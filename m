@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20506CD6E5D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F58CD6E63
 	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346135AbjJKMWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1346898AbjJKMWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 11 Oct 2023 08:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46638 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346942AbjJKMWS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:22:18 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937D21BC8
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:24 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-405524e6769so5548215e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:24 -0700 (PDT)
+        with ESMTP id S1346901AbjJKMWT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:22:19 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1321BE4
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:31 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-406650da82bso62491555e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026191; x=1697630991; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026198; x=1697630998; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e36s7GGdluC5QXynxByie2ZOB2vhF56/mrPwGpCKJMc=;
-        b=DywQE1gyVx47sFwd2d/Iuml2zEp0tVCWZz5ZkG3lcZNwjQC3FJBCNrfiEsQ3TbWDjH
-         742aYDguhBdOEPorCmCNgyC7HdZkER92HCMP+WjaV0ZJFqxwtUSL14F1ljrFF2uUmFzf
-         4fL3tn1hP2zP3R3aMbgBXgMalHbzhDi057oNGf8kUW8ymGuKwfjjSNxfOF9Atz2LWMUn
-         4uz52YRxNNMt67XBL5lzXUlLN0p8G3cPpAgJ798lK2rnVhE3+BYmlTAU7lSSNFd7H+ha
-         06hnNsT/nQTlZO0V+YGuMNyASN3LrW35Bw7Y4t4LUSYGswiNNztBueLNWrXOy1T1lNzT
-         wllQ==
+        bh=nBWQ9fSQp0ZA4dnWkAWnLMnFs+FYMpI9chYs/e79dsQ=;
+        b=xpHXUceaMR9V3bs14CPaeZRHcc1oDeNa/NPsff6yt78NhTfZPKZdPpqGFSDWdtt2IO
+         xJqPNF6i1bJmys6z0Tz1oZTEBZ8Pz2vd3W7v4/j0Hxzuiyp6+N/0o3HyWwsjURHfl5Qn
+         llQpa3VymxSX40V7ZoKYlZFsub/GW47+xGldH0V9SHPpVspkLhTJ5O4ksuIAJmhRbpuU
+         JOu4N4/EmV0chugmVK6NpJfvfFNqtOBmaGlFS11wU6grteZKVopjT4fPLPlq2T6Mk7eK
+         clVepseFJv/UJBkG/PufAK3mTw9ADo5LktLn6deI4X2pRMbokzzkxolPscjoxAz7G61L
+         vi9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026191; x=1697630991;
+        d=1e100.net; s=20230601; t=1697026198; x=1697630998;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e36s7GGdluC5QXynxByie2ZOB2vhF56/mrPwGpCKJMc=;
-        b=sDMeABwchpF5D7H0hzcXRyp8GR1rYfhLDIDsG8WCVdTaF4usBy0y8wt+f55lRP9QjG
-         XyV6b2pL4hXucz7xk/aaxlNGELpwERQ7sdrCTU6Dte3XijfpnEmT9V6V7MSbUbMZjkaE
-         4LrZ2KYfbgkOo2h/O0qd0JSpaPFtxu4JoSp2UUHpQYm6QwqxQYThfouVPqmxPaUdEMp0
-         fsq9FEpQP96fiH53fGRgt8rMALuX1pL7oqz5W6uzYFBxYO778spilNlmEHW+wP/EAyoO
-         zw86/kIXNdpjdXcC7GdmVtdNJjUY55agAS+9r27yJ4w5mLYOZjaTZhduZHFyE/vpTzHv
-         YmfQ==
-X-Gm-Message-State: AOJu0Yz/V2f23Wy6os6X+WnUy9vZK+oSVtuXPVUpQUXtSdTC+W+KiTod
-        hTal8iV4XZTarhxnXYh/cj4GaA==
-X-Google-Smtp-Source: AGHT+IFSAwuCWBTL7lezmJLtCyMvDb/zGXh4Rj3UdDilTVGeSvBu9wBWn9fhQSJSYAyBp8blm3Zxhw==
-X-Received: by 2002:a05:600c:4f02:b0:401:609f:7f9a with SMTP id l2-20020a05600c4f0200b00401609f7f9amr15768612wmq.8.1697026191637;
-        Wed, 11 Oct 2023 05:09:51 -0700 (PDT)
+        bh=nBWQ9fSQp0ZA4dnWkAWnLMnFs+FYMpI9chYs/e79dsQ=;
+        b=S8bLhjGL3crs9zFVjjH5evDMVF7XyLWWcTyV3FtC02AOPU+3HXwH8DgFUJrpmIPGs5
+         7T4up8XHAW/800rReCyinwY570yxHkFrpK5EmMYAzcXCWh1HeiuEtxsOL3uw8VwEhCqF
+         NW7QnsVDa5UCiVMg52CDIq6du0rt48LVgRfs/wk+pLwaCerRZ/eMLasOrRuSK4Lb0l05
+         TwbfMf/+oDM8poYKF5atTwBmdaqnYNgM/XmDBbnrp0oJyr3g2kGvq8sU4RiG0XNXHUuz
+         Wl9PIdkGCZnSIey2tH0BztgonDUXMAXX/2InZOXSZbDLVfgwspBFQVBWzugP3sY+pg/K
+         qPVQ==
+X-Gm-Message-State: AOJu0Ywlyaxgq+Q29Yl9Vmh1m+IWwJsCVgX5n9iBjZBQgW698nzlszEU
+        +mEEUwMfXcXvvV9inHt81T8qcA==
+X-Google-Smtp-Source: AGHT+IHh7D7JdR9pIqvKYYhRQNptYpBq6OqzbRE26mTQKCl1hcF1aF3IUYfDRd5BaZH3PNhzdp5PrA==
+X-Received: by 2002:a7b:cd8c:0:b0:401:bcd9:4871 with SMTP id y12-20020a7bcd8c000000b00401bcd94871mr19673885wmj.21.1697026197822;
+        Wed, 11 Oct 2023 05:09:57 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.50
+        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:09:51 -0700 (PDT)
+        Wed, 11 Oct 2023 05:09:57 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 48/62] pinctrl: st: drop the wrapper around pinctrl_gpio_direction_input()
-Date:   Wed, 11 Oct 2023 14:08:16 +0200
-Message-Id: <20231011120830.49324-49-brgl@bgdev.pl>
+Subject: [PATCH v2 55/62] pinctrl: mediatek: drop the wrappers around pinctrl_gpio_direction_input()
+Date:   Wed, 11 Oct 2023 14:08:23 +0200
+Message-Id: <20231011120830.49324-56-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
 References: <20231011120830.49324-1-brgl@bgdev.pl>
@@ -69,40 +69,65 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 pinctrl_gpio_direction_input() now has the same signature as the
-wrapper around it so we can drop it.
+wrappers around it so we can drop them.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pinctrl/pinctrl-st.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-moore.c      | 7 +------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 8 +-------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index db511dbd50e5..a30b426d1e74 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -717,13 +717,6 @@ static void st_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	__st_gpio_set(bank, offset, value);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index c3f33f96f920..c3d59eddd994 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -510,11 +510,6 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 	mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DO, !!value);
  }
  
--static int st_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+-static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
 -{
--	pinctrl_gpio_direction_input(chip, offset);
--
--	return 0;
+-	return pinctrl_gpio_direction_input(chip, gpio);
 -}
 -
- static int st_gpio_direction_output(struct gpio_chip *chip,
- 	unsigned offset, int value)
+ static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+ 				     int value)
  {
-@@ -1488,7 +1481,7 @@ static const struct gpio_chip st_gpio_template = {
+@@ -569,7 +564,7 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ 	chip->parent		= hw->dev;
+ 	chip->request		= gpiochip_generic_request;
+ 	chip->free		= gpiochip_generic_free;
+-	chip->direction_input	= mtk_gpio_direction_input;
++	chip->direction_input	= pinctrl_gpio_direction_input;
+ 	chip->direction_output	= mtk_gpio_direction_output;
+ 	chip->get		= mtk_gpio_get;
+ 	chip->set		= mtk_gpio_set;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 41e9847e3085..e79d66a04194 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -808,12 +808,6 @@ static const struct pinmux_ops mtk_pmx_ops = {
+ 	.gpio_request_enable	= mtk_pmx_gpio_request_enable,
+ };
+ 
+-static int mtk_gpio_direction_input(struct gpio_chip *chip,
+-					unsigned offset)
+-{
+-	return pinctrl_gpio_direction_input(chip, offset);
+-}
+-
+ static int mtk_gpio_direction_output(struct gpio_chip *chip,
+ 					unsigned offset, int value)
+ {
+@@ -898,7 +892,7 @@ static const struct gpio_chip mtk_gpio_chip = {
+ 	.request		= gpiochip_generic_request,
  	.free			= gpiochip_generic_free,
- 	.get			= st_gpio_get,
- 	.set			= st_gpio_set,
--	.direction_input	= st_gpio_direction_input,
+ 	.get_direction		= mtk_gpio_get_direction,
+-	.direction_input	= mtk_gpio_direction_input,
 +	.direction_input	= pinctrl_gpio_direction_input,
- 	.direction_output	= st_gpio_direction_output,
- 	.get_direction		= st_gpio_get_direction,
- 	.ngpio			= ST_GPIO_PINS_PER_BANK,
+ 	.direction_output	= mtk_gpio_direction_output,
+ 	.get			= mtk_gpio_get,
+ 	.set			= mtk_gpio_set,
 -- 
 2.39.2
 
