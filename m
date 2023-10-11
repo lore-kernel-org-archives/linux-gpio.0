@@ -2,94 +2,96 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE801CDB482
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 20:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B11CDB482
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 20:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbjJKUAL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 16:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60072 "EHLO
+        id S1376356AbjJKU0t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 16:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233103AbjJKUAL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 16:00:11 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BFB94;
-        Wed, 11 Oct 2023 13:00:09 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32799639a2aso204511f8f.3;
-        Wed, 11 Oct 2023 13:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697054408; x=1697659208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tX0FgbDhoDy/c6Xp48Q/Lp6Lf1CmRpkAa0uRPBrtEzI=;
-        b=kS85T0iNm6PXIkQ0vwA6Dm5UsGu/i7zsw06X4JZXfjdmX984sUoC42aDac/l4TSMSF
-         TJfcLQseLgukjFaia7yoJiX9XLZKu5vifaUrc0v7XvJRZfUO+FyjP5RC5k5x9bSa/K8g
-         dZBG9fvWCPNj9Ty6oZ9lMiN539hwHIu3qaTlLOi96Zlg8btjnNOWnqMFqAkH1cHOgeca
-         g+sWDAD+5rSRhuIp63ekbg469lob8lKoDHYVzpHKXN1/GXj/SXOJkKInkiHO6hPkf4xI
-         8ReZ9qemD54ZWMlwXYmzev9LpP/0qh2+NadbqLgVnppFD+73QHFpYIZ01orfDjKgP4xG
-         e41Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697054408; x=1697659208;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tX0FgbDhoDy/c6Xp48Q/Lp6Lf1CmRpkAa0uRPBrtEzI=;
-        b=Lx3INY8AhvvYmRNypE70JsvujhRski+yYNTaI1U7CObkWH15oagUI1flg8R0TYCKnJ
-         810Djq6GwsFMAwvQnLfdts1NsM8AEyLMUQjdqpAG9aVY0df4B866RHrletyaGiJDDyWf
-         VIZc5Yahj5qKbUA+7gXa8yXVlkiSQTm6XtT8Ymbd08JZfiS9qLjJKyvAqoSl/L6muAxA
-         711UmgoCBnePXvzPgJR0Iolad1Rc1OBCp4JKFlUV0s+/vavXE031LCprm/EZurPRO2IL
-         2mEPl8MZKY5yZuZqoNAQxVouBDQ6SXonyjK1/NM6tuqExAxI8gLznygzFKLOF/BUgYAB
-         U8Eg==
-X-Gm-Message-State: AOJu0YxPm6BxU9iKVzHMD35r93aBJ2QeBo3AE4aRYo5hJeHijA4WHhf3
-        lr+8akn1Ti+f86N5yRth0/8=
-X-Google-Smtp-Source: AGHT+IFE2hIFhU90VcqiD1hYI+viGbFaj9N2hYTLBPhgD1g5g2LebpwK9LSugAQZhx3RtB8KGn3BQg==
-X-Received: by 2002:a5d:4586:0:b0:31f:eb88:e3c8 with SMTP id p6-20020a5d4586000000b0031feb88e3c8mr18897299wrq.32.1697054407705;
-        Wed, 11 Oct 2023 13:00:07 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:b8af:68b0:4272:ed0d])
-        by smtp.gmail.com with ESMTPSA id r18-20020adfe692000000b0031912c0ffebsm16329039wrm.23.2023.10.11.13.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 13:00:07 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] pinctrl: renesas: rzg2l: Enhance driver to support interrupt affinity setting
-Date:   Wed, 11 Oct 2023 20:59:23 +0100
-Message-Id: <20231011195923.67404-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S233360AbjJKU0s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 16:26:48 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2533290;
+        Wed, 11 Oct 2023 13:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1697056007; x=1728592007;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ZRhu6GBogXEtacyQpk9MfPzZjieYt+h/X2GsbW/ugqU=;
+  b=PbGQqUkCHfWl/z39Hmo2Pe/omc4YEB2mtpxEjtTP8w66A2mqWcIEG1H4
+   VPujcZH1QHdTrRcImoQXkhKo0NwITKDjhAmv+X0TIYDVj79i5dcEAHsTF
+   KQYXvGP+IZ61Y+u82ZMtVJeHEG6w4eoEZuEAPNNDpcndvo/Pp5aAY8a0G
+   D6AIeBQJnUOBnQrRPA1IUQn3dzCdXsUWWtbZGPhKtAR3rGQkFwNJhniVm
+   LzRf9sRj2FrLL2CuH1XR0+aqXYf0e5H3f0lw287mearjip1T2+gMtdW0d
+   sY3RIpJekKDOC2/Cx1OQNabSKbyEiq0zptK4Q1hE7+cIhRqru8s0ZyB0U
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="471015120"
+X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
+   d="scan'208";a="471015120"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2023 13:26:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10860"; a="783393503"
+X-IronPort-AV: E=Sophos;i="6.03,217,1694761200"; 
+   d="scan'208";a="783393503"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 11 Oct 2023 13:26:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 2C8766DA; Wed, 11 Oct 2023 23:26:42 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2 3/4] hte: tegra194: Remove redundant dev_err()
+Date:   Wed, 11 Oct 2023 23:26:37 +0300
+Message-Id: <20231011202638.372382-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
+References: <20231011202638.372382-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+There is no need to call the dev_err() function directly to print a custom
+message when handling an error from platform_get_irq() function as it is
+going to display an appropriate error message in case of a failure.
 
-Implement irq_set_affinity callback so that we can set affinity
-for GPIO IRQs.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Dipen Patel <dipenp@nvidia.com>
+Tested-by: Dipen Patel <dipenp@nvidia.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20231010151709.4104747-4-andriy.shevchenko@linux.intel.com
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hte/hte-tegra194.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index c7c6d912a975..e6bf66fca074 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1576,6 +1576,7 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
- 	.irq_set_type = rzg2l_gpio_irq_set_type,
- 	.irq_eoi = rzg2l_gpio_irqc_eoi,
- 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
-+	.irq_set_affinity = irq_chip_set_affinity_parent,
- 	.flags = IRQCHIP_IMMUTABLE,
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index f6c2dbcd0aca..cf6058193403 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -731,10 +731,8 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err_probe(dev, ret, "failed to get irq\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	hte_dev->hte_irq = ret;
+ 	ret = devm_request_irq(dev, hte_dev->hte_irq, tegra_hte_isr, 0,
+ 			       dev_name(dev), hte_dev);
 -- 
-2.34.1
+2.40.0.1.gaa8946217a0b
 
