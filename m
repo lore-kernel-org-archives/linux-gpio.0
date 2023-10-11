@@ -2,61 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12383CD6E5D
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185CACD6E60
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346422AbjJKMLG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:11:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
+        id S1346905AbjJKMLR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346728AbjJKMKN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:10:13 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3015AD41
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:41 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-40651a726acso62579315e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:41 -0700 (PDT)
+        with ESMTP id S1346387AbjJKMK1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:10:27 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA12DD66
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:45 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40675f06f1fso5249595e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026169; x=1697630969; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026172; x=1697630972; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gdciYkeI9ojIVFf6NUkn/u7//A2Bey8sZm2LXyWrQBM=;
-        b=lbRlGdsddzuxZX0OBbBSiiUDbqJC0QX3Ch30M5gMRYizVpUF9YvXXzXDZ5JnVRZI42
-         a87tSMk1D6axceX5ultk1tpGeHAKBGuGigC+PQwx5eD2zDDfpjXLqR9qo297GrMRVMzm
-         sPVZTXvpjO+h8z9Rl67bXnaj88KnEQ52BgbCpMNRkpBnblpXIIbclZ+yCJzGPuf6YDlv
-         2LerYGVpXZhWax9xNWPMFHLJDD2Z5P1rlpjRD2zaMk2z/6C6RMTyLzW55UkaH/70NQXj
-         uOEnzRpPn7TVJ/gnCycXySi22+boakFIXlmbJ3roRA1O+4mMakLHHa92lj6HufzfU4C7
-         EO/w==
+        bh=9sX7KISk194rgY041xTg7tvrdqgP+qimN3AJxbjYr+Y=;
+        b=kiY+s1Q9xQSIiaAilZYcIrynguQgrP4taXSJqCzyrMm4H8SjpRErEdkt6PAa29wG4d
+         T/Oia4IJj3aO1irVkG32ONaUKk8O/TeqwfQw9mY6s/a6mDbhxsjmbdHx5joWfTT4n0FL
+         H6Sq/NP477mANb2rTqLO9lro0Oo5oUvljUJLpfxKUVHm8Zy0UoHe0d6SpLro7Os8Lpb1
+         Cbe2BA9VSvHOzdkHwPZklcXc3OnAZMPzTROf0a5NDj7CYENFitBhCLzW1Uof9WPoxs0I
+         V31LBXpiXlshvOTeafYDUAvwO2NpukRGoifyifW1XNiD2eARPk+2iMok4jbqK0KqUzLU
+         jkuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026169; x=1697630969;
+        d=1e100.net; s=20230601; t=1697026172; x=1697630972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gdciYkeI9ojIVFf6NUkn/u7//A2Bey8sZm2LXyWrQBM=;
-        b=AI9+vr3QSb2H6+ipCtZqk+yDWcC3TxoVweHdIU0eE8zuEbmMEDkPUb0lEBOCfeeqgm
-         WqGndUwdfOtmyVOHkZvI1NfJUggk6rOUPvrDkiXOANIBxELLlEv+2ffMH4IYUfh0+SCi
-         GGkHeTozvpRYo77g5fEPxpdVI/Oifc7wNnoqOzyAqCV9Z4puyQaPGUvaZGmLK3UF4Cec
-         hoef756RpirLVhlCFjKFRwb1mHVdzOnhE0KgT2L7tjWLuf3ATo59cHP6V5lzJ/SXMhrT
-         EpHsw0aAQf8+0qgrDP/oRRPiIjY62YCI8nDyudgEFxQKODOL7YeeoUmy8Il2U6T6jb4r
-         3QXw==
-X-Gm-Message-State: AOJu0YxD0kdXSrmD7MXloUGDlbh4uUc4pj7iI7vUPMJmJ5uB7/wGJoPh
-        5bmtWoKJpsnbWL5WCPoP7fc+zg==
-X-Google-Smtp-Source: AGHT+IFvsykFPLsR/DZxmt/oXTkLreB1wB/q0xWf2n0gxG0O+ZL8ee7uCpjNkE15mHaC562G4pWzkw==
-X-Received: by 2002:a05:600c:1d8f:b0:407:3630:f35 with SMTP id p15-20020a05600c1d8f00b0040736300f35mr13381234wms.9.1697026169023;
-        Wed, 11 Oct 2023 05:09:29 -0700 (PDT)
+        bh=9sX7KISk194rgY041xTg7tvrdqgP+qimN3AJxbjYr+Y=;
+        b=N2Ued9/H8AChlrgdurGLZkVmRIUh7jbS5ucxCNxNpc8KPND8DAscMoVw5QoGsrCw9B
+         8SQsttJjp3Hs9gP9qFECVfDhLg5quA+qSgHycW/XaCA2NhOmaNTSr//n5KRzLQZO0RE5
+         2C8MTgr/8NceED2R81LSkybd/h+HbQjsSsNx9XXPJMPBlb1XB5me/cEGNfVOGgGSIves
+         0JoLff7EFh5jRCzRlk+nJ5meUcJ/gmUvWpnq41VuqqZoQkbl++h4lT1C15pugq70ERjR
+         VvtSxPHDiIVoOjOgjNIjsV7tuRNCoYzuN5jWPRb6y4mmJDeQmJqoHxyZvBLHtXjzphHT
+         /yDQ==
+X-Gm-Message-State: AOJu0YwY1Bxeup8AewhQJpiLKeXrinuR6bpu0I+jbVymcYSKWdpm8rsV
+        y7VuuWfq0i1OmZ1UWB918yCdTg==
+X-Google-Smtp-Source: AGHT+IG2icVX5Pt9FWXu0PAluaZqpbmriKah8CaatcXfG7wi5SCT7FjBkZ30kg3Vf2zdp+SBGuFtaQ==
+X-Received: by 2002:a05:600c:4f02:b0:401:609f:7f9a with SMTP id l2-20020a05600c4f0200b00401609f7f9amr15767689wmq.8.1697026172774;
+        Wed, 11 Oct 2023 05:09:32 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.28
+        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:09:28 -0700 (PDT)
+        Wed, 11 Oct 2023 05:09:32 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 24/62] pinctrl: vt8500: use new pinctrl GPIO helpers
-Date:   Wed, 11 Oct 2023 14:07:52 +0200
-Message-Id: <20231011120830.49324-25-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 28/62] pinctrl: intel: use new pinctrl GPIO helpers
+Date:   Wed, 11 Oct 2023 14:07:56 +0200
+Message-Id: <20231011120830.49324-29-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
 References: <20231011120830.49324-1-brgl@bgdev.pl>
@@ -73,31 +75,78 @@ with the improved variants that instead take a pointer to the GPIO chip
 and the controller-relative offset.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/pinctrl/vt8500/pinctrl-wmt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++--
+ drivers/pinctrl/intel/pinctrl-intel.c      | 4 ++--
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 6fac30de1c6a..1a313295611e 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -528,14 +528,14 @@ static void wmt_gpio_set_value(struct gpio_chip *chip, unsigned offset,
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index b8ad73c6b53d..02202cac8fec 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1172,14 +1172,14 @@ static int chv_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
  
- static int wmt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ static int chv_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
  {
 -	return pinctrl_gpio_direction_input(chip->base + offset);
 +	return pinctrl_gpio_direction_input_new(chip, offset);
  }
  
- static int wmt_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ static int chv_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
  				     int value)
  {
- 	wmt_gpio_set_value(chip, offset, value);
+ 	chv_gpio_set(chip, offset, value);
 -	return pinctrl_gpio_direction_output(chip->base + offset);
 +	return pinctrl_gpio_direction_output_new(chip, offset);
  }
  
- static const struct gpio_chip wmt_gpio_chip = {
+ static const struct gpio_chip chv_gpio_chip = {
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index f9155d94a830..271aa60dbe9e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -991,14 +991,14 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return pinctrl_gpio_direction_input(chip->base + offset);
++	return pinctrl_gpio_direction_input_new(chip, offset);
+ }
+ 
+ static int intel_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
+ 				       int value)
+ {
+ 	intel_gpio_set(chip, offset, value);
+-	return pinctrl_gpio_direction_output(chip->base + offset);
++	return pinctrl_gpio_direction_output_new(chip, offset);
+ }
+ 
+ static const struct gpio_chip intel_gpio_chip = {
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index d7bc9ef29fcc..91d228fead45 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -541,7 +541,7 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 
+ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return pinctrl_gpio_direction_input(chip->base + offset);
++	return pinctrl_gpio_direction_input_new(chip, offset);
+ }
+ 
+ static int lp_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
+@@ -549,7 +549,7 @@ static int lp_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
+ {
+ 	lp_gpio_set(chip, offset, value);
+ 
+-	return pinctrl_gpio_direction_output(chip->base + offset);
++	return pinctrl_gpio_direction_output_new(chip,  offset);
+ }
+ 
+ static int lp_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
 -- 
 2.39.2
 
