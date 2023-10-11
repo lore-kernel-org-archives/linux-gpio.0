@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7854CCD98F5
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 06:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B063CD98F3
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 06:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344555AbjJKGPv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 02:15:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
+        id S1344710AbjJKGP4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 02:15:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345309AbjJKGPo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 02:15:44 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B647DE;
-        Tue, 10 Oct 2023 23:15:29 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id B8782E0008;
-        Wed, 11 Oct 2023 06:15:24 +0000 (UTC)
+        with ESMTP id S1344656AbjJKGPb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 02:15:31 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33726181;
+        Tue, 10 Oct 2023 23:15:19 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 627BFE0007;
+        Wed, 11 Oct 2023 06:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1697004928;
+        t=1697004917;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=T1VpXEDiEEj03z0lZbsi0RjHlrslWbdm5Y0c+1pg5eg=;
-        b=BYZqmqh62508Q//8TuaGDeXh9o1FzBQNHhXKLzI13x7I9+/e3vVTzDqAdIbo152e8a4qRF
-        YBzdEuejhjShkf1YBDWyC36mEaZgw+iJQZ8XUUPB7/1yD/pz84OlEp1WlC7xeudbhUDEoS
-        YbKRM+695/qBy7YRzZ8i5/qg3Dy/wZzPq/B9PR50U7HNkOr+1tL5DJKCasLbAiqgyZrN6D
-        39nEiE1k22J6JLd6VgD5jk/VXykM5JmQUcVywPh2q2dpV/L28jV6kZPppRHhHYfMza9kJm
-        zWAqbf8Qg+PindtWaoWqjkK2VgfuLKwhK3UzNowdS7G+iFNExB7Kaqv5/YfwfQ==
+        bh=exqU44vp0OQhVVoPYW7chAWLNAw8ghblo4zFam/LWAs=;
+        b=f7/2qCp1mhBlrLQ4l+8UzRH/WMbDRVk2s6szpLassj6vhw0vYTWFo01Ipv8eavUsGzjdty
+        L1L5/wvRmvkT5R1OB6wLsLS1sx+V5U6lnjS0agj8JAD4wkGF6WcE7hATLQ8mgPCHeBm/64
+        jnP+5wXVFc3Uojq1HCBi8RFkwfMIdCWcWeDCpx4pzqSGPiac0I+d12Qzhq468kS1gkebb2
+        CS068cPoaXJeH59rNhnDII0j6sSrvd3I3jnrO0QwOYYpBxrM9UdygnLVKBpccGbvkMYLmA
+        t7jvjuPpMPlaPLhmIeoYtZ8lvpMSFHz/Mj8Wx3BAG2Ch5QIg6cKF6EwweQFFAA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -54,10 +54,11 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v8 11/30] MAINTAINERS: Add the Freescale QMC HDLC driver entry
-Date:   Wed, 11 Oct 2023 08:14:15 +0200
-Message-ID: <20231011061437.64213-12-herve.codina@bootlin.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 08/30] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add support for QMC HDLC
+Date:   Wed, 11 Oct 2023 08:14:12 +0200
+Message-ID: <20231011061437.64213-9-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231011061437.64213-1-herve.codina@bootlin.com>
 References: <20231011061437.64213-1-herve.codina@bootlin.com>
@@ -68,32 +69,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After contributing the driver, add myself as the maintainer for the
-Freescale QMC HDLC driver.
+The QMC (QUICC mutichannel controller) is a controller present in some
+PowerQUICC SoC such as MPC885.
+The QMC HDLC uses the QMC controller to transfer HDLC data.
+
+Additionally, a framer can be connected to the QMC HDLC.
+If present, this framer is the interface between the TDM bus used by the
+QMC HDLC and the E1/T1 line.
+The QMC HDLC can use this framer to get information about the E1/T1 line
+and configure the E1/T1 line.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml      | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 90f13281d297..8b987f2c8633 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8364,6 +8364,13 @@ F:	Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
- F:	drivers/soc/fsl/qe/qmc.c
- F:	include/soc/fsl/qe/qmc.h
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+index 82d9beb48e00..e802e25923aa 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+@@ -101,6 +101,32 @@ patternProperties:
+           Channel assigned Rx time-slots within the Rx time-slots routed by the
+           TSA to this cell.
  
-+FREESCALE QUICC ENGINE QMC HDLC DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	netdev@vger.kernel.org
-+L:	linuxppc-dev@lists.ozlabs.org
-+S:	Maintained
-+F:	drivers/net/wan/fsl_qmc_hdlc.c
++      compatible:
++        items:
++          - enum:
++              - fsl,mpc885-scc-qmc-hdlc
++              - fsl,mpc866-scc-qmc-hdlc
++          - const: fsl,cpm1-scc-qmc-hdlc
++          - const: fsl,qmc-hdlc
 +
- FREESCALE QUICC ENGINE TSA DRIVER
- M:	Herve Codina <herve.codina@bootlin.com>
- L:	linuxppc-dev@lists.ozlabs.org
++      fsl,framer:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        description:
++          phandle to the framer node. The framer is in charge of an E1/T1 line
++          interface connected to the TDM bus. It can be used to get the E1/T1 line
++          status such as link up/down.
++
++    allOf:
++      - if:
++          properties:
++            compatible:
++              not:
++                contains:
++                  const: fsl,qmc-hdlc
++        then:
++          properties:
++            fsl,framer: false
++
+     required:
+       - reg
+       - fsl,tx-ts-mask
+@@ -155,9 +181,13 @@ examples:
+ 
+         channel@19 {
+             /* Ch19 : 8 TS (TS 8..15) from all routed from TSA */
++            compatible = "fsl,mpc885-scc-qmc-hdlc",
++                         "fsl,cpm1-scc-qmc-hdlc",
++                         "fsl,qmc-hdlc";
+             reg = <19>;
+             fsl,operational-mode = "hdlc";
+             fsl,tx-ts-mask = <0x00000000 0x0000ff00>;
+             fsl,rx-ts-mask = <0x00000000 0x0000ff00>;
++            fsl,framer = <&framer>;
+         };
+     };
 -- 
 2.41.0
 
