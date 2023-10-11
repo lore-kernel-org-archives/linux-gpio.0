@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B063CD98F3
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 06:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 748D4CD98F3
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 06:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344710AbjJKGP4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 02:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35436 "EHLO
+        id S1345313AbjJKGQC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 02:16:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344656AbjJKGPb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 02:15:31 -0400
+        with ESMTP id S1345357AbjJKGPp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 02:15:45 -0400
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33726181;
-        Tue, 10 Oct 2023 23:15:19 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 627BFE0007;
-        Wed, 11 Oct 2023 06:15:14 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F9A9EB;
+        Tue, 10 Oct 2023 23:15:33 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 6B79AE000D;
+        Wed, 11 Oct 2023 06:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1697004917;
+        t=1697004931;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=exqU44vp0OQhVVoPYW7chAWLNAw8ghblo4zFam/LWAs=;
-        b=f7/2qCp1mhBlrLQ4l+8UzRH/WMbDRVk2s6szpLassj6vhw0vYTWFo01Ipv8eavUsGzjdty
-        L1L5/wvRmvkT5R1OB6wLsLS1sx+V5U6lnjS0agj8JAD4wkGF6WcE7hATLQ8mgPCHeBm/64
-        jnP+5wXVFc3Uojq1HCBi8RFkwfMIdCWcWeDCpx4pzqSGPiac0I+d12Qzhq468kS1gkebb2
-        CS068cPoaXJeH59rNhnDII0j6sSrvd3I3jnrO0QwOYYpBxrM9UdygnLVKBpccGbvkMYLmA
-        t7jvjuPpMPlaPLhmIeoYtZ8lvpMSFHz/Mj8Wx3BAG2Ch5QIg6cKF6EwweQFFAA==
+        bh=H6LM5oBsAhqZ2AuRWwGids6eXtTepJ+ChJ2w8L/EWt8=;
+        b=DC9wZFhapS4z4fkYFylKnyEpnBJTDgi8lJPoHmii4PZA+LHzjhfM5UzFHgWJXjLt5umrT2
+        O6+plBjZFdhFPAUHkahdGUjMKiGixmVUvwHKnNYHn0nU6XEmoJCwtPAd5xBk6eXYX7gsIO
+        u+Ms1Y5xP5erYIunlNpFOzu9N1p2e8ZUdv6DtpH8BzOUFmkRUy4YLw/bQsP8IvcvbsJSIv
+        Dil4KRHSnlBndSUs6ETBXirk/xDI1MChLrz7rJQ/YWkU2Jhqh6ii6awcZhGb6LqbJqc12C
+        T03Dol5ygNf1JpwKeZ0AjBGwRp/cbkMU942+aIAF1NPXJejOoM3DMyBBfPjSkw==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -54,11 +54,10 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v8 08/30] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add support for QMC HDLC
-Date:   Wed, 11 Oct 2023 08:14:12 +0200
-Message-ID: <20231011061437.64213-9-herve.codina@bootlin.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v8 12/30] soc: fsl: cpm1: qmc: Introduce available timeslots masks
+Date:   Wed, 11 Oct 2023 08:14:16 +0200
+Message-ID: <20231011061437.64213-13-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231011061437.64213-1-herve.codina@bootlin.com>
 References: <20231011061437.64213-1-herve.codina@bootlin.com>
@@ -69,73 +68,54 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The QMC (QUICC mutichannel controller) is a controller present in some
-PowerQUICC SoC such as MPC885.
-The QMC HDLC uses the QMC controller to transfer HDLC data.
+Available timeslots masks define timeslots available for the related
+channel. These timeslots are defined by the QMC binding.
 
-Additionally, a framer can be connected to the QMC HDLC.
-If present, this framer is the interface between the TDM bus used by the
-QMC HDLC and the E1/T1 line.
-The QMC HDLC can use this framer to get information about the E1/T1 line
-and configure the E1/T1 line.
+Timeslots used are initialized to available timeslots but can be a
+subset of available timeslots.
+This prepares the dynamic timeslots management (ie. changing timeslots
+at runtime).
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- .../soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml      | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/soc/fsl/qe/qmc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
-index 82d9beb48e00..e802e25923aa 100644
---- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
-@@ -101,6 +101,32 @@ patternProperties:
-           Channel assigned Rx time-slots within the Rx time-slots routed by the
-           TSA to this cell.
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 5da15a25600e..653d458b84b6 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -177,7 +177,9 @@ struct qmc_chan {
+ 	struct qmc *qmc;
+ 	void __iomem *s_param;
+ 	enum qmc_mode mode;
++	u64	tx_ts_mask_avail;
+ 	u64	tx_ts_mask;
++	u64	rx_ts_mask_avail;
+ 	u64	rx_ts_mask;
+ 	bool is_reverse_data;
  
-+      compatible:
-+        items:
-+          - enum:
-+              - fsl,mpc885-scc-qmc-hdlc
-+              - fsl,mpc866-scc-qmc-hdlc
-+          - const: fsl,cpm1-scc-qmc-hdlc
-+          - const: fsl,qmc-hdlc
-+
-+      fsl,framer:
-+        $ref: /schemas/types.yaml#/definitions/phandle
-+        description:
-+          phandle to the framer node. The framer is in charge of an E1/T1 line
-+          interface connected to the TDM bus. It can be used to get the E1/T1 line
-+          status such as link up/down.
-+
-+    allOf:
-+      - if:
-+          properties:
-+            compatible:
-+              not:
-+                contains:
-+                  const: fsl,qmc-hdlc
-+        then:
-+          properties:
-+            fsl,framer: false
-+
-     required:
-       - reg
-       - fsl,tx-ts-mask
-@@ -155,9 +181,13 @@ examples:
+@@ -875,7 +877,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 			of_node_put(chan_np);
+ 			return ret;
+ 		}
+-		chan->tx_ts_mask = ts_mask;
++		chan->tx_ts_mask_avail = ts_mask;
++		chan->tx_ts_mask = chan->tx_ts_mask_avail;
  
-         channel@19 {
-             /* Ch19 : 8 TS (TS 8..15) from all routed from TSA */
-+            compatible = "fsl,mpc885-scc-qmc-hdlc",
-+                         "fsl,cpm1-scc-qmc-hdlc",
-+                         "fsl,qmc-hdlc";
-             reg = <19>;
-             fsl,operational-mode = "hdlc";
-             fsl,tx-ts-mask = <0x00000000 0x0000ff00>;
-             fsl,rx-ts-mask = <0x00000000 0x0000ff00>;
-+            fsl,framer = <&framer>;
-         };
-     };
+ 		ret = of_property_read_u64(chan_np, "fsl,rx-ts-mask", &ts_mask);
+ 		if (ret) {
+@@ -884,7 +887,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 			of_node_put(chan_np);
+ 			return ret;
+ 		}
+-		chan->rx_ts_mask = ts_mask;
++		chan->rx_ts_mask_avail = ts_mask;
++		chan->rx_ts_mask = chan->rx_ts_mask_avail;
+ 
+ 		mode = "transparent";
+ 		ret = of_property_read_string(chan_np, "fsl,operational-mode", &mode);
 -- 
 2.41.0
 
