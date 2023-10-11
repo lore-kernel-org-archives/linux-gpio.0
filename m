@@ -2,193 +2,157 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3E6CD6E60
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B169CD6E63
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235003AbjJKMQC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:16:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60510 "EHLO
+        id S235076AbjJKMUi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235002AbjJKMPz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:15:55 -0400
-Received: from mail-ed1-x564.google.com (mail-ed1-x564.google.com [IPv6:2a00:1450:4864:20::564])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85FF44BD
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:13:14 -0700 (PDT)
-Received: by mail-ed1-x564.google.com with SMTP id 4fb4d7f45d1cf-53d8320f0easo2785472a12.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:13:14 -0700 (PDT)
+        with ESMTP id S235000AbjJKMU3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:20:29 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2896819A2
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:18 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-405361bba99so62448195e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gadgetoid.com; s=google; t=1697026388; x=1697631188; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026189; x=1697630989; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DK9dJ9jy4t0RJYplqPgZneMfZDamD+neySH+hGtkHmQ=;
-        b=XPrNrkkWwkgxFgVu18nBppPXV6Qo9MOXRr+5FftiRHd7tSNYxOroFzbVH/yzPvoRuj
-         43V3KRFTIiCLL0/WpGbw2zml8HGeeDS/TGhMiJsge/N3RmP90S83sM19e5fTGTwmRDhJ
-         fahX51/OykoFz/1VaK1zNu/+1NecJO+j1GQrJk/TR9/rZBD2iuXtKVUI3qVVe+NHxpv7
-         EGHbF93AkLJ9cN/+I+iOgQqZXP7vnyNRohQnUDynFm6kAzIA13B+0M2ZNwGaInnJMxLQ
-         moz27lr1EsNmVl96F6rG3s1zNjjWlG/ay51oB25DwovlcwWJtVAmfeSSD5eggR2H83SA
-         oANQ==
+        bh=KvqkdE0pFC3rt0ALCPspH5t69Bx+kT0SWwFi+Jjq8JI=;
+        b=QZT2QNjmtsq4K2GdrJujpExlrFRrPGj3KERcfivGBjcMjq4lF4WxhrOuICYEB3xrBq
+         RdIwARKiFOdjht488LPPwY7ntC3NrlkYtF3X+IZX2eMmaeKmxfhx6LxovjKwywQXBlUH
+         uYEZFWhtRmVPupuj348uHMyPwZuJw0x++Jcxl0i3k/sA4VIva60/SImfOiArwX3QlgD0
+         ZQhf0UCUbEBcjWJe1A0XyWok3ZRtD5Rg8E9+tRh+ceN1PBrgN8w2b0FFxsgEPwL2xqM6
+         C2FqDD72WvUDh1d/QDK98nT5NBQlp2jg8pdybOqsoGC6nZbMFzURlbZe/1T5DcwfG9P5
+         JyRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026388; x=1697631188;
+        d=1e100.net; s=20230601; t=1697026189; x=1697630989;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DK9dJ9jy4t0RJYplqPgZneMfZDamD+neySH+hGtkHmQ=;
-        b=p2HGbO1hLP7XtgjMlyxsKdVJMM7AY1y9F198OTWaWVlBTlh2oQEwHgCqpYyW3EcAnB
-         BmodlZI9BhQbXoTmTocGsExvSgeeWyzbiOBbF1fEyEiX6IiwvFcFCugVuNCmKwxB64Gs
-         aENbRyTmDwSmpX14GHwTwt5BrczWHm3C9N25heFxxOs7K8MpM2QNKQ9pi8k5SvV2ZhtC
-         ncNGdH/2v/mnnlzC+tCbKKzHZ5NMeh4aadBX8erHrYm4yfZoy2o8tlR7tq7CVLTLTiqm
-         gcvzZaLWBtnf4PLGVshWQpBR8tbYnD6PvDBkDp/W/YgRJM+nfgHOqSJKuSRhuN06tij2
-         6bcg==
-X-Gm-Message-State: AOJu0Yw8srBokCZ0ox0V2Qg8dqyUzYfx5ZoRYYx6DJPjmRMVbnlUlLHG
-        udjwbcOcgZXLE+Rr5KPK14+f8wuO0ZxoDfK6xVsTmaqWOaUrMQ==
-X-Google-Smtp-Source: AGHT+IHfRZFqBWV/ehzxisvbzkImR34N23PDJ53Drl6a1NeBHPEiouT8K970Ueu2wusTv7NaMTPSmuNfLYYB
-X-Received: by 2002:a17:906:9c1:b0:9ae:5aa4:9fa with SMTP id r1-20020a17090609c100b009ae5aa409famr18581064eje.42.1697026387700;
-        Wed, 11 Oct 2023 05:13:07 -0700 (PDT)
-Received: from pop-os.. (cpc91242-cmbg18-2-0-cust972.5-4.cable.virginm.net. [82.8.131.205])
-        by smtp-relay.gmail.com with ESMTPS id x6-20020a170906134600b009b9720a85dcsm1582049ejb.44.2023.10.11.05.13.07
+        bh=KvqkdE0pFC3rt0ALCPspH5t69Bx+kT0SWwFi+Jjq8JI=;
+        b=I2gYVMTFAD2atFv/NL522VsK3/MDhVMQ+WmsO9uGwSnK2jJadwupbPUj6AHHx3gD4r
+         Vne/EPyvocbmyxjdqW3fNlW2l7mzDMTedgkQeVooVWxbwfCE5aSADLtqbctWrr1jyTN4
+         kwg+fqdUezbYkMAvVu8jOcZsEA6k9VRj29dKbI9chRyzBL03xNpPfW+QRAxBbxU7mz/C
+         s+D+7LWdP/LsOtm+nhyeJ+7EGk0BTF0bpUXrInJb+T9lVQoLUemd/4NR+By4W3bq3quF
+         cs/muf9Auzx0R9xT7pN1Ani6YF/nFezi9yel5HPmqurg+p4kYoy++4NzkfEO6GZ7wah9
+         qbEQ==
+X-Gm-Message-State: AOJu0YzW/EGqxaHstBNbtvCOOK6FQ32QThilvTDSApMeqwJalBktSFwk
+        niKF5tXHfhh4QEbsWQSHBIhwAg==
+X-Google-Smtp-Source: AGHT+IEY3ze74YLdjgYxoIb2hDThDJHsXjE7QOB83QYbmA/+gfM7BN03FF3RKA4WGnljEqr6LsiS+A==
+X-Received: by 2002:a7b:c4d6:0:b0:406:7074:301d with SMTP id g22-20020a7bc4d6000000b004067074301dmr19196089wmk.11.1697026189083;
+        Wed, 11 Oct 2023 05:09:49 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
+        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:13:07 -0700 (PDT)
-X-Relaying-Domain: gadgetoid.com
-From:   Phil Howard <phil@gadgetoid.com>
+        Wed, 11 Oct 2023 05:09:48 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org, Phil Howard <phil@gadgetoid.com>
-Subject: [libgpiod][PATCH 1/3] bindings: python: optionally include module in sdist
-Date:   Wed, 11 Oct 2023 13:12:44 +0100
-Message-Id: <20231011121246.9467-2-phil@gadgetoid.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231011121246.9467-1-phil@gadgetoid.com>
-References: <20231011121246.9467-1-phil@gadgetoid.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 45/62] pinctrl: change the signature of gpio_to_pin()
+Date:   Wed, 11 Oct 2023 14:08:13 +0200
+Message-Id: <20231011120830.49324-46-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
+References: <20231011120830.49324-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Build gpiod into Python module.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Optional environment var USE_SYSTEM_GPIO=1 to
-generate a module that depends upon system gpiod.
+Modify gpio_to_pin() to be in line with public GPIO helpers and take
+a pair of GPIO chip & offset as arguments.
 
-Signed-off-by: Phil Howard <phil@gadgetoid.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/python/MANIFEST.in |  4 +++
- bindings/python/include     |  1 +
- bindings/python/lib         |  1 +
- bindings/python/setup.py    | 57 ++++++++++++++++++++++++++++---------
- 4 files changed, 50 insertions(+), 13 deletions(-)
- create mode 120000 bindings/python/include
- create mode 120000 bindings/python/lib
+ drivers/pinctrl/core.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/bindings/python/MANIFEST.in b/bindings/python/MANIFEST.in
-index c7124d4..eff8977 100644
---- a/bindings/python/MANIFEST.in
-+++ b/bindings/python/MANIFEST.in
-@@ -11,3 +11,7 @@ recursive-include gpiod/ext *.h
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index dbc59e409439..89df934d65bc 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -269,7 +269,8 @@ static int pinctrl_register_pins(struct pinctrl_dev *pctldev,
+ /**
+  * gpio_to_pin() - GPIO range GPIO number to pin number translation
+  * @range: GPIO range used for the translation
+- * @gpio: gpio pin to translate to a pin number
++ * @gc: GPIO chip structure from the GPIO subsystem
++ * @offset: hardware offset of the GPIO relative to the controller
+  *
+  * Finds the pin number for a given GPIO using the specified GPIO range
+  * as a base for translation. The distinction between linear GPIO ranges
+@@ -280,13 +281,13 @@ static int pinctrl_register_pins(struct pinctrl_dev *pctldev,
+  * result of successful pinctrl_get_device_gpio_range calls)!
+  */
+ static inline int gpio_to_pin(struct pinctrl_gpio_range *range,
+-				unsigned int gpio)
++			      struct gpio_chip *gc, unsigned int offset)
+ {
+-	unsigned int offset = gpio - range->base;
++	unsigned int pin = gc->base + offset - range->base;
+ 	if (range->pins)
+-		return range->pins[offset];
++		return range->pins[pin];
+ 	else
+-		return range->pin_base + offset;
++		return range->pin_base + pin;
+ }
  
- recursive-include tests/gpiosim *.c
- recursive-include tests/procname *.c
-+
-+recursive-include lib *.c
-+recursive-include lib *.h
-+recursive-include include *.h
-diff --git a/bindings/python/include b/bindings/python/include
-new file mode 120000
-index 0000000..fcffffb
---- /dev/null
-+++ b/bindings/python/include
-@@ -0,0 +1 @@
-+../../include
-\ No newline at end of file
-diff --git a/bindings/python/lib b/bindings/python/lib
-new file mode 120000
-index 0000000..58677dd
---- /dev/null
-+++ b/bindings/python/lib
-@@ -0,0 +1 @@
-+../../lib
-\ No newline at end of file
-diff --git a/bindings/python/setup.py b/bindings/python/setup.py
-index 66b7908..2e25981 100644
---- a/bindings/python/setup.py
-+++ b/bindings/python/setup.py
-@@ -19,19 +19,53 @@ class build_ext(orig_build_ext):
-         rmtree(path.join(self.build_lib, "tests"), ignore_errors=True)
+ /**
+@@ -777,7 +778,7 @@ bool pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset)
+ 	mutex_lock(&pctldev->mutex);
  
+ 	/* Convert to the pin controllers number space */
+-	pin = gpio_to_pin(range, gc->base + offset);
++	pin = gpio_to_pin(range, gc, offset);
  
-+with open("gpiod/version.py", "r") as fd:
-+    exec(fd.read())
-+
-+
-+sources = [
-+    # gpiod Python bindings
-+    "gpiod/ext/chip.c",
-+    "gpiod/ext/common.c",
-+    "gpiod/ext/line-config.c",
-+    "gpiod/ext/line-settings.c",
-+    "gpiod/ext/module.c",
-+    "gpiod/ext/request.c",
-+]
-+
-+if "USE_SYSTEM_GPIOD" in environ and environ["USE_SYSTEM_GPIOD"] == "1":
-+    libraries = ["gpiod"]
-+    include_dirs = ["gpiod"]
-+else:
-+    sources += [
-+        # gpiod library
-+        "lib/chip.c",
-+        "lib/chip-info.c",
-+        "lib/edge-event.c",
-+        "lib/info-event.c",
-+        "lib/internal.c",
-+        "lib/line-config.c",
-+        "lib/line-info.c",
-+        "lib/line-request.c",
-+        "lib/line-settings.c",
-+        "lib/misc.c",
-+        "lib/request-config.c",
-+    ]
-+    libraries = []
-+    include_dirs = ["include", "lib", "gpiod/ext"]
-+
-+
- gpiod_ext = Extension(
-     "gpiod._ext",
--    sources=[
--        "gpiod/ext/chip.c",
--        "gpiod/ext/common.c",
--        "gpiod/ext/line-config.c",
--        "gpiod/ext/line-settings.c",
--        "gpiod/ext/module.c",
--        "gpiod/ext/request.c",
--    ],
-+    libraries=libraries,
-+    sources=sources,
-     define_macros=[("_GNU_SOURCE", "1")],
--    libraries=["gpiod"],
--    extra_compile_args=["-Wall", "-Wextra"],
-+    include_dirs=include_dirs,
-+    extra_compile_args=[
-+        "-Wall",
-+        "-Wextra",
-+        '-DGPIOD_VERSION_STR="{}"'.format(__version__),
-+    ],
- )
+ 	result = pinmux_can_be_used_for_gpio(pctldev, pin);
  
- gpiosim_ext = Extension(
-@@ -54,9 +88,6 @@ if "GPIOD_WITH_TESTS" in environ and environ["GPIOD_WITH_TESTS"] == "1":
-     extensions.append(gpiosim_ext)
-     extensions.append(procname_ext)
+@@ -812,7 +813,7 @@ int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset)
+ 	mutex_lock(&pctldev->mutex);
  
--with open("gpiod/version.py", "r") as fd:
--    exec(fd.read())
--
- setup(
-     name="libgpiod",
-     packages=find_packages(exclude=["tests", "tests.*"]),
+ 	/* Convert to the pin controllers number space */
+-	pin = gpio_to_pin(range, gc->base + offset);
++	pin = gpio_to_pin(range, gc, offset);
+ 
+ 	ret = pinmux_request_gpio(pctldev, range, pin, gc->base + offset);
+ 
+@@ -844,7 +845,7 @@ void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset)
+ 	mutex_lock(&pctldev->mutex);
+ 
+ 	/* Convert to the pin controllers number space */
+-	pin = gpio_to_pin(range, gc->base + offset);
++	pin = gpio_to_pin(range, gc, offset);
+ 
+ 	pinmux_free_gpio(pctldev, pin, range);
+ 
+@@ -868,7 +869,7 @@ static int pinctrl_gpio_direction(struct gpio_chip *gc, unsigned int offset,
+ 	mutex_lock(&pctldev->mutex);
+ 
+ 	/* Convert to the pin controllers number space */
+-	pin = gpio_to_pin(range, gc->base + offset);
++	pin = gpio_to_pin(range, gc, offset);
+ 	ret = pinmux_gpio_direction(pctldev, range, pin, input);
+ 
+ 	mutex_unlock(&pctldev->mutex);
+@@ -929,7 +930,7 @@ int pinctrl_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+ 		return ret;
+ 
+ 	mutex_lock(&pctldev->mutex);
+-	pin = gpio_to_pin(range, gc->base + offset);
++	pin = gpio_to_pin(range, gc, offset);
+ 	ret = pinconf_set_config(pctldev, pin, configs, ARRAY_SIZE(configs));
+ 	mutex_unlock(&pctldev->mutex);
+ 
 -- 
-2.34.1
+2.39.2
 
