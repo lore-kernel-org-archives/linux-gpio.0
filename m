@@ -2,145 +2,126 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA9FCD6E60
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F061CD6E5D
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:14:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346860AbjJKMOI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
+        id S234965AbjJKMO5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:14:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346857AbjJKMOA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:14:00 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23501FD3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:38 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40566f8a093so62357115e9.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:38 -0700 (PDT)
+        with ESMTP id S1346766AbjJKMOw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:14:52 -0400
+Received: from mail-ej1-x663.google.com (mail-ej1-x663.google.com [IPv6:2a00:1450:4864:20::663])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431F84680
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:13:14 -0700 (PDT)
+Received: by mail-ej1-x663.google.com with SMTP id a640c23a62f3a-9ba1eb73c27so570444766b.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026200; x=1697631000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DD6BuU8IBUrRqrtumgxKZT6+9ObXU+wfHPC15JgkQ2k=;
-        b=OHL9Nzn4aCShWYbtYAmeJLu+GIdlpF6HGwwHfvMjeNP4YJfJNsODtEs6yR5QJCyJT+
-         RQq4g11FAbgHkknhNeB8/DtGt8Fn4eSKhcsFFBUXxr1nnSK7lFjRfkZm3wPOlMK1FIAt
-         s2mxr7za/yjad2TBObxtUqnIenyHe5VC7ufIrXiZNERsiQXYikpJ7gqgt4pNBFGvPkMb
-         tKFa3MJ2pm75io4BL5asEeisOYwb4CuWfVRhfuveMjnEVtftyqv/vjlPZNJw6XSXe/O3
-         h3Gb9YryDmVtaOPjvqOruZVW5czmnxwzOkd4KNNhjVsZw7ukyZei85e7jjVhGTbpT3Fm
-         SPUw==
+        d=gadgetoid.com; s=google; t=1697026387; x=1697631187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBLSpnP4pezIVkg9EJCeIx23vaelyx7sqoVr/G0cVug=;
+        b=ffft9HqA8vOSni9dpDp1gHTMLVi9d7su331gEYucIF9rUxRV8ss7dXsFSLh3FGMSAz
+         bXd1Nk7OvuS9AxEwkaOf2ow9S/jx11aik2012qoOLdEWP0JdzqRocRALTbWdZcDb9AyY
+         VyqXgTJB0VUO7zNoi/wAl8wb0m1iircLYmwlt23Li5iel8xQeUexD027YJj7gkKlXClL
+         Rv0LpJfQbO5VY0HVXfJ4w5uS8cyofrg9xk9HrbJF4uQ5My0sReoBEtNOnSZjPBlT8pkV
+         meeSY/x75uOyCojzNGgXdOrbVSznEOQ3cnrd7yklNiuOPdAs1Y7pTXyv68Gn8GxBzQ73
+         2RiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026200; x=1697631000;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DD6BuU8IBUrRqrtumgxKZT6+9ObXU+wfHPC15JgkQ2k=;
-        b=EFUFfmwABC7oGuCRAMY34Fec74X6/DA4LkxEgVoeSKnK2jMu7kwFYKSncbdFQmRbrS
-         QdM217BjFkftpMo9rfFFHaXj0MH6IrhomZi3y1DrUHdfa0RA68V06ymBv7He7KQul0F8
-         vuy22iAGAl3wP0a/Uz4bAuVUd+K+glcfT3CyUCXa80App2bj/jvekqWTUTli8gCZwUi/
-         AXfLkIMYOrc63Z5xLZ+ls50tpoaVzABYNOMYXsE7gOZgKkmKVrp7s+j1u3NahaEWZgK1
-         3LyEqdu0A6SxPVqEj91yuUFaTSloIi/BKC64JW6MgO7nRVZhDh1qWIrIgf3J1TU4B9Nr
-         BYrA==
-X-Gm-Message-State: AOJu0YxHhvN7xIioign2hDFGsKRPt+xcSU/WZGL07g3M7fyr0V6gcubz
-        r8iRKvzFVji4WPEHM1Sj87JoCg==
-X-Google-Smtp-Source: AGHT+IEFq+coT62Yma7NWl07yIfaFMeiu/EDdvRfXRkmuZzXSfkwTtPEjpsqAXpAWQRCdXSEE3OLEg==
-X-Received: by 2002:a05:600c:cc:b0:405:3955:5872 with SMTP id u12-20020a05600c00cc00b0040539555872mr17752582wmm.18.1697026200458;
-        Wed, 11 Oct 2023 05:10:00 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.59
+        d=1e100.net; s=20230601; t=1697026387; x=1697631187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oBLSpnP4pezIVkg9EJCeIx23vaelyx7sqoVr/G0cVug=;
+        b=uNdHOBgG8q7KJeX2X+j8YeULC8Ta8vcs6TjVtxhmJfJFW9i232LxqieZACvUtZ+4Mq
+         nHtxu5KA+8EXSd4U0qSgTSBz6GsYnER48ZBlJ6VuLAYdYJnzHPnS9N+EUissq0haO5GP
+         BxbUjjndJtlzAJrVaftZs+/zqKIEyYk6w7V2QCpiu2XKicgdiYEfmkKjCilHp+ldaeMO
+         /7adhaVI8DTd/CTA7uwf7N7w+UAIRTIDfsidcYS/28Dc6SjiMJ64MqiLkoaGMKHr5G+F
+         Se2H9Zs5GadVzyFbteM7d8kdsxmQwiwg9C8oNbo9B3+qQ1YDWPGpW3g1GTNUcTMaji20
+         267w==
+X-Gm-Message-State: AOJu0YwpLghowwVXdxsmuaGc91967eUvrlPz2xj9OlULuOl2M/TLR1kx
+        QpUHkmNtXNaTFVAgnYiYGPePufT9vNmSegMvj/Kpn4UOxdDDNQ==
+X-Google-Smtp-Source: AGHT+IEbb8iuIrOOk3oY1F/D6d6CvxusPNxuNsMjuvVt4aNKi0Xba14QJBIlo/DxcBo88ALW/sjfTv9gvyg/
+X-Received: by 2002:a17:906:257:b0:9b8:8bcf:8739 with SMTP id 23-20020a170906025700b009b88bcf8739mr17741005ejl.75.1697026387010;
+        Wed, 11 Oct 2023 05:13:07 -0700 (PDT)
+Received: from pop-os.. (cpc91242-cmbg18-2-0-cust972.5-4.cable.virginm.net. [82.8.131.205])
+        by smtp-relay.gmail.com with ESMTPS id x6-20020a170906134600b009b9720a85dcsm1582049ejb.44.2023.10.11.05.13.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:09:59 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
+        Wed, 11 Oct 2023 05:13:06 -0700 (PDT)
+X-Relaying-Domain: gadgetoid.com
+From:   Phil Howard <phil@gadgetoid.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 58/62] pinctrl: starfive: drop wrappers around pinctrl_gpio_request/free()
-Date:   Wed, 11 Oct 2023 14:08:26 +0200
-Message-Id: <20231011120830.49324-59-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
-References: <20231011120830.49324-1-brgl@bgdev.pl>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org, Phil Howard <phil@gadgetoid.com>
+Subject: [libgpiod][PATCH 0/3] bindings: python: optionally include module (...)
+Date:   Wed, 11 Oct 2023 13:12:43 +0100
+Message-Id: <20231011121246.9467-1-phil@gadgetoid.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+This changeset vendors the gpiod library into the Python package, adds
+a pyproject.toml for minimum compatibility with modern Python packaging
+standards and sets "python_requires" to 3.9, reflecting the minimum version
+required by these bindings as established in commit <b436d05809b1> ("bindings: 
+python: replace PyModule_AddObjectRef() with PyModule_AddObject()").
 
-pinctrl_gpio_*() helpers now have signatures corresponding with those of
-the GPIOLIB callbacks. We can drop the wrappers.
+Why?
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 14 ++------------
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 14 ++------------
- 2 files changed, 4 insertions(+), 24 deletions(-)
+So that setup.py can produce an sdist that is installable irrespective of the
+availability or version of a distro-supplied libgpiod.
 
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-index 7beed57d665a..ea70b8c61679 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
-@@ -916,16 +916,6 @@ static struct pinctrl_desc starfive_desc = {
- 	.custom_conf_items = starfive_pinconf_custom_conf_items,
- };
- 
--static int starfive_gpio_request(struct gpio_chip *gc, unsigned int gpio)
--{
--	return pinctrl_gpio_request(gc, gpio);
--}
--
--static void starfive_gpio_free(struct gpio_chip *gc, unsigned int gpio)
--{
--	pinctrl_gpio_free(gc, gpio);
--}
--
- static int starfive_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
-@@ -1309,8 +1299,8 @@ static int starfive_probe(struct platform_device *pdev)
- 
- 	sfp->gc.label = dev_name(dev);
- 	sfp->gc.owner = THIS_MODULE;
--	sfp->gc.request = starfive_gpio_request;
--	sfp->gc.free = starfive_gpio_free;
-+	sfp->gc.request = pinctrl_gpio_request;
-+	sfp->gc.free = pinctrl_gpio_free;
- 	sfp->gc.get_direction = starfive_gpio_get_direction;
- 	sfp->gc.direction_input = starfive_gpio_direction_input;
- 	sfp->gc.direction_output = starfive_gpio_direction_output;
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-index 695c8c0a6e8b..9d71e8c13310 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-@@ -545,16 +545,6 @@ static const struct pinconf_ops jh7110_pinconf_ops = {
- 	.is_generic		= true,
- };
- 
--static int jh7110_gpio_request(struct gpio_chip *gc, unsigned int gpio)
--{
--	return pinctrl_gpio_request(gc, gpio);
--}
--
--static void jh7110_gpio_free(struct gpio_chip *gc, unsigned int gpio)
--{
--	pinctrl_gpio_free(gc, gpio);
--}
--
- static int jh7110_gpio_get_direction(struct gpio_chip *gc,
- 				     unsigned int gpio)
- {
-@@ -940,8 +930,8 @@ int jh7110_pinctrl_probe(struct platform_device *pdev)
- 
- 	sfp->gc.label = dev_name(dev);
- 	sfp->gc.owner = THIS_MODULE;
--	sfp->gc.request = jh7110_gpio_request;
--	sfp->gc.free = jh7110_gpio_free;
-+	sfp->gc.request = pinctrl_gpio_request;
-+	sfp->gc.free = pinctrl_gpio_free;
- 	sfp->gc.get_direction = jh7110_gpio_get_direction;
- 	sfp->gc.direction_input = jh7110_gpio_direction_input;
- 	sfp->gc.direction_output = jh7110_gpio_direction_output;
+This prevents a libgpiod pypi package install balking because the distro
+libgpiod is outdated or otherwise incompatible. This happens when attempting to
+install the current libgpiod from pypi onto - for example - the Debian Bookworm
+based Raspberry Pi OS.
+
+The availability of a distro agnostic package also ensures that libgpiod can be
+installed via pypi into an isolated virtual environment, safely specified as a
+dependency for Python packages and allows Python developers to target the newest
+API version irrespective of their distro supplied libgpiod.
+
+This is essential, since a venv is now widely *required* for user Python
+projects due to recommendations in pep-688 - https://peps.python.org/pep-0668/
+
+For Raspberry Pi this sdist can also be converted into a precompiled wheel by
+piwheels [1] which is, by default, added to Raspberry Pi OS as a pip index.
+
+How?
+
+If "USE_SYSTEM_GPIOD=1" is not specified then the gpiod._ext C Extension is
+amended to include all of the C sources for gpiod, so it can be built as a
+standalone module without depending upon a shared distro library.
+
+The gpiod sources are included by symlinking the lib and include directories up
+to the parent module, and updating MANIFEST.in to include the source files when
+an sdist is built.
+
+The resulting source distribution can then be uploaded to pypi and from there
+can be built and installed by any user with python3-dev installed.
+
+[1] - https://www.piwheels.org/
+
+Phil Howard (3):
+  bindings: python: optionally include module in sdist
+  bindings: python: add pyproject.toml, pep 518
+  bindings: python: require python 3.9.0
+
+ bindings/python/MANIFEST.in    |  4 +++
+ bindings/python/include        |  1 +
+ bindings/python/lib            |  1 +
+ bindings/python/pyproject.toml |  2 ++
+ bindings/python/setup.py       | 58 ++++++++++++++++++++++++++--------
+ 5 files changed, 53 insertions(+), 13 deletions(-)
+ create mode 120000 bindings/python/include
+ create mode 120000 bindings/python/lib
+ create mode 100644 bindings/python/pyproject.toml
+
 -- 
-2.39.2
+2.34.1
 
