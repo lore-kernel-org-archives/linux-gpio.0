@@ -2,468 +2,152 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7CFCD6E63
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B14CD6E60
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:23:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346972AbjJKMXN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
+        id S1346988AbjJKMXP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:23:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234966AbjJKMWy (ORCPT
+        with ESMTP id S234974AbjJKMWy (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:22:54 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63BC171F
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:07 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40651a72807so65201745e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:07 -0700 (PDT)
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F3C2D59
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:11:18 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40684f53ef3so66559455e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026183; x=1697630983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VpFrwYJaNCpP9/pahd8WXPSb6KpKEJe0UkhDGdY3T54=;
-        b=DRQ4C+sELbmHedX9H3kFXlaFAzHfhR1/ZsDTEzfN2K2E2J26e3Z+IOGTFBZdCIqv2+
-         E6F5bb7KMXD8/xXh3dH08qnE4exgKKH/kkY1xt3s0wankE2ZG8ySvubXTos9y0xjR1Vf
-         Dm4PvJJ7Q3l2gk6HLGc02dUcSb+wmIblC9Zb4VnP6EvIlNnoYsYbKboyK4rNBxciMR/B
-         GkwUIdeDwdkReIE28VlGK+WTv2ZRGH/yxoJxje55E1OAn9DqIVl4/i0Ueo6t1GdZPiuq
-         0INKIbMqlSkExdtflAKqL1Q2lfjMy37qyU0oNZhx+Lv2sP3eqlfh5duWJAq3eG4oJnof
-         Pc6g==
+        d=linaro.org; s=google; t=1697026268; x=1697631068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QPLserjwwsbucCfxghBr6ZgzGZTYvBNBd9opTNn+n1g=;
+        b=ZzZ2luOYO8aq+BRA3v7LWBeMv/r6vy842m679iVQxc46Xgc2oowbI4gm5twPApK1D1
+         23IEIpNk824P4N808VNNfcc2YD1dFW2e/shixR4h9ULxUDwZuT5EKU36u2HSmLVqUX4P
+         Ry2QYFV2OalOeXikgbWv3vrNmjVK5+soai0iaK1u4wT57cmtIyqUNCym32gk014cKyca
+         OPdRXBJT22unB94WooWrJ8CZhfrQAfm55jPj6F81ORAoYK1xW48Ew3wFg/Bgq8xLBVi/
+         AYVVky+r417DQbbalUi56CIfTmu+NUH9ea3PSvK2lmNWpxx+q9wrGhavsFzsIYOxgDH0
+         qALw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026183; x=1697630983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VpFrwYJaNCpP9/pahd8WXPSb6KpKEJe0UkhDGdY3T54=;
-        b=R5Z1TMt063sAJtBrS+1S1A7vHDjbfKoGgnuBWy/izCBtgc9mEOh93mY7kvWbQBle2s
-         IO0Ted/RLwzeSRLmLS5wfcNk5PGezOnhuo+SfgrSq3AlHiKq2548yilbLZn2IR6WpCQY
-         sTJ4uwoWPVxeZv6xYvRUq3k3X/LTJ02g8hIpVhN5n/VsJrJJ5IAuSEagKJ/8KDCSS8qa
-         0mYgJagUFWDDPCTeANhYFb/9lO/FzC313+ckCpfqriAghBpnZNzl9iHfcWFFHMAv+Wd3
-         XYfa4FrIuiAcukHXh9npl1Zox2I+Lm9oiRceyB5gu3DfHMM68wf+bHtoef3LZm/hafy2
-         KxtQ==
-X-Gm-Message-State: AOJu0YyA0wg7EfUbjBC1jVYnvEMe8ikvuy3RY8aZifd8voC+BDYe0zFN
-        +w7touD4nDYAaN6lt5M6nJbwKI8MGW0ymd6Pwk8=
-X-Google-Smtp-Source: AGHT+IGwUQzNqMtGi60/98rHQyQT8aoMQezAMaiODGWe09qopyLwc+LFhwMCoubtb8kDaMZqmdjFmA==
-X-Received: by 2002:a7b:cbcf:0:b0:406:545a:f8fe with SMTP id n15-20020a7bcbcf000000b00406545af8femr18580572wmi.29.1697026182935;
-        Wed, 11 Oct 2023 05:09:42 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:09:42 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 39/62] treewide: rename pinctrl_gpio_direction_input_new()
-Date:   Wed, 11 Oct 2023 14:08:07 +0200
-Message-Id: <20231011120830.49324-40-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
-References: <20231011120830.49324-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1697026268; x=1697631068;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QPLserjwwsbucCfxghBr6ZgzGZTYvBNBd9opTNn+n1g=;
+        b=qzRR1t36Ad8/ddhV/zfmXDkGX0G96jhNmpJL0lqakB1RZq8FL7LSk/3W0M01adzte6
+         V+v+tcibG2xpKGZ8KqU/ZRQczzOVgCX3ImnobxelQVswdV0Fzpco3IKz6thrpjrGq8zm
+         268yXbqEoHoPW9sa+9HVSQN0idmJ3X/dsuFdy66/lEmbKLHjq9orSZxrKvEp4k6mar5t
+         Z/mo2Jf1+MJ9TSUFijnMTJHUWa4yiTUUHU3OKHIRKf6A4UN5RThzXf+altKGk6kb7urI
+         D28edlMvaCWyebkse/WWRimF642zF6IUDqSSEGVqO5c4zRZRuqLIxvSsbTQlyfsdUIrA
+         I8Bw==
+X-Gm-Message-State: AOJu0Ywc64T8EaDvTXHAZ+sTy6WzHFilnA92pCdtDlpw5ITTKCJ4GhIK
+        RjSXXDK7ufjxBdZHw73oQZYTgw==
+X-Google-Smtp-Source: AGHT+IE64a5xkV0na2V2QKvpWQnIDZTy/kQyX3TYj6F0p8SjSaAETAL17LJW0hN0q6oe9Igo6VSGpw==
+X-Received: by 2002:a05:600c:c10:b0:407:536d:2e93 with SMTP id fm16-20020a05600c0c1000b00407536d2e93mr4434583wmb.8.1697026268499;
+        Wed, 11 Oct 2023 05:11:08 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.100])
+        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b004013797efb6sm18902138wme.9.2023.10.11.05.11.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 05:11:07 -0700 (PDT)
+Message-ID: <fa75fdbd-6058-44ff-a65f-825837d85205@linaro.org>
+Date:   Wed, 11 Oct 2023 14:11:05 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Content-Language: en-US
+To:     Greg KH <greg@kroah.com>, Peter Griffin <peter.griffin@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <2023101101-mauve-underarm-1b48@gregkh>
+ <CADrjBPr2UAfpuuw6M8T5UaiTmCYz0e3jabfDCcUJtH+35mwBKw@mail.gmail.com>
+ <2023101139-skinless-lash-b777@gregkh>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <2023101139-skinless-lash-b777@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 11/10/2023 11:11, Greg KH wrote:
+>>>
+>>> So you have sent a patch series that crosses multiple subsystems, who is
+>>> supposed to be taking these patches?  Or do you not want them actually
+>>> merged?
+>>
+>> Krzysztof indicated here:
+>> https://lore.kernel.org/all/b1598405-b01f-426a-aaba-89f2d2dc9c2e@linaro.org/
+>> that he would like to be the one applying the entire series through the Samsung
+>> SoC tree. If that's fine with everyone (it's OK with me).
+> 
+> As the serial changes are not ok (see my comments on them), I don't
+> think they should be going through any tree at this point in time :)
 
-Now that pinctrl_gpio_direction_input() is no longer used, let's drop the
-'_new' suffix from its improved variant.
+Yes, of course, I still need (or will need) your Ack.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-mvebu.c                     | 2 +-
- drivers/gpio/gpio-pxa.c                       | 2 +-
- drivers/gpio/gpio-rockchip.c                  | 2 +-
- drivers/gpio/gpio-tegra.c                     | 2 +-
- drivers/gpio/gpio-vf610.c                     | 2 +-
- drivers/pinctrl/cirrus/pinctrl-cs42l43.c      | 2 +-
- drivers/pinctrl/core.c                        | 6 +++---
- drivers/pinctrl/intel/pinctrl-cherryview.c    | 2 +-
- drivers/pinctrl/intel/pinctrl-intel.c         | 2 +-
- drivers/pinctrl/intel/pinctrl-lynxpoint.c     | 2 +-
- drivers/pinctrl/mediatek/pinctrl-moore.c      | 2 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
- drivers/pinctrl/mediatek/pinctrl-paris.c      | 2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c     | 2 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c     | 2 +-
- drivers/pinctrl/pinctrl-as3722.c              | 2 +-
- drivers/pinctrl/pinctrl-axp209.c              | 2 +-
- drivers/pinctrl/pinctrl-cy8c95x0.c            | 2 +-
- drivers/pinctrl/pinctrl-ingenic.c             | 2 +-
- drivers/pinctrl/pinctrl-ocelot.c              | 2 +-
- drivers/pinctrl/pinctrl-rk805.c               | 2 +-
- drivers/pinctrl/pinctrl-st.c                  | 2 +-
- drivers/pinctrl/renesas/gpio.c                | 2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c         | 2 +-
- drivers/pinctrl/vt8500/pinctrl-wmt.c          | 2 +-
- include/linux/pinctrl/consumer.h              | 6 +++---
- 26 files changed, 30 insertions(+), 30 deletions(-)
+> 
+> Also, in your 00/XX email, say what tree you expect them to go through
+> so we have a chance to know that please.
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index d7eae6f0430d..3d1f941191e7 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -346,7 +346,7 @@ static int mvebu_gpio_direction_input(struct gpio_chip *chip, unsigned int pin)
- 	 * Check with the pinctrl driver whether this pin is usable as
- 	 * an input GPIO
- 	 */
--	ret = pinctrl_gpio_direction_input_new(chip, pin);
-+	ret = pinctrl_gpio_direction_input(chip, pin);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 2fd797b91270..c60197d5fde0 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -260,7 +260,7 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	int ret;
- 
- 	if (pxa_gpio_has_pinctrl()) {
--		ret = pinctrl_gpio_direction_input_new(chip, offset);
-+		ret = pinctrl_gpio_direction_input(chip, offset);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 3576793f0bd9..05afb67fd677 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -159,7 +159,7 @@ static int rockchip_gpio_set_direction(struct gpio_chip *chip,
- 
- 
- 	if (input)
--		pinctrl_gpio_direction_input_new(chip, offset);
-+		pinctrl_gpio_direction_input(chip, offset);
- 	else
- 		pinctrl_gpio_direction_output_new(chip, offset);
- 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index fcb3b474d1df..a9a00b28cc55 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -179,7 +179,7 @@ static int tegra_gpio_direction_input(struct gpio_chip *chip,
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, offset), offset, 0);
- 	tegra_gpio_enable(tgi, offset);
- 
--	ret = pinctrl_gpio_direction_input_new(chip, offset);
-+	ret = pinctrl_gpio_direction_input(chip, offset);
- 	if (ret < 0)
- 		dev_err(tgi->dev,
- 			"Failed to set pinctrl input direction of GPIO %d: %d",
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 2c22a31ffbdc..fd1c06abb5a7 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -130,7 +130,7 @@ static int vf610_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- 		vf610_gpio_writel(val, port->gpio_base + GPIO_PDDR);
- 	}
- 
--	return pinctrl_gpio_direction_input_new(chip, gpio);
-+	return pinctrl_gpio_direction_input(chip, gpio);
- }
- 
- static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
-diff --git a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-index 097e4dcdda36..e35964359381 100644
---- a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-+++ b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-@@ -508,7 +508,7 @@ static void cs42l43_gpio_set(struct gpio_chip *chip, unsigned int offset, int va
- 
- static int cs42l43_gpio_direction_in(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int cs42l43_gpio_direction_out(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index fa7f8dc5e5d8..46f6510194de 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -874,7 +874,7 @@ static int pinctrl_gpio_direction(unsigned gpio, bool input)
- }
- 
- /**
-- * pinctrl_gpio_direction_input_new() - request a GPIO pin to go into input mode
-+ * pinctrl_gpio_direction_input() - request a GPIO pin to go into input mode
-  * @gc: GPIO chip structure from the GPIO subsystem
-  * @offset: hardware offset of the GPIO relative to the controller
-  *
-@@ -882,11 +882,11 @@ static int pinctrl_gpio_direction(unsigned gpio, bool input)
-  * as part of their gpio_direction_input() semantics, platforms and individual
-  * drivers shall *NOT* touch pin control GPIO calls.
-  */
--int pinctrl_gpio_direction_input_new(struct gpio_chip *gc, unsigned int offset)
-+int pinctrl_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
- {
- 	return pinctrl_gpio_direction(gc->base + offset, true);
- }
--EXPORT_SYMBOL_GPL(pinctrl_gpio_direction_input_new);
-+EXPORT_SYMBOL_GPL(pinctrl_gpio_direction_input);
- 
- /**
-  * pinctrl_gpio_direction_output_new() - request a GPIO pin to go into output
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 02202cac8fec..31b5ce821b76 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1172,7 +1172,7 @@ static int chv_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- static int chv_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int chv_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 271aa60dbe9e..7710236423bc 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -991,7 +991,7 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int intel_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index 91d228fead45..b4174829e1f9 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -541,7 +541,7 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- 
- static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int lp_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index dc41ffa31357..5a5ec00e32ea 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -512,7 +512,7 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
- 
- static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
- {
--	return pinctrl_gpio_direction_input_new(chip, gpio);
-+	return pinctrl_gpio_direction_input(chip, gpio);
- }
- 
- static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index fc046415b567..b2dc3072050a 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -811,7 +811,7 @@ static const struct pinmux_ops mtk_pmx_ops = {
- static int mtk_gpio_direction_input(struct gpio_chip *chip,
- 					unsigned offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int mtk_gpio_direction_output(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 14b151aec2f9..d8c969e506ce 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -916,7 +916,7 @@ static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
- 	if (gpio >= hw->soc->npins)
- 		return -EINVAL;
- 
--	return pinctrl_gpio_direction_input_new(chip, gpio);
-+	return pinctrl_gpio_direction_input(chip, gpio);
- }
- 
- static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index ab7cfc1e66f0..d7ce67242248 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -171,7 +171,7 @@ static int npcmgpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- 	struct npcm7xx_gpio *bank = gpiochip_get_data(chip);
- 	int ret;
- 
--	ret = pinctrl_gpio_direction_input_new(chip, offset);
-+	ret = pinctrl_gpio_direction_input(chip, offset);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index 78dbeef6af86..c22513e30068 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -173,7 +173,7 @@ static int npcmgpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- 	struct npcm8xx_gpio *bank = gpiochip_get_data(chip);
- 	int ret;
- 
--	ret = pinctrl_gpio_direction_input_new(chip, offset);
-+	ret = pinctrl_gpio_direction_input(chip, offset);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
-index 3d3adf9793fb..3f27da80adde 100644
---- a/drivers/pinctrl/pinctrl-as3722.c
-+++ b/drivers/pinctrl/pinctrl-as3722.c
-@@ -502,7 +502,7 @@ static void as3722_gpio_set(struct gpio_chip *chip, unsigned offset,
- 
- static int as3722_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int as3722_gpio_direction_output(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
-index d7f081f1d1f6..a6eb3b866a23 100644
---- a/drivers/pinctrl/pinctrl-axp209.c
-+++ b/drivers/pinctrl/pinctrl-axp209.c
-@@ -126,7 +126,7 @@ static int axp20x_gpio_get_reg(unsigned int offset)
- 
- static int axp20x_gpio_input(struct gpio_chip *chip, unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int axp20x_gpio_get(struct gpio_chip *chip, unsigned int offset)
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 8c6006353515..729c13a249ef 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -554,7 +554,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 
- static int cy8c95x0_gpio_direction_input(struct gpio_chip *gc, unsigned int off)
- {
--	return pinctrl_gpio_direction_input_new(gc, off);
-+	return pinctrl_gpio_direction_input(gc, off);
- }
- 
- static int cy8c95x0_gpio_direction_output(struct gpio_chip *gc,
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 5072fb907193..df36141edbf3 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -3563,7 +3563,7 @@ static int ingenic_gpio_get(struct gpio_chip *gc, unsigned int offset)
- static int ingenic_gpio_direction_input(struct gpio_chip *gc,
- 		unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(gc, offset);
-+	return pinctrl_gpio_direction_input(gc, offset);
- }
- 
- static int ingenic_gpio_direction_output(struct gpio_chip *gc,
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index a6022d44ad6c..d02d16084f33 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -1779,7 +1779,7 @@ static int ocelot_gpio_get_direction(struct gpio_chip *chip,
- static int ocelot_gpio_direction_input(struct gpio_chip *chip,
- 				       unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int ocelot_gpio_direction_output(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-rk805.c
-index 58e6dd932bc7..f0feb3a8e630 100644
---- a/drivers/pinctrl/pinctrl-rk805.c
-+++ b/drivers/pinctrl/pinctrl-rk805.c
-@@ -289,7 +289,7 @@ static void rk805_gpio_set(struct gpio_chip *chip,
- static int rk805_gpio_direction_input(struct gpio_chip *chip,
- 				      unsigned int offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int rk805_gpio_direction_output(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index ec763572ab3e..3f6631716779 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -719,7 +719,7 @@ static void st_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 
- static int st_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	pinctrl_gpio_direction_input_new(chip, offset);
-+	pinctrl_gpio_direction_input(chip, offset);
- 
- 	return 0;
- }
-diff --git a/drivers/pinctrl/renesas/gpio.c b/drivers/pinctrl/renesas/gpio.c
-index b39125a632b0..54346b7fcdef 100644
---- a/drivers/pinctrl/renesas/gpio.c
-+++ b/drivers/pinctrl/renesas/gpio.c
-@@ -164,7 +164,7 @@ static void gpio_pin_set_value(struct sh_pfc_chip *chip, unsigned offset,
- 
- static int gpio_pin_direction_input(struct gpio_chip *gc, unsigned offset)
- {
--	return pinctrl_gpio_direction_input_new(gc, offset);
-+	return pinctrl_gpio_direction_input(gc, offset);
- }
- 
- static int gpio_pin_direction_output(struct gpio_chip *gc, unsigned offset,
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index e4453fa58f9e..cbe306f47c0a 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -241,7 +241,7 @@ static void stm32_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 
- static int stm32_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int stm32_gpio_direction_output(struct gpio_chip *chip,
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 1a313295611e..54cd556a16b8 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -528,7 +528,7 @@ static void wmt_gpio_set_value(struct gpio_chip *chip, unsigned offset,
- 
- static int wmt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	return pinctrl_gpio_direction_input_new(chip, offset);
-+	return pinctrl_gpio_direction_input(chip, offset);
- }
- 
- static int wmt_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index 7dc7fcf23f9a..8b7ab935a3d3 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -29,8 +29,8 @@ struct pinctrl_state;
- bool pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset);
- int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
- void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
--int pinctrl_gpio_direction_input_new(struct gpio_chip *gc,
--				     unsigned int offset);
-+int pinctrl_gpio_direction_input(struct gpio_chip *gc,
-+				 unsigned int offset);
- int pinctrl_gpio_direction_output_new(struct gpio_chip *gc,
- 				      unsigned int offset);
- int pinctrl_gpio_set_config_new(struct gpio_chip *gc, unsigned int offset,
-@@ -104,7 +104,7 @@ static inline int pinctrl_gpio_direction_input(unsigned gpio)
- }
- 
- static inline int
--pinctrl_gpio_direction_input_new(struct gpio_chip *gc, unsigned int offset)
-+pinctrl_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
- {
- 	return 0;
- }
--- 
-2.39.2
++1
+
+Best regards,
+Krzysztof
 
