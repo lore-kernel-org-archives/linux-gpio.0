@@ -2,151 +2,157 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561A3CD6E5D
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2513CD6E5D
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Oct 2023 12:14:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346387AbjJKMND (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Oct 2023 08:13:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38322 "EHLO
+        id S1346808AbjJKMOA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Oct 2023 08:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346882AbjJKMMl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:12:41 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB6410C8
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:54 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-4060b623e64so5627005e9.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:09:54 -0700 (PDT)
+        with ESMTP id S1346801AbjJKMNz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2023 08:13:55 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D8C3210C
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:46 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-405524e6769so5550675e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2023 05:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697026176; x=1697630976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63WjOp9UsiT59ywyo99tyOEp/CpCY6vvpVWnONIBEpw=;
-        b=peZ6Fsn4XUud0jFzjDcUHU7bu940Yb+Qq18xQh6tfTox0KEXXlHg0GzaVQBzZ1WrkW
-         8LC6khX/Mqs5oj0I66uhoMua09XwyvbfO1RjDKdbsw2M+ntfysESyl9teV3K7WUuHivy
-         PJNqjWhVX8sdgY9YGUpHOIiT0ZTigNSTZzLvKtmsO6lTuTZlStqC2LW3B0f7tJrVtUKS
-         les8SHyNm34qh101w2wcR3UkdelzO6WU+P4ExnZp66nu1w6vmFQktbIfcedUFAaX2uHA
-         1Y0Rcbp9XC85zRbXe9Jny/5cv5O99Wb0ZTT5075oFCkPakSTl9q2R7zDLRIIZFRzSJpU
-         NF5g==
+        d=linaro.org; s=google; t=1697026211; x=1697631011; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0YuxREZxQvI3tZUj1y+IWBqA31a/S6I3QHsKO3D5ABk=;
+        b=SCpf6AZqF1nF3TZY2ygxJjU8tbxx3tPCJvH5u+xiNaSf/6cXokVWw8TYbAK30FpumR
+         T/h/0uHC79yqH+BX37gCd+5LTtJGZRQxqTdtIweaGafnEhbUxpgZcsOwIfVXDqwQMfwV
+         XgjlQAEHFYPtAV5IMSYTW4MDrDAFBDq8im4hYwGyCFXR92FjQW/v3C3qRq2PVvvS59Ky
+         IbrymsdKSK6W+sKSTdnRBxrEvV1f0Y+gVA83ruN33YlKNieN1VmLj6h+UpPwhFDz/IQS
+         ffQwpXmnZ+V3I9Rj2n9ud8yUsmhAty+9Xw+5eJfT/+EXUZ5Y9FMiOjWSbTIX2mjSzFOG
+         BjCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697026176; x=1697630976;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=63WjOp9UsiT59ywyo99tyOEp/CpCY6vvpVWnONIBEpw=;
-        b=Dci3Md8rAdtSRgHyd00EFhdozZLvpzBQawGZK5RKAIlvzts/VlEmUFja2uDURMYOes
-         Y1YJc9k5cIJnsyiGNaWMl+8PWUOs5yjO2PrcxHqLuo6QU6myN4o2pW4YafbK5BSMV8eE
-         XtK6/Y184z00sjryQmaDYg/1NlG6B6PQyeoH5pd+3qskkNLRyVjIziiuXVWdyP2asEB3
-         Kr3AOMaIxRusl0hOPDM3mSNkBJEpwHkBSND35q79MVyeLiGUoLiixZ65kuz+yMpx6JL4
-         E2Cyk6G9vpOaB7m5a/gIrJJV5mtJCbewh1wDH/CFBJdKW9hED4IeGBdWKe9RefGocBnq
-         RgLw==
-X-Gm-Message-State: AOJu0YzdS070BPFoARsYqOpLUCcQsLC6MZf4ZtGbQs4pxkZAR+V3weEE
-        x7sUPWEeu0EuMMp73pwKGX/2ZA==
-X-Google-Smtp-Source: AGHT+IEGqgu5V+Pg/7nLvW82pyAyz6O9E0Gf6z4or3apid/QwBxQIkmDYnSVBUM+m6s5v++vocBDJw==
-X-Received: by 2002:a05:600c:895:b0:405:3be0:c78d with SMTP id l21-20020a05600c089500b004053be0c78dmr13871009wmp.3.1697026176573;
-        Wed, 11 Oct 2023 05:09:36 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e551:3946:26fc:f94])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05600c015500b0040652e8ca13sm19012253wmm.43.2023.10.11.05.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 05:09:36 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 32/62] pinctrl: remove pinctrl_gpio_free()
-Date:   Wed, 11 Oct 2023 14:08:00 +0200
-Message-Id: <20231011120830.49324-33-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231011120830.49324-1-brgl@bgdev.pl>
-References: <20231011120830.49324-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1697026211; x=1697631011;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0YuxREZxQvI3tZUj1y+IWBqA31a/S6I3QHsKO3D5ABk=;
+        b=eRa7OISfRzmKpcSlijn0f90/SQGnWRG6vVcky1S8Y4odleyZVnNlT43R6V3kTqmv+x
+         mhlpnmJQmAZNt5RJM0xtkVwtedDnQZnpYZYqfHQu3grGEg0aAKc+VuzSzEF0AJKR9xN0
+         J+/9znG5o70p3bYdtH7FYlTmrCbE8z6y/0R/VyLB0nQSMS//GhPda82NJ2CCb9GPdyge
+         UZPRUgyWLXdJ/zDz+fDu9r2egsmXuQYewiU2IAlVDXukhWNtkK1i0LOj1N4I/YcObh2G
+         Zx5cJsdifXdtFXzn8U0AnGR23E3tnPkOwd4H6NGa+rq0EinIVv7x9CKGnXdguGrK7jcw
+         qGQA==
+X-Gm-Message-State: AOJu0YzPnYKuN135wUDaz7527kczTjreFWx+RXW70JfMvwqmcQ0J81e+
+        gV1qHhygiqJnoIbxRnZJfCG0+g==
+X-Google-Smtp-Source: AGHT+IFej/5ayi8PI4oLjjatno7uw1mo+oOL4QBnoMGwo84AkbVNBqUIDzpbQ4PilDXJwCzZ+KTYzQ==
+X-Received: by 2002:a05:600c:5390:b0:405:29ba:9b5c with SMTP id hg16-20020a05600c539000b0040529ba9b5cmr14599821wmb.16.1697026210671;
+        Wed, 11 Oct 2023 05:10:10 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.100])
+        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b004013797efb6sm18902138wme.9.2023.10.11.05.10.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Oct 2023 05:10:10 -0700 (PDT)
+Message-ID: <03090f30-8788-45ff-a4eb-66199f0cf3cf@linaro.org>
+Date:   Wed, 11 Oct 2023 14:10:08 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/20] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
+Content-Language: en-US
+To:     Greg KH <greg@kroah.com>, Peter Griffin <peter.griffin@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        semen.protsenko@linaro.org, saravanak@google.com,
+        willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
+ <2023101101-mauve-underarm-1b48@gregkh>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <2023101101-mauve-underarm-1b48@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 11/10/2023 09:44, Greg KH wrote:
+> On Tue, Oct 10, 2023 at 11:49:08PM +0100, Peter Griffin wrote:
+>> Hi folks,
+>>
+>> Firstly, thanks to everyone who reviewed the v1 series! V2 incorporates all
+>> the review feedback received so far.
+>>
+>> This series adds initial SoC support for the GS101 SoC and also initial board
+>> support for Pixel 6 phone (Oriole).
+>>
+>> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro
+>> (raven) phones. Currently DT is added for the gs101 SoC and Oriole.
+>> As you can see from the patches the SoC is based on a Samsung Exynos SoC,
+>> and therefore lots of the low level Exynos drivers can be re-used.
+>>
+>> The support added in this series consists of:
+>> * cpus
+>> * pinctrl
+>> * some CCF implementation
+>> * watchdog
+>> * uart
+>> * gpio
+> 
+> So you have sent a patch series that crosses multiple subsystems, who is
+> supposed to be taking these patches?  Or do you not want them actually
+> merged?
 
-There are no more users of pinctrl_gpio_free() so remove it.
+Me, through Samsung SoC -> ARM SoC. The cover letter could say that.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/core.c           | 41 +++++++++++++-------------------
- include/linux/pinctrl/consumer.h |  1 -
- 2 files changed, 17 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 837d35b0e5c3..6e163841d145 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -819,29 +819,6 @@ int pinctrl_gpio_request_new(struct gpio_chip *gc, unsigned int offset)
- }
- EXPORT_SYMBOL_GPL(pinctrl_gpio_request_new);
- 
--/* This function is deprecated and will be removed. Don't use. */
--void pinctrl_gpio_free(unsigned gpio)
--{
--	struct pinctrl_dev *pctldev;
--	struct pinctrl_gpio_range *range;
--	int ret;
--	int pin;
--
--	ret = pinctrl_get_device_gpio_range(gpio, &pctldev, &range);
--	if (ret) {
--		return;
--	}
--	mutex_lock(&pctldev->mutex);
--
--	/* Convert to the pin controllers number space */
--	pin = gpio_to_pin(range, gpio);
--
--	pinmux_free_gpio(pctldev, pin, range);
--
--	mutex_unlock(&pctldev->mutex);
--}
--EXPORT_SYMBOL_GPL(pinctrl_gpio_free);
--
- /**
-  * pinctrl_gpio_free_new() - free control on a single pin, currently used as GPIO
-  * @gc: GPIO chip structure from the GPIO subsystem
-@@ -853,7 +830,23 @@ EXPORT_SYMBOL_GPL(pinctrl_gpio_free);
-  */
- void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset)
- {
--	return pinctrl_gpio_free(gc->base + offset);
-+	struct pinctrl_gpio_range *range;
-+	struct pinctrl_dev *pctldev;
-+	int ret, pin;
-+
-+	ret = pinctrl_get_device_gpio_range(gc->base + offset, &pctldev,
-+					    &range);
-+	if (ret)
-+		return;
-+
-+	mutex_lock(&pctldev->mutex);
-+
-+	/* Convert to the pin controllers number space */
-+	pin = gpio_to_pin(range, gc->base + offset);
-+
-+	pinmux_free_gpio(pctldev, pin, range);
-+
-+	mutex_unlock(&pctldev->mutex);
- }
- EXPORT_SYMBOL_GPL(pinctrl_gpio_free_new);
- 
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index ffce8d7dd0d3..467f02b0aa98 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -28,7 +28,6 @@ struct pinctrl_state;
- /* External interface to pin control */
- bool pinctrl_gpio_can_use_line_new(struct gpio_chip *gc, unsigned int offset);
- int pinctrl_gpio_request_new(struct gpio_chip *gc, unsigned int offset);
--void pinctrl_gpio_free(unsigned gpio);
- void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset);
- int pinctrl_gpio_direction_input(unsigned gpio);
- int pinctrl_gpio_direction_input_new(struct gpio_chip *gc,
--- 
-2.39.2
+Best regards,
+Krzysztof
 
