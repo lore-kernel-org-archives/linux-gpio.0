@@ -2,65 +2,234 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AA4CDB482
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Oct 2023 10:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186EDCDB47E
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Oct 2023 11:15:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235679AbjJLK5Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Oct 2023 06:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56846 "EHLO
+        id S1378233AbjJLLP2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Oct 2023 07:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235674AbjJLK5Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Oct 2023 06:57:24 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1627C6
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Oct 2023 03:57:22 -0700 (PDT)
-Received: from kwepemm000002.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4S5mhs4DGpzVlV9;
-        Thu, 12 Oct 2023 18:53:49 +0800 (CST)
-Received: from localhost.localdomain (10.67.165.2) by
- kwepemm000002.china.huawei.com (7.193.23.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Thu, 12 Oct 2023 18:57:20 +0800
-From:   Devyn Liu <liudingyuan@huawei.com>
-To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <andy@kernel.org>
-CC:     <linux-gpio@vger.kernel.org>, <f.fangjian@huawei.com>,
-        <prime.zeng@huawei.com>, <kangfenglong@huawei.com>
-Subject: [PATCH] gpio: hisi: Fix format specifier
-Date:   Thu, 12 Oct 2023 18:54:11 +0800
-Message-ID: <20231012105411.2843043-1-liudingyuan@huawei.com>
-X-Mailer: git-send-email 2.30.0
+        with ESMTP id S1378237AbjJLLP1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Oct 2023 07:15:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B265690
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Oct 2023 04:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1697109277;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DRaC+0mMS0mqrKmBhT+mt/F7wkHtGnlArsECVSA7S7c=;
+        b=MdUGu5Pbgm6Yo5uFU6/2O8yVvBABluHE3s7VVBT8Pty11oov8a96z9IU1dqwzm9U0IUDg1
+        Vo0HJ3v6ghrOOCN1S3BDgdW28dX1P9w7EkZ5D/SkF7J9BCzI2geEP5U6IRh3UTRtDUVbHc
+        OvKVp+Fr+i2OtaZi167uoAZ68+GnjzU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-Bb47AmuwP72D6g4eFwMxPw-1; Thu, 12 Oct 2023 07:14:26 -0400
+X-MC-Unique: Bb47AmuwP72D6g4eFwMxPw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-9b65b6bcfb7so64020066b.2
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Oct 2023 04:14:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697109265; x=1697714065;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRaC+0mMS0mqrKmBhT+mt/F7wkHtGnlArsECVSA7S7c=;
+        b=o1FwBoYRRyMwCOZnH98w9+mEBPuMic0qAoP9XxoMXonM2jHXcTA0atE0teOaFruCvQ
+         ycrzuQSB1QmgQHh6FzUpexViXCuxu6B1HZSpQdb1RlWRwRYerqfHB8Hra+Se75ZbD5R4
+         Y72hBHJUUQUCqZ7I9OWpS3VB3YTDMqhKKDOig/4ul3sOUFGTlAJM1G/NvBk/9hDc6/yf
+         18NgGL2+8tFI/jiwKGErx+eyuqy742B6fKP7GMRj7f4kvDNw4wqo7hfIatLKpACaxxbH
+         DitoT1pPpZeDy77l5swnfzEXyBbTiOicQI+ubzcgBq/PvRZ42bdDgwn3EDKAxmUn3rjW
+         bD3Q==
+X-Gm-Message-State: AOJu0Yx90el/oUnUzF2juZFm9RfDC+ll9mM5PCpiUMChrWgWorLqQBCd
+        jeKjXmhmdUQn36uTLmqbtKHvkVNDNNWYyUcYIQs0lzVAWr3ELM9j0JkxjyRwELH2RHjp23ppaN1
+        o1uFzKHvWjXIxOy8mO31rqA==
+X-Received: by 2002:a17:907:720b:b0:9a1:f4e8:87b9 with SMTP id dr11-20020a170907720b00b009a1f4e887b9mr25620936ejc.45.1697109265301;
+        Thu, 12 Oct 2023 04:14:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHs8ShNQHDZ6hbq2SG2uMzUpUZfypOCB88v9DfbsSj8Zps3xEVjhs2Lqn/YHWow7aMfu9rhnQ==
+X-Received: by 2002:a17:907:720b:b0:9a1:f4e8:87b9 with SMTP id dr11-20020a170907720b00b009a1f4e887b9mr25620912ejc.45.1697109264928;
+        Thu, 12 Oct 2023 04:14:24 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id ks8-20020a170906f84800b0099b6becb107sm11078691ejb.95.2023.10.12.04.14.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Oct 2023 04:14:24 -0700 (PDT)
+Message-ID: <5d2e9eba-a941-ea9a-161a-5b97d09d5d35@redhat.com>
+Date:   Thu, 12 Oct 2023 13:14:23 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.165.2]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000002.china.huawei.com (7.193.23.144)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v20 1/4] usb: Add support for Intel LJCA device
+Content-Language: en-US, nl
+To:     "Wu, Wentong" <wentong.wu@intel.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "Wang, Zhifeng" <zhifeng.wang@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1696833205-16716-1-git-send-email-wentong.wu@intel.com>
+ <1696833205-16716-2-git-send-email-wentong.wu@intel.com>
+ <ZSZ3IPgLk7uC5UGI@smile.fi.intel.com>
+ <6a87b43a-0648-28d4-6c69-e0f684e44eb6@redhat.com>
+ <DM6PR11MB4316BE44F53E276384FF06C88DCCA@DM6PR11MB4316.namprd11.prod.outlook.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <DM6PR11MB4316BE44F53E276384FF06C88DCCA@DM6PR11MB4316.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The hisi_gpio->line is unsigned int so the format specifier
-should have been %u not %d.
+Hi,
 
-Signed-off-by: Devyn Liu <liudingyuan@huawei.com>
----
- drivers/gpio/gpio-hisi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 10/11/23 14:50, Wu, Wentong wrote:
+>> From: Hans de Goede <hdegoede>
+>>
+>> Hi,
+>>
+>> On 10/11/23 12:21, Andy Shevchenko wrote:
+>>> On Mon, Oct 09, 2023 at 02:33:22PM +0800, Wentong Wu wrote:
+>>>> Implements the USB part of Intel USB-I2C/GPIO/SPI adapter device
+>>>> named "La Jolla Cove Adapter" (LJCA).
+>>>>
+>>>> The communication between the various LJCA module drivers and the
+>>>> hardware will be muxed/demuxed by this driver. Three modules ( I2C,
+>>>> GPIO, and SPI) are supported currently.
+>>>>
+>>>> Each sub-module of LJCA device is identified by type field within the
+>>>> LJCA message header.
+>>>>
+>>>> The sub-modules of LJCA can use ljca_transfer() to issue a transfer
+>>>> between host and hardware. And ljca_register_event_cb is exported to
+>>>> LJCA sub-module drivers for hardware event subscription.
+>>>>
+>>>> The minimum code in ASL that covers this board is Scope
+>>>> (\_SB.PCI0.DWC3.RHUB.HS01)
+>>>>     {
+>>>>         Device (GPIO)
+>>>>         {
+>>>>             Name (_ADR, Zero)
+>>>>             Name (_STA, 0x0F)
+>>>>         }
+>>>>
+>>>>         Device (I2C)
+>>>>         {
+>>>>             Name (_ADR, One)
+>>>>             Name (_STA, 0x0F)
+>>>>         }
+>>>>
+>>>>         Device (SPI)
+>>>>         {
+>>>>             Name (_ADR, 0x02)
+>>>>             Name (_STA, 0x0F)
+>>>>         }
+>>>>     }
+>>>
+>>> This commit message is not true anymore, or misleading at bare minimum.
+>>> The ACPI specification is crystal clear about usage _ADR and _HID, i.e.
+>>> they must NOT be used together for the same device node. So, can you
+>>> clarify how the DSDT is organized and update the commit message and it
+>>> may require (quite likely) to redesign the architecture of this
+>>> driver. Sorry I missed this from previous rounds as I was busy by
+>>> something else.
+>>
+>> This part of the commit message unfortunately is not accurate.
+>> _ADR is not used in either DSDTs of shipping hw; nor in the code.
+> 
+> We have covered the _ADR in the code like below, it first try to find the
+> child device based on _ADR, if not found, it will check the _HID, and there
+> is clear comment in the function.
+> 
+> /* bind auxiliary device to acpi device */
+> static void ljca_auxdev_acpi_bind(struct ljca_adapter *adap,
+> 				   struct auxiliary_device *auxdev,
+> 				   u64 adr, u8 id)
+> {
+> 	struct ljca_match_ids_walk_data wd = { 0 };
+> 	struct acpi_device *parent, *adev;
+> 	struct device *dev = adap->dev;
+> 	char uid[4];
+> 
+> 	parent = ACPI_COMPANION(dev);
+> 	if (!parent)
+> 		return;
+> 
+> 	/*
+> 	 * get auxdev ACPI handle from the ACPI device directly
+> 	 * under the parent that matches _ADR.
+> 	 */
+> 	adev = acpi_find_child_device(parent, adr, false);
+> 	if (adev) {
+> 		ACPI_COMPANION_SET(&auxdev->dev, adev);
+> 		return;
+> 	}
+> 
+> 	/*
+> 	 * _ADR is a grey area in the ACPI specification, some
+> 	 * platforms use _HID to distinguish children devices.
+> 	 */
+> 	switch (adr) {
+> 	case LJCA_GPIO_ACPI_ADR:
+> 		wd.ids = ljca_gpio_hids;
+> 		break;
+> 	case LJCA_I2C1_ACPI_ADR:
+> 	case LJCA_I2C2_ACPI_ADR:
+> 		snprintf(uid, sizeof(uid), "%d", id);
+> 		wd.uid = uid;
+> 		wd.ids = ljca_i2c_hids;
+> 		break;
+> 	case LJCA_SPI1_ACPI_ADR:
+> 	case LJCA_SPI2_ACPI_ADR:
+> 		wd.ids = ljca_spi_hids;
+> 		break;
+> 	default:
+> 		dev_warn(dev, "unsupported _ADR\n");
+> 		return;
+> 	}
+> 
+> 	acpi_dev_for_each_child(parent, ljca_match_device_ids, &wd);
 
-diff --git a/drivers/gpio/gpio-hisi.c b/drivers/gpio/gpio-hisi.c
-index 29a03de37fd8..ef5cc654a24e 100644
---- a/drivers/gpio/gpio-hisi.c
-+++ b/drivers/gpio/gpio-hisi.c
-@@ -255,7 +255,7 @@ static void hisi_gpio_get_pdata(struct device *dev,
- 		hisi_gpio->irq = platform_get_irq(pdev, idx);
- 
- 		dev_info(dev,
--			 "get hisi_gpio[%d] with %d lines\n", idx,
-+			 "get hisi_gpio[%d] with %u lines\n", idx,
- 			 hisi_gpio->line_num);
- 
- 		idx++;
--- 
-2.30.0
+Ah ok, I see. So the code:
+
+1. First tries to find the matching child acpi_device for the auxdev by ADR
+
+2. If 1. fails then falls back to HID + UID matching
+
+And there are DSDTs which use either:
+
+1. Only use _ADR to identify which child device is which, like the example
+   DSDT snippet from the commit msg.
+
+2. Only use _HID + _UID like the 2 example DSDT snippets from me email
+
+But there never is a case where both _ADR and _HID are used at
+the same time (which would be an ACPI spec violation as Andy said).
+
+So AFAICT there is no issue here since  _ADR and _HID are never
+user at the same time and the commit message correctly describes
+scenario 1. from above, so the commit message is fine too.
+
+So I believe that we can continue with this patch series in
+its current v20 form, which has already been staged for
+going into -next by Greg.
+
+Andy can you confirm that moving ahead with the current
+version is ok ?
+
+Regards,
+
+Hans
+
+
 
