@@ -2,84 +2,277 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE9BCDB484
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Oct 2023 09:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD6ECDB47E
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Oct 2023 10:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbjJMJWS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Oct 2023 05:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
+        id S229903AbjJMKxf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Oct 2023 06:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230426AbjJMJWR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2023 05:22:17 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA5EB8
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2023 02:22:12 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-5a7c95b8d14so24156897b3.3
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2023 02:22:12 -0700 (PDT)
+        with ESMTP id S230052AbjJMKxe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2023 06:53:34 -0400
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFB4BD
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2023 03:53:31 -0700 (PDT)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1dcfb21f9d9so1098668fac.0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2023 03:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697188931; x=1697793731; darn=vger.kernel.org;
+        d=gadgetoid.com; s=google; t=1697194411; x=1697799211; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F8SGxNakBdg/eVn7PIGX4hM/sVFT3VICvg5gS9TqXYU=;
-        b=ePGxTHedJgq+x2NfArPc8AXEgphXX8+AVGvo2ci3Cde4p8Ehe031nOYNB/8MBUBLCY
-         1C1KD/HUAQ2ZpGvBHmMZ8+gacEiyjAlk4JwnmQ3sZvxfanvbw2jHRVkrPe+yrpYYd6vu
-         RMy/bvSAShf5Ss3Y0UOJygkJhW0awFpETI9/gPbPihmh/dB5TUhC7GUqRdjKhVFHe01Z
-         uu6Sp0OxlCTLK2qvhbmkcWkuPddm26/wdJcxq8eG4nUPQ8VRTKZEv4GgIetejoNRK4Es
-         /14ZKbBIkLSsZgSh34XzB8MIYTuSg0W9EvwoyKSQUcO+dRIYEx8KUzCx/dGXuomui8wp
-         vlYQ==
+        bh=Cx3OT1rGshp/Ir2GcBpAjiy0QL5GaqImc4dojac1F2o=;
+        b=V1Dq8RYuJzrqmg+LFh9HpgWhe9JgGyFreXNPGGtL3cUmq+OEwZ9/qrPcn531vkGBUP
+         iMhjLOMeLA2d3nkbfBP83HrR6pUph+zSvEdic7bvw3el2XvzkCTXtetuq+MiIII7lXJy
+         pQ7xmxVvp90tOIQGot+NfJ6xvcKhFoXCA8lIhgyjk6UlG4ihz8kB+WQiBtQSI3U9zXxO
+         NDQQRyqIOdmg6PvrkGlwKmwfEtaF4gjqL3F9SLhGlCmUOF7BXgodwPwjR0fG5aqm06k/
+         bUAHIhGitNmeN7dUk7gS1uGrXxg9d9Enh7eQOoSWZJkdHagElXgfivB+L2izWwiicuZR
+         QE0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697188931; x=1697793731;
+        d=1e100.net; s=20230601; t=1697194411; x=1697799211;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F8SGxNakBdg/eVn7PIGX4hM/sVFT3VICvg5gS9TqXYU=;
-        b=XVUd84wPgMgKBGaLHqvyr/ONHtP5UMifxB3nn8NhIW8Zi1KARDvISpgfgIk0Wdaqbv
-         zJvsg/fibOM5DAmiTiBzcEbwcZGqHlPFz1IrnuNnZLGKRRoNILkiceun0kZaVib4t7ge
-         qZPh8VA6+80UZ+2yvyV+XtEtOu2kioimfzDFyxuZTbcVtwKYT30sl2U7e8Q9fCz+PzKa
-         v54SurZ7E0Raf0YWZ49wedS01dUe29iLeMbsB+WqREz6dg/HH5amnx9yu64SQK4mNrW3
-         qsJ9rGMN3avsJGsCVaWbqkmmLoRKuJUwkl/kKD/tKZ7UgNLOg6fJD9m/upSk0zn35cw6
-         7d7Q==
-X-Gm-Message-State: AOJu0YxvkhQj6lHpKQNtPgoHeCpHL34LeTc+rhftncddqUZyTxa1vVfl
-        Q9qNjbU/tproTrjZmVIdfA/DnayL8EG/Y5XVwY/cYA==
-X-Google-Smtp-Source: AGHT+IEjUM6QSsdSZkuqSoUoeb4zdk5rMs26kzkqd85aMBvo/kCgSPeF7NujSuPVw/r4lCqKepQvz1vCuwu8uOhiG1s=
-X-Received: by 2002:a81:a247:0:b0:599:b570:2db7 with SMTP id
- z7-20020a81a247000000b00599b5702db7mr26076473ywg.30.1697188931174; Fri, 13
- Oct 2023 02:22:11 -0700 (PDT)
+        bh=Cx3OT1rGshp/Ir2GcBpAjiy0QL5GaqImc4dojac1F2o=;
+        b=wBrUXYdL61TQhU0HvncJdOQjT9Xp+1eqKtA+FlbwTBUBtfXoJA/42F6e8zhx7C5bew
+         cd36qOELBYDSYaLs4QLz8e7lK2nNLK2qrACHdsDWSwziY6XFlLDKmmNL+oSeCQqqnjGw
+         wwbjs6aMzFNzjgU8bIydHj41pJa0uDECOUWNugcvOADpfGqG73PCO57xQZlzWxGfq1Su
+         SEfRxbXSjpz/8Jpui4dWPRH4e2K2nBqg3IxxoydGsbMY4SfqQCqXvupZ4tCHfNbJekxA
+         AYTz9SuWK257SzTqlmnMmBtdubZhv43FUARhi4Q39mwcf5Qr0PZuvSu7PvRNs1x+c+JH
+         sBoA==
+X-Gm-Message-State: AOJu0Yw9FPPmIpoo+062D2Y1jDISV4SYm2P+Q9Zyxm5VBI7/VbKBj7/Z
+        CJMYPwaDCfTUQocqdak5KtvNHbZI9BqKx9E01TtDhw==
+X-Google-Smtp-Source: AGHT+IFKmN4OjL2qECbdSdSJ6bjm2KUigI0e4cDjpRQY8IuJ0WX7b3V0yNgZnCVo9xn+mUI22m8/Brr1oNNmlXj2dI4=
+X-Received: by 2002:a05:6870:89a5:b0:1bf:77e2:95cc with SMTP id
+ f37-20020a05687089a500b001bf77e295ccmr30439918oaq.17.1697194410863; Fri, 13
+ Oct 2023 03:53:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com> <20231010151709.4104747-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20231010151709.4104747-2-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Oct 2023 11:21:59 +0200
-Message-ID: <CACRpkdaPfBBW4a-AQZs21J=CCwMVNSdzBicu5CTS4xzT2=Qmiw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] gpiolib: provide gpio_device_find_by_fwnode()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
+References: <20231012210228.101513-1-phil@gadgetoid.com> <20231012210228.101513-2-phil@gadgetoid.com>
+ <CAMRc=MepcYb87SLikSO77Hnbi8T4dUK6heWX8H52TTw_xPOU=A@mail.gmail.com>
+In-Reply-To: <CAMRc=MepcYb87SLikSO77Hnbi8T4dUK6heWX8H52TTw_xPOU=A@mail.gmail.com>
+From:   Phil Howard <phil@gadgetoid.com>
+Date:   Fri, 13 Oct 2023 11:53:17 +0100
+Message-ID: <CA+kSVo_o61ivFSMWpVBpH09X7AH_cXOqHoU_sLv7qONhY3Maew@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH v2 1/2] bindings: python: optionally include
+ module in sdist
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 5:18=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-
-
-> One of the ways of looking up GPIO devices is using their fwnode.
-> Provide a helper for that to avoid every user implementing their
-> own matching function.
+On Fri, 13 Oct 2023 at 10:22, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> On Thu, Oct 12, 2023 at 11:02=E2=80=AFPM Phil Howard <phil@gadgetoid.com>=
+ wrote:
+> >
+> > Build libgpiod into Python module for build_ext or bdist_wheel.
+> >
+> > Include libgpiod source in sdist so that the Python module
+> > can be built from source by end users, even with a missing
+> > or mismatched system libgpiod.
+> >
+> > Add optional environment variable "LINK_SYSTEM_LIBGPIOD=3D1" to
+> > generate a module via build_ext or bdist_wheel that links
+> > against system libgpiod.
+> >
+> > Signed-off-by: Phil Howard <phil@gadgetoid.com>
+> > ---
+> >  bindings/python/MANIFEST.in |  4 ++
+> >  bindings/python/setup.py    | 95 +++++++++++++++++++++++++++++++------
+> >  2 files changed, 84 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/bindings/python/MANIFEST.in b/bindings/python/MANIFEST.in
+> > index c7124d4..eff8977 100644
+> > --- a/bindings/python/MANIFEST.in
+> > +++ b/bindings/python/MANIFEST.in
+> > @@ -11,3 +11,7 @@ recursive-include gpiod/ext *.h
+> >
+> >  recursive-include tests/gpiosim *.c
+> >  recursive-include tests/procname *.c
+> > +
+> > +recursive-include lib *.c
+> > +recursive-include lib *.h
+> > +recursive-include include *.h
+> > diff --git a/bindings/python/setup.py b/bindings/python/setup.py
+> > index fd674aa..e3b571c 100644
+> > --- a/bindings/python/setup.py
+> > +++ b/bindings/python/setup.py
+> > @@ -4,7 +4,30 @@
+> >  from os import environ, path
+> >  from setuptools import setup, Extension, find_packages
+> >  from setuptools.command.build_ext import build_ext as orig_build_ext
+> > -from shutil import rmtree
+> > +from setuptools.command.sdist import sdist as orig_sdist
+> > +from shutil import rmtree, copytree
+> > +
+> > +
+> > +def copy_libgpiod_files(func):
+> > +    """
+> > +    In order to include the lib and include directories in the sdist
+> > +    we must temporarily copy them up into the python bindings director=
+y.
+> > +
+> > +    If "./lib" exists we are building from an sdist package and will n=
+ot
+> > +    try to copy the files again.
+> > +    """
+> > +
+> > +    def wrapper(self):
+> > +        copy_src =3D not path.exists("./lib")
+> > +        if copy_src:
+> > +            copytree("../../lib", "./lib")
+> > +            copytree("../../include", "./include")
+> > +        func(self)
+> > +        if copy_src:
+> > +            rmtree("./lib")
+> > +            rmtree("./include")
+> > +
+> > +    return wrapper
+> >
+> >
+> >  class build_ext(orig_build_ext):
+> > @@ -14,24 +37,69 @@ class build_ext(orig_build_ext):
+> >      were built (and possibly copied to the source directory if inplace=
+ is set).
+> >      """
+> >
+> > +    @copy_libgpiod_files
+> >      def run(self):
+> >          super().run()
+> >          rmtree(path.join(self.build_lib, "tests"), ignore_errors=3DTru=
+e)
+> >
+> >
+> > +class sdist(orig_sdist):
+> > +    """
+> > +    Wrap sdist so that we can copy the lib and include files into . wh=
+ere
+> > +    MANIFEST.in will include them in the source package.
+> > +    """
+> > +
+> > +    @copy_libgpiod_files
+> > +    def run(self):
+> > +        super().run()
+> > +
+> > +
+> > +with open("gpiod/version.py", "r") as fd:
+> > +    exec(fd.read())
+> > +
+> > +sources =3D [
+> > +    # gpiod Python bindings
+> > +    "gpiod/ext/chip.c",
+> > +    "gpiod/ext/common.c",
+> > +    "gpiod/ext/line-config.c",
+> > +    "gpiod/ext/line-settings.c",
+> > +    "gpiod/ext/module.c",
+> > +    "gpiod/ext/request.c",
+> > +]
+> > +
+> > +if environ.get("LINK_SYSTEM_LIBGPIOD") =3D=3D "1":
+> > +    libraries =3D ["gpiod"]
+> > +    include_dirs =3D ["gpiod"]
+> > +else:
+> > +    sources +=3D [
+> > +        # gpiod library
+> > +        "lib/chip.c",
+> > +        "lib/chip-info.c",
+> > +        "lib/edge-event.c",
+> > +        "lib/info-event.c",
+> > +        "lib/internal.c",
+> > +        "lib/line-config.c",
+> > +        "lib/line-info.c",
+> > +        "lib/line-request.c",
+> > +        "lib/line-settings.c",
+> > +        "lib/misc.c",
+> > +        "lib/request-config.c",
+> > +    ]
+> > +    libraries =3D []
+> > +    include_dirs =3D ["include", "lib", "gpiod/ext"]
+> > +
+> > +
+> >  gpiod_ext =3D Extension(
+> >      "gpiod._ext",
+> > -    sources=3D[
+> > -        "gpiod/ext/chip.c",
+> > -        "gpiod/ext/common.c",
+> > -        "gpiod/ext/line-config.c",
+> > -        "gpiod/ext/line-settings.c",
+> > -        "gpiod/ext/module.c",
+> > -        "gpiod/ext/request.c",
+> > -    ],
+> > +    libraries=3Dlibraries,
+> > +    sources=3Dsources,
+> >      define_macros=3D[("_GNU_SOURCE", "1")],
+> > -    libraries=3D["gpiod"],
+> > -    extra_compile_args=3D["-Wall", "-Wextra"],
+> > +    include_dirs=3Dinclude_dirs,
+> > +    extra_compile_args=3D[
+> > +        "-Wall",
+> > +        "-Wextra",
+> > +        '-DGPIOD_VERSION_STR=3D"{}"'.format(__version__),
+>
+> This is incorrect. The version we want to pass here is the version of
+> libgpiod, not the version of python bindings which is now decoupled
+> from the former.
+>
+> I'm not sure how to correctly do it. We can read the contents of
+> configure.ac for one and get it from there. Maybe you have a better
+> idea.
 
-This makes sense to me! (But I haven't looked at the rest of the
-patches in the series. Yet.)
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Since configure.ac wont be available in the sdist package we'll need
+to copy the version number somewhere.
 
-Yours,
-Linus Walleij
+Since we should probably be plumbing this into autoconf anyway I
+think this var should be passed in the same way as
+GPIOD_WITH_TESTS, then setup.py can grab it from environ with
+a failover to loading from a packaged "gpiod-version-str.txt".
+
+A little out of my wheelhouse, but I'll take a shot.
+
+>
+> Bart
+>
+> > +    ],
+> >  )
+> >
+> >  gpiosim_ext =3D Extension(
+> > @@ -54,15 +122,12 @@ if "GPIOD_WITH_TESTS" in environ and environ["GPIO=
+D_WITH_TESTS"] =3D=3D "1":
+> >      extensions.append(gpiosim_ext)
+> >      extensions.append(procname_ext)
+> >
+> > -with open("gpiod/version.py", "r") as fd:
+> > -    exec(fd.read())
+> > -
+> >  setup(
+> >      name=3D"libgpiod",
+> >      packages=3Dfind_packages(exclude=3D["tests", "tests.*"]),
+> >      python_requires=3D">=3D3.9.0",
+> >      ext_modules=3Dextensions,
+> > -    cmdclass=3D{"build_ext": build_ext},
+> > +    cmdclass=3D{"build_ext": build_ext, "sdist": sdist},
+> >      version=3D__version__,
+> >      author=3D"Bartosz Golaszewski",
+> >      author_email=3D"brgl@bgdev.pl",
+> > --
+> > 2.34.1
+> >
+
+
+
+--=20
+Philip Howard
+Technology & Lifestyle Writer
+gadgetoid.com
+
+Gadgetoid gadg-et-oid [gaj-it-oid]
+
+                                     -adjective
+
+1. having the characteristics or form of a gadget; resembling a
+mechanical contrivance or device.
