@@ -2,135 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6067C41513
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Oct 2023 15:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EA3CDB482
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Oct 2023 15:19:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231891AbjJPPTD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Oct 2023 11:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57500 "EHLO
+        id S233615AbjJPPTW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Oct 2023 11:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232365AbjJPPTC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2023 11:19:02 -0400
-Received: from mail-ed1-x564.google.com (mail-ed1-x564.google.com [IPv6:2a00:1450:4864:20::564])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B986FE1
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Oct 2023 08:18:57 -0700 (PDT)
-Received: by mail-ed1-x564.google.com with SMTP id 4fb4d7f45d1cf-53db360294fso8318818a12.3
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Oct 2023 08:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gadgetoid.com; s=google; t=1697469536; x=1698074336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T6oYFK/6Wmv0NZR7M9rH7S12WEhk/kthTLyxaZH4cek=;
-        b=kBAAW7vzg+MIZcOW+/h7n/wreYJBr90u4YZNm9kXEw78KClmzkL5h7dyJb4VZmwJfF
-         brZ2EVZb6sKqtqiWuxwB+ZVtOrojBAgj75WC7d8CIdxPViPcsEH9aa3LEAlQUVZIcB4y
-         NQR3SENlKY2UdG77SpjkzXlRGV/pHB0tn8Ey91KG44A05ZPBG1eYFDX/I3JNCVvArX/Y
-         BvgGu8fvePQ9Nek/CymtaSli1ntALaBsDFcmKJ+mA6g5xlt8NJRGtLgg8evWtkWPTLGP
-         RMta1z5qHvL7br5RMYo1DdgEsQf4ORooF+G+/xqL6nurnwwwZ2snaFMfhjXDzISH8hLL
-         vDYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697469536; x=1698074336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T6oYFK/6Wmv0NZR7M9rH7S12WEhk/kthTLyxaZH4cek=;
-        b=ErndWyHXE2CF67CPHc0FkatzNYoLnKPcf+Z7+rYZVAq3P62E3NquPC5KlTXhATQa0F
-         69TC5jJYi9iP+ocDDNcVU5VlmYSpwYIpFT3tCJht8WxA7laapdzW3ku5CwJT0Fzk3uaH
-         v4vRkLfLjBOtY1eZwJZynFea3Oo+nOUeTvsk1WXDR6I9aBG+fTIalSyeCLcz9KLB29cw
-         5oKZLmP4ukv/fqje90oxEYyS+/s0SR4l1lFfCMw2zcFQmj0GlLHQS/LpUhy7D4oP2s7G
-         vaiMnpnKKnuC8IUt7yDY8+CtOZ+R06HzZEvyZt1n56kjpFMu5UlZMrYRBuVBA48TGM+g
-         GZ5Q==
-X-Gm-Message-State: AOJu0YxQxMZmhALqVwhk5VqqvCn2GggMygjPnVqe82/MBxHpWMG6mSxH
-        LKITqf8Oxg3Z+NYyq+6hlgYbSrKEpy23tVc7cK01b1Htop5a5g==
-X-Google-Smtp-Source: AGHT+IFWbCwTIsJ5gs4SDM4BoZlHxAzc3ouAdKSr8TSOcVItVv7Wlcq/O2k2uzs64ICIFCuhYPSDwwJ+M1/A
-X-Received: by 2002:a17:907:d15:b0:9c1:bee1:b7eb with SMTP id gn21-20020a1709070d1500b009c1bee1b7ebmr4251662ejc.37.1697469535633;
-        Mon, 16 Oct 2023 08:18:55 -0700 (PDT)
-Received: from pop-os.. (cpc91242-cmbg18-2-0-cust972.5-4.cable.virginm.net. [82.8.131.205])
-        by smtp-relay.gmail.com with ESMTPS id jp1-20020a170906f74100b00993b268eafdsm612951ejb.179.2023.10.16.08.18.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 08:18:55 -0700 (PDT)
-X-Relaying-Domain: gadgetoid.com
-From:   Phil Howard <phil@gadgetoid.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org, Phil Howard <phil@gadgetoid.com>
-Subject: [libgpiod][PATCH v4 0/1] bindings: python: optionally include module in sdist
-Date:   Mon, 16 Oct 2023 16:18:47 +0100
-Message-Id: <20231016151848.168209-1-phil@gadgetoid.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231569AbjJPPTW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2023 11:19:22 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0B3AB;
+        Mon, 16 Oct 2023 08:19:19 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DEDEC433C7;
+        Mon, 16 Oct 2023 15:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1697469559;
+        bh=IUlcckn2HIZvQSPS1Pli5AoJlsFWzcK+s4pdEgsn3uA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IZxB+S+5f7TG2qX+o3J/cEJG0d4Mm5M/FeuKYss2zs0UgFfcz/wJaTx4+uNG3Djyf
+         5fGUnNNij/cz1JMpbR9gRBF0cOwhBWm3s4vmzOlp/EUQkA+JdogYu+8OxgmeIj4Myx
+         PVNaWxTBU9KNC84846XlsI2shQg3JBG73yeWwBXE=
+Date:   Mon, 16 Oct 2023 17:19:13 +0200
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     "Wu, Wentong" <wentong.wu@intel.com>
+Cc:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "Wang, Zhifeng" <zhifeng.wang@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v20 1/4] usb: Add support for Intel LJCA device
+Message-ID: <2023101653-shiftless-scorebook-19e3@gregkh>
+References: <1696833205-16716-2-git-send-email-wentong.wu@intel.com>
+ <ZSZ3IPgLk7uC5UGI@smile.fi.intel.com>
+ <6a87b43a-0648-28d4-6c69-e0f684e44eb6@redhat.com>
+ <DM6PR11MB4316BE44F53E276384FF06C88DCCA@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <5d2e9eba-a941-ea9a-161a-5b97d09d5d35@redhat.com>
+ <ZSmjEKfYzFuAHXW+@smile.fi.intel.com>
+ <9a080d06-586d-686f-997e-674cb8d16099@redhat.com>
+ <DM6PR11MB43169A9ADDA7681DB7D9347C8DD7A@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <ZSzogNhlX9njvOIU@smile.fi.intel.com>
+ <DM6PR11MB4316382324D15985A70E531C8DD7A@DM6PR11MB4316.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4316382324D15985A70E531C8DD7A@DM6PR11MB4316.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This changeset vendors the gpiod library into the Python package.
+On Mon, Oct 16, 2023 at 03:05:09PM +0000, Wu, Wentong wrote:
+> > From: Shevchenko, Andriy
+> > On Mon, Oct 16, 2023 at 08:52:28AM +0300, Wu, Wentong wrote:
+> > > > On 10/13/23 22:05, Shevchenko, Andriy wrote:
+> > > > > On Thu, Oct 12, 2023 at 01:14:23PM +0200, Hans de Goede wrote:
+> > 
+> > <snip>
+> > 
+> > > > >> Ah ok, I see. So the code:
+> > > > >>
+> > > > >> 1. First tries to find the matching child acpi_device for the
+> > > > >> auxdev by ADR
+> > > > >>
+> > > > >> 2. If 1. fails then falls back to HID + UID matching
+> > > > >>
+> > > > >> And there are DSDTs which use either:
+> > > > >>
+> > > > >> 1. Only use _ADR to identify which child device is which, like the example
+> > > > >>    DSDT snippet from the commit msg.
+> > > > >>
+> > > > >> 2. Only use _HID + _UID like the 2 example DSDT snippets from me
+> > > > >> email
+> > > > >>
+> > > > >> But there never is a case where both _ADR and _HID are used at
+> > > > >> the same time (which would be an ACPI spec violation as Andy said).
+> > > > >>
+> > > > >> So AFAICT there is no issue here since  _ADR and _HID are never
+> > > > >> user at the same time and the commit message correctly describes
+> > > > >> scenario 1. from above, so the commit message is fine too.
+> > > > >>
+> > > > >> So I believe that we can continue with this patch series in its
+> > > > >> current v20 form, which has already been staged for going into
+> > > > >> -next by Greg.
+> > > > >>
+> > > > >> Andy can you confirm that moving ahead with the current version
+> > > > >> is ok ?
+> > > > >
+> > > > > Yes as we have a few weeks to fix corner cases.
+> > > > >
+> > > > > What I'm worrying is that opening door for _ADR that seems never
+> > > > > used is kinda an overkill here (resolving non-existing problem).
+> > > >
+> > > > I assume that there actually some DSDTs using the _ADR approach and
+> > > > that this support is not there just for fun.
+> > >
+> > > right, it's not for fun, we use _ADR here is to reduce the maintain
+> > > effort because currently it defines _HID for every new platform and
+> > > the drivers have to be updated accordingly, while _ADR doesn't have that
+> > problem.
+> > 
+> > But this does not confirm if you have such devices. Moreover, My question
+> > about _CID per function stays the same. Why firmware is not using it?
+> 
+> Yes, both _ADR and _CID can stop growing list in the driver. And for _ADR, it also
+> only require one ID per function. I don't know why BIOS team doesn't select _CID,
+> but I have suggested use _ADR internally, and , to make things moving forward,
+> the driver adds support for _ADR here first. 
+> 
+> But you're right, _CID is another solution as well, we will discuss it with firmware
+> team more.
 
-Why?
+Should I revert this series now until this gets sorted out?
 
-So that setup.py can produce an sdist that is installable irrespective of
-the availability or version of a distro-supplied libgpiod.
+thanks,
 
-This prevents a libgpiod pypi package install balking because the distro
-libgpiod is outdated or otherwise incompatible. This happens when
-attempting to install the current libgpiod from pypi onto - for example -
-the Debian Bookworm based Raspberry Pi OS or Ubuntu 23.10 Mantic which both
-ship with libgpiod v1.6.3.
-
-The availability of a distro agnostic package also ensures that libgpiod
-can be installed via pypi into an isolated virtual environment, safely
-specified as a dependency for Python packages and allows Python developers
-to target the newest API version irrespective of their distro supplied
-libgpiod.
-
-This is essential, since a venv is now widely *required* for user Python
-projects due to recommendations in pep-688 [1]
-
-For Raspberry Pi this sdist can also be converted into a precompiled wheel
-by piwheels [2] which is, by default, added to Raspberry Pi OS as a pip
-index.
-
-How?
-
-If "LINK_SYSTEM_LIBGPIOD=1" is not specified and "GPIOD_VERSION_STR" is
-supplied then the gpiod._ext C Extension is amended to include all of the C
-sources for gpiod, so it can be built as a standalone module without
-depending upon a shared distro library.
-
-The gpiod sources are included by copying the "lib" and "include"
-directories up to the parent module, and updating "MANIFEST.in" to include
-the source files when an sdist is built. Additionally the gpiod version
-string is included in "libgpiod-version-str.txt" so that it is available
-for source builds.
-
-bindings/python/Makefile.am has been extended so that "make" will now
-produce a .tar.gz source distribution in bindings/python/dist which is
-suitable for uploading to pypi and can be built and installed by any user
-with python3-dev installed.
-
-[1] - https://peps.python.org/pep-0668/
-[2] - https://www.piwheels.org/
-
-Changes v3 -> v4
-- Check for lack of "GPIOD_VERSION_STR" and revert to original behaviour
-- Add status messages to setup.py, hinting at the package build mode
-
-Changes v2 -> v3
-- Pass in correct "GPIOD_VERSION_STR" from build
-- Output an sdist build for pypi
-
-Changes v1 -> v2
-- Switch from symlinks to explicit file copy
-
-Phil Howard (1):
-  bindings: python: optionally include module in sdist
-
- bindings/python/MANIFEST.in |   5 ++
- bindings/python/Makefile.am |   3 +
- bindings/python/setup.py    | 122 +++++++++++++++++++++++++++++++-----
- 3 files changed, 114 insertions(+), 16 deletions(-)
-
--- 
-2.34.1
-
+greg k-h
