@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FDBCDB483
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DA4CDB474
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235061AbjJQMIb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Oct 2023 08:08:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
+        id S1343827AbjJQMIe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Oct 2023 08:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235079AbjJQMH3 (ORCPT
+        with ESMTP id S235078AbjJQMH3 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 08:07:29 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9909826B3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:48 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40684f53ef3so59008335e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:48 -0700 (PDT)
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0C112F
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:31 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c515527310so38319291fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544346; x=1698149146; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544329; x=1698149129; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1fJ2QmhXWplWv9DEf43iP6RhPqRuukfw3F4hurk2iKc=;
-        b=0md2dvRtqR2x5GkHHCg4ioGCoiPf3FwJgVndGKUXjO5Hxybp5BstnIK8HzFihYuUpn
-         RWChBD5mUaftVlj9I98ajJlAU1SheBJ640pOAxdKeJtQG2R0k9ETd7Jan8BU9x6Jn6yy
-         p60UCXSOrZ9TYN+xr3iIQlF0Df09oAoljm3B0Z118ae6dYXA57wPwtoY9PEa7Wu/H0jd
-         ITLXG5T6es6S9tZWzyOiTwSrsu+/imM/lLoz8o+b1tjLTKmA2vwxqsFjFoV1cBo/paKu
-         KePKM//OKFioXKgc3k/W9Yhy0JVX34d3tv8wN93GKRklfysGfapGlvWbLIaemW1Oj6x3
-         Y4LA==
+        bh=ZmbOot5RLrw4dhGM35wwQDK66NpZcPzXz+VcMMZhqQw=;
+        b=AR6rAWDOWbPt1AtkTSN3PTMBPkj1L2qTPmKSbC9w0hTqO3CZlDkRQk3iFVCDT5gwLx
+         ETKyUcbJrqsrrVE2pjFKzSh/j7Vhu2tFcSSd+O+oKrpBdxSfCni1365N9URaBGeDgyK5
+         SliNmYGXGX/6G0Hn4KptzXL5RJXDPkkOsg8KRcZvh0kXk73gvJlmcsOEDv/61ldsVhlC
+         szomGA2dGTqt92j3MytV0lVW9sDtI1zlc3eA7n5AY5us7Br3m8YU4f0YgX0WMKFu70L/
+         thDl3wFILRP+G3q/+7h1/RcjFxyh2p9bvHfqSwjh1tq754bxxLBkLrELf7vY0CW5UrOW
+         vumg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697544346; x=1698149146;
+        d=1e100.net; s=20230601; t=1697544329; x=1698149129;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1fJ2QmhXWplWv9DEf43iP6RhPqRuukfw3F4hurk2iKc=;
-        b=cowgxBoBVLEGA6Bh9ym+z0irw6Qq78CXqovXD53QyhKIb9RrSxZijDeKPygXXrFIvB
-         heuYfSy5mYdbWlWHBUo3SgPs2q7vv/qlPfScUhW9SmPanY1AZFpORdfgROgLULg+0iy9
-         LrGF9NbAgnenvynxBnOSA7SZ9cI/WZCi6MukhOgtfgi6OYCG959fzuXEVlOWvnMxPTx2
-         NygNhaElPqYkSEPaSdoK2I/b9rvle3JrBcs3aNPiQYST/YXezzd1r+bqo2PqWBJfQwX8
-         0xI+oTnV2mpm+K4RHB6gWFRcrA/Cp+SbPArNeIN4DsUzp5LIba9Sz7DxMBoQfIltuDC4
-         poyQ==
-X-Gm-Message-State: AOJu0YxVINLVGhZOoVi1SVMHzlPnZTo48f8Yu/SUwPHytxLvwZtQReOy
-        /o9NDSz1XinZYl2foTUq/z/4x/btf74Z02dfAtI=
-X-Google-Smtp-Source: AGHT+IFrm8m6PkO2MeoJBk8M+cQ5If/Je9u9hgzNaFX6Deg2XbQvzpcCpeRdkVruesr+LhmTiyHeDA==
-X-Received: by 2002:a05:600c:46c3:b0:407:5adc:4497 with SMTP id q3-20020a05600c46c300b004075adc4497mr1544354wmo.9.1697544346333;
-        Tue, 17 Oct 2023 05:05:46 -0700 (PDT)
+        bh=ZmbOot5RLrw4dhGM35wwQDK66NpZcPzXz+VcMMZhqQw=;
+        b=KweWqBQo/7bD8jx874+4rbPXHjSPYDvhsFm83fREI0DqwQIV+wc9OCNRdU1g9vKL7M
+         UcxwYJ/H1hOZWwjq02aMRWYN9uzORoskusQcW9589Ya/rVfdz11Qf+b2s903CHKicej2
+         HUxjsdk3tSm03OQgLCfRVullCBagHlDpFRGednQogc+BE4CQlbpm7QAKDgetv3AJPfJb
+         uT1fdLjlhY0w4TpZqvhsjNpDmdo+ify9lYuTIopZyF9WU+ApTOQ7IKgIfIMpqUrSpGIC
+         gmfaL0yzKXJv5rsB+xR6zsqkwXKd9V+vXkxjJcHDKnykLWPyHM/NlVCxgMZBI94Wyosd
+         HcqQ==
+X-Gm-Message-State: AOJu0YzGGZ/aDMwEa4moXPoxV/7kUfAFgB+Oxk9g7WmIyQ0M3XYcahbD
+        9cLKSOJ3cZPdYNPICok/Ku6+nw==
+X-Google-Smtp-Source: AGHT+IHnnbArgK7X3e7NA50LhtLme/ELgZolnw+hJhzIV6zoyJbs7diRLj3gP/grQYP7SGxh9SaD3g==
+X-Received: by 2002:a05:651c:314:b0:2c0:21b6:e82e with SMTP id a20-20020a05651c031400b002c021b6e82emr1509394ljp.4.1697544328832;
+        Tue, 17 Oct 2023 05:05:28 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f1ee:b000:ce90:ed14])
-        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.05.45
+        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.05.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 05:05:45 -0700 (PDT)
+        Tue, 17 Oct 2023 05:05:28 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 60/73] pinctrl: vt8500: drop the wrapper around pinctrl_gpio_direction_input()
-Date:   Tue, 17 Oct 2023 14:04:18 +0200
-Message-Id: <20231017120431.68847-61-brgl@bgdev.pl>
+Subject: [PATCH v3 42/73] treewide: rename pinctrl_gpio_can_use_line_new()
+Date:   Tue, 17 Oct 2023 14:04:00 +0200
+Message-Id: <20231017120431.68847-43-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231017120431.68847-1-brgl@bgdev.pl>
 References: <20231017120431.68847-1-brgl@bgdev.pl>
@@ -68,39 +68,73 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-pinctrl_gpio_direction_input() now has the same signature as the
-wrapper around it so we can drop them.
+Now that pinctrl_gpio_can_use_line() is no longer used, let's drop the
+'_new' suffix from its improved variant.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pinctrl/vt8500/pinctrl-wmt.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpiolib-cdev.c      | 2 +-
+ drivers/pinctrl/core.c           | 4 ++--
+ include/linux/pinctrl/consumer.h | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 639446bba373..fce92111a32e 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -526,11 +526,6 @@ static void wmt_gpio_set_value(struct gpio_chip *chip, unsigned offset,
- 		wmt_clearbits(data, reg_data_out, BIT(bit));
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 54ee075410db..02ffda6c1e51 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -2287,7 +2287,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
+ 	 * FIXME: find a non-racy way to retrieve this information. Maybe a
+ 	 * lock common to both frameworks?
+ 	 */
+-	ok_for_pinctrl = pinctrl_gpio_can_use_line_new(gc, info->offset);
++	ok_for_pinctrl = pinctrl_gpio_can_use_line(gc, info->offset);
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 881845395885..20f4b655aa08 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -755,7 +755,7 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
+ 	return -EINVAL;
  }
  
--static int wmt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
--{
--	return pinctrl_gpio_direction_input(chip, offset);
--}
--
- static int wmt_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				     int value)
+-bool pinctrl_gpio_can_use_line_new(struct gpio_chip *gc, unsigned int offset)
++bool pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset)
  {
-@@ -544,7 +539,7 @@ static const struct gpio_chip wmt_gpio_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
- 	.get_direction = wmt_gpio_get_direction,
--	.direction_input = wmt_gpio_direction_input,
-+	.direction_input = pinctrl_gpio_direction_input,
- 	.direction_output = wmt_gpio_direction_output,
- 	.get = wmt_gpio_get_value,
- 	.set = wmt_gpio_set_value,
+ 	struct pinctrl_dev *pctldev;
+ 	struct pinctrl_gpio_range *range;
+@@ -781,7 +781,7 @@ bool pinctrl_gpio_can_use_line_new(struct gpio_chip *gc, unsigned int offset)
+ 
+ 	return result;
+ }
+-EXPORT_SYMBOL_GPL(pinctrl_gpio_can_use_line_new);
++EXPORT_SYMBOL_GPL(pinctrl_gpio_can_use_line);
+ 
+ /**
+  * pinctrl_gpio_request_new() - request a single pin to be used as GPIO
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index aa3a7a7ca52d..4f9ead7f65d2 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -26,7 +26,7 @@ struct pinctrl_state;
+ #ifdef CONFIG_PINCTRL
+ 
+ /* External interface to pin control */
+-bool pinctrl_gpio_can_use_line_new(struct gpio_chip *gc, unsigned int offset);
++bool pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset);
+ int pinctrl_gpio_request_new(struct gpio_chip *gc, unsigned int offset);
+ void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset);
+ int pinctrl_gpio_direction_input_new(struct gpio_chip *gc,
+@@ -68,7 +68,7 @@ static inline int pinctrl_pm_select_idle_state(struct device *dev)
+ #else /* !CONFIG_PINCTRL */
+ 
+ static inline bool
+-pinctrl_gpio_can_use_line_new(struct gpio_chip *gc, unsigned int offset)
++pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	return true;
+ }
 -- 
 2.39.2
 
