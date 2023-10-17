@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42432CDB474
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E83CDB474
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343679AbjJQMIf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Oct 2023 08:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
+        id S234970AbjJQMIx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Oct 2023 08:08:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234944AbjJQMHd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 08:07:33 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D5926AC
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:47 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-40566f8a093so54071435e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:47 -0700 (PDT)
+        with ESMTP id S234971AbjJQMHq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 08:07:46 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCBC1FD5
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:32 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-405417465aaso53791405e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544345; x=1698149145; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544331; x=1698149131; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qZqsH4ukWg8dp7mZFhLrP2ADJHJW7V1bq0dpTxn7+d4=;
-        b=Iq1DEkCJyf74Eh8GJ/Efr891aLtBnfMpBjFVOBThjueAGkIcYWTn84YwEg1jIkjkzj
-         /1yLkN/BT5jJOkAQkOrxX7pX27R2YawzkBnpj0jhWgOfpaU5k3GXyPh/XgsE6upNz5bW
-         /sSV/zYp1O7jO5+QES3HjYe5VSfUeHASkiMdsBEZ+BJMQOV1PCbsVKZwtS32sG93Cm9X
-         YWDXIncFJ7iA6sjNDNa/UcuTT/QG4BRCXL6577wK4BMPaHnTW9VRCLCdiQiZ2etB+kCK
-         4ASmM0H7LYfSsmWnK6mDNs1boApbmLd7IKo7Zy0wIKN+PWpbM+zQXTbSl2zf0oZd+uT+
-         gCCQ==
+        bh=CUI+RK0dSqyYZaeI61u77qIZqUqMiGdn4pfRi7va2/E=;
+        b=uwre9TYIMZXoe/QIshrxf029enzYGkdB04/VWfdn1FB0ON5rJ+FkqVTGvJlGJ5mME/
+         V6la/a031MLFvgqQRhI+tB7XU39mElLo3CcihcnuPPfPo2WiWcVjxmf/pw1YyKO5fd1r
+         +OkIT8/fN0JnFAbhSw+zV4/ABUlG3WKd9QzYi3mmpfxLS88GEb+ttNAL6HACynbVnRZu
+         hDKq9Vd9TvErTzxRCr/kBCGFn4or4VEBBXwkpamk9e7HLtdZCpYrkxIR8NbUFKQ78q0R
+         9dUGSkmNn3bXxwt7Ou4JaGzTrm7UH8arcYc2+uUv3SXhQOX0OLfhIy1+m0Tcn7DUfGFc
+         +09Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697544345; x=1698149145;
+        d=1e100.net; s=20230601; t=1697544331; x=1698149131;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qZqsH4ukWg8dp7mZFhLrP2ADJHJW7V1bq0dpTxn7+d4=;
-        b=AfvuJ7/mgqxN92ZVK7/+qWl7x4UKcWPZ/4PbO3wD4CQJxqHSzs+fmoaEcPIxSUe+NL
-         ylw/UACG7RhhKsnZxNJR77sbUq87wUOPb+6RuTDKgAoAZXOU73XjqT4gA5ntodEH166h
-         1tFQMRl5E/RNIKhRNxf2YxhuDpu0Hr1+2M3RZCKFqBFgXbjq7BJPHpog/arLBfLxt2Hi
-         pJ1agZog6sMP6PfNd2pTtsv9HFkI5vF/psehbR2AUBrEHpd0fVnwPd2nVGYdc+0mMpZB
-         LcJkFEIEP6x2bIEa2zPLIqEhY27F/pB4jV0Sbm6ub4UzkHNTteDNk2bpUyFmdVu2MUQD
-         w1Uw==
-X-Gm-Message-State: AOJu0YxcLJuRdw0n0puwnZJjEzFgBEj2HKfc+PVu9E2/gqL5wG3RPzBO
-        49TMDatCBk4j1lHYQKr4vUBpmQ==
-X-Google-Smtp-Source: AGHT+IH0yWFOp9rKJ0cOBfUSaAmYAWjud/N6WGuc8A1DibebU/JZOq50dqOAWD6Ha/rOJpk+qlKpfw==
-X-Received: by 2002:a05:600c:1392:b0:405:3955:5872 with SMTP id u18-20020a05600c139200b0040539555872mr1630146wmf.18.1697544345467;
-        Tue, 17 Oct 2023 05:05:45 -0700 (PDT)
+        bh=CUI+RK0dSqyYZaeI61u77qIZqUqMiGdn4pfRi7va2/E=;
+        b=OSN5PMUqDD5vg/aDI5ekiM+7ZRMQ5qciTBlCGl2w1eBQk3VX5y7SUDEFE44zGqqFBs
+         vbIRHkyEEl5Q1yw0jEk+rhQr3P6FOTOzxAMANU5Y3UnzA/znxNuxJsBxKYslKHuviL5b
+         pYbgyNy+UxluNS9PjwzdYQHA/zpnt/IXazagKIbgsyHdskjjmzXj/9kxAK1RcRdLTyMG
+         Y9NhFojplS87jTikEByxWPCLLx/5Xx+LqwSNc8MJPMzcQkK8OyTxwTAZDscUNxIkgN/L
+         B1eHfZznZKnx7s7Y2fnjvbizHoXFg+fndv69E1y57WcPkFJLrF9OtfBKLgyMesaLwYMk
+         yyeQ==
+X-Gm-Message-State: AOJu0YyiwGyCs88lBPQVdKdT0fW/BTLN96c49jLnOVlEasvJaDBpcGmD
+        xLvxlGLImZSPomcMUPH/v7wJA4b0ztqOPNw+MaI=
+X-Google-Smtp-Source: AGHT+IFg2V4Zc6AkX/O2Vatm+e9Hdj2bRElDVWnfsubinuJZpDwUdf4naqucfOoT5ylcVLFqP8VyGg==
+X-Received: by 2002:a05:600c:1c29:b0:406:5227:86f0 with SMTP id j41-20020a05600c1c2900b00406522786f0mr1644532wms.5.1697544330762;
+        Tue, 17 Oct 2023 05:05:30 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f1ee:b000:ce90:ed14])
-        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.05.44
+        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.05.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 05:05:45 -0700 (PDT)
+        Tue, 17 Oct 2023 05:05:30 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 59/73] pinctrl: cy8c95x0: drop the wrapper around pinctrl_gpio_direction_input()
-Date:   Tue, 17 Oct 2023 14:04:17 +0200
-Message-Id: <20231017120431.68847-60-brgl@bgdev.pl>
+Subject: [PATCH v3 44/73] treewide: rename pinctrl_gpio_free_new()
+Date:   Tue, 17 Oct 2023 14:04:02 +0200
+Message-Id: <20231017120431.68847-45-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231017120431.68847-1-brgl@bgdev.pl>
 References: <20231017120431.68847-1-brgl@bgdev.pl>
@@ -68,39 +68,287 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-pinctrl_gpio_direction_input() now has the same signature as the
-wrapper around it so we can drop them.
+Now that pinctrl_gpio_free()() is no longer used, let's drop the '_new'
+suffix from its improved variant.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-aspeed.c                         | 2 +-
+ drivers/gpio/gpio-em.c                             | 2 +-
+ drivers/gpio/gpio-rcar.c                           | 2 +-
+ drivers/gpio/gpio-tegra.c                          | 2 +-
+ drivers/gpio/gpiolib.c                             | 2 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c           | 2 +-
+ drivers/pinctrl/core.c                             | 6 +++---
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          | 2 +-
+ drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c          | 2 +-
+ drivers/pinctrl/renesas/gpio.c                     | 2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            | 2 +-
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c            | 2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c             | 4 ++--
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 2 +-
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c              | 2 +-
+ include/linux/pinctrl/consumer.h                   | 4 ++--
+ 17 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 04285c930e94..adecb7d85da1 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -552,11 +552,6 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index af851c89cacc..4c417c8486dd 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -755,7 +755,7 @@ static int aspeed_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ 
+ static void aspeed_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ }
+ 
+ static int usecs_to_cycles(struct aspeed_gpio *gpio, unsigned long usecs,
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 08c5427deb71..aa31c189d0ef 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -234,7 +234,7 @@ static int em_gio_request(struct gpio_chip *chip, unsigned offset)
+ 
+ static void em_gio_free(struct gpio_chip *chip, unsigned offset)
+ {
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ 
+ 	/* Set the GPIO as an input to ensure that the next GPIO request won't
+ 	* drive the GPIO pin as an output.
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 8c98730a7ad2..6159fda38d5d 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -286,7 +286,7 @@ static void gpio_rcar_free(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+ 
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ 
+ 	/*
+ 	 * Set the GPIO as an input to ensure that the next GPIO request won't
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index c974ba368d18..fcb3b474d1df 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -146,7 +146,7 @@ static void tegra_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ 	tegra_gpio_disable(tgi, offset);
+ }
+ 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 794408be7109..53dce41d649a 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2052,7 +2052,7 @@ void gpiochip_generic_free(struct gpio_chip *gc, unsigned int offset)
+ 		return;
+ #endif
+ 
+-	pinctrl_gpio_free_new(gc, offset);
++	pinctrl_gpio_free(gc, offset);
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_generic_free);
+ 
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index 8162dd840933..fd5ce52d05b1 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -345,7 +345,7 @@ static void iproc_gpio_free(struct gpio_chip *gc, unsigned offset)
+ 	if (!chip->pinmux_is_supported)
+ 		return;
+ 
+-	pinctrl_gpio_free_new(gc, offset);
++	pinctrl_gpio_free(gc, offset);
+ }
+ 
+ static int iproc_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index d200a887dc5d..6872614c4a95 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -820,7 +820,7 @@ int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset)
+ EXPORT_SYMBOL_GPL(pinctrl_gpio_request);
+ 
+ /**
+- * pinctrl_gpio_free_new() - free control on a single pin, currently used as GPIO
++ * pinctrl_gpio_free() - free control on a single pin, currently used as GPIO
+  * @gc: GPIO chip structure from the GPIO subsystem
+  * @offset: hardware offset of the GPIO relative to the controller
+  *
+@@ -828,7 +828,7 @@ EXPORT_SYMBOL_GPL(pinctrl_gpio_request);
+  * as part of their gpio_request() semantics, platforms and individual drivers
+  * shall *NOT* request GPIO pins to be muxed in.
+  */
+-void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset)
++void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct pinctrl_gpio_range *range;
+ 	struct pinctrl_dev *pctldev;
+@@ -848,7 +848,7 @@ void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset)
+ 
+ 	mutex_unlock(&pctldev->mutex);
+ }
+-EXPORT_SYMBOL_GPL(pinctrl_gpio_free_new);
++EXPORT_SYMBOL_GPL(pinctrl_gpio_free);
+ 
+ static int pinctrl_gpio_direction(unsigned gpio, bool input)
+ {
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+index ad39b8c060b7..ab7cfc1e66f0 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+@@ -211,7 +211,7 @@ static int npcmgpio_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ static void npcmgpio_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	dev_dbg(chip->parent, "gpio_free: offset%d\n", offset);
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ }
+ 
+ static void npcmgpio_irq_handler(struct irq_desc *desc)
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+index dd4532ae62bf..78dbeef6af86 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
+@@ -207,7 +207,7 @@ static int npcmgpio_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ 
+ static void npcmgpio_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ }
+ 
+ static void npcmgpio_irq_handler(struct irq_desc *desc)
+diff --git a/drivers/pinctrl/renesas/gpio.c b/drivers/pinctrl/renesas/gpio.c
+index 0c4f4d8d0891..b39125a632b0 100644
+--- a/drivers/pinctrl/renesas/gpio.c
++++ b/drivers/pinctrl/renesas/gpio.c
+@@ -140,7 +140,7 @@ static int gpio_pin_request(struct gpio_chip *gc, unsigned offset)
+ 
+ static void gpio_pin_free(struct gpio_chip *gc, unsigned offset)
+ {
+-	return pinctrl_gpio_free_new(gc, offset);
++	return pinctrl_gpio_free(gc, offset);
+ }
+ 
+ static void gpio_pin_set_value(struct sh_pfc_chip *chip, unsigned offset,
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index c5d247d24374..9de350ad7e7d 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1181,7 +1181,7 @@ static void rzg2l_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	unsigned int virq;
+ 
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ 
+ 	virq = irq_find_mapping(chip->irq.domain, offset);
+ 	if (virq)
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+index 1ec0922f735c..21d7d5ac8c4a 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+@@ -832,7 +832,7 @@ static int rzv2m_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 
+ static void rzv2m_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ 
+ 	/*
+ 	 * Set the GPIO as an input to ensure that the next GPIO request won't
+diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
+index 6d3b7ce1c35a..a05570c7d833 100644
+--- a/drivers/pinctrl/spear/pinctrl-plgpio.c
++++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
+@@ -248,7 +248,7 @@ static int plgpio_request(struct gpio_chip *chip, unsigned offset)
+ 	if (!IS_ERR(plgpio->clk))
+ 		clk_disable(plgpio->clk);
+ err0:
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
  	return ret;
  }
  
--static int cy8c95x0_gpio_direction_input(struct gpio_chip *gc, unsigned int off)
--{
--	return pinctrl_gpio_direction_input(gc, off);
--}
--
- static int cy8c95x0_gpio_direction_output(struct gpio_chip *gc,
- 					  unsigned int off, int val)
- {
-@@ -814,7 +809,7 @@ static int cy8c95x0_setup_gpiochip(struct cy8c95x0_pinctrl *chip)
+@@ -278,7 +278,7 @@ static void plgpio_free(struct gpio_chip *chip, unsigned offset)
+ 	if (!IS_ERR(plgpio->clk))
+ 		clk_disable(plgpio->clk);
  
- 	gc->request = gpiochip_generic_request;
- 	gc->free = gpiochip_generic_free;
--	gc->direction_input  = cy8c95x0_gpio_direction_input;
-+	gc->direction_input = pinctrl_gpio_direction_input;
- 	gc->direction_output = cy8c95x0_gpio_direction_output;
- 	gc->get = cy8c95x0_gpio_get_value;
- 	gc->set = cy8c95x0_gpio_set_value;
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ }
+ 
+ /* PLGPIO IRQ */
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
+index 88e39f68ef25..7beed57d665a 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
+@@ -923,7 +923,7 @@ static int starfive_gpio_request(struct gpio_chip *gc, unsigned int gpio)
+ 
+ static void starfive_gpio_free(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	pinctrl_gpio_free_new(gc, gpio);
++	pinctrl_gpio_free(gc, gpio);
+ }
+ 
+ static int starfive_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+index c458c6fb992f..695c8c0a6e8b 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+@@ -552,7 +552,7 @@ static int jh7110_gpio_request(struct gpio_chip *gc, unsigned int gpio)
+ 
+ static void jh7110_gpio_free(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	pinctrl_gpio_free_new(gc, gpio);
++	pinctrl_gpio_free(gc, gpio);
+ }
+ 
+ static int jh7110_gpio_get_direction(struct gpio_chip *gc,
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index dddbdc1a64c5..e4453fa58f9e 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -222,7 +222,7 @@ static int stm32_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 
+ static void stm32_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+-	pinctrl_gpio_free_new(chip, offset);
++	pinctrl_gpio_free(chip, offset);
+ }
+ 
+ static int stm32_gpio_get(struct gpio_chip *chip, unsigned offset)
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index 05b2dae05f24..55b465edaff1 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -28,7 +28,7 @@ struct pinctrl_state;
+ /* External interface to pin control */
+ bool pinctrl_gpio_can_use_line(struct gpio_chip *gc, unsigned int offset);
+ int pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset);
+-void pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset);
++void pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset);
+ int pinctrl_gpio_direction_input_new(struct gpio_chip *gc,
+ 				     unsigned int offset);
+ int pinctrl_gpio_direction_output_new(struct gpio_chip *gc,
+@@ -80,7 +80,7 @@ pinctrl_gpio_request(struct gpio_chip *gc, unsigned int offset)
+ }
+ 
+ static inline void
+-pinctrl_gpio_free_new(struct gpio_chip *gc, unsigned int offset)
++pinctrl_gpio_free(struct gpio_chip *gc, unsigned int offset)
+ {
+ }
+ 
 -- 
 2.39.2
 
