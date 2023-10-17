@@ -2,68 +2,65 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227F5CDB474
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23738CDB483
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 12:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234890AbjJQMFD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Oct 2023 08:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60700 "EHLO
+        id S234893AbjJQMFG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Oct 2023 08:05:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234893AbjJQMFC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 08:05:02 -0400
+        with ESMTP id S234836AbjJQME7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 08:04:59 -0400
 Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B78109
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:00 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c5087d19a6so52211931fa.0
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:05:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13AEAB0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:04:57 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2bfed7c4e6dso69720661fa.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2023 05:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544298; x=1698149098; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1697544295; x=1698149095; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oKklGkxfnAqinncSlSkchK2k3CX/0axnYu/+hfRNakU=;
-        b=WSnxP7xBtD730Xep5nlPEijSvGnZHzTpNPlq1MNrfg/rm0sjZontk9k3cTBmDrGXHZ
-         dg2okQU4obug0GHkGppX87hjISVsb29oegkbjOxRSJ5IFPNim0kFtbW0tGknQwYPpopo
-         JrWKLBNuhVzck+wLPaHBL5PLNBCtlEZBC+FF/6AfaZMW1+JNIF7/26StgxvHvViqBECl
-         wFG9jlRUeZiu2OdcYqCTBYSzULmlbCZy6LdXB/aFCNJpPo+oXMyBARmKZcowQBNteDiP
-         nY5kxwsghCp1wn1NGbzSGdQxH9crdB8NNaFx8DewLQmwUf86I3xt9OgpXHQK0ZrL08V7
-         ZKDw==
+        bh=H58FBovONkBFAtGhn37zN4A9drmVE/E2kcDVb0X5d1o=;
+        b=fX6d6qEdmAsmceVcSpA7mQ7qD+xAzTnz9mQ8KUMGvXzR/Ipmzboud/6TS+ddyZqoos
+         t2iiclvUWhgasFMv/tkzsI5GqSU0l4IfXTL+JNDFKj2lcPOAJT1HeNW4oAwrogYM/4c+
+         yT8zw08FMi83BAflBF+SrmDwKYR+l9VmUyz2ikInkdJ2rWUR9STPMCYQfnm1WpUHJxIW
+         qN/1V1n3XYg24fWI9ieVSbs8yErODyfnKeTwer1EK/IDvbr8ELXWST733fIrgijHZtNR
+         ObcyEkiWljy8aqEj34ue3x3WP0u1e4HXXlutwATG+h3s2XGoUAZ1v2hKaqPfJwrfEhzH
+         yRoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697544298; x=1698149098;
+        d=1e100.net; s=20230601; t=1697544295; x=1698149095;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oKklGkxfnAqinncSlSkchK2k3CX/0axnYu/+hfRNakU=;
-        b=MuvA9cUNOqpTkLgdrNoD4LHvh8vHvYas43oAg95HJf3tEXEJyO8/PBlo+7a+eM6sUu
-         LtGhJiFI1YagIxEspiJlbqzvibDytoXj8vwLIYsmBTi9MBCIwkB5tLhR3nNeuhz0uOYV
-         aOa4yWYJUsolzHnKCHWM7A/k9x6DSNMuHy3VEh/7kywtqH1SUXq1xQIXaeFD5apzXHpo
-         Y/KFfP8xpu+pfroxZSMXxm6GChvO1xL5KhqDjsyMFJ/B/AzMEqPnfv07UazTD/VVIfUD
-         +25h73U3m1rgMvH3IKvdKkXKKMxH3cT8I/YAsKHz0W1BSn+7WHUo9csClcw5fKr3+VfF
-         sT6A==
-X-Gm-Message-State: AOJu0YxPR08wHP4l3KPpTCclhMOdy9K4e0Q5ybMDx1uHT1YUI/rBIZQ0
-        Zc7kzbbOvpI/+/UntgtvzYELqw==
-X-Google-Smtp-Source: AGHT+IFIoEycxqJm+0fa4YLHQ/Skq1X8nEXW95SRXywJZA6ysN644CwjpjhTVM4ZoIxEBTIIkDY6cA==
-X-Received: by 2002:a2e:7e0b:0:b0:2bc:efa4:2c32 with SMTP id z11-20020a2e7e0b000000b002bcefa42c32mr1382001ljc.37.1697544298531;
-        Tue, 17 Oct 2023 05:04:58 -0700 (PDT)
+        bh=H58FBovONkBFAtGhn37zN4A9drmVE/E2kcDVb0X5d1o=;
+        b=FdDxWUPsb1cA3gs+elwgM2D6J7GUiYhrGmoT/GxPnibxcUYL4vtrKc1zSeyyWlKKW0
+         0MVcmaPgASCHNZSl/tnAi9661YDeUrdaJYo5e5NxGNTprjYBxqGdJKz2sHkcbHhfxnig
+         BrSIH07bSDOhyjQIPDgeKxZo0vyzTxrng0F4YlVkyVNnD+eSJCeknE0b40mm4ftw4QhD
+         Nd+ahBh6Fpp0Ea50DvSEe3bbUlHhCj/4fD5Y/Jq0k1C2qfP9uvjC0D26fRt1ooyhX/2/
+         3zuyUmsE34QyA4+RPifWVah0Pu0s5j3y/3y3rn4fZITME8qn2lwCKuCz+zQe/weoksVc
+         sAhg==
+X-Gm-Message-State: AOJu0YyV018Ix1qhHemcCrlpIGY5Z9g0kYvEXfXrVxVFnvs4KqmPuJEB
+        yDMAd7g3lL2pBfbgi8Gj/OqlBiUCxzvf9lzjvUw=
+X-Google-Smtp-Source: AGHT+IG2o2TVreK+sIzBOu5Lvk/VaxgdmDKdcIm9WFJlnrjvvhxD0ilbK3saJQYIFzZIHRUVNO22rQ==
+X-Received: by 2002:a2e:9396:0:b0:2c5:275b:c5fc with SMTP id g22-20020a2e9396000000b002c5275bc5fcmr1585322ljh.0.1697544295299;
+        Tue, 17 Oct 2023 05:04:55 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f1ee:b000:ce90:ed14])
-        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.04.56
+        by smtp.gmail.com with ESMTPSA id a2-20020a05600c224200b00405442edc69sm1353859wmm.14.2023.10.17.05.04.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 05:04:57 -0700 (PDT)
+        Tue, 17 Oct 2023 05:04:54 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH v3 09/73] gpio: mvebu: use new pinctrl GPIO helpers
-Date:   Tue, 17 Oct 2023 14:03:27 +0200
-Message-Id: <20231017120431.68847-10-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v3 07/73] gpio: em: use new pinctrl GPIO helpers
+Date:   Tue, 17 Oct 2023 14:03:25 +0200
+Message-Id: <20231017120431.68847-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231017120431.68847-1-brgl@bgdev.pl>
 References: <20231017120431.68847-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -76,33 +73,29 @@ with the improved variants that instead take a pointer to the GPIO chip
 and the controller-relative offset.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpio/gpio-mvebu.c | 4 ++--
+ drivers/gpio/gpio-em.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index e5f2c2d2a721..c0ca0aa7b5cd 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -346,7 +346,7 @@ static int mvebu_gpio_direction_input(struct gpio_chip *chip, unsigned int pin)
- 	 * Check with the pinctrl driver whether this pin is usable as
- 	 * an input GPIO
- 	 */
--	ret = pinctrl_gpio_direction_input(chip->base + pin);
-+	ret = pinctrl_gpio_direction_input_new(chip, pin);
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index 858e6ebbb584..35c65ff43f71 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -229,12 +229,12 @@ static int em_gio_to_irq(struct gpio_chip *chip, unsigned offset)
  
-@@ -366,7 +366,7 @@ static int mvebu_gpio_direction_output(struct gpio_chip *chip, unsigned int pin,
- 	 * Check with the pinctrl driver whether this pin is usable as
- 	 * an output GPIO
- 	 */
--	ret = pinctrl_gpio_direction_output(chip->base + pin);
-+	ret = pinctrl_gpio_direction_output_new(chip, pin);
- 	if (ret)
- 		return ret;
+ static int em_gio_request(struct gpio_chip *chip, unsigned offset)
+ {
+-	return pinctrl_gpio_request(chip->base + offset);
++	return pinctrl_gpio_request_new(chip, offset);
+ }
  
+ static void em_gio_free(struct gpio_chip *chip, unsigned offset)
+ {
+-	pinctrl_gpio_free(chip->base + offset);
++	pinctrl_gpio_free_new(chip, offset);
+ 
+ 	/* Set the GPIO as an input to ensure that the next GPIO request won't
+ 	* drive the GPIO pin as an output.
 -- 
 2.39.2
 
