@@ -2,179 +2,298 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0BFCDB474
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Oct 2023 21:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B692ACDB47E
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Oct 2023 03:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234836AbjJQVnH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Oct 2023 17:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51494 "EHLO
+        id S229456AbjJRD03 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Oct 2023 23:26:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234700AbjJQVnG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 17:43:06 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506B3A4;
-        Tue, 17 Oct 2023 14:43:05 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1c8a1541233so39817285ad.1;
-        Tue, 17 Oct 2023 14:43:05 -0700 (PDT)
+        with ESMTP id S229448AbjJRD02 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2023 23:26:28 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46E3BA;
+        Tue, 17 Oct 2023 20:26:26 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1bf55a81eeaso43598565ad.0;
+        Tue, 17 Oct 2023 20:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697578985; x=1698183785; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8dHnHcRYCyxOwL9km7OBsoO20JO5i0CEOmfOPByDKD4=;
-        b=FZVX8TgO+gFhqhyE31UL4Ln6ZtJK6hru3MDr1WyFUk/BektUohS5M5wK2pfkbWYI0A
-         CeLiYjJlKOQVce/kcR0F2OPN+0db5h7rq6MMrVunbR/wRZM9O3rNndZEsse748VFaXLS
-         Kmp6efMPowaTj32pXiMKSUKjOyh4FMqmgVJkkCRrF2eL5hWNVelvi2OGWaTKw2oW2CgK
-         nCFowQQQeCGTKBU9MCjk0SbFzHz+ny/Z02S23O3Jp0fN9dTi/wJ1YCA4J9dgOI2G1Hob
-         YrHnTBRVDgwb9FohSaNx050gC6r2cScfqAdEuaD1hr0ZTWk0V3Hij3qIFkLyPtM8+OHp
-         Hqxw==
+        d=gmail.com; s=20230601; t=1697599586; x=1698204386; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PHviYvEcpPmVkvkxsXVgEvF0IjYVpOyRZvIZTPHvuAc=;
+        b=R0qQdZqwIgH9z/5NaNp0aLzqkLlX3Tr1WmKY0mW2oyg8BsqAlOpI9Wp1uUbBazaSlh
+         3bXUaAgfw2ZBMWZPQ+O/o7Q5ZkjxlxTj8v8d/Gf7zPr1PRvk7U2L3+i+xjYLVEnq8YMs
+         GcNcM0kkYYlAXRmmF7BxCWORMyejgNZDRLAcoPy9NA+mWgUI3I9Q5TSN+b6LgIkZJqYd
+         yTiutZWD/9vvdIouXB0vVbATCj/fkoXotA/ZhK/3xC6dhFzq5nOipWOFCnaa+JUyBHuk
+         HdHH6MDbOwXbyFVOgX9xc3+oYsYLIKiAdfDoDyoInYao3pZhcpNIaPJGCNnNf620VEtU
+         nijQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697578985; x=1698183785;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1697599586; x=1698204386;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dHnHcRYCyxOwL9km7OBsoO20JO5i0CEOmfOPByDKD4=;
-        b=WROz8BBF/HAoz09BVHrYtqqk0EcB2dVqyz3YOIN6xqYKD1H5kTOmYiXP6WK5QP5BV9
-         quOataX2L7iindHZCXkBj+NSo2/6Qaty+3fsjlPCrjqQASmjIHCD21AnuETqW2gd1h57
-         SmNoV4zWur/HVIWnghK1eKydPMpzjmd6rG/PTaeneuSh3Y9aoh7z+c66gp9Xkb89Jm1e
-         8iKnWyt2atYhd8XjM26ND6Ey9pKbw5ASfZc4R3L3kRlla37QAyOCW6zVtQheSbyFMfK7
-         d0QIKQtSGk7yVOr5Ou/KWGGfLhMVS3IHSZDF+7q4KHQBQ+rpgMNiM92H2AQW5q9/ZIg9
-         IYVQ==
-X-Gm-Message-State: AOJu0Yx1nRjguAYgycqaci8VbDkjCLBTTKmxGaruBGEwaKO+Fp+GuFf7
-        zXHdOLrOIOXOj68Ww+CguJk=
-X-Google-Smtp-Source: AGHT+IG3MaueZJOcSd9/Qf9yVIw77h0m8YlthYHtTQm5ylSL2Cb8EOaxmwEteoKK1M643tGGfACZOw==
-X-Received: by 2002:a17:902:d509:b0:1c9:b2c1:13a3 with SMTP id b9-20020a170902d50900b001c9b2c113a3mr3956209plg.49.1697578984492;
-        Tue, 17 Oct 2023 14:43:04 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:4b12:90d7:131f:fbd2])
-        by smtp.gmail.com with ESMTPSA id c13-20020a170902d48d00b001c7453fae33sm2040332plg.280.2023.10.17.14.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Oct 2023 14:43:04 -0700 (PDT)
-Date:   Tue, 17 Oct 2023 14:43:01 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ferry Toth <ftoth@exalondelft.nl>
-Subject: Re: [PATCH v1 1/1] Revert "pinctrl: avoid unsafe code pattern in
- find_pinctrl()"
-Message-ID: <ZS7_5VGvRnw99gzd@google.com>
-References: <20231017141806.535191-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdbHJHsgJ=3pYveP-x-Vuwwf3ib6TnFOt3UpCrKevf=d1w@mail.gmail.com>
- <ZS7TuodhwNxU9Ez6@smile.fi.intel.com>
- <CACRpkdZfzq81SZnEpB_Acp_=8Xc2TEMNi8yS_j4wNBcQKXgrgg@mail.gmail.com>
- <ZS7kY/+80Be4geGM@smile.fi.intel.com>
+        bh=PHviYvEcpPmVkvkxsXVgEvF0IjYVpOyRZvIZTPHvuAc=;
+        b=gz1XqWpQT1rwfdQhndJkCxuqFrBdjLF8aQpfpkwqpVv7lyKcSn+OHtdhng5vxNgjIz
+         WqDc1CxtoDZlHisO5SlEfh+lZXtmKi+t8CCLFzvOc3oNEbpBvpYnva8ANqIvlS4LuhYH
+         GAMfX7TWy/bJafgHuJL0rWNQz2pB3YKnci0fRRq4dkAQwkAgeTCV3ZQ/dnfl0SWuuA5j
+         CSNswJvntmLBq3zs1uQhxK0UD7aB0KZkgUY+eOwGHk5q5LVffibkfTirzIjNd7WMBzie
+         kIbrps3ifJldlLYL2nQ9bBRplywJQ65HeRJYr+HNECgjWwUAuexydx/vUYxm0akYCufK
+         20rw==
+X-Gm-Message-State: AOJu0YyWsP7Ydh4Hi45gPn58LaD+kWb/Q3iFSutaSid8AXVLGZ3PfYoY
+        s1xYCreJ7yXWEWOyDdNUdLOQ/RW8QMI=
+X-Google-Smtp-Source: AGHT+IFw85MD3M6uPf/yTnwSEICiOIUnNEgW2hmGP7tvPfmUGI+pJ+r5CWuCD+qsBdx+/YR8e9yRsg==
+X-Received: by 2002:a17:902:c649:b0:1c4:4462:f1bd with SMTP id s9-20020a170902c64900b001c44462f1bdmr3340196pls.35.1697599586067;
+        Tue, 17 Oct 2023 20:26:26 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 20-20020a170902c25400b001c9b70609e8sm2336469plg.256.2023.10.17.20.26.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Oct 2023 20:26:25 -0700 (PDT)
+Message-ID: <8e983479-709f-4ec8-85e2-c46a5256a2ec@gmail.com>
+Date:   Wed, 18 Oct 2023 11:26:21 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: pinctrl: Document nuvoton ma35d1 pin
+ control
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        p.zabel@pengutronix.de, j.neuschaefer@gmx.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
+References: <20231011090510.114476-1-ychuang570808@gmail.com>
+ <20231011090510.114476-3-ychuang570808@gmail.com>
+ <7800b2d6-33c4-4c4f-8d0c-c11ff0e47535@linaro.org>
+ <17a80031-98bf-48bf-8cea-c0ca4400f142@gmail.com>
+ <254837e5-a0fa-4796-8928-277db4b98bf1@linaro.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <254837e5-a0fa-4796-8928-277db4b98bf1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZS7kY/+80Be4geGM@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+Dear Krzysztof,
 
-On Tue, Oct 17, 2023 at 10:45:39PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 17, 2023 at 08:59:05PM +0200, Linus Walleij wrote:
-> > On Tue, Oct 17, 2023 at 8:34 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Tue, Oct 17, 2023 at 08:18:23PM +0200, Linus Walleij wrote:
-> > 
-> > > > In the past some file system developers have told us (Ulf will know)
-> > > > that we can't rely on the block device enumeration to identify
-> > > > devices, and requires that we use things such as sysfs or the
-> > > > UUID volume label in ext4 to identify storage.
-> > >
-> > > While I technically might agree with you, this was working for everybody
-> > > since day 1 of support of Intel Merrifield added (circa v4.8), now _user
-> > > space_ is broken.
-> > 
-> > Actually, I don't agree with that, just relaying it. I would prefer that we
-> > solve exactly the problem that we are facing here: some random unrelated
-> > code or similar affecting enumeration order of mmc devices.
+Thank you for the review.
 
-Sorry, but the era of static configuration where one has a well defined
-order in which things are probed and numbered has long gone. The right
-answer is either device aliases that provides stable numbering on a
-board that is not dependent on scheduler behavior, mutexes
-implementation (how they deal with writer starvation, etc),
-kernel/driver/subsystem linking order and myriad other things, or
-mounting by UUID. The kernel does not provide any guarantees on the
-stability of device probe and instantiation order.
 
-If you think about it it is the same issue as legacy GPIO numbering.
-It was convenient some time ago, but now it is no longer suitable or
-sufficient and could change when kernel is uprevved.
+On 2023/10/17 上午 03:52, Krzysztof Kozlowski wrote:
+> On 16/10/2023 06:32, Jacky Huang wrote:
+>>>> +  '#size-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  nuvoton,sys:
+>>>> +    description:
+>>>> +      phandle to the syscon node
+>>> sys is quite generic. Description explains nothing except duplicating
+>>> known information. Drop duplicated info and instead explain to what this
+>>> phandle points and how it is going to be used.
+> Read comments carefully.
 
-> > 
-> > It's not the first time it happens to me, I have several devices that change
-> > this enumeration order depending on whether an SD card is plugged
-> > in or not, and in a *BIG* way: the boot partition on the soldered eMMC
-> > changes enumeration depending on whether an SD card is inserted
-> > or not, and that has never been fixed (because above).
-> 
-> This is not the problem I have. I haven't added any SD card, hardware
-> configuration is the same. The solely difference in the whole setup is
-> this revert applied or not.
 
-Yes, I guess there is a contention on this mutex and the fact that we
-are now taking it once and not twice makes difference in which probes
-happen. If you look at the logs, you will see that even before the patch
-controllers did not enumerate on the order of PCI functions:
+I will update the description of 'nuvoton,sys'.
 
-[   36.439057] mmc0: SDHCI controller on PCI [0000:00:01.0] using ADMA
-[   36.450924] mmc2: SDHCI controller on PCI [0000:00:01.3] using ADMA
-[   36.459355] mmc1: SDHCI controller on PCI [0000:00:01.2] using ADMA
+>
+>>>
+>>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>>> +    items:
+>>>> +      maxItems: 1
+>>> So just phandle, not phandle-array, unless it is defined like this in
+>>> some other binding.
+>> I would like to update this as:
+>>
+>>     nuvoton,sys:
+> Nothing improved.
 
-So you have mmc2 instantiated before mmc1 even before the patch. This
-happens because we now have
+Here just fix  the 'phandle-array' to 'phandle' and remove 'maxItems'.
 
-		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+>>       $ref: /schemas/types.yaml#/definitions/phandle
+>>       description:
+>>         Help pinctrl driver to access system registers by means of regmap.
+> Driver is not relevant here. Say which part of syscon are necessary for
+> pinctrl operation.
+>
 
-in sdhci_driver structure in drivers/mmc/host/sdhci-pci-core.c. It just
-happened that even with asynchronous probing your storage did end up on
-mmc0 originally and you were happy.
+I will update description as:
 
-I wonder, could you please post entire dmesg for your system?
+   nuvoton,sys:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       The pin function control registers are located in the system
+       control register space. This phandle provides pinctrl the
+       ability to access the pin function control registers through
+       the use of regmap.
 
-> 
-> > > > That said, device trees are full of stuff like this:
-> > > >
-> > > >         aliases {
-> > > >                 serial0 = &uart_AO;
-> > > >                 mmc0 = &sd_card_slot;
-> > > >                 mmc1 = &sdhc;
-> > > >         };
-> > >
-> > > And Rob, AFAIU, is against aliases.
 
-Rob might not want them, but they are the reality and are present for
-multiple classes of devices and I believe are here to stay.
+>>
+>>
+>>>> +
+>>>> +  ranges: true
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: pinctrl.yaml#
+>>> allOf: goes after required: block.
+>> I will fix it.
+>>
+>>>> +
+>>>> +patternProperties:
+>>>> +  "gpio[a-n]@[0-9a-f]+$":
+>>> ^gpio@[0-9a-f]+$":
+>> I will fix this, and also fix the dtsi.
+>>
+>>>> +    type: object
+>>>> +    additionalProperties: false
+>>>> +    properties:
+>>>> +
+>>> Drop blank line
+>> I will fix it.
+>>
+>>>> +      gpio-controller: true
+>>>> +
+>>>> +      '#gpio-cells':
+>>>> +        const: 2
+>>>> +
+>>>> +      reg:
+>>>> +        maxItems: 1
+>>>> +
+>>>> +      clocks:
+>>>> +        maxItems: 1
+>>>> +
+>>>> +      interrupt-controller: true
+>>>> +
+>>>> +      '#interrupt-cells':
+>>>> +        const: 2
+>>>> +
+>>>> +      interrupts:
+>>>> +        description:
+>>>> +          The interrupt outputs to sysirq.
+>>>> +        maxItems: 1
+>>>> +
+>>>> +    required:
+>>>> +      - reg
+>>>> +      - interrupts
+>>>> +      - interrupt-controller
+>>>> +      - '#interrupt-cells'
+>>>> +      - gpio-controller
+>>>> +      - '#gpio-cells'
+>>> Keep the same order as in list of properties.
+>> I will fix the order.
+>>
+>>>> +
+>>>> +  "pcfg-[a-z0-9-.]+$":
+>>> Why using different naming than other Nuvoton SoCs? You also accept
+>>> "foobarpcfg-1", which does not look intentional.
+>>>
+>> I will use '"^pin-[a-z0-9-.]+$" instead.
+> [.] is redundant... What exactly do you want to match?
 
-> > >
-> > > > Notice how this enumeration gets defined by the aliases.
-> > > >
-> > > > Can you do the same with device properties? (If anyone can
-> > > > answer that question it's Dmitry!)
-> > >
-> > > No, and why should we?
-> > 
-> > Because device properties are not device tree, they are just some
-> > Linux thing so we can do whatever we want. Just checking if
-> > Dmitry has some idea that would solve this for good, he usually
-> > replies quickly.
-> 
-> OK.
+I want to match the name like "-1.8v" or "-3.3v".
+However, this should be specified in the property, so I will drop the "-.".
 
-I think the right answer is "fix the userspace" really in this case. We
-could also try extend of_alias_get_id() to see if we could pass some
-preferred numbering on x86. But this will again be fragile if the
-knowledge resides in the driver and is not tied to a particular board
-(as it is in DT case): there could be multiple controllers, things will
-be shifting board to board...
 
-Thanks.
+>>
+>>>> +    type: object
+>>>> +    description:
+>>>> +      A pinctrl node should contain at least one subnodes representing the
+>>>> +      pinctrl groups available on the machine. Each subnode will list the
+>>>> +      pins it needs, and how they should be configured, with regard to muxer
+>>>> +      configuration, pullups, drive strength, input enable/disable and input
+>>>> +      schmitt.
+>>>> +
+>>>> +    allOf:
+>>>> +      - $ref: pincfg-node.yaml#
+>>> missing additional/unevaluatedProperties: false.
+>> I will add unevaluatedProperties: false.
+>>
+>>>> +
+>>>> +    properties:
+>>>> +      bias-disable: true
+>>> Why do you need this and other ones?
+>> We expect the pin configuration to select one of ==>
+>> bias-disable;
+>> bias-pull-down;
+>> bias-pull-up;
+>>
+>> This is the same as rockchip,pinctrl.yaml and renesas,rzv2m-pinctrl.yaml.
+> OK, then go with nuvoton approach. List the properties (:true) and use
+> additionalProperties: false.
 
--- 
-Dmitry
+I got it.
+
+>>>> +
+>>>> +      bias-pull-down: true
+>>>> +
+>>>> +      bias-pull-up: true
+>>>> +
+>>>> +      drive-strength:
+>>>> +        minimum: 0
+>>> 0 mA? Is it really valid? Are you sure you used correct property?
+>> We treat this value as the value to be written to the control register,
+>> not as
+>> a current value in mA. I will correct this mistake.
+> Instead treat it as mA. Is this possible?
+
+I will update it as:
+
+       drive-strength-microamp:
+         oneOf:
+           - enum: [ 2900, 4400, 5800, 7300, 8600, 10100, 11500, 13000 ]
+             description: 1.8V I/O driving strength
+           - enum: [ 17100, 25600, 34100, 42800, 48000, 56000, 77000, 
+82000 ]
+             description: 3.3V I/O driving strength
+
+And use a lookup table in the pinctrl driver to translate it into 
+register value.
+
+
+>>>> +        maximum: 7
+>>>> +
+>>>> +      input-enable: true
+>>>> +
+>>>> +      input-schmitt-enable: true
+>>>> +
+>>>> +      power-source:
+>>>> +        description:
+>>>> +          I/O voltage in millivolt.
+>>>> +        enum: [ 1800, 3300 ]
+>>> Missing units in property name. power-source also does not really
+>>> describe the property.
+>>
+>> The output voltage level of GPIO can be configured as 1.8V or 3.3V,
+>> but I cannot find any suitable output properties in 'pincfg-node.yaml.'
+> There is actually power-source, but treated as actual choice of power
+> supplies.
+>
+>> I noticed that 'xlnx,zynq-pinctrl.yaml' and 'xlnx,zynq-pinctrl.yaml' use
+>> 'power source' to specify the output voltage.  Should I follow their
+>> approach or define a vendor-specific one?
+> Maybe Rob or Linus have here some recommendation, but I would suggest to
+> go either with rtd1319d-pinctrl.yaml approach or add a generic property
+> to pincfg-node expressed in real units like "io-microvolt".
+
+OK, I will update it as:
+
+       power-source:
+         description: |
+           Valid arguments are described as below:
+           0: power supply of 1.8V
+           1: power supply of 3.3V
+         enum: [0, 1]
+
+
+> Rob, Linus, any ideas for generic property replacing register-specific
+> power-source?
+>
+>
+> Best regards,
+> Krzysztof
+>
+
+Best Regards,
+Jacky Huang
+
