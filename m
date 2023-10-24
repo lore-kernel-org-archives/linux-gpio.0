@@ -2,120 +2,154 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CCDC00A8F
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Oct 2023 13:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EB8C07545
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Oct 2023 13:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbjJXNNG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Oct 2023 09:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34412 "EHLO
+        id S234097AbjJXNbJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Oct 2023 09:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231951AbjJXNNG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Oct 2023 09:13:06 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14B0CC
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Oct 2023 06:13:03 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-d84c24a810dso3959958276.2
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Oct 2023 06:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698153183; x=1698757983; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DxhEyjBJFg+nNZl60fRB3lLtFYlPjJhwsqt5NZemaGg=;
-        b=RpCMjppHRRvki1+EhUXQE1hk3PhN2xBMEc90YbZT47xFduEYB/RplO1yzh+5W5JXxW
-         cfd7Imak4NFCbsfivqgrRFY2EzoO6ucpXYbQtEwBew8oJxI7zT659Cb/FdV6OUL7gsN3
-         Vj/CzTN7CDkY3yONNnB9cDMzBlYkZ6Tr2CwhAd1gfx6JQJaLX9acYrR8al747t5akHhC
-         as5o9ejjpvkR2QMbBYty6DUIkdnFSLP4eX/uaVvSe9OS889p8cAF50oUeKAPHl9gHu/z
-         ZnYml3FrYmE0uanPZDc7feKSNl8ZOBF89+HTMzaAkMfTiSAJRfuNdG+RhLkep5NNPz7K
-         nM6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698153183; x=1698757983;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DxhEyjBJFg+nNZl60fRB3lLtFYlPjJhwsqt5NZemaGg=;
-        b=HCNBLdnvq+Km7PyBtFxdfIq6+chaf5ZyGFyzB+R9WeeJ+xYiOw0lPsGR7PA7FgWnbZ
-         rtGo5hToHC62+3ArUa9tBJef7HLiAtzsN8zkYlqjJbrJAXconbTUqklX6sS/mGPeGjiz
-         cNYkyZD/sh1Mdk/P13P2Gx/je3Pa8DvXOon92JR8tR8XOQvcfUMh64K/ipUDT0UUbWJo
-         4+7Z0jXrfEmapxzewuE4Vk80ghag2FVK6LpE4H3SDyGZG0t0Q2KOjAPUAxS/8FSx6ASu
-         32xvrhjYIN2Tl6idkpxsPTvZygXgHnGRSPU6y7AJKdZ2dB3yUhhAjNr3+lDHrGl69qoZ
-         LiiQ==
-X-Gm-Message-State: AOJu0YxbcTvqCDjx587RuggTXAVkwXRYcNVyCL2yi45Q+DuksE2VIV3v
-        6TSARxByLkybla5hn4eru7oNKQHU5LX93KQV5Azxsw==
-X-Google-Smtp-Source: AGHT+IErrrJZqHr9Mi8c9Lwy4ZFjFvA+JxkTdG5/38hd7daxCpYKkX6EQ4emeikgVsqQo7An76DCm1JB7nJUvPuC/IU=
-X-Received: by 2002:a25:dc52:0:b0:da0:4bda:dc41 with SMTP id
- y79-20020a25dc52000000b00da04bdadc41mr1112835ybe.37.1698153182803; Tue, 24
- Oct 2023 06:13:02 -0700 (PDT)
+        with ESMTP id S232073AbjJXNbI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Oct 2023 09:31:08 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832D56EA0;
+        Tue, 24 Oct 2023 06:31:05 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39OCrOwg026883;
+        Tue, 24 Oct 2023 13:30:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=3ghYYP6Zkll1M7e2fyWbrRlDpTUtu0CKI3Q54WrKXIk=;
+ b=DOGTk+WMeTzIasGQtIyOSbgxYNOHEF91E1d0CktNttmWksjzp5Xr357rbR+1MXT1ohs1
+ fVdrWkUCsBTOFmpU67pqGJRTkwV186zUXcQOl2frRdZuAAOZwD1N7L5B0/TFjHkoIfKi
+ F0LKiBHaUnGPVTPO2/+eoUQX3pZ0wsk2/iUtH73MdzKV4ehoJEMtUr5VUkX/bd4oCOR+
+ /gXTAppZl6mKB2O7tu6Zbtzkzi8KK+qrvy5MO+a7dSCZAhRPVQcowS1AaK5wdu4ra3XJ
+ v2R2LqsCaP/xGNV/IGeuopSggAVuMYgPeC/0zFwvKXD8mg1h/O7wG1vWuNSiH838NI+l Fw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3tx7r80utw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Oct 2023 13:30:56 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39ODUt0B005792
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Oct 2023 13:30:55 GMT
+Received: from [10.216.17.94] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Tue, 24 Oct
+ 2023 06:30:52 -0700
+Message-ID: <f3a4c114-b430-47ce-a746-4a840994dc58@quicinc.com>
+Date:   Tue, 24 Oct 2023 18:59:35 +0530
 MIME-Version: 1.0
-References: <20231005025843.508689-1-takahiro.akashi@linaro.org>
- <20231005025843.508689-6-takahiro.akashi@linaro.org> <20231006132346.GA3426353-robh@kernel.org>
- <CACRpkdaLsfSBEG-h9ZNT2_Lm8tW8AZO7tedDVNeuZoQAqSkyjw@mail.gmail.com>
- <ZSTgTC4cFFpofYAk@octopus> <CACRpkdYD6pkccYoy90AfzV3KT7oYkBPD2_4ZW-AXzT1eUVpchA@mail.gmail.com>
- <ZS3yK/f12Mxw9rXe@octopus> <CACRpkdarDrVkPmyDawhZ+H94S4F=dtDSDVuKegi-eNfQNDY3rg@mail.gmail.com>
- <ZTduWx7CH1ifI5Uc@octopus> <CACRpkdba=echR=rZYKVbROfaOp4mzjTQ9RphHFyzqSNgE1jZqg@mail.gmail.com>
- <ZTemAK/jBtv9b5xP@octopus>
-In-Reply-To: <ZTemAK/jBtv9b5xP@octopus>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 24 Oct 2023 15:12:51 +0200
-Message-ID: <CACRpkdY-5uS9EeXfDFVOiRKiFmwwSn3jRVGhT-n4JMqesHEumw@mail.gmail.com>
-Subject: Re: [RFC v2 5/5] dt-bindings: gpio: Add bindings for pinctrl based
- generic gpio driver
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>, sudeep.holla@arm.com,
-        cristian.marussi@arm.com, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, Oleksii_Moisieiev@epam.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3 v7] Misc SCM changes
+Content-Language: en-US
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <p.zabel@pengutronix.de>, <linus.walleij@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1696440338-12561-1-git-send-email-quic_mojha@quicinc.com>
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <1696440338-12561-1-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cRb-B8lA7NFtoORQMLneK3lPI_Vf1rZf
+X-Proofpoint-GUID: cRb-B8lA7NFtoORQMLneK3lPI_Vf1rZf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-24_14,2023-10-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
+ clxscore=1011 priorityscore=1501 suspectscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310170001 definitions=main-2310240116
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 24, 2023 at 1:10=E2=80=AFPM AKASHI Takahiro
-<takahiro.akashi@linaro.org> wrote:
 
-> As far as I understand, there is only one way for SCMI gpio driver
-> to know which pins are actually GPIO pins; Calling PINCNTRL_CONFIG_GET
-> command with "Input-mode" or "Output-mode" configuration type
-> against *every* pin-controller's pins.
-> (Here I assume that the command would fail with INVALID_PARAMETERS or
-> NOT_SUPPORTED if configuring the given pin as a GPIO input or output
-> is not possible. But the specification seems to be a bit ambiguous.)
+On 10/4/2023 10:55 PM, Mukesh Ojha wrote:
+> I have given version to this series as v7 as it has already
+> gone through v6 and later got added to minidump patch series
+> However, these 3 patches can go independently and has no
+> relation with minidump hence, separated it from minidump series.
 
-As I also wrote in the reply to Christian, I expect the SCMI firmware
-to consider GPIO a function on the pins, and either individual pins
-(groups with just one pin in it) or entire groups of pins can be switched
-to perform the "gpio function". ("gpio function" is akin to "i2c function"
-or "HDMI function" etc.)
 
-If the SCMI protocol considers GPIO usage to be something else
-than a function of a pin, that is going to be a problem. Then the SCMI
-protocol need some other way of determining that the pin is in
-GPIO mode, and perhaps something would need to be added to
-the protocol for that.
+Mukesh, Can you rebase this series on top of linux-next, since there is 
+a conflict?
 
-The reason is that in practice a lot of hardware has to decouple
-the pin from any internal function in order to use it as GPIO, and
-connect it to the GPIO block that can drive the line high and low.
-And we don't select that as a function, how is the firmware going
-to know that it needs to do this? Implicitly from the call requesting
-the line to be output perhaps. But if the firmware can be altered
-to do that, the firmware can just as well be altered to present
-GPIO as a proper function.
 
-Using a function makes most sense, because the board firmware
-knows which pins are GPIO lines and what they are used for
-(such as a LED or camera flash) and at boot certainly put them
-into GPIO function and drive them high/low or set them as
-input (high impedance).
+Bjorn, after rebase is done, will you able to pick it up for v6.7 if 
+there is a time? These patches(#1  and #3) are required for the crash 
+dump collection on IPQ9574 and IPQ5332 SoCs.
 
-> It means that, if SCMI firmware has 100 pinctrl pins, the driver needs
-> to call the command 200 times in order to get the answer.
 
-I think we should only need to check which function each pin
-has and those that are in the GPIO function we put into the ranges.
-
-Yours,
-Linus Walleij
+>
+> Change from minidump-v5(13/17-15/17):https://lore.kernel.org/lkml/1694429639-21484-1-git-send-email-quic_mojha@quicinc.com/
+>   - Removed mistakenly added macros.
+>     https://lore.kernel.org/lkml/9da888dc-401a-4cbb-b616-b4654fa79e35@quicinc.com/
+>   - Added Acked-by tag from Linus.w to 2/3.
+>
+> Changes from dload series v6: https://lore.kernel.org/lkml/1680076012-10785-1-git-send-email-quic_mojha@quicinc.com/
+>   - Rebased it on latest tag available on linux-next
+>   - Added missed Poovendhan sign-off on 15/17 and tested-by tag from
+>     Kathiravan. Thanks to him for testing and reminding me of missing sign-off.
+>   - Addressed comments made on dload mode patch v6 version
+>
+> Changes in v6:
+>    - Applied suggested API change(at v4) by [dmitry.baryshkov]
+>
+> Changes in v5: https://lore.kernel.org/lkml/1680017869-22421-1-git-send-email-quic_mojha@quicinc.com/
+>    - Tried to fix the issue reported by kernel test robot
+>      https://lore.kernel.org/lkml/202303280535.acb66sQT-lkp@intel.com/
+>
+>    - Applied some of the improvement suggested by [Bjorn.andersson]
+>   
+>      . Dropped 'both' instead support full,mini or mini,full for setting download
+>      mode to collect both minidump and full dump.
+>      
+>      . logging improvement.
+>      
+>
+> Changes in v4: https://lore.kernel.org/lkml/1679935281-18445-1-git-send-email-quic_mojha@quicinc.com/
+>    - val should be shifted within the function [srinivas.kandagatla]
+>      i.e new = (old & ~mask) | (val << ffs(mask) - 1);
+>    - Added Acked-by [linus.walleij] on pinctrl change.
+>
+> Changes in v3 : https://lore.kernel.org/lkml/1679070482-8391-1-git-send-email-quic_mojha@quicinc.com/
+>   - Removed [1] from the series and sent as a separate patch[2], although this series
+>     should be applied on top [2].
+>    [1] https://lore.kernel.org/lkml/1677664555-30191-2-git-send-email-quic_mojha@quicinc.com/
+>    [2] https://lore.kernel.org/lkml/1678979666-551-1-git-send-email-quic_mojha@quicinc.com/
+>   - Introduce new exported symbol on suggestion from [srinivas.kandagatla]
+>   - Use the symbol from drivers/pinctrl/qcom/pinctrl-msm.c.
+>   - Addressed comment given by [dmitry.baryshkov]
+>   - Converted non-standard Originally-by to Signed-off-by.
+>
+> Changes in v2: https://lore.kernel.org/lkml/1677664555-30191-1-git-send-email-quic_mojha@quicinc.com/
+>   - Addressed comment made by [bjorn]
+>   - Added download mask.
+>   - Passed download mode as parameter
+>   - Accept human accepatable download mode string.
+>   - enable = !!dload_mode
+>   - Shifted module param callback to somewhere down in
+>     the file so that it no longer need to know the
+>     prototype of qcom_scm_set_download_mode()
+>   - updated commit text.
+>
+> Mukesh Ojha (3):
+>    firmware: qcom_scm: provide a read-modify-write function
+>    pinctrl: qcom: Use qcom_scm_io_update_field()
+>    firmware: scm: Modify only the download bits in TCSR register
+>
+>   drivers/firmware/qcom_scm.c            | 32 ++++++++++++++++++++++++++++++--
+>   drivers/pinctrl/qcom/pinctrl-msm.c     | 10 ++++------
+>   include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>   3 files changed, 36 insertions(+), 8 deletions(-)
+>
