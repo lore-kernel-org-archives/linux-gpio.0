@@ -2,92 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D2CC07545
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 13:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00920C0032E
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 15:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235046AbjJYNv4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
+        id S1343719AbjJYPBI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Oct 2023 11:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235056AbjJYNvy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 09:51:54 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78136183;
-        Wed, 25 Oct 2023 06:51:49 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39PDPwAc031410;
-        Wed, 25 Oct 2023 13:51:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=2puYTceWJ8DwCbWwt9w1wkUS6+QbFQPa4PwAzf59AP4=;
- b=jlzbVKNdtFQXt/jZXu9wAy9LJ4HM7IubviifZ8gO3UciuvmcMMzsev8qT5dL/S68eVbb
- WuSpwfKw8qTy2nRLu4IPggvMNPFp5uq7KVTVc8SIAVy9EUuV3kqUesTmEZ0uAmoybOqs
- obkZu4KGjDVs1ehI44sWxuLhgEmZFmeQS8sE8Iw2m/Tofmkt9gdZ3sWhSsEgHc9jxnpl
- BcTR8QdlEHUV7vs1N3iBHZ8wykd56bEYcQ+SSy2+IIoJCdrurvzi6Nay9eoa4kk7mdD+
- aUZDYxhf7sa4VS/o7IGfkOObCIgco7bfbTzdIg2RlH3nlH9NVV8JZtwudryFimQAFx7C 7w== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3txuj7h0bq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Oct 2023 13:51:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 39PDpIHS018394
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Oct 2023 13:51:18 GMT
-Received: from blr-ubuntu-87.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.39; Wed, 25 Oct 2023 06:51:12 -0700
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <agross@kernel.org>, <conor+dt@kernel.org>,
-        <quic_rjendra@quicinc.com>, <abel.vesa@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <quic_tsoni@quicinc.com>, <neil.armstrong@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH 0/2] pinctrl: qcom: Introduce Pinctrl/GPIO for SC8380XP
-Date:   Wed, 25 Oct 2023 19:20:56 +0530
-Message-ID: <20231025135058.11268-1-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S1344433AbjJYPBG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 11:01:06 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57711A2;
+        Wed, 25 Oct 2023 08:00:56 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E8F43C000F;
+        Wed, 25 Oct 2023 15:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1698246054;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yH7ih/sENBHheaY4sC23vjZWR5QPhO2FB5uDgGmBUEE=;
+        b=Q3kFInjh7UIlv2i9yjPV+QU4V85L5o5uVFoPjbdjL//6+E7uHPH6qKo6VtFDApky9mvBZR
+        DLu9NkXUD5OxfTo6itNQvOGypacNFCTLN9WVTaPz0FqcOhRwPMyGfxtOcSfDuL7/skp8vX
+        Xi0TkyJYpNrsUrKOLGJVtQuYOi+gWoYdjSS/UVjEa2e22L9HGWc4DrymLHD7I/JWSwkFqm
+        89zhexE6c2ltXbqig51XVG6K1DOiQZZDzAVHFzwstX5/KXfaw66BE90pcuR8wCZ76roTNp
+        RW+shC4dBtvTe/L6r6lvIDt4EzZod8+c2krxeBAs7QIBUwZpDZyN+x2UlhjNHw==
+Date:   Wed, 25 Oct 2023 17:00:51 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 00/30] Add support for QMC HDLC, framer
+ infrastructure and PEF2256 framer
+Message-ID: <20231025170051.27dc83ea@bootlin.com>
+In-Reply-To: <20231013164647.7855f09a@kernel.org>
+References: <20231011061437.64213-1-herve.codina@bootlin.com>
+        <20231013164647.7855f09a@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BvTMePDD64dfBC9_j67t2wQdLZAQryZ3
-X-Proofpoint-GUID: BvTMePDD64dfBC9_j67t2wQdLZAQryZ3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-25_02,2023-10-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- impostorscore=0 priorityscore=1501 mlxscore=0 adultscore=0 mlxlogscore=507
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310170001
- definitions=main-2310250120
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series adds pinctrl/gpio support for the Qualcomm SC8380XP platform, aka Snapdragon X Elite.
+Hi All, Maintainers
 
-Release Link: https://www.qualcomm.com/news/releases/2023/10/qualcomm-unleashes-snapdragon-x-elite--the-ai-super-charged-plat
+On Fri, 13 Oct 2023 16:46:47 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Rajendra Nayak (2):
-  dt-bindings: pinctrl: qcom: Add SC8380XP pinctrl
-  pinctrl: qcom: Add SC8380XP pinctrl driver
+> On Wed, 11 Oct 2023 08:14:04 +0200 Herve Codina wrote:
+> > Compare to the previous iteration
+> >   https://lore.kernel.org/linux-kernel/20230928070652.330429-1-herve.codina@bootlin.com/
+> > This v8 series:
+> >  - Fixes a race condition
+> >  - Uses menuconfig instead of menu and hides CONFIG_GENERIC_FRAMER
+> >  - Performs minor changes  
+> 
+> Which way will those patches go? Via some FSL SoC tree?
 
- .../bindings/pinctrl/qcom,sc8380xp-tlmm.yaml  |  143 ++
- drivers/pinctrl/qcom/Kconfig.msm              |   10 +
- drivers/pinctrl/qcom/Makefile                 |    1 +
- drivers/pinctrl/qcom/pinctrl-sc8380xp.c       | 1876 +++++++++++++++++
- 4 files changed, 2030 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc8380xp-tlmm.yaml
- create mode 100644 drivers/pinctrl/qcom/pinctrl-sc8380xp.c
+This series seems mature now.
+What is the plan next in order to have it applied ?
 
--- 
-2.17.1
+Don't hesitate to tell me if you prefer split series.
 
+Best regards,
+Hervé
