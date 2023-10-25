@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5525C0032E
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 18:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0B6C25B6B
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 18:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbjJYSue (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Oct 2023 14:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
+        id S234033AbjJYSuf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Oct 2023 14:50:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjJYSud (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 14:50:33 -0400
+        with ESMTP id S233950AbjJYSue (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 14:50:34 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D5F111;
-        Wed, 25 Oct 2023 11:50:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF78111;
+        Wed, 25 Oct 2023 11:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698259832; x=1729795832;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Tyuad4CLXZh+vdA2dSWx/kiizQs1zXdiTr0LZZF2EVE=;
-  b=Tavz6p3mOcXodSrlTzlQQsL7v68RUYygves+XyA5ItERHHw7N7UT8uVS
-   z/yv6ITjqkFqZrlKbw+G2oSY6HOE7F/o6nSPsnpvnYWZvdNZmVvcx05I6
-   wgsYJMRluRqcGjdtEjbnKNg7GA93eN5lhjbkjAcJ0IppcPDhKGJJcv3hn
-   QP5jXN9jdF+NFfWb7rCNf1fG/br5EHhv0mZ11FFpafxtiHDg9XCj9pZ+3
-   9Q/XVXLbEsXQYxQXBDHUwdlmak37vV0t2MjnLBEIrN6WISU79zZxgXk+6
-   JgDSOQnclibuPL+ImwRBzWZ1hR4SxbDBRrE0jmklTVmRLzzF8jysTSFUm
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="176167"
+  t=1698259833; x=1729795833;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=DsRoRBNKoqw/Cc7dTmkqie/fv1TrhPx6ZfTLpdADeQM=;
+  b=BQ+akP4gxHkswTNgcXluntrWQ/4GEekGAf0UhauyDzq+86J+BOZ7f5xx
+   CvN7Kk46z7OwnjKZQt14kzIZedifL+fvv6Xakpdlr1CbmXwIiu5ro+ec0
+   ZVhdPFO0L2tSlczybu9WEliKvKM46fHFwyVoOazZg7kicRNeZJHwmI+f5
+   5l5akgILpjSTayBEv7OdbAw465hLDAXUUpQXNzKrR9GyCKAjsUFOy9Olp
+   FendhJZV4N2HBqETUIRoi9QdOqTCU9BX8UhaCH0+M+zfRIbP/A+LMtwwz
+   mJDFOBDZWyoXLvv6rqB8ky5j/V4J8NiP5a4w8EvirplkhovBxXPbAPfiS
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="176173"
 X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
-   d="scan'208";a="176167"
+   d="scan'208";a="176173"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2023 11:50:31 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="902642575"
+X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="902642576"
 X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
-   d="scan'208";a="902642575"
+   d="scan'208";a="902642576"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga001.fm.intel.com with ESMTP; 25 Oct 2023 11:48:03 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C8283125; Wed, 25 Oct 2023 21:43:01 +0300 (EEST)
+        id EABB12F3; Wed, 25 Oct 2023 21:43:01 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,29 +53,71 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v1 0/3] gpio: mmio: Make driver agnostic
-Date:   Wed, 25 Oct 2023 21:42:56 +0300
-Message-Id: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] gpio: mmio: Clean up headers
+Date:   Wed, 25 Oct 2023 21:42:59 +0300
+Message-Id: <20231025184259.250588-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
+References: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Driver uses so far some OF APIs when generic fwnode ones can be used.
-Replace these APIs accordingly. Note, this will help to clean up OF
-headers even more.
+There is a few things done:
+- include only the headers we are direct user of
+- add missing headers
+- group generic headers and subsystem headers
+- sort each group alphabetically
 
-Andy Shevchenko (3):
-  device property: Implement device_is_big_endian()
-  gpio: mmio: Make use of device properties
-  gpio: mmio: Clean up headers
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-mmio.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
- drivers/gpio/gpio-mmio.c | 53 +++++++++++++++-------------------------
- include/linux/property.h | 26 ++++++++++++++++++++
- 2 files changed, 46 insertions(+), 33 deletions(-)
-
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 66308b165a0d..71e1af7c2184 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -40,24 +40,22 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+  *               `.......````.```
+  */
+ 
+-#include <linux/init.h>
+-#include <linux/err.h>
+-#include <linux/bug.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/spinlock.h>
+-#include <linux/compiler.h>
+-#include <linux/types.h>
+-#include <linux/errno.h>
+-#include <linux/log2.h>
+-#include <linux/ioport.h>
+-#include <linux/io.h>
+-#include <linux/gpio/driver.h>
+-#include <linux/slab.h>
+ #include <linux/bitops.h>
++#include <linux/compiler.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/log2.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+-#include <linux/mod_devicetable.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++
++#include <linux/gpio/driver.h>
+ 
+ #include "gpiolib.h"
+ 
 -- 
 2.40.0.1.gaa8946217a0b
 
