@@ -2,94 +2,124 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00920C0032E
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 15:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385A3C0032E
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Oct 2023 18:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343719AbjJYPBI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Oct 2023 11:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52784 "EHLO
+        id S229583AbjJYSnK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Oct 2023 14:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344433AbjJYPBG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 11:01:06 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57711A2;
-        Wed, 25 Oct 2023 08:00:56 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E8F43C000F;
-        Wed, 25 Oct 2023 15:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1698246054;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yH7ih/sENBHheaY4sC23vjZWR5QPhO2FB5uDgGmBUEE=;
-        b=Q3kFInjh7UIlv2i9yjPV+QU4V85L5o5uVFoPjbdjL//6+E7uHPH6qKo6VtFDApky9mvBZR
-        DLu9NkXUD5OxfTo6itNQvOGypacNFCTLN9WVTaPz0FqcOhRwPMyGfxtOcSfDuL7/skp8vX
-        Xi0TkyJYpNrsUrKOLGJVtQuYOi+gWoYdjSS/UVjEa2e22L9HGWc4DrymLHD7I/JWSwkFqm
-        89zhexE6c2ltXbqig51XVG6K1DOiQZZDzAVHFzwstX5/KXfaw66BE90pcuR8wCZ76roTNp
-        RW+shC4dBtvTe/L6r6lvIDt4EzZod8+c2krxeBAs7QIBUwZpDZyN+x2UlhjNHw==
-Date:   Wed, 25 Oct 2023 17:00:51 +0200
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v8 00/30] Add support for QMC HDLC, framer
- infrastructure and PEF2256 framer
-Message-ID: <20231025170051.27dc83ea@bootlin.com>
-In-Reply-To: <20231013164647.7855f09a@kernel.org>
-References: <20231011061437.64213-1-herve.codina@bootlin.com>
-        <20231013164647.7855f09a@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
+        with ESMTP id S229548AbjJYSnK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2023 14:43:10 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B898DC;
+        Wed, 25 Oct 2023 11:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698259387; x=1729795387;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=T1sOH8MzD7ijqC2IX92sIk4YyeSEBbdujMf4a6IQTo0=;
+  b=hpnolXxbUnhqliba/zRd5Kq7TqHBo9QG2rVe0DUEYI9NYknDTF8L9NhT
+   w9UgrPaKeBzpIeKOFxNz/DyyN/UF+gG9VIjZXlXLOuVFLRz153x02Weuv
+   ueBBRv5zvsEqrizUG+Izc8nk+cma87X5C8rXsNdXdnDWea1mWa9Ah1aVF
+   SqPnwXn+wgQaIZuQnAHh5j5xcsj8qClexLf1NWbBDnjNXOrd8cwn8z10j
+   vK2zIYYWHB6x/nbDM66W6qImUr9n8pb9+hKByZBtvonzIxv5wXBdyKJyC
+   X+sPW0h/m6Y4y3MYXgGI3clFaM2yuNgHa5nS9G/vSYx7wI0rpzU6/dOd5
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="390233006"
+X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
+   d="scan'208";a="390233006"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2023 11:43:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10874"; a="932458246"
+X-IronPort-AV: E=Sophos;i="6.03,250,1694761200"; 
+   d="scan'208";a="932458246"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 25 Oct 2023 11:43:03 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D2142FF; Wed, 25 Oct 2023 21:43:01 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v1 1/3] device property: Implement device_is_big_endian()
+Date:   Wed, 25 Oct 2023 21:42:57 +0300
+Message-Id: <20231025184259.250588-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
+References: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi All, Maintainers
+Some users want to use the struct device pointer to see if the
+device is big endian in terms of Open Firmware specifications,
+i.e. if it has a "big-endian" property, or if the kernel was
+compiled for BE *and* the device has a "native-endian" property.
 
-On Fri, 13 Oct 2023 16:46:47 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+Provide inline helper for the users.
 
-> On Wed, 11 Oct 2023 08:14:04 +0200 Herve Codina wrote:
-> > Compare to the previous iteration
-> >   https://lore.kernel.org/linux-kernel/20230928070652.330429-1-herve.codina@bootlin.com/
-> > This v8 series:
-> >  - Fixes a race condition
-> >  - Uses menuconfig instead of menu and hides CONFIG_GENERIC_FRAMER
-> >  - Performs minor changes  
-> 
-> Which way will those patches go? Via some FSL SoC tree?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/property.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-This series seems mature now.
-What is the plan next in order to have it applied ?
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 2b8f07fc68a9..d1400a477b0a 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -80,12 +80,38 @@ int fwnode_property_match_string(const struct fwnode_handle *fwnode,
+ 
+ bool fwnode_device_is_available(const struct fwnode_handle *fwnode);
+ 
++static inline bool fwnode_device_is_big_endian(const struct fwnode_handle *fwnode)
++{
++	if (fwnode_property_present(fwnode, "big-endian"))
++		return true;
++	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) &&
++	    fwnode_property_present(fwnode, "native-endian"))
++		return true;
++	return false;
++}
++
+ static inline
+ bool fwnode_device_is_compatible(const struct fwnode_handle *fwnode, const char *compat)
+ {
+ 	return fwnode_property_match_string(fwnode, "compatible", compat) >= 0;
+ }
+ 
++/**
++ * device_is_big_endian - check if a device has BE registers
++ * @dev: Pointer to the struct device
++ *
++ * Returns: true if the device has a "big-endian" property, or if the kernel
++ * was compiled for BE *and* the device has a "native-endian" property.
++ * Returns false otherwise.
++ *
++ * Callers would nominally use ioread32be/iowrite32be if
++ * device_is_big_endian() == true, or readl/writel otherwise.
++ */
++static inline bool device_is_big_endian(const struct device *dev)
++{
++	return fwnode_device_is_big_endian(dev_fwnode(dev));
++}
++
+ /**
+  * device_is_compatible - match 'compatible' property of the device with a given string
+  * @dev: Pointer to the struct device
+-- 
+2.40.0.1.gaa8946217a0b
 
-Don't hesitate to tell me if you prefer split series.
-
-Best regards,
-Hervé
