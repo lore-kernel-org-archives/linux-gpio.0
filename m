@@ -2,47 +2,47 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE270C25B67
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Oct 2023 11:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29B8C25B47
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Oct 2023 11:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjJ0LYR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 27 Oct 2023 07:24:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
+        id S229633AbjJ0LdC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 27 Oct 2023 07:33:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbjJ0LYQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2023 07:24:16 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECA31B3;
-        Fri, 27 Oct 2023 04:24:13 -0700 (PDT)
+        with ESMTP id S231493AbjJ0LdB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2023 07:33:01 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FAD1B3;
+        Fri, 27 Oct 2023 04:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698405853; x=1729941853;
+  t=1698406379; x=1729942379;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=KPmjQF1ZqvViT3kYc13mgp+PgobpjuMwTCfo1SiwZS0=;
-  b=Kg+TQ4V+AfOC6Akm/AQ4y1qlN55ete+A+hA6aMOuw9bHcDwMarLJQZ4b
-   r1GPGzCVmKG9G9YRWTfMa6wyp/q8KXXxO3EeihB/+nnU/TPLELWdMuJcO
-   lQBJBArceU2oSAbf4T16r1AlfbC6r9c+r0VPQBEdicBIX0E31KpqDxPVV
-   PEe2labQHIrkJqG0TP2eecUS9C3pKqEwSJg9poMXJ3l1D7z/UuR7JdBtR
-   MAgJhb79nHz8T/ji8MDpvUA+qpdMvLXXsztK3bUnUJR3ERmappG1m8BA6
-   celE8GulBfRFSsyuvF36IxoarP9G4p1+LQR63V3hCowGnNLcA3KZyMYDc
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10875"; a="367967798"
+  bh=OApmSqXXZbIaoiJzOhkxdZnJfAMT4marLH+AGdbwU0U=;
+  b=hrGvThSgf5j0kiHxvHzeJLH2MLAX+tT4BhPJsDaDIOQPVbIa/yvc6x49
+   2ri7Jl2XyePxQVXKzjKTFSFN41D2WmZo4NBn1dsX7ZDozDm/80aacqytU
+   LWvfi+XLvYI+2XiedIQm6s9OcRe1CQQa6O28nvQJw+6O22skolcPNc6fj
+   DqA/7mRX6ORkdx+xBPD383mABo5C6ZxnCKRNtOC2PB282dJSBLiKgMXJe
+   wjz1TndIgZK4/WeVQW7fAytnnmfRj5I+Z+yASljb6kt50J5aIz5tPDRG2
+   vRi21ZWX+CVpyR3jtSWgBnRXujIoJ1sb0vKeFjrL1mgRPO3yBG0bLLfI+
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10875"; a="451997562"
 X-IronPort-AV: E=Sophos;i="6.03,256,1694761200"; 
-   d="scan'208";a="367967798"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2023 04:24:13 -0700
+   d="scan'208";a="451997562"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2023 04:32:59 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10875"; a="794549216"
+X-IronPort-AV: E=McAfee;i="6600,9927,10875"; a="883160448"
 X-IronPort-AV: E=Sophos;i="6.03,256,1694761200"; 
-   d="scan'208";a="794549216"
+   d="scan'208";a="883160448"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2023 04:24:10 -0700
+  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2023 04:32:56 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC3)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qwKwh-0000000984N-25aY;
-        Fri, 27 Oct 2023 14:24:07 +0300
-Date:   Fri, 27 Oct 2023 14:24:07 +0300
+        id 1qwL5B-000000098Aj-35H6;
+        Fri, 27 Oct 2023 14:32:53 +0300
+Date:   Fri, 27 Oct 2023 14:32:53 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linhua Xu <Linhua.xu@unisoc.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -53,35 +53,57 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         lh xu <xulh0829@gmail.com>,
         Zhirong Qiu <zhirong.qiu@unisoc.com>,
         Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: Re: [PATCH V3 3/6] pinctrl: sprd: Move common and misc offset
- parameters to private data
-Message-ID: <ZTud17B4VeASo0os@smile.fi.intel.com>
+Subject: Re: [PATCH V3 2/6] pinctrl: sprd: Fix the incorrect mask and shift
+ definition
+Message-ID: <ZTuf5fk8PV/LqHwr@smile.fi.intel.com>
 References: <20231027071426.17724-1-Linhua.xu@unisoc.com>
- <20231027071426.17724-4-Linhua.xu@unisoc.com>
+ <20231027071426.17724-3-Linhua.xu@unisoc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231027071426.17724-4-Linhua.xu@unisoc.com>
+In-Reply-To: <20231027071426.17724-3-Linhua.xu@unisoc.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Oct 27, 2023 at 03:14:23PM +0800, Linhua Xu wrote:
+On Fri, Oct 27, 2023 at 03:14:22PM +0800, Linhua Xu wrote:
 > From: Linhua Xu <Linhua.Xu@unisoc.com>
 > 
-> For UNISOC pin controller, the offset values of the common
-> register and misc register will be different. So add SoC
-> structure in sprd_pinctrl_of_match() and parse it in sprd-pinctrl_core.
+> Pull-up and pull-down are mutually exclusive. When setting one of them,
+> the bit of the other needs to be clear. Now, there are cases where pull-up
+> and pull-down are set at the same time in the code, thus fix them.
 
 ...
 
-> +	priv_data = of_device_get_match_data(&pdev->dev);
-> +	if (!priv_data)
-> +		return -EINVAL;
+> Fixes:<1fb4b907e808> ("pinctrl: sprd: Add Spreadtrum pin control driver")
+> 
+> Signed-off-by: Linhua Xu <Linhua.Xu@unisoc.com>
 
-I believe there is the idea to make that API local to the device property core,
-so use device_get_match_data() instead.
+Same comment  about the Fixes: tag.
+
+...
+
+> -#define SLEEP_PULL_DOWN_MASK		0x1
+> +#define SLEEP_PULL_DOWN_MASK		GENMASK(1, 0)
+>  #define SLEEP_PULL_DOWN_SHIFT		2
+
+No, this is an incorrect (prone to errors and confusion) change.
+You need to introduce new mask for both of them and use in the code.
+
+#define SLEEP_PULL_UP_DOWN_MASK		GENMASK(1, 0)
+#define SLEEP_PULL_UP_DOWN_SHIFT	2
+
+...
+
+> -#define PULL_DOWN_MASK			0x1
+> +#define PULL_DOWN_MASK			(GENMASK(1, 0) | BIT(6))
+>  #define PULL_DOWN_SHIFT			6
+
+Ditto.
+
+#define PULL_UP_DOWN_MASK		(GENMASK(1, 0) | BIT(6))
+#define PULL_UP_DOWN_SHIFT		6
 
 -- 
 With Best Regards,
