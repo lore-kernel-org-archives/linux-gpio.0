@@ -2,105 +2,79 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DDEC25B47
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Oct 2023 11:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5DBC25B48
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Oct 2023 21:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345770AbjJ0Lyo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 27 Oct 2023 07:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57682 "EHLO
+        id S235062AbjJ0Vgd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 27 Oct 2023 17:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345780AbjJ0Lyn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2023 07:54:43 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC50ED7;
-        Fri, 27 Oct 2023 04:54:40 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-1e9c42fc0c9so1022559fac.1;
-        Fri, 27 Oct 2023 04:54:40 -0700 (PDT)
+        with ESMTP id S235083AbjJ0Vgc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2023 17:36:32 -0400
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63AC91B5;
+        Fri, 27 Oct 2023 14:36:30 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6c4a25f6390so1662410a34.2;
+        Fri, 27 Oct 2023 14:36:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698407680; x=1699012480;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9b+/9ZwUdROxnR+oS+/WwpQi1QFxbE22Ia4rZevwgMo=;
-        b=MvRl46K3vsPnSAGZJr1TI1s8IsqM3w+78N9VT8wRDNl4Ow/hcFe3QBUcFgLV8lmavF
-         M9VqTx73QeNBksPwvPrsYgeat+F/HFe1r7T00i2dEN8KW2dYCzQ+RIjB3dX4QFEXpacc
-         rW7HyK+8zsSEmSDbjb/JIr1UaIlTi+Ico/zyryG2oU6NabtCEvjOnsS8TH3yzIM/BpGf
-         f92D8zZuw/mIH0OwO3sAO59kZPeeB+vb8VlZiLu9/HSqB7RsGUMCy0kZxUR2mKY5+SuF
-         FMqI3zlvVJtFTzF6/PhCaZfiOajJ8honhGDctzYWd/wZ0gTKWLe0NKDzlqAJ0tRxWkNp
-         T7OQ==
-X-Gm-Message-State: AOJu0Yx0Nx7yVUMWVs2uH5OAmc98TVF4E5ogbc+W+Sfgm3dKw3v2vYjM
-        YMNwu/X8+QY0+mA5DSxOeg==
-X-Google-Smtp-Source: AGHT+IHxDsoKekl8Yvqf0gShEW9817qFAuqyXO1pz/hZt/mb8dMArGiXOTmukS2xWKDp/y2/VxMElA==
-X-Received: by 2002:a05:6870:9e98:b0:1e9:b29b:b145 with SMTP id pu24-20020a0568709e9800b001e9b29bb145mr3170664oab.7.1698407679875;
-        Fri, 27 Oct 2023 04:54:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1698442589; x=1699047389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DOW1gEyiWmEb/ezKdyTSa7aCrvLtzejrHPgIEGPvmy0=;
+        b=jpfDoL2cTkyHz5rWEBU3ywhoBa9r4fkAO0Qy2gAgOJ6TRf7+qzGo7Y//i6TyIyvOMq
+         f+rQQb03PMaDbqW5kwpvMI8pOhtETPT2FCnyPcMDH8lKlnhOnu9taQL/YU6WoN4ReAYp
+         k2LLQYoc9+iKvSRbOOL+kHJDWB7w539mHIHNnqWXiLj75795K1G6Oor1oXHu+yA7vq8y
+         qP4HofdYGxcwM4g7cHoi9FlcqfrhlIAakGmhAxq4M3CHi9J5MpOMj6hqzA7TbGzHKdCY
+         Fu72jE7+6SAW5B46t9D6owvfsQ9M4M613JMPOm3RQ5J5UtzY6cr0mmjQp5f3AFDqUi4B
+         UtPQ==
+X-Gm-Message-State: AOJu0YxCna6n3v9c+MK7C1xZFihCtEVFeJNRO7xxwRx9uMQJO707vOBX
+        7fWbq0NDcmRhbD+5obnkuw==
+X-Google-Smtp-Source: AGHT+IFip7ODb1zb61QmrdBN36ulxahgE6GgTEI4aD6ID2yrNuo5bR0hxSJHwxDIywoUx9LZKxej8A==
+X-Received: by 2002:a05:6830:2b23:b0:6b4:5ed3:8246 with SMTP id l35-20020a0568302b2300b006b45ed38246mr5754653otv.2.1698442589625;
+        Fri, 27 Oct 2023 14:36:29 -0700 (PDT)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id ef11-20020a0568701a8b00b001c5a3e31474sm267686oab.45.2023.10.27.04.54.38
+        by smtp.gmail.com with ESMTPSA id m6-20020a05683026c600b006b9e872c0a0sm411926otu.68.2023.10.27.14.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Oct 2023 04:54:38 -0700 (PDT)
-Received: (nullmailer pid 2176039 invoked by uid 1000);
-        Fri, 27 Oct 2023 11:54:37 -0000
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-MIME-Version: 1.0
+        Fri, 27 Oct 2023 14:36:28 -0700 (PDT)
+Received: (nullmailer pid 3413620 invoked by uid 1000);
+        Fri, 27 Oct 2023 21:36:27 -0000
+Date:   Fri, 27 Oct 2023 16:36:27 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
-Cc:     sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
-        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <e9285b4377242e4d888391be987cbb99caf8c573.1698353854.git.oleksii_moisieiev@epam.com>
-References: <cover.1698353854.git.oleksii_moisieiev@epam.com>
- <e9285b4377242e4d888391be987cbb99caf8c573.1698353854.git.oleksii_moisieiev@epam.com>
-Message-Id: <169839099385.1526712.3835943870318448924.robh@kernel.org>
-Subject: Re: [RFC v5 5/5] dt-bindings: firmware: arm,scmi: Add support for
- pinctrl protocol
-Date:   Fri, 27 Oct 2023 06:54:37 -0500
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom,sm8650-lpass-lpi-pinctrl:
+ add SM8650 LPASS
+Message-ID: <169844258726.3413571.7068196166115912913.robh@kernel.org>
+References: <20231027093615.140656-1-krzysztof.kozlowski@linaro.org>
+ <20231027093615.140656-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231027093615.140656-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
-On Fri, 27 Oct 2023 06:28:11 +0000, Oleksii Moisieiev wrote:
-> Add new SCMI v3.2 pinctrl protocol bindings definitions and example.
+On Fri, 27 Oct 2023 11:36:14 +0200, Krzysztof Kozlowski wrote:
+> Add bindings for the pin controller in Low Power Audio SubSystem (LPASS)
+> of Qualcomm SM8650 SoC.
 > 
-> Signed-off-by: Oleksii Moisieiev <oleksii_moisieiev@epam.com>
-> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> Changes v3 -> v4
->   - reworked protocol@19 format
-> ---
->  .../bindings/firmware/arm,scmi.yaml           | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
+>  .../qcom,sm8650-lpass-lpi-pinctrl.yaml        | 148 ++++++++++++++++++
+>  1 file changed, 148 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8650-lpass-lpi-pinctrl.yaml
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/firmware/arm,scmi.yaml:244:15: [error] string value is redundantly quoted with any quotes (quoted-strings)
-./Documentation/devicetree/bindings/firmware/arm,scmi.yaml:258:19: [error] string value is redundantly quoted with any quotes (quoted-strings)
-./Documentation/devicetree/bindings/firmware/arm,scmi.yaml:259:19: [error] string value is redundantly quoted with any quotes (quoted-strings)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/e9285b4377242e4d888391be987cbb99caf8c573.1698353854.git.oleksii_moisieiev@epam.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
