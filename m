@@ -2,45 +2,45 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F36AC4332F
-	for <linux-gpio@archiver.kernel.org>; Sun, 29 Oct 2023 23:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E68C4167B
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 00:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbjJ2XYk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 29 Oct 2023 19:24:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
+        id S229795AbjJ3ACh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 29 Oct 2023 20:02:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232252AbjJ2XY2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Oct 2023 19:24:28 -0400
+        with ESMTP id S230481AbjJ3ACg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Oct 2023 20:02:36 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A8C6F86;
-        Sun, 29 Oct 2023 16:01:47 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09072C116B2;
-        Sun, 29 Oct 2023 22:59:59 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F89110C8;
+        Sun, 29 Oct 2023 15:57:55 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1BBC433B6;
+        Sun, 29 Oct 2023 22:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698620400;
-        bh=FMQrM8rvPb+BR3jkz89P0nM8HxUUIDo2skSSGYxw9PI=;
+        s=k20201202; t=1698620225;
+        bh=quEiwnh0HWwxQJhsPx6tXqzN6tx0b2hgZcdHoPkuRJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E5k88aQYiKsD1kwxHo0MottDmDlsK5cds5G8c5aOM01lW90RN5Su55HYxssMiWPl9
-         lg2uoFz8OIrdBDJJaQ0ArhtupBh0jicOAo2aYTCPXajVBvhRz60VtZiL5w/0Ivispl
-         iUyqM6q+RJo7MDTCIVkal0LeBgcs3og5n/M7mzPfqtYsjlbARYmI78wizR+lnxmxEw
-         m6Ivyy/AsPgx8jt82vhzkaqQXOFu8uLVbxc/LMHw1nR+qo8j0Q3ffANMzINwK8J8J9
-         470VtLfINvA0xC5GqXFDr59imC2mJkkUqtebmeQOxH8JZpbl1difquXRyhswx1f5B5
-         51+efl/MUWxTA==
+        b=Aq8DlL55Cs4OCyyynaq5Kp6zNME7yhllx5ZmLFIdfqc1+NO4MTnevhzzsObKIxRji
+         pq1KNX9FBAyCBm5m0QBYPczQpZzLp2/JRJRexzXa+ECY8eFI2NBQYMUQB39a3lVSDL
+         ZMv+pALhNcppmUtXntxpGjKyP+jMA8SsebRp7wEImhb8GhOUudIOGf6EIzs+/V/B6d
+         AVR+cHaexC6EZkXHArkDEJfySRBJ81AochyeC4m4Opr7Oglgtfns1U0DchP9Qp+r4x
+         uCQm8mYbGiwzd2icIgDjF/cWOodlw83S3HVI/ox65S6KiThXyI8fTka1duHkDOTuuu
+         3zkTEeXqUZSCA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 28/28] Revert "pinctrl: avoid unsafe code pattern in find_pinctrl()"
-Date:   Sun, 29 Oct 2023 18:59:03 -0400
-Message-ID: <20231029225916.791798-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.5 51/52] Revert "pinctrl: avoid unsafe code pattern in find_pinctrl()"
+Date:   Sun, 29 Oct 2023 18:53:38 -0400
+Message-ID: <20231029225441.789781-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231029225916.791798-1-sashal@kernel.org>
-References: <20231029225916.791798-1-sashal@kernel.org>
+In-Reply-To: <20231029225441.789781-1-sashal@kernel.org>
+References: <20231029225441.789781-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.137
+X-stable-base: Linux 6.5.9
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 17c6931211c65..ffe39336fcaca 100644
+index b84781cfc2596..401886c813449 100644
 --- a/drivers/pinctrl/core.c
 +++ b/drivers/pinctrl/core.c
-@@ -1007,20 +1007,17 @@ static int add_setting(struct pinctrl *p, struct pinctrl_dev *pctldev,
+@@ -1012,20 +1012,17 @@ static int add_setting(struct pinctrl *p, struct pinctrl_dev *pctldev,
  
  static struct pinctrl *find_pinctrl(struct device *dev)
  {
@@ -112,7 +112,7 @@ index 17c6931211c65..ffe39336fcaca 100644
  }
  
  static void pinctrl_free(struct pinctrl *p, bool inlist);
-@@ -1129,6 +1126,7 @@ struct pinctrl *pinctrl_get(struct device *dev)
+@@ -1133,6 +1130,7 @@ struct pinctrl *pinctrl_get(struct device *dev)
  	p = find_pinctrl(dev);
  	if (p) {
  		dev_dbg(dev, "obtain a copy of previously claimed pinctrl\n");
