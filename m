@@ -2,130 +2,84 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D93C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 12:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E01C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 14:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbjJ3MIK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Oct 2023 08:08:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40784 "EHLO
+        id S229620AbjJ3OKs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Oct 2023 10:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233300AbjJ3MIB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 08:08:01 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92FC9F4;
-        Mon, 30 Oct 2023 05:07:47 -0700 (PDT)
+        with ESMTP id S229514AbjJ3OKr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 10:10:47 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3211BC0;
+        Mon, 30 Oct 2023 07:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698667668; x=1730203668;
+  t=1698675045; x=1730211045;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SuALRcFHet1VQPwinCdbLgm/7exVlSMWjFr50V1Snuk=;
-  b=ZQzHrZsVzik5pj7RW4Al94L1au3HfycFk2ePpMoplRXgVUtLAed3yDxj
-   ynbl2f88zm24rsFDDusC5ET+v4IzWKdqUJm8I43Cyy6HE+IrJnnaLgiH1
-   wGO5dHtz5/PkvXiYRuSXmap92wzZ3mBm4hsQBwf7kl0/oho8NBYGSvjDL
-   QhqPUDGSKRW1Dc8Ezt+FQa3p7EfEq2kNNvzB3NvC/vz+neRq5IfgHrz4t
-   wUT4HkwtMbV1EWoFf+q7Q9DidAwROtS9pwDi3Sg6q+mSr2n9f5/wiIpBH
-   JYcq2CgylWIKmYEbdRRPtm77ZTfqKA4ohhdrfj/CGCtxp3/vB1+rfUoWs
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="6691350"
+  bh=vyhDZlVvoZgL6YwfFJ3a7ANMHT3BRYGYddeuTV3c88M=;
+  b=OWRPlBzO/vAFBGa+eEZ3QHkTDA8kmX44//2c4TcMUnt8SWkywDPwsl2A
+   Y87JOEryje7DSCt2SlrzvDsH9ILUfEy6jv6/Oj7LdmdB66HEK1+aCxzH0
+   0yDovpUXRYRpg4HAhkoXdj6zdR57ogqyi7Hj2BeizTx50sM8O0l3nU+kh
+   +L3rrnFqGNKV1Gt6CFS/nEFgb+MXac898IbD0tOPqKgJOycurV2pX3mOb
+   htBFly13rsbQyQGQvoo08fZWA3nbGyryw6ms3p8hiBiogDTBl03pYwJI1
+   ZlHKQtDtx8sW2TBtNsIHtvsP4hj2VhNTatjLGN9GkED8I2ewqU8xSsgqQ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10879"; a="378447164"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="6691350"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:07:47 -0700
+   d="scan'208";a="378447164"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 07:10:44 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="826036562"
+X-IronPort-AV: E=McAfee;i="6600,9927,10879"; a="710102224"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="826036562"
+   d="scan'208";a="710102224"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2023 05:07:43 -0700
+  by orsmga003.jf.intel.com with ESMTP; 30 Oct 2023 07:10:42 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9337551D; Mon, 30 Oct 2023 14:07:36 +0200 (EET)
+        id 95163331; Mon, 30 Oct 2023 16:10:40 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Raag Jadav <raag.jadav@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Subject: [PATCH v3 17/17] pinctrl: intel: Make PM ops functions static
-Date:   Mon, 30 Oct 2023 14:07:34 +0200
-Message-Id: <20231030120734.2831419-18-andriy.shevchenko@linux.intel.com>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 3/3] pinctrl: intel: Add ACPI ID to the generic platform driver
+Date:   Mon, 30 Oct 2023 16:10:34 +0200
+Message-Id: <20231030141034.3241674-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
-References: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20231030141034.3241674-1-andriy.shevchenko@linux.intel.com>
+References: <20231030141034.3241674-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-No more users outside of the main module.
+The INTC105F is an ACPI _CID that reflects compatibility with
+the _DSD shema supported by the generic Intel pin control
+platform driver. Add it there.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 6 ++----
- drivers/pinctrl/intel/pinctrl-intel.h | 9 ---------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel-platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 9fbdc7bfa65c..f1d8f7e0d9b7 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1727,7 +1727,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned int
- 	return false;
+diff --git a/drivers/pinctrl/intel/pinctrl-intel-platform.c b/drivers/pinctrl/intel/pinctrl-intel-platform.c
+index 2305d8befdd3..5605583b1a34 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel-platform.c
++++ b/drivers/pinctrl/intel/pinctrl-intel-platform.c
+@@ -203,6 +203,7 @@ static int intel_platform_pinctrl_probe(struct platform_device *pdev)
  }
  
--int intel_pinctrl_suspend_noirq(struct device *dev)
-+static int intel_pinctrl_suspend_noirq(struct device *dev)
- {
- 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	struct intel_community_context *communities;
-@@ -1770,7 +1770,6 @@ int intel_pinctrl_suspend_noirq(struct device *dev)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(intel_pinctrl_suspend_noirq);
- 
- static bool intel_gpio_update_reg(void __iomem *reg, u32 mask, u32 value)
- {
-@@ -1837,7 +1836,7 @@ static void intel_restore_padcfg(struct intel_pinctrl *pctrl, unsigned int pin,
- 	dev_dbg(dev, "restored pin %u padcfg%u %#08x\n", pin, n, readl(padcfg));
- }
- 
--int intel_pinctrl_resume_noirq(struct device *dev)
-+static int intel_pinctrl_resume_noirq(struct device *dev)
- {
- 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	const struct intel_community_context *communities;
-@@ -1881,7 +1880,6 @@ int intel_pinctrl_resume_noirq(struct device *dev)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(intel_pinctrl_resume_noirq);
- 
- EXPORT_NS_GPL_DEV_PM_OPS(intel_pinctrl_pm_ops, PINCTRL_INTEL) = {
- 	NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq, intel_pinctrl_resume_noirq)
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index d3f511f97ed9..e7d911a65584 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -255,15 +255,6 @@ struct intel_pinctrl {
- int intel_pinctrl_probe_by_hid(struct platform_device *pdev);
- int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
- 
--int intel_pinctrl_suspend_noirq(struct device *dev);
--int intel_pinctrl_resume_noirq(struct device *dev);
--
--#define INTEL_PINCTRL_PM_OPS(_name)					\
--const struct dev_pm_ops _name = {					\
--	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend_noirq,	\
--				      intel_pinctrl_resume_noirq)	\
--}
--
- extern const struct dev_pm_ops intel_pinctrl_pm_ops;
- 
- struct intel_community *intel_get_community(struct intel_pinctrl *pctrl, unsigned int pin);
+ static const struct acpi_device_id intel_platform_pinctrl_acpi_match[] = {
++	{ "INTC105F" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, intel_platform_pinctrl_acpi_match);
 -- 
 2.40.0.1.gaa8946217a0b
 
