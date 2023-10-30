@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E10C4167B
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 12:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D5FC00142
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 12:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233304AbjJ3MIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Oct 2023 08:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
+        id S233351AbjJ3MII (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Oct 2023 08:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233219AbjJ3MHr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 08:07:47 -0400
+        with ESMTP id S233288AbjJ3MIA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 08:08:00 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640E1E6;
-        Mon, 30 Oct 2023 05:07:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDA6ED;
+        Mon, 30 Oct 2023 05:07:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1698667666; x=1730203666;
+  t=1698667668; x=1730203668;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Av6v/75XUvOo/4G6umamPviDmNrMM0DwE4OGzjWC1uc=;
-  b=k4fnJBKtNIePQJeA5B/2CqcTwLYDx6fnF2rFE8BfDRW2T5wKLOTU3ROb
-   3OPF6a+0yiUCszxEIO2STx3GojvTXIniQ9O+hjlPoMbm0NB+iz+6iQsl6
-   5wcjFSvafoyaYOJRT8OMGaMl/W1x6KuxoXU0ReTzeQQ2UtRCFakHPtp/M
-   HLbGUeuF7ztpZNbe8layZtOJZIAhIwHpriDR79oW/9Aa4LC1U+EF5hoju
-   gcFsn74blSVC7g5Mdl74Y10aDusa48/Kpq4+USvm59FhiGEKu4sNdvgik
-   04sNq6jQmeX0BFzXLL1MBBhc3kluHsrce7BC8jZ07hixIVGOtrr13lO+B
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="6691310"
+  bh=HZBuupFLaswcQ6rjSTSVB/ntkS6l460Cr5/0l0Mopvs=;
+  b=Rbtqz+Wg5zyGBViMkYr4xebbbYx1WOd0ry6CidzOdH84DKlsd1jxDbl/
+   cvsrM+TUsZ99iVYFo5h/FfelaNw4c+ayNsJhSps2SrAf9QNic9rFZ3xDd
+   RKIByol/Gw2u5fu1eCuVgW224cZcXvesORu9hXHMOVEcWja9BIH8zCx+O
+   UQTG7mefr1+p3Ls7QepnDLfGYMlqao1ZVtFOWqd4gfszIMnJH76UgOJfD
+   oDdR0cicIYWg3wd0jnFEXKJlklUB7VP9BpFPoOI0hGeaUDIaLhYkKIPqn
+   w/jHo8OEwGe6HW4c37K7o/easJUNIKu8kZCBm6yCfrF+0mYE1cI6xqC3L
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="6691344"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="6691310"
+   d="scan'208";a="6691344"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:07:44 -0700
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:07:47 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="826036533"
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="826036557"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="826036533"
+   d="scan'208";a="826036557"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2023 05:07:40 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 30 Oct 2023 05:07:43 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 6663E499; Mon, 30 Oct 2023 14:07:36 +0200 (EET)
+        id 88F464F0; Mon, 30 Oct 2023 14:07:36 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
@@ -48,9 +48,9 @@ Cc:     Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Paul Cercueil <paul@crapouillou.net>,
         Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Subject: [PATCH v3 12/17] pinctrl: lakefield: Switch to use Intel pin control PM ops
-Date:   Mon, 30 Oct 2023 14:07:29 +0200
-Message-Id: <20231030120734.2831419-13-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 16/17] pinctrl: tigerlake: Switch to use Intel pin control PM ops
+Date:   Mon, 30 Oct 2023 14:07:33 +0200
+Message-Id: <20231030120734.2831419-17-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
 References: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
@@ -65,14 +65,14 @@ Switch this driver to use it instead of customly wrapped one.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-lakefield.c | 5 ++---
+ drivers/pinctrl/intel/pinctrl-tigerlake.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lakefield.c b/drivers/pinctrl/intel/pinctrl-lakefield.c
-index 0b94e11b78ac..adef85db82ca 100644
---- a/drivers/pinctrl/intel/pinctrl-lakefield.c
-+++ b/drivers/pinctrl/intel/pinctrl-lakefield.c
-@@ -9,6 +9,7 @@
+diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
+index 4768a69a9258..80cd7a06fe5a 100644
+--- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
++++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
+@@ -10,6 +10,7 @@
  #include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
@@ -80,22 +80,22 @@ index 0b94e11b78ac..adef85db82ca 100644
  
  #include <linux/pinctrl/pinctrl.h>
  
-@@ -347,14 +348,12 @@ static const struct acpi_device_id lkf_pinctrl_acpi_match[] = {
+@@ -743,14 +744,12 @@ static const struct acpi_device_id tgl_pinctrl_acpi_match[] = {
  };
- MODULE_DEVICE_TABLE(acpi, lkf_pinctrl_acpi_match);
+ MODULE_DEVICE_TABLE(acpi, tgl_pinctrl_acpi_match);
  
--static INTEL_PINCTRL_PM_OPS(lkf_pinctrl_pm_ops);
+-static INTEL_PINCTRL_PM_OPS(tgl_pinctrl_pm_ops);
 -
- static struct platform_driver lkf_pinctrl_driver = {
+ static struct platform_driver tgl_pinctrl_driver = {
  	.probe = intel_pinctrl_probe_by_hid,
  	.driver = {
- 		.name = "lakefield-pinctrl",
- 		.acpi_match_table = lkf_pinctrl_acpi_match,
--		.pm = &lkf_pinctrl_pm_ops,
+ 		.name = "tigerlake-pinctrl",
+ 		.acpi_match_table = tgl_pinctrl_acpi_match,
+-		.pm = &tgl_pinctrl_pm_ops,
 +		.pm = pm_sleep_ptr(&intel_pinctrl_pm_ops),
  	},
  };
- module_platform_driver(lkf_pinctrl_driver);
+ module_platform_driver(tgl_pinctrl_driver);
 -- 
 2.40.0.1.gaa8946217a0b
 
