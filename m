@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8D7C0018A
-	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 12:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601EBC00142
+	for <linux-gpio@archiver.kernel.org>; Mon, 30 Oct 2023 12:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233201AbjJ3MHq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 30 Oct 2023 08:07:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
+        id S233135AbjJ3MHs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 30 Oct 2023 08:07:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233167AbjJ3MHp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 08:07:45 -0400
+        with ESMTP id S233187AbjJ3MHq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2023 08:07:46 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A396D6;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC11FC6;
         Mon, 30 Oct 2023 05:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1698667663; x=1730203663;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+BEoNOVpWEZhamBaNCb3lmH2sOnOe89VQ+7qyzH87zo=;
-  b=NHtc9UoaJ3bW2c0rNVx4OGXO2jBhSPYj42l1qbZI83rQavpE68UCzGma
-   gKjbJB3VWmcqRMYyInq2AJ3GQVnQexYMSmuWXPmXrWBf9m+y6C2V/okf6
-   ksvW2uZvpQVskpnYNU6+UFtcm5EMHIM/C5KF8YZrqH8/IjGKWNa/3OBVT
-   m8kipe3s1TMc5IJP3oYYOvposYaWNZTbzxXhAm9hOAOeddOxXjcBWzGac
-   Jx8Th48KnEhyiu9EU6Mof0g1VleTeBsz+bn0ha3EYAmoyyVPmrTqL0ZIC
-   tQv6eXH8EhSUvQfpJ4F/qtnG0tYy7B6Yx2Shwos6hgQcbBGdp29wqOtcB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="373107359"
+  bh=kaMTYelFwgGuSlV0Gv80EqaUluoFfXrYzjdVi1fzCJw=;
+  b=KhsQJ0tICN8wQ0xd69h3SgzUpMLcg2KaKou/eLJwkO52U96aRDgPl6rK
+   vhphdD0FDt9tlADKfyKl+9GWv4dusmw7cpX0WHpk0gzXzVueZy+nBFINL
+   KEOBqnnZY277vK2XPJkDMm1vf2nX/wCkZPXv9zt7tbPNfZOHMBy02+0xy
+   ocn/b1Em9d4lYGCkQVSCL32homEAXn104CtSfA+U5Xziv1nFC8J/su4Lm
+   7WMcogqUzrrRBle9P/jUYyiW7/U3xLDRAJJCYAgv7OCYH+2RuQRKiD6IR
+   bzWPPXyv0sLXlzC/JbVxOSokMHwHNbWvniFy8s1da8W0n/Y9yIItWTW4x
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="373107369"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="373107359"
+   d="scan'208";a="373107369"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2023 05:07:42 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="753771406"
+X-IronPort-AV: E=McAfee;i="6600,9927,10878"; a="753771405"
 X-IronPort-AV: E=Sophos;i="6.03,263,1694761200"; 
-   d="scan'208";a="753771406"
+   d="scan'208";a="753771405"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga007.jf.intel.com with ESMTP; 30 Oct 2023 05:07:40 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5254545B; Mon, 30 Oct 2023 14:07:36 +0200 (EET)
+        id 30AC336D; Mon, 30 Oct 2023 14:07:36 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
@@ -48,9 +48,9 @@ Cc:     Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Paul Cercueil <paul@crapouillou.net>,
         Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Subject: [PATCH v3 10/17] pinctrl: icelake: Switch to use Intel pin control PM ops
-Date:   Mon, 30 Oct 2023 14:07:27 +0200
-Message-Id: <20231030120734.2831419-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 07/17] pinctrl: elkhartlake: Switch to use Intel pin control PM ops
+Date:   Mon, 30 Oct 2023 14:07:24 +0200
+Message-Id: <20231030120734.2831419-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
 References: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
@@ -65,39 +65,37 @@ Switch this driver to use it instead of customly wrapped one.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-icelake.c | 5 ++---
+ drivers/pinctrl/intel/pinctrl-elkhartlake.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-index 300e1538c8d0..fe3042de891a 100644
---- a/drivers/pinctrl/intel/pinctrl-icelake.c
-+++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-@@ -10,6 +10,7 @@
- #include <linux/acpi.h>
+diff --git a/drivers/pinctrl/intel/pinctrl-elkhartlake.c b/drivers/pinctrl/intel/pinctrl-elkhartlake.c
+index 81581ab85316..1678634ebc06 100644
+--- a/drivers/pinctrl/intel/pinctrl-elkhartlake.c
++++ b/drivers/pinctrl/intel/pinctrl-elkhartlake.c
+@@ -9,6 +9,7 @@
+ #include <linux/mod_devicetable.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
 +#include <linux/pm.h>
  
  #include <linux/pinctrl/pinctrl.h>
  
-@@ -668,8 +669,6 @@ static const struct intel_pinctrl_soc_data icln_soc_data = {
- 	.ncommunities = ARRAY_SIZE(icln_communities),
+@@ -485,14 +486,12 @@ static const struct acpi_device_id ehl_pinctrl_acpi_match[] = {
  };
+ MODULE_DEVICE_TABLE(acpi, ehl_pinctrl_acpi_match);
  
--static INTEL_PINCTRL_PM_OPS(icl_pinctrl_pm_ops);
+-static INTEL_PINCTRL_PM_OPS(ehl_pinctrl_pm_ops);
 -
- static const struct acpi_device_id icl_pinctrl_acpi_match[] = {
- 	{ "INT3455", (kernel_ulong_t)&icllp_soc_data },
- 	{ "INT34C3", (kernel_ulong_t)&icln_soc_data },
-@@ -682,7 +681,7 @@ static struct platform_driver icl_pinctrl_driver = {
+ static struct platform_driver ehl_pinctrl_driver = {
+ 	.probe = intel_pinctrl_probe_by_uid,
  	.driver = {
- 		.name = "icelake-pinctrl",
- 		.acpi_match_table = icl_pinctrl_acpi_match,
--		.pm = &icl_pinctrl_pm_ops,
+ 		.name = "elkhartlake-pinctrl",
+ 		.acpi_match_table = ehl_pinctrl_acpi_match,
+-		.pm = &ehl_pinctrl_pm_ops,
 +		.pm = pm_sleep_ptr(&intel_pinctrl_pm_ops),
  	},
  };
- module_platform_driver(icl_pinctrl_driver);
+ module_platform_driver(ehl_pinctrl_driver);
 -- 
 2.40.0.1.gaa8946217a0b
 
