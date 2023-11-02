@@ -2,109 +2,107 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35867C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Nov 2023 15:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AFFC41535
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Nov 2023 15:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbjKBPFA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Nov 2023 11:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45988 "EHLO
+        id S1344650AbjKBPMR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Nov 2023 11:12:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232145AbjKBPE7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Nov 2023 11:04:59 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 847F9138;
-        Thu,  2 Nov 2023 08:04:55 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 428792F4;
-        Thu,  2 Nov 2023 08:05:37 -0700 (PDT)
-Received: from pluto (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4ABEF3F738;
-        Thu,  2 Nov 2023 08:04:53 -0700 (PDT)
-Date:   Thu, 2 Nov 2023 15:04:43 +0000
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
-Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        with ESMTP id S230205AbjKBPMP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Nov 2023 11:12:15 -0400
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74531187;
+        Thu,  2 Nov 2023 08:12:06 -0700 (PDT)
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id D0760848D4;
+        Thu,  2 Nov 2023 16:12:04 +0100 (CET)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Thu, 02 Nov 2023 16:11:08 +0100
+Subject: [PATCH v7 02/10] dt-bindings: pinctrl: pinctrl-single: add
+ marvell,pxa1908-padconf compatible
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20231102-pxa1908-lkml-v7-2-cabb1a0cb52b@skole.hr>
+References: <20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr>
+In-Reply-To: <20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [RFC v5 2/5] drivers: firmware: scmi: Introduce
- scmi_get_max_msg_size function
-Message-ID: <ZUO6iyNIbit7PCQ8@pluto>
-References: <cover.1698353854.git.oleksii_moisieiev@epam.com>
- <fdfedf6dd0196afd887049877eae9fce0fe63eb2.1698353854.git.oleksii_moisieiev@epam.com>
- <ZUNP6BeUd4Ba_rUp@pluto>
- <9c9660c1-ab64-4186-917d-2007d88ce7c7@epam.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c9660c1-ab64-4186-917d-2007d88ce7c7@epam.com>
+        Tony Lindgren <tony@atomide.com>,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Leo Yan <leoy@marvell.com>,
+        Zhangfei Gao <zhangfei.gao@marvell.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-hardening@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Karel Balej <balejk@matfyz.cz>, Rob Herring <robh@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=937;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=XB52xSkcW7DlpdxdsDrnjNPD7kW7z6MEd0cFXu6HRPY=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlQ7w4s0X/U4LfTPm+d3uM/f8sVLN8kU+aEvTP7
+ Uln5kwWiPGJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZUO8OAAKCRCaEZ6wQi2W
+ 4UBOD/9XSrU6k/VpMh4t2ctpZgfmH9BIW4xIC/g7N2fLI3uAYchePaqWsjv/O2ZDBAQ9rKccpMf
+ wzidE0AvYkJQhr/G2EiiDVr4u7b00b2IorTUGkIOkmX8a4tyFI/+KJsaBIVNiBD24va6gZq5Ew2
+ PoQsztYvv1p2t9RHpS/d0ceDb2GZX0cNq9SeGcBGlR4NZ7EneBmUuTjb2iUL7cN4ovIKyYhGPgJ
+ scW07emNsENae6F/yqJbahnL2HXc4Gi3cDHL/iuNXLos0yzXILsXl7lvIEuhr9IXqhRtJYZ+H9v
+ pUWuO7mt8Xg2QgJAi+qX3ZUuUFkdzLgaGz/AOeCQzxJ6PhMcfWrp51ElmRCqUHZgM08ZZ/NLWF7
+ PQ1kbIhMN6rgewJvmdr1FfhcXSiUGsAXRdBqvk41wODAjtr0p6u9T7I9IzqrjI0+0t0Bt8XIHIj
+ 7/E8V/TrQ3mJDVAlrPSTeb30/si5QhEQRU7D0YPwnoHXi0EAS1V/VIdU76gUWYcLk3TE9OOQi95
+ ql5iEImrlQmY25Cxq0uR4GPzE4ya4pXjnkKF1ilnqmF0/5WlFTN3fXG0J0MN2qs+JZ8Z6cR1vjj
+ 0BaJVwy1z8PNobG552NcH0MKhZqvheNQDfRcCaalw1uYiB37dQxAFkiH49UP/xArkEF/aq6Ey/D
+ gGqZRowQytonoWA==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 02, 2023 at 01:57:24PM +0000, Oleksii Moisieiev wrote:
-> Hi Cristian,
-> 
+Add the "marvell,pxa1908-padconf" compatible to allow migrating to a
+separate pinctrl driver later.
 
-Hi,
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Just found an interesting note in the PINCTRL_CONFIG_SET command 
-> description:
-> 
-> The maximum value of this field is limited by
-> the transport used. The agent needs to specify
-> this field such that the entire command can be
-> accommodated within the transport chosen.
-> 
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+index 45a307d3ce16..0f7e16a28990 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+@@ -32,6 +32,10 @@ properties:
+               - ti,omap4-padconf
+               - ti,omap5-padconf
+           - const: pinctrl-single
++      - items:
++          - enum:
++              - marvell,pxa1908-padconf
++          - const: pinconf-single
+ 
+   reg:
+     maxItems: 1
 
-Yes I am aware of that.
+-- 
+2.42.0
 
-> Furthermore, I observed the absence of a skip_configs parameter.
-> 
->  From my understanding, this implies that the maximum number of 
-> configurations should not exceed the msg_max_size allowed by the 
-> protocol, enabling the transmission of only one message to the SCMI 
-> server at a time.
->
 
-Yes that is correct, my understanding is that the transmitter is in
-charge of building a message whose payload can fit into the maximum
-message size allowed by the underlying configured transport.
-
-> Given this constraint, it seems we might not require additional helper 
-> functions. We could potentially just verify against msg_max_size.
-> 
-
-Indeed for that reason the scmi_get_max_msg_size that you introduced is
-just enough since it allows you to peek into the transport and get the
-max_msg_size...the misunderstanding is around the fact that I was simply
-meaning that you should plug it into some new helper_ops so that yo can
-call it like:
-
-  max_msg = ph->hops->get_max_msg_size(ph);
-
-(like iterators or get_extended_name)
-
-Because in this way you could use it also when the protocol is build as
-a loadable module, thing that now it is possible only for vendor defined
-protocols, but we could also easily switch all the base protocols to be
-selectable via Kconfig and =m in the future (if ever)
-
-Your helper is fine by itself it is just that it cannot be called by a
-protocol defined to loaded as a module because the symbol is not
-exported and, indeed, we introduced the ph->hops thing just for this
-reason, i.e. to have a set of common protocol utilities that can be
-called even from loadable modules protocols without the need to export
-every single symbol.
-
-The reference to iterators and extended_name was misleading
-probably...my bad...or I am still missing something :D
-
-Thanks,
-Cristian
