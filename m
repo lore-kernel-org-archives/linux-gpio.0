@@ -2,148 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FF8C4167B
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Nov 2023 12:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE5AC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Nov 2023 13:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234610AbjKGM0E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Nov 2023 07:26:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36566 "EHLO
+        id S234882AbjKGNts (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Nov 2023 08:49:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234082AbjKGMZo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2023 07:25:44 -0500
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1ED28A6B
-        for <linux-gpio@vger.kernel.org>; Tue,  7 Nov 2023 04:18:32 -0800 (PST)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5a7af20c488so67404557b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Nov 2023 04:18:32 -0800 (PST)
+        with ESMTP id S234925AbjKGNtc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2023 08:49:32 -0500
+Received: from mail-lj1-x261.google.com (mail-lj1-x261.google.com [IPv6:2a00:1450:4864:20::261])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BDF1721
+        for <linux-gpio@vger.kernel.org>; Tue,  7 Nov 2023 05:47:24 -0800 (PST)
+Received: by mail-lj1-x261.google.com with SMTP id 38308e7fff4ca-2c6b30acacdso75513731fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Nov 2023 05:47:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699359512; x=1699964312; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AjUrVizqyH1nfI6x/UZaYgw1z+MKM3l8dtyFAmAVDWw=;
-        b=yaKLipwya77Nb9STHS6f5skNVFquQj9pxhrnBIy2ZOUQXhjwxxZ4DX79l/+lRFDIiw
-         zDFUnybuJO3nLdzgtIO+5Cy+DsdzxBer0kY4Bb4KeKdg6w6qZ9mRMWYjpEx+ivHny6vt
-         2nWCGqyaWhriac5mfb+XpB6Vjv1V1yJ12CT7Ii50NVnStSye11JRJuGLParf5lk4xYkk
-         tOUxhS6zXvRTdoFmmV50HkmUuwEW6XH2JlYhKFE+vIrNd6QL8fu/GoDiuSQt6eaIucvQ
-         it3dGbFKcjBQHYGKbveLKw0sJachoGYFKF/dJgSJMen8OrMQySq09VlGpe8Kcd6yZTjk
-         NSrg==
+        d=gadgetoid.com; s=google; t=1699364842; x=1699969642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7dT8HNQOrxIm3pkuqT2pRA4XkMhzWg9k/6qHhenud2A=;
+        b=CP4zAY5vEi8UJtnFyGECT4yr2osFXpOmKrhgUqdNiugNrK6TcDkceHV9xBIwcsxO0J
+         ATDI8O6GU4Zdm6Zg7Wd2L60OkRywEagMT+/cTFQHpDpf2nyj8OtXAlYISY0yqZvqZb9U
+         7+0VCMPaveJ0pAUB+BFN8CNw9LAAuethP+8lmuGPzR0MiaZyf5g62p6GdkZMIzR+SL8f
+         UiLV6ERNtIHtWHBup4qM17CIgKMu29uhN4CRwlLPHqG+ZzkEEpiHERkYQLO2NghudxvM
+         OWn2oWJEasqF4lxU0K7iWw0itFCja0/vrVQS7UtgYWd6seBt2sFU0lgyy09kURO35x3K
+         Q2Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699359512; x=1699964312;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AjUrVizqyH1nfI6x/UZaYgw1z+MKM3l8dtyFAmAVDWw=;
-        b=wxcd13/X2PrN+cPKz0nxyO+E+iIfhmL0lhroW1Cd3rmm5j/l7nA6a4LBMzVtGRUhiD
-         8RwubpCRCXT7o0pP3snL8tBG+5RfsVCyhxlTxYYwCHI696CGeTxRDKgofiMt7U6PbfIt
-         cQmRGyIyim4NfNuhfYJd9Nxs2Wp5EoELL4GRQYHZQzbhevHnenM39pJs3T5sWmHt5kPU
-         SnM8PgLO3erX1J1u6I07aRg91kNj+H5azKs5ILlPfn3R63ZBnlXxr0f8uvpda9m8shVY
-         5tChtJC8eirX8+dLvtBYTyqXyog5WpK0PEGJvjF2ZFHB1CQhJYEZwJs0MPgsWvWDpXMb
-         kQrw==
-X-Gm-Message-State: AOJu0YyIbKWwpJOMYl9NXfhkhXu7ZrQ12WkykKD/mZZIEXkdkZIioQ7a
-        A3oigK2DJwROErOyUGtuEslKCAL9X2kmEW18Jeb9aw==
-X-Google-Smtp-Source: AGHT+IEfNk5GXDy4Op4JDSJ5jjpGKCs5RJ5m+Jq4s18y1HSS1sLqrMJRFHEjKKMGNS3lWsWeWVrZ/XIvsrSt6UA57OM=
-X-Received: by 2002:a0d:e6cb:0:b0:5a8:62f2:996a with SMTP id
- p194-20020a0de6cb000000b005a862f2996amr14903778ywe.6.1699359511723; Tue, 07
- Nov 2023 04:18:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699364842; x=1699969642;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7dT8HNQOrxIm3pkuqT2pRA4XkMhzWg9k/6qHhenud2A=;
+        b=GPJ7vuIDpQ42aChJxnW2dn/296K3M6Kz+ceJ5wo+OZRHhHr7eYrpMtOPjDNAuqsMfL
+         PZJu3nPn8XmT93NbOGl+ETZkMKmeAU0Mv3KewN9bZIx1jTvwH39tMdB+vcuVFqeHjQb2
+         v4ph7OVB4l20SAXZ6vmpAjKM8CQKmIUeIFnE2urwgwTib8r2AgiSGui4Z5MPuwL2glbl
+         jLEmvVib6rZjurTql8qOz3vgfLfRcjXaGVXPR2imo/c9ujwdF0I8FU8Dmt8PbwycARKM
+         aC2KDrwJ8UcGDEeHKs1qeoEvxuxhren9Xz3rNTtndA3WUFztA3YqA+b1CWxO90QzENjM
+         a1RQ==
+X-Gm-Message-State: AOJu0YzWtLIePHRr+iWvDDrYUEriGd2ZhHtQUWzkz5PjOCXvSMtl7xjV
+        iM+G7Oys9espjeVN7aK3lQQBqCLfckwMnEYTcKD3qOKgdDJWmA==
+X-Google-Smtp-Source: AGHT+IHyctoVVuPshnlL40GpsjVRt9xwgrMfJDFxe8gnyu8YqyTnkxXmo0l+2C4O3Urt+6wYYo4f6IKNE2dd
+X-Received: by 2002:a19:430d:0:b0:507:9d70:b297 with SMTP id q13-20020a19430d000000b005079d70b297mr22347999lfa.60.1699364842167;
+        Tue, 07 Nov 2023 05:47:22 -0800 (PST)
+Received: from pop-os.. (cpc91242-cmbg18-2-0-cust972.5-4.cable.virginm.net. [82.8.131.205])
+        by smtp-relay.gmail.com with ESMTPS id x8-20020a5d4908000000b0032db2e770f1sm66153wrq.66.2023.11.07.05.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Nov 2023 05:47:22 -0800 (PST)
+X-Relaying-Domain: gadgetoid.com
+From:   Phil Howard <phil@gadgetoid.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org, Phil Howard <phil@gadgetoid.com>
+Subject: [libgpiod][PATCH 2/2] bindings: python: use absolute paths for python test builds
+Date:   Tue,  7 Nov 2023 13:47:18 +0000
+Message-Id: <20231107134718.2913223-2-phil@gadgetoid.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231107134718.2913223-1-phil@gadgetoid.com>
+References: <20231107134718.2913223-1-phil@gadgetoid.com>
 MIME-Version: 1.0
-References: <20231011184823.443959-1-peter.griffin@linaro.org>
- <20231011184823.443959-7-peter.griffin@linaro.org> <20231016134106.GA2643742-robh@kernel.org>
-In-Reply-To: <20231016134106.GA2643742-robh@kernel.org>
-From:   Peter Griffin <peter.griffin@linaro.org>
-Date:   Tue, 7 Nov 2023 12:18:20 +0000
-Message-ID: <CADrjBPqB_tDjo68qODKsJMQLmDRoQo9U-LFR7os8bExjDNeEZw@mail.gmail.com>
-Subject: Re: [PATCH v3 06/20] dt-bindings: pinctrl: samsung: add
- google,gs101-pinctrl compatible
-To:     Rob Herring <robh@kernel.org>
-Cc:     krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, gregkh@linuxfoundation.org, cw00.choi@samsung.com,
-        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-        semen.protsenko@linaro.org, saravanak@google.com,
-        willmcvicker@google.com, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        kernel-team@android.com, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Rob,
+Change the paths used to build test C extensions in place to their abs
+counterparts. Avoids issues locating files if the build behaviour changes.
 
-Thanks for your review.
+Signed-off-by: Phil Howard <phil@gadgetoid.com>
+---
+ bindings/python/Makefile.am | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Mon, 16 Oct 2023 at 14:41, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Oct 11, 2023 at 07:48:09PM +0100, Peter Griffin wrote:
-> > Add the "google,gs101-pinctrl" compatible to the dt-schema bindings
-> > documentation.
-> >
-> > Add maxItems of 50 for the interrupts property as gs101 can have
-> > multiple irqs.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  .../bindings/pinctrl/samsung,pinctrl.yaml     | 22 ++++++++++++++++++-
-> >  1 file changed, 21 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> > index 26614621774a..6dc648490668 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> > +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-> > @@ -35,6 +35,7 @@ properties:
-> >
-> >    compatible:
-> >      enum:
-> > +      - google,gs101-pinctrl
-> >        - samsung,s3c2412-pinctrl
-> >        - samsung,s3c2416-pinctrl
-> >        - samsung,s3c2440-pinctrl
-> > @@ -58,7 +59,8 @@ properties:
-> >    interrupts:
-> >      description:
-> >        Required for GPIO banks supporting external GPIO interrupts.
-> > -    maxItems: 1
-> > +    minItems: 1
-> > +    maxItems: 50
-> >
-> >    power-domains:
-> >      maxItems: 1
-> > @@ -134,6 +136,24 @@ allOf:
-> >            minItems: 1
-> >            maxItems: 1
-> >
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: google,gs101-pinctrl
-> > +    then:
-> > +      properties:
-> > +        interrupts:
-> > +          description:
-> > +            Required for external wakeup interrupts. List all external
->
-> Is it external GPIO interrupts or wakeup interrupts?
+diff --git a/bindings/python/Makefile.am b/bindings/python/Makefile.am
+index b2f2779..95edfff 100644
+--- a/bindings/python/Makefile.am
++++ b/bindings/python/Makefile.am
+@@ -14,8 +14,8 @@ endif
+ all-local:
+ 	GPIOD_WITH_TESTS=$(BUILD_TESTS) \
+ 	$(PYTHON) setup.py build_ext --inplace \
+-		--include-dirs=$(top_srcdir)/include/:$(top_srcdir)/tests/gpiosim/ \
+-		--library-dirs=$(top_builddir)/lib/.libs/:$(top_builddir)/tests/gpiosim/.libs/
++		--include-dirs=$(abs_top_srcdir)/include/:$(abs_top_srcdir)/tests/gpiosim/ \
++		--library-dirs=$(abs_top_builddir)/lib/.libs/:$(abs_top_builddir)/tests/gpiosim/.libs/
+ 
+ install-exec-local:
+ 	GPIOD_WITH_TESTS= \
+-- 
+2.34.1
 
-These are external wakeup interrupts.
-
-Looking again I believe this can be dropped entirely as re-reading
-samsung,pinctrl-gpio-bank.yaml we are already defining the
-external wake-up interrupts on each bank in gs101-pinctrl.dtsi.
-
->
-> > +            wakeup interrupts supported by this bank.
-> > +          minItems: 1
-> > +          maxItems: 50
->
-> For a given SoC, I don't see how this is variable? If it is variable,
-> how do you know which entry is what?
-
-It isn't variable.
-
-Peter.
