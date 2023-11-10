@@ -2,67 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD31C4167D
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Nov 2023 17:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC036C05032
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Nov 2023 17:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234896AbjKJRoL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Nov 2023 12:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34518 "EHLO
+        id S1345269AbjKJRq4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Nov 2023 12:46:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345909AbjKJRnn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2023 12:43:43 -0500
-Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0100DA267
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Nov 2023 00:46:13 -0800 (PST)
-Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
-        id B87B247C6C; Fri, 10 Nov 2023 08:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
-        s=mail; t=1699605971;
-        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
-        h=Date:From:To:Subject:From;
-        b=LBb3nIWoFT2Bo1UmNDE1YNjZTgpyz3MnkQMOlO9VN5SdeEC+70UcmdYjSydopU/4r
-         i8jgAMpiJyZ4K5awWMEKErPQGlvpNaJjBLbs7AKTot/apaaGpMxxFkXINOQnsdNq6i
-         Lx2RUXlyEH52E+gKwJ0zCMp4FpTwhB23JHbT8ASL2fZ/HdjH4PmmB+otUI5rt4Q7Zi
-         I1OZtraaL739aSTWV7LzpyxipYCtlUBWCLyjkiCZmm+TfmHK6FuAuQXn0RCrOgbsuA
-         r3xoBDI/51TW6vx8iQinBlx/fhnF5Lq5jS4Wkd9Kws7Rffiwp7Kv/5k7dKzeKOc/YP
-         NPSjf5Zp2SRjg==
-Received: by mail.venturelinkbiz.com for <linux-gpio@vger.kernel.org>; Fri, 10 Nov 2023 08:45:47 GMT
-Message-ID: <20231110074500-0.1.3i.9o7n.0.01rh0b7c2u@venturelinkbiz.com>
-Date:   Fri, 10 Nov 2023 08:45:47 GMT
-From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
-X-Mailer: mail.venturelinkbiz.com
+        with ESMTP id S235181AbjKJRpz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2023 12:45:55 -0500
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17AEC5260;
+        Thu,  9 Nov 2023 22:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699596866; x=1731132866;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ii54i8l9M6cKrlgX+mjJdtwVkIC1gfwZhndVsG7a0/A=;
+  b=HMkNK9yiNe5UXNwY4QS79BhdAUg2cYuvZIHGUDCx+J4Eu/+wrtaDdFkD
+   mxgJOJXVH0HqDio70qFlm69C7CmsvT5HMSvaWOUJa3iQL5DQy6seSKlnc
+   YQsHXhd2lLx6noykKtzLlMMI0/B/v9/Ppui0cE500hxQYRaUqqNu/+n+t
+   MX+R2UVmjXegAfxARz82E6+gR/3R5WsoHMVwvTef6+83AgJgPuVBjIeS8
+   e9HvhYLoyK5YnyxPxYJzZlOIcmacd5oVrtkW7q5MJ5s2Xojiqc43XRKDJ
+   gv61ijEpB2HOe1CxNxMQ5I1M1T1MkhcBGrc0w4ImChe6J8TeNJPlssQXk
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10889"; a="394044710"
+X-IronPort-AV: E=Sophos;i="6.03,291,1694761200"; 
+   d="scan'208";a="394044710"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2023 22:14:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10889"; a="1095109933"
+X-IronPort-AV: E=Sophos;i="6.03,291,1694761200"; 
+   d="scan'208";a="1095109933"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Nov 2023 22:14:23 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 239D614F; Fri, 10 Nov 2023 08:14:22 +0200 (EET)
+Date:   Fri, 10 Nov 2023 08:14:22 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v3 00/17] pinctrl: intel: Use NOIRQ PM helper
+Message-ID: <20231110061422.GI17433@black.fi.intel.com>
+References: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231030120734.2831419-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dobr=C3=A9 r=C3=A1no,
+Hi Andy,
 
-m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
-bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
-nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
-em telefonu?
+On Mon, Oct 30, 2023 at 02:07:17PM +0200, Andy Shevchenko wrote:
+> Intel pin control drivers use NOIRQ variant of the PM callbacks.
+> To make them smaller and less error prone against different
+> kernel configurations (with possible defined but not used variables)
+> switch to use NOIRQ PM helper.
+> 
+> Changelog v3:
+> - dropped applied patches
+> - dropped MediaTek patch for now
+> - split Intel patch to the series using suggection by Paul
+> 
+> Changelog v2:
+> - rewritten commit message in patch 1 (Rafael)
+> - converted non-Intel pin control drivers as well
+> - added couple of kinda related patches to use pm_ptr()
+> 
+> Andy Shevchenko (17):
+>   pinctrl: intel: Provide Intel pin control wide PM ops structure
+>   pinctrl: alderlake: Switch to use Intel pin control PM ops
+>   pinctrl: broxton: Switch to use Intel pin control PM ops
+>   pinctrl: cannonlake: Switch to use Intel pin control PM ops
+>   pinctrl: cedarfork: Switch to use Intel pin control PM ops
+>   pinctrl: denverton: Switch to use Intel pin control PM ops
+>   pinctrl: elkhartlake: Switch to use Intel pin control PM ops
+>   pinctrl: emmitsburg: Switch to use Intel pin control PM ops
+>   pinctrl: geminilake: Switch to use Intel pin control PM ops
+>   pinctrl: icelake: Switch to use Intel pin control PM ops
+>   pinctrl: jasperlake: Switch to use Intel pin control PM ops
+>   pinctrl: lakefield: Switch to use Intel pin control PM ops
+>   pinctrl: lewisburg: Switch to use Intel pin control PM ops
+>   pinctrl: meteorlake: Switch to use Intel pin control PM ops
+>   pinctrl: sunrisepoint: Switch to use Intel pin control PM ops
+>   pinctrl: tigerlake: Switch to use Intel pin control PM ops
+>   pinctrl: intel: Make PM ops functions static
+> 
+>  drivers/pinctrl/intel/pinctrl-alderlake.c    |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-broxton.c      |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-cannonlake.c   |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-cedarfork.c    |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-denverton.c    |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-elkhartlake.c  |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-emmitsburg.c   |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-geminilake.c   |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-icelake.c      |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-intel.c        | 14 +++++++-------
+>  drivers/pinctrl/intel/pinctrl-intel.h        | 11 +----------
+>  drivers/pinctrl/intel/pinctrl-jasperlake.c   |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-lakefield.c    |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-lewisburg.c    |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-meteorlake.c   |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  5 ++---
+>  drivers/pinctrl/intel/pinctrl-tigerlake.c    |  5 ++---
+>  17 files changed, 38 insertions(+), 62 deletions(-)
 
-Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
-=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
-rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
- stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
+Nice! For the series,
 
-Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
-=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
- analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
-tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
-=ADl.
-
-C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
-a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
-vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
-=2E
-
-
-Pozdravy
-Michal Rmoutil
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
