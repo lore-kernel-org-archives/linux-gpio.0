@@ -2,164 +2,67 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ABAC4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Nov 2023 00:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD31C4167D
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Nov 2023 17:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229491AbjKJA6r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Nov 2023 19:58:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41432 "EHLO
+        id S234896AbjKJRoL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Nov 2023 12:44:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbjKJA6r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Nov 2023 19:58:47 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C610A3A91
-        for <linux-gpio@vger.kernel.org>; Thu,  9 Nov 2023 16:58:44 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id 46e09a7af769-6d339b93423so12097a34.0
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Nov 2023 16:58:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699577924; x=1700182724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xJVrXuXFcu3DgtWdnbXpFzASR1Czvt1UEeVrRTmaZPQ=;
-        b=V5c558bwpJbS+RsMjl+81BnZskU9iA2PziT2KM/lWdWWWu9sF61J7xxbkit5dKirS2
-         r46y3F7gdM+v0QWicY8k7FIYJb5Dw3lpnFUDM3m4L8n8WniI4rH9r8J2k99Wtdjlx3Fb
-         cwZB48T+NKxPi43z6rvgfk/gCXdrlX5dBOCqrgDLWe5aYioerEi22D0WnIYhJA53bF61
-         2Wt2HG7wPkxoF3tCC0mKbYrB8/JhenDUbnG+eH0+lc2Y4Db7+Gy38b34eL/xGguoIOwW
-         3M3hrwMEaHFE2CBRj16ppDuBnYjw4ba78bTRKl83sEIGAc3ygF8yvXkwM6qFYWp3ifyr
-         /Wxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699577924; x=1700182724;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJVrXuXFcu3DgtWdnbXpFzASR1Czvt1UEeVrRTmaZPQ=;
-        b=vrrIaCXgaWbnJdeZx5UCswnQyaz76nXtrU+az6Tmimn90tCr/A00YXAKCZFkLdSSjc
-         3hSj9NrsLAbyafVio5UJbhSXCB3lSoy4XlJcMgPS7JMohdBsH9pBOz463pKbUAMpyDbE
-         7sdiCi7YXy3RNEBlzM3SqWe+7WhQWsS94iuojfAecCCgeE0/6iHfkd+HvphuRolUkuHR
-         oZnBcYfByuGGONSQvVqNP0cyL7r8svSQv4naWJnBGhlw0ZVpFoVXiJ1S2JUL/rOw4Kb0
-         70aKyOploBI6TZ9kGWQGKQqPkJCoAkUMDvG5yIHErupRg2Fwpu/J5GnD0l8ULO8Xn+0W
-         ptEg==
-X-Gm-Message-State: AOJu0Yyh/OUR/AqO6X6cTsiY7hTw0QgOB/woM1IEZSiBOaU78r93CJLe
-        9qHCub2lO29dy/XYOog0pa3ltlXKoOnZ5hJipRzAUQ==
-X-Google-Smtp-Source: AGHT+IFCGAq9uOJ74nOCEa1XdXbPO22Qfscitoj00Gqwgxzjx8UkOGK6WexDGU679wSnRWP4OZnOBw==
-X-Received: by 2002:a9d:6f16:0:b0:6b7:36af:1937 with SMTP id n22-20020a9d6f16000000b006b736af1937mr7501364otq.0.1699577923984;
-        Thu, 09 Nov 2023 16:58:43 -0800 (PST)
-Received: from octopus ([2400:4050:c3e1:100:f2ee:7d90:a86d:610])
-        by smtp.gmail.com with ESMTPSA id s4-20020a655844000000b005bdf596164fsm1746007pgr.94.2023.11.09.16.58.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Nov 2023 16:58:43 -0800 (PST)
-Date:   Fri, 10 Nov 2023 09:58:39 +0900
-From:   Takahiro Akashi <takahiro.akashi@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [RFC v5 5/5] dt-bindings: firmware: arm,scmi: Add support for
- pinctrl protocol
-Message-ID: <ZU2AP7leDcIZIN+b@octopus>
-Mail-Followup-To: Takahiro Akashi <takahiro.akashi@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <cover.1698353854.git.oleksii_moisieiev@epam.com>
- <e9285b4377242e4d888391be987cbb99caf8c573.1698353854.git.oleksii_moisieiev@epam.com>
- <CACRpkdYW-xmejyOo9H9XSkcabvYgBqPvpjppvNe_RF6RLxyxKA@mail.gmail.com>
+        with ESMTP id S1345909AbjKJRnn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2023 12:43:43 -0500
+Received: from mail.venturelinkbiz.com (mail.venturelinkbiz.com [51.195.119.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0100DA267
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Nov 2023 00:46:13 -0800 (PST)
+Received: by mail.venturelinkbiz.com (Postfix, from userid 1002)
+        id B87B247C6C; Fri, 10 Nov 2023 08:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkbiz.com;
+        s=mail; t=1699605971;
+        bh=JBV4b8UUo1MSngn/QBoedt1Dv52bT8rWeq4R22MtJMs=;
+        h=Date:From:To:Subject:From;
+        b=LBb3nIWoFT2Bo1UmNDE1YNjZTgpyz3MnkQMOlO9VN5SdeEC+70UcmdYjSydopU/4r
+         i8jgAMpiJyZ4K5awWMEKErPQGlvpNaJjBLbs7AKTot/apaaGpMxxFkXINOQnsdNq6i
+         Lx2RUXlyEH52E+gKwJ0zCMp4FpTwhB23JHbT8ASL2fZ/HdjH4PmmB+otUI5rt4Q7Zi
+         I1OZtraaL739aSTWV7LzpyxipYCtlUBWCLyjkiCZmm+TfmHK6FuAuQXn0RCrOgbsuA
+         r3xoBDI/51TW6vx8iQinBlx/fhnF5Lq5jS4Wkd9Kws7Rffiwp7Kv/5k7dKzeKOc/YP
+         NPSjf5Zp2SRjg==
+Received: by mail.venturelinkbiz.com for <linux-gpio@vger.kernel.org>; Fri, 10 Nov 2023 08:45:47 GMT
+Message-ID: <20231110074500-0.1.3i.9o7n.0.01rh0b7c2u@venturelinkbiz.com>
+Date:   Fri, 10 Nov 2023 08:45:47 GMT
+From:   "Michal Rmoutil" <michal.rmoutil@venturelinkbiz.com>
+To:     <linux-gpio@vger.kernel.org>
+Subject: =?UTF-8?Q?Efektivn=C3=AD_sledov=C3=A1n=C3=AD_a_optimalizace_v=C3=BDroby_pro_va=C5=A1i_spole=C4=8Dnost?=
+X-Mailer: mail.venturelinkbiz.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYW-xmejyOo9H9XSkcabvYgBqPvpjppvNe_RF6RLxyxKA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Arm folks,
+Dobr=C3=A9 r=C3=A1no,
 
-Do you have any comment?
-I expect that you have had some assumption when you defined
-SCMI pinctrl protocol specification.
+m=C3=A1te mo=C5=BEnost sledovat stav ka=C5=BEd=C3=A9ho stroje a v=C3=BDro=
+bn=C3=ADho procesu z kancel=C3=A1=C5=99e, konferen=C4=8Dn=C3=AD m=C3=ADst=
+nosti nebo dokonce z domova =C4=8Di na cest=C3=A1ch =E2=80=93 na va=C5=A1=
+em telefonu?
 
-On Mon, Nov 06, 2023 at 02:12:36PM +0100, Linus Walleij wrote:
-> On Fri, Oct 27, 2023 at 8:28???AM Oleksii Moisieiev
-> <Oleksii_Moisieiev@epam.com> wrote:
-> 
-> > +                keys_pins: keys-pins {
-> > +                    pins = "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
-> > +                    bias-pull-up;
-> > +                };
-> 
-> This is kind of interesting and relates to my question about naming groups and
-> functions of GPIO pins.
-> 
-> Here we see four pins suspiciously named "GP_*" which I read as
-> "generic purpose"
-> and they are not muxed to *any* function, yes pulled up.
-> 
-> I would have expected something like:
-> 
-> keys_pins: keys-pins {
->   groups = "GP_5_17_grp", "GP_5_20_grp", "GP_5_22_grp", "GP_2_1_grp";
->   function = "gpio";
->   pins = "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
->   bias-pull-up;
-> };
-> 
-> I hope this illustrates what I see as a problem in not designing in
-> GPIO as an explicit
-> function, I get the impression that these pins are GPIO because it is hardware
-> default.
+Poskytujeme rychle implementovateln=C3=BD a snadno pou=C5=BEiteln=C3=BD n=
+=C3=A1stroj, kter=C3=BD zachyt=C3=AD i n=C4=9Bkolikasekundov=C3=BD mikrop=
+rostoj a okam=C5=BEit=C4=9B p=C5=99epo=C4=8D=C3=ADt=C3=A1 vyu=C5=BEit=C3=AD=
+ stroje v kontextu dan=C3=A9 v=C3=BDrobn=C3=AD zak=C3=A1zky.
 
-If you want to stick to "explicit", we may rather introduce a pre-defined
-sub-node name, "gpio", in a device tree binding, i.e.
+Kdykoli vid=C3=ADte stav objedn=C3=A1vky a jste informov=C3=A1ni o p=C5=99=
+=C3=ADpadn=C3=A9m sn=C3=AD=C5=BEen=C3=AD efektivity. Syst=C3=A9m s=C3=A1m=
+ analyzuje data a p=C5=99ipravuje cenn=C3=A9 reporty, co=C5=BE oper=C3=A1=
+tor=C5=AFm umo=C5=BE=C5=88uje soust=C5=99edit se na v=C3=BDrobn=C3=AD c=C3=
+=ADl.
 
-  protocol@19 { // pinctrl protocol
-      ... // other pinmux nodes
+C=C3=ADl je jednoduch=C3=BD: jeden pohled =E2=80=93 cel=C3=A1 tov=C3=A1rn=
+a. =C4=8Cek=C3=A1m na odpov=C4=9B=C4=8F, jestli vid=C3=ADte mo=C5=BEnost =
+vyu=C5=BEit=C3=AD takov=C3=A9ho n=C3=A1stroje ve va=C5=A1=C3=AD firm=C4=9B=
+=2E
 
-      scmi_gpio: gpio { // "gpio" is a fixed name
-          keys-pins {
-              pins = "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
-              bias-pull-up;
-              // possibly input or output
-          };
-          input-pins {
-              groups = "some group"; // any name
-              input-mode;
-          }
-          output-pins {
-              pins = "foo1", "foo2"; // any name
-              output-mode;
-          }
-      }
-  }
 
-It would indicate that all the succeeding nodes are for gpio definitions
-and *virtual* gpio pin numbers will be assigned in the order of
-appearances in "gpio" node. Then a client driver may refer to a gpio pin
-(say, GP_2_1?) like in the current manner:
-
-  foo_device {
-       ...
-       reset-gpios = <&scmi_gpio 3 ...>;
-  }
-
--Takahiro Akashi
-
-> 
-> Yours,
-> Linus Walleij
+Pozdravy
+Michal Rmoutil
