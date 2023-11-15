@@ -1,27 +1,27 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEA033082;
-	Wed, 15 Nov 2023 14:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866A43FB05;
+	Wed, 15 Nov 2023 14:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FjVYWW77"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA04419BD;
-	Wed, 15 Nov 2023 06:40:36 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPA id D18DCFF803;
-	Wed, 15 Nov 2023 14:40:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bv0Zflz+"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C042B10D0;
+	Wed, 15 Nov 2023 06:40:39 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPA id DE465FF80E;
+	Wed, 15 Nov 2023 14:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1700059235;
+	t=1700059238;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C3qOJv0880JICdalI8Clio4OU3q9Vor1WvllgMz11pQ=;
-	b=FjVYWW77zxWT3RPfWO0q5MqX/HipTbaOOMudJonQCk4ENdJkVVMHckED7vX5DxkjbcxB8B
-	ROVu0AKMwCaKpOPDuOZsiWkrkBeVIao2T5EFAX6Vlt/01RIFFPKFadYn84KaUGPkrh8F4C
-	QLagBeJw+RUjMhCgEnmWc1GtBsJ2raODXXqvPqAlPC5dGV0qDtHx374ZSHBhvvN2Ebr1GV
-	L3cVR4ZVfEFjMvSS7P/88iFwh/f6IRY0OeOhZsJmVhG9V49919G98/M8c1kbiRbcsil43O
-	WsaHZ/ZhQwv3iSwh8zPd3g38zurxtnqYrkS2PTUic3nWr9xqTirctyM0/7HW6w==
+	bh=6qb0p+kQx/Ezw2TnsBKRObBra0SWAv6y0eQ73skGxgk=;
+	b=bv0Zflz+RnQ1Lm3yYoKVFMf0Gt5d/w3V1AOghfxWq6H+UlIkvPnfQdDme+xqwCgQ1GC3M+
+	eqqA1jzyxSPPc13p0R/JqPGL20Rvk1Tt3HZSmskv52WrjR4KlZ35z+JScNZjv19C9Qi562
+	BlPFXk/RlsLPeeXanzURp0UpLwrsidonqpJ9b0FNv4oSSwTskNFRIbdpnxbmH0ItoueEz9
+	uDh2B9UbfMde2ANyss0eb6ns59oYcO2dVN1EC9pJef2JOAjB1bxfiEb0u84NC7UT80VQAb
+	K8Xrzp/p6g3hg038WtH3uHNOgVFphcADY+BSplSCzF7PllL+OoZnH/g55/JpgQ==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: netdev@vger.kernel.org,
 	Simon Horman <horms@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v9 12/27] soc: fsl: cpm1: qmc: Remove no more needed checks from qmc_check_chans()
-Date: Wed, 15 Nov 2023 15:39:48 +0100
-Message-ID: <20231115144007.478111-13-herve.codina@bootlin.com>
+Subject: [PATCH v9 14/27] soc: fsl: cpm1: qmc: Add support for disabling channel TSA entries
+Date: Wed, 15 Nov 2023 15:39:50 +0100
+Message-ID: <20231115144007.478111-15-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231115144007.478111-1-herve.codina@bootlin.com>
 References: <20231115144007.478111-1-herve.codina@bootlin.com>
@@ -71,70 +71,93 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-The newly introduced qmc_chan_setup_tsa* functions check that the
-channel entries are not already used.
-These checks are also performed by qmc_check_chans() and are no more
-needed.
+In order to allow runtime timeslot route changes, disabling channel TSA
+entries needs to be supported.
 
-Remove them from qmc_check_chans().
+Add support for this new feature.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 5d7e2ecdd933..f2a71a140db7 100644
+index 8d71e63d0f21..c1318fad296b 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -884,10 +884,7 @@ EXPORT_SYMBOL(qmc_chan_reset);
- static int qmc_check_chans(struct qmc *qmc)
+@@ -567,7 +567,8 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
+ 	spin_unlock_irqrestore(&chan->rx_lock, flags);
+ }
+ 
+-static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_serial_info *info)
++static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_serial_info *info,
++				     bool enable)
  {
- 	struct tsa_serial_info info;
--	bool is_one_table = false;
- 	struct qmc_chan *chan;
--	u64 tx_ts_mask = 0;
--	u64 rx_ts_mask = 0;
- 	u64 tx_ts_assigned_mask;
- 	u64 rx_ts_assigned_mask;
- 	int ret;
-@@ -911,7 +908,6 @@ static int qmc_check_chans(struct qmc *qmc)
- 			dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned are not equal\n");
- 			return -EINVAL;
- 		}
--		is_one_table = true;
- 	}
+ 	unsigned int i;
+ 	u16 curr;
+@@ -603,13 +604,14 @@ static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_ser
+ 			continue;
  
- 	tx_ts_assigned_mask = info.nb_tx_ts == 64 ? U64_MAX : (((u64)1) << info.nb_tx_ts) - 1;
-@@ -922,27 +918,11 @@ static int qmc_check_chans(struct qmc *qmc)
- 			dev_err(qmc->dev, "chan %u uses TSA unassigned Tx TS\n", chan->id);
- 			return -EINVAL;
- 		}
--		if (tx_ts_mask & chan->tx_ts_mask) {
--			dev_err(qmc->dev, "chan %u uses an already used Tx TS\n", chan->id);
--			return -EINVAL;
--		}
- 
- 		if (chan->rx_ts_mask > rx_ts_assigned_mask) {
- 			dev_err(qmc->dev, "chan %u uses TSA unassigned Rx TS\n", chan->id);
- 			return -EINVAL;
- 		}
--		if (rx_ts_mask & chan->rx_ts_mask) {
--			dev_err(qmc->dev, "chan %u uses an already used Rx TS\n", chan->id);
--			return -EINVAL;
--		}
--
--		if (is_one_table && (chan->tx_ts_mask != chan->rx_ts_mask)) {
--			dev_err(qmc->dev, "chan %u uses different Rx and Tx TS\n", chan->id);
--			return -EINVAL;
--		}
--
--		tx_ts_mask |= chan->tx_ts_mask;
--		rx_ts_mask |= chan->rx_ts_mask;
+ 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
+-				 ~QMC_TSA_WRAP, val);
++				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
  	}
  
  	return 0;
+ }
+ 
+-static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_serial_info *info)
++static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_serial_info *info,
++					bool enable)
+ {
+ 	unsigned int i;
+ 	u16 curr;
+@@ -650,7 +652,7 @@ static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_
+ 			continue;
+ 
+ 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
+-				 ~QMC_TSA_WRAP, val);
++				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
+ 	}
+ 	/* Set entries based on Tx stuff */
+ 	for (i = 0; i < info->nb_tx_ts; i++) {
+@@ -658,13 +660,13 @@ static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_
+ 			continue;
+ 
+ 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATTX + (i * 2),
+-				 ~QMC_TSA_WRAP, val);
++				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static int qmc_chan_setup_tsa(struct qmc_chan *chan)
++static int qmc_chan_setup_tsa(struct qmc_chan *chan, bool enable)
+ {
+ 	struct tsa_serial_info info;
+ 	int ret;
+@@ -679,8 +681,8 @@ static int qmc_chan_setup_tsa(struct qmc_chan *chan)
+ 	 * and one for Tx) according to assigned TS numbers.
+ 	 */
+ 	return ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) ?
+-		qmc_chan_setup_tsa_64rxtx(chan, &info) :
+-		qmc_chan_setup_tsa_32rx_32tx(chan, &info);
++		qmc_chan_setup_tsa_64rxtx(chan, &info, enable) :
++		qmc_chan_setup_tsa_32rx_32tx(chan, &info, enable);
+ }
+ 
+ static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
+@@ -1146,7 +1148,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+ 
+ 	chan->qmc = qmc;
+ 
+-	ret = qmc_chan_setup_tsa(chan);
++	ret = qmc_chan_setup_tsa(chan, true);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.41.0
 
