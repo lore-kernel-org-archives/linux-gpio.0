@@ -1,27 +1,27 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D03C33CD8;
-	Wed, 15 Nov 2023 14:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140FC33CF1;
+	Wed, 15 Nov 2023 14:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KrcrEFY8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F8jgT8lA"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7068E1706;
-	Wed, 15 Nov 2023 06:40:27 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 19E93FF80D;
-	Wed, 15 Nov 2023 14:40:24 +0000 (UTC)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ADAB173E;
+	Wed, 15 Nov 2023 06:40:30 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 6916CFF820;
+	Wed, 15 Nov 2023 14:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1700059225;
+	t=1700059229;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Iw0he/eMliW08eqoSvHMYrNGnDe+h1GkLIEhwTKgW3w=;
-	b=KrcrEFY8b8jyP7vnep/tWcobGg6jopjOKj1ItdyzONrXzwnWM9YuoRMJpIkUJQWYI0YDaB
-	w+x+FA/dWBbyTuxz5vyA6cSqwf83Isg7QquoZl90OHA+OhfACg70un0l5U6KRNCxPXUOWK
-	KAD7j5358qHpASqkKW5y5xjia6bcwdXlGsTcahxCg8JeDLxB+glNyr7KM4iB9OZyTWZcD8
-	kVGHspd447eTqCFEwMvD5tIiMYLuiya0NZAUOb6/73jZGo6XgsNtOxDHGIYrj6tTHFFgYQ
-	3NR+FTVJDvbVXvOGzn3SUIH+uaif7g28iU7qyG3UZqNguY3ei/S2zvRHF6Nwkw==
+	bh=TbBlqCeNrZy6PhV/R9epk+t9XJ3OdgYkqrPc5YpLg7o=;
+	b=F8jgT8lAPKXcyPFzLLW6if6nqwx09xLI3vwuPUKc53E0anAfDsVMDwhaC4MBlBLthBvEB7
+	gti0LfKwRBHxFE9PVn+frjJVDtSgnpQyUfdLMHlyWX6t3OZbqdGZ6ErXkLZwvxd/iCreE7
+	e8Q9dzWh01eVci1znQdPLUL5C4oWXB9ouB0cLYgDGU/h76U5fZbZqTnkjQLn1+AVJoDw+Y
+	DmsERmP6F3aDPCfs4zSPh2y7a+BzkeIiZV4/3zlFNaWU40SDz/fvQRlr9IM4PltZptqzPB
+	4vsA/8J/SpoH72Ji+PtnnjTCp+7EOrWCtXzzP2PGmDEWqgnUFNGyW3fwbsSUfg==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: netdev@vger.kernel.org,
 	Simon Horman <horms@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v9 06/27] soc: fsl: cpm1: qmc: Add support for child devices
-Date: Wed, 15 Nov 2023 15:39:42 +0100
-Message-ID: <20231115144007.478111-7-herve.codina@bootlin.com>
+Subject: [PATCH v9 08/27] MAINTAINERS: Add the Freescale QMC HDLC driver entry
+Date: Wed, 15 Nov 2023 15:39:44 +0100
+Message-ID: <20231115144007.478111-9-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231115144007.478111-1-herve.codina@bootlin.com>
 References: <20231115144007.478111-1-herve.codina@bootlin.com>
@@ -71,179 +71,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-QMC child devices support is needed to avoid orphan DT nodes that use a
-simple DT phandle to reference a QMC channel.
-
-Allow to instantiate child devices and also extend the API to get the
-qmc_chan using a child device.
+After contributing the driver, add myself as the maintainer for the
+Freescale QMC HDLC driver.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 91 +++++++++++++++++++++++++++++++---------
- include/soc/fsl/qe/qmc.h |  2 +
- 2 files changed, 73 insertions(+), 20 deletions(-)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 27f2f16deac9..e716f13669a0 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -1425,8 +1425,16 @@ static int qmc_probe(struct platform_device *pdev)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 97f51d5ec1cf..82d9afa8c083 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8524,6 +8524,13 @@ F:	Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+ F:	drivers/soc/fsl/qe/qmc.c
+ F:	include/soc/fsl/qe/qmc.h
  
- 	platform_set_drvdata(pdev, qmc);
- 
-+	/* Populate channel related devices */
-+	ret = devm_of_platform_populate(qmc->dev);
-+	if (ret)
-+		goto err_disable_txrx;
++FREESCALE QUICC ENGINE QMC HDLC DRIVER
++M:	Herve Codina <herve.codina@bootlin.com>
++L:	netdev@vger.kernel.org
++L:	linuxppc-dev@lists.ozlabs.org
++S:	Maintained
++F:	drivers/net/wan/fsl_qmc_hdlc.c
 +
- 	return 0;
- 
-+err_disable_txrx:
-+	qmc_setbits32(qmc->scc_regs + SCC_GSMRL, 0);
-+
- err_disable_intr:
- 	qmc_write16(qmc->scc_regs + SCC_SCCM, 0);
- 
-@@ -1465,26 +1473,16 @@ static struct platform_driver qmc_driver = {
- };
- module_platform_driver(qmc_driver);
- 
--struct qmc_chan *qmc_chan_get_byphandle(struct device_node *np, const char *phandle_name)
-+static struct qmc_chan *qmc_chan_get_from_qmc(struct device_node *qmc_np, unsigned int chan_index)
- {
--	struct of_phandle_args out_args;
- 	struct platform_device *pdev;
- 	struct qmc_chan *qmc_chan;
- 	struct qmc *qmc;
--	int ret;
- 
--	ret = of_parse_phandle_with_fixed_args(np, phandle_name, 1, 0,
--					       &out_args);
--	if (ret < 0)
--		return ERR_PTR(ret);
--
--	if (!of_match_node(qmc_driver.driver.of_match_table, out_args.np)) {
--		of_node_put(out_args.np);
-+	if (!of_match_node(qmc_driver.driver.of_match_table, qmc_np))
- 		return ERR_PTR(-EINVAL);
--	}
- 
--	pdev = of_find_device_by_node(out_args.np);
--	of_node_put(out_args.np);
-+	pdev = of_find_device_by_node(qmc_np);
- 	if (!pdev)
- 		return ERR_PTR(-ENODEV);
- 
-@@ -1494,17 +1492,12 @@ struct qmc_chan *qmc_chan_get_byphandle(struct device_node *np, const char *phan
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 
--	if (out_args.args_count != 1) {
-+	if (chan_index >= ARRAY_SIZE(qmc->chans)) {
- 		platform_device_put(pdev);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (out_args.args[0] >= ARRAY_SIZE(qmc->chans)) {
--		platform_device_put(pdev);
--		return ERR_PTR(-EINVAL);
--	}
--
--	qmc_chan = qmc->chans[out_args.args[0]];
-+	qmc_chan = qmc->chans[chan_index];
- 	if (!qmc_chan) {
- 		platform_device_put(pdev);
- 		return ERR_PTR(-ENOENT);
-@@ -1512,8 +1505,44 @@ struct qmc_chan *qmc_chan_get_byphandle(struct device_node *np, const char *phan
- 
- 	return qmc_chan;
- }
-+
-+struct qmc_chan *qmc_chan_get_byphandle(struct device_node *np, const char *phandle_name)
-+{
-+	struct of_phandle_args out_args;
-+	struct qmc_chan *qmc_chan;
-+	int ret;
-+
-+	ret = of_parse_phandle_with_fixed_args(np, phandle_name, 1, 0,
-+					       &out_args);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	if (out_args.args_count != 1) {
-+		of_node_put(out_args.np);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	qmc_chan = qmc_chan_get_from_qmc(out_args.np, out_args.args[0]);
-+	of_node_put(out_args.np);
-+	return qmc_chan;
-+}
- EXPORT_SYMBOL(qmc_chan_get_byphandle);
- 
-+struct qmc_chan *qmc_chan_get_bychild(struct device_node *np)
-+{
-+	struct device_node *qmc_np;
-+	u32 chan_index;
-+	int ret;
-+
-+	qmc_np = np->parent;
-+	ret = of_property_read_u32(np, "reg", &chan_index);
-+	if (ret)
-+		return ERR_PTR(-EINVAL);
-+
-+	return qmc_chan_get_from_qmc(qmc_np, chan_index);
-+}
-+EXPORT_SYMBOL(qmc_chan_get_bychild);
-+
- void qmc_chan_put(struct qmc_chan *chan)
- {
- 	put_device(chan->qmc->dev);
-@@ -1550,6 +1579,28 @@ struct qmc_chan *devm_qmc_chan_get_byphandle(struct device *dev,
- }
- EXPORT_SYMBOL(devm_qmc_chan_get_byphandle);
- 
-+struct qmc_chan *devm_qmc_chan_get_bychild(struct device *dev,
-+					   struct device_node *np)
-+{
-+	struct qmc_chan *qmc_chan;
-+	struct qmc_chan **dr;
-+
-+	dr = devres_alloc(devm_qmc_chan_release, sizeof(*dr), GFP_KERNEL);
-+	if (!dr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	qmc_chan = qmc_chan_get_bychild(np);
-+	if (!IS_ERR(qmc_chan)) {
-+		*dr = qmc_chan;
-+		devres_add(dev, dr);
-+	} else {
-+		devres_free(dr);
-+	}
-+
-+	return qmc_chan;
-+}
-+EXPORT_SYMBOL(devm_qmc_chan_get_bychild);
-+
- MODULE_AUTHOR("Herve Codina <herve.codina@bootlin.com>");
- MODULE_DESCRIPTION("CPM QMC driver");
- MODULE_LICENSE("GPL");
-diff --git a/include/soc/fsl/qe/qmc.h b/include/soc/fsl/qe/qmc.h
-index 6f1d6cebc9fe..166484bb4294 100644
---- a/include/soc/fsl/qe/qmc.h
-+++ b/include/soc/fsl/qe/qmc.h
-@@ -17,9 +17,11 @@ struct device;
- struct qmc_chan;
- 
- struct qmc_chan *qmc_chan_get_byphandle(struct device_node *np, const char *phandle_name);
-+struct qmc_chan *qmc_chan_get_bychild(struct device_node *np);
- void qmc_chan_put(struct qmc_chan *chan);
- struct qmc_chan *devm_qmc_chan_get_byphandle(struct device *dev, struct device_node *np,
- 					     const char *phandle_name);
-+struct qmc_chan *devm_qmc_chan_get_bychild(struct device *dev, struct device_node *np);
- 
- enum qmc_mode {
- 	QMC_TRANSPARENT,
+ FREESCALE QUICC ENGINE TSA DRIVER
+ M:	Herve Codina <herve.codina@bootlin.com>
+ L:	linuxppc-dev@lists.ozlabs.org
 -- 
 2.41.0
 
