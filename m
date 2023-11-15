@@ -1,27 +1,27 @@
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E050235EED;
-	Wed, 15 Nov 2023 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEA033082;
+	Wed, 15 Nov 2023 14:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mgVCAJ61"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F2DD41;
-	Wed, 15 Nov 2023 06:40:31 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 1ED09FF806;
-	Wed, 15 Nov 2023 14:40:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FjVYWW77"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA04419BD;
+	Wed, 15 Nov 2023 06:40:36 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPA id D18DCFF803;
+	Wed, 15 Nov 2023 14:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1700059230;
+	t=1700059235;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=daBaX2nOfcBqffmMooshUw4wUFqmDO5ms4CR0skya7c=;
-	b=mgVCAJ61AqFQIr6QF7RiXK3F6Cxg5EMIeCpU6X2gv8ZzhZmf98Hg4ERhvuQ3K26IuhY77O
-	ZruaKb44yCnT5dcdR29YFri3+bibE1spS21Q+X9SzqZ1QhqjgDBi84ke0p3FCw7tB25YNZ
-	qcJTZSUFwHHGl99GQhxK8xtPF+mP+F5YT0stnRyunVL5lunl/bvmdfHntKHrq2kbqlSA/U
-	B2jIPrMT8dwvUbH86ASqO9+aswVHDF+Rg2rxfIM5b6Ss97DvO9NOMAahArp09mAlXiz0Cr
-	SP32UQ4h4Wtn7oK6KDKOo/i6GvA8jGgeRkU2LI41x0V9omEijgzNrFT8RGQihg==
+	bh=C3qOJv0880JICdalI8Clio4OU3q9Vor1WvllgMz11pQ=;
+	b=FjVYWW77zxWT3RPfWO0q5MqX/HipTbaOOMudJonQCk4ENdJkVVMHckED7vX5DxkjbcxB8B
+	ROVu0AKMwCaKpOPDuOZsiWkrkBeVIao2T5EFAX6Vlt/01RIFFPKFadYn84KaUGPkrh8F4C
+	QLagBeJw+RUjMhCgEnmWc1GtBsJ2raODXXqvPqAlPC5dGV0qDtHx374ZSHBhvvN2Ebr1GV
+	L3cVR4ZVfEFjMvSS7P/88iFwh/f6IRY0OeOhZsJmVhG9V49919G98/M8c1kbiRbcsil43O
+	WsaHZ/ZhQwv3iSwh8zPd3g38zurxtnqYrkS2PTUic3nWr9xqTirctyM0/7HW6w==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: netdev@vger.kernel.org,
 	Simon Horman <horms@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v9 09/27] soc: fsl: cpm1: qmc: Introduce available timeslots masks
-Date: Wed, 15 Nov 2023 15:39:45 +0100
-Message-ID: <20231115144007.478111-10-herve.codina@bootlin.com>
+Subject: [PATCH v9 12/27] soc: fsl: cpm1: qmc: Remove no more needed checks from qmc_check_chans()
+Date: Wed, 15 Nov 2023 15:39:48 +0100
+Message-ID: <20231115144007.478111-13-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231115144007.478111-1-herve.codina@bootlin.com>
 References: <20231115144007.478111-1-herve.codina@bootlin.com>
@@ -71,54 +71,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Available timeslots masks define timeslots available for the related
-channel. These timeslots are defined by the QMC binding.
+The newly introduced qmc_chan_setup_tsa* functions check that the
+channel entries are not already used.
+These checks are also performed by qmc_check_chans() and are no more
+needed.
 
-Timeslots used are initialized to available timeslots but can be a
-subset of available timeslots.
-This prepares the dynamic timeslots management (ie. changing timeslots
-at runtime).
+Remove them from qmc_check_chans().
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index e716f13669a0..0413e25d4c67 100644
+index 5d7e2ecdd933..f2a71a140db7 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -177,7 +177,9 @@ struct qmc_chan {
- 	struct qmc *qmc;
- 	void __iomem *s_param;
- 	enum qmc_mode mode;
-+	u64	tx_ts_mask_avail;
- 	u64	tx_ts_mask;
-+	u64	rx_ts_mask_avail;
- 	u64	rx_ts_mask;
- 	bool is_reverse_data;
- 
-@@ -875,7 +877,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
- 			of_node_put(chan_np);
- 			return ret;
+@@ -884,10 +884,7 @@ EXPORT_SYMBOL(qmc_chan_reset);
+ static int qmc_check_chans(struct qmc *qmc)
+ {
+ 	struct tsa_serial_info info;
+-	bool is_one_table = false;
+ 	struct qmc_chan *chan;
+-	u64 tx_ts_mask = 0;
+-	u64 rx_ts_mask = 0;
+ 	u64 tx_ts_assigned_mask;
+ 	u64 rx_ts_assigned_mask;
+ 	int ret;
+@@ -911,7 +908,6 @@ static int qmc_check_chans(struct qmc *qmc)
+ 			dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned are not equal\n");
+ 			return -EINVAL;
  		}
--		chan->tx_ts_mask = ts_mask;
-+		chan->tx_ts_mask_avail = ts_mask;
-+		chan->tx_ts_mask = chan->tx_ts_mask_avail;
+-		is_one_table = true;
+ 	}
  
- 		ret = of_property_read_u64(chan_np, "fsl,rx-ts-mask", &ts_mask);
- 		if (ret) {
-@@ -884,7 +887,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
- 			of_node_put(chan_np);
- 			return ret;
+ 	tx_ts_assigned_mask = info.nb_tx_ts == 64 ? U64_MAX : (((u64)1) << info.nb_tx_ts) - 1;
+@@ -922,27 +918,11 @@ static int qmc_check_chans(struct qmc *qmc)
+ 			dev_err(qmc->dev, "chan %u uses TSA unassigned Tx TS\n", chan->id);
+ 			return -EINVAL;
  		}
--		chan->rx_ts_mask = ts_mask;
-+		chan->rx_ts_mask_avail = ts_mask;
-+		chan->rx_ts_mask = chan->rx_ts_mask_avail;
+-		if (tx_ts_mask & chan->tx_ts_mask) {
+-			dev_err(qmc->dev, "chan %u uses an already used Tx TS\n", chan->id);
+-			return -EINVAL;
+-		}
  
- 		mode = "transparent";
- 		ret = of_property_read_string(chan_np, "fsl,operational-mode", &mode);
+ 		if (chan->rx_ts_mask > rx_ts_assigned_mask) {
+ 			dev_err(qmc->dev, "chan %u uses TSA unassigned Rx TS\n", chan->id);
+ 			return -EINVAL;
+ 		}
+-		if (rx_ts_mask & chan->rx_ts_mask) {
+-			dev_err(qmc->dev, "chan %u uses an already used Rx TS\n", chan->id);
+-			return -EINVAL;
+-		}
+-
+-		if (is_one_table && (chan->tx_ts_mask != chan->rx_ts_mask)) {
+-			dev_err(qmc->dev, "chan %u uses different Rx and Tx TS\n", chan->id);
+-			return -EINVAL;
+-		}
+-
+-		tx_ts_mask |= chan->tx_ts_mask;
+-		rx_ts_mask |= chan->rx_ts_mask;
+ 	}
+ 
+ 	return 0;
 -- 
 2.41.0
 
