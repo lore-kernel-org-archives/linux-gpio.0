@@ -1,68 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MS4SPydT"
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D55310F0;
-	Mon, 20 Nov 2023 06:02:30 -0800 (PST)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-677fb277b7cso12068236d6.3;
-        Mon, 20 Nov 2023 06:02:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sYPcyH8F"
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C95493
+	for <linux-gpio@vger.kernel.org>; Mon, 20 Nov 2023 07:06:55 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6cf65093780so2589272a34.0
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Nov 2023 07:06:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700488949; x=1701093749; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1700492814; x=1701097614; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SW5H6+GFrLZpuAg2kGT9GqVc35788MqwtA8XYVGcezU=;
-        b=MS4SPydTxdqqJAZZHQ6IWh9sd4oaL6USu5Y318QtCqVfniYI2uM8eIfi0AZxavwMk2
-         l5SvoJd4cp/94S+TPIOyHX0fxLa1ewRDouGFZvgs3XhYiHXwyV9pZJx+DGgMCfCmPnCe
-         VNvhRJZcAjwTyOwnuYituQdQnwBlUrdHLVMDkENEVwXrcKBTi5OQVxQwYojRU5DR5SjR
-         f9Sf91z56pgDadONXm+Zc9k/er7ge7V14WNRVrr2R8dcbEqwafk6y9WV0ZKsJWRnznbg
-         QLV1XRqHSUIM0WsVnrWvUjR3zSiCPEiJ90WUFngZrHLs3NikDvsRgJGauO4KfimEEQLa
-         QZDg==
+        bh=1vVhCBw4UGnbOTaPublp+dT13ul5pmR1HyKDFK4Q5L8=;
+        b=sYPcyH8FC2/TI3GRqENHP2USiyIzWe5ZfI2yrsR2/DgUI6kBqoYsCfcRFRH+Zba6nK
+         gAtwKNGmZPJJ6zomhngB6MnD8rpeNDe2VeIGBQZiFuNLmtf/YqNkpcB0IpIQXve1lxoW
+         K3c79JPUfd0g1GZemvXRlEFLlNVS6QzVwbZk5Ig+QQ9URuvpR20k8T5AsGbKjbsoI01r
+         WunVKmvbsEpnpGAw/jHpuJWprAgq9FwK7+mtjvkNRKWCSWqsZXLpU8Wy0B6PPFmNiAnN
+         JBt65uB3NKy24Rg9i6aPRBx2ZEsQ8X7cGLn8/7f0sGAm1DcQLSMVBnSG9zRWmcgflk3u
+         sgEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700488949; x=1701093749;
+        d=1e100.net; s=20230601; t=1700492814; x=1701097614;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SW5H6+GFrLZpuAg2kGT9GqVc35788MqwtA8XYVGcezU=;
-        b=fyiPIbcTj07xpiG32D96VTvF0cTlNlWbv+4Q/i01SmsUoH6BiwAT79KbZ7kiXJn5FF
-         Qr9Ss6Ia6G2EuAGwDJHftWDhSAnbN3lZ5zKxTRPVGKUlwzOa9dSKbYoAJMMGG5NL66Wi
-         qqr8EkC9icTEJA6MWe5W4Zqp4hkRzQYGezetbbIhXDuEr9tP4YSlUXv2M0Z73v3rrBbK
-         uMgR3kogSJ8agpN+k4bqWRl2DEer/sVgIwdOw47+gKAhfSgSgx73P7cL97fBztQyFwJT
-         DILjPm0BeVtWf4XihunrT6lCrsv8E8xDJPIoCWKrGJqHEpSSu84mD54iInWNXrZOUjSZ
-         qBsw==
-X-Gm-Message-State: AOJu0YwxVjZbHFNCr/rxOO6dKf2qP80uD99IZnp88U9UGf2HhI0G90YF
-	yqkB1W5yeFFf+0j+eoqg1SYUS8ujs5Rkg0HJ2Yc=
-X-Google-Smtp-Source: AGHT+IGeSrnoTC16ZLCmpmUVs/JOx3P+70UOzoWmnEnwoTuS02z1pZ2tcccL8OodBdGDyRMLzrT1lmoHfF8FywLQpaA=
-X-Received: by 2002:ad4:5de6:0:b0:673:7256:7c70 with SMTP id
- jn6-20020ad45de6000000b0067372567c70mr10262221qvb.38.1700488948995; Mon, 20
- Nov 2023 06:02:28 -0800 (PST)
+        bh=1vVhCBw4UGnbOTaPublp+dT13ul5pmR1HyKDFK4Q5L8=;
+        b=c9o8qxLSz+4yncBry98T+O8V1rqNYCYV+NMhqFLSrOqsAuDw/NT5VEiwuUl1Msn/lS
+         Zjmlb0JCYbANeUEB2XdC9EOeLJds7Pud+VsIzU/sNk4OzfY2C8XqMD/ky53VY6WFiKdz
+         pRaZ0hpWsSXMe7cEyDPl2BAiVfXNPkvTFpopadCo/yts+cAe567IML0XwXLGFPYohtI6
+         NwIaEbB6IZC3ovMdEXFn+k0EwI22preXnNaAJCMRmXmEAs1g4mDXszCJvqSu99JIQ9e8
+         5BL+pGagqpTxiNuQ5rszIJjB5QKbJoMoxtJB0j/VrZ6idNiCMdhf6PDuSv315cryDt++
+         dAcg==
+X-Gm-Message-State: AOJu0Yw/58kQBQvGkmZAVVLWuG09pNaJWsLots1Ji3XXEtWIhF1XsQSz
+	deGBufio18kbBmTBhYyX25Xv+ykxWjmXKspA1mg4TJRZTwZkHw6q
+X-Google-Smtp-Source: AGHT+IHiOw/GOhoqSglQEq4xwFJxVajS26VlN4i3Ic8j6+NDTi7W6YgdeZC24XKyFtN4IUFTWod/HG5DRe7EefXqyME=
+X-Received: by 2002:a05:6358:7e14:b0:16b:c63d:5dfe with SMTP id
+ o20-20020a0563587e1400b0016bc63d5dfemr7829578rwm.16.1700492814326; Mon, 20
+ Nov 2023 07:06:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231116223045.274211-1-afd@ti.com>
-In-Reply-To: <20231116223045.274211-1-afd@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 20 Nov 2023 16:01:52 +0200
-Message-ID: <CAHp75Vcdr9yvCXBBU1R-PQ1K8B8U6YRtXQgz_hZfENtMgr6OfA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: as3722: Use devm_gpiochip_add_data() to simplify
- remove path
-To: Andrew Davis <afd@ti.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231115165001.2932350-1-brgl@bgdev.pl> <CACRpkdbDny8X3WB_qJ4h_vbwrjno5ytAtNMgTeXg4jpegdUH2w@mail.gmail.com>
+In-Reply-To: <CACRpkdbDny8X3WB_qJ4h_vbwrjno5ytAtNMgTeXg4jpegdUH2w@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 20 Nov 2023 16:06:43 +0100
+Message-ID: <CAMRc=McZJzdj04Ckf_ygDhWNN2JcbTfY+yefOZSYx_nTE_Jpjg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: don't use gpiod_to_chip()
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 17, 2023 at 12:30=E2=80=AFAM Andrew Davis <afd@ti.com> wrote:
+On Thu, Nov 16, 2023 at 2:43=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
 >
-> Use devm version of gpiochip add function to handle removal for us.
+> On Wed, Nov 15, 2023 at 5:50=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Let's start working towards removing gpiod_to_chip() from the kernel.
+> > Start with pinctrl. The first patch should go through the GPIO tree
+> > and become available through an immutable tag so that we can get more
+> > conversions in this cycle elsewhere.
+>
+> Fair enough, maybe an immutable branch with all three patches?
+> Probably best to merga all three into both subsystems I think.
+>
 
-LGTM,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Nah, I don't think I need to pollute the GPIO tree with every pinctrl
+patch. It's enough to just merge the first one into GPIO and you do
+the same in pinctrl.
 
-Consider adding a new patch to convert to use return dev_err_probe(...);
+Bart
 
---=20
-With Best Regards,
-Andy Shevchenko
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
