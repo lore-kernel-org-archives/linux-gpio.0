@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jteQd3gI"
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9D11A1
-	for <linux-gpio@vger.kernel.org>; Sun, 19 Nov 2023 23:01:03 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-32df66c691dso2519066f8f.3
-        for <linux-gpio@vger.kernel.org>; Sun, 19 Nov 2023 23:01:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iXigQ3gu"
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D281A1
+	for <linux-gpio@vger.kernel.org>; Sun, 19 Nov 2023 23:01:09 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso10863375e9.3
+        for <linux-gpio@vger.kernel.org>; Sun, 19 Nov 2023 23:01:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1700463662; x=1701068462; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1700463668; x=1701068468; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jfOiAJGxKuFWs2NWOIwVX0esmzm7aks9t4Cs2rPO3Ns=;
-        b=jteQd3gIxDYoQ0MmForZh67/JEJCMfow7L1/mxJxllxJoRp1ZR/Fd4W5obZk1ui/vn
-         2272gIvWQ6LSGo4O0GdOn1UkM9QRFBmT/1enokRu/nrywQk4dlU7Q24jfb1lQiJLuRKH
-         25X6CS+B/FSLQWkJUFs0tk8G37qQ4ZORH/dRPgj4UQkhHsGCZwbymdJjtyOPPzpexyQL
-         rw1AyYBkytsX8GOPxFfVDNrzgZ6ehzj/RWXpQB1Y7pq4szP+afFl1Op+bz4tsiTk9XT5
-         sEImRSG37Ppsl79eWpeDvEd8bmd6PUnx6CBgguB5BBHhzyPITnknqRd8E3x2mD9RDOTn
-         qPVg==
+        bh=oDJFuAkxoAAAFxgz7hC7RfGlOkGB3yAjNrGdDF3wBw8=;
+        b=iXigQ3gumKghlUB4EcJqvu/PGx6Vj4LyTq9i8JWgpique6ct9SM5hVYsZvzugmZwWa
+         e1GlCOY9vn/Uw8Uwf0L1Bw6xsiZ1pH1vmAuYNu/rpovXsZKuxaofNjUPo6XxaNYf7DKK
+         mt4Y8hBDtK0Jhmb1wB/imOBEv+C/cz9fEZDjvDgjOQHrFhqoijp41CsJE/Q8a+HtFqoJ
+         vJ5ao4Ve+tt9sDXMSrmqkTCHBOAwieljLJplemznDb+Qurgs3KjvMTm1Wb6PJivW/H4e
+         ECwcv3Od0oe9dNvjUaMbCWSj8ZKQUv2loLWksWB7qvWM0W31uNmq4AstXtDBj544IR+W
+         HQYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700463662; x=1701068462;
+        d=1e100.net; s=20230601; t=1700463668; x=1701068468;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jfOiAJGxKuFWs2NWOIwVX0esmzm7aks9t4Cs2rPO3Ns=;
-        b=MVAvY+hZrHF9SXzjYD9lkm0w9kRqBwoOayJ9FBqmVfdJfkLEjsSUaz/hDJ3RJTsR6M
-         F60M+NIj6sHk11bnFmwRRzf8mCsZjA4Mnc/OO1U/2k/if5GUKuI5e7aRPtaiCrtV9s08
-         r36nPC0t63pYzHh2smUp1BlPFYYfgAiRT52pq0NvzabDV5W+j+hO3nEjlOVUdU6VBvZr
-         cqmbBgSAntYEJRIcUGrI7EeSGdo3uZPsIy09CLvbINM68dgigSBDLvnGuLc+XCaah0Iq
-         c/OEKQLrK7xx01UKegrK0IT5FBK4wEn8lkIaCFn9XzyRUcEvx8XTzBhRZjb6y75yjLsh
-         dASQ==
-X-Gm-Message-State: AOJu0YzxfLOWvTwkIzguW3BBjSeZ4QQS6Jfs7A6Y5gWPnk1bw7E4YUCK
-	ylzyY9gscdvlSU+omgfIfiFBVA==
-X-Google-Smtp-Source: AGHT+IFYhQC0pKwL0X3X3CzqpSXg8s469lrvzqmbezPv+06Vdd64UWtM2cJIFyyY6eDNFLel2u3BPA==
-X-Received: by 2002:a05:6000:1883:b0:32d:701b:a585 with SMTP id a3-20020a056000188300b0032d701ba585mr5891937wri.69.1700463662121;
-        Sun, 19 Nov 2023 23:01:02 -0800 (PST)
+        bh=oDJFuAkxoAAAFxgz7hC7RfGlOkGB3yAjNrGdDF3wBw8=;
+        b=VQiKb2oZBo7FeHZBxWidc/xmNZNhNAYfhTWwB56NSkvYOqWA0huuuUjhS9H9x4Hvj7
+         NjIat57d5uC8j+XlVlq6XRbJnFxcLfl/XZ8eRgTx6NksKNO1cylnd5IgMwaYWMtb7GL1
+         eTCZTn7NiA0Fr7fmsO1qrDuWmUt/TyFlMfyH1rkBk2Rnbsk91z50VgcXOHZOU0mwomL2
+         dYEedjSx2Fid5NFK+iwL8IoO45Cw1EgdNbwLnRGMd2d4OMrQ5p7fRJQ/WsQW38xriMPZ
+         3X1ZbfR6Up44Mg26xvZvbC/LSHxTVsXBRoAWVrlgDSAXeqGXLCG7syrlqOf2Q40gOnsX
+         uCow==
+X-Gm-Message-State: AOJu0YzjEtCNTQKyM2cxV4wcgpx+9A+JARl59PG5qIy32HnS88M3i2zP
+	+p08hzk2XLUHuJdAWvuE4Q4VgQ==
+X-Google-Smtp-Source: AGHT+IFdZD01DHq4eQNzHXtPEzp6vTkd1cCzbxzLp4oTOb/wADDYmHoaiTF9FA7lphWv7r0vUz/O4g==
+X-Received: by 2002:a05:6000:186d:b0:32d:a54a:f57c with SMTP id d13-20020a056000186d00b0032da54af57cmr5218229wri.25.1700463667954;
+        Sun, 19 Nov 2023 23:01:07 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.183])
-        by smtp.gmail.com with ESMTPSA id p2-20020a5d4582000000b003316d1a3b05sm8777667wrq.78.2023.11.19.23.00.59
+        by smtp.gmail.com with ESMTPSA id p2-20020a5d4582000000b003316d1a3b05sm8777667wrq.78.2023.11.19.23.01.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Nov 2023 23:01:01 -0800 (PST)
+        Sun, 19 Nov 2023 23:01:07 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: s.shtylyov@omp.ru,
@@ -74,9 +74,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 02/14] clk: renesas: rzg2l-cpg: Check reset monitor registers
-Date: Mon, 20 Nov 2023 09:00:12 +0200
-Message-Id: <20231120070024.4079344-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 04/14] clk: renesas: r9a08g045-cpg: Add clock and reset support for ETH0 and ETH1
+Date: Mon, 20 Nov 2023 09:00:14 +0200
+Message-Id: <20231120070024.4079344-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
@@ -90,92 +90,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hardware manual of both RZ/G2L and RZ/G3S specifies that reset monitor
-registers need to be interrogated when the reset signals are toggled
-(chapters "Procedures for Supplying and Stopping Reset Signals" and
-"Procedure for Activating Modules"). Without this there is a chance that
-different modules (e.g. Ethernet) to not be ready after reset signal is
-toggled leading to failures (on probe or resume from deep sleep states).
+RZ/G3S has 2 Gigabit Ethernet interfaces available. Add clock and reset
+support for both of them.
 
-Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
+ drivers/clk/renesas/r9a08g045-cpg.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Hi, Geert,
-
-In case you apply this patch and patch 1/13 as is, please add a Depend-on
-tag on this patch to point to patch 1/13 for proper backporting.
-
-Thank you,
-Claudiu Beznea
-
- drivers/clk/renesas/rzg2l-cpg.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3189c3167ba8..2922dc884e35 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1416,12 +1416,23 @@ static int rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 	struct rzg2l_cpg_priv *priv = rcdev_to_priv(rcdev);
- 	const struct rzg2l_cpg_info *info = priv->info;
- 	unsigned int reg = info->resets[id].off;
--	u32 value = BIT(info->resets[id].bit) << 16;
-+	u32 dis = BIT(info->resets[id].bit);
-+	u32 value = dis << 16;
-+	int ret = 0;
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 6ff40763a00a..e78dbc74df27 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -181,9 +181,11 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
+ 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
+ 		    dtable_1_32, 0, 0, 0, NULL),
+ 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
++	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
+ 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
+ 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
+ 	DEF_FIXED("OSC2", R9A08G045_OSCCLK2, CLK_EXTAL, 1, 3),
++	DEF_FIXED("HP", R9A08G045_CLK_HP, CLK_PLL6, 1, 2),
+ };
  
- 	dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, CLK_RST_R(reg));
- 
- 	writel(value, priv->base + CLK_RST_R(reg));
--	return 0;
-+
-+	if (info->has_clk_mon_regs) {
-+		ret = readl_poll_timeout_atomic(priv->base + CLK_MRST_R(reg), value,
-+						value & dis, 10, 200);
-+	} else {
-+		/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-+		udelay(35);
-+	}
-+
-+	return ret;
- }
- 
- static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
-@@ -1432,12 +1443,22 @@ static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
- 	unsigned int reg = info->resets[id].off;
- 	u32 dis = BIT(info->resets[id].bit);
- 	u32 value = (dis << 16) | dis;
-+	int ret = 0;
- 
- 	dev_dbg(rcdev->dev, "deassert id:%ld offset:0x%x\n", id,
- 		CLK_RST_R(reg));
- 
- 	writel(value, priv->base + CLK_RST_R(reg));
--	return 0;
-+
-+	if (info->has_clk_mon_regs) {
-+		ret = readl_poll_timeout_atomic(priv->base + CLK_MRST_R(reg), value,
-+						!(value & dis), 10, 200);
-+	} else {
-+		/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-+		udelay(35);
-+	}
-+
-+	return ret;
- }
- 
- static int rzg2l_cpg_reset(struct reset_controller_dev *rcdev,
-@@ -1449,9 +1470,6 @@ static int rzg2l_cpg_reset(struct reset_controller_dev *rcdev,
- 	if (ret)
- 		return ret;
- 
--	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
--	udelay(35);
--
- 	return rzg2l_cpg_deassert(rcdev, id);
- }
- 
+ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+@@ -217,6 +219,16 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 					MSTOP(PERI_COM, BIT(11))),
+ 	DEF_MOD("sdhi2_aclk",		R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11,
+ 					MSTOP(PERI_COM, BIT(11))),
++	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0,
++					MSTOP(PERI_COM, BIT(2))),
++	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0,
++					MSTOP(PERI_COM, BIT(2))),
++	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8, 0),
++	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1,
++					MSTOP(PERI_COM, BIT(3))),
++	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1,
++					MSTOP(PERI_COM, BIT(3))),
++	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9, 0),
+ 	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0,
+ 					MSTOP(MCPU2, BIT(1))),
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0, 0),
+@@ -228,6 +240,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
+ 	DEF_RST(R9A08G045_SDHI2_IXRST, 0x854, 2),
++	DEF_RST(R9A08G045_ETH0_RST_HW_N, 0x87c, 0),
++	DEF_RST(R9A08G045_ETH1_RST_HW_N, 0x87c, 1),
+ 	DEF_RST(R9A08G045_SCIF0_RST_SYSTEM_N, 0x884, 0),
+ 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
 -- 
 2.39.2
 
