@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dt1nCoaK"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8BF1B5;
-	Wed, 22 Nov 2023 09:51:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mo/Uu3QW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93426101;
+	Wed, 22 Nov 2023 09:54:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700675463; x=1732211463;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KXXlj/feskp9/q4ZNOgI6jch8e71Hk8LNA1Dtwk+8Og=;
-  b=dt1nCoaKabQohQU4TdbjY9vaQ3JaNO7s/FglXN6MlHlbvHzPaHRZr3jY
-   1VayefjeGG2y2pUBpQYmJWeeRADx0b202INF5xkcNkI60ApiZmvO3rcOg
-   G5aSEpomIimPUyGT9oO6xS/Tju7pSpSDm/ivKpJSU7T4zWvrgbLon/b/L
-   Bs9paSv2qzszJZ4RmQCTZRJN7p1GziS71UzZJcBEC+t8LbDkEIOOIrkmO
-   IGOkDpKmuJRTom3R++L9dA+Dv6pKuKSxmoc3hFk2EapN6MWW54ZoV51Hu
-   2z4Kfn1d1rqfgt88D7IO8ZdH3erp7U2fS7vnAeLeet+U26qyOZBUbF88Q
+  t=1700675692; x=1732211692;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YCdU8G3RGqUX0Po0bGsZzggEg0XQbmO7+fvYqgSfd2c=;
+  b=Mo/Uu3QW/OfmhTZ5S4wcDckSKBsxUjSdxRaOXVZd/3ozOoP2K4FC4Q+6
+   5BfdevoRQ6OSa0NQ+RgMyTrOW3IMDwPG/v2x9BMLawZB/DJvNp6TY+wUz
+   i75NFq7oBif6FnzRCQr4gYJ2u3oxNc5URsZIuFm8OQnQ99HMak2RMHJ9d
+   uCCAPlM1DBxLJqN8kPg32A3epkB/dU/b1SApo6TB2ncHbiRB8fTjyAJ91
+   /03QJTwXQhsmQl0U0vh9NGbcNE5QWyy1GTACUgb/OomuPQf4gkxt48SQg
+   C5R/YtBVNxRei983kx0d9xANsBm2LHq33zTQgKdwC4p9/adS+BmbJW4/m
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="458606562"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="389268414"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="458606562"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 09:51:02 -0800
+   d="scan'208";a="389268414"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 09:54:49 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="910912309"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="837516073"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="910912309"
+   d="scan'208";a="837516073"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Nov 2023 09:50:56 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 22 Nov 2023 09:54:48 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id EF72F291; Wed, 22 Nov 2023 19:50:54 +0200 (EET)
+	id A79B42A2; Wed, 22 Nov 2023 19:54:46 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -36,12 +36,10 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 2/4] pinctrl: baytrail: Factor out byt_gpio_force_input_mode()
-Date: Wed, 22 Nov 2023 19:50:37 +0200
-Message-ID: <20231122175039.2289945-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pinctrl: lynxpoint: Simplify code with cleanup helpers
+Date: Wed, 22 Nov 2023 19:54:44 +0200
+Message-ID: <20231122175444.2316719-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
-References: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,96 +48,247 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a piece of code that it being used at least twice.
-Factor it out.
+Use macros defined in linux/cleanup.h to automate resource lifetime
+control in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 42 ++++++++++++------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 72 +++++++----------------
+ 1 file changed, 21 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index f1af21dbd5fb..291f0454257b 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -829,6 +829,24 @@ static int byt_set_pull_strength(u32 *reg, u16 strength)
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index e6878e4cf20c..1fb0bba8b386 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -10,6 +10,7 @@
+ #include <linux/acpi.h>
+ #include <linux/array_size.h>
+ #include <linux/bitops.h>
++#include <linux/cleanup.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -291,10 +292,9 @@ static int lp_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ {
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct intel_pingroup *grp = &lg->soc->groups[group];
+-	unsigned long flags;
+ 	int i;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
+ 
+ 	/* Now enable the mux setting for each pin in the group */
+ 	for (i = 0; i < grp->grp.npins; i++) {
+@@ -312,8 +312,6 @@ static int lp_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 		iowrite32(value, reg);
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
  	return 0;
  }
  
-+static void byt_gpio_force_input_mode(struct intel_pinctrl *vg, unsigned int offset)
-+{
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	u32 value;
-+
-+	value = readl(reg);
-+	if (!(value & BYT_INPUT_EN))
-+		return;
-+
-+	/*
-+	 * Pull assignment is only applicable in input mode. If
-+	 * chip is not in input mode, set it and warn about it.
-+	 */
-+	value &= ~BYT_INPUT_EN;
-+	writel(value, reg);
-+	dev_warn(vg->dev, "Pin %i: forcibly set to input mode\n", offset);
-+}
-+
- static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
- 			      unsigned long *config)
+@@ -334,10 +332,9 @@ static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *reg = lp_gpio_reg(&lg->chip, pin, LP_CONFIG1);
+ 	void __iomem *conf2 = lp_gpio_reg(&lg->chip, pin, LP_CONFIG2);
+-	unsigned long flags;
+ 	u32 value;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
+ 
+ 	/*
+ 	 * Reconfigure pin to GPIO mode if needed and issue a warning,
+@@ -352,8 +349,6 @@ static int lp_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	/* Enable input sensing */
+ 	lp_gpio_enable_input(conf2);
+ 
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
+ 	return 0;
+ }
+ 
+@@ -363,14 +358,11 @@ static void lp_gpio_disable_free(struct pinctrl_dev *pctldev,
  {
-@@ -919,9 +937,8 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *conf2 = lp_gpio_reg(&lg->chip, pin, LP_CONFIG2);
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
+ 
+ 	/* Disable input sensing */
+ 	lp_gpio_disable_input(conf2);
+-
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static int lp_gpio_set_direction(struct pinctrl_dev *pctldev,
+@@ -379,10 +371,9 @@ static int lp_gpio_set_direction(struct pinctrl_dev *pctldev,
  {
- 	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctl_dev);
- 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
--	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
- 	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
--	u32 conf, val, db_pulse, debounce;
-+	u32 conf, db_pulse, debounce;
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *reg = lp_gpio_reg(&lg->chip, pin, LP_CONFIG1);
+-	unsigned long flags;
+ 	u32 value;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
+ 
+ 	value = ioread32(reg);
+ 	value &= ~DIR_BIT;
+@@ -400,8 +391,6 @@ static int lp_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	}
+ 	iowrite32(value, reg);
+ 
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
+ 	return 0;
+ }
+ 
+@@ -421,13 +410,11 @@ static int lp_pin_config_get(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *conf2 = lp_gpio_reg(&lg->chip, pin, LP_CONFIG2);
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+-	unsigned long flags;
+ 	u32 value, pull;
+ 	u16 arg;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
+-	value = ioread32(conf2);
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
++	scoped_guard(raw_spinlock_irqsave, &lg->lock)
++		value = ioread32(conf2);
+ 
+ 	pull = value & GPIWP_MASK;
+ 
+@@ -464,11 +451,10 @@ static int lp_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *conf2 = lp_gpio_reg(&lg->chip, pin, LP_CONFIG2);
  	enum pin_config_param param;
- 	unsigned long flags;
- 	int i, ret = 0;
-@@ -930,7 +947,6 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 	raw_spin_lock_irqsave(&byt_lock, flags);
+-	unsigned long flags;
+-	int i, ret = 0;
++	unsigned int i;
+ 	u32 value;
  
- 	conf = readl(conf_reg);
--	val = readl(val_reg);
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
  
- 	for (i = 0; i < num_configs; i++) {
- 		param = pinconf_to_config_param(configs[i]);
-@@ -945,15 +961,7 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 			if (arg == 1)
- 				arg = 2000;
+ 	value = ioread32(conf2);
  
--			/*
--			 * Pull assignment is only applicable in input mode. If
--			 * chip is not in input mode, set it and warn about it.
--			 */
--			if (val & BYT_INPUT_EN) {
--				val &= ~BYT_INPUT_EN;
--				writel(val, val_reg);
--				dev_warn(vg->dev, "Pin %i: forcibly set to input mode\n", offset);
--			}
-+			byt_gpio_force_input_mode(vg, offset);
+@@ -489,19 +475,13 @@ static int lp_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			value |= GPIWP_UP;
+ 			break;
+ 		default:
+-			ret = -ENOTSUPP;
++			return -ENOTSUPP;
+ 		}
+-
+-		if (ret)
+-			break;
+ 	}
  
- 			conf &= ~BYT_PULL_ASSIGN_MASK;
- 			conf |= BYT_PULL_ASSIGN_DOWN;
-@@ -965,15 +973,7 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 			if (arg == 1)
- 				arg = 2000;
+-	if (!ret)
+-		iowrite32(value, conf2);
++	iowrite32(value, conf2);
  
--			/*
--			 * Pull assignment is only applicable in input mode. If
--			 * chip is not in input mode, set it and warn about it.
--			 */
--			if (val & BYT_INPUT_EN) {
--				val &= ~BYT_INPUT_EN;
--				writel(val, val_reg);
--				dev_warn(vg->dev, "Pin %i: forcibly set to input mode\n", offset);
--			}
-+			byt_gpio_force_input_mode(vg, offset);
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
+-	return ret;
++	return 0;
+ }
  
- 			conf &= ~BYT_PULL_ASSIGN_MASK;
- 			conf |= BYT_PULL_ASSIGN_UP;
+ static const struct pinconf_ops lptlp_pinconf_ops = {
+@@ -527,16 +507,13 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+ {
+ 	struct intel_pinctrl *lg = gpiochip_get_data(chip);
+ 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
+ 
+ 	if (value)
+ 		iowrite32(ioread32(reg) | OUT_LVL_BIT, reg);
+ 	else
+ 		iowrite32(ioread32(reg) & ~OUT_LVL_BIT, reg);
+-
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+@@ -592,11 +569,10 @@ static void lp_irq_ack(struct irq_data *d)
+ 	struct intel_pinctrl *lg = gpiochip_get_data(gc);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_STAT);
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
++
+ 	iowrite32(BIT(hwirq % 32), reg);
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+ }
+ 
+ static void lp_irq_unmask(struct irq_data *d)
+@@ -613,13 +589,11 @@ static void lp_irq_enable(struct irq_data *d)
+ 	struct intel_pinctrl *lg = gpiochip_get_data(gc);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
+-	unsigned long flags;
+ 
+ 	gpiochip_enable_irq(gc, hwirq);
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
+-	iowrite32(ioread32(reg) | BIT(hwirq % 32), reg);
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
++	scoped_guard(raw_spinlock_irqsave, &lg->lock)
++		iowrite32(ioread32(reg) | BIT(hwirq % 32), reg);
+ }
+ 
+ static void lp_irq_disable(struct irq_data *d)
+@@ -628,11 +602,9 @@ static void lp_irq_disable(struct irq_data *d)
+ 	struct intel_pinctrl *lg = gpiochip_get_data(gc);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 	void __iomem *reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
+-	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
+-	iowrite32(ioread32(reg) & ~BIT(hwirq % 32), reg);
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
++	scoped_guard(raw_spinlock_irqsave, &lg->lock)
++		iowrite32(ioread32(reg) & ~BIT(hwirq % 32), reg);
+ 
+ 	gpiochip_disable_irq(gc, hwirq);
+ }
+@@ -642,7 +614,6 @@ static int lp_irq_set_type(struct irq_data *d, unsigned int type)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct intel_pinctrl *lg = gpiochip_get_data(gc);
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+-	unsigned long flags;
+ 	void __iomem *reg;
+ 	u32 value;
+ 
+@@ -656,7 +627,8 @@ static int lp_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EBUSY;
+ 	}
+ 
+-	raw_spin_lock_irqsave(&lg->lock, flags);
++	guard(raw_spinlock_irqsave)(&lg->lock);
++
+ 	value = ioread32(reg);
+ 
+ 	/* set both TRIG_SEL and INV bits to 0 for rising edge */
+@@ -682,8 +654,6 @@ static int lp_irq_set_type(struct irq_data *d, unsigned int type)
+ 	else if (type & IRQ_TYPE_LEVEL_MASK)
+ 		irq_set_handler_locked(d, handle_level_irq);
+ 
+-	raw_spin_unlock_irqrestore(&lg->lock, flags);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.43.0.rc1.1.gbec44491f096
 
