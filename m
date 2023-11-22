@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQCpoVnF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XmdDKZzD"
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025E21AB;
-	Wed, 22 Nov 2023 09:50:58 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1269D9A;
+	Wed, 22 Nov 2023 09:51:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700675458; x=1732211458;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K/qL736vnfHe+cuwyIG35u574xUK66chgtqXG6L/DWM=;
-  b=EQCpoVnFZt+hoURu5o7bbZ1CQg9s8YQwydSC0rVpyl9Xx22gYdGQdKCg
-   B+HKcJFQ5EeRcGMLrqn3YllaIkJIykDjineyf5CmbVsCslwO/Mx++pUbh
-   4iSbBqCBWfTte5D8eiNChr20RQKZ0HsbMiTObwIYHj9ttgmookxRP+XD9
-   MFM4t/ro8uq+OhIsy+iBT3IbY0c2rJlfwPCvv9A67/RK9orAM3u4pvpBi
-   A4zL9FEMrdcGIid8NCh6X4Wke60tqHwGEsS1Ob7SOaImDGhqAuqPvljfF
-   b0eqjwf0wyTvGd2dj0+aUkGn4fFD9ljkZ1s7wjDtCXFka4XZGrC4rNl64
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456431551"
+  t=1700675459; x=1732211459;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vjM99oJF/e2ni3/auPFYtDFRthGYsyUVZgmaU1qFAN0=;
+  b=XmdDKZzDMDCjZ1URGjnyH3YjR/q71E3JctUi/QIK/rnWmpwYSLuWWo3e
+   IGJRngLZRRcgVMgoj0S+ClsTdZbhhGw79qVhikeJBRbXl2DGhuid++OWS
+   A+9dztKxixvXgMCLgAQNx+6f+l0Fc6kI1W5ke7ztMp6te8ijw3qOUAtxS
+   OV7go9NUwvhVHpsIOnN5eySUeGbMkyaq4zpwRvZjuO8PN4G+iiYgNbhNq
+   Cf/aHeum6QZ6KjCpbdeNF4/Lmj+V/rptsjjPTL5e4Lq/IJZtlu0gMEwz4
+   gZjWnEJ0G/LJ5HSJRmn6cM08CrEoV85gU873Y6HM0tPzz+/vsO9uyAecG
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456431556"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="456431551"
+   d="scan'208";a="456431556"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 09:50:57 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 09:50:58 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="770707123"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="770707124"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="770707123"
+   d="scan'208";a="770707124"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga007.fm.intel.com with ESMTP; 22 Nov 2023 09:50:56 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0482C2A6; Wed, 22 Nov 2023 19:50:54 +0200 (EET)
+	id E02AC2A2; Wed, 22 Nov 2023 19:50:54 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -36,12 +36,10 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 3/4] pinctrl: baytrail: Move default strength assignment to a switch-case
-Date: Wed, 22 Nov 2023 19:50:38 +0200
-Message-ID: <20231122175039.2289945-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/4] pinctrl: baytrail: Fix types of config value in byt_pin_config_set()
+Date: Wed, 22 Nov 2023 19:50:36 +0200
+Message-ID: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
-References: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,51 +48,34 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-iWhen ->pin_config_set() is called from the GPIO library (assumed
-GpioIo() ACPI resource), the argument can be 1, when, for example,
-PullDefault is provided. In such case we supply sane default in
-the driver. Move that default assingment to a switch-case, so
-it will be consolidated in one place.
+When unpacked, the config value is split to two of different types.
+Fix the types accordingly.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 291f0454257b..84f21a28fe7e 100644
+index 3cd0798ee631..f1af21dbd5fb 100644
 --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
 +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -810,6 +810,7 @@ static int byt_set_pull_strength(u32 *reg, u16 strength)
- 	*reg &= ~BYT_PULL_STR_MASK;
+@@ -918,13 +918,14 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 			      unsigned int num_configs)
+ {
+ 	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctl_dev);
+-	unsigned int param, arg;
+ 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+ 	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
+ 	u32 conf, val, db_pulse, debounce;
++	enum pin_config_param param;
+ 	unsigned long flags;
+ 	int i, ret = 0;
++	u32 arg;
  
- 	switch (strength) {
-+	case 1: /* Set default strength value in case none is given */
- 	case 2000:
- 		*reg |= BYT_PULL_STR_2K;
- 		break;
-@@ -957,10 +958,6 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 			conf &= ~BYT_PULL_ASSIGN_MASK;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
--			/* Set default strength value in case none is given */
--			if (arg == 1)
--				arg = 2000;
--
- 			byt_gpio_force_input_mode(vg, offset);
+ 	raw_spin_lock_irqsave(&byt_lock, flags);
  
- 			conf &= ~BYT_PULL_ASSIGN_MASK;
-@@ -969,10 +966,6 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			/* Set default strength value in case none is given */
--			if (arg == 1)
--				arg = 2000;
--
- 			byt_gpio_force_input_mode(vg, offset);
- 
- 			conf &= ~BYT_PULL_ASSIGN_MASK;
 -- 
 2.43.0.rc1.1.gbec44491f096
 
