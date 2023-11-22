@@ -1,43 +1,42 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H5sORdv/"
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0164D44
-	for <linux-gpio@vger.kernel.org>; Wed, 22 Nov 2023 12:06:10 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-409299277bbso837865e9.2
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Nov 2023 12:06:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5AEBrxc"
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7A6D43
+	for <linux-gpio@vger.kernel.org>; Wed, 22 Nov 2023 12:06:06 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4083dbc43cfso779185e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Nov 2023 12:06:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1700683569; x=1701288369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3EOznFpP5Wm2+kn1uG/Do2cPlHmY6zYZfJbOPAYwR3c=;
-        b=H5sORdv/9BystWaiQuivjt+vLaUn7y6XsfLSe3qrr/nPUTEptZYy2bOoyXJWkzqaMH
-         gBlXUt3Zwa0DDDP1cfbUiaDvY0a4Af2F8DSWdQvn6u2G6jOEr4jiOt910q35cvd9TgF6
-         tnb3RIUMR/tUxV4NtOc/SnW9oVMrxJ+ocMf0rD9osS+lr6MpS2iC+nvh1xyuPTLLybI9
-         9s3B/nKvV59Vu1LN5MNxZ0yNFuFxJ2g0mwxL0SZBOuCYBfm6Qpkfv3ZbiCyErHlBx94g
-         RbJrLwOkE1mjiTVzR6hI13YawQncBv6iKbkv92mFN+RlezKVTvPULpTk4MpUfqgwBA1Z
-         gmlg==
+        d=linaro.org; s=google; t=1700683565; x=1701288365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mWZ3+DJ5YCHvpyiY+r4/NJs/Atp/by6b5Pd+Cg5ZuxQ=;
+        b=c5AEBrxcZQGuSVl1NZbFEPuvOT22njj505lzLe4PSxEfVU2FFkRsT7OkKglkXzWUMv
+         UYFQUJzIUHCa/5fv/eALyFeG6oCw4JgvSElxmVX41K+DQn6D4WH28XioytnIJPZeALXz
+         2c+hgMF8ymmw028VL75UihXudW+MN1JIyXSvAKQnP9I+fPmsOCSHDQjVNmBtzcuVTL5t
+         jk6C3cpDvKMrWpcD+YZnZPTRsaSPlzDWvmtovy5QDEY9Y6LYeAf6suWfv1IWLAhBAxCj
+         RzmSaOhiSdXtpvi99P7v74Xkf5lWL+GLQOS8xdfrY2YrgLtBWR/OXzgH9WcskdqTcWHg
+         uzeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700683569; x=1701288369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3EOznFpP5Wm2+kn1uG/Do2cPlHmY6zYZfJbOPAYwR3c=;
-        b=H/HUCU67+7vmrni1q1l6mvxF8DlPrvqvYHVmIvI1VVOhmFuYp1MeA9kVYQDBG98gWG
-         +DpgbvwjOiDZ5LEb2+vbAXxQ+0PADHHLWdFx2rFWK2duJYOE+O6WHrp1ofBMOUa1Ymqh
-         ts+74k5MtJZ7vGX5NFZQK7iBft567V3WGXLTiEMzpvh8WLSRKmoDxS8YcQXDFdd33mnj
-         ZD8ItWKw82WhSAbpnBHpe+GMb8S6oj0lAfOLrMkIx+XU6PxP8qbmgZaiRJ73s67DYPZ9
-         GvvRd8WBvXwWaDlAizuZgjRAruuBY2avbXck25T09fKcf/4U7jIV/k/e1QjBW+IlL6gu
-         4okQ==
-X-Gm-Message-State: AOJu0Yw4xkDGgFObK028CiJyXnjxRCndGohnzQiqeLjbYXVyTU3ndlZA
-	BBv0v4E2IYwzbSYb5J+ipyaDsQ==
-X-Google-Smtp-Source: AGHT+IGCVfLzK8Oe+0XBpSNMCveU4O6Qvzpw6gxialiMohgi0yDnSXJlz9A+pgM+VMFdYfI+HDlEDg==
-X-Received: by 2002:a05:600c:138c:b0:408:4cf7:4f91 with SMTP id u12-20020a05600c138c00b004084cf74f91mr2636634wmf.16.1700683569119;
-        Wed, 22 Nov 2023 12:06:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700683565; x=1701288365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mWZ3+DJ5YCHvpyiY+r4/NJs/Atp/by6b5Pd+Cg5ZuxQ=;
+        b=HKQBPvL95jFb80uBTiewk7cOIhFfL0CGV+MlpTAIiB3NxWVY2BLgmYVj5CqRmUuDs4
+         pbbXvEa96caAI7ZssYN8q81QteNxI8fC0V5NzMD6rM3iYkUy/AuBDHpxH/Mc6t/BGEJm
+         kN4q69PGC0wymHcfKhg+JVOG5YDeAn31b6kEIcyfKeRgDEWDjQTCstyMObbwQ06oXy0X
+         dGNWHz6+g14YZj/UijMDFvEFaSUDvNSvHZuSOqqfiRYEkYcsOOeE0D9Y/Nz3yUCxzGg+
+         n783qpI2Cg1ODddNr79148Z5cSAI6grpPEl3eYajtXrdiyhDCgpgBElHwWyFt3Ie9ZRF
+         p4ig==
+X-Gm-Message-State: AOJu0YwKZnsAv39wWnn7PmpAAw0R56YrGiUWsDC6Hvz3WuS+jUPYcPUI
+	uM/Ies+59HXtQzSJ/eMrCteibQ==
+X-Google-Smtp-Source: AGHT+IFitXblLY1r/Y0wBl/NbRc3r/ZKvP2PBN+63RmOyBT2RIPuJw1uS6//n+KoIJ+MZoUxzl630g==
+X-Received: by 2002:a05:600c:5125:b0:403:272:4414 with SMTP id o37-20020a05600c512500b0040302724414mr2812498wms.0.1700683565051;
+        Wed, 22 Nov 2023 12:06:05 -0800 (PST)
 Received: from krzk-bin.. ([178.197.218.100])
-        by smtp.gmail.com with ESMTPSA id l17-20020a05600c4f1100b004063c9f68f2sm394665wmq.26.2023.11.22.12.06.07
+        by smtp.gmail.com with ESMTPSA id l17-20020a05600c4f1100b004063c9f68f2sm394665wmq.26.2023.11.22.12.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 12:06:08 -0800 (PST)
+        Wed, 22 Nov 2023 12:06:04 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Tomasz Figa <tomasz.figa@gmail.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -54,12 +53,10 @@ To: Tomasz Figa <tomasz.figa@gmail.com>,
 Cc: Peter Griffin <peter.griffin@linaro.org>,
 	semen.protsenko@linaro.org,
 	Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov9: use Exynos7 fallbacks for pin wake-up controllers
-Date: Wed, 22 Nov 2023 21:04:07 +0100
-Message-Id: <20231122200407.423264-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: pinctrl: samsung: use Exynos7 fallbacks for newer wake-up controllers
+Date: Wed, 22 Nov 2023 21:04:05 +0100
+Message-Id: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
-References: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,9 +65,23 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ExynosAutov9 pin controller capable of wake-ups is still compatible with
-Exynos7, however it does not mux interrupts. Add Exynos7 compatible
-fallback to annotate that compatibility and match the bindings.
+Older ARM8 SoCs like Exynos5433, Exynos7 and Exynos7885 have the pin
+controller with wake-up interrupts muxed, thus the wake-up interrupt
+controller device node has interrupts property, while its pin banks
+might not (because they are muxed by the wake-up controller).
+
+Newer SoCs like Exynos850 and ExynosAutov9 do not used muxed wake-up
+interrupts:
+1. Wake-up interrupt controller device node has no interrupts,
+2. Its pin banks have interrupts (since there is no muxing).
+
+Their programming interface is however still compatible with Exynos7,
+thus change the bindings to express this: retain compatibility with
+Exynos7 and add new compatibility fallback of Exynos850 in newer
+designs.
+
+No driver changes are needed.  This is necessary only to properly
+describe DTS.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
@@ -80,24 +91,63 @@ Cc: Peter Griffin <peter.griffin@linaro.org>
 Cc: semen.protsenko@linaro.org
 Cc: Jaewon Kim <jaewon02.kim@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../samsung,pinctrl-wakeup-interrupt.yaml     | 25 +++++++++++--------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index 417aa56a81f6..c871a2f49fda 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -310,7 +310,9 @@ pinctrl_alive: pinctrl@10450000 {
- 			reg = <0x10450000 0x1000>;
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+index 1b75abebb953..2bafa867aea2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+@@ -36,13 +36,17 @@ properties:
+           - samsung,s5pv210-wakeup-eint
+           - samsung,exynos4210-wakeup-eint
+           - samsung,exynos7-wakeup-eint
+-          - samsung,exynos850-wakeup-eint
+-          - samsung,exynosautov9-wakeup-eint
+-          - samsung,exynosautov920-wakeup-eint
+       - items:
+           - enum:
+               - samsung,exynos5433-wakeup-eint
+               - samsung,exynos7885-wakeup-eint
++              - samsung,exynos850-wakeup-eint
++          - const: samsung,exynos7-wakeup-eint
++      - items:
++          - enum:
++              - samsung,exynosautov9-wakeup-eint
++              - samsung,exynosautov920-wakeup-eint
++          - const: samsung,exynos850-wakeup-eint
+           - const: samsung,exynos7-wakeup-eint
  
- 			wakeup-interrupt-controller {
--				compatible = "samsung,exynosautov9-wakeup-eint";
-+				compatible = "samsung,exynosautov9-wakeup-eint",
-+					     "samsung,exynos850-wakeup-eint",
-+					     "samsung,exynos7-wakeup-eint";
- 			};
- 		};
- 
+   interrupts:
+@@ -86,11 +90,14 @@ allOf:
+   - if:
+       properties:
+         compatible:
+-          contains:
+-            enum:
+-              - samsung,s5pv210-wakeup-eint
+-              - samsung,exynos4210-wakeup-eint
+-              - samsung,exynos7-wakeup-eint
++          # Match without "contains", to skip newer variants which are still
++          # compatible with samsung,exynos7-wakeup-eint
++          enum:
++            - samsung,s5pv210-wakeup-eint
++            - samsung,exynos4210-wakeup-eint
++            - samsung,exynos5433-wakeup-eint
++            - samsung,exynos7-wakeup-eint
++            - samsung,exynos7885-wakeup-eint
+     then:
+       properties:
+         interrupts:
+@@ -105,8 +112,6 @@ allOf:
+           contains:
+             enum:
+               - samsung,exynos850-wakeup-eint
+-              - samsung,exynosautov9-wakeup-eint
+-              - samsung,exynosautov920-wakeup-eint
+     then:
+       properties:
+         interrupts: false
 -- 
 2.34.1
 
