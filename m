@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mEweqi9s"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRvLkWgD"
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D15810C7;
-	Wed, 22 Nov 2023 08:41:16 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9807B1711;
+	Wed, 22 Nov 2023 08:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700671275; x=1732207275;
+  t=1700671282; x=1732207282;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2IJ5RkmvKb06y4Pls/nYVezIgr9GrpPlE4qXI9p0tOg=;
-  b=mEweqi9sFj9kJx1OhGjlXbj2L+Z2b287QDX23g8ECuUAYiq+ogPd9IEU
-   NiuEE0N2J8lto8tk+AEuDpU5kZRpmZqxh6Ppzw+sDxQtF55rULI/3YfVr
-   fMHPtkAYW9BM6GeaLJwp2yCNd0BkvC7ArPWtKe0H3f1ghdLBiz4YzoeMw
-   g1mVSZLr7kIzBp9ONdhQtxz0n0nSkOKjm9X9Kxjuanj16e5XaPwryC7SF
-   uVkNowjx4bTC5c8ELKm3hKGmHvE1fg4F7p7lqmlRG7l5NG5oedDaDR6mA
-   B1/BkDCvRgU1Ht+tH3OA2HhOIsbgABtjuTwc2WcMUB5GEeIwSGaP1Pzjd
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456414350"
+  bh=7v2CAg5DroP23VK/yC7/YkMVF79slYQ+EVkLEfbZi+o=;
+  b=eRvLkWgD55A3lR2H3RQvijRU+zMBl2J3pGjGIOCNPcebds4S+Xp/Ni4t
+   7JOXhCaKCmqpAtlF4f5HHNrH49jlyB3Ae5X7drEg6ekIZH/yiyURfQjL1
+   HXak57+OFObBKIb8eJfuScgeKi0iDG3wYDpXBMFgZsly20NywULgUfpJQ
+   BawWE5Rhub0Rpznwpmv0JAS059gBw+ujvnu47hsOXahiJuJrQdGvmBNSM
+   UjVZfkRMEG7xDgHKDGSzbAd2stRoF9d14nOdbDDCTGRphrXO8fAyphRgf
+   FKoG4xrDG6ul3oefacjkJqX8QxsHrmNHw11k2+BazAqwXEt7ymjzELujZ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="456414396"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="456414350"
+   d="scan'208";a="456414396"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:41:12 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:41:21 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="884681649"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="884681699"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="884681649"
+   d="scan'208";a="884681699"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 22 Nov 2023 08:41:05 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 22 Nov 2023 08:41:13 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id B90287E4; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
+	id DF13E9EF; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v1 13/17] pinctrl: keembay: Convert to use grp member
-Date: Wed, 22 Nov 2023 18:35:45 +0200
-Message-ID: <20231122164040.2262742-14-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 16/17] pinctrl: starfive: Convert to use grp member
+Date: Wed, 22 Nov 2023 18:35:48 +0200
+Message-ID: <20231122164040.2262742-17-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
 References: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
@@ -85,39 +85,76 @@ Convert drivers to use grp member embedded in struct group_desc.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-keembay.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 8 ++++----
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
-index 152c35bce8ec..ace61f8e8936 100644
---- a/drivers/pinctrl/pinctrl-keembay.c
-+++ b/drivers/pinctrl/pinctrl-keembay.c
-@@ -945,7 +945,7 @@ static int keembay_set_mux(struct pinctrl_dev *pctldev, unsigned int fun_sel,
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
+index ea70b8c61679..21bfbbaede72 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c
+@@ -654,7 +654,7 @@ static int starfive_set_mux(struct pinctrl_dev *pctldev,
  		return -EINVAL;
  
- 	/* Change modes for pins in the selected group */
--	pin = *grp->pins;
-+	pin = *grp->grp.pins;
- 	pin_mode = *(u8 *)(func->data);
+ 	pinmux = group->data;
+-	for (i = 0; i < group->num_pins; i++) {
++	for (i = 0; i < group->grp.npins; i++) {
+ 		u32 v = pinmux[i];
+ 		unsigned int gpio = starfive_pinmux_to_gpio(v);
+ 		u32 dout = starfive_pinmux_to_dout(v);
+@@ -797,7 +797,7 @@ static int starfive_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 	if (!group)
+ 		return -EINVAL;
  
- 	val = keembay_read_reg(kpc->base1 + KEEMBAY_GPIO_MODE, pin);
-@@ -1528,12 +1528,11 @@ static int keembay_build_groups(struct keembay_pinctrl *kpc)
- 	/* Each pin is categorised as one group */
- 	for (i = 0; i < kpc->ngroups; i++) {
- 		const struct pinctrl_pin_desc *pdesc = keembay_pins + i;
--		struct group_desc *kmb_grp = grp + i;
-+		struct pingroup *pgrp = &grp[i].grp;
+-	return starfive_pinconf_get(pctldev, group->pins[0], config);
++	return starfive_pinconf_get(pctldev, group->grp.pins[0], config);
+ }
  
--		kmb_grp->name = pdesc->name;
--		kmb_grp->pins = (int *)&pdesc->number;
--		pinctrl_generic_add_group(kpc->pctrl, kmb_grp->name,
--					  kmb_grp->pins, 1, NULL);
-+		pgrp->name = pdesc->name;
-+		pgrp->pins = (int *)&pdesc->number;
-+		pinctrl_generic_add_group(kpc->pctrl, pgrp->name, pgrp->pins, 1, NULL);
+ static int starfive_pinconf_group_set(struct pinctrl_dev *pctldev,
+@@ -876,8 +876,8 @@ static int starfive_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 		}
  	}
  
+-	for (i = 0; i < group->num_pins; i++)
+-		starfive_padctl_rmw(sfp, group->pins[i], mask, value);
++	for (i = 0; i < group->grp.npins; i++)
++		starfive_padctl_rmw(sfp, group->grp.pins[i], mask, value);
+ 
  	return 0;
+ }
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+index 9d71e8c13310..60160965cd29 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+@@ -307,7 +307,7 @@ static int jh7110_set_mux(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 
+ 	pinmux = group->data;
+-	for (i = 0; i < group->num_pins; i++) {
++	for (i = 0; i < group->grp.npins; i++) {
+ 		u32 v = pinmux[i];
+ 
+ 		if (info->jh7110_set_one_pin_mux)
+@@ -437,7 +437,7 @@ static int jh7110_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 	if (!group)
+ 		return -EINVAL;
+ 
+-	return jh7110_pinconf_get(pctldev, group->pins[0], config);
++	return jh7110_pinconf_get(pctldev, group->grp.pins[0], config);
+ }
+ 
+ static int jh7110_pinconf_group_set(struct pinctrl_dev *pctldev,
+@@ -508,8 +508,8 @@ static int jh7110_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 		}
+ 	}
+ 
+-	for (i = 0; i < group->num_pins; i++)
+-		jh7110_padcfg_rmw(sfp, group->pins[i], mask, value);
++	for (i = 0; i < group->grp.npins; i++)
++		jh7110_padcfg_rmw(sfp, group->grp.pins[i], mask, value);
+ 
+ 	return 0;
+ }
 -- 
 2.43.0.rc1.1.gbec44491f096
 
