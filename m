@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XjMO7sYC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAwxvBW+"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C4DA2;
-	Wed, 22 Nov 2023 08:51:55 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9325A10F1;
+	Wed, 22 Nov 2023 08:52:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700671916; x=1732207916;
+  t=1700671928; x=1732207928;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=liPHDLuYbD94sAXW+HKE2PmyEtAsJEMqj1/hueiHOBE=;
-  b=XjMO7sYC81KyqnSsw5QB8p42fyFjtcichmPfXyBTyPeAXCBB+/Vo8awy
-   UhBM7PNCNgMkKCzw8trsTcEx8YPy+UMtf3QR/VVUb2Qi4cbLp7bsOHNvb
-   U7incF+iSKWGgYG8nYatTXQG5ySqV0xJpqT1SkYVm5XEriRABhfKSlt6B
-   mcy1x4yLZCBQGZ1Jk70Ei1tSAQSIkRZQ/tgBAWaLXyEpSbv4D9P9jbFAh
-   6k08ATRCoAD3FKrFg/V2z40xbcKiQDSoaQbUnFsqcqVjTIUO6FRtgsc8L
-   n/QapkR6icu/jysB3eNaf0PSAj7KkrI00rIsJiBHY4uzX2DF19kUMSHfU
+  bh=k/CuwaYQabHIX2TTMtkxSjWVlEzJjCHclcddt/a9src=;
+  b=mAwxvBW+MkOP2UtA9f5BTJMiFv/wmyZD7Dy+IwGiiK4HXYQvBNAycwu+
+   AxLeafB4lN8LGbbxfWGJqAcIIGP3B8wfGqLxVRt2ntFRjtauGwvV2b5Fw
+   0LohdHY7lcVKFo9bnO80kK3X99qsplk57SAY15w29fmnWLqjl4lQPm3vO
+   68h1LWnhPRmuXxYWtVjUo5oDD9/dznKeKYspW9/8NRMQQjUEr4UwIYYoC
+   qg44gLNFyxpOQ3uwtRRapocoGPHYnttrqtUdvrG3567cpyl0FyAYT0oob
+   D6SHqRxGy0zA/417J3F4BgSqLSfIe2QiAQx/sBEKosfBj8JfG9eCcX087
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="5233337"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="5233425"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="5233337"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:51:25 -0800
+   d="scan'208";a="5233425"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 08:51:36 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="910887968"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="857812956"
 X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="910887968"
+   d="scan'208";a="857812956"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Nov 2023 08:51:16 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Nov 2023 08:51:25 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C55678D6; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
+	id 40214555; Wed, 22 Nov 2023 18:40:45 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v1 14/17] pinctrl: mediatek: Convert to use grp member
-Date: Wed, 22 Nov 2023 18:35:46 +0200
-Message-ID: <20231122164040.2262742-15-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 06/17] pinctrl: ingenic: Make use of PINCTRL_GROUP_DESC()
+Date: Wed, 22 Nov 2023 18:35:38 +0200
+Message-ID: <20231122164040.2262742-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
 References: <20231122164040.2262742-1-andriy.shevchenko@linux.intel.com>
@@ -81,50 +81,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert drivers to use grp member embedded in struct group_desc.
+Make use of PINCTRL_GROUP_DESC() instead of open coding it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-moore.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index c3d59eddd994..d972584c0519 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -56,12 +56,12 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index ee718f6e2556..393873de910a 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -83,15 +83,10 @@
+ #define JZ4730_PINS_PER_PAIRED_REG	16
  
- 	dev_dbg(pctldev->dev, "enable function %s group %s\n",
--		func->name, grp->name);
-+		func->name, grp->grp.name);
+ #define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		funcs,					\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), funcs)
  
--	for (i = 0; i < grp->num_pins; i++) {
-+	for (i = 0; i < grp->grp.npins; i++) {
- 		const struct mtk_pin_desc *desc;
- 		int *pin_modes = grp->data;
--		int pin = grp->pins[i];
-+		int pin = grp->grp.pins[i];
+ #define INGENIC_PIN_GROUP(name, id, func)		\
+-	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), (void *)(func))
  
- 		desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
- 		if (!desc->name)
-@@ -602,13 +602,12 @@ static int mtk_build_groups(struct mtk_pinctrl *hw)
- 
- 	for (i = 0; i < hw->soc->ngrps; i++) {
- 		const struct group_desc *group = hw->soc->grps + i;
-+		const struct pingroup *grp = &group->grp;
- 
--		err = pinctrl_generic_add_group(hw->pctrl, group->name,
--						group->pins, group->num_pins,
-+		err = pinctrl_generic_add_group(hw->pctrl, grp->name, grp->pins, grp->npins,
- 						group->data);
- 		if (err < 0) {
--			dev_err(hw->dev, "Failed to register group %s\n",
--				group->name);
-+			dev_err(hw->dev, "Failed to register group %s\n", grp->name);
- 			return err;
- 		}
- 	}
+ enum jz_version {
+ 	ID_JZ4730,
 -- 
 2.43.0.rc1.1.gbec44491f096
 
