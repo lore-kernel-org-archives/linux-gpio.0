@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IfbKtuBI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9322B10D9;
-	Thu, 23 Nov 2023 11:34:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F7T6g53D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7339170B;
+	Thu, 23 Nov 2023 11:34:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700768069; x=1732304069;
+  t=1700768072; x=1732304072;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gV4qvzwrDTaHf4ixLMxBh2Hur2d7tzECkc7jI+eVgVw=;
-  b=IfbKtuBI8nW1JnUkLXbCGVbHHx/o5wef0qRpnwYVSTnnTMNbgDdaOqdI
-   KqlHJs9l3Ioie+KWMBxHGSeEu6f3pTmIceKiPCsvuU1Qrask7ilssI4iX
-   AyrYYTYhXByUM5gGTEd70iNGxfN98qCLdxfMIBxiP54P00e/Lh7Erprlf
-   yoxNzkoYJjzA64hUguywvBtLbyS5g92A2mNqs8nrZRUCgyywhzGlBU78o
-   SEk5PTIsodA6h2dscCy5BNFu2z4v9cfuabEzE54lWa3bJ+E/R1a5dYwgW
-   41YmR89fqt0IbnO99+OR3cN9iF9gH4nEFFkOuh7LqCZ5aDZKLMo/DhR2d
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="372482257"
+  bh=NE+17+HWJqu1tvwDbF/Yy56Y9wnjeE8kjUUulypb5zo=;
+  b=F7T6g53DVGvLosjpkJL9xLKusamlgREYPsDbB4KeM75flvrAJya4c41v
+   nrjrIE9auqAwHE7Mi9woNf7tOKJdeafoRJuZoJT5wp81Ym0OBsRpMouWF
+   EmD1h6CxLNNNONM0K48cZQTWigUukYZ7XbaR/Gd1E4NvvZ85ZZE1T/AY5
+   U4nk8gmQ7GTnVw75XGOuaywrpQOFcpaBy1AAyjtNxB2psgJn3A+xaSnFE
+   BcomtdfF/fQeyw0yFM5Ki8G3LgpNw/XiqQig2qeId8vKkKjymPXGmwboe
+   KaG/YHzC4M1grs7HumIq/rFLKqEIse4sA4QZC1rFhx8yDDRF4qj3ohjy6
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="371671537"
 X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="372482257"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 11:34:25 -0800
+   d="scan'208";a="371671537"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 11:34:26 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="833506177"
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="771062268"
 X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
-   d="scan'208";a="833506177"
+   d="scan'208";a="771062268"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 23 Nov 2023 11:34:17 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 23 Nov 2023 11:34:17 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9290AA0C; Thu, 23 Nov 2023 21:33:59 +0200 (EET)
+	id 657F38FE; Thu, 23 Nov 2023 21:33:59 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v2 19/21] pinctrl: renesas: Convert to use grp member
-Date: Thu, 23 Nov 2023 21:31:47 +0200
-Message-ID: <20231123193355.3400852-20-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 16/21] pinctrl: ingenic: Convert to use grp member
+Date: Thu, 23 Nov 2023 21:31:44 +0200
+Message-ID: <20231123193355.3400852-17-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
 References: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
@@ -85,100 +85,53 @@ Convert drivers to use grp member embedded in struct group_desc.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rza1.c  |  2 +-
- drivers/pinctrl/renesas/pinctrl-rza2.c  | 10 +++++-----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c |  6 +++---
- drivers/pinctrl/renesas/pinctrl-rzv2m.c |  6 +++---
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
-index ab334de89b69..b03f22c54ca8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-@@ -1131,7 +1131,7 @@ static int rza1_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 393873de910a..6806fede5df4 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -3756,17 +3756,17 @@ static int ingenic_pinmux_set_mux(struct pinctrl_dev *pctldev,
  		return -EINVAL;
  
- 	mux_confs = (struct rza1_mux_conf *)func->data;
--	for (i = 0; i < grp->num_pins; ++i) {
-+	for (i = 0; i < grp->grp.npins; ++i) {
- 		int ret;
+ 	dev_dbg(pctldev->dev, "enable function %s group %s\n",
+-		func->name, grp->name);
++		func->name, grp->grp.name);
  
- 		ret = rza1_pin_mux_single(rza1_pctl, &mux_confs[i]);
-diff --git a/drivers/pinctrl/renesas/pinctrl-rza2.c b/drivers/pinctrl/renesas/pinctrl-rza2.c
-index 990b96d45967..af689d7c117f 100644
---- a/drivers/pinctrl/renesas/pinctrl-rza2.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rza2.c
-@@ -447,15 +447,15 @@ static int rza2_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+ 	mode = (uintptr_t)grp->data;
+ 	if (mode <= 3) {
+-		for (i = 0; i < grp->num_pins; i++)
+-			ingenic_pinmux_set_pin_fn(jzpc, grp->pins[i], mode);
++		for (i = 0; i < grp->grp.npins; i++)
++			ingenic_pinmux_set_pin_fn(jzpc, grp->grp.pins[i], mode);
+ 	} else {
+ 		pin_modes = grp->data;
  
- 	psel_val = func->data;
- 
--	for (i = 0; i < grp->num_pins; ++i) {
-+	for (i = 0; i < grp->grp.npins; ++i) {
- 		dev_dbg(priv->dev, "Setting P%c_%d to PSEL=%d\n",
--			port_names[RZA2_PIN_ID_TO_PORT(grp->pins[i])],
--			RZA2_PIN_ID_TO_PIN(grp->pins[i]),
-+			port_names[RZA2_PIN_ID_TO_PORT(grp->grp.pins[i])],
-+			RZA2_PIN_ID_TO_PIN(grp->grp.pins[i]),
- 			psel_val[i]);
- 		rza2_set_pin_function(
- 			priv->base,
--			RZA2_PIN_ID_TO_PORT(grp->pins[i]),
--			RZA2_PIN_ID_TO_PIN(grp->pins[i]),
-+			RZA2_PIN_ID_TO_PORT(grp->grp.pins[i]),
-+			RZA2_PIN_ID_TO_PIN(grp->grp.pins[i]),
- 			psel_val[i]);
+-		for (i = 0; i < grp->num_pins; i++)
+-			ingenic_pinmux_set_pin_fn(jzpc, grp->pins[i], pin_modes[i]);
++		for (i = 0; i < grp->grp.npins; i++)
++			ingenic_pinmux_set_pin_fn(jzpc, grp->grp.pins[i], pin_modes[i]);
  	}
  
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 9de350ad7e7d..504e8716fc32 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -273,7 +273,7 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 	struct function_desc *func;
- 	unsigned int i, *psel_val;
- 	struct group_desc *group;
--	int *pins;
-+	const int *pins;
+ 	return 0;
+@@ -4293,12 +4293,12 @@ static int __init ingenic_pinctrl_probe(struct platform_device *pdev)
  
- 	func = pinmux_generic_get_function(pctldev, func_selector);
- 	if (!func)
-@@ -283,9 +283,9 @@ static int rzg2l_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
+ 	for (i = 0; i < chip_info->num_groups; i++) {
+ 		const struct group_desc *group = &chip_info->groups[i];
++		const struct pingroup *grp = &group->grp;
  
- 	psel_val = func->data;
--	pins = group->pins;
-+	pins = group->grp.pins;
- 
--	for (i = 0; i < group->num_pins; i++) {
-+	for (i = 0; i < group->grp.npins; i++) {
- 		unsigned int *pin_data = pctrl->desc.pins[pins[i]].drv_data;
- 		u32 off = RZG2L_PIN_CFG_TO_PORT_OFFSET(*pin_data);
- 		u32 pin = RZG2L_PIN_ID_TO_PIN(pins[i]);
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-index 21d7d5ac8c4a..eb66e306b8c8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-@@ -165,7 +165,7 @@ static int rzv2m_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 	struct function_desc *func;
- 	unsigned int i, *psel_val;
- 	struct group_desc *group;
--	int *pins;
-+	const int *pins;
- 
- 	func = pinmux_generic_get_function(pctldev, func_selector);
- 	if (!func)
-@@ -175,9 +175,9 @@ static int rzv2m_pinctrl_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
- 
- 	psel_val = func->data;
--	pins = group->pins;
-+	pins = group->grp.pins;
- 
--	for (i = 0; i < group->num_pins; i++) {
-+	for (i = 0; i < group->grp.npins; i++) {
- 		dev_dbg(pctrl->dev, "port:%u pin: %u PSEL:%u\n",
- 			RZV2M_PIN_ID_TO_PORT(pins[i]), RZV2M_PIN_ID_TO_PIN(pins[i]),
- 			psel_val[i]);
+-		err = pinctrl_generic_add_group(jzpc->pctl, group->name,
+-				group->pins, group->num_pins, group->data);
++		err = pinctrl_generic_add_group(jzpc->pctl, grp->name, grp->pins, grp->npins,
++						group->data);
+ 		if (err < 0) {
+-			dev_err(dev, "Failed to register group %s\n",
+-					group->name);
++			dev_err(dev, "Failed to register group %s\n", grp->name);
+ 			return err;
+ 		}
+ 	}
 -- 
 2.43.0.rc1.1.gbec44491f096
 
