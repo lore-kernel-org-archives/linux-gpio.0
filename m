@@ -1,110 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FB63210;
-	Thu, 23 Nov 2023 19:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDfcvTch"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C706C433C7;
-	Thu, 23 Nov 2023 19:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700766588;
-	bh=H31tYMRMi9KqwFq+p39ksYkA9U91as7rK22EFXyG874=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cDfcvTch5RfNfxfF5D79XFdoatrLc/szYurTXztwWV/Dqw2WfIvQRbT1ly1TJRkr1
-	 JdnTlb4EQGY1DiK2wriv9OEDl28V0vdl7Dtcbl3phz7B9SzdMCTD9ePpKgjNPVah4c
-	 J7EkAjCek5sBU/ZDkej90SIeovaVGGEpOIBo4NfyAJHgVqVjkdMP/gla45kzs7imCv
-	 z5TGPafyWpBEln7Ci39ksTkqTtO1jWWOQFRlmIh9BT7ntLm7JigCIZN/E04Y3wN2eq
-	 v3f6L4nGQ2mtNfDRqsaYJtCDCEoKOqE5udKhRbKrXsyvn4yCz8FWKHHacSNJMpo/CN
-	 9yf6M2Tk+P45g==
-Date: Thu, 23 Nov 2023 19:09:36 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: mitrutzceclan <mitrutzceclan@gmail.com>, linus.walleij@linaro.org,
- brgl@bgdev.pl, linux-gpio@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Walle <michael@walle.cc>, Arnd Bergmann <arnd@arndb.de>, ChiaEn Wu
- <chiaen_wu@richtek.com>, Niklas Schnelle <schnelle@linux.ibm.com>, Leonard
- =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>, Mike Looijmans
- <mike.looijmans@topic.nl>, Haibo Chen <haibo.chen@nxp.com>, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>, Ceclan Dumitru <dumitru.ceclan@analog.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] iio: adc: ad7173: add AD7173 driver
-Message-ID: <20231123190936.51f61b8d@jic23-huawei>
-In-Reply-To: <ZV-CHima8bpXcopc@smile.fi.intel.com>
-References: <20231123152331.5751-1-user@HYB-hhAwRlzzMZb>
-	<20231123152331.5751-2-user@HYB-hhAwRlzzMZb>
-	<ZV-CHima8bpXcopc@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZRP0aaTs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F70D46;
+	Thu, 23 Nov 2023 11:34:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700768048; x=1732304048;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HR6AD3oucSuNKOYxIpiD/4nGiB6I6Xel00vv5noMc+E=;
+  b=ZRP0aaTsIrD++izsKIi0cbi1Df59X/nqVlH2dnKgMEhHOgaL+cyPLREX
+   me73emgGUT5cIY4yZlKh5JMHyOAl83OfeLO2+PKQofBNama6St5m35A+t
+   nNYOMjrN9B498OQIeJLdMzlainYsUM73HrTCQClDAOp3iWLAtHmz2YJJi
+   TyOfA7V9g7/bHm/9Z8cvLJ1EYUynkik0Sw5vMa2HJKPaJv1wvZtbXgJty
+   6N2QvyiFuZGTS/3GiHWUMuq68T/90o65UJ0+0Xx3PC6jUPd2wujfmMHHc
+   j+/3g/vJ3sZPnjWL05fkxIR2NdmVk94VuSkkRQCOXSHZZbtGe6TxqGj4s
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="372482060"
+X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
+   d="scan'208";a="372482060"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 11:34:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="833506145"
+X-IronPort-AV: E=Sophos;i="6.04,222,1695711600"; 
+   d="scan'208";a="833506145"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Nov 2023 11:33:59 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A864F387; Thu, 23 Nov 2023 21:33:58 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-mips@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>
+Subject: [PATCH v2 03/21] pinctrl: equilibrium: Use temporary variable to hold pins
+Date: Thu, 23 Nov 2023 21:31:31 +0200
+Message-ID: <20231123193355.3400852-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+In-Reply-To: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
+References: <20231123193355.3400852-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The pins are allocated from the heap, but in order to pass
+them as constant object, we need to use non-constant pointer.
+Achieve this by using a temporary variable.
 
-> 
-> ...
-> 
-> > +	return vref / (MICRO/MILLI);  
-> 
-> Wouldn't MILLI in the denominator just suffice?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-equilibrium.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Just a quick comment here. Given this is converting from micro to milli units
-I'd consider the maths here be acting as documentation of that which would be lost if
-/MILLI only used.  Need spaces around the / though
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 5b5ddf7e5d0e..91157a2b949c 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -704,7 +704,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ {
+ 	struct device *dev = drvdata->dev;
+ 	struct device_node *node = dev->of_node;
+-	unsigned int *pinmux, pin_id, pinmux_id;
++	unsigned int *pins, *pinmux, pin_id, pinmux_id;
+ 	struct group_desc group;
+ 	struct device_node *np;
+ 	struct property *prop;
+@@ -722,15 +722,14 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 			return -EINVAL;
+ 		}
+ 		group.name = prop->value;
+-		group.pins = devm_kcalloc(dev, group.num_pins,
+-					  sizeof(*(group.pins)), GFP_KERNEL);
+-		if (!group.pins) {
++		pins = devm_kcalloc(dev, group.num_pins, sizeof(*pins), GFP_KERNEL);
++		if (!pins) {
+ 			of_node_put(np);
+ 			return -ENOMEM;
+ 		}
++		group.pins = pins;
+ 
+-		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux),
+-				      GFP_KERNEL);
++		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux), GFP_KERNEL);
+ 		if (!pinmux) {
+ 			of_node_put(np);
+ 			return -ENOMEM;
+@@ -749,7 +748,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 				of_node_put(np);
+ 				return -EINVAL;
+ 			}
+-			group.pins[j] = pin_id;
++			pins[j] = pin_id;
+ 			if (of_property_read_u32_index(np, "pinmux", j, &pinmux_id)) {
+ 				dev_err(dev, "Group %s: Read intel pinmux id failed\n",
+ 					group.name);
+-- 
+2.43.0.rc1.1.gbec44491f096
 
-
-> 
-> ...
-> 
-> > +	case IIO_CHAN_INFO_SAMP_FREQ:
-> > +		reg = st->channels[chan->address].cfg.odr;
-> > +
-> > +		*val = st->info->sinc5_data_rates[reg] / MILLI;
-> > +		*val2 = (st->info->sinc5_data_rates[reg] % MILLI) * (MICRO/MILLI);
-> > +
-> > +		return IIO_VAL_INT_PLUS_MICRO;
-> > +	}  
-> 
-> > +		ret = fwnode_property_read_string(child, "adi,reference-select", &ref_label);
-> > +		if (!ret) {
-> > +			for (i = 0; i < ARRAY_SIZE(ad7173_ref_sel_str); i++)
-> > +				if (strcmp(ref_label, ad7173_ref_sel_str[i]) == 0) {
-> > +					ref_sel = i;
-> > +					break;
-> > +				}  
-> 
-> > +			if (i == ARRAY_SIZE(ad7173_ref_sel_str))
-> > +				return dev_err_probe(dev, -EINVAL, "Invalid channel reference name %s", ref_label);  
-> 
-> Too long line.
-> 
-> > +		} else if (ret != -EINVAL) {
-> > +			return dev_err_probe(dev, ret, "Invalid channel reference value");
-> > +		}  
-> 
-> 
-> Use standard pattern and it will be easier to see that 'else' is redundant.
-> 
-> 		if (ret == -EINVAL) // However I don't like this handling of
-> 				    // properties, but up to you and maintainer
-
-Personally I'd check for existence of property first and only try reading if it
-exists.  Avoid dance with resetting ret to 0.
-
-> 			ret = 0;
-> 		if (ret)
-> 			return dev_err_probe(...);
-> 
-> 
-> BUT. Isn't it a home grown variant of fwnode_property_match_property_string()?
-
-true enough...  I'd still add an existence check first given this one is optional.
-
-Jonathan
