@@ -1,195 +1,194 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A810719E
-	for <linux-gpio@vger.kernel.org>; Wed, 22 Nov 2023 15:40:02 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5wp1-0006dY-OW; Thu, 23 Nov 2023 00:39:55 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5wp0-00AuuC-Qz; Thu, 23 Nov 2023 00:39:54 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r5wp0-00668f-HT; Thu, 23 Nov 2023 00:39:54 +0100
-Date: Thu, 23 Nov 2023 00:39:54 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-pwm@vger.kernel.org,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkDkgejS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166A31A4;
+	Wed, 22 Nov 2023 19:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700709139; x=1732245139;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3sBlfJImwRaqa6aryIZaVq3UckHfBRFnYA7tVrAvU28=;
+  b=HkDkgejSTaKHw0KrfZzucjWPtINUcXlHo85Zfuh6vyo0ndxkUvzr0UUI
+   q6qQACLh1E22hnbms7xxvohwvkPnC4Jl3RAgQTVRHwLjdWQPMlm1K14Cb
+   vmjD9ftI3+Wo6WTQB4W8aTwPfk3cu1QRXOYO8FsdPae/YErv9QmIgX0lG
+   x4ldtN1ReiTmF8MwEwMUM9WmpZ+yvcOzeFclFAfAw5D2UD8uIqTdNCuHS
+   Crahd8QZkX9ImMkXRN+4gDWby532nPkAEYHxcRyVvdXuQdEp9hRSdfvyl
+   Tm2L0Pq8ehsOSRhMsGK0jrbnnDw7fnM6u0AH5uheCHWVEosZmkCABYzjF
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="13744904"
+X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
+   d="scan'208";a="13744904"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 19:12:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
+   d="scan'208";a="8712749"
+Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 22 Nov 2023 19:12:11 -0800
+Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r608P-00019r-1j;
+	Thu, 23 Nov 2023 03:12:09 +0000
+Date: Thu, 23 Nov 2023 11:11:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>, kernel@pengutronix.de
-Subject: Re: [PATCH v3 100/108] gpio: mvebu: Make use of devm_pwmchip_alloc()
- function
-Message-ID: <20231122233954.crq7jr5lv2c5piik@pengutronix.de>
-References: <20231121134901.208535-1-u.kleine-koenig@pengutronix.de>
- <20231121134901.208535-101-u.kleine-koenig@pengutronix.de>
- <CAMRc=MdSc3emU+AJpCni6is0qsmR9HcqysSL33gpAmb8JTnjVA@mail.gmail.com>
- <20231121161111.zphi7pn77ns7sgu2@pengutronix.de>
- <20231122090502.tcscaaaf7vuk6g7w@pengutronix.de>
- <CAMRc=MdBvcS8pvtt_mB9NWskJPQgB4t4jot5YZRE=_d+jVNnMQ@mail.gmail.com>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org, linux-mips@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH v1 01/17] pinctrl: equilibrium: Convert to use struct
+ pingroup
+Message-ID: <202311230820.MGDyVHJW-lkp@intel.com>
+References: <20231122164040.2262742-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z2qlqaxh74j6nlxe"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MdBvcS8pvtt_mB9NWskJPQgB4t4jot5YZRE=_d+jVNnMQ@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+In-Reply-To: <20231122164040.2262742-2-andriy.shevchenko@linux.intel.com>
+
+Hi Andy,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linusw-pinctrl/devel]
+[also build test WARNING on linusw-pinctrl/for-next geert-renesas-drivers/renesas-pinctrl pinctrl-samsung/for-next linus/master v6.7-rc2 next-20231122]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-equilibrium-Convert-to-use-struct-pingroup/20231123-005932
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20231122164040.2262742-2-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 01/17] pinctrl: equilibrium: Convert to use struct pingroup
+config: i386-randconfig-001-20231123 (https://download.01.org/0day-ci/archive/20231123/202311230820.MGDyVHJW-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231123/202311230820.MGDyVHJW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311230820.MGDyVHJW-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/pinctrl/pinctrl-equilibrium.c: In function 'eqbr_build_groups':
+   drivers/pinctrl/pinctrl-equilibrium.c:750:17: error: assignment of read-only location '*(grp->pins + (sizetype)((unsigned int)j * 4))'
+     750 |    grp->pins[j] = pin_id;
+         |                 ^
+   drivers/pinctrl/pinctrl-equilibrium.c:761:23: error: 'struct pingroup' has no member named 'num_pins'; did you mean 'npins'?
+     761 |       grp->pins, grp->num_pins,
+         |                       ^~~~~~~~
+         |                       npins
+>> drivers/pinctrl/pinctrl-equilibrium.c:761:10: warning: passing argument 3 of 'pinctrl_generic_add_group' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     761 |       grp->pins, grp->num_pins,
+         |       ~~~^~~~~~
+   In file included from drivers/pinctrl/pinctrl-equilibrium.c:16:
+   drivers/pinctrl/core.h:225:15: note: expected 'int *' but argument is of type 'const unsigned int *'
+     225 |          int *gpins, int ngpins, void *data);
+         |          ~~~~~^~~~~
 
 
---z2qlqaxh74j6nlxe
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+vim +761 drivers/pinctrl/pinctrl-equilibrium.c
 
-Hello Bart,
+   702	
+   703	static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+   704	{
+   705		struct device *dev = drvdata->dev;
+   706		struct device_node *node = dev->of_node;
+   707		unsigned int *pinmux, pin_id, pinmux_id;
+   708		struct pingroup group, *grp = &group;
+   709		struct device_node *np;
+   710		struct property *prop;
+   711		int j, err;
+   712	
+   713		for_each_child_of_node(node, np) {
+   714			prop = of_find_property(np, "groups", NULL);
+   715			if (!prop)
+   716				continue;
+   717	
+   718			grp->npins = of_property_count_u32_elems(np, "pins");
+   719			if (grp->npins < 0) {
+   720				dev_err(dev, "No pins in the group: %s\n", prop->name);
+   721				of_node_put(np);
+   722				return -EINVAL;
+   723			}
+   724			grp->name = prop->value;
+   725			grp->pins = devm_kcalloc(dev, grp->npins, sizeof(*grp->pins), GFP_KERNEL);
+   726			if (!grp->pins) {
+   727				of_node_put(np);
+   728				return -ENOMEM;
+   729			}
+   730	
+   731			pinmux = devm_kcalloc(dev, grp->npins, sizeof(*pinmux), GFP_KERNEL);
+   732			if (!pinmux) {
+   733				of_node_put(np);
+   734				return -ENOMEM;
+   735			}
+   736	
+   737			for (j = 0; j < grp->npins; j++) {
+   738				if (of_property_read_u32_index(np, "pins", j, &pin_id)) {
+   739					dev_err(dev, "Group %s: Read intel pins id failed\n",
+   740						grp->name);
+   741					of_node_put(np);
+   742					return -EINVAL;
+   743				}
+   744				if (pin_id >= drvdata->pctl_desc.npins) {
+   745					dev_err(dev, "Group %s: Invalid pin ID, idx: %d, pin %u\n",
+   746						grp->name, j, pin_id);
+   747					of_node_put(np);
+   748					return -EINVAL;
+   749				}
+   750				grp->pins[j] = pin_id;
+   751				if (of_property_read_u32_index(np, "pinmux", j, &pinmux_id)) {
+   752					dev_err(dev, "Group %s: Read intel pinmux id failed\n",
+   753						grp->name);
+   754					of_node_put(np);
+   755					return -EINVAL;
+   756				}
+   757				pinmux[j] = pinmux_id;
+   758			}
+   759	
+   760			err = pinctrl_generic_add_group(drvdata->pctl_dev, grp->name,
+ > 761							grp->pins, grp->num_pins,
+   762							pinmux);
+   763			if (err < 0) {
+   764				dev_err(dev, "Failed to register group %s\n", grp->name);
+   765				of_node_put(np);
+   766				return err;
+   767			}
+   768			memset(&group, 0, sizeof(group));
+   769			pinmux = NULL;
+   770		}
+   771	
+   772		return 0;
+   773	}
+   774	
 
-On Wed, Nov 22, 2023 at 11:36:19AM +0100, Bartosz Golaszewski wrote:
-> On Wed, Nov 22, 2023 at 10:05=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Tue, Nov 21, 2023 at 05:11:11PM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Tue, Nov 21, 2023 at 03:02:39PM +0100, Bartosz Golaszewski wrote:
-> > > > Eh... I had a talk at LPC where I explained why I really dislike th=
-is
-> > > > approach but I guess this ship has sailed now and it's not a subsys=
-tem
-> > > > where I have any say anyway.
-> > >
-> > > Is there a record of your talk? I'm open to hear your arguments.
-> >
-> > I found your slides at
-> > https://lpc.events/event/17/contributions/1627/attachments/1258/2725/Li=
-nux%20Plumbers%20Conference%202023.pdf
-> >
->=20
-> My talk is here: https://www.youtube.com/watch?v=3DVxaAorwL89c&t=3D29310s
->=20
-> > The main critic as I understand it about the "alloc_foo() +
-> > register_foo()" approach is: "Breaks life-time logic - the driver
-> > allocates the object but is not responsible for freeing it".
-> >
-> > Yes, the driver allocates the object (via a subsystem helper). It is not
-> > responsible for freeing the object, but the driver must drop its
-> > reference to this object when going away. So foo_alloc() is paired by
-> > foo_put().
-> >
->=20
-> Is it though? I don't see any pwmchip_put() being called in this
-> patch.
-
-It's not in this patch. Up to patch #103 I'm preparing drivers and the
-code that is moved into the core isn't better than what was done before
-in each driver.
-
-Look at patch #106 which does the relevant conversion in
-pwmchip_alloc(). When unbinding the mvebu gpio driver the necessary
-pwmchip_put() is triggered by the devm cleanup registered in
-devm_pwmchip_alloc().
-
-> I assume it's done implicitly but that's just confusing and
-> does break the scope.
->=20
-> > The solution you present as the good way has the struct device in the
-> > foo_wrapper. In GPIO land that's struct gpio_device, right?
->=20
-> Exactly.
->=20
-> > gpiochip_add_data_with_key() allocates that using kzalloc() and "frees"
-> > it with gpio_device_put() right? So your approach suffers from the same
->=20
-> No, the structure is allocated by kzalloc() but it's life-time is tied
-> with the struct device embedded in it and it's freed in the device's
-> .release() callback when the last reference is dropped.
-
-With the complete series applied a pwmchip is allocated by
-pwmchip_alloc() and it's life-time is tied with the struct device
-embedded in it and it's freed in the device's .release() callback when
-the last reference is dropped.
-
-In this respect I see a certain similarity between your gpio approach
-and mine for pwm. So either I don't understand your critic on my patch
-set, or I don't see why it shouldn't apply to your approach, too.
-
-Yes, gpio drivers look fine having only ..._alloc() paired with
-=2E.._free() and ..._get() with ..._put(). But that's only because you
-moved that "inconsistency" of kzalloc() <-> put_device() into the gpio
-core, while I kept it in the drivers.
-
-Renaming pwmchip_alloc() to pwmchip_get_new() was a honest suggestion
-that moves that inconsistency to the core, too.
-
-> > inconsistency, the only upside is that you do that once at the subsystem
-> > level instead of in each driver. (And in return you have two allocations
-> > (priv + foo_wrapper) while the "alloc_foo() + register_foo()" approach
-> > only needs one.)
->=20
-> Memory is cheap and this is not a hot path, so it isn't a big deal.
-
-It's not only about wasting memory and the time needed to dereference
-pointers. It's also about complexity that has to be grasped by humans.
-Also not being in a hot path doesn't mean it's bad to pick the faster
-approach. Having said that I'm not sure if the hot paths (e.g.
-gpiod_set_value()) really don't suffer from having two separate
-allocations.
-
-But I guess we're both biased here to our own approach because that's
-what each of us thought about in detail.
-
-> > Let's just rename foo_alloc() to foo_get_new() and the problem is gone?
->=20
-> Nope, because from a quick glance at PWM code, I'm convinced it will
-> suffer from the same hot-unplug problem I described in my talk. In
-> which case this rework will not fix all the issues.
-
-Please look at the state after patch #107. If you spot an issue there,
-please tell me.
-
-> > In the implementation of foo_get_new() kzalloc() is still paired with
-> > put_device() in foo_put(), but IMHO that's fine. The responsibility to
-> > kfree() is traded to the struct device with device_initialize() in
-> > return for a reference to the device. That's something you won't get rid
-> > of while keeping the concept of reference counting.
->=20
-> But if the PWM driver is unbound with users still holding references -
-> do you have a mechanism to handle that?
-
-Yes, should be fine starting with patch #107. In my tests (on top of
-patch #108) it works fine. I held /dev/pwmchipX open and unbound the
-lowlevel driver. The ioctls are caught in the core then and yield an
-error and the kfree of the pwmchip struct is delayed until /dev/pwmchipX
-is closed.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
-   |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---z2qlqaxh74j6nlxe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVekUkACgkQj4D7WH0S
-/k78tAf6AzTX5s1Y+yVF12beh2v9YbM02qCT0k9nv7VyHhXFDrE4D+C4e7rmoLeL
-8YtqoWz66jRT9QAPURLP87viuumj36KowhgmQoaZan5FSlOZWqXHSPKzWL27jlkX
-4pwLEMfsctan6Vq4LBMCT7/3iaZVtqXAknYdW7054df1QtsSsEgu0q2zcJGDNTpN
-IHmPZCkCBgk7985UtEKI6V0oQNNSFFT+47gQBaLm8cNIgWCKo8jHKOLvvNCS6IEi
-esF/7RtXi1RcKTMr0SJT/NdnDVoiWXUUMmZAMzDQEHRzhamoeFLcn3qyGsTXGQVy
-M5/aULGp+mrxnChQ+Oxj1fgGj6hoXQ==
-=Vpvj
------END PGP SIGNATURE-----
-
---z2qlqaxh74j6nlxe--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
