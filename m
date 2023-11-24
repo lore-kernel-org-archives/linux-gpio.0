@@ -1,61 +1,93 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dETjZJfx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0336E101;
-	Thu, 23 Nov 2023 21:41:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700804488; x=1732340488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oVQwgv2ow7U2EuiQeF94cjR2sx9Q558B5162Jzqi6NM=;
-  b=dETjZJfxTz8iHOTyyjXsxXtXFbLfMAmotA8qC45IbN9pqHf4lv21cMEe
-   zputlPDJ4iRgCNn1rNwXG3KruPkf7ZZV0g69c4JirphqbBs6wKS7snqPO
-   2rpZ4ZGYy5sNRebX8bCCFte7nFVaEomnx7UeD7rWFQzPkgsB2rZD16reC
-   BQTprucHLZL3TJZyxf8jrkz/d2OnK24fjndM1c/yb6DD2VCyG1KdOPSrM
-   fDozETJQWOYDdyrZYtIcpVoyPwbxEnO3mHhdBpRj+a9by9DJ4nX6zlFDq
-   uoeEjhTUZiV4ck9n5Uf9IJcHlukzL7OdhugqKVxcox95B56+eW7Ezax8u
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="423505261"
-X-IronPort-AV: E=Sophos;i="6.04,223,1695711600"; 
-   d="scan'208";a="423505261"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2023 21:41:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="796494457"
-X-IronPort-AV: E=Sophos;i="6.04,223,1695711600"; 
-   d="scan'208";a="796494457"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 23 Nov 2023 21:41:25 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 20B2B1C7; Fri, 24 Nov 2023 07:33:39 +0200 (EET)
-Date: Fri, 24 Nov 2023 07:33:39 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/4] pinctrl: baytrail: Fix types of config value in
- byt_pin_config_set()
-Message-ID: <20231124053339.GG1074920@black.fi.intel.com>
-References: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFeVVzca"
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3240D4E
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Nov 2023 23:41:17 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9fa45e75ed9so224396666b.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Nov 2023 23:41:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700811676; x=1701416476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fe7LFiAVDzLRSxjoOCH/kO6LIkOeWYMi0jJKMHO+M30=;
+        b=EFeVVzcaKgPj8Wuw/qGbs778MDt/hrO/YETUFBa4H5Fk+0XzKiVNaYrsiUTqEW+02n
+         DqcBSZzHjwjhDnHdf7sNM4nStGbvzhX/3WVW1EM1CL3WzdT8pQTB81Bq9VEpRx0SaqTa
+         reDp4PArRiYAdTyIMLdpzeDIbm+9fFviTRRBjMc43OrR3RndiW5ZtoNbNMiLNhO4Z9Mo
+         hgSXxeNO84eImfHF5sSRZsDz76uw9y8E6CuXBcyAEjlym/psA+pkpmofkiIRqozgWcyf
+         FkJYFkTorbEwXjXuGRLhN+0ArWxMkJaSVf3j3eSJtnuxXiZz3PrOOvojK8A0werprcyn
+         Pb/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700811676; x=1701416476;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fe7LFiAVDzLRSxjoOCH/kO6LIkOeWYMi0jJKMHO+M30=;
+        b=dwhBUSEBn02uavPeFXUsdGef9riIVSLcInWy9vCfyBBas4qDTAMiwaf7eoasftHto4
+         mpZrLpHIorI8oooKTPcv/wu3JftloQDbGQrvVGCIlq0gVcheo+e9NVmARgxXE3mFTP4L
+         733OiXwxsqH4LjlTgzzZhvXPK45IRO3cO7KXsoksPXwDC/7NzrWOhG5XsjHavnwUC0m6
+         PV6FNRS9IbzMTc1ZtsL8YuWB1EaCG0xNzwsNVTXWTe2+v2aGnCZlr5+47VtV5kBAck8T
+         9TF+Gz/JgZER8OtzlR+/9LVTH9ivvz0F0mgD3h96iquzGshMe6mpcI7fdvE8dgRvY0hk
+         Z0zg==
+X-Gm-Message-State: AOJu0YwsZfQvmiI1iyuRd+6DyqOjJfH5obR5Ggb7P6h4/UQV43dBbQH9
+	7cQ3GsDHvZdnw9fmEv6DhzLRrw==
+X-Google-Smtp-Source: AGHT+IHDrv06ivxtPgRXd+8inYekMaQKkAUnYCK1Xa+l7J5VfhociYD92/EJid18MCVCbwbs/iMh6Q==
+X-Received: by 2002:a17:907:740a:b0:9e5:d618:d6c1 with SMTP id gj10-20020a170907740a00b009e5d618d6c1mr1110958ejc.19.1700811676466;
+        Thu, 23 Nov 2023 23:41:16 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.100])
+        by smtp.gmail.com with ESMTPSA id hk15-20020a170906c9cf00b009fef7d22c98sm1736585ejb.35.2023.11.23.23.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 23:41:15 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	semen.protsenko@linaro.org,
+	Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: Re: (subset) [PATCH 1/3] dt-bindings: pinctrl: samsung: use Exynos7 fallbacks for newer wake-up controllers
+Date: Fri, 24 Nov 2023 08:41:13 +0100
+Message-Id: <170081167113.4921.3456428823798140178.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
+References: <20231122200407.423264-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231122175039.2289945-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 22, 2023 at 07:50:36PM +0200, Andy Shevchenko wrote:
-> When unpacked, the config value is split to two of different types.
-> Fix the types accordingly.
+
+On Wed, 22 Nov 2023 21:04:05 +0100, Krzysztof Kozlowski wrote:
+> Older ARM8 SoCs like Exynos5433, Exynos7 and Exynos7885 have the pin
+> controller with wake-up interrupts muxed, thus the wake-up interrupt
+> controller device node has interrupts property, while its pin banks
+> might not (because they are muxed by the wake-up controller).
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Newer SoCs like Exynos850 and ExynosAutov9 do not used muxed wake-up
+> interrupts:
+> 1. Wake-up interrupt controller device node has no interrupts,
+> 2. Its pin banks have interrupts (since there is no muxing).
+> 
+> [...]
 
-There was one typo which I commented (please fix when applying).
-Otherwise the series looks good to me,
+Applied, thanks!
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+[1/3] dt-bindings: pinctrl: samsung: use Exynos7 fallbacks for newer wake-up controllers
+      https://git.kernel.org/pinctrl/samsung/c/904140fa45533f6d05071e24492013da16c46b7f
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
