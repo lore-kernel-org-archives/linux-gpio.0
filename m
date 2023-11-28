@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="idAQfDn5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DGJzu5Iv"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37227F4;
-	Tue, 28 Nov 2023 12:12:18 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F6219A4;
+	Tue, 28 Nov 2023 12:12:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701202338; x=1732738338;
+  t=1701202339; x=1732738339;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=GcznTEzkYh7381dOAmLl/g2Ovk3HvI9vfBlGPtxsvN8=;
-  b=idAQfDn5rcGLi5UKZJTiWQQpNxqcNUbpH//JM7yehplWrFKXdnLaDODv
-   ywpY6FfXRKN9UWLaa6yf6UguA4xzMeValueJe6xIG3wu/J0vouYoeT4Oj
-   RPcKGMUHv9/r7vXQz9hodeY4zU8reebrBjIPzm+24P1syopTNLClQ6Sfz
-   we486zRpTWye3P5RFhfq7Uwan4sRG2W1WkixImtmprRweK6Zv9QK5M4B+
-   yPAjue/QsaYppY75cSft0LMRLW+UgX3EqsyBz+Khvxx09VH92T0hviksQ
-   mEnUj4MetGPFeANARvxSvWUvmV7CNeLmiEyds7Jh3V4H19Z2qrBv1SHPG
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="392767508"
+  bh=NbQPPAhSXc+lH2scgSPRWjHrBuSZh78A/g5NEt950rk=;
+  b=DGJzu5IvoF/pgOvEDSuGLHx4LjEBXi7SH0FGXQ96bkmK/amdVISsS49F
+   x8tPjSL0h28FSAJ882p9adK1dWFz4UM9fFylZqePNb8Z6lEcYG3qzte9L
+   KH9iTseD2KM9W/olVSJJUxn+O5y1dCKxauToJgX/urx+xYywFe+k+nQ7j
+   Qe6Kus00Y4v/FPDTFocF+oVvPh9Timn1GzHWoBEFHqTS4VCDV6lLXbOC5
+   128HKezJvO+zqCx8mTjQ2LN3V6IaFfJdz/Q2a6/N4NAe7YvDcY7nKOzTx
+   hpJuxmOhrDrNInRq8bOelh1B91aJxRWjmWX2NzlO+mBh0rcgp8XMHhqWm
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="392767556"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="392767508"
+   d="scan'208";a="392767556"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:12:16 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:12:17 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="834754923"
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="834754922"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="834754923"
+   d="scan'208";a="834754922"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga008.fm.intel.com with ESMTP; 28 Nov 2023 12:12:08 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 34A01A7D; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
+	id 0EF69968; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 07/22] pinctrl: equilibrium: Convert to use struct pingroup
-Date: Tue, 28 Nov 2023 21:56:56 +0200
-Message-ID: <20231128200155.438722-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 04/22] pinctrl: equilibrium: Use temporary variable to hold pins
+Date: Tue, 28 Nov 2023 21:56:53 +0200
+Message-ID: <20231128200155.438722-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
 References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
@@ -81,89 +81,57 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pin control header provides struct pingroup.
-Utilize it instead of open coded variants in the driver.
+The pins are allocated from the heap, but in order to pass
+them as constant object, we need to use non-constant pointer.
+Achieve this by using a temporary variable.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-equilibrium.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/pinctrl/pinctrl-equilibrium.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
-index fd59cfdeefac..4ebae516d1b1 100644
+index 54755b583d3f..fd59cfdeefac 100644
 --- a/drivers/pinctrl/pinctrl-equilibrium.c
 +++ b/drivers/pinctrl/pinctrl-equilibrium.c
-@@ -705,7 +705,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+@@ -704,7 +704,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ {
  	struct device *dev = drvdata->dev;
  	struct device_node *node = dev->of_node;
- 	unsigned int *pins, *pinmux, pin_id, pinmux_id;
--	struct group_desc group;
-+	struct pingroup group, *grp = &group;
+-	unsigned int *pinmux, pin_id, pinmux_id;
++	unsigned int *pins, *pinmux, pin_id, pinmux_id;
+ 	struct group_desc group;
  	struct device_node *np;
  	struct property *prop;
- 	int j, err;
-@@ -721,49 +721,49 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
- 			of_node_put(np);
- 			return err;
+@@ -723,15 +723,14 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
  		}
--		group.num_pins = err;
--		group.name = prop->value;
--		pins = devm_kcalloc(dev, group.num_pins, sizeof(*pins), GFP_KERNEL);
-+		grp->npins = err;
-+		grp->name = prop->value;
-+		pins = devm_kcalloc(dev, grp->npins, sizeof(*pins), GFP_KERNEL);
- 		if (!pins) {
+ 		group.num_pins = err;
+ 		group.name = prop->value;
+-		group.pins = devm_kcalloc(dev, group.num_pins,
+-					  sizeof(*(group.pins)), GFP_KERNEL);
+-		if (!group.pins) {
++		pins = devm_kcalloc(dev, group.num_pins, sizeof(*pins), GFP_KERNEL);
++		if (!pins) {
  			of_node_put(np);
  			return -ENOMEM;
  		}
--		group.pins = pins;
-+		grp->pins = pins;
++		group.pins = pins;
  
--		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux), GFP_KERNEL);
-+		pinmux = devm_kcalloc(dev, grp->npins, sizeof(*pinmux), GFP_KERNEL);
+-		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux),
+-				      GFP_KERNEL);
++		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux), GFP_KERNEL);
  		if (!pinmux) {
  			of_node_put(np);
  			return -ENOMEM;
- 		}
- 
--		for (j = 0; j < group.num_pins; j++) {
-+		for (j = 0; j < grp->npins; j++) {
- 			if (of_property_read_u32_index(np, "pins", j, &pin_id)) {
- 				dev_err(dev, "Group %s: Read intel pins id failed\n",
--					group.name);
-+					grp->name);
+@@ -750,7 +749,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
  				of_node_put(np);
  				return -EINVAL;
  			}
- 			if (pin_id >= drvdata->pctl_desc.npins) {
- 				dev_err(dev, "Group %s: Invalid pin ID, idx: %d, pin %u\n",
--					group.name, j, pin_id);
-+					grp->name, j, pin_id);
- 				of_node_put(np);
- 				return -EINVAL;
- 			}
- 			pins[j] = pin_id;
+-			group.pins[j] = pin_id;
++			pins[j] = pin_id;
  			if (of_property_read_u32_index(np, "pinmux", j, &pinmux_id)) {
  				dev_err(dev, "Group %s: Read intel pinmux id failed\n",
--					group.name);
-+					grp->name);
- 				of_node_put(np);
- 				return -EINVAL;
- 			}
- 			pinmux[j] = pinmux_id;
- 		}
- 
--		err = pinctrl_generic_add_group(drvdata->pctl_dev, group.name,
--						group.pins, group.num_pins,
-+		err = pinctrl_generic_add_group(drvdata->pctl_dev,
-+						grp->name, grp->pins, grp->npins,
- 						pinmux);
- 		if (err < 0) {
--			dev_err(dev, "Failed to register group %s\n", group.name);
-+			dev_err(dev, "Failed to register group %s\n", grp->name);
- 			of_node_put(np);
- 			return err;
- 		}
+ 					group.name);
 -- 
 2.43.0.rc1.1.gbec44491f096
 
