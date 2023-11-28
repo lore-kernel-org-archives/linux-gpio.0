@@ -1,73 +1,72 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ax9MSrK9"
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28641B9
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Nov 2023 07:06:06 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-da37522a363so5231650276.0
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Nov 2023 07:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701183966; x=1701788766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LNbBrvCLKy2IUxXzcxy/eNfeZ8Ee6bkTl+4EYxHiBPg=;
-        b=ax9MSrK9c8D3Gs3u2D2tPc7kgq2HKa1MSUYM1dIs0qL5eEaU2L3RaKB7g+FshL4EsM
-         Okce6hiKkH8z/B2hnENOSlQgtk+5XkXO85ocSbkphEacQRb8ip/jAOoQLq3TR13eGtFl
-         W/Pe6VGyTsmGYE+DyczJMog0e1BLBcY5eLOMtwcUjCWElwCCeutSY7xrZtp0+4vlUGSS
-         Fhw7S/9OsBsUOU6O0fbgXCZ6BY9G4XNwbu7wGKtBXdTZ//avYWyz1dL3ECbsNgIoYV1p
-         BFN8ZEj5SFjwnNEo5H4FaqF/BInUeGSKrblWZm7OWikwN0LsrLM0pHZpyW+D+BOBxWWO
-         WEsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701183966; x=1701788766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LNbBrvCLKy2IUxXzcxy/eNfeZ8Ee6bkTl+4EYxHiBPg=;
-        b=VcRT9bY/ZbB4XqVH/beLql3K0sDNvtzsnbkepTHR1AJIu/HxnQsNtkTEF1XyafQT6p
-         EU+FY7Mq7B7nS+GA0dqFwHy5aeD3BltQDwKU7l0EemeSToJgaxDAYUQMhxVMEY3mQN2Y
-         cIDO2uBba5OCfKS9NVZzPDcpuu66Svs9/yKnP65Z2RL2/nGLRLroxa5XHtyluept5q1z
-         nvcelM3uzq5wP79PaV7K+BFUSBITsPEopMDUSeSsKLiu81jqVOaqUBNuVz9EAaKWvlJv
-         ixobjEv5t464xT8YBFf1pXj4Tu2wg/uNOAGPnqDvzCVVn+tcmXSe5ub93wKQ+F6zYF43
-         ZhOw==
-X-Gm-Message-State: AOJu0YyhMDuypcfmeBEjAkkwRoivGP4bPGlsEfh6qXbkWxn5Y4Y4qy+d
-	pi6ZuyAeDMaEZf00gDlKSkyuWs0Nb7+8jSZrCylpow==
-X-Google-Smtp-Source: AGHT+IFZT4O2LrhNLGFJpzCHtpipXj8NKAcJA1v6/JsDAJjncGLcFq3ZGlfCKBQKFJHnSFWAB6RlUTuIMphvsoDsPlU=
-X-Received: by 2002:a25:3795:0:b0:db3:a317:3e9d with SMTP id
- e143-20020a253795000000b00db3a3173e9dmr15023586yba.61.1701183966065; Tue, 28
- Nov 2023 07:06:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PlXSi2sB"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A279D1;
+	Tue, 28 Nov 2023 07:35:48 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C40AFF806;
+	Tue, 28 Nov 2023 15:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1701185747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MO0oeiUpyqbOgvAxbqOeRIw/9jHxJtwd/pdok3s36o8=;
+	b=PlXSi2sBmzn0/PFbfGLe0lOa8p9Rp3u9AJp14hX9ZaxUcbYWXQHwR99gVR0d5OG+AnYAjJ
+	pU/wiqt725xhZd/WqjkZ++yokakY9tCVqgiWC1DPsd3tVpwdMNTdGzyY/FWVAb5EK1eSTV
+	tB0hnUuKJ0uz8LtoluRhvxjEKZDEEDMrZPJLNu3HfBVrWniDZpAOEn7V0MXVNEvH5Fv7iN
+	PfuifIj2dsySSzzpgK0n71RpQCZMK7UrhKTL1a4e7+x8hq+BFIxJbw3JZYX4qnJJB38+8g
+	so+dfnK8Dqt36J0fEkUoarRamwn3CQByBRkZ/8GlFyJYXjjXFtBO9qdJqUcQcg==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Tue, 28 Nov 2023 16:34:59 +0100
+Subject: [PATCH 1/3] dt-bindings: pinctrl: pinctrl-single: add
+ ti,j7200-padconf compatible
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231127193716.63143-1-brgl@bgdev.pl> <20231127193716.63143-2-brgl@bgdev.pl>
- <CACRpkdYG5FbOLDLM+WGEbX-42mjkALU-HfAgdLLhHSq+K1gnaw@mail.gmail.com> <CAMRc=MdSO_Zp2wqyZQvqadDoUdZVi09vE2fo3oZF3161W-+Qhw@mail.gmail.com>
-In-Reply-To: <CAMRc=MdSO_Zp2wqyZQvqadDoUdZVi09vE2fo3oZF3161W-+Qhw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 28 Nov 2023 16:05:54 +0100
-Message-ID: <CACRpkdb49rYZoXG5oDLvoDZ90BgpubpC7jRp=7L5qsk=ipPqyg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: use a mutex to protect the list of GPIO devices
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kent Gibson <warthog618@gmail.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20231128-j7200-pinctrl-s2r-v1-1-704e7dc24460@bootlin.com>
+References: <20231128-j7200-pinctrl-s2r-v1-0-704e7dc24460@bootlin.com>
+In-Reply-To: <20231128-j7200-pinctrl-s2r-v1-0-704e7dc24460@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-omap@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+ gregory.clement@bootlin.com, theo.lebrun@bootlin.com, u-kumar1@ti.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.12.0
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Tue, Nov 28, 2023 at 3:52=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Add the "ti,j7200-padconf" compatible to support suspend to ram on
+j7200.
 
-> We don't need to lock the GPIO device or chip separately - the
-> descriptor structs will stay alive as long as there's a live reference
-> to the GPIO device. GPIO device will have an SRCU cookie for
-> protecting API calls against removal of the chip.
->
-> To summarize: one mutex for the GPIO device list, one lock per GPIO
-> descriptor and SRCU protection of the GPIO device's chip.
->
-> Does it make sense?
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Absolutely, standing by to review, it's gonna look awesome!
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+index 45a307d3ce16..c11495524dd2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+@@ -31,6 +31,7 @@ properties:
+               - ti,omap3-padconf
+               - ti,omap4-padconf
+               - ti,omap5-padconf
++              - ti,j7200-padconf
+           - const: pinctrl-single
+ 
+   reg:
 
-Linus
+-- 
+2.39.2
+
