@@ -1,122 +1,130 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6b5JWm/"
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFBC93;
-	Tue, 28 Nov 2023 09:49:34 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-a03a900956dso2375566b.1;
-        Tue, 28 Nov 2023 09:49:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701193772; x=1701798572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Q6ar52kT12/oSOUgsQunGkK9992ePoRC0ssPbZWDgw=;
-        b=i6b5JWm/Osc81en8u5MDun6d2WX3T2lgYcXr6EDNsslp3MsrN9UGO1lIuwIsO8uelE
-         p7Ye+IxD1z8eu+soCqNKCvxuiMg8DllwymR/KoOEKthKXtgoLUaBz2EkJzUncZEgPqFL
-         Sl39VY27IQ2XgIsnnv5bBiV3NTmtWd22L6x+vDxo25aqiZ/dJiKEQjHIx8DLvZ1GOJL0
-         E0BI49DiZI7AczT8S3AbawIwwQ3LFiZg4c6AAtvQw9pQ63NPrCVpj4Qp4tP9PG8+mSg4
-         BW92EwaV8iwL+5vZsnTx7LFjyRcjZq/MTgzCBKw7Wg1PkCPsS416mBpjXwM/yqiHoGTN
-         iQ2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701193772; x=1701798572;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Q6ar52kT12/oSOUgsQunGkK9992ePoRC0ssPbZWDgw=;
-        b=HSCHEJ9tx9fP3ac938yQCRyALwwkzSgU0NA2XKhLkTPBVT3SLcKA2SbDQdCiDA3ElQ
-         J6+1QM5AWhrwExibRUh94ftYAxKvkuWiqSTx+zCP25csTHSYn6Wl1MrWH3vT8Fus4w3q
-         I/d6URFXxgD8O3EU+pqxuMsF5TEyjahKkqBaN9jsrXL4gjKUD7B1ABiaXZO1blaWMm03
-         VYFK4x3mz0mkuQAcxy8HV9KEYEonaw/EiSfw3jw9qoZ04X/EoXy9YobU32SAWL++n5JW
-         ZIQtYZlesTy9mhmt1n9HztfNMSd0FOnE6JKa7KoEHYwe9NA1ldHsEbTUPwZ+g88AvhvB
-         uXCw==
-X-Gm-Message-State: AOJu0YyaouNdzjWolwYz7jj15SqcjG2MMD4Fv1ZHSLwK/6dsL6J+y662
-	coBwelqbex2xOQwHLA83h/8=
-X-Google-Smtp-Source: AGHT+IFegfjLsT1XNjq4u1dJkNE5gSVojRjltbsyE47RsYa/oKV+OirEmiPZK9QlSr1+eKKQQmVk8w==
-X-Received: by 2002:a17:906:f811:b0:a0f:1882:d5e with SMTP id kh17-20020a170906f81100b00a0f18820d5emr5384410ejb.37.1701193772296;
-        Tue, 28 Nov 2023 09:49:32 -0800 (PST)
-Received: from localhost (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id cm26-20020a0564020c9a00b0054ae75dcd6bsm5742280edb.95.2023.11.28.09.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 09:49:30 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Lee Jones <lee@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E1oeRHiM"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B05610F0;
+	Tue, 28 Nov 2023 12:03:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701201819; x=1732737819;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3nCf9Nawx9DZLMwtP7gm5hKJWHmWiIVjJbmiWUav9q4=;
+  b=E1oeRHiM7sCTXHAntg+gsINTwz3mB5WyHVXU+g2DeowY8yffeDzuHSRW
+   z14erJ5tbLRHDw9oYvrV4MJrnDEHU8hv8B5MD8LNd4bRijmkgF02BZoMk
+   6BlOxnkuTfdh0kSWtVJ08RmQx6eLmwCzo+NIsN0zlgYLXS4SLOB1wBxZE
+   3YsqIJBdPyPO1P1525jOYlaEgB4ZF7G3kRwTl3iteo4XfhDho1CrdciWU
+   nXGzTgo0kW62ivSX4JPw56vYa3ea1EUZFZ15A7uf2ytVqWYyad6X2gBYb
+   oeHEzZAMKimxEQjzZtAapI/YBCShbbN3PoepHKYwNw/36/I+KDv5c8Zdh
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457345377"
+X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
+   d="scan'208";a="457345377"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:02:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="772420441"
+X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
+   d="scan'208";a="772420441"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Nov 2023 12:02:19 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7C3E5AC4; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH 00/17] dt-bindings: samsung: add specific compatibles for existing SoC
-Date: Tue, 28 Nov 2023 18:49:23 +0100
-Message-ID: <170119374454.445690.515311393756577368.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
-References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	linux-mips@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>
+Subject: [PATCH v3 12/22] pinctrl: mediatek: Make use of PINCTRL_GROUP_DESC()
+Date: Tue, 28 Nov 2023 21:57:01 +0200
+Message-ID: <20231128200155.438722-13-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
+References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Make use of PINCTRL_GROUP_DESC() instead of open coding it.
 
-On Wed, 08 Nov 2023 11:43:26 +0100, Krzysztof Kozlowski wrote:
-> Merging
-> =======
-> I propose to take entire patchset through my tree (Samsung SoC), because:
-> 1. Next cycle two new SoCs will be coming (Google GS101 and ExynosAutov920), so
->    they will touch the same lines in some of the DT bindings (not all, though).
->    It is reasonable for me to take the bindings for the new SoCs, to have clean
->    `make dtbs_check` on the new DTS.
-> 2. Having it together helps me to have clean `make dtbs_check` within my tree
->    on the existing DTS.
-> 3. No drivers are affected by this change.
-> 4. I plan to do the same for Tesla FSD and Exynos ARM32 SoCs, thus expect
->    follow up patchsets.
-> 
-> [...]
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-moore.h | 7 +------
+ drivers/pinctrl/mediatek/pinctrl-paris.h | 7 +------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
-Applied, thanks!
-
-[12/17] dt-bindings: pwm: samsung: add specific compatibles for existing SoC
-        commit: 5d67b8f81b9d598599366214e3b2eb5f84003c9f
-
-Best regards,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.h b/drivers/pinctrl/mediatek/pinctrl-moore.h
+index e1b4b82b9d3d..22ef1ffbcdcb 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.h
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.h
+@@ -38,12 +38,7 @@
+ 	}
+ 
+ #define PINCTRL_PIN_GROUP(name, id)			\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		id##_funcs,				\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), id##_funcs)
+ 
+ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+ 			    const struct mtk_pin_soc *soc);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.h b/drivers/pinctrl/mediatek/pinctrl-paris.h
+index 8762ac599329..f208a904c4a8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.h
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.h
+@@ -50,12 +50,7 @@
+ 	}
+ 
+ #define PINCTRL_PIN_GROUP(name, id)			\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		id##_funcs,				\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), id##_funcs)
+ 
+ int mtk_paris_pinctrl_probe(struct platform_device *pdev);
+ 
 -- 
-Thierry Reding <thierry.reding@gmail.com>
+2.43.0.rc1.1.gbec44491f096
+
