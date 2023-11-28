@@ -1,107 +1,136 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGbLa0RO"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF7C83;
-	Tue, 28 Nov 2023 12:12:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701202343; x=1732738343;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mMbruSBIhN6yytGf1T9i3S2OJs+TIbgzVI2rHK9D8Qk=;
-  b=WGbLa0ROXTm8FHV0ty2/jeuTUBl8FS9FsX0mBcNsph8FvK3qMCkg19nN
-   /Z0fnfF8/dhRZVz/S/qTsWLo+bpXGcxTHcjMYIVz/GRm8kb3MxEwd2McH
-   IwChaLLjoil/ZFREqGlMJhaw5pxp4Id3zQTuQgR/KM9hdjNe/bTUPGy3D
-   1vzrF8MrAbPuKnnuIiwUVOMfA5m17pxaIsiYzO9hm/I+4BmJYtKSNzbzK
-   qHYeHudc49YwvjlKp3vwdL6dr1rm0WbHT4zMObExIXTSsvtDhemojDFmz
-   9JGNfPYbWg2QwWfY7eRz3I7fyhitndTNUp/ly0KA33rn4LvjvBIRvCb6m
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457348157"
-X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="457348157"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:12:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="772422557"
-X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="772422557"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 28 Nov 2023 12:12:08 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D4B2A24C; Tue, 28 Nov 2023 22:01:57 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	openbmc@lists.ozlabs.org,
-	linux-mips@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Sean Wang <sean.wang@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 01/22] pinctrl: qcom: lpass-lpi: Replace kernel.h with what is being used
-Date: Tue, 28 Nov 2023 21:56:50 +0200
-Message-ID: <20231128200155.438722-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
-References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C518A1BCE
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Nov 2023 12:59:30 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AN-0006nV-7B; Tue, 28 Nov 2023 21:58:47 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AI-00CFt4-DE; Tue, 28 Nov 2023 21:58:42 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r85AI-00AOAR-2T; Tue, 28 Nov 2023 21:58:42 +0100
+Date: Tue, 28 Nov 2023 21:58:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 00/17] dt-bindings: samsung: add specific
+ compatibles for existing SoC
+Message-ID: <20231128205841.al23ra5s34rn3muj@pengutronix.de>
+References: <20231108104343.24192-1-krzysztof.kozlowski@linaro.org>
+ <170119374454.445690.515311393756577368.b4-ty@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bibczb2zawwhoawf"
+Content-Disposition: inline
+In-Reply-To: <170119374454.445690.515311393756577368.b4-ty@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Replace kernel.h with what exactly is being used, i.e. array_size.h.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--bibczb2zawwhoawf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-index 206b2c0ca828..2017bc80314d 100644
---- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-+++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-@@ -6,8 +6,8 @@
- #ifndef __PINCTRL_LPASS_LPI_H__
- #define __PINCTRL_LPASS_LPI_H__
- 
-+#include <linux/array_size.h>
- #include <linux/bits.h>
--#include <linux/kernel.h>
- 
- #include "../core.h"
- 
--- 
-2.43.0.rc1.1.gbec44491f096
+On Tue, Nov 28, 2023 at 06:49:23PM +0100, Thierry Reding wrote:
+>=20
+> On Wed, 08 Nov 2023 11:43:26 +0100, Krzysztof Kozlowski wrote:
+> > Merging
+> > =3D=3D=3D=3D=3D=3D=3D
+> > I propose to take entire patchset through my tree (Samsung SoC), becaus=
+e:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+> > 1. Next cycle two new SoCs will be coming (Google GS101 and ExynosAutov=
+920), so
+> >    they will touch the same lines in some of the DT bindings (not all, =
+though).
+> >    It is reasonable for me to take the bindings for the new SoCs, to ha=
+ve clean
+> >    `make dtbs_check` on the new DTS.
+> > 2. Having it together helps me to have clean `make dtbs_check` within m=
+y tree
+> >    on the existing DTS.
+> > 3. No drivers are affected by this change.
+> > 4. I plan to do the same for Tesla FSD and Exynos ARM32 SoCs, thus expe=
+ct
+> >    follow up patchsets.
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [12/17] dt-bindings: pwm: samsung: add specific compatibles for existing =
+SoC
+>         commit: 5d67b8f81b9d598599366214e3b2eb5f84003c9f
+
+You didn't honor (or even comment) Krzysztof's proposal to take the
+whole patchset via his tree (marked above). Was there some off-list
+agreement?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--bibczb2zawwhoawf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmVIAACgkQj4D7WH0S
+/k4mPQgAuzfJsEw0Nil25KsPJwyY53qFjfCGd8WTObzTDFpeIlzV2EL87bWT2Gtd
+vEFgfX2Uj+RoOLX5CNnyuEfwH5e+O5oVYF9gfpsdqtRTJ3zyPV3dUiFCaIh2KNqZ
+aaY1tsb4vECeh7dmEL/y2VUWoO2bAa08sZe6EpJXOkeUWN54VdTCMBwncH1utjgh
+Tb/pHhjkfvdcbXuvxsFY4gL86pT8BER5EjIRZZaPN0kHDrGTBR+ZqjFvMVWTrFbq
+IUK1gAMX+BOooJDwVFE4SeRta6p/lfClW73PbWk1++SyLPA2KbTp8jTul4qgXWKT
+IbIJY8Qwg5trzJ0LHDMX3a02COS9hg==
+=P7ML
+-----END PGP SIGNATURE-----
+
+--bibczb2zawwhoawf--
