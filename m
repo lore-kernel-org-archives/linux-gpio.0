@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQSZP1GL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A+DIenp3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F7B19A4;
-	Tue, 28 Nov 2023 12:03:52 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5348612C;
+	Tue, 28 Nov 2023 12:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701201833; x=1732737833;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Qqh2pcByd+e2zO9M4U/s3/66TY0T4He1j0iO/aoG8Gg=;
-  b=BQSZP1GLydboC9A1FSgrM7mjyFRX+H3up7qc+yet7gJ6lEggJw2YJoMu
-   xu3eco6sFvBEHiVh4Z7URFUJoMXkcTJYoGerWdsnqW43VW7+W6tQzoXSJ
-   VBFmDJmxMf5I6vhKGA3ixwm1Z89S/8/i83HfGqNOXNEyHaSqJXaCxE3jU
-   fU/960QhwvnKha+AAtHb3Etb/DirgRjn9qb9LXLRp8aDSgDYfyzFRk2Iw
-   6KXFoAyib2XTTyY6ZZziSCsylb/2uKSQ7P7aqkOjGxym3Tzq5Z85b9T17
-   GXuz+BN4nMgC7gX+C+a85th9wJoETsLAceSoagYILy/kv5UWUBGg5iZUs
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="6217534"
+  t=1701201834; x=1732737834;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3uSEXFAfigJrZCoXVJ4ZtMtwaJ+4f5OEieqGUBtBbV0=;
+  b=A+DIenp3GsG5ercT3CGJSnme2k869dgqlsbSmZ0kvumfBimspCybBhLY
+   7oJuWykA4V1t4abl9JiNtpAZVBxOXCyHvUfZfr6/1YLSBZmBpDwqR+3rY
+   NMHMA+DSLF27EQrzEXfj6zr6qFexVGtDwxtyxlPrq0g0RMikSc036JcpN
+   ORubwSdOZACPwFfThPLs7NRMnUyhpkfRsM4W367FOn4qEoeBE/yf04Czo
+   hdeChbgpd3LMDTZp9W+seQKNjJ0D5zXBwjPTU2DxD3HYixA8K3UwQoaN4
+   inFC0pKwf43EGhuccxJ8LRCEju0NukeeMvdPg/PcPi48GERW2Lh0xmU0b
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="6217551"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="6217534"
+   d="scan'208";a="6217551"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:02:08 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="797687914"
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="797687918"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="797687914"
+   d="scan'208";a="797687918"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga008.jf.intel.com with ESMTP; 28 Nov 2023 12:01:59 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C7DC423E; Tue, 28 Nov 2023 22:01:57 +0200 (EET)
+	id F27D879F; Tue, 28 Nov 2023 22:01:57 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,104 +67,52 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 00/22] pinctrl: Convert struct group_desc to use struct pingroup
-Date: Tue, 28 Nov 2023 21:56:49 +0200
-Message-ID: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 03/22] pinctrl: equilibrium: Unshadow error code of of_property_count_u32_elems()
+Date: Tue, 28 Nov 2023 21:56:52 +0200
+Message-ID: <20231128200155.438722-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
+References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The struct group_desc has a lot of duplication with struct pingroup.
-Deduplicate that by embeddind the latter in the former and convert
-users.
+of_property_count_u32_elems() might return an error code in some cases.
+It's naturally better to assign what it's returned to the err variable
+and supply the real code to the upper layer(s). Besides that, it's a
+common practice to avoid assignments for the data in cases when we know
+that the error condition happened. Refactor the code accordingly.
 
-Linus, assuming everything is fine, I can push this to my tree.
-Or you can apply it (assumming all CIs and people are happy with
-the series).
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-equilibrium.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-NB. It seems to me that GCC 7.x has an issue when compound literal
-is being assigned to a constant object. I believe it's a false positive
-(at least I can't reproduce this with recent GCC and LLVM and hence
-I haven't touched the code in order to address this.
-
-NB. This series contains previously sent patches for Qualcomm and
-Nuovoton. Here the updated version for Qualcomm that splits previous
-patch to two and fixes compilation warnings.
-
-NB. The function_desc is in plan to follow the similar deduplication.
-
-In v3:
-- fixed reported bug in equilibrium code (LKP)
-- collected tags (Emil, Florian, Paul)
-
-v2: https://lore.kernel.org/r/20231123193355.3400852-1-andriy.shevchenko@linux.intel.com
-
-In v2:
-- added a few patches to fix multiple compile-time errors (LKP)
-- added tag (Jonathan)
-
-v1: https://lore.kernel.org/r/20231122164040.2262742-1-andriy.shevchenko@linux.intel.com
-
-Andy Shevchenko (22):
-  pinctrl: qcom: lpass-lpi: Replace kernel.h with what is being used
-  pinctrl: qcom: lpass-lpi: Remove unused member in struct lpi_pingroup
-  pinctrl: equilibrium: Unshadow error code of
-    of_property_count_u32_elems()
-  pinctrl: equilibrium: Use temporary variable to hold pins
-  pinctrl: imx: Use temporary variable to hold pins
-  pinctrl: core: Make pins const in struct group_desc
-  pinctrl: equilibrium: Convert to use struct pingroup
-  pinctrl: keembay: Convert to use struct pingroup
-  pinctrl: nuvoton: Convert to use struct pingroup and
-    PINCTRL_PINGROUP()
-  pinctrl: core: Add a convenient define PINCTRL_GROUP_DESC()
-  pinctrl: ingenic: Make use of PINCTRL_GROUP_DESC()
-  pinctrl: mediatek: Make use of PINCTRL_GROUP_DESC()
-  pinctrl: core: Embed struct pingroup into struct group_desc
-  pinctrl: bcm: Convert to use grp member
-  pinctrl: equilibrium: Convert to use grp member
-  pinctrl: imx: Convert to use grp member
-  pinctrl: ingenic: Convert to use grp member
-  pinctrl: keembay: Convert to use grp member
-  pinctrl: mediatek: Convert to use grp member
-  pinctrl: renesas: Convert to use grp member
-  pinctrl: starfive: Convert to use grp member
-  pinctrl: core: Remove unused members from struct group_desc
-
- drivers/pinctrl/bcm/pinctrl-ns.c              |  4 +-
- drivers/pinctrl/core.c                        | 13 +++---
- drivers/pinctrl/core.h                        | 19 +++++---
- drivers/pinctrl/freescale/pinctrl-imx.c       | 44 +++++++++----------
- drivers/pinctrl/mediatek/pinctrl-moore.c      | 13 +++---
- drivers/pinctrl/mediatek/pinctrl-moore.h      |  7 +--
- drivers/pinctrl/mediatek/pinctrl-paris.h      |  7 +--
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c     |  9 ++--
- drivers/pinctrl/pinctrl-equilibrium.c         | 42 +++++++++---------
- drivers/pinctrl/pinctrl-ingenic.c             | 27 +++++-------
- drivers/pinctrl/pinctrl-keembay.c             |  6 +--
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h      |  6 +--
- .../pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c   | 16 -------
- .../pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c | 20 ---------
- .../pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c   | 20 ---------
- .../pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c   | 15 -------
- .../pinctrl/qcom/pinctrl-sm8350-lpass-lpi.c   | 16 -------
- .../pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c   | 24 ----------
- .../pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c   | 24 ----------
- .../pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c   | 24 ----------
- drivers/pinctrl/renesas/pinctrl-rza1.c        |  2 +-
- drivers/pinctrl/renesas/pinctrl-rza2.c        | 10 ++---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  6 +--
- drivers/pinctrl/renesas/pinctrl-rzv2m.c       |  6 +--
- .../starfive/pinctrl-starfive-jh7100.c        |  8 ++--
- .../starfive/pinctrl-starfive-jh7110.c        |  8 ++--
- 26 files changed, 108 insertions(+), 288 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 5b5ddf7e5d0e..54755b583d3f 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -715,12 +715,13 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 		if (!prop)
+ 			continue;
+ 
+-		group.num_pins = of_property_count_u32_elems(np, "pins");
+-		if (group.num_pins < 0) {
++		err = of_property_count_u32_elems(np, "pins");
++		if (err < 0) {
+ 			dev_err(dev, "No pins in the group: %s\n", prop->name);
+ 			of_node_put(np);
+-			return -EINVAL;
++			return err;
+ 		}
++		group.num_pins = err;
+ 		group.name = prop->value;
+ 		group.pins = devm_kcalloc(dev, group.num_pins,
+ 					  sizeof(*(group.pins)), GFP_KERNEL);
 -- 
 2.43.0.rc1.1.gbec44491f096
 
