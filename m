@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sp+MVrjA"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAC519A9;
-	Tue, 28 Nov 2023 12:08:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="idAQfDn5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37227F4;
+	Tue, 28 Nov 2023 12:12:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701202105; x=1732738105;
+  t=1701202338; x=1732738338;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=liPHDLuYbD94sAXW+HKE2PmyEtAsJEMqj1/hueiHOBE=;
-  b=Sp+MVrjAF7v4amKtjEigTaQo+ecDlhzxk/RJWxUdXDudQFpB9Axhjy5V
-   Ea1SO/i/kh4CCHV5SI76BVxPf1hQrJIunLZLUZmup/nNeiraQA0uhQmrb
-   uhC/mv7uL7mmUv+KmNaXq883aFRBlw2+Pf7ALjkaGbsoPI0DL+WqY9SHB
-   LePozd+oUJaex04b4GyTVmN7V1+4mm9v8WPECCQd2Zq9fp5FeNWl6zDy+
-   6m7iwB9mJJNQHq8Y7cl8ApMKzkkNdoW9aubXoBfzscWBuZEgiRu518IJx
-   FRIUEoL/R28JjyiI42LFe0MhgAMCfkOqYZ4SZ130W2mqxkr4IT0+sf72F
+  bh=GcznTEzkYh7381dOAmLl/g2Ovk3HvI9vfBlGPtxsvN8=;
+  b=idAQfDn5rcGLi5UKZJTiWQQpNxqcNUbpH//JM7yehplWrFKXdnLaDODv
+   ywpY6FfXRKN9UWLaa6yf6UguA4xzMeValueJe6xIG3wu/J0vouYoeT4Oj
+   RPcKGMUHv9/r7vXQz9hodeY4zU8reebrBjIPzm+24P1syopTNLClQ6Sfz
+   we486zRpTWye3P5RFhfq7Uwan4sRG2W1WkixImtmprRweK6Zv9QK5M4B+
+   yPAjue/QsaYppY75cSft0LMRLW+UgX3EqsyBz+Khvxx09VH92T0hviksQ
+   mEnUj4MetGPFeANARvxSvWUvmV7CNeLmiEyds7Jh3V4H19Z2qrBv1SHPG
    Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457347162"
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="392767508"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="457347162"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:07:08 -0800
+   d="scan'208";a="392767508"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:12:16 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="1100254426"
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="834754923"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="1100254426"
+   d="scan'208";a="834754923"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Nov 2023 12:02:29 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 28 Nov 2023 12:12:08 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DED66BD5; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
+	id 34A01A7D; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 19/22] pinctrl: mediatek: Convert to use grp member
-Date: Tue, 28 Nov 2023 21:57:08 +0200
-Message-ID: <20231128200155.438722-20-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 07/22] pinctrl: equilibrium: Convert to use struct pingroup
+Date: Tue, 28 Nov 2023 21:56:56 +0200
+Message-ID: <20231128200155.438722-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
 References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
@@ -81,50 +81,89 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert drivers to use grp member embedded in struct group_desc.
+The pin control header provides struct pingroup.
+Utilize it instead of open coded variants in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-moore.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-equilibrium.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index c3d59eddd994..d972584c0519 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -56,12 +56,12 @@ static int mtk_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
- 
- 	dev_dbg(pctldev->dev, "enable function %s group %s\n",
--		func->name, grp->name);
-+		func->name, grp->grp.name);
- 
--	for (i = 0; i < grp->num_pins; i++) {
-+	for (i = 0; i < grp->grp.npins; i++) {
- 		const struct mtk_pin_desc *desc;
- 		int *pin_modes = grp->data;
--		int pin = grp->pins[i];
-+		int pin = grp->grp.pins[i];
- 
- 		desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
- 		if (!desc->name)
-@@ -602,13 +602,12 @@ static int mtk_build_groups(struct mtk_pinctrl *hw)
- 
- 	for (i = 0; i < hw->soc->ngrps; i++) {
- 		const struct group_desc *group = hw->soc->grps + i;
-+		const struct pingroup *grp = &group->grp;
- 
--		err = pinctrl_generic_add_group(hw->pctrl, group->name,
--						group->pins, group->num_pins,
-+		err = pinctrl_generic_add_group(hw->pctrl, grp->name, grp->pins, grp->npins,
- 						group->data);
- 		if (err < 0) {
--			dev_err(hw->dev, "Failed to register group %s\n",
--				group->name);
-+			dev_err(hw->dev, "Failed to register group %s\n", grp->name);
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index fd59cfdeefac..4ebae516d1b1 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -705,7 +705,7 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 	struct device *dev = drvdata->dev;
+ 	struct device_node *node = dev->of_node;
+ 	unsigned int *pins, *pinmux, pin_id, pinmux_id;
+-	struct group_desc group;
++	struct pingroup group, *grp = &group;
+ 	struct device_node *np;
+ 	struct property *prop;
+ 	int j, err;
+@@ -721,49 +721,49 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 			of_node_put(np);
  			return err;
  		}
- 	}
+-		group.num_pins = err;
+-		group.name = prop->value;
+-		pins = devm_kcalloc(dev, group.num_pins, sizeof(*pins), GFP_KERNEL);
++		grp->npins = err;
++		grp->name = prop->value;
++		pins = devm_kcalloc(dev, grp->npins, sizeof(*pins), GFP_KERNEL);
+ 		if (!pins) {
+ 			of_node_put(np);
+ 			return -ENOMEM;
+ 		}
+-		group.pins = pins;
++		grp->pins = pins;
+ 
+-		pinmux = devm_kcalloc(dev, group.num_pins, sizeof(*pinmux), GFP_KERNEL);
++		pinmux = devm_kcalloc(dev, grp->npins, sizeof(*pinmux), GFP_KERNEL);
+ 		if (!pinmux) {
+ 			of_node_put(np);
+ 			return -ENOMEM;
+ 		}
+ 
+-		for (j = 0; j < group.num_pins; j++) {
++		for (j = 0; j < grp->npins; j++) {
+ 			if (of_property_read_u32_index(np, "pins", j, &pin_id)) {
+ 				dev_err(dev, "Group %s: Read intel pins id failed\n",
+-					group.name);
++					grp->name);
+ 				of_node_put(np);
+ 				return -EINVAL;
+ 			}
+ 			if (pin_id >= drvdata->pctl_desc.npins) {
+ 				dev_err(dev, "Group %s: Invalid pin ID, idx: %d, pin %u\n",
+-					group.name, j, pin_id);
++					grp->name, j, pin_id);
+ 				of_node_put(np);
+ 				return -EINVAL;
+ 			}
+ 			pins[j] = pin_id;
+ 			if (of_property_read_u32_index(np, "pinmux", j, &pinmux_id)) {
+ 				dev_err(dev, "Group %s: Read intel pinmux id failed\n",
+-					group.name);
++					grp->name);
+ 				of_node_put(np);
+ 				return -EINVAL;
+ 			}
+ 			pinmux[j] = pinmux_id;
+ 		}
+ 
+-		err = pinctrl_generic_add_group(drvdata->pctl_dev, group.name,
+-						group.pins, group.num_pins,
++		err = pinctrl_generic_add_group(drvdata->pctl_dev,
++						grp->name, grp->pins, grp->npins,
+ 						pinmux);
+ 		if (err < 0) {
+-			dev_err(dev, "Failed to register group %s\n", group.name);
++			dev_err(dev, "Failed to register group %s\n", grp->name);
+ 			of_node_put(np);
+ 			return err;
+ 		}
 -- 
 2.43.0.rc1.1.gbec44491f096
 
