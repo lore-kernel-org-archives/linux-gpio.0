@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HGcnp9tV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHEzTC6M"
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E46110F0;
-	Tue, 28 Nov 2023 12:08:01 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F4883;
+	Tue, 28 Nov 2023 12:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701202081; x=1732738081;
+  t=1701202103; x=1732738103;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CyMweha2ZvuLisSoPmNJvwBvM8UVF+24ES7V+e13w7A=;
-  b=HGcnp9tV83iHVtaN4q3xBFp0xWEVUhCfIt65jQiQKYMnqYLsLBsWoHnP
-   +utQEqDPyVspjj5ttLpu5gQW7WdHIAL4x8SurKAMCA97rnfGJbMa4rSLm
-   B74VPX/fV4fBEgskWaVvAxn9qumO7tJad1A5GcTe25Z4OyRQc/BEVU0hQ
-   z1NM464wnJSNVU9ChrJB+Ke71cvKOipy3ezNJFylUCgOhkdGETRg8rNvE
-   rX89URAPImuobIdRzJ5zHbgCmx/GJBv0sLaj1+gy940VFseo7VTA3WOpU
-   Mr2ZNO752ImjTBdnNyWD31xTzSbNEKqC5Sn4cjJMhXRnT+U/KsUT4jko+
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457346999"
+  bh=PGY8MTlj1zxv8/c+SyAmL9CgRA2hWCcICDO7OAfEpv4=;
+  b=OHEzTC6MZZ9PludQgBgEhyoU3P21aFv72zW+NPtUBhlCWXrh8KI+QlLR
+   PIrtoCpLntGA6WdQgWvMUSPD1tlYsIpIUZ/u0Tp/4j01yu4X541CLPAaj
+   n8WPO3UZhVMpA392+SKsqMRubX8P1soyKodjdsAvXlvqy3pEqGhvAkv8Y
+   EC2/DupPk2La3gZUwU6KGJCa2/RBy8TaMKl4cKRU6iOl2YVjCNBjUxqDh
+   zGLTnJal//f5tqD1s+NiuoNzTEj9g1xoCd/ikupF9JU46zTHZTaL7S5dW
+   6rRNTgc7TQL3pyWjE8y2ts2kO3L0c7jwRh7SltPdnd51POiU0fTVG1jw2
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="457347141"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="457346999"
+   d="scan'208";a="457347141"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:06:38 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2023 12:07:02 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="1100254115"
+X-IronPort-AV: E=McAfee;i="6600,9927,10908"; a="1100254360"
 X-IronPort-AV: E=Sophos;i="6.04,234,1695711600"; 
-   d="scan'208";a="1100254115"
+   d="scan'208";a="1100254360"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Nov 2023 12:02:18 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 28 Nov 2023 12:02:28 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 4F6ADA96; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
+	id A4B61B21; Tue, 28 Nov 2023 22:01:58 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v3 09/22] pinctrl: nuvoton: Convert to use struct pingroup and PINCTRL_PINGROUP()
-Date: Tue, 28 Nov 2023 21:56:58 +0200
-Message-ID: <20231128200155.438722-10-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 15/22] pinctrl: equilibrium: Convert to use grp member
+Date: Tue, 28 Nov 2023 21:57:04 +0200
+Message-ID: <20231128200155.438722-16-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
 References: <20231128200155.438722-1-andriy.shevchenko@linux.intel.com>
@@ -79,49 +79,27 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The pin control header provides struct pingroup and PINCTRL_PINGROUP() macro.
-Utilize them instead of open coded variants in the driver.
+Convert drivers to use grp member embedded in struct group_desc.
 
-Reviewed-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/nuvoton/pinctrl-wpcm450.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-equilibrium.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-index 0cff44b07b29..4589900244c7 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
-@@ -474,9 +474,8 @@ enum {
- #undef WPCM450_GRP
- };
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 4ebae516d1b1..6e1be38865c3 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -331,8 +331,8 @@ static int eqbr_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
  
--static struct group_desc wpcm450_groups[] = {
--#define WPCM450_GRP(x) { .name = #x, .pins = x ## _pins, \
--			.num_pins = ARRAY_SIZE(x ## _pins) }
-+static struct pingroup wpcm450_groups[] = {
-+#define WPCM450_GRP(x) PINCTRL_PINGROUP(#x, x ## _pins, ARRAY_SIZE(x ## _pins))
- 	WPCM450_GRPS
- #undef WPCM450_GRP
- };
-@@ -852,7 +851,7 @@ static int wpcm450_get_group_pins(struct pinctrl_dev *pctldev,
- 				  const unsigned int **pins,
- 				  unsigned int *npins)
- {
--	*npins = wpcm450_groups[selector].num_pins;
-+	*npins = wpcm450_groups[selector].npins;
- 	*pins  = wpcm450_groups[selector].pins;
- 
- 	return 0;
-@@ -901,7 +900,7 @@ static int wpcm450_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	struct wpcm450_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
- 	wpcm450_setfunc(pctrl->gcr_regmap, wpcm450_groups[group].pins,
--			wpcm450_groups[group].num_pins, function);
-+			wpcm450_groups[group].npins, function);
+ 	pinmux = grp->data;
+-	for (i = 0; i < grp->num_pins; i++)
+-		eqbr_set_pin_mux(pctl, pinmux[i], grp->pins[i]);
++	for (i = 0; i < grp->grp.npins; i++)
++		eqbr_set_pin_mux(pctl, pinmux[i], grp->grp.pins[i]);
  
  	return 0;
  }
