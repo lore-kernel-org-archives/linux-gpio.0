@@ -1,74 +1,95 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NBj+2ZUQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKSyjgsn"
 Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE9BD4A
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 07:48:36 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-5094cb3a036so9586554e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 07:48:36 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69A38D46
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 07:57:44 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-50bc2e7f1e4so1704624e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 07:57:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1701272915; x=1701877715; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=92OxtxZwSGpeWAn1meN2/QJvS3h/Q5dejm51Ey+HMAY=;
-        b=NBj+2ZUQ76cR6Qhj08bKhy3zQYXWrsPSnt+JtT8KH3qaHhnYm98Dh64V9ggeb4QUrm
-         jtlvjxyv+GtaYl+71WIaaen4BMydZgsdw4Z2w2NBO4RTVBJp7DQQUeiPq/bAG4Lu7Ofw
-         mQ5rmgQmk441DetuDmzFHbQT8Te7//aOPS+jQ=
+        d=linaro.org; s=google; t=1701273463; x=1701878263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vA0x6TLGrrwrneDYeNbPP8u/I8CMuud7wLf1wVHyc/E=;
+        b=LKSyjgsnMToOAYXJMfSztu3tCnmFKdO/LZHIK5z3TkA/wGuARdjRNkzvxrq1jJI6oV
+         D0xBFrPauxPKvbY9oR5TB5KoJFOfQL6QHEHeCSjemhqJ/0W5iYzQg+JIwoSraRGJvmhw
+         Pkw74zi3rnfOQjqMnITIl41LQgzjcMgYEfjK5KBMhYGJjRkxBS7fe1qsj93zbrPmEH2Q
+         rJtFQ9pJYbeyQBJZb/ssz4gwS7KBrRT8Wja/NM6veM5owUFcdWa0Enlq0UHMAxhqagQ4
+         9s0Ls7NvBqiWFGzFbNrbJ+gdmRGg1aid2SA0hZgzrWVIUo0HATyF+PMXzN6Dg5RTUvjv
+         nSyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701272915; x=1701877715;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1701273463; x=1701878263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=92OxtxZwSGpeWAn1meN2/QJvS3h/Q5dejm51Ey+HMAY=;
-        b=YJ9WVeoyHCCo8wAkFLAexsb/e9LCUA2tkPLjwCRppl2tY5bsT3ASoco3uFaOReIdkO
-         Oz5agOKXsBS3WH6LJ0tFt26gI+XLIK3sdKZtNjhg7bmvdwlw2iDK3afOTkWN6DywkVle
-         eG+/YeFLCsHWxYagTVTr3AmF6xNfgCHksLRAFfs+zE8qw8xWkJhKI5clelkJ8+dcBv2l
-         sVuBCF6+SVlQrcKeCzVgZja+1eDr1wALy9M5piNMOR2Xk4dbObFBaduSY93+mmYg8ZCU
-         imGCT0z/NV5g1qw2fWNsyakK+I1pUnw1MCjIyMgU6Q8Vg9hr1NXR4aTcOzjenvTzhhf+
-         TMig==
-X-Gm-Message-State: AOJu0YwflC2z9KjMhwCbm4iYtoKLp4llFaylKFCK+Rr/bF4cyfVWQJG5
-	lYh2E5x7trNwr1DC2vxEakmOmLrVdfEO1JTUa2Jf+KRw
-X-Google-Smtp-Source: AGHT+IG2oh4LgjicdX0H4n5dcryqF0UBEm4FKSAMhkztyIollrlNC9i/DeoweWBgL9sEeCfReICSPg==
-X-Received: by 2002:a19:a40a:0:b0:50b:c7e3:a1e6 with SMTP id q10-20020a19a40a000000b0050bc7e3a1e6mr950322lfc.44.1701272915021;
-        Wed, 29 Nov 2023 07:48:35 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id z15-20020a056512308f00b0050bc1ccbee5sm374484lfd.270.2023.11.29.07.48.34
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Nov 2023 07:48:34 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-50bc39dcbcbso1538040e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 07:48:34 -0800 (PST)
-X-Received: by 2002:a05:6512:1096:b0:50b:aab6:da2f with SMTP id
- j22-20020a056512109600b0050baab6da2fmr11186168lfg.10.1701272913996; Wed, 29
- Nov 2023 07:48:33 -0800 (PST)
+        bh=vA0x6TLGrrwrneDYeNbPP8u/I8CMuud7wLf1wVHyc/E=;
+        b=Wd9eybiy+NchlrWrNz4kvRgAO+vnk7h2geqo8rP/seOpoDd8jEiqJJpsuih2L1wUCy
+         3pEwRlucgDfvgCwObSRBT9NgY5FJgccPmZO7Z3jeoHHbxtRRYkvGKDC5vxgXMNCRn+Lw
+         9r4XoJvOV2UP37E8pmtJ6AcRpiIM+Uwbu3ASG/HYmfs9jJZqQTqK7LeQf0GFVycSuI13
+         MLG859dC34qEDaXg2GqB39Mdoe78x7dyYJWRZjMEkXuktyHY/jh0/uXiUu9T0L7Muhxn
+         hLCQIMA1saYE9nMtW7AzfgEWruxjAoMlQ/olTOxGKBDTFqi/amcncGZ1EgE3LXubeGrP
+         xacw==
+X-Gm-Message-State: AOJu0YwXy+zrjHv2WH50oe59qV6tIlofPX+VwHrhQyQX3xgUkkVLsFus
+	omPt5wpu2x/+C3PzZ2DYOpw9Pw==
+X-Google-Smtp-Source: AGHT+IF+Z+kwt6F2DX1OduNpIDwwv9Ayq2GX7aWrmMCjgCQFl2Myc5kLzUmIxfrRWVgaj7HNcVtCKQ==
+X-Received: by 2002:a05:6512:108f:b0:507:97ca:ec60 with SMTP id j15-20020a056512108f00b0050797caec60mr15616839lfg.3.1701273462620;
+        Wed, 29 Nov 2023 07:57:42 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.109])
+        by smtp.gmail.com with ESMTPSA id gy5-20020a0564025bc500b0054b686e5b3bsm3345130edb.68.2023.11.29.07.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Nov 2023 07:57:41 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH] dt-bindings: pinctrl: qcom,sm8550-lpass-lpi: add X1E80100 LPASS LPI
+Date: Wed, 29 Nov 2023 16:57:38 +0100
+Message-Id: <20231129155738.167030-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACRpkdb8dwq7OYUFuyjJCv7VN9mH1zEmibcOwgFip0wDv5H1gA@mail.gmail.com>
-In-Reply-To: <CACRpkdb8dwq7OYUFuyjJCv7VN9mH1zEmibcOwgFip0wDv5H1gA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 29 Nov 2023 07:48:17 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whZj3WZezdj8wq6thUeRfzua2y2QsrnoPG9dqfmk-=rcw@mail.gmail.com>
-Message-ID: <CAHk-=whZj3WZezdj8wq6thUeRfzua2y2QsrnoPG9dqfmk-=rcw@mail.gmail.com>
-Subject: Re: [GIT PULL] Pin control fixes for v6.7 minus one patch
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Maria Yu <quic_aiquny@quicinc.com>, Charles Keepax <ckeepax@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 29 Nov 2023 at 07:18, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Here is an updated tag on a branch where the only change
-> is to drop the locking READ_ONCE() patch until we know
-> more about what is going on here.
+Document the Qualcomm X1E80100 SoC Low Power Audio SubSystem Low Power
+Island (LPASS LPI) pin controller, compatible with earlier SM8550 model.
 
-Bah. I already pulled the previous one and pushed out before reading
-more emails and noticing you had so quickly re-done it.
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml     | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-So the READ_ONCE() workaround is there now, but I hope there will be a
-future patch that explains (and fixes) whatever made the value change
-from underneath that code.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml
+index ef9743246849..ad5e32130fd7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml
+@@ -16,7 +16,11 @@ description:
+ 
+ properties:
+   compatible:
+-    const: qcom,sm8550-lpass-lpi-pinctrl
++    oneOf:
++      - const: qcom,sm8550-lpass-lpi-pinctrl
++      - items:
++          - const: qcom,x1e80100-lpass-lpi-pinctrl
++          - const: qcom,sm8550-lpass-lpi-pinctrl
+ 
+   reg:
+     items:
+-- 
+2.34.1
 
-          Linus
