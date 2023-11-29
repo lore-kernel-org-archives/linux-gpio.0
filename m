@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EvBioQpr"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LX0mx146"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8918510EA;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AADA10E3;
 	Wed, 29 Nov 2023 08:15:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1701274528; x=1732810528;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=3i/qNugva+8rE/EMw94820KaaNfJNx5Amurjj3c6AyU=;
-  b=EvBioQpr4HdwhVXnDtpT0mAgB3XsiW8caDdLzT7mXo/KuL/vA4OCS0E+
-   08wFKLnzZ1vltMLG74YKAAJNRBIwf5iVH+bZPPIAVIwQvYXwcJw9mS0z6
-   5K97SiW5TjP5hjD+ckwGJpbOje8LfnXUWPVonOvD+jrqBQV85FSE3Hf1b
-   ZBtZ5Arg/no1YeQgtBF+entMQUESx6nhLkpFolX27Ys9omyoW71JCGLDM
-   HZYQzt4nIejyKLlRLRMiqFtU07BBApr5oErplaZzuXyG/5sgbwn+v2e+3
-   JllC96gd2IWYGQ/JiJAKOI2rJ8stSqlgJQpRF/btCgYsC9KWc68l297ym
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372755"
+  bh=f8wZ7ICKocKtMYA3oWz5WyU3fU43fja8D4mWZqwqcoo=;
+  b=LX0mx146BSGJIv4jXWxJrjpnu7u9WE96BOx1ZNAhePFsuli/5zLHo9ic
+   OhVZFSvkA0mL/ZhXhJE38Km6sVOxTgExIQbXm4f/YsOPw6GShQHYaQtKc
+   LgVaysg4a52zuBXWUFmYIDfYKiEtjhKqmUWJalKDBLJU/ZmZVEgKeBI9d
+   FQYLedy14ykrWmP6huvlParzVYv9z2fTcOWYs7kWnEN18E2O1+YBQDa12
+   2Ox76+1QsruVXwmPBJz9eGh6Y/AQN3dCjRjZsHClQ9HZSAZjDk9wtX3rH
+   kr9ClMXWnU7SNkdqS7A+CNvMsDBTsUqD0qfOzwEkMDJ11uluDKQxEh1i3
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372766"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="373372755"
+   d="scan'208";a="373372766"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:23 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498884"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498888"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="892498884"
+   d="scan'208";a="892498888"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 059BFB21; Wed, 29 Nov 2023 18:15:02 +0200 (EET)
+	id CC1A6AC4; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -66,11 +66,10 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Andy Gross <agross@kernel.org>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: [PATCH v4 14/23] pinctrl: bcm: Convert to use grp member
-Date: Wed, 29 Nov 2023 18:06:37 +0200
-Message-ID: <20231129161459.1002323-15-andriy.shevchenko@linux.intel.com>
+	Hal Feng <hal.feng@starfivetech.com>
+Subject: [PATCH v4 11/23] pinctrl: ingenic: Make use of PINCTRL_GROUP_DESC()
+Date: Wed, 29 Nov 2023 18:06:34 +0200
+Message-ID: <20231129161459.1002323-12-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
 References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
@@ -82,30 +81,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert drivers to use grp member embedded in struct group_desc.
+Make use of PINCTRL_GROUP_DESC() instead of open coding it.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Acked-by: Paul Cercueil <paul@crapouillou.net>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/bcm/pinctrl-ns.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-ingenic.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-ns.c b/drivers/pinctrl/bcm/pinctrl-ns.c
-index d099a7f25f64..6bb2b461950b 100644
---- a/drivers/pinctrl/bcm/pinctrl-ns.c
-+++ b/drivers/pinctrl/bcm/pinctrl-ns.c
-@@ -171,8 +171,8 @@ static int ns_pinctrl_set_mux(struct pinctrl_dev *pctrl_dev,
- 	if (!group)
- 		return -EINVAL;
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index ee718f6e2556..393873de910a 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -83,15 +83,10 @@
+ #define JZ4730_PINS_PER_PAIRED_REG	16
  
--	for (i = 0; i < group->num_pins; i++)
--		unset |= BIT(group->pins[i]);
-+	for (i = 0; i < group->grp.npins; i++)
-+		unset |= BIT(group->grp.pins[i]);
+ #define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
+-	{						\
+-		name,					\
+-		id##_pins,				\
+-		ARRAY_SIZE(id##_pins),			\
+-		funcs,					\
+-	}
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), funcs)
  
- 	tmp = readl(ns_pinctrl->base);
- 	tmp &= ~unset;
+ #define INGENIC_PIN_GROUP(name, id, func)		\
+-	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
++	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), (void *)(func))
+ 
+ enum jz_version {
+ 	ID_JZ4730,
 -- 
 2.43.0.rc1.1.gbec44491f096
 
