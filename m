@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fyqhC9Av"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EUur5zgd"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E083C10A;
-	Wed, 29 Nov 2023 08:15:13 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C7DD6C;
+	Wed, 29 Nov 2023 08:15:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701274513; x=1732810513;
+  t=1701274515; x=1732810515;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=mMbruSBIhN6yytGf1T9i3S2OJs+TIbgzVI2rHK9D8Qk=;
-  b=fyqhC9Av+Oi1C8lffck8LChmD0r/OWmq7lETiXG+27HK5zS2cn7L6EK9
-   aMx0BS6jumd3Y0qWE7oPyRg7oGHywxFpGpNLKrJFj76QebZiDPm1AAf3T
-   PXUpiDfj6drKHeiy6M/nh9j2pMqXfL4TNehKiwsuHcTY7Hp8TEhR5iyHb
-   iFOPZ/qc7nUFnVJsHhBHZczgax9/ykgT1I+2+1chHVPPrhg9x0Vj/Fhnv
-   7QqOQPyQhNwU7uTu6yOzVeueccipendgwDKTw/umMLKIN6QHvEj7DZ+MU
-   JSf4GvCGM7RskbzzTLlfH7rH99vLNYm2kyhlQantuV/M9VmEZghxUd8i6
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372506"
+  bh=3uSEXFAfigJrZCoXVJ4ZtMtwaJ+4f5OEieqGUBtBbV0=;
+  b=EUur5zgdw0sHryb1EIcaXGIhv7lpKJbDN7o0UI7pUQHeLa/tXN+km1dm
+   g/nKztSx1Une4uuEKGQ3XTZdbhMjhiTKL2g6mUVSXkHVM1ju6C8zKixkf
+   nmVG1mAQ+B2kRpCR6lTW8wJ4mosJyPLcn5NvVo7PSMgWC9e5wtIfv03z3
+   HqdHwyjErXfDMn4klYAQyPkY78GHsEp7tumdhMeRZXcs+Bd/OrtoNH9JE
+   fUDJmmAxZzbl1AIaQ7zbz4xJFem5UBN0Zc1EbvvQTJ3Qbs/dYD0W+c/jt
+   myHumjktzAyxKU5ARO/Hl7dNfaB9bIvCGOPvoQMcYaLBVlD9fVLUT5UMi
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372556"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="373372506"
+   d="scan'208";a="373372556"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:11 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:12 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498846"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498853"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="892498846"
+   d="scan'208";a="892498853"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:02 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 30BB423A; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
+	id 4E6C2968; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v4 01/23] pinctrl: qcom: lpass-lpi: Replace kernel.h with what is being used
-Date: Wed, 29 Nov 2023 18:06:24 +0200
-Message-ID: <20231129161459.1002323-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 03/23] pinctrl: equilibrium: Unshadow error code of of_property_count_u32_elems()
+Date: Wed, 29 Nov 2023 18:06:26 +0200
+Message-ID: <20231129161459.1002323-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
 References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
@@ -81,27 +81,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace kernel.h with what exactly is being used, i.e. array_size.h.
+of_property_count_u32_elems() might return an error code in some cases.
+It's naturally better to assign what it's returned to the err variable
+and supply the real code to the upper layer(s). Besides that, it's a
+common practice to avoid assignments for the data in cases when we know
+that the error condition happened. Refactor the code accordingly.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-equilibrium.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-index 206b2c0ca828..2017bc80314d 100644
---- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-+++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-@@ -6,8 +6,8 @@
- #ifndef __PINCTRL_LPASS_LPI_H__
- #define __PINCTRL_LPASS_LPI_H__
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 5b5ddf7e5d0e..54755b583d3f 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -715,12 +715,13 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+ 		if (!prop)
+ 			continue;
  
-+#include <linux/array_size.h>
- #include <linux/bits.h>
--#include <linux/kernel.h>
- 
- #include "../core.h"
- 
+-		group.num_pins = of_property_count_u32_elems(np, "pins");
+-		if (group.num_pins < 0) {
++		err = of_property_count_u32_elems(np, "pins");
++		if (err < 0) {
+ 			dev_err(dev, "No pins in the group: %s\n", prop->name);
+ 			of_node_put(np);
+-			return -EINVAL;
++			return err;
+ 		}
++		group.num_pins = err;
+ 		group.name = prop->value;
+ 		group.pins = devm_kcalloc(dev, group.num_pins,
+ 					  sizeof(*(group.pins)), GFP_KERNEL);
 -- 
 2.43.0.rc1.1.gbec44491f096
 
