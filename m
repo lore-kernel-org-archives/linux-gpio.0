@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YwNlYr1d"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NcgJ95X8"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A90D7D;
-	Wed, 29 Nov 2023 08:15:26 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06CF10D4;
+	Wed, 29 Nov 2023 08:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701274526; x=1732810526;
+  t=1701274527; x=1732810527;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tsj37wyW7nCXgooQSC3UG4Yz4bb4c6+0Qg8IYdX3FB0=;
-  b=YwNlYr1d7zY0MhvEQ1g9TEJ+9W7AjcpRx3RmWhESwBI9rH2ZOfGpsbYU
-   /MzR+UPZurseeKBP2h4j3eTtK1E0bD4niN+x0xF6N1WOVPBLmtQ3fIp1w
-   2sSH+j4HD9ZfcIO9lw3ipideG3VcTr9XX3Anq1WoJyz+PG6piAT5HrloL
-   ew1y5azTAK198G9XaqgJCEtZY5fO0B2Cc2RpSW6QfE9X8VOX4mSt16J8O
-   GCyGumWZbplDa8e3XHKThBUuAl8Bx0SAwNEwLPCrcZa8H3GWyIm52r1YO
-   dT8mcKhm1v/LqoBfhgitCa2dB3vdhTvg4rrGi2nR4NQYHM6rzduoU6x6y
+  bh=mX8nkFa+pUFM3JtjtNpLHJ2j2h/kDkAZjOuxZ+/LWq0=;
+  b=NcgJ95X8k3MwKtsmZ2kuhhU+2eS4QYqReMBR08m35MXD+N1nVaYPxJvX
+   FSQ1ghxxgVD068NA96gTAcJAZrPbhoRD9TdgCKjbbwN2y0ttH8B5dO6Hd
+   gFj4jU07erZ3D32JYYjFVntwZfA5xVvNv1rxSvvCOnYV+2zlAhQxDmnRt
+   fO8MaCOAFpUWxTlbJa2h7LIAejvkqqH6Vj1rMzTaAgInI8o1JMUjtOee3
+   nVuQ82wjU/Wvud26JCTbC4v0WoX8i8GaCdo12QIJLkBnIgTDbPMyeP2wX
+   5tx7s9z0lrxBy8bv/f/Cl1mVrNp+2jQzeNka7mpX8jmtM8tAguGO818bC
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372702"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372749"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="373372702"
+   d="scan'208";a="373372749"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:22 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:23 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498878"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498882"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="892498878"
+   d="scan'208";a="892498882"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BC9B9AA2; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
+	id 9BC91A96; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v4 10/23] pinctrl: core: Add a convenient define PINCTRL_GROUP_DESC()
-Date: Wed, 29 Nov 2023 18:06:33 +0200
-Message-ID: <20231129161459.1002323-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 08/23] pinctrl: keembay: Convert to use struct pingroup
+Date: Wed, 29 Nov 2023 18:06:31 +0200
+Message-ID: <20231129161459.1002323-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
 References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
@@ -81,51 +81,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add PINCTRL_GROUP_DESC() macro for inline use.
+The pin control header provides struct pingroup.
+Utilize it instead of open coded variants in the driver.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/core.c | 5 +----
- drivers/pinctrl/core.h | 9 +++++++++
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-keembay.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 7040d8cea0c3..1e44682db355 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -658,10 +658,7 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- 	if (!group)
- 		return -ENOMEM;
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 152c35bce8ec..87d328853ae4 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -1517,7 +1517,7 @@ static int keembay_gpiochip_probe(struct keembay_pinctrl *kpc,
  
--	group->name = name;
--	group->pins = pins;
--	group->num_pins = num_pins;
--	group->data = data;
-+	*group = PINCTRL_GROUP_DESC(name, pins, num_pins, data);
+ static int keembay_build_groups(struct keembay_pinctrl *kpc)
+ {
+-	struct group_desc *grp;
++	struct pingroup *grp;
+ 	unsigned int i;
  
- 	error = radix_tree_insert(&pctldev->pin_group_tree, selector, group);
- 	if (error)
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
-index 75797c0b4fde..4689b24e40f0 100644
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -208,6 +208,15 @@ struct group_desc {
- 	void *data;
- };
+ 	kpc->ngroups = kpc->npins;
+@@ -1528,7 +1528,7 @@ static int keembay_build_groups(struct keembay_pinctrl *kpc)
+ 	/* Each pin is categorised as one group */
+ 	for (i = 0; i < kpc->ngroups; i++) {
+ 		const struct pinctrl_pin_desc *pdesc = keembay_pins + i;
+-		struct group_desc *kmb_grp = grp + i;
++		struct pingroup *kmb_grp = grp + i;
  
-+/* Convenience macro to define a generic pin group descriptor */
-+#define PINCTRL_GROUP_DESC(_name, _pins, _num_pins, _data)	\
-+(struct group_desc) {						\
-+	.name = _name,						\
-+	.pins = _pins,						\
-+	.num_pins = _num_pins,					\
-+	.data = _data,						\
-+}
-+
- int pinctrl_generic_get_group_count(struct pinctrl_dev *pctldev);
- 
- const char *pinctrl_generic_get_group_name(struct pinctrl_dev *pctldev,
+ 		kmb_grp->name = pdesc->name;
+ 		kmb_grp->pins = (int *)&pdesc->number;
 -- 
 2.43.0.rc1.1.gbec44491f096
 
