@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LX0mx146"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MimJe7e3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AADA10E3;
-	Wed, 29 Nov 2023 08:15:28 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1231700;
+	Wed, 29 Nov 2023 08:15:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701274528; x=1732810528;
+  t=1701274533; x=1732810533;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=f8wZ7ICKocKtMYA3oWz5WyU3fU43fja8D4mWZqwqcoo=;
-  b=LX0mx146BSGJIv4jXWxJrjpnu7u9WE96BOx1ZNAhePFsuli/5zLHo9ic
-   OhVZFSvkA0mL/ZhXhJE38Km6sVOxTgExIQbXm4f/YsOPw6GShQHYaQtKc
-   LgVaysg4a52zuBXWUFmYIDfYKiEtjhKqmUWJalKDBLJU/ZmZVEgKeBI9d
-   FQYLedy14ykrWmP6huvlParzVYv9z2fTcOWYs7kWnEN18E2O1+YBQDa12
-   2Ox76+1QsruVXwmPBJz9eGh6Y/AQN3dCjRjZsHClQ9HZSAZjDk9wtX3rH
-   kr9ClMXWnU7SNkdqS7A+CNvMsDBTsUqD0qfOzwEkMDJ11uluDKQxEh1i3
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372766"
+  bh=PGY8MTlj1zxv8/c+SyAmL9CgRA2hWCcICDO7OAfEpv4=;
+  b=MimJe7e3NLl4bjcuPToQlbyMlDFRgwgzur394C+9f40WYUVrbEV3GfoF
+   gU3pGr6+2d2OsosCiDiUl2F0yBXSSCqRkbpWbaZB2IHg7a7q1fs5sdPCk
+   4ZsBjfG3qiX9YTEPUGjTbc/8cCXqMXqbxdjRPqWR7oBce9ExojgijbqUc
+   1g+1FlwbYypGMw5dO5BlWDAtiv+4bc5XONRkE9IfPit36kFjUMmXcGhpu
+   W/K7tbo6TuzzflrFrQFxyjjkdCAGH9rc70u6WCaWHElKhYHWtfL0mpI92
+   xno3j9bE2Ezs1A0VBVlcr6lVpM8ckZlFhQ6uR0QZpF76gDHha27eDWbo/
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="373372786"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="373372766"
+   d="scan'208";a="373372786"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:23 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2023 08:15:31 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498888"
+X-IronPort-AV: E=McAfee;i="6600,9927,10909"; a="892498903"
 X-IronPort-AV: E=Sophos;i="6.04,235,1695711600"; 
-   d="scan'208";a="892498888"
+   d="scan'208";a="892498903"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:12 -0800
+  by orsmga004.jf.intel.com with ESMTP; 29 Nov 2023 08:15:21 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id CC1A6AC4; Wed, 29 Nov 2023 18:15:01 +0200 (EET)
+	id 17ACBB48; Wed, 29 Nov 2023 18:15:02 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v4 11/23] pinctrl: ingenic: Make use of PINCTRL_GROUP_DESC()
-Date: Wed, 29 Nov 2023 18:06:34 +0200
-Message-ID: <20231129161459.1002323-12-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 15/23] pinctrl: equilibrium: Convert to use grp member
+Date: Wed, 29 Nov 2023 18:06:38 +0200
+Message-ID: <20231129161459.1002323-16-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 In-Reply-To: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
 References: <20231129161459.1002323-1-andriy.shevchenko@linux.intel.com>
@@ -81,36 +81,28 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make use of PINCTRL_GROUP_DESC() instead of open coding it.
+Convert drivers to use grp member embedded in struct group_desc.
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-equilibrium.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index ee718f6e2556..393873de910a 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -83,15 +83,10 @@
- #define JZ4730_PINS_PER_PAIRED_REG	16
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 4ebae516d1b1..6e1be38865c3 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -331,8 +331,8 @@ static int eqbr_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
  
- #define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
--	{						\
--		name,					\
--		id##_pins,				\
--		ARRAY_SIZE(id##_pins),			\
--		funcs,					\
--	}
-+	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), funcs)
+ 	pinmux = grp->data;
+-	for (i = 0; i < grp->num_pins; i++)
+-		eqbr_set_pin_mux(pctl, pinmux[i], grp->pins[i]);
++	for (i = 0; i < grp->grp.npins; i++)
++		eqbr_set_pin_mux(pctl, pinmux[i], grp->grp.pins[i]);
  
- #define INGENIC_PIN_GROUP(name, id, func)		\
--	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
-+	PINCTRL_GROUP_DESC(name, id##_pins, ARRAY_SIZE(id##_pins), (void *)(func))
- 
- enum jz_version {
- 	ID_JZ4730,
+ 	return 0;
+ }
 -- 
 2.43.0.rc1.1.gbec44491f096
 
