@@ -1,161 +1,110 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2JS/SOyd"
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F9A10E6
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 06:24:33 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b4744d603so27777155e9.2
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 06:24:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BwzzGAyG"
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56486A3
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 06:43:44 -0800 (PST)
+Received: by mail-vk1-xa2e.google.com with SMTP id 71dfb90a1353d-4b28f8ca7b6so166348e0c.3
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2023 06:43:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1701267872; x=1701872672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1701269023; x=1701873823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q4MUC5eIDni/buanxrUZQlfU7mM7/HRQ/uDUqZDkwLQ=;
-        b=2JS/SOydiknEuqmFOYDnpQfOVtxGkBRZY8XxDaZBUM0fS0jUw1xbvXhpHfg+ll24M+
-         s25G4Ll0kIQpwCF0XCy+nAE+JIF2QWIln1/wSFxrrBfryHwX/0aZTgaQ7RYgWWIfenok
-         hyYs9xJNsYbwURFUyXfa/ELuGq3jtb5rPSaKBoe6wlBohBeQo0IJWmS6x0EFq5XT0QiB
-         AmsmqOwI6Sq0N5SVE1qH+xcHsuOxZKPR4hiSbacH950E/4SPQ0KUQ4eUz+DMiwqlrTq4
-         KalbYjiJlpeLI0ccbYVXBCu+o7KLSieBN9tP4rDswlK6XAQ6trVmVDOHg0K4rw4rzWPP
-         0iJA==
+        bh=3rmkMM8ESI5mrgpY+hyRZPX+eOseClGKdO3wFuBysPw=;
+        b=BwzzGAyGcJvMYxbZHk3Fw6C4CIfcTu4ipU9hvvs0/LWuEljUjTWFRI82IAoZrbEURW
+         VD63Ac0nQRGahWdOxWbjruPFtDz4i/Ys0OactYBFWwUQvWtALaj3yYTVO45SjmC9Vjrc
+         isutxXfzGaKOn8LNLEAalcDUUSbdiIo8hNnR3Jz+D/CC8J8psRoN6SAgVuGmd/Hidkfv
+         w2ZOE/gAjaqy2N0GWNd70t1p/Yt+i/209DMJo2RNuV8ba79mDHUxXkMRXqymrPo8GkBA
+         yjgMFhlZs21+vBygzvakvKKhOEtY+AHY1bRoNDVfbs1BVjVqGO6nSLAKCIz/isKHXgrc
+         THVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701267872; x=1701872672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1701269023; x=1701873823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q4MUC5eIDni/buanxrUZQlfU7mM7/HRQ/uDUqZDkwLQ=;
-        b=QQbfEFmfr5ocYRMAiiZ9ktVsxV/rUyG9f/2CGOdkYZDDxNCXLP0iSlaNrk1QxHcVqT
-         9mV3AmpNhHG1gv22+1lDpBIv/oUPPp9qSdaow6Z47Ri3VyPfie4RIXf7JzkwEMsWw9Sz
-         akBW+jDxi3uWNv3ND8fnAM9WKF1Vg7QO5bHG3FEKiENOQ42rdCuBjLeIpi9gjbHiqvwj
-         eRT/qnO0K3pdoWoSQZyJitGgpKkSZPaSJXHPKrbyXLS3W/dB1P8hFKXOyFZlYhIJ94Q8
-         4s51u8EnZHib7FzQvQOPUKIon65Q8EAeHbl6kCl5yZWlsm7+3Pi7y5EaDrmH51s3wguo
-         psuA==
-X-Gm-Message-State: AOJu0YxJ1Ex2nUKveysJ/PhilHRZKYnw0VOEGflWIlQkuLFkbRlJ/489
-	4EMLsjKrx3eWhPXXVZ0q1YZ4Ig==
-X-Google-Smtp-Source: AGHT+IEIhjE3hyoM/RXTc0cdiJwPMiOTEp4g658vnqp6nZCY6jMei2HDNMvjcMgAUPil9kSpdJQRzA==
-X-Received: by 2002:a05:600c:3ca0:b0:40b:37d9:b646 with SMTP id bg32-20020a05600c3ca000b0040b37d9b646mr11047907wmb.3.1701267872204;
-        Wed, 29 Nov 2023 06:24:32 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:4520:2f25:4d3a:4adf])
-        by smtp.gmail.com with ESMTPSA id n40-20020a05600c3ba800b0040b34720206sm2406848wms.12.2023.11.29.06.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 06:24:31 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 10/10] gpiolib: remove gpiochip_is_requested()
-Date: Wed, 29 Nov 2023 15:24:11 +0100
-Message-Id: <20231129142411.76863-11-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231129142411.76863-1-brgl@bgdev.pl>
-References: <20231129142411.76863-1-brgl@bgdev.pl>
+        bh=3rmkMM8ESI5mrgpY+hyRZPX+eOseClGKdO3wFuBysPw=;
+        b=jpdhihUesB5Szw0IZoO/h2R9P6sWdLxbtUmi3F16NOQdmyxMxVNdQdmddEPLMUqEWv
+         6/JwDQoKaVuGdSK0zgjx4V/PclLbhBJSc+NfOxkYbrSSy3bD1iMZfTnW/S4xdrDDj03n
+         /4kZlosNuFBXHN3EwwSyZhM/QgKkOEVsGZeNyN9Aplso3IGzuwbMPU8Y6mnImwShkGiB
+         K+wC45X+CUiL3/OUgXBfFE3cs6l1NTtVf1h0k2wPjmkmjZQBzofkY91nkuZRjdD2XWGO
+         q/Alva46VBQPwAmn5YFAtXWZU7htDMCeSwLuB8w0I/sxl3Cea0kdu03keIfgZHp23+1+
+         tvfg==
+X-Gm-Message-State: AOJu0Yz39s+YIRJrqkB8lFHrgjA0Nz7WHyjM6KoYgenmUnG/VinbqFYt
+	EwHosMh1PwATDGdRfmpivOC8y5HZNe22sMYUnXJ6uA==
+X-Google-Smtp-Source: AGHT+IGg4feXHlqH1k+LS1haHX894DfH+rp+1nlOgEZHI0wBa6s1+9a8a7exhdIV/QguwIGDn8v54ioBMnVhi7rKoho=
+X-Received: by 2002:a05:6122:3106:b0:4ac:22c7:89d5 with SMTP id
+ cg6-20020a056122310600b004ac22c789d5mr14312769vkb.2.1701269023361; Wed, 29
+ Nov 2023 06:43:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231129142411.76863-1-brgl@bgdev.pl> <20231129142411.76863-10-brgl@bgdev.pl>
+In-Reply-To: <20231129142411.76863-10-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 29 Nov 2023 15:43:32 +0100
+Message-ID: <CAMRc=MfL2nHF78TUmRjRSUC-2zyMjWotzU7Tv_27mVJPLET40Q@mail.gmail.com>
+Subject: Re: [PATCH 09/10] gpiolib: use gpiochip_dup_line_label() in for_each helpers
+To: Linus Walleij <linus.walleij@linaro.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Nov 29, 2023 at 3:24=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Rework for_each_requested_gpio_in_range() to use the new helper to
+> retrieve a dynamically allocated copy of the descriptor label and free
+> it at the end of each iteration.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  include/linux/gpio/driver.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 9796a34e2fee..6405f6d454af 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -543,8 +543,10 @@ char *gpiochip_dup_line_label(struct gpio_chip *gc, =
+unsigned int offset);
+>   * @label:     label of current GPIO
+>   */
+>  #define for_each_requested_gpio_in_range(chip, i, base, size, label)    =
+               \
+> -       for (i =3D 0; i < size; i++)                                     =
+                 \
+> -               if ((label =3D gpiochip_is_requested(chip, base + i)) =3D=
+=3D NULL) {} else
+> +       for (i =3D 0; i < size; i++, kfree(label))                       =
+                 \
+> +               if ((label =3D gpiochip_dup_line_label(chip, base + i)) =
+=3D=3D NULL) {}       \
+> +               else if (IS_ERR(label)) {}                               =
+               \
+> +               else
+>
 
-We have no external users of gpiochip_is_requested(). Let's remove it
-and replace its internal calls with direct testing of the REQUESTED flag.
+Ah, cr*p, it will leak if we break out of the loop, why did I think it
+was correct?
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib.c      | 46 ++++++++++---------------------------
- include/linux/gpio/driver.h |  1 -
- 2 files changed, 12 insertions(+), 35 deletions(-)
+Any ideas how to handle this one? I was thinking something like:
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 8e932e6a6a8d..3070a4f7bbb1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1085,7 +1085,7 @@ void gpiochip_remove(struct gpio_chip *gc)
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	for (i = 0; i < gdev->ngpio; i++) {
--		if (gpiochip_is_requested(gc, i))
-+		if (test_bit(FLAG_REQUESTED, &gdev->descs[i].flags))
- 			break;
- 	}
- 	spin_unlock_irqrestore(&gpio_lock, flags);
-@@ -2373,33 +2373,6 @@ void gpiod_free(struct gpio_desc *desc)
- 	gpio_device_put(desc->gdev);
- }
- 
--/**
-- * gpiochip_is_requested - return string iff signal was requested
-- * @gc: controller managing the signal
-- * @offset: of signal within controller's 0..(ngpio - 1) range
-- *
-- * Returns NULL if the GPIO is not currently requested, else a string.
-- * The string returned is the label passed to gpio_request(); if none has been
-- * passed it is a meaningless, non-NULL constant.
-- *
-- * This function is for use by GPIO controller drivers.  The label can
-- * help with diagnostics, and knowing that the signal is used as a GPIO
-- * can help avoid accidentally multiplexing it to another controller.
-- */
--const char *gpiochip_is_requested(struct gpio_chip *gc, unsigned int offset)
--{
--	struct gpio_desc *desc;
--
--	desc = gpiochip_get_desc(gc, offset);
--	if (IS_ERR(desc))
--		return NULL;
--
--	if (test_bit(FLAG_REQUESTED, &desc->flags) == 0)
--		return NULL;
--	return desc->label;
--}
--EXPORT_SYMBOL_GPL(gpiochip_is_requested);
--
- /**
-  * gpiochip_dup_line_label - Get a copy of the consumer label.
-  * @gc: GPIO chip controlling this line.
-@@ -2414,16 +2387,21 @@ EXPORT_SYMBOL_GPL(gpiochip_is_requested);
-  */
- char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
- {
--	const char *label;
-+	struct gpio_desc *desc;
- 	char *cpy;
- 
--	label = gpiochip_is_requested(gc, offset);
--	if (!label)
-+	desc = gpiochip_get_desc(gc, offset);
-+	if (IS_ERR(desc))
- 		return NULL;
- 
--	cpy = kstrdup(label, GFP_KERNEL);
--	if (!cpy)
--		return ERR_PTR(-ENOMEM);
-+	scoped_guard(spinlock_irqsave, &gpio_lock) {
-+		if (!test_bit(FLAG_REQUESTED, &desc->flags))
-+			return NULL;
-+
-+		cpy = kstrdup(desc->label, GFP_KERNEL);
-+		if (!cpy)
-+			return ERR_PTR(-ENOMEM);
-+	}
- 
- 	return cpy;
- }
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 6405f6d454af..1679e6fa5469 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -531,7 +531,6 @@ struct gpio_chip {
- #endif /* CONFIG_OF_GPIO */
- };
- 
--const char *gpiochip_is_requested(struct gpio_chip *gc, unsigned int offset);
- char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset);
- 
- /**
--- 
-2.40.1
+    for (i =3D 0, char *p __free(kfree) =3D label; i < size; i++)
 
+would work but it doesn't.
+
+Bart
+
+>  /* Iterates over all requested GPIO of the given @chip */
+>  #define for_each_requested_gpio(chip, i, label)                         =
+                       \
+> --
+> 2.40.1
+>
