@@ -1,133 +1,145 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5ZOvbeGn"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBD4114;
-	Sat,  2 Dec 2023 19:25:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E0261urfrYPKhMUoH3EP/lR5Eo2e1obVhCZ9vr8XGlsGpgB2tGY8bORNJ1YuC/jSDE3SZbpb4n4m+WL3raunxt589c4JgS7m9ix1aOv4atjHbWwbj00FCYGO1L+jwOTPr/96Rwepr/Mu+92MSouN3eMmxOumHBsTP6x4UReMrpmuISd1wctTF+RQesl4wn0qZoN4fco9hPvc4KqCGhJOXyfYYKq/WsUIebluB8H3SFePvjKWvDvvxu7Zr1fraXhvzFmnGD9LKituQAgMffbEIWmKtR6ERDtFXv8falojEwzET8iLDWw8TrGqGTPmZxCKpE0VOUFW01RJ9PILCRAyBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U+0tFVgE4g8WGLUuwmexyRvYTYNkNme3z3im5Uc+8MU=;
- b=Ow1wWsWB2asQW13/Yg6Eh5ecSuzyZSlfa06ChJWG0MU+5v9UHDGQ4kzsQI7rMZqTdY0QCzYqK8Xyqnyj98SQnkxntbEXvnlZB+JcD7RnBC+DeBeIh+cCQduv8LIfjpuRXcA1KhOojic5VhL/tIdo9SsrbASRF50ma7sf6icY2oVxMzwsqpq+Iizc9lITG93n7081nh4aOA3xf4BH9JamfNxYxuYPSIQiv1NK9Gs8NTq6p5Rcuv8wx02aqiv7qf/QjRXFdfnIWWUqbd8dqHrfZJ48GGHUZo8zVFG4OvRl29CPxV5qUJBbEfj4+Ixq+0A1vzm0tG9++cdzzOUTlF+AQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+0tFVgE4g8WGLUuwmexyRvYTYNkNme3z3im5Uc+8MU=;
- b=5ZOvbeGnezMQUNNwGrH9MUoM9FdYZV/ZVyWhBb8mWJKZjonUr6/aWFqbxZUhau2DaVP33NIwLPUCRZfi/5C6ENmyQZNl5g9lnv54WwiQb8AgqBxSMN5VdxUkqxAeuWLfhYXzTsIp2oB+aFQVn1XI5N5+Bd0nUJivgSG7GQhThLc=
-Received: from BL1PR13CA0259.namprd13.prod.outlook.com (2603:10b6:208:2ba::24)
- by PH0PR12MB7840.namprd12.prod.outlook.com (2603:10b6:510:28a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.30; Sun, 3 Dec
- 2023 03:25:01 +0000
-Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
- (2603:10b6:208:2ba:cafe::54) by BL1PR13CA0259.outlook.office365.com
- (2603:10b6:208:2ba::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.21 via Frontend
- Transport; Sun, 3 Dec 2023 03:25:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7068.20 via Frontend Transport; Sun, 3 Dec 2023 03:25:00 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.34; Sat, 2 Dec
- 2023 21:24:59 -0600
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-CC: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>, Basavaraj Natikar
-	<Basavaraj.Natikar@amd.com>, "open list:HID CORE LAYER"
-	<linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>,
-	<stable@vger.kernel.org>, Marcus Aram <marcus+oss@oxar.nl>, Mark Herbert
-	<mark.herbert42@gmail.com>
-Subject: [PATCH 1/2] HID: i2c-hid: Add IDEA5002 to i2c_hid_acpi_blacklist[]
-Date: Sat, 2 Dec 2023 21:24:30 -0600
-Message-ID: <20231203032431.30277-2-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231203032431.30277-1-mario.limonciello@amd.com>
-References: <20231203032431.30277-1-mario.limonciello@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idXsJTWF"
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9BAA8
+	for <linux-gpio@vger.kernel.org>; Sun,  3 Dec 2023 07:10:04 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-a1a0bc1e415so269860066b.0
+        for <linux-gpio@vger.kernel.org>; Sun, 03 Dec 2023 07:10:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701616202; x=1702221002; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jGB7/4Pq9xLu62LbNXXLS+atvDTK++BhtQFi4zPFcRU=;
+        b=idXsJTWFHxPPkqTnnKs/5zPDJCRLdWagXbHTPM+cfeDtKBZhtx4PVwnmG+rmS+g7UU
+         /8sxJ5/GWol57B+/hKMAxn/pg3WkcQEJ41JxXzIkBDBbaWgKTvPL8TUF+mrCOMg0btLZ
+         aOjXdu0hTDHzsUXrrSmhN3WLpQY4SHp12Dn/6qXHQeYfW1bB8NGNmlVnFQKtprc2U9MP
+         IyMOVsVLXWkUCSBzdyT+yPHUwQmM+mylorDJ5t3jvx/Ng5ryHTQDUL9KjYoyuOSthCDG
+         t8vCDaKyY5LMj9V9i+6yuH6K/p6PgKlEonAZN4q78i9fnZzufz2irdDwiqmev+kt5doL
+         +SFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701616202; x=1702221002;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGB7/4Pq9xLu62LbNXXLS+atvDTK++BhtQFi4zPFcRU=;
+        b=P/FwNpWGQzdOawJh4qt0HgpPeHgD1+K7v4X54B5GevKIMw3LqvSMS0c5AT23qmoOiI
+         CY9orcV9wQuSpLTUrht2akW2N8q8lTRLkb6bfoz/gy8+89qk5baqFVIHIEkRM4XiQF1z
+         xUJYJqcLXVqeTBn+sPmZg219DzDzwbYMjtTlbkGjUCd6Bng2z8prSfpo1aeK1RUwTIl0
+         fa+akwUUn1ce7YvNhAkEctprURGrA56m1xpmrD6JeBm+vLe3PcIU+VQ3OYmqv7iX6RkY
+         TFsL4NLIOTOjnioPGJ3oEk6hwoI5IRzD/444dW+me4Tou9NSsKq5h9Ax7wxXgojrW3sW
+         mwYg==
+X-Gm-Message-State: AOJu0YxHufrPwkzvP6ydJ8LHfP3AHRmT9F0/wvTwdHSdX5+UGe10vS4D
+	QVPZJOegW64gLTwGXn54oo2gvA==
+X-Google-Smtp-Source: AGHT+IHW7znHwy3UiTaFioppqZ7lRoPvFI2q3fuEaMrHtiiZ7ZARoiioG27gvjXmuFmlcOOp4RoODQ==
+X-Received: by 2002:a17:906:d8:b0:a19:53d9:b365 with SMTP id 24-20020a17090600d800b00a1953d9b365mr2097931eji.57.1701616202198;
+        Sun, 03 Dec 2023 07:10:02 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.109])
+        by smtp.gmail.com with ESMTPSA id di16-20020a170906731000b00a1b6d503e7esm492044ejc.157.2023.12.03.07.09.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Dec 2023 07:09:40 -0800 (PST)
+Message-ID: <2854a9b5-d6c8-454c-bc3b-79744e613686@linaro.org>
+Date: Sun, 3 Dec 2023 16:09:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|PH0PR12MB7840:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a48e995-9ad4-426d-4b69-08dbf3af6e9d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	o8qQOhgY+Mhz412zdr/Yq73u5C3ZD42yCV1rLYY8D6dVAx/uq20HjKQ2JbyqVERFSGq7Nuu8zvO8iaI4iHj/4NnaZ+w8WXprvqLa60dZp8QJT3dJHEDWK46nYEcbwpUjrjfNTHv7xJwzVSdqGyyFRuW0vz89mQL3oq4sUjTbDdgO/IGFxk8Ni5QXLc911KYIDDmgcxqWMnB8lC/Jg6cQEyUfOVY+sSBwweIEzjlEC6e+sWStqwPihcJChy9cxppV9u1SayX16Ncc2I8Y1nkR/ttJQBi3MNGXifdnnRalHdTtb2f6y/DSR+DYqNby57VTlb+v8Pb8odFvJqxqwBufmCH23sJ6gW6HQqxFYMR8lAcW4kfKGq7vKazHsMP+AijdVJqYqPJGBCZCysZUVtfHyB1yartybfjoY00qvTwu4VGnNL8XbUSihhHpvLPUfLr/X4EBBrP96r9ZGYwMTXkqColtZq8UkceNUEeyHdhUnnGr6CAkLfELFRvvPKYaB7A+2yMLCx8yKZyLeuKeImVW1/OSDRqeZ0e26S2wArbZUQaeLd11+vDg42vg/UsbBuaOz7MMoO2cbRC/OlTEkNe74kg3K6Heh72spa7UM4UJgYrVaKN705wCKyYvOLSpNWr4AX5M11rSv9pZJzPFzJ+5poJqn3X7VqSJ6RjrX8jf8v80gubFGn5e8s+NSWCaQlbOoyCfQsBHMPhHmMGxySn2gKGBUMTN+Hs0n4bookDta2Q6NVaoHVHKVNiJMxIyk+pF
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(39860400002)(396003)(346002)(136003)(230922051799003)(64100799003)(82310400011)(186009)(451199024)(1800799012)(40470700004)(36840700001)(46966006)(40460700003)(47076005)(336012)(83380400001)(426003)(16526019)(82740400003)(81166007)(356005)(41300700001)(70586007)(26005)(70206006)(44832011)(36860700001)(5660300002)(8936002)(8676002)(4326008)(316002)(54906003)(110136005)(1076003)(2616005)(6666004)(7696005)(478600001)(2906002)(966005)(86362001)(36756003)(40480700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2023 03:25:00.3373
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a48e995-9ad4-426d-4b69-08dbf3af6e9d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7840
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/20] dt-bindings: soc: samsung: usi: add
+ google,gs101-usi compatible
+Content-Language: en-US
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231201160925.3136868-1-peter.griffin@linaro.org>
+ <20231201160925.3136868-11-peter.griffin@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231201160925.3136868-11-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Users have reported problems with recent Lenovo laptops that contain
-an IDEA5002 I2C HID device. Reports include fans turning on and
-running even at idle and spurious wakeups from suspend.
+On 01/12/2023 17:09, Peter Griffin wrote:
+> From: Tudor Ambarus <tudor.ambarus@linaro.org>
+> 
+> Add google,gs101-usi dedicated compatible for representing USI of Google
+> GS101 SoC.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> index 61be1f2ddbe7..a10a438d89f0 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> @@ -28,6 +28,9 @@ properties:
+>                - samsung,exynosautov9-usi
+>                - samsung,exynosautov920-usi
+>            - const: samsung,exynos850-usi
+> +      - items:
+> +          - const: google,gs101-usi
 
-Presumably in the Windows ecosystem there is an application that
-uses the HID device. Maybe that puts it into a lower power state so
-it doesn't cause spurious events.
+This should be part of previous enum.
 
-This device doesn't serve any functional purpose in Linux as nothing
-interacts with it so blacklist it from being probed. This will
-prevent the GPIO driver from setting up the GPIO and the spurious
-interrupts and wake events will not occur.
-
-Cc: stable@vger.kernel.org # 6.1
-Reported-and-tested-by: Marcus Aram <marcus+oss@oxar.nl>
-Reported-and-tested-by: Mark Herbert <mark.herbert42@gmail.com>
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/2812
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/hid/i2c-hid/i2c-hid-acpi.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/hid/i2c-hid/i2c-hid-acpi.c b/drivers/hid/i2c-hid/i2c-hid-acpi.c
-index ac918a9ea8d3..1b49243adb16 100644
---- a/drivers/hid/i2c-hid/i2c-hid-acpi.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-acpi.c
-@@ -40,6 +40,11 @@ static const struct acpi_device_id i2c_hid_acpi_blacklist[] = {
- 	 * ICN8505 controller, has a _CID of PNP0C50 but is not HID compatible.
- 	 */
- 	{ "CHPN0001" },
-+	/*
-+	 * The IDEA5002 ACPI device causes high interrupt usage and spurious
-+	 * wakeups from suspend.
-+	 */
-+	{ "IDEA5002" },
- 	{ }
- };
- 
--- 
-2.34.1
+Best regards,
+Krzysztof
 
