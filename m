@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24A35EE5;
-	Mon,  4 Dec 2023 20:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D392535EFA;
+	Mon,  4 Dec 2023 20:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpm/RZDv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E0DC43391;
-	Mon,  4 Dec 2023 20:33:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfpePyU1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4044C433CA;
+	Mon,  4 Dec 2023 20:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701722008;
-	bh=jl9mkb3+8I4qmhnlzh34M7GhRZZUr41HM/ua32/te84=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fpm/RZDv1oxz2nwwbBAtu2ZUxFgTMQeW696xFxP6L84YuDYJX7qnqq45UTLM8m/Lo
-	 IyFNGNk2+u1A6LRA7pEG1u2vaRSd/7tmwxOWJYOYFQAw8TODiJCZSdAsFK48ISEFM3
-	 /k5bCmsWMOK5VAIRBAeMOIQgiaL7ScuNSqtjnsJ1J8D3MWmPaLr67LY3NKVbQug8gL
-	 RIbAo2BkNwfnhgZLDO7GMBUn9m2ZjbgQtYXGiPwcK65zBhQyfuIv/+fPFMNqAk2EpV
-	 Nzt+ui63sNRJOg4FIASqdS9ZqhzKpsq9OslnnBTbnFXR7MZO1EkSX9uBsPOjG3H5vB
-	 mBN0CsTUSFZeg==
+	s=k20201202; t=1701722118;
+	bh=C2U2qrCynZxI56Zkj6LUzA8sFR5k/ZUF1IMLPjunjXM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kfpePyU1kYjofn5AW34bsIYfYkR8+w4QT+ZdqrS09kaa5KHDUco4Zw7IAeI8kYsAS
+	 WJ2FY+80dCTzhLhhutYMldZtDJfEijElp9KvIt6jE9/I1oQvWC6ZCl+q/4r0UXDtD4
+	 0HNEleormdZzCI/ZGJIy5oao3sEbLk3pnaygypbABo/4YrQbQKCTiXa95RYgToa0U8
+	 NZOFUehFsdYQupxW/SkI7zMrdPF2Fq4OWVx307G+0fcvYeATnsfPuSXqieAuYT9lp0
+	 a9kCFTz5K4o8bdLMWrYsTOHgitSItmNVr1VIMUmp0vQebxrScvfOSc7q8Ni2uvNTdp
+	 bLB9fSBdYafhg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -28,12 +28,10 @@ Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
 	alsa-devel@alsa-project.org,
 	patches@opensource.cirrus.com,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 04/32] pinctrl: lochnagar: Don't build on MIPS
-Date: Mon,  4 Dec 2023 15:32:24 -0500
-Message-ID: <20231204203317.2092321-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 01/17] pinctrl: lochnagar: Don't build on MIPS
+Date: Mon,  4 Dec 2023 15:34:46 -0500
+Message-ID: <20231204203514.2093855-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231204203317.2092321-1-sashal@kernel.org>
-References: <20231204203317.2092321-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.4
+X-stable-base: Linux 6.1.65
 Content-Transfer-Encoding: 8bit
 
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
@@ -66,11 +64,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/cirrus/Kconfig b/drivers/pinctrl/cirrus/Kconfig
-index d6318cb57aff2..e7e827a8877a0 100644
+index 530426a74f751..b3cea8d56c4f6 100644
 --- a/drivers/pinctrl/cirrus/Kconfig
 +++ b/drivers/pinctrl/cirrus/Kconfig
-@@ -12,7 +12,8 @@ config PINCTRL_CS42L43
- 
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  config PINCTRL_LOCHNAGAR
  	tristate "Cirrus Logic Lochnagar pinctrl driver"
 -	depends on MFD_LOCHNAGAR
