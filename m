@@ -1,82 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D392535EFA;
-	Mon,  4 Dec 2023 20:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfpePyU1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4044C433CA;
-	Mon,  4 Dec 2023 20:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701722118;
-	bh=C2U2qrCynZxI56Zkj6LUzA8sFR5k/ZUF1IMLPjunjXM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kfpePyU1kYjofn5AW34bsIYfYkR8+w4QT+ZdqrS09kaa5KHDUco4Zw7IAeI8kYsAS
-	 WJ2FY+80dCTzhLhhutYMldZtDJfEijElp9KvIt6jE9/I1oQvWC6ZCl+q/4r0UXDtD4
-	 0HNEleormdZzCI/ZGJIy5oao3sEbLk3pnaygypbABo/4YrQbQKCTiXa95RYgToa0U8
-	 NZOFUehFsdYQupxW/SkI7zMrdPF2Fq4OWVx307G+0fcvYeATnsfPuSXqieAuYT9lp0
-	 a9kCFTz5K4o8bdLMWrYsTOHgitSItmNVr1VIMUmp0vQebxrScvfOSc7q8Ni2uvNTdp
-	 bLB9fSBdYafhg==
-From: Sasha Levin <sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="KHFAu1tq"
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921673849
+	for <linux-gpio@vger.kernel.org>; Mon,  4 Dec 2023 12:35:36 -0800 (PST)
+Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-677fba00a49so41514896d6.1
+        for <linux-gpio@vger.kernel.org>; Mon, 04 Dec 2023 12:35:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1701722135; x=1702326935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DyOt6WNJoyGPyyAGB/bMPPXRQGKI15oaDucC2U+fr/M=;
+        b=KHFAu1tqEjUF818xvyy2DPCcHiLL60PxQAUJW6qaDAdQ2Q7R96QliiQrEajn5P0MOB
+         8mhH03+0zJt0HNlN/FDzTGxHPM2wD4cBVLqyiicYpbM9vqEHpWUSMuGmwzcLdIi6E38p
+         hTsh1rzrMSwXqNKLbZZaE6alC4yQPtNNE7GaXeC6ksZucFIZCzc/tvj+N1GhZff7cU2j
+         fcSFU7VHFxVKCye85uQ9AkicYxi2APKZ/QB0Q3LdQ75qzJobrHo4HbNvapWYh5JHmnqp
+         8zdY0HPOUDZwsYzzdMqele1oy9x5nDawgBlwhaxjEc6WtHP+hRyi5aO+rOU43YMdIOg3
+         ZPvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701722135; x=1702326935;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DyOt6WNJoyGPyyAGB/bMPPXRQGKI15oaDucC2U+fr/M=;
+        b=PgfEuBNgZD026E5bMkzVL4K4sI2mpdy9BVrd0PD+iqOXfgAPVz7ocdUSGxBv7eBqkN
+         swkjctYX/sSzYWAI0jMpw5crBe+k0SSK5gSif/RxpnLzCiGs57SkuBllUvRR6lveBzvn
+         SO2S1A8jBUcIznMCJzZSHhBzQpw+wGA8qPkAZEabYSYnO3FXRt8rBnc8hLngiYymNYVG
+         gP1moqhqueyyTBLwZv4w8/X0ZbMCFWMuJgcEdV+x7EssfUvyt78Cl1/3mGG6E94JO4AK
+         UjGDOgNE/8a+ORYbWUtrnmd/RGlteJmUf8vAHPqrgBf2LlCMZjhLtEq4mjecKvjl+eg7
+         BNJA==
+X-Gm-Message-State: AOJu0YxNdPShcCpXIFujknoJN1Lv0CPDSJgPIXJX21MYGDLbYqxMcLMJ
+	RWaFx2tFfD3nwEftVdYzh10c+Q==
+X-Google-Smtp-Source: AGHT+IHQVPJUpnF0jpAxRYOUbhikG4xN8M9TPSoPIYVN8gwSA7y9CB1MpGu7A2cRrqTvvdjC++88Hg==
+X-Received: by 2002:a05:6214:519d:b0:67a:5815:9996 with SMTP id kl29-20020a056214519d00b0067a58159996mr217380qvb.6.1701722135213;
+        Mon, 04 Dec 2023 12:35:35 -0800 (PST)
+Received: from localhost.localdomain ([50.212.55.89])
+        by smtp.gmail.com with ESMTPSA id jo23-20020a056214501700b0067ac930d17asm1123469qvb.141.2023.12.04.12.35.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Dec 2023 12:35:34 -0800 (PST)
+From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
 To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-	kernel test robot <lkp@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	rf@opensource.cirrus.com,
-	alsa-devel@alsa-project.org,
-	patches@opensource.cirrus.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 01/17] pinctrl: lochnagar: Don't build on MIPS
-Date: Mon,  4 Dec 2023 15:34:46 -0500
-Message-ID: <20231204203514.2093855-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.42.0
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ben Wolsieffer <ben.wolsieffer@hefring.com>
+Subject: [PATCH 0/2] stm32: fix GPIO level interrupts
+Date: Mon,  4 Dec 2023 15:33:55 -0500
+Message-ID: <20231204203357.2897008-1-ben.wolsieffer@hefring.com>
+X-Mailer: git-send-email 2.42.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.65
 Content-Transfer-Encoding: 8bit
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+GPIO level interrupts on the STM32 were behaving like edge interrupts.
+The STM32 lacks hardware support for GPIO level interrupts, therefore
+the pinctrl driver contains code to emulate them using edge interrupts,
+but this was not working.
 
-[ Upstream commit 6588732445ff19f6183f0fa72ddedf67e5a5be32 ]
+First, the STM32 EXTI interrupt controller driver lacked support for
+retriggering interrupts, and second, the wrong IRQ handler was being
+used because the parent interrupt was an edge interrupt.
 
-MIPS appears to define a RST symbol at a high level, which clashes
-with some register naming in the driver. Since there is currently
-no case for running this driver on MIPS devices simply cut off the
-build of this driver on MIPS.
+Ben Wolsieffer (2):
+  irqchip/stm32-exti: support retriggering on STM32 MCUs
+  pinctrl: stm32: fix GPIO level interrupts
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202311071303.JJMAOjy4-lkp@intel.com/
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20231115162853.1891940-1-ckeepax@opensource.cirrus.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/cirrus/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-stm32-exti.c      | 13 +++++++++++++
+ drivers/pinctrl/stm32/pinctrl-stm32.c |  3 +++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/pinctrl/cirrus/Kconfig b/drivers/pinctrl/cirrus/Kconfig
-index 530426a74f751..b3cea8d56c4f6 100644
---- a/drivers/pinctrl/cirrus/Kconfig
-+++ b/drivers/pinctrl/cirrus/Kconfig
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config PINCTRL_LOCHNAGAR
- 	tristate "Cirrus Logic Lochnagar pinctrl driver"
--	depends on MFD_LOCHNAGAR
-+	# Avoid clash caused by MIPS defining RST, which is used in the driver
-+	depends on MFD_LOCHNAGAR && !MIPS
- 	select GPIOLIB
- 	select PINMUX
- 	select PINCONF
 -- 
-2.42.0
+2.42.1
 
