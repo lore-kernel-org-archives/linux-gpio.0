@@ -1,70 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zkuwnamv"
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A64AF5
-	for <linux-gpio@vger.kernel.org>; Mon,  4 Dec 2023 01:47:30 -0800 (PST)
-Received: by mail-yb1-xb2f.google.com with SMTP id 3f1490d57ef6-dafe04717baso2615798276.1
-        for <linux-gpio@vger.kernel.org>; Mon, 04 Dec 2023 01:47:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KAWOwoTR"
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F69BC4
+	for <linux-gpio@vger.kernel.org>; Mon,  4 Dec 2023 01:50:56 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5c08c47c055so46302247b3.1
+        for <linux-gpio@vger.kernel.org>; Mon, 04 Dec 2023 01:50:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1701683249; x=1702288049; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1701683456; x=1702288256; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I/Va0kOOCQXMJr2TQKWKwJ9zWUP7bBtr/H8JK5walkU=;
-        b=zkuwnamvBvJpJncHSIT7eWV87jlt1VfEXLXEGuAo8/GRKGsPcChVxAZ9UgKvNgmUes
-         R4PO8bnoJRTwVtlqrxJKZwN20ij9jSgCBDDsdbXvWCHUp9XX86+tTFCWQogUfBwWF/Fc
-         Gttd3+ITjvX3AqIv4b+St4K4sW84a3RmYjZbJr4CENY7G/m8HwC8zOz/vQ8r+QoXfLbn
-         XAo9KXv0g/xexyBdWH4As88DtS1XqC00XbkC4hUf05HyBOxuOCLIqo4yrRf4kNI1mXtg
-         Ob4pEnp2AF09w3jRDjC0LfSqKvLcMGLBDbVdthYlDHEZ0p173x9hEueXaa4ino2RWPR5
-         LMww==
+        bh=lGU1eO3+rKPmkCGDfE8WNlc7ZD+3bMubQESl5Z40WnA=;
+        b=KAWOwoTRh6vqykF0xTnLmhXbEa0rPdSXsF9MeCSGHnfMZDqvKDZ+PH/8nVVVvMGJkz
+         Xik+8DAwhiGtXeFarfQFOWpydANr5YShWeTusW98RlhXA6X2CY+jFcSWoZp/+yLaYp6w
+         waTT69wWr9luwhVzKBdjXzo0curvAng00S8uHDaWFLARVNFnGAQtnNYTjsJWJ5bBhQw2
+         Hitxw7Gkau1jEvzYcNWJZ/SYPWZGqvwT87sB5Gj9CBTspamSpBgecOe0RYqGrxv4BE9o
+         dMpClcs/QYT4tk9ld4S78bPP+iccB3KNAg9Jb57Ta7S+1PXmHyhHmQPCf05JxOlwH4y6
+         bciA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701683249; x=1702288049;
+        d=1e100.net; s=20230601; t=1701683456; x=1702288256;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I/Va0kOOCQXMJr2TQKWKwJ9zWUP7bBtr/H8JK5walkU=;
-        b=jFPRMRdbKgKUWJDdtX1VqoD+FwLDmVP7DVBY57FCr5f9ASXfiWL9ueobC3eCb5kwdh
-         Zee0+X+qKFYKt61yFcj4NfCIEcZX7SYkrcQbEn7hlWmLHbz9bw843EO/O0l5t/JOSfRb
-         5sFPsTIXtnADoScL7ZnlLFOlCcbG6p3mggR5+UlErrkkB6IHUT0tO8j+xlHEVhVF2r91
-         z59LuvZlaxTtk/1UDuQveT/PqGkST5lcrOvOXLyPSpPT2Zac5AJzt3qPyXZIiVmGQCrH
-         Hq9cYvmRIUwir37hkcG/B8mLVs7joVcvFmR1UgNHgpLBWoMknXOlnOiw80AVB1LYasIP
-         5FpA==
-X-Gm-Message-State: AOJu0YwjRLh7VKisXTqGQFZDOjkrgUbWei/sLYrvOBswPjdfYOfOBLn+
-	g9DRZ55I9ZTTdzEQnKyZZKkelTbIsBm8UxTW/haBFw==
-X-Google-Smtp-Source: AGHT+IHzmn4R3eDwNqxLIvsLdnuOrMgDl1kyI5pUXW4FtxkQmVJw7pplvdOzdsQmeJxtozIgo/BWo3hmtyPbnRvdWuw=
-X-Received: by 2002:a25:824b:0:b0:db7:dacf:6fe4 with SMTP id
- d11-20020a25824b000000b00db7dacf6fe4mr2504494ybn.108.1701683249364; Mon, 04
- Dec 2023 01:47:29 -0800 (PST)
+        bh=lGU1eO3+rKPmkCGDfE8WNlc7ZD+3bMubQESl5Z40WnA=;
+        b=SJHbDU0tDAXixdOK0HkHdPG3+PrS3xbpEkzRpOY+2doYF7isOtIFuKnSqoU+SurLuN
+         6v2Da+eze6SRRx/R8db7Lx1Y8gZVANRKA+RzKVEVsacuaj+1wZxtEzo/KlnHtzh4/Ip8
+         Mgq+U16kOg1abhDUVjIr5b8xq3gq2L2GYNl01JLzimwQ3rXnYSbGyQJBQ+hQxvOFuBDJ
+         jGp0DhHxB2irp4pwWdIc4dPU0FjN5oAPcmFGw6y+8dEUDTXLTKcGxEHwt5yuhbXJ3dBm
+         kQRca8ZXjwDZskm9TnteE4PNKY7UP9m/NvHX4pJdxeoQf7Y1Qub1Lr8By8VmPT+smkOU
+         /XQQ==
+X-Gm-Message-State: AOJu0Yxcj4fns+WWTO9lm7c4Fr8cHEXTk/LXTzwNVS5cKwqxIIe37EA3
+	6XimIpID9LZc8sni01L3gZjZ9yD2DoiqRCRXjJBZBA==
+X-Google-Smtp-Source: AGHT+IFr0tZGPNA0XSTLBc8DStzul9bB95RE9/GVcI/qQQrjj8ZGLEf+VAFXGKT5oyarUp1D9/rCaSsOqpWBDjIgwkI=
+X-Received: by 2002:a05:690c:d94:b0:5d7:ca4a:b1e1 with SMTP id
+ da20-20020a05690c0d9400b005d7ca4ab1e1mr2034497ywb.73.1701683455874; Mon, 04
+ Dec 2023 01:50:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122144744.2222207-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20231122144744.2222207-1-andriy.shevchenko@linux.intel.com>
+References: <20231128020202.728156-3-mailingradian@gmail.com>
+In-Reply-To: <20231128020202.728156-3-mailingradian@gmail.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 4 Dec 2023 10:47:17 +0100
-Message-ID: <CACRpkdZtCOwmVa7_vyCfs5i3GVdvopNAGA3rPyij0EeLr8e4MA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] pinctrl: mediatek: Switch to use no-IRQ PM helpers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-mediatek@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Date: Mon, 4 Dec 2023 10:50:44 +0100
+Message-ID: <CACRpkdb0wKxnFmgDND7YNRvg6yo53R52ctpPAsuTuUqnPK0gNw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: fail to retrieve configuration from
+ invalid pin groups
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 22, 2023 at 3:49=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Nov 28, 2023 at 3:03=E2=80=AFAM Richard Acayan <mailingradian@gmail=
+.com> wrote:
 
-> Since pm.h provides a helper for system no-IRQ PM callbacks,
-> switch the driver to use it instead of open coded variant.
+> The pinconf-groups debugfs file dumps each valid configuration item of
+> all pin groups. Some platforms and devices may have pin groups which
+> cannot be accessed, according to commit 691bf5d5a7bf ("pinctrl: qcom:
+> Don't allow protected pins to be requested"). Fail for each
+> configuration item of an invalid pin group by checking the GPIO chip's
+> valid mask.
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> The validity of the pin group cannot be checked in the generic pinconf
+> dump (function "pinconf_generic_dump_one"), as it does not directly
+> interact with the gpiochip or the pinmux callbacks (which would give it
+> access to the request callback). Instead, an entry contains the ID and
+> name of the pingroup with no properties when all items fail.
+>
+> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
 
-Patch applied!
+Looks reasonable so patch applied.
 
 Yours,
 Linus Walleij
