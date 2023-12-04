@@ -1,135 +1,150 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C2CD3;
-	Mon,  4 Dec 2023 00:10:17 -0800 (PST)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-77ecedad216so167078985a.3;
-        Mon, 04 Dec 2023 00:10:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701677416; x=1702282216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nS1L7NOGg06KDGUFGFQufZ/HHPyLo1FuHzjQoQBHem0=;
-        b=AJDhA2a12rQ4GM5Ze2j/Tg6roXa8OWdP5wSSt0DwFyHzHryz2sfNgmt4kb1zefq4tq
-         vGBRe/AP+ZvEB+xFbp9Lefx68ubxbdJOk4XwFHswhLY5Wl7tBzrIPLc88bgz0s3XwlTk
-         ZemqAAcKr3CEzwrjPlMTVboH0HlVw8rC+3+Dxji1++Gp6nMhBpEUDBqI43cb9/+AqvUe
-         /ORKEV4jgxScpFNbkAd3IHr5FBU48x4X5aKsMvIsYOwpH1MCkvMc7C5RRUjhSl09Pl2O
-         9/VAH6uKp+32FYXZwkeOneZ1weMPOwRqBAc2BJw/pl2XBu/oDuuE5dIeFDqbL/4oGRGL
-         QYLQ==
-X-Gm-Message-State: AOJu0YzJyQKdbQrui8yThNu2O+3r4RYNrFieOUWUQZ/E2xgFZf2VTbVD
-	Q0lP2ujoDZWIjD2vcwCE0nTOSFWC5NxGSQ==
-X-Google-Smtp-Source: AGHT+IH+88HvOfduf9w2+EiioRSXS0hHuKcr9eAKG4NAcvE5FKea0kdXX4iOqq4chMrYwfMNzMSrwQ==
-X-Received: by 2002:a05:6214:964:b0:67a:a721:d782 with SMTP id do4-20020a056214096400b0067aa721d782mr4233333qvb.104.1701677416575;
-        Mon, 04 Dec 2023 00:10:16 -0800 (PST)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id rg3-20020a05620a8ec300b0077703f31496sm4042370qkn.92.2023.12.04.00.10.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Dec 2023 00:10:16 -0800 (PST)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-77dd07e7d39so308509385a.0;
-        Mon, 04 Dec 2023 00:10:16 -0800 (PST)
-X-Received: by 2002:a0d:ebd4:0:b0:5d7:1940:f3ef with SMTP id
- u203-20020a0debd4000000b005d71940f3efmr3110087ywe.87.1701676944345; Mon, 04
- Dec 2023 00:02:24 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81B6D50B;
+	Mon,  4 Dec 2023 08:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ileSoowW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D5FBC433C8;
+	Mon,  4 Dec 2023 08:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701677665;
+	bh=fMFPIQKNQgD0rlqa1vmejcL5CVWsD1P2NQIr7QZ0AyY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ileSoowWK8JxxTKKpdDv/X1erln3oTJQ8pftp3cwxD00ldz8N8EvPka27n6T6Jq6m
+	 wQknGML2EPVT85/RsKkMs6qivPrjHzdDQpszagNUVFno8NIlR/EfE6TOxj4QWdwZBI
+	 RhWtftoa6XflsqC1VVMMVhpIadoTB/19vsDQ1Nmjrs2a7J6Hs8gccaUiVkx9H/GZxX
+	 9xerhgR34fCwTYA7AA7BxIsHgSIIZGRdrCtBwaLE4Py3b+6lhPq0DHQs9tqy7/4A86
+	 dHYrCVQPqrbZOO/Hn4gqMvrNqbS2ouZqhphZLmJaKR2B9PWSxvp4eC69zxrDwMOrCh
+	 IEJFPFkfge7Kw==
+Message-ID: <6539d781-ecb2-4ffe-9daa-e82ec8d70bea@kernel.org>
+Date: Mon, 4 Dec 2023 09:14:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231120070024.4079344-1-claudiu.beznea.uj@bp.renesas.com>
- <20231120070024.4079344-11-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdW9Unpw7NQOGWd4SeFV8XgvRYTKTXnt9Tsagb3Q3U9tNA@mail.gmail.com> <96dd3f54-9560-4587-b4e8-bf75422ff5ef@tuxon.dev>
-In-Reply-To: <96dd3f54-9560-4587-b4e8-bf75422ff5ef@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2023 09:02:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWGbEhBdzK4Swu4uX05vX7H2Ow4uE1C=JVNOrdcbZYL=A@mail.gmail.com>
-Message-ID: <CAMuHMdWGbEhBdzK4Swu4uX05vX7H2Ow4uE1C=JVNOrdcbZYL=A@mail.gmail.com>
-Subject: Re: [PATCH 10/14] arm64: renesas: r9a08g045: Add Ethernet nodes
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux@armlinux.org.uk, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	linus.walleij@linaro.org, p.zabel@pengutronix.de, arnd@arndb.de, 
-	m.szyprowski@samsung.com, alexandre.torgue@foss.st.com, afd@ti.com, 
-	broonie@kernel.org, alexander.stein@ew.tq-group.com, 
-	eugen.hristev@collabora.com, sergei.shtylyov@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, biju.das.jz@bp.renesas.com, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] pinctrl: qcom: Add SM4450 pinctrl driver
+Content-Language: en-US
+To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ agross@kernel.org, konrad.dybcio@linaro.org, linus.walleij@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20231130024046.25938-1-quic_tengfan@quicinc.com>
+ <20231130024046.25938-3-quic_tengfan@quicinc.com>
+ <1d2fbb36-9476-4f32-8bcd-33fd5dcbd6e4@kernel.org>
+ <d192f32a-130f-4568-9622-d3465c709853@quicinc.com>
+ <1b65f67a-8142-4690-af6e-4a0bf641b7be@kernel.org>
+ <c3e18a62-0d50-4291-94a2-17a51957253d@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <c3e18a62-0d50-4291-94a2-17a51957253d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+On 04/12/2023 09:06, Tengfei Fan wrote:
+> 
+> 
+> 在 12/4/2023 3:56 PM, Krzysztof Kozlowski 写道:
+>> On 04/12/2023 02:57, Tengfei Fan wrote:
+>>>
+>>>
+>>> 在 11/30/2023 7:57 PM, Krzysztof Kozlowski 写道:
+>>>> On 30/11/2023 03:40, Tengfei Fan wrote:
+>>>>> Add pinctrl driver for TLMM block found in SM4450 SoC.
+>>>>>
+>>>>> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+>>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>>>> ---
+>>>>>    drivers/pinctrl/qcom/Kconfig.msm      |    8 +
+>>>>>    drivers/pinctrl/qcom/Makefile         |    1 +
+>>>>>    drivers/pinctrl/qcom/pinctrl-sm4450.c | 1013 +++++++++++++++++++++++++
+>>>>>    3 files changed, 1022 insertions(+)
+>>>>>    create mode 100644 drivers/pinctrl/qcom/pinctrl-sm4450.c
+>>>>>
+>>>>
+>>>> Hm, was this patch ever built?
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>> This patch has been built before, I will check and compare if there are
+>>> any errors and changes when I submitted this patch series.
+>>>
+>>
+>> No, it wasn't built. I just tried - applied it and:
+>>
+>> pinctrl-sm4450.c:996:19: error: initialization of ‘int (*)(struct
+>> platform_device *)’ from incompatible pointer type ‘void (*)(struct
+>> platform_device *)’ [-Werror=incompatible-pointer-types]
+>>    996 |         .remove = msm_pinctrl_remove,
+>>        |                   ^~~~~~~~~~~~~~~~~~
+>> ../drivers/pinctrl/qcom/pinctrl-sm4450.c:996:19: note: (near
+>> initialization for ‘sm4450_tlmm_driver.remove’)
+>>
+>> So you just sent a patch which was not even compiled.
+>>
+>> NAK.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> I compiled all the related patches together, but I did not compile this 
+> patch separately.
 
-On Mon, Dec 4, 2023 at 8:41=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxon=
-.dev> wrote:
-> On 01.12.2023 19:35, Geert Uytterhoeven wrote:
-> > On Mon, Nov 20, 2023 at 8:01=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Add Ethernet nodes available on RZ/G3S (R9A08G045).
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> >> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> >> @@ -149,6 +149,38 @@ sdhi2: mmc@11c20000 {
-> >>                         status =3D "disabled";
-> >>                 };
-> >>
-> >> +               eth0: ethernet@11c30000 {
-> >> +                       compatible =3D "renesas,r9a08g045-gbeth", "ren=
-esas,rzg2l-gbeth";
-> >> +                       reg =3D <0 0x11c30000 0 0x10000>;
-> >> +                       interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH=
->,
-> >> +                                    <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> >> +                                    <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-> >> +                       interrupt-names =3D "mux", "fil", "arp_ns";
-> >> +                       clocks =3D <&cpg CPG_MOD R9A08G045_ETH0_CLK_AX=
-I>,
-> >> +                                <&cpg CPG_MOD R9A08G045_ETH0_CLK_CHI>=
-,
-> >> +                                <&cpg CPG_MOD R9A08G045_ETH0_REFCLK>;
-> >> +                       clock-names =3D "axi", "chi", "refclk";
-> >> +                       resets =3D <&cpg R9A08G045_ETH0_RST_HW_N>;
-> >> +                       power-domains =3D <&cpg>;
-> >
-> > Perhaps add a default phy mode, like on other SoCs?
-> >
-> >     phy-mode =3D "rgmii"';
->
-> I skipped this (even it was available on the other SoCs) as I consider th=
-e
-> phy-mode is board specific.
+We talk about this patch here. Please do not send knowingly wrong code,
+because it does not make sense and hurts bisectability.
 
-IC.  Still, it's good to have some consistency across boards.
+> The fact that there is a compilation problem is known, but because the 
+> patch is already reviewed-by, so a separate patch(patch 3) is submitted 
+> to fix the compilation error.
 
-> > Also missing:
-> >
-> >     #address-cells =3D <1>;
-> >     #size-cells =3D <0>;
->
-> Same for these.
+That's not the process. Each patch must be correct. Each.
 
-These are required, and always have the same values, so it makes more
-sense to have them in the SoC .dtsi file, once.
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
