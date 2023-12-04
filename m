@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D194C35EEC;
-	Mon,  4 Dec 2023 20:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D32735F0B;
+	Mon,  4 Dec 2023 20:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PI6lzptj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2187FC433C9;
-	Mon,  4 Dec 2023 20:36:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IScNoc5b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982C9C433C7;
+	Mon,  4 Dec 2023 20:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701722180;
+	s=k20201202; t=1701722220;
 	bh=C2U2qrCynZxI56Zkj6LUzA8sFR5k/ZUF1IMLPjunjXM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=PI6lzptjvMU1ws9NyonJRAuDY15E8rv/xZOD1fi+XsaH7xRAqZ5JtWzNKu1IzAyIy
-	 3cKxn/yG0xHjPoJdtzVNKYzSG7L2kBoSsImRj/f980fx2wdZfv3J//CIc2tm7QzpU+
-	 S61mFKfubhgq/Ew8ECbAf3qiByZLw3o+YQd9iOPXtA5ra6+0pIQBxA86/0g5z/OOvQ
-	 8uLEjImaVKTNiV8S+cNQee9eLV1LMqjdjsmjDoyx5iVdobzF6kFwjB4kcfcNKYn1VG
-	 1/ppj8jWWQAX3rY0kCab06mJk9s4KSy2FIf0NPQh96WLMvO2UJDHaPaPUhBDxZcqKg
-	 rxjiH0FnUK4SA==
+	b=IScNoc5bmi31RBqdxdDJdin6PVWDjdvhE3/cxNEZba6oZPvxe/oHtjCVsYlV6WPZj
+	 PpFAwQ47J5a3fL75uPlAou9LTF9pu/07p3tL+Xe48+TPQGU/aA4RfaGzQNLEASnoc+
+	 nQU4ezISZ2MGV/EqO5Bv5aP4Bdo+G3R4MSw9T1n6re7+01pMvneVHB1CxAsAtNgPKX
+	 pRqoOM87k6i4KfylIt7s/790m/CFRRWygvcf8MKBRCDR+1Zu099Vw62nr1H+bqHDak
+	 eZxcGJz+xOXdjOOre6Gs+KoN/uLxMLmDYFDtWkoJ/J0jh2NI9r1tdDjuBKvs/Q7IjV
+	 zOpuw+clzRduA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -28,9 +28,9 @@ Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
 	alsa-devel@alsa-project.org,
 	patches@opensource.cirrus.com,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 01/10] pinctrl: lochnagar: Don't build on MIPS
-Date: Mon,  4 Dec 2023 15:35:58 -0500
-Message-ID: <20231204203616.2094529-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 1/7] pinctrl: lochnagar: Don't build on MIPS
+Date: Mon,  4 Dec 2023 15:36:44 -0500
+Message-ID: <20231204203656.2094777-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.141
+X-stable-base: Linux 5.10.202
 Content-Transfer-Encoding: 8bit
 
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
