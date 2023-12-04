@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJWi8vuA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA5FAC;
-	Mon,  4 Dec 2023 05:16:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNMu+zTV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B9B4AC;
+	Mon,  4 Dec 2023 05:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701695812; x=1733231812;
+  t=1701695944; x=1733231944;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ruNQAEGel56sXK2lguhT42sAf9ycNnOllBZQjHkiz68=;
-  b=PJWi8vuAeDGxWmC51xOgTiB7Xwmd+3IsWThqlM69FemK1I7ldZaurLM3
-   TARm+gcD43ls55I2Q72/39L0Yef7FHoDTwEmC66R8rNtk1vZikF7Ft/bS
-   A3XqwGC7dBcvOzeDjMS3q04OXdlEcKypy47jVyioKncz6EsFnZPmy8Ksl
-   40ByOlgx9BrT7+z1MUPlSMUHfwugqZoPGSXbJ82SatM8NqkPcsywc0u6V
-   U18yfhxYNnMUtJ2qd+eb0vX2MxYKR7tOlZnSWt9iD5MbP+wlwr7QAlx35
-   s4HpL8ELMwXkOUHplEfyvy6H5BQLNdWCBYSmaRaGuBcf7CgLKQwdvrjna
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="629373"
+  bh=blRWcQemAp0zrvU2vELHpiLg3H45UrfeHyClI630l4s=;
+  b=WNMu+zTVANQ8c5CNjeNwp88HDiYqTSN5oTWng5FKsIyl+08ocJNoSnUb
+   Q2yuHhKuobH2ZtyB8mtcpXt4++/bGzkuLgY3NHaUjZDT00MvMxiEHmss+
+   SQLiPDpSQFo+MzXT67qEuqVq6aOnp6DNywUMnwoMdg4WnSZ5VFS38MU55
+   ILYs7o1xBMywTOvIFqKEqB/z1gGVjEaV+LnHSoPbG+TbxefJ+Hh2YtpJC
+   nEUEBfgXkAxXrd/Ct4MyKkLIHIiObyE20tIwRvIGLJPLxpkHefzpRIE2+
+   7Dg/w+brLafuZHu1K49xCMETU3SJ4xqMjN9o8LQ04b+UaEnJhcWMykFMZ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="775926"
 X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="629373"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:16:52 -0800
+   d="scan'208";a="775926"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:19:03 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="774254311"
+X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="720319000"
 X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="774254311"
+   d="scan'208";a="720319000"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:16:50 -0800
+  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:19:01 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.97)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rA8oZ-00000001kz7-47cN;
-	Mon, 04 Dec 2023 15:16:47 +0200
-Date: Mon, 4 Dec 2023 15:16:47 +0200
+	id 1rA8qg-00000001l0l-2AuV;
+	Mon, 04 Dec 2023 15:18:58 +0200
+Date: Mon, 4 Dec 2023 15:18:58 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 02/10] gpio: wm831x: use gpiochip_dup_line_label()
-Message-ID: <ZW3RPxjsNPacT9Si@smile.fi.intel.com>
+Subject: Re: [PATCH v3 07/10] pinctrl: baytrail: use gpiochip_dup_line_label()
+Message-ID: <ZW3RwqZHvRRoYLXn@smile.fi.intel.com>
 References: <20231204093509.19225-1-brgl@bgdev.pl>
- <20231204093509.19225-3-brgl@bgdev.pl>
+ <20231204093509.19225-8-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -49,24 +49,21 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231204093509.19225-3-brgl@bgdev.pl>
+In-Reply-To: <20231204093509.19225-8-brgl@bgdev.pl>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Dec 04, 2023 at 10:35:01AM +0100, Bartosz Golaszewski wrote:
+On Mon, Dec 04, 2023 at 10:35:06AM +0100, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
 > Use the new gpiochip_dup_line_label() helper to safely retrieve the
 > descriptor label.
 
-...
+Fine by me,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
->  	for (i = 0; i < chip->ngpio; i++) {
->  		int gpio = i + chip->base;
->  		int reg;
-> -		const char *label, *pull, *powerdomain;
-> +		const char *pull, *powerdomain;
-
-Make it reversed xmas tree?
+Still would be nice to have an immutable tag/branch with the first and
+this patches (at least) that I can incorporate into my pin control tree
+(TBH I do not expect collisions, but just in case).
 
 -- 
 With Best Regards,
