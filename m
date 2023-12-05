@@ -1,42 +1,42 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDuxtYA1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D27F120
-	for <linux-gpio@vger.kernel.org>; Tue,  5 Dec 2023 08:02:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fa2Vsz9t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B34D9194
+	for <linux-gpio@vger.kernel.org>; Tue,  5 Dec 2023 08:05:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701792165; x=1733328165;
+  t=1701792308; x=1733328308;
   h=date:from:to:cc:subject:message-id;
-  bh=xegEYqjWTMSWWFU2+xxt+Ee98ZWb4iBj4+ORqVIBJCA=;
-  b=RDuxtYA17LuAB9nNHjPiJTFCGsIS9M37vtIy1Jfj9P++LGbNfQxw+fLA
-   dilQhS9sqN8Y0UD3fth21w94ATI9QPRNYmAtbqMm7wLDKMpOQxrYvH6PH
-   1wOWVR/8YHMIqmpe2P+AfrykwjpvwLdfyvbzFWDUY5jOI2ZsAvmsnGrl3
-   vAXzm9RuNYkOH76Sa6OwM/koDs67jS6JFccvr83eR5eobuDTDydTmEzwM
-   COIZrEzEq8cu9+w948VgkaWThdK/v+Wslb5cIbJYP5mxrXeE5AFgQu75h
-   U1xE+rG9Z/88tbwOY2oUZBhrRrBVFHFhlrhnfCfeyY/iy1mA8sqAGcdfK
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="7211548"
+  bh=Qi5OE0k9wlqmw4K1uf8bL90Uy9ix8HYnzGGV2dQIPfo=;
+  b=Fa2Vsz9tnTUMq3Uoqja5JE2zAfN6+ghPi1wi2Ri47inyPvx8wpzUbaCO
+   WhgJOKquRWdLJcexVLnJmf0FVOZO9lpjpkXoKYJb+cRd2U6fHPtL0PQH7
+   EybQ9eo857DP61XJZxgUM1+RUmxPRo8Rd9IviXJA2lJTJSUEBzlHFGksn
+   sXflnrDTpRAQ3wE0Fvnkdt0cAC5F8MEb6gxG++7FwOEL58eD/+tj/TZOG
+   34/NwCXA2NYjZeS3RdOGOGYZ+aWZ7RkOwce9ZreOTfBns/HgZRGhY+jcr
+   zLOcgecBSF/OF9Cnl9ycqGroAXeap6LlFrY6jVvz4rfm1Rd66izd/eRId
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="374101161"
 X-IronPort-AV: E=Sophos;i="6.04,252,1695711600"; 
-   d="scan'208";a="7211548"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2023 08:02:44 -0800
+   d="scan'208";a="374101161"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2023 08:04:47 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="770969223"
+X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="800011332"
 X-IronPort-AV: E=Sophos;i="6.04,252,1695711600"; 
-   d="scan'208";a="770969223"
+   d="scan'208";a="800011332"
 Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 05 Dec 2023 08:02:42 -0800
+  by orsmga008.jf.intel.com with ESMTP; 05 Dec 2023 08:04:45 -0800
 Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1rAXse-0009HT-0Y;
-	Tue, 05 Dec 2023 16:02:40 +0000
-Date: Wed, 06 Dec 2023 00:01:42 +0800
+	id 1rAXud-0009IH-14;
+	Tue, 05 Dec 2023 16:04:43 +0000
+Date: Wed, 06 Dec 2023 00:04:20 +0800
 From: kernel test robot <lkp@intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- 2fff0b5e1a6b9c577b4dd4958902c877159c856b
-Message-ID: <202312060039.Xkk6CS47-lkp@intel.com>
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 253bad7f0436284ee0413b1c615a1d4be96893de
+Message-ID: <202312060017.mhuYicTl-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -44,10 +44,10 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 2fff0b5e1a6b9c577b4dd4958902c877159c856b  pinctrl: amd: Mask non-wake source pins with interrupt enabled at suspend
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 253bad7f0436284ee0413b1c615a1d4be96893de  dt-bindings: pinctrl: qcom,sm8550-lpass-lpi: add X1E80100 LPASS LPI
 
-elapsed time: 1458m
+elapsed time: 1460m
 
 configs tested: 177
 configs skipped: 2
