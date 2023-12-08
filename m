@@ -1,141 +1,236 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BojPCiJ/"
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC2FD59
-	for <linux-gpio@vger.kernel.org>; Thu,  7 Dec 2023 17:01:22 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1d06fffdb65so12458435ad.2
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Dec 2023 17:01:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701997282; x=1702602082; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j70BRMzgDsvZ8mzFUhrH/sFaE9EEqqslT6VjYzB7u/M=;
-        b=BojPCiJ/AMtiDjLcTi69hVy/z+xMR1ATDF92veh7S8cf4sA/edu2KpPwzFVJW62ISl
-         pwQyxe1NSJdLrKjdhnOh5lwlpU/E9GfXiGdrSGzjp/swylkbiH5XttoS6YKWYqz6vZYE
-         e7BV6PUKHDjVjv7HZMMA9pQrcyYPVqemgFL0vdkaZTCBY64T1snPLbDA4g7LPdaL+fWH
-         AkWNPT1E3yeMk/Ts1jpK+2/L/pIh1Mf3iRPXRCCZf7VBHQXqesmMTS9yRytJaI1jL/EC
-         xPg/mxvMMTWUvo2m/9vLhU8gmY8tFUiHliI5qfVm/DQmjctKPFiLHY7GTppRDe1Hn5Sz
-         eS5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701997282; x=1702602082;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j70BRMzgDsvZ8mzFUhrH/sFaE9EEqqslT6VjYzB7u/M=;
-        b=c6SKMMRmBw6cjGSasigQgSs/2XU3CFmAbVLUgwcnIA2iX93cZKakL5eS69ACR7g2Zh
-         nvmGPau4Jr1bXD/cNttz/1J0Om0ihXChrxQZpZZ+xsH+IQt9z94Wb82Ynv4ad9YlHA5O
-         jJ487ZH8B7W3QTYn/Nn6basPcewSGU0SBnpN6gBlykwQ+t7T+yAkhaVQ0XX5UJAl5/oh
-         uHOb9csjvk8E0qXj9CQn7HG+ThURyvt8B++2i4nj0mNggILy3yEJOeFoSZiHfzDFl9et
-         ZsWAmnHTJLixbu8bBWpykIYJmD6cm6gmb0I268Pt/6Erd0R1hgzAvCRkb708HEaawaCr
-         qh/A==
-X-Gm-Message-State: AOJu0Yx019d7tsc6yefyLw6vhAFFvAwVkp76l4pH97/P4OmypRBV0lN9
-	ybtDBKHqxp8TTkpZXJiFZfw=
-X-Google-Smtp-Source: AGHT+IEo+esb80E9y+GucqvPtLtxXKGeFzUYA+vAHy6HKy0SED2VaSwks2yHg3+o3Gsl3XgWKbtqOg==
-X-Received: by 2002:a17:90a:30d:b0:285:da91:69d6 with SMTP id 13-20020a17090a030d00b00285da9169d6mr2850159pje.36.1701997281691;
-        Thu, 07 Dec 2023 17:01:21 -0800 (PST)
-Received: from rigel (194-223-186-106.tpgi.com.au. [194.223.186.106])
-        by smtp.gmail.com with ESMTPSA id az4-20020a170902a58400b001c71ec1866fsm430551plb.258.2023.12.07.17.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 17:01:21 -0800 (PST)
-Date: Fri, 8 Dec 2023 09:01:15 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: GPIOLIB locking is broken and how to fix it
-Message-ID: <ZXJq2zGjBT0yQAXv@rigel>
-References: <CAMRc=McMxnYQosDDip3KGNBsQHDpHg_7bJgvS_Yr_7Y=2kqyUg@mail.gmail.com>
- <ZWFN8RVUy7Vx72CE@rigel>
- <CAMRc=MdcPNrbhXWm6NX_=kA8ut9pcfy5wJGP7EZFNkHDLrSZUQ@mail.gmail.com>
- <ZWKL4r9DREwYjnyo@rigel>
- <CAMRc=Md6y=91o_zB7ePLM1tEfG7sjgE2tujZXSRTQQ8y8oJnPg@mail.gmail.com>
- <CAMRc=Me3JV6yjfRK6TaVtVYV0zhbn=274uCzbfYZ-uywaSuz0A@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j7tdR86u"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3992C1731
+	for <linux-gpio@vger.kernel.org>; Thu,  7 Dec 2023 23:50:24 -0800 (PST)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231208075021epoutp03ee894e551a9d7d3a6dad2646a12f8ed0~ey9RMlH7M1918319183epoutp03j
+	for <linux-gpio@vger.kernel.org>; Fri,  8 Dec 2023 07:50:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231208075021epoutp03ee894e551a9d7d3a6dad2646a12f8ed0~ey9RMlH7M1918319183epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1702021821;
+	bh=jf0IfkFwZ1DhJlD4BeDhp4v+pYjblUlZQuCAeIU8Emk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=j7tdR86ukoJ/WT/emcDk7CDLozqYfjXopF/u8JqIs0fZ4kfY1z5CXeeFKpdRf32h1
+	 FONzztmKTa+jbI5JVr0vvfth7v+SoLWik1xpTggIUev/75mnrE0ybLE1oKT5QoX7mI
+	 lkRwMaQ9x+f/bgSAmFA0UGZuPYhVk4gSIb5nesYE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20231208075021epcas2p384030ade76947fd563d54d1b9731ca12~ey9QpPT0x0598705987epcas2p3j;
+	Fri,  8 Dec 2023 07:50:21 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Smjwr4m6Jz4x9Q7; Fri,  8 Dec
+	2023 07:50:20 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	44.D3.10006.CBAC2756; Fri,  8 Dec 2023 16:50:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20231208075020epcas2p30e46ea65e921664930b337510461892f~ey9Pqwdgm1398013980epcas2p3H;
+	Fri,  8 Dec 2023 07:50:20 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231208075020epsmtrp121750879f0952f633efe0c28ae518131~ey9PppGt70202202022epsmtrp1z;
+	Fri,  8 Dec 2023 07:50:20 +0000 (GMT)
+X-AuditID: b6c32a45-179ff70000002716-7a-6572cabc8c6b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7D.40.18939.CBAC2756; Fri,  8 Dec 2023 16:50:20 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.55]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20231208075019epsmtip22aa869371b7b30fef6916db6cafcccc5~ey9PVDIMi1340013400epsmtip2n;
+	Fri,  8 Dec 2023 07:50:19 +0000 (GMT)
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Rob Herring <robh+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester
+	Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Uwe Kleine-K?nig
+	<u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v3 2/4] arm64: dts: exynos: add minimal support for
+ exynosautov920 sadk board
+Date: Fri,  8 Dec 2023 16:45:25 +0900
+Message-ID: <20231208074527.50840-3-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231208074527.50840-1-jaewon02.kim@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me3JV6yjfRK6TaVtVYV0zhbn=274uCzbfYZ-uywaSuz0A@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMJsWRmVeSWpSXmKPExsWy7bCmhe6eU0WpBl8OqFg8mLeNzWLN3nNM
+	FvOPnGO1aF68ns1iR8MRVot3c2Us9r7eym4x5c9yJotNj6+xWmye/4fR4vKuOWwWd++uYrSY
+	cX4fk8WZxb3sFq17j7BbHH7Tzmrxc9c8FotVu4Dqbk+czOgg7LFz1l12j02rOtk87lzbw+ax
+	f+4ado/NS+o9+v8aePRtWcXo8XmTXABHVLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGu
+	oaWFuZJCXmJuqq2Si0+ArltmDtA7SgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC
+	8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjI/9B9gKbopXdLw9xt7AOF+4i5GTQ0LAROLu9C2s
+	XYxcHEICOxglji7ayg7hfGKUmPShhRnOOXLlADtMy6ftkxlBbCGBnYwSDw5yQBR9ZJS4P3s6
+	WIJNQFvi+/rFrCC2iMB9ZonXbdUgRcwC7UwS8769ZAFJCAvES8xe9hHMZhFQlXjw8y/QOg4O
+	XgFbidcP7SGWyUss3rGcGcTmFLCTWNC7A8zmFRCUODnzCVgrM1BN89bZYJdKCJzhkJjy7Qwz
+	RLOLxPmX91ghbGGJV8e3QH0gJfGyvw3Kzpdou3IGyq6R2LjgEiOEbS8x6zcoYDiAFmhKrN+l
+	D2JKCChLHLkFtZZPouPwX3aIMK9ER5sQRKOaxP2p59ggbBmJSUdWMkHYHhJPfi5igwTVREaJ
+	15sPskxgVJiF5JtZSL6ZhbB4ASPzKkax1ILi3PTUYqMCQ3gEJ+fnbmIEp24t1x2Mk99+0DvE
+	yMTBeIhRgoNZSYQ353x+qhBvSmJlVWpRfnxRaU5q8SFGU2BQT2SWEk3OB2aPvJJ4QxNLAxMz
+	M0NzI1MDcyVx3nutc1OEBNITS1KzU1MLUotg+pg4OKUamFjkXcv+KZu2zzwQWWmbuthOJj/9
+	tcIKm9+X8+48mXc/mC/JLlff3T4w9//GppvSn+8dT7+y9IW38j/7qcYv9Qp+bXtz/MP+1n8e
+	U19ovmNYGzc3nUeiT7z32ZmCnfUfP96oPz5LSOyCn/j5Vfmf+nt+3NTWS1qdXNPWqFMovXe2
+	SPyMGZ8TWffvtk1f6bI2/olXZGhzb3J/QOaMP/+03TdP0EpnEQuo8GS+qf8pwP9OQNS1FYYd
+	jva73LfahjGfmek3OamvW2+a9UTZ1suvJlybJXlbNn7S8XOzTrsaLjuyIvrizPLDSca5elsU
+	b0v/lLp6seBgbY9t5I2q20li4aYv93XLnDmzWjiq7kKmvRJLcUaioRZzUXEiAM80zBJmBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJXnfPqaJUg7ZPzBYP5m1js1iz9xyT
+	xfwj51gtmhevZ7PY0XCE1eLdXBmLva+3sltM+bOcyWLT42usFpvn/2G0uLxrDpvF3burGC1m
+	nN/HZHFmcS+7ReveI+wWh9+0s1r83DWPxWLVLqC62xMnMzoIe+ycdZfdY9OqTjaPO9f2sHns
+	n7uG3WPzknqP/r8GHn1bVjF6fN4kF8ARxWWTkpqTWZZapG+XwJXxsf8AW8FN8YqOt8fYGxjn
+	C3cxcnJICJhIfNo+mRHEFhLYzijRcyseIi4jsfxZHxuELSxxv+UIaxcjF1DNe0aJl2fOgyXY
+	BLQlvq9fDJYQEXjOLHH2zyNmkASzQD+TxPVNCSC2sECsRPuGF2AbWARUJR78/AtUw8HBK2Ar
+	8fqhPcQCeYnFO5aDtXIK2Eks6N3BDHGQrcSarR3sIDavgKDEyZlPWCDGy0s0b53NPIFRYBaS
+	1CwkqQWMTKsYRVMLinPTc5MLDPWKE3OLS/PS9ZLzczcxgqNLK2gH47L1f/UOMTJxMB5ilOBg
+	VhLhzTmfnyrEm5JYWZValB9fVJqTWnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXA
+	FD0xq1DxPo/Gp4LF9w8xzxcwdld5xd3n+9T+svBDJrZWSetIoWebP1q6HTNUW/dA9/yT865J
+	qhEv+pwVrVxFbwXpvHrSFL3bbd2fsr7ie2siVeQFnjlJzn1Yuz9jvdlOBi2x1wd1TvTGls9Z
+	P5vPPe9AxpYarpXv4lM/ffF7KrckUuiN3H4pwxWZP//mnrzF7bdgWd2XTQ8N7+/VnWK9RUby
+	GPfK5BObupvjd/3ktY88d5HxnuxJL5f3zkctPsxY0OFxuNHD77OSQ5NL0YyqC68boi9+jVA4
+	++L9igXt81l1nTUUNxny21sZi6yqO8Mk4nTW9zXLsWsrv87n1nd4JSL8NKbTJWRn3YsGFZYX
+	SizFGYmGWsxFxYkAOCExrx0DAAA=
+X-CMS-MailID: 20231208075020epcas2p30e46ea65e921664930b337510461892f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231208075020epcas2p30e46ea65e921664930b337510461892f
+References: <20231208074527.50840-1-jaewon02.kim@samsung.com>
+	<CGME20231208075020epcas2p30e46ea65e921664930b337510461892f@epcas2p3.samsung.com>
 
-On Thu, Dec 07, 2023 at 07:37:54PM +0100, Bartosz Golaszewski wrote:
-> On Tue, Nov 28, 2023 at 11:47 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
->
-> [snip]
->
-> >
-> > Because years of technical debt, that's why. :)
-> >
->
-> Speaking of technical debt: you may have noticed that despite stating
-> I'm almost done last week, I still haven't submitted my locking
-> rework.
->
-> The reason for that is that I'm stuck on some corner-cases related to
-> the GPIO <-> pinctrl interaction. Specifically the fact that we have
-> GPIOLIB API functions that may be called from atomic context which may
-> end up calling into pinctrl where a mutex will be acquired.
->
+ExynosAutov920 SADK is ExynosAutov920 SoC based SADK(Samsung Automotive
+Development Kit) board. It has 16GB(8GB + 8GB) LPDDR5 RAM and 256GB
+(128GB + 128GB) UFS.
 
-To be clear, that is an existing pinctrl mutex?
+This is minimal support board device-tree.
+ * Serial console
+ * GPIO Key
+ * PWM FAN
 
-> An example of that is any of the GPIO chips that don't set the
-> can_sleep field in struct gpio_chip but still use
-> gpiochip_generic_config() (e.g. tegra186). We can then encounter the
-> following situation:
->
-> irq_handler() // in atomic context
->   gpiod_direction_output() // line is open-drain
->     gpio_set_config()
->       gpiochip_generic_config()
->         pinctrl_gpio_set_config()
->           mutex_lock()
->
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/Makefile           |  3 +-
+ .../boot/dts/exynos/exynosautov920-sadk.dts   | 88 +++++++++++++++++++
+ 2 files changed, 90 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
 
-Isn't using a mutex (the pinctrl one here) from atomic always a
-problem?  Shouldn't this flow be handed off to irq_thread()?
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 6e4ba69268e5..da06e1a9456c 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -5,4 +5,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos7-espresso.dtb		\
+ 	exynos7885-jackpotlte.dtb	\
+ 	exynos850-e850-96.dtb		\
+-	exynosautov9-sadk.dtb
++	exynosautov9-sadk.dtb		\
++	exynosautov920-sadk.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+new file mode 100644
+index 000000000000..e250b5594b58
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung's ExynosAutov920 SADK board device tree source
++ *
++ * Copyright (c) 2023 Samsung Electronics Co., Ltd.
++ *
++ */
++
++/dts-v1/;
++#include "exynosautov920.dtsi"
++#include "exynos-pinctrl.h"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "Samsung ExynosAutov920 SADK board";
++	compatible = "samsung,exynosautov920-sadk", "samsung,exynosautov920";
++
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	aliases {
++		serial0 = &serial_0;
++	};
++
++	chosen {
++		stdout-path = &serial_0;
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x0 0x70000000>,
++		      <0x8 0x80000000 0x1 0xfba00000>,
++		      <0xa 0x00000000 0x2 0x00000000>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&key_wakeup &key_back>;
++
++		key-wakeup {
++			label = "KEY_WAKEUP";
++			linux,code = <KEY_WAKEUP>;
++			gpios = <&gpa0 0 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++
++		key-back {
++			label = "KEY_BACK";
++			linux,code = <KEY_BACK>;
++			gpios = <&gpp6 3 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pinctrl_alive {
++	key_wakeup: key-wakeup-pins {
++		samsung,pins = "gpa0-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++	};
++};
++
++&pinctrl_peric1 {
++	key_back: key-back-pins {
++		samsung,pins = "gpp6-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++	};
++};
++
++&pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm_tout0>;
++	status = "okay";
++};
++
++&serial_0 {
++	status = "okay";
++};
++
++&usi_0 {
++	samsung,clkreq-on; /* needed for UART mode */
++	status = "okay";
++};
++
++&xtcxo {
++	clock-frequency = <38400000>;
++};
+-- 
+2.43.0
 
-> Currently we don't take any locks nor synchronize in any other way
-> (which is wrong as concurrent gpiod_direction_output() and
-> gpiod_direction_input() will get in each other's way). Using a mutex
-> will be fine but for non-sleeping chips if we use a spinlock here (no
-> other choice really) we'll set off fireworks.
->
-> One of the ideas I have is using the fact that we already use atomic
-> bitops in most places. Let's not take locks but add a new flag:
-> FLAG_SETTING_DIRECTION. Now when we go into
-> gpiod_direction_output/input(), we test and set it. A subsequent call
-> will fail with EBUSY or EAGAIN as long as it's set. It will have no
-> effect on set/get() - any synchronization will be left to the driver.
-> When we're done, we clear it after setting the relevant direction
-> flag.
->
-> Does this make any sense? There's still the label pointer and debounce
-> period stored in the descriptor but these are not accessed in atomic
-> context AFAICT.
->
-
-Makes sense to me, as it is basically the sub-state solution I suggested
-earlier for request/release, but applied to direction.  Not sure about
-the contention behaviour though, as that is something userspace will
-see and might not be expecting.
-
-OTOH I'm starting to think that serialising callbacks might be a good idea
-- unless it is crystal clear to the driver authors that the callbacks may
-be called concurrently.
-
-The debounce is really a cdev field.  Putting it in the desc made sense
-to me at the time as it is per-line, not per-request, but perhaps it
-should moved into the cdev linereq, even if that means having to alloc
-space for it, just to get it out of your hair.
-
-Cheers,
-Kent.
