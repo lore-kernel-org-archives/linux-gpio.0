@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VN0VLnBk"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C13CCF;
-	Mon, 11 Dec 2023 11:03:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RduQeacq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 929C7C0;
+	Mon, 11 Dec 2023 11:03:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702321414; x=1733857414;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ACcmTJgIefDIVYbDCBBfrcMa7Src+AAIG2eWNqY+244=;
-  b=VN0VLnBkLVZd56vDxcQq35CzDxiJWdp4aU8EM06q3n+QIa3nbovwOyFd
-   xfrrOjl+7dlXsQa0K/HmqksZWPqB3j0a1ozVC464hqDOgTkwYpgJb4rmK
-   3ZGpMsrleOAP0Q0NmLAT96A2dkFnLaX9QtmmKa88yW4SOhS14DGkGcmCn
-   cZXGcCuC14nDlD45+1lIX/BqsIcDxjWZSMEUr8TxfV/lIH6RbjOXbYr9N
-   JSgVfHBoCLJEaj2bELxuYAgLCKAUWT51oWLxiVKMGyUctLnqkzOWVEYl+
-   V1FZKG9aE3HJCksGUlilIKPM569wrDvCRcukAFe1t4DV67Q6vnG1kIDBD
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10921"; a="379692511"
+  t=1702321417; x=1733857417;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Q2BczxrNZm1mBCco6sqW/QGBn/6Xmav22CnVogTYodc=;
+  b=RduQeacqgb/9arZ5AqJQFik8Y/nIT4tCmYeQAn4NpAqUp6yFdRSNz9Oq
+   lfgyjfXn8Wgg4rVIg/TvBVC/AUkuh9zHYMyg/cs52y6XO0H7THj9sFfy3
+   7+vBQW082ekjdY8RrSZvIosmCaCQVOMO7o8o55jQjDID6fzu0w7kzbtJC
+   tD3+wf+KbCR68i3wtZ/yAant2SYfp59qHnOhiixi6MYJQkeq1Vo8hJpMB
+   s/OmJllyjOuH9VUPdKzhRT60S7XmvKHkFvUFKA63OF5k3J0zcWCZGib07
+   sKh2B7hN/j/Rl2+WPoJrAKhofmhxHl/1uxjxNMUykUh9l520OFnsNYWWF
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10921"; a="480893475"
 X-IronPort-AV: E=Sophos;i="6.04,268,1695711600"; 
-   d="scan'208";a="379692511"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2023 11:03:32 -0800
+   d="scan'208";a="480893475"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2023 11:03:36 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10921"; a="946445054"
+X-IronPort-AV: E=McAfee;i="6600,9927,10921"; a="766491653"
 X-IronPort-AV: E=Sophos;i="6.04,268,1695711600"; 
-   d="scan'208";a="946445054"
+   d="scan'208";a="766491653"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 11 Dec 2023 11:03:24 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Dec 2023 11:03:24 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7601E3AE; Mon, 11 Dec 2023 21:03:23 +0200 (EET)
+	id 4AFB52AB; Mon, 11 Dec 2023 21:03:23 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -59,12 +59,10 @@ Cc: Ray Jui <rjui@broadcom.com>,
 	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
 	Emil Renner Berthing <kernel@esmil.dk>,
 	Hal Feng <hal.feng@starfivetech.com>
-Subject: [PATCH v5 03/13] pinctrl: ingenic: Use C99 initializers in PINCTRL_PIN_GROUP()
-Date: Mon, 11 Dec 2023 20:57:56 +0200
-Message-ID: <20231211190321.307330-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 00/13] pinctrl: Convert struct group_desc to use struct pingroup
+Date: Mon, 11 Dec 2023 20:57:53 +0200
+Message-ID: <20231211190321.307330-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20231211190321.307330-1-andriy.shevchenko@linux.intel.com>
-References: <20231211190321.307330-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -73,47 +71,73 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For the better flexibility use C99 initializers in PINCTRL_PIN_GROUP().
+The struct group_desc has a lot of duplication with struct pingroup.
+Deduplicate that by embeddind the latter in the former and convert
+users.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-ingenic.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+NB. The function_desc is in plan to follow the similar deduplication.
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index ee718f6e2556..f5661dcdedf5 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -82,16 +82,21 @@
- #define PINS_PER_GPIO_CHIP			32
- #define JZ4730_PINS_PER_PAIRED_REG	16
- 
--#define INGENIC_PIN_GROUP_FUNCS(name, id, funcs)		\
--	{						\
--		name,					\
--		id##_pins,				\
--		ARRAY_SIZE(id##_pins),			\
--		funcs,					\
-+#define INGENIC_PIN_GROUP_FUNCS(_name_, id, funcs)					\
-+	{										\
-+		.name = _name_,								\
-+		.pins = id##_pins,							\
-+		.num_pins = ARRAY_SIZE(id##_pins),					\
-+		.data = funcs,								\
- 	}
- 
--#define INGENIC_PIN_GROUP(name, id, func)		\
--	INGENIC_PIN_GROUP_FUNCS(name, id, (void *)(func))
-+#define INGENIC_PIN_GROUP(_name_, id, func)						\
-+	{										\
-+		.name = _name_,								\
-+		.pins = id##_pins,							\
-+		.num_pins = ARRAY_SIZE(id##_pins),					\
-+		.data = (void *)func,							\
-+	}
- 
- enum jz_version {
- 	ID_JZ4730,
+This time test-compiled with old GCC 8 for arm64, besides GCC 13 and
+LLVM 16 for x86_64.
+
+In v5:
+- dropped applied patches
+- elaborated the need of the conversion (Fabio)
+- reworked to avoid build errors on old GCC (Marek, Krzysztof, Geert)
+
+v4: https://lore.kernel.org/r/20231129161459.1002323-1-andriy.shevchenko@linux.intel.com
+
+In v4:
+- made pins also unsigned in struct group_desc (Geert)
+- made local pins variable unsigned in renesas drivers (Geert)
+- collected more tags (Paul, Geert)
+
+v3: https://lore.kernel.org/r/20231128200155.438722-1-andriy.shevchenko@linux.intel.com
+
+In v3:
+- fixed reported bug in equilibrium code (LKP)                                                                   - collected tags (Emil, Florian, Paul)
+
+v2: https://lore.kernel.org/r/20231123193355.3400852-1-andriy.shevchenko@linux.intel.com
+
+In v2:
+- added a few patches to fix multiple compile-time errors (LKP)
+- added tag (Jonathan)
+
+v1: https://lore.kernel.org/r/20231122164040.2262742-1-andriy.shevchenko@linux.intel.com
+
+Andy Shevchenko (13):
+  pinctrl: core: Add a convenient define PINCTRL_GROUP_DESC()
+  pinctrl: mediatek: Use C99 initializers in PINCTRL_PIN_GROUP()
+  pinctrl: ingenic: Use C99 initializers in PINCTRL_PIN_GROUP()
+  pinctrl: core: Embed struct pingroup into struct group_desc
+  pinctrl: bcm: Convert to use grp member
+  pinctrl: equilibrium: Convert to use grp member
+  pinctrl: imx: Convert to use grp member
+  pinctrl: ingenic: Convert to use grp member
+  pinctrl: keembay: Convert to use grp member
+  pinctrl: mediatek: Convert to use grp member
+  pinctrl: renesas: Convert to use grp member
+  pinctrl: starfive: Convert to use grp member
+  pinctrl: core: Remove unused members from struct group_desc
+
+ drivers/pinctrl/bcm/pinctrl-ns.c              |  4 +--
+ drivers/pinctrl/core.c                        | 11 +++---
+ drivers/pinctrl/core.h                        | 17 +++++----
+ drivers/pinctrl/freescale/pinctrl-imx.c       | 31 ++++++++--------
+ drivers/pinctrl/mediatek/pinctrl-moore.c      | 13 ++++---
+ drivers/pinctrl/mediatek/pinctrl-moore.h      | 10 +++---
+ drivers/pinctrl/mediatek/pinctrl-paris.h      | 10 +++---
+ drivers/pinctrl/pinctrl-equilibrium.c         |  4 +--
+ drivers/pinctrl/pinctrl-ingenic.c             | 35 ++++++++++---------
+ drivers/pinctrl/pinctrl-keembay.c             |  2 +-
+ drivers/pinctrl/renesas/pinctrl-rza1.c        |  2 +-
+ drivers/pinctrl/renesas/pinctrl-rza2.c        | 10 +++---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  4 +--
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c       |  4 +--
+ .../starfive/pinctrl-starfive-jh7100.c        |  8 ++---
+ .../starfive/pinctrl-starfive-jh7110.c        |  8 ++---
+ 16 files changed, 84 insertions(+), 89 deletions(-)
+
 -- 
 2.43.0.rc1.1.gbec44491f096
 
