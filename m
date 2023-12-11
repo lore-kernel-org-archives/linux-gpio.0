@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkFPu3m+"
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5673F3
-	for <linux-gpio@vger.kernel.org>; Mon, 11 Dec 2023 08:24:17 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-336223afe64so972117f8f.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Dec 2023 08:24:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQuW+4Sz"
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7699106
+	for <linux-gpio@vger.kernel.org>; Mon, 11 Dec 2023 08:24:20 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3333131e08dso5282997f8f.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Dec 2023 08:24:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702311856; x=1702916656; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702311859; x=1702916659; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ntQd6Owtil6YY6kfGzZXkI4IcBcs/QvakRIvV3Jrlmc=;
-        b=IkFPu3m+6IESH7GEy/s2c+dGeLlES3O4Hx8YUKJQMV6wicHdIwcV8zpQnazfrHu5J5
-         09ZxtBXV2j9XSNg5xgab1r29iSzf2C5b3GIdwDExabZ4f/n6XxfTWYAqcRVXKojQw5x+
-         L+3lqxuiTqvSUFAvLqXPyMeIK64ke2wdBtzNbXz6vyETIe07/Komx623yPsnNldFrSsn
-         EPPA9ux+LdTcBR+xepkBSrXShLcP9YuBnWHyQOyUj7vo1KYAj1qywkMsatEsWiEWUxVl
-         wCYt/HL4OjvTXYTUg9qFZk1F6+TKGT1/qEmxk+WJlCQJ3Vuo7GF8HyWo+5Wy8ZECKYnd
-         xezg==
+        bh=uHn6La4SxICedZgCH1SVIME+UAZa7Q6nySeOkcn6arQ=;
+        b=cQuW+4SzKo0rtB4RlQkun513oPbkZtjExhLs6ydAupEVQGbfKjxhk2w5uG5LfNvwMm
+         TPNKqyzMpsi4FgUE2FY4kJHi/dIhVdGF3TE35qlOp5izpPa4QVXNp18VWm5EHEdujdrD
+         m2oP0dNbgWBJjJW42j/LD+5dFhbclCjG8MyFCa1MDFghVGBp9Da3uOt58lVnNB6yHCPv
+         x5I0dgaOV52AT7S8Vo4sHVh2IRwriTHOYBDcu2c1UNz2ZheZmUAr1bGyvhHPym3h1WJD
+         eFeVwUF2TfpLD/5/bovDNGcsuRhKK1A/7wECmOb+xdJrL1N2m2Xw476Z2uutbag1JC1p
+         sqqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702311856; x=1702916656;
+        d=1e100.net; s=20230601; t=1702311859; x=1702916659;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ntQd6Owtil6YY6kfGzZXkI4IcBcs/QvakRIvV3Jrlmc=;
-        b=JCuTEJt/8C70P/HsWXiu2fSIcPO8N30j9J1cT5xYtmM0jMHkff6AwdXZ8IQUVx5kff
-         7K0mS88LNmVl9BMaXQHV1RdIinrCpocRES6NyuVrj/KrXxyWlmfoo5QBy8s1iscyGXeU
-         rG2GHFZPIDZgpz3OlIhIGmr38eXaT5VMMLECDWgHyYiPti6zFwbUm5Bp+v9aNdhwxLb2
-         BPbS5yV0uq5k8z7Ux3MIvebHcvogv2dqLNwaWpDVjUAzoOyQjd2SUKsRsjZ9wKFwzla+
-         N6y5vg0cKWJk5sBdMjEUGfMFW5ffk160uVxRfABfpl04Iq9FjxE5IG5y0aJ9Rl2Dc4Qr
-         eEhQ==
-X-Gm-Message-State: AOJu0YxE2zKB+j/mc/z9Xf64bJeiHmEMSy0kjYYb5cs8fuvutpJ5d3XW
-	285SQzWZaYpHSmFlHVOnXtuVBw==
-X-Google-Smtp-Source: AGHT+IERzhWDtnFYAN7fglUabpiLxWRf4WJ2G4/bvTQZRB7ZPQCtA2qqWU1Rohw/fIlMIYr7Qj/kEw==
-X-Received: by 2002:a5d:4412:0:b0:336:1701:f8f8 with SMTP id z18-20020a5d4412000000b003361701f8f8mr2352487wrq.52.1702311856155;
-        Mon, 11 Dec 2023 08:24:16 -0800 (PST)
+        bh=uHn6La4SxICedZgCH1SVIME+UAZa7Q6nySeOkcn6arQ=;
+        b=juhmbmpQjJ7DYDUaKVYk6xQ1bypfPfSPgkgDGPGpib+ORv72H+/LEavqOzc6sUaoRD
+         HIDS+piuOBx+i8H/a6nMANtR/Kvj2Bq+YOm3OOGst3AwdPNEWFQBSI2MRXdl/dHhkGDy
+         SpnmQjWm7oNjBBFGTfGvAlOJhauglbEtF7mFJr+6a9uC8C4GUqEWq5teWLCC30VCs2oT
+         XNBi7D9SnXmojC8JP7wrrheExI+3DSc6X1k2eLXT2C8UL1JLMTFOkK6geVisi7VVsXNw
+         f6CEUBgaRCD0aeUKQvdrEml/9UOxVU1y3qZ+dpgUACsl5oHGWtNAS4Vh2SdWTgEr6ove
+         GwvA==
+X-Gm-Message-State: AOJu0YxB0C1tO3wxoqrtl48+AEmIJRqpYEcimvb5H8i4Ql7ea5+Eb+Ph
+	lsCzY6pPz25ZkC//Ocx8pKnXGg==
+X-Google-Smtp-Source: AGHT+IEmf6M1kKz97d9swAyZHxrDmo9Qm70c5j0hECQTw3R9XBH94lhiP5Z8mVJVo/XZZ6lHXKjMTw==
+X-Received: by 2002:a05:600c:1715:b0:40c:267e:314c with SMTP id c21-20020a05600c171500b0040c267e314cmr2222341wmn.103.1702311859112;
+        Mon, 11 Dec 2023 08:24:19 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-28-58.as13285.net. [92.29.28.58])
-        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm8923103wrf.107.2023.12.11.08.24.14
+        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm8923103wrf.107.2023.12.11.08.24.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 08:24:15 -0800 (PST)
+        Mon, 11 Dec 2023 08:24:18 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v7 02/16] dt-bindings: arm: google: Add bindings for Google ARM platforms
-Date: Mon, 11 Dec 2023 16:23:17 +0000
-Message-ID: <20231211162331.435900-3-peter.griffin@linaro.org>
+Subject: [PATCH v7 04/16] dt-bindings: serial: samsung: Make samsung,uart-fifosize a required property
+Date: Mon, 11 Dec 2023 16:23:19 +0000
+Message-ID: <20231211162331.435900-5-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231211162331.435900-1-peter.griffin@linaro.org>
 References: <20231211162331.435900-1-peter.griffin@linaro.org>
@@ -86,81 +86,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This introduces bindings and dt-schema for the Google Tensor SoCs.
-Currently just gs101 and pixel 6 are supported.
+Specifying samsung,uart-fifosize in both DT and driver static data is error
+prone and relies on driver probe order and dt aliases to be correct.
+
+Additionally on many Exynos platforms these are (USI) universal serial
+interfaces which can be uart, spi or i2c, so it can change per board.
+
+For google,gs101-uart make samsung,uart-fifosize a required property.
+For this platform fifosize now *only* comes from DT.
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-@RobH I removed your 'Reviewed-by: Rob Herring <robh@kernel.org>' tag
-as since you reviewed this I added the empty ect node. Can you please
-do the review again?
+ .../devicetree/bindings/serial/samsung_uart.yaml       | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-x# Please enter the commit message for your changes. Lines starting
----
- .../devicetree/bindings/arm/google.yaml       | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
-new file mode 100644
-index 000000000000..e20b5c9b16bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/google.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/google.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+index 6af274d2f185..133259ed3a34 100644
+--- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
++++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+@@ -134,6 +134,16 @@ allOf:
+             - const: uart
+             - const: clk_uart_baud0
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - google,gs101-uart
++    then:
++      required:
++        - samsung,uart-fifosize
 +
-+title: Google Tensor platforms
-+
-+maintainers:
-+  - Peter Griffin <peter.griffin@linaro.org>
-+
-+description: |
-+  ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
-+  devices.
-+
-+  Currently upstream this is devices using "gs101" SoC which is found in Pixel
-+  6, Pixel 6 Pro and Pixel 6a.
-+
-+  Google have a few different names for the SoC:
-+  - Marketing name ("Tensor")
-+  - Codename ("Whitechapel")
-+  - SoC ID ("gs101")
-+  - Die ID ("S5P9845")
-+
-+  Likewise there are a couple of names for the actual device
-+  - Marketing name ("Pixel 6")
-+  - Codename ("Oriole")
-+
-+  Devicetrees should use the lowercased SoC ID and lowercased board codename,
-+  e.g. gs101 and gs101-oriole.
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: Google Pixel 6 / Oriole
-+        items:
-+          - enum:
-+              - google,gs101-oriole
-+          - const: google,gs101
-+
-+  # Bootloader requires empty ect node to be present
-+  ect:
-+    type: object
-+    additionalProperties: false
-+
-+required:
-+  - ect
-+
-+additionalProperties: true
-+
-+...
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
 2.43.0.472.g3155946c3a-goog
 
