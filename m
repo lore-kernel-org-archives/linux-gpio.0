@@ -1,15 +1,15 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="uYKQgOKE"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01rlnn2041.outbound.protection.outlook.com [40.95.53.41])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A0CD0;
+	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="lBnim1ub"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01rlnn2089.outbound.protection.outlook.com [40.95.54.89])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8EED5;
 	Wed, 13 Dec 2023 11:05:38 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fC4ld0gpItKHxaGEfnMcffkEBwNBch/BNB6XguhlQWME6/6povYbK+h0gCAt7v9o4RRm59C3+0nHkVccoH8GifIarJ/D/w8HIGeyWInBcWI5c8cHu4P3cpX7R4yLl67JxOxPdl3U/L7hKkzPgyAjc+d+kPWBEFmLuxTAt22iWf1z51LYYtnq2fHSd8+F3Dd0atvJHBR7x81L9hwGAPMLfP391/5o2uYlBx6idLymbErpP3sYQVDplhTEygb0i9eDv9BHD/A//p4RABu9NHI4cWF0VvxxJJz9sKqkzJHqmPXp38qqMDEC4v/VGuxP+cmzxmx9OZRiJG/JbEtSQ/mG9g==
+ b=d43MIEqgkQ9lSsaOxLVKP/vXUuLWJkjUmCb/JWBl+b+Y0nCVOUPeCDj5VtoFe6S23Z2XcpfDD7gRHYvvXHOng/6pfjvhHH54BNDoyp6NAqqiydIb/+3gFOr+1KK6JX745P86m+clRU6CKsdMeu54aSfwi+v9QTRhpXzWdkewzyuY8XaBFwqE2xqnGrYlkfpSoTdNNeNTVBxJMnC5iYXimePoLSyzwGFNJ5Nj0soyhR5j3+3tu+ldsKc4dbS4qqPWSOl62c7U+8Ir8T7S8W4ldCWQgBjaR6htYJ8BGP8NtaSxO6J+rL8d/3IsH+EEyWblJjZ5ugcv9V3l/ErCzOeNRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+i9VXHA17foOwtFxfhCvfV4OjRJRyDaaG7Oh+1HoFj4=;
- b=EVM1h/ZmjctDCcRc9KDJsuPt2dedxRVx3ZQfIyZpC+bY2w/F7EwoLrNfY53198sgvQS+32kkZf3HIfsUcEPtyHlq4ekNfzwcMIhG5ZBKS8Mz1EKbWRWzWS4MZFWqGNdgiRTna523Br6ppbQjRSOqaKuZRiKwijTlOcWygPqkA/9beKAMlvmVOzRINvJx3owOdRGlrz/9G320NtrkT7mlvFuTM2UIxqBBbbKWslsPi0h7wNovURO0NO7QUnB/2dhq8OQJVARy2/1raMDst8sr7ioY2yAYwHau8L5RZdoDx8YlWUcSQm6N1FDjrOWJyRZdcPo4QYDOWj3M1zPsyhy3rQ==
+ bh=uAB+2VWqPgQ5pF/q71H07YBh3mzkSI5r+fDj29BEmV0=;
+ b=k4p44qLo194/8I326OcrAtCCfcAGSpaQfStrwmCC2TUPIAZ5Rf6QieQjoUGOKmW9f7fVCyhxXKBkJzDo7c354clalJRg+FJJjzQob0v6pcXG+Ib69EDmoz7RuiMEyzcqqLJu3dxctE39reIRFajYxE0oJ3HsK5tWERSb26Ub9Km3N1LOC+K6mVpV+G50aY/r5kozU1HWETdcjxnK2hhOlZTjA0a+ds6O2ES/ZURH+DuFJIsog5Vgx23qxM2a9iyKbsY9MPcs7vSRQhEJ5i+hT7KnowZObXKuvW1CQORkDw/Dqu1TrGWpB7aBIeskP4MP4W4TqUOM1Wftv6K+xdx7LQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
  is 211.75.126.7) smtp.rcpttodomain=arndb.de smtp.mailfrom=gmail.com;
  dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
@@ -17,18 +17,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+i9VXHA17foOwtFxfhCvfV4OjRJRyDaaG7Oh+1HoFj4=;
- b=uYKQgOKERm+SAjSIxb7OeTh+AwPm6K+GRnfnFwpv3v8alc5awH165tH1jFhHvobAlDrsgy3B2d2DwW5gm1UJIsZfiuJsmE0cyDagyOeSrWIddwg223viq2Fcu2RM37NuisyLCnQID5Z7qDDaKjDqqCzRBCV43c+3WXKz100js84=
+ bh=uAB+2VWqPgQ5pF/q71H07YBh3mzkSI5r+fDj29BEmV0=;
+ b=lBnim1ubThge9eTuZZNWfA4beHRMOkNlPuEz1EUo1VOycxcvxASGQlfFDgW1Q3ppstY/c7BXiuAE0P6h30lF4uEbk1IE5Yw7hoScn834esUXWOE6kftYCO3aZS98mG2R2tO7x9gik1NS1BKsffugFLeJy1sulaBMKFmUIYA/4DE=
 Received: from KL1PR02CA0033.apcprd02.prod.outlook.com (2603:1096:820:d::20)
- by TYZPR03MB7060.apcprd03.prod.outlook.com (2603:1096:400:337::16) with
+ by TY0PR03MB6725.apcprd03.prod.outlook.com (2603:1096:400:213::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Wed, 13 Dec
- 2023 19:05:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Wed, 13 Dec
+ 2023 19:05:33 +0000
 Received: from HK2PEPF00006FB1.apcprd02.prod.outlook.com
- (2603:1096:820:d:cafe::1f) by KL1PR02CA0033.outlook.office365.com
+ (2603:1096:820:d:cafe::b5) by KL1PR02CA0033.outlook.office365.com
  (2603:1096:820:d::20) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26 via Frontend
- Transport; Wed, 13 Dec 2023 19:05:34 +0000
+ Transport; Wed, 13 Dec 2023 19:05:33 +0000
 X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 211.75.126.7)
  smtp.mailfrom=gmail.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=gmail.com;
@@ -37,21 +37,21 @@ Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
 Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
  HK2PEPF00006FB1.mail.protection.outlook.com (10.167.8.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7091.26 via Frontend Transport; Wed, 13 Dec 2023 19:05:34 +0000
-Received: from NTHCCAS02.nuvoton.com (10.1.9.121) by NTHCCAS01.nuvoton.com
+ 15.20.7091.26 via Frontend Transport; Wed, 13 Dec 2023 19:05:32 +0000
+Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
  (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 14 Dec
- 2023 03:05:33 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS02.nuvoton.com
- (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 03:05:32 +0800
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01B.nuvoton.com
+ (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14; Thu, 14 Dec
- 2023 03:05:33 +0800
+ 2023 03:05:32 +0800
 Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
  (10.1.8.28) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Thu, 14 Dec 2023 03:05:32 +0800
+ Transport; Thu, 14 Dec 2023 03:05:31 +0800
 Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 23EF45F5D7;
-	Wed, 13 Dec 2023 21:05:32 +0200 (IST)
+	by taln58.nuvoton.co.il (Postfix) with ESMTP id 07A3E5F5AC;
+	Wed, 13 Dec 2023 21:05:31 +0200 (IST)
 From: Tomer Maimon <tmaimon77@gmail.com>
 To: <arnd@arndb.de>, <pmenzel@molgen.mpg.de>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -61,12 +61,10 @@ To: <arnd@arndb.de>, <pmenzel@molgen.mpg.de>, <robh+dt@kernel.org>,
 CC: <openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tomer Maimon
 	<tmaimon77@gmail.com>
-Subject: [PATCH v3 2/3] soc: nuvoton: add configuration menu
-Date: Wed, 13 Dec 2023 21:05:27 +0200
-Message-ID: <20231213190528.3751583-3-tmaimon77@gmail.com>
+Subject: [PATCH v3 0/3] soc: add NPCM BPC driver support 
+Date: Wed, 13 Dec 2023 21:05:25 +0200
+Message-ID: <20231213190528.3751583-1-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231213190528.3751583-1-tmaimon77@gmail.com>
-References: <20231213190528.3751583-1-tmaimon77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,55 +78,69 @@ X-EOPAttributedMessage: 0
 X-MS-Exchange-SkipListedInternetSender:
  ip=[211.75.126.7];domain=NTHCCAS01.nuvoton.com
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB1:EE_|TYZPR03MB7060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e89f2bb-b129-447c-b52b-08dbfc0e7c13
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB1:EE_|TY0PR03MB6725:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1dc031c-674f-4210-866c-08dbfc0e7b01
 X-MS-Exchange-SenderADCheck: 2
 X-MS-Exchange-AntiSpam-Relay: 1
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	dJNOYgGeNoJ72Oxh181XSsFA31P5q4Q/Fw2uiMvH7sDMnNa4pXuqrN5STdO4vIfSUxlXzUpiOw+8BMAvWjfkp+Zw1uBkGj5OMgGmaBbx4n21x5wu720kf0y1Icv4iw30NJjOYNYAmtlhcbItSMA4yLiqG/JoeE06NEjNWMX2GVj1dVKSpHAUiuZjwFEJytq57bKD+5TMsJ6+FDiZkWT3wkkZL8I9sXjkG6ylXakti5gawE58Gfn0qGBWz/AvNJhFSSp+Dbo7vblgiddmB4lANJf0jziyYBcCwiG5CDZ4GP3YIXkvf1jQMg3WS3b49n80qEACkMvFjOWwNwLix5TcPqZ2sWz/uA8Ys2ElFyhzYrghIiatfURjQiu2a3nQHzR7BS01IIfr8ls7zGFnakGgGo+Fj3QIgXiz/XKV7fCYMuV9ZTWSz29IXhZsZ4DcuaQkH71453TD3FXzmbu1ZMiTmyVAyxsDOb1KgNf/bid15Q0mknCXEZeu7gnrxH3+K6lD4//JiqTujCWn565KNEmffc6IBXmjkrdeCjkTViP3El+NtBos25RstHI/LiGHR9b9z+EPUnBX1bYoAK5iw/q6ecdxz4HHIgKJgMP3LF8UdYcAczGwl2yFkfKosdz7781jaBesG8xZQVzcLucNjz7K0vVPYQ0bg90Y+MAxNqHQkrsQ4EsP8Lfyez8QZ13Hvv6Tf0iNnUEQu6/08tFs9dBL2K/Bm2Ng742itmjYYlR/3L0MdBTVd2k+xmGD6ePvnVk8eWiNeNE2FJ7Ux7E2gIDicvOGCatASr00tsKnqUrQnwOR8tzhISx9hFhAeG4rARoF
+	5G82PBEyOhZuQLfw+E3Aa6rEvJFsmYwxdAPZQKQmW2fXKgI6bnnoEkSKQj3MBEmF0ZtB+3tMLj/g0HLmqB9oc90/ylFHdR7tLrP7Xg9w5wWJWNTgKeg2MSSEf6Ena4PoPIHHTGIwm1LbC71Kn1uuS6EEX9bhtIxArSszS1yFGEnckPC5HT/uhKfdfXN4XdO8285vbvTAODY4S4ERlr7be8xnXI0iQDFhd/Lt5t4x7H5HAznvHmbSLTRw01CtrYdvLoYvQP1qYAC2utTHCzhIUHI4OGXrCFoQHlfOZCkHO6a7UFu6YdKBpxJKiiOqcftOIwzJGAtGErHl/VZZ4Lk1qaeiY7RfOWUrCxSvuFHFebsw4blHeCaPBwBOV6B1awp1v8n2cHLmn2n+Xlu33ezmAegapZPyteC1xRqQqZkWoIizGbxDLnMGKH/Jfcq9r+LuumoGFBBZKB1FO8X+TdDcGkXyuLo2Q9L72xGpgykC7uQMZ59WVMAk1n/SfgRqG8NeKPAF4CCySxaIwbruqUuH3sdZTjZNm59QBQYmtQuAxYSLyfqiCRUIqCVy/uCaF/SuP7DcUTvg/U0S3RestY57j/sklV1gd2nafNNHEi5OtJcMj7jB+n1I86+FVOB54Ty2mo1zwH5D4Z8khtWdmxPKrtQC4Q2bI7TW5hVVKQ0C5MCji8Wc6tJlLT9/durrPYQqnEKXFA93nqQQPZB8eYmIcY4bpgL4I42ZQoXUsEHXGRyzlh+qYk4r9FCM8cR2q1YQ4WTpDiqFxW2UkF4SceKJmWyTIDoLu4SxH5jhS4dTD/g=
 X-Forefront-Antispam-Report:
-	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(376002)(396003)(136003)(230922051799003)(48200799006)(82310400011)(451199024)(64100799003)(61400799012)(40470700004)(46966006)(76482006)(47076005)(26005)(2616005)(6666004)(1076003)(82202003)(82740400003)(356005)(81166007)(86362001)(55446002)(54906003)(316002)(70206006)(70586007)(110136005)(498600001)(336012)(6266002)(35950700001)(40480700001)(83380400001)(40460700003)(8936002)(8676002)(4326008)(73392003)(7416002)(5660300002)(4744005)(2906002)(921008)(41300700001)(36756003);DIR:OUT;SFP:1022;
+	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(39860400002)(376002)(136003)(230922051799003)(82310400011)(48200799006)(64100799003)(61400799012)(451199024)(40470700004)(46966006)(7416002)(5660300002)(2906002)(55446002)(40480700001)(8676002)(4326008)(8936002)(54906003)(82740400003)(110136005)(81166007)(356005)(76482006)(40460700003)(316002)(6666004)(41300700001)(86362001)(35950700001)(921008)(498600001)(70586007)(70206006)(47076005)(336012)(4743002)(83380400001)(2616005)(6266002)(82202003)(1076003)(36756003)(966005)(73392003)(26005);DIR:OUT;SFP:1022;
 X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 19:05:34.3996
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 19:05:32.6183
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e89f2bb-b129-447c-b52b-08dbfc0e7c13
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1dc031c-674f-4210-866c-08dbfc0e7b01
 X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB1.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7060
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB6725
 X-Spam-Level: **
 
-Add menu configuration to Nuvoton SoC drivers.
+This patch set adds BIOS Post code (BPC) support for the Nuvoton 
+NPCM Baseboard Management Controller (BMC).
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/soc/nuvoton/Kconfig | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Nuvoton BMC NPCM BIOS Post Code (BPC) monitoring two configurable 
+I/O addresses written by the host on the bus, the capture data 
+stored in 128-word FIFO.
 
-diff --git a/drivers/soc/nuvoton/Kconfig b/drivers/soc/nuvoton/Kconfig
-index df46182088ec..d5102f5f0c28 100644
---- a/drivers/soc/nuvoton/Kconfig
-+++ b/drivers/soc/nuvoton/Kconfig
-@@ -1,5 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
--menuconfig WPCM450_SOC
-+
-+menu "NUVOTON SoC drivers"
-+
-+config WPCM450_SOC
- 	tristate "Nuvoton WPCM450 SoC driver"
- 	default y if ARCH_WPCM450
- 	select SOC_BUS
-@@ -9,3 +12,5 @@ menuconfig WPCM450_SOC
+NPCM BPC can support capture double words.
+
+The NPCM BPC driver tested on NPCM750 Olympus board.
+
+Addressed comments from:
+ - Krzysztof Kozlowski : https://www.spinics.net/lists/kernel/msg5035188.html
+ - Conor Dooley : https://www.spinics.net/lists/kernel/msg5034239.html
+ - kernel test robot : https://www.spinics.net/lists/kernel/msg5034970.html
+
+Changes since version 2:
+ - Modify compatible bindings.
+ - Add more details to nuvoton,bpc-en-dwcapture parameter. 
+ - Using _is_visible() function to support NPCM8XX.
+ - add __poll_t custom.
+
+Changes since version 1:
+ - Remove LPC present from the BPC driver.
+ - Modify dt-bindings message header.
+ - Add vendor to the file name.
+ - Modify incorrect spelling.
  
- 	  This driver provides information such as the SoC model and
- 	  revision.
-+
-+endmenu
+Tomer Maimon (3):
+  dt-bindings: soc: nuvoton: Add NPCM BPC
+  soc: nuvoton: add configuration menu
+  soc: nuvoton: add NPCM BPC driver
+
+ .../soc/nuvoton/nuvoton,npcm-bpc.yaml         |  65 +++
+ drivers/soc/nuvoton/Kconfig                   |  16 +-
+ drivers/soc/nuvoton/Makefile                  |   1 +
+ drivers/soc/nuvoton/npcm-bpc.c                | 387 ++++++++++++++++++
+ 4 files changed, 468 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-bpc.yaml
+ create mode 100644 drivers/soc/nuvoton/npcm-bpc.c
+
 -- 
 2.34.1
 
