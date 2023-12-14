@@ -1,168 +1,165 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R55KsC/N"
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7751BA6;
-	Thu, 14 Dec 2023 04:57:39 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-a1db6c63028so935949866b.2;
-        Thu, 14 Dec 2023 04:57:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4H0hrBv"
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A83111;
+	Thu, 14 Dec 2023 05:35:05 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-db3a09e96daso8264419276.3;
+        Thu, 14 Dec 2023 05:35:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702558658; x=1703163458; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g2GKWz1rRyCNwha7gGcRolq2RILUdPIiIt5FzDdvILQ=;
-        b=R55KsC/NDMFJnCucTbjK5g5o6ELzDY2jFcfTZR678xc3Cyqzv4YZEAfkohXIY2IU07
-         4dl4paNF15fmPy/hDhPj4ZT9E/ws8+OPCaaEZXSf745M3Mza6oET9Y+g0BvZub2aDCKH
-         lHVcwFLKwhyCwvdWLhDXy6mUPqgAe7lfRhv0ubP7boMtSjypehMixvZk41QdZXx2NyM/
-         RrI7cu6nbU3pT9XRYB/PtgZUKhsJg+O4JqxnSS1H9uloO3a794NcJJy3ijw+CpFR99tL
-         fvRd7A/zUqUO0zZCvA1kM/ZfLPRFL//PzPpphkn4gvi2h/VVWCi4WBOQDKAyhvvQeWZE
-         sQSw==
+        d=gmail.com; s=20230601; t=1702560905; x=1703165705; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3s9nt/dkGYTh2W2+GQ2SmWUJnneEpQA8EgYbyB2HA0=;
+        b=U4H0hrBvihtKC/A06Azu7/Ymbqle9om675BxT7K85PHzzSM/aZpAQiIgvPyI2ar+tU
+         XxTFs9iqpMtKoNJadt54fniW7/0CYraTdmxIh46jkDbCOaUFwu01gtTKg1MmKRHzWF34
+         D0+YApRNryJ5CCQWyIrFyaex1vnI0L9iOOjStoKT0AmTsAdIBJF/oXeOTAv/NzPK/+8Z
+         GvXV4EiE1ZnN4fVM8M+37sAxpX/4rnoOhftjXnDHGnH20Cnz0OvVUMiRxa0eAyTofc2m
+         GFns//waV8i5tgycp/5BGk2ZgyqbBuYJ0ScT8cvbMwcDPQQNl2Eg9s1zVj97fnaeh7Wv
+         cUmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702558658; x=1703163458;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g2GKWz1rRyCNwha7gGcRolq2RILUdPIiIt5FzDdvILQ=;
-        b=fnXUPG4rDFyD+WBn32ix6SI74MeCIA64XP/p0HXV+lPPaNrNkMYKKigvQvLSrgan10
-         MNbXKTPo3YdP8gZiqPPs8p11Tvwi860UvQN6cN91+EMsj8oUE0SdwZB6j5Dg15KVNLF/
-         1krsZgZ1qo88P+JxiET/QX7UAh5o9KsNo0nUfOPW7LIffr1jpmWNp+8RPf3hcewuIRI2
-         5pr8jvlkydqj+9pqCx9VQ27meRr5TN6di+wabj3Xa+xG1HMpnU9e07DN0K5GMQ0992hK
-         yojN3OiqGXLHEB4lTfQdN3puUoUlTGN9DJNONA/VlLBdz9OhodWMxBs259ElAl0enwfS
-         Swmw==
-X-Gm-Message-State: AOJu0YyTmFIzCznmuAM9dzM5NctEhmlUlOFmuQXcXqXEZeTOfv0smpyU
-	EmHXAhpHTWNxtcV3CMLbtlU=
-X-Google-Smtp-Source: AGHT+IHtIY7rFcQC93tfnJBXkLGQRNbPQabINCfXb9w5tCgijrk98Ge2WRXokyVfdLbqczA2V1R56A==
-X-Received: by 2002:a17:906:4546:b0:a01:fc1b:8197 with SMTP id s6-20020a170906454600b00a01fc1b8197mr4262851ejq.62.1702558657491;
-        Thu, 14 Dec 2023 04:57:37 -0800 (PST)
-Received: from [172.25.98.130] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id ub14-20020a170907c80e00b00a1da5d9a602sm9368347ejc.138.2023.12.14.04.57.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Dec 2023 04:57:36 -0800 (PST)
-Message-ID: <375bf803-a5d5-4778-938a-b8218b116375@gmail.com>
-Date: Thu, 14 Dec 2023 14:57:35 +0200
+        d=1e100.net; s=20230601; t=1702560905; x=1703165705;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y3s9nt/dkGYTh2W2+GQ2SmWUJnneEpQA8EgYbyB2HA0=;
+        b=kpL+RGNIBtWQDIeLX4/jwCGXzylquu0qWpq1/TGURPhapazBe0LTl6BuiBcoRc4ygN
+         vOPKPuypxPLMuY5m/SSZCKF1KLqFDCZ+NWw/p+vjLTc7kbLkk0gPHqfTk980JHij5TG0
+         Dm0Gyl8SXJbLYGBg4Tji55rL6qF7ms9nmjNrVKdrBfujBMb0D/c8Ceqq8kCiOA85ZJbW
+         7fd62EE4MNU+FISKxEMVk0A3oS44waDsE/IybtzY3+/3iEhO/1roeFGto4h+WFdEYf8m
+         yKSmLLaLEzp8Gfk5RT48ffXc0aXRKpQgmX160x6TTWkx+kdRK56KyA+Azlc8wDIVSNeX
+         XCHA==
+X-Gm-Message-State: AOJu0Yze9DT/xogQL4T3PqQVAwqVrijXneVsXRYj4S7/qTov6do5IH4+
+	Dj2nuq1Dm1CQq2o/kkggqh5dFueY0qCP4nzFUto=
+X-Google-Smtp-Source: AGHT+IFH0sGhWqrMql6feIySTna7hEqbkNg/aDh9joX9iMx2qR+eNM1NkuEkHw2rj+og88fzdOt+ITN7+3dy/pW4Z6o=
+X-Received: by 2002:a25:dccf:0:b0:dbc:dc60:1e36 with SMTP id
+ y198-20020a25dccf000000b00dbcdc601e36mr1110925ybe.36.1702560904819; Thu, 14
+ Dec 2023 05:35:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] iio: adc: ad7173: add AD7173 driver
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org,
- linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Walle <michael@walle.cc>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- ChiaEn Wu <chiaen_wu@richtek.com>, Niklas Schnelle <schnelle@linux.ibm.com>,
- =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>,
- Mike Looijmans <mike.looijmans@topic.nl>, Haibo Chen <haibo.chen@nxp.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231212104451.22522-1-mitrutzceclan@gmail.com>
- <20231212104451.22522-2-mitrutzceclan@gmail.com>
- <20231214123029.000002f1@Huawei.com>
-From: Ceclan Dumitru <mitrutzceclan@gmail.com>
-In-Reply-To: <20231214123029.000002f1@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231213190528.3751583-1-tmaimon77@gmail.com> <20231213190528.3751583-2-tmaimon77@gmail.com>
+ <ccaefd08-161f-4aa1-acc1-5216c5f7f7c7@linaro.org>
+In-Reply-To: <ccaefd08-161f-4aa1-acc1-5216c5f7f7c7@linaro.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 14 Dec 2023 15:34:53 +0200
+Message-ID: <CAP6Zq1i42ZUJmt_=VpLa6e-gzOndMFYL-Tuc1gEPr-fARS3VBA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: soc: nuvoton: Add NPCM BPC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: arnd@arndb.de, pmenzel@molgen.mpg.de, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	j.neuschaefer@gmx.net, openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Krzysztof,
 
+Thanks for your comments.
 
-On 12/14/23 14:30, Jonathan Cameron wrote:
-> On Tue, 12 Dec 2023 12:44:36 +0200
-> Dumitru Ceclan <mitrutzceclan@gmail.com> wrote:
-> 
->> The AD7173 family offer a complete integrated Sigma-Delta ADC solution
->> which can be used in high precision, low noise single channel
->> applications or higher speed multiplexed applications. The Sigma-Delta
->> ADC is intended primarily for measurement of signals close to DC but also
->> delivers outstanding performance with input bandwidths out to ~10kHz.
->>
->> Reviewed-by: Michael Walle <michael@walle.cc> # for gpio-regmap
->> Signed-off-by: Dumitru Ceclan <mitrutzceclan@gmail.com>
-> Hi
-> 
-> Given it seems like you'll be doing a v9, one quick comment from me below.
-> 
-> Jonathan
-> 
->> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->> new file mode 100644
->> index 000000000000..96918b24a10a
->> --- /dev/null
->> +++ b/drivers/iio/adc/ad7173.c
->> @@ -0,0 +1,964 @@
-> ...
-> 
->> +static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->> +{
-> 
-> ...
-> 
->> +
->> +	if (st->info->has_temp) {
->> +		chan_arr[chan_index] = ad7173_temp_iio_channel_template;
->> +		chan_st_priv = &channels_st_priv_arr[chan_index];
->> +		chan_st_priv->ain =
->> +			AD7173_CH_ADDRESS(chan_arr[chan_index].channel, chan_arr[chan_index].channel2);
->> +		chan_st_priv->cfg.bipolar = false;
->> +		chan_st_priv->cfg.input_buf = true;
->> +		chan_st_priv->cfg.ref_sel = AD7173_SETUP_REF_SEL_INT_REF;
->> +		st->adc_mode |= AD7173_ADC_MODE_REF_EN;
->> +
->> +		chan_index++;
->> +	}
->> +
->> +	device_for_each_child_node(dev, child) {
->> +		chan = &chan_arr[chan_index];
->> +		chan_st_priv = &channels_st_priv_arr[chan_index];
->> +		ret = fwnode_property_read_u32_array(child, "diff-channels",
->> +						     ain, ARRAY_SIZE(ain));
->> +		if (ret) {
->> +			fwnode_handle_put(child);
->> +			return ret;
->> +		}
->> +
->> +		if (ain[0] >= st->info->num_inputs ||
->> +		    ain[1] >= st->info->num_inputs) {
->> +			fwnode_handle_put(child);
->> +			return dev_err_probe(dev, -EINVAL,
->> +					     "Input pin number out of range for pair (%d %d).\n",
->> +					     ain[0], ain[1]);
->> +		}
->> +
->> +		ret = fwnode_property_match_property_string(child,
->> +							    "adi,reference-select",
->> +							    ad7173_ref_sel_str,
->> +							    ARRAY_SIZE(ad7173_ref_sel_str));
->> +
->> +		if (ret < 0)
->> +			ref_sel = AD7173_SETUP_REF_SEL_INT_REF;
->> +		else
->> +			ref_sel = ret;
-> Simpler pattern for properties with a default is not to check the error code.
-> 
-> 		ref_sel = AD7173_SETUP_REF_SEL_INT_REF;
-> 
-> 		fwnode_property_match_property_String(child, ...
-> 
-> so only if it succeeds is the value overridden.
+On Thu, 14 Dec 2023 at 09:56, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 13/12/2023 20:05, Tomer Maimon wrote:
+> > Added device tree binding documentation for Nuvoton BMC NPCM BIOS Post
+> > Code (BPC).
+> >
+> > The NPCM BPC monitoring two configurable I/O addresses written by the
+> > host on the bus.
+> >
+> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > ---
+> >  .../soc/nuvoton/nuvoton,npcm-bpc.yaml         | 65 +++++++++++++++++++
+> >  1 file changed, 65 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-bpc.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-bpc.yaml b/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-bpc.yaml
+> > new file mode 100644
+> > index 000000000000..c04302a1d52b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/soc/nuvoton/nuvoton,npcm-bpc.yaml
+> > @@ -0,0 +1,65 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/soc/nuvoton/nuvoton,npcm-bpc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Nuvoton BMC NPCM BIOS Post Code (BPC) controller
+> > +
+> > +maintainers:
+> > +  - Tomer Maimon <tmaimon77@gmail.com>
+> > +
+> > +description:
+> > +  Nuvoton BMC NPCM BIOS Post Code (BPC) monitoring two configurable I/O
+> > +  addresses written by the host on the bus, the capture data stored in
+> > +  128-word FIFO.
+> > +
+> > +  NPCM BPC supports capture double words, when using capture
+> > +  double word only I/O address 1 is monitored.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - nuvoton,npcm845-bpc
+> > +          - nuvoton,npcm750-bpc
+> > +      - const: nuvoton,npcm-bpc
+>
+> That's not what I suggested. I asked to make 845 compatible with 750.
+> This works, but I want to be sure you really, really understand the
+> consequences of this.
+Did you mean to do the compatible as follows?
+properties:
+  compatible:
+    items:
+      - enum:
+          - nuvoton,npcm845-bpc
+      - const: nuvoton,npcm750-bpc
 
-Where exactly would the value be overridden, the function does not have
-an argument passed for the found index. The function is written to
-return either the found index or a negative error.
+Appreciate it if you could explain what is the difference between the
+compatibility suggested in V3?
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  nuvoton,monitor-ports:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>
+> Missing constraints, like min/maxItems and maybe values.
+O.K.
+>
+> > +    description:
+> > +      Contain monitor I/O addresses on the bus, at least one monitor I/O
+> > +      address required.
+> > +
+> > +  nuvoton,bpc-en-dwcapture:
+>
+> nuvoton,double-word-capture?
+Modify in V4
+>
+> > +    description:
+> > +      Set DWCAPTURE bit in BPCFEN register that enables double word capture
+> > +      according to the first address setting.
+> > +    type: boolean
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - nuvoton,monitor-ports
+>
+> Best regards,
+> Krzysztof
+>
 
-The proposed pattern would just ignore the returned index and would
-always leave ref_sel to default. Am I missing something?
+Thanks,
 
-I can see in the thread where it was introduced that you proposed:
-"Looking at the usecases I wonder if it would be better to pass in
-
-an unsigned int *ret which is only updated on a match?"
-
-But on the iio togreg branch that was suggested I could the function on,
-it does not have that parameter.
+Tomer
