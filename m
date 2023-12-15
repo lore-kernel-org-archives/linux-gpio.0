@@ -1,55 +1,55 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CCB53AF
-	for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 14:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5B7364B2
+	for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 14:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="f5ka+KE/"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="JveIQFn2"
 Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3A8FD3F2C1
-	for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 14:39:12 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 702C73F737
+	for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 14:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1702651152;
-	bh=DP/Du3U6CUcJgvW/RY0Kd++wZRLCP6RkWeO4awpzGL4=;
+	s=20210705; t=1702651154;
+	bh=RobAsopvkyaJG4ZlGH6Q+ihyPFqhE+HxeBCHD/K5fRk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=f5ka+KE/KeWhuy3HXkILyrwP8G8uLew5gsHyT5wAyhzj1h4j26G6oAKiswnfiezhL
-	 I2ICnJLWO13eYHR9LczDnwLT85Q8orFReaxgYDggcy78pjT+dWSWDeVUKMBbZkH+pX
-	 vhdUBVr+utQ+7ebtqDNRhpppJ2HMCv+pTo1bymSd58xq4EJoVGeIKF7aVrL1+vqdlD
-	 7Ecc1BIG2m5b2Wzqd0/Pa+OLRZ1R+AdPauy1hdEH/iv4ZhdecDRRS2rx6Jf8W/Rxgy
-	 OXRPKB6wKmbfEtkVXX0gHq28InjNNqp0KNI2/5VmxRKWUINPyAtO1kpTmfa9/ienPG
-	 S95jclXTbt1PQ==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a1d38492da7so45850266b.0
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 06:39:12 -0800 (PST)
+	b=JveIQFn2hQtiyEGthTh3fz27PLBh02oceELhU88h2YjgRTXCJYOY0JUZ+vYeU3i3W
+	 d8ToUf4a3ADU9cvRYxnL7sp7OnVFU+kdzfBlHhAXj/cLKY+DhCgEklXlR5MiWV1IQG
+	 K4OTjk1gGeDQNunql/fABmy0Pt9168sPtJz8DnDnLSium2duC9Ysvaz62cTPyo3uNw
+	 qRoCmrbIQLAeRFfO0WNhWAZVi7u1RsihmSVxcBNt8p4vCHJilN+ACd0DdzB/LUd/GQ
+	 6wBgNRZ090lYheME1O2MGw6c089o0Cz3wcVzR3C5k9dcd26eJTENBpHPvZFZLb4Kwe
+	 ywC/z0ICQJ51Q==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9fffa4c4f28so28484866b.3
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Dec 2023 06:39:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702651151; x=1703255951;
+        d=1e100.net; s=20230601; t=1702651153; x=1703255953;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DP/Du3U6CUcJgvW/RY0Kd++wZRLCP6RkWeO4awpzGL4=;
-        b=EOSTOvKCGsrDqIWkpn7LHB7K50DV6iK1LV2+EBW+VXirdAiiciV0btIA4c6batQE4Z
-         INBjS62jvwH0FpJLfOAOgo95QqXMFSLAkX9peRUCyWW3MXM9U+GOig8BZjTDi/Lk3/MT
-         42BmnAahwIDFiPraDtz6CHSBi8te1aEV/IITPut71zyLXjDZnwIiFtWtB7SzHj551j4b
-         0QXythpVtaLjBAWQlr0uyYgEk0gw7oPtCMS6J+YoU/UQdEHwwZCksw8EkVtNzguu9bbU
-         v1sDaj3mVCNzeOJB3JTay/urPTFRL0GW1OxGJb7wVbvtHYdZJyvgmkZ6tEhV2ndOA6Ni
-         TxJA==
-X-Gm-Message-State: AOJu0YwHHU6yD/npM18oDsEdvKie/AbryfOkMOmXOEsd/dPY5WoOqOVU
-	jgRczRQMwVtD52fW7LjOBYsoYPJOtJzvEjKlijmMnSr7ZdLuct+WA5WlEczk9ecdnyouWDTGggE
-	R25pWLOO+pEyEfrn2RXYotc9D6Z7KlmtFzDpd6jQbxpANGo8=
-X-Received: by 2002:a17:906:11cb:b0:a1f:69bb:1172 with SMTP id o11-20020a17090611cb00b00a1f69bb1172mr3074863eja.24.1702651151345;
-        Fri, 15 Dec 2023 06:39:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGTffL/doR/ETAy/wrSMpH3RUmFY43A+OIfIwmHqAuJ/qR9YE82r4WDCo8NkupJsSz0cvddfw==
-X-Received: by 2002:a17:906:11cb:b0:a1f:69bb:1172 with SMTP id o11-20020a17090611cb00b00a1f69bb1172mr3074850eja.24.1702651151022;
-        Fri, 15 Dec 2023 06:39:11 -0800 (PST)
+        bh=RobAsopvkyaJG4ZlGH6Q+ihyPFqhE+HxeBCHD/K5fRk=;
+        b=r+SW/s6AXbJl2LaKRQVswLN3X+SyIs75SqxiHR9mELCITz0oH5qtfM4Dl81o7Oj7xk
+         OPdsZl06MSQiehunHQNYUn+KLcnFi+Ve6f38tSWGTzZJ0O1dYCdpFUiLYwmTnIfGoID1
+         z2xyQ2eqQrUALRVWBQdqeoWBLN8LFN4e/ZaH3As3ywYeG4Bhoq1cQ5H7UBcxLFl6rUSY
+         ZJCDQtm7FL2OE8ZtKFGh1ZAxyJnOlUh8UJTQF1zwMgnDVaX4xB5uPePDx5+96y7NskEI
+         5uxgTm3Pk5WiKmTsyZP470FMT7KoZy4Juf36e5/fcqQerSVgkyRghWXGb75Q3+Tqew7d
+         83yA==
+X-Gm-Message-State: AOJu0YxJ787VdGJq0+0CAZJqZzleuf202anNeBW7m4rhHVGJkG3gk7Sg
+	H2C1/4lnKsUo6sUVbisGjHrgZnbp/mzGhTFmfXV8O+lYjZApIC46+EdPVaFU7Zqk1TYrwpECCmZ
+	tjgFtRGehSEaQSSMFKtYUGKwkPpSbfsp8ebo7HEifavt3nhI=
+X-Received: by 2002:a17:907:9714:b0:a04:bc39:c1c7 with SMTP id jg20-20020a170907971400b00a04bc39c1c7mr8341368ejc.36.1702651153752;
+        Fri, 15 Dec 2023 06:39:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEMJ/XNk1OcnlxBlTONG8qxR+NbDMfjb9FP+RE/bMN9YTONgYiMhiDoaYwky2i3vk37hslVhA==
+X-Received: by 2002:a17:907:9714:b0:a04:bc39:c1c7 with SMTP id jg20-20020a170907971400b00a04bc39c1c7mr8341347ejc.36.1702651153594;
+        Fri, 15 Dec 2023 06:39:13 -0800 (PST)
 Received: from stitch.. ([152.115.213.158])
-        by smtp.gmail.com with ESMTPSA id tm6-20020a170907c38600b00a1db955c809sm10789122ejc.73.2023.12.15.06.39.09
+        by smtp.gmail.com with ESMTPSA id tm6-20020a170907c38600b00a1db955c809sm10789122ejc.73.2023.12.15.06.39.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Dec 2023 06:39:09 -0800 (PST)
+        Fri, 15 Dec 2023 06:39:13 -0800 (PST)
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To: linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
@@ -68,9 +68,9 @@ Cc: Hoan Tran <hoan@os.amperecomputing.com>,
 	Fu Wei <wefu@redhat.com>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [PATCH v1 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
-Date: Fri, 15 Dec 2023 15:38:59 +0100
-Message-Id: <20231215143906.3651122-2-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 3/8] riscv: dts: thead: Add TH1520 pin control nodes
+Date: Fri, 15 Dec 2023 15:39:01 +0100
+Message-Id: <20231215143906.3651122-4-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231215143906.3651122-1-emil.renner.berthing@canonical.com>
 References: <20231215143906.3651122-1-emil.renner.berthing@canonical.com>
@@ -82,176 +82,53 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
+Add nodes for pin controllers on the T-Head TH1520 RISC-V SoC.
 
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 ---
- .../pinctrl/thead,th1520-pinctrl.yaml         | 156 ++++++++++++++++++
- 1 file changed, 156 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+ arch/riscv/boot/dts/thead/th1520.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-new file mode 100644
-index 000000000000..1b1b446cd498
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-@@ -0,0 +1,156 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index ba4d2c673ac8..397d5c71bd3d 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -242,6 +242,11 @@ portd: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl1_apsys: pinctrl@ffe7f3c000 {
++			compatible = "thead,th1520-group2-pinctrl";
++			reg = <0xff 0xe7f3c000 0x0 0x1000>;
++		};
 +
-+title: T-Head TH1520 SoC pin controller
+ 		gpio0: gpio@ffec005000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0xff 0xec005000 0x0 0x1000>;
+@@ -278,6 +283,11 @@ portb: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl0_apsys: pinctrl@ffec007000 {
++			compatible = "thead,th1520-group3-pinctrl";
++			reg = <0xff 0xec007000 0x0 0x1000>;
++		};
 +
-+maintainers:
-+  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
+ 		uart2: serial@ffec010000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0xff 0xec010000 0x0 0x4000>;
+@@ -414,6 +424,11 @@ porte: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl_aosys: pinctrl@fffff4a000 {
++			compatible = "thead,th1520-group1-pinctrl";
++			reg = <0xff 0xfff4a000 0x0 0x2000>;
++		};
 +
-+description: |
-+  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
-+
-+  The TH1520 has 3 groups of pads each controlled from different memory ranges.
-+  Confusingly the memory ranges are named
-+    PADCTRL_AOSYS  -> PAD Group 1
-+    PADCTRL1_APSYS -> PAD Group 2
-+    PADCTRL0_APSYS -> PAD Group 3
-+
-+  Each pad can be muxed individually to up to 5 different functions. For most
-+  pads only a few of those 5 configurations are valid though, and a few pads in
-+  group 1 does not support muxing at all.
-+
-+  Pinconf is fairly regular except for a few pads in group 1 that either can't
-+  be configured or has some special functions. The rest have configurable drive
-+  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
-+  addition to a special strong pull up.
-+
-+  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
-+  are then meant to be used by the audio co-processor. Each such pad can then
-+  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
-+  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
-+  also configured in different registers. All of this is done from a different
-+  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - thead,th1520-group1-pinctrl
-+      - thead,th1520-group2-pinctrl
-+      - thead,th1520-group3-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+patternProperties:
-+  '-[0-9]+$':
-+    type: object
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        $ref: /schemas/pinctrl/pincfg-node.yaml
-+        description:
-+          A pinctrl node should contain at least one subnode describing one
-+          or more pads and their associated pinmux and pinconf settings.
-+
-+        properties:
-+          pins:
-+            $ref: /schemas/types.yaml#/definitions/string-array
-+            description: List of pads that properties in the node apply to.
-+
-+          function:
-+            $ref: /schemas/types.yaml#/definitions/string
-+            enum: [ "0", "1", "2", "3", "4", "5" ]
-+            description: The mux function to select for the given pins.
-+
-+          bias-disable: true
-+
-+          bias-pull-up:
-+            type: boolean
-+
-+          bias-pull-down:
-+            type: boolean
-+
-+          drive-strength:
-+            enum: [ 1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25 ]
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          slew-rate:
-+            maximum: 1
-+
-+          thead,strong-pull-up:
-+            oneOf:
-+              - type: boolean
-+              - $ref: /schemas/types.yaml#/definitions/uint32
-+                enum: [ 0, 2100 ]
-+            description: Enable or disable strong 2.1kOhm pull-up.
-+
-+        required:
-+          - pins
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    padctrl0_apsys: pinctrl@ec007000 {
-+        compatible = "thead,th1520-group3-pinctrl";
-+        reg = <0xec007000 0x1000>;
-+
-+        uart0_pins: uart0-0 {
-+            tx-pins {
-+                pins = "UART0_TXD";
-+                function = "0";
-+                bias-disable;
-+                drive-strength = <3>;
-+                input-disable;
-+                input-schmitt-disable;
-+                slew-rate = <0>;
-+            };
-+
-+            rx-pins {
-+                pins = "UART0_RXD";
-+                function = "0";
-+                bias-disable;
-+                drive-strength = <1>;
-+                input-enable;
-+                input-schmitt-enable;
-+                slew-rate = <0>;
-+            };
-+        };
-+    };
-+
-+    padctrl1_apsys: pinctrl@e7f3c000 {
-+        compatible = "thead,th1520-group2-pinctrl";
-+        reg = <0xe7f3c000 0x1000>;
-+
-+        i2c5_pins: i2c5-0 {
-+            i2c-pins {
-+                pins = "QSPI1_CSN0",    /* I2C5_SCL */
-+                       "QSPI1_D0_MOSI"; /* I2C5_SDA */
-+                function = "2";
-+                bias-disable;
-+                drive-strength = <7>;
-+                input-enable;
-+                input-schmitt-enable;
-+                slew-rate = <0>;
-+                thead,strong-pull-up;
-+            };
-+        };
-+    };
+ 		ao_gpio1: gpio@fffff52000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0xff 0xfff52000 0x0 0x1000>;
 -- 
 2.40.1
 
