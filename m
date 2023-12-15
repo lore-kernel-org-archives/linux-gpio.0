@@ -1,123 +1,116 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775643EA81;
-	Fri, 15 Dec 2023 15:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWXLJsKt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702653077; x=1734189077;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Sook6ADwecKC9ZJSEtb7hbbRbghZbLoEQUg8mNVwp3o=;
-  b=AWXLJsKtIIigDkB5qBudXJN8z/Y6ew4sUxxzxdbxIgVQTv7Z07LKZdOg
-   wllEcolyWPDYLkWgjCR0GyisrtHquo/r9knswtWebQy5ZnK9S5pXCII7e
-   T9cNFCnjlVCFPFFwU6ANIFkXH+2klhNCeB89V95KW1pWijYHSI/Y3IOcT
-   2JipEJjQpHlby8EhH5DhBIeYpmMtIAfVNf1gJN4bbxlyoFELlBAa0rFAR
-   EO0xyS98O/yuLJzCbRCjwUP0XB70QxoAGa323imNk5ra6c6SJ1E11cPVJ
-   Fg9ZFxTC8hZmkY/xzfpgximEYy+B635TszgAPUvy1mG2o7jSWXqhgNCR5
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="394161415"
-X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
-   d="scan'208";a="394161415"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 07:08:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="803736114"
-X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
-   d="scan'208";a="803736114"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 07:08:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rE9nk-000000069VM-2TzQ;
-	Fri, 15 Dec 2023 17:08:32 +0200
-Date: Fri, 15 Dec 2023 17:08:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v1 1/3] device property: Implement device_is_big_endian()
-Message-ID: <ZXxr8LD1P63k-xRV@smile.fi.intel.com>
-References: <20231025184259.250588-1-andriy.shevchenko@linux.intel.com>
- <20231025184259.250588-2-andriy.shevchenko@linux.intel.com>
- <2023102624-moonshine-duller-3043@gregkh>
- <ZTpbMVSdKlOgLbwv@smile.fi.intel.com>
- <ZUPBVMdi3hcTyW2n@smile.fi.intel.com>
- <CAMRc=MeV9ZyOzuQFEE_duPTHYgfmr6UZU6bpjDPhrczZX4PHpg@mail.gmail.com>
- <CAMRc=MdSpk_OszeDCyA5_Sp-w=sL9DHB2gGCOFP+FCiobm2cbA@mail.gmail.com>
- <2023111513-stinky-doorframe-8cd1@gregkh>
- <ZXHUat2Xo1VcAxN2@smile.fi.intel.com>
- <2023121512-breeches-snaking-74ad@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C4336B10;
+	Fri, 15 Dec 2023 15:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-59052ab970eso805190eaf.1;
+        Fri, 15 Dec 2023 07:18:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702653523; x=1703258323;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Wx6tE9pQ+EepUECdpeIr7K3ALwmL7SjqzWxTPqRLfZI=;
+        b=VuhtT1m/FkmCKwUiVgZXeznSppjTKnqUbLYmYYCTv4ELhqWD7EXORvbxeRppO31e8d
+         vKEr2f6/BOryRAh0yrv7g/K46ENBxgBkbCFX5TP/u965lY61ygQDFTRudzI4YBzZhU95
+         iLEenH7wzzXPsHA+QhNcqguUjhPvLjfrqfL9rVcUvlKc07Dps6xn2R6GvblQsMeGwdV+
+         Tkhew3x5HqxdSo3kmgzxdrOlDCTTtMJBWOamMISZzPvovfRCLnOO83Px1M8fpoUC4GQT
+         f0UmJdxWM7ZhRRcKSaCP0Lwu7F3GgFkstXPc9ZDtZS+oYTgI/BW5iyEPiZ269YAitU+q
+         v+aw==
+X-Gm-Message-State: AOJu0YxA8loqqga0xFwQyGvg0iOcMD8GJW5IOUEJ/Peqg9N4x50x9JIO
+	4qif7m6c1BVnjVzHfckZ5g==
+X-Google-Smtp-Source: AGHT+IHjFeotZx/0jN0abAYahbn+a/d+puSMjYHpsS0vGkhglRT7juzY/+tJNJarXEhiwoEGbj3qJw==
+X-Received: by 2002:a05:6870:ec8b:b0:203:5ba2:895c with SMTP id eo11-20020a056870ec8b00b002035ba2895cmr891540oab.35.1702653522944;
+        Fri, 15 Dec 2023 07:18:42 -0800 (PST)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id lt14-20020a05687142ce00b00203297a24d7sm1393415oab.47.2023.12.15.07.18.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 07:18:42 -0800 (PST)
+Received: (nullmailer pid 3935630 invoked by uid 1000);
+	Fri, 15 Dec 2023 15:18:40 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2023121512-breeches-snaking-74ad@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Rob Herring <robh@kernel.org>
+To: Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: Mike Looijmans <mike.looijmans@topic.nl>, Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, ChiaEn Wu <chiaen_wu@richtek.com>, andy@kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Michael Walle <michael@walle.cc>, Andy Shevchenko <andy.shevchenko@gmail.com>, devicetree@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>, brgl@bgdev.pl, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Arnd Bergmann <arnd@arndb.de>, =?utf-8?q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>, Haibo Chen <haibo.chen@nxp.com>, Ceclan Dumitru <dumitru.ceclan@analog.com>, linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>
+In-Reply-To: <20231215133512.28735-1-mitrutzceclan@gmail.com>
+References: <20231215133512.28735-1-mitrutzceclan@gmail.com>
+Message-Id: <170265352089.3935533.15346706462448721074.robh@kernel.org>
+Subject: Re: [PATCH v9 1/2] dt-bindings: adc: add AD7173
+Date: Fri, 15 Dec 2023 09:18:40 -0600
 
-On Fri, Dec 15, 2023 at 03:49:38PM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Dec 07, 2023 at 04:19:22PM +0200, Andy Shevchenko wrote:
-> > On Wed, Nov 15, 2023 at 03:21:29PM -0500, Greg Kroah-Hartman wrote:
-> > > On Wed, Nov 15, 2023 at 03:58:54PM +0100, Bartosz Golaszewski wrote:
-> > > > On Fri, Nov 3, 2023 at 10:08 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > > > On Thu, Nov 2, 2023 at 4:33 PM Andy Shevchenko
-> > > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > On Thu, Oct 26, 2023 at 03:27:30PM +0300, Andy Shevchenko wrote:
-> > > > > > > On Thu, Oct 26, 2023 at 07:25:35AM +0200, Greg Kroah-Hartman wrote:
-> > > > > > > > On Wed, Oct 25, 2023 at 09:42:57PM +0300, Andy Shevchenko wrote:
 
-...
-
-> > > > > > > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > >
-> > > > > > > Thank you, Greg.
-> > > > > > >
-> > > > > > > Bart, would it be still possible to take this into next?
-> > > > > > > I would like to have at least this patch applied (with the first user)
-> > > > > > > to allow conversion of others (I have some more users of new API).
-> > > > > >
-> > > > > > Okay, seems we missed v6.7 with this, can you then prepare an immutable
-> > > > > > branch / tag with this, so other maintainers can pull in case it's needed?
-> > > > > > (I have something against tty already and perhaps something else, let's
-> > > > > >  see.)
-> > > > >
-> > > > > It arrived too late in the cycle, I needed to send my PR earlier this
-> > > > > time as I was OoO this week.
-> > > >
-> > > > Greg, will you take this patch through your tree and provide me with
-> > > > an immutable tag for this cycle?
-> > > 
-> > > Sure, let me catch up with patches after I return from Plumbers next
-> > > week.
-> > 
-> > Hope Plumbers went well!
+On Fri, 15 Dec 2023 15:34:57 +0200, Dumitru Ceclan wrote:
+> The AD7173 family offer a complete integrated Sigma-Delta ADC solution
+> which can be used in high precision, low noise single channel applications
+> or higher speed multiplexed applications. The Sigma-Delta ADC is intended
+> primarily for measurement of signals close to DC but also delivers
+> outstanding performance with input bandwidths out to ~10kHz.
 > 
-> Sorry for the delay, immutable tag can be found at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git device_is_big_endian-6.8-rc1
-> for anyone to pull from now.
+> Signed-off-by: Dumitru Ceclan <mitrutzceclan@gmail.com>
+> ---
+> V8->v9
+>  - Add gpio-controller and "#gpio-cells" properties
+>  - Add missing avdd2 and iovdd supplies
+>  - Add string type to reference-select
+> V7->V8
+>  - include missing fix from V6
+> V6->V7 <no changes>
+> V5->V6
+>  - Moved global required property to proper placement
+> V4 -> V5
+>  - Use string enum instead of integers for "adi,reference-select"
+>  - Fix conditional checking in regards to compatible
+> V3 -> V4
+>  - include supply attributes
+>  - add channel attribute for selecting conversion reference
+> V2 -> V3
+>  - remove redundant descriptions
+>  - use referenced 'bipolar' property
+>  - remove newlines from example
+> V1 -> V2 <no changes>
+> 
+>  .../bindings/iio/adc/adi,ad7173.yaml          | 184 ++++++++++++++++++
+>  1 file changed, 184 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> 
 
-No problem and thank you!
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Bart, can you pull that? Or should I to my tree and then push with other
-GPIO patches?
+yamllint warnings/errors:
 
--- 
-With Best Regards,
-Andy Shevchenko
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml: patternProperties:^channel@[0-9a-f]$:properties:adi,reference-select:type: 'string' is not one of ['boolean', 'object']
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml: patternProperties:^channel@[0-9a-f]$:properties:adi,reference-select:type: 'boolean' was expected
+	hint: A vendor boolean property can use "type: boolean"
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7173.example.dtb: adc@0: '#gpio-cells' is a dependency of 'gpio-controller'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml#
 
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231215133512.28735-1-mitrutzceclan@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
