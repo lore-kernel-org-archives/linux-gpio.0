@@ -1,76 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7AC34CFE;
-	Fri, 15 Dec 2023 14:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB8E4184E;
+	Fri, 15 Dec 2023 15:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MI2OTpBd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V0fewAjO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702652308; x=1734188308;
+  t=1702652967; x=1734188967;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=xNI9zmJFSg33rN1tJ6eP4QEDvxIpJ2d9bmw3BCAyoLY=;
-  b=MI2OTpBduriXcVo2Twp3A0fhTbdPb7/zrMpeFxCSqAS3qS/wbglusff8
-   TfME5Sk4VoVEetvJfs6IRDhO9fQGzvaQdJneC0B+JN/3V8LbHWIkJ4MxJ
-   UF50LNri5MY9/AFJf5MzBWSiI1+wQXhSdbRZ5kN6saFImUoHCjl16YfWw
-   2OTAm74p8U4krsxMrkBeGTw8SjdCAku8JuDZ2k7rYwkit2NTdiASfVtsQ
-   62qqBpICpYPoRb+hiVZt76VO6hlVEs12JOJRh9jqaXkWQyuF0xtxxJR03
-   zYIzxS0DS74mHMZeZ2HdKrtMMf4ijJTcF4QwQkSPJBM8OQEu69he5nq0c
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="2455364"
+  bh=0Ol7cR4GyXOE/n2OXDMud1el+9icI8vDEslQ8aeAEKY=;
+  b=V0fewAjOniAVNI+Weec0o1/JStgIARSzQTOxGgTQEGFviIlPKWGxLJf8
+   mjuXOSfQ7oJvVStky3x4gSGG7Wi6Zwu7ld3Sb72EzQH+MsmOtrTZ9zpbv
+   c97JWtgk5V++Hu3Ss29IeO51Zvt98FReKaiWOT8MK/ZQKtDi0oF8ygsXM
+   BlzQHEscje44k2Id6K87pEEfzezDnRCOf10hlmjdbyVT3mFuvB40jDsqD
+   ZsaCBQmaHWwoM+ptJz2BG81ZpMrGnFRrbygl6w+0vvViLf4Yorh/xFmDy
+   QqQt2Oh2awcSqJsLAF2iZ38QrekUmNu4qhtEn0jhACyYHbGXWNCBBCkqz
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="8645040"
 X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
-   d="scan'208";a="2455364"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 06:58:27 -0800
+   d="scan'208";a="8645040"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 07:09:26 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="845147457"
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="840691611"
 X-IronPort-AV: E=Sophos;i="6.04,279,1695711600"; 
-   d="scan'208";a="845147457"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 15 Dec 2023 06:58:25 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 485BA3A3; Fri, 15 Dec 2023 16:58:24 +0200 (EET)
-Date: Fri, 15 Dec 2023 16:58:24 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="840691611"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 07:09:19 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1rE9oS-000000069Vu-2BSJ;
+	Fri, 15 Dec 2023 17:09:16 +0200
+Date: Fri, 15 Dec 2023 17:09:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: Raag Jadav <raag.jadav@intel.com>, linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH v1 1/1] pinctrl: intel: Add Intel Meteor Point pin
  controller and GPIO support
-Message-ID: <20231215145824.GY1074920@black.fi.intel.com>
+Message-ID: <ZXxsHKdADb4mfH21@smile.fi.intel.com>
 References: <20231214154653.1087747-1-andriy.shevchenko@linux.intel.com>
  <20231215064417.GV1074920@black.fi.intel.com>
  <ZXxl161aJ8vZyiPw@smile.fi.intel.com>
+ <20231215145824.GY1074920@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZXxl161aJ8vZyiPw@smile.fi.intel.com>
+In-Reply-To: <20231215145824.GY1074920@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Dec 15, 2023 at 04:42:31PM +0200, Andy Shevchenko wrote:
-> On Fri, Dec 15, 2023 at 08:44:17AM +0200, Mika Westerberg wrote:
-> > On Thu, Dec 14, 2023 at 05:46:53PM +0200, Andy Shevchenko wrote:
-> > > This driver supports pinctrl/GPIO hardware found on Intel Meteor Point
-> > > (a Meteor Lake PCH) providing users a pinctrl and GPIO interfaces
-> > > including GPIO interrupts.
+On Fri, Dec 15, 2023 at 04:58:24PM +0200, Mika Westerberg wrote:
+> On Fri, Dec 15, 2023 at 04:42:31PM +0200, Andy Shevchenko wrote:
+> > On Fri, Dec 15, 2023 at 08:44:17AM +0200, Mika Westerberg wrote:
+> > > On Thu, Dec 14, 2023 at 05:46:53PM +0200, Andy Shevchenko wrote:
+> > > > This driver supports pinctrl/GPIO hardware found on Intel Meteor Point
+> > > > (a Meteor Lake PCH) providing users a pinctrl and GPIO interfaces
+> > > > including GPIO interrupts.
+> > > 
+> > > This is driver for Meteor Lake-S and related, correct? Why it cannot use
+> > > pinctrl-meteorlake.c instead? Same way we do for other desktop CPUs
+> > > whose PCHs have the GPIO/pinctrl block.
 > > 
-> > This is driver for Meteor Lake-S and related, correct? Why it cannot use
-> > pinctrl-meteorlake.c instead? Same way we do for other desktop CPUs
-> > whose PCHs have the GPIO/pinctrl block.
+> > Meteor Lake-S may or may not have an additional PCH, so the SoC (on-die)
+> > pin control IP is serviced by pinctrl-meteorlake.c, here we need to have
+> > a different file as we would have a name clash. Yes, it means that on
+> > the end user platform it may be two pin control drivers!
 > 
-> Meteor Lake-S may or may not have an additional PCH, so the SoC (on-die)
-> pin control IP is serviced by pinctrl-meteorlake.c, here we need to have
-> a different file as we would have a name clash. Yes, it means that on
-> the end user platform it may be two pin control drivers!
+> I see, thanks for clarification! Then this makes sense.
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-I see, thanks for clarification! Then this makes sense.
+Pushed to my review and testing queue, thanks!
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
