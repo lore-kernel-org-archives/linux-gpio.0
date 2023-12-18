@@ -1,81 +1,88 @@
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0461111C92;
-	Mon, 18 Dec 2023 08:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB15125C0
+	for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 09:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="rLVZ4rwO"
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 3C6734FB;
-	Mon, 18 Dec 2023 09:50:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1702889422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7y980s7TlqjCCAo0oCLZY8k6BxPJ803Kug7xEFCoGk=;
-	b=rLVZ4rwOEPGlYUtRcUAdVLk5m7XBx4vX8PZBc+L8VhucInDrJkExOLW9giC4bwcIbREtbU
-	Je3WaYQXn/btQGQQqiPpyyqWcA5DRdeh21JyX5yDS/u1rYCWa45KnBM7IUGDavZRTav2Zl
-	X0MH9Ty/zWgE+4zV9He07kqI56vn0wrFZaDJkyWt5UFfTcMlHLoEo7QJBhNpSIsAekAwQt
-	sWrBUMuBVC+YmODug75aTaImAUbgmuPqVvVJlm347hwJ107AoXamXtaJwJaQkjz6dMnJf5
-	dF6wdDqyd9iC56O6rdID2Z8HXpk5Zj3Z8CaKqC1zg0wmij/i6sGW3A5vGJgyQQ==
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PxrFdoT+"
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-7cbc56a8023so493378241.1
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 01:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1702890050; x=1703494850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dw026XAnMtLtxWNCzhpPAk2Qu2t2BiOON2FGMJeyr7g=;
+        b=PxrFdoT+DSIB6eEzateOpfY4/ZhLgx569COxdfk9kGK6c/eEMRhkTUspc4IPkyTELL
+         WMuggvwAnC4BOplgrCIX0l4xPtOG/Va90wnPLaSwbVtw7m6ksYE7Ls7tvuycK4Tvodcn
+         6ptYHPi2TguKa4uoOxUidMZbczE/LfVVL0ovgV/Baihz7guz1IjjEVd3o4XJ6ma3xZ8u
+         D8xE0EuPJsLsj0zsJTFBYw8wZzPFbikFL9OCbz4fPmgYWaPuy3GDFNzMh9kHCQzxP/yP
+         fSY5VLPJr0aWay9WnROv/RA2jV5a7GFLi4N8dxKvvXO2gRkw7zKzFjrUHyXpiz38Z9Ls
+         B5FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702890050; x=1703494850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dw026XAnMtLtxWNCzhpPAk2Qu2t2BiOON2FGMJeyr7g=;
+        b=FMHV7geJ1yhuOMItv/wmTug2WEoZmswXm2mtRKEtoX0RtmJi9NxCDNwi7/KPx7XJzg
+         SfGCOJeBUEK/DS2HuOHP+6U0R4S8AsrEOhLa72S88HWikPESaTHzPbXGdRBMzdKQFdGh
+         /c+7Ul1aeqbsH1Z9Kf5gt95oihX3p8dLIDq0J/HdSLHEyBessIThF6deAc2zy9FOtwvS
+         tqDe3fqFjwpDUiHIFz2n71OU16FYYo/IUEehbd6hl2jioZPT+rnCDeszPFZdbW/2+FZV
+         pbikpfc1EpzrP/TDh2UJ+bFWRON3rjbAcTE+ZC1UZ7IPpu3dewPSIpCqhmDQsJZ2iNa7
+         Yccw==
+X-Gm-Message-State: AOJu0YwWzuYmpDcI2JxnzEyHTlUKbodFgkjWJf8ObqGeMO5+9MS/p/CT
+	Kem4/0ULbcN0QRS0M17PHOBxLafeWAyuXzgoQUR+Hw==
+X-Google-Smtp-Source: AGHT+IGAem1nDjnIi/J+LHNBgQ4NtWFW5yBV6M0O+03v+atNRenIB54exX2ziXmYNDuGtPwz9HtnjyZK+OpGDUlNAj4=
+X-Received: by 2002:a05:6102:2b82:b0:466:8748:1309 with SMTP id
+ ib2-20020a0561022b8200b0046687481309mr1799507vsb.13.1702890050618; Mon, 18
+ Dec 2023 01:00:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 18 Dec 2023 09:50:21 +0100
-From: Michael Walle <michael@walle.cc>
-To: =?UTF-8?Q?TY=5FChang=5B=E5=BC=B5=E5=AD=90=E9=80=B8=5D?=
- <tychang@realtek.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] Add GPIO support for Realtek DHC(Digital Home
- Center) RTD SoCs.
-In-Reply-To: <be8db58b51d04043a255a702a08cdaba@realtek.com>
-References: <20231207100723.15015-1-tychang@realtek.com>
- <20231207100723.15015-3-tychang@realtek.com>
- <ZXHMbZRXLXGa_tq8@smile.fi.intel.com>
- <989146448858478b975c66899b8f3fed@realtek.com>
- <ZXm0MIub8X2q_lnp@smile.fi.intel.com>
- <23574204547646779d02f0109c20b3ff@realtek.com>
- <ZXsKAyIlY3y3tgUi@smile.fi.intel.com>
- <0f0b3b65a838aea6797ae78c47d6af49@walle.cc>
- <ZXsV96xhuvVSyc1f@smile.fi.intel.com>
- <be8db58b51d04043a255a702a08cdaba@realtek.com>
-Message-ID: <3dd3a101e61f5a8f8931114ddc80cecf@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231215155300.21186-1-brgl@bgdev.pl> <20231215155300.21186-3-brgl@bgdev.pl>
+ <ZXyN5WrJL6NmV_l8@smile.fi.intel.com>
+In-Reply-To: <ZXyN5WrJL6NmV_l8@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 18 Dec 2023 10:00:39 +0100
+Message-ID: <CAMRc=MfiiF3SGY-4t+EQYEL1gjUN6-EQsdSP7LKdOA=a+H+_PQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpiolib: use a mutex to protect the list of GPIO devices
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Dec 15, 2023 at 6:33=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Dec 15, 2023 at 04:53:00PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > The global list of GPIO devices is never modified or accessed from
+> > atomic context so it's fine to protect it using a mutex. Add a new
+> > global lock dedicated to the gpio_devices list and use it whenever
+> > accessing or modifying it.
+> >
+> > While at it: fold the sysfs registering of existing devices into
+> > gpiolib.c and make gpio_devices static within its compilation unit.
+>
 
-> I have looked into regmap-irq, it appears that using the default irq
-> thread_fn(regmap_irq_thread) is required. However, due to hardware 
-> limitation,
-> we need to inspect the IRQ_TYPE to determine whether to manage the irq 
-> within
-> the irq handler. I think our irq portion does not perfectly fit the 
-> regmap-irq.
-> Moreover, it seems that the gpio-regmap.c file needs to be modified if 
-> the GPIO driver
-> requires debounce settings. I think the gpio-regmap may not be 
-> appropriate for our driver.
-> Do you have any suggestions?
+This part is no longer true, I'll remove it and apply the patches.
 
-Can't say anything regarding the interrupt handling but adding literally
-one line to gpio-regmap shouldn't be a reason not to use it.
+Bart
 
--michael
+> LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
