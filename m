@@ -1,88 +1,130 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB15125C0
-	for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 09:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD20111707
+	for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 09:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PxrFdoT+"
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-7cbc56a8023so493378241.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 01:00:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FagT9KWy"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-553046ea641so1789934a12.3
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Dec 2023 01:45:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1702890050; x=1703494850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dw026XAnMtLtxWNCzhpPAk2Qu2t2BiOON2FGMJeyr7g=;
-        b=PxrFdoT+DSIB6eEzateOpfY4/ZhLgx569COxdfk9kGK6c/eEMRhkTUspc4IPkyTELL
-         WMuggvwAnC4BOplgrCIX0l4xPtOG/Va90wnPLaSwbVtw7m6ksYE7Ls7tvuycK4Tvodcn
-         6ptYHPi2TguKa4uoOxUidMZbczE/LfVVL0ovgV/Baihz7guz1IjjEVd3o4XJ6ma3xZ8u
-         D8xE0EuPJsLsj0zsJTFBYw8wZzPFbikFL9OCbz4fPmgYWaPuy3GDFNzMh9kHCQzxP/yP
-         fSY5VLPJr0aWay9WnROv/RA2jV5a7GFLi4N8dxKvvXO2gRkw7zKzFjrUHyXpiz38Z9Ls
-         B5FQ==
+        d=linaro.org; s=google; t=1702892753; x=1703497553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3Cx4LBCQ55lZB8WnWvhI3iafApiI+cNI28/HCIjwBg=;
+        b=FagT9KWyUarRxDnkg9ZEv7rsgnycmThGiZKTFUUPEWFWLUzAVUjHURgkzpcMF69BM4
+         wyAzI2gseYOxDpcItSHaDdXRVkH98l3HaYyZhIgfGZXcffXBhO65If6RCoc3yPzGBDYm
+         RFQfLOgdJZCCCvKhV76SavmBAK6mbBQRSXxO7cE0zA4LDs/kKpMqzr563fqQgB3fY2CB
+         F0S/OcyPPHC1JsSY1nVFAXLaEvtMMh/tg+0f6PuJTcQdmFm6v9lUrE7mbSmkXGNMo4Lk
+         MoT7xJUEKJr179ynp0U0Q4siBq2MQcDhPLN7w7ywJbg8K9nXWFtZnm8Rq0jei1DaqEQy
+         bL0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702890050; x=1703494850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dw026XAnMtLtxWNCzhpPAk2Qu2t2BiOON2FGMJeyr7g=;
-        b=FMHV7geJ1yhuOMItv/wmTug2WEoZmswXm2mtRKEtoX0RtmJi9NxCDNwi7/KPx7XJzg
-         SfGCOJeBUEK/DS2HuOHP+6U0R4S8AsrEOhLa72S88HWikPESaTHzPbXGdRBMzdKQFdGh
-         /c+7Ul1aeqbsH1Z9Kf5gt95oihX3p8dLIDq0J/HdSLHEyBessIThF6deAc2zy9FOtwvS
-         tqDe3fqFjwpDUiHIFz2n71OU16FYYo/IUEehbd6hl2jioZPT+rnCDeszPFZdbW/2+FZV
-         pbikpfc1EpzrP/TDh2UJ+bFWRON3rjbAcTE+ZC1UZ7IPpu3dewPSIpCqhmDQsJZ2iNa7
-         Yccw==
-X-Gm-Message-State: AOJu0YwWzuYmpDcI2JxnzEyHTlUKbodFgkjWJf8ObqGeMO5+9MS/p/CT
-	Kem4/0ULbcN0QRS0M17PHOBxLafeWAyuXzgoQUR+Hw==
-X-Google-Smtp-Source: AGHT+IGAem1nDjnIi/J+LHNBgQ4NtWFW5yBV6M0O+03v+atNRenIB54exX2ziXmYNDuGtPwz9HtnjyZK+OpGDUlNAj4=
-X-Received: by 2002:a05:6102:2b82:b0:466:8748:1309 with SMTP id
- ib2-20020a0561022b8200b0046687481309mr1799507vsb.13.1702890050618; Mon, 18
- Dec 2023 01:00:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702892753; x=1703497553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3Cx4LBCQ55lZB8WnWvhI3iafApiI+cNI28/HCIjwBg=;
+        b=eCeiBf30/TScjfX17zKWoM15UrdPNCmmxwA6MEc6TFM/nKx7QMNAiWgDDONGCjLnQ2
+         fg65fOpgPoptmFdKn8FLQmy5VSP7AmqyPva4eISBNRXqM7F4M+Akhm51WoO9YyWEsySZ
+         gNIHPKMfa0Vef58AFqiF1so8Hmc0Z6/KQsELMkZI/lZOnqTBLcsrh764frSWDeNEqwVc
+         vDnkKw7Xt1mv6L1fPJrZpsmLnKB4lwxEJNZd/WRHybnIKM1QQg/s1VJOpCW80csd6be9
+         I0phrGkKQQWVPm3a9cIObc1qowdhE2LzuS9G6Qs0sEDnnGAt3xclrCoWaF1tO/NedJr0
+         OqMQ==
+X-Gm-Message-State: AOJu0YxTr3WEvKNLDG63M0HTF15JMNiQhv6UuS0+3PfL+3EFO5BGa3BU
+	BwIeDENTpDCVsT48sk1Jtw4TZQ==
+X-Google-Smtp-Source: AGHT+IG8sNFmemRPce/khkhH1WuZjuhq/cFdrfDD4VKMz8M4LUXyo3lOAKDJYV9Mv6695jFBBgeqtw==
+X-Received: by 2002:a17:906:16c7:b0:a23:4262:9411 with SMTP id t7-20020a17090616c700b00a2342629411mr524951ejd.38.1702892753035;
+        Mon, 18 Dec 2023 01:45:53 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id i11-20020a170906250b00b00a233a4c4a30sm1974926ejb.90.2023.12.18.01.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 01:45:52 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [GIT PULL] pinctrl: samsung: drivers for v6.8
+Date: Mon, 18 Dec 2023 10:45:48 +0100
+Message-Id: <20231218094548.37105-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215155300.21186-1-brgl@bgdev.pl> <20231215155300.21186-3-brgl@bgdev.pl>
- <ZXyN5WrJL6NmV_l8@smile.fi.intel.com>
-In-Reply-To: <ZXyN5WrJL6NmV_l8@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 18 Dec 2023 10:00:39 +0100
-Message-ID: <CAMRc=MfiiF3SGY-4t+EQYEL1gjUN6-EQsdSP7LKdOA=a+H+_PQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] gpiolib: use a mutex to protect the list of GPIO devices
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 15, 2023 at 6:33=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Dec 15, 2023 at 04:53:00PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The global list of GPIO devices is never modified or accessed from
-> > atomic context so it's fine to protect it using a mutex. Add a new
-> > global lock dedicated to the gpio_devices list and use it whenever
-> > accessing or modifying it.
-> >
-> > While at it: fold the sysfs registering of existing devices into
-> > gpiolib.c and make gpio_devices static within its compilation unit.
->
+Hi Linus,
 
-This part is no longer true, I'll remove it and apply the patches.
+Google and Samsung SoC pinctrl changes for v6.8.
 
-Bart
+Best regards,
+Krzysztof
 
-> LGTM,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-6.8
+
+for you to fetch changes up to 6cf96df77338c6a7e753229fe6d330ab60e28cda:
+
+  pinctrl: samsung: add exynosautov920 pinctrl (2023-12-13 08:49:33 +0100)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v6.8
+
+1. New hardware: Add pin controllers for Samsung ExynosAutov920 and
+   Google Tensor GS101.
+
+2. Few DT bindings cleanups: add specific compatibles for each device
+   using generic compatible as fallback.  This affects only DTS, no
+   driver changes are needed.
+
+3. Allow setting affinity on non wake-up external GPIO interrupts.
+
+----------------------------------------------------------------
+Jaewon Kim (3):
+      dt-bindings: pinctrl: samsung: add exynosautov920
+      pinctrl: samsung: support ExynosAuto GPIO structure
+      pinctrl: samsung: add exynosautov920 pinctrl
+
+Krzysztof Kozlowski (3):
+      dt-bindings: pinctrl: samsung: add specific compatibles for existing SoC
+      dt-bindings: pinctrl: samsung: use Exynos7 fallbacks for newer wake-up controllers
+      dt-bindings: pinctrl: samsung: correct ExynosAutov920 wake-up compatibles
+
+Peter Griffin (3):
+      dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible
+      dt-bindings: pinctrl: samsung: add gs101-wakeup-eint compatible
+      pinctrl: samsung: Add gs101 SoC pinctrl configuration
+
+Petr Vorel (1):
+      MAINTAINERS: Remove snawrocki's git tree
+
+Youngmin Nam (1):
+      pinctrl: samsung: add irq_set_affinity() for non wake up external gpio interrupt
+
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |  45 ++--
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   5 +-
+ MAINTAINERS                                        |   1 -
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 280 +++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 109 +++++++-
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |  25 ++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   7 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |  14 ++
+ 8 files changed, 460 insertions(+), 26 deletions(-)
