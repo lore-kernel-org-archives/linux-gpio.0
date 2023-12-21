@@ -1,50 +1,58 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C636518B;
-	Thu, 21 Dec 2023 18:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AD664AA1
+	for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2023 18:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRSvr9xw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1703184631; x=1734720631;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6lqfECsnx9YNGz7mNu1P1q5RcYfS8nYI6pc/nxTM7UQ=;
-  b=NRSvr9xwu8uUsCJvIuUNMSq4vmzVfwdjoepfVThM+cj1amxFYXz1HfN4
-   aeGC0pFU0JNpOqZJu3snBaAIwYrRsY4Nhccg90CsH+07tC4mQV/NBdfiJ
-   QyEOTYO0FyfXRDDos3biRWv+ktHvIiu220Xdla3tN9f13bb8OArZgoLMh
-   eGW2nRaGFFrB5wXKXLd2kWYBu12kB1fEqGICz5xm95FsvMskLDNPQFjX/
-   XjX8U8qPFQJF5wu4q2+RZ7r+j80cRgSH9CsP4fmmZmlMzUU5PBLELdIg8
-   MILUq2Yp3fLFw2dnPLCar6VdLmL4yimdGQZboNThB1DKE1ntADzlqlC7s
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10931"; a="462463230"
-X-IronPort-AV: E=Sophos;i="6.04,294,1695711600"; 
-   d="scan'208";a="462463230"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2023 10:50:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10931"; a="920407804"
-X-IronPort-AV: E=Sophos;i="6.04,294,1695711600"; 
-   d="scan'208";a="920407804"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2023 10:50:28 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 93260B8; Thu, 21 Dec 2023 19:55:28 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qvgKvBWV"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40d31116dbeso12411745e9.3
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2023 10:57:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1703185034; x=1703789834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ez827Nwv0PCJp7yHRGpscI+PcE4XwM2uw7IbXMXl5M=;
+        b=qvgKvBWVreZP4ptG+yOSgyuE1TFvcA+YCN4BTK5biADBd6x6p56gUp92DKl3UlzfmW
+         J618miRJe6oxxdS9iUGgDJ6PnSjJ2wI5nDsqtD7Yuk4VyAAY5pG4pmPBhNbKdwGCx7Vg
+         j4smXPG8+YZffONKuiAlNUFBYfMAiRk+rtlD8R4kckrOv7t/g76kTmEJLw0uF14cqDFq
+         OA37br+y/NaeAqUwf69oTmB584yB0mY8hzLaYCOteQoAFKzV5/G7V+ESJQHvyBYK2W4p
+         TZ/Ht9hkZ5haEOn+AB2JabYtO/UJiqJwSohaeUKtlPPSr7+qcDD8DWqofjoNwP8LDRVL
+         E7UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703185034; x=1703789834;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ez827Nwv0PCJp7yHRGpscI+PcE4XwM2uw7IbXMXl5M=;
+        b=JZJLK100PkYYi8LeU6PAcsKwKsTjJkZQ9M4JSRLWvDU6TvU/GrHVfSBaDhHAFJT3gX
+         wemNpUh5RvqtDEoo9eijeHTX1iIiLeiCYG/M7vfjr4pIyIVbeyGh/ZtRDASW2wrg905y
+         ycHdV+GFBxTT5sjmLRLhPXMSeCRr9rK9giwVi0r+sKrKPGoQuJZRo1H1jCt0nof0ioBB
+         xA1tUmKoeWf4JaEUeYZ2yzoqv3ctElt14h8V3I6ktBMbSqBEs4SX1hu5YF5EFrtBb7ys
+         To05gUeaprv68G+ehQVXf70GQhSRyL735J5ctCtAmXUaJF7Am1WF9hAcinsQgMTIA1fB
+         w27Q==
+X-Gm-Message-State: AOJu0YzRCzi7N1hj4JbUfzXkd9ZHuGPJsx06iphGq8OUhJ+P3qruiLz6
+	ibNRfRwWl1n7iOQ8B0ClYQeCqFVwpAHpBQ==
+X-Google-Smtp-Source: AGHT+IETlTI6wAfVOp5F4c8392SkTN9zkl2x5ytVqBeSIDMi4vkgq2+YYf6CeXrpzwk1bjBp9KY+oA==
+X-Received: by 2002:a05:600c:a42:b0:40c:3905:51e4 with SMTP id c2-20020a05600c0a4200b0040c390551e4mr101519wmq.68.1703185034624;
+        Thu, 21 Dec 2023 10:57:14 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7701:a2c3:cba4:74db])
+        by smtp.gmail.com with ESMTPSA id u4-20020a05600c138400b0040c03c3289bsm4277125wmf.37.2023.12.21.10.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Dec 2023 10:57:14 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Tony Lindgren <tony@atomide.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: linux-omap@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpiolib: cdev: Split line_get_debounce_period() and use
-Date: Thu, 21 Dec 2023 19:55:27 +0200
-Message-ID: <20231221175527.2814506-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: tps65219: don't use CONFIG_DEBUG_GPIO
+Date: Thu, 21 Dec 2023 19:57:02 +0100
+Message-Id: <20231221185702.24685-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -53,80 +61,47 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of repeating the same code and reduce possible miss
-of READ_ONCE(), split line_get_debounce_period() heler out
-and use in the existing cases.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CONFIG_DEBUG_GPIO should only be used to enable debug log messages and
+for core GPIOLIB debugging. Don't use it to control the execution of
+potentially buggy code. Just put it under an always-false #if.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-tps65219.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 744734405912..c573820d5722 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -651,6 +651,16 @@ static struct line *supinfo_find(struct gpio_desc *desc)
- 	return NULL;
- }
+diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
+index 7b38aa360112..cd1f17041f8c 100644
+--- a/drivers/gpio/gpio-tps65219.c
++++ b/drivers/gpio/gpio-tps65219.c
+@@ -96,16 +96,16 @@ static int tps65219_gpio_change_direction(struct gpio_chip *gc, unsigned int off
+ 	 * Below can be used for test purpose only.
+ 	 */
  
-+static unsigned int line_get_debounce_period(struct line *line)
-+{
-+	return READ_ONCE(line->debounce_period_us);
-+}
-+
-+static inline bool line_has_supinfo(struct line *line)
-+{
-+	return line_get_debounce_period(line);
-+}
-+
- static void supinfo_to_lineinfo(struct gpio_desc *desc,
- 				struct gpio_v2_line_info *info)
- {
-@@ -665,15 +675,10 @@ static void supinfo_to_lineinfo(struct gpio_desc *desc,
+-	if (IS_ENABLED(CONFIG_DEBUG_GPIO)) {
+-		int ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG,
+-					     TPS65219_GPIO0_DIR_MASK, direction);
+-		if (ret) {
+-			dev_err(dev,
+-				"GPIO DEBUG enabled: Fail to change direction to %u for GPIO%d.\n",
+-				direction, offset);
+-			return ret;
+-		}
++#if 0
++	int ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG,
++				     TPS65219_GPIO0_DIR_MASK, direction);
++	if (ret) {
++		dev_err(dev,
++			"GPIO DEBUG enabled: Fail to change direction to %u for GPIO%d.\n",
++			direction, offset);
++		return ret;
+ 	}
++#endif
  
- 	attr = &info->attrs[info->num_attrs];
- 	attr->id = GPIO_V2_LINE_ATTR_ID_DEBOUNCE;
--	attr->debounce_period_us = READ_ONCE(line->debounce_period_us);
-+	attr->debounce_period_us = line_get_debounce_period(line);
- 	info->num_attrs++;
- }
- 
--static inline bool line_has_supinfo(struct line *line)
--{
--	return READ_ONCE(line->debounce_period_us);
--}
--
- /*
-  * Checks line_has_supinfo() before and after the change to avoid unnecessary
-  * supinfo_tree access.
-@@ -846,7 +851,7 @@ static enum hte_return process_hw_ts(struct hte_ts_data *ts, void *p)
- 		line->total_discard_seq++;
- 		line->last_seqno = ts->seq;
- 		mod_delayed_work(system_wq, &line->work,
--		  usecs_to_jiffies(READ_ONCE(line->debounce_period_us)));
-+				 usecs_to_jiffies(line_get_debounce_period(line)));
- 	} else {
- 		if (unlikely(ts->seq < line->line_seqno))
- 			return HTE_CB_HANDLED;
-@@ -987,7 +992,7 @@ static irqreturn_t debounce_irq_handler(int irq, void *p)
- 	struct line *line = p;
- 
- 	mod_delayed_work(system_wq, &line->work,
--		usecs_to_jiffies(READ_ONCE(line->debounce_period_us)));
-+			 usecs_to_jiffies(line_get_debounce_period(line)));
- 
- 	return IRQ_HANDLED;
- }
-@@ -1215,7 +1220,7 @@ static int edge_detector_update(struct line *line,
- 			gpio_v2_line_config_debounce_period(lc, line_idx);
- 
- 	if ((active_edflags == edflags) &&
--	    (READ_ONCE(line->debounce_period_us) == debounce_period_us))
-+	    (line_get_debounce_period(line) == debounce_period_us))
- 		return 0;
- 
- 	/* sw debounced and still will be...*/
+ 	dev_err(dev,
+ 		"GPIO%d direction set by NVM, change to %u failed, not allowed by specification\n",
 -- 
-2.43.0.rc1.1.gbec44491f096
+2.40.1
 
