@@ -1,105 +1,97 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D969389
-	for <linux-gpio@vger.kernel.org>; Sat, 23 Dec 2023 00:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81A7EE;
+	Sat, 23 Dec 2023 02:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ka8ZELYE"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5cbcfdeaff3so23365907b3.0
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Dec 2023 16:18:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7Pct699"
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3ba52d0f9feso1833441b6e.0;
+        Fri, 22 Dec 2023 18:08:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703290711; x=1703895511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lp9vWQxdAPDDdlHKGcJ8qgp0FvOo9mvy4HBh0flEGoE=;
-        b=ka8ZELYEQtP85db6yj291tuWZYHMfmwkKM1t8l1UiKtd5+UCxAj7bw6E9n3DYVkXs0
-         kwLnj/DZiOtKtk6dbC1Qe6j/rpZ32Eg0oCQ8pQ35s+DSBbaeh5xe3y2VU3v6SNnATG24
-         /CZkmvHhLwt0pYqD0FSQaKweE1jIl0Fy06Qa3bk1gxdhYOo2dCdNXgLFGGgVOyE9brLQ
-         AKEfSVzK1nGo9Y58sB2iCPgf+WVAgjXaBcj6zFnZWYwwuaF/3tMWdA3wA/QKpWb/sXLb
-         4tsRy2dHe6ALd0AzhjvX+7KjUpxlcobidiendwFeWog2OUSnyOpr62pAFLrIZrU1gBrf
-         eD6w==
+        d=gmail.com; s=20230601; t=1703297300; x=1703902100; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tSEYNsw40lOGpE/LYtf6GTFnHQe8PBqBKGpVOYnVyS4=;
+        b=B7Pct699pdAr7WlFpqCDCbE1OOHVIkhxP2dJvtvz6EEAH4WZ1ChUFhrZVIjSNIZUYj
+         3N1F18EYApDINpEsJ/BnamoqQHecW023vi3hnRuVCs4bcc4BRVqWTCDqqUhYSHZmDO9j
+         mYQd1O/ViAnh83QoU23l44takbWnMbidUTmFZlJyHsQ7vO7gK3nru0jzulfqzBr5hqje
+         wO9TZluZoWOQR7DjuaAJacIfMMtCsYweyVSXXjq0EV3OL1sUeVpz3X8HQpjwcylvI0Wr
+         e2Y/80/M6OPqugFP887hREuk3dbBdbR2zrRSG/ocdAFTlMxLfMzrtmGnRR83rhDNEiO7
+         LPhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703290711; x=1703895511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lp9vWQxdAPDDdlHKGcJ8qgp0FvOo9mvy4HBh0flEGoE=;
-        b=Ir9AzjUz04T+zzSMlL4mjvJ2Fvm985/Xzle1NlatLOG0QXFEp3uCaHyjBLJ1GnAYuw
-         NAMkNQtnxpDWLrGCkA3qd9Fttu87r7fYgmOvtMOOFKCZsexVfw2VToVGdmtZwJyu8zy6
-         iRdL5cXL1A002t82BP1M6lphJoM8kKkh3RdjYnyaEvo3+SbcJxngKt7YZmgAtuGOejrT
-         quAScvc9QogZRInag5/7tzKRaN/WcN0Q2AjVBVqY30JZU7YAisedAo+0PyMuAV2gIokI
-         XPv3QpqE9fjHWi2rX7KWdQegUT6Vfqb20LPLMLWEJ1P41tVGQY2ivIE+ExknJysi7hnu
-         RRBA==
-X-Gm-Message-State: AOJu0YyzdcBj0xWLHYV5aFRKMv4cclErIRU0z5p3Kg5SNO6Ve3nEF+mo
-	Drgbcm+W/oU1fIEaDLggenseBeLeQw+UkJo45Q+WnFuhq6Nhbw==
-X-Google-Smtp-Source: AGHT+IH0J9appb9YaOYYWr0pL/JzayP1h7qzAi5FZV+YX3znd3OxV1cD/KlvJy/FEWLrONbRLEArBL7fAvmtung+mUc=
-X-Received: by 2002:a05:690c:c0d:b0:5e7:e838:633a with SMTP id
- cl13-20020a05690c0c0d00b005e7e838633amr995068ywb.34.1703290711253; Fri, 22
- Dec 2023 16:18:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703297300; x=1703902100;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tSEYNsw40lOGpE/LYtf6GTFnHQe8PBqBKGpVOYnVyS4=;
+        b=wurdV6CIJt45UzyM503pRSg/jP6Z7MczDzhVG4CGKi8dwArLs52dxD0TNWDaBq2zGt
+         dvy1ip8/7IIz91G7CqgKmy9X1iqPUEdEMtbIaQoynxCkAPyMuA6/aJ1UgLA0O75dIU3o
+         6IFmT9K/cVZhL2CmDux7kuWnkjO3EMR+cPDGfYcL56nOEC536QfNPZIkOyBGDt121Ows
+         aWfWU3jNCeHaSq5cbR2vFkBC9F/9DAECyEs7x/gXA3tKDQk5WF5C9e8yWRW7ZYscwqi0
+         msNF66IyxeAJd9O5XlHOK/0bo7Mc0GnWXbNGpDmuhHZy/0edROyqEfGuCyaDrWpRCR+7
+         X6UA==
+X-Gm-Message-State: AOJu0Yxyo2O2aVe5NvoOHaDpL/Ax9wmeUf1zKeDr9uPiR7UzY/f2lSRJ
+	uVb2Lc1BhHVdlJkMcTEf4Ms=
+X-Google-Smtp-Source: AGHT+IFcdLvURlqt+oAULebiS4ad/zZFRyZVDbtfx7RaCF3nPaS3U35twxlL4qbs+pR5gO4ujSi4gg==
+X-Received: by 2002:a05:6808:2f09:b0:3bb:9815:7cb2 with SMTP id gu9-20020a0568082f0900b003bb98157cb2mr246303oib.114.1703297299897;
+        Fri, 22 Dec 2023 18:08:19 -0800 (PST)
+Received: from rigel (60-241-235-125.tpgi.com.au. [60.241.235.125])
+        by smtp.gmail.com with ESMTPSA id hy3-20020a056a006a0300b006d5405e62basm4036860pfb.134.2023.12.22.18.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Dec 2023 18:08:19 -0800 (PST)
+Date: Sat, 23 Dec 2023 10:08:14 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpiolib: cdev: Split line_get_debounce_period()
+ and use
+Message-ID: <ZYZBDu1HjtU23fnB@rigel>
+References: <20231221175527.2814506-1-andriy.shevchenko@linux.intel.com>
+ <ZYTihbWMcHMHSkC_@rigel>
+ <ZYWDij-J1YruTIM7@smile.fi.intel.com>
+ <ZYWHjq_7PnwO27ro@rigel>
+ <CAMRc=McPzQyR1J5Mhn7_cBrWEcqz2JKg7t8CpjHx6jgVEnYBvA@mail.gmail.com>
+ <ZYWYZ6Ys3hSb4IOe@rigel>
+ <CACMJSeu-bS+MpP8HCcD74w0j6vFt821bpgth5LHpqq-fHnEe1w@mail.gmail.com>
+ <ZYWZ4yhqzTF8rShe@rigel>
+ <CACRpkdZrnOJ-Sjj4VpuVU0Gvzca_uGN9Um5Zj=bRMH2df4kRZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215143906.3651122-1-emil.renner.berthing@canonical.com>
- <20231215143906.3651122-2-emil.renner.berthing@canonical.com>
- <20231215202137.GA317624-robh@kernel.org> <CAJM55Z9pBpYfwpxPH7bUumuosVDn9DHLSBngW6CtG7aK_z+_bQ@mail.gmail.com>
- <CACRpkdYT+jf4=dk3Y9cwa_=aYCihVq93N-iT0RUbtT2-+PX69w@mail.gmail.com>
- <CAJM55Z8osSFxKi_7=aRkEr+U3vAq0TS93OggnRzyPpssNuuJ3Q@mail.gmail.com>
- <CACRpkdbx7BOoHzbGd6n5p=Ho3GhMcujwUzQam0jLe6Ysg+xsNg@mail.gmail.com> <CAJM55Z8SwyNEqw4HWRd7G8Y9rdtOGtKy-KbzDorqohdK3nZg0A@mail.gmail.com>
-In-Reply-To: <CAJM55Z8SwyNEqw4HWRd7G8Y9rdtOGtKy-KbzDorqohdK3nZg0A@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 23 Dec 2023 01:18:19 +0100
-Message-ID: <CACRpkdazVUJnfEJTXmAErfxptgnNGByQPU=aLz2RReZD_3GyyA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZrnOJ-Sjj4VpuVU0Gvzca_uGN9Um5Zj=bRMH2df4kRZw@mail.gmail.com>
 
-On Thu, Dec 21, 2023 at 3:07=E2=80=AFPM Emil Renner Berthing
-<emil.renner.berthing@canonical.com> wrote:
-> Linus Walleij wrote:
-
-> > Do the people designing boards using this have better documentation tha=
-n what
-> > you have? Then either get that documentation or just don't give them
-> > too much rope.
+On Fri, Dec 22, 2023 at 06:49:03PM +0100, Linus Walleij wrote:
+> On Fri, Dec 22, 2023 at 3:15 PM Kent Gibson <warthog618@gmail.com> wrote:
+> > On Fri, Dec 22, 2023 at 03:09:54PM +0100, Bartosz Golaszewski wrote:
 >
-> We can certainly prevent Linux from ever combining the strong pull-up wit=
-h the
-> regular bias, but that doesn't mean that the vendor u-boot can't find a u=
-se for
-> it and might hand over pins in such states Linux then wouldn't know how t=
-o
-> handle.
+> > > I can still split the uAPI files into their own section, make Linus
+> > > and myself maintainers and make you a reviewer, how about that?
+> >
+> > That is closer to the reality, so that would work for me.
+>
+> Hmm I think of Kent as one of the main architects for UAPI v2
+> so I would like you as maintainer, and me to be dropped, I already
+> responded to that patch though.
+>
 
-What you are saying is "there might be people who have access to
-documentation that I don't have so they do this crazy thing".
+There is no escaping that my fingerprints are all over that so it does
+make sense to list me over you. Given that patch and git-tree management
+will be deferred to the GPIO subsystem/Bart, there isn't much distinction
+between a reviewer and a maintainer, so I'm ok with being listed as a
+maintainer - I'll just have to pay a bit more attention to the list mails
+than I have been.
 
-Clearly you cannot design for that.
-
-Print a big fat warning and fail probe if it happens.
-
-If U-Boot is using some feature you definitely cannot deal with if this
-happens, and then the people doing this can very well write a patch for
-the kernel.
-
-> If you think its better we could just postpone that problem to when/if it=
- ever
-> happens.
-
-Yes please.
-
-Yours,
-Linus Walleij
+Cheers,
+Kent.
