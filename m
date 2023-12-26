@@ -1,236 +1,209 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2013A4C60C;
-	Tue, 26 Dec 2023 07:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 3BQ7ar433332919, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 3BQ7ar433332919
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Dec 2023 15:36:53 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.32; Tue, 26 Dec 2023 15:34:38 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 26 Dec 2023 15:34:38 +0800
-Received: from RTEXDAG02.realtek.com.tw ([fe80::5d58:7838:d352:d6b8]) by
- RTEXDAG02.realtek.com.tw ([fe80::5d58:7838:d352:d6b8%5]) with mapi id
- 15.01.2375.007; Tue, 26 Dec 2023 15:34:38 +0800
-From: =?big5?B?VFlfQ2hhbmdbsWmkbLZoXQ==?= <tychang@realtek.com>
-To: Andy Shevchenko <andy@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 2/2] Add GPIO support for Realtek DHC(Digital Home Center) RTD SoCs.
-Thread-Topic: [PATCH v4 2/2] Add GPIO support for Realtek DHC(Digital Home
- Center) RTD SoCs.
-Thread-Index: AQHaNKykAxQglRQ65UeKSWnkfMw4BLC0wdMAgAYrmgA=
-Date: Tue, 26 Dec 2023 07:34:37 +0000
-Message-ID: <63983de33ce2415abb8b5b745db58911@realtek.com>
-References: <20231222075812.6540-1-tychang@realtek.com>
- <20231222075812.6540-3-tychang@realtek.com>
- <ZYWLdG9kxm2ql0uf@smile.fi.intel.com>
-In-Reply-To: <ZYWLdG9kxm2ql0uf@smile.fi.intel.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXDAG02.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212B1851
+	for <linux-gpio@vger.kernel.org>; Tue, 26 Dec 2023 19:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bhB8gn2b"
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7b7fe0ae57bso282926039f.0
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Dec 2023 11:21:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1703618518; x=1704223318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RTMdzaXRW7qZuQbwoV3Wl84rTkfhX+SS2G9EZyVMNtM=;
+        b=bhB8gn2bTOUKiZC7bfODn2IWKIXN88hgEghVvxPNszXTfyl92IViWkh1IMM6qwLBdu
+         qzN1ADOBPGa9SDdjyZDlPcby60E7YYXXuTJIHzptmNgtwV+KS2O5jzigkiVZFce0Dxn2
+         3RxCnlPGEbkseBWIF9g+j/7ulMMGEEAGizR1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703618518; x=1704223318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RTMdzaXRW7qZuQbwoV3Wl84rTkfhX+SS2G9EZyVMNtM=;
+        b=aYXpB1BTFMYOQTdC8RMiEaPYbQLZI/PH6FtudYh3UUmoXOlglxAaUR+y/Qx6JbPkmv
+         lee1/XLddDIyarknULpcinwgZ6H/xmYp5GzoEHaowvT0t712JVEXA1tUBGXt5trXocOm
+         ztGU2Rz+llDtsoFMv2tgO1C1GwtTsnM8fW7FU0cmgtyomkmmU64a68LQAoUpdpkrdVEn
+         6WmpludO0Ub1muW0/l0DvkFew7fGRNsXKp5c72RUmLA7fqlXQrJlRyaL7TocSdQ1JMwn
+         wgk4K1ynEqNpch2zPP03kn2w1VJIEt3EAJEVnrfk+1llkp27FnUUU3pIpm/d6Y8TcuVA
+         LeAw==
+X-Gm-Message-State: AOJu0YxXpQEO8QNSodfyrtJc43VcHptWgmRk1nEFp4cp7kydVTSRZC2w
+	aHz62OgHQIG8btzdDMW/QNVsow3jxOp5
+X-Google-Smtp-Source: AGHT+IG4C2xoYudxRt+wWDCBtgSKAQTayFQAShLTQwb4dd83mgwRgc9KhsMLLL8fkL4EZvoyrMNzzQ==
+X-Received: by 2002:a6b:d90a:0:b0:7b7:b27f:351c with SMTP id r10-20020a6bd90a000000b007b7b27f351cmr12182959ioc.14.1703618518475;
+        Tue, 26 Dec 2023 11:21:58 -0800 (PST)
+Received: from markhas1.lan (71-218-50-136.hlrn.qwest.net. [71.218.50.136])
+        by smtp.gmail.com with ESMTPSA id gw3-20020a0566381ee300b0046b692e719esm3207609jab.150.2023.12.26.11.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Dec 2023 11:21:58 -0800 (PST)
+From: Mark Hasemeyer <markhas@chromium.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Raul Rangel <rrangel@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Mark Hasemeyer <markhas@chromium.org>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Baoquan He <bhe@redhat.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Benson Leung <bleung@chromium.org>,
+	Bhanu Prakash Maiya <bhanumaiya@chromium.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Nick Hawkins <nick.hawkins@hpe.com>,
+	Prashant Malani <pmalani@chromium.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Barnes <robbarnes@google.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Wolfram Sang <wsa@kernel.org>,
+	chrome-platform@lists.linux.dev,
+	cros-qcom-dts-watchers@chromium.org,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v3 00/24] Improve IRQ wake capability reporting and update the cros_ec driver to use it
+Date: Tue, 26 Dec 2023 12:21:04 -0700
+Message-ID: <20231226192149.1830592-1-markhas@chromium.org>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Transfer-Encoding: 8bit
 
-SGkgQW5keSwNCg0KVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3Lg0KDQo+T24gRnJpLCBEZWMgMjIs
-IDIwMjMgYXQgMDM6NTg6MTJQTSArMDgwMCwgVHp1eWkgQ2hhbmcgd3JvdGU6DQo+PiBUaGlzIGRy
-aXZlciBlbmFibGVzIGNvbmZpZ3VyYXRpb24gb2YgR1BJTyBkaXJlY3Rpb24sIEdQSU8gdmFsdWVz
-LCBHUElPDQo+PiBkZWJvdW5jZSBzZXR0aW5ncyBhbmQgaGFuZGxlcyBHUElPIGludGVycnVwdHMu
-DQo+DQo+Li4uDQo+DQo+PiArICAgICBoZWxwDQo+PiArICAgICAgIFNheSB5ZXMgaGVyZSB0byBz
-dXBwb3J0IEdQSU8gb24gUmVhbHRlayBESEMoRGlnaXRhbCBIb21lIENlbnRlcikNCj4+ICsgICAg
-ICAgU29Dcy4NCj4NCj5jaGVja3BhdGNoLnBsIGNvbXBsYWlucyBpZiBpdCdzIGxlc3MgdGhhbiAz
-IGxpbmVzLg0KPg0KDQpJIHdpbGwgYWRkIG1vcmUgZGVzY3JpcHRpb24uDQoNCj4uLi4NCj4NCj5Q
-bGVhc2UsIGZvbGxvdyBJV1lVIHByaW5jaXBsZS4NCj4NCj4+ICsjaW5jbHVkZSA8bGludXgvYml0
-b3BzLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+DQo+PiArI2luY2x1ZGUg
-PGxpbnV4L2ludGVycnVwdC5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9pcnFjaGlwLmg+DQo+PiAr
-I2luY2x1ZGUgPGxpbnV4L2lycWNoaXAvY2hhaW5lZF9pcnEuaD4gI2luY2x1ZGUgPGxpbnV4L2ly
-cWRvbWFpbi5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4gI2luY2x1ZGUgPGxpbnV4
-L3BsYXRmb3JtX2RldmljZS5oPiAjaW5jbHVkZQ0KPj4gKzxsaW51eC9wcm9wZXJ0eS5oPg0KPg0K
-Pj4gKyNpbmNsdWRlIDxsaW51eC9zcGlubG9jay5oPg0KPg0KPisgdHlwZXMuaA0KPg0KDQpJIHdp
-bGwgcmV2aXNlIGl0Lg0KDQo+Li4uDQo+DQo+PiArc3RydWN0IHJ0ZF9ncGlvX2luZm8gew0KPj4g
-KyAgICAgY29uc3QgY2hhciAgICAgICAgICAgICAgKm5hbWU7DQo+PiArICAgICB1bnNpZ25lZCBp
-bnQgICAgICAgICAgICBncGlvX2Jhc2U7DQo+PiArICAgICB1bnNpZ25lZCBpbnQgICAgICAgICAg
-ICBudW1fZ3Bpb3M7DQo+PiArICAgICB1OCAgICAgICAgICAgICAgICAgICAgICAqZGlyX29mZnNl
-dDsNCj4+ICsgICAgIHU4ICAgICAgICAgICAgICAgICAgICAgICpkYXRvX29mZnNldDsNCj4+ICsg
-ICAgIHU4ICAgICAgICAgICAgICAgICAgICAgICpkYXRpX29mZnNldDsNCj4+ICsgICAgIHU4ICAg
-ICAgICAgICAgICAgICAgICAgICppZV9vZmZzZXQ7DQo+PiArICAgICB1OCAgICAgICAgICAgICAg
-ICAgICAgICAqZHBfb2Zmc2V0Ow0KPj4gKyAgICAgdTggICAgICAgICAgICAgICAgICAgICAgKmdw
-YV9vZmZzZXQ7DQo+PiArICAgICB1OCAgICAgICAgICAgICAgICAgICAgICAqZ3BkYV9vZmZzZXQ7
-DQo+PiArICAgICB1OCAgICAgICAgICAgICAgICAgICAgICAqZGViX29mZnNldDsNCj4+ICsgICAg
-IHU4ICAgICAgICAgICAgICAgICAgICAgICpkZWJfdmFsOw0KPj4gKyAgICAgdTggICAgICAgICAg
-ICAgICAgICAgICAgKCpnZXRfZGViX3NldHZhbCkoY29uc3Qgc3RydWN0DQo+cnRkX2dwaW9faW5m
-byAqaW5mbywNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB1bnNpZ25lZCBpbnQNCj5vZmZzZXQsIHU4ICpyZWdfb2Zmc2V0LA0KPj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHU4ICpzaGlmdCwgdTgNCj4+
-ICtkZWJfaW5kZXgpOw0KPg0KPkJhc2ljYWxseSB5b3Ugc2hvdWxkIGdyb3VwIGlucHV0IHBhcmFt
-ZXRlcnMgYW5kIG91dHB1dCBmb3IgYmV0dGVyDQo+dW5kZXJzdGFuZGluZy4NCj4NCg0KSSB3aWxs
-IGRlZmluZSBhIHN0cnVjdHVyZSB0byBob2xkIHRoZSBuZWNlc3NhcnkgaW5mb3JtYXRpb24gZm9y
-IHRoZSBvdXRwdXQuDQoNCj4gICAgICAgIHU4ICAgICAgICAgICAgICAoKmdldF9kZWJfc2V0dmFs
-KShjb25zdCBzdHJ1Y3QgcnRkX2dwaW9faW5mbw0KPippbmZvLA0KPiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBvZmZzZXQsIHU4DQo+ZGViX2lu
-ZGV4LA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHU4ICpyZWdf
-b2Zmc2V0LCB1OCAqc2hpZnQpOw0KPg0KPkFsc28gaW5kZW50IHRoZSBsaW5lcyBwcm9wZXJseSAo
-YmVzaWRlcyB0aGUgVEFCcykuDQo+DQo+PiArfTsNCj4NCj5NYWtlIGl0IG9uZSBUQUIgbGVzcyBp
-biB0aGUgbWlkZGxlLg0KPg0KDQpJIHdpbGwgcmV2aXNlIGl0Lg0KDQo+Li4uDQo+DQo+PiArc3Rh
-dGljIHU4IHJ0ZF9ncGlvX2dldF9kZWJfc2V0dmFsKGNvbnN0IHN0cnVjdCBydGRfZ3Bpb19pbmZv
-ICppbmZvLCB1bnNpZ25lZA0KPmludCBvZmZzZXQsDQo+PiArICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICB1OCAqcmVnX29mZnNldCwgdTggKnNoaWZ0LCB1OCBkZWJfdmFsKQ0KPg0KPldoeSBp
-cyBpdCBjYWxsZWQgdmFsIGhlcmUgYW5kIGluZGV4IGluIHRoZSBvdGhlciBjYXNlcz8NCj5DYW4g
-eW91IGNvbWUgdXAgd2l0aCBiZXR0ZXIgbmFtaW5nIHRoYXQgaXQgY2FuIGJlIGNvbnNpc3RlbnQg
-aW4gYWxsIGZvdXIgcGxhY2VzPw0KPg0KDQpJIG1pc3NlZCB0byByZW5hbWUgaXQgdG8gJ2RlYl9p
-bmRleCcuIFNvcnJ5IGFib3V0IHRoYXQuDQoNCj4+ICt7DQo+PiArICAgICAqcmVnX29mZnNldCA9
-IGluZm8tPmRlYl9vZmZzZXRbb2Zmc2V0IC8gOF07DQo+PiArICAgICAqc2hpZnQgPSAob2Zmc2V0
-ICUgOCkgKiA0Ow0KPj4gKyAgICAgcmV0dXJuIGluZm8tPmRlYl92YWxbZGViX3ZhbF07DQo+PiAr
-fQ0KPj4gKw0KPj4gK3N0YXRpYyB1OCBydGQxMjk1X21pc2NfZ3Bpb19nZXRfZGViX3NldHZhbChj
-b25zdCBzdHJ1Y3QgcnRkX2dwaW9faW5mbyAqaW5mbywNCj51bnNpZ25lZCBpbnQgb2Zmc2V0LA0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdTggKnJlZ19vZmZzZXQs
-IHU4ICpzaGlmdCwgdTgNCj4+ICtkZWJfaW5kZXgpIHsNCj4+ICsgICAgICpyZWdfb2Zmc2V0ID0g
-aW5mby0+ZGViX29mZnNldFswXTsNCj4+ICsgICAgICpzaGlmdCA9IChvZmZzZXQgJSA4KSAqIDQ7
-DQo+PiArICAgICByZXR1cm4gaW5mby0+ZGViX3ZhbFtkZWJfaW5kZXhdOyB9DQo+DQo+PiArc3Rh
-dGljIHU4IHJ0ZDEyOTVfaXNvX2dwaW9fZ2V0X2RlYl9zZXR2YWwoY29uc3Qgc3RydWN0IHJ0ZF9n
-cGlvX2luZm8gKmluZm8sDQo+dW5zaWduZWQgaW50IG9mZnNldCwNCj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgdTggKnJlZ19vZmZzZXQsIHU4ICpzaGlmdCwgdTgNCj4+
-ICtkZWJfaW5kZXgpIHsNCj4+ICsgICAgICpyZWdfb2Zmc2V0ID0gaW5mby0+ZGViX29mZnNldFsw
-XTsNCj4+ICsgICAgICpzaGlmdCA9IDA7DQo+PiArICAgICByZXR1cm4gaW5mby0+ZGViX3ZhbFtk
-ZWJfaW5kZXhdOyB9DQo+DQo+Li4uDQo+DQo+PiArc3RhdGljIGludCBydGRfZ3Bpb19ncGFfb2Zm
-c2V0KHN0cnVjdCBydGRfZ3BpbyAqZGF0YSwgdW5zaWduZWQgaW50DQo+PiArb2Zmc2V0KSB7DQo+
-PiArICAgICByZXR1cm4gZGF0YS0+aW5mby0+Z3BhX29mZnNldFtvZmZzZXQgLyAzMV07IH0NCj4+
-ICsNCj4+ICtzdGF0aWMgaW50IHJ0ZF9ncGlvX2dwZGFfb2Zmc2V0KHN0cnVjdCBydGRfZ3BpbyAq
-ZGF0YSwgdW5zaWduZWQgaW50DQo+PiArb2Zmc2V0KSB7DQo+PiArICAgICByZXR1cm4gZGF0YS0+
-aW5mby0+Z3BkYV9vZmZzZXRbb2Zmc2V0IC8gMzFdOyB9DQo+DQo+VGhlIC8gMzEgc28tby1vIGNv
-dW50ZXIgaW50dWl0aXZlLCBwbGVhc2UgYWRkIGEgY29tbWVudCBpbiBlYWNoIGNhc2UgdG8gZXhw
-bGFpbg0KPndoeSBbaXQncyBub3QgMzIgb3Igb3RoZXIgcG93ZXItb2YtMl0uDQo+DQoNCkluIG91
-ciBoYXJkd2FyZSBkZXNpZ24sIHRoZSBiaXQgMCBvZiB0aGUgZ3BkYSBhbmQgZ3BhIHN0YXR1cyBy
-ZWdpc3RlcnMgZG9lcyBub3QgY29ycmVzcG9uZCB0byBhIEdQSU8uDQpJZiBiaXQgMCBpcyBzZXQg
-dG8gMSwgdGhlIG90aGVyIGJpdCBjYW4gYmUgc2V0IHRvIDEgYnkgd3JpdGluZyAxLg0KSWYgYml0
-IDAgaXMgc2V0IHRvIDAsIHRoZSBvdGhlciBiaXQgY2FuIGJlIGNsZWFyIHRvIDAgYnkgd3JpdGlu
-ZyAxLg0KDQpUaGVyZWZvcmUsIGVhY2ggc3RhdHVzIHJlZ2lzdGVyIG9ubHkgY29udGFpbnMgdGhl
-IHN0YXR1cyBvZiAzMSBHUElPcy4gSSB3aWxsIGFkZCB0aGUgY29tbWVudCBmb3IgdGhpcy4NCg0K
-Pi4uLg0KPg0KPj4gKyAgICAgcmF3X3NwaW5fbG9ja19pcnFzYXZlKCZkYXRhLT5sb2NrLCBmbGFn
-cyk7DQo+PiArICAgICB3cml0ZWxfcmVsYXhlZCh2YWwsIGRhdGEtPmJhc2UgKyByZWdfb2Zmc2V0
-KTsNCj4+ICsgICAgIHJhd19zcGluX3VubG9ja19pcnFyZXN0b3JlKCZkYXRhLT5sb2NrLCBmbGFn
-cyk7DQo+DQo+Q29udmVydCB0byB1c2UgY2xlYW51cC5jLCBpbiBwYXJ0aWN1bGFyIGhlcmUgaXQg
-YmVjb21lcw0KPg0KPiAgICAgICAgZ3VhcmQocmF3X3NwaW5sb2NrX2lycXNhdmUpKCZkYXRhLT5s
-b2NrKTsNCj4NCj4gICAgICAgIHdyaXRlbF9yZWxheGVkKHZhbCwgZGF0YS0+YmFzZSArIHJlZ19v
-ZmZzZXQpOw0KPg0KDQpJIHdpbGwgcmV2aXNlIGl0Lg0KDQo+Li4uDQo+DQo+PiArICAgICB2YWwg
-PSByZWFkbF9yZWxheGVkKGRhdGEtPmJhc2UgKyBkaXJfcmVnX29mZnNldCk7DQo+PiArICAgICB2
-YWwgJj0gQklUKG9mZnNldCAlIDMyKTsNCj4+ICsgICAgIGRhdF9yZWdfb2Zmc2V0ID0gdmFsID8N
-Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgcnRkX2dwaW9fZGF0b19vZmZzZXQoZGF0YSwgb2Zm
-c2V0KSA6DQo+PiArIHJ0ZF9ncGlvX2RhdGlfb2Zmc2V0KGRhdGEsIG9mZnNldCk7DQo+PiArDQo+
-PiArICAgICB2YWwgPSByZWFkbF9yZWxheGVkKGRhdGEtPmJhc2UgKyBkYXRfcmVnX29mZnNldCk7
-DQo+DQo+PiArICAgICB2YWwgPj49IG9mZnNldCAlIDMyOw0KPj4gKyAgICAgdmFsICY9IDB4MTsN
-Cj4NCj5SZXBsYWNlIDMgTG9DcyBieSAxOg0KPg0KPiAgICAgICAgcmV0dXJuICEhKHZhbCAmIEJJ
-VChvZnNzZXQgJSAzMikpOw0KPg0KPg0KPk1pc3NlZCBsb2NraW5nLiBIb3cgZG8geW91IGd1YXJh
-bnRlZSB0aGF0IHlvdSB3aWxsIGdldCBjb25zaXN0ZW50IHJlc3VsdHMNCj5iZXR3ZWVuIHRoZSBy
-ZWFkcz8NCj4NCg0KSSB3aWxsIHJldmlzZSBpdC4NCg0KPi4uLg0KPg0KPj4gKyAgICAgdmFsICY9
-IEJJVChvZmZzZXQgJSAzMik7DQo+PiArDQo+PiArICAgICByZXR1cm4gdmFsID8gR1BJT19MSU5F
-X0RJUkVDVElPTl9PVVQgOg0KPkdQSU9fTElORV9ESVJFQ1RJT05fSU47DQo+DQo+ICAgICAgICBp
-ZiAodmFsICYgQklUKC4uLikpDQo+ICAgICAgICAgICAgICAgIHJldHVybiBfT1VUOw0KPiAgICAg
-ICAgcmV0dXJuIF9JTjsNCj4NCj4uLi4NCj4NCj4+ICsgICAgIGZvciAoaSA9IDA7IGkgPCBkYXRh
-LT5pbmZvLT5udW1fZ3Bpb3M7IGkgKz0gMzEpIHsNCj4NCj5TYW1lLCBhZGQgZXhwbGFuYXRpb24g
-d2h5IDMxLg0KPg0KPk5vdGUsIEkgYWN0dWFsbHkgcHJlZmVyIHRvIHNlZSB1c2Ugb2YgdmFsaWRf
-bWFzayBpbnN0ZWFkIG9mIHRoaXMgd2VpcmRuZXNzLg0KPlRoZW4geW91IHdpbGwgbmVlZCB0byBj
-b21tZW50IG9ubHkgb25jZSBhbmQgdXNlIDMyIChhbG1vc3Q/KSBldmVyeXdoZXJlLg0KPg0KDQpU
-aGUgcmVhc29uIHJlbWFpbnMgY29uc2lzdGVudCB3aXRoIHRoZSBwcmV2aW91cyBleHBsYW5hdGlv
-bi4gRWFjaCBzdGF0dXMgcmVnaXN0ZXINCmV4Y2x1c2l2ZWx5IGhvbGRzIHRoZSBzdGF0dXMgb2Yg
-MzEgR1BJT3MuDQoNCj4+ICsgICAgICAgICAgICAgcmVnX29mZnNldCA9IGdldF9yZWdfb2Zmc2V0
-KGRhdGEsIGkpOw0KPj4gKw0KPj4gKyAgICAgICAgICAgICBzdGF0dXMgPSByZWFkbF9yZWxheGVk
-KGRhdGEtPmlycV9iYXNlICsgcmVnX29mZnNldCkgPj4gMTsNCj4+ICsgICAgICAgICAgICAgd3Jp
-dGVsX3JlbGF4ZWQoc3RhdHVzIDw8IDEsIGRhdGEtPmlycV9iYXNlICsNCj4+ICsgcmVnX29mZnNl
-dCk7DQo+PiArDQo+PiArICAgICAgICAgICAgIGZvcl9lYWNoX3NldF9iaXQoaiwgJnN0YXR1cywg
-MzEpIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICBod2lycSA9IGkgKyBqOw0KPg0KPk5pY2Us
-IGJ1dCB5b3UgY2FuIGRvIGJldHRlcg0KPg0KPiAgICAgICAgICAgICAgICAvKiBCaXQgMCBpcyBz
-cGVjaWFsLi4uIGJsYS1ibGEtYmxhLi4uICovDQo+ICAgICAgICAgICAgICAgIHN0YXR1cyA9IHJl
-YWRsX3JlbGF4ZWQoZGF0YS0+aXJxX2Jhc2UgKyByZWdfb2Zmc2V0KTsNCj4gICAgICAgICAgICAg
-ICAgc3RhdHVzICY9IH5CSVQoMCk7DQo+ICAgICAgICAgICAgICAgIHdyaXRlbF9yZWxheGVkKHN0
-YXR1cywgZGF0YS0+aXJxX2Jhc2UgKyByZWdfb2Zmc2V0KTsNCj4NCj4gICAgICAgICAgICAgICAg
-Zm9yX2VhY2hfc2V0X2JpdChqLCAmc3RhdHVzLCAzMikgew0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgIGh3aXJxID0gaSArIGogLSAxOw0KPg0KDQpHaXZlbiB0aGF0IGVhY2ggc3RhdHVzIHJlZ2lz
-dGVyIGFjY29tbW9kYXRlcyB0aGUgc3RhdHVzIG9mIG9ubHkgMzEgR1BJT3MsIEkgdGhpbmsgdXRp
-bGl6aW5nIA0KdGhlIHVwcGVyIGZvcm1hdCBhbmQgaW5jbHVkaW5nIGV4cGxhbmF0b3J5IGNvbW1l
-bnRzIHdvdWxkIGJlIGFwcHJvcHJpYXRlLiBJdCBjYW4gaW5kaWNhdGUgdGhlDQpzdGF0dXMgcmVn
-aXN0ZXJzIG9ubHkgY29udGFpbnMgMzEgR1BJT3MuIFBsZWFzZSBjb3JyZWN0IG1lIGlmIG15IHVu
-ZGVyc3RhbmRpbmcgaXMgaW5jb3JyZWN0Lg0KDQo+PiArICAgICAgICAgICAgICAgICAgICAgaWYg
-KHJ0ZF9ncGlvX2NoZWNrX2llKGRhdGEsIGh3aXJxKSkgew0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgaW50IGdpcnEgPSBpcnFfZmluZF9tYXBwaW5nKGRvbWFpbiwNCj5od2lycSk7
-DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1MzIgaXJxX3R5cGUgPQ0KPj4gKyBp
-cnFfZ2V0X3RyaWdnZXJfdHlwZShnaXJxKTsNCj4+ICsNCj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGlmICgoaXJxID09IGRhdGEtPmlycXNbMV0pICYmICgoaXJxX3R5cGUgJg0KPklS
-UV9UWVBFX1NFTlNFX01BU0spICE9DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIElSUV9UWVBFX0VER0VfQk9USCkpDQo+DQo+RG8geW91IG5lZWQgbWFzaz8gSXNuJ3Qg
-aXJxX3R5cGUgYWxyZWFkeSBwcm9wZXJseSBtYXNrZWQgaGVyZT8NCj4NCj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+PiArICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBnZW5lcmljX2hhbmRsZV9kb21haW5faXJxKGRvbWFpbiwNCj5od2lycSk7DQo+
-PiArICAgICAgICAgICAgICAgICAgICAgfQ0KPj4gKyAgICAgICAgICAgICB9DQo+PiArICAgICB9
-DQo+DQoNCkl0IGhhcyBhbHJlYWR5IGJlZW4gbWFza2VkIGluIHRoZSBpcnFfZ2V0X3RyaWdnZXJf
-dHlwZS4gSSB3aWxsIHJldmlzZSBpdC4NCg0KPi4uLg0KPg0KPj4gKyAgICAgdTMyIGNscl9tYXNr
-ID0gQklUKGh3aXJxICUgMzEpIDw8IDE7DQo+PiArICAgICB1MzIgaWVfbWFzayA9IEJJVChod2ly
-cSAlIDMyKTsNCj4NCj5UaGlzIGJsb3dzIHRoZSBtaW5kLiBOZWVkcyBhIGNvbW1lbnQuDQo+DQoN
-ClRoZSBjbHJfbWFzayBpcyB1c2VkIHRvIGNsZWFyIHRoZSBncGEvZ3BkYSByZWdpc3RlcnMsIGVh
-Y2ggb2Ygd2hpY2ggYWNjb21tb2RhdGVzIG9ubHkgMzEgR1BJT3MuDQoNCj4uLi4NCj4NCj4+ICtz
-dGF0aWMgaW50IHJ0ZF9ncGlvX2lycV9zZXRfdHlwZShzdHJ1Y3QgaXJxX2RhdGEgKmQsIHVuc2ln
-bmVkIGludA0KPj4gK3R5cGUpIHsNCj4+ICsgICAgIHN0cnVjdCBncGlvX2NoaXAgKmdjID0gaXJx
-X2RhdGFfZ2V0X2lycV9jaGlwX2RhdGEoZCk7DQo+PiArICAgICBzdHJ1Y3QgcnRkX2dwaW8gKmRh
-dGEgPSBncGlvY2hpcF9nZXRfZGF0YShnYyk7DQo+PiArICAgICBpcnFfaHdfbnVtYmVyX3QgaHdp
-cnEgPSBpcnFkX3RvX2h3aXJxKGQpOw0KPj4gKyAgICAgdTMyIG1hc2sgPSBCSVQoaHdpcnEgJSAz
-Mik7DQo+PiArICAgICB1bnNpZ25lZCBsb25nIGZsYWdzOw0KPj4gKyAgICAgaW50IGRwX3JlZ19v
-ZmZzZXQ7DQo+PiArICAgICBib29sIHBvbGFyaXR5Ow0KPj4gKyAgICAgdTMyIHZhbDsNCj4+ICsN
-Cj4+ICsgICAgIGRwX3JlZ19vZmZzZXQgPSBydGRfZ3Bpb19kcF9vZmZzZXQoZGF0YSwgaHdpcnEp
-Ow0KPj4gKw0KPj4gKyAgICAgc3dpdGNoICh0eXBlICYgSVJRX1RZUEVfU0VOU0VfTUFTSykgew0K
-Pj4gKyAgICAgY2FzZSBJUlFfVFlQRV9FREdFX1JJU0lORzoNCj4+ICsgICAgICAgICAgICAgcG9s
-YXJpdHkgPSAxOw0KPj4gKyAgICAgICAgICAgICBicmVhazsNCj4+ICsNCj4+ICsgICAgIGNhc2Ug
-SVJRX1RZUEVfRURHRV9GQUxMSU5HOg0KPj4gKyAgICAgICAgICAgICBwb2xhcml0eSA9IDA7DQo+
-PiArICAgICAgICAgICAgIGJyZWFrOw0KPj4gKw0KPj4gKyAgICAgY2FzZSBJUlFfVFlQRV9FREdF
-X0JPVEg6DQo+PiArICAgICAgICAgICAgIHBvbGFyaXR5ID0gMTsNCj4+ICsgICAgICAgICAgICAg
-YnJlYWs7DQo+PiArDQo+PiArICAgICBkZWZhdWx0Og0KPj4gKyAgICAgICAgICAgICByZXR1cm4g
-LUVJTlZBTDsNCj4+ICsgICAgIH0NCj4+ICsNCj4+ICsgICAgIHJhd19zcGluX2xvY2tfaXJxc2F2
-ZSgmZGF0YS0+bG9jaywgZmxhZ3MpOw0KPj4gKw0KPj4gKyAgICAgdmFsID0gcmVhZGxfcmVsYXhl
-ZChkYXRhLT5iYXNlICsgZHBfcmVnX29mZnNldCk7DQo+PiArICAgICBpZiAocG9sYXJpdHkpDQo+
-PiArICAgICAgICAgICAgIHZhbCB8PSBtYXNrOw0KPj4gKyAgICAgZWxzZQ0KPj4gKyAgICAgICAg
-ICAgICB2YWwgJj0gfm1hc2s7DQo+PiArICAgICB3cml0ZWxfcmVsYXhlZCh2YWwsIGRhdGEtPmJh
-c2UgKyBkcF9yZWdfb2Zmc2V0KTsNCj4+ICsNCj4+ICsgICAgIHJhd19zcGluX3VubG9ja19pcnFy
-ZXN0b3JlKCZkYXRhLT5sb2NrLCBmbGFncyk7DQo+PiArDQo+PiArICAgICByZXR1cm4gMDsNCj4+
-ICt9DQo+DQo+Li4uDQo+DQo+PiArICAgICBpcnFfY2hpcC0+aGFuZGxlciA9IGhhbmRsZV9zaW1w
-bGVfaXJxOw0KPg0KPlBsZWFzZSwgYXBwbHkgYmFkIGhhbmRsZXIgaGVyZSBhbmQgbG9jayBpdCBp
-biB0aGUgc2V0X3R5cGUgY2FsbGJhY2sgYWJvdmUuDQo+DQo+WW91IG1heSByZWFkIGViNDQxMzM3
-YzcxNCAoImdwaW86IHBjYTk1M3g6IFNldCBJUlEgdHlwZSB3aGVuIGhhbmRsZSBJbnRlbA0KPkdh
-bGlsZW8gR2VuIDIiKSB0byB1bmRlcnN0YW5kIHRoZSBkaWZmZXJlbmNlLg0KPg0KDQpJIHdpbGwg
-cmV2aXNlIGl0Lg0KDQo+Li4uDQo+DQo+PiArc3RhdGljIGludCBydGRfZ3Bpb19pbml0KHZvaWQp
-DQo+PiArew0KPj4gKyAgICAgcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmcnRkX2dw
-aW9fcGxhdGZvcm1fZHJpdmVyKTsNCj4+ICt9DQo+DQo+PiArDQo+DQo+UmVkdW5kYW50IGJsYW5r
-IGxpbmUsIGJ1dCBzZWUgYmVsb3cuDQo+DQo+PiArbW9kdWxlX2luaXQocnRkX2dwaW9faW5pdCk7
-DQo+PiArDQo+PiArc3RhdGljIHZvaWQgX19leGl0IHJ0ZF9ncGlvX2V4aXQodm9pZCkgew0KPj4g
-KyAgICAgcGxhdGZvcm1fZHJpdmVyX3VucmVnaXN0ZXIoJnJ0ZF9ncGlvX3BsYXRmb3JtX2RyaXZl
-cik7DQo+PiArfQ0KPj4gK21vZHVsZV9leGl0KHJ0ZF9ncGlvX2V4aXQpOw0KPg0KPlRoZXJlIGlz
-IG5vIHNwZWNpYWwgaW5pdGNhbGwsIHlvdSBtYXkgdXNlIG1vZHVsZV9wbGF0Zm9ybV9kcml2ZXIo
-KSBtYWNybw0KPmluc3RlYWQuDQo+DQoNCkkgd2lsbCByZXZpc2UgaXQuDQoNClRoYW5rcywNClR6
-dXlpIENoYW5nDQo=
+Currently the cros_ec driver assumes that its associated interrupt is
+wake capable. This is an incorrect assumption as some Chromebooks use a
+separate wake pin, while others overload the interrupt for wake and IO.
+This patch train updates the driver to query the underlying ACPI/DT data
+to determine whether or not the IRQ should be enabled for wake.
+
+Both the device tree and ACPI systems have methods for reporting IRQ
+wake capability. In device tree based systems, a node can advertise
+itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
+Interrupt resource descriptors can use the 'SharedAndWake' or
+'ExclusiveAndWake' share types.
+
+Some logic is added to the platform, ACPI, and DT subsystems to more
+easily pipe wakeirq information up to the driver.
+
+Changes in v3:
+-Rebase on linux-next
+-See each patch for patch specific changes
+
+Changes in v2:
+-Rebase on linux-next
+-Add cover letter
+-See each patch for patch specific changes
+
+Mark Hasemeyer (24):
+  resource: Add DEFINE_RES_*_NAMED_FLAGS macro
+  gpiolib: acpi: Modify acpi_dev_irq_wake_get_by() to use resource
+  i2c: acpi: Modify i2c_acpi_get_irq() to use resource
+  dt-bindings: power: Clarify wording for wakeup-source property
+  ARM: dts: tegra: Enable cros-ec-spi as wake source
+  ARM: dts: rockchip: rk3288: Enable cros-ec-spi as wake source
+  ARM: dts: samsung: exynos5420: Enable cros-ec-spi as wake source
+  ARM: dts: samsung: exynos5800: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8173: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8183: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8192: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8195: Enable cros-ec-spi as wake source
+  arm64: dts: tegra: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sc7180: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sc7280: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sdm845: Enable cros-ec-spi as wake source
+  arm64: dts: rockchip: rk3399: Enable cros-ec-spi as wake source
+  of: irq: add wake capable bit to of_irq_resource()
+  of: irq: Add default implementation for of_irq_to_resource()
+  of: irq: Remove extern from function declarations
+  device property: Modify fwnode irq_get() to use resource
+  device property: Update functions to use EXPORT_SYMBOL_GPL
+  platform: Modify platform_get_irq_optional() to use resource
+  platform/chrome: cros_ec: Use PM subsystem to manage wakeirq
+
+ .../bindings/power/wakeup-source.txt          | 18 +++--
+ arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi   |  1 +
+ arch/arm/boot/dts/nvidia/tegra124-venice2.dts |  1 +
+ .../rockchip/rk3288-veyron-chromebook.dtsi    |  1 +
+ .../boot/dts/samsung/exynos5420-peach-pit.dts |  1 +
+ .../boot/dts/samsung/exynos5800-peach-pi.dts  |  1 +
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  1 +
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |  1 +
+ .../boot/dts/mediatek/mt8192-asurada.dtsi     |  1 +
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |  1 +
+ .../arm64/boot/dts/nvidia/tegra132-norrin.dts |  1 +
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
+ .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  1 +
+ .../arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi |  1 +
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  1 +
+ drivers/acpi/property.c                       | 11 ++-
+ drivers/base/platform.c                       | 70 +++++++++++++------
+ drivers/base/property.c                       | 32 +++++++--
+ drivers/gpio/gpiolib-acpi.c                   | 27 ++++---
+ drivers/i2c/i2c-core-acpi.c                   | 37 +++++-----
+ drivers/i2c/i2c-core-base.c                   |  6 +-
+ drivers/i2c/i2c-core.h                        |  4 +-
+ drivers/of/irq.c                              | 39 +++++++++--
+ drivers/of/property.c                         |  8 +--
+ drivers/platform/chrome/cros_ec.c             | 48 ++++++++++---
+ drivers/platform/chrome/cros_ec_lpc.c         | 32 ++++++++-
+ drivers/platform/chrome/cros_ec_spi.c         | 15 ++--
+ drivers/platform/chrome/cros_ec_uart.c        | 22 ++++--
+ include/linux/acpi.h                          | 23 +++---
+ include/linux/fwnode.h                        |  8 ++-
+ include/linux/ioport.h                        | 20 ++++--
+ include/linux/of_irq.h                        | 41 ++++++-----
+ include/linux/platform_data/cros_ec_proto.h   |  4 +-
+ include/linux/platform_device.h               |  3 +
+ include/linux/property.h                      |  2 +
+ 36 files changed, 336 insertions(+), 149 deletions(-)
+
+-- 
+2.43.0.472.g3155946c3a-goog
+
