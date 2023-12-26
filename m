@@ -1,109 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D042260BA4;
-	Tue, 26 Dec 2023 00:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G22Hqhsf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DCDFC433C8;
-	Tue, 26 Dec 2023 00:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703550453;
-	bh=CNBU/Y9sLgZ+fGEB2eCCzMGg0xo/YT9sWLvCQfkKNrU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G22HqhsfdcixYRmDteh+9SCeR58N2wEBQ2+JWRSi0cMT2asEvcHxRZAcjc4x3JKLh
-	 8bym3OqGbGKerGKuG+N8fI7OQ1KnwCv3LOeUtk1kh8kuzv61Ya1XbdPiliNp6iJX9w
-	 E6pARRXK8/BTwH5MxtYbn+TZqA5bTOLCAgIS/kuhtMf02jzl6xQah/QfVlEUtMi/it
-	 K4UhV7k2Y0QvIf2ijf6Qc92at4u8Vi3MfZO4KjkoDUFdtqOevf3qUWLuDgr2JYExcf
-	 /bYWxwkq1pT0v7s9Mwt/MqcD2NEBhlWa8L1Sc+p9SH4Otfi0f3HOYqWOuEBcBuB9Dg
-	 /kCq0hHcMRpNA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Marcus Aram <marcus+oss@oxar.nl>,
-	Mark Herbert <mark.herbert42@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Basavaraj.Natikar@amd.com,
-	Shyam-sundar.S-k@amd.com,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 3/6] pinctrl: amd: Mask non-wake source pins with interrupt enabled at suspend
-Date: Mon, 25 Dec 2023 19:27:10 -0500
-Message-ID: <20231226002725.7471-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231226002725.7471-1-sashal@kernel.org>
-References: <20231226002725.7471-1-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD574C60B;
+	Tue, 26 Dec 2023 07:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 3BQ7YxK02332767, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 3BQ7YxK02332767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Dec 2023 15:34:59 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.17; Tue, 26 Dec 2023 15:34:57 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 26 Dec 2023 15:34:57 +0800
+Received: from RTEXDAG02.realtek.com.tw ([fe80::5d58:7838:d352:d6b8]) by
+ RTEXDAG02.realtek.com.tw ([fe80::5d58:7838:d352:d6b8%5]) with mapi id
+ 15.01.2375.007; Tue, 26 Dec 2023 15:34:57 +0800
+From: =?utf-8?B?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?= <tychang@realtek.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "Andy
+ Shevchenko" <andy@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 2/2] Add GPIO support for Realtek DHC(Digital Home Center) RTD SoCs.
+Thread-Topic: [PATCH v4 2/2] Add GPIO support for Realtek DHC(Digital Home
+ Center) RTD SoCs.
+Thread-Index: AQHaNKykAxQglRQ65UeKSWnkfMw4BLC2ZpWAgATFNhA=
+Date: Tue, 26 Dec 2023 07:34:57 +0000
+Message-ID: <0d0510c2340e4e7f8048e56400a01b48@realtek.com>
+References: <20231222075812.6540-1-tychang@realtek.com>
+ <20231222075812.6540-3-tychang@realtek.com>
+ <2a44fe91-b4a5-4842-8abc-f30c532f14e0@linaro.org>
+In-Reply-To: <2a44fe91-b4a5-4842-8abc-f30c532f14e0@linaro.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.14.334
-Content-Transfer-Encoding: 8bit
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-From: Mario Limonciello <mario.limonciello@amd.com>
-
-[ Upstream commit 2fff0b5e1a6b9c577b4dd4958902c877159c856b ]
-
-If a pin isn't marked as a wake source processing any interrupts is
-just going to destroy battery life.  The APU may wake up from a hardware
-sleep state to process the interrupt but not return control to the OS.
-
-Mask interrupt for all non-wake source pins at suspend. They'll be
-re-enabled at resume.
-
-Reported-and-tested-by: Marcus Aram <marcus+oss@oxar.nl>
-Reported-and-tested-by: Mark Herbert <mark.herbert42@gmail.com>
-Link: https://gitlab.freedesktop.org/drm/amd/-/issues/2812
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-Link: https://lore.kernel.org/r/20231203032431.30277-3-mario.limonciello@amd.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/pinctrl-amd.c | 9 +++++++++
- drivers/pinctrl/pinctrl-amd.h | 5 +++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 509ba4bceefcb..a5cd88c5dd844 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -766,6 +766,15 @@ int amd_gpio_suspend(struct device *dev)
- 
- 		raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 		gpio_dev->saved_regs[i] = readl(gpio_dev->base + pin * 4) & ~PIN_IRQ_PENDING;
-+
-+		/* mask any interrupts not intended to be a wake source */
-+		if (!(gpio_dev->saved_regs[i] & WAKE_SOURCE)) {
-+			writel(gpio_dev->saved_regs[i] & ~BIT(INTERRUPT_MASK_OFF),
-+			       gpio_dev->base + pin * 4);
-+			pm_pr_dbg("Disabling GPIO #%d interrupt for suspend.\n",
-+				  pin);
-+		}
-+
- 		raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 	}
- 
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index 884f48f7a6a36..065419dabffb5 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -80,6 +80,11 @@ struct amd_pingroup {
- 	unsigned npins;
- };
- 
-+#define WAKE_SOURCE	(BIT(WAKE_CNTRL_OFF_S0I3) | \
-+			 BIT(WAKE_CNTRL_OFF_S3)   | \
-+			 BIT(WAKE_CNTRL_OFF_S4)   | \
-+			 BIT(WAKECNTRL_Z_OFF))
-+
- struct amd_function {
- 	const char *name;
- 	const char * const *groups;
--- 
-2.43.0
-
+SGkgS3J6eXN6dG9mLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXcuDQoNCj4uLi4NCj4NCj4+
+ICtzdGF0aWMgaW50IHJ0ZF9ncGlvX2lycV9zZXRfdHlwZShzdHJ1Y3QgaXJxX2RhdGEgKmQsIHVu
+c2lnbmVkIGludA0KPj4gK3R5cGUpIHsNCj4+ICsgICAgIHN0cnVjdCBncGlvX2NoaXAgKmdjID0g
+aXJxX2RhdGFfZ2V0X2lycV9jaGlwX2RhdGEoZCk7DQo+PiArICAgICBzdHJ1Y3QgcnRkX2dwaW8g
+KmRhdGEgPSBncGlvY2hpcF9nZXRfZGF0YShnYyk7DQo+PiArICAgICBpcnFfaHdfbnVtYmVyX3Qg
+aHdpcnEgPSBpcnFkX3RvX2h3aXJxKGQpOw0KPj4gKyAgICAgdTMyIG1hc2sgPSBCSVQoaHdpcnEg
+JSAzMik7DQo+PiArICAgICB1bnNpZ25lZCBsb25nIGZsYWdzOw0KPj4gKyAgICAgaW50IGRwX3Jl
+Z19vZmZzZXQ7DQo+PiArICAgICBib29sIHBvbGFyaXR5Ow0KPj4gKyAgICAgdTMyIHZhbDsNCj4+
+ICsNCj4+ICsgICAgIGRwX3JlZ19vZmZzZXQgPSBydGRfZ3Bpb19kcF9vZmZzZXQoZGF0YSwgaHdp
+cnEpOw0KPj4gKw0KPj4gKyAgICAgc3dpdGNoICh0eXBlICYgSVJRX1RZUEVfU0VOU0VfTUFTSykg
+ew0KPj4gKyAgICAgY2FzZSBJUlFfVFlQRV9FREdFX1JJU0lORzoNCj4+ICsgICAgICAgICAgICAg
+cG9sYXJpdHkgPSAxOw0KPj4gKyAgICAgICAgICAgICBicmVhazsNCj4+ICsNCj4+ICsgICAgIGNh
+c2UgSVJRX1RZUEVfRURHRV9GQUxMSU5HOg0KPj4gKyAgICAgICAgICAgICBwb2xhcml0eSA9IDA7
+DQo+PiArICAgICAgICAgICAgIGJyZWFrOw0KPj4gKw0KPj4gKyAgICAgY2FzZSBJUlFfVFlQRV9F
+REdFX0JPVEg6DQo+PiArICAgICAgICAgICAgIHBvbGFyaXR5ID0gMTsNCj4+ICsgICAgICAgICAg
+ICAgYnJlYWs7DQo+PiArDQo+PiArICAgICBkZWZhdWx0Og0KPj4gKyAgICAgICAgICAgICByZXR1
+cm4gLUVJTlZBTDsNCj4+ICsgICAgIH0NCj4+ICsNCj4+ICsgICAgIHJhd19zcGluX2xvY2tfaXJx
+c2F2ZSgmZGF0YS0+bG9jaywgZmxhZ3MpOw0KPg0KPldoeSBhcmUgeW91IHVzaW5nIHJhdyBzcGlu
+bG9jaz8gVGhpcyBxdWVzdGlvbiBhcHBsaWVzIHRvIGVudGlyZSBkcml2ZXIuDQo+DQoNCkkgdGhp
+bmsgY29uc3VtZXIgZHJpdmVyIG1heSBvcGVyYXRlIEdQSU9zIHdpdGhpbiB0aGUgSVNSLCBzbyBp
+dCBuZWVkcyBhIGxvY2suDQoNCj4+ICsNCj4+ICsgICAgIHZhbCA9IHJlYWRsX3JlbGF4ZWQoZGF0
+YS0+YmFzZSArIGRwX3JlZ19vZmZzZXQpOw0KPj4gKyAgICAgaWYgKHBvbGFyaXR5KQ0KPj4gKyAg
+ICAgICAgICAgICB2YWwgfD0gbWFzazsNCj4+ICsgICAgIGVsc2UNCj4+ICsgICAgICAgICAgICAg
+dmFsICY9IH5tYXNrOw0KPj4gKyAgICAgd3JpdGVsX3JlbGF4ZWQodmFsLCBkYXRhLT5iYXNlICsg
+ZHBfcmVnX29mZnNldCk7DQo+PiArDQo+PiArICAgICByYXdfc3Bpbl91bmxvY2tfaXJxcmVzdG9y
+ZSgmZGF0YS0+bG9jaywgZmxhZ3MpOw0KPj4gKw0KPj4gKyAgICAgcmV0dXJuIDA7DQo+PiArfQ0K
+Pg0KPi4uLg0KPg0KPn0NCj4+ICsNCj4+ICttb2R1bGVfaW5pdChydGRfZ3Bpb19pbml0KTsNCj4+
+ICsNCj4+ICtzdGF0aWMgdm9pZCBfX2V4aXQgcnRkX2dwaW9fZXhpdCh2b2lkKSB7DQo+PiArICAg
+ICBwbGF0Zm9ybV9kcml2ZXJfdW5yZWdpc3RlcigmcnRkX2dwaW9fcGxhdGZvcm1fZHJpdmVyKTsN
+Cj4+ICt9DQo+PiArbW9kdWxlX2V4aXQocnRkX2dwaW9fZXhpdCk7DQo+DQo+V2h5IG5vdCB1c2lu
+ZyBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyPw0KPg0KDQpJIHdpbGwgcmV2aXNlIGl0Lg0KDQpUaGFu
+a3MsDQpUenV5aSBDaGFuZw0K
