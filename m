@@ -1,55 +1,58 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583E914AAB
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jan 2024 15:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC43814AB6
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jan 2024 15:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pdQKouu+"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40d5336986cso92451725e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2024 07:59:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PduPRUQs"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40d5f40ce04so49996085e9.2
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2024 07:59:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1704211193; x=1704815993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8WsyzcZQRV9ijz3j8+9hqogl73yu+I0VcAwk/LOq5VA=;
-        b=pdQKouu+ItTuNIY77iqeCZ7JSbcVAtvV9+iQHktUdo1Olc1GaXBMp/aEdWqMUqQthQ
-         6H50x3gXdOdLyk0irINKnKX77Z7BOnhrT6b4EIKqJiosWiZgf9wIxK0djrUcXFTl1/9+
-         gJoVfL/hB71oRfbQ7D0qEgi3nCQoaRVKPXoZAqrSn7r48GRdrodPcooI4+botp2e4h7U
-         WukOiCSF6MeBwiv4w/KXmVlpItgsdx+Sazgs9FuuR8INWviP/WecJYXW0YQSDxzJcsd7
-         U4DBEvtYQh6UbDzrEQeyKlqBzstoqkBc8Pew00BImXVC+ZdA/41COdPpu5CuiI8FQRKG
-         5qag==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1704211195; x=1704815995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g3wf/pQ/AJWgbz0DcSp/EQGOfmOL52HnCJ3+CUimtjU=;
+        b=PduPRUQsYm/KpfCIrEUCZUXYsQ7W+JTChiO0vxlA4tCt/TnMtN6KAmdNhvsJUnN1+9
+         xk6NawI3a+MvdzLGPMnsSw2Ri/H0/Zkk2YL6tte1jfjHmTyySxByGhzaZiTecbsKmjVk
+         DHsTPO+WwUPvfXF8/AxcogXxL6p0FZGsdPO+kr+yKEw28WVDfDcmyhUgqgzwuZoq1Cvx
+         x3yfPJGfsSSFvl1deH43Mj17jFTX+vZ2ljdRKl6vgifEzzmRhzCGeEz5v5YwyioaEboQ
+         UlVfdZgS40bP1AqxgpXDJMIkCndRDH+LzRHzxRhQ7AaIFcZsFmSW68eUSs7Wsju8//Cq
+         sD3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704211193; x=1704815993;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8WsyzcZQRV9ijz3j8+9hqogl73yu+I0VcAwk/LOq5VA=;
-        b=u5DBhyYq1XqCdAKjvtIvaQMbBJwWf/r0M3lV/6xa34ZJq/W3qcsTQQvd5eHRnnoJLO
-         0VaSinSAdPRvoTIpZqjrjhfsMj1vaA7yHrrqvBjc5ZKKVd2B9wuSiBbIT5mChxfrKCUF
-         NmgihAWcju17eh5wwCW4vlDxQCm2j0z6dsSYAnE8V0GvZdoaPgfYbE5AJwHax87yci/P
-         SH5RNK22qN85Udy6ZFEck2RbMRExHZ7OCELAXmRPj8clN3lQfmvozCm/TMMXE1CQ9ifZ
-         rpDmESucCLVqcYTjYKwMYAGRfGm3lMminBMs9nRsN4x9Y/vRE8DUDQ1iJqj5UPmgTPKl
-         4MrA==
-X-Gm-Message-State: AOJu0Yy4cU9ubX4kKJc0wqJwSx2CbNf9URYm1VBuZRjZrkUCMjyu8ZtH
-	uIgaQrYnVow9/SkQE5ONb+V49r3WJvuCyhvEW5LnK3VV1sw=
-X-Google-Smtp-Source: AGHT+IEQ0ydWU51BdGD1VzVabgu66m6TLoDAtPd0hUHRuhEZl0AbRC4um4XG4Evsbxae2zC2OIoU2w==
-X-Received: by 2002:a05:600c:c18:b0:40d:8cd1:16dd with SMTP id fm24-20020a05600c0c1800b0040d8cd116ddmr587983wmb.248.1704211193471;
-        Tue, 02 Jan 2024 07:59:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704211195; x=1704815995;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g3wf/pQ/AJWgbz0DcSp/EQGOfmOL52HnCJ3+CUimtjU=;
+        b=ljQegqeq5gBq/iNDqKnYdM/uZWaWPcIEtyZGL/MXfYitsYkhzo3PUzgysroUA/mkk3
+         8SrayX0cZZl7h26kx98GaBeUuMtdcuOK3R/5wIV0w2VxQoKQR+CI5GWMo5DDgNbret+7
+         4pBceFwnJQ1c+y8T/ylPN7/mxAf3JGtFpkmXceFEEXnhqBME+Dkct8SWVmqm0rBfIjw/
+         qiAkCHjj6QHEtUI8xDwoZ0tvulsUWR0QRqSfFbRBwdyeoD3Q1WsAzgDPBgQXJT/47ax8
+         mBaMrGBDu+tDYewqmHCSPuRrrA/YPRRnPcAReeMol8ZFbMFEYnI9fCcahgdN6sJ/KrQ4
+         CW2A==
+X-Gm-Message-State: AOJu0YzLY/iodWokFyngwtEe4y0Xb9RpOo7T7CrivGR5Yr5HK87HeDBT
+	eBExk6sXTeVnYRTCmhlX2zv+qHaSrSSTVQ==
+X-Google-Smtp-Source: AGHT+IHPuqgldGLMFnRYL6FhPI2YLi1Eg/NCz/1AQ9quf/p1eetr/TeWu+oHiX7d0d/zVPaZOgEOSA==
+X-Received: by 2002:a05:600c:1ca9:b0:40d:5b0d:b105 with SMTP id k41-20020a05600c1ca900b0040d5b0db105mr6173715wms.117.1704211195108;
+        Tue, 02 Jan 2024 07:59:55 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:6f51:fa47:f00a:a53c])
-        by smtp.gmail.com with ESMTPSA id u14-20020a05600c138e00b0040d62f97e3csm20556641wmf.10.2024.01.02.07.59.52
+        by smtp.gmail.com with ESMTPSA id u14-20020a05600c138e00b0040d62f97e3csm20556641wmf.10.2024.01.02.07.59.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 07:59:53 -0800 (PST)
+        Tue, 02 Jan 2024 07:59:54 -0800 (PST)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 0/3] gpiolib: use a read-write semaphore to protect the GPIO device list
-Date: Tue,  2 Jan 2024 16:59:46 +0100
-Message-Id: <20240102155949.73434-1-brgl@bgdev.pl>
+Subject: [PATCH v2 2/3] gpiolib: replace the GPIO device mutex with a read-write semaphore
+Date: Tue,  2 Jan 2024 16:59:48 +0100
+Message-Id: <20240102155949.73434-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240102155949.73434-1-brgl@bgdev.pl>
+References: <20240102155949.73434-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,33 +63,129 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I'm still figuring out how to keep GPIO descriptors coherent while
-(mostly) lockless. In the meantime, I found a potential race-condition
-during GPIO descriptor lookup and also figured that the correct way to
-protect the GPIO device list is actually a read-write semaphore as we're
-not modifying the list very often and readers should be able to iterate
-over it concurrently.
+There are only two spots where we modify (add to or remove objects from)
+the GPIO device list. Readers should be able to access it concurrently.
+Replace the mutex with a read-write semaphore and adjust the locking
+operations accordingly.
 
-The first patch in this series is new in v2. I realized that we must not
-wait until .release() to remove the GPIO device from the list as this is
-why pinning down the GPIO device list during lookup would never work -
-we always could end up re-taking a reference to an object that was being
-released if it got looked up between when the last reference is dropped
-and the object is finally removed from the device list.
-
-v1 -> v2:
-- add patch 1/3 to fix a release timing issue
-
-Bartosz Golaszewski (3):
-  gpiolib: remove the GPIO device from the list when it's unregistered
-  gpiolib: replace the GPIO device mutex with a read-write semaphore
-  gpiolib: pin GPIO devices in place during descriptor lookup
-
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
  drivers/gpio/gpiolib-sysfs.c |  2 +-
- drivers/gpio/gpiolib.c       | 62 ++++++++++++++++++++----------------
+ drivers/gpio/gpiolib.c       | 18 +++++++++---------
  drivers/gpio/gpiolib.h       |  2 +-
- 3 files changed, 36 insertions(+), 30 deletions(-)
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 2d29ae37d953..4dbf298bb5dd 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -773,7 +773,7 @@ int gpiochip_sysfs_register_all(void)
+ 	struct gpio_device *gdev;
+ 	int ret;
+ 
+-	guard(mutex)(&gpio_devices_lock);
++	guard(rwsem_read)(&gpio_devices_sem);
+ 
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
+ 		if (gdev->mockdev)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e019c4243809..4c93cf73a826 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -85,7 +85,7 @@ static DEFINE_MUTEX(gpio_lookup_lock);
+ static LIST_HEAD(gpio_lookup_list);
+ 
+ LIST_HEAD(gpio_devices);
+-DEFINE_MUTEX(gpio_devices_lock);
++DECLARE_RWSEM(gpio_devices_sem);
+ 
+ static DEFINE_MUTEX(gpio_machine_hogs_mutex);
+ static LIST_HEAD(gpio_machine_hogs);
+@@ -118,7 +118,7 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
+ {
+ 	struct gpio_device *gdev;
+ 
+-	scoped_guard(mutex, &gpio_devices_lock) {
++	scoped_guard(rwsem_read, &gpio_devices_sem) {
+ 		list_for_each_entry(gdev, &gpio_devices, list) {
+ 			if (gdev->base <= gpio &&
+ 			    gdev->base + gdev->ngpio > gpio)
+@@ -402,7 +402,7 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
+ 	if (!name)
+ 		return NULL;
+ 
+-	guard(mutex)(&gpio_devices_lock);
++	guard(rwsem_read)(&gpio_devices_sem);
+ 
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
+ 		struct gpio_desc *desc;
+@@ -871,7 +871,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 
+ 	gdev->ngpio = gc->ngpio;
+ 
+-	scoped_guard(mutex, &gpio_devices_lock) {
++	scoped_guard(rwsem_write, &gpio_devices_sem) {
+ 		/*
+ 		 * TODO: this allocates a Linux GPIO number base in the global
+ 		 * GPIO numberspace for this chip. In the long run we want to
+@@ -1001,7 +1001,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 		goto err_print_message;
+ 	}
+ err_remove_from_list:
+-	scoped_guard(mutex, &gpio_devices_lock)
++	scoped_guard(rwsem_write, &gpio_devices_sem)
+ 		list_del(&gdev->list);
+ err_free_label:
+ 	kfree_const(gdev->label);
+@@ -1065,7 +1065,7 @@ void gpiochip_remove(struct gpio_chip *gc)
+ 		dev_crit(&gdev->dev,
+ 			 "REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED\n");
+ 
+-	scoped_guard(mutex, &gpio_devices_lock)
++	scoped_guard(rwsem_write, &gpio_devices_sem)
+ 		list_del(&gdev->list);
+ 
+ 	/*
+@@ -1114,7 +1114,7 @@ struct gpio_device *gpio_device_find(void *data,
+ 	 */
+ 	might_sleep();
+ 
+-	guard(mutex)(&gpio_devices_lock);
++	guard(rwsem_read)(&gpio_devices_sem);
+ 
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
+ 		if (gdev->chip && match(gdev->chip, data))
+@@ -4730,7 +4730,7 @@ static void *gpiolib_seq_start(struct seq_file *s, loff_t *pos)
+ 
+ 	s->private = "";
+ 
+-	guard(mutex)(&gpio_devices_lock);
++	guard(rwsem_read)(&gpio_devices_sem);
+ 
+ 	list_for_each_entry(gdev, &gpio_devices, list) {
+ 		if (index-- == 0)
+@@ -4745,7 +4745,7 @@ static void *gpiolib_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ 	struct gpio_device *gdev = v;
+ 	void *ret = NULL;
+ 
+-	scoped_guard(mutex, &gpio_devices_lock) {
++	scoped_guard(rwsem_read, &gpio_devices_sem) {
+ 		if (list_is_last(&gdev->list, &gpio_devices))
+ 			ret = NULL;
+ 		else
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 0ce7451a6b24..97df54abf57a 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -137,7 +137,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
+ 
+ extern spinlock_t gpio_lock;
+ extern struct list_head gpio_devices;
+-extern struct mutex gpio_devices_lock;
++extern struct rw_semaphore gpio_devices_sem;
+ 
+ void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
+ 
 -- 
 2.40.1
 
