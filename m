@@ -1,55 +1,55 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB93214ABD
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jan 2024 15:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB6014F6E
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jan 2024 15:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I/F8dAhF"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40d560818b8so69638825e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2024 07:59:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZVJl1vpI"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40d8909a6feso14998175e9.2
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2024 07:59:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1704211194; x=1704815994; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1704211196; x=1704815996; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qgJ68qs44Lcqe8TCw142wLnFP4mWeBCuDvsZcDC2Hj8=;
-        b=I/F8dAhFXk0gDICtKIkqAqTnOg96FpLU0X46Glli0PXSC2kBkyfsfY1S5YqNULZXPI
-         yPPQ57I2EQom14KzZ+ffs/HGpgeHfuEnDbP4wR8D4udgWEYefmk+4i2UBs2wjXgzjgnA
-         /UnINcjnZdYKpb11EhtDot1WGNtDhANBfXT4eblPeC8QCmhf1o7r0BVOr787RqTU3k2z
-         d8sJEfrmlrwxIR1Af6XCD76n5XYmf046A3X/vXhy0x8iG/amMqQVMiWGlaUO2XUa4rN9
-         +16AIIattoOlPqoSlGKGiHViiq4rMlRVD+cgiKxIwhOA8G3Gmcoqf1m6VLPQRTld2OOX
-         TWJg==
+        bh=2esXyx5UxoOKpIF+VnQ6ASTzOMASqrG8+CTbzdc5ia0=;
+        b=ZVJl1vpIC1Dkqy4CjWJ4VibUTVzS7tUNHY6MU70rkwr6SM1vw5pRiC5ecHO19R9e9Q
+         MO+sePdzIm1zQYnqmHoYJkf1K1a3/UOoBtjVcxE1OBmhG+t3lZYpmLWzbdXo8YVH1F0a
+         u0aLLOzthTcnlQxTy6hJxvy1wn78e/oDRjbTYJgpFCHiIxYQrQrzmTnPo4J5sNrRaX6F
+         9b4ubW5JOaU9xlhvhhImOpMsYAiwc5TSfp9p62Cjs+4y52gmL4SxeC8Dj+p54SPCAdlD
+         lSfBGVVv6f5vSvK8SoyzTCoZuwaGYzRreXiWD1wCk6w/GHAwqBT9cdQpq0mUsmdYWwmI
+         bT2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704211194; x=1704815994;
+        d=1e100.net; s=20230601; t=1704211196; x=1704815996;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qgJ68qs44Lcqe8TCw142wLnFP4mWeBCuDvsZcDC2Hj8=;
-        b=a6xSpUc1Ur/0QlNSLxEsFVd3DJZH96GXOq9RENh8NgPskklewDoXgc9ttytN9WweMg
-         Sq9tV5J04jS2MIVqzr9rO4HZOo/xgKYvu6QWG1nVS+Z4E3qYTkVOpITPXZ0JQjx3fNOr
-         Dd5mnoCCvgLlN1jmPoGla8dwNqJgwYkoNkC2L4SBBm0oLRupgYbCrQqpnMD28kwGRwAX
-         mjbgjwsq/yfucicHA9MubuG7yYV6Da65G2UFgSx1yqqlkqyX48D/CAyhPPb60Ga+/TPo
-         m79Wwm+vMfTsj2KbvIhqDVBd+2eA8PQTXL1Gp6QDupOhHwQwCQLNv8vW6t/9dpcBf+Vi
-         96mg==
-X-Gm-Message-State: AOJu0Yx6vk8RUwPc6Z/g9/MsWTTx7y0BFD9m2kn6IiybuTJd2rXY7Ayf
-	1wAEWwtKllKqcy4VPPlp46fTzVQn5SjWCA==
-X-Google-Smtp-Source: AGHT+IEIx7iO4O+2hI4WmFZMKnVPkhvLRQqC9aD3ixvuGIyV3qeFn4DGO8oPt33bW+FY9YKuPLQNTg==
-X-Received: by 2002:a05:600c:2a8d:b0:40c:610e:3c69 with SMTP id x13-20020a05600c2a8d00b0040c610e3c69mr9638192wmd.36.1704211194128;
-        Tue, 02 Jan 2024 07:59:54 -0800 (PST)
+        bh=2esXyx5UxoOKpIF+VnQ6ASTzOMASqrG8+CTbzdc5ia0=;
+        b=JuOVeJD9PhQh+te1VEQDT2FqZ+0qUHoaCEvmJFFyYTAF3aGjZ86tW/5byv57aiGcYk
+         s9/HauRKhEG1P9Tt7wuibbk4AZWedrXkX++LBKxi9ETnACxfb/omNdVTRkJYflrn0Zn+
+         vXMdJCcpVUfK3vrNuGkzR9Aaf1y6tIi3MCjqZVPAeaTHoxx2M/kxQ5On0UQDIFh8US0H
+         erHcCVVPdq7oOeRhdNEKrvdYNCBVIIYjf6sChfqGZUrGXEYt6fL2c9eszBFlrp/IBKwU
+         LbjPCm5c9JkPBCyyapfEaDUiOvPHV2YNhtxGEMuOuvbq+CAcjKap+Kf5W5NgfV/sZ1a4
+         MfMQ==
+X-Gm-Message-State: AOJu0YxySOqZC0z1Nt5/2GTYbVl/tuv6Hax5L/58TlV6pxzCDbDBP/sM
+	r86rGGXP/UpPqO7Z20Io0sy//UETw/1l8w==
+X-Google-Smtp-Source: AGHT+IFO77LNRULmeuWq25wUmGax3n6DQ0q75MvHESGBQmOGpnwFvSFCxOj3OOkj+FeMCQjM1CDgpw==
+X-Received: by 2002:a05:600c:28b:b0:40c:6eda:9260 with SMTP id 11-20020a05600c028b00b0040c6eda9260mr6544470wmk.56.1704211196193;
+        Tue, 02 Jan 2024 07:59:56 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:6f51:fa47:f00a:a53c])
-        by smtp.gmail.com with ESMTPSA id u14-20020a05600c138e00b0040d62f97e3csm20556641wmf.10.2024.01.02.07.59.53
+        by smtp.gmail.com with ESMTPSA id u14-20020a05600c138e00b0040d62f97e3csm20556641wmf.10.2024.01.02.07.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 07:59:53 -0800 (PST)
+        Tue, 02 Jan 2024 07:59:55 -0800 (PST)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 1/3] gpiolib: remove the GPIO device from the list when it's unregistered
-Date: Tue,  2 Jan 2024 16:59:47 +0100
-Message-Id: <20240102155949.73434-2-brgl@bgdev.pl>
+Subject: [PATCH v2 3/3] gpiolib: pin GPIO devices in place during descriptor lookup
+Date: Tue,  2 Jan 2024 16:59:49 +0100
+Message-Id: <20240102155949.73434-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240102155949.73434-1-brgl@bgdev.pl>
 References: <20240102155949.73434-1-brgl@bgdev.pl>
@@ -63,45 +63,72 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-If we wait until the GPIO device's .release() callback gets invoked
-before we remove it from the global device list, then we risk that
-someone will look it up using gpio_device_find() between where we
-dropped the last reference and before .release() is done taking a
-reference again to an object that's being released.
+There's time between when we locate the relevant descriptor during
+lookup and when we actually take the reference to its parent GPIO
+device where - if the GPIO device in question is removed - we'll end up
+with a dangling pointer to freed memory. Make sure devices cannot be
+removed until we hold a new reference to the device.
 
-The device must be removed when it's being unregistered - just like how
-we remove it from the GPIO bus.
-
-Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 40 +++++++++++++++++++++++-----------------
+ 1 file changed, 23 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e21497b989a1..e019c4243809 100644
+index 4c93cf73a826..be57f8d6aeae 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -651,9 +651,6 @@ static void gpiodev_release(struct device *dev)
- {
- 	struct gpio_device *gdev = to_gpio_device(dev);
+@@ -4134,27 +4134,33 @@ static struct gpio_desc *gpiod_find_and_request(struct device *consumer,
+ 	struct gpio_desc *desc;
+ 	int ret;
  
--	scoped_guard(mutex, &gpio_devices_lock)
--		list_del(&gdev->list);
--
- 	ida_free(&gpio_ida, gdev->id);
- 	kfree_const(gdev->label);
- 	kfree(gdev->descs);
-@@ -1068,6 +1065,9 @@ void gpiochip_remove(struct gpio_chip *gc)
- 		dev_crit(&gdev->dev,
- 			 "REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED\n");
- 
-+	scoped_guard(mutex, &gpio_devices_lock)
-+		list_del(&gdev->list);
+-	desc = gpiod_find_by_fwnode(fwnode, consumer, con_id, idx, &flags, &lookupflags);
+-	if (gpiod_not_found(desc) && platform_lookup_allowed) {
++	scoped_guard(rwsem_read, &gpio_devices_sem) {
++		desc = gpiod_find_by_fwnode(fwnode, consumer, con_id, idx,
++					    &flags, &lookupflags);
++		if (gpiod_not_found(desc) && platform_lookup_allowed) {
++			/*
++			 * Either we are not using DT or ACPI, or their lookup
++			 * did not return a result. In that case, use platform
++			 * lookup as a fallback.
++			 */
++			dev_dbg(consumer,
++				"using lookup tables for GPIO lookup\n");
++			desc = gpiod_find(consumer, con_id, idx, &lookupflags);
++		}
 +
- 	/*
- 	 * The gpiochip side puts its use of the device to rest here:
- 	 * if there are no userspace clients, the chardev and device will
++		if (IS_ERR(desc)) {
++			dev_dbg(consumer, "No GPIO consumer %s found\n",
++				con_id);
++			return desc;
++		}
++
+ 		/*
+-		 * Either we are not using DT or ACPI, or their lookup did not
+-		 * return a result. In that case, use platform lookup as a
+-		 * fallback.
++		 * If a connection label was passed use that, else attempt to
++		 * use the device name as label
+ 		 */
+-		dev_dbg(consumer, "using lookup tables for GPIO lookup\n");
+-		desc = gpiod_find(consumer, con_id, idx, &lookupflags);
++		ret = gpiod_request(desc, label);
+ 	}
+ 
+-	if (IS_ERR(desc)) {
+-		dev_dbg(consumer, "No GPIO consumer %s found\n", con_id);
+-		return desc;
+-	}
+-
+-	/*
+-	 * If a connection label was passed use that, else attempt to use
+-	 * the device name as label
+-	 */
+-	ret = gpiod_request(desc, label);
+ 	if (ret) {
+ 		if (!(ret == -EBUSY && flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE))
+ 			return ERR_PTR(ret);
 -- 
 2.40.1
 
