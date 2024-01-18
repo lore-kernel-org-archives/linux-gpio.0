@@ -1,31 +1,32 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EE91E494
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2024 16:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7617A28E02
+	for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2024 16:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705595577; cv=none; b=l53RYlQXlvuIKiavC4oNP66BAzC0h10skwLFnZuVFsonnk/d0TfWvTUqGAQFaDIv01FKTmw0t9pmzgCy1FXvy50a+l5oYf5JcZgIvPwKmz1jvn0OeN8JwqIk+x1KhxnkQG/serTcbxERElqdAB4hhfV/OY1oOelNkFUaOw5tNoQ=
+	t=1705595579; cv=none; b=j9oHtFSeILPHnNK/ieBWFA9Op9aL7+FhntoRtM7nc0y82T4hoWD/1hU9jZaH0oFo6+biCXMaJCr6main7dp1PoakPioyJhDgJs4776w42Y9MHWY7NTzfo4/U4e/cI6HQEKr8SxmCpP2H9uz2EjWAPIgYgKQNu9pnEvIQLvfckzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705595577; c=relaxed/simple;
-	bh=QEjaNhBGKA3YyvmwXEl+cjtVAcdleNOs+cWk5nQanQo=;
+	s=arc-20240116; t=1705595579; c=relaxed/simple;
+	bh=xp5wqNmO+F5SY7+tEzQiJmR8UD4Aq+XQHZnGT1wC76c=;
 	h=Received:Received:Received:From:To:Cc:Subject:Date:Message-Id:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=lauD0iVda+ow1ap6giX7HwVN3cdRtD6x/JGvncqahlT6A0IhiqOCWV8tRMhIExHp7Li8a4fjxJJUV3BS6f7seruGqBAEADyJKxPZhHb3MKMjeKzM9V3fRW0yDxZ59Av1fgYnV3fyyski4By3b3dfjNhL/JgQgxpeUs0+EKmjoeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	 X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding; b=otF/sqfY3Bjl5aTeJaDIuZdERek8DByNu5+bJY8BduQJQ3lltrPsk1ce7BnQnJRryT2yHD6qW+/Hgj/F2clFaZVjtfie7Ehc/v0NCIsQodErNhkefzlCkynNBm+Axt0/6nvnBRmL2qjVSzPioet6rQ3G865/H5VsbiuYaZxAa0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:ba0a:9cd8:eeb4:49de])
-	by baptiste.telenet-ops.be with bizsmtp
-	id cGYl2B007041RrH01GYlnh; Thu, 18 Jan 2024 17:32:45 +0100
+	by laurent.telenet-ops.be with bizsmtp
+	id cGYo2B005041RrH01GYoiS; Thu, 18 Jan 2024 17:32:48 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rQVJ7-00FqQH-T6;
-	Thu, 18 Jan 2024 17:32:45 +0100
+	id 1rQVJB-00FqQQ-38;
+	Thu, 18 Jan 2024 17:32:48 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rQVJs-001nEd-VR;
-	Thu, 18 Jan 2024 17:32:44 +0100
+	id 1rQVJw-001nEn-58;
+	Thu, 18 Jan 2024 17:32:48 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
@@ -36,10 +37,12 @@ Cc: Phong Hoang <phong.hoang.wz@renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] renesas: r8a779g0: Add missing SCIF_CLK2
-Date: Thu, 18 Jan 2024 17:32:35 +0100
-Message-Id: <cover.1705589612.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a779g0: Add missing SCIF_CLK2
+Date: Thu, 18 Jan 2024 17:32:37 +0100
+Message-Id: <72f20c1bf32187bd30a963cafe27252907d661f9.1705589612.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1705589612.git.geert+renesas@glider.be>
+References: <cover.1705589612.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -48,44 +51,59 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
-
 R-Car V4H actually has two SCIF_CLK pins.
 The second pin provides the SCIF_CLK signal for HSCIF2 and SCIF4.
-The first pin provides the SCIF_CLK signal for the other (H)SCIF
-instances.
 
-This patch series adds the missing SCIF_CLK2 pin group/function to the
-R-Car V4H pin control driver and to the R-Car V4H DTS file, and fixes
-the HSCIF2 and SCIF4 DT descriptions to refer to the proper clock.
-
-As SCIF_CLK2 cannot be used on the White Hawk development board, I could
-not test proper operation of HSCIF2 and SCIF4.  I did verify that HSCIF2
-and SCIF4 do not operate properly when trying to use (the first and thus
-incorrect) SCIF_CLK as the clock source.
-
-I plan to queue these in renesas-pinctrl resp. renesas-devel for v6.9.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  pinctrl: renesas: r8a779g0: Add missing SCIF_CLK2 pin group/function
-  arm64: dts: renesas: r8a779g0: Add missing SCIF_CLK2
-
+Fixes: a4c31c56d2d35641 ("arm64: dts: renesas: r8a779g0: Add SCIF nodes")
+Fixes: 39d9dfc6fbe1860e ("arm64: dts: renesas: r8a779g0: Add remaining HSCIF nodes")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 12 +++++++++---
- drivers/pinctrl/renesas/pfc-r8a779g0.c    | 14 ++++++++++++++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+index 0a46f315c307e3cb..7b05b9b3e0a85f44 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
+@@ -185,13 +185,19 @@ psci {
+ 		method = "smc";
+ 	};
+ 
+-	/* External SCIF clock - to be overridden by boards that provide it */
++	/* External SCIF clocks - to be overridden by boards that provide them */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+ 	};
+ 
++	scif_clk2: scif2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	soc: soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -690,7 +696,7 @@ hscif2: serial@e6560000 {
+ 			interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 516>,
+ 				 <&cpg CPG_CORE R8A779G0_CLK_SASYNCPERD1>,
+-				 <&scif_clk>;
++				 <&scif_clk2>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x35>, <&dmac0 0x34>,
+ 			       <&dmac1 0x35>, <&dmac1 0x34>;
+@@ -1066,7 +1072,7 @@ scif4: serial@e6c40000 {
+ 			interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 705>,
+ 				 <&cpg CPG_CORE R8A779G0_CLK_SASYNCPERD1>,
+-				 <&scif_clk>;
++				 <&scif_clk2>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x59>, <&dmac0 0x58>,
+ 			       <&dmac1 0x59>, <&dmac1 0x58>;
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
