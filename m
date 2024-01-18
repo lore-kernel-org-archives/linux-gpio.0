@@ -1,148 +1,808 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720001170A;
-	Thu, 18 Jan 2024 08:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB1CC129;
+	Thu, 18 Jan 2024 08:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705565452; cv=none; b=CPrRObrQ+D/clRnJYJeQmSracfFClvHKdvhZ0wFuJwNjvC6ljG1l7eUYh/VRJbXxA+5rw5OcnFCt3clgLllpXkf05hOcTYYSzPWCm3PvVqB+hFVWAb4gLtLtYY2IL1EgMSFtCPPyYU0eQvYmjnoTnN0buu1fhBWm2X3uCCIjoOs=
+	t=1705566179; cv=none; b=ZFwcqZboW4Nyeez5z/rvw56bo6U7aaC7mwxmNaJCpeipwcsj/26qTRYhlJmtG07RiTsKxS0uzTTHGkzPAG6gz8W427LheNkef23/NRWpbMHJM9Ev9VNiJn3wrgFMeEn+2jc9NqSizI8zCoLmp7rW3mIRVExGL3/u5JIlewyDATk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705565452; c=relaxed/simple;
-	bh=ok5rxjWhE2d4d91QscThfDxkehsNlfCTZpi60NZLj+s=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:Content-Language:
-	 To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding; b=nFKiYOiAJ8e6AT5hMzfic4F1dfAsSv1EEB6lDClfM66EXsIgxULh1ptBvp9VRLqFWvw8CutX2t/xlLYFh8/9+KvoDSnrZB1k0e5UKtc2QZf6EGyRxcopsIox1aHUhKZb1EI56r9LzWCGgF/txYmrWByPrCTTK7PZYNHpkQFsf9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjfkNm9v; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705566179; c=relaxed/simple;
+	bh=hMGmzhpbaLSZ9OqJ8qGDJfg0DzfsxiLa/TmRN5Fkotc=;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To; b=EGKBCvzUCHEMm1GmpM8BEv4TbBEPUeBi47stBlPr6HuX2qN3EcOkX6fwAJlwaz2bNykLWcZTfdmu5iJCIkUIjgOTWCn4VA93/OSAWxe3vYsWr1iBMZZ8h8Y9Qoz2aOyUvTOf6R6iG7i+ctDB3jcoFwjDIRQj48DQgA0cr8g2YQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGd8fE5T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjfkNm9v"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-55a0294893eso439792a12.3;
-        Thu, 18 Jan 2024 00:10:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705565448; x=1706170248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8D9GrCN6KCy/inIyivjsUBv8glt8HtDAWFkt4pSTRR4=;
-        b=jjfkNm9v3BrmDTdbrH/kB0yQKNNa+6AqoZkVHWXrqM4bDZ6XWV6NtC2GY8D88vpHjB
-         N7fRCqOnLkwdJ1RmNYkMAAi7BbqbdH+enus/pu6GPe0mco/J/BHwSFwhxr3pblW2fNYG
-         PojSrNDkX+nXTsPn7n7EB2gc43+efCENDJctWRyWS2ZfxT/iRyveDvz292s4LhP1Rnpp
-         F4PUioQ+5sMnW06k23iJx7cSAdbQgMb3/JlUe4HJVplYpucudk/i3K8wFsqACbPIem3O
-         H3prW3HZva86XtWZM8Td/0Lu4bPOqqVpmTSnjykHUYLypOlpowp59NzuJYGxGZSUT5kV
-         RAng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705565448; x=1706170248;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8D9GrCN6KCy/inIyivjsUBv8glt8HtDAWFkt4pSTRR4=;
-        b=D88LMX/E1pu+IPTd95XWK34/pxq4TRPA9OMkfp+isugloZlnhEjf9+EPNqm3QXHZ/+
-         PFn8blcy0R6UUp+Vx70y+aO0eAEUiyFKFiv9ET5xjrrPBixzS3srDoEtcyJrVBKjfxn+
-         sD/VfsaC95kVyDxZyUYOd6szYuPpvqVHV15tQXDeqmWmg70K3Dq6x6GD+ZG2i6LHk9Bg
-         MDJtW252OxXqB9MvC61E5+pJssHBnCdxGMpZwMiPMHi7KADoAAOTjRM/KGtBrT+MGyXX
-         1M5siNk/oX9ujEGxCJxnjj74Zoy2wQyMku0MBcHDKEb+f+ndiszK/FZPgP20Ml+j3z2c
-         uIcw==
-X-Gm-Message-State: AOJu0Yz5Vix0lq8BLwnmsSz1vumVIXWtjKS1t707qsd6NBO+TsSY2b4r
-	YZC4pVp2T/HQsLAY2JE2OZkVu172qpAitr/Q+k21oL3PlENqmEPPvcmibeqzY8OUMw==
-X-Google-Smtp-Source: AGHT+IGLvo4wbg35gUjDK5QGjm+OOMU9mJXTgGBGSZAwutp91RLeltfNpn3vC0BeSxl1FDH4Z7C3LA==
-X-Received: by 2002:a17:906:c78e:b0:a29:4267:ac9 with SMTP id cw14-20020a170906c78e00b00a2942670ac9mr258926ejb.52.1705565448311;
-        Thu, 18 Jan 2024 00:10:48 -0800 (PST)
-Received: from [172.25.98.130] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id bt22-20020a170906b15600b00a2c32c5f484sm8752674ejb.209.2024.01.18.00.10.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jan 2024 00:10:47 -0800 (PST)
-Message-ID: <cf48e196-a569-4287-93b7-b5f06c34d6f6@gmail.com>
-Date: Thu, 18 Jan 2024 10:10:46 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGd8fE5T"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BF0F2C433C7;
+	Thu, 18 Jan 2024 08:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705566178;
+	bh=hMGmzhpbaLSZ9OqJ8qGDJfg0DzfsxiLa/TmRN5Fkotc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=FGd8fE5T6fh8D8xLk48WdPXbu6fJ08ePXGIJH7w3stgrRDuiwKERypJXjOGa52srN
+	 7kC2CdE3DrLwysEXbhflrdCaI28nOgwI5SPh8hQINsW4QIMG5y0XtXb8DoV6L7AD1G
+	 xbjdfCTGqV54G0O/L3jhOpe/P1wFz+cQhMtsDx5Xy+fWxRuFrxjLo9g7mxCCvE6XBw
+	 lWQgm2aVvs1HDhcHegMN162uqelv6+9e0gkGgGmuQqGGkSCkeMtHsE18JuJzxmXrnt
+	 t2spal3ffUmj0ha8WHFYaJNIhZlhAKUAJiARK7Su2ud/q60BgaW5miXV4HePOsylLd
+	 m3xfQBP2GpfiA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCDEC47077;
+	Thu, 18 Jan 2024 08:22:58 +0000 (UTC)
+From:
+ Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Date: Thu, 18 Jan 2024 11:20:45 +0300
+Subject: [PATCH v7 02/39] gpio: ep93xx: split device in multiple
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/2] dt-bindings: adc: add AD7173
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: David Lechner <dlechner@baylibre.com>, linus.walleij@linaro.org,
- brgl@bgdev.pl, andy@kernel.org, linux-gpio@vger.kernel.org,
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Walle <michael@walle.cc>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- ChiaEn Wu <chiaen_wu@richtek.com>, Niklas Schnelle <schnelle@linux.ibm.com>,
- =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>,
- Mike Looijmans <mike.looijmans@topic.nl>, Haibo Chen <haibo.chen@nxp.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231220104810.3179-1-mitrutzceclan@gmail.com>
- <CAMknhBELp3NQEHE16gHhC96bttoafQOGxx3a_dLZn9o2Ru7y9g@mail.gmail.com>
- <20240116163003.0000039d@Huawei.com>
- <18c239af-71ee-49d8-878e-e1770c3e2d46@gmail.com>
- <20240117163725.00003981@Huawei.com>
-From: Ceclan Dumitru <mitrutzceclan@gmail.com>
-In-Reply-To: <20240117163725.00003981@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240118-ep93xx-v7-2-d953846ae771@maquefel.me>
+References: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
+In-Reply-To: <20240118-ep93xx-v7-0-d953846ae771@maquefel.me>
+To: Hartley Sweeten <hsweeten@visionengravers.com>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13-dev-e3e53
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1705566176; l=25436;
+ i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
+ bh=eJl1MYzYgo7ABcrVWSq3IHWXtZ78BE2Cpbx3JuiFlWQ=; =?utf-8?q?b=3DhZ83FPlc7ZG+?=
+ =?utf-8?q?Xdc2D7HL+cYp/Oq7x/4GVukjFk0w2EB7XgZTMHuxj5w2+yuR2yfG/v4MGFmk+7BW?=
+ g6q5owhTBjHvd0K/Av4Ch1uHhrtzvzlSByzDpPAlQFGG4CCyyc+X
+X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
+ pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
+X-Endpoint-Received:
+ by B4 Relay for nikita.shubin@maquefel.me/20230718 with auth_id=65
+X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Reply-To: <nikita.shubin@maquefel.me>
 
+From: Nikita Shubin <nikita.shubin@maquefel.me>
 
+Prepare ep93xx SOC gpio to convert into device tree driver:
+- dropped banks and legacy defines
+- split AB IRQ and make it shared
 
-On 1/17/24 18:37, Jonathan Cameron wrote:
-> On Wed, 17 Jan 2024 14:43:21 +0200
-> Ceclan Dumitru <mitrutzceclan@gmail.com> wrote:
->> On 1/16/24 18:30, Jonathan Cameron wrote:
->>> On Mon, 15 Jan 2024 15:53:39 -0600
->>> David Lechner <dlechner@baylibre.com> wrote:
->>>> On Wed, Dec 20, 2023 at 4:48 AM Dumitru Ceclan <mitrutzceclan@gmail.com> wrote:  
+We are relying on IRQ number information A, B ports have single shared
+IRQ, while F port have dedicated IRQ for each line.
 
-...
+Also we had to split single ep93xx platform_device into multiple, one
+for each port, without this we can't do a full working transition from
+legacy platform code into device tree capable. All GPIO_LOOKUP were
+change to match new chip namings.
 
->>>>> +
->>>>> +  refin-supply:
->>>>> +    description: external reference supply, can be used as reference for conversion.    
->>>> If I'm understanding correctly, this represents both voltage inputs
->>>> REF+ and REF-, correct? The datasheet says "Reference Input Negative
->>>> Terminal. REF− can span from AVSS to AVDD1 − 1 V". It seems like they
->>>> should be separate supplies in case REF- is non-zero. Otherwise, how
->>>> can we know what voltage it is? (same comment applies to refin2.)  
->>> Agreed, in this case these are directly used as references (we recently
->>> had another driver that could take a wide range of negative and positive
->>> inputs but in that case an internal reference was generated that didn't
->>> made it not matter exactly what was being supplied.  Not true here though!
->>>   
->> Wouldn't it be alright to specify that the voltage specified here should
->> be the actual difference (REF+)-(REF-)?
-> How do you establish the offset to apply to single ended channels if you don't
-> know the value of REF- (relative to local ground)?
-> 
-> So no - as the device supports single ended channels the difference isn't
-> enough information.  It would probably be fine to do as you say if it
-> were a device with only differential channels where all that matters is
-> the scaling.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+ arch/arm/mach-ep93xx/core.c          | 121 ++++++++++++--
+ arch/arm/mach-ep93xx/edb93xx.c       |   2 +-
+ arch/arm/mach-ep93xx/ts72xx.c        |   4 +-
+ arch/arm/mach-ep93xx/vision_ep9307.c |  10 +-
+ drivers/gpio/gpio-ep93xx.c           | 311 +++++++++++++----------------------
+ 5 files changed, 228 insertions(+), 220 deletions(-)
 
-	I suppose that you are referring to the first page presentation: "Cross
-point multiplexer; 8 full differential or 16 single-ended channels". I
-consider this to be a bit misleading as all channels are actually fully
-differential (must select positive and negative source, AVSS is not one
-of them).
+diff --git a/arch/arm/mach-ep93xx/core.c b/arch/arm/mach-ep93xx/core.c
+index 8b1ec60a9a46..03bce5e9d1f1 100644
+--- a/arch/arm/mach-ep93xx/core.c
++++ b/arch/arm/mach-ep93xx/core.c
+@@ -35,6 +35,7 @@
+ #include <linux/reboot.h>
+ #include <linux/usb/ohci_pdriver.h>
+ #include <linux/random.h>
++#include <linux/ioport.h>
+ 
+ #include "hardware.h"
+ #include <linux/platform_data/video-ep93xx.h>
+@@ -139,9 +140,80 @@ EXPORT_SYMBOL_GPL(ep93xx_chip_revision);
+ /*************************************************************************
+  * EP93xx GPIO
+  *************************************************************************/
+-static struct resource ep93xx_gpio_resource[] = {
+-	DEFINE_RES_MEM(EP93XX_GPIO_PHYS_BASE, 0xcc),
++/* port A */
++static struct resource ep93xx_a_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE,        0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x10, 0x04, "dir"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x90, 0x1c, "intr"),
+ 	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO_AB),
++};
++
++static struct platform_device ep93xx_a_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 0,
++	.num_resources = ARRAY_SIZE(ep93xx_a_gpio_resources),
++	.resource = ep93xx_a_gpio_resources,
++};
++
++/* port B */
++static struct resource ep93xx_b_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x04, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x14, 0x04, "dir"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0xac, 0x1c, "intr"),
++	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO_AB),
++};
++
++static struct platform_device ep93xx_b_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 1,
++	.num_resources = ARRAY_SIZE(ep93xx_b_gpio_resources),
++	.resource = ep93xx_b_gpio_resources,
++};
++
++/* port C */
++static struct resource ep93xx_c_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x08, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x18, 0x04, "dir"),
++};
++
++static struct platform_device ep93xx_c_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 2,
++	.num_resources = ARRAY_SIZE(ep93xx_c_gpio_resources),
++	.resource = ep93xx_c_gpio_resources,
++};
++
++/* port D */
++static struct resource ep93xx_d_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x0c, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x1c, 0x04, "dir"),
++};
++
++static struct platform_device ep93xx_d_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 3,
++	.num_resources = ARRAY_SIZE(ep93xx_d_gpio_resources),
++	.resource = ep93xx_d_gpio_resources,
++};
++
++/* port E */
++static struct resource ep93xx_e_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x20, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x24, 0x04, "dir"),
++};
++
++static struct platform_device ep93xx_e_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 4,
++	.num_resources = ARRAY_SIZE(ep93xx_e_gpio_resources),
++	.resource = ep93xx_e_gpio_resources,
++};
++
++/* port F */
++static struct resource ep93xx_f_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x30, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x34, 0x04, "dir"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x4c, 0x1c, "intr"),
+ 	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO0MUX),
+ 	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO1MUX),
+ 	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO2MUX),
+@@ -152,11 +224,34 @@ static struct resource ep93xx_gpio_resource[] = {
+ 	DEFINE_RES_IRQ(IRQ_EP93XX_GPIO7MUX),
+ };
+ 
+-static struct platform_device ep93xx_gpio_device = {
+-	.name		= "gpio-ep93xx",
+-	.id		= -1,
+-	.num_resources	= ARRAY_SIZE(ep93xx_gpio_resource),
+-	.resource	= ep93xx_gpio_resource,
++static struct platform_device ep93xx_f_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 5,
++	.num_resources = ARRAY_SIZE(ep93xx_f_gpio_resources),
++	.resource = ep93xx_f_gpio_resources,
++};
++
++/* port G */
++static struct resource ep93xx_g_gpio_resources[] = {
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x38, 0x04, "data"),
++	DEFINE_RES_MEM_NAMED(EP93XX_GPIO_PHYS_BASE + 0x3c, 0x04, "dir"),
++};
++
++static struct platform_device ep93xx_g_gpio = {
++	.name           = "gpio-ep93xx",
++	.id             = 6,
++	.num_resources = ARRAY_SIZE(ep93xx_g_gpio_resources),
++	.resource = ep93xx_g_gpio_resources,
++};
++
++static struct platform_device *ep93xx_gpio_device[] __initdata = {
++	&ep93xx_a_gpio,
++	&ep93xx_b_gpio,
++	&ep93xx_c_gpio,
++	&ep93xx_d_gpio,
++	&ep93xx_e_gpio,
++	&ep93xx_f_gpio,
++	&ep93xx_g_gpio,
+ };
+ 
+ /*************************************************************************
+@@ -335,9 +430,9 @@ static struct gpiod_lookup_table ep93xx_i2c_gpiod_table = {
+ 	.dev_id		= "i2c-gpio.0",
+ 	.table		= {
+ 		/* Use local offsets on gpiochip/port "G" */
+-		GPIO_LOOKUP_IDX("G", 1, NULL, 0,
++		GPIO_LOOKUP_IDX("gpio-ep93xx.6", 1, NULL, 0,
+ 				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
+-		GPIO_LOOKUP_IDX("G", 0, NULL, 1,
++		GPIO_LOOKUP_IDX("gpio-ep93xx.6", 0, NULL, 1,
+ 				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
+ 		{ }
+ 	},
+@@ -441,8 +536,8 @@ static struct gpiod_lookup_table ep93xx_leds_gpio_table = {
+ 	.dev_id = "leds-gpio",
+ 	.table = {
+ 		/* Use local offsets on gpiochip/port "E" */
+-		GPIO_LOOKUP_IDX("E", 0, NULL, 0, GPIO_ACTIVE_HIGH),
+-		GPIO_LOOKUP_IDX("E", 1,	NULL, 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.4", 0, NULL, 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.4", 1, NULL, 1, GPIO_ACTIVE_HIGH),
+ 		{ }
+ 	},
+ };
+@@ -975,6 +1070,7 @@ static struct device __init *ep93xx_init_soc(void)
+ struct device __init *ep93xx_init_devices(void)
+ {
+ 	struct device *parent;
++	unsigned int i;
+ 
+ 	/* Disallow access to MaverickCrunch initially */
+ 	ep93xx_devcfg_clear_bits(EP93XX_SYSCON_DEVCFG_CPENA);
+@@ -989,7 +1085,8 @@ struct device __init *ep93xx_init_devices(void)
+ 	parent = ep93xx_init_soc();
+ 
+ 	/* Get the GPIO working early, other devices need it */
+-	platform_device_register(&ep93xx_gpio_device);
++	for (i = 0; i < ARRAY_SIZE(ep93xx_gpio_device); i++)
++		platform_device_register(ep93xx_gpio_device[i]);
+ 
+ 	amba_device_register(&uart1_device, &iomem_resource);
+ 	amba_device_register(&uart2_device, &iomem_resource);
+diff --git a/arch/arm/mach-ep93xx/edb93xx.c b/arch/arm/mach-ep93xx/edb93xx.c
+index dbdb822a0100..356b0460c7ed 100644
+--- a/arch/arm/mach-ep93xx/edb93xx.c
++++ b/arch/arm/mach-ep93xx/edb93xx.c
+@@ -105,7 +105,7 @@ static struct spi_board_info edb93xx_spi_board_info[] __initdata = {
+ static struct gpiod_lookup_table edb93xx_spi_cs_gpio_table = {
+ 	.dev_id = "spi0",
+ 	.table = {
+-		GPIO_LOOKUP("A", 6, "cs", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio-ep93xx.0", 6, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-ep93xx/ts72xx.c b/arch/arm/mach-ep93xx/ts72xx.c
+index d3de7283ecb3..0bbdf587c685 100644
+--- a/arch/arm/mach-ep93xx/ts72xx.c
++++ b/arch/arm/mach-ep93xx/ts72xx.c
+@@ -268,7 +268,7 @@ static struct spi_board_info bk3_spi_board_info[] __initdata = {
+ static struct gpiod_lookup_table bk3_spi_cs_gpio_table = {
+ 	.dev_id = "spi0",
+ 	.table = {
+-		GPIO_LOOKUP("F", 3, "cs", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio-ep93xx.5", 3, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+@@ -318,7 +318,7 @@ static struct gpiod_lookup_table ts72xx_spi_cs_gpio_table = {
+ 	.dev_id = "spi0",
+ 	.table = {
+ 		/* DIO_17 */
+-		GPIO_LOOKUP("F", 2, "cs", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio-ep93xx.5", 2, "cs", GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-ep93xx/vision_ep9307.c b/arch/arm/mach-ep93xx/vision_ep9307.c
+index 9471938df64c..b3087b8eed3f 100644
+--- a/arch/arm/mach-ep93xx/vision_ep9307.c
++++ b/arch/arm/mach-ep93xx/vision_ep9307.c
+@@ -206,9 +206,9 @@ static struct gpiod_lookup_table vision_spi_mmc_gpio_table = {
+ 	.dev_id = "mmc_spi.2", /* "mmc_spi @ CS2 */
+ 	.table = {
+ 		/* Card detect */
+-		GPIO_LOOKUP_IDX("B", 7, NULL, 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.1", 7, NULL, 0, GPIO_ACTIVE_LOW),
+ 		/* Write protect */
+-		GPIO_LOOKUP_IDX("F", 0, NULL, 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.5", 0, NULL, 1, GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
+ };
+@@ -253,9 +253,9 @@ static struct gpiod_lookup_table vision_spi_cs4271_gpio_table = {
+ static struct gpiod_lookup_table vision_spi_cs_gpio_table = {
+ 	.dev_id = "spi0",
+ 	.table = {
+-		GPIO_LOOKUP_IDX("A", 6, "cs", 0, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("A", 7, "cs", 1, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("G", 2, "cs", 2, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.0", 6, "cs", 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.0", 7, "cs", 1, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-ep93xx.6", 2, "cs", 2, GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 6cedf46efec6..a55f635585f4 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -18,30 +18,10 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/bitops.h>
+ #include <linux/seq_file.h>
+-
+-#define EP93XX_GPIO_F_INT_STATUS 0x5c
+-#define EP93XX_GPIO_A_INT_STATUS 0xa0
+-#define EP93XX_GPIO_B_INT_STATUS 0xbc
+-
+-/* Maximum value for gpio line identifiers */
+-#define EP93XX_GPIO_LINE_MAX 63
+-
+-/* Number of GPIO chips in EP93XX */
+-#define EP93XX_GPIO_CHIP_NUM 8
+-
+-/* Maximum value for irq capable line identifiers */
+-#define EP93XX_GPIO_LINE_MAX_IRQ 23
+-
+-#define EP93XX_GPIO_A_IRQ_BASE 64
+-#define EP93XX_GPIO_B_IRQ_BASE 72
+-/*
+- * Static mapping of GPIO bank F IRQS:
+- * F0..F7 (16..24) to irq 80..87.
+- */
+-#define EP93XX_GPIO_F_IRQ_BASE 80
++#include <linux/interrupt.h>
+ 
+ struct ep93xx_gpio_irq_chip {
+-	u8 irq_offset;
++	void __iomem *base;
+ 	u8 int_unmasked;
+ 	u8 int_enabled;
+ 	u8 int_type1;
+@@ -50,15 +30,11 @@ struct ep93xx_gpio_irq_chip {
+ };
+ 
+ struct ep93xx_gpio_chip {
++	void __iomem			*base;
+ 	struct gpio_chip		gc;
+ 	struct ep93xx_gpio_irq_chip	*eic;
+ };
+ 
+-struct ep93xx_gpio {
+-	void __iomem		*base;
+-	struct ep93xx_gpio_chip	gc[EP93XX_GPIO_CHIP_NUM];
+-};
+-
+ #define to_ep93xx_gpio_chip(x) container_of(x, struct ep93xx_gpio_chip, gc)
+ 
+ static struct ep93xx_gpio_irq_chip *to_ep93xx_gpio_irq_chip(struct gpio_chip *gc)
+@@ -79,25 +55,23 @@ static struct ep93xx_gpio_irq_chip *to_ep93xx_gpio_irq_chip(struct gpio_chip *gc
+ #define EP93XX_INT_RAW_STATUS_OFFSET	0x14
+ #define EP93XX_INT_DEBOUNCE_OFFSET	0x18
+ 
+-static void ep93xx_gpio_update_int_params(struct ep93xx_gpio *epg,
+-					  struct ep93xx_gpio_irq_chip *eic)
++static void ep93xx_gpio_update_int_params(struct ep93xx_gpio_irq_chip *eic)
+ {
+-	writeb_relaxed(0, epg->base + eic->irq_offset + EP93XX_INT_EN_OFFSET);
++	writeb_relaxed(0, eic->base + EP93XX_INT_EN_OFFSET);
+ 
+ 	writeb_relaxed(eic->int_type2,
+-		       epg->base + eic->irq_offset + EP93XX_INT_TYPE2_OFFSET);
++		       eic->base + EP93XX_INT_TYPE2_OFFSET);
+ 
+ 	writeb_relaxed(eic->int_type1,
+-		       epg->base + eic->irq_offset + EP93XX_INT_TYPE1_OFFSET);
++		       eic->base + EP93XX_INT_TYPE1_OFFSET);
+ 
+ 	writeb_relaxed(eic->int_unmasked & eic->int_enabled,
+-		       epg->base + eic->irq_offset + EP93XX_INT_EN_OFFSET);
++		       eic->base + EP93XX_INT_EN_OFFSET);
+ }
+ 
+ static void ep93xx_gpio_int_debounce(struct gpio_chip *gc,
+ 				     unsigned int offset, bool enable)
+ {
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+ 	int port_mask = BIT(offset);
+ 
+@@ -106,53 +80,43 @@ static void ep93xx_gpio_int_debounce(struct gpio_chip *gc,
+ 	else
+ 		eic->int_debounce &= ~port_mask;
+ 
+-	writeb(eic->int_debounce,
+-	       epg->base + eic->irq_offset + EP93XX_INT_DEBOUNCE_OFFSET);
++	writeb(eic->int_debounce, eic->base + EP93XX_INT_DEBOUNCE_OFFSET);
+ }
+ 
+-static void ep93xx_gpio_ab_irq_handler(struct irq_desc *desc)
++static u32 ep93xx_gpio_ab_irq_handler(struct gpio_chip *gc)
+ {
+-	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+-	struct irq_chip *irqchip = irq_desc_get_chip(desc);
++	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+ 	unsigned long stat;
+ 	int offset;
+ 
+-	chained_irq_enter(irqchip, desc);
+-
+-	/*
+-	 * Dispatch the IRQs to the irqdomain of each A and B
+-	 * gpiochip irqdomains depending on what has fired.
+-	 * The tricky part is that the IRQ line is shared
+-	 * between bank A and B and each has their own gpiochip.
+-	 */
+-	stat = readb(epg->base + EP93XX_GPIO_A_INT_STATUS);
++	stat = readb(eic->base + EP93XX_INT_STATUS_OFFSET);
+ 	for_each_set_bit(offset, &stat, 8)
+-		generic_handle_domain_irq(epg->gc[0].gc.irq.domain,
+-					  offset);
++		generic_handle_domain_irq(gc->irq.domain, offset);
+ 
+-	stat = readb(epg->base + EP93XX_GPIO_B_INT_STATUS);
+-	for_each_set_bit(offset, &stat, 8)
+-		generic_handle_domain_irq(epg->gc[1].gc.irq.domain,
+-					  offset);
++	return stat;
++}
+ 
+-	chained_irq_exit(irqchip, desc);
++static irqreturn_t ep93xx_ab_irq_handler(int irq, void *dev_id)
++{
++	return IRQ_RETVAL(ep93xx_gpio_ab_irq_handler(dev_id));
+ }
+ 
+ static void ep93xx_gpio_f_irq_handler(struct irq_desc *desc)
+ {
+-	/*
+-	 * map discontiguous hw irq range to continuous sw irq range:
+-	 *
+-	 *  IRQ_EP93XX_GPIO{0..7}MUX -> EP93XX_GPIO_LINE_F{0..7}
+-	 */
+ 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+-	unsigned int irq = irq_desc_get_irq(desc);
+-	int port_f_idx = (irq & 7) ^ 4; /* {20..23,48..51} -> {0..7} */
+-	int gpio_irq = EP93XX_GPIO_F_IRQ_BASE + port_f_idx;
++	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
++	struct gpio_irq_chip *gic = &gc->irq;
++	unsigned int parent = irq_desc_get_irq(desc);
++	unsigned int i;
+ 
+ 	chained_irq_enter(irqchip, desc);
+-	generic_handle_irq(gpio_irq);
++	for (i = 0; i < gic->num_parents; i++)
++		if (gic->parents[i] == parent)
++			break;
++
++	if (i < gic->num_parents)
++		generic_handle_domain_irq(gc->irq.domain, i);
++
+ 	chained_irq_exit(irqchip, desc);
+ }
+ 
+@@ -160,31 +124,29 @@ static void ep93xx_gpio_irq_ack(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+-	int port_mask = BIT(d->irq & 7);
++	int port_mask = BIT(irqd_to_hwirq(d));
+ 
+ 	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH) {
+ 		eic->int_type2 ^= port_mask; /* switch edge direction */
+-		ep93xx_gpio_update_int_params(epg, eic);
++		ep93xx_gpio_update_int_params(eic);
+ 	}
+ 
+-	writeb(port_mask, epg->base + eic->irq_offset + EP93XX_INT_EOI_OFFSET);
++	writeb(port_mask, eic->base + EP93XX_INT_EOI_OFFSET);
+ }
+ 
+ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+-	int port_mask = BIT(d->irq & 7);
++	int port_mask = BIT(irqd_to_hwirq(d));
+ 
+ 	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH)
+ 		eic->int_type2 ^= port_mask; /* switch edge direction */
+ 
+ 	eic->int_unmasked &= ~port_mask;
+-	ep93xx_gpio_update_int_params(epg, eic);
++	ep93xx_gpio_update_int_params(eic);
+ 
+-	writeb(port_mask, epg->base + eic->irq_offset + EP93XX_INT_EOI_OFFSET);
++	writeb(port_mask, eic->base + EP93XX_INT_EOI_OFFSET);
+ 	gpiochip_disable_irq(gc, irqd_to_hwirq(d));
+ }
+ 
+@@ -192,10 +154,9 @@ static void ep93xx_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+ 
+-	eic->int_unmasked &= ~BIT(d->irq & 7);
+-	ep93xx_gpio_update_int_params(epg, eic);
++	eic->int_unmasked &= ~BIT(irqd_to_hwirq(d));
++	ep93xx_gpio_update_int_params(eic);
+ 	gpiochip_disable_irq(gc, irqd_to_hwirq(d));
+ }
+ 
+@@ -203,11 +164,10 @@ static void ep93xx_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+ 
+ 	gpiochip_enable_irq(gc, irqd_to_hwirq(d));
+-	eic->int_unmasked |= BIT(d->irq & 7);
+-	ep93xx_gpio_update_int_params(epg, eic);
++	eic->int_unmasked |= BIT(irqd_to_hwirq(d));
++	ep93xx_gpio_update_int_params(eic);
+ }
+ 
+ /*
+@@ -219,8 +179,7 @@ static int ep93xx_gpio_irq_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+-	int offset = d->irq & 7;
++	irq_hw_number_t offset = irqd_to_hwirq(d);
+ 	int port_mask = BIT(offset);
+ 	irq_flow_handler_t handler;
+ 
+@@ -264,51 +223,11 @@ static int ep93xx_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 
+ 	eic->int_enabled |= port_mask;
+ 
+-	ep93xx_gpio_update_int_params(epg, eic);
++	ep93xx_gpio_update_int_params(eic);
+ 
+ 	return 0;
+ }
+ 
+-/*************************************************************************
+- * gpiolib interface for EP93xx on-chip GPIOs
+- *************************************************************************/
+-struct ep93xx_gpio_bank {
+-	const char	*label;
+-	int		data;
+-	int		dir;
+-	int		irq;
+-	int		base;
+-	bool		has_irq;
+-	bool		has_hierarchical_irq;
+-	unsigned int	irq_base;
+-};
+-
+-#define EP93XX_GPIO_BANK(_label, _data, _dir, _irq, _base, _has_irq, _has_hier, _irq_base) \
+-	{							\
+-		.label		= _label,			\
+-		.data		= _data,			\
+-		.dir		= _dir,				\
+-		.irq		= _irq,				\
+-		.base		= _base,			\
+-		.has_irq	= _has_irq,			\
+-		.has_hierarchical_irq = _has_hier,		\
+-		.irq_base	= _irq_base,			\
+-	}
+-
+-static struct ep93xx_gpio_bank ep93xx_gpio_banks[] = {
+-	/* Bank A has 8 IRQs */
+-	EP93XX_GPIO_BANK("A", 0x00, 0x10, 0x90, 0, true, false, EP93XX_GPIO_A_IRQ_BASE),
+-	/* Bank B has 8 IRQs */
+-	EP93XX_GPIO_BANK("B", 0x04, 0x14, 0xac, 8, true, false, EP93XX_GPIO_B_IRQ_BASE),
+-	EP93XX_GPIO_BANK("C", 0x08, 0x18, 0x00, 40, false, false, 0),
+-	EP93XX_GPIO_BANK("D", 0x0c, 0x1c, 0x00, 24, false, false, 0),
+-	EP93XX_GPIO_BANK("E", 0x20, 0x24, 0x00, 32, false, false, 0),
+-	/* Bank F has 8 IRQs */
+-	EP93XX_GPIO_BANK("F", 0x30, 0x34, 0x4c, 16, false, true, EP93XX_GPIO_F_IRQ_BASE),
+-	EP93XX_GPIO_BANK("G", 0x38, 0x3c, 0x00, 48, false, false, 0),
+-	EP93XX_GPIO_BANK("H", 0x40, 0x44, 0x00, 56, false, false, 0),
+-};
+-
+ static int ep93xx_gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 				  unsigned long config)
+ {
+@@ -342,110 +261,102 @@ static const struct irq_chip gpio_eic_irq_chip = {
+ 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+ };
+ 
+-static int ep93xx_gpio_add_bank(struct ep93xx_gpio_chip *egc,
+-				struct platform_device *pdev,
+-				struct ep93xx_gpio *epg,
+-				struct ep93xx_gpio_bank *bank)
++static int ep93xx_setup_irqs(struct platform_device *pdev,
++			     struct ep93xx_gpio_chip *egc)
+ {
+-	void __iomem *data = epg->base + bank->data;
+-	void __iomem *dir = epg->base + bank->dir;
+ 	struct gpio_chip *gc = &egc->gc;
+ 	struct device *dev = &pdev->dev;
+-	struct gpio_irq_chip *girq;
+-	int err;
++	struct gpio_irq_chip *girq = &gc->irq;
++	int ret, irq, i;
++	void __iomem *intr;
+ 
+-	err = bgpio_init(gc, dev, 1, data, NULL, NULL, dir, NULL, 0);
+-	if (err)
+-		return err;
++	intr = devm_platform_ioremap_resource_byname(pdev, "intr");
++	if (IS_ERR(intr))
++		return PTR_ERR(intr);
+ 
+-	gc->label = bank->label;
+-	gc->base = bank->base;
++	gc->set_config = ep93xx_gpio_set_config;
++	egc->eic = devm_kzalloc(dev, sizeof(*egc->eic), GFP_KERNEL);
++	if (!egc->eic)
++		return -ENOMEM;
+ 
+-	girq = &gc->irq;
+-	if (bank->has_irq || bank->has_hierarchical_irq) {
+-		gc->set_config = ep93xx_gpio_set_config;
+-		egc->eic = devm_kcalloc(dev, 1,
+-					sizeof(*egc->eic),
+-					GFP_KERNEL);
+-		if (!egc->eic)
+-			return -ENOMEM;
+-		egc->eic->irq_offset = bank->irq;
+-		gpio_irq_chip_set_chip(girq, &gpio_eic_irq_chip);
+-	}
++	egc->eic->base = intr;
++	gpio_irq_chip_set_chip(girq, &gpio_eic_irq_chip);
++	girq->num_parents = platform_irq_count(pdev);
++	if (girq->num_parents == 0)
++		return -EINVAL;
+ 
+-	if (bank->has_irq) {
+-		int ab_parent_irq = platform_get_irq(pdev, 0);
++	girq->parents = devm_kcalloc(dev, girq->num_parents,
++				   sizeof(*girq->parents),
++				   GFP_KERNEL);
++	if (!girq->parents)
++		return -ENOMEM;
+ 
+-		girq->parent_handler = ep93xx_gpio_ab_irq_handler;
+-		girq->num_parents = 1;
+-		girq->parents = devm_kcalloc(dev, girq->num_parents,
+-					     sizeof(*girq->parents),
+-					     GFP_KERNEL);
+-		if (!girq->parents)
+-			return -ENOMEM;
+-		girq->default_type = IRQ_TYPE_NONE;
+-		girq->handler = handle_level_irq;
+-		girq->parents[0] = ab_parent_irq;
+-		girq->first = bank->irq_base;
+-	}
++	if (girq->num_parents == 1) { /* A/B irqchips */
++		irq = platform_get_irq(pdev, 0);
++		if (irq < 0)
++			return irq;
+ 
+-	/* Only bank F has especially funky IRQ handling */
+-	if (bank->has_hierarchical_irq) {
+-		int gpio_irq;
+-		int i;
++		ret = devm_request_irq(dev, irq, ep93xx_ab_irq_handler,
++				       IRQF_SHARED, gc->label, gc);
++		if (ret)
++			return dev_err_probe(dev, ret, "requesting IRQ: %d\n", irq);
+ 
+-		/*
+-		 * FIXME: convert this to use hierarchical IRQ support!
+-		 * this requires fixing the root irqchip to be hierarchical.
+-		 */
++		girq->parents[0] = irq;
++	} else { /* F irqchip */
+ 		girq->parent_handler = ep93xx_gpio_f_irq_handler;
+-		girq->num_parents = 8;
+-		girq->parents = devm_kcalloc(dev, girq->num_parents,
+-					     sizeof(*girq->parents),
+-					     GFP_KERNEL);
+-		if (!girq->parents)
+-			return -ENOMEM;
+-		/* Pick resources 1..8 for these IRQs */
++
+ 		for (i = 0; i < girq->num_parents; i++) {
+-			girq->parents[i] = platform_get_irq(pdev, i + 1);
+-			gpio_irq = bank->irq_base + i;
+-			irq_set_chip_data(gpio_irq, &epg->gc[5]);
+-			irq_set_chip_and_handler(gpio_irq,
+-						 girq->chip,
+-						 handle_level_irq);
+-			irq_clear_status_flags(gpio_irq, IRQ_NOREQUEST);
++			irq = platform_get_irq(pdev, i);
++			if (irq < 0)
++				continue;
++
++			girq->parents[i] = irq;
+ 		}
+-		girq->default_type = IRQ_TYPE_NONE;
+-		girq->handler = handle_level_irq;
+-		girq->first = bank->irq_base;
++
++		girq->map = girq->parents;
+ 	}
+ 
+-	return devm_gpiochip_add_data(dev, gc, epg);
++	girq->default_type = IRQ_TYPE_NONE;
++	/* TODO: replace with handle_bad_irq() once we are fully hierarchical */
++	girq->handler = handle_simple_irq;
++
++	return 0;
+ }
+ 
+ static int ep93xx_gpio_probe(struct platform_device *pdev)
+ {
+-	struct ep93xx_gpio *epg;
+-	int i;
++	struct ep93xx_gpio_chip *egc;
++	struct gpio_chip *gc;
++	void __iomem *data;
++	void __iomem *dir;
++	int ret;
+ 
+-	epg = devm_kzalloc(&pdev->dev, sizeof(*epg), GFP_KERNEL);
+-	if (!epg)
++	egc = devm_kzalloc(&pdev->dev, sizeof(*egc), GFP_KERNEL);
++	if (!egc)
+ 		return -ENOMEM;
+ 
+-	epg->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(epg->base))
+-		return PTR_ERR(epg->base);
++	data = devm_platform_ioremap_resource_byname(pdev, "data");
++	if (IS_ERR(data))
++		return PTR_ERR(data);
+ 
+-	for (i = 0; i < ARRAY_SIZE(ep93xx_gpio_banks); i++) {
+-		struct ep93xx_gpio_chip *gc = &epg->gc[i];
+-		struct ep93xx_gpio_bank *bank = &ep93xx_gpio_banks[i];
++	dir = devm_platform_ioremap_resource_byname(pdev, "dir");
++	if (IS_ERR(dir))
++		return PTR_ERR(dir);
+ 
+-		if (ep93xx_gpio_add_bank(gc, pdev, epg, bank))
+-			dev_warn(&pdev->dev, "Unable to add gpio bank %s\n",
+-				 bank->label);
++	gc = &egc->gc;
++	ret = bgpio_init(gc, &pdev->dev, 1, data, NULL, NULL, dir, NULL, 0);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "unable to init generic GPIO\n");
++
++	gc->label = dev_name(&pdev->dev);
++	if (platform_irq_count(pdev) > 0) {
++		dev_dbg(&pdev->dev, "setting up irqs for %s\n", dev_name(&pdev->dev));
++		ret = ep93xx_setup_irqs(pdev, egc);
++		if (ret)
++			dev_err_probe(&pdev->dev, ret, "setup irqs failed");
+ 	}
+ 
+-	return 0;
++	return devm_gpiochip_add_data(&pdev->dev, gc, egc);
+ }
+ 
+ static struct platform_driver ep93xx_gpio_driver = {
 
+-- 
+2.41.0
 
-	Even more, the datasheet specifies that when using "single-ended"
-inputs you need to select which of the pins is the common one and
-connect it to the desired GND (be it AVSS, REF-):
-
-"Because there is a cross point mux, the user can set any of the analog
-inputs as the common pin. An example of such a scenario is to connect
-the AIN16 pin to AVSS or to the REFOUT voltage (that is, AVSS +
-2.5 V)" (ad7173-8 page 27)
-
-	For me this is 100% the case that this is a fully differential ADC in
-which the datasheet presents a way to use it single-ended. Let's say
-that we are using EXT_REF, and REF- is non zero. If someone connects
-AVSS to the desired common pin, the ADC will still measure correctly the
-difference of voltage between AIN_POS and AIN_NEG and compare it to the
-EXT_REF.
