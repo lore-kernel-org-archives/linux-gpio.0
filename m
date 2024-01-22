@@ -1,148 +1,86 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3CF3A1BB;
-	Mon, 22 Jan 2024 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E923A1B4;
+	Mon, 22 Jan 2024 10:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705917773; cv=none; b=U0UgtEVKmUwKsxI+SLwLhPdcwvAzvGBar1E2zzEyriHy3cuAVCFMo3vQp7f4y9mGu5scHrvtJOeEJidVG7czWF6hxi7DqXr+McKmYsQGXdLA1ODGqTMq1dc0GBA/wlfyk2PQYjRhzZSvY1rJPnwaKhDCZBNphgmdvY8Hg9iB9wk=
+	t=1705918816; cv=none; b=fckRmGiyeqzr6YaRp+6NdTZUjSPnmJMW17T9DpxECnCr6lxIEArSAzdz/Dr+fG2jsue+GAgPc9f/j+C6goL5eUVzeVOZph5zArrYrpT1FVSUkqTRfKO97VhIsNGOGqVnd70D2Cq2WXw73VBhLTN+g0aNQK7o8dPtIWT1NTv6EOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705917773; c=relaxed/simple;
-	bh=yr5/pY5F3bbljYsjV3ZbgKqZ+6wIamtE7wbnetcG5Pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LSG8DH0lyXlvLDLgoM4DCumN7C7S/JZvBsy6hCqsIwyQW6RE/K4C/TnxYSZkX2yRX1LRaiKIPu/rLMKBD+n7b69Fw89j022MBr1q82dLBp3PdqkE/VnkAECV3b4rNHT8W5lVc20qspDysXa5CP4h0JbLjOmbiVOBFl0bPhZiwEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3V2X2tV; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705918816; c=relaxed/simple;
+	bh=FkzVe6iZBWVXTveesPrlVI7IQutkxNDUXYFU5aqWMVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfAoKkDDdrLH//K5Jqs9BDC/HJKHjmT23ZJ0/aLu9upVgj5EEfsWA8DBjpHSekbPUeDPK/lp8CdCvVR4yWKwlB74pMjp7Ajk5PdvpoiLyN69iqa5y7J62ev6HroUQtoIQ1o0OATacuMI3XVFBo+OPbO+qAw5R4U1SZYrkqli8wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCN+kmIt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3V2X2tV"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-595d24ad466so2047860eaf.0;
-        Mon, 22 Jan 2024 02:02:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705917771; x=1706522571; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=be1sWfrBuq3C8e6dZyHZX6I3ErBa0Gp9ywBnEmhOm9U=;
-        b=M3V2X2tVuxfHOlKTkBiON6DNKsoDDkgKBCk/2kwxi9Yfqmz9PIrK1tZ58vSW5Lg/a2
-         E6mECX4GWbNpqxUytGEMm1UHKQTijd5mU8rVDLKn/szYYNtUM90MocaFgBMbGMZHecXe
-         bQAMXHutRXVvsSFV15fsuA7AyfIKSg6QL4maQa9UDzvCmX9qvhvH+nKqF/24DEVBZ0ew
-         4ZQGQaKRRLZTMXB0fRmb5PzNbYzWDnx7QHajzwnZIeA57LZ0GBNxSf93PTrS2Vhz1Vac
-         HeQgRIaWn0yrRi79S6ebEq7IaJwFFm8jVLdm+yxWbjEESa/MRXh6w6DL6zss/HEgkhr+
-         lANg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705917771; x=1706522571;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=be1sWfrBuq3C8e6dZyHZX6I3ErBa0Gp9ywBnEmhOm9U=;
-        b=PSEXBaHd2MZjx2n0jYj4y4STkGdzxXyKTa13MSo0ke1lWFyu7KAXeAExCKMP0YRYOY
-         //9Uvte007ln5KZexkzfye5RpgJBVIDXD9MM44UHzzCJfclvn9rCL20cH+qXCvV5HGzQ
-         hUIb0hvRsJEe3hyaOwNYDpUCbUPI0ytVzgOZxx8xjd2ED5EtGtxgRE/3koGg9HbdUxk9
-         opSdQfONQym1yT69NMTTQ4CmGDQw4JdxQnw9nOTLZW0GE0/GpUB1DaWzArtWzwOTRYjD
-         1YdWUSV8qb2AgxP+GIeEDHAcI/HwX2sG+Lm+h38sZSQoPk0s/sYXdzxNua4Xc0uzHUbN
-         S+tA==
-X-Gm-Message-State: AOJu0YyHXInAVpRwM379XZFqWyL6inxR0LnihfZt3hle55L+DBL6wrcb
-	7K6+ys4LhJmuf5mgWIj2SVasccSYxRVOnRvFfBKTVi4JCT3g118qgfZ8VGf/SA9OfPW/a5Ai4VY
-	Pd9j4dXBpbgj8XL7rjED2WUUSKMU=
-X-Google-Smtp-Source: AGHT+IHsxnpL6bqH4oc5mbz/r2JMIxIACxNiDGOWEgDp4R44ux6kf/bRIqEdYEAIw2wJTa6XcPwsjyVngTCts6jd35I=
-X-Received: by 2002:a05:6870:568d:b0:210:a7d4:44ef with SMTP id
- p13-20020a056870568d00b00210a7d444efmr4302089oao.110.1705917770894; Mon, 22
- Jan 2024 02:02:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCN+kmIt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B185EC433F1;
+	Mon, 22 Jan 2024 10:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705918815;
+	bh=FkzVe6iZBWVXTveesPrlVI7IQutkxNDUXYFU5aqWMVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WCN+kmItAJWSkCtB/80pBy8D9uLLLmmD+JgGzxn3Ig5NUh2IM9sAdEOioezdjdVwY
+	 ficQmt3nkGye3JD/MCFO24MZQ5dyWjNbqE4FHzM98XLjsl2irpI6Iq6Kf6q6A8S7Wl
+	 g8i0ra7aEzTr6LBstET/PFfg0EewtfAS8nYIiIklUr+CQz4pyLYsf2QPrxANar8abg
+	 YLXeBEyHq0zAgWz8Bf/OGxJx2Z2YDTwq21jp7Duk0tSfATRE6lrsbgcNFvxrZ7Pxx0
+	 kl55o7e11dKLco9mlv3koYQhjHNxrY5PgUzLFUiNyLKwtdoUCoB8/JQJ5RAaj8c01z
+	 GKkdjuuQpr/kg==
+Date: Mon, 22 Jan 2024 11:20:02 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: dlemoal@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl, michal.simek@amd.com,
+	p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+	piyush.mehta@amd.com, mubin.sayyed@amd.com,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+	git@amd.com
+Subject: Re: [PATCH] dt-bindings: xilinx: replace Piyush Mehta maintainership
+Message-ID: <Za5BUkkd8SymC6lT@x1-carbon>
+References: <1705664181-722937-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240109073849.10791-1-Wenhua.Lin@unisoc.com> <20240109073849.10791-3-Wenhua.Lin@unisoc.com>
-In-Reply-To: <20240109073849.10791-3-Wenhua.Lin@unisoc.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Mon, 22 Jan 2024 18:02:14 +0800
-Message-ID: <CAAfSe-uTZx9Be8NCWqyTXb7GDU73--N0VmRCeh24G_-5-yL5qw@mail.gmail.com>
-Subject: Re: [PATCH V4 2/2] gpio: eic-sprd: Optimize the calculation method of
- eic number
-To: Wenhua Lin <Wenhua.Lin@unisoc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, wenhua lin <wenhua.lin1994@gmail.com>, 
-	Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1705664181-722937-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-On Tue, 9 Jan 2024 at 15:39, Wenhua Lin <Wenhua.Lin@unisoc.com> wrote:
->
-> The num_eics is a default value, but some SoCs support more than 8.
-> In order to adapt to all projects, the total number of eics is
-> automatically calculated through dts.
->
-> Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
-
-Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
-
-Thanks,
-Chunyan
-
+On Fri, Jan 19, 2024 at 05:06:21PM +0530, Radhey Shyam Pandey wrote:
+> As Piyush is leaving AMD, he handed over ahci-ceva, ZynqMP Mode Pin GPIO
+> controller, Zynq UltraScale+ MPSoC and Versal reset, Xilinx SuperSpeed
+> DWC3 USB SoC controller, Microchip USB5744 4-port Hub Controller and
+> Xilinx udc controller maintainership duties to Mubin and Radhey.
+> 
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 > ---
->  drivers/gpio/gpio-eic-sprd.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index 806b88d8dfb7..2dd0e46c42ad 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -108,7 +108,6 @@ static struct sprd_eic *to_sprd_eic(struct notifier_block *nb)
->
->  struct sprd_eic_variant_data {
->         enum sprd_eic_type type;
-> -       u32 num_eics;
->  };
->
->  static const char *sprd_eic_label_name[SPRD_EIC_MAX] = {
-> @@ -118,22 +117,18 @@ static const char *sprd_eic_label_name[SPRD_EIC_MAX] = {
->
->  static const struct sprd_eic_variant_data sc9860_eic_dbnc_data = {
->         .type = SPRD_EIC_DEBOUNCE,
-> -       .num_eics = 8,
->  };
->
->  static const struct sprd_eic_variant_data sc9860_eic_latch_data = {
->         .type = SPRD_EIC_LATCH,
-> -       .num_eics = 8,
->  };
->
->  static const struct sprd_eic_variant_data sc9860_eic_async_data = {
->         .type = SPRD_EIC_ASYNC,
-> -       .num_eics = 8,
->  };
->
->  static const struct sprd_eic_variant_data sc9860_eic_sync_data = {
->         .type = SPRD_EIC_SYNC,
-> -       .num_eics = 8,
->  };
->
->  static inline void __iomem *sprd_eic_offset_base(struct sprd_eic *sprd_eic,
-> @@ -619,6 +614,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
->         struct gpio_irq_chip *irq;
->         struct sprd_eic *sprd_eic;
->         struct resource *res;
-> +       u16 num_banks = 0;
->         int ret, i;
->
->         pdata = of_device_get_match_data(dev);
-> @@ -652,10 +648,12 @@ static int sprd_eic_probe(struct platform_device *pdev)
->                 sprd_eic->base[i] = devm_ioremap_resource(dev, res);
->                 if (IS_ERR(sprd_eic->base[i]))
->                         return PTR_ERR(sprd_eic->base[i]);
-> +
-> +               num_banks++;
->         }
->
->         sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
-> -       sprd_eic->chip.ngpio = pdata->num_eics;
-> +       sprd_eic->chip.ngpio = num_banks * SPRD_EIC_PER_BANK_NR;
->         sprd_eic->chip.base = -1;
->         sprd_eic->chip.parent = dev;
->         sprd_eic->chip.direction_input = sprd_eic_direction_input;
-> --
-> 2.17.1
->
+>  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml      | 3 ++-
+>  .../devicetree/bindings/gpio/xlnx,zynqmp-gpio-modepin.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.yaml | 3 ++-
+>  Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml         | 3 ++-
+>  Documentation/devicetree/bindings/usb/microchip,usb5744.yaml   | 3 ++-
+>  Documentation/devicetree/bindings/usb/xlnx,usb2.yaml           | 3 ++-
+>  6 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
+> index b29ce598f9aa..9952e0ef7767 100644
+> --- a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
+> +++ b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
+> @@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Ceva AHCI SATA Controller
+>  
+>  maintainers:
+> -  - Piyush Mehta <piyush.mehta@amd.com>
+> +  - Mubin Sayyed <mubin.sayyed@amd.com>
+> +  - Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+>  
+>  description: |
+>    The Ceva SATA controller mostly conforms to the AHCI interface with some
+
+For ata:
+Acked-by: Niklas Cassel <cassel@kernel.org>
