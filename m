@@ -1,111 +1,212 @@
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C106B81AD5;
-	Tue, 23 Jan 2024 18:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08361292D4;
+	Tue, 23 Jan 2024 18:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706034016; cv=none; b=NuD7zGBx5oBP+yCRoH7TftLxaos8w71ibpY8BAl99QQK1cZXraVVIv3PYjRZB//top4etLxrV8+l6aotxMLfcRaye9WAgRoq3Xt0Y1vMD7DZim0KOJUoB8pe2DAgOYSp9+/NraZrpvOZdQhBQaePXvF1FbLYRqPGCvUnbejcyFM=
+	t=1706035632; cv=none; b=FUj3pUb5HOhWsHpaTdbVtfu0szn+Vr0AL3AoOvx3HvgyOoZrj4fUZm9ssEKu91th7Hf8GeBQOqZnavsjllYlfF9VuhfVB+vpTxu1xPib3Vk+8CQ/DI5Qtzxr7yrPB/Ha2ASxWBYp4bL6VAQA645N+8l3muJngrNVjlzjTy5Q9/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706034016; c=relaxed/simple;
-	bh=DjBxG7P4BZNDoXbPPQ3AAP8/5+IiYOHXQO3HWX5SrYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IixlPNedqbyaD4KElqJxt1A6McOS3oK9K2IOUhPr9qONOOCQLIk9MVA7bNKwq/e8JFXwfwjB0FtfpJ6UaO+EvGD+RppY+uUabFLp55+ZQa08PLtSzkh/yII+R1BvxOFG2q6SdKD4+xJ2PWu9IS9u84b5iTkqbHiKzAawGQArgkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3bd4df21f4eso971275b6e.1;
-        Tue, 23 Jan 2024 10:20:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706034014; x=1706638814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Zl0o3sQ/xs4orleB37d3h482FB9X5KwzM20ctuXltg=;
-        b=h5fbu95zhjq0X2CfSzH+eDR7p5YahB2BS0wjamIAgVl25KdhdZBYfbaaBovoypGSbA
-         FolKjwenlDAdIeyE3S3y/5vuFUMOoSTOny43Sw20y50VkRdBypQ5ucMhVkV0RKvWOEbb
-         BJbeXGSgJ7Rl6RKpuLHJn2pt7UoOlWVWfu818xPgnku2eqlyOzy8ner18UbB2wPo5b0L
-         ICC2+ZhuztprKP381kWXVD2d1DNQavkL1hQETF2uZaE0vVImk6rp6Mchp/xYT/F7I5FO
-         jksc0ESyjn2yxKOSHBTQ+XBa7QIIL+mlFOBBW7P4KCyAuvh8I9XfkZPQkZex042Fwumo
-         ni+A==
-X-Gm-Message-State: AOJu0YwD0KPbYPFju6AN7SfrR6Rm7lbk3YPv01PameFYjRwZu+6zRe0W
-	ofUcteYwBsSktR5CjZf1neU9/XK1O6nn9Yb3XuTb6tzmQTzRgUHJ1HLjg4QzVzbdf4DlyYAN54W
-	lNgs6nqMkHuxXJ+1qbsoG7iV9CNU=
-X-Google-Smtp-Source: AGHT+IGhgSapfprq6NVIcYCrJDnvbl9cZpHCQ6hCgTamtUt7jUgtSWMMLG9xq8Tiv/kMT/LsxSZqCL6ZsZYhgHd826Y=
-X-Received: by 2002:a05:6870:7029:b0:210:d66c:7c27 with SMTP id
- u41-20020a056870702900b00210d66c7c27mr163590oae.2.1706034013592; Tue, 23 Jan
- 2024 10:20:13 -0800 (PST)
+	s=arc-20240116; t=1706035632; c=relaxed/simple;
+	bh=YIEKqK5MI7C6wgG1cBeAfL6H69SH6ljkSO16YrF7vPc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=duRum4awE4/m4x/4ZyKb1CvQDkoxxgEep22E4OMDMr8teckO1Utem2z1d+CabctREIi5vPM6/v4hh0uqSYsZB0SLQYANQmeDEsILOAku5Pdvho9q7MBMixneK+1EBFI7Cv4SMWG5CNfSxB94DnXKeKVbF4m7wLOTBKRO17CIhus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XPDUxWDk; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XPDUxWDk"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DB95EC000A;
+	Tue, 23 Jan 2024 18:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706035622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM6whmgyRwSqq5DhU05BK7t5rD5rPlWu1apIXMRZECI=;
+	b=XPDUxWDk56dPVlQg4Hwl+Y5KnNrvtzFndQXn6q3tJmJdz15glHWUKOWF2G4mckyPpf7d9V
+	cXkxEITwnC2+pu6n5xHSSyMZfMn1dAwdS5z6pJoHp/kXgUTwsY+0eHXOaXsDGN7QjYY0Wv
+	Pya5jSziHUO2Ll1XfCLFttbjnr8U4VjLu1072UukAT8fx8IFtgsdob4mebl4QdWmg6QNtK
+	0xBhgzbl5b4CXfHcKjnvxuzRN+iFSBhQqp1+yPetBL7AhxP2AA0KvvBQLsXsvLjkAl0uGG
+	oq1kYvAno0jSxIcVxNYCq0xROPBBvI6p43XwLArPNOeVSXIzfKUC+5E5W68x6g==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Tue, 23 Jan 2024 19:46:46 +0100
+Subject: [PATCH v3 01/17] clk: fixed-factor: add optional accuracy support
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123180818.3994-1-mario.limonciello@amd.com>
-In-Reply-To: <20240123180818.3994-1-mario.limonciello@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 23 Jan 2024 19:20:01 +0100
-Message-ID: <CAJZ5v0gWuYUg55PGezhkzFaPK7S9qFw9xvd=SoetNBHtOzQxEA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: amd: Add IRQF_ONESHOT to the interrupt request
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Christian Heusel <christian@heusel.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240123-mbly-clk-v3-1-392b010b8281@bootlin.com>
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+In-Reply-To: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Jan 23, 2024 at 7:08=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On some systems the interrupt is shared between GPIO controller
-> and ACPI SCI. When the interrupt is shared with the ACPI SCI the
-> flags need to be identical.
->
-> This should fix the GPIO controller failing to work after commit
-> 7a36b901a6eb ("ACPI: OSL: Use a threaded interrupt handler for SCI").
-> ```
-> [    0.417335] genirq: Flags mismatch irq 9. 00000088 (pinctrl_amd) vs. 0=
-0002080 (acpi)
-> [    0.420073] amd_gpio: probe of AMDI0030:00 failed with error -16
-> ```
->
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Reported-by: Christian Heusel <christian@heusel.eu>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218407
-> Fixes: 7a36b901a6eb ("ACPI: OSL: Use a threaded interrupt handler for SCI=
-")
-> Link: https://lore.kernel.org/linux-acpi/CAJZ5v0iRqUXeuKmC_+dAJtDBLWQ3x15=
-n4gRH48y7MEaLoXF+UA@mail.gmail.com/T/#mc5506014141b61e472b24e095889535a0445=
-8083
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Fixed factor clock reports the parent clock accuracy. Add flags and acc
+fields to `struct clk_fixed_factor` to support setting a fixed
+accuracy. The default if no flag is set is not changed: use the parent
+clock accuracy.
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/clk/clk-fixed-factor.c | 28 +++++++++++++++++++++-------
+ include/linux/clk-provider.h   | 12 +++++++++++-
+ 2 files changed, 32 insertions(+), 8 deletions(-)
 
-> ---
->  drivers/pinctrl/pinctrl-amd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.=
-c
-> index ca4a247c2cd1..6a33b584976c 100644
-> --- a/drivers/pinctrl/pinctrl-amd.c
-> +++ b/drivers/pinctrl/pinctrl-amd.c
-> @@ -1162,7 +1162,7 @@ static int amd_gpio_probe(struct platform_device *p=
-dev)
->         }
->
->         ret =3D devm_request_irq(&pdev->dev, gpio_dev->irq, amd_gpio_irq_=
-handler,
-> -                              IRQF_SHARED, KBUILD_MODNAME, gpio_dev);
-> +                              IRQF_SHARED | IRQF_ONESHOT, KBUILD_MODNAME=
-, gpio_dev);
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index b3e66202b942..bc2644a9bd7d 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -57,10 +57,22 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static unsigned long clk_factor_recalc_accuracy(struct clk_hw *hw,
++						unsigned long parent_accuracy)
++{
++	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
++
++	if (fix->flags & CLK_FIXED_FACTOR_FIXED_ACCURACY)
++		return fix->acc;
++
++	return parent_accuracy;
++}
++
+ const struct clk_ops clk_fixed_factor_ops = {
+ 	.round_rate = clk_factor_round_rate,
+ 	.set_rate = clk_factor_set_rate,
+ 	.recalc_rate = clk_factor_recalc_rate,
++	.recalc_accuracy = clk_factor_recalc_accuracy,
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
+@@ -81,7 +93,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name,
+ 		const struct clk_hw *parent_hw, int index,
+ 		unsigned long flags, unsigned int mult, unsigned int div,
+-		bool devm)
++		unsigned long acc, unsigned int fixflags, bool devm)
+ {
+ 	struct clk_fixed_factor *fix;
+ 	struct clk_init_data init = { };
+@@ -105,6 +117,8 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	fix->mult = mult;
+ 	fix->div = div;
+ 	fix->hw.init = &init;
++	fix->acc = acc;
++	fix->flags = fixflags;
+ 
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+@@ -152,7 +166,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL, index,
+-					      flags, mult, div, true);
++					      flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
+ 
+@@ -174,7 +188,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      -1, flags, mult, div, true);
++					      -1, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -184,7 +198,7 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL,
+ 					      parent_hw, -1, flags, mult, div,
+-					      false);
++					      0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -193,7 +207,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-					      flags, mult, div, false);
++					      flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -240,7 +254,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-			flags, mult, div, true);
++			flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
+@@ -267,7 +281,7 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 
+ 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
+-					    0, mult, div, false);
++					    0, mult, div, 0, 0, false);
+ 	if (IS_ERR(hw)) {
+ 		/*
+ 		 * Clear OF_POPULATED flag so that clock registration can be
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1293c38ddb7f..7ddc952c8c67 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1084,18 +1084,28 @@ void of_fixed_factor_clk_setup(struct device_node *node);
+  * @hw:		handle between common and hardware-specific interfaces
+  * @mult:	multiplier
+  * @div:	divider
++ * @acc:	fixed accuracy in ppb
++ * @flags:	behavior modifying flags
+  *
+  * Clock with a fixed multiplier and divider. The output frequency is the
+  * parent clock rate divided by div and multiplied by mult.
+- * Implements .recalc_rate, .set_rate and .round_rate
++ * Implements .recalc_rate, .set_rate, .round_rate and .recalc_accuracy
++ *
++ * Flags:
++ * * CLK_FIXED_FACTOR_FIXED_ACCURACY - Use the value in @acc instead of the
++ *                                     parent clk accuracy.
+  */
+ 
+ struct clk_fixed_factor {
+ 	struct clk_hw	hw;
+ 	unsigned int	mult;
+ 	unsigned int	div;
++	unsigned long	acc;
++	unsigned int	flags;
+ };
+ 
++#define CLK_FIXED_FACTOR_FIXED_ACCURACY	BIT(0)
++
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
 
-Or if adding IRQF_ONESHOT here is not acceptable, IRQF_PROBE_SHARED
-can be used too.
+-- 
+2.43.0
 
->         if (ret)
->                 goto out2;
->
-> --
