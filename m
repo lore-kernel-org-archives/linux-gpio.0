@@ -1,190 +1,121 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768B7199D9
-	for <linux-gpio@vger.kernel.org>; Wed, 24 Jan 2024 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25502208E
+	for <linux-gpio@vger.kernel.org>; Wed, 24 Jan 2024 10:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706093678; cv=none; b=YEIl8fFRTxFeW1Sq1bFwqbx185guZDv80UENSS4J8JLXI/jJwvRRxx7cZmtrrzf9FbXAiCT7gf6sguEl1PgO1ztbg28PWVmiUliSqwfEk8Z0CASUv0bqWIidFy0kGa56ihVZHP3h/BdR9svsCFoDdXIsJ8SUdjIxMjokippuBKc=
+	t=1706093909; cv=none; b=l5lSnWUvb2qe0X1br/JhnKnS17IWTzStFyxkUHjj5GbdH7DYZIk1qXlXVjRlyQgGIJp0GccmgMvW+mojdqZ84Ug+2R3FvO3/22mUCV1b0/CG9jxOl6i9LZ7CRnS7GN3uh+8aiFljXHlPpb9rf6n3Ug7V2i1GorUvEvrZpHv5vKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706093678; c=relaxed/simple;
-	bh=lKdiVruIzPpYmtbsDhdv0Tfge2qMRNvAnOAyUZusIqI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ni5sIgtCEVfAhUw1QBTxPJZNOBoBz2TR+lO5a0JnbyfV+ST1KzvXEfzFRTVwZU+ja7w97n2BACeRKUOlrTnwghLEL97JPJ2NNl3AdqI8T3Dc01/D8NYA3/x6nrsgbjuaKIYWjJBybapqVSbWVXrpSKafwhXxjxkaMQnP9vjm8wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rSatc-00013p-UF; Wed, 24 Jan 2024 11:54:16 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rSatb-0022P4-5Z; Wed, 24 Jan 2024 11:54:15 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1rSatb-00086H-0J;
-	Wed, 24 Jan 2024 11:54:15 +0100
-Message-ID: <82bde47d48ec2962d69d9e4edde6d6d96fcbbd65.camel@pengutronix.de>
-Subject: Re: [PATCH v3 09/17] reset: eyeq5: add platform driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Gregory
- CLEMENT <gregory.clement@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij
- <linus.walleij@linaro.org>,  =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?=
- <rafal@milecki.pl>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-  linux-gpio@vger.kernel.org
-Date: Wed, 24 Jan 2024 11:54:14 +0100
-In-Reply-To: <20240123-mbly-clk-v3-9-392b010b8281@bootlin.com>
-References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
-	 <20240123-mbly-clk-v3-9-392b010b8281@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1706093909; c=relaxed/simple;
+	bh=U/aFnsktNVeHAKY6zHqHLSGBBe4tZr59iRq93vPZbCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMnqdTlLlHIea3jxGQcQ0DoUDC5mFFfMTOIZRBrPm5gnNoNSnRrLlcFCxMCUVL+J93ASjyF/fIIbYd5ei0tYVLYisnSi4JwExcDu8h/KgUelAR3xYeHoqmLH8v2oCpipIzQFd4nE3eofjtW96cFCIceksbFRH/fGa6eE5dAn9hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UABRBBSF; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UABRBBSF"
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-7ce3c7566e0so1205869241.1
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jan 2024 02:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1706093906; x=1706698706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=biiC2+9IgRkBvIwO63/+dyZINeIQ4EIhvkzZ1f1/AEU=;
+        b=UABRBBSFUxbZ5nC7qCKjPv0DnBZhsVgBp1/30EdENdYaoLnLPtgYgzLM/d0vBHSWRu
+         mpKP4zu1m926qTh1uBx9bN8wkIgSUQogeXjS5MxFDDE4DclM7G7jf0eaVsf+pDcHxHuP
+         sq14o8YHKFZdgNi1c4INpYdF0MvWlDtB3MwiHRw3KsIZ7lLIKRUP+uN7dHZKK+TLebp4
+         D0rnTKVe/poGyrunqrKEN0UBQrAxqY1Byd4LVKgapfxNLgVNzICTPQoPDPEIJW0VLsG2
+         fItqTfseXE7DWSEa0yW04KecGpD3U15iLpHWvSZSMkgMwqVNIhpp65RqC+XeXTIiCB24
+         NGTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706093906; x=1706698706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=biiC2+9IgRkBvIwO63/+dyZINeIQ4EIhvkzZ1f1/AEU=;
+        b=HVuBno0gOg2KK6fsWmhGogu2dhWzpb8u9BVQJ433taTud5kIOAchm+JQLYnXUJmx9Q
+         7+9xbScoKeP6+8t685ZTJl0YlmideVqzuaZCSk1Wd+G1xJdf1mgjGkI8WnJicItSc8Kn
+         wp1rrMfeMjT/C3nrm0T7aZbM69VnwVXYAfaamsOkqInPMAF0Jvwb/Wv0NMVOA63anpQN
+         6AQ762+zjqK+WItjc91SCfG1IxPmLU9y5PFeaMh/68DZEshL3iF01SSwPEEkFu3cnrHi
+         hvnntyEm19/Bv6+Ao0vO9kCXMhur1vr9mV4Y4QBur10eVVZkqIYA3LGDDBqhyJGrxNYD
+         v7LQ==
+X-Gm-Message-State: AOJu0YwaR0/sXVvGjfQnoVHkQYucKWcc1JGvLvDPNcAVk+SZeszKMnHp
+	EtYIm39oH3rn/Xunv/KuYfXgBhGwJ4gBA82W5HrWeL8rxzyP9kY3V97BTvBQkdKppZM8yyafwI2
+	4pe4550++6dnWr+l/ktwH6syqN8vzcUCF5uJdBQ==
+X-Google-Smtp-Source: AGHT+IGlkgHFRX1ZbIqjIBx+UaQQo1ss28IBZhWHHx067UrDPuot4Z5qYutqELh+PjqPJHxfFtsn3Kydf7100pP5XAI=
+X-Received: by 2002:ac5:c5d3:0:b0:4bd:5f4b:aa61 with SMTP id
+ g19-20020ac5c5d3000000b004bd5f4baa61mr332644vkl.27.1706093906736; Wed, 24 Jan
+ 2024 02:58:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+References: <20240124103929.66545-1-brgl@bgdev.pl> <20240124105424.GA66219@rigel>
+In-Reply-To: <20240124105424.GA66219@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 24 Jan 2024 11:58:16 +0100
+Message-ID: <CAMRc=MfGJ2UxOdchd=qmM340x2d-QT0egpG4HkR1fCiz8sfyoA@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH] core: ignore positive values returned by the
+ GPIO_V2_GET_LINE ioctl()
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Phil Howard <phil@gadgetoid.com>, 
+	linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	=?UTF-8?Q?Jos=C3=A9_Guilherme_de_Castro_Rodrigues?= <joseguilhermebh@hotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Di, 2024-01-23 at 19:46 +0100, Th=C3=A9o Lebrun wrote:
-[...]
-> diff --git a/drivers/reset/reset-eyeq5.c b/drivers/reset/reset-eyeq5.c
-> new file mode 100644
-> index 000000000000..2217e42e140b
-> --- /dev/null
-> +++ b/drivers/reset/reset-eyeq5.c
-> @@ -0,0 +1,383 @@
-[...]
+On Wed, Jan 24, 2024 at 11:54=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
+ wrote:
+>
+> On Wed, Jan 24, 2024 at 11:39:29AM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > If the kernel GPIO driver (erroneously) returns a positive value from o=
+ne
+> > of its callbacks, it may end up being propagated to user space as
+> > a positive value returned by the call to ioctl(). Let's treat all
+> > non-zero values as errors as GPIO uAPI ioctl()s are not expected to eve=
+r
+> > return positive values. This should be addressed in the kernel but will
+> > remain a problem on older or unpatched versions so we need to sanitize =
+it
+> > in user-space too.
+> >
+> > Reported-by: Jos=C3=A9 Guilherme de Castro Rodrigues <joseguilhermebh@h=
+otmail.com>
+> > Fixes: b7ba732e6a93 ("treewide: libgpiod v2 implementation")
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  lib/chip.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/lib/chip.c b/lib/chip.c
+> > index 7c05e53..7bf40c6 100644
+> > --- a/lib/chip.c
+> > +++ b/lib/chip.c
+> > @@ -239,7 +239,7 @@ gpiod_chip_request_lines(struct gpiod_chip *chip,
+> >               return NULL;
+> >
+> >       ret =3D ioctl(chip->fd, GPIO_V2_GET_LINE_IOCTL, &uapi_req);
+> > -     if (ret < 0)
+> > +     if (ret)
+> >               return NULL;
+> >
+>
+> What is errno going to be here?
+> Is errno set if the ioctl returns positive?
+>
 
-> +static int eq5r_assert(struct reset_controller_dev *rcdev, unsigned long=
- id)
-> +{
-> +	struct eq5r_private *priv =3D dev_get_drvdata(rcdev->dev);
+No it isn't, thanks for catching it.
 
-rcdev is contained in priv, you can just use container_of instead of
-chasing pointers around.
+This patch is incomplete - we need a wrapper around ioctl() for all
+uAPI calls that will check for positive numbers and set errno to
+ERANGE (is that the right one? any other ideas?) then return -1.
 
-> +	u32 offset =3D id & GENMASK(7, 0);
-> +	u32 domain =3D id >> 8;
-> +	int ret;
-> +
-> +	if (WARN_ON(domain >=3D EQ5R_DOMAIN_COUNT))
-> +		return -EINVAL;
-
-Reset controls with domain >=3D EQ5R_DOMAIN_COUNT are already weeded out
-during request by of_xlate, so this check is not necessary.
-
-> +	dev_dbg(rcdev->dev, "%u-%u: assert request\n", domain, offset);
-> +
-> +	mutex_lock(&priv->mutexes[domain]);
-> +	_eq5r_assert(priv, domain, offset);
-> +	ret =3D _eq5r_busy_wait(priv, rcdev->dev, domain, offset, true);
-> +	mutex_unlock(&priv->mutexes[domain]);
-> +
-> +	return ret;
-
-Consider using guard(mutex)(&priv->mutexes[domain]) from
-linux/cleanup.h to automatically unlock on return.
-
-[...]
-> +static int eq5r_reset(struct reset_controller_dev *rcdev, unsigned long =
-id)
-
-Is this used by anything? If unused, I'd prefer this not to be
-implemented. If it is used, is no delay required between assert and
-deassert by any consumer?
-
-> +{
-> +	struct device *dev =3D rcdev->dev;
-> +	struct eq5r_private *priv =3D dev_get_drvdata(dev);
-> +	u32 offset =3D id & GENMASK(7, 0);
-> +	u32 domain =3D id >> 8;
-> +	int ret;
-> +
-> +	if (WARN_ON(domain >=3D EQ5R_DOMAIN_COUNT))
-> +		return -EINVAL;
-> +
-> +	dev_dbg(dev, "%u-%u: reset request\n", domain, offset);
-> +
-> +	mutex_lock(&priv->mutexes[domain]);
-> +
-> +	_eq5r_assert(priv, domain, offset);
-> +	ret =3D _eq5r_busy_wait(priv, dev, domain, offset, true);
-> +	if (ret) /* don't let an error disappear silently */
-> +		dev_warn(dev, "%u-%u: reset assert failed: %d\n",
-> +			 domain, offset, ret);
-
-Why not return the error though?
-
-> +	_eq5r_deassert(priv, domain, offset);
-> +	ret =3D _eq5r_busy_wait(priv, dev, domain, offset, false);
-> +
-> +	mutex_unlock(&priv->mutexes[domain]);
-> +
-> +	return ret;
-> +}
-[...]
-> +static int eq5r_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct device_node *np =3D dev->of_node;
-> +	struct device_node *parent_np =3D of_get_parent(np);
-> +	struct eq5r_private *priv;
-> +	int ret, i;
-> +
-> +	priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
-
-Using devm_kzalloc() avoids leaking this on error return or driver
-unbind.
-
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, priv);
-> +
-> +	priv->olb =3D ERR_PTR(-ENODEV);
-> +	if (parent_np) {
-> +		priv->olb =3D syscon_node_to_regmap(parent_np);
-> +		of_node_put(parent_np);
-> +	}
-> +	if (IS_ERR(priv->olb))
-> +		return PTR_ERR(priv->olb);
-> +
-> +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
-> +		mutex_init(&priv->mutexes[i]);
-> +
-> +	priv->rcdev.ops =3D &eq5r_ops;
-> +	priv->rcdev.owner =3D THIS_MODULE;
-> +	priv->rcdev.dev =3D dev;
-> +	priv->rcdev.of_node =3D np;
-> +	priv->rcdev.of_reset_n_cells =3D 2;
-> +	priv->rcdev.of_xlate =3D eq5r_of_xlate;
-> +
-> +	priv->rcdev.nr_resets =3D 0;
-> +	for (i =3D 0; i < EQ5R_DOMAIN_COUNT; i++)
-> +		priv->rcdev.nr_resets +=3D __builtin_popcount(eq5r_valid_masks[i]);
-> +
-> +	ret =3D reset_controller_register(&priv->rcdev);
-
-Similarly, use devm_reset_controller_register() or disable driver
-unbind with suppress_bind_attrs.
-
-regards
-Philipp
-
+Bart
