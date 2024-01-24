@@ -1,120 +1,220 @@
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0426781AD5
-	for <linux-gpio@vger.kernel.org>; Wed, 24 Jan 2024 17:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2A582D7B;
+	Wed, 24 Jan 2024 17:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706117089; cv=none; b=XprVT3ExtNLPR8vkt2xavjwO58yDUF+5JPzJqyKcaJmqcQwMqtw+UayTbpH5hO49fGo+na1L5WpYzQyJNf3kM37FFaHPzb/SZcvABpeJbOT9ihsbjQXEL8FXYpwxp/huzwyyWNev4/Mdvm6kWjNCSkVkTa/eLiK+t8tgZZ45Tlk=
+	t=1706117301; cv=none; b=F9C2JWDFtLeJtWRoyZVSNhbF4jocqaCuR4ZSJ2l5C2TW52CBTlZQoPGolaAS8UeuPuhKwCSTxglVIdc7xzjiLRcMXUN9ck69bqJbLnbzswL81YGQR6qKmdwPMn3PaTkGSE7tILeJGNQjRZtRWpNBDwMfvk97RWnYfKvs5zMeMlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706117089; c=relaxed/simple;
-	bh=QGjT7/uUZbTMYEx4CS6vzoXVQrBz2yJenS8lM6zfQU8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=paRhPzTmPjLViBbYDLcqfH+3iuzXST4vsL6cjVSeFr+81K9tGx/f5yiMGWHINh8ijCj1PCh5jmEs0xaTZeDHAWTrI+yqIX7O2jOK3/I5JAaDKwL0lxdS6RhWNTL1ACJIXaxQ4aIv8up/o2XVGwbZ8kOOTsa2/bvhVyU2lpFkzao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=c0HIY21p; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1706117301; c=relaxed/simple;
+	bh=zlrlZGL1ccljq0wZTffstwt62GdsF9GBruDVt6c6i6I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=CeFnks5eqve0og2ZSQCycctjwqsw4XBWsppjVpba9aGU7QWef8X57gSviI0sSMVimKwxHKxyK5brh/BTc6nGPUXx2z+6A2js5Vrb2uikHws6s3hPro14YmzZOAhDqciugYkuS63GUCgjYIVK7aWiau6b/QhEGWMfwlpRBDDvDnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kVwzzACi; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="c0HIY21p"
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40O8MvVq030107;
-	Wed, 24 Jan 2024 11:24:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	PODMain02222019; bh=PUe1cBvR9UX53hjVEalrGVrXExW4eMX7vcU3xKD9yUQ=; b=
-	c0HIY21pf2d6NIzficgoAE5uxFLIIf9mzRu2muFmNbHCpubTiYPDNARH9HZqFnQX
-	Se4Khg15CTN5NpOZxgz8wHzAYklHFUJsLulkncXEwfquaCUNUoU2CbyFDpFIWpew
-	brat9bauCcqTvYoaolO4ml2rxaoJcDlOCvdXway1lAUvb+846560lBAQfPcVA8VL
-	Yyi6+GR93EhhyHpKQH7pWyiU/s6TJeS2ZjJ3qgmZ+eQCOaEVjKVKQJt0xSFpbvFB
-	rCVsP4a/HLd/TkdZ1Iz9G542DMxU4fpOAxlgGxlHVN+X0/bjfptC58s8wtSMPZ2k
-	cMa4hEngAo+l0ngpcmYFTg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3vtmf9s5jc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jan 2024 11:24:40 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 24 Jan
- 2024 17:24:38 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.40 via Frontend Transport; Wed, 24 Jan 2024 17:24:38 +0000
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 986DF820247;
-	Wed, 24 Jan 2024 17:24:38 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <linus.walleij@linaro.org>
-CC: <andy.shevchenko@gmail.com>, <patches@opensource.cirrus.com>,
-        <linux-gpio@vger.kernel.org>
-Subject: [PATCH 2/3] pinctrl: cs42l43: Remove some needless inlines
-Date: Wed, 24 Jan 2024 17:24:37 +0000
-Message-ID: <20240124172438.2086766-2-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240124172438.2086766-1-ckeepax@opensource.cirrus.com>
-References: <20240124172438.2086766-1-ckeepax@opensource.cirrus.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kVwzzACi"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A364AC0009;
+	Wed, 24 Jan 2024 17:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706117297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10uyfb5Z5S8wcEdv0qJfDFN4rfE+zh8ufIUekB4Kl1Q=;
+	b=kVwzzACiYdI8SyjZoYNuT94j9maKxAyBDWuR3GtmW5vmJfgrkUXOLTJfprs6j6yOk6txCa
+	64nOuR1KkPX+4QU/jUZgagrqXHxJwnS2mwenTzAOYQo9xhQivhT+WtPOGzghSNmC9ABXpS
+	S/rraFO9ruaoul2Lw/JQtI8CoV2GhGmFPoLx3ndCa9jMJgzOlgs3GlAomoa+l6LuBwmceh
+	0PD7RFvYowqglTrKh80RTHXAU/RAJN8o/jWOSwpgxQ7xJtYwfqJyyd1G0SjsL3g9e73KUg
+	1MNze1ZPceir6+iFRQPZ/FIHo1f6V0uP57T2rTfKcE19erLiMVOXGdT1vZxNWQ==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: aoD_oL-xJa6Y3SL2JXEB_pI30EcYc0-x
-X-Proofpoint-ORIG-GUID: aoD_oL-xJa6Y3SL2JXEB_pI30EcYc0-x
-X-Proofpoint-Spam-Reason: safe
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 24 Jan 2024 18:28:16 +0100
+Message-Id: <CYN43TSPPPZ5.1VUA1CH95D8KJ@bootlin.com>
+Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, <linux-mips@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
+To: "Rob Herring" <robh@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v3 04/17] dt-bindings: soc: mobileye: add EyeQ5 OLB
+ system controller
+X-Mailer: aerc 0.15.2
+References: <20240123-mbly-clk-v3-0-392b010b8281@bootlin.com>
+ <20240123-mbly-clk-v3-4-392b010b8281@bootlin.com>
+ <20240124151405.GA930997-robh@kernel.org>
+In-Reply-To: <20240124151405.GA930997-robh@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/pinctrl/cirrus/pinctrl-cs42l43.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Hello,
 
-diff --git a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-index 24e21d1e0d06c..ac3df58bbe951 100644
---- a/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-+++ b/drivers/pinctrl/cirrus/pinctrl-cs42l43.c
-@@ -276,7 +276,7 @@ static const struct pinmux_ops cs42l43_pin_mux_ops = {
- 
- static const unsigned int cs42l43_pin_drv_str_ma[] = { 1, 2, 4, 8, 9, 10, 12, 16 };
- 
--static inline int cs42l43_pin_get_drv_str(struct cs42l43_pin *priv, unsigned int pin)
-+static int cs42l43_pin_get_drv_str(struct cs42l43_pin *priv, unsigned int pin)
- {
- 	const struct cs42l43_pin_data *pdat = cs42l43_pin_pins[pin].drv_data;
- 	unsigned int val;
-@@ -289,8 +289,8 @@ static inline int cs42l43_pin_get_drv_str(struct cs42l43_pin *priv, unsigned int
- 	return cs42l43_pin_drv_str_ma[(val & pdat->mask) >> pdat->shift];
- }
- 
--static inline int cs42l43_pin_set_drv_str(struct cs42l43_pin *priv, unsigned int pin,
--					  unsigned int ma)
-+static int cs42l43_pin_set_drv_str(struct cs42l43_pin *priv, unsigned int pin,
-+				   unsigned int ma)
- {
- 	const struct cs42l43_pin_data *pdat = cs42l43_pin_pins[pin].drv_data;
- 	int i;
-@@ -314,7 +314,7 @@ static inline int cs42l43_pin_set_drv_str(struct cs42l43_pin *priv, unsigned int
- 	return -EINVAL;
- }
- 
--static inline int cs42l43_pin_get_db(struct cs42l43_pin *priv, unsigned int pin)
-+static int cs42l43_pin_get_db(struct cs42l43_pin *priv, unsigned int pin)
- {
- 	unsigned int val;
- 	int ret;
-@@ -332,8 +332,8 @@ static inline int cs42l43_pin_get_db(struct cs42l43_pin *priv, unsigned int pin)
- 	return 85; // Debounce is roughly 85uS
- }
- 
--static inline int cs42l43_pin_set_db(struct cs42l43_pin *priv, unsigned int pin,
--				     unsigned int us)
-+static int cs42l43_pin_set_db(struct cs42l43_pin *priv, unsigned int pin,
-+			      unsigned int us)
- {
- 	if (pin >= CS42L43_NUM_GPIOS)
- 		return -ENOTSUPP;
--- 
-2.30.2
+On Wed Jan 24, 2024 at 4:14 PM CET, Rob Herring wrote:
+> On Tue, Jan 23, 2024 at 07:46:49PM +0100, Th=C3=A9o Lebrun wrote:
+> > Add documentation to describe the "Other Logic Block" syscon.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 77 ++++++++++++++=
+++++++++
+> >  MAINTAINERS                                        |  1 +
+> >  2 files changed, 78 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,ey=
+eq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq=
+5-olb.yaml
+> > new file mode 100644
+> > index 000000000000..031ef6a532c1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb=
+.yaml
+> > @@ -0,0 +1,77 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yam=
+l#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Mobileye EyeQ5 SoC system controller
+> > +
+> > +maintainers:
+> > +  - Gr=C3=A9gory Clement <gregory.clement@bootlin.com>
+> > +  - Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> > +
+> > +description:
+> > +  OLB ("Other Logic Block") is a hardware block grouping smaller block=
+s. Clocks,
+> > +  resets, pinctrl are being handled from here.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: mobileye,eyeq5-olb
+> > +      - const: syscon
+> > +      - const: simple-mfd
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clock-controller:
+> > +    $ref: /schemas/clock/mobileye,eyeq5-clk.yaml#
+> > +    type: object
+> > +
+> > +  reset-controller:
+> > +    $ref: /schemas/reset/mobileye,eyeq5-reset.yaml#
+> > +    type: object
+> > +
+> > +  pinctrl-a:
+> > +    $ref: /schemas/pinctrl/mobileye,eyeq5-pinctrl.yaml#
+> > +    type: object
+> > +
+> > +  pinctrl-b:
+> > +    $ref: /schemas/pinctrl/mobileye,eyeq5-pinctrl.yaml#
+> > +    type: object
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    system-controller@e00000 {
+> > +      compatible =3D "mobileye,eyeq5-olb", "syscon", "simple-mfd";
+> > +      reg =3D <0xe00000 0x400>;
+> > +
+> > +      clock-controller {
+> > +        compatible =3D "mobileye,eyeq5-clk";
+> > +        #clock-cells =3D <1>;
+> > +        clocks =3D <&xtal>;
+> > +        clock-names =3D "ref";
+> > +      };
+> > +
+> > +      reset-controller {
+> > +        compatible =3D "mobileye,eyeq5-reset";
+> > +        #reset-cells =3D <2>;
+> > +      };
+> > +
+> > +      pinctrl-a {
+> > +        compatible =3D "mobileye,eyeq5-a-pinctrl";
+> > +        #pinctrl-cells =3D <1>;
+>
+> Sure you need this? Generally only pinctrl-single uses this.
 
+You are completely right, it is useless. I naively expected it in the
+same vein as other subsystems.
+
+>
+> > +      };
+> > +
+> > +      pinctrl-b {
+> > +        compatible =3D "mobileye,eyeq5-b-pinctrl";
+> > +        #pinctrl-cells =3D <1>;
+> > +      };
+> > +    };
+>
+> This can all be simplified to:
+>
+> system-controller@e00000 {
+>     compatible =3D "mobileye,eyeq5-olb", "syscon";
+>     reg =3D <0xe00000 0x400>;
+>     #reset-cells =3D <2>;
+>     #clock-cells =3D <1>;
+>     clocks =3D <&xtal>;
+>     clock-names =3D "ref";
+>
+>     pins { ... };
+> };
+>
+> There is no need for sub nodes unless you have reusable blocks or each=20
+> block has its own resources in DT.
+
+That is right, and it does simplify the devicetree as you have shown.
+However, the split nodes gives the following advantages:
+
+ - Devicetree-wise, it allows for one alias per function.
+   `clocks =3D <&clocks EQ5C_PLL_CPU>` is surely more intuitive
+   than `clocks =3D <&olb EQ5C_PLL_CPU>;`. Same for reset.
+
+ - It means an MFD driver must be implemented, adding between 100 to 200
+   lines of boilerplate code to the kernel.
+
+ - It means one pinctrl device for the two banks. That addresses your
+   comment on [PATCH v3 10/17]. This is often done and would be doable
+   on this platform. However it means added logic to each individual
+   function of pinctrl-eyeq5.
+
+   Overall it makes for less readable code, for code that already looks
+   more complex than it really is.
+
+   My initial non-public version of pinctrl-eyeq5 was using this method
+   (a device handling both banks) and I've leaned away from it.
+
+Those are all minor, but I don't have the feeling a few lines and nodes
+less in devicetree compensate for those.
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
