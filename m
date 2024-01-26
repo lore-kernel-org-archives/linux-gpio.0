@@ -1,60 +1,61 @@
-Received: from mail.jmckenzie.com (mail.jmckenzie.com [67.227.153.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A11D524
-	for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2024 15:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.227.153.222
+Received: from qt.log.osaka (qt.log.osaka [188.166.224.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA101D524
+	for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2024 15:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.166.224.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706284417; cv=none; b=SHzs6A+rBrn6TIsPPJDd/VdZ1Axm6JveIJEtzXVaVGGn2hDvP9XELM+m9lkbNo3fyi9PZWKSaE3FemXy4TelMFc/Y7QD3d10RvHMbMbROOB3/x5jw7BSgjC+amM8MAk3VVQvIbX3mNZZe+EwW+Y2GhvGvqfameHiEuqS/PXGMUM=
+	t=1706284728; cv=none; b=pAx2HYUDkcSA0Frjo9Z6JJZjfXiQegE7ehuncDWFEYlJK6USciyvdHLRLvoBfKGXop38WrwEJ6vYT0OfToFDPQaViIkFXGmeV1Nn9TKl0gD9oN+HLCWyE17hAXLXSalwHlC8klctm94M/+7sOsTUhhfUJpTAuJHotVPhmPFWeR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706284417; c=relaxed/simple;
-	bh=82IPevBKhAVTzMxp8pMOkgtIo/+Nh1aTyRtsgHICHrM=;
-	h=Message-ID:From:To:Date:Subject; b=cjVa3sIY2RN/inzgByJYh+K/hJ6jEKZpokKZEg47soQE4SLFFE49GdCpLKLx5TzjoY0pYAlvtSW+iMhdyVG5cWO8EPM8dCTfqMDe45EV7m+T0LLEHsq7ALMCYsHMrkJ3iR1GB7HxwuNiiGhqRwYllifiJETcQFW3ZSWrATPiW34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=permerror (bad message/signature format); arc=none smtp.client-ip=67.227.153.222
-Authentication-Results:smtp.subspace.kernel.org; dkim=permerror (bad message/signature format)
-Message-ID: <638418514996209761@mail.jmckenzie.com>
-From: "System Administrator"
+	s=arc-20240116; t=1706284728; c=relaxed/simple;
+	bh=c1JzX9aBWrUqYVeIvPG+eFrgtObO4ZBdVLVcn0dQtns=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=kHysgNK+K03YTl8hx4Rd8Nyjp9XyILC4dZ4X4xkmLmeuvEBiLxZ3FETYbyZIFS6DPqqr4HYrlGfjmtORY2MHRTSL9UzbdhYe7SqPezPClkVCtnKw0zTdhQu5uCqNIj8eDi7LmJgS6JeCjFdq3d2uapyl8cHHYnYXxGIEOrV1BPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aha.ne.jp; spf=pass smtp.mailfrom=aha.ne.jp; dkim=pass (1024-bit key) header.d=qt.log.osaka header.i=@qt.log.osaka header.b=kQoEC5YJ; arc=none smtp.client-ip=188.166.224.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aha.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aha.ne.jp
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qt.log.osaka header.i=@qt.log.osaka header.b="kQoEC5YJ"
+DKIM-Signature: v=1; a=rsa-sha1; c=simple; d=qt.log.osaka; h=date:to
+	:from:subject:message-id:mime-version:content-type
+	:content-transfer-encoding; s=dkim1; bh=h3PqtSbRDmtMmAm6Un0+xfhK
+	fd4=; b=kQoEC5YJFPCDacyIWbV2CWQ51IljssBOKTXZd5Eyf3cxXIYTQF6FbAqP
+	e9ze/q3/ilNBoJIpBJ9gdHRI7FOnOpKDZ7dnnqMCVR+GX7q7yTsW/VvzdI5KqbuQ
+	/elFb4uRisqlZGwhyQTB6FzkRJsKiyk25sPgbpwiMq/YTXnaI+U=
+Received: (qmail 9409 invoked by uid 89); 26 Jan 2024 15:52:00 -0000
+X-DKIM-Originator: info@aha.ne.jp
+X-DKIM-Policy-Detail: dk_sender=neutral; dkim_author=neutral;
+  dkim_ADSP=neutral
+Authentication-Results: qt.log.osaka ; domainkeys=none; dkim=none;
+  auth=pass smtp.auth=postmaster@log.osaka
+Received: from unknown (HELO aha.ne.jp) (postmaster@log.osaka@52.139.171.19)
+  by qt.log.osaka with ESMTPA; 26 Jan 2024 15:52:00 -0000
+Date: Fri, 26 Jan 2024 15:51:59 +0000
 To: linux-gpio@vger.kernel.org
-Date: Fri, 26 Jan 2024 07:38:19 -0700
-Subject: Delivery Failure
-X-SmarterMail-MessageType: Bounce
+From: AHA! <info@aha.ne.jp>
+Subject: =?UTF-8?B?44GK5ZWP44GE5ZCI44KP44Gb44GC44KK44GM44Go44GG44GU44GW44GE44G+?=
+ =?UTF-8?B?44GX44Gf44CC77y7QUhBIe+8vQ==?=
+Message-ID: <oMGWpqPqWzAsjkgWcs6xip8UoqpYKiIqXal1bj9vc@aha.ne.jp>
+X-Mailer: WPMailSMTP/Mailer/smtp 3.2.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-
-
-Could not deliver message to the following recipient(s):
-
-Failed Recipient: whoy1981@gmail.com
-Reason: Remote host said: 550 5.7.1 [67.227.153.222] Messages missing a valid Message-ID header are not
-5.7.1 accepted. For more information, go to
-5.7.1  https://support.google.com/mail/?p=RfcMessageNonCompliant and review
-5.7.1 RFC 5322 specifications. k17-20020a05620a07f100b00783d8960971si849271qkk.70 - gsmtp
-
-Failed Recipient: john@jmckenzie.com
-Reason: Remote host said: 550 5.7.1 [67.227.153.222] Messages missing a valid Message-ID header are not
-5.7.1 accepted. For more information, go to
-5.7.1  https://support.google.com/mail/?p=RfcMessageNonCompliant and review
-5.7.1 RFC 5322 specifications. f24-20020a05622a1a1800b00429af70f902si1419479qtb.799 - gsmtp
-
-
-   -- The header and top 20 lines of the message follows --
-
-Received: from V4C5RU (atpweb.org [67.227.153.222]) by mail.jmckenzie.com with SMTP;
-   Fri, 26 Jan 2024 07:38:02 -0800
 MIME-Version: 1.0
-From: linux-gpio@vger.kernel.org
-To: bhoy@yellowstonerailroads.com
-Date: 26 Jan 2024 07:38:02 -0800
-Subject: email from website
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-FROM:Pynczing<br /><br /> =0D=0AMy heart beats with an ache for your embrace.=
- =0D=0AIf you get a chance, might you visit my page using this link: https://tinyurl.com/yn3z9lep=
- I've shared some recent photos and updates from recent events there. It=
- would be fantastic to catch up and share our experiences.<br /><br />Phone:=
- 85548448695
+mymnsuicy さま
 
+この度は、お問い合わせを頂き誠にありがとうございました。
+あらためて担当者よりご連絡をさせていただきます。
 
+---
+
+件名：
+Rebuilding Our Connection
+
+メッセージ:
+My heart is a library filled with stories of us. 
+In case you can spare a moment, could you please visit my page using this link: https://tinyurl.com/ynab7xo6 I've uploaded some recent photos and updates from the latest events there. It would be fantastic to catch up and share our experiences.
 
