@@ -1,30 +1,32 @@
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F76D14005
-	for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2024 10:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AC012E57
+	for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2024 10:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706266615; cv=none; b=MU/0FiJ/W7a7zJ3yvk0JK1UkC+5qpQAbgoNX77UcbKf2CpTMf+oVmh2yweJfKPF5kXulQXwDAOO6VUIwoJY6CaLaJ8SXZ2NAJOeFQ8QcIcfFpXotlK5hXWzHJDT6in1iWlYzvSUEt14PDmYlQkjz4r4kLg5eAmXP8xRdMY+cZJo=
+	t=1706266616; cv=none; b=biumg8PXFBgxgriPu5czHAcIeX5p83Eh6myNws6pU9rOP1adrxv6inPfm4KoYbnlA5zf2oABzK3N7uZTICpKkM19mjkT8YIHxm7F53+KWaibzgRYXsP+P3iR+CTxVZHrSbJ+SdbCw8rPNl/hs8ENbj2ScEVeAWcF0U79eTDw9Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706266615; c=relaxed/simple;
-	bh=B255vhPhlqUmPWIyPCeK/kQPbij3zSMbrOPzlrlZjrs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uOt4P6hK2Gn7IhRMleBDcHArHcHirgUi9oRNIikv8asbJRQrgrbLC3mLczAh5e/yP8veyfqhuDRQGeJLJIExa7W7lRElr6FGCvJP36hqQFRE3LJ8CkY9GwcTD3wuiecTtcL++mF0vQEIhfsrcuLzHOo3H0t7HXIHg/xmYlQpCiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+	s=arc-20240116; t=1706266616; c=relaxed/simple;
+	bh=lRt42MNJjD/g5ZyL5oWsuIV1Re3nDffjLc0RdDdLCIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qwdSDJQbjLCtQMUF18hXV6D8ycDkDZFK2dGSvCxidNEeLd+yvyZBs3tFxt6CL9icTVVicKj4YWbeyklvZgGiMxA24/IAaatLa0weGJfQTd1tIwuMUV+A6BeAC5n/r8404OmdBsj06h6HDQD/k4ZdPSmXH0mdYDum6TgOTBPKiPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4TLvlN5X3wz4wx7s
+	for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2024 11:56:48 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:8d64:ae04:ce87:de06])
-	by laurent.telenet-ops.be with bizsmtp
-	id fNwo2B0011AdMdB01NwoKr; Fri, 26 Jan 2024 11:56:48 +0100
+	by michel.telenet-ops.be with bizsmtp
+	id fNwo2B00B1AdMdB06NwoJS; Fri, 26 Jan 2024 11:56:48 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJsL-00GWhL-Ou;
-	Fri, 26 Jan 2024 11:56:47 +0100
+	id 1rTJsM-00GWkf-6w;
+	Fri, 26 Jan 2024 11:56:48 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rTJh0-00G5T2-3Z;
+	id 1rTJgz-00G5Sk-WB;
 	Fri, 26 Jan 2024 11:44:14 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -35,125 +37,81 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/14] pinctrl: renesas: r8a779h0: Add SD/MMC pins, groups, functions
-Date: Fri, 26 Jan 2024 11:44:02 +0100
-Message-Id: <c4c06f5be8ffeb32c48993c138f89c8f463751f4.1706264667.git.geert+renesas@glider.be>
+Subject: [PATCH 00/14] pinctrl: renesas: Add support for R-Car V4M
+Date: Fri, 26 Jan 2024 11:43:58 +0100
+Message-Id: <cover.1706264667.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1706264667.git.geert+renesas@glider.be>
-References: <cover.1706264667.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Cong Dang <cong.dang.xn@renesas.com>
+	Hi all,
 
-Add pins, groups and functions for the SD Card/MMC Interface on the
-Renesas R-Car V4M (R8A779H0) SoC.
+This patch series adds pin control support for the R-Car V4M (R8A779H0)
+SoC.
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-r8a779h0.c | 63 ++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+Some, but not all, of this has been tested on the Gray Hawk Single
+development board.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-index 61d72e0222bcbe95..e3d44a56576c9357 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
-@@ -1425,6 +1425,49 @@ static const unsigned int avb2_avtp_match_mux[] = {
- 	AVB2_AVTP_MATCH_MARK,
- };
- 
-+/* - MMC -------------------------------------------------------------------- */
-+static const unsigned int mmc_data_pins[] = {
-+	/* MMC_SD_D[0:3], MMC_D[4:7] */
-+	RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 0),
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 5),
-+	RCAR_GP_PIN(3, 7), RCAR_GP_PIN(3, 6),
-+	RCAR_GP_PIN(3, 9), RCAR_GP_PIN(3, 8),
-+};
-+static const unsigned int mmc_data_mux[] = {
-+	MMC_SD_D0_MARK, MMC_SD_D1_MARK,
-+	MMC_SD_D2_MARK, MMC_SD_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK,
-+	MMC_D6_MARK, MMC_D7_MARK,
-+};
-+static const unsigned int mmc_ctrl_pins[] = {
-+	/* MMC_SD_CLK, MMC_SD_CMD */
-+	RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 10),
-+};
-+static const unsigned int mmc_ctrl_mux[] = {
-+	MMC_SD_CLK_MARK, MMC_SD_CMD_MARK,
-+};
-+static const unsigned int mmc_cd_pins[] = {
-+	/* SD_CD */
-+	RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int mmc_cd_mux[] = {
-+	SD_CD_MARK,
-+};
-+static const unsigned int mmc_wp_pins[] = {
-+	/* SD_WP */
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int mmc_wp_mux[] = {
-+	SD_WP_MARK,
-+};
-+static const unsigned int mmc_ds_pins[] = {
-+	/* MMC_DS */
-+	RCAR_GP_PIN(3, 4),
-+};
-+static const unsigned int mmc_ds_mux[] = {
-+	MMC_DS_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb0_link),
- 	SH_PFC_PIN_GROUP(avb0_magic),
-@@ -1455,6 +1498,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb2_avtp_pps),
- 	SH_PFC_PIN_GROUP(avb2_avtp_capture),
- 	SH_PFC_PIN_GROUP(avb2_avtp_match),
-+
-+	BUS_DATA_PIN_GROUP(mmc_data, 1),
-+	BUS_DATA_PIN_GROUP(mmc_data, 4),
-+	BUS_DATA_PIN_GROUP(mmc_data, 8),
-+	SH_PFC_PIN_GROUP(mmc_ctrl),
-+	SH_PFC_PIN_GROUP(mmc_cd),
-+	SH_PFC_PIN_GROUP(mmc_wp),
-+	SH_PFC_PIN_GROUP(mmc_ds),
- };
- 
- static const char * const avb0_groups[] = {
-@@ -1493,10 +1544,22 @@ static const char * const avb2_groups[] = {
- 	"avb2_avtp_match",
- };
- 
-+static const char * const mmc_groups[] = {
-+	"mmc_data1",
-+	"mmc_data4",
-+	"mmc_data8",
-+	"mmc_ctrl",
-+	"mmc_cd",
-+	"mmc_wp",
-+	"mmc_ds",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb0),
- 	SH_PFC_FUNCTION(avb1),
- 	SH_PFC_FUNCTION(avb2),
-+
-+	SH_PFC_FUNCTION(mmc),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+There are also a few unresolved questions:
+  - According to the documentation, using I2C requires setting
+    SEL_S{CL,DA}[0-3]_1 instead of SEL_S{CL,DA}[0-3]_0 in the MOD_SEL
+    register.  However, I2C works regardless of this setting, just like
+    on R-Car V4H (see commit 42cbd16e7c547499 ("pinctrl: renesas:
+    r8a779g0: Fixup MODSEL8")),
+  - Using i2c-gpio instead of i2c-rcar for I2C0 does not work, even
+    when using a similar scheme like on R-Car S4 and V3U (see e.g.
+    commit 8bdd369dba7ff2f8 ("pinctrl: renesas: r8a779f0: Fix GPIO
+    function on I2C-capable pins").
+
+For testing, I have updated [1] accordingly.
+Thanks for your comments!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/v4m-gray-hawk-single-v2
+
+Cong Dang (13):
+  pinctrl: renesas: Initial R8A779H0 (R-Car V4M) PFC support
+  pinctrl: renesas: r8a779h0: Add Ethernet AVB pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SD/MMC pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add QSPI pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SCIF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add SCIF_CLK pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add HSCIF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add I2C pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add MSIOF pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add PWM/TPU pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add CANFD pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add PCIe pins, groups, functions
+  pinctrl: renesas: r8a779h0: Add Audio pins, groups, functions
+
+Geert Uytterhoeven (1):
+  dt-bindings: pinctrl: renesas,pfc: Document R-Car V4M support
+
+ .../bindings/pinctrl/renesas,pfc.yaml         |    1 +
+ drivers/pinctrl/renesas/Kconfig               |    5 +
+ drivers/pinctrl/renesas/Makefile              |    1 +
+ drivers/pinctrl/renesas/core.c                |    6 +
+ drivers/pinctrl/renesas/pfc-r8a779h0.c        | 3967 +++++++++++++++++
+ drivers/pinctrl/renesas/sh_pfc.h              |    1 +
+ 6 files changed, 3981 insertions(+)
+ create mode 100644 drivers/pinctrl/renesas/pfc-r8a779h0.c
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
