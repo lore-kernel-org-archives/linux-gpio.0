@@ -1,130 +1,212 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176978B7E;
-	Wed, 31 Jan 2024 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB8212BE8B;
+	Wed, 31 Jan 2024 16:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706715739; cv=none; b=MNSeLpfIVfrCTGIwCzUD5M+xuTjlY0IxxjcxRge7EH9MnmMgFgH7j07ISFZZitmxZfOre33dW87LNg/uYZkbJOgOSYvUWP7LxarZHb9qMen7E504wXVXBOowln74tKHJa2Xu5OapC7iCdUFnoLUN/5+rNEU5ERWuXel8guz/qDM=
+	t=1706718437; cv=none; b=BRhKolaCPaRBaXbalV+LgUG0bjeGWR+7WMIer/Yc94cAFmSXH1YN+JLtkbeo1K6G87CZ+A6DmLAshk2ypKYMEJDE+ZrAXEShG0J/rxi2vwtAwWNwAfdC1g2754vkitnrQsm3ee0wuZUMk2Ki1H9meoDdZKMQYCgr6QJs1bszy+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706715739; c=relaxed/simple;
-	bh=ejQDb/K2pqX/zGSPCSBHEbX1yV2ewgTMosiZWj4uTBw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+W3SC4thgaSZj8LDP/SUwIp8oPRcDz4fwQfpAsTXDEHlWbsvSnPT9Fb+MewcyrdhjpR0hfYA7OzsFje0VLbDRb4VMosm2oxQWMB5fIkrhSGqL+ekIAtxacjyjKmlP4juSbqK02X8H+6/4cidHN5SwnJYGVIqw1iU8O7xF9Ot7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=kf3hVBn4; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1706718437; c=relaxed/simple;
+	bh=YIEKqK5MI7C6wgG1cBeAfL6H69SH6ljkSO16YrF7vPc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AjHq0z+SHvcq4tCJA8EafIahFZnMMZkoBn+CkM721rnTeHyP8TuEm/OE6KpvtoNsVCrSMPt37oUIcJfgWHyCkvFTF5K8GRwcZcTqXW+erNDxlClSlpaN2Tz24e4q4u85AeIDMysjzjSwDnmDuVH/C6eiiHpGbzUYlD/MlIJvfwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XgxKTp/6; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="kf3hVBn4"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40V6hZO0021183;
-	Wed, 31 Jan 2024 09:41:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=PODMain02222019; bh=9zRUek2aBogSyza
-	Uq35rUcFSlWZ+bDNLWJplCN5AqvU=; b=kf3hVBn4657bGK2vMU8xTyDRMQHDBgR
-	H3anUKrF9Dz5CGVcpuhAYctmIxGyI31uJYCOcX/tAbRIHCz7QsCPMQba0rdXAUyr
-	j/aV6QrzHvDAuYLZVFS0XaujRBqrsQz85icFVof9M+MsLt9oQ7GM6MuffT/GST2W
-	mH2v3++KgWjLaMzvJGT2nm8h6vRWCA9gVbmiLdQOSvrOubQuZaxaCSk6uh4uLZ41
-	qvL8Tp8YHVihJf1qppFIbvcS41KlhyIRvFF6DT03bobA9qzc9Nl1eWJ0eFs44WCV
-	10NdwDpC0R17N1i8IuKam9Kx6k2ULa3mjMouoWLebcTPgcZYHbfjGNw==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3vw043vw4t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jan 2024 09:41:54 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 31 Jan
- 2024 15:41:51 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.40 via Frontend Transport; Wed, 31 Jan 2024 15:41:51 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id A2CE8820242;
-	Wed, 31 Jan 2024 15:41:51 +0000 (UTC)
-Date: Wed, 31 Jan 2024 15:41:50 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <andy.shevchenko@gmail.com>
-CC: <broonie@kernel.org>, <lee@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linus.walleij@linaro.org>, <vkoul@kernel.org>, <lgirdwood@gmail.com>,
-        <yung-chuan.liao@linux.intel.com>, <sanyog.r.kale@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>, <alsa-devel@alsa-project.org>,
-        <patches@opensource.cirrus.com>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 5/6] spi: cs42l43: Add SPI controller support
-Message-ID: <ZbpqPuDj/v07yZ5y@ediswmail9.ad.cirrus.com>
-References: <20230804104602.395892-1-ckeepax@opensource.cirrus.com>
- <20230804104602.395892-6-ckeepax@opensource.cirrus.com>
- <ZalahZkCrBm-BXwz@surfacebook.localdomain>
- <20240119114917.GB16899@ediswmail.ad.cirrus.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XgxKTp/6"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1D91E40004;
+	Wed, 31 Jan 2024 16:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1706718431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM6whmgyRwSqq5DhU05BK7t5rD5rPlWu1apIXMRZECI=;
+	b=XgxKTp/6votMI/aaWA0PXKpV01VKRsDH1GKKA4MGlpd9q9feMCJOq30FPZ4I7KdSr7qsh+
+	yrdyZByREaWdv1yUlzhJWdDQtldUbyrga1QzXBKlyuQkQd7TYhdgqOuvM4gHNh63SjZ7eU
+	fnngriE9fJPVFkLSvFqer+VDPFAQsAzc0jIxsIGuGNEuPHacGIKjHKCDdEo1bbg4OwLwOn
+	Q8mEuA3M7noy4C0slnj1QlYLdfG+IkaedWI3kIO+VHH93xJ3EXYYblb/QfOzDhiaedcAtc
+	9il6OhOPBnOMgWkPPKmtWMOkX58BAM9Lfo5V0HEvuIuqRTyWKXKrrMfJVR4K7w==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Wed, 31 Jan 2024 17:26:14 +0100
+Subject: [PATCH v4 01/18] clk: fixed-factor: add optional accuracy support
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240119114917.GB16899@ediswmail.ad.cirrus.com>
-X-Proofpoint-ORIG-GUID: tm09R4IRvormBltDxfOzMXF9SxmrUytb
-X-Proofpoint-GUID: tm09R4IRvormBltDxfOzMXF9SxmrUytb
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240131-mbly-clk-v4-1-bcd00510d6a0@bootlin.com>
+References: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+In-Reply-To: <20240131-mbly-clk-v4-0-bcd00510d6a0@bootlin.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Fri, Jan 19, 2024 at 11:49:17AM +0000, Charles Keepax wrote:
-> On Thu, Jan 18, 2024 at 07:06:13PM +0200, andy.shevchenko@gmail.com wrote:
-> > Fri, Aug 04, 2023 at 11:46:01AM +0100, Charles Keepax kirjoitti:
-> > > +		while (buf < block) {
-> > > +			const u8 *word = min(buf + sizeof(u32), block);
-> > > +			int pad = (buf + sizeof(u32)) - word;
-> > > +
-> > > +			while (buf < word) {
-> > > +				val >>= BITS_PER_BYTE;
-> > > +				val |= FIELD_PREP(GENMASK(31, 24), *buf);
-> > > +
-> > > +				buf++;
-> > > +			}
-> > 
-> > Is this a reinvented way of get_unaligned_*() APIs?
-> > 
-> > > +			val >>= pad * BITS_PER_BYTE;
-> > > +
-> > > +			regmap_write(regmap, CS42L43_TX_DATA, val);
-> > > +		}
-> > 
-> > ...
-> > 
-> > > +			while (buf < word) {
-> > > +				*buf = FIELD_GET(GENMASK(7, 0), val);
-> > > +
-> > > +				val >>= BITS_PER_BYTE;
-> > > +				buf++;
-> > > +			}
-> > 
-> > put_unaligned_*() ?
-> > 
-> 
-> Alas as it has been a while I have forgetten the exact context
-> here and this one will take a little more time. I will try to
-> find some spare time to work out if that would actual do the same
-> thing, I have a vague feeling there was something here.
-> 
+Fixed factor clock reports the parent clock accuracy. Add flags and acc
+fields to `struct clk_fixed_factor` to support setting a fixed
+accuracy. The default if no flag is set is not changed: use the parent
+clock accuracy.
 
-Ok found some time to refresh my memory on this.
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/clk/clk-fixed-factor.c | 28 +++++++++++++++++++++-------
+ include/linux/clk-provider.h   | 12 +++++++++++-
+ 2 files changed, 32 insertions(+), 8 deletions(-)
 
-The main issue here was as this is processing raw data for the
-SPI we shouldn't assume the data is a multiple of 4-bytes. You
-could write the code such that you used put_unaligned_le32 for
-most of the data and then special case the remainder, which would
-probably be slightly faster. But for the remainder you either end
-with the code here anyway or a special case for each of the cases
-8,16,24 bits. So the code ends up looking much messier.
-Personally I am inclined to leave this unless performance on the
-SPI becomes a major issue.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index b3e66202b942..bc2644a9bd7d 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -57,10 +57,22 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static unsigned long clk_factor_recalc_accuracy(struct clk_hw *hw,
++						unsigned long parent_accuracy)
++{
++	struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
++
++	if (fix->flags & CLK_FIXED_FACTOR_FIXED_ACCURACY)
++		return fix->acc;
++
++	return parent_accuracy;
++}
++
+ const struct clk_ops clk_fixed_factor_ops = {
+ 	.round_rate = clk_factor_round_rate,
+ 	.set_rate = clk_factor_set_rate,
+ 	.recalc_rate = clk_factor_recalc_rate,
++	.recalc_accuracy = clk_factor_recalc_accuracy,
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_factor_ops);
+ 
+@@ -81,7 +93,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name,
+ 		const struct clk_hw *parent_hw, int index,
+ 		unsigned long flags, unsigned int mult, unsigned int div,
+-		bool devm)
++		unsigned long acc, unsigned int fixflags, bool devm)
+ {
+ 	struct clk_fixed_factor *fix;
+ 	struct clk_init_data init = { };
+@@ -105,6 +117,8 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	fix->mult = mult;
+ 	fix->div = div;
+ 	fix->hw.init = &init;
++	fix->acc = acc;
++	fix->flags = fixflags;
+ 
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+@@ -152,7 +166,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL, index,
+-					      flags, mult, div, true);
++					      flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
+ 
+@@ -174,7 +188,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      -1, flags, mult, div, true);
++					      -1, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -184,7 +198,7 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL,
+ 					      parent_hw, -1, flags, mult, div,
+-					      false);
++					      0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -193,7 +207,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-					      flags, mult, div, false);
++					      flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -240,7 +254,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		unsigned int mult, unsigned int div)
+ {
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+-			flags, mult, div, true);
++			flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
+@@ -267,7 +281,7 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 
+ 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
+-					    0, mult, div, false);
++					    0, mult, div, 0, 0, false);
+ 	if (IS_ERR(hw)) {
+ 		/*
+ 		 * Clear OF_POPULATED flag so that clock registration can be
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1293c38ddb7f..7ddc952c8c67 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1084,18 +1084,28 @@ void of_fixed_factor_clk_setup(struct device_node *node);
+  * @hw:		handle between common and hardware-specific interfaces
+  * @mult:	multiplier
+  * @div:	divider
++ * @acc:	fixed accuracy in ppb
++ * @flags:	behavior modifying flags
+  *
+  * Clock with a fixed multiplier and divider. The output frequency is the
+  * parent clock rate divided by div and multiplied by mult.
+- * Implements .recalc_rate, .set_rate and .round_rate
++ * Implements .recalc_rate, .set_rate, .round_rate and .recalc_accuracy
++ *
++ * Flags:
++ * * CLK_FIXED_FACTOR_FIXED_ACCURACY - Use the value in @acc instead of the
++ *                                     parent clk accuracy.
+  */
+ 
+ struct clk_fixed_factor {
+ 	struct clk_hw	hw;
+ 	unsigned int	mult;
+ 	unsigned int	div;
++	unsigned long	acc;
++	unsigned int	flags;
+ };
+ 
++#define CLK_FIXED_FACTOR_FIXED_ACCURACY	BIT(0)
++
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
 
-There is perhaps an argument for a comment in the code to explain
-this given it took me time to remember what was going on.
+-- 
+2.43.0
 
-Thanks,
-Charles
