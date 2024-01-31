@@ -1,66 +1,66 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E10821101
-	for <linux-gpio@vger.kernel.org>; Wed, 31 Jan 2024 20:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F253F8F9
+	for <linux-gpio@vger.kernel.org>; Wed, 31 Jan 2024 20:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706732192; cv=none; b=aDW98mMU081Dl0y3tBdyAaixvLfJ5IBOmZTj/M4hWw1VaJwKIWfN4isk+8DeEpTMZYqkGACJb8+p4PcN71aIJJeIEh/wqz5JKjrYYoC0FZAcReQVdbTJk15FcSWOToQh3FxdbKCkOnRqGEqpfy2mwEGwX6FMB/yWfzJGh6glA+M=
+	t=1706732252; cv=none; b=AfK93ZMAAZvrdyJpX/vEXBouSx4jgJpSqEf6hW9JAIFw3RSR3/cOT0zFjYyZ7YzXZRuh7j4sAuwD3irhMkhqa1yL/jU1jKI8cRXrYht46VUyeAOUt5mJgNCh0D0pHTbc8GW415TsC8I9RySm0PfF1qZCBcYfgRhyOAI15exFu9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706732192; c=relaxed/simple;
-	bh=JbKC+73posjGFpYb9gcbTa9LruZ7n6Vqx9LSCaLAvaY=;
+	s=arc-20240116; t=1706732252; c=relaxed/simple;
+	bh=BTliOxaTIKtdhGrJh/+gt3GB4Eb5h9IjYdumB/YLq0A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BWVKSwRyQEkjBxUTaaqpusA81+Y1uiTl1s9jdGGxl46Rqy6m1C0W3Q5z9eGiGxE0Or7qNiMgSk609zIjBGPbil9glZ8tz81w4+fIeaa37Hw+fL0HyQ53LpRPgxUa5ZKs7G30+7wL1taDi3AfAFJmaZHxyKx3FqoV3aBo7uWB0bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uFLOS68i; arc=none smtp.client-ip=209.85.128.170
+	 To:Cc:Content-Type; b=a54wSTljgoYwWxO5QUo+sqdm+zZZAQq3HyZpQqdv92Ur1Aq7THHjEvzHRvWmFKJ5ENvN6/92oZ7GWB2AeeWwV5Ha+BGtQVKwV2C7/BoB3xOonbMZzxteFCAFzWiA6HuLAtxN2xXdrC+gHGRIaMwGUUfznjYotzgaJubKcvjke2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDaNr2Ao; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uFLOS68i"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6041779e75eso1817977b3.3
-        for <linux-gpio@vger.kernel.org>; Wed, 31 Jan 2024 12:16:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDaNr2Ao"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6040d0c9cf1so1889857b3.0
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Jan 2024 12:17:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706732190; x=1707336990; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706732249; x=1707337049; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JbKC+73posjGFpYb9gcbTa9LruZ7n6Vqx9LSCaLAvaY=;
-        b=uFLOS68i/yyrVqC7VDAnP6ksgbG4HLyLifc/V0kmd2Gi4kvUcbqagat7WEUvA5eYNf
-         vUE4zX93cyvIn79qtesy0ZwQ7z0N8cmuca3ucB5HFk/W7XJgBezZmI9f8Iv9QaRe3DGO
-         Ir2nnCrWKhQiu9zEfXxYutSBXBH3s+MS7+Yesm/Wi+0s7w/YtAqcbnlTj5ZNapUwDJT0
-         /9vj2LXQbyiLD+iS3lPP4NnVmjvPCPfxFL9Te8fcCjJ7AXDto+emsliwu9q/rmTi0UJo
-         zfhXQQsR4mKj8emMjuypeyvpmxzUTyXqpKhO5kcc3r2gbuJJZ2HnbmviU5sBcHwZuTHU
-         hCeQ==
+        bh=BTliOxaTIKtdhGrJh/+gt3GB4Eb5h9IjYdumB/YLq0A=;
+        b=fDaNr2Ao7hZVgSbDc7CNLOsmpj3bC+iwhd2SUj3SP+CzQhOMOsmvbfg34cmHtQNrYc
+         Ef2wfDFIpj6Xvw8duIyahJAIcbpqmohmsaRLg9DGFoIqi0vRf6SzYxXbx0x3sUmN/Who
+         G8Gtk90ShAagF1E+4U+nRpGF3dQyerPmDJspIHm/7pesqdD50fyj1JLp2EdggjsH0naa
+         X3Shu9my5CTY8ehHsrd50zOJMAzD+08XFMGORQNsKZdupksGQ5tAxcGnz6iKbrXOdfCQ
+         TGJ9JLKL0WjQ6kLzW7xnCd5I+HkHWtdYiMKRIVGWNiRUNSQolsQT8ThO8e0bELCc9sU1
+         tvQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706732190; x=1707336990;
+        d=1e100.net; s=20230601; t=1706732249; x=1707337049;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JbKC+73posjGFpYb9gcbTa9LruZ7n6Vqx9LSCaLAvaY=;
-        b=JBS31uskKVb0/gUhu2eXEltihMbzZbZyzbKR+f7aLg52/vhQkL9LkNg3hBT2Bk0KOW
-         ac6ywCa+lVw4+G3PO3e4yyKG3vAlTGflepF04xEWkXpv5l4kxt9JQpxU8e1WTeWVaEnR
-         xlzJp3lf4W2MS4oqnsbegBPlT4N4nKLvfioWd85l/QoqrxDGpZVuoSR9YxWvGUyBW8TO
-         4r413LAklEOOlDwURlTM8nctAnan00WJ2J3m/wETpQu7mu3yBajdWLJQyazJhI2XnqZ2
-         LhJLaGuBrZOA4pvdMsiGa87HGvRP3oxM7GnH3BPFpmAL0TBTUr0Yc2NuxkV/G0Z7a1Nw
-         SXTQ==
-X-Gm-Message-State: AOJu0Yy+HrTuNf3i749sLew6GVmfnxNnNhSIxa5b7U5v5OAN8mzvk71h
-	RVVKS12aIUp4EZfubfOy71gcMLJE/+UC2/xLzXa6x19p/kcGKK/xHQ8jtkjdFZp6WLfiJ5JTfgj
-	NZ+AHhxOXs3M6eaLNHltPLHCrWJNc56bg1jESoA==
-X-Google-Smtp-Source: AGHT+IGTOhv4lmVR+cLSWJktEaFcD/NzFyonVYAm8q2ESuuHXU+x0IeRbHQ3KE2sm5LhZkzlbQEePXGUJDnai2ccI8k=
-X-Received: by 2002:a0d:d60b:0:b0:5ff:83f7:57e7 with SMTP id
- y11-20020a0dd60b000000b005ff83f757e7mr2547764ywd.31.1706732189732; Wed, 31
- Jan 2024 12:16:29 -0800 (PST)
+        bh=BTliOxaTIKtdhGrJh/+gt3GB4Eb5h9IjYdumB/YLq0A=;
+        b=UyDT9M+4yePOlJGL4kWKJ1UaXBsxaLR3U91iI53/71TWLMqkwIM7/49fmw03lzn2qG
+         T/M51YxCy0TKRzAo1dz7nJHP8xmolvM6i5sqygaEyI+6QCSCl7lGRmdT+c0lwG4TEpFe
+         xNM9O0VN4VZlENzP91W5/celGp3hhvdj9p3TFDqxxjqSKbeWsGuBwV5QcPyHso9RKrXO
+         rP3Mi374IXouIGheOLIQxnoVPj0fQkIxzOyPITy/hoXncigVviv7UxKmkqxTKuegCSE8
+         JVIzcrs/4XR0cQ61ambNuMo9dD8wRtiiKxg3LsgJmHbqbPcAUBEjoB7LJbB2PnkX8yYX
+         7YiA==
+X-Gm-Message-State: AOJu0YzyUe90cSFFxgeQOYdXipkFJrupyV35X0gctq4y8CzkvNTGDAu1
+	kxRIbOB1IQDse4mibAXln/k1eObDHlNygfh8ylxLqFcQ5J6A39GRKEhPcwrEtf51zlksEG40w8t
+	8TswaVwRnziOpMR+NzEYT2aQe7WhwHQ4zYx1ebA==
+X-Google-Smtp-Source: AGHT+IEqmyTd4gqkQ6kqF8ce/gDvES+VmPNb/Xegyl4QD24HktmyP6vfTyAaWq3IqSksBdtOEL9MC58IPSh1Ru3fWGs=
+X-Received: by 2002:a81:ae5e:0:b0:5f8:f50e:bcf9 with SMTP id
+ g30-20020a81ae5e000000b005f8f50ebcf9mr2827329ywk.20.1706732249448; Wed, 31
+ Jan 2024 12:17:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240130124828.14678-1-brgl@bgdev.pl> <20240130124828.14678-17-brgl@bgdev.pl>
-In-Reply-To: <20240130124828.14678-17-brgl@bgdev.pl>
+References: <20240130124828.14678-1-brgl@bgdev.pl> <20240130124828.14678-19-brgl@bgdev.pl>
+In-Reply-To: <20240130124828.14678-19-brgl@bgdev.pl>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 31 Jan 2024 21:16:18 +0100
-Message-ID: <CACRpkdbCBe+HH5uuh94tx9ezV0xtBO-=DZp22bUBbbYuEtJ3Vw@mail.gmail.com>
-Subject: Re: [PATCH 16/22] gpio: reduce the functionality of validate_desc()
+Date: Wed, 31 Jan 2024 21:17:18 +0100
+Message-ID: <CACRpkdaiECDm3g0HOvBgRDrEieM9A5+AMfN2GFkRhP05XY4L8A@mail.gmail.com>
+Subject: Re: [PATCH 18/22] gpio: add the can_sleep flag to struct gpio_device
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Kent Gibson <warthog618@gmail.com>, Alex Elder <elder@linaro.org>, 
 	Geert Uytterhoeven <geert+renesas@glider.be>, "Paul E . McKenney" <paulmck@kernel.org>, 
@@ -75,24 +75,13 @@ On Tue, Jan 30, 2024 at 1:48=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
 
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> Checking desc->gdev->chip for NULL without holding it in place with some
-> serializing mechanism is pointless. Remove this check. Also don't check
-> desc->gdev for NULL as it can never happen.
+> Duplicating the can_sleep value in GPIO device will allow us to not
+> needlessly dereference the chip pointer in several places and reduce the
+> number of SRCU read-only critical sections.
 >
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I don't know if I agree that it is pointless. It will work on any single-CP=
-U
-system and 99.9% of other cases.
-
-On the other hand: what it is supposed to protect against is userspace
-doing calls to a gpio_device through the character device, while the
-backing struct gpio_chip is gone (e.g. a GPIO expander on USB,
-and someone pulled the cable), i.e. it became NULL, and this is why the
-error message says "backing device is gone".
-
-But I want to see where the series is going, maybe you fix this
-problem in the end, so I can come back and ACK this.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
