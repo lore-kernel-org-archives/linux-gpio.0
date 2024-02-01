@@ -1,95 +1,97 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA7038DCC;
-	Thu,  1 Feb 2024 15:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A761415DBBF
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Feb 2024 15:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706799786; cv=none; b=kar08yHxC+7RNfA9NPrcE22knPu5rW/0dOeWpOkRtzBoe7+UNQslOIJg/t0vfP3HaJtdwKuxvLFr/HZcJoJAnZKOFSHEGOzXzN7hTW0x21ImobwRl4QiqR0b1mpgakTkkda/VpFkiOMoxXEyYk5FeZt3hHVoV/d95ioSicPpGwo=
+	t=1706803129; cv=none; b=loJQfp1GAW13ZqVkcuN+oAKkHK0tm1g8H4zpmZ+os5fGB+Zi4N0awHFCMeKQB3Kt2zewKlXUISalLoVF8GtP33W/dk3u2F6snHqKtitgBibz3bgQUtN/dH8MCUd4//0Hhzu5QNSD4EMKKsE4NG/iRd/bDvdZAxKaU/q4bdbE3lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706799786; c=relaxed/simple;
-	bh=sNXUraVborZXj4QhItcVoPEZab80kO5mGvnyG6+Imf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJyeS8BEpAFy2uOmf5MHdbjXxIFD8484lSUEepdozSOdmipsvPwvIpnHMTHHckhIGp8xxnwYan6CrLk0nMZCIVMLc5rRjFTkeIFSI20850GsIZdMdKAlgXJ/uPhrs3rT5kw5ghG6Vbt0VY37n4uB49e4cUhLXYH/eVZIp6JT7dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QFv6ol2k; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QFv6ol2k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706799784; x=1738335784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sNXUraVborZXj4QhItcVoPEZab80kO5mGvnyG6+Imf0=;
-  b=QFv6ol2k68sFX6tMYvHiWbuwl7Bs1RBk+taHufMEluBK2NvGmoVDB5vQ
-   WWgsGXvTPxcPW1hf++uLncVC/jCnUvmlsTaixEFa73Qzy9JsnqoWVgSJ2
-   rcOpZXsdXYA5Hb4yH6RjHzQTxYTmcl3DJ1Kv8+R9jzeCFFpRW1VSlY4ZP
-   aoYmSSy1bqgdKsO8qbxqcoqfWRQAZUPN3AcwXzJBqZDSOvXEe6GdbbpT6
-   pkJlva7aSzT8bWmVmejPs6XgBoeFYZNA9hZbagStmj0P3S3qtbkumeubr
-   Smn+bDIEwv8FhtA/vNgzIFrm1BjBx+9JbF/B0/x8fe2Cet4R9tryKeczY
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="2846642"
-X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
-   d="scan'208";a="2846642"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2024 07:03:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="788948476"
-X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
-   d="scan'208";a="788948476"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2024 07:03:00 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rVY5G-00000000rG3-3PRt;
-	Thu, 01 Feb 2024 16:30:30 +0200
-Date: Thu, 1 Feb 2024 16:30:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arturas Moskvinas <arturas.moskvinas@gmail.com>
-Cc: linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	akaessens@gmail.com, thomas.preston@codethink.co.uk,
-	preid@electromag.com.au, u.kleine-koenig@pengutronix.de,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: mcp23s08: Check only GPIOs which have
- interrupts enabled
-Message-ID: <ZburBq7ZJhK_X_t0@smile.fi.intel.com>
-References: <20240201141406.32484-2-arturas.moskvinas@gmail.com>
+	s=arc-20240116; t=1706803129; c=relaxed/simple;
+	bh=CF2ARHz2cRosX82RdwM2kdN6+Pv0jTsoPu/93EYZ5G8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=H4mKm5k9XLQBO+J7BgzyULzsLrJ5ZLlci32+bsTAtNn9PZjzlC7qwIfGHPu53rYKWUDSjBu9fU4X/DGrCsR0ErkLXaq1u88uJO5dDvRi4yFIUntIAqqNcncVUZ+gPyK87cWGE7wAnbMHqkKqkVapvmcbxkcPa/opQ1jtxejwTso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:4392:e888:3d14:1bdc])
+	by andre.telenet-ops.be with bizsmtp
+	id hryk2B0072BHJxj01rykWw; Thu, 01 Feb 2024 16:58:45 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rVZRn-00GvjY-3I;
+	Thu, 01 Feb 2024 16:58:44 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rVZSe-00Abud-3K;
+	Thu, 01 Feb 2024 16:58:44 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] regulator: gpio: Correct default GPIO state to LOW
+Date: Thu,  1 Feb 2024 16:58:42 +0100
+Message-Id: <ffb1eb1d747dce00b2c09d7af9357cd43284d1c4.1706802756.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1706802756.git.geert+renesas@glider.be>
+References: <cover.1706802756.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240201141406.32484-2-arturas.moskvinas@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 01, 2024 at 04:14:07PM +0200, Arturas Moskvinas wrote:
-> GPINTEN register contains information about GPIOs with enabled
-> interrupts no need to check other GPIOs for changes.
-> 
-> Signed-off-by: Arturas Moskvinas <arturas.moskvinas@gmail.com>
-> ---
+According to the GPIO regulator DT bindings[1], the default GPIO state
+is LOW.  However, the driver defaults to HIGH.
 
-You forgot to add a changelog here, but no need to resend, just you can respond
-to the email since it's not a big issue in this case.
+Before the conversion to descriptors in commit d6cd33ad71029a3f
+("regulator: gpio: Convert to use descriptors"), the default state used
+by the driver was rather ill-defined, too:
+  - If the "gpio-states" property was missing or empty, the default was
+    low, matching the bindings.
+  - If the "gpio-states" property was present, the default for missing
+    entries was the value of the last present entry.
 
-...
+Fix this by making the driver adhere to the DT bindings, i.e. default to
+LOW.
 
-> +	if (mcp_read(mcp, MCP_GPINTEN, &gpinten))
-> +		goto unlock;
+[1] Documentation/devicetree/bindings/regulator/gpio-regulator.yaml
 
-Do all hw variants have this register available?
-Esp. I2C part, wouldn't it be problematic (exception with NACK on the bus)?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+I have no idea if this has any impact.
+I guess most/all DTS files have proper gpios-states properties?
+---
+ drivers/regulator/gpio-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-...
-
-The rest LGTM, thanks!
-
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 65927fa2ef161cda..5dfed8bae0c4cfdc 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -176,9 +176,9 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 			ret = of_property_read_u32_index(np, "gpios-states", i,
+ 							 &val);
+ 
+-			/* Default to high per specification */
++			/* Default to low per specification */
+ 			if (ret)
+-				config->gflags[i] = GPIOD_OUT_HIGH;
++				config->gflags[i] = GPIOD_OUT_LOW;
+ 			else
+ 				config->gflags[i] =
+ 					val ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
