@@ -1,50 +1,55 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0869249F7;
-	Mon,  5 Feb 2024 13:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A65F210E6
+	for <linux-gpio@vger.kernel.org>; Mon,  5 Feb 2024 13:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707140837; cv=none; b=kV78yZ9Z3yobvt0JXzdVdMC/iPsF948E14o6bozoWRMa9Q0NmYs3xsnF6zd0vGbriqHucOIbNneesOmpGRJtt4X8aOzGfH/QoJgfW4zYJ164HSvM/snLYaRAhOdTI4QZ4IZY9yOuO8XOEFa4dNVPzHqjUHIFasaCDfSdtDAXNf0=
+	t=1707140860; cv=none; b=SZviWainvBiJOOwP/nrbTS6N75nQ1Xt7mM2vjwCLAE30SCni+6XnDgMMbc1vw24/1oRA/1LiqHgZiJlHv5i/za7Cw+9dAPvTY7/5kYqWUi27hlrQkDADwgfejWg7xx/QvDiy1T6sijZLWIo5XeN9fp9Mlf9QvRO1d0z+/3ombzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707140837; c=relaxed/simple;
-	bh=fnnDzvyHo2rzexAyz4LUlPbdbYoQlWB3LXPS87c8RE8=;
+	s=arc-20240116; t=1707140860; c=relaxed/simple;
+	bh=RtTlx6KHa14TGuCYGKyp4jsnm9AKJ1lz1W/UGueHRbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5awhO2073nGjAy8OK0FytM0INYTKi3XBDwYYW9V9PFHDYWOcAyJsSMaNyN9eMOiacDnkdAx+uBiAtjMOXwvdHiSyg5+DHyfSrTQyyflpU5/UELTP/C6l2pkUrJqIuGL824ETSJSeoOQJxLZl3hCahbcCvxfKno3f0b/RvmkTW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XograDka; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjb2QtBIAhwhGd7BnYzzbiCFaH2Y5+PcKomPf+9Tax6vTvfCfo4qDvMTqbzAPH7XqysGGikLemCSln51WgfveEM0pcr6kMN1VdUDUEgwn6F2XBUt2QkqqAqdIY8v1fzbUtZANYaIkrkgbDugU27sDnJliN3G3sZdYseQsvUleNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MhtDcma8; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XograDka"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MhtDcma8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707140836; x=1738676836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=fnnDzvyHo2rzexAyz4LUlPbdbYoQlWB3LXPS87c8RE8=;
-  b=XograDka1yzzWSwD90LdrIZXFWmaRAkGr3PC3d1Z24kFkEDsE229kVNO
-   F7HnIMHyFi1fegeGZ5wbGzfrDCcndRU6tWsPddppULuewxbk4hAaou0C7
-   em5hwUPXT7m/6wY195IOAU43WqoUpL7tLSKiqkJBfKWFoeN7C5YMXiGST
-   2TVLI/jPpUsL5wV1dwkewEZC7qZInqdhbVzD0oY7iawWeV1D8yqM1Fxv1
-   lO0Y+xXzdGGVNXDrE7xAtMY8kmfCAZk3exPZ3BqqeQ+xZwCSjqxgxUdZG
-   aUYPOeAaNPIEM1RgmWaEZxirLnKBiqnamxHcFwJzgwrVSqezyuqifDeaL
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10974"; a="430659"
+  t=1707140858; x=1738676858;
+  h=resent-from:resent-date:resent-message-id:resent-to:date:
+   from:to:cc:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=RtTlx6KHa14TGuCYGKyp4jsnm9AKJ1lz1W/UGueHRbE=;
+  b=MhtDcma8dr2NKmm1FqSzduYaOJ5yIChxFL6Ipl+4wV2BcQKsUzt7PGzW
+   gjcHfNwaZVCSu0C6h26Vv/5FK5kGq3pFILckdpZMguqmRJc2Q0DDD7hUy
+   WW/Fwcas/l/ZOCQR/aYJt3uB5VZ8PZ+jxpka7byrLCkAgb8NcBHwzEFqL
+   PkfHSiGkoc4qkESAGDEfQcITqBz5ajSRdmy7EKl6Flaw7oGB7C0vmL8bT
+   zVB8/XTDJhyfjW+r74BH6RyrS418nujeuQ/xVAFNWrbPOE+Mh9oXvJAAr
+   P55O3loNgBTPbfW7r6/NTXw6eedcCjNz4ezeVl7BqagMrdusTN637QWfz
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10974"; a="430696"
 X-IronPort-AV: E=Sophos;i="6.05,245,1701158400"; 
-   d="scan'208";a="430659"
+   d="scan'208";a="430696"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 05:47:16 -0800
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 05:47:38 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10974"; a="909300304"
+X-IronPort-AV: E=McAfee;i="6600,9927,10974"; a="909300341"
 X-IronPort-AV: E=Sophos;i="6.05,245,1701158400"; 
-   d="scan'208";a="909300304"
+   d="scan'208";a="909300341"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 05:47:12 -0800
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 05:47:35 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rWzJV-000000025o8-2zcX;
-	Mon, 05 Feb 2024 15:47:09 +0200
-Date: Mon, 5 Feb 2024 15:47:09 +0200
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1rWzJt-000000025oj-32N4;
+	Mon, 05 Feb 2024 15:47:33 +0200
+Resent-From: Andy Shevchenko <andriy.shevchenko@intel.com>
+Resent-Date: Mon, 5 Feb 2024 15:47:33 +0200
+Resent-Message-ID: <ZcDm9RKHsftOqc7G@smile.fi.intel.com>
+Resent-To: brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Date: Mon, 5 Feb 2024 14:22:03 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
@@ -54,68 +59,45 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 08/23] gpio: sysfs: use gpio_device_find() to iterate
- over existing devices
-Message-ID: <ZcDm3ZrW1dQQAroY@smile.fi.intel.com>
+Subject: Re: [PATCH v2 17/23] gpio: reduce the functionality of
+ validate_desc()
+Message-ID: <ZcDS60dB39y-B6WR@smile.fi.intel.com>
 References: <20240205093418.39755-1-brgl@bgdev.pl>
- <20240205093418.39755-9-brgl@bgdev.pl>
- <ZcDSKYqFHSUZb2Qx@smile.fi.intel.com>
- <CAMRc=Mfh5CcftXUStGOXvUF-s3aNxnaNM0sDt72LKrBfttqitQ@mail.gmail.com>
- <ZcDkvOrlSRkmYIk_@smile.fi.intel.com>
- <CAMRc=MeiXLZ4q8MH5h_wX1rBz9-YVK6UKUdCu2nTb6+uNHGXPQ@mail.gmail.com>
+ <20240205093418.39755-18-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeiXLZ4q8MH5h_wX1rBz9-YVK6UKUdCu2nTb6+uNHGXPQ@mail.gmail.com>
+In-Reply-To: <20240205093418.39755-18-brgl@bgdev.pl>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Feb 05, 2024 at 02:39:40PM +0100, Bartosz Golaszewski wrote:
-> On Mon, Feb 5, 2024 at 2:38 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Feb 05, 2024 at 02:19:10PM +0100, Bartosz Golaszewski wrote:
-> > > On Mon, Feb 5, 2024 at 1:36 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Mon, Feb 05, 2024 at 10:34:03AM +0100, Bartosz Golaszewski wrote:
+On Mon, Feb 05, 2024 at 10:34:12AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Checking desc->gdev->chip for NULL without holding it in place with some
+> serializing mechanism is pointless. Remove this check. Also don't check
+> desc->gdev for NULL as it can never happen. We'll be protecting
+> gdev->chip with SRCU soon but we will provide a dedicated, automatic
+> class for that.
 
 ...
 
-> > > > > +static int gpiofind_sysfs_register(struct gpio_chip *gc, void *data)
-> > > > > +{
-> > > > > +     struct gpio_device *gdev = gc->gpiodev;
-> > > > > +     int ret;
-> > > > > +
-> > > > > +     if (gdev->mockdev)
-> > > > > +             return 0;
-> > > > > +
-> > > > > +     ret = gpiochip_sysfs_register(gdev);
-> > > > > +     if (ret)
-> > > > > +             chip_err(gc, "failed to register the sysfs entry: %d\n", ret);
-> > > >
-> > > > > +     return 0;
-> > > >
-> > > > ???
-> >
-> > What the point of function to be int if you effectively ignore this by always
-> > returning 0?
-> >
-> 
-> Because the signature of the callback expects an int to be returned?
+>  void gpiod_free(struct gpio_desc *desc)
+>  {
+> -	/*
+> -	 * We must not use VALIDATE_DESC_VOID() as the underlying gdev->chip
+> -	 * may already be NULL but we still want to put the references.
+> -	 */
+> -	if (!desc)
+> -		return;
+> +	VALIDATE_DESC_VOID(desc);
 
-But why do you return 0 instead of ret?
-
-> > > Not sure what the ... and ??? mean? The commit message should have
-> > > read "... traverse it from gpiofind_sysfs_register()" I agree but the
-> > > latter?
-> >
-> > I didn't realize this may not be obvious :-(.
-> >
-> > > > > +}
+IIRC we (used to) have two cases like this (you added one in some code like
+last year).
 
 -- 
 With Best Regards,
