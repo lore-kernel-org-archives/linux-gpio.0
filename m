@@ -1,91 +1,83 @@
-Received: from akranes.kaiser.cx (akranes.kaiser.cx [152.53.16.207])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132391E538;
-	Tue,  6 Feb 2024 14:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.53.16.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DE2171B0;
+	Tue,  6 Feb 2024 19:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707229928; cv=none; b=prG8n2I2Q08p7idbDVNr4kVEERux9VL8kTUhJ2mYg9PKNP5HDET8ZO/KOGLczbO4Sl6NPPm2mVhQNyryz9SJt0YPxdTvVf2IG5/mNPEPmAIwlIQYAH/anSl1lavrRMBjSZusCnBlSw5+KfsWlxr4Bpmk6B0rfWQqMg7Gk+nB5+4=
+	t=1707247518; cv=none; b=m46aFUWi1TdTZr6U8wfFRoPv0ETDVlCqF8KpnyVFidncfdAeBmAfqWyA4kVsB9/JPV/0C7CHgSC+dfZHqat+mD/flg5AoFWPaOZbybUJfJEr+LhrL1FYPukU5vodbL6XSk/Jv0Gn2QF+OiRNCWRXCFvD+pw+/yRp355etbKGpC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707229928; c=relaxed/simple;
-	bh=FXlLwj57nAJFGF/Vub+i5XUXQg7kTxUUzmFuRuy0jiU=;
+	s=arc-20240116; t=1707247518; c=relaxed/simple;
+	bh=Mu4K6W1Ehm84eYP2IsyclOUmQOj8IiBKVmzjXqzzQ2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rldLpcChIvJ0L7P4TxEUYVxFX1aIsyRm7MHHQYmhBZraZ55m9fltrCgblCW5VzyYBoPJgKF+NvwQ/WYfieKzDGANmL77/OcMPELTVvktjW8dGuvtwunHGakgzgSeE4/KP0xhZS85ayStEkrVQmavMy7FUxsJ4+TDzzrDiOaorz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx; spf=pass smtp.mailfrom=kaiser.cx; arc=none smtp.client-ip=152.53.16.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaiser.cx
-Received: from martin by akranes.kaiser.cx with local (Exim 4.96)
-	(envelope-from <martin@akranes.kaiser.cx>)
-	id 1rXM4h-000AXd-1k;
-	Tue, 06 Feb 2024 15:05:23 +0100
-Date: Tue, 6 Feb 2024 15:05:23 +0100
-From: Martin Kaiser <martin@kaiser.cx>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Shawn Guo <shawnguo@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWBP9lEX6742jPRNzmrpl8jb3BCnOQzZ9mSR3Jb8jk7ebAJkFvBfchrbhL/K2Ju1gup8OweNqMYk7Yoc0JRdfTXc4VfCgBG3/bENIHpaCnskGmVCBprslJcAGz6ED+1qr5vhPZ0PjVXTxW1srUj7uvq7ONuG3EuiflZ7q7QtZ/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dryfk4hB; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dryfk4hB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0CC5C433C7;
+	Tue,  6 Feb 2024 19:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707247516;
+	bh=Mu4K6W1Ehm84eYP2IsyclOUmQOj8IiBKVmzjXqzzQ2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dryfk4hBPCkoHPTRg3bOk3W70RS8MbpKC1iEwwOvNetBlzd81NKnbDWZByUZFt2Kk
+	 xCSY4+QuwurPs60t78WctLqClMcT0WqgN6MJPDJfbJy1nAJK9PFB/u7g7YevXeeU66
+	 Oz82bqacMGrjQs8YoAnZOObRKuVMnFFiVKgVScvClx1Pw0ABQK1kJOJyv5ns+hYGi3
+	 507LPYJs7O1l3UavO+3NG68bZOMB6bK5eOaZm+YUpAR6OyCJ4Bb3IRY0Y74lRxGcok
+	 YjMjV232u0P1L1iEJZbNwCaEIjMnf+OpXmQ+lagpDKh2GgI6jvA39b2/UhJQxkO8qI
+	 ro6dKcSZh907Q==
+Date: Tue, 6 Feb 2024 19:25:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Peng Fan <peng.fan@nxp.com>,
-	Andrew Lunn <andrew@lunn.ch>, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] gpio: vf610: allow disabling the vf610 driver
-Message-ID: <ZcI8oyHzaktJcfNV@v2202401214221251712.nicesrv.de>
-References: <20240124205900.14791-1-martin@kaiser.cx>
- <20240124205900.14791-2-martin@kaiser.cx>
- <20240126122719.GA13659@francesco-nb>
- <ZbgX-HGjM5fdftCG@v2202401214221251712.nicesrv.de>
- <ZbibA9QbOn19AXcn@gaggiata.pivistrello.it>
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Drew Fustini <dfustini@baylibre.com>
+Subject: Re: [PATCH v2 0/8] Add T-Head TH1520 SoC pin control
+Message-ID: <20240206-cornball-blighted-e40a9cc059cf@spud>
+References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9SR2866Q2kC1oVMZ"
+Content-Disposition: inline
+In-Reply-To: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
+
+
+--9SR2866Q2kC1oVMZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZbibA9QbOn19AXcn@gaggiata.pivistrello.it>
-Sender: "Martin Kaiser,,," <martin@akranes.kaiser.cx>
 
-Thus wrote Francesco Dolcini (francesco@dolcini.it):
+On Wed, Jan 03, 2024 at 02:28:37PM +0100, Emil Renner Berthing wrote:
+> This adds a pin control driver for the T-Head TH1520 RISC-V SoC used on
+> the Lichee Pi 4A and BeagleV Ahead boards and updates the device trees
+> to make use of it.
 
-> On Mon, Jan 29, 2024 at 10:26:16PM +0100, Martin Kaiser wrote:
-> > Thus wrote Francesco Dolcini (francesco@dolcini.it):
+I'm gonna mark the bits of this that apply to me as "superseded", albeit
+somewhat preemptive, since you'll need to resubmit the bindings patch.
 
-> > > On Wed, Jan 24, 2024 at 09:58:57PM +0100, Martin Kaiser wrote:
-> > > > The vf610 gpio driver is enabled by default for all i.MX machines,
-> > > > without any option to disable it in a board-specific config file.
+Cheers,
+Conor.
 
-> > > > Most i.MX chipsets have no hardware for this driver. Change the default
-> > > > to enable GPIO_VF610 for SOC_VF610 and disable it otherwise.
+--9SR2866Q2kC1oVMZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > > > Add a text description after the bool type, this makes the driver
-> > > > selectable by make config etc.
+-----BEGIN PGP SIGNATURE-----
 
-> > > > Fixes: 30a35c07d9e9 ("gpio: vf610: drop the SOC_VF610 dependency for GPIO_VF610")
-> > > > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> > > > ---
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZcKHlwAKCRB4tDGHoIJi
+0jngAQC/9KRmKdjlujY+RbvfKLmq782PlybcZHEB0rVLPFyb/wEA7SN2iJajXSPV
+T3vr7u9GNYAvcAHAcDhp3/esony+yQ0=
+=3Hcg
+-----END PGP SIGNATURE-----
 
-> > > >  config GPIO_VF610
-> > > > -	def_bool y
-> > > > +	bool "VF610 GPIO support"
-> > > > +	default y if SOC_VF610
-
-> > > any reason for having this default y for SOC_VF610, but not for the
-> > > other SOC that uses the same variant (i.MX7ULP, ... ?).
-
-> > Ok, it's probably not as consistent as it could be.
-
-> ...
-
-> > Does this make sense?
-> sounds fair to me.
-
-Sorry for the delay, other tasks got in the way.
-
-The maintainers have meanwhile merged v4.
-
-Basically, the conclusion of my last mail was that imx7ulp and soc_vf610 could
-be configured in the same way to make things a bit clearer. This wouldn't be
-much of an improvement compared to the v4 set, I'd suggest keeping the current
-state.
-
-Thanks,
-Martin
+--9SR2866Q2kC1oVMZ--
