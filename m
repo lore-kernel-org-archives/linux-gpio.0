@@ -1,86 +1,181 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD58657B5;
-	Fri,  9 Feb 2024 14:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8643F9C0;
+	Fri,  9 Feb 2024 14:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707487636; cv=none; b=n+mbV/qZHhL+jacW9a486nu8NcJMaOu696XB1SggzMs+/MmNZ02Oe7qso0gIsHSVo8D4IlkF+ShFEf/FO4IEItxlrBzgwg55xij5nHMC3vqUy5rhGPaUHgUDCKsghujcn3tpxgQUtcFinqDV6EsR3edp77H91Op5/Z3J0SjPq84=
+	t=1707489114; cv=none; b=ahbAgNZgPr+egkqcf02zYe3womeJJiL+fEU+xK35kbc0VAkswDKi78LB6SPTiWhBQ3DMOm1CytHoTAlWxtc2Ci9UtasBifZtw6YIaaW91emRldYR1AMdj6OYrgZeHbJUXbRdwvaJItmTWQ1uqXTGvHRvtjBJjb41ZJEx1enpDi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707487636; c=relaxed/simple;
-	bh=UppTMuPvFgBB9f8XupQc3wIwMSfTH3V3GTIflUXlFXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TikhDKc8g9bNiCtmf6zqRlVjKASFKVAx5Cp4owmvHKlJMDZmKNIbuELg3nzxkmjSB6Je0x+8umT9H9ApYfncfU38fgkZm4QwXhOkB1kTwMGrIRnjr8Y++E2mxfnPHTXhHGi1Wyp9BV8XrfVUkBsbor4pp7iVj5bWYv9TY4BYCHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NH+/2XYT; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1707489114; c=relaxed/simple;
+	bh=QyuJSJlqyr4I15nAAAdkFa3ViskJgQew0x/JXRRa0AE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NO6l/YpIPOpSYGq9KYpD3i2uCGrRYi/JR2twhPEsuTqSN94nSSAZ1GI/cl/vR71RxRQFDSDLerMikAJBVBTlN2Zf+tjbzJhZCA9FXnNHjfzi9JdnJsDqGfvtPMnAu9aBXxeKghK4YOAL3lFBDCa91eq5V4DDdHwC/nasFoQrhQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QgvOrLd4; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NH+/2XYT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707487635; x=1739023635;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UppTMuPvFgBB9f8XupQc3wIwMSfTH3V3GTIflUXlFXA=;
-  b=NH+/2XYTfz5K2IxQ6nWL6ztT2PxGu8CkkN81U5qrVFaw0lGIaGn+AFr5
-   c8KId0oAMiz2/sk3KSXQLdDhHyr95BEZ4H5/emszgQj5q6DkSixyTj0+d
-   pZS3eiWMCqgu/OK8EKu/dEln2VRpRhoLdZATwh0Z+Pn0fMXUo9ajQg9Uu
-   FC+RBjOgA536xzT9S5R/Of4KZ9PSIE3zOvpvZ8m9pv1wIJUsQAc3LgS3Q
-   NBh5nHAk94Y2Was1Y99Mbgt5+R/7syYBdag1KA7dIW1e++j75t8dYd0SF
-   Xl+ZzZMTQRVZJMJtlmXP/x18Lu7e4fDhiBsTF/JIXLsDggREvyOpnU4Cg
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10978"; a="23912329"
-X-IronPort-AV: E=Sophos;i="6.05,257,1701158400"; 
-   d="scan'208";a="23912329"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2024 06:07:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10978"; a="910717772"
-X-IronPort-AV: E=Sophos;i="6.05,257,1701158400"; 
-   d="scan'208";a="910717772"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2024 06:07:11 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rYRX3-00000003AQI-1FAE;
-	Fri, 09 Feb 2024 16:07:09 +0200
-Date: Fri, 9 Feb 2024 16:07:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: constify opaque pointer in gpio_device_find()
- match function
-Message-ID: <ZcYxjSWahbSWQM6g@smile.fi.intel.com>
-References: <20240208202704.631203-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QgvOrLd4"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8F59C240002;
+	Fri,  9 Feb 2024 14:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1707489109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aq9MbOqr21Sl0cLKaoBi7IfLbqhaI1zVPu3ITBlSL8o=;
+	b=QgvOrLd4CH0xvBJjh2lbqtPgPCmRxHnDiPDPO54ZMRSb62wQ3AT6wnzDmq+w2Xf1Hcof7n
+	cJBeXqM48r4vthLWHP8MbKcQFeeUXqprkIdIKsQv2YwtUzrWYFvbdiE7rkEvJgFEQ+Y6eg
+	vLx2t/h5u8lwh6HkRY56X5Pi+6iS3lfhed97byLmBwV4nM1HpyLOQKGEScbnkz4FUex8Gz
+	UAr7t02ETmVg9fIyLck3fz+GPlqBbnw7TK3q6KWjUXdxdaEeGxIwtR3Aff57RmzDTuYmxC
+	pht/sVt95GcBJLa6vA4Gn3ye8cthaeKBfmTVKixNwLIYyok4XuahnECr9cNHkA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Fri, 09 Feb 2024 15:31:39 +0100
+Subject: [PATCH v5 03/13] dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240208202704.631203-1-krzysztof.kozlowski@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240209-mbly-clk-v5-3-f094ee5e918a@bootlin.com>
+References: <20240209-mbly-clk-v5-0-f094ee5e918a@bootlin.com>
+In-Reply-To: <20240209-mbly-clk-v5-0-f094ee5e918a@bootlin.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Thu, Feb 08, 2024 at 09:27:04PM +0100, Krzysztof Kozlowski wrote:
-> The match function used in gpio_device_find() should not modify the
-> contents of passed opaque pointer, because such modification would not
-> be necessary for actual matching and it could lead to quite unreadable,
-> spaghetti code.
+Add DT schema bindings for the EyeQ5 clock controller driver.
 
-IIRC I also asked Bart about this in his series where something similar
-was used.
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         | 52 ++++++++++++++++++++++
+ MAINTAINERS                                        |  2 +
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     | 22 +++++++++
+ 3 files changed, 76 insertions(+)
 
-Good it's not only me who sees the benefits from this.
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+diff --git a/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+new file mode 100644
+index 000000000000..44eff4618ca7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/mobileye,eyeq5-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mobileye EyeQ5 clock controller
++
++description:
++  The EyeQ5 clock controller handles 10 read-only PLLs derived from the main
++  crystal clock. It also exposes one divider clock, a child of one of the PLLs.
++  Its registers live in a shared region called OLB.
++
++maintainers:
++  - Grégory Clement <gregory.clement@bootlin.com>
++  - Théo Lebrun <theo.lebrun@bootlin.com>
++  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
++
++properties:
++  compatible:
++    const: mobileye,eyeq5-clk
++
++  reg:
++    minItems: 2
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: plls
++      - const: ospi
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++    description:
++      Input parent clock to all PLLs. Expected to be the main crystal.
++
++  clock-names:
++    items:
++      - const: ref
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - "#clock-cells"
++  - clocks
++  - clock-names
++
++additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 35c752dc536b..2143f64e9e15 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14789,10 +14789,12 @@ M:	Gregory CLEMENT <gregory.clement@bootlin.com>
+ M:	Théo Lebrun <theo.lebrun@bootlin.com>
+ L:	linux-mips@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/mobileye,eyeq5-clk.yaml
+ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
+ F:	arch/mips/boot/dts/mobileye/
+ F:	arch/mips/configs/eyeq5_defconfig
+ F:	arch/mips/mobileye/board-epm5.its.S
++F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+ F:	include/dt-bindings/soc/mobileye,eyeq5.h
+ 
+ MODULE SUPPORT
+diff --git a/include/dt-bindings/clock/mobileye,eyeq5-clk.h b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+new file mode 100644
+index 000000000000..26d8930335e4
+--- /dev/null
++++ b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2024 Mobileye Vision Technologies Ltd.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ5_CLK_H
++#define _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ5_CLK_H
++
++#define EQ5C_PLL_CPU	0
++#define EQ5C_PLL_VMP	1
++#define EQ5C_PLL_PMA	2
++#define EQ5C_PLL_VDI	3
++#define EQ5C_PLL_DDR0	4
++#define EQ5C_PLL_PCI	5
++#define EQ5C_PLL_PER	6
++#define EQ5C_PLL_PMAC	7
++#define EQ5C_PLL_MPC	8
++#define EQ5C_PLL_DDR1	9
++
++#define EQ5C_DIV_OSPI	10
++
++#endif
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
