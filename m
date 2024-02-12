@@ -1,112 +1,98 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp47.i.mail.ru (smtp47.i.mail.ru [95.163.41.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD283FE44;
-	Mon, 12 Feb 2024 18:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B4241233;
+	Mon, 12 Feb 2024 19:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.163.41.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707764326; cv=none; b=Xaz/Did+qQ3h7Mz5LYeNT0Xj1iFukSPxXnw2h291xa7PYytHM0ONje5jY3K1Q4z8hy8bih31HyPM1VjLT+e6b9fSBEW+7pU1BDtZK3cbL9EIv4/fzKnB2rFvTemesRpk7ti9vcYvvaBFraKt1OauVgTWvoVXcgRPS+1gMuRlU4g=
+	t=1707765062; cv=none; b=e49bAdpzH5Gm6tyTK3N7ScCmMEeEqeJBvET8X/XdWa3MYsk6sfZU1ots3fB++Z2/GTif5xVtLwRR8AMrUcWamM2xqw9agBU1zxxQ5642WLRyGG3ZMUUpg+eBOKr+JkWurS2bkgZE+7ejmC6RtDJGaSEjrzt8iVIwGbfKYvGwSsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707764326; c=relaxed/simple;
-	bh=plrXdSzX2cXpZ6Di178taVe+HVkNMfViZlH5AuPB9gw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sHZzx0/r4+d1CbXoJlYqAmseMejhkiF8ndgLgn28+T4sbqHAG+Jd4B2S2hx1PtjAOQfhDjH8iHTkg+BvvK5SGku6HFloHC3X5Xxc1MD8lWLK6JCyLQwgaQ5fRyCvaVZxNJUKiLR0jAYpQT0vTiAF24jBSzzUrgl3NxzmUCrMyFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6077dabae03so2187097b3.0;
-        Mon, 12 Feb 2024 10:58:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707764322; x=1708369122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qE+rpTjs9eBLf5jPsgmKdz9gvYpfD1G97Uge2T8CuAg=;
-        b=VMaf6bd4KepF/cXQf29FqX2Fw1h1fkMMXx+AC4Wxexwz4+RJqq7GUu1hCj70fU3RqC
-         mk6DhB54Wf0TWS7NwLkZGPk4CfBzWexauLC2Wulc+VP9BVzX6m3OPMMau3BTC3BAtzQA
-         9IJh+mZWgniq1sbBtCrFb7h2rr3nQeWiKcs5AmNgqBWF3EM9ayH4rl/0+6ZAs93ps2mE
-         GPyFJakXoLV4kP2salXvtCgKjpxczZdyRP3vllern2mpF8YIUboBTg0GeA6HKmV7hsgC
-         yi1+qkVMQR9LzdnefPP9MGLcbQ+zMl8tT4IfSGckqjaFrYmnfAhciIYLUBOsPZVV72wF
-         U93A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqynwbveKO5JoB8HHIqcGjK9/RlPsjtzt98DdPZAF0f49mF85vBCXrN0wyQhCpG3K1ChDn7XmZP7DH8NrGiooXjD9hDP4m328xlz6pPbKnFpsT8bP3pHqgVlrR8O0hHEY+Ug5Px0FSG2V7VNMA
-X-Gm-Message-State: AOJu0YyQAErF1hKq2jfre4joB8fzWVxKAOKdCQiP2UrmuUhv3lmR0tsc
-	NY+P9MVo5X5UEe+BkNSeinMRTPouwfyD8vzR5s994xxwp1IlIS768HT5+2Thfao=
-X-Google-Smtp-Source: AGHT+IE/KA6hlTT3UE43aWYdG8wLx/tQf+t7LHUylcs8UOnvWa/3ZWPZ6szZm6OZv/NZ3kbLuXWj9w==
-X-Received: by 2002:a0d:ce02:0:b0:5ff:981a:2aa5 with SMTP id q2-20020a0dce02000000b005ff981a2aa5mr5839259ywd.46.1707764322137;
-        Mon, 12 Feb 2024 10:58:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgJIiYGVWLILDR69mnTNX2DsYrB+xRgm7fL0TtxKubengPRQ1z8CWtgYFcfcnh+b64M9KbNzzm6ANoI6mQi+Xz462ka9O7XXJUYsqV3DYNjLkZKDl4ionreR2PZXix5WdU0O5z5bZSYi5OXteK
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id m126-20020a0dca84000000b005fffb25df43sm1290040ywd.22.2024.02.12.10.58.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 10:58:41 -0800 (PST)
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dc6d8bd618eso3583491276.3;
-        Mon, 12 Feb 2024 10:58:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXthf6eyw9O9dYBurqTzQZMCimM2PHKHEV17JA0wJCoMGi680C/5FUv7jQIH/tjdGWSPY9F6qgfneMj2ynm3r9NvmShjgGpNiR5FN8/H8pXJPuSv5AkV5+Ewu0WXG+YatfRdo7/qkA8gGWb12KP
-X-Received: by 2002:a5b:4d:0:b0:dc7:5cb3:256a with SMTP id e13-20020a5b004d000000b00dc75cb3256amr5340489ybp.42.1707764321673;
- Mon, 12 Feb 2024 10:58:41 -0800 (PST)
+	s=arc-20240116; t=1707765062; c=relaxed/simple;
+	bh=0yhCG8dhpATOF1IMFYS9jk9hzjLZB4lf+Rg7yCc8bQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p6saDW19x6ZMnZrBMt4RjFiy1xsoj7tEFHKYgOW1AjtkDM6Xa11r6BQ68p57NZ2w0vIV4qlhDXWLWD1/eIe4aQQXla2Z2RQkFChwvI9pvbSqpwcEqoWCKNZWfF21bsNvqHNuBXC5ofxb256aJlG/w1FlTV2OmG4dio8sVYfp+zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=QViBSjcW; arc=none smtp.client-ip=95.163.41.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="QViBSjcW"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=be2FZjSBLdE52ZDvzuE6Y7LdDV7OjNfUF3Iag3/gLsY=; t=1707765059; x=1707855059; 
+	b=QViBSjcWw8k+y4JrwzjHFBezj6d1GfrOlBojBWQ+lG3g6ow5l3AJEJ2QU1SmM8KMyFDNTaU0K+9
+	uT4K58mAKBQL2PhZUVTllMzKDCFQ7Wajo5Kll0zb9HHf+wm1UTXSpGhLnXOFg7kWRgyUPTmd0K1rh
+	V9F+XP9xH2ZVfXnScsQ=;
+Received: by smtp47.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1rZbha-00000006gZh-2rRl; Mon, 12 Feb 2024 22:10:51 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	vkoul@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom,sm8450-tlmm: Add compatible for SM8475
+Date: Mon, 12 Feb 2024 22:10:45 +0300
+Message-ID: <20240212191046.77013-2-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240212191046.77013-1-danila@jiaxyga.com>
+References: <20240212191046.77013-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206135115.151218-1-biju.das.jz@bp.renesas.com>
- <20240206135115.151218-3-biju.das.jz@bp.renesas.com> <CAMuHMdWwHwZcGj9Efuqp-vnAh0Dy9br7RScOjpsL5zcCKFcbhw@mail.gmail.com>
- <CADT+UeB4PL+gfiV=x2RO0U9hTDtrr3fT+8039w9eCZM8HvWc-g@mail.gmail.com>
-In-Reply-To: <CADT+UeB4PL+gfiV=x2RO0U9hTDtrr3fT+8039w9eCZM8HvWc-g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Feb 2024 19:58:29 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVpN+ntXVw4+7p-r8HpQATvcHahKsYBHEcrFi7BUeehTg@mail.gmail.com>
-Message-ID: <CAMuHMdVpN+ntXVw4+7p-r8HpQATvcHahKsYBHEcrFi7BUeehTg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] pinctrl: renesas: rzg2l: Simplify rzg2l_gpio_irq_{en,dis}able
-To: Biju Das <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp47.i.mail.ru; auth=pass smtp.auth=danila@jiaxyga.com smtp.mailfrom=danila@jiaxyga.com
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD96201AD55A1C8F7DBBE4586EF28675698F5F01DAAADAF1068182A05F5380850409D2489145FEC18542EB5D77EF37489D14A1AA2E7FAC71D20E51B3825F593DFF2C855A04F18BB56E3
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7CA8E915ACC910FBDEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F79006374DF0C582D42FCA168638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8F8ADA90683CD2DB66F91843850D5FF6A322F45CD8408C157CC7F00164DA146DAFE8445B8C89999728AA50765F790063798EAA0EED4DE4A60389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8D2A98E5A6551E3E5117882F4460429728AD0CFFFB425014E868A13BD56FB6657D81D268191BDAD3DC09775C1D3CA48CF776FEBA3834A766EBA3038C0950A5D36C8A9BA7A39EFB766D91E3A1F190DE8FDBA3038C0950A5D36D5E8D9A59859A8B622310ACB61D7A70376E601842F6C81A1F004C906525384303E02D724532EE2C3F43C7A68FF6260569E8FC8737B5C2249D082881546D93491E827F84554CEF50127C277FBC8AE2E8BA83251EDC214901ED5E8D9A59859A8B6694CCBE1C0966AF9089D37D7C0E48F6C5571747095F342E88FB05168BE4CE3AF
+X-87b9d050: 1
+X-C1DE0DAB: 0D63561A33F958A559EFF6B5FCD277EE5002B1117B3ED696847FE81983125413D57BAD45EC4C5DE1823CB91A9FED034534781492E4B8EEADB71243024C627CEAC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF7FF25121C2BD51D8AC780F63A8418607627C1A678612397DBA10C0E146FC4F3A9EC5AF04A575AA6C233AFEF422F2DFF9CFDB2A09F3D044135D44EE695255846BDB20B368FAAAD0D042BF32D1DA1046D202C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj1UUEhvrYbM0rusnGgA4tgg==
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C7394981983862166B64222887A35C9C7BBE74BE6DD7FE894E1CCFBF34B96B647EEE94572C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
 
-Hi Biju,
+Add a dt-bindings compatible string for the SM8475 SoC that uses SM8450
+tlmm.
 
-On Mon, Feb 12, 2024 at 6:03=E2=80=AFPM Biju Das <biju.das.au@gmail.com> wr=
-ote:
-> On Mon, Feb 12, 2024 at 3:53=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Tue, Feb 6, 2024 at 2:51=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas=
-.com> wrote:
-> > > Simplify rzg2l_gpio_irq_{en,dis}able by adding a helper function
-> > > rzg2l_gpio_irq_endisable().
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > ---
-> > > v2:
-> > >  * New patch
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Note that this conflicts with Prabhakar's "[PATCH 2/5]
-> > irqchip/renesas-rzg2l: Add support for RZ/Five SoC"
-> > https://lore.kernel.org/all/20240129151618.90922-3-prabhakar.mahadev-la=
-d.rj@bp.renesas.com
->
-> Do you mean patch [1] conflicts with the above as it is irqchip related?
-> [1]
-> https://lore.kernel.org/all/20240212113712.71878-6-biju.das.jz@bp.renesas=
-.com/
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+---
+ .../devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml      | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Oops, you're right.
-I've been seeing too many patches today...
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
+index 16fd2c5e2339..590de2d8a1c6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
+@@ -17,7 +17,12 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: qcom,sm8450-tlmm
++    oneOf:
++      - items:
++          - enum:
++              - qcom,sm8475-tlmm
++          - const: qcom,sm8450-tlmm
++      - const: qcom,sm8450-tlmm
+ 
+   reg:
+     maxItems: 1
+-- 
+2.43.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
