@@ -1,39 +1,38 @@
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D585FF0B;
-	Wed, 14 Feb 2024 16:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A475F871;
+	Wed, 14 Feb 2024 16:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707927896; cv=none; b=NSR+pbIgBuvKmnSYK+Z5c7A42tay41v8fT+LFpMxMljvzKO+MD6tToa6rRa0p4+f4G8TDIBnkURCkHooxC0scaP6FEqtjXBstt0ZHvwVwklT0ZTc8sXJSUh2mUMYuqiM8Yt+BzVyjbjAEu4kyxKQNsuLAXVyLasPQFQ+n13zptI=
+	t=1707927898; cv=none; b=g6SPC49ejLtYEdoZ4SifplYh1YCZnqPe2ulkov6l+eIbF0f832UgHtGspkjfBfa7FsuvkPSXY15Aw/Br32NYx4xooGtP4ZNbYBO+hPwqEy6eiekA8DtwZcEBcl1w8CaKMECeX54NYAXEAOtiGv87AbWC8nL8qFjF70M6MbgRRcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707927896; c=relaxed/simple;
-	bh=liIAu+HdBd+K5fea1uFUEyksEHrgCU91l/MPuFwanfE=;
+	s=arc-20240116; t=1707927898; c=relaxed/simple;
+	bh=VOfDw64xrAjLKL7SdlbDSsAR3K/CMdlWhNnXfibl/HE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nm1TxlPTlV4R6vpNloe8f1qzu0D2MESAvkgwAs2nzNlag3v4w0Wd7PmrQdo6fRGRTzhaIsvrQNAeIDc5NPWqu5/iXwZbvJX9sfw+PsR57ariP1ES1bB0CxS5qJkC/lTAqPiEGSZWfUeOXbctqHEUPAWezhwGT6r6BD0gtXaY0As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kH7nsdlG; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:To:Cc; b=kMSTDzA/SSjO48tjLBKDQrZvEz70MewzjNvn8OUD3TmNKjLn0zNsRz7tfKqisvOZlJvYMfqlu49RfqJ5fOZJVgcgMBCnwUUwCo5oHtmLFv9gax2mjGBBOj4oz7pmDT2o+Q0ZAmxcNEq6Q3x+gzArLcMAlb3xRC6KtlpaZEbgr0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j9wNif49; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kH7nsdlG"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5DAB160016;
-	Wed, 14 Feb 2024 16:24:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j9wNif49"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D2B3860007;
+	Wed, 14 Feb 2024 16:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1707927892;
+	t=1707927893;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gNwsUDGVccEaSEL1sdyKeqNgvGE7K6phcBXwuAXfoTc=;
-	b=kH7nsdlGsizYX5Ap75XjtyQdaIEJcSnEQz53Xj/rPSpD2g0O3d1Fi4Qz+JDwqSaZ9DoJMS
-	9+WarZmhOSe9DDUJVuA3Pil2LybE4ddEuEpy59DIF36EkAV5qQCNuEvVZjHc2YU3S7/P7+
-	NJBkrCJ1EyicgOdm9lDuuTfWIrmN7rttUkWppTnb+5IbLe7b9XVesMxSs5o4HYzgILCZQu
-	edbVKrwJPAvUdtW+HtXdNhgzxlCuWgoiIoVGjoSHw8RhdQFFO+QREfynoWx8iskhc20bVD
-	GeSKV30sK67PkI8BdTrUxvBBB74TP/Txap3BgkFkYNJMfGdzvRX4pYQ7z/oWKA==
+	bh=oJ14tHqSqLHFtg6avp0X1Ritv/bgPHCct9WWR86lzjo=;
+	b=j9wNif49vyuB2N1ghzZdkYvXJqOuDxV5K/Bldfi6wun0Dm4St/QW8qVvmsniMdQNAVjdux
+	fdjzOJeQ8JFIcPHNUnSazEhL49lZEUk3oQLWhS2JDjbItD/P5snFOqYU4/0lkF7dC+l1V+
+	sTaPtDu38kiFYbHT/4QoqFLwDIw0fN5kbgUms2Sfv89z5dSfYEyMqvsaJrN4KTpWhufaD2
+	UGHCNDOPeAw1R0Q039aeKRlxcjaAZcWwsAneDh46npdB3nUHBguxcwYkzrDQIhMKThYDVU
+	OPTfx7eZilXMG6v7fqVRljHF77nY1TZFxer30Y4qof4lz5kG/tizbRvwBCKpOg==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 14 Feb 2024 17:24:03 +0100
-Subject: [PATCH 10/23] pinctrl: nomadik: follow whitespace kernel coding
- conventions
+Date: Wed, 14 Feb 2024 17:24:05 +0100
+Subject: [PATCH 12/23] gpio: nomadik: request dynamic ID allocation
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240214-mbly-gpio-v1-10-f88c0ccf372b@bootlin.com>
+Message-Id: <20240214-mbly-gpio-v1-12-f88c0ccf372b@bootlin.com>
 References: <20240214-mbly-gpio-v1-0-f88c0ccf372b@bootlin.com>
 In-Reply-To: <20240214-mbly-gpio-v1-0-f88c0ccf372b@bootlin.com>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -60,250 +59,188 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.12.4
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Fix strict checkpatch warnings relative to whitespace. Message types
-addressed:
+Move away from statically allocated GPIO IDs. Switch to dynamic ID
+allocation. Static IDs are deprecated because they cause issues when
+multiple GPIO controllers are to be found on the same platform.
 
-   ERROR: space required before the open parenthesis '('
-   WARNING: quoted string split across lines
-   CHECK: Alignment should match open parenthesis
-   CHECK: Please don't use multiple blank lines
-   CHECK: line length of 103 exceeds 100 columns
-   CHECK: spaces preferred around that '+' (ctx:VxV)
+Add a bit of complexity to do pin number -> GPIO chip + offset.
+Previously, bank number and offsets were retrieved using division and
+remainder (bank size being constant 32). Now, to get the pin number
+matching a bank base, we must know the sum of ngpios of previous banks.
+This is done in find_nmk_gpio_from_pin() which also exposes the offset
+inside the bank.
 
-Before: 1 errors, 2 warnings, 38 checks.
-After:  0 errors, 1 warnings, 16 checks.
+Also remove the assumption that bank sizes are constant. Instead of
+using NMK_GPIO_PER_CHIP as bank size, use nmk_gpio_chips[i]->ngpio.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 65 +++++++++++++++----------------
- 1 file changed, 32 insertions(+), 33 deletions(-)
+ drivers/gpio/gpio-nomadik.c               |  2 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 55 +++++++++++++++++++++----------
+ 2 files changed, 38 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
+index e39477e1a58f..8d47aef8d2c4 100644
+--- a/drivers/gpio/gpio-nomadik.c
++++ b/drivers/gpio/gpio-nomadik.c
+@@ -516,7 +516,7 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct device_node *np,
+ 
+ 	nmk_chip->bank = id;
+ 	chip = &nmk_chip->chip;
+-	chip->base = id * NMK_GPIO_PER_CHIP;
++	chip->base = -1;
+ 	chip->ngpio = NMK_GPIO_PER_CHIP;
+ 	chip->label = dev_name(&gpio_pdev->dev);
+ 	chip->parent = &gpio_pdev->dev;
 diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index 94338a3c8d4f..83e7868bc1d7 100644
+index 8099dd947701..c7693fbc0484 100644
 --- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
 +++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -165,7 +165,6 @@
- #define PIN_SLEEPMODE_DISABLED	(0 << PIN_SLEEPMODE_SHIFT)
- #define PIN_SLEEPMODE_ENABLED	(1 << PIN_SLEEPMODE_SHIFT)
- 
--
- /* Shortcuts.  Use these instead of separate DIR, PULL, and VAL.  */
- #define PIN_INPUT_PULLDOWN	(PIN_DIR_INPUT | PIN_PULL_DOWN)
- #define PIN_INPUT_PULLUP	(PIN_DIR_INPUT | PIN_PULL_UP)
-@@ -341,7 +340,7 @@ static void nmk_write_masked(void __iomem *reg, u32 mask, u32 value)
+@@ -530,25 +530,33 @@ static int nmk_get_group_pins(struct pinctrl_dev *pctldev, unsigned int selector
+ 	return 0;
  }
  
- static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
--	unsigned int offset, unsigned int alt_num)
-+				    unsigned int offset, unsigned int alt_num)
+-static struct nmk_gpio_chip *find_nmk_gpio_from_pin(unsigned int pin)
++/* This makes the mapping from pin number to a GPIO chip. We also return the pin
++ * offset in the GPIO chip for convenience (and to avoid a second loop).
++ */
++static struct nmk_gpio_chip *find_nmk_gpio_from_pin(unsigned int pin,
++						    unsigned int *offset)
  {
- 	int i;
- 	u16 reg;
-@@ -385,7 +384,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
- 					nmk_write_masked(npct->prcm_base + reg, BIT(bit), 0);
- 					dev_dbg(npct->dev,
- 						"PRCM GPIOCR: pin %i: alternate-C%i has been disabled\n",
--						offset, i+1);
-+						offset, i + 1);
- 				}
- 			}
- 		}
-@@ -395,8 +394,8 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
- 	alt_index = alt_num - 1;
- 	if (pin_desc->altcx[alt_index].used == false) {
- 		dev_warn(npct->dev,
--			"PRCM GPIOCR: pin %i: alternate-C%i does not exist\n",
--			offset, alt_num);
-+			 "PRCM GPIOCR: pin %i: alternate-C%i does not exist\n",
-+			 offset, alt_num);
- 		return;
- 	}
- 
-@@ -414,7 +413,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
- 				nmk_write_masked(npct->prcm_base + reg, BIT(bit), 0);
- 				dev_dbg(npct->dev,
- 					"PRCM GPIOCR: pin %i: alternate-C%i has been disabled\n",
--					offset, i+1);
-+					offset, i + 1);
- 			}
- 		}
- 	}
-@@ -422,7 +421,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
- 	reg = gpiocr_regs[pin_desc->altcx[alt_index].reg_index];
- 	bit = pin_desc->altcx[alt_index].control_bit;
- 	dev_dbg(npct->dev, "PRCM GPIOCR: pin %i: alternate-C%i has been selected\n",
--		offset, alt_index+1);
-+		offset, alt_index + 1);
- 	nmk_write_masked(npct->prcm_base + reg, BIT(bit), BIT(bit));
- }
- 
-@@ -499,7 +498,7 @@ int __maybe_unused nmk_prcm_gpiocr_get_mode(struct pinctrl_dev *pctldev, int gpi
- 			reg = gpiocr_regs[pin_desc->altcx[i].reg_index];
- 			bit = pin_desc->altcx[i].control_bit;
- 			if (readl(npct->prcm_base + reg) & BIT(bit))
--				return NMK_GPIO_ALT_C+i+1;
-+				return NMK_GPIO_ALT_C + i + 1;
- 		}
- 	}
- 	return NMK_GPIO_ALT_C;
-@@ -513,7 +512,7 @@ static int nmk_get_groups_cnt(struct pinctrl_dev *pctldev)
- }
- 
- static const char *nmk_get_group_name(struct pinctrl_dev *pctldev,
--				       unsigned int selector)
-+				      unsigned int selector)
- {
- 	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -536,12 +535,12 @@ static struct nmk_gpio_chip *find_nmk_gpio_from_pin(unsigned int pin)
- 	int i;
+-	int i;
++	int i, j = 0;
  	struct nmk_gpio_chip *nmk_gpio;
  
--	for(i = 0; i < NMK_MAX_BANKS; i++) {
-+	for (i = 0; i < NMK_MAX_BANKS; i++) {
++	/* We assume that pins are allocated in bank order. */
+ 	for (i = 0; i < NMK_MAX_BANKS; i++) {
  		nmk_gpio = nmk_gpio_chips[i];
  		if (!nmk_gpio)
  			continue;
- 		if (pin >= nmk_gpio->chip.base &&
--			pin < nmk_gpio->chip.base + nmk_gpio->chip.ngpio)
-+		    pin < nmk_gpio->chip.base + nmk_gpio->chip.ngpio)
+-		if (pin >= nmk_gpio->chip.base &&
+-		    pin < nmk_gpio->chip.base + nmk_gpio->chip.ngpio)
++		if (pin >= j && pin < j + nmk_gpio->chip.ngpio) {
++			if (offset)
++				*offset = pin - j;
  			return nmk_gpio;
++		}
++		j += nmk_gpio->chip.ngpio;
  	}
  	return NULL;
-@@ -557,7 +556,7 @@ static struct gpio_chip *find_gc_from_pin(unsigned int pin)
  }
  
- static void nmk_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
--		   unsigned int offset)
-+			     unsigned int offset)
+ static struct gpio_chip *find_gc_from_pin(unsigned int pin)
  {
- 	struct gpio_chip *chip = find_gc_from_pin(offset);
+-	struct nmk_gpio_chip *nmk_gpio = find_nmk_gpio_from_pin(pin);
++	struct nmk_gpio_chip *nmk_gpio = find_nmk_gpio_from_pin(pin, NULL);
  
-@@ -569,8 +568,8 @@ static void nmk_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
- }
- 
- static int nmk_dt_add_map_mux(struct pinctrl_map **map, unsigned int *reserved_maps,
--		unsigned int *num_maps, const char *group,
--		const char *function)
-+			      unsigned int *num_maps, const char *group,
-+			      const char *function)
- {
- 	if (*num_maps == *reserved_maps)
- 		return -ENOSPC;
-@@ -584,9 +583,9 @@ static int nmk_dt_add_map_mux(struct pinctrl_map **map, unsigned int *reserved_m
- }
- 
- static int nmk_dt_add_map_configs(struct pinctrl_map **map,
--		unsigned int *reserved_maps,
--		unsigned int *num_maps, const char *group,
--		unsigned long *configs, unsigned int num_configs)
-+				  unsigned int *reserved_maps,
-+				  unsigned int *num_maps, const char *group,
-+				  unsigned long *configs, unsigned int num_configs)
- {
- 	unsigned long *dup_configs;
- 
-@@ -702,15 +701,14 @@ static const char *nmk_find_pin_name(struct pinctrl_dev *pctldev, const char *pi
- }
- 
- static bool nmk_pinctrl_dt_get_config(struct device_node *np,
--		unsigned long *configs)
-+				      unsigned long *configs)
- {
- 	bool has_config = 0;
- 	unsigned long cfg = 0;
- 	int i, val, ret;
- 
- 	for (i = 0; i < ARRAY_SIZE(nmk_cfg_params); i++) {
--		ret = of_property_read_u32(np,
--				nmk_cfg_params[i].property, &val);
-+		ret = of_property_read_u32(np, nmk_cfg_params[i].property, &val);
- 		if (ret != -EINVAL) {
- 			if (nmk_dt_pin_config(i, val, &cfg) == 0) {
- 				*configs |= cfg;
-@@ -723,10 +721,10 @@ static bool nmk_pinctrl_dt_get_config(struct device_node *np,
- }
- 
- static int nmk_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
--		struct device_node *np,
--		struct pinctrl_map **map,
--		unsigned int *reserved_maps,
--		unsigned int *num_maps)
-+					 struct device_node *np,
-+					 struct pinctrl_map **map,
-+					 unsigned int *reserved_maps,
-+					 unsigned int *num_maps)
- {
- 	int ret;
- 	const char *function = NULL;
-@@ -751,7 +749,7 @@ static int nmk_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 
- 		of_property_for_each_string(np, "groups", prop, group) {
- 			ret = nmk_dt_add_map_mux(map, reserved_maps, num_maps,
--					  group, function);
-+						 group, function);
- 			if (ret < 0)
- 				goto exit;
- 		}
-@@ -792,8 +790,9 @@ static int nmk_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- }
- 
- static int nmk_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
--				 struct device_node *np_config,
--				 struct pinctrl_map **map, unsigned int *num_maps)
-+				      struct device_node *np_config,
-+				      struct pinctrl_map **map,
-+				      unsigned int *num_maps)
- {
- 	unsigned int reserved_maps;
- 	struct device_node *np;
-@@ -805,7 +804,7 @@ static int nmk_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 
- 	for_each_child_of_node(np_config, np) {
- 		ret = nmk_pinctrl_dt_subnode_to_map(pctldev, np, map,
--				&reserved_maps, num_maps);
-+						    &reserved_maps, num_maps);
- 		if (ret < 0) {
- 			pinctrl_utils_free_map(pctldev, *map, *num_maps);
- 			of_node_put(np);
-@@ -920,7 +919,8 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
- 				g->grp.pins[i], g->grp.name, i);
- 			goto out_glitch;
- 		}
--		dev_dbg(npct->dev, "setting pin %d to altsetting %d\n", g->grp.pins[i], g->altsetting);
-+		dev_dbg(npct->dev, "setting pin %d to altsetting %d\n",
-+			g->grp.pins[i], g->altsetting);
- 
- 		clk_enable(nmk_chip->clk);
- 		bit = g->grp.pins[i] % NMK_GPIO_PER_CHIP;
-@@ -934,7 +934,7 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
- 		nmk_gpio_disable_lazy_irq(nmk_chip, bit);
- 
- 		__nmk_gpio_set_mode_safe(nmk_chip, bit,
--			(g->altsetting & NMK_GPIO_ALT_C), glitch);
-+					 (g->altsetting & NMK_GPIO_ALT_C), glitch);
- 		clk_disable(nmk_chip->clk);
- 
- 		/*
-@@ -947,7 +947,7 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 	if (nmk_gpio)
+ 		return &nmk_gpio->chip;
+@@ -903,8 +911,19 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 		 * Then mask the pins that need to be sleeping now when we're
+ 		 * switching to the ALT C function.
  		 */
- 		if ((g->altsetting & NMK_GPIO_ALT_C) == NMK_GPIO_ALT_C)
- 			nmk_prcm_altcx_set_mode(npct, g->grp.pins[i],
--				g->altsetting >> NMK_GPIO_ALT_CX_SHIFT);
-+						g->altsetting >> NMK_GPIO_ALT_CX_SHIFT);
+-		for (i = 0; i < g->grp.npins; i++)
+-			slpm[g->grp.pins[i] / NMK_GPIO_PER_CHIP] &= ~BIT(g->grp.pins[i]);
++		for (i = 0; i < g->grp.npins; i++) {
++			struct nmk_gpio_chip *nmk_chip;
++
++			nmk_chip = find_nmk_gpio_from_pin(g->grp.pins[i], NULL);
++			if (!nmk_chip) {
++				dev_err(npct->dev,
++					"invalid pin offset %d in group %s at index %d\n",
++					g->grp.pins[i], g->grp.name, i);
++				goto out_pre_slpm_init;
++			}
++
++			slpm[nmk_chip->bank] &= ~BIT(g->grp.pins[i]);
++		}
+ 		nmk_gpio_glitch_slpm_init(slpm);
  	}
  
- 	/* When all pins are successfully reconfigured we get here */
-@@ -1219,8 +1219,7 @@ static int nmk_pinctrl_probe(struct platform_device *pdev)
- 	if (!npct->prcm_base) {
- 		if (version == PINCTRL_NMK_STN8815) {
- 			dev_info(&pdev->dev,
--				 "No PRCM base, "
--				 "assuming no ALT-Cx control is available\n");
-+				 "No PRCM base, assuming no ALT-Cx control is available\n");
- 		} else {
- 			dev_err(&pdev->dev, "missing PRCM base address\n");
- 			return -EINVAL;
+@@ -912,7 +931,7 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 		struct nmk_gpio_chip *nmk_chip;
+ 		unsigned int bit;
+ 
+-		nmk_chip = find_nmk_gpio_from_pin(g->grp.pins[i]);
++		nmk_chip = find_nmk_gpio_from_pin(g->grp.pins[i], &bit);
+ 		if (!nmk_chip) {
+ 			dev_err(npct->dev,
+ 				"invalid pin offset %d in group %s at index %d\n",
+@@ -923,7 +942,6 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 			g->grp.pins[i], g->altsetting);
+ 
+ 		clk_enable(nmk_chip->clk);
+-		bit = g->grp.pins[i] % NMK_GPIO_PER_CHIP;
+ 		/*
+ 		 * If the pin is switching to altfunc, and there was an
+ 		 * interrupt installed on it which has been lazy disabled,
+@@ -954,17 +972,18 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 	ret = 0;
+ 
+ out_glitch:
+-	if (glitch) {
++	if (glitch)
+ 		nmk_gpio_glitch_slpm_restore(slpm);
++out_pre_slpm_init:
++	if (glitch)
+ 		spin_unlock_irqrestore(&nmk_gpio_slpm_lock, flags);
+-	}
+ 
+ 	return ret;
+ }
+ 
+ static int nmk_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				   struct pinctrl_gpio_range *range,
+-				   unsigned int offset)
++				   unsigned int pin)
+ {
+ 	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
+ 	struct nmk_gpio_chip *nmk_chip;
+@@ -982,10 +1001,11 @@ static int nmk_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	chip = range->gc;
+ 	nmk_chip = gpiochip_get_data(chip);
+ 
+-	dev_dbg(npct->dev, "enable pin %u as GPIO\n", offset);
++	dev_dbg(npct->dev, "enable pin %u as GPIO\n", pin);
++
++	find_nmk_gpio_from_pin(pin, &bit);
+ 
+ 	clk_enable(nmk_chip->clk);
+-	bit = offset % NMK_GPIO_PER_CHIP;
+ 	/* There is no glitch when converting any pin to GPIO */
+ 	__nmk_gpio_set_mode(nmk_chip, bit, NMK_GPIO_ALT_GPIO);
+ 	clk_disable(nmk_chip->clk);
+@@ -995,11 +1015,11 @@ static int nmk_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 
+ static void nmk_gpio_disable_free(struct pinctrl_dev *pctldev,
+ 				  struct pinctrl_gpio_range *range,
+-				  unsigned int offset)
++				  unsigned int pin)
+ {
+ 	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	dev_dbg(npct->dev, "disable pin %u as GPIO\n", offset);
++	dev_dbg(npct->dev, "disable pin %u as GPIO\n", pin);
+ 	/* Set the pin to some default state, GPIO is usually default */
+ }
+ 
+@@ -1040,7 +1060,7 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	int pull, slpm, output, val, i;
+ 	bool lowemi, gpiomode, sleep;
+ 
+-	nmk_chip = find_nmk_gpio_from_pin(pin);
++	nmk_chip = find_nmk_gpio_from_pin(pin, &bit);
+ 	if (!nmk_chip) {
+ 		dev_err(npct->dev,
+ 			"invalid pin offset %d\n", pin);
+@@ -1098,7 +1118,6 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			lowemi ? "on" : "off");
+ 
+ 		clk_enable(nmk_chip->clk);
+-		bit = pin % NMK_GPIO_PER_CHIP;
+ 		if (gpiomode)
+ 			/* No glitch when going to GPIO mode */
+ 			__nmk_gpio_set_mode(nmk_chip, bit, NMK_GPIO_ALT_GPIO);
 
 -- 
 2.43.1
