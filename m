@@ -1,50 +1,45 @@
-Received: from esa2.ltts.com (unknown [14.140.155.42])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CA312B8A;
-	Wed, 14 Feb 2024 09:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.140.155.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5131B959
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707903085; cv=none; b=KkApxMwLHzwSXyZ4RD4dE6BuZCLYQxTQ6d/87SSLssmIHWBfzsAEkFYVJBA7BjqzGjc9JJmiBtkqNd8fkaa3pmBhN3uNlC+XnePITp+VgGz6v2Eyyn21Xk5BDsLhNzUDtgv8fsyolrFHhqzxPv/PyB6Q14bSc2s0paRsbrdQC2E=
+	t=1707903291; cv=none; b=RsFpFKkxNRi/My2PrQpQEdgvXsRKqy+Ak7az5j+1F+AJ3SQRJW2EuNZ9DJtg/6LoMun1n7Qm+Sj7MD3AXnbLRum7Qhj5Dxt+wO8oDY5RTXSWp3AkE3KvGx311RZBm6wpT+b1m0kYJbXUsJ1lfDmqqGmIkA61HTuTTxxr2hUeKTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707903085; c=relaxed/simple;
-	bh=oT34Qaa1f3ZWrCvgXRGBt6WIgG0rg2dW46uvJiuy3rc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L1QnWn7XIYEqq+5/tY8CIm980aRNLXv1d4oQ0IMyUFrvAiSbYE/LsfDgTLryX+C2bTTiWOQciCZW8sfjdw3NNA6vjeA47XmiV0QJnlIp7ms5Z8BTR/Ip7ZcAUPfKuW6ZDgHiO5eXKLa3L2H9xZQmi6Gqhzfcshl16KzNpt6sz4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ltts.com; arc=none smtp.client-ip=14.140.155.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltts.com
-IronPort-SDR: pwvaSPp4sCHdhnLsgMihVnqqppYhStIQvkknA9BJaz2JXyd4SdwTyxaJGpVdf8dfEG1+IQvTlQ
- B5zxD+sm+l1A==
-Received: from unknown (HELO localhost.localdomain) ([192.168.34.55])
-  by esa2.ltts.com with ESMTP; 14 Feb 2024 15:01:13 +0530
-From: Bhargav Raviprakash <bhargav.r@ltts.com>
-To: conor@kernel.org
-Cc: arnd@arndb.de,
-	bhargav.r@ltts.com,
-	broonie@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	jpanis@baylibre.com,
-	kristo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	lee@kernel.org,
-	lgirdwood@gmail.com,
-	linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	m.nirmaladevi@ltts.com,
-	nm@ti.com,
-	robh+dt@kernel.org,
-	vigneshr@ti.com
-Subject: Re: [RESEND PATCH v1 03/13] dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
-Date: Wed, 14 Feb 2024 15:01:06 +0530
-Message-Id: <20240214093106.86483-1-bhargav.r@ltts.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240209-blitz-fidgety-78469aa80d6d@spud>
-References: <20240209-blitz-fidgety-78469aa80d6d@spud>
+	s=arc-20240116; t=1707903291; c=relaxed/simple;
+	bh=W5Wp/YX5ZNL5lRXSmQet2h8oEA52+3pGK0CF32hVD4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cbUAjonRtRR1sMvCIn22qWMhM+kY/+T3SflXAJFrnN8qGQajYKcUKI5bPtO2RU6WkA26n2/EUMeEqGiS5wygiRo5aU7tQObq11XnA16daD2ORM51bL2tcF6KuNusKPfOl1abis3jOxaGRzQuqUGwYgMnodmfNoXLcUNZiXGoQPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBfA-0006CQ-Ba; Wed, 14 Feb 2024 10:34:44 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBf7-000fIB-09; Wed, 14 Feb 2024 10:34:41 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBf6-004YA3-2z;
+	Wed, 14 Feb 2024 10:34:40 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-pwm@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH v6 151/164] gpio: mvebu: Make use of devm_pwmchip_alloc() function
+Date: Wed, 14 Feb 2024 10:33:18 +0100
+Message-ID:  <2edc3adbb2c40b76b3b3dac82de82f3036bec1d5.1707900770.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -52,37 +47,84 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2259; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=W5Wp/YX5ZNL5lRXSmQet2h8oEA52+3pGK0CF32hVD4A=; b=owGbwMvMwMXY3/A7olbonx/jabUkhtQzHT8sJr/jnz9/Y5/1ke3xDfqcZbrpxj16T1VDFyz/7 iCXtWh9J6MxCwMjF4OsmCKLfeOaTKsqucjOtf8uwwxiZQKZwsDFKQATuW7E/k9bN29+MtdPo5RF 6vrZYUfLljq8TIytVryReuPtq218LqwL2ILYWie4zObqTuWfHGLUw/P/zrp6pTVCP54Yv11x9vg 8V5fTfh69iZf++ic4vK+XlF9341Hhfe6FqexLnbNqeT5/uBewt+RDd+NzA0enyteWS7oc9mu9ms xsPmflKY3bxxJ6T2TZ2Wh4Tbq/98DhYi5lXcsEr+9WP3Qr2k/LlxsXRIiVMVadOGMTX7H3zeuLf 73r94pfDBR1y/b95PZqR6j/3QR19lL7P2bmCap7082mz/Rn8Om6/js21OzjMe397xl7nTSrZljL 2Oq+zmrtaN07s+5OyYmHJZVOTYpRtzOfSYu8srpQLCEDAA==
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Hi Conor,
+This prepares the pwm sub-driver to further changes of the pwm core
+outlined in the commit introducing devm_pwmchip_alloc(). There is no
+intended semantical change and the driver should behave as before.
 
-On Fri 2/9/2024 10:41 PM, Conor Dooley wrote:
-> On Thu, Feb 08, 2024 at 04:23:33PM +0530, Bhargav Raviprakash wrote:
-> > TPS65224 is a Power Management IC with 4 Buck regulators and 3 LDO
-> > regulators, it includes additional features like GPIOs, watchdog, ESMs
-> > (Error Signal Monitor), and PFSM (Pre-configurable Finite State Machine)
-> > managing the state of the device.
-> 
-> > TPS6594 and TPS65224 have significant functional overlap.
-> 
-> What does "significant functional overlap" mean? Does one implement a
-> compatible subset of the other? I assume the answer is no, given there
-> seems to be some core looking registers at different addresses.
-> 
-> Thanks,
-> Conor.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpio/gpio-mvebu.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-The intention behind “significant functional overlap” was meant to
-indicate a lot of the features between TPS6594 and TPS65224 overlap,
-while there are some features specific to TPS65224.
-There is compatibility between the PMIC register maps, I2C, PFSM,
-and other drivers even though there are some core registers at
-different addresses.
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index a13f3c18ccd4..8cfd3a89c018 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -99,7 +99,6 @@ struct mvebu_pwm {
+ 	u32			 offset;
+ 	unsigned long		 clk_rate;
+ 	struct gpio_desc	*gpiod;
+-	struct pwm_chip		 chip;
+ 	spinlock_t		 lock;
+ 	struct mvebu_gpio_chip	*mvchip;
+ 
+@@ -615,7 +614,7 @@ static const struct regmap_config mvebu_gpio_regmap_config = {
+  */
+ static struct mvebu_pwm *to_mvebu_pwm(struct pwm_chip *chip)
+ {
+-	return container_of(chip, struct mvebu_pwm, chip);
++	return pwmchip_get_drvdata(chip);
+ }
+ 
+ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+@@ -789,6 +788,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mvebu_pwm *mvpwm;
++	struct pwm_chip *chip;
+ 	void __iomem *base;
+ 	u32 offset;
+ 	u32 set;
+@@ -813,9 +813,11 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	if (IS_ERR(mvchip->clk))
+ 		return PTR_ERR(mvchip->clk);
+ 
+-	mvpwm = devm_kzalloc(dev, sizeof(struct mvebu_pwm), GFP_KERNEL);
+-	if (!mvpwm)
+-		return -ENOMEM;
++	chip = devm_pwmchip_alloc(dev, mvchip->chip.ngpio, sizeof(*mvpwm));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++	mvpwm = to_mvebu_pwm(chip);
++
+ 	mvchip->mvpwm = mvpwm;
+ 	mvpwm->mvchip = mvchip;
+ 	mvpwm->offset = offset;
+@@ -868,13 +870,11 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 		return -EINVAL;
+ 	}
+ 
+-	mvpwm->chip.dev = dev;
+-	mvpwm->chip.ops = &mvebu_pwm_ops;
+-	mvpwm->chip.npwm = mvchip->chip.ngpio;
++	chip->ops = &mvebu_pwm_ops;
+ 
+ 	spin_lock_init(&mvpwm->lock);
+ 
+-	return devm_pwmchip_add(dev, &mvpwm->chip);
++	return devm_pwmchip_add(dev, chip);
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-- 
+2.43.0
 
-Would it be more appropriate to say the 2 devices are compatible and have
-sufficient feature overlap rather than significant functional overlap?
-
-Thank you for your review and feedback!                                     
-
-Regards,
-Bhargav
