@@ -1,88 +1,147 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33506024E;
-	Wed, 14 Feb 2024 16:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6399160254;
+	Wed, 14 Feb 2024 16:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707927027; cv=none; b=PqMDdarZVFqU0FnDJMNPvFS5/TtOTCakDM5AgeM7IbB6J/e+Dw+qxDejdWDB18gcpv/Ns7mD0EkrhcGORt+qeI5yUNqItgAPFQYXd346lwJNohpRyz4UNIb+UnOHUhD68mvebDhj25Z3B1cZZWUOuT/4sKCImk8T6WmiHUaZFKs=
+	t=1707927896; cv=none; b=jNcNjwBwgIV3wun7PbgwG7EIEoADbjblqr2ZDtsjrTq7ATlEFWa116/hQ6QlwHwKcBKcjjNXM6BYGvskUrJ5ImxLo3sAA2Op9Q8J8iv2kiOPH0wEkeHjpgnmXaDFTtGD6KZJg9zdLqmaHBfVE7ZL3fdfUCTloyd6xHulyT6knDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707927027; c=relaxed/simple;
-	bh=EPePPB/lIurC0Ku/0gWbLOnLCawKF9APUfhsaLua0Kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TxvKyW8NPKoEKK/Dgrw0ezcK5Iuz8BiycavhS3sC3F6aMIp4w/eNX9/SjmpG59vBHFYamDdIbMxYYo3alYQra3HatOVFUHnEJqdosx2cWQ59S9VNmMYFgsN3+39sfrFAnedl+dcurvT4FIKjm2AHlJCTLltzcjLJnAyIEuoTU5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ae0n2h3z; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707927896; c=relaxed/simple;
+	bh=ldERVwA0tqVeaQIDHTYEi71mBmSUTsvjMzu+1URPmgY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JMkvodEkmpNJBR5kBkBhrqanBfN88y7VW6DsoCrnfnDUADDFOLb1xYGikq2bemsWgNKh9A2vsrlPFcMuptESWCgt9J0+YRTLnHeJncPMOBzdVzS5lwBHYYfmcepuhwrVNV788cQNIP6BikQRKaVXRJu1N83vV24ruBMdwjII3d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LmB7S6uF; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ae0n2h3z"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-55fcceb5f34so6733347a12.3;
-        Wed, 14 Feb 2024 08:10:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707927024; x=1708531824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EPePPB/lIurC0Ku/0gWbLOnLCawKF9APUfhsaLua0Kw=;
-        b=ae0n2h3zxyuMoEeQkaguWMagG+AvESE1PP3VdfmWi9dcu3yFgIVvZk426w7wzhqC5l
-         r7wjojZTq9vskb/r86YMT6isbnC791n/3y/SHyIkGtnwubsPWfanHWJz1oiNti6jDj9e
-         exIuMidWlqcXzP47NBy+KbzyNx0+S7OAlZTCH+FfbQUEHhE2OoGmZIJnz3jiD26HOjfB
-         zsGfyOksxw+0uTsjreZcYyh3yszjpa4xsytpYKOZ1lgRgm11qLRVI44x9TvcVPQuI+r0
-         MsLtmxshxyQwKUvUb1+2/HhVDgMZaRHqwwwM8F/Ttfp+GkDhuLJwAkQmqQrFJ5bFgzWu
-         WHTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707927024; x=1708531824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EPePPB/lIurC0Ku/0gWbLOnLCawKF9APUfhsaLua0Kw=;
-        b=HBpQxAlFgmOZSYL/DuAc5pY0PiRaRwV7PO1I62HMntgrXMx/I5+koroCXwQ0N21NW0
-         QJwnPWmdLuQu8i1SgUpkZDRCPS8EzMeHGa1zHAWpSwy5Xx6ke5HNhdmHt47HhIikO1S6
-         FL09zVBwjd6IG08lXtU42/yM+acAraBLuHuDuVWkjirkzHQ3vIGKuQt7S5aDOnUEyxtr
-         Tp9XeFQNV+fY9l+E6aLLkFbyXyN5rnJk4lbO3xwYtiOjMde2vVGnO2ehA+/6c/csWVmc
-         v+Gf4OcmBeDyAsOvvYym6eFzpI7EauD7/DBAOM7SMP5iOHfp8DHChVX5m3kL0dcuMdEq
-         hqTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt5t5dz8bTPNL6Se/C1c5QC5DYB8E1Bc8RkNtBVBBalksUEN9ki/a8VKaMGOI24hnFfiUWzzM7iu/Wybvqc8FG1tgkMGEJtfvrdRkrb5DbYopDMxaAXWjgCSTDxrP6mhQldlSZJYa31zc7wv20GILeEePePjv+I028ejSF14vqTgcWEq5qtjr/EOc=
-X-Gm-Message-State: AOJu0YwTCwpoze6xzK8N+Gn/RxbuHmxIR9oMCBcA8qifactLtxodBJfo
-	gI40F6wFb6bvsENllRWBRbIrvtKW/qHKprCGjSxAnWNwXf7fFz7SIQEZ7bZjkX6M9zDjnebRZA1
-	RzEd7BG8YtPfc7w741yF+F7OXiFE=
-X-Google-Smtp-Source: AGHT+IELyJJh2ZRqPQwjBq0JI6m6ylIDhOzbOF/1/4Ik5wJAvGSCRU/schLL2+qkq5hr3L+hrhhH/uwyjCTF0Nw/sPI=
-X-Received: by 2002:a17:906:aacd:b0:a3d:4bf8:124a with SMTP id
- kt13-20020a170906aacd00b00a3d4bf8124amr1544407ejb.35.1707927024008; Wed, 14
- Feb 2024 08:10:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LmB7S6uF"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 21F1B60018;
+	Wed, 14 Feb 2024 16:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1707927892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y8W2yOX1/lqz3cTT+5TwvqzWpGJkVlzJWrTABq4PG4k=;
+	b=LmB7S6uF1VqHaKkR2WZnKequ04ZUZd7v3E29hBaoG+ztkKOP6mdgED6tMr+jGhvfEDrMDb
+	V1BG0YfBcCz+mPopZO8DiuPsX8zMfhshWRj04C0leLIsRsD6TkhO83c1qTrwoaF2Qgqubz
+	aWfUKmljXAFDGsyTjFUufi3hiurK3n7MBsa9Fjk0Nb+JlgZdA3PURHrFHNCFIfOnLdIC9u
+	thvf5hGoM914YbPlkbK9v4DbTtsOOMqsPBqQ/UkW1ZtIxKHWFvedmI6TzWYuLaVR5afX++
+	TKzhqfb4rBfIe4CUAsyRKb69q+FsPR/uOubv7i7sjNewmoOmkYeBy+CjOVZyfg==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Wed, 14 Feb 2024 17:24:04 +0100
+Subject: [PATCH 11/23] pinctrl: nomadik: follow conditional kernel coding
+ conventions
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
- <b567ab5dd992e361eb884fa6c2cac11be9c7dde3.1707900770.git.u.kleine-koenig@pengutronix.de>
- <Zcy2GbkjX7N6buB9@smile.fi.intel.com> <asyro4yemnlljhyjxk7dxzzo3nlhqxq7hg5vk7lirx6gtknqsh@4jd42jhr6bkp>
-In-Reply-To: <asyro4yemnlljhyjxk7dxzzo3nlhqxq7hg5vk7lirx6gtknqsh@4jd42jhr6bkp>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Feb 2024 18:09:47 +0200
-Message-ID: <CAHp75VffQUet_ZiE4-e-DzjzxMoNM8L=0WQiommi=hc1Hr9sxg@mail.gmail.com>
-Subject: Re: [PATCH v6 067/164] pwm: lpss-*: Make use of devm_pwmchip_alloc() function
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Linus Walleij <linus.walleij@linaro.org>, platform-driver-x86@vger.kernel.org, 
-	Hans de Goede <hdegoede@redhat.com>, kernel@pengutronix.de, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240214-mbly-gpio-v1-11-f88c0ccf372b@bootlin.com>
+References: <20240214-mbly-gpio-v1-0-f88c0ccf372b@bootlin.com>
+In-Reply-To: <20240214-mbly-gpio-v1-0-f88c0ccf372b@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.12.4
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Wed, Feb 14, 2024 at 6:01=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Wed, Feb 14, 2024 at 02:46:17PM +0200, Andy Shevchenko wrote:
+Fix strict checkpatch warnings relative to if-else blocks and bool
+expressions. Message types addressed:
 
-> (i.e. I didn't add your Reviewed-by tag because I didn't capitalize
-> pwm).
+   CHECK: Comparison to NULL could be written "!nmk_cfg_params[index].choice"
+   CHECK: Unbalanced braces around else statement
+   CHECK: Using comparison to false is error prone
+   CHECK: Using comparison to true is error prone
+   CHECK: braces {} should be used on all arms of this statement
 
-Are you expecting me to bikeshed?! :-)
-Please, add it there.
+Before: 0 errors, 1 warnings, 16 checks.
+After:  0 errors, 1 warnings,  7 checks.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 83e7868bc1d7..8099dd947701 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -377,7 +377,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
+ 	 */
+ 	if (!alt_num) {
+ 		for (i = 0 ; i < PRCM_IDX_GPIOCR_ALTC_MAX ; i++) {
+-			if (pin_desc->altcx[i].used == true) {
++			if (pin_desc->altcx[i].used) {
+ 				reg = gpiocr_regs[pin_desc->altcx[i].reg_index];
+ 				bit = pin_desc->altcx[i].control_bit;
+ 				if (readl(npct->prcm_base + reg) & BIT(bit)) {
+@@ -392,7 +392,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
+ 	}
+ 
+ 	alt_index = alt_num - 1;
+-	if (pin_desc->altcx[alt_index].used == false) {
++	if (!pin_desc->altcx[alt_index].used) {
+ 		dev_warn(npct->dev,
+ 			 "PRCM GPIOCR: pin %i: alternate-C%i does not exist\n",
+ 			 offset, alt_num);
+@@ -406,7 +406,7 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
+ 	for (i = 0 ; i < PRCM_IDX_GPIOCR_ALTC_MAX ; i++) {
+ 		if (i == alt_index)
+ 			continue;
+-		if (pin_desc->altcx[i].used == true) {
++		if (pin_desc->altcx[i].used) {
+ 			reg = gpiocr_regs[pin_desc->altcx[i].reg_index];
+ 			bit = pin_desc->altcx[i].control_bit;
+ 			if (readl(npct->prcm_base + reg) & BIT(bit)) {
+@@ -494,7 +494,7 @@ int __maybe_unused nmk_prcm_gpiocr_get_mode(struct pinctrl_dev *pctldev, int gpi
+ 	pin_desc = npct->soc->altcx_pins + i;
+ 	gpiocr_regs = npct->soc->prcm_gpiocr_registers;
+ 	for (i = 0; i < PRCM_IDX_GPIOCR_ALTC_MAX; i++) {
+-		if (pin_desc->altcx[i].used == true) {
++		if (pin_desc->altcx[i].used) {
+ 			reg = gpiocr_regs[pin_desc->altcx[i].reg_index];
+ 			bit = pin_desc->altcx[i].control_bit;
+ 			if (readl(npct->prcm_base + reg) & BIT(bit))
+@@ -676,9 +676,9 @@ static const struct nmk_cfg_param nmk_cfg_params[] = {
+ 
+ static int nmk_dt_pin_config(int index, int val, unsigned long *config)
+ {
+-	if (nmk_cfg_params[index].choice == NULL)
++	if (!nmk_cfg_params[index].choice) {
+ 		*config = nmk_cfg_params[index].config;
+-	else {
++	} else {
+ 		/* test if out of range */
+ 		if  (val < nmk_cfg_params[index].size) {
+ 			*config = nmk_cfg_params[index].config |
+@@ -1102,9 +1102,9 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 		if (gpiomode)
+ 			/* No glitch when going to GPIO mode */
+ 			__nmk_gpio_set_mode(nmk_chip, bit, NMK_GPIO_ALT_GPIO);
+-		if (output)
++		if (output) {
+ 			__nmk_gpio_make_output(nmk_chip, bit, val);
+-		else {
++		} else {
+ 			__nmk_gpio_make_input(nmk_chip, bit);
+ 			__nmk_gpio_set_pull(nmk_chip, bit, pull);
+ 		}
+
+-- 
+2.43.1
+
