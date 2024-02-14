@@ -1,108 +1,88 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa2.ltts.com (unknown [14.140.155.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6805812E72
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CA312B8A;
+	Wed, 14 Feb 2024 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.140.155.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707902978; cv=none; b=F4TKnSDI+7IoCwnA4eXGaCIJiJIhtaeVfYbaXKV/ASuQjuMGzL26RNedJBKPO8d/KLQyKxdB+IDG9KtB/3brc3uRw8duDv/zUew3w2Fzgg+nVBZEP8OrAkbX7L1Zszzlp7McFYIa9rm/h7M4fl9aKflkMsNPIFl4411yzmk22Zw=
+	t=1707903085; cv=none; b=KkApxMwLHzwSXyZ4RD4dE6BuZCLYQxTQ6d/87SSLssmIHWBfzsAEkFYVJBA7BjqzGjc9JJmiBtkqNd8fkaa3pmBhN3uNlC+XnePITp+VgGz6v2Eyyn21Xk5BDsLhNzUDtgv8fsyolrFHhqzxPv/PyB6Q14bSc2s0paRsbrdQC2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707902978; c=relaxed/simple;
-	bh=QGJGbBcSxuCx9Avf+9BT92M2uOkRt65tIyJgEDued6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrKWniGow+esLwLZZ1ugkxStWpkLmcOuiFtDQrHyXeS+FekUJp54/hZqRiBcVBvFPDKZqQ5bCdse4ZZD+bFJQcpJH4yW3HwyC0lFiA2zn02xmRa20pG8A/dHGirQQGMC1SIrm+LhWElNDk86Pf9GU5495vadb3RxO5D+/Tdnuf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=T0EctImZ; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="T0EctImZ"
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4b7fc7642fcso1754863e0c.0
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 01:29:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1707902975; x=1708507775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4NTlOSe5fjimviBpJdsalrhomrdPQE7oNI7Qj6Alw1M=;
-        b=T0EctImZYwp0q3bNcDuI/KHQXguCPWhQPhBEeNS/Y9BGb6Gp+aQCIMaE6Pj/JADY50
-         v4xxAiydJaGS20EQkjXt4c6NYdOEVMDMY+0AACTnbSgiCke7pbhmVz74oHowlMaqWVIq
-         2T+CWhG9nTDTQhw59tB7YBTOGSv0pGmw52NgVWVWzyA6TP4mERn5OUeo20krThvmmo1h
-         cP0/iN4SR+6a4b99EC7SDvsPE1eE/tE/oL/EcFpF/eIDbY6U3GhIt9+5EVO5X8B2cHLp
-         Y4WEH67iirem+BIucQ7fru3vIkEQ51Ghm1I1n/odNCJvWAfopng72fJyXMUnauxhJ4ro
-         zTlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707902975; x=1708507775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4NTlOSe5fjimviBpJdsalrhomrdPQE7oNI7Qj6Alw1M=;
-        b=W+9Trlw8knzDsd5xZedM+Pzg1zei7iufraExowe55+Y4hT1wS8vSIwpHbFj+Ogsl0s
-         mtXU0bL/EmGWePOwB1xj01R8eVhKwgB0PAyT5xbW5A0tWrkG7f8isi7KCZKo+cjxIBjN
-         I9Aj/LjfqrIEfs7vMZgZQncF6I0DiTSXfW/TX1LxAfSn0rm4m5hj1V19qH9cMt7JbDuL
-         r9120nvMWgHJS2ipBUgpSPScVFZheREFXaaxqJvfeAF9uT9VLcZcnsM/NLPwhWfbWh5G
-         TuJeaLdh1eKt+HJAOIIcN/quNL+2vIgqi4QtDoUcZqsmbTyeAlcw+KTFfZwtE40Ywdeg
-         4ang==
-X-Forwarded-Encrypted: i=1; AJvYcCXwoY5TlaMyo4CZosBJEmYepr+xY+6Z5omIkLxpr52m/JO4WhkiIYhMP85t5c/jIGDYpvWZ/Jbadm8R9NywAyUgpn1EL3kTG6jdWw==
-X-Gm-Message-State: AOJu0YxKWhpwNufQuYF9i3FTzzBbgM+t0gboy8WZyJTJIE/+AOVNue96
-	WagealgYWUdO0LgWwtdJMi+eDSyjk2JWbyHTufMx1A232Q9C5JmlhWAqxAfosbpNaH9fAD5pNqM
-	VCvnUpssBD9Tm4yYY13vsJfFZqSEXN9kH6ySoAQ==
-X-Google-Smtp-Source: AGHT+IH2j8d++4e+u1mW346Mzu8bIt7wE9r3caRvalw9/NdZqNB/8dU8pyZv7IJ5KcYwAbcnPABW8sixlqBXfX1Jc1I=
-X-Received: by 2002:a1f:c787:0:b0:4c0:292d:193d with SMTP id
- x129-20020a1fc787000000b004c0292d193dmr2079166vkf.12.1707902975308; Wed, 14
- Feb 2024 01:29:35 -0800 (PST)
+	s=arc-20240116; t=1707903085; c=relaxed/simple;
+	bh=oT34Qaa1f3ZWrCvgXRGBt6WIgG0rg2dW46uvJiuy3rc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L1QnWn7XIYEqq+5/tY8CIm980aRNLXv1d4oQ0IMyUFrvAiSbYE/LsfDgTLryX+C2bTTiWOQciCZW8sfjdw3NNA6vjeA47XmiV0QJnlIp7ms5Z8BTR/Ip7ZcAUPfKuW6ZDgHiO5eXKLa3L2H9xZQmi6Gqhzfcshl16KzNpt6sz4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ltts.com; arc=none smtp.client-ip=14.140.155.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltts.com
+IronPort-SDR: pwvaSPp4sCHdhnLsgMihVnqqppYhStIQvkknA9BJaz2JXyd4SdwTyxaJGpVdf8dfEG1+IQvTlQ
+ B5zxD+sm+l1A==
+Received: from unknown (HELO localhost.localdomain) ([192.168.34.55])
+  by esa2.ltts.com with ESMTP; 14 Feb 2024 15:01:13 +0530
+From: Bhargav Raviprakash <bhargav.r@ltts.com>
+To: conor@kernel.org
+Cc: arnd@arndb.de,
+	bhargav.r@ltts.com,
+	broonie@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jpanis@baylibre.com,
+	kristo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	lee@kernel.org,
+	lgirdwood@gmail.com,
+	linus.walleij@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	m.nirmaladevi@ltts.com,
+	nm@ti.com,
+	robh+dt@kernel.org,
+	vigneshr@ti.com
+Subject: Re: [RESEND PATCH v1 03/13] dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
+Date: Wed, 14 Feb 2024 15:01:06 +0530
+Message-Id: <20240214093106.86483-1-bhargav.r@ltts.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240209-blitz-fidgety-78469aa80d6d@spud>
+References: <20240209-blitz-fidgety-78469aa80d6d@spud>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240212093420.381575-1-warthog618@gmail.com>
-In-Reply-To: <20240212093420.381575-1-warthog618@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 14 Feb 2024 10:29:24 +0100
-Message-ID: <CAMRc=MfwCQYuouRfU7i2C-YKi64_pTCRCs7jj6evBefj7=Pbog@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: gpio: clarify sysfs line values are logical
-To: Kent Gibson <warthog618@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linus.walleij@linaro.org, andy@kernel.org, 
-	corbet@lwn.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 12, 2024 at 10:34=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
- wrote:
->
-> Clarify that line values are logical, not physical, by replacing high/low
-> terminology with active/inactive.
->
-> Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> ---
->  Documentation/userspace-api/gpio/sysfs.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/userspace-api/gpio/sysfs.rst b/Documentation/u=
-serspace-api/gpio/sysfs.rst
-> index e12037a0f2b4..116921048b18 100644
-> --- a/Documentation/userspace-api/gpio/sysfs.rst
-> +++ b/Documentation/userspace-api/gpio/sysfs.rst
-> @@ -87,9 +87,9 @@ and have the following read/write attributes:
->                 allow userspace to reconfigure this GPIO's direction.
->
->         "value" ...
-> -               reads as either 0 (low) or 1 (high). If the GPIO
-> +               reads as either 0 (inactive) or 1 (active). If the GPIO
->                 is configured as an output, this value may be written;
-> -               any nonzero value is treated as high.
-> +               any nonzero value is treated as active.
->
->                 If the pin can be configured as interrupt-generating inte=
-rrupt
->                 and if it has been configured to generate interrupts (see=
- the
-> --
-> 2.39.2
->
+Hi Conor,
 
-Applied, thanks!
+On Fri 2/9/2024 10:41 PM, Conor Dooley wrote:
+> On Thu, Feb 08, 2024 at 04:23:33PM +0530, Bhargav Raviprakash wrote:
+> > TPS65224 is a Power Management IC with 4 Buck regulators and 3 LDO
+> > regulators, it includes additional features like GPIOs, watchdog, ESMs
+> > (Error Signal Monitor), and PFSM (Pre-configurable Finite State Machine)
+> > managing the state of the device.
+> 
+> > TPS6594 and TPS65224 have significant functional overlap.
+> 
+> What does "significant functional overlap" mean? Does one implement a
+> compatible subset of the other? I assume the answer is no, given there
+> seems to be some core looking registers at different addresses.
+> 
+> Thanks,
+> Conor.
 
-Bart
+The intention behind “significant functional overlap” was meant to
+indicate a lot of the features between TPS6594 and TPS65224 overlap,
+while there are some features specific to TPS65224.
+There is compatibility between the PMIC register maps, I2C, PFSM,
+and other drivers even though there are some core registers at
+different addresses.
+
+Would it be more appropriate to say the 2 devices are compatible and have
+sufficient feature overlap rather than significant functional overlap?
+
+Thank you for your review and feedback!                                     
+
+Regards,
+Bhargav
