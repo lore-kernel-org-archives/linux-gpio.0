@@ -1,306 +1,317 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC5168BC
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF62101E3
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707904433; cv=none; b=Z7eDr1z4luI6G/UZG1mqJAFRok/VKwRD0qKJAPbg95UboSmzAhkXwdU90u8Ni3senga7mn5ZIqK0KS7cJarpLO//sW1ZXQtJpESTDgNb9kqWRek26Jhvk25mqjA6y4ZoDCpYfr4NwAheHjSeiBjv7k1Zf9NvTB0RvKP2k/GTwfE=
+	t=1707904490; cv=none; b=ge/n693vKPmjuKR3r3wW/7xUIAg1Ll36iMG+1Hqk+Mp755nZ1qZbnppACsp/P1AqQje2tvYDgO/OV4WOdXA4i6UT+lc7HAaFw+F8q2yAKBXdn4OfIwb1PDE2Mojb1aimFGnipU+rMxeU3Uy5aTn5YtCo+sAMJbngwZJRJDQ7ev0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707904433; c=relaxed/simple;
-	bh=koAN/+/23sPZAVIjNYgBDfSOCZNuNAYktJbEIstyjSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sdt8h04dlYpWJRzyK7Cy38d/VqNfLPwslkLPsR0bG4Sj6cRQjG6CyPeH4Vw1e/Do1PEAvXB0H1e+TgI4toBNxWNCtChqDfW2GEiM99ZFIPQ9wcNdeTpkHpZa2eVMgp6rAeu65LezL5zmbT28mKndQE87AU2FRqXvcAjmT2KYDGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBeq-0004OA-3m; Wed, 14 Feb 2024 10:34:24 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBek-000f6Z-By; Wed, 14 Feb 2024 10:34:18 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBek-004Xzr-0a;
-	Wed, 14 Feb 2024 10:34:18 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	James Clark <james.clark@arm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-pwm@vger.kernel.org,
-	Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Benson Leung <bleung@chromium.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	=?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hammer Hsieh <hammerh0314@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Sean Anderson <sean.anderson@seco.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Anjelique Melendez <quic_amelende@quicinc.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Kees Cook <keescook@chromium.org>,
-	Rob Herring <robh@kernel.org>
-Cc: linux-doc@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH v6 003/164] pwm: Provide pwmchip_alloc() function and a devm variant of it
-Date: Wed, 14 Feb 2024 10:30:50 +0100
-Message-ID:  <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+	s=arc-20240116; t=1707904490; c=relaxed/simple;
+	bh=AW3iTpdeQd5LrcY5EEVfeccxQicHGDM6fp70Qht42ow=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=OmfvMzLUv02k3voQU/Axk/RtjLa7A6SDWQFPh+uduRhS/Dna7C9fQ5MKIWmhFho1qYlGkqzobf7kobXaOaG6qtRXUImBD9WGDT7rgC3yPoz4qtFAyP7fT3OMejNH6YCT8mT+C+RRE7tR97x7qnOwPP9s8Z0wjSh6ViZ0eOiAjdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L/Ng6AAy; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L/Ng6AAy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707904488; x=1739440488;
+  h=date:from:to:cc:subject:message-id;
+  bh=AW3iTpdeQd5LrcY5EEVfeccxQicHGDM6fp70Qht42ow=;
+  b=L/Ng6AAytpUURfe2vLUgFCLfSi5IO0DSIFXUIaF1NQ8ftqgou2amJHyi
+   BR/phr1uldywfm2mJ+xwoEkgb8hhY/bbeSDQBmr+Ml8CPsBBGor7BjK36
+   E7ino2C2410V4b9y3G1P3Rjb7hrybVr1HgxNcxbcE/GeGIoq0ufDTSXlf
+   O6CntP2xLXPwor2+qzALyucjuhPkM7tho6rAk7nkVpCp8MllPOcDTS6v9
+   SyYXxZVWqNSHOIwG+2ZxhM0YA98AjMoH7A6cTCncVh8b7KmtSxoIPJexA
+   ww0jlFqz4x4bZLmR/tICDnSvG2ZkWzfv63kOV7tv5VP+o1Kl/hKDniSjy
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="1849796"
+X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
+   d="scan'208";a="1849796"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2024 01:54:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
+   d="scan'208";a="7750562"
+Received: from lkp-server01.sh.intel.com (HELO 01f0647817ea) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 14 Feb 2024 01:54:45 -0800
+Received: from kbuild by 01f0647817ea with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1raByV-0008eU-1n;
+	Wed, 14 Feb 2024 09:54:43 +0000
+Date: Wed, 14 Feb 2024 17:54:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ cb4443f26b43efa54494b8de8a50457febb06940
+Message-ID: <202402141718.espmTSLg-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6032; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=koAN/+/23sPZAVIjNYgBDfSOCZNuNAYktJbEIstyjSk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlzIhOy3rMjR1GdjpQaPyoW0nJ56JzUO/rQmlQs ZBM0ZtEf82JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZcyITgAKCRCPgPtYfRL+ TicEB/0dPx8EojmTD1h+4X2160QdFmhEtr9DkNcgvD4MXbJwi2AR0WTiisK1rsmV+6tCkIK7tJ3 ia8xMZ3BnvofoSfLSnXkboz+RdVSIEA7BqEblHXS94KRpF0kJSfkChuZTlsOibS5ccdLl9keCDp Ln92glGKIspJhlUYHC5XJS/5WgVuJIs2zBZ0mj9ssy1fRc7GPSOATaja3kUzueYK4sFeE9sRycR zgSfTLZglcFmMVV6/V8gfK4IdkOlO88EBryyP7oNNXf0XhDmqRiBNvGBpkzOgQFt0cSSObTgx1d uKdMfoMhlp4iXIRqjo0TrOM/JN49b64qgWPy7mfDaS9UVtMr
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-This function allocates a struct pwm_chip and driver data. Compared to
-the status quo the split into pwm_chip and driver data is new, otherwise
-it doesn't change anything relevant (yet).
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: cb4443f26b43efa54494b8de8a50457febb06940  pinctrl: stm32: fix PM support for stm32mp257
 
-The intention is that after all drivers are switched to use this
-allocation function, its possible to add a struct device to struct
-pwm_chip to properly track the latter's lifetime without touching all
-drivers again. Proper lifetime tracking is a necessary precondition to
-introduce character device support for PWMs (that implements atomic
-setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
-userspace support).
+elapsed time: 1458m
 
-The new function pwmchip_priv() (obviously?) only works for chips
-allocated with pwmchip_alloc().
+configs tested: 244
+configs skipped: 3
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- .../driver-api/driver-model/devres.rst        |  1 +
- Documentation/driver-api/pwm.rst              | 11 ++--
- drivers/pwm/core.c                            | 58 +++++++++++++++++++
- include/linux/pwm.h                           | 22 +++++++
- 4 files changed, 87 insertions(+), 5 deletions(-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index c5f99d834ec5..e4df72c408d2 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -420,6 +420,7 @@ POWER
-   devm_reboot_mode_unregister()
- 
- PWM
-+  devm_pwmchip_alloc()
-   devm_pwmchip_add()
-   devm_pwm_get()
-   devm_fwnode_pwm_get()
-diff --git a/Documentation/driver-api/pwm.rst b/Documentation/driver-api/pwm.rst
-index 3c28ccc4b611..b41b1c56477f 100644
---- a/Documentation/driver-api/pwm.rst
-+++ b/Documentation/driver-api/pwm.rst
-@@ -143,11 +143,12 @@ to implement the pwm_*() functions itself. This means that it's impossible
- to have multiple PWM drivers in the system. For this reason it's mandatory
- for new drivers to use the generic PWM framework.
- 
--A new PWM controller/chip can be added using pwmchip_add() and removed
--again with pwmchip_remove(). pwmchip_add() takes a filled in struct
--pwm_chip as argument which provides a description of the PWM chip, the
--number of PWM devices provided by the chip and the chip-specific
--implementation of the supported PWM operations to the framework.
-+A new PWM controller/chip can be allocated using pwmchip_alloc(), then
-+registered using pwmchip_add() and removed again with pwmchip_remove(). To undo
-+pwmchip_alloc() use pwmchip_put(). pwmchip_add() takes a filled in struct
-+pwm_chip as argument which provides a description of the PWM chip, the number
-+of PWM devices provided by the chip and the chip-specific implementation of the
-+supported PWM operations to the framework.
- 
- When implementing polarity support in a PWM driver, make sure to respect the
- signal conventions in the PWM framework. By definition, normal polarity
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 830a697826af..9fc6f4fa71d6 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -454,6 +454,64 @@ of_pwm_single_xlate(struct pwm_chip *chip, const struct of_phandle_args *args)
- }
- EXPORT_SYMBOL_GPL(of_pwm_single_xlate);
- 
-+#define PWMCHIP_ALIGN ARCH_DMA_MINALIGN
-+
-+static void *pwmchip_priv(struct pwm_chip *chip)
-+{
-+	return (void *)chip + ALIGN(sizeof(*chip), PWMCHIP_ALIGN);
-+}
-+
-+/* This is the counterpart to pwmchip_alloc */
-+void pwmchip_put(struct pwm_chip *chip)
-+{
-+	kfree(chip);
-+}
-+EXPORT_SYMBOL_GPL(pwmchip_put);
-+
-+struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv)
-+{
-+	struct pwm_chip *chip;
-+	size_t alloc_size;
-+
-+	alloc_size = size_add(ALIGN(sizeof(*chip), PWMCHIP_ALIGN), sizeof_priv);
-+
-+	chip = kzalloc(alloc_size, GFP_KERNEL);
-+	if (!chip)
-+		return ERR_PTR(-ENOMEM);
-+
-+	chip->dev = parent;
-+	chip->npwm = npwm;
-+
-+	pwmchip_set_drvdata(chip, pwmchip_priv(chip));
-+
-+	return chip;
-+}
-+EXPORT_SYMBOL_GPL(pwmchip_alloc);
-+
-+static void devm_pwmchip_put(void *data)
-+{
-+	struct pwm_chip *chip = data;
-+
-+	pwmchip_put(chip);
-+}
-+
-+struct pwm_chip *devm_pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv)
-+{
-+	struct pwm_chip *chip;
-+	int ret;
-+
-+	chip = pwmchip_alloc(parent, npwm, sizeof_priv);
-+	if (IS_ERR(chip))
-+		return chip;
-+
-+	ret = devm_add_action_or_reset(parent, devm_pwmchip_put, chip);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return chip;
-+}
-+EXPORT_SYMBOL_GPL(devm_pwmchip_alloc);
-+
- static void of_pwmchip_add(struct pwm_chip *chip)
- {
- 	if (!pwmchip_parent(chip) || !pwmchip_parent(chip)->of_node)
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 29a7d9140f77..4a6568dfdf3f 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -403,6 +403,10 @@ static inline bool pwm_might_sleep(struct pwm_device *pwm)
- int pwm_capture(struct pwm_device *pwm, struct pwm_capture *result,
- 		unsigned long timeout);
- 
-+void pwmchip_put(struct pwm_chip *chip);
-+struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv);
-+struct pwm_chip *devm_pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv);
-+
- int __pwmchip_add(struct pwm_chip *chip, struct module *owner);
- #define pwmchip_add(chip) __pwmchip_add(chip, THIS_MODULE)
- void pwmchip_remove(struct pwm_chip *chip);
-@@ -475,6 +479,24 @@ static inline int pwm_capture(struct pwm_device *pwm,
- 	return -EINVAL;
- }
- 
-+static inline void pwmchip_put(struct pwm_chip *chip)
-+{
-+}
-+
-+static inline struct pwm_chip *pwmchip_alloc(struct device *parent,
-+					     unsigned int npwm,
-+					     size_t sizeof_priv)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static inline struct pwm_chip *devm_pwmchip_alloc(struct device *parent,
-+						  unsigned int npwm,
-+						  size_t sizeof_priv)
-+{
-+	return pwmchip_alloc(parent, npwm, sizeof_priv);
-+}
-+
- static inline int pwmchip_add(struct pwm_chip *chip)
- {
- 	return -EINVAL;
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                     nsimosci_hs_defconfig   gcc  
+arc                   randconfig-001-20240213   gcc  
+arc                   randconfig-001-20240214   gcc  
+arc                   randconfig-002-20240213   gcc  
+arc                   randconfig-002-20240214   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                        keystone_defconfig   gcc  
+arm                   randconfig-001-20240213   gcc  
+arm                   randconfig-001-20240214   clang
+arm                   randconfig-002-20240213   gcc  
+arm                   randconfig-002-20240214   gcc  
+arm                   randconfig-003-20240213   gcc  
+arm                   randconfig-003-20240214   clang
+arm                   randconfig-004-20240213   clang
+arm                   randconfig-004-20240214   clang
+arm                    vt8500_v6_v7_defconfig   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240213   gcc  
+arm64                 randconfig-001-20240214   clang
+arm64                 randconfig-002-20240213   gcc  
+arm64                 randconfig-002-20240214   clang
+arm64                 randconfig-003-20240213   gcc  
+arm64                 randconfig-003-20240214   gcc  
+arm64                 randconfig-004-20240213   gcc  
+arm64                 randconfig-004-20240214   clang
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240213   gcc  
+csky                  randconfig-001-20240214   gcc  
+csky                  randconfig-002-20240213   gcc  
+csky                  randconfig-002-20240214   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+hexagon               randconfig-001-20240213   clang
+hexagon               randconfig-001-20240214   clang
+hexagon               randconfig-002-20240213   clang
+hexagon               randconfig-002-20240214   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240213   clang
+i386         buildonly-randconfig-001-20240214   clang
+i386         buildonly-randconfig-002-20240213   gcc  
+i386         buildonly-randconfig-002-20240214   clang
+i386         buildonly-randconfig-003-20240213   gcc  
+i386         buildonly-randconfig-003-20240214   clang
+i386         buildonly-randconfig-004-20240213   clang
+i386         buildonly-randconfig-005-20240213   gcc  
+i386         buildonly-randconfig-006-20240213   clang
+i386         buildonly-randconfig-006-20240214   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240213   clang
+i386                  randconfig-001-20240214   clang
+i386                  randconfig-002-20240213   gcc  
+i386                  randconfig-002-20240214   clang
+i386                  randconfig-003-20240213   gcc  
+i386                  randconfig-003-20240214   clang
+i386                  randconfig-004-20240213   clang
+i386                  randconfig-005-20240213   gcc  
+i386                  randconfig-005-20240214   clang
+i386                  randconfig-006-20240213   gcc  
+i386                  randconfig-011-20240213   clang
+i386                  randconfig-011-20240214   clang
+i386                  randconfig-012-20240213   gcc  
+i386                  randconfig-013-20240213   gcc  
+i386                  randconfig-014-20240213   gcc  
+i386                  randconfig-015-20240213   gcc  
+i386                  randconfig-015-20240214   clang
+i386                  randconfig-016-20240213   gcc  
+i386                  randconfig-016-20240214   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240213   gcc  
+loongarch             randconfig-001-20240214   gcc  
+loongarch             randconfig-002-20240213   gcc  
+loongarch             randconfig-002-20240214   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                       m5275evb_defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+microblaze                      mmu_defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                          ath79_defconfig   gcc  
+mips                         bigsur_defconfig   gcc  
+mips                  decstation_64_defconfig   gcc  
+mips                      pic32mzda_defconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240213   gcc  
+nios2                 randconfig-001-20240214   gcc  
+nios2                 randconfig-002-20240213   gcc  
+nios2                 randconfig-002-20240214   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240213   gcc  
+parisc                randconfig-001-20240214   gcc  
+parisc                randconfig-002-20240213   gcc  
+parisc                randconfig-002-20240214   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                        icon_defconfig   gcc  
+powerpc                      ppc6xx_defconfig   gcc  
+powerpc               randconfig-001-20240213   clang
+powerpc               randconfig-001-20240214   clang
+powerpc               randconfig-002-20240213   gcc  
+powerpc               randconfig-002-20240214   clang
+powerpc               randconfig-003-20240213   gcc  
+powerpc               randconfig-003-20240214   clang
+powerpc                     tqm8560_defconfig   gcc  
+powerpc                      walnut_defconfig   gcc  
+powerpc64             randconfig-001-20240213   gcc  
+powerpc64             randconfig-001-20240214   clang
+powerpc64             randconfig-002-20240213   gcc  
+powerpc64             randconfig-002-20240214   clang
+powerpc64             randconfig-003-20240213   clang
+powerpc64             randconfig-003-20240214   clang
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+riscv                 randconfig-001-20240213   gcc  
+riscv                 randconfig-001-20240214   clang
+riscv                 randconfig-002-20240213   gcc  
+riscv                 randconfig-002-20240214   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                          debug_defconfig   gcc  
+s390                                defconfig   clang
+s390                  randconfig-001-20240213   gcc  
+s390                  randconfig-001-20240214   clang
+s390                  randconfig-002-20240213   clang
+s390                  randconfig-002-20240214   gcc  
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                        dreamcast_defconfig   gcc  
+sh                ecovec24-romimage_defconfig   gcc  
+sh                         ecovec24_defconfig   gcc  
+sh                    randconfig-001-20240213   gcc  
+sh                    randconfig-001-20240214   gcc  
+sh                    randconfig-002-20240213   gcc  
+sh                    randconfig-002-20240214   gcc  
+sh                          rsk7201_defconfig   gcc  
+sh                          rsk7203_defconfig   gcc  
+sh                          sdk7780_defconfig   gcc  
+sh                           se7705_defconfig   gcc  
+sh                           se7722_defconfig   gcc  
+sh                           se7724_defconfig   gcc  
+sh                            shmin_defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                       sparc64_defconfig   gcc  
+sparc64                          alldefconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240213   gcc  
+sparc64               randconfig-001-20240214   gcc  
+sparc64               randconfig-002-20240213   gcc  
+sparc64               randconfig-002-20240214   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                    randconfig-001-20240213   clang
+um                    randconfig-001-20240214   clang
+um                    randconfig-002-20240213   gcc  
+um                    randconfig-002-20240214   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240214   gcc  
+x86_64       buildonly-randconfig-002-20240214   clang
+x86_64       buildonly-randconfig-003-20240214   gcc  
+x86_64       buildonly-randconfig-004-20240214   gcc  
+x86_64       buildonly-randconfig-005-20240214   gcc  
+x86_64       buildonly-randconfig-006-20240214   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240214   clang
+x86_64                randconfig-002-20240214   gcc  
+x86_64                randconfig-003-20240214   clang
+x86_64                randconfig-004-20240214   gcc  
+x86_64                randconfig-005-20240214   clang
+x86_64                randconfig-006-20240214   clang
+x86_64                randconfig-011-20240214   clang
+x86_64                randconfig-012-20240214   clang
+x86_64                randconfig-013-20240214   gcc  
+x86_64                randconfig-014-20240214   gcc  
+x86_64                randconfig-015-20240214   clang
+x86_64                randconfig-016-20240214   clang
+x86_64                randconfig-071-20240214   gcc  
+x86_64                randconfig-072-20240214   clang
+x86_64                randconfig-073-20240214   gcc  
+x86_64                randconfig-074-20240214   clang
+x86_64                randconfig-075-20240214   clang
+x86_64                randconfig-076-20240214   gcc  
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                            allnoconfig   gcc  
+xtensa                           allyesconfig   gcc  
+xtensa                randconfig-001-20240213   gcc  
+xtensa                randconfig-001-20240214   gcc  
+xtensa                randconfig-002-20240213   gcc  
+xtensa                randconfig-002-20240214   gcc  
+xtensa                         virt_defconfig   gcc  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
