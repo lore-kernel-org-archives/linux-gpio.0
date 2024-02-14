@@ -1,246 +1,84 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703811B818
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5013612E5C
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707903291; cv=none; b=qczuKYeVEnY3naTvFPMyqxl7jTU/5zsj6Pyqkw81FHvzZKtV5AfdyZkYZ5/OulpdLrfdTsVAVIv/pvI0nE4+pTwMxav9XeDfoChuL5OoFdOicqNWvnJWFRy69qY2MBm7talzw0WH08BOm8CFKsVxnN+RIJgS601ka9LFSnmtf5k=
+	t=1707903353; cv=none; b=Rtodx9m3GJwveT3I4pYFI8zi44h3speWpTWVjnxyc3cmuVR3B6JRVsAS6CVKNw66wDA+OIBFvYfnfNiXfhFUGmK/JoB/PkrotdFiSLW9l3eCaxUyZQBGaiEIoKb54yyeis+tPanFk/4PegOhEAZScYRrhI1wouOC7gi/Jn0VIAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707903291; c=relaxed/simple;
-	bh=gzmpzVfqggGNfr+S+rO98BpLG4fSThwCnRBApLleERQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BN2KtYOE8dpBgUWg5NKpF8rhX6GcVRZ7zYBsGcv/zfuqXn/Sgpsl+UQnemwTCRrwxFngWP9EfXty1drDDLNc5MVCnXsYAF/p1I+Wg4HjZc77y9RLNwbzutVkkczeYHFl5Pi1CeB3umg8AKcgTQ1YpvKXyKP6Lo8qASymJNAWTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBex-00051u-Iz; Wed, 14 Feb 2024 10:34:31 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBeu-000fCu-A1; Wed, 14 Feb 2024 10:34:28 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raBeu-004Y4J-0h;
-	Wed, 14 Feb 2024 10:34:28 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pwm@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org,
-	kernel@pengutronix.de,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v6 067/164] pwm: lpss-*: Make use of devm_pwmchip_alloc() function
-Date: Wed, 14 Feb 2024 10:31:54 +0100
-Message-ID:  <b567ab5dd992e361eb884fa6c2cac11be9c7dde3.1707900770.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+	s=arc-20240116; t=1707903353; c=relaxed/simple;
+	bh=FxGJAH83UTrQJFawuwOkZhQNDaql6s20rG59BXEIoT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f85JQPvESLcpZIRBwIyD+1KahGeuH/Vp/omkf0ujETTXZy0s04UDg+iUNAfG6dWYMJBkYmvouj6l03ALwHrFO0BQDgOfbywIuRCXmHE9jx4CD6dRHeQe4+UCCtGrkDaIlbaVtiIJ+g7vwXRmjL8+GNQCw4SAflaQMHqoO7sarf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k9eS6af2; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k9eS6af2"
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-7d698a8d93cso866791241.3
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Feb 2024 01:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1707903349; x=1708508149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FxGJAH83UTrQJFawuwOkZhQNDaql6s20rG59BXEIoT0=;
+        b=k9eS6af2Le1UDrnWN4cY+JAmQ33DtPRzd55GR+pIeNMrDCv8z7vHyfwaqnTqbIc0Xf
+         wO6pDEbGuortCX1plRHEb/tnavCZlIa2wCtfa1zkS731DYHWpSnC/fkcQbsq3vrQoWYI
+         zCnh16Nsf7idk0olqb1AVOJ9iTv0imxvD3+no9uByAT7aYqdkMlvfaaCOvOuVLJhSc4x
+         YTqhJ0jCz24Ry5SBC0N/LPxtgx4ZrSv/WrSmu48up0CO34tsqavzN7YQPQrbQmlP3If+
+         j4QynBK4lm2GY0qXYou6WH/VW0qkUoep9rZXQMOgcQ2jFGz7BkXIiayiTj16wqAnfOyW
+         +nsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707903349; x=1708508149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FxGJAH83UTrQJFawuwOkZhQNDaql6s20rG59BXEIoT0=;
+        b=w9dKoUBVhdfCl0fwJbsz+kd425160lQ2UR8T6uMgZw6RpM+LdDR35fIFc1h+Gm3peo
+         SEsoO2v9RDfdFXRqUEbX4iofUh51XVzfxJQC9HolgjL2Nj1Hapboq3BT7hHfkGSTF7bD
+         plGmZpxoCy41skMvhZ1LjEwavWmi/HdVI5El+zWipvfQbhKhstJZkePcRYonEOZK0LF8
+         ZDBHCNG+zoOcp9TWPlWnKTrIKZ0M4b5GWjtzklijkrbaV96VpKnQb1EBMhL5MrD77x5v
+         pZOnd0F3anO/yARbaLjP+Do2myiZn65IwuVkxFMTBVjNqvT4ZVq8R2jdZRw8kfA1ISe2
+         S/tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ48mTDrAwLKO49GgbemMyN8zAQz/LkLhvJLa/k0E5TaU4ME2DMcCXLUjT4mSMkZZNxWQbbcNsPAGbW/hSZ50rY4e3GxORul2NeA==
+X-Gm-Message-State: AOJu0YyHLQV6L0xKDdPBrg3BfOlysZtnyvhXlKuOXMj7Ucc3ChB8kzdn
+	e6aSxMl+tOsfDxno+nnK6ThFAIOliuc5vPdiRJ1TOVYhJR79/oJQxXi8OdFcwhJnMk+fB+opQpq
+	nCtwdZ3x85y+mPDkAOLvxoK75nCGdKFpIE4Z9lQ==
+X-Google-Smtp-Source: AGHT+IEOxg1ObHX8j5ADuwz4SaSKeY0U/wXSXneGYVCIWIk2eqRKhLL0UkhWDS2Bv0MsNKDNNk02uHpLn4FhpW05EPE=
+X-Received: by 2002:a05:6102:2746:b0:46e:d0cd:428d with SMTP id
+ p6-20020a056102274600b0046ed0cd428dmr1931571vsu.33.1707903349246; Wed, 14 Feb
+ 2024 01:35:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6419; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=gzmpzVfqggGNfr+S+rO98BpLG4fSThwCnRBApLleERQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlzIiXO9vU/I4HWIXQf+QzW7hOkySXBCdgMGIf0 yD3H1Jv9kyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZcyIlwAKCRCPgPtYfRL+ Ts0gCACYjl5guzFar8+s8qCX3/Xz+rU4xcwf2EJDvE32M8AlfM9BBb3rqDAiauEL+Xvg4tL2gaG uU2w3ZzvZsv7kKRMNe5SZPWn9zMCNBRy8F2NHUgFo1Py4mcc8pTnr510z7eL6WprvzOXISbhG5k Culmc9SVC5g4NDrAeNdKZJjiei/BDFY/Z2e5qvSwy87PVl0ELy3xLl8Vq2hBaHWwRTlxKoJlwH3 +/tZirlCe+nF+OvL4tq5AKuUw7jeXD1Q0PDOlnbeYW8qIP/4kNg5TbK6AZrgC0I2nYolmrVnpxC P3u1mHm5xuUEuMXcQ9tBjsORvIbpbRgtFEhCG2abF+8WYPr1
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+References: <20240213141222.382457-1-warthog618@gmail.com>
+In-Reply-To: <20240213141222.382457-1-warthog618@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 14 Feb 2024 10:35:38 +0100
+Message-ID: <CAMRc=MdmfHLyy0UrfC21UMxFa8CTySOx8LCEg0Nt+Z9tb8mRSQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: gpio: consistent use of logical line value terminology
+To: Kent Gibson <warthog618@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linus.walleij@linaro.org, andy@kernel.org, 
+	corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This prepares the pwm-lpc drivers to further changes of the pwm core
-outlined in the commit introducing devm_pwmchip_alloc(). There is no
-intended semantical change and the driver should behave as before.
+On Tue, Feb 13, 2024 at 3:12=E2=80=AFPM Kent Gibson <warthog618@gmail.com> =
+wrote:
+>
+> Consistently use active/inactive to describe logical line values, rather
+> than high/low, which is used for physical values, or asserted/de-asserted
+> which is awkward.
+>
+> Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> ---
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/pinctrl/intel/pinctrl-intel.c      |  6 +++---
- drivers/pwm/pwm-lpss-pci.c                 |  8 ++++----
- drivers/pwm/pwm-lpss-platform.c            |  8 ++++----
- drivers/pwm/pwm-lpss.c                     | 20 ++++++++++----------
- drivers/pwm/pwm-lpss.h                     |  1 -
- include/linux/platform_data/x86/pwm-lpss.h |  4 ++--
- 6 files changed, 23 insertions(+), 24 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index d6f29e6faab7..89bd7ce6711a 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1492,7 +1492,7 @@ static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
- 		.base_unit_bits = 22,
- 		.bypass = true,
- 	};
--	struct pwm_lpss_chip *pwm;
-+	struct pwm_chip *chip;
- 
- 	if (!(community->features & PINCTRL_FEATURE_PWM))
- 		return 0;
-@@ -1500,8 +1500,8 @@ static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
- 	if (!IS_REACHABLE(CONFIG_PWM_LPSS))
- 		return 0;
- 
--	pwm = devm_pwm_lpss_probe(pctrl->dev, community->regs + PWMC, &info);
--	return PTR_ERR_OR_ZERO(pwm);
-+	chip = devm_pwm_lpss_probe(pctrl->dev, community->regs + PWMC, &info);
-+	return PTR_ERR_OR_ZERO(chip);
- }
- 
- int intel_pinctrl_probe(struct platform_device *pdev,
-diff --git a/drivers/pwm/pwm-lpss-pci.c b/drivers/pwm/pwm-lpss-pci.c
-index 34acfe99b74f..25045c229520 100644
---- a/drivers/pwm/pwm-lpss-pci.c
-+++ b/drivers/pwm/pwm-lpss-pci.c
-@@ -18,7 +18,7 @@ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
- 			      const struct pci_device_id *id)
- {
- 	const struct pwm_lpss_boardinfo *info;
--	struct pwm_lpss_chip *lpwm;
-+	struct pwm_chip *chip;
- 	int err;
- 
- 	err = pcim_enable_device(pdev);
-@@ -30,9 +30,9 @@ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
- 		return err;
- 
- 	info = (struct pwm_lpss_boardinfo *)id->driver_data;
--	lpwm = devm_pwm_lpss_probe(&pdev->dev, pcim_iomap_table(pdev)[0], info);
--	if (IS_ERR(lpwm))
--		return PTR_ERR(lpwm);
-+	chip = devm_pwm_lpss_probe(&pdev->dev, pcim_iomap_table(pdev)[0], info);
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
- 
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_allow(&pdev->dev);
-diff --git a/drivers/pwm/pwm-lpss-platform.c b/drivers/pwm/pwm-lpss-platform.c
-index 5f6ee300e342..dbc9f5b17bdc 100644
---- a/drivers/pwm/pwm-lpss-platform.c
-+++ b/drivers/pwm/pwm-lpss-platform.c
-@@ -20,7 +20,7 @@
- static int pwm_lpss_probe_platform(struct platform_device *pdev)
- {
- 	const struct pwm_lpss_boardinfo *info;
--	struct pwm_lpss_chip *lpwm;
-+	struct pwm_chip *chip;
- 	void __iomem *base;
- 
- 	info = device_get_match_data(&pdev->dev);
-@@ -31,9 +31,9 @@ static int pwm_lpss_probe_platform(struct platform_device *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	lpwm = devm_pwm_lpss_probe(&pdev->dev, base, info);
--	if (IS_ERR(lpwm))
--		return PTR_ERR(lpwm);
-+	chip = devm_pwm_lpss_probe(&pdev->dev, base, info);
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
- 
- 	/*
- 	 * On Cherry Trail devices the GFX0._PS0 AML checks if the controller
-diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
-index 394c768f5a5f..b79fd3405e15 100644
---- a/drivers/pwm/pwm-lpss.c
-+++ b/drivers/pwm/pwm-lpss.c
-@@ -68,7 +68,7 @@ EXPORT_SYMBOL_GPL(pwm_lpss_tng_info);
- 
- static inline struct pwm_lpss_chip *to_lpwm(struct pwm_chip *chip)
- {
--	return container_of(chip, struct pwm_lpss_chip, chip);
-+	return pwmchip_get_drvdata(chip);
- }
- 
- static inline u32 pwm_lpss_read(const struct pwm_device *pwm)
-@@ -245,9 +245,10 @@ static const struct pwm_ops pwm_lpss_ops = {
- 	.get_state = pwm_lpss_get_state,
- };
- 
--struct pwm_lpss_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base,
-+struct pwm_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base,
- 					  const struct pwm_lpss_boardinfo *info)
- {
-+	struct pwm_chip *chip;
- 	struct pwm_lpss_chip *lpwm;
- 	unsigned long c;
- 	int i, ret;
-@@ -256,9 +257,10 @@ struct pwm_lpss_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base
- 	if (WARN_ON(info->npwm > LPSS_MAX_PWMS))
- 		return ERR_PTR(-ENODEV);
- 
--	lpwm = devm_kzalloc(dev, sizeof(*lpwm), GFP_KERNEL);
--	if (!lpwm)
-+	chip = devm_pwmchip_alloc(dev, info->npwm, sizeof(*lpwm));
-+	if (!chip)
- 		return ERR_PTR(-ENOMEM);
-+	lpwm = to_lpwm(chip);
- 
- 	lpwm->regs = base;
- 	lpwm->info = info;
-@@ -267,23 +269,21 @@ struct pwm_lpss_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base
- 	if (!c)
- 		return ERR_PTR(-EINVAL);
- 
--	lpwm->chip.dev = dev;
--	lpwm->chip.ops = &pwm_lpss_ops;
--	lpwm->chip.npwm = info->npwm;
-+	chip->ops = &pwm_lpss_ops;
- 
--	ret = devm_pwmchip_add(dev, &lpwm->chip);
-+	ret = devm_pwmchip_add(dev, chip);
- 	if (ret) {
- 		dev_err(dev, "failed to add PWM chip: %d\n", ret);
- 		return ERR_PTR(ret);
- 	}
- 
- 	for (i = 0; i < lpwm->info->npwm; i++) {
--		ctrl = pwm_lpss_read(&lpwm->chip.pwms[i]);
-+		ctrl = pwm_lpss_read(&chip->pwms[i]);
- 		if (ctrl & PWM_ENABLE)
- 			pm_runtime_get(dev);
- 	}
- 
--	return lpwm;
-+	return chip;
- }
- EXPORT_SYMBOL_GPL(devm_pwm_lpss_probe);
- 
-diff --git a/drivers/pwm/pwm-lpss.h b/drivers/pwm/pwm-lpss.h
-index bf841250385f..b5267ab5193b 100644
---- a/drivers/pwm/pwm-lpss.h
-+++ b/drivers/pwm/pwm-lpss.h
-@@ -18,7 +18,6 @@
- #define LPSS_MAX_PWMS			4
- 
- struct pwm_lpss_chip {
--	struct pwm_chip chip;
- 	void __iomem *regs;
- 	const struct pwm_lpss_boardinfo *info;
- };
-diff --git a/include/linux/platform_data/x86/pwm-lpss.h b/include/linux/platform_data/x86/pwm-lpss.h
-index c852fe24fe2a..752c06b47cc8 100644
---- a/include/linux/platform_data/x86/pwm-lpss.h
-+++ b/include/linux/platform_data/x86/pwm-lpss.h
-@@ -27,7 +27,7 @@ struct pwm_lpss_boardinfo {
- 	bool other_devices_aml_touches_pwm_regs;
- };
- 
--struct pwm_lpss_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base,
--					  const struct pwm_lpss_boardinfo *info);
-+struct pwm_chip *devm_pwm_lpss_probe(struct device *dev, void __iomem *base,
-+				     const struct pwm_lpss_boardinfo *info);
- 
- #endif	/* __PLATFORM_DATA_X86_PWM_LPSS_H */
--- 
-2.43.0
-
+Bart
