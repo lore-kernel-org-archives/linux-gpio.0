@@ -1,85 +1,82 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from esa2.ltts.com (unknown [14.140.155.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDE918039
-	for <linux-gpio@vger.kernel.org>; Fri, 23 Feb 2024 09:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAB05BAC0;
+	Fri, 23 Feb 2024 09:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.140.155.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708680345; cv=none; b=XTLrOQik46UAHvrHyF2dIAtHZgheRHprxr5ChZ+P44eb6ubDBqCr4LKl1PdFolkJosid8336TUD/7KXSwenj24IDDfuou5Yi9xb4WKM40dj25oP9ynOT4R4gl1CY8XzusOXvFZY+BHemY9NA1lx4jkdzer44Txg4Z+bckyloVQ8=
+	t=1708681059; cv=none; b=HJi8MYVklBmE9fbyx/JYMYszgqjA4lhZewR6ddvJ250a1tdtrbYLYXP6ln4Wpv5jDX8ZPbDwZVV0o58mzI2NB9alb4OGrkJ1KZs6bFgAvlHPDiGmiM1r2lkslCFJLflhY3W0FjIPsoW0coSZwFkYhHk3XV3qTsiL8Ex09bsJjkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708680345; c=relaxed/simple;
-	bh=O6wCPEDf5O+9Pu6YvSeWPM1PWp4R5rgRpm3yLHS4Ljc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OpEYKAL3dYvOd6/5eY5nu5+7QziCn7Y1nO1m2xhrIIiSZpg9fIb7JtCdt/u7P7I5RVtfMEVp8SerAGRKEeXFDYmHgBs1brlu4eNajwnes9AUTRrRJwkSBIjBpl9rg7/+zenc1MgLjchzVe4KcDHxhUhlqN9yrf7GMgOmVo2mESg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TM3o31ME; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TM3o31ME"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708680343; x=1740216343;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=O6wCPEDf5O+9Pu6YvSeWPM1PWp4R5rgRpm3yLHS4Ljc=;
-  b=TM3o31MEPuzxtrq8X9BML11Ad9SlE9c+doARqdxgEbYXweCWjDPc8Jvv
-   WEhARkJ3Qk8ov6qdiRnuT0OQ4A0W7uOnCT9wp4dr6oLgk5YOx4MtNNmEx
-   VHMMElMkns/cbJBlYA0PvcMe93pJGpPlQuDQ+ElaMquU64onG/MXr1OCY
-   sBd2HCX2zpPmdK4RFWu572eYkSBfYeYEJGZOiAbaxnBVYHBP8JhdhUMFZ
-   R4mds0vH9uHJ3zV5Er+YQAQYcg2cmHoJ35icxyq/7GYSm4Op4ebyEcTqs
-   oJltsu/FCzEAelSzdWaMv3RWW21TfynAno4OpN+awTIiuTNij3NNnXo/w
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10992"; a="20426253"
-X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
-   d="scan'208";a="20426253"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 01:25:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
-   d="scan'208";a="10456654"
-Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Feb 2024 01:25:41 -0800
-Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rdRnw-0007H2-2j;
-	Fri, 23 Feb 2024 09:25:30 +0000
-Date: Fri, 23 Feb 2024 17:23:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: "andy.shevchenko" <andy.shevchenko@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [brgl:gpio/for-next 42/42] undefined reference to `iowrite64be'
-Message-ID: <202402231729.PvxQ1uRx-lkp@intel.com>
+	s=arc-20240116; t=1708681059; c=relaxed/simple;
+	bh=YhRydBMoSfK2yiDbquWm5uDTbUoeCWofGtGmhmE1C5M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kI9mVY9HBBdnhrtBFmdveERIqAmDPPP+QHKcxRSedbjCSqCpTFlp/vGnGWTjnmD5QDwQJ6kysrxOf3yfmFPBXKUKRCzFqGnn8Q77WhRSvRpc8esu7i0zAyutQ81bMc3/2bRSFstkxNBIUK1eYN8mJh+LmrMVoJqaCuniRFrn9SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ltts.com; arc=none smtp.client-ip=14.140.155.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltts.com
+IronPort-SDR: RDo4bVXk5djaunyNJnrk5wFpmCUBMBQPLXHa2b2NXT1cIqQSsX/LDayRDlO6J6cMBCpIVIHwOP
+ 0hxqbGe/UvpA==
+Received: from unknown (HELO localhost.localdomain) ([192.168.34.55])
+  by esa2.ltts.com with ESMTP; 23 Feb 2024 15:07:13 +0530
+From: Bhargav Raviprakash <bhargav.r@ltts.com>
+To: linux-kernel@vger.kernel.org
+Cc: m.nirmaladevi@ltts.com,
+	lee@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	jpanis@baylibre.com,
+	devicetree@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linus.walleij@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	nm@ti.com,
+	vigneshr@ti.com,
+	kristo@kernel.org,
+	Bhargav Raviprakash <bhargav.r@ltts.com>
+Subject: [PATCH v2 04/14] dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
+Date: Fri, 23 Feb 2024 15:06:51 +0530
+Message-Id: <20240223093701.66034-5-bhargav.r@ltts.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240223093701.66034-1-bhargav.r@ltts.com>
+References: <20240223093701.66034-1-bhargav.r@ltts.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-head:   36e44186e0badfda499b65d4462c49783bf92314
-commit: 36e44186e0badfda499b65d4462c49783bf92314 [42/42] gpio: mmio: Support 64-bit BE access
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240223/202402231729.PvxQ1uRx-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240223/202402231729.PvxQ1uRx-lkp@intel.com/reproduce)
+TPS65224 is a Power Management IC with 4 Buck regulators and 3 LDO
+regulators, it includes additional features like GPIOs, watchdog, ESMs
+(Error Signal Monitor), and PFSM (Pre-configurable Finite State Machine)
+managing the state of the device.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402231729.PvxQ1uRx-lkp@intel.com/
+In addition TPS65224 has support for 12-bit ADC and does not have RTC
+unlike TPS6594.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Bhargav Raviprakash <bhargav.r@ltts.com>
+---
+ Documentation/devicetree/bindings/mfd/ti,tps6594.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-   alpha-linux-ld: drivers/gpio/gpio-mmio.o: in function `bgpio_write64be':
->> (.text+0x910): undefined reference to `iowrite64be'
->> alpha-linux-ld: (.text+0x920): undefined reference to `iowrite64be'
-   alpha-linux-ld: drivers/gpio/gpio-mmio.o: in function `bgpio_read64be':
->> (.text+0x95c): undefined reference to `ioread64be'
->> alpha-linux-ld: (.text+0x964): undefined reference to `ioread64be'
-
+diff --git a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+index 9d43376be..6341b6070 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
++++ b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+@@ -21,6 +21,7 @@ properties:
+       - ti,lp8764-q1
+       - ti,tps6593-q1
+       - ti,tps6594-q1
++      - ti,tps65224-q1
+ 
+   reg:
+     description: I2C slave address or SPI chip select number.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
