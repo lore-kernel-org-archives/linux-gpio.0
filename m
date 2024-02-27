@@ -1,111 +1,197 @@
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC0F139568;
-	Tue, 27 Feb 2024 11:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D899813A274;
+	Tue, 27 Feb 2024 12:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709033684; cv=none; b=Wjf5uWpF9YxolDCHsFmu68wv79hcZnBwuPal5gs7u5Y2Zb8g8B8yIYGH42X1YfsMDXyyGg//vYyzS2pcP0O/4jrYKzETvRlWEYl1pgrtqPCrDLOuJO1yIZiT5rAdzHyY7A/pvxU5NWSe8rvYZ3dexZeFvyCXxgJP2CQk/OlPYNU=
+	t=1709035586; cv=none; b=L+xWtN6kRvtP0YJONcjyMhwqlwvUMR+EGVwHbhQD4TGU6vt3CAY3jMRurxDRkFDmAzelTpNwCV372U3jeF2nwWVSjq8yhYengKXv6ubOkxiLoTNGU+qU87DRH2e8P+7VCzBGCBqKpVYSDn75U1mWgcDEJugWjyZlK99rAGUN9S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709033684; c=relaxed/simple;
-	bh=kvF+KDgzeivY+RAQ8/BHt2sd41hOYzWE/MAHOlgwnpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hF5EUpSK9UtWUFX4qy6wX3NFLdw8yfl/1K+FapfgJlSP28SFzc1fb0/2rqQBRF+nzkLr5ltKc2Xn62357sbGGJLbykhd32ua5/t5AkN2sjBuWGkeiW23kKYctTukReYyyUhtv0n7eYyYMijE7JoOkJb7joilqtigX2t7en3YTSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RNSH9eQ+; arc=none smtp.client-ip=217.70.183.197
+	s=arc-20240116; t=1709035586; c=relaxed/simple;
+	bh=WvJArsUTJXRJiZdUCPnafcBXTHqHKXd8uQhLhgKJhZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ln26wItKYUGOml/8MWkBT2SoQ3wlQj8hNKVWAhaLnwa5K9S0Ujso9SWOW0why8yAYWqn/eAgN1PdFwyyNvA8Zl/eeTmxvAjea2q9mOHqu4KpsGgOrj/D9WB2nq4kWkOdLfbE0TceYBpdtLjg3nyjCPVGQ9prCJW5AKq1Mg9oXOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GxtuEB2o; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RNSH9eQ+"
-Received: by mail.gandi.net (Postfix) with ESMTPA id 04A831C000B;
-	Tue, 27 Feb 2024 11:34:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GxtuEB2o"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 777041C0004;
+	Tue, 27 Feb 2024 12:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709033674;
+	t=1709035581;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JEy1WKZu79JY8RBIlDzPDmv8Cqag9mXrU8thTH54FTE=;
-	b=RNSH9eQ+4yWnHnVtlpUJNgnp4s9B6XVqsh6exUAL1s6CqvR6ygkEsOH/dQOX/tE6eC/qFr
-	LNMoKg7wTEhXQgA4XChpkYqs+LILCghDtZdR83mOjk0GJAyKs6FgHEotEEFASaW3bLUAmD
-	aJgjIGeDSNCg8VI1xSF/d829mDK+ju2dP4dWYyNTVZZDI2NvMTxooFd4HzclQmz5NruFX6
-	/i1j+sL46YdFwwEp1uC8/ubaWfZIYGtNc4rsIE+Gp4L8tiBO0+N9dsE7OpgQOEybfKxPFS
-	xn7hxpTDY5ob9FqApPkD8EIyUvSAbYM0pn9bDipErxQNZeUBLz5mybDXpbksiw==
+	bh=WIrYh61CXichMQDwM9T6CmacuZVLBIfhKTVUXwxZYBE=;
+	b=GxtuEB2ovjmpeD6CflqWcUa6WGVUI2jNXi4BkBFeRvhBoV52Q91DF7Vx4d8ebxUKPU/oxO
+	z9UKoSQFWPY4fCYkX3S0feEQFA14hZe8CQ830J8X8U/NW48Z7Mn8+njjk2ckQWyhIIXLyb
+	Adcby25xzXXQHD0UFwysY2zvjuprwAte95k06679TJMAt1QfKflmwwGAm9bw2I2K3Ou38a
+	WYKVjW8RQiQAHWX0/3kcRJbAAMGLm/BI10lHarq9TeLWBCi1GKxLbosbyh7iIIHtMPDGxS
+	sugb7JzWflHYVJKYwvMOtI5HfbIzO9gXcb5dEApWhnxYOO0aavauleBks362eg==
+Date: Tue, 27 Feb 2024 13:06:19 +0100
 From: Herve Codina <herve.codina@bootlin.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v2 1/2] gpiolib: call gcdev_unregister() sooner in the removal operations
-Date: Tue, 27 Feb 2024 12:34:24 +0100
-Message-ID: <20240227113426.253232-2-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240227113426.253232-1-herve.codina@bootlin.com>
-References: <20240227113426.253232-1-herve.codina@bootlin.com>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+ <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+ <lee@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Android Kernel Team
+ <kernel-team@android.com>
+Subject: Re: [PATCH RESEND 0/2] leds: gpio: Add devlink between the
+ leds-gpio device and the gpio used.
+Message-ID: <20240227130619.4b47d409@bootlin.com>
+In-Reply-To: <CAGETcx_=g1dCH=YMUkc7VquUmLs=bNZMspUxH+V49uhcV0Bx2w@mail.gmail.com>
+References: <20240220133950.138452-1-herve.codina@bootlin.com>
+	<CAMRc=MfWPEOHeNvAwra-JxHZBFMrQbP+273zbFLDZfxi7fx8Yg@mail.gmail.com>
+	<20240220155347.693e46e1@bootlin.com>
+	<CAMRc=MeSgCOLZvFOXF4eQOp=bTz38K5Krzuy9r569-jnDx1zFA@mail.gmail.com>
+	<20240220164730.03412479@bootlin.com>
+	<CAGETcx_=g1dCH=YMUkc7VquUmLs=bNZMspUxH+V49uhcV0Bx2w@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-When gpio chip device is removed while some related gpio are used by the
-user-space, the following warning can appear:
-  remove_proc_entry: removing non-empty directory 'irq/233', leaking at least 'gpiomon'
-  WARNING: CPU: 2 PID: 72 at fs/proc/generic.c:717 remove_proc_entry+0x190/0x19c
-  ...
-  Call trace:
-    remove_proc_entry+0x190/0x19c
-    unregister_irq_proc+0xd0/0x104
-    free_desc+0x4c/0xc4
-    irq_free_descs+0x6c/0x90
-    irq_dispose_mapping+0x104/0x14c
-    gpiochip_irqchip_remove+0xcc/0x1a4
-    gpiochip_remove+0x48/0x100
-  ...
+Hi Saravana,
 
-Indeed, the gpio cdev uses an IRQ but this IRQ is not released
-(irq_free() call) before the call to gpiochip_irqchip_remove().
+On Tue, 20 Feb 2024 19:28:17 -0800
+Saravana Kannan <saravanak@google.com> wrote:
 
-In order to give a chance to the gpio dev driver to release this
-irq before removing the IRQ mapping, notify the cdev driver about
-the gpio device removal before the gpiochip_irqchip_remove() call.
+> On Tue, Feb 20, 2024 at 7:47 AM Herve Codina <herve.codina@bootlin.com> wrote:
+> >
+> > Hi Bartosz,
+> >
+> > On Tue, 20 Feb 2024 16:30:11 +0100
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >  
+> > > On Tue, Feb 20, 2024 at 3:53 PM Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > >
+> > > > On Tue, 20 Feb 2024 15:19:57 +0100
+> > > > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > >  
+> > > > > On Tue, Feb 20, 2024 at 2:39 PM Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > Note: Resent this series with Saravana added in Cc.
+> > > > > >
+> > > > > > When a gpio used by the leds-gpio device is removed, the leds-gpio
+> > > > > > device continues to use this gpio. Also, when the gpio is back, the
+> > > > > > leds-gpio still uses the old removed gpio.
+> > > > > >
+> > > > > > A consumer/supplier relationship is missing between the leds-gpio device
+> > > > > > (consumer) and the gpio used (supplier).
+> > > > > >
+> > > > > > This series adds an addionnal devlink between this two device.
+> > > > > > With this link when the gpio is removed, the leds-gpio device is also
+> > > > > > removed.
+> > > > > >
+> > > > > > Best regards,
+> > > > > > Hervé Codina
+> > > > > >
+> > > > > > Herve Codina (2):
+> > > > > >   gpiolib: Introduce gpiod_device_add_link()
+> > > > > >   leds: gpio: Add devlinks between the gpio consumed and the gpio leds
+> > > > > >     device
+> > > > > >
+> > > > > >  drivers/gpio/gpiolib.c        | 32 ++++++++++++++++++++++++++++++++
+> > > > > >  drivers/leds/leds-gpio.c      | 15 +++++++++++++++
+> > > > > >  include/linux/gpio/consumer.h |  5 +++++
+> > > > > >  3 files changed, 52 insertions(+)
+> > > > > >
+> > > > > > --
+> > > > > > 2.43.0
+> > > > > >  
+> > > > >
+> > > > > Can you add some more context here in the form of DT snippets that
+> > > > > lead to this being needed?  
+> > > >
+> > > > / {
+> > > >         leds-dock {
+> > > >                 compatible = "gpio-leds";
+> > > >
+> > > >                 led-5 {
+> > > >                         label = "dock:alarm:red";
+> > > >                         gpios = <&tca6424_dock_2 12 GPIO_ACTIVE_HIGH>;
+> > > >                 };  
+> > >
+> > > Do I understand correctly that the devlink is created between "led-5"
+> > > and "tca6424_dock_2" but actually should also be created between
+> > > "leds-dock" and "tca6424_dock_2"?
+> > >  
+> >
+> > Yes, that's my understanding too.  
+> 
+> I'm replying here instead of the RESEND because here's where the
+> context and example are provided.
+> 
+> I quickly poked into the gpio-leds driver. Please correct me if I'm
+> misunderstanding anything.
+> 
+> It looks like led-5 will be added as a class device. But the
+> dev->fwnode is not set before it's added because it uses
+> device_create_with_groups(). So, fw_devlink doesn't create a link
+> between led-5 and tca6424_dock_2 unless tca6424_dock_2 is added after
+> led-5. Which coincidentally seems to be the case here. Might want to
+> explicitly create the device in gpio-leds driver.
+> 
+> The issue you are trying to fix is a generic issue that I'd like to
+> fix in a generic fashion. It's one of my TODOs which I've mentioned
+> before in conferences/emails to LKML: device links framework has a
+> bunch of gaps when it comes to class devices. I've been thinking about
+> it for a while, but it needs a lot more work and testing. I'll roll in
+> this case when I deal with it in a generic fashion. But here's the
+> general idea of things that need to be addressed:
+> 
+> 1. "Managed" device links allow having a class device as a supplier,
+> but that'll mean the consumer will never probe.
+> 2. What if a class device is a consumer and the supplier isn't ready.
+> What does it mean for the class device to be added? Is it available
+> for use? Probably not. Can we do something here that'll be useful for
+> the class implementation?
+> 3. What if the supplier and consumer are class devices, when does the
+> consumer class device become "available" (do we check the suppliers of
+> the supplier?)?
+> 4. What happens if the supplier of a class device gets removed? Do we
+> notify the class so it can do the right thing? Do we force unbind the
+> first ancestor that's on a bus? (your case).
+> 5. What if a supplier class device is removed, should we unbind the
+> consumer (if it's a bus device)?
+> 
+> I'm currently working on a patch to break dependency cycles. Once
+> that's in, the next TODO item I work on is going to be this or clock
+> framework sync_state() support.
+> 
+> So, I'd recommend waiting this out if it's not urgent.
+> 
+> Heh, here's my commit on my local repo from a year ago when I touched
+> on this and realised the scope of the work.
+> 
+> commit 7dcaad52e569209104408f3e472fde4ef8cd5585 (class-devlinks-v1)
+> Author: Saravana Kannan <saravanak@google.com>
+> Date:   Mon Feb 13 13:40:43 2023 -0800
+> 
+>     add class support to device links
+> 
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/gpio/gpiolib.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Well, on one side we have this current patch that fixes the current issue in
+the gpio-led use case.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 63e793a410e3..4ad3e260dec2 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1118,6 +1118,11 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	/* Numb the device, cancelling all outstanding operations */
- 	rcu_assign_pointer(gdev->chip, NULL);
- 	synchronize_srcu(&gdev->srcu);
-+	/*
-+	 * Tell gcdev that the device is removing. If any gpio resources are in
-+	 * use (irqs for instance), it's time for gcdev to release them.
-+	 */
-+	gcdev_unregister(gdev);
- 	gpiochip_irqchip_remove(gc);
- 	acpi_gpiochip_remove(gc);
- 	of_gpiochip_remove(gc);
-@@ -1135,7 +1140,6 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	 * be removed, else it will be dangling until the last user is
- 	 * gone.
- 	 */
--	gcdev_unregister(gdev);
- 	gpio_device_put(gdev);
- }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
--- 
-2.43.0
+On the other side, I have a commit hash from your local repo which is one
+year old and some more work is needed on it.
 
+Maybe my patch is not fully correct but it fixes the issue.
+
+Do you have any idea about when your work on that topic will be available?
+
+Best regards,
+Hervé
