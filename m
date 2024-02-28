@@ -1,38 +1,38 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59257135A6B;
-	Wed, 28 Feb 2024 11:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1A713A893;
+	Wed, 28 Feb 2024 11:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709119703; cv=none; b=JCpsiTmRAZTcadD63zKqKnw+g6hSCLDcP1orPmZ676zV8cdP2ha3OnvD9BXjqpRTtUR6Wr0AVBljdcbRbdMqkUM2/pChSuOgc2ZJQvxL3FIeXgWQd0XyKmej+kFfBeAjXdJRvZZlD478s34acYvmJvphXCS2Vb3f8znwcKDSxJg=
+	t=1709119704; cv=none; b=P+aGN6dPN4n4l6Ff2jIamBRZLBabMPzR7aD2mltdMPXTnZsDxVRjmQBLRyC3LF23qnFywWlCneadaTF8JrAWwx4WGDeHFqNkOsChz6hqvc3JHtagcUKA1QFBrOLJGmY0YisMz5G/OIaDzz/dWv3i5apKu18G4FrDJ/ubjt/ILnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709119703; c=relaxed/simple;
-	bh=aS4vsmKOiyXUzu/gtsh1LG1nA/WQDCKMrN7hnt9Q3Pw=;
+	s=arc-20240116; t=1709119704; c=relaxed/simple;
+	bh=Vvxtqfff227CvQ+NRjPqUWZTrj6Z7C7Vz1QGG5vik8Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n+3AnWdaW+M7cKHKkTZ8YRjFnvqABN6vWG/gQYfDgb0auJBosLZXnZDnEZPBTqXig9TeaegQo/da2an3TVyeB1JGaJ6ijm2ZWu1sGORDQGITnSodm9XZR5z8SJJxEwCwoQgggWztDUtUnaHEQqPsVfmejzCUf8Eyqda0Ye0WPvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UY4k68Fm; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=Q4hmrg7ZxpkvGzLwPwdOcRigMSqCIyp6qK/RNkEEXa8ZWGAMsdFYNd+Dn4aZ5iuBvTXbMKiX+Oa//fY1AzWFJltA4cgh1t/3imvOoMbonkTcCQvD7uUidzqhr1Ael15aF0nxddRhuJovJD+27eAjx6292UmBzcLdkgPIf5iFjeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZOhb12jB; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UY4k68Fm"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D60371BF207;
-	Wed, 28 Feb 2024 11:28:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZOhb12jB"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9BDDD1BF219;
+	Wed, 28 Feb 2024 11:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709119694;
+	t=1709119698;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=obEsZr5TqYQ+s6w0haLqPuWmQvfUOmeEY6NOi1OIfoc=;
-	b=UY4k68Fmjuo+t50X2+k2fLHa0B33dKhPVDyu/+wbj+/NL9OdUOXrCDuFHyahShKI6kP2A+
-	fEDyx5UVsjQZgPhLVSNwUNa3NeFkg28U4lyIYJtLAiKGHsjLzWRQv56HGwZUwzo+4Et5Yg
-	4wjXYZQu7nsTZG3jLYsg6zFBZr9qeJDKo83dSbju/C3c7fj8uMaIq+vtpYd6YaCxzHs59H
-	TT3ilkazvII1wpQ1rn4UhX8+6pmMgQQAQWGq8dImgjVfF1BV6epGb46HtN+lt6VnwrPHN1
-	bl36D8DRnLJjske06uyabkqYtXZSXF7af0WfLp569fp7Si7Ihk0jR2GDq6JiDQ==
+	bh=1seadG+CBBUxb4Y3ZLyFvvvNaIdZJZ6KheSJBHoIsiI=;
+	b=ZOhb12jBzER1DD03jga9FIQRWU9oi87FiAFZy5Qqa0kq+mLmvvJq3PcAdOmHT4UdcUwmUX
+	A8PYWegGZO+ozd9Co81YImFsFT3xGnyTGG7hfu5UW3DxnJzwqSYymQ4r2f737PQz2lk5Xe
+	GlQZU9EFlqZ54mMlKmNr2hsQk1xSqmj+XIwvL4DrMIk0JTB6DIkEszA4rFdOmgafWVz1bZ
+	B/c37Wv9VfLXucMS2ddj4qwkVg0pgHm45ctTiao9SSLbPBvC+eMvHzIwZyxLed/MMrapZ1
+	TZzq4lwFeJzGcf2PdZquUNK3hGX+RVp7Qpho9+vv51uZ6p0CZVK1r/9Bkvsibw==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 28 Feb 2024 12:28:03 +0100
-Subject: [PATCH v2 05/30] gpio: nomadik: fix offset bug in nmk_pmx_set()
+Date: Wed, 28 Feb 2024 12:28:08 +0100
+Subject: [PATCH v2 10/30] pinctrl: nomadik: minimise indentation in probe
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240228-mbly-gpio-v2-5-3ba757474006@bootlin.com>
+Message-Id: <20240228-mbly-gpio-v2-10-3ba757474006@bootlin.com>
 References: <20240228-mbly-gpio-v2-0-3ba757474006@bootlin.com>
 In-Reply-To: <20240228-mbly-gpio-v2-0-3ba757474006@bootlin.com>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -59,45 +59,66 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.13.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Previously, the statement looked like:
+nmk_pinctrl_probe() iterates over each GPIO block. Use an early
+conditional continue to skip to the next iteration rather than indent
+all the loop code block.
 
-    slpm[x] &= ~BIT(g->grp.pins[i]);
+Do not change code logic. The block is changed from:
 
-Where:
- - slpm is a unsigned int pointer;
- - g->grp.pins[i] is a pin number. It can grow to more than 32.
+	for (i = 0; i < NMK_MAX_BANKS; i++) {
+		x = of_parse_phandle(...);
+		if (x) {
+			... do work ...
+		}
+	}
 
-The expected shift amount is a pin bank offset.
+To:
 
-This bug does not occur on every group or pin: the altsetting must be
-NMK_GPIO_ALT_C and the pin must be 32 or above. It might have occured.
-For example, in pinctrl-nomadik-db8500.c, pin group i2c3_c_2 has the
-right altsetting and pins 229 and 230.
+	for (i = 0; i < NMK_MAX_BANKS; i++) {
+		x = of_parse_phandle(...);
+		if (!x)
+			continue;
 
-Fixes: dbfe8ca259e1 ("pinctrl/nomadik: implement pin multiplexing")
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+		... do work ...
+	}
+
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index 7911353ac97d..4f7c4af4f93c 100644
+index c8d2699be985..69b421bea1f4 100644
 --- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
 +++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1579,8 +1579,10 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned function,
- 		 * Then mask the pins that need to be sleeping now when we're
- 		 * switching to the ALT C function.
- 		 */
--		for (i = 0; i < g->grp.npins; i++)
--			slpm[g->grp.pins[i] / NMK_GPIO_PER_CHIP] &= ~BIT(g->grp.pins[i]);
-+		for (i = 0; i < g->grp.npins; i++) {
-+			unsigned int bit = g->grp.pins[i] % NMK_GPIO_PER_CHIP;
-+			slpm[g->grp.pins[i] / NMK_GPIO_PER_CHIP] &= ~BIT(bit);
-+		}
- 		nmk_gpio_glitch_slpm_init(slpm);
+@@ -1203,17 +1203,16 @@ static int nmk_pinctrl_probe(struct platform_device *pdev)
+ 		struct nmk_gpio_chip *nmk_chip;
+ 
+ 		gpio_np = of_parse_phandle(np, "nomadik-gpio-chips", i);
+-		if (gpio_np) {
+-			dev_info(&pdev->dev,
+-				 "populate NMK GPIO %d \"%pOFn\"\n",
+-				 i, gpio_np);
+-			nmk_chip = nmk_gpio_populate_chip(gpio_np, pdev);
+-			if (IS_ERR(nmk_chip))
+-				dev_err(&pdev->dev,
+-					"could not populate nmk chip struct "
+-					"- continue anyway\n");
+-			of_node_put(gpio_np);
+-		}
++		if (!gpio_np)
++			continue;
++
++		dev_info(&pdev->dev, "populate NMK GPIO %d \"%pOFn\"\n",
++			 i, gpio_np);
++		nmk_chip = nmk_gpio_populate_chip(gpio_np, pdev);
++		if (IS_ERR(nmk_chip))
++			dev_err(&pdev->dev,
++				"could not populate nmk chip struct - continue anyway\n");
++		of_node_put(gpio_np);
  	}
  
+ 	prcm_np = of_parse_phandle(np, "prcm", 0);
 
 -- 
 2.44.0
