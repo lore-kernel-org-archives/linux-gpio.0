@@ -1,99 +1,145 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0713B7C0A1;
-	Thu, 29 Feb 2024 11:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D197CF36;
+	Thu, 29 Feb 2024 12:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709206950; cv=none; b=IRpdJmQkz10c+LJsdy7vkH7WgtY5kKZH2riR9kk308KGJqqQmA2G0e8y1wcNchARTiTU6LgAKeqgSCQdcZ9tbu7nKo6dSvNTh/b4tyvoNsZUrdXeooB6567BSkdnpk81Oo8V9k9klTE/fsQ+exg0KTZduFU5cCc0CNA4Ta40paI=
+	t=1709209102; cv=none; b=tBkGdz+23UYNkmnG1XCugqBW0GwbJd7/zjAjzZql39izeMApN2iyA0WmXuYhBAavGIRT+jHii94Nt5f4YgDEhdlx6FmRk+fATjwSECMSBKpmqYr7Y4Gy0lFRwQsv7TcX9zRpQl2s1KxbnjcCUHVlGRQDo+UQR5NdeHe+LkzMX74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709206950; c=relaxed/simple;
-	bh=ZbTUZ2sytbwY3/uZ8J7MOQaQg4/G+6K17RU1C1wYXmk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UWyz916dsgxMukhdC8+khittfBj5aZgP4HW9dY4RkiFyTx+M2T4yNC7ld9ESeHzuRB/GozQc/YzQJH/PttdGv7C03Kk5QJsuVdPek9TFRYnrbmF1IW0gplqieNZpy4VSauKuVLpVcNoY8lRfAyc/ad03mIe93csZZbf/hgwLLsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ItMkn2Z6; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1709209102; c=relaxed/simple;
+	bh=8Eelp2TJHh8fMmaYaoIG0d+mIvZQwLFJthLx9DhOBLg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=Ip0fJ9t44tOw2MzgmEqROg+gRRP2vS436OH4V3AtPLe7zuJFLywMEyTK9k9YWk6ZeiAONJxMZYx6gRYMOqOTSNYFDB0yZC+U3UwzPw2s9ga4UhDEf+rOjn4mk3b4NYn58QTQ0o+PDhIWRP3Zm0afdq4LI70zoSur3fe5nf2x1bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IH3OE8JS; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ItMkn2Z6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1709206948; x=1740742948;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=ZbTUZ2sytbwY3/uZ8J7MOQaQg4/G+6K17RU1C1wYXmk=;
-  b=ItMkn2Z61k7rurAtlUpWCHmZT7F/Pt5PxP+ATADR96SbTtw9LP6e9SBx
-   GUrQ5DGhQ/gbjjxPvp6bz9oCNDA0R6ClQ3j3zogRfUrejej1eYVC4hhJJ
-   NhOfIPybmDFT9WTdPKpScuU83ApZQ4PYXXcMJkX1q09qdOVzyDvobhk/4
-   YhudWlCr7wbls8L7mlhDE3pV/AatF4mDpLISuDvuRjBqjzaEQDaQmJNHF
-   RmUIwFP3V7/uTIWgemW9mtb8Og7dvOQVuVxI2EY8mIPKE4DdhxtPpg8bS
-   4sRvMGRKzwCZuFbGMZE9pfFzo7FHnd7KjASqzC/OSbwr8dQ8TAgPSoO78
-   Q==;
-X-CSE-ConnectionGUID: KYf983/NSaCGRI0KPGLdxQ==
-X-CSE-MsgGUID: ZlDiA8fQTiSENQRO23TXRw==
-X-IronPort-AV: E=Sophos;i="6.06,194,1705388400"; 
-   d="scan'208";a="184277799"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Feb 2024 04:42:21 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 29 Feb 2024 04:41:41 -0700
-Received: from [127.0.1.1] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 29 Feb 2024 04:41:37 -0700
-From: Balakrishnan Sambath <balakrishnan.s@microchip.com>
-Date: Thu, 29 Feb 2024 17:09:31 +0530
-Subject: [PATCH 2/3] ARM: dts: microchip: sama7g5: Move pinfunc.h headers
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IH3OE8JS"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C64F31BF20A;
+	Thu, 29 Feb 2024 12:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709209089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rivbcy22OyT/FZEzxvNP0xJkQRC61DIMcbwv6BnP3xA=;
+	b=IH3OE8JSAMKn+Ls6dirQEB0XuO2Y6HcF9GIJPUJoHwnocUzLz7Ez1whX6c3fgNaTzwz6W4
+	NSefEg/uekQgeRhfCZOQuVsTXCrbS7xgiAJOy+RYmvY7f6a9uIQEqInD1RHHK2nt9Xyt2p
+	SsJSO4zrN3IwB38ObMZ5Ynu417CznPxN2vQKd12LMYDmAI8bA2laQiALFUAWDRJaS/BPHE
+	Z/4VCACO8BMVmQZy0aJND/4zDvsgv43KhtR0EwjOo0tDwGEM0zmptCMTQsd8pCuT07bfxq
+	MBzMHCxh6oJLiIaPh2Q4jxl9Hxlnd12EtMfGqhaT5GVGLJShK8gIFkdxHpgoEw==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240229-pio4-pinctrl-yaml-v1-2-c4d8279c083f@microchip.com>
-References: <20240229-pio4-pinctrl-yaml-v1-0-c4d8279c083f@microchip.com>
-In-Reply-To: <20240229-pio4-pinctrl-yaml-v1-0-c4d8279c083f@microchip.com>
-To: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Linus Walleij <linus.walleij@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>, "Balakrishnan
- Sambath" <balakrishnan.s@microchip.com>
-X-Mailer: b4 0.13.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 29 Feb 2024 13:18:08 +0100
+Message-Id: <CZHK1ZCSROM5.X4WYN7SAZJTH@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v8 04/10] reset: eyeq5: add platform driver
+Cc: "Gregory CLEMENT" <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh+dt@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Linus Walleij"
+ <linus.walleij@linaro.org>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
+ <rafal@milecki.pl>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, <linux-gpio@vger.kernel.org>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+X-Mailer: aerc 0.15.2
+References: <20240227-mbly-clk-v8-0-c57fbda7664a@bootlin.com>
+ <20240227-mbly-clk-v8-4-c57fbda7664a@bootlin.com>
+ <Zd4bbCsY54XEnvJM@smile.fi.intel.com>
+ <CZGVIWR4H4DE.3M5H3H99X0QPT@bootlin.com>
+ <ZeBo4N204gLO0eUd@smile.fi.intel.com>
+In-Reply-To: <ZeBo4N204gLO0eUd@smile.fi.intel.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Move sama7g5-pinfunc.h into include/dt-bindings/pinctrl so that we can
-include it in yaml dt-binding examples.
+Hello,
 
-Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
----
- arch/arm/boot/dts/microchip/at91-sama7g5ek.dts                          | 2 +-
- .../dts/microchip => include/dt-bindings/pinctrl}/sama7g5-pinfunc.h     | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
+On Thu Feb 29, 2024 at 12:22 PM CET, Andy Shevchenko wrote:
+> On Wed, Feb 28, 2024 at 06:04:47PM +0100, Th=C3=A9o Lebrun wrote:
+> > On Tue Feb 27, 2024 at 6:27 PM CET, Andy Shevchenko wrote:
+> > > On Tue, Feb 27, 2024 at 03:55:25PM +0100, Th=C3=A9o Lebrun wrote:
+>
+> ...
+>
+> > > > +	u32 offset =3D id & GENMASK(7, 0);
+> > > > +	u32 domain =3D id >> 8;
+> > >
+> > > Perhaps
+> > >
+> > > 	u32 offset =3D (id & GENMASK(7, 0)) >> 0;
+> > > 	u32 domain =3D (id & GENMASK(31, 8)) >> 8;
+> > >
+> > > for better understanding the split?
+> >=20
+> > Do the additional zero-bit-shift and GENMASK() help understanding? My
+> > brain needs time to parse them to then notice they do nothing and
+> > simplify the code in my head, back to the original version.
+>
+> In my opinion yes, as you exactly showing the split.
+> But. The better is to use FIELD_GET().
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-index 217e9b96c61e..a92c37e57aaf 100644
---- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-@@ -9,7 +9,7 @@
-  *
-  */
- /dts-v1/;
--#include "sama7g5-pinfunc.h"
-+#include <dt-bindings/pinctrl/sama7g5-pinfunc.h>
- #include "sama7g5.dtsi"
- #include <dt-bindings/mfd/atmel-flexcom.h>
- #include <dt-bindings/input/input.h>
-diff --git a/arch/arm/boot/dts/microchip/sama7g5-pinfunc.h b/include/dt-bindings/pinctrl/sama7g5-pinfunc.h
-similarity index 100%
-rename from arch/arm/boot/dts/microchip/sama7g5-pinfunc.h
-rename to include/dt-bindings/pinctrl/sama7g5-pinfunc.h
+I'll go with the FIELD_GET() option!
 
--- 
-2.25.1
+[...]
+
+>
+> > > > +	priv->rcdev.of_node =3D np;
+> > >
+> > > It's better to use device_set_node().
+> >=20
+> > I don't see how device_set_node() can help? It works on struct device
+> > pointers. Here priv->rcdev is a reset_controller_dev struct. There are
+> > no users of device_set_node() in drivers/reset/.
+>
+> No users doesn't mean it's good. The API is relatively "new" and takes
+> care of two things:
+> 1) it uses agnostic interface;
+> 2) it doesn't require any firmware node direct dereference.
+>
+> The 2) is most important here as allows us to refactor (firmware node) co=
+de
+> in the future.
+
+I think I get the point of device_set_node(). I still do not understand
+how it could help me fill the ->of_node field in a reset_controller_dev
+structure?
+
+Should I be using device_set_node() to fill the struct device pointer
+and the reset subsystem, by some magic, will pick this up and use it
+for its own of_node field? I've not seen any magic/code doing that.
+
+[...]
+
+> > > > +		priv->rcdev.nr_resets +=3D __builtin_popcount(eq5r_valid_masks[i=
+]);
+> > >
+> > > Please, use corresponding hweightXX() API.
+> >
+> > Noted. I did not find this keyword even though I searched quite a bit
+> > for it. "popcount" sounds more logical to me. :-)
+>
+> Hmm... But it's fundamental, it's called Hamming weight.
+> https://en.wikipedia.org/wiki/Hamming_weight
+
+Makes sense now. I've always called it population count following the
+name of the matching instruction on x86 (and I believe other ISAs). TIL.
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
