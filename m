@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C85B1E2
-	for <linux-gpio@vger.kernel.org>; Fri,  1 Mar 2024 10:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CEC6BB24
+	for <linux-gpio@vger.kernel.org>; Fri,  1 Mar 2024 10:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709288839; cv=none; b=oB0tAs9Zc9LWrvdzPIwgZt5cXvIaIkf2Esjhj67Qkwsnn3HeufYl7DKGOhZs0NQTzBWq5qXlQE/jCmB/EnWtd4u4k1EcF3Mw1UcPFvdZ9JMkSlczLBRe6KFsDIcCRLd/vvD26Yg39A/T23gfPyHuotu6SAV3dkfC6A9mst86ta4=
+	t=1709288941; cv=none; b=AiCVNYQi1idFP2peTTFj5qAp8+x0zSjFgEE/G/ltD+/eMhoZyC0ud/PJV1zHZy59E0OCh8THPEU4F6Wm5P+3BmFDm4lxlWxH6OkyrdIPJCALVORAwrTyaO4SdMFNmlv7J0zdWsWEpi3P1JaXMb4uXmtMrCRFQeOPFdc0yHY8AKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709288839; c=relaxed/simple;
-	bh=RlJl1DbPlPT6t91Sd9a5iiOW0d4HgTqybFLLwGPfUBg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rRz57kf21G7cM60PCJFAfrIfGA7yVBr/1Cl0ngZHcb/Tx8y0bZkT7ZKjdseEIdcTXMzyAmnGNCk9EKxdJKbshFu4tvgn13VNZ9CnbyPfdEaX7UeYkes5a30xEaAm0DftJNA9N3W34SECFWSJwNx37Xn4GxRaFuKYli4/4e51mZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lKsnGvLs; arc=none smtp.client-ip=192.198.163.8
+	s=arc-20240116; t=1709288941; c=relaxed/simple;
+	bh=gCQYzd+V54k0Iq5KaOqQEPyn84IhXjl7Xo/DTTrOszg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=WmSadpznPzPAVaB90vBuuVKwN5nc01tyQ2mM01zpmMjCPu8yyfeThd5pOQ7Zbo51sJfLTyIke8Bstgymkn42MPKAa/55oD/CLqFphl51M38B4728zUGAhVUxhBU67QpOoaW0zDqk75H5Nl1jmNMMsYw0XbJebKX8Mqln0Sd9zIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jHL5nDwx; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lKsnGvLs"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jHL5nDwx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709288837; x=1740824837;
+  t=1709288940; x=1740824940;
   h=date:from:to:cc:subject:message-id;
-  bh=RlJl1DbPlPT6t91Sd9a5iiOW0d4HgTqybFLLwGPfUBg=;
-  b=lKsnGvLsQ81i10NsrjHgAJobWR0z3yuY/9Kya0HN2rPlzLWsvypFeWER
-   WiI0sq7sJoC840KbsSAvgoOUOUMfQhLJ4302E0ZWSN4X5BLZ3nDS2aZZ6
-   84CLMJsIFTleN5mKTAkBEJh0oXlMLzVJK2AgAtXQBLfCxSYd5bFZWyhkz
-   wJ1BRxpHJcWfVKIjklh5+mY4WyhZX1MDVPrerhMKwMy5BQ/mxnxyqsQid
-   mEmPOozNfrmaePPV4dcTQZ/XhbgtBft0aqDwKROX9I1FP5hNCw9pI1POV
-   sfYcIywURcRpD2zNLXCqXQoCl1YIeQY7J342Vtpy/l9LDYNn1Z4lE1tlt
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="21359828"
+  bh=gCQYzd+V54k0Iq5KaOqQEPyn84IhXjl7Xo/DTTrOszg=;
+  b=jHL5nDwxoPlf9Cugr8W4H36gVJnPX9ZP1iV0orwBufT6S5mbrqNx7ZEy
+   KuVMlhLOoBV8wzPE8yM8ZEdSf2Vgjf7SehWCl0lY1e6/h+IBABSRG+i0H
+   KmnBNYsGTUVRgfrIGY8ZTK9CafPUNmWfWHyAIOjTJ0up3FzlzgldvR1tH
+   JrbUJLyByfUxCMYrd2DnhSbdUdAJqKfwb0aVUVGk/ZplrG60FBcuC8o9N
+   1k4Ow63UAEKxccypCxTRs3G1Ee1M+B11DWjZF+a727F1NwReUnji6A+3V
+   rI+/106sgjwQ11MsJFVslDdn+73RbULiKGjpQgdZJUSU+aYdRKfuGw7gB
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="3706718"
 X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="21359828"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 02:27:16 -0800
+   d="scan'208";a="3706718"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 02:28:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="8390451"
+   d="scan'208";a="12842073"
 Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Mar 2024 02:27:15 -0800
+  by orviesa003.jf.intel.com with ESMTP; 01 Mar 2024 02:28:58 -0800
 Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1rg06Z-000DmX-0w;
-	Fri, 01 Mar 2024 10:27:06 +0000
-Date: Fri, 01 Mar 2024 18:25:04 +0800
+	id 1rg08N-000Dmq-1q;
+	Fri, 01 Mar 2024 10:28:55 +0000
+Date: Fri, 01 Mar 2024 18:26:26 +0800
 From: kernel test robot <lkp@intel.com>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- f6443e0177a55f78e94ccc1a43eb63a023a0b6fd
-Message-ID: <202403011801.mX89Xqor-lkp@intel.com>
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 26fea220ad5b97b448741eb6103bb49830b67eb2
+Message-ID: <202403011823.pbT6s1hG-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -55,12 +55,12 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: f6443e0177a55f78e94ccc1a43eb63a023a0b6fd  pinctrl: don't put the reference to GPIO device in pinctrl_pins_show()
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 26fea220ad5b97b448741eb6103bb49830b67eb2  pinctrl: da9062: Add OF table
 
-elapsed time: 738m
+elapsed time: 739m
 
-configs tested: 159
+configs tested: 152
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -118,14 +118,6 @@ i386                  randconfig-001-20240301   clang
 i386                  randconfig-002-20240301   clang
 i386                  randconfig-003-20240301   clang
 i386                  randconfig-004-20240301   clang
-i386                  randconfig-005-20240301   gcc  
-i386                  randconfig-006-20240301   gcc  
-i386                  randconfig-011-20240301   gcc  
-i386                  randconfig-012-20240301   clang
-i386                  randconfig-013-20240301   clang
-i386                  randconfig-014-20240301   gcc  
-i386                  randconfig-015-20240301   gcc  
-i386                  randconfig-016-20240301   gcc  
 loongarch                        allmodconfig   gcc  
 loongarch                         allnoconfig   gcc  
 loongarch                           defconfig   gcc  
@@ -221,6 +213,7 @@ x86_64                randconfig-013-20240301   clang
 x86_64                randconfig-014-20240301   gcc  
 x86_64                randconfig-015-20240301   clang
 x86_64                randconfig-016-20240301   gcc  
+x86_64                randconfig-071-20240301   gcc  
 x86_64                          rhel-8.3-rust   clang
 x86_64                               rhel-8.3   gcc  
 xtensa                            allnoconfig   gcc  
