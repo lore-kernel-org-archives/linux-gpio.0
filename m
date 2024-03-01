@@ -1,238 +1,116 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA636BB23
-	for <linux-gpio@vger.kernel.org>; Fri,  1 Mar 2024 10:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7EC69D22;
+	Fri,  1 Mar 2024 10:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709288942; cv=none; b=qbUofU3IrsJypys7pGpER80W/RzwX6rlB9UnGnvCjWJorkZAmvxfxPp9y4yk4c2WmjN1pbVMKJ2POCmUGQ6DGwamcmQNNlPk995zdRxEDNFxevjdnO2GFA1RvQQddgQbI5JN8WFPpI61DZV3RDvetIXfc4hhv07IY5+IMbMfAIA=
+	t=1709289577; cv=none; b=qhupJOkWXSeCNlbUwzRq9IQ7Rtu3suabQoKmEP/G+aPJQErYtQQTQ8xFHdnFDQpNBNdod7SMTVRfKjArv88eDynHai3LN/svo0HmfyYn/jSzyVvz4fVxae1WzVgHNZTUB+fs8hhQwGS0x2eeMhkcyYBOF7SivgEvcNu2Q1r+F7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709288942; c=relaxed/simple;
-	bh=PRtqwu39SyCgbzucfioJghQrqRB5OQH8f9dYMr4Ox2A=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=URdF6Z98saf3A/qgZZ9k8pCbS1V6YivBdg13VNOHb/wcXqVsSDfhaD+/6L1oGSuyBJqz8qup8KuCMIOeD7+V6PI/6KaplrahLE+iSkPOdx+T124mwxZXgsye9tekyi8CsHKvGNBO9gfqEk3j4636rixAW6YrgVFyADE2TU2/tPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fNq3rx91; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1709289577; c=relaxed/simple;
+	bh=pNebpWfsA+jspsdFsOJW/LSf558UZwWkGzieJ+R8+uI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fzHhMiqOHrBXYaWfuOux/tNxHuSDKPjMl6SOXFfG0KvxXFX8GgwIWdQ9boT1+CstbU4Gz6fbrKGnvaO5S3yXoteyeYWiL3mjLpzKKvIMPH4H1c3Jiff1BLxv3jhzRZsV0TBcX8lGfCKXgDNWCOkpeQO67WSrPfqRwfBNcnFMPwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SgxOeAM9; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fNq3rx91"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709288940; x=1740824940;
-  h=date:from:to:cc:subject:message-id;
-  bh=PRtqwu39SyCgbzucfioJghQrqRB5OQH8f9dYMr4Ox2A=;
-  b=fNq3rx91urdGWt3o3BuY9PIEfsogEhJ2ixrfgqecrVF5h5L8EuzRi5eY
-   cvdX5gPPwDwQs93lUkOwIa3KxUf9AUQAi1OvYYLW5bfB8dU2+xyeeR9zi
-   m8hjkhXrKlZFYuE9+/RvH8TFkpwFwSROJO7dSZV+r9fJcfK9rFvS1XwlD
-   /q3Cn3DOBDmQcmIGSGWa/QOi1QafwHvCGGPoV26zUo9pxIjcKoWgzWzfq
-   ch7ii20m/mA4yielx9U565qZKB6+ChcHlRRQvdiOGce0IMsihQ/1le5Xs
-   a72dxFEueVAaFEwtDMixShV8a4L9S4gBTCRtJ9ZDJzCFyCjmjvXWWX5XD
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="15230382"
-X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="15230382"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 02:28:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="31340507"
-Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Mar 2024 02:28:58 -0800
-Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rg08N-000Dmw-2S;
-	Fri, 01 Mar 2024 10:28:55 +0000
-Date: Fri, 01 Mar 2024 18:26:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- c041b1b66c2f667ef5d1536c2cc78b27c39e0fda
-Message-ID: <202403011805.FAmvpZE7-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SgxOeAM9"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C2D2FFF80B;
+	Fri,  1 Mar 2024 10:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709289573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o5NiKL8r/W+kJucjBrQoKtnviioRK6Ax5P082kWhSJE=;
+	b=SgxOeAM92J8bU9MnEeveG4HXHNVeROmThLtiIEtkdLm+tkpTnaN4GYsQYzx/ZH19ymOkph
+	8rUnWBIxrtRBhcxSVL1JLb35kkV8q5HzcaaNen6qAjhGX4DsEwHwXc9DkFRYOXqTtByrQR
+	b+VurREC5sJtBtaagcy1WMWUyk/021AnHUC+CWy0wLsQ7OpBkDrmEjwNoPTysavuwLHPis
+	SI3w/NGr9mDDzH3zcPabXJd98WrUoOYRQbrwPjvLb4vP/VWHSi6OwHcc1AdP5VASKGInE6
+	BwiB//gQ+Prlgcgs9eMsglkhVP177jJa0+SRzmvIWGhWrHE9wCWh1CUh7R/tyg==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Date: Fri, 01 Mar 2024 11:39:26 +0100
+Subject: [PATCH] gpio: nomadik: fix Kconfig dependencies inbetween pinctrl
+ & GPIO
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240301-mbly-gpio-kconfig-fix-v1-1-2785cebd475d@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAF2w4WUC/x2MSwqAMAwFryJZG6itgnoVceEnrUFtpQVRxLsbX
+ M4b3jyQKDIlaLMHIp2cOHiBIs9gWgbvCHkWBq10qYwqcB+3G93BAdcpeMsOLV9IjRlFV9rWNcj
+ 3iCTz3+369/0AhkLXv2cAAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, kernel test robot <lkp@intel.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.13.0
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: c041b1b66c2f667ef5d1536c2cc78b27c39e0fda  Merge branch 'devel' into for-next
+PINCTRL_NOMADIK cannot select GPIO_NOMADIK without first selecting
+GPIOLIB on which GPIO_NOMADIK depends. GPIO_NOMADIK depends on OF_GPIO,
+it is a direct dependency.
 
-elapsed time: 739m
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202403010917.pnDhdS1Y-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202403011102.v8w2zPOU-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202403011329.1VnABMRz-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202403011546.Hpt8sBTa-lkp@intel.com/
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Test robot usefully reported four related issues; see Closes
+trailers for links. Here is a proposed fix. It applies on
+top of ib-nomadik-gpio [0].
 
-configs tested: 165
-configs skipped: 3
+I'm fine with squashing if you prefer keeping the tree
+clean of such commits. Unsure if that is what you usually do.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Have a nice day,
+Théo
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240301   gcc  
-arc                   randconfig-002-20240301   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm                   randconfig-001-20240301   gcc  
-arm                   randconfig-002-20240301   clang
-arm                   randconfig-003-20240301   gcc  
-arm                   randconfig-004-20240301   gcc  
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   clang
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240301   gcc  
-arm64                 randconfig-002-20240301   clang
-arm64                 randconfig-003-20240301   gcc  
-arm64                 randconfig-004-20240301   clang
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240301   gcc  
-csky                  randconfig-002-20240301   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240301   clang
-hexagon               randconfig-002-20240301   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240301   clang
-i386         buildonly-randconfig-002-20240301   clang
-i386         buildonly-randconfig-003-20240301   gcc  
-i386         buildonly-randconfig-004-20240301   clang
-i386         buildonly-randconfig-005-20240301   clang
-i386         buildonly-randconfig-006-20240301   clang
-i386                                defconfig   clang
-i386                  randconfig-001-20240301   clang
-i386                  randconfig-002-20240301   clang
-i386                  randconfig-003-20240301   clang
-i386                  randconfig-004-20240301   clang
-i386                  randconfig-005-20240301   gcc  
-i386                  randconfig-006-20240301   gcc  
-i386                  randconfig-011-20240301   gcc  
-i386                  randconfig-012-20240301   clang
-i386                  randconfig-013-20240301   clang
-i386                  randconfig-014-20240301   gcc  
-i386                  randconfig-015-20240301   gcc  
-i386                  randconfig-016-20240301   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240301   gcc  
-loongarch             randconfig-002-20240301   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240301   gcc  
-nios2                 randconfig-002-20240301   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240301   gcc  
-parisc                randconfig-002-20240301   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc               randconfig-001-20240301   gcc  
-powerpc               randconfig-002-20240301   gcc  
-powerpc               randconfig-003-20240301   clang
-powerpc64             randconfig-001-20240301   clang
-powerpc64             randconfig-002-20240301   gcc  
-powerpc64             randconfig-003-20240301   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240301   gcc  
-riscv                 randconfig-002-20240301   clang
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240301   clang
-s390                  randconfig-002-20240301   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240301   gcc  
-sh                    randconfig-002-20240301   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240301   gcc  
-sparc64               randconfig-002-20240301   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20240301   gcc  
-um                    randconfig-002-20240301   clang
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240301   clang
-x86_64       buildonly-randconfig-002-20240301   gcc  
-x86_64       buildonly-randconfig-003-20240301   clang
-x86_64       buildonly-randconfig-004-20240301   gcc  
-x86_64       buildonly-randconfig-005-20240301   clang
-x86_64       buildonly-randconfig-006-20240301   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240301   gcc  
-x86_64                randconfig-002-20240301   clang
-x86_64                randconfig-003-20240301   clang
-x86_64                randconfig-004-20240301   clang
-x86_64                randconfig-005-20240301   gcc  
-x86_64                randconfig-006-20240301   gcc  
-x86_64                randconfig-011-20240301   clang
-x86_64                randconfig-012-20240301   clang
-x86_64                randconfig-013-20240301   clang
-x86_64                randconfig-014-20240301   gcc  
-x86_64                randconfig-015-20240301   clang
-x86_64                randconfig-016-20240301   gcc  
-x86_64                randconfig-071-20240301   gcc  
-x86_64                randconfig-072-20240301   clang
-x86_64                randconfig-073-20240301   gcc  
-x86_64                randconfig-074-20240301   gcc  
-x86_64                randconfig-075-20240301   gcc  
-x86_64                randconfig-076-20240301   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20240301   gcc  
-xtensa                randconfig-002-20240301   gcc  
+[0]: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-nomadik-gpio
+---
+ drivers/gpio/Kconfig            | 2 +-
+ drivers/pinctrl/nomadik/Kconfig | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index fe6112abb73a..f633be517654 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -481,7 +481,7 @@ config GPIO_MXS
+ config GPIO_NOMADIK
+ 	bool "Nomadik GPIO driver"
+ 	depends on ARCH_U8500 || ARCH_NOMADIK || MACH_EYEQ5 || COMPILE_TEST
+-	select OF_GPIO
++	depends on OF_GPIO
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say yes here to support the Nomadik SoC GPIO block. This block is also
+diff --git a/drivers/pinctrl/nomadik/Kconfig b/drivers/pinctrl/nomadik/Kconfig
+index 59d0d885651c..aafecf348670 100644
+--- a/drivers/pinctrl/nomadik/Kconfig
++++ b/drivers/pinctrl/nomadik/Kconfig
+@@ -25,6 +25,7 @@ config PINCTRL_NOMADIK
+ 	depends on OF
+ 	select PINMUX
+ 	select PINCONF
++	select GPIOLIB
+ 	select GPIO_NOMADIK
+ 
+ config PINCTRL_STN8815
+
+---
+base-commit: 6ad679cfaeea9291e9dce3247e34656080fc1d29
+change-id: 20240301-mbly-gpio-kconfig-fix-e93b03052f88
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Théo Lebrun <theo.lebrun@bootlin.com>
+
