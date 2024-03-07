@@ -1,33 +1,35 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB6E1CD09
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF19A1CD1E
 	for <linux-gpio@vger.kernel.org>; Thu,  7 Mar 2024 07:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709794907; cv=none; b=hGs7L5KhT59nMESiXz3iT8PRfiniWg+l6RfDMpPyBuGiVeyflQSb3ehQnWMhaWlllW5+e1yV/Oh7IO/Fmmvt+hvJVEEqwi9wsJ/I/jhTIWtpgrxK/0N+9csdd/wGf7qlQ9aLZDL3Hjxnw8CzQP2fZkswipl+65tmua64XC33tmg=
+	t=1709794907; cv=none; b=d4N095WKWRfDiVamt5NKwHOF0NFON7erph3SrJMOWenOtd8UJrVwXAzNdcNsMFIMKlnyQ5buTFg5lgYyTy6iCSlcLfTiDQQEl6rKfOt70T3y6yJdXj4BTDHWhfM1g1RcYetlDeAVCu1tmd7JOFbp+AOZiX9gkSMyMd59eFOYXK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709794907; c=relaxed/simple;
-	bh=hlDEF+mRhQCk1gTXJ3ci/EweREqmguVowikDg+AyhVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rU3Vi6r0cn6HAB+e18oHBkb3XUikxEHhe3+SsAS0l9Vt1XNtZk7hP5a8IJUNxv2KgaLRO/5fqhGy+RcXwxVNelN8DuwL33+1P9yWVR4v0oK6cg8y2OByJVkKln9DtquSGyHUzAOFl5m9WkrGgBoHqz0ZRg7P9KNNVIwvURJOKzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=W+u4e7Sz; arc=none smtp.client-ip=212.227.15.18
+	bh=ifYiOgp3knTsR6lC0MHYh79PwcVHlan23djwx4rl6OU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F9mKq1D/tudV9Pbxy44xTZ/dU+ELOj4ntc0hubDTCqRzygU/WasPTbUGPqZMWg3flYzDO9gRNZGpOUMgEv6eXlCLwD6+1ENJF4tcvrYa8RBDzTjxAlIgS3RnLNGLTWQc33yAajAMpiN9JR3brtNlvlLjJDopAgj4Lz+CrwQhSuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=eqUErcwQ; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="W+u4e7Sz"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="eqUErcwQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
 	s=s31663417; t=1709794895; x=1710399695; i=wahrenst@gmx.net;
-	bh=hlDEF+mRhQCk1gTXJ3ci/EweREqmguVowikDg+AyhVM=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-	b=W+u4e7Sz7JCIFmRZBLxh1pynfFhd38G62yi+qNH4XGubsiH+CYDWOQdOFZ7+WgRA
-	 RwoM2GQ6EbqIHqXeXLGQWwBhxgV8/7V0tehkVmNasd6Rl8LZP/CSuTahVN1LCekk7
-	 npu2dXv8wY1hdi6VH5LykY8W9C9XjnWpzJnYIPSD/JMwvt4KxhPYXWej/MH9YNPyM
-	 OgSCKCWW680tl4NfTuDT41P+ttx21jjCsZpnUy0DVLw13AZFBPGbpyfHjnEOZIcyV
-	 NaJOtY/MHhm4U/902SKC8XxGbRnRa97hNiXtbnpe7oND7ErCvCxtugSamewwPTpZP
-	 sLknb+sYMaLEQDQWQw==
+	bh=ifYiOgp3knTsR6lC0MHYh79PwcVHlan23djwx4rl6OU=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
+	 References;
+	b=eqUErcwQMb/NC0eL+Qu273xANDwup/kw4KBWDclbx8da76rWxjGTjN/l575VmS5Z
+	 /8icEyxV9/Mbqi1pifCl5U0/HbLGfmjFpW4/iQ13SpuYcySDl1OlrERYeABZBC+Un
+	 UChKOMILkV4QrvHGn4sKqZQXxgbZUB9oDYUgoms+PDzRMhMhG6oCULxinu9E/XP1L
+	 vpGfdjMIqif4xe2XaWNNtCxrQ1THNRBs0DXllwzXRrgin7ivko081IR1Kb+nYYCEv
+	 HQ/tzTH3V0MUs0cAnn7jKSoRCnSduHUGMq1S/MRqcLxuZfU29w/6u1fZVIR2TWWS9
+	 O3I3gO6a7kRcvcihHA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMGN2-1rS6Ey3w62-00JHEh; Thu, 07
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1My36T-1quzY02y47-00zSba; Thu, 07
  Mar 2024 08:01:35 +0100
 From: Stefan Wahren <wahrenst@gmx.net>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -39,10 +41,12 @@ Cc: bcm-kernel-feedback-list@broadcom.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH V4 0/2] pinctrl: bcm2835: Implement pin_conf_get
-Date: Thu,  7 Mar 2024 08:01:11 +0100
-Message-Id: <20240307070113.4888-1-wahrenst@gmx.net>
+Subject: [PATCH V4 2/2] pinctrl: bcm2835: Implement bcm2711_pinconf_get
+Date: Thu,  7 Mar 2024 08:01:13 +0100
+Message-Id: <20240307070113.4888-3-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240307070113.4888-1-wahrenst@gmx.net>
+References: <20240307070113.4888-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,53 +54,99 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:50RETKyDu8i7DG2qTrfRZpz81ncmODJiA4eBAXV3DhClcmUmaNY
- jXwbMnS5VGcbbEMExAc1bIBPc3tZp0cd8r7gkwHLYpE88zFp580D2rHLK4S+Gr+Xw0p15M0
- WPp/G9i90qSER1HaJcHyFeDaRlaWcEtTr+j4kkXYxP6uhVHzy+2AWVxWYYCBCyEJjvE51Q+
- 13bHVYGwGaOI38/5Jfmgg==
+X-Provags-ID: V03:K1:DCccPuS8QyVdPnMEcwog/EF0++clZNFV5FmydDrTVqEaJx5LsSa
+ I4KEmckJZowefSlMYv9rYno83+Bg8210wiTRtSIIp33KgcpT/l1N9UhDH+p0RcvQVbMp3dq
+ luGMo9m6WJa6uAm+7R8v/xKp8sCHGa94b7rFk/BixUPMq2DBagRGAVcUnhzaad0p6Gsmiw7
+ Bkr4G2Xsk+JkiUMimv34g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LAKqurRLRtQ=;tYl76iU+lkCk1yKbR6eT15QSjbC
- 0KDQsA0dxneGxG5c/UMtb7lwSvhRH45uT7boHO1nrXgF8IxLKNj5h9dpBGkob0ZZRHV6DGpR4
- u2xc0uaXdkrMX99yiRNSZ+aaAjUUm8vbu01GCl2SehLT0AORdhVHjBO9R1p30SYrUp+XGC3vo
- DFiTCyaVdfB+fwUgQrD6+OhngF6f1oHWbKr7SFLJEKHY8mX2GF/E+PNQmAT6uHUYcJxSiZIXk
- cCoZaTzKkAiBJM5YgMlwjxwSM0ok/1Gc8v8SXP90FggpH9FjcQd8D6bPcncBULwuIZmnAUotc
- O4IAo+FFTJnFbdafvJT+h+pogOpgOZmqv/l0EOjepKkzyf2wS7hPelbGkYipknPCyvC8pnneD
- 1RU2Nd2JfoeFzDSqu8k88wOi/iJKkFKqWiDEfIro1nrwkbiuzKkrlmLPsdX6WLE0IFpyVaY61
- I+I2nD1pvEOKLfVCqX1daaN10SarVTGlTMwrNuLBIAd3qAhz41/h0kk32z0qT7uIq+t6vsfqE
- ZDQDtXBCyDQbBlIDj2uVcLtTBmiYMvzb23QT2dNS18ZF0PMEp39Lwti6BL4dN1rfPAs2Ab7Os
- FPkRA0Am+lm3LVVPcHAjvQFloRwGisoiTacml006S678RQzTKzQji6feye7y2oOM7ULXeYND+
- NbxkYAg0RFlj4yJ3ti2MWCKJSAbJO65vKWvp3kZymS4NyE+AgHEbXmgasTGV9BYleURRZlqJ5
- xF0AirjFA8bN+Ow3rJCrIuaOJLJRWQJBncrget7TdyZAn8ItbZsqlncO4/i58HA9RsuDmuHT3
- IQT4cxVISsn3TastoTvc9e/wgX/UcNBKmbIyOcUNa8vAw=
+UI-OutboundReport: notjunk:1;M01:P0:11mm5wwasfY=;sWUeDeS0YKe2o8YXTrSL4SrjuaB
+ iFhcu7nmkhM1FuTfPfRNqEA5OnkbaQLe3QtQHhGSVC9s+6qP2uRr2raJCgzcKLvLVUMdX1wKl
+ 7FiAP2EkYsCZRr9ln7U0zR6DMnPiGb/h9oSzU4u5AgtrsqzSvkfPjR57rm6WWwKj2rzvhZv6D
+ MWmmRmr6hmfLucMVjpnxoH0hIuTkK0cxQIfNvV2/Oav1c+yJMGExXtsXLkmTLbBdMC+ZhoErO
+ GXE78Y2T72PoULNPJ0s2mee05z2K6rxDONvTmWtn9VW6E3rSY4X9oL42/mrTUiqZNK7/yfXYb
+ gw8xrcxrrCTWcwdRYTLUAO05iLTYYzjKJXei9UAGMTg89rgqdziPic6hnbexYLJkY32EHkLs2
+ CjKRgXiBGwgganx7WYV/ep5sa+jrX9YB+0WXCvOZi7DXowZ2XhJHBJH1RXhKmVHXxtIdfBdvM
+ YFdnFD5v9951S+Em4aze3zR8djFNVIjXlCogs1CIKwjfjTqzzVvPdCd+SBHHSB1hMB1YLWE9P
+ t1toud1viYuSor/vOe4kdBulICzQ9UuTor1oY4uiyHy+BJtMlpCDEeqpW6zywsO4RsZL6SHKq
+ SI9d59bDwYBrihyzBqFPNHvhyAVPiZyDFbglRgIV/GHiTJaQFeOE8wXatDnQtqAcJBfz5V1DZ
+ hPzs/c9VijnEtsenGYvnBExvapuP9MEEOZoR8SoNhlNahBi29deVhrSlGxEUaHQXm7ekkoUuN
+ k/XSBWj4pv4f7YggKVtzZaCqIOs20pSjqkM+xtr5QC5DutPPo4CRY14nolAL50hS5fvfeY+IH
+ VCM63FxNBSxRawI7wmO9WRHmu7bgCSkFIvTsQQ/X8xgCA=
 
-For years, the Raspberry Pi users relied on userspace programs to read
-the pin configuration. In the meantime, it has become apparent that this
-approach has reached its limits for various reasons.
+The BCM2711 allows to read the bias config. So implement pin_conf_get
+accordingly. The pull resistor values has been taken from the
+BCM2711/7211 datasheet.
 
-This patch series now attempts to improve the debugging possibilities on
-the kernel side in order to reduce the dependency on these userspace
-programs.
+This implementation assumes that BCM7211 behaves the same way.
 
-Changes in V4:
-- drop PIN_CONFIG_INPUT_ENABLE & PIN_CONFIG_OUTPUT_ENABLE from
-  bcm2835_pinconf_get as suggested by Chen-Yu Tsai
-- add Florian's Reviewed-by and Tested-by
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+=2D--
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 41 ++++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
-Changes in V3:
-- convert changes to single return point of success as suggested by
-  Andy Shevchenko
-- justify ENOTSUPP checkpatch false positive
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/p=
+inctrl-bcm2835.c
+index 5d2b188a1ef4..f5a9372d43bd 100644
+=2D-- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -1098,6 +1098,45 @@ static const struct pinconf_ops bcm2835_pinconf_ops=
+ =3D {
+ 	.pin_config_set =3D bcm2835_pinconf_set,
+ };
 
-Changes in V2:
-- adjust the BCM2711/7211 pull resistor value according to the Broadcom
-  datasheet
++static int bcm2711_pinconf_get(struct pinctrl_dev *pctldev, unsigned pin,
++			       unsigned long *config)
++{
++	struct bcm2835_pinctrl *pc =3D pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param =3D pinconf_to_config_param(*config);
++	u32 offset, shift, val;
++
++	offset =3D PUD_2711_REG_OFFSET(pin);
++	shift =3D PUD_2711_REG_SHIFT(pin);
++	val =3D bcm2835_gpio_rd(pc, GP_GPIO_PUP_PDN_CNTRL_REG0 + (offset * 4));
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		if (((val >> shift) & PUD_2711_MASK) !=3D BCM2711_PULL_NONE)
++			return -EINVAL;
++
++		break;
++
++	case PIN_CONFIG_BIAS_PULL_UP:
++		if (((val >> shift) & PUD_2711_MASK) !=3D BCM2711_PULL_UP)
++			return -EINVAL;
++
++		*config =3D pinconf_to_config_packed(param, 50000);
++		break;
++
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		if (((val >> shift) & PUD_2711_MASK) !=3D BCM2711_PULL_DOWN)
++			return -EINVAL;
++
++		*config =3D pinconf_to_config_packed(param, 50000);
++		break;
++
++	default:
++		return bcm2835_pinconf_get(pctldev, pin, config);
++	}
++
++	return 0;
++}
++
+ static void bcm2711_pull_config_set(struct bcm2835_pinctrl *pc,
+ 				    unsigned int pin, unsigned int arg)
+ {
+@@ -1165,7 +1204,7 @@ static int bcm2711_pinconf_set(struct pinctrl_dev *p=
+ctldev,
 
-Stefan Wahren (2):
-  pinctrl: bcm2835: Implement bcm2835_pinconf_get
-  pinctrl: bcm2835: Implement bcm2711_pinconf_get
-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 64 +++++++++++++++++++++++++--
- 1 file changed, 61 insertions(+), 3 deletions(-)
+ static const struct pinconf_ops bcm2711_pinconf_ops =3D {
+ 	.is_generic =3D true,
+-	.pin_config_get =3D bcm2835_pinconf_get,
++	.pin_config_get =3D bcm2711_pinconf_get,
+ 	.pin_config_set =3D bcm2711_pinconf_set,
+ };
 
 =2D-
 2.34.1
