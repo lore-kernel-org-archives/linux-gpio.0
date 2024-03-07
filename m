@@ -1,69 +1,43 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C793812E1D2;
-	Thu,  7 Mar 2024 13:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E815612D779;
+	Thu,  7 Mar 2024 14:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709819481; cv=none; b=FW4Ff6VRXIET+PMMhIfhmKIy5e8YdmiRcoVy6flh6tHl3zXVmZdY2XBqW3BKPILzi/XqVp1wgmxLZo9IiUczmNyNsyClZebqvQmL134WeP6zDh3nx+DCj8VG/C32Tfmx2OgQT/QiKfjSsI16ZskjH9ilWGJKJBRtth5oyh3DOoI=
+	t=1709820455; cv=none; b=pgkKHNJr118RYPpxcDTtp8H0Y+xePfJ3nN4y24e4dCYsRs2nvjzD0BJBlmgch0RpaMllY6dGzkHPmqvYNWRlepPejCQE3FGoU42CrzKP5pRX24X5PaWhP2K4TEPwqgNmCgro8X3Au41jv4yWR0JfWb8eKmhcQMp5xW5RM0GgByc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709819481; c=relaxed/simple;
-	bh=ygVU4Yd+yAg3WNCryrpv6ThnAM7OpsqhmDWwhxQC6j4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oHvMfiE2uSzFa1aFZkSZ54R3Eb3SsVuC0G7jD1Wz/6x+EsF1VA60MCWujdyQMUHhqXX7fMCPaWIJbC7bBIjQ7n8aZVypLFMuVZT2N2Ct8A4v+MZ+05l0c7QxtD7MYD3mTLhfUz5CWgHHB7lctTHeXxcXZ8qu/GwbFqt65UNU2XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ij369SYa; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1709820455; c=relaxed/simple;
+	bh=wVfBUfFXr/Mm3SfDtTgqpjDmUiqQ3rkkVC81aOHU33Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A/5NshibocKMXyP7kwQNZyY8NCnBu6nLWKemlrKqYCOiyvff/cfx9sPKFBTfbt0eCkZ+Jx9HRKMGgHC5Z4rL98XycdxsnGPpnvpxjO6e6ahuNGeFqHarqZ+lr95cv+0o6q4srXt9f58K7ZjjRrvmBV/YRQD7i2eM3ZVrNsfvqOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvhF20uQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ij369SYa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709819480; x=1741355480;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ygVU4Yd+yAg3WNCryrpv6ThnAM7OpsqhmDWwhxQC6j4=;
-  b=ij369SYaO2ccAUAy8iPLs2xhCRKvq1hFwXJ5u017Mu/wDXur2pibfFr3
-   IwD/uBauP8QgjIqzqjmXaPMLKxNCVKEwgq4J3dIV6YqenvSMpV+/wFisC
-   9b1x7aAi6by8AB583R5gIfnsfb5JYZ/8LDSrhDGob2OV5AWGzMPJPvKNO
-   jQdcciWQbCM9IFR0r3eW/lAIf8D0AYjrS1YOdoZmVyWzVHZwLblvUIEM+
-   sgQahTqhFDt3oUGbW5N31zWTRwlesT7iJf0YaCr1EW9wF1N7qy8EcQZzs
-   yeYpyxokneQMVhGCtXQCxYUsXDVRZnEQEAGSApOHWeSwkmvM2uNj8B5UU
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11005"; a="26960350"
-X-IronPort-AV: E=Sophos;i="6.07,211,1708416000"; 
-   d="scan'208";a="26960350"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2024 05:51:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11005"; a="937046160"
-X-IronPort-AV: E=Sophos;i="6.07,211,1708416000"; 
-   d="scan'208";a="937046160"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Mar 2024 05:51:12 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 052F23C0; Thu,  7 Mar 2024 15:51:10 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvhF20uQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3FBC433C7;
+	Thu,  7 Mar 2024 14:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709820454;
+	bh=wVfBUfFXr/Mm3SfDtTgqpjDmUiqQ3rkkVC81aOHU33Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pvhF20uQKIprQ8g8U/7M+MLaoYkIfpYKq5KoxXHM58n7V1dwUgIyg+gnJien9dwwo
+	 Xvp2ZAb/TDFgOGvltF+0ffIxAnq9tgzIRfruQPbn2TGF8LNH+BviRdxx3lv9jvxe5G
+	 LChwX/rwCnMXptEwhY3BVrWG0qbXfvdQ9d5WWQTFKAWtjpCslMwY+giWY2V5PIUTGU
+	 zUqSNLpUr0c6XRY3eSxv/v+k24PVKak3onvVpVjvLrc7HBCMgwiUlzzKUS8MvPeYYj
+	 0aGU8GZ6rFjeDbRDedCXlkPRjcEVKka4Wxy2X6H6gLOE2Rfy4c92RRxwQSFwUR4ncT
+	 i2GJExz8bLQcQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	David Bauer <mail@david-bauer.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Hu Haowen <2023002089@link.tyut.edu.cn>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v1 1/3] ARM: pxa: spitz: Open code gpio_request_array()
-Date: Thu,  7 Mar 2024 15:49:03 +0200
-Message-ID: <20240307135109.3778316-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20240307135109.3778316-1-andriy.shevchenko@linux.intel.com>
-References: <20240307135109.3778316-1-andriy.shevchenko@linux.intel.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: aw9523: allow building as loadable module
+Date: Thu,  7 Mar 2024 15:06:44 +0100
+Message-Id: <20240307140729.2278907-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,50 +46,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to prerare for removal of gpio_request_array(), open code
-the latter. Note, we are not using gpio_request_one() as it's also
-deprecated, hence reducing legacy API usage to the very basic ones.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+When CONFIG_I2C is set to =m, the new aw9523 driver fails to link:
+
+arm-linux-gnueabi-ld: drivers/pinctrl/pinctrl-aw9523.o: in function `aw9523_probe':
+pinctrl-aw9523.c:(.text+0x9f8): undefined reference to `__devm_regmap_init_i2c'
+arm-linux-gnueabi-ld: drivers/pinctrl/pinctrl-aw9523.o: in function `aw9523_driver_init':
+pinctrl-aw9523.c:(.init.text+0x4): undefined reference to `i2c_register_driver'
+arm-linux-gnueabi-ld: drivers/pinctrl/pinctrl-aw9523.o: in function `aw9523_driver_exit':
+pinctrl-aw9523.c:(.exit.text+0x2): undefined reference to `i2c_del_driver'
+
+Make it a tristate symbol so the dependency is correctly honored.
+
+Fixes: bfa5aa367a82 ("pinctrl: Add driver for Awinic AW9523/B I2C GPIO Expander")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/spitz_pm.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/pinctrl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-pxa/spitz_pm.c b/arch/arm/mach-pxa/spitz_pm.c
-index 8bc4ea51a0c1..03b4b347f11a 100644
---- a/arch/arm/mach-pxa/spitz_pm.c
-+++ b/arch/arm/mach-pxa/spitz_pm.c
-@@ -35,18 +35,20 @@
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 21d38bf2d1ca..d45657aa986a 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -128,7 +128,7 @@ config PINCTRL_AXP209
+ 	  Say Y to enable pinctrl and GPIO support for the AXP209 PMIC.
  
- static int spitz_last_ac_status;
- 
--static struct gpio spitz_charger_gpios[] = {
--	{ SPITZ_GPIO_KEY_INT,	GPIOF_IN, "Keyboard Interrupt" },
--	{ SPITZ_GPIO_SYNC,	GPIOF_IN, "Sync" },
--	{ SPITZ_GPIO_AC_IN,     GPIOF_IN, "Charger Detection" },
--	{ SPITZ_GPIO_ADC_TEMP_ON, GPIOF_OUT_INIT_LOW, "ADC Temp On" },
--	{ SPITZ_GPIO_JK_B,	  GPIOF_OUT_INIT_LOW, "JK B" },
--	{ SPITZ_GPIO_CHRG_ON,	  GPIOF_OUT_INIT_LOW, "Charger On" },
--};
--
- static void spitz_charger_init(void)
- {
--	gpio_request_array(ARRAY_AND_SIZE(spitz_charger_gpios));
-+	gpio_request(SPITZ_GPIO_KEY_INT, "Keyboard Interrupt");
-+	gpio_direction_input(SPITZ_GPIO_KEY_INT);
-+	gpio_request(SPITZ_GPIO_SYNC, "Sync");
-+	gpio_direction_input(SPITZ_GPIO_SYNC);
-+	gpio_request(SPITZ_GPIO_AC_IN, "Charger Detection");
-+	gpio_direction_input(SPITZ_GPIO_AC_IN);
-+	gpio_request(SPITZ_GPIO_ADC_TEMP_ON, "ADC Temp On");
-+	gpio_direction_output(SPITZ_GPIO_ADC_TEMP_ON, 0);
-+	gpio_request(SPITZ_GPIO_JK_B, "JK B");
-+	gpio_direction_output(SPITZ_GPIO_JK_B, 0);
-+	gpio_request(SPITZ_GPIO_CHRG_ON, "Charger On");
-+	gpio_direction_output(SPITZ_GPIO_CHRG_ON, 0);
- }
- 
- static void spitz_measure_temp(int on)
+ config PINCTRL_AW9523
+-	bool "Awinic AW9523/AW9523B I2C GPIO expander pinctrl driver"
++	tristate "Awinic AW9523/AW9523B I2C GPIO expander pinctrl driver"
+ 	depends on OF && I2C
+ 	select PINMUX
+ 	select PINCONF
 -- 
-2.43.0.rc1.1.gbec44491f096
+2.39.2
 
