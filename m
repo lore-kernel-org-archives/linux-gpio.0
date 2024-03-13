@@ -1,32 +1,33 @@
 Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1315D737
-	for <linux-gpio@vger.kernel.org>; Wed, 13 Mar 2024 23:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498285D8F6
+	for <linux-gpio@vger.kernel.org>; Wed, 13 Mar 2024 23:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710374075; cv=none; b=C5fjKW1HjT62LutGfipEtNuOqxSUYmVfQPvEHeJI7j2FmnmwpyH6rrXNDmG+YTHnHBqrXeHM+9ryNQrxUufVqDocGhpOAEwNARz+0PgRZhdZMKZGNvu4WdzDhtjrViiZd0w/mudDL5cLOFY+ecDuu6a7ehGS//+ftNoAB2XlBus=
+	t=1710374076; cv=none; b=HJKdN5szVLmSU2bnSLKPqiI05FjuYXHvts9V/jR+WfdYzDL6bASeVsRJxkVTDxSS4XEARF0tzUaScobHtf3wjDK2oWY+N0BxhCJJBgCVZK2XHpSfpAHoHBEB6huh1/pA8LwZS3mHnn/rZskIzrFgCK/oiZptNA17ANgASx1oFdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710374075; c=relaxed/simple;
-	bh=4haKc0BWmXZv48XAJVDKU0krU0tVfIaoXXWWf/W8YnQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Unb7JQ9BwaaB4GdhQGs1Y1NVkhvcjuS5h/c8C9dKSxdGeq2pLTwvciNhpSSjrWTTEg+X1+WkdWRgUzle8Y1v+LExY0wkEL8KVKvzXUOr/y8bpPz4EBcOznWW4R4zAxuif9wP3Wg2GKutMZzBUZlN8WLt+M27LAvXIwcCFOAfLNY=
+	s=arc-20240116; t=1710374076; c=relaxed/simple;
+	bh=GLJSgRLelWjt7dIinJmYtT1PfasRJUH2zmyz15NzJ20=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=H7v20JlrDWUCJXTgMn+JouJqniP+cSJdH5oZqt36ulfr5WWfYmLaaSOMnmXH8D0YH2dwYQSl3qPYolHzy34/NssuTbDrgTxmFp4vuKKsvcwaUXXTyEgeUwEzH6pKtwf2keUKu4UgcPeIM+ZmeKLnNY4LjqRvnKEd3iwPOeqlnTw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-217.elisa-laajakaista.fi [88.113.26.217])
 	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id 05614ad2-e195-11ee-a9de-005056bdf889;
-	Thu, 14 Mar 2024 01:54:25 +0200 (EET)
+	id 096ee361-e195-11ee-a9de-005056bdf889;
+	Thu, 14 Mar 2024 01:54:32 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 01/11] pinctrl: aw9523: Destroy mutex on ->remove()
-Date: Thu, 14 Mar 2024 01:52:04 +0200
-Message-ID: <20240313235422.180075-2-andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 08/11] pinctrl: aw9523: Make use of dev_err_probe()
+Date: Thu, 14 Mar 2024 01:52:11 +0200
+Message-ID: <20240313235422.180075-9-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240313235422.180075-1-andy.shevchenko@gmail.com>
 References: <20240313235422.180075-1-andy.shevchenko@gmail.com>
@@ -38,42 +39,43 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If aw9523_hw_init() fails on ->remove() the mutex left alive.
-Destroy it in that case as well. While at it, remove never
-true check at the beginning of the function.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Simplify the error handling in probe function by switching from
+dev_err() to dev_err_probe().
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/pinctrl-aw9523.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-aw9523.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
-index 4edd371c469fb..66629af0b88b4 100644
+index 44b798c39e26b..17c359f9c45c0 100644
 --- a/drivers/pinctrl/pinctrl-aw9523.c
 +++ b/drivers/pinctrl/pinctrl-aw9523.c
-@@ -1067,10 +1067,6 @@ static int aw9523_probe(struct i2c_client *client)
- static void aw9523_remove(struct i2c_client *client)
- {
- 	struct aw9523 *awi = i2c_get_clientdata(client);
--	int ret;
--
--	if (!awi)
--		return;
+@@ -816,10 +816,8 @@ static int aw9523_init_irq(struct aw9523 *awi, int irq)
  
- 	/*
- 	 * If the chip VIO is connected to a regulator that we can turn
-@@ -1082,10 +1078,8 @@ static void aw9523_remove(struct i2c_client *client)
- 		regulator_disable(awi->vio_vreg);
- 	} else {
- 		mutex_lock(&awi->i2c_lock);
--		ret = aw9523_hw_init(awi);
-+		aw9523_hw_init(awi);
- 		mutex_unlock(&awi->i2c_lock);
--		if (ret)
--			return;
+ 	ret = devm_request_threaded_irq(dev, irq, NULL, aw9523_irq_thread_func,
+ 					IRQF_ONESHOT, dev_name(dev), awi);
+-	if (ret) {
+-		dev_err(dev, "Failed to request irq %d\n", irq);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to request irq %d\n", irq);
+ 
+ 	girq = &awi->gpio.irq;
+ 	gpio_irq_chip_set_chip(girq, &aw9523_irq_chip);
+@@ -1016,8 +1014,7 @@ static int aw9523_probe(struct i2c_client *client)
+ 
+ 	awi->pctl = devm_pinctrl_register(dev, pdesc, awi);
+ 	if (IS_ERR(awi->pctl)) {
+-		ret = PTR_ERR(awi->pctl);
+-		dev_err(dev, "Cannot register pinctrl: %d", ret);
++		ret = dev_err_probe(dev, PTR_ERR(awi->pctl), "Cannot register pinctrl");
+ 		goto err_disable_vregs;
  	}
  
- 	mutex_destroy(&awi->i2c_lock);
 -- 
 2.44.0
 
