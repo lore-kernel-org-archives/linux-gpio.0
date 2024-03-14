@@ -1,115 +1,128 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682C0768FB;
-	Thu, 14 Mar 2024 22:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B311F9FE;
+	Thu, 14 Mar 2024 23:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710455030; cv=none; b=IyK7LRWVYr/ygRAf3+lL7mieEAW8+dCiBU2BuoDDOnKRWDbt4+0YtNXwGoayH8ooNu6SyTj7BtkRJLdhnSQzTqrmiEFCJxdQz+nXgJTZjZqEIqXuDI05StczCNeyeeHabRaTwhOIlZYn+uSV5GBss3UQXcW/zkwhxD4NXswfujM=
+	t=1710458586; cv=none; b=bEoGfXO1HMXzlkHlL0QFHysRbubJL/iYR2MOMOoeeMJQVKgsS/egAf0TLvkSK5cMweYiApDTbQ7qPRin+vw9YHjIFgXEwnnt88dp1kfdxDVNjjTQzr8mQZFRbZqUWycyrH/URYlQsouQiIoroJT1tnZ36dwIOfig8LyIRkn2cRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710455030; c=relaxed/simple;
-	bh=1UvIatx4kpXKXQ8b0xv9aC+YyzrYn0tYZ+udZOWdEus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDBjbOyLo60Y2UOp4kxhv5uf+H0B98DmaBATCDOGDUOO4Mwerf3jLDIAj0JGAO5vWwOSMo6UyWICg653BQXw0y0mjMh62p6pgF2v0Om9VjCUfpjiDiPF1s4c5YVgZgNWhPm9byGD95WvVZX4TCSCH0FXBAFujkYMNzjiYqSg4/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H3g78vW5; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1710458586; c=relaxed/simple;
+	bh=IzEKonS3Rk9mP1viG+w4DpVU37kIVPLD3KQHL9qY338=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cKPwsMsy1eCl4QyEV+LORnySUY1H7ZziiXAZviS/UXASuHMBXXNm2YWyy9X/XBYOx+qGCgX3Zs5/40dzz0m2K6zewWRsDcotWE982hFy3+WrWjAJ1pssRIftt67F1wrEflMIE//ONsx66/Fgnc4DLlmDXW3OrOiYMCBMkbI+aUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Pnxk4JYQ; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H3g78vW5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1710455029; x=1741991029;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1UvIatx4kpXKXQ8b0xv9aC+YyzrYn0tYZ+udZOWdEus=;
-  b=H3g78vW5+CsEzJvkBjymxqCfcDxRw7DxrybtWnwcjiN+irwvDTe3K1L/
-   vwOcXlfPaI7Ncf4H9cFTo8CccEIm6ibosKMyh3f8nwDOjgCTgu4OEpnKD
-   WdIVSV+0XbSCU6GbBW72ULtJ0GWJXSqm31KTLvh1bFqa3N7Php/GhJbZh
-   GL+kH8WRg0kVXLStxOnbNgpo1t+/mq9X23NE78Wm+Rx0d/XyAvXRoX9Ru
-   Au9QZ7LNBVuO1lh6q5gyRNTBYhRa74irhvzAuhem9rNsSxio2Sziyx1So
-   BYpyqL3n5QP89k4dUbAhSkBkNWpuGuk8NAVm/SMmXPaOERLWr5XH4gTuW
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11013"; a="5171640"
-X-IronPort-AV: E=Sophos;i="6.07,126,1708416000"; 
-   d="scan'208";a="5171640"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2024 15:23:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,126,1708416000"; 
-   d="scan'208";a="43358107"
-Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 14 Mar 2024 15:23:45 -0700
-Received: from kbuild by b21307750695 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rktUF-000Dpx-1m;
-	Thu, 14 Mar 2024 22:23:43 +0000
-Date: Fri, 15 Mar 2024 06:22:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v1 04/11] pinctrl: aw9523: Make use of struct pinfunction
- and PINCTRL_PINFUNCTION()
-Message-ID: <202403150648.HPQmT2Ob-lkp@intel.com>
-References: <20240313235422.180075-5-andy.shevchenko@gmail.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Pnxk4JYQ"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id BFF02120005;
+	Fri, 15 Mar 2024 02:23:00 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BFF02120005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1710458580;
+	bh=JVEInx1VsQ+k5oHrMWuJJb1gmeD/iUbSkd2IAOMDuc8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=Pnxk4JYQBKVCYVvRS/2Brp3Ukypy7RKzgprVi0yh+stIP98DPYmv5GriGrKlsewzg
+	 3eXevzf8rSqB2LMWKc+LISmVwiqWdNiDdr+EfgZKhADZPTmuFZnHH4IzAdxe4bTaHD
+	 4YlOa3nz4MC9X2xzM5xvSihLRVnjnNGnIPSpniXSG1N35YIqAskEkbcRjr9Q7MMIRw
+	 nM3xaSeEKQgnG8lWaNUvWoEYd+fLsZUfLjRZ/T6inuQfXk5pcY9e9L6TUkEg+QX/w0
+	 vMStx9edszET+iCpoomFrDZh3fz96XwHjIMKdVHDZ1kd0/Ks1ZzRyNWb0PiH/rJTJU
+	 IjJsqsBvZNY9Q==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Fri, 15 Mar 2024 02:23:00 +0300 (MSK)
+Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 15 Mar 2024 02:23:00 +0300
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>
+CC: <kernel@salutedevices.com>
+Subject: [PATCH 01/25] clk: meson: a1: restrict an amount of 'hifi_pll' params
+Date: Fri, 15 Mar 2024 02:21:37 +0300
+Message-ID: <20240314232201.2102178-2-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
+References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240313235422.180075-5-andy.shevchenko@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 183875 [Feb 29 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.3
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_smtp_not_equal_from}, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Andy,
+Existing values were insufficient to produce accurate clock for audio
+devices. New values are safe and most suitable to produce 48000Hz sample
+rate.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+---
+ drivers/clk/meson/a1-pll.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master next-20240314]
-[cannot apply to v6.8]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/pinctrl-aw9523-Destroy-mutex-on-remove/20240314-075853
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20240313235422.180075-5-andy.shevchenko%40gmail.com
-patch subject: [PATCH v1 04/11] pinctrl: aw9523: Make use of struct pinfunction and PINCTRL_PINFUNCTION()
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240315/202403150648.HPQmT2Ob-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240315/202403150648.HPQmT2Ob-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202403150648.HPQmT2Ob-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pinctrl/pinctrl-aw9523.c: In function 'aw9523_pmx_get_groups':
->> drivers/pinctrl/pinctrl-aw9523.c:170:36: error: 'const struct pinfunction' has no member named 'ngrpoups'; did you mean 'ngroups'?
-     170 |         *ngroups = aw9523_pmx[sel].ngrpoups;
-         |                                    ^~~~~~~~
-         |                                    ngroups
-
-
-vim +170 drivers/pinctrl/pinctrl-aw9523.c
-
-   164	
-   165	static int aw9523_pmx_get_groups(struct pinctrl_dev *pctl, unsigned int sel,
-   166					 const char * const **groups,
-   167					 unsigned int * const ngroups)
-   168	{
-   169		*groups = aw9523_pmx[sel].groups;
- > 170		*ngroups = aw9523_pmx[sel].ngrpoups;
-   171		return 0;
-   172	}
-   173	
-
+diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+index 4325e8a6a3ef..00e06d03445b 100644
+--- a/drivers/clk/meson/a1-pll.c
++++ b/drivers/clk/meson/a1-pll.c
+@@ -74,9 +74,9 @@ static struct clk_regmap fixed_pll = {
+ 	},
+ };
+ 
+-static const struct pll_mult_range hifi_pll_mult_range = {
+-	.min = 32,
+-	.max = 64,
++static const struct pll_params_table hifi_pll_params_table[] = {
++	PLL_PARAMS(128, 5),
++	{ },
+ };
+ 
+ static const struct reg_sequence hifi_init_regs[] = {
+@@ -124,7 +124,7 @@ static struct clk_regmap hifi_pll = {
+ 			.shift   = 6,
+ 			.width   = 1,
+ 		},
+-		.range = &hifi_pll_mult_range,
++		.table = hifi_pll_params_table,
+ 		.init_regs = hifi_init_regs,
+ 		.init_count = ARRAY_SIZE(hifi_init_regs),
+ 	},
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
