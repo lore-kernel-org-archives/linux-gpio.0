@@ -1,98 +1,133 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815866CDB0
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Mar 2024 13:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7226CDD7
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Mar 2024 14:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710423047; cv=none; b=IIIQ7bjFewb4IpC1g+oP3aj5Nf+DdwHYiZc1nT/zFTPZkT+qrv1hruaieqAhBe8p2VHSYZNB0EY6Ftr2N4uSLQF5ablRDsiAAHmLodHLK1hHlG6lXxAzDu3uFkM+kPpE1990RNSKLegUaqSLfDQPUTlHTKLMkbKx8VtUvvanCRM=
+	t=1710425469; cv=none; b=pTFspEMMD9EzBnb0tapfwpfX3h4r8EaMXuozbjBEedfsjiVFi0RS6a0Q+b6/o2TpWEW4gtPZCsVAUBh2Idqm58jymwhO30K6D53IHLL5GSSQ4ZA9dnmY+euu5GgNW4fmOXG9lrFTLyMAFBBvSHPsk14jWZORFuO62lr6RKSlPBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710423047; c=relaxed/simple;
-	bh=11j+Z3UFl/e7AjIJcRHi2dz2L+8S9g3f5yDsqvNuBV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhcBhW/D1wq64qINq1YriaxkNQ+8W1UCPuU2jH7zngBVN3aXPO2JC6VcXMZ0ne1ZNl77tEDV8J5TtAKsAyLZmKUl7eZjiZmlWoiM2aWVEc9W/UKQ2LachULF8dgBgLkSrOzPND+5fsllDDY5x9yC1r3XVVrw950RvGTYm6Rb284=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nu2w+gOg; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710425469; c=relaxed/simple;
+	bh=EP0L4/as9nxE0lKi4we9oY73zQPhQ4YRmDCQOtvHWlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rfXHLz/V0wd7DWqPAA3pUjJTSFqhiO2ECoFyBtnXaulCkyeAKYQl2r58oYk8FnMVLThbF23S7RwM4t3y71rxsU8IDdQg0BqZrdCZB9upE5tj+6JekgdU/fjobtUH2uz9Hi+E1Ze2cnDYcYmGsCmuhlKRMoYdrXr+2bRoMy+H35o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Bm2kzMFt; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nu2w+gOg"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51320ca689aso1178299e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Mar 2024 06:30:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Bm2kzMFt"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d24a727f78so11626971fa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Mar 2024 07:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710423044; x=1711027844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=86yHLksSztOa2QFDhY00gGhv0MGKwJBozJPgYBlG5kQ=;
-        b=Nu2w+gOgNoBawfoWW7J7GMIEXzvfNM4dKaIR8BT724cqyRaVVidGCrvJFou0LVM4oo
-         snSCP0Ws4OsNgzyZZaMvxIcZ+bEbUerjhqfx8j8QHxG+mF7phtJxbM3tg0TA/Zdz8CU9
-         3DIm50CNY9p12dgR1p66DDgLEnBMdZ9tUPTT129a0eNr3sYnKbxKm0U6P1oESxfoWyZb
-         e8TrGmjZGkhMKaZNicN3rSuLOunxAxgO7YEROGevEKfN6+6RnKOiayOiscEqseqwRO19
-         aNnVZkroJhJEMbM7zWX2IP8+tTTNTAUluMJ9cZihSOotswRKbQJiFp09hrn3XxYbU3Co
-         fW9g==
+        d=tuxon.dev; s=google; t=1710425464; x=1711030264; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+jPZL+farhsuUuOhDhbQjn1BkC3HvW75LXDKYJuhfZE=;
+        b=Bm2kzMFtkeX5MsH0cZFT1Q6A91s6nnffNUuMonwpsHo6jcvtCAvqk+bTZW6iTjmVIz
+         I3A8JU08wzPAze+v/oN0To2oa0OHdHvwi4M3gU2Qs4Sl2U12PW2Jkq3zaYbKlneTnn8Z
+         T0hoVFwatRr180E2bvXHB+btWsYYE2g0iSzYHGdUkgol5MyruDu/PRXwUFC6n+GImhCU
+         uwnMZOqGe7TzvWPd6iBY0p4xV1N3LMG9350qit7ZA4fv2PW1P/6H3tRPEC/F3oaPDPVL
+         TAvkgH6v64z96b1GOcRZeBf8j20cDbl0IjYamJkMzolNdDl/z035Ir3XAzTr1qHZbtzu
+         8R9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710423044; x=1711027844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=86yHLksSztOa2QFDhY00gGhv0MGKwJBozJPgYBlG5kQ=;
-        b=iTOTqE3Jx4fOV2F0z8Sbt/Au6sdLi2AuPYFQCuyS5OhIimRBhm+TXHKsvZVhuY8mG3
-         g8L2nNU6SNPk5NFlyu9r1RlPZYv6NAehuHbue0KYNHT1X7mNZSXd2mhBP+0IbaKZSVB8
-         oEoW6Bq+Uox4SM6aRDfXgcHT5uhRjhswqFMy67NRL0fOc+rbUxzOgDKnUh626PXqpSo3
-         IlfpuwcrE7BTXswefc9cCGP2YTfvRGzNePvA/YsAJPDMntn8X/e9z9MggMqH5n/8Kfsj
-         /hTVpFJfbFf+rXJxtoO0H06VTjDYhl76udLp0VjVPc3J8xA8lEthAA7YmP41UvZ4FRTV
-         dp7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNp4s9ZB35TGbOYCyGyJKd7XUfW8jvLF2GuJYjEFCzSiPS8ovqqnE6opYPtunjGEJYq6iuIqxeH6wTTVZh299tAZnK5M6ORumXvQ==
-X-Gm-Message-State: AOJu0Yxe7/bZwaoPjBiv9R/y2pAwX01Sm3UxWay1jdxJM0HxYHE6Lx7k
-	I1xaRblWo0dMyxEI0HQ9dBObol5aXWy3vRYzYuojNjTe7BWgUGfIi87JE1HXC+8=
-X-Google-Smtp-Source: AGHT+IH9MrqihKkfEzTbqPu+2K9+3izR3okzeB9SWVDvZd2rTdQvgjDWFZ9R9M41VsxvuggqOXa8kQ==
-X-Received: by 2002:a05:6512:370b:b0:513:32e2:141b with SMTP id z11-20020a056512370b00b0051332e2141bmr86493lfr.67.1710423043347;
-        Thu, 14 Mar 2024 06:30:43 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id v13-20020a05600c470d00b00413f1c01a7bsm2157935wmo.16.2024.03.14.06.30.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Mar 2024 06:30:43 -0700 (PDT)
-Date: Thu, 14 Mar 2024 16:30:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bhargav Raviprakash <bhargav.r@ltts.com>
-Cc: linux-kernel@vger.kernel.org, m.nirmaladevi@ltts.com, lee@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, jpanis@baylibre.com,
-	devicetree@vger.kernel.org, arnd@arndb.de,
-	gregkh@linuxfoundation.org, lgirdwood@gmail.com, broonie@kernel.org,
-	linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, nm@ti.com, vigneshr@ti.com,
-	kristo@kernel.org, eblanc@baylibre.com
-Subject: Re: [PATCH v3 03/11] mfd: tps6594: add regmap config in match data
-Message-ID: <bb5de326-899c-4c32-b9af-f1698316e5f8@moroto.mountain>
-References: <20240308103455.242705-1-bhargav.r@ltts.com>
- <20240308103455.242705-4-bhargav.r@ltts.com>
+        d=1e100.net; s=20230601; t=1710425464; x=1711030264;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+jPZL+farhsuUuOhDhbQjn1BkC3HvW75LXDKYJuhfZE=;
+        b=wCxOegLk2PtO7FAnTMj4GBdfSHq+Xrp8sv0OJ1NH1mgXScyi+1bJuy02yLwC/dLB6Y
+         lu+QKeWsTAFsfxw+AYHovlaSjXIinfnpOWJQtx2DMEEEskPqv6uCowb4T+znLkecsy+G
+         Qv9p8whhUQnf+v6bjELgxpHWTH8iTidf7VfLOC3Xu0MluqLvZ9yER066Mo/AtWi5ura4
+         SgVi0GP4ZojcpLv7CjgI8d7IFk4CMNQnQG+h2vifbCaf54WQSbtBBBy/7t4BvQZ7VRYr
+         sXN15v2wt1R8IBkfWXS3OJI+Xl8ypPTDHuJSRsMUadJ1kCCyxp3ypHB1h18pP3B7qulI
+         Dgsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqLW87exSBYzDOZ0J2UwC9w/kdPcSLocotmrzVeGRgpybOGnFQ2LVFTV//5dU+Yum9qxRhLtZaApxn4/iNh1iXusLs5TC2b7WIzw==
+X-Gm-Message-State: AOJu0Yz09hdVvtgMqKixofqxHeX3r+l4TkAzVGoYIuSTvITgW2rzDugR
+	GkDzDDDr1vlJz58Sg3xgpf+EfetQzoxQUHjb1e7lUSJ6k6l8WReAh6JshS7PvVE=
+X-Google-Smtp-Source: AGHT+IHVfiIeAXikc9Ks7N3k/GJ46m7UIH56BHraaOQrJfI3Qn0+cQH3BrQvR/CW4f5cmuQuvMQYqg==
+X-Received: by 2002:a2e:a716:0:b0:2d4:727c:94bf with SMTP id s22-20020a2ea716000000b002d4727c94bfmr1206970lje.31.1710425463910;
+        Thu, 14 Mar 2024 07:11:03 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id c19-20020aa7d613000000b005686037bc12sm749129edr.29.2024.03.14.07.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Mar 2024 07:11:03 -0700 (PDT)
+Message-ID: <da48838c-5043-4fff-99aa-2f75f0755609@tuxon.dev>
+Date: Thu, 14 Mar 2024 16:11:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240308103455.242705-4-bhargav.r@ltts.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Execute atomically the interrupt
+ configuration
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240307112452.74220-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWwbfem71Q9FE40jqHM2pXWJW9u+w-+NKy3OffFkzu5SQ@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWwbfem71Q9FE40jqHM2pXWJW9u+w-+NKy3OffFkzu5SQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 08, 2024 at 04:04:47PM +0530, Bhargav Raviprakash wrote:
-> +static const struct tps6594_match_data match_data[] = {
-> +	[TPS6594] = {TPS6594, &tps6594_i2c_regmap_config},
-> +	[TPS6593] = {TPS6593, &tps6594_i2c_regmap_config},
-> +	[LP8764] = {LP8764, &tps6594_i2c_regmap_config},
-> +};
-> +
->  static const struct of_device_id tps6594_i2c_of_match_table[] = {
-> -	{ .compatible = "ti,tps6594-q1", .data = (void *)TPS6594, },
-> -	{ .compatible = "ti,tps6593-q1", .data = (void *)TPS6593, },
-> -	{ .compatible = "ti,lp8764-q1",  .data = (void *)LP8764,  },
-> +	{ .compatible = "ti,tps6594-q1", .data = (void *)&match_data[TPS6594], },
-> +	{ .compatible = "ti,tps6593-q1", .data = (void *)&match_data[TPS6593], },
-> +	{ .compatible = "ti,lp8764-q1",  .data = (void *)&match_data[LP8764], },
+Hi, Geert,
 
-The casts are no longer required.  Same for tps6594_spi_of_match_table.
+On 14.03.2024 15:21, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> Thanks for your patch!
+> 
+> On Thu, Mar 7, 2024 at 12:25 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Lockdep detects a possible deadlock as listed below. This is because it
+>> detects the IA55 interrupt controller .irq_eoi() API is called from
+>> interrupt context while configuration-specific API (e.g., .irq_enable())
+>> could be called from process context on resume path (by calling
+>> rzg2l_gpio_irq_restore()). To avoid this, protect the call of
+>> rzg2l_gpio_irq_enable() with spin_lock_irqsave()/spin_unlock_irqrestore().
+>> With this the same approach that is available in __setup_irq() is mimicked
+>> to pinctrl IRQ resume function.
+> 
+> You mean __setup_irq() in kernel/irq/manage.c?
 
-regards,
-dan carpenter
+Yes!
 
+> That one uses the raw spinlock methods?
+
+Yes! Would you prefer to have raw spinlock here, too?
+
+Thank you,
+Claudiu Beznea
+
+> 
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> @@ -2063,8 +2063,17 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
+>>                         continue;
+>>                 }
+>>
+>> -               if (!irqd_irq_disabled(data))
+>> +               if (!irqd_irq_disabled(data)) {
+>> +                       unsigned long flags;
+>> +
+>> +                       /*
+>> +                        * This has to be atomically executed to protect against a concurrent
+>> +                        * interrupt.
+>> +                        */
+>> +                       spin_lock_irqsave(&pctrl->lock, flags);
+>>                         rzg2l_gpio_irq_enable(data);
+>> +                       spin_unlock_irqrestore(&pctrl->lock, flags);
+>> +               }
+>>         }
+>>  }
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
