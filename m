@@ -1,44 +1,44 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB74E182A3;
-	Thu, 14 Mar 2024 23:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A2D21111;
+	Thu, 14 Mar 2024 23:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710458593; cv=none; b=dF2p+wZ5YcycQtw2yvHFD2ewmrYu3HwKjIIdgbMJV2VPngZUePB1ajqubFJK6tDE3LfTiLwco3V3CyxmjIeCdIfKkxnhcz77HTkGrRYqSUJZSCP/7i6VwniLrz+Cxb48YE4cyirbGZwpMNIQ7mJ3+dMTZ67VtGK+upkHBX9AUF4=
+	t=1710458595; cv=none; b=d3GFwLcFlbMD/iyE9a1r4LrWM5GBKkSZZiAljt7TpYFam84Bv+x6WaMT2cnrDs7hG3DcPVsVQEamvzNnl8W80AnzEU6+Kj9gWs9uizQf7al01+WL6sGGEwiTaJKOG2mmt1Sc1cgEfXnrWdrW1IjonljwIH00rXRuH6VWQj21bOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710458593; c=relaxed/simple;
-	bh=ybkbzx+DIvWdFpyy8EDoKSIvtWeGkBDccrQr3+eS2DI=;
+	s=arc-20240116; t=1710458595; c=relaxed/simple;
+	bh=yqiIwjG/S7XDJV/pa1WQy2erlDBpjOznaZZknYGr6Bk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mwnQL878ePVJpcEO9mN9JYgGjSLaPwm5DaZb4n9oUQsgKZCgsXsihzRB15AEcCfcc2fxNEs5dH23G7/4mKRNXgMqJKMVuhYpRcSspvnwFZRxcdsjB5gzmkSAApPydLbz2CunRLV21rnaOSPZhilzAkOr+rPea05mkyEnoAfzB1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=pmWgkXaJ; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=cNklxgBI2YuaT3mJlsVQFuHgeZi+IakBhkDL6wugLqmayKqHhty84vvsBJ/7rZt8oIuwGAjB0GPfFdAOd7uhIYUKowrFHLTM62bPNEcDAJBSIzKl57GpFafS85POhfSKlsZDC37EwAnB7LlkM4p3cl9jgCZL6rU3GN1LZCkNIfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=F5+hAxaA; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="pmWgkXaJ"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id C2A15120012;
-	Fri, 15 Mar 2024 02:23:06 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru C2A15120012
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="F5+hAxaA"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 089C110001B;
+	Fri, 15 Mar 2024 02:23:08 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 089C110001B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710458586;
-	bh=9SRIX/FvqDap0SMfdebaXOrywr2NEUWz33l2V3WObDM=;
+	s=mail; t=1710458588;
+	bh=KNZWo7RkvOeyvRwAeuVGN8+SUS+q1CnUsbKOy62L+dA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=pmWgkXaJSxRnY2mr5czzY/iGGINaK0+pU7azMlmYipUFsMcwF9rY+yRy3nkG4tXhI
-	 h2emBkJj73eur4HHgzAvK2iDeQHORBbLT/QWiW7uzbkaIitQSQItPYflNW+VEYDcC6
-	 A1sdhRNU4DeQNrK/nbK9uBZKi3zcbleBIlZMg5Agrqd9GPCTR5FxoeibVlSu1gWReA
-	 U2RLXn7gdbNpy8fyHwxgfX1+y/ACrMsZ5Z8JMgVh/8cwK/OVYZvuYb5D/zT/5a+/i5
-	 rFFP+gp6rfElFV+4AgcN3FfjOGBGU1qaSo2zmQ8v5W5YTJBL8xcbMkVNffkNWsJeUb
-	 S+K2xl1zKyVEQ==
+	b=F5+hAxaAuDoDnxTAqPYowmUkkX/zJKODl8ftawtc03dmmjCxhn8MTZVcYf4q6FgsS
+	 SHYEHSeJFJiglmOka3LVsX0BD9hxLA1CprfiPvvlo16P3uluxgV4X4L2jPEQn+RrMh
+	 BGCW+nQuaPxLoxyr2qyTMd8phuzS3lXBB4s5YAXoBpn5zlbTc6NE+k3M/uN9l8lrLK
+	 7+19l6E6fiYcj/t2+4es17KU8ajQtYABzmOlSKQJuNBjSQmQdXb1LRotSOgvD2HhdG
+	 Jyrt8MJoejggzhXQZRDOIaX+SUvE0v7uxSL7YVColylFONTEPvHrU0wX8y7LuVAYzD
+	 6nUconXFqKSBA==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 15 Mar 2024 02:23:06 +0300 (MSK)
+	Fri, 15 Mar 2024 02:23:07 +0300 (MSK)
 Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 15 Mar 2024 02:23:06 +0300
+ 15.2.1118.40; Fri, 15 Mar 2024 02:23:07 +0300
 From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
@@ -55,9 +55,9 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
 	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
 	<linux-gpio@vger.kernel.org>
 CC: <kernel@salutedevices.com>
-Subject: [PATCH 17/25] ASoC: dt-bindings: meson: axg-fifo: claim support of A1 SoC family
-Date: Fri, 15 Mar 2024 02:21:53 +0300
-Message-ID: <20240314232201.2102178-18-jan.dakinevich@salutedevices.com>
+Subject: [PATCH 20/25] ASoC: dt-bindings: meson: axg-tdm-formatters: claim support of A1 SoC family
+Date: Fri, 15 Mar 2024 02:21:56 +0300
+Message-ID: <20240314232201.2102178-21-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
 References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
@@ -88,33 +88,47 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add "amlogic,a1-toddr" and "amlogic,a1-frddr" compatible string aliases
-to "amlogic,sm1-toddr" and "amlogic,sm1-frddr" respectevely.
+Add "amlogic,a1-tdmout" and "amlogic,a1-tdmin" compatible string aliases
+to "amlogic,sm1-tdmout" and "amlogic,sm1-tdmin" respectevely.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 ---
- .../devicetree/bindings/sound/amlogic,axg-fifo.yaml       | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../sound/amlogic,axg-tdm-formatters.yaml     | 22 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-index b1b48d683101..1e809c7c2179 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
-@@ -25,6 +25,14 @@ properties:
-               - amlogic,g12a-frddr
-               - amlogic,sm1-frddr
-           - const: amlogic,axg-frddr
-+      - items:
-+          - const: amlogic,a1-toddr
-+          - const: amlogic,sm1-toddr
-+          - const: amlogic,axg-toddr
-+      - items:
-+          - const: amlogic,a1-frddr
-+          - const: amlogic,sm1-frddr
-+          - const: amlogic,axg-frddr
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.yaml
+index 719ca8fc98c7..154522488020 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-tdm-formatters.yaml
+@@ -11,14 +11,20 @@ maintainers:
  
-   reg:
-     maxItems: 1
+ properties:
+   compatible:
+-    enum:
+-      - amlogic,g12a-tdmout
+-      - amlogic,sm1-tdmout
+-      - amlogic,axg-tdmout
+-      - amlogic,g12a-tdmin
+-      - amlogic,sm1-tdmin
+-      - amlogic,axg-tdmin
+-
++    oneOf:
++      - enum:
++          - amlogic,g12a-tdmout
++          - amlogic,sm1-tdmout
++          - amlogic,axg-tdmout
++          - amlogic,g12a-tdmin
++          - amlogic,sm1-tdmin
++          - amlogic,axg-tdmin
++      - items:
++          - const: amlogic,a1-tdmout
++          - const: amlogic,sm1-tdmout
++      - items:
++          - const: amlogic,a1-tdmin
++          - const: amlogic,sm1-tdmin
+   clocks:
+     items:
+       - description: Peripheral clock
 -- 
 2.34.1
 
