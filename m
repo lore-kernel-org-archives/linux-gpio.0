@@ -1,44 +1,44 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5F2182A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3901805E;
 	Thu, 14 Mar 2024 23:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710458593; cv=none; b=GiE5mHTKiqXNK2lupVuw29i+AREGFFDbDQiaUl7bCcgzx2I+9vOfblh2DCQsqHoJ4E4MtEoQ1kE2mrG5tWQxrFll8DBVg0F0+FjCqsOBFD/OkHUKg6K3UGv8uHFfKRZqki/LxE8Ak8BKJGF5Uw9iwyP6goZVZNTWi9iHDh1xLqE=
+	t=1710458593; cv=none; b=gIPIL8f2VfvPUqm2m42gtigHq3AQXCah3gobPyBk3GgXxwKsnKUW5VE0CCqNa8YFjDnCOM2KVmEz60jE8o46kG0QGo6JtneryM7gAw4gYBtiMXshPeBVSHLpkpvE6RCAZTnWbD3s99Jj/mizt84u1jvIEGhRt05qimC5yHitW9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710458593; c=relaxed/simple;
-	bh=/RnznKU33/L03MF4VCC+cflkWrgwlP2A4Zdxk9pvLNQ=;
+	bh=CdUZuag803pC6PQdBGNShUD3QvPJO0XyZzr2rysVTHI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y6zTr3934tH/6qmWVPll8FeiOmVOeISz4q90N+GfpKsr6Na7RX8a1AC0MdDnwBzMUFEQ4lonDwk/+vqa1dNKXYep+2sd72VZqDMMjs6kum7zAi6wQ8ZjI7UwMtcvtidtqHlvTdt4j8WCa2P6/Sy5U3LhC6YW1ZRXAH3vQMDKepc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=dx5X71Xu; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=Blhg11/bV52q8FFlBEuIopBnUwZwmzEWfxT67tOXXTni17tqQ0emkQLB16+sOHWjLMbBxKQRuqMCc6RQajwW1J3ytH84HqsqtvukZqBnCYihSwRfFcgovpeYZYHR08baqPcpdZmInS0XLvC5/YAOGx60Eqqyj9lAbMY63s1W2jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=A/s4+Msr; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="dx5X71Xu"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="A/s4+Msr"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 95CF1120015;
-	Fri, 15 Mar 2024 02:23:07 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 95CF1120015
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 1C128120011;
+	Fri, 15 Mar 2024 02:23:06 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 1C128120011
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710458587;
-	bh=ZdrA0foYPUX7l+X7zTwiNorgDt1IrMSTCKBa1q4G4Ww=;
+	s=mail; t=1710458586;
+	bh=99JB9YoarE9SEc+xcyDjebZPaFcK5hgu9Fe8vikVLCM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=dx5X71XunFOBx/jyJN73MCPnLI+BARQWKQAg9T+oXW2WAEt7t2VbpvMN4SoOLMqOL
-	 V6+g6D2jHc+qT/xGKP6Hn0mTWJZEoAoO8KkPzMNSfGJ0CUI3eEIK2hunyiWVSr/Mow
-	 8bR+CM2g0hPljbffm9WsQzvfLnOkPGQaFXg1exaqAKypWFd6IlkeuQ3KM/TqHDZYM1
-	 5kEFd2owVxNelooshQAEPJfIXeAYXVT6YOGvyJ6iMNIkL/bJBPOo5ovzY45iylSjKQ
-	 PPwj8YuIdrHQtHAs3vF/ONI3yuUETxyWB7DNb0dMXKq421LWxQUwHQFI07ENw7KBHo
-	 gcsX3dSZEynoQ==
+	b=A/s4+MsrzxQkdH6kF9o+zKirhNTZ68W7DBaf/I9ein8ggW4DC1DiOKcAaQgeVHzbm
+	 VcNOCrtQoYTThe7D/6h7P4qOYGslQ3vW5TlkwR6EmTNdnUmlpnQ84nkLl1O1Z9pUyk
+	 kU7fDRFuyNBEDdM/wSbctLL8CmkIwGj3TtlHs3CrKKU3QleWVFslOvnWy0O+NMUo93
+	 8feniseUSTcs40RpSKQZ/q0b/LoFwhxqxY2fHRrtb4A0eprM77UTi7FwtwGqL0jHiq
+	 Wd7uF8S/HEcIPZgPKKflVFpGqJIqoP3Xe7dhvx7d9DbyLQUUdnlVv5ApWEfAPVU65E
+	 aoFu3rOV8A0nA==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 15 Mar 2024 02:23:07 +0300 (MSK)
+	Fri, 15 Mar 2024 02:23:05 +0300 (MSK)
 Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 15 Mar 2024 02:23:07 +0300
+ 15.2.1118.40; Fri, 15 Mar 2024 02:23:05 +0300
 From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
@@ -55,9 +55,9 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Neil Armstrong
 	<alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
 	<linux-gpio@vger.kernel.org>
 CC: <kernel@salutedevices.com>
-Subject: [PATCH 19/25] ASoC: dt-bindings: meson: axg-sound-card: claim support of A1 SoC family
-Date: Fri, 15 Mar 2024 02:21:55 +0300
-Message-ID: <20240314232201.2102178-20-jan.dakinevich@salutedevices.com>
+Subject: [PATCH 15/25] pinctrl/meson: fix typo in PDM's pin name
+Date: Fri, 15 Mar 2024 02:21:51 +0300
+Message-ID: <20240314232201.2102178-16-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
 References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
@@ -88,31 +88,44 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add "amlogic,a1-sound-card" compatible string alias to
-"amlogic,axg-sound-card".
+Other pins have _a or _x suffix, but this one doesn't have any.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 ---
- .../devicetree/bindings/sound/amlogic,axg-sound-card.yaml   | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/meson/pinctrl-meson-a1.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.yaml
-index 5db718e4d0e7..492b41cc8ccd 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.yaml
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-sound-card.yaml
-@@ -14,7 +14,11 @@ allOf:
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+index 79f5d753d7e1..50a87d9618a8 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+@@ -250,7 +250,7 @@ static const unsigned int pdm_dclk_x_pins[]		= { GPIOX_10 };
+ static const unsigned int pdm_din2_a_pins[]		= { GPIOA_6 };
+ static const unsigned int pdm_din1_a_pins[]		= { GPIOA_7 };
+ static const unsigned int pdm_din0_a_pins[]		= { GPIOA_8 };
+-static const unsigned int pdm_dclk_pins[]		= { GPIOA_9 };
++static const unsigned int pdm_dclk_a_pins[]		= { GPIOA_9 };
  
- properties:
-   compatible:
--    const: amlogic,axg-sound-card
-+    oneOf:
-+      - const: amlogic,axg-sound-card
-+      - items:
-+          - const: amlogic,a1-sound-card
-+          - const: amlogic,axg-sound-card
+ /* gen_clk */
+ static const unsigned int gen_clk_x_pins[]		= { GPIOX_7 };
+@@ -591,7 +591,7 @@ static struct meson_pmx_group meson_a1_periphs_groups[] = {
+ 	GROUP(pdm_din2_a,		3),
+ 	GROUP(pdm_din1_a,		3),
+ 	GROUP(pdm_din0_a,		3),
+-	GROUP(pdm_dclk,			3),
++	GROUP(pdm_dclk_a,		3),
+ 	GROUP(pwm_c_a,			3),
+ 	GROUP(pwm_b_a,			3),
  
-   audio-aux-devs:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
+@@ -755,7 +755,7 @@ static const char * const spi_a_groups[] = {
+ 
+ static const char * const pdm_groups[] = {
+ 	"pdm_din0_x", "pdm_din1_x", "pdm_din2_x", "pdm_dclk_x", "pdm_din2_a",
+-	"pdm_din1_a", "pdm_din0_a", "pdm_dclk",
++	"pdm_din1_a", "pdm_din0_a", "pdm_dclk_a",
+ };
+ 
+ static const char * const gen_clk_groups[] = {
 -- 
 2.34.1
 
