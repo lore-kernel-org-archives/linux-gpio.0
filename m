@@ -1,117 +1,178 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FC932C89
-	for <linux-gpio@vger.kernel.org>; Mon, 18 Mar 2024 10:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FCB364BA;
+	Mon, 18 Mar 2024 10:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710758679; cv=none; b=lv2JIBVwkULKes3No4yE9Rxl2mwi0QWbSIe5atBm4AqFIum8XjKCN9rEzzefIfz9yta4/1ERuKxofM3c0mlSeqreqYcEBWWnCETQvmzEuNe91o4YSGhXPOBZ3rOGtvzKGaXyBGVEBTC0vg+Hc73BlMChkL0LmiSlO+ryMANtvNY=
+	t=1710759158; cv=none; b=AjD4EUn7/d1gE/uKp9aULklf0USHBLECGG9/L/hMLBGuJJvfH2LYznKbEHebzboRgwJKPh781GeNECL0Mk8mC/wAoGWGKHvca3nySJyupdu7apubAGNS6Z9QV3uaNZRdIflfjj7LOiMLvn+1NX2f/EF5YQBM6t72bIeRxZEFIY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710758679; c=relaxed/simple;
-	bh=+SOG/JMXzSLzhcPXLSIqOGl5VMrpHzfQZrNkOx8y724=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=tfDaB+sYvoPEFaMDGUywyWs6jIDTEP8e4x8G4HrqWyhIxTVt3vjmGwjGlsvt9ISnC2oGBFDjMoo0KH8TMd6V71FW1FHurAQv+gJpCbwOcyemMOa6xV7L6LrhRENNt9l8XQJR+PdmkwpPoNoiuVc5wjdoJrG6KZypPy9nRI9prQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1cM11hDe; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1710759158; c=relaxed/simple;
+	bh=OwxnuWoY3m48R2NAbq0b7xRY+NWRNbJKa92r+XdxlU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odiCnApYb1sO97rQTMYGKaRNfQaWMltK91eNcZ8N2SDZJb+F8SmnZT79mt+N7rVASQA90xGuTXGg7xP6YQKtMbj5s8C3zmdcYDBs9RjgRGQZioQOjyieTmMRJHPNiJxeLk0B51wJQ45J56/6ZDlVelB1sFLMJ7HppHEQodaverA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T/VPdU2w; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1cM11hDe"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-513d3746950so4964533e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Mar 2024 03:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1710758676; x=1711363476; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCGPrCwTOITqjTnhSele0x2XpulUBe47CHNWCd7XesU=;
-        b=1cM11hDeSMTR9lFAQfTERjAzuRrCa3rqVEh8PZNzqy7eDhvjQWyz2Y2AL5sm5dsTje
-         +7mG0i3XjWHnHUKnzcJJY3DoxefsHtBLvVXh8+ifZxU8Z7T0dywDnFYKbvrJqyDh2R19
-         qkquO0aTGqDWuTt2z/K/HinTLVZzcScfgDhd/mkiQDGUS9oCSfDx5v3nWjp/ZRwgW2Ut
-         qSRCe46G/cPOUA4LtQfuzodZnBE9W22UwhqBQ37IPmmNaYbC5Fy6Z5nCrQtYndYpR4Fr
-         GN6JDqT8wIJ2ymn2rxXh+ytzIklDaFm1PQLiB68BWuow9Whp8oKMDBD29i2C7KacOvEO
-         pdzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710758676; x=1711363476;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KCGPrCwTOITqjTnhSele0x2XpulUBe47CHNWCd7XesU=;
-        b=AZoNncM/SxV62jRbU59vutdXQ+cpiRZFIckEHTJVtzx+UK3xn/Kc9WmGUCgTmrUcfZ
-         nlp4X/T6c8gASKpNDENCDbzXiBVthYK8BCDmyXD/Va5X1PHCIMoJvOvY/tGbKqVLiOqY
-         wRlMwfOjd/Z5PhTlEYr0yOGyQHWx0gqU1MSva7+XuMv+q0vMj8VYXHg+0zj3RRe1Xue+
-         2L6dlTlvhQ+4jkv/6c4y83ssLlWkDLJngrf73j6zQ+V3jsuK6aNJYk5qjSVmIjXgcrvh
-         I5FiAi5A+8zjvUSdg8ziR+6oX3vTgEOokrmmI6mzpGlu3qB1GT4cKCg2tk/QiwIzo6gb
-         04RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhPwu1jqrr3Il0nmIez0l0NzdkloC4d5ylaiSC9b8vyOdWC+3QvOP5K6QG2keMFrfshFF76CeqdaxKN7QNRNCQCSIrGrkPVzbncQ==
-X-Gm-Message-State: AOJu0Yw5AF3t0AOUSqyMSVCEx39VWKK5zZMTxDJ8GVvQ8mlZiu4JE3/F
-	UNosOvzLKCIqEJ+0h9g1LMMrnzuAqom6VanaMr/Vzf8g6SmaQq8LtjUCnTAJyoI=
-X-Google-Smtp-Source: AGHT+IHrBhAsRVSFIOS45FQu5E9/DGiPnUOBufbspQxtJ2p2r6r0OzKNwEix9BKbpaZlbyfnUT+a6Q==
-X-Received: by 2002:ac2:494f:0:b0:513:c963:895e with SMTP id o15-20020ac2494f000000b00513c963895emr7169639lfi.42.1710758676166;
-        Mon, 18 Mar 2024 03:44:36 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e4d5:78c0:18b:ad85])
-        by smtp.gmail.com with ESMTPSA id m8-20020a05600c4f4800b00413ea26f942sm17214532wmq.14.2024.03.18.03.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 03:44:35 -0700 (PDT)
-References: <20240314232201.2102178-1-jan.dakinevich@salutedevices.com>
- <20240314232201.2102178-10-jan.dakinevich@salutedevices.com>
- <2a41e8b6-7e8a-4995-a1d7-c5d30e53c2d5@sirena.org.uk>
- <3ae535cf-9a89-4187-a761-8390d649b00b@salutedevices.com>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Mark Brown <broonie@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen  Boyd <sboyd@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman
- <khilman@baylibre.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Jaroslav  Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- kernel@salutedevices.com
-Subject: Re: [PATCH 09/25] ASoC: meson: g12a-toacodec: add support for A1
- SoC family
-Date: Mon, 18 Mar 2024 11:42:20 +0100
-In-reply-to: <3ae535cf-9a89-4187-a761-8390d649b00b@salutedevices.com>
-Message-ID: <1ja5mvhl9o.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T/VPdU2w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1710759157; x=1742295157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OwxnuWoY3m48R2NAbq0b7xRY+NWRNbJKa92r+XdxlU4=;
+  b=T/VPdU2wAyrRrL7K6c3d8pL2ErxV66L+8CVUqr2ttlxOfHrkz4Ivtl1J
+   2ybS0g4Kj2Gl51OjuUyWUebE7FaI2+qfx4SLaaTmqlDlcrGB5hewToeHT
+   jAQpKbbonm9RCE67c/P4ieSUc1B6aoW1wZ7WByMFhIL8oWy3TsqPnjGlu
+   +dfgUQLje/NvvGaM5KDfN7iZ5kbFh5m8FX+FNKTQ9dlSNqOAQCT1LmMj7
+   lgCdIO70UWFmgXjI4odEhoro+tVkhB/1Nq1pes3JeZms04YaDa/OmLgaF
+   omPqrgi16mFaA1bkNVlHYGG7i11FUEFQxFrVU/OGQXNBLv1muCw75rNw3
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11016"; a="16704747"
+X-IronPort-AV: E=Sophos;i="6.07,134,1708416000"; 
+   d="scan'208";a="16704747"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2024 03:52:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,11016"; a="914588377"
+X-IronPort-AV: E=Sophos;i="6.07,134,1708416000"; 
+   d="scan'208";a="914588377"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2024 03:52:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1rmAbW-0000000Dv2X-2mHi;
+	Mon, 18 Mar 2024 12:52:30 +0200
+Date: Mon, 18 Mar 2024 12:52:30 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Hamish Martin <Hamish.Martin@alliedtelesis.co.nz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"brgl@bgdev.pl" <brgl@bgdev.pl>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH] gpiolib: acpi: Move storage of acpi_gpio_chip
+Message-ID: <Zfgc7soiZyRAhUkp@smile.fi.intel.com>
+References: <20240313030251.1049624-1-hamish.martin@alliedtelesis.co.nz>
+ <ZfGMNWtFrgsuUdLz@smile.fi.intel.com>
+ <ZfGNfucm2-izJBfd@smile.fi.intel.com>
+ <f6833616b81e4e35f561dc0ea4dae8dcd0ac026b.camel@alliedtelesis.co.nz>
+ <ZfL5CYMLY03i8q6u@smile.fi.intel.com>
+ <a0c6898f94d5ca3132a132fc47e8d8e23c36eb4e.camel@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0c6898f94d5ca3132a132fc47e8d8e23c36eb4e.camel@alliedtelesis.co.nz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+Summon Hans and Sakari for the ideas and for heads up (MIPI case can be
+affected as well).
 
-On Sun 17 Mar 2024 at 18:19, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+On Fri, Mar 15, 2024 at 12:39:03AM +0000, Hamish Martin wrote:
+> On Thu, 2024-03-14 at 15:18 +0200, andriy.shevchenko@linux.intel.com
+> wrote:
+> > On Thu, Mar 14, 2024 at 01:13:31AM +0000, Hamish Martin wrote:
+> > > On Wed, 2024-03-13 at 13:26 +0200, Andy Shevchenko wrote:
 
-> On 3/15/24 16:33, Mark Brown wrote:
->> On Fri, Mar 15, 2024 at 02:21:45AM +0300, Jan Dakinevich wrote:
->> 
->>>  static const struct regmap_config g12a_toacodec_regmap_cfg = {
->>> -	.reg_bits	= 32,
->>> -	.val_bits	= 32,
->>> -	.reg_stride	= 4,
->>> +	.reg_bits		= 32,
->>> +	.val_bits		= 32,
->>> +	.reg_stride		= 4,
->>> +	.max_register		= TOACODEC_CTRL0,
->>> +	.max_register_is_0	= true,
->> 
->> If the maximum register is 0 how does the regmap have a stride?
->
-> reg_stride inherited from existing code. Apparently, it was meaningless
-> even before my modifications (the hardware has single register
-> regardless of max_register declaration) and it should be dropped. But,
-> is it okay to remove it in the same commit?
+...
 
-Yes it has a single register, for now. Still the stride is 4.
-And assuming the mmio region passed from DT is correct, I'm not sure the
-hunk is useful at all.
+> > > Removing the setting of the handle to invalid may be the right fix
+> > > but
+> > > I don't feel I know the code well enough to make a decision on
+> > > that. It
+> > > certainly doesn't resolve things immediately - I saw ref counting
+> > > warnings output.
+> > 
+> > Not removing, but moving to the better place?
+> > Can you share warnings, though?
+> > 
+> For context here is the current call chain that leads to
+> acpi_gpiochip_remove():
+> 
+>  acpi_gpiochip_remove+0x32/0x1a0
+>  gpiochip_remove+0x39/0x140
+>  devres_release_group+0xe6/0x160
+>  i2c_device_remove+0x2d/0x80
+>  device_release_driver_internal+0x19a/0x200
+>  bus_remove_device+0xbf/0x100
+>  device_del+0x157/0x490
+>  ? __pfx_device_match_fwnode+0x10/0x10
+>  ? srso_return_thunk+0x5/0x5f
+>  device_unregister+0xd/0x30
+>  i2c_acpi_notify+0x10e/0x160
+>  notifier_call_chain+0x58/0xd0
+>  blocking_notifier_call_chain+0x3a/0x60
+>  acpi_device_del_work_fn+0x85/0x1d0
+>  process_one_work+0x134/0x2f0
+>  worker_thread+0x2f0/0x410
+>  ? __pfx_worker_thread+0x10/0x10
+>  kthread+0xe3/0x110
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x2f/0x50
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1b/0x30
+
+Right, and with invalid handle it can't process further.
+And note, that _pointer_ is valid, the content become
+unavailable.
+
+> I removed the setting of adev->handle = INVALID_ACPI_HANDLE from
+> acpi_scan_drop_device() and shifted it to just after the call to
+> blocking_notifier_call_chain() in acpi_device_del_work_fn().
+> With that it seems things progress further with the call to
+> acpi_get_data() in acpi_gpiochip_remove() succeeding now. However,
+> later in acpi_gpiochip_free_regions() we hit this error:
+> 
+> pca953x i2c-PRP0001:03: Failed to remove GPIO OpRegion handler
+> 
+> We also get these errors:
+> ACPI Warning: Obj 00000000ba6a9600, Reference Count is already zero,
+> cannot decrement
+>  (20230628/utdelete-422)
+
+Right, because of ACPICA (not even ACPI glue layer!) the callbacks are called
+when namespace node (which is acpi_handle) is being removed.
+
+I spend a few hours to understand the history of the invalidation of the handle.
+TBH, it looks like a hack to me, but its presence seems necessary to avoid racing
+with the hotplug work. It's a lot of functions that run asynchronously there
+and the validness of some objects is questionable.
+
+Here are the commits in question:
+d783156ea384 ("ACPI / scan: Define non-empty device removal handler")
+c27b2c33b621 ("ACPI / hotplug: Introduce common hotplug function acpi_device_hotplug()")
+
+(It doesn't mean they are bad, it means that this requires more investigation.)
+
+That said, from my perspective what should be done/clarified
+
+- the scope of ACPI data (Can we use it outside of ACPICA/ACPI glue layer or not?)
+
+- clarify in the documentation the scope / life time of the ACPI objects from
+  the ACPICA perspective (Is it already done? Where?)
+
+- remove that invalidation hack and find better solution for the race avoidance
+
+> > P.S.
+> > I'm not an expert in ACPICA and low lever of ACPI glue layer in the Linux
+> > kernel, perhaps Rafael can suggest something better.
+> > 
+> OK, thanks for your help. Hopefully Rafael can add something to the
+> discssion.
+
+Added more people to harvest the ideas.
 
 -- 
-Jerome
+With Best Regards,
+Andy Shevchenko
+
+
