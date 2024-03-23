@@ -1,69 +1,76 @@
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B563F9EC;
-	Sat, 23 Mar 2024 12:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FB01B95C;
+	Sat, 23 Mar 2024 13:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711196348; cv=none; b=mL9imXpMFsDqpuPYsAVonbEcLfFd3sUvg6VMgYdlrwYRWCXVb24AwcJIJY+4F0cx9r9qHBYxDEBjsTZH/x/JEf86vwKBV6rkwepyZnSiLEvvGol6c15i7oO33V2t7v/eKumK0IO7LehXCWhKe0ySo1y4qyMJL76CTHD/sYn+aa0=
+	t=1711200501; cv=none; b=uKN89nktNN8PHCdXy2mlHYoUCibgIpDoF7TMcgWq1PFO+u7y3xVU58giuFqJd8yc27q5ebJVNKDCSJMdtz9g3FNqIGZutfdlLWvOdsLzTPn/u2ZiOpn6kM5ipn+jdxLDMBThVREV30aNQ4A4jpL7RfPQ1Wy3niHyOLsXMcu7Ago=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711196348; c=relaxed/simple;
-	bh=miFsSSO6ORAFKfb/FNplR2ic2Sl1l5TEs4zGx418nbM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=ZWSeiaGKwmD0sh0OLnMIaujbybFRqtq7Lm9eJaZASRYKNWAUp17dyqUWjxj9dxASXqbDv7JlJBADNH2/MC21ntTBfMv7hJvpzfLhDCHdkvNQIFHFSZ0DDkpSO5wImMUGRrLEeSiNR8R0QqVUFQq4yfGx4M8JzWUQBCDAf3E98MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xyVGsYbG; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+	s=arc-20240116; t=1711200501; c=relaxed/simple;
+	bh=FVG1NGLm0NqbBCJODls7SI+MMlqwX2csixRc1Mf+tTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gULu9PlnuejP1rmzZreC9aerTBjcbrPH5qwJxLZSvumR/hu/GFNfg5eAG5/pm5hFy+4D01TW4u5nwx1Uz4VzwZZcTjvGgBXaTmhavfQtYMP14zEgOQ9Q9+2j/Z8Fwnxsgz6EUotTM7R6OD0xGvIF6Psb/9tkRX5PiqGKaO6iQYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at9o7Now; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xyVGsYbG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1711196340; bh=FXV/7ms+3t0/0kPfleO6oqzdUTF8q8JeIeMsgZdvycQ=;
-	h=From:To:Cc:Subject:Date;
-	b=xyVGsYbGdlfK7syv/7rw/9CxFN+2u97nXWHevUw1lP1bAI0V2fFz13SSn96Op7iLC
-	 zhd+8GOR+xUsRUq9/uXDh7byKFuoUxNT0Y5/ueBAgb3FnSOW+hpOFl5gGl35hvzn84
-	 s1XfkxIA7ikOIXNKpuEThg40dnjOyeakmkdhcAGY=
-Received: from cyy-pc.lan ([240e:379:225d:8e00:b91:b2e7:7c69:8554])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 29B94C26; Sat, 23 Mar 2024 20:10:27 +0800
-X-QQ-mid: xmsmtpt1711195827thrvb5b58
-Message-ID: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
-X-QQ-XMAILINFO: OQ59tfF64tJLcVZEXNL6UKJCRP6DHmqNBwAbU7DzvlZsg0jBqqRaEo1a73jhJm
-	 Vh0+GpXnv94y64GUeH5S+fE/Ps19L9WbiN9ZmXTXotRyo2XLcy/EQKsTlJBDshdlxmk4pmT+i70G
-	 3HosWAV2ZIeXLr5ALg+vLiO+j3RUhuItIlsUiMcAK5N0xfpfTJ5LSKVAr7M49GeFf9fymOKgsk64
-	 sK5+srDS91yIJ4R4+QujU1guaQBu7MuVXVHh7qHRpp+Q5ku4KfMsRvkaF71F9ONeBcXsLCImI402
-	 mqtkIpylN8HdSzcwLctKhNYZ61m/YJR264ZDCQyy4sxNX9XN6BUEftw2M6S1W9FroNg4/ucAmNvN
-	 /Pszszfjb2/snKHFsAVysatXYGVQnHB5uxrWrsbbRkRsX08pbtGBT7e/qG7bAn5/qXQUBwd1QEWH
-	 qaKiCZW731/G2/Xqu5K0+5jTMNK5dgwm0YWpxfCTYc39Lfzo/tf/dfWF9uDfDJ7sKZq4BB/H9YRK
-	 mJhYmEycgRABuR9xYd9qyvEzNJzpWrGmI35vvsJPVVoFUjybS+2+yid/YN0H4d17VVGpB9nvH6ES
-	 S8IPJiQdWKp3oy5hEIFrsq34usTmHNogPQbmwVOQMEcIy4+OR1WijG1T1YIIfy0do328CpSzSEMY
-	 YFXPbpG265qTzUCekSfDntNMpV5rCpE9jeLzJyiqlcJXj72pW0/b3c+aJC9QHOuuMweGjBt+8UhQ
-	 GzPdj36D0ittQNv0ux4ZhC0Et0RF7ofenLujMVGfIDYfjczIXK3uto07gEVKlYY4xe+EdLuXlkZQ
-	 C8obnGdoLtKrnnnmVII4Er0RxxoGrZZk9i4IjN4tAhqDL0R+wtLbfvAPRt2mM4Z06Q2alTad4cEY
-	 qL1D4LvB1CoFOLJMCkKrwwcvU0afxtkEkl+C2y8fh03VNV9A+Kg5WFRuIykSWBQvh+z1Nkw7RpE3
-	 tzUBgj04844rp8o0KENCsG5YyRA9vETpl8Gn6/8AknawQfz41E2Z0d5bSBH6Car5+kFpVkkzE=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Yangyu Chen <cyy@cyyself.name>
-To: linux-riscv@lists.infradead.org
-Cc: Conor Dooley <conor@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at9o7Now"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-341b9f6fb2eso787349f8f.2;
+        Sat, 23 Mar 2024 06:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711200498; x=1711805298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EZ1pELuVvPRDiO8S0zv+ldR/r8hfFaunbVkRqdzuPe4=;
+        b=at9o7NowD8bCYYmNx8aPVjl6o5GlszGcwPT8qveI40JKnt9bmCVxxk2M0gBnze2lBY
+         v34tsNcv0QRa7ZjMq2XepU2VrXy3lL8wdlGNaympe0XSZPiyJ5SEfRMeKH42Ioz1U2bo
+         4dDLiRrUuBLDf8EuOM5P7dmsNAh+0n3NxIaygLRdshxcEUJ+7Mof+LWWiqJZf3JdZ8Ip
+         Qqz1lcz8UwEniR/5JuH5cO35V4Tf3gmpmwmbpP7pRpK0d5el4XlaXmL61PSOj1pYdgCm
+         z1DxKd7+Zc8F5RjQGbMbhIweOJGnFQXVNGU+mfvi7vOgpqw35pibTeO5AdDJgLa9UXKf
+         YgIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711200498; x=1711805298;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EZ1pELuVvPRDiO8S0zv+ldR/r8hfFaunbVkRqdzuPe4=;
+        b=I0Y+d7gisqwsFYKJTfLY+8fIMQsQ+lS6tSq118jcD3byL+jD0jeNx+7lDmIRAiV9W9
+         doRrPV0E7PnCa2BrNhdgzcuwQDDOdT56phxa+KklxCyaMFqdXQkLzc2mvi6qwi2pxF/4
+         9KjpDpH9o2GA4aDSFX10S/RuH9MBq8+0cRkMMxNp2Rmby7GsbV97cRDyyyPpOYVYjZvi
+         q8caZZK0ql05jdCmBfeTNvuPDHVLoz1wY3Tjfgt4QSVYnsdZ5Qii/D1/Ipd5Q9HwnLM3
+         ZemX6/EwTY/ZZFZYIGZvbKIpZxyxqjis6wVeFLIdXK4wGjqmSqez1AnF88w9lrsfgSfK
+         lMLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1vImtJuTBLqb/9jk6SkR5zifg9Eef/SwnFGm3SsJAznHu9CQg88Zho+WbFj/lfPJXePFJS2HqDDmpHBcvh79DaMZxbeMPsi3ru0O7bbBTcwwJQ6alVJsj36IqO1pyz9WdRfU0rDtajdUBapvebJWIktRUvjUIl0TfOTVrjZTjSNOdOvk=
+X-Gm-Message-State: AOJu0YwQti+GCoY280+dAyI9tKx/9VTuPxtrHtY0ii+xPUEtPuXNRaMD
+	e0JtoNTpj5AokYqJb8NJCAgUc0tQ8OiSXYznqeUnbbrhPSQlhP0=
+X-Google-Smtp-Source: AGHT+IHWBxgXRVeLan1IbXLwr5IkdNxnlpfI/0AVMaa+FFCBgQFF1+WMjd7RRQ9wtNDRtuN2vh/s0Q==
+X-Received: by 2002:a5d:40cb:0:b0:33e:1f2a:d88a with SMTP id b11-20020a5d40cb000000b0033e1f2ad88amr1468113wrq.69.1711200497586;
+        Sat, 23 Mar 2024 06:28:17 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:fbb8:7547:139d:a40f])
+        by smtp.gmail.com with ESMTPSA id x17-20020adfffd1000000b00341babb8af0sm3076061wrs.7.2024.03.23.06.28.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Mar 2024 06:28:17 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Guo Ren <guoren@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Zhang Qing <zhangqing@rock-chips.com>,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH v6 00/11] riscv: add initial support for Canaan Kendryte K230
-Date: Sat, 23 Mar 2024 20:09:42 +0800
-X-OQ-MSGID: <20240323120942.1728629-1-cyy@cyyself.name>
-X-Mailer: git-send-email 2.43.0
+	linux-gpio@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v3 0/5] Add RK816 PMIC support
+Date: Sat, 23 Mar 2024 14:27:53 +0100
+Message-ID: <20240323132757.141861-2-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,91 +79,62 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add initial
-support for it to allow more people to participate in building drivers
-to mainline for it.
+This series aims to add support for Rockchip RK816 PMIC series. As per
+datasheet it's targeted for RK3126/RK3128 (RK816-1), RK1108 (RK816-2) and
+PX3-SE (RK816-3) but might be used for other SoCs as well. The MFD consists
+of an integrated RTC, a GPIO controller, two 32k clock outputs, a power
+key, 3 buck- and 6 ldo regulators, 3 regulator-switches, and charger with
+integrated fuel gauge. Charger and fuel gauge are not part of this series.
+Two of the switches (otg/boost) are part of the binding, but not of
+the driver. They must only ever be enabled if no battery charging is
+happening, but it will be enabled automatically if a battery is attached
+and an external power source is connected. Thus that needs some
+incorporation of a yet to be added charger driver.
+Integration in the existing rk8xx-infrastructure was pretty straightforward
+and only needed very little tweaking. In order to not further bloat the
+driver(s) too much with additional `#define`s I tried to re-use existing
+ones wherever possible.
 
-This kernel has been tested upon factory SDK [1] with
-k230_evb_only_linux_defconfig and patched mainline opensbi [2] to skip
-locked pmp and successfully booted to busybox on initrd with this log [3].
+The patches are loosely based on the vendor's implementation, verified
+against the datasheet and tested/measured on a RK3126 board. As they are
+touching several subsystems I'm sending them (very) early for the
+6.10.-cycle.
 
-[1] https://github.com/kendryte/k230_sdk
-[2] https://github.com/cyyself/opensbi/tree/k230
-[3] https://gist.github.com/cyyself/b9445f38cc3ba1094924bd41c9086176
+changes since v1:
+  - integrated Krzysztof's feedback for the bindings and the resulting
+    driver changes
+  - fixed a sparse warning 
 
-Changes since v5:
-- Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210 SoCs
-- Modify existing K210 drivers depends on SOC_CANAAN_K210 symbol
-- Reword dts commit message
-- Modify dts to use Full 512MB memory
-- Rebase to linux mainline master
+link to v1:
+https://lore.kernel.org/lkml/20240321143911.90210-2-knaerzche@gmail.com/
 
-Changes since v4:
-- Reword commit message on dts that the B-ext version of c908 is 1.0 rather
-  than 1.0-rc1
+changes since v2:
+  - integrated Krzysztof's feedback to v2 of the bindings and the resulting
+    driver changes
 
-v4: https://lore.kernel.org/linux-riscv/tencent_587730262984A011834F42D0563BC6B10405@qq.com/
+link to v2:
+https://lore.kernel.org/lkml/20240323085852.116756-1-knaerzche@gmail.com/
 
-Changes since v3:
-- Refactor Kconfig.soc which uses ARCH_CANAAN for regular Canaan SoCs and
-  rename SOC_CANAAN to SOC_CANAAN_K210 for K210 in patch [5/7]
-- Sort dt-binding stings on Cannan SoCs in alphanumerical order
+Please see individual patches for details about the changes.
 
-v3: https://lore.kernel.org/linux-riscv/tencent_BB2364BBF1812F4E304F7BDDD11E57356605@qq.com/
+Alex Bee (5):
+  dt-bindings: mfd: Add rk816 binding
+  mfd: rk8xx: Add RK816 support
+  pinctrl: rk805: Add rk816 pinctrl support
+  regulator: rk808: Support apply_bit for
+    rk808_set_suspend_voltage_range
+  regulator: rk808: Add RK816 support
 
-Changes since v2:
-- Add MIT License to dts file
-- Sort dt-binding stings in alphanumerical order
-- Sort filename in dts Makefile in alphanumerical order
-- Rename canmv-k230.dts to k230-canmv.dts
+ .../bindings/mfd/rockchip,rk816.yaml          | 274 ++++++++++++++++++
+ drivers/mfd/Kconfig                           |   4 +-
+ drivers/mfd/rk8xx-core.c                      | 103 +++++++
+ drivers/mfd/rk8xx-i2c.c                       |  45 ++-
+ drivers/pinctrl/pinctrl-rk805.c               |  69 +++++
+ drivers/regulator/rk808-regulator.c           | 218 +++++++++++++-
+ include/linux/mfd/rk808.h                     | 141 +++++++++
+ 7 files changed, 847 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rockchip,rk816.yaml
 
-v2: https://lore.kernel.org/linux-riscv/tencent_64A9B4B31C2D70D5633042461AC9F80C0509@qq.com/
-
-Changes since v1:
-- Patch dt-bindings in clint and plic
-- Use enum in K230 compatible dt bindings
-- Fix dts to pass `make dtbs_check`
-- Add more details in commit message
-
-v1: https://lore.kernel.org/linux-riscv/tencent_E15F8FE0B6769E6338AE690C7F4844A31706@qq.com/
-
-Yangyu Chen (11):
-  dt-bindings: riscv: Add T-HEAD C908 compatible
-  dt-bindings: add Canaan K230 boards compatible strings
-  dt-bindings: timer: Add Canaan K230 CLINT
-  dt-bindings: interrupt-controller: Add Canaan K230 PLIC
-  riscv: Kconfig.socs: Split ARCH_CANAAN and SOC_CANAAN_K210
-  soc: canaan: Deprecate SOC_CANAAN and use SOC_CANAAN_K210 for K210
-  clk: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
-  pinctrl: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
-  reset: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
-  riscv: dts: add initial canmv-k230 and k230-evb dts
-  riscv: config: enable ARCH_CANAAN in defconfig
-
- .../sifive,plic-1.0.0.yaml                    |   1 +
- .../devicetree/bindings/riscv/canaan.yaml     |   8 +-
- .../devicetree/bindings/riscv/cpus.yaml       |   1 +
- .../bindings/timer/sifive,clint.yaml          |   1 +
- arch/riscv/Kconfig.socs                       |   8 +-
- arch/riscv/Makefile                           |   2 +-
- arch/riscv/boot/dts/canaan/Makefile           |   2 +
- arch/riscv/boot/dts/canaan/k230-canmv.dts     |  24 +++
- arch/riscv/boot/dts/canaan/k230-evb.dts       |  24 +++
- arch/riscv/boot/dts/canaan/k230.dtsi          | 140 ++++++++++++++++++
- arch/riscv/configs/defconfig                  |   1 +
- arch/riscv/configs/nommu_k210_defconfig       |   3 +-
- .../riscv/configs/nommu_k210_sdcard_defconfig |   3 +-
- drivers/clk/Kconfig                           |   4 +-
- drivers/pinctrl/Kconfig                       |   4 +-
- drivers/reset/Kconfig                         |   4 +-
- drivers/soc/Makefile                          |   2 +-
- drivers/soc/canaan/Kconfig                    |   4 +-
- 18 files changed, 220 insertions(+), 16 deletions(-)
- create mode 100644 arch/riscv/boot/dts/canaan/k230-canmv.dts
- create mode 100644 arch/riscv/boot/dts/canaan/k230-evb.dts
- create mode 100644 arch/riscv/boot/dts/canaan/k230.dtsi
-
-base-commit: 8e938e39866920ddc266898e6ae1fffc5c8f51aa
 -- 
-2.43.0
+2.43.2
 
