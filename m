@@ -1,49 +1,48 @@
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94770F9EC;
-	Sat, 23 Mar 2024 12:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87715C157;
+	Sat, 23 Mar 2024 12:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711196195; cv=none; b=W0jNwPFfabX3NsERgXRMebG1DMF8Bhi4F4rOs9gV/5n1U9xO27f6yTDQO0r4wKh8xehGGvcDuU/WaDeGtjv5ersc53W/yDPgh4Bvk6MJPWKv+NAyYxmNWclIcTlsQEfJ23PqpHlXXJMt421kXAnSWVURFJJpQJ7bQf5eO3cOnZ8=
+	t=1711196270; cv=none; b=sQOVaJBx0ePdPV0J//XuzZA1eafIP3PzrSes44rwGidYo9KuILkl6yxnCzpaZYwxo6+QxVcWJ40Opt7rdH6wcS6046EZTw3gHLO+uDNpErpjjB3DFwnmyPOGxX6N5RgY3omltVk77o2RwluLh6RN6du4wWdQ8P5YUSiwpfbnuiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711196195; c=relaxed/simple;
-	bh=VY/sGrXKFyoKGGx/9bHqzS7Eglr7oAp1+7lX9qZ4AZg=;
+	s=arc-20240116; t=1711196270; c=relaxed/simple;
+	bh=QRLQxeqsECyJ6uun0xKaJizzaw8Pb5i5/HMBcCU6mS0=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QhqIgGIBPsosZ9rRtDIHKGf2jN6RS4J11qf911HEZXFHfuzzh5p/MWdMEX5/jcIdOZQr5tLCjdHMGAmF+6bfbMKX2jqDcZXedYFx7z7BiiKr0vYzuoRVLxQ/vivN9DzXn+BeDBefV7uzqMdNw2KqnJlwA/n19TU/kOmS+99c6z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=a8s4ZS8k; arc=none smtp.client-ip=162.62.57.210
+	 MIME-Version; b=doOA+ekHfqbxHcpvQi6yccxRcfNK8BaTOyJKBWL5t6ZgpGu4mt+2aV6/HOdlp71R0WKohVW9J8grHofFuR73+PaFRKGYYg6B8RaoLD1QEwcQdzx6OFfueaJaesytvHS0Ahw39nIMWl4j99qkBwciC0V96I8ioZdLEvyaujSvuZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UAwxZfTO; arc=none smtp.client-ip=203.205.221.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="a8s4ZS8k"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UAwxZfTO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1711196180; bh=prkqax1s/YPOiuAZGsCqzxUs5Mq7p8+18pkZu3zCxio=;
+	t=1711195965; bh=kvuS7K0wl30nwl4M5zznAdLvDfFhfeZr9JFWkFZyoG8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=a8s4ZS8kCinMQEBfC4n1k5obHtzBvp5gzvBzqed8Nnssq0rwTndxYacsxzyXUW+st
-	 wHy/n0YQL4EP9q9C4S3jic7TMRZVRnccfac6+vjlcNQmI83SmVI6clLZHHivyscsTF
-	 Uh2cxZ7phT1z2gGyrjbwNwt1nItJTSmEhLK81N9E=
+	b=UAwxZfTOnsMlrE0TydZIYo2U64LS6Whupe6SfLEEtEOlbmXjOxygdcxmK5wZ3cK2d
+	 6Lltbx/BQLihIpvr/9ZN3RZMuh073rTY2wnl/VThwTXbxaCnHKCo0edtWmjS62xRXi
+	 jRgecDXEwuLgJFvQOFB3kbkqXaDYI3HvwOSA/m4c=
 Received: from cyy-pc.lan ([240e:379:225d:8e00:b91:b2e7:7c69:8554])
 	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
 	id 32594C7F; Sat, 23 Mar 2024 20:12:37 +0800
-X-QQ-mid: xmsmtpt1711195978tnmlc3wz9
-Message-ID: <tencent_09DCFC98C510B846023E004101ED10C70A07@qq.com>
-X-QQ-XMAILINFO: OakVxA/3u/8RJY9aJxFZniVxmyjuv+LnRwH4BurKFJB3iN1qA6IOmp0/dMwmGq
-	 INFrrIaazWaGFoEuymArxkohE6PFoK5yiXKOvxcdoT8D5n8yfqfYPpSw9lGIHfmkVheMdL2z5pt0
-	 9vYFjBFTEAEY+EHInLHRem7AesRCeGKMrAqbPsGPm+TSdIzUg3V1oZdW8RxDYENgg9ZXCa172B0X
-	 Gz9E7NicSdmTzdY63OFO0IpMvqmIYKgU9zdp4rBlsI8Qk/KLBkv1h9B5kv6aQ0SaKP5741c6C4S5
-	 E3Iq2mOMUkKqWKHwYZg1gor5WBdZu8ZVnBQIzqYtoov5VFQ1c4HmlJyPm4UFb2WFhUi9aAnPuFSp
-	 KN0SpzT/ThmgnQAyKWIeXWocwRzmbCywWu44Xz2K5uVNTvecAfNCJU9ix6OL6tYUK2q8HpbX83GH
-	 gViqq84mYBnl+Bm363O6gQC4zoWydpo4DkEn6LOkYviXPxA0Qqzb5pDTPrbkf992jDcYTam1oAfe
-	 foBX6gMtX3rrhkDzUaSe+VaPutNlIArRzaZxkQIAB/FSiabGD46XrQw4k69xJjbq5eZNwBxgLPuJ
-	 hH51Kge4KnM0dXNQ9backIuoneNkl4OOY2aq7RtHibNy6QPDNJTXz0Gu77EOm9hmlK+b35BpZ5Ju
-	 x3CIFB8ZFxyg7XWghwzcbFwhZP4nB02cDxH6ykrVePXY3xsCOsCJWqt6eZaw42KDtBfc3+WSjkhA
-	 EiEgZyMUFMOxicnQKkk76Q1Sp7AaqA7KL68slHTRz+1Mcgr5EfjPVjhAKaZNl5v8zOg9KpT4dUGJ
-	 y2qv4l97K1/Y6Yi59CMw/oJp1UGHwgv1aFrDOoGJCC8A+0WvSw8fqjjIWHvaAup+IBbPXpKov/sj
-	 WKND29wrN3sXj/qLz8nerguDF8O3J7BK6292HjwkRrqMI43CiUABAbmOkDEV20yniYCkedSicui7
-	 4tIllPcH6NX0I8haL2cqKlQGACvNOVHe3nC6DzRoUjkkQbXcCz797BdLeuxoyVKqfKc4azC6aRlf
-	 0ZPUJNzOvSY7aatIEhBh2IOxOy3OZPVkBVmsCYLPt0JNw1gx6P5OrZEaBgF2+9awiLpvTbWWx00E
-	 pnjcW2v7rt+3Y9oUA=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-mid: xmsmtpt1711195961tqo3gwp33
+Message-ID: <tencent_1B8B214D8D4B7C2D8251DA428E0CB8013108@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeie4AIX3n0T6n2lu58j6vXgROfiC092HgAEm8RRTXfZaJpCzJ9OiY
+	 2B7IOHvEe5F7TNPSPasm4NV1ylAM/5PTbvvLAZQKWxONeUuasKlNFaqFniXuJbAmXfkNXgjS/ZZz
+	 OimQYeLT+dYTxJ/EIkojZeoS5ivI/d+OxLzQopg9DxHHf+IN7/cTQJpD+3CZltaKO7K5AwOZdGmj
+	 CTKTJpKvbSugjXBsYoaxWNZpMv6VSspUOXTfnHfMND5W0cK5AUxRKRqj2/TNcEsLefe2TXaaW1pt
+	 zmTyQ3GyRo3XCgpuYMhQZisBFfPtlx6QOh9MrH5l0C6v7GMjX/NEbBVh5WCqQ09sg/nHeOWxP3hp
+	 oqiNSgxKNddrjrUy9zMTtwdE90mvNvHK3g3DLtqIjRaAy4cOddiEZHdnQh29hrvnM2K2PKJrm3rf
+	 fRegbfQZYzl4O3N4Rb1fOimJxgnMEX8Is7NVK55JzYR5gd7rZqYVVeFV2t+xDmzcEPNcjiDawpyr
+	 06xovEC5i6TYjxdMVYVsfRhqeQhRoK5zo+1KLniy2UI8tkKk8Upn5pnf+Da2N6jaltb3U1IogbsY
+	 6km1CBdbtyJo4K7ewGF9kP8deREHeoMrJfmzQU+P2l5rxMU6Hy5Wcm3uhbJLZ9+hcIRZOTlaNpy4
+	 b5OSShNl/P9PnZ8OJ1bA4/ZdCfdafoRZm4hKXEHYB9wSOhhDG4lUGuz+z5iJrCUrfBzs+U5xXmdd
+	 XfI4GM3/nbRaHBcY18Ker+tzMJBTS/xwJ8VlSUAf9SoBc17iguf0PwElOK08rNH1zl71NRvzS40B
+	 //uBduVqBx9JYSwCGlngR1wy/RQ+UQPH+rllMv+eByNiD3+9uFQF3EQJj47SG3QN3EIpxDI3OAMY
+	 BAXG83xCcSc2tvgPdGWJWN86nWFZxBrjYEPwYLC7aYJfkuuvz4oDznP27HGQ5Ej6YjfQoBpPYg4U
+	 HBkgRnDB1ylFphWhvEeQBAXLY8VezRIeDWfL+plC8WkZQjZK7wBnOG/BNoLzjTOUPTNpLDf8df8P
+	 5lIPm+YKySKuJyNLDV
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 From: Yangyu Chen <cyy@cyyself.name>
 To: linux-riscv@lists.infradead.org
 Cc: Conor Dooley <conor@kernel.org>,
@@ -62,10 +61,11 @@ Cc: Conor Dooley <conor@kernel.org>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH v6 09/11] reset: k210: Deprecate SOC_CANAAN and use SOC_CANAAN_K210
-Date: Sat, 23 Mar 2024 20:12:21 +0800
-X-OQ-MSGID: <20240323121223.1729328-9-cyy@cyyself.name>
+	Yangyu Chen <cyy@cyyself.name>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v6 02/11] dt-bindings: add Canaan K230 boards compatible strings
+Date: Sat, 23 Mar 2024 20:12:14 +0800
+X-OQ-MSGID: <20240323121223.1729328-2-cyy@cyyself.name>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
 References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
@@ -77,40 +77,44 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since SOC_FOO should be deprecated from patch [1], and cleanup for other
-SoCs is already on the mailing list [2,3,4,5], we remove the use of
-SOC_CANAAN and introduced SOC_CANAAN_K210 for K210-specific drivers,
-
-Thus, we replace its drivers depends on SOC_CANAAN_K210 and default select
-when it has the symbol SOC_CANAAN_K210.
-
-[1] https://lore.kernel.org/linux-riscv/20221121221414.109965-1-conor@kernel.org/
-[2] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0a@spud/
-[3] https://lore.kernel.org/linux-riscv/20240305-fled-undrilled-41dc0c46bb29@spud/
-[4] https://lore.kernel.org/linux-riscv/20240305-stress-earflap-d7ddb8655a4d@spud/
-[5] https://lore.kernel.org/linux-riscv/20240305-praying-clad-c4fbcaa7ed0a@spud/
+Since K230 was released, K210 is no longer the only SoC in the Kendryte
+series, so remove the K210 string from the description. Also, add two
+boards based on k230 to compatible strings to allow them to be used in the
+dt.
 
 Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 ---
- drivers/reset/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/riscv/canaan.yaml | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 85b27c42cf65..7112f5932609 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -103,9 +103,9 @@ config RESET_INTEL_GW
+diff --git a/Documentation/devicetree/bindings/riscv/canaan.yaml b/Documentation/devicetree/bindings/riscv/canaan.yaml
+index 41fd11f70a49..f9854ff43ac6 100644
+--- a/Documentation/devicetree/bindings/riscv/canaan.yaml
++++ b/Documentation/devicetree/bindings/riscv/canaan.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Damien Le Moal <dlemoal@kernel.org>
  
- config RESET_K210
- 	bool "Reset controller driver for Canaan Kendryte K210 SoC"
--	depends on (SOC_CANAAN || COMPILE_TEST) && OF
-+	depends on (SOC_CANAAN_K210 || COMPILE_TEST) && OF
- 	select MFD_SYSCON
--	default SOC_CANAAN
-+	default SOC_CANAAN_K210
- 	help
- 	  Support for the Canaan Kendryte K210 RISC-V SoC reset controller.
- 	  Say Y if you want to control reset signals provided by this
+ description:
+-  Canaan Kendryte K210 SoC-based boards
++  Canaan Kendryte SoC-based boards
+ 
+ properties:
+   $nodename:
+@@ -42,6 +42,12 @@ properties:
+       - items:
+           - const: canaan,kendryte-k210
+ 
++      - items:
++          - enum:
++              - canaan,canmv-k230
++              - canaan,k230-usip-lp3-evb
++          - const: canaan,kendryte-k230
++
+ additionalProperties: true
+ 
+ ...
 -- 
 2.43.0
 
