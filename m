@@ -1,39 +1,27 @@
-Received: from phobos3.kreativmedia.ch (phobos3.kreativmedia.ch [80.74.157.50])
+Received: from 25586.bigscoots-wpo.com (unknown [207.241.199.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2815182D4
-	for <linux-gpio@vger.kernel.org>; Sun, 24 Mar 2024 15:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.74.157.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A227617BB6
+	for <linux-gpio@vger.kernel.org>; Sun, 24 Mar 2024 15:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.241.199.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711295172; cv=none; b=cmZzzv8U0Y4RQ1Y1zhZCGnpTGNyaRA/r7AJU499Ud6Pa9J0Tg4zOjhfltrUgINtkOQ1KukkwYNr5gVAHaxBFxuyoPy4dBrW39Pdpx9XYRwDp2SxwkfWeRrJY2a6eU6N4sWDRnVN2iqoy2N5XDppVbQ2+bkE414pCicAB7dnfbYQ=
+	t=1711295645; cv=none; b=f6xt/aX6+3HUjT0ZWsHjCEE03zJ+3pbtdLh2QYtXloO4G8GFiuzd5J+t+PSJb8d/gjtH48CsH2VJKIltJLHU8JDYaTEPntaaWNCTsaRYxoRxzH2ZEsX/sm5WF7414SFQkgqbXV+g8XBbnolvKUyjfl8xWDH6BV+zxqlofwNi5nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711295172; c=relaxed/simple;
-	bh=vWbx860P/ss1HzFD9nuVLN5pEatXCmMhAmEEhLfoPBo=;
-	h=To:Subject:Date:From:Cc:Message-ID:MIME-Version:Content-Type; b=b+3XPbpg2IfS5BuOVNjfCXiUssrS7aU0uvBkyc4+YhTpzS8yMUaYvlBpBJOCxNfA0ozkiYzQA12JnfCgdfSawN0zta8UlwV7cyV6zRCoYjSmtGcSzsYrNGGzmTEvQduYsDiV+okKsQYX86opVi3N0eX/b6Xs3XPHYnex3S3o2e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=vger.kernel.org; spf=pass smtp.mailfrom=k-ivanov.com; dkim=pass (2048-bit key) header.d=k-ivanov.com header.i=@k-ivanov.com header.b=jLwuexhD; arc=none smtp.client-ip=80.74.157.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=vger.kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=k-ivanov.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=k-ivanov.com header.i=@k-ivanov.com header.b="jLwuexhD"
-Received: by phobos3.kreativmedia.ch (Postfix, from userid 11513)
-	id 1D2AB5E0645; Sun, 24 Mar 2024 16:39:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=k-ivanov.com;
-	s=default; t=1711294752;
-	bh=j7UbW+NeDdx+LxkInVRnneJL2fSiaE/UV+aFQuDSCUI=; h=To:Subject:From;
-	b=jLwuexhDgxYj2K0XeXrgGv8KnLWeaYzkp8lLq5FcCFnLELZ2dKXRY7d6iGvi7wuob
-	 u5k75t6xk3N2K3gxAOitFt3j0pXy+v78TjxfHv29kGS+zwk2o/E6GJfaVC5V3kQy53
-	 Kha3eqYwpdKXp1GIW47Ymumk+LcDUV8aCjRXI9lSKdZGRTaa2VCchx6QWpjJ59rMlk
-	 rIbhqa9FojhdPVWnlgIjMzgq85ajqdoVKXRtFiFDbP+nXnH65A3KItRiz2LrOjJ9KG
-	 nv99+urE05vEzYb04l8sOZ03Xd2xGY3zUOniXxHPYn33pRq9e2eI+NbQveiVbWuLFp
-	 paGLPQOoVW8Aw==
-To: ivanov.kire@gmail.com
-Subject: Contact Form: Rifebeli
-X-PHP-Originating-Script: 11513:PHPMailer.php
-Date: Sun, 24 Mar 2024 15:39:12 +0000
-From: Rifebeli <linux-gpio@vger.kernel.org>
-Cc: Rifebeli <linux-gpio@vger.kernel.org>
-Message-ID: <75kIxMS4xjlWvDKEkCycDUivipSL3yaGmyUSvKF74@diagonale-carrelage.ch>
-X-Mailer: PHPMailer 6.8.1 (https://github.com/PHPMailer/PHPMailer)
+	s=arc-20240116; t=1711295645; c=relaxed/simple;
+	bh=pKmp53zTzALcJumS0x8fLniPh6t7yeoTmmiSqDrlVPs=;
+	h=To:Subject:Date:From:Message-ID:MIME-Version:Content-Type; b=q93muPV06zEe8yS0IlkUiXutOu1Los8fOUKwMf6C6WDXXV1297AC5YoEVW6yu5OVj2UXTmeyqfHUofw1vm5BFwbYcWgtrQREDZNOYhyoO582EkkFrpFVGTyfAHQFxnFc+YxWnFXPKTxX28w9A4Zd7X0PVCrzmxWpYhegC02MQvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beplantwell.com; spf=none smtp.mailfrom=25586.bigscoots-wpo.com; arc=none smtp.client-ip=207.241.199.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beplantwell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=25586.bigscoots-wpo.com
+Received: by 25586.bigscoots-wpo.com (Postfix, from userid 1000)
+	id A620AC0E; Sun, 24 Mar 2024 15:48:33 +0000 (UTC)
+To: linux-gpio@vger.kernel.org
+Subject: Message sent from your contact form.
+Date: Sun, 24 Mar 2024 15:48:33 +0000
+From: FruthFub <contact@beplantwell.com>
+Reply-To: FruthFub <linux-gpio@vger.kernel.org>
+Message-ID: <4l8Vun5kV1nG7dXKLrGr36Uh73gNejSa6cM4IQ24@beplantwell.com>
+X-Mailer: PHPMailer 6.7 (https://github.com/PHPMailer/PHPMailer)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,8 +30,18 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Name: Rifebeli
-Message:  
-My heart beats in harmony with your love. 
-If you have a moment, would you kindly take a look at my page via this link: https://tinyurl.com/2d75wwjs I\'ve shared some recent photos and updates from current events there. It would be wonderful to catch up and share our experiences.
+Hello admin, 
+
+You are being contacted via plant.well: 
+
+Name:     FruthFub
+Email:    linux-gpio@vger.kernel.org
+Subject:  Message sent from your contact form.
+Date:     March 24, 2024 @ 3:48 pm
+
+Message: 
+
+My one and only, your love is my true north. 
+Whenever you can, might you take a look at my page via this link: https://tinyurl.com/2a4j5bov I've shared some recent photos and updates from the latest events there. It would be wonderful to catch up and share our experiences.
+
 
