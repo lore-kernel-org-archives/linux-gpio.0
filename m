@@ -1,213 +1,116 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368334EB5F;
-	Mon, 25 Mar 2024 17:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFA453387;
+	Mon, 25 Mar 2024 17:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711387093; cv=none; b=ft7gwenObrp7e/POtzUsgfOW7ZK50gtHqcN/aZpofxTauhWNqyDny38LEEGkmXYkd9eoa3UFke4FRUERi3dTRG/FUZVUQeggREP/IpBch2YJmkysZdMknjYc03qVj2K4qMVCFp//9DDAneKcfVr50VssQbulRxy3GLT5dfTX81E=
+	t=1711387189; cv=none; b=Aqx01WktuHRrBWDmPcPsSSbMflHtBbWentjgCnlt+KMwbm0FL8pMs35BBwHcTm7BFzERRV0puGmr5hUg0oDc7tjhJvU4+iKmHPd38Spd4N9rIeo0nKt2zmLLXbf31uF3ZoI80FPSVGUoHvHONX1ZBvh29/v8CtneMUDLeal4jTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711387093; c=relaxed/simple;
-	bh=rVysmY2hoDOfSR8Roev4MtIq14Q/G7Fv9ugKPFwvn80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XAy2XubkRbsFpIEIMKQD3ckPQVKbM6dMD+BWSmxm8QXsccqILJ08OV4SlwVEfFG76bM2gwbJVzu5QExJvY/5zwI1gFTL9jqLAYcbtsN1He2NVvu/CJQNSoTkZ3z8sCL/isCK/wHOOjCqGuDP5fAAuQPdqsl/9XokA2eKSzez+yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VK6jjGhG; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1711387189; c=relaxed/simple;
+	bh=75ihyrm2v0POCpOny14EBcy365OwfYgPNoejpuqAQ08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6xbSbUPyV9eZzgOx9+wZIuEZZStNCQ94GAbEZRsfxmy+2o0CkSPo26F1hOrGedwCB5oLaNv+oMNKEV7VtitSDl2lpjQbWFyi7Hqj6XwwhVfu9SNwEunyLDMkMxHUadKpbPSH21p0Z3d31mb2KPznxbeMHASzB9aGr8H9F3kfM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YemJ7wqK; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VK6jjGhG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1711387092; x=1742923092;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rVysmY2hoDOfSR8Roev4MtIq14Q/G7Fv9ugKPFwvn80=;
-  b=VK6jjGhGaxvSl6rInAV9X8fXuPIv9ApA4lcmkMGLzjLA8UNKT8ukUAb2
-   s1Z+ff0+N6x8D/kwYIbiSaH1VeVeLxA2Mdx9/J8Ti4DYWBJ9L9XencSjb
-   peRcM47Fxoh4gbSn6qksXcTzujeyYvSTsUP63sK60vyLqLsFdjmzyuYwp
-   zovN4OKzCyPMFsYY7gWyDDA2NrDbg4J9dVfamfeWFQ3bKbgtooJspGfY2
-   zxYhZqUSF7QWOMkJ4lu6YtrleLUMXhZVBCEEnbHZKvR4RZCbvu9uQ65Bu
-   nzjtSbda5HgYKFiPSuNlWGHcLmCBHsp7hAxZvqAeqztVA8rreRTxV75/A
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11024"; a="17546547"
-X-IronPort-AV: E=Sophos;i="6.07,153,1708416000"; 
-   d="scan'208";a="17546547"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2024 10:18:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11024"; a="937070691"
-X-IronPort-AV: E=Sophos;i="6.07,153,1708416000"; 
-   d="scan'208";a="937070691"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Mar 2024 10:18:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A5DFF484; Mon, 25 Mar 2024 19:18:05 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ferry Toth <ftoth@exalondelft.nl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v4 1/2] gpiolib: Fix debug messaging in gpiod_find_and_request()
-Date: Mon, 25 Mar 2024 19:16:25 +0200
-Message-ID: <20240325171804.3375280-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20240325171804.3375280-1-andriy.shevchenko@linux.intel.com>
-References: <20240325171804.3375280-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YemJ7wqK"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56bf6418434so2733227a12.0;
+        Mon, 25 Mar 2024 10:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711387187; x=1711991987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75ihyrm2v0POCpOny14EBcy365OwfYgPNoejpuqAQ08=;
+        b=YemJ7wqK8p0gAwl7EGPnO4/6aOD74US5F/2KLM6UA4H/8N42BMTjmYc2ioG9TcWHV/
+         JhEhgGAvQO9/X5sUoPG5u1NvMzLzKA4buAwcpBvVArSfTqINEhVB/phZS2EYjXcXK8R9
+         4yOjvaMNOWwJvbLZAN7Z3WYkuiDfNYyEE5yzXx+N1A4jjPQqRkR2fwoQ4z2d5PstLo1f
+         Amz8G5LqRA9pZpXYc2sBW2BrnXmgcCH6WmHljNGdTaeD0DW+0Q5UsrVOGV42koTAQZz5
+         HkuuNXMX7ebiWHB66XEtXPthxCNJcWeuZ0Vmj+0nImkci64MwcNWVbI4jrbufTfIWc/c
+         sx4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711387187; x=1711991987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=75ihyrm2v0POCpOny14EBcy365OwfYgPNoejpuqAQ08=;
+        b=UmHHF6JGVwDjn64xWdY+lJEK5aKkPfi0Ns/AoDkbJ9npYsja4YKAKMVrrHA17a+ieA
+         RlYidGTV63bXgwLA3RP4iUtISPLqjynl1/94GAdOsymjDeyZY/NIkIL1uqTErZheT3tI
+         PI4gkSxfPhfjhi8TyQe7FQBZ+ubHMOJbc8OYIaKamWiXIXxw8mtd2ta6raG2ClwmQZVr
+         TzIPcPYPtS02yqDcMQzzLVkzE3LL2wOX1rLq7wCHuj/AVsczrpfEZLCz4nDmreZxM1BT
+         Qge8mZ0bBLKkLvGnqWykIxKONpmnOlnEWLdypOQxhXq9MsOveXsNvpCjPjvScyOEtkvP
+         /koA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrnDh0PfBaOSd3rO8KmtNvAk+DrS6yaYOzuSVhnC+pptKRDObjT3rKC2YBq38RFypuRy+xf076KECk5EgQnKB0dN3w1gKP1dTpuCx1bv4AGG/Q+JNAHvQ4w/HcOXxf7B5g4B4utPBrPA==
+X-Gm-Message-State: AOJu0YwBPedPP+LfScpMejUqGgHbD5e9VFidhvDF3C7RsQG9jx2uUsWj
+	g3vGQb/bG514O9VHeecfduXa8ocDR6IKfP3Jyw3j9qc1qotexlH7q8lDIqu2OFKDSnTuBUIM/46
+	mq/3cHZhI68JcaJZQNJblJDMiEl8=
+X-Google-Smtp-Source: AGHT+IG6eOGseMTCjzeAv3soMifKZSfo1+beNKC6+feU9hC2xfExTJZe2LW52tp1M3FwcaOi8a0vLvdYtM6AlLDH48k=
+X-Received: by 2002:a17:906:3650:b0:a46:8c03:b659 with SMTP id
+ r16-20020a170906365000b00a468c03b659mr5122572ejb.42.1711387186608; Mon, 25
+ Mar 2024 10:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240322073725.3338266-1-peng.fan@oss.nxp.com>
+ <CAHp75Vds1dmjbaDa0D+Xxoyt_9CgHhoS2j0cR3EQdMp3sbwg5g@mail.gmail.com>
+ <CAMRc=McYbsd8t1_6PDypGBme2OSyvy8erdjR51cUzVhM-qQXZg@mail.gmail.com>
+ <ZgGfgY2hITq_MDvl@smile.fi.intel.com> <CAMRc=Mec5DSegEJHf5khj5ksCE3+SjQoq6vwRPEdnS7arawz4A@mail.gmail.com>
+In-Reply-To: <CAMRc=Mec5DSegEJHf5khj5ksCE3+SjQoq6vwRPEdnS7arawz4A@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 25 Mar 2024 19:19:09 +0200
+Message-ID: <CAHp75Ve3wYHf2Kp+r1s-9KcQSbYJ2RCSxugBWDxMr_PC4DrL=w@mail.gmail.com>
+Subject: Re: [PATCH V3] gpiolib: use dev_err() when gpiod_configure_flags failed
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, linus.walleij@linaro.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When consolidating GPIO lookups in ACPI code, the debug messaging
-had been reworked that the user may see
+On Mon, Mar 25, 2024 at 6:24=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+> On Mon, Mar 25, 2024 at 5:00=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Mon, Mar 25, 2024 at 04:48:27PM +0100, Bartosz Golaszewski wrote:
+> > > On Fri, Mar 22, 2024 at 4:59=E2=80=AFPM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Mar 22, 2024 at 9:29=E2=80=AFAM Peng Fan (OSS) <peng.fan@os=
+s.nxp.com> wrote:
 
-  [   13.401147] (NULL device *): using ACPI '\_SB.LEDS.led-0' for '(null)' GPIO lookup
-  [   13.401378] gpio gpiochip0: Persistence not supported for GPIO 40
-  [   13.401402] gpio-40 (?): no flags found for (null)
+...
 
-instead of
+> > > > Bart, are you aware that this will add yet another possibility of
+> > > > scary '(null)' in the error level, which is much likely visible to =
+the
+> > > > end users?
+> > > >
+> > > > I propose to apply my fix first to avoid this happening.
+> > > > 20240320165930.1182653-1-andriy.shevchenko@linux.intel.com
+> > >
+> > > I think you meant the v2[1]?
+> >
+> > Yes!
+> >
+> > > And sure, I will pick it up shortly.
+> >
+> > Thank you!
+> >
+> > > [1] https://lore.kernel.org/lkml/20240320165930.1182653-1-andriy.shev=
+chenko@linux.intel.com/T/
+> >
+> > I can update this patch (rebase it on top) if needed to make less burde=
+n on
+> > the author's shoulders. Just tell me.
+>
+> Sure, if you can resend both yours and this one then even better.
 
-  [   14.182962] gpio gpiochip0: Persistence not supported for GPIO 40
-  [   14.182994] gpio-40 (?): no flags found for gpios
+Just sent both as v4.
 
-The '(null)' parts are less informative and likely scare the users.
-Replace them by '(default)' which can point out to the default connection
-IDs, such as 'gpios'.
-
-While at it, amend other places where con_id is used in the messages.
-
-Reported-by: Ferry Toth <ftoth@exalondelft.nl>
-Fixes: 8eb1f71e7acc ("gpiolib: consolidate GPIO lookups")
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Tested-by: Ferry Toth <ftoth@exalondelft.nl>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 06f6c84fc7b1..b98cbf4335e3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2396,6 +2396,11 @@ char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
- }
- EXPORT_SYMBOL_GPL(gpiochip_dup_line_label);
- 
-+static inline const char *function_name_or_default(const char *con_id)
-+{
-+	return con_id ?: "(default)";
-+}
-+
- /**
-  * gpiochip_request_own_desc - Allow GPIO chip to request its own descriptor
-  * @gc: GPIO chip
-@@ -2424,10 +2429,11 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
- 					    enum gpiod_flags dflags)
- {
- 	struct gpio_desc *desc = gpiochip_get_desc(gc, hwnum);
-+	const char *name = function_name_or_default(label);
- 	int ret;
- 
- 	if (IS_ERR(desc)) {
--		chip_err(gc, "failed to get GPIO descriptor\n");
-+		chip_err(gc, "failed to get GPIO %s descriptor\n", name);
- 		return desc;
- 	}
- 
-@@ -2437,8 +2443,8 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
- 
- 	ret = gpiod_configure_flags(desc, label, lflags, dflags);
- 	if (ret) {
--		chip_err(gc, "setup of own GPIO %s failed\n", label);
- 		gpiod_free_commit(desc);
-+		chip_err(gc, "setup of own GPIO %s failed\n", name);
- 		return ERR_PTR(ret);
- 	}
- 
-@@ -4152,19 +4158,17 @@ static struct gpio_desc *gpiod_find_by_fwnode(struct fwnode_handle *fwnode,
- 					      enum gpiod_flags *flags,
- 					      unsigned long *lookupflags)
- {
-+	const char *name = function_name_or_default(con_id);
- 	struct gpio_desc *desc = ERR_PTR(-ENOENT);
- 
- 	if (is_of_node(fwnode)) {
--		dev_dbg(consumer, "using DT '%pfw' for '%s' GPIO lookup\n",
--			fwnode, con_id);
-+		dev_dbg(consumer, "using DT '%pfw' for '%s' GPIO lookup\n", fwnode, name);
- 		desc = of_find_gpio(to_of_node(fwnode), con_id, idx, lookupflags);
- 	} else if (is_acpi_node(fwnode)) {
--		dev_dbg(consumer, "using ACPI '%pfw' for '%s' GPIO lookup\n",
--			fwnode, con_id);
-+		dev_dbg(consumer, "using ACPI '%pfw' for '%s' GPIO lookup\n", fwnode, name);
- 		desc = acpi_find_gpio(fwnode, con_id, idx, flags, lookupflags);
- 	} else if (is_software_node(fwnode)) {
--		dev_dbg(consumer, "using swnode '%pfw' for '%s' GPIO lookup\n",
--			fwnode, con_id);
-+		dev_dbg(consumer, "using swnode '%pfw' for '%s' GPIO lookup\n", fwnode, name);
- 		desc = swnode_find_gpio(fwnode, con_id, idx, lookupflags);
- 	}
- 
-@@ -4180,6 +4184,7 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 					 bool platform_lookup_allowed)
- {
- 	unsigned long lookupflags = GPIO_LOOKUP_FLAGS_DEFAULT;
-+	const char *name = function_name_or_default(con_id);
- 	/*
- 	 * scoped_guard() is implemented as a for loop, meaning static
- 	 * analyzers will complain about these two not being initialized.
-@@ -4202,8 +4207,7 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 		}
- 
- 		if (IS_ERR(desc)) {
--			dev_dbg(consumer, "No GPIO consumer %s found\n",
--				con_id);
-+			dev_dbg(consumer, "No GPIO consumer %s found\n", name);
- 			return desc;
- 		}
- 
-@@ -4225,15 +4229,14 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 		 *
- 		 * FIXME: Make this more sane and safe.
- 		 */
--		dev_info(consumer,
--			 "nonexclusive access to GPIO for %s\n", con_id);
-+		dev_info(consumer, "nonexclusive access to GPIO for %s\n", name);
- 		return desc;
- 	}
- 
- 	ret = gpiod_configure_flags(desc, con_id, lookupflags, flags);
- 	if (ret < 0) {
--		dev_dbg(consumer, "setup of GPIO %s failed\n", con_id);
- 		gpiod_put(desc);
-+		dev_dbg(consumer, "setup of GPIO %s failed\n", name);
- 		return ERR_PTR(ret);
- 	}
- 
-@@ -4349,6 +4352,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_optional);
- int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 		unsigned long lflags, enum gpiod_flags dflags)
- {
-+	const char *name = function_name_or_default(con_id);
- 	int ret;
- 
- 	if (lflags & GPIO_ACTIVE_LOW)
-@@ -4392,7 +4396,7 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 
- 	/* No particular flag request, return here... */
- 	if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
--		gpiod_dbg(desc, "no flags found for %s\n", con_id);
-+		gpiod_dbg(desc, "no flags found for GPIO %s\n", name);
- 		return 0;
- 	}
- 
--- 
-2.43.0.rc1.1.gbec44491f096
-
+--=20
+With Best Regards,
+Andy Shevchenko
