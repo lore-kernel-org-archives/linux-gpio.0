@@ -1,102 +1,89 @@
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1D528383;
-	Thu, 28 Mar 2024 09:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320E5F876
+	for <linux-gpio@vger.kernel.org>; Thu, 28 Mar 2024 09:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711617116; cv=none; b=PzbB9UgnseYhoNwAbb5zmeWHiPKjttjM+5puwGGSqROSefZt+Yu9SPJhXAgv/TQGq+YdKGQ6EAUTQemT5Dd3eLaE8iOsJQBYMDNeouz0fJcfGhTRx0FwYHQc2yzea5dgktGXJu0SzYBw+E5FPOvbMeDMVur82iMTrBprJ4yBfA8=
+	t=1711617318; cv=none; b=E/eLzdwldJzBRZwEG0SLm+kLuHsPQ6mkOIGc1xTFtPIffRSY6f7lnEJEmP0rMqoz0hAiqEb5q/XDPeXGItbhMTCqB6nENPj/iNx6vdz7OC7t8tdxyeICXJStBk/Bhg3ZdVguP8RVHqa+rffk9wootRhqGUo+QEqM7RmzQBn70n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711617116; c=relaxed/simple;
-	bh=xLh6sA1cDo9lAwGZhSFLZxXSoW/5MgW2cFiEZVtezjE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qiFKbYx/cMz3h+axA3Bc5kI6N7uHZnucOdgVlsTOsM2L8rtwS75ir7lLij6mvJHWnqKbbkP0wqZU3xmpXGogqSfFmSq6PMqg4qH6zzMV5sYZ3gWYUC3zxnsm4ljSuaMbSF2fhQPsN2G/DVH7rWbAxOZeHk1xxtlvKquxwmlX3Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=WvMTSt/U; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+	s=arc-20240116; t=1711617318; c=relaxed/simple;
+	bh=DK3WWLpghCazhNxnzpVoeZ6lBHInJGjDV4FWurbpgm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qH0CZbbpSu1wtJ0JuFm4i6qupuURIWlDOcqkcH3MsEJMO+DtF6mtleIgaYw4wg0VaLieufNDIuo4jGUqKpLhscU67RSMVXxxLBdiqs3xsY700zm9ICdGqmYbksoh7i8xS6KaMhS99fpjuI4QGu/Lk/mjfUipRfNadJ1vvcuCWhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B9nTBtX4; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="WvMTSt/U"
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id A47AE100003;
-	Thu, 28 Mar 2024 12:11:34 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1711617094; bh=2dA60c3u8NMsA53rnbkHUP4JLBJTm4YliDz9GB9JWBE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=WvMTSt/UHNE28Etstf5/h/lbVATM9C8t72dfsIPPgJm2rSxozA8jjrKL53POnYB7V
-	 hKp2c15fvIoEZvyOZi6IbNpH+qw3PyHDKGjof+cWqaC5Ev6C4j6kHaya3/lssLb5Dd
-	 wWvibFme26QC1oLOM5zXaDhh3fGmDNGuXxBgKVgsrj5PWzuFbPt2S5/MmeNj4/RPct
-	 4xwpoG50cAAVAxWyZkqFxuUyYsf8MKhtz5IPYEKHtEIRl/htdU6rMyDXlNCwgHO/Jx
-	 t6dJj87Rwtgwtwytlpe/AruE3e6KPbljESqzrGSeqGZ/Hr1IId4PnYehwE68WzTERm
-	 LuyT9QIvFC10g==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Thu, 28 Mar 2024 12:10:49 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Mar
- 2024 12:10:28 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Keerthy <j-keerthy@ti.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Linus Walleij
-	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, "Andrew F.
- Davis" <afd@ti.com>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] gpio: davinci: Fix potential buffer overflow
-Date: Thu, 28 Mar 2024 12:10:21 +0300
-Message-ID: <20240328091021.18027-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B9nTBtX4"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-ddaebc9d6c9so736570276.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Mar 2024 02:15:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711617316; x=1712222116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DK3WWLpghCazhNxnzpVoeZ6lBHInJGjDV4FWurbpgm0=;
+        b=B9nTBtX4Ml1Rl3ZO7w/cQZvClojyd4utcAjbyrjq8DN6EeJoephcoZr81NhKHjkE0P
+         iq/vnuRF2B8DanFZY8dMMhhfXP+7UrA/Y/j2hhHhqskPD5UiwGBx6HUnVdZxrrqnwMOZ
+         gWFnf7hjqpcYLZnh8tDxPfHTlxGnyNneinjTHMBQ8K6O+7p5DEE2En4EEKqckN6S3rK0
+         I4AIS2aGX1uix1FghNU4X34hiyBnqfcosDPP7MeIO4Nwuzj3QSHdbidoh+X4Af/t72Vd
+         wiMlzcBt7gkS5QpyYGTSadf9NYDjZ+7mYywOzJSu4LvFmsY1dikIeMzwupF4Mq8z60xA
+         XK7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711617316; x=1712222116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DK3WWLpghCazhNxnzpVoeZ6lBHInJGjDV4FWurbpgm0=;
+        b=RnAT0zyL/X6QNtcdYoWvntvn1lOoho41w2FsJctJfSZyk5ITYZWXeSIkj8GnfXw3iQ
+         zWzrewGONH8AuMNPrJFXS2KKj8RzggJSHum/jQE14ouroHbsF3T3U/GlXMRbTqZSrB2y
+         owKjsbrllSTcwlB5Wsv6rjmugl0UBwf3R0eYwJXhtcoeS/ASugxtuSR7GDGSQkVTxYwn
+         SmQr083gwE1FRoowLqCajvvTh+Ej4naNDoSbKCgNgyVp5khJje3EVKdv2vcJvDyGC4yv
+         qdk0rLXJS7fM75an/LxUvXJtwe4Qe+XMlLmTXfeYRoNCkyNpshf0jtOUgE0QuAAGEa6T
+         OLjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDbC1d2Ful996LjbgUraqlRfaieB3R18eh3bB+lOVLXmusMOE7MYFk+9slETR9PK2qgWn1F+zXSQWybt9347Zm96/EvQg+6uW4Rw==
+X-Gm-Message-State: AOJu0YyM+/+wk6r1vANLR2VsuxdrnXCvr/r1XhTWiNLniAASyk+7KWBm
+	Kxg4VglkNx8dGl/vGNIKyiWji9keFrSjJowrvWSnSixjoJjIWxw1QUaafDfcJ9GosucbFmeQViM
+	n2tvgn6s5dj6OHlXSpGqpOLyOytqa37QS5TJWGBm5UZ8ltEAt
+X-Google-Smtp-Source: AGHT+IG4UAVC7NGDGidRJtRNWZfYlG/8nA0Xwk+zw0p4efi6wDiAGEzLWglCyWj8gtQ9WRg5ukXUl7W+4wfTKJP4AgI=
+X-Received: by 2002:a25:9b85:0:b0:dd0:39a0:a998 with SMTP id
+ v5-20020a259b85000000b00dd039a0a998mr2199704ybo.6.1711617316176; Thu, 28 Mar
+ 2024 02:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 184460 [Mar 28 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 13 0.3.13 9d58e50253d512f89cb08f71c87c671a2d0a1bca, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/03/28 07:24:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/03/28 06:03:00 #24486213
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240313092809.2596644-1-billy_tsai@aspeedtech.com>
+In-Reply-To: <20240313092809.2596644-1-billy_tsai@aspeedtech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 28 Mar 2024 10:15:05 +0100
+Message-ID: <CACRpkdaxekb_E4ttW5XfRUa+srkjOzUaVXRAtHMYjkVir7R7xQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: pinctrl-aspeed-g6: Fix register offset for
+ pinconf of GPIOR-T
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: andrew@codeconstruct.com.au, joel@jms.id.au, johnny_huang@aspeedtech.com, 
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com, Ricky_CX_Wu@wiwynn.com, 
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In davinci_gpio_probe() accessing an element of array 'chips->regs' of size 5 and
-array 'offset_array' of size 5 can lead to a buffer overflow, since the index
-'bank' can have an out of range value 63.
-Fix this bug by limiting top index value.
+On Wed, Mar 13, 2024 at 10:28=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.=
+com> wrote:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> The register offset to disable the internal pull-down of GPIOR~T is 0x630
+> instead of 0x620, as specified in the Ast2600 datasheet v15
+> The datasheet can download from the official Aspeed website.
+>
+> Fixes: 15711ba6ff19 ("pinctrl: aspeed-g6: Add AST2600 pinconf support")
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 
-Fixes: c809e37a3b5a ("gpio: davinci: Allocate the correct amount of memory for controller")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
- drivers/gpio/gpio-davinci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Patch applied.
+I recorded Delphine's similar patch as "reported-by".
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index bb499e362912..b65df1f2b83f 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -257,6 +257,9 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	spin_lock_init(&chips->lock);
- 
- 	nbank = DIV_ROUND_UP(ngpio, 32);
-+    if (nbank > MAX_REGS_BANKS || nbank > 5) {
-+        nbank = MAX_REGS_BANKS < 5 ? MAX_REGS_BANKS : 5;
-+	}
- 	for (bank = 0; bank < nbank; bank++)
- 		chips->regs[bank] = gpio_base + offset_array[bank];
- 
--- 
-2.30.2
-
+Yours,
+Linus Walleij
