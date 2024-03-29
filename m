@@ -1,141 +1,184 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EEB6A343
-	for <linux-gpio@vger.kernel.org>; Fri, 29 Mar 2024 11:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665DB3D0A1;
+	Fri, 29 Mar 2024 11:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711712759; cv=none; b=EN7HyjD6JM7ljOAirRzfsXY+kTmpLt7v+7LWuXs0gNGBLcOQd4TkwwK+ZwY4WtYrigXynAxLxcIWZ+2ZWnz2NvWJyqVdiNISwUUbuvHhcXfuYHz/32FRcbkgo/zUQiHbsQ2Am7OUcPW51UR3Up9lFe35y05oy63iB5tIjxnKpk8=
+	t=1711712860; cv=none; b=Ju7EUA7bG2QxCHIwq1dTOQtDv6ixA/+CeXPAwR9EHVbrpOpizSunh6nIHM8zYvmXy2DLSX2WibCxZiQczfIs4zbj+m7r21oPMvmkoduHsjBGXeEP3uEZfJYjB4A8iEBP8+K6wiwkWgfgElCPyuy3Ck4Cdqq1/X0yHO3w8d7IkzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711712759; c=relaxed/simple;
-	bh=kNMj+YT8/hRCP1/RW7aCBo3XA153NEDluUwsJT0u81M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pA6Qq9I4p400EHShnR4hKTEUP1aebzPPZCGJ/6i9HRRnz7tBRstQ5/obxy6opJbEIPkDoHCNFHqrISbprstkfrMMJe5eaKYqwbeQ3wPZRv2+jq0ZoZQwqahWPqXvfz21zT+1f9CRYaBS4TA0GrBR/+tgo474YlfEZrOHJJp/S+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ipqMQXrg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1711712860; c=relaxed/simple;
+	bh=Pw0an15Ryf+cccx17VkcKxitygXsbkxpPvE+wCyiFt4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bup0Tg8XgUlmYxWYb3GRuegGR/NJLYTCAdV4KWjFqqx/fPdh9NJZGPHpGy3AcIyzGjwSUrAopdT5ce9q/m4Br4pmFP45oGMw2RYXBePv7TtdB9JfpQZwW6qyKmOsPPRvTtQjT2NUk4ZJPH13YMIC1y3zJpWZVswokaWRA1sDBVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ai7myRKd; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ipqMQXrg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711712756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+LLP6jd0zeIvxHanQorL3kqCJpFSSxGEDWd7CPARJUA=;
-	b=ipqMQXrgdMsGEYu0j2osRY1fuWMLdGgCZe4aPgvsS5bk6utG0ntwpfmtSAISqalJkEKcmO
-	ODoh3JoxMvdipSvz8JnT3J6zg3uIGGraKI4u5ItiEuaCYYgl53hsadV79Xl7MzJQZTatep
-	BKlyHXq5EkuCxt9NN/NwArCx6bkgRqQ=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-Ezf1mLPKM4OIrizZaqSE0Q-1; Fri, 29 Mar 2024 07:45:55 -0400
-X-MC-Unique: Ezf1mLPKM4OIrizZaqSE0Q-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-56c07b8b72fso860179a12.1
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Mar 2024 04:45:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711712754; x=1712317554;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LLP6jd0zeIvxHanQorL3kqCJpFSSxGEDWd7CPARJUA=;
-        b=mcFFvFO14vymL8MLWZWyW8DvPyXMeGo+VCuFzpLNEPS3o13qpEK6+Jy+kUHr7036CI
-         /DLszH9IUkyBXpmzRJ3eEl08zKCsVil4WLkyViB2lUg/2MiYLTc07bV5RTgd3dgkHoq5
-         40lzzMYY4OaKO2UGLa18XWqxMNe6f1ypsus3v7IbgwyFnhJ+xHHDKziaBcveaPmPuuxO
-         kpq+C62QngEFRsqUacYO1xO/MpkbiL2OteWY9caPoy4iFtQ9bsNvKa2JXTq4zbqSB6iL
-         /hUYcu/AMVfOA+vLl9WZ4p4+JjmWAbvWgurbPwyOVaRzkZx9ID+iXUQOXDwC9FkUMpVk
-         7zig==
-X-Forwarded-Encrypted: i=1; AJvYcCVUZyin4ziZXFXsrweR1ezjVm/xd31WpeNsJreEkPsQp9ZfMIByXdJwa+FRdSDjCsmUEe29GrRdjTa/krYooqOF2dfODBMakcYkYw==
-X-Gm-Message-State: AOJu0YwU880/GQxyEAc8Ks5o9ANpinMgxYyDe7FbEVsP66z6LKKKKJZu
-	9+rX+q+Exa8vJH1LLxVAXfLHtbouf8Kgn1ZzaN+NZHqTY7lmmOycfQOxG1cOV8gxauPS74pMpB4
-	KTEM2XXxvgS3efn/BwomuO0M8LeI8vImfC4gIxSkKl7y2kCTxgmlzB2DD13M=
-X-Received: by 2002:a50:9b1b:0:b0:566:4aa9:7143 with SMTP id o27-20020a509b1b000000b005664aa97143mr1413886edi.14.1711712753976;
-        Fri, 29 Mar 2024 04:45:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYo6QfJYFEsVSF15QDDFwx8DOxbmiwf/M/DPk0Gc7NLZc79Ft95vFE1vuYwIhBFYvCdq0kyQ==
-X-Received: by 2002:a50:9b1b:0:b0:566:4aa9:7143 with SMTP id o27-20020a509b1b000000b005664aa97143mr1413848edi.14.1711712753534;
-        Fri, 29 Mar 2024 04:45:53 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-25-33.business.telecomitalia.it. [87.12.25.33])
-        by smtp.gmail.com with ESMTPSA id e12-20020a50d4cc000000b0056bf6287f32sm1991237edj.26.2024.03.29.04.45.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Mar 2024 04:45:52 -0700 (PDT)
-Date: Fri, 29 Mar 2024 12:45:46 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
-	"David S. Miller" <davem@davemloft.net>, Viresh Kumar <vireshk@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Joerg Roedel <joro@8bytes.org>, Alexander Graf <graf@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Kalle Valo <kvalo@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Pankaj Gupta <pankaj.gupta.linux@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, netdev@vger.kernel.org, 
-	v9fs@lists.linux.dev, kvm@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 16/22] net: vmw_vsock: virtio: drop owner assignment
-Message-ID: <xhr3nq5n5acn6m7lg7ai2cfaqvlc2a2nihruj54f7um2bjdpaf@tivbri5udlrb>
-References: <20240327-module-owner-virtio-v1-0-0feffab77d99@linaro.org>
- <20240327-module-owner-virtio-v1-16-0feffab77d99@linaro.org>
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ai7myRKd"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42T51HNI032384;
+	Fri, 29 Mar 2024 06:47:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	PODMain02222019; bh=357eE4xzGzzgIlIH685EBtNkhR3++TI4U8Ms5TSwQoI=; b=
+	ai7myRKd3yDXGxseNPtAXur5CJOwIIGp9Ywpw26m492imyoZX1YoPrGFUAUuFoZE
+	WeUR9PuqPj3UBf33D7QZPuADihMmTaCBvRd8DQWG3eIB1Myl5UD79r9zfj6Uyc0J
+	+J4HDtTMboaecqs+r6duGWY17W8OgyAAKvNKq1KKPY5VBcruka7ceTpGIyh8Nf/r
+	WDrQJltoC0U88SOI5qVbBSFOsR3KbY9Nombro2Pkkrm5ivdN1HggQt0Qbjvu6d/S
+	GasVFcGDKw/op0p5FJQC+hn4ffLa7AYYNu4g0rKJBm/8gAPaMvvKNuwRp9E0RiHn
+	IYBXsSq+wgbhUT27PydI1g==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3x4k7k4747-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Mar 2024 06:47:32 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 29 Mar
+ 2024 11:47:30 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4
+ via Frontend Transport; Fri, 29 Mar 2024 11:47:30 +0000
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 45C3D82024A;
+	Fri, 29 Mar 2024 11:47:30 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>
+CC: <linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH v3 1/3] gpio: swnode: Add ability to specify native chip selects for SPI
+Date: Fri, 29 Mar 2024 11:47:28 +0000
+Message-ID: <20240329114730.360313-2-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240329114730.360313-1-ckeepax@opensource.cirrus.com>
+References: <20240329114730.360313-1-ckeepax@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240327-module-owner-virtio-v1-16-0feffab77d99@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: MVqB_ZbE_vwCH_-IV6YxddtM6qwapT3F
+X-Proofpoint-ORIG-GUID: MVqB_ZbE_vwCH_-IV6YxddtM6qwapT3F
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Mar 27, 2024 at 01:41:09PM +0100, Krzysztof Kozlowski wrote:
->virtio core already sets the .owner, so driver does not need to.
->
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
->---
->
->Depends on the first patch.
->---
-> net/vmw_vsock/virtio_transport.c | 1 -
-> 1 file changed, 1 deletion(-)
+SPI devices can specify a cs-gpios property to enumerate their
+chip selects. Under device tree, a zero entry in this property can
+be used to specify that a particular chip select is using the SPI
+controllers native chip select, for example:
 
-Acked-by: Stefano Garzarella <sgarzare@redhat.com>
+        cs-gpios = <&gpio1 0 0>, <0>;
 
-Nit: you can use "vsock/virtio: " as prefix for the commit title.
+Here the second chip select is native. However, when using swnodes
+there is currently no way to specify a native chip select. The
+proposal here is to register a swnode_gpio_undefined software node,
+that can be specified to allow the indication of a native chip
+select. For example:
 
->
->diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->index 1748268e0694..13f42a62b034 100644
->--- a/net/vmw_vsock/virtio_transport.c
->+++ b/net/vmw_vsock/virtio_transport.c
->@@ -858,7 +858,6 @@ static struct virtio_driver virtio_vsock_driver = {
-> 	.feature_table = features,
-> 	.feature_table_size = ARRAY_SIZE(features),
-> 	.driver.name = KBUILD_MODNAME,
->-	.driver.owner = THIS_MODULE,
-> 	.id_table = id_table,
-> 	.probe = virtio_vsock_probe,
-> 	.remove = virtio_vsock_remove,
->
->-- 
->2.34.1
->
+static const struct software_node_ref_args device_cs_refs[] = {
+	{
+		.node  = &device_gpiochip_swnode,
+		.nargs = 2,
+		.args  = { 0, GPIO_ACTIVE_LOW },
+	},
+	{
+		.node  = &swnode_gpio_undefined,
+		.nargs = 0,
+	},
+};
+
+Register the swnode as the gpiolib is initialised and
+check in swnode_get_gpio_device if the returned node matches
+swnode_gpio_undefined and return -ENOENT, which matches the behaviour
+of the device tree system when it encounters a 0 phandle.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+
+No changes since v2.
+
+Thanks,
+Charles
+
+ drivers/gpio/gpiolib-swnode.c | 8 ++++++++
+ drivers/gpio/gpiolib.c        | 9 +++++++++
+ include/linux/gpio/consumer.h | 4 ++++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-swnode.c b/drivers/gpio/gpiolib-swnode.c
+index fa52bdb1a29a3..801b5a660307f 100644
+--- a/drivers/gpio/gpiolib-swnode.c
++++ b/drivers/gpio/gpiolib-swnode.c
+@@ -17,6 +17,11 @@
+ #include "gpiolib.h"
+ #include "gpiolib-swnode.h"
+ 
++const struct software_node swnode_gpio_undefined = {
++	.name = "gpio-internal-undefined",
++};
++EXPORT_SYMBOL_GPL(swnode_gpio_undefined);
++
+ static void swnode_format_propname(const char *con_id, char *propname,
+ 				   size_t max_size)
+ {
+@@ -40,6 +45,9 @@ static struct gpio_device *swnode_get_gpio_device(struct fwnode_handle *fwnode)
+ 	if (!gdev_node || !gdev_node->name)
+ 		return ERR_PTR(-EINVAL);
+ 
++	if (!strcmp(gdev_node->name, "gpio-internal-undefined"))
++		return ERR_PTR(-ENOENT);
++
+ 	gdev = gpio_device_find_by_label(gdev_node->name);
+ 	return gdev ?: ERR_PTR(-EPROBE_DEFER);
+ }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ce94e37bcbee7..e3a7e2a3a323e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4892,8 +4892,17 @@ DEFINE_SEQ_ATTRIBUTE(gpiolib);
+ 
+ static int __init gpiolib_debugfs_init(void)
+ {
++	int ret;
++
++	ret = software_node_register(&swnode_gpio_undefined);
++	if (ret < 0) {
++		pr_err("gpiolib: failed to register swnode: %d\n", ret);
++		return ret;
++	}
++
+ 	/* /sys/kernel/debug/gpio */
+ 	debugfs_create_file("gpio", 0444, NULL, NULL, &gpiolib_fops);
++
+ 	return 0;
+ }
+ subsys_initcall(gpiolib_debugfs_init);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index db2dfbae8edbd..e685fac43398d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -12,6 +12,8 @@ struct fwnode_handle;
+ struct gpio_array;
+ struct gpio_desc;
+ 
++struct software_node;
++
+ /**
+  * struct gpio_descs - Struct containing an array of descriptors that can be
+  *                     obtained using gpiod_get_array()
+@@ -54,6 +56,8 @@ enum gpiod_flags {
+ 	GPIOD_OUT_HIGH_OPEN_DRAIN = GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_OPEN_DRAIN,
+ };
+ 
++extern const struct software_node swnode_gpio_undefined;
++
+ #ifdef CONFIG_GPIOLIB
+ 
+ /* Return the number of GPIOs associated with a device / function */
+-- 
+2.39.2
 
