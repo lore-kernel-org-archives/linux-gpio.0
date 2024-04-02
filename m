@@ -1,97 +1,114 @@
-Received: from mail.nic.cz (mail.nic.cz [217.31.204.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8CC14B09C;
-	Tue,  2 Apr 2024 16:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.31.204.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141E15A4BE
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Apr 2024 16:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712076709; cv=none; b=c8/JnonePhUaskJBp9T7+zw0RbGLNzFqmCV4Ga/joWIug4wiUg47qAM3FGlMBTBiM6TLaLjbJk7chfcciO7P5pGOtSPcfaQsoRTs7cXtUxjJFkCaJ5YNJ3EQlx4Jr7U+LWw+6u/I01oRy8NqxxQDfANUJvbWzUVKyFgEY2Ionh0=
+	t=1712076721; cv=none; b=fPBdyXRwZOLgLvcUItQtCziZmjKicFcujaPDfzcgh0xiuChQRvSrvv66CpNMmhHo4UgB8BrkGXcIxszOqwdUbCdP/pjhu+nnh3hOLViInC94raaYx69iF17NGgvZM6niErjB12N+RvSiyLEl+rOlmffoHZPRBYMbedmwvvgXzqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712076709; c=relaxed/simple;
-	bh=KsHqIU03sKEpvUMS47A78uuJhzarHCzHfAicczh24Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NM75azOXITPamcLUJa+R8HbgqB08Ocy8ZOQnafjDPBWpDx4bf76QxaGZ6e0fkxVoOvw7+pF1u6axsU/RVVIH/E8qAjascSBB+Z0p0AnnGFwYKaKqzYtyfPQITuhZj5w2HMgx+abO6HRn1PYGZLrZcW4KU1yBYoVLGt2483KKGCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz; spf=pass smtp.mailfrom=nic.cz; dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b=wAajVCPs; arc=none smtp.client-ip=217.31.204.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nic.cz
+	s=arc-20240116; t=1712076721; c=relaxed/simple;
+	bh=SJbU2X7441mYJCFBc2qvaCsgEGCMk8xV0KIIvRAIKzw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVfbs28e3T4+yYYzalVXuyUDx05DArkwnnLKeJwQIEs5c4cKJKl9LgpAFwEfBsiZjQ4eQx6N7vDlLnXVkOtrLvOhFczvZlMrOdToAC9WFB2ISH8kwvgWyAXGEtuDAViuiWneRvXO3f58CDOcMUZAcUK10oMRyFhYRlruvPU12Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7Gitald; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="wAajVCPs"
-Received: from kandell (unknown [172.20.6.80])
-	by mail.nic.cz (Postfix) with ESMTPS id AEC1A1C184F;
-	Tue,  2 Apr 2024 18:41:59 +0200 (CEST)
-Authentication-Results: mail.nic.cz;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-	t=1712076119; bh=KsHqIU03sKEpvUMS47A78uuJhzarHCzHfAicczh24Rw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Reply-To:
-	 Subject:To:Cc;
-	b=wAajVCPskhVE6QjgewseYXgMvfXy+nAr9nqIxZzBmCGOJ1MHz0qbE0w/Gu1bYzNJz
-	 kneTVuNk4xUrIOF/IBR4mWDIZnwxbAQ6hQ177SkR37jGIKtvE9tUwGLBvuGs8OhhL8
-	 7JqkMAm8d2CkkCGSUooowNcfWay3yzVdhSbpXCv4=
-Date: Tue, 2 Apr 2024 18:41:59 +0200
-From: Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>, soc@kernel.org,
-	arm@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v5 02/11] platform: cznic: Add preliminary support for
- Turris Omnia MCU
-Message-ID: <20240402164159.ylu3gy4pwrbxqoeb@kandell>
-References: <20240323164359.21642-1-kabel@kernel.org>
- <20240323164359.21642-3-kabel@kernel.org>
- <ZgAII1B03bLUisWr@surfacebook.localdomain>
- <20240324160408.77c8574e@thinkpad>
- <CAHp75VesxrOdm4H3TYUtfEJx=i3Zpd6a=yzbkUFismnzW=nE-g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7Gitald"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-515a81928a1so8934670e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Apr 2024 09:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712076718; x=1712681518; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wgISE5etL0neRViDNv8SHE5eH5odsBSeTE4yjpddWsk=;
+        b=m7Gitaldj663ocgot38K3IumLid79g1nMbCPtZWwgMzcyCzvplX84sAoOEp1AqX7Zb
+         buhRthXA/lyaILn1mzEKcNQEt7X1Zc0T0CKmkjYAWlF02h9v5GyTeooY3fbA5EyAGh3l
+         GEx+i66KSu/gm0SwVxGYQrii+Um9Sk6e6LYFWsR+QlYvoeVUuC/wQy/efioD97Bp8o10
+         YAU7rC9dJxPF50QuKXXRFVIxSk/h1UFF8Mjar3u3So0AzaPMA0Bfu/gLozzJaLaHrLyP
+         LokMnaIy+GMydtcDZatUBuVdxZStfjKAewICGJvmXI/HVut36LNc3QL9u2LWUy/1rNpy
+         r28w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712076718; x=1712681518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wgISE5etL0neRViDNv8SHE5eH5odsBSeTE4yjpddWsk=;
+        b=Hl4dq+WYYsZomdaTcL+GYt1CpZIgXa7GrANSUrDaGtLL35uOh8ukJHDEZ0IxXED5FG
+         ER0uXlKMYI/EnEaRG6TvHfuLrdXEv82iIRmhDIFqHIpLiFVIdxrjQJ5oFK58pguvpApH
+         aEY/1yutV4zLWL9XRDDMSZVWJm9yCMqRjm/QZqqAfD5j6PKxz6YQFSqB+qxUMhSOoOkM
+         l4gNZLuUpEuhnQPRSQYb2acec4F7dgy4ppXrqTq8Vh7RakmSXqZBLLVxFd1a52IVUn5G
+         Zylh9Dif+voins8H/Rg9AjbjVIkW2tyJMydyVKwNPeCt2zMDBvOHPK3FcWw6Fu6+Jhj1
+         KNtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMheV5nZxs4FQtvS+2NO+8ZjmMTBlawL5ymB+gAydOPaLkelQJBPOnW/qCaoh6eQMr845PLbFDVweHJa3vMkJ2GctFkvu9wi1GLQ==
+X-Gm-Message-State: AOJu0YxkH3gUfSxM9ca6M8aM1KBtq3KLfciT8ryVyzyXxvnt0BqciTnx
+	ygG8Gt7GJD0+iqI4B8AeP41NY1ubsEY6QFDRgJol+cUAi5sYBFHqd4dmFgHkVZcfhXsljhzAebI
+	matNYHh2hoVhwQfKQA6/BOwzW5ek=
+X-Google-Smtp-Source: AGHT+IFkZ8Fljuu+7esyL9W9leJUOufQMhdJaMevUKQhSvGeXEfzLVh/OLYbTMyr2Xz/3ayXWd9W6SkCVg8xApbQmU8=
+X-Received: by 2002:ac2:4149:0:b0:516:9eb9:dcd1 with SMTP id
+ c9-20020ac24149000000b005169eb9dcd1mr1955851lfi.34.1712076718157; Tue, 02 Apr
+ 2024 09:51:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VesxrOdm4H3TYUtfEJx=i3Zpd6a=yzbkUFismnzW=nE-g@mail.gmail.com>
-X-Virus-Scanned: clamav-milter 0.103.10 at mail
-X-Virus-Status: Clean
-X-Rspamd-Action: no action
-X-Rspamd-Pre-Result: action=no action;
-	module=multimap;
-	Matched map: WHITELISTED_IP
-X-Rspamd-Server: mail
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: AEC1A1C184F
-X-Spamd-Result: default: False [-0.10 / 20.00];
-	MIME_GOOD(-0.10)[text/plain];
-	WHITELISTED_IP(0.00)[172.20.6.80];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com]
+References: <20240402164345.14065-1-hdegoede@redhat.com>
+In-Reply-To: <20240402164345.14065-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 2 Apr 2024 19:51:21 +0300
+Message-ID: <CAHp75VeJYASFaxwG2yuAdBLn7H5hK1BESP7p+3CzBVmNdCTpwg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpiolib: Fix triggering "kobject: 'gpiochipX' is not
+ initialized, yet" kobject_get() errors
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 24, 2024 at 05:30:39PM +0200, Andy Shevchenko wrote:
-> On Sun, Mar 24, 2024 at 5:04 PM Marek Behún <kabel@kernel.org> wrote:
-> >
-> > Hi Andy,
-> >
-> > thank you very much for the review. I have some notes and some
-> > questions, see below.
-> 
-> Btw, I'll look into other patches next week.
+On Tue, Apr 2, 2024 at 7:43=E2=80=AFPM Hans de Goede <hdegoede@redhat.com> =
+wrote:
+>
+> When a gpiochip gets added by loading a module, then another driver may
+> be waiting for that gpiochip to load on the deferred-probe list.
+>
+> If the deferred-probe for the consumer of gpiochip then triggers between
+> the gpiodev_add_to_list_unlocked() calls which makes gpio_device_find()
+> see the chip and the gpiochip_setup_dev() later then gpio_device_find()
+> does a kobject_get() on an uninitialzed kobject since the kobject is
 
-Hello Andy,
+uninitialized
 
-did you have a chance to look at the other patches?
+> initialized by gpiochip_setup_dev() calling device_initialize():
+>
+>  arizona spi-10WM5102:00: cannot find GPIO chip arizona, deferring
+>  arizona spi-10WM5102:00: cannot find GPIO chip arizona, deferring
+>  ------------[ cut here ]------------
+>  kobject: 'gpiochip5' (00000000241466f2): is not initialized, yet kobject=
+_get() is being called.
+>  WARNING: CPU: 3 PID: 42 at lib/kobject.c:640 kobject_get+0x43/0x70
+>  Call Trace:
+>   kobject_get
+>   gpio_device_find
+>   gpiod_find_and_request
+>   gpiod_get
+>   snd_byt_wm5102_mc_probe
+>
+> Not only is the device not initialized yet, but when the gpio-device is
+> added to the list things like the irqchip also have not been initialized
+> yet.
+>
+> So gpio_device_find() should really ignore the gpio-device until
+> gpiochip_add_data_with_key() is fully done. Add a device_is_registered()
+> check to gpio_device_find() to ignore gpio-devices on the list which are
+> not yet fully initialized.
 
-Marek
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
