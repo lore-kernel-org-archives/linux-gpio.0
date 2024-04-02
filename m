@@ -1,255 +1,118 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0D4132C38;
-	Tue,  2 Apr 2024 16:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F666159910
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Apr 2024 16:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712076025; cv=none; b=lTds23ClhCHuLEdUQZsV8821V6rOdwCH5ohU+gFj1avTV3osUbgK04wByA3yJptDMZrQnQ+c0G41UhtdolwMuTuwGFhKmDxbm1jNM1W/CP+6MnIGkytj/pwRsNqOC9ZJJ21WtWJn5UitlVbbE/hpEX4IBgAPLT2XC8PXiahiCJk=
+	t=1712076239; cv=none; b=W9xbZUoglt3fDyRww3iwGdj017RHrfnY/Kfxxl57AjOnVDuRvC1UV3lw8Oh367fd1+tDLTgRS7vMeQWwXOHr4nEtsETAiXRgkhEvf+kaWW5hcMeO5ytvuu04nXjEvxwH7gGCOPTXreIpZrBUT1lM9uN2a0fjkZuOE232x2jtITg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712076025; c=relaxed/simple;
-	bh=bPzZAjPgb7YR2f8OiRfv2mTtF4c6m/IEuL2l7gAXHyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLse4Utm7lGjjwpvO5GnA825gFy6DRR/DFdiYhnRzR2xesitiJmdxT3kS5aX44A8p4bFXh/PtNhkDCFox6c6jAf0LuzYRut/p3Vw7q1icfisRGbigOUySvloyvfAoCst4Ss8HHJS7b1GPiJjHqodErIp+HAJiszw1Bv3oJVrq/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNZdWuPr; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712076239; c=relaxed/simple;
+	bh=zRkhmGjgmVMhbBTs4VgkmwPJvD4Nu5No5k8gC7QBMGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uHiwRk6ZzcnOysZKa/lK05nrkB94ZO35i+XQDKQBt6e4gOzTMOO6ttpuTStQYaiW0+Xc0LI5V2Wq6DUGpy38j03dEH2lnmPOvfrFvgjmvFIULjS4yxiO6QjgyeYOgad8BScfDasngm2z8DHQIxTL48yymDPmdSqDXZAh/60act4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJecy9t8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNZdWuPr"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2d485886545so89305111fa.2;
-        Tue, 02 Apr 2024 09:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712076021; x=1712680821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xeglKPkGssu647V9+AWVaK1QLXwREHb2PyTHNRkcVfU=;
-        b=MNZdWuPr2zyoun6926avXxjtEHcQG1a/NRbVOYLjlULP8KNvjLBHBN1EFBxTVW802N
-         PqdxbOLOQNC9wl3xBkpzSwOqdmposWUNoc/CBhN/NI30kP0OhMe/E8Ft06XE2qYlHDkF
-         B4eer0yLTPQD7wCV5+GMSgd+fUpGCw4jKfT0K6VXfyFKWz8sRbErCR4locvwQYVfPWGe
-         vqwjqcCpI3lrIct2Nv4Kts914Yc8rsdpZ7CvznoOXnBUTapDCprsl0BzHXDgkDfeAIaJ
-         3ID+8YMfcfqiZ/RHB0k3W67jPGFOaCZSSuwzsHNhbdQAEAKR3VBmcuZkmPePQU9Ni+8l
-         0Rbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712076021; x=1712680821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xeglKPkGssu647V9+AWVaK1QLXwREHb2PyTHNRkcVfU=;
-        b=YZ2wT40601v/MnCGzFesWqCiJCcGBtr5urZMkeJpLQVcj3W8/zWY1k9zyYQzDTn2Sb
-         USERhKuzL21fne/RC8ADYxv2bjGncgYCtSxtTIhSeWaemH73AXAOMYcn4kmSHxXW9exO
-         jwfXbRsOuqEkKFwZ3g+u4aKZXUlNosFyuw5C77qZWWXSmyjYsVov5N38NWU8m40f006I
-         KD17HkOKXWBozXYGNs/y78Hsw3nvCd0L1nm+QuhGSs3QtaWD4BQ6qPlCJaYAYuvidlMH
-         T2w9X2rCDofuwNxWIz6H2+4m7+6XwZrEk76qm7SKeNVT/xZUJYwMYP83WmDBPaYd/Mi/
-         WMcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6zCV6TViiScf94WeuqpzgnFkhzZW5acRK2z7u9i+2q4M15U97+a/0KUhSsDXjfD1PTvkoeW6hJI/a2ZobKanTgLaW+S4qQ6LNJf9bnZ5fwuAmo4+V7zfOSHXWlmatjpVq1wA29GucZx1UCXLxh9vP5XXyeO+5kMwJSsSld+Pmibnntu8=
-X-Gm-Message-State: AOJu0YzOBTsv3IBODKvvL9kHpdhDoZKJUeFdcVA5PVfTA3CBdNrfvL9I
-	Llo/cVp9SSGvO3bJaShSdH5Wp8/LoT6GfcuF+MFK07GHNEwveBwW7nb9d9tJ1ACgrxtmquFBWBo
-	KRSh/uWEBc67SgphngmjO+DLJ++4=
-X-Google-Smtp-Source: AGHT+IGl+uNohAmGp7yty1Y/r35Wex0MlzIlU/dh6fUEpfO9UkK1JTZF2iD3j6JHceSsWZiSgmFGxtk1zREniCvtrzM=
-X-Received: by 2002:a2e:a168:0:b0:2d8:d91:d77a with SMTP id
- u8-20020a2ea168000000b002d80d91d77amr2094457ljl.5.1712076020719; Tue, 02 Apr
- 2024 09:40:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJecy9t8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712076237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3mmSRm2AtBAuROYhBMqBOzOmzoCJiEGySZSdD2yP9So=;
+	b=DJecy9t8KHWaMZ7sUurfbDR7StNG9+npL/tDS2DjHZtGD3+WdLw5XDUspLwkQKZF/s14uE
+	ank4+SdfWWCN835FclOFXC61OeGWQ+Z3veMAS2pjrcNDAIKekkIzNtNwb2/MvYNxMXCM0S
+	+ntjM1cp3QHYxnjIRfxUHJcjvI9v+Mc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-jS27BinaPdS8F1B7XgUnkg-1; Tue, 02 Apr 2024 12:43:53 -0400
+X-MC-Unique: jS27BinaPdS8F1B7XgUnkg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2B4C681A291;
+	Tue,  2 Apr 2024 16:43:52 +0000 (UTC)
+Received: from x1.nl (unknown [10.39.192.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id D3BD917B24;
+	Tue,  2 Apr 2024 16:43:50 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-gpio@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: [PATCH v2] gpiolib: Fix triggering "kobject: 'gpiochipX' is not initialized, yet" kobject_get() errors
+Date: Tue,  2 Apr 2024 18:43:45 +0200
+Message-ID: <20240402164345.14065-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240323-pinctrl-scmi-v6-0-a895243257c0@nxp.com>
- <20240323-pinctrl-scmi-v6-3-a895243257c0@nxp.com> <ZgcP4IkTQGks9ehH@surfacebook.localdomain>
- <DU0PR04MB9417E797F4E0F7BB6154B3BE88382@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <Zgu4Tok43W5t8KM0@pluto> <CAHp75VdAaTeQ_Ag3gd0s9UfT=kAT2hwibeJ9-YFXJx4z=R3e+g@mail.gmail.com>
- <ZgwrKnx3hb59OG77@pluto>
-In-Reply-To: <ZgwrKnx3hb59OG77@pluto>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 2 Apr 2024 19:39:44 +0300
-Message-ID: <CAHp75VeOB2_ivX5y8YfPEb64YUZBi+3U_1xUdjDVWzLiD=f+nw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] firmware: arm_scmi: Add SCMI v3.2 pincontrol
- protocol basic support
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Oleksii Moisieiev <oleksii_moisieiev@epam.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Tue, Apr 2, 2024 at 6:58=E2=80=AFPM Cristian Marussi
-<cristian.marussi@arm.com> wrote:
-> On Tue, Apr 02, 2024 at 04:06:06PM +0300, Andy Shevchenko wrote:
-> > On Tue, Apr 2, 2024 at 10:48=E2=80=AFAM Cristian Marussi
-> > <cristian.marussi@arm.com> wrote:
-> > > On Sun, Mar 31, 2024 at 01:44:28PM +0000, Peng Fan wrote:
-> > > > > Sat, Mar 23, 2024 at 08:15:16PM +0800, Peng Fan (OSS) kirjoitti:
+When a gpiochip gets added by loading a module, then another driver may
+be waiting for that gpiochip to load on the deferred-probe list.
 
-...
+If the deferred-probe for the consumer of gpiochip then triggers between
+the gpiodev_add_to_list_unlocked() calls which makes gpio_device_find()
+see the chip and the gpiochip_setup_dev() later then gpio_device_find()
+does a kobject_get() on an uninitialzed kobject since the kobject is
+initialized by gpiochip_setup_dev() calling device_initialize():
 
-> > > > > > +#include <linux/module.h>
-> > > > > > +#include <linux/scmi_protocol.h>
-> > > > > > +#include <linux/slab.h>
-> > > > >
-> > > > > This is semi-random list of headers. Please, follow IWYU principl=
-e (include
-> > > > > what you use). There are a lot of inclusions I see missing (just =
-in the context of
-> > > > > this page I see bits.h, types.h, and  asm/byteorder.h).
-> > > >
-> > > > Is there any documentation about this requirement?
-> > > > Some headers are already included by others.
-> >
-> > The documentation here is called "a common sense".
-> > The C language is built like this and we expect that nobody will
-> > invest into the dependency hell that we have already, that's why IWYU
-> > principle, please follow it.
->
-> Yes, but given that we have a growing number of SCMI protocols there is a
-> common local protocols.h header to group all includes needed by any
-> protocols: the idea behind this (and the devm_ saga down below) was to ea=
-se
-> development of protocols, since there are lots of them and growing, given
-> the SCMI spec is extensible.
+ arizona spi-10WM5102:00: cannot find GPIO chip arizona, deferring
+ arizona spi-10WM5102:00: cannot find GPIO chip arizona, deferring
+ ------------[ cut here ]------------
+ kobject: 'gpiochip5' (00000000241466f2): is not initialized, yet kobject_get() is being called.
+ WARNING: CPU: 3 PID: 42 at lib/kobject.c:640 kobject_get+0x43/0x70
+ Call Trace:
+  kobject_get
+  gpio_device_find
+  gpiod_find_and_request
+  gpiod_get
+  snd_byt_wm5102_mc_probe
 
-Yes, and what you are effectively suggesting is: "Technical debt? Oh,
-fine, we do not care!" This is not good. I'm in a long term of
-cleaning up the dependency hell in the kernel (my main focus is
-kernel.h for now) and I am talking from my experience. I do not like
-what people are doing in 95% of the code, that's why I really want to
-stop the bad practices as soon as possible.
+Not only is the device not initialized yet, but when the gpio-device is
+added to the list things like the irqchip also have not been initialized
+yet.
 
-Last to add, but not least is that your code may be used as an example
-for others, hence we really have to do our best in order to avoid bad
-design, practices, and cargo cults. If this requires more refactoring
-of the existing code, then do it sooner than later.
+So gpio_device_find() should really ignore the gpio-device until
+gpiochip_add_data_with_key() is fully done. Add a device_is_registered()
+check to gpio_device_find() to ignore gpio-devices on the list which are
+not yet fully initialized.
 
-...
+Fixes: aab5c6f20023 ("gpio: set device type for GPIO chips")
+Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Move device_is_registered() outside of RCU read lock section
+-Simplify backtrace in commit msg
+-Add fixes tag
+---
+ drivers/gpio/gpiolib.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> > > Andy made (mostly) the same remarks on this same patch ~1-year ago on
-> > > this same patch while it was posted by Oleksii.
-> > >
-> > > And I told that time that most of the remarks around devm_ usage were
-> > > wrong due to how the SCMI core handles protocol initialization (using=
- a
-> > > devres group transparently).
-> > >
-> > > This is what I answered that time.
-> > >
-> > > https://lore.kernel.org/linux-arm-kernel/ZJ78hBcjAhiU+ZBO@e120937-lin=
-/#t
-> > >
-> > > I wont repeat myself, but, in a nutshell the memory allocation like i=
-t
-> > > is now is fine: a bit happens via devm_ at protocol initialization, t=
-he
-> > > other is doe via explicit kmalloc at runtime and freed via kfree at
-> > > remove time (if needed...i.e. checking the present flag of some struc=
-ts)
-> >
-> > This sounds like a mess. devm_ is expected to be used only for the
-> > ->probe() stage, otherwise you may consider cleanup.h (__free() macro)
-> > to have automatic free at the paths where memory is not needed.
->
-> Indeed, this protocol_init code is called by the SCMI core once for all w=
-hen
-> an SCMI driver tries at first to use this specific protocol by 'getting' =
-its
-> protocol_ops, so it is indeed called inside the probe chain of the driver=
-:
-> at this point you *can* decide to use devres to allocate memory and be as=
-sured
-> that if the init fails, or when the driver cease to use this protocol (ca=
-lling
-> its remove()) and no other driver is using it, all the stuff that have be=
-en
-> allocated related to this protocol will be released by the core for you.
-> (using an internal devres group)
->
-> Without this you should handle manually all the deallocation manually on
-> the init error-paths AND also provide all the cleanup explicitly when
-> the protocol is no more used by any driver (multiple users of the same
-> protocol instance are possible)...for all protocols.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 59ccf9a3e153..94903fc1c145 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1175,6 +1175,9 @@ struct gpio_device *gpio_device_find(const void *data,
+ 
+ 	list_for_each_entry_srcu(gdev, &gpio_devices, list,
+ 				 srcu_read_lock_held(&gpio_devices_srcu)) {
++		if (!device_is_registered(&gdev->dev))
++			continue;
++
+ 		guard(srcu)(&gdev->srcu);
+ 
+ 		gc = srcu_dereference(gdev->chip, &gdev->srcu);
+-- 
+2.44.0
 
-Yes. Is it a problem?
-
-> This is/was handy since, till now, all the SCMI querying and resources
-> allocation happened anyway all at once at init time...
->
-> ...the mess, as you kindly called it, derives from the fact that this spe=
-cific
-> protocol is the first and only one that does NOT allocate all that it nee=
-ds
-> during the initialization (to minimize needless allocs for a lot of possi=
-bly
-> unused resources) and this lazy-initialization phase, done after init at =
-runtime,
-> must be handled manually since it cannot be managed by the devres group t=
-hat is
-> open/clsoed around init by the SCMI core.
->
-> I dont like particularly this split allocation but it has a reason and an=
-y
-> other solution seems more messy to me at the moment.
->
-> And I dont feel like changing all the SCMI protocol initialziation core c=
-ode
-> (that address a lot more under the hood) is a desirable solution to addre=
-ss a
-> non-existent problem really.
->
-> > And the function naming doesn't suggest that you have a probe-remove
-> > pair. Moreover, if the init-deinit part is called in the probe-remove,
-> > the devm_ must not be mixed with non-devm ones, as it breaks the order
-> > and leads to subtle mistakes.
->
-> Initialization order is enforced by SCMI core like this:
->
->  @driver_probe->get_protocol_ops()
->   @core/get_protocol_ops
->      -> devres_group_open()
->      -> protocol_init->devm_*()
->      -> devres_group_close()
->      -> driver_probing
->
->    @runtime optional explicit_lazy_kmallocs inside the protocol
->
->  @driver_remove->put_protocol_ops()
->    @core/put_protocol_ops()
->      -> protocol_denit->optional_explicit_kfree_of_the_above
->      -> devres_group_release()
->    -> driver_removing
->
-> ... dont think there's an ordering problem.
-
-The mess with devm_ vs. non-devm is quite easy to achieve. You are
-probably out of the control of what the protocol driver wants to do in
-the init. Is the usage of devm (which APIs and in which order can be
-used)  WRT SCMI documented somewhere?
-
-Misuse of devm is a common issue, I'm not surprised it will hit your
-subsystem one day with such an approach.
-
-> ...note that the ph->dev provided in the protocol_init and used by devm_
-> is NOT the dev of the SCMI driver probe/remove that uses the get_protocol=
-_ops,
-> it is an internal SCMI device associated with the core SCMI stack probing=
- and
-> allocations, within which a devres group for the specific protocol is cre=
-ated
-> when that specific protocol is initialized...protocols are not fully
-> fledged drivers are just bits of the SCMI stack that are initialized when=
- needed
-> (and possibly also loaded when needed for vendor protocols) and
-> de-initialzed when no more SCMI driver users exist for that protocol.
-
-P.S. I guess from now on it's your call, but this code and in case
-other drivers use similar, is badly written. I hope some documentation
-exists to at least justify all this mess and explaining why there no
-and (what's really important) will never be a problem.
-
---=20
-With Best Regards,
-Andy Shevchenko
