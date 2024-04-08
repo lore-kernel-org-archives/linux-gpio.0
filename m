@@ -1,23 +1,22 @@
 Received: from esa2.ltts.com (unknown [14.140.155.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D268171B47;
-	Mon,  8 Apr 2024 12:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDFA2D057;
+	Mon,  8 Apr 2024 12:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.140.155.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712580092; cv=none; b=lDLLbhELpJvVM5lEdonRNeAsAGfqtjsA+oyJ9MwW6LCLR2K5/744hU5+M4sy2mGPLutTJRTEZhOcxktY4gGiN8SOwjZb0crmuzsnF6Ka4IU++idHQmdLMNDgB96tBuEQovE3VdJ85gMjiablw4PYrnNoiSLaADDtLtUnLIORDTE=
+	t=1712580140; cv=none; b=WP636mpj3ZOXsHwZX/ayEM6loB/CBbohxuOJLhu4zdJzMd23M6BGDAVz/khp0Zz3iMKHhnPSWgQ3ynrSF1uFsWPhgeMbM/RyY4ODOWl4wJfJzWR+0XRSbr7Tl1APc7dZvfv54AXKc2IbOP3D6C2Mq7gg1L1XSqqVzJkCi8a61Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712580092; c=relaxed/simple;
-	bh=/z6DZH45bLOkfq/gVueWFPb4M8m52qtDKhLklz3wx38=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rM2RMrlmcxt2RsHGe5PMAzfJdDgiNM8XNoDP+HSXaouZVEttcklCs3myya6Ce4DZzD+ipzjcOOXC/vuVQOzTUlMeqw9INRsj6ZeNguVwnLQnD3a6rdH69KOVK20L6K7yTR21nxNppNz+jiwUtRJlKSw4RwvRotr20yZyePdzMhc=
+	s=arc-20240116; t=1712580140; c=relaxed/simple;
+	bh=4KoBWQJ8F7B0mWMu96tsQo9bqI4843gXdehwB5urs6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nVs2lilHRS+soCwhqxCIDtbYJjXJYHdmSCRR/+GThER7xoXKiKJKCov125EglLfw/57JvlvpFFDTSHJUIEs02ZCeBhby5D12/BuIGg/km5rn+3vDC5Yih2qF0VXjgGAjw/jGFeTCbKVSzRGwur6MJMsdGKL9mU/YgHd/JIJvbC0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ltts.com; arc=none smtp.client-ip=14.140.155.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltts.com
-IronPort-SDR: w6Kdt8ZmnvpgPA1o2uIndLjVLlbWA2/ozduYRp+PAd+sqOcxk9ZcyrPhWka0gv+mSlnbnS0YwG
- Ek5HbuyrWlNg==
+IronPort-SDR: JNqtrZ7ABL9Xa/s63myixw0s2rathzfd5Pavffzr1QJzZh4c0Tr4bFBDvM9xPuOXm7KdsMWDg5
+ tIPo6rrvwKnw==
 Received: from unknown (HELO localhost.localdomain) ([192.168.34.55])
-  by esa2.ltts.com with ESMTP; 08 Apr 2024 18:11:25 +0530
+  by esa2.ltts.com with ESMTP; 08 Apr 2024 18:11:01 +0530
 From: Bhargav Raviprakash <bhargav.r@ltts.com>
 To: linux-kernel@vger.kernel.org
 Cc: m.nirmaladevi@ltts.com,
@@ -39,12 +38,10 @@ Cc: m.nirmaladevi@ltts.com,
 	kristo@kernel.org,
 	eblanc@baylibre.com,
 	Bhargav Raviprakash <bhargav.r@ltts.com>
-Subject: [PATCH v6 11/11] arch: arm64: dts: ti: k3-am62p5-sk: Add TPS65224 PMIC support in AM62P dts
-Date: Mon,  8 Apr 2024 18:10:47 +0530
-Message-Id: <20240408124047.191895-12-bhargav.r@ltts.com>
+Subject: [PATCH v6 00/11] Add support for TI TPS65224 PMIC
+Date: Mon,  8 Apr 2024 18:10:36 +0530
+Message-Id: <20240408124047.191895-1-bhargav.r@ltts.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240408124047.191895-1-bhargav.r@ltts.com>
-References: <20240408124047.191895-1-bhargav.r@ltts.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -53,141 +50,92 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for TPS65224 PMIC in device tree of AM62P EVM. Adds regulator
-configuration, pinmux configurations and pmic device nodes.
+This series modifies the existing TPS6594 drivers to add support for the
+TPS65224 PMIC device that is a derivative of TPS6594. TPS65224 has a
+similar register map to TPS6594 with a few differences. SPI, I2C, ESM,
+PFSM, Regulators and GPIO features overlap between the two devices.
 
-Signed-off-by: Bhargav Raviprakash <bhargav.r@ltts.com>
----
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 95 +++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
+TPS65224 is a Power Management IC (PMIC) which provides regulators and
+other features like GPIOs, Watchdog, Error Signal Monitor (ESM) and
+Pre-configurable Finite State Machine (PFSM). The SoC and the PMIC can
+communicate through the I2C or SPI interfaces. The PMIC TPS65224
+additionally has a 12-bit ADC.
+Data Sheet for TPS65224: https://www.ti.com/product/TPS65224-Q1
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 1773c05f7..5d8e4321b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -112,6 +112,16 @@ vddshv_sdio: regulator-3 {
- 		bootph-all;
- 	};
- 
-+	vcc_3v3_main: regulator-4 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v3_main";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vmain_pd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -580,6 +590,12 @@ &main_uart1 {
- &mcu_pmx0 {
- 	bootph-all;
- 
-+	pmic_irq_pins_default: pmic-irq-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x000, PIN_INPUT, 7) /* (B10) MCU_GPIO0_0 */
-+		>;
-+	};
-+
- 	wkup_uart0_pins_default: wkup-uart0-default-pins {
- 		pinctrl-single,pins = <
- 			AM62PX_MCU_IOPAD(0x02c, PIN_INPUT, 0)	/* (C7) WKUP_UART0_CTSn */
-@@ -589,6 +605,13 @@ AM62PX_MCU_IOPAD(0x028, PIN_OUTPUT, 0)	/* (D7) WKUP_UART0_TXD */
- 		>;
- 		bootph-all;
- 	};
-+
-+	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x04c, PIN_INPUT, 0) /* (A13) WKUP_I2C0_SCL */
-+			AM62PX_MCU_IOPAD(0x050, PIN_INPUT, 0) /* (C11) WKUP_I2C0_SDA */
-+		>;
-+	};
- };
- 
- &wkup_uart0 {
-@@ -599,6 +622,78 @@ &wkup_uart0 {
- 	bootph-all;
- };
- 
-+&wkup_i2c0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&wkup_i2c0_pins_default>;
-+	clock-frequency = <400000>;
-+
-+	tps65224: pmic@48 {
-+		compatible = "ti,tps65224-q1";
-+		reg = <0x48>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq_pins_default>;
-+		interrupt-parent = <&mcu_gpio0>;
-+		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-+		ti,primary-pmic;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		buck12-supply = <&vcc_3v3_main>;
-+		buck3-supply = <&vcc_3v3_main>;
-+		buck4-supply = <&vcc_3v3_main>;
-+
-+		ldo1-supply = <&vcc_3v3_main>;
-+		ldo2-supply = <&vcc_3v3_main>;
-+		ldo3-supply = <&vcc1v8_sys>;
-+
-+		regulators {
-+			vcc_core: buck12 {
-+				regulator-name = "vcc_core_buck12";
-+				regulator-min-microvolt = <715000>;
-+				regulator-max-microvolt = <895000>;
-+				regulator-always-on;
-+			};
-+
-+			vcc1v8_sys: buck3 {
-+				regulator-name = "vcc1v8_sys_buck3";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			vcc1v1: buck4 {
-+				regulator-name = "vcc1v1_buck4";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-always-on;
-+			};
-+
-+			vdda1v8: ldo1 {
-+				regulator-name = "vdda1v8_ldo1";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			dvdd3v3: ldo2 {
-+				regulator-name = "dvdd3v3_ldo2";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vcc_0v85: ldo3 {
-+				regulator-name = "vcc_0v85_ldo3";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
- /* mcu_gpio0 and mcu_gpio_intr are reserved for mcu firmware usage */
- &mcu_gpio0 {
- 	status = "reserved";
+Driver re-use is applied following the advice of the following series:
+https://lore.kernel.org/lkml/2f467b0a-1d11-4ec7-8ca6-6c4ba66e5887@baylibre.com/
+
+The features implemented in this series are:
+- TPS65224 Register definitions
+- Core (MFD I2C and SPI entry points)
+- PFSM	
+- Regulators
+- Pinctrl
+
+TPS65224 Register definitions:
+This patch adds macros for register field definitions of TPS65224
+to the existing TPS6594 driver.  
+
+Core description:
+I2C and SPI interface protocols are implemented, with and without
+the bit-integrity error detection feature (CRC mode).
+
+PFSM description:
+Strictly speaking, PFSM is not hardware. It is a piece of code.
+PMIC integrates a state machine which manages operational modes.
+Depending on the current operational mode, some voltage domains
+remain energized while others can be off.
+PFSM driver can be used to trigger transitions between configured
+states.
+
+Regulators description:
+4 BUCKs and 3 LDOs.
+BUCK12 can be used in dual-phase mode.
+
+Pinctrl description:
+TPS65224 family has 6 GPIOs. Those GPIOs can also serve different
+functions such as I2C or SPI interface or watchdog disable functions.
+The driver provides both pinmuxing for the functions and GPIO capability.
+
+This series was tested on linux-next tag: next-20240118
+
+Test logs can be found here:
+https://gist.github.com/LeonardMH/58ec135921fb1062ffd4a8b384831eb0
+
+Changelog v5 -> v6:
+- Refactoring regulator driver: pass both array and size
+  in tps6594_regulator_irq_handler function
+
+Bhargav Raviprakash (8):
+  mfd: tps6594: use volatile_table instead of volatile_reg
+  mfd: tps6594: add regmap config in match data
+  dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
+  mfd: tps6594-i2c: Add TI TPS65224 PMIC I2C
+  mfd: tps6594-spi: Add TI TPS65224 PMIC SPI
+  mfd: tps6594-core: Add TI TPS65224 PMIC core
+  misc: tps6594-pfsm: Add TI TPS65224 PMIC PFSM
+  arch: arm64: dts: ti: k3-am62p5-sk: Add TPS65224 PMIC support in AM62P
+    dts
+
+Nirmala Devi Mal Nadar (3):
+  mfd: tps6594: Add register definitions for TI TPS65224 PMIC
+  regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators
+  pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl and GPIO
+
+ .../devicetree/bindings/mfd/ti,tps6594.yaml   |   1 +
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       |  95 +++++
+ drivers/mfd/tps6594-core.c                    | 253 ++++++++++--
+ drivers/mfd/tps6594-i2c.c                     |  41 +-
+ drivers/mfd/tps6594-spi.c                     |  43 ++-
+ drivers/misc/tps6594-pfsm.c                   |  48 ++-
+ drivers/pinctrl/pinctrl-tps6594.c             | 275 ++++++++++---
+ drivers/regulator/Kconfig                     |   4 +-
+ drivers/regulator/tps6594-regulator.c         | 243 ++++++++++--
+ include/linux/mfd/tps6594.h                   | 362 +++++++++++++++++-
+ 10 files changed, 1221 insertions(+), 144 deletions(-)
+
+
+base-commit: 2863b714f3ad0a9686f2de1b779228ad8c7a8052
 -- 
 2.25.1
 
