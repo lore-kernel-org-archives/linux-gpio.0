@@ -1,106 +1,131 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8211411EF;
-	Mon,  8 Apr 2024 15:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227E913E8AB;
+	Mon,  8 Apr 2024 16:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712590576; cv=none; b=hC7kZX1sFHtlMFpRCc+SKW6Xz/bRWhCvtQYZpSfhhKM7L/K6nXtBOvCU2oAEHpDA+qtaR5Z1ha5m0xlgAfczeURbdmDOuln/FcWx6M3lAq4hg8/xvOHuAejm0Ht7OV8Xt/g+QYeBNd7jdQSlNYLv2i5eAv/CDWSDKtFul9mBYhA=
+	t=1712592515; cv=none; b=svcdRzf9m2ocIKjAyDbIldsYjfUNHVStSw5wUEzPQonU623LEtis4+HF4iofA2ZHhK+4y90NRcsBGXmHaRJxjEOyZivg94+e6v+q8qcopbe7n0QD6sFl0pvUSpZjVJ7guqpeLG11DBdy6A5Rmq/9Ps5ZZTlHSAuSO7UhcChPbqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712590576; c=relaxed/simple;
-	bh=ElEBboZZmhHmo+fflG6/dLQkwXH+6/Jt3imK/vp90K0=;
+	s=arc-20240116; t=1712592515; c=relaxed/simple;
+	bh=LuK52G68sV8wmG51vDdU+FBlJoogw177YUbxkO4TPXU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ldwolADAo0QKK4SKMS6EgQPSgiVoqmrlLT2O/j6/qzS6//lb0NrEPNAPYCn2LOy2yNcmY0Gj+5jlD/fsIkJuHRxlcizMO/f1qCz4sWumH+b+Vmrd3nLcC6t5elNVTBOGlXTChNN570OBKTVP7cXG+gCGjzK1gfeLePY5HEEsbKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2UZDhr5; arc=none smtp.client-ip=209.85.218.46
+	 To:Cc:Content-Type; b=JGBomPWSwR26N2DcECY0RdrdoV6cwr2gZyYL5Nm9sLxcJWES6mxpnE3exiXaXi3MJt7muSyS2Ve+OLdzmMv63zEfihXquk5p94PHn3K4cW+xOa43ATmJGSRjkwkZV/sFVyvkXTy7QQzdBk0BIIPnF/fJZUyIpaEv8UsrCkKTl90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0HNiFlb; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2UZDhr5"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a5199906493so440384866b.1;
-        Mon, 08 Apr 2024 08:36:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0HNiFlb"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a51d90def9eso136121466b.0;
+        Mon, 08 Apr 2024 09:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712590573; x=1713195373; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712592512; x=1713197312; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ElEBboZZmhHmo+fflG6/dLQkwXH+6/Jt3imK/vp90K0=;
-        b=k2UZDhr5+O7cPcFCTb3t1ZzHlYT5/XCnO3pAFI4RbrQ10aOGN2vIdO5jPT5Za7aoAf
-         hrMj0ewrN+ZOQ5EaTAD/rxXRwgJ6P2TZnVtB6gAS4YpySxyOsjGci2Li2HUZRcOLmfMd
-         uPJk+SO+jz6og6XuPsDI6G106wqJ9HJ+0UAXGlCBzWQpPmCVy8nO4+33+4p7qlLGZkwQ
-         ppFSUEtKbZMNxwaVWlj1JIGQLaZUgK0GzoByYMMZODilZmDGuNsvRMFT8fDee2ODKBiO
-         t5jxc/fF7BMrdX351KDxz+cqfeMmyRqt5W5qx/OYZ6L/gpWacUkHjUab1Z+Ew59on4jb
-         u1dQ==
+        bh=LddNB/SlR7VWoe9W9ijRpH02JJqnehM5Rk6HpRI4lyA=;
+        b=a0HNiFlbgHEulNm0XSBOejZTRFNeK+4SSkGuV8Hbdnt8Az80WaWj40lzmyPZi87Kda
+         MADvtjq02/IhgitK3iQOTfFQYg67k7G2rgMpuHuHLMIcSYcGFh5oblbDVLrHxxS/W908
+         P8EoEQ8vlOWxu/Pt9nPzSA8pDxGUl/ONwIbU/dFG9R+2WlZit84B8rWzWo7ReAkJs1ca
+         H4PRcV+T5TgoZIeLuUFzMYLhsL6cgCvaquXskd1H7put8fH7LflvRKeu/2Cqseu5JBXC
+         oaRt4FLWrUX8SMykmXw8lwQo2/hIiA+r1oWphHaXIKsxuiwF4FiWZnKkGXjg6fQKhp8N
+         iX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712590573; x=1713195373;
+        d=1e100.net; s=20230601; t=1712592512; x=1713197312;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ElEBboZZmhHmo+fflG6/dLQkwXH+6/Jt3imK/vp90K0=;
-        b=f5B0jfa3U/B3U4pqq1i5MFshNvmKdec0rP0Ldy8X6CBdBCntLImLbR1b02VEHv6u9l
-         sjqZYEqFnu2Hffd64/p+znMp+aCoQJZqp64Lg2KEKRw9kE0Oc18LgBKhz7edCTUwrrPO
-         3LY5iitHgRhihmOAXfMQlY+76rLl1aC09UHTLcSq/hKmcz9kre7YQ4oRB7iF34DNV/3Z
-         ThBu/2W7kdAxytdeizkkXLgftO8lCMUd9FblGzmXUIkqs1PhzJQ1kskdZmxaElk+J7t8
-         1GJqbBcHSMz95sQ++BkLbhH4jQ0q9NQfWjMw7eWD13pSCS/3rpuEKW/IDDjkDt4Gs2H8
-         6RSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhra7sye9srUsXSUCcGvoBLoHM7ACqErXqRVqisWrQhaRkdo4J0SMRraIDu+z4UaJyOXQrXU7fj3lcqpYmMhoVPnt7oLMaSX5i2uLPXONBU3Yas7M4vGvXSml5e+Vk06Wk9BZstA==
-X-Gm-Message-State: AOJu0Yz1zqUkHUDi370N5dTI1bq7jOrtEc789/XpQJPcJFjU0T5BGbOU
-	qnFREyMqisVzFNVeWile20hcYCbn7mNBAyfgarARv99FW/11WdaYJLZp7yholP4QuWLoM0JO6UB
-	WEI7hT0biL1rjhw2Yslu5jqn3iWw=
-X-Google-Smtp-Source: AGHT+IFVf4lpZN05DBhUUba0o3Qn7pGE/745rbeti1y5rvdlMmYVqhhSf2HIdl3wBA8Ote60ZMibrzXmtZ9XY7qZkGk=
-X-Received: by 2002:a17:907:9708:b0:a51:18cf:b776 with SMTP id
- jg8-20020a170907970800b00a5118cfb776mr8601571ejc.2.1712590572856; Mon, 08 Apr
- 2024 08:36:12 -0700 (PDT)
+        bh=LddNB/SlR7VWoe9W9ijRpH02JJqnehM5Rk6HpRI4lyA=;
+        b=BPxJrFFj5rtLmAZP//XBOLuYgxvJvL4fr9vgUUv7J1e6CKmjsJFIzPKtIpSWdUhd2U
+         bfuONhK3U2UoaS8AUYAmMsdGlA5uutfCoJcOwIqCzFU92+mRhN/8hxX9//SiSawtqXoR
+         0Wo5C+eRtQ3/A5GFy3h2ZywmiabcsRKB9H/eWtGdyS8WoLlCeyR2gC5Vf888ukPJSiCm
+         ArNYR5uh5OZ84wHQ6m/wMFmRAmwWLt4IWgMPtJSwSfQi2BgDAiPqSjA0jbQ7A2qE39VP
+         Epo69WhSUk0WKeG65X8SsVZzFE3RF0W+Brh4HGLNGx6hlzibnxF/SwKHfT8zK34ihTCL
+         9NsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQCip+WIviNq8+t0IaGtDR4u5RfyLgv3FAClFAvDYCwGIPh/JFrdXzBYFq0pelyH8tFPfPeNsTEjd1d9npUBrUmzv6hcPZ0Ifi9dkue8eX9HgWzS8bp0Gd08uTme2rWziIzqfBqw==
+X-Gm-Message-State: AOJu0Yxgm5iVf2SxskD9jrBNQkixFjpekIdgs9l0W1Rpq6JXsn6jyHqp
+	GHH0wlAQVWIDMzgmZGwqBqOl/UWlH2DDpD9Y3hdXO4TxvHiE5m0m6zw+BK4rahNi7u5VdWYeoqj
+	j10GhWAAB7aaZsWecfLkeHij0JMuDNaDFw/qjFg==
+X-Google-Smtp-Source: AGHT+IFYL9i+2WeiRWUNRR6GdDCbfxImfItNL4tU/+xdtZ9H2UiiK4Qh3ykh+LKtVVurEC/J0Vf1S1RCYo+v5qhHZ/4=
+X-Received: by 2002:a17:906:4704:b0:a4e:2bd3:a060 with SMTP id
+ y4-20020a170906470400b00a4e2bd3a060mr6137237ejq.64.1712592512179; Mon, 08 Apr
+ 2024 09:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240407200453.40829-1-hdegoede@redhat.com> <ZhQL7KmvVYgRpz46@smile.fi.intel.com>
- <01494b5d-b7de-48b7-b68b-69a32da9fa5b@redhat.com>
-In-Reply-To: <01494b5d-b7de-48b7-b68b-69a32da9fa5b@redhat.com>
+References: <20240329114730.360313-1-ckeepax@opensource.cirrus.com>
+ <20240329114730.360313-4-ckeepax@opensource.cirrus.com> <Zg3AaNM0eizfC6Bk@surfacebook.localdomain>
+ <ZhQO0vTvr67bR2O9@ediswmail9.ad.cirrus.com>
+In-Reply-To: <ZhQO0vTvr67bR2O9@ediswmail9.ad.cirrus.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 8 Apr 2024 18:35:36 +0300
-Message-ID: <CAHp75VcVdvWux=3rxBjHisMhKC=69Ldhrn-eZiBgMgm0OHs23w@mail.gmail.com>
-Subject: Re: [PATCH 1/6] mmc: core: Add mmc_gpiod_set_cd_config() function
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Mon, 8 Apr 2024 19:07:55 +0300
+Message-ID: <CAHp75VdJQd4bcJ4qfMfJvNnNrE46SHmQQiVwyJa-99Y5k50nsg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] spi: cs42l43: Add bridged cs35l56 amplifiers
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: broonie@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
+	patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 8, 2024 at 6:27=E2=80=AFPM Hans de Goede <hdegoede@redhat.com> =
-wrote:
-> On 4/8/24 5:23 PM, Andy Shevchenko wrote:
-> > On Sun, Apr 07, 2024 at 10:04:48PM +0200, Hans de Goede wrote:
-> >> Some mmc host drivers may need to fixup a card-detection GPIO's config
-> >> to e.g. enable the GPIO controllers builtin pull-up resistor on device=
-s
-> >> where the firmware description of the GPIO is broken (e.g. GpioInt wit=
-h
-> >> PullNone instead of PullUp in ACPI DSDT).
-> >>
-> >> Since this is the exception rather then the rule adding a config
-> >> parameter to mmc_gpiod_request_cd() seems undesirable, so instead
-> >> add a new mmc_gpiod_set_cd_config() function. This is simply a wrapper
-> >> to call gpiod_set_config() on the card-detect GPIO acquired through
-> >> mmc_gpiod_request_cd().
+On Mon, Apr 8, 2024 at 6:35=E2=80=AFPM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Wed, Apr 03, 2024 at 11:47:36PM +0300, Andy Shevchenko wrote:
+> > Fri, Mar 29, 2024 at 11:47:30AM +0000, Charles Keepax kirjoitti:
+
+...
+
+> > > +#include <dt-bindings/gpio/gpio.h>
 > >
-> > FWIW,
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> > Hmm... Is it requirement by gpiolib-swnode? (I haven't looked at the us=
+e cases,
+> > I'm not the author of this idea, hence the Q).
 >
-> for just this patch or for the series ?
+> It's required for the GPIO_ACTIVE_LOW used in the swnode stuff.
 
-You have no cover-letter, your choice :-)
-(yes, for the series, but really it's better to have a even small
-cover letter, `b4` can use it for good in a few ways, although dunno
-what MMC maintainers use)
+Seems to me like you are mistaken.
+https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib-swnode.=
+c#L85
 
-> > assuming you considered addressing nit-picks.
+...
+
+> > > +   if (!is_acpi_node(fwnode))
+> > > +           return false;
+> >
+> > Dup, your loop will perform the same effectivelly.
 >
-> Ack will do.
+> Are you sure? Won't adev end up being NULL and the adev->handle
+> will dereference it?
 
+Yes, you need to check the ACPI dev to be not NULL there. Also note,
+that is_acpi_node() is not the same as is_acpi_device_node().
+
+> > > +   fwnode_for_each_child_node(fwnode, child_fwnode) {
+> >
+> > > +           struct acpi_device *adev =3D to_acpi_device_node(child_fw=
+node);
+
+...
+
+> > > +           ret =3D device_create_managed_software_node(&priv->ctlr->=
+dev, cs42l43_cs_props, NULL);
+> >
+> > No, this must not be used (I'm talking about _managed variant), this is=
+ a hack
+> > for backward compatibility.
+>
+> Hm... odd, feels like the function could use a comment or something
+> to say don't use me. But we can go back to managing it manually
+> no problems.
+
+Ah, I was thinking that it inherited that from device_add_property()
+(see 2338e7bcef44 ("device property: Remove device_add_properties()
+API") for the details), but no, it seems okay to use. but then we
+really need to be careful about lifetime of it wrt. other parts in
+this code.
 
 --=20
 With Best Regards,
