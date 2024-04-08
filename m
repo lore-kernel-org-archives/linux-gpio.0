@@ -1,113 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa2.ltts.com (unknown [14.140.155.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CDB657B6;
-	Mon,  8 Apr 2024 11:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE266A014;
+	Mon,  8 Apr 2024 12:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.140.155.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712575563; cv=none; b=EThUAKgzO0tH/Dg0cFzVm64gpu2Lqo1iT24ifAiuiJFY1E9Slyr6a112fAqlqLUHvebT+IrJDb3wz6eaeJnQrTlglZrre8ljPEGeiNSXM+3dhl9JCC95u3yzasSQykIMKiP3R6Y+8Kz/N6bm1zueN5npW3QFSODCXKaAjhTXJtE=
+	t=1712580082; cv=none; b=iLRdtx5H8GALpIjOJu2hZXEn889pR6l0uVdTS1Jdinz+fgjpbW7N60pOxvCYezNFDkKT9jD70XIcVFOSDsw4dCxkwCGpPxF7EVgLwQmC1L6/zbn0rLY8rvfozoKlBzRzTxSYzVqTwp9Qq4UBCdpASatIcWDHCpj3qY/PhHby6h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712575563; c=relaxed/simple;
-	bh=pu31DqzdIAUThdu05vllJ6aO/HR5oJpRFf3su6h7bbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DWaNNxjGF9z6LRWY5rOeL6YK2x97hIrauMDhJRs9uEewJtcqZWcja/Pc0ci9R8b/XMb43Cvhs2XsLdYCaeeJgLWSXGjv3FV+dJeV5H9CAc6TnG7s3/mVKdGGMJ/CMcc7gPqWBIBI1p/EgoUG8uBNKl2IqdI6jq0HakHtRI/Zb74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY5uD7Ux; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY5uD7Ux"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95E61C43390;
-	Mon,  8 Apr 2024 11:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712575563;
-	bh=pu31DqzdIAUThdu05vllJ6aO/HR5oJpRFf3su6h7bbU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JY5uD7Uxv37sdCSHsPFl7O+sMsnG2xT11Xm6rGdNbMqMwlmY1S4dOQhtf11gqQJwd
-	 CaH8VrR+kD2KbfwT40YlGu5DKEwcszL+BLXNHEfC5MMb9mnIiRonbszXzyPnnvCGxQ
-	 vQTEGEnVYLXy63VoE4UsRIF0h2bajPn0jkOQ3wafMRI0jFX2h+M6bmLspaw6oaHK+X
-	 c0ulIUGNokyg3QBO10+4frkYHhpHu6T94ReggHpccTjTwSnm8+VaRXChPfl/heCm84
-	 qtpN7oNS5fpPQFXiTtsmh2kT2Uh+9TwnMxwQE4pqgULROdXKP6mDp0GoAm+WC+uy0u
-	 JTFkgDXq3Zt8Q==
-Message-ID: <434c41bd-4a48-47ea-a3ef-6190e7033332@kernel.org>
-Date: Mon, 8 Apr 2024 13:25:56 +0200
+	s=arc-20240116; t=1712580082; c=relaxed/simple;
+	bh=UEdOs4UfnECnvOUdq3tW2tCJOukxn82iBBTNqs61wr0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P8q+rU3+IPivqqCIxy6AJx7VSIOQ7S3t0NhYya4SXTX1yW4qFjLrEwaRDNKILiss0OQvuSW7lzdcwMpDKSEz657F/iypUsGIWVv55rH8U/Lr1RFbRqox/qnelQLdnDPGiYSrUeRZ7WRPVUTCX9LZAb00A7FEaro7uKt/u5uY98M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com; spf=pass smtp.mailfrom=ltts.com; arc=none smtp.client-ip=14.140.155.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ltts.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltts.com
+IronPort-SDR: cQSPGghfieXKV6HCkzW/GshXht0JY38sX066QN4NUUR9s2Yovupa8LOo7gDdmkOWsZpFolHCPt
+ 0uls7f2jiLAA==
+Received: from unknown (HELO localhost.localdomain) ([192.168.34.55])
+  by esa2.ltts.com with ESMTP; 08 Apr 2024 18:11:10 +0530
+From: Bhargav Raviprakash <bhargav.r@ltts.com>
+To: linux-kernel@vger.kernel.org
+Cc: m.nirmaladevi@ltts.com,
+	lee@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	jpanis@baylibre.com,
+	devicetree@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linus.walleij@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	nm@ti.com,
+	vigneshr@ti.com,
+	kristo@kernel.org,
+	eblanc@baylibre.com,
+	Bhargav Raviprakash <bhargav.r@ltts.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v6 04/11] dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
+Date: Mon,  8 Apr 2024 18:10:40 +0530
+Message-Id: <20240408124047.191895-5-bhargav.r@ltts.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240408124047.191895-1-bhargav.r@ltts.com>
+References: <20240408124047.191895-1-bhargav.r@ltts.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: pinctrl: mediatek: mt7622: add "gpio-ranges"
- property
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, linux-mediatek@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>
-References: <20240408105128.30586-1-zajec5@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240408105128.30586-1-zajec5@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 08/04/2024 12:51, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
-> 
-> Allow specifying pin to GPIO mapping. It can be find in in-Linux DTS
-> file for MT7622.
-> 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+TPS65224 is a Power Management IC with 4 Buck regulators and 3 LDO
+regulators, it includes additional features like GPIOs, watchdog, ESMs
+(Error Signal Monitor), and PFSM (Pre-configurable Finite State Machine)
+managing the state of the device.
 
+In addition TPS65224 has support for 12-bit ADC and does not have RTC
+unlike TPS6594.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Bhargav Raviprakash <bhargav.r@ltts.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/mfd/ti,tps6594.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+index 9d43376be..6341b6070 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
++++ b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+@@ -21,6 +21,7 @@ properties:
+       - ti,lp8764-q1
+       - ti,tps6593-q1
+       - ti,tps6594-q1
++      - ti,tps65224-q1
+ 
+   reg:
+     description: I2C slave address or SPI chip select number.
+-- 
+2.25.1
 
