@@ -1,112 +1,221 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5E613F443
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Apr 2024 15:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF181E4AF;
+	Mon,  8 Apr 2024 15:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712590072; cv=none; b=lfIoLZO0ouELl8H9CPnb7obuxabkgB/P+PepjkuIBXjNl0rFq8o23m0gKlWmFDGNQ23An4aytfW8qy3ejU9+6c8AiDVtCnkI8B00t1VffACR686uhRw5QeUFbhR8zfV0XMqjrebFicO5jH1P1p1qG4dX6OFzGS/QvzVcOzxNObg=
+	t=1712590556; cv=none; b=WQ5XxZd7mCUrpSjNdV/zsU0YJSICB4ShcgvRpQ+RLFm28JJgFbtucWEUlCof/qxDs1/X+UiiUd4LMVitnVoR6JVYWSdisvULGkkAIgy0cunfA+oWoHf6hdBefKXQ0NkarV1D6GYRCgNSYsyI7wsvD56ap3ZRSAXwtp2E28YQ8qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712590072; c=relaxed/simple;
-	bh=mlVW9Me+XbweFyG9F25yRrb5gzakcJA4MSi16ccv36k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVcircL2LA9ATeqo+nBjgbSvpufhxbfM6UIrvz4aX/07eTtBtzgec/bHMz2TVi1Bp9Z0kPubSJlRB8806dVLmuJz0du2t0BSoyDoBbw4mhRoRlSiSrLUBOn0tDbnW+KWG8NzL5CwAIhJbimWQ3mUHj1b5WjQJGgqF9KIrJ+EkAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJ4f8UKK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1712590556; c=relaxed/simple;
+	bh=nfhXUuDM+wQiCwJoJQ/JfBm25BuzySMiazVENfH/Afo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNFtW1GuX/tCxr13e0xSRS7wx8ZZ+EWE88kdRuUFXwpW+v1Zv8W36p7XcXQJ/gW9zkj9OjCEkQTw3q7PYc1IaZ92QpEkimZrSHjxBw2rNGNnnzRaUh4cRDOB9eby+uZAoo9T/12ZaP9zKyViLIAJcADgOBNQiVmRBgf0UmuXhBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=mB2Cdges; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJ4f8UKK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712590069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x9lmgoGiJPBgqXYheNnhSIDVhxfqRrXJG/Rw0VMx+Zk=;
-	b=bJ4f8UKK8x1yH9MPTrKgFmIRsGcZnxsFpI4ajXs0l3Xd9Z9Hazf7W54nVRYZ6aIKmshx11
-	aICKQ8htF/ZzDtr/KOrnmOS8glikGPDI+RdBc2u3NVrBq+FO45BzZASUvUucNd/Tq9zLv5
-	cpGo6UGBeRg5l6xZwq9mc5x7TPvbTNw=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-48yLwpczOSOWeZFi24qAxg-1; Mon, 08 Apr 2024 11:27:48 -0400
-X-MC-Unique: 48yLwpczOSOWeZFi24qAxg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a51d062b178so77121666b.2
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Apr 2024 08:27:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712590067; x=1713194867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9lmgoGiJPBgqXYheNnhSIDVhxfqRrXJG/Rw0VMx+Zk=;
-        b=GiHfJwUy6W4tbADerqgYA4YB1D9ef+Pf2I0z7sb+YT8vdYOvgRxxKGYGTtX4W11ocZ
-         bbVLqioqm7ZiIR+xUS0DKLBA7ysWPMGp50tfIpAc+93FG+WWBZ2H6G3Gar532vTCesU0
-         L3WrC5Zxil1rBUN8mMvfNUJiY609Fakkwg6X/8dtggeb58gQPkdQsvdasdoVF3x9noV+
-         C9bDbzbAIX2l6J1Lw+q8Etkenq/UdM+eHs7TQs5dJHoojLsIlY8hxb8vi8SjISBfP4st
-         MZcaN4gyROZQewdZZE4gkoQJFnOprVquNmo0KLBTzSCD1vRU82+EsEnTjiARm1vViFa3
-         Hb3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVna09dhblkF28Bmxbc7PNCAWK3wL81f6yG5ZsTbAugadAzKy0x59s1krKEw6L/YLZs0BkoTOkGOH785tJY7DSq1vs8Ho87WCehtQ==
-X-Gm-Message-State: AOJu0YxK8RipvxAG/m2Bv14lpONcwqKEn7uDBPBz0B+xf32b5TGNGxtT
-	k0aY6mguuJ0uuQZ+trqX0FfE6VyT0CP6w08SPq2Lqeb48ttSKloC9JU12tJ16pX5wIKY87FC7S7
-	o6dCU73dUyDjTtD3GQC9QDtmmN6HL+nyNRz1ktOoiFt8drOeTwL+IYsw+SRY=
-X-Received: by 2002:a17:906:340f:b0:a51:d235:74cf with SMTP id c15-20020a170906340f00b00a51d23574cfmr2674298ejb.38.1712590067150;
-        Mon, 08 Apr 2024 08:27:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEI/VwBmMFdArbHeoBDZ2t7a+cc1SsBqXDZl12Lkul3tuzGYitmToVfeIox5n1MLEEUok7krw==
-X-Received: by 2002:a17:906:340f:b0:a51:d235:74cf with SMTP id c15-20020a170906340f00b00a51d23574cfmr2674286ejb.38.1712590066822;
-        Mon, 08 Apr 2024 08:27:46 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id qb34-20020a1709077ea200b00a4df78425dbsm4496079ejc.36.2024.04.08.08.27.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Apr 2024 08:27:46 -0700 (PDT)
-Message-ID: <01494b5d-b7de-48b7-b68b-69a32da9fa5b@redhat.com>
-Date: Mon, 8 Apr 2024 17:27:45 +0200
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="mB2Cdges"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43850rko005178;
+	Mon, 8 Apr 2024 10:35:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=PODMain02222019; bh=5ZqHoK67TZfwoNt
+	kp7APkFwF8BKF7L62HyD7fMD140Q=; b=mB2Cdges9z4sLBZE7oOYF2U1KYUTQ3K
+	k0at5brq/pU0MafzkcvKWBs8RXYQbtteGwS4Frtufbg0bdQqW+QGkSAFjwTzZ3Lh
+	0ZohfgF1PHiTMqxcUGYMRiPsNqZsk6Hdm6dSH8wkNHdHJpG7/3E2JG5ui4A4I7Eb
+	dawMIx3NdjneMLUH23CL103rmomb6M+NeHkf0SJ4LixW4lv8u90cAIgpuptYhhNl
+	EQLBAGZ2LanxNBc1a6ZTkrew0VEIfNmozGv6m8pbAeYYCRVEzrytspr0F/9bSequ
+	qNNUWOaj5cNT26uK4FupF7vDnIxoReFxfpmX7RKFFbBLV7MLz6xELJg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xb3sxhmbc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Apr 2024 10:35:49 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Apr 2024
+ 16:35:47 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 8 Apr 2024 16:35:47 +0100
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 57F72820242;
+	Mon,  8 Apr 2024 15:35:47 +0000 (UTC)
+Date: Mon, 8 Apr 2024 15:35:46 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: <broonie@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+        <linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v3 3/3] spi: cs42l43: Add bridged cs35l56 amplifiers
+Message-ID: <ZhQO0vTvr67bR2O9@ediswmail9.ad.cirrus.com>
+References: <20240329114730.360313-1-ckeepax@opensource.cirrus.com>
+ <20240329114730.360313-4-ckeepax@opensource.cirrus.com>
+ <Zg3AaNM0eizfC6Bk@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] mmc: core: Add mmc_gpiod_set_cd_config() function
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20240407200453.40829-1-hdegoede@redhat.com>
- <ZhQL7KmvVYgRpz46@smile.fi.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZhQL7KmvVYgRpz46@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zg3AaNM0eizfC6Bk@surfacebook.localdomain>
+X-Proofpoint-ORIG-GUID: 7zXdBPhC_44Yvty_oRGT4tIjoWOFl76p
+X-Proofpoint-GUID: 7zXdBPhC_44Yvty_oRGT4tIjoWOFl76p
+X-Proofpoint-Spam-Reason: safe
 
-Hi,
-
-On 4/8/24 5:23 PM, Andy Shevchenko wrote:
-> On Sun, Apr 07, 2024 at 10:04:48PM +0200, Hans de Goede wrote:
->> Some mmc host drivers may need to fixup a card-detection GPIO's config
->> to e.g. enable the GPIO controllers builtin pull-up resistor on devices
->> where the firmware description of the GPIO is broken (e.g. GpioInt with
->> PullNone instead of PullUp in ACPI DSDT).
->>
->> Since this is the exception rather then the rule adding a config
->> parameter to mmc_gpiod_request_cd() seems undesirable, so instead
->> add a new mmc_gpiod_set_cd_config() function. This is simply a wrapper
->> to call gpiod_set_config() on the card-detect GPIO acquired through
->> mmc_gpiod_request_cd().
+On Wed, Apr 03, 2024 at 11:47:36PM +0300, Andy Shevchenko wrote:
+> Fri, Mar 29, 2024 at 11:47:30AM +0000, Charles Keepax kirjoitti:
+> > From: Maciej Strozek <mstrozek@opensource.cirrus.com>
+> > +#include <dt-bindings/gpio/gpio.h>
 > 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> Hmm... Is it requirement by gpiolib-swnode? (I haven't looked at the use cases,
+> I'm not the author of this idea, hence the Q).
 
-for just this patch or for the series ?
+It's required for the GPIO_ACTIVE_LOW used in the swnode stuff.
 
-> assuming you considered addressing nit-picks.
+> > +#include <linux/acpi.h>
+> 
+> You need array_size.h (and perhaps overflow.h) and property.h.
 
-Ack will do.
+Good spot will add those.
 
-Regards,
+> > +static struct spi_board_info ampl_info = {
+> > +	.modalias		= "cs35l56",
+> > +	.max_speed_hz		= 2000000,
+> 
+> Maybe HZ_PER_MHZ from units.h?
 
-Hans
+Can do.
 
+> > +static const struct software_node_ref_args cs42l43_cs_refs[] = {
+> Please, use SOFTWARE_NODE_REFERENCE().
 
+> > +static const struct property_entry cs42l43_cs_props[] = {
+> You want PROPERTY_ENTRY_REF_ARRAY().. 
+
+Can do.
+
+> > +static bool cs42l43_has_sidecar(struct fwnode_handle *fwnode)
+> > +{
+> > +	static const int func_smart_amp = 0x1;
+> > +	struct fwnode_handle *child_fwnode, *ext_fwnode;
+> > +	unsigned long long function;
+> > +	unsigned int val;
+> > +	int ret;
+> 
+> > +	if (!is_acpi_node(fwnode))
+> > +		return false;
+> 
+> Dup, your loop will perform the same effectivelly.
+
+Are you sure? Won't adev end up being NULL and the adev->handle
+will dereference it?
+
+> > +	fwnode_for_each_child_node(fwnode, child_fwnode) {
+> 
+> > +		struct acpi_device *adev = to_acpi_device_node(child_fwnode);
+> > +
+> > +		ret = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &function);
+> > +		if (ACPI_FAILURE(ret) || function != func_smart_amp) {
+> > +			fwnode_handle_put(fwnode);
+> > +			continue;
+> > +		}
+> 
+> acpi_get_local_address() (it has a stub for CONFIG_ACPI=n).
+
+Thanks was looking for something like that not sure how I missed
+that.
+
+> > +		ext_fwnode = fwnode_get_named_child_node(child_fwnode,
+> > +				"mipi-sdca-function-expansion-subproperties");
+> > +		if (!ext_fwnode) {
+> 
+> > +			fwnode_handle_put(fwnode);
+> 
+> Are you sure?
+
+oops, yeah those should all be child_fwnode.
+
+> > +	if (has_sidecar) {
+> > +		ret = software_node_register(&cs42l43_gpiochip_swnode);
+> > +		if (ret) {
+> > +			dev_err(priv->dev, "Failed to register gpio swnode: %d\n", ret);
+> > +			return ret;
+> > +		}
+> 
+> > +		ret = device_create_managed_software_node(&priv->ctlr->dev, cs42l43_cs_props, NULL);
+> 
+> No, this must not be used (I'm talking about _managed variant), this is a hack
+> for backward compatibility.
+
+Hm... odd, feels like the function could use a comment or something
+to say don't use me. But we can go back to managing it manually
+no problems.
+
+> > +		if (ret) {
+> > +			dev_err(priv->dev, "Failed to add swnode: %d\n", ret);
+> > +			goto err;
+> > +		}
+> 
+> > +
+> 
+> Redundant blank line.
+
+yup.
+
+> > +	} else {
+> > +		device_set_node(&priv->ctlr->dev, fwnode);
+> > +	}
+> >  
+> >  	ret = devm_spi_register_controller(priv->dev, priv->ctlr);
+> >  	if (ret) {
+> >  		dev_err(priv->dev, "Failed to register SPI controller: %d\n", ret);
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (has_sidecar) {
+> > +		if (!spi_new_device(priv->ctlr, &ampl_info)) {
+> > +			ret = -ENODEV;
+> > +			dev_err(priv->dev, "Failed to create left amp slave\n");
+> > +			goto err;
+> > +		}
+> > +
+> > +		if (!spi_new_device(priv->ctlr, &ampr_info)) {
+> > +			ret = -ENODEV;
+> > +			dev_err(priv->dev, "Failed to create right amp slave\n");
+> > +			goto err;
+> > +		}
+> >  	}
+> >  
+> > +	return 0;
+> > +
+> > +err:
+> > +	if (has_sidecar)
+> > +		software_node_unregister(&cs42l43_gpiochip_swnode);
+> > +
+> >  	return ret;
+> >  }
+> 
+> Wondering why don't you use return dev_err_probe() / ret = dev_err_probe() /
+> dev_err_probe(ret)?
+
+Yeah some of those should be, will update.
+
+> > +static int cs42l43_spi_remove(struct platform_device *pdev)
+> > +{
+> > +	struct cs42l43 *cs42l43 = dev_get_drvdata(pdev->dev.parent);
+> 
+> platform_get_drvdata()
+> 
+> > +	struct fwnode_handle *fwnode = dev_fwnode(cs42l43->dev);
+> 
+> Is this dev the same as &pdev->dev?
+
+No, this is MFD parent device, to be fair could probably use
+parent directly here. Will have a think about that.
+
+Thanks,
+Charles
