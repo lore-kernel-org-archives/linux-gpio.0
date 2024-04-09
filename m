@@ -1,88 +1,132 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E6F12FF67
-	for <linux-gpio@vger.kernel.org>; Tue,  9 Apr 2024 18:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BC9158D9A
+	for <linux-gpio@vger.kernel.org>; Tue,  9 Apr 2024 23:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712687968; cv=none; b=qhqzUxHxM/zkiJDaF5FAk409qBCsM/RUvbuRNUa6fj5NbvVB0+h5OwGQ/VyF3kuQJrIJRyR9HzK2S0vDwc/+sZiLZLUD3Lq8Xkx4AJrak/seHQnWZQVbTYU2mZ7CG75ab2Lz0SstTMFwoSA9j+Ge73Qdxriyd3Us4XD/TjbLbYA=
+	t=1712703793; cv=none; b=rU8sA8ocJEOgAQEmxaTY4oUwDSI7NtsVZLHnicnXQ3tt5Jf5Z4HYmPX1AAn+V7JbNi/e+aQBml8vDKBLpkYVIPDz8yLdzqM4ejs8aqCoKHee4eX6Gqgi5RAUsPiQfpnVsEfQeTO7xCAMrRet7XIjSvJRp+HuKiVADdNkBwNftZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712687968; c=relaxed/simple;
-	bh=BwPr7SrsQf4b7g+pojJ443HjHLELotWIZE/wilGloq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ETYkLyNDPQYmZFZo2Z86bhcdaMYrEJ2hsKoG5Vo4l39nqK7JFaoL12vewcwh8RibxW5jtGirRMvKzwdOPJVTO7pXTMktipHl+34ClcDXEidNJ33JPrICa86RsVMBepPVOqDjojUMw8X86QCWOIbLCwTQmZHc3V8/zecyu+ZB/Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O+7syKAS; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712703793; c=relaxed/simple;
+	bh=IdohVNvU3qr5Wr5UrBvazvHqZcZjB8QiyZotMsuJMUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jwMrvQ1ydWHT8gvDpGW5oCuJU3hUTePao0rDvptCReyBuey5cuvuzD40zapxadmXffHRvbVx4zSgGVHtdg80Z1rT+Aiib4dBmavDPhiZkTJ2gMLzmfut8Qu7hp5GjXuT5ugU2z6/1H/R8nYj6Gifik1/sSi7vdj2/cOGGM9cEKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jIkxa2uD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+7syKAS"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dcbc6a6808fso5871891276.2
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Apr 2024 11:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712687965; x=1713292765; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAdR0lfI/Ap3S0wzwjpUHjQuKqdM6aVtl85wb7tRnRA=;
-        b=O+7syKASBx2JiFlsf6BUFWTgvb8hzJc1kYl/sTbv+8cPiBaRynz8Gbcm8FlAELTX+m
-         /l0SKde+GrmSENTVJydNz3kLE420nx0i+Ang2TYm9BI0i4Yvbyj/6XrOEBaabpfK7TLp
-         nR1+C0huxdZbrnNUdWg8Zdsq+I9VsFm/B8NYahsJpdIQ1cGqzlWHw/dUtwt5LaKoIVJM
-         FZF7LiqqdVlwwV4gqB56ml1T7x8Utc60xBYQcFlNn7wj+z2UdvDO6UmdkqWHMeyGmBf9
-         5unKzwqIU0O5N5Azvb8EvL7u151ziPbwU1i4UJJvP8NhcMY1OL78frGZyAGXGT38yvOe
-         moGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712687965; x=1713292765;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hAdR0lfI/Ap3S0wzwjpUHjQuKqdM6aVtl85wb7tRnRA=;
-        b=LMQFIkQPHygT5q/tHmgSkZ8W1Wq3Cyx0tm0Z5BGB4L202FtLCY1k197j9aYUxpQQ2E
-         w/RjzrnyHnkKcbtUWaxiDoRBnl0CNPEZZrPuqReHZZJVP65S87X+NkVMOmV6mWv/fBYw
-         o60ugwqmIOQincZEiULOf4DbXWsmctZeF5NxU32tcCbjXIaxL6N59MfgTabHl1GuuevW
-         zLaEdwkhTCeZksTVZxu8BEnLH5/McPbBtQk8khSLB6UHa5PP6miUPAEfJ1802x+w5Dkd
-         FaDSPQbkHQNdochtTu8LZnG1LVunvFsNz23/en/+Eb2wr//gKYnYTzU2NCnCZQrC0/jl
-         7Zkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaSvOI5IpUW128ZIWT4vzusk/fMnkS+Kt0mdluBdZIJjYMhz7lu4OIS7SUjkjOzHe0/8gxBezkmfZ2+L23OWykSv2/70/8urYiCg==
-X-Gm-Message-State: AOJu0Yz0iKSqqqp0W0dL8H1EHtQ9PJW3xNegLLt1ICjDRERnOBWhkJPn
-	womue9lSblyR6kkzSyK/+pWoCXA8wR/5inUNuEo1fKMPCoxkOw4SPWwmil8OpEoCtrT8GWCXu3j
-	KpRuaMTjiRu0YAogkX2EXkBBJRJRQXo1UqoPJPB3RHYnhHao/
-X-Google-Smtp-Source: AGHT+IHq5NVO+WfWmq3XyvBYt0xQLngoIVqzHjLiDg5l97bez8m7/Sp8OhTA5vGPOslEtZDyb+Woew1HHexx4xjD/3U=
-X-Received: by 2002:a05:6902:c0b:b0:dc2:1f53:3a4f with SMTP id
- fs11-20020a0569020c0b00b00dc21f533a4fmr750553ybb.5.1712687965237; Tue, 09 Apr
- 2024 11:39:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jIkxa2uD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712703792; x=1744239792;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IdohVNvU3qr5Wr5UrBvazvHqZcZjB8QiyZotMsuJMUo=;
+  b=jIkxa2uDaQCBmUweZnMtsQosxdsIekMMKkOE4aGeT0QFF4HxpxM6w6fl
+   ME538xqEUh2n/o7siga3WqrhIcEmpkpR4UihXHGTFuOIz5TQFztsyxNjI
+   6f6DU7Gn29VPZbzk83vjXm3fsnGRmFxQoclciEmF/WFpkc+dw1/G5uBzZ
+   5MmiJOyacFT7VHpFuDfbEdKlCdzw3uOxUJJnpuQYJwFwAzWrdNbAaaSq8
+   HmslwqWJLfwIwcg7fIHSQFpUTbiDnbY0Vt3yZwy+wKTqZq8jq4TmrE/Rf
+   9rKhXFKYIFGjGajxtvjTdndsu8aCakAaRr5iBEyvOfRk+2v89fBPeUwR7
+   g==;
+X-CSE-ConnectionGUID: 7X6ahZ46SAugxzpJQRu7nw==
+X-CSE-MsgGUID: 2Y+CqXwvTju3BDqXZkYVhA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11039"; a="18611464"
+X-IronPort-AV: E=Sophos;i="6.07,190,1708416000"; 
+   d="scan'208";a="18611464"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2024 16:03:10 -0700
+X-CSE-ConnectionGUID: qjZlOoSYSsiFkana82iDuQ==
+X-CSE-MsgGUID: 8hIzaALlQSWg/F9xejFkwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,190,1708416000"; 
+   d="scan'208";a="51572416"
+Received: from lkp-server01.sh.intel.com (HELO e61807b1d151) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 09 Apr 2024 16:03:09 -0700
+Received: from kbuild by e61807b1d151 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ruKUc-0006b8-2j;
+	Tue, 09 Apr 2024 23:03:06 +0000
+Date: Wed, 10 Apr 2024 07:03:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: [linusw-gpio:b4/descriptors-wireless 2/2]
+ drivers/gpio/gpio-ath79.c:263:1: warning: no return statement in function
+ returning non-void
+Message-ID: <202404100626.HQOO79B8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240409-qcom-pmic-gpio-hog-v2-0-5ff812d2baed@z3ntu.xyz> <20240409-qcom-pmic-gpio-hog-v2-2-5ff812d2baed@z3ntu.xyz>
-In-Reply-To: <20240409-qcom-pmic-gpio-hog-v2-2-5ff812d2baed@z3ntu.xyz>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 9 Apr 2024 21:39:14 +0300
-Message-ID: <CAA8EJppzfBbTi7htJDmMowtXXTi3ASfzQpEpkCjPngBFH=TE-A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: qcom: msm8974-hammerhead: Update gpio
- hog node name
-To: Luca Weiss <luca@z3ntu.xyz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 9 Apr 2024 at 21:37, Luca Weiss <luca@z3ntu.xyz> wrote:
->
-> Follow the gpio-hog bindings and use otg-hog as node name.
->
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  arch/arm/boot/dts/qcom/qcom-msm8974-lge-nexus5-hammerhead.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git b4/descriptors-wireless
+head:   3ca0eec7ecfa5c404f41e9b1e7690ec64de77b53
+commit: 3ca0eec7ecfa5c404f41e9b1e7690ec64de77b53 [2/2] wifi: ath9k: Obtain system GPIOS from descriptors
+config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20240410/202404100626.HQOO79B8-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240410/202404100626.HQOO79B8-lkp@intel.com/reproduce)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202404100626.HQOO79B8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/gpio/gpio-ath79.c: In function 'ath79_gpio_register_wifi_descriptors':
+>> drivers/gpio/gpio-ath79.c:263:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     263 | }
+         | ^
+
+
+vim +263 drivers/gpio/gpio-ath79.c
+
+   225	
+   226	#if IS_ENABLED(CONFIG_ATH9K_AHB)
+   227	/*
+   228	 * This registers all of the ath79k GPIOs as descriptors to be picked
+   229	 * directly from the ATH79K wifi driver if the two are jitted together
+   230	 * in the same SoC.
+   231	 */
+   232	#define ATH79K_WIFI_DESCS 32
+   233	static int ath79_gpio_register_wifi_descriptors(struct device *dev,
+   234							const char *label)
+   235	{
+   236		struct gpiod_lookup_table *lookup;
+   237		int i;
+   238	
+   239		/* Create a gpiod lookup using gpiochip-local offsets + 1 for NULL */
+   240	        lookup = devm_kzalloc(&pdev->dev,
+   241				      struct_size(lookup, table, ATH79K_WIFI_DESCS + 1),
+   242				      GFP_KERNEL);
+   243	
+   244		if (!lookup)
+   245			return -ENOMEM;
+   246	
+   247		lookup->dev_id = "ath9k";
+   248	
+   249		for (i = 0; i < ATH79K_WIFI_DESCS; i++) {
+   250			lookup->table[i] = (struct gpiod_lookup)
+   251				PIO_LOOKUP_IDX(label, 0, NULL, i,
+   252					       GPIO_ACTIVE_HIGH);
+   253		}
+   254	
+   255		gpiod_add_lookup_table(lookup);
+   256	
+   257		return 0;
+   258	}
+   259	#else
+   260	static int ath79_gpio_register_wifi_descriptors(struct device *dev,
+   261							const char *label)
+   262	{
+ > 263	}
+   264	#endif
+   265	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
