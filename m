@@ -1,190 +1,126 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A15F1E6F6F;
-	Thu, 11 Apr 2024 17:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9DD18050;
+	Thu, 11 Apr 2024 17:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712855606; cv=none; b=kxYv8/Wm/KG6tjC9C0mDUVRV9pZAoz92PUrTd+jK25+Ok2DpN6wGEL90RyDmFX8DSaReG7458IaIdANHw7qGYAqsiTx+01WjHYYbKZDZamObH3PFowca+YJ7lsHFeeVFbxOAGZWnvI2KvJv1bpvHPuxPtYURjzAiN3jO52SVcQg=
+	t=1712856401; cv=none; b=lj0KHv+9Eo+e64KwQPfdrdYj67CJamqT0+eOjL8WVpCcsD08CjKna5rlH9QA6cr0XqsU2kAa9VuJBq4yqXEbL1aDGUVIzGQTufLjXA2QfqQTrpTXtRkdKQaWJIIaN6r4B3H0K0ZXxtlldxvYhKQrP/nXYfyWgAB2CwS56j750uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712855606; c=relaxed/simple;
-	bh=OAkb6O93bCbim6J2BNly7gzfaDzf9BuBjbDFoXODMM8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgTBnKyJtHzqJ17iqO2d0rt7KTm/bw7omq6EJa251Mz2b90iOGVCv8oiwLU+PouVQT/cdvTPPUpS2wk140PUV7QH/uhR3nJxZtC+LLZysehp6pIeDJ2tHtvrlvcHSIaS4QsPtshnwlAgfV2zf12epPh03evi8JklvehyNMEoAtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=BpYB3Wg8; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1712856401; c=relaxed/simple;
+	bh=A2+jXtS5g8HA0A8/2hmcMBqno1MQ7oBHc6IPFkKw3e8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=om549zUD831/F28DxPqXQ/WGvj6F6pYOHsUcqpNffHCddUbtt9qJwI65Q8yx9qq/C2tqB0VFt4CYW/JE+af4OnfE+5qG6VNRETcCrCvL0qNqI5MLcmRRnBY0tvsgyO052uWLOjOWYGHR0G02yu3NTngbpEl8Nkj+zatMkIvn6PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WC28LqO8; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="BpYB3Wg8"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43B40ALn009489;
-	Thu, 11 Apr 2024 12:13:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=
-	PODMain02222019; bh=MVsF3Y6/tW0tUDnyjWrIIKO1P2oaUgkqMmz08BtWtgU=; b=
-	BpYB3Wg8/aap59AWs5VEZ3Nnf1qgARGhbPYvr5na8qEElv8LMUGlnCxe4CzcCLY7
-	+GU9lda/2wd3mLKReA2cxSf5L2vFYIOWhISE6K87BBgTlEnSg9J/NfR3a/FRvyWe
-	+e9Tl/BAMsLARlDCzxb63SiyZIgx4MNhLb3tUoffu6QC07a8ZnR5HGdebgowgIwF
-	O1lBAh2qZZc7zTKO7jPEWDmnifF9XzoMkRFSgmXbXUARiXfVDsMJEnIlaSM4/814
-	8lisXR+dtm5ND3fxLYVIx2FfiAgZTavgyVoanoC0KYVTxMeIsXYfRTAqo/NWv+os
-	D1Q0A10fsoXDqZnSAfxIZA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xb3sxqcaf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Apr 2024 12:13:18 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Apr
- 2024 18:13:16 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Thu, 11 Apr 2024 18:13:16 +0100
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 74359820242;
-	Thu, 11 Apr 2024 17:13:16 +0000 (UTC)
-Date: Thu, 11 Apr 2024 17:13:15 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: <broonie@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <bard.liao@intel.com>, <linux-gpio@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v5 4/4] spi: cs42l43: Add bridged cs35l56 amplifiers
-Message-ID: <ZhgaK9vhtvy3/YpU@ediswmail9.ad.cirrus.com>
-References: <20240411090628.2436389-1-ckeepax@opensource.cirrus.com>
- <20240411090628.2436389-5-ckeepax@opensource.cirrus.com>
- <CAHp75Ve00EuT0AdZy0b6OfqHySNkxTBuUbrv7z+mUgcrT56QWw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WC28LqO8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712856400; x=1744392400;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=A2+jXtS5g8HA0A8/2hmcMBqno1MQ7oBHc6IPFkKw3e8=;
+  b=WC28LqO886XPiO9g611lcP4THsUDjjmeQEAtQ19xypW59zlhD2FtatuK
+   lwZGg7RpTQVLx5H5rfcyElOZqmjAiGpGT+g2GwmYb4L5pSIePuKa7jUQ3
+   g1KM+YD1MtRZlOjAmzXU1PgnHe+Fp+v+d19M8elF53Y1BnSzv6WMDKfID
+   MW8Tv7j7gPnnWVn5Uacw8IobRJKfcbqDuUqgEtzZ16hAIDy1eQjV/8M0w
+   AvEtAlR1kHaRB3AI2n+c3ey954VVGH1km7DpXzxco2DqQBcKBuyn4EFfC
+   que0V9KNsVIG1m3q0UR+4CqPhArSv3k593JcTbqPMPURnQNQ5ENmiaXQQ
+   Q==;
+X-CSE-ConnectionGUID: VQclX42vR0aiFqbXrUtmuA==
+X-CSE-MsgGUID: RNyzALCHRhyv78PLv4d8tQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="18844983"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="18844983"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 10:26:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="937097272"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="937097272"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Apr 2024 10:26:35 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2B32C4C5; Thu, 11 Apr 2024 20:26:34 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Thompson <davthompson@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: [PATCH v1 3/4] gpiolib: acpi: Move acpi_can_fallback_to_crs() out of __acpi_find_gpio()
+Date: Thu, 11 Apr 2024 20:22:31 +0300
+Message-ID: <20240411172540.4122581-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20240411172540.4122581-2-andriy.shevchenko@linux.intel.com>
+References: <20240411172540.4122581-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Ve00EuT0AdZy0b6OfqHySNkxTBuUbrv7z+mUgcrT56QWw@mail.gmail.com>
-X-Proofpoint-ORIG-GUID: 1OExJAL_JgbNifayXx0Zj9S90ytHXE2u
-X-Proofpoint-GUID: 1OExJAL_JgbNifayXx0Zj9S90ytHXE2u
-X-Proofpoint-Spam-Reason: safe
 
-On Thu, Apr 11, 2024 at 05:04:33PM +0300, Andy Shevchenko wrote:
-> On Thu, Apr 11, 2024 at 12:06 PM Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> > From: Maciej Strozek <mstrozek@opensource.cirrus.com>
-> >
-> > On some cs42l43 systems a couple of cs35l56 amplifiers are attached
-> > to the cs42l43's SPI and I2S. On Windows the cs42l43 is controlled
-> > by a SDCA class driver and these two amplifiers are controlled by
-> > firmware running on the cs42l43. However, under Linux the decision
-> > was made to interact with the cs42l43 directly, affording the user
-> > greater control over the audio system. However, this has resulted
-> > in an issue where these two bridged cs35l56 amplifiers are not
-> > populated in ACPI and must be added manually.
-> >
-> > Check for the presence of the "01fa-cirrus-sidecar-instances" property
-> > in the SDCA extension unit's ACPI properties to confirm the presence
-> > of these two amplifiers and if they exist add them manually onto the
-> > SPI bus.
-> 
-> ...
-> 
-> > +static const struct software_node ampl = {
-> > +       .name                   = "cs35l56-left",
-> > +};
-> > +
-> > +static const struct software_node ampr = {
-> > +       .name                   = "cs35l56-right",
-> > +};
-> 
-> Still I fail to see how these are used. They provide just a static
-> swnode with name and no properties. How is that different from the
-> no-fwnode case? Can you test without these being defined?
-> 
+New coming user may need to check for _CRS fallback slightly differently.
+Move the current check out of the helper function to allow that user to
+use it.
 
-The code in the last patch will pick up the name and use it to
-name the amps that are registered. This means when those amps are
-referred to by the audio machine driver code we will know what
-they are called. Admittedly that audio machine driver change
-isn't in this series as it is a bit of a work in progress and not
-technically necessary for just registering the amps as this
-series does.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> ...
-> 
-> > +static const struct software_node cs42l43_gpiochip_swnode = {
-> > +       .name                   = "cs42l43-pinctrl",
-> > +};
-> 
-> On the contrary I understand this one (however, using that generic
-> name prevents more than one or two drivers from being instantiated).
-> 
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index fb2e14670b7a..2b3fd43b13fc 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -947,7 +947,7 @@ static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
+ 
+ static struct gpio_desc *
+ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int idx,
+-		 struct acpi_gpio_info *info)
++		 bool can_fallback, struct acpi_gpio_info *info)
+ {
+ 	struct acpi_device *adev = to_acpi_device_node(fwnode);
+ 	struct gpio_desc *desc;
+@@ -978,7 +978,7 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
+ 	}
+ 
+ 	/* Then from plain _CRS GPIOs */
+-	if (!adev || !acpi_can_fallback_to_crs(adev, con_id))
++	if (!adev || !can_fallback)
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	return acpi_get_gpiod_by_index(adev, NULL, idx, info);
+@@ -991,10 +991,11 @@ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
+ 				 unsigned long *lookupflags)
+ {
+ 	struct acpi_device *adev = to_acpi_device_node(fwnode);
++	bool can_fallback = acpi_can_fallback_to_crs(adev, con_id);
+ 	struct acpi_gpio_info info;
+ 	struct gpio_desc *desc;
+ 
+-	desc = __acpi_find_gpio(fwnode, con_id, idx, &info);
++	desc = __acpi_find_gpio(fwnode, con_id, idx, can_fallback, &info);
+ 	if (IS_ERR(desc))
+ 		return desc;
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Yeah that might need to change in the future, however there is no
-obvious use-cases for using multiple cs42l43's in a single system
-so at the moment we are not doing the work to support that case.
-There are plenty other things that would need fixed to support
-that as well.
-
-> ...
-> 
-> > +       SOFTWARE_NODE_REFERENCE(&swnode_gpio_undefined),
-> 
-> gpio/property.h for this one.
-
-Sorry, still not quite following this one, are you just reminding
-me to include the header when I move the swnode_gpio_undefined
-definition or are you asking for something more?
-
-> > +static bool cs42l43_has_sidecar(struct fwnode_handle *fwnode)
-> > +{
-> > +       static const u32 func_smart_amp = 0x1;
-> > +       struct fwnode_handle *child_fwnode, *ext_fwnode;
-> > +       unsigned int val;
-> > +       u32 function;
-> > +       int ret;
-> > +
-> > +       fwnode_for_each_child_node(fwnode, child_fwnode) {
-> > +               acpi_handle handle = ACPI_HANDLE_FWNODE(child_fwnode);
-> 
-> > +               if (!handle)
-> > +                       continue;
-> 
-> This is _almost_ redundant check. handle == NULL is for the global
-> root object which quite unlikely will have the _ADR method. The
-> specification is clear about this: "The _ADR object is valid only
-> within an Augmented Device Descriptor." That said, the check makes
-> sense against the (very) ill-formed DSDT.
-> 
-
-I am willing to be guided here, but given it would result in a
-null pointer dereference I am inclined to keep the check
-personally.
-
-> > +       if (has_sidecar) {
-> > +               ret = software_node_register(&cs42l43_gpiochip_swnode);
-> > +               if (ret) {
-> > +                       return dev_err_probe(priv->dev, ret,
-> > +                                            "Failed to register gpio swnode\n");
-> > +               }
-> > +
-> > +               ret = device_create_managed_software_node(&priv->ctlr->dev,
-> > +                                                         cs42l43_cs_props, NULL);
-> > +               if (ret) {
-> > +                       dev_err_probe(priv->dev, ret, "Failed to add swnode\n");
-> > +                       goto err;
-> > +               }
-> 
-> Wouldn't it miss the parent fwnode? I mean that you might probably
-> need to call...
-> 
-> > +       } else {
-> > +               device_set_node(&priv->ctlr->dev, fwnode);
-> 
-> ...this one always. Have you checked it? How does sysfs look like
-> before and after this change on the device in question?
-
-I will check this.
-
-Thanks,
-Charles
