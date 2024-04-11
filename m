@@ -1,120 +1,130 @@
-Received: from smtpfb2-g21.free.fr (smtpfb2-g21.free.fr [212.27.42.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29FE1EE291;
-	Thu, 11 Apr 2024 15:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.10
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C01205E26;
+	Thu, 11 Apr 2024 15:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712850116; cv=none; b=el7rT4LJ/udDMUSfVz176+VPijTuUkCHSR0DIKDeFt5YOv3n2b/wwrtnlEIggES6v6Ezzz0Klp290VAsU+jMdxRCeBtG2bqpvPiYRew2hwyUZsrbf/QH2ZbCt1fjErqeViIRgRhEDMyd452QUrvvurupquxEPY7/Mz7wUvh66CY=
+	t=1712850308; cv=none; b=tzkzQDvhtHNLBAEScaV1MQsRmx93BK5EiTU73vy0dlg8l+XSjE0X4Q3DfyNFHQKv3Ol88M8whbLFKg/CvcZXjvhpOM5w7a8aWwHlqk2SChtjfT3UeJJPXAAqqLlnTYJ3vVQIGYF0ti4P0wTRPkfozsxy7nAgwswWcEZ12RtnRUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712850116; c=relaxed/simple;
-	bh=sdve3zvrGeQnGmwpoWkNGk88ZE0iuKbJSVfpS5ImZi0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eG17ohzook5dyw3NTiTpwe/6Hl+SNhNfuATBtHWEt8uvNwTquCl+WWKKCh2+jzcB+NyrmdNka86gBJSQrpZNsNAzvLRVkdCGMgrHeRnT7dNzQcb2k7bolSYWCRwv3bTDLxoHTklkWvfvUpc+79x7cfq5gGux/Ag+d7n8ttO3bug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
-	by smtpfb2-g21.free.fr (Postfix) with ESMTP id 924F94D70E;
-	Thu, 11 Apr 2024 17:35:36 +0200 (CEST)
-Received: from localhost.localdomain (unknown [82.64.135.138])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id D66822003CA;
-	Thu, 11 Apr 2024 17:35:24 +0200 (CEST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-	id 2369040039; Thu, 11 Apr 2024 17:34:32 +0200 (CEST)
-Date: Thu, 11 Apr 2024 17:34:32 +0200
-From: Etienne Buira <etienne.buira@free.fr>
-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][RFC][resend after bogus] gpio-syscon: do not report bogus
- error
-Message-ID: <ZhgDCKhcHdwGoJ4Y@Z926fQmE5jqhFMgp6>
-Mail-Followup-To: linus.walleij@linaro.org, brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1712850308; c=relaxed/simple;
+	bh=/IRr60aMZOeOyFiScIJ7Hqy89Fa77PW2HAAbz3xI4jQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=efAXcmlEhSHdBfi0o1uUgguWkg82vehvhJt/QOQKRdFm2MrQy8Quy+SRmSpg3mIMYLAH2CYYeEvSW3w2H4slf9kCWHgkLtq+6+52R0Ot6ledVM9j/HXVsm/90rrAs5ZHifA5S4bGAbBke5M8h7VjRgawHxjHpDFD4bC0BXypfME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hh1T/l8A; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hh1T/l8A"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43BDG7bV024388;
+	Thu, 11 Apr 2024 15:44:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=haD8srUSA/7piIQcBMU+j
+	z1u8jwrb7rUW232cvqEx3s=; b=Hh1T/l8AZXIPiuPJqEb+2xEhcwSozimpdVr7/
+	ABvip+E1Wk/J/Zj8agqdbWyJOXCUiT7kxIstytMkXA+Kr/EioGE0k1drFabachGG
+	e/twcqTZYzv9/ZuLmnPN3qe1clHinSdawWe/XA3nIErgRDeW4uRtXUcQGNH/g5LB
+	rnwWMlOrXRIsrFHYwNEFgG5AxakO2YYA/gPwVGw0SJvV8jq4U85e4u4sjAhUfnBv
+	psRlDjeOV5LSTGoaaOr+7fn2w0mbIocdr5edRg/SDi57nOvFQPmti6rJF1yvUb50
+	dcbDTpIE+iyP7jKi+xqrz3TUbZFyfzUAR9PjsEMo8l8BCqSDQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xebqx9mg6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Apr 2024 15:44:46 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43BFijB4032349
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Apr 2024 15:44:45 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 11 Apr 2024 08:44:45 -0700
+Date: Thu, 11 Apr 2024 08:44:44 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix
+ Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sean Wang
+	<sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        zhanghongchen <zhanghongchen@loongson.cn>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] pinctrl: qcom: sm7150: fix module autoloading
+Message-ID: <ZhgFbKg8DPBsRrac@hu-bjorande-lv.qualcomm.com>
+References: <20240411064614.7409-1-krzk@kernel.org>
+ <20240411064614.7409-4-krzk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20240411064614.7409-4-krzk@kernel.org>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KU4mU--SOy6t8CFhdoXd3JVsuCKtrbVx
+X-Proofpoint-ORIG-GUID: KU4mU--SOy6t8CFhdoXd3JVsuCKtrbVx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-11_08,2024-04-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 suspectscore=0
+ adultscore=0 spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404110115
 
-Do not call dev_err when gpio,syscon-dev is not set albeit unneeded.
-gpio-syscon is used with rk3328 chip, but this iomem region is
-documented in
-Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml and
-does not look like to require gpio,syscon-dev setting.
+On Thu, Apr 11, 2024 at 08:46:13AM +0200, Krzysztof Kozlowski wrote:
+> Add MODULE_DEVICE_TABLE(), so the module could be properly autoloaded
+> based on the alias from of_device_id table.  Pin controllers are
+> considered core components, so usually they are built-in, however these
+> can be built and used as modules on some generic kernel.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 
-Signed-off-by: Etienne Buira <etienne.buira@free.fr>
-X-Prefers: kind explanations over rotten tomatoes
----
- drivers/gpio/gpio-syscon.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 6e1a2581e6ae..14c4f224eb07 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -16,6 +16,7 @@
- #define GPIO_SYSCON_FEAT_IN	BIT(0)
- #define GPIO_SYSCON_FEAT_OUT	BIT(1)
- #define GPIO_SYSCON_FEAT_DIR	BIT(2)
-+#define GPIO_SYSCON_FEAT_NODEV	BIT(3)
- 
- /* SYSCON driver is designed to use 32-bit wide registers */
- #define SYSCON_REG_SIZE		(4)
-@@ -27,7 +28,8 @@
-  * @flags:		Set of GPIO_SYSCON_FEAT_ flags:
-  *			GPIO_SYSCON_FEAT_IN:	GPIOs supports input,
-  *			GPIO_SYSCON_FEAT_OUT:	GPIOs supports output,
-- *			GPIO_SYSCON_FEAT_DIR:	GPIOs supports switch direction.
-+ *			GPIO_SYSCON_FEAT_DIR:	GPIOs supports switch direction,
-+ *			GPIO_SYSCON_FEAT_NODEV:	gpio,syscon-dev do not have to be set.
-  * @bit_count:		Number of bits used as GPIOs.
-  * @dat_bit_offset:	Offset (in bits) to the first GPIO bit.
-  * @dir_bit_offset:	Optional offset (in bits) to the first bit to switch
-@@ -149,7 +151,7 @@ static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 
- static const struct syscon_gpio_data rockchip_rk3328_gpio_mute = {
- 	/* RK3328 GPIO_MUTE is an output only pin at GRF_SOC_CON10[1] */
--	.flags		= GPIO_SYSCON_FEAT_OUT,
-+	.flags		= GPIO_SYSCON_FEAT_OUT | GPIO_SYSCON_FEAT_NODEV,
- 	.bit_count	= 1,
- 	.dat_bit_offset = 0x0428 * 8 + 1,
- 	.set		= rockchip_gpio_set,
-@@ -221,19 +223,21 @@ static int syscon_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->syscon))
- 		return PTR_ERR(priv->syscon);
- 
--	ret = of_property_read_u32_index(np, "gpio,syscon-dev", 1,
--					 &priv->dreg_offset);
--	if (ret)
--		dev_err(dev, "can't read the data register offset!\n");
-+	if (!(priv->data->flags & GPIO_SYSCON_FEAT_NODEV)) {
-+		ret = of_property_read_u32_index(np, "gpio,syscon-dev", 1,
-+						 &priv->dreg_offset);
-+		if (ret)
-+			dev_err(dev, "can't read the data register offset!\n");
- 
--	priv->dreg_offset <<= 3;
-+		priv->dreg_offset <<= 3;
- 
--	ret = of_property_read_u32_index(np, "gpio,syscon-dev", 2,
--					 &priv->dir_reg_offset);
--	if (ret)
--		dev_dbg(dev, "can't read the dir register offset!\n");
-+		ret = of_property_read_u32_index(np, "gpio,syscon-dev", 2,
-+						 &priv->dir_reg_offset);
-+		if (ret)
-+			dev_dbg(dev, "can't read the dir register offset!\n");
- 
--	priv->dir_reg_offset <<= 3;
-+		priv->dir_reg_offset <<= 3;
-+	}
- 
- 	priv->chip.parent = dev;
- 	priv->chip.owner = THIS_MODULE;
+Regards,
+Bjorn
 
-base-commit: 4cece764965020c22cff7665b18a012006359095
--- 
-2.43.0
-
+> ---
+> 
+> Changes in v2:
+> 1. Add ack
+> ---
+>  drivers/pinctrl/qcom/pinctrl-sm7150.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sm7150.c b/drivers/pinctrl/qcom/pinctrl-sm7150.c
+> index c25357ca1963..c542f9bc6bcd 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-sm7150.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-sm7150.c
+> @@ -1246,6 +1246,7 @@ static const struct of_device_id sm7150_tlmm_of_match[] = {
+>  	{ .compatible = "qcom,sm7150-tlmm", },
+>  	{ },
+>  };
+> +MODULE_DEVICE_TABLE(of, sm7150_tlmm_of_match);
+>  
+>  static struct platform_driver sm7150_tlmm_driver = {
+>  	.driver = {
+> -- 
+> 2.34.1
+> 
