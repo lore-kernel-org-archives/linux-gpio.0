@@ -1,61 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750D634EA;
-	Thu, 11 Apr 2024 13:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A651C14AD22;
+	Thu, 11 Apr 2024 13:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712840613; cv=none; b=tMd3Zr5eh5VdXiNCXvr7ArblJLx50uUnZ1EVE9JaFr5oC0Fvk5FwgurdV6Hi7mWOnxBAqIcqdwX1qpsDPLppzk0Uy+V3GDAqI0r1NYo7eQwIgDdQ7aBCNqIOMGs+A/t72gF9EOs8HcqYtWzOGz9WSqI117PNiH6LFZbdOtH4orI=
+	t=1712842093; cv=none; b=fcbyTLkzoOx/islzs/rjdnu7iycY3RuXom1rrt9zKB06JOROXbfaSsgLhWdps9nw1W+GOQQz2/fQHurV/sWpxIPKZQkg5YnMKNKiflOoRr9pKvs24M2huQ7mDyMP+FFik7n5RMxs2mwDLEw9rVjTFnZ1nMYJACsULVey6Kgfxdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712840613; c=relaxed/simple;
-	bh=zU/kfADijr6TZDGC9HVf3SLG86X1f/kISTrnOErlmYs=;
+	s=arc-20240116; t=1712842093; c=relaxed/simple;
+	bh=rN3vnamxh1y4e19vWKAPhoeeESNA3w+VvGOlWEyFGns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1O3V1blYNf2N9447UAsVwcm96CxEekArIZW4bqVF0/Q8q9RlGHUKDPISOzKeYDMgWJqQ5gdIdIJEE1HKv3maArUkPioGc06KZysDwPqDnUWQlTnXJzd/yN0ElGudSqjOnqj03g9c0z4Iv05x0fsz9RUK9ngwWBu3OeHlYQdi6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s6amwz0n; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNQHsr0QVob70HnY5cNwuMe/4+sw4VqBQcWVXkU0AsfbGBwjLljx6FdUUY3JtRWHqLzw0wGr8k0qJZ0aO78jh0sowe1ZAOouyFMSfZei6jSsVjWCClSHFLervuZlMzBEok1qlwe/oe8/cqg6stlNeVy9nI35/cxyteFvz2zKPSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9Q6Z+W7; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s6amwz0n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CBEC433F1;
-	Thu, 11 Apr 2024 13:03:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1712840613;
-	bh=zU/kfADijr6TZDGC9HVf3SLG86X1f/kISTrnOErlmYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s6amwz0nM4hhjx4LtlRlhXaDxBcgLv3DdkMfZQqzNmLRnjTx/eVnQbjVsKpQv/Fge
-	 Fcg2TTe/uFLZwFWrfJT5lBiWkxKYMPMaG/3YH7R5iXwc10VRaSXCbyynYC1HPq+4i8
-	 9N7QEJ5oOwok7/1JA/T7FWgBDplQqf9l/yhzMVJU=
-Date: Thu, 11 Apr 2024 15:03:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Bhargav Raviprakash <bhargav.r@ltts.com>
-Cc: linux-kernel@vger.kernel.org, m.nirmaladevi@ltts.com, lee@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, jpanis@baylibre.com,
-	devicetree@vger.kernel.org, arnd@arndb.de, lgirdwood@gmail.com,
-	broonie@kernel.org, linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	nm@ti.com, vigneshr@ti.com, kristo@kernel.org, eblanc@baylibre.com
-Subject: Re: [PATCH v6 08/11] misc: tps6594-pfsm: Add TI TPS65224 PMIC PFSM
-Message-ID: <2024041122-fever-record-8cd7@gregkh>
-References: <20240408124047.191895-1-bhargav.r@ltts.com>
- <20240408124047.191895-9-bhargav.r@ltts.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9Q6Z+W7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712842091; x=1744378091;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rN3vnamxh1y4e19vWKAPhoeeESNA3w+VvGOlWEyFGns=;
+  b=S9Q6Z+W7o1vnYlqo9nMo3eIuBz0Z7vrbM63vn+qexxoeGePkjGXCq5GX
+   UOM3dXq+SsyyhByR5FsVQwOZyyv8MDrfdvM5rRw5io+SVn9sMpjIs2I8N
+   /hsOwMykQ2O5awLRk7NgjXhxg+6koue/ISevnOgryvT8mxq8au0XiLkUJ
+   FqdWpXjZcEOkvZaDxVO5Pstg1z1PHiBg2CYFO+dW0k+QjN34Nv8ZDsDxQ
+   Rku3hXL9rdKFf3IBKyfVfvLlC50K8FPhlw+3Zta1PUuPr6ySuGVrYZAYK
+   6qcm7WZ6c4EcOG6oPOLkIpBjr+obmojlq4wdeikFsgTWWDrVeolDMGtmE
+   g==;
+X-CSE-ConnectionGUID: W3wfzMj5SPOnTsD0KihHqg==
+X-CSE-MsgGUID: bcY6aqeDTJaRmcCl1vat/w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="8102458"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="8102458"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 06:28:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="937096973"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="937096973"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Apr 2024 06:28:08 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id EB28532A; Thu, 11 Apr 2024 16:28:06 +0300 (EEST)
+Date: Thu, 11 Apr 2024 16:28:06 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v1 0/2] gpiolib: acpi: A couple of error checks amendmends
+Message-ID: <20240411132806.GB112498@black.fi.intel.com>
+References: <20240410202243.1658129-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240408124047.191895-9-bhargav.r@ltts.com>
+In-Reply-To: <20240410202243.1658129-1-andriy.shevchenko@linux.intel.com>
 
-On Mon, Apr 08, 2024 at 06:10:44PM +0530, Bhargav Raviprakash wrote:
-> Add support for TPS65224 PFSM in the TPS6594 PFSM driver as they share
-> significant functionality.
+On Wed, Apr 10, 2024 at 11:21:45PM +0300, Andy Shevchenko wrote:
+> One error check is moved and one is dropped.
+> No functional changes intended.
 > 
-> Signed-off-by: Bhargav Raviprakash <bhargav.r@ltts.com>
-> Acked-by: Julien Panis <jpanis@baylibre.com>
-> ---
->  drivers/misc/tps6594-pfsm.c | 48 +++++++++++++++++++++++++++----------
->  1 file changed, 35 insertions(+), 13 deletions(-)
-> 
+> Andy Shevchenko (2):
+>   gpiolib: acpi: Remove never true check in acpi_get_gpiod_by_index()
+>   gpiolib: acpi: Check for errors first in acpi_find_gpio()
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Both,
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
