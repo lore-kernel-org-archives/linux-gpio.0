@@ -1,99 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C430D535D9;
-	Thu, 11 Apr 2024 17:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BDE4F207;
+	Thu, 11 Apr 2024 18:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712856405; cv=none; b=AQRza/lm69jZWxgKExSoo6iuqAPv7rffxRomty9ZDNjzybj+n+/jM9FM1v5Hytdgj1nhlxovfHSGCjNoLEqLxUgUgX5SLKPQ89PlOaKsRnKMyxaUzwGRYLAVknlWKMhEVW/fuIcB1Umx2g7jdg7EVSiyHFrnmI78aNL5TEIGdeo=
+	t=1712858917; cv=none; b=nmm50Tl2JWD/3SK8wVcIfFwziomFb1mfhlLSXCL6aHJekbFLCSI+V6/k24U9TFx5ZvnvRdfjxwEvFYOxxDN8Unpr24qqVIHMqt8OB2cQ1moFwVIevsCClcTiTFPtOzPB019RK/wNKNc+4DhRIAbL2jY5lZYeiMNSYO0D+bq3l1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712856405; c=relaxed/simple;
-	bh=rb4Rwfv5xHnQdtI+SSu0ajaicwDU38E72wab/KYC78w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KR2qB5EJF5GQZ+PFzKn+U8I6yLQAbgIWyGCTAMVQA/Q7YUqqz8dIf8po0EFUhhGe+/Y7gHBGvGlu89JwJqgRTuwZs2ZxPnJGzqjbd6k1s3GsdS65pTGmz1LoGJIcy2q34jYxsIZF7/AtNb8GrrE2dBOMkvpYYLJhU8tjXJPL3Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CDyejZbC; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1712858917; c=relaxed/simple;
+	bh=9KoLhmJ62HZS/u1+U2FiEcVIp81BpXJI6juZOrEXQ4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C7kqtEE3ho7Aw4s2IRzGdGaNcSZ29u954cZHxgJpbm7sOGtmjqhOg5KfMfklY3UZh1x6HtrtmQs+wNH9KuP526yTCu/hr+tUcGHBiM8M0167YeMDt8jZmNOKIoS+WyPjEaU9PugXL1Y395285T+H8NU6pxwA4B4g5Vok8kqyeGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlueOTAv; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CDyejZbC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712856404; x=1744392404;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rb4Rwfv5xHnQdtI+SSu0ajaicwDU38E72wab/KYC78w=;
-  b=CDyejZbCvLFiFmOLVt9/RkTrbxuYqiJP72FFAZ2zOGCogQv076JnnPNg
-   1L9Z7KrjtLv5i1zGmm1EsRLwOzE3lZ29yPClI1qMqzRMSH7YhO4TPeIDh
-   I3SKhTQuk2J6lRg48rOmUyH7GN+MMOLxDV1ZIKgTeAVzB1waXqvo31Hgi
-   Sqy5zuwXsH+7jxNK0mIN0ODQu9eqX9ZLOFu1MzDqSRKv7vryuLxJNdU3P
-   5/8++PXiXtkWWKrMCG3RSs3/FCPA3Tuxh14G3pxBuo27sgZQDGDNH9FiG
-   /z/peF8fiVH904gBUXKS2cx7qyFfUQBilHKdA9Te6prFbNncHAWPqNuge
-   A==;
-X-CSE-ConnectionGUID: mQTJ7LqGRnCJl1C1YPR7xg==
-X-CSE-MsgGUID: 3AhjIcm2SzKPeD+XY0VtGA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="18845025"
-X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
-   d="scan'208";a="18845025"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 10:26:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="937097278"
-X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
-   d="scan'208";a="937097278"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Apr 2024 10:26:35 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E99FC194; Thu, 11 Apr 2024 20:26:33 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	David Thompson <davthompson@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Subject: [PATCH v1 0/4] gpiolib: acpi: Use con_id in acpi_dev_gpio_irq_get_by()
-Date: Thu, 11 Apr 2024 20:22:28 +0300
-Message-ID: <20240411172540.4122581-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlueOTAv"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a51d3193e54so9354766b.2;
+        Thu, 11 Apr 2024 11:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712858914; x=1713463714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9KoLhmJ62HZS/u1+U2FiEcVIp81BpXJI6juZOrEXQ4Q=;
+        b=AlueOTAvfb4o1JW0A+vLXodE6Niqn8RjktU1N1qcMzVn/hTi/rIq0nHBh2egibYvNh
+         fMAIvU0BRr0Tqm1jd0LFNW4ryj5ufaYCTyqbRrPOnsGiCl4rnXZhjFVIyNs/51WasA/I
+         3NDlJTsanpliwjzOng/YKa4210+qI/eqVyO5DTtyY0wcbFX8U4Me8xYA+qeIEsozg2U6
+         hxQihLpmN9pTxjVsCnwocJtBSaB1m22widVDa+kIhVINuX2BQvux1yul/v4XESBnsK6g
+         4GG08uJkDPY+38HkxSdzoRWYnBvESDWDFHEUkTttIDBIjRWajwFZyAeEk01Xo0aViwNA
+         wfRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712858914; x=1713463714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9KoLhmJ62HZS/u1+U2FiEcVIp81BpXJI6juZOrEXQ4Q=;
+        b=dS3EOeU+9koR7s7DCof1ApPSA4HyiYMv08Ixd2BCr9J/21bQ4WKKnCRlj8AVE2S9uP
+         tpBHhg3Dwm7lXac2Pe87ZTJOEPULFd83lbVtChgNs8u8JzwORkAoI/WamMGiz/WO44D2
+         hTI8vuJQGbTuWQw4YNH4oO20aFIgbR+I/fD+BAMMUx5pfP6v7Uf7WuNLwjnQ+xz2cFpQ
+         fYYYTqcQPbwwvB3gyoZZ7x4Hi9U1Z9y+HIR+lvvF4QXmkS1pgAW6owbixHUcGVHAMK3G
+         ZUirx/aiA7DlmoZVIJnv6WmM6OaNLkNrmtNe7LkyEeB8KwvudaTPATyp4Yd33aDxMDZq
+         Gx+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+iS6O71PaikBLI/8cisQGC1BMnxADJfxOWTAA5K74ivjG/JXo3wuOUpMidPT560Db8m+O5BFbifQ2YWte1tOqXIMuxQP/0JOIhQe5dAQTFv/j0y+z3Nm9x5aZt6T9fc9iTi7PUA==
+X-Gm-Message-State: AOJu0YwVtH5d1BZk+Jf+5CVU48V5TMwi/O4iSwJtKFji/FDbqpaEkgpj
+	DDr0BUSR9TdUt/POuiJWe2p+hEX9oDy3Nh+XA9p52kiGTFg4gcP+f+nPbmf8CNZjCZaAEtYq5ps
+	Xj1bNCBvbJM9u1fnCOpZQPl+g4H7lP+n1
+X-Google-Smtp-Source: AGHT+IGOi7sU6kub3c5gEseOSUqSZwpxQDU6SH5YGpxSgthio8s/COAH4tc4JSyx380Y36ZS7zgXBahadb/B3hRv0+Q=
+X-Received: by 2002:a17:907:1b1d:b0:a52:2b39:879b with SMTP id
+ mp29-20020a1709071b1d00b00a522b39879bmr283598ejc.46.1712858914283; Thu, 11
+ Apr 2024 11:08:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240411090628.2436389-1-ckeepax@opensource.cirrus.com>
+ <20240411090628.2436389-4-ckeepax@opensource.cirrus.com> <CAHp75VefB7fN8Bf3ZJ6sYnqdiHxoJ87zjDWERoEXNfY+NzosPA@mail.gmail.com>
+ <ZhgYNfSXjqNksKmY@ediswmail9.ad.cirrus.com>
+In-Reply-To: <ZhgYNfSXjqNksKmY@ediswmail9.ad.cirrus.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 11 Apr 2024 21:07:57 +0300
+Message-ID: <CAHp75VedO9pqUEU0+c-c47HLLymiKbQzbx3u_FTqtp1FF+L67A@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] spi: Update swnode based SPI devices to use the
+ fwnode name
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: broonie@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	bard.liao@intel.com, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
+	patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use con_id instead of property in the acpi_dev_gpio_irq_get_by().
-It will be aligned with other GPIO library functions.
+On Thu, Apr 11, 2024 at 8:04=E2=80=AFPM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Thu, Apr 11, 2024 at 04:33:05PM +0300, Andy Shevchenko wrote:
+> > On Thu, Apr 11, 2024 at 12:06=E2=80=AFPM Charles Keepax
+> > <ckeepax@opensource.cirrus.com> wrote:
 
-Assumed to go via my GPIO ACPI library tree follwoed by GPIO subsystem.
+...
 
-Andy Shevchenko (4):
-  gpiolib: acpi: Extract __acpi_find_gpio() helper
-  gpiolib: acpi: Simplify error handling in __acpi_find_gpio()
-  gpiolib: acpi: Move acpi_can_fallback_to_crs() out of
-    __acpi_find_gpio()
-  gpiolib: acpi: Pass con_id instead of property into
-    acpi_dev_gpio_irq_get_by()
+> > Thinking more about this, maybe even the ACPI case also can be combined=
+?
+> > See for the details
+> >
+> > 87526603c892 ("irqdomain: Get rid of special treatment for ACPI in
+> > __irq_domain_add()")
+> > 9ed78b05f998 ("irqdomain: Allow software nodes for IRQ domain creation"=
+)
+>
+> Maybe, I am not super confident that acpi_dev_name will always
+> return the same thing as fwnode_get_name and I don't really want
+> to risk renaming everything on the ACPI side.
 
- drivers/gpio/gpio-pca953x.c                   |  2 +-
- drivers/gpio/gpiolib-acpi.c                   | 52 +++++++++++--------
- .../mellanox/mlxbf_gige/mlxbf_gige_main.c     |  2 +-
- drivers/pinctrl/pinctrl-cy8c95x0.c            |  2 +-
- include/linux/acpi.h                          |  8 +--
- 5 files changed, 37 insertions(+), 29 deletions(-)
+Scratch this. They are completely different.
 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+--=20
+With Best Regards,
+Andy Shevchenko
