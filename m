@@ -1,56 +1,56 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF39556472
-	for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 12:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6645645D
+	for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 12:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712924906; cv=none; b=Z44bZ32GpSSzLLZGginTl7dDozFhTV4l4otSobbqouxB0S3CLBukOfaskpJPG4lEQC8Bud0UYM1WINt8EiMy9IhVbpZeITtT+WQB+JNdSLvpyBOFpGn5LxTswLmvUCQ4RuiGXUNfuMPQ/VZEFl617VyMdXP5H7LV+QjhQw1j978=
+	t=1712924907; cv=none; b=tIO+oaJXom9Neot67kWxLLx1MnP/0qTpK3t2F+VvbUrDV4U01vdgm2X1ty6Svw6BPGuFXac3cKaS04vR/YZF/G4b3NHzS6UBQPA/DOWh4ra92Lreom+v8ThhHyBOemWfOexzglAcgAsD6yO0lTbQBjUo10ljIIG/qvojS+iSNAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712924906; c=relaxed/simple;
-	bh=TdqRZmpauaPEvYUd2oGe+zwA3Qu11UKZsB9EC2caMl0=;
+	s=arc-20240116; t=1712924907; c=relaxed/simple;
+	bh=pYfXuXNihnf55LTn9z9dDMqn9K4ahtUeLF0TuUvNQio=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A8/y+eqLqhS+8/+2tUxv/7MSg6+Xtdg3ZmeF+ofDb4zIqG8HoNyOo0bpVKxgLP2/WQSN+WRxlOLIOMGYs8lefx9Ecv3XGwHhST+0oYC9jo0r4bW4v1q7Q4D0NxlPZdVwR3mjN65lSiZ61NxPsFikB4HLGErtaaief+JgbyD4b/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3eCdE1l2; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=XXzw/OsP2LjuW7a4GbReOI9TvmGw6I0Cnj4iflLyGxrW4QArLvwsizExzRBL40vVnX6z2T6j7bmQGZyApNaqWbc95WP/WPGjrmtU0oRw+1wQ4bR+AJB817rim6byCicXR2SMrO1yHupNTFN7Mb4dGg/J+3HIhgOuH1IRscq25iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1K+knGAL; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3eCdE1l2"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41802e8daafso2625505e9.2
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 05:28:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1K+knGAL"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-417d14c3411so9005835e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 05:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1712924900; x=1713529700; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1712924902; x=1713529702; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NE9Jsph+vuhKJudFuzZEzR/bv3+gjjqQt1jqUROohGk=;
-        b=3eCdE1l268HI/JBHs6h1Mmg5bbtNuP1ipNp51Oaj8hsuUMt91NILqExsdCVgqNb3qY
-         ahxUWdjUnt19PVY+L6esdcBTWpDydU+Wob1XXYn16d+MwpcoSHS3px3LiPWplPgt186Q
-         e+5vlZfzLDCWKgd8JOT3q8hW+XO7zr6ZzD0yKee7eRiBeQcP0SLyV8NzjCJgwu0OGMxe
-         RFbVUyAUpBCxhBHmjH3oGOpHFszjEsFE4FwbZes/CHDoyyG09CR402O7K27Yra9e1RwU
-         NNL0GT2MU8+T/HoQ+36wHDxLCW94rPkJt/fX1/HwuiubB51Aq4bV3BM8OTAOkQsUPlXU
-         3/FA==
+        bh=COG66uPJlNJGiIRO4JINODBZW/7LkG5WAdj0/4PvTMg=;
+        b=1K+knGALLJdt71mW/x8cTAB4bwyFD88fWH6R+KXncDGK4BlxSvezyhIBI3V0zhF6W4
+         Bu9N2LZOJI8zSjQjnEcu/ZrFpIl52Xffvrg9ahXHnCJOrWF+11yrqTlDstDvGeKTnydX
+         usr1W1DkEwGXeCk1MYuZmAkOhuILxHOTKCNpPxLvf4CPc98F/aB8CDXfZsuD5xRvuJdJ
+         yTcgEaqHtoU5Obm/mPcfT2MaZ4wZnAL1jjIz6A522152daK+yOWBd76xGw1r1TOJlddV
+         aUhXIRoByCalvo9IG8rnAjYTfywd4SE9gSJyjc2W3DI8Vn76D2GRkX+xzb1A/HVCHHT7
+         XNZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712924900; x=1713529700;
+        d=1e100.net; s=20230601; t=1712924902; x=1713529702;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NE9Jsph+vuhKJudFuzZEzR/bv3+gjjqQt1jqUROohGk=;
-        b=kM1OZym7gRDRldBRqBBE+WkGWiguqYs2YD0RtkTiEZrxCnGCdK6oL8fpeYPqcRXPlE
-         1D3vj4RZMHsARgQXQbVpBMfWWT/3r6urTEO1mhzisBP+dqgG3S/IRVQAS7xWj7HF9+BM
-         8Ku2ADhs+IBkO8DLPhYQ2zHRc6HraMuZEaY3CLOr0MF5Xh2GB8yULmyhLBRzRV2vCruv
-         ze8vPZBkoJ4i7cI2gM2UiwxNSK7JxBbZqbTO7Dgffj0vvc40xxf/VUTBOBhVuSfDhUB0
-         Ha33XOiMBrVOjzgwariPgmENVoNnEvF2Vt974OasSYgcJbVa9sf+gH+uwO0IyuPJHc5+
-         JUqg==
-X-Gm-Message-State: AOJu0Yx47GLd+4kE88zFL1Gf/qqp0e6KB8P1wQK6KKlsEN3ngmuDP9JS
-	3L1zi8ca9LbDvk4Se7HRVgJXPNGSDhMdk+a0LYHx8Z7PnQCBmS+ZK/WNaIIuNQg=
-X-Google-Smtp-Source: AGHT+IEBjL0BOCq4ELP6MJsHAFlMvYuAd6ANUmVFe5pM8sVtIYVEfUgj2Q55PYkbAuOTwXROD524gg==
-X-Received: by 2002:a05:600c:474a:b0:416:a51e:23bf with SMTP id w10-20020a05600c474a00b00416a51e23bfmr2181265wmo.3.1712924899901;
-        Fri, 12 Apr 2024 05:28:19 -0700 (PDT)
+        bh=COG66uPJlNJGiIRO4JINODBZW/7LkG5WAdj0/4PvTMg=;
+        b=CVZkMcGW8kFLz/k0uaaNkMP83xYQpdTikNj+UmhIqHHzTFP8hDBfVExmWrci5XFUO+
+         XWHQSBqIgN5QUNMFs90DBuTR3i1QSQwpCXJmHYYfXFFcqgpGO7BnB2/ejuLyxvRzR5eq
+         DRr+kp0n7XrMBjOIpfAYFxZYRyz0KC4NDXC5eq7Ex71jfZYT7riHUa5EwcWiD3holnvo
+         wSNILw+mScs9MT0tg4Fjk0G6Mnx4KcEaiD2cuyG9AxClXQ0+j/CwHb1lM2hKXicipPdJ
+         ezqbsbFxAB5/fllV06M2J5I892xnZHqURXhgXV4xD+x9D7NRvfzBkskKe5DQFADl/51f
+         9T2g==
+X-Gm-Message-State: AOJu0Yw/uuLgDeynbgUi0aLBupMZ4C8EDunrT+i8zbz7ojKn7SNaabMP
+	40csE37VvWayyRsZ+qpFGywUxjXyOH7W6+wHqQw6Xz9VUHTn8mFweQCbnN1o+xw=
+X-Google-Smtp-Source: AGHT+IG/h+m/f657ZlJ+v+YCVfvQWP4d7v+foquJmyWFJAFpchPHFazR025/iCVPiHIODIhoU1+Cdg==
+X-Received: by 2002:a05:600c:4711:b0:416:4641:5947 with SMTP id v17-20020a05600c471100b0041646415947mr2391966wmo.34.1712924901531;
+        Fri, 12 Apr 2024 05:28:21 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:3e87:b228:de9:1398])
-        by smtp.gmail.com with ESMTPSA id m18-20020a05600c3b1200b0041668162b45sm8752211wms.26.2024.04.12.05.28.19
+        by smtp.gmail.com with ESMTPSA id m18-20020a05600c3b1200b0041668162b45sm8752211wms.26.2024.04.12.05.28.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Apr 2024 05:28:19 -0700 (PDT)
+        Fri, 12 Apr 2024 05:28:21 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Kent Gibson <warthog618@gmail.com>,
@@ -60,9 +60,9 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 	Viresh Kumar <viresh.kumar@linaro.org>
 Cc: linux-gpio@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][RFC/RFT 05/18] bindings: glib: add core code
-Date: Fri, 12 Apr 2024 14:27:51 +0200
-Message-Id: <20240412122804.109323-6-brgl@bgdev.pl>
+Subject: [libgpiod][RFC/RFT 07/18] bindings: glib: add tests
+Date: Fri, 12 Apr 2024 14:27:53 +0200
+Message-Id: <20240412122804.109323-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240412122804.109323-1-brgl@bgdev.pl>
 References: <20240412122804.109323-1-brgl@bgdev.pl>
@@ -76,2869 +76,2430 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the files implementing the public API of the GLib bindings to
-libgpiod.
+Add a comprehensive set of test-cases for GLib bindings to libgpiod
+reusing the core test framework based around the gpio-sim module.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/glib/chip-info.c                | 118 ++++++
- bindings/glib/chip.c                     | 396 +++++++++++++++++++++
- bindings/glib/edge-event.c               | 158 +++++++++
- bindings/glib/error.c                    |  67 ++++
- bindings/glib/generated-enums.c.template |  43 +++
- bindings/glib/info-event.c               | 150 ++++++++
- bindings/glib/internal.c                 | 334 +++++++++++++++++
- bindings/glib/internal.h                 |  54 +++
- bindings/glib/line-config.c              | 186 ++++++++++
- bindings/glib/line-info.c                | 274 ++++++++++++++
- bindings/glib/line-request.c             | 434 +++++++++++++++++++++++
- bindings/glib/line-settings.c            | 359 +++++++++++++++++++
- bindings/glib/misc.c                     |  17 +
- bindings/glib/request-config.c           | 155 ++++++++
- 14 files changed, 2745 insertions(+)
- create mode 100644 bindings/glib/chip-info.c
- create mode 100644 bindings/glib/chip.c
- create mode 100644 bindings/glib/edge-event.c
- create mode 100644 bindings/glib/error.c
- create mode 100644 bindings/glib/generated-enums.c.template
- create mode 100644 bindings/glib/info-event.c
- create mode 100644 bindings/glib/internal.c
- create mode 100644 bindings/glib/internal.h
- create mode 100644 bindings/glib/line-config.c
- create mode 100644 bindings/glib/line-info.c
- create mode 100644 bindings/glib/line-request.c
- create mode 100644 bindings/glib/line-settings.c
- create mode 100644 bindings/glib/misc.c
- create mode 100644 bindings/glib/request-config.c
+ bindings/glib/tests/helpers.c              |  12 +
+ bindings/glib/tests/helpers.h              | 139 ++++
+ bindings/glib/tests/tests-chip-info.c      |  55 ++
+ bindings/glib/tests/tests-chip.c           | 183 ++++++
+ bindings/glib/tests/tests-edge-event.c     | 226 +++++++
+ bindings/glib/tests/tests-info-event.c     | 321 ++++++++++
+ bindings/glib/tests/tests-line-config.c    | 186 ++++++
+ bindings/glib/tests/tests-line-info.c      |  98 +++
+ bindings/glib/tests/tests-line-request.c   | 704 +++++++++++++++++++++
+ bindings/glib/tests/tests-line-settings.c  | 252 ++++++++
+ bindings/glib/tests/tests-misc.c           |  88 +++
+ bindings/glib/tests/tests-request-config.c |  58 ++
+ 12 files changed, 2322 insertions(+)
+ create mode 100644 bindings/glib/tests/helpers.c
+ create mode 100644 bindings/glib/tests/helpers.h
+ create mode 100644 bindings/glib/tests/tests-chip-info.c
+ create mode 100644 bindings/glib/tests/tests-chip.c
+ create mode 100644 bindings/glib/tests/tests-edge-event.c
+ create mode 100644 bindings/glib/tests/tests-info-event.c
+ create mode 100644 bindings/glib/tests/tests-line-config.c
+ create mode 100644 bindings/glib/tests/tests-line-info.c
+ create mode 100644 bindings/glib/tests/tests-line-request.c
+ create mode 100644 bindings/glib/tests/tests-line-settings.c
+ create mode 100644 bindings/glib/tests/tests-misc.c
+ create mode 100644 bindings/glib/tests/tests-request-config.c
 
-diff --git a/bindings/glib/chip-info.c b/bindings/glib/chip-info.c
+diff --git a/bindings/glib/tests/helpers.c b/bindings/glib/tests/helpers.c
 new file mode 100644
-index 0000000..a2038c6
+index 0000000..d77f2b8
 --- /dev/null
-+++ b/bindings/glib/chip-info.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODChipInfo {
-+	GObject parent_instance;
-+	struct gpiod_chip_info *handle;
-+};
-+
-+enum {
-+	G_GPIOD_CHIP_INFO_PROP_HANDLE = 1,
-+	G_GPIOD_CHIP_INFO_PROP_NAME,
-+	G_GPIOD_CHIP_INFO_PROP_LABEL,
-+	G_GPIOD_CHIP_INFO_PROP_NUM_LINES,
-+};
-+
-+G_DEFINE_TYPE(GPIODChipInfo, g_gpiod_chip_info, G_TYPE_OBJECT);
-+
-+static void g_gpiod_chip_info_get_property(GObject *obj, guint prop_id,
-+					   GValue *val, GParamSpec *pspec)
-+{
-+	GPIODChipInfo *self = G_GPIOD_CHIP_INFO_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_CHIP_INFO_PROP_NAME:
-+		g_value_set_static_string(val,
-+			gpiod_chip_info_get_name(self->handle));
-+		break;
-+	case G_GPIOD_CHIP_INFO_PROP_LABEL:
-+		g_value_set_static_string(val,
-+			gpiod_chip_info_get_label(self->handle));
-+		break;
-+	case G_GPIOD_CHIP_INFO_PROP_NUM_LINES:
-+		g_value_set_uint(val,
-+			gpiod_chip_info_get_num_lines(self->handle));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_chip_info_set_property(GObject *obj, guint prop_id,
-+					   const GValue *val, GParamSpec *pspec)
-+{
-+	GPIODChipInfo *self = G_GPIOD_CHIP_INFO_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_CHIP_INFO_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_chip_info_finalize(GObject *obj)
-+{
-+	GPIODChipInfo *self = G_GPIOD_CHIP_INFO_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_chip_info_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_chip_info_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_chip_info_class_init(GPIODChipInfoClass *chip_info_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(chip_info_class);
-+
-+	class->set_property = g_gpiod_chip_info_set_property;
-+	class->get_property = g_gpiod_chip_info_get_property;
-+	class->finalize = g_gpiod_chip_info_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_INFO_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO Chip information object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_INFO_PROP_NAME,
-+		g_param_spec_string("name", "Name",
-+			"Name of this GPIO chip device.", NULL,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_INFO_PROP_LABEL,
-+		g_param_spec_string("label", "Label",
-+			"Label of this GPIO chip device.", NULL,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_INFO_PROP_NUM_LINES,
-+		g_param_spec_uint("num-lines", "NumLines",
-+			"Number of GPIO lines exposed by this chip.",
-+			1, G_MAXUINT, 1,
-+			G_PARAM_READABLE));
-+}
-+
-+static void g_gpiod_chip_info_init(GPIODChipInfo *self)
-+{
-+	self->handle = NULL;
-+}
-+
-+const gchar *g_gpiod_chip_info_get_name(GPIODChipInfo *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "name");
-+}
-+
-+const gchar *g_gpiod_chip_info_get_label(GPIODChipInfo *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "label");
-+}
-+
-+guint g_gpiod_chip_info_get_num_lines(GPIODChipInfo *self)
-+{
-+	return g_gpiod_get_prop_uint(G_OBJECT(self), "num-lines");
-+}
-diff --git a/bindings/glib/chip.c b/bindings/glib/chip.c
-new file mode 100644
-index 0000000..bd8495b
---- /dev/null
-+++ b/bindings/glib/chip.c
-@@ -0,0 +1,396 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODChip {
-+	GObject parent_instance;
-+	GString *path;
-+	GError *construct_err;
-+	struct gpiod_chip *handle;
-+	GSource *info_event_src;
-+	guint info_event_src_id;
-+};
-+
-+enum {
-+	G_GPIOD_CHIP_PROP_PATH = 1,
-+	G_GPIOD_CHIP_PROP_HANDLE,
-+};
-+
-+enum {
-+	G_GPIOD_CHIP_SIGNAL_INFO_EVENT,
-+	G_GPIOD_CHIP_SIGNAL_LAST,
-+};
-+
-+static guint signals[G_GPIOD_CHIP_SIGNAL_LAST];
-+
-+static void g_string_free_complete(GString *str)
-+{
-+	g_string_free(str, TRUE);
-+}
-+
-+static gboolean g_gpiod_chip_on_info_event(GIOChannel *source G_GNUC_UNUSED,
-+					   GIOCondition condition G_GNUC_UNUSED,
-+					   gpointer data)
-+{
-+	g_autoptr(GPIODInfoEvent) event = NULL;
-+	struct gpiod_info_event *event_handle;
-+	GPIODChip *self = data;
-+
-+	event_handle = gpiod_chip_read_info_event(self->handle);
-+	if (!event_handle)
-+		return TRUE;
-+
-+	event = G_GPIOD_INFO_EVENT_OBJ(g_object_new(G_GPIOD_INFO_EVENT_TYPE,
-+						    "handle", event_handle,
-+						    NULL));
-+
-+	g_signal_emit(self,
-+		      signals[G_GPIOD_CHIP_SIGNAL_INFO_EVENT],
-+		      0,
-+		      event);
-+
-+	return TRUE;
-+}
-+
-+static gboolean
-+g_gpiod_chip_initable_init(GInitable *initable,
-+			   GCancellable *cancellable G_GNUC_UNUSED,
-+			   GError **err)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(initable);
-+
-+	if (self->construct_err) {
-+		g_propagate_error(err, self->construct_err);
-+		self->construct_err = NULL;
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+static void g_gpiod_chip_initable_iface_init(GInitableIface *iface)
-+{
-+	iface->init = g_gpiod_chip_initable_init;
-+}
-+
-+G_DEFINE_TYPE_WITH_CODE(GPIODChip, g_gpiod_chip, G_TYPE_OBJECT,
-+			G_IMPLEMENT_INTERFACE(
-+				G_TYPE_INITABLE,
-+				g_gpiod_chip_initable_iface_init));
-+
-+static void g_gpiod_chip_constructed(GObject *obj)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(obj);
-+	g_autoptr(GIOChannel) channel = NULL;
-+
-+	g_assert(!self->handle);
-+	g_assert(self->path);
-+
-+	self->handle = gpiod_chip_open(self->path->str);
-+	if (!self->handle) {
-+		g_gpiod_set_error_from_errno(&self->construct_err,
-+					     "unable to open GPIO chip '%s'",
-+					     self->path->str);
-+		return;
-+	}
-+
-+	channel = g_io_channel_unix_new(gpiod_chip_get_fd(self->handle));
-+	self->info_event_src = g_io_create_watch(channel, G_IO_IN);
-+	g_source_set_callback(self->info_event_src,
-+			      G_SOURCE_FUNC(g_gpiod_chip_on_info_event),
-+			      self, NULL);
-+	self->info_event_src_id = g_source_attach(self->info_event_src, NULL);
-+
-+	G_OBJECT_CLASS(g_gpiod_chip_parent_class)->constructed(obj);
-+}
-+
-+static void g_gpiod_chip_get_property(GObject *obj, guint prop_id,
-+				      GValue *val, GParamSpec *pspec)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_CHIP_PROP_PATH:
-+		g_value_set_static_string(val, self->path->str);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_chip_set_property(GObject *obj, guint prop_id,
-+				      const GValue *val, GParamSpec *pspec)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_CHIP_PROP_PATH:
-+		self->path = g_string_new(g_value_get_string(val));
-+		break;
-+	case G_GPIOD_CHIP_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+void g_gpiod_chip_close(GPIODChip *self)
-+{
-+	g_clear_pointer(&self->info_event_src, g_source_unref);
-+	g_clear_pointer(&self->handle, gpiod_chip_close);
-+}
-+
-+static void g_gpiod_chip_dispose(GObject *obj)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(obj);
-+
-+	if (self->info_event_src_id)
-+		g_source_remove(self->info_event_src_id);
-+
-+	g_gpiod_chip_close(self);
-+
-+	G_OBJECT_CLASS(g_gpiod_chip_parent_class)->dispose(obj);
-+}
-+
-+static void g_gpiod_chip_finalize(GObject *obj)
-+{
-+	GPIODChip *self = G_GPIOD_CHIP_OBJ(obj);
-+
-+	g_clear_error(&self->construct_err);
-+	g_clear_pointer(&self->path, g_string_free_complete);
-+
-+	G_OBJECT_CLASS(g_gpiod_chip_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_chip_class_init(GPIODChipClass *chip_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(chip_class);
-+
-+	class->constructed = g_gpiod_chip_constructed;
-+	class->get_property = g_gpiod_chip_get_property;
-+	class->set_property = g_gpiod_chip_set_property;
-+	class->dispose = g_gpiod_chip_dispose;
-+	class->finalize = g_gpiod_chip_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_PROP_PATH,
-+		g_param_spec_string("path", "Path",
-+			"Path to the GPIO chip device used to create this chip.",
-+			NULL, G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class, G_GPIOD_CHIP_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"Open GPIO chip handle as returned by gpiod_chip_open().",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	signals[G_GPIOD_CHIP_SIGNAL_INFO_EVENT] =
-+				g_signal_new("info-event",
-+					     G_TYPE_FROM_CLASS(chip_class),
-+					     G_SIGNAL_RUN_LAST,
-+					     0,
-+					     NULL,
-+					     NULL,
-+					     g_cclosure_marshal_generic,
-+					     G_TYPE_NONE,
-+					     1,
-+					     G_GPIOD_INFO_EVENT_TYPE);
-+}
-+
-+static void g_gpiod_chip_init(GPIODChip *self)
-+{
-+	self->path = NULL;
-+	self->construct_err = NULL;
-+	self->handle = NULL;
-+	self->info_event_src = NULL;
-+	self->info_event_src_id = 0;
-+}
-+
-+GPIODChip *g_gpiod_chip_new(const gchar *path, GError **err)
-+{
-+	return G_GPIOD_CHIP_OBJ(g_initable_new(G_GPIOD_CHIP_TYPE, NULL, err,
-+					       "path", path, NULL));
-+}
-+
-+gboolean g_gpiod_chip_is_closed(GPIODChip *self)
-+{
-+	return !self->handle;
-+}
-+
-+const gchar *g_gpiod_chip_get_path(GPIODChip *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "path");
-+}
-+
-+static void set_err_chip_closed(GError **err)
-+{
-+	g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_CHIP_CLOSED,
-+		    "Chip was closed and cannot be used");
-+}
-+
-+GPIODChipInfo *g_gpiod_chip_get_info(GPIODChip *self, GError **err)
-+{
-+	struct gpiod_chip_info *info;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_chip_is_closed(self)) {
-+		set_err_chip_closed(err);
-+		return NULL;
-+	}
-+
-+	info = gpiod_chip_get_info(self->handle);
-+	if (!info) {
-+		g_gpiod_set_error_from_errno(err,
-+			"unable to retrieve GPIO chip information");
-+		return NULL;
-+	}
-+
-+	return G_GPIOD_CHIP_INFO_OBJ(g_object_new(G_GPIOD_CHIP_INFO_TYPE,
-+						  "handle", info, NULL));
-+}
-+
-+static GPIODLineInfo *
-+g_gpiod_chip_do_get_line_info(GPIODChip *self, guint offset, GError **err,
-+			struct gpiod_line_info *(*func)(struct gpiod_chip *,
-+							unsigned int),
-+			const gchar *err_action)
-+{
-+	struct gpiod_line_info *info;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_chip_is_closed(self)) {
-+		set_err_chip_closed(err);
-+		return NULL;
-+	}
-+
-+	info = func(self->handle, offset);
-+	if (!info) {
-+		g_gpiod_set_error_from_errno(err, "unable to %s for offset %u",
-+					     err_action, offset);
-+		return NULL;
-+	}
-+
-+	return G_GPIOD_LINE_INFO_OBJ(g_object_new(G_GPIOD_LINE_INFO_TYPE,
-+						  "handle", info, NULL));
-+		
-+}
-+
-+GPIODLineInfo *
-+g_gpiod_chip_get_line_info(GPIODChip *self, guint offset, GError **err)
-+{
-+	return g_gpiod_chip_do_get_line_info(self, offset, err,
-+					     gpiod_chip_get_line_info,
-+					     "retrieve GPIO line-info");
-+}
-+
-+GPIODLineInfo *
-+g_gpiod_chip_watch_line_info(GPIODChip *self, guint offset, GError **err)
-+{
-+	return g_gpiod_chip_do_get_line_info(self, offset, err,
-+					     gpiod_chip_watch_line_info,
-+					     "setup a line-info watch");
-+}
-+
-+gboolean
-+g_gpiod_chip_unwatch_line_info(GPIODChip *self, guint offset, GError **err)
-+{
-+	int ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_chip_is_closed(self)) {
-+		set_err_chip_closed(err);
-+		return FALSE;
-+	}
-+
-+	ret = gpiod_chip_unwatch_line_info(self->handle, offset);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err,
-+			    "unable to unwatch line-info events for offset %u",
-+			    offset);
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+gboolean
-+g_gpiod_chip_get_line_offset_from_name(GPIODChip *self, const gchar *name,
-+				       guint *offset, GError **err)
-+{
-+	gint ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_chip_is_closed(self)) {
-+		set_err_chip_closed(err);
-+		return FALSE;
-+	}
-+
-+	if (!name) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "name must not be NULL");
-+		return FALSE;
-+	}
-+
-+	ret = gpiod_chip_get_line_offset_from_name(self->handle, name);
-+	if (ret < 0) {
-+		if (errno != ENOENT)
-+			g_gpiod_set_error_from_errno(err,
-+				    "failed to map line name to offset");
-+		else
-+			errno = 0;
-+
-+		return FALSE;
-+	}
-+
-+	if (offset)
-+		*offset = ret;
-+
-+	return TRUE;
-+}
-+
-+GPIODLineRequest *g_gpiod_chip_request_lines(GPIODChip *self,
-+					     GPIODRequestConfig *req_cfg,
-+					     GPIODLineConfig *line_cfg,
-+					     GError **err)
-+{
-+	struct gpiod_request_config *req_cfg_handle;
-+	struct gpiod_line_config *line_cfg_handle;
-+	struct gpiod_line_request *req;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_chip_is_closed(self)) {
-+		set_err_chip_closed(err);
-+		return NULL;
-+	}
-+
-+	if (!line_cfg) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "line-config is required for request");
-+		return NULL;
-+	}
-+
-+	req_cfg_handle = req_cfg ?
-+		g_gpiod_get_prop_pointer(G_OBJECT(req_cfg), "handle") : NULL;
-+	line_cfg_handle = g_gpiod_get_prop_pointer(G_OBJECT(line_cfg),
-+						   "handle");
-+
-+	req = gpiod_chip_request_lines(self->handle,
-+				       req_cfg_handle, line_cfg_handle);
-+	if (!req) {
-+		g_gpiod_set_error_from_errno(err,
-+				"failed to request GPIO lines");
-+		return NULL;
-+	}
-+
-+	return G_GPIOD_LINE_REQUEST_OBJ(g_object_new(G_GPIOD_LINE_REQUEST_TYPE,
-+						     "handle", req, NULL));
-+}
-diff --git a/bindings/glib/edge-event.c b/bindings/glib/edge-event.c
-new file mode 100644
-index 0000000..c732138
---- /dev/null
-+++ b/bindings/glib/edge-event.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
++++ b/bindings/glib/tests/helpers.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
++#include "helpers.h"
 +
-+#include "internal.h"
-+
-+struct _GPIODEdgeEvent {
-+	GObject parent_instance;
-+	struct gpiod_edge_event *handle;
-+};
-+
-+enum {
-+	G_GPIOD_EDGE_EVENT_PROP_HANDLE = 1,
-+	G_GPIOD_EDGE_EVENT_PROP_EVENT_TYPE,
-+	G_GPIOD_EDGE_EVENT_PROP_TIMESTAMP_NS,
-+	G_GPIOD_EDGE_EVENT_PROP_LINE_OFFSET,
-+	G_GPIOD_EDGE_EVENT_PROP_GLOBAL_SEQNO,
-+	G_GPIOD_EDGE_EVENT_PROP_LINE_SEQNO,
-+};
-+
-+G_DEFINE_TYPE(GPIODEdgeEvent, g_gpiod_edge_event, G_TYPE_OBJECT);
-+
-+static void g_gpiod_edge_event_get_property(GObject *obj, guint prop_id,
-+					    GValue *val, GParamSpec *pspec)
++GArray *gpiod_glib_test_array_from_const(gconstpointer data, gsize len,
++					 gsize elem_size)
 +{
-+	GPIODEdgeEvent *self = G_GPIOD_EDGE_EVENT_OBJ(obj);
-+	GPIODEdgeEventType type;
++	GArray *arr = g_array_new(FALSE, TRUE, elem_size);
 +
-+	switch (prop_id) {
-+	case G_GPIOD_EDGE_EVENT_PROP_EVENT_TYPE:
-+		type = g_gpiod_edge_event_type_from_library(
-+				gpiod_edge_event_get_event_type(self->handle));
-+		g_value_set_enum(val, type);
-+		break;
-+	case G_GPIOD_EDGE_EVENT_PROP_TIMESTAMP_NS:
-+		g_value_set_uint64(val,
-+			gpiod_edge_event_get_timestamp_ns(self->handle));
-+		break;
-+	case G_GPIOD_EDGE_EVENT_PROP_LINE_OFFSET:
-+		g_value_set_uint(val,
-+			gpiod_edge_event_get_line_offset(self->handle));
-+		break;
-+	case G_GPIOD_EDGE_EVENT_PROP_GLOBAL_SEQNO:
-+		g_value_set_ulong(val,
-+			gpiod_edge_event_get_global_seqno(self->handle));
-+		break;
-+	case G_GPIOD_EDGE_EVENT_PROP_LINE_SEQNO:
-+		g_value_set_ulong(val,
-+			gpiod_edge_event_get_line_seqno(self->handle));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
++	return g_array_append_vals(arr, data, len);
 +}
-+
-+static void g_gpiod_edge_event_set_property(GObject *obj, guint prop_id,
-+					    const GValue *val,
-+					    GParamSpec *pspec)
-+{
-+	GPIODEdgeEvent *self = G_GPIOD_EDGE_EVENT_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_EDGE_EVENT_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_edge_event_finalize(GObject *obj)
-+{
-+	GPIODEdgeEvent *self = G_GPIOD_EDGE_EVENT_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_edge_event_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_edge_event_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_edge_event_class_init(GPIODEdgeEventClass *edge_event_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(edge_event_class);
-+
-+	class->set_property = g_gpiod_edge_event_set_property;
-+	class->get_property = g_gpiod_edge_event_get_property;
-+	class->finalize = g_gpiod_edge_event_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_EDGE_EVENT_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO info event object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_EDGE_EVENT_PROP_EVENT_TYPE,
-+		g_param_spec_enum("event-type", "Event Type",
-+			"Type of the edge event.",
-+			G_GPIOD_EDGE_EVENT_TYPE_TYPE,
-+			G_GPIOD_EDGE_EVENT_RISING_EDGE,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_EDGE_EVENT_PROP_TIMESTAMP_NS,
-+		g_param_spec_uint64("timestamp-ns",
-+			"Timestamp (in nanoseconds)",
-+			"Timestamp of the edge event expressed in nanoseconds.",
-+			0, G_MAXUINT64, 0, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_EDGE_EVENT_PROP_LINE_OFFSET,
-+		g_param_spec_uint("line-offset", "Line Offset",
-+			"Offset of the line on which this event was registered.",
-+			0, G_MAXUINT, 0, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_EDGE_EVENT_PROP_GLOBAL_SEQNO,
-+		g_param_spec_ulong("global-seqno", "Global Sequence Number",
-+			"Global sequence number of this event",
-+			0, G_MAXULONG, 0, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_EDGE_EVENT_PROP_LINE_SEQNO,
-+		g_param_spec_ulong("line-seqno", "Line Sequence Number",
-+			"Event sequence number specific to the line.",
-+			0, G_MAXULONG, 0, G_PARAM_READABLE));
-+}
-+
-+static void g_gpiod_edge_event_init(GPIODEdgeEvent *self)
-+{
-+	self->handle = NULL;
-+}
-+
-+GPIODEdgeEventType g_gpiod_edge_event_get_event_type(GPIODEdgeEvent *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "event-type");
-+}
-+
-+guint64 g_gpiod_edge_event_get_timestamp_ns(GPIODEdgeEvent *self)
-+{
-+	return g_gpiod_get_prop_uint64(G_OBJECT(self), "timestamp-ns");
-+}
-+
-+guint g_gpiod_edge_event_get_line_offset(GPIODEdgeEvent *self)
-+{
-+	return g_gpiod_get_prop_uint(G_OBJECT(self), "line-offset");
-+}
-+
-+gulong g_gpiod_edge_event_get_global_seqno(GPIODEdgeEvent *self)
-+{
-+	return g_gpiod_get_prop_ulong(G_OBJECT(self), "global-seqno");
-+}
-+
-+gulong g_gpiod_edge_event_get_line_seqno(GPIODEdgeEvent *self)
-+{
-+	return g_gpiod_get_prop_ulong(G_OBJECT(self), "line-seqno");
-+}
-diff --git a/bindings/glib/error.c b/bindings/glib/error.c
+diff --git a/bindings/glib/tests/helpers.h b/bindings/glib/tests/helpers.h
 new file mode 100644
-index 0000000..6a1dc00
+index 0000000..2eda6a7
 --- /dev/null
-+++ b/bindings/glib/error.c
-@@ -0,0 +1,67 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <errno.h>
-+#include <glib.h>
-+#include <gpiod-glib.h>
-+#include <stdarg.h>
-+
-+G_DEFINE_QUARK(g-gpiod-error, g_gpiod_error)
-+
-+static GPIODError error_from_errno(void)
-+{
-+	switch (errno) {
-+	case EPERM:
-+		return G_GPIOD_ERR_PERM;
-+	case ENOENT:
-+		return G_GPIOD_ERR_NOENT;
-+	case EINTR:
-+		return G_GPIOD_ERR_INTR;
-+	case EIO:
-+		return G_GPIOD_ERR_IO;
-+	case ENXIO:
-+		return G_GPIOD_ERR_NXIO;
-+	case E2BIG:
-+		return G_GPIOD_ERR_E2BIG;
-+	case EBADFD:
-+		return G_GPIOD_ERR_BADFD;
-+	case ECHILD:
-+		return G_GPIOD_ERR_CHILD;
-+	case EAGAIN:
-+		return G_GPIOD_ERR_AGAIN;
-+	case ENOMEM:
-+		/* Special case - as a convention GLib just aborts on ENOMEM. */
-+		g_error("out of memory");
-+	case EACCES:
-+		return G_GPIOD_ERR_ACCES;
-+	case EFAULT:
-+		return G_GPIOD_ERR_FAULT;
-+	case EBUSY:
-+		return G_GPIOD_ERR_BUSY;
-+	case EEXIST:
-+		return G_GPIOD_ERR_EXIST;
-+	case ENODEV:
-+		return G_GPIOD_ERR_NODEV;
-+	case EINVAL:
-+		return G_GPIOD_ERR_INVAL;
-+	case ENOTTY:
-+		return G_GPIOD_ERR_NOTTY;
-+	case EPIPE:
-+		return G_GPIOD_ERR_PIPE;
-+	default:
-+		return G_GPIOD_ERR_FAILED;
-+	}
-+}
-+
-+void g_gpiod_set_error_from_errno(GError **err, const gchar *fmt, ...)
-+{
-+	g_autofree gchar *msg = NULL;
-+	va_list va;
-+
-+	va_start(va, fmt);
-+	msg = g_strdup_vprintf(fmt, va);
-+	va_end(va);
-+
-+	g_set_error(err, G_GPIOD_ERROR, error_from_errno(),
-+		    "%s: %s", msg, g_strerror(errno));
-+}
-diff --git a/bindings/glib/generated-enums.c.template b/bindings/glib/generated-enums.c.template
-new file mode 100644
-index 0000000..c124eb7
---- /dev/null
-+++ b/bindings/glib/generated-enums.c.template
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+/*** BEGIN file-header ***/
-+
-+#include <gpiod-glib.h>
-+
-+/*** END file-header ***/
-+
-+/*** BEGIN file-production ***/
-+
-+/* enumerations from "@basename@" */
-+
-+/*** END file-production ***/
-+
-+/*** BEGIN value-header ***/
-+
-+GType @enum_name@_get_type(void)
-+{
-+	static gsize static_g_@type@_type_id;
-+
-+	if (g_once_init_enter(&static_g_@type@_type_id)) {
-+		static const G@Type@Value values[] = {
-+/*** END value-header ***/
-+
-+/*** BEGIN value-production ***/
-+			{@VALUENAME@, "@VALUENAME@", "@valuenick@"},
-+/*** END value-production ***/
-+
-+/*** BEGIN value-tail ***/
-+			{ 0, NULL, NULL }
-+		};
-+
-+		GType g_@type@_type_id = g_@type@_register_static(
-+				g_intern_static_string("@EnumName@"), values);
-+
-+		g_once_init_leave (&static_g_@type@_type_id, g_@type@_type_id);
-+	}
-+
-+	return static_g_@type@_type_id;
-+}
-+
-+/*** END value-tail ***/
-diff --git a/bindings/glib/info-event.c b/bindings/glib/info-event.c
-new file mode 100644
-index 0000000..4abaee3
---- /dev/null
-+++ b/bindings/glib/info-event.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODInfoEvent {
-+	GObject parent_instance;
-+	struct gpiod_info_event *handle;
-+	GPIODLineInfo *info;
-+};
-+
-+enum {
-+	G_GPIOD_INFO_EVENT_PROP_HANDLE = 1,
-+	G_GPIOD_INFO_EVENT_PROP_EVENT_TYPE,
-+	G_GPIOD_INFO_EVENT_PROP_TIMESTAMP,
-+	G_GPIOD_INFO_EVENT_PROP_LINE_INFO,
-+};
-+
-+G_DEFINE_TYPE(GPIODInfoEvent, g_gpiod_info_event, G_TYPE_OBJECT);
-+
-+static void g_gpiod_info_event_get_property(GObject *obj, guint prop_id,
-+					    GValue *val, GParamSpec *pspec)
-+{
-+	GPIODInfoEvent *self = G_GPIOD_INFO_EVENT_OBJ(obj);
-+	struct gpiod_line_info *info, *cpy;
-+	GPIODInfoEventType type;
-+
-+	switch (prop_id) {
-+	case G_GPIOD_INFO_EVENT_PROP_EVENT_TYPE:
-+		type = g_gpiod_info_event_type_from_library(
-+				gpiod_info_event_get_event_type(self->handle));
-+		g_value_set_enum(val, type);
-+		break;
-+	case G_GPIOD_INFO_EVENT_PROP_TIMESTAMP:
-+		g_value_set_uint64(val,
-+			gpiod_info_event_get_timestamp_ns(self->handle));
-+		break;
-+	case G_GPIOD_INFO_EVENT_PROP_LINE_INFO:
-+		if (!self->info) {
-+			info = gpiod_info_event_get_line_info(self->handle);
-+			cpy = gpiod_line_info_copy(info);
-+			if (!cpy)
-+				g_error("Failed to allocate memory for line-info object");
-+
-+			self->info = G_GPIOD_LINE_INFO_OBJ(
-+				g_object_new(G_GPIOD_LINE_INFO_TYPE,
-+					"handle", cpy, NULL));
-+		}
-+
-+		g_value_set_object(val, g_object_ref(self->info));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_info_event_set_property(GObject *obj, guint prop_id,
-+					    const GValue *val,
-+					    GParamSpec *pspec)
-+{
-+	GPIODInfoEvent *self = G_GPIOD_INFO_EVENT_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_INFO_EVENT_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_info_event_dispose(GObject *obj)
-+{
-+	GPIODInfoEvent *self = G_GPIOD_INFO_EVENT_OBJ(obj);
-+
-+	g_clear_object(&self->info);
-+
-+	G_OBJECT_CLASS(g_gpiod_info_event_parent_class)->dispose(obj);
-+}
-+
-+static void g_gpiod_info_event_finalize(GObject *obj)
-+{
-+	GPIODInfoEvent *self = G_GPIOD_INFO_EVENT_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_info_event_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_info_event_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_info_event_class_init(GPIODInfoEventClass *info_event_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(info_event_class);
-+
-+	class->set_property = g_gpiod_info_event_set_property;
-+	class->get_property = g_gpiod_info_event_get_property;
-+	class->dispose = g_gpiod_info_event_dispose;
-+	class->finalize = g_gpiod_info_event_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_INFO_EVENT_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO info event object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_INFO_EVENT_PROP_EVENT_TYPE,
-+		g_param_spec_enum("event-type", "Event Type",
-+			"Type of the info event.",
-+			G_GPIOD_INFO_EVENT_TYPE_TYPE,
-+			G_GPIOD_INFO_EVENT_LINE_REQUESTED,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_INFO_EVENT_PROP_TIMESTAMP,
-+		g_param_spec_uint64("timestamp-ns",
-+			"Timestamp (in nanoseconds)",
-+			"Timestamp of the info event expressed in nanoseconds.",
-+			0, G_MAXUINT64, 0, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_INFO_EVENT_PROP_LINE_INFO,
-+		g_param_spec_object("line-info", "Line Info",
-+			"New line-info snapshot associated with this info event.",
-+			G_GPIOD_LINE_INFO_TYPE, G_PARAM_READABLE));
-+}
-+
-+static void g_gpiod_info_event_init(GPIODInfoEvent *self)
-+{
-+	self->handle = NULL;
-+	self->info = NULL;
-+}
-+
-+GPIODInfoEventType g_gpiod_info_event_get_event_type(GPIODInfoEvent *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "event-type");
-+}
-+
-+guint64 g_gpiod_info_event_get_timestamp_ns(GPIODInfoEvent *self)
-+{
-+	return g_gpiod_get_prop_uint64(G_OBJECT(self), "timestamp-ns");
-+}
-+
-+GPIODLineInfo *g_gpiod_info_event_get_line_info(GPIODInfoEvent *self)
-+{
-+	return G_GPIOD_LINE_INFO_OBJ(
-+			g_gpiod_get_prop_object(G_OBJECT(self), "line-info"));
-+}
-diff --git a/bindings/glib/internal.c b/bindings/glib/internal.c
-new file mode 100644
-index 0000000..40192a4
---- /dev/null
-+++ b/bindings/glib/internal.c
-@@ -0,0 +1,334 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include "internal.h"
-+
-+#define get_prop(_obj, _prop, _type, _vtype, _get_func) \
-+	({ \
-+		g_auto(GValue) _val = G_VALUE_INIT; \
-+		_type _ret; \
-+		g_value_init(&_val, _vtype); \
-+		g_object_get_property(_obj, _prop, &_val); \
-+		_ret = _get_func(&_val); \
-+		_ret; \
-+	})
-+
-+G_GNUC_INTERNAL const gchar *
-+g_gpiod_get_prop_string(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, const gchar *, G_TYPE_STRING,
-+			g_value_get_string);
-+}
-+
-+G_GNUC_INTERNAL gboolean g_gpiod_get_prop_bool(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, gboolean, G_TYPE_BOOLEAN,
-+			g_value_get_boolean);
-+}
-+
-+G_GNUC_INTERNAL gint g_gpiod_get_prop_enum(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, gint, G_TYPE_ENUM, g_value_get_enum);
-+}
-+
-+G_GNUC_INTERNAL guint g_gpiod_get_prop_uint(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, guint, G_TYPE_UINT, g_value_get_uint);
-+}
-+
-+G_GNUC_INTERNAL guint64 g_gpiod_get_prop_uint64(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, guint64, G_TYPE_UINT64, g_value_get_uint64);
-+}
-+
-+G_GNUC_INTERNAL gulong g_gpiod_get_prop_ulong(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, gulong, G_TYPE_ULONG, g_value_get_ulong);
-+}
-+
-+G_GNUC_INTERNAL GTimeSpan
-+g_gpiod_get_prop_timespan(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, GTimeSpan, G_TYPE_INT64, g_value_get_int64);
-+}
-+
-+G_GNUC_INTERNAL GObject *
-+g_gpiod_get_prop_object(GObject *obj, const gchar *prop)
-+{
-+	return G_OBJECT(get_prop(obj, prop, gpointer, G_TYPE_OBJECT,
-+			g_value_get_object));
-+}
-+
-+G_GNUC_INTERNAL gpointer
-+g_gpiod_get_prop_pointer(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, gpointer, G_TYPE_POINTER,
-+			g_value_get_pointer);
-+}
-+
-+G_GNUC_INTERNAL gpointer
-+g_gpiod_get_prop_boxed_array(GObject *obj, const gchar *prop)
-+{
-+	return get_prop(obj, prop, gpointer, G_TYPE_ARRAY, g_value_get_boxed);
-+}
-+
-+#define set_prop(_obj, _prop, _set_func, _vtype, _val) \
-+	do { \
-+		g_auto(GValue) _gval = G_VALUE_INIT; \
-+		g_value_init(&_gval, _vtype); \
-+		_set_func(&_gval, _val); \
-+		g_object_set_property(_obj, _prop, &_gval); \
-+	} while (0)
-+
-+G_GNUC_INTERNAL void
-+g_gpiod_set_prop_uint(GObject *obj, const gchar *prop, guint val)
-+{
-+	set_prop(obj, prop, g_value_set_uint, G_TYPE_UINT, val);
-+}
-+
-+G_GNUC_INTERNAL void
-+g_gpiod_set_prop_string(GObject *obj, const gchar *prop, const gchar *val)
-+{
-+	set_prop(obj, prop, g_value_set_string, G_TYPE_STRING, val);
-+}
-+
-+G_GNUC_INTERNAL void
-+g_gpiod_set_prop_enum(GObject *obj, const gchar *prop, gint val)
-+{
-+	set_prop(obj, prop, g_value_set_enum, G_TYPE_ENUM, val);
-+}
-+
-+G_GNUC_INTERNAL void
-+g_gpiod_set_prop_bool(GObject *obj, const gchar *prop, gboolean val)
-+{
-+	set_prop(obj, prop, g_value_set_boolean, G_TYPE_BOOLEAN, val);
-+}
-+
-+G_GNUC_INTERNAL void
-+g_gpiod_set_prop_timespan(GObject *obj, const gchar *prop, GTimeSpan val)
-+{
-+	set_prop(obj, prop, g_value_set_int64, G_TYPE_INT64, val);
-+}
-+
-+G_GNUC_INTERNAL GPIODLineDirection
-+g_gpiod_line_direction_from_library(enum gpiod_line_direction direction,
-+				    gboolean allow_as_is)
-+{
-+	switch (direction) {
-+	case GPIOD_LINE_DIRECTION_AS_IS:
-+		if (allow_as_is)
-+			return G_GPIOD_LINE_DIRECTION_AS_IS;
-+		break;
-+	case GPIOD_LINE_DIRECTION_INPUT:
-+		return G_GPIOD_LINE_DIRECTION_INPUT;
-+	case GPIOD_LINE_DIRECTION_OUTPUT:
-+		return G_GPIOD_LINE_DIRECTION_OUTPUT;
-+	}
-+
-+	g_error("invalid line direction value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODLineEdge
-+g_gpiod_line_edge_from_library(enum gpiod_line_edge edge)
-+{
-+	switch (edge) {
-+	case GPIOD_LINE_EDGE_NONE:
-+		return G_GPIOD_LINE_EDGE_NONE;
-+	case GPIOD_LINE_EDGE_RISING:
-+		return G_GPIOD_LINE_EDGE_RISING;
-+	case GPIOD_LINE_EDGE_FALLING:
-+		return G_GPIOD_LINE_EDGE_FALLING;
-+	case GPIOD_LINE_EDGE_BOTH:
-+		return G_GPIOD_LINE_EDGE_BOTH;
-+	}
-+
-+	g_error("invalid line edge value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODLineBias
-+g_gpiod_line_bias_from_library(enum gpiod_line_bias bias, gboolean allow_as_is)
-+{
-+	switch (bias) {
-+	case GPIOD_LINE_BIAS_AS_IS:
-+		if (allow_as_is)
-+			return G_GPIOD_LINE_BIAS_AS_IS;
-+		break;
-+	case GPIOD_LINE_BIAS_UNKNOWN:
-+		return G_GPIOD_LINE_BIAS_UNKNOWN;
-+	case GPIOD_LINE_BIAS_DISABLED:
-+		return G_GPIOD_LINE_BIAS_DISABLED;
-+	case GPIOD_LINE_BIAS_PULL_UP:
-+		return G_GPIOD_LINE_BIAS_PULL_UP;
-+	case GPIOD_LINE_BIAS_PULL_DOWN:
-+		return G_GPIOD_LINE_BIAS_PULL_DOWN;
-+	}
-+
-+	g_error("invalid line bias value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODLineDrive
-+g_gpiod_line_drive_from_library(enum gpiod_line_drive drive)
-+{
-+	switch (drive) {
-+	case GPIOD_LINE_DRIVE_PUSH_PULL:
-+		return G_GPIOD_LINE_DRIVE_PUSH_PULL;
-+	case GPIOD_LINE_DRIVE_OPEN_DRAIN:
-+		return G_GPIOD_LINE_DRIVE_OPEN_DRAIN;
-+	case GPIOD_LINE_DRIVE_OPEN_SOURCE:
-+		return G_GPIOD_LINE_DRIVE_OPEN_SOURCE;
-+	}
-+
-+	g_error("invalid line drive value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODLineClock
-+g_gpiod_line_clock_from_library(enum gpiod_line_clock event_clock)
-+{
-+	switch (event_clock) {
-+	case GPIOD_LINE_CLOCK_MONOTONIC:
-+		return G_GPIOD_LINE_CLOCK_MONOTONIC;
-+	case GPIOD_LINE_CLOCK_REALTIME:
-+		return G_GPIOD_LINE_CLOCK_REALTIME;
-+	case GPIOD_LINE_CLOCK_HTE:
-+		return G_GPIOD_LINE_CLOCK_HTE;
-+	}
-+
-+	g_error("invalid line event clock value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODLineValue
-+g_gpiod_line_value_from_library(enum gpiod_line_value value)
-+{
-+	switch (value) {
-+	case GPIOD_LINE_VALUE_INACTIVE:
-+		return G_GPIOD_LINE_VALUE_INACTIVE;
-+	case GPIOD_LINE_VALUE_ACTIVE:
-+		return G_GPIOD_LINE_VALUE_ACTIVE;
-+	default:
-+		break;
-+	}
-+
-+	g_error("invalid line value returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODInfoEventType
-+g_gpiod_info_event_type_from_library(enum gpiod_info_event_type type)
-+{
-+	switch (type) {
-+	case GPIOD_INFO_EVENT_LINE_REQUESTED:
-+		return G_GPIOD_INFO_EVENT_LINE_REQUESTED;
-+	case GPIOD_INFO_EVENT_LINE_RELEASED:
-+		return G_GPIOD_INFO_EVENT_LINE_RELEASED;
-+	case GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED:
-+		return G_GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED;
-+	}
-+	
-+	g_error("invalid info-event type returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL GPIODEdgeEventType
-+g_gpiod_edge_event_type_from_library(enum gpiod_edge_event_type type)
-+{
-+	switch (type) {
-+	case GPIOD_EDGE_EVENT_RISING_EDGE:
-+		return G_GPIOD_EDGE_EVENT_RISING_EDGE;
-+	case GPIOD_EDGE_EVENT_FALLING_EDGE:
-+		return G_GPIOD_EDGE_EVENT_FALLING_EDGE;
-+	}
-+
-+	g_error("invalid edge-event type returned by libgpiod");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_direction
-+g_gpiod_line_direction_to_library(GPIODLineDirection direction)
-+{
-+	switch (direction) {
-+	case G_GPIOD_LINE_DIRECTION_AS_IS:
-+		return GPIOD_LINE_DIRECTION_AS_IS;
-+	case G_GPIOD_LINE_DIRECTION_INPUT:
-+		return GPIOD_LINE_DIRECTION_INPUT;
-+	case G_GPIOD_LINE_DIRECTION_OUTPUT:
-+		return GPIOD_LINE_DIRECTION_OUTPUT;
-+	}
-+
-+	g_error("invalid line direction value");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_edge
-+g_gpiod_line_edge_to_library(GPIODLineEdge edge)
-+{
-+	switch (edge) {
-+	case G_GPIOD_LINE_EDGE_NONE:
-+		return GPIOD_LINE_EDGE_NONE;
-+	case G_GPIOD_LINE_EDGE_RISING:
-+		return GPIOD_LINE_EDGE_RISING;
-+	case G_GPIOD_LINE_EDGE_FALLING:
-+		return GPIOD_LINE_EDGE_FALLING;
-+	case G_GPIOD_LINE_EDGE_BOTH:
-+		return GPIOD_LINE_EDGE_BOTH;
-+	}
-+
-+	g_error("invalid line edge value");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_bias
-+g_gpiod_line_bias_to_library(GPIODLineBias bias)
-+{
-+	switch (bias) {
-+	case G_GPIOD_LINE_BIAS_AS_IS:
-+		return GPIOD_LINE_BIAS_AS_IS;
-+	case G_GPIOD_LINE_BIAS_DISABLED:
-+		return GPIOD_LINE_BIAS_DISABLED;
-+	case G_GPIOD_LINE_BIAS_PULL_UP:
-+		return GPIOD_LINE_BIAS_PULL_UP;
-+	case G_GPIOD_LINE_BIAS_PULL_DOWN:
-+		return GPIOD_LINE_BIAS_PULL_DOWN;
-+	default:
-+		break;
-+	}
-+
-+	g_error("invalid line bias value");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_drive
-+g_gpiod_line_drive_to_library(GPIODLineDrive drive)
-+{
-+	switch (drive) {
-+	case G_GPIOD_LINE_DRIVE_PUSH_PULL:
-+		return GPIOD_LINE_DRIVE_PUSH_PULL;
-+	case G_GPIOD_LINE_DRIVE_OPEN_SOURCE:
-+		return GPIOD_LINE_DRIVE_OPEN_SOURCE;
-+	case G_GPIOD_LINE_DRIVE_OPEN_DRAIN:
-+		return GPIOD_LINE_DRIVE_OPEN_DRAIN;
-+	}
-+
-+	g_error("invalid line drive value");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_clock
-+g_gpiod_line_clock_to_library(GPIODLineClock event_clock)
-+{
-+	switch (event_clock) {
-+	case G_GPIOD_LINE_CLOCK_MONOTONIC:
-+		return GPIOD_LINE_CLOCK_MONOTONIC;
-+	case G_GPIOD_LINE_CLOCK_REALTIME:
-+		return GPIOD_LINE_CLOCK_REALTIME;
-+	case G_GPIOD_LINE_CLOCK_HTE:
-+		return GPIOD_LINE_CLOCK_HTE;
-+	}
-+
-+	g_error("invalid line clock value");
-+}
-+
-+G_GNUC_INTERNAL enum gpiod_line_value
-+g_gpiod_line_value_to_library(GPIODLineValue value)
-+{
-+	switch (value) {
-+	case G_GPIOD_LINE_VALUE_INACTIVE:
-+		return GPIOD_LINE_VALUE_INACTIVE;
-+	case G_GPIOD_LINE_VALUE_ACTIVE:
-+		return GPIOD_LINE_VALUE_ACTIVE;
-+	}
-+
-+	g_error("invalid line value");
-+}
-diff --git a/bindings/glib/internal.h b/bindings/glib/internal.h
-new file mode 100644
-index 0000000..a1fa516
---- /dev/null
-+++ b/bindings/glib/internal.h
-@@ -0,0 +1,54 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
++++ b/bindings/glib/tests/helpers.h
+@@ -0,0 +1,139 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
 +/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+#ifndef __GPIOD_GLIB_INTERNAL_H__
-+#define __GPIOD_GLIB_INTERNAL_H__
++#ifndef __GPIOD_GLIB_TEST_HELPERS_H__
++#define __GPIOD_GLIB_TEST_HELPERS_H__
 +
 +#include <glib.h>
-+#include <glib-object.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
++#include <gpiod-test-common.h>
 +
-+void g_gpiod_set_error_from_errno(GError **err, const gchar *fmt, ...);
++#define gpiod_glib_test_new_chip_or_fail(_path) \
++	({ \
++		g_autoptr(GError) _err = NULL; \
++		GPIODChip *_chip = g_gpiod_chip_new(_path, &_err); \
++		g_assert_nonnull(_chip); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++		_chip; \
++	})
 +
-+const gchar *g_gpiod_get_prop_string(GObject *obj, const gchar *prop);
-+gboolean g_gpiod_get_prop_bool(GObject *obj, const gchar *prop);
-+gint g_gpiod_get_prop_enum(GObject *obj, const gchar *prop);
-+guint g_gpiod_get_prop_uint(GObject *obj, const gchar *prop);
-+guint64 g_gpiod_get_prop_uint64(GObject *obj, const gchar *prop);
-+gulong g_gpiod_get_prop_ulong(GObject *obj, const gchar *prop);
-+GTimeSpan g_gpiod_get_prop_timespan(GObject *obj, const gchar *prop);
-+GObject *g_gpiod_get_prop_object(GObject *obj, const gchar *prop);
-+gpointer g_gpiod_get_prop_pointer(GObject *obj, const gchar *prop);
-+gpointer g_gpiod_get_prop_boxed_array(GObject *obj, const gchar *prop);
++#define gpiod_glib_test_chip_get_info_or_fail(_chip) \
++	({ \
++		g_autoptr(GError) _err = NULL; \
++		GPIODChipInfo *_info = g_gpiod_chip_get_info(_chip, &_err); \
++		g_assert_nonnull(_info); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++		_info; \
++	})
 +
-+void g_gpiod_set_prop_uint(GObject *obj, const gchar *prop, guint val);
-+void g_gpiod_set_prop_string(GObject *obj, const gchar *prop, const gchar *val);
-+void g_gpiod_set_prop_enum(GObject *obj, const gchar *prop, gint val);
-+void g_gpiod_set_prop_bool(GObject *obj, const gchar *prop, gboolean val);
-+void g_gpiod_set_prop_timespan(GObject *obj, const gchar *prop, GTimeSpan val);
++#define gpiod_glib_test_chip_get_line_info_or_fail(_chip, _offset) \
++	({ \
++		g_autoptr(GError) _err = NULL; \
++		GPIODLineInfo *_info = g_gpiod_chip_get_line_info(_chip, \
++								  _offset, \
++								  &_err); \
++		g_assert_nonnull(_info); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++		_info; \
++	})
 +
-+GPIODLineDirection
-+g_gpiod_line_direction_from_library(enum gpiod_line_direction direction,
-+				    gboolean allow_as_is);
-+GPIODLineEdge g_gpiod_line_edge_from_library(enum gpiod_line_edge edge);
-+GPIODLineBias g_gpiod_line_bias_from_library(enum gpiod_line_bias bias,
-+					     gboolean allow_as_is);
-+GPIODLineDrive g_gpiod_line_drive_from_library(enum gpiod_line_drive drive);
-+GPIODLineClock
-+g_gpiod_line_clock_from_library(enum gpiod_line_clock event_clock);
-+GPIODLineValue g_gpiod_line_value_from_library(enum gpiod_line_value value);
-+GPIODInfoEventType
-+g_gpiod_info_event_type_from_library(enum gpiod_info_event_type type);
-+GPIODEdgeEventType
-+g_gpiod_edge_event_type_from_library(enum gpiod_edge_event_type type);
++#define gpiod_glib_test_chip_watch_line_info_or_fail(_chip, _offset) \
++	({ \
++		g_autoptr(GError) _err = NULL; \
++		GPIODLineInfo *_info = g_gpiod_chip_watch_line_info(_chip, \
++								    _offset, \
++								    &_err); \
++		g_assert_nonnull(_info); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++		_info; \
++	})
 +
-+enum gpiod_line_direction
-+g_gpiod_line_direction_to_library(GPIODLineDirection direction);
-+enum gpiod_line_edge g_gpiod_line_edge_to_library(GPIODLineEdge edge);
-+enum gpiod_line_bias g_gpiod_line_bias_to_library(GPIODLineBias bias);
-+enum gpiod_line_drive g_gpiod_line_drive_to_library(GPIODLineDrive drive);
-+enum gpiod_line_clock g_gpiod_line_clock_to_library(GPIODLineClock event_clock);
-+enum gpiod_line_value g_gpiod_line_value_to_library(GPIODLineValue value);
++#define gpiod_glib_test_chip_unwatch_line_info_or_fail(_chip, _offset) \
++	do { \
++		g_autoptr(GError) _err = NULL; \
++		gboolean ret = \
++			g_gpiod_chip_unwatch_line_info(_chip, _offset, &_err); \
++		g_assert_true(ret); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
 +
-+#endif /* __GPIOD_GLIB_INTERNAL_H__ */
-diff --git a/bindings/glib/line-config.c b/bindings/glib/line-config.c
++#define gpiod_glib_test_line_config_add_line_settings_or_fail(_config, \
++							      _offsets, \
++							      _settings) \
++	do { \
++		g_autoptr(GError) _err = NULL; \
++		gboolean _ret = \
++			g_gpiod_line_config_add_line_settings(_config, \
++							      _offsets,\
++							      _settings, \
++							      &_err); \
++		g_assert_true(_ret); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
++
++#define gpiod_glib_test_line_config_get_line_settings_or_fail(_config, \
++							      _offset) \
++	({ \
++		GPIODLineSettings *_settings = \
++			g_gpiod_line_config_get_line_settings(_config, \
++							      _offset); \
++		g_assert_nonnull(_settings); \
++		gpiod_test_return_if_failed(); \
++		_settings; \
++	})
++
++#define gpiod_glib_test_line_config_set_output_values_or_fail(_config, \
++							      _values) \
++	do { \
++		g_autoptr(GError) _err = NULL; \
++		gboolean _ret = \
++			g_gpiod_line_config_set_output_values(_config, \
++							      _values, \
++							      &_err); \
++		g_assert_true(_ret); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
++
++#define gpiod_glib_test_chip_request_lines_or_fail(_chip, _req_cfg, _line_cfg) \
++	({ \
++		g_autoptr(GError) _err = NULL; \
++		GPIODLineRequest *_req = \
++			g_gpiod_chip_request_lines(_chip, _req_cfg, \
++						   _line_cfg, &_err); \
++		g_assert_nonnull(_req); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++		_req; \
++	})
++
++#define gpiod_glib_test_request_lines_or_fail(_path, _req_cfg, _line_cfg) \
++	({ \
++		g_autoptr(GPIODChip) _chip = \
++			gpiod_glib_test_new_chip_or_fail(_path); \
++		GPIODLineRequest *_req = \
++			gpiod_glib_test_chip_request_lines_or_fail(_chip, \
++								   _req_cfg, \
++								   _line_cfg); \
++		_req; \
++	})
++
++#define gpiod_glib_test_check_error_or_fail(_err, _domain, _code) \
++	do { \
++		g_assert_nonnull(_err); \
++		gpiod_test_return_if_failed(); \
++		g_assert_cmpint(_domain, ==, (_err)->domain); \
++		g_assert_cmpint(_code, ==, (_err)->code); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
++
++GArray *gpiod_glib_test_array_from_const(const gconstpointer data, gsize len,
++					 gsize elem_size);
++
++#endif /* __GPIOD_GLIB_TEST_HELPERS_H__ */
++
+diff --git a/bindings/glib/tests/tests-chip-info.c b/bindings/glib/tests/tests-chip-info.c
 new file mode 100644
-index 0000000..4fc1585
+index 0000000..7741ccb
 --- /dev/null
-+++ b/bindings/glib/line-config.c
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODLineConfig {
-+	GObject parent_instance;
-+	struct gpiod_line_config *handle;
-+};
-+
-+enum {
-+	G_GPIOD_LINE_CONFIG_PROP_HANDLE = 1,
-+	G_GPIOD_LINE_CONFIG_PROP_CONFIGURED_OFFSETS,
-+};
-+
-+G_DEFINE_TYPE(GPIODLineConfig, g_gpiod_line_config, G_TYPE_OBJECT);
-+
-+static void g_gpiod_line_config_get_property(GObject *obj, guint prop_id,
-+					     GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineConfig *self = G_GPIOD_LINE_CONFIG_OBJ(obj);
-+	g_autofree guint *offsets = NULL;
-+	gsize num_offsets, i;
-+	GArray *boxed;
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_CONFIG_PROP_HANDLE:
-+		g_value_set_pointer(val, self->handle);
-+		break;
-+	case G_GPIOD_LINE_CONFIG_PROP_CONFIGURED_OFFSETS:
-+		num_offsets = gpiod_line_config_get_num_configured_offsets(
-+								self->handle);
-+		offsets = g_malloc0(num_offsets * sizeof(guint));
-+		gpiod_line_config_get_configured_offsets(self->handle, offsets,
-+							 num_offsets);
-+
-+		boxed = g_array_new(FALSE, TRUE, sizeof(guint));
-+		for (i = 0; i < num_offsets; i++)
-+			g_array_append_val(boxed, offsets[i]);
-+
-+		g_value_set_boxed(val, boxed);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_config_finalize(GObject *obj)
-+{
-+	GPIODLineConfig *self = G_GPIOD_LINE_CONFIG_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_line_config_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_config_parent_class)->finalize(obj);
-+}
-+
-+static void
-+g_gpiod_line_config_class_init(GPIODLineConfigClass *line_config_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(line_config_class);
-+
-+	class->get_property = g_gpiod_line_config_get_property;
-+	class->finalize = g_gpiod_line_config_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_CONFIG_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO line config object.",
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_CONFIG_PROP_CONFIGURED_OFFSETS,
-+		g_param_spec_boxed("configured-offsets", "Configured Offsets",
-+			"Array of offsets for which line settings have been set.",
-+			G_TYPE_ARRAY,
-+			G_PARAM_READABLE));
-+}
-+
-+static void g_gpiod_line_config_init(GPIODLineConfig *self)
-+{
-+	self->handle = gpiod_line_config_new();
-+	if (!self->handle)
-+		/* The only possible error is ENOMEM. */
-+		g_error("Failed to allocate memory for the request-config object.");
-+}
-+
-+GPIODLineConfig *g_gpiod_line_config_new(void)
-+{
-+	return G_GPIOD_LINE_CONFIG_OBJ(
-+			g_object_new(G_GPIOD_LINE_CONFIG_TYPE, NULL));
-+}
-+
-+void g_gpiod_line_config_reset(GPIODLineConfig *self)
-+{
-+	g_assert(self);
-+
-+	gpiod_line_config_reset(self->handle);
-+}
-+
-+gboolean g_gpiod_line_config_add_line_settings(GPIODLineConfig *self,
-+					       const GArray *offsets,
-+					       GPIODLineSettings *settings,
-+					       GError **err)
-+{
-+	struct gpiod_line_settings *settings_handle;
-+	int ret;
-+
-+	g_assert(self);
-+
-+	if (!offsets || !offsets->len) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "at least one offset must be specified when adding line settings");
-+		return FALSE;
-+	}
-+
-+	settings_handle = settings ?
-+		g_gpiod_get_prop_pointer(G_OBJECT(settings), "handle") : NULL;
-+	ret = gpiod_line_config_add_line_settings(self->handle,
-+						  (unsigned int *)offsets->data,
-+						  offsets->len,
-+						  settings_handle);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err,
-+			"failed to add line settings to line config");
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+GPIODLineSettings *
-+g_gpiod_line_config_get_line_settings(GPIODLineConfig *self, guint offset)
-+{
-+	struct gpiod_line_settings *settings;
-+
-+	g_assert(self);
-+
-+	settings = gpiod_line_config_get_line_settings(self->handle, offset);
-+	if (!settings) {
-+		if (errno == ENOENT)
-+			return NULL;
-+
-+		/* Let's bail-out on ENOMEM/ */
-+		g_error("failed to retrieve line settings for offset %u: %s",
-+			offset, g_strerror(errno));
-+	}
-+
-+	return G_GPIOD_LINE_SETTINGS_OBJ(
-+		g_object_new(G_GPIOD_LINE_SETTINGS_TYPE,
-+			     "handle", settings, NULL));
-+}
-+
-+gboolean g_gpiod_line_config_set_output_values(GPIODLineConfig *self,
-+					       const GArray *values,
-+					       GError **err)
-+{
-+	g_autofree enum gpiod_line_value *vals = NULL;
-+	gint ret;
-+	guint i;
-+
-+	g_assert(self);
-+
-+	vals = g_malloc0(sizeof(*vals) * values->len);
-+	for (i = 0; i < values->len; i++)
-+		vals[i] = g_gpiod_line_value_to_library(
-+				g_array_index(values, GPIODLineValue, i));
-+
-+	ret = gpiod_line_config_set_output_values(self->handle, vals,
-+						  values->len);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err,
-+				"unable to set output values");
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+GArray *g_gpiod_line_config_get_configured_offsets(GPIODLineConfig *self)
-+{
-+	return g_gpiod_get_prop_boxed_array(G_OBJECT(self),
-+					    "configured-offsets");
-+}
-diff --git a/bindings/glib/line-info.c b/bindings/glib/line-info.c
-new file mode 100644
-index 0000000..38b332f
---- /dev/null
-+++ b/bindings/glib/line-info.c
-@@ -0,0 +1,274 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODLineInfo {
-+	GObject parent_instance;
-+	struct gpiod_line_info *handle;
-+};
-+
-+enum {
-+	G_GPIOD_LINE_INFO_PROP_HANDLE = 1,
-+	G_GPIOD_LINE_INFO_PROP_OFFSET,
-+	G_GPIOD_LINE_INFO_PROP_NAME,
-+	G_GPIOD_LINE_INFO_PROP_USED,
-+	G_GPIOD_LINE_INFO_PROP_CONSUMER,
-+	G_GPIOD_LINE_INFO_PROP_DIRECTION,
-+	G_GPIOD_LINE_INFO_PROP_EDGE_DETECTION,
-+	G_GPIOD_LINE_INFO_PROP_BIAS,
-+	G_GPIOD_LINE_INFO_PROP_DRIVE,
-+	G_GPIOD_LINE_INFO_PROP_ACTIVE_LOW,
-+	G_GPIOD_LINE_INFO_PROP_DEBOUNCED,
-+	G_GPIOD_LINE_INFO_PROP_DEBOUNCE_PERIOD,
-+	G_GPIOD_LINE_INFO_PROP_EVENT_CLOCK,
-+};
-+
-+G_DEFINE_TYPE(GPIODLineInfo, g_gpiod_line_info, G_TYPE_OBJECT);
-+
-+static void g_gpiod_line_info_get_property(GObject *obj, guint prop_id,
-+					   GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineInfo *self = G_GPIOD_LINE_INFO_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_INFO_PROP_OFFSET:
-+		g_value_set_uint(val, gpiod_line_info_get_offset(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_NAME:
-+		g_value_set_static_string(val,
-+			gpiod_line_info_get_name(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_USED:
-+		g_value_set_boolean(val, gpiod_line_info_is_used(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_CONSUMER:
-+		g_value_set_static_string(val,
-+			gpiod_line_info_get_consumer(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_DIRECTION:
-+		g_value_set_enum(val,
-+			g_gpiod_line_direction_from_library(
-+				gpiod_line_info_get_direction(self->handle),
-+				FALSE));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_EDGE_DETECTION:
-+		g_value_set_enum(val,
-+			g_gpiod_line_edge_from_library(
-+				gpiod_line_info_get_edge_detection(
-+					self->handle)));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_BIAS:
-+		g_value_set_enum(val,
-+			g_gpiod_line_bias_from_library(
-+				gpiod_line_info_get_bias(self->handle),
-+				FALSE));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_DRIVE:
-+		g_value_set_enum(val,
-+			g_gpiod_line_drive_from_library(
-+				gpiod_line_info_get_drive(self->handle)));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_ACTIVE_LOW:
-+		g_value_set_boolean(val,
-+			gpiod_line_info_is_active_low(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_DEBOUNCED:
-+		g_value_set_boolean(val,
-+			gpiod_line_info_is_debounced(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_DEBOUNCE_PERIOD:
-+		g_value_set_int64(val,
-+			gpiod_line_info_get_debounce_period_us(self->handle));
-+		break;
-+	case G_GPIOD_LINE_INFO_PROP_EVENT_CLOCK:
-+		g_value_set_enum(val,
-+			g_gpiod_line_clock_from_library(
-+				gpiod_line_info_get_event_clock(self->handle)));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_info_set_property(GObject *obj, guint prop_id,
-+					   const GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineInfo *self = G_GPIOD_LINE_INFO_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_INFO_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_info_finalize(GObject *obj)
-+{
-+	GPIODLineInfo *self = G_GPIOD_LINE_INFO_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_line_info_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_info_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_line_info_class_init(GPIODLineInfoClass *line_info_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(line_info_class);
-+
-+	class->set_property = g_gpiod_line_info_set_property;
-+	class->get_property = g_gpiod_line_info_get_property;
-+	class->finalize = g_gpiod_line_info_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO line information object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_OFFSET,
-+		g_param_spec_uint("offset", "Offset",
-+			"Offset of the GPIO line.",
-+			0, G_MAXUINT, 0, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_NAME,
-+		g_param_spec_string("name", "Name",
-+			"Name of the GPIO line, if named.",
-+			NULL, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_USED,
-+		g_param_spec_boolean("used", "Is Used",
-+			"Indicates whether the GPIO line is requested for exclusive usage",
-+			FALSE, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_CONSUMER,
-+		g_param_spec_string("consumer", "Consumer",
-+			"Name of the consumer of the GPIO line, if requested.",
-+			NULL, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_DIRECTION,
-+		g_param_spec_enum("direction", "Direction",
-+			"Direction of the GPIO line.",
-+			G_GPIOD_LINE_DIRECTION_TYPE,
-+			G_GPIOD_LINE_DIRECTION_INPUT,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_INFO_PROP_EDGE_DETECTION,
-+		g_param_spec_enum("edge-detection", "Edge Detection",
-+			"Edge detection setting of the GPIO line.",
-+			G_GPIOD_LINE_EDGE_TYPE,
-+			G_GPIOD_LINE_EDGE_NONE,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_BIAS,
-+		g_param_spec_enum("bias", "Bias",
-+			"Bias setting of the GPIO line.",
-+			G_GPIOD_LINE_BIAS_TYPE,
-+			G_GPIOD_LINE_BIAS_UNKNOWN,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_DRIVE,
-+		g_param_spec_enum("drive", "Drive",
-+			"Drive setting of the GPIO line.",
-+			G_GPIOD_LINE_DRIVE_TYPE,
-+			G_GPIOD_LINE_DRIVE_PUSH_PULL,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_INFO_PROP_ACTIVE_LOW,
-+		g_param_spec_boolean("active-low", "Is Active-Low",
-+			"Indicates whether the signal of the line is inverted.",
-+			FALSE, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_INFO_PROP_DEBOUNCED,
-+		g_param_spec_boolean("debounced", "Is Debounced",
-+			"Indicates whether the line is debounced (by hardware or by the kernel software debouncer).",
-+			FALSE, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_INFO_PROP_DEBOUNCE_PERIOD,
-+		g_param_spec_int64("debounce-period-us",
-+			"Debounce Period (in microseconds)",
-+			"Debounce period of the line (expressed in microseconds).",
-+			0, G_MAXINT64, 0,
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_INFO_PROP_EVENT_CLOCK,
-+		g_param_spec_enum("event-clock", "Event Clock",
-+			"Event clock used to timestamp the edge events of the line.",
-+			G_GPIOD_LINE_CLOCK_TYPE,
-+			G_GPIOD_LINE_CLOCK_MONOTONIC,
-+			G_PARAM_READABLE));
-+}
-+
-+static void g_gpiod_line_info_init(GPIODLineInfo *self)
-+{
-+	self->handle = NULL;
-+}
-+
-+guint g_gpiod_line_info_get_offset(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_uint(G_OBJECT(self), "offset");
-+}
-+
-+const gchar *g_gpiod_line_info_get_name(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "name");
-+}
-+
-+gboolean g_gpiod_line_info_is_used(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_bool(G_OBJECT(self), "used");
-+}
-+
-+const gchar *g_gpiod_line_info_get_consumer(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "consumer");
-+}
-+
-+GPIODLineDirection g_gpiod_line_info_get_direction(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "direction");
-+}
-+
-+GPIODLineEdge g_gpiod_line_info_get_edge_detection(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "edge-detection");
-+}
-+
-+GPIODLineBias g_gpiod_line_info_get_bias(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "bias");
-+}
-+
-+GPIODLineDrive g_gpiod_line_info_get_drive(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "drive");
-+}
-+
-+gboolean g_gpiod_line_info_is_active_low(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_bool(G_OBJECT(self), "active-low");
-+}
-+
-+gboolean g_gpiod_line_info_is_debounced(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_bool(G_OBJECT(self), "debounced");
-+}
-+
-+GTimeSpan g_gpiod_line_info_get_debounce_period_us(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_timespan(G_OBJECT(self), "debounce-period-us");
-+}
-+
-+GPIODLineClock g_gpiod_line_info_get_event_clock(GPIODLineInfo *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "event-clock");
-+}
-diff --git a/bindings/glib/line-request.c b/bindings/glib/line-request.c
-new file mode 100644
-index 0000000..d26dd9c
---- /dev/null
-+++ b/bindings/glib/line-request.c
-@@ -0,0 +1,434 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+
-+#include "internal.h"
-+
-+static const gsize event_buf_size = 64;
-+
-+struct _GPIODLineRequest {
-+	GObject parent_instance;
-+	struct gpiod_line_request *handle;
-+	struct gpiod_edge_event_buffer *event_buf;
-+	GSource *edge_event_src;
-+	guint edge_event_src_id;
-+	enum gpiod_line_value *val_buf;
-+};
-+
-+enum {
-+	G_GPIOD_LINE_REQUEST_PROP_HANDLE = 1,
-+	G_GPIOD_LINE_REQUEST_PROP_CHIP_NAME,
-+	G_GPIOD_LINE_REQUEST_PROP_REQUESTED_OFFSETS,
-+};
-+
-+enum {
-+	G_GPIOD_LINE_REQUEST_SIGNAL_EDGE_EVENT,
-+	G_GPIOD_LINE_REQUEST_SIGNAL_LAST,
-+};
-+
-+static guint signals[G_GPIOD_LINE_REQUEST_SIGNAL_LAST];
-+
-+G_DEFINE_TYPE(GPIODLineRequest, g_gpiod_line_request, G_TYPE_OBJECT);
-+
-+static gboolean
-+g_gpiod_line_request_on_edge_event(GIOChannel *source G_GNUC_UNUSED,
-+				   GIOCondition condition G_GNUC_UNUSED,
-+				   gpointer data)
-+{
-+	struct gpiod_edge_event *event_handle, *event_copy;
-+	GPIODLineRequest *self = data;
-+	gint ret, i;
-+
-+	ret = gpiod_line_request_read_edge_events(self->handle,
-+						  self->event_buf,
-+						  event_buf_size);
-+	if (ret < 0)
-+		return TRUE;
-+
-+	for (i = 0; i < ret; i++) {
-+		g_autoptr(GPIODEdgeEvent) event = NULL;
-+
-+		event_handle = gpiod_edge_event_buffer_get_event(
-+						self->event_buf, i);
-+		event_copy = gpiod_edge_event_copy(event_handle);
-+		if (!event_copy)
-+			g_error("failed to copy the edge event");
-+
-+		event = G_GPIOD_EDGE_EVENT_OBJ(
-+				g_object_new(G_GPIOD_EDGE_EVENT_TYPE,
-+					     "handle", event_copy, NULL));
-+
-+		g_signal_emit(self,
-+			      signals[G_GPIOD_LINE_REQUEST_SIGNAL_EDGE_EVENT],
-+			      0,
-+			      event);
-+	}
-+
-+	return TRUE;
-+}
-+
-+static void g_gpiod_line_request_constructed(GObject *obj)
-+{
-+	GPIODLineRequest *self = G_GPIOD_LINE_REQUEST_OBJ(obj);
-+	g_autoptr(GIOChannel) channel = NULL;
-+	gsize num_lines;
-+
-+	self->event_buf = gpiod_edge_event_buffer_new(event_buf_size);
-+	if (!self->event_buf)
-+		g_error("failed to allocate the edge event buffer");
-+
-+	channel = g_io_channel_unix_new(
-+			gpiod_line_request_get_fd(self->handle));
-+	self->edge_event_src = g_io_create_watch(channel, G_IO_IN);
-+	g_source_set_callback(self->edge_event_src,
-+			      G_SOURCE_FUNC(g_gpiod_line_request_on_edge_event),
-+			      self, NULL);
-+	self->edge_event_src_id = g_source_attach(self->edge_event_src, NULL);
-+
-+	num_lines = gpiod_line_request_get_num_requested_lines(self->handle);
-+	self->val_buf = g_malloc0(sizeof(enum gpiod_line_value) * num_lines);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_request_parent_class)->constructed(obj);
-+}
-+
-+static void g_gpiod_line_request_get_property(GObject *obj, guint prop_id,
-+						GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineRequest *self = G_GPIOD_LINE_REQUEST_OBJ(obj);
-+	g_autofree guint *offsets = NULL;
-+	gsize num_offsets;
-+	GArray *boxed;
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_REQUEST_PROP_CHIP_NAME:
-+		g_value_set_static_string(val,
-+			gpiod_line_request_get_chip_name(self->handle));
-+		break;
-+	case G_GPIOD_LINE_REQUEST_PROP_REQUESTED_OFFSETS:
-+		boxed = g_array_new(FALSE, TRUE, sizeof(guint));
-+
-+		if (!g_gpiod_line_request_is_released(self)) {
-+			num_offsets =
-+				gpiod_line_request_get_num_requested_lines(
-+								self->handle);
-+			offsets = g_malloc0(num_offsets * sizeof(guint));
-+			gpiod_line_request_get_requested_offsets(self->handle,
-+								 offsets,
-+								 num_offsets);
-+			g_array_append_vals(boxed, offsets, num_offsets);
-+		}
-+
-+		g_value_set_boxed(val, boxed);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_request_set_property(GObject *obj, guint prop_id,
-+					       const GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineRequest *self = G_GPIOD_LINE_REQUEST_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_REQUEST_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_request_dispose(GObject *obj)
-+{
-+	GPIODLineRequest *self = G_GPIOD_LINE_REQUEST_OBJ(obj);
-+
-+	if (self->edge_event_src_id)
-+		g_source_remove(self->edge_event_src_id);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_request_parent_class)->dispose(obj);
-+}
-+
-+static void g_gpiod_line_request_finalize(GObject *obj)
-+{
-+	GPIODLineRequest *self = G_GPIOD_LINE_REQUEST_OBJ(obj);
-+
-+	g_gpiod_line_request_release(self);
-+	g_clear_pointer(&self->event_buf, gpiod_edge_event_buffer_free);
-+	g_clear_pointer(&self->val_buf, g_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_request_parent_class)->finalize(obj);
-+}
-+
-+static void g_gpiod_line_request_class_init(GPIODLineRequestClass *line_request_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(line_request_class);
-+
-+	class->constructed = g_gpiod_line_request_constructed;
-+	class->set_property = g_gpiod_line_request_set_property;
-+	class->get_property = g_gpiod_line_request_get_property;
-+	class->dispose = g_gpiod_line_request_dispose;
-+	class->finalize = g_gpiod_line_request_finalize;
-+
-+	g_object_class_install_property(class, G_GPIOD_LINE_REQUEST_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO line request object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_REQUEST_PROP_CHIP_NAME,
-+		g_param_spec_string("chip-name", "Chip Name",
-+			"Name of the GPIO chip this request was made on.",
-+			NULL, G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_REQUEST_PROP_REQUESTED_OFFSETS,
-+		g_param_spec_boxed("requested-offsets", "Requested offsets",
-+			"Array of requested offsets.",
-+			G_TYPE_ARRAY,
-+			G_PARAM_READABLE));
-+
-+	signals[G_GPIOD_LINE_REQUEST_SIGNAL_EDGE_EVENT] =
-+			g_signal_new("edge-event",
-+				     G_TYPE_FROM_CLASS(line_request_class),
-+				     G_SIGNAL_RUN_LAST,
-+				     0,
-+				     NULL,
-+				     NULL,
-+				     g_cclosure_marshal_generic,
-+				     G_TYPE_NONE,
-+				     1,
-+				     G_GPIOD_EDGE_EVENT_TYPE);
-+}
-+
-+static void g_gpiod_line_request_init(GPIODLineRequest *self)
-+{
-+	self->handle = NULL;
-+	self->event_buf = NULL;
-+	self->edge_event_src = NULL;
-+}
-+
-+void g_gpiod_line_request_release(GPIODLineRequest *self)
-+{
-+	g_assert(self);
-+
-+	g_clear_pointer(&self->edge_event_src, g_source_unref);
-+	g_clear_pointer(&self->handle, gpiod_line_request_release);
-+}
-+
-+gboolean g_gpiod_line_request_is_released(GPIODLineRequest *self)
-+{
-+	g_assert(self);
-+
-+	return !self->handle;
-+}
-+
-+static void set_err_request_released(GError **err)
-+{
-+	g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED,
-+		    "line request was released and cannot be used");
-+}
-+
-+const gchar *g_gpiod_line_request_get_chip_name(GPIODLineRequest *self)
-+{
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "chip-name");
-+}
-+
-+GArray *g_gpiod_line_request_get_requested_offsets(GPIODLineRequest *self)
-+{
-+	return g_gpiod_get_prop_boxed_array(G_OBJECT(self),
-+					    "requested-offsets");
-+}
-+
-+gboolean g_gpiod_line_request_reconfigure_lines(GPIODLineRequest *self,
-+						GPIODLineConfig *config,
-+						GError **err)
-+{
-+	struct gpiod_line_config *config_handle;
-+	gint ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_line_request_is_released(self)) {
-+		set_err_request_released(err);
-+		return FALSE;
-+	}
-+
-+	if (!config) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "line-config is required to reconfigure lines");
-+		return FALSE;
-+	}
-+
-+	config_handle = g_gpiod_get_prop_pointer(G_OBJECT(config), "handle");
-+
-+	ret = gpiod_line_request_reconfigure_lines(self->handle, config_handle);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err,
-+					     "failed to reconfigure lines");
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+gboolean
-+g_gpiod_line_request_get_value(GPIODLineRequest *self, guint offset,
-+			       GPIODLineValue *value, GError **err)
-+{
-+	enum gpiod_line_value val;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_line_request_is_released(self)) {
-+		set_err_request_released(err);
-+		return FALSE;
-+	}
-+
-+	val = gpiod_line_request_get_value(self->handle, offset);
-+	if (val == GPIOD_LINE_VALUE_ERROR) {
-+		g_gpiod_set_error_from_errno(err,
-+			    "failed to get line value for offset %u", offset);
-+		return FALSE;
-+	}
-+
-+	*value = g_gpiod_line_value_from_library(val);
-+	return TRUE;
-+}
-+
-+gboolean g_gpiod_line_request_get_values_subset(GPIODLineRequest *self,
-+						const GArray *offsets,
-+						GArray **values,
-+						GError **err)
-+{
-+	guint i;
-+	int ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_line_request_is_released(self)) {
-+		set_err_request_released(err);
-+		return FALSE;
-+	}
-+
-+	if (!offsets || !values) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "offsets and values must not be NULL");
-+		return FALSE;
-+	}
-+
-+	ret = gpiod_line_request_get_values_subset(self->handle, offsets->len,
-+					(const unsigned int *)offsets->data,
-+					self->val_buf);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err, "failed to read line values");
-+		return FALSE;
-+	}
-+
-+	if (!(*values)) {
-+		*values = g_array_sized_new(FALSE, TRUE,
-+					    sizeof(GPIODLineValue),
-+					    offsets->len);
-+	}
-+
-+	g_array_set_size(*values, offsets->len);
-+
-+	for (i = 0; i < offsets->len; i++) {
-+		GPIODLineValue *val = &g_array_index(*values, GPIODLineValue, i);
-+		*val = g_gpiod_line_value_from_library(self->val_buf[i]);
-+	}
-+
-+	return TRUE;
-+}
-+
-+gboolean g_gpiod_line_request_get_values(GPIODLineRequest *self,
-+					 GArray **values, GError **err)
-+{
-+	g_autoptr(GArray) offsets = NULL;
-+
-+	offsets = g_gpiod_line_request_get_requested_offsets(self);
-+
-+	return g_gpiod_line_request_get_values_subset(self, offsets,
-+						      values, err);
-+}
-+
-+gboolean g_gpiod_line_request_set_value(GPIODLineRequest *self, guint offset,
-+					GPIODLineValue value, GError **err)
-+{
-+	int ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_line_request_is_released(self)) {
-+		set_err_request_released(err);
-+		return FALSE;
-+	}
-+
-+	ret = gpiod_line_request_set_value(self->handle, offset,
-+				g_gpiod_line_value_to_library(value));
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err,
-+			"failed to set line value for offset: %u", offset);
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+gboolean g_gpiod_line_request_set_values_subset(GPIODLineRequest *self,
-+						const GArray *offsets,
-+						const GArray *values,
-+						GError **err)
-+{
-+	guint i;
-+	int ret;
-+
-+	g_assert(self);
-+
-+	if (g_gpiod_line_request_is_released(self)) {
-+		set_err_request_released(err);
-+		return FALSE;
-+	}
-+
-+	if (!offsets || !values) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "offsets and values must not be NULL");
-+		return FALSE;
-+	}
-+
-+	if (offsets->len != values->len) {
-+		g_set_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL,
-+			    "offsets and values must have the sme size");
-+		return FALSE;
-+	}
-+
-+	for (i = 0; i < values->len; i++)
-+		self->val_buf[i] = g_gpiod_line_value_to_library(
-+					g_array_index(values,
-+						      GPIODLineValue, i));
-+
-+	ret = gpiod_line_request_set_values_subset(self->handle,
-+						offsets->len,
-+						(unsigned int *)offsets->data,
-+						self->val_buf);
-+	if (ret) {
-+		g_gpiod_set_error_from_errno(err, "failed to set line values");
-+		return FALSE;
-+	}
-+
-+	return TRUE;
-+}
-+
-+gboolean g_gpiod_line_request_set_values(GPIODLineRequest *self,
-+					 GArray *values, GError **err)
-+{
-+	g_autoptr(GArray) offsets = NULL;
-+
-+	offsets = g_gpiod_line_request_get_requested_offsets(self);
-+
-+	return g_gpiod_line_request_set_values_subset(self, offsets,
-+						      values, err);
-+}
-diff --git a/bindings/glib/line-settings.c b/bindings/glib/line-settings.c
-new file mode 100644
-index 0000000..612a17e
---- /dev/null
-+++ b/bindings/glib/line-settings.c
-@@ -0,0 +1,359 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+#include <gio/gio.h>
-+#include <gpiod.h>
-+#include <gpiod-glib.h>
-+#include <stdarg.h>
-+
-+#include "internal.h"
-+
-+struct _GPIODLineSettings {
-+	GObject parent_instance;
-+	struct gpiod_line_settings *handle;
-+};
-+
-+enum {
-+	G_GPIOD_LINE_SETTINGS_PROP_HANDLE = 1,
-+	G_GPIOD_LINE_SETTINGS_PROP_DIRECTION,
-+	G_GPIOD_LINE_SETTINGS_PROP_EDGE_DETECTION,
-+	G_GPIOD_LINE_SETTINGS_PROP_BIAS,
-+	G_GPIOD_LINE_SETTINGS_PROP_DRIVE,
-+	G_GPIOD_LINE_SETTINGS_PROP_ACTIVE_LOW,
-+	G_GPIOD_LINE_SETTINGS_PROP_DEBOUNCE_PERIOD_US,
-+	G_GPIOD_LINE_SETTINGS_PROP_EVENT_CLOCK,
-+	G_GPIOD_LINE_SETTINGS_PROP_OUTPUT_VALUE,
-+};
-+
-+G_DEFINE_TYPE(GPIODLineSettings, g_gpiod_line_settings, G_TYPE_OBJECT);
-+
-+static void g_gpiod_line_settings_constructed(GObject *obj)
-+{
-+	GPIODLineSettings *self = G_GPIOD_LINE_SETTINGS_OBJ(obj);
-+
-+	/*
-+	 * If we still haven't created the handle at this point, do it now.
-+	 * This is normal if called did g_gpiod_line_settings_new(NULL).
-+	 */
-+	if (!self->handle) {
-+		self->handle = gpiod_line_settings_new();
-+		if (!self->handle)
-+			g_error("failed to allocate line settings");
-+	}
-+
-+	G_OBJECT_CLASS(g_gpiod_line_settings_parent_class)->constructed(obj);
-+}
-+
-+static void g_gpiod_line_settings_get_property(GObject *obj, guint prop_id,
-+					       GValue *val, GParamSpec *pspec)
-+{
-+	GPIODLineSettings *self = G_GPIOD_LINE_SETTINGS_OBJ(obj);
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_SETTINGS_PROP_HANDLE:
-+		g_value_set_pointer(val, self->handle);
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DIRECTION:
-+		g_value_set_enum(val,
-+			g_gpiod_line_direction_from_library(
-+				gpiod_line_settings_get_direction(
-+							self->handle), TRUE));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_EDGE_DETECTION:
-+		g_value_set_enum(val,
-+			g_gpiod_line_edge_from_library(
-+				gpiod_line_settings_get_edge_detection(
-+							self->handle)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_BIAS:
-+		g_value_set_enum(val,
-+			g_gpiod_line_bias_from_library(
-+				gpiod_line_settings_get_bias(self->handle),
-+				TRUE));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DRIVE:
-+		g_value_set_enum(val,
-+			g_gpiod_line_drive_from_library(
-+				gpiod_line_settings_get_drive(self->handle)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_ACTIVE_LOW:
-+		g_value_set_boolean(val,
-+			gpiod_line_settings_get_active_low(self->handle));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DEBOUNCE_PERIOD_US:
-+		g_value_set_int64(val,
-+			gpiod_line_settings_get_debounce_period_us(
-+							self->handle));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_EVENT_CLOCK:
-+		g_value_set_enum(val,
-+			g_gpiod_line_clock_from_library(
-+				gpiod_line_settings_get_event_clock(
-+							self->handle)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_OUTPUT_VALUE:
-+		g_value_set_enum(val,
-+			g_gpiod_line_value_from_library(
-+				gpiod_line_settings_get_output_value(
-+							self->handle)));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_settings_set_property(GObject *obj, guint prop_id,
-+					       const GValue *val,
-+					       GParamSpec *pspec)
-+{
-+	GPIODLineSettings *self = G_GPIOD_LINE_SETTINGS_OBJ(obj);
-+
-+	if (!self->handle && prop_id != G_GPIOD_LINE_SETTINGS_PROP_HANDLE) {
-+		self->handle = gpiod_line_settings_new();
-+		if (!self->handle)
-+			/* The only possible error is ENOMEM. */
-+			g_error("Failed to allocate memory for the line-settings object.");
-+	}
-+
-+	switch (prop_id) {
-+	case G_GPIOD_LINE_SETTINGS_PROP_HANDLE:
-+		self->handle = g_value_get_pointer(val);
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DIRECTION:
-+		gpiod_line_settings_set_direction(self->handle,
-+			g_gpiod_line_direction_to_library(
-+				g_value_get_enum(val)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_EDGE_DETECTION:
-+		gpiod_line_settings_set_edge_detection(self->handle,
-+			g_gpiod_line_edge_to_library(g_value_get_enum(val)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_BIAS:
-+		gpiod_line_settings_set_bias(self->handle,
-+			g_gpiod_line_bias_to_library(g_value_get_enum(val)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DRIVE:
-+		gpiod_line_settings_set_drive(self->handle,
-+			g_gpiod_line_drive_to_library(g_value_get_enum(val)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_ACTIVE_LOW:
-+		gpiod_line_settings_set_active_low(self->handle,
-+						   g_value_get_boolean(val));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_DEBOUNCE_PERIOD_US:
-+		gpiod_line_settings_set_debounce_period_us(self->handle,
-+						g_value_get_int64(val));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_EVENT_CLOCK:
-+		gpiod_line_settings_set_event_clock(self->handle,
-+			g_gpiod_line_clock_to_library(g_value_get_enum(val)));
-+		break;
-+	case G_GPIOD_LINE_SETTINGS_PROP_OUTPUT_VALUE:
-+		gpiod_line_settings_set_output_value(self->handle,
-+			g_gpiod_line_value_to_library(g_value_get_enum(val)));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
-+	}
-+}
-+
-+static void g_gpiod_line_settings_finalize(GObject *obj)
-+{
-+	GPIODLineSettings *self = G_GPIOD_LINE_SETTINGS_OBJ(obj);
-+
-+	g_clear_pointer(&self->handle, gpiod_line_settings_free);
-+
-+	G_OBJECT_CLASS(g_gpiod_line_settings_parent_class)->finalize(obj);
-+}
-+
-+static void
-+g_gpiod_line_settings_class_init(GPIODLineSettingsClass *line_settings_class)
-+{
-+	GObjectClass *class = G_OBJECT_CLASS(line_settings_class);
-+
-+	class->constructed = g_gpiod_line_settings_constructed;
-+	class->set_property = g_gpiod_line_settings_set_property;
-+	class->get_property = g_gpiod_line_settings_get_property;
-+	class->finalize = g_gpiod_line_settings_finalize;
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_SETTINGS_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO line settings object.",
-+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_SETTINGS_PROP_DIRECTION,
-+		g_param_spec_enum("direction", "Direction",
-+			"Line direction setting.",
-+			G_GPIOD_LINE_DIRECTION_TYPE,
-+			G_GPIOD_LINE_DIRECTION_AS_IS,
-+			G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_SETTINGS_PROP_EDGE_DETECTION,
-+		g_param_spec_enum("edge-detection", "Edge Detection",
-+			"Line edge detection setting.",
-+			G_GPIOD_LINE_EDGE_TYPE,
-+			G_GPIOD_LINE_EDGE_NONE,
-+			G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_SETTINGS_PROP_BIAS,
-+		g_param_spec_enum("bias", "Bias",
-+			"Line bias setting.",
-+			G_GPIOD_LINE_BIAS_TYPE,
-+			G_GPIOD_LINE_BIAS_AS_IS,
-+			G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_SETTINGS_PROP_DRIVE,
-+		g_param_spec_enum("drive", "Drive",
-+			"Line drive setting.",
-+			G_GPIOD_LINE_DRIVE_TYPE,
-+			G_GPIOD_LINE_DRIVE_PUSH_PULL,
-+			G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_SETTINGS_PROP_ACTIVE_LOW,
-+		g_param_spec_boolean("active-low", "Active-Low",
-+			"Line active-low settings.",
-+			FALSE, G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_SETTINGS_PROP_DEBOUNCE_PERIOD_US,
-+		g_param_spec_int64("debounce-period-us",
-+			"Debounce Period (in microseconds)",
-+			"Line debounce period (expressed in microseconds).",
-+			0, G_MAXINT64, 0, G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_LINE_SETTINGS_PROP_EVENT_CLOCK,
-+		g_param_spec_enum("event-clock", "Event Clock",
-+			"Clock used to timestamp edge events.",
-+			G_GPIOD_LINE_CLOCK_TYPE,
-+			G_GPIOD_LINE_CLOCK_MONOTONIC,
-+			G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_LINE_SETTINGS_PROP_OUTPUT_VALUE,
-+		g_param_spec_enum("output-value", "Output Value",
-+			"Line output value.",
-+			G_GPIOD_LINE_VALUE_TYPE,
-+			G_GPIOD_LINE_VALUE_INACTIVE,
-+			G_PARAM_READWRITE));
-+}
-+
-+static void g_gpiod_line_settings_init(GPIODLineSettings *self)
-+{
-+	self->handle = NULL;
-+}
-+
-+GPIODLineSettings *g_gpiod_line_settings_new(const gchar *first_prop, ...)
-+{
-+	GPIODLineSettings *settings;
-+	va_list va;
-+
-+	va_start(va, first_prop);
-+	settings = G_GPIOD_LINE_SETTINGS_OBJ(
-+			g_object_new_valist(G_GPIOD_LINE_SETTINGS_TYPE,
-+					    first_prop, va));
-+	va_end(va);
-+
-+	return settings;
-+}
-+
-+void g_gpiod_line_settings_reset(GPIODLineSettings *self)
-+{
-+	g_assert(self);
-+
-+	gpiod_line_settings_reset(self->handle);
-+}
-+
-+void g_gpiod_line_settings_set_direction(GPIODLineSettings *self,
-+					 GPIODLineDirection direction)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "direction", direction);
-+}
-+
-+GPIODLineDirection g_gpiod_line_settings_get_direction(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "direction");
-+}
-+
-+void g_gpiod_line_settings_set_edge_detection(GPIODLineSettings *self,
-+					      GPIODLineEdge edge)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "edge-detection", edge);
-+}
-+
-+GPIODLineEdge g_gpiod_line_settings_get_edge_detection(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "edge-detection");
-+}
-+
-+void g_gpiod_line_settings_set_bias(GPIODLineSettings *self, GPIODLineBias bias)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "bias", bias);
-+}
-+
-+GPIODLineBias g_gpiod_line_settings_get_bias(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "bias");
-+}
-+
-+void g_gpiod_line_settings_set_drive(GPIODLineSettings *self,
-+				     GPIODLineDrive drive)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "drive", drive);
-+}
-+
-+GPIODLineDrive g_gpiod_line_settings_get_drive(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "drive");
-+}
-+
-+void g_gpiod_line_settings_set_active_low(GPIODLineSettings *self,
-+					  gboolean active_low)
-+{
-+	g_gpiod_set_prop_bool(G_OBJECT(self), "active-low", active_low);
-+}
-+
-+gboolean g_gpiod_line_settings_get_active_low(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_bool(G_OBJECT(self), "active-low");
-+}
-+
-+void g_gpiod_line_settings_set_debounce_period_us(GPIODLineSettings *self,
-+						  GTimeSpan period)
-+{
-+	g_gpiod_set_prop_timespan(G_OBJECT(self),
-+				  "debounce-period-us", period);
-+}
-+
-+GTimeSpan g_gpiod_line_settings_get_debounce_period_us(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_timespan(G_OBJECT(self), "debounce-period-us");
-+}
-+
-+void g_gpiod_line_settings_set_event_clock(GPIODLineSettings *self,
-+					   GPIODLineClock event_clock)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "event-clock", event_clock);
-+}
-+
-+GPIODLineClock g_gpiod_line_settings_get_event_clock(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "event-clock");
-+}
-+
-+void g_gpiod_line_settings_set_output_value(GPIODLineSettings *self,
-+					    GPIODLineValue value)
-+{
-+	g_gpiod_set_prop_enum(G_OBJECT(self), "output-value", value);
-+}
-+
-+GPIODLineValue g_gpiod_line_settings_get_output_value(GPIODLineSettings *self)
-+{
-+	return g_gpiod_get_prop_enum(G_OBJECT(self), "output-value");
-+}
-diff --git a/bindings/glib/misc.c b/bindings/glib/misc.c
-new file mode 100644
-index 0000000..139efed
---- /dev/null
-+++ b/bindings/glib/misc.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
++++ b/bindings/glib/tests/tests-chip-info.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+#include <gpiod.h>
 +#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
 +
-+gboolean g_gpiod_is_gpiochip_device(const gchar *path)
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/chip-info"
++
++GPIOD_TEST_CASE(get_name)
 +{
-+	g_assert(path);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODChipInfo) info = NULL;
 +
-+	return gpiod_is_gpiochip_device(path);
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	info = gpiod_glib_test_chip_get_info_or_fail(chip);
++
++	g_assert_cmpstr(g_gpiod_chip_info_get_name(info), ==,
++			g_gpiosim_chip_get_name(sim));
 +}
 +
-+const gchar *g_gpiod_api_version(void)
++GPIOD_TEST_CASE(get_label)
 +{
-+	return gpiod_api_version();
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("label", "foobar",
++							NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODChipInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	info = gpiod_glib_test_chip_get_info_or_fail(chip);
++
++	g_assert_cmpstr(g_gpiod_chip_info_get_label(info), ==, "foobar");
 +}
-diff --git a/bindings/glib/request-config.c b/bindings/glib/request-config.c
++
++GPIOD_TEST_CASE(get_num_lines)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 16, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODChipInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	info = gpiod_glib_test_chip_get_info_or_fail(chip);
++
++	g_assert_cmpuint(g_gpiod_chip_info_get_num_lines(info), ==, 16);
++}
+diff --git a/bindings/glib/tests/tests-chip.c b/bindings/glib/tests/tests-chip.c
 new file mode 100644
-index 0000000..05c903b
+index 0000000..b7c5aff
 --- /dev/null
-+++ b/bindings/glib/request-config.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
++++ b/bindings/glib/tests/tests-chip.c
+@@ -0,0 +1,183 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <glib.h>
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/chip"
++
++GPIOD_TEST_CASE(open_chip_good)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = g_gpiod_chip_new(g_gpiosim_chip_get_dev_path(sim), &err);
++	g_assert_nonnull(chip);
++	g_assert_null(err);
++}
++
++GPIOD_TEST_CASE(open_chip_nonexistent)
++{
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = g_gpiod_chip_new("/dev/nonexistent", &err);
++	g_assert_null(chip);
++	gpiod_glib_test_check_error_or_fail(err, G_GPIOD_ERROR,
++					    G_GPIOD_ERR_NOENT);
++}
++
++GPIOD_TEST_CASE(open_chip_not_a_character_device)
++{
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = g_gpiod_chip_new("/tmp", &err);
++	g_assert_null(chip);
++	gpiod_glib_test_check_error_or_fail(err, G_GPIOD_ERROR,
++					    G_GPIOD_ERR_NOTTY);
++}
++
++GPIOD_TEST_CASE(open_chip_not_a_gpio_device)
++{
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = g_gpiod_chip_new("/dev/null", &err);
++	g_assert_null(chip);
++	gpiod_glib_test_check_error_or_fail(err, G_GPIOD_ERROR,
++					    G_GPIOD_ERR_NODEV);
++}
++
++GPIOD_TEST_CASE(get_chip_path)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	const gchar *path = g_gpiosim_chip_get_dev_path(sim);
++
++	chip = gpiod_glib_test_new_chip_or_fail(path);
++
++	g_assert_cmpstr(g_gpiod_chip_get_path(chip), ==, path);
++}
++
++GPIOD_TEST_CASE(closed_chip)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	g_autoptr(GPIODChipInfo) info = NULL;
++	const gchar *path = g_gpiosim_chip_get_dev_path(sim);
++
++	chip = gpiod_glib_test_new_chip_or_fail(path);
++
++	g_gpiod_chip_close(chip);
++
++	info = g_gpiod_chip_get_info(chip, &err);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_CHIP_CLOSED);
++
++	/* Properties still work. */
++	g_assert_cmpstr(g_gpiod_chip_get_path(chip), ==, path);
++}
++
++GPIOD_TEST_CASE(find_line_bad)
++{
++	static const GPIOSimLineName names[] = {
++		{ .offset = 1, .name = "foo", },
++		{ .offset = 2, .name = "bar", },
++		{ .offset = 4, .name = "baz", },
++		{ .offset = 5, .name = "xyz", },
++		{ }
++	};
++
++	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
++							"line-names", vnames,
++							NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	g_assert_false(g_gpiod_chip_get_line_offset_from_name(chip,
++							      "nonexistent",
++							      &offset, &err));
++	g_assert_no_error(err);
++}
++
++GPIOD_TEST_CASE(find_line_good)
++{
++	static const GPIOSimLineName names[] = {
++		{ .offset = 1, .name = "foo", },
++		{ .offset = 2, .name = "bar", },
++		{ .offset = 4, .name = "baz", },
++		{ .offset = 5, .name = "xyz", },
++		{ }
++	};
++
++	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
++							"line-names", vnames,
++							NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	g_assert_true(g_gpiod_chip_get_line_offset_from_name(chip, "baz",
++							     &offset, &err));
++	g_assert_no_error(err);
++	g_assert_cmpuint(offset, ==, 4);
++}
++
++/* Verify that for duplicated line names, the first one is returned. */
++GPIOD_TEST_CASE(find_line_duplicate)
++{
++	static const GPIOSimLineName names[] = {
++		{ .offset = 1, .name = "foo", },
++		{ .offset = 2, .name = "baz", },
++		{ .offset = 4, .name = "baz", },
++		{ .offset = 5, .name = "xyz", },
++		{ }
++	};
++
++	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
++							"line-names", vnames,
++							NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	g_assert_true(g_gpiod_chip_get_line_offset_from_name(chip, "baz",
++							     &offset, &err));
++	g_assert_no_error(err);
++	g_assert_cmpuint(offset, ==, 2);
++}
++
++GPIOD_TEST_CASE(find_line_null_name)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	g_assert_false(g_gpiod_chip_get_line_offset_from_name(chip, NULL,
++							      &offset, &err));
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
+diff --git a/bindings/glib/tests/tests-edge-event.c b/bindings/glib/tests/tests-edge-event.c
+new file mode 100644
+index 0000000..fbebcd3
+--- /dev/null
++++ b/bindings/glib/tests/tests-edge-event.c
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+#include <gio/gio.h>
-+#include <gpiod.h>
 +#include <gpiod-glib.h>
-+#include <stdarg.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
 +
-+#include "internal.h"
++#include "helpers.h"
 +
-+struct _GPIODRequestConfig {
-+	GObject parent_instance;
-+	struct gpiod_request_config *handle;
-+};
++#define GPIOD_TEST_GROUP "glib/edge-event"
 +
-+enum {
-+	G_GPIOD_REQUEST_CONFIG_PROP_HANDLE = 1,
-+	G_GPIOD_REQUEST_CONFIG_PROP_CONSUMER,
-+	G_GPIOD_REQUEST_CONFIG_PROP_EVENT_BUFFER_SIZE,
-+};
-+
-+G_DEFINE_TYPE(GPIODRequestConfig, g_gpiod_request_config, G_TYPE_OBJECT);
-+
-+static void g_gpiod_request_config_get_property(GObject *obj, guint prop_id,
-+						GValue *val, GParamSpec *pspec)
++static gpointer falling_and_rising_edge_events(gpointer data)
 +{
-+	GPIODRequestConfig *self = G_GPIOD_REQUEST_CONFIG_OBJ(obj);
++	GPIOSimChip *sim = data;
 +
-+	switch (prop_id) {
-+	case G_GPIOD_REQUEST_CONFIG_PROP_HANDLE:
-+		g_value_set_pointer(val, self->handle);
-+		break;
-+	case G_GPIOD_REQUEST_CONFIG_PROP_CONSUMER:
-+		g_value_set_static_string(val,
-+			gpiod_request_config_get_consumer(self->handle));
-+		break;
-+	case G_GPIOD_REQUEST_CONFIG_PROP_EVENT_BUFFER_SIZE:
-+		g_value_set_uint(val,
-+			gpiod_request_config_get_event_buffer_size(
-+				self->handle));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
++	g_usleep(1000);
++
++	g_gpiosim_chip_set_pull(sim, 2, G_GPIOSIM_PULL_UP);
++
++	g_usleep(1000);
++
++	g_gpiosim_chip_set_pull(sim, 2, G_GPIOSIM_PULL_DOWN);
++
++	return NULL;
++}
++
++typedef struct {
++	gboolean rising;
++	gboolean falling;
++	gboolean failed;
++	guint64 falling_ts;
++	guint64 rising_ts;
++	guint falling_offset;
++	guint rising_offset;
++} EdgeEventCallbackData;
++
++static void on_edge_event(GPIODLineRequest *request G_GNUC_UNUSED,
++			  GPIODEdgeEvent *event, gpointer data)
++{
++	EdgeEventCallbackData *cb_data = data;
++
++	if (g_gpiod_edge_event_get_event_type(event) ==
++	    G_GPIOD_EDGE_EVENT_FALLING_EDGE) {
++		cb_data->falling = TRUE;
++		cb_data->falling_ts =
++			g_gpiod_edge_event_get_timestamp_ns(event);
++		cb_data->falling_offset =
++			g_gpiod_edge_event_get_line_offset(event);
++	} else {
++		cb_data->rising = TRUE;
++		cb_data->rising_ts =
++			g_gpiod_edge_event_get_timestamp_ns(event);
++		cb_data->rising_offset =
++			g_gpiod_edge_event_get_line_offset(event);
 +	}
 +}
 +
-+static void g_gpiod_request_config_set_property(GObject *obj, guint prop_id,
-+						const GValue *val,
-+						GParamSpec *pspec)
++static gboolean on_timeout(gpointer data)
 +{
-+	GPIODRequestConfig *self = G_GPIOD_REQUEST_CONFIG_OBJ(obj);
++	EdgeEventCallbackData *cb_data = data;
 +
-+	switch (prop_id) {
-+	case G_GPIOD_REQUEST_CONFIG_PROP_CONSUMER:
-+		gpiod_request_config_set_consumer(self->handle,
-+						  g_value_get_string(val));
-+		break;
-+	case G_GPIOD_REQUEST_CONFIG_PROP_EVENT_BUFFER_SIZE:
-+		gpiod_request_config_set_event_buffer_size(self->handle,
-+							g_value_get_uint(val));
-+		break;
-+	default:
-+		G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, prop_id, pspec);
++	g_test_fail_printf("timeout while waiting for edge events");
++	cb_data->failed = TRUE;
++
++	return G_SOURCE_CONTINUE;
++}
++
++GPIOD_TEST_CASE(read_both_events)
++{
++	static const guint offset = 2;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GThread) thread = NULL;
++	EdgeEventCallbackData cb_data = { };
++	guint timeout_id;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT,
++			"edge-detection", G_GPIOD_LINE_EDGE_BOTH, NULL);
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     config);
++
++	g_signal_connect(request, "edge-event",
++			 G_CALLBACK(on_edge_event), &cb_data);
++	timeout_id = g_timeout_add_seconds(5, on_timeout, &cb_data);
++
++	thread = g_thread_new("rising-falling-edge-events",
++			      falling_and_rising_edge_events, sim);
++	g_thread_ref(thread);
++
++	while (!cb_data.failed && (!cb_data.falling || !cb_data.rising))
++		g_main_context_iteration(NULL, TRUE);
++
++	g_source_remove(timeout_id);
++	g_thread_join(thread);
++
++	g_assert_cmpuint(cb_data.falling_ts, >, cb_data.rising_ts);
++	g_assert_cmpuint(cb_data.falling_offset, ==, offset);
++	g_assert_cmpuint(cb_data.rising_offset, ==, offset);
++}
++
++typedef struct {
++	gboolean failed;
++	gboolean first;
++	gboolean second;
++	guint first_offset;
++	guint second_offset;
++	gulong first_line_seqno;
++	gulong second_line_seqno;
++	gulong first_global_seqno;
++	gulong second_global_seqno;
++} SeqnoCallbackData;
++
++static void on_seqno_edge_event(GPIODLineRequest *request G_GNUC_UNUSED,
++				GPIODEdgeEvent *event, gpointer data)
++{
++	SeqnoCallbackData *cb_data = data;
++
++	if (!cb_data->first) {
++		cb_data->first_offset =
++			g_gpiod_edge_event_get_line_offset(event);
++		cb_data->first_line_seqno =
++			g_gpiod_edge_event_get_line_seqno(event);
++		cb_data->first_global_seqno =
++			g_gpiod_edge_event_get_global_seqno(event);
++		cb_data->first = TRUE;
++	} else {
++		cb_data->second_offset =
++			g_gpiod_edge_event_get_line_offset(event);
++		cb_data->second_line_seqno =
++			g_gpiod_edge_event_get_line_seqno(event);
++		cb_data->second_global_seqno =
++			g_gpiod_edge_event_get_global_seqno(event);
++		cb_data->second = TRUE;
 +	}
 +}
 +
-+static void g_gpiod_request_config_finalize(GObject *obj)
++static gpointer rising_edge_events_on_two_offsets(gpointer data)
 +{
-+	GPIODRequestConfig *self = G_GPIOD_REQUEST_CONFIG_OBJ(obj);
++	GPIOSimChip *sim = data;
 +
-+	g_clear_pointer(&self->handle, gpiod_request_config_free);
++	g_usleep(1000);
 +
-+	G_OBJECT_CLASS(g_gpiod_request_config_parent_class)->finalize(obj);
++	g_gpiosim_chip_set_pull(sim, 2, G_GPIOSIM_PULL_UP);
++
++	g_usleep(1000);
++
++	g_gpiosim_chip_set_pull(sim, 3, G_GPIOSIM_PULL_UP);
++
++	return NULL;
 +}
 +
-+static void
-+g_gpiod_request_config_class_init(GPIODRequestConfigClass *request_config_class)
++static gboolean on_seqno_timeout(gpointer data)
 +{
-+	GObjectClass *class = G_OBJECT_CLASS(request_config_class);
++	SeqnoCallbackData *cb_data = data;
 +
-+	class->set_property = g_gpiod_request_config_set_property;
-+	class->get_property = g_gpiod_request_config_get_property;
-+	class->finalize = g_gpiod_request_config_finalize;
++	g_test_fail_printf("timeout while waiting for edge events");
++	cb_data->failed = TRUE;
 +
-+	g_object_class_install_property(class,
-+					G_GPIOD_REQUEST_CONFIG_PROP_HANDLE,
-+		g_param_spec_pointer("handle", "Handle",
-+			"GPIO request config object.",
-+			G_PARAM_READABLE));
-+
-+	g_object_class_install_property(class,
-+					G_GPIOD_REQUEST_CONFIG_PROP_CONSUMER,
-+		g_param_spec_string("consumer", "Consumer",
-+			"Name of the request consumer.",
-+			NULL, G_PARAM_READWRITE));
-+
-+	g_object_class_install_property(class,
-+				G_GPIOD_REQUEST_CONFIG_PROP_EVENT_BUFFER_SIZE,
-+		g_param_spec_uint("event-buffer-size", "Event Buffer Size",
-+			"Size of the kernel event buffer size of the request.",
-+			0, G_MAXUINT, 64, G_PARAM_READWRITE));
++	return G_SOURCE_CONTINUE;
 +}
 +
-+static void g_gpiod_request_config_init(GPIODRequestConfig *self)
++GPIOD_TEST_CASE(seqno)
 +{
-+	self->handle = gpiod_request_config_new();
-+	if (!self->handle)
-+		/* The only possible error is ENOMEM. */
-+		g_error("Failed to allocate memory for the request-config object.");
++	static const guint offset_vals[] = { 2, 3 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GThread) thread = NULL;
++	SeqnoCallbackData cb_data = { };
++	guint timeout_id;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++		g_gpiosim_chip_get_dev_path(sim));
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT,
++			"edge-detection", G_GPIOD_LINE_EDGE_BOTH, NULL);
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 2,
++						   sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     config);
++	g_signal_connect(request, "edge-event",
++			 G_CALLBACK(on_seqno_edge_event), &cb_data);
++
++	timeout_id = g_timeout_add_seconds(5, on_seqno_timeout, &cb_data);
++
++	thread = g_thread_new("two-rising-edge-events",
++			      rising_edge_events_on_two_offsets, sim);
++	g_thread_ref(thread);
++
++	while (!cb_data.failed && (!cb_data.first || !cb_data.second))
++		g_main_context_iteration(NULL, TRUE);
++
++	g_source_remove(timeout_id);
++	g_thread_join(thread);
++
++	g_assert_cmpuint(cb_data.first_offset, ==, 2);
++	g_assert_cmpuint(cb_data.second_offset, ==, 3);
++	g_assert_cmpuint(cb_data.first_line_seqno, ==, 1);
++	g_assert_cmpuint(cb_data.second_line_seqno, ==, 1);
++	g_assert_cmpuint(cb_data.first_global_seqno, ==, 1);
++	g_assert_cmpuint(cb_data.second_global_seqno, ==, 2);
++}
+diff --git a/bindings/glib/tests/tests-info-event.c b/bindings/glib/tests/tests-info-event.c
+new file mode 100644
+index 0000000..1884e0b
+--- /dev/null
++++ b/bindings/glib/tests/tests-info-event.c
+@@ -0,0 +1,321 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/info-event"
++
++GPIOD_TEST_CASE(watching_info_events_returns_line_info)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	info = gpiod_glib_test_chip_watch_line_info_or_fail(chip, 3);
++	g_assert_cmpuint(g_gpiod_line_info_get_offset(info), ==, 3);
 +}
 +
-+GPIODRequestConfig *g_gpiod_request_config_new(const gchar *first_prop, ...)
++GPIOD_TEST_CASE(try_offset_of_out_range)
 +{
-+	GPIODRequestConfig *settings;
-+	va_list va;
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++	g_autoptr(GError) err = NULL;
 +
-+	va_start(va, first_prop);
-+	settings = G_GPIOD_REQUEST_CONFIG_OBJ(
-+			g_object_new_valist(G_GPIOD_REQUEST_CONFIG_TYPE,
-+					    first_prop, va));
-+	va_end(va);
-+
-+	return settings;
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	info = g_gpiod_chip_watch_line_info(chip, 11, &err);
++	g_assert_null(info);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
 +}
 +
-+void g_gpiod_request_config_set_consumer(GPIODRequestConfig *self,
-+					 const gchar *consumer)
++static void on_bad_info_event(GPIODChip *chip G_GNUC_UNUSED,
++			      GPIODInfoEvent *event G_GNUC_UNUSED,
++			      gpointer data G_GNUC_UNUSED)
 +{
-+	g_assert(self);
-+
-+	g_gpiod_set_prop_string(G_OBJECT(self), "consumer", consumer);
++	g_test_fail_printf("unexpected info event received");
 +}
 +
-+const gchar *g_gpiod_request_config_get_consumer(GPIODRequestConfig *self)
++static gboolean on_expected_timeout(gpointer data)
 +{
-+	g_assert(self);
++	gboolean *done = data;
 +
-+	return g_gpiod_get_prop_string(G_OBJECT(self), "consumer");
++	*done = TRUE;
++
++	return G_SOURCE_REMOVE;
 +}
 +
-+void g_gpiod_request_config_set_event_buffer_size(GPIODRequestConfig *self,
-+						  guint event_buffer_size)
++GPIOD_TEST_CASE(event_timeout)
 +{
-+	g_assert(self);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++	gboolean done = FALSE;
 +
-+	g_gpiod_set_prop_uint(G_OBJECT(self), "event-buffer-size",
-+			      event_buffer_size);
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	g_signal_connect(chip, "info-event",
++			 G_CALLBACK(on_bad_info_event), NULL);
++	g_timeout_add(100, on_expected_timeout, &done);
++
++	info = gpiod_glib_test_chip_watch_line_info_or_fail(chip, 3);
++
++	while (!done && !g_test_failed())
++		g_main_context_iteration(NULL, TRUE);
 +}
 +
-+guint g_gpiod_request_config_get_event_buffer_size(GPIODRequestConfig *self)
-+{
-+	g_assert(self);
++typedef struct {
++	const gchar *chip_path;
++	guint offset;
++} RequestContext;
 +
-+	return g_gpiod_get_prop_uint(G_OBJECT(self), "event-buffer-size");
++typedef struct {
++	GPtrArray *events;
++	guint done;
++	gboolean failed;
++} EventContext;
++
++static gpointer request_reconfigure_release_line(gpointer data)
++{
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	RequestContext *ctx = data;
++	gboolean ret;
++
++	chip = g_gpiod_chip_new(ctx->chip_path, &err);
++	g_assert_no_error(err);
++	if (g_test_failed())
++		return NULL;
++
++	offsets = gpiod_glib_test_array_from_const(&ctx->offset, 1,
++						   sizeof(guint));
++	config = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(NULL);
++
++	ret = g_gpiod_line_config_add_line_settings(config, offsets,
++						    settings, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	if (g_test_failed())
++		return NULL;
++
++	g_usleep(1000);
++
++	request = g_gpiod_chip_request_lines(chip, NULL, config, &err);
++	g_assert_nonnull(request);
++	g_assert_no_error(err);
++
++	g_usleep(1000);
++
++	g_gpiod_line_config_reset(config);
++	g_gpiod_line_settings_set_direction(settings,
++					    G_GPIOD_LINE_DIRECTION_OUTPUT);
++	ret = g_gpiod_line_config_add_line_settings(config, offsets,
++						    settings, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	if (g_test_failed())
++		return NULL;
++
++	ret = g_gpiod_line_request_reconfigure_lines(request, config, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	if (g_test_failed())
++		return NULL;
++
++	g_usleep(1000);
++
++	g_gpiod_line_request_release(request);
++
++	return NULL;
++}
++
++static void basic_on_info_event(GPIODChip *chip G_GNUC_UNUSED,
++			  GPIODInfoEvent *event, gpointer data)
++{
++	EventContext *ctx = data;
++
++	g_ptr_array_add(ctx->events, g_object_ref(event));
++	ctx->done++;
++}
++
++static gboolean on_timeout(gpointer data)
++{
++	gboolean *failed = data;
++
++	g_test_fail_printf("wait for info event timed out");
++	*failed = TRUE;
++
++	return G_SOURCE_CONTINUE;
++}
++
++GPIOD_TEST_CASE(request_reconfigure_release_events)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++	g_autoptr(GPtrArray) events = NULL;
++	g_autoptr(GThread) thread = NULL;
++	const gchar *chip_path = g_gpiosim_chip_get_dev_path(sim);
++	GPIODInfoEvent *req_ev, *reconf_ev, *rel_ev;
++	guint64 req_ts, reconf_ts, rel_ts;
++	EventContext ev_ctx;
++	RequestContext req_ctx;
++	guint timeout_id;
++
++	events = g_ptr_array_new_full(3, g_object_unref);
++
++	chip = gpiod_glib_test_new_chip_or_fail(chip_path);
++	g_signal_connect(chip, "info-event", G_CALLBACK(basic_on_info_event),
++			 &ev_ctx);
++	timeout_id = g_timeout_add_seconds(5, on_timeout, &ev_ctx.failed);
++
++	info = gpiod_glib_test_chip_watch_line_info_or_fail(chip, 3);
++
++	g_assert_false(g_gpiod_line_info_is_used(info));
++
++	req_ctx.chip_path = chip_path;
++	req_ctx.offset = 3;
++
++	thread = g_thread_new("request-reconfigure-release",
++			      request_reconfigure_release_line, &req_ctx);
++	g_thread_ref(thread);
++
++	ev_ctx.done = 0;
++	ev_ctx.failed = FALSE;
++	ev_ctx.events = events;
++
++	while (ev_ctx.done != 3 && !ev_ctx.failed)
++		g_main_context_iteration(NULL, TRUE);
++
++	g_source_remove(timeout_id);
++	g_thread_join(thread);
++
++	req_ev = g_ptr_array_index(events, 0);
++	reconf_ev = g_ptr_array_index(events, 1);
++	rel_ev = g_ptr_array_index(events, 2);
++
++	g_assert_cmpint(g_gpiod_info_event_get_event_type(req_ev), ==,
++			G_GPIOD_INFO_EVENT_LINE_REQUESTED);
++	g_assert_cmpint(g_gpiod_info_event_get_event_type(reconf_ev), ==,
++			G_GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED);
++	g_assert_cmpint(g_gpiod_info_event_get_event_type(rel_ev), ==,
++			G_GPIOD_INFO_EVENT_LINE_RELEASED);
++
++	req_ts = g_gpiod_info_event_get_timestamp_ns(req_ev);
++	reconf_ts = g_gpiod_info_event_get_timestamp_ns(reconf_ev);
++	rel_ts = g_gpiod_info_event_get_timestamp_ns(rel_ev);
++
++	g_assert_cmpuint(req_ts, <, reconf_ts);
++	g_assert_cmpuint(reconf_ts, <, rel_ts);
++}
++
++static void unwatch_on_info_event(GPIODChip *chip G_GNUC_UNUSED,
++				  GPIODInfoEvent *event G_GNUC_UNUSED,
++				  gpointer data)
++{
++	gboolean *got_event = data;
++
++	*got_event = TRUE;
++}
++
++GPIOD_TEST_CASE(unwatch_and_check_that_no_events_are_generated)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	gboolean got_event = FALSE;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	g_signal_connect(chip, "info-event", G_CALLBACK(unwatch_on_info_event),
++			 &got_event);
++
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++	config = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(NULL);
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++
++	info = gpiod_glib_test_chip_watch_line_info_or_fail(chip, offset);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     config);
++
++	g_main_context_iteration(NULL, TRUE);
++
++	g_assert_true(got_event);
++
++	gpiod_glib_test_chip_unwatch_line_info_or_fail(chip, offset);
++
++	got_event = FALSE;
++	g_gpiod_line_request_release(request);
++
++	g_main_context_iteration(NULL, TRUE);
++
++	g_assert_false(got_event);
++}
++
++static void check_line_info_on_info_event(GPIODChip *chip G_GNUC_UNUSED,
++					  GPIODInfoEvent *event, gpointer data)
++{
++	GPIODLineInfo **info = data;
++
++	*info = g_gpiod_info_event_get_line_info(event);
++}
++
++GPIOD_TEST_CASE(info_event_contains_new_line_info)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) initial_info = NULL;
++	g_autoptr(GPIODLineInfo) event_info = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	g_signal_connect(chip, "info-event",
++			 G_CALLBACK(check_line_info_on_info_event),
++			 &event_info);
++
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++	config = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(NULL);
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++
++	initial_info = gpiod_glib_test_chip_watch_line_info_or_fail(chip,
++								    offset);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     config);
++
++	g_main_context_iteration(NULL, TRUE);
++
++	g_assert_nonnull(event_info);
++}
+diff --git a/bindings/glib/tests/tests-line-config.c b/bindings/glib/tests/tests-line-config.c
+new file mode 100644
+index 0000000..cbdf589
+--- /dev/null
++++ b/bindings/glib/tests/tests-line-config.c
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/line-config"
++
++GPIOD_TEST_CASE(too_many_lines)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i;
++
++	settings = g_gpiod_line_settings_new(NULL);
++	config = g_gpiod_line_config_new();
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++
++	for (i = 0; i < 65; i++)
++		g_array_append_val(offsets, i);
++
++	ret = g_gpiod_line_config_add_line_settings(config, offsets,
++						    settings, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_E2BIG);
++}
++
++GPIOD_TEST_CASE(get_line_settings)
++{
++	static const guint offset_vals[] = { 0, 1, 2, 3 };
++
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineSettings) retrieved = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT,
++			"bias", G_GPIOD_LINE_BIAS_PULL_DOWN,
++			NULL);
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 4,
++						   sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++
++	retrieved = gpiod_glib_test_line_config_get_line_settings_or_fail(
++								config, 2);
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(retrieved), ==,
++			G_GPIOD_LINE_DIRECTION_INPUT);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(retrieved), ==,
++			G_GPIOD_LINE_BIAS_PULL_DOWN);
++}
++
++GPIOD_TEST_CASE(null_settings)
++{
++	static const guint offset_vals[] = { 0, 1, 2, 3 };
++
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GArray) offsets = NULL;
++
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 4,
++						   sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      NULL);
++
++	settings = gpiod_glib_test_line_config_get_line_settings_or_fail(config,
++									 2);
++
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DIRECTION_AS_IS);
++}
++
++GPIOD_TEST_CASE(null_offsets)
++{
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	settings = g_gpiod_line_settings_new(NULL);
++	config = g_gpiod_line_config_new();
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++
++	ret = g_gpiod_line_config_add_line_settings(config, NULL, settings,
++						    &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(zero_offsets)
++{
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	settings = g_gpiod_line_settings_new(NULL);
++	config = g_gpiod_line_config_new();
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++
++	ret = g_gpiod_line_config_add_line_settings(config, offsets, settings,
++						    &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(set_global_output_values)
++{
++	static const guint offset_vals[] = { 0, 1, 2, 3 };
++	static const GPIODLineValue output_values[] = {
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_INACTIVE,
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_INACTIVE,
++	};
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 4, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT, NULL);
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 4,
++						   sizeof(guint));
++	values = gpiod_glib_test_array_from_const(output_values, 4,
++						  sizeof(GPIODLineValue));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      settings);
++	gpiod_glib_test_line_config_set_output_values_or_fail(config, values);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     config);
++
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 0), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 1), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 2), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 3), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++}
++
++GPIOD_TEST_CASE(handle_duplicate_offsets)
++{
++	static const guint offset_vals[] = { 0, 2, 2, 3 };
++
++	g_autoptr(GPIODLineConfig) config = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) retrieved = NULL;
++
++	config = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 4,
++						   sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(config, offsets,
++							      NULL);
++
++	retrieved = g_gpiod_line_config_get_configured_offsets(config);
++	g_assert_cmpuint(retrieved->len, ==, 3);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 0), ==, 0);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 1), ==, 2);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 2), ==, 3);
++}
+diff --git a/bindings/glib/tests/tests-line-info.c b/bindings/glib/tests/tests-line-info.c
+new file mode 100644
+index 0000000..c132c06
+--- /dev/null
++++ b/bindings/glib/tests/tests-line-info.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/line-info"
++
++GPIOD_TEST_CASE(get_line_info_good)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	info = gpiod_glib_test_chip_get_line_info_or_fail(chip, 3);
++
++	g_assert_cmpuint(g_gpiod_line_info_get_offset(info), ==, 3);
++}
++
++GPIOD_TEST_CASE(get_line_info_offset_out_of_range)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	info = g_gpiod_chip_get_line_info(chip, 8, &err);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(line_info_basic_properties)
++{
++	static const GPIOSimLineName names[] = {
++		{ .offset = 1, .name = "foo", },
++		{ .offset = 2, .name = "bar", },
++		{ .offset = 4, .name = "baz", },
++		{ .offset = 5, .name = "xyz", },
++		{ }
++	};
++
++	static const GPIOSimHog hogs[] = {
++		{
++			.offset = 3,
++			.name = "hog3",
++			.direction = G_GPIOSIM_DIRECTION_OUTPUT_HIGH,
++		},
++		{
++			.offset = 4,
++			.name = "hog4",
++			.direction = G_GPIOSIM_DIRECTION_OUTPUT_LOW,
++		},
++		{ }
++	};
++
++	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
++	g_autoptr(GVariant) vhogs = g_gpiosim_package_hogs(hogs);
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
++							"line-names", vnames,
++							"hogs", vhogs,
++							NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineInfo) info4 = NULL;
++	g_autoptr(GPIODLineInfo) info6 = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++				g_gpiosim_chip_get_dev_path(sim));
++	info4 = gpiod_glib_test_chip_get_line_info_or_fail(chip, 4);
++	info6 = gpiod_glib_test_chip_get_line_info_or_fail(chip, 6);
++
++	g_assert_cmpuint(g_gpiod_line_info_get_offset(info4), ==, 4);
++	g_assert_cmpstr(g_gpiod_line_info_get_name(info4), ==, "baz");
++	g_assert_cmpstr(g_gpiod_line_info_get_consumer(info4), ==, "hog4");
++	g_assert_true(g_gpiod_line_info_is_used(info4));
++	g_assert_cmpint(g_gpiod_line_info_get_direction(info4), ==,
++			G_GPIOD_LINE_DIRECTION_OUTPUT);
++	g_assert_cmpint(g_gpiod_line_info_get_edge_detection(info4), ==,
++			G_GPIOD_LINE_EDGE_NONE);
++	g_assert_false(g_gpiod_line_info_is_active_low(info4));
++	g_assert_cmpint(g_gpiod_line_info_get_bias(info4), ==,
++			G_GPIOD_LINE_BIAS_UNKNOWN);
++	g_assert_cmpint(g_gpiod_line_info_get_drive(info4), ==,
++			G_GPIOD_LINE_DRIVE_PUSH_PULL);
++	g_assert_cmpint(g_gpiod_line_info_get_event_clock(info4), ==,
++			G_GPIOD_LINE_CLOCK_MONOTONIC);
++	g_assert_false(g_gpiod_line_info_is_debounced(info4));
++	g_assert_cmpuint(g_gpiod_line_info_get_debounce_period_us(info4), ==,
++			 0);
++}
+diff --git a/bindings/glib/tests/tests-line-request.c b/bindings/glib/tests/tests-line-request.c
+new file mode 100644
+index 0000000..ae13c38
+--- /dev/null
++++ b/bindings/glib/tests/tests-line-request.c
+@@ -0,0 +1,704 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <glib.h>
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiosim-glib.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/line-request"
++
++GPIOD_TEST_CASE(request_fails_with_no_offsets)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GError) err = NULL;
++
++	line_cfg = g_gpiod_line_config_new();
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	request = g_gpiod_chip_request_lines(chip, NULL, line_cfg, &err);
++	g_assert_null(request);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(request_fails_with_no_line_config)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GError) err = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	request = g_gpiod_chip_request_lines(chip, NULL, NULL, &err);
++	g_assert_null(request);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(set_consumer)
++{
++	static const gchar *const consumer = "foobar";
++	static const guint offset = 2;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODRequestConfig) req_cfg = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	req_cfg = g_gpiod_request_config_new("consumer", consumer, NULL);
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, req_cfg,
++							     line_cfg);
++
++	info = gpiod_glib_test_chip_get_line_info_or_fail(chip, offset);
++	g_assert_cmpstr(g_gpiod_line_info_get_consumer(info), ==, consumer);
++}
++
++GPIOD_TEST_CASE(empty_consumer)
++{
++	static const guint offset = 2;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODChip) chip = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GPIODLineInfo) info = NULL;
++
++	chip = gpiod_glib_test_new_chip_or_fail(
++			g_gpiosim_chip_get_dev_path(sim));
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_chip_request_lines_or_fail(chip, NULL,
++							     line_cfg);
++
++	info = gpiod_glib_test_chip_get_line_info_or_fail(chip, offset);
++	g_assert_cmpstr(g_gpiod_line_info_get_consumer(info), ==, "?");
++}
++
++GPIOD_TEST_CASE(get_requested_offsets)
++{
++	static const guint offset_vals[] = { 2, 1, 6, 4 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) retrieved = NULL;
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 4,
++						   sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	retrieved = g_gpiod_line_request_get_requested_offsets(request);
++	g_assert_cmpuint(retrieved->len, ==, 4);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 0), ==, 2);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 1), ==, 1);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 2), ==, 6);
++	g_assert_cmpuint(g_array_index(retrieved, guint, 3), ==, 4);
++}
++
++GPIOD_TEST_CASE(released_request_cannot_be_used_reconfigure)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_gpiod_line_request_release(request);
++
++	ret = g_gpiod_line_request_reconfigure_lines(request, line_cfg, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED);
++}
++
++GPIOD_TEST_CASE(released_request_cannot_be_used_get_value)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	GPIODLineValue value;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_gpiod_line_request_release(request);
++
++	ret = g_gpiod_line_request_get_value(request, offset, &value, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED);
++
++	g_clear_pointer(&err, g_error_free);
++
++	ret = g_gpiod_line_request_get_values(request, &values, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED);
++}
++
++GPIOD_TEST_CASE(released_request_cannot_be_used_set_value)
++{
++	static const guint offset = 3;
++	static const GPIODLineValue value = G_GPIOD_LINE_VALUE_ACTIVE;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_gpiod_line_request_release(request);
++
++	ret = g_gpiod_line_request_set_value(request, offset, value, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED);
++
++	g_clear_pointer(&err, g_error_free);
++
++	values = gpiod_glib_test_array_from_const(&value, 1, sizeof(value));
++	ret = g_gpiod_line_request_set_values(request, values, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_REQUEST_RELEASED);
++}
++
++GPIOD_TEST_CASE(reconfigure_lines)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset_vals[2];
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT,
++			"output-value", G_GPIOD_LINE_VALUE_ACTIVE,
++			NULL);
++
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	offset_vals[0] = 0;
++	offset_vals[1] = 2;
++	g_array_append_vals(offsets, offset_vals, 2);
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++	g_free(g_array_steal(offsets, NULL));
++
++	g_gpiod_line_settings_set_output_value(settings,
++					       G_GPIOD_LINE_VALUE_INACTIVE);
++	offset_vals[0] = 1;
++	offset_vals[1] = 3;
++	g_array_append_vals(offsets, offset_vals, 2);
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++	g_free(g_array_steal(offsets, NULL));
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 0), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 1), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 2), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 3), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++
++	g_gpiod_line_config_reset(line_cfg);
++
++	g_gpiod_line_settings_set_output_value(settings,
++					       G_GPIOD_LINE_VALUE_INACTIVE);
++	offset_vals[0] = 0;
++	offset_vals[1] = 2;
++	g_array_append_vals(offsets, offset_vals, 2);
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++	g_free(g_array_steal(offsets, NULL));
++
++	g_gpiod_line_settings_set_output_value(settings,
++					       G_GPIOD_LINE_VALUE_ACTIVE);
++	offset_vals[0] = 1;
++	offset_vals[1] = 3;
++	g_array_append_vals(offsets, offset_vals, 2);
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	ret = g_gpiod_line_request_reconfigure_lines(request, line_cfg, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 0), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 1), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 2), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 3), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++}
++
++GPIOD_TEST_CASE(reconfigure_fails_without_config)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	ret = g_gpiod_line_request_reconfigure_lines(request, NULL, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(reconfigure_with_different_offsets)
++{
++	static const guint offsets0[] = { 0, 1, 2, 3 };
++	static const guint offsets1[] = { 2, 4, 5 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(offsets0, 4, sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++	g_free(g_array_steal(offsets, NULL));
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_gpiod_line_config_reset(line_cfg);
++
++	g_array_append_vals(offsets, offsets1, 3);
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	ret = g_gpiod_line_request_reconfigure_lines(request, line_cfg, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(read_one_value)
++{
++	static const guint offset_vals[] = { 0, 2, 4 };
++	static const gint pulls[] = { 0, 1, 0 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	GPIODLineValue value;
++	gboolean ret;
++	guint i;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 3,
++						   sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	for (i = 0; i < 3; i++)
++		g_gpiosim_chip_set_pull(sim, offset_vals[i],
++					pulls[i] ? G_GPIOSIM_PULL_UP :
++						   G_GPIOSIM_PULL_DOWN);
++
++	ret = g_gpiod_line_request_get_value(request, 2, &value, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++	g_assert_cmpint(value, ==, G_GPIOD_LINE_VALUE_ACTIVE);
++}
++
++GPIOD_TEST_CASE(read_all_values_null_array)
++{
++	static const guint offset_vals[] = { 0, 2, 4, 5, 7 };
++	static const gint pulls[] = { 0, 1, 0, 1, 1 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 5,
++						   sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	for (i = 0; i < 5; i++)
++		g_gpiosim_chip_set_pull(sim, offset_vals[i],
++					pulls[i] ? G_GPIOSIM_PULL_UP :
++						   G_GPIOSIM_PULL_DOWN);
++
++	ret = g_gpiod_line_request_get_values(request, &values, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++
++	g_assert_cmpuint(values->len, ==, 5);
++
++	for (i = 0; i < 5; i++)
++		g_assert_cmpint(g_array_index(values, GPIODLineValue, i), ==,
++				pulls[i]);
++}
++
++GPIOD_TEST_CASE(read_all_values_preallocated_array)
++{
++	static const guint offset_vals[] = { 0, 2, 4, 5, 7 };
++	static const gint pulls[] = { 0, 1, 0, 1, 1 };
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 5,
++						   sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	for (i = 0; i < 5; i++)
++		g_gpiosim_chip_set_pull(sim, offset_vals[i],
++					pulls[i] ? G_GPIOSIM_PULL_UP :
++						   G_GPIOSIM_PULL_DOWN);
++
++	values = g_array_new(FALSE, TRUE, sizeof(GPIODLineValue));
++	g_array_set_size(values, 5);
++
++	ret = g_gpiod_line_request_get_values(request, &values, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++
++	g_assert_cmpuint(values->len, ==, 5);
++
++	for (i = 0; i < 5; i++)
++		g_assert_cmpint(g_array_index(values, GPIODLineValue, i), ==,
++				pulls[i]);
++}
++
++GPIOD_TEST_CASE(set_one_value)
++{
++	static const guint offset = 4;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT,
++			"output-value", G_GPIOD_LINE_VALUE_INACTIVE,
++			NULL);
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_assert_cmpuint(g_gpiosim_chip_get_value(sim, offset), ==,
++			G_GPIOSIM_VALUE_INACTIVE);
++
++	ret = g_gpiod_line_request_set_value(request, 4,
++					     G_GPIOD_LINE_VALUE_ACTIVE, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++
++	g_assert_cmpuint(g_gpiosim_chip_get_value(sim, offset), ==,
++			G_GPIOSIM_VALUE_ACTIVE);
++}
++
++GPIOD_TEST_CASE(set_all_values)
++{
++	static const guint offset_vals[] = { 0, 2, 4, 5, 6 };
++	static const GPIODLineValue value_vals[] = {
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_INACTIVE,
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_ACTIVE
++	};
++	static const GPIOSimValue sim_values[] = {
++		G_GPIOSIM_VALUE_ACTIVE,
++		G_GPIOSIM_VALUE_INACTIVE,
++		G_GPIOSIM_VALUE_ACTIVE,
++		G_GPIOSIM_VALUE_ACTIVE,
++		G_GPIOSIM_VALUE_ACTIVE
++	};
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(offset_vals, 5, sizeof(guint));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	values = gpiod_glib_test_array_from_const(value_vals, 5,
++						  sizeof(GPIODLineValue));
++
++	ret = g_gpiod_line_request_set_values(request, values, &err);
++	g_assert_true(ret);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++
++	for (i = 0; i < 5; i++)
++		g_assert_cmpint(g_gpiosim_chip_get_value(sim, offset_vals[i]),
++				==, sim_values[i]);
++}
++
++GPIOD_TEST_CASE(get_values_invalid_arguments)
++{
++	static const guint offset = 3;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(offset));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	ret = g_gpiod_line_request_get_values_subset(request, offsets, NULL,
++						     &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++
++	g_clear_pointer(&err, g_error_free);
++
++	ret = g_gpiod_line_request_get_values_subset(request, NULL, &values,
++						     &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(set_values_invalid_arguments)
++{
++	static const guint offset = 3;
++	static const GPIODLineValue value_vals[] = {
++		G_GPIOD_LINE_VALUE_ACTIVE,
++		G_GPIOD_LINE_VALUE_INACTIVE,
++	};
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineSettings) settings = NULL;
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GArray) vals_inval = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++
++	line_cfg = g_gpiod_line_config_new();
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_OUTPUT, NULL);
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(offset));
++	values = gpiod_glib_test_array_from_const(value_vals, 1,
++						  sizeof(GPIODLineValue));
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets,
++							      settings);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	ret = g_gpiod_line_request_set_values_subset(request, offsets, NULL,
++						     &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++
++	g_clear_pointer(&err, g_error_free);
++
++	ret = g_gpiod_line_request_set_values_subset(request, NULL, values,
++						     &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++
++	g_clear_pointer(&err, g_error_free);
++
++	vals_inval = gpiod_glib_test_array_from_const(value_vals, 2,
++						      sizeof(GPIODLineValue));
++
++	ret = g_gpiod_line_request_set_values_subset(request, offsets,
++						     vals_inval, &err);
++	g_assert_false(ret);
++	g_assert_error(err, G_GPIOD_ERROR, G_GPIOD_ERR_INVAL);
++}
++
++GPIOD_TEST_CASE(get_chip_name)
++{
++	static const guint offset = 4;
++
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GPIODLineConfig) line_cfg = NULL;
++	g_autoptr(GPIODLineRequest) request = NULL;
++	g_autoptr(GArray) offsets = NULL;
++
++	line_cfg = g_gpiod_line_config_new();
++	offsets = gpiod_glib_test_array_from_const(&offset, 1, sizeof(guint));
++
++	gpiod_glib_test_line_config_add_line_settings_or_fail(line_cfg,
++							      offsets, NULL);
++
++	request = gpiod_glib_test_request_lines_or_fail(
++			g_gpiosim_chip_get_dev_path(sim), NULL, line_cfg);
++
++	g_assert_cmpstr(g_gpiosim_chip_get_name(sim), ==,
++			g_gpiod_line_request_get_chip_name(request));
++}
+diff --git a/bindings/glib/tests/tests-line-settings.c b/bindings/glib/tests/tests-line-settings.c
+new file mode 100644
+index 0000000..ad195ba
+--- /dev/null
++++ b/bindings/glib/tests/tests-line-settings.c
+@@ -0,0 +1,252 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/line-settings"
++
++GPIOD_TEST_CASE(default_config)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings),
++			==, G_GPIOD_LINE_EDGE_NONE);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_PUSH_PULL);
++	g_assert_false(g_gpiod_line_settings_get_active_low(settings));
++	g_assert_cmpint(g_gpiod_line_settings_get_debounce_period_us(settings),
++			==, 0);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_MONOTONIC);
++	g_assert_cmpint(g_gpiod_line_settings_get_output_value(settings), ==,
++			G_GPIOD_LINE_VALUE_INACTIVE);
++}
++
++GPIOD_TEST_CASE(set_direction)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_direction(settings,
++					    G_GPIOD_LINE_DIRECTION_INPUT);
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_INPUT);
++
++	g_gpiod_line_settings_set_direction(settings,
++					    G_GPIOD_LINE_DIRECTION_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_AS_IS);
++
++	g_gpiod_line_settings_set_direction(settings,
++					    G_GPIOD_LINE_DIRECTION_OUTPUT);
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_OUTPUT);
++}
++
++GPIOD_TEST_CASE(set_edge_detection)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_edge_detection(settings,
++						 G_GPIOD_LINE_EDGE_BOTH);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_BOTH);
++
++	g_gpiod_line_settings_set_edge_detection(settings,
++						 G_GPIOD_LINE_EDGE_NONE);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_NONE);
++
++	g_gpiod_line_settings_set_edge_detection(settings,
++						 G_GPIOD_LINE_EDGE_FALLING);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_FALLING);
++
++	g_gpiod_line_settings_set_edge_detection(settings,
++						 G_GPIOD_LINE_EDGE_RISING);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_RISING);
++}
++
++GPIOD_TEST_CASE(set_bias)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_bias(settings, G_GPIOD_LINE_BIAS_DISABLED);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_DISABLED);
++
++	g_gpiod_line_settings_set_bias(settings, G_GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_AS_IS);
++
++	g_gpiod_line_settings_set_bias(settings, G_GPIOD_LINE_BIAS_PULL_DOWN);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_PULL_DOWN);
++
++	g_gpiod_line_settings_set_bias(settings, G_GPIOD_LINE_BIAS_PULL_UP);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_PULL_UP);
++}
++
++GPIOD_TEST_CASE(set_drive)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_drive(settings,
++					G_GPIOD_LINE_DRIVE_OPEN_DRAIN);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_OPEN_DRAIN);
++
++	g_gpiod_line_settings_set_drive(settings,
++					G_GPIOD_LINE_DRIVE_PUSH_PULL);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_PUSH_PULL);
++
++	g_gpiod_line_settings_set_drive(settings,
++					G_GPIOD_LINE_DRIVE_OPEN_SOURCE);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_OPEN_SOURCE);
++}
++
++GPIOD_TEST_CASE(set_active_low)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_active_low(settings, TRUE);
++	g_assert_true(g_gpiod_line_settings_get_active_low(settings));
++
++	g_gpiod_line_settings_set_active_low(settings, FALSE);
++	g_assert_false(g_gpiod_line_settings_get_active_low(settings));
++}
++
++GPIOD_TEST_CASE(set_debounce_period)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_debounce_period_us(settings, 4000);
++	g_assert_cmpint(g_gpiod_line_settings_get_debounce_period_us(settings),
++			==, 4000);
++}
++
++GPIOD_TEST_CASE(set_event_clock)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_event_clock(settings,
++					       G_GPIOD_LINE_CLOCK_MONOTONIC);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_MONOTONIC);
++
++	g_gpiod_line_settings_set_event_clock(settings,
++					      G_GPIOD_LINE_CLOCK_REALTIME);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_REALTIME);
++
++	g_gpiod_line_settings_set_event_clock(settings,
++					      G_GPIOD_LINE_CLOCK_HTE);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_HTE);
++}
++
++GPIOD_TEST_CASE(set_output_value)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_output_value(settings,
++					       G_GPIOD_LINE_VALUE_ACTIVE);
++	g_assert_cmpint(g_gpiod_line_settings_get_output_value(settings), ==,
++			G_GPIOD_LINE_VALUE_ACTIVE);
++
++	g_gpiod_line_settings_set_output_value(settings,
++					       G_GPIOD_LINE_VALUE_INACTIVE);
++	g_assert_cmpint(g_gpiod_line_settings_get_output_value(settings), ==,
++			G_GPIOD_LINE_VALUE_INACTIVE);
++}
++
++GPIOD_TEST_CASE(reset_settings)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(NULL);
++
++	g_gpiod_line_settings_set_direction(settings,
++					    G_GPIOD_LINE_DIRECTION_INPUT);
++	g_gpiod_line_settings_set_edge_detection(settings,
++						 G_GPIOD_LINE_EDGE_BOTH);
++	g_gpiod_line_settings_set_debounce_period_us(settings, 2000);
++	g_gpiod_line_settings_set_event_clock(settings,
++					      G_GPIOD_LINE_CLOCK_REALTIME);
++
++	g_gpiod_line_settings_reset(settings);
++
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_NONE);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_AS_IS);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_PUSH_PULL);
++	g_assert_false(g_gpiod_line_settings_get_active_low(settings));
++	g_assert_cmpint(g_gpiod_line_settings_get_debounce_period_us(settings),
++			==, 0);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_MONOTONIC);
++	g_assert_cmpint(g_gpiod_line_settings_get_output_value(settings), ==,
++			G_GPIOD_LINE_VALUE_INACTIVE);
++}
++
++GPIOD_TEST_CASE(set_props_in_constructor)
++{
++	g_autoptr(GPIODLineSettings) settings = NULL;
++
++	settings = g_gpiod_line_settings_new(
++			"direction", G_GPIOD_LINE_DIRECTION_INPUT,
++			"edge-detection", G_GPIOD_LINE_EDGE_BOTH,
++			"active-low", TRUE,
++			"debounce-period-us", (GTimeSpan)3000,
++			"bias", G_GPIOD_LINE_BIAS_PULL_UP,
++			"event-clock", G_GPIOD_LINE_CLOCK_REALTIME,
++			NULL);
++
++	g_assert_cmpint(g_gpiod_line_settings_get_direction(settings), ==,
++			G_GPIOD_LINE_DIRECTION_INPUT);
++	g_assert_cmpint(g_gpiod_line_settings_get_edge_detection(settings), ==,
++			G_GPIOD_LINE_EDGE_BOTH);
++	g_assert_cmpint(g_gpiod_line_settings_get_bias(settings), ==,
++			G_GPIOD_LINE_BIAS_PULL_UP);
++	g_assert_cmpint(g_gpiod_line_settings_get_drive(settings), ==,
++			G_GPIOD_LINE_DRIVE_PUSH_PULL);
++	g_assert_true(g_gpiod_line_settings_get_active_low(settings));
++	g_assert_cmpint(g_gpiod_line_settings_get_debounce_period_us(settings),
++			==, 3000);
++	g_assert_cmpint(g_gpiod_line_settings_get_event_clock(settings), ==,
++			G_GPIOD_LINE_CLOCK_REALTIME);
++	g_assert_cmpint(g_gpiod_line_settings_get_output_value(settings), ==,
++			G_GPIOD_LINE_VALUE_INACTIVE);
++}
+diff --git a/bindings/glib/tests/tests-misc.c b/bindings/glib/tests/tests-misc.c
+new file mode 100644
+index 0000000..7db9ec2
+--- /dev/null
++++ b/bindings/glib/tests/tests-misc.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <glib.h>
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiosim-glib.h>
++
++#define GPIOD_TEST_GROUP "glib/misc"
++
++GPIOD_TEST_CASE(is_gpiochip_bad)
++{
++	g_assert_false(g_gpiod_is_gpiochip_device("/dev/null"));
++	g_assert_false(g_gpiod_is_gpiochip_device("/dev/nonexistent"));
++}
++
++GPIOD_TEST_CASE(is_gpiochip_good)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++
++	g_assert_true(g_gpiod_is_gpiochip_device(
++			g_gpiosim_chip_get_dev_path(sim)));
++}
++
++GPIOD_TEST_CASE(is_gpiochip_link_bad)
++{
++	g_autofree gchar *link = NULL;
++	gint ret;
++
++	link = g_strdup_printf("/tmp/gpiod-test-link.%u", getpid());
++	ret = symlink("/dev/null", link);
++	g_assert_cmpint(ret, ==, 0);
++	gpiod_test_return_if_failed();
++
++	g_assert_false(g_gpiod_is_gpiochip_device(link));
++	ret = unlink(link);
++	g_assert_cmpint(ret, ==, 0);
++}
++
++GPIOD_TEST_CASE(is_gpiochip_link_good)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autofree gchar *link = NULL;
++	gint ret;
++
++	link = g_strdup_printf("/tmp/gpiod-test-link.%u", getpid());
++	ret = symlink(g_gpiosim_chip_get_dev_path(sim), link);
++	g_assert_cmpint(ret, ==, 0);
++	gpiod_test_return_if_failed();
++
++	g_assert_true(g_gpiod_is_gpiochip_device(link));
++	ret = unlink(link);
++	g_assert_cmpint(ret, ==, 0);
++}
++
++GPIOD_TEST_CASE(version_string)
++{
++	static const gchar *const pattern = "^\\d+\\.\\d+(\\.\\d+|\\-devel|\\-rc\\d+)$";
++
++	g_autoptr(GError) err = NULL;
++	g_autoptr(GRegex) regex = NULL;
++	g_autoptr(GMatchInfo) match = NULL;
++	g_autofree gchar *res = NULL;
++	const gchar *ver;
++	gboolean ret;
++
++	ver = g_gpiod_api_version();
++	g_assert_nonnull(ver);
++	gpiod_test_return_if_failed();
++
++	regex = g_regex_new(pattern, 0, 0, &err);
++	g_assert_nonnull(regex);
++	g_assert_no_error(err);
++	gpiod_test_return_if_failed();
++
++	ret = g_regex_match(regex, ver, 0, &match);
++	g_assert_true(ret);
++	gpiod_test_return_if_failed();
++
++	g_assert_true(g_match_info_matches(match));
++	res = g_match_info_fetch(match, 0);
++	g_assert_nonnull(res);
++	g_assert_cmpstr(res, ==, ver);
++	g_match_info_next(match, &err);
++	g_assert_no_error(err);
++	g_assert_false(g_match_info_matches(match));
++}
+diff --git a/bindings/glib/tests/tests-request-config.c b/bindings/glib/tests/tests-request-config.c
+new file mode 100644
+index 0000000..665f2a4
+--- /dev/null
++++ b/bindings/glib/tests/tests-request-config.c
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <glib.h>
++#include <gpiod-glib.h>
++#include <gpiod-test.h>
++
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "glib/request-config"
++
++GPIOD_TEST_CASE(default_config)
++{
++	g_autoptr(GPIODRequestConfig) config = NULL;
++
++	config = g_gpiod_request_config_new(NULL);
++
++	g_assert_null(g_gpiod_request_config_get_consumer(config));
++	g_assert_cmpuint(g_gpiod_request_config_get_event_buffer_size(config),
++			 ==, 0);
++}
++
++GPIOD_TEST_CASE(set_consumer)
++{
++	g_autoptr(GPIODRequestConfig) config = NULL;
++
++	config = g_gpiod_request_config_new(NULL);
++
++	g_gpiod_request_config_set_consumer(config, "foobar");
++	g_assert_cmpstr(g_gpiod_request_config_get_consumer(config), ==,
++			"foobar");
++
++	g_gpiod_request_config_set_consumer(config, NULL);
++	g_assert_null(g_gpiod_request_config_get_consumer(config));
++}
++
++GPIOD_TEST_CASE(set_event_buffer_size)
++{
++	g_autoptr(GPIODRequestConfig) config = NULL;
++
++	config = g_gpiod_request_config_new(NULL);
++
++	g_gpiod_request_config_set_event_buffer_size(config, 128);
++	g_assert_cmpuint(g_gpiod_request_config_get_event_buffer_size(config),
++			 ==, 128);
++}
++
++GPIOD_TEST_CASE(set_properties_in_constructor)
++{
++	g_autoptr(GPIODRequestConfig) config = NULL;
++
++	config = g_gpiod_request_config_new("consumer", "foobar",
++					    "event-buffer-size", 64, NULL);
++	g_assert_cmpstr(g_gpiod_request_config_get_consumer(config), ==,
++			"foobar");
++	g_assert_cmpuint(g_gpiod_request_config_get_event_buffer_size(config),
++			 ==, 64);
 +}
 -- 
 2.40.1
