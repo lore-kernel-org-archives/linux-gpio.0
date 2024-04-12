@@ -1,138 +1,87 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23B941744
-	for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 10:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCF443AC0
+	for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 10:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712918689; cv=none; b=d88zhDIyhnrWgg/IjdOQh4dYEmDgQFzUi1Cbifk2lEqLsgK1aU/3hgKtNUjJLjh9LFjEqZy4Sb4lDQCNEwWz5ChetnWwlFKFDHpDINa6xDevnYD9JcCnRZESRFgmnEfgZ2YV1eaT34TfUitBNaxUrrM6EiKpz7nYniGCl7dNMAg=
+	t=1712918947; cv=none; b=KgMjufAepI12WTvQiloCuEfS8aS2lvb9GWG5oPFtHySwEijOErAfbPo4kCozik0SvKAb+aIWEYyUOJuj1zASB63OxzJS9kqa/ZqnKrsP3uEK9G7JeyhgodehfC1sysidOsU/PL0K7ATzAPm4kb92Pd1GaJ5M769UO4p7GkSgqYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712918689; c=relaxed/simple;
-	bh=v7mlEGcz7mNkeBpLcHL3FGgewkD7pRBBLfHoly2Kz5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=DXdo3gIOB7DOKZ8wlMAFzlixAiY/4WT4k4C3X1Wmvr7F1M4DXxrzcrF4ipDBiTdNoKTeA+q0YbW0G4pimW4E/EWq5JCfVH4jA2RgaxKa27inySS7henJtCUsZFN+mGPiYViejKW5+b+i2VUUTokdcpXG0OVEqSemuC8wfK2rtKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wyYWXuPo; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wyYWXuPo"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcc80d6006aso751024276.0
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Apr 2024 03:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712918685; x=1713523485; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DqlenMfbXI7u4QjaxfgU8oCjAPQSIsIN53pM+qheFN8=;
-        b=wyYWXuPo0dfDLuWrrgtKfwn0Fay1fwGgWeFjRyy4PXTqq653H7hxFiwZWFlcz2DXGj
-         1XdM53Gf2fZMDSWWvigysSpsCNcWgBuQ+0UMu8y0UUA3DLVbq8qK+h14YnZQR5UfgB/A
-         aVTBMz7U6c+E0wpQY2CZlOeSZNMLfYhTpVgElP2NT+i+H+s9kBMq7HWFa62i05JWMG3K
-         r/Lbp7qLBgJfo3TayokWWZM6V6USvBpDzHigpoB8uhT9JWdhX1V07PjOHr0ORK1ww8Mj
-         Fw/cw/2X8J+3namHbLEz6ppXVietKBxAhFdunwsmrA4kC/8QcCQJFF2tRAPUtK5XRGzE
-         QdEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712918685; x=1713523485;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DqlenMfbXI7u4QjaxfgU8oCjAPQSIsIN53pM+qheFN8=;
-        b=tFWxDO66Vhiq2Z5Suz+7IT1UKTGpev63P+scoGCELjuji/IlK3gzP5Lr8xVoZTUslZ
-         rzWppTOZWCKQjNuVHWgfoEg6EA7yBz/GX/dMOhUTpWui7Pe3FBnZ3TNn7foQWXAq6NL7
-         SEcR10CTBO7Tabe9um1Il3X0CzC/VZf9PIWyZA0OYC9pgSBp7O0NdDuG/PrdDUfXjr9p
-         54a6WQyIF5+Iz2Gi2ILd6hQXYklSBLa8/Q5IDahWJBlAzMzTxklGW9+LK3Ya9VLMjqjx
-         NYQxUjmwUtS5vU4iUdwF2AguQQhTwWFa+vtOJkiKDCI32+tpwovGZylvcMeFoOY3RymD
-         5fiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZmMNzAyrDLtAMhX2xmoP8D3DKdrW7AspdfJIR91jNtAWS2rGjKo5PkFJ4m69dZHwIXXOYZgZQiVX0YseLGSaPctWsRbAS5SkInQ==
-X-Gm-Message-State: AOJu0YwTDN2Mq7+raBXEyplrHMdmBRyEwW7gVMleEGuW5PMRjzPv947w
-	NoeAsc7W6J/veUH7Xt0FZkbOG+b+KHAaFN6PeTnVlX3i0cQoGT9nyGHcVKRwjrmdHdlRXZaaYB8
-	xMoUwYAg9PP0auXNzG9xU6njMtb14uvbzlvhoNg==
-X-Google-Smtp-Source: AGHT+IED3ayl6UkAQC2P0B49UvTOP1CgyGKxhqTmGgKhH3s9wFkmjW9bev85ClbkNc6qjO3C+ZIZtAit7NY75/+rT74=
-X-Received: by 2002:a05:6902:252:b0:dc7:4b0a:589 with SMTP id
- k18-20020a056902025200b00dc74b0a0589mr2026248ybs.55.1712918685648; Fri, 12
- Apr 2024 03:44:45 -0700 (PDT)
+	s=arc-20240116; t=1712918947; c=relaxed/simple;
+	bh=c7uGBSgj4i54t4cuUVmXTwG47NlFc+8aGQoUG+2Uv9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MtU7qAwyMccYhzha6GXEdBYKGS1QooIgitV4ZKao9kDODqjtG7Xb58TD0l+/ImzMnKTDvoxjy8ylD/whuyC7M8OpX5bXojG78D9B/rmCIERvbFPFi7dmwhB+4PYhJ6gW0JmljFsNmitIVblJhDk/YNNM3OEG6Ccaed0vf3Dds20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by andre.telenet-ops.be with bizsmtp
+	id AAox2C00G0SSLxL01AoxX9; Fri, 12 Apr 2024 12:48:57 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rvESF-00GpBe-KB;
+	Fri, 12 Apr 2024 12:48:56 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rvDjV-004eRm-Vf;
+	Fri, 12 Apr 2024 12:02:10 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Fixes for v6.9
+Date: Fri, 12 Apr 2024 12:02:07 +0200
+Message-Id: <cover.1712915891.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZhgDCKhcHdwGoJ4Y@Z926fQmE5jqhFMgp6>
-In-Reply-To: <ZhgDCKhcHdwGoJ4Y@Z926fQmE5jqhFMgp6>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 Apr 2024 12:44:34 +0200
-Message-ID: <CACRpkdbTdGajQLSGDkD0cWRG+79tpojYkdyF3t0jD7_WEDtQLw@mail.gmail.com>
-Subject: Re: [PATCH][RFC][resend after bogus] gpio-syscon: do not report bogus error
-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Etienne,
+	Hi Linus,
 
-thanks for your patch!
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-On Thu, Apr 11, 2024 at 5:35=E2=80=AFPM Etienne Buira <etienne.buira@free.f=
-r> wrote:
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-> Do not call dev_err when gpio,syscon-dev is not set albeit unneeded.
-> gpio-syscon is used with rk3328 chip, but this iomem region is
-> documented in
-> Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.yaml and
-> does not look like to require gpio,syscon-dev setting.
->
-> Signed-off-by: Etienne Buira <etienne.buira@free.fr>
-> X-Prefers: kind explanations over rotten tomatoes
+are available in the Git repository at:
 
-If you look in drivers/gpio/gpio-syscon.c you see this:
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-fixes-for-v6.9-tag1
 
-        priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "gpio,syscon-d=
-ev");
-        if (IS_ERR(priv->syscon) && np->parent)
-                priv->syscon =3D syscon_node_to_regmap(np->parent);
+for you to fetch changes up to aa43c15a790cf083a6e6a7c531cffd27a5e1fd4f:
 
-So the driver will attempt to grab the syscon from the parent if
-it can't be located from a gpio,syscon-dev node.
+  pinctrl: renesas: rzg2l: Execute atomically the interrupt configuration (2024-03-26 09:42:37 +0100)
 
-But it's not optional, look in arch/arm64/boot/dts/rockchip/rk3328.dtsi:
+----------------------------------------------------------------
+pinctrl: renesas: Fixes for v6.9
 
-        grf: syscon@ff100000 {
-                compatible =3D "rockchip,rk3328-grf", "syscon", "simple-mfd=
-";
-                reg =3D <0x0 0xff100000 0x0 0x1000>;
-(...)
-                grf_gpio: gpio {
-                        compatible =3D "rockchip,rk3328-grf-gpio";
-                        gpio-controller;
-                        #gpio-cells =3D <2>;
-                };
+  - Fix a dtbs_check warning on RZ/G3S,
+  - Fix a lockdep warning on RZ/G2L.
 
-So indeed the parent is a sycon, and syscon_node_to_regmap(np->parent) will
-be used to populate priv->syscon on RK3328.
+Thanks for pulling!
 
-So what you could do insteaf of the kludge is something like:
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      pinctrl: renesas: rzg2l: Execute atomically the interrupt configuration
 
-bool has_parent_syscon =3D false;
+Lad Prabhakar (1):
+      dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow 'input' and 'output-enable' properties
 
-priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
-if (IS_ERR(priv->syscon) && np->parent) {
-        priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "gpio,syscon-d=
-ev");
-        has_parent_syscon =3D true;
-}
-if (IS_ERR(priv->syscon))
-        return PTR_ERR(priv->syscon);
+ .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |  2 ++
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c                       | 11 ++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Then when you get to the code you disable for the flag instead of:
+Gr{oetje,eeting}s,
 
-if (!(priv->data->flags & GPIO_SYSCON_FEAT_NODEV)) {
-(...)
+						Geert
 
-instead do:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-if (!has_parent_syscon) {
-(...)
-
-What do you think about this?
-
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
