@@ -1,108 +1,97 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F06E84DEA;
-	Fri, 12 Apr 2024 13:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DB0145333;
+	Fri, 12 Apr 2024 14:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712929076; cv=none; b=mF4eMCiau9rs8lRFvFGXn3BAnJjvDkmD2qJ293Ike8J2zJMW3bVnbPedqN0P+HliBnMpWWX1MFlPmAOmYPjvvIHU/7Co+9tt6+dwUwALiokpYhkf6VZyT7G00KbSchqBr2zVM3RS+DHFZha+BjQTsPakHLp+0KuqeVZdi3ZLoUE=
+	t=1712933572; cv=none; b=HO8JDTJZac0eU5OdyGs2XBy28cB9pzgHDPYM/60b0HEm0999nj9zCzR12ZCUBSfsN+bvKpQqhVYvxOE/sgOrupqcsCeqxZvQ/zjdJ+5rJ1Jfh/8AXJ5YmDII1aDRdlnwWPeOcW4pqo4OTvYGzSwBJJ6r5Xv/Vo94gdI+KE82wYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712929076; c=relaxed/simple;
-	bh=RtPHTSwAiDMZibFKSA4Jdowqk+RE3EK7sCxTQ9Eflpg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dj0w9KeUCW2XKk0m8rwCv5wFDnZJ4UHFZzIJ8vjK9zu5g336rZrUuj82ZDyq2aKUP4Zmqs5Mvtok/BTmxE+6cSIEOEY+dO8ZNgumDPwbSyQl54I3Yz/e4lycujlTSBKGuYO/FJ9/8g9ysQS6TzQ2zRzmTfT2FbuzQ5ijGFoEr+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSMaEXef; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712933572; c=relaxed/simple;
+	bh=3VJO+40pwSkL8WEP5XEs7367DXnCHzRW9AIbe65tr7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1ixzWl+R1yCRCu+dSqbLikH2KzgyrgVoftv+40dCgeodPe8SRDdKeafVr7xfeXpJt27Kx97nlj7sXb4bFSEn/hbh52hCAoPVMuTn/sOJYO0BiQunWGtq/sPZc/xGqyJe/TgMnuKYQNiMkKNu7jBq/y2ybS6lR4WuNOZxCihp+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PXAJs4g5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSMaEXef"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-516d04fc04bso1502109e87.2;
-        Fri, 12 Apr 2024 06:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712929073; x=1713533873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZBZ/trnMtit0L5nOLjCK4i4uNbzRJ+y85cwstMMxmcc=;
-        b=MSMaEXefpKDDc2uYMIpOFc2i2hOxYu0eSZTRHqnSxo7CNMytbY79q2YBxCdcwMDP3v
-         x4Mj4nCuoEgBXE/1FhIJnV3qq65+FwY3z/9ZOer636GPaF2hrA5qUZZHESbkYm8kqp3k
-         g7+/B8TwTkHdqHbsmW16C5KBMdzueFFfwvQb1OiI08FvoCvFc+19KUaLrxWQPUW5Qiqb
-         ZikI0L5Q/GUH3sV1VlSmil9lLJbazMfI6ujoRkGQVuThMFcjoFbSJHDoCpyKWC4QAQ7F
-         TOea65qFLHtxL0ywCMJXt+jTsdegEI72D5s9KVWvo4Oa/RpP1h0Ge+zF3z/8pdINMedA
-         cOrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712929073; x=1713533873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZBZ/trnMtit0L5nOLjCK4i4uNbzRJ+y85cwstMMxmcc=;
-        b=W9Pp6LQYh1iAEa3FGoUmiVeO5YB0X3aapLBKwUwCqQ3KNEC/A7Bgs/LcKALLyhlz75
-         AUiiG2bj8/WnoynGgIQf3kWwF+qKYoqM1S9zM35vMrY1kXrJqdV9sz0apvrKCksc/4sL
-         5LVn9ZIggXqjZGw1ktBEmkQ8Hn/L8cvibXaz47ENnjr+hwJUc6wqh+kinrlslNzptytl
-         +OKwm8yjRy3RCSXv1j3AKVU63FsFHvxM+2HacxUp6AAgCZcJNr6PXJqdutXKX9Gr9yP3
-         bxCLCNmTu1TqY30bmnq3hG6Go7BKpvEdfKNpYSyhxFS8CgSeYja9uzjk8Tl8E6CO65M/
-         FR1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqa9C0zhFDF4QAzmgDLOEmWjg6SXDjHeCCjGyaYXLXq7nfS7lUzDVqZnhbzdnXx/pbexNzBjDxX/0bHCXEGEGtb3wqj/JbKaTg6f2rl2gLO7ObW3dja+DufzufGHAVdc8nD/IGeDQPvdXilsWQrkOncEwOmG6NZtQJA4eYbfuVAIuNmx8=
-X-Gm-Message-State: AOJu0Yyopy9yiP4kGBgCOJNHKpyzc/eqsUtDZgR+mOr8iOquqAKVz2o7
-	WR/yNp6tfSTbL2EtRUWED/jqcEJLqJgXIeE4mDSagVmwx3z22P74ZDX0QOC0PTuBY3bxNvIU+83
-	uI7BA3zu5fIR7SeStUg6tMxqyxWg=
-X-Google-Smtp-Source: AGHT+IHNCOxpEcg7kq0YLqhVyBPLSvQx/KccK2KXiNpUI+6rMUuNO8y0wPk5vLRyn20x610DSEMMlhpS/tWB09yu4rg=
-X-Received: by 2002:a05:6512:21d1:b0:513:d5ec:afb with SMTP id
- d17-20020a05651221d100b00513d5ec0afbmr1556007lft.40.1712929073158; Fri, 12
- Apr 2024 06:37:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PXAJs4g5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712933571; x=1744469571;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3VJO+40pwSkL8WEP5XEs7367DXnCHzRW9AIbe65tr7w=;
+  b=PXAJs4g5wg3ErC1btReuQ0iiYUy8BKv8nVcclBwEa+cM9Un6mH4WcYAe
+   AFYgML7ccsQ2l+QtWUP97joyNtmOWHPsUsM/JP5YU9EIsBCTPDt8HzF+8
+   5ng6j6Ld0NeviflAFfc74eLzX1fP4DDESayIatu4IV/9gQdGD4+kBRUpc
+   eLT0iEp5cAeu3uDms74G0cMVOB92eWBfkBDX41qmpDtKLLtcyLIZzIGKa
+   HToSXqvb5MYCYKo18wb5YUfn/kLDPA/JBLEQkGck+6BnHISAaU0utNl6g
+   LCSs7IMsBDY5SQlSgDm4RH17WBtSJaFVJ/VxYHSSVTjkzOV3zpb+3fHSk
+   g==;
+X-CSE-ConnectionGUID: 7gGmLBNDSYCUN8qqGendhg==
+X-CSE-MsgGUID: 0E1ZN7QZRTSIaYuVw6rNUA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11042"; a="8497359"
+X-IronPort-AV: E=Sophos;i="6.07,196,1708416000"; 
+   d="scan'208";a="8497359"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2024 07:52:50 -0700
+X-CSE-ConnectionGUID: UR2HQIB/T9aOUxFJHHipNw==
+X-CSE-MsgGUID: IbdOgvKoQS2wVBiMBfp5dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,196,1708416000"; 
+   d="scan'208";a="25906271"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Apr 2024 07:52:46 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id CCE371B02; Fri, 12 Apr 2024 13:19:44 +0300 (EEST)
+Date: Fri, 12 Apr 2024 13:19:44 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	David Thompson <davthompson@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v1 0/4] gpiolib: acpi: Use con_id in
+ acpi_dev_gpio_irq_get_by()
+Message-ID: <20240412101944.GE112498@black.fi.intel.com>
+References: <20240411172540.4122581-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240412-pinctrl-scmi-v9-0-b817344d3a9a@nxp.com>
- <CAHp75VfBaU+F-+3zte66mxgJ+gW9N7j8E+0gw9_T9J5DHTnsBA@mail.gmail.com> <DU0PR04MB9417DF1519C59AEBE156BC2488042@DU0PR04MB9417.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9417DF1519C59AEBE156BC2488042@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 12 Apr 2024 16:37:16 +0300
-Message-ID: <CAHp75Vch7TzevZQK4CE_WSVOgUdzODkJXiv0=OuqrmDfgevV+A@mail.gmail.com>
-Subject: Re: [PATCH v9 0/4] firmware: arm_scmi: Add SCMI v3.2 pincontrol
- protocol basic support
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Dhruva Gole <d-gole@ti.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Oleksii Moisieiev <oleksii_moisieiev@epam.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240411172540.4122581-2-andriy.shevchenko@linux.intel.com>
 
-On Fri, Apr 12, 2024 at 10:01=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
-> > Subject: Re: [PATCH v9 0/4] firmware: arm_scmi: Add SCMI v3.2 pincontro=
-l
-> > protocol basic support
-> > On Fri, Apr 12, 2024 at 3:13=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nx=
-p.com>
-> > wrote:
+On Thu, Apr 11, 2024 at 08:22:28PM +0300, Andy Shevchenko wrote:
+> Use con_id instead of property in the acpi_dev_gpio_irq_get_by().
+> It will be aligned with other GPIO library functions.
+> 
+> Assumed to go via my GPIO ACPI library tree follwoed by GPIO subsystem.
+> 
+> Andy Shevchenko (4):
+>   gpiolib: acpi: Extract __acpi_find_gpio() helper
+>   gpiolib: acpi: Simplify error handling in __acpi_find_gpio()
+>   gpiolib: acpi: Move acpi_can_fallback_to_crs() out of
+>     __acpi_find_gpio()
+>   gpiolib: acpi: Pass con_id instead of property into
+>     acpi_dev_gpio_irq_get_by()
+> 
+>  drivers/gpio/gpio-pca953x.c                   |  2 +-
+>  drivers/gpio/gpiolib-acpi.c                   | 52 +++++++++++--------
 
-...
+For the gpiolib-acpi.c parts,
 
-> > > - Because "pinctrl: pinconf-generic: check error value EOPNOTSUPP" wa=
-s
-> > >   applied, so pinctrl-scmi.c not convert to err return value for
-> > >   'pinctrl_ops->settings_get_one()'.
-> >
-> > Because it's there it does not mean we want it right now. I pinged Linu=
-s about
-> > it again.
->
-> ok, let me include the diff[1], is this ok for you?
->
-> [1]https://lore.kernel.org/all/DU0PR04MB941754A6D751E80840F9A79888012@DU0=
-PR04MB9417.eurprd04.prod.outlook.com/
-
-Yes.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
