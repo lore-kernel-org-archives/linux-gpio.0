@@ -1,54 +1,57 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3192C9D
-	for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 22:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4524E56B9E
+	for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 22:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713046486; cv=none; b=Nv8wFsAWAX6xnVKmXPBZGYuK2UkCKh7sdqLURBi/Svmhx+2g+o19/YDhwA6JYVHJgSccn3pHlzP6DVRLoy2DCdjwtVduNr7beU4v/kTTMU/c/zz5Eijs1lD6HKEGCUBdNuVVHR4kxzFrqk6A+gxHHgA14QNsLb+3PdSSpad+AaM=
+	t=1713046487; cv=none; b=sjnOlJTpfoeZmEycjF7RI+0Z8zIXaJpw9yfLzdzvIPZoFmPO/0/h4ovRi8FFpt1KX4TEN5MhT/YDnTjtQZvYfVz2/AkZtw41JaYn2dUiJyUtiiwY4FzxhCJNo5yrhz8gO7fQaai+8M2r5bA/duZBmKNWRjVsvLTWDkkFsOIh4ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713046486; c=relaxed/simple;
-	bh=D4cHZTrBFs9Y8i1w0bHj0gtliPoYKudctyXTaCkiaCo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=L4BYN0PGw+3WXdj97OQ/b4z4Lov+2aRppGRjGdxGUCLU3kvQkfDSHzPIT+PUgiNUZ1kX/BqVTAy2HGKoccD+2x7hmbfACSm0w76e3/nvdI39h/vv4AuOhFPg8Bp8XWSeoKK2DQitqnZfWLp893NJ9bHDrhWADF5fT2IfEyTfSYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cYmGkNLk; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1713046487; c=relaxed/simple;
+	bh=ZtByzIHxpfuAEFUa9VWbWb1E2J8uKDy/v2iO84NC0x8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Dg0UN0SesqkYCqyryG7YHlGIFebPJjVlxU49maaA3Cqb4ANFWxGYZvQYorHR4WCabBcEQ9OCxPH1MM0w4F6vK+zKN+zw+9eAcdXDp5xn24OXiFpaoYVhE9rKxukWFbZnSy+W5eSHq9OVp+YLB7hbneju65KG4WwR51GE+G+4H2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HUUswcw3; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cYmGkNLk"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56fffb1d14bso2735959a12.1
-        for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 15:14:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HUUswcw3"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2d094bc2244so21328841fa.1
+        for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 15:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1713046481; x=1713651281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxFqmOp3HshWN+SgF1tbY2QlrStlEk1IWrM1mFhMRAI=;
-        b=cYmGkNLkC/Pyi3/rbbEMfKfekynsdQwk3Co/A5dhbkyMNnT0Z5H/5lsRIZFuny3eBN
-         jrZue4RrcDj+/EsgV4e8bYDwuMcx6DPPBj6z70PPmRLyi3jop/4XyFbBNiosbf+B+6q1
-         Ii1Mc2akZMWOi9eKsWifK98WWL0B2bQ7JwNdYDc7AxaHPruFfSZeaWsUQUBMPdxMe7e/
-         zHK32zJSnTywMhA6QxEJC6cLh2gSOeWsc+QGEqWgz9n2WUjm0R7A1z9hxN4BQY0nQGOF
-         D+5v0AwbB+LtXwUqQMddR2rQyS5cgLfAYmohwMh4tAeB0EDespvqvzkD9fizIx7k4Ult
-         X5Ow==
+        d=suse.com; s=google; t=1713046483; x=1713651283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XZwqKfG6p8JaM/Q71ad/MDCBd7iRVLRuGbWu8s7oPwE=;
+        b=HUUswcw3D5xv2UFGEh4YE4WeduhJPSAq51pdhJr0CXJO345ZtZbR4gx5JU4DHMii7/
+         3/8AvsbdXnvjWg60LvzFmfoWUS3fTRQ/6sSMIdCDuJyr4IZB+BvFgD47Dn0RdVFd01gM
+         G4ARA1PoGWTfi6glC0RPaGnp9pym7if+cqIaV72m9CS+LR0+9k0mN0zQwI2BCzPPBsnm
+         x1fLmvm0GtlaoJboHkRZySGnkPB2JF59HV8QjvofmbLjF1bYYU4DdW/Ub5ousy/8Q4PF
+         UE+vUbm5EIuoKJxEIIu5kdT5WPodDvEy+d8KFINhDsV2XwN1YYQqeYB/7l/xSouKH7+T
+         qaog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713046481; x=1713651281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxFqmOp3HshWN+SgF1tbY2QlrStlEk1IWrM1mFhMRAI=;
-        b=st0u6zDRW1y69U1jeAuLtugN5TU3OLZooMNSMa51LhTFY8ypqBsG7C+dzjeJUGtoLv
-         pLhLb+FX/ntC+q8u958Ywh/YNWdwReJqnTVJVcabH3BdsamaRzAROH5o2VAd9Lr+gIwI
-         aLYCMoxumxXAzKv1ICL2Mh3AQ6zkgqzk4N0P5/e0HHouZKDtix8/mts9hl5AHps/BmWz
-         nC3YipP3W+s9Zihpat937REeHhitAwD/ppkN66jz0Vdf75aw0qgZyxr2HLW4lrAgVw2J
-         DcIzTU84LnKjdx6KBLLuhizrDVsHh7BtfiH9DaGyI70fTRqTVBWMDntJioYVAgS7QW18
-         IiMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfdcu6Sv7O8FuXBdGZ0XNMuZihcWForn6OF6ZCs/fNd4wQjBtGBZ88dt0U//1nCxDWJzrClD1LTd1phkolbySUvdpqhahy1PMwFQ==
-X-Gm-Message-State: AOJu0YxZDtyiF88RnGq9KeLmxFevYPNZisPrkaYE7t/hwj5y8QzlmLTp
-	omgisearkL/lxKdmWhtgy2Bcs4J3zsd7YjAtkA+hqjYCjtMrF+1fI/yWF9Pza9A=
-X-Google-Smtp-Source: AGHT+IFcFugdj9bcTWs2YQtc+IVEziRNNY4/ZWW62w81MoufOnOsTtn3loVBBMBQBvaAMW24sH/sXw==
-X-Received: by 2002:a05:6402:3895:b0:56f:db50:f2ca with SMTP id fd21-20020a056402389500b0056fdb50f2camr8490302edb.4.1713046481310;
-        Sat, 13 Apr 2024 15:14:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713046483; x=1713651283;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XZwqKfG6p8JaM/Q71ad/MDCBd7iRVLRuGbWu8s7oPwE=;
+        b=hjPoxXKyOqqzXXFOB5Tdq/HOBHZsiAP/gpLmlx8wsKCS+pc1lw/+dFzLpoaGNon//b
+         I/rdfjyW0Jig9DIfwNE7AW2o4rjUqKKjrbSG/z1GYluLpAkCtvX9POlJEregOGiwi15n
+         7O0bNZp3fgsH9hHerbNMij/CohLBk2GKM8ffcjeCLZlg5EboCsMQDE3FpQWGI1pe6X1L
+         qnkekoeWYi4GQSuRpZG7++KmiS1SAcUEQZBBJMxuFy5wRjVavwOMpjrMZFOH0yaKa1gA
+         FjNvQ49gIJwlC5iwiEi+Gx1iItEEhc5YZ9GJ7nxgUgqn6ygA+PKONuDjTUGGyM82sdma
+         zNag==
+X-Forwarded-Encrypted: i=1; AJvYcCVpYewbrYSMoPDSwqPJpr8miSeZsxSnkUp4DtTsh9JruZHlQaE1V7hKmBlKbIYKv2MkPaKvXMDkiU0vwfjaMzVeMUcVhyiFi8F+Pw==
+X-Gm-Message-State: AOJu0YwIaPnWc97wcfQRdXUKXbVgxbwAIPq7KIynIVmP6N0V3dKzwzMa
+	7voKMgAuRR/cxozOVlw+iPQwDYMwJ86MTwNaCVI3qqnASJKml1RfYN8R9I4EN8A=
+X-Google-Smtp-Source: AGHT+IFfx3Ukte+/jbUIOHsuAj8JYMvFoe/VC/sh9UZQlEdV09O7BFS5ROv7MMq6W1YAyuALnuGL8w==
+X-Received: by 2002:a2e:9b1a:0:b0:2d8:b2e:7bf3 with SMTP id u26-20020a2e9b1a000000b002d80b2e7bf3mr3537864lji.0.1713046483364;
+        Sat, 13 Apr 2024 15:14:43 -0700 (PDT)
 Received: from localhost (host-87-4-160-102.retail.telecomitalia.it. [87.4.160.102])
-        by smtp.gmail.com with ESMTPSA id b11-20020aa7c6cb000000b0056e7ba0497dsm2976956eds.28.2024.04.13.15.14.40
+        by smtp.gmail.com with ESMTPSA id dh5-20020a0564021d2500b0056e3e0394absm2970717edb.68.2024.04.13.15.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Apr 2024 15:14:41 -0700 (PDT)
+        Sat, 13 Apr 2024 15:14:43 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
 	Rob Herring <robh@kernel.org>,
@@ -68,10 +71,12 @@ To: Ulf Hansson <ulf.hansson@linaro.org>,
 	linux-gpio@vger.kernel.org,
 	Jonathan Bell <jonathan@raspberrypi.com>,
 	Phil Elwell <phil@raspberrypi.com>
-Subject: [PATCH 0/6] Add support for BCM2712 SD card controller
-Date: Sun, 14 Apr 2024 00:14:22 +0200
-Message-ID: <cover.1713036964.git.andrea.porta@suse.com>
+Subject: [PATCH 2/6] dt-bindings: mmc: Add support for BCM2712 SD host controller
+Date: Sun, 14 Apr 2024 00:14:24 +0200
+Message-ID: <ad96fff723675c2d65a5e3328da9b09f2781cbcd.1713036964.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1713036964.git.andrea.porta@suse.com>
+References: <cover.1713036964.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,74 +85,103 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+---
+ .../bindings/mmc/brcm,sdhci-brcmstb.yaml      | 51 ++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
-This patchset adds support for the SDHCI controller on Broadcom BCM2712
-SoC in order to make it possible to boot (particularly) Raspberry Pi 5
-from SD card. This work is heavily based on downstream contributions.
-
-Patch #1 and 2: introduce the dt binding definitions for, respectively,
-the new pin cfg/mux controller and the SD host controller as a preparatory
-step for the upcoming dts.
-
-Patch #3: add a somewhat reasonable (*almost* bare-minimum) dts to be used
-to boot Rpi5 boards. Since till now there was no support at all for any
-2712 based chipset, both the SoC and board dts plus definitions for the
-new Pin and SD host controller have been added.
-
-Patch #4: the driver supporting the pin controller. Based on [1] and
-successive fix commits.
-
-Patch #5: add SDHCI support. Based on [2] and the next 2 fix commits.
-Drop the SD Express implementation for now, that will be added by patch
-#6.
-
-Patch #6: this patch offers SD Express support and can be considered totally
-optional. The callback plumbing is slightly different w.r.t. the downstream
-approach (see [3]), as explained in the patch comment. Not sure what is the best,
-any comment is highly appreciated.
-
-Tested succesfully on Raspberry Pi 5 using an SDxC card as the boot device.
-
-Still untested:
-- SD Express due to the lack of an Express capable card.
-  Also, it will need PCIe support first.
-- card detection pin, since the sd was the booting and root fs device.
-
-Many thanks,
-Andrea
-
-Links:
-[1] - https://github.com/raspberrypi/linux/commit/d9b655314a826724538867bf9b6c229d04c25d84
-[2] - https://github.com/raspberrypi/linux/commit/e3aa070496e840e72a4dc384718690ea4125fa6a
-[3] - https://github.com/raspberrypi/linux/commit/eb1df34db2a9a5b752eba40ee298c4ae87e26e87
-
-Andrea della Porta (6):
-  dt-bindings: pinctrl: Add support for BCM2712 pin controller
-  dt-bindings: mmc: Add support for BCM2712 SD host controller
-  arm64: dts: broadcom: Add support for BCM2712
-  pinctrl: bcm: Add pinconf/pinmux controller driver for BCM2712
-  mmc: sdhci-brcmstb: Add BCM2712 support
-  mmc: sdhci-brcmstb: Add BCM2712 SD Express support
-
- .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |   51 +-
- .../pinctrl/brcm,bcm2712-pinctrl.yaml         |   99 ++
- arch/arm64/boot/dts/broadcom/Makefile         |    1 +
- .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  313 +++++
- arch/arm64/boot/dts/broadcom/bcm2712-rpi.dtsi |   81 ++
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi     |  841 +++++++++++
- drivers/mmc/host/Kconfig                      |    1 +
- drivers/mmc/host/sdhci-brcmstb.c              |  275 ++++
- drivers/pinctrl/bcm/Kconfig                   |    9 +
- drivers/pinctrl/bcm/Makefile                  |    1 +
- drivers/pinctrl/bcm/pinctrl-bcm2712.c         | 1247 +++++++++++++++++
- 11 files changed, 2918 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm2712-pinctrl.yaml
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
- create mode 100644 drivers/pinctrl/bcm/pinctrl-bcm2712.c
-
+diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+index cbd3d6c6c77f..6aa137d78e4f 100644
+--- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
++++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+@@ -13,6 +13,7 @@ maintainers:
+ properties:
+   compatible:
+     oneOf:
++      - const: brcm,bcm2712-sdhci
+       - items:
+           - enum:
+               - brcm,bcm7216-sdhci
+@@ -26,12 +27,16 @@ properties:
+           - const: brcm,sdhci-brcmstb
+ 
+   reg:
+-    maxItems: 2
++    minItems: 2
++    maxItems: 4
+ 
+   reg-names:
++    minItems: 2
+     items:
+       - const: host
+       - const: cfg
++      - const: busisol
++      - const: lcpll
+ 
+   interrupts:
+     maxItems: 1
+@@ -60,6 +65,7 @@ properties:
+     description: Specifies that controller should use auto CMD12
+ 
+ allOf:
++  - $ref: sdhci-common.yaml
+   - $ref: mmc-controller.yaml#
+   - if:
+       properties:
+@@ -71,6 +77,28 @@ allOf:
+       required:
+         - clock-frequency
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm2712-sdhci
++
++    then:
++      properties:
++        reg:
++          maxItems: 4
++        clock-names:
++         const: "sw_sdio"
++
++    else:
++      properties:
++        reg:
++          minItems: 2
++          maxItems: 2
++        reg-names:
++          minItems: 2
++          maxItems: 2
++
+ required:
+   - compatible
+   - reg
+@@ -114,3 +142,24 @@ examples:
+       clocks = <&scmi_clk 245>;
+       clock-names = "sw_sdio";
+     };
++
++  - |
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      mmc@fff000 {
++        compatible = "brcm,bcm2712-sdhci";
++        reg = <0x10 0x00fff000  0x0 0x260>,
++              <0x10 0x00fff400  0x0 0x200>,
++              <0x10 0x015040b0  0x0 0x4>,  // Bus isolation control
++              <0x10 0x015200f0  0x0 0x24>; // LCPLL control misc0-8
++        reg-names = "host", "cfg", "busisol", "lcpll";
++        interrupts = <0x0 0x111 0x4>;
++        clocks = <&clk_emmc2>;
++        sdhci-caps-mask = <0x0000C000 0x0>;
++        sdhci-caps = <0x0 0x0>;
++        mmc-ddr-3_3v;
++        clock-names = "sw_sdio";
++      };
++    };
 -- 
 2.35.3
 
