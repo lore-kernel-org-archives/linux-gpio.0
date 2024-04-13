@@ -1,232 +1,201 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661F853E3B
-	for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 19:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D125856B81
+	for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 22:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713038043; cv=none; b=E0VWd+1nf+BR/pVH9rNCPuaEsYmlUNA17gjhsOfsLZ0whz0hkjnUofIwxIXEZE6RwubENMs3XcSTWNCK7mzWFWeD/GpY65hz0uHWXxGFA091PtMTSDVx8qVxfkjAb/ncI6N+tYpBHBxIgNOGjPD4qLdKwdhk0V69kzFaIHykviU=
+	t=1713046485; cv=none; b=fmlGL2H7C1s+rK4TVor0f+TxNx4y6xcMgZyfBLzf+kGCqkM4zWXM3pKKlLEpRJmspGQbMqHMrfAdOFEKwoA/4By4Rt/14SKdO3Pz+4LPQz3r40LmYLwHEmh6/Uw/BgOb+zyEoYQcLTyQo6BwN/h2i96jwDxLsPuXJiMPRGJzLB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713038043; c=relaxed/simple;
-	bh=3H0WATwQYFTMltdmaed97JP4njsxJHI/yvQeJU/IZrI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=cc4PSeLlP1jJaqeV3QlRmeoSOp99IXdbnobHwnJIHFhAUp03+NGzjzF34gck5CXkvTneHtT0lwhNBCNHvj1k2wNONUHHX38ZsIeJs1htapWdDJYa5jEm8TRHkhQrqzIjYPQgk9vxHgja3ntRG1lbi02cg9vH1rz8Kk77/pqAX9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UzU8hX7X; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1713046485; c=relaxed/simple;
+	bh=4IEOevbT+EXFyMqOZWAejLbNHWKkLa13ytu7fg6PdRA=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E78UiupoYcES+vqh9pmmRruK4771JjdZLiBeDzum/E4Mv4Bqec0p6/k1SOmRlwOOswwXqACmPdbfdR0nXRfrEJTK4DLqMFKRHKH+wybhDoV/y02pTlVLvpuHPHYaxcEr5tkkxXbQp2V8SlgFYVia7Q8k2KTsV8RoHgvHqOzE1rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=c4Wxe5en; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UzU8hX7X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713038042; x=1744574042;
-  h=date:from:to:cc:subject:message-id;
-  bh=3H0WATwQYFTMltdmaed97JP4njsxJHI/yvQeJU/IZrI=;
-  b=UzU8hX7XvvQRmN5Wpo96n2jkae9N2jsA/YMzyezYMQTuR7IiHO1IF06r
-   x0C7r9LXXcFdvNOll6/S/DhBjra/CPgIAGyCMV3YbQ52g8dwFuK1knbkd
-   2ORlvkI26USB1NYBUC9jlw+8Vs9tP/4D7k4jAybf2ApBIe9c1hVsuzpOx
-   Yz3eMSYHgho5GG/6CJ/yhFDLvIGGdLsBL5IKg5Jx0CDVpKz9Qq9rKB44w
-   +Ofx7de/181o4qF8AsrpfE6vs4DLJF0L9R8c1yCekY9mWhOMjz6AI9hvT
-   +MZVuebQ0Ch/EqW6WoVjnejUXh8V5ao9GQt53gb2axqFo7EJdtXTkBOOU
-   g==;
-X-CSE-ConnectionGUID: 4tzzDnB4Shmb2KPsKylYeQ==
-X-CSE-MsgGUID: k/XZ4eQbRBuEy2JQaQz4cw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11043"; a="8596231"
-X-IronPort-AV: E=Sophos;i="6.07,199,1708416000"; 
-   d="scan'208";a="8596231"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2024 12:53:59 -0700
-X-CSE-ConnectionGUID: 9lFNeoDZRxyO98C1fBsL1Q==
-X-CSE-MsgGUID: UoVkl+gNQUSPmylX/L6qBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,199,1708416000"; 
-   d="scan'208";a="21517254"
-Received: from unknown (HELO 23c141fc0fd8) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 13 Apr 2024 12:53:58 -0700
-Received: from kbuild by 23c141fc0fd8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rvjRj-000316-0x;
-	Sat, 13 Apr 2024 19:53:55 +0000
-Date: Sun, 14 Apr 2024 03:53:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- 8d1e84ab0176c2d2b49fd741d6609a021ecc1d01
-Message-ID: <202404140314.7M3v9KSi-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="c4Wxe5en"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56bdf81706aso2355374a12.2
+        for <linux-gpio@vger.kernel.org>; Sat, 13 Apr 2024 15:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1713046482; x=1713651282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTT6p3JdD6iIGkz1qRSEnktJlf1231ftu3Zq8pQLVBE=;
+        b=c4Wxe5enB6nCJ/s8VPvv7UngnYXrJwJEnZlXoHJpMLM5TXR84LIYsxb7gG+zimgwJn
+         Vw9pqTgwSUWS0YNw3Ma93tpHxEoFxOdW9sb+EEKPXIuZrQOrfPQgGM71H09TPANBn+m9
+         jP5swW1NY3aVJoMIejKLOHDnviZU3V+OPKGzsYVD56UK2C2M7lUKAa7crgiX908aSpYx
+         Nwyb5dduIk8et9lxyH50Z4yyPix/+yBKhBXrvwoIEWXFpKdRVEaSsGMSE8LberN2AzPz
+         HmtjweyUBQKS+ZcgjOHqmMaUjrKRWmAjIgV8bBP3qmpCBqQVDi1W7L2YSUIxIT5uW/fw
+         jwxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713046482; x=1713651282;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YTT6p3JdD6iIGkz1qRSEnktJlf1231ftu3Zq8pQLVBE=;
+        b=EdCStWdS36dm0ELqteF8rz0U1YF9dsKPGHnwWonXWxcvBpwlKgCSELoWuZ5JXtYxNg
+         a8ozc0MJZm2UtQTTT8RNCaHggAz7mR095nnC7U/LaDkwMW7btjkhubIsyEmsOuk2vJVF
+         52UT1Z6XFAXAc8N4o6NkN0dhuTPr+gb1V2WnN3fl3Snp1TknKQgN0f19z4wk9mElbZpN
+         GkZTltT8W7kUQIAm4t0oKwI8ag33fJQ6Yx4RslmYIGY69FJlNT/tCetvKVl27blR9bz7
+         +5VYjo5AxeLh1xecYogXfRS6aogudXfCZ1LWwzv/vSe6fdvCKRxmn6aBauO09n38ndcd
+         deqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI1pqRgwSyG103j80JEg5tfRgJWatn4seD+cagOr/Ds0rp3eJEXaZgrZI2EmHYlqmmZ7K/mFlBdUQ9i5IGs0rz/BWVuWlGmZbhgQ==
+X-Gm-Message-State: AOJu0Yw/9btZdgYkwrwZ6IQV0hWHjP9VZpbr2d7b3Kgjm30+8qX3tg7K
+	d2nckBSEKyCYZSgzXcN2cAYU2jes1MBBAJk1tlGbUu5cWLVoZug346RWWizwtGU=
+X-Google-Smtp-Source: AGHT+IHvdgPgM6YCX7nXGiRe0PMOpJ528SyHSzEBMH11ypp2OlQZEyO0zCKKKxpm14WAjFxMlCHWNA==
+X-Received: by 2002:a50:d59e:0:b0:56c:5a7b:5dbd with SMTP id v30-20020a50d59e000000b0056c5a7b5dbdmr3850975edi.15.1713046482214;
+        Sat, 13 Apr 2024 15:14:42 -0700 (PDT)
+Received: from localhost (host-87-4-160-102.retail.telecomitalia.it. [87.4.160.102])
+        by smtp.gmail.com with ESMTPSA id x7-20020a056402414700b0056feb6315easm2782050eda.1.2024.04.13.15.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Apr 2024 15:14:41 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	della Porta <andrea.porta@suse.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Phil Elwell <phil@raspberrypi.com>
+Subject: [PATCH 1/6] dt-bindings: pinctrl: Add support for BCM2712 pin controller
+Date: Sun, 14 Apr 2024 00:14:23 +0200
+Message-ID: <2d1272cad92ad618297a6683e9264e31b8f2df73.1713036964.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1713036964.git.andrea.porta@suse.com>
+References: <cover.1713036964.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: 8d1e84ab0176c2d2b49fd741d6609a021ecc1d01  gpio: regmap: Use -ENOTSUPP consistently
+Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+---
+ .../pinctrl/brcm,bcm2712-pinctrl.yaml         | 99 +++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm2712-pinctrl.yaml
 
-elapsed time: 1448m
-
-configs tested: 155
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240413   gcc  
-arc                   randconfig-002-20240413   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm                   randconfig-001-20240413   clang
-arm                   randconfig-002-20240413   gcc  
-arm                   randconfig-003-20240413   clang
-arm                   randconfig-004-20240413   clang
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240413   clang
-arm64                 randconfig-002-20240413   clang
-arm64                 randconfig-003-20240413   clang
-arm64                 randconfig-004-20240413   clang
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240413   gcc  
-csky                  randconfig-002-20240413   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240413   clang
-hexagon               randconfig-002-20240413   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240413   gcc  
-i386         buildonly-randconfig-002-20240413   gcc  
-i386         buildonly-randconfig-003-20240413   clang
-i386         buildonly-randconfig-004-20240413   clang
-i386         buildonly-randconfig-005-20240413   clang
-i386         buildonly-randconfig-006-20240413   clang
-i386                                defconfig   clang
-i386                  randconfig-001-20240413   clang
-i386                  randconfig-002-20240413   gcc  
-i386                  randconfig-003-20240413   clang
-i386                  randconfig-004-20240413   gcc  
-i386                  randconfig-005-20240413   clang
-i386                  randconfig-006-20240413   clang
-i386                  randconfig-011-20240413   gcc  
-i386                  randconfig-012-20240413   clang
-i386                  randconfig-013-20240413   gcc  
-i386                  randconfig-014-20240413   gcc  
-i386                  randconfig-015-20240413   clang
-i386                  randconfig-016-20240413   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240413   gcc  
-loongarch             randconfig-002-20240413   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240413   gcc  
-nios2                 randconfig-002-20240413   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240413   gcc  
-parisc                randconfig-002-20240413   gcc  
-parisc64                            defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc               randconfig-001-20240413   clang
-powerpc               randconfig-002-20240413   clang
-powerpc               randconfig-003-20240413   clang
-powerpc64             randconfig-001-20240413   clang
-powerpc64             randconfig-002-20240413   gcc  
-powerpc64             randconfig-003-20240413   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240413   clang
-riscv                 randconfig-002-20240413   gcc  
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240413   gcc  
-s390                  randconfig-002-20240413   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240413   gcc  
-sh                    randconfig-002-20240413   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240413   gcc  
-sparc64               randconfig-002-20240413   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20240413   clang
-um                    randconfig-002-20240413   clang
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240413   gcc  
-x86_64       buildonly-randconfig-002-20240413   gcc  
-x86_64       buildonly-randconfig-003-20240413   gcc  
-x86_64       buildonly-randconfig-004-20240413   gcc  
-x86_64       buildonly-randconfig-005-20240413   gcc  
-x86_64       buildonly-randconfig-006-20240413   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240413   gcc  
-x86_64                randconfig-002-20240413   gcc  
-x86_64                randconfig-003-20240413   gcc  
-x86_64                randconfig-004-20240413   gcc  
-x86_64                randconfig-005-20240413   gcc  
-x86_64                randconfig-006-20240413   gcc  
-x86_64                randconfig-011-20240413   clang
-x86_64                randconfig-012-20240413   clang
-x86_64                randconfig-013-20240413   clang
-x86_64                randconfig-014-20240413   clang
-x86_64                randconfig-015-20240413   gcc  
-x86_64                randconfig-016-20240413   clang
-x86_64                randconfig-071-20240413   gcc  
-x86_64                randconfig-072-20240413   gcc  
-x86_64                randconfig-073-20240413   clang
-x86_64                randconfig-074-20240413   gcc  
-x86_64                randconfig-075-20240413   gcc  
-x86_64                randconfig-076-20240413   clang
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-002-20240413   gcc  
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2712-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2712-pinctrl.yaml
+new file mode 100644
+index 000000000000..2908dfe99f3e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2712-pinctrl.yaml
+@@ -0,0 +1,99 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/brcm,bcm2712-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM2712 pin controller
++
++maintainers:
++  - Andrea della Porta <andrea.porta@suse.com>
++
++description:
++  Bindings for Broadcom's BCM2712 memory-mapped pin controller.
++
++properties:
++  compatible:
++    enum:
++      - brcm,bcm2712-pinctrl
++      - brcm,bcm2712-aon-pinctrl
++      - brcm,bcm2712c0-pinctrl
++      - brcm,bcm2712c0-aon-pinctrl
++      - brcm,bcm2712d0-pinctrl
++      - brcm,bcm2712d0-aon-pinctrl
++
++  reg:
++    items:
++      - description: pin control registers
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++required:
++  - compatible
++  - reg
++
++additionalProperties:
++  anyOf:
++    - type: object  
++      allOf:
++        - $ref: pincfg-node.yaml#
++        - $ref: pinmux-node.yaml#
++
++      properties:
++        function: 
++          enum: [ gpio, alt1, alt2, alt3, alt4, alt5, alt6, alt7, alt8,
++                 aon_cpu_standbyb, aon_fp_4sec_resetb, aon_gpclk, aon_pwm,
++                 arm_jtag, aud_fs_clk0, avs_pmu_bsc, bsc_m0, bsc_m1, bsc_m2,
++                 bsc_m3, clk_observe, ctl_hdmi_5v, enet0, enet0_mii,
++                 enet0_rgmii, ext_sc_clk, fl0, fl1, gpclk0, gpclk1, gpclk2,
++                 hdmi_tx0_auto_i2c, hdmi_tx0_bsc, hdmi_tx1_auto_i2c,
++                 hdmi_tx1_bsc, i2s_in, i2s_out, ir_in, mtsif, mtsif_alt,
++                 mtsif_alt1, pdm, pkt, pm_led_out, sc0, sd0, sd2, sd_card_a,
++                 sd_card_b, sd_card_c, sd_card_d, sd_card_e, sd_card_f,
++                 sd_card_g, spdif_out, spi_m, spi_s, sr_edm_sense, te0, te1,
++                 tsio, uart0, uart1, uart2, usb_pwr, usb_vbus, uui, vc_i2c0,
++                 vc_i2c3, vc_i2c4, vc_i2c5, vc_i2csl, vc_pcm, vc_pwm0,
++                 vc_pwm1, vc_spi0, vc_spi3, vc_spi4, vc_spi5, vc_uart0,
++                 vc_uart2, vc_uart3, vc_uart4 ]
++
++        pins:
++          items:
++            pattern: "^((aon_)?s?gpio[0-6]?[0-9])|(emmc_(clk|cmd|dat[0-7]|ds))$"
++
++        bias-disable: true
++        bias-pull-down: true
++        bias-pull-up: true
++      additionalProperties: false
++
++    - type: object
++      additionalProperties:
++        $ref: "#/additionalProperties/anyOf/0"
++
++examples:
++  - |
++    pinctrl: pinctrl@7d504100 {
++      compatible = "brcm,bcm2712-pinctrl";
++        reg = <0x7d504100 0x30>;
++
++        uarta_24_pins: uarta_24_pins {
++          pin_rts {
++            function = "uart0";
++            pins = "gpio24";
++            bias-disable;
++        };
++
++        pin_cts {
++            function = "uart0";
++            pins = "gpio25";
++            bias-pull-up;
++        };
++      };
++
++      spi10_gpio2: spi10_gpio2 {
++        function = "vc_spi0";
++        pins = "gpio2", "gpio3", "gpio4";
++        bias-disable;
++      };
++    };
++...
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.35.3
+
