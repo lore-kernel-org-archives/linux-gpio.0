@@ -1,129 +1,118 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C26712DD95;
-	Tue, 16 Apr 2024 14:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E39130E57
+	for <linux-gpio@vger.kernel.org>; Tue, 16 Apr 2024 15:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713278946; cv=none; b=lBGeUQhrNL9jrr135Z70zcOL1fXjlZ+iF2x9uQQsjBsoHrk8DDEeLT4BmX+3FVSgUX7yAw+3ht3THsh95zQjJ0hDL68O0ppuTMQf0ka+kN8HDTHoa8fFHTo9YtoD1TZZy2XMEcUsClSdBtmDteAUzYRYQAG/+8RCO66FsLGzTEk=
+	t=1713282454; cv=none; b=LOWiaYy7UtfpN6o8oCUDCM7qRR+9lBGaBaulEZhIR1rLzM2OI325SvvdEyxhtqLw/HB/8OD1ZpdEh3+UynLobOZ4NW2RS1si5d2SmXzD67b2vajBJNSogM497uwFAM9TOgC+zIdIXPMxvHrvmXWvIaGxtFGF1y5sa33U9tbQsoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713278946; c=relaxed/simple;
-	bh=N7wBR+UpwtOV9tGvVgMsV+bnRTrkTRC+bkXsjuPHIuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TdszABVUP8uCGvukqb+GKNp/wI7phVHWovWj+J0QIqp+wT6J4rMQoF/mJZmd1qFdDgLotUYNPpdLIVK9y9tRH7UrK9zSkEMveubHBUQCnXb/RZT3DiuydMbwqZ48omK2Jj0RtaKk6diJeI8hAgXMQ+h9/VVaihbphdDIjJ0foTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cp9aWPme; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cp9aWPme"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6ed01c63657so4012379b3a.2;
-        Tue, 16 Apr 2024 07:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713278944; x=1713883744; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BX6A1PLIPUHloNbC1YwAKF3yvucqzC+IykrkDL2EP9k=;
-        b=Cp9aWPmeMH+dt/AMVWJSWZu8t/9uQxw8G/UwKTRTZwxUj9JadJkKxBHFl++VxFoiwE
-         AgLIp1xWmESaiSA5/UbYipL+s+H64p2AfNFhzJpzILY0IfZrrVBHmqqKxkkI/nxgw+7h
-         6kB+okac3WlQTYydfqpoHnmFvn4pwxCy0WgtGsrUov56z37148y/6Ipd9avj+Bld/i+u
-         k312TBwFccBR94oD1Mqw1hz1rKvJlODxVat36Gd9+cGw1Ky1szuuJIDP4tEPSF5w98Ix
-         ieFzGmi5PGiPZ0CwokfeIJFQv2NV9yuFCh7hHzKp9Sv3jR31nXxuj1S+DBPnwGiCGQzN
-         M+Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713278944; x=1713883744;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BX6A1PLIPUHloNbC1YwAKF3yvucqzC+IykrkDL2EP9k=;
-        b=TJBznwNQNwYKj022PeFNvURJ3+Ixc6bGrVQPrx2e+2+2Z8+7m8f9+CWqtjB6L72KY9
-         D/Ry/MFNSiljHfavSSj4Gk8XFm/ZLyhKUmp83LmkYOnJ2VONv4jyF6NyKOOcMsml1X71
-         GTn1bdRSK+3V1jG30+VS5htwDEZwYpvpn07GJ3EZvlnXddp3Xe4qrxsTNKP9zEh3zy5b
-         VSeCCA5f8BZsf898SGMrmbHSK1xvUsp1q3UCA/ASkBrG1AFr1zWKSzVB8n9oxXxDtAek
-         /DROd/DDDqgNmRdJ85md3UppbRW0SskzUTcqkO2ftaaOCSU24OxNFsKiV3vvYTOng/YG
-         2QpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJQkQTvTuMLMUjNoh2v+mrMhx1RHnGnK+EeKCefutz8gnnyIy93jXJhUQ1rH5Cl0sI3/0NRvjDsN5IDi+mchXp8SdMkBiKZNM+wQE7dARzuPjMPkxJW2AXff5RgcdrIe5FIF97uusdDH6euD4Qt00y/o9n8AtpkNji5kjSiQG4Mg==
-X-Gm-Message-State: AOJu0YyfRdaf1tAvlnYUg6ENAs3thHAunlbsisQogRi/YvDVG2AOHUMU
-	Ajwqd4HaHvxyq7C+cyfkvvAsIliZuNvn7n0LftYyN3M/+lHFIz++o1lv4n6huM3hJZFmjgleE4L
-	IAO1SFMGW7lTIXxHgnBKiLXdqbqrYGjFxL4I=
-X-Google-Smtp-Source: AGHT+IHwXhNE3qhkiOVa1dv2tNZZoMwwK96HbsfDvdiRkntrb7ZgeBlDRihGUMHsqNe5ZhvEp1uCE2io4H+6TCFJAD0=
-X-Received: by 2002:a05:6a20:3255:b0:1a7:9fd2:8bbb with SMTP id
- hm21-20020a056a20325500b001a79fd28bbbmr11344740pzc.24.1713278944220; Tue, 16
- Apr 2024 07:49:04 -0700 (PDT)
+	s=arc-20240116; t=1713282454; c=relaxed/simple;
+	bh=/acYgz3kJaLA/vBHE8yKL25SRSKCtv2KUbyuhCBZmo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cEcga/fkjqINJrEjJSqlSdEQzir3O1QR4EyVOf+62EMFJzhjAsqK3P69zXo/QqkUQhv3YX8wJSZ1YmB8kqVFmupFergkoT08gISOgSG0+OD1TEul5ZU5wUIYt7dOZ3WQA4Rw18az6KX/7RP6jng0/GKAWMuHzvrbGef+/wO73A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:76d0:2bff:fec8:549])
+	by michel.telenet-ops.be with bizsmtp
+	id BrnV2C00L0SSLxL06rnVye; Tue, 16 Apr 2024 17:47:30 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rwl1K-008J5u-9p;
+	Tue, 16 Apr 2024 17:47:29 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1rwl1t-00Ebkf-Mw;
+	Tue, 16 Apr 2024 17:47:29 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Cong Dang <cong.dang.xn@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] pinctrl: renesas: r8a779h0: Fix IRQ suffixes
+Date: Tue, 16 Apr 2024 17:47:22 +0200
+Message-Id: <7d3c7498d9e8eda5583b15f9163eb25bb797ed24.1713282028.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1713282028.git.geert+renesas@glider.be>
+References: <cover.1713282028.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240414065305.9796-1-marco@sirabella.org>
-In-Reply-To: <20240414065305.9796-1-marco@sirabella.org>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 16 Apr 2024 16:48:52 +0200
-Message-ID: <CAOiHx==-V-SeyiH3+BbPD2r13vwsWE2MzRDjtHRBWX7CtFLsDg@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: spi: Update gpio+bitbang instruction
-To: Marco Sirabella <marco@sirabella.org>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
-	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The suffixes of the IRQ identifiers, as used for pins related to the
+Interrupt Controller for External Devices (INTC-EX), are inconsistent.
+Correct them to match the Pin Multiplex attachment in Rev.0.51 of the
+R-Car V4M Series Hardware User's Manual.
 
-On Sun, 14 Apr 2024 at 08:54, Marco Sirabella <marco@sirabella.org> wrote:
->
-> The way to do this was changed in
-> 9b00bc7b901f (spi-gpio: Rewrite to use GPIO descriptors)
-> and there's no real docs outlining this,
-> update defunct #include "spi-gpio.c" instructions
->
-> Signed-off-by: Marco Sirabella <marco@sirabella.org>
-> ---
->  drivers/spi/spi-gpio.c | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-> index 909cce109bba..8c5f88f01db2 100644
-> --- a/drivers/spi/spi-gpio.c
-> +++ b/drivers/spi/spi-gpio.c
-> @@ -44,22 +44,13 @@ struct spi_gpio {
->   * per transferred bit can make performance a problem, this code
->   * is set up so that you can use it in either of two ways:
->   *
-> - *   - The slow generic way:  set up platform_data to hold the GPIO
-> + *   - The generic way:  set up platform_data to hold the GPIO
->   *     numbers used for MISO/MOSI/SCK, and issue procedure calls for
->   *     each of them.  This driver can handle several such busses.
+Fixes: 291f7856fc451cbe ("pinctrl: renesas: Initial R8A779H0 (R-Car V4M) PFC support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/pfc-r8a779h0.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-9b00bc7b901f (spi-gpio: Rewrite to use GPIO descriptors) removed the
-fields for the GPIO numbers, so this is definitely not the way
-anymore.
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779h0.c b/drivers/pinctrl/renesas/pfc-r8a779h0.c
+index afa8f06c85cf5bd6..0cbfe7637fc97743 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779h0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779h0.c
+@@ -75,10 +75,10 @@
+ #define GPSR0_9		F_(MSIOF5_SYNC,		IP1SR0_7_4)
+ #define GPSR0_8		F_(MSIOF5_SS1,		IP1SR0_3_0)
+ #define GPSR0_7		F_(MSIOF5_SS2,		IP0SR0_31_28)
+-#define GPSR0_6		F_(IRQ0,		IP0SR0_27_24)
+-#define GPSR0_5		F_(IRQ1,		IP0SR0_23_20)
+-#define GPSR0_4		F_(IRQ2,		IP0SR0_19_16)
+-#define GPSR0_3		F_(IRQ3,		IP0SR0_15_12)
++#define GPSR0_6		F_(IRQ0_A,		IP0SR0_27_24)
++#define GPSR0_5		F_(IRQ1_A,		IP0SR0_23_20)
++#define GPSR0_4		F_(IRQ2_A,		IP0SR0_19_16)
++#define GPSR0_3		F_(IRQ3_A,		IP0SR0_15_12)
+ #define GPSR0_2		F_(GP0_02,		IP0SR0_11_8)
+ #define GPSR0_1		F_(GP0_01,		IP0SR0_7_4)
+ #define GPSR0_0		F_(GP0_00,		IP0SR0_3_0)
+@@ -265,10 +265,10 @@
+ #define IP0SR0_3_0	F_(0, 0)		FM(ERROROUTC_N_B)	FM(TCLK2_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_7_4	F_(0, 0)		FM(MSIOF3_SS1)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_11_8	F_(0, 0)		FM(MSIOF3_SS2)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_15_12	FM(IRQ3)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_19_16	FM(IRQ2)		FM(MSIOF3_TXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_23_20	FM(IRQ1)		FM(MSIOF3_RXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR0_27_24	FM(IRQ0)		FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_15_12	FM(IRQ3_A)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_19_16	FM(IRQ2_A)		FM(MSIOF3_TXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_23_20	FM(IRQ1_A)		FM(MSIOF3_RXD)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR0_27_24	FM(IRQ0_A)		FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR0_31_28	FM(MSIOF5_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP1SR0 */		/* 0 */			/* 1 */			/* 2 */		/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+@@ -672,16 +672,16 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR0_11_8,	MSIOF3_SS2),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3),
++	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_15_12,	MSIOF3_SCK),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2),
++	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_19_16,	MSIOF3_TXD),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1),
++	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_23_20,	MSIOF3_RXD),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0),
++	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0_A),
+ 	PINMUX_IPSR_GPSR(IP0SR0_27_24,	MSIOF3_SYNC),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR0_31_28,	MSIOF5_SS2),
+-- 
+2.34.1
 
-Since the code now always uses descriptors, the performance comment in
-the first paragraph does not apply anymore as well and should be
-dropped as well.
-
->   *
-> - *   - The quicker inlined way:  only helps with platform GPIO code
-> - *     that inlines operations for constant GPIOs.  This can give
-> - *     you tight (fast!) inner loops, but each such bus needs a
-> - *     new driver.  You'll define a new C file, with Makefile and
-> - *     Kconfig support; the C code can be a total of six lines:
-> - *
-> - *             #define DRIVER_NAME     "myboard_spi2"
-> - *             #define SPI_MISO_GPIO   119
-> - *             #define SPI_MOSI_GPIO   120
-> - *             #define SPI_SCK_GPIO    121
-> - *             #define SPI_N_CHIPSEL   4
-> - *             #include "spi-gpio.c"
-> + *   - The inlined way:  manually set up and register a gpiod_lookup_table with
-> + *     the appropriately labelled gpio pins "sck", "mosi", "miso" & an array
-> + *     named "cs" before calling devm_spi_register_controller (XXX).
-
-I think you need to use platform_device_register(), at least both
-remaining users do so. And this is AFAICT now the only option for
-registering it via C code (which also means that DRIVER_NAME will
-never be defined from outside, and GENERIC_BITBANG will always be true
-... ).
-
-Best Regards,
-Jonas
