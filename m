@@ -1,65 +1,66 @@
 Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BD569946
-	for <linux-gpio@vger.kernel.org>; Tue, 16 Apr 2024 21:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BDA69946
+	for <linux-gpio@vger.kernel.org>; Tue, 16 Apr 2024 21:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713304350; cv=none; b=JkR9qBtH+q8chM6AAzxta1kjVsxACV9kueYr0kXi+ev2g54KCbAu4/yZFV5rT0E3+d6IXYMw0hkL+D3xVE3cnJKaGWgTvblMGAscBLlzHFL6n8/33B/8JOvVTpbSzw88W9k+4g0PYGxlqD0NSPvbH5WVrL33PC7r1ucFxp3mayM=
+	t=1713304353; cv=none; b=kDLf0cYvZDv5vtfXIlTQpUr/pTLoT2Z8k4YIL87bAWRckl76Qs9qvTTwurtRqeD8AxM/Q+i2AQcrF78Htinsm6LFEhKFhAd0iM5KzyvlT1mC4Kc19qJSCY7fXLR1Hv4itEs6aE+G0nFQesCFGl0irTlsxRpVLpAg+yJK3s4CnhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713304350; c=relaxed/simple;
-	bh=Xpo2ETpkTSXzES1cPuQ73Aak9SSPA5hN4hSxtPFO+E0=;
+	s=arc-20240116; t=1713304353; c=relaxed/simple;
+	bh=q6/gLtyhQSyX7zsxFDwS1nDlm6kwyGd7DE1AAnd5Ks8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fjcWc7ZA9yjbOdKxYzSXhoDLBXXKum03XQJOLYbUZd5AIc4x6YpXKHG9h7A9vmUnihdOnlGVqgjTv39OjxMLW7KlIi1RpAUL+ZuqFkN13YvpYNeOWt4gdbBsq7B5beTclArM08WnN/LK0kYhi6rgr6FEU59CL7a0iui48LYNX/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xc8v5d9j; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=qwumieYJn88bcLhhk4KseiLKX5s/tVnfwVAQDpNIexk4rSHWjqPRm5nv52c42yFP8C92RYEoM09l4ohei4icLO2zJdHLpLFrAuPK+zM68T/46P9P8q7iU/1w7Qwgbv6RmZ81dCR+TBLTcI1/2oIch3AUrQyLkfOISuBFnc0gD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dq+jCISf; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xc8v5d9j"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6ed5109d924so4188621b3a.0
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Apr 2024 14:52:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dq+jCISf"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6ed5109d924so4188665b3a.0
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Apr 2024 14:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713304348; x=1713909148; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713304351; x=1713909151; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZUoEwV/WonERdygqJVUNKsyBTwb8gi0MTfMadGUK8J0=;
-        b=xc8v5d9j1BK+yhWvBogEABIXDBgaLgQ8ITLd7EsTHKfJSmOs3+slFRMM/chs1/Za+3
-         5YZkhl6HIjnzekJA3JKDpFU3oAcxaEnn7INbQeXSduy4F5/Ru+xBaXdNDgH0OKQJ25UI
-         MFsxEzkhz/4efyCHlZ9Lh60RbOQ31lpeuDoLNKWSwOcbjaqeuZqM2IKIPvjTRp9/NkAh
-         J4y0ZFtA7lHHA+xXYzdKPF42bEen/eNvLHo3y399IG2SpeaYJvLNSjpOXS9Zi9em2Ist
-         tV7AlHt1hlBPJxyAoJEXvw15bk8ZCm56siYNVo5kmYX2ZYxl/1dnWI9uwV5rZC6C9Qrf
-         yKlA==
+        bh=TXiJdzRTAuB1UlX3lfsMbcreITp5HZxliXA/4a98Y64=;
+        b=dq+jCISfnv29r/ddgXbGEF5TlyZL3tAtFSDg389/LE7B4UN60m8BUK7w6pKlaGiNh0
+         w67HmrWVcAat2iXZtXhs3v3ECblTQh1C5m0uFaspcCM9mLANKQKzCZSlJlnwoA0H0jml
+         4VKCh7JbdGHC/9F+GzKsNbmR9hNfeqY2MoHRACKucLH1jtrLUaMZsaHxmayoId7cCZ1Z
+         UV9RlA6J9el2a0Qj31Zx7VGszBn7Q+QO2MSSajwZvXKEcqI8haXkhupnDOPkZNeNMhVH
+         9J29//xpm+VzgOdcKWIBQI1S2GIoBcooWdzcjCa1d/M0PCNuuznZg5JbYpcXNnIrYhd8
+         wlCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713304348; x=1713909148;
+        d=1e100.net; s=20230601; t=1713304351; x=1713909151;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZUoEwV/WonERdygqJVUNKsyBTwb8gi0MTfMadGUK8J0=;
-        b=D5ppD8FD6jK9wYfygYbEZ+9lZclFr4Pr8rcaJy+dDDUoI+itE8qjN+88vmJdr+mteg
-         UL/uAzr9WvXwyB4O41qumzeuXwzwctwya7Ds7KcyHHdPQkntqQEucYmV9HYvWwdb+nrQ
-         7xcPdGOvjcKhb6S30OvxV5JtfiGfxa34fwBUVfATTELnf7RxhrToOW7qziXKy6RcUAK4
-         79L0Y+/bRtzLSLmDfXvEXZaB1na+3TKlj3ONGNR7loWuAtmzr9DlF5NKA67HR98Cjhs8
-         jJqRI/oRDxM/BIBhwlTvz/2vMJ6uQYmyF8oiFySqy3dHEZPmv2cIVvfHSPFS9lpNUVOK
-         HmrQ==
-X-Gm-Message-State: AOJu0YzM6CC5I9EWeLKQ9bP70TQXjtKiNcCtXaJZuAvmiWHZQt208a7D
-	XJkDt6Jz8RoEBdjFJSfeFV5ItlgUaITzUlF19FRKHEyCZLTgmsGZBMJ1GA+///I=
-X-Google-Smtp-Source: AGHT+IEqnbIQNi207huXAQ8ctOL38JNw4GyD8GEfdN4/2489Qyp9aZRNzPKSh3bMbsxoP97/D/oPJA==
-X-Received: by 2002:a05:6a00:3cc4:b0:6ed:def8:4dc with SMTP id ln4-20020a056a003cc400b006eddef804dcmr15435623pfb.10.1713304348411;
-        Tue, 16 Apr 2024 14:52:28 -0700 (PDT)
+        bh=TXiJdzRTAuB1UlX3lfsMbcreITp5HZxliXA/4a98Y64=;
+        b=jlNUa0pBVGNX3KwZT27HfmIPVu48Fcsb37JeQuyHaaE+v6saxzpwEbb/SGcSLQ1QCt
+         Jq3f3GVOJXoUR1VyV7eZEQLbsxH0uem4bBbSJQju1IZ2lmRdUwirOndvbh3+IoZuT6/4
+         jEpek7uLuwir392kRTvPjqsDHWz4x1wh7hml0sba812pVmYJiiLwSmWFfaTXpuCEgyXo
+         NC1GU3S0+KQFtxJrhirQSogBW5zGWe+59+6x6TTYBskmfUnpQ5NRVL4nklLnWM3Nzimv
+         AfgidsD8UOcThRNJ89Ty24ri2LaY7wGenpi/EbobxMaojfOm1DGmrcxSD8w4eklarmwl
+         Lukg==
+X-Gm-Message-State: AOJu0Yyb9EouDXZuxsaSRamtmmFqHR1xHzYAjxnkrPes6PMTLPxEiBGe
+	/CuJTa4e1gfWUMJxEJ0PEV7GzFIuTPP2NJEbBfEz/gHwlvVWs1G0kOQiBZw5UyHPLbybZq6awC3
+	cyAw=
+X-Google-Smtp-Source: AGHT+IGAixADyk/tsrCZSC2YS7wzRIrpN+S1hZwAxxKZOgoLJcJBlwxtj5tmxfZm0fYIiUdmxF9OvQ==
+X-Received: by 2002:a05:6a21:3d84:b0:1a7:aba5:7ce9 with SMTP id bj4-20020a056a213d8400b001a7aba57ce9mr12798568pzc.34.1713304351505;
+        Tue, 16 Apr 2024 14:52:31 -0700 (PDT)
 Received: from brgl-uxlite.. ([24.75.208.145])
-        by smtp.gmail.com with ESMTPSA id o8-20020a656148000000b005f07f34eb59sm8005217pgv.27.2024.04.16.14.52.26
+        by smtp.gmail.com with ESMTPSA id o8-20020a656148000000b005f07f34eb59sm8005217pgv.27.2024.04.16.14.52.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 14:52:27 -0700 (PDT)
+        Tue, 16 Apr 2024 14:52:30 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Kent Gibson <warthog618@gmail.com>,
 	=?UTF-8?q?Gunnar=20Th=C3=B6rnqvist?= <gunnar@igl.se>
 Cc: linux-gpio@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH v2 2/4] tools: use ppoll() where higher timeout resolution makes sense
-Date: Tue, 16 Apr 2024 23:52:20 +0200
-Message-Id: <20240416215222.175166-3-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 4/4] tools: add minutes as a new supported time unit
+Date: Tue, 16 Apr 2024 23:52:22 +0200
+Message-Id: <20240416215222.175166-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240416215222.175166-1-brgl@bgdev.pl>
 References: <20240416215222.175166-1-brgl@bgdev.pl>
@@ -73,90 +74,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We allow timeout units to be specified in microseconds but for poll() we
-need to round them up to milliseconds. Switch to ppoll() to avoid losing
-precision.
+Make it more convenient to specify longer time periods in gpio-tools by
+introducing minutes as the new time unit.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- tools/gpiomon.c    | 12 ++++++++++--
- tools/gpionotify.c | 12 ++++++++++--
- 2 files changed, 20 insertions(+), 4 deletions(-)
+ tools/tools-common.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/tools/gpiomon.c b/tools/gpiomon.c
-index 40e6ac2..728a671 100644
---- a/tools/gpiomon.c
-+++ b/tools/gpiomon.c
-@@ -176,7 +176,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
- 			cfg->fmt = optarg;
- 			break;
- 		case 'i':
--			cfg->idle_timeout = parse_period_or_die(optarg) / 1000;
-+			cfg->idle_timeout = parse_period_or_die(optarg);
- 			break;
- 		case 'l':
- 			cfg->active_low = true;
-@@ -362,6 +362,7 @@ int main(int argc, char **argv)
- 	int num_lines, events_done = 0;
- 	struct gpiod_edge_event *event;
- 	struct line_resolver *resolver;
-+	struct timespec idle_timeout;
- 	struct gpiod_chip *chip;
- 	struct pollfd *pollfds;
- 	unsigned int *offsets;
-@@ -453,7 +454,14 @@ int main(int argc, char **argv)
- 	for (;;) {
- 		fflush(stdout);
+diff --git a/tools/tools-common.c b/tools/tools-common.c
+index 500e9a2..4340bce 100644
+--- a/tools/tools-common.c
++++ b/tools/tools-common.c
+@@ -138,10 +138,12 @@ long long parse_period(const char *option)
+ 	}
  
--		ret = poll(pollfds, resolver->num_chips, cfg.idle_timeout);
-+		if (cfg.idle_timeout > 0) {
-+			idle_timeout.tv_sec = cfg.idle_timeout / 1000000;
-+			idle_timeout.tv_nsec =
-+					(cfg.idle_timeout % 1000000) * 1000;
-+		}
-+
-+		ret = ppoll(pollfds, resolver->num_chips,
-+			    cfg.idle_timeout > 0 ? &idle_timeout : NULL, NULL);
- 		if (ret < 0)
- 			die_perror("error polling for events");
+ 	if (m) {
+-		if (*end != 's')
++		if (*end == '\0')
++			m = 60000000;
++		else if (*end == 's')
++			end++;
++		else
+ 			return -1;
+-
+-		end++;
+ 	} else {
+ 		m = 1000;
+ 	}
+@@ -213,7 +215,7 @@ void print_period_help(void)
+ {
+ 	printf("\nPeriods:\n");
+ 	printf("    Periods are taken as milliseconds unless units are specified. e.g. 10us.\n");
+-	printf("    Supported units are 's', 'ms', and 'us'.\n");
++	printf("    Supported units are 'm', 's', 'ms', and 'us' for minutes, seconds, milliseconds and microseconds respectively.\n");
+ }
  
-diff --git a/tools/gpionotify.c b/tools/gpionotify.c
-index d2aee15..962896c 100644
---- a/tools/gpionotify.c
-+++ b/tools/gpionotify.c
-@@ -132,7 +132,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
- 			cfg->fmt = optarg;
- 			break;
- 		case 'i':
--			cfg->idle_timeout = parse_period_or_die(optarg) / 1000;
-+			cfg->idle_timeout = parse_period_or_die(optarg);
- 			break;
- 		case 'n':
- 			cfg->events_wanted = parse_uint_or_die(optarg);
-@@ -374,6 +374,7 @@ int main(int argc, char **argv)
- 	int i, j, ret, events_done = 0, evtype;
- 	struct line_resolver *resolver;
- 	struct gpiod_info_event *event;
-+	struct timespec idle_timeout;
- 	struct gpiod_chip **chips;
- 	struct gpiod_chip *chip;
- 	struct pollfd *pollfds;
-@@ -422,7 +423,14 @@ int main(int argc, char **argv)
- 	for (;;) {
- 		fflush(stdout);
- 
--		ret = poll(pollfds, resolver->num_chips, cfg.idle_timeout);
-+		if (cfg.idle_timeout > 0) {
-+			idle_timeout.tv_sec = cfg.idle_timeout / 1000000;
-+			idle_timeout.tv_nsec =
-+					(cfg.idle_timeout % 1000000) * 1000;
-+		}
-+
-+		ret = ppoll(pollfds, resolver->num_chips,
-+			    cfg.idle_timeout > 0 ? &idle_timeout : NULL, NULL);
- 		if (ret < 0)
- 			die_perror("error polling for events");
- 
+ #define TIME_BUFFER_SIZE 20
 -- 
 2.40.1
 
