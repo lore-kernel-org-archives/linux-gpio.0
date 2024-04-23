@@ -1,119 +1,86 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173D086253
-	for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 11:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE928143C5C;
+	Tue, 23 Apr 2024 11:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713872468; cv=none; b=IEWkYjlPUJ/1iaoQMSwgtylI+SBVhJR2tPcB3cGZsG7HPv871U5QCg004k7wfW4HCUwhKo3vWNLXmVUtw/NFpYKTObcksQJGGf5ZAFpqfHWKytDgt/CnzeJ3mkg5mEEmww+EP0ZqkfEXcJC/j8bvZmjb157KiWpA19mDNfVRs54=
+	t=1713872480; cv=none; b=rllCGjUhN2L4fMcqsO79JoeTPnlFDjJiDnFhzv1ECLoDuSz1lxZFv15cdiTDK070Wy1ksapS2ggsJ8zcxYrEf+56OKq51kt/ZIzvMmvdLH7k25pYg9pvhtWnw/tZYnL0WHG/Ye6d5rl+g11TQCXeUAwuWyyzAycwHiVsy+7bTlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713872468; c=relaxed/simple;
-	bh=jGSxB/aKBQrvQZyFP9ugxKa9qzrbfWhqVhGn/ZIkYAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXffdyLg/85Y2ggSWwi7gSaBaJbCUBxTClFVSw8HvAtmoAT2jHyf5PB3f/Redx/vE79GiXo1LDUfDPQiYTa353syk0RB87+EiVBEZV3X/nLoYVLM45akm9WZxgz6tSaZ+8RVTKVmIjmw4wpUBnTZVnDJ6ghqDJaYlEH0B+khTZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jUNa/QHf; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713872480; c=relaxed/simple;
+	bh=Z7K1TEC6YbRp8oemypKgCaK2krbYRjdQKpWmHKQYgS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GeeKrr7WBW2+45h4etEgntXtTnpyldL/sbaV9dSfxNKNCWlJddLT+11MgmnDRVHB87/02tCEmNM7rJ0sDPGXCb1Q+e69d33fQ3X9VutjobP1JerW145fOlykpnZnGPug0FQZbYQS8aHN74sdgjDMpE5VbWipvDhJlUc7GXjR1e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIaDogNI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jUNa/QHf"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-de4640ec49fso5686446276.2
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 04:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713872466; x=1714477266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHww8guo9joHfM40pOxCx1WuFD69gCMICsgCV/kfVdI=;
-        b=jUNa/QHf+h7rYfkyPkjek9PKWLdqhYn8cYkiC0ZAa62e0AthIsdqVaYno2Psgu54Tw
-         uGB5D8REfnmWsukIeVHj6PGddpntyXFlHNKuiTAHQ2UG44fKPlmLzBdQrn656KyFViXv
-         36GuWW834TeQTyRaWp4QxurOJ6mxzmpSdThL4pbt8jFxflYLIE+TPUQoiMQqW7O1E6Ss
-         PNMyVuXkYz0rU7Flh/7J2Sr1heGl+7Mae6Pw+gHCQJNuYwKw9U7X5KJRXRWCjSDd64ca
-         +XqNq1ZFw+EAjP62mGVaLWygdTyauWXRSzDvP7nvO7Jta9NClP4bKUdaGAMRihp0Ouqb
-         4qKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713872466; x=1714477266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHww8guo9joHfM40pOxCx1WuFD69gCMICsgCV/kfVdI=;
-        b=KBh8wcrrecKoaxK0ZpIYQ6g5Zk2n0dv4PosSb+nOEMDazIslBxLZqZvGDQxgyj2R1L
-         NYChFvGfEaYFk6aNBzmV1Va1Pfc1ryHU9uUOtMdMtVZad4rH/A57Xq6HNRbATBkseCt5
-         kerPTQmqyMozAcSn3hBXY6cBSdOuKgjbh54piZRvvqcsMQo+RAANWyf2A9AA2x0Wzywj
-         O2ZxBnYADdpKHmftz6DXOoV/DFDtvZSCD+D8pDtYoWAekksiRXXClZ6T8eN8gFtuBW5r
-         0zOj/b9yQViUu9QgMP8188bij80aCLOWkmNKJxDYdYCIIW8jn5Dj57G70XGC3RhvBleN
-         AN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVA0vXc7qTEJfpo+3SKq936R2Sk2k2ar2lqxK6s/zo1iHn1ZJDKUOb8/la9V/7ck7gJGTZtQezZqnLgT2t0TvbqNcbAgj5kpnO7Pw==
-X-Gm-Message-State: AOJu0YwyBnMv3IVVsaa4sEeKLoFPaN8DMVMNbk2guz2NySrtYrFqp77r
-	vvnR8/ckM09TU+0Iv7OFhNDypeRnxozIjWwQtFF3L8VclMFol49GJiN0tGNt5bxe22wzaXq1jkb
-	zV6li5/N7MBAEL47Bq1EIA1K5JdmQRdRmBCbj9w==
-X-Google-Smtp-Source: AGHT+IG0zUJ0k+vOuaZckaNvNj9KvErNxit8stDC2Lri93dfWftA1haaHyaI6RFYiG/AC23vxxVy2y/4BpkWBRxblqM=
-X-Received: by 2002:a25:bc45:0:b0:de5:5084:715d with SMTP id
- d5-20020a25bc45000000b00de55084715dmr1506637ybk.53.1713872466081; Tue, 23 Apr
- 2024 04:41:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIaDogNI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97594C32782;
+	Tue, 23 Apr 2024 11:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713872480;
+	bh=Z7K1TEC6YbRp8oemypKgCaK2krbYRjdQKpWmHKQYgS8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TIaDogNI7GxWUXuKY8ZrzkrTsLCvtYoT/MtZ79bGrGxRXessjAz3J1GCiOkj1Mnos
+	 3cIoD9INv5e7+MuhXqv6h9R2d/YlszdIHjdhOSnfGnKkVX6kALuVISyUnUoOSXWvwu
+	 acNPRzKc7zFHkzoBGP62NUmYzjBCLPjlbeespeUOcAzskMSmFZjoXoxI4rHRX3HFSt
+	 DeiA2HrHf5tIgpKA5SsmGuTd2mZZBqBmFQ4i1CAEiFQ37LfVB8EEIFbDSNYKUnDXuV
+	 9cGl3r5QIIiC5J0hJ5WbhQrJws31BuKjmt7nDmZi0lOcb3McQaNMf2EZ7Ufwaminvo
+	 ndY4wdqlkpL6A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	andy@kernel.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 4/9] gpio: wcove: Use -ENOTSUPP consistently
+Date: Tue, 23 Apr 2024 07:02:26 -0400
+Message-ID: <20240423110233.1659071-4-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240423110233.1659071-1-sashal@kernel.org>
+References: <20240423110233.1659071-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423022814.3951048-1-haibo.chen@nxp.com>
-In-Reply-To: <20240423022814.3951048-1-haibo.chen@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 23 Apr 2024 13:40:55 +0200
-Message-ID: <CACRpkdaRxoEZT1_KyJ3QMDgBcciw1XUXKr=cEiPxbcwSnpmyiA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: vf610: always set GPIO to input mode when used as
- interrupt source
-To: haibo.chen@nxp.com
-Cc: brgl@bgdev.pl, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.156
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 23, 2024 at 4:28=E2=80=AFAM <haibo.chen@nxp.com> wrote:
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> From: Haibo Chen <haibo.chen@nxp.com>
->
-> Though the default pin configuration is INPUT, but if the prior stage doe=
-s
-> configure the pins as OUTPUT, then Linux will not reconfigure the pin as
-> INPUT.
->
-> e.g. When use one pin as interrupt source, and set as low level trigger,
-> if prior stage already set this pin as OUTPUT low, then will meet interru=
-pt
-> storm.
->
-> So always set GPIO to input mode when used as interrupt source to fix abo=
-ve
-> case.
->
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
->  drivers/gpio/gpio-vf610.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> index 07e5e6323e86..305b0bcdee6f 100644
-> --- a/drivers/gpio/gpio-vf610.c
-> +++ b/drivers/gpio/gpio-vf610.c
-> @@ -214,7 +214,7 @@ static int vf610_gpio_irq_set_type(struct irq_data *d=
-, u32 type)
->         else
->                 irq_set_handler_locked(d, handle_edge_irq);
->
-> -       return 0;
-> +       return port->gc.direction_input(&port->gc, d->hwirq);
+[ Upstream commit 0c3b532ad3fbf82884a2e7e83e37c7dcdd4d1d99 ]
 
-Just call vf610_gpio_direction_input() instead of indirecting through
-gc->direction_input(), no need to jump through the vtable and as
-Bartosz says: it just makes that struct vulnerable.
+The GPIO library expects the drivers to return -ENOTSUPP in some
+cases and not using analogue POSIX code. Make the driver to follow
+this.
 
-Second:
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-wcove.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In this patch also implement gc->get_direction() which is currently
-unimplemented. If you are going to change the direction of a
-GPIO randomly at runtime then the framework really likes to
-have a chance to know the current direction for obvious reasons.
+diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
+index 16a0fae1e32eb..2df948e16eb71 100644
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -104,7 +104,7 @@ static inline int to_reg(int gpio, enum ctrl_register type)
+ 	unsigned int reg = type == CTRL_IN ? GPIO_IN_CTRL_BASE : GPIO_OUT_CTRL_BASE;
+ 
+ 	if (gpio >= WCOVE_GPIO_NUM)
+-		return -EOPNOTSUPP;
++		return -ENOTSUPP;
+ 
+ 	return reg + gpio;
+ }
+-- 
+2.43.0
 
-Yours,
-Linus Walleij
