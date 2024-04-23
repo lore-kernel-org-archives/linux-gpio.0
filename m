@@ -1,210 +1,168 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8761051016;
-	Tue, 23 Apr 2024 09:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E8F60DCF
+	for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 10:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713865349; cv=none; b=LJ/HoSt1E6m7CaSdBgu9NUQip+dLwlisyrzamlse/KXUbp79JhMd17fppnDLhhYZ6K8nrjwv9UJASlnUZM0qfEawv8RrjMyAsCt9qAzFDP1YYrp9eOv4vhlCifl6Vj6SkgERJ19srs+b3lj7gCrYLlVZzTg6yQ33C56y5/3Tl0I=
+	t=1713866702; cv=none; b=L3zfYgFeZ/Z5rukKPudcsu/q1InDXlyKnNAt91e9Ji/L0nGsjxKuz6iLaftrQnof6QgwYqi/+60SbFSKYwxmjyg6zZZL7/3ezFdbiZEHTfqO+xMKztetTOvriW6sqpyLDi/RlxklJFBjLy82+V+S7p0PUf//83h76KcerGyiApM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713865349; c=relaxed/simple;
-	bh=SeejIbtFL3q2Ah+TgrTpf656eWgMzRmReKNJR8SEw/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fKPQNB3SE8ua+a0XYloNDAd5UlFsmGsc0Bo2wcTCfGGm8VI4aIxqM160gq5OAOWxr8fCdvEF1MrfrPfuDXNZY4RKDQSCKqbA2n4d4dxkjYOQ+rxNN50mrvOWbDjC5L9ONIGKZ+v5pJa730yKqJIf5NcIZcktUYk+NfU5Rdv28gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-61816fc256dso47363617b3.0;
-        Tue, 23 Apr 2024 02:42:27 -0700 (PDT)
+	s=arc-20240116; t=1713866702; c=relaxed/simple;
+	bh=wZgr20dfY+CkOzhOLyU4m7MU2TR5zJLdVN/TG6a7ASs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tecpCOI98Pk49L2f1aV6f3fyd8OLmrrcvrb8PBkGLXBXG0r2Roaok/as/Oqi7ki/Pg0cCf1gWSazw6fAsmJYgScR1LeNrKrOf0ssD1OVlJ5CUK/Rvs0LMmWnppXkNqgBWSWjcRRg0MFHRgOZBSVew+5kmxh/9u2i8KMILS9Eg/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q86PCwzx; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q86PCwzx"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41a5b68ed85so11035885e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 03:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713866698; x=1714471498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E7pba3IahTgD9DftxTzBcYMSbhG2YiMnuGqnb35n1gw=;
+        b=Q86PCwzxmL20dHEkmZD0V911rfDI3vUmEuXXslvs2maNaFHl1FeAYBLu0rHkDoP71Q
+         TesEbIx8UHkPzjLXWYUI04XwF7bzmWDrBJw2qVKBKYDIzyp8FuMjHKKH41CIdW9G/TzT
+         cT0mZAQqwKPsQUeKK1AMfEwls0NFV8s8oohZnhEwXU7tceatFeNPSaKoHJ+o0u7svo+l
+         OIRQJ+AT+s7GOJDxfyO2yqtFGZs/JqJ7eKVZ7SBP9XlWN1TShUtZ9XSwDn5n3curMQ0e
+         vKjrXG04ydlqJNmR7BxrAK8BLvU8cmbS7fz5M3dDRs63VWYVs7Lj9WzOfTJGXUZw1yTm
+         cj6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713865345; x=1714470145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1713866698; x=1714471498;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wqVVfPd+WN3revU4fg7rebmHFdp/AiB0hyvlw5Bb61g=;
-        b=uqlflhjQyo+9UkWaG+dQ4pRyc+Mv+OpWEMAW0vD60iz9rdtwHbj+g+de5B/R6Jf2ZA
-         Id0x20wVLLl7i0iZTky0o4upJb6sCBLlvXtsXCef7jrSDQCEvprL6cTKyJ51Vi4fAdbv
-         t5T5EebEQj09IgyU0yeAJ+oWhQbaOMWzKjYX8n7FpLI4iQ67ko/Rt8I0hRJiN9/NW6xp
-         twThh+nUIe4N78sJgLJVcGzp1ZtsIVn1l8tw7bAYdda1NpJAu3L9S65AyFnE6rwD6x3Y
-         UyR/C1cVtns40GbYcuz7Oc1uLMEib1wTX4KZ1Tm6mKrA0nA+GwUMDbXh/brJ6mYxH/3T
-         X7yA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/BtNrVgqwaiHe/N4MnHaMuXWSqtJNmmofUoT01/741JPnVPkp4gdFVBuP8g3lfO55cDv9TSZNFZvzjIaOC1prvNui4ctw70yIk/0Ert5vYxZsvj5zfJ+T8y3CgZlPsd4zhsM2jQM5QWGnCx4FJsIo0sitT1+8GObJ6mO7WXwRQeR4+KgAOGgWx4uzW39TXPhyMATdnEJ9LVX8e2WQHHCRCVqN1UGkyh5vN0uPbgAeiSuCDRyGLzeGnrz8lsE+Pw7FR6Nwiti53Lx8+aDdzn4QCBj9nYbDYldgWYzEFA==
-X-Gm-Message-State: AOJu0YxSF6CcvH9qT1ALkXUGgQRpZfkNTwURQ1ob9rpgEe6hQlXb+zgh
-	MBuMY5dv3mLrCbjWVbPspOGsXwwBAzRKKy/N6qgh3/usmyR5pIB2HrcwqlUB
-X-Google-Smtp-Source: AGHT+IHxjd25aXH4Pg198Wdzat7g29/g3mpyPaK2cuNtRCeV9WCFBJbFMsrV78FnEW7acppO2pJ2og==
-X-Received: by 2002:a05:690c:3501:b0:61a:fb4d:6fc3 with SMTP id fq1-20020a05690c350100b0061afb4d6fc3mr12942508ywb.35.1713865345073;
-        Tue, 23 Apr 2024 02:42:25 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id p204-20020a0de6d5000000b0061575978d53sm2426862ywe.55.2024.04.23.02.42.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 02:42:24 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so5240006276.1;
-        Tue, 23 Apr 2024 02:42:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXBe/ttW7jIQwk9mvXAqBujSj9nhpbCsQuTPJY0CECTUuPCrqHHiZhB2mFgyTMrI1nDQp6kb5glsHU4jLy3cr3NIKXyMQGCRXqPJ4AKP9BPNhBEIc4XzgvGCfD54yK/ckAKz/+72YFdRBJyhb9DMWhfpAzENfCIPQK1Uj3a6QPAAh7SANu6/VltdVwXTSt+TA88CQPrrDeY9YW4KnumNDzghIpiTFk8Jg8UhUGHGxfZlHw6pAl7h+gF4svd9Fz6G1BUGuohz8SsZKYRn1rwfc0sO78GOCH2II309HXqHg==
-X-Received: by 2002:a25:804f:0:b0:de4:6aa6:9ea2 with SMTP id
- a15-20020a25804f000000b00de46aa69ea2mr11819127ybn.32.1713865344325; Tue, 23
- Apr 2024 02:42:24 -0700 (PDT)
+        bh=E7pba3IahTgD9DftxTzBcYMSbhG2YiMnuGqnb35n1gw=;
+        b=Ld2Ew83xJR7OURW+MPM31r/yLtKF3cS9XkpzvKazUc34SzwzsU9ZkZLtqfZ8phfskG
+         6JwY0fomc2ZYQilRmpHFTzG38WA7SJ7Fulizc/gOzAmIAXBDPMy5B3WMofdhtYZzEU7P
+         GxRez2VhQH1UYdNz1yWPGVtG50WQAgfDGPEIwWD4Gy6AfGEUuA2GaU8lynJpQ0bFxXZs
+         DQzosIM9J+I4S0Lw0727of2tks2v0334Zeq+5m74wFETLyNRU4os6Pp3t9KERhr4kUbi
+         JBZC/7efgqtk+bU0GNlIImvcDNi6p6/QtnYix25xilBeKfvGkF8kYM7Qn50d53wMZE4d
+         tiTw==
+X-Gm-Message-State: AOJu0YyNGMZ0hcsaEtBwIa58oyqGM5qbTCzNI6ejWM3MqJxzL0luOLsz
+	odgvmMeUM0oAV+SqMPgqDKjwXwMfm0pVkU3VN19v6+qrsJMnDjG9SI+nL3DMvYc=
+X-Google-Smtp-Source: AGHT+IEvyoelW2XJXtzNG4MegsaDgos16YqfhUsokEe8vzdbvwCRMmYJjSvMVqQSHAlrsonezdVmZA==
+X-Received: by 2002:a05:600c:3b94:b0:417:e316:fbb3 with SMTP id n20-20020a05600c3b9400b00417e316fbb3mr1469245wms.15.1713866698051;
+        Tue, 23 Apr 2024 03:04:58 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:a046:fbef:467d:18f7])
+        by smtp.gmail.com with ESMTPSA id ay13-20020a05600c1e0d00b0041a7581f8b6sm5223200wmb.23.2024.04.23.03.04.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 03:04:56 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	=?UTF-8?q?Gunnar=20Th=C3=B6rnqvist?= <gunnar@igl.se>
+Cc: linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH v3 1/4] tools: rename timeout to idle_timeout in gpiomon and gpionotify
+Date: Tue, 23 Apr 2024 12:04:49 +0200
+Message-Id: <20240423100452.32958-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240423100452.32958-1-brgl@bgdev.pl>
+References: <20240423100452.32958-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com> <20240102-j7200-pcie-s2r-v5-1-4b8c46711ded@bootlin.com>
-In-Reply-To: <20240102-j7200-pcie-s2r-v5-1-4b8c46711ded@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Apr 2024 11:42:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVnKX23yi7ir1LVxfXAMeeWMFzM+cdgSSTNjpn1OnC2xw@mail.gmail.com>
-Message-ID: <CAMuHMdVnKX23yi7ir1LVxfXAMeeWMFzM+cdgSSTNjpn1OnC2xw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/11] gpio: pca953x: move suspend()/resume() to suspend_noirq()/resume_noirq()
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com, 
-	theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Tue, Apr 16, 2024 at 3:31=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
-> Some IOs can be needed during suspend_noirq()/resume_noirq().
-> So move suspend()/resume() to noirq.
->
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+Use a more meaningful name for the variable storing the idle timeout
+value.
 
-Thanks for your patch, which is now commit 86eb98127332748f ("gpio:
-pca953x: move suspend()/resume() to suspend_noirq()/resume_noirq()")
-in i2c-host/i2c/i2c-host.
+Suggested-by: Kent Gibson <warthog618@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ tools/gpiomon.c    | 8 ++++----
+ tools/gpionotify.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-This patch causes regressions on e.g. Salvator-XS.
+diff --git a/tools/gpiomon.c b/tools/gpiomon.c
+index e3abb2d..40e6ac2 100644
+--- a/tools/gpiomon.c
++++ b/tools/gpiomon.c
+@@ -30,7 +30,7 @@ struct config {
+ 	const char *fmt;
+ 	enum gpiod_line_clock event_clock;
+ 	int timestamp_fmt;
+-	int timeout;
++	int idle_timeout;
+ };
+ 
+ static void print_help(void)
+@@ -143,7 +143,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
+ 	memset(cfg, 0, sizeof(*cfg));
+ 	cfg->edges = GPIOD_LINE_EDGE_BOTH;
+ 	cfg->consumer = "gpiomon";
+-	cfg->timeout = -1;
++	cfg->idle_timeout = -1;
+ 
+ 	for (;;) {
+ 		optc = getopt_long(argc, argv, shortopts, longopts, &opti);
+@@ -176,7 +176,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
+ 			cfg->fmt = optarg;
+ 			break;
+ 		case 'i':
+-			cfg->timeout = parse_period_or_die(optarg) / 1000;
++			cfg->idle_timeout = parse_period_or_die(optarg) / 1000;
+ 			break;
+ 		case 'l':
+ 			cfg->active_low = true;
+@@ -453,7 +453,7 @@ int main(int argc, char **argv)
+ 	for (;;) {
+ 		fflush(stdout);
+ 
+-		ret = poll(pollfds, resolver->num_chips, cfg.timeout);
++		ret = poll(pollfds, resolver->num_chips, cfg.idle_timeout);
+ 		if (ret < 0)
+ 			die_perror("error polling for events");
+ 
+diff --git a/tools/gpionotify.c b/tools/gpionotify.c
+index 2c56590..d2aee15 100644
+--- a/tools/gpionotify.c
++++ b/tools/gpionotify.c
+@@ -23,7 +23,7 @@ struct config {
+ 	const char *chip_id;
+ 	const char *fmt;
+ 	int timestamp_fmt;
+-	int timeout;
++	int idle_timeout;
+ };
+ 
+ static void print_help(void)
+@@ -108,7 +108,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
+ 	int opti, optc;
+ 
+ 	memset(cfg, 0, sizeof(*cfg));
+-	cfg->timeout = -1;
++	cfg->idle_timeout = -1;
+ 
+ 	for (;;) {
+ 		optc = getopt_long(argc, argv, shortopts, longopts, &opti);
+@@ -132,7 +132,7 @@ static int parse_config(int argc, char **argv, struct config *cfg)
+ 			cfg->fmt = optarg;
+ 			break;
+ 		case 'i':
+-			cfg->timeout = parse_period_or_die(optarg) / 1000;
++			cfg->idle_timeout = parse_period_or_die(optarg) / 1000;
+ 			break;
+ 		case 'n':
+ 			cfg->events_wanted = parse_uint_or_die(optarg);
+@@ -422,7 +422,7 @@ int main(int argc, char **argv)
+ 	for (;;) {
+ 		fflush(stdout);
+ 
+-		ret = poll(pollfds, resolver->num_chips, cfg.timeout);
++		ret = poll(pollfds, resolver->num_chips, cfg.idle_timeout);
+ 		if (ret < 0)
+ 			die_perror("error polling for events");
+ 
+-- 
+2.40.1
 
-    s2idle:
-
-         Freezing user space processes
-         Freezing user space processes completed (elapsed 0.006 seconds)
-         OOM killer disabled.
-         Freezing remaining freezable tasks
-         Freezing remaining freezable tasks completed (elapsed 0.003 second=
-s)
-         sd 0:0:0:0: [sda] Synchronizing SCSI cache
-         ata1.00: Entering standby power mode
-        +i2c-rcar e66d8000.i2c: error -16 : 10000005
-        +pca953x 4-0020: Failed to sync GPIO dir registers: -16
-        +pca953x 4-0020: Failed to restore register map: -16
-        +pca953x 4-0020: PM: dpm_run_callback(): pca953x_resume_noirq
-returns -16
-        +pca953x 4-0020: PM: failed to resume async noirq: error -16
-
-    s2ram:
-
-         Detected VIPT I-cache on CPU7
-         CPU7: Booted secondary processor 0x0000000103 [0x410fd034]
-         CPU7 is up
-        +i2c-rcar e66d8000.i2c: error -110 : 10000001
-        +pca953x 4-0020: Failed to sync GPIO dir registers: -110
-        +pca953x 4-0020: Failed to restore register map: -110
-        +pca953x 4-0020: PM: dpm_run_callback(): pca953x_resume_noirq
-returns -110
-        +pca953x 4-0020: PM: failed to resume async noirq: error -110
-         usb usb1: root hub lost power or was reset
-         ...
-         PM: suspend exit
-         ata1: link resume succeeded after 1 retries
-        -ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
-        -sd 0:0:0:0: [sda] Starting disk
-        -ata1.00: configured for UDMA/133
-        -ata1.00: Entering active power mode
-        +ata1: SATA link down (SStatus 0 SControl 300)
-        +ata1: link resume succeeded after 1 retries
-        +ata1: SATA link down (SStatus 0 SControl 300)
-        +ata1: limiting SATA link speed to <unknown>
-        +ata1: link resume succeeded after 1 retries
-        +ata1: SATA link down (SStatus 0 SControl 3F0)
-        +ata1.00: disable device
-        +ata1.00: detaching (SCSI 0:0:0:0)
-        +sd 0:0:0:0: [sda] Synchronizing SCSI cache
-        +sd 0:0:0:0: [sda] Synchronize Cache(10) failed: Result:
-hostbyte=3D0x04 driverbyte=3DDRIVER_OK
-
-    When trying to read from /dev/sda afterwards:
-
-        ata1: link resume succeeded after 1 retries
-        ata1: SATA link down (SStatus 0 SControl 3F0)
-        ata1.00: disable device
-        ata1.00: detaching (SCSI 0:0:0:0)
-        device offline error, dev sda, sector 0 op 0x0:(READ) flags
-0x80700 phys_seg 4 prio class 0
-        device offline error, dev sda, sector 0 op 0x0:(READ) flags
-0x0 phys_seg 1 prio class 0
-        Buffer I/O error on dev sda, logical block 0, async page read
-        sd 0:0:0:0: [sda] Synchronizing SCSI cache
-        sd 0:0:0:0: [sda] Synchronize Cache(10) failed: Result:
-hostbyte=3D0x04 driverbyte=3DDRIVER_OK
-
-All issues above are fixed by reverting this commit.
-
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -1234,7 +1234,7 @@ static void pca953x_save_context(struct pca953x_chi=
-p *chip)
->         regcache_cache_only(chip->regmap, true);
->  }
->
-> -static int pca953x_suspend(struct device *dev)
-> +static int pca953x_suspend_noirq(struct device *dev)
->  {
->         struct pca953x_chip *chip =3D dev_get_drvdata(dev);
->
-> @@ -1248,7 +1248,7 @@ static int pca953x_suspend(struct device *dev)
->         return 0;
->  }
->
-> -static int pca953x_resume(struct device *dev)
-> +static int pca953x_resume_noirq(struct device *dev)
->  {
->         struct pca953x_chip *chip =3D dev_get_drvdata(dev);
->         int ret;
-> @@ -1268,7 +1268,8 @@ static int pca953x_resume(struct device *dev)
->         return ret;
->  }
->
-> -static DEFINE_SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x=
-_resume);
-> +static DEFINE_NOIRQ_DEV_PM_OPS(pca953x_pm_ops,
-> +                              pca953x_suspend_noirq, pca953x_resume_noir=
-q);
->
->  /* convenience to stop overlong match-table lines */
->  #define OF_653X(__nrgpio, __int) ((void *)(__nrgpio | PCAL653X_TYPE | __=
-int))
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
