@@ -1,146 +1,89 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868221369A9
-	for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 13:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613E113C3E3;
+	Tue, 23 Apr 2024 15:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713880447; cv=none; b=snjfFlEYRS+aLFt0PxPqImV1jcYOCexmWZ3nFOiuV59rhP8LiSApdXO+ZZMTw2jsncrhNUkMe9j3n8gBSdPF2/lSHd/AFfvT+CgFnaJa2rjGZoD8+c7jioYNRMXZnwMOxQ1QnBRUG976ZuBWTGat66HUOBJ9/L2Qs8oGor0/Fek=
+	t=1713886333; cv=none; b=pmlK2RARl5z6ke4R5lJgxqhflXxqQAtC0wg3LraaSRi6Thwa4iJnaVM5DoTDq3fr3WS4yYNsbkgDQHCz7I8ZjqYj7gPHl66k2qNLrInaiH9DDuQW6APsk2mfWKp78lDZVaGiQxtHUbHZzJ/h2rpJrIMidX81i1LcIcg2ISgK6Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713880447; c=relaxed/simple;
-	bh=Rc2IumjbQ8OjG4qfb9Z/1cwn+g9VCp4urj9gZ8iGneE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LEJeH0wKtB6UUI2unxFgRJybwrc8TlQigWSHdkrKhPBg5TEBRY1R2cEPcrz8OJPkuP4Ok9kfneYZuCcSUZrUmV24pgFQcB+NEbYpGopP0KDQCue2+wJ2X901ZGAy+NgXhrNZwgzB6VH9HrNPd57Kzc5LZL6Dbe+KBrtprtFQuZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gL+PxhQt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713886333; c=relaxed/simple;
+	bh=loKLUZOtD2Ahu5u6ZjVLLzhH7+gsOeQjN/iG5Ye4+LQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=tiFgH5VXmXIt83++ohvpAOwneJDDCe60vgamg5vVNoOsS2vR7Y52a28sdj4dP14SLQJTgL+ePx0MnTUDZp5bmDBQZ27I2gJ3CyAWYeLDrGguI6uhp3XWJIa2Hy3pBIXWkTT5ZVFeXk9gHYVywjJSs8oBmRnvx/VUQg0lves3q6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9Suwh23; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gL+PxhQt"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51b09c3a111so3790114e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Apr 2024 06:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713880443; x=1714485243; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gtSA0+kfCH0DzApn0Z0KwQ9Ybzg48e+TinciXUnlIO0=;
-        b=gL+PxhQtlBkKCKXD98D2fu1xrRdORNGEnBDV/FrEbJNoBoc7FFnRYyd5UvRhJzb2l2
-         RzCdzfltTycU79WqlEZj7VtEhLVBx6AAOrS3d13s1U7+xYabw7PJIDytySBbvrQw7Mjr
-         UP4WZQR/3o7QAsgw3agtrqWOzFiPjShjC/ZC8wbiA5pe1sn+KUwdfCvYnQdvJdzpQ1hC
-         2SYe6hmYZyYcv8yQjZicliIoCpmS7zHzjEOIu32MEUm2jn6AevV/cylDobxClyZy1Ote
-         HGWbFQ4ihwWPeVLlP5NgnxKL4o4NXkFW6Gbb3NSFp+6I7drLhK5xqIqqq42CQGZSROhw
-         lDaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713880443; x=1714485243;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gtSA0+kfCH0DzApn0Z0KwQ9Ybzg48e+TinciXUnlIO0=;
-        b=HusnikhvBifQEIKY5DCMK1+VPSdpQpUezlS0RrxUaHUQn+2/58EsWb6D1kyR+bjMhR
-         EmM2+wXug1Cd0MP8SN/ibRmQeZG/u1W4vymRx2pZ3Vbec0hipsnYmNIKnHJUARGk5X/q
-         95zVjDtO7ceid3heZ44hqQ9INkBd3UqhcS7xX1XmgqBIyOL6U2dWanteLcpVS1a+DrIb
-         hhhQxoKPFdJ8+hUvMXID2gnWiWU5rdtR5yeZD/UaysfVISwRdVXkiD+ebghJ00dmP8/y
-         HXIHny+Q9N6r/h5JVyhyI/rxvvM4rewLENgP1ytiAMOiA/o8y5G+/7q88VQWmARv2C7T
-         g9yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdyT3UGxMBEC8cYBJe2PJ3I3hC1tMscbrdPavkE6XSCzT7ba2TLIVlhdXD6NaINFC97yzOFhI4Aa8Ri2o6i62/NBLTfdCnz/IHJQ==
-X-Gm-Message-State: AOJu0YxdOt5zynbxwq0RCl5LdUQ0RnMp3jsaZr0N4QpeJGyOVKd5TdoH
-	ja5yPMuEpC1ysEk9iR3JDk8xO8mbZ8OXAjAsJZFWzMiVdtUMRxcBQLp1Il5UiwkUIbooKjA1a9M
-	V
-X-Google-Smtp-Source: AGHT+IFlE4pqogUlR+eZ37BQq666pDAg97ATWOgkDpFMSX8lWAbA7K/Gu3ABd18BwtKzqHaH18zFDA==
-X-Received: by 2002:a19:640e:0:b0:519:6691:4135 with SMTP id y14-20020a19640e000000b0051966914135mr8449450lfb.67.1713880443491;
-        Tue, 23 Apr 2024 06:54:03 -0700 (PDT)
-Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id b18-20020ac24112000000b0051a61f2d251sm1875997lfi.290.2024.04.23.06.54.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Apr 2024 06:54:02 -0700 (PDT)
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 23 Apr 2024 15:54:01 +0200
-Subject: [PATCH 5/5] ARM: orion5x: Convert TS409 board to GPIO descriptors
- for LEDs
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9Suwh23"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5777C116B1;
+	Tue, 23 Apr 2024 15:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713886333;
+	bh=loKLUZOtD2Ahu5u6ZjVLLzhH7+gsOeQjN/iG5Ye4+LQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=E9Suwh23sx3IIB9Z4pNt8T3srnBCr1SXJeKfITWC9nJdUUAEgGeoLHY3vPzwf2l7J
+	 PbIlygKMPxrjsWiugzGcnIo0YwCqESO5UXHg+SnqMmg+pDrQr1Au3eX8/3UUtcLqcJ
+	 5huwrjYTxZKD1fA5MJcG84xh0LbhcElv9IlkKd/Pj8D0JYzgVH1GDuMBhLSuQgHl3p
+	 F8fZN+wiUbzWSfqmznAM3NtpvdsYkMYouebc9tkT5n3TDxcA+FTCXZg75hWLn1wJ7/
+	 hX84vsv3KTvjBXSqQfU+Jz3YapjUAHCDeUMyRR/AngQBui1KUCyVEJU9ox8Isar3jg
+	 S1aB3BjHhTtVw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  Arnd Bergmann
+ <arnd@arndb.de>,  Alban Bedel <albeu@free.fr>,  Bartosz Golaszewski
+ <brgl@bgdev.pl>,  Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?=
+ <toke@toke.dk>,
+  linux-wireless@vger.kernel.org,  brcm80211-dev-list.pdl@broadcom.com,
+  linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] wifi: ath9k: Obtain system GPIOS from descriptors
+References: <20240423-descriptors-wireless-v2-1-6d1d03b30bfa@linaro.org>
+Date: Tue, 23 Apr 2024 18:32:08 +0300
+In-Reply-To: <20240423-descriptors-wireless-v2-1-6d1d03b30bfa@linaro.org>
+	(Linus Walleij's message of "Tue, 23 Apr 2024 14:12:33 +0200")
+Message-ID: <87v848t7rb.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240423-gpio-leds-v1-5-799c2f6bc61c@linaro.org>
-References: <20240423-gpio-leds-v1-0-799c2f6bc61c@linaro.org>
-In-Reply-To: <20240423-gpio-leds-v1-0-799c2f6bc61c@linaro.org>
-To: Andrew Lunn <andrew@lunn.ch>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Gregory Clement <gregory.clement@bootlin.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
 
-This makes the LEDs on the TS409 Orion5x board use GPIO
-descriptors instead of hardcoded GPIOs from the global
-numberspace.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/mach-orion5x/ts409-setup.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+> The ath9k has an odd use of system-wide GPIOs: if the chip
+> does not have internal GPIO capability, it will try to obtain a
+> GPIO line from the system GPIO controller:
+>
+>   if (BIT(gpio) & ah->caps.gpio_mask)
+>         ath9k_hw_gpio_cfg_wmac(...);
+>   else if (AR_SREV_SOC(ah))
+>         ath9k_hw_gpio_cfg_soc(ah, gpio, out, label);
+>
+> Where ath9k_hw_gpio_cfg_soc() will attempt to issue
+> gpio_request_one() passing the local GPIO number of the controller
+> (0..31) to gpio_request_one().
+>
+> This is somewhat peculiar and possibly even dangerous: there is
+> nowadays no guarantee of the numbering of these system-wide
+> GPIOs, and assuming that GPIO 0..31 as used by ath9k would
+> correspond to GPIOs 0..31 on the system as a whole seems a bit
+> wild.
+>
+> Register all 32 GPIOs at index 0..31 directly in the ATH79K
+> GPIO driver and associate with WIFI if and only if we are probing
+> ATH79K wifi from the AHB bus (used for SoCs).
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changes in v2:
+> - Define all the descriptors directly in the ATH79K
+>   GPIO driver in case the driver want to request them directly.
+> - Link to v1: https://lore.kernel.org/r/20240131-descriptors-wireless-v1-0-e1c7c5d68746@linaro.org
 
-diff --git a/arch/arm/mach-orion5x/ts409-setup.c b/arch/arm/mach-orion5x/ts409-setup.c
-index 6f60dc1dfa22..8131982c10d9 100644
---- a/arch/arm/mach-orion5x/ts409-setup.c
-+++ b/arch/arm/mach-orion5x/ts409-setup.c
-@@ -8,6 +8,7 @@
-  * Copyright (C) 2008  Martin Michlmayr <tbm@cyrius.com>
-  */
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-@@ -168,20 +169,27 @@ static struct i2c_board_info __initdata qnap_ts409_i2c_rtc = {
- static struct gpio_led ts409_led_pins[] = {
- 	{
- 		.name		= "ts409:red:sata1",
--		.gpio		= 4,
--		.active_low	= 1,
- 	}, {
- 		.name		= "ts409:red:sata2",
--		.gpio		= 5,
--		.active_low	= 1,
- 	}, {
- 		.name		= "ts409:red:sata3",
--		.gpio		= 6,
--		.active_low	= 1,
- 	}, {
- 		.name		= "ts409:red:sata4",
--		.gpio		= 7,
--		.active_low	= 1,
-+	},
-+};
-+
-+static struct gpiod_lookup_table ts409_leds_gpio_table = {
-+	.dev_id = "leds-gpio",
-+	.table = {
-+		GPIO_LOOKUP_IDX("orion_gpio0", 4, NULL,
-+				0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("orion_gpio0", 5, NULL,
-+				1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("orion_gpio0", 6, NULL,
-+				2, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("orion_gpio0", 7, NULL,
-+				3, GPIO_ACTIVE_LOW),
-+		{ },
- 	},
- };
- 
-@@ -300,6 +308,7 @@ static void __init qnap_ts409_init(void)
- 	if (qnap_ts409_i2c_rtc.irq == 0)
- 		pr_warn("qnap_ts409_init: failed to get RTC IRQ\n");
- 	i2c_register_board_info(0, &qnap_ts409_i2c_rtc, 1);
-+	gpiod_add_lookup_table(&ts409_leds_gpio_table);
- 	platform_device_register(&ts409_leds);
- 
- 	/* register tsx09 specific power-off method */
+Linus, via which tree should this go?
 
 -- 
-2.44.0
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
