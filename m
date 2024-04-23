@@ -1,127 +1,100 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2686273;
-	Tue, 23 Apr 2024 15:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFF813CA81;
+	Tue, 23 Apr 2024 16:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713886336; cv=none; b=tNKgtB6B93n2WBbG7kwJDneKmvObraaQJcvomhCM1SHOynqgF/AgT5Dsa70ayaSMUqsJGXU+RwEMn672LndvqEuIhsoQaR6JA1+FNNTTf/LRaRCD/LaMJs07mmRtccmhZc/ERV0TX/3Xv6NGDE9bCAFCnwUFo7dZEe5Vnu6f7O8=
+	t=1713888366; cv=none; b=kl5gtGVjOcDhNgeq9PpTBT+t5J6WxzLNGX6Lrvk0dWRXeD8NTVKy2Whv6Tmk5wU8bzC+/yseRQGK+v1itIkRVDC5u8RHNjjAvyC/rLZHNFup7ThpoGbwnQRypIlBSQ4Ps1XsxYNf18H0GvveYQRF46ezq7eYkM3TWt8xFdZg7es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713886336; c=relaxed/simple;
-	bh=Axa3Mn5+KVTK6qIzldvrgQzSEYO2/lcirqLJInKyRG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZXUHKad3OyzKN5sXvMkdcCwHi/SC+qdEiHlkpBu2RC39c/65eVwFVLgqCaKD0yxWm9nxqE7vzg9cGu2cc/n8sXv6gCB0IH4N4+gwcLp6Ao0P/rt5gYcjdPVX0csfc+Zwww0OvvARN5u9n7k5snp8/ROvx7LcmHdmMD3hQDFlTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-61816fc256dso50988897b3.0;
-        Tue, 23 Apr 2024 08:32:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713886333; x=1714491133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pCFrzV7qoH1GMPZYbyZsRzzURQK7cGFU6Wp+TTcFvr8=;
-        b=LPth/cZFk4JlInnptjMDl2XXrxBuMp0XvL4yz+QzMwOw+nQtJnNxU6IvnOtkHNc26g
-         r9Dsdbd1RCRnGCFLbPbtbpU+ComM9edt8DNvVWY+mVi69/tQM/Q2USepwH3CsauSfZ9E
-         8exeAQQQQppYsLSrrz5XTkAEV2rRg73eMmQ5p3MyR3zVSBjvdCMOrk1tua83g4WSld/t
-         G4aiJ/8uvsFwDgJ6Bsve8MnyL78nzphgOt3ns2KOPA6ljKo5pPAeDG1T2KuJnt9JeXMS
-         Cm8teEftdPyUAw6hasL1/6DLyB5YdYc7DcWLwKHaV7dW6tB5VOu+HQCXTCl9K4D9kA8P
-         PXGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Vti+OI5iSIThtBBjC6Chrsdy7O4OEQNRvPLTCumRwOTuJLD5zxzGA4u/7GRbgZeyd/zojaC9pFjziwq/YLzKiWpgfRxHO/f7kClseyR0dQc5vUA/HnCK6hsnlrS2fuuu9YiSIwf0X5CIRmXTQYLHR4h80VlJP2HDo9kf/Q/ztw6ImdQqlRwyANXZYO7kVASOVF+j3ZLvBwXKY7w3mEiuvMhMi1Ki6eWlaWGnH808ZQO0OVKzlHLZNK9gPuz/y0kzX5SRmQOpW5sOuyo7dKWrFoMhXotd02GAZ1suCw==
-X-Gm-Message-State: AOJu0YzgtujE/L709zM1lFPaeDlAMuS5nUCbJ3TtZPrjo6NHsudG/Cvq
-	GfMAJYIMAaYua5dSWK3IevJZh2dw+E4v7jWNtHEVtsizwisZ6Paid/fXetzm
-X-Google-Smtp-Source: AGHT+IEn9o9kwpQ21sUDm3boQ5gEGYvUxHSf9p6oYyBqPVpgAQDC1EghII1JwoT01XsucnyZNFnveA==
-X-Received: by 2002:a05:690c:61c6:b0:61b:1a4f:158b with SMTP id hk6-20020a05690c61c600b0061b1a4f158bmr13675592ywb.6.1713886331234;
-        Tue, 23 Apr 2024 08:32:11 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id z12-20020a81ac4c000000b00617f1b4943esm2480486ywj.106.2024.04.23.08.32.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 08:32:11 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-db4364ecd6aso5760935276.2;
-        Tue, 23 Apr 2024 08:32:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVI4gBTrDCBV79aoDQ+Z2jvbLk16BClJTyYYOHXBbHU8Dw6HZCDo28WffVKQpmrv7wzQliCHqJ0khwkjoH/BrxdVBlBuyiLZRkb+HuKTWWexZ0C2P7teEWKhR/F2i4ol7O9imDwzh12qvMGkwVfPbXI2S+iVhDSlPEmrxQl/jpA20Mmt9caMzgK+7T3Y+xQ8W9WKB7nFoZAkeTTTbv1Iixy2777zCnQaTNfLmalj6hUQqeCtPncVGQz4zwJKMWH+DChm1sbM90hIcRf31RUNGRC/jTHghxzSNZd4vI/UA==
-X-Received: by 2002:a25:86c7:0:b0:de0:d45f:7c5 with SMTP id
- y7-20020a2586c7000000b00de0d45f07c5mr11933981ybm.20.1713886329809; Tue, 23
- Apr 2024 08:32:09 -0700 (PDT)
+	s=arc-20240116; t=1713888366; c=relaxed/simple;
+	bh=QQMhOz7NDz+lNA87IQggc91wQxr/7XmKxGMbgJuvYo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3+0uU4/zxy9iHDfp/IRFT3GQpluJUfnXpBEQUkBzOtjhIBv9elaF1TdmiEQj3wV8Xiuv657gmI3sxz/lfwCd4Hgv817WX45fzRnQsaVzhoJo2V1SfDh4p2BsoTN1c6X+9VDBx1CjinUD8hevblW0PKDvMVkJHtE9L3yb2EVUrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: bnHsb/J5QQmV33n0UomTOg==
+X-CSE-MsgGUID: CEfvNxiNQdee9YHZBFb1TA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11053"; a="9312959"
+X-IronPort-AV: E=Sophos;i="6.07,222,1708416000"; 
+   d="scan'208";a="9312959"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2024 09:06:04 -0700
+X-CSE-ConnectionGUID: LYGEq/79Sa+qDtrCi/1Veg==
+X-CSE-MsgGUID: 65O88O6jRX2M92k6olZJSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,222,1708416000"; 
+   d="scan'208";a="29058763"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2024 09:05:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1rzIeX-00000000Nys-2y1l;
+	Tue, 23 Apr 2024 19:05:53 +0300
+Date: Tue, 23 Apr 2024 19:05:53 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Arnd Bergmann <arnd@arndb.de>, soc@kernel.org,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	devicetree@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>, arm@kernel.org,
+	Andrew Lunn <andrew@lunn.ch>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
+Subject: Re: [PATCH v6 00/11] Turris Omnia MCU driver
+Message-ID: <ZifcYXdJ7mSEJVfh@smile.fi.intel.com>
+References: <20240418121116.22184-1-kabel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com>
- <20240102-j7200-pcie-s2r-v5-1-4b8c46711ded@bootlin.com> <CAMuHMdVnKX23yi7ir1LVxfXAMeeWMFzM+cdgSSTNjpn1OnC2xw@mail.gmail.com>
- <CAHp75Vf+F3ArczHQ+nSmP4uFvRdMAQWufmR6xR0xtbHfVvFm-g@mail.gmail.com> <c5ed5bed-9c93-47eb-8277-d78e12e96b42@bootlin.com>
-In-Reply-To: <c5ed5bed-9c93-47eb-8277-d78e12e96b42@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Apr 2024 17:31:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV3NbCHchm9eHhGQNuvzmdwuP_fdt31m7vNY7Cp2-3-=Q@mail.gmail.com>
-Message-ID: <CAMuHMdV3NbCHchm9eHhGQNuvzmdwuP_fdt31m7vNY7Cp2-3-=Q@mail.gmail.com>
-Subject: Re: [PATCH v5 01/11] gpio: pca953x: move suspend()/resume() to suspend_noirq()/resume_noirq()
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com, 
-	theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240418121116.22184-1-kabel@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Thomas,
+On Thu, Apr 18, 2024 at 02:11:05PM +0200, Marek Behún wrote:
+> Hello Andy, Dan, Linus, Arnd, Gregory, and others,
+> 
+> I am sending v6 of the series adding Turris Omnia MCU driver.
+> 
+> This series depends on the immutable branch between LEDs and locking,
+> introducing devm_mutex_init(), see the PR
+>   https://lore.kernel.org/linux-leds/20240412084616.GR2399047@google.com/
 
-On Tue, Apr 23, 2024 at 12:53=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
-> On 4/23/24 12:34, Andy Shevchenko wrote:
-> > On Tue, Apr 23, 2024 at 12:42=E2=80=AFPM Geert Uytterhoeven
-> > <geert@linux-m68k.org> wrote:
-> >> On Tue, Apr 16, 2024 at 3:31=E2=80=AFPM Thomas Richard
-> >> <thomas.richard@bootlin.com> wrote:
-> >
-> > ...
-> >
-> >>         +i2c-rcar e66d8000.i2c: error -16 : 10000005
-> >
-> > It probably means that I=C2=B2C host controller is already in power off
-> > mode and can't serve anymore.
->
-> Yes the i2c controller is already off.
-> In fact it's the same issue I had with the i2c-omap driver.
-> In suspend-noirq, the runtime pm is disabled, so you can't wakeup a
-> device. More details available in this thread [1].
-> So the trick is to wakeup the device during suspend (like I did for the
-> i2c-omap driver [2].
->
-> [1]
-> https://lore.kernel.org/all/f68c9a54-0fde-4709-9d2f-0d23a049341b@bootlin.=
-com/
-> [2]
-> https://lore.kernel.org/all/20240102-j7200-pcie-s2r-v5-2-4b8c46711ded@boo=
-tlin.com/
->
-> I think the patch below should fix the issue.
+...
 
-Thanks, I gave that a try, but it doesn't make any difference.
+>   devm-helpers: Add resource managed version of irq_create_mapping()
+>   devm-helpers: Add resource managed version of debugfs directory create
+>     function
 
-Gr{oetje,eeting}s,
+IIUC you created them as static inline, the header will become yet another
+cumbersome and messy "kernel.h". Can we prevent that?
 
-                        Geert
+-- 
+With Best Regards,
+Andy Shevchenko
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
