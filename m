@@ -1,38 +1,39 @@
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52952153BF3;
-	Fri,  3 May 2024 14:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A986154BF1;
+	Fri,  3 May 2024 14:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714746079; cv=none; b=sI160RSMmZrH6DV4N4pbcSR6sNHD6jV1g3MVjhaJnH5dsOW8Zx0aF0N5shdZJU3zsp9zB0bMC+HxS9YJpnWTOoCB2IA6B/Z7lZBA/JTXuf7Gl6BjM2Y+oukC1n2IPF5w54/lM5R2KQo1+mzBGZ3CvzVqIUml/8hXUVXmrenM/Xw=
+	t=1714746080; cv=none; b=dMyBqOT8ZMVxnzwfEgZDwoA4o6pEqpkuJ1ma369cGPmwCV73nWy7VTD1+W/kiauT+RNvkrbMHtFM7yc1jMfZssL7ua0v+tAs5ITERndJlj2agZEF3Taf0TH533w+85eyiptztZXyMbqMevaxgpSlz2jhuMacKmXtqMD3mb39ysE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714746079; c=relaxed/simple;
-	bh=RlPqLAnreRucam7vP7wW4xXszOq8/j39ateAy9eIb5s=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bH6nJ5Jl7PcDnBdvJnIxVFThUOFhVI6rCWRmXrm5uPy8VcV/Q6VVMXNb0+M5RL2wlRKt40pab90ehIWN7M9irHVbZWge1sEOLE+z0h+3e9bmZBxTra40k9wSqSWplSCysDP4Kl4w58pJKvo0dnJwCWhI941RH7/Kvkj3mCINTHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nl9ST+k1; arc=none smtp.client-ip=217.70.183.196
+	s=arc-20240116; t=1714746080; c=relaxed/simple;
+	bh=aPqTKe7d4WbI7QD4yTnf4tncjyKh5eeTinicI+o4iQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FdLbTrb7cxxRFIQ/zzWwMRDnuNSwCumwzBDCSyMjXVeIjZG5q+A7Z2rZdv3V3eafxlhjkhWMJ/GpfJSOz10N0F3F0yL4/pW32kqtsUl3W0H1wQkQwNOWykDlxjkG5AUBcQ4DeQdAc8H8QzFOe8PNziNc6STeLvqS9LmWaVcj8jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TlYeUop/; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nl9ST+k1"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3AED6E0005;
-	Fri,  3 May 2024 14:21:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TlYeUop/"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D0FF8E000C;
+	Fri,  3 May 2024 14:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1714746069;
+	t=1714746075;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PTqZ54gj8ig1Fedp9Waojut71etolv05n2qYK+FFydU=;
-	b=Nl9ST+k1xWyBaGbqqkpWbBra4iDps9JT33bXsHJP3ig/58P0koDDbDG9GF9zgGmrIKv9rX
-	YCSuvvlGwEc07hcY8gk+IHELyo+MppOToCYM85b4j0ZWo4LhukVsDwUCrpv3Fb7KH01SSu
-	zYCmcrGZhl5zjVfbT56EBtCIgAcLvR05DSBXAATqAu1eiHXe4PPMBOZCv52YoDFuM+B4Dd
-	2WI4bYNmNzK5B39Y9rIexSg/HzyrNzx6qs1xeYBQqhlIBEQGZoNc6i3fAcpNLMlsWNfGgg
-	ZfHiMl5DV1y0sR0NCVQ7qnAdKpqGBY/n3Is5aZ9mMoJH/sQFFL87HGUn6U0iug==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0CmhYS38FoiHM21EItP7+1kMUZLrboLBpS562xGjpdM=;
+	b=TlYeUop/D26Wwi25qpQ4yhYXwqSEuNsVANHZGKT4my4vGC7jDA3sCFFedSehCrcJnhnSpl
+	bz3aF90uTvhMFH3GBN3sbBUY4d7A5Xm62JTi9+DofOiHzBrpVIaSaNx7X8DVWfRSOabAqU
+	yBzRncqpduNrxM//Sdj1O7JO3J4XKlRlVyN/KN6yEQa1E3YbJILU7zG05fgaRXjG61iliB
+	9LuBOASlsDnBcyJDEeAZGV/60ZxlmDukgQkG2tUhI3NLKddPMI/SyEqGVJGWUUgnNGO7If
+	uDCIB7D/7B95zc98oGdjCAqtbZwAbfh2AgafUZiOeewl4qrM5xvsFvFeOKzYOA==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: [PATCH v2 00/11] Add Mobileye EyeQ system controller support (clk,
- reset, pinctrl)
-Date: Fri, 03 May 2024 16:20:45 +0200
-Message-Id: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+Date: Fri, 03 May 2024 16:20:52 +0200
+Subject: [PATCH v2 07/11] clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS
+ flag
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,9 +42,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAL3yNGYC/0XMSwqDMBSF4a3IHTcl5lFtR91HcWCSm3pBTUkkV
- MS9N5VCh//h8G2QMBImuFUbRMyUKMwlxKkCO/TzExm50iC4UFzxlk1mXFkYDWt032qvrXcoodx
- fET29D+rRlR4oLSGuh5zr7/pDav5Hcs04k1Kjul5cY1DeTQjLSPPZhgm6fd8/Vog/16IAAAA=
+Message-Id: <20240503-mbly-olb-v2-7-95ce5a1e18fe@bootlin.com>
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+In-Reply-To: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
 To: Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -64,158 +65,129 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
 X-Mailer: b4 0.13.0
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hello,
+Add CLK_DIVIDER_EVEN_INTEGERS flag to support divisor of 2, 4, 6, etc.
+The same divisor can be done using a table, which would be big and
+wasteful for a clock dividor of width 8 (256 entries).
 
-This builds on previous EyeQ5 system-controller revisions[0], supporting
-EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
-features here:
- - Clocks: some read-only PLLs derived from main crystal and some
-   divider clocks based on PLLs.
- - Resets.
- - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single).
-
-EyeQ6H is special in that it has seven instances of this
-system-controller. Those are spread around and cannot be seen as a
-single device, hence are exposed as seven DT nodes and seven
-compatibles.
-
-This revision differs from previous in that it exposes all devices as a
-single DT node. Driver-wise, a MFD registers multiple cells for each
-device. Each driver is still in isolation from one another, each in
-their respective subsystem.
-
-This has been requested during previous reviews and took time to
-implement; I'd be happy to get some feedback on this aspect.
-
-Patches are targeting MIPS, clk, reset, pinctrl and MFD:
-
-MIPS:
- - dt-bindings: clock: mobileye,eyeq5-clk: drop bindings
- - dt-bindings: clock: mobileye,eyeq5-reset: drop bindings
- - dt-bindings: soc: mobileye: add EyeQ OLB system controller
- - MIPS: mobileye: eyeq5: add OLB system-controller node
-
-   Start by dropping already accepted dt-bindings that don't match
-   current approach of single node for entire OLB (and no subnodes).
-   Then add single dt-bindings that cover clk/reset/pinctrl features.
-
-   Squash devicetree commits together into one.
-   Adapted to having a single devicetree node without subnodes.
-
-MFD:
- - driver core: platform: Introduce platform_device_add_with_name()
- - mfd: Add cell device name
- - mfd: olb: Add support for Mobileye OLB system-controller
-
-   There are seven instances of OLB on EyeQ6H. That means many clk/reset
-   instances. Without naming devices properly it becomes a mess because
-   integer IDs are not explicit. Add feature to name MFD sub-devices.
-
-   Then add OLB MFD platform driver; a really simple driver. Most its
-   content is iomem resources and MFD cells.
-
-clk:
- - clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
- - clk: eyeq: add driver
-
-reset:
- - reset: eyeq: add platform driver
-
-pinctrl:
- - pinctrl: eyeq5: add platform driver
-
-Have a nice day,
-Théo
-
-[0]: https://lore.kernel.org/lkml/20240301-mbly-clk-v9-0-cbf06eb88708@bootlin.com/
+Require increasing flags size from u8 to u16 because
+CLK_DIVIDER_EVEN_INTEGERS is the eighth flag.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
-Changes in v2:
-- dt-bindings:
-  - Drop mobileye,eyeq5-clk and mobileye,eyeq5-reset bindings.
-  - Update OLB bindings to handle clk/reset/pinctrl from OLB node.
-- MFD:
-  - Add core driver and MFD patches to allow setting sub-devices names
-    from MFD cell.
-  - Add MFD OLB driver.
-- clk:
-  - Change type of eqc_pll->reg64 from u32 to unsigned int.
-  - Use resource indexes rather than names for iomem resources.
-  - Put early PLLs into a separate match data table. Also, have store
-    number of late clocks in early match data to properly alloc cells.
-  - Pre-acquire all divclk resources first, then register them.
-    This simplifies code.
-  - Extract PLLs and divclks init to two separate functions.
-  - Avoid variable declarations in loop bodies.
-  - Do not register match data table to platform driver. It gets probed
-    as MFD sub-device matching on driver name. Match data table is
-    matched against parent OF node compatible.
-  - Fix ugly memory corruption bug when clk count == 1.
-- reset:
-  - EQR_EYEQ5_SARCR and EQR_EYEQ6H_SARCR did not use offset 0x0: do
-    minus four to all their offsets and reduce resource sizes.
-  - Remove resource names. Reset i uses iomem resource index i.
-  - Simplify xlate: have two implementations for of_reset_n_cells==1 and
-    of_reset_n_cells==2. Both call the same helper internal function.
-  - Do not register match data table to platform driver. It gets probed
-    as MFD sub-device matching on driver name. Match data table is
-    matched against parent OF node compatible.
-- pinctrl:
-  - Remove match data table to platform driver. It gets probed as MFD
-    sub-device matching on driver name. Driver has single compatible.
-  - Drop "Reviewed-by: Linus Walleij" as driver changed approach.
-- MIPS DTS:
-  - Squash all commits together into a single one.
-  - Adapt to new approach: OLB is now a single OF node.
-- Link to v1: https://lore.kernel.org/r/20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com
+ drivers/clk/clk-divider.c    | 12 +++++++++---
+ include/linux/clk-provider.h | 11 +++++++----
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
----
-Théo Lebrun (11):
-      dt-bindings: clock: mobileye,eyeq5-clk: drop bindings
-      dt-bindings: clock: mobileye,eyeq5-reset: drop bindings
-      dt-bindings: soc: mobileye: add EyeQ OLB system controller
-      driver core: platform: Introduce platform_device_add_with_name()
-      mfd: Add cell device name
-      mfd: olb: Add support for Mobileye OLB system-controller
-      clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
-      clk: eyeq: add driver
-      reset: eyeq: add platform driver
-      pinctrl: eyeq5: add platform driver
-      MIPS: mobileye: eyeq5: add OLB system-controller node
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index a2c2b5203b0a..b6654c5c36d2 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -72,6 +72,8 @@ static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width,
+ 		return clk_div_mask(width);
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		return 1 << clk_div_mask(width);
++	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
++		return 2 * (clk_div_mask(width) + 1);
+ 	if (table)
+ 		return _get_table_maxdiv(table, width);
+ 	return clk_div_mask(width) + 1;
+@@ -97,6 +99,8 @@ static unsigned int _get_div(const struct clk_div_table *table,
+ 		return 1 << val;
+ 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+ 		return val ? val : clk_div_mask(width) + 1;
++	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
++		return 2 * (val + 1);
+ 	if (table)
+ 		return _get_table_div(table, val);
+ 	return val + 1;
+@@ -122,6 +126,8 @@ static unsigned int _get_val(const struct clk_div_table *table,
+ 		return __ffs(div);
+ 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+ 		return (div == clk_div_mask(width) + 1) ? 0 : div;
++	if (flags & CLK_DIVIDER_EVEN_INTEGERS)
++		return (div >> 1) - 1;
+ 	if (table)
+ 		return  _get_table_val(table, div);
+ 	return div - 1;
+@@ -538,7 +544,7 @@ struct clk_hw *__clk_hw_register_divider(struct device *dev,
+ 		struct device_node *np, const char *name,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
+ 		const struct clk_div_table *table, spinlock_t *lock)
+ {
+ 	struct clk_divider *div;
+@@ -610,7 +616,7 @@ EXPORT_SYMBOL_GPL(__clk_hw_register_divider);
+ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+-		u8 clk_divider_flags, const struct clk_div_table *table,
++		u16 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+ 	struct clk_hw *hw;
+@@ -664,7 +670,7 @@ struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
+ 		struct device_node *np, const char *name,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
+ 		const struct clk_div_table *table, spinlock_t *lock)
+ {
+ 	struct clk_hw **ptr, *hw;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f655..cb348e502e41 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -675,13 +675,15 @@ struct clk_div_table {
+  * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses are used
+  *	for the divider register.  Setting this flag makes the register accesses
+  *	big endian.
++ * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
++ *	Formula is 2 * (value read from hardware + 1).
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
+ 	u8		shift;
+ 	u8		width;
+-	u8		flags;
++	u16		flags;
+ 	const struct clk_div_table	*table;
+ 	spinlock_t	*lock;
+ };
+@@ -697,6 +699,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
+ #define CLK_DIVIDER_BIG_ENDIAN		BIT(7)
++#define CLK_DIVIDER_EVEN_INTEGERS	BIT(8)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
+@@ -726,18 +729,18 @@ struct clk_hw *__clk_hw_register_divider(struct device *dev,
+ 		struct device_node *np, const char *name,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
+ 		const struct clk_div_table *table, spinlock_t *lock);
+ struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
+ 		struct device_node *np, const char *name,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg, u8 shift, u8 width, u16 clk_divider_flags,
+ 		const struct clk_div_table *table, spinlock_t *lock);
+ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+-		u8 clk_divider_flags, const struct clk_div_table *table,
++		u16 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock);
+ /**
+  * clk_register_divider - register a divider clock with the clock framework
 
- .../bindings/clock/mobileye,eyeq5-clk.yaml         |  51 --
- .../bindings/reset/mobileye,eyeq5-reset.yaml       |  43 --
- .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 375 +++++++++++
- MAINTAINERS                                        |   5 +
- .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +-
- arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 ++++
- arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  22 +-
- drivers/base/platform.c                            |  17 +-
- drivers/clk/Kconfig                                |  11 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-divider.c                          |  12 +-
- drivers/clk/clk-eyeq.c                             | 690 +++++++++++++++++++++
- drivers/mfd/Kconfig                                |  10 +
- drivers/mfd/Makefile                               |   2 +
- drivers/mfd/mfd-core.c                             |   2 +-
- drivers/mfd/mobileye-olb.c                         | 180 ++++++
- drivers/pinctrl/Kconfig                            |  14 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-eyeq5.c                    | 573 +++++++++++++++++
- drivers/reset/Kconfig                              |  13 +
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-eyeq.c                         | 541 ++++++++++++++++
- include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 +
- include/linux/clk-provider.h                       |  11 +-
- include/linux/mfd/core.h                           |  19 +-
- include/linux/platform_device.h                    |  12 +-
- 26 files changed, 2651 insertions(+), 155 deletions(-)
----
-base-commit: d5a00175dce1740a3e9d519933ba76f9ce5cbd24
-change-id: 20240408-mbly-olb-75a85f5cfde3
-
-Best regards,
 -- 
-Théo Lebrun <theo.lebrun@bootlin.com>
+2.45.0
 
