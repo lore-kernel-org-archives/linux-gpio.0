@@ -1,173 +1,98 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D94613C3E2
-	for <linux-gpio@vger.kernel.org>; Tue,  7 May 2024 07:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F3013B7B3
+	for <linux-gpio@vger.kernel.org>; Tue,  7 May 2024 07:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715067789; cv=none; b=qioFOz0FmnCTebHoME9dXSmOogqLiuXkuUu0CswidcJ6XYfYNIqnETzyOns2vM8bvi9FalZyCWnc92FCMAzaRtI5btF242apWHeeFwHzrhAAtumoNOY/KCN07myxwyJ0tQRxaBwJK+fyyC7z7Wka03OxlGVkydUvH1OzBsW1gHE=
+	t=1715067836; cv=none; b=Otf9fq6P6UJYuzWkDxRzrpSeAnLbjx7/EbLQvsInaUKyE8ioE1hpmJfL/DQgZSAOzWjlLYpwf9DKYXqaKbui1gI1OfKW76jganx+gq8/SmghIH4lppVWaQz1xaAXb/gmdl0zuAYEtPySHhLvsBwXsNzwispehrbkhQAjPyAnuoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715067789; c=relaxed/simple;
-	bh=wARDzFCD9hfGFytJILO0YowwSyMW47/dEWIG1RwZwhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUJxrzwdJ/UksBEmQr+fzuRs+RAuz3C+ssADRDbzrs5JSD0+gKiIH/hEQVOpne+9cNO4sdnDoXRpFK75IHR7ti/t0hkfy6mnUwDmPerBEVFsw9OeGEc7Zt9QNNoL4PV+hNelBseaFu28ITR2MhZRSBa41TlbXebX+nPrEhR9HOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=I4jWW7ib; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1715067836; c=relaxed/simple;
+	bh=oHHqYRD7qMgv2wEkOdho0u35Sixf1MXzeNBC03qPDMo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lo7epajcbZbVYZtlTVCNJ/mteahgF2KSzj9rXgxrzxVm6FypIRd4056AJiSbK1ViK9rdLDHyaWPZaRWDcbaRCFkSWFzQ3jpKBVJvutytFqA5j2kOe+Gb+LF23UH0Zb4Bp5andzX6j15FUbI5Wz97Pl1HqMjow/oYTHACcJ5WsYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=evFCDuEd; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I4jWW7ib"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e242b1df60so33628191fa.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 May 2024 00:43:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="evFCDuEd"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so1776299f8f.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 May 2024 00:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715067785; x=1715672585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715067831; x=1715672631; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=blv84ccNVSxe0erDzVypkmQBfNhmaTRBCl+jKs7q6Tc=;
-        b=I4jWW7ibPmkaP2+0ps9RdE9EcDgbewGckVoFcbfGaYVUzLUH3b15OqcnVlswXF0ILu
-         UbrS8kNxi/bmL/weRmuCNrikOO9P8X7st3982h/8WpK82saJE4Hyo8O3wki+fkP0Y8pp
-         mNNFCvAKiILPEsoKQoj7KRWv3RPNeW5Dzab7IrFg5zDeG17ekXbCugtU82/zl5YutuDG
-         msGP9vphJTBEE/wQvwClFyf7m7kNloal1toknAFMdp3CF5yLIy9UkRju1ER7nkY+QdqV
-         86TLpG3jKSzwZSEO9Fdq79JRe7hzLhZwQPmpKfr9/THLxIj6FAj1CUoBlgMRNzti1V4u
-         zqlw==
+        bh=YcEGZ5grKxd70UshoNQ02EH91BRv8n2zkyfR63pxkJg=;
+        b=evFCDuEdAF5KL0fNIe8H7amA6FYBUxP9e9JhoGSlxg6hgahnxs2XBRUjwEc7yOllmS
+         wL3tbFi6AIHfdPw/heBTO2w6B6axGIRRkVTEsbifqOjw/sSoAQcObXosx4jJ6SA8fYkF
+         JEybCWRXE3qlZrNWGuCib3xTeYuCV4uREuqDN/GvaP2MnZZZY2Bj7xZQwNuNjarz4qvD
+         jwqm9+oprraiZpfgc0hQJn2XdtAdp41IzCPBRuwabiuTRi1YFFl+v8teusQgOKyOwGvM
+         j+l50dkRxnEIWKGB/fp6iPhOhUFoR2Fgi1SkryEo5giy2rODJ00wEIQ/2E8D8qyxH87p
+         H88w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715067785; x=1715672585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715067831; x=1715672631;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=blv84ccNVSxe0erDzVypkmQBfNhmaTRBCl+jKs7q6Tc=;
-        b=mqLBA/VW/i2MMk+OxPVZ0QZY9I3tmpLrUginexIiYo4vobpNNfbwpRG52/HFsO5NiX
-         zp88KpFkYbz7QnLVfaSRFdbwiFyMRA3vBKIYewpNGcZCR99ledVzWohE6WqYrq4+TqU1
-         qxTYJiu98iUFenK/XbMU+lOvB0iOqV/9cqs9Lv0i5DslGmZAdc596mb5j7emGEcRmqNY
-         ms10yHqNYXRukqiMlEjKD9IjFI1ukMKtT2v+Yfa8R7QvlX2iLsSgrnQoXxNCCmvjs2sl
-         2AgXiqrdsCAzMfekmld8wz78v9Owl297nv7zVm7tX6yGnok/MxAXHXN0bzffaOfevMEo
-         jiUw==
-X-Gm-Message-State: AOJu0YweDUZnyrVZGhHHOvvQb2vorR8TxOTbxtNzP+Gn+h7fC0eQLJFB
-	TXYjEgx/C5IqfK+KwZYEi/ikr00PY2PfC+gDSNMb0yRRQxJRGxF5N8gYdkJw4Ac7sR1qx4LJ25r
-	iJI4fyUZZTUHEBruv8iuXAwfwf1D9yR+sIwgFooS5AECH6vu2
-X-Google-Smtp-Source: AGHT+IEx7ScRfYupdno2cnpWbVnYLzeGB21D9Ob3J8vjFJbM7Ui2mvGcwzTSCxtqKX0PunNuG4MiwECcWBZB3Ret5cA=
-X-Received: by 2002:a2e:8208:0:b0:2e2:902:e664 with SMTP id
- w8-20020a2e8208000000b002e20902e664mr9305914ljg.45.1715067784966; Tue, 07 May
- 2024 00:43:04 -0700 (PDT)
+        bh=YcEGZ5grKxd70UshoNQ02EH91BRv8n2zkyfR63pxkJg=;
+        b=QyBjokgUR94t2cw4FY/2mExbMwqapG3BTMwT2x68875k2KrW1XSSA6cWgs6HxedB1S
+         IepICg6V7o3IeIKcI6Z7CR+Gi5bZVuH/dR8urJQJQjfpnOlgfOIFKUlG/tylPLMLif3h
+         2hCF8a0Wed2ZiIOEdGNCOAfjh3wk6Pqwx6aR0ckpWoqjXAcD6FkgsEWMMApDrPZm5tLS
+         kXXIQ7POAIo3kryGqKB2xcvl4MmQM2BN2TRETsQAeeulUiaZAofq2xFSzGoZoj+ct8Fo
+         o60i3YpylbRmTMS8eBFHEMTJwZ80PJENG/lO/fvFV/uUKi+ifyF/U8ICL1PqjpN5F55O
+         +TPg==
+X-Gm-Message-State: AOJu0YyutlA9KqlKTN1vZ41DdoNIkH+NQsV8JRav2tSUwirKsM3Yo3iF
+	eR8TpRrIQQELiFcXFo4I8HVWbe/HyleqbJoFZpLeSiOb96hWrrwkmFHxCQ7d2mKI0mb/4cyATwb
+	d
+X-Google-Smtp-Source: AGHT+IFI/xCIACN3E54mOQrSdjKSC4CLhwpA5gRdj4LKQvI58B8XAwdmaCnLNwGESmPcW97zSCNY/Q==
+X-Received: by 2002:a05:6000:e0b:b0:34d:7a55:f95a with SMTP id dx11-20020a0560000e0b00b0034d7a55f95amr8170777wrb.19.1715067831426;
+        Tue, 07 May 2024 00:43:51 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:581a:1d:3b79:3b03])
+        by smtp.gmail.com with ESMTPSA id g18-20020a5d5412000000b00346bda84bf9sm12331872wrv.78.2024.05.07.00.43.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 00:43:51 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Subject: Re: [PATCH v1 1/1] gpiolib: Discourage to use formatting strings in line names
+Date: Tue,  7 May 2024 09:43:49 +0200
+Message-Id: <171506781682.6288.6692636956225077878.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240505141420.627398-1-andy.shevchenko@gmail.com>
+References: <20240505141420.627398-1-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjiVc8DKWkNF7-oL@black.fi.intel.com>
-In-Reply-To: <ZjiVc8DKWkNF7-oL@black.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 7 May 2024 09:42:53 +0200
-Message-ID: <CAMRc=McZ2SSELOpVWyJeQ_W_oB9JaV6ccBPVerreL+rzJYjh+Q@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-gpio for 6.10-1
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux GPIO <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 6, 2024 at 11:10=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Hi Linux GPIO  maintainers,
->
-> A set of updates regarding to GPIO ACPI library and a few Intel GPIO driv=
-ers.
-> The lot has been in LInux Next for a few weeks without reported problems.
-> Please, pull for v6.10-rc1.
->
-> Thanks,
->
-> With Best Regards,
-> Andy Shevchenko
->
-> The following changes since commit ace0ebe5c98d66889f19e0f30e2518d0c58d0e=
-04:
->
->   gpio: crystalcove: Use -ENOTSUPP consistently (2024-04-05 20:12:39 +030=
-0)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git=
- tags/intel-gpio-v6.10-1
->
-> for you to fetch changes up to ecc4b1418e2399753af7ef304d01f45e8e942286:
->
->   gpio: Add Intel Granite Rapids-D vGPIO driver (2024-04-25 14:57:28 +030=
-0)
->
-> ----------------------------------------------------------------
-> intel-gpio for v6.10-1
->
-> * New driver for vGPIO controller on Intel Granite Rapids-D
-> * Update ACPI GPIO library to unify the IRQ code path
-> * Better GPIO IRQ line labeling for ACPI
-> * Switched Intel SCH driver to use "mapped" I/O accessors
->
-> The following is an automated git shortlog grouped by driver:
->
-> Add Intel Granite Rapids-D vGPIO driver:
->  - Add Intel Granite Rapids-D vGPIO driver
->
-> crystalcove:
->  -  Use -ENOTSUPP consistently
->
-> gpiolib:
->  -  acpi: Set label for IRQ only lines
->  -  acpi: Add fwnode name to the GPIO interrupt label
->  -  acpi: Pass con_id instead of property into acpi_dev_gpio_irq_get_by()
->  -  acpi: Move acpi_can_fallback_to_crs() out of __acpi_find_gpio()
->  -  acpi: Simplify error handling in __acpi_find_gpio()
->  -  acpi: Extract __acpi_find_gpio() helper
->  -  acpi: Check for errors first in acpi_find_gpio()
->  -  acpi: Remove never true check in acpi_get_gpiod_by_index()
->
-> sch:
->  -  Utilise temporary variable for struct device
->  -  Switch to memory mapped IO accessors
->
-> wcove:
->  -  Use -ENOTSUPP consistently
->
-> ----------------------------------------------------------------
-> Aapo Vienamo (1):
->       gpio: Add Intel Granite Rapids-D vGPIO driver
->
-> Andy Shevchenko (10):
->       gpiolib: acpi: Remove never true check in acpi_get_gpiod_by_index()
->       gpiolib: acpi: Check for errors first in acpi_find_gpio()
->       gpio: sch: Switch to memory mapped IO accessors
->       gpio: sch: Utilise temporary variable for struct device
->       gpiolib: acpi: Extract __acpi_find_gpio() helper
->       gpiolib: acpi: Simplify error handling in __acpi_find_gpio()
->       gpiolib: acpi: Move acpi_can_fallback_to_crs() out of __acpi_find_g=
-pio()
->       gpiolib: acpi: Pass con_id instead of property into acpi_dev_gpio_i=
-rq_get_by()
->       gpiolib: acpi: Add fwnode name to the GPIO interrupt label
->       gpiolib: acpi: Set label for IRQ only lines
->
->  MAINTAINERS                                        |   1 +
->  drivers/gpio/Kconfig                               |  18 +
->  drivers/gpio/Makefile                              |   1 +
->  drivers/gpio/gpio-graniterapids.c                  | 383 +++++++++++++++=
-++++++
->  drivers/gpio/gpio-pca953x.c                        |   2 +-
->  drivers/gpio/gpio-sch.c                            |  35 +-
->  drivers/gpio/gpiolib-acpi.c                        |  65 ++--
->  .../ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c |   2 +-
->  drivers/pinctrl/pinctrl-cy8c95x0.c                 |   2 +-
->  include/linux/acpi.h                               |   8 +-
->  10 files changed, 468 insertions(+), 49 deletions(-)
->  create mode 100644 drivers/gpio/gpio-graniterapids.c
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Pulled, thanks!
 
-Bart
+On Sun, 05 May 2024 17:14:20 +0300, Andy Shevchenko wrote:
+> Currently the documentation for line names allows to use %u inside
+> the alternative name. This is broken in character device approach
+> from day 1 and being in use solely in sysfs.
+> 
+> Character device interface has a line number as a part of its address,
+> so the users better rely on it. Hence remove the misleading documentation.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] gpiolib: Discourage to use formatting strings in line names
+      commit: 2b5ae9c7d9e5ef4bc52c932fdf10328feb5167c6
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
