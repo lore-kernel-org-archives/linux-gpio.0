@@ -1,105 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269793F9FB
-	for <linux-gpio@vger.kernel.org>; Sat, 11 May 2024 12:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94AB3C2D
+	for <linux-gpio@vger.kernel.org>; Sat, 11 May 2024 15:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715431293; cv=none; b=HKsJ9q/A8Sos1Nz2mfgPbagUvd+XFP8tsnWiIWEq6GOkxIwUP0M9lotj2SDKJLihlJzrzV2QULtETwmpjZqkAmFxrxWO//ssU6cJgNSA4yMHz43OeEC62xw5eY0BB4/G6cLDImgYsj9fH97HRHEXTfOeIIvN1WrUEvhpZdoTjCQ=
+	t=1715440275; cv=none; b=Bgnoy/aZvv2rFtb3CxEKEJgxoSei4NUiWHlccetciAWDBFO0nPGaX2d7rDqNH1/icEx8wWSRaGf29wu4e5pgHZWYmBpMYyR3VBoD1tMZHWV42o12ZiPABnNt6PJNKofdCqy3dvxlpqtsynp2MLaEv36vnywgIF6v8L/p10/joJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715431293; c=relaxed/simple;
-	bh=avN3Xg3Mbfc96QLRWHhwQNaqyLEHRO9S1hxukvt0CNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qpv9MqvrSeyhB1E60I9/P1UlUrAILcZtfmdllwCiF2yEobhkaJGJVlsJbnjiDhhJw28u89NzXSJ3lbFjfQNAwqh9YZkFgYJb0WwqKH+gNfhb4fshSOXg+4kzYo/U4u5be/mCHPput1AKMT2Rb+28G93xSwFwJB874xF95oPYfRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHQBofdD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715440275; c=relaxed/simple;
+	bh=yBJY5Yq0AiIfwNIR7yS1/0dzp5WuzEqaggK03BM6G5k=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HFQrZvyFpN/Wf3QBFwwNU6Bn9WcKbfglyh/MxCIg8djH1fI/bNleUTRAwytk0/RAY0yqXDxEN6kvDjYnt2tR0T+4AkrIyw+9iBYC1fnI/9Qkw9Kn/G9Q20RWlGxhWx/eVp+8v2OGGe4UZat4I1FCUWnLBLOndHrqZiEMo2Gw3t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcxvKWX+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHQBofdD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CF3C2BBFC;
-	Sat, 11 May 2024 12:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715431292;
-	bh=avN3Xg3Mbfc96QLRWHhwQNaqyLEHRO9S1hxukvt0CNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NHQBofdDefqWJ/XLFYoTiG8KOrkVcCoXGSapOuAxhyEvIFGPO0e5AxGs1awLh7GSX
-	 0g8ep98qyZfIUyj6eDSd9acaXsVS0fKryMhVaX6kLaHSutfM41JZnl2t0XtqWmh/Md
-	 pFbMpoH992PxYOliMxxGQoH4G8ttoF/g3+ZL9o/4fs1i0M1JE6ranpoA+DJgx74g3m
-	 61cSIltsizhSjjHqjvm308C3y4f07YTM6PKuK3zREsBus+9vaHzsFY0Phg0GErepio
-	 R8VbG7lQUPFLMML5BtLSGAE0jgogbNlIFw57K/NCM+gI5AdyD4CXSZuKoLgPGmPj7o
-	 bmYp+nubkvBLQ==
-Date: Sat, 11 May 2024 21:41:28 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: GPIO drivers under drivers/char/
-Message-ID: <Zj9neMiKZH9vlsKp@ishi>
-References: <Zj5agJGxhpyO4zp-@smile.fi.intel.com>
- <Zj5lce8vzGhJWVeA@smile.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcxvKWX+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715440273; x=1746976273;
+  h=date:from:to:cc:subject:message-id;
+  bh=yBJY5Yq0AiIfwNIR7yS1/0dzp5WuzEqaggK03BM6G5k=;
+  b=UcxvKWX+a6ysznr0ewZxc4rksrFD/9953xplLewGslMMjcGlbqE6xQhW
+   j6Z88tVq7DY9ZphsLJ30F9B1Y2tmME/gOXbJdTKGwRXv3HTxOwoKQ8AHp
+   ZeJDZ/X2wWNfL0C4CNWT0vSHM27yvG7NZqyWif8/kJdFNCo7RHIl1CflI
+   BXDzbHeFVsjVOwu82JKD5XxIkfd3kT7Cq1/DkMzGteacHgaLG7ocsTVB1
+   kolgAxLTXq0Sz2Wh0h8ps0vX0Qs60z1FcIHD452Q/xEvbHqtmdSt6SSYI
+   3JGFd6TcGwIrvET++NMx8eCb4hH4/mQP9jTTjJeGrm5nfl3plieupPEN5
+   Q==;
+X-CSE-ConnectionGUID: VuzRXGrVQiq8oP6tS0yYkQ==
+X-CSE-MsgGUID: GmQWf59JTMWd9XkYQpsHSw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11070"; a="14374006"
+X-IronPort-AV: E=Sophos;i="6.08,154,1712646000"; 
+   d="scan'208";a="14374006"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 08:11:13 -0700
+X-CSE-ConnectionGUID: 7V/soh1kQsGMjT1+og1TJw==
+X-CSE-MsgGUID: gsO6xoWzTUeffh+2EOygaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,154,1712646000"; 
+   d="scan'208";a="34588346"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 11 May 2024 08:11:12 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s5oNR-0007Xg-1n;
+	Sat, 11 May 2024 15:11:09 +0000
+Date: Sat, 11 May 2024 23:10:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-current] BUILD SUCCESS
+ ee0166b637a5e376118e9659e5b4148080f1d27e
+Message-ID: <202405112344.dBPpBE6W-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F5qTcyqTReKKx6d5"
-Content-Disposition: inline
-In-Reply-To: <Zj5lce8vzGhJWVeA@smile.fi.intel.com>
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: ee0166b637a5e376118e9659e5b4148080f1d27e  gpiolib: cdev: fix uninitialised kfifo
 
---F5qTcyqTReKKx6d5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+elapsed time: 1398m
 
-On Fri, May 10, 2024 at 09:20:33PM +0300, Andy Shevchenko wrote:
-> (Update William's email; btw, William, it seems MAINTAINERS need an updat=
-e, or .mailcap)
->=20
-> On Fri, May 10, 2024 at 08:33:53PM +0300, Andy Shevchenko wrote:
-> > Hi!
-> >=20
-> > Due to patch bomb from Jens, I noticed that we have two interesting dri=
-vers
-> > (and a common library) under drivers/char/. Shouldn't we move them to
-> > drivers/gpio/ to keep an eye on that (with the respective update of MAI=
-NTAINERS
-> > if needed)? Also William might say something about this since those are=
- old ISA
-> > (?) related ones and (perhaps?) might utilise PC-104 code.
->=20
-> --=20
-> With Best Regards,
-> Andy Shevchenko
+configs tested: 117
+configs skipped: 3
 
-Thank you for the forward; I'm updating MAINTAINERS to match my
-kernel.org address from now on so that we don't have this problem again
-in the future. :-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Regarding the gpio char drivers, I take it you are referring to the
-nsc_gpio used by scx200_gpio and pc8736x_gpio. I agree, these should be
-moved to the GPIO subsystem so they're with the old GPIO drivers (and
-ported to the standard GPIO interface we have there if they're not
-already).
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240511   gcc  
+arc                   randconfig-002-20240511   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                   randconfig-001-20240511   clang
+arm                   randconfig-002-20240511   clang
+arm                   randconfig-003-20240511   gcc  
+arm                   randconfig-004-20240511   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240511   gcc  
+arm64                 randconfig-002-20240511   clang
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240511   gcc  
+i386         buildonly-randconfig-002-20240511   clang
+i386         buildonly-randconfig-003-20240511   gcc  
+i386         buildonly-randconfig-004-20240511   clang
+i386         buildonly-randconfig-005-20240511   gcc  
+i386         buildonly-randconfig-006-20240511   gcc  
+i386                                defconfig   clang
+i386                  randconfig-001-20240511   gcc  
+i386                  randconfig-002-20240511   clang
+i386                  randconfig-003-20240511   gcc  
+i386                  randconfig-004-20240511   clang
+i386                  randconfig-005-20240511   gcc  
+i386                  randconfig-006-20240511   gcc  
+i386                  randconfig-011-20240511   clang
+i386                  randconfig-012-20240511   gcc  
+i386                  randconfig-013-20240511   clang
+i386                  randconfig-014-20240511   clang
+i386                  randconfig-015-20240511   clang
+i386                  randconfig-016-20240511   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240511   gcc  
+x86_64       buildonly-randconfig-002-20240511   gcc  
+x86_64       buildonly-randconfig-003-20240511   gcc  
+x86_64       buildonly-randconfig-004-20240511   gcc  
+x86_64       buildonly-randconfig-005-20240511   clang
+x86_64       buildonly-randconfig-006-20240511   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240511   clang
+x86_64                randconfig-002-20240511   clang
+x86_64                          rhel-8.3-rust   clang
+xtensa                            allnoconfig   gcc  
 
-Taking a quick look, neither of these are PC-104 devices, but rather
-appear to be part of the Super I/O chip. Regardless, the driver
-interface can be the same since they're both performing ioport
-operations over an ISA bus essentially. You can utilize
-include/linux/isa.h and leverage the module_isa_driver() like what we do
-in the gpio-mm driver.
-
-William Breathitt Gray
-
---F5qTcyqTReKKx6d5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZj9neAAKCRC1SFbKvhIj
-K4iZAQCBp4kX9sMAYppdnYkv3nZ+4PZgbgAm+zb67e4Nk4YjRwEA6GKWBV32IK/k
-9yI1hmtbsST+4ibug2yowDgz+h8lRQU=
-=FoYW
------END PGP SIGNATURE-----
-
---F5qTcyqTReKKx6d5--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
