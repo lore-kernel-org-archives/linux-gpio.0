@@ -1,92 +1,81 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F22E636
-	for <linux-gpio@vger.kernel.org>; Tue, 14 May 2024 08:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4314267;
+	Tue, 14 May 2024 08:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715676691; cv=none; b=fpMGkRyWCfkaIGvTTqddGOXu2N7n5I4lR71TeaKa0g0nOwba7MfaC3Q5VqwcWbMkLd1Jhn9EA/LakyWqpVrfYzyt7Pb9lkSkRKmijATQqQxl4AgbaGQBbJUKqKX+z8jnMgh0LpleX8Lm01I3gYTzcHC9iF1S+oeweI/kEdsqqAY=
+	t=1715676932; cv=none; b=Wc/Gf/zvlBtEKdcWRHKD45pmR55ggPFNG7rv7XeVTFADogyXFzDdYpIMHaOS486xNN9/5IO7WP2X0k7GgjEtwDt55pKWuzY/h3RpzqDiYkrBw/QCVyieRs7shHMqt5/8BPgGZg8eCYpJhA6Tv0GN6XYiSywW7ENWO1MfV8EtB50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715676691; c=relaxed/simple;
-	bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=si36xau98UVNIN+k8tYEh86xQqcT7TTlwt1ymOm1kUZo0NSKttrXiiydTSbqwDYu2VUxNqWS3iOIi630DdwYrroDIbxfuF6dzhO4TjSzju5Dl6UKCV+heZTzBsvMPGFPYG7EoEezE3LgBww6inkv3xG9LNXaT/wgeglVkolhvvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aRROseLO; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715676932; c=relaxed/simple;
+	bh=y1IZls1LWu+iNxoVkU74EoQMsMBFPX6UyBKivRz0/u0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SY2wjctHAR5gTLxMxIVG9QrZoZU/U0V3W6/FLdo7SwTXrKUwpC5WohGiaV+mR+5uy61rGblSVJGqtHoUN9LckwuA5Xg3A4H2WbIos1eBOWfV7qOw9BPOegN/Ocq8KjzJt96IECO+9l+RjhZAmXD0a/JZqEVr0eNzvwJOKGazMGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5LJNyFm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aRROseLO"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6153d85053aso40673237b3.0
-        for <linux-gpio@vger.kernel.org>; Tue, 14 May 2024 01:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715676689; x=1716281489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-        b=aRROseLOaMavXA0W5FbArPt54GVcGw2KyvkFMM3HFHdY6mACaXTJhq8t8zbq+vn6w2
-         BfpffEqbZPfUrVabsn+zmw8bM+6BlU0E1V2z5ecE0yA8wsk9m/9w/dUVz548CwFaQ6rd
-         k4lgsEV8Wu3VpoWWCvfKfRsDHiB5gfIbRNulki3sFNRHLnZB4fFt7AG9v7QbJhA5Rbr6
-         A9Jz50a0f244tlx/aMQx9q/M9QfYQGvMRITJ2syn1mDd/IdftNvx3wipW1adTdUfzAPe
-         v757RLhfmoY1/rybimu+7VmI7AAuGosrBymG/oroajTu4Ty3iZJ0jIISwkdlr9RD6q3y
-         YNGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715676689; x=1716281489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-        b=Ogqh0XL3lbeRRhNzLJ+PlzQmhgsFN62sYdb067XBg5Bix1eDJb19MUeehu8KS/qtU9
-         aQTwQ2HujeDGtqEgKBrC2XWwrF1mAASPzH/OZTvulg+x0oYs2Ycmw0VZJ4b3nwCT3Ju7
-         sZwFQ/sLVteWE2YmLynXrKA5KBR1aFJ02g+2GxDJQLE/WSuCUXy9mYRdWP7emeQw+SZN
-         syh12/ValOny1pnxo7rSftulF7qiUrDP/bUBxz//axO/VuwhLKpNnMG8T2wQ28JJcT2z
-         Pr4zh2W4CgrjmVOoYqSvpmdMOkfIsVvFvBB/pyjcXyKpEUfZn5nSsN6DDlCsfisVPtsC
-         +vQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvUB4WlegDC7PVb9t6Jy9EIvmVzgAd3QaDL1tjCoYPQ9jy4tdQDVyGl+KpdhDQYTtoqtbQCyqsCMVlC/JNSkDXIDXn4apGWLH0AA==
-X-Gm-Message-State: AOJu0YyRipS7LGMPVjKSj17MZ2HsLXQBEwUSMfRoz1zfJqefhAOeLEyP
-	zLQeT8kvzNe+pdqxtEKQLYs9OLGxr70GwuYTYSFNrtQcwX7TDBvkfhiSfG01pMxJKH9J5eXBKoI
-	Ezp2xFs0lT+x8CijoMugU854jpNUS8mQiM9XsPA==
-X-Google-Smtp-Source: AGHT+IEEXncSLeYlRp50wZguJ1swNJ7Rn/eiIzeOU7YbZYMQO/MhNJglXYcod5TE7cTXRGpqohgHa7iMGT7HvYhCpa4=
-X-Received: by 2002:a81:7255:0:b0:61b:748:55a1 with SMTP id
- 00721157ae682-622b7fc3cc6mr111470377b3.13.1715676689254; Tue, 14 May 2024
- 01:51:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5LJNyFm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B0DCC2BD10;
+	Tue, 14 May 2024 08:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715676931;
+	bh=y1IZls1LWu+iNxoVkU74EoQMsMBFPX6UyBKivRz0/u0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y5LJNyFm/w+Ya1A8GiQW8wl2LWCus9irHNsreHSdoVJFBZeZioJPdZobvSR/HsI0M
+	 CPCw32/ENvYD8Xg857bvl4Pykq4LCwQW8VBTs/7JCNjnNxDvf41rdlqtoIEG+9Ho7R
+	 ILmGaH+wPfh0oiWyTQme1gVlW7/+AFZHYwAvYoYA/Cbx3NXX1PjvMDYrmJHOC65dwC
+	 bxoAIf9/G9XWp8I+1vXMYDk1SdsJVZOJznGQT7pkw1r+mSm+rLZpveuBWzWxAqJm40
+	 d+rbr7zgRl18vCpQJkqd3Y/Lxk0bHBNygwdorDrsgRwyAFAD0m5siOosH0/yfVtfYP
+	 BnfshcKCVJTxQ==
+Date: Tue, 14 May 2024 09:55:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	naresh.solanki@9elements.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
+Message-ID: <85577035-06b0-4059-8092-1b751c2a6b53@sirena.org.uk>
+References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
+ <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain>
+ <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
+ <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
+ <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
- <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain> <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
- <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
-In-Reply-To: <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 May 2024 10:51:17 +0200
-Message-ID: <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
-To: Patrick Rudolph <patrick.rudolph@9elements.com>, Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, naresh.solanki@9elements.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="irJCPoShLSLsA2zF"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
+X-Cookie: In the war of wits, he's unarmed.
 
-On Tue, May 14, 2024 at 10:39=E2=80=AFAM Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
 
-> Do you have an example where muxed registers are used in a regmap?
-> Is there some documentation available explaining the existing
-> mechanism? I'm not aware of anything.
+--irJCPoShLSLsA2zF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The regmap is sadly undocumented I have had it on my list for a long
-time to document this gem, but I never find the time.
+On Tue, May 14, 2024 at 10:51:17AM +0200, Linus Walleij wrote:
 
-You have to mark registers that cannot be cached as volatile, then
-enable caching in the regmap with e.g. .cache_type =3D REGCACHE_FLAT
-in the regmap config, then it pretty much caches itself.
-<linux/regmap.h> has some cache maintenance functions if you
-run into corner cases.
+> enable caching in the regmap with e.g. .cache_type = REGCACHE_FLAT
 
-(Mark will correct me if I say something wrong...)
+Unless you have a specific reason use REGCACHE_MAPLE.
 
-Yours,
-Linus Walleij
+--irJCPoShLSLsA2zF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZDJv4ACgkQJNaLcl1U
+h9DJ8Af+OXFu/JbEzYan9rjI/f/vjZWwi9UvDk01MSm+WaEh+ir47AJjYERLPxXZ
+5WOdaEdH3rQan32g4IcyyC1hTAokwXt+UFUrZ7rpzlJZ/vremxSuV6hgZBZGUV3K
+7U1hExSE9XRQ3p+0sngNJuklSvK9JncwcxiVIbgCF15O7IdtNJs8SxzFo/r7iOPK
+iKmelxgu0JmB9U9/E5yTsFcWKOxvvnigCLzhVlohDH3v+OVWGUMsUThU7Ls/ep0O
+rpDv455Uz26R3OZg/YzvXUmrfNJWZ50VZpHSBF/baLw3vrtrQrp7xGFVMfmhMpfd
+b/7F5gCU56dMVJCs7VG8sfGRFFTYnA==
+=ywEN
+-----END PGP SIGNATURE-----
+
+--irJCPoShLSLsA2zF--
