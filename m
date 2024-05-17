@@ -1,34 +1,34 @@
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4214535C4
-	for <linux-gpio@vger.kernel.org>; Fri, 17 May 2024 12:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72AC51010
+	for <linux-gpio@vger.kernel.org>; Fri, 17 May 2024 12:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715950738; cv=none; b=VwAbQGUe7ObTC77LOFhatreMtdZwvtXM1KY33uYXgkX8IkK2nAqpF8CcO/ITWkxR/SAf4olvgTa0Q8VbG2egYrEmdDNhTyj2Gw64fmVxnl+aOWaLOUpovk8RKfBQftppEMRTS3x+iDPJmu61lRFuFk1SClbrnJ7k6fkicfkBX+Y=
+	t=1715950738; cv=none; b=oEDVaWRYtjq3YKthEOf54bM4fsKEhQa0ny6OQmuel2p3XyIvxeiEKJHXLWDvm1HjuBDHXvJua/VAZAClpngo+Lnjs+y//015JcL0Rl4a86SwkAgfs5rN5WNUxvdOGipwTO9qpJohyRaTPhH7C8qoxpFZVwBxSJBfqIfb/U/PIjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715950738; c=relaxed/simple;
-	bh=6bQE8tz005tpkjYXd8Krz8L0/70f7CCtMikQfPJxlQc=;
+	bh=0d39N4GPWNqxF0dFVCzjorEh1XiWOcRr2ujB+nVTEXI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mgGi4nvBip2Zf8dntbSshH6tFfemLYAHibDmiRaozCY/+KnwgVIYx9D17cYyV/MrDcjHpMRgFs8qeXQpVI/1AjjmUWKKlOcawYfAmjAdH2D9M6Dpae0+o0IVFB5HQdKvXnFrs2k1Ev9hpsgOYkUwAYIRH3etoyNJJ3K2ZbPQZlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=t+BQBTl8; arc=none smtp.client-ip=95.215.58.176
+	 In-Reply-To:To:Cc; b=WleoeMBPb/ameOLdRtLQlWJXiRVkKVkwjETnUOPfQzN4ZYm5IPl2KmCDTkz0B53p7m22l/XLqKLvVUOi67rWp5tqdlUqBqHJTjTYD+21DAteieVEHa282GuvaoYc229d1UJc6ONQpcLhql0vesYQ/tynM1gWl8NmNvPRBfYJ6/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=wa81VU0r; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="t+BQBTl8"
+	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="wa81VU0r"
 X-Envelope-To: linux-i2c@vger.kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqrs.dk; s=key1;
-	t=1715950731;
+	t=1715950729;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3Qq56lk4JZsEZ+C4jeNHc4OlySfRhJLqLZblzRlQEi4=;
-	b=t+BQBTl8JR4T9tddRQ4lPoImalqHFRx32mz9imnyvVIZhu3dbQBdnmBR58B5Y9pbzFv1DP
-	b4VOvWYlfCBDDW36NKBY4Py5JEY2JNrJr/98s0eDzcNu3jDAf8c8F8TMyuEViTM8HWZND/
-	50CBIiiZrxyn2sjs7CD4lhLyQctBkv85kh6Cv/JQypVFTY4vWoM8sioUTIhx6Q6e2BA9XM
-	kUYXGXK2wi80MW8+IiZdWW0aROme+F/7l7YNr8rVJzSe0ohCNbK4Y/Wx/qdoezt7om4D41
-	UbWWeszdNGgonx4h7TK6wMkIvuDPaITU+oVkEgxKIfV6W7NjxdqR65b6EyiHdg==
+	bh=QZlgR///yHXui6cTc/6KXDaywf/me0E2mv4A04nqOmE=;
+	b=wa81VU0r8x+nrJ00CtQUM/U0gA2ygVrJoSG7OFUWPcDKBmJmDF1WmMXJy8eZ56yxkiQiOr
+	loKwswHpowGRP4aftRo64q2oWmia0Zao/1GYi5T9L07Tru6jMQQsLbJZlshZbO9ZoPj7l/
+	mrIudK5rQ8nWhdwuwz5dmXetu1FK1UQk3dn3FaahlwHXdqMtsoU4Z89rmLtS3XmYFNGzjt
+	14S4u6JB0utb+b+U8S4nUHRKgTFPPUuCxQEV2lsZ7Fxm4QQmtQ0vRlL4vK/0DyEQM+GTdn
+	S9C5/ruov56mZIgKIjrhSbkNZXIFSXt/9SsSAvt0OgyFbKTxhI9mKhAUjzQF/w==
 X-Envelope-To: linux-gpio@vger.kernel.org
 X-Envelope-To: conor+dt@kernel.org
 X-Envelope-To: linus.walleij@linaro.org
@@ -53,8 +53,8 @@ X-Envelope-To: andi.shyti@kernel.org
 X-Envelope-To: brgl@bgdev.pl
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Date: Fri, 17 May 2024 14:58:05 +0200
-Subject: [PATCH 07/13] ASoC: codecs: add AD24xx codec driver
+Date: Fri, 17 May 2024 14:58:03 +0200
+Subject: [PATCH 05/13] a2b: add AD24xx node driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240517-a2b-v1-7-b8647554c67b@bang-olufsen.dk>
+Message-Id: <20240517-a2b-v1-5-b8647554c67b@bang-olufsen.dk>
 References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
 In-Reply-To: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
 To: Mark Brown <broonie@kernel.org>, 
@@ -86,133 +86,77 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-This A2B driver adds support for the I2S/TDM interface found on AD24xx
-A2B transceiver chips. The chips also support PDM, but this is not
-currently implemented due to a lack of hardware to test with.
+This A2B node driver supports controlling both main and subordinate
+AD24xx nodes. As well as implementing the required ops for an A2B node
+driver, it also registers peripheral functions available on this series
+of A2B transceivers: GPIO, codec, clock, and I2C controller. The
+implementation of those functions is handled in discrete A2B drivers
+placed in the relevant subsystems.
 
-Configuration of A2B codecs takes place at runtime through manipulation
-of kcontrols exported by this codec. The full semantics are far too
-detailed to repeat in this commit message, and so it is suggested to
-refer to the technical reference manual published by ADI:
+The core node op symbols are also exported to support the implementation
+of more bespoke node drivers, such as for hardware which requires
+additional hand-holding to properly integrate with the driver model. A
+supporting header file is also added with prototypes for these
+functions.
 
- [1] AD2420(W)/6(W)/7(W)/8(W)/9(W) Automotive Audio Bus A2B Transceiver
-     Technical Reference, Part Number 82-100138-01
-
-Check out the section "Managing A2B System Data Flow". What follows is a
-simplified description with Linux specifics.
-
-A2B nodes are daisy-chained via unshielded twisted pair. An A2B bus
-consists of a single "main" node connected to the SoC via I2C and TDM.
-The other nodes are called "subordinate" nodes and also have TDM
-interfaces. These nodes' TDM interfaces are typically connected to other
-codecs. A2B enables a user to forward TDM slots captured on nodes' TDM
-interfaces over the A2B bus to be retransmitted on other (possibly
-multiple) nodes' TDM interfaces. There are various restrictions imposed
-by the hardware, namely bandwidth, but to give an idea of the
-capability: in a relatively simple case the bus enables synchronous
-transmission of up to 32 channels of 32-bit PCM data between a main node
-and a subordinate node.
-
-In ASoC context, main nodes are always clock consumers and subordinate
-nodes are always clock providers. All clocks are synchronized to the
-FSYNC signal provided to the main node. The default state of the bus is
-not to enable any transmission of audio data. Through I2C, the system
-data flow can be modified to send TDM slots where they need to go. These
-registers are exposed by the codec in the form of kcontrols.
-
-The slot configuration - known in the technical documentation as a
-"structure" - must be seen in the context of the entire A2B bus. For
-this reason it is assumed that all nodes are part of the same sound
-card. When kcontrols are modified it does not immediately result in a
-change in structure; instead, the codecs use the hw_params and hw_free
-ops to register and unregister their requested slots with the A2B driver
-core. When all nodes on the bus have requested slots, a new structure is
-applied. In the hw_free path, slots are freed and the bus can revert to
-zero PCM data transmission.
-
-Link: https://www.analog.com/media/en/technical-documentation/user-guides/ad242x-trm.pdf [1]
 Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
- drivers/a2b/Kconfig             |   4 +-
- sound/soc/codecs/Kconfig        |   5 +
- sound/soc/codecs/Makefile       |   2 +
- sound/soc/codecs/ad24xx-codec.c | 665 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 675 insertions(+), 1 deletion(-)
+ drivers/a2b/Kconfig       |  14 +
+ drivers/a2b/Makefile      |   3 +
+ drivers/a2b/ad24xx-node.c | 887 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/a2b/ad24xx-node.h |  42 +++
+ 4 files changed, 946 insertions(+)
 
 diff --git a/drivers/a2b/Kconfig b/drivers/a2b/Kconfig
-index 8c894579e2fc..6ba5dc11c51d 100644
+index 120b1d491623..1f6d836463f3 100644
 --- a/drivers/a2b/Kconfig
 +++ b/drivers/a2b/Kconfig
-@@ -8,7 +8,8 @@ menuconfig A2B
-        select OF
+@@ -18,11 +18,25 @@ config A2B_AD24XX_I2C
+        tristate "Analog Devices Inc. AD24xx I2C interface support"
+        depends on I2C
+        select REGMAP_I2C
++       select A2B_AD24XX_NODE
         help
- 	 A2B (Automotive Audio Bus) is a digital audio and control bus from
--	 Analog Devices Inc.
-+	 Analog Devices Inc. that enables synchronous capture and playback of
-+	 PCM audio over distance.
+          Say Y here to enable I2C interface support for AD24xx A2B transceiver
+          chips from Analog Devices Inc. Supported models include AD240x, AD241x,
+          and AD242x.
  
++	 Selecting this option will also force AD24xx node support, which is
++	 required to operate the chip as a main node.
++
++	 If unsure, say N.
++
++config A2B_AD24XX_NODE
++       tristate "Analog Devices Inc. AD24xx node support"
++       select REGMAP_A2B
++       help
++         Say Y here to enable support for AD24xx A2B transceiver nodes. This
++         applies to both main nodes and subordinate nodes. Supported models
++         include AD240x, AD241x, and AD242x.
++
  	 If unsure, say N.
  
-@@ -33,6 +34,7 @@ config A2B_AD24XX_NODE
-        tristate "Analog Devices Inc. AD24xx node support"
-        select REGMAP_A2B
-        imply GPIO_AD24XX
-+       imply SND_SOC_AD24XX
-        help
-          Say Y here to enable support for AD24xx A2B transceiver nodes. This
-          applies to both main nodes and subordinate nodes. Supported models
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 4afc43d3f71f..ae9460aed55c 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -21,6 +21,7 @@ config SND_SOC_ALL_CODECS
- 	imply SND_SOC_AD193X_SPI
- 	imply SND_SOC_AD193X_I2C
- 	imply SND_SOC_AD1980
-+	imply SND_SOC_AD24XX
- 	imply SND_SOC_AD73311
- 	imply SND_SOC_ADAU1372_I2C
- 	imply SND_SOC_ADAU1372_SPI
-@@ -431,6 +432,10 @@ config SND_SOC_AD1980
- 	depends on SND_SOC_AC97_BUS
- 	select REGMAP_AC97
+ endif # A2B
+diff --git a/drivers/a2b/Makefile b/drivers/a2b/Makefile
+index 07241524645c..171ffa237943 100644
+--- a/drivers/a2b/Makefile
++++ b/drivers/a2b/Makefile
+@@ -7,3 +7,6 @@ obj-$(CONFIG_A2B)			+= a2b.o
  
-+config SND_SOC_AD24XX
-+	tristate "Analog Devices Inc. AD24xx codec"
-+	depends on A2B_AD24XX_NODE
+ # Interface drivers
+ obj-$(CONFIG_A2B_AD24XX_I2C)		+= ad24xx-i2c.o
 +
- config SND_SOC_AD73311
- 	tristate
- 
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index b4df22186e25..0f865d47385e 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -7,6 +7,7 @@ snd-soc-ad193x-y := ad193x.o
- snd-soc-ad193x-spi-y := ad193x-spi.o
- snd-soc-ad193x-i2c-y := ad193x-i2c.o
- snd-soc-ad1980-y := ad1980.o
-+snd-soc-ad24xx-y := ad24xx-codec.o
- snd-soc-ad73311-y := ad73311.o
- snd-soc-adau-utils-y := adau-utils.o
- snd-soc-adau1372-y := adau1372.o
-@@ -403,6 +404,7 @@ obj-$(CONFIG_SND_SOC_AD193X)	+= snd-soc-ad193x.o
- obj-$(CONFIG_SND_SOC_AD193X_SPI)	+= snd-soc-ad193x-spi.o
- obj-$(CONFIG_SND_SOC_AD193X_I2C)	+= snd-soc-ad193x-i2c.o
- obj-$(CONFIG_SND_SOC_AD1980)	+= snd-soc-ad1980.o
-+obj-$(CONFIG_SND_SOC_AD24XX)	+= snd-soc-ad24xx.o
- obj-$(CONFIG_SND_SOC_AD73311) += snd-soc-ad73311.o
- obj-$(CONFIG_SND_SOC_ADAU_UTILS)	+= snd-soc-adau-utils.o
- obj-$(CONFIG_SND_SOC_ADAU1372)	+= snd-soc-adau1372.o
-diff --git a/sound/soc/codecs/ad24xx-codec.c b/sound/soc/codecs/ad24xx-codec.c
++# Node drivers
++obj-$(CONFIG_A2B_AD24XX_NODE)		+= ad24xx-node.o
+diff --git a/drivers/a2b/ad24xx-node.c b/drivers/a2b/ad24xx-node.c
 new file mode 100644
-index 000000000000..56ee32effc01
+index 000000000000..c5716391936d
 --- /dev/null
-+++ b/sound/soc/codecs/ad24xx-codec.c
-@@ -0,0 +1,665 @@
++++ b/drivers/a2b/ad24xx-node.c
+@@ -0,0 +1,887 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * AD24xx codec driver
++ * AD24xx A2B transceiver node driver
 + *
 + * Copyright (c) 2023-2024 Alvin Šipraga <alsi@bang-olufsen.dk>
 + *
@@ -220,661 +164,931 @@ index 000000000000..56ee32effc01
 + *
 + * [1] AD2420(W)/6(W)/7(W)/8(W)/9(W) Automotive Audio Bus A2B Transceiver
 + *     Technical Reference, Revision 1.1, October 2019, Part Number 82-100138-01
++ *
++ * [2] Datasheet for AD2420(W)/AD2426(W)/AD2427(W)/AD2428(W)/AD2429(W) Rev. C,
++ *     July 2021
 + */
 +
 +#include <linux/a2b/a2b.h>
 +#include <linux/a2b/ad24xx.h>
-+#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
 +#include <linux/module.h>
++#include <linux/of_irq.h>
 +#include <linux/regmap.h>
-+#include <sound/soc.h>
 +
-+#define AD24XX_RATES_SUB_48 \
-+	(SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 | SNDRV_PCM_RATE_192000)
-+#define AD24XX_RATES_SUB_44_1                                                 \
-+	(SNDRV_PCM_RATE_11025 | SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_44100 | \
-+	 SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_176400)
-+#define AD24XX_RATES_MAIN_48 SNDRV_PCM_RATE_48000
-+#define AD24XX_RATES_MAIN_44_1 SNDRV_PCM_RATE_44100
++#include "ad24xx-node.h"
 +
-+struct ad24xx_codec {
++struct ad24xx_node {
 +	struct device *dev;
-+	struct a2b_func *func;
 +	struct a2b_node *node;
 +	struct regmap *regmap;
-+	struct snd_soc_dai_driver *dai_drv;
-+	struct a2b_slot_config slot_config;
++	struct irq_domain *irqdomain;
++	int irq;
++	struct completion running_completion;
++	struct completion discovery_completion;
++	struct a2b_func *func_gpio;
++	struct a2b_func *func_codec;
++	struct a2b_func *func_clk;
++	struct a2b_func *func_i2c;
 +};
 +
-+static const char *const ad24xx_codec_slot_format_text[] = {
-+	"Normal Slot Format",
-+	"Alternate Slot Format",
-+};
-+
-+static const char *const ad24xx_codec_slot_size_text[] = {
-+	"8 bits",  "12 bits", "16 bits", "20 bits",
-+	"24 bits", "28 bits", "32 bits",
-+};
-+
-+static SOC_ENUM_SINGLE_VIRT_DECL(ad24xx_codec_dn_slot_size_enum,
-+				 ad24xx_codec_slot_size_text);
-+static SOC_ENUM_SINGLE_VIRT_DECL(ad24xx_codec_dn_slot_format_enum,
-+				 ad24xx_codec_slot_format_text);
-+static SOC_ENUM_SINGLE_VIRT_DECL(ad24xx_codec_up_slot_size_enum,
-+				 ad24xx_codec_slot_size_text);
-+static SOC_ENUM_SINGLE_VIRT_DECL(ad24xx_codec_up_slot_format_enum,
-+				 ad24xx_codec_slot_format_text);
-+
-+static int ad24xx_codec_slot_config_get(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_kcontrol_component(kcontrol);
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	struct a2b_slot_config *slot_config = &adc->slot_config;
-+	const struct soc_enum *priv = (void *)kcontrol->private_value;
-+	unsigned int *val = &ucontrol->value.enumerated.item[0];
-+
-+	if (priv == &ad24xx_codec_dn_slot_size_enum)
-+		*val = slot_config->size[A2B_DIR_DOWN];
-+	else if (priv == &ad24xx_codec_dn_slot_format_enum)
-+		*val = slot_config->format[A2B_DIR_DOWN];
-+	else if (priv == &ad24xx_codec_up_slot_size_enum)
-+		*val = slot_config->size[A2B_DIR_UP];
-+	else if (priv == &ad24xx_codec_up_slot_format_enum)
-+		*val = slot_config->format[A2B_DIR_UP];
-+	else
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
-+static int ad24xx_codec_slot_config_put(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_kcontrol_component(kcontrol);
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	struct a2b_slot_config *slot_config = &adc->slot_config;
-+	const struct soc_enum *priv = (void *)kcontrol->private_value;
-+	unsigned int val = ucontrol->value.enumerated.item[0];
-+	enum a2b_direction direction =
-+		(priv == &ad24xx_codec_up_slot_size_enum ||
-+		 priv == &ad24xx_codec_up_slot_format_enum) ?
-+			A2B_DIR_UP :
-+			A2B_DIR_DOWN;
-+
-+	if (priv == &ad24xx_codec_up_slot_size_enum ||
-+	    priv == &ad24xx_codec_dn_slot_size_enum) {
-+		if (val >= ARRAY_SIZE(ad24xx_codec_slot_size_text))
-+			return -EINVAL;
-+		slot_config->size[direction] = val;
-+	} else if (priv == &ad24xx_codec_up_slot_format_enum ||
-+		   priv == &ad24xx_codec_dn_slot_format_enum) {
-+		if (val >= ARRAY_SIZE(ad24xx_codec_slot_format_text))
-+			return -EINVAL;
-+		slot_config->format[direction] = val;
-+	} else
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new ad24xx_codec_controls_main[] = {
-+	SOC_SINGLE("Downstream Slots", A2B_DNSLOTS, 0, 32, 0),
-+	SOC_SINGLE("Upstream Slots", A2B_UPSLOTS, 0, 32, 0),
-+	SOC_ENUM_EXT("Downstream Slot Size", ad24xx_codec_dn_slot_size_enum,
-+		     ad24xx_codec_slot_config_get,
-+		     ad24xx_codec_slot_config_put),
-+	SOC_ENUM_EXT("Downstream Slot Format", ad24xx_codec_dn_slot_format_enum,
-+		     ad24xx_codec_slot_config_get,
-+		     ad24xx_codec_slot_config_put),
-+	SOC_ENUM_EXT("Upstream Slot Size", ad24xx_codec_up_slot_size_enum,
-+		     ad24xx_codec_slot_config_get,
-+		     ad24xx_codec_slot_config_put),
-+	SOC_ENUM_EXT("Upstream Slot Format", ad24xx_codec_up_slot_format_enum,
-+		     ad24xx_codec_slot_config_get,
-+		     ad24xx_codec_slot_config_put),
-+};
-+
-+static const struct snd_kcontrol_new ad24xx_codec_controls_sub[] = {
-+	SOC_SINGLE("Broadcast Downstream Slots", A2B_BCDNSLOTS, 0, 32, 0),
-+	SOC_SINGLE("Downstream Slots Targeted", A2B_LDNSLOTS, 0, 32, 0),
-+	SOC_SINGLE("Upstream Slots Generated", A2B_LUPSLOTS, 0, 32, 0),
-+	SOC_SINGLE("Downstream Slots", A2B_DNSLOTS, 0, 32, 0),
-+	SOC_SINGLE("Upstream Slots", A2B_UPSLOTS, 0, 32, 0),
-+};
-+
-+static const struct snd_kcontrol_new ad24xx_codec_controls_data_rx_mask[] = {
-+	SOC_SINGLE("Downstream Broadcast Mask Enable", A2B_LDNSLOTS, 7, 1, 0),
-+	SND_SOC_BYTES("Upstream Data RX Mask", A2B_UPMASK0, 4),
-+	SOC_SINGLE("Local Upstream Channel Offset", A2B_UPOFFSET, 0, 31, 0),
-+	SND_SOC_BYTES("Downstream Data RX Mask", A2B_DNMASK0, 4),
-+	SOC_SINGLE("Local Downstream Channel Offset", A2B_DNOFFSET, 0, 31, 0),
-+};
-+
-+#define SND_SOC_DAPM_ENCODER(wname, stname, wreg, wshift, winvert) \
-+{	.id = snd_soc_dapm_encoder, .name = wname, .sname = stname, \
-+	SND_SOC_DAPM_INIT_REG_VAL(wreg, wshift, winvert), }
-+
-+#define SND_SOC_DAPM_DECODER(wname, stname, wreg, wshift, winvert) \
-+{	.id = snd_soc_dapm_decoder, .name = wname, .sname = stname, \
-+	SND_SOC_DAPM_INIT_REG_VAL(wreg, wshift, winvert), }
-+
-+static const struct snd_soc_dapm_widget ad24xx_codec_dapm_widgets[] = {
-+	SND_SOC_DAPM_AIF_IN("RX0", NULL, 0, A2B_I2SCFG, 4, 0),
-+	SND_SOC_DAPM_AIF_IN("RX1", NULL, 0, A2B_I2SCFG, 5, 0),
-+	SND_SOC_DAPM_AIF_OUT("TX0", NULL, 0, A2B_I2SCFG, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("TX1", NULL, 0, A2B_I2SCFG, 1, 0),
-+	SND_SOC_DAPM_ENCODER("ENC", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DECODER("DEC", NULL, SND_SOC_NOPM, 0, 0),
-+};
-+
-+static const struct snd_soc_dapm_route ad24xx_codec_dapm_routes_main[] = {
-+	{ "I2S Capture", NULL, "DEC" },
-+	{ "TX0", NULL, "I2S Capture" },
-+	{ "TX1", NULL, "I2S Capture" },
-+	{ "I2S Playback", NULL, "RX0" },
-+	{ "I2S Playback", NULL, "RX1" },
-+	{ "ENC", NULL, "I2S Playback" },
-+};
-+
-+static const struct snd_soc_dapm_route ad24xx_codec_dapm_routes_sub[] = {
-+	{ "ENC", NULL, "I2S Capture" },
-+	{ "I2S Capture", NULL, "RX0" },
-+	{ "I2S Capture", NULL, "RX1" },
-+	{ "TX0", NULL, "I2S Playback" },
-+	{ "TX1", NULL, "I2S Playback" },
-+	{ "I2S Playback", NULL, "DEC" },
-+};
-+
-+static int ad24xx_codec_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	bool bclk_invert;
-+	unsigned int val;
-+	int ret;
-+
-+	/* Main node must be BCLK/FSYNC consumer, subordinate node provider */
-+	if ((fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) !=
-+	    (is_a2b_main(adc->node) ? SND_SOC_DAIFMT_CBC_CFC :
-+				      SND_SOC_DAIFMT_CBP_CFP))
-+		return -EINVAL;
-+
-+	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-+	case SND_SOC_DAIFMT_NB_NF:
-+		if (adc->node->invert_sync)
-+			return -EINVAL;
-+		bclk_invert = false;
-+		break;
-+	case SND_SOC_DAIFMT_NB_IF:
-+		if (!adc->node->invert_sync)
-+			return -EINVAL;
-+		bclk_invert = false;
-+		break;
-+	case SND_SOC_DAIFMT_IB_NF:
-+		if (adc->node->invert_sync)
-+			return -EINVAL;
-+		bclk_invert = true;
-+		break;
-+	case SND_SOC_DAIFMT_IB_IF:
-+		if (!adc->node->invert_sync)
-+			return -EINVAL;
-+		bclk_invert = true;
-+		break;
-+	}
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+		if (!adc->node->alternating_sync || !adc->node->early_sync)
-+			return -EINVAL;
-+		break;
-+	case SND_SOC_DAIFMT_DSP_A:
-+		if (adc->node->alternating_sync || !adc->node->early_sync)
-+			return -EINVAL;
-+		break;
-+	case SND_SOC_DAIFMT_DSP_B:
-+		if (adc->node->alternating_sync || adc->node->early_sync)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	val = bclk_invert ? A2B_I2SCFG_RXBCLKINV_MASK :
-+			    A2B_I2SCFG_TXBCLKINV_MASK;
-+	ret = regmap_update_bits(
-+		adc->regmap, A2B_I2SCFG,
-+		A2B_I2SCFG_TXBCLKINV_MASK | A2B_I2SCFG_RXBCLKINV_MASK, val);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int ad24xx_codec_calc_a_dnslots(struct ad24xx_codec *adc)
-+{
-+	struct a2b_node *node = adc->node;
-+	unsigned int dnslots;
-+	unsigned int dnmasken;
-+	unsigned int ldnslots;
-+	unsigned int bcdnslots;
-+	unsigned int dnmaskrx;
-+	__le32 dnmask;
-+	unsigned int val;
-+	int ret;
-+
-+	/*
-+	 * Calculate the number of downstream slots to be received by this
-+	 * node's A-side transceiver. For main nodes this is trivially zero
-+	 * because the A-side is inactive. Following [1] section 3-18
-+	 * "Downstream Data Slots", for subordinate nodes the calculation
-+	 * depends on whether the A2B_LDNSLOTS.DNMASKEN bit is set:
-+	 *
-+	 *   DNMASKEN=0 => A2B_BCDNSLOTS + A2B_DNSLOTS + A2B_LDNSLOTS
-+	 *   DNMASKEN=1 => max(A2B_DNSLOTS, dnmaskrx)
-+	 *
-+	 * where dnmaskrx is the most significant bit of the A2B_DNMASK{0,3}
-+	 * mask.
-+	 */
-+
-+	if (is_a2b_main(node))
-+		return 0;
-+
-+	ret = regmap_read(adc->regmap, A2B_DNSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	dnslots = FIELD_GET(A2B_DNSLOTS_DNSLOTS_MASK, val);
-+
-+	ret = regmap_read(adc->regmap, A2B_LDNSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	ldnslots = FIELD_GET(A2B_LDNSLOTS_LDNSLOTS_MASK, val);
-+	dnmasken = FIELD_GET(A2B_LDNSLOTS_DNMASKEN_MASK, val);
-+
-+	if (!dnmasken) {
-+		ret = regmap_read(adc->regmap, A2B_BCDNSLOTS, &val);
-+		if (ret)
-+			return ret;
-+
-+		bcdnslots = FIELD_GET(A2B_BCDNSLOTS_BCDNSLOTS_MASK, val);
-+
-+		return bcdnslots + dnslots + ldnslots;
-+	}
-+
-+	ret = regmap_bulk_read(adc->regmap, A2B_DNMASK0, &dnmask, 4);
-+	if (ret)
-+		return ret;
-+
-+	dnmaskrx = fls(le32_to_cpu(dnmask));
-+
-+	return max(dnslots, dnmaskrx);
-+}
-+
-+static int ad24xx_codec_calc_b_dnslots(struct ad24xx_codec *adc)
-+{
-+	struct a2b_node *node = adc->node;
-+	unsigned int dnslots;
-+	unsigned int dnmasken;
-+	unsigned int ldnslots;
-+	unsigned int bcdnslots;
-+	unsigned int val;
-+	int ret;
-+
-+	/*
-+	 * Calculate the number of downstream slots to be transmitted by this
-+	 * node's B-side transceiver. Following [1] section 3-18 "Downstream
-+	 * Data Slots", for main nodes the number is A2B_DNSLOTS. For
-+	 * subordinate nodes the calculation depends on whether the
-+	 * A2B_LDNSLOTS.DNMASKEN bit is set:
-+	 *
-+	 *   DNMASKEN=0 => A2B_BCDNSLOTS + A2B_DNSLOTS
-+	 *   DNMASKEN=1 => A2B_DNSLOTS + A2B_LDNSLOTS
-+	 */
-+
-+	ret = regmap_read(adc->regmap, A2B_DNSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	dnslots = FIELD_GET(A2B_DNSLOTS_DNSLOTS_MASK, val);
-+
-+	if (is_a2b_main(node))
-+		return dnslots;
-+
-+	ret = regmap_read(adc->regmap, A2B_LDNSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	ldnslots = FIELD_GET(A2B_LDNSLOTS_LDNSLOTS_MASK, val);
-+	dnmasken = FIELD_GET(A2B_LDNSLOTS_DNMASKEN_MASK, val);
-+
-+	if (dnmasken)
-+		return dnslots + ldnslots;
-+
-+	ret = regmap_read(adc->regmap, A2B_BCDNSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	bcdnslots = FIELD_GET(A2B_BCDNSLOTS_BCDNSLOTS_MASK, val);
-+
-+	return bcdnslots + dnslots;
-+}
-+
-+static unsigned int ad24xx_codec_calc_a_upslots(struct ad24xx_codec *adc)
-+{
-+	struct a2b_node *node = adc->node;
-+	unsigned int upslots;
-+	unsigned int lupslots;
-+	unsigned int val;
-+	int ret;
-+
-+	/*
-+	 * Calculate the number of upstream slots to be transmitted by this
-+	 * node's A-side transceiver. According to [1] section 3-20 "Upstream
-+	 * Data Slots", this is A2B_UPSLOTS + A2B_LUPSLOTS for subordinate
-+	 * nodes. For the main node it is trivially always zero, as its A-side
-+	 * is inactive.
-+	 */
-+
-+	if (is_a2b_main(node))
-+		return 0;
-+
-+	ret = regmap_read(adc->regmap, A2B_UPSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	upslots = FIELD_GET(A2B_UPSLOTS_UPSLOTS_MASK, val);
-+
-+	ret = regmap_read(adc->regmap, A2B_LUPSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	lupslots = FIELD_GET(A2B_LUPSLOTS_LUPSLOTS_MASK, val);
-+
-+	return upslots + lupslots;
-+}
-+
-+static unsigned int ad24xx_codec_calc_b_upslots(struct ad24xx_codec *adc)
-+{
-+	struct a2b_node *node = adc->node;
-+	unsigned int upslots;
-+	unsigned int upmaskrx;
-+	unsigned int upmask;
-+	unsigned int val;
-+	u8 buf[4];
-+	int ret;
-+
-+	/*
-+	 * Calculate the number of upstream slots to be received by this node's
-+	 * B-side transceiver. This is, cf. [1] section 3-20, max(A2B_UPSLOTS,
-+	 * upmaskrx), where upmaskrx is the most significant bit of the
-+	 * A2B_UPMASK{0,3} mask. For main nodes it is simply the value of
-+	 * A2B_UPSLOTS, as they have no upstream data RX mask to configure.
-+	 */
-+
-+	ret = regmap_read(adc->regmap, A2B_UPSLOTS, &val);
-+	if (ret)
-+		return ret;
-+
-+	upslots = FIELD_GET(A2B_UPSLOTS_UPSLOTS_MASK, val);
-+
-+	if (is_a2b_main(node))
-+		return upslots;
-+
-+	ret = regmap_bulk_read(adc->regmap, A2B_UPMASK0, buf, 4);
-+	if (ret)
-+		return ret;
-+
-+	upmask = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-+	upmaskrx = fls(upmask);
-+
-+	return max(upslots, upmaskrx);
-+}
-+
-+static int ad24xx_codec_hw_params(struct snd_pcm_substream *substream,
-+				  struct snd_pcm_hw_params *params,
-+				  struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	unsigned int rate = params_rate(params);
-+	struct a2b_slot_req slot_req = {
-+		.a_dnslots = ad24xx_codec_calc_a_dnslots(adc),
-+		.a_upslots = ad24xx_codec_calc_a_upslots(adc),
-+		.b_dnslots = ad24xx_codec_calc_b_dnslots(adc),
-+		.b_upslots = ad24xx_codec_calc_b_upslots(adc),
-+		.slot_config = adc->slot_config, /* ignored for subordinates */
-+	};
-+	enum a2b_superframe_freq sff = adc->node->bus->sff;
-+	int ret;
-+
-+	/* Configure I2S/TDM rate */
-+	if (is_a2b_main(adc->node)) {
-+		/*
-+		 * The I2S rate of the main node DAIs is fixed at the superframe
-+		 * frequency (SFF) and cannot change.
-+		 */
-+		if (!((rate == 48000 && sff == A2B_SFF_48000) ||
-+		      (rate == 44100 && sff == A2B_SFF_44100)))
-+			return -EINVAL;
-+	} else {
-+		/*
-+		 * The I2S rate of subordinate nodes can be set to (SFF * x)
-+		 * for x in { 0.25, 0.5, 1, 2, 4 }.
-+		 */
-+		unsigned int sff_rate = sff == A2B_SFF_48000 ? 48000 : 44100;
-+		unsigned int val = 0;
-+
-+		if (rate == sff_rate / 4)
-+			val |= FIELD_PREP(A2B_I2SRATE_I2SRATE_MASK, 2);
-+		else if (rate == sff_rate / 2)
-+			val |= FIELD_PREP(A2B_I2SRATE_I2SRATE_MASK, 1);
-+		else if (rate == sff_rate)
-+			val |= FIELD_PREP(A2B_I2SRATE_I2SRATE_MASK, 0);
-+		/* A2B_I2SRRATE.RRDIV support is not implemented */
-+		else if (rate == sff_rate * 2)
-+			val |= FIELD_PREP(A2B_I2SRATE_I2SRATE_MASK, 5);
-+		else if (rate == sff_rate * 4)
-+			val |= FIELD_PREP(A2B_I2SRATE_I2SRATE_MASK, 6);
-+		else
-+			return -EINVAL;
-+
-+		ret = regmap_update_bits(adc->regmap, A2B_I2SRATE,
-+					 A2B_I2SRATE_I2SRATE_MASK, val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+
-+	/* Finally, request slots */
-+	ret = a2b_node_request_slots(adc->node, &slot_req);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int ad24xx_codec_hw_free(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	int ret;
-+
-+	ret = a2b_node_free_slots(adc->node);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dai_ops ad24xx_codec_dai_ops = {
-+	.set_fmt = ad24xx_codec_set_fmt,
-+	.hw_params = ad24xx_codec_hw_params,
-+	.hw_free = ad24xx_codec_hw_free,
-+};
-+
-+enum ad24xx_codec_dai {
-+	AD24XX_DAI_I2S,
-+};
-+
-+static const struct snd_soc_dai_driver ad24xx_codec_dai_drv[] = {
-+	[AD24XX_DAI_I2S] = {
-+		.name = "ad24xx-i2s",
-+		.playback = {
-+			.stream_name = "I2S Playback",
-+			.channels_min = 1,
-+			.channels_max = 32,
-+		},
-+		.capture = {
-+			.stream_name = "I2S Capture",
-+			.channels_min = 1,
-+			.channels_max = 32,
-+		},
-+		.ops = &ad24xx_codec_dai_ops,
-+		.symmetric_rate = 1,
++#define A2B_CHIP_CAPS_AD242X                                      \
++	(A2B_CHIP_CAP_REDUCED_RATE | A2B_CHIP_CAP_CLKOUT |        \
++	 A2B_CHIP_CAP_BUS_MONITOR | A2B_CHIP_CAP_SUSTAIN |        \
++	 A2B_CHIP_CAP_DATA_RX_MASK | A2B_CHIP_CAP_GPIO_DISTANCE | \
++	 A2B_CHIP_CAP_MAILBOX)
++
++const struct a2b_chip_info ad24xx_chip_info[] = {
++	[A2B_AD2401] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_PDM,
++		.max_gpios = 7,
++	},
++	[A2B_AD2402] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_PDM,
++		.max_gpios = 7,
++	},
++	[A2B_AD2403] = {
++		.caps = A2B_CHIP_CAP_MAIN |
++			A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_I2S,
++		.max_subs = 8,
++		.max_gpios = 7,
++	},
++	[A2B_AD2410] = {
++		.caps = A2B_CHIP_CAP_MAIN |
++			A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_I2S |
++			A2B_CHIP_CAP_PDM,
++		.max_subs = 8,
++		.max_gpios = 7,
++	},
++	[A2B_AD2420] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_gpios = 8,
++	},
++	[A2B_AD2421] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_gpios = 8,
++	},
++	[A2B_AD2422] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_gpios = 8,
++	},
++	[A2B_AD2425] = {
++		.caps = A2B_CHIP_CAP_MAIN |
++			A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_I2S |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_subs = 10,
++		.max_gpios = 8,
++	},
++	[A2B_AD2426] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_gpios = 8,
++	},
++	[A2B_AD2427] = {
++		.caps = A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_gpios = 8,
++	},
++	[A2B_AD2428] = {
++		.caps = A2B_CHIP_CAP_MAIN |
++			A2B_CHIP_CAP_A_SIDE |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_I2S |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_subs = 10,
++		.max_gpios = 8,
++	},
++	[A2B_AD2429] = {
++		.caps = A2B_CHIP_CAP_MAIN |
++			A2B_CHIP_CAP_B_SIDE |
++			A2B_CHIP_CAP_I2S |
++			A2B_CHIP_CAP_PDM |
++			A2B_CHIP_CAPS_AD242X,
++		.max_subs = 2,
++		.max_gpios = 8,
 +	},
 +};
++EXPORT_SYMBOL_GPL(ad24xx_chip_info);
 +
-+static int ad24xx_codec_component_probe(struct snd_soc_component *component)
++static int of_a2b_parse_tdm_slot_size(struct device_node *np,
++				      enum a2b_tdm_slot_size *tdm_slot_size)
 +{
-+	struct ad24xx_codec *adc = snd_soc_component_get_drvdata(component);
-+	struct a2b_node *node = adc->node;
++	u32 slot_size;
 +	int ret;
 +
-+	snd_soc_component_init_regmap(component, adc->regmap);
++	ret = of_property_read_u32(np, "adi,tdm-slot-size", &slot_size);
++	if (ret)
++		return ret;
 +
-+	if (is_a2b_sub(node) &&
-+	    (node->chip_info->caps & A2B_CHIP_CAP_DATA_RX_MASK)) {
-+		ret = snd_soc_add_component_controls(
-+			component, ad24xx_codec_controls_data_rx_mask,
-+			ARRAY_SIZE(ad24xx_codec_controls_data_rx_mask));
-+		if (ret)
-+			return ret;
-+	}
++	if (slot_size == 16)
++		*tdm_slot_size = A2B_TDMSS_16;
++	else if (slot_size == 32)
++		*tdm_slot_size = A2B_TDMSS_32;
++	else
++		return -EINVAL;
 +
 +	return 0;
 +}
 +
-+static const struct snd_soc_component_driver ad24xx_codec_component_drv_main = {
-+	.probe = ad24xx_codec_component_probe,
-+	.controls = ad24xx_codec_controls_main,
-+	.num_controls = ARRAY_SIZE(ad24xx_codec_controls_main),
-+	.dapm_widgets = ad24xx_codec_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(ad24xx_codec_dapm_widgets),
-+	.dapm_routes = ad24xx_codec_dapm_routes_main,
-+	.num_dapm_routes = ARRAY_SIZE(ad24xx_codec_dapm_routes_main),
-+	.endianness = 1,
++static int of_a2b_parse_tdm_mode(struct device_node *np,
++				 enum a2b_tdm_mode *tdm_mode)
++{
++	u32 mode;
++	int ret;
++
++	ret = of_property_read_u32(np, "adi,tdm-mode", &mode);
++	if (ret)
++		return ret;
++
++	if (mode == 2)
++		*tdm_mode = A2B_TDMMODE_2;
++	else if (mode == 4)
++		*tdm_mode = A2B_TDMMODE_4;
++	else if (mode == 8)
++		*tdm_mode = A2B_TDMMODE_8;
++	else if (mode == 12)
++		*tdm_mode = A2B_TDMMODE_12;
++	else if (mode == 16)
++		*tdm_mode = A2B_TDMMODE_16;
++	else if (mode == 20)
++		*tdm_mode = A2B_TDMMODE_20;
++	else if (mode == 24)
++		*tdm_mode = A2B_TDMMODE_24;
++	else if (mode == 32)
++		*tdm_mode = A2B_TDMMODE_32;
++	else
++		return -EINVAL;
++
++	return 0;
++}
++
++static const struct irq_chip ad24xx_node_irq_chip = {
++	.name = "ad24xx-node",
 +};
 +
-+static const struct snd_soc_component_driver ad24xx_codec_component_drv_sub = {
-+	.probe = ad24xx_codec_component_probe,
-+	.controls = ad24xx_codec_controls_sub,
-+	.num_controls = ARRAY_SIZE(ad24xx_codec_controls_sub),
-+	.dapm_widgets = ad24xx_codec_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(ad24xx_codec_dapm_widgets),
-+	.dapm_routes = ad24xx_codec_dapm_routes_sub,
-+	.num_dapm_routes = ARRAY_SIZE(ad24xx_codec_dapm_routes_sub),
-+	.endianness = 1,
++static int ad24xx_node_irqdomain_map(struct irq_domain *irqdomain,
++				     unsigned int irq, irq_hw_number_t hwirq)
++{
++	irq_set_chip_data(irq, irqdomain->host_data);
++	irq_set_chip_and_handler(irq, &ad24xx_node_irq_chip, handle_simple_irq);
++	irq_set_nested_thread(irq, 1);
++	irq_set_noprobe(irq);
++
++	return 0;
++}
++
++static void ad24xx_node_irqdomain_unmap(struct irq_domain *irqdomain,
++					unsigned int irq)
++{
++	irq_set_nested_thread(irq, 0);
++	irq_set_chip_and_handler(irq, NULL, NULL);
++	irq_set_chip_data(irq, NULL);
++}
++
++static int ad24xx_node_irqdomain_alloc(struct irq_domain *irqdomain,
++				       unsigned int virq, unsigned int nr_irqs,
++				       void *data)
++{
++	struct ad24xx_node *adn = irqdomain->host_data;
++	struct irq_fwspec *fwspec = data;
++	irq_hw_number_t hwirq = fwspec->param[0];
++
++	if (nr_irqs != 1)
++		return -EINVAL;
++
++	if (hwirq > AD24XX_MAX_GPIOS)
++		return -EINVAL;
++
++	return irq_domain_set_hwirq_and_chip(irqdomain, virq, hwirq,
++					     &ad24xx_node_irq_chip, adn);
++}
++
++static const struct irq_domain_ops ad24xx_node_irqdomain_ops = {
++	.alloc = ad24xx_node_irqdomain_alloc,
++	.free = irq_domain_free_irqs_common,
++	.map = ad24xx_node_irqdomain_map,
++	.unmap = ad24xx_node_irqdomain_unmap,
++	.xlate = irq_domain_xlate_onecell,
 +};
 +
-+static const struct regmap_config ad24xx_codec_regmap_config = {
++static void devm_ad24xx_node_release_irqdomain(void *data)
++{
++	struct irq_domain *irqdomain = data;
++	int virq;
++	int i;
++
++	for (i = 0; i < A2B_MAX_NODES; i++) {
++		virq = irq_find_mapping(irqdomain, i);
++		if (virq)
++			irq_dispose_mapping(virq);
++	}
++
++	irq_domain_remove(irqdomain);
++}
++
++static irqreturn_t ad24xx_node_irq_handler(int irq, void *data)
++{
++	struct ad24xx_node *adn = data;
++	struct a2b_node *node = adn->node;
++	struct device *dev = adn->dev;
++	unsigned int inttype;
++	unsigned int virq;
++	int ret;
++
++	ret = a2b_node_get_inttype(node, &inttype);
++	if (ret) {
++		dev_err_ratelimited(adn->dev,
++				    "failed to get interrupt type: %d\n", ret);
++		return IRQ_NONE;
++	}
++
++	dev_dbg_ratelimited(dev, "received interrupt of type %d\n", inttype);
++
++	switch (inttype) {
++	case A2B_INTTYPE_HDCNTERR:
++	case A2B_INTTYPE_DDERR:
++	case A2B_INTTYPE_CRCERR:
++	case A2B_INTTYPE_DPERR:
++	case A2B_INTTYPE_BECOVF:
++	case A2B_INTTYPE_SRFERR:
++	case A2B_INTTYPE_SRFCRCERR:
++	case A2B_INTTYPE_PWRERR_0:
++	case A2B_INTTYPE_PWRERR_1:
++	case A2B_INTTYPE_PWRERR_2:
++	case A2B_INTTYPE_PWRERR_3:
++	case A2B_INTTYPE_PWRERR_4:
++	case A2B_INTTYPE_PWRERR_5:
++	case A2B_INTTYPE_I2CERR:
++	case A2B_INTTYPE_ICRCERR:
++	case A2B_INTTYPE_PWRERR_6:
++	case A2B_INTTYPE_PWRERR_7:
++	case A2B_INTTYPE_IRQMSGERR:
++	case A2B_INTTYPE_STARTUPERR:
++	case A2B_INTTYPE_SLVINTTYPERR:
++		/* Error IRQ */
++		a2b_node_report_error(node, inttype);
++		return IRQ_HANDLED;
++	case A2B_INTTYPE_IO0PND:
++	case A2B_INTTYPE_IO1PND:
++	case A2B_INTTYPE_IO2PND:
++	case A2B_INTTYPE_IO3PND:
++	case A2B_INTTYPE_IO4PND:
++	case A2B_INTTYPE_IO5PND:
++	case A2B_INTTYPE_IO6PND:
++	case A2B_INTTYPE_IO7PND:
++		/* GPIO IRQ */
++		virq = irq_find_mapping(adn->irqdomain,
++					inttype - A2B_INTTYPE_IO0PND);
++		if (virq)
++			handle_nested_irq(virq);
++		return IRQ_NONE;
++	case A2B_INTTYPE_DSCDONE:
++		/* Discovery done IRQ */
++		complete(&adn->discovery_completion);
++		return IRQ_HANDLED;
++	case A2B_INTTYPE_MBOX0FULL:
++	case A2B_INTTYPE_MBOX0EMPTY:
++	case A2B_INTTYPE_MBOX1FULL:
++	case A2B_INTTYPE_MBOX1EMPTY:
++		/* Mailbox IRQ - unimplemented */
++		dev_info(dev, "unhandled mailbox interrupt %d\n", inttype);
++		return IRQ_NONE;
++	case A2B_INTTYPE_STBYDONE:
++		/* Standby IRQ - unimplemented */
++		dev_info(dev, "unhandled standby interrupt %d\n", inttype);
++		return IRQ_NONE;
++	case A2B_INTTYPE_MSTR_RUNNING:
++		/* Master (main) running IRQ */
++		complete(&adn->running_completion);
++		return IRQ_HANDLED;
++	default:
++		dev_warn(dev, "unhandled unknown interrupt %d\n", inttype);
++		return IRQ_NONE;
++	}
++}
++
++int ad24xx_node_set_respcycs(struct a2b_node *node, unsigned int respcycs)
++{
++	struct ad24xx_node *adn = node->priv;
++	int ret;
++
++	dev_dbg(&node->dev, "set RESPCYCS %d\n", respcycs);
++
++	ret = regmap_write(adn->regmap, A2B_RESPCYCS, respcycs);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_set_respcycs);
++
++int ad24xx_node_set_switching(struct a2b_node *node, bool enable,
++			      enum a2b_swmode mode)
++{
++	struct ad24xx_node *adn = node->priv;
++	unsigned int val;
++	int ret;
++
++	/*
++	 * Use external switch mode 1 instead of 0. This indicates that the
++	 * downstream node is not using A2B bus power and is not properly
++	 * terminating the bias. See [1] section 7-11 "Switch Control Register"
++	 * for more information.
++	 */
++	if (node->swmode_1 && mode == A2B_SWMODE_0)
++		mode = A2B_SWMODE_1;
++
++	dev_dbg(&node->dev, "%s switching, mode %d\n",
++		enable ? "enable" : "disable", mode);
++
++	val = FIELD_PREP(A2B_SWCTL_ENSW_MASK, enable) |
++	      FIELD_PREP(A2B_SWCTL_MODE_MASK, mode);
++
++	ret = regmap_write(adn->regmap, A2B_SWCTL, val);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_set_switching);
++
++int ad24xx_node_discover(struct a2b_node *node, unsigned int respcycs)
++{
++	struct ad24xx_node *adn = node->priv;
++	int ret;
++	long timeout;
++
++	ret = regmap_write(adn->regmap, A2B_DISCVRY, respcycs);
++	if (ret)
++		return ret;
++
++	timeout = wait_for_completion_interruptible_timeout(
++		&adn->discovery_completion, msecs_to_jiffies(350));
++	reinit_completion(&adn->discovery_completion);
++	if (timeout < 0)
++		return timeout;
++	else if (timeout == 0) {
++		/*
++		 * On discovery timeout it is necessary to manually end the
++		 * discovery process by setting the ENDDSC bit. Empirically, the
++		 * following issues were observed when failing to do so:
++		 *
++		 *  - the A2B_DISCSTAT.DSCACT bit will remain indefinitely set;
++		 *  - the main node will fail to report a bus drop error
++		 *    properly; namely, it will signal SRFERRs but only set its
++		 *    LAST bit when switching is disabled;
++		 *  - subsequent attempts to rediscover the first subordinate
++		 *    node will succeed (insofar as a DSCDONE interrupt will
++		 *    arrive), but I2C access to the node's registers over the
++		 *    BUS client will always fail.
++		 */
++		ret = regmap_set_bits(adn->regmap, A2B_CONTROL,
++				      A2B_CONTROL_ENDDSC_MASK);
++		if (ret)
++			return ret;
++
++		return 1;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_discover);
++
++int ad24xx_node_new_structure(struct a2b_node *node,
++			      const struct a2b_slot_config *slot_config,
++			      bool dn_enable, bool up_enable)
++{
++	struct ad24xx_node *adn = node->priv;
++	unsigned int val;
++	int ret;
++
++	/*
++	 * Synchronize A2B slot sizes and formats with all downstream nodes. The
++	 * A2B_SLOTFMT register is main only and with auto-broadcast, meaning
++	 * that the written value is automatically propagated to all downstream
++	 * subordinate nodes.
++	 */
++	val = FIELD_PREP(A2B_SLOTFMT_DNSIZE_MASK,
++			 slot_config->size[A2B_DIR_DOWN]) |
++	      FIELD_PREP(A2B_SLOTFMT_DNFMT_MASK,
++			 slot_config->format[A2B_DIR_DOWN]) |
++	      FIELD_PREP(A2B_SLOTFMT_UPSIZE_MASK,
++			 slot_config->size[A2B_DIR_UP]) |
++	      FIELD_PREP(A2B_SLOTFMT_UPFMT_MASK,
++			 slot_config->format[A2B_DIR_UP]);
++
++	ret = regmap_write(adn->regmap, A2B_SLOTFMT, val);
++	if (ret)
++		return ret;
++
++	val = FIELD_PREP(A2B_DATCTL_DNS_MASK, dn_enable) |
++	      FIELD_PREP(A2B_DATCTL_UPS_MASK, up_enable);
++
++	ret = regmap_write(adn->regmap, A2B_DATCTL, val);
++	if (ret)
++		return ret;
++
++	ret = regmap_set_bits(adn->regmap, A2B_CONTROL,
++			      A2B_CONTROL_NEWSTRCT_MASK);
++	if (ret)
++		return ret;
++
++	/*
++	 * A new structure is applied within 5 superframe cycles unless
++	 * communication errors create delays, cf. [1] section 7-24 "Control
++	 * Register". Nominally this is about 100 us, so add a little extra to
++	 * account for any potential errors.
++	 */
++	usleep_range(200, 400);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_new_structure);
++
++int ad24xx_node_is_last(struct a2b_node *node)
++{
++	struct ad24xx_node *adn = node->priv;
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(adn->regmap, A2B_NODE, &val);
++	if (ret)
++		return ret;
++
++	return val & A2B_NODE_LAST_MASK ? 1 : 0;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_is_last);
++
++static int ad24xx_node_setup_pincfg(struct ad24xx_node *adn)
++{
++	struct device_node *np = adn->dev->of_node;
++	unsigned int val = 0;
++	unsigned int drvstr = 1; /* Chip default is high drive strength */
++	bool irqinv;
++	bool irqts;
++
++	of_property_read_u32(np, "adi,drive-strength", &drvstr);
++	irqinv = of_property_present(np, "adi,invert-interrupt");
++	irqts = of_property_present(np, "adi,tristate-interrupt");
++
++	val |= FIELD_PREP(A2B_PINCFG_DRVSTR_MASK, drvstr);
++	val |= FIELD_PREP(A2B_PINCFG_IRQINV_MASK, irqinv);
++	val |= FIELD_PREP(A2B_PINCFG_IRQTS_MASK, irqts);
++
++	return regmap_write(adn->regmap, A2B_PINCFG, val);
++}
++
++static int ad24xx_node_setup_i2sgcfg(struct ad24xx_node *adn)
++{
++	struct a2b_node *node = adn->node;
++	unsigned int val = 0;
++
++	val |= FIELD_PREP(A2B_I2SGCFG_TDMMODE_MASK, node->tdm_mode);
++	val |= FIELD_PREP(A2B_I2SGCFG_RXONDTX1_MASK, node->rx_on_dtx1);
++	val |= FIELD_PREP(A2B_I2SGCFG_TDMSS_MASK, node->tdm_slot_size);
++	val |= FIELD_PREP(A2B_I2SGCFG_ALT_MASK, node->alternating_sync);
++	val |= FIELD_PREP(A2B_I2SGCFG_EARLY_MASK, node->early_sync);
++	val |= FIELD_PREP(A2B_I2SGCFG_INV_MASK, node->invert_sync);
++
++	return regmap_write(adn->regmap, A2B_I2SGCFG, val);
++}
++
++static bool ad24xx_node_precious_reg(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case A2B_INTTYPE:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config ad24xx_node_regmap_config = {
 +	.reg_bits = 8,
 +	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
++	.precious_reg = ad24xx_node_precious_reg,
++	.max_register = A2B_REG_MAX,
 +};
 +
-+static int ad24xx_codec_probe(struct device *dev)
++int ad24xx_node_setup(struct a2b_node *node)
 +{
-+	struct a2b_func *func = to_a2b_func(dev);
-+	const struct snd_soc_component_driver *drv;
-+	struct snd_soc_dai_driver *i2s_dai;
-+	struct ad24xx_codec *adc;
++	struct device *dev = &node->dev;
++	struct device_node *np = dev->of_node;
++	struct ad24xx_node *adn;
++	long timeout;
 +	int ret;
 +
-+	adc = devm_kzalloc(dev, sizeof(*adc), GFP_KERNEL);
-+	if (!adc)
++	adn = devm_kzalloc(dev, sizeof(*adn), GFP_KERNEL);
++	if (!adn)
 +		return -ENOMEM;
 +
-+	adc->dev = dev;
-+	adc->func = func;
-+	adc->node = func->node;
-+	dev_set_drvdata(dev, adc);
++	adn->regmap =
++		devm_regmap_init_a2b_node(node, &ad24xx_node_regmap_config);
++	if (IS_ERR(adn->regmap))
++		return PTR_ERR(adn->regmap);
 +
-+	adc->regmap =
-+		devm_regmap_init_a2b_func(func, &ad24xx_codec_regmap_config);
-+	if (IS_ERR(adc->regmap))
-+		return PTR_ERR(adc->regmap);
++	ret = of_a2b_parse_tdm_mode(np, &node->tdm_mode);
++	if (ret)
++		return -EINVAL;
 +
-+	adc->dai_drv = devm_kmemdup(dev, ad24xx_codec_dai_drv,
-+				    sizeof(ad24xx_codec_dai_drv), GFP_KERNEL);
-+	if (!adc->dai_drv)
++	ret = of_a2b_parse_tdm_slot_size(np, &node->tdm_slot_size);
++	if (ret)
++		return -EINVAL;
++
++	if (of_property_present(np, "adi,invert-sync"))
++		node->invert_sync = 1;
++	if (of_property_present(np, "adi,early-sync"))
++		node->early_sync = 1;
++	if (of_property_present(np, "adi,alternating-sync"))
++		node->alternating_sync = 1;
++	if (of_property_present(np, "adi,rx-on-dtx1"))
++		node->rx_on_dtx1 = 1;
++	if (of_property_present(np, "adi,a2b-external-switch-mode-1"))
++		node->swmode_1 = 1;
++
++	node->priv = adn;
++
++	adn->dev = dev;
++	adn->node = node;
++	init_completion(&adn->running_completion);
++	init_completion(&adn->discovery_completion);
++
++	/* Identify */
++	ret = regmap_read(adn->regmap, A2B_VENDOR, &node->vendor);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(adn->regmap, A2B_PRODUCT, &node->product);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(adn->regmap, A2B_VERSION, &node->version);
++	if (ret)
++		return ret;
++
++	/* IRQ domain for GPIOs */
++	adn->irqdomain = irq_domain_add_linear(adn->dev->of_node,
++					       AD24XX_MAX_GPIOS,
++					       &ad24xx_node_irqdomain_ops, adn);
++	if (!adn->irqdomain)
 +		return -ENOMEM;
 +
-+	i2s_dai = &adc->dai_drv[AD24XX_DAI_I2S];
++	ret = devm_add_action_or_reset(
++		adn->dev, devm_ad24xx_node_release_irqdomain, adn->irqdomain);
++	if (ret)
++		return ret;
 +
-+	if (adc->node->tdm_slot_size == A2B_TDMSS_32)
-+		i2s_dai->playback.formats = i2s_dai->capture.formats =
-+			SNDRV_PCM_FMTBIT_S32_LE;
-+	else
-+		i2s_dai->playback.formats = i2s_dai->capture.formats =
-+			SNDRV_PCM_FMTBIT_S16_LE;
++	/* IRQ */
++	adn->irq = of_irq_get(adn->dev->of_node, 0);
++	if (adn->irq <= 0)
++		return -EINVAL;
 +
-+	if (is_a2b_main(adc->node)) {
-+		if (adc->node->bus->sff == A2B_SFF_48000)
-+			i2s_dai->playback.rates = i2s_dai->capture.rates =
-+				AD24XX_RATES_MAIN_48;
-+		else
-+			i2s_dai->playback.rates = i2s_dai->capture.rates =
-+				AD24XX_RATES_MAIN_44_1;
-+	} else {
-+		if (adc->node->bus->sff == A2B_SFF_48000)
-+			i2s_dai->playback.rates = i2s_dai->capture.rates =
-+				AD24XX_RATES_SUB_48;
-+		else
-+			i2s_dai->playback.rates = i2s_dai->capture.rates =
-+				AD24XX_RATES_SUB_44_1;
++	ret = devm_request_threaded_irq(adn->dev, adn->irq, NULL,
++					ad24xx_node_irq_handler, IRQF_ONESHOT,
++					"ad24xx-node", adn);
++	if (ret)
++		return ret;
++
++	/*
++	 * Perform a software reset - but only on the main node, as doing this
++	 * on subordinate nodes will require them to be re-discovered.
++	 */
++	if (is_a2b_main(node)) {
++		ret = regmap_set_bits(adn->regmap, A2B_CONTROL,
++				      A2B_CONTROL_SOFTRST_MASK);
++		if (ret)
++			return ret;
 +	}
 +
-+	if (is_a2b_main(adc->node))
-+		drv = &ad24xx_codec_component_drv_main;
-+	else
-+		drv = &ad24xx_codec_component_drv_sub;
++	/* Pin configuration */
++	ret = ad24xx_node_setup_pincfg(adn);
++	if (ret)
++		return ret;
 +
-+	ret = devm_snd_soc_register_component(dev, drv, adc->dai_drv,
-+					      ARRAY_SIZE(ad24xx_codec_dai_drv));
++	/* Enable interrupts */
++	ret = regmap_write(adn->regmap, A2B_INTMSK0, 0xFF);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(adn->regmap, A2B_INTMSK1, 0xFF);
++	if (ret)
++		return ret;
++
++	if (is_a2b_main(node)) {
++		/*
++		 * Enable master (main) bit and wait for the transceiver to lock
++		 * its PLL to the received SYNC signal.
++		 */
++		ret = regmap_set_bits(adn->regmap, A2B_CONTROL,
++				      A2B_CONTROL_MSTR_MASK);
++		if (ret)
++			return ret;
++
++		/*
++		 * Per the datasheet [2] Table 3, "Clock and Reset Timing (A2B
++		 * Master)", the typical PLL Lock Time t_PLK is 7.5 ms. Wait 30
++		 * ms to be on the safe side and avoid spurious timeouts.
++		 */
++		timeout = wait_for_completion_interruptible_timeout(
++			&adn->running_completion, msecs_to_jiffies(30));
++		reinit_completion(&adn->running_completion);
++		if (timeout < 0)
++			return timeout;
++		else if (timeout == 0)
++			return -ETIMEDOUT;
++
++		/*
++		 * Enable main-node-only interrupts, ...
++		 *
++		 * but NOT I2C Error interrupts, as we should expect the error
++		 * to be reported via the I2C adapter associated with the BUS
++		 * client of the main node. This prevents many spurious
++		 * interrupts during e.g. i2cdetect -r.
++		 */
++		ret = regmap_write(adn->regmap, A2B_INTMSK2, 0x0D);
++		if (ret)
++			return ret;
++	}
++
++	/*
++	 * Set the global I2S configuration. For main nodes, the Technical
++	 * Reference [1] is clear that this register must be set before
++	 * discovery and must not be modified thereafter. For subordinate nodes
++	 * there is no such restriction.
++	 */
++	ret = ad24xx_node_setup_i2sgcfg(adn);
++	if (ret)
++		return ret;
++
++	/* Register optional transceiver functions with the core */
++	np = of_get_child_by_name(node->dev.of_node, "gpio");
++	if (np)
++		adn->func_gpio = a2b_node_of_add_func(node, np);
++	of_node_put(np);
++	if (IS_ERR(adn->func_gpio))
++		return PTR_ERR(adn->func_gpio);
++
++	np = of_get_child_by_name(node->dev.of_node, "codec");
++	if (np)
++		adn->func_codec = a2b_node_of_add_func(node, np);
++	of_node_put(np);
++	if (IS_ERR(adn->func_codec)) {
++		ret = PTR_ERR(adn->func_codec);
++		goto err_codec;
++	}
++
++	np = of_get_child_by_name(node->dev.of_node, "clock");
++	if (np)
++		adn->func_clk = a2b_node_of_add_func(node, np);
++	of_node_put(np);
++	if (IS_ERR(adn->func_clk)) {
++		ret = PTR_ERR(adn->func_clk);
++		goto err_clk;
++	}
++
++	np = of_get_child_by_name(node->dev.of_node, "i2c");
++	if (np)
++		adn->func_i2c = a2b_node_of_add_func(node, np);
++	of_node_put(np);
++	if (IS_ERR(adn->func_i2c)) {
++		ret = PTR_ERR(adn->func_i2c);
++		goto err_i2c;
++	}
++
++	return 0;
++
++	/* Unregister optional functions on error */
++err_i2c:
++	if (adn->func_clk)
++		device_unregister(&adn->func_clk->dev);
++err_clk:
++	if (adn->func_codec)
++		device_unregister(&adn->func_codec->dev);
++err_codec:
++	if (adn->func_gpio)
++		device_unregister(&adn->func_gpio->dev);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_setup);
++
++void ad24xx_node_teardown(struct a2b_node *node)
++{
++	struct ad24xx_node *adn = node->priv;
++
++	if (adn->func_i2c)
++		device_unregister(&adn->func_i2c->dev);
++	if (adn->func_clk)
++		device_unregister(&adn->func_clk->dev);
++	if (adn->func_codec)
++		device_unregister(&adn->func_codec->dev);
++	if (adn->func_gpio)
++		device_unregister(&adn->func_gpio->dev);
++
++	/*
++	 * Reset the switch control register to disable any switching. This
++	 * might fail - particularly if this node is being torn down as a result
++	 * of a bus drop. But if the driver is just being unbound from the node
++	 * device, switching should be disabled so that on any rebind, the
++	 * discovery process can continue from this node. Otherwise there is a
++	 * possibility that the switching is never toggled off, which is a
++	 * prerequisite for rediscovery.
++	 */
++	regmap_write(adn->regmap, A2B_SWCTL, 0x00);
++
++	/*
++	 * Similarly, in case only an unbind is occurring, mask and clear all
++	 * pending interrupts to prevent spurious interrupts.
++	 */
++	regmap_write(adn->regmap, A2B_INTMSK0, 0x00);
++	regmap_write(adn->regmap, A2B_INTMSK1, 0x00);
++	regmap_write(adn->regmap, A2B_INTPND0, 0xFF);
++	regmap_write(adn->regmap, A2B_INTPND1, 0xFF);
++
++	if (is_a2b_main(node)) {
++		regmap_write(adn->regmap, A2B_INTMSK2, 0x00);
++		regmap_write(adn->regmap, A2B_INTPND2, 0xFF);
++	}
++}
++EXPORT_SYMBOL_GPL(ad24xx_node_teardown);
++
++static struct a2b_node_ops ad24xx_sub_ops = {
++	.set_respcycs = ad24xx_node_set_respcycs,
++	.set_switching = ad24xx_node_set_switching,
++	.is_last = ad24xx_node_is_last,
++	.setup = ad24xx_node_setup,
++	.teardown = ad24xx_node_teardown,
++};
++
++static struct a2b_node_ops ad24xx_main_ops = {
++	.set_respcycs = ad24xx_node_set_respcycs,
++	.set_switching = ad24xx_node_set_switching,
++	.discover = ad24xx_node_discover,
++	.new_structure = ad24xx_node_new_structure,
++	.is_last = ad24xx_node_is_last,
++	.setup = ad24xx_node_setup,
++	.teardown = ad24xx_node_teardown,
++};
++
++static int ad24xx_node_probe(struct device *dev)
++{
++	struct a2b_node *node = to_a2b_node(dev);
++	int ret;
++
++	node->ops = is_a2b_main(node) ? &ad24xx_main_ops : &ad24xx_sub_ops;
++	node->chip_info = of_device_get_match_data(dev);
++
++	ret = a2b_register_node(node);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id ad24xx_codec_of_match_table[] = {
-+	{ .compatible = "adi,ad2403-codec" },
-+	{ .compatible = "adi,ad2410-codec" },
-+	{ .compatible = "adi,ad2425-codec" },
-+	{ .compatible = "adi,ad2428-codec" },
-+	{ .compatible = "adi,ad2429-codec" },
++static void ad24xx_node_remove(struct device *dev)
++{
++	struct a2b_node *node = to_a2b_node(dev);
++
++	a2b_unregister_node(node);
++}
++
++static const struct of_device_id ad24xx_node_of_match_table[] = {
++	{
++		.compatible = "adi,ad2401-node",
++		.data = &ad24xx_chip_info[A2B_AD2401],
++	},
++	{
++		.compatible = "adi,ad2402-node",
++		.data = &ad24xx_chip_info[A2B_AD2402],
++	},
++	{
++		.compatible = "adi,ad2403-node",
++		.data = &ad24xx_chip_info[A2B_AD2403],
++	},
++	{
++		.compatible = "adi,ad2410-node",
++		.data = &ad24xx_chip_info[A2B_AD2410],
++	},
++	{
++		.compatible = "adi,ad2420-node",
++		.data = &ad24xx_chip_info[A2B_AD2420],
++	},
++	{
++		.compatible = "adi,ad2421-node",
++		.data = &ad24xx_chip_info[A2B_AD2421],
++	},
++	{
++		.compatible = "adi,ad2422-node",
++		.data = &ad24xx_chip_info[A2B_AD2422],
++	},
++	{
++		.compatible = "adi,ad2425-node",
++		.data = &ad24xx_chip_info[A2B_AD2425],
++	},
++	{
++		.compatible = "adi,ad2426-node",
++		.data = &ad24xx_chip_info[A2B_AD2426],
++	},
++	{
++		.compatible = "adi,ad2427-node",
++		.data = &ad24xx_chip_info[A2B_AD2427],
++	},
++	{
++		.compatible = "adi,ad2428-node",
++		.data = &ad24xx_chip_info[A2B_AD2428],
++	},
++	{
++		.compatible = "adi,ad2429-node",
++		.data = &ad24xx_chip_info[A2B_AD2429],
++	},
 +	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(of, ad24xx_codec_of_match_table);
++MODULE_DEVICE_TABLE(of, ad24xx_node_of_match_table);
 +
-+static struct a2b_driver ad24xx_codec_driver = {
++static struct a2b_driver ad24xx_node_driver = {
 +	.driver = {
-+		.name = "ad24xx-codec",
-+		.of_match_table = ad24xx_codec_of_match_table,
++		.name = "ad24xx-node",
++		.of_match_table = ad24xx_node_of_match_table,
 +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 +	},
-+	.probe = ad24xx_codec_probe,
++	.probe = ad24xx_node_probe,
++	.remove = ad24xx_node_remove,
 +};
-+module_a2b_driver(ad24xx_codec_driver);
++module_a2b_driver(ad24xx_node_driver);
 +
 +MODULE_AUTHOR("Alvin Šipraga <alsi@bang-olufsen.dk>");
-+MODULE_DESCRIPTION("AD24xx codec driver");
++MODULE_DESCRIPTION("AD24xx A2B transceiver node driver");
 +MODULE_LICENSE("GPL");
+diff --git a/drivers/a2b/ad24xx-node.h b/drivers/a2b/ad24xx-node.h
+new file mode 100644
+index 000000000000..15591f0b1a51
+--- /dev/null
++++ b/drivers/a2b/ad24xx-node.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * AD24xx A2B transceiver node driver extension header
++ *
++ * Copyright (c) 2023-2024 Alvin Šipraga <alsi@bang-olufsen.dk>
++ *
++ * Use this to derive your own custom A2B node driver.
++ */
++#ifndef _AD24XX_NODE_H
++#define _AD24XX_NODE_H
++
++#include <linux/a2b/a2b.h>
++
++enum ad24xx_chips {
++	A2B_AD2401,
++	A2B_AD2402,
++	A2B_AD2403,
++	A2B_AD2410,
++	A2B_AD2420,
++	A2B_AD2421,
++	A2B_AD2422,
++	A2B_AD2425,
++	A2B_AD2426,
++	A2B_AD2427,
++	A2B_AD2428,
++	A2B_AD2429,
++};
++
++extern const struct a2b_chip_info ad24xx_chip_info[];
++
++int ad24xx_node_set_respcycs(struct a2b_node *node, unsigned int respcycs);
++int ad24xx_node_set_switching(struct a2b_node *node, bool enable,
++			      enum a2b_swmode mode);
++int ad24xx_node_discover(struct a2b_node *node, unsigned int respcycs);
++int ad24xx_node_new_structure(struct a2b_node *node,
++			      const struct a2b_slot_config *slot_config,
++			      bool dn_enable, bool up_enable);
++int ad24xx_node_is_last(struct a2b_node *node);
++int ad24xx_node_setup(struct a2b_node *node);
++void ad24xx_node_teardown(struct a2b_node *node);
++
++#endif /* _AD24XX_NODE_H */
 
 -- 
 2.44.0
