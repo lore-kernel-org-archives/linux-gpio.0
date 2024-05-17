@@ -1,60 +1,60 @@
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E9053368
-	for <linux-gpio@vger.kernel.org>; Fri, 17 May 2024 12:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE1052F6D
+	for <linux-gpio@vger.kernel.org>; Fri, 17 May 2024 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715950739; cv=none; b=dSdpP+IH2YV8QWvpmp/5u4WUFWYVsxZBK9m5kCu2gZ4XXO+HHW/aEZvzIzzlvJpoIZd5a3aVJLVHueZ3TqWAZxawudXzcTzNSrOuPn+oSkSnC2MPwnBNe3pSIVACfetZelCy1ttOTOZ7Y3mbuF4ouf3V0w//hXUgjBJAuLJI0BA=
+	t=1715951190; cv=none; b=U/wAfY4ZUUQKwwcoyvzpJMracHLco4LEtSwkQXUS2OivUygEnU1ITPn/OJbEJcI02+o/wMfEPplJO0nCQugLb/sn4YhR10D92md407DSutT6gvP242ucqhe/HqidfhHYLrfYG/XgIWSwpMrf6XuRQbtKeNYsudcS6ClY0x4+UMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715950739; c=relaxed/simple;
-	bh=0XOMm+ge0CG1rMR477UJBe3byaxH6SnO+N8jfBfoTS4=;
+	s=arc-20240116; t=1715951190; c=relaxed/simple;
+	bh=+BQrjQj8fvQHF8fbbT0PBaakRFsdp/Ftmf8qaj4dRD4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UIhARP9Iad4CyrkgBummK2TlOXZLmwbduT9dO4zu/d7j/FXTIvQh9jAS2uKUzkGHTDopKIOOCLUc85Vf+MrtboANyFQRl2LejyDcyVsSvMeFbsdrVIkGghuA3a83LR/fyrUn8XDM2A2RtMp86qrXU8HQKQ5w/HhMnLCGkw1yb1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=t+hKGjVy; arc=none smtp.client-ip=95.215.58.185
+	 In-Reply-To:To:Cc; b=gZMtArNG6lv7s9c/v9sshUMYTb9h9Cgdb5w5HAcYQRSof8TLZoorSX+vleqGVaAClED6/kjGjEutGep3ZdSjbbbCuKqvYkYQnNKs9i8oyPpV/FqrgeoLwBH781N3kXe207AtiUhW+MkdSClEVtIAOeapdzmYTmZj3THAtt5HVn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=dOTaOKOX; arc=none smtp.client-ip=91.218.175.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="t+hKGjVy"
-X-Envelope-To: linux-i2c@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="dOTaOKOX"
+X-Envelope-To: broonie@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqrs.dk; s=key1;
-	t=1715950730;
+	t=1715951186;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BKi9dQbr0T+uVxmbTMIarChYf6vJF2b8+XfTd+iLTkI=;
-	b=t+hKGjVy72mnGQfVQXGD2Ss4kQdbuvoKZ3LkaVJJ13ZBKIqKH7WJqRNu6/AhgLJ0aFQcWv
-	/dOzAdAZOO4pstDh3a1PLPzzv+QEOuzuphNU0NalyGPOCSGUov2cD9yny9IFVWsoyBwv0W
-	PIQi2eljSfZqvMIaEDLvb4CTWp/q8dahR8n1s0fjV1G1o3QD62Wdkf3phMsUNOSeONdsWq
-	Px07v9/e5I9TSYJfPRf1yhRPnkfEyJrt01W/iacidEQPvZTAX6Jfao+DKfC3MvV9R/5lao
-	LKVvunhbIn3a2YvQ+JPDl4ed9L/PEsaijBnFaeOtl5j5XhMWR1POGSqkx/2yAQ==
-X-Envelope-To: linux-gpio@vger.kernel.org
+	bh=KGwqzFatac3SdyxB8/u13aV/YQxtNfiylkMZnmEN/dw=;
+	b=dOTaOKOXRY1/J9FXikk6Plm0TjP7QZu6iKqVOOSxBpP7jNKFg+rZoZNSIJ4SBzuxrfv6S4
+	Txzj3GF4F4fLeAIOv8y6WrFGLTAft5DKHIRpn4KPbj26f7zEjh8b7CKvKVXkdalN6FU8FE
+	rv6/nbPPMzwtJjBN8eriUY89iZQYM9H8RnU9y24aeLEb1ITyn1vkqbhW4/2u6WS0kVrfqD
+	2/TfL3RD5lBAJ0SZs0vFiwc8DQzE2xDA61ctozaRV2fMSAwvyp2HetdPqS3y8tUcP/MOtL
+	TrbECBNI6PEVyMzBKKSknGnjGCYWB1PxwRW2NneQQF/zNjI4x7UtVcOwuJrdiw==
+X-Envelope-To: gregkh@linuxfoundation.org
+X-Envelope-To: rafael@kernel.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
 X-Envelope-To: conor+dt@kernel.org
 X-Envelope-To: linus.walleij@linaro.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: emas@bang-olufsen.dk
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: perex@perex.cz
+X-Envelope-To: brgl@bgdev.pl
 X-Envelope-To: lgirdwood@gmail.com
-X-Envelope-To: mturquette@baylibre.com
-X-Envelope-To: broonie@kernel.org
-X-Envelope-To: saravanak@google.com
-X-Envelope-To: alsi@bang-olufsen.dk
-X-Envelope-To: rafael@kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: perex@perex.cz
 X-Envelope-To: tiwai@suse.com
+X-Envelope-To: mturquette@baylibre.com
+X-Envelope-To: sboyd@kernel.org
+X-Envelope-To: andi.shyti@kernel.org
+X-Envelope-To: saravanak@google.com
+X-Envelope-To: emas@bang-olufsen.dk
+X-Envelope-To: linux-kernel@vger.kernel.org
 X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-gpio@vger.kernel.org
 X-Envelope-To: linux-sound@vger.kernel.org
 X-Envelope-To: linux-clk@vger.kernel.org
-X-Envelope-To: sboyd@kernel.org
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: andi.shyti@kernel.org
-X-Envelope-To: brgl@bgdev.pl
+X-Envelope-To: linux-i2c@vger.kernel.org
+X-Envelope-To: alsi@bang-olufsen.dk
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Date: Fri, 17 May 2024 14:58:04 +0200
-Subject: [PATCH 06/13] gpio: add AD24xx GPIO driver
+Date: Fri, 17 May 2024 15:02:15 +0200
+Subject: [PATCH 08/13] clk: add AD24xx clock driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,9 +63,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
-In-Reply-To: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+Message-Id: <20240517-a2b-v1-8-7e776c784e02@bang-olufsen.dk>
+References: <20240517-a2b-v1-0-7e776c784e02@bang-olufsen.dk>
+In-Reply-To: <20240517-a2b-v1-0-7e776c784e02@bang-olufsen.dk>
 To: Mark Brown <broonie@kernel.org>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -86,368 +86,406 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-This driver adds GPIO function support for AD24xx A2B transceiver chips.
-When a GPIO is requested, the relevant pin is automatically muxed to
-GPIO mode. The device tree property gpio-reserved-ranges can be used to
-protect certain pins which are reserved for other functionality such as
-I2S/TDM data.
+Analog Devices Inc. AD24xx series A2B transceivers support muxing IO
+pins to a CLKOUT function. The clock supports division of the internal
+PLL of the transceiver.
 
 Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
- drivers/a2b/Kconfig        |   1 +
- drivers/gpio/Kconfig       |   6 +
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-ad24xx.c | 302 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 310 insertions(+)
+ drivers/a2b/Kconfig      |   1 +
+ drivers/clk/Kconfig      |   7 +
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-ad24xx.c | 341 +++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 350 insertions(+)
 
 diff --git a/drivers/a2b/Kconfig b/drivers/a2b/Kconfig
-index 1f6d836463f3..8c894579e2fc 100644
+index 6ba5dc11c51d..08acf5728023 100644
 --- a/drivers/a2b/Kconfig
 +++ b/drivers/a2b/Kconfig
-@@ -32,6 +32,7 @@ config A2B_AD24XX_I2C
- config A2B_AD24XX_NODE
-        tristate "Analog Devices Inc. AD24xx node support"
+@@ -35,6 +35,7 @@ config A2B_AD24XX_NODE
         select REGMAP_A2B
-+       imply GPIO_AD24XX
+        imply GPIO_AD24XX
+        imply SND_SOC_AD24XX
++       imply COMMON_CLK_AD24XX
         help
           Say Y here to enable support for AD24xx A2B transceiver nodes. This
           applies to both main nodes and subordinate nodes. Supported models
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 3dbddec07028..72bd0d88d6b3 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1241,6 +1241,12 @@ config GPIO_ALTERA_A10SR
- 	  includes reads of pushbuttons and DIP switches as well
- 	  as writes to LEDs.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3e9099504fad..a3d54b077e68 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -257,6 +257,13 @@ config COMMON_CLK_LAN966X
+ 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
+ 	  within the SoC.
  
-+config GPIO_AD24XX
-+	tristate "Analog Devies Inc. AD24xx GPIO support"
++config COMMON_CLK_AD24XX
++	bool "Clock driver for Analog Devices Inc. AD24xx"
 +	depends on A2B_AD24XX_NODE
 +	help
-+	  Say Y here to enable GPIO support for AD24xx A2B transceivers.
++	  This driver supports the clock output functionality of AD24xx series
++	  A2B transceiver chips.
 +
- config GPIO_ARIZONA
- 	tristate "Wolfson Microelectronics Arizona class devices"
- 	depends on MFD_ARIZONA
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index e2a53013780e..f625bb140143 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+= gpio-104-idi-48.o
- obj-$(CONFIG_GPIO_104_IDIO_16)		+= gpio-104-idio-16.o
- obj-$(CONFIG_GPIO_74X164)		+= gpio-74x164.o
- obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
-+obj-$(CONFIG_GPIO_AD24XX)		+= gpio-ad24xx.o
- obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
- obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
- obj-$(CONFIG_GPIO_AGGREGATOR)		+= gpio-aggregator.o
-diff --git a/drivers/gpio/gpio-ad24xx.c b/drivers/gpio/gpio-ad24xx.c
+ config COMMON_CLK_ASPEED
+ 	bool "Clock driver for Aspeed BMC SoCs"
+ 	depends on ARCH_ASPEED || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 4abe16c8ccdf..cf5c867bf71a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
+ obj-$(CONFIG_COMMON_CLK_FSL_FLEXSPI)	+= clk-fsl-flexspi.o
+ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
++obj-$(CONFIG_COMMON_CLK_AD24XX)		+= clk-ad24xx.o
+ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+ obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+diff --git a/drivers/clk/clk-ad24xx.c b/drivers/clk/clk-ad24xx.c
 new file mode 100644
-index 000000000000..097ea9e2d629
+index 000000000000..ed227c317faa
 --- /dev/null
-+++ b/drivers/gpio/gpio-ad24xx.c
-@@ -0,0 +1,302 @@
++++ b/drivers/clk/clk-ad24xx.c
+@@ -0,0 +1,341 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * AD24xx GPIO driver
++ * AD24xx clock driver
 + *
-+ * Copyright (c) 2023-2024 Alvin Šipraga <alsi@bang-olufsen.dk>
++ * Copyright (c) 2023 Alvin Šipraga <alsi@bang-olufsen.dk>
 + */
 +
 +#include <linux/a2b/a2b.h>
 +#include <linux/a2b/ad24xx.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
++#include <linux/clk-provider.h>
 +#include <linux/module.h>
-+#include <linux/of_irq.h>
 +#include <linux/regmap.h>
 +
-+struct ad24xx_gpio {
++#define AD24XX_NUM_CLKS 2
++
++/* Define some safe macros to make the code more readable */
++#define A2B_CLKCFG(_idx)        (!(_idx) ? A2B_CLK1CFG : A2B_CLK2CFG)
++
++#define A2B_CLKCFG_DIV_SHIFT    A2B_CLK1CFG_CLK1DIV_SHIFT
++#define A2B_CLKCFG_PDIV_SHIFT   A2B_CLK1CFG_CLK1PDIV_SHIFT
++
++#define A2B_CLKCFG_DIV_MASK     A2B_CLK1CFG_CLK1DIV_MASK
++#define A2B_CLKCFG_PDIV_MASK    A2B_CLK1CFG_CLK1PDIV_MASK
++#define A2B_CLKCFG_INV_MASK     A2B_CLK1CFG_CLK1INV_MASK
++#define A2B_CLKCFG_EN_MASK      A2B_CLK1CFG_CLK1EN_MASK
++
++static_assert(A2B_CLK1CFG_CLK1DIV_MASK  == A2B_CLK2CFG_CLK2DIV_MASK);
++static_assert(A2B_CLK1CFG_CLK1PDIV_MASK == A2B_CLK2CFG_CLK2PDIV_MASK);
++static_assert(A2B_CLK1CFG_CLK1INV_MASK  == A2B_CLK2CFG_CLK2INV_MASK);
++static_assert(A2B_CLK1CFG_CLK1EN_MASK   == A2B_CLK2CFG_CLK2EN_MASK);
++
++struct ad24xx_clkout {
++	struct clk_hw hw;
++	unsigned int idx;
++	bool registered;
++};
++
++struct ad24xx_clk {
 +	struct device *dev;
 +	struct a2b_func *func;
 +	struct a2b_node *node;
 +	struct regmap *regmap;
-+	int irqs[AD24XX_MAX_GPIOS];
-+	struct gpio_chip gpio_chip;
-+	struct irq_chip irq_chip;
-+	struct mutex mutex;
-+	unsigned int irq_invert : AD24XX_MAX_GPIOS;
-+	unsigned int irq_enable : AD24XX_MAX_GPIOS;
++	struct clk_hw *pll_hw;
++	struct ad24xx_clkout clkouts[AD24XX_NUM_CLKS];
 +};
 +
-+static int ad24xx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
++static struct ad24xx_clkout *to_ad24xx_clkout(struct clk_hw *hw)
 +{
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++	return container_of(hw, struct ad24xx_clkout, hw);
++}
++
++static struct ad24xx_clk *to_ad24xx_clk(struct ad24xx_clkout *clkout)
++{
++	return container_of(clkout, struct ad24xx_clk, clkouts[clkout->idx]);
++}
++
++/*
++ * A CLKOUT signal is derived from the PLL frequency (2048 * SFF), going through
++ * a pre-divide step and a divide step.
++ *
++ * The pre-divide is either 2 or 32. The divisor is between 1 and 16.
++ *
++ * The pre-divide register PDIV is 1 bit and selects between 2 (0) or 32 (1).
++ * The divide register DIV is 4 bit and the resultant divisor is 2 * (DIV + 1).
++ */
++
++#define VAL(_pdiv, _div) \
++	(((_pdiv) << A2B_CLKCFG_PDIV_SHIFT) | ((_div) << A2B_CLKCFG_DIV_SHIFT))
++#define DIV(_div) (2 * ((_div) + 1))
++
++/* In total there are 6 bits to the value, with the 4th bit going unused */
++#define AD24XX_CLK_DIV_WIDTH 6
++static const struct clk_div_table ad24xx_clk_div_table[] = {
++	{ VAL(0, 0), 2 * DIV(0) },    { VAL(0, 1), 2 * DIV(1) },
++	{ VAL(0, 2), 2 * DIV(2) },    { VAL(0, 3), 2 * DIV(3) },
++	{ VAL(0, 4), 2 * DIV(4) },    { VAL(0, 5), 2 * DIV(5) },
++	{ VAL(0, 6), 2 * DIV(6) },    { VAL(0, 7), 2 * DIV(7) },
++	{ VAL(0, 8), 2 * DIV(8) },    { VAL(0, 9), 2 * DIV(9) },
++	{ VAL(0, 10), 2 * DIV(10) },  { VAL(0, 11), 2 * DIV(11) },
++	{ VAL(0, 12), 2 * DIV(12) },  { VAL(0, 13), 2 * DIV(13) },
++	{ VAL(0, 14), 2 * DIV(14) },  { VAL(0, 15), 2 * DIV(15) },
++	{ VAL(1, 0), 32 * DIV(0) },   { VAL(1, 1), 32 * DIV(1) },
++	{ VAL(1, 2), 32 * DIV(2) },   { VAL(1, 3), 32 * DIV(3) },
++	{ VAL(1, 4), 32 * DIV(4) },   { VAL(1, 5), 32 * DIV(5) },
++	{ VAL(1, 6), 32 * DIV(6) },   { VAL(1, 7), 32 * DIV(7) },
++	{ VAL(1, 8), 32 * DIV(8) },   { VAL(1, 9), 32 * DIV(9) },
++	{ VAL(1, 10), 32 * DIV(10) }, { VAL(1, 11), 32 * DIV(11) },
++	{ VAL(1, 12), 32 * DIV(12) }, { VAL(1, 13), 32 * DIV(13) },
++	{ VAL(1, 14), 32 * DIV(14) }, { VAL(1, 15), 32 * DIV(15) },
++	{ /* sentinel */ }
++};
++
++static int ad24xx_clk_prepare(struct clk_hw *hw)
++{
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
++
++	return regmap_update_bits(adclk->regmap, A2B_CLKCFG(idx),
++				  A2B_CLKCFG_EN_MASK,
++				  FIELD_PREP(A2B_CLKCFG_EN_MASK, 1));
++}
++
++static void ad24xx_clk_unprepare(struct clk_hw *hw)
++{
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
++
++	regmap_update_bits(adclk->regmap, A2B_CLKCFG(idx), A2B_CLKCFG_EN_MASK,
++			   FIELD_PREP(A2B_CLKCFG_EN_MASK, 0));
++}
++
++static unsigned long ad24xx_clk_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
 +	unsigned int val;
 +	int ret;
 +
-+	ret = regmap_read(adg->regmap, A2B_GPIOOEN, &val);
++	ret = regmap_read(adclk->regmap, A2B_CLKCFG(idx), &val);
 +	if (ret)
-+		return ret;
++		return 0;
 +
-+	if (val & BIT(offset))
-+		return 0; /* output */
++	val &= A2B_CLKCFG_PDIV_MASK | A2B_CLKCFG_DIV_MASK;
 +
-+	return 1; /* input */
++	return divider_recalc_rate(hw, parent_rate, val, ad24xx_clk_div_table,
++				   0, AD24XX_CLK_DIV_WIDTH);
 +}
 +
-+static int ad24xx_gpio_get(struct gpio_chip *gc, unsigned int offset)
++static long ad24xx_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
 +{
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++	return divider_round_rate(hw, rate, parent_rate, ad24xx_clk_div_table,
++				  AD24XX_CLK_DIV_WIDTH, 0);
++}
++
++static int ad24xx_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	return divider_determine_rate(hw, req, ad24xx_clk_div_table,
++				      AD24XX_CLK_DIV_WIDTH, 0);
++}
++
++static int ad24xx_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
++	int val;
++
++	val = divider_get_val(rate, parent_rate, ad24xx_clk_div_table,
++			      AD24XX_CLK_DIV_WIDTH, 0);
++	if (val < 0)
++		return val;
++
++	return regmap_update_bits(adclk->regmap, A2B_CLKCFG(idx),
++				  A2B_CLKCFG_PDIV_MASK | A2B_CLKCFG_DIV_MASK,
++				  val);
++}
++
++static int ad24xx_clk_get_phase(struct clk_hw *hw)
++{
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
 +	unsigned int val;
++	bool invert;
 +	int ret;
 +
-+	ret = regmap_read(adg->regmap, A2B_GPIOIN, &val);
++	ret = regmap_read(adclk->regmap, A2B_CLKCFG(idx), &val);
 +	if (ret)
 +		return ret;
 +
-+	if (val & BIT(offset))
-+		return 1; /* high */
++	invert = FIELD_GET(A2B_CLKCFG_INV_MASK, val);
 +
-+	return 0; /* low */
++	return invert ? 180 : 0;
 +}
 +
-+static void ad24xx_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			    int value)
++static int ad24xx_clk_set_phase(struct clk_hw *hw, int degrees)
 +{
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
-+	unsigned int reg = value ? A2B_GPIODATSET : A2B_GPIODATCLR;
++	struct ad24xx_clkout *clkout = to_ad24xx_clkout(hw);
++	struct ad24xx_clk *adclk = to_ad24xx_clk(clkout);
++	unsigned int idx = clkout->idx;
++	bool invert = !!degrees;
 +
-+	regmap_write(adg->regmap, reg, BIT(offset));
-+}
-+
-+static int ad24xx_gpio_set_direction(struct ad24xx_gpio *adg,
-+				     unsigned int offset,
-+				     unsigned int direction)
-+{
-+	unsigned int mask = BIT(offset);
-+	unsigned int ival = direction ? BIT(offset) : 0;
-+	int ret;
-+
-+	ret = regmap_update_bits(adg->regmap, A2B_GPIOIEN, mask, ival);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(adg->regmap, A2B_GPIOOEN, mask, ~ival);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int ad24xx_gpio_direction_input(struct gpio_chip *gc,
-+				       unsigned int offset)
-+{
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
-+
-+	return ad24xx_gpio_set_direction(adg, offset, 1);
-+}
-+
-+static int ad24xx_gpio_direction_output(struct gpio_chip *gc,
-+					unsigned int offset, int value)
-+{
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
-+
-+	/* For atomicity, write the output value before setting the direction */
-+	ad24xx_gpio_set(gc, offset, value);
-+
-+	return ad24xx_gpio_set_direction(adg, offset, 0);
-+}
-+
-+static int ad24xx_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-+					     unsigned int child,
-+					     unsigned int child_type,
-+					     unsigned int *parent,
-+					     unsigned int *parent_type)
-+{
-+	*parent = child;
-+	return 0;
-+}
-+
-+static void ad24xx_gpio_irq_mask(struct irq_data *d)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+
-+	adg->irq_enable &= ~BIT(hwirq);
-+	gpiochip_disable_irq(gpio_chip, hwirq);
-+}
-+
-+static void ad24xx_gpio_irq_unmask(struct irq_data *d)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+
-+	gpiochip_disable_irq(gpio_chip, hwirq);
-+	adg->irq_enable |= BIT(hwirq);
-+}
-+
-+static int ad24xx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		adg->irq_invert &= ~BIT(hwirq);
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		adg->irq_invert |= BIT(hwirq);
-+		break;
-+	default:
++	if (degrees != 0 && degrees != 180)
 +		return -EINVAL;
-+	}
 +
-+	return 0;
++	return regmap_update_bits(adclk->regmap, A2B_CLKCFG(idx),
++				  A2B_CLKCFG_INV_MASK,
++				  FIELD_PREP(A2B_CLKCFG_INV_MASK, invert));
 +}
 +
-+static void ad24xx_gpio_irq_bus_lock(struct irq_data *d)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
-+
-+	mutex_lock(&adg->mutex);
-+}
-+
-+static void ad24xx_gpio_irq_bus_sync_unlock(struct irq_data *d)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
-+	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
-+	int ret;
-+
-+	ret = regmap_write(adg->regmap, A2B_PINTINV, adg->irq_invert);
-+	if (ret)
-+		goto out;
-+
-+	ret = regmap_write(adg->regmap, A2B_PINTEN, adg->irq_enable);
-+	if (ret)
-+		goto out;
-+
-+out:
-+	mutex_unlock(&adg->mutex);
-+
-+	if (ret)
-+		dev_err(adg->dev,
-+			"failed to update interrupt configuration: %d\n", ret);
-+}
-+
-+static const struct irq_chip ad24xx_gpio_irq_chip = {
-+	.name = "ad24xx-gpio",
-+	.flags = IRQCHIP_IMMUTABLE,
-+	.irq_mask = ad24xx_gpio_irq_mask,
-+	.irq_unmask = ad24xx_gpio_irq_unmask,
-+	.irq_set_type = ad24xx_gpio_irq_set_type,
-+	.irq_bus_lock = ad24xx_gpio_irq_bus_lock,
-+	.irq_bus_sync_unlock = ad24xx_gpio_irq_bus_sync_unlock,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++static const struct clk_ops ad24xx_clk_ops = {
++	.prepare = ad24xx_clk_prepare,
++	.unprepare = ad24xx_clk_unprepare,
++	.recalc_rate = ad24xx_clk_recalc_rate,
++	.round_rate = ad24xx_clk_round_rate,
++	.determine_rate = ad24xx_clk_determine_rate,
++	.set_rate = ad24xx_clk_set_rate,
++	.get_phase = ad24xx_clk_get_phase,
++	.set_phase = ad24xx_clk_set_phase,
 +};
 +
-+static const struct regmap_config ad24xx_gpio_regmap_config = {
++static const struct regmap_config ad24xx_clk_regmap_config = {
 +	.reg_bits = 8,
 +	.val_bits = 8,
++	.cache_type = REGCACHE_RBTREE,
 +};
 +
-+static int ad24xx_gpio_probe(struct device *dev)
++static struct clk_hw *ad24xx_clk_of_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct ad24xx_clk *adclk = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= AD24XX_NUM_CLKS)
++		return ERR_PTR(-EINVAL);
++
++	if (!adclk->clkouts[idx].registered)
++		return ERR_PTR(-ENOENT);
++
++	return &adclk->clkouts[idx].hw;
++}
++
++static int ad24xx_clk_probe(struct device *dev)
 +{
 +	struct a2b_func *func = to_a2b_func(dev);
 +	struct a2b_node *node = func->node;
-+	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
-+	struct gpio_chip *gpio_chip;
-+	struct gpio_irq_chip *irq_chip;
-+	struct irq_domain *parent_domain;
-+	struct ad24xx_gpio *adg;
-+	struct device_node *np;
++	struct device_node *np = dev->of_node;
++	char *pll_name;
++	const char *sync_clk_name;
++	struct ad24xx_clk *adclk;
++	int num_clks;
 +	int ret;
++	int i;
 +
-+	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
-+	if (!adg)
++	/*
++	 * Older series AD240x and AD241x chips have a single discrete
++	 * A2B_CLKCFG register that behaves differently to the A2B_CLKnCFG
++	 * registers of the later AD242x series. This driver only supports the
++	 * latter right now.
++	 */
++	if (!(node->chip_info->caps & A2B_CHIP_CAP_CLKOUT))
++		return -ENODEV;
++
++	adclk = devm_kzalloc(dev, sizeof(*adclk), GFP_KERNEL);
++	if (!adclk)
 +		return -ENOMEM;
 +
-+	adg->regmap =
-+		devm_regmap_init_a2b_func(func, &ad24xx_gpio_regmap_config);
-+	if (IS_ERR(adg->regmap))
-+		return PTR_ERR(adg->regmap);
++	adclk->regmap =
++		devm_regmap_init_a2b_func(func, &ad24xx_clk_regmap_config);
++	if (IS_ERR(adclk->regmap))
++		return PTR_ERR(adclk->regmap);
 +
-+	adg->dev = dev;
-+	adg->func = func;
-+	adg->node = node;
-+	mutex_init(&adg->mutex);
++	adclk->dev = dev;
++	adclk->func = func;
++	adclk->node = node;
++	dev_set_drvdata(dev, adclk);
 +
-+	np = of_irq_find_parent(dev->of_node);
-+	if (!np)
-+		return -ENOENT;
++	num_clks = of_property_count_strings(np, "clock-output-names");
++	if (num_clks < 0 || num_clks > AD24XX_NUM_CLKS)
++		return -EINVAL;
 +
-+	parent_domain = irq_find_host(np);
-+	of_node_put(np);
-+	if (!parent_domain)
-+		return -ENOENT;
++	/*
++	 * Register the PLL internally to use it as the parent of the CLKOUTs.
++	 * The PLL runs at 2048 times the SYNC clock rate.
++	 */
++	pll_name =
++		devm_kasprintf(dev, GFP_KERNEL, "%s_pll", dev_name(&node->dev));
++	if (!pll_name)
++		return -ENOMEM;
++	sync_clk_name = __clk_get_name(a2b_node_get_sync_clk(func->node));
++	adclk->pll_hw = devm_clk_hw_register_fixed_factor(
++		dev, pll_name, sync_clk_name, 0, 2048, 1);
++	if (IS_ERR(adclk->pll_hw))
++		return PTR_ERR(adclk->pll_hw);
 +
-+	gpio_chip = &adg->gpio_chip;
-+	gpio_chip->label = dev_name(dev);
-+	gpio_chip->parent = dev;
-+	gpio_chip->fwnode = fwnode;
-+	gpio_chip->owner = THIS_MODULE;
-+	gpio_chip->get_direction = ad24xx_gpio_get_direction;
-+	gpio_chip->direction_input = ad24xx_gpio_direction_input;
-+	gpio_chip->direction_output = ad24xx_gpio_direction_output;
-+	gpio_chip->get = ad24xx_gpio_get;
-+	gpio_chip->set = ad24xx_gpio_set;
-+	gpio_chip->base = -1;
-+	gpio_chip->ngpio = node->chip_info->max_gpios;
-+	gpio_chip->can_sleep = true;
++	for (i = 0; i < num_clks; i++) {
++		struct clk_init_data init = { };
++		const char *parent_names = clk_hw_get_name(adclk->pll_hw);
++		unsigned int idx = i;
 +
-+	irq_chip = &gpio_chip->irq;
-+	gpio_irq_chip_set_chip(irq_chip, &ad24xx_gpio_irq_chip);
-+	irq_chip->fwnode = fwnode;
-+	irq_chip->parent_domain = parent_domain;
-+	irq_chip->child_to_parent_hwirq = ad24xx_gpio_child_to_parent_hwirq;
-+	irq_chip->handler = handle_bad_irq;
-+	irq_chip->default_type = IRQ_TYPE_NONE;
++		/* Clock outputs can be skipped with the clock-indices property */
++		of_property_read_u32_index(np, "clock-indices", i, &idx);
++		if (idx > AD24XX_NUM_CLKS)
++			return -EINVAL;
 +
-+	/* Initialize all GPIOs as inputs for high impedance state */
-+	ret = regmap_write(adg->regmap, A2B_GPIOIEN, 0xFF);
-+	if (ret)
-+		return ret;
++		ret = of_property_read_string_index(np, "clock-output-names", i,
++						    &init.name);
++		if (ret)
++			return ret;
 +
-+	ret = devm_gpiochip_add_data(dev, gpio_chip, adg);
++		init.ops = &ad24xx_clk_ops;
++		init.parent_names = &parent_names;
++		init.num_parents = 1;
++
++		adclk->clkouts[idx].hw.init = &init;
++		adclk->clkouts[idx].idx = idx;
++		adclk->clkouts[idx].registered = true;
++
++		ret = devm_clk_hw_register(dev, &adclk->clkouts[idx].hw);
++		if (ret)
++			return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, ad24xx_clk_of_get, adclk);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id ad24xx_gpio_of_match_table[] = {
-+	{ .compatible = "adi,ad2401-gpio" },
-+	{ .compatible = "adi,ad2402-gpio" },
-+	{ .compatible = "adi,ad2403-gpio" },
-+	{ .compatible = "adi,ad2410-gpio" },
-+	{ .compatible = "adi,ad2420-gpio" },
-+	{ .compatible = "adi,ad2421-gpio" },
-+	{ .compatible = "adi,ad2422-gpio" },
-+	{ .compatible = "adi,ad2425-gpio" },
-+	{ .compatible = "adi,ad2426-gpio" },
-+	{ .compatible = "adi,ad2427-gpio" },
-+	{ .compatible = "adi,ad2428-gpio" },
-+	{ .compatible = "adi,ad2429-gpio" },
++static const struct of_device_id ad24xx_clk_of_match_table[] = {
++	{ .compatible = "adi,ad2420-clk" },
++	{ .compatible = "adi,ad2421-clk" },
++	{ .compatible = "adi,ad2422-clk" },
++	{ .compatible = "adi,ad2425-clk" },
++	{ .compatible = "adi,ad2426-clk" },
++	{ .compatible = "adi,ad2427-clk" },
++	{ .compatible = "adi,ad2428-clk" },
++	{ .compatible = "adi,ad2429-clk" },
 +	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(of, ad24xx_gpio_of_match_table);
++MODULE_DEVICE_TABLE(of, ad24xx_clk_of_match_table);
 +
-+static struct a2b_driver ad24xx_gpio_driver = {
++static struct a2b_driver ad24xx_clk_driver = {
 +	.driver = {
-+		.name = "ad24xx-gpio",
-+		.of_match_table = ad24xx_gpio_of_match_table,
++		.name = "ad24xx-clk",
++		.of_match_table = ad24xx_clk_of_match_table,
 +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 +	},
-+	.probe = ad24xx_gpio_probe,
++	.probe = ad24xx_clk_probe,
 +};
-+module_a2b_driver(ad24xx_gpio_driver);
++module_a2b_driver(ad24xx_clk_driver);
 +
 +MODULE_AUTHOR("Alvin Šipraga <alsi@bang-olufsen.dk>");
-+MODULE_DESCRIPTION("AD24xx GPIO driver");
++MODULE_DESCRIPTION("AD24xx CLK driver");
 +MODULE_LICENSE("GPL");
 
 -- 
