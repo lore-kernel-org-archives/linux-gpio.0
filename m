@@ -1,54 +1,72 @@
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EA1136E2E
-	for <linux-gpio@vger.kernel.org>; Mon, 20 May 2024 15:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535014C66;
+	Mon, 20 May 2024 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716217477; cv=none; b=u85QP+O3o6WTAWizrBkXoPXtOQVfNzowgkU+K8vjsdWMqGISsI+SP2vXyEMrgdbIaW1GMtrlX58PVkgcF5c3UQTOexvp9i44JIc/fh8jXOQPq8YhuTO25vJlk3UgG9VFJmbgu684bQx51AsArpIzvcb9Tvr1ztslRO/jUJM2FnA=
+	t=1716220038; cv=none; b=gD+UZJ+YratiyRVJXitIMDEpv4TfoUSm3AXkXzqF+PRUhonDmewzYJuCpSvsRjnUmHt1VlBNHTBDXUQFmSdK+8q/2FfzxDvXI8lc0HbtVFSDawdSq3Wi6fZytOS/w3e64Vm3tYaFHepuOMwTLhqEmYtEIWYMtnZSbLkVgFi7rdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716217477; c=relaxed/simple;
-	bh=rZJaNLBVEf+aK2rDOIXSWaoAcXGZCiPjotRHJZW2cj0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uTjCo6bTaK+n9fPk6CZcJdx4GJFbRiqgUVJ4q878I97dF9oCCp6gI0/fGPwwUeH5wklSuUQTFerE9aHlFj6tuuNcZOyVop+WZMeP1SqKPSChqwhhBqbDp5ymXLHZRojKmc6IzFN0tNsUUwgAz/it2/3v+luxfUQvwOlusWPn1jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xduTDc1x; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1716220038; c=relaxed/simple;
+	bh=uQyTUDBrb2M4ToZZB76OHhpsj6zKCUibocapiCL/n+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hKLud25cgqUxiJ0CSnQ5FSfuor+Xa+b1fnzLjaBPr3JUb9WCfg/ANmDUVHO0jgnUAQxI3wb0sTIdv2ZvIHHZAeLd5ETVVLHGdS+FwA/Nqpt0wUJdcjDl8ho+a+sEOaOnPZj3cq7BnzqqTch29Zj2LkFRrddY41jmul+8evud2FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MosCYrxE; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xduTDc1x"
-X-Envelope-To: linus.walleij@linaro.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716217474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M5zviEf5A12KnXDSQllyVorIBh12Tl6r4o0V0p+XKTg=;
-	b=xduTDc1xFMCmLLPJTZC6FSmby3/D/cKU1Fr3zpI1koYGiES/CQsult1CS8u6WgO6odOyqX
-	g0i5amQ0sxSbUeqDZNLCzwtYPLeydD6MuUp2FF0Un7jMKYBThmk/D/6MEKrs6X56HCG/W+
-	3Q4ULtmQEt3q8JPlcqVftRTcTJJrnoU=
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: linux-gpio@vger.kernel.org
-X-Envelope-To: sai.krishna.potthuri@amd.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: andy.shevchenko@gmail.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: sean.anderson@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-gpio@vger.kernel.org
-Cc: Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v2 2/2] pinctrl: zynqmp: Support muxing individual pins
-Date: Mon, 20 May 2024 11:04:24 -0400
-Message-Id: <20240520150424.2531458-3-sean.anderson@linux.dev>
-In-Reply-To: <20240520150424.2531458-1-sean.anderson@linux.dev>
-References: <20240520150424.2531458-1-sean.anderson@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MosCYrxE"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5210684cee6so3961055e87.0;
+        Mon, 20 May 2024 08:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716220034; x=1716824834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F3SMiS49AyJkdxBHc7WIBbANno/llp+H6SaO+b8OMQA=;
+        b=MosCYrxEXdUNb7C9Txh7i8+ELcUGNxO/x9nK9Y2r+glGjoEf3QaC02lEyRue2yl7M0
+         BgzEv5C6wpBXSflu9/S4j01TjLr+yQX1fsLW/486Q0yg+vIeyyo5a4vlOnx34jsq4v1/
+         ewAGC/fVDqib3WvppfIxvKpK3CM8hk7GMc4fLA0u9SvSJq5N/Wfp2T+eCu2AtvJDuapX
+         xiwJxd6EVws4EF3veRdxRQBySkMx0DXp5OBq7aSlUnu17XC7j0mYeZzaw0uPMJrBJe8B
+         86henWGECYmrRHqyi5/vqXtB9dhJ1yG2ZXrSBqO/4VegMzfLWTMTJUPNbh+IgBrRiWXq
+         oPNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716220034; x=1716824834;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F3SMiS49AyJkdxBHc7WIBbANno/llp+H6SaO+b8OMQA=;
+        b=KLKL9iWpXsVQjulg/Ux/Hpkrl0DRG7/pJ/J2Oe1+lXLgS2T95uaBcmZXqZ4F4QD3Ry
+         sEpTxn1r5E8ZT/2SRH22T2H6TaVDEsLA16+7J5wLpURm/9K5k68I4JYkbS5BrO72IhGx
+         6Qly0mFSZle9mvjM8SGAaebeJRWD0tQpc/F5zVg/Qu+w0nT1/Reqw3hy5LK1B98pRUVV
+         TMRe9X+8EZooYkd9hooADLVq7LQzLf81nfxpIdiEFt0lehRYZJXn24eTaH+xHgEH61Qz
+         6Sf5stPoxofS7Nfd8D0hd+FP53X99mmo5UJZLOg1AQEis1eq8MkHnm2Oan5tGGcITzEf
+         hY8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVa/3BDOg4Wu0+UjGid0iJPW9+/4veUVF7LbxkB1cPYfDben/X88+Y0CVAYWzlCEKmYg76ZAF4CrZs/bpaqqZg2GuaADW8yshjHIWF/rNwsxdw06dKndU5EdovWvvogL7w0uH6BE/zL+5JFedMAk3m0uNp57bhSmUWH7MCt41BewUqqslI=
+X-Gm-Message-State: AOJu0YysiDI6seSB6QLN32UI7XoBC3hIPuC2xpW5NaRzUepCuNWEMlTd
+	Wi4A0IW1vdQWqYV36KMMgGJGHvoHtrE0QLUjInzrcr/hw+rob9Uu
+X-Google-Smtp-Source: AGHT+IG62mY91gEpiAarmSHeHjUwItNwi5VJN0X/TlHTjt2kNSZCxj4kp8AqtGbIWbuVJ3Tc+FEtPA==
+X-Received: by 2002:a05:6512:3091:b0:51e:f1a6:ac39 with SMTP id 2adb3069b0e04-5220fa71b46mr24154338e87.12.1716220034251;
+        Mon, 20 May 2024 08:47:14 -0700 (PDT)
+Received: from pratik-IdeaPad.lan (customer-145-40-29-195.stosn.net. [145.40.29.195])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-521f35ba754sm4301267e87.107.2024.05.20.08.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 May 2024 08:47:13 -0700 (PDT)
+From: Pratik Farkase <pratikfarkase94@gmail.com>
+X-Google-Original-From: Pratik Farkase <pratik.farkase@wsisweden.com>
+To: 
+Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Pratik Farkase <pratikfarkase94@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: gpio: lsi,zevio-gpio: convert to dtschema
+Date: Mon, 20 May 2024 17:47:08 +0200
+Message-Id: <20240520154711.7991-1-pratik.farkase@wsisweden.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -56,171 +74,90 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-While muxing groups of pins at once can be convenient for large
-interfaces, it can also be rigid. This is because the group is set to
-all pins which support a particular function, even though not all pins
-may be used. For example, the sdhci0 function may be used with a 8-bit
-eMMC, 4-bit SD card, or even a 1-bit SD card. In these cases, the extra
-pins may be repurposed for other uses, but this is not currently
-allowed.
+Convert Zevio GPIO Controller from text to dtschema.
 
-There is not too much point in pin "groups" when there are not actual
-pin groups at the hardware level. The pins can all be muxed
-individually, so there's no point in adding artificial groups on top.
-Just mux the pins like the hardware allows.
-
-To this effect, add a new group for each pin which can be muxed. These
-groups are part of each function the pin can be muxed to. We treat group
-selectors beyond the number of groups as "pin" groups. To set this up,
-we initialize groups before functions, and then create a bitmap of used
-pins for each function. These used pins are appended to the function's
-list of groups.
-
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
 ---
-
 Changes in v2:
-- Use __set_bit instead of set_bit
-- Use size_add when calculating the number of kcalloc members
-- Expand commit message with some more motivation
+- Renamed file from `gpio-zevio.yaml` to `lsi,zevio-gpio.yaml`
+- Fixed the space indentation in example
+---
+---
+ .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 --------
+ .../bindings/gpio/lsi,zevio-gpio.yaml         | 41 +++++++++++++++++++
+ 2 files changed, 41 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
 
- drivers/pinctrl/pinctrl-zynqmp.c | 61 ++++++++++++++++++++++----------
- 1 file changed, 43 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index 5c46b7d7ebcb..7cc1e43fb07c 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
- 
-+#include <linux/bitmap.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -97,7 +98,7 @@ static int zynqmp_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
- {
- 	struct zynqmp_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
--	return pctrl->ngroups;
-+	return pctrl->ngroups + zynqmp_desc.npins;
- }
- 
- static const char *zynqmp_pctrl_get_group_name(struct pinctrl_dev *pctldev,
-@@ -105,7 +106,10 @@ static const char *zynqmp_pctrl_get_group_name(struct pinctrl_dev *pctldev,
- {
- 	struct zynqmp_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
--	return pctrl->groups[selector].name;
-+	if (selector < pctrl->ngroups)
-+		return pctrl->groups[selector].name;
-+
-+	return zynqmp_desc.pins[selector - pctrl->ngroups].name;
- }
- 
- static int zynqmp_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
-@@ -115,8 +119,13 @@ static int zynqmp_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
- {
- 	struct zynqmp_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
--	*pins = pctrl->groups[selector].pins;
--	*npins = pctrl->groups[selector].npins;
-+	if (selector < pctrl->ngroups) {
-+		*pins = pctrl->groups[selector].pins;
-+		*npins = pctrl->groups[selector].npins;
-+	} else {
-+		*pins = &zynqmp_desc.pins[selector - pctrl->ngroups].number;
-+		*npins = 1;
-+	}
- 
- 	return 0;
- }
-@@ -560,10 +569,12 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- {
- 	u16 resp[NUM_GROUPS_PER_RESP] = {0};
- 	const char **fgroups;
--	int ret, index, i;
-+	int ret, index, i, pin;
-+	unsigned int npins;
-+	unsigned long *used_pins __free(bitmap) =
-+		bitmap_zalloc(zynqmp_desc.npins, GFP_KERNEL);
- 
--	fgroups = devm_kcalloc(dev, func->ngroups, sizeof(*fgroups), GFP_KERNEL);
--	if (!fgroups)
-+	if (!used_pins)
- 		return -ENOMEM;
- 
- 	for (index = 0; index < func->ngroups; index += NUM_GROUPS_PER_RESP) {
-@@ -578,23 +589,37 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- 			if (resp[i] == RESERVED_GROUP)
- 				continue;
- 
--			fgroups[index + i] = devm_kasprintf(dev, GFP_KERNEL,
--							    "%s_%d_grp",
--							    func->name,
--							    index + i);
--			if (!fgroups[index + i])
--				return -ENOMEM;
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+deleted file mode 100644
+index a37bd9ae2730..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Zevio GPIO controller
 -
- 			groups[resp[i]].name = devm_kasprintf(dev, GFP_KERNEL,
- 							      "%s_%d_grp",
- 							      func->name,
- 							      index + i);
- 			if (!groups[resp[i]].name)
- 				return -ENOMEM;
-+
-+			for (pin = 0; pin < groups[resp[i]].npins; pin++)
-+				__set_bit(groups[resp[i]].pins[pin], used_pins);
- 		}
- 	}
- done:
-+	npins = bitmap_weight(used_pins, zynqmp_desc.npins);
-+	fgroups = devm_kcalloc(dev, size_add(func->ngroups, npins),
-+			       sizeof(*fgroups), GFP_KERNEL);
-+	if (!fgroups)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < func->ngroups; i++) {
-+		fgroups[i] = devm_kasprintf(dev, GFP_KERNEL, "%s_%d_grp",
-+					    func->name, i);
-+		if (!fgroups[i])
-+			return -ENOMEM;
-+	}
-+
-+	pin = 0;
-+	for_each_set_bit(pin, used_pins, zynqmp_desc.npins)
-+		fgroups[i++] = zynqmp_desc.pins[pin].name;
-+
- 	func->groups = fgroups;
-+	func->ngroups += npins;
- 
- 	return 0;
- }
-@@ -772,6 +797,10 @@ static int zynqmp_pinctrl_prepare_function_info(struct device *dev,
- 	if (!groups)
- 		return -ENOMEM;
- 
-+	ret = zynqmp_pinctrl_prepare_group_pins(dev, groups, pctrl->ngroups);
-+	if (ret)
-+		return ret;
-+
- 	for (i = 0; i < pctrl->nfuncs; i++) {
- 		ret = zynqmp_pinctrl_prepare_func_groups(dev, i, &funcs[i],
- 							 groups);
-@@ -779,10 +808,6 @@ static int zynqmp_pinctrl_prepare_function_info(struct device *dev,
- 			return ret;
- 	}
- 
--	ret = zynqmp_pinctrl_prepare_group_pins(dev, groups, pctrl->ngroups);
--	if (ret)
--		return ret;
+-Required properties:
+-- compatible: Should be "lsi,zevio-gpio"
+-- reg: Address and length of the register set for the device
+-- #gpio-cells: Should be two. The first cell is the pin number and the
+-  second cell is used to specify optional parameters (currently unused).
+-- gpio-controller: Marks the device node as a GPIO controller.
 -
- 	pctrl->funcs = funcs;
- 	pctrl->groups = groups;
- 
+-Example:
+-	gpio: gpio@90000000 {
+-		compatible = "lsi,zevio-gpio";
+-		reg = <0x90000000 0x1000>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+new file mode 100644
+index 000000000000..b5aae8124311
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-zevio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zevio GPIO controller
++
++maintainers:
++  - Pratik Farkase <pratikfarkase94@gmail.com>
++
++properties:
++  compatible:
++    items:
++      - const: lsi,zevio-gpio
++
++  reg:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-controller
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio@90000000 {
++        compatible = "lsi,zevio-gpio";
++        reg = <0x90000000 0x1000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++    };
 -- 
-2.35.1.1320.gc452695387.dirty
+2.34.1
 
