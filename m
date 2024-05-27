@@ -1,103 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2479F1640B;
-	Mon, 27 May 2024 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEF15F309
+	for <linux-gpio@vger.kernel.org>; Mon, 27 May 2024 14:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716819100; cv=none; b=RMPKH1+r8XvfeZ8c3ZNE1/leElgf6g6e/HMrgmASf9q1H3Az8+lHKbkIlQ7iTqQwVNKONGluiPuHZ2LdLjQIylRby5IuDrgJVqsGkO0Y8nP0fqmiJpAJatK8SQh7wC241UaKMTIWnk74qqqFmozyc1o83hxQOwkKKqUZrPRhcjc=
+	t=1716819975; cv=none; b=QSeWcuWSHUEVpkfaq8WQqpS7PRBoz/m3Lwz+yzdvPJRYoN7FxCEkIPS64LJjmeCo6aSviR1ZoIJSja15t4hmuEetX25/roX1/pUk9Y5RMXQK4hhsGx3XhtsMN/SGinfAjPZ5l3Lwc2DsCTg7A5nwO7CssZEIqQ9f6bTNGP4uzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716819100; c=relaxed/simple;
-	bh=o5hbqwBIk7hbVfK+3GoDhFtKqh6k+H303kYL9/uP8BU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bxRUPK9iJVCtXIUwrGuOpyQ8vj9QgU8SKS51PQAc2GoAubCUBlfKs4N5WeFmjfOaiNM1fnjEM4y4J0ofn6QAqxhm94PRZbFagRoq6cAqt8PUzUI0II2aIda5rkVqDImSoGO5MGDMqRxrexVLCSDZTaR940W6aKlEJB5eg6mI7GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btIVkH8V; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1716819975; c=relaxed/simple;
+	bh=mIexTCXVeUPx/vSiQvIkN6fMNuyrTcPp/6jeHHlIuU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAUBoKe1+h5B05zTVkbZ+wCbQG1rBGbQqBJ3RQtY/qUttpVHLNaAc47+xu3FvRn+tYJq8cTECOHEex83YRA7ygK3yp2CYD18A+wrF/6/KDbGVXeZO7ViSI+kBdswiFb72k/9PMab35PA+6jaTCcCaPo7qXS8hoi+NlrCMHxAmu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrTFd1KC; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btIVkH8V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716819100; x=1748355100;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=o5hbqwBIk7hbVfK+3GoDhFtKqh6k+H303kYL9/uP8BU=;
-  b=btIVkH8VG3nLkoluYtHKtpqtNocofhWbTYqn3SSi5k0AsqkdNY2Y6Mdx
-   mavajyB6uW31yeGxAk70SJdJOQbNzqWoIGLQhr40pxLerX4TAO5dI+BGO
-   gELXg3nRlcc21gDfrCOfTLPK05eHDIaCtI5bEDB/0hprbcih2aptPZTKP
-   ftvXweCQgTLHiNIEPStlqU1Ms5xEYPxEcJ4V0CPjKbLieUfswm4JOV2pY
-   w1HvMUsGjWMMbuZzlBywKieM19hGlPlg/RfKXSkoh4ScMmW31QhqqXafK
-   ItNqdplFIwaoaYK9Q11stCDjv5bYPmhJj1FXPMHQA8TlYQMxDTmghbLyR
-   w==;
-X-CSE-ConnectionGUID: Zd8Ki25gTKOdKGmKgylV0g==
-X-CSE-MsgGUID: sVVEbBwxQ8SPHSAbEMIciQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11085"; a="13085578"
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="13085578"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:11:39 -0700
-X-CSE-ConnectionGUID: Zhuq5rPFQmKHqU+Ja7y81A==
-X-CSE-MsgGUID: CZN/hKapTWO683lguzJlNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,192,1712646000"; 
-   d="scan'208";a="65990651"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.140])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2024 07:11:36 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 27 May 2024 17:11:32 +0300 (EEST)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Linus Walleij <linus.walleij@linaro.org>, 
-    Bartosz Golaszewski <brgl@bgdev.pl>, 
-    Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrTFd1KC"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a626776cc50so381191266b.3
+        for <linux-gpio@vger.kernel.org>; Mon, 27 May 2024 07:26:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716819971; x=1717424771; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v7c0ZrJPynvxMLH92Q3X2WTOon5tSRNZ2c7KU9q10EA=;
+        b=nrTFd1KCvlLfA//4I+gCqd8ZcWdfnLCJ3ucTz510/Os2KxkVEy/PwsXga90ubfXQiS
+         belfAJa7pFpPIqeygLzvUlwUdW2WNMOQ8lfAfJmPXVjRIA86bfTA0ilOc7YnsFuGgDWN
+         LRAATof3mgk1AQ5AQuHKGxCpFx9t8LDjCMeBja5hVF1GZR6stDUd62+RZfK8K9MNcQJB
+         VuiXxiZbZkawFldGGq667R7AdA6X7gsuhZCaIptDCeUJ8v5w4LLNuJ3Tjng1IqZ+MD5l
+         GTCDzY4+w5YJzZ6eIhqM1CtveMyzWcA5AQxGHLWQWASQWZrWfIv14ZhuNm91OSu2KKvv
+         7nhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716819971; x=1717424771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7c0ZrJPynvxMLH92Q3X2WTOon5tSRNZ2c7KU9q10EA=;
+        b=BPOSJ3cYcLoNmJ1J7C9OeSRYDliXp5Wrihb9JSXI+3T82LTDT5i//SKKM3cE2Pj+Yq
+         ln/oK5nEdiKjuzt5WyPctMVoD7phHoVQQmVc9Hn3R2KOwRQZfNfn1PWnDqkGLN4dQHzU
+         gVTiV+WKQj3S41/v6ZJkQ2pbZLL+HJ1TfgaKRF6N2WiW+XrBjfCLPY6uViktkztmyA9g
+         RgT6JOUFOotGcbt2q017HAEba96a74Bus3gJ/oWhDMCrWKTK/toBSQhFdOmct2jrRuKK
+         HMLwr5mfKrcPBPdiIRn/jHpQyWD9UgZSM14Bdm9JfC81xr+VRtCPfk78EC2xtiLbvYNs
+         a6zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUJ0/SQFsWutU0P/ckpyP3RFWU/tMGM+7MMYD/hJ6njpFoRKvAtmq8fQnm+FesK84ABOd2ublS38RBAejTIAhAheIeVReafkUyHg==
+X-Gm-Message-State: AOJu0YwDMAoArLLF4o7P5UGyZWe1wU0hocst59KBK05y+UT35i1Ui7It
+	iF8BlQaYfI+QeR4/S84eE7tTT1squNhmtcrlK7mpeJ1fhAmtPrvfKRqE+lpPNgA=
+X-Google-Smtp-Source: AGHT+IGDy6lBIZRlSXWUHrbdvlDpDLY1u7lkMBWjrjOr4cWf2ElMKM1ipIguJpApXRrP72OijJSLjA==
+X-Received: by 2002:a17:906:3614:b0:a62:8116:cb59 with SMTP id a640c23a62f3a-a628116cbf3mr535401266b.30.1716819970946;
+        Mon, 27 May 2024 07:26:10 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6283119b12sm420845566b.192.2024.05.27.07.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 07:26:10 -0700 (PDT)
+Date: Mon, 27 May 2024 17:26:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Baryshkov <dbaryshkov@gmail.com>, linux-gpio@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to
  errnos
-In-Reply-To: <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
-Message-ID: <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
-References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com> <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
+Message-ID: <50e1c6a7-f583-4b5b-997b-2e505b3df0ec@moroto.mountain>
+References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
+ <09f2f3ac-94a7-43d3-8c43-0d264a1d9c65@moroto.mountain>
+ <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1881005345-1716819092=:1006"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1881005345-1716819092=:1006
 Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d475c6c-8bbf-86f4-b2d8-8bc11cb9043e@linux.intel.com>
 
-On Mon, 27 May 2024, Dan Carpenter wrote:
+On Mon, May 27, 2024 at 05:11:32PM +0300, Ilpo Järvinen wrote:
+> On Mon, 27 May 2024, Dan Carpenter wrote:
+> 
+> > On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo Järvinen wrote:
+> > > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+> > > index 6f3ded619c8b..3377667a28de 100644
+> > > --- a/drivers/gpio/gpio-amd8111.c
+> > > +++ b/drivers/gpio/gpio-amd8111.c
+> > > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
+> > >  
+> > >  found:
+> > >  	err = pci_read_config_dword(pdev, 0x58, &gp.pmbase);
+> > > -	if (err)
+> > > +	if (err) {
+> > > +		err = pcibios_err_to_errno(err);
+> > 
+> > The patch is correct, but is the CC to stable necessary?  Is this a real
+> > concern?
+> > 
+> > Most callers don't check.  Linus Torvalds, once said something to the
+> > effect that if your PCI bus starts failing, there isn't anything the
+> > operating system can do, so checking is pointless.  The only fix is to
+> > buy new hardware.  There was a hotpluggable PCI back in the day but I
+> > don't think it exists any more.
+> 
+> I don't mind if the CC stable isn't there.
 
-> On Mon, May 27, 2024 at 04:23:44PM +0300, Ilpo J=E4rvinen wrote:
-> > diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-> > index 6f3ded619c8b..3377667a28de 100644
-> > --- a/drivers/gpio/gpio-amd8111.c
-> > +++ b/drivers/gpio/gpio-amd8111.c
-> > @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
-> > =20
-> >  found:
-> >  =09err =3D pci_read_config_dword(pdev, 0x58, &gp.pmbase);
-> > -=09if (err)
-> > +=09if (err) {
-> > +=09=09err =3D pcibios_err_to_errno(err);
->=20
-> The patch is correct, but is the CC to stable necessary?  Is this a real
-> concern?
->=20
-> Most callers don't check.  Linus Torvalds, once said something to the
-> effect that if your PCI bus starts failing, there isn't anything the
-> operating system can do, so checking is pointless.  The only fix is to
-> buy new hardware.  There was a hotpluggable PCI back in the day but I
-> don't think it exists any more.
+I don't mind either way.  I was hoping you were going to say it was for
+some new hotswap hardware Intel was working on.
 
-I don't mind if the CC stable isn't there.
+Smatch deletes all the failure paths from the pci_read_ functions
+because otherwise you end up with a lot of warnings that no one cares
+about.  Uninitialized variables mostly?
 
-
---=20
- i.
-
---8323328-1881005345-1716819092=:1006--
+regards,
+dan carpenter
