@@ -1,130 +1,110 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E888613B5B9
-	for <linux-gpio@vger.kernel.org>; Tue, 28 May 2024 08:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7696A13C683
+	for <linux-gpio@vger.kernel.org>; Tue, 28 May 2024 08:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884767; cv=none; b=TU3ZwYtSzPMT0UfaLQsdZUL3cI7mKQbpy/BysT78jioOYGiwUFZg4iYzxLB2AdCsDptG0625qbcxP90uomRyzdrmaaF1zmKNGRW37fmRnsXbierg2sBW7BQJV9wOPp46sY4RhpTQO21N0x/GZ5rmhGg4RuOUcapv9aogqMuN0RA=
+	t=1716885251; cv=none; b=JZiAs8iyJSj+pS/y6mas2mooBNOjv2VKeKd3vX6O8AJ0adaqJ6cCLI0TxcAinLyPoWyP8XGs392nvhX6XKrwOD6BF0utGG5iYLSDzjBL5djhFrC1Wiv2RNa6mNwo32xJO+22bs5eF02xvFVQFH+HhW6gqECVAJCjL8QE5nV1SAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884767; c=relaxed/simple;
-	bh=GAEE9E5pxIlTtypsNRbue75lfPMNqAE/GTqxio4TpJM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r+t3ARbHnLaW8el/4H35dAvSzB6GbEAClxH0ooRBOee5r5ox4BlEgXiObQ9waXt4cSV5G2IPVMNp1r3rDenlpcFmuOSKNYNgUqHtUy9mJ82tok7xtkiANBmW5eM6C9q9PbcOqP9gPViPoKdhfgcX8VICxPnIduqpqLT29JvQN0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xR7/853O; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1716885251; c=relaxed/simple;
+	bh=ACwW7cJHDZpXdK19RU//5+x4cTOgCVACeuCPdpb8wO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/VJb1MC2M7KUCKRIl6a4lqQO6atDSdvjxMTEGj4bOocWh39H5NOT6cqzoXR4mXGbKQ/UjzxopXwl0z+Bi6vGwVF8ExvvYALXPEfifIa9AnXAeZcITRgwWsi3uWWe/+uBthb46E6gY+U5J3rFmK3enXprhZ9GVVMlISQYcU2PCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICip0uRl; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xR7/853O"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-420180b58c5so3867105e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 May 2024 01:26:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICip0uRl"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2bf5797973fso459423a91.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 May 2024 01:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1716884761; x=1717489561; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PUSYzkcmz/5Oy1AGbRpHSlMVdz0s2mXKMHaOTb3Fihg=;
-        b=xR7/853O0a9mhuvJbl5F/VFdsjm80hwqz0XyoQrHBiu+DOSZ4FRZPVq/Y0rIE3wu1c
-         AmAw9CxHEkUjrMnJjfR8i7SY/m5IRw/NpcwifcqyssTDQveaTo9ZMBnBPVTUB2ZCJX8b
-         essMMb1hvnmfSo9FQ/jx7OQDRCJ1g6I6uFLSkt6WqroCv11zv6vdi8FRLV+1N8d6HYFP
-         S3NSjbwusov2L216YgrEs3iNtrhwnPc1wz1dE8DJW8j6lv5UT42fH0tw6qCwJT7gd8BY
-         VAKdw6Dx6q3rkbjw6q0E6aF/hQanY2Ex2r+NOn3ccmKeIJYOjhlWqFJ2Tq3YHRZ7swVG
-         bZZQ==
+        d=gmail.com; s=20230601; t=1716885250; x=1717490050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BKxjMxlyw0XAlkJtEB4TwQlKN+zhIEews65jxWsW5uk=;
+        b=ICip0uRlLVi86EkqoUhfCgL3BQXV3gdrDglHno9TshMPwGy+jdDDC+hSzs+DM5iTuA
+         R9UxHVCi/f7lAG9YHMNlM6XreKrlndV48T1cqHcUlQ3V25H6XFUc+XIb0gl9+biPa1g9
+         i9n1Rk++rVQtJfunDR9FE30TJoom0pe63J5hZ2U2S46mZ8xrww+8FTAd7o3DvPOk3LB3
+         FbGtm0OI8WvHruFyqTnPgLGKlC1BwhmeaLzE+EzffLNwoaU46w5jNMfFk74wcPozYaMo
+         LY+ZdvwY4gJM9NMBD6Rw8pSYd1jxsQsW5NCfYvtKp3q7/DWBvvyrB6VFKXGdKKeR5aMc
+         W6gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716884761; x=1717489561;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUSYzkcmz/5Oy1AGbRpHSlMVdz0s2mXKMHaOTb3Fihg=;
-        b=aY3l1zQwlgI/qDHnVT2ufAeHA4rv0JwoWVvomCW4kgqxeIW1KeBW1PPzC+MdEcpNAA
-         hRPRgM28TteXlyZARl8Yk/95s+kBsgjLVzH8ZwKYeM1aXPo00DT54rFQCQXFeNKI7FyZ
-         Pf/8d7WAaNGZfHWJ8NnLlqRRVFbjEbCM14JD5vLUhaUxS149c5NTQ5NQ9pfZRFjV7esN
-         hDLWxFX2h/jah3HjiRlnDhKlyE9nidPfF9EV+VngaFjsg4cOFSNWqdQ0qDuvCJFO1ZiL
-         DF1/zrpRoWcPxbraiOsZxvWvQ3dP0DnJM+Rp5bIUtjmLL3kJyLDgmj0t7vdtzEX3nMUj
-         OeVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5fdVAS7m/0zxHrsA9ZNgPKXwpu5H3y4KSG8JsRk5zF/cDZO5s4VCbmpULSE6d5tKSxXLpIVDY/MnoVUsvaVgowRRNJcXCcSx/dQ==
-X-Gm-Message-State: AOJu0Yzz7SMsZ6uzkfXe47iwtcR1HxsmOa96Xwc+vBc5vgQmtieDEVE6
-	pyaaldMTmk0XhGOZnS432vThFn4tDyo3VioUcFZRD05XIrL822b8gnHp4DgywwQ=
-X-Google-Smtp-Source: AGHT+IGjuFpnGYHnqdSiDJap9Jf+xrb2ePuAy7CL8VEitVplGnXAktBbjZdaoGUg6NkanhIQWOZClg==
-X-Received: by 2002:a05:600c:56d6:b0:41f:f144:5623 with SMTP id 5b1f17b1804b1-421089cd2a7mr76406905e9.14.1716884761304;
-        Tue, 28 May 2024 01:26:01 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:75a:e000:93eb:927a:e851:8a2f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-420fd37d5c0sm96207545e9.1.2024.05.28.01.26.00
+        d=1e100.net; s=20230601; t=1716885250; x=1717490050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BKxjMxlyw0XAlkJtEB4TwQlKN+zhIEews65jxWsW5uk=;
+        b=RnZOMEfv+fb/14paTQQectQGdEV3wNFPMESfjRtCE+fyYbUztdMZbxA/xDtG9KZo/c
+         tpZtS2RnA+ouxDajoTJoQe+EsGrGmkKcMpYESWcejPVR/Eu0lB6rloO3Uk4kL+uVq8Qo
+         XwxD9ENOdRqq3h9xkK0/6I7F6yiMNXnVzNjZ4Mfy4ZnvFK9GQQhLgdFWQltc37qMp0v4
+         meCwKS8s75VKuSdH5PSl8myBIzax4Ppx52reh7F3h+LZv0S2etFBJR/cqas1qEW1E95T
+         IXIdU2M659KqmCBU+Y117qM8SRbMeXRRy+pDiHyaSCytNBQXp1jhkTadyjpweMruWw4B
+         C2ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWjQQTJ8fD+dX6KcWHfhJRLxKhLvIXS1Ruu9GhpG6T4z2NNRFpKXSwd9MColTfWZwvUwPbLg1/WTgduBi70fb4mPGVm2glsPcWxxQ==
+X-Gm-Message-State: AOJu0Yy22s626GcviCY7tq6lRbaPnq30MlYVHlVG270YtSJH82BAVXWR
+	SQd3re+ppeEAYMoloz3sVd+vYhGWnm0X0bDb9BLnApBuia5h8qKH
+X-Google-Smtp-Source: AGHT+IH8vmv0wJSSw928SlEjx0/t6mGsatcPhdDACvZJGi28GVPgp9MTvjwqcWmZjU75FFv1B45rCQ==
+X-Received: by 2002:a17:90b:fd2:b0:2b9:7a42:e3ab with SMTP id 98e67ed59e1d1-2bf5ee148d0mr12321115a91.20.1716885249736;
+        Tue, 28 May 2024 01:34:09 -0700 (PDT)
+Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bf5f50c450sm7202247a91.17.2024.05.28.01.34.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 May 2024 01:26:00 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 28 May 2024 10:25:50 +0200
-Subject: [PATCH libgpiod v3 3/4] tools: tests: remove unneeded ';' in while
- loops
+        Tue, 28 May 2024 01:34:09 -0700 (PDT)
+Date: Tue, 28 May 2024 16:34:05 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH libgpiod v3 0/4] tools: tests: fix a few issues in bash
+ scripts
+Message-ID: <20240528083405.GA79126@rigel>
+References: <20240528-fix-bash-tests-v3-0-e9b5be2ba8bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240528-fix-bash-tests-v3-3-e9b5be2ba8bf@linaro.org>
-References: <20240528-fix-bash-tests-v3-0-e9b5be2ba8bf@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240528-fix-bash-tests-v3-0-e9b5be2ba8bf@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Kent Gibson <warthog618@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- linux-gpio@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=952;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=riNlIxW4Qfkkk/Nr3YxVgXIhisEwGSeSulI++INvgps=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmVZUVrKXhqv25I2smuoNUMQFfl7SPEjd4AEW6x
- BwW8AdeVwKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZlWVFQAKCRARpy6gFHHX
- cg5jEAChaBBeHgWeuZfxo5vm8YlN9gV+cgGilD9dNeoHhCUcF++vqRzROAJnVwLPq1agoytYLnH
- xmG2s2quA99Rx+ODbo+U8aIFPPqANXmK6u8Fbqu+CsaGVkwMnN6NBMDlGJBH/DMCh3vUgCiXXkr
- JseI/8Du8YpxUplbTbDxmen5/RF9PYbclyc05AclRAjEbQpDKaB/MXrRnUuLs21yCU4/eI0Fnye
- mYtpFV/8uGZvz5J2Xy2t+Lx68tfVnd9eo7NfarX0z0wheDLAq2op64zrxuQBuiX7pUkjqprwFt2
- mjKRs0mz+lZvQ5s18em8hEmuob2vAB1Mj7VEGVo5HBx3GVhjep4K+mUvaBa2aDoqmfoWHHJpVsY
- YYpB5sOxhjKTm25kUS9So9zJyMtkkvVzjmBbtikH+9rCY50O5unyRJ/+E20l6xCILcLrkaNIRwX
- OBBoEsO1wriqPSw00h3ElolTLURVcLklOTOxrXUennvE+feDxKD4Dei28LzraOdltzXqFQLlxCh
- 7bUIeZgxICywKjxqJxr3tRhBOUI58/KzIik4bdI62x/Ity2mz2auSAJh0X3OwvtRXP2PxQvcnE3
- g/OV0bBM1iBtvnh2y1m/DXd7r7xoq6/+WZaa5aCkS2oaQ23xkswPB3FyOw4lwMBHleDUOnsR72U
- g1NuUu9bxPZZCvQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, May 28, 2024 at 10:25:47AM +0200, Bartosz Golaszewski wrote:
+> Fix a few issues with tools tests reported by Andy.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We're already breaking the line between while and do so there's no need
-for the ';' character.
+Looks good to me.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- tools/gpio-tools-test.bash | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
 
-diff --git a/tools/gpio-tools-test.bash b/tools/gpio-tools-test.bash
-index 1bd7d89..b6809f3 100755
---- a/tools/gpio-tools-test.bash
-+++ b/tools/gpio-tools-test.bash
-@@ -211,7 +211,7 @@ dut_read_redirect() {
- dut_read() {
- 	local LINE
- 	lines=()
--	while read -t 0.2 -u ${COPROC[0]} LINE;
-+	while read -t 0.2 -u ${COPROC[0]} LINE
- 	do
- 		if [ -n "$DUT_FIRST_CHAR" ]
- 		then
-@@ -232,7 +232,7 @@ dut_flush() {
- 	lines=()
- 	output=
- 	unset DUT_FIRST_CHAR
--	while read -t 0 -u ${COPROC[0]} JUNK;
-+	while read -t 0 -u ${COPROC[0]} JUNK
- 	do
- 		read -t 0.1 -u ${COPROC[0]} JUNK || true
- 	done
-
--- 
-2.43.0
-
+> ---
+> Changes in v3:
+> - Use $* in the message string in assert_fail()
+> - Make shellcheck happy when using find exclusively instead of find + grep
+> - Link to v2: https://lore.kernel.org/r/20240527-fix-bash-tests-v2-0-05d90cea24cd@linaro.org
+>
+> Changes in v2:
+> - Use double quotes around $@ to prevent globbing but allow variable expansion
+> - Link to v1: https://lore.kernel.org/r/20240524-fix-bash-tests-v1-0-1397c73073a6@linaro.org
+>
+> ---
+> Bartosz Golaszewski (4):
+>       tools: tests: use tabs for indentation consistently
+>       tools: tests: use "$@" instead of $*
+>       tools: tests: remove unneeded ';' in while loops
+>       tools: tests: remove dependency on grep
+>
+>  tools/gpio-tools-test.bash | 46 ++++++++++++++++++----------------------------
+>  1 file changed, 18 insertions(+), 28 deletions(-)
+> ---
+> base-commit: 27fe10150f6d5fa78d1a1ef1e922dc8395d1154d
+> change-id: 20240524-fix-bash-tests-545bf26447b3
+>
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
