@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8D6194C68;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7568519DF42;
 	Wed, 29 May 2024 16:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000236; cv=none; b=NR8J/HnX7mcf0YfGYGzSnyx5monT6KSLxx413TPLTuN0mrUiXx6W37JwVT7UypyDaQS0E2X7FmCaUB71vO9NeF6xLOjZs82cYK3GAVCKSpN3bQ9Uzc/BVcQu5ABfc1obek1CWZUXN0xtU+8B6zhBgiyZrJSfYwc0YNJPLOA0N5Q=
+	t=1717000236; cv=none; b=hBB3R7Do2nur8JUjHfnuIaxf1/Ff6yex82k4gvblRo2+32GB4lWkwrvsBLjgYU/eHWlNQlqk8ZmtC6q6RyCFErPI53Xmf5Yt8hNIe3HLhCdsKnpKQZTdit2S9dkGg2HNXzrzluID/0OsOHV3jVR3997B4LBqhIj0G9soBbo/aAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717000236; c=relaxed/simple;
-	bh=2q8uKA69UrATuj6FRt0GVVqnEyADsM00txP6nQDM2tk=;
+	bh=SQO/+ouLx21qu/S9Vf1DTU5WIZ4v/dXTVdqD0GLD4FM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S4Rd2VWnyU3NLbjdAakt37M2Mbg0HT/7NMTKew8JgkHuSLMzRx67krgOLRifW4leoqB39wsLjCXuiRNuuQPASs8wzMEZTxSN+5GABaUVqm0x4ogyJwwJ68IwKuSsJq1VJDPh5YWeWCI8hhWiKl9HhQq2Sm4WOy0E3zlJQiMTh2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTc+cHhp; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=F5XZVXpj/vAUZ8eg75fJc+Er0Wj8M3+4spczM4nRYhyoz4x6/kzlc1UZGzMfahH0ZNHsnv0HwL03nIN4Tdio/gzbknXadQFxBpIUMSxdpg7IY5SMVLAFphPmvYMunbKG5wZNQvI94X55nDPv13gKwYoL5K9upceDK48bMZW2Eps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1Cay7ae; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTc+cHhp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D944C4AF07;
-	Wed, 29 May 2024 16:30:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1Cay7ae"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09931C4AF0F;
+	Wed, 29 May 2024 16:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717000235;
-	bh=2q8uKA69UrATuj6FRt0GVVqnEyADsM00txP6nQDM2tk=;
+	s=k20201202; t=1717000236;
+	bh=SQO/+ouLx21qu/S9Vf1DTU5WIZ4v/dXTVdqD0GLD4FM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QTc+cHhp+mlJVys6+DmmcCUMfF9Df7Mso5WBnbpCap491+vYMb3f6IajcUpgBJL6R
-	 uuEXVYRLCKERUUGkNF2lQPPkPYznWTpvdjOdIIqMcrv6VYLityd2Iar8pjz++aODpZ
-	 ZmH34eCXi/5VATN2wmBloBwMPsbKnqN7ENOimqQxLgRe1DiNdbfHhEFkQEMA5L0/Ww
-	 1dSC2qATQwsMCp4YUn33MS6QSqCH4gga6Zyt8rWj5kP6s+NVt68pK4lSOfHj2VbVee
-	 ShwR9hNzz8cagYuCMrWTG09RTfE33b+nhj9WYwliejk5N/1+B1E+EoC5jUaHoRyDpL
-	 VViTL+bQKKlVA==
+	b=n1Cay7ae3Iz2RpfLd5/XdlMF8rcIlgdnRp5sB8pjfk6wYMKtnDeVQql6tZUYDJRIe
+	 3+YB6t0kFcB9fNpNTWfR62vG2cCLVlL3/rhRUDiXXmOlAa7y4xnF6/7ZeySX5WhTmJ
+	 PFVf+5JzoLa4Nd35yGwxGxvR4QOROBWbW1Eup2G/QiZybZKGmS7iMKgDQoMl3s77oA
+	 cmiwCVmPRjpDFFR9ufKAECbuEcFF7OerGOiLzrvJBqygu73TSjcuQT50yVXWDzItY3
+	 toTq7NAxY25g9mT5u28nF5Wm1F0GVmLJ50UWZDhjG7+6HL90pLOBHZsv+gOYDMF4WG
+	 LzLGBLdXYJ1Jg==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1sCMCB-000000004ik-1oZd;
-	Wed, 29 May 2024 18:30:35 +0200
+	id 1sCMCC-000000004j5-0LCb;
+	Wed, 29 May 2024 18:30:36 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Lee Jones <lee@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 02/14] mfd: pm8008: fix regmap irq chip initialisation
-Date: Wed, 29 May 2024 18:29:46 +0200
-Message-ID: <20240529162958.18081-3-johan+linaro@kernel.org>
+Subject: [PATCH v2 10/14] dt-bindings: mfd: pm8008: drop redundant descriptions
+Date: Wed, 29 May 2024 18:29:54 +0200
+Message-ID: <20240529162958.18081-11-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.44.1
 In-Reply-To: <20240529162958.18081-1-johan+linaro@kernel.org>
 References: <20240529162958.18081-1-johan+linaro@kernel.org>
@@ -64,110 +64,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The regmap irq array is potentially shared between multiple PMICs and
-should only contain static data.
+In preparation for reworking the binding, drop the redundant
+descriptions of the standard 'reg' and 'interrupts' properties.
 
-Use a custom macro to initialise also the type fields and drop the
-unnecessary updates on each probe.
-
-Fixes: 6b149f3310a4 ("mfd: pm8008: Add driver for QCOM PM8008 PMIC")
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/mfd/qcom-pm8008.c | 64 ++++++++++++++-------------------------
- 1 file changed, 23 insertions(+), 41 deletions(-)
+ Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
-index 3ac3742f438b..f71c490f25c8 100644
---- a/drivers/mfd/qcom-pm8008.c
-+++ b/drivers/mfd/qcom-pm8008.c
-@@ -56,15 +56,25 @@ static unsigned int pm8008_config_regs[] = {
- 	INT_POL_LOW_OFFSET,
- };
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+index e1e05921afb4..d71657f488db 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+@@ -19,16 +19,11 @@ properties:
+     const: qcom,pm8008
  
--static struct regmap_irq pm8008_irqs[] = {
--	REGMAP_IRQ_REG(PM8008_IRQ_MISC_UVLO,	PM8008_MISC,	BIT(0)),
--	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OVLO,	PM8008_MISC,	BIT(1)),
--	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST2,	PM8008_MISC,	BIT(2)),
--	REGMAP_IRQ_REG(PM8008_IRQ_MISC_OTST3,	PM8008_MISC,	BIT(3)),
--	REGMAP_IRQ_REG(PM8008_IRQ_MISC_LDO_OCP,	PM8008_MISC,	BIT(4)),
--	REGMAP_IRQ_REG(PM8008_IRQ_TEMP_ALARM,	PM8008_TEMP_ALARM, BIT(0)),
--	REGMAP_IRQ_REG(PM8008_IRQ_GPIO1,	PM8008_GPIO1,	BIT(0)),
--	REGMAP_IRQ_REG(PM8008_IRQ_GPIO2,	PM8008_GPIO2,	BIT(0)),
-+#define _IRQ(_irq, _off, _mask, _types)			\
-+	[_irq] = {					\
-+		.reg_offset = (_off),			\
-+		.mask = (_mask),			\
-+		.type = {				\
-+			.type_reg_offset = (_off),	\
-+			.types_supported = (_types),	\
-+		},					\
-+	}
-+
-+static const struct regmap_irq pm8008_irqs[] = {
-+	_IRQ(PM8008_IRQ_MISC_UVLO,    PM8008_MISC,	BIT(0), IRQ_TYPE_EDGE_RISING),
-+	_IRQ(PM8008_IRQ_MISC_OVLO,    PM8008_MISC,	BIT(1), IRQ_TYPE_EDGE_RISING),
-+	_IRQ(PM8008_IRQ_MISC_OTST2,   PM8008_MISC,	BIT(2), IRQ_TYPE_EDGE_RISING),
-+	_IRQ(PM8008_IRQ_MISC_OTST3,   PM8008_MISC,	BIT(3), IRQ_TYPE_EDGE_RISING),
-+	_IRQ(PM8008_IRQ_MISC_LDO_OCP, PM8008_MISC,	BIT(4), IRQ_TYPE_EDGE_RISING),
-+	_IRQ(PM8008_IRQ_TEMP_ALARM,   PM8008_TEMP_ALARM,BIT(0), IRQ_TYPE_SENSE_MASK),
-+	_IRQ(PM8008_IRQ_GPIO1,	      PM8008_GPIO1,	BIT(0), IRQ_TYPE_SENSE_MASK),
-+	_IRQ(PM8008_IRQ_GPIO2,	      PM8008_GPIO2,	BIT(0), IRQ_TYPE_SENSE_MASK),
- };
+   reg:
+-    description:
+-      I2C slave address.
+-
+     maxItems: 1
  
- static const unsigned int pm8008_periph_base[] = {
-@@ -143,38 +153,9 @@ static struct regmap_config qcom_mfd_regmap_cfg = {
- 	.max_register	= 0xFFFF,
- };
+   interrupts:
+     maxItems: 1
  
--static int pm8008_probe_irq_peripherals(struct device *dev,
--					struct regmap *regmap,
--					int client_irq)
--{
--	int rc, i;
--	struct regmap_irq_type *type;
--	struct regmap_irq_chip_data *irq_data;
+-    description: Parent interrupt.
 -
--	for (i = 0; i < ARRAY_SIZE(pm8008_irqs); i++) {
--		type = &pm8008_irqs[i].type;
--
--		type->type_reg_offset = pm8008_irqs[i].reg_offset;
--
--		if (type->type_reg_offset == PM8008_MISC)
--			type->types_supported = IRQ_TYPE_EDGE_RISING;
--		else
--			type->types_supported = (IRQ_TYPE_EDGE_BOTH |
--				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
--	}
--
--	rc = devm_regmap_add_irq_chip(dev, regmap, client_irq,
--			IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
--	if (rc) {
--		dev_err(dev, "Failed to add IRQ chip: %d\n", rc);
--		return rc;
--	}
--
--	return 0;
--}
--
- static int pm8008_probe(struct i2c_client *client)
- {
-+	struct regmap_irq_chip_data *irq_data;
- 	int rc;
- 	struct device *dev;
- 	struct regmap *regmap;
-@@ -187,9 +168,10 @@ static int pm8008_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, regmap);
+   reset-gpios:
+     maxItems: 1
  
- 	if (of_property_read_bool(dev->of_node, "interrupt-controller")) {
--		rc = pm8008_probe_irq_peripherals(dev, regmap, client->irq);
-+		rc = devm_regmap_add_irq_chip(dev, regmap, client->irq,
-+				IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
- 		if (rc)
--			dev_err(dev, "Failed to probe irq periphs: %d\n", rc);
-+			dev_err(dev, "failed to add IRQ chip: %d\n", rc);
- 	}
- 
- 	return devm_of_platform_populate(dev);
 -- 
 2.44.1
 
