@@ -1,119 +1,122 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5B415920F
-	for <linux-gpio@vger.kernel.org>; Wed, 29 May 2024 14:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7AB1581E9;
+	Wed, 29 May 2024 14:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716993520; cv=none; b=Y7RwH3cxGuSVMJE082uQYLxO9IF5thx+CPM9utaVg1UQ2b4lLpt2xfinAGFDawzVRBNSxmmZSkP2POm0hoQXFx6SK6ys1G1foT68hJFIr+9vY5+iN8v+/hBzvgOI99/OuCiNDLX/+iriHx9+bBl9OhHGRdSg+kfGt0Cn6TfycCU=
+	t=1716993881; cv=none; b=g3RqQkb7wnD+quKa8SYbJyarJ5UQwbTAfssPtwu/Ra9Yohplw8uYNZg1CRq8QA6oepanLO2rHNRFRRpfvTZtXgKU4uM1kAjBmmOXzu4qpTUHrtMhGGkW0ClgheuMdGO39pUcnEz3w7U0u6MMSTJZzmqnpAQMbYNgzYOIjWYH+PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716993520; c=relaxed/simple;
-	bh=qtx7heFq23Ik7RP0+IKkj4MhAFl1SLLrhfCCxu4Y/iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSUTHp+lVnNHN/OSmizbxsSncIUSLqhRTlCAYB6D0AT33PGP7tWUSdpJG02PH7wa4Ze+dXanZ4vkbXPily+VwlFg2cwZjw7CoNZ+iHswRAFRxO6mqipC+kBS4Mu5up7pSN+N8L3AoGToWBSZXFtEHuwj34f38mCCIOvnHWwm+xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KPVZsj8k; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1716993881; c=relaxed/simple;
+	bh=gCT8PDxsy7chYSyUoW1k8QcPJdu1mk37WMs2Qzi/GIg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MsVH9LzQHnOHLZfyi6OjKC5wPZnsLX9PBhL1IKQVz1oiSavsxao3QGTzL9cFGTeG7nAo7Gtsz9jcpXxHEXL0PGfmrv5kJjHke07Maheyv9nidpv7oKZKqAGI1nLqj5LFp+OObkdAHYm7/TM3f78DSsRBHyM7+lq0IxIqF/ZrzKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acvxl+jF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPVZsj8k"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42108856c33so148665e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 May 2024 07:38:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acvxl+jF"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52388d9ca98so3367348e87.0;
+        Wed, 29 May 2024 07:44:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716993517; x=1717598317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXlxBJgQstiSb1iHCBoySUt4Dr8xVwSho9/4h77j9/Y=;
-        b=KPVZsj8kfvrlqGxbyhrgjG3IDqnkkY39IVuhBMIuXI/rqVNwir2Gd1dRiYCTpLb0GM
-         IRDzbSgYs00UqAJ9L/CpJIuonpFKvjUjwsWBv7K6egTLd+EJkGuGNQQQomsNipW22dZ9
-         9bs1Z7YbIlwQIaiAslEtb/NQd7XXmBrrOmppCeJ4M5sJeLkAtvkZZWMdOM8hQ1G9LB2s
-         z06vIg6p3Ip0BBe5zGvs02AFcmoUIaD4LwpyDa4NpRI4ZFSMErGgFC1xQtS17PYzaXf4
-         6g5k6ek3FUHM4D5ZTH03zvygR1cBnTJLXNOvbZu08v4dIvBbtEFuueA9AnG0XX1J9dVx
-         WvZA==
+        d=gmail.com; s=20230601; t=1716993878; x=1717598678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmg0Xdln3CoQgJ9NVNuMFs06AxZyiuM9wtNOUDPn1Ws=;
+        b=acvxl+jF4l1Fn445EpMyDJP7HLvePAY76vT08rr+n5PrrEaEprEfFmSgpJMCphR3Z1
+         l+Z7Jw605mq+zZo3VJ/nHFalbQVJ1xv1fzt59aMc+/ag00PfgZVRcDuGRvHCezYzHUk5
+         j8ZEqCp9Wrp3D+lEmqygIxXYhBhD0Q7PmTLVQD5hfEA7GNrzmKxfdG6bCz52esbBdkjT
+         lNYNFNhed1sbnhl9wKCjZ0JjXOPVYKt75evVtme3ROxoqY/aaiJi/v7vzCxN/RfSWeVV
+         52CxTe2or+iZTLtt2C4cTh32a9mXkDYCKFKBZGh+6c0SCdM/lNLXzMT991t+UqNpkRfU
+         uI0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716993517; x=1717598317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NXlxBJgQstiSb1iHCBoySUt4Dr8xVwSho9/4h77j9/Y=;
-        b=rpFob4SfbMOHpdR3A0Jf2wYnQJYBH9dPj5nwm6g2zNogQGCEyAaRf4m6d8jxsGasCi
-         6HxQBEro/NkPnc+L9aoCSQnnNwuZNhyAinKWaYybOCbDz5CUyiln2rslIZCpLJEaGa2u
-         rZmpM2hp4jjm7RoBMFq8ilr9TpR7Bgr8e9RERsWhEzdhbVXmcCPUct30iv1+FGkdv9JM
-         KePKiwFMJ13iccZ6W1hbd3iWbT4e2TjgxN0OEmpIcp7wXkPthraEF3cUCF11IZTib2QF
-         4l8XO+1Qkt0CU9VzjpFq/OwLqtKF9xyy7kxhtF2u2Vf1IuDiAPFsZet7UxqgwKzSNbZy
-         P9lg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0XmN6YThgQoVPaouV7Z3lgHOsgAiCn8qsre7gptWjSGlw0N229PoEM4KjfHd/TEKSTIWgBQdffvVbuKbfEUtHNheMFTFNGFijSg==
-X-Gm-Message-State: AOJu0YzjWHvgqCDrO8n3lKMr+0H1a6FS5KsZRqroBMDu+PYuzgnuSw3H
-	stzsJzi/Ldvob27DquEWFh3poqQGJ1RPoY1MtDG+sSPo5sYP+wL7C8zU66K8ZxM=
-X-Google-Smtp-Source: AGHT+IH716sSlQ0shXbTlDViazn4mQcqRoOCpRWv8t8XYiQ1HLYo/wxnu2ygHpUNyh3b8AdjgrqGIg==
-X-Received: by 2002:a05:600c:4450:b0:41c:73d:63b3 with SMTP id 5b1f17b1804b1-42122adb00amr20059995e9.3.1716993516434;
-        Wed, 29 May 2024 07:38:36 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089cc4e2sm183157625e9.39.2024.05.29.07.38.35
+        d=1e100.net; s=20230601; t=1716993878; x=1717598678;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wmg0Xdln3CoQgJ9NVNuMFs06AxZyiuM9wtNOUDPn1Ws=;
+        b=qpHHsFvdEGGQXfpiC9fWOKcI+kFScZ1ptqfT6jEk46qRzXD2Ys0lcjHDjNJwkg/V8o
+         BGafz4FibddZn7G2ohJfr7KjejZ/PA1mszuclbyxy9HzoR8Ijq98ojTwD5Sna3eKUlKa
+         Wzbdph2rj3hQeRcu3ZttVOpE4IWcoWRSQMQTZdZ16z+HLlwZb8fFqaP1edHR+rdJ3Day
+         FHFB/VSnV9vIn1qt4Clkj1Z8hE/ezQLQ1UHctOh3SMWssgMHV3wyorALr4yKZMi1/mZ7
+         1CSbrSbYCn+jxT6NIZtwI7xpgSA3PIrc3/eA6NOBbOv0oMRLYSOvLwrB9P3mrfIl9MEX
+         AxIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjEP5Nv3Q1fn0v1HZDomj4euS6o0oVm94bz+qmNLbeKEBJOVWcPRQsPFU/2mRR5KQ7+Y/84qyLJYOb9682klykMSvAwbj3pn1iZId0JxiCRsxOKMOjMvMHd9G6AaxlBl5Xx+v8bGrvvQztc/JONyJrJazwEd55vMazGx9sP2D8wYTJI0I=
+X-Gm-Message-State: AOJu0YyxXfvkBe/lQRWElPFILY7QcNWGI33Fmkz7Y5rzEu/cM/nDonsr
+	pGJPb23zYXC7Qqc3Ko2HXu8/7C4GSp0uE9hqekanNop001fBDuL0
+X-Google-Smtp-Source: AGHT+IEmeGBP4gSt953JX9l/IvekTaw0WinbNkSEyrZcdumRfTqWxO7Errv9yS6JwzWsqMFJg0mUOw==
+X-Received: by 2002:ac2:5dc1:0:b0:522:8352:ff29 with SMTP id 2adb3069b0e04-5296736bb86mr12370567e87.42.1716993877840;
+        Wed, 29 May 2024 07:44:37 -0700 (PDT)
+Received: from yoga-710.tas.nnz-ipc.net ([178.218.200.115])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-529ac903bd9sm928915e87.236.2024.05.29.07.44.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:38:35 -0700 (PDT)
-Date: Wed, 29 May 2024 17:38:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>,
-	linux@ew.tq-group.com
-Subject: Re: [PATCH 8/8] gpio: tqmx86: fix broken IRQ_TYPE_EDGE_BOTH
- interrupt type
-Message-ID: <8689fbcd-3fa3-410b-8fc9-7a699bf163b8@moroto.mountain>
-References: <cover.1716967982.git.matthias.schiffer@ew.tq-group.com>
- <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
+        Wed, 29 May 2024 07:44:37 -0700 (PDT)
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Yashin <dmt.yashin@gmail.com>
+Subject: [PATCH v2 0/2] pinctrl: rockchip: add rk3308b SoC support
+Date: Wed, 29 May 2024 19:35:32 +0500
+Message-ID: <20240529143534.32402-1-dmt.yashin@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c265b6bcfcde7d2327b94c4f6e3ad6d4f1e2de7.1716967982.git.matthias.schiffer@ew.tq-group.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 09:45:20AM +0200, Matthias Schiffer wrote:
-> diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-> index c957be3341774..400415676ad5d 100644
-> --- a/drivers/gpio/gpio-tqmx86.c
-> +++ b/drivers/gpio/gpio-tqmx86.c
-> @@ -126,9 +126,15 @@ static void _tqmx86_gpio_irq_config(struct tqmx86_gpio_data *gpio, int hwirq)
->  	unsigned int offset = hwirq - TQMX86_NGPO;
->  	u8 type = TQMX86_INT_TRIG_NONE, mask, val;
->  
-> -	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED)
-> +	if (gpio->irq_type[hwirq] & TQMX86_INT_UNMASKED) {
->  		type = gpio->irq_type[hwirq] & TQMX86_INT_TRIG_MASK;
->  
-> +		if (type == TQMX86_INT_TRIG_BOTH)
-> +			type = tqmx86_gpio_get(&gpio->chip, hwirq)
-                                                            ^^^^^
+This patch series and adds support for pin controller found on rk3308b.
+According to rk3308b TRM, this pinctrl much the same as rk3308's,
+but with additional iomux routes and 3bit iomuxes selected via
+gpio##_sel_src_ctrl registers.
 
-> +				? TQMX86_INT_TRIG_FALLING
-> +				: TQMX86_INT_TRIG_RISING;
-> +	}
-> +
->  	mask = TQMX86_GPII_MASK(offset);
-                                ^^^^^^
->  	val = TQMX86_GPII_CONFIG(offset, type);
-                                 ^^^^^^
->  	_tqmx86_gpio_update_bits(gpio, TQMX86_GPIIC, mask, val);
+Downstream kernel [1] managed this SoC's with rk3308b_soc_data_init,
+wich picked configuration based on cpuid. Upstream pinctrl patches
+droped soc init function.
 
-The offset stuff wasn't beautiful and I'm glad you are deleting it.  My
-understanding is that a hwirq is 0-3 for output or 4-7 input.  An offset
-is "hwirq % 4"?
+The function rk3308b_soc_sel_src_init sets up gpio##_sel_src_ctrl
+registers, making SoC to use 3bit iomuxes over some 2bit old ones.
 
-There are a bunch of places which are still marked as taking an offset
-but they all actually take a hwirq.  For example, tqmx86_gpio_get()
-above.  The only things which still actually take an offset are the
-TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() macros.
+These patches have been tested on Radxa's ROCK Pi S, one based on rk3308
+and the other on rk3308b (from the latest batches). For the new boards it
+fixes broken spi1 clk.
 
-Could you:
-1) Modify TQMX86_GPII_MASK() and TQMX86_GPII_CONFIG() to take a hwirq?
-2) Rename all the "offset" variables to "hwirq"?
+Similar effort [2] was made several years ago, but without keeping base
+rk3308 SoC pinctrl support.
 
-regards,
-dan carpenter
+Based on feedback from Luca, Heiko and Jonas, the v2 series droped dt
+binding in the favor of runtime SoC detection, so iomux_recalced and
+iomux_routes updated for the new SoC's and patch 1 delays recalced_mask
+and route_mask init.
+
+[1] https://github.com/radxa/kernel/blob/stable-4.4-rockpis/drivers/pinctrl/pinctrl-rockchip.c#L4388
+[2] https://lore.kernel.org/linux-rockchip/20220930102620.1568864-1-jay.xu@rock-chips.com/
+
+v1 Link: https://lore.kernel.org/all/20240515121634.23945-1-dmt.yashin@gmail.com/
+
+Changes in v2:
+- Drop routes fixup patch, already applied
+- Drop dt binding patch
+- Add new patch to delay recalced_mask and route_mask init
+- Rework last patch from dt to runtime setup with rk3308_soc_data_update
+
+Dmitry Yashin (2):
+  pinctrl: rockchip: delay recalced_mask and route_mask init
+  pinctrl: rockchip: add rk3308b SoC support
+
+ drivers/pinctrl/pinctrl-rockchip.c | 286 +++++++++++++++++++++++++++--
+ drivers/pinctrl/pinctrl-rockchip.h |   1 +
+ 2 files changed, 267 insertions(+), 20 deletions(-)
+
+-- 
+2.39.2
 
