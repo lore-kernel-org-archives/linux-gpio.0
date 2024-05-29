@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A48F194C66;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C094194C67;
 	Wed, 29 May 2024 16:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717000236; cv=none; b=L5Tlqn/0krb5PP2Hb9mazOZ+P/P1hu1K86fb2lQY+GIEJmCMKLUedqxBxyp2YUasPSze5K3eGIGppbqjZ9zGo4XBkbgwfDx02Q7QqfIyMv2JmY747L3axz4I2HjCnclTH+gExmTA7qV7ccvumyt8TT/4r2qV7ISnmE7sxkxxVJ0=
+	t=1717000236; cv=none; b=GuBd57U5k5PC8X4h24BERXJJdD7JE3qG5+hWWbbpvFHNozRFBcj4XVNe4kSqOWOu8e4QIcHx1b8tJuPL8uPYFZYUsggD0atXYJ9XizjFBw5PiPcNzA+puBIpZ9BqyKRE4FaR3so4lqm/KcULmeIlJIxxZ980Atourn9WLXCX96U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717000236; c=relaxed/simple;
-	bh=9D6ySfgbWhQOFK6PfMLujLLbbQCJ9ljTc4OjiKugm44=;
+	bh=ay6FxObVid/tpLQpHByj0/j24W/+xZDsEHwqrIUSxCo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lz4XkRXZWNQ6+28QwWPSyEHFm30tsnpGf2hZzOebxZWiKkIQMqta/VD8WP7FvsdvMjrviirh6GGvB9FFZf10VioxENxE9O2f3jELjVWrH4hxI9WHQsHjyGs9wj5ZiDiThnVAyxAytfAhz2fmgyYm5/BT4QyfQz5jAxOXB0dta7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRxff3Si; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=bLvOHxGP0CHFHUZoKniQUe2G/Xse2VgNWrvUg9EwOBSPCD1yxpXc0CpkhTAS714Lzbp88/Ls27Re/uI3YW18zLZC0ViQJD1B49waMiMC6SWkobY8EtETQkiwPVaBLBM4ZhRrjfyGWaz13viNItRYpnyOcjFYdipa+6waJfP18dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNrvXw/w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRxff3Si"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF042C4AF0A;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNrvXw/w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C8EC4AF0E;
 	Wed, 29 May 2024 16:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717000236;
-	bh=9D6ySfgbWhQOFK6PfMLujLLbbQCJ9ljTc4OjiKugm44=;
+	bh=ay6FxObVid/tpLQpHByj0/j24W/+xZDsEHwqrIUSxCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XRxff3Si8T3w4EsMM+jiwSbHJVXoKYJr7+4jRhq3FPMhNW8MOd8WDyhOP0DYIdwQZ
-	 cze326C+SxHZmRMLRVEjwPB18DrmdxVnZTN7xvFpyG7MZv+pAdak4wbw22dReMM6Dr
-	 p+2vwxrYWkjDNC/i5ESOAwZcwC1ESIo1M341EYYoNFOFWyrma/ZDLCY7zivkxs7peu
-	 bdL0ZnDvV2ZykombcCouuP1hECvifMYyutR7DDtqmies3nB2gjSah77s8t+9gAG+E1
-	 vtQTmPBYVC+DftcQypp0td+11f7Jm45ov4/mis/vTfBvYk2DiAA4lV94LqMgRWto4L
-	 Nj150dMoCm9EA==
+	b=JNrvXw/wBzKS/rNwJ6A9XTbAYLDEko2MRARiA5OIkIsEtr7Y6oIAl4vsKkaV8v4/S
+	 GVd6jlkri8o7vRzXRMKDLaBrnksxG4qJ0rBFCJnODp/IYyVeG6qPYctqEjqdQn51l7
+	 kG5vXSWDAYWwNXtwmRNiT2m2Hmh9sLOsGlSFkOLfRA33ccJRtqQoxbYHFPw1tZLz+/
+	 6DmbDrWoPmd3cIYId/rN44NjGppsNccbemmJqCAmhTSphMIjk4zyCkG+4Ft7IcyzCW
+	 ISxCF/o+aqPrFXL+Jt7HGPU9JhWEuAMSD9eKTvM0h6mkaUH+EcC9MuxmoYyvnoXDWr
+	 TCjhyTpJH4N0A==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1sCMCB-000000004iu-3Qlj;
-	Wed, 29 May 2024 18:30:35 +0200
+	id 1sCMCB-000000004j2-48bG;
+	Wed, 29 May 2024 18:30:36 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Lee Jones <lee@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 07/14] mfd: pm8008: drop unused driver data
-Date: Wed, 29 May 2024 18:29:51 +0200
-Message-ID: <20240529162958.18081-8-johan+linaro@kernel.org>
+Subject: [PATCH v2 09/14] dt-bindings: pinctrl: qcom,pmic-gpio: drop pm8008
+Date: Wed, 29 May 2024 18:29:53 +0200
+Message-ID: <20240529162958.18081-10-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.44.1
 In-Reply-To: <20240529162958.18081-1-johan+linaro@kernel.org>
 References: <20240529162958.18081-1-johan+linaro@kernel.org>
@@ -64,29 +64,48 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The i2c client driver data pointer has never been used so drop the
-unnecessary assignment.
+The binding for PM8008 is being reworked so that internal details like
+interrupts and register offsets are no longer described. This
+specifically also involves dropping the gpio child node and its
+compatible string which is no longer needed.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Note that there are currently no users of the upstream binding and
+driver.
+
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/mfd/qcom-pm8008.c | 2 --
- 1 file changed, 2 deletions(-)
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
-index bab17417aeec..72199840231e 100644
---- a/drivers/mfd/qcom-pm8008.c
-+++ b/drivers/mfd/qcom-pm8008.c
-@@ -167,8 +167,6 @@ static int pm8008_probe(struct i2c_client *client)
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	i2c_set_clientdata(client, regmap);
--
- 	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
- 	if (IS_ERR(reset))
- 		return PTR_ERR(reset);
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+index 3f8ad07c7cfd..58807212a601 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+@@ -28,7 +28,6 @@ properties:
+           - qcom,pm7325-gpio
+           - qcom,pm7550ba-gpio
+           - qcom,pm8005-gpio
+-          - qcom,pm8008-gpio
+           - qcom,pm8018-gpio
+           - qcom,pm8019-gpio
+           - qcom,pm8038-gpio
+@@ -122,7 +121,6 @@ allOf:
+         compatible:
+           contains:
+             enum:
+-              - qcom,pm8008-gpio
+               - qcom,pmi8950-gpio
+               - qcom,pmr735d-gpio
+     then:
+@@ -421,7 +419,6 @@ $defs:
+                  - gpio1-gpio10 for pm7325
+                  - gpio1-gpio8 for pm7550ba
+                  - gpio1-gpio4 for pm8005
+-                 - gpio1-gpio2 for pm8008
+                  - gpio1-gpio6 for pm8018
+                  - gpio1-gpio12 for pm8038
+                  - gpio1-gpio40 for pm8058
 -- 
 2.44.1
 
