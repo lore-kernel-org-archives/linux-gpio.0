@@ -1,102 +1,86 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DEE15FCE6;
-	Wed, 29 May 2024 09:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F47169AF2
+	for <linux-gpio@vger.kernel.org>; Wed, 29 May 2024 09:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716974235; cv=none; b=gvCfPBoGvf1O2fu4drFiMzW14bQLbyGb9j9RE55NEzbgq46xWpUlce7ppYBWhQy7o4bDpVzDFpUoHCf+Q5ALPO6CQq6n4lTmvwBewPKQmQpUS8NuOZ7vPRDcdyekq7Jowf2GAoX3GKNJCpv3kOyCMaBXI4qWLDNbwxDrVF8fSkY=
+	t=1716974986; cv=none; b=pmPGepZ/bCjUmPabHVw/lGMb/UBplWJ4F8HBJ3N93V4enTY+05WQ+vq/xWFv5bQMgFrpGoL4ChM+HTmPxFR81y/JElHuzzOvUsaUkuJFEQPjciWdr+g3cx6m6QMUbbXWnakV2iFSTs+vfjRMnv7FbGzE4JPYV8YIhENOsPnn+DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716974235; c=relaxed/simple;
-	bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQCeiDb+CaJt/y4MaNgo/b02/zkklGdCfUXAEiMHay4vK0+uOx2ThYXrjDHFt6c2w/h3FNnXFLeAnCVtkYUPTsNKHv4mUb/JHrCpU7v7jP/nmfEz3N4Sy6hkL+ZSoTal2x3MPxUX0Ac2IZzaE7F86+jxzalWFvA0HDVrAcEtBFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzSd2GdS; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzSd2GdS"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a352bbd9so110558266b.1;
-        Wed, 29 May 2024 02:17:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716974232; x=1717579032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-        b=jzSd2GdS7PwUVoxhb2O8GyKE5SNUArFCFIrwUpoecw9s4OO0WMgf0VumJI2jryW6eL
-         gq2VvU7/F4yg7nhHqIiEbn3pdrhxGXlbkLSKRDX4fxKa5c2W6hAxBaXI2SkjVACcq4bu
-         VGwnTaBW65LX7A99Z5aLCpIYelY6SDRTGHMQ0M+b88gb0GKG5RjQIYAlGvenSQuBepXD
-         FlG8PSy+TMDwqvJoLg70aMMPeoA2o9GrRk78+GrLoRrQW9hXh5CO7s/qvQO2824kHhjm
-         m0s/VUCr6UNbAfbzEX+MPsybwq/FYqMsJk0qIjE3IChn4YkES9X0Rs92kX7ZIfvQlCUS
-         bzhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716974232; x=1717579032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DhhdnnOXh6qGL5/6zvdk/VdVZmsP1nLae35wo137JWg=;
-        b=nvj9S5rdzvPqcrbXBT4ygJeJ1jkAr2xyKHprA8AmrUW1HwsHD9mqDILYN6RhV+cuv7
-         ttRCi4VAoD0f24M1a5jZxx1u9DU0P5/LZiUFiD7+DPFblsCBV8dP3B6/8s5tXq6sMuMu
-         K9C+egUfIU26fI9R6NSIq89IeDX8S9u8nwkcbNYN7/7tFmA3Ys0a7XwtKDleXxnIbMgu
-         e/287HinCgfaiFhfwwcu62zV5gVAz2pVcrmCd9n1K/s6VSftHeGpxkyfq4AOH5xVBNDu
-         mfifMrRsvfvWetj6KLUMaLNNdSPShryzrg7laFRFHpvuZ801aPljUPPiZSDocXH9jCm1
-         WLyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtDMjUZm/tk/13gI0Huuth1iSbk1NDrYT4Hc8BCsi3JuTHPeMEHQdPIWjnUbkWAFAuaQ0fg/Ps4PAAxJssHcH/7ULDNVrqUPCc7SwXs/RT+gghqldm8gZK1AutA3eknRr4a3xwA2FkTBGuq+6xp3IZAjXvTn2by1ThQDP+dMpz8TzEnqE=
-X-Gm-Message-State: AOJu0YyAgFNLnfpxk2ZgNOUTQQZwJORD97+Qa0UL02A7TlSE2paqr/3v
-	MjD+9bm2RhpN9gAbwmsV+QxdgUssWkN6B9ULXz5eW16J9s61AMuammU0TQktDVs6LI9f/XP21Yn
-	eeZ5iRKwbX8vgxsJ5ReQu1YxEz9I=
-X-Google-Smtp-Source: AGHT+IHGdwBKFS281WJKM1LepXLS87qJk4CkOo+icUfU1WShxVz0GmuGPZsuGmboZ5p2ros9zrvRRiQCXqmzCeTNR8M=
-X-Received: by 2002:a17:906:718f:b0:a5a:7493:5b68 with SMTP id
- a640c23a62f3a-a642d95819emr140252866b.24.1716974232163; Wed, 29 May 2024
- 02:17:12 -0700 (PDT)
+	s=arc-20240116; t=1716974986; c=relaxed/simple;
+	bh=lC9HYilaLEPRJNvUV/3RHQldHaDnLJhOOG8MTKQS3II=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=selq6qoSjgYNHg5IfxgNLd9yDANWYAsuspULcr/V4YBZbjqh9FxO00/ngJ7u+mo6k9NWMIlZrn0wOSq4RAIn85+TMxxDuqwjZKixaqE1cvKX6Awf3TKHMJiuuRnlhkG2KTuLQKuOq8h5emghAZgcjWVd3lclRsqezoJTZpKHPeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
+	by albert.telenet-ops.be with bizsmtp
+	id UxVg2C00S3VPV9V06xVglU; Wed, 29 May 2024 11:29:43 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCFbu-00GHL2-42;
+	Wed, 29 May 2024 11:29:40 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sCFcq-008wSQ-HS;
+	Wed, 29 May 2024 11:29:40 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 8/8] arm64: dts: renesas: r8a779h0: Add OTP_MEM node
+Date: Wed, 29 May 2024 11:29:37 +0200
+Message-Id: <0e4af5b32b74f901945e24ad2baefbfce37e957f.1716974503.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1716974502.git.geert+renesas@glider.be>
+References: <cover.1716974502.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528194951.1489887-1-andy.shevchenko@gmail.com>
- <20240528194951.1489887-11-andy.shevchenko@gmail.com> <358b6488-3f7c-4378-a811-175b6c77290f@collabora.com>
-In-Reply-To: <358b6488-3f7c-4378-a811-175b6c77290f@collabora.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 29 May 2024 12:16:36 +0300
-Message-ID: <CAHp75VfG__AA7bHd15-dg1UphkvzwpMN6eXzJXhyUDNW0a1_1w@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] pinctrl: mediatek: Convert to use func member
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Daniel Golle <daniel@makrotopia.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-mips@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 29, 2024 at 11:24=E2=80=AFAM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 28/05/24 21:45, Andy Shevchenko ha scritto:
-> > Convert drivers to use func member embedded in struct function_desc,
-> > because other members will be removed to avoid duplication and
-> > desynchronisation of the generic pin function description.
-> >
-> > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
-> pinctrl: mediatek: moore: Convert to use func member
+Add a device node for the OTP non-volatile memory on the R-Car V4M
+(R8A779H0) SoC, which provides E-FUSE services.
 
-Sure, if I need a new version. Otherwise I hope Linus can tweak this
-whilst applying.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> Then,
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+index 28ac930e7db1f234..3766652623fd8e5e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
+@@ -411,6 +411,11 @@ tsc: thermal@e6198000 {
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
++		otp: otp@e61be000 {
++			compatible = "renesas,r8a779h0-otp";
++			reg = <0 0xe61be000 0 0x1000>, <0 0xe61bf000 0 0x1000>;
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a779h0", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+-- 
+2.34.1
 
-Thanks!
-
---=20
-With Best Regards,
-Andy Shevchenko
