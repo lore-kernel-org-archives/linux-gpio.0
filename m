@@ -1,108 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF390E576;
-	Wed, 29 May 2024 16:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638C187358;
+	Wed, 29 May 2024 16:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716999421; cv=none; b=LaAYWe+Eu1zPv3pY1oCv94JmOzPfmhljs3mZjaLT0WmINNQkBi2vBMRr2pFJHLscbQzTLpyUEMfxTezJYAfSeZVk4y0o2SaXBRPSCuPWnOzNZ+3zEF1jsCWkBM1Ts6RX6rrup/SjsvJchNMc5jvjn3usMFP6hTRX0/t83jZSYJI=
+	t=1717000236; cv=none; b=V1OigAQ7JMUhnCo3t0GIY97NaGPKWzF5QpylnTt0Fwc/CgyQ/aJfG+C7lWVaVw3I7xqofS1TBmvLmuXxDRimRuDZgH48udJ0gzPITuJZ/IyEd2ct1KuAL3KWY+1if4VuwI0qyFTB12CYaRs0Qq+sdNf2ZrNSCCsO62WLMWJqNZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716999421; c=relaxed/simple;
-	bh=4dpB5T2dqL+I9yVD9wiiBGyseVVp1ELP7uPP7/kIEDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvG08hRHU0ITcXFRpA/sOE4BAr9CrJ0t27GX61Zs3TlPACwReqVHPn/mkzj0OcYFmtRjimMxJsibws8hox5YJ450gIbk9Dn/TQ14qu6FCn963GuCMGBkeIfrFzBEMCSs56v8U1h9vdbX6iCEIluYXho3MwvAEqA51N2fNCenYoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urwF66fA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717000236; c=relaxed/simple;
+	bh=xQFnxItaw23X3Z5K4ATnqQiJwXgY2xVxtlO/Rvgqwyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ryJIjdcVAjgyHiUH/Bn+jNLPZD5lvAyQd5HBfppr7rdtdO9NsWkY64xbGgAuLNNEu3lEX03YI+Y2cromNvWolfv+sNHB0zTP7AErNGmpzC/CnNueuPfWHqN04Ytzs5aoMvZwefSeY+yeYwtEodWSBMI2xhdq4M8WDIEzZFr3MdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxX2a2aT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urwF66fA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA5DC113CC;
-	Wed, 29 May 2024 16:17:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxX2a2aT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994C8C32789;
+	Wed, 29 May 2024 16:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716999420;
-	bh=4dpB5T2dqL+I9yVD9wiiBGyseVVp1ELP7uPP7/kIEDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=urwF66fAsw7TVYLSIJZcXYWlWU3BiZRBcZ78Ifo/KW7Imd4CXhGLpdng16r/rXw1V
-	 g2+A6fn0SGNviwZ6cKgT04v7qyhjUpaRvQp5yyy+Yc2wda6R5hro1PNbX6QXRiWVBV
-	 hUwXr2LzHZ+WkNKkYIhDXpY+uo+/aEBDPPV3CSlFSE+cB9DCp/uzBqtCwtlXGJx4Fx
-	 mUabmfb/c+VlgZAMyZw61VJZ+Bq6/uTO+rxW3Z5Jho/hbAm1v0u59875nQKyq5myz8
-	 tIUj3F8nP22QW3u1vWgvhMeSGr9aFQKpfTbBHGBAkytaUIE2I23fi4Hnbt6ec782gJ
-	 9qjddStaUJn+Q==
+	s=k20201202; t=1717000235;
+	bh=xQFnxItaw23X3Z5K4ATnqQiJwXgY2xVxtlO/Rvgqwyg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IxX2a2aTTeLmaC7Pa3LqNnTkfbHabF5Yg6us9YIk/bmS3UQVZ3Sx1WKxgIMym3xt0
+	 BCLy+PnFZwWHMqa/gxw81U5IBcou6JQy4PHyMwxKi/WQjkPlfHjbr9G1fobBSx/sjD
+	 UM3Xs1AWcUMaIkWB8eut92kYQ3AgQYvRffpilPY6uGcVeL3+BqIl1yz2LE/Q3+oAuZ
+	 +6KhJ2U5KGztBTsR4OqhYRqn25TKDSSj0mPv98L0nw5i0J9yhkCbmfh979RdnFuAsv
+	 LAnHIGu1RGRMQuuWsayy1dVmrlHWidUSaF2YEaNqtXqZlGQcHcvNSDxmGXeXP6gkK1
+	 +S1uYI+nT5zFg==
 Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sCLz2-000000004VC-0Sv0;
-	Wed, 29 May 2024 18:17:00 +0200
-Date: Wed, 29 May 2024 18:17:00 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1sCMCB-000000004ii-1PJU;
+	Wed, 29 May 2024 18:30:35 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Lee Jones <lee@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya <quic_c_skakit@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 03/13] mfd: pm8008: deassert reset on probe
-Message-ID: <ZldU_LqjkU-4uphO@hovoldconsulting.com>
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-4-johan+linaro@kernel.org>
- <4468becb-dc03-4832-aa03-5f597023fcb2@linaro.org>
- <ZjyX6iBqc50ic_oI@hovoldconsulting.com>
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 01/14] dt-bindings: mfd: pm8008: add reset gpio
+Date: Wed, 29 May 2024 18:29:45 +0200
+Message-ID: <20240529162958.18081-2-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.44.1
+In-Reply-To: <20240529162958.18081-1-johan+linaro@kernel.org>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjyX6iBqc50ic_oI@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 11:31:22AM +0200, Johan Hovold wrote:
-> On Wed, May 08, 2024 at 05:12:51PM +0100, Bryan O'Donoghue wrote:
-> > On 06/05/2024 16:08, Johan Hovold wrote:
-> > > Request and deassert any (optional) reset gpio during probe in case it
-> > > has been left asserted by the boot firmware.
-> > > 
-> > > Note the reset line is not asserted to avoid reverting to the default
-> > > I2C address in case the firmware has configured an alternate address.
-> 
-> > > @@ -169,6 +171,10 @@ static int pm8008_probe(struct i2c_client *client)
-> > >   
-> > >   	i2c_set_clientdata(client, regmap);
-> > >   
-> > > +	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-> > > +	if (IS_ERR(reset))
-> > > +		return PTR_ERR(reset);
-> > > +
-> > >   	if (of_property_read_bool(dev->of_node, "interrupt-controller")) {
-> > >   		rc = devm_regmap_add_irq_chip(dev, regmap, client->irq,
-> > >   				IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
-> > 
-> > So not resetting is fine and I understand you want to retain the address 
-> > given by the firmware, I think that's the right thing to do.
-> 
-> > In addition to adding a small delay suggested by Andy - a few 
-> > microseconds pick a number, I think you should verify the chip is out of 
-> > reset as we would do with many other i2c devices.
-> 
-> > In this case, suggest reading REVID_PERPH_TYPE @ 0x104 and 
-> > REVID_PERPH_SUBTYPE @ 0x105
-> > 
-> > REVID_PERPH_TYPE @ 0x104 == 0x51 (PMIC)
-> > REVID_PERPH_SUBYTE @ 0x105 == 0x2C (PM8008)
-> 
-> I'll consider it for v2.
+Describe the optional reset gpio (which may not be wired up).
 
-I decided to not add any revid checks for v2 as it's not strictly
-needed. This is something can be added later when/if needed.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The irqchip registration will also fail if there's no from reply from
-this address.
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+index 0c75d8bde568..e1e05921afb4 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+@@ -29,6 +29,9 @@ properties:
+ 
+     description: Parent interrupt.
+ 
++  reset-gpios:
++    maxItems: 1
++
+   "#interrupt-cells":
+     const: 2
+ 
+@@ -97,6 +100,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
++    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/mfd/qcom-pm8008.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+ 
+@@ -115,6 +119,8 @@ examples:
+         interrupt-parent = <&tlmm>;
+         interrupts = <32 IRQ_TYPE_EDGE_RISING>;
+ 
++        reset-gpios = <&tlmm 42 GPIO_ACTIVE_LOW>;
++
+         pm8008_gpios: gpio@c000 {
+           compatible = "qcom,pm8008-gpio", "qcom,spmi-gpio";
+           reg = <0xc000>;
+-- 
+2.44.1
 
-Johan
