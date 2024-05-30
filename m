@@ -1,100 +1,119 @@
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB8018396A
-	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 08:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D58317E46B
+	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059523; cv=none; b=kn4GXFXMuN6DGbUoNZGMqT2FLMvhz+NSfv14Sk6EzAh+GKkDvuQ7wd3urwSAdjSlEyR4U5KaJvHzH3m3UOjb33c7toNQUkW6cWQMHnUNPHq5WTZne+FabwEZUhZoe6GJ6Y/7OiuX/R9ITa3kZun7ZKPhvq8Y1teu+IClEM6W5Fk=
+	t=1717059749; cv=none; b=egL7lsPocSuan58hwyP/f5calpERNmRc8SJIvO935Zz4x1au1gqGrfry3NKVYrZMS7GqsGpRK3qr7PtFScEr4ln9wS0sQJorUYhmFQ5plgBtAZo087P57cA80y0T/OWTdbO3r/v+WnEKeg6Ln6I8tenO0i9wiJe/ezS+IJShglw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059523; c=relaxed/simple;
-	bh=AtdSj8Gi5BjDdlTV9ZqdN7OUIGwv22hj9Vwr0vi/QVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uxzf4eLWPnObk3NAzyGFUAF2drffRWe+9FyZTVFwwatdne7yFxQqK9dKd0/Bn+nnjsDwnQcQM9+NOKzH/FND0BxruRTUL9e89DYslDcGE20+cTktYaWJ1SlNyuXIfQaAvfP/Ql4dJE7iDs2v0BgifxJszjCLrYMtQDKExoQAcqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+	s=arc-20240116; t=1717059749; c=relaxed/simple;
+	bh=F2UL5a5lNnRgjZ1mIiR2YUOReGq+mkXTrOgzg/TJ45E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0BwKOu2wmFeNK/Ao+4ZWwl7vbYm11YrayzrxGofw9rvp0gmIMk0/uxbrZAZc7H6l6WH1oEaHiAyygataiptloZK0sL5UBTl5zEQv7UIcsE6mBpwdWnRPt1R+ukcPNohA+fzY+TS9F8nO+B0CMgNe0BUls5xXYgJHO9SiLSfDR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id cd6d5db0-1e62-11ef-8e2e-005056bdf889;
-	Thu, 30 May 2024 11:58:37 +0300 (EEST)
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 51e6d162-1e63-11ef-80c8-005056bdfda7;
+	Thu, 30 May 2024 12:02:22 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Date: Thu, 30 May 2024 12:02:19 +0300
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-mips@vger.kernel.org
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
 	Jacky Bai <ping.bai@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
 	Sean Wang <sean.wang@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 11/11] pinctrl: pinmux: Remove unused members from struct function_desc
-Date: Thu, 30 May 2024 11:55:20 +0300
-Message-ID: <20240530085745.1539925-12-andy.shevchenko@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
-References: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put()
+ cleanups
+Message-ID: <ZlhAm-giX6jNaUKr@surfacebook.localdomain>
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+ <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com>
+ <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Mon, May 13, 2024 at 01:59:03PM +0200, Geert Uytterhoeven kirjoitti:
+> On Sat, May 4, 2024 at 3:14 PM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
 
-All drivers are converted to use embedded struct pinfunction.
-Remove unused members from struct function_desc.
+...
 
-Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/pinctrl/pinmux.h | 9 ---------
- 1 file changed, 9 deletions(-)
+> You missed one trivial conversion, presumably because no error handling
+> and thus no of_node_put() is involved?
 
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-index 9b57c1cc9d50..2965ec20b77f 100644
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -134,16 +134,10 @@ static inline void pinmux_init_device_debugfs(struct dentry *devroot,
- /**
-  * struct function_desc - generic function descriptor
-  * @func: generic data of the pin function (name and groups of pins)
-- * @name: name of the function
-- * @group_names: array of pin group names
-- * @num_group_names: number of pin group names
-  * @data: pin controller driver specific data
-  */
- struct function_desc {
- 	struct pinfunction func;
--	const char *name;
--	const char * const *group_names;
--	int num_group_names;
- 	void *data;
- };
- 
-@@ -151,9 +145,6 @@ struct function_desc {
- #define PINCTRL_FUNCTION_DESC(_name, _grps, _num_grps, _data)	\
- (struct function_desc) {					\
- 	.func = PINCTRL_PINFUNCTION(_name, _grps, _num_grps),	\
--	.name = _name,						\
--	.group_names = _grps,					\
--	.num_group_names = _num_grps,				\
- 	.data = _data,						\
- }
- 
+Nothing is missed. The below is a redundant change.
+
+...
+
+> -       for_each_child_of_node(np, child) {
+> +       for_each_child_of_node_scoped(np, child) {
+>                 if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
+>                         count++;
+>         }
+> 
+> If you prefer not to include this
+
+I prefer this not to be included as it will give a misleading signals to the
+use of the original API(s).
+
 -- 
-2.45.1
+With Best Regards,
+Andy Shevchenko
+
 
