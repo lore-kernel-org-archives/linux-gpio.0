@@ -1,75 +1,101 @@
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B102B9A6
-	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 09:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CE16F300
+	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 09:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060784; cv=none; b=EVDRFKzDbn8vfoovL2OdcPRBLM7gzsCNWdtfWUCUx0ArEEF/lCrMeaehaqfPiMw7m5rxet1zJSI5cv8vQMoRGgVi96zzAEgFIXevSG4oiFGc9SO7DZinaOtQkZer+JjJ3aBRsYFX0f19wVbl+iknBFK8qLiXp5zppWKjRHPxpkQ=
+	t=1717060909; cv=none; b=KO8kL9Vvjug5t901Ez6kSg+FTXOQuwyuscpOb/CcmxYuzfuonVFuWMGl5cYoP09Zqn9uaRUeWxtG51clAI5ZBwUEgwLAG5ypZHOn/XhiJjRzBKgZM0Hx6gepcfUDUWAJuv94ttwkcPBEuuJhjtg6cn0eE/Yc59s6wnoliHB7J3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060784; c=relaxed/simple;
-	bh=T0jmtYHHSMPtDQE4PpIt/OUcXb9+vWLEEcBAfOJfEk8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IsR8w4xxQmcHjrzI3+TJkJnE0y60LgC4lfANKjEWAUJ5LGlumpsqVfFTuBv9oW1fpEcI1EGhJf+Kz/Gh02QOpMZxVjaVcYJX4YJVJ0xLZ9PB8tcBF0BQcPJbGGm8TRa6zWC1NXj3byuL1xPqDAgFEj1jxKIPvHE3rKB8LzjE9dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d4b9:349f:44ea:8b43])
-	by andre.telenet-ops.be with bizsmtp
-	id VMKa2C0052Aokgh01MKajb; Thu, 30 May 2024 11:19:34 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCbvf-000nZB-EY;
-	Thu, 30 May 2024 11:19:33 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sCbwb-00ALoP-Pa;
-	Thu, 30 May 2024 11:19:33 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1717060909; c=relaxed/simple;
+	bh=LOuk5ngQgDvwGWmTqF8UHa1uZEIcOdoIOKhJeBC24z0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oYA6Ey/cb52ZKuBRr+uXnJ+CodBDTwfZI3+sxDVYiZ/XwlbBelKhomv6+RgKev5eeQKl30/VJ7O7frseKPFHy8FuY+U8FBM1tRzw58dKldJnUCgKq2J1KS07z4mcnAziTlHH98sJND3Wj5P6j8gAWHJvP36dO/+jqhbgcsTTYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=C1N+N03H; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="C1N+N03H"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso6441895e9.3
+        for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 02:21:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717060906; x=1717665706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2NdMUTFKCND4TuQAML2rnvjKT/jKwjKz+oofuCTZRU=;
+        b=C1N+N03HSClTf7HDAbAg03esAG0+Hm8TAvrIXn0xEH5owaeDI0RbU8q4kXwKvam6YH
+         6rJ25m5X9RKo1K1EwEidkD4JpcmHehhR3FabH2EOxdr7aBtp/vEiD0wzYkrgcO4HSGRA
+         gKvs/fZ1Cf+zJJDnvOLovhlC9TwqeK0vtppkz6ArotbeipU1Am/gsSuBZIpOnLIYZcPz
+         Yx2squZ9tT4c9XLq1T1swEm9+fYB6X7re+6inPYBToqzoiuiJuDx5PFCMiw5St/bhrbm
+         yygowueKgj/KrRX7pqC55WDPsqKeiAWcESt0Xy6l3iKjpZxqM/OasJU/xJWUpVoVw6V/
+         qsYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717060906; x=1717665706;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J2NdMUTFKCND4TuQAML2rnvjKT/jKwjKz+oofuCTZRU=;
+        b=TMJFbAJ3thRJ8GE/3x5zxLO9hdMv8dIWfcV+2oHdr1sfEcKG8RvO5U1i/75mXGIcWD
+         XzrjQS8Jkd582HgeI0tCuTVLXRKoftECqOVF1prhx6wmtmzd4fHl4CAMdKvqaBt36sQg
+         CvQn31yGB+jG+YhikqTP3LJUwhV8ay/jhYX6UucKF7RYs8NhR348lvBU/BYaIPVKCRTD
+         CRJ8FlFZC7Aipc/Ihkq8HtEaydFLYJkJAy+LbgC1L38UJq2XiKEXIZWt7i/t40Lr+X3H
+         H1GHR32ZdHsMAKr1cHN0WGUfVxuoxx5rxQ7SFZNAc2imDe/R6ddhoTGG8MjjaXW4ymcr
+         PNcA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6J/HWhFruZ8DUZqiD9pgDjSMQEB3b215pNfH0hRh+IkgudJvWPby1SwYSXLQOKGHXdi0aWYMGwqSkc19Q8jLJRDjsicgYg8+cOg==
+X-Gm-Message-State: AOJu0YxCJhY+bFbYk7/gmcs9o9mx8IV9iTFDdegZbNK5anemqb8Bydc3
+	dAyjCnzHgY91nM2PG0LzQIPO0hZVtnpELliv3oz5EdUXviEbMFnjUt/aHhk26dU=
+X-Google-Smtp-Source: AGHT+IGvEkCdARfpYJn7j9uuA7yNxUbgpb8AAl+3ZNngODEN/Wqw/TiTEIYw1nqx7Q6osL9EIgQc7Q==
+X-Received: by 2002:a05:600c:154f:b0:421:b79:93fd with SMTP id 5b1f17b1804b1-4212781b4a7mr13857215e9.21.1717060905592;
+        Thu, 30 May 2024 02:21:45 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:aae:8a32:91fa:6bf5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212706c46fsm19043935e9.28.2024.05.30.02.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 02:21:45 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Baryshkov <dbaryshkov@gmail.com>,
 	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: renesas: rzn1: Use for_each_child_of_node_scoped()
-Date: Thu, 30 May 2024 11:19:29 +0200
-Message-Id: <c0a28f466c42d5d59c7fadfa1fd05fd512d43b6f.1717060708.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to errnos
+Date: Thu, 30 May 2024 11:21:43 +0200
+Message-ID: <171706089866.32720.4484394923188699673.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
+References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Use the scoped variant of for_each_child_of_node() to simplify the code.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-pinctrl for v6.11.
 
- drivers/pinctrl/renesas/pinctrl-rzn1.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Mon, 27 May 2024 16:23:44 +0300, Ilpo Järvinen wrote:
+> amd_gpio_init() uses pci_read_config_dword() that returns PCIBIOS_*
+> codes. The return code is then returned as is but amd_gpio_init() is
+> a module init function that should return normal errnos.
+> 
+> Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
+> errno before returning it from amd_gpio_init().
+> 
+> [...]
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzn1.c b/drivers/pinctrl/renesas/pinctrl-rzn1.c
-index e1b4203c66c6f836..39af1fe79c8462eb 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
-@@ -737,13 +737,12 @@ static int rzn1_pinctrl_parse_groups(struct device_node *np,
- 
- static int rzn1_pinctrl_count_function_groups(struct device_node *np)
- {
--	struct device_node *child;
- 	int count = 0;
- 
- 	if (of_property_count_u32_elems(np, RZN1_PINS_PROP) > 0)
- 		count++;
- 
--	for_each_child_of_node(np, child) {
-+	for_each_child_of_node_scoped(np, child) {
- 		if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
- 			count++;
- 	}
+Applied, thanks!
+
+[1/2] gpio: amd8111: Convert PCIBIOS_* return codes to errnos
+      commit: d4cde6e42f2eb56436cab6d1931738ec09e64f74
+[2/2] gpio: rdc321x: Convert PCIBIOS_* return codes to errnos
+      commit: 9a73e037f4b5eb45c9ecccb191d39c280abe7cbd
+
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
