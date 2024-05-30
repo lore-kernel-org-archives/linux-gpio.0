@@ -1,140 +1,113 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6C14B967;
-	Thu, 30 May 2024 09:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D715278D
+	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 09:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060915; cv=none; b=Y0tj7O+i5L+L6f3crUrVfDAr2eacBOzU8TS9Kg8y6HrqEFyGelhmiqzYh2jBPHW0vaj+2/kJGruqITJgL2MhJaPcBfUZ//51wyAF/sr1YMuUTtcuvOi8MuETKbQ1443zN83c4dvI6miJhshwg2iKrcrQPd8vi5QaE9ycUFnOLIU=
+	t=1717060937; cv=none; b=pwikcXC3yCl5HQfnal6i5OGuwTwa6t9OZ+4nowrMxMjX3N5VGmxyON75fWpY4V83ldlCmfMBgYnB/wzDmC42THdZ51XcNz/52bvzsKNoyA0BKH3PZkGZs3/P1HjhjoSaeX8+AMMR2n96DcuOuswYNDSyTK5raV3dd2hVCZWzx6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060915; c=relaxed/simple;
-	bh=6FVSMp5UzL317G0j5W9LunE9q3jEg6QzEPMtdCTKcKA=;
+	s=arc-20240116; t=1717060937; c=relaxed/simple;
+	bh=qOALaBFtiFKu1Kyw1uTvIGvPyHrAyxbJXFr9phnkPyY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f3dlzHHWA0MKUvkiOZGquWLB8705fJN69OtYKO3RHmLzbqp3N23yosnYVrh2lpyplERdJ19/iBwFYbsTAchKaVxu37FPWSII+7MsYcF0ECyOqiLD+5cAEgKqXmKzv1R7B/FVBLOsBY7sbYUbrnCWIZEivYMRYfDCUYER5uH03KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-794ab0eb68cso76595885a.0;
-        Thu, 30 May 2024 02:21:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=ocbhb/kbQGtkgnH2pRMbuh/9dXhtaQnyumAyMMHi6vsLOMdO/pfmrAOb87ByxTNqpYluRq7LNVpIpQeNmNG2n32YRMMuBnnGz8K8OUtk/76dqvBSb6slO8IMu7/RgTGlEH6zP0mJA7mwmQTaDHsNM9Gpfbs+GZHloADkT/GMF+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PTJpiTIS; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PTJpiTIS"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so6645181fa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 02:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717060935; x=1717665735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m/z6JrsczbGlJdeagCzokQ7NOChpkizM9tHLk7nwYHc=;
+        b=PTJpiTISayIe2cIHPvwAxRZOwUQ5rkNCEInN9p+19wmMPxnbq6OBTG0g0eJXQtGbnn
+         4AvcP1I/AzY42xE+n5m1gt/3WxNhm7s3MMrFPohjlc2Z7DUzndveWQPK40UpLP067bvU
+         DlOiWujvhVL1GeVakV2R/UX2i+YviaSdnVx7kFJISjaaDAm6MwdzkTg9uHhLjLn8IQfh
+         fzA1wvohqU9Lh4pHLFET5rQLwragHVmHrJBnh7cRy7ogMJul+8jhmgBUspidCXOPbiRy
+         3ktGE6talZD5zOXXbXoeMtjqlGx7TzrYgabxguJEO5JJPrF3Jg1IFZlR93JF7IVJTxE6
+         E0ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717060911; x=1717665711;
+        d=1e100.net; s=20230601; t=1717060935; x=1717665735;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FWN78EB24MX6Q0HZqErBr8t9tcr4nbKt3etlWVHkE68=;
-        b=KP/n8SXmLoudi6c7yimkqVKUIgeyV3IktwUchm+433df3AH85xnBLG7zMlxtlFutNL
-         2urTIAR7vEFsGB9nMqouMvZdN6hwgMiVWPya8NNrUCmazpwt9gWsmc12Dv2gmMwcNehP
-         Y4XrJ8t9NZGz8KhOHZvgaNVrM36U4tybruoYGPQq9Cek0gOQuy+R5mlsZooUOK57B950
-         TSE3BgXc9Ei1AJeauunr6UkswDqK0jLRxqIMwP7QERtkWGhri6Kp8CjEXqC27KdWdN9F
-         FhgPsbcHC0MSs60p6BFj4O3Shrd6F0zBhRQe7ieTlwKgUUDdhXxj11yV+Z2cvOMddgDj
-         XmxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYVO0tsHpG6+aB6i2peHETpTL69Iha2J+Zr/oMSeJnHHx/Q5E160/PfULGdxb+yWMa/ijDgNCLqSYRGuxucdnsqkTgfsL28MQOpElKuIgnKe0ucPW1PP6OMCDH6GTKC0NaiD+tWH7ptYpNviwb7apRA/pHVGHOuDvAnHU33vCbrkDQsRfJtcmi2j3u/8tkoTNQcCukT+FmFyddvZ/seWCpmA/cuR6sg9KJF9ZvmY7Hd6qeJYwlpu73vd7VUtsg7B+mHN4kFDojM76SWw==
-X-Gm-Message-State: AOJu0YxJ0vnLsK0zrecA6297Efu8TNDMoQQQ+2n17bZ4q/P5s15Lqxle
-	0vdJVMKykTXPV5lMckEtLS71QPoq76Y08nU0xQo8PkgrhU+msp5hEpzrsLEE
-X-Google-Smtp-Source: AGHT+IFnOeVdl75ED81mRu+QfJiqXLb14x/cckQKLw4UCGtpWB3AWmqQNs7Osz4Top3dnRcPBr82+w==
-X-Received: by 2002:a05:6214:c49:b0:6ad:7573:acb9 with SMTP id 6a1803df08f44-6ae0e0e573dmr21350226d6.0.1717060911088;
-        Thu, 30 May 2024 02:21:51 -0700 (PDT)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad6ebd52d5sm49108846d6.54.2024.05.30.02.21.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 02:21:50 -0700 (PDT)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-792bdf626beso58529285a.1;
-        Thu, 30 May 2024 02:21:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+Jom2LoG3rmXq9o3tjgZqFaV7K3vHk2TXRM1NG36mS6B7+B/AukWsKEZe9RBTpHy9J7vkSgllDkEIqaFmpPNZUm5knvpxl01S3RmbMFFkFbtu6xo60toploMIOfC3ojgx2BznRpO9PTH4l3xhhZIlYxUWugcqr31tEs9cVlEeYpPBhin3I3QfIyBmctndTSmtHuN5J+S3loS8K1MtC2x7VBqzKZYFdIbOyrMFtkrTylHQeD0Sq0tHDbPZJW5iANZgXyoweELMItVBAg==
-X-Received: by 2002:a25:8c84:0:b0:dd1:6cad:8fd3 with SMTP id
- 3f1490d57ef6-dfa5dcdc800mr946343276.27.1717060889311; Thu, 30 May 2024
- 02:21:29 -0700 (PDT)
+        bh=m/z6JrsczbGlJdeagCzokQ7NOChpkizM9tHLk7nwYHc=;
+        b=oAkmGQqBaNfjmlEoN8q24m+NgLTAWgXq++4TCgHwSUZomfAQBKy9aDFRnwH50YDb6b
+         /S97hpua04iOycuQxxxWzaO8GxTD+1S7sAbzdfagvqI/n4i9Nf3DjjtTgf9BJJOmzMLV
+         0+AGfb8Svlg3samx1U919MYluPT32wSAOe0yxMcILFJfKdITLU9eyfwAh/7V2ZeSM2Ap
+         X11idC9cc1HuL1gqz35mogQCh43rYrjQxPg8P7O9HWlk6rQfWccbZQY10YQNvjPNg5tY
+         wf3p2H1Hm+i6olq/scbTZDrjUE3+emViqTlYYT/fPUgfvLYy1SQh1W2tjBES25SMRROg
+         Rorg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5afuhq78WKuoXOGK3d6RHw+so19FdPQu8Jn6LTW4sCMe8JT8md7lTkHfqesmm5MeESrCVTaVNTg6qX0QSmxS7wqTeY+cHBvabsQ==
+X-Gm-Message-State: AOJu0YxE8MxmH0jddTcBnero5qS6gBXwbknoii6CWVZ1q02t5uQpRPJs
+	YaifdHqxm2ado9Jf5sCWv8ENaZ6e5JR+eHWmIYmImuQGN0copKvMNUQ9fgFbi77EJIVTf1A1ybj
+	jjqdYoAEFqYclQITHwNwQqNmQw6SnLuUlo+5SpvgLnL/2VA8W
+X-Google-Smtp-Source: AGHT+IGRJ3Rf6Gezxv9hcamuYQlhVWVAgV+Pbef78MTY3m0hnhXDE53keEkjqkBHl1Toem6mykR6y8+l+5Vju2z3wBI=
+X-Received: by 2002:a2e:87d4:0:b0:2ea:8027:a6a7 with SMTP id
+ 38308e7fff4ca-2ea8488ac29mr6544131fa.50.1717060933982; Thu, 30 May 2024
+ 02:22:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
- <ZlhAm-giX6jNaUKr@surfacebook.localdomain>
-In-Reply-To: <ZlhAm-giX6jNaUKr@surfacebook.localdomain>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 May 2024 11:21:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXqXVT3Y7N8pTb_68E23RkLGi=ySOSDkAWX4MOpP09Q4g@mail.gmail.com>
-Message-ID: <CAMuHMdXqXVT3Y7N8pTb_68E23RkLGi=ySOSDkAWX4MOpP09Q4g@mail.gmail.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
+References: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20240527132345.13956-1-ilpo.jarvinen@linux.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 30 May 2024 11:22:02 +0200
+Message-ID: <CAMRc=MdWLzA=PYJg_6pq-doZ807S2w4Lo6SyLMkbVi41zdzzTg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: amd8111: Convert PCIBIOS_* return codes to errnos
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Baryshkov <dbaryshkov@gmail.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
-
-On Thu, May 30, 2024 at 11:03=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> Mon, May 13, 2024 at 01:59:03PM +0200, Geert Uytterhoeven kirjoitti:
-> > On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp=
-.com> wrote:
-> > You missed one trivial conversion, presumably because no error handling
-> > and thus no of_node_put() is involved?
+On Mon, May 27, 2024 at 3:23=E2=80=AFPM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
 >
-> Nothing is missed. The below is a redundant change.
+> amd_gpio_init() uses pci_read_config_dword() that returns PCIBIOS_*
+> codes. The return code is then returned as is but amd_gpio_init() is
+> a module init function that should return normal errnos.
 >
-> ...
+> Convert PCIBIOS_* returns code using pcibios_err_to_errno() into normal
+> errno before returning it from amd_gpio_init().
 >
-> > -       for_each_child_of_node(np, child) {
-> > +       for_each_child_of_node_scoped(np, child) {
-> >                 if (of_property_count_u32_elems(child, RZN1_PINS_PROP) =
-> 0)
-> >                         count++;
-> >         }
-> >
-> > If you prefer not to include this
+> Fixes: f942a7de047d ("gpio: add a driver for GPIO pins found on AMD-8111 =
+south bridge chips")
+> Cc: stable@vger.kernel.org
+
+I dropped these.
+
+Bart
+
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-amd8111.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> I prefer this not to be included as it will give a misleading signals to =
-the
-> use of the original API(s).
-
-Thank you for reminding me to send this out as a separate patch :-)
-
-https://lore.kernel.org/r/c0a28f466c42d5d59c7fadfa1fd05fd512d43b6f.17170607=
-08.git.geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+> index 6f3ded619c8b..3377667a28de 100644
+> --- a/drivers/gpio/gpio-amd8111.c
+> +++ b/drivers/gpio/gpio-amd8111.c
+> @@ -195,8 +195,10 @@ static int __init amd_gpio_init(void)
+>
+>  found:
+>         err =3D pci_read_config_dword(pdev, 0x58, &gp.pmbase);
+> -       if (err)
+> +       if (err) {
+> +               err =3D pcibios_err_to_errno(err);
+>                 goto out;
+> +       }
+>         err =3D -EIO;
+>         gp.pmbase &=3D 0x0000FF00;
+>         if (gp.pmbase =3D=3D 0)
+> --
+> 2.39.2
+>
