@@ -1,132 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BB76F301;
-	Thu, 30 May 2024 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44043152787
+	for <linux-gpio@vger.kernel.org>; Thu, 30 May 2024 08:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059388; cv=none; b=VcVybITCTwQgDal5FhlCFXx3rguDG3Pq3KIMziBMArBd94PyjXXbFzw2SKkT0wgMMwZUWLYWOKKAZH+e8Q/3nrJbeAvrszJZWFkgjxHoZOC/GaTWsoQ14EkVf0rYQvkasn4q/m22s839HFLd1VEROKIX5CfCg7FtXAenOnNBPfQ=
+	t=1717059476; cv=none; b=WLgrmSmn8cBe4qffDwf3114e/4SxRMfsa9iYDTkcWNRwMLU+TcFN4dxVroTwvm9hCG7i8Ke5JV0xujxt/tyluOooDdBRETXNzDE8opiepPt1GiSrhBjJV/tDUeUEv1DbXE19dXo5KFqBLCJMr1XlV8+tc5IfhKq9fk1sI4hhBbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059388; c=relaxed/simple;
-	bh=fum/BPvWuDHoboZhfPtwEwo9cUCkLkyCgJcO+Gf/NjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwi6T4Jb12nZ0Xrz8CyaasEanfmkrQLXYPMuPs6hrDzjpYHbPFcw62KSgu9cruCv4AJjogdbqmfiZqG8c5+KfzLTZFD0FLye65RRhWY/xZKzj/wF5WsdwKki151BUb/bskXIY8B5E6Tiiz4zzMo7wAPdfTKIj+TevZtPsinLkaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrDPeC2x; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrDPeC2x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED5B2C32786;
-	Thu, 30 May 2024 08:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717059388;
-	bh=fum/BPvWuDHoboZhfPtwEwo9cUCkLkyCgJcO+Gf/NjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MrDPeC2xAruMf0dsLELM9FoeYWMHVJCNCBGH8lb4co9Con9cFEHZl3zEt26HxOX8T
-	 wv5V3SUq47QQghlMVGMwD8CnghcgGDPdi4zmEr9c8WuXg+Lln3jXBRoQipd/aGL8ZP
-	 eJoNUKhq1dJZIPdSRcI3plFu8KT/4nF7XHpDS6lgqYAfmARlrH7Eic/3Bwb4nq5PPE
-	 y5vEzRHuvWd49tf3Qhq7Qv68aDHDVq8RIXizIQqPSxm0Q0oXvE2VZSIih4F0VgfgCB
-	 MU5L1amHuAmAPgNUsKyEi88dsPNotrHJwnerM5k+0fwZy6TOXzgQzXdI4xW6fMZ1eA
-	 gafO4//xKUfIg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sCbaG-000000004kF-0kIr;
-	Thu, 30 May 2024 10:56:28 +0200
-Date: Thu, 30 May 2024 10:56:28 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
+	s=arc-20240116; t=1717059476; c=relaxed/simple;
+	bh=rMtuf0zcS3kB8x7D/HT0/cZ54ltIPRIKq3ttpS2CiSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/0ahHh6wgSDZZgSzn5oBiJM8gDTrvINA/vVeq0quJg/z/wrmQesLRgYqaSTWRczboQd2iYPw74za/yUInEaKFUz0y7bTpt9rZUXNVESN3v/wqO0IcVds4vBBE7VOBTYgMyWMUyERATAD1HM3ejlGCA4nY26HKvZhRjWBB3KKbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id b11f2cc6-1e62-11ef-8d3e-005056bd6ce9;
+	Thu, 30 May 2024 11:57:52 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 13/14] regulator: add pm8008 pmic regulator driver
-Message-ID: <Zlg_PP3PomxYGJ8A@hovoldconsulting.com>
-References: <20240529162958.18081-1-johan+linaro@kernel.org>
- <20240529162958.18081-14-johan+linaro@kernel.org>
- <CAHp75VcC5t1FynFeHGd+57=AeXKE8u0uduzOfozsG3MEzCPpDQ@mail.gmail.com>
- <Zlg1bGOs3V3TkHck@hovoldconsulting.com>
- <CAHp75VeiVSxJwjxXyNueinudOfj-WHZEUg32VBTW4PfCfB9Q+g@mail.gmail.com>
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v3 00/11] pinctrl: pinmux: Embed and reuse struct
+Date: Thu, 30 May 2024 11:55:09 +0300
+Message-ID: <20240530085745.1539925-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VeiVSxJwjxXyNueinudOfj-WHZEUg32VBTW4PfCfB9Q+g@mail.gmail.com>
 
-On Thu, May 30, 2024 at 11:46:12AM +0300, Andy Shevchenko wrote:
-> On Thu, May 30, 2024 at 11:14 AM Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, May 29, 2024 at 11:02:57PM +0300, Andy Shevchenko wrote:
-> > > On Wed, May 29, 2024 at 7:30 PM Johan Hovold <johan+linaro@kernel.org> wrote:
-> 
-> ...
-> 
-> > > > +#include <linux/array_size.h>
-> > > > +#include <linux/bits.h>
-> > > > +#include <linux/device.h>
-> > > > +#include <linux/math.h>
-> > > > +#include <linux/module.h>
-> > >
-> > > > +#include <linux/of.h>
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/regmap.h>
-> > > > +#include <linux/regulator/driver.h>
-> > >
-> > > + types.h
-> >
-> > This one is already pulled in indirectly and I'm not going to respin for
-> > this.
-> >
-> > > + asm/byteorder.h
-> >
-> > Already explicitly included in the code you left out.
-> 
-> Is there any guarantee it will be like this? I don't think so. That's
-> why there is an IWYU principle to give more flexibility of reshuffling
-> the (core) headers. And I believe you know that we have way too far
-> dependency hell in the headers in the kernel. Have you seen what Ingo
-> tried to do and what the potential achievements are?
+As promised to Linus W. there is a series that converts struct function_desc
+to use struct pinfunction. With this it both struct group_desc and struct
+function_desc will rely on the generic data types (struct pingroup and struct
+pinfunction respectively). I haven't compiled everything, some builds might
+fail. Anyway, comments, reviews, testing are all appreciated. 
 
-The driver is using cpu_to_le16() from asm/byteorder.h so the __le16
-type definition will be pulled in.
+In v3:
+- added 'moore' to the mediatek patches summary (AngeloGioacchino)
+- added tags (AngeloGioacchino)
+- fixed build error in IMX driver (LKP)
 
-> 
-> ...
-> 
-> > > > +               rdev = devm_regulator_register(dev, desc, &config);
-> > > > +               if (IS_ERR(rdev)) {
-> > > > +                       ret = PTR_ERR(rdev);
-> > > > +                       dev_err(dev, "failed to register regulator %s: %d\n",
-> > > > +                                       desc->name, ret);
-> > > > +                       return ret;
-> > >
-> > > It's possible to use
-> > >
-> > >   return dev_err_probe(...);
-> > >
-> > > even for non-probe functions.
-> 
-> (this should be "non-probe deferred functions")
-> 
-> > This is a probe function(), but as I've told you repeatedly I'm not
-> > going to use dev_err_probe() here.
-> 
-> Yeah, I got it, some developers are leaving in the previous decades to
-> make code very verbose for no benefit, no problem.
+In v2:
+- fixed compilation problems found so far by LKP
 
-And some developers write unreadable code just to save a few lines of
-code. I prefer clarity.
+Andy Shevchenko (11):
+  pinctrl: berlin: Make use of struct pinfunction
+  pinctrl: equilibrium: Make use of struct pinfunction
+  pinctrl: ingenic: Provide a helper macro INGENIC_PIN_FUNCTION()
+  pinctrl: mediatek: moore: Provide a helper macro
+    PINCTRL_PIN_FUNCTION()
+  pinctrl: pinmux: Add a convenient define PINCTRL_FUNCTION_DESC()
+  pinctrl: pinmux: Embed struct pinfunction into struct function_desc
+  pinctrl: imx: Convert to use func member
+  pinctrl: ingenic: Convert to use func member
+  pinctrl: keembay: Convert to use func member
+  pinctrl: mediatek: moore: Convert to use func member
+  pinctrl: pinmux: Remove unused members from struct function_desc
 
-Johan
+ drivers/pinctrl/berlin/berlin.c           |  21 +-
+ drivers/pinctrl/berlin/berlin.h           |   6 -
+ drivers/pinctrl/core.h                    |   2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c   |  14 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.c  |  10 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.h  |   6 +
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c |  32 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c |  42 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7629.c |  20 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7981.c |  34 +-
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.c     |  24 +-
+ drivers/pinctrl/pinctrl-equilibrium.h     |  12 -
+ drivers/pinctrl/pinctrl-ingenic.c         | 707 +++++++++++-----------
+ drivers/pinctrl/pinctrl-keembay.c         |  22 +-
+ drivers/pinctrl/pinmux.c                  |  19 +-
+ drivers/pinctrl/pinmux.h                  |  19 +-
+ 17 files changed, 503 insertions(+), 511 deletions(-)
+
+-- 
+2.45.1
+
