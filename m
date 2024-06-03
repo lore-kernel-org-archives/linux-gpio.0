@@ -1,94 +1,150 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724291384BD
-	for <linux-gpio@vger.kernel.org>; Mon,  3 Jun 2024 18:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3426513B798;
+	Mon,  3 Jun 2024 20:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717438826; cv=none; b=eWuskjpb4zrvkPrpGgKTdVA6/n9WFjMvR1DODRNUP7GZ6nrauYTAKAcnf+zgNLUF/2fvBb0zP9GqKoAADHUsN0CJZ9S015TUI8zqcK4G0x/om466SPPb5HxPKowlytwzrORO4FgOHvgEAAF/Mbcb2+jdpnm6iLDMytcfFphCaFg=
+	t=1717446907; cv=none; b=mb5j0tMhwL9NhiGGzFfI2UrUymquzUhDOYBK+b7sH8Kv9zFR/8M8337bJeHCDX33yQ8V7vJBRd45CeDb2IGfWQCOGrDtvCR0BePms6k0ApcPcSnBojjYvWBmcWe691BTsS5y4QvzPfQoXMfyjGlGlnaJ/PQCsQw5jGwPfSOi1c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717438826; c=relaxed/simple;
-	bh=UCb1oxLOGJzH/ZitH8t6qvhy9EFhpnUBiqfrMm7NZR8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bOUC4/WpmLuvOrKkkUCT7HjcazKA4fywPp7eRO0YGuXp+pmbPFMybdKj9fZ/O/LYVIRm9xjJhgV0AHFdj/StDPMDGSzQdOx7lXsE9SC7/tFAJe9/MnfaPEM/F6g+2Ncs90oAa+zsldTfyco99Jf03TX/TCJa+/APnDFx32HrPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=FkwZbjeN; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1717446907; c=relaxed/simple;
+	bh=KwWNQGw+2/5TNKQgZ7WcKZJkgf/QIcP8hEPwsf63tFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Er15KXf7ig7TVttFdRtsd0jrsK+4rHvbAVxB3AVw+t5s5f2P5eDtMSSBESWrGPAgHT6d4wqj5l7N1sEOx1+DKvOovmtVyTPMHdOODVJHVOrGcWYgALSgDj4uVIR0iKoJ77QAUQ13ATVnssBuigerxNDnl4Bel+BvDNOvJqhSIK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KvGH2rg+; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="FkwZbjeN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1717438809; x=1718043609; i=wahrenst@gmx.net;
-	bh=mLilu4oDs1cQpEMdL21n/1Egwu8dlRtQxoYeJeOd6Qc=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FkwZbjeNo4o6ArBnEzlC5PzYVhUYnBinlAAT+PebhwNMRQ/FtA7bejTbiMXRZF7+
-	 UK4/CAwB5hmX8ZKVPHM+NfKJwXPf647ImVDQQFs0UgTxHFlx2e123VGbWjm0UgjWE
-	 sJVPP3swEu6GjpDvwBXxmiXKApQJx2+DEfR9lBQyu6AJGXxPgYg1+TfgihZsebAvb
-	 0OezGZRkz3CzasRLYMbFOC63kFDI0Rutje5odyDDWm0ibzY9CLrv6HEGfRtCYxGgN
-	 jV3ZP557UQCDVUc2R8lgT+C2JH8a3iZcZbcpZJ+8LTmAMI/waNZfhNAa8Shxxxf/q
-	 wVz+jWOrTqnChODX4g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M59C2-1sD6MO3sgO-002Ib5; Mon, 03
- Jun 2024 20:20:09 +0200
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Kent Gibson <warthog618@gmail.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 0/2] pinctrl: bcm2835: persist_gpio_outputs follow-up
-Date: Mon,  3 Jun 2024 20:19:36 +0200
-Message-Id: <20240603181938.76047-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvGH2rg+"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so5125372a12.1;
+        Mon, 03 Jun 2024 13:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717446904; x=1718051704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7xuy1n57KIpCTHjyrkT+Tg9AxFkzW/GLX4KPPVhYwkc=;
+        b=KvGH2rg+OZkIEZ80yBo9LmwPgBBDbyUuaEZPpmdTLpCTgv5mmaC9ekNUjUapbVOYT2
+         PihC6jm5lb6qrR1Rh7JrzDyk+QpGuePGZnDzCn4b7RZMzkXvzdPSamwquMMuPBibUOEK
+         rpK69mVUgbFysbFG6BUQ5RaH1XHLHDQaG234rdk3VLjlMvwycjF70Afll8ZMDL2afd7o
+         l+Osx+TSq+XY5/GZdGlH0sFdFl03GLayZ2+wWPNzCgzY5j09N/q5Qu2YXcqxO8HS3XPz
+         2uL7lGp/F8WUnxc/pmC28sX1A36fBE7KQVIf7d0zV5cYOEzVtGBZfm2Y7AXhVNpazJbc
+         Z5zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717446904; x=1718051704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7xuy1n57KIpCTHjyrkT+Tg9AxFkzW/GLX4KPPVhYwkc=;
+        b=stHl5QMMI2bfdkcHDCvvgUJo+acrfjPYQxNEmgcp7eIbR2T8IBRn9B5oCgRnCRuAiR
+         3Mmmdm2NhWUzVrREaU8irRITjALj0z0u8TKpc/l7LjBWNVSheVQsfOptxB9HojAF/utx
+         zvZp7+j1pkZHWRjk3nUcdfItca4lr3O0etFjkKAgu99szYFmwyDOD5peoyrZYU5V7obi
+         DHrkF1nulyO/FLOsqEwH8ZqqAMtJSHBppq74Vb89V/gPFPHDOBVabTr0+QdGgq1Ev0Fc
+         rZLVRINpiWjhXo5zXhWi0l5+gib1Q+D9ZlTSbXQKegIARLfV1YLxkJTSB/bfr4gE0XhV
+         rhHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKrkOaj6Ivtmb8zm+rTCY/50+d+SRNzHv9SJUt6GXtYtLzWDgx0QUFfdWY+CrXMqlFJsuYG1oFMpmT2l8hwytGNQP/RelFDoxzetQwifakfPbmajbK1SgJyhgD8ofLminfHjE5ugeophtYhtleZvK8q1sQ8lxZ5hrcKghlcNqGS0Q=
+X-Gm-Message-State: AOJu0YwYpEPXYT3z5Qw43ZyhnpavntlAjQOwI6oij4fMA1G4hdIdM5qZ
+	q9UBF63rpyntF4aIrEC4U6Kmk3JbtjEtbB1AojztEAu2kd2V4Uk83U4LoSgyjHNV/1OVzlulBr+
+	HThKI0OORTSEUk3jxuLxh6YwfO5w=
+X-Google-Smtp-Source: AGHT+IH+lDMxvyFKRk7F24crRs9d1+aHL58p6J9vIYExDHMUBtOF6fP5eFn7MAR5PXhD2pmOTQ8bcx8Sf/xAnRtrwHA=
+X-Received: by 2002:a17:906:d106:b0:a68:a333:d2a6 with SMTP id
+ a640c23a62f3a-a68a333d5bcmr518193566b.65.1717446904290; Mon, 03 Jun 2024
+ 13:35:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240602-pwm-gpio-v6-0-e8f6ec9cc783@linaro.org> <20240602-pwm-gpio-v6-2-e8f6ec9cc783@linaro.org>
+In-Reply-To: <20240602-pwm-gpio-v6-2-e8f6ec9cc783@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 3 Jun 2024 23:34:27 +0300
+Message-ID: <CAHp75VfUcvz00T+12JKWPnJBK3msxgft-9fYQPU3ugtyqLBrTg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] pwm: Add GPIO PWM driver
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philip Howard <phil@gadgetoid.com>, Sean Young <sean@mess.org>, 
+	Chris Morgan <macromorgan@hotmail.com>, Stefan Wahren <wahrenst@gmx.net>, linux-gpio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	Vincent Whitchurch <vincent.whitchurch@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DfNlYMDdoezmpLYhZlyEa8iHTA2jUbg5yuYhAjkP8oM8OSQ1BlF
- 9GyE3OYDQstSVcx0gLBZ+/VFjYqQApkrrDHN9wXjaRTPabCmT9HDJavRIvCN+RqN/u0z89e
- vVwH5vn5NFlQL6AEOcwC1+1uKsPTDpCZxePdgJ0S431Fhqm22fVqnORByGhJkTsOha5RkgR
- 4F9TMjHvnXL4rfb5hODTw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:T+ICGM8kC5I=;Twd+JlyVBKevyo4RsdxGj52QTeO
- bfvdJ/465ZSa28RmTmG5z3SmDco2iJXm9+GddiY4qxhwsSGlk5wu3qdqMJDgORhHbvlMILHHJ
- 7B95HAr545FsZqroDfj85G5F0Lt1Bjza/l+R7/ozTVSwU+eSQh5d8clGGCZOzzNL6cSuJ0N+r
- p3UaG4l4WRCapJg/++LNkK3cm6P+thusT1f8yWFYuc2hsv6IfLpdbAtRCOsFiavJc8Wfud7B7
- tIf31uE7kjxmTS7U62BztuT+hgwa2n3+TeuBlbJgAazoaPV/LwpKTvx5xwEItD7OW/K8jleVY
- gK0YVAMKV7mqp8a6zuM0XLRBue8GW3nypI2sIhbVlmJiTF+AZ4QI/GYxBi1bOIVjBBrCE93Wr
- k+fWfsVSGuPmUPP/h5kv7ouZH8j9DLnvCmrYV/eMJ/Csud682dYJnHDzhl5s+SZA1hR77Pt58
- yM0TlZ3T3qus/dUKHEvMkuNqCXQRtRUSgC00h4uM1V9rGBnm72qUtd5s3vEuNcmemhPNbxyOI
- Anq7/wrs74yvukHVXDB7e1U8nMWvNO0nKs/EjyKNlCdTTJoYfmZEHOGkFpPSo0uvFlzpnkPoq
- PE5NFTxbRA/Qr2Kv3gSXPAXa4uzmn2XtgG6oonoJvP91Iat7NBF7uJUbDjbImk3qE5pFQgTYQ
- Z/acXecH8VxgrMhfzKCgffaOHBrb6yWjA+YT6L0VvMuL4xDu2KxgoSeL/26ItLWFgN7BkPLP0
- iBnF/LvnKS6oTEv89NaReVKOA8M0bfRJE2ZlwLOsPqlkuQp+7QWoiY7I6CCXU7k0ywgjFQr1M
- t6EFjOFxEIYvcJj9fOsPGvLiqR7e+R/1FgeXvVant4lRM=
 
-After the patch "pinctrl: bcm2835: Make pin freeing behavior configurable"
-has been applied for 6.10-rc1, Andy Shevchenko submitted two comments [1].
-So this small series address them.
+On Sun, Jun 2, 2024 at 11:33=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+>
+> From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+>
+> Add a software PWM which toggles a GPIO from a high-resolution timer.
+>
+> This will naturally not be as accurate or as efficient as a hardware
+> PWM, but it is useful in some cases.  I have for example used it for
+> evaluating LED brightness handling (via leds-pwm) on a board where the
+> LED was just hooked up to a GPIO, and for a simple verification of the
+> timer frequency on another platform.
+>
+> Since high-resolution timers are used, sleeping GPIO chips are not
+> supported and are rejected in the probe function.
 
-[1] - https://lore.kernel.org/linux-gpio/Zjk-C0nLmlynqLAE@surfacebook.loca=
-ldomain/
 
-Stefan Wahren (2):
-  pinctrl: bcm2835: Fix permissions of persist_gpio_outputs
-  pinctrl: bcm2835: Use string_choices API instead of ternary operator
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+See one question below.
 
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+...
 
-=2D-
-2.34.1
+> +static int pwm_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct pwm_chip *chip;
+> +       struct pwm_gpio *gpwm;
+> +       int ret;
+> +
+> +       chip =3D devm_pwmchip_alloc(dev, 1, sizeof(*gpwm));
+> +       if (IS_ERR(chip))
+> +               return PTR_ERR(chip);
+> +
+> +       gpwm =3D pwmchip_get_drvdata(chip);
+> +
+> +       spin_lock_init(&gpwm->lock);
+> +
+> +       gpwm->gpio =3D devm_gpiod_get(dev, NULL, GPIOD_ASIS);
+> +       if (IS_ERR(gpwm->gpio))
+> +               return dev_err_probe(dev, PTR_ERR(gpwm->gpio),
+> +                                    "%pfw: could not get gpio\n",
+> +                                    dev_fwnode(dev));
+> +
+> +       if (gpiod_cansleep(gpwm->gpio))
+> +               return dev_err_probe(dev, -EINVAL,
+> +                                    "%pfw: sleeping GPIO not supported\n=
+",
+> +                                    dev_fwnode(dev));
+> +
+> +       chip->ops =3D &pwm_gpio_ops;
+> +       chip->atomic =3D true;
+> +
+> +       hrtimer_init(&gpwm->gpio_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL=
+);
+> +       ret =3D devm_add_action_or_reset(dev, pwm_gpio_disable_hrtimer, g=
+pwm);
+> +       if (ret)
+> +               return ret;
+> +
+> +       gpwm->gpio_timer.function =3D pwm_gpio_timer;
+> +
+> +       ret =3D pwmchip_add(chip);
+> +       if (ret < 0)
+> +               return dev_err_probe(dev, ret, "could not add pwmchip\n")=
+;
 
+> +       platform_set_drvdata(pdev, gpwm);
+
+Do we still need this?
+
+> +       return 0;
+> +}
+
+--=20
+With Best Regards,
+Andy Shevchenko
