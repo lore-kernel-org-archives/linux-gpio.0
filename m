@@ -1,59 +1,60 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097BA1428E5
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Jun 2024 21:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5C4142905
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Jun 2024 21:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717534848; cv=none; b=FRmGoyNp/3C+45ICyPGa26Q6i0MVFmyiEZxJCZMhbb08ck0PUOdbHkc1Sb1c3Szk1RFY4hGl9C4qTzps7xzZt+Am3xFI7m1/SnYi3ODW6gKRFnAT6Ctl/3Jjk/bBfzCjF3nswhSIAasysvZr34CpiG5MybeOY5fB86hW/7PsIo0=
+	t=1717534850; cv=none; b=SupGC3ob492mMSDCLfbAXu3ZJsPaBnuMJtMJO0wE3FH2L1oBUP/TSE4uKFPmEMuEAzP4PSULzypYFQEvh4gXyZGk85eoWTK1BLNXRRhPd1qNRfmJSEEKMZterMeDvGVVQTo2FrIFTQExCRa5SMhPOO1B8H4QOmuMTPuCI7lTijY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717534848; c=relaxed/simple;
-	bh=Q+B+M9A3bozPmvs5f6VbzmhkxmOt/eX1zVh9tEbC3SA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ejSfWINAZQApfEqZ26GoXmWid8pIARIzjS+G/C5Nl46M69oEBChjoQuuwIh5xFSo2ZT7imWwZCcGDBj6n9WgHd0x3ETHqLyEg78xwJbdtj6RhJDEDmsy2UkLXbkCUCmLRS6kFhPVUC6+up3hXJx375BeGvKHvahIbeL8nqfVVDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SYgwcG0+; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1717534850; c=relaxed/simple;
+	bh=ESTF32lMBgnfmtpVmFxezA2ZDd3LVBT4FCldxnU73VM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LbII/X/b0HI9a96O1QkdOYTPqeE4xFcaPoSEDnbcczE2OLLyTXF0kP3Oqxj7Yx/FDHxhoeS4/gmWI8JypkDmxeildP3mTKQ8SMHQmJTKU/Fn5lOmbQOQwMHCESIgkF9OkRDACbGhgOhF1mU1muxj+XSokP3ZCzkLydbfCIIpPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fqLi9+fR; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYgwcG0+"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e95a883101so78153591fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Jun 2024 14:00:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fqLi9+fR"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so74144381fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Jun 2024 14:00:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717534843; x=1718139643; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VaxwRCwbACCoSFNLb+z66cNZdHbaMYdeMFIBxgS2cyU=;
-        b=SYgwcG0+Hjz9cKBtvBX3jpK4FTkUpnMV5AxDELohrAHELZtB2BNebjyCncqhgnfXqm
-         +fkluqrMsr6ZeIYEJI9SOkEaVsFTZW98zcwNa8Wl0fgLcR6FbSjdrZ2amhD6d/fnVjI/
-         0Pk11YaoANE4ORUJrT7GKnhUo3Y3d53agEOgUNpNfDzLz+Z/n5VFNWE2VJgjDOKiNHZd
-         QDmXPMgvawATpRqIfvXOAnODFS9aau7wavDizR0cR5T/3S5RGVfHHGWI3yzeiKAM2DdJ
-         BrYWSbma6ES618lWTx5xuTafg/KkalZyt11Cz2BjUDulMQMXfzStZVEaeBbpLh82r08V
-         hDFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717534843; x=1718139643;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717534846; x=1718139646; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VaxwRCwbACCoSFNLb+z66cNZdHbaMYdeMFIBxgS2cyU=;
-        b=NLAu9IFgXmIZGeiIVSJm2YNDaX734rznLO57gJUdfu10LDLX7RT2/8LfE2G2b+uBQM
-         Bcwmo932dAfyPieTW3Xr7kJhCE2oW0Rc1WvS0Qklpe0x1m5RvL/rEFKVJGYmgebIqLZ4
-         Q8csWHJGPsYDaBB15YuVgnVXsPnzE894UBP0D2gAh7fBGsUvviuA1HHqr1kDrWoeD9Wh
-         JBD45SaCPrg02mkjGlCdTkFGROsibvzVkvGzaLH8mai4Mm/93c/c2QqFxiyEEMMuADly
-         uf6g9rDAXebWfkPBEXnOFbkfFjfn70mgq8TnNa78Dd3Fs0XGaJ/guo33C7OCoJu5ZrAG
-         owng==
-X-Forwarded-Encrypted: i=1; AJvYcCVBDNMtwaIyscgdshNBjcH/63RcFDikBNe7hbnMxDLa74IBfjYYsK14G4xTaMAcUpgc3818xISNVurcpFLw4mNzyJxZh5ZlfGL9yw==
-X-Gm-Message-State: AOJu0YwSgxyYC1gfRhRIEyywP5epYjhdY/JCOg2Uiovci7ESzHh+PWBo
-	TXKP5d661qrmNmmzw696wUi8kUQpGVhDY3mu71Uu+5ZZNCOaSdQNYjEZjonP3p8=
-X-Google-Smtp-Source: AGHT+IEAn9HjzLbBUvqgiwNHYaRjErLlxxvmgKAxDpgU3qKbR6y/k+dyZllte1HY9bhiO7VtbTyp+g==
-X-Received: by 2002:a2e:8604:0:b0:2ea:c7f7:ea20 with SMTP id 38308e7fff4ca-2eac7f7f536mr1327281fa.7.1717534842951;
-        Tue, 04 Jun 2024 14:00:42 -0700 (PDT)
+        bh=wPN7HZ2vwvvaPOlO2MX7LqUrxdB6GJC3BE6c+ARMRWU=;
+        b=fqLi9+fR7ZFW90BEivbbOfyMOJKOdeUgxDZVMEXr6xprcM2m0fwB+mi2hoC3oea4OL
+         oa56l+9lUR1pi4T/TujCJPBya5U9dc7zxcHCwKhaczr02yemCTbJTx5HAT7NIpgZYvkg
+         UleOPpcCqW/WxYgb0OFuPqmcWaNMGj0oHOUwku3GSSdr0AyhhqSy5oM4JZ3xTmLmqUDv
+         8jwf0p+4Y2fxAKp7dlHfNKjmNG2TKLlg7UNzSRsMPs1ZjJkSadzxz5KGaHY80diaCEAF
+         ZSNEj5CaJHc6NiUd8FutVgdXJJWEngw6lY/qy8BMSqWxdHV7OUBhE7CDOPWELk6b9VfW
+         t1Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717534846; x=1718139646;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wPN7HZ2vwvvaPOlO2MX7LqUrxdB6GJC3BE6c+ARMRWU=;
+        b=wRsDjkfnkTG5Z4bR3LAOWuwyP0udrkb6ucHpPoc532PU46AnEwsUOtTmaC19CVcHqu
+         uS7KbMBXWAG+za/6WiAj+2NvjkbS1eXToR4TvEG+BAqtpE94ks8uLFpPkPUga9UdJdVe
+         w5v1X35qnhgapenjg+PkdETGOUctPXBQYli5Hx78RGCKZOcR0brPoMKnpgomHp2hM29n
+         0RadXR5AxyS4nbgoYrc+H3oRXkDMadlRxTF6kqnecK9Rr7sEtvsY6j4gm4bamG+OJa6P
+         7NFXRkCkcg/Bsluf9D6yc8bqsjsJzbwTtCsMjYEyC54n3GIU2oU5BExDqz6s62vxrGkv
+         vNCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0oLaW+hj59KVJ9VfFa8R1rjKvXcCZ4WiVU7YHwmUnv7s/5ukPQiDfxkM2/EqtQ4fUg2H+vpYh4XbKN6OFoIeeXYYjrhVJ/ePm0w==
+X-Gm-Message-State: AOJu0YxKBXaFZxozMCdmNno6SNqibXaefvocWamzRE1dsMTbUxUQKbxa
+	NDszoROb+A0CCGKHbGHkmkmG1IcxDsWZG7ltq5PLDXWcZvfMvPsSxvnms/duHLI=
+X-Google-Smtp-Source: AGHT+IFs3MkcSueqtHX9PciHP/k4irbilM07o/0UR/kiPwl5QdzapG7Ex7bzRFQvfYUUhTUQrzrD1g==
+X-Received: by 2002:a2e:9811:0:b0:2e5:67bc:6f2 with SMTP id 38308e7fff4ca-2eac7a988ddmr1970521fa.44.1717534846130;
+        Tue, 04 Jun 2024 14:00:46 -0700 (PDT)
 Received: from [192.168.1.140] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91cc8082sm16140991fa.94.2024.06.04.14.00.42
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91cc8082sm16140991fa.94.2024.06.04.14.00.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 14:00:42 -0700 (PDT)
+        Tue, 04 Jun 2024 14:00:44 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v7 0/2] pwm: Add GPIO PWM driver
-Date: Tue, 04 Jun 2024 23:00:39 +0200
-Message-Id: <20240604-pwm-gpio-v7-0-6b67cf60db92@linaro.org>
+Date: Tue, 04 Jun 2024 23:00:41 +0200
+Subject: [PATCH v7 2/2] pwm: Add GPIO PWM driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -62,9 +63,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHeAX2YC/0XMQQ7CIBCF4as0sxZDQSl15T1MFwSndBIFAgY1D
- XcX68Ll//LyrZAxEWY4dSskLJQp+BbDrgO7GO+Q0bU1CC4O/Cg5i887c5ECw7GX0vSaK7TQ7jH
- hTK+NukytF8qPkN6bXNR3/SGKiz9SFOMM9dyM0dpBy/ONvElhH5KDqdb6AfQQsxWhAAAA
+Message-Id: <20240604-pwm-gpio-v7-2-6b67cf60db92@linaro.org>
+References: <20240604-pwm-gpio-v7-0-6b67cf60db92@linaro.org>
+In-Reply-To: <20240604-pwm-gpio-v7-0-6b67cf60db92@linaro.org>
 To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, andy.shevchenko@gmail.com, 
@@ -73,130 +74,336 @@ To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
  linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
  devicetree@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, 
- Nicola Di Lieto <nicola.dilieto@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Dhruva Gole <d-gole@ti.com>, 
  Vincent Whitchurch <vincent.whitchurch@axis.com>, 
  Andy Shevchenko <andy@kernel.org>
 X-Mailer: b4 0.13.0
 
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+
 Add a software PWM which toggles a GPIO from a high-resolution timer.
 
-Recent discussions in the Raspberry Pi community revealt that a lot
-of users still use MMIO userspace tools for GPIO access. One argument
-for this approach is the lack of a GPIO PWM kernel driver. So this
-series tries to fill this gap.
+This will naturally not be as accurate or as efficient as a hardware
+PWM, but it is useful in some cases.  I have for example used it for
+evaluating LED brightness handling (via leds-pwm) on a board where the
+LED was just hooked up to a GPIO, and for a simple verification of the
+timer frequency on another platform.
 
-This continues the work of Vincent Whitchurch [1], which is easier
-to read and more consequent by rejecting sleeping GPIOs than Nicola's
-approach [2]. It further takes over where Stefan Wahren left off.
+Since high-resolution timers are used, sleeping GPIO chips are not
+supported and are rejected in the probe function.
 
-I have not looked into the interrupt storm problem mentioned in [3]
-but instead focused on some real-life tests:
-
-The IXP4xx NSLU2 has a speaker connected directly to a GPIO, and I
-wanted to use this patch to provide a proper beeper for the machine
-and not have to rely on custom hacks.
-
-I added a DTS patch like this:
-
-gpio_pwm: pwm {
-        #pwm-cells = <3>;
-        compatible = "pwm-gpio";
-        gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-};
-
-beeper {
-        compatible = "pwm-beeper";
-        pwms = <&gpio_pwm 0 1 0>;
-        beeper-hz = <1000>;
-};
-
-Then activated the necessary drivers with input evdev and they
-both probe fine. Then I use this test program:
-https://gist.github.com/licheegh/3dbdc8918325e8af8d4d13805cd0c350
-with a few different beep frequencies, such as "beep 400"
-for an OK sounding 400 Hz signal.
-
-Above ~10000 Hz the sound becomes bad and mostly sound like
-different kinds of noise. But this is not so bad for the NSLU2
-which is a 266 MHz ARM XScale machine, and we do not need any better
-on this machine so mission accomplished. Pushing the playback
-to higher and higher rates does not crash the machine, the
-sample program always terminates.
-
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Co-developed-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Co-developed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes in v7:
-- Drop platform_set_drvdata() as nothing use this anymore.
-- Add a small blurb documenting the pwm-cells in the binding.
-- Link to v6: https://lore.kernel.org/r/20240602-pwm-gpio-v6-0-e8f6ec9cc783@linaro.org
+ Documentation/driver-api/gpio/drivers-on-gpio.rst |   7 +-
+ drivers/pwm/Kconfig                               |  11 +
+ drivers/pwm/Makefile                              |   1 +
+ drivers/pwm/pwm-gpio.c                            | 241 ++++++++++++++++++++++
+ 4 files changed, 259 insertions(+), 1 deletion(-)
 
-v6:
-- Add a small blurb to drivers-on-gpio.rst
-- Add missing headers to driver
-- Use guarded spinlocks from <linux/cleanup.h>
-- Drop minor surplus whitespace
-- Use dev pointer everywhere in probe()
-- Drop dev_info() chatter at end of probe()
-- Use devm_add_action_or_reset() for a hook to disable the hrtimer and
-  get rid of the .remove() callback altogether.
+diff --git a/Documentation/driver-api/gpio/drivers-on-gpio.rst b/Documentation/driver-api/gpio/drivers-on-gpio.rst
+index af632d764ac6..95572d2a94ce 100644
+--- a/Documentation/driver-api/gpio/drivers-on-gpio.rst
++++ b/Documentation/driver-api/gpio/drivers-on-gpio.rst
+@@ -27,7 +27,12 @@ hardware descriptions such as device tree or ACPI:
+   to the lines for a more permanent solution of this type.
+ 
+ - gpio-beeper: drivers/input/misc/gpio-beeper.c is used to provide a beep from
+-  an external speaker connected to a GPIO line.
++  an external speaker connected to a GPIO line. (If the beep is controlled by
++  off/on, for an actual PWM waveform, see pwm-gpio below.)
++
++- pwm-gpio: drivers/pwm/pwm-gpio.c is used to toggle a GPIO with a high
++  resolution timer producing a PWM waveform on the GPIO line, as well as
++  Linux high resolution timers can do.
+ 
+ - extcon-gpio: drivers/extcon/extcon-gpio.c is used when you need to read an
+   external connector status, such as a headset line for an audio driver or an
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 1dd7921194f5..68ba28d52c4c 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -223,6 +223,17 @@ config PWM_FSL_FTM
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-fsl-ftm.
+ 
++config PWM_GPIO
++	tristate "GPIO PWM support"
++	depends on GPIOLIB
++	depends on HIGH_RES_TIMERS
++	help
++	  Generic PWM framework driver for software PWM toggling a GPIO pin
++	  from kernel high-resolution timers.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm-gpio.
++
+ config PWM_HIBVT
+ 	tristate "HiSilicon BVT PWM support"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 90913519f11a..65d62cc41a8f 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_PWM_DWC_CORE)	+= pwm-dwc-core.o
+ obj-$(CONFIG_PWM_DWC)		+= pwm-dwc.o
+ obj-$(CONFIG_PWM_EP93XX)	+= pwm-ep93xx.o
+ obj-$(CONFIG_PWM_FSL_FTM)	+= pwm-fsl-ftm.o
++obj-$(CONFIG_PWM_GPIO)		+= pwm-gpio.o
+ obj-$(CONFIG_PWM_HIBVT)		+= pwm-hibvt.o
+ obj-$(CONFIG_PWM_IMG)		+= pwm-img.o
+ obj-$(CONFIG_PWM_IMX1)		+= pwm-imx1.o
+diff --git a/drivers/pwm/pwm-gpio.c b/drivers/pwm/pwm-gpio.c
+new file mode 100644
+index 000000000000..9f8884ac7504
+--- /dev/null
++++ b/drivers/pwm/pwm-gpio.c
+@@ -0,0 +1,241 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Generic software PWM for modulating GPIOs
++ *
++ * Copyright (C) 2020 Axis Communications AB
++ * Copyright (C) 2020 Nicola Di Lieto
++ * Copyright (C) 2024 Stefan Wahren
++ * Copyright (C) 2024 Linus Walleij
++ */
++
++#include <linux/cleanup.h>
++#include <linux/container_of.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/hrtimer.h>
++#include <linux/math.h>
++#include <linux/module.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/pwm.h>
++#include <linux/spinlock.h>
++#include <linux/time.h>
++#include <linux/types.h>
++
++struct pwm_gpio {
++	struct hrtimer gpio_timer;
++	struct gpio_desc *gpio;
++	struct pwm_state state;
++	struct pwm_state next_state;
++
++	/* Protect internal state between pwm_ops and hrtimer */
++	spinlock_t lock;
++
++	bool changing;
++	bool running;
++	bool level;
++};
++
++static void pwm_gpio_round(struct pwm_state *dest, const struct pwm_state *src)
++{
++	u64 dividend;
++	u32 remainder;
++
++	*dest = *src;
++
++	/* Round down to hrtimer resolution */
++	dividend = dest->period;
++	remainder = do_div(dividend, hrtimer_resolution);
++	dest->period -= remainder;
++
++	dividend = dest->duty_cycle;
++	remainder = do_div(dividend, hrtimer_resolution);
++	dest->duty_cycle -= remainder;
++}
++
++static u64 pwm_gpio_toggle(struct pwm_gpio *gpwm, bool level)
++{
++	const struct pwm_state *state = &gpwm->state;
++	bool invert = state->polarity == PWM_POLARITY_INVERSED;
++
++	gpwm->level = level;
++	gpiod_set_value(gpwm->gpio, gpwm->level ^ invert);
++
++	if (!state->duty_cycle || state->duty_cycle == state->period) {
++		gpwm->running = false;
++		return 0;
++	}
++
++	gpwm->running = true;
++	return level ? state->duty_cycle : state->period - state->duty_cycle;
++}
++
++static enum hrtimer_restart pwm_gpio_timer(struct hrtimer *gpio_timer)
++{
++	struct pwm_gpio *gpwm = container_of(gpio_timer, struct pwm_gpio,
++					     gpio_timer);
++	u64 next_toggle;
++	bool new_level;
++
++	guard(spinlock_irqsave)(&gpwm->lock);
++
++	/* Apply new state at end of current period */
++	if (!gpwm->level && gpwm->changing) {
++		gpwm->changing = false;
++		gpwm->state = gpwm->next_state;
++		new_level = !!gpwm->state.duty_cycle;
++	} else {
++		new_level = !gpwm->level;
++	}
++
++	next_toggle = pwm_gpio_toggle(gpwm, new_level);
++	if (next_toggle)
++		hrtimer_forward(gpio_timer, hrtimer_get_expires(gpio_timer),
++				ns_to_ktime(next_toggle));
++
++	return next_toggle ? HRTIMER_RESTART : HRTIMER_NORESTART;
++}
++
++static int pwm_gpio_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			  const struct pwm_state *state)
++{
++	struct pwm_gpio *gpwm = pwmchip_get_drvdata(chip);
++	bool invert = state->polarity == PWM_POLARITY_INVERSED;
++
++	if (state->duty_cycle && state->duty_cycle < hrtimer_resolution)
++		return -EINVAL;
++
++	if (state->duty_cycle != state->period &&
++	    (state->period - state->duty_cycle < hrtimer_resolution))
++		return -EINVAL;
++
++	if (!state->enabled) {
++		hrtimer_cancel(&gpwm->gpio_timer);
++	} else if (!gpwm->running) {
++		int ret;
++
++		/*
++		 * This just enables the output, but pwm_gpio_toggle()
++		 * really starts the duty cycle.
++		 */
++		ret = gpiod_direction_output(gpwm->gpio, invert);
++		if (ret)
++			return ret;
++	}
++
++	guard(spinlock_irqsave)(&gpwm->lock);
++
++	if (!state->enabled) {
++		pwm_gpio_round(&gpwm->state, state);
++		gpwm->running = false;
++		gpwm->changing = false;
++
++		gpiod_set_value(gpwm->gpio, invert);
++	} else if (gpwm->running) {
++		pwm_gpio_round(&gpwm->next_state, state);
++		gpwm->changing = true;
++	} else {
++		unsigned long next_toggle;
++
++		pwm_gpio_round(&gpwm->state, state);
++		gpwm->changing = false;
++
++		next_toggle = pwm_gpio_toggle(gpwm, !!state->duty_cycle);
++		if (next_toggle)
++			hrtimer_start(&gpwm->gpio_timer, next_toggle,
++				      HRTIMER_MODE_REL);
++	}
++
++	return 0;
++}
++
++static int pwm_gpio_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
++			       struct pwm_state *state)
++{
++	struct pwm_gpio *gpwm = pwmchip_get_drvdata(chip);
++
++	guard(spinlock_irqsave)(&gpwm->lock);
++
++	if (gpwm->changing)
++		*state = gpwm->next_state;
++	else
++		*state = gpwm->state;
++
++	return 0;
++}
++
++static const struct pwm_ops pwm_gpio_ops = {
++	.apply = pwm_gpio_apply,
++	.get_state = pwm_gpio_get_state,
++};
++
++static void pwm_gpio_disable_hrtimer(void *data)
++{
++	struct pwm_gpio *gpwm = data;
++
++	hrtimer_cancel(&gpwm->gpio_timer);
++}
++
++static int pwm_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct pwm_chip *chip;
++	struct pwm_gpio *gpwm;
++	int ret;
++
++	chip = devm_pwmchip_alloc(dev, 1, sizeof(*gpwm));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++
++	gpwm = pwmchip_get_drvdata(chip);
++
++	spin_lock_init(&gpwm->lock);
++
++	gpwm->gpio = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
++	if (IS_ERR(gpwm->gpio))
++		return dev_err_probe(dev, PTR_ERR(gpwm->gpio),
++				     "%pfw: could not get gpio\n",
++				     dev_fwnode(dev));
++
++	if (gpiod_cansleep(gpwm->gpio))
++		return dev_err_probe(dev, -EINVAL,
++				     "%pfw: sleeping GPIO not supported\n",
++				     dev_fwnode(dev));
++
++	chip->ops = &pwm_gpio_ops;
++	chip->atomic = true;
++
++	hrtimer_init(&gpwm->gpio_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	ret = devm_add_action_or_reset(dev, pwm_gpio_disable_hrtimer, gpwm);
++	if (ret)
++		return ret;
++
++	gpwm->gpio_timer.function = pwm_gpio_timer;
++
++	ret = pwmchip_add(chip);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "could not add pwmchip\n");
++
++	return 0;
++}
++
++static const struct of_device_id pwm_gpio_dt_ids[] = {
++	{ .compatible = "pwm-gpio" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, pwm_gpio_dt_ids);
++
++static struct platform_driver pwm_gpio_driver = {
++	.driver = {
++		.name = "pwm-gpio",
++		.of_match_table = pwm_gpio_dt_ids,
++	},
++	.probe = pwm_gpio_probe,
++};
++module_platform_driver(pwm_gpio_driver);
++
++MODULE_DESCRIPTION("PWM GPIO driver");
++MODULE_AUTHOR("Vincent Whitchurch");
++MODULE_LICENSE("GPL");
 
-V5:
- - add Reviewed-by's for dt-binding patch
- - rebase on top of v6.10-rc1
- - print hr resolution at driver probe
- - fix grammar in Kconfig
- - fix return type of pwm_gpio_toggle
- - implement hrtimer resolution rounding as noted by Uwe
- - use firmware node path instead of GPIO numbers as suggested by Andy
- - adjust some header includes and style issues as noted by Andy
-
-V4:
- - address DT bindings comments from Conor Dooley
- - drop unnecessary MODULE_ALIAS() as suggested by Krzysztof Kozlowski
- - add range checks to apply which consider the hrtimer resolution
-   (idea comes from Sean Young)
- - mark driver as atomic as suggested by Sean Young
-
-V3:
- - rebase on top of v6.8-pwm-next
- - cherry-pick improvements from Nicola's series
- - try to address Uwe's, Linus' and Andy's comments
- - try to avoid GPIO glitches during probe
- - fix pwm_gpio_remove()
- - some code clean up's and comments
-
-V2:
- - Rename gpio to gpios in binding
- - Calculate next expiry from expected current expiry rather than "now"
- - Only change configuration after current period ends
- - Implement get_state()
- - Add error message for probe failures
- - Stop PWM before unregister
-
-[1] - https://lore.kernel.org/all/20200915135445.al75xmjxudj2rgcp@axis.com/T/
-[2] - https://lore.kernel.org/all/20201205214353.xapax46tt5snzd2v@einstein.dilieto.eu/
-[3] - https://lore.kernel.org/linux-pwm/CACRpkdary+kDrTJ=u4VbSTv7wXGLQj9_fy7mv0w-Zg+eDvGXVQ@mail.gmail.com/T/#m513f255daa9f30c325d11999cacd086411591bf9
-
----
-Nicola Di Lieto (1):
-      dt-bindings: pwm: Add pwm-gpio
-
-Vincent Whitchurch (1):
-      pwm: Add GPIO PWM driver
-
- .../devicetree/bindings/pwm/pwm-gpio.yaml          |  46 ++++
- Documentation/driver-api/gpio/drivers-on-gpio.rst  |   7 +-
- drivers/pwm/Kconfig                                |  11 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-gpio.c                             | 241 +++++++++++++++++++++
- 5 files changed, 305 insertions(+), 1 deletion(-)
----
-base-commit: cc97b8f37b097a1598410154ca472964a1d9b255
-change-id: 20240530-pwm-gpio-e9133a1806ec
-
-Best regards,
 -- 
-Linus Walleij <linus.walleij@linaro.org>
+2.45.1
 
