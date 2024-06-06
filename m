@@ -1,161 +1,98 @@
-Received: from mail.eh5.me (mail.eh5.me [45.76.111.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A2944361;
-	Thu,  6 Jun 2024 06:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.76.111.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9723EA72;
+	Thu,  6 Jun 2024 07:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717654438; cv=none; b=LBDTWllKfEqsncx1kMgxGAUnIam33J53NEAJxC+13GghFjLSRyMJf8HzJkHbaKMruLxev5RLS7/WdqKfkdqF6hNbaTGHzCtaHSpmMV45PhNFdIChUc/p1elZ3uWHGmPYu61kksAY1icT8A93SAQxEkoV4mi46QYfQsF4eNtEraM=
+	t=1717658027; cv=none; b=h9jjLWy9Sw54RZIphM2cPVv7+UXPDanxDuCoEl/Kz/hWnRumOJUa7PKg/VfiuvouifH2DwGH8eMD1Na1qeXyrYyTQwjNOMQzCPFYLPu7ZHAc4Qi6jfzhBvOS2eqyEpuc5vBh8O4ku0isu+92zATDDaw166XZqYt5zIDWTU6VN3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717654438; c=relaxed/simple;
-	bh=jePjYwzuWCmU1CZ9/Yom3hqaS1sdLARMt2yKSuKSyTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CdeflIGusEx8RQCfihL2dkPugrVSuL82q6HpOBAYxmxrkN2foBCSK5dxo1DcemVmLx2ZPo1midFz0cXvdtH4vRpqrQ1/YQ4S6GykKmAQaTc+ps+4dkEs84OanT2nqG1E6I3rtqkvVkuSi8pg/c6tyKt7OUdqj8fb0/o2t4czyiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me; spf=pass smtp.mailfrom=eh5.me; dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b=sQyl9k2s; arc=none smtp.client-ip=45.76.111.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eh5.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eh5.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eh5.me header.i=@eh5.me header.b="sQyl9k2s"
-From: Huang-Huang Bao <i@eh5.me>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eh5.me; s=dkim;
-	t=1717653885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SJyrvJEgIUfczl/GlGYofH0Vf0eBCOnBoq6FdTDHbXo=;
-	b=sQyl9k2s0D2SH6FdsfLkix0QKLdkdaz/12yR2F0BtoD3a0vC2Bsq9F/lXmo77blf507v5V
-	W4dU28yVFLH59Xp+stzowAfar160U97QNsqZjBtC0fb5aQ+sGjjYc0a+KgLXGZduWhZrOc
-	Zq7hKtNo61+NEEiR1XgsbxDg9h6U2P8=
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Huang-Huang Bao <i@eh5.me>
-Subject: [PATCH 1/3] pinctrl: rockchip: fix RK3328 pinmux bits
-Date: Thu,  6 Jun 2024 14:04:33 +0800
-Message-ID: <20240606060435.765716-2-i@mail.eh5.me>
-In-Reply-To: <20240606060435.765716-1-i@eh5.me>
-References: <20240606060435.765716-1-i@eh5.me>
+	s=arc-20240116; t=1717658027; c=relaxed/simple;
+	bh=zeU6ieindwFhx65owVU/4wu96d3miDMyrhgkBCEZg4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jin2gCa5gOQwMfByJ3/qaNCqJncB46Uibmnmb93Vsu0vKGJ+SPH7qOolMKRwwCH/pQcM9Vuc7pJ44SJUzTM8VOFfQVjYnDYO51IoM70CTm0MaR1uhmIjBeTuS3+L35seqpA2xjldqa7D3NFgXS5FVTSmG7JExQ7CLOmWMkSUFME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-62a2424ec39so6499717b3.1;
+        Thu, 06 Jun 2024 00:13:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717658024; x=1718262824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YC3aEUF0r/ho1aec7nweuE1jEwUeFO57mmlxnzfx9fs=;
+        b=KQaxhf+wMHKnniTFwRX78b4iEgi+2oG+0YLtYYfeaDomOPVjHssBHyZWHkUBQhTV4a
+         4/mJ37mniQSM5cqKhsSfW7rGjb/wMrH4eIBo4ur6fZSZW03Ve5jol6YVhC1lAMUjjFOS
+         dcSh9BsTEps/8mlVznyIVAx+eiJOBUfhpjagA1K5paQHH20Gs+iLONFvdX8iskoB2ihU
+         4F2OIl3k3S37bf9JrIV4b5stf7I0ZeAdZ5o7zAdoTVnOcmLjFDgv8YxYw9WGiFRWnX2m
+         oh2ViR1BxcmAJ2wcTNuU86oDJTnWocamOofDlz8cWhyD74nFdXDjsgYzVPLxsJUoUNHG
+         GPtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0zl8Scdr+zFywUyDwvbGmmlfneF19W46kjufrShr/7yCxlSWHrfq6psoeffz8NmYUAqDEaw0AnT+Tlg3I7FbPlVDzsSvRIAN2iWK9QHerEOdQyPfhmdgPW1pgRNc7bARGhYhu/cpJJRqL3kycyN3pqN1Pn5VlUJ40c4Q4JsOwQesuASljOAF0NqVCkcULHdTYz0Y6vK3aST7xBzxUP6Srug2xtTsFwg==
+X-Gm-Message-State: AOJu0Yxn97PJCOjZbUgGGzQhjYqijQdieF2S8yj8Dk5TpVBbqETZ/MNK
+	rDjBmMiZ1Thn7Z+06kX5HB0eU/0po2IjNOzl6D6eR/M9dFoIURe6dFUAz1jQ
+X-Google-Smtp-Source: AGHT+IGQjIITTAj0p/Vqy5EC4/7eZIl0JsD8xjUbEHKOw6AERoQj1Z4Xli5GNWEVijyh/EjEqB1ILw==
+X-Received: by 2002:a05:690c:242:b0:615:1e68:9080 with SMTP id 00721157ae682-62cbb5050efmr45900877b3.26.1717658023013;
+        Thu, 06 Jun 2024 00:13:43 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccacaddd1sm1655807b3.11.2024.06.06.00.13.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 00:13:42 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso594077276.1;
+        Thu, 06 Jun 2024 00:13:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdNO7uwjuOxUpKq0bOGiLjpFQ0D2Gi6lUFQlEXVEIqpwVwEn7S4vP+wdWjnlhOU/M4jsGlzhH2F3h1JdjLl7KgcES2FKYckr4k+EnRwhG48Yb0UPLCOzMV7nuzqfoTB7Lu63nqUVWJaG1MnfWgyd5daVNQP/+beZN476PGqmrsRpxcdFs1k1y3UtV+41a02gCCM+bGLwusPlR9F/8E9DHI6OBSUR77qw==
+X-Received: by 2002:a25:c544:0:b0:df7:955f:9b99 with SMTP id
+ 3f1490d57ef6-dfacaced9aamr4723147276.47.1717658021842; Thu, 06 Jun 2024
+ 00:13:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240604153612.GA839371-robh@kernel.org> <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8tWxGBkuOY=G3RaB_0NXS3ShE-nL+5t49=_mJGvo6j6yQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Jun 2024 09:13:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com>
+Message-ID: <CAMuHMdWvdvmt42Wy=5Do2MeCRNbLOd2c8Nra2RFQtumnmZod_g@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
+ RZ/V2H(P) SoC
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pinmux bits for GPIO2-B0 to GPIO2-B6 actually have 2 bits width,
-correct the bank flag for GPIO2-B. The pinmux bits for GPIO2-B7 is
-recalculated so it remain unchanged.
+Hi Prabhakar,
 
-The pinmux bits for GPIO3-B1 to GPIO3-B6 have different register offset
-than common rockhip pinmux, set the correct value for those pins in
-rk3328_mux_recalced_data.
+On Wed, Jun 5, 2024 at 11:39=E2=80=AFAM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> OK, I will fix the above and send a v6 series.
 
-The pinmux bits for those pins are not explicitly specified in RK3328
-TRM, however we can get hint from pad name and its correspinding IOMUX
-setting for pins in interface descriptions, e.g.
-IO_SPIclkm0_GPIO2B0vccio5 with GRF_GPIO2B_IOMUX[1:0]=2'b01 setting.
+Please don't drag it out that long ;-)
+As the rest of the series looks fine, a v4 should be sufficient.
+Actually a v4 of just the first patch would be fine for me, too.
 
-This fix has been tested on NanoPi R2S for fixing confliting pinmux bits
-between GPIO2-15 with GPIO2-13.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Huang-Huang Bao <i@eh5.me>
----
- drivers/pinctrl/pinctrl-rockchip.c | 59 ++++++++++++++++++++++++++----
- 1 file changed, 52 insertions(+), 7 deletions(-)
+                        Geert
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 3bedf36a0019..23531ea0d088 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -634,23 +634,68 @@ static struct rockchip_mux_recalced_data rk3308_mux_recalced_data[] = {
- 
- static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
- 	{
--		.num = 2,
--		.pin = 12,
--		.reg = 0x24,
--		.bit = 8,
--		.mask = 0x3
--	}, {
-+		/* gpio2_b7_sel */
- 		.num = 2,
- 		.pin = 15,
- 		.reg = 0x28,
- 		.bit = 0,
- 		.mask = 0x7
- 	}, {
-+		/* gpio2_c7_sel */
- 		.num = 2,
- 		.pin = 23,
- 		.reg = 0x30,
- 		.bit = 14,
- 		.mask = 0x3
-+	}, {
-+		/* gpio3_b1_sel */
-+		.num = 3,
-+		.pin = 9,
-+		.reg = 0x44,
-+		.bit = 2,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b2_sel */
-+		.num = 3,
-+		.pin = 10,
-+		.reg = 0x44,
-+		.bit = 4,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b3_sel */
-+		.num = 3,
-+		.pin = 11,
-+		.reg = 0x44,
-+		.bit = 6,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b4_sel */
-+		.num = 3,
-+		.pin = 12,
-+		.reg = 0x44,
-+		.bit = 8,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b5_sel */
-+		.num = 3,
-+		.pin = 13,
-+		.reg = 0x44,
-+		.bit = 10,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b6_sel */
-+		.num = 3,
-+		.pin = 14,
-+		.reg = 0x44,
-+		.bit = 12,
-+		.mask = 0x3
-+	}, {
-+		/* gpio3_b7_sel */
-+		.num = 3,
-+		.pin = 15,
-+		.reg = 0x44,
-+		.bit = 14,
-+		.mask = 0x3
- 	},
- };
- 
-@@ -3763,7 +3808,7 @@ static struct rockchip_pin_bank rk3328_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", 0, 0, 0, 0),
- 	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
- 	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0,
--			     IOMUX_WIDTH_3BIT,
-+			     0,
- 			     IOMUX_WIDTH_3BIT,
- 			     0),
- 	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3",
--- 
-2.45.2
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
