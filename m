@@ -1,33 +1,33 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABB715D5AD
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Jun 2024 10:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4042F1E51D
+	for <linux-gpio@vger.kernel.org>; Fri,  7 Jun 2024 10:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755683; cv=none; b=u6JHzdejzaOjkHDHfEKO3YDSWO4OnW9e1nZLSktoW0Rxxt4sS68E0DHIBRnFlcA3lA63majJgn3TzxZRtYrhddbl2FSj9yrclGQn/JqH0kMdQ9sa+7LuYacFeCoNGckSe9lDVF4DakKwzarEmD0gUZkjS+vv04ufxN349g37z/c=
+	t=1717755821; cv=none; b=gFKrKoWJykiSnXPOvgWEhLXnuJyR51s7JuQhPCQ9yjZzh066n+wsKMJCsfsM4lZsPr4SJfzoLQ9cLN6f3lRDPxly8CJqFRrZeSNdEM8KmW8dkqnjk0yt6sfoV9lMCJNKgiIlUczYm4ElRr9HjWxpyRGlnN2Fe2ZQgRutxzR8XHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755683; c=relaxed/simple;
-	bh=9TE9lSyPO3G5pcCOYxY/XXH4PkO6Gj5ARGhqLKty69E=;
+	s=arc-20240116; t=1717755821; c=relaxed/simple;
+	bh=gyR/0gLFmok33OQL/9d+54PAju+H+4hhW8s7S3AqEO0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cQWLAOYh6sQm+UvASiKvyAwbgcBROm5XdMZPTIYla+fuPc8B2jQeGlG7EbSD41IUKRWnoDBxwHaCe/3MwfnrKlP3tC62F4Eelnh2LAyiTeglcQUc6u3k5u6rLiI7sKTsFxI1MoTWrrLLv9t54AiSQG3eGj0APSWaD4i9/AjwUvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
+	 MIME-Version; b=NrIpaXqa9MJqSQC5s/WegcfMRTUB+w3hZ0YD4AFFxWczS6CVxlDsw1ALG7xQ/RVSsLbok13FNo4A0HTihydCf76rhBsaugK2eSYk+4WBK3MVMP1BhN/b2F3uowUoIAcJRRVE+vc0ba/f4yfmw5ZohvWxiwztub1nnZjFVxPq7so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4VwcVm6XX2z4xJkc
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4VwcVm6QgXz4x5b1
 	for <linux-gpio@vger.kernel.org>; Fri, 07 Jun 2024 12:14:08 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5ffd:9c1a:d9c:cf6])
-	by albert.telenet-ops.be with bizsmtp
-	id YaDz2C00i45NznL06aDzJr; Fri, 07 Jun 2024 12:14:01 +0200
+	by andre.telenet-ops.be with bizsmtp
+	id YaDz2C00C45NznL01aDzC7; Fri, 07 Jun 2024 12:14:01 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sFWae-00ECgX-1s;
+	id 1sFWae-00ECgl-4I;
 	Fri, 07 Jun 2024 12:13:59 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sFWbf-00200n-Ib;
+	id 1sFWbf-002012-Ku;
 	Fri, 07 Jun 2024 12:13:59 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -41,9 +41,9 @@ Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] pinctrl: renesas: r8a779g0: Fix IRQ suffixes
-Date: Fri,  7 Jun 2024 12:13:52 +0200
-Message-Id: <8ce9baf0a0f9346544a3ac801fd962c7c12fd247.1717754960.git.geert+renesas@glider.be>
+Subject: [PATCH 8/8] pinctrl: renesas: r8a779g0: Fix TPU suffixes
+Date: Fri,  7 Jun 2024 12:13:55 +0200
+Message-Id: <0dd9428bc24e97e1001ed3976b1cb98966f5e7e3.1717754960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1717754960.git.geert+renesas@glider.be>
 References: <cover.1717754960.git.geert+renesas@glider.be>
@@ -55,125 +55,273 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The suffixes of the IRQ identifiers for external interrupts 0-3
-are inconsistent:
-  - "IRQ0" and "IRQ0_A",
-  - "IRQ1" and "IRQ1_A",
-  - "IRQ2" and "IRQ2_A",
-  - "IRQ3" and "IRQ3_B".
-The suffixes for external interrupts 4 and 5 do follow conventional
-naming:
-  - "IRQ4A" and IRQ4_B",
-  - "IRQ5".
+The Timer Pulse Unit channels have two alternate pin groups:
+"tpu_to[0-3]" and "tpu_to[0-3]_a".
 
-Fix this by adopting R-Car V4M naming:
-  - Rename "IRQ[0-2]_A" to "IRQ[0-2]_B",
-  - Rename "IRQ[0-3]" to "IRQ[0-3]_A".
+Increase uniformity by adopting R-Car V4M naming:
+  - Rename "tpu_to[0-3]_a" to "tpu_to[0-3]_b",
+  - Rename "tpu_to[0-3]" to "tpu_to[0-3]_a",
 
 Fixes: ad9bb2fec66262b0 ("pinctrl: renesas: Initial R8A779G0 (R-Car V4H) PFC support")
-Fixes: 1b23d8a478bea9d1 ("pinctrl: renesas: r8a779g0: Add missing IRQx_A/IRQx_B")
+Fixes: 050442ae4c74f830 ("pinctrl: renesas: r8a779g0: Add pins, groups and functions")
+Fixes: 85a9cbe4c57bb958 ("pinctrl: renesas: r8a779g0: Add missing TPU0TOx_A")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a779g0.c | 36 +++++++++++++-------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a779g0.c | 128 ++++++++++++-------------
+ 1 file changed, 63 insertions(+), 65 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779g0.c b/drivers/pinctrl/renesas/pfc-r8a779g0.c
-index e3c720ea76e32bd7..f9f650f232e6e71e 100644
+index 8c19b892441a3567..bb843e333c880f91 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779g0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
-@@ -68,10 +68,10 @@
- #define GPSR0_9		F_(MSIOF5_SYNC,		IP1SR0_7_4)
- #define GPSR0_8		F_(MSIOF5_SS1,		IP1SR0_3_0)
- #define GPSR0_7		F_(MSIOF5_SS2,		IP0SR0_31_28)
--#define GPSR0_6		F_(IRQ0,		IP0SR0_27_24)
--#define GPSR0_5		F_(IRQ1,		IP0SR0_23_20)
--#define GPSR0_4		F_(IRQ2,		IP0SR0_19_16)
--#define GPSR0_3		F_(IRQ3,		IP0SR0_15_12)
-+#define GPSR0_6		F_(IRQ0_A,		IP0SR0_27_24)
-+#define GPSR0_5		F_(IRQ1_A,		IP0SR0_23_20)
-+#define GPSR0_4		F_(IRQ2_A,		IP0SR0_19_16)
-+#define GPSR0_3		F_(IRQ3_A,		IP0SR0_15_12)
- #define GPSR0_2		F_(GP0_02,		IP0SR0_11_8)
- #define GPSR0_1		F_(GP0_01,		IP0SR0_7_4)
- #define GPSR0_0		F_(GP0_00,		IP0SR0_3_0)
-@@ -278,10 +278,10 @@
- #define IP0SR0_3_0	F_(0, 0)		FM(ERROROUTC_N_B)	FM(TCLK2_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP0SR0_7_4	F_(0, 0)		FM(MSIOF3_SS1)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP0SR0_11_8	F_(0, 0)		FM(MSIOF3_SS2)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP0SR0_15_12	FM(IRQ3)		FM(MSIOF3_SCK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP0SR0_19_16	FM(IRQ2)		FM(MSIOF3_TXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP0SR0_23_20	FM(IRQ1)		FM(MSIOF3_RXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP0SR0_27_24	FM(IRQ0)		FM(MSIOF3_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP0SR0_15_12	FM(IRQ3_A)		FM(MSIOF3_SCK)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP0SR0_19_16	FM(IRQ2_A)		FM(MSIOF3_TXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP0SR0_23_20	FM(IRQ1_A)		FM(MSIOF3_RXD)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP0SR0_27_24	FM(IRQ0_A)		FM(MSIOF3_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP0SR0_31_28	FM(MSIOF5_SS2)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -119,8 +119,8 @@
+ #define GPSR2_11	F_(CANFD0_RX,		IP1SR2_15_12)
+ #define GPSR2_10	F_(CANFD0_TX,		IP1SR2_11_8)
+ #define GPSR2_9		F_(CAN_CLK,		IP1SR2_7_4)
+-#define GPSR2_8		F_(TPU0TO0,		IP1SR2_3_0)
+-#define GPSR2_7		F_(TPU0TO1,		IP0SR2_31_28)
++#define GPSR2_8		F_(TPU0TO0_A,		IP1SR2_3_0)
++#define GPSR2_7		F_(TPU0TO1_A,		IP0SR2_31_28)
+ #define GPSR2_6		F_(FXR_TXDB,		IP0SR2_27_24)
+ #define GPSR2_5		F_(FXR_TXENB_N_A,	IP0SR2_23_20)
+ #define GPSR2_4		F_(RXDB_EXTFXR,		IP0SR2_19_16)
+@@ -332,29 +332,29 @@
  
- /* IP1SR0 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
-@@ -290,7 +290,7 @@
- #define IP1SR0_11_8	FM(MSIOF5_TXD)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP1SR0_15_12	FM(MSIOF5_SCK)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP1SR0_19_16	FM(MSIOF5_RXD)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP1SR0_23_20	FM(MSIOF2_SS2)		FM(TCLK1)		FM(IRQ2_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP1SR0_23_20	FM(MSIOF2_SS2)		FM(TCLK1)		FM(IRQ2_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP1SR0_27_24	FM(MSIOF2_SS1)		FM(HTX1_A)		FM(TX1_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP1SR0_31_28	FM(MSIOF2_SYNC)		FM(HRX1_A)		FM(RX1_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ /* IP3SR1 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+ #define IP3SR1_3_0	FM(HRX3_A)		FM(SCK3_A)		FM(MSIOF4_SS2)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3SR1_7_4	FM(HSCK3_A)		FM(CTS3_N_A)		FM(MSIOF4_SCK)		FM(TPU0TO0_A)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3SR1_11_8	FM(HRTS3_N_A)		FM(RTS3_N_A)		FM(MSIOF4_TXD)		FM(TPU0TO1_A)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3SR1_7_4	FM(HSCK3_A)		FM(CTS3_N_A)		FM(MSIOF4_SCK)		FM(TPU0TO0_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3SR1_11_8	FM(HRTS3_N_A)		FM(RTS3_N_A)		FM(MSIOF4_TXD)		FM(TPU0TO1_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3SR1_15_12	FM(HCTS3_N_A)		FM(RX3_A)		FM(MSIOF4_RXD)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3SR1_19_16	FM(HTX3_A)		FM(TX3_A)		FM(MSIOF4_SYNC)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
  
-@@ -325,8 +325,8 @@
- #define IP2SR1_7_4	FM(SCIF_CLK)		FM(IRQ4_A)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2SR1_11_8	FM(SSI_SCK)		FM(TCLK3)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2SR1_15_12	FM(SSI_WS)		FM(TCLK4)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2SR1_19_16	FM(SSI_SD)		FM(IRQ0_A)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2SR1_23_20	FM(AUDIO_CLKOUT)	FM(IRQ1_A)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2SR1_19_16	FM(SSI_SD)		FM(IRQ0_B)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2SR1_23_20	FM(AUDIO_CLKOUT)	FM(IRQ1_B)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2SR1_27_24	FM(AUDIO_CLKIN)		FM(PWM3_A)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2SR1_31_28	F_(0, 0)		FM(TCLK2)		FM(MSIOF4_SS1)		FM(IRQ3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ /* SR2 */
+ /* IP0SR2 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+-#define IP0SR2_3_0	FM(FXR_TXDA)		FM(CANFD1_TX)		FM(TPU0TO2_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR2_7_4	FM(FXR_TXENA_N_A)	FM(CANFD1_RX)		FM(TPU0TO3_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR2_3_0	FM(FXR_TXDA)		FM(CANFD1_TX)		FM(TPU0TO2_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR2_7_4	FM(FXR_TXENA_N_A)	FM(CANFD1_RX)		FM(TPU0TO3_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_11_8	FM(RXDA_EXTFXR)		FM(CANFD5_TX_A)		FM(IRQ5)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_15_12	FM(CLK_EXTFXR)		FM(CANFD5_RX_A)		FM(IRQ4_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_19_16	FM(RXDB_EXTFXR)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_23_20	FM(FXR_TXENB_N_A)	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_27_24	FM(FXR_TXDB)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR2_31_28	FM(TPU0TO1)		FM(CANFD6_TX)		F_(0, 0)		FM(TCLK2_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR2_31_28	FM(TPU0TO1_A)		FM(CANFD6_TX)		F_(0, 0)		FM(TCLK2_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
  
-@@ -724,16 +724,16 @@ static const u16 pinmux_data[] = {
+ /* IP1SR2 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+-#define IP1SR2_3_0	FM(TPU0TO0)		FM(CANFD6_RX)		F_(0, 0)		FM(TCLK1_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP1SR2_3_0	FM(TPU0TO0_A)		FM(CANFD6_RX)		F_(0, 0)		FM(TCLK1_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_7_4	FM(CAN_CLK)		FM(FXR_TXENA_N_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_11_8	FM(CANFD0_TX)		FM(FXR_TXENB_N_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_15_12	FM(CANFD0_RX)		FM(STPWT_EXTFXR)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR2_19_16	FM(CANFD2_TX)		FM(TPU0TO2)		F_(0, 0)		FM(TCLK3_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR2_23_20	FM(CANFD2_RX)		FM(TPU0TO3)		FM(PWM1_B)		FM(TCLK4_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP1SR2_19_16	FM(CANFD2_TX)		FM(TPU0TO2_A)		F_(0, 0)		FM(TCLK3_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP1SR2_23_20	FM(CANFD2_RX)		FM(TPU0TO3_A)		FM(PWM1_B)		FM(TCLK4_C)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_27_24	FM(CANFD3_TX)		F_(0, 0)		FM(PWM2)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_31_28	FM(CANFD3_RX)		F_(0, 0)		FM(PWM3_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
  
- 	PINMUX_IPSR_GPSR(IP0SR0_11_8,	MSIOF3_SS2),
+@@ -871,12 +871,12 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP3SR1_7_4,	HSCK3_A),
+ 	PINMUX_IPSR_GPSR(IP3SR1_7_4,	CTS3_N_A),
+ 	PINMUX_IPSR_GPSR(IP3SR1_7_4,	MSIOF4_SCK),
+-	PINMUX_IPSR_GPSR(IP3SR1_7_4,	TPU0TO0_A),
++	PINMUX_IPSR_GPSR(IP3SR1_7_4,	TPU0TO0_B),
  
--	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3),
-+	PINMUX_IPSR_GPSR(IP0SR0_15_12,	IRQ3_A),
- 	PINMUX_IPSR_GPSR(IP0SR0_15_12,	MSIOF3_SCK),
+ 	PINMUX_IPSR_GPSR(IP3SR1_11_8,	HRTS3_N_A),
+ 	PINMUX_IPSR_GPSR(IP3SR1_11_8,	RTS3_N_A),
+ 	PINMUX_IPSR_GPSR(IP3SR1_11_8,	MSIOF4_TXD),
+-	PINMUX_IPSR_GPSR(IP3SR1_11_8,	TPU0TO1_A),
++	PINMUX_IPSR_GPSR(IP3SR1_11_8,	TPU0TO1_B),
  
--	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2),
-+	PINMUX_IPSR_GPSR(IP0SR0_19_16,	IRQ2_A),
- 	PINMUX_IPSR_GPSR(IP0SR0_19_16,	MSIOF3_TXD),
+ 	PINMUX_IPSR_GPSR(IP3SR1_15_12,	HCTS3_N_A),
+ 	PINMUX_IPSR_GPSR(IP3SR1_15_12,	RX3_A),
+@@ -889,11 +889,11 @@ static const u16 pinmux_data[] = {
+ 	/* IP0SR2 */
+ 	PINMUX_IPSR_GPSR(IP0SR2_3_0,	FXR_TXDA),
+ 	PINMUX_IPSR_GPSR(IP0SR2_3_0,	CANFD1_TX),
+-	PINMUX_IPSR_GPSR(IP0SR2_3_0,	TPU0TO2_A),
++	PINMUX_IPSR_GPSR(IP0SR2_3_0,	TPU0TO2_B),
  
--	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1),
-+	PINMUX_IPSR_GPSR(IP0SR0_23_20,	IRQ1_A),
- 	PINMUX_IPSR_GPSR(IP0SR0_23_20,	MSIOF3_RXD),
+ 	PINMUX_IPSR_GPSR(IP0SR2_7_4,	FXR_TXENA_N_A),
+ 	PINMUX_IPSR_GPSR(IP0SR2_7_4,	CANFD1_RX),
+-	PINMUX_IPSR_GPSR(IP0SR2_7_4,	TPU0TO3_A),
++	PINMUX_IPSR_GPSR(IP0SR2_7_4,	TPU0TO3_B),
  
--	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0),
-+	PINMUX_IPSR_GPSR(IP0SR0_27_24,	IRQ0_A),
- 	PINMUX_IPSR_GPSR(IP0SR0_27_24,	MSIOF3_SYNC),
+ 	PINMUX_IPSR_GPSR(IP0SR2_11_8,	RXDA_EXTFXR),
+ 	PINMUX_IPSR_GPSR(IP0SR2_11_8,	CANFD5_TX_A),
+@@ -909,12 +909,12 @@ static const u16 pinmux_data[] = {
  
- 	PINMUX_IPSR_GPSR(IP0SR0_31_28,	MSIOF5_SS2),
-@@ -751,7 +751,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP0SR2_27_24,	FXR_TXDB),
  
- 	PINMUX_IPSR_GPSR(IP1SR0_23_20,	MSIOF2_SS2),
- 	PINMUX_IPSR_GPSR(IP1SR0_23_20,	TCLK1),
--	PINMUX_IPSR_GPSR(IP1SR0_23_20,	IRQ2_A),
-+	PINMUX_IPSR_GPSR(IP1SR0_23_20,	IRQ2_B),
+-	PINMUX_IPSR_GPSR(IP0SR2_31_28,	TPU0TO1),
++	PINMUX_IPSR_GPSR(IP0SR2_31_28,	TPU0TO1_A),
+ 	PINMUX_IPSR_GPSR(IP0SR2_31_28,	CANFD6_TX),
+ 	PINMUX_IPSR_GPSR(IP0SR2_31_28,	TCLK2_C),
  
- 	PINMUX_IPSR_GPSR(IP1SR0_27_24,	MSIOF2_SS1),
- 	PINMUX_IPSR_GPSR(IP1SR0_27_24,	HTX1_A),
-@@ -851,10 +851,10 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP2SR1_15_12,	TCLK4),
+ 	/* IP1SR2 */
+-	PINMUX_IPSR_GPSR(IP1SR2_3_0,	TPU0TO0),
++	PINMUX_IPSR_GPSR(IP1SR2_3_0,	TPU0TO0_A),
+ 	PINMUX_IPSR_GPSR(IP1SR2_3_0,	CANFD6_RX),
+ 	PINMUX_IPSR_GPSR(IP1SR2_3_0,	TCLK1_B),
  
- 	PINMUX_IPSR_GPSR(IP2SR1_19_16,	SSI_SD),
--	PINMUX_IPSR_GPSR(IP2SR1_19_16,	IRQ0_A),
-+	PINMUX_IPSR_GPSR(IP2SR1_19_16,	IRQ0_B),
+@@ -928,11 +928,11 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP1SR2_15_12,	STPWT_EXTFXR),
  
- 	PINMUX_IPSR_GPSR(IP2SR1_23_20,	AUDIO_CLKOUT),
--	PINMUX_IPSR_GPSR(IP2SR1_23_20,	IRQ1_A),
-+	PINMUX_IPSR_GPSR(IP2SR1_23_20,	IRQ1_B),
+ 	PINMUX_IPSR_GPSR(IP1SR2_19_16,	CANFD2_TX),
+-	PINMUX_IPSR_GPSR(IP1SR2_19_16,	TPU0TO2),
++	PINMUX_IPSR_GPSR(IP1SR2_19_16,	TPU0TO2_A),
+ 	PINMUX_IPSR_GPSR(IP1SR2_19_16,	TCLK3_C),
  
- 	PINMUX_IPSR_GPSR(IP2SR1_27_24,	AUDIO_CLKIN),
- 	PINMUX_IPSR_GPSR(IP2SR1_27_24,	PWM3_A),
+ 	PINMUX_IPSR_GPSR(IP1SR2_23_20,	CANFD2_RX),
+-	PINMUX_IPSR_GPSR(IP1SR2_23_20,	TPU0TO3),
++	PINMUX_IPSR_GPSR(IP1SR2_23_20,	TPU0TO3_A),
+ 	PINMUX_IPSR_GPSR(IP1SR2_23_20,	PWM1_B),
+ 	PINMUX_IPSR_GPSR(IP1SR2_23_20,	TCLK4_C),
+ 
+@@ -2403,64 +2403,63 @@ static const unsigned int ssi_ctrl_mux[] = {
+ 	SSI_SCK_MARK, SSI_WS_MARK,
+ };
+ 
+-/* - TPU ------------------------------------------------------------------- */
+-static const unsigned int tpu_to0_pins[] = {
+-	/* TPU0TO0 */
++/* - TPU -------------------------------------------------------------------- */
++static const unsigned int tpu_to0_a_pins[] = {
++	/* TPU0TO0_A */
+ 	RCAR_GP_PIN(2, 8),
+ };
+-static const unsigned int tpu_to0_mux[] = {
+-	TPU0TO0_MARK,
++static const unsigned int tpu_to0_a_mux[] = {
++	TPU0TO0_A_MARK,
+ };
+-static const unsigned int tpu_to1_pins[] = {
+-	/* TPU0TO1 */
++static const unsigned int tpu_to1_a_pins[] = {
++	/* TPU0TO1_A */
+ 	RCAR_GP_PIN(2, 7),
+ };
+-static const unsigned int tpu_to1_mux[] = {
+-	TPU0TO1_MARK,
++static const unsigned int tpu_to1_a_mux[] = {
++	TPU0TO1_A_MARK,
+ };
+-static const unsigned int tpu_to2_pins[] = {
+-	/* TPU0TO2 */
++static const unsigned int tpu_to2_a_pins[] = {
++	/* TPU0TO2_A */
+ 	RCAR_GP_PIN(2, 12),
+ };
+-static const unsigned int tpu_to2_mux[] = {
+-	TPU0TO2_MARK,
++static const unsigned int tpu_to2_a_mux[] = {
++	TPU0TO2_A_MARK,
+ };
+-static const unsigned int tpu_to3_pins[] = {
+-	/* TPU0TO3 */
++static const unsigned int tpu_to3_a_pins[] = {
++	/* TPU0TO3_A */
+ 	RCAR_GP_PIN(2, 13),
+ };
+-static const unsigned int tpu_to3_mux[] = {
+-	TPU0TO3_MARK,
++static const unsigned int tpu_to3_a_mux[] = {
++	TPU0TO3_A_MARK,
+ };
+ 
+-/* - TPU_A ------------------------------------------------------------------- */
+-static const unsigned int tpu_to0_a_pins[] = {
+-	/* TPU0TO0_A */
++static const unsigned int tpu_to0_b_pins[] = {
++	/* TPU0TO0_B */
+ 	RCAR_GP_PIN(1, 25),
+ };
+-static const unsigned int tpu_to0_a_mux[] = {
+-	TPU0TO0_A_MARK,
++static const unsigned int tpu_to0_b_mux[] = {
++	TPU0TO0_B_MARK,
+ };
+-static const unsigned int tpu_to1_a_pins[] = {
+-	/* TPU0TO1_A */
++static const unsigned int tpu_to1_b_pins[] = {
++	/* TPU0TO1_B */
+ 	RCAR_GP_PIN(1, 26),
+ };
+-static const unsigned int tpu_to1_a_mux[] = {
+-	TPU0TO1_A_MARK,
++static const unsigned int tpu_to1_b_mux[] = {
++	TPU0TO1_B_MARK,
+ };
+-static const unsigned int tpu_to2_a_pins[] = {
+-	/* TPU0TO2_A */
++static const unsigned int tpu_to2_b_pins[] = {
++	/* TPU0TO2_B */
+ 	RCAR_GP_PIN(2, 0),
+ };
+-static const unsigned int tpu_to2_a_mux[] = {
+-	TPU0TO2_A_MARK,
++static const unsigned int tpu_to2_b_mux[] = {
++	TPU0TO2_B_MARK,
+ };
+-static const unsigned int tpu_to3_a_pins[] = {
+-	/* TPU0TO3_A */
++static const unsigned int tpu_to3_b_pins[] = {
++	/* TPU0TO3_B */
+ 	RCAR_GP_PIN(2, 1),
+ };
+-static const unsigned int tpu_to3_a_mux[] = {
+-	TPU0TO3_A_MARK,
++static const unsigned int tpu_to3_b_mux[] = {
++	TPU0TO3_B_MARK,
+ };
+ 
+ /* - TSN0 ------------------------------------------------ */
+@@ -2702,14 +2701,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(ssi_data),
+ 	SH_PFC_PIN_GROUP(ssi_ctrl),
+ 
+-	SH_PFC_PIN_GROUP(tpu_to0),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to0_a),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to1),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to1_a),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to2),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to2_a),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to3),		/* suffix might be updated */
+-	SH_PFC_PIN_GROUP(tpu_to3_a),		/* suffix might be updated */
++	SH_PFC_PIN_GROUP(tpu_to0_a),
++	SH_PFC_PIN_GROUP(tpu_to0_b),
++	SH_PFC_PIN_GROUP(tpu_to1_a),
++	SH_PFC_PIN_GROUP(tpu_to1_b),
++	SH_PFC_PIN_GROUP(tpu_to2_a),
++	SH_PFC_PIN_GROUP(tpu_to2_b),
++	SH_PFC_PIN_GROUP(tpu_to3_a),
++	SH_PFC_PIN_GROUP(tpu_to3_b),
+ 
+ 	SH_PFC_PIN_GROUP(tsn0_link),
+ 	SH_PFC_PIN_GROUP(tsn0_phy_int),
+@@ -3020,15 +3019,14 @@ static const char * const ssi_groups[] = {
+ };
+ 
+ static const char * const tpu_groups[] = {
+-	/* suffix might be updated */
+-	"tpu_to0",
+ 	"tpu_to0_a",
+-	"tpu_to1",
++	"tpu_to0_b",
+ 	"tpu_to1_a",
+-	"tpu_to2",
++	"tpu_to1_b",
+ 	"tpu_to2_a",
+-	"tpu_to3",
++	"tpu_to2_b",
+ 	"tpu_to3_a",
++	"tpu_to3_b",
+ };
+ 
+ static const char * const tsn0_groups[] = {
 -- 
 2.34.1
 
