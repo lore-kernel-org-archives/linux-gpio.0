@@ -1,29 +1,30 @@
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80A013F016
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E814915B96F
 	for <linux-gpio@vger.kernel.org>; Fri,  7 Jun 2024 10:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755251; cv=none; b=mpOEj+B2eI35fV2t8aot7+hD+RDcyXgrBgkQO5YLaBWuUrUL7hv2T9d/OouNUiCsb7xUA+w0ocKlknLxr9d1RvRAS45b1wQH/7nUe7LG04iUrslROahgZis7AZt8QCHMnHHWcRnUeZk/1zOy2yNTez6dbdvtOwz+IOvmHzNC8RQ=
+	t=1717755251; cv=none; b=YjAiRpNta4+Ex6PRMTbQAX2hQhiyXwal0ihNO8P2xRSOpFiZPjdbjkpc4USCXAgpytrIDs7xsujHbdfH5in7pg7xgexHdr8a7t6+lymVTHfNOjtDUrjTLCcV7Z123wfEj8o3o/ZUfY4CF9L/v95pSrbItLYz9PDESBY5HuSB2rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717755251; c=relaxed/simple;
-	bh=4TY0fau/yTVqLJLKEXa5oVIqmFvR5rt54q0zSz91W20=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OL42Wm/xakhdi2Z/S21G6fiCsDOjwJEA7FXOFfdxxUJjBndfqrchG0rBcRzmtDBGlNi+7h9r37zk3KPv/f/VFUIk2HAsReNXyKhIcbVbR+1f7VBPOJ0xhWP5JD141cteEl3swuzw2wuJXr0tXE4yngXJgujAsczNI+A0QElCjyY=
+	bh=gThjn3oEkv9tLnagtQGRTukBv506WHftFz8rHHWcL9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HUv25z+jbhkHNJFxMi+mFOnbF1tPqjlybtWv0iwlm0KXMt68Dglgn02vcVChRp89mhPprdTXEFdkuN/YtGmGfzE3l19s7EjIV2NRe5HGqJThegyc4Re8bpb/yYgv0patBa7tiPCFSWy7H8Gp+gTmFff1QNiVXsuhDMsB2kHJ5Mo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:5ffd:9c1a:d9c:cf6])
 	by xavier.telenet-ops.be with bizsmtp
-	id YaDz2C00N45NznL01aDzVt; Fri, 07 Jun 2024 12:14:01 +0200
+	id YaDz2C00P45NznL01aDzVu; Fri, 07 Jun 2024 12:14:01 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sFWad-00ECgG-Ut;
+	id 1sFWad-00ECgK-Vj;
 	Fri, 07 Jun 2024 12:13:59 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sFWbf-00200U-C8;
+	id 1sFWbf-00200b-GF;
 	Fri, 07 Jun 2024 12:13:59 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Linus Walleij <linus.walleij@linaro.org>,
@@ -37,10 +38,12 @@ Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] pinctrl: renesas: r8a779g0: Fix pin group suffixes
-Date: Fri,  7 Jun 2024 12:13:47 +0200
-Message-Id: <cover.1717754960.git.geert+renesas@glider.be>
+Subject: [PATCH 2/8] pinctrl: renesas: r8a779g0: Fix FXR_TXEN[AB] suffixes
+Date: Fri,  7 Jun 2024 12:13:49 +0200
+Message-Id: <5e1e9abb46c311d4c54450d991072d6d0e66f14c.1717754960.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1717754960.git.geert+renesas@glider.be>
+References: <cover.1717754960.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -49,61 +52,95 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+The Pin Multiplex attachment in Rev.1.10 of the R-Car V4H Series
+Hardware User's Manual still has two alternate pins named both
+"FXR_TXEN[AB]".  To differentiate, the pin control driver uses
+"FXR_TXEN[AB]" and "FXR_TXEN[AB]_X", which were considered temporary
+names until the conflict was sorted out.
 
-On R-Car SoCs, pin group names usually have a suffix ("_a", "_b", ...)
-if and only if there are alternate pin groups for the same function.
-At the time initial pin control support for the R-Car V4H (R8A779G0) SoC
-was introduced, there were lots of ambiguities and inconsistencies in
-the naming of pin groups in the documentation, violating this convention:
-  1. Some alternate pin groups may be named identically, without any
-     suffix to differentiate,
-  2. In case of two alternate pin groups, the primary may not carry a
-     suffix, while the alternate may carry an "_a" or "_b" suffix,
-  3. A pin group without an alternate may have an "_a" or even a "_b"
-     suffix.
-So far the driver followed the documentation, except for case 1, where
-an "_x" suffix was added to one of the alternates.  The plan was to
-update the pin group names when they were clarified in the documentation.
-As technically these names are part of the ABI, they were clearly marked
-with "suffix might be updated" in the driver.
+Fix this by adopting R-Car V4M naming:
+  - Rename "FXR_TXEN[AB]" to "FXR_TXEN[AB]_A",
+  - Rename "FXR_TXEN[AB]_X" to "FXR_TXEN[AB]_B".
 
-Unfortunately the pin group names are still not updated in the latest
-revision (Rev.1.10) of the R-Car V4H Series Hardware User's Manual.
-However, the newer R-Car V4M (R8A779H0) SoC is mostly signal-compatible
-with R-Car V4H (they are not pin-compatible, as R-Car V4H has many more
-pins).  Hence this series bites the bullet, and fixes the ambiguities
-and inconsistencies by adopting R-Car V4M pin group naming (from Rev.0.51
-of the R-Car V4M Series Hardware User's Manual), and following the
-traditional naming convention.
+Fixes: ad9bb2fec66262b0 ("pinctrl: renesas: Initial R8A779G0 (R-Car V4H) PFC support")
+Fixes: 1c2646b5cebfff07 ("pinctrl: renesas: r8a779g0: Add missing FlexRay")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/pfc-r8a779g0.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Note that this does not affect any upstream DTS files.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (8):
-  pinctrl: renesas: r8a779g0: Fix CANFD5 suffix
-  pinctrl: renesas: r8a779g0: Fix FXR_TXEN[AB] suffixes
-  pinctrl: renesas: r8a779g0: Fix (H)SCIF1 suffixes
-  pinctrl: renesas: r8a779g0: Fix (H)SCIF3 suffixes
-  pinctrl: renesas: r8a779g0: Fix IRQ suffixes
-  pinctrl: renesas: r8a779g0: FIX PWM suffixes
-  pinctrl: renesas: r8a779g0: Fix TCLK suffixes
-  pinctrl: renesas: r8a779g0: Fix TPU suffixes
-
- drivers/pinctrl/renesas/pfc-r8a779g0.c | 712 ++++++++++++-------------
- 1 file changed, 348 insertions(+), 364 deletions(-)
-
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779g0.c b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+index d90ba8b6b4b423ed..ba2ec8e0421199b0 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779g0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+@@ -122,11 +122,11 @@
+ #define GPSR2_8		F_(TPU0TO0,		IP1SR2_3_0)
+ #define GPSR2_7		F_(TPU0TO1,		IP0SR2_31_28)
+ #define GPSR2_6		F_(FXR_TXDB,		IP0SR2_27_24)
+-#define GPSR2_5		F_(FXR_TXENB_N,		IP0SR2_23_20)
++#define GPSR2_5		F_(FXR_TXENB_N_A,	IP0SR2_23_20)
+ #define GPSR2_4		F_(RXDB_EXTFXR,		IP0SR2_19_16)
+ #define GPSR2_3		F_(CLK_EXTFXR,		IP0SR2_15_12)
+ #define GPSR2_2		F_(RXDA_EXTFXR,		IP0SR2_11_8)
+-#define GPSR2_1		F_(FXR_TXENA_N,		IP0SR2_7_4)
++#define GPSR2_1		F_(FXR_TXENA_N_A,	IP0SR2_7_4)
+ #define GPSR2_0		F_(FXR_TXDA,		IP0SR2_3_0)
+ 
+ /* GPSR3 */
+@@ -340,18 +340,18 @@
+ /* SR2 */
+ /* IP0SR2 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+ #define IP0SR2_3_0	FM(FXR_TXDA)		FM(CANFD1_TX)		FM(TPU0TO2_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR2_7_4	FM(FXR_TXENA_N)		FM(CANFD1_RX)		FM(TPU0TO3_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR2_7_4	FM(FXR_TXENA_N_A)	FM(CANFD1_RX)		FM(TPU0TO3_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_11_8	FM(RXDA_EXTFXR)		FM(CANFD5_TX_A)		FM(IRQ5)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_15_12	FM(CLK_EXTFXR)		FM(CANFD5_RX_A)		FM(IRQ4_B)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_19_16	FM(RXDB_EXTFXR)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0SR2_23_20	FM(FXR_TXENB_N)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0SR2_23_20	FM(FXR_TXENB_N_A)	F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_27_24	FM(FXR_TXDB)		F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0SR2_31_28	FM(TPU0TO1)		FM(CANFD6_TX)		F_(0, 0)		FM(TCLK2_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ 
+ /* IP1SR2 */		/* 0 */			/* 1 */			/* 2 */			/* 3		4	 5	  6	   7	    8	     9	      A	       B	C	 D	  E	   F */
+ #define IP1SR2_3_0	FM(TPU0TO0)		FM(CANFD6_RX)		F_(0, 0)		FM(TCLK1_A)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR2_7_4	FM(CAN_CLK)		FM(FXR_TXENA_N_X)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP1SR2_11_8	FM(CANFD0_TX)		FM(FXR_TXENB_N_X)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP1SR2_7_4	FM(CAN_CLK)		FM(FXR_TXENA_N_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP1SR2_11_8	FM(CANFD0_TX)		FM(FXR_TXENB_N_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_15_12	FM(CANFD0_RX)		FM(STPWT_EXTFXR)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_19_16	FM(CANFD2_TX)		FM(TPU0TO2)		F_(0, 0)		FM(TCLK3_A)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1SR2_23_20	FM(CANFD2_RX)		FM(TPU0TO3)		FM(PWM1_B)		FM(TCLK4_A)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -891,7 +891,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP0SR2_3_0,	CANFD1_TX),
+ 	PINMUX_IPSR_GPSR(IP0SR2_3_0,	TPU0TO2_A),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR2_7_4,	FXR_TXENA_N),
++	PINMUX_IPSR_GPSR(IP0SR2_7_4,	FXR_TXENA_N_A),
+ 	PINMUX_IPSR_GPSR(IP0SR2_7_4,	CANFD1_RX),
+ 	PINMUX_IPSR_GPSR(IP0SR2_7_4,	TPU0TO3_A),
+ 
+@@ -905,7 +905,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR2_19_16,	RXDB_EXTFXR),
+ 
+-	PINMUX_IPSR_GPSR(IP0SR2_23_20,	FXR_TXENB_N),
++	PINMUX_IPSR_GPSR(IP0SR2_23_20,	FXR_TXENB_N_A),
+ 
+ 	PINMUX_IPSR_GPSR(IP0SR2_27_24,	FXR_TXDB),
+ 
+@@ -919,10 +919,10 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP1SR2_3_0,	TCLK1_A),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR2_7_4,	CAN_CLK),
+-	PINMUX_IPSR_GPSR(IP1SR2_7_4,	FXR_TXENA_N_X),
++	PINMUX_IPSR_GPSR(IP1SR2_7_4,	FXR_TXENA_N_B),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR2_11_8,	CANFD0_TX),
+-	PINMUX_IPSR_GPSR(IP1SR2_11_8,	FXR_TXENB_N_X),
++	PINMUX_IPSR_GPSR(IP1SR2_11_8,	FXR_TXENB_N_B),
+ 
+ 	PINMUX_IPSR_GPSR(IP1SR2_15_12,	CANFD0_RX),
+ 	PINMUX_IPSR_GPSR(IP1SR2_15_12,	STPWT_EXTFXR),
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
