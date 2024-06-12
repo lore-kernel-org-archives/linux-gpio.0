@@ -1,221 +1,115 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE07381D4
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Jun 2024 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397FA16C872
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Jun 2024 11:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718193187; cv=none; b=sBvY6drgHkQ2rcjWzHnayABV7WJCOMTrBV7ZoPIgEmjxtL0fIo0wke8HevyJ2aAwXDfgwxJUssUk8UFqu5qN//BoMCYOMAqc9J0R30/qkj+3GtaFJ1MkpGFYMBZJ90K53Cnp3mTt8es5xfKw6vrMD5j0ydojOf5++Xqreu1PMGE=
+	t=1718193368; cv=none; b=c1VmnmpARQYDJzuG7olJVpaHzAW0ghczDl+eEDA/8XOdWwBnhZD5RfUs91n0Sp4gjRfPlfJODzpEm2RtyVII13RT5Rv/0Nls1PkIIcg5bs65WRmjZlvgBuLgZ8GEs3gAKGqCXfpw5wKnmSWeYNpEIiMCA7VZVfiGEfqek/TGk8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718193187; c=relaxed/simple;
-	bh=gIxc5R2yJd9VUifO8gyW7fV3jyzLCecrCt5fl7cMhQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JRXj5N0naOHjOy84MAZgB+8UUxARsjou++Skn/EQBj1RC71pXCjYJOX0J9/OB973GQL+p1Uk8ntciz1Bkar9R3XaNNsKtI91L3xMgLDoCg89kE5DkEGIUp91SHUjk4KWa1nLtS4QDXxlxM2twWehgZMETI3dnMYFXUJbnItyeE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vlnvGd4I; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1718193368; c=relaxed/simple;
+	bh=uOR+xIsHDbWSbhrnfmd8+ZJ/VQdwPuFOjpN0peY3rVw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GBAKdcqfOQH2ZLHAHJuerly0xiHA7mXTFUm/Ls9oRsVR1bMNbSILp9hl4QAd1VDiwvMlfo4EBOnaJesZxkH+9ozSSui47b9Qy76lzcpclf2YhhPvAm213KCg03rsIxTUwOmwWP9P8Bf7Wv2SEOwM69St7Es4s2YkaXA66v/oZno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y29JYbjm; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vlnvGd4I"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so5236145e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jun 2024 04:53:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y29JYbjm"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f1cf00b3aso138908666b.0
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Jun 2024 04:56:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718193182; x=1718797982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RMaVrXTNSn8/RlgcBidtA4XNwAtbmdRI1NY6kSKH78g=;
-        b=vlnvGd4I9XwvwxIOYIOYmsD7QKkJ5KN8WsIpjHtV3WKatrYDHnkawEZtPh8p6ZNjWe
-         wmM2YaX57fsXHk3qTqKjwQnLm5TwdRAPBrnCtAjmhLMoDq+nk3yewV4uSbLPCcpLfu3o
-         l4P77jJG/tJqUFPS+OWjYpOCw8klnROq0c2XH67fTyQtWQiXwEXSysfnDUrEgfFxEiDo
-         v1C1G+qixJuIj5kCamYwPUbM7xifgqSttaqwjxKxTQQOa/8ocSL+7e/8aRez7VaA/Xyt
-         BD4869csava4myns3G8A/31wn81jfjKlqcuu5E8TuO/D36AbhNCgD8yy7Sqx/7OuNZye
-         7qiw==
+        d=linaro.org; s=google; t=1718193365; x=1718798165; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oxtqnkllneU5FSN1j1eKyCGRpnLNazDSvubINnfxoJQ=;
+        b=y29JYbjmJgpQM1HK6rR0gChdDpGzwzIIxZFAqummvuY+To3yWcbv/K0v8ngocAzqxK
+         3rpgpXWK0d3NXRrseUxV0k27MGLrwyDTXSPMmXEPPx07isgeGsY1A+JPHaEwg0K37w+q
+         frCJowKc+HILnZRdfXUo8Wo/JmDW0oDEvB1pKPRgsCiqHR6YVG4jL1KtVE8sfBxS2tGG
+         8wIL4mdTHX92wM5hGCO1Uw8oO9WG9YitLMe4kycy8abnxiRwnQZB9glAQ+aEo0+mlwqo
+         88slYNpaIACEtt9hbYbkMcfswufAFQGd52S5IbA+UsS+IUXECVkZETX2Yin4BAbeY2XN
+         dskQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718193182; x=1718797982;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RMaVrXTNSn8/RlgcBidtA4XNwAtbmdRI1NY6kSKH78g=;
-        b=MRk536V0/J/OuvUiEo9YAHI/g+XYpD0yEsCo+XgYyaV33AnNBJCNkX5YOpHxcUHmEB
-         hu0t5piFPgvQFMdV//W7wQzyx6txCcUJxlNYMA2rPC4JrRVgLt+FOAm/gJuoZ+E+Clgc
-         XAyzVE0Tv7wtOZxdkklFskdrCWfkAI7oBZ68aorMUy589yxw3Qz88ZcFtUnmsHBBpcII
-         8PGe5JaCtBhjB69jd/iN8A9B/eYMO2qsM3X5SvgzfJ7J5ANI0bnoOEPdw+HKbpeL3oyT
-         ZOht1kn5H790Uf0P5cr3BZoKpOUV/vEN7Ah/JkChkC8YkVpLg+0yayCq/RhwPAiTvtlz
-         s3Rg==
-X-Gm-Message-State: AOJu0YxhzoDYZppNZHCYDwibZxrjo0TzBovAFVs7BaH6xms25MP261SN
-	mlx4fDAcRq9+AU/qpozaGHb7pXnQZVHpxrwAnv8fv6N7psVh9HJDcFF1hv+VvwQw/NphWmQWuUb
-	s
-X-Google-Smtp-Source: AGHT+IHYYStDCJ+efOYUfRfVc0U8uY+8W/Gy+dCA6wjCUkJXARiUSADe+wTLCY9FVnjiFVraHnRknw==
-X-Received: by 2002:ac2:46f6:0:b0:52c:84a2:6e0f with SMTP id 2adb3069b0e04-52c9a3c768fmr857602e87.15.1718193182228;
-        Wed, 12 Jun 2024 04:53:02 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:a172:4e8b:453e:2f03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1c958f9fsm10457352f8f.38.2024.06.12.04.53.01
+        d=1e100.net; s=20230601; t=1718193365; x=1718798165;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oxtqnkllneU5FSN1j1eKyCGRpnLNazDSvubINnfxoJQ=;
+        b=X1n1PhblJ3wHJYGBiWDeG/4CXj7AZO/u+2hF3kH7r4WkGjWr6T6kHXY4oKVJD5+vPj
+         ZbNVP2j+M9he+Ma8QMkeTimyPgPmnx8sEzNEDhmwQbga98/gQdeNaV0ihuReJeGgdn11
+         /bhXt2dqVp0OevSDyKlkZw+epVkC0eb6SfeuhPERnPoWZukcxI7/GakeUzj1RQFn1qaE
+         Ycey1gCEG5lX4CcxUelmM99ZA/FaGN9cp9eQjCUY3rBXqD1c1SnQ7lisCje1WP6SnDps
+         SRVNtKikhl54n7M/XaCYORvDev/ajpa5OqKQLNMDXWiD3wk2qEt5+t8PBgEBXuhGQ90k
+         1dyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAAHSsVDqB+gypH266C7pq5vNQZ8O/YzEkJ1uDeXuRU3KaFE5JjdkWeLRbUqnMM+Fv+uN7N2NuHUtUQowMeWDsCtTJLF/7d92mhw==
+X-Gm-Message-State: AOJu0YwtyKObaSkrQ+vDOEg88/CLctsFGcCGVxpEZQV1nRcL+1sr6PJr
+	8/YQwtMg45m0+U9UZEJVpN9tJpeTKmWwAfNeOZOvVHqhYwiM5jCHWMnnUfK232E=
+X-Google-Smtp-Source: AGHT+IFXFTqJEnGgm3nlv3r4tBxyWKOMcONwHoYdXFVZPX7J06kPvPoo0NWR2HZ1krnwdNU1FMiNoA==
+X-Received: by 2002:a17:906:2790:b0:a6e:fecb:6baa with SMTP id a640c23a62f3a-a6f34ddcccbmr358983466b.34.1718193365502;
+        Wed, 12 Jun 2024 04:56:05 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f2f8bd62esm275762266b.141.2024.06.12.04.56.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 04:53:01 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 1/2] genirq/irq_sim: add a notifier for irqchip events
-Date: Wed, 12 Jun 2024 13:52:25 +0200
-Message-ID: <20240612115231.26703-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240612115231.26703-1-brgl@bgdev.pl>
-References: <20240612115231.26703-1-brgl@bgdev.pl>
+        Wed, 12 Jun 2024 04:56:05 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/2] pinctrl: qcom: add sm4250 lpi pinctrl
+Date: Wed, 12 Jun 2024 12:55:43 +0100
+Message-Id: <20240612-sm4250-lpi-v1-0-f19c33e1cc6e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL+MaWYC/x2NQQqDQAwAvyI5G8im6qFfKR42NtWA3UoCUhD/3
+ rXHGRjmgFA3Dbg3B7juFvYpFVLbwLTkMivaszIwcUdDYox3xz3huhlKysKD3IR6ghpIDkXxXKb
+ lSlz4spvry77/xQN2hvE8f68Um1Z2AAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=883;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=uOR+xIsHDbWSbhrnfmd8+ZJ/VQdwPuFOjpN0peY3rVw=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmaYzUVFtwMT4tcW19q5T3WlgZ1W6TtznpCplbP
+ OPB8c+bsr+JATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZmmM1AAKCRB6of1ZxzRV
+ N6HXB/9POskOO91hQ3rIbwW6dGB0gGSXNe/DbmuevbjSoY9jsS7Qu5PqXVapI//nbeRTdBOtFlK
+ QAVVpuCh4Mt0HHECWuHaR9yvQblUTwYXKMjwv25AYJaKa59mcvXpDcukG5vBVusH/H98KIW9S5g
+ za/ZQflcL+/Gou8KgoG2tLjPtVGhtoyll02siVTWN12J9ofy6YQ2GeP59zV0TiIpBaJMbjBb7NL
+ baPE1uqS2Zot4bd8e3R/3rQ4+ontFeprfQtoVSqHeRMBniPXyT185WS904Q/2SdLDOQXX0y1ft4
+ g8xf7cwhzJGYUuTNUFlnuUjO34oDlWy2fmJkEhtwjvH5eRwe
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Add support for sm4250 lpi pinctrl.
 
-Currently users of the interrupt simulator don't have any way of being
-notified about interrupts from the simulated domain being requested or
-released. This causes a problem for one of the users - the GPIO
-simulator - which is unable to lock the pins as interrupts.
+changes since v1:
+- updated dt bindings with suggestions from Krzysztof
+- removed duplicate function name.
+- added all the lpi pins
 
-Add a blocking notifier and provide interfaces to register with it, then
-use it to notify users of the domain about interrupts being requested
-and released while also leaving space for future extensions.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- include/linux/irq_sim.h | 11 +++++++
- kernel/irq/irq_sim.c    | 64 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+)
+Srinivas Kandagatla (2):
+      dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
+      pinctrl: qcom: Introduce SM4250 LPI pinctrl driver
 
-diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-index ab831e5ae748..462d1913bb27 100644
---- a/include/linux/irq_sim.h
-+++ b/include/linux/irq_sim.h
-@@ -10,6 +10,7 @@
- #include <linux/device.h>
- #include <linux/fwnode.h>
- #include <linux/irqdomain.h>
-+#include <linux/notifier.h>
- 
- /*
-  * Provides a framework for allocating simulated interrupts which can be
-@@ -23,4 +24,14 @@ struct irq_domain *devm_irq_domain_create_sim(struct device *dev,
- 					      unsigned int num_irqs);
- void irq_domain_remove_sim(struct irq_domain *domain);
- 
-+enum {
-+	IRQ_SIM_DOMAIN_IRQ_REQUESTED = 1,
-+	IRQ_SIM_DOMAIN_IRQ_RELEASED,
-+};
-+
-+int irq_sim_domain_register_notifier(struct irq_domain *domain,
-+				     struct notifier_block *nb);
-+int irq_sim_domain_unregister_notifier(struct irq_domain *domain,
-+				       struct notifier_block *nb);
-+
- #endif /* _LINUX_IRQ_SIM_H */
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 38d6ae651ac7..653b6ca869cb 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -17,6 +17,7 @@ struct irq_sim_work_ctx {
- 	unsigned int		irq_count;
- 	unsigned long		*pending;
- 	struct irq_domain	*domain;
-+	struct blocking_notifier_head notifier;
- };
- 
- struct irq_sim_irq_ctx {
-@@ -88,6 +89,28 @@ static int irq_sim_set_irqchip_state(struct irq_data *data,
- 	return 0;
- }
- 
-+static int irq_sim_request_resources(struct irq_data *data)
-+{
-+	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-+	struct irq_sim_work_ctx *work_ctx = irq_ctx->work_ctx;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(data);
-+
-+	blocking_notifier_call_chain(&work_ctx->notifier,
-+				     IRQ_SIM_DOMAIN_IRQ_REQUESTED, &hwirq);
-+
-+	return 0;
-+}
-+
-+static void irq_sim_release_resources(struct irq_data *data)
-+{
-+	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-+	struct irq_sim_work_ctx *work_ctx = irq_ctx->work_ctx;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(data);
-+
-+	blocking_notifier_call_chain(&work_ctx->notifier,
-+				     IRQ_SIM_DOMAIN_IRQ_RELEASED, &hwirq);
-+}
-+
- static struct irq_chip irq_sim_irqchip = {
- 	.name			= "irq_sim",
- 	.irq_mask		= irq_sim_irqmask,
-@@ -95,6 +118,8 @@ static struct irq_chip irq_sim_irqchip = {
- 	.irq_set_type		= irq_sim_set_type,
- 	.irq_get_irqchip_state	= irq_sim_get_irqchip_state,
- 	.irq_set_irqchip_state	= irq_sim_set_irqchip_state,
-+	.irq_request_resources	= irq_sim_request_resources,
-+	.irq_release_resources	= irq_sim_release_resources,
- };
- 
- static void irq_sim_handle_irq(struct irq_work *work)
-@@ -183,6 +208,7 @@ struct irq_domain *irq_domain_create_sim(struct fwnode_handle *fwnode,
- 	work_ctx->irq_count = num_irqs;
- 	work_ctx->work = IRQ_WORK_INIT_HARD(irq_sim_handle_irq);
- 	work_ctx->pending = no_free_ptr(pending);
-+	BLOCKING_INIT_NOTIFIER_HEAD(&work_ctx->notifier);
- 
- 	return no_free_ptr(work_ctx)->domain;
- }
-@@ -242,3 +268,41 @@ struct irq_domain *devm_irq_domain_create_sim(struct device *dev,
- 	return domain;
- }
- EXPORT_SYMBOL_GPL(devm_irq_domain_create_sim);
-+
-+/**
-+ * irq_sim_domain_register_notifier - Start listening for events on this
-+ *                                    interrupt simulator.
-+ *
-+ * @domain:     The interrupt simulator domain to register with.
-+ * @nb:         Notifier block called on domain events.
-+ *
-+ * On success: return 0.
-+ * On failure: return negative error code.
-+ */
-+int irq_sim_domain_register_notifier(struct irq_domain *domain,
-+				     struct notifier_block *nb)
-+{
-+	struct irq_sim_work_ctx *work_ctx = domain->host_data;
-+
-+	return blocking_notifier_chain_register(&work_ctx->notifier, nb);
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_domain_register_notifier);
-+
-+/**
-+ * irq_sim_domain_unregister_notifier - Stop listening for events on this
-+ *                                      interrupt simulator.
-+ *
-+ * @domain:     The interrupt simulator domain to register with.
-+ * @nb:         Notifier block called on domain events.
-+ *
-+ * On success: return 0.
-+ * On failure: return negative error code.
-+ */
-+int irq_sim_domain_unregister_notifier(struct irq_domain *domain,
-+				       struct notifier_block *nb)
-+{
-+	struct irq_sim_work_ctx *work_ctx = domain->host_data;
-+
-+	return blocking_notifier_chain_unregister(&work_ctx->notifier, nb);
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_domain_unregister_notifier);
+ .../pinctrl/qcom,sm4250-lpass-lpi-pinctrl.yaml     | 119 +++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |   9 +
+ drivers/pinctrl/qcom/Makefile                      |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c    | 236 +++++++++++++++++++++
+ 4 files changed, 365 insertions(+)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240612-sm4250-lpi-b1ab26b3b050
+
+Best regards,
 -- 
-2.40.1
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
