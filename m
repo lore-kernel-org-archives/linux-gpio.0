@@ -1,113 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704F37FB;
-	Thu, 13 Jun 2024 07:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3AC13BC0D
+	for <linux-gpio@vger.kernel.org>; Thu, 13 Jun 2024 08:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718262932; cv=none; b=sMtzO2OLpShFMswgOcPh5Az5F/61HS0p90UlmKUQKXv8G2lBA+Eeojo9VwbO6NMMfOE8ofBzR3CWKiloZPUk7Ii+VhU+pa22wlJBTBvl/w8eKUSj5gICLZBs3kIEZkbf+jw7cFtvpevjTQE4DQp44CO4ndVInzp0G1/0qPVtXyU=
+	t=1718266180; cv=none; b=nebwJ/Sm5jtMXz6nizGSIFH8IpkTyej3CW2IoPi6l6yM91D68sEynPkx30brdVfrt9iS/ZX2DevNsK+/v6DTVFaU6fu6CrNKYZIw8WiLBT+YEd4HFRP54Czs+kmx/zJjk2vieOLorG+pcZ+3CuvWqy8NZkOFAEiFPZ/Nc8DZuJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718262932; c=relaxed/simple;
-	bh=Tmo/BuogahgR5M93Y4MvIAIRnQBajprod5rkLlc7vm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aTZS62a/Tq6BIxTcS5ufw156HJPfXrtLiOyd3W5NHc+f+ncgp2o9p4dFGblqWhKyfIbjyj8prB3Izjrfb/HIoSSou/sMpNPD9HoABlc0G9MWIygXVz2DRPL1dvVzyI8YpTmYSktQMZe48jdXmpV1K/VonoIvV7EJ2qq8cpenTck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEUb6Lxt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718266180; c=relaxed/simple;
+	bh=uyzErR0jfrSwe/0i9vmgqsTZP67TNvMZucGWdnL0p6M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cyDb/eAZmYFN2rmWAouHkoRXyzL/COBkLkxBsKwGzLB16PuzKgu+sG+uS/m2rFKHYiJ4Hgy9Vr0gg1COXyWh/Nl6ownlj4SVmZiN1O6ozVTQTfvYSwvLKkkYrs+rgTHZBMjlj/jlRgR6JXBsl7UiBP3QfH2KugzFkDwJJNr5e7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqLqVpOn; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEUb6Lxt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125A3C32789;
-	Thu, 13 Jun 2024 07:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718262932;
-	bh=Tmo/BuogahgR5M93Y4MvIAIRnQBajprod5rkLlc7vm4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YEUb6LxtH77IDUSV5/8g5JA73JmVYjf5AH9ec4P/xY1ZJFv4k1n0y3CRuzYpmskMS
-	 /BSPVBqQfdiyc0DTpZo8uP3cxQHFGHt3RmPcWxwzlYjTCN6hXnXQJZDyt+HulROKDR
-	 poDhM7eg867xaITURqO0eIrPiAmqRjHqUoKm+wsJtbRPxjcqLErXLZV8eq0KFPSIvO
-	 wZViSBss9HKV6iJmkyIKhvw3QbL0vuMRkxVtKaPFeugJG7FD5AL0C+AI5lTlVN+pPO
-	 Q8t3mHkj6y5FRtgNd+Kf1KK1pYxpYVK5M27SxqctUpM2SvsSNZwykrYkCNjtS48+JC
-	 kmVb+hn0hmGew==
-Message-ID: <e10eda85-68cf-4f66-ba34-3e746d286fa2@kernel.org>
-Date: Thu, 13 Jun 2024 09:15:26 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqLqVpOn"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so1081018e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Jun 2024 01:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718266177; x=1718870977; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AJh8Ir0vft1w9SzxkS2NwBCQ6TB5aAmszybTHTdUIC0=;
+        b=kqLqVpOnSpuHSXd14aZ2Tf6kk+doyakn5dhtoeXJ/scyl90eDMr3b60Qe+jrMmJywg
+         iDdqAicwcEzAuNitNj1/YBSthasas1+L/ixFL/s9MgL2LDt3lQRMIEz/0KJw6TwdsJnr
+         yaNcYH8Z5eiqS4LaWn0Ew2vtJNK+/RYal3golw36Cc8HmT2vZj/XszI8KJGlK6Z4AobQ
+         UDESy0eG+rP9AkUyKhnlFUpPKsAFL5S5t2OoHdHunedaoRE5ixmsjkwad6SRh94Yleh9
+         YCr3IpHWBKXXZdppb99VhEjIvKPUbipwRPKydN2NrJGHHye7FHtfWB6NDhBX7OARjbtd
+         5mDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718266177; x=1718870977;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AJh8Ir0vft1w9SzxkS2NwBCQ6TB5aAmszybTHTdUIC0=;
+        b=cSKOgw2qlb0lq4saw/hApPNHJdH0oYnV2iCcJbuTYxwgM6jfq3qPEspiKLraLDwCEc
+         EHQ4OHj+1eGP6htVer2f0g15W3lhnKef6C3Chbw7Fmk7NUBcepKkpDoPAVv/7UcHLdqA
+         XsCNCZOx5aSK3+llQ5Lkrazi3Q3B3i53uKJJcd7qC5JjR/ACgM9K6XO0dFmKP0ikrJGb
+         Vq+O6z2Yn7swphxPPTR/kySM43AXUWSsS/Qs4HwEOgehOjNuymN3Iw9ekM/4VobRQYXh
+         VZDOaONx4WsQirrKIF/aJDl6RJ3h9wwWsvWOJiE2B0X49v/Xc7+Ns2JyEiofLDu4+x4k
+         gfGQ==
+X-Gm-Message-State: AOJu0YxkgOa0EvZAUcOdq6rx2CWyMyzM72Roqwd5iZVbMMuorfEokwLX
+	h7YRfqxNS3Z0HMGB40PNHR1eZGIk8OTPponRvdXyOEOobFIqoFX0z5xxm/CcNTM=
+X-Google-Smtp-Source: AGHT+IEZwNcXIVSt8akb+2YlU9hx0rkua5ijXT0WGfgKSe0eSzfvU3jfJnPuXkVAhZFxxJls0r5DeQ==
+X-Received: by 2002:ac2:4344:0:b0:52c:89ff:10bf with SMTP id 2adb3069b0e04-52c9a406871mr2129646e87.67.1718266176783;
+        Thu, 13 Jun 2024 01:09:36 -0700 (PDT)
+Received: from lino.lan ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825b38sm120532e87.24.2024.06.13.01.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 01:09:36 -0700 (PDT)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 13 Jun 2024 10:09:36 +0200
+Subject: [PATCH] pinctrl: keembay: Fixed missing member check
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240612-sm4250-lpi-v1-0-f19c33e1cc6e@linaro.org>
- <20240612-sm4250-lpi-v1-1-f19c33e1cc6e@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240612-sm4250-lpi-v1-1-f19c33e1cc6e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240613-fix-keembay-v1-1-5c188f900214@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAD+pamYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0Nj3bTMCt3s1NTcpMRK3WRzU9M0YwNLU0szQyWgjoKiVKA02LTo2Np
+ aABwUrU9dAAAA
+To: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.13.0
 
-On 12/06/2024 13:55, Srinivas Kandagatla wrote:
-> +
-> +description:
-> +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
-> +  (LPASS) Low Power Island (LPI) of Qualcomm SM4250 SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm4250-lpass-lpi-pinctrl
-> +
-> +  reg:
-> +    maxItems: 2
+A bug in a refactoring caused a build failure, fix it up.
 
-Nothing changed.
+Fixes: 15d34374182a ("pinctrl: pinmux: Remove unused members from struct function_desc")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-keembay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 245a74ed97ee..b693f4787044 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -1627,7 +1627,7 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
+ 			}
+ 
+ 			/* Setup new function for this mux we didn't see before */
+-			if (!fdesc->name) {
++			if (!fdesc->func.name) {
+ 				fdesc->func.name = mux->name;
+ 				fdesc->func.ngroups = 1;
+ 				fdesc->data = &mux->mode;
+
+---
+base-commit: 1e37f761d0163cf99567fb81d9c59860ef255d9d
+change-id: 20240613-fix-keembay-c755f3095961
 
 Best regards,
-Krzysztof
+-- 
+Linus Walleij <linus.walleij@linaro.org>
 
