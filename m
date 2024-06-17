@@ -1,123 +1,152 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE99153824
-	for <linux-gpio@vger.kernel.org>; Mon, 17 Jun 2024 14:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193AE1D950A;
+	Mon, 17 Jun 2024 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718634288; cv=none; b=GMoR3uFQVd1AoAQea8VQMa8vKDiWHMcNuniL0pcB5snQz2Sy/8ThOOJd+3l39OWYRKncN4uuqhe/hoHmkIBHmFnltbYvSLgcuUSjGZhr5wFWJiS0AWOgaVWae6WXLv685DtAh3/AODZEg79z73bppAWHJ+j1RwYpFJyrUtWB3JE=
+	t=1718637976; cv=none; b=AcyOvRJd50lvIDRlqG7sTo9/I5Y+hwb+jXrBwfwS4w0e3w+v+sOB1RbpZeMhwZ5Y/Cyvq/Wd8tS8FzGJlb2kQKTuzNM4yc73B252EAzhETJ5De0aEDhm84PcCAw8OL8fPDgtgYG0la7R7pIHSX+TGSKKEeeiEqLE3zEZbjUZips=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718634288; c=relaxed/simple;
-	bh=wVhqRWNLZk1bqs6B75oHYwXT2//rBMtuWsFLrtykLhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDyugMCBUdRHPSGau0rxEDaNM+Ie24o9x6+sC35fb9uUpZb+VgbTL9uXfjriPXcQEf60XeDWKK9RlX8iobe9ibboJgVLHrFb4mP/HPFUppllhWOJjXDydBRsllkeEJppJqBSfZ7t2T8+1sbK+Zyb41d9bl988RyEtMIlLTcAlAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZ1StWvr; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718637976; c=relaxed/simple;
+	bh=oTLnHaJiK0vL379Jvi0C5I8jRbSEsC+C/G9nLiN/JrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WLeQBhlFlwIkaEGZ9yk+Bp3Dm0O9P/MtNzfQYC62tTTyikrbS/pSTqcUsOdfGfBBCmpBF2a8NeVViT4gPFV0D3/sqxFU/7mgpfb+6Fm26VCNfHZAlSCSpiae3+D9q1KsXgRiLH1hIu32NLpNhTIUviT9+5CskoHwUkOLllb034Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2oiHeLT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZ1StWvr"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f225ac23bso4315872f8f.0
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Jun 2024 07:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718634285; x=1719239085; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TYqDJrI0I1UHhBST5eoFbg+CuNr3i46R10TuIWsB+Ks=;
-        b=KZ1StWvrv1mC1WJe2I77PWplyaixdUTGt+8p3GXGy+aCQ5pBWszH8/WxAEg47g1Pjd
-         rwQu4gewq2flOHS9vqBNQbrYg6J/mSrGiMypIXB5cnInNBBO1n6BiXP0n/pobGS4E6gg
-         SH9ghSoijkcqGb0MHTyXlgvJ5wyz5aeS3E9F0GYrFwsGa2+QFjquckQ2AhjFh+rNl0sE
-         5Tga+FheZcd9FXLwx7UtBnNGAJYius54NOCCkj0D4WzHzH8tLYuLdRK4SBckzKer/gGm
-         lT9Fu3BqBW35QSOgth3VJbQSSihbN5/tVxyxTs46bL46JLVOC/rvmsYpxtpoGBknJ+M7
-         9Y/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718634285; x=1719239085;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TYqDJrI0I1UHhBST5eoFbg+CuNr3i46R10TuIWsB+Ks=;
-        b=Cv1vYnzE93BxUa4uVl7CSXegS0TOWW2HHuPW1FpnKX9/RywWCva/tyDB111R1B33wq
-         3V/hk3SICCTxhwJKf3UYknelN/Fv+pNNJAl9KFJB5xMMaJ8JkJvTXQLKu1WgjcN3Z9Qv
-         gSu5CyR3K5Dcj7rICI1TCGf26j2nJJf10W9c2Ps76sHVHI+kyQn+aO7aloaXi2aml0Cn
-         hKGp8zfS7TXwS0jQMI+On36i3t/+LhKqelGuEakCIZg3ID2pLw8du+uWGaWK5u0Lbbke
-         YWhs99Oc3tB0Y+bX6g6+/nEiIkWP7hAm4l1J37C+GAA7CK/3hVfvnS62TJWOcEErWChX
-         zTzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUssypE/StR7ZDE+0zGggOMwJrxajrxfIO+q6SkNQP/09UwRjeunYPW6yYL8Sq1T1CPYXar1s3f72UNcAXJW9oROmIk1384TGA9Jw==
-X-Gm-Message-State: AOJu0Yzem2MhhkSpUb4byoaJ8WWlaRScqIPWA794MpVi+B0MILsD8luZ
-	feWbdrbspbN5VD86eKBnFCiiDiI3EbwpEHV2byJYdZBrd2k8xp3mmniGKFwocO8=
-X-Google-Smtp-Source: AGHT+IFhoW04Z2vjfp8Vdnof23ViUwN5wREaB43PL2wgSa1MkS0vqUdB4gDIhr3ovCzPLliM/vwrQQ==
-X-Received: by 2002:adf:f84a:0:b0:360:8604:dd76 with SMTP id ffacd0b85a97d-3608604de8cmr7116693f8f.66.1718634284814;
-        Mon, 17 Jun 2024 07:24:44 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36076515a80sm11849360f8f.76.2024.06.17.07.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 07:24:44 -0700 (PDT)
-Date: Mon, 17 Jun 2024 17:24:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [bug report] pinctrl: renesas: rzg2l: Drop struct
- rzg2l_variable_pin_cfg
-Message-ID: <58d0bda8-7155-4ce5-84f6-74ce3f6d98e2@moroto.mountain>
-References: <5c1bf20b-7e94-4b06-95e5-da9f99750203@moroto.mountain>
- <CA+V-a8urbOnrmWbFt=n9=Twis2+gNQDf2_ap-TN42BRdxb5_Gw@mail.gmail.com>
- <CAMuHMdVVnpHrNwYLOAcgyr53cJkw7ytXWj24TrKn2FBjosn-pA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2oiHeLT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F42C4AF1D;
+	Mon, 17 Jun 2024 15:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718637975;
+	bh=oTLnHaJiK0vL379Jvi0C5I8jRbSEsC+C/G9nLiN/JrU=;
+	h=From:List-Id:To:Cc:Subject:Date:From;
+	b=t2oiHeLTMzGOLktbuoAtTLfTMFQnFcXpJpK8aeHYSXd0xYrRiHyM0wUqsTX+pe49V
+	 8JcpnNSXsZuwoL/BDt1Oibr1eU9Hlr5WX4gHrATBfkfF3CA0qKQ2sW06Krivhf4Ycq
+	 ec2fA3q/6YtwuIGE6f80bijoFepLOOpGYMSkOIsArx4ypDq0sHCKBrcACoHw7uY7pe
+	 n+MoZYZVWvF1Mifp9pUMxnCEXkrbq0qj8Z1bK+3j4QhzaWJoPpJETsEqe0KZq/A2au
+	 M+SCsU4eLAbLmITuMXPPAxw92K2hoa38bdAA9kTdjpkNoUHlqiuBTLjozzMfNuivkb
+	 JQ+n+KXGofBXw==
+From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org,
+	arm@kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	devicetree@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Olivia Mackall <olivia@selenic.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Subject: [PATCH v12 0/8] Turris Omnia MCU driver
+Date: Mon, 17 Jun 2024 17:25:58 +0200
+Message-ID: <20240617152606.26191-1-kabel@kernel.org>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVVnpHrNwYLOAcgyr53cJkw7ytXWj24TrKn2FBjosn-pA@mail.gmail.com>
 
-On Mon, Jun 17, 2024 at 02:54:13PM +0200, Geert Uytterhoeven wrote:
-> Hi Prabhakar,
-> 
-> On Mon, Jun 17, 2024 at 2:47 PM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Mon, Jun 17, 2024 at 10:35 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > > Commit 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct
-> > > rzg2l_variable_pin_cfg") from May 30, 2024 (linux-next), leads to the
-> > > following Smatch static checker warning:
-> > >
-> > >         drivers/pinctrl/renesas/pinctrl-rzg2l.c:374 rzg2l_pinctrl_get_variable_pin_cfg()
-> > >         warn: was expecting a 64 bit value instead of '~((((1))) << (16))'
-> > >
-> > Is there any way I can replicate the same on my setup? I tried the
-> > kcehker utility but it didn't print the above warning.
-> >
-> > > drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > >     362 static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct rzg2l_pinctrl *pctrl,
-> > >     363                                               u64 pincfg,
-> > >     364                                               unsigned int port,
-> > >     365                                               u8 pin)
-> > >     366 {
-> > >     367         unsigned int i;
-> > >     368
-> > >     369         for (i = 0; i < pctrl->data->n_variable_pin_cfg; i++) {
-> > >     370                 u64 cfg = pctrl->data->variable_pin_cfg[i];
-> > >     371
-> > >     372                 if (FIELD_GET(VARIABLE_PIN_CFG_PORT_MASK, cfg) == port &&
-> > >     373                     FIELD_GET(VARIABLE_PIN_CFG_PIN_MASK, cfg) == pin)
-> > > --> 374                         return (pincfg & ~PIN_CFG_VARIABLE) | FIELD_GET(PIN_CFG_MASK, cfg);
-> > >
-> > > pincfg is a u64 and we're returning a u64.  The code here is trying to
-> > > mask out PIN_CFG_VARIABLE which is BIT(16).  But because it's BIT()
-> > > instead of BIT_ULL(16) then it ends up masking the high 32 bits as well.
-> 
-> Note that there is no issue on 64-bit platforms (i.e. all affected
-> platforms), as BIT() does produce a 64-bit value if unsigned long
-> is 64-bit.
-> 
+Hello Andy, Hans, Ilpo, Arnd, Gregory, and others,
 
-Ah, yes, thanks.  I had forgotten that it was BIT() was UL.  I was doing
-a 32bit build, yes.
+this is v12 of the series adding Turris Omnia MCU driver.
 
-regards,
-dan carpenter
+Changes since v11:
+- fixed some includes, suggested by Andy
+- moved #include <linux/turris-omnia-mcu-interface.h> after the other
+  includes, since it is domain specific, suggested by Andy
+- in patch 2, use sizeof() of dest buffer in memcpy call, instead of
+  ETH_ALEN constant, as suggested by Andy
+- in patch 3, dropped the .has_int member of omnia GPIO definition
+  structure, and added is_int_bit_valid() function instead, as suggested
+  by Andy
+- in patch 3, changed int to unsigned int where appropriate, as
+  suggested by Andy
+- in patch 3, fixed docstring indentation, suggested by Andy
+- in patch 4 dropped #include <linux/rtc.h>, and instead declared struct
+  rtc_device, it is only used as a pointer, suggested by Andy
+- in patch 5, renamed the completion from trng_completion to
+  trng_entropy_available
+- in patch 5, use gpio_device_get_desc() instead of gpiochip_get_desc()
+  when mapping IRQ (as discussed with Andy and Bart)
+- in patch 5, dropped setting the priv member of hwrng, and instead use
+  container_of() to get the driver private structure, suggested by
+  Herbert
+
+Links to previous cover letters (v1 to v11):
+  https://patchwork.kernel.org/project/linux-soc/cover/20230823161012.6986-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20230919103815.16818-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20231023143130.11602-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20231026161803.16750-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240323164359.21642-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240418121116.22184-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240424173809.7214-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240430115111.3453-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240508103118.23345-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240510101819.13551-1-kabel@kernel.org/
+  https://patchwork.kernel.org/project/linux-soc/cover/20240605161851.13911-1-kabel@kernel.org/
+
+Marek Behún (8):
+  dt-bindings: firmware: add cznic,turris-omnia-mcu binding
+  platform: cznic: Add preliminary support for Turris Omnia MCU
+  platform: cznic: turris-omnia-mcu: Add support for MCU connected GPIOs
+  platform: cznic: turris-omnia-mcu: Add support for poweroff and wakeup
+  platform: cznic: turris-omnia-mcu: Add support for MCU watchdog
+  platform: cznic: turris-omnia-mcu: Add support for MCU provided TRNG
+  ARM: dts: turris-omnia: Add MCU system-controller node
+  ARM: dts: turris-omnia: Add GPIO key node for front button
+
+ .../sysfs-bus-i2c-devices-turris-omnia-mcu    |  113 ++
+ .../firmware/cznic,turris-omnia-mcu.yaml      |   86 ++
+ MAINTAINERS                                   |    4 +
+ .../dts/marvell/armada-385-turris-omnia.dts   |   35 +-
+ drivers/platform/Kconfig                      |    2 +
+ drivers/platform/Makefile                     |    1 +
+ drivers/platform/cznic/Kconfig                |   48 +
+ drivers/platform/cznic/Makefile               |    8 +
+ .../platform/cznic/turris-omnia-mcu-base.c    |  408 +++++++
+ .../platform/cznic/turris-omnia-mcu-gpio.c    | 1088 +++++++++++++++++
+ .../cznic/turris-omnia-mcu-sys-off-wakeup.c   |  260 ++++
+ .../platform/cznic/turris-omnia-mcu-trng.c    |  103 ++
+ .../cznic/turris-omnia-mcu-watchdog.c         |  130 ++
+ drivers/platform/cznic/turris-omnia-mcu.h     |  194 +++
+ include/linux/turris-omnia-mcu-interface.h    |  249 ++++
+ 15 files changed, 2728 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-turris-omnia-mcu
+ create mode 100644 Documentation/devicetree/bindings/firmware/cznic,turris-omnia-mcu.yaml
+ create mode 100644 drivers/platform/cznic/Kconfig
+ create mode 100644 drivers/platform/cznic/Makefile
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu-base.c
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu-gpio.c
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu-sys-off-wakeup.c
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu-trng.c
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu-watchdog.c
+ create mode 100644 drivers/platform/cznic/turris-omnia-mcu.h
+ create mode 100644 include/linux/turris-omnia-mcu-interface.h
+
+-- 
+2.44.2
 
