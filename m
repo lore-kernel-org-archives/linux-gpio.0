@@ -1,88 +1,97 @@
 Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DDD139D13
-	for <linux-gpio@vger.kernel.org>; Tue, 18 Jun 2024 11:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E971814E2C6
+	for <linux-gpio@vger.kernel.org>; Tue, 18 Jun 2024 11:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710074; cv=none; b=BP2ugtmXdgaqwXxvw3VRDmghiQ02SD/l/qOr/B74zxJCqxXAG978HwoxLfVuT+IcT1hcZvotRBkQqcYh+Irpz1xWkQH08LjwGSATYAixTFfuioPhBinAQZ4eTsS+iLG7yInMl+bflV//BM95h+oN4emNO2o81SVbO9JFE8DOFTc=
+	t=1718710476; cv=none; b=tFvcsykrM8VxGNdxFvM7to82OxudZIVMQXjcshyRsdef0fVHFOYH7k2rmNLmzep2kWvEmDpQW4FnZOnsqrwEg5sJaKuDGXRo+yn9luiVomJIKqFLUBb8jePfaSJcSZ1S23vaLsdZ8QDyMb0z+nd0AzlxajLf3lcH083kOvb35ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710074; c=relaxed/simple;
-	bh=Ef1LVa5cSagrsVKfv8LfYeQroHfw40K2Rz/BJEMjG54=;
+	s=arc-20240116; t=1718710476; c=relaxed/simple;
+	bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Evbvy5SkZK1XJ9C0NUmbnq8xHmU3h9mgl5YHGqG5ZvIaKhMUODIZzAmjfHxfjldYieVMDl8nTHvlmv3GbfVBzK3v5DOcqer7869Vw9BaISZwBYYWezDbu4im2NTpFD7yqK4a2a7+jWBJilaXeO3QJ5PTjNZuvquaGLDsG7ZFDFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvimlsKv; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=f7QtL3GGTWIPNYnHOjouW6BdQm3PHhczyb69fWoImeavgV8n+qcElkLU8fzYWOmM42+QMAe5dKTujPHODWD8biQKPJiy2Zcwpsg4LmeVhAWcCB2R0fwzJqnxE8+D065oTkeeiEVqhS/bUaA4o52ZFn7jEdVJLQo1nVgrpb4+GAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N78y5zEG; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvimlsKv"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bc121fb1eso6253488e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Jun 2024 04:27:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N78y5zEG"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso5606161e87.2
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Jun 2024 04:34:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718710071; x=1719314871; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718710473; x=1719315273; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ef1LVa5cSagrsVKfv8LfYeQroHfw40K2Rz/BJEMjG54=;
-        b=UvimlsKvC4G9N4sDg60LnqolqVWcDSglSy8A7lt2+kzADxJI00W9hh4HLcoCwczXAc
-         tepPNjKQ1W9VQTEPmqMG4Z+bacEVuA8XrzPW2dwHqVM4jp8Lw2ldwVlpJEHMfEms2hhl
-         2IPNAv5a7QCBYnbajyEHb/BeZtiuE8IL0bTVCdWQNupsZYziMOXZdgalAtNmDCZIB/f+
-         MwNTIpFaJsY1pY3PHFQ5ePJOZcYhHtX+beKSgG9+/iUI+crTlmYZMbSS5ukO9nSmacZE
-         oNv8nFbFLHCES9CjqpGoW4ArPGptlRaw6o8AFnR8UvbGmHnqEvedkYNuwsOHqyi98jK/
-         6eig==
+        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
+        b=N78y5zEGOvRJHsoLLBFoZ+q8mHQ7IzQHxJD75rVsXiyYWDEkN1TsiKGQFlCLFk575s
+         /hCii7YmfXLGkTnuSH56M3Z2lMxPynfUnKNv2VObGz2kLoooL+7KP9TBeMLmBpAsmHxh
+         0TtsvdZHNIkOHJ9RAlvIt+xEO2wc06+NE1paEaHSTd3FlaF4IfTWzH1ZbVPNlmqM84Si
+         HCdwi9WJlgI0S+GYOcY3651Vmq3Fru5bANNN8PLTbCBY7JWlkkEjtVEM8JeF+2e8/Xmo
+         BkKaliOhD+hP5eOya5xpSM6IpNSAcKqe9O0csqVrhFPCSonCVsXC5hOo1iffYNmbul0D
+         Yu2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718710071; x=1719314871;
+        d=1e100.net; s=20230601; t=1718710473; x=1719315273;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ef1LVa5cSagrsVKfv8LfYeQroHfw40K2Rz/BJEMjG54=;
-        b=GRF7IuWlRxLlaTZE1V5n+5azqJai5vr1ex/hEaae44XgoCPUpzMgWuLktD6CU2Rr51
-         kr2Q8mnTmnaf3m3W07S202t9kF6yALvjPDJ8ooXG7A28TSSuoS46ZKlV6gybWLWE+YK7
-         0AyuSPwmkAhp3DkDj3I6qM19zEN+OJL2v/IcrH3oQXCVvJ6F8mGdGJADAR3RgrAALBdl
-         IQR59D/ly1uWj2u1rwu0IN2y+IEOX6EfBgojYFltNkQL0KOwf5M65v1h+mxoMevfQ80G
-         nX72QA+HubVWtHBaKBUUg9NG5sS3cRsAVY4amWI4e5zlBMx4+ogHWKhUueI6bxS45JK+
-         7kHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVu19iHGfsUTidrn1Bb37EFUZls91BP0wsQ5GYXdLeQWT4cv6dPHReOmS2X6JQ62wAYFhG6KMtADX4ExK2vnlFdP4cUOeplqMI5kw==
-X-Gm-Message-State: AOJu0YzxxYNSVuZTgDnoMD9R6zO3xfGONWQbfYhgRFKl7YFuy27HQSka
-	k1iBUwVpoTTctOlnrEljDl80F4IorSdV9Qhd6s0BTHz/1q2NZBALoo72U+b5tamz66jKOWvarRF
-	RBG3F9o3J4H9sh5AML+p2egCEzJrvHHvJOUbP4Q==
-X-Google-Smtp-Source: AGHT+IEheZl1XJd07/I4c76ZX9172EIYDaxyOcwKiMvq82AVziwBWADH7Hsssc7rmmZWrFAeHWGnfitV87kFwI5z6s4=
-X-Received: by 2002:a05:6512:3ee:b0:52c:8a14:6777 with SMTP id
- 2adb3069b0e04-52ca6e55c9dmr6891062e87.10.1718710068957; Tue, 18 Jun 2024
- 04:27:48 -0700 (PDT)
+        bh=UMkfk1uz4OiFUzUfIWw8xL19AnVl0WWu88Rh0CNSYCo=;
+        b=DR+QY95tCEYP74AjfAItbYeoV8LrcGU8ObUSNCj8YV+fz32dWdrgs2CNbHnAZeNbJT
+         CFHkiRCADSu9V9pp8FxGkFgm+Nz7soo4v+U9m5+FOzFHVWKwTEPmKGneZdQxHSNZFOCZ
+         mDysoCpi9eQFc/RMWI8WAZhcTNsgyxGcscHx2/lLFkWV9rCeY6IqBj9QmIeNGYGvZY0a
+         K+R2BkIi9AKOXtSxvztLNz3rafTEfoUnDanTJpxsrZNOrXMLlvxQpk8UD8Nr5GBp3os5
+         5u6gXVJ7Wl7Yz6Ug0uVXbUXohTuNrcKWR/7aPnDDZUrjVskpzT/t66hBOIWxGElP5ZT5
+         EyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQAisIiySLD6VN5kEGNfEHRDL9hs9kRfi5RJfYX2VbJGCoaGcEC5/mCZzHqttnw8Sdxtif/LvJhLtfl1qIaoApzZPkIjmqsBNuXA==
+X-Gm-Message-State: AOJu0YxO1OJGqyFyxHgPhVnJmQR2q5rVfPP4JP3M7p4JuW6vqqGRj8ij
+	0BjCERwD/IJ/sRi+PCKCMoJuoXFormk09IXfiSP4HBfYwzi3g7HzKD3N2xVFVCrfxBXVS3vm7bU
+	kOcTqalIoOmZ0/y4qnSbwqvscukM4SBXe0CWNGA==
+X-Google-Smtp-Source: AGHT+IGyZn9ZxYOyqgLilSVSiYsQNPXHOBNuta8dqNri+uFDpDVvXJ/3px/0KeevQMRS1XyUFGcx9t0XkY+UWQx74Ag=
+X-Received: by 2002:a05:6512:ad0:b0:52c:8210:13bc with SMTP id
+ 2adb3069b0e04-52ca6e98fe1mr9251684e87.64.1718710473025; Tue, 18 Jun 2024
+ 04:34:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618111824.15593-1-brgl@bgdev.pl>
-In-Reply-To: <20240618111824.15593-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 18 Jun 2024 13:27:38 +0200
-Message-ID: <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
+References: <20240618111824.15593-1-brgl@bgdev.pl> <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
+In-Reply-To: <CACRpkdYWqsV+2a_L-dzyvGiV4WYAdS2B7WvOkKMyZh6tGT39Mw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 18 Jun 2024 13:34:21 +0200
+Message-ID: <CAMRc=MepWmLu5zW8G+T93H6Eunb81cJh+ng1SZN_aYK64yYP_Q@mail.gmail.com>
 Subject: Re: [PATCH RFT] pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Support Opensource <support.opensource@diasemi.com>, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, 
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 1:18=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
-
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Jun 18, 2024 at 1:27=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
 >
-> In order to finally confine the unsafe gpiochip_get_desc() to
-> drivers/gpio/, let's convert this driver to using the safer alternative
-> that takes the gpio_device as argument.
+> On Tue, Jun 18, 2024 at 1:18=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > In order to finally confine the unsafe gpiochip_get_desc() to
+> > drivers/gpio/, let's convert this driver to using the safer alternative
+> > that takes the gpio_device as argument.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I guess you will apply this to the GPIO tree, else tell me what to do!
+>
+> Yours,
+> Linus Walleij
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I can, yes. Thank you.
 
-I guess you will apply this to the GPIO tree, else tell me what to do!
+I'll give it some time to possibly get a Tested-by from Dialog.
 
-Yours,
-Linus Walleij
+Bart
