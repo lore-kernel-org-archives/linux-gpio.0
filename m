@@ -1,61 +1,61 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F261855887
-	for <linux-gpio@vger.kernel.org>; Fri, 28 Jun 2024 18:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1A55E58
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Jun 2024 18:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719601144; cv=none; b=MR+S6WQ/xbPmGg5qkI4Vwn8MkgsXPDYOo0F2cwmDQ7X3bGq6rbVlxxA2BZHylaIxCR11tp43z1m5fYKaxv12e7Ha6lu+swXSBD91LoqanOQswpnkYPg3WkGNYVFCuMAsEzAZLhU5QPiEv6Xon63NalpJXS8EFYDdJnin0qW992g=
+	t=1719601147; cv=none; b=Cye4arnFqeto1/NY4bJybyPEFxFfdqagLp1h264LBGDL988pHu+mtHI9q53n3MQtOb06Hadh/Xd8HwuL+iTbuPyDcHKP5tkuqWg8lSLQzg+YmA0UaRJKXRkaKbHqJo3V7WeZhTObnEI3b69v83QmyE3rj/kRpr7Url2Q5S8PLbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719601144; c=relaxed/simple;
-	bh=k2xbLX8kmYM7/Q/dLI4NGEd0yPQHmi443C7fSaQRRJk=;
+	s=arc-20240116; t=1719601147; c=relaxed/simple;
+	bh=jHDNApF6Py0Jb/L4gKZb/5Q3dfZO/6Yy20UkG2CM944=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i2AbamsQHfgnXA6glHYM0SCmICpFInggqEwWPhXQ0+Si/YyM5+JUSM9GsQViffl3xv+ZhlKUMaAnuM9pjsmu6QTX4btwng1AGe2LPsGTeYTTfpZwI7PLOfJsZaS5shJi9K6XvzcXhcJlILx39BQTQLE1UB+YQ3cb4o2kaLYhHPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VTKcQ9rD; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=hWOa9qY5ndgGle7OFIRvMykbgmMD+AXXMQGJ+GmNngOPquxu3I4Sff/tVQxCvnZCSW8FEONqwj0ed1Fb2JWFzxx75/2sEdkUTlz0IPEoNOgPrxWKgw7Zdx8M1eQd5il6w59xoeIKInDfe12v9b6C6elvnf6MlYbeOwATjWgkaBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SoPZOSsv; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VTKcQ9rD"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3676447928bso549795f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Jun 2024 11:59:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SoPZOSsv"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42562e4b5d1so6920535e9.1
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Jun 2024 11:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719601139; x=1720205939; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719601142; x=1720205942; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=x8OAXQw9s2MrfcewrXeB2jj3VO7TisVuW3r6LI6Onag=;
-        b=VTKcQ9rDMrRORu8UeUV8sqFqxAtvRGELLS0cDZJ9TVzRC+TB23IST+tNq3AsnucOKG
-         1S4bGwWrdOAdbQXdSueCKTJsyBSAxgAvSvpCTKBLqJdfDdtEUgSsPmFUVhSkoA0JtMbm
-         xoTVUDcVaeILvCd+doixKQKTixvAz2bHYxq9y1nzINuQeHGOrQtXNanR4MAK6IwNQpFG
-         1zSzqgyqexZ0C3xdpAqWlWWgd9RmOEV1YUWtOKCc75Mv6uuQSDXAn4nrsEKNIUs8uTUD
-         AckXbVIvnINRtnKLyaN9IjAezywRdgv6/MACe3yrlaZCDQGuxzyWgAh1TuYiFgxvJl4y
-         S27A==
+        bh=YvTuvy1Ai6TZS13lF1q6X9ZQcEeWbyNLSCkPhm4FmQI=;
+        b=SoPZOSsv+G6Wi5co0hdkCD4YXvlyRsUfzuU7Dti+Y+zJc8pHVm+g4zOF9e+EqAvYBR
+         qXBly6479Ugvv/fWuqEoYHk0WSWeuXgkB4GEdMNFUoI6uE69TwGuKdnZSWiANDmxkO+f
+         sCWNwj+Y1P07BbsQcr/QkLdFb0/0dw6+I7P1r9jcx3UeiYH13AgDnwekDJaGo4VYJcxW
+         d4IoOUe2J904SvqjIEC9NoE2QV8q4s4ZCwn7bwH0lIAMDMU66LOXZE3tnlzjZvoB23ef
+         kqmRE7eEONMsl0+P5aLxO5NwHrgBsaNbTs2rL4SoVmbdhv/EEORxyTCCq9AU5xu5thFN
+         5t8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719601139; x=1720205939;
+        d=1e100.net; s=20230601; t=1719601142; x=1720205942;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x8OAXQw9s2MrfcewrXeB2jj3VO7TisVuW3r6LI6Onag=;
-        b=Luh2UUBBiJuj5Gvb9jWLEuXgBAL5WaeLsZQ/7RIorpl/t4iuwJq0B4OlrP1ipLie/H
-         cbDpz9KzThavb1zdz+aWvI1cKNRPPrFlelGQ+iU6HsCXMbZs/hB7JbnqpR3/KzPnhFjV
-         OXwMmspbgD/j0B0F2CvEyUvJ8SE6kFY9NFs0iOW5HFicX6wypUBrgFwvwz34opEnm2Id
-         NhRt0XnEqTztUacej0KKxk/7rImIQ/ouqUct8ka7nMCKTWz8UtHkxiInpsqq0XsH0Smh
-         MW+0uQGqRkqgs6DpK2NSB+Wts6+6qOcR33ULD6DTTw197DiahNC20OkebGgvbfHZeJ90
-         To/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGuK8qpaW8MWdLlhNj6v6l+Jwdi9gzmWD28qyU2BXOTsiCvwOfVSh7BwU80xlnpbXWXDNObWG/lrf7caDhx3PyY+FLgPCg1m/hFg==
-X-Gm-Message-State: AOJu0YykNFOQi1X/klNy2YbDvjgS6UxHMcDq8QLa676JCow0liT+hpfp
-	B80YEo/JuEpJupzH8eEjsci3eH4cig6giZj2ghCD0fYeRXdkLPe8tWAGoB6GFwM=
-X-Google-Smtp-Source: AGHT+IGZAKLrqVsMkELvqUT4bbYGXAWnLT2L0ILGhUj42uW9NneRylBkq+6KQfi7tlfUC+ESzTdj+g==
-X-Received: by 2002:a5d:400a:0:b0:362:e1f5:db0e with SMTP id ffacd0b85a97d-366e94d17b5mr10200983f8f.32.1719601139124;
-        Fri, 28 Jun 2024 11:58:59 -0700 (PDT)
+        bh=YvTuvy1Ai6TZS13lF1q6X9ZQcEeWbyNLSCkPhm4FmQI=;
+        b=rvF1QALL5Z5aq1Hq2mgyLUQHgUXrILYk3dKh9+HDaGVzgbj/nzlM2ar9fbCu6H88kY
+         9omZyoplhd5FC0aEFOkxY3Ia31p7Lr4t/at1DfuIYcbX+6RGmzWz3L7jojZLC1Djjt8Y
+         sHVmWm0kZLucNLzRoRp11hL/0HHQHc1cJbtZhZAHSpkHk6FS9z98CINlTNoNB/kYm4cC
+         6dR6b21zx5i7sshZIN2KMfknqxllL3AOzsZzO+kzTAXYRR0+GTFFAwmvsY1TVsHwo4Me
+         KkeQdQeq732BEdEVMZ4McpG2yeAV4nT4GTq7LcqDSvE3yMEbWAdL60SWYoM3e1xHGmv9
+         nxkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaW/mO1NbxPCFKhn+ZnpRJHlhTCpJ1DSPN0MjwaEyFcPx8+CJ4O7pPaN42q9FA4x3Aw5vnx5ZfkKd33YWQup/zVWfhvQ6uArUykg==
+X-Gm-Message-State: AOJu0YzLxt6cm66BC6MyJS2wCnnpMTcYT6uhfSonZc0HTRJarpnx3SVI
+	JLn9Uppyiq3UMWFnaP8MRvMH+HF9s2nl3TO2QRDS37kgDSlSMMTjYlBaBIBosXE=
+X-Google-Smtp-Source: AGHT+IG4C+LvpRHaDKX3xH2xK+TeA5HdHQEyj4m6r4kn0xqUMhbeO65JSMJ8V+Bdb/IaalLpn1lWJg==
+X-Received: by 2002:a05:6000:154d:b0:366:e508:c7d7 with SMTP id ffacd0b85a97d-366e508c9d5mr15952943f8f.7.1719601141987;
+        Fri, 28 Jun 2024 11:59:01 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:cb0e:590a:642a:e1f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103d00sm3097336f8f.99.2024.06.28.11.58.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103d00sm3097336f8f.99.2024.06.28.11.59.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:58:58 -0700 (PDT)
+        Fri, 28 Jun 2024 11:59:00 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 28 Jun 2024 20:58:21 +0200
-Subject: [PATCH RESEND libgpiod v2 02/18] tests: split out the common test
- code for bash scripts
+Date: Fri, 28 Jun 2024 20:58:23 +0200
+Subject: [PATCH RESEND libgpiod v2 04/18] bindings: glib: add public
+ headers
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-dbus-v2-2-c1331ac17cb8@linaro.org>
+Message-Id: <20240628-dbus-v2-4-c1331ac17cb8@linaro.org>
 References: <20240628-dbus-v2-0-c1331ac17cb8@linaro.org>
 In-Reply-To: <20240628-dbus-v2-0-c1331ac17cb8@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -78,1750 +78,1663 @@ Cc: "As advised by Dan Carpenter - I'm CC'ing dbus"@lists.freedesktop.orgto,
  linux-gpio@vger.kernel.org, dbus@lists.freedesktop.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=49419;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=49036;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=474QOSsO92ZhWiUzyCtU/8aEDAzo7Vj87W4OmVWhYnM=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmfwfp2ayMCy/XAVqFV5q2Xi+jOVPPm6xe9ogen
- l+Qz0Bw7ziJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZn8H6QAKCRARpy6gFHHX
- cvWcD/9r5m6zHRG70xg5QxIjKfMAvZuRcAmtVxt87VTv/7nr+34qCocviq+ZZGVgJSSzMqIrZwI
- qkDvB3zLrWcr+LG2E6ysvc+nOg5SzMACAVqUSyYA+Fd3nraA3jVmw+aJuO/4T9765RDiCZWXA3k
- RJWVBri9Hham++ZsLsrW+i3MGK1ssoZMEfxP4SDRzlQxjeW/b1/mHNIjzIyo2dgpJCghYbh3w2R
- fHALZiceQucgAdgV7r3ih639gkqFhxzZVvz5EBtXk96e//AYhlutFYmU6mVDZ6L/VkIZstWeBHb
- 6JhFBKLLzK0SNqEhbN7UoZyRoWjwRGpI2Q6KWJ3pEqoZ7J+UmcSkS8aqKYl5gtpHMDxPjBSgCsi
- Rp6ZMETvYMA9z4Jk3IYE69yDaPEwRpBFkmjKL3bEQR5KWhWb7eVEDYVLeyRuZi2EBlVv2UV5B/N
- eRKzmGVH1nF7bHzCGytaxzkm8WZUoObI7xrY+hDJRAd26ujLXfGcGeo43v11T2ybKYe199lEPnO
- /8/oIpepKNk/6IixR4s87IWJFN0o0ylBhgAP0Q1t0uClqE3rumsGrUrLl1uy+5iW4XSDtBj+94a
- +JXST7hYGZTSA82UoDfsKQJRcIdfNLlKztCmYMhYJT9uc0FbSNyA6SBc7PJ2ABemfs/uH1bw4Kb
- FU/iNsJfWVaBTcQ==
+ bh=yASdN/rfYx1HxoyUfgQTVlxDhy8bZbAEnv+bDBPwhdY=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmfwfq4jw3/hhZ1fgtFBetfOsGeeL/LPq/sE7s0
+ clIXIzM7DiJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZn8H6gAKCRARpy6gFHHX
+ csOqD/9JLxN34QcliguvOdHtl4RgsOds6zh3Xcc21LsAYcyTYinIrVzL154CYfK0D41+61+69sO
+ 1ZT0NLNjfnugiZpochKTDVTlTgI0KKbF6QZ/REqoAI9chR9o2HApjjnwLx9aCkh0mWUJV8k4LcK
+ w9JRzcKUaKsX7slrQNoe1sBDWDimQhxZIuSiHzmpRGVLjdykxzxpR09IdF2o8mM3frSHKd3LgSk
+ CwZbJJwpK8Sd6XI4skIN/RcNbF+LB2g0pMmYm+cYKakulFZPa+eThJVouBQow8LrS1soUiQ/ksP
+ gaY3JZAwbHHz55uqQpiobAjQYoo8Z0psZtrU60hPljbHhYb5zFgK4Q3x7yN5ffYcS6u+eSXSLsb
+ FtBm1PN68Ej+FM3uUkrShe5qruopGTneb9/Phh3Vo3zc43lbWdt/p7ZIkRkRLll9zFerTOqIdij
+ 56Do3yr9N+QXRPuha+ZV1fzgJHD4Qbur2s64ZgISu7+b1oqUAN5io9p4qlZbpA0Um9knC8BV+FL
+ 7PtHtUV7vW6Zt/Ze3Kmoo2qBnNtSVijlIIiwyLvUs6Si5/yiJgox6S4pDA+GLIirmeDghibEBuw
+ hF58ZXzIsoJtOfL2Abj4LIp/ezC98Ic7yeIY/t9c9pVhdhz7KVfF/IeRtYrdE6UiI8vSKpUGXND
+ VUIypGPu7+bTHxg==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-In order to allow the upcoming DBus command-line client tests to reuse the
-existing bash test harness, let's put the common code into an importable
-file and rename run_tool to run_prog to reflect that it now can run any
-program.
+Add the public headers for GLib bindings. They contain the entire API
+together with Doxygen comments.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- configure.ac                             |   1 +
- tests/Makefile.am                        |   2 +-
- tests/scripts/Makefile.am                |   4 +
- tests/scripts/gpiod-bash-test-helper.inc | 330 ++++++++++++++++++
- tools/gpio-tools-test.bash               | 566 +++++++------------------------
- 5 files changed, 458 insertions(+), 445 deletions(-)
+ bindings/glib/generated-enums.h.template  |  30 +++++
+ bindings/glib/gpiod-glib.h                |  33 +++++
+ bindings/glib/gpiod-glib/chip-info.h      |  84 +++++++++++++
+ bindings/glib/gpiod-glib/chip.h           | 164 ++++++++++++++++++++++++
+ bindings/glib/gpiod-glib/edge-event.h     | 114 +++++++++++++++++
+ bindings/glib/gpiod-glib/error.h          |  67 ++++++++++
+ bindings/glib/gpiod-glib/info-event.h     |  97 ++++++++++++++
+ bindings/glib/gpiod-glib/line-config.h    | 116 +++++++++++++++++
+ bindings/glib/gpiod-glib/line-info.h      | 171 +++++++++++++++++++++++++
+ bindings/glib/gpiod-glib/line-request.h   | 182 +++++++++++++++++++++++++++
+ bindings/glib/gpiod-glib/line-settings.h  | 202 ++++++++++++++++++++++++++++++
+ bindings/glib/gpiod-glib/line.h           | 114 +++++++++++++++++
+ bindings/glib/gpiod-glib/misc.h           |  51 ++++++++
+ bindings/glib/gpiod-glib/request-config.h | 107 ++++++++++++++++
+ 14 files changed, 1532 insertions(+)
 
-diff --git a/configure.ac b/configure.ac
-index d1f49ac..93d9d75 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -277,6 +277,7 @@ AC_CONFIG_FILES([Makefile
- 		 tests/gpiosim/Makefile
- 		 tests/gpiosim-glib/Makefile
- 		 tests/harness/Makefile
-+		 tests/scripts/Makefile
- 		 bindings/cxx/libgpiodcxx.pc
- 		 bindings/Makefile
- 		 bindings/cxx/Makefile
-diff --git a/tests/Makefile.am b/tests/Makefile.am
-index c89fd8d..7049d21 100644
---- a/tests/Makefile.am
-+++ b/tests/Makefile.am
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2017-2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--SUBDIRS = gpiosim gpiosim-glib harness
-+SUBDIRS = gpiosim gpiosim-glib harness scripts
- 
- AM_CFLAGS = -I$(top_srcdir)/include/ -I$(top_srcdir)/tests/gpiosim-glib/
- AM_CFLAGS += -I$(top_srcdir)/tests/harness/
-diff --git a/tests/scripts/Makefile.am b/tests/scripts/Makefile.am
+diff --git a/bindings/glib/generated-enums.h.template b/bindings/glib/generated-enums.h.template
 new file mode 100644
-index 0000000..5766593
+index 0000000..53ea247
 --- /dev/null
-+++ b/tests/scripts/Makefile.am
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++++ b/bindings/glib/generated-enums.h.template
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: LGPL-2.1-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+EXTRA_DIST = gpiod-bash-test-helper.inc
-diff --git a/tests/scripts/gpiod-bash-test-helper.inc b/tests/scripts/gpiod-bash-test-helper.inc
++/*** BEGIN file-header ***/
++
++#ifndef __GPIOD_GLIB_GENERATED_ENUMS_H__
++#define __GPIOD_GLIB_GENERATED_ENUMS_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++G_BEGIN_DECLS
++/*** END file-header ***/
++
++/*** BEGIN file-production ***/
++
++/*** END file-production ***/
++
++/*** BEGIN value-header ***/
++GType @enum_name@_get_type(void) G_GNUC_CONST;
++#define @ENUMPREFIX@_@ENUMSHORT@_TYPE (@enum_name@_get_type())
++/*** END value-header ***/
++
++/*** BEGIN file-tail ***/
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_GENERATED_ENUMS_H__ */
++/*** END file-tail ***/
+diff --git a/bindings/glib/gpiod-glib.h b/bindings/glib/gpiod-glib.h
 new file mode 100644
-index 0000000..d0f8a6d
+index 0000000..c45064c
 --- /dev/null
-+++ b/tests/scripts/gpiod-bash-test-helper.inc
-@@ -0,0 +1,330 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
-+# SPDX-FileCopyrightText: 2022 Kent Gibson <warthog618@gmail.com>
-+# SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++++ b/bindings/glib/gpiod-glib.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+# Simple test harness for the gpio-tools.
++/**
++ * @file gpiod-glib.h
++ */
 +
-+# Where output from the dut is stored (must be used together
-+# with SHUNIT_TMPDIR).
-+DUT_OUTPUT=gpio-tools-test-output
++#ifndef __GPIOD_GLIB_H__
++#define __GPIOD_GLIB_H__
 +
-+# Save the PID of coprocess - otherwise we won't be able to wait for it
-+# once it exits as the COPROC_PID will be cleared.
-+DUT_PID=""
++/**
++ * @defgroup gpiod_glib GLib bindings
++ *
++ * GLib bindings for libgpiod representing all data structures using the
++ * GObject type system.
++ */
 +
-+# mappings from local name to system chip name, path, dev name
-+declare -A GPIOSIM_CHIP_NAME
-+declare -A GPIOSIM_CHIP_PATH
-+declare -A GPIOSIM_DEV_NAME
-+GPIOSIM_CONFIGFS="/sys/kernel/config/gpio-sim"
-+GPIOSIM_SYSFS="/sys/devices/platform/"
-+GPIOSIM_APP_NAME="gpio-tools-test"
++#define __GPIOD_GLIB_INSIDE__
++#include "gpiod-glib/chip.h"
++#include "gpiod-glib/chip-info.h"
++#include "gpiod-glib/edge-event.h"
++#include "gpiod-glib/error.h"
++#include "gpiod-glib/generated-enums.h"
++#include "gpiod-glib/info-event.h"
++#include "gpiod-glib/line-config.h"
++#include "gpiod-glib/line-info.h"
++#include "gpiod-glib/line-request.h"
++#include "gpiod-glib/line-settings.h"
++#include "gpiod-glib/misc.h"
++#include "gpiod-glib/request-config.h"
++#undef __GPIOD_GLIB_INSIDE__
 +
-+MIN_KERNEL_VERSION="5.17.4"
-+MIN_SHUNIT_VERSION="2.1.8"
++#endif /* __GPIOD_GLIB_H__ */
+diff --git a/bindings/glib/gpiod-glib/chip-info.h b/bindings/glib/gpiod-glib/chip-info.h
+new file mode 100644
+index 0000000..bfa5a02
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/chip-info.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+# Run the command in $@ and fail the test if the command succeeds.
-+assert_fail() {
-+	"$@" || return 0
-+	fail " '$*': command did not fail as expected"
-+}
++/**
++ * @file chip-info.h
++ */
 +
-+# Check if the string in $2 matches against the pattern in $1.
-+regex_matches() {
-+	[[ $2 =~ $1 ]]
-+	assertEquals " '$2' did not match '$1':" "0" "$?"
-+}
++#ifndef __GPIOD_GLIB_CHIP_INFO_H__
++#define __GPIOD_GLIB_CHIP_INFO_H__
 +
-+output_contains_line() {
-+	assertContains "$1" "$output"
-+}
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
 +
-+output_is() {
-+	assertEquals " output:" "$1" "$output"
-+}
++#include <glib.h>
++#include <glib-object.h>
 +
-+num_lines_is() {
-+	[ "$1" -eq "0" ] || [ -z "$output" ] && return 0
-+	local NUM_LINES
-+	NUM_LINES=$(echo "$output" | wc -l)
-+	assertEquals " number of lines:" "$1" "$NUM_LINES"
-+}
++G_BEGIN_DECLS
 +
-+status_is() {
-+	assertEquals " status:" "$1" "$status"
-+}
++/**
++ * @cond
++ */
 +
-+# Same as above but match against the regex pattern in $1.
-+output_regex_match() {
-+	[[ "$output" =~ $1 ]]
-+	assertEquals " '$output' did not match '$1'" "0" "$?"
-+}
++G_DECLARE_FINAL_TYPE(GPIODChipInfo, g_gpiod_chip_info,
++		     G_GPIOD, CHIP_INFO, GObject);
 +
-+gpiosim_chip() {
-+	local VAR=$1
-+	local NAME=${GPIOSIM_APP_NAME}-$$-${VAR}
-+	local DEVPATH=$GPIOSIM_CONFIGFS/$NAME
-+	local BANKPATH=$DEVPATH/bank0
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_chip_info GPIO chip info GObject
++ * @{
++ *
++ * Represents an immutable snapshot of GPIO chip information.
++ */
 +
-+	mkdir -p "$BANKPATH"
++/**
++ * @brief Get the GObject type for the GPIO chip-info.
++ */
++#define G_GPIOD_CHIP_INFO_TYPE (g_gpiod_chip_info_get_type())
 +
-+	for ARG in "$@"
-+	do
-+		local KEY VAL
-+		KEY=$(echo "$ARG" | cut -d"=" -f1)
-+		VAL=$(echo "$ARG" | cut -d"=" -f2)
++/**
++ * @brief Cast a GObject to a GPIO chip-info concrete GObject.
++ */
++#define G_GPIOD_CHIP_INFO_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_CHIP_INFO_TYPE, \
++				    GPIODChipInfo))
 +
-+		if [ "$KEY" = "num_lines" ]
-+		then
-+			echo "$VAL" > "$BANKPATH/num_lines"
-+		elif [ "$KEY" = "line_name" ]
-+		then
-+			local OFFSET LINENAME
-+			OFFSET=$(echo "$VAL" | cut -d":" -f1)
-+			LINENAME=$(echo "$VAL" | cut -d":" -f2)
-+			local LINEPATH=$BANKPATH/line$OFFSET
++/**
++ * @brief Get the name of the chip as represented in the kernel.
++ * @param self GPIO chip info object to manipulate.
++ * @return Valid pointer to a human-readable string containing the chip name.
++ *         The string lifetime is tied to the chip info object so the pointer
++ *         must not be freed by the caller.
++ */
++const gchar *g_gpiod_chip_info_get_name(GPIODChipInfo *self);
 +
-+			mkdir -p "$LINEPATH"
-+			echo "$LINENAME" > "$LINEPATH/name"
-+		fi
-+	done
++/**
++ * @brief Get the label of the chip as represented in the kernel.
++ * @param self GPIO chip info object to manipulate.
++ * @return Valid pointer to a human-readable string containing the chip label.
++ *         The string lifetime is tied to the chip info object so the pointer
++ *         must not be freed by the caller.
++ */
++const gchar *g_gpiod_chip_info_get_label(GPIODChipInfo *self);
 +
-+	echo 1 > "$DEVPATH/live"
++/**
++ * @brief Get the number of lines exposed by the chip.
++ * @param self GPIO chip info object to manipulate.
++ * @return Number of GPIO lines.
++ */
++guint g_gpiod_chip_info_get_num_lines(GPIODChipInfo *self);
 +
-+	local CHIP_NAME
-+	CHIP_NAME=$(<"$BANKPATH/chip_name")
-+	GPIOSIM_CHIP_NAME[$1]=$CHIP_NAME
-+	GPIOSIM_CHIP_PATH[$1]="/dev/$CHIP_NAME"
-+	GPIOSIM_DEV_NAME[$1]=$(<"$DEVPATH/dev_name")
-+}
++/**
++ * @}
++ *
++ * @}
++ */
 +
-+gpiosim_chip_number() {
-+	local NAME=${GPIOSIM_CHIP_NAME[$1]}
-+	echo "${NAME#gpiochip}"
-+}
++G_END_DECLS
 +
-+gpiosim_chip_symlink() {
-+	GPIOSIM_CHIP_LINK="$2/${GPIOSIM_APP_NAME}-$$-lnk"
-+	ln -s "${GPIOSIM_CHIP_PATH[$1]}" "$GPIOSIM_CHIP_LINK"
-+}
++#endif /* __GPIOD_GLIB_CHIP_INFO_H__ */
+diff --git a/bindings/glib/gpiod-glib/chip.h b/bindings/glib/gpiod-glib/chip.h
+new file mode 100644
+index 0000000..3b6e907
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/chip.h
+@@ -0,0 +1,164 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+gpiosim_chip_symlink_cleanup() {
-+	if [ -n "$GPIOSIM_CHIP_LINK" ]
-+	then
-+		rm "$GPIOSIM_CHIP_LINK"
-+	fi
-+	unset GPIOSIM_CHIP_LINK
-+}
++/**
++ * @file chip.h
++ */
 +
-+gpiosim_set_pull() {
-+	local OFFSET=$2
-+	local PULL=$3
-+	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
-+	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
++#ifndef __GPIOD_GLIB_CHIP_H__
++#define __GPIOD_GLIB_CHIP_H__
 +
-+	echo "$PULL" > "$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/pull"
-+}
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
 +
-+gpiosim_check_value() {
-+	local OFFSET=$2
-+	local EXPECTED=$3
-+	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
-+	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
++#include <glib.h>
++#include <glib-object.h>
 +
-+	VAL=$(<"$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/value")
-+	[ "$VAL" = "$EXPECTED" ]
-+}
++#include "chip-info.h"
++#include "line-config.h"
++#include "line-info.h"
++#include "line-request.h"
++#include "request-config.h"
 +
-+gpiosim_wait_value() {
-+	local OFFSET=$2
-+	local EXPECTED=$3
-+	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
-+	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
-+	local PORT=$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/value
++G_BEGIN_DECLS
 +
-+	for _i in {1..30}; do
-+		[ "$(<"$PORT")" = "$EXPECTED" ] && return
-+		sleep 0.01
-+	done
-+	return 1
-+}
++/**
++ * @cond
++ */
 +
-+gpiosim_cleanup() {
-+	for CHIP in "${!GPIOSIM_CHIP_NAME[@]}"
-+	do
-+		local NAME=${GPIOSIM_APP_NAME}-$$-$CHIP
++G_DECLARE_FINAL_TYPE(GPIODChip, g_gpiod_chip, G_GPIOD, CHIP, GObject);
 +
-+		local DEVPATH=$GPIOSIM_CONFIGFS/$NAME
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_chip GPIO chip GObject
++ * @{
++ *
++ * This type represents a GPIO chip. In addition to the methods defined here,
++ * it exposes the `info-event` signal with the following signature:
++ *
++ *     void (*)(GPIODChip *, GPIODInfoEvent *, gpointer)
++ */
 +
-+		echo 0 > "$DEVPATH/live"
-+		find "$DEVPATH" -type d -name hog -exec rmdir '{}' '+'
-+		find "$DEVPATH" -type d -name "line*" -exec rmdir '{}' '+'
-+		find "$DEVPATH" -type d -name "bank*" -exec rmdir '{}' '+'
-+		rmdir "$DEVPATH"
-+	done
++/**
++ * @brief Get the GObject type for the GPIO chip.
++ */
++#define G_GPIOD_CHIP_TYPE (g_gpiod_chip_get_type())
 +
-+	gpiosim_chip_symlink_cleanup
++/**
++ * @brief Cast a GObject to a GPIO chip concrete GObject.
++ */
++#define G_GPIOD_CHIP_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_CHIP_TYPE, GPIODChip))
 +
-+	GPIOSIM_CHIP_NAME=()
-+	GPIOSIM_CHIP_PATH=()
-+	GPIOSIM_DEV_NAME=()
-+}
++/**
++ * @brief Instantiates a new chip object by opening the device file indicated
++ *        by \p path.
++ * @param path Path to the device file to open.
++ * @param err Return location for error or NULL.
++ * @return New GPIO chip object.
++ */
++GPIODChip *g_gpiod_chip_new(const gchar *path, GError **err);
 +
-+run_prog() {
-+	# Executables to test are expected to be in the same directory as the
-+	# testing script.
-+	cmd=$1
-+	shift
-+	output=$(timeout 10s "$SOURCE_DIR/$cmd" "$@" 2>&1)
-+	status=$?
-+}
++/**
++ * @brief Close the GPIO chip device file and free associated resources.
++ * @param self Chip object to manipulate.
++ * @note The chip object can live after calling this method but any of
++ *       the chip's methods will result in an error being set.
++ */
++void g_gpiod_chip_close(GPIODChip *self);
 +
-+dut_run() {
-+	cmd=$1
-+	shift
-+	coproc timeout 10s "$SOURCE_DIR/$cmd" "$@" 2>&1
-+	DUT_PID=$COPROC_PID
-+	read -r -t1 -n1 -u "${COPROC[0]}" DUT_FIRST_CHAR
-+}
++/**
++ * @brief Check if this object is valid.
++ * @param self Chip object to manipulate.
++ * @return TRUE if this object's methods can be used, FALSE otherwise.
++ *         False usually means the chip was closed. If the user calls
++ *         any of the methods of this class on an object for which this
++ *         operator returned false, a logic_error will be thrown.
++ */
++gboolean g_gpiod_chip_is_closed(GPIODChip *self);
 +
-+dut_run_redirect() {
-+	cmd=$1
-+	shift
-+	coproc timeout 10s "$SOURCE_DIR/$cmd" "$@" > "$SHUNIT_TMPDIR/$DUT_OUTPUT" 2>&1
-+	DUT_PID=$COPROC_PID
-+	# give the process time to spin up
-+	# FIXME - find a better solution
-+	sleep 0.2
-+}
++/**
++ * @brief Get the filesystem path that was used to open this GPIO chip.
++ * @param self Chip object to manipulate.
++ * @return Path to the underlying character device file.
++ */
++const gchar *g_gpiod_chip_get_path(GPIODChip *self);
 +
-+dut_read_redirect() {
-+	output=$(<"$SHUNIT_TMPDIR/$DUT_OUTPUT")
-+	local ORIG_IFS="$IFS"
-+	IFS=$'\n' mapfile -t lines <<< "$output"
-+	IFS="$ORIG_IFS"
-+}
++/**
++ * @brief Get information about the chip.
++ * @param self Chip object to manipulate.
++ * @param err Return location for error or NULL.
++ * @return New GPIO chip info object.
++ */
++GPIODChipInfo *g_gpiod_chip_get_info(GPIODChip *self, GError **err);
 +
-+dut_read() {
-+	local LINE
-+	lines=()
-+	while read -r -t 0.2 -u "${COPROC[0]}" LINE
-+	do
-+		if [ -n "$DUT_FIRST_CHAR" ]
-+		then
-+			LINE=${DUT_FIRST_CHAR}${LINE}
-+			unset DUT_FIRST_CHAR
-+		fi
-+		lines+=("$LINE")
-+	done
-+	output="${lines[*]}"
-+}
++/**
++ * @brief Retrieve the current snapshot of line information for a single line.
++ * @param self Chip object to manipulate.
++ * @param offset Offset of the line to get the info for.
++ * @param err Return location for error or NULL.
++ * @return New GPIO line info object.
++ */
++GPIODLineInfo *
++g_gpiod_chip_get_line_info(GPIODChip *self, guint offset, GError **err);
 +
-+dut_readable() {
-+	read -t 0 -u "${COPROC[0]}" LINE
-+}
++/**
++ * @brief Retrieve the current snapshot of line information for a single line
++ *        and start watching this line for future changes.
++ * @param self Chip object to manipulate.
++ * @param offset Offset of the line to get the info for and to watch.
++ * @param err Return location for error or NULL.
++ * @return New GPIO line info object.
++ */
++GPIODLineInfo *
++g_gpiod_chip_watch_line_info(GPIODChip *self, guint offset, GError **err);
 +
-+dut_flush() {
-+	local _JUNK
-+	lines=()
-+	output=
-+	unset DUT_FIRST_CHAR
-+	while read -t 0 -u "${COPROC[0]}" _JUNK
-+	do
-+		read -r -t 0.1 -u "${COPROC[0]}" _JUNK || true
-+	done
-+}
++/**
++ * @brief Stop watching the line at given offset for info events.
++ * @param self Chip object to manipulate.
++ * @param offset Offset of the line to get the info for.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean
++g_gpiod_chip_unwatch_line_info(GPIODChip *self, guint offset, GError **err);
 +
-+# check the next line of output matches the regex
-+dut_regex_match() {
-+	PATTERN=$1
++/**
++ * @brief Map a GPIO line's name to its offset within the chip.
++ * @param self Chip object to manipulate.
++ * @param name Name of the GPIO line to map.
++ * @param offset Return location for the mapped offset.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean
++g_gpiod_chip_get_line_offset_from_name(GPIODChip *self, const gchar *name,
++				       guint *offset, GError **err);
 +
-+	read -r -t 0.2 -u "${COPROC[0]}" LINE || (echo Timeout && false)
-+	if [ -n "$DUT_FIRST_CHAR" ]
-+	then
-+		LINE=${DUT_FIRST_CHAR}${LINE}
-+		unset DUT_FIRST_CHAR
-+	fi
-+	[[ $LINE =~ $PATTERN ]]
-+	assertEquals "'$LINE' did not match '$PATTERN'" "0" "$?"
-+}
++/**
++ * @brief Request a set of lines for exclusive usage.
++ * @param self Chip object to manipulate.
++ * @param req_cfg Request config object. Can be NULL for default settings.
++ * @param line_cfg Line config object.
++ * @param err Return location for error or NULL.
++ * @return New GPIO line request object or NULL on failure.
++ */
++GPIODLineRequest *g_gpiod_chip_request_lines(GPIODChip *self,
++					     GPIODRequestConfig *req_cfg,
++					     GPIODLineConfig *line_cfg,
++					     GError **err);
 +
-+dut_write() {
-+	echo "$@" >&"${COPROC[1]}"
-+}
++/**
++ * @}
++ *
++ * @}
++ */
 +
-+dut_kill() {
-+	kill "$@" "$DUT_PID"
-+}
++G_END_DECLS
 +
-+dut_wait() {
-+	wait "$DUT_PID"
-+	export status=$?
-+	unset DUT_PID
-+}
++#endif /* __GPIOD_GLIB_CHIP_H__ */
+diff --git a/bindings/glib/gpiod-glib/edge-event.h b/bindings/glib/gpiod-glib/edge-event.h
+new file mode 100644
+index 0000000..711a8fb
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/edge-event.h
+@@ -0,0 +1,114 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+dut_cleanup() {
-+	if [ -n "$DUT_PID" ]
-+	then
-+		kill -SIGTERM "$DUT_PID" 2> /dev/null
-+		wait "$DUT_PID" || false
-+	fi
-+	rm -f "$SHUNIT_TMPDIR/$DUT_OUTPUT"
-+}
++/**
++ * @file edge-event.h
++ */
 +
-+tearDown() {
-+	dut_cleanup
-+	gpiosim_cleanup
-+}
++#ifndef __GPIOD_GLIB_EDGE_EVENT_H__
++#define __GPIOD_GLIB_EDGE_EVENT_H__
 +
-+request_release_line() {
-+	"$SOURCE_DIR/gpioget" -c "$@" >/dev/null
-+}
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
 +
-+die() {
-+	echo "$@" 1>&2
-+	exit 1
-+}
++#include <glib.h>
++#include <glib-object.h>
 +
-+# Must be done after we sources shunit2 as we need SHUNIT_VERSION to be set.
-+oneTimeSetUp() {
-+	test "$SHUNIT_VERSION" = "$MIN_SHUNIT_VERSION" && return 0
-+	local FIRST
-+	FIRST=$(printf "%s\n%s\n" "$SHUNIT_VERSION" "$MIN_SHUNIT_VERSION" | sort -Vr | head -1)
-+	test "$FIRST" = "$MIN_SHUNIT_VERSION" && \
-+		die "minimum shunit version required is $MIN_SHUNIT_VERSION (current version is $SHUNIT_VERSION"
-+}
++#include "line-info.h"
 +
-+check_kernel() {
-+	local REQUIRED=$1
-+	local CURRENT
-+	CURRENT=$(uname -r)
++G_BEGIN_DECLS
 +
-+	SORTED=$(printf "%s\n%s" "$REQUIRED" "$CURRENT" | sort -V | head -n 1)
++/**
++ * @cond
++ */
 +
-+	if [ "$SORTED" != "$REQUIRED" ]
-+	then
-+		die "linux kernel version must be at least: v$REQUIRED - got: v$CURRENT"
-+	fi
-+}
++G_DECLARE_FINAL_TYPE(GPIODEdgeEvent, g_gpiod_edge_event,
++		     G_GPIOD, EDGE_EVENT, GObject);
 +
-+check_prog() {
-+	local PROG=$1
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_edge_event GPIO edge-event GObject
++ * @{
++ *
++ * An edge event object contains information about a single line edge event.
++ * It contains the event type, timestamp and the offset of the line on which
++ * the event occurred as well as two sequence numbers (global for all lines
++ * in the associated request and local for this line only).
++ */
 +
-+	if ! which "$PROG" > /dev/null
-+	then
-+		die "$PROG not found - needed to run the tests"
-+	fi
-+}
++/**
++ * @brief Get the GObject type for the GPIO edge-event.
++ */
++#define G_GPIOD_EDGE_EVENT_TYPE (g_gpiod_edge_event_get_type())
 +
-+# Check all required non-coreutils tools
-+check_prog shunit2
-+check_prog modprobe
-+check_prog timeout
++/**
++ * @brief Cast a GObject to a GPIO edge-event concrete GObject.
++ */
++#define G_GPIOD_EDGE_EVENT_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_EDGE_EVENT_TYPE, \
++				    GPIODEdgeEvent))
 +
-+# Check if we're running a kernel at the required version or later
-+check_kernel $MIN_KERNEL_VERSION
++/**
++ * @brief Event types.
++ */
++typedef enum {
++	G_GPIOD_EDGE_EVENT_RISING_EDGE = 1,
++	/**< Rising edge event. */
++	G_GPIOD_EDGE_EVENT_FALLING_EDGE,
++	/**< Falling edge event. */
++} GPIODEdgeEventType;
 +
-+modprobe gpio-sim || die "unable to load the gpio-sim module"
-+mountpoint /sys/kernel/config/ > /dev/null 2> /dev/null || \
-+	die "configfs not mounted at /sys/kernel/config/"
-diff --git a/tools/gpio-tools-test.bash b/tools/gpio-tools-test.bash
-index 3b93388..359960a 100755
---- a/tools/gpio-tools-test.bash
-+++ b/tools/gpio-tools-test.bash
-@@ -4,285 +4,8 @@
- # SPDX-FileCopyrightText: 2022 Kent Gibson <warthog618@gmail.com>
- # SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
- 
--# Simple test harness for the gpio-tools.
--
--# Where output from the dut is stored (must be used together
--# with SHUNIT_TMPDIR).
--DUT_OUTPUT=gpio-tools-test-output
--
--# Save the PID of coprocess - otherwise we won't be able to wait for it
--# once it exits as the COPROC_PID will be cleared.
--DUT_PID=""
--
--SOURCE_DIR=$(dirname "${BASH_SOURCE[0]}")
--
--# mappings from local name to system chip name, path, dev name
--declare -A GPIOSIM_CHIP_NAME
--declare -A GPIOSIM_CHIP_PATH
--declare -A GPIOSIM_DEV_NAME
--GPIOSIM_CONFIGFS="/sys/kernel/config/gpio-sim"
--GPIOSIM_SYSFS="/sys/devices/platform/"
--GPIOSIM_APP_NAME="gpio-tools-test"
--
--MIN_KERNEL_VERSION="5.17.4"
--MIN_SHUNIT_VERSION="2.1.8"
--
--# Run the command in $@ and fail the test if the command succeeds.
--assert_fail() {
--	"$@" || return 0
--	fail " '$*': command did not fail as expected"
--}
--
--# Check if the string in $2 matches against the pattern in $1.
--regex_matches() {
--	[[ $2 =~ $1 ]]
--	assertEquals " '$2' did not match '$1':" "0" "$?"
--}
--
--output_contains_line() {
--	assertContains "$1" "$output"
--}
--
--output_is() {
--	assertEquals " output:" "$1" "$output"
--}
--
--num_lines_is() {
--	[ "$1" -eq "0" ] || [ -z "$output" ] && return 0
--	local NUM_LINES
--	NUM_LINES=$(echo "$output" | wc -l)
--	assertEquals " number of lines:" "$1" "$NUM_LINES"
--}
--
--status_is() {
--	assertEquals " status:" "$1" "$status"
--}
--
--# Same as above but match against the regex pattern in $1.
--output_regex_match() {
--	[[ "$output" =~ $1 ]]
--	assertEquals " '$output' did not match '$1'" "0" "$?"
--}
--
--gpiosim_chip() {
--	local VAR=$1
--	local NAME=${GPIOSIM_APP_NAME}-$$-${VAR}
--	local DEVPATH=$GPIOSIM_CONFIGFS/$NAME
--	local BANKPATH=$DEVPATH/bank0
--
--	mkdir -p "$BANKPATH"
--
--	for ARG in "$@"
--	do
--		local KEY VAL
--		KEY=$(echo "$ARG" | cut -d"=" -f1)
--		VAL=$(echo "$ARG" | cut -d"=" -f2)
--
--		if [ "$KEY" = "num_lines" ]
--		then
--			echo "$VAL" > "$BANKPATH/num_lines"
--		elif [ "$KEY" = "line_name" ]
--		then
--			local OFFSET LINENAME
--			OFFSET=$(echo "$VAL" | cut -d":" -f1)
--			LINENAME=$(echo "$VAL" | cut -d":" -f2)
--			local LINEPATH=$BANKPATH/line$OFFSET
--
--			mkdir -p "$LINEPATH"
--			echo "$LINENAME" > "$LINEPATH/name"
--		fi
--	done
--
--	echo 1 > "$DEVPATH/live"
--
--	local CHIP_NAME
--	CHIP_NAME=$(<"$BANKPATH/chip_name")
--	GPIOSIM_CHIP_NAME[$1]=$CHIP_NAME
--	GPIOSIM_CHIP_PATH[$1]="/dev/$CHIP_NAME"
--	GPIOSIM_DEV_NAME[$1]=$(<"$DEVPATH/dev_name")
--}
--
--gpiosim_chip_number() {
--	local NAME=${GPIOSIM_CHIP_NAME[$1]}
--	echo "${NAME#gpiochip}"
--}
--
--gpiosim_chip_symlink() {
--	GPIOSIM_CHIP_LINK="$2/${GPIOSIM_APP_NAME}-$$-lnk"
--	ln -s "${GPIOSIM_CHIP_PATH[$1]}" "$GPIOSIM_CHIP_LINK"
--}
--
--gpiosim_chip_symlink_cleanup() {
--	if [ -n "$GPIOSIM_CHIP_LINK" ]
--	then
--		rm "$GPIOSIM_CHIP_LINK"
--	fi
--	unset GPIOSIM_CHIP_LINK
--}
--
--gpiosim_set_pull() {
--	local OFFSET=$2
--	local PULL=$3
--	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
--	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
--
--	echo "$PULL" > "$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/pull"
--}
--
--gpiosim_check_value() {
--	local OFFSET=$2
--	local EXPECTED=$3
--	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
--	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
--
--	VAL=$(<"$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/value")
--	[ "$VAL" = "$EXPECTED" ]
--}
--
--gpiosim_wait_value() {
--	local OFFSET=$2
--	local EXPECTED=$3
--	local DEVNAME=${GPIOSIM_DEV_NAME[$1]}
--	local CHIPNAME=${GPIOSIM_CHIP_NAME[$1]}
--	local PORT=$GPIOSIM_SYSFS/$DEVNAME/$CHIPNAME/sim_gpio$OFFSET/value
--
--	for _i in {1..30}; do
--		[ "$(<"$PORT")" = "$EXPECTED" ] && return
--		sleep 0.01
--	done
--	return 1
--}
--
--gpiosim_cleanup() {
--	for CHIP in "${!GPIOSIM_CHIP_NAME[@]}"
--	do
--		local NAME=${GPIOSIM_APP_NAME}-$$-$CHIP
--
--		local DEVPATH=$GPIOSIM_CONFIGFS/$NAME
--
--		echo 0 > "$DEVPATH/live"
--		find "$DEVPATH" -type d -name hog -exec rmdir '{}' '+'
--		find "$DEVPATH" -type d -name "line*" -exec rmdir '{}' '+'
--		find "$DEVPATH" -type d -name "bank*" -exec rmdir '{}' '+'
--		rmdir "$DEVPATH"
--	done
--
--	gpiosim_chip_symlink_cleanup
--
--	GPIOSIM_CHIP_NAME=()
--	GPIOSIM_CHIP_PATH=()
--	GPIOSIM_DEV_NAME=()
--}
--
--run_tool() {
--	# Executables to test are expected to be in the same directory as the
--	# testing script.
--	cmd=$1
--	shift
--	output=$(timeout 10s "$SOURCE_DIR/$cmd" "$@" 2>&1)
--	status=$?
--}
--
--dut_run() {
--	cmd=$1
--	shift
--	coproc timeout 10s "$SOURCE_DIR/$cmd" "$@" 2>&1
--	DUT_PID=$COPROC_PID
--	read -r -t1 -n1 -u "${COPROC[0]}" DUT_FIRST_CHAR
--}
--
--dut_run_redirect() {
--	cmd=$1
--	shift
--	coproc timeout 10s "$SOURCE_DIR/$cmd" "$@" > "$SHUNIT_TMPDIR/$DUT_OUTPUT" 2>&1
--	DUT_PID=$COPROC_PID
--	# give the process time to spin up
--	# FIXME - find a better solution
--	sleep 0.2
--}
--
--dut_read_redirect() {
--	output=$(<"$SHUNIT_TMPDIR/$DUT_OUTPUT")
--	local ORIG_IFS="$IFS"
--	IFS=$'\n' mapfile -t lines <<< "$output"
--	IFS="$ORIG_IFS"
--}
--
--dut_read() {
--	local LINE
--	lines=()
--	while read -r -t 0.2 -u "${COPROC[0]}" LINE
--	do
--		if [ -n "$DUT_FIRST_CHAR" ]
--		then
--			LINE=${DUT_FIRST_CHAR}${LINE}
--			unset DUT_FIRST_CHAR
--		fi
--		lines+=("$LINE")
--	done
--	output="${lines[*]}"
--}
--
--dut_readable() {
--	read -t 0 -u "${COPROC[0]}" LINE
--}
--
--dut_flush() {
--	local _JUNK
--	lines=()
--	output=
--	unset DUT_FIRST_CHAR
--	while read -t 0 -u "${COPROC[0]}" _JUNK
--	do
--		read -r -t 0.1 -u "${COPROC[0]}" _JUNK || true
--	done
--}
--
--# check the next line of output matches the regex
--dut_regex_match() {
--	PATTERN=$1
--
--	read -r -t 0.2 -u "${COPROC[0]}" LINE || (echo Timeout && false)
--	if [ -n "$DUT_FIRST_CHAR" ]
--	then
--		LINE=${DUT_FIRST_CHAR}${LINE}
--		unset DUT_FIRST_CHAR
--	fi
--	[[ $LINE =~ $PATTERN ]]
--	assertEquals "'$LINE' did not match '$PATTERN'" "0" "$?"
--}
--
--dut_write() {
--	echo "$@" >&"${COPROC[1]}"
--}
--
--dut_kill() {
--	kill "$@" "$DUT_PID"
--}
--
--dut_wait() {
--	wait "$DUT_PID"
--	export status=$?
--	unset DUT_PID
--}
--
--dut_cleanup() {
--	if [ -n "$DUT_PID" ]
--	then
--		kill -SIGTERM "$DUT_PID" 2> /dev/null
--		wait "$DUT_PID" || false
--	fi
--	rm -f "$SHUNIT_TMPDIR/$DUT_OUTPUT"
--}
--
--tearDown() {
--	dut_cleanup
--	gpiosim_cleanup
--}
--
--request_release_line() {
--	"$SOURCE_DIR/gpioget" -c "$@" >/dev/null
--}
-+export SOURCE_DIR
-+SOURCE_DIR="$(dirname "${BASH_SOURCE[0]}")"
- 
- #
- # gpiodetect test cases
-@@ -300,7 +23,7 @@ test_gpiodetect_all_chips() {
- 	local sim1dev=${GPIOSIM_DEV_NAME[sim1]}
- 	local sim2dev=${GPIOSIM_DEV_NAME[sim2]}
- 
--	run_tool gpiodetect
-+	run_prog gpiodetect
- 
- 	output_regex_match "$sim0 \[${sim0dev}[-:]node0\] \(4 lines\)"
- 	output_regex_match "$sim1 \[${sim1dev}[-:]node0\] \(8 lines\)"
-@@ -311,7 +34,7 @@ test_gpiodetect_all_chips() {
- 	local initial_output=$output
- 	gpiosim_chip_symlink sim1 /dev
- 
--	run_tool gpiodetect
-+	run_prog gpiodetect
- 
- 	output_is "$initial_output"
- 	status_is 0
-@@ -330,21 +53,21 @@ test_gpiodetect_a_chip() {
- 	local sim2dev=${GPIOSIM_DEV_NAME[sim2]}
- 
- 	# by name
--	run_tool gpiodetect "$sim0"
-+	run_prog gpiodetect "$sim0"
- 
- 	output_regex_match "$sim0 \[${sim0dev}[-:]node0\] \(4 lines\)"
- 	num_lines_is 1
- 	status_is 0
- 
- 	# by path
--	run_tool gpiodetect "${GPIOSIM_CHIP_PATH[sim1]}"
-+	run_prog gpiodetect "${GPIOSIM_CHIP_PATH[sim1]}"
- 
- 	output_regex_match "$sim1 \[${sim1dev}[-:]node0\] \(8 lines\)"
- 	num_lines_is 1
- 	status_is 0
- 
- 	# by number
--	run_tool gpiodetect "$(gpiosim_chip_number sim2)"
-+	run_prog gpiodetect "$(gpiosim_chip_number sim2)"
- 
- 	output_regex_match "$sim2 \[${sim2dev}[-:]node0\] \(16 lines\)"
- 	num_lines_is 1
-@@ -352,7 +75,7 @@ test_gpiodetect_a_chip() {
- 
- 	# by symlink
- 	gpiosim_chip_symlink sim2 .
--	run_tool gpiodetect "$GPIOSIM_CHIP_LINK"
-+	run_prog gpiodetect "$GPIOSIM_CHIP_LINK"
- 
- 	output_regex_match "$sim2 \[${sim2dev}[-:]node0\] \(16 lines\)"
- 	num_lines_is 1
-@@ -371,7 +94,7 @@ test_gpiodetect_multiple_chips() {
- 	local sim1dev=${GPIOSIM_DEV_NAME[sim1]}
- 	local sim2dev=${GPIOSIM_DEV_NAME[sim2]}
- 
--	run_tool gpiodetect "$sim0" "$sim1" "$sim2"
-+	run_prog gpiodetect "$sim0" "$sim1" "$sim2"
- 
- 	output_regex_match "$sim0 \[${sim0dev}[-:]node0\] \(4 lines\)"
- 	output_regex_match "$sim1 \[${sim1dev}[-:]node0\] \(8 lines\)"
-@@ -381,7 +104,7 @@ test_gpiodetect_multiple_chips() {
- }
- 
- test_gpiodetect_with_nonexistent_chip() {
--	run_tool gpiodetect nonexistent-chip
-+	run_prog gpiodetect nonexistent-chip
- 
- 	status_is 1
- 	output_regex_match \
-@@ -396,7 +119,7 @@ test_gpioinfo_all_chips() {
- 	gpiosim_chip sim0 num_lines=4
- 	gpiosim_chip sim1 num_lines=8
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_contains_line "${GPIOSIM_CHIP_NAME[sim0]} - 4 lines:"
- 	output_contains_line "${GPIOSIM_CHIP_NAME[sim1]} - 8 lines:"
-@@ -408,7 +131,7 @@ test_gpioinfo_all_chips() {
- 	local initial_output=$output
- 	gpiosim_chip_symlink sim1 /dev
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_is "$initial_output"
- 	status_is 0
-@@ -420,7 +143,7 @@ test_gpioinfo_all_chips_with_some_used_lines() {
- 
- 	dut_run gpioset --banner --active-low foo=1 baz=0
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_contains_line "${GPIOSIM_CHIP_NAME[sim0]} - 4 lines:"
- 	output_contains_line "${GPIOSIM_CHIP_NAME[sim1]} - 8 lines:"
-@@ -439,7 +162,7 @@ test_gpioinfo_a_chip() {
- 	local sim1=${GPIOSIM_CHIP_NAME[sim1]}
- 
- 	# by name
--	run_tool gpioinfo --chip "$sim1"
-+	run_prog gpioinfo --chip "$sim1"
- 
- 	output_contains_line "$sim1 - 4 lines:"
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
-@@ -450,7 +173,7 @@ test_gpioinfo_a_chip() {
- 	status_is 0
- 
- 	# by path
--	run_tool gpioinfo --chip "$sim1"
-+	run_prog gpioinfo --chip "$sim1"
- 
- 	output_contains_line "$sim1 - 4 lines:"
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
-@@ -461,7 +184,7 @@ test_gpioinfo_a_chip() {
- 	status_is 0
- 
- 	# by number
--	run_tool gpioinfo --chip "$sim1"
-+	run_prog gpioinfo --chip "$sim1"
- 
- 	output_contains_line "$sim1 - 4 lines:"
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
-@@ -473,7 +196,7 @@ test_gpioinfo_a_chip() {
- 
- 	# by symlink
- 	gpiosim_chip_symlink sim1 .
--	run_tool gpioinfo --chip "$GPIOSIM_CHIP_LINK"
-+	run_prog gpioinfo --chip "$GPIOSIM_CHIP_LINK"
- 
- 	output_contains_line "$sim1 - 4 lines:"
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
-@@ -492,28 +215,28 @@ test_gpioinfo_a_line() {
- 	local sim1=${GPIOSIM_CHIP_NAME[sim1]}
- 
- 	# by offset
--	run_tool gpioinfo --chip "$sim1" 2
-+	run_prog gpioinfo --chip "$sim1" 2
- 
- 	output_regex_match "$sim1 2\\s+\"bar\"\\s+input"
- 	num_lines_is 1
- 	status_is 0
- 
- 	# by name
--	run_tool gpioinfo bar
-+	run_prog gpioinfo bar
- 
- 	output_regex_match "$sim0 5\\s+\"bar\"\\s+input"
- 	num_lines_is 1
- 	status_is 0
- 
- 	# by chip and name
--	run_tool gpioinfo --chip "$sim1" 2
-+	run_prog gpioinfo --chip "$sim1" 2
- 
- 	output_regex_match "$sim1 2\\s+\"bar\"\\s+input"
- 	num_lines_is 1
- 	status_is 0
- 
- 	# unquoted
--	run_tool gpioinfo --unquoted --chip "$sim1" 2
-+	run_prog gpioinfo --unquoted --chip "$sim1" 2
- 
- 	output_regex_match "$sim1 2\\s+bar\\s+input"
- 	num_lines_is 1
-@@ -530,7 +253,7 @@ test_gpioinfo_first_matching_named_line() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioinfo foobar
-+	run_prog gpioinfo foobar
- 
- 	output_regex_match "$sim0 3\\s+\"foobar\"\\s+input"
- 	num_lines_is 1
-@@ -545,7 +268,7 @@ test_gpioinfo_multiple_lines() {
- 	local sim1=${GPIOSIM_CHIP_NAME[sim1]}
- 
- 	# by offset
--	run_tool gpioinfo --chip "$sim1" 1 2
-+	run_prog gpioinfo --chip "$sim1" 1 2
- 
- 	output_regex_match "$sim1 1\\s+unnamed\\s+input"
- 	output_regex_match "$sim1 2\\s+\"baz\"\\s+input"
-@@ -553,7 +276,7 @@ test_gpioinfo_multiple_lines() {
- 	status_is 0
- 
- 	# by name
--	run_tool gpioinfo bar baz
-+	run_prog gpioinfo bar baz
- 
- 	output_regex_match "$sim0 5\\s+\"bar\"\\s+input"
- 	output_regex_match "$sim1 2\\s+\"baz\"\\s+input"
-@@ -561,7 +284,7 @@ test_gpioinfo_multiple_lines() {
- 	status_is 0
- 
- 	# by name and offset
--	run_tool gpioinfo --chip "$sim0" bar 3
-+	run_prog gpioinfo --chip "$sim0" bar 3
- 
- 	output_regex_match "$sim0 5\\s+\"bar\"\\s+input"
- 	output_regex_match "$sim0 3\\s+unnamed\\s+input"
-@@ -578,7 +301,7 @@ test_gpioinfo_line_attribute_menagerie() {
- 
- 	dut_run gpioset --banner --active-low --bias=pull-up --drive=open-source foo=1 baz=0
- 
--	run_tool gpioinfo foo baz
-+	run_prog gpioinfo foo baz
- 
- 	output_regex_match \
- "$sim0 1\\s+\"foo\"\\s+output active-low drive=open-source bias=pull-up consumer=\"gpioset\""
-@@ -592,7 +315,7 @@ test_gpioinfo_line_attribute_menagerie() {
- 
- 	dut_run gpioset --banner --bias=pull-down --drive=open-drain foo=1 baz=0
- 
--	run_tool gpioinfo foo baz
-+	run_prog gpioinfo foo baz
- 
- 	output_regex_match \
- "$sim0 1\\s+\"foo\"\\s+output drive=open-drain bias=pull-down consumer=\"gpioset\""
-@@ -606,7 +329,7 @@ test_gpioinfo_line_attribute_menagerie() {
- 
- 	dut_run gpiomon --banner --bias=disabled --utc -p 10ms foo baz
- 
--	run_tool gpioinfo foo baz
-+	run_prog gpioinfo foo baz
- 
- 	output_regex_match \
- "$sim0 1\\s+\"foo\"\\s+input bias=disabled edges=both event-clock=realtime debounce-period=10ms consumer=\"gpiomon\""
-@@ -620,7 +343,7 @@ test_gpioinfo_line_attribute_menagerie() {
- 
- 	dut_run gpiomon --banner --edges=rising --localtime foo baz
- 
--	run_tool gpioinfo foo baz
-+	run_prog gpioinfo foo baz
- 
- 	output_regex_match \
- "$sim0 1\\s+\"foo\"\\s+input edges=rising event-clock=realtime consumer=\"gpiomon\""
-@@ -634,7 +357,7 @@ test_gpioinfo_line_attribute_menagerie() {
- 
- 	dut_run gpiomon --banner --edges=falling foo baz
- 
--	run_tool gpioinfo foo baz
-+	run_prog gpioinfo foo baz
- 
- 	output_regex_match \
- "$sim0 1\\s+\"foo\"\\s+input edges=falling consumer=\"gpiomon\""
-@@ -650,7 +373,7 @@ test_gpioinfo_with_same_line_twice() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by offset
--	run_tool gpioinfo --chip "$sim0" 1 1
-+	run_prog gpioinfo --chip "$sim0" 1 1
- 
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+input"
- 	output_regex_match ".*lines '1' and '1' are the same line"
-@@ -658,7 +381,7 @@ test_gpioinfo_with_same_line_twice() {
- 	status_is 1
- 
- 	# by name
--	run_tool gpioinfo foo foo
-+	run_prog gpioinfo foo foo
- 
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+input"
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
-@@ -666,7 +389,7 @@ test_gpioinfo_with_same_line_twice() {
- 	status_is 1
- 
- 	# by name and offset
--	run_tool gpioinfo --chip "$sim0" foo 1
-+	run_prog gpioinfo --chip "$sim0" foo 1
- 
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+input"
- 	output_regex_match ".*lines 'foo' and '1' are the same line"
-@@ -684,7 +407,7 @@ test_gpioinfo_all_lines_matching_name() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 	local sim1=${GPIOSIM_CHIP_NAME[sim1]}
- 
--	run_tool gpioinfo --strict foobar
-+	run_prog gpioinfo --strict foobar
- 
- 	output_regex_match "$sim0 3\\s+\"foobar\"\\s+input"
- 	output_regex_match "$sim1 2\\s+\"foobar\"\\s+input"
-@@ -701,7 +424,7 @@ test_gpioinfo_with_lines_strictly_by_name() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# first by offset (to show offsets match first)
--	run_tool gpioinfo --chip "$sim0" 1 6
-+	run_prog gpioinfo --chip "$sim0" 1 6
- 
- 	output_regex_match "$sim0 1\\s+\"6\"\\s+input"
- 	output_regex_match "$sim0 6\\s+\"1\"\\s+input"
-@@ -709,7 +432,7 @@ test_gpioinfo_with_lines_strictly_by_name() {
- 	status_is 0
- 
- 	# then strictly by name
--	run_tool gpioinfo --by-name --chip "$sim0" 1
-+	run_prog gpioinfo --by-name --chip "$sim0" 1
- 
- 	output_regex_match "$sim0 6\\s+\"1\"\\s+input"
- 	num_lines_is 1
-@@ -717,7 +440,7 @@ test_gpioinfo_with_lines_strictly_by_name() {
- }
- 
- test_gpioinfo_with_nonexistent_chip() {
--	run_tool gpioinfo --chip nonexistent-chip
-+	run_prog gpioinfo --chip nonexistent-chip
- 
- 	output_regex_match \
- ".*cannot find GPIO chip character device 'nonexistent-chip'"
-@@ -727,12 +450,12 @@ test_gpioinfo_with_nonexistent_chip() {
- test_gpioinfo_with_nonexistent_line() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioinfo nonexistent-line
-+	run_prog gpioinfo nonexistent-line
- 
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
- 	status_is 1
- 
--	run_tool gpioinfo --chip "${GPIOSIM_CHIP_NAME[sim0]}" nonexistent-line
-+	run_prog gpioinfo --chip "${GPIOSIM_CHIP_NAME[sim0]}" nonexistent-line
- 
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
- 	status_is 1
-@@ -743,7 +466,7 @@ test_gpioinfo_with_offset_out_of_range() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioinfo --chip "$sim0" 0 1 2 3 4 5
-+	run_prog gpioinfo --chip "$sim0" 0 1 2 3 4 5
- 
- 	output_regex_match "$sim0 0\\s+unnamed\\s+input"
- 	output_regex_match "$sim0 1\\s+unnamed\\s+input"
-@@ -764,12 +487,12 @@ test_gpioget_by_name() {
- 
- 	gpiosim_set_pull sim0 1 pull-up
- 
--	run_tool gpioget foo
-+	run_prog gpioget foo
- 
- 	output_is "\"foo\"=active"
- 	status_is 0
- 
--	run_tool gpioget --unquoted foo
-+	run_prog gpioget --unquoted foo
- 
- 	output_is "foo=active"
- 	status_is 0
-@@ -780,12 +503,12 @@ test_gpioget_by_offset() {
- 
- 	gpiosim_set_pull sim0 1 pull-up
- 
--	run_tool gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1
-+	run_prog gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1
- 
- 	output_is "\"1\"=active"
- 	status_is 0
- 
--	run_tool gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1
-+	run_prog gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1
- 
- 	output_is "1=active"
- 	status_is 0
-@@ -797,7 +520,7 @@ test_gpioget_by_symlink() {
- 
- 	gpiosim_set_pull sim0 1 pull-up
- 
--	run_tool gpioget --chip "$GPIOSIM_CHIP_LINK" 1
-+	run_prog gpioget --chip "$GPIOSIM_CHIP_LINK" 1
- 
- 	output_is "\"1\"=active"
- 	status_is 0
-@@ -809,12 +532,12 @@ test_gpioget_by_chip_and_name() {
- 
- 	gpiosim_set_pull sim1 3 pull-up
- 
--	run_tool gpioget --chip "${GPIOSIM_CHIP_NAME[sim1]}" foo
-+	run_prog gpioget --chip "${GPIOSIM_CHIP_NAME[sim1]}" foo
- 
- 	output_is "\"foo\"=active"
- 	status_is 0
- 
--	run_tool gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim1]}" foo
-+	run_prog gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim1]}" foo
- 
- 	output_is "foo=active"
- 	status_is 0
-@@ -829,7 +552,7 @@ test_gpioget_first_matching_named_line() {
- 
- 	gpiosim_set_pull sim0 3 pull-up
- 
--	run_tool gpioget foobar
-+	run_prog gpioget foobar
- 
- 	output_is "\"foobar\"=active"
- 	status_is 0
-@@ -843,7 +566,7 @@ test_gpioget_multiple_lines() {
- 	gpiosim_set_pull sim0 5 pull-up
- 	gpiosim_set_pull sim0 7 pull-up
- 
--	run_tool gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0 1 2 3 4 5 6 7
-+	run_prog gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0 1 2 3 4 5 6 7
- 
- 	output_is \
- "0=inactive 1=inactive 2=active 3=active 4=inactive 5=active 6=inactive 7=active"
-@@ -859,7 +582,7 @@ test_gpioget_multiple_lines_by_name_and_offset() {
- 	gpiosim_set_pull sim0 4 pull-up
- 	gpiosim_set_pull sim0 6 pull-up
- 
--	run_tool gpioget --chip "$sim0" 0 foo 4 bar
-+	run_prog gpioget --chip "$sim0" 0 foo 4 bar
- 
- 	output_is "\"0\"=inactive \"foo\"=active \"4\"=active \"bar\"=active"
- 	status_is 0
-@@ -872,7 +595,7 @@ test_gpioget_multiple_lines_across_multiple_chips() {
- 	gpiosim_set_pull sim0 1 pull-up
- 	gpiosim_set_pull sim1 4 pull-up
- 
--	run_tool gpioget baz bar foo xyz
-+	run_prog gpioget baz bar foo xyz
- 
- 	output_is "\"baz\"=inactive \"bar\"=inactive \"foo\"=active \"xyz\"=active"
- 	status_is 0
-@@ -888,7 +611,7 @@ test_gpioget_with_numeric_values() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioget --numeric --chip "$sim0" 0 1 2 3 4 5 6 7
-+	run_prog gpioget --numeric --chip "$sim0" 0 1 2 3 4 5 6 7
- 
- 	output_is "0 0 1 1 0 1 0 1"
- 	status_is 0
-@@ -904,7 +627,7 @@ test_gpioget_with_active_low() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioget --active-low --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
-+	run_prog gpioget --active-low --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
- 
- 	output_is \
- "0=active 1=active 2=inactive 3=inactive 4=active 5=inactive 6=active 7=inactive"
-@@ -917,7 +640,7 @@ test_gpioget_with_consumer() {
- 
- 	dut_run gpionotify --banner -F "%l %E %C" foo baz
- 
--	run_tool gpioget --consumer gpio-tools-tests foo baz
-+	run_prog gpioget --consumer gpio-tools-tests foo baz
- 	status_is 0
- 
- 	dut_read
-@@ -935,7 +658,7 @@ test_gpioget_with_pull_up() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioget --bias=pull-up --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
-+	run_prog gpioget --bias=pull-up --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
- 
- 	output_is \
- "0=active 1=active 2=active 3=active 4=active 5=active 6=active 7=active"
-@@ -952,7 +675,7 @@ test_gpioget_with_pull_down() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioget --bias=pull-down --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
-+	run_prog gpioget --bias=pull-down --unquoted --chip "$sim0" 0 1 2 3 4 5 6 7
- 
- 	output_is \
- "0=inactive 1=inactive 2=inactive 3=inactive 4=inactive 5=inactive 6=inactive 7=inactive"
-@@ -965,31 +688,31 @@ test_gpioget_with_direction_as_is() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# flip to output
--	run_tool gpioset -t0 foo=1
-+	run_prog gpioset -t0 foo=1
- 
- 	status_is 0
- 
--	run_tool gpioinfo foo
-+	run_prog gpioinfo foo
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+output"
- 	status_is 0
- 
--	run_tool gpioget --as-is foo
-+	run_prog gpioget --as-is foo
- 	# note gpio-sim reverts line to its pull when released
- 	output_is "\"foo\"=inactive"
- 	status_is 0
- 
--	run_tool gpioinfo foo
-+	run_prog gpioinfo foo
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+output"
- 	status_is 0
- 
- 	# whereas the default behaviour forces to input
--	run_tool gpioget foo
-+	run_prog gpioget foo
- 	# note gpio-sim reverts line to its pull when released
- 	# (defaults to pull-down)
- 	output_is "\"foo\"=inactive"
- 	status_is 0
- 
--	run_tool gpioinfo foo
-+	run_prog gpioinfo foo
- 	output_regex_match "$sim0 1\\s+\"foo\"\\s+input"
- 	status_is 0
- }
-@@ -998,7 +721,7 @@ test_gpioget_with_hold_period() {
- 	gpiosim_chip sim0 num_lines=8 line_name=1:foo
- 
- 	# only test parsing - testing the hold-period itself is tricky
--	run_tool gpioget --hold-period=100ms foo
-+	run_prog gpioget --hold-period=100ms foo
- 	output_is "\"foo\"=inactive"
- 	status_is 0
- }
-@@ -1010,7 +733,7 @@ test_gpioget_with_strict_named_line_check() {
- 				      line_name=4:xyz line_name=7:foobar
- 	gpiosim_chip sim2 num_lines=16
- 
--	run_tool gpioget --strict foobar
-+	run_prog gpioget --strict foobar
- 
- 	output_regex_match ".*line 'foobar' is not unique"
- 	status_is 1
-@@ -1024,12 +747,12 @@ test_gpioget_with_lines_by_offset() {
- 	gpiosim_set_pull sim0 1 pull-up
- 	gpiosim_set_pull sim0 6 pull-down
- 
--	run_tool gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
-+	run_prog gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
- 
- 	output_is "\"1\"=active \"6\"=inactive"
- 	status_is 0
- 
--	run_tool gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
-+	run_prog gpioget --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
- 
- 	output_is "1=active 6=inactive"
- 	status_is 0
-@@ -1043,19 +766,19 @@ test_gpioget_with_lines_strictly_by_name() {
- 	gpiosim_set_pull sim0 1 pull-up
- 	gpiosim_set_pull sim0 6 pull-down
- 
--	run_tool gpioget --by-name --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
-+	run_prog gpioget --by-name --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
- 
- 	output_is "\"1\"=inactive \"6\"=active"
- 	status_is 0
- 
--	run_tool gpioget --by-name --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
-+	run_prog gpioget --by-name --unquoted --chip "${GPIOSIM_CHIP_NAME[sim0]}" 1 6
- 
- 	output_is "1=inactive 6=active"
- 	status_is 0
- }
- 
- test_gpioget_with_no_arguments() {
--	run_tool gpioget
-+	run_prog gpioget
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -1064,7 +787,7 @@ test_gpioget_with_no_arguments() {
- test_gpioget_with_chip_but_no_line_specified() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}"
-+	run_prog gpioget --chip "${GPIOSIM_CHIP_NAME[sim0]}"
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -1074,7 +797,7 @@ test_gpioget_with_offset_out_of_range() {
- 	gpiosim_chip sim0 num_lines=4
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioget --chip "$sim0" 0 1 2 3 4 5
-+	run_prog gpioget --chip "$sim0" 0 1 2 3 4 5
- 
- 	output_regex_match ".*offset 4 is out of range on chip '$sim0'"
- 	output_regex_match ".*offset 5 is out of range on chip '$sim0'"
-@@ -1082,7 +805,7 @@ test_gpioget_with_offset_out_of_range() {
- }
- 
- test_gpioget_with_nonexistent_line() {
--	run_tool gpioget nonexistent-line
-+	run_prog gpioget nonexistent-line
- 
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
- 	status_is 1
-@@ -1093,31 +816,31 @@ test_gpioget_with_same_line_twice() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by offset
--	run_tool gpioget --chip "$sim0" 0 0
-+	run_prog gpioget --chip "$sim0" 0 0
- 
- 	output_regex_match ".*lines '0' and '0' are the same line"
- 	status_is 1
- 
- 	# by name
--	run_tool gpioget foo foo
-+	run_prog gpioget foo foo
- 
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
- 	status_is 1
- 
- 	# by chip and name
--	run_tool gpioget --chip "$sim0" foo foo
-+	run_prog gpioget --chip "$sim0" foo foo
- 
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
- 	status_is 1
- 
- 	# by name and offset
--	run_tool gpioget --chip "$sim0" foo 1
-+	run_prog gpioget --chip "$sim0" foo 1
- 
- 	output_regex_match ".*lines 'foo' and '1' are the same line"
- 	status_is 1
- 
- 	# by offset and name
--	run_tool gpioget --chip "$sim0" 1 foo
-+	run_prog gpioget --chip "$sim0" 1 foo
- 
- 	output_regex_match ".*lines '1' and 'foo' are the same line"
- 	status_is 1
-@@ -1126,7 +849,7 @@ test_gpioget_with_same_line_twice() {
- test_gpioget_with_invalid_bias() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioget --bias=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0 1
-+	run_prog gpioget --bias=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0 1
- 
- 	output_regex_match ".*invalid bias.*"
- 	status_is 1
-@@ -1135,7 +858,7 @@ test_gpioget_with_invalid_bias() {
- test_gpioget_with_invalid_hold_period() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioget --hold-period=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0
-+	run_prog gpioget --hold-period=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0
- 
- 	output_regex_match ".*invalid period.*"
- 	status_is 1
-@@ -1255,7 +978,7 @@ test_gpioset_with_consumer() {
- 
- 	dut_run gpioset --banner --consumer gpio-tools-tests foo=1 baz=0
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
- 	output_regex_match \
-@@ -1627,7 +1350,7 @@ test_gpioset_with_invalid_toggle_period() {
- 	gpiosim_chip sim0 num_lines=8 line_name=1:foo line_name=4:bar \
- 				      line_name=7:baz
- 
--	run_tool gpioset --toggle 1ns foo=1 bar=0 baz=0
-+	run_prog gpioset --toggle 1ns foo=1 bar=0 baz=0
- 
- 	output_regex_match ".*invalid period.*"
- 	status_is 1
-@@ -1640,7 +1363,7 @@ test_gpioset_with_strict_named_line_check() {
- 				      line_name=4:xyz line_name=7:foobar
- 	gpiosim_chip sim2 num_lines=16
- 
--	run_tool gpioset --strict foobar=active
-+	run_prog gpioset --strict foobar=active
- 
- 	output_regex_match ".*line 'foobar' is not unique"
- 	status_is 1
-@@ -1697,7 +1420,7 @@ test_gpioset_interactive_after_SIGTERM() {
- }
- 
- test_gpioset_with_no_arguments() {
--	run_tool gpioset
-+	run_prog gpioset
- 
- 	status_is 1
- 	output_regex_match ".*at least one GPIO line value must be specified"
-@@ -1706,7 +1429,7 @@ test_gpioset_with_no_arguments() {
- test_gpioset_with_chip_but_no_line_specified() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioset --chip "${GPIOSIM_CHIP_NAME[sim0]}"
-+	run_prog gpioset --chip "${GPIOSIM_CHIP_NAME[sim0]}"
- 
- 	output_regex_match ".*at least one GPIO line value must be specified"
- 	status_is 1
-@@ -1717,7 +1440,7 @@ test_gpioset_with_offset_out_of_range() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioset --chip "$sim0" 0=1 1=1 2=1 3=1 4=1 5=1
-+	run_prog gpioset --chip "$sim0" 0=1 1=1 2=1 3=1 4=1 5=1
- 
- 	output_regex_match ".*offset 4 is out of range on chip '$sim0'"
- 	output_regex_match ".*offset 5 is out of range on chip '$sim0'"
-@@ -1729,7 +1452,7 @@ test_gpioset_with_invalid_hold_period() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioset --hold-period=bad --chip "$sim0" 0=1
-+	run_prog gpioset --hold-period=bad --chip "$sim0" 0=1
- 
- 	output_regex_match ".*invalid period.*"
- 	status_is 1
-@@ -1741,13 +1464,13 @@ test_gpioset_with_invalid_value() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by name
--	run_tool gpioset --chip "$sim0" 0=c
-+	run_prog gpioset --chip "$sim0" 0=c
- 
- 	output_regex_match ".*invalid line value.*"
- 	status_is 1
- 
- 	# by value
--	run_tool gpioset --chip "$sim0" 0=3
-+	run_prog gpioset --chip "$sim0" 0=3
- 
- 	output_regex_match ".*invalid line value.*"
- 	status_is 1
-@@ -1756,7 +1479,7 @@ test_gpioset_with_invalid_value() {
- test_gpioset_with_invalid_offset() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioset --chip "${GPIOSIM_CHIP_NAME[sim0]}" 4000000000=0
-+	run_prog gpioset --chip "${GPIOSIM_CHIP_NAME[sim0]}" 4000000000=0
- 
- 	output_regex_match ".*cannot find line '4000000000'"
- 	status_is 1
-@@ -1765,7 +1488,7 @@ test_gpioset_with_invalid_offset() {
- test_gpioset_with_invalid_bias() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioset --bias=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0=1 1=1
-+	run_prog gpioset --bias=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0=1 1=1
- 
- 	output_regex_match ".*invalid bias.*"
- 	status_is 1
-@@ -1774,7 +1497,7 @@ test_gpioset_with_invalid_bias() {
- test_gpioset_with_invalid_drive() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpioset --drive=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0=1 1=1
-+	run_prog gpioset --drive=bad --chip "${GPIOSIM_CHIP_NAME[sim0]}" 0=1 1=1
- 
- 	output_regex_match ".*invalid drive.*"
- 	status_is 1
-@@ -1785,14 +1508,14 @@ test_gpioset_with_interactive_and_toggle() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpioset --interactive --toggle 1s --chip "$sim0" 0=1
-+	run_prog gpioset --interactive --toggle 1s --chip "$sim0" 0=1
- 
- 	output_regex_match ".*can't combine interactive with toggle"
- 	status_is 1
- }
- 
- test_gpioset_with_nonexistent_line() {
--	run_tool gpioset nonexistent-line=0
-+	run_prog gpioset nonexistent-line=0
- 
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
- 	status_is 1
-@@ -1804,25 +1527,25 @@ test_gpioset_with_same_line_twice() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by offset
--	run_tool gpioset --chip "$sim0" 0=1 0=1
-+	run_prog gpioset --chip "$sim0" 0=1 0=1
- 
- 	output_regex_match ".*lines '0' and '0' are the same line"
- 	status_is 1
- 
- 	# by name
--	run_tool gpioset --chip "$sim0" foo=1 foo=1
-+	run_prog gpioset --chip "$sim0" foo=1 foo=1
- 
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
- 	status_is 1
- 
- 	# by name and offset
--	run_tool gpioset --chip "$sim0" foo=1 1=1
-+	run_prog gpioset --chip "$sim0" foo=1 1=1
- 
- 	output_regex_match ".*lines 'foo' and '1' are the same line"
- 	status_is 1
- 
- 	# by offset and name
--	run_tool gpioset --chip "$sim0" 1=1 foo=1
-+	run_prog gpioset --chip "$sim0" 1=1 foo=1
- 
- 	output_regex_match ".*lines '1' and 'foo' are the same line"
- 	status_is 1
-@@ -2018,7 +1741,7 @@ test_gpiomon_with_consumer() {
- 
- 	dut_run gpiomon --banner --consumer gpio-tools-tests foo baz
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
- 	output_regex_match \
-@@ -2089,7 +1812,7 @@ test_gpiomon_with_debounce_period() {
- 
- 	dut_run gpiomon --banner --debounce-period 123us foo baz
- 
--	run_tool gpioinfo
-+	run_prog gpioinfo
- 
- 	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
- 	output_regex_match \
-@@ -2195,7 +1918,7 @@ test_gpiomon_exit_after_SIGTERM() {
- }
- 
- test_gpiomon_with_nonexistent_line() {
--	run_tool gpiomon nonexistent-line
-+	run_prog gpiomon nonexistent-line
- 
- 	status_is 1
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
-@@ -2207,19 +1930,19 @@ test_gpiomon_with_same_line_twice() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by offset
--	run_tool gpiomon --chip "$sim0" 0 0
-+	run_prog gpiomon --chip "$sim0" 0 0
- 
- 	output_regex_match ".*lines '0' and '0' are the same line"
- 	status_is 1
- 
- 	# by name
--	run_tool gpiomon foo foo
-+	run_prog gpiomon foo foo
- 
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
- 	status_is 1
- 
- 	# by name and offset
--	run_tool gpiomon --chip "$sim0" 1 foo
-+	run_prog gpiomon --chip "$sim0" 1 foo
- 
- 	output_regex_match ".*lines '1' and 'foo' are the same line"
- 	status_is 1
-@@ -2232,7 +1955,7 @@ test_gpiomon_with_strict_named_line_check() {
- 				      line_name=4:xyz line_name=7:foobar
- 	gpiosim_chip sim2 num_lines=16
- 
--	run_tool gpiomon --strict foobar
-+	run_prog gpiomon --strict foobar
- 
- 	output_regex_match ".*line 'foobar' is not unique"
- 	status_is 1
-@@ -2292,7 +2015,7 @@ test_gpiomon_with_lines_strictly_by_name() {
- }
- 
- test_gpiomon_with_no_arguments() {
--	run_tool gpiomon
-+	run_prog gpiomon
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -2301,7 +2024,7 @@ test_gpiomon_with_no_arguments() {
- test_gpiomon_with_no_line_specified() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpiomon --chip "${GPIOSIM_CHIP_NAME[sim0]}"
-+	run_prog gpiomon --chip "${GPIOSIM_CHIP_NAME[sim0]}"
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -2312,7 +2035,7 @@ test_gpiomon_with_offset_out_of_range() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpiomon --chip "$sim0" 5
-+	run_prog gpiomon --chip "$sim0" 5
- 
- 	output_regex_match ".*offset 5 is out of range on chip '$sim0'"
- 	status_is 1
-@@ -2323,7 +2046,7 @@ test_gpiomon_with_invalid_bias() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpiomon --bias=bad -c "$sim0" 0 1
-+	run_prog gpiomon --bias=bad -c "$sim0" 0 1
- 
- 	output_regex_match ".*invalid bias.*"
- 	status_is 1
-@@ -2334,7 +2057,7 @@ test_gpiomon_with_invalid_debounce_period() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpiomon --debounce-period bad -c "$sim0" 0 1
-+	run_prog gpiomon --debounce-period bad -c "$sim0" 0 1
- 
- 	output_regex_match ".*invalid period: bad"
- 	status_is 1
-@@ -2345,7 +2068,7 @@ test_gpiomon_with_invalid_idle_timeout() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpiomon --idle-timeout bad -c "$sim0" 0 1
-+	run_prog gpiomon --idle-timeout bad -c "$sim0" 0 1
- 
- 	output_regex_match ".*invalid period: bad"
- 	status_is 1
-@@ -2770,7 +2493,7 @@ test_gpionotify_exit_after_SIGTERM() {
- }
- 
- test_gpionotify_with_nonexistent_line() {
--	run_tool gpionotify nonexistent-line
-+	run_prog gpionotify nonexistent-line
- 
- 	status_is 1
- 	output_regex_match ".*cannot find line 'nonexistent-line'"
-@@ -2782,21 +2505,21 @@ test_gpionotify_with_same_line_twice() {
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
- 	# by offset
--	run_tool gpionotify --chip "$sim0" 0 0
-+	run_prog gpionotify --chip "$sim0" 0 0
- 
- 	output_regex_match ".*lines '0' and '0' are the same line"
- 	num_lines_is 1
- 	status_is 1
- 
- 	# by name
--	run_tool gpionotify foo foo
-+	run_prog gpionotify foo foo
- 
- 	output_regex_match ".*lines 'foo' and 'foo' are the same line"
- 	num_lines_is 1
- 	status_is 1
- 
- 	# by name and offset
--	run_tool gpionotify --chip "$sim0" 1 foo
-+	run_prog gpionotify --chip "$sim0" 1 foo
- 
- 	output_regex_match ".*lines '1' and 'foo' are the same line"
- 	num_lines_is 1
-@@ -2810,7 +2533,7 @@ test_gpionotify_with_strict_named_line_check() {
- 				      line_name=4:xyz line_name=7:foobar
- 	gpiosim_chip sim2 num_lines=16
- 
--	run_tool gpionotify --strict foobar
-+	run_prog gpionotify --strict foobar
- 
- 	output_regex_match ".*line 'foobar' is not unique"
- 	status_is 1
-@@ -2854,7 +2577,7 @@ test_gpionotify_with_lines_strictly_by_name() {
- }
- 
- test_gpionotify_with_no_arguments() {
--	run_tool gpionotify
-+	run_prog gpionotify
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -2863,7 +2586,7 @@ test_gpionotify_with_no_arguments() {
- test_gpionotify_with_no_line_specified() {
- 	gpiosim_chip sim0 num_lines=8
- 
--	run_tool gpionotify --chip "${GPIOSIM_CHIP_NAME[sim0]}"
-+	run_prog gpionotify --chip "${GPIOSIM_CHIP_NAME[sim0]}"
- 
- 	output_regex_match ".*at least one GPIO line must be specified"
- 	status_is 1
-@@ -2874,7 +2597,7 @@ test_gpionotify_with_offset_out_of_range() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpionotify --chip "$sim0" 5
-+	run_prog gpionotify --chip "$sim0" 5
- 
- 	output_regex_match ".*offset 5 is out of range on chip '$sim0'"
- 	status_is 1
-@@ -2885,7 +2608,7 @@ test_gpionotify_with_invalid_idle_timeout() {
- 
- 	local sim0=${GPIOSIM_CHIP_NAME[sim0]}
- 
--	run_tool gpionotify --idle-timeout bad -c "$sim0" 0 1
-+	run_prog gpionotify --idle-timeout bad -c "$sim0" 0 1
- 
- 	output_regex_match ".*invalid period: bad"
- 	status_is 1
-@@ -3037,53 +2760,8 @@ test_gpionotify_with_custom_format_unknown_specifier() {
- 	output_is "%x"
- }
- 
--die() {
--	echo "$@" 1>&2
--	exit 1
--}
--
--# Must be done after we sources shunit2 as we need SHUNIT_VERSION to be set.
--oneTimeSetUp() {
--	test "$SHUNIT_VERSION" = "$MIN_SHUNIT_VERSION" && return 0
--	local FIRST
--	FIRST=$(printf "%s\n%s\n" "$SHUNIT_VERSION" "$MIN_SHUNIT_VERSION" | sort -Vr | head -1)
--	test "$FIRST" = "$MIN_SHUNIT_VERSION" && \
--		die "minimum shunit version required is $MIN_SHUNIT_VERSION (current version is $SHUNIT_VERSION"
--}
--
--check_kernel() {
--	local REQUIRED=$1
--	local CURRENT
--	CURRENT=$(uname -r)
--
--	SORTED=$(printf "%s\n%s" "$REQUIRED" "$CURRENT" | sort -V | head -n 1)
--
--	if [ "$SORTED" != "$REQUIRED" ]
--	then
--		die "linux kernel version must be at least: v$REQUIRED - got: v$CURRENT"
--	fi
--}
--
--check_prog() {
--	local PROG=$1
--
--	if ! which "$PROG" > /dev/null
--	then
--		die "$PROG not found - needed to run the tests"
--	fi
--}
--
--# Check all required non-coreutils tools
--check_prog shunit2
--check_prog modprobe
--check_prog timeout
--
--# Check if we're running a kernel at the required version or later
--check_kernel $MIN_KERNEL_VERSION
--
--modprobe gpio-sim || die "unable to load the gpio-sim module"
--mountpoint /sys/kernel/config/ > /dev/null 2> /dev/null || \
--	die "configfs not mounted at /sys/kernel/config/"
-+# shellcheck source=tests/scripts/gpiod-bash-test-helper.inc
-+source gpiod-bash-test-helper.inc
- 
- # shellcheck source=/dev/null
--. shunit2
-+source shunit2
++/**
++ * @brief Get the event type.
++ * @param self GPIO edge event to manipulate.
++ * @return The event type (::G_GPIOD_EDGE_EVENT_RISING_EDGE or
++ *         ::G_GPIOD_EDGE_EVENT_FALLING_EDGE).
++ */
++GPIODEdgeEventType g_gpiod_edge_event_get_event_type(GPIODEdgeEvent *self);
++
++/**
++ * @brief Get the timestamp of the event.
++ * @param self GPIO edge event to manipulate.
++ * @return Timestamp in nanoseconds.
++ * @note The source clock for the timestamp depends on the event_clock
++ *       setting for the line.
++ */
++guint64 g_gpiod_edge_event_get_timestamp_ns(GPIODEdgeEvent *self);
++
++/**
++ * @brief Get the offset of the line which triggered the event.
++ * @param self GPIO edge event to manipulate.
++ * @return Line offset.
++ */
++guint g_gpiod_edge_event_get_line_offset(GPIODEdgeEvent *self);
++
++/**
++ * @brief Get the global sequence number of the event.
++ * @param self GPIO edge event to manipulate.
++ * @return Sequence number of the event in the series of events for all lines
++ *         in the associated line request.
++ */
++gulong g_gpiod_edge_event_get_global_seqno(GPIODEdgeEvent *self);
++
++/**
++ * @brief Get the event sequence number specific to the line.
++ * @param self GPIO edge event to manipulate.
++ * @return Sequence number of the event in the series of events only for this
++ *         line within the lifetime of the associated line request.
++ */
++gulong g_gpiod_edge_event_get_line_seqno(GPIODEdgeEvent *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_EDGE_EVENT_H__ */
+diff --git a/bindings/glib/gpiod-glib/error.h b/bindings/glib/gpiod-glib/error.h
+new file mode 100644
+index 0000000..3433c11
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/error.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file error.h
++ */
++
++#ifndef __GPIOD_GLIB_ERROR_H__
++#define __GPIOD_GLIB_ERROR_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++
++G_BEGIN_DECLS
++
++/**
++ * @ingroup gpiod_glib
++ * @{
++ */
++
++/**
++ * @brief Get the libgpiod GObject error domain.
++ */
++#define G_GPIOD_ERROR g_gpiod_error_quark()
++
++/**
++ * @}
++ *
++ * @cond
++ */
++
++typedef enum {
++	G_GPIOD_ERR_FAILED = 1,
++	G_GPIOD_ERR_CHIP_CLOSED,
++	G_GPIOD_ERR_REQUEST_RELEASED,
++	G_GPIOD_ERR_PERM,
++	G_GPIOD_ERR_NOENT,
++	G_GPIOD_ERR_INTR,
++	G_GPIOD_ERR_IO,
++	G_GPIOD_ERR_NXIO,
++	G_GPIOD_ERR_E2BIG,
++	G_GPIOD_ERR_BADFD,
++	G_GPIOD_ERR_CHILD,
++	G_GPIOD_ERR_AGAIN,
++	G_GPIOD_ERR_NOMEM,
++	G_GPIOD_ERR_ACCES,
++	G_GPIOD_ERR_FAULT,
++	G_GPIOD_ERR_BUSY,
++	G_GPIOD_ERR_EXIST,
++	G_GPIOD_ERR_NODEV,
++	G_GPIOD_ERR_INVAL,
++	G_GPIOD_ERR_NOTTY,
++	G_GPIOD_ERR_PIPE,
++} GPIODError;
++
++GQuark g_gpiod_error_quark(void);
++
++/**
++ * @endcond
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_ERROR_H__ */
+diff --git a/bindings/glib/gpiod-glib/info-event.h b/bindings/glib/gpiod-glib/info-event.h
+new file mode 100644
+index 0000000..d9e61e3
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/info-event.h
+@@ -0,0 +1,97 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file info-event.h
++ */
++
++#ifndef __GPIOD_GLIB_INFO_EVENT_H__
++#define __GPIOD_GLIB_INFO_EVENT_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++#include "line-info.h"
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODInfoEvent, g_gpiod_info_event,
++		     G_GPIOD, INFO_EVENT, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_info_event GPIO info-event GObject
++ * @{
++ *
++ * An info-event contains information about the event itself (timestamp, type)
++ * as well as a snapshot of line's status in the form of a line-info object.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO info-event.
++ */
++#define G_GPIOD_INFO_EVENT_TYPE (g_gpiod_info_event_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO info-event concrete GObject.
++ */
++#define G_GPIOD_INFO_EVENT_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_INFO_EVENT_TYPE, \
++				    GPIODInfoEvent))
++
++/**
++ * @brief Line status change event types.
++ */
++typedef enum {
++	G_GPIOD_INFO_EVENT_LINE_REQUESTED = 1,
++	/**< Line has been requested. */
++	G_GPIOD_INFO_EVENT_LINE_RELEASED,
++	/**< Previously requested line has been released. */
++	G_GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED,
++	/**< Line configuration has changed. */
++} GPIODInfoEventType;
++
++/**
++ * @brief Get the event type of the status change event.
++ * @param self GPIO edge event to manipulate.
++ * @return One of ::G_GPIOD_INFO_EVENT_LINE_REQUESTED,
++ *         ::G_GPIOD_INFO_EVENT_LINE_RELEASED or
++ *         ::G_GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED.
++ */
++GPIODInfoEventType g_gpiod_info_event_get_event_type(GPIODInfoEvent *self);
++
++/**
++ * @brief Get the timestamp of the event.
++ * @param self GPIO edge event to manipulate.
++ * @return Timestamp in nanoseconds, read from the monotonic clock.
++ */
++guint64 g_gpiod_info_event_get_timestamp_ns(GPIODInfoEvent *self);
++
++/**
++ * @brief Get the snapshot of line-info associated with the event.
++ * @param self GPIO edge event to manipulate.
++ * @return Returns a new reference to the associated line-info object.
++ */
++GPIODLineInfo *g_gpiod_info_event_get_line_info(GPIODInfoEvent *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_INFO_EVENT_H__ */
+diff --git a/bindings/glib/gpiod-glib/line-config.h b/bindings/glib/gpiod-glib/line-config.h
+new file mode 100644
+index 0000000..a477165
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/line-config.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file line-config.h
++ */
++
++#ifndef __GPIOD_GLIB_LINE_CONFIG_H__
++#define __GPIOD_GLIB_LINE_CONFIG_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++#include "line-settings.h"
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODLineConfig, g_gpiod_line_config,
++		     G_GPIOD, LINE_CONFIG, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_line_config GPIO line config GObject
++ * @{
++ *
++ * The line-config object contains the configuration for lines that can be
++ * used in two cases:
++ *  - when making a line request
++ *  - when reconfiguring a set of already requested lines.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO line-config.
++ */
++#define G_GPIOD_LINE_CONFIG_TYPE (g_gpiod_line_config_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO line-config concrete GObject.
++ */
++#define G_GPIOD_LINE_CONFIG_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_LINE_CONFIG_TYPE, \
++				    GPIODLineConfig))
++
++/**
++ * @brief Create a new line config object.
++ * @return Empty line config object.
++ */
++GPIODLineConfig *g_gpiod_line_config_new(void);
++
++/**
++ * @brief Reset the line config object.
++ * @param self GPIO line config to manipulate.
++ */
++void g_gpiod_line_config_reset(GPIODLineConfig *self);
++
++/**
++ * @brief Add line settings for a set of offsets.
++ * @param self GPIO line config to manipulate.
++ * @param offsets GArray of offsets for which to apply the settings.
++ * @param settings Line settings to apply.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_config_add_line_settings(GPIODLineConfig *self,
++					       const GArray *offsets,
++					       GPIODLineSettings *settings,
++					       GError **err);
++
++/**
++ * @brief Get line settings for offset.
++ * @param self GPIO line config to manipulate.
++ * @param offset Offset for which to get line settings.
++ * @return New reference to a line settings object.
++ */
++GPIODLineSettings *
++g_gpiod_line_config_get_line_settings(GPIODLineConfig *self, guint offset);
++
++/**
++ * @brief Set output values for a number of lines.
++ * @param self GPIO line config to manipulate.
++ * @param values GArray containing the output values.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on error.
++ */
++gboolean g_gpiod_line_config_set_output_values(GPIODLineConfig *self,
++					       const GArray *values,
++					       GError **err);
++
++/**
++ * @brief Get configured offsets.
++ * @param self GPIO line config to manipulate.
++ * @return GArray containing the offsets for which configuration has been set.
++ */
++GArray *g_gpiod_line_config_get_configured_offsets(GPIODLineConfig *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_LINE_CONFIG_H__ */
+diff --git a/bindings/glib/gpiod-glib/line-info.h b/bindings/glib/gpiod-glib/line-info.h
+new file mode 100644
+index 0000000..d94750c
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/line-info.h
+@@ -0,0 +1,171 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file line-info.h
++ */
++
++#ifndef __GPIOD_GLIB_LINE_INFO_H__
++#define __GPIOD_GLIB_LINE_INFO_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++#include "line.h"
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODLineInfo, g_gpiod_line_info,
++		     G_GPIOD, LINE_INFO, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_line_info GPIO line-info GObject
++ * @{
++ *
++ * Line info object contains an immutable snapshot of a line's status.
++ *
++ * The line info contains all the publicly available information about a
++ * line, which does not include the line value. The line must be requested
++ * to access the line value.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO line-info.
++ */
++#define G_GPIOD_LINE_INFO_TYPE (g_gpiod_line_info_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO line-info concrete GObject.
++ */
++#define G_GPIOD_LINE_INFO_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_LINE_INFO_TYPE, \
++				    GPIODLineInfo))
++
++/**
++ * @brief Get the offset of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Offset of the line within the parent chip.
++ *
++ * The offset uniquely identifies the line on the chip. The combination of the
++ * chip and offset uniquely identifies the line within the system.
++ */
++guint g_gpiod_line_info_get_offset(GPIODLineInfo *self);
++
++/**
++ * @brief Get the name of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Name of the GPIO line as it is represented in the kernel.
++ *         This function returns a valid pointer to a null-terminated string
++ *         or NULL if the line is unnamed. The string lifetime is tied to the
++ *         line info object so the pointer must not be freed.
++ */
++const gchar *g_gpiod_line_info_get_name(GPIODLineInfo *self);
++
++/**
++ * @brief Check if the line is in use.
++ * @param self GPIO line info object to manipulate.
++ * @return True if the line is in use, false otherwise.
++ *
++ * The exact reason a line is busy cannot be determined from user space.
++ * It may have been requested by another process or hogged by the kernel.
++ * It only matters that the line is used and can't be requested until
++ * released by the existing consumer.
++ */
++gboolean g_gpiod_line_info_is_used(GPIODLineInfo *self);
++
++/**
++ * @brief Get the name of the consumer of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Name of the GPIO consumer as it is represented in the kernel.
++ *         This function returns a valid pointer to a null-terminated string
++ *         or NULL if the consumer name is not set. The string lifetime is tied
++ *         to the line info object so the pointer must not be freed.
++ */
++const gchar *g_gpiod_line_info_get_consumer(GPIODLineInfo *self);
++
++/**
++ * @brief Get the direction setting of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Returns ::G_GPIOD_LINE_DIRECTION_INPUT or
++ *        ::G_GPIOD_LINE_DIRECTION_OUTPUT.
++ */
++GPIODLineDirection g_gpiod_line_info_get_direction(GPIODLineInfo *self);
++
++/**
++ * @brief Get the edge detection setting of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Returns ::G_GPIOD_LINE_EDGE_NONE, ::G_GPIOD_LINE_EDGE_RISING,
++ *        ::G_GPIOD_LINE_EDGE_FALLING or ::G_GPIOD_LINE_EDGE_BOTH.
++ */
++GPIODLineEdge g_gpiod_line_info_get_edge_detection(GPIODLineInfo *self);
++
++/**
++ * @brief Get the bias setting of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Returns ::G_GPIOD_LINE_BIAS_PULL_UP, ::G_GPIOD_LINE_BIAS_PULL_DOWN,
++ *         ::G_GPIOD_LINE_BIAS_DISABLED or ::G_GPIOD_LINE_BIAS_UNKNOWN.
++ */
++GPIODLineBias g_gpiod_line_info_get_bias(GPIODLineInfo *self);
++
++/**
++ * @brief Get the drive setting of the line.
++ * @param self GPIO line info object to manipulate.
++ * @return Returns ::G_GPIOD_LINE_DRIVE_PUSH_PULL,
++ *         ::G_GPIOD_LINE_DRIVE_OPEN_DRAIN or ::G_GPIOD_LINE_DRIVE_OPEN_SOURCE.
++ */
++GPIODLineDrive g_gpiod_line_info_get_drive(GPIODLineInfo *self);
++
++/**
++ * @brief Check if the logical value of the line is inverted compared to the
++ *        physical.
++ * @param self GPIO line info object to manipulate.
++ * @return TRUE if the line is "active-low", FALSE otherwise.
++ */
++gboolean g_gpiod_line_info_is_active_low(GPIODLineInfo *self);
++
++/**
++ * @brief Check if the line is debounced (either by hardware or by the kernel
++ *        software debouncer).
++ * @param self GPIO line info object to manipulate.
++ * @return TRUE if the line is debounced, FALSE otherwise.
++ */
++gboolean g_gpiod_line_info_is_debounced(GPIODLineInfo *self);
++
++/**
++ * @brief Get the debounce period of the line, in microseconds.
++ * @param self GPIO line info object to manipulate.
++ * @return Debounce period in microseconds. 0 if the line is not debounced.
++ */
++GTimeSpan g_gpiod_line_info_get_debounce_period_us(GPIODLineInfo *self);
++
++/**
++ * @brief Get the event clock setting used for edge event timestamps for the
++ *        line.
++ * @param self GPIO line info object to manipulate.
++ * @return Returns ::G_GPIOD_LINE_CLOCK_MONOTONIC, ::G_GPIOD_LINE_CLOCK_HTE or
++ *         ::G_GPIOD_LINE_CLOCK_REALTIME.
++ */
++GPIODLineClock g_gpiod_line_info_get_event_clock(GPIODLineInfo *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_LINE_INFO_H__ */
+diff --git a/bindings/glib/gpiod-glib/line-request.h b/bindings/glib/gpiod-glib/line-request.h
+new file mode 100644
+index 0000000..1c906f1
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/line-request.h
+@@ -0,0 +1,182 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file line-request.h
++ */
++
++#ifndef __GPIOD_GLIB_LINE_REQUEST_H__
++#define __GPIOD_GLIB_LINE_REQUEST_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODLineRequest, g_gpiod_line_request,
++		     G_GPIOD, LINE_REQUEST, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_line_request GPIO line-request GObject
++ * @{
++ *
++ * Line request object allows interacting with a set of requested GPIO lines.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO line-request.
++ */
++#define G_GPIOD_LINE_REQUEST_TYPE (g_gpiod_line_request_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO line-request concrete GObject.
++ */
++#define G_GPIOD_LINE_REQUEST_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_LINE_REQUEST_TYPE, \
++				    GPIODLineRequest))
++
++/**
++ * @brief Release the requested lines and free all associated resources.
++ * @param self GPIO line request object to manipulate.
++ */
++void g_gpiod_line_request_release(GPIODLineRequest *self);
++
++/**
++ * @brief Check if this request was released.
++ * @param self GPIO line request object to manipulate.
++ * @return TRUE if this request was released and is no longer valid, FALSE
++ *         otherwise.
++ */
++gboolean g_gpiod_line_request_is_released(GPIODLineRequest *self);
++
++/**
++ * @brief Get the name of the chip this request was made on.
++ * @param self GPIO line request object to manipulate.
++ * @return Name the GPIO chip device.
++ */
++const gchar *g_gpiod_line_request_get_chip_name(GPIODLineRequest *self);
++
++/**
++ * @brief Get the offsets of the lines in the request.
++ * @param self GPIO line request object to manipulate.
++ * @return Array containing the requested offsets.
++ */
++GArray *g_gpiod_line_request_get_requested_offsets(GPIODLineRequest *self);
++
++/**
++ * @brief Update the configuration of lines associated with a line request.
++ * @param self GPIO line request object to manipulate.
++ * @param config New line config to apply.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ * @note The new line configuration completely replaces the old.
++ * @note Any requested lines without overrides are configured to the requested
++ *       defaults.
++ * @note Any configured overrides for lines that have not been requested
++ *       are silently ignored.
++ */
++gboolean g_gpiod_line_request_reconfigure_lines(GPIODLineRequest *self,
++						GPIODLineConfig *config,
++						GError **err);
++
++/**
++ * @brief Get the value of a single requested line.
++ * @param self GPIO line request object to manipulate.
++ * @param offset The offset of the line of which the value should be read.
++ * @param value Return location for the value.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean
++g_gpiod_line_request_get_value(GPIODLineRequest *self, guint offset,
++			       GPIODLineValue *value, GError **err);
++
++/**
++ * @brief Get the values of a subset of requested lines.
++ * @param self GPIO line request object to manipulate.
++ * @param offsets Array of offsets identifying the subset of requested lines
++ *                from which to read values.
++ * @param values Array in which the values will be stored. Can be NULL in which
++ *               case a new array will be created and its location stored here.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_request_get_values_subset(GPIODLineRequest *self,
++						const GArray *offsets,
++						GArray **values,
++						GError **err);
++
++/**
++ * @brief Get the values of all requested lines.
++ * @param self GPIO line request object to manipulate.
++ * @param values Array in which the values will be stored. Can be NULL in which
++ *               case a new array will be created and its location stored here.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_request_get_values(GPIODLineRequest *self,
++					 GArray **values, GError **err);
++
++/**
++ * @brief Set the value of a single requested line.
++ * @param self GPIO line request object to manipulate.
++ * @param offset The offset of the line for which the value should be set.
++ * @param value Value to set.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_request_set_value(GPIODLineRequest *self, guint offset,
++					GPIODLineValue value, GError **err);
++
++/**
++ * @brief Set the values of a subset of requested lines.
++ * @param self GPIO line request object to manipulate.
++ * @param offsets Array of offsets identifying the requested lines for
++ *                which to set values.
++ * @param values Array in which the values will be stored. Can be NULL in which
++ *               case a new array will be created and its location stored here.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_request_set_values_subset(GPIODLineRequest *self,
++						const GArray *offsets,
++						const GArray *values,
++						GError **err);
++
++/**
++ * @brief Set the values of all lines associated with a request.
++ * @param self GPIO line request object to manipulate.
++ * @param values Array containing the values to set. Must be sized to
++ *               contain the number of values equal to the number of requested
++ *               lines. Each value is associated with the line identified by
++ *               the corresponding entry in the offset array filled by
++ *               ::g_gpiod_line_request_get_requested_offsets.
++ *               case a new array will be created and its location stored here.
++ * @param err Return location for error or NULL.
++ * @return TRUE on success, FALSE on failure.
++ */
++gboolean g_gpiod_line_request_set_values(GPIODLineRequest *self,
++					 GArray *values, GError **err);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_LINE_REQUEST_H__ */
+diff --git a/bindings/glib/gpiod-glib/line-settings.h b/bindings/glib/gpiod-glib/line-settings.h
+new file mode 100644
+index 0000000..fbdf911
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/line-settings.h
+@@ -0,0 +1,202 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file line-settings.h
++ */
++
++#ifndef __GPIOD_GLIB_LINE_SETTINGS_H__
++#define __GPIOD_GLIB_LINE_SETTINGS_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++#include "line.h"
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODLineSettings, g_gpiod_line_settings,
++		     G_GPIOD, LINE_SETTINGS, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_line_settings GPIO line-settings GObject
++ * @{
++ *
++ * Line settings object contains a set of line properties that can be used
++ * when requesting lines or reconfiguring an existing request.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO line-settings.
++ */
++#define G_GPIOD_LINE_SETTINGS_TYPE (g_gpiod_line_settings_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO line-settings concrete GObject.
++ */
++#define G_GPIOD_LINE_SETTINGS_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_LINE_SETTINGS_TYPE, \
++				    GPIODLineSettings))
++
++/**
++ * @brief Create a new line settings object.
++ * @param first_prop Name of the first property to set.
++ * @return New line settings object.
++ *
++ * The constructor allows to set object's properties when it's first created
++ * instead of having to build an empty object and then call mutators separately.
++ *
++ * Currently supported properties are: `direction`, `edge-detection`, `bias`,
++ * `drive`, `debounce-period-us`, `active-low`, 'event-clock` and
++ * `output-value`.
++ */
++GPIODLineSettings *g_gpiod_line_settings_new(const gchar *first_prop, ...);
++
++/**
++ * @brief Reset the line settings object to its default values.
++ * @param self Line settings object to manipulate.
++ */
++void g_gpiod_line_settings_reset(GPIODLineSettings *self);
++
++/**
++ * @brief Set direction.
++ * @param self Line settings object to manipulate.
++ * @param direction New direction.
++ */
++void g_gpiod_line_settings_set_direction(GPIODLineSettings *self,
++					 GPIODLineDirection direction);
++
++/**
++ * @brief Get direction.
++ * @param self Line settings object to manipulate.
++ * @return Current direction.
++ */
++GPIODLineDirection g_gpiod_line_settings_get_direction(GPIODLineSettings *self);
++
++/**
++ * @brief Set edge detection.
++ * @param self Line settings object to manipulate.
++ * @param edge New edge detection setting.
++ */
++void g_gpiod_line_settings_set_edge_detection(GPIODLineSettings *self,
++					      GPIODLineEdge edge);
++
++/**
++ * @brief Get edge detection.
++ * @param self Line settings object to manipulate.
++ * @return Current edge detection setting.
++ */
++GPIODLineEdge g_gpiod_line_settings_get_edge_detection(GPIODLineSettings *self);
++
++/**
++ * @brief Set bias.
++ * @param self Line settings object to manipulate.
++ * @param bias New bias.
++ */
++void g_gpiod_line_settings_set_bias(GPIODLineSettings *self,
++				    GPIODLineBias bias);
++
++/**
++ * @brief Get bias.
++ * @param self Line settings object to manipulate.
++ * @return Current bias setting.
++ */
++GPIODLineBias g_gpiod_line_settings_get_bias(GPIODLineSettings *self);
++
++/**
++ * @brief Set drive.
++ * @param self Line settings object to manipulate.
++ * @param drive New drive setting.
++ */
++void g_gpiod_line_settings_set_drive(GPIODLineSettings *self,
++				     GPIODLineDrive drive);
++
++/**
++ * @brief Get drive.
++ * @param self Line settings object to manipulate.
++ * @return Current drive setting.
++ */
++GPIODLineDrive g_gpiod_line_settings_get_drive(GPIODLineSettings *self);
++
++/**
++ * @brief Set active-low setting.
++ * @param self Line settings object to manipulate.
++ * @param active_low New active-low setting.
++ */
++void g_gpiod_line_settings_set_active_low(GPIODLineSettings *self,
++					  gboolean active_low);
++
++/**
++ * @brief Get active-low setting.
++ * @param self Line settings object to manipulate.
++ * @return TRUE if active-low is enabled, FALSE otherwise.
++ */
++gboolean g_gpiod_line_settings_get_active_low(GPIODLineSettings *self);
++
++/**
++ * @brief Set debounce period.
++ * @param self Line settings object to manipulate.
++ * @param period New debounce period in microseconds.
++ */
++void g_gpiod_line_settings_set_debounce_period_us(GPIODLineSettings *self,
++						  GTimeSpan period);
++
++/**
++ * @brief Get debounce period.
++ * @param self Line settings object to manipulate.
++ * @return Current debounce period in microseconds.
++ */
++GTimeSpan g_gpiod_line_settings_get_debounce_period_us(GPIODLineSettings *self);
++
++/**
++ * @brief Set event clock.
++ * @param self Line settings object to manipulate.
++ * @param event_clock New event clock.
++ */
++void g_gpiod_line_settings_set_event_clock(GPIODLineSettings *self,
++					   GPIODLineClock event_clock);
++
++/**
++ * @brief Get event clock setting.
++ * @param self Line settings object to manipulate.
++ * @return Current event clock setting.
++ */
++GPIODLineClock g_gpiod_line_settings_get_event_clock(GPIODLineSettings *self);
++
++/**
++ * @brief Set the output value.
++ * @param self Line settings object to manipulate.
++ * @param value New output value.
++ */
++void g_gpiod_line_settings_set_output_value(GPIODLineSettings *self,
++					    GPIODLineValue value);
++
++/**
++ * @brief Get the output value.
++ * @param self Line settings object to manipulate.
++ * @return Current output value.
++ */
++GPIODLineValue g_gpiod_line_settings_get_output_value(GPIODLineSettings *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_LINE_SETTINGS_H__ */
+diff --git a/bindings/glib/gpiod-glib/line.h b/bindings/glib/gpiod-glib/line.h
+new file mode 100644
+index 0000000..9d90b74
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/line.h
+@@ -0,0 +1,114 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file line.h
++ */
++
++#ifndef __GPIOD_GLIB_LINE_H__
++#define __GPIOD_GLIB_LINE_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++
++G_BEGIN_DECLS
++
++/**
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gpiod_glib_line Line definitions
++ * @{
++ *
++ * These defines are used across the API.
++ */
++
++/**
++ * @brief Logical line state.
++ */
++typedef enum {
++	G_GPIOD_LINE_VALUE_INACTIVE = 0,
++	/**< Line is logically inactive. */
++	G_GPIOD_LINE_VALUE_ACTIVE = 1,
++	/**< Line is logically active. */
++} GPIODLineValue;
++
++/**
++ * @brief Direction settings.
++ */
++typedef enum {
++	G_GPIOD_LINE_DIRECTION_AS_IS = 1,
++	/**< Request the line(s), but don't change direction. */
++	G_GPIOD_LINE_DIRECTION_INPUT,
++	/**< Direction is input - for reading the value of an externally driven
++	 *   GPIO line. */
++	G_GPIOD_LINE_DIRECTION_OUTPUT,
++	/**< Direction is output - for driving the GPIO line. */
++} GPIODLineDirection;
++
++/**
++ * @brief Edge detection settings.
++ */
++typedef enum {
++	G_GPIOD_LINE_EDGE_NONE = 1,
++	/**< Line edge detection is disabled. */
++	G_GPIOD_LINE_EDGE_RISING,
++	/**< Line detects rising edge events. */
++	G_GPIOD_LINE_EDGE_FALLING,
++	/**< Line detects falling edge events. */
++	G_GPIOD_LINE_EDGE_BOTH,
++	/**< Line detects both rising and falling edge events. */
++} GPIODLineEdge;
++
++/**
++ * @brief Internal bias settings.
++ */
++typedef enum {
++	G_GPIOD_LINE_BIAS_AS_IS = 1,
++	/**< Don't change the bias setting when applying line config. */
++	G_GPIOD_LINE_BIAS_UNKNOWN,
++	/**< The internal bias state is unknown. */
++	G_GPIOD_LINE_BIAS_DISABLED,
++	/**< The internal bias is disabled. */
++	G_GPIOD_LINE_BIAS_PULL_UP,
++	/**< The internal pull-up bias is enabled. */
++	G_GPIOD_LINE_BIAS_PULL_DOWN,
++	/**< The internal pull-down bias is enabled. */
++} GPIODLineBias;
++
++/**
++ * @brief Drive settings.
++ */
++typedef enum {
++	G_GPIOD_LINE_DRIVE_PUSH_PULL = 1,
++	/**< Drive setting is push-pull. */
++	G_GPIOD_LINE_DRIVE_OPEN_DRAIN,
++	/**< Line output is open-drain. */
++	G_GPIOD_LINE_DRIVE_OPEN_SOURCE,
++	/**< Line output is open-source. */
++} GPIODLineDrive;
++
++/**
++ * @brief Clock settings.
++ */
++typedef enum {
++	G_GPIOD_LINE_CLOCK_MONOTONIC = 1,
++	/**< Line uses the monotonic clock for edge event timestamps. */
++	G_GPIOD_LINE_CLOCK_REALTIME,
++	/**< Line uses the realtime clock for edge event timestamps. */
++	G_GPIOD_LINE_CLOCK_HTE,
++	/**< Line uses the hardware timestamp engine for event timestamps. */
++} GPIODLineClock;
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_LINE_H__ */
+diff --git a/bindings/glib/gpiod-glib/misc.h b/bindings/glib/gpiod-glib/misc.h
+new file mode 100644
+index 0000000..d555aae
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/misc.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file misc.h
++ */
++
++#ifndef __GPIOD_GLIB_MISC_H__
++#define __GPIOD_GLIB_MISC_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++
++G_BEGIN_DECLS
++
++/**
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gpiod_glib_misc Misc functions.
++ * @{
++ */
++
++/**
++ * @brief Check if the file pointed to by path is a GPIO chip character device.
++ * @param path Path to check.
++ * @return TRUE if the file exists and is either a GPIO chip character device
++ *         or a symbolic link to one, FALSE otherwise.
++ */
++gboolean g_gpiod_is_gpiochip_device(const gchar *path);
++
++/**
++ * @brief Get the API version of the library as a human-readable string.
++ * @return A valid pointer to a human-readable string containing the library
++ *         version. The pointer is valid for the lifetime of the program and
++ *         must not be freed by the caller.
++ */
++const gchar *g_gpiod_api_version(void);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_MISC_H__ */
+diff --git a/bindings/glib/gpiod-glib/request-config.h b/bindings/glib/gpiod-glib/request-config.h
+new file mode 100644
+index 0000000..c413f0f
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/request-config.h
+@@ -0,0 +1,107 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++/* SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++/**
++ * @file request-config.h
++ */
++
++#ifndef __GPIOD_GLIB_REQUEST_CONFIG_H__
++#define __GPIOD_GLIB_REQUEST_CONFIG_H__
++
++#if !defined (__GPIOD_GLIB_INSIDE__)
++#error "Only <gpiod-glib.h> can be included directly."
++#endif
++
++#include <glib.h>
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++/**
++ * @cond
++ */
++
++G_DECLARE_FINAL_TYPE(GPIODRequestConfig, g_gpiod_request_config,
++		     G_GPIOD, REQUEST_CONFIG, GObject);
++
++/**
++ * @endcond
++ *
++ * @ingroup gpiod_glib
++ * @{
++ *
++ * @defgroup gobject_request_config GPIO request-config GObject
++ * @{
++ *
++ * Request config objects are used to pass a set of options to the kernel at
++ * the time of the line request.
++ */
++
++/**
++ * @brief Get the GObject type for the GPIO request-config.
++ */
++#define G_GPIOD_REQUEST_CONFIG_TYPE (g_gpiod_request_config_get_type())
++
++/**
++ * @brief Cast a GObject to a GPIO request-config concrete GObject.
++ */
++#define G_GPIOD_REQUEST_CONFIG_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST((obj), G_GPIOD_REQUEST_CONFIG_TYPE, \
++				    GPIODRequestConfig))
++
++/**
++ * @brief Create a new request config object.
++ * @param first_prop Name of the first property to set.
++ * @return New request config object.
++ *
++ * The constructor allows to set object's properties when it's first created
++ * instead of having to build an empty object and then call mutators separately.
++ *
++ * Currently supported properties are: `consumer` and `event-buffer-size`.
++ */
++GPIODRequestConfig *g_gpiod_request_config_new(const gchar *first_prop, ...);
++
++/**
++ * @brief Set the consumer name for the request.
++ * @param self GPIO request config object to manipulate.
++ * @param consumer Consumer name.
++ * @note If the consumer string is too long, it will be truncated to the max
++ *       accepted length.
++ */
++void g_gpiod_request_config_set_consumer(GPIODRequestConfig *self,
++					 const gchar *consumer);
++
++/**
++ * @brief Get the consumer name configured in the request config.
++ * @param self GPIO request config object to manipulate.
++ * @return Consumer name stored in the request config.
++ */
++const gchar *g_gpiod_request_config_get_consumer(GPIODRequestConfig *self);
++
++/**
++ * @brief Set the size of the kernel event buffer for the request.
++ * @param self GPIO request config object to manipulate.
++ * @param event_buffer_size New event buffer size.
++ * @note The kernel may adjust the value if it's too high. If set to 0, the
++ *       default value will be used.
++ */
++void g_gpiod_request_config_set_event_buffer_size(GPIODRequestConfig *self,
++						  guint event_buffer_size);
++
++
++/**
++ * @brief Get the edge event buffer size for the request config.
++ * @param self GPIO request config object to manipulate.
++ * @return Edge event buffer size setting from the request config.
++ */
++guint g_gpiod_request_config_get_event_buffer_size(GPIODRequestConfig *self);
++
++/**
++ * @}
++ *
++ * @}
++ */
++
++G_END_DECLS
++
++#endif /* __GPIOD_GLIB_REQUEST_CONFIG_H__ */
 
 -- 
 2.43.0
