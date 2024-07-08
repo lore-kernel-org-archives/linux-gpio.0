@@ -1,70 +1,63 @@
-Received: from mail.fris.de (mail.fris.de [116.203.77.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12C138DD3;
-	Mon,  8 Jul 2024 08:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7401E53362
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jul 2024 09:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720428096; cv=none; b=Jh8ZhdBJhTCSpr16wEzE9ejAx5fctGJPOoQjxANTBckzd+Y7JvDiHtI4mFiSVrRNHW/5vQXx9IuYc5UmKRSsaydmH2DbMAB7ZW4YAKMmGQsD+T2nuM/FYkDiwdag3zAgXt2IaYdEyWEAv4GvJW+rPCEeIRJOqE7xK/PAXdwZZIY=
+	t=1720432114; cv=none; b=Hyji24AvK408gmDzJQ3rbk6toZqWSo4A5n81vWrfD18+r12CzyRzf31iMCXq9/Q/ABLdeLZ7gA1H2ELaejoS9ZMLHQORHigj9UF25KqA7jaibgA/6RFgudM9E4o6SbGjS3BVI9sUCCTSv2XKyH2r5fQMkTMMt1pnizqRZzZD0/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720428096; c=relaxed/simple;
-	bh=EbyMstgkGC0hj8mldRlEtHe4fvYA2Le4WLi6G4ZlrAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qrYS5wGNRWmVLCTqNdT0EAZ/ENfQpi3l7znKMk27x+iT5rT3IqhAXRgwqQZKxgQf54y9MGR9s1MEyCmrkyjkUo0yTanw6wb6Ms48puQ4+tOkiHmvo6KjgZOgyPjlw6l1Pqu1KJ96XGjfAPjumq00qTZTAo2AnsUr3NQmw0QL/rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=pUJU3jAV; arc=none smtp.client-ip=116.203.77.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+	s=arc-20240116; t=1720432114; c=relaxed/simple;
+	bh=dmR+2X16GcWqdwoSVKJ8V8At3LVO9TILYWmHIHpnwVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cxa8ED9W8Nj+Wk+ZIewppBGTiCeR3Tcdsf8QvZd4j3TMWUg+fl4VntCsXvCzPewTc5z1IOU/XZa39XwEwGA2Bjrn7bswEev/6rSjh3HvvlzifCMjgGmXJuaKT1Sszv5Iyxv1oon0Ox1wIwUwYrvj/PwSw60nUJx3m+roJYI7y88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gtC5FRu6; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="pUJU3jAV"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 99346BFB3E;
-	Mon,  8 Jul 2024 10:41:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1720428084; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=NveMWMLf1KKss1u30fBLh9RzfeK0IK5Gk36rVhpiHb0=;
-	b=pUJU3jAVou5Tg4YmrtMeZGhGmK6WS7KWRoMLsDsH8i89ySc+f1/q7Bc/TaCRAvFV9Z5MuL
-	t2IZKpWNNi4+8SimyplauJhDPUb8bwP01GEOp79OBJ5omUMzVgv6zSyzUyZhClBBqM2atd
-	2dwxcMvQw4SoDtBRxUvlJpk+80J6oCSmQJAgopKUGXG8yvhOixRL71ZQ/FJ19z9enzkEN9
-	+BL9R86YOPcOCX2vyU3O6Vs+Qz6pY/eBfy4lA4I18c3diM1KZ0EfQmVj2ZIc1fhL8ewZRC
-	EkBAr/qfSxKyNLom4uKLJ9zY+RCwKqjQUyPb203LnENHXKtmXjAgLyj81osJuA==
-From: Frieder Schrempf <frieder@fris.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Yang <leoyang.li@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stefan Agner <stefan@agner.ch>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bo Liu <liubo03@inspur.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Joy Zou <joy.zou@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH v2 0/5] Add support for Kontron OSM-S i.MX93 SoM and carrier board
-Date: Mon,  8 Jul 2024 10:40:30 +0200
-Message-ID: <20240708084107.38986-1-frieder@fris.de>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gtC5FRu6"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee90f56e02so35204481fa.2
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jul 2024 02:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720432111; x=1721036911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SlCAuEI1JMWRZhhXnkDZTE2W3A3Pf3GOAP6Z+n+3yT0=;
+        b=gtC5FRu69xdAiOHh29z8TGOr2s74vNNyz65etHJXmb3IQeNgRD+Mx8muOvO2qHNe58
+         6TDrfKb/NWoUgJuxaUsg3tf6a5ejp/Cf9UzmJfSe0ADqx01u7gZv5bzL8cAMdktC6r03
+         soy7BZCxWLxuG5g5V7nX/sBhMTECDr+VshWifk+ZVKCH5Jf0CMOhExz9dT6FgEOV2wOq
+         CZlnKuZeiZPwUQYtHeehg9rUsxvE5VgtrfWLAv+Zv7lgQhQsbkG/ImpQLy7q8gZ3KE+2
+         gpb5iHV43O6GT74fL+lIOVdb1RBVVb5fp3UMv3jqq9Ut1WMoiK6ujeYIK/UHwIn7K6k0
+         pNLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720432111; x=1721036911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SlCAuEI1JMWRZhhXnkDZTE2W3A3Pf3GOAP6Z+n+3yT0=;
+        b=uuf6gJZIfcOcF8BAjsg2O6Ui1vqlovI136vdz4+w+BhPcgFgpXkaveV8NcjnUCaRfe
+         f75LWZnQs3CSPrfypJ44uZA1hKgUPWnYCvYgYqtTFECw4/FIWZA/hHH5IyjA9fMbuu+2
+         5WhnOOSO1ACW9XlifWJ3fBPZ+BAmQjWsaPPmmZUcsFA+704408Py6LENkhdHckYWmuce
+         2zbtEfdRYgxtCHXNCVYL0CbgvP1XooN/GXJVWB76jxsG36nugsX8m34c+JwNnz7HZsAN
+         Ubto6AIYX5ZUvjJ+19Wu3uKPMT9Ivh/5HtUfQSLlGeCBXnCHi6M2ti/hQQIJ74Eri8fp
+         PUTA==
+X-Gm-Message-State: AOJu0YxAq1bICmWp7uJBhYbLvKNr8d5j3TFBZXt1Ezj6JxDix1DUJMt4
+	117/TXrr1I62hkQPb3TQdSWJTPO/8KT5cOJ1vF/lt8Tt6tB44afF2yg852nkcE0=
+X-Google-Smtp-Source: AGHT+IFpV02xc0OBdcy7deqje0KPJVUIJuMWNCl2BYhxPrescnlG6RqAUnAm1n3vewr/MayYD6Hylw==
+X-Received: by 2002:a2e:9150:0:b0:2ec:1042:fb04 with SMTP id 38308e7fff4ca-2ee8edffca6mr69214411fa.35.1720432111509;
+        Mon, 08 Jul 2024 02:48:31 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a2a3:9ebc:2cb5:a86a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2b4976sm157364325e9.48.2024.07.08.02.48.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 02:48:31 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH] bindings: cxx: tests: set direction when reconfiguring lines
+Date: Mon,  8 Jul 2024 11:48:27 +0200
+Message-ID: <20240708094827.84986-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,39 +65,32 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Patch 1-2: small DT binding fixups
-Patch 3: board DT bindings
-Patch 4: support PMIC driver without IRQ
-Patch 5: add devicetrees
+Linux kernel commit b44039638741 ("gpiolib: cdev: Ignore reconfiguration
+without direction") made the direction setting mandatory for line config
+passed to the kernel when reconfiguring requested lines. Fix the C++ test
+case which doesn't do it and now fails due to the rest of the settings
+being ignored.
 
-Changes for v2:
-* remove applied patches 1 and 2
-* add tags
-* improvements suggested by Krzysztof (thanks!)
-* add missing Makefile entry for DT
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ bindings/cxx/tests/tests-line-request.cpp | 1 +
+ 1 file changed, 1 insertion(+)
 
-Frieder Schrempf (5):
-  dt-bindings: gpio: vf610: Allow gpio-line-names to be set
-  dt-bindings: regulator: pca9450: Make interrupt optional
-  dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
-  regulator: pca9450: Make IRQ optional
-  arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier
-    board
-
- .../devicetree/bindings/arm/fsl.yaml          |   6 +
- .../devicetree/bindings/gpio/gpio-vf610.yaml  |   4 +
- .../regulator/nxp,pca9450-regulator.yaml      |   1 -
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 165 ++++++
- .../dts/freescale/imx93-kontron-osm-s.dtsi    | 547 ++++++++++++++++++
- drivers/regulator/pca9450-regulator.c         |  41 +-
- 7 files changed, 742 insertions(+), 23 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
-
+diff --git a/bindings/cxx/tests/tests-line-request.cpp b/bindings/cxx/tests/tests-line-request.cpp
+index af8b979..a99bd44 100644
+--- a/bindings/cxx/tests/tests-line-request.cpp
++++ b/bindings/cxx/tests/tests-line-request.cpp
+@@ -208,6 +208,7 @@ TEST_CASE("values can be read", "[line-request]")
+ 				.add_line_settings(
+ 					offs,
+ 					::gpiod::line_settings()
++						.set_direction(direction::INPUT)
+ 						.set_active_low(true))
+ 		);
+ 
 -- 
-2.45.2
+2.43.0
+
