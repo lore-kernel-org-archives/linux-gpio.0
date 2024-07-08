@@ -1,94 +1,89 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028DF38FB0
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jul 2024 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6520B38FB0;
+	Mon,  8 Jul 2024 08:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720427240; cv=none; b=nZNcvsaGKd9rXKgMF3EUs7ZbjmudFBD1Etr/vzkZG1m1GhTMXStiTVgU5BQNEMq2Wy1JMnv/OIIXq5195BQ7xdQhowAC1nDU8jWa2q0Q3r1PuZdKrDEFf1eetjlYiaKXjSGkUrUFGy2Q9qck6Sd/phhfnox2hg9ZTpKdQR8oK0M=
+	t=1720428095; cv=none; b=WVkyh8lck18ntuqhwnDrktn89YO4nIE1+OOaJSmECWjfd4RVuCws7ayzAzew56zH+yr/Toxbx9mdk9o62/GIv24g3PSYRhM658I4CKA2Kthqh6pgLMcbNosTv/y/ce5x0yUHPVdy8phDjJrYPzjLhBtJTZcBBrQ2938whHK0P0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720427240; c=relaxed/simple;
-	bh=YX3K9QoCWzNZff9uMuOLqqZmixFZ6Zh5S0PcfSoyi7E=;
+	s=arc-20240116; t=1720428095; c=relaxed/simple;
+	bh=OlqDzkICZh/rXle1yN3cbMo0i3pUWIT0ry1t2Or0OBE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EViQX/QHhW6cWUQRQNDID6J+NJTVwJvJaSopMn8/kuwK9Q0howVCLpUdwDFeGIiFy85DR+xSsKGDZxDGjs2RJr0M9c6p5BgR9pzc+krXLTryv5ORTy8H4XjpuuEgA/8XVLpdtcGp7aFSSw5KFw+NkEAZNklfQXQ/vlFtyWWcPck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IMDZk9Fs; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	 MIME-Version; b=bzBB3Z6tFNKhnrfdcNyEJ6g+mdDjTZoE+fHuKSlxSqHwmWNTJvz+jZjLp/SXsBo1wiWTuhNBtCNwmmn8/d3+z6kLcufQEtCTI6mmsbpumg7+U9XHsdjo1kkm3wuldhigGRajC8fI/GITkUVzQWLaJ9MjmgO5HYUSwEZYE6jyKeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=Mdvazh3a; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IMDZk9Fs"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4266bb98b4aso3627935e9.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jul 2024 01:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720427237; x=1721032037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqWQVdHO+aL9sRjJ+leEKZothBpneGJaFH9mgptqiH0=;
-        b=IMDZk9FsJxdeJIJHcBNvtRP7OI6+xoZSk6+m9ZZBukLRPyYb3BNKhjqiUDh6+hEeSb
-         LM0HE3zC4fOSUovDQEDBGYm2gtLUFQb496PskvZQ4pFit0anzzROgN68VpVSyJM2/j4e
-         pG+hyI3mBWtMBYMsyQ2g+5d3ffEpf8IgBaup2xeodqUevbquTJyBDenvmLyL3YTa6Bp5
-         56+bRqYvE3gzpZMxcEWkGJbVyRxTt1V7mONCqYc0lWnR8lSBMc+phVHQU1f6N1Ddwebz
-         /yJewLl+6Wg1rWcnMj3OCYiBgNejl3vDugMOlQFeTL/WkfytbqqYjQ+X2bSsRoBoLDCa
-         1MyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720427237; x=1721032037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqWQVdHO+aL9sRjJ+leEKZothBpneGJaFH9mgptqiH0=;
-        b=Y15RQkesqWL1cq27Gd+BhbN0h3+q9XZnXh3GJODNFVekMiD6HMqfp2bWex5xA4i0nA
-         sCZXXAEvArfSb8LRmISjnG4FWRZDDi/BDhZ5/PFcUlSO/QMfj3KCZKK7bsEoMw4POGYI
-         zTrjxr9wZwzTkJIFon+LN1Oo4d3IPTen3pW5DzM+Y6hMb4laCmZIJE+PtGFN9jTpuqC8
-         OjKnLTYSTGfuPgcZhEi+DvbOW+sBpnC/KFLi3NYmKROTLalRJ3XyNMirz2oHLKdZngKq
-         MJ9oy47U97V55pw0uRpMPwp2ovOl65PjnC5sTfhiIUrAoU1oT3NxJ9Ak5w46zdMcGLV/
-         Bb8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUajdijIzV+C1fw2t6PXunXUTtbcu5TQK5U409HDbKrjarCd55TMWe7eMMp1XA6AApYa2FDIuKRh+WfF5bm3IypioN+xR4jYgdCqw==
-X-Gm-Message-State: AOJu0YyKItcwUQnNxBe7J0UW5OmzQL04+0wbI/Q/nTUi/XZN2DtQcGC+
-	uwvDak7kTN1Ln19tvlQouNOfCp0n/9pgO35P9JUsxDnEfysVEznbqo+PG3P1E9g=
-X-Google-Smtp-Source: AGHT+IG4+eVdg/D79Rysc4TB5JnYLu83zPddq1Tpw9ngA/CWvX25ChhLETeqBmpxJYJmNNRoFI48LA==
-X-Received: by 2002:a05:6000:d4a:b0:367:955b:b8b2 with SMTP id ffacd0b85a97d-3679dd277femr9085557f8f.18.1720427237377;
-        Mon, 08 Jul 2024 01:27:17 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a2a3:9ebc:2cb5:a86a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678ec6ff64sm14370341f8f.3.2024.07.08.01.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 01:27:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Kent Gibson <warthog618@gmail.com>,
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="Mdvazh3a"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0FA9DBFB4D;
+	Mon,  8 Jul 2024 10:41:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1720428086; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=8b9WEdH6nX/uhqStbhCkxjbUTBocln+2zCJ0wjlz2TM=;
+	b=Mdvazh3as5WxPvN2jOz6c7pNkuYrl00UjJ8Xt4UlUDINGARD/zK1yFD7tFfH1V8oRmNzOW
+	9J6lBuVIfboFtllMmf+D6/tCkeNfK6aNQqlKfM8P3c2n9QMPdrlLkQsNbwaLGHzfRK8/ND
+	mqVnTgkENTszZAPB3C73dUKZbUh8qLrOuFz9KjwJMqvDA0azx+TWNrjZAVeM5l9pDQqzz+
+	Yur5ZeoEW9LKud5jkhL2P3ylAeYS/Km5qvdfl6u+ZhL77Zb23XRDqv8P0lATdnYoXm2Lb6
+	jLD55CCtRNYwCUmZiuZXTtl6QBpTmRLM5bMlg5nJ/VjXLjR+EDm7eGQ4rMFK4A==
+From: Frieder Schrempf <frieder@fris.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [libgpiod][PATCH v2] README: list the development packages required to build the library
-Date: Mon,  8 Jul 2024 10:27:15 +0200
-Message-ID: <172042723224.19049.17572818519052303074.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240705073314.5728-1-brgl@bgdev.pl>
-References: <20240705073314.5728-1-brgl@bgdev.pl>
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Stefan Agner <stefan@agner.ch>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v2 1/5] dt-bindings: gpio: vf610: Allow gpio-line-names to be set
+Date: Mon,  8 Jul 2024 10:40:31 +0200
+Message-ID: <20240708084107.38986-2-frieder@fris.de>
+In-Reply-To: <20240708084107.38986-1-frieder@fris.de>
+References: <20240708084107.38986-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
+Describe common "gpio-line-names" property to allow DTs to
+specify names for GPIO lines.
 
-On Fri, 05 Jul 2024 09:33:14 +0200, Bartosz Golaszewski wrote:
-> The error messages emitted by configure when either libtool, pkg-config
-> or autoconf-archive packages are missing on the host are not very clear
-> and seem to cause confusion among users building the project from
-> sources. List the required packages in the README.
-> 
-> 
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+Changes for v2:
+* change commit message (remove non-existing warning)
+* add minItems and maxItems
+---
+ Documentation/devicetree/bindings/gpio/gpio-vf610.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Applied, thanks!
-
-[1/1] README: list the development packages required to build the library
-      commit: 099697530033ceec583b67abfda1df152430fae3
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+index a27f929502575..cabda2eab4a23 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+@@ -51,6 +51,10 @@ properties:
+ 
+   gpio-controller: true
+ 
++  gpio-line-names:
++    minItems: 1
++    maxItems: 32
++
+   clocks:
+     items:
+       - description: SoC GPIO clock
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.45.2
+
