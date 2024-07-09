@@ -1,37 +1,36 @@
-Received: from msa.smtpout.orange.fr (smtp-68.smtpout.orange.fr [80.12.242.68])
+Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A9A182A64
-	for <linux-gpio@vger.kernel.org>; Tue,  9 Jul 2024 20:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F50144313
+	for <linux-gpio@vger.kernel.org>; Tue,  9 Jul 2024 20:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720557484; cv=none; b=gQRZX0oq49vcoK4jL4xxoIVXzXq1OpgAlI0gnJV4cTzHcGoH7cYJo2ZtDWQ/2rB7cFOaXInvrESq9oT0g5FHedW8CrkwGUZogWnG8GzU8AvCf8ZoT+wg0gmstVIAN6v3+qjYCSbWQHULxGfkR2MSmT9SeBalpABoE2LkOeZsriU=
+	t=1720557542; cv=none; b=Zc7YYdFi1ClJ+ffZ6ZNevyLiqnLKTKwCdC19Pz0fUqkAiVHx0lsV4qZ9jbZWOz+9LY9vxOQg/Fw+8gqcROfHvZCO+HNXSPuWZoK2qxKAL8C1ugy9b0Hfbr4vt46UUk27Q1wQWUbsPH15aWTCdshUIFiMSrN/TJmoNaN5T1du3GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720557484; c=relaxed/simple;
-	bh=gmf3aasC6nYbLpzKP+9gJGJLL0Mreue7d/koV0x/jsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NLUlLcAWkKcvCq9UmOwLHGHVV8MpAyev3u5QUOiX7iBUqud7l30hfvAdJAPVoMjyHzdTu5gC9ax5yDRwQfW5Ys4GdurdVxUWjasPcuRLJqKV5XVNlNZNTl1g2IQKbblitrYnpqSauzqaoF4kpWgKtxY8BtKYs7JETma+lX8P6n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JjMfMUtM; arc=none smtp.client-ip=80.12.242.68
+	s=arc-20240116; t=1720557542; c=relaxed/simple;
+	bh=ZVITLZw3RZWYg9D/gUYsaAPt39mhDi81cXcYf0kiYo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q9LadWV0DiRMFbSjJtWeDrSSob8hxf0+mEmNv5/gX/LAXU+F/oYc3XDZ1btMCph0yayViIiQabAb6g74pf+lNAy1+g8rariPnWNbEArn7DEL1lTq00SLW/YD55ZvkV8W4RxnoM62Ag4PWXLhZCouFsrlksBDwo56etJ/GM9sHPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MjQhK/BS; arc=none smtp.client-ip=193.252.23.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JjMfMUtM"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MjQhK/BS"
 Received: from fedora.. ([77.130.249.53])
 	by smtp.orange.fr with ESMTPA
-	id RHavsh9C6phyvRHb0sZbYg; Tue, 09 Jul 2024 22:37:55 +0200
+	id RHavsh9C6phyvRHavsZbUA; Tue, 09 Jul 2024 22:37:51 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720557475;
-	bh=EgfXHxdLYyi1/TpBSR1xI3tIrUBzJ3KcvfA6MU/OQKo=;
+	s=t20230301; t=1720557471;
+	bh=Pf/cwNIvre1Xs+7SJVXgRoolLcWJeJYfmUMXMPn3ODo=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JjMfMUtMkRVCbGRXLRdYqkVuZXSnMREEJGWg++G2nMYcQf4OBmfp6sGGu/AK7mZSW
-	 6uUIax8VnEYELmwmXxYFe8WTe3wcR0zQEjWEE69gW9NuW20DQIfnG87ixKkzIU8Rp6
-	 QH/c7IWtZq9VktUVo09HCoXGUTijwehgn/3ivm0nAtBdOBbXpf+I7mstmnXZCrlUB5
-	 Z0IBpeCNGgiCJn04p18Ilh9FT9es6ZX9iz8FGix+KMRRrTzFFqlrtHvau1UJC5hYB7
-	 iMJSzjbdOTQyX9vIf/yizuvmNJRDjPTnrJqjxdXi6fbSisG8iEAa9z4+3ViOZaEFi+
-	 Yd2X7WCdqz85w==
+	b=MjQhK/BSIx30xmH7mN5f+J/v7FA+3Dx9jApKTwGVicxPrsrXS3NthcOcSEw/Q7e34
+	 UhBeZtkGxt1lx+17JV17sGoWpFV04V7G3f1YaIYuYlzbzX6fsA6GqWJ6vp2kPusDD9
+	 M6RHtkjKyjxxlu+UGIv+zYXJEJcbcGFfJonKdX+3QKgh6MH5Mta83sHtc5SeNx07EV
+	 h7/BXjL/PaMMeMlhNj5jJpfQPf2mlc/Ix8UjY331Q4JclOtp9XucOnp0Yh/eSCFBOF
+	 gUUY5vg0hRfvY9dmLx6VWStNeiDWFUaScgHon5jG4ElIPz/xOmX0ppe33XEMClIFZH
+	 Bfb5AUaV9LzUA==
 X-ME-Helo: fedora..
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 09 Jul 2024 22:37:55 +0200
+X-ME-Date: Tue, 09 Jul 2024 22:37:51 +0200
 X-ME-IP: 77.130.249.53
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: linus.walleij@linaro.org,
@@ -43,12 +42,10 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] pinctrl: ti: ti-iodelay: Constify struct regmap_config
-Date: Tue,  9 Jul 2024 22:37:45 +0200
-Message-ID: <4eefa8530a55ecde82b3ec9a445f93c01bda7ded.1720556038.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] pinctrl: ti: ti-iodelay: Fix some error handling paths + 2 unrelated clean-ups
+Date: Tue,  9 Jul 2024 22:37:42 +0200
+Message-ID: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -57,51 +54,26 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct regmap_config' is not modified in this driver.
+The first patch is completly speculative. It is based on static analysis
+when a function is called in the remove() function, but not in the
+error handling path of the probe.
+When looking deeper at it, it seems that part of
+ti_iodelay_pinconf_init_dev() also needed to be fixed.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+/!\ This is completly speculative. So review with care /!\
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  17355	   1692	     16	  19063	   4a77	drivers/pinctrl/ti/pinctrl-ti-iodelay.o
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  17729	   1372	     16	  19117	   4aad	drivers/pinctrl/ti/pinctrl-ti-iodelay.o
+Patch 2 and 3 are just constification patches spoted while looking at
+the code.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Christophe JAILLET (3):
+  pinctrl: ti: ti-iodelay: Fix some error handling paths
+  pinctrl: ti: ti-iodelay: Constify struct ti_iodelay_reg_data
+  pinctrl: ti: ti-iodelay: Constify struct regmap_config
 
-diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-index 65f9439d0d5b..019b302db2b0 100644
---- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-+++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-@@ -82,7 +82,7 @@ struct ti_iodelay_reg_data {
- 	u32 reg_start_offset;
- 	u32 reg_nr_per_pin;
- 
--	struct regmap_config *regmap_config;
-+	const struct regmap_config *regmap_config;
- };
- 
- /**
-@@ -776,7 +776,7 @@ static int ti_iodelay_alloc_pins(struct device *dev,
- 	return 0;
- }
- 
--static struct regmap_config dra7_iodelay_regmap_config = {
-+static const struct regmap_config dra7_iodelay_regmap_config = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
- 	.val_bits = 32,
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 58 ++++++++++---------------
+ 1 file changed, 24 insertions(+), 34 deletions(-)
+
 -- 
 2.45.2
 
