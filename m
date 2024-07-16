@@ -1,28 +1,28 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01rlnn2073.outbound.protection.outlook.com [40.95.53.73])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01rlnn2055.outbound.protection.outlook.com [40.95.53.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C541A08B2;
-	Tue, 16 Jul 2024 19:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.95.53.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFAB1A01DE;
+	Tue, 16 Jul 2024 20:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.95.53.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721158828; cv=fail; b=qHRhYt+g4vO7T+uE17o0jk4RROY7eAHBHPrwM2s+rqhPy6DskRxQQkd01aUMFnG7b79jdikgUWujO/PBus8w29gFfMtiDSOjfNt5GNcaBLLuk1osn//Y5D4En8UEF01dIiu2d3ZickCBLaHvvEX2rBJwlkrwAWQoRQnzX3V83g8=
+	t=1721160808; cv=fail; b=n7UKuJGllNVenAboIFhXigvm+2EEQIOm5FlYGrajWuFgVa7NSA31hWfUEk/dX1noLbUizK1jI499qFQTykZ7Pz3tWsLRCfaoRV2vPx3hVseDMSRQAj94N8NSSIaoGUh9rwsfeUIY6gg2lF2440BLxVWcIyDOaz5R5oPCdFvbkpk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721158828; c=relaxed/simple;
-	bh=ejC2X1EemjadUL+Zwsm0AM56r4tfCQ7koeUF+HV17Qs=;
+	s=arc-20240116; t=1721160808; c=relaxed/simple;
+	bh=lUfvjhhtGPG4kodgC+VtezuaLPntr64L20z2BITRCEE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pANSetr90ruHpqxPbkrsVBvWVNEX3deq0ONq2TymIajbjwTLf8xnc9Y1X0JtHOpjl5beIqWH5fTUukWYJ3pwyuDk5+LQIwtpPOSSGoAPUX9VslcRrKJ1Z3dZ49rEhnzIVQbXwpavdnBDMoiejILyFeV/FT6lC/N2ky6sgJsiKhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=jPrGyubq; arc=fail smtp.client-ip=40.95.53.73
+	 MIME-Version:Content-Type; b=bLPUZfU9zwMXh8mng55UB25UUpSF21xk4gK1HsDo2w+W/UbWXA2IPnWnhLr6qOH93IvS+l90Kg0bCVKOKBsr8W7gVXjbTTRa4UK+jf5CGMHqHYcRtzBh0m8aDrNUSvSlY5+4bUIPI6vQ67zld5wDZIF08rqaSRAD3tDM1UB59nw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=tVN6GxXJ; arc=fail smtp.client-ip=40.95.53.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="jPrGyubq"
+	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="tVN6GxXJ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oHwP4STiyc58W7jNv2HYjlefQHruHHxmlXJFQETdU5jvVtxH7mZ89BQrsOD5rtXNze44TEmn/WIGTpMhqM6SEvIR4TDk/PGJpGG4MsyRjYyIXt65JHLER4wldsTiEcFzAmJO05B1Va0GJkiWWnfw900hOP3SCTjBCPbHDF0V3dATWFzqhRMbd3RVAMljzOrVEPArlObWSxb0GxbUYrGQXOc+gRNT3AX6fpUgcIWMzCTxLfYWJx11UGBmuh51DAUrUQiqVMpqMQHVuknXQSVgtdHLN1o92UvKAm8Tk8UDH1/pA7TjIFDnHoaUYBZQPcrHMb5xzvZ/4TC2Oc7h8TO6vw==
+ b=GTtO4VUCQzGuLM3At1GA/gCDWnujmJ9sfhGp+AEgJ4gTihXTQR3EflSLSdDeL7zpJV62HQPQR46AAVG3OqWiEPnnomYoyxrxJ2yHUv/+tyccMFdT+Yzc2bj/oAqJKiYfVTGjpBbisqjhUo2Um3ou2UMiHCMWofdCtxPNb7fK4gscRJ8qoU0cPhumiUgffk0LbKaIBNxIoZXdeZXrSIZdkWQU+VkWChQnj/S1roksr3Zt/01CHsm0rPZWdFwuB0PGXHDtnOuUDCaieEKPNBDDFi3O7IMioEbhklwQoloMrC0mChntGPMqqwM526PU1S/0NuTm85xkmsF04tf+sNgyZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zRLjeeVD0N6SLH64QcEcyhfgfptn49nbeH+Tfis54ec=;
- b=WMCDChAtZvcvIV4ZGj187HqE2A1BzKMa3TzHRcgDiZoookwLMEZFFyMgyQfS55k46+yCxB/ZdxlPbCamMsEug87n3Oc8O304Mj4MvZbLxQqc8R8nBbXynvuELVTe2f+myFAPRyiKibKTd42+MTX3WUeDJjzaez3hDi3NGdiRW3esuopIyVG0psmXjc7r8qJSJ7RbwjxnmeNHTIwX3GzyKqaW4fozPeekjKYHzmqUcMieoag+KBnJPNfnETXwvLuElxoY865djAPLaxZchHnwcHTlLF+rr71i0y2Htv62nM1KjaCLOY8teBp19QqG6F6LMFMXsaGI2jRi44Z5U8gIYg==
+ bh=C8iWpxll0dRjz6NNBG7W6f6ZNHM13rxW/T+lyqcWVBA=;
+ b=I18qAfooRNCDcJGyfV736hOy61CPPmeK0fRQ6Lb6htV8wfJVsNqYWqri7WMclbgUMhyPLRHOpdxG20eHKGhP3uWN+QvnocYUIqHtn2AmxmNpr/FWwVWVD6erJAiW2E0pMlw3P3elUj7/5O6OlX9dD9o6tOQEMdezhEIkOHX2o0jIULjFBfUOTd7u7jf98q7QcGDpS8MtwXoJfw6MQh4dcrSi7lPu2+IBpsmq7N56KJQWbORuFiuPxhFgBKHgqA4zUElx/ggFm8oLcrcpcxjLVUCtLrXGI1V9yCxdXSdLM7Hr4MgJoUnUUZVIksZ9Xr6kDIGm1yGzRb+1E8bszHNimQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
  211.75.126.7) smtp.rcpttodomain=gmail.com smtp.mailfrom=taln60.nuvoton.co.il;
  dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zRLjeeVD0N6SLH64QcEcyhfgfptn49nbeH+Tfis54ec=;
- b=jPrGyubqeW3d0qG4ASy+fPI2eC7xYFMzJqcEsi6idfMKzb0kqPEKOqb36i6rC2IlDQ3bxZicISxDvk6ORWAdZiS1TFCzhb+1WIqwySM4L7rn7wT7jr8BqnQLn8JJhIwl5wVQ85hImka+jrbMmuU7jM/Hi1xfe9CaevUqh8NtSd8=
-Received: from SG2PR01CA0132.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::36) by SEZPR03MB8382.apcprd03.prod.outlook.com
- (2603:1096:101:21f::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Tue, 16 Jul
- 2024 19:40:17 +0000
+ bh=C8iWpxll0dRjz6NNBG7W6f6ZNHM13rxW/T+lyqcWVBA=;
+ b=tVN6GxXJ/TqptVLeCv26DiUuffAZxLOWvVssIp540c0TdE1o8qwI6um4EgwPn8BjELuUDWzZzAzlIjdnbCJIDkhzKopG4htDrs+yXMX5kQzh1QyeboIzWi43MMc9CxFp72mm8haN6YTezvYElccAMGiu3lxqWCCL4s2j6Pz5jnw=
+Received: from SG2PR01CA0117.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::21) by SG2PR03MB6478.apcprd03.prod.outlook.com
+ (2603:1096:4:1c5::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 16 Jul
+ 2024 19:40:16 +0000
 Received: from SG2PEPF000B66C9.apcprd03.prod.outlook.com
- (2603:1096:4:40:cafe::ce) by SG2PR01CA0132.outlook.office365.com
- (2603:1096:4:40::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29 via Frontend
- Transport; Tue, 16 Jul 2024 19:40:17 +0000
+ (2603:1096:4:40:cafe::ae) by SG2PR01CA0117.outlook.office365.com
+ (2603:1096:4:40::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
+ Transport; Tue, 16 Jul 2024 19:40:16 +0000
 X-MS-Exchange-Authentication-Results: spf=none (sender IP is 211.75.126.7)
  smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=gmail.com;
@@ -50,23 +50,23 @@ Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
 Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
  SG2PEPF000B66C9.mail.protection.outlook.com (10.167.240.20) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Tue, 16 Jul 2024 19:40:16 +0000
-Received: from NTHCML01A.nuvoton.com (10.1.8.177) by NTHCCAS01.nuvoton.com
+ 15.20.7784.11 via Frontend Transport; Tue, 16 Jul 2024 19:40:15 +0000
+Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
  (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
- 2024 03:40:13 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01A.nuvoton.com
- (10.1.8.177) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 03:40:12 +0800
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01B.nuvoton.com
+ (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 17 Jul
- 2024 03:40:13 +0800
+ 2024 03:40:12 +0800
 Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
  (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 17 Jul 2024 03:40:13 +0800
+ Transport; Wed, 17 Jul 2024 03:40:12 +0800
 Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 9045E5F65C;
+	by taln58.nuvoton.co.il (Postfix) with ESMTP id 5A5D05F635;
 	Tue, 16 Jul 2024 22:40:11 +0300 (IDT)
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 8C343DC0BCE; Tue, 16 Jul 2024 22:40:11 +0300 (IDT)
+	id 4C912DC0D47; Tue, 16 Jul 2024 22:40:11 +0300 (IDT)
 From: Tomer Maimon <tmaimon77@gmail.com>
 To: <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<conor+dt@kernel.org>, <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
@@ -75,9 +75,9 @@ To: <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 CC: <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
 	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
 	<tmaimon77@gmail.com>
-Subject: [PATCH v2 7/7] pinctrl: nuvoton: npcm8xx: modify pins flags
-Date: Tue, 16 Jul 2024 22:40:08 +0300
-Message-ID: <20240716194008.3502068-8-tmaimon77@gmail.com>
+Subject: [PATCH v2 1/7] dt-bindings: pinctrl: npcm8xx: remove non-existent groups and functions
+Date: Tue, 16 Jul 2024 22:40:02 +0300
+Message-ID: <20240716194008.3502068-2-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240716194008.3502068-1-tmaimon77@gmail.com>
 References: <20240716194008.3502068-1-tmaimon77@gmail.com>
@@ -92,139 +92,151 @@ Content-Type: text/plain
 X-NotSetDelaration: True
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66C9:EE_|SEZPR03MB8382:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3d9c0d4-c356-41ae-a0cd-08dca5cf1e88
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66C9:EE_|SG2PR03MB6478:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe302314-6987-4500-45fe-08dca5cf1dcc
 X-MS-Exchange-SenderADCheck: 2
 X-MS-Exchange-AntiSpam-Relay: 1
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7093399012|48200799018|7416014|35950700016|61400799027|921020|35450700002;
+	BCL:0;ARA:13230040|82310400026|376014|7416014|35950700016|61400799027|48200799018|7093399012|921020|35450700002;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?khAggtLyzo1Dr7PPbI26w/8qWS2mOHbri+iM9Tzg/2B2aCJ6bItY5RqQbZuk?=
- =?us-ascii?Q?Su2VqlEzoz6GCIp8Nfk9yPPS0lJK7ZKuf/hfbTpOhnBzet3eFDj4Tnn/Inel?=
- =?us-ascii?Q?wGQTSPDp06hBWzh0AKXXiL27lIoR8chGpFoXf9y7Ebd2X2AuIqHANZpPFOLJ?=
- =?us-ascii?Q?AQv515fZUIF7WD4q9GZhup+bAUHViRn1HQ0uyt3Bl4M/+R5idEEAkr4lphPK?=
- =?us-ascii?Q?MuXM4ZpGwfzOhxaheiEM8bI0GoVzz2erQSnkimXXwhM7ROlF6xvtUwHMLA6a?=
- =?us-ascii?Q?rnN8ztG3rN5TF+xy2ocA7prbCldQ43vTJ87si/UliH2o1N6mlqZdaiTWTrLz?=
- =?us-ascii?Q?bFshQYZkM44LHigV8MF0nQgxtA+mon5AtBzJ1Ba5SN2VsQ8Bk6kTcPefVk2f?=
- =?us-ascii?Q?gF+qt9PKgtMyhcgN2cOkTcT515HihEx2Z0rVmAF7rfbZabN0IviHqBLKGvud?=
- =?us-ascii?Q?uLNiGgw725fRGJpSZQPXvYp0Tkz332TC8Tlxrfs9nb5RVX/SHXk/ftXimiHl?=
- =?us-ascii?Q?1quA7oubo+TWlxaiwJoF7HiB7A5KDYX37F1imJtSSLSIyuCo/RYvlUJFRgq/?=
- =?us-ascii?Q?jZNXqRmVsK0bNQkG1N7ic6IYOqtm/sk6qQNiziihRB31FsAjd2I+w/4N0yas?=
- =?us-ascii?Q?dUuF1sCuw5F937rpZB/UeVlkTjza03l3q/iNw4WEQnW8mJE6skXyBdX+n6Lp?=
- =?us-ascii?Q?AIGBEsfBdU/MmmiYRQXQ4Ck/a3EA2VH0F+VZmXF+LLlna+6FocAjCAzZtb8D?=
- =?us-ascii?Q?euMxALbrTvzmtNaCYGMvUz3BZbmYHQ69nZksJKHJHIOCmGJXmRtiEy3kscAh?=
- =?us-ascii?Q?f/0o9kzEL0gtjy8T8nClZ51nCpAwONI4JscRFbEOCIt1bVT6lUR9Mk5fDnat?=
- =?us-ascii?Q?4+2F/tLbMGHLImrTh/NR3AoG6j3jmYJr50lsD2u/KCMc5zapeiqZzJMVSJRj?=
- =?us-ascii?Q?sEW4XBOe6lGP6bLZ5gwt3Jcz1Tz6/L93z1a3/kSUN7Lz/irzJ3dJAPFvc9w/?=
- =?us-ascii?Q?KCeiT4ER1xhXGRVZio11+5WqWiXq01200LWNgktGFqtg4J/Pg5koGbdl+FD5?=
- =?us-ascii?Q?z8QR93fs8GQoGBkh9KWAXOjY4HAdm5CJm4RTx5KzF5iYCSyNTRTgejfmCFwa?=
- =?us-ascii?Q?p20e9IbktFVg07HfffqqVKzS5LT3Fa0XNlciN/x3/kEo1Ttva9qClQRWWDZ1?=
- =?us-ascii?Q?aHVTnzfOfKUgoY3NT5bbk6jh21aDXtTIVB3X4iFOCg8P7bkOj+683OL3xwbh?=
- =?us-ascii?Q?nA1Y7UbW2jz6nAeEuTXWwl98qCH70l/DjNzZSKqzP2sJEw09DNw0fdmL9p39?=
- =?us-ascii?Q?BUne9QLN8M/wZKk8hVE/5ZHYhU7WwA/CMYU2U9TrdOgM47wswZCm3hYGPNjM?=
- =?us-ascii?Q?mV5Z4JE4JTFeG4eqsVFh77q9mEMOmoDW6lWKunbdolrUkMzshh06fPOf7j0S?=
- =?us-ascii?Q?3Wq1tr6hJa0zR/AZt1dRNmpE/WvP3ONDhU5l8/JaL8lAwIylMqlZKx1ULxR4?=
- =?us-ascii?Q?p44NL2D50R0fyMU=3D?=
+	=?us-ascii?Q?MhyEhA8VK4ii0hkF23h6nLgT1uVwbSGobWxyJQX1gE4zeTDT7BpbEjV7bGB9?=
+ =?us-ascii?Q?4E1sT8PEpE1EhLpJRi3j8KZHYHqvnIo8IXBwtMP3aP1krSFTG/TxbSP2Q33b?=
+ =?us-ascii?Q?1+XepN0B7qX+n+PftLjxxhcr6VkdhR7viOtG6Ie3fk7QiUs83EUZagO3YHLW?=
+ =?us-ascii?Q?lSyGKxXsp8hVMKv2suq8aJ5Ct4mEAwwZ3NEfsIlpic1cYh4i4TCOpWWVEoHS?=
+ =?us-ascii?Q?pkjBrvo9vcFN1ibyRWYUsWNkIA6p5dGFTowR53bfw4rDLIbIQnCNfgUKbiZd?=
+ =?us-ascii?Q?Lq3Eagu03UiYWISiV5e2zltM7OvRXAoqIVo44XlXaRin8X92Uw/6PW+sppPO?=
+ =?us-ascii?Q?jwcduaXa3wJpX/VJg52K03/z10lv7F6bjazA7OncpWF30kFYpHCqjLY+/lY7?=
+ =?us-ascii?Q?x5mb/xYetYBzsRN2oQ/o0QCSHkBrY7hOpoHKdOBYSu41WqcK7JhQzYz/PC5z?=
+ =?us-ascii?Q?vhAewoOSEdxPQKoPKSJzchWFDsqKBGkaKNM3EUYziiJXPAmxna214MrvTWAU?=
+ =?us-ascii?Q?8m4mjrkuiI8ZL6Pqa3qwtkvu3ZC6SerqcgZ+/3BgGK0TePc7lSE1oXsG1ayI?=
+ =?us-ascii?Q?VFe5SmVletHqiNV+twJ4kK97A2Ap4S8fESc0I7qycBhfEpzjfvMN9MKhCjbM?=
+ =?us-ascii?Q?bA0kHW+hMhT4hD7/TwkqKcMJKJ5iH6uL+BYWQ/OMUNvRICx59roHVxDgrmiS?=
+ =?us-ascii?Q?WVSWfgMs8PZSP4Nq/0xECqyaRaQv8aNwyG8SMTnSy22BCN4Iwv1gH4agHLtO?=
+ =?us-ascii?Q?LSr/0K8CWXb5kc9eSycwiJRZ6AFQW4LbmGusMbqLRgF1df0Occo7zRhlNBpX?=
+ =?us-ascii?Q?9UyoYWCc5vnSOhI3aJgpX3caQ2GMQr+BH4Z3KKf2rnfyGi8iAsMocIqCmcLQ?=
+ =?us-ascii?Q?NYbtjySnDfhpeRz2PZQzWPp0DCoZ0DZJRxL5YgJS4TLFQ1GAYbGg6Ih8Etp1?=
+ =?us-ascii?Q?6a/iVeQb2f3jYXHd9IBbCtskWYqxzOb0NOj2/5dwufwQE1Es7+6QIY63pVIk?=
+ =?us-ascii?Q?fUdQRM1unUyJZhNg5NVGAiousOhpngl3CQPKF1ZT3G7ro1T//PXUSE6gpuox?=
+ =?us-ascii?Q?2jC5XbIvJ+J3tR+wZs1tM4y0Wq9YkvRA8wPYnGIoV+yHHQ1kND28qWdGxBft?=
+ =?us-ascii?Q?/f1ynoTh8bsbYaLKgHC3e9y3NXd+AGPKMXoGIhd24PxPFyDhBdPRflCIjemI?=
+ =?us-ascii?Q?/IxfLXmtLgOGlX5W0Y0HpW9GMeIHF0OD3wMSAYJIgB7zum3R8iBu/6jQtixC?=
+ =?us-ascii?Q?ldh/K9ePIbvKupwE+mA+psejArNtNgXBZrfNS+5/dhlSbVUMYhPMOktOpfOc?=
+ =?us-ascii?Q?LKATgZiGuZ6YbUIi9X3ckfFMzHpJj1G8Yr5Q/0V5DMbce3kIHnPhjxzIDC4A?=
+ =?us-ascii?Q?rDJscCv/yxkz+GOq/Z7OvNVqLkVHDXf8gmt8eJL367cNI2v+xXu1PKWGhn52?=
+ =?us-ascii?Q?muBWse82Wwo8A6n874i1Sdpc4Q+kj3Dj6bADnpAhXEKV4qNKKBLNnJLyeWoM?=
+ =?us-ascii?Q?2Is3+yvt7EKpyuY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7093399012)(48200799018)(7416014)(35950700016)(61400799027)(921020)(35450700002);DIR:OUT;SFP:1022;
+	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(35950700016)(61400799027)(48200799018)(7093399012)(921020)(35450700002);DIR:OUT;SFP:1022;
 X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 19:40:16.7757
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2024 19:40:15.5413
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3d9c0d4-c356-41ae-a0cd-08dca5cf1e88
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe302314-6987-4500-45fe-08dca5cf1dcc
 X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	SG2PEPF000B66C9.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8382
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR03MB6478
 
-Modify the following pins flags on the Nuvoton NPCM8XX BMC:
-- Add pins 110-113, 187, 191, 192, 194-199, 202 SLEW flag
-- Add pins 229 and 230 GPO flag.
-- Remove pin 233 SLEWLPC flag.
-- Remove pin 251 SLEW flag.
+Remove non-existent smb4den and lpcclk groups and functions from Nuvoton
+NPCM8XX Pin controller binding documentation.
 
 Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 36 +++++++++++------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ .../pinctrl/nuvoton,npcm845-pinctrl.yaml      | 70 +++++++++----------
+ 1 file changed, 34 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index 2cc433a74ad2..471f644c5eef 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -1433,10 +1433,10 @@ static const struct npcm8xx_pincfg pincfg[] = {
- 	NPCM8XX_PINCFG(107,	i3c5, MFSEL3, 22,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(108,	sg1mdio, MFSEL4, 21,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(109,	sg1mdio, MFSEL4, 21,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
--	NPCM8XX_PINCFG(110,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	rmii3, MFSEL5, 11,	none, NONE, 0,		none, NONE, 0,		0),
--	NPCM8XX_PINCFG(111,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	rmii3, MFSEL5, 11,	none, NONE, 0,		none, NONE, 0,		0),
--	NPCM8XX_PINCFG(112,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
--	NPCM8XX_PINCFG(113,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
-+	NPCM8XX_PINCFG(110,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	rmii3, MFSEL5, 11,	none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(111,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	rmii3, MFSEL5, 11,	none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(112,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(113,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(114,	smb0, MFSEL1, 6,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
- 	NPCM8XX_PINCFG(115,	smb0, MFSEL1, 6,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
- 	NPCM8XX_PINCFG(116,	smb1, MFSEL1, 7,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
-@@ -1510,22 +1510,22 @@ static const struct npcm8xx_pincfg pincfg[] = {
- 	NPCM8XX_PINCFG(184,	gpio1836, MFSEL6, 19,	spi3, MFSEL4, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(185,	gpio1836, MFSEL6, 19,	spi3, MFSEL4, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(186,	gpio1836, MFSEL6, 19,	spi3, MFSEL4, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12)),
--	NPCM8XX_PINCFG(187,	gpo187, MFSEL7, 24,	smb14b, MFSEL7, 26,	spi3cs1, MFSEL4, 17,	none, NONE, 0,		none, NONE, 0,		0),
-+	NPCM8XX_PINCFG(187,	gpo187, MFSEL7, 24,	smb14b, MFSEL7, 26,	spi3cs1, MFSEL4, 17,	none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(188,	gpio1889, MFSEL7, 25,	spi3cs2, MFSEL4, 18,	spi3quad, MFSEL4, 20,	none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(189,	gpio1889, MFSEL7, 25,	spi3cs3, MFSEL4, 19,	spi3quad, MFSEL4, 20,	none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(190,	nprd_smi, FLOCKR1, 20,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(2, 4)),
--	NPCM8XX_PINCFG(191,	spi1d23, MFSEL5, 3,	spi1cs2, MFSEL5, 4,	fm1, MFSEL6, 17,	smb15, MFSEL7, 27,	none, NONE, 0,		DSTR(0, 2)),  /* XX */
--	NPCM8XX_PINCFG(192,	spi1d23, MFSEL5, 3,	spi1cs3, MFSEL5, 5,	fm1, MFSEL6, 17,	smb15, MFSEL7, 27,	none, NONE, 0,		DSTR(0, 2)),  /* XX */
-+	NPCM8XX_PINCFG(191,	spi1d23, MFSEL5, 3,	spi1cs2, MFSEL5, 4,	fm1, MFSEL6, 17,	smb15, MFSEL7, 27,	none, NONE, 0,		SLEW),  /* XX */
-+	NPCM8XX_PINCFG(192,	spi1d23, MFSEL5, 3,	spi1cs3, MFSEL5, 5,	fm1, MFSEL6, 17,	smb15, MFSEL7, 27,	none, NONE, 0,		SLEW),  /* XX */
- 	NPCM8XX_PINCFG(193,	r1, MFSEL3, 9,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
--	NPCM8XX_PINCFG(194,	smb0b, I2CSEGSEL, 0,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
--	NPCM8XX_PINCFG(195,	smb0b, I2CSEGSEL, 0,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
--	NPCM8XX_PINCFG(196,	smb0c, I2CSEGSEL, 1,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
--	NPCM8XX_PINCFG(197,	smb0den, I2CSEGSEL, 22,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
--	NPCM8XX_PINCFG(198,	smb0d, I2CSEGSEL, 2,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
--	NPCM8XX_PINCFG(199,	smb0d, I2CSEGSEL, 2,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
-+	NPCM8XX_PINCFG(194,	smb0b, I2CSEGSEL, 0,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(195,	smb0b, I2CSEGSEL, 0,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(196,	smb0c, I2CSEGSEL, 1,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(197,	smb0den, I2CSEGSEL, 22,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(198,	smb0d, I2CSEGSEL, 2,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(199,	smb0d, I2CSEGSEL, 2,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(200,	r2, MFSEL1, 14,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPO),
- 	NPCM8XX_PINCFG(201,	r1, MFSEL3, 9,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPO),
--	NPCM8XX_PINCFG(202,	smb0c, I2CSEGSEL, 1,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(0, 1)),
-+	NPCM8XX_PINCFG(202,	smb0c, I2CSEGSEL, 1,	fm0, MFSEL6, 16,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(203,	faninx, MFSEL3, 3,	spi1cs0, MFSEL3, 4,	fm1, MFSEL6, 17,	none, NONE, 0,		none, NONE, 0,		DSTR(8, 12)),
- 	NPCM8XX_PINCFG(208,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW), /* DSCNT */
- 	NPCM8XX_PINCFG(209,	rg2, MFSEL4, 24,	ddr, MFSEL3, 26,	rmii3, MFSEL5, 11,	none, NONE, 0,		none, NONE, 0,		SLEW), /* DSCNT */
-@@ -1548,10 +1548,10 @@ static const struct npcm8xx_pincfg pincfg[] = {
- 	NPCM8XX_PINCFG(226,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPO | DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(227,	spix, MFSEL4, 27,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(228,	spixcs1, MFSEL4, 28,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
--	NPCM8XX_PINCFG(229,	spix, MFSEL4, 27,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
--	NPCM8XX_PINCFG(230,	spix, MFSEL4, 27,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
-+	NPCM8XX_PINCFG(229,	spix, MFSEL4, 27,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPO | DSTR(8, 12) | SLEW),
-+	NPCM8XX_PINCFG(230,	spix, MFSEL4, 27,	fm2, MFSEL6, 18,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPO | DSTR(8, 12) | SLEW),
- 	NPCM8XX_PINCFG(231,	clkreq, MFSEL4, 9,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(4, 12) | SLEW),
--	NPCM8XX_PINCFG(233,	spi1cs1, MFSEL5, 0,	fm1, MFSEL6, 17,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEWLPC), /* slewlpc ? */
-+	NPCM8XX_PINCFG(233,	spi1cs1, MFSEL5, 0,	fm1, MFSEL6, 17,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0), /* slewlpc ? */
- 	NPCM8XX_PINCFG(234,	pwm10, MFSEL6, 13,	smb20, MFSEL5, 28,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
- 	NPCM8XX_PINCFG(235,	pwm11, MFSEL6, 14,	smb20, MFSEL5, 28,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(240,	i3c0, MFSEL5, 17,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-@@ -1563,7 +1563,7 @@ static const struct npcm8xx_pincfg pincfg[] = {
- 	NPCM8XX_PINCFG(246,	i3c3, MFSEL5, 23,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(247,	i3c3, MFSEL5, 23,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
- 	NPCM8XX_PINCFG(250,	ddr, MFSEL3, 26,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		DSTR(8, 12) | SLEW),
--	NPCM8XX_PINCFG(251,	jm2, MFSEL5, 1,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
-+	NPCM8XX_PINCFG(251,	jm2, MFSEL5, 1,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		0),
- 	NPCM8XX_PINCFG(253,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPI), /* SDHC1 power */
- 	NPCM8XX_PINCFG(254,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPI), /* SDHC2 power */
- 	NPCM8XX_PINCFG(255,	none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		none, NONE, 0,		GPI), /* DACOSEL */
+diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+index 814b9598edd1..8cd1f442240e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+@@ -71,51 +71,49 @@ patternProperties:
+           One or more groups of pins to mux to a certain function
+         items:
+           enum: [ iox1, iox2, smb1d, smb2d, lkgpo1, lkgpo2, ioxh, gspi,
+-                  smb5b, smb5c, lkgpo0, pspi, jm1, jm2, smb4den, smb4b,
+-                  smb4c, smb15, smb16, smb17, smb18, smb19, smb20, smb21,
+-                  smb22, smb23, smb23b, smb4d, smb14, smb5, smb4, smb3,
+-                  spi0cs1, spi0cs2, spi0cs3, spi1cs0, spi1cs1, spi1cs2,
+-                  spi1cs3, spi1cs23, smb3c, smb3b, bmcuart0a, uart1, jtag2,
+-                  bmcuart1, uart2, sg1mdio, bmcuart0b, r1err, r1md, r1oen,
+-                  r2oen, rmii3, r3oen, smb3d, fanin0, fanin1, fanin2, fanin3,
+-                  fanin4, fanin5, fanin6, fanin7, fanin8, fanin9, fanin10,
+-                  fanin11, fanin12, fanin13, fanin14, fanin15, pwm0, pwm1, pwm2,
+-                  pwm3, r2, r2err, r2md, r3rxer, ga20kbc, smb5d, lpc, espi, rg2,
+-                  ddr, i3c0, i3c1, i3c2, i3c3, i3c4, i3c5, smb0, smb1, smb2,
+-                  smb2c, smb2b, smb1c, smb1b, smb8, smb9, smb10, smb11, sd1,
+-                  sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8, pwm9, pwm10, pwm11,
+-                  mmc8, mmc, mmcwp, mmccd, mmcrst, clkout, serirq, lpcclk,
+-                  scipme, smi, smb6, smb6b, smb6c, smb6d, smb7, smb7b, smb7c,
+-                  smb7d, spi1, faninx, r1, spi3, spi3cs1, spi3quad, spi3cs2,
+-                  spi3cs3, nprd_smi, smb0b, smb0c, smb0den, smb0d, ddc, rg2mdio,
+-                  wdog1, wdog2, smb12, smb13, spix, spixcs1, clkreq, hgpio0,
+-                  hgpio1, hgpio2, hgpio3, hgpio4, hgpio5, hgpio6, hgpio7, bu4,
+-                  bu4b, bu5, bu5b, bu6, gpo187 ]
++                  smb5b, smb5c, lkgpo0, pspi, jm1, jm2, smb4b, smb4c, smb15,
++                  smb16, smb17, smb18, smb19, smb20, smb21, smb22, smb23,
++                  smb23b, smb4d, smb14, smb5, smb4, smb3, spi0cs1, spi0cs2,
++                  spi0cs3, spi1cs0, spi1cs1, spi1cs2, spi1cs3, spi1cs23, smb3c,
++                  smb3b, bmcuart0a, uart1, jtag2, bmcuart1, uart2, sg1mdio,
++                  bmcuart0b, r1err, r1md, r1oen, r2oen, rmii3, r3oen, smb3d,
++                  fanin0, fanin1, fanin2, fanin3, fanin4, fanin5, fanin6,
++                  fanin7, fanin8, fanin9, fanin10, fanin11, fanin12, fanin13,
++                  fanin14, fanin15, pwm0, pwm1, pwm2, pwm3, r2, r2err, r2md,
++                  r3rxer, ga20kbc, smb5d, lpc, espi, rg2, ddr, i3c0, i3c1,
++                  i3c2, i3c3, i3c4, i3c5, smb0, smb1, smb2, smb2c, smb2b, smb1c,
++                  smb1b, smb8, smb9, smb10, smb11, sd1, sd1pwr, pwm4, pwm5,
++                  pwm6, pwm7, pwm8, pwm9, pwm10, pwm11, mmc8, mmc, mmcwp, mmccd,
++                  mmcrst, clkout, serirq, scipme, smi, smb6, smb6b, smb6c,
++                  smb6d, smb7, smb7b, smb7c, smb7d, spi1, faninx, r1, spi3, 
++                  spi3cs1, spi3quad, spi3cs2, spi3cs3, nprd_smi, smb0b, smb0c,
++                  smb0den, smb0d, ddc, rg2mdio, wdog1, wdog2, smb12, smb13,
++                  spix, spixcs1, clkreq, hgpio0, hgpio1, hgpio2, hgpio3, hgpio4,
++                  hgpio5, hgpio6, hgpio7, bu4, bu4b, bu5, bu5b, bu6, gpo187 ]
+ 
+       function:
+         description:
+           The function that a group of pins is muxed to
+-        enum: [ iox1, iox2, smb1d, smb2d, lkgpo1, lkgpo2, ioxh, gspi,
+-                smb5b, smb5c, lkgpo0, pspi, jm1, jm2, smb4den, smb4b,
+-                smb4c, smb15, smb16, smb17, smb18, smb19, smb20, smb21,
+-                smb22, smb23, smb23b, smb4d, smb14, smb5, smb4, smb3,
+-                spi0cs1, spi0cs2, spi0cs3, spi1cs0, spi1cs1, spi1cs2,
+-                spi1cs3, spi1cs23, smb3c, smb3b, bmcuart0a, uart1, jtag2,
+-                bmcuart1, uart2, sg1mdio, bmcuart0b, r1err, r1md, r1oen,
+-                r2oen, rmii3, r3oen, smb3d, fanin0, fanin1, fanin2, fanin3,
+-                fanin4, fanin5, fanin6, fanin7, fanin8, fanin9, fanin10,
++        enum: [ iox1, iox2, smb1d, smb2d, lkgpo1, lkgpo2, ioxh, gspi, smb5b,
++                smb5c, lkgpo0, pspi, jm1, jm2, smb4b, smb4c, smb15, smb16,
++                smb17, smb18, smb19, smb20, smb21, smb22, smb23, smb23b, smb4d,
++                smb14, smb5, smb4, smb3, spi0cs1, spi0cs2, spi0cs3, spi1cs0,
++                spi1cs1, spi1cs2, spi1cs3, spi1cs23, smb3c, smb3b, bmcuart0a,
++                uart1, jtag2, bmcuart1, uart2, sg1mdio, bmcuart0b, r1err, r1md,
++                r1oen, r2oen, rmii3, r3oen, smb3d, fanin0, fanin1, fanin2,
++                fanin3, fanin4, fanin5, fanin6, fanin7, fanin8, fanin9, fanin10,
+                 fanin11, fanin12, fanin13, fanin14, fanin15, pwm0, pwm1, pwm2,
+                 pwm3, r2, r2err, r2md, r3rxer, ga20kbc, smb5d, lpc, espi, rg2,
+                 ddr, i3c0, i3c1, i3c2, i3c3, i3c4, i3c5, smb0, smb1, smb2,
+                 smb2c, smb2b, smb1c, smb1b, smb8, smb9, smb10, smb11, sd1,
+                 sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8, pwm9, pwm10, pwm11,
+-                mmc8, mmc, mmcwp, mmccd, mmcrst, clkout, serirq, lpcclk,
+-                scipme, smi, smb6, smb6b, smb6c, smb6d, smb7, smb7b, smb7c,
+-                smb7d, spi1, faninx, r1, spi3, spi3cs1, spi3quad, spi3cs2,
+-                spi3cs3, nprd_smi, smb0b, smb0c, smb0den, smb0d, ddc, rg2mdio,
+-                wdog1, wdog2, smb12, smb13, spix, spixcs1, clkreq, hgpio0,
+-                hgpio1, hgpio2, hgpio3, hgpio4, hgpio5, hgpio6, hgpio7, bu4,
+-                bu4b, bu5, bu5b, bu6, gpo187 ]
++                mmc8, mmc, mmcwp, mmccd, mmcrst, clkout, serirq, scipme, smi,
++                smb6, smb6b, smb6c, smb6d, smb7, smb7b, smb7c, smb7d, spi1,
++                faninx, r1, spi3, spi3cs1, spi3quad, spi3cs2, spi3cs3, nprd_smi,
++                smb0b, smb0c, smb0den, smb0d, ddc, rg2mdio, wdog1, wdog2,
++                smb12, smb13, spix, spixcs1, clkreq, hgpio0, hgpio1, hgpio2,
++                hgpio3, hgpio4, hgpio5, hgpio6, hgpio7, bu4, bu4b, bu5, bu5b,
++                bu6, gpo187 ]
+ 
+     dependencies:
+       groups: [ function ]
 -- 
 2.34.1
 
