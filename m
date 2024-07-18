@@ -1,59 +1,59 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716EA81AD7
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 09:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9709A8175F
+	for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294926; cv=none; b=QZGuP049mQitqxClyhdroktohrttGyKGaA8MNcFTmi1ppjpto6FGF/wzUYZCF2UlTvj4nNn2ZHW8gAUhvtBFhhSvdDP1IrpUtR/aCuBOIu8a/TXGUZt3yzFrOJo2zdTnJ2aUULn4wKIxWrfKFmAT4h0xMJv34k/mR7dX4LiKeuA=
+	t=1721294927; cv=none; b=D477IuNrKzNqYg1KLXnjDY8Lgah6X+fLgiCV5TIErG/qEY8a0ha7wzy57Z2OURY3hT4gjr0LqZoR8YgU9OooRWLZF3t3zO4YATx5LZawIh43rmmYOWMZpktPkQX+hddsbbIXzXvEDV7vX4Z1EQBrKP1rEXr17/Q4DQBJnZXUnuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294926; c=relaxed/simple;
-	bh=+cpgB/sUNLElfXii6HKp8dxHm/FplVyOSKb0xmgMpzo=;
+	s=arc-20240116; t=1721294927; c=relaxed/simple;
+	bh=0wcMfzQFhzlij302GMY4WZ9ixIi9No6G7LpkeBET8qU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aI9nWeh1bLOjyFh+OEunpGATyorqywnr9vSCkM/e5jcVKUr1KPfGpn6Fzj6YVNkNLNzugNDB7txDwm9afeB1rP6iBPRIgILZTs665noH7PMPNJ9Iy1UZrjxf7ABO0wWv+uxRgKbw+3UY5O1nJwSYmvd9sRPqY2fwHJg3lZBSbtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=c4McRYFi; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=MfTJr5l93Z2FwlsbGDL6AiZnt3F5+5fNY2u5qJGcwLNIbV+ZqniVEljtoIEBFaXefa4CF+p3SGa3YKHIKD6CGJb0xpPG7vMJ78FXNw81iMLiit5gz0PrGPPHCbUXxcgJHt9mAWwq4uqefPnN7+Vsy3FTHYlsslhnj1B/ZxwJbr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hFIsg2GX; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="c4McRYFi"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso184023f8f.3
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 02:28:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hFIsg2GX"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42679f33fefso761475e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 02:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721294921; x=1721899721; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721294923; x=1721899723; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DzDjC3x46ghGclx++6S3uqoVesqd7loVQVZvAOGTIsw=;
-        b=c4McRYFirwmkuEqsboWfjdQR2Dd0zFJ7BqoohROVZObFFEia89EyIfw6ObySlShdrG
-         a5NIY5UIu9/JCobwSE2EdSOaDZFBeU1bVKkT8nNokpjM6GGU6NxGGna6gC14YEQ0X+ka
-         YcyO5IzXyZaGZYLKQ2VvQVgRB8wQ3RCxk90dI68xKxPnIiEIsk0PM8VZ3tFFGJRlb4YF
-         u43jC4gRZV5Cd/mlpYSePpT9jmvEeuKSuFLevfl9LAyC2oEGzqmS9FEbZyHrNacobipH
-         4wYz4IjGV5aKDho4uHCAi6ygd8nRtm7xk4OPaO4OBMcn3ljG8DoxgPXEySIjyCG++k88
-         cqcQ==
+        bh=Qd6HF4U7ga46pzIv7o3cy2nIOXwA07Q8xGTDHh89CXo=;
+        b=hFIsg2GX69oKabzPwbJQuEpsGPXBsGZrFVvhP1nF1i1J3cAfRQdpQlVZQLUVbGeVVI
+         C1MrO/Z227fXO2fFUybhvaQJf1wf7+wE9G3WlqTWTAdHzF1csAhzuyTQ7QST9R4cXXbi
+         trSwwNyz+7QRTylhXRYBOTLSGMEUOa+EwoiJs0j9mVevHXMzJIQ7Dq981HktaqqOMIWX
+         Kbne+di3N6dNATHQI9luPovbHWV0PngbM/RgoF9rIxiy2cRv+6qtCV84r/l7OKbAawS6
+         TY8/XG4jGK0uInfzX9Ejs1yHQGHt04ECFE0YZcE0c448PHLrYGBpjThdNTz3n+KEme9M
+         E8fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721294921; x=1721899721;
+        d=1e100.net; s=20230601; t=1721294923; x=1721899723;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DzDjC3x46ghGclx++6S3uqoVesqd7loVQVZvAOGTIsw=;
-        b=UK/lIqRnJmQQ4tgktLfJUtrD+VHU2OWlW7mNYRy4q/v3Z8Ox6uWIEylbEZx9wyzkSX
-         rS7VSdDzSCR38BFCV/Eowh/aT1RrMbKisx3e8EgUKZuoCLHxcHVMP3sj4bAH4hJLh90M
-         ButS5TpXlH6KC5pmSpl4pGdp8ipSwFHDc3L6ZH9qwAay8/CEdPc0LLS16kFr9d00ZD7P
-         s3jQhO3y2V3Ys4suPXc1GFq4VBhob6wyyuF0zJxd2D3D/hkKCDuYa5LRz7/NEQdiLo/f
-         VVr3/h3j4Oj+ej2X+/C2fOcBjz6fx3VD++YCojoBgxepfuoN9DOIDtCeIKNYHmq9HQds
-         YXFw==
-X-Gm-Message-State: AOJu0YweheGqiTVTox8WnpW9k4EDvLszyvvX1cN4pHu9FTOAc4W/3dqF
-	EJAmgjcOoISHrvb1GCOCIjoIGQR56QZBh5Wv7FbivIcQdAPivTuO5gNu1qce/Ss=
-X-Google-Smtp-Source: AGHT+IEvcGg0BbSI63Xluszyrs5zgRNwpQ9OqQE7TD2pJKb550x7Q9I0xtsgsEZo+MOGEC/+vHlBHA==
-X-Received: by 2002:a5d:56ce:0:b0:367:9877:750e with SMTP id ffacd0b85a97d-36831605880mr2533471f8f.25.1721294920243;
-        Thu, 18 Jul 2024 02:28:40 -0700 (PDT)
+        bh=Qd6HF4U7ga46pzIv7o3cy2nIOXwA07Q8xGTDHh89CXo=;
+        b=wvUG+qfCuXcP7osUeIqHLU+UWeDdHe6Wt1eZDWONAqQrrYaUcN5NBECB1Ow3bJgQC6
+         L2dizntNuq+DII1/itAUvKDxP+ANhdXV8U+nOyHFLpmbah0QkpDdb/egEduwFVj3CV21
+         4Dt21hGXlgCxdKw8WreUffxAtms35a6zpq+QAoQrmbLUyBe+E/g4fkeqVP3okVwwkEqn
+         5YkZSdqPrvLl8zF9YZpiar62Zm7+p6V10VB4SXh4K1xbTFwWGmMntJNfGDIFhC2rPiKb
+         5/xtzlpaHGNpyKsQh9x586hVTWzCQTp8KIf7vrUaxtCMjYGjWK+hYc/FqlWt/1D7vDiU
+         Aaqw==
+X-Gm-Message-State: AOJu0Yy5ya6c8/y/yLz/aVF/ryXbTF4R8LOiqgtHFRkUVlQC9qTazER6
+	fpJ4cWlKU3Ekk3xw5PMHbS/qLqiaVuJiRntHwMGy7BOqzSIdBW7QRbO3NBav2zk=
+X-Google-Smtp-Source: AGHT+IHVzHe/XYOAunXf9u+/jwUH4jX0IagE9PjcC6wH+lTzAFgmjIYYk/0HTSAbOF3U84sL8fAhyQ==
+X-Received: by 2002:a5d:64c5:0:b0:368:326e:1df6 with SMTP id ffacd0b85a97d-3685e166c4fmr628324f8f.19.1721294922740;
+        Thu, 18 Jul 2024 02:28:42 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:58d4:2f84:5fcd:8259])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0489csm13792849f8f.104.2024.07.18.02.28.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0489csm13792849f8f.104.2024.07.18.02.28.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 02:28:38 -0700 (PDT)
+        Thu, 18 Jul 2024 02:28:42 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 11:27:58 +0200
-Subject: [PATCH libgpiod v3 04/18] bindings: glib: add public headers
+Date: Thu, 18 Jul 2024 11:28:00 +0200
+Subject: [PATCH libgpiod v3 06/18] bindings: glib: add examples
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240718-dbus-v3-4-c9ea2604f082@linaro.org>
+Message-Id: <20240718-dbus-v3-6-c9ea2604f082@linaro.org>
 References: <20240718-dbus-v3-0-c9ea2604f082@linaro.org>
 In-Reply-To: <20240718-dbus-v3-0-c9ea2604f082@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -77,1693 +77,1028 @@ Cc: linux-gpio@vger.kernel.org, dbus@lists.freedesktop.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Alexander Sverdlin <alexander.sverdlin@siemens.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=50408;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=31642;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=o1YHZRtKPcoebq8WsM64/quJLEmVtRjxOJv66s5/IcE=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmmOA+iOEiLMBjoIzgfSvJ0Kr/chFsiQNrSEZui
- rsfmbniZkqJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZpjgPgAKCRARpy6gFHHX
- cnqyEADWKUUioK6KbyKVrJvomP0icca+36isVt+/uOaN7O7oFtQP/a5d8mGTuf9GbwGNOW8dclU
- NNskn7L5aITXM0zsnOwHhTqJ4AEs8hvlM16hO7z7KFlV331Hoa9lJAsvvQlGlRLc971/zVDyxXR
- Wc6+ECFMGo43tAT7fzuK9D79TxHwNrWSIZOez6heKhVXLDo4S1sv3EVWEeMu+C/N9CchFyyx54Q
- sFUfZwG+wlyOdbeOoib21b5RC/zF/8j1B4O1peS0Q0d6sSlIybu6e5z7yXKyCbjHa/UvyktCwfC
- z/AgH8IQy5Nv9V7YtWFixUyxCy8eWVHqdPBRs+BaGSa7dZOqTBtG4dyiQYNgzxXACnkI4R31vto
- aWu7S/BxQwlujk36u0SP33wZkHfYSsQfmDT6POESD0OCjdHh8c0RYbYqMTwRahYRdafWmY9FAcw
- vm444mtk/ZFL8uum6+/l74FuLiDy8DXrWEhThSGcPo8O8ZbrZ1qCVEyeWtjD71V+gRUc20xS7Jx
- j50PfU3lq5Dw2rLduVxhS3aHSqXecZZbvXqu84iAVuBX3gpMcEEWgUBlkg/nPQxqyOkNR2cG3cx
- sFpy+f6yvEC8T8JXHddLnbHc8sfyGCbPVc3+Cbrk0AE5ZGp1WDQp9YPQr6SDEi7iH2bt+RFAIgD
- 87dqCHAf0Wj3pKw==
+ bh=Nx2jQK96MCHStiHw0hjoMB4LTQ6/Kzp5NdUqfe+LYVk=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmmOA/fj/apbswDyJku+xP9ytqH2LqYwb59GilT
+ FPVAlYXW9+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZpjgPwAKCRARpy6gFHHX
+ ckTqD/0b0pz6LI6Nxx3Wubhwh1mDp+1cp4+6aoApvduQ5mLBCoYY6yMThdJ3hGIZAazBoK5R3kE
+ zQySQUpCWasdUZ0O5g3nvGKaRGSoiaJpddYeAoCVZv1+tIjbtFJbG+fwNP4ga7aFK/qwSgSbw/I
+ xaS4Bltr0Pu2aFuDZGBx0aK/Hr1iewLIDXI8rRrgKOPg/iGolv3g3luKSSK2HxA7rDY/gXuHB45
+ aqUrnl9WquAt7c+BS6j/wJfe0FVXv4JP/G8VjcE8ogm336khEOB7pjhiXke9copOCdqx5rQQL2+
+ KalbI6yIJbwAl2BO5euFcXpNBfzKWVhC8yjt5OZfWoTPk9olDut0MBuVSnrMhKLgVD4X7Id+ISa
+ A6o2O4LXzHa0hvOJ2t8GwTjBa2Ok7mSk2dasc/lGT78EfpSzs4CSDLwgD1a0ARuO1P3ln9XG5H2
+ rG1KplN8SRsXAVMH9fg08Z74+2VzwaAFV24xRoqFEwRJe5z8PMCeQkTN4iKkICN+pEvosdsnfUV
+ MA/RGw2+JcvCjMIzbEmFrM1mlpySDFC12KZ7Ayx1DvUZlMqyJY0FVKK74dKaasVed2/Sm2YdQFR
+ UjbyvP2xrP4WaH3/utObnqPb9MeBOUTSwuL3w0bcjV/qJJQ8gCL66Xr4cYlD/5THnaTwM4s64rN
+ ru+a5a2+XowanuQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the public headers for GLib bindings. They contain the entire API
-together with Doxygen comments.
+Add example programs showcasing the usage of GLib bindings to libgpiod.
 
 Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/glib/generated-enums.h.template  |  30 +++++
- bindings/glib/gpiod-glib.h                |  33 +++++
- bindings/glib/gpiod-glib/chip-info.h      |  86 ++++++++++++
- bindings/glib/gpiod-glib/chip.h           | 167 ++++++++++++++++++++++++
- bindings/glib/gpiod-glib/edge-event.h     | 115 ++++++++++++++++
- bindings/glib/gpiod-glib/error.h          |  67 ++++++++++
- bindings/glib/gpiod-glib/info-event.h     |  98 ++++++++++++++
- bindings/glib/gpiod-glib/line-config.h    | 118 +++++++++++++++++
- bindings/glib/gpiod-glib/line-info.h      | 175 +++++++++++++++++++++++++
- bindings/glib/gpiod-glib/line-request.h   | 186 ++++++++++++++++++++++++++
- bindings/glib/gpiod-glib/line-settings.h  | 209 ++++++++++++++++++++++++++++++
- bindings/glib/gpiod-glib/line.h           | 114 ++++++++++++++++
- bindings/glib/gpiod-glib/misc.h           |  51 ++++++++
- bindings/glib/gpiod-glib/request-config.h | 112 ++++++++++++++++
- 14 files changed, 1561 insertions(+)
+ bindings/glib/examples/find_line_by_name_glib.c    |  71 +++++++++++
+ bindings/glib/examples/get_chip_info_glib.c        |  42 +++++++
+ bindings/glib/examples/get_line_info_glib.c        |  80 +++++++++++++
+ bindings/glib/examples/get_line_value_glib.c       |  68 +++++++++++
+ .../glib/examples/get_multiple_line_values_glib.c  |  73 ++++++++++++
+ .../examples/reconfigure_input_to_output_glib.c    | 104 ++++++++++++++++
+ bindings/glib/examples/toggle_line_value_glib.c    |  99 ++++++++++++++++
+ .../examples/toggle_multiple_line_values_glib.c    | 132 +++++++++++++++++++++
+ bindings/glib/examples/watch_line_info_glib.c      |  63 ++++++++++
+ bindings/glib/examples/watch_line_value_glib.c     |  91 ++++++++++++++
+ .../examples/watch_multiple_edge_rising_glib.c     |  95 +++++++++++++++
+ 11 files changed, 918 insertions(+)
 
-diff --git a/bindings/glib/generated-enums.h.template b/bindings/glib/generated-enums.h.template
+diff --git a/bindings/glib/examples/find_line_by_name_glib.c b/bindings/glib/examples/find_line_by_name_glib.c
 new file mode 100644
-index 0000000..94f3763
+index 0000000..ee8766e
 --- /dev/null
-+++ b/bindings/glib/generated-enums.h.template
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
++++ b/bindings/glib/examples/find_line_by_name_glib.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/*** BEGIN file-header ***/
-+
-+#ifndef __GPIODGLIB_GENERATED_ENUMS_H__
-+#define __GPIODGLIB_GENERATED_ENUMS_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
-+
-+G_BEGIN_DECLS
-+/*** END file-header ***/
-+
-+/*** BEGIN file-production ***/
-+
-+/*** END file-production ***/
-+
-+/*** BEGIN value-header ***/
-+GType @enum_name@_get_type(void) G_GNUC_CONST;
-+#define @ENUMPREFIX@_@ENUMSHORT@_TYPE (@enum_name@_get_type())
-+/*** END value-header ***/
-+
-+/*** BEGIN file-tail ***/
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_GENERATED_ENUMS_H__ */
-+/*** END file-tail ***/
-diff --git a/bindings/glib/gpiod-glib.h b/bindings/glib/gpiod-glib.h
-new file mode 100644
-index 0000000..228f540
---- /dev/null
-+++ b/bindings/glib/gpiod-glib.h
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
-+
-+/**
-+ * @file gpiod-glib.h
-+ */
-+
-+#ifndef __GPIOD_GLIB_H__
-+#define __GPIOD_GLIB_H__
-+
-+/**
-+ * @defgroup gpiodglib GLib bindings
-+ *
-+ * GLib bindings for libgpiod representing all data structures using the
-+ * GObject type system.
-+ */
-+
-+#define __GPIOD_GLIB_INSIDE__
-+#include "gpiod-glib/chip.h"
-+#include "gpiod-glib/chip-info.h"
-+#include "gpiod-glib/edge-event.h"
-+#include "gpiod-glib/error.h"
-+#include "gpiod-glib/generated-enums.h"
-+#include "gpiod-glib/info-event.h"
-+#include "gpiod-glib/line-config.h"
-+#include "gpiod-glib/line-info.h"
-+#include "gpiod-glib/line-request.h"
-+#include "gpiod-glib/line-settings.h"
-+#include "gpiod-glib/misc.h"
-+#include "gpiod-glib/request-config.h"
-+#undef __GPIOD_GLIB_INSIDE__
-+
-+#endif /* __GPIOD_GLIB_H__ */
-diff --git a/bindings/glib/gpiod-glib/chip-info.h b/bindings/glib/gpiod-glib/chip-info.h
-new file mode 100644
-index 0000000..8eea3e8
---- /dev/null
-+++ b/bindings/glib/gpiod-glib/chip-info.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
-+
-+/**
-+ * @file chip-info.h
-+ */
-+
-+#ifndef __GPIODGLIB_CHIP_INFO_H__
-+#define __GPIODGLIB_CHIP_INFO_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of finding a line with the given name. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+G_BEGIN_DECLS
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const line_name = "GPIO0";
 +
-+/**
-+ * @cond
-+ */
++	g_autoptr(GpiodglibChipInfo) info = NULL;
++	g_autoptr(GError) err = NULL;
++	g_autoptr(GDir) dir = NULL;
++	const gchar *filename;
++	gboolean ret;
++	guint offset;
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibChipInfo, gpiodglib_chip_info,
-+		     GPIODGLIB, CHIP_INFO, GObject);
++	dir = g_dir_open("/dev", 0, &err);
++	if (err) {
++		g_printerr("Unable to open /dev: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_chip_info GPIO chip info GObject
-+ * @{
-+ *
-+ * Represents an immutable snapshot of GPIO chip information.
-+ */
++	/*
++	 * Names are not guaranteed unique, so this finds the first line with
++	 * the given name.
++	 */
++	while ((filename = g_dir_read_name(dir))) {
++		g_autoptr(GpiodglibChip) chip = NULL;
++		g_autofree gchar *path = NULL;
++		g_autofree gchar *name = NULL;
 +
-+/**
-+ * @brief Get the GObject type for the GPIO chip-info.
-+ */
-+#define GPIODGLIB_CHIP_INFO_TYPE (gpiodglib_chip_info_get_type())
++		path = g_build_filename("/dev", filename, NULL);
++		if (!gpiodglib_is_gpiochip_device(path))
++			continue;
 +
-+/**
-+ * @brief Cast a GObject to a GPIO chip-info concrete GObject.
-+ */
-+#define GPIODGLIB_CHIP_INFO_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_CHIP_INFO_TYPE, \
-+				    GpiodglibChipInfo))
++		chip = gpiodglib_chip_new(path, &err);
++		if (err) {
++			g_printerr("Failed to open the GPIO chip at '%s': %s\n",
++				   path, err->message);
++			return EXIT_FAILURE;
++		}
 +
-+/**
-+ * @brief Get the name of the chip as represented in the kernel.
-+ * @param self GPIO chip info object to manipulate.
-+ * @return Valid pointer to a human-readable string containing the chip name.
-+ *         The returned string is a copy and must be freed by the caller using
-+ *         g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_chip_info_dup_name(GpiodglibChipInfo *self);
++		ret = gpiodglib_chip_get_line_offset_from_name(chip, line_name,
++							       &offset, &err);
++		if (!ret) {
++			g_printerr("Failed to map the line name '%s' to offset: %s\n",
++				   line_name, err->message);
++			return EXIT_FAILURE;
++		}
 +
-+/**
-+ * @brief Get the label of the chip as represented in the kernel.
-+ * @param self GPIO chip info object to manipulate.
-+ * @return Valid pointer to a human-readable string containing the chip label.
-+ *         The returned string is a copy and must be freed by the caller using
-+ *         g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_chip_info_dup_label(GpiodglibChipInfo *self);
++		info = gpiodglib_chip_get_info(chip, &err);
++		if (!info) {
++			g_printerr("Failed to get chip info: %s\n",
++				   err->message);
++			return EXIT_FAILURE;
++		}
 +
-+/**
-+ * @brief Get the number of lines exposed by the chip.
-+ * @param self GPIO chip info object to manipulate.
-+ * @return Number of GPIO lines.
-+ */
-+guint gpiodglib_chip_info_get_num_lines(GpiodglibChipInfo *self);
++		name = gpiodglib_chip_info_dup_name(info);
 +
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
++		g_print("%s %u\n", name, offset);
++	}
 +
-+G_END_DECLS
++	g_print("line '%s' not found\n", line_name);
 +
-+#endif /* __GPIODGLIB_CHIP_INFO_H__ */
-diff --git a/bindings/glib/gpiod-glib/chip.h b/bindings/glib/gpiod-glib/chip.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/get_chip_info_glib.c b/bindings/glib/examples/get_chip_info_glib.c
 new file mode 100644
-index 0000000..00c833d
+index 0000000..ccdf437
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/chip.h
-@@ -0,0 +1,167 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/get_chip_info_glib.c
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file chip.h
-+ */
-+
-+#ifndef __GPIODGLIB_CHIP_H__
-+#define __GPIODGLIB_CHIP_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of reading the info for a chip. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "chip-info.h"
-+#include "line-config.h"
-+#include "line-info.h"
-+#include "line-request.h"
-+#include "request-config.h"
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip0";
 +
-+G_BEGIN_DECLS
++	g_autoptr(GpiodglibChipInfo) info = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autofree gchar *label = NULL;
++	g_autofree gchar *name = NULL;
++	g_autoptr(GError) err = NULL;
 +
-+/**
-+ * @cond
-+ */
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (err) {
++		g_printerr("Failed to open the GPIO chip at '%s': %s\n",
++			   chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibChip, gpiodglib_chip, GPIODGLIB, CHIP, GObject);
++	info = gpiodglib_chip_get_info(chip, &err);
++	if (err) {
++		g_printerr("Failed to retrieve GPIO chip info: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_chip GPIO chip GObject
-+ * @{
-+ *
-+ * This type represents a GPIO chip. In addition to the methods defined here,
-+ * it exposes the `info-event` signal with the following signature:
-+ *
-+ *     void (*)(GpiodglibChip *, GpiodglibInfoEvent *, gpointer)
-+ */
++	name = gpiodglib_chip_info_dup_name(info);
++	label = gpiodglib_chip_info_dup_label(info);
 +
-+/**
-+ * @brief Get the GObject type for the GPIO chip.
-+ */
-+#define GPIODGLIB_CHIP_TYPE (gpiodglib_chip_get_type())
++	g_print("%s [%s] (%u lines)\n",
++		name, label, gpiodglib_chip_info_get_num_lines(info));
 +
-+/**
-+ * @brief Cast a GObject to a GPIO chip concrete GObject.
-+ */
-+#define GPIODGLIB_CHIP_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_CHIP_TYPE, GpiodglibChip))
-+
-+/**
-+ * @brief Instantiates a new chip object by opening the device file indicated
-+ *        by \p path.
-+ * @param path Path to the device file to open.
-+ * @param err Return location for error or NULL.
-+ * @return New GPIO chip object.
-+ */
-+GpiodglibChip *gpiodglib_chip_new(const gchar *path, GError **err);
-+
-+/**
-+ * @brief Close the GPIO chip device file and free associated resources.
-+ * @param self Chip object to manipulate.
-+ * @note The chip object can live after calling this method but any of
-+ *       the chip's methods will result in an error being set.
-+ */
-+void gpiodglib_chip_close(GpiodglibChip *self);
-+
-+/**
-+ * @brief Check if this object is valid.
-+ * @param self Chip object to manipulate.
-+ * @return TRUE if this object's methods can be used, FALSE otherwise.
-+ *         False usually means the chip was closed. If the user calls
-+ *         any of the methods of this class on an object for which this
-+ *         operator returned false, a logic_error will be thrown.
-+ */
-+gboolean gpiodglib_chip_is_closed(GpiodglibChip *self);
-+
-+/**
-+ * @brief Get the filesystem path that was used to open this GPIO chip.
-+ * @param self Chip object to manipulate.
-+ * @return Path to the underlying character device file. The string is a copy
-+ *         and must be freed by the caller with g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_chip_dup_path(GpiodglibChip *self);
-+
-+/**
-+ * @brief Get information about the chip.
-+ * @param self Chip object to manipulate.
-+ * @param err Return location for error or NULL.
-+ * @return New GPIO chip info object.
-+ */
-+GpiodglibChipInfo *gpiodglib_chip_get_info(GpiodglibChip *self, GError **err);
-+
-+/**
-+ * @brief Retrieve the current snapshot of line information for a single line.
-+ * @param self Chip object to manipulate.
-+ * @param offset Offset of the line to get the info for.
-+ * @param err Return location for error or NULL.
-+ * @return New GPIO line info object.
-+ */
-+GpiodglibLineInfo *
-+gpiodglib_chip_get_line_info(GpiodglibChip *self, guint offset, GError **err);
-+
-+/**
-+ * @brief Retrieve the current snapshot of line information for a single line
-+ *        and start watching this line for future changes.
-+ * @param self Chip object to manipulate.
-+ * @param offset Offset of the line to get the info for and to watch.
-+ * @param err Return location for error or NULL.
-+ * @return New GPIO line info object.
-+ */
-+GpiodglibLineInfo *
-+gpiodglib_chip_watch_line_info(GpiodglibChip *self, guint offset, GError **err);
-+
-+/**
-+ * @brief Stop watching the line at given offset for info events.
-+ * @param self Chip object to manipulate.
-+ * @param offset Offset of the line to get the info for.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean
-+gpiodglib_chip_unwatch_line_info(GpiodglibChip *self, guint offset,
-+				 GError **err);
-+
-+/**
-+ * @brief Map a GPIO line's name to its offset within the chip.
-+ * @param self Chip object to manipulate.
-+ * @param name Name of the GPIO line to map.
-+ * @param offset Return location for the mapped offset.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean
-+gpiodglib_chip_get_line_offset_from_name(GpiodglibChip *self, const gchar *name,
-+					 guint *offset, GError **err);
-+
-+/**
-+ * @brief Request a set of lines for exclusive usage.
-+ * @param self Chip object to manipulate.
-+ * @param req_cfg Request config object. Can be NULL for default settings.
-+ * @param line_cfg Line config object.
-+ * @param err Return location for error or NULL.
-+ * @return New GPIO line request object or NULL on failure.
-+ */
-+GpiodglibLineRequest *
-+gpiodglib_chip_request_lines(GpiodglibChip *self,
-+			     GpiodglibRequestConfig *req_cfg,
-+			     GpiodglibLineConfig *line_cfg, GError **err);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_CHIP_H__ */
-diff --git a/bindings/glib/gpiod-glib/edge-event.h b/bindings/glib/gpiod-glib/edge-event.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/get_line_info_glib.c b/bindings/glib/examples/get_line_info_glib.c
 new file mode 100644
-index 0000000..bbcf2b3
+index 0000000..bd49332
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/edge-event.h
-@@ -0,0 +1,115 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/get_line_info_glib.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file edge-event.h
-+ */
-+
-+#ifndef __GPIODGLIB_EDGE_EVENT_H__
-+#define __GPIODGLIB_EDGE_EVENT_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of reading the info for a line. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "line-info.h"
++static GString *make_flags(GpiodglibLineInfo *info)
++{
++	g_autofree gchar *drive_str = NULL;
++	g_autofree gchar *edge_str = NULL;
++	g_autofree gchar *bias_str = NULL;
++	GpiodglibLineDrive drive;
++	GpiodglibLineEdge edge;
++	GpiodglibLineBias bias;
++	GString *ret;
 +
-+G_BEGIN_DECLS
++	edge = gpiodglib_line_info_get_edge_detection(info);
++	bias = gpiodglib_line_info_get_bias(info);
++	drive = gpiodglib_line_info_get_drive(info);
 +
-+/**
-+ * @cond
-+ */
++	edge_str = g_enum_to_string(GPIODGLIB_LINE_EDGE_TYPE, edge);
++	bias_str = g_enum_to_string(GPIODGLIB_LINE_BIAS_TYPE, bias);
++	drive_str = g_enum_to_string(GPIODGLIB_LINE_DRIVE_TYPE, drive);
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibEdgeEvent, gpiodglib_edge_event,
-+		     GPIODGLIB, EDGE_EVENT, GObject);
++	ret = g_string_new(NULL);
++	g_string_printf(ret, "%s, %s, %s", edge_str, bias_str, drive_str);
++	g_string_replace(ret, "GPIODGLIB_LINE_", "", 0);
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_edge_event GPIO edge-event GObject
-+ * @{
-+ *
-+ * An edge event object contains information about a single line edge event.
-+ * It contains the event type, timestamp and the offset of the line on which
-+ * the event occurred as well as two sequence numbers (global for all lines
-+ * in the associated request and local for this line only).
-+ */
++	return ret;
++}
 +
-+/**
-+ * @brief Get the GObject type for the GPIO edge-event.
-+ */
-+#define GPIODGLIB_EDGE_EVENT_TYPE (gpiodglib_edge_event_get_type())
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip0";
++	static const guint line_offset = 4;
 +
-+/**
-+ * @brief Cast a GObject to a GPIO edge-event concrete GObject.
-+ */
-+#define GPIODGLIB_EDGE_EVENT_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_EDGE_EVENT_TYPE, \
-+				    GpiodglibEdgeEvent))
++	g_autoptr(GpiodglibLineInfo) info = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autofree gchar *consumer = NULL;
++	GpiodglibLineDirection direction;
++	g_autoptr(GString) flags = NULL;
++	g_autofree gchar *name = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean active_low;
 +
-+/**
-+ * @brief Event types.
-+ */
-+typedef enum {
-+	GPIODGLIB_EDGE_EVENT_RISING_EDGE = 1,
-+	/**< Rising edge event. */
-+	GPIODGLIB_EDGE_EVENT_FALLING_EDGE,
-+	/**< Falling edge event. */
-+} GpiodglibEdgeEventType;
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (err) {
++		g_printerr("Failed to open the GPIO chip at '%s': %s\n",
++			   chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the event type.
-+ * @param self GPIO edge event to manipulate.
-+ * @return The event type (::GPIODGLIB_EDGE_EVENT_RISING_EDGE or
-+ *         ::GPIODGLIB_EDGE_EVENT_FALLING_EDGE).
-+ */
-+GpiodglibEdgeEventType
-+gpiodglib_edge_event_get_event_type(GpiodglibEdgeEvent *self);
++	info = gpiodglib_chip_get_line_info(chip, line_offset, &err);
++	if (err) {
++		g_printerr("Failed to retrieve GPIO line info: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the timestamp of the event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Timestamp in nanoseconds.
-+ * @note The source clock for the timestamp depends on the event_clock
-+ *       setting for the line.
-+ */
-+guint64 gpiodglib_edge_event_get_timestamp_ns(GpiodglibEdgeEvent *self);
++	name = gpiodglib_line_info_dup_name(info);
++	consumer = gpiodglib_line_info_dup_consumer(info);
++	direction = gpiodglib_line_info_get_direction(info);
++	active_low = gpiodglib_line_info_is_active_low(info);
++	flags = make_flags(info);
 +
-+/**
-+ * @brief Get the offset of the line which triggered the event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Line offset.
-+ */
-+guint gpiodglib_edge_event_get_line_offset(GpiodglibEdgeEvent *self);
++	g_print("\tline: %u %s %s %s %s [%s]\n",
++		line_offset,
++		name ?: "unnamed",
++		consumer ?: "unused",
++		direction == GPIODGLIB_LINE_DIRECTION_INPUT ?
++					"input" : "output",
++		active_low ? "active-low" : "active-high",
++		flags->str);
 +
-+/**
-+ * @brief Get the global sequence number of the event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Sequence number of the event in the series of events for all lines
-+ *         in the associated line request.
-+ */
-+gulong gpiodglib_edge_event_get_global_seqno(GpiodglibEdgeEvent *self);
-+
-+/**
-+ * @brief Get the event sequence number specific to the line.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Sequence number of the event in the series of events only for this
-+ *         line within the lifetime of the associated line request.
-+ */
-+gulong gpiodglib_edge_event_get_line_seqno(GpiodglibEdgeEvent *self);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_EDGE_EVENT_H__ */
-diff --git a/bindings/glib/gpiod-glib/error.h b/bindings/glib/gpiod-glib/error.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/get_line_value_glib.c b/bindings/glib/examples/get_line_value_glib.c
 new file mode 100644
-index 0000000..738f080
+index 0000000..660ba7d
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/error.h
-@@ -0,0 +1,67 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/get_line_value_glib.c
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file error.h
-+ */
-+
-+#ifndef __GPIODGLIB_ERROR_H__
-+#define __GPIODGLIB_ERROR_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of reading a single line. */
 +
 +#include <glib.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+G_BEGIN_DECLS
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offset = 5;
 +
-+/**
-+ * @ingroup gpiodglib
-+ * @{
-+ */
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	guint offset;
++	gboolean ret;
 +
-+/**
-+ * @brief Get the libgpiod GObject error domain.
-+ */
-+#define GPIODGLIB_ERROR gpiodglib_error_quark()
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @}
-+ *
-+ * @cond
-+ */
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_val(offsets, line_offset);
 +
-+typedef enum {
-+	GPIODGLIB_ERR_FAILED = 1,
-+	GPIODGLIB_ERR_CHIP_CLOSED,
-+	GPIODGLIB_ERR_REQUEST_RELEASED,
-+	GPIODGLIB_ERR_PERM,
-+	GPIODGLIB_ERR_NOENT,
-+	GPIODGLIB_ERR_INTR,
-+	GPIODGLIB_ERR_IO,
-+	GPIODGLIB_ERR_NXIO,
-+	GPIODGLIB_ERR_E2BIG,
-+	GPIODGLIB_ERR_BADFD,
-+	GPIODGLIB_ERR_CHILD,
-+	GPIODGLIB_ERR_AGAIN,
-+	GPIODGLIB_ERR_NOMEM,
-+	GPIODGLIB_ERR_ACCES,
-+	GPIODGLIB_ERR_FAULT,
-+	GPIODGLIB_ERR_BUSY,
-+	GPIODGLIB_ERR_EXIST,
-+	GPIODGLIB_ERR_NODEV,
-+	GPIODGLIB_ERR_INVAL,
-+	GPIODGLIB_ERR_NOTTY,
-+	GPIODGLIB_ERR_PIPE,
-+} GPIODError;
++	settings = gpiodglib_line_settings_new("direction",
++					       GPIODGLIB_LINE_DIRECTION_INPUT,
++					       NULL);
 +
-+GQuark gpiodglib_error_quark(void);
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @endcond
-+ */
++	req_cfg = gpiodglib_request_config_new("consumer",
++					       "get-line-value-glib",
++					       NULL);
 +
-+G_END_DECLS
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+#endif /* __GPIODGLIB_ERROR_H__ */
-diff --git a/bindings/glib/gpiod-glib/info-event.h b/bindings/glib/gpiod-glib/info-event.h
++	ret = gpiodglib_line_request_get_value(request, line_offset,
++					       &offset, &err);
++	if (!ret) {
++		g_printerr("failed to read line values: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
++
++	g_print("%u\n", offset);
++
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/get_multiple_line_values_glib.c b/bindings/glib/examples/get_multiple_line_values_glib.c
 new file mode 100644
-index 0000000..b83bf16
+index 0000000..2b2e547
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/info-event.h
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/get_multiple_line_values_glib.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file info-event.h
-+ */
-+
-+#ifndef __GPIODGLIB_INFO_EVENT_H__
-+#define __GPIODGLIB_INFO_EVENT_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of reading multiple lines. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "line-info.h"
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offsets[] = { 5, 3, 7 };
++	static const gsize num_lines = 3;
 +
-+G_BEGIN_DECLS
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i, j;
 +
-+/**
-+ * @cond
-+ */
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	for (i = 0; i < num_lines; i++)
++		g_array_append_val(offsets, line_offsets[i]);
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibInfoEvent, gpiodglib_info_event,
-+		     GPIODGLIB, INFO_EVENT, GObject);
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_info_event GPIO info-event GObject
-+ * @{
-+ *
-+ * An info-event contains information about the event itself (timestamp, type)
-+ * as well as a snapshot of line's status in the form of a line-info object.
-+ */
++	settings = gpiodglib_line_settings_new("direction",
++					       GPIODGLIB_LINE_DIRECTION_INPUT,
++					       NULL);
 +
-+/**
-+ * @brief Get the GObject type for the GPIO info-event.
-+ */
-+#define GPIODGLIB_INFO_EVENT_TYPE (gpiodglib_info_event_get_type())
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Cast a GObject to a GPIO info-event concrete GObject.
-+ */
-+#define GPIODGLIB_INFO_EVENT_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_INFO_EVENT_TYPE, \
-+				    GpiodglibInfoEvent))
++	req_cfg = gpiodglib_request_config_new("consumer",
++					       "get-multiple-line-values",
++					       NULL);
 +
-+/**
-+ * @brief Line status change event types.
-+ */
-+typedef enum {
-+	GPIODGLIB_INFO_EVENT_LINE_REQUESTED = 1,
-+	/**< Line has been requested. */
-+	GPIODGLIB_INFO_EVENT_LINE_RELEASED,
-+	/**< Previously requested line has been released. */
-+	GPIODGLIB_INFO_EVENT_LINE_CONFIG_CHANGED,
-+	/**< Line configuration has changed. */
-+} GpiodglibInfoEventType;
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the event type of the status change event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return One of ::GPIODGLIB_INFO_EVENT_LINE_REQUESTED,
-+ *         ::GPIODGLIB_INFO_EVENT_LINE_RELEASED or
-+ *         ::GPIODGLIB_INFO_EVENT_LINE_CONFIG_CHANGED.
-+ */
-+GpiodglibInfoEventType
-+gpiodglib_info_event_get_event_type(GpiodglibInfoEvent *self);
++	ret = gpiodglib_line_request_get_values_subset(request, offsets,
++						       &values, &err);
++	if (!ret) {
++		g_printerr("failed to read line values: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the timestamp of the event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Timestamp in nanoseconds, read from the monotonic clock.
-+ */
-+guint64 gpiodglib_info_event_get_timestamp_ns(GpiodglibInfoEvent *self);
++	for (j = 0; j < values->len; j++)
++		g_print("%d ", g_array_index(values, GpiodglibLineValue, j));
++	g_print("\n");
 +
-+/**
-+ * @brief Get the snapshot of line-info associated with the event.
-+ * @param self GPIO edge event to manipulate.
-+ * @return Returns a new reference to the associated line-info object.
-+ */
-+GpiodglibLineInfo *gpiodglib_info_event_get_line_info(GpiodglibInfoEvent *self);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_INFO_EVENT_H__ */
-diff --git a/bindings/glib/gpiod-glib/line-config.h b/bindings/glib/gpiod-glib/line-config.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/reconfigure_input_to_output_glib.c b/bindings/glib/examples/reconfigure_input_to_output_glib.c
 new file mode 100644
-index 0000000..9b2a997
+index 0000000..9254cfb
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/line-config.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/reconfigure_input_to_output_glib.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file line-config.h
++/*
++ * Example of a bi-directional line requested as input and then switched
++ * to output.
 + */
-+
-+#ifndef __GPIODGLIB_LINE_CONFIG_H__
-+#define __GPIODGLIB_LINE_CONFIG_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "line-settings.h"
++int main(void)
++{
++	/* Example configuration - customize to suit your situation */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offset = 5;
 +
-+G_BEGIN_DECLS
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GError) err = NULL;
++	GpiodglibLineValue value;
++	gboolean ret;
 +
-+/**
-+ * @cond
-+ */
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_val(offsets, line_offset);
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibLineConfig, gpiodglib_line_config,
-+		     GPIODGLIB, LINE_CONFIG, GObject);
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_line_config GPIO line config GObject
-+ * @{
-+ *
-+ * The line-config object contains the configuration for lines that can be
-+ * used in two cases:
-+ *  - when making a line request
-+ *  - when reconfiguring a set of already requested lines.
-+ */
++	settings = gpiodglib_line_settings_new("direction",
++					       GPIODGLIB_LINE_DIRECTION_INPUT,
++					       NULL);
 +
-+/**
-+ * @brief Get the GObject type for the GPIO line-config.
-+ */
-+#define GPIODGLIB_LINE_CONFIG_TYPE (gpiodglib_line_config_get_type())
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Cast a GObject to a GPIO line-config concrete GObject.
-+ */
-+#define GPIODGLIB_LINE_CONFIG_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_LINE_CONFIG_TYPE, \
-+				    GpiodglibLineConfig))
++	req_cfg = gpiodglib_request_config_new("consumer",
++					       "reconfigure-input-to-output",
++					       NULL);
 +
-+/**
-+ * @brief Create a new line config object.
-+ * @return Empty line config object.
-+ */
-+GpiodglibLineConfig *gpiodglib_line_config_new(void);
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Reset the line config object.
-+ * @param self GPIO line config to manipulate.
-+ */
-+void gpiodglib_line_config_reset(GpiodglibLineConfig *self);
++	/* Read the current line value. */
++	ret = gpiodglib_line_request_get_value(request, line_offset,
++					       &value, &err);
++	if (!ret) {
++		g_printerr("failed to read line value: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Add line settings for a set of offsets.
-+ * @param self GPIO line config to manipulate.
-+ * @param offsets GArray of offsets for which to apply the settings.
-+ * @param settings Line settings to apply.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean
-+gpiodglib_line_config_add_line_settings(GpiodglibLineConfig *self,
-+					const GArray *offsets,
-+					GpiodglibLineSettings *settings,
-+					GError **err);
++	g_print("%s (input)\n",
++		value == GPIODGLIB_LINE_VALUE_ACTIVE ? "Active" : "Inactive");
 +
-+/**
-+ * @brief Get line settings for offset.
-+ * @param self GPIO line config to manipulate.
-+ * @param offset Offset for which to get line settings.
-+ * @return New reference to a line settings object.
-+ */
-+GpiodglibLineSettings *
-+gpiodglib_line_config_get_line_settings(GpiodglibLineConfig *self,
-+					guint offset);
++	/* Switch the line to an output and drive it high. */
++	gpiodglib_line_settings_set_direction(settings,
++					      GPIODGLIB_LINE_DIRECTION_OUTPUT);
++	gpiodglib_line_settings_set_output_value(settings,
++						 GPIODGLIB_LINE_VALUE_ACTIVE);
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Set output values for a number of lines.
-+ * @param self GPIO line config to manipulate.
-+ * @param values GArray containing the output values.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on error.
-+ */
-+gboolean gpiodglib_line_config_set_output_values(GpiodglibLineConfig *self,
-+						 const GArray *values,
-+						 GError **err);
++	/* Reconfigure lines. */
++	ret = gpiodglib_line_request_reconfigure_lines(request, line_cfg, &err);
++	if (!ret) {
++		g_printerr("failed to reconfigure lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get configured offsets.
-+ * @param self GPIO line config to manipulate.
-+ * @return GArray containing the offsets for which configuration has been set.
-+ */
-+GArray *gpiodglib_line_config_get_configured_offsets(GpiodglibLineConfig *self);
++	/* Report the current driven value. */
++	ret = gpiodglib_line_request_get_value(request, line_offset,
++					       &value, &err);
++	if (!ret) {
++		g_printerr("failed to read line value: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
++	g_print("%s (output)\n",
++		value == GPIODGLIB_LINE_VALUE_ACTIVE ? "Active" : "Inactive");
 +
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_LINE_CONFIG_H__ */
-diff --git a/bindings/glib/gpiod-glib/line-info.h b/bindings/glib/gpiod-glib/line-info.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/toggle_line_value_glib.c b/bindings/glib/examples/toggle_line_value_glib.c
 new file mode 100644
-index 0000000..1158a68
+index 0000000..e9e0e41
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/line-info.h
-@@ -0,0 +1,175 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/toggle_line_value_glib.c
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file line-info.h
-+ */
-+
-+#ifndef __GPIODGLIB_LINE_INFO_H__
-+#define __GPIODGLIB_LINE_INFO_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of periodically toggling a single line. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "line.h"
++typedef struct {
++	GpiodglibLineRequest *request;
++	guint line_offset;
++	GpiodglibLineValue value;
++} ToggleData;
 +
-+G_BEGIN_DECLS
++static gboolean toggle_line(gpointer user_data)
++{
++	ToggleData *data = user_data;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
 +
-+/**
-+ * @cond
-+ */
++	data->value = data->value == GPIODGLIB_LINE_VALUE_ACTIVE ?
++					GPIODGLIB_LINE_VALUE_INACTIVE :
++					GPIODGLIB_LINE_VALUE_ACTIVE;
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibLineInfo, gpiodglib_line_info,
-+		     GPIODGLIB, LINE_INFO, GObject);
++	ret = gpiodglib_line_request_set_value(data->request, data->line_offset,
++					       data->value, &err);
++	if (!ret) {
++		g_printerr("failed to set line value: %s\n", err->message);
++		exit(EXIT_FAILURE);
++	}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_line_info GPIO line-info GObject
-+ * @{
-+ *
-+ * Line info object contains an immutable snapshot of a line's status.
-+ *
-+ * The line info contains all the publicly available information about a
-+ * line, which does not include the line value. The line must be requested
-+ * to access the line value.
-+ */
++	g_print("%u=%s\n",
++		data->line_offset,
++		data->value == GPIODGLIB_LINE_VALUE_ACTIVE ?
++					"active" : "inactive");
 +
-+/**
-+ * @brief Get the GObject type for the GPIO line-info.
-+ */
-+#define GPIODGLIB_LINE_INFO_TYPE (gpiodglib_line_info_get_type())
++	return G_SOURCE_CONTINUE;
++}
 +
-+/**
-+ * @brief Cast a GObject to a GPIO line-info concrete GObject.
-+ */
-+#define GPIODGLIB_LINE_INFO_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_LINE_INFO_TYPE, \
-+				    GpiodglibLineInfo))
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offset = 5;
 +
-+/**
-+ * @brief Get the offset of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Offset of the line within the parent chip.
-+ *
-+ * The offset uniquely identifies the line on the chip. The combination of the
-+ * chip and offset uniquely identifies the line within the system.
-+ */
-+guint gpiodglib_line_info_get_offset(GpiodglibLineInfo *self);
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GMainLoop) loop = NULL;
++	g_autoptr(GError) err = NULL;
++	ToggleData data;
++	gboolean ret;
 +
-+/**
-+ * @brief Get the name of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Name of the GPIO line as it is represented in the kernel.
-+ *         This function returns a valid pointer to a null-terminated string
-+ *         or NULL if the line is unnamed. The string is a copy of the
-+ *         line name and must be freed by the caller with g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_line_info_dup_name(GpiodglibLineInfo *self);
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_val(offsets, line_offset);
 +
-+/**
-+ * @brief Check if the line is in use.
-+ * @param self GPIO line info object to manipulate.
-+ * @return True if the line is in use, false otherwise.
-+ *
-+ * The exact reason a line is busy cannot be determined from user space.
-+ * It may have been requested by another process or hogged by the kernel.
-+ * It only matters that the line is used and can't be requested until
-+ * released by the existing consumer.
-+ */
-+gboolean gpiodglib_line_info_is_used(GpiodglibLineInfo *self);
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the name of the consumer of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Name of the GPIO consumer as it is represented in the kernel.
-+ *         This function returns a valid pointer to a null-terminated string
-+ *         or NULL if the consumer name is not set. The string is a copy of the
-+ *         consumer label and must be freed by the caller with g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_line_info_dup_consumer(GpiodglibLineInfo *self);
++	settings = gpiodglib_line_settings_new("direction",
++					       GPIODGLIB_LINE_DIRECTION_OUTPUT,
++					       NULL);
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the direction setting of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Returns ::GPIODGLIB_LINE_DIRECTION_INPUT or
-+ *        ::GPIODGLIB_LINE_DIRECTION_OUTPUT.
-+ */
-+GpiodglibLineDirection
-+gpiodglib_line_info_get_direction(GpiodglibLineInfo *self);
++	req_cfg = gpiodglib_request_config_new("consumer", "toggle-line-value",
++					       NULL);
 +
-+/**
-+ * @brief Get the edge detection setting of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Returns ::GPIODGLIB_LINE_EDGE_NONE, ::GPIODGLIB_LINE_EDGE_RISING,
-+ *        ::GPIODGLIB_LINE_EDGE_FALLING or ::GPIODGLIB_LINE_EDGE_BOTH.
-+ */
-+GpiodglibLineEdge
-+gpiodglib_line_info_get_edge_detection(GpiodglibLineInfo *self);
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the bias setting of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Returns ::GPIODGLIB_LINE_BIAS_PULL_UP, ::GPIODGLIB_LINE_BIAS_PULL_DOWN,
-+ *         ::GPIODGLIB_LINE_BIAS_DISABLED or ::GPIODGLIB_LINE_BIAS_UNKNOWN.
-+ */
-+GpiodglibLineBias gpiodglib_line_info_get_bias(GpiodglibLineInfo *self);
++	data.request = request;
++	data.line_offset = line_offset;
++	data.value = GPIODGLIB_LINE_VALUE_INACTIVE;
 +
-+/**
-+ * @brief Get the drive setting of the line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Returns ::GPIODGLIB_LINE_DRIVE_PUSH_PULL,
-+ *         ::GPIODGLIB_LINE_DRIVE_OPEN_DRAIN or ::GPIODGLIB_LINE_DRIVE_OPEN_SOURCE.
-+ */
-+GpiodglibLineDrive gpiodglib_line_info_get_drive(GpiodglibLineInfo *self);
++	loop = g_main_loop_new(NULL, FALSE);
++	/* Do the GLib way: add a callback to be invoked from the main loop. */
++	g_timeout_add_seconds(1, toggle_line, &data);
 +
-+/**
-+ * @brief Check if the logical value of the line is inverted compared to the
-+ *        physical.
-+ * @param self GPIO line info object to manipulate.
-+ * @return TRUE if the line is "active-low", FALSE otherwise.
-+ */
-+gboolean gpiodglib_line_info_is_active_low(GpiodglibLineInfo *self);
++	g_main_loop_run(loop);
 +
-+/**
-+ * @brief Check if the line is debounced (either by hardware or by the kernel
-+ *        software debouncer).
-+ * @param self GPIO line info object to manipulate.
-+ * @return TRUE if the line is debounced, FALSE otherwise.
-+ */
-+gboolean gpiodglib_line_info_is_debounced(GpiodglibLineInfo *self);
-+
-+/**
-+ * @brief Get the debounce period of the line, in microseconds.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Debounce period in microseconds. 0 if the line is not debounced.
-+ */
-+GTimeSpan gpiodglib_line_info_get_debounce_period_us(GpiodglibLineInfo *self);
-+
-+/**
-+ * @brief Get the event clock setting used for edge event timestamps for the
-+ *        line.
-+ * @param self GPIO line info object to manipulate.
-+ * @return Returns ::GPIODGLIB_LINE_CLOCK_MONOTONIC, ::GPIODGLIB_LINE_CLOCK_HTE or
-+ *         ::GPIODGLIB_LINE_CLOCK_REALTIME.
-+ */
-+GpiodglibLineClock gpiodglib_line_info_get_event_clock(GpiodglibLineInfo *self);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_LINE_INFO_H__ */
-diff --git a/bindings/glib/gpiod-glib/line-request.h b/bindings/glib/gpiod-glib/line-request.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/toggle_multiple_line_values_glib.c b/bindings/glib/examples/toggle_multiple_line_values_glib.c
 new file mode 100644
-index 0000000..8d0d5e8
+index 0000000..d1b37b3
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/line-request.h
-@@ -0,0 +1,186 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/toggle_multiple_line_values_glib.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file line-request.h
-+ */
-+
-+#ifndef __GPIODGLIB_LINE_REQUEST_H__
-+#define __GPIODGLIB_LINE_REQUEST_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of periodically toggling multiple lines. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+G_BEGIN_DECLS
++typedef struct {
++	GpiodglibLineRequest *request;
++	GArray *offsets;
++	GArray *values;
++} ToggleData;
 +
-+/**
-+ * @cond
-+ */
++static void toggle_values(GArray *values)
++{
++	GpiodglibLineValue *value;
++	guint i;
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibLineRequest, gpiodglib_line_request,
-+		     GPIODGLIB, LINE_REQUEST, GObject);
++	for (i = 0; i < values->len; i++) {
++		value = &g_array_index(values, GpiodglibLineValue, i);
++		*value = *value == GPIODGLIB_LINE_VALUE_ACTIVE ?
++					GPIODGLIB_LINE_VALUE_INACTIVE :
++					GPIODGLIB_LINE_VALUE_ACTIVE;
++	}
++}
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_line_request GPIO line-request GObject
-+ * @{
-+ *
-+ * Line request object allows interacting with a set of requested GPIO lines.
-+ */
++static gboolean toggle_lines(gpointer user_data)
++{
++	ToggleData *data = user_data;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
++	guint i;
 +
-+/**
-+ * @brief Get the GObject type for the GPIO line-request.
-+ */
-+#define GPIODGLIB_LINE_REQUEST_TYPE (gpiodglib_line_request_get_type())
++	toggle_values(data->values);
 +
-+/**
-+ * @brief Cast a GObject to a GPIO line-request concrete GObject.
-+ */
-+#define GPIODGLIB_LINE_REQUEST_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_LINE_REQUEST_TYPE, \
-+				    GpiodglibLineRequest))
++	ret = gpiodglib_line_request_set_values_subset(data->request,
++						       data->offsets,
++						       data->values, &err);
++	if (!ret) {
++		g_printerr("failed to set line values: %s\n", err->message);
++		exit(EXIT_FAILURE);
++	}
 +
-+/**
-+ * @brief Release the requested lines and free all associated resources.
-+ * @param self GPIO line request object to manipulate.
-+ */
-+void gpiodglib_line_request_release(GpiodglibLineRequest *self);
++	for (i = 0; i < data->offsets->len; i++)
++		g_print("%u=%s ",
++			g_array_index(data->offsets, guint, i),
++			g_array_index(data->values,
++				      GpiodglibLineValue,
++				      i) == GPIODGLIB_LINE_VALUE_ACTIVE ?
++						"active" : "inactive");
++	g_print("\n");
 +
-+/**
-+ * @brief Check if this request was released.
-+ * @param self GPIO line request object to manipulate.
-+ * @return TRUE if this request was released and is no longer valid, FALSE
-+ *         otherwise.
-+ */
-+gboolean gpiodglib_line_request_is_released(GpiodglibLineRequest *self);
++	return G_SOURCE_CONTINUE;
++}
 +
-+/**
-+ * @brief Get the name of the chip this request was made on.
-+ * @param self GPIO line request object to manipulate.
-+ * @return Name the GPIO chip device. The string is a copy and must be freed
-+ *         by the caller using g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_line_request_dup_chip_name(GpiodglibLineRequest *self);
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offsets[] = { 5, 3, 7 };
++	static const GpiodglibLineValue line_values[] = {
++		GPIODGLIB_LINE_VALUE_ACTIVE,
++		GPIODGLIB_LINE_VALUE_ACTIVE,
++		GPIODGLIB_LINE_VALUE_INACTIVE
++	};
++	static const gsize num_lines = 3;
 +
-+/**
-+ * @brief Get the offsets of the lines in the request.
-+ * @param self GPIO line request object to manipulate.
-+ * @return Array containing the requested offsets.
-+ */
-+GArray *
-+gpiodglib_line_request_get_requested_offsets(GpiodglibLineRequest *self);
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GMainLoop) loop = NULL;
++	g_autoptr(GArray) values = NULL;
++	g_autoptr(GError) err = NULL;
++	ToggleData data;
++	gboolean ret;
 +
-+/**
-+ * @brief Update the configuration of lines associated with a line request.
-+ * @param self GPIO line request object to manipulate.
-+ * @param config New line config to apply.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ * @note The new line configuration completely replaces the old.
-+ * @note Any requested lines without overrides are configured to the requested
-+ *       defaults.
-+ * @note Any configured overrides for lines that have not been requested
-+ *       are silently ignored.
-+ */
-+gboolean gpiodglib_line_request_reconfigure_lines(GpiodglibLineRequest *self,
-+						  GpiodglibLineConfig *config,
-+						  GError **err);
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_vals(offsets, line_offsets, num_lines);
 +
-+/**
-+ * @brief Get the value of a single requested line.
-+ * @param self GPIO line request object to manipulate.
-+ * @param offset The offset of the line of which the value should be read.
-+ * @param value Return location for the value.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean
-+gpiodglib_line_request_get_value(GpiodglibLineRequest *self, guint offset,
-+				 GpiodglibLineValue *value, GError **err);
++	values = g_array_new(FALSE, TRUE, sizeof(GpiodglibLineValue));
++	g_array_append_vals(values, line_values, num_lines);
 +
-+/**
-+ * @brief Get the values of a subset of requested lines.
-+ * @param self GPIO line request object to manipulate.
-+ * @param offsets Array of offsets identifying the subset of requested lines
-+ *                from which to read values.
-+ * @param values Array in which the values will be stored. Can be NULL in which
-+ *               case a new array will be created and its location stored here.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean gpiodglib_line_request_get_values_subset(GpiodglibLineRequest *self,
-+						  const GArray *offsets,
-+						  GArray **values,
-+						  GError **err);
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Get the values of all requested lines.
-+ * @param self GPIO line request object to manipulate.
-+ * @param values Array in which the values will be stored. Can be NULL in which
-+ *               case a new array will be created and its location stored here.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean gpiodglib_line_request_get_values(GpiodglibLineRequest *self,
-+					   GArray **values, GError **err);
++	settings = gpiodglib_line_settings_new("direction",
++					       GPIODGLIB_LINE_DIRECTION_OUTPUT,
++					       NULL);
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s\n",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Set the value of a single requested line.
-+ * @param self GPIO line request object to manipulate.
-+ * @param offset The offset of the line for which the value should be set.
-+ * @param value Value to set.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean
-+gpiodglib_line_request_set_value(GpiodglibLineRequest *self, guint offset,
-+				 GpiodglibLineValue value, GError **err);
++	ret = gpiodglib_line_config_set_output_values(line_cfg, values, &err);
++	if (!ret) {
++		g_printerr("failed to set output values: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Set the values of a subset of requested lines.
-+ * @param self GPIO line request object to manipulate.
-+ * @param offsets Array of offsets identifying the requested lines for
-+ *                which to set values.
-+ * @param values Array in which the values will be stored. Can be NULL in which
-+ *               case a new array will be created and its location stored here.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean gpiodglib_line_request_set_values_subset(GpiodglibLineRequest *self,
-+						  const GArray *offsets,
-+						  const GArray *values,
-+						  GError **err);
++	req_cfg = gpiodglib_request_config_new("consumer", "toggle-line-value",
++					       NULL);
 +
-+/**
-+ * @brief Set the values of all lines associated with a request.
-+ * @param self GPIO line request object to manipulate.
-+ * @param values Array containing the values to set. Must be sized to
-+ *               contain the number of values equal to the number of requested
-+ *               lines. Each value is associated with the line identified by
-+ *               the corresponding entry in the offset array filled by
-+ *               ::gpiodglib_line_request_get_requested_offsets.
-+ *               case a new array will be created and its location stored here.
-+ * @param err Return location for error or NULL.
-+ * @return TRUE on success, FALSE on failure.
-+ */
-+gboolean gpiodglib_line_request_set_values(GpiodglibLineRequest *self,
-+					   GArray *values, GError **err);
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s\n", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
++	data.request = request;
++	data.offsets = offsets;
++	data.values = values;
 +
-+G_END_DECLS
++	loop = g_main_loop_new(NULL, FALSE);
++	/* Do the GLib way: add a callback to be invoked from the main loop. */
++	g_timeout_add_seconds(1, toggle_lines, &data);
 +
-+#endif /* __GPIODGLIB_LINE_REQUEST_H__ */
-diff --git a/bindings/glib/gpiod-glib/line-settings.h b/bindings/glib/gpiod-glib/line-settings.h
++	g_main_loop_run(loop);
++
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/watch_line_info_glib.c b/bindings/glib/examples/watch_line_info_glib.c
 new file mode 100644
-index 0000000..56eea40
+index 0000000..e3b3ae4
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/line-settings.h
-@@ -0,0 +1,209 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/watch_line_info_glib.c
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file line-settings.h
-+ */
-+
-+#ifndef __GPIODGLIB_LINE_SETTINGS_H__
-+#define __GPIODGLIB_LINE_SETTINGS_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of watching for requests on particular lines. */
 +
 +#include <glib.h>
-+#include <glib-object.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+#include "line.h"
++static void on_info_event(GpiodglibChip *chip G_GNUC_UNUSED,
++			  GpiodglibInfoEvent *event,
++			  gpointer data G_GNUC_UNUSED)
++{
++	g_autoptr(GpiodglibLineInfo) info = NULL;
++	g_autoptr(GString) event_name = NULL;
++	guint offset;
 +
-+G_BEGIN_DECLS
++	event_name = g_string_new(
++			g_enum_to_string(GPIODGLIB_INFO_EVENT_TYPE_TYPE,
++				gpiodglib_info_event_get_event_type(event)));
++	g_string_replace(event_name, "GPIODGLIB_INFO_EVENT_LINE_", "", 0);
++	info = gpiodglib_info_event_get_line_info(event);
++	offset = gpiodglib_line_info_get_offset(info);
 +
-+/**
-+ * @cond
-+ */
++	g_print("%s %u\n", event_name->str, offset);
++}
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibLineSettings, gpiodglib_line_settings,
-+		     GPIODGLIB, LINE_SETTINGS, GObject);
++int main(void)
++{
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offsets[] = { 5, 3, 7 };
++	static const gsize num_lines = 3;
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_line_settings GPIO line-settings GObject
-+ * @{
-+ *
-+ * Line settings object contains a set of line properties that can be used
-+ * when requesting lines or reconfiguring an existing request.
-+ */
++	g_autoptr(GMainLoop) loop = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GError) err = NULL;
++	guint i;
 +
-+/**
-+ * @brief Get the GObject type for the GPIO line-settings.
-+ */
-+#define GPIODGLIB_LINE_SETTINGS_TYPE (gpiodglib_line_settings_get_type())
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Cast a GObject to a GPIO line-settings concrete GObject.
-+ */
-+#define GPIODGLIB_LINE_SETTINGS_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_LINE_SETTINGS_TYPE, \
-+				    GpiodglibLineSettings))
++	for (i = 0; i < num_lines; i++) {
++		g_autoptr(GpiodglibLineInfo) info =
++			gpiodglib_chip_watch_line_info(chip, line_offsets[i],
++						       &err);
++		if (!info) {
++			g_printerr("unable to watch line info for offset %u: %s",
++				   line_offsets[1], err->message);
++			return EXIT_FAILURE;
++		}
++	}
 +
-+/**
-+ * @brief Create a new line settings object.
-+ * @param first_prop Name of the first property to set.
-+ * @return New line settings object.
-+ *
-+ * The constructor allows to set object's properties when it's first created
-+ * instead of having to build an empty object and then call mutators separately.
-+ *
-+ * Currently supported properties are: `direction`, `edge-detection`, `bias`,
-+ * `drive`, `debounce-period-us`, `active-low`, 'event-clock` and
-+ * `output-value`.
-+ */
-+GpiodglibLineSettings *
-+gpiodglib_line_settings_new(const gchar *first_prop, ...);
++	loop = g_main_loop_new(NULL, FALSE);
 +
-+/**
-+ * @brief Reset the line settings object to its default values.
-+ * @param self Line settings object to manipulate.
-+ */
-+void gpiodglib_line_settings_reset(GpiodglibLineSettings *self);
++	g_signal_connect(chip, "info-event", G_CALLBACK(on_info_event), NULL);
 +
-+/**
-+ * @brief Set direction.
-+ * @param self Line settings object to manipulate.
-+ * @param direction New direction.
-+ */
-+void gpiodglib_line_settings_set_direction(GpiodglibLineSettings *self,
-+					   GpiodglibLineDirection direction);
++	g_main_loop_run(loop);
 +
-+/**
-+ * @brief Get direction.
-+ * @param self Line settings object to manipulate.
-+ * @return Current direction.
-+ */
-+GpiodglibLineDirection
-+gpiodglib_line_settings_get_direction(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set edge detection.
-+ * @param self Line settings object to manipulate.
-+ * @param edge New edge detection setting.
-+ */
-+void gpiodglib_line_settings_set_edge_detection(GpiodglibLineSettings *self,
-+						GpiodglibLineEdge edge);
-+
-+/**
-+ * @brief Get edge detection.
-+ * @param self Line settings object to manipulate.
-+ * @return Current edge detection setting.
-+ */
-+GpiodglibLineEdge
-+gpiodglib_line_settings_get_edge_detection(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set bias.
-+ * @param self Line settings object to manipulate.
-+ * @param bias New bias.
-+ */
-+void gpiodglib_line_settings_set_bias(GpiodglibLineSettings *self,
-+				      GpiodglibLineBias bias);
-+
-+/**
-+ * @brief Get bias.
-+ * @param self Line settings object to manipulate.
-+ * @return Current bias setting.
-+ */
-+GpiodglibLineBias gpiodglib_line_settings_get_bias(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set drive.
-+ * @param self Line settings object to manipulate.
-+ * @param drive New drive setting.
-+ */
-+void gpiodglib_line_settings_set_drive(GpiodglibLineSettings *self,
-+				       GpiodglibLineDrive drive);
-+
-+/**
-+ * @brief Get drive.
-+ * @param self Line settings object to manipulate.
-+ * @return Current drive setting.
-+ */
-+GpiodglibLineDrive
-+gpiodglib_line_settings_get_drive(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set active-low setting.
-+ * @param self Line settings object to manipulate.
-+ * @param active_low New active-low setting.
-+ */
-+void gpiodglib_line_settings_set_active_low(GpiodglibLineSettings *self,
-+					    gboolean active_low);
-+
-+/**
-+ * @brief Get active-low setting.
-+ * @param self Line settings object to manipulate.
-+ * @return TRUE if active-low is enabled, FALSE otherwise.
-+ */
-+gboolean gpiodglib_line_settings_get_active_low(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set debounce period.
-+ * @param self Line settings object to manipulate.
-+ * @param period New debounce period in microseconds.
-+ */
-+void gpiodglib_line_settings_set_debounce_period_us(GpiodglibLineSettings *self,
-+						    GTimeSpan period);
-+
-+/**
-+ * @brief Get debounce period.
-+ * @param self Line settings object to manipulate.
-+ * @return Current debounce period in microseconds.
-+ */
-+GTimeSpan
-+gpiodglib_line_settings_get_debounce_period_us(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set event clock.
-+ * @param self Line settings object to manipulate.
-+ * @param event_clock New event clock.
-+ */
-+void gpiodglib_line_settings_set_event_clock(GpiodglibLineSettings *self,
-+					     GpiodglibLineClock event_clock);
-+
-+/**
-+ * @brief Get event clock setting.
-+ * @param self Line settings object to manipulate.
-+ * @return Current event clock setting.
-+ */
-+GpiodglibLineClock
-+gpiodglib_line_settings_get_event_clock(GpiodglibLineSettings *self);
-+
-+/**
-+ * @brief Set the output value.
-+ * @param self Line settings object to manipulate.
-+ * @param value New output value.
-+ */
-+void gpiodglib_line_settings_set_output_value(GpiodglibLineSettings *self,
-+					      GpiodglibLineValue value);
-+
-+/**
-+ * @brief Get the output value.
-+ * @param self Line settings object to manipulate.
-+ * @return Current output value.
-+ */
-+GpiodglibLineValue
-+gpiodglib_line_settings_get_output_value(GpiodglibLineSettings *self);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_LINE_SETTINGS_H__ */
-diff --git a/bindings/glib/gpiod-glib/line.h b/bindings/glib/gpiod-glib/line.h
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/watch_line_value_glib.c b/bindings/glib/examples/watch_line_value_glib.c
 new file mode 100644
-index 0000000..2022ee6
+index 0000000..2292f16
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/line.h
-@@ -0,0 +1,114 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/watch_line_value_glib.c
+@@ -0,0 +1,91 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file line.h
-+ */
-+
-+#ifndef __GPIODGLIB_LINE_H__
-+#define __GPIODGLIB_LINE_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++/* Minimal example of asynchronously watching for edges on a single line. */
 +
 +#include <glib.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+G_BEGIN_DECLS
++static void on_edge_event(GpiodglibLineRequest *request G_GNUC_UNUSED,
++			  GpiodglibEdgeEvent *event,
++			  gpointer data G_GNUC_UNUSED)
++{
++	g_autoptr(GString) event_name = NULL;
++	guint64 timestamp;
++	guint offset;
 +
-+/**
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gpiodglib_line Line definitions
-+ * @{
-+ *
-+ * These defines are used across the API.
-+ */
++	event_name = g_string_new(
++			g_enum_to_string(GPIODGLIB_EDGE_EVENT_TYPE_TYPE,
++				gpiodglib_edge_event_get_event_type(event)));
++	g_string_replace(event_name, "GPIODGLIB_EDGE_EVENT_", "", 0);
++	timestamp = gpiodglib_edge_event_get_timestamp_ns(event);
++	offset = gpiodglib_edge_event_get_line_offset(event);
 +
-+/**
-+ * @brief Logical line state.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_VALUE_INACTIVE = 0,
-+	/**< Line is logically inactive. */
-+	GPIODGLIB_LINE_VALUE_ACTIVE = 1,
-+	/**< Line is logically active. */
-+} GpiodglibLineValue;
++	g_print("%s %lu %u\n", event_name->str, timestamp, offset);
++}
 +
-+/**
-+ * @brief Direction settings.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_DIRECTION_AS_IS = 1,
-+	/**< Request the line(s), but don't change direction. */
-+	GPIODGLIB_LINE_DIRECTION_INPUT,
-+	/**< Direction is input - for reading the value of an externally driven
-+	     GPIO line. */
-+	GPIODGLIB_LINE_DIRECTION_OUTPUT,
-+	/**< Direction is output - for driving the GPIO line. */
-+} GpiodglibLineDirection;
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offset = 5;
 +
-+/**
-+ * @brief Edge detection settings.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_EDGE_NONE = 1,
-+	/**< Line edge detection is disabled. */
-+	GPIODGLIB_LINE_EDGE_RISING,
-+	/**< Line detects rising edge events. */
-+	GPIODGLIB_LINE_EDGE_FALLING,
-+	/**< Line detects falling edge events. */
-+	GPIODGLIB_LINE_EDGE_BOTH,
-+	/**< Line detects both rising and falling edge events. */
-+} GpiodglibLineEdge;
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GMainLoop) loop = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
 +
-+/**
-+ * @brief Internal bias settings.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_BIAS_AS_IS = 1,
-+	/**< Don't change the bias setting when applying line config. */
-+	GPIODGLIB_LINE_BIAS_UNKNOWN,
-+	/**< The internal bias state is unknown. */
-+	GPIODGLIB_LINE_BIAS_DISABLED,
-+	/**< The internal bias is disabled. */
-+	GPIODGLIB_LINE_BIAS_PULL_UP,
-+	/**< The internal pull-up bias is enabled. */
-+	GPIODGLIB_LINE_BIAS_PULL_DOWN,
-+	/**< The internal pull-down bias is enabled. */
-+} GpiodglibLineBias;
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_val(offsets, line_offset);
 +
-+/**
-+ * @brief Drive settings.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_DRIVE_PUSH_PULL = 1,
-+	/**< Drive setting is push-pull. */
-+	GPIODGLIB_LINE_DRIVE_OPEN_DRAIN,
-+	/**< Line output is open-drain. */
-+	GPIODGLIB_LINE_DRIVE_OPEN_SOURCE,
-+	/**< Line output is open-source. */
-+} GpiodglibLineDrive;
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @brief Clock settings.
-+ */
-+typedef enum {
-+	GPIODGLIB_LINE_CLOCK_MONOTONIC = 1,
-+	/**< Line uses the monotonic clock for edge event timestamps. */
-+	GPIODGLIB_LINE_CLOCK_REALTIME,
-+	/**< Line uses the realtime clock for edge event timestamps. */
-+	GPIODGLIB_LINE_CLOCK_HTE,
-+	/**< Line uses the hardware timestamp engine for event timestamps. */
-+} GpiodglibLineClock;
++	/*
++	 * Assume a button connecting the pin to ground, so pull it up and
++	 * provide some debounce.
++	 */
++	settings = gpiodglib_line_settings_new(
++			"direction", GPIODGLIB_LINE_DIRECTION_INPUT,
++			"edge-detection", GPIODGLIB_LINE_EDGE_BOTH,
++			"bias", GPIODGLIB_LINE_BIAS_PULL_UP,
++			"debounce-period-us", 1000,
++			NULL);
 +
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+G_END_DECLS
++	req_cfg = gpiodglib_request_config_new("consumer", "watch-line-value",
++					       NULL);
 +
-+#endif /* __GPIODGLIB_LINE_H__ */
-diff --git a/bindings/glib/gpiod-glib/misc.h b/bindings/glib/gpiod-glib/misc.h
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s", err->message);
++		return EXIT_FAILURE;
++	}
++
++	loop = g_main_loop_new(NULL, FALSE);
++
++	/* Connect to the edge-event signal on the line-request. */
++	g_signal_connect(request, "edge-event",
++			 G_CALLBACK(on_edge_event), NULL);
++
++	g_main_loop_run(loop);
++
++	return EXIT_SUCCESS;
++}
+diff --git a/bindings/glib/examples/watch_multiple_edge_rising_glib.c b/bindings/glib/examples/watch_multiple_edge_rising_glib.c
 new file mode 100644
-index 0000000..f148baf
+index 0000000..aa47713
 --- /dev/null
-+++ b/bindings/glib/gpiod-glib/misc.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++++ b/bindings/glib/examples/watch_multiple_edge_rising_glib.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+/**
-+ * @file misc.h
++/*
++ * Minimal example of asynchronously watching for rising edges on multiple
++ * lines.
 + */
-+
-+#ifndef __GPIODGLIB_MISC_H__
-+#define __GPIODGLIB_MISC_H__
-+
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
 +
 +#include <glib.h>
++#include <gpiod-glib.h>
++#include <stdlib.h>
 +
-+G_BEGIN_DECLS
++static void on_edge_event(GpiodglibLineRequest *request G_GNUC_UNUSED,
++			  GpiodglibEdgeEvent *event,
++			  gpointer data G_GNUC_UNUSED)
++{
++	g_autoptr(GString) event_name = NULL;
++	guint64 timestamp;
++	guint offset;
 +
-+/**
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gpiodglib_misc Misc functions.
-+ * @{
-+ */
++	event_name = g_string_new(
++			g_enum_to_string(GPIODGLIB_EDGE_EVENT_TYPE_TYPE,
++				gpiodglib_edge_event_get_event_type(event)));
++	g_string_replace(event_name, "GPIODGLIB_EDGE_EVENT_", "", 0);
++	timestamp = gpiodglib_edge_event_get_timestamp_ns(event);
++	offset = gpiodglib_edge_event_get_line_offset(event);
 +
-+/**
-+ * @brief Check if the file pointed to by path is a GPIO chip character device.
-+ * @param path Path to check.
-+ * @return TRUE if the file exists and is either a GPIO chip character device
-+ *         or a symbolic link to one, FALSE otherwise.
-+ */
-+gboolean gpiodglib_is_gpiochip_device(const gchar *path);
++	g_print("%s %lu %u\n", event_name->str, timestamp, offset);
++}
 +
-+/**
-+ * @brief Get the API version of the library as a human-readable string.
-+ * @return A valid pointer to a human-readable string containing the library
-+ *         version. The pointer is valid for the lifetime of the program and
-+ *         must not be freed by the caller.
-+ */
-+const gchar *gpiodglib_api_version(void);
++int main(void)
++{
++	/* Example configuration - customize to suit your situation. */
++	static const gchar *const chip_path = "/dev/gpiochip1";
++	static const guint line_offsets[] = { 5, 3, 7 };
++	static const gsize num_lines = 3;
 +
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
++	g_autoptr(GpiodglibRequestConfig) req_cfg = NULL;
++	g_autoptr(GpiodglibLineSettings) settings = NULL;
++	g_autoptr(GpiodglibLineRequest) request = NULL;
++	g_autoptr(GpiodglibLineConfig) line_cfg = NULL;
++	g_autoptr(GpiodglibChip) chip = NULL;
++	g_autoptr(GArray) offsets = NULL;
++	g_autoptr(GMainLoop) loop = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean ret;
 +
-+G_END_DECLS
++	offsets = g_array_new(FALSE, TRUE, sizeof(guint));
++	g_array_append_vals(offsets, line_offsets, num_lines);
 +
-+#endif /* __GPIODGLIB_MISC_H__ */
-diff --git a/bindings/glib/gpiod-glib/request-config.h b/bindings/glib/gpiod-glib/request-config.h
-new file mode 100644
-index 0000000..0d1160d
---- /dev/null
-+++ b/bindings/glib/gpiod-glib/request-config.h
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++	chip = gpiodglib_chip_new(chip_path, &err);
++	if (!chip) {
++		g_printerr("unable to open %s: %s\n", chip_path, err->message);
++		return EXIT_FAILURE;
++	}
 +
-+/**
-+ * @file request-config.h
-+ */
++	/*
++	 * Assume a button connecting the pin to ground, so pull it up and
++	 * provide some debounce.
++	 */
++	settings = gpiodglib_line_settings_new(
++			"direction", GPIODGLIB_LINE_DIRECTION_INPUT,
++			"edge-detection", GPIODGLIB_LINE_EDGE_RISING,
++			"bias", GPIODGLIB_LINE_BIAS_PULL_UP,
++			"debounce-period-us", 1000,
++			NULL);
 +
-+#ifndef __GPIODGLIB_REQUEST_CONFIG_H__
-+#define __GPIODGLIB_REQUEST_CONFIG_H__
++	line_cfg = gpiodglib_line_config_new();
++	ret = gpiodglib_line_config_add_line_settings(line_cfg, offsets,
++						      settings, &err);
++	if (!ret) {
++		g_printerr("failed to add line settings to line config: %s",
++			   err->message);
++		return EXIT_FAILURE;
++	}
 +
-+#if !defined (__GPIODGLIB_INSIDE__)
-+#error "Only <gpiod-glib.h> can be included directly."
-+#endif
++	req_cfg = gpiodglib_request_config_new(NULL);
++	gpiodglib_request_config_set_consumer(req_cfg, "watch-multiline-value");
 +
-+#include <glib.h>
-+#include <glib-object.h>
++	request = gpiodglib_chip_request_lines(chip, req_cfg, line_cfg, &err);
++	if (!request) {
++		g_printerr("failed to request lines: %s", err->message);
++		return EXIT_FAILURE;
++	}
 +
-+G_BEGIN_DECLS
++	loop = g_main_loop_new(NULL, FALSE);
 +
-+/**
-+ * @cond
-+ */
++	/* Connect to the edge-event signal on the line-request. */
++	g_signal_connect(request, "edge-event",
++			 G_CALLBACK(on_edge_event), NULL);
 +
-+G_DECLARE_FINAL_TYPE(GpiodglibRequestConfig, gpiodglib_request_config,
-+		     GPIODGLIB, REQUEST_CONFIG, GObject);
++	g_main_loop_run(loop);
 +
-+/**
-+ * @endcond
-+ *
-+ * @ingroup gpiodglib
-+ * @{
-+ *
-+ * @defgroup gobject_request_config GPIO request-config GObject
-+ * @{
-+ *
-+ * Request config objects are used to pass a set of options to the kernel at
-+ * the time of the line request.
-+ */
-+
-+/**
-+ * @brief Get the GObject type for the GPIO request-config.
-+ */
-+#define GPIODGLIB_REQUEST_CONFIG_TYPE (gpiodglib_request_config_get_type())
-+
-+/**
-+ * @brief Cast a GObject to a GPIO request-config concrete GObject.
-+ */
-+#define GPIODGLIB_REQUEST_CONFIG_OBJ(obj) \
-+	(G_TYPE_CHECK_INSTANCE_CAST((obj), GPIODGLIB_REQUEST_CONFIG_TYPE, \
-+				    GpiodglibRequestConfig))
-+
-+/**
-+ * @brief Create a new request config object.
-+ * @param first_prop Name of the first property to set.
-+ * @return New request config object.
-+ *
-+ * The constructor allows to set object's properties when it's first created
-+ * instead of having to build an empty object and then call mutators separately.
-+ *
-+ * Currently supported properties are: `consumer` and `event-buffer-size`.
-+ */
-+GpiodglibRequestConfig *
-+gpiodglib_request_config_new(const gchar *first_prop, ...);
-+
-+/**
-+ * @brief Set the consumer name for the request.
-+ * @param self GPIO request config object to manipulate.
-+ * @param consumer Consumer name.
-+ * @note If the consumer string is too long, it will be truncated to the max
-+ *       accepted length.
-+ */
-+void gpiodglib_request_config_set_consumer(GpiodglibRequestConfig *self,
-+					   const gchar *consumer);
-+
-+/**
-+ * @brief Get the consumer name configured in the request config.
-+ * @param self GPIO request config object to manipulate.
-+ * @return Consumer name stored in the request config. The returned string is
-+ *         a copy and must be freed by the caller using g_free().
-+ */
-+gchar * G_GNUC_WARN_UNUSED_RESULT
-+gpiodglib_request_config_dup_consumer(GpiodglibRequestConfig *self);
-+
-+/**
-+ * @brief Set the size of the kernel event buffer for the request.
-+ * @param self GPIO request config object to manipulate.
-+ * @param event_buffer_size New event buffer size.
-+ * @note The kernel may adjust the value if it's too high. If set to 0, the
-+ *       default value will be used.
-+ */
-+void
-+gpiodglib_request_config_set_event_buffer_size(GpiodglibRequestConfig *self,
-+					       guint event_buffer_size);
-+
-+
-+/**
-+ * @brief Get the edge event buffer size for the request config.
-+ * @param self GPIO request config object to manipulate.
-+ * @return Edge event buffer size setting from the request config.
-+ */
-+guint
-+gpiodglib_request_config_get_event_buffer_size(GpiodglibRequestConfig *self);
-+
-+/**
-+ * @}
-+ *
-+ * @}
-+ */
-+
-+G_END_DECLS
-+
-+#endif /* __GPIODGLIB_REQUEST_CONFIG_H__ */
++	return EXIT_SUCCESS;
++}
 
 -- 
 2.43.0
