@@ -1,60 +1,59 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B6E28DD1
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 09:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166B681AC7
+	for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 09:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294920; cv=none; b=jqlKy6oS1wojacdBA9f9ptjVSlg9o9x1FhMwWsIjjgij1cQrIK8WOTpVl/tQVYJ79LNCW6mutqk0cIXF6P1kJMEWPXrSCwZSXXnKhmGORT0iuq6DR32/KgSLkJd1c3g0LxNIEeKMqnSaDXytwmnwc5CDYMjlyBNBUk+kcRl04bk=
+	t=1721294922; cv=none; b=qZm242nRl63FTh3DIpVWeO/SrGvuOpsSsYbUD2YilZqIrZsawJWY0qc0onuw4Nv4nV5zQkBAeRZ5oJHnO05Yt56rFZlm1gU+al+gV9RM/GFQYMwBG/8leumv89GiUbW5eBqNl3aUCOathMIMxLJdiqX+NKeKHDER/sXKrwYfVrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294920; c=relaxed/simple;
-	bh=MSozu9z5WN0+sALAmnVaDjERWL6k0HXNzEEoXj0vn2s=;
+	s=arc-20240116; t=1721294922; c=relaxed/simple;
+	bh=9IJF7u3k9VjBMNdJxw6+myAapa94V8je+wHgs1LGYw4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e0+uDC3g5CtOB0xY23Sd27SNVajqSP846JVkxJ+U6fQtGmd9eZjPg7d4qVtR2oG30jZ6mMy1F8YTljecoIzw82w9/tDFq9QR4bSwl5QD7wSOk1LBDOwT7D2+8pN0nwfdj8e8T1xYeDNhAKciPg7TE5paEf17SQfuY9kEztPHwXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=E1P9BxJS; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=YJONZO13hs5F/iGEph3TVvuywO2L8jp4cOB+T1WOwH2ErwEtZexlKMRvrkfWjdX+00NRbpp6gNPOkc7yVeObwx0ZW3pkwH5+DQTBe1CktEy6JLYS2WkrpXKOK4dOab5IWoP1dzUrVDpBp1G2bYXQuFHWJUredXfjBn93yUmOGrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xaYshmCD; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="E1P9BxJS"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368526b1333so209969f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 02:28:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xaYshmCD"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so842335e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Jul 2024 02:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721294916; x=1721899716; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721294918; x=1721899718; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BirZvIipRdEW7YR8FNm+vf9VSBri/u/DJc7N5uiCqcs=;
-        b=E1P9BxJSo6F8rkpjrV/YQbg69XjDYJpNuMhtB0nsl7d1pu0IS6WBKypU9s3QI0axGL
-         ib9aXkxLOTTjt0cxdIhqEtrYmkq04LlavXEm5bb+QRNEPnrGtrf0k9p0WfKDel1Gj5JL
-         NbxJWhmSCECrOQzHg0Xla3qjX6pLMkan9cZh6Bb6VRpLxBFKspJKKOxtwxoX9Hlilhyj
-         vi6JzGbqNn6YFlzRxbJBdR9iwBnoq5qy41QsozOGC2wyx2G2e+wAa4HtLz+7JydjjCfC
-         tiLLQlZJiroIOYrWGBQUbzKiYpMMkRKtARm1dxdEBLnO22RwSgtgCsAtjMn/SHrSdPuX
-         k4oA==
+        bh=vhd6l0SPbiOnmh49slS/vdQ0qXadf5oHmz0JSOPf4Lg=;
+        b=xaYshmCDPC1vg5fiu0vCzfCdYoREc7slu5G+AxhFCndaNIxq/A98UA8UkR5xrAFPOT
+         D1+/70s+A2NHjA8uwp4qkbkHQKKK4VPyueiTSLtLCysWSf9/+ZKzMadySptFInSooVet
+         gSbxQlZUq+HVVWiiHnazHerKmetNuH6TOHAGoZuarYsQBTIeoebEbvRxAIupkACAXXar
+         rsLcjCfryicYREPpcpF9XW/oFY3ACNzEVXGc8rW/Wj3kine+wbqltbwkOhZCL8cUJwvm
+         rHJpRKaOjDCQHaVwalLmzy5ZgnrKTVd18VhbRNYUAjS6ZUO5DEt3VtJsf3IBmqEiur1R
+         MGcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721294916; x=1721899716;
+        d=1e100.net; s=20230601; t=1721294918; x=1721899718;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BirZvIipRdEW7YR8FNm+vf9VSBri/u/DJc7N5uiCqcs=;
-        b=aXKBVtLzGhFD4P0kTf9NsE/GLf7ujD0BGFEprBx8ZjnIEHzxoBdHhnufEwYkCCTw1A
-         67BmNPB4jzZ3I3MdEfIdMVY2cg2uLvlHY7pM+0L31G6VBJNJhpqfuDeuwYX4Kc2zS06d
-         dl1re7qBbZ9hNsJTDOh1BVRySKkPbdrLXyaqOe7MK0W/Jh34H2xO0Ac1XumedwwlnQya
-         fRYvYmG/pWxWrMTlzfN5TEXRB3t5NE/+sJK+m4Wrw4RJjqHfrBUB0rUIKmrZSP7qCCy5
-         kj5AW+WoCOoZBNggiaDEyOKjF6dgFd0Middn9gWwhKyapVD+VQpxF9LAYQtidkAQ54Us
-         oR3A==
-X-Gm-Message-State: AOJu0YzBbsvoaazAGNRnn56MOeF6U9CZEHVulXqu7qA+6Fy8mQ6Kubus
-	ooIWb8Hpu9iZv4ZPgYzpDOSrQfzwITW3NfbxWt2oDmYIchVbAJTd/5zzzTmiDYE=
-X-Google-Smtp-Source: AGHT+IG82FW3inEs7y+i9aMpUM8Q3U1pQTH48GRvImk0pUywjC6UI0+/ZwMa0kr+BtF8zjLFr4h06w==
-X-Received: by 2002:a5d:68c4:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-3684b3f70c6mr1347552f8f.27.1721294915882;
-        Thu, 18 Jul 2024 02:28:35 -0700 (PDT)
+        bh=vhd6l0SPbiOnmh49slS/vdQ0qXadf5oHmz0JSOPf4Lg=;
+        b=WWWzyrt54J5GxcmJ4Rkl1MxZ2AMzPAQ3fW3eXd2fFKwU+1TK8vEjg9XZIMJU0P92JA
+         XOyQxlBIyoogy+NtcTjUx8ESX9PTUVm1C3hTxT8/jMNuQO/syK2mszT7F3k9j6RpTJ8x
+         LyYcRyw03DhO6UUf9ZmBSG0inkDAlZUL/Ftr+IUPsnkvJe7IFKbp0TTFyY1phoI3I5ty
+         n8Z/mlvyrtqs74jhjJ1q6o/2i9nr+KzNHvNWRzSkDmTaUp/t52iZva9kGcetip6XTRZA
+         xFKxXGtmOWEGr7llH77DmDPXd0v9zx/ycDhzW8TwcDL2T1mD7ThQjqJU+K8XYZyDI1py
+         9b0w==
+X-Gm-Message-State: AOJu0YyAhL4i+GIOKC298bRk7aqxbTwTQpJomC4QiZZrTea3m/E5+VF1
+	cvEGjjQNEjQYJUd8BDFq7+Nn9VoGTOPgpjyTaCvl3YsN0E8rogtHG7v7c50yLnk=
+X-Google-Smtp-Source: AGHT+IGinjGytdI+FEpwi2qSf74wR+zZyapUGR1+9jJ1i4B9ErL0EV4nx2pGVEDYojhEC6Zj0e9vKw==
+X-Received: by 2002:a05:600c:4455:b0:426:5d4d:d759 with SMTP id 5b1f17b1804b1-427c2d01fa0mr36874195e9.24.1721294918193;
+        Thu, 18 Jul 2024 02:28:38 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:58d4:2f84:5fcd:8259])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0489csm13792849f8f.104.2024.07.18.02.28.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db0489csm13792849f8f.104.2024.07.18.02.28.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 02:28:35 -0700 (PDT)
+        Thu, 18 Jul 2024 02:28:37 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 11:27:55 +0200
-Subject: [PATCH libgpiod v3 01/18] tests: split out reusable test code into
- a local static library
+Date: Thu, 18 Jul 2024 11:27:57 +0200
+Subject: [PATCH libgpiod v3 03/18] bindings: glib: add build files
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,7 +62,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240718-dbus-v3-1-c9ea2604f082@linaro.org>
+Message-Id: <20240718-dbus-v3-3-c9ea2604f082@linaro.org>
 References: <20240718-dbus-v3-0-c9ea2604f082@linaro.org>
 In-Reply-To: <20240718-dbus-v3-0-c9ea2604f082@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -78,625 +77,410 @@ Cc: linux-gpio@vger.kernel.org, dbus@lists.freedesktop.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Alexander Sverdlin <alexander.sverdlin@siemens.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=18656;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12214;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=szXE5TlFuxBsWS+vMeZOwJRtXfQ9fBEF96xW6pIVXxo=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmmOA+AmQXnQ2fUB6HGsF1Oph644Z0JL5/y2MVm
- Hvrl0ucdLyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZpjgPgAKCRARpy6gFHHX
- csKqEACAQgGC6cWOCri1mqBGupBR5w3ot+cV+vFFFAnDtTFBZ5qOvHv4/ks0Z/0qe1RtU4P38zz
- Ac+yz/CzXGYk5imRwEJkvEArJV2p1KHRbc3L7s25S3AF6zIXtXOzAspjO4YPulkMz/ghVHRkr9p
- LklALY4Gt6uCfEhhaQZpTo1a/+HqytUbZcC/P+Cf6eevbKlFcZlTGP7nB6KVR2qKvjku5FWYfHj
- nUExswdSGpegSYIsdbUPMFm4u5oci+MlSBOWEjS3gMrO4sjRuFOBc+Y3LZ2nlBFRuIHf7TSlq+H
- tB+vDdMwU1rB3vGYxRA6iS+bjR7USGVFAkSGbXPyzt5MIDS+2vHxxGrpGNEP5fC8xFr01KAPPnz
- gmHrqfikpac065I8tRb3+KT7NTN9/YXJiTWZjagZAxplAL+xy88ssEG4dpaDbithAHJb7wWu8+m
- fJwty2vCTXHsMg2C3d9AOiKj6T1+SgWIddXhmatyu00xljiXu495yfrSfzUzAQ/Dtdg3en2saSG
- vbLqPpXuKHtlHChVDdu6KuR7JLanMWQyLzN9FbWoUVje3S1BRpEg1h2V+4GEAbQiQIwdtgm1Qys
- KYeNKOhEYv+PP8nbiekBxVKMFnu6nn/IZPQ20gnteT0xkuLR1bWG4QMCcsgqhP2J5KSfFd1YNy8
- GRhYrcirJZJubVQ==
+ bh=zATcDbJoxluULhCGOEgspkEZFBkz6WCs6uEOVR463Gc=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmmOA+HkUA0Zs88R+H4YE4v/9puobYEIAsAc5sQ
+ O6+0ynjTjiJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZpjgPgAKCRARpy6gFHHX
+ cmfKD/9WWKTUyy0g7QRb6Ohic779SmR0oFnpbq2wTOmFZNpKvDWZ9D48wwMuOEWTJGq3cb2Yyu+
+ 70SqYqmwKvsP4PJT4EWcW/dPzptUB7xstLGbxnXgMoCnOnWOw9H21BYQybwOehuILKmxeacl6fa
+ er6naor+KZvd1HZ/It14lCoYPwYhpk2Yh0xomRifWh/tvFZpHM6y1ch2kdbMJFfVkiwbZqpAa+o
+ 71NReXP1pFEyh8K5f1QWmXZBs5FXGP2PYAjnZKyognKiPx8H833d8Oca6RAHv8PSlSVnH9wRhiX
+ YioCZ/6WHdEOWrQdWHq6fmV6HYDqdkerQfEZnkrlw7XH8BJBPCTAQRTh/ETRMj0bg4nwQXUFng9
+ mcXEEe6BTVCzYst0VZPZKoHvWySbvqsJCcqH5XUaY4Rxeyrqfcz+I4e78CpuXWdAabD9AM4fIor
+ dNPCyVCBLKtp3q3fFqI6MyXRdE699WEbsow91QWF8gEfrsaDv8ZxkcS8WimXYUfiSiW4MXlc7LZ
+ /T/s5Mtry1knx8RXqk4qWao3aJjjzsjai3+X/9sysdEDkn+7zu3JuesrzhN56z2oznn7NCG0Rj4
+ 4Pv6G2RlT3khvZpAtdAU2SbpaKtwYxSvW97cVjV/cSI6XYn080JJbo/3oge4MI+fl8DF3fkAY5g
+ z8ebeVp6H3ZQHIA==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-In order to allow the upcoming GLib and DBus bindings to reuse the test
-code, let's put all common elements into reusable libtool objects and
-export the relevant symbols in internal headers.
+Add the directory structure and build files as well as changes to
+.gitignore and Doxygen.in for GLib bindings.
 
 Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- configure.ac                                       |  2 ++
- tests/Makefile.am                                  | 14 ++++----
- tests/gpiod-test-helpers.c                         | 41 ----------------------
- tests/gpiosim-glib/Makefile.am                     | 13 +++++++
- .../gpiosim-glib.c}                                | 30 +++++++++++++++-
- .../gpiosim-glib.h}                                | 14 ++++++++
- tests/harness/Makefile.am                          | 12 +++++++
- tests/harness/gpiod-test-common.h                  | 23 ++++++++++++
- tests/{ => harness}/gpiod-test.c                   |  0
- tests/{ => harness}/gpiod-test.h                   |  0
- tests/{gpiod-test-helpers.h => helpers.h}          | 36 ++-----------------
- tests/tests-chip-info.c                            |  7 ++--
- tests/tests-chip.c                                 | 15 ++++----
- tests/tests-edge-event.c                           |  7 ++--
- tests/tests-info-event.c                           |  7 ++--
- tests/tests-kernel-uapi.c                          |  7 ++--
- tests/tests-line-config.c                          |  7 ++--
- tests/tests-line-info.c                            | 11 +++---
- tests/tests-line-request.c                         |  7 ++--
- tests/tests-line-settings.c                        |  5 +--
- tests/tests-misc.c                                 |  7 ++--
- tests/tests-request-config.c                       |  5 +--
- 22 files changed, 150 insertions(+), 120 deletions(-)
+ .gitignore                           |   2 +
+ Doxyfile.in                          |   4 +-
+ bindings/Makefile.am                 |   7 +++
+ bindings/glib/.gitignore             |   5 ++
+ bindings/glib/Makefile.am            | 105 +++++++++++++++++++++++++++++++++++
+ bindings/glib/examples/.gitignore    |  14 +++++
+ bindings/glib/examples/Makefile.am   |  22 ++++++++
+ bindings/glib/gpiod-glib.pc.in       |  15 +++++
+ bindings/glib/gpiod-glib/Makefile.am |  18 ++++++
+ bindings/glib/tests/.gitignore       |   4 ++
+ bindings/glib/tests/Makefile.am      |  29 ++++++++++
+ configure.ac                         |  30 ++++++++++
+ 12 files changed, 254 insertions(+), 1 deletion(-)
 
-diff --git a/configure.ac b/configure.ac
-index b86eee0..d1f49ac 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -275,6 +275,8 @@ AC_CONFIG_FILES([Makefile
- 		 tools/Makefile
- 		 tests/Makefile
- 		 tests/gpiosim/Makefile
-+		 tests/gpiosim-glib/Makefile
-+		 tests/harness/Makefile
- 		 bindings/cxx/libgpiodcxx.pc
- 		 bindings/Makefile
- 		 bindings/cxx/Makefile
-diff --git a/tests/Makefile.am b/tests/Makefile.am
-index a5e1fe0..c89fd8d 100644
---- a/tests/Makefile.am
-+++ b/tests/Makefile.am
-@@ -1,25 +1,23 @@
+diff --git a/.gitignore b/.gitignore
+index cf66e97..c3a29d8 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,6 +4,8 @@
+ *.o
+ *.lo
+ *.la
++generated-*.c
++generated-*.h
+ doc
+ *.pc
+ *.tar.gz
+diff --git a/Doxyfile.in b/Doxyfile.in
+index 9c85e21..548a0da 100644
+--- a/Doxyfile.in
++++ b/Doxyfile.in
+@@ -46,7 +46,9 @@ WARN_FORMAT            =
+ WARN_LOGFILE           =
+ INPUT                  = @top_srcdir@/include/gpiod.h \
+                          @top_srcdir@/bindings/cxx/gpiod.hpp \
+-                         @top_srcdir@/bindings/cxx/gpiodcxx/
++                         @top_srcdir@/bindings/cxx/gpiodcxx/ \
++                         @top_srcdir@/bindings/glib/gpiod-glib.h \
++                         @top_srcdir@/bindings/glib/gpiod-glib/
+ SOURCE_BROWSER         = YES
+ INLINE_SOURCES         = NO
+ REFERENCED_BY_RELATION = YES
+diff --git a/bindings/Makefile.am b/bindings/Makefile.am
+index 004ae23..a177187 100644
+--- a/bindings/Makefile.am
++++ b/bindings/Makefile.am
+@@ -1,5 +1,6 @@
  # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2017-2022 Bartosz Golaszewski <brgl@bgdev.pl>
+ # SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
  
--SUBDIRS = gpiosim
-+SUBDIRS = gpiosim gpiosim-glib harness
+ SUBDIRS = .
  
--AM_CFLAGS = -I$(top_srcdir)/include/ -I$(top_srcdir)/tests/gpiosim/
-+AM_CFLAGS = -I$(top_srcdir)/include/ -I$(top_srcdir)/tests/gpiosim-glib/
-+AM_CFLAGS += -I$(top_srcdir)/tests/harness/
- AM_CFLAGS += -include $(top_builddir)/config.h
- AM_CFLAGS += -Wall -Wextra -g -std=gnu89 $(GLIB_CFLAGS) $(GIO_CFLAGS)
- AM_CFLAGS += -DG_LOG_DOMAIN=\"gpiod-test\"
- LDADD = $(top_builddir)/lib/libgpiod.la
- LDADD += $(top_builddir)/tests/gpiosim/libgpiosim.la
-+LDADD += $(top_builddir)/tests/gpiosim-glib/libgpiosim-glib.la
-+LDADD += $(top_builddir)/tests/harness/libgpiod-test-harness.la
- LDADD += $(GLIB_LIBS) $(GIO_LIBS)
+@@ -20,3 +21,9 @@ if WITH_BINDINGS_RUST
+ SUBDIRS += rust
  
- noinst_PROGRAMS = gpiod-test
- 
- gpiod_test_SOURCES = \
--	gpiod-test.c \
--	gpiod-test.h \
--	gpiod-test-helpers.c \
--	gpiod-test-helpers.h \
--	gpiod-test-sim.c \
--	gpiod-test-sim.h \
-+	helpers.h \
- 	tests-chip.c \
- 	tests-chip-info.c \
- 	tests-edge-event.c \
-diff --git a/tests/gpiod-test-helpers.c b/tests/gpiod-test-helpers.c
-deleted file mode 100644
-index 7e5b396..0000000
---- a/tests/gpiod-test-helpers.c
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/* SPDX-FileCopyrightText: 2017-2022 Bartosz Golaszewski <brgl@bgdev.pl> */
--
--/*
-- * Testing framework for the core library.
-- *
-- * This file contains functions and definitions extending the GLib unit testing
-- * framework with functionalities necessary to test the libgpiod core C API as
-- * well as the kernel-to-user-space interface.
-- */
--
--#include "gpiod-test-helpers.h"
--
--GVariant *
--gpiod_test_package_line_names(const GPIOSimLineName *names)
--{
--	g_autoptr(GVariantBuilder) builder = NULL;
--	const GPIOSimLineName *name;
--
--	builder = g_variant_builder_new(G_VARIANT_TYPE("a(us)"));
--
--	for (name = &names[0]; name->name; name++)
--		g_variant_builder_add(builder, "(us)",
--				      name->offset, name->name);
--
--	return g_variant_ref_sink(g_variant_new("a(us)", builder));
--}
--
--GVariant *gpiod_test_package_hogs(const GPIOSimHog *hogs)
--{
--	g_autoptr(GVariantBuilder) builder = NULL;
--	const GPIOSimHog *hog;
--
--	builder = g_variant_builder_new(G_VARIANT_TYPE("a(usi)"));
--
--	for (hog = &hogs[0]; hog->name; hog++)
--		g_variant_builder_add(builder, "(usi)",
--				      hog->offset, hog->name, hog->direction);
--
--	return g_variant_ref_sink(g_variant_new("a(usi)", builder));
--}
-diff --git a/tests/gpiosim-glib/Makefile.am b/tests/gpiosim-glib/Makefile.am
+ endif
++
++if WITH_BINDINGS_GLIB
++
++SUBDIRS += glib
++
++endif
+diff --git a/bindings/glib/.gitignore b/bindings/glib/.gitignore
 new file mode 100644
-index 0000000..1c01629
+index 0000000..9a7d424
 --- /dev/null
-+++ b/tests/gpiosim-glib/Makefile.am
-@@ -0,0 +1,13 @@
++++ b/bindings/glib/.gitignore
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: CC0-1.0
++# SPDX-FileCopyrightText: 2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++*.gir
++*.typelib
+diff --git a/bindings/glib/Makefile.am b/bindings/glib/Makefile.am
+new file mode 100644
+index 0000000..0f571c1
+--- /dev/null
++++ b/bindings/glib/Makefile.am
+@@ -0,0 +1,105 @@
 +# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++SUBDIRS = . gpiod-glib
++
++if WITH_TESTS
++
++SUBDIRS += tests
++
++endif
++
++if WITH_EXAMPLES
++
++SUBDIRS += examples
++
++endif
++
++lib_LTLIBRARIES = libgpiod-glib.la
++
++libgpiod_glib_la_SOURCES = \
++	chip.c \
++	chip-info.c \
++	edge-event.c \
++	error.c \
++	info-event.c \
++	internal.c \
++	internal.h \
++	line-config.c \
++	line-info.c \
++	line-request.c \
++	line-settings.c \
++	misc.c \
++	request-config.c
++
++EXTRA_DIST = \
++	generated-enums.c.template \
++	generated-enums.h.template
++
++project_headers = \
++	$(srcdir)/gpiod-glib/line.h \
++	$(srcdir)/gpiod-glib/edge-event.h \
++	$(srcdir)/gpiod-glib/info-event.h
++
++generated-enums.c: $(project_headers) generated-enums.c.template
++	$(AM_V_GEN)$(GLIB_MKENUMS) \
++		--template=$(srcdir)/generated-enums.c.template \
++		--output=$(builddir)/$@ \
++		$(project_headers)
++
++gpiod-glib/generated-enums.h: $(project_headers) generated-enums.h.template
++	$(AM_V_GEN)$(GLIB_MKENUMS) \
++		--template=$(srcdir)/generated-enums.h.template \
++		--output=$(srcdir)/$@ \
++		$(project_headers)
++
++nodist_libgpiod_glib_la_SOURCES = \
++	generated-enums.c \
++	gpiod-glib/generated-enums.h
++
++BUILT_SOURCES = $(nodist_libgpiod_glib_la_SOURCES)
++CLEANFILES = $(nodist_libgpiod_glib_la_SOURCES)
++
++libgpiod_glib_la_CFLAGS = -Wall -Wextra -g
++libgpiod_glib_la_CFLAGS += -I$(top_srcdir)/include/ -include $(top_builddir)/config.h
++libgpiod_glib_la_CFLAGS += $(GLIB_CFLAGS) $(GIO_CFLAGS) $(GIO_UNIX_CFLAGS)
++libgpiod_glib_la_CFLAGS += -DG_LOG_DOMAIN=\"gpiod-glib\"
++libgpiod_glib_la_CFLAGS += $(PROFILING_CFLAGS)
++libgpiod_glib_la_LDFLAGS = -version-info $(subst .,:,$(ABI_GLIB_VERSION))
++libgpiod_glib_la_LDFLAGS += -lgpiod -L$(top_builddir)/lib
++libgpiod_glib_la_LDFLAGS += $(GLIB_LIBS) $(GIO_LIBS) $(GIO_UNIX_LIBS)
++libgpiod_glib_la_LDFLAGS += $(PROFILING_LDFLAGS)
++
++include_HEADERS = gpiod-glib.h
++
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = gpiod-glib.pc
++
++if HAVE_INTROSPECTION
++
++INTROSPECTION_GIRS = gpiod-glib.gir
++
++girdir = $(INTROSPECTION_GIRDIR)
++gir_DATA = gpiod-glib.gir
++
++typelibsdir = $(INTROSPECTION_TYPELIBDIR)
++typelibs_DATA = gpiod-glib.typelib
++
++gpiod_gir_SCANNERFLAGS = \
++	--c-include="gpiod-glib.h" \
++	--warn-all \
++	--namespace Gpiodglib \
++	--identifier-prefix Gpiodglib \
++	--symbol-prefix gpiod
++
++gpiod_glib_gir_CFLAGS = $(libgpiod_glib_la_CFLAGS)
++
++gpiod-glib.gir: libgpiod-glib.la
++gpiod_glib_gir_INCLUDES = Gio-2.0
++gpiod_glib_gir_LIBS = libgpiod-glib.la
++gpiod_glib_gir_FILES = $(libgpiod_glib_la_SOURCES)
++gpiod_glib_gir_EXPORT_PACKAGES = gpiod-glib
++
++include $(INTROSPECTION_MAKEFILE)
++
++endif
+diff --git a/bindings/glib/examples/.gitignore b/bindings/glib/examples/.gitignore
+new file mode 100644
+index 0000000..c2415ae
+--- /dev/null
++++ b/bindings/glib/examples/.gitignore
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: CC0-1.0
++# SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++find_line_by_name_glib
++get_chip_info_glib
++get_line_info_glib
++get_line_value_glib
++get_multiple_line_values_glib
++reconfigure_input_to_output_glib
++toggle_line_value_glib
++toggle_multiple_line_values_glib
++watch_line_info_glib
++watch_line_value_glib
++watch_multiple_edge_rising_glib
+diff --git a/bindings/glib/examples/Makefile.am b/bindings/glib/examples/Makefile.am
+new file mode 100644
+index 0000000..fb4e5b1
+--- /dev/null
++++ b/bindings/glib/examples/Makefile.am
+@@ -0,0 +1,22 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++bin_PROGRAMS = \
++	find_line_by_name_glib \
++	get_chip_info_glib \
++	get_line_info_glib \
++	get_line_value_glib \
++	get_multiple_line_values_glib \
++	reconfigure_input_to_output_glib \
++	toggle_line_value_glib \
++	toggle_multiple_line_values_glib \
++	watch_line_info_glib \
++	watch_line_value_glib \
++	watch_multiple_edge_rising_glib
++
++AM_CFLAGS = -I$(top_srcdir)/bindings/glib/
++AM_CFLAGS += -include $(top_builddir)/config.h
++AM_CFLAGS += -Wall -Wextra -g -std=gnu89 $(GLIB_CFLAGS) $(GOBJECT_CFLAGS)
++AM_CFLAGS += -DG_LOG_DOMAIN=\"gpiotools-glib\"
++LDADD = $(top_builddir)/bindings/glib/libgpiod-glib.la
++LDADD += $(GLIB_LIBS) $(GOBJECT_LIBS)
+diff --git a/bindings/glib/gpiod-glib.pc.in b/bindings/glib/gpiod-glib.pc.in
+new file mode 100644
+index 0000000..15d2b3f
+--- /dev/null
++++ b/bindings/glib/gpiod-glib.pc.in
+@@ -0,0 +1,15 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: gpiod-glib
++Description: GObject bindings for libgpiod
++URL: @PACKAGE_URL@
++Version: @PACKAGE_VERSION@
++Requires.private: libgpiod >= 2.1
++Libs: -L${libdir} -lgpiod-glib
++Cflags: -I${includedir}
+diff --git a/bindings/glib/gpiod-glib/Makefile.am b/bindings/glib/gpiod-glib/Makefile.am
+new file mode 100644
+index 0000000..3d47772
+--- /dev/null
++++ b/bindings/glib/gpiod-glib/Makefile.am
+@@ -0,0 +1,18 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++otherincludedir = $(includedir)/gpiod-glib
++otherinclude_HEADERS = \
++	chip.h \
++	chip-info.h \
++	edge-event.h \
++	error.h \
++	generated-enums.h \
++	info-event.h \
++	line.h \
++	line-config.h \
++	line-info.h \
++	line-request.h \
++	line-settings.h \
++	misc.h \
++	request-config.h
+diff --git a/bindings/glib/tests/.gitignore b/bindings/glib/tests/.gitignore
+new file mode 100644
+index 0000000..8eb499f
+--- /dev/null
++++ b/bindings/glib/tests/.gitignore
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: CC0-1.0
 +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+noinst_LTLIBRARIES = libgpiosim-glib.la
-+libgpiosim_glib_la_SOURCES = \
-+	gpiosim-glib.c \
-+	gpiosim-glib.h
++gpiod-glib-test
+diff --git a/bindings/glib/tests/Makefile.am b/bindings/glib/tests/Makefile.am
+new file mode 100644
+index 0000000..a90587a
+--- /dev/null
++++ b/bindings/glib/tests/Makefile.am
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+AM_CFLAGS = -I$(top_srcdir)/tests/gpiosim/
++noinst_PROGRAMS = gpiod-glib-test
++gpiod_glib_test_SOURCES = \
++	helpers.c \
++	helpers.h \
++	tests-chip.c \
++	tests-chip-info.c \
++	tests-edge-event.c \
++	tests-info-event.c \
++	tests-line-config.c \
++	tests-line-info.c \
++	tests-line-request.c \
++	tests-line-settings.c \
++	tests-misc.c \
++	tests-request-config.c
++
++AM_CFLAGS = -I$(top_srcdir)/bindings/glib/
++AM_CFLAGS += -I$(top_srcdir)/tests/gpiosim-glib/
++AM_CFLAGS += -I$(top_srcdir)/tests/harness/
 +AM_CFLAGS += -include $(top_builddir)/config.h
 +AM_CFLAGS += -Wall -Wextra -g -std=gnu89 $(GLIB_CFLAGS) $(GIO_CFLAGS)
-+AM_CFLAGS += -DG_LOG_DOMAIN=\"gpiosim-glib\"
-+libgpiosim_glib_la_LDFLAGS = -lgpiosim
-diff --git a/tests/gpiod-test-sim.c b/tests/gpiosim-glib/gpiosim-glib.c
-similarity index 93%
-rename from tests/gpiod-test-sim.c
-rename to tests/gpiosim-glib/gpiosim-glib.c
-index ac6c71a..4eaeace 100644
---- a/tests/gpiod-test-sim.c
-+++ b/tests/gpiosim-glib/gpiosim-glib.c
-@@ -6,7 +6,7 @@
- #include <stdlib.h>
- #include <unistd.h>
++AM_CFLAGS += -DG_LOG_DOMAIN=\"gpiod-glib-test\"
++LDADD = $(top_builddir)/bindings/glib/libgpiod-glib.la
++LDADD += $(top_builddir)/tests/gpiosim/libgpiosim.la
++LDADD += $(top_builddir)/tests/gpiosim-glib/libgpiosim-glib.la
++LDADD += $(top_builddir)/tests/harness/libgpiod-test-harness.la
++LDADD += $(GLIB_LIBS) $(GIO_LIBS)
+diff --git a/configure.ac b/configure.ac
+index 93d9d75..85d6984 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -31,6 +31,8 @@ AC_SUBST(ABI_CXX_VERSION, [3.0.1])
+ # ABI version for libgpiosim (we need this since it can be installed if we
+ # enable tests).
+ AC_SUBST(ABI_GPIOSIM_VERSION, [1.1.0])
++# ... and another one for GLib bindings:
++AC_SUBST(ABI_GLIB_VERSION, [1.0.0])
  
--#include "gpiod-test-sim.h"
-+#include "gpiosim-glib.h"
+ AC_CONFIG_AUX_DIR([autostuff])
+ AC_CONFIG_MACRO_DIRS([m4])
+@@ -248,6 +250,29 @@ then
+ 	fi
+ fi
  
- G_DEFINE_QUARK(g-gpiosim-error, g_gpiosim_error);
- 
-@@ -462,3 +462,31 @@ void g_gpiosim_chip_set_pull(GPIOSimChip *chip, guint offset, GPIOSimPull pull)
- 		g_critical("Unable to set the pull setting for simulated line: %s",
- 			    g_strerror(errno));
- }
++AC_ARG_ENABLE([bindings-glib],
++	[AS_HELP_STRING([--enable-bindings-glib],[enable GLib 2.0 bindings [default=no]])],
++	[if test "x$enableval" = xyes; then with_bindings_glib=true; fi],
++	[with_bindings_glib=false])
++AM_CONDITIONAL([WITH_BINDINGS_GLIB], [test "x$with_bindings_glib" = xtrue])
 +
-+GVariant *g_gpiosim_package_line_names(const GPIOSimLineName *names)
-+{
-+	g_autoptr(GVariantBuilder) builder = NULL;
-+	const GPIOSimLineName *name;
++if test "x$with_bindings_glib" = xtrue
++then
++	PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.54])
++	PKG_CHECK_MODULES([GOBJECT], [gobject-2.0 >= 2.54])
++	PKG_CHECK_MODULES([GIO], [gio-2.0 >= 2.54])
++	PKG_CHECK_MODULES([GIO_UNIX], [gio-unix-2.0 >= 2.54])
++	PKG_PROG_PKG_CONFIG([0.28])
++	PKG_CHECK_VAR([GLIB_MKENUMS], [glib-2.0], [glib_mkenums], [],
++		AC_MSG_ERROR([glib-mkenums not found - needed to build GLib bindings]))
++fi
 +
-+	builder = g_variant_builder_new(G_VARIANT_TYPE("a(us)"));
++# GObject-introspection
++found_introspection=no
++m4_ifdef([GOBJECT_INTROSPECTION_CHECK],
++	[GOBJECT_INTROSPECTION_CHECK([0.6.2])],
++	[AM_CONDITIONAL(HAVE_INTROSPECTION, test "x$found_introspection" = "xyes")])
 +
-+	for (name = &names[0]; name->name; name++)
-+		g_variant_builder_add(builder, "(us)",
-+				      name->offset, name->name);
-+
-+	return g_variant_ref_sink(g_variant_new("a(us)", builder));
-+}
-+
-+GVariant *g_gpiosim_package_hogs(const GPIOSimHog *hogs)
-+{
-+	g_autoptr(GVariantBuilder) builder = NULL;
-+	const GPIOSimHog *hog;
-+
-+	builder = g_variant_builder_new(G_VARIANT_TYPE("a(usi)"));
-+
-+	for (hog = &hogs[0]; hog->name; hog++)
-+		g_variant_builder_add(builder, "(usi)",
-+				      hog->offset, hog->name, hog->direction);
-+
-+	return g_variant_ref_sink(g_variant_new("a(usi)", builder));
-+}
-diff --git a/tests/gpiod-test-sim.h b/tests/gpiosim-glib/gpiosim-glib.h
-similarity index 86%
-rename from tests/gpiod-test-sim.h
-rename to tests/gpiosim-glib/gpiosim-glib.h
-index f6a4bf0..fa76736 100644
---- a/tests/gpiod-test-sim.h
-+++ b/tests/gpiosim-glib/gpiosim-glib.h
-@@ -74,6 +74,20 @@ void g_gpiosim_chip_set_pull(GPIOSimChip *self, guint offset, GPIOSimPull pull);
- 		_val; \
- 	})
- 
-+typedef struct {
-+	guint offset;
-+	const gchar *name;
-+} GPIOSimLineName;
-+
-+typedef struct {
-+	guint offset;
-+	const gchar *name;
-+	GPIOSimDirection direction;
-+} GPIOSimHog;
-+
-+GVariant *g_gpiosim_package_line_names(const GPIOSimLineName *names);
-+GVariant *g_gpiosim_package_hogs(const GPIOSimHog *hogs);
-+
- G_END_DECLS
- 
- #endif /* __GPIOD_TEST_SIM_H__ */
-diff --git a/tests/harness/Makefile.am b/tests/harness/Makefile.am
-new file mode 100644
-index 0000000..185c00f
---- /dev/null
-+++ b/tests/harness/Makefile.am
-@@ -0,0 +1,12 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+noinst_LTLIBRARIES = libgpiod-test-harness.la
-+libgpiod_test_harness_la_SOURCES = \
-+	gpiod-test.c \
-+	gpiod-test.h \
-+	gpiod-test-common.h
-+
-+AM_CFLAGS = -include $(top_builddir)/config.h
-+AM_CFLAGS += -Wall -Wextra -g -std=gnu89 $(GLIB_CFLAGS)
-+AM_CFLAGS += -DG_LOG_DOMAIN=\"gpiod-test\"
-diff --git a/tests/harness/gpiod-test-common.h b/tests/harness/gpiod-test-common.h
-new file mode 100644
-index 0000000..7aaec05
---- /dev/null
-+++ b/tests/harness/gpiod-test-common.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl> */
-+
-+#ifndef __GPIOD_TEST_COMMON_H__
-+#define __GPIOD_TEST_COMMON_H__
-+
-+#include <glib.h>
-+
-+#define gpiod_test_return_if_failed() \
-+	do { \
-+		if (g_test_failed()) \
-+			return; \
-+	} while (0)
-+
-+#define gpiod_test_join_thread_and_return_if_failed(_thread) \
-+	do { \
-+		if (g_test_failed()) { \
-+			g_thread_join(_thread); \
-+			return; \
-+		} \
-+	} while (0)
-+
-+#endif /* __GPIOD_TEST_COMMON_H__ */
-diff --git a/tests/gpiod-test.c b/tests/harness/gpiod-test.c
-similarity index 100%
-rename from tests/gpiod-test.c
-rename to tests/harness/gpiod-test.c
-diff --git a/tests/gpiod-test.h b/tests/harness/gpiod-test.h
-similarity index 100%
-rename from tests/gpiod-test.h
-rename to tests/harness/gpiod-test.h
-diff --git a/tests/gpiod-test-helpers.h b/tests/helpers.h
-similarity index 87%
-rename from tests/gpiod-test-helpers.h
-rename to tests/helpers.h
-index 41791a3..ecb7baf 100644
---- a/tests/gpiod-test-helpers.h
-+++ b/tests/helpers.h
-@@ -1,14 +1,12 @@
- /* SPDX-License-Identifier: GPL-2.0-or-later */
--/* SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl> */
-+/* SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
- 
- #ifndef __GPIOD_TEST_HELPERS_H__
- #define __GPIOD_TEST_HELPERS_H__
- 
--#include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
--
--#include "gpiod-test-sim.h"
-+#include <gpiod-test-common.h>
- 
- /*
-  * These typedefs are needed to make g_autoptr work - it doesn't accept
-@@ -49,20 +47,6 @@ typedef struct gpiod_edge_event_buffer struct_gpiod_edge_event_buffer;
- G_DEFINE_AUTOPTR_CLEANUP_FUNC(struct_gpiod_edge_event_buffer,
- 			      gpiod_edge_event_buffer_free);
- 
--#define gpiod_test_return_if_failed() \
--	do { \
--		if (g_test_failed()) \
--			return; \
--	} while (0)
--
--#define gpiod_test_join_thread_and_return_if_failed(_thread) \
--	do { \
--		if (g_test_failed()) { \
--			g_thread_join(_thread); \
--			return; \
--		} \
--	} while (0)
--
- #define gpiod_test_open_chip_or_fail(_path) \
- 	({ \
- 		struct gpiod_chip *_chip = gpiod_chip_open(_path); \
-@@ -184,20 +168,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(struct_gpiod_edge_event_buffer,
- 	} while (0)
- 
- #define gpiod_test_expect_errno(_expected) \
--	g_assert_cmpint(_expected, ==, errno)
--
--typedef struct {
--	guint offset;
--	const gchar *name;
--} GPIOSimLineName;
--
--typedef struct {
--	guint offset;
--	const gchar *name;
--	GPIOSimDirection direction;
--} GPIOSimHog;
--
--GVariant *gpiod_test_package_line_names(const GPIOSimLineName *names);
--GVariant *gpiod_test_package_hogs(const GPIOSimHog *hogs);
-+	g_assert_cmpint((_expected), ==, errno)
- 
- #endif /* __GPIOD_TEST_HELPERS_H__ */
-diff --git a/tests/tests-chip-info.c b/tests/tests-chip-info.c
-index db76385..7b2e857 100644
---- a/tests/tests-chip-info.c
-+++ b/tests/tests-chip-info.c
-@@ -4,10 +4,11 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "chip-info"
- 
-diff --git a/tests/tests-chip.c b/tests/tests-chip.c
-index 815b4c7..13e3f61 100644
---- a/tests/tests-chip.c
-+++ b/tests/tests-chip.c
-@@ -4,10 +4,11 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "chip"
- 
-@@ -89,7 +90,7 @@ GPIOD_TEST_CASE(find_line_bad)
- 
- 	g_autoptr(GPIOSimChip) sim = NULL;
- 	g_autoptr(struct_gpiod_chip) chip = NULL;
--	g_autoptr(GVariant) vnames = gpiod_test_package_line_names(names);
-+	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
- 
- 	sim = g_gpiosim_chip_new(
- 			"num-lines", 8,
-@@ -116,7 +117,7 @@ GPIOD_TEST_CASE(find_line_good)
- 
- 	g_autoptr(GPIOSimChip) sim = NULL;
- 	g_autoptr(struct_gpiod_chip) chip = NULL;
--	g_autoptr(GVariant) vnames = gpiod_test_package_line_names(names);
-+	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
- 
- 	sim = g_gpiosim_chip_new(
- 			"num-lines", 8,
-@@ -142,7 +143,7 @@ GPIOD_TEST_CASE(find_line_duplicate)
- 
- 	g_autoptr(GPIOSimChip) sim = NULL;
- 	g_autoptr(struct_gpiod_chip) chip = NULL;
--	g_autoptr(GVariant) vnames = gpiod_test_package_line_names(names);
-+	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
- 
- 	sim = g_gpiosim_chip_new(
- 			"num-lines", 8,
-@@ -165,7 +166,7 @@ GPIOD_TEST_CASE(find_line_non_standard_names)
- 		{ }
- 	};
- 
--	g_autoptr(GVariant) vnames = gpiod_test_package_line_names(names);
-+	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
- 	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
- 							"line-names", vnames,
- 							NULL);
-diff --git a/tests/tests-edge-event.c b/tests/tests-edge-event.c
-index b744ca5..6389455 100644
---- a/tests/tests-edge-event.c
-+++ b/tests/tests-edge-event.c
-@@ -3,11 +3,12 @@
- 
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- #include <poll.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "edge-event"
- 
-diff --git a/tests/tests-info-event.c b/tests/tests-info-event.c
-index cbd9e9e..e014500 100644
---- a/tests/tests-info-event.c
-+++ b/tests/tests-info-event.c
-@@ -3,11 +3,12 @@
- 
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- #include <poll.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "info-event"
- 
-diff --git a/tests/tests-kernel-uapi.c b/tests/tests-kernel-uapi.c
-index e54cfcc..ff220fc 100644
---- a/tests/tests-kernel-uapi.c
-+++ b/tests/tests-kernel-uapi.c
-@@ -4,10 +4,11 @@
- #include <glib.h>
- #include <gpiod.h>
- #include <poll.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "kernel-uapi"
- 
-diff --git a/tests/tests-line-config.c b/tests/tests-line-config.c
-index 469500b..b61a445 100644
---- a/tests/tests-line-config.c
-+++ b/tests/tests-line-config.c
-@@ -4,10 +4,11 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "line-config"
- 
-diff --git a/tests/tests-line-info.c b/tests/tests-line-info.c
-index cf2c650..92cd7e0 100644
---- a/tests/tests-line-info.c
-+++ b/tests/tests-line-info.c
-@@ -4,10 +4,11 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "line-info"
- 
-@@ -64,8 +65,8 @@ GPIOD_TEST_CASE(line_info_basic_properties)
- 	g_autoptr(struct_gpiod_chip) chip = NULL;
- 	g_autoptr(struct_gpiod_line_info) info4 = NULL;
- 	g_autoptr(struct_gpiod_line_info) info6 = NULL;
--	g_autoptr(GVariant) vnames = gpiod_test_package_line_names(names);
--	g_autoptr(GVariant) vhogs = gpiod_test_package_hogs(hogs);
-+	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
-+	g_autoptr(GVariant) vhogs = g_gpiosim_package_hogs(hogs);
- 
- 	sim = g_gpiosim_chip_new(
- 			"num-lines", 8,
-diff --git a/tests/tests-line-request.c b/tests/tests-line-request.c
-index 7bba078..dd4e9a8 100644
---- a/tests/tests-line-request.c
-+++ b/tests/tests-line-request.c
-@@ -3,10 +3,11 @@
- 
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "line-request"
- 
-diff --git a/tests/tests-line-settings.c b/tests/tests-line-settings.c
-index b86fd26..18fde50 100644
---- a/tests/tests-line-settings.c
-+++ b/tests/tests-line-settings.c
-@@ -4,9 +4,10 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "line-settings"
- 
-diff --git a/tests/tests-misc.c b/tests/tests-misc.c
-index 240dd02..9d4f3de 100644
---- a/tests/tests-misc.c
-+++ b/tests/tests-misc.c
-@@ -4,11 +4,12 @@
- #include <errno.h>
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
-+#include <gpiosim-glib.h>
- #include <unistd.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
--#include "gpiod-test-sim.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "misc"
- 
-diff --git a/tests/tests-request-config.c b/tests/tests-request-config.c
-index d3c679a..a38befd 100644
---- a/tests/tests-request-config.c
-+++ b/tests/tests-request-config.c
-@@ -3,9 +3,10 @@
- 
- #include <glib.h>
- #include <gpiod.h>
-+#include <gpiod-test.h>
-+#include <gpiod-test-common.h>
- 
--#include "gpiod-test.h"
--#include "gpiod-test-helpers.h"
-+#include "helpers.h"
- 
- #define GPIOD_TEST_GROUP "request-config"
- 
+ AC_CHECK_PROG([has_doxygen], [doxygen], [true], [false])
+ AM_CONDITIONAL([HAS_DOXYGEN], [test "x$has_doxygen" = xtrue])
+ if test "x$has_doxygen" = xfalse
+@@ -284,6 +309,11 @@ AC_CONFIG_FILES([Makefile
+ 		 bindings/cxx/gpiodcxx/Makefile
+ 		 bindings/cxx/examples/Makefile
+ 		 bindings/cxx/tests/Makefile
++		 bindings/glib/gpiod-glib.pc
++		 bindings/glib/Makefile
++		 bindings/glib/examples/Makefile
++		 bindings/glib/gpiod-glib/Makefile
++		 bindings/glib/tests/Makefile
+ 		 bindings/python/Makefile
+ 		 bindings/python/gpiod/Makefile
+ 		 bindings/python/gpiod/ext/Makefile
 
 -- 
 2.43.0
