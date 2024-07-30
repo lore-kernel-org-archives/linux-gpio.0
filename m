@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6FF19B584;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBC319D88E;
 	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335171; cv=none; b=p0CsiDM0o8fb3K4K0ymaeHFY5korl2JSyBlVOGJSo07VV1mkJpYMjFPsQg8Fj7nKTZqY7gIJ+TwHzmFc09YQjCSlAlswGr/M2aa6MopV5rgfu8eD7zD/Wpd/YAyjZKRkOJJNPUaHF3xlg2XtQQAZ3usKkG+InYzlNj7maetXwkQ=
+	t=1722335171; cv=none; b=NNTVMENCwpu84s18NmAFC4QcZY5jLWg7QW90EL3UV7jjbnSqYW3StKj/JXvyRhb1usp6jbJNMQLcaU3qvGey8tbSdZb1b+a/wLPEPg5E651vj/+iDczFMnWe2Ud+1cbyf+Uiv2tCWcpMOVcrWu4MZry/CNhUw23fyohM4m7m2Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722335171; c=relaxed/simple;
-	bh=0d4cLa1Ic0Cl8c4k7lLoTR7z9RYXhTtJPGblfCY7fmA=;
+	bh=yfoG8mqn/X97sdC5spzqwus+gtROE5wIfNQiUg05Vcg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oWl17cIY3VdMT5krHpbIX7eCLQjbGTz9iKzcEH85TQjplNjfS3YYTL3y6vsymLjbvy/WaW0Ps3uN0awXcL5dkpWcCNcuxhxpD1I4NdKA3g7VkntjZIzk/BdsLRMPiO43rpIdTa+K5qKpBpIMOe9uGqp6CnC42+pZgX5ZFHwg/bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpjpVRlZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=TXPq3fNQEt810xMB+UXn4Yoh4oS1zZoKz5snlx5USV4iX7vpKtf1ZhWOfLMq612HE+6OGrVsSfvmS0MnnEjnBWkq8ArYeLDv8j8qHl3NjxajmNHAyjaZLxnKF96voJO7iNcIZu/7LF9O+Jbc6Uf2ZTxk5XbHkHgQM9EGqLaUn7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MeSBDsPa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpjpVRlZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 05553C4AF1D;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeSBDsPa"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 65EA8C4DDEB;
 	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722335171;
-	bh=0d4cLa1Ic0Cl8c4k7lLoTR7z9RYXhTtJPGblfCY7fmA=;
+	bh=yfoG8mqn/X97sdC5spzqwus+gtROE5wIfNQiUg05Vcg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mpjpVRlZXRop/445ykUNovxlhgtsY6jwRuom1qF3JKAz9HzG9KEU2h7lW0mODTZwY
-	 tkoqBzVdNbBsXN8A30Zc0n2AWQ63iza7Kyyw5BOYge2uddHGc+21rcnt+cqMripxh/
-	 k4Gzlcxdo3f5eEi2Ce7FolltndD+s+cnRb1o7HcuEk3a+r0H1D0dSXTrSqw/r0UpIK
-	 X0WwWGdyicK8smf5284Mk5wQ1y3gMYh0KIzmdcm8t/piMLaPtAPO1NRk+BtgCQEMsH
-	 mzi+Bn15axZ2dEZRPsLoeltERfEzvGn4W7jt+8i8Bln7gGFHMc9TFN2P1RACfabghC
-	 RTUzXdnuieckw==
+	b=MeSBDsPaJuHc76nXqAXiIB4Gp+VhTbXnfoTbXAJNzT13Lb5h0InH0zw8p91ZpIGxM
+	 eg3WBhoq9HMC0WRub2oYlJtWCQ2LUULo9IZj/EIxVXvvURo7YnEiaVHwMH74Y0L2tk
+	 sH1Bas3qPY9V3XLZOxyC6mSlcXHmXoAe7kIVLvxW1Ai4cZ8JeLL3zuv/rHGKoiSZB4
+	 8/lv2aq0K+Z2kI8uE+/tMQt0mhTSyIq3s/qdRzoWt2xLBcb0jSx8LZtKjIxB6kZKuZ
+	 DBe1aGqISylhfXA1vJ6lselKJzddTjqtwruTS5o8DJlF0UKwHIGzfM09xKzVjtL/KO
+	 fQeFo3KChjATw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0BBC49EA1;
-	Tue, 30 Jul 2024 10:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D402C49EA1;
+	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Tue, 30 Jul 2024 12:25:11 +0200
-Subject: [PATCH v11 03/12] pinctrl: single: add marvell,pxa1908-padconf
- compatible
+Date: Tue, 30 Jul 2024 12:25:17 +0200
+Subject: [PATCH v11 09/12] dt-bindings: marvell: Document PXA1908 SoC
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240730-pxa1908-lkml-v11-3-21dbb3e28793@skole.hr>
+Message-Id: <20240730-pxa1908-lkml-v11-9-21dbb3e28793@skole.hr>
 References: <20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr>
 In-Reply-To: <20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -57,15 +56,16 @@ Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=938;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890;
  i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=nYweYn5B7a8N7bBvBLtJmhM3QSMoorGx+lcXKMQV7l4=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDGkr9m9eP3WLv5jdTY/XV//s5Fhl/Ccwfv83q3u1UeXHv
- z1327/hTUcpC4MYF4OsmCJL7n/Ha7yfRbZuz15mADOHlQlkCAMXpwBMpCqA4b+/tkfBubsKvQL1
- /Ru897LV2Gdz9jpe9Di27tIKFf+L3pcZ/un5dUzct3XLwthreTbRDEu55jAc+3v4aadVyrrKqGC
- hDRwA
+ bh=sKkIzhW7HxgO/mwjme6nrHzJLLNyn3Ni8Blvn7ov2qY=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDGkr9m85O8Viq9/kkhmrfvD8dFnHUvucI/ee1VODS382T
+ Tm4p7f6UEcpC4MYF4OsmCJL7n/Ha7yfRbZuz15mADOHlQlkCAMXpwBMRH0+w/+cyx9zb1s3zHZr
+ inqW/fBtq72V2JTryoUuLXWfF/6XufyAkWHxrNqNlZdr7xxnesPRLZISqMH6vOakEp+D0hVxLte
+ bgZwA
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
@@ -75,27 +75,30 @@ Reply-To: duje.mihanovic@skole.hr
 
 From: Duje Mihanović <duje.mihanovic@skole.hr>
 
-Add the "marvell,pxa1908-padconf" compatible to allow migrating to a
-separate pinctrl driver later.
+Add dt binding for the Marvell PXA1908 SoC.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- drivers/pinctrl/pinctrl-single.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 4c6bfabb6bd7..45166d479c70 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1963,6 +1963,7 @@ static const struct pcs_soc_data pinconf_single = {
- };
+diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+index 4c43eaf3632e..f73bb8ec3a1a 100644
+--- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
++++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+@@ -35,6 +35,11 @@ properties:
+           - enum:
+               - dell,wyse-ariel
+           - const: marvell,mmp3
++      - description: PXA1908 based boards
++        items:
++          - enum:
++              - samsung,coreprimevelte
++          - const: marvell,pxa1908
  
- static const struct of_device_id pcs_of_match[] = {
-+	{ .compatible = "marvell,pxa1908-padconf", .data = &pinconf_single },
- 	{ .compatible = "ti,am437-padconf", .data = &pinctrl_single_am437x },
- 	{ .compatible = "ti,am654-padconf", .data = &pinctrl_single_am654 },
- 	{ .compatible = "ti,dra7-padconf", .data = &pinctrl_single_dra7 },
+ additionalProperties: true
+ 
 
 -- 
 2.45.2
