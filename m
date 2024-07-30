@@ -1,63 +1,67 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2058.outbound.protection.outlook.com [40.107.94.58])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2088.outbound.protection.outlook.com [40.107.220.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADA518FDD3;
-	Tue, 30 Jul 2024 06:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D82319007B;
+	Tue, 30 Jul 2024 06:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.88
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722322564; cv=fail; b=rDEzY5u8vYPxMKA9bbtCobhoc4/LJgcEQIW/WsHuY43BldM/B+vmcZNOjrpv913k6YDWCrwIBmBjpbZyhzxWDkktbsZXGaaje35XY+gAKoKM6hniFN8bwSeQmNvt/HFfZI+M2zRLyp3tCSCLQQrGAA0gr7m5T9q9xS5PJtidgmQ=
+	t=1722322573; cv=fail; b=kodgrKswJLIazHrK4QtloLciArMoVkxoA5Hexr/oppfQ+HUd7GkWaHMCdz5r7eXJpnQgaRYqMdfzMkh7QjX2xPGK3hUpLkuhzb+avjZ+jSOVKlak7JSQ+BdYtgM8frZPtwui5CnphdmJhJmTXIKsPXpGx84mGBSx4ZggH0pKiKA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722322564; c=relaxed/simple;
-	bh=uC3LHEBQ0zGKP8SpEMeipQhSdGfrZYfs2BfSMRewaT4=;
+	s=arc-20240116; t=1722322573; c=relaxed/simple;
+	bh=0EBtVRHt4serazTpODaBBzbM1CQWFB581YXNockqjIo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ak60+jGoFvIR+5rualTxedfuMRyGSH32lBQ8SeNSlGVzf1SCrAAqVYlcxoZBcPQPP6PmxmlI82R14HvLqjv/2SrbC9IDEM4F5zqfgrHaX9izaiaWSdMDMH1Lg9w+Iu+w4kgGUZv6L8hCHMfeHVxCJxwjQbXradZqAGaFKI573Zg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XXEb0RZh; arc=fail smtp.client-ip=40.107.94.58
+	 MIME-Version:Content-Type; b=Fbf5Bl44YY4WN404JNQsjYAcBWT70LhuKfw4N5IAW802jwx7H3pO+SWz2m1EYFdXyjiGbamkmWltdCKNYQRdVw8TQQNnMogL/7jVEBKm2LNpuenuHCsLnWuZ5UW5AHrc+70U+CBIohFoHkhNlCN0/FmEfUrLQZwdcN8Xqn3yVm0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B9wFfaYs; arc=fail smtp.client-ip=40.107.220.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XXEb0RZh"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B9wFfaYs"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TjmwoRpIoX+6pvAqfSnqj20GaE1Sq831hF2srTdQzW2TzWAnZKO6094ryrMNG2dy1h6lTlbAC7+MgFspmClxkAle/0OpS6xOeRNit0Z+i0pN98iEVvtjSELn5Mg1BMI3ewgQaquRKT10zFtSjq3ccbSB7bTTcoFMVm7IE2m4TVrln/Q/GO26zkMt/o2FgoVpohnWN1arEt9Px3+wAye1z2erc9b35SnFw7fboreXumeklXSsGD+3Uh9oMieDiStik8JNf2UkHWKOVvLA5rEM0eOzx0hz9yV/chdIlnoa6FMZBpC324Z0oHv82j/lJ0v//24MMD5NtOybyRQ7XgIEKg==
+ b=yNKnD5nO+4JSze0UwOtIXIEuDVf3//jnZqcvYcWHQpjbdFa3JC32GtWH+Bp/cI15x+SZOzqHpEmuJBOG7XhmPEaawGGxTqxD9F7nD2lOkFCaV/VaNWgyPZfywthVWAe/EB/T8/yq416A24COj177OWY/I/BYf3mUCZlctOdnxzD4C98cpqb00KipBy2WnBFSciUbfcUqzk2aq6NAW14RHSxrC9UbTzBTSGvUdYpNX6ZoVQ57vOlw53BFbTnB+srMxdpnumku6Ip4KO569P2g8xsvdD/OnTtTLBj4WKNTC0OmImEpvPg+qRyxxtiaqbkje+swU78oXE4K30wbjW3jlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6CXZ9MWGvB3ANQDVmViB27BTYURW6vEsbiGqg7sfnCc=;
- b=R+b4InLvEmOHjINailK5KX25lpthX0i75+hqWWgGMPYszM+kKTnYlMaj3nW7ywUM1/Xd9/YcCGWQ90cCPb3b+wPmssSVMIxI7HKrJLzTYOkiwdj2wxAOWWrKXOCfBRBnW1yG2jcpI/K1vttucYVWfiODqpstY5xM78cW3d8vekJTeZX/w6CMe42MkgJ6bvV8lpkjHyA7AQpmDpX7qDvDczX6oujbPHjgZacMNtwUlox/HFl9KRvp/Iyv9czjWdIzNWRjTb8z3mKVfhj1dd7aquXpk4WDjsTVF7P9Dam2IV1AMqic3BFEnoRfzrsv9LeRpOv5kEa+OZWUa/EhwjDtJw==
+ bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
+ b=LgDalygN4xW7bbL51i+xXIFgkXv1eLLIN93Iqkc2+8pkVesbr0dh5N+esutrzy0X/IsvL2iGT6ixyEg0JrED5pinMybI7112A5YaM63r2jGfIJ48K+9lZeg8H/cHxmoEN7JaVZUJRrc598UB95G2ODI9hZg2RNSHlZZTK6A+3x2SIJa9rQNB56ASBPJll3JgtpmDgVyIHC3aHIjcHwIS38yJtNb2bjkJGo5Vrtbk61ucvRU2VSAtO3xxnTGawRRV35QPRuX6SjYgS0XHYpc+hXaVehVw1ffCIMTtZQWvu0E9uDX1YJEh/qC51kcJU2tWrGTJxygKFgVzcRn+pAi4Tw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6CXZ9MWGvB3ANQDVmViB27BTYURW6vEsbiGqg7sfnCc=;
- b=XXEb0RZhzvMf85Ld41IPY9Q2SPsmhczjPRXSILeWaSDPNjqYZk4hKAHCh8Yhxh9t0zSSYqsORWzHjWvhKmvLOsDc7G+6nFVlf3VvITHozL3CdGUReNGqpqQk14xqcv+Tp9CIhTijnB3La+473OG9saMxl6HSylHlo6owGid9Bj4=
-Received: from MW4PR04CA0388.namprd04.prod.outlook.com (2603:10b6:303:81::33)
- by SA3PR12MB7902.namprd12.prod.outlook.com (2603:10b6:806:305::17) with
+ bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
+ b=B9wFfaYs2q0xMQV3Rndh4TDFgaURy4MICmBcWrtscHZPo1vv8JWygmvoHxDFEju4XKMuignacm4ecDfjHXM5Z5dVrIPZpDT9g9FHHjJ10oLnDh22m+uuIfR6j7epbeqr0go12NFcMheEL7cZZevfPWNfDG/LCnqnaKmXqk3zQpQ=
+Received: from DS7PR03CA0102.namprd03.prod.outlook.com (2603:10b6:5:3b7::17)
+ by MW4PR12MB7165.namprd12.prod.outlook.com (2603:10b6:303:21b::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 30 Jul
- 2024 06:55:59 +0000
-Received: from MWH0EPF000971E9.namprd02.prod.outlook.com
- (2603:10b6:303:81:cafe::5b) by MW4PR04CA0388.outlook.office365.com
- (2603:10b6:303:81::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 30 Jul
+ 2024 06:56:09 +0000
+Received: from DS2PEPF00003440.namprd02.prod.outlook.com
+ (2603:10b6:5:3b7:cafe::fc) by DS7PR03CA0102.outlook.office365.com
+ (2603:10b6:5:3b7::17) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
- Transport; Tue, 30 Jul 2024 06:55:59 +0000
+ Transport; Tue, 30 Jul 2024 06:56:09 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000971E9.mail.protection.outlook.com (10.167.243.71) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 06:55:59 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.7828.19 via Frontend Transport; Tue, 30 Jul 2024 06:56:09 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 30 Jul
- 2024 01:55:57 -0500
+ 2024 01:56:07 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 30 Jul
+ 2024 01:56:06 -0500
 Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 30 Jul 2024 01:55:53 -0500
+ Transport; Tue, 30 Jul 2024 01:56:02 -0500
 From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek
 	<michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
@@ -69,9 +73,9 @@ CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<saikrishna12468@gmail.com>, <git@amd.com>, Sai Krishna Potthuri
 	<sai.krishna.potthuri@amd.com>
-Subject: [PATCH v2 1/3] dt-bindings: pinctrl: Add support for Xilinx Versal platform
-Date: Tue, 30 Jul 2024 12:25:46 +0530
-Message-ID: <20240730065548.1371518-2-sai.krishna.potthuri@amd.com>
+Subject: [PATCH v2 3/3] pinctrl: pinctrl-zynqmp: Add support for Versal platform
+Date: Tue, 30 Jul 2024 12:25:48 +0530
+Message-ID: <20240730065548.1371518-4-sai.krishna.potthuri@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240730065548.1371518-1-sai.krishna.potthuri@amd.com>
 References: <20240730065548.1371518-1-sai.krishna.potthuri@amd.com>
@@ -83,359 +87,217 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: sai.krishna.potthuri@amd.com does not
+Received-SPF: None (SATLEXMB05.amd.com: sai.krishna.potthuri@amd.com does not
  designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E9:EE_|SA3PR12MB7902:EE_
-X-MS-Office365-Filtering-Correlation-Id: f53e3cde-25fd-4cb8-b631-08dcb064ab0f
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|MW4PR12MB7165:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55170644-7674-4eb5-6679-08dcb064b0fb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qj6bs3aRlNJ/PM7GHJ7yEYD6oVgzzng7C1wsDovpERiC/P7VmlGPSeogYBjZ?=
- =?us-ascii?Q?jeyHp9Jw1jb5NGF51u/ux4w0xkDMljfeNo4RM8VddKjBDU4iPGtjmHQ+5qdm?=
- =?us-ascii?Q?9DaYpbYa4AU3MF9NZ2inXzI7hF09jD5dyob2f0OX4MUYXJZRusPFEghLTlxw?=
- =?us-ascii?Q?nsorGqJ16hBVb3p7WSjxnidAlCUbfbmHKbw0hqp2ARIrJx+8ZuzUGqJQ6azV?=
- =?us-ascii?Q?O+HBKt34WRnLfeSNXsZDH88jRx/Q38NDk67agzzNYh6apNubvNK1oAn54Pqj?=
- =?us-ascii?Q?90+NxcDyFdBa4gDCOshL/4346Jd4PtOc0UFbVaQuLJADo0KbivdFyoaRTFu7?=
- =?us-ascii?Q?Gl3k6oIW6NBEKhP7nPau+4WbyWslKbaXBdYkzexy27/0B2UIS2P8DyFjjxLb?=
- =?us-ascii?Q?rODMRxda8F73By0l98HQW3tfanCi3ehzylNOgLctjXh9DtqE0ElHyh6tChN2?=
- =?us-ascii?Q?7//Z5Go+NOuB9cpW9PuqV9ghIxfFn2+D9ofLAWaaL1ay2pQkQY+/fRre471B?=
- =?us-ascii?Q?jniQsNDVb3VgmiY4BXgJMKIDsMrH4Sc76isgudi7j50e0GY/2wFWQydtaK1Z?=
- =?us-ascii?Q?F43q773bdn8YXy3CDYpnApo+a50UwoVBslh+cdbZ3eX54QQNjhVKY3lczBlk?=
- =?us-ascii?Q?dCCkEm0yaWjapeCQWDvj1WlShb844CS1zazO//dc879YrgWej4/10wILefeY?=
- =?us-ascii?Q?nzmHuhJVW2EM2ns0xmLrgFgbTJkgMMtDeeWYJrboOR9IcSE36sg64e6a0vz9?=
- =?us-ascii?Q?zPm9bj/C1wF38qCYjCRaZhTy/bQwDN7YEBfb2wNiQgobGpYKZvM42f+6aIgN?=
- =?us-ascii?Q?zy95AKAIjgtQ8nZIHrbwnDjXJjyDm0bVBtl5vstD2SNhy2+L9Jq3qG9M+8mZ?=
- =?us-ascii?Q?VruRuXibAjaCEfI/QBm64h7KB9my378ouVkNDnLSvs3KVI347PabNFpetwYD?=
- =?us-ascii?Q?mVl/9bJI2uQtNmj+Sq4fqTvpivpfjCeUlU3ejHbzZSVEK6oYIYf64O22AqPH?=
- =?us-ascii?Q?QVrsXCLMrYCousVIUTLvFDqTfQmISTm8h6RQU5cgBxGUtrRq1LXt5Q3saKgK?=
- =?us-ascii?Q?e1X9yFkyNgaaIfwOjOnqwfVxnrUPiMU8ify9z9q38riQDjh4A5XtyAkgR/au?=
- =?us-ascii?Q?NFx7XG4elWNXj4sruRolfDjQ6EaeRvQqXsbCZvV+fPLNW8mL8V9kkHyfSPgk?=
- =?us-ascii?Q?0cUjOrSf6po95New4X7RcD53mSyBxA1UrLKMiCb7LZhjowBOA5QjqYrmEfHf?=
- =?us-ascii?Q?hkKj8Zf0L8Xo83DVVJmiQT/WUK4JUpMqdMhBqStaMjbxfpv8YVo3M8WzCJsn?=
- =?us-ascii?Q?ctbJxk8zu+fNLaUM6Q6kLLwRtCIHqoPtOMRqfOigqmoxl5EvYpLkGwtIX4im?=
- =?us-ascii?Q?D9o26p3drve2yo7vT4TkhlnoNkPERCTnDKSDUcu65zsCZsjJGA=3D=3D?=
+	=?us-ascii?Q?UH6CjGAA4h+GFMJL0tBQQKLBIvOxddR5GOGWGA98GMt8R0SSvsJ643dJa4u9?=
+ =?us-ascii?Q?+00woDzf5kkTmK6sCmHITZopA+TqdUX20/pqL/HwwaRiSjJBX69zpFO7iZxX?=
+ =?us-ascii?Q?52BFoaikEV6c9TcZOvkweN+5I9Fgm7eb3uqQ7xJEn+lAWNIsfSb/PiHE/EHI?=
+ =?us-ascii?Q?2LaSlot5XmOKvJGk6LCXEsE+2Aq52xWObEDetlRqxemVFdUUnZafGnCISS1l?=
+ =?us-ascii?Q?dCgZOtBHcfLkiF5baUjUqEODqtWAnqFJY6w7HO7Z/p+DzUTd44Y9iG2XZiIK?=
+ =?us-ascii?Q?fXpSIq2NpMOjhYpA99i0aJuBLgER3oUUvDRJaYTzz7/BJCBAyiaJjw/1I8k2?=
+ =?us-ascii?Q?AINNd+4gUVjw7cNLRMhyM4yy/hpDAyxtYp4kAqu1FqDJRqHxHOIOOxOea2zw?=
+ =?us-ascii?Q?lEwS4ewHsq0Qh5mpOz6VUCvleVIY3JPRU9kgMTt1grtQSvT2gPx9JQmZRO4k?=
+ =?us-ascii?Q?wnuo5I3NvgnxiZkbzwxxUWlpXJLHjN2FluKQaeU6u5E4Y5J+4WGO5qG2Fp/t?=
+ =?us-ascii?Q?5n47xQzWHCCEiWMRKEBq71RrW8xAepo1ojbieg6v7ZhPzpeDcIOxI4PQCmtF?=
+ =?us-ascii?Q?C/WbnUEPlqkEi8FrA7gnZ5ZX7sc8MJVzo9AoPwyHQdvbhU9YBdEkdqKMacKg?=
+ =?us-ascii?Q?7xo7mj+66mFv2r71pXzzJPz0QL3TQv5f6sgun658OSnYbaLXchPlRyvCtq1g?=
+ =?us-ascii?Q?n0pWEMr2JiNbKJgwfvNfrMeg1NBPSXJdvuo8lcfxmAvQk1TlrAM2mjUpjBZt?=
+ =?us-ascii?Q?8O1BcyOPx9N15Q9AAnwIMrnQW652AHXhO44Z0r6V/NxL4ARxM1B1DpxFiqB6?=
+ =?us-ascii?Q?CpkdOZOG4MqYRnUXjxfxEEp4hrswmLcojl6RfnJwFEdhlQlyz8vPP+YK+tFX?=
+ =?us-ascii?Q?sPVjqE0H/YN9iGBGYZF5NXqfFYYjwmQm5JMP/GGGHWEBdYyvNvUpvfh9/IgK?=
+ =?us-ascii?Q?ZDmFEnpe02qRkhz3i9M4R2yBhUhZDBnVyClDVtxnG1Xu1V5N5hWgSEU+0cSy?=
+ =?us-ascii?Q?CWpkYXmJjn9AsDKr8+ARGzhbMaqGnjC/qGLdOGicQrP8VnC2jv1OLwA0J+0j?=
+ =?us-ascii?Q?SAYNdY0ID2nrD36HZy2DijWVe9bf113KhyvxUMzBuu3GwnChKOkFUfdJAhc2?=
+ =?us-ascii?Q?jRmiR9csITwZjJxgYGiAcmkNwi9rZBORLrAhBBS4Rz5PJv1/5LOHbQyiR6dt?=
+ =?us-ascii?Q?mqcjfUy2sbpi+EwrHAg2ExnHqld8oMnHp2Zv9pXXRxV8ntH/Y28s2n6txLtd?=
+ =?us-ascii?Q?G+BzoH0K+HYc3X4ckKvSE51yOMFR64LIIy0xRZiF5K4wfNpYU5XqhSXCPgoC?=
+ =?us-ascii?Q?Zurrf0YosrdKnW9TgksJKcoq4nz8aziOIXMs+JDyWW26VRrvtxk+uGykCsqF?=
+ =?us-ascii?Q?qkQEYGFwXNZ2stHTvuYmN/jwMg3Igox+RMROv94TiGy4wy0+sQheVPJvRtCi?=
+ =?us-ascii?Q?iF7TMwV4fD3MP16Ek6s8Kt5eKutdgIrB?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 06:55:59.1044
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 06:56:09.0689
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f53e3cde-25fd-4cb8-b631-08dcb064ab0f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55170644-7674-4eb5-6679-08dcb064b0fb
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E9.namprd02.prod.outlook.com
+	DS2PEPF00003440.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7902
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7165
 
-Add Xilinx Versal compatible string and corresponding groups, function and
-pins properties to support pin controller features on Versal platform.
+Add Pinctrl support for Xilinx Versal platform.
+Driver checks for firmware support to retrieve the Pin information, if it
+is supported then proceed further otherwise it returns error saying
+operation not supported. Latest Xilinx Platform Management Firmware must
+be used to make use of the Pinctrl driver for Versal platform.
 
 Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 ---
- .../bindings/pinctrl/xlnx,versal-pinctrl.yaml | 289 ++++++++++++++++++
- 1 file changed, 289 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/xlnx,versal-pinctrl.yaml
+ drivers/pinctrl/pinctrl-zynqmp.c | 97 ++++++++++++++++++++++++++++++--
+ 1 file changed, 92 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,versal-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,versal-pinctrl.yaml
-new file mode 100644
-index 000000000000..ff456a0c0a37
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/xlnx,versal-pinctrl.yaml
-@@ -0,0 +1,289 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/xlnx,versal-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
+index 3c6d56fdb8c9..2b9f8db49a15 100644
+--- a/drivers/pinctrl/pinctrl-zynqmp.c
++++ b/drivers/pinctrl/pinctrl-zynqmp.c
+@@ -10,6 +10,7 @@
+ 
+ #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
+ 
++#include <linux/bitfield.h>
+ #include <linux/bitmap.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -44,6 +45,12 @@
+ #define DRIVE_STRENGTH_8MA	8
+ #define DRIVE_STRENGTH_12MA	12
+ 
++#define VERSAL_LPD_PIN_PREFIX		"LPD_MIO"
++#define VERSAL_PMC_PIN_PREFIX		"PMC_MIO"
 +
-+title: Xilinx Versal Pinctrl
++#define VERSAL_PINCTRL_ATTR_NODETYPE_MASK	GENMASK(19, 14)
++#define VERSAL_PINCTRL_NODETYPE_LPD_MIO		BIT(0)
 +
-+maintainers:
-+  - Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+ /**
+  * struct zynqmp_pmux_function - a pinmux function
+  * @name:	Name of the pin mux function
+@@ -93,6 +100,8 @@ struct zynqmp_pctrl_group {
+ };
+ 
+ static struct pinctrl_desc zynqmp_desc;
++static u32 family_code;
++static u32 sub_family_code;
+ 
+ static int zynqmp_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
+ {
+@@ -596,8 +605,12 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
+ 			if (!groups[resp[i]].name)
+ 				return -ENOMEM;
+ 
+-			for (pin = 0; pin < groups[resp[i]].npins; pin++)
+-				__set_bit(groups[resp[i]].pins[pin], used_pins);
++			for (pin = 0; pin < groups[resp[i]].npins; pin++) {
++				if (family_code == ZYNQMP_FAMILY_CODE)
++					__set_bit(groups[resp[i]].pins[pin], used_pins);
++				else
++					__set_bit((u8)groups[resp[i]].pins[pin] - 1, used_pins);
++			}
+ 		}
+ 	}
+ done:
+@@ -873,6 +886,70 @@ static int zynqmp_pinctrl_prepare_pin_desc(struct device *dev,
+ 	return 0;
+ }
+ 
++static int versal_pinctrl_get_attributes(u32 pin_idx, u32 *response)
++{
++	struct zynqmp_pm_query_data qdata = {0};
++	u32 payload[PAYLOAD_ARG_CNT];
++	int ret;
 +
-+description: |
-+  Please refer to pinctrl-bindings.txt in this directory for details of the
-+  common pinctrl bindings used by client devices, including the meaning of the
-+  phrase "pin configuration node".
++	qdata.qid = PM_QID_PINCTRL_GET_ATTRIBUTES;
++	qdata.arg1 = pin_idx;
 +
-+  Versal's pin configuration nodes act as a container for an arbitrary number of
-+  subnodes. Each of these subnodes represents some desired configuration for a
-+  pin, a group, or a list of pins or groups. This configuration can include the
-+  mux function to select on those pin(s)/group(s), and various pin configuration
-+  parameters, such as pull-up, slew rate, etc.
++	ret = zynqmp_pm_query_data(qdata, payload);
++	if (ret)
++		return ret;
 +
-+  Each configuration node can consist of multiple nodes describing the pinmux and
-+  pinconf options. Those nodes can be pinmux nodes or pinconf nodes.
++	memcpy(response, &payload[1], sizeof(*response));
 +
-+  The name of each subnode is not important; all subnodes should be enumerated
-+  and processed purely based on their content.
++	return 0;
++}
 +
-+properties:
-+  compatible:
-+    const: xlnx,versal-pinctrl
++static int versal_pinctrl_prepare_pin_desc(struct device *dev,
++					   const struct pinctrl_pin_desc **zynqmp_pins,
++					   unsigned int *npins)
++{
++	u32 lpd_mio_pins = 0, attr, nodetype;
++	struct pinctrl_pin_desc *pins, *pin;
++	int ret, i;
 +
-+patternProperties:
-+  '^(.*-)?(default|gpio-grp)$':
-+    type: object
-+    patternProperties:
-+      '^mux':
-+        type: object
-+        description:
-+          Pinctrl node's client devices use subnodes for pin muxes,
-+          which in turn use below standard properties.
-+        $ref: pinmux-node.yaml#
++	ret = zynqmp_pm_is_function_supported(PM_QUERY_DATA, PM_QID_PINCTRL_GET_ATTRIBUTES);
++	if (ret)
++		return ret;
 +
-+        properties:
-+          pins:
-+            description:
-+              List of pins to select (either this or "groups" must be specified)
-+            items:
-+              pattern: '^((LPD|PMC)_)MIO([0-9]|[1-6][0-9]|7[0-7])$'
++	ret = zynqmp_pinctrl_get_num_pins(npins);
++	if (ret)
++		return ret;
 +
-+          groups:
-+            description:
-+              List of groups to select (either this or "pins" must be
-+              specified), available groups for this subnode.
-+            items:
-+              anyOf:
-+                - pattern: '^((LPD|PMC)_)MIO([0-9]|[1-6][0-9]|7[0-7])$'
-+                - enum: [spi0_0_grp, spi0_1_grp, spi0_2_grp, spi0_3_grp, spi0_4_grp, spi0_5_grp,
-+                         spi0_ss_0_grp, spi0_ss_1_grp, spi0_ss_2_grp, spi0_ss_3_grp, spi0_ss_4_grp,
-+                         spi0_ss_5_grp, spi0_ss_6_grp, spi0_ss_7_grp, spi0_ss_8_grp, spi0_ss_9_grp,
-+                         spi0_ss_10_grp, spi0_ss_11_grp, spi0_ss_12_grp, spi0_ss_13_grp, spi0_ss_14_grp,
-+                         spi0_ss_15_grp, spi0_ss_16_grp, spi0_ss_17_grp, spi1_0_grp, spi1_1_grp,
-+                         spi1_2_grp, spi1_3_grp, spi1_4_grp, spi1_5_grp, spi1_ss_0_grp, spi1_ss_1_grp,
-+                         spi1_ss_2_grp, spi1_ss_3_grp, spi1_ss_4_grp, spi1_ss_5_grp, spi1_ss_6_grp,
-+                         spi1_ss_7_grp, spi1_ss_8_grp, spi1_ss_9_grp, spi1_ss_10_grp, spi1_ss_11_grp,
-+                         spi1_ss_12_grp, spi1_ss_13_grp, spi1_ss_14_grp, spi1_ss_15_grp, spi1_ss_16_grp
-+                         spi1_ss_17_grp, can0_0_grp, can0_1_grp, can0_2_grp, can0_3_grp, can0_4_grp,
-+                         can0_5_grp, can0_6_grp, can0_7_grp, can0_8_grp, can0_9_grp, can0_10_grp,
-+                         can0_11_grp, can0_12_grp, can0_13_grp, can0_14_grp, can0_15_grp, can0_16_grp,
-+                         can0_17_grp, can1_0_grp, can1_1_grp, can1_2_grp, can1_3_grp, can1_4_grp,
-+                         can1_5_grp, can1_6_grp, can1_7_grp, can1_8_grp, can1_9_grp, can1_10_grp,
-+                         can1_11_grp, can1_12_grp, can1_13_grp, can1_14_grp, can1_15_grp, can1_16_grp,
-+                         can1_17_grp, can1_18_grp, i2c0_0_grp, i2c0_1_grp, i2c0_2_grp, i2c0_3_grp,
-+                         i2c0_4_grp, i2c0_5_grp, i2c0_6_grp, i2c0_7_grp, i2c0_8_grp, i2c0_9_grp,
-+                         i2c0_10_grp, i2c0_11_grp, i2c0_12_grp, i2c0_13_grp, i2c0_14_grp, i2c0_15_grp,
-+                         i2c0_16_grp, i2c0_17_grp, i2c1_0_grp, i2c1_1_grp, i2c1_2_grp, i2c1_3_grp,
-+                         i2c1_4_grp, i2c1_5_grp, i2c1_6_grp, i2c1_7_grp, i2c1_8_grp, i2c1_9_grp,
-+                         i2c1_10_grp, i2c1_11_grp, i2c1_12_grp, i2c1_13_grp, i2c1_14_grp, i2c1_15_grp,
-+                         i2c1_16_grp, i2c1_17_grp, i2c1_18_grp, i2c_pmc_0_grp, i2c_pmc_1_grp,
-+                         i2c_pmc_2_grp, i2c_pmc_3_grp, i2c_pmc_4_grp, i2c_pmc_5_grp, i2c_pmc_6_grp,
-+                         i2c_pmc_7_grp, i2c_pmc_8_grp, i2c_pmc_9_grp, i2c_pmc_10_grp, i2c_pmc_11_grp,
-+                         i2c_pmc_12_grp, ttc0_clk_0_grp, ttc0_clk_1_grp, ttc0_clk_2_grp, ttc0_clk_3_grp,
-+                         ttc0_clk_4_grp, ttc0_clk_5_grp, ttc0_clk_6_grp, ttc0_clk_7_grp, ttc0_clk_8_grp,
-+                         ttc0_wav_0_grp, ttc0_wav_1_grp, ttc0_wav_2_grp, ttc0_wav_3_grp, ttc0_wav_4_grp,
-+                         ttc0_wav_5_grp, ttc0_wav_6_grp, ttc0_wav_7_grp, ttc0_wav_8_grp, ttc1_clk_0_grp,
-+                         ttc1_clk_1_grp, ttc1_clk_2_grp, ttc1_clk_3_grp, ttc1_clk_4_grp, ttc1_clk_5_grp,
-+                         ttc1_clk_6_grp, ttc1_clk_7_grp, ttc1_clk_8_grp, ttc1_wav_0_grp, ttc1_wav_1_grp,
-+                         ttc1_wav_2_grp, ttc1_wav_3_grp, ttc1_wav_4_grp, ttc1_wav_5_grp, ttc1_wav_6_grp,
-+                         ttc1_wav_7_grp, ttc1_wav_8_grp, ttc2_clk_0_grp, ttc2_clk_1_grp, ttc2_clk_2_grp,
-+                         ttc2_clk_3_grp, ttc2_clk_4_grp, ttc2_clk_5_grp, ttc2_clk_6_grp, ttc2_clk_7_grp,
-+                         ttc2_clk_8_grp, ttc2_wav_0_grp, ttc2_wav_1_grp, ttc2_wav_2_grp, ttc2_wav_3_grp,
-+                         ttc2_wav_4_grp, ttc2_wav_5_grp, ttc2_wav_6_grp, ttc2_wav_7_grp, ttc2_wav_8_grp,
-+                         ttc3_clk_0_grp, ttc3_clk_1_grp, ttc3_clk_2_grp, ttc3_clk_3_grp, ttc3_clk_4_grp,
-+                         ttc3_clk_5_grp, ttc3_clk_6_grp, ttc3_clk_7_grp, ttc3_clk_8_grp, ttc3_wav_0_grp,
-+                         ttc3_wav_1_grp, ttc3_wav_2_grp, ttc3_wav_3_grp, ttc3_wav_4_grp, ttc3_wav_5_grp,
-+                         ttc3_wav_6_grp, ttc3_wav_7_grp, ttc3_wav_8_grp, wwdt0_0_grp, wwdt0_1_grp,
-+                         wwdt0_2_grp, wwdt0_3_grp, wwdt0_4_grp, wwdt0_5_grp, wwdt1_0_grp, wwdt1_1_grp,
-+                         wwdt1_2_grp, wwdt1_3_grp, wwdt1_4_grp, wwdt1_5_grp, sysmon_i2c0_0_grp,
-+                         sysmon_i2c0_1_grp, sysmon_i2c0_2_grp, sysmon_i2c0_3_grp, sysmon_i2c0_4_grp,
-+                         sysmon_i2c0_5_grp, sysmon_i2c0_6_grp, sysmon_i2c0_7_grp, sysmon_i2c0_8_grp,
-+                         sysmon_i2c0_9_grp, sysmon_i2c0_10_grp, sysmon_i2c0_11_grp, sysmon_i2c0_12_grp,
-+                         sysmon_i2c0_13_grp, sysmon_i2c0_14_grp, sysmon_i2c0_15_grp,
-+                         sysmon_i2c0_16_grp, sysmon_i2c0_17_grp, sysmon_i2c0_alrt_0_grp,
-+                         sysmon_i2c0_alrt_1_grp, sysmon_i2c0_alrt_2_grp, sysmon_i2c0_alrt_3_grp,
-+                         sysmon_i2c0_alrt_4_grp, sysmon_i2c0_alrt_5_grp, sysmon_i2c0_alrt_6_grp,
-+                         sysmon_i2c0_alrt_7_grp, sysmon_i2c0_alrt_8_grp, sysmon_i2c0_alrt_9_grp,
-+                         sysmon_i2c0_alrt_10_grp, sysmon_i2c0_alrt_11_grp, sysmon_i2c0_alrt_12_grp,
-+                         sysmon_i2c0_alrt_13_grp, sysmon_i2c0_alrt_14_grp, sysmon_i2c0_alrt_15_grp,
-+                         sysmon_i2c0_alrt_16_grp, sysmon_i2c0_alrt_17_grp, uart0_0_grp, uart0_1_grp,
-+                         uart0_2_grp, uart0_3_grp, uart0_4_grp, uart0_5_grp, uart0_6_grp, uart0_7_grp,
-+                         uart0_8_grp, uart0_ctrl_0_grp, uart0_ctrl_1_grp, uart0_ctrl_2_grp,
-+                         uart0_ctrl_3_grp, uart0_ctrl_4_grp, uart0_ctrl_5_grp, uart0_ctrl_6_grp,
-+                         uart0_ctrl_7_grp, uart0_ctrl_8_grp, uart1_0_grp, uart1_1_grp, uart1_2_grp,
-+                         uart1_3_grp, uart1_4_grp, uart1_5_grp, uart1_6_grp, uart1_7_grp, uart1_8_grp,
-+                         uart1_ctrl_0_grp, uart1_ctrl_1_grp, uart1_ctrl_2_grp, uart1_ctrl_3_grp,
-+                         uart1_ctrl_4_grp, uart1_ctrl_5_grp, uart1_ctrl_6_grp, uart1_ctrl_7_grp,
-+                         uart1_ctrl_8_grp, gpio0_0_grp, gpio0_1_grp, gpio0_2_grp, gpio0_3_grp,
-+                         gpio0_4_grp, gpio0_5_grp, gpio0_6_grp, gpio0_7_grp, gpio0_8_grp, gpio0_9_grp,
-+                         gpio0_10_grp, gpio0_11_grp, gpio0_12_grp, gpio0_13_grp, gpio0_14_grp,
-+                         gpio0_15_grp, gpio0_16_grp, gpio0_17_grp, gpio0_18_grp, gpio0_19_grp,
-+                         gpio0_20_grp, gpio0_21_grp, gpio0_22_grp, gpio0_23_grp, gpio0_24_grp,
-+                         gpio0_25_grp, gpio1_0_grp, gpio1_1_grp, gpio1_2_grp, gpio1_3_grp, gpio1_4_grp,
-+                         gpio1_5_grp, gpio1_6_grp, gpio1_7_grp, gpio1_8_grp, gpio1_9_grp,
-+                         gpio1_10_grp, gpio1_11_grp, gpio1_12_grp, gpio1_13_grp, gpio1_14_grp,
-+                         gpio1_15_grp, gpio1_16_grp, gpio1_17_grp, gpio1_18_grp, gpio1_19_grp,
-+                         gpio1_20_grp, gpio1_21_grp, gpio1_22_grp, gpio1_23_grp, gpio1_24_grp,
-+                         gpio1_25_grp, gpio2_0_grp, gpio2_1_grp, gpio2_2_grp, gpio2_3_grp, gpio2_4_grp,
-+                         gpio2_5_grp, gpio2_6_grp, gpio2_7_grp, gpio2_8_grp, gpio2_9_grp, gpio2_10_grp,
-+                         gpio2_11_grp, gpio2_12_grp, gpio2_13_grp, gpio2_14_grp, gpio2_15_grp,
-+                         gpio2_16_grp, gpio2_17_grp, gpio2_18_grp, gpio2_19_grp, gpio2_20_grp,
-+                         gpio2_21_grp, gpio2_22_grp, gpio2_23_grp, gpio2_24_grp, gpio2_25_grp,
-+                         emio0_0_grp, emio0_1_grp, emio0_2_grp, emio0_3_grp, emio0_4_grp, emio0_5_grp,
-+                         emio0_6_grp, emio0_7_grp, emio0_8_grp, emio0_9_grp, emio0_10_grp,
-+                         emio0_11_grp, emio0_12_grp, emio0_13_grp, emio0_14_grp, emio0_15_grp,
-+                         emio0_16_grp, emio0_17_grp, emio0_18_grp, emio0_19_grp, emio0_20_grp,
-+                         emio0_21_grp, emio0_22_grp, emio0_23_grp, emio0_24_grp, emio0_25_grp,
-+                         emio0_26_grp, emio0_27_grp, emio0_28_grp, emio0_29_grp, emio0_30_grp,
-+                         emio0_31_grp, emio0_32_grp, emio0_33_grp, emio0_34_grp, emio0_35_grp,
-+                         emio0_36_grp, emio0_37_grp, emio0_38_grp, emio0_39_grp, emio0_40_grp,
-+                         emio0_41_grp, emio0_42_grp, emio0_43_grp, emio0_44_grp, emio0_45_grp,
-+                         emio0_46_grp, emio0_47_grp, emio0_48_grp, emio0_49_grp, emio0_50_grp,
-+                         emio0_51_grp, emio0_52_grp, emio0_53_grp, emio0_54_grp, emio0_55_grp,
-+                         emio0_56_grp, emio0_57_grp, emio0_58_grp, emio0_59_grp, emio0_60_grp,
-+                         emio0_61_grp, emio0_62_grp, emio0_63_grp, emio0_64_grp, emio0_65_grp,
-+                         emio0_66_grp, emio0_67_grp, emio0_68_grp, emio0_69_grp, emio0_70_grp,
-+                         emio0_71_grp, emio0_72_grp, emio0_73_grp, emio0_74_grp, emio0_75_grp,
-+                         emio0_76_grp, emio0_77_grp, gem0_0_grp, gem0_1_grp, gem1_0_grp, gem1_1_grp,
-+                         trace0_0_grp, trace0_1_grp, trace0_2_grp, trace0_clk_0_grp, trace0_clk_1_grp,
-+                         trace0_clk_2_grp, mdio0_0_grp, mdio0_1_grp, mdio1_0_grp, mdio1_1_grp,
-+                         gem_tsu0_0_grp, gem_tsu0_1_grp, gem_tsu0_2_grp, gem_tsu0_3_grp, pcie0_0_grp,
-+                         pcie0_1_grp, pcie0_2_grp, smap0_0_grp, usb0_0_grp, sd0_0_grp, sd0_1_grp,
-+                         sd0_2_grp, sd0_3_grp, sd0_4_grp, sd0_5_grp, sd0_6_grp, sd0_7_grp, sd0_8_grp,
-+                         sd0_9_grp, sd0_10_grp, sd0_11_grp, sd0_12_grp, sd0_13_grp, sd0_14_grp,
-+                         sd0_15_grp, sd0_16_grp, sd0_17_grp, sd0_18_grp, sd0_19_grp, sd0_20_grp,
-+                         sd0_21_grp, sd0_pc_0_grp, sd0_pc_1_grp, sd0_cd_0_grp, sd0_cd_1_grp,
-+                         sd0_wp_0_grp, sd0_wp_1_grp, sd1_0_grp, sd1_1_grp, sd1_2_grp, sd1_3_grp,
-+                         sd1_4_grp, sd1_5_grp, sd1_6_grp, sd1_7_grp, sd1_8_grp, sd1_9_grp, sd1_10_grp,
-+                         sd1_11_grp, sd1_12_grp, sd1_13_grp, sd1_14_grp, sd1_15_grp, sd1_16_grp,
-+                         sd1_17_grp, sd1_18_grp, sd1_19_grp, sd1_20_grp, sd1_21_grp, sd1_pc_0_grp,
-+                         sd1_pc_1_grp, sd1_cd_0_grp, sd1_cd_1_grp, sd1_wp_0_grp, sd1_wp_1_grp,
-+                         ospi0_0_grp, ospi0_ss_0_grp, qspi0_0_grp, qspi0_fbclk_0_grp, qspi0_ss_0_grp,
-+                         test_clk_0_grp, test_scan_0_grp, tamper_trigger_0_grp]
-+            maxItems: 78
++	pins = devm_kzalloc(dev, sizeof(*pins) * *npins, GFP_KERNEL);
++	if (!pins)
++		return -ENOMEM;
 +
-+          function:
-+            description:
-+              Specify the alternative function to be configured for the
-+              given pin groups.
-+            enum: [spi0, spi0_ss, spi1, spi1_ss, can0, can1, i2c0, i2c1, i2c_pmc, ttc0_clk,
-+                   ttc0_wav, ttc1_clk, ttc1_wav, ttc2_clk, ttc2_wav, ttc3_clk, ttc3_wav, wwdt0,
-+                   wwdt1, sysmon_i2c0, sysmon_i2c0_alrt, uart0, uart0_ctrl, uart1, uart1_ctrl,
-+                   gpio0, gpio1, gpio2, emio0, gem0, gem1, trace0, trace0_clk, mdio0, mdio1, gem_tsu0,
-+                   pcie0, smap0, usb0, sd0, sd0_pc, sd0_cd, sd0_wp, sd1, sd1_pc, sd1_wp, sd1_cd,
-+                   ospi0, ospi0_ss, qspi0, qspi0_fbclk, qspi0_ss, test_clk, test_scan, tamper_trigger]
++	for (i = 0; i < *npins; i++) {
++		ret = versal_pinctrl_get_attributes(i, &attr);
++		if (ret)
++			return ret;
 +
-+        required:
-+          - function
++		pin = &pins[i];
++		pin->number = attr;
++		nodetype = FIELD_GET(VERSAL_PINCTRL_ATTR_NODETYPE_MASK, attr);
++		if (nodetype == VERSAL_PINCTRL_NODETYPE_LPD_MIO) {
++			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
++						   VERSAL_LPD_PIN_PREFIX, i);
++			lpd_mio_pins++;
++		} else {
++			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
++						   VERSAL_PMC_PIN_PREFIX, i - lpd_mio_pins);
++		}
 +
-+        oneOf:
-+          - required: [ groups ]
-+          - required: [ pins ]
++		if (!pin->name)
++			return -ENOMEM;
++	}
 +
-+        additionalProperties: false
++	*zynqmp_pins = pins;
 +
-+      '^conf':
-+        type: object
-+        description:
-+          Pinctrl node's client devices use subnodes for pin configurations,
-+          which in turn use the standard properties below.
-+        $ref: pincfg-node.yaml#
++	return 0;
++}
 +
-+        properties:
-+          groups:
-+            description:
-+              List of pin groups as mentioned above.
+ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct zynqmp_pinctrl *pctrl;
+@@ -882,9 +959,18 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
+ 	if (!pctrl)
+ 		return -ENOMEM;
+ 
+-	ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev,
+-					      &zynqmp_desc.pins,
+-					      &zynqmp_desc.npins);
++	ret = zynqmp_pm_get_family_info(&family_code, &sub_family_code);
++	if (ret < 0)
++		return ret;
 +
-+          pins:
-+            description:
-+              List of pin names to select in this subnode.
-+            items:
-+              pattern: '^((LPD|PMC)_)MIO([0-9]|[1-6][0-9]|7[0-7])$'
-+            maxItems: 78
++	if (family_code == ZYNQMP_FAMILY_CODE) {
++		ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
++						      &zynqmp_desc.npins);
++	} else {
++		ret = versal_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
++						      &zynqmp_desc.npins);
++	}
 +
-+          bias-pull-up: true
-+
-+          bias-pull-down: true
-+
-+          bias-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          bias-high-impedance: true
-+
-+          low-power-enable: true
-+
-+          low-power-disable: true
-+
-+          slew-rate:
-+            enum: [0, 1]
-+
-+          output-enable:
-+            description:
-+              This will internally disable the tri-state for MIO pins.
-+
-+          drive-strength:
-+            description:
-+              Selects the drive strength for MIO pins, in mA.
-+            enum: [2, 4, 8, 12]
-+
-+          power-source:
-+            enum: [0, 1]
-+
-+        oneOf:
-+          - required: [ groups ]
-+          - required: [ pins ]
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
-+    versal_firmware: versal-firmware {
-+        pinctrl0: pinctrl {
-+          compatible = "xlnx,versal-pinctrl";
-+
-+          pinctrl_uart0_default: uart0-default {
-+             mux {
-+                 groups = "uart0_4_grp", "uart0_5_grp";
-+                 function = "uart0";
-+             };
-+
-+             conf {
-+                groups = "uart0_4_grp";
-+                slew-rate = <SLEW_RATE_SLOW>;
-+                power-source = <IO_STANDARD_LVCMOS18>;
-+             };
-+
-+             conf-rx {
-+                pins = "PMC_MIO42";
-+                bias-pull-up;
-+             };
-+
-+             conf-tx {
-+                pins = "PMC_MIO43";
-+                bias-disable;
-+                input-schmitt-disable;
-+             };
-+          };
-+        };
-+    };
-+
-+    uart0 {
-+         pinctrl-names = "default";
-+         pinctrl-0 = <&pinctrl_uart0_default>;
-+    };
-+
-+...
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "pin desc prepare fail with %d\n", ret);
+ 		return ret;
+@@ -907,6 +993,7 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id zynqmp_pinctrl_of_match[] = {
+ 	{ .compatible = "xlnx,zynqmp-pinctrl" },
++	{ .compatible = "xlnx,versal-pinctrl" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, zynqmp_pinctrl_of_match);
 -- 
 2.25.1
 
