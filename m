@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5FD19AD81;
-	Tue, 30 Jul 2024 10:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5867119B3F4;
+	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722335171; cv=none; b=PVgPnhLDa/Qheie0dU+nhEaLJ2MIu0qqP1FZDtOe//1JDyMx0XOM7LFv8DM6v/aIL689/BgB9Ov1giP28L9AoykjkC8Dp+8yo9n7zgydKpRxcJrm3DRQ69/gQ6z7m87WUuqa+xdp6YJEuGLFW6HM0mBtHnMJ7sTebKqulJNSjrg=
+	t=1722335171; cv=none; b=mtxw2+ofLu71+P2jzi1LKO2bc2cQyN/KENrQobfb+2txRYiSYfDNIKgkUT3nkGfHj71WKgi0oERVBEofG6Uk+MfvqVvaro1CqoWeKk1T9cVeSVZYHEWM9I7CRnS1YsMK0MuqkCxhQakeb/vFXL40KvsHEKQCji35t+n0oIRTRZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722335171; c=relaxed/simple;
-	bh=esxKEex8+51rNpzxQN3ox5RAsVaCCzTefrB7PLUkUm4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HygVlP7vqVdMF5TGcQ+XhtVcVcBxdPdbMdk6C8ts/Kao9sx5tcnaTM6ByWpJ4s/02wKbprSnr2+0NU4jJf2MrzHuGwQiDgCdafu656qF1ogwcaNjd4YFPiT0PULW1JrAN501+DMawVwD62A40sYMf1XFo9xJW3iLkVe8DRpG2ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PM/hGoHK; arc=none smtp.client-ip=10.30.226.201
+	bh=HTq8KxdlBff6aHVfaDL9tdZs8oniKPuVqDJdX3FXXA0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=C/C6dsjdHzVlbhelWrYmEN8NWp5DH1GJZgcJPSJgvll7JRnNMt7Lv0wLVn3pMi59Z1JOlQBr8D8aP1EVJ1q5lHYl3RY7ssPnkygFt1+WlU54OspT+OxkKmhdNP+8gV0w/RKJNdZh3SjqwPLfWiLGNxpk+5FCcaAdITnu7GFsMKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmXjW1fp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PM/hGoHK"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B6156C4AF0B;
-	Tue, 30 Jul 2024 10:26:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmXjW1fp"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 12ED0C4AF52;
+	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722335170;
-	bh=esxKEex8+51rNpzxQN3ox5RAsVaCCzTefrB7PLUkUm4=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=PM/hGoHKejg7tHswaCVpjDmQs35ugrJEykpaLXYY0TNu/5j85VySr/vPAHQc+FEPg
-	 leoqk/RoT9PJCnN1xLW19Lsn2mc25SJOfBM8KVKU//5RAOYedeUx1Cq67IrxIhq+lH
-	 5VEe27uX3WY+kuvJWToEI4txBUo0KmEkN+X2VfIPveOSMLr5VtkitkYYK1lziXLhX4
-	 +CtYXoJN+8gKesI/jNDEgBD5pCxHDAeAuCCSpG2FErRZPiVFeAeq4do/LjZxFpffhz
-	 mBt8mpS0whL4uA4yOINpu1gYcHrs4N0/BoFvl5J/R0KVXjuCKm13vZpGdlNJbfvXlT
-	 iaTxLXxQCgllA==
+	s=k20201202; t=1722335171;
+	bh=HTq8KxdlBff6aHVfaDL9tdZs8oniKPuVqDJdX3FXXA0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=hmXjW1fpsVHmTfgmyeFyogd6JxcedGzI2LkuLqbPM0AXFk85YvL0EgzPtb9Gduke/
+	 l4TithREs+VE2u/kRG2kzavTOrnGyWMuSPCI3tam73vyrFN7tPZEthudAwr0S7Qn0G
+	 FqmCVSe+U8NBB5dPY0dVBR1Qb/R/+rtSziw498v+IAAuvjizD/xiGDjV2/mEabL0pm
+	 PzbouARYdADjHHTKVHKzp5XGCbFHSKnwUWD7cDuFzBn81F6c3gzjXuF/EVjxjz9rxB
+	 nQpL9CkV4aSsS38AD5GHoxCAuexfGMceo9HslfSGaZB0Wbynidt1t5n1BATnI26ddu
+	 GHbnDo8Zfrm/w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E05C3DA49;
-	Tue, 30 Jul 2024 10:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08114C3DA49;
+	Tue, 30 Jul 2024 10:26:11 +0000 (UTC)
 From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Subject: [PATCH v11 00/12] Initial Marvell PXA1908 support
-Date: Tue, 30 Jul 2024 12:25:08 +0200
-Message-Id: <20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr>
+Date: Tue, 30 Jul 2024 12:25:12 +0200
+Subject: [PATCH v11 04/12] dt-bindings: clock: Add Marvell PXA1908 clock
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,12 +41,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAIS/qGYC/4XRy07DMBAF0F+pssbRPPzsiv9ALBzHpqaPVAlER
- VX/HbdSaTALljPSub7ynJspjjlOzXp1bsY45ykPhzIgPq2asPGHtyhyXxYNATFYYHE8eXRgxW6
- 73wltGaLtvVTBNIUcx5jy6Zb38lrmTZ4+hvHrFj/zdXsPkr+DZhYgbJQ2Bc8GnHuetsMutpuxu
- ebM9LCGDGpy4FoNjAJF//ke230ubYc5hwriEiIhgKSWULH6T8plXVPVlaVu6Nia3nAnFVVWLSx
- SZVWxXvUKHZsYWVZW/1gEhMrqYjtKERxJCMlW1t6tBPxjbbEpeqOtV06a+l33sBLqzq5YUh6Ao
- +WgU/3LsMBU37Y0AcE69KlTVmJaHvdyuXwDvK6FCoUCAAA=
+Message-Id: <20240730-pxa1908-lkml-v11-4-21dbb3e28793@skole.hr>
+References: <20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr>
+In-Reply-To: <20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
  Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -60,17 +58,15 @@ Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7782;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4973;
  i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=esxKEex8+51rNpzxQN3ox5RAsVaCCzTefrB7PLUkUm4=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDGkr9m/WOmZcOSHwk5IB1+9Lqv1vOHd/Lv70+EXZUtafy
- TrubyabdJSyMIhxMciKKbLk/ne8xvtZZOv27GUGMHNYmUCGMHBxCsBEdBMYGWa0evcIHu84HBhb
- 2Wb7lKHBldH6+OSsifYsaTGVSsWLahgZHm6ceT9+S538hScxiaIHlA7e+D1vH//KSDUze9VbTa8
- vcwIA
+ bh=KMQL466nychebb4YZnaiI07BFVr6kSgzNovpEb0k4I8=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDGkr9m9Zvdp+opL46fb1FrdEz5rtEU878zU1kCszpUa1N
+ Ui7kOdMRykLgxgXg6yYIkvuf8drvJ9Ftm7PXmYAM4eVCWQIAxenAEzkbRDDf9fdcUcrJ7yesKbn
+ fIXCioT/t5VWPfvXMl+/mZl55T2b1kRGhkcs8ae+VMY48d1zznRz6Vepf2FSwBP9KPBNyrc9d28
+ +5AMA
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
@@ -78,183 +74,169 @@ X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
 X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 Reply-To: duje.mihanovic@skole.hr
 
-Hello,
+From: Duje Mihanović <duje.mihanovic@skole.hr>
 
-This series adds initial support for the Marvell PXA1908 SoC and
-"samsung,coreprimevelte", a smartphone using the SoC.
+Add dt bindings and documentation for the Marvell PXA1908 clock
+controller.
 
-USB works and the phone can boot a rootfs from an SD card, but there are
-some warnings in the dmesg:
-
-During SMP initialization:
-[    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
-[    0.006542] CPU features: Unsupported CPU feature variation detected.
-[    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
-[    0.010710] Detected VIPT I-cache on CPU2
-[    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
-[    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
-[    0.014849] Detected VIPT I-cache on CPU3
-[    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
-[    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
-
-SMMU probing fails:
-[    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
-[    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
-[    0.101816] arm-smmu c0010000.iommu:         no translation support!
-
-A 3.14 based Marvell tree is available on GitHub
-acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
-CoderCharmander/g361f-kernel.
-
-Andreas Färber attempted to upstream support for this SoC in 2017:
-https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
-
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
-
-Changes in v11:
-- Rebase on v6.11-rc1 (conflict with DTS Makefile), no changes
-- Link to v10: https://lore.kernel.org/r/20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr
-
-Changes in v10:
-- Update trailers
-- Rebase on v6.9-rc5
-- Clock driver changes:
-  - Add a couple of forgotten clocks in APBC
-    - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
-    - The IDs and register offsets were already present, but I forgot to
-      actually register them
-  - Split each controller block into own file
-  - Drop unneeded -of in clock driver filenames
-  - Simplify struct pxa1908_clk_unit
-  - Convert to platform driver
-  - Add module metadata
-- DTS changes:
-  - Properly name pinctrl nodes
-  - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
-  - Fix pinctrl input-schmitt configuration
-- Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
-
-Changes in v9:
-- Update trailers and rebase on v6.9-rc2, no changes
-- Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
-
-Changes in v8:
-- Drop SSPA patch
-- Drop broken-cd from eMMC node
-- Specify S-Boot hardcoded initramfs location in device tree
-- Add ARM PMU node
-- Correct inverted modem memory base and size
-- Update trailers
-- Rebase on next-20240110
-- Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
-  and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
-
-Changes in v7:
-- Suppress SND_MMP_SOC_SSPA on ARM64
-- Update trailers
-- Rebase on v6.6-rc7
-- Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
-
-Changes in v6:
-- Address maintainer comments:
-  - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
-- Drop GPIO patch as it's been pulled
-- Update trailers
-- Rebase on v6.6-rc5
-- Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
-
-Changes in v5:
-- Address maintainer comments:
-  - Move *_NR_CLKS to clock driver from dt binding file
-- Allocate correct number of clocks for each block instead of blindly
-  allocating 50 for each
-- Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
-
-Changes in v4:
-- Address maintainer comments:
-  - Relicense clock binding file to BSD-2
-- Add pinctrl-names to SD card node
-- Add vgic registers to GIC node
-- Rebase on v6.5-rc5
-- Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
-
-Changes in v3:
-- Address maintainer comments:
-  - Drop GPIO dynamic allocation patch
-  - Move clock register offsets into driver (instead of bindings file)
-  - Add missing Tested-by trailer to u32_fract patch
-  - Move SoC binding to arm/mrvl/mrvl.yaml
-- Add serial0 alias and stdout-path to board dts to enable UART
-  debugging
-- Rebase on v6.5-rc4
-- Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
-
-Changes in v2:
-- Remove earlycon patch as it's been merged into tty-next
-- Address maintainer comments:
-  - Clarify GPIO regressions on older PXA platforms
-  - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
-  - Add missing includes to clock driver
-  - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
-  - Dual license clock bindings
-  - Change clock IDs to decimal
-  - Fix underscores in dt node names
-  - Move chosen node to top of board dts
-  - Clean up documentation
-  - Reorder commits
-  - Drop pxa,rev-id
-- Rename muic-i2c to i2c-muic
-- Reword some commits
-- Move framebuffer node to chosen
-- Add aliases for mmc nodes
-- Rebase on v6.5-rc3
-- Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
-
 ---
-Andy Shevchenko (1):
-      clk: mmp: Switch to use struct u32_fract instead of custom one
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml | 48 ++++++++++++
+ include/dt-bindings/clock/marvell,pxa1908.h        | 88 ++++++++++++++++++++++
+ 2 files changed, 136 insertions(+)
 
-Duje Mihanović (11):
-      dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
-      pinctrl: single: add marvell,pxa1908-padconf compatible
-      dt-bindings: clock: Add Marvell PXA1908 clock bindings
-      clk: mmp: Add Marvell PXA1908 APBC driver
-      clk: mmp: Add Marvell PXA1908 APBCP driver
-      clk: mmp: Add Marvell PXA1908 APMU driver
-      clk: mmp: Add Marvell PXA1908 MPMU driver
-      dt-bindings: marvell: Document PXA1908 SoC
-      arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
-      arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
-      MAINTAINERS: add myself as Marvell PXA1908 maintainer
+diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
+new file mode 100644
+index 000000000000..4e78933232b6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/marvell,pxa1908.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell PXA1908 Clock Controllers
++
++maintainers:
++  - Duje Mihanović <duje.mihanovic@skole.hr>
++
++description: |
++  The PXA1908 clock subsystem generates and supplies clock to various
++  controllers within the PXA1908 SoC. The PXA1908 contains numerous clock
++  controller blocks, with the ones currently supported being APBC, APBCP, MPMU
++  and APMU roughly corresponding to internal buses.
++
++  All these clock identifiers could be found in <include/dt-bindings/marvell,pxa1908.h>.
++
++properties:
++  compatible:
++    enum:
++      - marvell,pxa1908-apbc
++      - marvell,pxa1908-apbcp
++      - marvell,pxa1908-mpmu
++      - marvell,pxa1908-apmu
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  # APMU block:
++  - |
++    clock-controller@d4282800 {
++      compatible = "marvell,pxa1908-apmu";
++      reg = <0xd4282800 0x400>;
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/marvell,pxa1908.h b/include/dt-bindings/clock/marvell,pxa1908.h
+new file mode 100644
+index 000000000000..fb15b0d0cd4c
+--- /dev/null
++++ b/include/dt-bindings/clock/marvell,pxa1908.h
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++#ifndef __DTS_MARVELL_PXA1908_CLOCK_H
++#define __DTS_MARVELL_PXA1908_CLOCK_H
++
++/* plls */
++#define PXA1908_CLK_CLK32		1
++#define PXA1908_CLK_VCTCXO		2
++#define PXA1908_CLK_PLL1_624		3
++#define PXA1908_CLK_PLL1_416		4
++#define PXA1908_CLK_PLL1_499		5
++#define PXA1908_CLK_PLL1_832		6
++#define PXA1908_CLK_PLL1_1248		7
++#define PXA1908_CLK_PLL1_D2		8
++#define PXA1908_CLK_PLL1_D4		9
++#define PXA1908_CLK_PLL1_D8		10
++#define PXA1908_CLK_PLL1_D16		11
++#define PXA1908_CLK_PLL1_D6		12
++#define PXA1908_CLK_PLL1_D12		13
++#define PXA1908_CLK_PLL1_D24		14
++#define PXA1908_CLK_PLL1_D48		15
++#define PXA1908_CLK_PLL1_D96		16
++#define PXA1908_CLK_PLL1_D13		17
++#define PXA1908_CLK_PLL1_32		18
++#define PXA1908_CLK_PLL1_208		19
++#define PXA1908_CLK_PLL1_117		20
++#define PXA1908_CLK_PLL1_416_GATE	21
++#define PXA1908_CLK_PLL1_624_GATE	22
++#define PXA1908_CLK_PLL1_832_GATE	23
++#define PXA1908_CLK_PLL1_1248_GATE	24
++#define PXA1908_CLK_PLL1_D2_GATE	25
++#define PXA1908_CLK_PLL1_499_EN		26
++#define PXA1908_CLK_PLL2VCO		27
++#define PXA1908_CLK_PLL2		28
++#define PXA1908_CLK_PLL2P		29
++#define PXA1908_CLK_PLL2VCODIV3		30
++#define PXA1908_CLK_PLL3VCO		31
++#define PXA1908_CLK_PLL3		32
++#define PXA1908_CLK_PLL3P		33
++#define PXA1908_CLK_PLL3VCODIV3		34
++#define PXA1908_CLK_PLL4VCO		35
++#define PXA1908_CLK_PLL4		36
++#define PXA1908_CLK_PLL4P		37
++#define PXA1908_CLK_PLL4VCODIV3		38
++
++/* apb (apbc) peripherals */
++#define PXA1908_CLK_UART0		1
++#define PXA1908_CLK_UART1		2
++#define PXA1908_CLK_GPIO		3
++#define PXA1908_CLK_PWM0		4
++#define PXA1908_CLK_PWM1		5
++#define PXA1908_CLK_PWM2		6
++#define PXA1908_CLK_PWM3		7
++#define PXA1908_CLK_SSP0		8
++#define PXA1908_CLK_SSP1		9
++#define PXA1908_CLK_IPC_RST		10
++#define PXA1908_CLK_RTC			11
++#define PXA1908_CLK_TWSI0		12
++#define PXA1908_CLK_KPC			13
++#define PXA1908_CLK_SWJTAG		14
++#define PXA1908_CLK_SSP2		15
++#define PXA1908_CLK_TWSI1		16
++#define PXA1908_CLK_THERMAL		17
++#define PXA1908_CLK_TWSI3		18
++
++/* apb (apbcp) peripherals */
++#define PXA1908_CLK_UART2		1
++#define PXA1908_CLK_TWSI2		2
++#define PXA1908_CLK_AICER		3
++
++/* axi (apmu) peripherals */
++#define PXA1908_CLK_CCIC1		1
++#define PXA1908_CLK_ISP			2
++#define PXA1908_CLK_DSI1		3
++#define PXA1908_CLK_DISP1		4
++#define PXA1908_CLK_CCIC0		5
++#define PXA1908_CLK_SDH0		6
++#define PXA1908_CLK_SDH1		7
++#define PXA1908_CLK_USB			8
++#define PXA1908_CLK_NF			9
++#define PXA1908_CLK_CORE_DEBUG		10
++#define PXA1908_CLK_VPU			11
++#define PXA1908_CLK_GC			12
++#define PXA1908_CLK_SDH2		13
++#define PXA1908_CLK_GC2D		14
++#define PXA1908_CLK_TRACE		15
++#define PXA1908_CLK_DVC_DFC_DEBUG	16
++
++#endif
 
- .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
- .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
- .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
- MAINTAINERS                                        |   9 +
- arch/arm64/Kconfig.platforms                       |   8 +
- arch/arm64/boot/dts/marvell/Makefile               |   3 +
- .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 328 +++++++++++++++++++++
- arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 +++++++++++++++++++
- drivers/clk/mmp/Makefile                           |   2 +-
- drivers/clk/mmp/clk-frac.c                         |  57 ++--
- drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
- drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
- drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
- drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
- drivers/clk/mmp/clk-pxa1908-apbc.c                 | 131 ++++++++
- drivers/clk/mmp/clk-pxa1908-apbcp.c                |  84 ++++++
- drivers/clk/mmp/clk-pxa1908-apmu.c                 | 123 ++++++++
- drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
- drivers/clk/mmp/clk.h                              |  10 +-
- drivers/pinctrl/pinctrl-single.c                   |   1 +
- include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
- 21 files changed, 1296 insertions(+), 57 deletions(-)
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20230803-pxa1908-lkml-6830e8da45c7
-
-Best regards,
 -- 
-Duje Mihanović <duje.mihanovic@skole.hr>
+2.45.2
 
 
