@@ -1,108 +1,177 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE64613D638;
-	Wed, 31 Jul 2024 06:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA44D16D4F0;
+	Wed, 31 Jul 2024 06:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722406064; cv=none; b=eWxK+O9xrBH+S13lODVJhXxObyKMu1kNeDKozz37CYOaZhgsKXlB7YJThqeLE25SKGssag/PrvOeFi8J+jcXKWPklQgqJNIZOmdOcTWGRXYZok4nOlOkrtcHFDNDfeXSKscv4n/VWJ8NJjKNNi0UmjCTC+8j9ZKovMLwxIzNQWg=
+	t=1722407216; cv=none; b=brGUlhC+YASl8+IeqbTh0thuCJJVPv7WuU2C8Y5JK/+bkBewZOV8cPPLGEWlSr8VjXBDjQJKtWu4h2wQTtNGmsmtvTPrSLmjJ6R8eFsXebMBwI3DDSb+GzygaedKnit3XWRmEVA3I4AsWVTKcLXwfZCytIMsxiCXoqbGyAY/bNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722406064; c=relaxed/simple;
-	bh=/117AAbI4gc9bsKiFz31BUpxBe2X4Vtltf0f10UPpg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O8keh1q/gtLUk3DXWofH1rdki1mze92JRvgJ5OhQZVpohmm+vWr4OUKkg2Woeh0JiM+67M7NTD762OiW0QB9UYu181TjotNFGkkSUhkYfTFzbssZibGlVLaMVAxE86dna4Tg3UNDl3gZrMnl0wN1/a7do5nF4ZbFSb/S1OS9A7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZxYil+F; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZxYil+F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B02C116B1;
-	Wed, 31 Jul 2024 06:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722406063;
-	bh=/117AAbI4gc9bsKiFz31BUpxBe2X4Vtltf0f10UPpg8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IZxYil+FluKVZ9f3j2DPZcS1UoDQmv2bbspgdJUfhW2/V/85MgM0jcm6wJxdxgHWd
-	 mo7Gio4cmQ2yU2mIDAFdx59A/V8S16QppKoXERZzn4oGDi+th/d7tHXAGKh7CdJ/4k
-	 k8zKQKHI3nSx0LBgG53kgrdxIdqXIvHu3+2VndKdSnj3F67RFyNyf33Kk1Y7QSrXWc
-	 XTTLfJkyC1Gboyd0nYZQYclsFCXOre58p6zQ3s71KtwU/6jLS594lppdHy7t/4x8B3
-	 dNB/4LhnsmFwgVYIgVyuUj6DncnkdtpeLsuPVfnJNTsL7cuQkqE1MZ6yPCQsJyP57T
-	 x5TB8B0y1wvjQ==
-Message-ID: <fb789fdc-6efe-48df-8821-7e990a6ba708@kernel.org>
-Date: Wed, 31 Jul 2024 08:07:37 +0200
+	s=arc-20240116; t=1722407216; c=relaxed/simple;
+	bh=BMsR2K+cliRP8uXc5J40bCvkNjYbTpnWKyomArpp+/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=icDcmN/TpyU4BMe6RzQ8BOor2IYZHE9+fZ68O8BEjAZIZunTXf0ev27EG/JvmtZwgvekM03B+9/guYxgxNcKBI28BzVHasaCtBLCR95pRWnI/HoHkuTAFCAOdjOEJ+jdGHnpAvAonnt7ZIZBf9vjhWdVTxvSHpjlw/XV733i/D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 413B81FD73;
+	Wed, 31 Jul 2024 06:26:53 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8823513AEA;
+	Wed, 31 Jul 2024 06:26:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YL/TICzZqWYkZgAAD6G6ig
+	(envelope-from <iivanov@suse.de>); Wed, 31 Jul 2024 06:26:52 +0000
+From: "Ivan T. Ivanov" <iivanov@suse.de>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org
+Cc: conor+dt@kernel.org,
+	florian.fainelli@broadcom.com,
+	wahrenst@gmx.net,
+	andrea.porta@suse.com,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"Ivan T. Ivanov" <iivanov@suse.de>
+Subject: [PATCH 7/7] arm64: dts: broadcom: bcm2712: Add UARTA controller node.
+Date: Wed, 31 Jul 2024 09:28:14 +0300
+Message-ID: <20240731062814.215833-8-iivanov@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240731062814.215833-1-iivanov@suse.de>
+References: <20240731062814.215833-1-iivanov@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: gpio: nxp,lpc3220-gpio: Convert to
- dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240731054442.109732-1-animeshagarwal28@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240731054442.109732-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 413B81FD73
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[dt]
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 
-On 31/07/2024 07:44, Animesh Agarwal wrote:
-> Convert the NXP LPC3220 SoC GPIO controller bindings to DT schema format.
-> 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+On RPi5 device Bluetooth chips is connected to UARTA
+port. Add Bluetooth chips and related pin definitions.
+With this and firmware already provided by distributions,
+at least on openSUSE Tumbleweed, this is sufficient to make
+Bluetooth operational on RPi5 \o/.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+---
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     | 45 +++++++++++++++++++
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 11 +++++
+ 2 files changed, 56 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+index b6bfe0abb774..a557cbd8ba17 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+@@ -133,11 +133,39 @@ wl_on_pins: wl-on-pins {
+ 		pins = "gpio28";
+ 	};
+ 
++	bt_shutdown_pins: bt-shutdown-pins {
++		function = "gpio";
++		pins = "gpio29";
++	};
++
+ 	emmc_sd_pulls: emmc-sd-pulls {
+ 		pins = "emmc_cmd", "emmc_dat0", "emmc_dat1", "emmc_dat2", "emmc_dat3";
+ 		bias-pull-up;
+ 	};
+ 
++	uarta_24_pins: uarta-24-pins {
++		pin-rts {
++			function = "uart0";
++			pins = "gpio24";
++			bias-disable;
++		};
++		pin-cts {
++			function = "uart0";
++			pins = "gpio25";
++			bias-pull-up;
++		};
++		pin-txd {
++			function = "uart0";
++			pins = "gpio26";
++			bias-disable;
++		};
++		pin-rxd {
++			function = "uart0";
++			pins = "gpio27";
++			bias-pull-up;
++		};
++	};
++
+ 	sdio2_30_pins: sdio2-30-pins {
+ 		pin-clk {
+ 			function = "sd2";
+@@ -156,3 +184,20 @@ pins-dat {
+ 		};
+ 	};
+ };
++
++/* uarta communicates with the BT module */
++&uarta {
++	uart-has-rtscts;
++	auto-flow-control;
++	status = "okay";
++	clock-frequency = <96000000>;
++	pinctrl-0 = <&uarta_24_pins &bt_shutdown_pins>;
++	pinctrl-names = "default";
++
++	bluetooth: bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		max-speed = <3000000>;
++		shutdown-gpios = <&gio 29 GPIO_ACTIVE_HIGH>;
++		local-bd-address = [ 00 00 00 00 00 00 ];
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+index 3c0663dc6712..e972f94d6828 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
++++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+@@ -305,6 +305,17 @@ gio: gpio@7d508500 {
+ 			brcm,gpio-direct;
+ 		};
+ 
++		uarta: serial@7d50c000 {
++			compatible = "brcm,bcm7271-uart";
++			reg = <0x7d50c000 0x20>;
++			reg-names = "uart";
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			interrupts = <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>;
++			skip-init;
++			status = "disabled";
++		};
++
+ 		pinctrl_aon: pinctrl@7d510700 {
+ 			compatible = "brcm,bcm2712-aon-pinctrl";
+ 			reg = <0x7d510700 0x20>;
+-- 
+2.43.0
 
