@@ -1,153 +1,107 @@
-Received: from mail-108-mta253.mxroute.com (mail-108-mta253.mxroute.com [136.175.108.253])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C44132139
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Aug 2024 15:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DEC14373A;
+	Thu,  1 Aug 2024 18:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525820; cv=none; b=UzSxxI3/KfXGOtpL9uSmSkMKfjGllBRkltmu+D17gqe1GjXpQE1AOidopSF93OGEVgUNNDBIkhvyDTi055GXW2dm7t8Cu+Yh0lKjYmTjI1ipEoDjxkctDbnzsFWgN0PHspnjtdsgec9dvk8zmKyF9au9xbQJqSs46fF3H3hnnTA=
+	t=1722538154; cv=none; b=q+gOq2YN9i+Q/QYjCP7h8QiWdASI1LOAM4TgrGY5vEip5xnI+REifeg6spthJ+K843Edqp6v3qtK4qItXXWaoCREGc4KX1+OozveeWeTC6Xz+QxBK1aQWVwkSXKfER7ksAZ2hv1PJCgM+MeJUr+uBPvTbO9VbAl9qPOuG51XUVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525820; c=relaxed/simple;
-	bh=UiAZyNNwH+6w8OwcTr9IjVkvsdiXq0k2vVfJG25b2sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o26Zcx9bHvrochJ6Z5S87z1elUvqvgbboTa9WlSsXa/xa/ea5jk7Z4AvmV2BqnCj2oG277xoz9esqG5R9q3+ukJzx/8oBgP4lHZLt36xgjInuaMLBS8F9xrdD7BPb6V3P/thwDm+RU24uRU5LZj2qeoTy8TK81JvCxz5m9BVHOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=noprivs.com; spf=pass smtp.mailfrom=noprivs.com; dkim=pass (2048-bit key) header.d=noprivs.com header.i=@noprivs.com header.b=oo+7IL0/; arc=none smtp.client-ip=136.175.108.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=noprivs.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=noprivs.com
+	s=arc-20240116; t=1722538154; c=relaxed/simple;
+	bh=Mqvq6a7v7faU/RsAxiBN033U6iPOpo33gjvwTQwwEBE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UyZ6I9a1kTlzXcC6eWpF0Dmw21m1BjpvV5Gq4AiMetoQn9WtrF3WoBnayKd7soof5o5ycTRhXeMDDFZ1Ddmke/bbn6dNXTea4XaPpcVSZIjozHeDEmwvDWe+CmNnoc9XIjq0cdXN5/C1RbvsZk93P/jCvQ8DKc4YGNLOH28BuzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V/R18hQL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TB16bH+7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=noprivs.com header.i=@noprivs.com header.b="oo+7IL0/"
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta253.mxroute.com (ZoneMTA) with ESMTPSA id 1910e855d4a00017a3.004
- for <linux-gpio@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Thu, 01 Aug 2024 15:18:26 +0000
-X-Zone-Loop: 2222451867b9373e8f8526413c5331cbfd63ddecca72
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=noprivs.com
-	; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:
-	To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RBL5xfHn/yCv2oQB5tSj0V3J2d/Dye4Rv9aECud2mcE=; b=oo+7IL0/DkY7PZ1KwR3v7hIgVe
-	AEw+1avDuOhp1zXd3bbndL/s+Xzxhl1PuqniyA1cpNpgrxbDdeaLDQgD+rO4O0fx5vW64KDYKNZWl
-	65PSFSBLTu1urclG3Ixl9abeOhKt2BcrXcdIS2KE5RkgPUWFCdJKQAddBzrA4TcVf3XT5gvwYtJ1f
-	BDkPJOnDqbLrUsWVeMdZxe0UzzGTBgSmjo4FQx3U7ba4e+XcKj4+eDl9iX/toz/XRAdwuX+w/GTIe
-	KtppOP8iPtPXsWkxT/0lnDz8Ff9H7b8ntIeF+m8uLYbq/akr9LFgXmNsTutYGKnk5xNDxSun1sTQI
-	5a/MpoOw==;
-Message-ID: <41cf5ac9-a6bf-48b6-b0e3-c4737641b104@noprivs.com>
-Date: Thu, 1 Aug 2024 10:18:23 -0500
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V/R18hQL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TB16bH+7"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722538149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zy4QAbBchws8wpEd632QvvKsWpoM4onCh56dsKjIHlQ=;
+	b=V/R18hQLq+jyQoLBzyEA/jn4Fzajd35TRSiGYLRaN/IJiictIcX6L3AmjSn/d3co88iSHu
+	bubzfHPnaZfsdZV+n9L6x0BH+0IDUzw4uWIiBLHtgmyyZRkKUc3z2lbAE7MFUFieOJQtr6
+	/K2h2pJ1GL5UKwSIn6qNY7EqGmRnc7NfuLvUYsEbgz315JLujAFOuyuCsxlfhcCkjCj1rw
+	9DAtO6VQGNm9NaCdKm+7p8mHC22oedrL3kc89L3/FE/HF+TkVc/1a8BEn4v4VvUc8p9cZd
+	F33M1ajTN9rT2zJyvvJgW1OyXO6NdrO66oFuFxLBUtr01FKDFp6spDwVwNwiBA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722538149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zy4QAbBchws8wpEd632QvvKsWpoM4onCh56dsKjIHlQ=;
+	b=TB16bH+7FY9c5h6o6aIywattKgBHBOAnvaRdWLpcsYODy3h8ds9MT5TvjCSdJWS3Y5wMeK
+	KUR0S+I/dHQsuzAw==
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+ Marc Zyngier <maz@kernel.org>, Daire McNamara
+ <daire.mcnamara@microchip.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
+In-Reply-To: <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-flatworm-cornflake-8023212f6584@wendy> <87le1k8oq2.ffs@tglx>
+ <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
+Date: Thu, 01 Aug 2024 20:49:08 +0200
+Message-ID: <87r0b82i57.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: exar set value handling for hw with gpio pull-up or
- pull-down
-To: Sai Kumar Cholleti <skmr537@gmail.com>, bgolaszewski@baylibre.com,
- andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org
-References: <20240730134610.80986-1-skmr537@gmail.com>
-Content-Language: en-US
-From: Matthew McClain <mmcclain@noprivs.com>
-In-Reply-To: <20240730134610.80986-1-skmr537@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Id: catch@noprivs.com
+Content-Type: text/plain
 
-Hi all,
+On Thu, Aug 01 2024 at 16:09, Conor Dooley wrote:
+> On Mon, Jul 29, 2024 at 12:41:25PM +0200, Thomas Gleixner wrote:
+>> > +	/*
+>> > +	 * If a bit is set in the mux, GPIO the corresponding interrupt from
+>> > +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
+>> 
+>> This is not a coherent sentence.
+>
+> It should read "controller 0 or 1;s interrupt is muxed". Does that make
+> more sense to you?
 
-I worked with Sai on this.
+No: If a bit is set in the mux, GPIO the corresponding...
 
-We discovered this problem when we upgraded our kernel from 5.10 to 6.1.
-The behavior changed with the switch to regmap in 5.11.
+I'm already failing at 'GPIO'. My parser expects a verb there :)
 
-commit 36fb7218e87833b17e3042e77f3b102c75129e8f
-Author: Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon Sep 28 17:00:26 2020 +0200
+>> > +	irq_set_chained_handler_and_data(virq, handle_untracked_irq,
+>> 
+>> Why does this use handle_untracked_irq()?
+>
+> I'll have to go and dig back in my notes as to why it is untracked. It
+> was probably something like irqd_set() in handle_irq_event() blowing up
+> on the irq_data being invalid (which I figure could relate back to my
+> questions in the cover letter about issues with irqd_to_hwirq()) - but
+> I'll double check what exactly prompted it when I get back from my
+> holidays, but...
+>
+>> This sets up a chained handler
+>> but handle_untracked_irq() is a regular interrupt handler.
+>
+> ...what I was likely using before was handle_simple_irq() which isn't
+> chained either. You're expecting to see mpfs_irq_mux_nondirect_handler()
+> here I suppose?
 
-     gpio: exar: switch to using regmap
+Yes or some other proper chained handler.
 
-     We can simplify the code in gpio-exar by using regmap. This allows
-     us to drop the mutex (regmap provides its own locking) and we can
-     also reuse regmap's bit operations instead of implementing our own
-     update function.
+> Given you've only commented on one significant issue and two minor items,
+> is it safe to conclude that the overall approach doesn't have you
+> screaming and running for the hills?
 
-     Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-     Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-
-We noticed because we had some gpios tied to reset pins and when
-we set direction to high, value went to 0, and put devices in reset.
+I don't love it, but I don't have a better approach to deal with this.
 
 Thanks,
-Matthew
 
-
-On 7/30/24 08:46, Sai Kumar Cholleti wrote:
-> Setting gpio direction = high, sometimes results in gpio value = 0.
->
-> If a gpio is pulled high, the following construction results in the
-> value being 0 when the desired value is 1:
->
-> $ echo "high" > /sys/class/gpio/gpio336/direction
-> $ cat /sys/class/gpio/gpio336/value
-> 0
->
-> Before the gpio direction is changed from input to output,
-> exar_set_value is set to 1, but since direction is input when
-> exar_set_value is called, _regmap_update_bits reads a 1 due to an
-> external pull-up.  When force_write is not set (regmap_set_bits has
-> force_write = false), the value is not written.  When the direction is
-> then changed, the gpio becomes an output with the value of 0 (the
-> hardware default).
->
-> regmap_write_bits sets force_write = true, so the value is always
-> written by exar_set_value and an external pull-up doesn't affect the
-> outcome of setting direction = high.
->
->
-> The same can happen when a gpio is pulled low, but the scenario is a
-> little more complicated.
->
-> $ echo high > /sys/class/gpio/gpio351/direction
-> $ cat /sys/class/gpio/gpio351/value
-> 1
->
-> $ echo in > /sys/class/gpio/gpio351/direction
-> $ cat /sys/class/gpio/gpio351/value
-> 0
->
-> $ echo low > /sys/class/gpio/gpio351/direction
-> $ cat /sys/class/gpio/gpio351/value
-> 1
->
-> Signed-off-by: Sai Kumar Cholleti <skmr537@gmail.com>
-> ---
->   drivers/gpio/gpio-exar.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-> index 482f678c893e..de5ce73159cb 100644
-> --- a/drivers/gpio/gpio-exar.c
-> +++ b/drivers/gpio/gpio-exar.c
-> @@ -99,11 +99,13 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
->   	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
->   	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
->   	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
-> +	unsigned int bit_value = value ? BIT(bit) : 0;
->   
-> -	if (value)
-> -		regmap_set_bits(exar_gpio->regmap, addr, BIT(bit));
-> -	else
-> -		regmap_clear_bits(exar_gpio->regmap, addr, BIT(bit));
-> +	/*
-> +	 * regmap_write_bits forces value to be written when an external
-> +	 * pull up/down might otherwise indicate value was already set
-> +	 */
-> +	regmap_write_bits(exar_gpio->regmap, addr, BIT(bit), bit_value);
->   }
->   
->   static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
-
+        tglx
