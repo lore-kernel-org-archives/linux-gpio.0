@@ -1,179 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542E3A1DA;
-	Thu,  1 Aug 2024 15:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7E13C3D6;
+	Thu,  1 Aug 2024 15:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722524995; cv=none; b=sqkFH4XvCC0CRzBeljBuPeEHKKCDt0Dm6QVWxtSk4ZiDQB9e/UtWsXO3bliusWjTvG52UXSMSxOcPQKV3EmZ2VaLYO4A5/YCYtTUJiPDcZIHA+PIMRrnOzlIi4YqijEoHvkxYGdcTCDdaIAo1hf4cEqby4xNzooQhHCQ/w6XwvE=
+	t=1722525592; cv=none; b=pRHQ/JsGEnvuJkUUxy2gN2Lj8bouiMGZPkYbfmn1UjniJliKNtiUiHLjYW5DsXM19TmKT39oF05NBaINBLmrTwY5APCCW23NGyDTTl8U3ABrfD1pRJohG4GVvfWmevdtp6LAb+PTxbYRMt5RNfHoAQcSw4P8tCAngUIIyTQKnVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722524995; c=relaxed/simple;
-	bh=kbvV4AlvhMw0jKJGpx/bRqh4DWyE7ZqZruWEjEQ6LL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPo7mCSix5DtaC15ZVBYBT3dneueFGsZ9NWafeJDbK/sxKE4B83NP2lE224V7A8fJ0fauTRwKDA/Ul5BpYStCshvmsogfawd3QdNyIExnhTVqSq42HbmZdc0CEUig4TlniD9HkYDbUr+hwIkug9/KlHOBMddU3JROe5MfWGDzNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdY7X/tF; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdY7X/tF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8095C32786;
-	Thu,  1 Aug 2024 15:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722524994;
-	bh=kbvV4AlvhMw0jKJGpx/bRqh4DWyE7ZqZruWEjEQ6LL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HdY7X/tFmCpcXLqCSIZGKkUOsNwAms3dfdCuzutVEYV21FG9OekVPWjti7ryadq8y
-	 SyR+NUgifiWNearG3mufdQdbV/YT0W3ngrOBL8yoziKgZCRh6d8aSzXqw63TgvrXo7
-	 4hJ+4wPVPp2Ct+B49GFQVFgGSvt2ihNr2sQxXPk0TjERG8VdtBerrehCFA8aK8Gok6
-	 15DhSVzsrv6tCELNnL+6bR0SbQO9F9Pf3kjZ8mINK3ze0Qobr/eyApZ3hWj+WOGxNS
-	 ZpVIkR9J0yKI7kBVtYlrjrU/BBCTAqMPNF6tss46OGuonqfTKcSmyKxZsvbwZF/SgU
-	 b5GyxIZpx58zQ==
-Date: Thu, 1 Aug 2024 16:09:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
-Message-ID: <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-flatworm-cornflake-8023212f6584@wendy>
- <87le1k8oq2.ffs@tglx>
+	s=arc-20240116; t=1722525592; c=relaxed/simple;
+	bh=hPsrbCaY2Jr065uvGV0XmHvY3hpLPDuw5mS9wLk8/bI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u4aF9kLR0VrBVTKCxT8Y0TeofoFRhPHQ+zQCXZP3+IrGKpZis56/uot9Zu1LIRPbXF297UROwjrTHKy66eWhFWj80PRjsEl0OK378bSf/soDKE3j9E54w1PrFoTnS+JRz3CTqAweU86eU4mHWqEMBSztDT5wN+t6LtxrZ8aI8uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6634f0afe05so61019017b3.0;
+        Thu, 01 Aug 2024 08:19:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722525588; x=1723130388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RDyWAMhmHE59w0Mny126OKEGtu/+cpHDnSt+3EGJJgM=;
+        b=owA+ruFIFeqfzmHTif8gbBWE2Jx/EAZY2S67gNj6/TBxYmYRSMaRfgkNiRPBNXoBXv
+         Rgvq8MYsB9Ihb0u00XeVZd5nK3HXOrHV4QZi0JOb36BqZFoPHbp8IE/0EIwHpsE1CM4t
+         wclLUd+1K1kkXtX1S9MoQvjdYpHcjTkIQtg74tiUDoUOXCaIq/4AGP4bv1gTRyINgYiu
+         OleR9r0nVvnBc1PjITDtBS9hXyy2565wQmGGst4pl2Fq3hTuPMCiVJNZVRisnnyxdYK7
+         AMDH8DSdeEKDX9vc2h2jnU6CQaKVrgPbhQKIe7q8J75FMQKOvZ/O9EPEDavpeNjlOQLj
+         VMdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1iO0/FvOKVT5+VD8M0xPDFzwI/7uNUqjLxiWXN5weMKhbuONTcnggZAoZkchh+h1gbQVV9EzH7nIcuGTrBrp/bz5GLwKBFI6C2vdcVQpLZkPJF/AFlIktyF2HYczbJjDHGPQYrtaQ3i5XhTLkZ7M4eoEI3eoeANLsaX07LXjSdtNbVK/nrYNFmP9J
+X-Gm-Message-State: AOJu0Yx9K0Fsk9xmj2GyjSvk/8QXPYExDDs9eBCxu1+RPF7GgOwYNecc
+	seI93F+jw79aeSu1lG7T+qCDwXDGQ2ADY5QjwvC1mFGm3PpM6JcqswuKWiIN
+X-Google-Smtp-Source: AGHT+IGUTFq8Bj7uiYf/lQTZJf2JsR2IZgEYAI+qzinGgBoLld18HXeSEzEBH27ofHFKzYRl+QvjuQ==
+X-Received: by 2002:a81:5c86:0:b0:64a:3d7c:2782 with SMTP id 00721157ae682-68964391001mr3715527b3.41.1722525588698;
+        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-68867e9dafesm1408557b3.137.2024.08.01.08.19.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6634f0afe05so61018807b3.0;
+        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUahvREYt0mdwfSkPgNImmMrz+iQlDrPG3byGtOstRh+jk8oW5Eg4JYxNfPo5oVPHl/4sJzj8QzrEJETZ3m1OriMgieLHTLMtVHf00jhObxFYrYbKZYCoaJG3ADOHsr4ouO5yE8nOBVKsufSPvRyA4alssKlwYoRBuQGf9yLESojRQyrQGEePSRlOCF
+X-Received: by 2002:a81:b405:0:b0:64b:44b4:e1a with SMTP id
+ 00721157ae682-68961dc2868mr4974247b3.26.1722525588139; Thu, 01 Aug 2024
+ 08:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="11AmpaTIfaZfcutl"
-Content-Disposition: inline
-In-Reply-To: <87le1k8oq2.ffs@tglx>
-
-
---11AmpaTIfaZfcutl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 17:19:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUQzF==5ejD5XGC7KPm+ccq3=p0CDpjiYzsiTbn0D4yKw@mail.gmail.com>
+Message-ID: <CAMuHMdUQzF==5ejD5XGC7KPm+ccq3=p0CDpjiYzsiTbn0D4yKw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
+ doesn't support PIN_CFG_OEN
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 12:41:25PM +0200, Thomas Gleixner wrote:
-> On Tue, Jul 23 2024 at 12:27, Conor Dooley wrote:
-> > +
-> > +struct mpfs_irq_mux_bank_config {
-> > +	u32 mask;
-> > +	u8 shift;
-> > +};
->=20
-> Please see:
->=20
->   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
->=20
-> vs. coding style.
->=20
-> > +/*
-> > + * Returns an unsigned long, where a set bit indicates the correspondi=
-ng
-> > + * interrupt is in non-direct/muxed mode for that bank/GPIO controller.
-> > + */
-> > +static inline unsigned long mpfs_irq_mux_get_muxed_irqs(struct mpfs_ir=
-q_mux *priv,
-> > +							unsigned int bank)
-> > +{
-> > +	unsigned long mux_config =3D priv->mux_config, muxed_irqs =3D -1;
-> > +	struct mpfs_irq_mux_bank_config bank_config =3D mpfs_irq_mux_bank_con=
-figs[bank];
-> > +
-> > +	/*
-> > +	 * If a bit is set in the mux, GPIO the corresponding interrupt from
-> > +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
->=20
-> This is not a coherent sentence.
+On Tue, Jul 23, 2024 at 6:50=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
+> PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_OE=
+N
+> configuration.
+>
+> -EINVAL is a valid error when dumping the pin configurations. Returning
+> -EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the
+> message 'ERROR READING CONFIG SETTING 16' being printed during dumping
+> pinconf-pins.
+>
+> For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
+> PIN_CONFIG_OUTPUT_ENABLE config.
+>
+> Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OEN =
+read/write functions")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-It should read "controller 0 or 1;s interrupt is muxed". Does that make
-more sense to you?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.12.
 
-> > +	 * Invert the bits in the configuration register, so that set bits
-> > +	 * equate to non-direct mode, for GPIO controller 2.
-> > +	 */
-> > +	if (bank =3D=3D 2u)
-> > +		mux_config =3D ~mux_config;
-> > +
->=20
-> > +static int mpfs_irq_mux_nondirect_alloc(struct irq_domain *d, unsigned=
- int virq,
-> > +					struct irq_fwspec *fwspec, struct mpfs_irq_mux *priv)
-> > +{
-> > +	unsigned int bank =3D fwspec->param[0] / MPFS_MAX_IRQS_PER_GPIO;
-> > +
-> > +	if (bank > 2)
-> > +		return -EINVAL;
-> > +
-> > +	priv->nondirect_irqchips[bank].domain =3D d;
-> > +
-> > +	irq_domain_set_hwirq_and_chip(d, virq, fwspec->param[0],
-> > +				      &mpfs_irq_mux_nondirect_irq_chip, priv);
-> > +	irq_set_chained_handler_and_data(virq, handle_untracked_irq,
->=20
-> Why does this use handle_untracked_irq()?
+Gr{oetje,eeting}s,
 
-I'll have to go and dig back in my notes as to why it is untracked. It
-was probably something like irqd_set() in handle_irq_event() blowing up
-on the irq_data being invalid (which I figure could relate back to my
-questions in the cover letter about issues with irqd_to_hwirq()) - but
-I'll double check what exactly prompted it when I get back from my
-holidays, but...
+                        Geert
 
-> This sets up a chained handler
-> but handle_untracked_irq() is a regular interrupt handler.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-=2E..what I was likely using before was handle_simple_irq() which isn't
-chained either. You're expecting to see mpfs_irq_mux_nondirect_handler()
-here I suppose?
-
->+static void mpfs_irq_mux_nondirect_handler(struct irq_desc *desc)
->+{
->+	struct mpfs_irq_mux_irqchip *irqchip_data =3D irq_desc_get_handler_data(=
-desc);
->+	struct mpfs_irq_mux *priv =3D container_of(irqchip_data, struct mpfs_irq=
-_mux,
->+						 nondirect_irqchips[irqchip_data->bank]);
->+	unsigned long muxed_irqs;
->+	int pos;
->+
->+	chained_irq_enter(irq_desc_get_chip(desc), desc);
->+
->+	muxed_irqs =3D mpfs_irq_mux_get_muxed_irqs(priv, irqchip_data->bank);
->+
->+	for_each_set_bit(pos, &muxed_irqs, MPFS_MAX_IRQS_PER_GPIO)
->+		generic_handle_domain_irq(irqchip_data->domain, irqchip_data->offset + =
-pos);
->+
->+	chained_irq_exit(irq_desc_get_chip(desc), desc);
->+}
-
-Given you've only commented on one significant issue and two minor items,
-is it safe to conclude that the overall approach doesn't have you
-screaming and running for the hills?
-
-Cheers,
-Conor.
-
-> > +					 &priv->nondirect_irqchips[bank]);
-
---11AmpaTIfaZfcutl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqulPQAKCRB4tDGHoIJi
-0sKFAP9oHaSYPhW8FIkf4ssGaWWv0SILb0BeDNlL+8x69V02NwEAiitNydpF/yk7
-SFtK2kbzZYCnFccFMEDAeC8qRGJpQQ0=
-=MaNi
------END PGP SIGNATURE-----
-
---11AmpaTIfaZfcutl--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
