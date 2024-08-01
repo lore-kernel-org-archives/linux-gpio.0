@@ -1,89 +1,153 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-108-mta253.mxroute.com (mail-108-mta253.mxroute.com [136.175.108.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0F13B7B3;
-	Thu,  1 Aug 2024 15:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C44132139
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Aug 2024 15:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525693; cv=none; b=eIM6aTemkgPsYs/uAXC6CqtwSEom0lHSZ1VR8o3k2dyXvc8uaparfH6YUZxNyC1V+WtHhXPbVXUOcGE8BbD0GCeyNKVTW0BB/wZ7Zuw2JsAOeVQpnhX5SZZaueAhAyTt6ho+Y/+w5JwociqnT0xmZCa743l1aB/h9n4W+x5N2Uw=
+	t=1722525820; cv=none; b=UzSxxI3/KfXGOtpL9uSmSkMKfjGllBRkltmu+D17gqe1GjXpQE1AOidopSF93OGEVgUNNDBIkhvyDTi055GXW2dm7t8Cu+Yh0lKjYmTjI1ipEoDjxkctDbnzsFWgN0PHspnjtdsgec9dvk8zmKyF9au9xbQJqSs46fF3H3hnnTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525693; c=relaxed/simple;
-	bh=tQ8+AzUBcM0AwjI6oj62U4wnpDCToEASjdQt71nCQ/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X35Xus0QJjG3gs6qaT2WUdYOC2108WtNh5wwzUeLtpWQShkYVTfqeKVMv23+BOYG3sKDmo/bI30v/jTC/3jnRMUnZa5BbEBZGOVvu9pz4oJBZylq8Ws64lxXjop1hxpLi0KybKz9COrjcNcRnvErl+1+z47G3FWaiC2Vc2AmkCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso5321797276.1;
-        Thu, 01 Aug 2024 08:21:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722525689; x=1723130489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OdXnupxniBHctTimlSN25YFj+anspPAiyBuoWR/U+8s=;
-        b=HmarQzEfm6Vn1SL2hzrcy0nHGYxF4pRTss6RAsU8oxsHiHTlq9C4FG0X3NrL1A4Uoq
-         NCo7VKN20teMfEa+J2E6Q1rp5gk6/G71yoyU+GMWCV76vQkfk6xOB8JfnvcHd91U87h9
-         jYK4mHtJmgv941S1R9MLpC2TXPTYWywyu8p/lx2ajWYTIIl9+HWLDIRpkg0XBBGJ4wGq
-         262FU24U0VzFEDmg96T2A9Osy+Nx4qS0yvt2h+uNTnQISze2VvMNJyk9CO8HCxG85iau
-         IhEl4/m6PwxKO2nA4fPr2j4MFLI22JyLVFtv+3QHnLhm/3hDUhUP3eH2iC6pklP1YEQ0
-         9+PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWBvN7Bp1DS2+ZiT2/uapaZxfv++frYRPJ85gHzlMIcbDflxifDZv4l4mUbdfELUMhATaJ12tT6F7/uJjl+H1q1rbc2AF6ZeJDV5tEg/T5MubCF4Tgjqouh+dmmNVy2lTuK+AA89s1LCpkdkZb
-X-Gm-Message-State: AOJu0YyU8mOVUgJitXcOCg6YyHKEjU7V/xmEKYMSv2fy16Xoy9jNM6SI
-	n/C/HdF55mMHsrNsssYu9KC6fAtMBQ/Afi9emkzNhbwq5oKxxdlhwABRoq4h
-X-Google-Smtp-Source: AGHT+IHXIUS7qOJ8qQSNpvfSA6ZPLkhe1/qBzFYl2aEhZs2+s6Vk5GlG0zM5QQDnkj4gbwuzz4lDaw==
-X-Received: by 2002:a05:6902:1021:b0:e0b:28ce:6153 with SMTP id 3f1490d57ef6-e0bde290ae5mr490045276.12.1722525689276;
-        Thu, 01 Aug 2024 08:21:29 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b29f54b11sm3227436276.21.2024.08.01.08.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 08:21:28 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0871f82ff8so5664075276.3;
-        Thu, 01 Aug 2024 08:21:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJ3RTkW2c2Yw5OeDA1SEBjJ3rVXR/gUtZssTYbqUEdXXjRnyrnyQ3+VYl/xGo9RLo/RCSl8LUbH7I1z+Zp3sWqMpogIdh063sRY/Uf1a9RFk+CsnEfgGCYXwRcDOWMpVZVz7twr/t7UR/W4QTB
-X-Received: by 2002:a05:6902:c01:b0:e0b:cc76:5a09 with SMTP id
- 3f1490d57ef6-e0bde4e089bmr559784276.48.1722525688498; Thu, 01 Aug 2024
- 08:21:28 -0700 (PDT)
+	s=arc-20240116; t=1722525820; c=relaxed/simple;
+	bh=UiAZyNNwH+6w8OwcTr9IjVkvsdiXq0k2vVfJG25b2sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=o26Zcx9bHvrochJ6Z5S87z1elUvqvgbboTa9WlSsXa/xa/ea5jk7Z4AvmV2BqnCj2oG277xoz9esqG5R9q3+ukJzx/8oBgP4lHZLt36xgjInuaMLBS8F9xrdD7BPb6V3P/thwDm+RU24uRU5LZj2qeoTy8TK81JvCxz5m9BVHOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=noprivs.com; spf=pass smtp.mailfrom=noprivs.com; dkim=pass (2048-bit key) header.d=noprivs.com header.i=@noprivs.com header.b=oo+7IL0/; arc=none smtp.client-ip=136.175.108.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=noprivs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=noprivs.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=noprivs.com header.i=@noprivs.com header.b="oo+7IL0/"
+Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta253.mxroute.com (ZoneMTA) with ESMTPSA id 1910e855d4a00017a3.004
+ for <linux-gpio@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Thu, 01 Aug 2024 15:18:26 +0000
+X-Zone-Loop: 2222451867b9373e8f8526413c5331cbfd63ddecca72
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=noprivs.com
+	; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:
+	To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=RBL5xfHn/yCv2oQB5tSj0V3J2d/Dye4Rv9aECud2mcE=; b=oo+7IL0/DkY7PZ1KwR3v7hIgVe
+	AEw+1avDuOhp1zXd3bbndL/s+Xzxhl1PuqniyA1cpNpgrxbDdeaLDQgD+rO4O0fx5vW64KDYKNZWl
+	65PSFSBLTu1urclG3Ixl9abeOhKt2BcrXcdIS2KE5RkgPUWFCdJKQAddBzrA4TcVf3XT5gvwYtJ1f
+	BDkPJOnDqbLrUsWVeMdZxe0UzzGTBgSmjo4FQx3U7ba4e+XcKj4+eDl9iX/toz/XRAdwuX+w/GTIe
+	KtppOP8iPtPXsWkxT/0lnDz8Ff9H7b8ntIeF+m8uLYbq/akr9LFgXmNsTutYGKnk5xNDxSun1sTQI
+	5a/MpoOw==;
+Message-ID: <41cf5ac9-a6bf-48b6-b0e3-c4737641b104@noprivs.com>
+Date: Thu, 1 Aug 2024 10:18:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240728090421.7136-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20240728090421.7136-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Aug 2024 17:21:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdURy_4BdkZpj4z+umwE6QTrFHVLydRJx0hnu-_YUuwO=A@mail.gmail.com>
-Message-ID: <CAMuHMdURy_4BdkZpj4z+umwE6QTrFHVLydRJx0hnu-_YUuwO=A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Use dev_err_probe()
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: exar set value handling for hw with gpio pull-up or
+ pull-down
+To: Sai Kumar Cholleti <skmr537@gmail.com>, bgolaszewski@baylibre.com,
+ andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org
+References: <20240730134610.80986-1-skmr537@gmail.com>
+Content-Language: en-US
+From: Matthew McClain <mmcclain@noprivs.com>
+In-Reply-To: <20240730134610.80986-1-skmr537@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Id: catch@noprivs.com
 
-On Sun, Jul 28, 2024 at 11:04=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> Replace dev_err()->dev_err_probe() to simpilfy probe
-> helper functions.
+Hi all,
+
+I worked with Sai on this.
+
+We discovered this problem when we upgraded our kernel from 5.10 to 6.1.
+The behavior changed with the switch to regmap in 5.11.
+
+commit 36fb7218e87833b17e3042e77f3b102c75129e8f
+Author: Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon Sep 28 17:00:26 2020 +0200
+
+     gpio: exar: switch to using regmap
+
+     We can simplify the code in gpio-exar by using regmap. This allows
+     us to drop the mutex (regmap provides its own locking) and we can
+     also reuse regmap's bit operations instead of implementing our own
+     update function.
+
+     Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+     Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+
+We noticed because we had some gpios tied to reset pins and when
+we set direction to high, value went to 0, and put devices in reset.
+
+Thanks,
+Matthew
+
+
+On 7/30/24 08:46, Sai Kumar Cholleti wrote:
+> Setting gpio direction = high, sometimes results in gpio value = 0.
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> If a gpio is pulled high, the following construction results in the
+> value being 0 when the desired value is 1:
+>
+> $ echo "high" > /sys/class/gpio/gpio336/direction
+> $ cat /sys/class/gpio/gpio336/value
+> 0
+>
+> Before the gpio direction is changed from input to output,
+> exar_set_value is set to 1, but since direction is input when
+> exar_set_value is called, _regmap_update_bits reads a 1 due to an
+> external pull-up.  When force_write is not set (regmap_set_bits has
+> force_write = false), the value is not written.  When the direction is
+> then changed, the gpio becomes an output with the value of 0 (the
+> hardware default).
+>
+> regmap_write_bits sets force_write = true, so the value is always
+> written by exar_set_value and an external pull-up doesn't affect the
+> outcome of setting direction = high.
+>
+>
+> The same can happen when a gpio is pulled low, but the scenario is a
+> little more complicated.
+>
+> $ echo high > /sys/class/gpio/gpio351/direction
+> $ cat /sys/class/gpio/gpio351/value
+> 1
+>
+> $ echo in > /sys/class/gpio/gpio351/direction
+> $ cat /sys/class/gpio/gpio351/value
+> 0
+>
+> $ echo low > /sys/class/gpio/gpio351/direction
+> $ cat /sys/class/gpio/gpio351/value
+> 1
+>
+> Signed-off-by: Sai Kumar Cholleti <skmr537@gmail.com>
+> ---
+>   drivers/gpio/gpio-exar.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+> index 482f678c893e..de5ce73159cb 100644
+> --- a/drivers/gpio/gpio-exar.c
+> +++ b/drivers/gpio/gpio-exar.c
+> @@ -99,11 +99,13 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
+>   	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+>   	unsigned int addr = exar_offset_to_lvl_addr(exar_gpio, offset);
+>   	unsigned int bit = exar_offset_to_bit(exar_gpio, offset);
+> +	unsigned int bit_value = value ? BIT(bit) : 0;
+>   
+> -	if (value)
+> -		regmap_set_bits(exar_gpio->regmap, addr, BIT(bit));
+> -	else
+> -		regmap_clear_bits(exar_gpio->regmap, addr, BIT(bit));
+> +	/*
+> +	 * regmap_write_bits forces value to be written when an external
+> +	 * pull up/down might otherwise indicate value was already set
+> +	 */
+> +	regmap_write_bits(exar_gpio->regmap, addr, BIT(bit), bit_value);
+>   }
+>   
+>   static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.12.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
