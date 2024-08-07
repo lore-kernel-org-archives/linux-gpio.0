@@ -1,59 +1,59 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480911D173B
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2024 09:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542B71D173B
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Aug 2024 09:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021886; cv=none; b=UJHrwHMNDMQJa2YzEuhDjrPlQOPEPQPxp3SqAkLxfoscvTheY4uTGzELCAfVSyKVEYvW6DF7JW57ZDzBtL62/Ln5srL4MVJ+Uc1AmdwV5Goir9usKUFdBcoelfMhPBjapemxVnpDzaLDV7si3I+YtIs+X16oa22syaBE2dcaFt4=
+	t=1723021889; cv=none; b=F/7f+5JloKFq5DdDZY5tMHQELet9Isxc5huOCKpyxrPDABcBgcBaA78zZXJ5A23QvI8vTQj8wrHRQvfI9OZK6Xo/1Hp28jE1V/jzstDVrZwebK6JwlWssSUs7LO6qOGY8YZXvME4LpR5xb3/IalIDb6HMoyt3S0TbbzWcjO4cHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021886; c=relaxed/simple;
-	bh=dbvjRGNmelcenKY6JKDsWpjzFkWOY/sdhX+4XylckwM=;
+	s=arc-20240116; t=1723021889; c=relaxed/simple;
+	bh=ageDLTwEo+BmI3rPAdbaDhfHfFsSpDT9K7TZGbim0sE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kXish+zhbPMaL+zycxPVvPgOU0ssaepFTw++2psk81dt1Cn/douOWGmhPFS2OvW12tDnWng8B5LYCvzLXbYDiXxVwOGqadC7wwgkcJokBTxzY9lKvNwP0uJj/eEB5/2vrL4f+qXGiHtgADpjd/ldIpKCqsHuL9XhOf9UXHIlt4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FT1x3U8O; arc=none smtp.client-ip=209.85.208.174
+	 In-Reply-To:To:Cc; b=hogT1KveN/IM9RIbYvKboPAXwdRVdsdFd2kqm3endlwJZlbzwJlIeezaeL1jOoWTeTcIMA48Jh1+uR62voy4a3P55SXrUocEuqvFSF4RxW9ISQ5k4+elUeAIlScxMfMpW8iMSf96MNwLp0i62OQ5jYRFPY0rC3vsaXPzkpxQtbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VjqnKuuG; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FT1x3U8O"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso15883691fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Aug 2024 02:11:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VjqnKuuG"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428fb103724so3676965e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Aug 2024 02:11:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723021883; x=1723626683; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723021886; x=1723626686; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zmKu9lH9xWYQGAKSqvif1JN42oJCOxk7azckLgWclIY=;
-        b=FT1x3U8OHocM3w5CNW3VO5GSncxb4UJtEvOXOO69ukrK+w0QWgWujXOaTpaxOkJb31
-         O/WXQ53YJE+HkRHN5b51vEvIY4ZKUkc47PPoPyH/BqvtQySoUYZSv8LYD9ffqCN1Rdsa
-         8jzaL4jghqTvTZt1kw+U6JpN1gdaTYBU4HnjoizyCvLLTsDvoMu1ihcHGo4bu55IUv3O
-         z0XWEUxvDLTVHhNC1clC+o+YlXpEE+tT86Y5sCWg8EtGBlUKN1gM8w/cqslxWDAc7pAR
-         Odip244uz9l4mHD7UG9aXt+Khpcw3KpPmmMkgxgmMyNDSHKDrGHrz1jhqujxooXlhpW6
-         B2bw==
+        bh=T9XvZnmeUGmFbZbvV9oUCAGwukHfh77cEC8B1BTwJbg=;
+        b=VjqnKuuGd02LoWrTrFdDJRp4VyZZOPLqqDNBI2JZYDmSDU9fi2foehZQgPQ8ElO9jU
+         QY5DVZ9SQphCeuRUjXRNCyLIIiQAClJu+PsvDd46/AuAr9vughO8hxTjrt5rG75zI3g0
+         C3BIx23v+9CqOhAeu7HOgKHgpJI5sehKb7PD48YSGqi28OrAr0U6YDsY1IPLEXuV3016
+         GlTElVNely5ju6ujBXlxfWq6Qmh9+3dmdo0jdxKyatAaNW3ZCN9bH3XzUByJpShPlQtl
+         RrRroDZWZQhXyii7oB7CftYABNe7DZCVWiGPBUc7ay7CGJpXy6mwLPQpyLhDnzLZfeBg
+         DiJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723021883; x=1723626683;
+        d=1e100.net; s=20230601; t=1723021886; x=1723626686;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zmKu9lH9xWYQGAKSqvif1JN42oJCOxk7azckLgWclIY=;
-        b=v22zdM9Jrlqa5yD+NHzfInSllF3cmTHlbSll9X2eWjeGcAqjKWOCOKUWsyy74uv6uE
-         sSR2udqNTTFIolZHfooaPWJEVMWcOt9MjLk+X6S96fCo3yKGZG3/rYiLGSqX61m8ppIe
-         9Zs51iAEk3cyxqav8q2pmHsTXgTqEUFHuQdgO9tb890zKptpjHxqdAZ2zroHIziPnBln
-         QHmqnmYtSCSrtkNyLyTVOh7yJs47jbW/Vx9yOoOEUk3Ne4AozS09ykTrt479sjyObzUn
-         fHBCSUkNXT4KrnInkfmHE21eeYj4SeWynVhrKsQN8B+3QMziDySCQ7LUoc/zCQ4qRDKH
-         YPnA==
-X-Gm-Message-State: AOJu0Yx3DyuSR/OD3mEI+JsKYfgF2OlYvFDcK1Eg7G5ZBJUwlKGYJJF+
-	piRZVpI5bu969schVMuhK16oXD8sATaU3vIqOJ+x9NUkkZNxxjnbus3pENMteEU=
-X-Google-Smtp-Source: AGHT+IGX9bAqVsKJKguRlPxnyNnkemaGaJCK+VXBTQESlX6bHuM4CF8uCTQr+YpymALroHWld5PDhg==
-X-Received: by 2002:a05:651c:95:b0:2ef:1db2:c02c with SMTP id 38308e7fff4ca-2f15aa83909mr119049191fa.10.1723021883475;
-        Wed, 07 Aug 2024 02:11:23 -0700 (PDT)
+        bh=T9XvZnmeUGmFbZbvV9oUCAGwukHfh77cEC8B1BTwJbg=;
+        b=izG0uKpN25nFC1WpU+dWV3TlbEoJGU0BfqIUCMxh3meRkUbxCM9pbLuIsW8BTpgxhD
+         g4mTJnVtTCvafZ7rLnSNlc74jFaPEbHto1K7NFViKhJxN+ppNJozgfTdxjHED87l6UVq
+         /uJEexknecleFST5MfGqD7IgZ15yfDpvz17p3LSiKZAG0+s4v6Y2rOqe3WFY9hheI0Nu
+         oFpWdY7ZhZBU8RqlatX7tfcJZYBksUJAJNcMQZuQFpKbtcRv1itUkEIKlmtdjx0ZCVCa
+         dv5Tal3btna0w/8X0XbZCVTd+pIIL0xjemYnNv1h5MwOBipB85nP/aJPSnNk1nCvIq+i
+         mqCg==
+X-Gm-Message-State: AOJu0YzEjsFwiVGA4NkFzwIWjxfEKdn6SB7GqG51gZuKoSpaA96n9w4n
+	KrwkQ6CaTOLht8k8PfYWyMNw0Mfm0VtgDa1TXLyNKGFqgCXemqfGZ5bD/ruQdtE=
+X-Google-Smtp-Source: AGHT+IHaPQcUplAJCG74zOgIsJkoDgIfKMv6P/6p9xdLqAwOLVcZ+KnA2ts9RMjNlblBnbZx2y3vrw==
+X-Received: by 2002:a05:600c:19c7:b0:426:6fb1:6b64 with SMTP id 5b1f17b1804b1-429050c2b96mr11147395e9.7.1723021885595;
+        Wed, 07 Aug 2024 02:11:25 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:a3e7:be71:fe4f:c360])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059cd2b3sm18936355e9.44.2024.08.07.02.11.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059cd2b3sm18936355e9.44.2024.08.07.02.11.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 02:11:22 -0700 (PDT)
+        Wed, 07 Aug 2024 02:11:25 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 07 Aug 2024 11:10:43 +0200
-Subject: [PATCH libgpiod v4 12/18] dbus: add data files
+Date: Wed, 07 Aug 2024 11:10:45 +0200
+Subject: [PATCH libgpiod v4 14/18] dbus: add tests
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-dbus-v4-12-64ea80169e51@linaro.org>
+Message-Id: <20240807-dbus-v4-14-64ea80169e51@linaro.org>
 References: <20240807-dbus-v4-0-64ea80169e51@linaro.org>
 In-Reply-To: <20240807-dbus-v4-0-64ea80169e51@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -77,150 +77,933 @@ Cc: linux-gpio@vger.kernel.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Alexander Sverdlin <alexander.sverdlin@siemens.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3920;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=29306;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=5uGtKWTlFCDU1nul8eXNrce8KwG7JiRpVs1b7fBHGLc=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmszoSw+4WBdDBLUaTb0gJwm/xTNy83BUfuRVYY
- f2r6zWNDOGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrM6EgAKCRARpy6gFHHX
- cgDvEACsj/dn+FnQ9CPkHhc03heaTWMoHDr3xRFyE5olWTG3/HgZ5syIjNRjMWhr7SsVaAHmEFp
- hn6f/vROmdRhcMqakQ3BZKJOU0bTUMQq+XgVI0Vgs+xmXAfJs2W/ZzvW742z8r8M2LSxFjUDU5m
- U9qZF990UOA3Olv7Qp+5hDzIjPkz/B8vVFEKXUIdHzrxdUAipYAzlB+x74Uvtl+bax8fkJPsPr3
- BjXr4KI//JscgsvKR1I0bJvgBt80VTeX2Gd0GmBDODDoEwV0Ho2V32XbcAvISOVBWoTF4+hK/Wo
- uuIIn+ugyJH0Q4qVhkmXyD4ePJFWDDKS0XP7ca/bmOwyZ8P0GN/CaaOdnpvlBhrAjkvxT/aygW2
- lCXnosSzioxhIihMpi/FfRKgGLKy1laBDwLjp7IPWiKjn5ya9z+mZeIj/OYKzLwb614k398dsZF
- OVOVhc+8CBEvtcLW6bjJEFZCS5tr8hz7YJk6C+xObgQK6VT5H19MddV7k180q5PDPUZzHi2KGFk
- tmnEtJxKveQv6RWuchzmkHAG7uXCP4zWcDhTUC2u57ckerhGlpOSjDyn944h1c1BbXHIuFcudVF
- LEYPlmfQy2DjMjCAonwdtzlExpNpQyd8PM2WJXrZ6D4gcUFkbVE9W4gyPdKmQWa/NGn5fv8CgcO
- PiSwPcoulU1bNdw==
+ bh=O8kSYeVdijgogU40UUjjMH6YuwZ5QMa4Z46U5SrDdQ0=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmszoS12jOmc+tlHJUuP3V+OzrHODKWmOMCEPTe
+ vBroZiutYSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrM6EgAKCRARpy6gFHHX
+ cj/jEADfpNiBWGJ5qo7MiyYBgndIeji2lSYw99YfKJ0a98yVzdnyWXZUldD9EYxgPvJ7NERVq21
+ EcLHwsVc3mPPg5NZwWLAbd8nblQZqzk9rONqhFObsGyZ2XeFkcO102qCKbfjMlrr4XcHdGX7Wob
+ D3JRqRNya0/uo7BieD9x2jKm63mDq+/n1+uKeDntSMvkF8Gj7KLXNM1CqaTJAjlvT7AwCWsqlHU
+ A06IfdCNVxbo8g6MwAZdB1O03a7kP1OaowqsiKo93Tpc/H9OFly+IY2zdw1LgdDzXEtDi5FIG2W
+ VgwwEB3OIiFHxqov7uUYDspeI3vnn5XPye4OqTgRS++H6Q/gDufYk9AqZ+Mid5QAYRfdOMg++17
+ xilMYMxJGyOwa8M2Dl2p9h8+inxyybkQeKEgSwyCA2VFJhYcVb/CsfhTNtj8w9K+4wMK8uQFMY3
+ zc5j9pH+OYUIywaqPglBuCiywb6RgkSTIy6Z+JCxt+NDUzr/7qF/JxTkp9cGA+Bqh7hUIU31HV5
+ zhrCpXmvJUYzAk+Xd8Rx9ZYRCV6BP6dwfuAJnWA80HoY15pLZNCnE5GgjH1VsV0IcYeqvoRd/or
+ ANxWmMd0gnH17jTm4k7vur1T1GFarKvHLU4zk57TpRRYAdDi15Vz1/DYhrK0fkaqsWL8XQ4DHpE
+ 55Z6aA/WrJpIQMQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the default service configuration file for the DBus GPIO API and
-a systemd unit file that allows to start up the gpio-manager.
+Add a set of test-cases verifying the functionality of the gpio-manager
+daemon.
 
 Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- dbus/data/90-gpio.rules        |  4 ++++
- dbus/data/gpio-manager.service | 50 ++++++++++++++++++++++++++++++++++++++++++
- dbus/data/io.gpiod1.conf       | 41 ++++++++++++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
+ dbus/tests/daemon-process.c | 129 +++++++++++++++++++++++++
+ dbus/tests/daemon-process.h |  20 ++++
+ dbus/tests/helpers.c        | 107 ++++++++++++++++++++
+ dbus/tests/helpers.h        | 114 ++++++++++++++++++++++
+ dbus/tests/tests-chip.c     | 133 +++++++++++++++++++++++++
+ dbus/tests/tests-line.c     | 231 ++++++++++++++++++++++++++++++++++++++++++++
+ dbus/tests/tests-request.c  | 116 ++++++++++++++++++++++
+ 7 files changed, 850 insertions(+)
 
-diff --git a/dbus/data/90-gpio.rules b/dbus/data/90-gpio.rules
+diff --git a/dbus/tests/daemon-process.c b/dbus/tests/daemon-process.c
 new file mode 100644
-index 0000000..ef27949
+index 0000000..e65183e
 --- /dev/null
-+++ b/dbus/data/90-gpio.rules
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: CC0-1.0
-+# SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++++ b/dbus/tests/daemon-process.c
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+SUBSYSTEM=="gpio", KERNEL=="gpiochip[0-9]*", GROUP="gpio", MODE="0660"
-diff --git a/dbus/data/gpio-manager.service b/dbus/data/gpio-manager.service
++#include <gio/gio.h>
++#include <signal.h>
++
++#include "daemon-process.h"
++
++struct _GpiodbusDaemonProcess {
++	GObject parent_instance;
++	GSubprocess *proc;
++};
++
++G_DEFINE_TYPE(GpiodbusDaemonProcess, gpiodbus_daemon_process, G_TYPE_OBJECT);
++
++static gboolean on_timeout(gpointer data G_GNUC_UNUSED)
++{
++	g_error("timeout reached waiting for the daemon name to appear on the system bus");
++
++	return G_SOURCE_REMOVE;
++}
++
++static void on_name_appeared(GDBusConnection *con G_GNUC_UNUSED,
++			     const gchar *name G_GNUC_UNUSED,
++			     const gchar *name_owner G_GNUC_UNUSED,
++			     gpointer data)
++{
++	gboolean *name_state = data;
++
++	*name_state = TRUE;
++}
++
++static void gpiodbus_daemon_process_constructed(GObject *obj)
++{
++	GpiodbusDaemonProcess *self = GPIODBUS_DAEMON_PROCESS_OBJ(obj);
++	const gchar *path = g_getenv("GPIODBUS_TEST_DAEMON_PATH");
++	g_autoptr(GDBusConnection) con = NULL;
++	g_autofree gchar *addr = NULL;
++	g_autoptr(GError) err = NULL;
++	gboolean name_state = FALSE;
++	guint watch_id, timeout_id;
++
++	if (!path)
++		g_error("GPIODBUS_TEST_DAEMON_PATH environment variable must be set");
++
++	addr = g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SYSTEM, NULL, &err);
++	if (!addr)
++		g_error("failed to get an address for system bus: %s",
++			err->message);
++
++	con = g_dbus_connection_new_for_address_sync(addr,
++			G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
++			G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION,
++			NULL, NULL, &err);
++	if (!con)
++		g_error("failed to get a dbus connection: %s", err->message);
++
++	watch_id = g_bus_watch_name_on_connection(con, "io.gpiod1",
++						  G_BUS_NAME_WATCHER_FLAGS_NONE,
++						  on_name_appeared, NULL,
++						  &name_state, NULL);
++
++	self->proc = g_subprocess_new(G_SUBPROCESS_FLAGS_STDOUT_SILENCE |
++				      G_SUBPROCESS_FLAGS_STDERR_SILENCE,
++				      &err, path, NULL);
++	if (!self->proc)
++		g_error("failed to launch the gpio-manager process: %s",
++			err->message);
++
++	timeout_id = g_timeout_add_seconds(5, on_timeout, NULL);
++
++	while (!name_state)
++		g_main_context_iteration(NULL, TRUE);
++
++	g_bus_unwatch_name(watch_id);
++	g_source_remove(timeout_id);
++
++	G_OBJECT_CLASS(gpiodbus_daemon_process_parent_class)->constructed(obj);
++}
++
++static void gpiodbus_daemon_process_kill(GSubprocess *proc)
++{
++	g_autoptr(GError) err = NULL;
++	gint status;
++
++	g_subprocess_send_signal(proc, SIGTERM);
++	g_subprocess_wait(proc, NULL, &err);
++	if (err)
++		g_error("failed to collect the exit status of gpio-manager: %s",
++			err->message);
++
++	if (!g_subprocess_get_if_exited(proc))
++		g_error("dbus-manager process did not exit normally");
++
++	status = g_subprocess_get_exit_status(proc);
++	if (status != 0)
++		g_error("dbus-manager process exited with a non-zero status: %d",
++			status);
++
++	g_object_unref(proc);
++}
++
++static void gpiodbus_daemon_process_dispose(GObject *obj)
++{
++	GpiodbusDaemonProcess *self = GPIODBUS_DAEMON_PROCESS_OBJ(obj);
++
++	g_clear_pointer(&self->proc, gpiodbus_daemon_process_kill);
++
++	G_OBJECT_CLASS(gpiodbus_daemon_process_parent_class)->dispose(obj);
++}
++
++static void
++gpiodbus_daemon_process_class_init(GpiodbusDaemonProcessClass *proc_class)
++{
++	GObjectClass *class = G_OBJECT_CLASS(proc_class);
++
++	class->constructed = gpiodbus_daemon_process_constructed;
++	class->dispose = gpiodbus_daemon_process_dispose;
++}
++
++static void gpiodbus_daemon_process_init(GpiodbusDaemonProcess *self)
++{
++	self->proc = NULL;
++}
++
++GpiodbusDaemonProcess *gpiodbus_daemon_process_new(void)
++{
++	return g_object_new(GPIODBUS_DAEMON_PROCESS_TYPE, NULL);
++}
+diff --git a/dbus/tests/daemon-process.h b/dbus/tests/daemon-process.h
 new file mode 100644
-index 0000000..f93a6fa
+index 0000000..f5f453b
 --- /dev/null
-+++ b/dbus/data/gpio-manager.service
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: CC0-1.0
-+# SPDX-FileCopyrightText: 2023-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++++ b/dbus/tests/daemon-process.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
 +
-+[Unit]
-+Description=Centralized GPIO manager daemon
++#ifndef __GPIODBUS_TEST_DAEMON_PROCESS_H__
++#define __GPIODBUS_TEST_DAEMON_PROCESS_H__
 +
-+[Service]
-+Type=dbus
-+BusName=io.gpiod1
-+ExecStart=/usr/bin/gpio-manager
-+Restart=always
-+User=gpio-manager
++#include <glib.h>
 +
-+CapabilityBoundingSet=
-+ReadOnlyDirectories=/
-+NoNewPrivileges=yes
-+RemoveIPC=yes
-+PrivateTmp=yes
-+PrivateUsers=yes
-+ProtectControlGroups=yes
-+ProtectHome=yes
-+ProtectKernelModules=yes
-+ProtectKernelTunables=yes
-+ProtectSystem=strict
-+ProtectClock=yes
-+Delegate=no
-+IPAddressDeny=any
-+KeyringMode=private
-+LockPersonality=yes
-+MemoryDenyWriteExecute=yes
-+NotifyAccess=main
-+PrivateMounts=no
-+PrivateNetwork=no
-+ProtectHostname=yes
-+RestrictNamespaces=yes
-+RestrictRealtime=yes
-+RestrictSUIDSGID=yes
-+SystemCallFilter=~@clock
-+SystemCallFilter=~@cpu-emulation
-+SystemCallFilter=~@debug
-+SystemCallFilter=~@module
-+SystemCallFilter=~@mount
-+SystemCallFilter=~@obsolete
-+SystemCallFilter=~@privileged
-+SystemCallFilter=~@raw-io
-+SystemCallFilter=~@reboot
-+SystemCallFilter=~@swap
++G_DECLARE_FINAL_TYPE(GpiodbusDaemonProcess, gpiodbus_daemon_process,
++		     GPIODBUS, DAEMON_PROCESS, GObject);
 +
-+[Install]
-+WantedBy=multi-user.target
-diff --git a/dbus/data/io.gpiod1.conf b/dbus/data/io.gpiod1.conf
++#define GPIODBUS_DAEMON_PROCESS_TYPE (gpiodbus_daemon_process_get_type())
++#define GPIODBUS_DAEMON_PROCESS_OBJ(obj) \
++	(G_TYPE_CHECK_INSTANCE_CAST(obj, \
++	 GPIODBUS_DAEMON_PROCESS_TYPE, \
++	 GpiodbusDaemonProcess))
++
++GpiodbusDaemonProcess *gpiodbus_daemon_process_new(void);
++
++#endif /* __GPIODBUS_TEST_DAEMON_PROCESS_H__ */
+diff --git a/dbus/tests/helpers.c b/dbus/tests/helpers.c
 new file mode 100644
-index 0000000..99b470f
+index 0000000..f0089a0
 --- /dev/null
-+++ b/dbus/data/io.gpiod1.conf
-@@ -0,0 +1,41 @@
-+<!-- SPDX-License-Identifier: CC-BY-SA-4.0.txt -->
-+<!-- SPDX-FileCopyrightText: 2022-2024 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> -->
++++ b/dbus/tests/helpers.c
+@@ -0,0 +1,107 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 +
-+<!-- This configuration file specifies the required security policies
-+     for the gpio-dbus daemon to work. -->
++#include <gio/gio.h>
 +
-+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
-+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
++#include "helpers.h"
 +
-+<busconfig>
++GDBusConnection *gpiodbus_test_get_dbus_connection(void)
++{
++	g_autoptr(GDBusConnection) con = NULL;
++	g_autofree gchar *addr = NULL;
++	g_autoptr(GError) err = NULL;
 +
-+  <!-- Everyone can list GPIO devices and see their properties. -->
-+  <policy context="default">
-+    <allow send_destination="io.gpiod1"
-+           send_interface="org.freedesktop.DBus.Peer"
-+           send_member="Ping"/>
-+    <allow send_destination="io.gpiod1"
-+           send_interface="org.freedesktop.DBus.Introspectable"/>
-+    <allow send_destination="io.gpiod1"
-+           send_interface="org.freedesktop.DBus.Properties"/>
-+    <allow send_destination="io.gpiod1"
-+           send_interface="org.freedesktop.DBus.ObjectManager"/>
-+  </policy>
++	addr = g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SYSTEM, NULL, &err);
++	if (!addr)
++		g_error("Failed to get address on the bus: %s", err->message);
 +
-+  <!-- Daemon must run as the `gpio-manager` user. -->
-+  <policy user="gpio-manager">
-+    <allow own="io.gpiod1"/>
-+  </policy>
++	con = g_dbus_connection_new_for_address_sync(addr,
++		G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
++		G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION,
++		NULL, NULL, &err);
++	if (!con)
++		g_error("Failed to get system bus connection: %s",
++			err->message);
 +
-+  <!-- Members of the `gpio` group can request and manipulate GPIO lines. -->
-+  <policy group="gpio">
-+    <allow send_destination="io.gpiod1"/>
-+  </policy>
++	return g_object_ref(con);
++}
 +
-+  <!-- Root can do anything. -->
-+  <policy user="root">
-+    <allow own="io.gpiod1"/>
-+    <allow send_destination="io.gpiod1"/>
-+  </policy>
++typedef struct {
++	gboolean *added;
++	gchar *obj_path;
++} OnObjectAddedData;
 +
-+</busconfig>
++static void on_object_added(GDBusObjectManager *manager G_GNUC_UNUSED,
++			    GpiodbusObject *object, gpointer data)
++{
++	OnObjectAddedData *cb_data = data;
++	const gchar *path;
++
++	path = g_dbus_object_get_object_path(G_DBUS_OBJECT(object));
++
++	if (g_strcmp0(path, cb_data->obj_path) == 0)
++		*cb_data->added = TRUE;
++}
++
++static gboolean on_timeout(gpointer data G_GNUC_UNUSED)
++{
++	g_error("timeout reached waiting for the gpiochip interface to appear on the bus");
++
++	return G_SOURCE_REMOVE;
++}
++
++void gpiodbus_test_wait_for_sim_intf(GPIOSimChip *sim)
++{
++	g_autoptr(GDBusObjectManager) manager = NULL;
++	g_autoptr(GDBusConnection) con = NULL;
++	g_autoptr(GpiodbusObject) obj = NULL;
++	g_autoptr(GError) err = NULL;
++	g_autofree gchar *obj_path;
++	OnObjectAddedData cb_data;
++	gboolean added = FALSE;
++	guint timeout_id;
++
++	con = gpiodbus_test_get_dbus_connection();
++	if (!con)
++		g_error("failed to obtain a bus connection: %s", err->message);
++
++	obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				   g_gpiosim_chip_get_name(sim));
++
++	cb_data.added = &added;
++	cb_data.obj_path = obj_path;
++
++	manager = gpiodbus_object_manager_client_new_sync(con,
++				G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE,
++				"io.gpiod1", "/io/gpiod1/chips", NULL, &err);
++	if (!manager)
++		g_error("failed to create the object manager client: %s",
++			err->message);
++
++	g_signal_connect(manager, "object-added", G_CALLBACK(on_object_added),
++			 &cb_data);
++
++	obj = GPIODBUS_OBJECT(g_dbus_object_manager_get_object(manager,
++							       obj_path));
++	if (obj) {
++		if (g_strcmp0(g_dbus_object_get_object_path(G_DBUS_OBJECT(obj)),
++			      obj_path) == 0)
++			added = TRUE;
++	}
++
++	timeout_id = g_timeout_add_seconds(5, on_timeout, NULL);
++
++	while (!added)
++		g_main_context_iteration(NULL, TRUE);
++
++	g_source_remove(timeout_id);
++}
++
++GVariant *gpiodbus_test_make_empty_request_config(void)
++{
++	GVariantBuilder builder;
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
++
++	return g_variant_ref_sink(g_variant_builder_end(&builder));
++}
+diff --git a/dbus/tests/helpers.h b/dbus/tests/helpers.h
+new file mode 100644
+index 0000000..b0be279
+--- /dev/null
++++ b/dbus/tests/helpers.h
+@@ -0,0 +1,114 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> */
++
++#ifndef __GPIODBUS_TEST_INTERNAL_H__
++#define __GPIODBUS_TEST_INTERNAL_H__
++
++#include <gio/gio.h>
++#include <glib.h>
++#include <gpiodbus.h>
++#include <gpiosim-glib.h>
++
++#define __gpiodbus_test_check_gboolean_and_error(_ret, _err) \
++	do { \
++		g_assert_true(_ret); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
++
++#define __gpiodbus_test_check_nonnull_and_error(_ptr, _err) \
++	do { \
++		g_assert_nonnull(_ptr); \
++		g_assert_no_error(_err); \
++		gpiod_test_return_if_failed(); \
++	} while (0)
++
++#define gpiodbus_test_get_chip_proxy_or_fail(_obj_path) \
++	({ \
++		g_autoptr(GDBusConnection) _con = NULL; \
++		g_autoptr(GError) _err = NULL; \
++		g_autoptr(GpiodbusChip) _chip = NULL; \
++		_con = gpiodbus_test_get_dbus_connection(); \
++		_chip = gpiodbus_chip_proxy_new_sync(_con, \
++						     G_DBUS_PROXY_FLAGS_NONE, \
++						     "io.gpiod1", _obj_path, \
++						     NULL, &_err); \
++		__gpiodbus_test_check_nonnull_and_error(_chip, _err); \
++		g_object_ref(_chip); \
++	})
++
++#define gpiodbus_test_get_line_proxy_or_fail(_obj_path) \
++	({ \
++		g_autoptr(GDBusConnection) _con = NULL; \
++		g_autoptr(GError) _err = NULL; \
++		g_autoptr(GpiodbusLine) _line = NULL; \
++		_con = gpiodbus_test_get_dbus_connection(); \
++		_line = gpiodbus_line_proxy_new_sync(_con, \
++						     G_DBUS_PROXY_FLAGS_NONE, \
++						     "io.gpiod1", _obj_path, \
++						     NULL, &_err); \
++		__gpiodbus_test_check_nonnull_and_error(_line, _err); \
++		g_object_ref(_line); \
++	})
++
++#define gpiodbus_test_get_request_proxy_or_fail(_obj_path) \
++	({ \
++		g_autoptr(GDBusConnection) _con = NULL; \
++		g_autoptr(GError) _err = NULL; \
++		g_autoptr(GpiodbusRequest) _req = NULL; \
++		_con = gpiodbus_test_get_dbus_connection(); \
++		_req = gpiodbus_request_proxy_new_sync(_con, \
++						G_DBUS_PROXY_FLAGS_NONE, \
++						"io.gpiod1", _obj_path, \
++						NULL, &_err); \
++		__gpiodbus_test_check_nonnull_and_error(_req, _err); \
++		g_object_ref(_req); \
++	})
++
++#define gpiodbus_test_get_chip_object_manager_or_fail() \
++	({ \
++		g_autoptr(GDBusObjectManager) _manager = NULL; \
++		g_autoptr(GDBusConnection) _con = NULL; \
++		g_autoptr(GError) _err = NULL; \
++		_con = gpiodbus_test_get_dbus_connection(); \
++		_manager = gpiodbus_object_manager_client_new_sync( \
++				_con, \
++				G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE, \
++				"io.gpiod1", "/io/gpiod1/chips", NULL, \
++				&_err); \
++		__gpiodbus_test_check_nonnull_and_error(_manager, _err); \
++		g_object_ref(_manager); \
++	})
++
++#define gpiodbus_test_chip_call_request_lines_sync_or_fail(_chip, \
++							   _line_config, \
++							   _request_config, \
++							   _request_path) \
++	do { \
++		g_autoptr(GError) _err = NULL; \
++		gboolean _ret; \
++		_ret = gpiodbus_chip_call_request_lines_sync( \
++						_chip, _line_config, \
++						_request_config, \
++						G_DBUS_CALL_FLAGS_NONE, -1, \
++						_request_path, NULL, &_err); \
++		__gpiodbus_test_check_gboolean_and_error(_ret, _err); \
++	} while (0)
++
++#define gpiodbus_test_request_call_release_sync_or_fail(_request) \
++	do { \
++		g_autoptr(GError) _err = NULL; \
++		gboolean _ret; \
++		_ret = gpiodbus_request_call_release_sync( \
++						_request, \
++						G_DBUS_CALL_FLAGS_NONE, \
++						-1, NULL, &_err); \
++		__gpiodbus_test_check_gboolean_and_error(_ret, _err); \
++	} while (0)
++
++GDBusConnection *gpiodbus_test_get_dbus_connection(void);
++void gpiodbus_test_wait_for_sim_intf(GPIOSimChip *sim);
++GVariant *gpiodbus_test_make_empty_request_config(void);
++
++#endif /* __GPIODBUS_TEST_INTERNAL_H__ */
++
+diff --git a/dbus/tests/tests-chip.c b/dbus/tests/tests-chip.c
+new file mode 100644
+index 0000000..bfb5e3c
+--- /dev/null
++++ b/dbus/tests/tests-chip.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gio/gio.h>
++#include <glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiodbus.h>
++#include <gpiosim-glib.h>
++
++#include "daemon-process.h"
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "gpiodbus/chip"
++
++GPIOD_TEST_CASE(read_chip_info)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8,
++							"label", "foobar",
++							NULL);
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autoptr(GpiodbusChip) chip = NULL;
++	g_autofree gchar *obj_path = NULL;
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				   g_gpiosim_chip_get_name(sim));
++	chip = gpiodbus_test_get_chip_proxy_or_fail(obj_path);
++
++	g_assert_cmpstr(gpiodbus_chip_get_name(chip), ==,
++			g_gpiosim_chip_get_name(sim));
++	g_assert_cmpstr(gpiodbus_chip_get_label(chip), ==, "foobar");
++	g_assert_cmpuint(gpiodbus_chip_get_num_lines(chip), ==, 8);
++	g_assert_cmpstr(gpiodbus_chip_get_path(chip), ==,
++			g_gpiosim_chip_get_dev_path(sim));
++}
++
++static gboolean on_timeout(gpointer user_data)
++{
++	gboolean *timed_out = user_data;
++
++	*timed_out = TRUE;
++
++	return G_SOURCE_REMOVE;
++}
++
++static void on_object_event(GDBusObjectManager *manager G_GNUC_UNUSED,
++			    GpiodbusObject *object, gpointer user_data)
++{
++	gchar **obj_path = user_data;
++
++	*obj_path = g_strdup(g_dbus_object_get_object_path(
++						G_DBUS_OBJECT(object)));
++}
++
++GPIOD_TEST_CASE(chip_added)
++{
++	g_autoptr(GDBusObjectManager) manager = NULL;
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autofree gchar *sim_obj_path = NULL;
++	g_autoptr(GPIOSimChip) sim = NULL;
++	g_autofree gchar *obj_path = NULL;
++	gboolean timed_out = FALSE;
++	guint timeout_id;
++
++	mgr = gpiodbus_daemon_process_new();
++
++	manager = gpiodbus_test_get_chip_object_manager_or_fail();
++
++	g_signal_connect(manager, "object-added", G_CALLBACK(on_object_event),
++			 &obj_path);
++	timeout_id = g_timeout_add_seconds(5, on_timeout, &timed_out);
++
++	sim = g_gpiosim_chip_new(NULL);
++
++	while (!obj_path && !timed_out)
++		g_main_context_iteration(NULL, TRUE);
++
++	if (timed_out) {
++		g_test_fail_printf("timeout reached waiting for chip to be added");
++		return;
++	}
++
++	sim_obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				       g_gpiosim_chip_get_name(sim));
++
++	g_assert_cmpstr(sim_obj_path, ==, obj_path);
++
++	g_source_remove(timeout_id);
++}
++
++GPIOD_TEST_CASE(chip_removed)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new(NULL);
++	g_autoptr(GDBusObjectManager) manager = NULL;
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autofree gchar *sim_obj_path = NULL;
++	g_autoptr(GpiodbusChip) chip = NULL;
++	g_autofree gchar *obj_path = NULL;
++	gboolean timed_out = FALSE;
++	guint timeout_id;
++
++	sim_obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				       g_gpiosim_chip_get_name(sim));
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				   g_gpiosim_chip_get_name(sim));
++	chip = gpiodbus_test_get_chip_proxy_or_fail(obj_path);
++	manager = gpiodbus_test_get_chip_object_manager_or_fail();
++
++	g_signal_connect(manager, "object-removed", G_CALLBACK(on_object_event),
++			 &obj_path);
++	timeout_id = g_timeout_add_seconds(5, on_timeout, &timed_out);
++
++	g_clear_object(&sim);
++
++	while (!obj_path && !timed_out)
++		g_main_context_iteration(NULL, TRUE);
++
++	if (timed_out) {
++		g_test_fail_printf("timeout reached waiting for chip to be removed");
++		return;
++	}
++
++	g_assert_cmpstr(sim_obj_path, ==, obj_path);
++
++	g_source_remove(timeout_id);
++}
+diff --git a/dbus/tests/tests-line.c b/dbus/tests/tests-line.c
+new file mode 100644
+index 0000000..309e6c4
+--- /dev/null
++++ b/dbus/tests/tests-line.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gio/gio.h>
++#include <glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiodbus.h>
++#include <gpiosim-glib.h>
++
++#include "daemon-process.h"
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "gpiodbus/line"
++
++GPIOD_TEST_CASE(read_line_properties)
++{
++	static const GPIOSimLineName names[] = {
++		{ .offset = 1, .name = "foo", },
++		{ .offset = 2, .name = "bar", },
++		{ .offset = 4, .name = "baz", },
++		{ .offset = 5, .name = "xyz", },
++		{ }
++	};
++
++	static const GPIOSimHog hogs[] = {
++		{
++			.offset = 3,
++			.name = "hog3",
++			.direction = G_GPIOSIM_DIRECTION_OUTPUT_HIGH,
++		},
++		{
++			.offset = 4,
++			.name = "hog4",
++			.direction = G_GPIOSIM_DIRECTION_OUTPUT_LOW,
++		},
++		{ }
++	};
++
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autoptr(GpiodbusLine) line4 = NULL;
++	g_autoptr(GpiodbusLine) line6 = NULL;
++	g_autofree gchar *obj_path_4 = NULL;
++	g_autofree gchar *obj_path_6 = NULL;
++	g_autoptr(GPIOSimChip) sim = NULL;
++	g_autoptr(GVariant) vnames = g_gpiosim_package_line_names(names);
++	g_autoptr(GVariant) vhogs = g_gpiosim_package_hogs(hogs);
++
++	sim = g_gpiosim_chip_new(
++			"num-lines", 8,
++			"line-names", vnames,
++			"hogs", vhogs,
++			NULL);
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	obj_path_4 = g_strdup_printf("/io/gpiod1/chips/%s/line4",
++				     g_gpiosim_chip_get_name(sim));
++	line4 = gpiodbus_test_get_line_proxy_or_fail(obj_path_4);
++
++	obj_path_6 = g_strdup_printf("/io/gpiod1/chips/%s/line6",
++				     g_gpiosim_chip_get_name(sim));
++	line6 = gpiodbus_test_get_line_proxy_or_fail(obj_path_6);
++
++	g_assert_cmpuint(gpiodbus_line_get_offset(line4), ==, 4);
++	g_assert_cmpstr(gpiodbus_line_get_name(line4), ==, "baz");
++	g_assert_cmpstr(gpiodbus_line_get_consumer(line4), ==, "hog4");
++	g_assert_true(gpiodbus_line_get_used(line4));
++	g_assert_false(gpiodbus_line_get_managed(line4));
++	g_assert_cmpstr(gpiodbus_line_get_direction(line4), ==, "output");
++	g_assert_cmpstr(gpiodbus_line_get_edge_detection(line4), ==, "none");
++	g_assert_false(gpiodbus_line_get_active_low(line4));
++	g_assert_cmpstr(gpiodbus_line_get_bias(line4), ==, "unknown");
++	g_assert_cmpstr(gpiodbus_line_get_drive(line4), ==, "push-pull");
++	g_assert_cmpstr(gpiodbus_line_get_event_clock(line4), ==, "monotonic");
++	g_assert_false(gpiodbus_line_get_debounced(line4));
++	g_assert_cmpuint(gpiodbus_line_get_debounce_period_us(line4), ==, 0);
++
++	g_assert_cmpuint(gpiodbus_line_get_offset(line6), ==, 6);
++	g_assert_cmpstr(gpiodbus_line_get_name(line6), ==, "");
++	g_assert_cmpstr(gpiodbus_line_get_consumer(line6), ==, "");
++	g_assert_false(gpiodbus_line_get_used(line6));
++}
++
++static gboolean on_timeout(gpointer user_data)
++{
++	gboolean *timed_out = user_data;
++
++	*timed_out = TRUE;
++
++	return G_SOURCE_REMOVE;
++}
++
++static void
++on_properties_changed(GpiodbusLine *line G_GNUC_UNUSED,
++		      GVariant *changed_properties,
++		      GStrv invalidated_properties G_GNUC_UNUSED,
++		      gpointer user_data)
++{
++	GHashTable *changed_props = user_data;
++	GVariantIter iter;
++	GVariant *variant;
++	gchar *str;
++
++	g_variant_iter_init(&iter, changed_properties);
++	while (g_variant_iter_next(&iter, "{sv}", &str, &variant)) {
++		g_hash_table_insert(changed_props, str, NULL);
++		g_variant_unref(variant);
++	}
++}
++
++static void check_props_requested(GHashTable *props)
++{
++	if (!g_hash_table_contains(props, "Direction") ||
++	    !g_hash_table_contains(props, "Consumer") ||
++	    !g_hash_table_contains(props, "Used") ||
++	    !g_hash_table_contains(props, "RequestPath") ||
++	    !g_hash_table_contains(props, "Managed"))
++		g_test_fail_printf("Not all expected properties have changed");
++}
++
++static void check_props_released(GHashTable *props)
++{
++	if (!g_hash_table_contains(props, "RequestPath") ||
++	    !g_hash_table_contains(props, "Consumer") ||
++	    !g_hash_table_contains(props, "Used") ||
++	    !g_hash_table_contains(props, "Managed"))
++		g_test_fail_printf("Not all expected properties have changed");
++}
++
++static GVariant *make_props_changed_line_config(void)
++{
++	g_autoptr(GVariant) output_values = NULL;
++	g_autoptr(GVariant) line_settings = NULL;
++	g_autoptr(GVariant) line_offsets = NULL;
++	g_autoptr(GVariant) line_configs = NULL;
++	g_autoptr(GVariant) line_config = NULL;
++	GVariantBuilder builder;
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder, g_variant_new_uint32(4));
++	line_offsets = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder,
++				g_variant_new("{sv}", "direction",
++					      g_variant_new_string("output")));
++	line_settings = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_TUPLE);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_offsets));
++	g_variant_builder_add_value(&builder, g_variant_ref(line_settings));
++	line_config = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_config));
++	line_configs = g_variant_builder_end(&builder);
++
++	output_values = g_variant_new("ai", NULL);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_TUPLE);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_configs));
++	g_variant_builder_add_value(&builder, g_variant_ref(output_values));
++
++	return g_variant_ref_sink(g_variant_builder_end(&builder));
++}
++
++GPIOD_TEST_CASE(properties_changed)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autoptr(GHashTable) changed_props = NULL;
++	g_autoptr(GpiodbusRequest) request = NULL;
++	g_autoptr(GVariant) request_config = NULL;
++	g_autoptr(GVariant) line_config = NULL;
++	g_autofree gchar *line_obj_path = NULL;
++	g_autofree gchar *chip_obj_path = NULL;
++	g_autofree gchar *request_path = NULL;
++	g_autoptr(GpiodbusChip) chip = NULL;
++	g_autoptr(GpiodbusLine) line = NULL;
++	gboolean timed_out = FALSE;
++	guint timeout_id;
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	line_obj_path = g_strdup_printf("/io/gpiod1/chips/%s/line4",
++					g_gpiosim_chip_get_name(sim));
++	line = gpiodbus_test_get_line_proxy_or_fail(line_obj_path);
++
++	chip_obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++					g_gpiosim_chip_get_name(sim));
++	chip = gpiodbus_test_get_chip_proxy_or_fail(chip_obj_path);
++
++	changed_props = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
++						      NULL);
++
++	g_signal_connect(line, "g-properties-changed",
++			 G_CALLBACK(on_properties_changed), changed_props);
++	timeout_id = g_timeout_add_seconds(5, on_timeout, &timed_out);
++
++	line_config = make_props_changed_line_config();
++	request_config = gpiodbus_test_make_empty_request_config();
++
++	gpiodbus_test_chip_call_request_lines_sync_or_fail(chip, line_config,
++							   request_config,
++							   &request_path);
++
++	while (g_hash_table_size(changed_props) < 5 && !timed_out)
++		g_main_context_iteration(NULL, TRUE);
++
++	check_props_requested(changed_props);
++
++	g_hash_table_destroy(g_hash_table_ref(changed_props));
++
++	request = gpiodbus_test_get_request_proxy_or_fail(request_path);
++	gpiodbus_test_request_call_release_sync_or_fail(request);
++
++	while (g_hash_table_size(changed_props) < 4 && !timed_out)
++		g_main_context_iteration(NULL, TRUE);
++
++	check_props_released(changed_props);
++
++	if (timed_out) {
++		g_test_fail_printf("timeout reached waiting for line properties to change");
++		return;
++	}
++
++	g_source_remove(timeout_id);
++}
+diff --git a/dbus/tests/tests-request.c b/dbus/tests/tests-request.c
+new file mode 100644
+index 0000000..c84e528
+--- /dev/null
++++ b/dbus/tests/tests-request.c
+@@ -0,0 +1,116 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// SPDX-FileCopyrightText: 2022-2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++#include <gio/gio.h>
++#include <glib.h>
++#include <gpiod-test.h>
++#include <gpiod-test-common.h>
++#include <gpiodbus.h>
++#include <gpiosim-glib.h>
++
++#include "daemon-process.h"
++#include "helpers.h"
++
++#define GPIOD_TEST_GROUP "gpiodbus/request"
++
++static GVariant *make_empty_request_config(void)
++{
++	GVariantBuilder builder;
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
++
++	return g_variant_ref_sink(g_variant_builder_end(&builder));
++}
++
++static GVariant *make_input_lines_line_config(void)
++{
++	g_autoptr(GVariant) output_values = NULL;
++	g_autoptr(GVariant) line_settings = NULL;
++	g_autoptr(GVariant) line_offsets = NULL;
++	g_autoptr(GVariant) line_configs = NULL;
++	g_autoptr(GVariant) line_config = NULL;
++	GVariantBuilder builder;
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder, g_variant_new_uint32(3));
++	g_variant_builder_add_value(&builder, g_variant_new_uint32(5));
++	g_variant_builder_add_value(&builder, g_variant_new_uint32(7));
++	line_offsets = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder,
++				g_variant_new("{sv}", "direction",
++					      g_variant_new_string("input")));
++	line_settings = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_TUPLE);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_offsets));
++	g_variant_builder_add_value(&builder, g_variant_ref(line_settings));
++	line_config = g_variant_builder_end(&builder);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_ARRAY);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_config));
++	line_configs = g_variant_builder_end(&builder);
++
++	output_values = g_variant_new("ai", NULL);
++
++	g_variant_builder_init(&builder, G_VARIANT_TYPE_TUPLE);
++	g_variant_builder_add_value(&builder, g_variant_ref(line_configs));
++	g_variant_builder_add_value(&builder, g_variant_ref(output_values));
++
++	return g_variant_ref_sink(g_variant_builder_end(&builder));
++}
++
++GPIOD_TEST_CASE(request_input_lines)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autoptr(GVariant) request_config = NULL;
++	g_autoptr(GVariant) line_config = NULL;
++	g_autofree gchar *request_path = NULL;
++	g_autoptr(GpiodbusChip) chip = NULL;
++	g_autofree gchar *obj_path = NULL;
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				   g_gpiosim_chip_get_name(sim));
++	chip = gpiodbus_test_get_chip_proxy_or_fail(obj_path);
++
++	line_config = make_input_lines_line_config();
++	request_config = make_empty_request_config();
++
++	gpiodbus_test_chip_call_request_lines_sync_or_fail(chip, line_config,
++							   request_config,
++							   &request_path);
++}
++
++GPIOD_TEST_CASE(release_request)
++{
++	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
++	g_autoptr(GpiodbusDaemonProcess) mgr = NULL;
++	g_autoptr(GVariant) request_config = NULL;
++	g_autoptr(GpiodbusRequest) request = NULL;
++	g_autoptr(GVariant) line_config = NULL;
++	g_autofree gchar *request_path = NULL;
++	g_autoptr(GpiodbusChip) chip = NULL;
++	g_autofree gchar *obj_path = NULL;
++
++	mgr = gpiodbus_daemon_process_new();
++	gpiodbus_test_wait_for_sim_intf(sim);
++
++	obj_path = g_strdup_printf("/io/gpiod1/chips/%s",
++				   g_gpiosim_chip_get_name(sim));
++	chip = gpiodbus_test_get_chip_proxy_or_fail(obj_path);
++
++	line_config = make_input_lines_line_config();
++	request_config = make_empty_request_config();
++
++	gpiodbus_test_chip_call_request_lines_sync_or_fail(chip, line_config,
++							   request_config,
++							   &request_path);
++
++	request = gpiodbus_test_get_request_proxy_or_fail(request_path);
++	gpiodbus_test_request_call_release_sync_or_fail(request);
++}
 
 -- 
 2.43.0
