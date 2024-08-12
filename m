@@ -1,154 +1,135 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2125.outbound.protection.partner.outlook.cn [139.219.146.125])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE628176FBD;
-	Mon, 12 Aug 2024 13:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469909; cv=fail; b=DD+HdRW7fofUANXa3zWJU2ZaksxI3qzPRNS5MPskc4ctdUmAYCmtA6PpkY7afYU1VsRT4YTOR6KHPJIG8luorQxFHyF8w2/ate1xGQUAMrgzGuMUHCCDYPCbJV8GLEtojBr/pdlYYB69oQu1CjCd9MnK2XxIKA4mra4JwKmptu0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469909; c=relaxed/simple;
-	bh=+iFBzz2G0Syy8uQjZfVwHKKi5kmxZS9YRTdJhsqnADU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=C1MMItIVLAHRec3Rnb/3hdGlnm+WVGHcKqSmd69Zcmfk5sg1RA+Oxq/LleaKyiSPfj7UbcROqeraL2bxWdaFJpg5N1k8iXncEcQAKTLPK2IXrhLhupN0nMGzeAcgyZgFwZcK1o3izIUkuMMKzFu2mM2NhhNCLfZRZ7Wj7ftU0Tc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i+mSAANc5UV0PuQuplwgfUqhj7wZKIEPsNaOtzeZpnAAkOMnF79zlEFaCrusSn8FhAuipxNzob+f39yyAXvu9wLa0acG/i1qSXH8K5TkT6QJ5py6+3TEn+Yp0YMkyLCaX7g2eZA0ytU6SH4atuwsjavrDek3ivB89EkrFNcv8F2qXaqd4RCrA/oMRGOLKU6qJpMhwCBtt9TAD2TZWGIA7BqVmOQM+zZknVrSgtnbIpMem7NdGU3pD1/VHwj68CBn3EMdHlmlrICwNSFInZPbAuW6aLm42k6F2rRiBKU77XxkQdaqR3tIjiZ/lz/7RW7XEgTEhX/zRRHK1BfYG9fckg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dtTX+siQG+eMTSarMDHELnA25W+WyNzHpnayrRNzufo=;
- b=ZufD12j+BoEW+meD1nbBQ78xhV7yV4BCjzVdCN+UdLftk2kWcJ9CxzEWpetedyYXhbsjtuQvn499oK5lWkufAsvWYmhIMqWloty/mek3TfFpT5A0M0GjNZBCPmOLkfpomEs/KcYoI18ZldkXZhdfvAI8Hjnhx32mUTNjKnXhEt2yfw2jEFgkGJDfnJXRke/hTjz1V5uKLxVDMiOIwC6ypfyN3tfjfeSDAA3Cd03M9cyK5b4BA7/3LKfoSJk+ACT98dScMP6Vj7rYRM738VzkT/NMYuA2dFrsPrmCbLLsIbVOr7WSjgHLqQIbxJKmAqY9LvC57JC12W7hiOB6H4fNTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1323.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33; Mon, 12 Aug
- 2024 07:02:31 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::5a83:8682:b030:e46b]) by
- ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn ([fe80::5a83:8682:b030:e46b%3])
- with mapi id 15.20.7784.035; Mon, 12 Aug 2024 07:02:31 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jianlong Huang <jianlong.huang@starfivetech.com>,
-	Hal Feng <hal.feng@starfivetech.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] pinctrl: starfive: jh7110: Correct the level trigger configuration of iev register
-Date: Mon, 12 Aug 2024 15:01:08 +0800
-Message-ID: <20240812070108.100923-1-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.43.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0015.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510::9) To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB26130E27;
+	Mon, 12 Aug 2024 16:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723479213; cv=none; b=O8iQRZC2thsGC/clm9k0BABxKb0ER1oETHh4snH1Z3WkAI9quDMqGpr6nAuRFgdv+n7puKIj3M6QqnytzsLvkDvcarWm/RMBBw4yZcoHoYm1uy7G1+Hil9iHOPk3Tdc73XR49/PdW7sBA0FQT8ah1t3fq1Cb4VAgsjT/RlcJt/E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723479213; c=relaxed/simple;
+	bh=0YjTgfH3hHB0i3WXLphUYB3PzSTXzdLghJd8Rv3Ffaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMdp9GmrvobJj9OXWIs4xdpxYSIas0bwfT2E9r344ilXJUIIIgPJqNmktS6EYCfsi9AOxDn9BbjBIsIi8odGqzh2rpW6tuHKJlj1nT8rv0bKyUxvhZuZycoVMHuWaLco4MfMRF9U6YmMFvcDwBVhzRXrANUc/jSmx7TGcN7dxB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhSrpplF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhSrpplF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F4BC32782;
+	Mon, 12 Aug 2024 16:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723479213;
+	bh=0YjTgfH3hHB0i3WXLphUYB3PzSTXzdLghJd8Rv3Ffaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MhSrpplFKEYwtlVk144Qnb8h6EgRQApUaHgFeIzJ5rs43Qfcz8fhW/dkaEb+7Nt8z
+	 rqh4DVYf4igXuO0rM8BQTq2xhjR3SOa2cYOUkeUtF2rBPoTBHyFBoeF4SasAAPZWJ3
+	 /uY8fnW4neVjRNvNGUbf45h+AMGfj68syPoslq2NUjo/K9fJduRzrKTY3UJ8Mocwxk
+	 t+W+iR5bLko/qUffP5PTtVImPXvg3hE2ADeLvg72O0hMh8T6gf3M2g+WKruUvxIKlG
+	 8tyFukIH8gXw3pQOCx2KtB3MCJUX0P8ZRPodoDudjTgEvsTw1uEO327Z5BM7qiiwSD
+	 x9NcN6ClbhvUQ==
+Date: Mon, 12 Aug 2024 17:13:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: Add rk3576 pinctrl bindings
+Message-ID: <20240812-decibel-abdomen-90354e0ad4e6@spud>
+References: <20240808164132.81306-1-detlev.casanova@collabora.com>
+ <20240808164132.81306-2-detlev.casanova@collabora.com>
+ <20240809-dexterity-attention-8376b3b16d59@spud>
+ <22382840.EfDdHjke4D@trenzalore>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1323:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17d43eae-d7e7-4e39-54f0-08dcba9cbbe2
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|41320700013|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	N5dz4bRrH7QMjmQAJAXPKNxCa0x0qsk141m+zitGDtWGKWENEghpsxO+w2ZodsqgKbvSvdpUIXeBtkhPoa2xO1ENApJL66R+UU3+mTs5tKmqLddv5on8imPQfKFXhNVwi3O+lwUNtCCgQvB0hP8QNX6Xb55hU2qetS3b3xCrz4KaJ+QEWaI6WrnlgqFDhvS1ZnrJHYGsJCPN1dxqLMAXkfabHv3Ici4CS0dpcsZ3uc/JLnD6gqQ+LYDB/4U/7SP7o0kxluJ9JUIxgzCl3D55BnOv2+vNC2M5u4D6xXt5uMKIxyBydEEXMw1LhK1qFN2mTuwo2Ddr4k9717uwpV7nqNIdfNUMTcl54l8N2RJjvnwoeuTcTh0bebiy2YCkcKotFFiK+r80ICUgJDE3c+peenKJc6oXRpx5b46iaj42EuZRRuNeFRQbZXOHwkTdjFeELorJ2Z/7YtCUbN660xCiXccytztIVfi2iyRRJPaFPUeO9yYXJ6fOEM+KTBVwqCBVrKcNZ3Ds1vXl0hGNcitbifRDO99Cv01cRXpJq4D+seIagxVOO9VfGbdUDQvI6uG3XkicjWWhh/PjE6ASp8q0jS235bc7MMgI1lC2EH3TiRdW+L9lHz9M6WhOD6tGQl+2
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(41320700013)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H0n8zKCtNT/2UUFHYePJWpG/F8awqMPkBwjgBpRSBiL6FD+bDhbOHDlVXxCI?=
- =?us-ascii?Q?TMNz0fxL2t4pltnCZrOVwUH/LM8NDZZ1jTf/vTh4ttBUQYAYqscQxnsQEb9V?=
- =?us-ascii?Q?hceIxLcKrqjmKXxuk+Y2QxhpNyRQnlMwcQLg23fJ3MWaKhxQyqE5GVZNdA6M?=
- =?us-ascii?Q?bcF4sc9t94XEGZuYK9/AchnjZwIYEWfYTXmmEsDwY59Co1E4D31cBHtxt1Nk?=
- =?us-ascii?Q?7fY8a6zp1/aOuDlbAKvMOgmoemwH5j5EgCwEqAe9VxGT50jFyldy+eIxfb9H?=
- =?us-ascii?Q?F9PsnSylxa3Qa6eUZjEgqkAmicDW+Kbo54EXK5EeW7BPk388xYtNa8uuxvNs?=
- =?us-ascii?Q?0oEDlOln/YTuQsOKnFKB6TqmaYhBV7FdjoNNBgnQUTuaQVr0ZFqHTiFN7dnT?=
- =?us-ascii?Q?pTRUdlKwiLt7bUEe6+y6sjlCRk8IeNoz6NCGydmEP5nsO6z4zs+xaCVup721?=
- =?us-ascii?Q?uDxMRsZD8E4rMEbRl+TKnloq6oRe97utfjRJUOltG0rBFf/kFGdlfhZrLCmb?=
- =?us-ascii?Q?laaf01I7JdfM1uY8SkE6Ai9oJHXroTCWAGJVmwuxlwwGwz8pXp3TVhaeWjUG?=
- =?us-ascii?Q?df0Y7wtmKtJZQFy/3QJcS09IKp4W/OTLroNhbAOFg48r99wR0YM0yiR3PIrd?=
- =?us-ascii?Q?a/NSHeTekpsjmYTvaqqfUZB6d908XZ7lY/sulT9llbnuzPbCuGq0ZuCkR9Vl?=
- =?us-ascii?Q?Xd7dAfw+nMa3TnvLRHqltXjPJLNSt+RmM8W71LfCD2lvO3JJK5ueZN1m+ooY?=
- =?us-ascii?Q?4x8/F1wBpokjMPNwTJzZlmgbbNrsaE7B6kilHzV5nfQKMbM9M2yIrT4p+UCY?=
- =?us-ascii?Q?WuWWuE0aNw24rqO52+qLJZhLtIUVPWYxa3gv2too2EVgD7K08F3fxSJrTWNF?=
- =?us-ascii?Q?RogHY4V2uT4zEFwVlctkA1VaJQLUyiWbcbzRbVPKNXEIqkP+C6hD2euvC2No?=
- =?us-ascii?Q?Xzhs603jopBWdnay+/nsZS9xUDW8PiLyKmqUF6X7m11kv0VtYKfQRUpVsHTf?=
- =?us-ascii?Q?CvspyaX3xhXcLOu/TNQOw5w15fgIPCm2LOvQc6K37RV7VG7AfU+3mOEXwV32?=
- =?us-ascii?Q?lipxCJokkxcuCPJxf1tiV8C4nxJm2/S/ZojZ6b+jrTvSt1Cm4ZUh/XWk97EG?=
- =?us-ascii?Q?d201of5hPDeIOX0m6Fz1Ttm3dUe1bgnev46G0N14aE9ftAjmm1F0csU1uzX7?=
- =?us-ascii?Q?0rxh6zSqW1sEY+1ZCdyePKO+/fENl+JvvxqFSuNfNMY+L5PsJrj44g5ktNIZ?=
- =?us-ascii?Q?IisWgnDNZbNUHvHXLoG2lpolqR+8uO4VfkQvpZJ0cZXpo2PQaFDAONb+ypSr?=
- =?us-ascii?Q?Mh4ciPHC6mMECdF7U1TNmJ0QvU2lRnz57+BDtYCQd75rqwsH7OaE20UBm62t?=
- =?us-ascii?Q?uD07/6+7HeRKqvnyUXyhxUqQCB7DlM8IR4y41vSQwtpOZETkNo4sc9JMJXXv?=
- =?us-ascii?Q?o9nkmdM6Akb7TihsydFwtbJsJ7chL0Dpv6ZUTW0fpmXIOfvbkpLnzdWae2oI?=
- =?us-ascii?Q?9QMjVqYazhPz30EWF2zKC91+iq+Ay+3a+rEs96Hssav8xoiXK47DOE7fR+nY?=
- =?us-ascii?Q?MXfetS8eDJew00POufSvTgmPZOP+NgwGoHvzYA/fQmtqVywOuJckbQh/Indy?=
- =?us-ascii?Q?bA=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17d43eae-d7e7-4e39-54f0-08dcba9cbbe2
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 07:02:31.0822
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3Cp35fVcGtJW7pePR6ssLIndHhZ2YOxttgFaaZDMUNY+ixMGUAmHeOKmjZD2mPYYSOqJf+M7N1j70ZgQiIEJDk18++zQseBx+xmru092mX4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1323
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="puv11dB6IoxYMEpS"
+Content-Disposition: inline
+In-Reply-To: <22382840.EfDdHjke4D@trenzalore>
 
-A mistake was made in level trigger register configuration. Correct it.
 
-Fixes: 447976ab62c5 ("pinctrl: starfive: Add StarFive JH7110 sys controller driver")
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
+--puv11dB6IoxYMEpS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Aug 09, 2024 at 01:53:16PM -0400, Detlev Casanova wrote:
+> On Friday, 9 August 2024 10:58:38 EDT Conor Dooley wrote:
+> > On Thu, Aug 08, 2024 at 12:39:55PM -0400, Detlev Casanova wrote:
+> > > Add the compatible string as well as the optional rockchip,sys-grf fi=
+eld.
+> >=20
+> > Optional for all rockchip devices supported by this binding, or just the
+> > one you're adding?
+>=20
+> It is only optionally used by rk3576. I can add it in an 'if:', or update=
+ the=20
+> description with somthing like "It is used on rk3576 for i3c software=20
+> controlled weak pull-up"
 
-When we tested some modules that use gpio level trigger, we found
-the current level trigger register configuration was set wrong.
-Submit this patch to correct.
+And if/else that restricts it to where it is available please.
 
-Best regards,
-Hal
+>=20
+> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > > ---
+> > >=20
+> > >  .../devicetree/bindings/pinctrl/rockchip,pinctrl.yaml      | 7 +++++=
+++
+> > >  1 file changed, 7 insertions(+)
+> > >=20
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> > > b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml ind=
+ex
+> > > 20e806dce1ecb..cd527ccc9e6bf 100644
+> > > --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> > >=20
+> > > @@ -45,6 +45,7 @@ properties:
+> > >        - rockchip,rk3368-pinctrl
+> > >        - rockchip,rk3399-pinctrl
+> > >        - rockchip,rk3568-pinctrl
+> > >=20
+> > > +      - rockchip,rk3576-pinctrl
+> > >=20
+> > >        - rockchip,rk3588-pinctrl
+> > >        - rockchip,rv1108-pinctrl
+> > >        - rockchip,rv1126-pinctrl
+> > >=20
+> > > @@ -54,6 +55,12 @@ properties:
+> > >      description:
+> > >        The phandle of the syscon node for the GRF registers.
+> > >=20
+> > > +  rockchip,sys-grf:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > +    description:
+> > > +      The phandle of the syscon node for the SYS GRF registers.
+> > > +      It is used for i3c software controlled weak pull-up.
+> > > +
+> > >=20
+> > >    rockchip,pmu:
+> > >      $ref: /schemas/types.yaml#/definitions/phandle
+> > >      description:
+>=20
+>=20
+>=20
+>=20
 
----
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--puv11dB6IoxYMEpS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-index 4ce080caa233..1d0d6c224c10 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-@@ -793,12 +793,12 @@ static int jh7110_irq_set_type(struct irq_data *d, unsigned int trigger)
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		irq_type  = 0;    /* 0: level triggered */
- 		edge_both = 0;    /* 0: ignored */
--		polarity  = mask; /* 1: high level */
-+		polarity  = 0;    /* 0: high level */
- 		break;
- 	case IRQ_TYPE_LEVEL_LOW:
- 		irq_type  = 0;    /* 0: level triggered */
- 		edge_both = 0;    /* 0: ignored */
--		polarity  = 0;    /* 0: low level */
-+		polarity  = mask; /* 1: low level */
- 		break;
- 	default:
- 		return -EINVAL;
+-----BEGIN PGP SIGNATURE-----
 
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
--- 
-2.43.2
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZro0qAAKCRB4tDGHoIJi
+0kTXAQDyKDk5IqP6NphVJj1ZkDK5QCADbb+uzV5TA37RTt+HHgEAvaubL5mfaR+X
+heIH+qlN/7beb49IzJi3Kvx5wCZqXgE=
+=c1VS
+-----END PGP SIGNATURE-----
 
+--puv11dB6IoxYMEpS--
