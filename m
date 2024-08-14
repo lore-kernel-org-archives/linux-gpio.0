@@ -1,36 +1,61 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA639879;
-	Wed, 14 Aug 2024 03:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78481746E;
+	Wed, 14 Aug 2024 06:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723604989; cv=none; b=YGy2oMGjMezlIqd9mPX8FXrolgoARIBeA4TdRSVOkKAw0VaMY4vKV3oOVqWYXvbfm/BRvoFgwyuubEa6LhBhL9rpnrNKQCtD9yBM6VNLH04JYsi37KvF3BfnVPpP1OBLVS5to4McaWK77x1edtEMmtW43XahDrzmnKrlveDDQfA=
+	t=1723616027; cv=none; b=q4LRMZV/uKJ3XezNDmBM8Svc01PqB/ikMrMBSzAJnAbLDRRpmlvwJ3ZOQFRPo/QvVHL2RzXQhjtfhaDnTKPOd/1Rx1Ej0gYbZWtu74b4x6uWmO4eZzGhBNirWhK6pi9SpdDxBQJTEKBlmDUf5FIEEkBb63otjY9NFAsxnFNFqzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723604989; c=relaxed/simple;
-	bh=HSxV9DCwxnKbAClnBF2Sl7FFbF6SYtxpSn25/kSssvY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WKicVPxKBTRT+M2MW8dq5KL48PlpGNUdhO1nfPayQgRCXYbpxm8tyR3LuDqTW/eowvxRK41Lbp4YSVSBUIukR2Cqm+hW/E9Ch2zZtFOSxFCScOq1PhArNOWrqkd4uBYBqcg7bYJfl1tigkltCT9guv4B7K36/G1BOcn10wJmdFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkCr82457zndv7;
-	Wed, 14 Aug 2024 11:08:24 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8DB4B1400FD;
-	Wed, 14 Aug 2024 11:09:44 +0800 (CST)
-Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
- (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
- 2024 11:09:44 +0800
-From: Liao Chen <liaochen4@huawei.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
-	<michal.simek@amd.com>
-Subject: [PATCH -next] pinctrl: pinctrl-zynq: fix module autoloading
-Date: Wed, 14 Aug 2024 03:01:55 +0000
-Message-ID: <20240814030155.3876069-1-liaochen4@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723616027; c=relaxed/simple;
+	bh=MFc07a7qDFLWvBfKP3p3SXSxGEayoTWHYZRN+ciE6XE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aQU6pGK8u/yZOH7hOSkGqIKcnEAtdENjaw4HyJvXAaMQRpOJOfErxguS2EWnODIU+3vYrk7WpuDBX9guy4et4//XfAVN68p+nlWDeXouWwo8ZGLE/tv0j3JQcxNo7vBTMwRIG7pquAW+vXphTvNxQtceNDpMCSc/L4mhYu+BCOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FXy6JkN7; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FXy6JkN7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723616025; x=1755152025;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=MFc07a7qDFLWvBfKP3p3SXSxGEayoTWHYZRN+ciE6XE=;
+  b=FXy6JkN78Ccyi6qs8fPShwLUNGd5x06bJbjucaBD626P4kdC5woo9Xsc
+   evDg7IRTiMJwl0uXsLESlSs+vu5dH4ESHIWCUbumJV62qAankK6qzd0tK
+   MFY3gZB+vheSEa4Op75/sSGByVTOYNKY0GGygNZ18bDgMq2BDWTgRRcfx
+   a72uRIJORvt4oMPPf0Zk7YZ1gj8LqfE7dVqQkGbsV3usGzNwJqPBRyU3q
+   d06Bzkbdcn59txnfzQffj2O9cEdPSYf6p6Lwd4zn8ZXu39YoT7YWwDlGM
+   WFqDGRUp4PisWWK9XWTHU0UO/Ius6g2UlorHpT6A9rmFgqyJT9dJo9u48
+   g==;
+X-CSE-ConnectionGUID: /IfnQ+z+Sza5leyL0Yr/gg==
+X-CSE-MsgGUID: /9kTFHpASuCu6CxRDQnusA==
+X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
+   d="scan'208";a="33398206"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2024 23:13:44 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 13 Aug 2024 23:13:34 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 13 Aug 2024 23:13:29 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v4 2/4] ARM: dts: microchip: Remove additional compatible string from PIO3 pinctrl nodes
+Date: Wed, 14 Aug 2024 11:43:13 +0530
+Message-ID: <20240814061315.112564-3-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240814061315.112564-1-manikandan.m@microchip.com>
+References: <20240814061315.112564-1-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -39,29 +64,87 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500020.china.huawei.com (7.185.36.49)
 
-Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-based on the alias from of_device_id table.
+The driver data specific to each pinctrl GPIO bank compatible nodes are not
+the same and declaring additional compatible string as fallback has no
+specific purpose, hence, removing the additional compatible string from the
+pinctrl nodes in DT to comply with atmel,at91-pinctrl.txt documentation.
 
-Signed-off-by: Liao Chen <liaochen4@huawei.com>
+Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-zynq.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/microchip/at91sam9n12.dtsi | 2 +-
+ arch/arm/boot/dts/microchip/at91sam9x5.dtsi  | 2 +-
+ arch/arm/boot/dts/microchip/sam9x60.dtsi     | 2 +-
+ arch/arm/boot/dts/microchip/sama5d3.dtsi     | 2 +-
+ arch/arm/boot/dts/microchip/sama5d4.dtsi     | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index 0e8de27d0de8..caa8a2ca3e68 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -1202,6 +1202,7 @@ static const struct of_device_id zynq_pinctrl_of_match[] = {
- 	{ .compatible = "xlnx,pinctrl-zynq" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, zynq_pinctrl_of_match);
+diff --git a/arch/arm/boot/dts/microchip/at91sam9n12.dtsi b/arch/arm/boot/dts/microchip/at91sam9n12.dtsi
+index 9aa22195051d..844bd50943fc 100644
+--- a/arch/arm/boot/dts/microchip/at91sam9n12.dtsi
++++ b/arch/arm/boot/dts/microchip/at91sam9n12.dtsi
+@@ -226,7 +226,7 @@ dma: dma-controller@ffffec00 {
+ 			pinctrl@fffff400 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "atmel,at91sam9x5-pinctrl", "atmel,at91rm9200-pinctrl", "simple-mfd";
++				compatible = "atmel,at91sam9x5-pinctrl", "simple-mfd";
+ 				ranges = <0xfffff400 0xfffff400 0x800>;
  
- static struct platform_driver zynq_pinctrl_driver = {
- 	.driver = {
+ 				atmel,mux-mask = <
+diff --git a/arch/arm/boot/dts/microchip/at91sam9x5.dtsi b/arch/arm/boot/dts/microchip/at91sam9x5.dtsi
+index d41d7c844200..27c1f2861cc3 100644
+--- a/arch/arm/boot/dts/microchip/at91sam9x5.dtsi
++++ b/arch/arm/boot/dts/microchip/at91sam9x5.dtsi
+@@ -202,7 +202,7 @@ dma1: dma-controller@ffffee00 {
+ 			pinctrl: pinctrl@fffff400 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "atmel,at91sam9x5-pinctrl", "atmel,at91rm9200-pinctrl", "simple-mfd";
++				compatible = "atmel,at91sam9x5-pinctrl", "simple-mfd";
+ 				ranges = <0xfffff400 0xfffff400 0x800>;
+ 
+ 				/* shared pinctrl settings */
+diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+index 4e71ae63edf1..797855e78058 100644
+--- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+@@ -1223,7 +1223,7 @@ AT91_XDMAC_DT_PERID(28))>,
+ 			pinctrl: pinctrl@fffff400 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "microchip,sam9x60-pinctrl", "atmel,at91sam9x5-pinctrl", "atmel,at91rm9200-pinctrl", "simple-mfd";
++				compatible = "microchip,sam9x60-pinctrl", "simple-mfd";
+ 				ranges = <0xfffff400 0xfffff400 0x800>;
+ 
+ 				/* mux-mask corresponding to sam9x60 SoC in TFBGA228L package */
+diff --git a/arch/arm/boot/dts/microchip/sama5d3.dtsi b/arch/arm/boot/dts/microchip/sama5d3.dtsi
+index f1614dcd7d28..39865133aa56 100644
+--- a/arch/arm/boot/dts/microchip/sama5d3.dtsi
++++ b/arch/arm/boot/dts/microchip/sama5d3.dtsi
+@@ -493,7 +493,7 @@ aic: interrupt-controller@fffff000 {
+ 			pinctrl: pinctrl@fffff200 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "atmel,sama5d3-pinctrl", "atmel,at91sam9x5-pinctrl", "simple-mfd";
++				compatible = "atmel,sama5d3-pinctrl", "simple-mfd";
+ 				ranges = <0xfffff200 0xfffff200 0xa00>;
+ 				atmel,mux-mask = <
+ 					/*   A          B          C  */
+diff --git a/arch/arm/boot/dts/microchip/sama5d4.dtsi b/arch/arm/boot/dts/microchip/sama5d4.dtsi
+index 69dd4e7b4c14..b253ba33fc38 100644
+--- a/arch/arm/boot/dts/microchip/sama5d4.dtsi
++++ b/arch/arm/boot/dts/microchip/sama5d4.dtsi
+@@ -791,7 +791,7 @@ dbgu: serial@fc069000 {
+ 			pinctrl: pinctrl@fc06a000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "atmel,sama5d3-pinctrl", "atmel,at91sam9x5-pinctrl", "simple-mfd";
++				compatible = "atmel,sama5d3-pinctrl", "simple-mfd";
+ 				ranges = <0xfc068000 0xfc068000 0x100
+ 					  0xfc06a000 0xfc06a000 0x4000>;
+ 				/* WARNING: revisit as pin spec has changed */
 -- 
-2.34.1
+2.25.1
 
