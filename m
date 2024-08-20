@@ -1,57 +1,57 @@
-Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D441917DE
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Aug 2024 14:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3441917FC
+	for <linux-gpio@vger.kernel.org>; Tue, 20 Aug 2024 14:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724164579; cv=none; b=Gr4g6UZdSzApflxS4EGfR7pQKgvoZ1SJa4KRGSNBmSZWtrN8mrKjAYYQ3CsS4YF3JHgKKaREPuoNYuqzZ6biiKYZrkFI2mSWA9REQRFuWNs1zvPxKGKbgCX4Q5/qA+XFzhpykhWY0nXJ0oU1p2vuEJ7QND84jM1dsKt8suBYP8Y=
+	t=1724164580; cv=none; b=FqopEpV4Q1XroYQm0ipc68xl8ApfLZmcu2EZIzx5KenlkYtqo3KQP1olXnqNMAGqjVvI5e4l10pzRsn3TtkCkaPudYhDJ10kCKlnChAQwmjqWlP0R/HhVoSaTsbIC3CBTnBLoutQw3h2uwNIRK5tImEo86Y5TOhLZMc6Y3dLhUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724164579; c=relaxed/simple;
-	bh=zuktvUjNWXMImNkeTtLFSHHzhM7nEaX7nzni+eAnH3Y=;
+	s=arc-20240116; t=1724164580; c=relaxed/simple;
+	bh=lmkX3X+lZfdLocHcy9uquvCuB7MX3sjbyBoHFtfeUIs=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ppq6cyoaXsCX9mTHeaqCc7w5yHQYKczUXY7IwGLqitAOh2xPhblgM5OziIvI4i4CfsLObDYBI45WEJUFObxR8I3bxlxEEgu86MMeY3VR8qttd2mheJYgWk74zNCcIh7uT9oNQF3jp45moM15M3v3t9ET/xqQSoWkxR0+V0B6Q3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W7vcF3dY; arc=none smtp.client-ip=209.85.167.67
+	 MIME-Version; b=aPqzOAGlFG57/PW55r04TCYFzStBrIzKFL7/os4PBm9+i8eQZpegNjhfXrCIm/IslC6VkLMD1mU3TycSQDCurqOoi5FmBKRbGAPsjcnqtDr/ADtDdCU3iQ1KAN7o6cr19BuPYqI5QBevugi38JqV85Qgf0CAD5Kvxb4edgRL02k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GOFbM3ej; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W7vcF3dY"
-Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so2682846e87.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Aug 2024 07:36:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GOFbM3ej"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bf0261f162so2092183a12.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Aug 2024 07:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724164573; x=1724769373; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1724164575; x=1724769375; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eHu+9p6fy0B9DjKzKrA0lK/WG9JbQEJbtKENjEf1pwk=;
-        b=W7vcF3dYHioTcKOuIYIo6n6+vRtdw1xJkHt8d27dnlXlR95qd8ngmLJXGBgbJoGff9
-         /Vwz7WPJhqrrQp626RCGqVG6QRSa1Vgas5KqC4ruq7jaz/9NoLct+VOSQo6bjOVTT3N9
-         XrOlwHJFNTJ96f/Pb8dSlNdDYi1h4/PMDOrk0UXcjZiYjk/oUkAN8SUACsjr7IREhZ3L
-         ToEVlQ9n3K+1HaNGsyd5MPpZ1XqS3TUyFBM4gpCpd1WUcpsMxkGT5PDkQvc7OUKJj2oj
-         sa/q2cVGUikjBoUGE0xqtK3eUegb+zsORBscTnrozIVwNa6XM24eFZJqR1YXVHeQLYxr
-         L/3g==
+        bh=xT6huOC6T7Yu7zfFRkWYs+RyZWH6K8VkXHaDH7bLRdw=;
+        b=GOFbM3ejQrvqPnq3AQiItzlch4kDbEyor+mNzJTzIJ1Tdp5pM9qNbmhYh8YZJWYrcU
+         a9NkZOO3tzPBotazYKDhjjhXKlAJ34B5tiTJqvbEyvCHD7kGqRBYfIpxCQkzu1+rzWrG
+         jx70FKUmqrCkbPJF1smy8fFJyafehS4kHW089dDrtRLbzg792WlTgVdwegXi0OnIl33x
+         IwadkE/9PWDo7MU7EA0yM6v6b+81CqrA5FQ7DyUySclAvW9y6SLGHEj2tiuHSTsClT+I
+         cHS9BPpykW/LplwpQDZ47z5olZaYKFG/IE/56ZGr9q5lZZvZQItIYd+kpIFc+KYVCpH7
+         OBZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724164573; x=1724769373;
+        d=1e100.net; s=20230601; t=1724164575; x=1724769375;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eHu+9p6fy0B9DjKzKrA0lK/WG9JbQEJbtKENjEf1pwk=;
-        b=mZX8C0uI+8xKeb2cb8aMadmvLXUKl2F1JEd1UcG41AIOEleZHqeCCBVmoZg5TPWOXJ
-         u6xwpsRIIZFV4SD6VcoAutqQADY/QYZ5zQA58a+AXpc3RDOAYAp3lChDW8EI0v6u2xiJ
-         QYUnSic2GFhQLKY2rQcP1Zcs7K/uIU2PusM44aweSoCOVJqnSRwao5rxGupavgakHfOo
-         pun5THEtmeGdAOZGH6mo0LoJnET/7X9vI5SK2mnv16tiTYUv/8MlNT4K2niIcWmOg5uD
-         h1zrJFSTNZ82kHZFc4KjYCIUahGhWF0QdRBV0qFYh2yqZmVmfptE9NdzW2NIHbZdd6b1
-         OuYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKIQgTTFZ5mhjKYbFWXCGe/dxkO38fu4tPxsxVAnr/gLOZXBE8JtOJ8iPe3Jy9R26qCKSCUXGXUVfl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwECeBf8+DicJPHA8KwijXKK7kxIpzKVpeHSeAytXellZtihi/I
-	xNq5SukUuU3Kkf3AcUhlmRWxsTeldi3pcXNv5YVSvyDiQYNEffCzAGq2MRhRauo=
-X-Google-Smtp-Source: AGHT+IF9Ser2XrcrS55JMHmj+9A2o//OfYkDsSH6Bg071olmkQupPK4x4M42RDza57V7ur4d+qD5iQ==
-X-Received: by 2002:a05:6512:2346:b0:530:ad8d:dcdb with SMTP id 2adb3069b0e04-5331c6a1931mr13803638e87.19.1724164572476;
-        Tue, 20 Aug 2024 07:36:12 -0700 (PDT)
+        bh=xT6huOC6T7Yu7zfFRkWYs+RyZWH6K8VkXHaDH7bLRdw=;
+        b=NzXzNys+EB0VYwe0XdZVzFEKBdj8KMTRIny99yQ7xKOkPJanhsDuL/PSiIT76HyA/V
+         8X8m5nK7gUNILAwSG/1H/xl3EDDFtH2BZ7Ft59vOQc5syoZnlh2sRvyJlCr1fADJ/NoF
+         5GHcelxCaPcftD/6SyEOcq8iRuMz7VQ64QIKVEkmhBu4wKY8a6fONV+WNtmAgwdM1ZOQ
+         MOrlpC8h4Gk3Duyhu7/YvJF+eOzjjVdHZRuK4pdNJiELaT+lAuJ1HcsChM7qCk1fu/7i
+         ATBmjpgoryaSRrjia7x2SKliHTNCb2DultmP0q7mcc8v5JOUzYF2BXUplkWyEL2sjkET
+         HBew==
+X-Forwarded-Encrypted: i=1; AJvYcCVrje6sh0blFhAOV38LfajAF6pTuu8IJSph4Nd28SdaZKo0brhfXYatRtYNz5ZDezehDCnxCc1lz+YW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqo6GSpJvdIhK+63JsyhiXt2/iA4cFYOEMWfUEBtPs2+J/PBJ4
+	J9mYdgLCzrCW41CY9Brek9gPuF7i/MBfrCd8L/QWaOMGoasavaYr9i4ofScq4L4=
+X-Google-Smtp-Source: AGHT+IGQKwDr2ogZrSzCgclLvBAiT9X7zYngYAlcDJL0KUFwXPaOBp69ElOzx3FbUUgrmqZUdz3wjQ==
+X-Received: by 2002:a05:6402:520c:b0:5be:fadc:8707 with SMTP id 4fb4d7f45d1cf-5befadc893emr4836516a12.7.1724164574347;
+        Tue, 20 Aug 2024 07:36:14 -0700 (PDT)
 Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838eee50sm774414666b.93.2024.08.20.07.36.12
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebc0817a8sm6821446a12.84.2024.08.20.07.36.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 07:36:12 -0700 (PDT)
+        Tue, 20 Aug 2024 07:36:14 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 To: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -88,9 +88,9 @@ To: Andrea della Porta <andrea.porta@suse.com>,
 	Lee Jones <lee@kernel.org>,
 	Andrew Lunn <andrew@lunn.ch>,
 	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 01/11] dt-bindings: clock: Add RaspberryPi RP1 clock bindings
-Date: Tue, 20 Aug 2024 16:36:03 +0200
-Message-ID: <8d7dd7ca5da41f2a96e3ef4e2e3f29fd0d71906a.1724159867.git.andrea.porta@suse.com>
+Subject: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address parsed from DT
+Date: Tue, 20 Aug 2024 16:36:05 +0200
+Message-ID: <8b4fa91380fc4754ea80f47330c613e4f6b6592c.1724159867.git.andrea.porta@suse.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1724159867.git.andrea.porta@suse.com>
 References: <cover.1724159867.git.andrea.porta@suse.com>
@@ -102,190 +102,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device tree bindings for the clock generator found in RP1 multi
-function device, and relative entries in MAINTAINERS file.
+The of_pci_set_address() function parse devicetree PCI range specifier
+assuming the address is 'sanitized' at the origin, i.e. without checking
+whether the incoming address is 32 or 64 bit has specified in the flags.
+In this way an address with no OF_PCI_ADDR_SPACE_MEM64 set in the flagss
+could leak through and the upper 32 bits of the address will be set too,
+and this violates the PCI specs stating that ion 32 bit address the upper
+bit should be zero.
+This could cause mapping translation mismatch on PCI devices (e.g. RP1)
+that are expected to be addressed with a 64 bit address while advertising
+a 32 bit address in the PCI config region.
+Add a check in of_pci_set_address() to set upper 32 bits to zero in case
+the address has no 64 bit flag set.
 
 Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 ---
- .../clock/raspberrypi,rp1-clocks.yaml         | 87 +++++++++++++++++++
- MAINTAINERS                                   |  6 ++
- include/dt-bindings/clock/rp1.h               | 56 ++++++++++++
- 3 files changed, 149 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
- create mode 100644 include/dt-bindings/clock/rp1.h
+ drivers/pci/of_property.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-new file mode 100644
-index 000000000000..b27db86d0572
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-@@ -0,0 +1,87 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: RaspberryPi RP1 clock generator
-+
-+maintainers:
-+  - Andrea della Porta <andrea.porta@suse.com>
-+
-+description: |
-+  The RP1 contains a clock generator designed as three PLLs (CORE, AUDIO,
-+  VIDEO), and each PLL output can be programmed though dividers to generate
-+  the clocks to drive the sub-peripherals embedded inside the chipset.
-+
-+  Link to datasheet:
-+  https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-+
-+properties:
-+  compatible:
-+    const: raspberrypi,rp1-clocks
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    description:
-+      The index in the assigned-clocks is mapped to the output clock as per
-+      definitions in dt-bindings/clock/rp1.h.
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/rp1.h>
-+
-+    rp1 {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        rp1_clocks: clocks@18000 {
-+            compatible = "raspberrypi,rp1-clocks";
-+            reg = <0xc0 0x40018000 0x0 0x10038>;
-+            #clock-cells = <1>;
-+            clocks = <&clk_xosc>;
-+
-+            assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
-+                              <&rp1_clocks RP1_PLL_AUDIO_CORE>,
-+                              /* RP1_PLL_VIDEO_CORE and dividers are now managed by VEC,DPI drivers */
-+                              <&rp1_clocks RP1_PLL_SYS>,
-+                              <&rp1_clocks RP1_PLL_SYS_SEC>,
-+                              <&rp1_clocks RP1_PLL_AUDIO>,
-+                              <&rp1_clocks RP1_PLL_AUDIO_SEC>,
-+                              <&rp1_clocks RP1_CLK_SYS>,
-+                              <&rp1_clocks RP1_PLL_SYS_PRI_PH>,
-+                              /* RP1_CLK_SLOW_SYS is used for the frequency counter (FC0) */
-+                              <&rp1_clocks RP1_CLK_SLOW_SYS>,
-+                              <&rp1_clocks RP1_CLK_SDIO_TIMER>,
-+                              <&rp1_clocks RP1_CLK_SDIO_ALT_SRC>,
-+                              <&rp1_clocks RP1_CLK_ETH_TSU>;
-+
-+            assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
-+                                   <1536000000>, // RP1_PLL_AUDIO_CORE
-+                                   <200000000>,  // RP1_PLL_SYS
-+                                   <125000000>,  // RP1_PLL_SYS_SEC
-+                                   <61440000>,   // RP1_PLL_AUDIO
-+                                   <192000000>,  // RP1_PLL_AUDIO_SEC
-+                                   <200000000>,  // RP1_CLK_SYS
-+                                   <100000000>,  // RP1_PLL_SYS_PRI_PH
-+                                   /* Must match the XOSC frequency */
-+                                   <50000000>, // RP1_CLK_SLOW_SYS
-+                                   <1000000>, // RP1_CLK_SDIO_TIMER
-+                                   <200000000>, // RP1_CLK_SDIO_ALT_SRC
-+                                   <50000000>; // RP1_CLK_ETH_TSU
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 42decde38320..6e7db9bce278 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19116,6 +19116,12 @@ F:	Documentation/devicetree/bindings/media/raspberrypi,pispbe.yaml
- F:	drivers/media/platform/raspberrypi/pisp_be/
- F:	include/uapi/linux/media/raspberrypi/
- 
-+RASPBERRY PI RP1 PCI DRIVER
-+M:	Andrea della Porta <andrea.porta@suse.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-+F:	include/dt-bindings/clock/rp1.h
-+
- RC-CORE / LIRC FRAMEWORK
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
-diff --git a/include/dt-bindings/clock/rp1.h b/include/dt-bindings/clock/rp1.h
-new file mode 100644
-index 000000000000..1ed67b8a5229
---- /dev/null
-+++ b/include/dt-bindings/clock/rp1.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+/*
-+ * Copyright (C) 2021 Raspberry Pi Ltd.
-+ */
-+
-+#define RP1_PLL_SYS_CORE		0
-+#define RP1_PLL_AUDIO_CORE		1
-+#define RP1_PLL_VIDEO_CORE		2
-+
-+#define RP1_PLL_SYS			3
-+#define RP1_PLL_AUDIO			4
-+#define RP1_PLL_VIDEO			5
-+
-+#define RP1_PLL_SYS_PRI_PH		6
-+#define RP1_PLL_SYS_SEC_PH		7
-+#define RP1_PLL_AUDIO_PRI_PH		8
-+
-+#define RP1_PLL_SYS_SEC			9
-+#define RP1_PLL_AUDIO_SEC		10
-+#define RP1_PLL_VIDEO_SEC		11
-+
-+#define RP1_CLK_SYS			12
-+#define RP1_CLK_SLOW_SYS		13
-+#define RP1_CLK_DMA			14
-+#define RP1_CLK_UART			15
-+#define RP1_CLK_ETH			16
-+#define RP1_CLK_PWM0			17
-+#define RP1_CLK_PWM1			18
-+#define RP1_CLK_AUDIO_IN		19
-+#define RP1_CLK_AUDIO_OUT		20
-+#define RP1_CLK_I2S			21
-+#define RP1_CLK_MIPI0_CFG		22
-+#define RP1_CLK_MIPI1_CFG		23
-+#define RP1_CLK_PCIE_AUX		24
-+#define RP1_CLK_USBH0_MICROFRAME	25
-+#define RP1_CLK_USBH1_MICROFRAME	26
-+#define RP1_CLK_USBH0_SUSPEND		27
-+#define RP1_CLK_USBH1_SUSPEND		28
-+#define RP1_CLK_ETH_TSU			29
-+#define RP1_CLK_ADC			30
-+#define RP1_CLK_SDIO_TIMER		31
-+#define RP1_CLK_SDIO_ALT_SRC		32
-+#define RP1_CLK_GP0			33
-+#define RP1_CLK_GP1			34
-+#define RP1_CLK_GP2			35
-+#define RP1_CLK_GP3			36
-+#define RP1_CLK_GP4			37
-+#define RP1_CLK_GP5			38
-+#define RP1_CLK_VEC			39
-+#define RP1_CLK_DPI			40
-+#define RP1_CLK_MIPI0_DPI		41
-+#define RP1_CLK_MIPI1_DPI		42
-+
-+/* Extra PLL output channels - RP1B0 only */
-+#define RP1_PLL_VIDEO_PRI_PH		43
-+#define RP1_PLL_AUDIO_TERN		44
+diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
+index 5a0b98e69795..77865facdb4a 100644
+--- a/drivers/pci/of_property.c
++++ b/drivers/pci/of_property.c
+@@ -60,7 +60,10 @@ static void of_pci_set_address(struct pci_dev *pdev, u32 *prop, u64 addr,
+ 	prop[0] |= flags | reg_num;
+ 	if (!reloc) {
+ 		prop[0] |= OF_PCI_ADDR_FIELD_NONRELOC;
+-		prop[1] = upper_32_bits(addr);
++		if (FIELD_GET(OF_PCI_ADDR_FIELD_SS, flags) == OF_PCI_ADDR_SPACE_MEM64)
++			prop[1] = upper_32_bits(addr);
++		else
++			prop[1] = 0;
+ 		prop[2] = lower_32_bits(addr);
+ 	}
+ }
 -- 
 2.35.3
 
