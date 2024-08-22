@@ -1,34 +1,33 @@
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44FA1D0DF0
-	for <linux-gpio@vger.kernel.org>; Thu, 22 Aug 2024 22:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A84312B72
+	for <linux-gpio@vger.kernel.org>; Thu, 22 Aug 2024 22:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724367395; cv=none; b=bZucxsa6hl9z9uAwq+i91EWwmRU1yGskzupqWW/6Qcm2ON75hlG6WnwA8YCmc1sfes04EmTkf+9QXs/I5Ai5la4WJ4aHsaUPcYV5a78PIWasNZtXyzuS+ot2mI5RRgK8LMQSkmw+v5kXVx9hvLFgefOa3HHoKtAjTiiddmFNWNk=
+	t=1724367503; cv=none; b=Sq8hDM29c/2hDqoFkWMDEoprMRPmFFDDU8MMDquHXp3/6IdznmXWTmh71vgB5IMQ0kuNz+eqTIsjHahYPrRtn+sNX0ZUl9qX8vi4RPlFXhQcTzKOMfXN6D+71cImXFAalK38jCNrsm/DE9CiUePCpKk3fDxynFqyoF8RwnkXo48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724367395; c=relaxed/simple;
-	bh=kydB5gAR1qt/Mq0WG6CTYE3LCD6Nj2jl2gXbb9SCuQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FINupb7VqAOF9cQY428u2nZvqBWHLatVVbJvgz/XL35yF0RKRO5Wf2tVlj/QqNTDsnGvTGGzVyTtcpuoMTgCRauBlyIsreHKZKB2da9Q4JjxGWjWPoIyeOXnT3cvx5IOx2C5ZlWovE3Xj9HkhGfRQB4ey9oj17c1v78zTqAlE5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+	s=arc-20240116; t=1724367503; c=relaxed/simple;
+	bh=XP59DpnvPpz3OTugVZRRK2XvnbQkKUHgfixv7fVy6R8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E1XZaoSOrq+EGr3tWeJ7z0Gsu90A0bkuZuqgE3o3p11fK/Y7sZhdRl49m8B+TI2r0kg6TzRCq4qHbnpYKflRrOMBknt8F3OUjjtKfedGzszPfKAUHk+iA7bC9uzyfxLTcMMRTfcbXVU6+9cySM+asY/ztybQEwX6hMdZ9R9EEqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
 	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id c5724119-60d9-11ef-822f-005056bdfda7;
-	Fri, 23 Aug 2024 01:56:31 +0300 (EEST)
+	id 0605c0c0-60da-11ef-822f-005056bdfda7;
+	Fri, 23 Aug 2024 01:58:19 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: linux-gpio@vger.kernel.org,
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 1/1] gpio: uniphier: Replace of_node_to_fwnode() with more suitable API
-Date: Fri, 23 Aug 2024 01:56:29 +0300
-Message-ID: <20240822225629.707365-1-andy.shevchenko@gmail.com>
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v1 1/1] gpio: visconti: Replace of_node_to_fwnode() with more suitable API
+Date: Fri, 23 Aug 2024 01:58:18 +0300
+Message-ID: <20240822225818.707550-1-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -43,39 +42,40 @@ of_fwnode_handle(). Replace the former with more suitable API.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/gpio/gpio-uniphier.c | 5 +++--
+ drivers/gpio/gpio-visconti.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-index 1f440707f8f4..da99ba13e82d 100644
---- a/drivers/gpio/gpio-uniphier.c
-+++ b/drivers/gpio/gpio-uniphier.c
-@@ -11,6 +11,7 @@
- #include <linux/of.h>
+diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
+index 6734e7e1e2a4..ebc71ecdb6cf 100644
+--- a/drivers/gpio/gpio-visconti.c
++++ b/drivers/gpio/gpio-visconti.c
+@@ -8,6 +8,7 @@
+  * Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+  */
+ 
++#include <linux/bitops.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+@@ -15,8 +16,8 @@
+ #include <linux/io.h>
  #include <linux/of_irq.h>
  #include <linux/platform_device.h>
 +#include <linux/property.h>
- #include <linux/spinlock.h>
- #include <dt-bindings/gpio/uniphier-gpio.h>
+ #include <linux/seq_file.h>
+-#include <linux/bitops.h>
  
-@@ -164,7 +165,7 @@ static int uniphier_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
- 	if (offset < UNIPHIER_GPIO_IRQ_OFFSET)
- 		return -ENXIO;
+ /* register offset */
+ #define GPIO_DIR	0x00
+@@ -202,7 +203,7 @@ static int visconti_gpio_probe(struct platform_device *pdev)
  
--	fwspec.fwnode = of_node_to_fwnode(chip->parent->of_node);
-+	fwspec.fwnode = dev_fwnode(chip->parent);
- 	fwspec.param_count = 2;
- 	fwspec.param[0] = offset - UNIPHIER_GPIO_IRQ_OFFSET;
- 	/*
-@@ -404,7 +405,7 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
- 	priv->domain = irq_domain_create_hierarchy(
- 					parent_domain, 0,
- 					UNIPHIER_GPIO_IRQ_MAX_NUM,
--					of_node_to_fwnode(dev->of_node),
-+					dev_fwnode(dev),
- 					&uniphier_gpio_irq_domain_ops, priv);
- 	if (!priv->domain)
- 		return -ENOMEM;
+ 	girq = &priv->gpio_chip.irq;
+ 	gpio_irq_chip_set_chip(girq, &visconti_gpio_irq_chip);
+-	girq->fwnode = of_node_to_fwnode(dev->of_node);
++	girq->fwnode = dev_fwnode(dev);
+ 	girq->parent_domain = parent;
+ 	girq->child_to_parent_hwirq = visconti_gpio_child_to_parent_hwirq;
+ 	girq->populate_parent_alloc_arg = visconti_gpio_populate_parent_fwspec;
 -- 
 2.46.0
 
