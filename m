@@ -1,112 +1,100 @@
-Received: from mail-m19731125.qiye.163.com (mail-m19731125.qiye.163.com [220.197.31.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E50188920;
-	Fri, 23 Aug 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF30188A21
+	for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2024 15:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427144; cv=none; b=kiYGTLrDgJqdKSRwbFDqT4H/kRvcTu/Gitvbcv/mTnw2v/9oLG3s8k+OSiX09Ci0/Rx8Us1Y49ASAnOy6nJo7JGk1UM8rwnGaCQwI3RMdzP0n5QLo7NrUqPY25MebHqCkjTJuad76zYvMgbq7lG2t3gXaHcibotcZCeKBxEOe8g=
+	t=1724427172; cv=none; b=Hx63Y/Pg/kYK6FwVmLBQpat33bGLXzEdj7iEJJeqNlmgC+lUG0J1EeTQxA/1HTU1/3I1vzw4dBicuhG7uWBwKHnGOx7DnpCkCHNblMLGlNdQmLkALQW0B0pXXowH6RgWgRQiENrX4aE6THmu94J8y3aJSz6dD7jwjlCR/9MWbaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427144; c=relaxed/simple;
-	bh=tfaCEzlZ1LhNiIKfeFVTZb7lDH70RxZS7nJf7Bmy8lc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sktty+zia/BrQx31CZFalClGlytjv473SwKocoskaLh35ZrHIdu7Qjm18Y778KcVlfo7lu/7GSKPizl8ApCVTRpq8YHDxOXSOwr/UP6egCN4CAON2dVKliSd7JQtY+m79r4M+4dG7f4K3/fM+aHihhWxmcCrcahuYA4pY8MxMP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Y846mzsG; arc=none smtp.client-ip=220.197.31.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1724427172; c=relaxed/simple;
+	bh=9aXyELinQfYwyLATQYHkwQS0PD0DQrUrkpCY/Wkcr1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YABAgDzlVStFhTfDolnhvJRsCXMMS3HhVS+ZQbWYJuZQnOzooeWrwBwqRHUfw3V3ri/w8QcjMKSimGbidZlE3WhJyQ4vBCsSc2rdkObcHz8FzmnEC3SwfkO3V5fHINMR7yW1eOK/zWWLcXQui3B8Rc3FlG3MsCGYFWElTrb+DMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SdT0DOok; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Y846mzsG"
-DKIM-Signature: a=rsa-sha256;
-	b=Y846mzsGjepE5I9zVGhtEOkuo/VziAacg1VazjQ73SxbNO8es21Y8Wk7eQ+FsBKIpOVQV6e2JMBk1Z7e/U0kfnZYFx2pwbO2Z831PHwqbhl63jt43mvlIwZziWq0FHlIq0oZY0LYMQajFgOuWcGClgoFtZkGhkBDYGxRWSUpb+U=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=L9GlpNjSE4nJJrkD+TrY66Rr2oSAqGgJJBgFwS4eF04=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 1C02E7E03CC;
-	Fri, 23 Aug 2024 11:45:05 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Ye Zhang <ye.zhang@rock-chips.com>
-Subject: [PATCH v2] gpio: rockchip: Update debounce config function
-Date: Fri, 23 Aug 2024 11:43:09 +0800
-Message-Id: <20240823034314.62305-7-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SdT0DOok"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so2805899e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Aug 2024 08:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724427169; x=1725031969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9aXyELinQfYwyLATQYHkwQS0PD0DQrUrkpCY/Wkcr1E=;
+        b=SdT0DOok/1R2S3HMr8BCSjCFesI7pNklyEfTirJPU1Z641PMlbLjoLJA7BM0VPCviE
+         DESgvjRhPlB4L1CYinYutRiTJTy/vWaOVCeaK7NktmCNI3G0inXhNuInHuPAPLss2unR
+         Hk/nql9qejBBRpSq4huEWJaFEle0rMKdYZtwI8eSsAA6wcIb5y+jV95DUkW9fPCpmRnE
+         Gy8TptnFjtvG6fmm736FEJYAvEcXp6w2LsYyCS1w4n+94EIwS4Qgn0TmhC5zIj1gTCmS
+         aO5MhUVOgaZ6B2A/r9Fx0V2mzcUu2dUXPCslSiv45snGBo8e8JUkO/1Sl9kzN3MOzaxD
+         luYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724427169; x=1725031969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9aXyELinQfYwyLATQYHkwQS0PD0DQrUrkpCY/Wkcr1E=;
+        b=e1osuomFUF9Pt01mDkxaJafhodo1BU6NBgH2ZVTHQh6grWn0preSn9dpLjl5AIwIuY
+         7KavQuiIUVQAcN0bRyU8T8Ss1Fw9B8zrdlwMBI4+l1QioWFa3dmbJN9ZhzFe2DVrh2ra
+         UAEOP0yHQ3nnxrlhSDAqnxORl/1+1j0xEIehPaOI+VnjEG3kTtLEim+RlQlNT3qs2PSN
+         NZuC48bh8J/UqOxsH7hBJz6SFQd+BPAUnIM1FdK0WxIDuoC9RO51rXoplLj90fBQ/MI6
+         K4xIUJPSUSAf9U4QrIpjCxrHB5FPlouEE0etfGxdkn2QGlucaC6qeeWWC18kBZh20lp7
+         aFsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbTWYhPxXPKIGQNbeMPjhXlPJ04wB+5K57N0Uiz3aqTxhYJaVtRvSO5vOipEwNigjpE7Pds7eoo8WC@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn4zfgU6DYqOWbBi1OtuiDxt1zQgw1/nxLJGij+fO/w6zcQxxr
+	Q38LkiMldjjh2dDRLBM1Y/bbPfVslaNivIcPM7+QeWge7W1dikTMzwoAjz/P/p3IeBFb154vT/A
+	rhGMCgruZEf4RN4gJnhufZELXmWsZvB4+pVLgwQ==
+X-Google-Smtp-Source: AGHT+IEYxslfLVF7+4zGqGpVr0fUIcYeQYYcG88hw1QjYn1vbcqIzy5iBUMugSQ9ALglpqd3RGOJWBHD6ds7yHhxQzQ=
+X-Received: by 2002:a05:6512:3b24:b0:52e:9382:a36 with SMTP id
+ 2adb3069b0e04-5343883b0c9mr2013199e87.30.1724427168328; Fri, 23 Aug 2024
+ 08:32:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhpIGlYaGkNISx5DHkweHkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a917d567d1e09cfkunm1c02e7e03cc
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzI6FRw6SDI8EixIGTYzTgge
-	VksaCitVSlVKTElPSENPTEtNSUxNVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSElCTDcG
+References: <5b992862-355d-f0de-cd3d-ff99e67a4ff1@ek-dev.de>
+In-Reply-To: <5b992862-355d-f0de-cd3d-ff99e67a4ff1@ek-dev.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 17:32:37 +0200
+Message-ID: <CACRpkdZZu4i_DPx9hZp1NXBv=4YBvknrMdaKni1vDeHb5+_rFg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: at91: make it work with current gpiolib
+To: thomas.blocher@ek-dev.de
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the GPIO with version number 0x01000C2B, debounce configuration is
-already supported.
+On Wed, Jul 31, 2024 at 1:16=E2=80=AFAM Thomas Blocher <thomas.blocher@ek-d=
+ev.de> wrote:
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+> pinctrl-at91 currently does not support the gpio-groups devicetree
+> property and has no pin-range.
+> Because of this at91 gpios stopped working since patch
+> commit 2ab73c6d8323fa1e ("gpio: Support GPIO controllers without pin-rang=
+es")
+> This was discussed in the patches
+> commit fc328a7d1fcce263 ("gpio: Revert regression in sysfs-gpio (gpiolib.=
+c)")
+> commit 56e337f2cf132632 ("Revert "gpio: Revert regression in sysfs-gpio (=
+gpiolib.c)"")
+>
+> As a workaround manually set pin-range via gpiochip_add_pin_range() until
+> a) pinctrl-at91 is reworked to support devicetree gpio-groups
+> b) another solution as mentioned in
+> commit 56e337f2cf132632 ("Revert "gpio: Revert regression in sysfs-gpio (=
+gpiolib.c)"")
+> is found
+>
+> Signed-off-by: Thomas Blocher <thomas.blocher@ek-dev.de>
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index c246f116a3b5..aff8bec79062 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -250,6 +250,8 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 			clk_prepare_enable(bank->db_clk);
- 		else
- 			clk_disable_unprepare(bank->db_clk);
-+	} else {
-+		return -ENOTSUPP;
- 	}
- 
- 	return 0;
-@@ -278,22 +280,11 @@ static int rockchip_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 				  unsigned long config)
- {
- 	enum pin_config_param param = pinconf_to_config_param(config);
-+	unsigned int debounce = pinconf_to_config_argument(config);
- 
- 	switch (param) {
- 	case PIN_CONFIG_INPUT_DEBOUNCE:
--		rockchip_gpio_set_debounce(gc, offset, true);
--		/*
--		 * Rockchip's gpio could only support up to one period
--		 * of the debounce clock(pclk), which is far away from
--		 * satisftying the requirement, as pclk is usually near
--		 * 100MHz shared by all peripherals. So the fact is it
--		 * has crippled debounce capability could only be useful
--		 * to prevent any spurious glitches from waking up the system
--		 * if the gpio is conguired as wakeup interrupt source. Let's
--		 * still return -ENOTSUPP as before, to make sure the caller
--		 * of gpiod_set_debounce won't change its behaviour.
--		 */
--		return -ENOTSUPP;
-+		return rockchip_gpio_set_debounce(gc, offset, debounce);
- 	default:
- 		return -ENOTSUPP;
- 	}
--- 
-2.34.1
+No reaction from maintainers so patch applied for fixes now.
 
+Yours,
+Linus Walleij
