@@ -1,99 +1,201 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mail-m32112.qiye.163.com (mail-m32112.qiye.163.com [220.197.32.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4E13A86C;
-	Fri, 23 Aug 2024 09:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0524314C599;
+	Fri, 23 Aug 2024 09:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405637; cv=none; b=BLt/OZllwYY1+gHA4ioD7DTXPK1dPGYF8e+wJuBQu1O1ZFaooIdE06dki7w3gYMmwW5pZ3U8bHnCJEiC/drhdcuo0dFoK7LjWvWkg0h9K630640GjGmz2pahwfE9ovL3g6hMWG2jGcAdts4yiHUuzObz9QdNVP0tOKccAK/qD98=
+	t=1724406139; cv=none; b=q336pBS+t3HksK90jj1/jyuEsBegQWLtqihp6fSI8Op9rl67xQW7vUSFTkNuJG/9AxwWgc6vZZy/Gs0jiMpqrIYRFFLRjmokxSw8unlqghv6tH7CBEtt55evMkYOk+LyGfu0GqPS3Qf7Fa/oVMca4xjsvhV5AEhpG1VXH+CANPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405637; c=relaxed/simple;
-	bh=94Oj+6Hrgb9H/+EtnwJQvyp/Aoq0Ek+bMHAQYtZ3rNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YpcKVSAODsysnrIHPnoairFru4PH57Br7l5HcH4yMJRf1vZWI8+YlU30rhg1gMdZrCyFuP4+/YAIcb0QaC9sreBokyDujau55IAUMx5d+QUSrsBhEnr2vwzhz0uejvDwMc8YjVn/BbC9c8X0L4lptZO9aooX+Rp4o31l1HslJWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MIObJiob; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1724406139; c=relaxed/simple;
+	bh=GJh8uTmIZqGDAYcAhOsia98LpeOyGHuOpEaECHMKRCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GFaE2rAFKLB40aFVzteF5a3ra5GwMBFtkDLGoUHhYsojpIYd1hXtZQ0GmWBkIjHAZoY/fDjaCYfjjM8HAbmtzs+ad7TvOvhsGXnvhJxHYTtJyS4BxgcUEciiVbStBxjqiCAqnnRKTVR5PSgJ87G4I+a0HXPVqCgGoQtpsrLH8B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=U9MZIydU; arc=none smtp.client-ip=220.197.32.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MIObJiob"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VSF0ofpqVbXipZjEn2ptobw3B3A2X9stUgfiIscvRIA=; b=MIObJiobwizHAH4f2xl+A2u+a8
-	J+AB8MybckpNLriEASHgl19CpzbLeJDJ/sNbbvxT0f7AxAZvto7rgfG6XMZFIiT8X6qm3hDO+1pHx
-	0gX1jcWYT6RmjkGqS6ELqqmJqQ99JkuDes2StMr/E791bFH86B4SIwzDl+lmhTFYzZx9PrKRo8XYc
-	wgVJo/+5bWQHbKz4WgdQJ+A8RTXU75QuTFFWiBC9HLKgJw0oP3aD06ecgmQaFEODEgk44lCscrXaq
-	OP0cD1euUqu1GrsgnFr/bhGtFgV5L4mnmUzDKGwZ3x1guNrMyx1XhEGvKMP5hZ1MWsxbE+234zYcD
-	C7D95/Lg==;
-Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shQg5-0003r5-2j; Fri, 23 Aug 2024 11:33:53 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
- tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
- tim.chen@rock-chips.com, elaine.zhang@rock-chips.com,
- Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v2] gpio: rockchip: resolve overflow issues
-Date: Fri, 23 Aug 2024 11:34:34 +0200
-Message-ID: <2735393.uZKlY2gecq@diego>
-In-Reply-To: <20240823034314.62305-4-ye.zhang@rock-chips.com>
-References:
- <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-4-ye.zhang@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="U9MZIydU"
+DKIM-Signature: a=rsa-sha256;
+	b=U9MZIydUDcjO9xdJvBvlkI0qjkZordIUe5F8OiKfCHXK4rX6EDX6BnpGbE63FBVy9KckeE51U7OEyDt+7u5WiKeX06NJNeZDUxxkMritcWcUP/KqPoHUpDqv86Dl7mqHemop6eY39GJud+qeSFOBWGMhO0hTt5po8eki6cu7NJE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=kmbOu81I/SivoswEU4k4vCo9LnH975Xko2P8NPDJNNA=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id D96197E03F1;
+	Fri, 23 Aug 2024 11:45:07 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: [PATCH v2] gpio: rockchip: support new version gpio
+Date: Fri, 23 Aug 2024 11:43:11 +0800
+Message-Id: <20240823034314.62305-9-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk9IHlZKGkwaShoZQ0xOTB5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a917d5687fb09cfkunmd96197e03f1
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OVE6HTo*FDI2Hiw0NzYhTgII
+	EjkaCzBVSlVKTElPSENPTEtCS0NKVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBTU9JSzcG
 
-Am Freitag, 23. August 2024, 05:43:06 CEST schrieb Ye Zhang:
-> Prevent overflow issues when performing debounce-related calculations.
+The next version gpio controller on SoCs like rk3576 which support four
+OS operation and four interrupts
 
-Please add some more explanation here.
-I.e. something about previous max_debounce calculation does overflow
-the type of max_debounce
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 40 ++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-Thanks
-Heiko
-
-> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-> ---
->  drivers/gpio/gpio-rockchip.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 5f60162baaeb..bf22b103b6a2 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -209,11 +209,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
->  		freq = clk_get_rate(bank->db_clk);
->  		if (!freq)
->  			return -EINVAL;
-> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
-> +		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
-> +		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
->  		if (debounce > max_debounce)
->  			return -EINVAL;
->  
-> -		div = debounce * freq;
-> +		div = (u64)debounce * freq;
->  		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
->  	} else {
->  		div_debounce_support = false;
-> 
-
-
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 25ddf6a82c09..5289c94d5c60 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -29,6 +29,7 @@
+ #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
+ #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
+ #define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
++#define GPIO_TYPE_V2_2		(0x010219C8)  /* GPIO Version ID 0x010219C8 */
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
+@@ -78,7 +79,7 @@ static inline void rockchip_gpio_writel(struct rockchip_pin_bank *bank,
+ {
+ 	void __iomem *reg = bank->reg_base + offset;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2)
++	if (bank->gpio_type >= GPIO_TYPE_V2)
+ 		gpio_writel_v2(value, reg);
+ 	else
+ 		writel(value, reg);
+@@ -90,7 +91,7 @@ static inline u32 rockchip_gpio_readl(struct rockchip_pin_bank *bank,
+ 	void __iomem *reg = bank->reg_base + offset;
+ 	u32 value;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2)
++	if (bank->gpio_type >= GPIO_TYPE_V2)
+ 		value = gpio_readl_v2(reg);
+ 	else
+ 		value = readl(reg);
+@@ -105,7 +106,7 @@ static inline void rockchip_gpio_writel_bit(struct rockchip_pin_bank *bank,
+ 	void __iomem *reg = bank->reg_base + offset;
+ 	u32 data;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2) {
++	if (bank->gpio_type >= GPIO_TYPE_V2) {
+ 		if (value)
+ 			data = BIT(bit % 16) | BIT(bit % 16 + 16);
+ 		else
+@@ -126,7 +127,7 @@ static inline u32 rockchip_gpio_readl_bit(struct rockchip_pin_bank *bank,
+ 	void __iomem *reg = bank->reg_base + offset;
+ 	u32 data;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2) {
++	if (bank->gpio_type >= GPIO_TYPE_V2) {
+ 		data = readl(bit >= 16 ? reg + 0x4 : reg);
+ 		data >>= bit % 16;
+ 	} else {
+@@ -204,18 +205,24 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 	unsigned int cur_div_reg;
+ 	u64 div;
+ 
+-	div_debounce_support = (bank->gpio_type == GPIO_TYPE_V2) && !IS_ERR(bank->db_clk);
++	div_debounce_support = (bank->gpio_type >= GPIO_TYPE_V2) && !IS_ERR(bank->db_clk);
+ 	if (debounce && div_debounce_support) {
+ 		freq = clk_get_rate(bank->db_clk);
+ 		if (!freq)
+ 			return -EINVAL;
+ 		div = (u64)(GENMASK(23, 0) + 1) * 1000000;
+-		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
++		if (bank->gpio_type == GPIO_TYPE_V2)
++			max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
++		else
++			max_debounce = DIV_ROUND_CLOSEST_ULL(div, 2 * freq);
+ 		if (debounce > max_debounce)
+ 			return -EINVAL;
+ 
+ 		div = (u64)debounce * freq;
+-		div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC) - 1;
++		if (bank->gpio_type == GPIO_TYPE_V2)
++			div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC) - 1;
++		else
++			div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC / 2) - 1;
+ 	}
+ 
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
+@@ -401,7 +408,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 	polarity = rockchip_gpio_readl(bank, bank->gpio_regs->int_polarity);
+ 
+ 	if (type == IRQ_TYPE_EDGE_BOTH) {
+-		if (bank->gpio_type == GPIO_TYPE_V2) {
++		if (bank->gpio_type >= GPIO_TYPE_V2) {
+ 			rockchip_gpio_writel_bit(bank, d->hwirq, 1,
+ 						 bank->gpio_regs->int_bothedge);
+ 			goto out;
+@@ -420,7 +427,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 				polarity |= mask;
+ 		}
+ 	} else {
+-		if (bank->gpio_type == GPIO_TYPE_V2) {
++		if (bank->gpio_type >= GPIO_TYPE_V2) {
+ 			rockchip_gpio_writel_bit(bank, d->hwirq, 0,
+ 						 bank->gpio_regs->int_bothedge);
+ 		} else {
+@@ -526,7 +533,7 @@ static int rockchip_interrupts_register(struct rockchip_pin_bank *bank)
+ 	}
+ 
+ 	gc = irq_get_domain_generic_chip(bank->domain, 0);
+-	if (bank->gpio_type == GPIO_TYPE_V2) {
++	if (bank->gpio_type >= GPIO_TYPE_V2) {
+ 		gc->reg_writel = gpio_writel_v2;
+ 		gc->reg_readl = gpio_readl_v2;
+ 	}
+@@ -648,13 +655,20 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 
+ 	id = readl(bank->reg_base + gpio_regs_v2.version_id);
+ 
+-	/* If not gpio v2, that is default to v1. */
+-	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
++	switch (id) {
++	case GPIO_TYPE_V2:
++	case GPIO_TYPE_V2_1:
+ 		bank->gpio_regs = &gpio_regs_v2;
+ 		bank->gpio_type = GPIO_TYPE_V2;
+-	} else {
++		break;
++	case GPIO_TYPE_V2_2:
++		bank->gpio_regs = &gpio_regs_v2;
++		bank->gpio_type = GPIO_TYPE_V2_2;
++		break;
++	default:
+ 		bank->gpio_regs = &gpio_regs_v1;
+ 		bank->gpio_type = GPIO_TYPE_V1;
++		pr_info("Note: Use default GPIO_TYPE_V1!\n");
+ 	}
+ 
+ 	return 0;
+-- 
+2.34.1
 
