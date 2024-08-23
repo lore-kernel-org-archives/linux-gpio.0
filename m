@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185381C86E1;
-	Fri, 23 Aug 2024 20:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114A61C8255;
+	Fri, 23 Aug 2024 20:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724446540; cv=none; b=kkpRsrOVEsJ4O/GxaqXj722HzcItc8YqqtvoZqjxLEzE5jE6iWh8ax9ubh9OKWHfGhWsXxsMcm2+FWDqEKzlEN2tbNm5T2fsDv36ngNCbS47kQRglUvpBj+Yh+Rw3tIJF4gXqUgngF8Lx9+OX1ymEAB1su1L8fjsJoUi7+I4AvY=
+	t=1724446540; cv=none; b=f7v3U+RgozUIKiSJvbkAB5Wo8ZVyJCS5wk6FL8LMHFQnrNO1eHY8q8DyZjDNHI61Oz9dI0bcz0vEqfOUCiX8Q0UpanyZlje0WyxpnO3e2qVL5/PRllRLgvOnWObpyeJ9b0OHotvaSMV22IiwbP6U28S+N1LrNB3fiAEo1/6Bv/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724446540; c=relaxed/simple;
-	bh=Bc7Y8RE10TBtcIo2KWuTduWgRhhYWwzVGcu0VEozjwA=;
+	bh=Q3+HmYt/G3Au0niSNa/DgxrSc5e1rXQMjT5sZsxkC6k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t022ZKoxZ7mg1Z3OvrIuoxtt8y421+ip43uQ6hhHP6H42JCInrT2HzayXIaWxx3vQfBhagRGah8TX7E8TGv2SQo8AbqyRbVuDiR6sN2CzUIUKYDJL/PkGTbAIDqucEfPcUDCrBEmQdLQTW9qrhLyVc9pyS3dGVhihz9vxZmmUvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgB/T8qh; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=qi72sruBA1ryWecxbaRyRiqXHar54Vah0OJIomGCFGh7N+SQ6WKRQ5SP3Rj1vg/R5V0ME5OCivOnEpExzeN1o49WTAgMgIPTuZJuXt0K9a+NRXAkew7IzOogaS3KSj3vV+kz1uMYxK6nzytLjeo4zltPuO+N+xFYFemxuxTb+NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvBQSMqU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgB/T8qh"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BCABFC4AF12;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvBQSMqU"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DC580C4DE06;
 	Fri, 23 Aug 2024 20:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1724446539;
-	bh=Bc7Y8RE10TBtcIo2KWuTduWgRhhYWwzVGcu0VEozjwA=;
+	bh=Q3+HmYt/G3Au0niSNa/DgxrSc5e1rXQMjT5sZsxkC6k=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=GgB/T8qhdT40vsE9ridoym05oCkIvVRjIDPKHchEBLHFKf2jzsWtQo2/ldKeInYMv
-	 8WF1c8XQru2VE1U5+mOaYrGq62qlJysdhIoC18kJhNVT7hFhT/h1VBbGbrWhgtn5r0
-	 43zpjFDFVPUhYrCa38nNigvPb7JzccfGyaEvPxxulv1YtZUGcgke7teeg2aF1Lnjcb
-	 Jdguj8QoPRpNRBAI7zsNmEU7N4DH8HZHbfgXWSj05oc/3HYCC4orLjU7i3vnkCXDGZ
-	 ROV8/zolz+GmGHdhUnDqoXwmJPGGHg7f26SBr0wNnOBaO2RubQKJPZ54uyZMJNE6lx
-	 AClmQPeXVK0Sg==
+	b=XvBQSMqU1e7ef3C8uU+tS2nJk/ECWMx5tGp040hyDzvCwQBoLunK+w9N39JZNswI8
+	 SSdDf0595/SF0it02f1TuVrXivw9KePWXfpt0WQjJugHLCIz2tf2ccKwLULN3soyMA
+	 IonTfGVxUSvmqr1bEwnxC2k9gYYeUJHJsVbOeVXw8S+u0MfZcW/axJa9MRi2YfWc4Q
+	 gGjZGB+y2/FhD9kkFSUpCl3AHEMTkCuCvaDsemjKLuSN2Yvn4YiWqFoJiRTSOoNSAf
+	 KpwH7WuMA5g43VfJTyz1S637B6iQEE7WacemNb6MbtmS4ZQlwP+XwkYoP+cCUOSd6v
+	 p6P4pS5bkLi7g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B37C5472C;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4818C5472F;
 	Fri, 23 Aug 2024 20:55:39 +0000 (UTC)
 From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Fri, 23 Aug 2024 22:54:45 +0200
-Subject: [PATCH v12 10/12] arm64: Kconfig.platforms: Add config for Marvell
- PXA1908 platform
+Date: Fri, 23 Aug 2024 22:54:47 +0200
+Subject: [PATCH v12 12/12] MAINTAINERS: add myself as Marvell PXA1908
+ maintainer
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240823-pxa1908-lkml-v12-10-cc3ada51beb0@skole.hr>
+Message-Id: <20240823-pxa1908-lkml-v12-12-cc3ada51beb0@skole.hr>
 References: <20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr>
 In-Reply-To: <20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -59,13 +59,13 @@ Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=855;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=906;
  i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=fzvCh/aSlHCzaUUGJBsiKYdBDNmXMSZTFM1QYbrcN24=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDGknvmsu4b62bR1X/f+Kxze27H2f81j0asEhvaigqRkbd
- /yoS3qs2FHKwiDGxSArpsiS+9/xGu9nka3bs5cZwMxhZQIZwsDFKQATufCEkaF76bfuHJ4dIY+2
- 79YKO/D3OYf6fTahtOez3RgapZb0ugNVnPyxku3x1Ed8rz6f/Xmu8PrX+XP8SspEtfYoZjQKHu+
- W5gEA
+ bh=GovpMCIQGsNWiqbFciJR2Sc0Ur3raxOrVfpbnASZsI0=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDGknvmtOrQsqVdn/eNOL6UtM38WnnF06LSylxs74TY+Zk
+ /MLo0UVHaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjAR5VWMDF+Fr/W0cn4+lPPI
+ Uab+fHTsIt2zZgz9t86z6nFxOK0uusvwizlo+fYjB/3Zpdj5D8SaqDX/blqV+7tOwe4d256288v
+ OswIA
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
@@ -75,32 +75,33 @@ Reply-To: duje.mihanovic@skole.hr
 
 From: Duje Mihanović <duje.mihanovic@skole.hr>
 
-Add ARCH_MMP configuration option for Marvell PXA1908 SoC.
+Add myself as the maintainer for Marvell PXA1908 SoC support.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- arch/arm64/Kconfig.platforms | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6c6d11536b42..6cb21a278447 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -175,6 +175,14 @@ config ARCH_MESON
- 	  This enables support for the arm64 based Amlogic SoCs
- 	  such as the s905, S905X/D, S912, A113X/D or S905X/D2
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f328373463b0..33752c63bd5a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2481,6 +2481,15 @@ F:	drivers/irqchip/irq-mvebu-*
+ F:	drivers/pinctrl/mvebu/
+ F:	drivers/rtc/rtc-armada38x.c
  
-+config ARCH_MMP
-+	bool "Marvell MMP SoC Family"
-+	select PINCTRL
-+	select PINCTRL_SINGLE
-+	help
-+	  This enables support for Marvell MMP SoC family, currently
-+	  supporting PXA1908 aka IAP140.
++ARM/Marvell PXA1908 SOC support
++M:	Duje Mihanović <duje.mihanovic@skole.hr>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++T:	git https://gitlab.com/LegoLivesMatter/linux
++F:	arch/arm64/boot/dts/marvell/pxa1908*
++F:	drivers/clk/mmp/clk-pxa1908*.c
++F:	include/dt-bindings/clock/marvell,pxa1908.h
 +
- config ARCH_MVEBU
- 	bool "Marvell EBU SoC Family"
- 	select ARMADA_AP806_SYSCON
+ ARM/Mediatek RTC DRIVER
+ M:	Eddie Huang <eddie.huang@mediatek.com>
+ M:	Sean Wang <sean.wang@mediatek.com>
 
 -- 
 2.46.0
