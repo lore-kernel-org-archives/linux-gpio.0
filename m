@@ -1,95 +1,87 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m3299.qiye.163.com (mail-m3299.qiye.163.com [220.197.32.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703CB1E529;
-	Fri, 23 Aug 2024 15:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5810538DCD;
+	Fri, 23 Aug 2024 15:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427024; cv=none; b=gazPJ7YeKfAcupS8G2dCRAr8B7Wm8f+nWoO9x6MCj9ALNE/yBLD7S0Fq8amiNbC1wnbpmXfqaClzv+mvsgAOSt/4losvg4GgSer61eSE+cVED+j2eXK/8XLkARCWSrCZlKjg9bYjSuoZlfdm236EHlpCswU+TMSUeOtprEO0obA=
+	t=1724427139; cv=none; b=gCm9cPEFqypORUT0FeDlFP78nPhiCAVFcLDkG0KYKIqHuOF2t9mjODFDStyiPP+A0XRMUUCkLCPhl9smwb5Djaw8b7mnf3v4Qaze7qYTdBiyvuhSHfNK0zW4w28fIG5z3RcyO4EM7CUPkmJuaW3ievmnUOCdnsre4fTI3AlcYlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427024; c=relaxed/simple;
-	bh=MYhe+0dimdjupQz3+SID53Jf06YJ9yx0cG073VN8KUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lAR6r5nzy1wPxhIClrEGONPjX2uMwNpLuJMwhZhRDssU2fyae67Eb8IOlbjL1c6lOqU9dbRKF6RPtOhNQH9VQgC7VLehJNlM2+hqHsfIY3KtW3zp4XyOu5MUUNl3KqWv4M+4zbg7y+38Xt1IMKTj9h9B6XYlxLwjkWLvSrb4800=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1205de17aaso2168182276.2;
-        Fri, 23 Aug 2024 08:30:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427021; x=1725031821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tfbrrY27H13omvCwK9916CfiXzhyrylN8NolaO2kmUw=;
-        b=D5qT04/cINdGy1kB50ijYOjCbK/AmT0oC+FpxjokirANb92RYozzag2JEsyzOJAS+z
-         9iTJul3pUnjj5gprzlxRax8APFbqryEIQM0uunJ2nTU/+OB8zMwb57p1C/hj8z9DpG4v
-         +rtqqrLQV9wHtedM6Q8zmkF8zP9jcdLxIB6PwOGaDtmt5Q0ICj0xBIb1uMzbGYeRh1g5
-         jbGDiOBrn24eigwJOOvA5d9mg0/nE4SIL7tQCUMOtUA0R7mpVdGx4KdnKm7mbTWvlZxN
-         7kPfqCgXHsdHKc9EotWzBLV2eDfmq9EOnEdAV4aGyviiytN/zCOvC5Qzlr0Ws1kLqcRj
-         4tfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8gQRws9825pzbKggGuVVW9V4pHONQ1GI1j4EH/A6uhQegwn4a3pMCoaMwo7161Id2/zoxIrzPK7F2SxmqxNOJ1g=@vger.kernel.org, AJvYcCUWiHiwRn9lQtcyio+W9FQS3X32UutSl1qScLEPRnDKFRBLVsBQmc2K2M2oOmczYTeOxLqxuWKukLfC@vger.kernel.org, AJvYcCXLqgk4alpSEgvvJ9LNdPEKo3ZEYtrqB8K4X/fvROGenVfS+YbizpvBfwdzAptUF8CksijYvNyq6O1IeJPo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZeIR391T/T2a0n0voyq3blAzf2QSrQiNDX5gnXrGZaDUo0bew
-	H8VNLmCkyAOp4E5gBuYzgiY55aS1JiSXX/GNRJ5f5o2PiV85brfNJal3ZInr
-X-Google-Smtp-Source: AGHT+IFNWc9gJLuCIl8f9PnAKYtAGEMUxz5m0F8sp5F0DW+krHteANK+J/HnyymVvaWnE9wAuZG9Tw==
-X-Received: by 2002:a05:6902:120c:b0:e0b:5d76:c22c with SMTP id 3f1490d57ef6-e17a83b2b3fmr3389578276.5.1724427020716;
-        Fri, 23 Aug 2024 08:30:20 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4638c5sm692477276.18.2024.08.23.08.30.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 08:30:20 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso2104576276.3;
-        Fri, 23 Aug 2024 08:30:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXrv64aUG/VcVEFgaxJRmRFnkzMG6orxmrtEbPFuTituZU2RI7NKGF5F5hesQcv7JS9NIOufqOQxTg@vger.kernel.org, AJvYcCWf1zV/A3Hdfs9Wlr7R4aZsyNiPPx2a6j1WO/rq3BTRajxJfu/ehHfGm1b3RVucmHWuqZStb2AuKHsO0KCd@vger.kernel.org, AJvYcCWfRH4o8+d3NbZnDajR3+aIo46oamh8nP3S84+x88KVWFEZH7B8Dt7TaBAk4/RDbyrKA13sOihVnORMRoHoRiPbwQw=@vger.kernel.org
-X-Received: by 2002:a05:690c:4585:b0:65f:dfd9:b672 with SMTP id
- 00721157ae682-6c624fb6c9emr23894087b3.11.1724427019711; Fri, 23 Aug 2024
- 08:30:19 -0700 (PDT)
+	s=arc-20240116; t=1724427139; c=relaxed/simple;
+	bh=rQii0oBq5qomxiuAfZ9W2LcD4mFuZolUuTeRd2nMWV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MFovFPs7gzelrFF01TJuGiZDE1SK4krvMY1q/y3t7yJQkO2wRVIflgDRhdVKjkamINBmb+9x9TpY5f3j7ffZ2R6zYL6UpoPK1d4YybETHxoroCnsCpY22AejziclyvmBDpiMZtHLLTLJJ8AxwXzfkAZOIYSDJabTsvi8RWixM2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PG0X56dX; arc=none smtp.client-ip=220.197.32.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PG0X56dX"
+DKIM-Signature: a=rsa-sha256;
+	b=PG0X56dX9eS7NjdXgLPOYU0ccjHLv3nwxAItYxLTOFxjR6cOYun4xYfG/hM7dJBLMuXH+eTNZ6fyYCL7JM8tfi6aLTBPoa2nDMzd6hcmaVRNkNZJaocLX2/yZ0zmVK4jKBNSnNj6fOv8S936safpH+ZnsuRgqstXXHVadwkg1Z0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=LWcU6RysEIzIJ6pAz/3hn/zvAsi9B5aKaEc9SGRcJtw=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 769137E0207;
+	Fri, 23 Aug 2024 11:44:58 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: [PATCH v2] gpio: rockchip: avoid division by zero
+Date: Fri, 23 Aug 2024 11:43:04 +0800
+Message-Id: <20240823034314.62305-2-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822061438.14617-1-shenlichuan@vivo.com> <ZsipPZz7O0yrOHE9@black.fi.intel.com>
-In-Reply-To: <ZsipPZz7O0yrOHE9@black.fi.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 17:30:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX=T04FizyGQ4QBWYw_Ug8ODg6K+dQ=Cqg8L7pmA6wEDg@mail.gmail.com>
-Message-ID: <CAMuHMdX=T04FizyGQ4QBWYw_Ug8ODg6K+dQ=Cqg8L7pmA6wEDg@mail.gmail.com>
-Subject: Re: [PATCH v1] drivers/pinctrl/renesas: Switch to use kmemdup_array()
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Shen Lichuan <shenlichuan@vivo.com>, linus.walleij@linaro.org, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUgdSlZLHk9NH01MQkJPTx5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a917d56633709cfkunm769137e0207
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODI6Gjo5KjI3MCxCTjYpTg0p
+	ChQKCT5VSlVKTElPSENPTUJCTEpMVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUhDSTcG
 
-Hi Andy,
+If the clk_get_rate return '0', it will happen division by zero.
 
-On Fri, Aug 23, 2024 at 5:22=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
-> On Thu, Aug 22, 2024 at 02:14:38PM +0800, Shen Lichuan wrote:
-> > Let the kememdup_array() take care about
-> > multiplication and possible overflows.
->
-> > +     cfgs =3D kmemdup_array(configs, num_configs,
-> > +                             sizeof(*cfgs), GFP_KERNEL);
->
-> Geert, don't you want to fix the indentation issues?
-> Perhaps even combining these to a single line?
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I have already done so while applying ;-)
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 0bd339813110..712258224eb3 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -207,6 +207,8 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+ 		div_debounce_support = true;
+ 		freq = clk_get_rate(bank->db_clk);
++		if (!freq)
++			return -EINVAL;
+ 		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+ 		if (debounce > max_debounce)
+ 			return -EINVAL;
+-- 
+2.34.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
