@@ -1,212 +1,256 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from outbound-ip8b.ess.barracuda.com (outbound-ip8b.ess.barracuda.com [209.222.82.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FA5DDC1;
-	Tue, 27 Aug 2024 02:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724725428; cv=none; b=KElZtnodPfl2qWZdpmEbmzf2p/0FK9l5auIYz5k8Vw7uzcAAqK18e5UNe3u0uPt8Pi31+m6ZJ57fus8n5dA7hOsBJu8XNYcNNSqI/otrnzpUNrJsJw4FLK1FrYcmmRAK+U9UmOD3s45TXBr2nWlo2fgb2Ph/5ps0HQZHpQmLffQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724725428; c=relaxed/simple;
-	bh=9FCIJxsMYSpU1aUPh+K5f4k3cmYgB1Evzoh4BA6p5gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8kYbHytwW4ERlhXS/01zU25WgX1/5aTzhf08UosDM0KNkvJEb0ClKoJmz/n1Si0UO/5RrP1v9Mdg7ahS7fnWK2ga/MQaR8REWwtlMWXB2XQhsFJe0+ev922yWLvqwvLrdl0fdo0jIc/IS6Bw6zilmWLxolJORnadf1BX+8SVHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVoo1KF7; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B70017543;
+	Tue, 27 Aug 2024 02:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.190
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724726638; cv=fail; b=ss5yNan+uRMy1jQW8zYK6dDrsqvCSTlYwmsxGJPphx8nU/ON2DDYZik81ZVGf18dO/DVquYSm8Jqlv6ttRgTjlU/WKnDlX7KwFId5f57SlG6zypV3k6UI2vt3CF26drqpPiTsg0qlgbQoe43DAvco1us1k0JsigpWJ46jY0iEwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724726638; c=relaxed/simple;
+	bh=qcVwEtHsXGEm5oVN7ttMY80u3hqJBaLMuTyZuCyn/MI=;
+	h=Date:From:To:cc:Subject:Message-ID:Content-Type:MIME-Version; b=l7mfs12gl4Gb6yQ9wKKg5KOi7Q+axOqnHfGy8EzAZ2Uo/YOM2a+dB4iNAsneI1t5mqXKoeWpAUft8drAODIfzWSw29ABNPYEZHQAP8RtlCEyDIUHtTx7U8y6lRupDdJtlX8USszRgBgatn1IgLX9xqVQdFPCwLsN6uicOgpVccI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=qHRa+6dS; arc=fail smtp.client-ip=209.222.82.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVoo1KF7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724725427; x=1756261427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9FCIJxsMYSpU1aUPh+K5f4k3cmYgB1Evzoh4BA6p5gc=;
-  b=TVoo1KF7s4W52WAy5tk9N8mSu10TYXtJf1SzMgp88JeRZQtUD87znL1g
-   3wpSfa2FuoJEcIXT/jPoivcJ7fzWuwpyLYrydUmGmz68R22lujXvkKk5K
-   1hLcwBPrtyrPwrzNTjIc00JeF9u8Q9tmeUspcia+3CWRq8hNtw/NGTTzP
-   PbejYZv6b5Fw2vBa3k5iDKbwO6SEXfmqACV02quBDHfAUNEYnUl7OwjxD
-   O83+HHBD7QJEQliZ+Yf/HhUNF3Hb0e30yHtkkNHN3zsmLoDawI9JrMUw+
-   FG6D4MDQskDmvVzx4xaHkL11cd9PTFsMzsxJxr2sT8cUPx6pQyKeY9Suz
-   Q==;
-X-CSE-ConnectionGUID: L5sZLJF4Q3yvsCtlg6kY3g==
-X-CSE-MsgGUID: qK8MsAL8SHSmE4jKy6gdeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33842808"
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="33842808"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 19:23:46 -0700
-X-CSE-ConnectionGUID: gkxRGydFQXynZmJ8vej9rQ==
-X-CSE-MsgGUID: /7k15b78SHuSJdem06g7ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
-   d="scan'208";a="62386322"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 26 Aug 2024 19:23:42 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1silrw-000HnZ-0f;
-	Tue, 27 Aug 2024 02:23:40 +0000
-Date: Tue, 27 Aug 2024 10:23:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-Message-ID: <202408271011.hpcNokNu-lkp@intel.com>
-References: <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="qHRa+6dS"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2177.outbound.protection.outlook.com [104.47.57.177]) by mx-outbound22-208.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Tue, 27 Aug 2024 02:43:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ouUa/Ha7W1TVf0ixc5tM1CcyW5kUiQo351SCcxwPCqGDmIfaQSz/WTDGovI4fKHcmEgLKCkNelYgV86K4TX1DNtkqwBYCaSeC0o/KeZGrHgky/8IKGbC8PZtNAoNzf1XrkAVvLVt6eRlNM7xDjhvRfqqOE/izFs4m0s/d59R/OpgfAu+4EP0Dg3ioRFHsx6mHP/kZ4C5kDO36FA4Rs97OAVEiaum8/8E5FjhRRnoHxrQjYgRHugivFbSJrdGmJs6tw5C72sWWODQS5wdBAAiTiw5Q/Lg5ZGL5wMkmdmWaZTTFQqalnBEA0PRjMzoeevjgfJiUjdLAo9++SmO34kXCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Et/TtYtSIRTd5m0+2fDxXyIfC54HNHWqrhTxyXJPmS0=;
+ b=FYe6LummUNqqmIf1dNRO3K+zG00J4pSferFnhDn0jP/8+8WKthtfpH2tCo+H/93tc6j3ujlmiiON2ITLR74YOaK1Mx+s8AMr9jEUpi7ChRjK04Luz53Zy1GADXP4AYULsx5MAqWYBHgV9f6xABeDHkN+NbKgzpdOU61WmxkQXukeEGeXrkvDuUW8l3hGKGPNCuFe5s1yBTRHDa4tgW9vHGUa8tpQSjffk6Vaqqc6Q5/npPNHHABbqNwrpFoulNqjFS4XWwg6ipkQwqDmrCplZCPZqZRM81DhJZWHOV2RtPyCVdC9v7sdFP2ZFeQUeFK5cntUUoyrmDZMCJTpnt6mgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
+ dkim=pass header.d=digi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Et/TtYtSIRTd5m0+2fDxXyIfC54HNHWqrhTxyXJPmS0=;
+ b=qHRa+6dSXGd24WCCjz3VCfYBjZlH6CTtadXHI6hgT1UQKVUhGpEaM9E/FEZP1Jq7cQzf9dODigvy41Z8L/ZQ+Jj6A+yu7URlDp6rsht71lsDWqUVyXL8PWDSa005SQyJLN8iNGWPDvlskf44xyziOR5fX4CbZDF0XbrKs1ZoXVWeu0PS4auLu1UB6kAye3Z/EZPyP1Nk7nq0g30ByF0yvSuQjOrlftibwqE9Zmbw1hjttHynOh4/ENYbyf6IAVSa8CWjB/qY6IdbRL7YmVq4aIxgV1p+ZWCvthjwlZQ1DJSZuyEDXSHyN9QvqrDAF8gkQkDC/IPFwGVDM/p6UjKKbw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=digi.com;
+Received: from DS0PR10MB6918.namprd10.prod.outlook.com (2603:10b6:8:136::8) by
+ DS0PR10MB7432.namprd10.prod.outlook.com (2603:10b6:8:155::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.14; Tue, 27 Aug 2024 02:10:52 +0000
+Received: from DS0PR10MB6918.namprd10.prod.outlook.com
+ ([fe80::3697:c0ef:caee:24ae]) by DS0PR10MB6918.namprd10.prod.outlook.com
+ ([fe80::3697:c0ef:caee:24ae%5]) with mapi id 15.20.7918.006; Tue, 27 Aug 2024
+ 02:10:52 +0000
+Date: Tue, 27 Aug 2024 12:10:44 +1000 (AEST)
+From: David Leonard <David.Leonard@digi.com>
+To: linux-arm-kernel@lists.infradead.org
+cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+    Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+    Pengutronix Kernel Team <kernel@pengutronix.de>, 
+    Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, David.Leonard@digi.com, 
+    linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] dt-bindings: pinctrl: Add fsl,ls1012a-pinctrl yaml
+ file
+Message-ID: <a5c1eef7-372d-082b-066e-ecd5e001d1cf@digi.com>
+Organization: Opengear Digi
+Content-Type: text/plain; format=flowed; charset=US-ASCII
+X-ClientProxiedBy: SY5P300CA0001.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1fb::13) To DS0PR10MB6918.namprd10.prod.outlook.com
+ (2603:10b6:8:136::8)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
-
-Hi Andrei,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on robh/for-next linus/master v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-gpio-add-schema-for-NXP-S32G2-S32G3-SoCs/20240826-164853
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240826084214.2368673-3-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs support
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240827/202408271011.hpcNokNu-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271011.hpcNokNu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408271011.hpcNokNu-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/gpio/gpio-siul2-s32g2.c:342:5: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     341 |                                 "Failed to initialize opad2%lu regmap config\n",
-         |                                                            ~~~
-         |                                                            %zu
-     342 |                                 i);
-         |                                 ^
-   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^~~~~~~~~~~
-   drivers/gpio/gpio-siul2-s32g2.c:351:5: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     350 |                                 "Failed to initialize ipad2%lu regmap config\n",
-         |                                                            ~~~
-         |                                                            %zu
-     351 |                                 i);
-         |                                 ^
-   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^~~~~~~~~~~
-   drivers/gpio/gpio-siul2-s32g2.c:499:5: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     498 |                                 "unable to get pinspec %lu from device tree\n",
-         |                                                        ~~~
-         |                                                        %zu
-     499 |                                 i);
-         |                                 ^
-   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^~~~~~~~~~~
-   9 warnings generated.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB6918:EE_|DS0PR10MB7432:EE_
+X-MS-Office365-Filtering-Correlation-Id: c29354a2-ae4f-40dc-c9dc-08dcc63d7a1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UCF+Zk8oNdqUem4QxBkBf+SzuzrCsyVKVPCwqUGdlJBJg5LrNFkHksfj7bal?=
+ =?us-ascii?Q?JqJwgDJiS+CiSqR+wYISgwx8v3sYG3FkMEMG8WiCY3jMnfH5+Clu7OKk3Oic?=
+ =?us-ascii?Q?vNxdljOCfXP7hgPy8OaTKVJ5wG3BVrwLT2OPLtWmUVjPhbZWGgXseUxOqiiL?=
+ =?us-ascii?Q?nABu7KAY3kZiAxPfUgUhovulwuHc0LJTKFYDQxDSUVd1XZ6HeiOQKgn1EeIG?=
+ =?us-ascii?Q?7/C0PRSmWxgrVWChOhL3TU/FDOj4rlA08Rujb497b/aKfQiN2zrwiPtUwg20?=
+ =?us-ascii?Q?ieAjotMQvcn02K1HyGjTvksteiv6qmW/Wqx8p9NQh7k6RNEWXArIUSrN2VbT?=
+ =?us-ascii?Q?AqsM9SLbf7oxUqVrXnBoRjeMwzH934pZnCT9IB4R0T9nG1vgMQGVM4kn9a/4?=
+ =?us-ascii?Q?Fzt7GfvGp4bzR+AsWD48nrxvI/U3Mgemuty9+dSO7a5BN6mffp4nPS20WWgF?=
+ =?us-ascii?Q?HYvMVo5P2ifH1tUyclH3dnw1Cexl3yrPJuFPqNn2LY7ZLwcuq2weBATMZtT+?=
+ =?us-ascii?Q?wagfFZ7FRaZzOIGJNfSuOcMEWgA40kr9j07vLiWTJONTt6JM1bVX7mjc1VUl?=
+ =?us-ascii?Q?vmeVppoTb68f4sf41OhB545qBjBpwz53Ht4VtLwRLA3u46JkaBp7cJm7eP3x?=
+ =?us-ascii?Q?JDXOXb//kQ3oNowV5BlolJLEyWzFvIJYszA0LOWXUVMaJaVOJiUeFnGLVv81?=
+ =?us-ascii?Q?oFeWSuWVj2yg9cF7ciJteJnJZQDaXK69r3VBBP97UWUyn3YLydzn/g6bPpdn?=
+ =?us-ascii?Q?pKblvalSJedwabNpVlsBZIa1Dv/Cs7/33tCess4d+/5muLdtSd746iOh30iV?=
+ =?us-ascii?Q?AJJk0AF+1LbiWPfaoxHrFJ3cBf/mGqdbqrIF+q/VR/bQaZqn96QGrby2pexQ?=
+ =?us-ascii?Q?8CfGjACu0zAjR4umjPZIzcdSM3GqHy10eBTUVAXTeCG32O86r7alIH1DbIG+?=
+ =?us-ascii?Q?G4Xjqj7wgxQzr0nHa9Mq8VwFc9bMh526oKWU72J9+79gzJgR9+2BNV9TYYti?=
+ =?us-ascii?Q?+TfKzcykXA74bcs8mH3p67YFl1WKORTlaA/zWzDx6buuQdpKy3OQ631OLUB6?=
+ =?us-ascii?Q?zI9rrOCnLMbKTqu4+3zHi0Hmbty7wlArJRgIYr7jTlJTdGExpL4a39g2p4fM?=
+ =?us-ascii?Q?IFr96zk+biMYShfd48hG80MpKUGjl2lwLdZRjSSAej9FlHEzB1RdDNGyD7bn?=
+ =?us-ascii?Q?cyRYGMK5MpeJGISaJ1dH22wRygqAPLbhEWes0ML7giKudKDckBPCOeuwWj5p?=
+ =?us-ascii?Q?6wvLz8H1HBDvabjKta34Fu2DxcxxyzkYgZqNaxNVfAWdG62bpVHoHlWAG9vc?=
+ =?us-ascii?Q?H4k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6918.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SEbw2gCLmUPGzjb3r6F22s/Nt+V2fhTrQK9mpteW+oT3QYMyJQsKSDX/G3rw?=
+ =?us-ascii?Q?scnY2jvYj8gJdcMn7kGFWwjOvKyDKDBB31IbpYXeJmif58/qKY+uLVic4zZt?=
+ =?us-ascii?Q?zZL7Pc2VN6S6BRXbZyMQLAUgrekS2c0jKangUeSBHVlJtlSFui5Fa5tyGo0e?=
+ =?us-ascii?Q?7I6n+m0nTmVkWHoxAIiwSJo8ptYV0HWMbRW6lSA8yhgrlhKZmoT2bYiXMCBw?=
+ =?us-ascii?Q?l3yp2bp18xmsE3GLW+wQfxGjbbMiFyHIlICE8N3elmc7tdNd2D2mmA+gLXuH?=
+ =?us-ascii?Q?UkIsxmF6XiVnW+RpbRpzl2On7UbwVdhZ3tIqWTkf15UfyDzq4jzBoRl+35Vm?=
+ =?us-ascii?Q?PgQ3r2B0so8ZhOO4x4zbdFD2zfra7T6WC2HPmqaQoL3xsC1+euoDA2FsIc5W?=
+ =?us-ascii?Q?mXSTZMInDVdnL/jomE/GdIecUXkgvQrYyuKZAwX13TmTls4uFKUpVo0ms//W?=
+ =?us-ascii?Q?RDUTOMiFjQo0MWl6AfvfNVPb6wMPd3NwQ/3zO3DREFIriXhVyQ4C875sGlqF?=
+ =?us-ascii?Q?6ztf3j+ttk3XQTZJGAHxftMFEZwhnLG+St92pAHRAEpBljpX5cVSGaR1/HSp?=
+ =?us-ascii?Q?wfCERdSlxfHXuAPJpW8NEYMjSmdJoHJAgFIk8KiYQ1+r4h1wM9IA72I13xNU?=
+ =?us-ascii?Q?rbNh1bETnMvqsCzauJLXfvs1GWiM6JN7JQ2hxYwdz0xV3v9AtOEcsbAuEYGr?=
+ =?us-ascii?Q?N4nTSkRvsPwY8hVMhUS9/ikRA8AD5WOO3KPNws1jl6FQHR3p2mrEQ5PQcjmU?=
+ =?us-ascii?Q?dYKl6ixxlKNnhob3vLFryIXKV1Byt1ux9HI4U6D4jkow3t43Wvkg+xbV+Ljm?=
+ =?us-ascii?Q?zJDoNB7ujuFyP7vhI8CJcrq8rU3W5uq2rD/q5E4AjPZfyDGYyBeH2Fa7tSkD?=
+ =?us-ascii?Q?XN76T/+nwEhE6DNEP2+0XtavIBJwRK79DYOF1TiMBGass0jtpzWkhE8Y85Uw?=
+ =?us-ascii?Q?4TgGPt3XfuWPxV7bcz3j5NjzNKvzLQ/iDZ4KIgZe7lpRUmii1G26lonT2w9T?=
+ =?us-ascii?Q?OQ9xPZFJ549gJgewNujucKpt04EqvWsOAVMKGCbXqYdwnEnnq3QT/OhXvD1Z?=
+ =?us-ascii?Q?8Y+mMM19YqGPJHDSP2jsh6wP/8WilXRsY4AYUU4gAv/YnGGYxVyj6xWxQrkR?=
+ =?us-ascii?Q?+t30fs2g99lDVnx4xwzyJrilGB9MAF9cygINygvm2YH0AIsrreFR2q7Z1C5W?=
+ =?us-ascii?Q?rDzinibx8sUIcmlVlWOKeI14NVwYbHyjTro9ma0GDly6h8tb8SaVM9A5W1KY?=
+ =?us-ascii?Q?iVVMPIKGUtBf7XjuPGZ3iyY3mY17e5xz7NHIU/OBwfp/3dbLZrsyDpDmBbEG?=
+ =?us-ascii?Q?Co1XZ7KRBwYlHoBDU5AySoKZmaXYaYltxt3qwIhfPfj/yFHJufBZDUQUH6em?=
+ =?us-ascii?Q?IRo7FJLI1ACxEF+cwbWyE4Ohtf42CxuVHFX01VzTzpml9oY8dxvf39HAiSKR?=
+ =?us-ascii?Q?luJd3DMAjJVaytfM9BdRMmGt8CsKyry7ElIVQUhmHozcadEVMYrpIVplA+QE?=
+ =?us-ascii?Q?Y4sdy1fE1vDNReUIjlYRqSq00tTvrYWZDVuu+C1U/132Zuhwoh6WSXMplgPd?=
+ =?us-ascii?Q?E4gnu6VN0vuy1U83OOV2ecdsvL3sryAc7AlCvgHYm4XYG0AxVnPH7dRuTzyt?=
+ =?us-ascii?Q?pAjDtwDRtPDC+MA3rAAvdDeA7Vg+Tpy6I48f/cV+obIb?=
+X-OriginatorOrg: digi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c29354a2-ae4f-40dc-c9dc-08dcc63d7a1f
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6918.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 02:10:52.4828
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: adTmz9E04fHOQ2FkIwEEeyoYmUZuhWMhXe4ehwHznvhMJcA325fDUz6Dw5ySurNf4jSsDyNaAD64/O/rzfawuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7432
+X-BESS-ID: 1724726633-105840-22353-19911-1
+X-BESS-VER: 2019.1_20240823.2008
+X-BESS-Apparent-Source-IP: 104.47.57.177
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkZmFsZAVgZQMNEwydLAzDQtzd
+	Ay2cjYIDkp2STJMjUxNTHZ0MLE2NJMqTYWAOMtX2NBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.258621 [from 
+	cloudscan11-197.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
 
-vim +342 drivers/gpio/gpio-siul2-s32g2.c
+Add a binding schema and examples for the LS1012A's pinctrl function.
 
-   329	
-   330	static int siul2_gpio_pads_init(struct platform_device *pdev,
-   331					struct siul2_gpio_dev *gpio_dev)
-   332	{
-   333		struct device *dev = &pdev->dev;
-   334		size_t i;
-   335	
-   336		for (i = 0; i < ARRAY_SIZE(gpio_dev->siul2); i++) {
-   337			gpio_dev->siul2[i].opadmap = init_padregmap(pdev, gpio_dev, i,
-   338								    false);
-   339			if (IS_ERR(gpio_dev->siul2[i].opadmap)) {
-   340				dev_err(dev,
-   341					"Failed to initialize opad2%lu regmap config\n",
- > 342					i);
-   343				return PTR_ERR(gpio_dev->siul2[i].opadmap);
-   344			}
-   345	
-   346			gpio_dev->siul2[i].ipadmap = init_padregmap(pdev, gpio_dev, i,
-   347								    true);
-   348			if (IS_ERR(gpio_dev->siul2[i].ipadmap)) {
-   349				dev_err(dev,
-   350					"Failed to initialize ipad2%lu regmap config\n",
-   351					i);
-   352				return PTR_ERR(gpio_dev->siul2[i].ipadmap);
-   353			}
-   354		}
-   355	
-   356		return 0;
-   357	}
-   358	
+Signed-off-by: David Leonard <David.Leonard@digi.com>
+---
+  .../bindings/pinctrl/fsl,ls1012a-pinctrl.yaml | 83 +++++++++++++++++++
+  1 file changed, 83 insertions(+)
+  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,ls1012a-pinctrl.yaml
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,ls1012a-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,ls1012a-pinctrl.yaml
+new file mode 100644
+index 000000000000..599df49b44d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,ls1012a-pinctrl.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/fsl,ls1012a-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP QorIQ LS1012A pin multiplexing
++
++maintainers:
++  - David.Leonard@digi.com
++
++description: >
++  Bindings for LS1012A pinmux control.
++
++properties:
++  compatible:
++    const: fsl,ls1012a-pinctrl
++
++  reg:
++    description: Specifies the base address of the PMUXCR0 register.
++    maxItems: 2
++
++  big-endian:
++    description: If present, the PMUXCR0 register is implemented in big-endian.
++    type: boolean
++
++  dcfg-regmap:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node for the DCFG registers.
++
++patternProperties:
++  '^pinctrl-':
++    type: object
++    $ref: pinmux-node.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      function:
++        enum: [ i2c, spi, gpio, gpio_reset ]
++
++      groups:
++        items:
++          enum: [ qspi_1_grp, qspi_2_grp, qspi_3_grp ]
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl: pinctrl@1570430 {
++        compatible = "fsl,ls1012a-pinctrl";
++        reg = <0x0 0x1570430 0x0 0x4>;
++        big-endian;
++        dcfg-regmap = <&dcfg>;
++        pinctrl_qspi_1: pinctrl-qspi-1 {
++            groups = "qspi_1_grp";
++            function = "spi";
++        };
++        pinctrl_qspi_2: pinctrl-qspi-2 {
++            groups = "qspi_1_grp", "qspi_2_grp";
++            function = "spi";
++        };
++        pinctrl_qspi_4: pinctrl-qspi-4 {
++            groups = "qspi_1_grp", "qspi_2_grp", "qspi_3_grp";
++            function = "spi";
++        };
++    };
++  - |
++    qspi: quadspi@1550000 {
++        compatible = "fsl,ls1021a-qspi";
++        reg = <0 0x1550000 0 0x10000>;
++        /* QSPI pins for buswidth 2 */
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_qspi_2>;
++        status = "okay";
++    };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
