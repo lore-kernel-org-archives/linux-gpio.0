@@ -1,220 +1,165 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654201B29D4
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2024 14:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9388E1B0126;
+	Thu, 29 Aug 2024 14:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941145; cv=none; b=Se0HcqDlneADqf+06XyRECOhzfVPKKNvbDgfKqG94cLp5uleBkffobsIkIP8/RTUHvZoCwAZ0G0Q7SUiJ2FC7cRY1voJOhH7N6+9xL/VF2s02uk/ymflJ8zn9SI7hnINTLs3QTGmdfRQ9pytTUZwHRZfEKJL2fG/WhVrznN5yDs=
+	t=1724941215; cv=none; b=MAwXV1z+mCKIKdJZtCgPSm7iGQuuax4kyICXLnJwymqMCFWxyNwxAycxfeJT5Q0LwqbD/l8A4pNlcTOLioKt9zAkg1HvknWa7RF3S4MlTQRXX5CG+/yEuO5/BVRs2owYJSiE/dmAQnllnVh/602+Unw6GLyES9EGdzILisOu7V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941145; c=relaxed/simple;
-	bh=DthlLOD0XWT9pUXf24uzdmG5D5JXhN126raQjVqCgeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FBIi/qL2+26T11ylkRkVWZL3sWzGOmT/yaeco4Bq70+fmXPW9iLJ2Qd/rg9ZGBD/1OmzQYI0jQ/jZiVaZNz/EHiBIDRC7F+5925X1YWqfncGzCSD09WXRwTQc/bK1S46b4KZYZpUrPAgCwDAXpxLt6V5C+8DP6Q9PC+OUt9FJLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZ7ZlKMg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZ7ZlKMg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724941142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wt2kRlQoJgJxTzxQjhrYYWN0zj4xz5nEsQIR91A/520=;
-	b=GZ7ZlKMgT48O0gwGI7prQRa8WDJvAsnXIOGSxVSJmcNjHsDRcEn0JBNyRBRp3xKzFeq8cV
-	15/VuJkaMGwzTdFyHuGtY/9QeQLip3yjSsyYo5Vgsi6OC4fV8fR/YE/0P40cLmGj4vC1VK
-	0jqITKNzKQJ1LnbSKrYFso+jr6ZDOnE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-rLO7YbV5Nwejc7N90dHdkQ-1; Thu, 29 Aug 2024 10:19:01 -0400
-X-MC-Unique: rLO7YbV5Nwejc7N90dHdkQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3718eb22836so448159f8f.3
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2024 07:19:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724941140; x=1725545940;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wt2kRlQoJgJxTzxQjhrYYWN0zj4xz5nEsQIR91A/520=;
-        b=V4SQpOE0Ske/OemKhJDCWfJEZbI6pZwZ5YFEeY2aXwIIX8h4lyTZ27RFQ5pgByx9g/
-         MHIYtsGvRVAYh/32WaVce/WtIrB3ZfF+jnWsBue3wIhkcd9y2JFlUeK6MooCAhWjgMJY
-         Aj88dJYFeLZY/LHDtRE+6xxphAeeDkUxXZ3X0JUdoABUdv329Be5OdbY1IVyg9g5qQ9x
-         UK3OWoFyTPr6BPq2vZRFkHSj2+uF7z0ht5kdknbEfEKgzvYiedN90TsfygL65fkaB2IG
-         KC6HxNg+7Nf4fxb3ux060RNf19emdLJXiOt5XDdWUUL9R2n8zVmd0IEHL+0mMqr2r8NQ
-         +2SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9MN0LdugNIJaYXDi0DtUQwE5A/qC4XyVhU3SjcU6qnxf8s8D7mSCya1sh7oxc3D1MHmxzYR1FjWBz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtqDx1wyx79fWCgufx0JPWXTncCKFqDA8rKSMr7mf84Vu2tZn2
-	ZJVizJLM4g00D6mqOJ4gSapYiBaAhLBW7Dgomo/RH04/VSb+3w068KEBGLAS05CywyGmNvXk7OA
-	GJ8kmqbLPrDdReZ9uxZwBFtw4KiERPZHkCQ3LB3deM+8lKVz+rdjOnQRkPFo=
-X-Received: by 2002:a5d:588c:0:b0:371:a8a3:f9a1 with SMTP id ffacd0b85a97d-3749b52ec54mr2845192f8f.11.1724941139757;
-        Thu, 29 Aug 2024 07:18:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVKE4GA6MoFtMHaGld6Pjw11VpfoD8Zbo28+LZWJJjSK41LEicR+xodyvjjYoPw88n/IlaOg==
-X-Received: by 2002:a5d:588c:0:b0:371:a8a3:f9a1 with SMTP id ffacd0b85a97d-3749b52ec54mr2845129f8f.11.1724941139264;
-        Thu, 29 Aug 2024 07:18:59 -0700 (PDT)
-Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abebdsm52670425e9.27.2024.08.29.07.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 07:18:58 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	John Garry <john.g.garry@oracle.com>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH v5 7/7] vdap: solidrun: Replace deprecated PCI functions
-Date: Thu, 29 Aug 2024 16:16:26 +0200
-Message-ID: <20240829141844.39064-8-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240829141844.39064-1-pstanner@redhat.com>
-References: <20240829141844.39064-1-pstanner@redhat.com>
+	s=arc-20240116; t=1724941215; c=relaxed/simple;
+	bh=vVnHDMPRWEqw78UqpM0GcVu6kdAO83JBT5gVll4IiqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9L9rqGfCFQ9DUqX0D52R3bTtLFBHn6Jbi87nTTBI5QxUioY8XQzdJCYAgEVI28FEKixPPoWZmRr+zO0+ViTKqERAdGmZOhMWh/UyC/nAygvmn4/gr7zBACnxTvfNkHfzHrDJISKeOluSBY3GwA60eqIWbR6oPCRea1eESdf23Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id AD15240D7C7C;
+	Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id uXjXtRG2l_4c; Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 2659445735E9;
+	Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+Date: Thu, 29 Aug 2024 10:11:13 -0400
+From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: add support for FTDI's MPSSE as GPIO
+Message-ID: <ZtCBgWrdFI6h3zbo@freedom.csh.rit.edu>
+References: <20240814191509.1577661-1-mstrodl@csh.rit.edu>
+ <CACRpkdYyo9MD6zfiPde+3vSdpH96r+ZO12bdmMAfjw5PCNJ1BQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYyo9MD6zfiPde+3vSdpH96r+ZO12bdmMAfjw5PCNJ1BQ@mail.gmail.com>
 
-solidrun utilizes pcim_iomap_regions(), which has been deprecated by the
-PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-pcim_iomap_table(), pcim_iomap_regions_request_all()"), among other
-things because it forces usage of quite a complicated bitmask mechanism.
-The bitmask handling code can entirely be removed by replacing
-pcim_iomap_regions() and pcim_iomap_table().
+On Sat, Aug 24, 2024 at 04:25:59PM +0200, Linus Walleij wrote:
+> thanks for your patch!
 
-Replace pcim_iomap_regions() and pcim_iomap_table() with
-pcim_iomap_region().
+Thank you for reviewing!
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/vdpa/solidrun/snet_main.c | 53 +++++++++++--------------------
- 1 file changed, 18 insertions(+), 35 deletions(-)
+> > +config GPIO_MPSSE
+> > +       tristate "FTDI MPSSE GPIO support"
+> > +       help
+> > +         GPIO driver for FTDI's MPSSE interface. These can do input and
+> > +         output. Each MPSSE provides 16 IO pins.
+> 
+> select GPIOLIB_IRQCHIP
 
-diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
-index c8b74980dbd1..2b7ff071aab9 100644
---- a/drivers/vdpa/solidrun/snet_main.c
-+++ b/drivers/vdpa/solidrun/snet_main.c
-@@ -556,36 +556,25 @@ static const struct vdpa_config_ops snet_config_ops = {
- static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- {
- 	char *name;
--	int ret, i, mask = 0;
-+	unsigned short i;
-+
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
-+	if (!name)
-+		return -ENOMEM;
-+
- 	/* We don't know which BAR will be used to communicate..
- 	 * We will map every bar with len > 0.
- 	 *
- 	 * Later, we will discover the BAR and unmap all other BARs.
- 	 */
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (pci_resource_len(pdev, i))
--			mask |= (1 << i);
--	}
--
--	/* No BAR can be used.. */
--	if (!mask) {
--		SNET_ERR(pdev, "Failed to find a PCI BAR\n");
--		return -ENODEV;
--	}
--
--	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
--	if (!name)
--		return -ENOMEM;
--
--	ret = pcim_iomap_regions(pdev, mask, name);
--	if (ret) {
--		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
--		return ret;
--	}
--
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (mask & (1 << i))
--			psnet->bars[i] = pcim_iomap_table(pdev)[i];
-+		if (!pci_resource_len(pdev, i))
-+			continue;
-+		psnet->bars[i] = pcim_iomap_region(pdev, i, name);
-+		if (IS_ERR(psnet->bars[i])) {
-+			SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-+			return PTR_ERR(psnet->bars[i]);
-+		}
- 	}
- 
- 	return 0;
-@@ -594,21 +583,18 @@ static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
- {
- 	char *name;
--	int ret;
- 
- 	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "snet[%s]-bars", pci_name(pdev));
- 	if (!name)
- 		return -ENOMEM;
- 
- 	/* Request and map BAR */
--	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
--	if (ret) {
-+	snet->bar = pcim_iomap_region(pdev, snet->psnet->cfg.vf_bar, name);
-+	if (IS_ERR(snet->bar)) {
- 		SNET_ERR(pdev, "Failed to request and map PCI BAR for a VF\n");
--		return ret;
-+		return PTR_ERR(snet->bar);
- 	}
- 
--	snet->bar = pcim_iomap_table(pdev)[snet->psnet->cfg.vf_bar];
--
- 	return 0;
- }
- 
-@@ -656,15 +642,12 @@ static int psnet_detect_bar(struct psnet *psnet, u32 off)
- 
- static void psnet_unmap_unused_bars(struct pci_dev *pdev, struct psnet *psnet)
- {
--	int i, mask = 0;
-+	unsigned short i;
- 
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
- 		if (psnet->bars[i] && i != psnet->barno)
--			mask |= (1 << i);
-+			pcim_iounmap_region(pdev, i);
- 	}
--
--	if (mask)
--		pcim_iounmap_regions(pdev, mask);
- }
- 
- /* Read SNET config from PCI BAR */
--- 
-2.46.0
+Will-do!
 
+> > +struct mpsse_priv {
+> > +       struct gpio_chip gpio;
+> > +       struct usb_device *udev;     /* USB device encompassing all MPSSEs */
+> > +       struct usb_interface *intf;  /* USB interface for this MPSSE */
+> > +       u8 intf_id;                  /* USB interface number for this MPSSE */
+> > +       struct irq_chip irq;
+> 
+> What is this irq_chip? You already have an immutable one lower in the code.
+
+Oops. Forgot to remove this, thanks.
+
+> 
+> > +       struct work_struct irq_work; /* polling work thread */
+> > +       struct mutex irq_mutex;      /* lock over irq_data */
+> > +       atomic_t irq_type[16];       /* pin -> edge detection type */
+> > +       atomic_t irq_enabled;
+> > +       int id;
+> > +
+> > +       u8 gpio_outputs[2];          /* Output states for GPIOs [L, H] */
+> > +       u8 gpio_dir[2];              /* Directions for GPIOs [L, H] */
+> 
+> Caching states of lines is a bit regmap territory. Have you looked into
+> just using regmap?
+
+Do you mean gpio_regmap or using regmap directly? I'm not sure that gpio_regmap
+will do what I want because I need to provide an irq_chip (and I don't see a way
+to "break the glass" and access the gpio_chip directly)
+
+> If this doesn't need to be atomic you should use
+> __set_bit() and __clear_bit().
+> 
+> Yeah I know it's confusing... I think you should use the __variants
+> everywhere.
+
+Oops, thanks.
+
+> Is there something wrong with just using the gpiolib irqchip library
+> 
+> select GPIOLIB_IRQCHIP
+> 
+> there are several examples in other drivers of how to use this.
+
+I've ripped out all the extra stuff, I didn't realise how much was
+already being done for me!
+
+> > +static int gpio_mpsse_probe(struct usb_interface *interface,
+> > +                           const struct usb_device_id *id)
+> > +{
+> > +       struct mpsse_priv *priv;
+> > +       struct device *dev;
+> > +       int err, irq, offset;
+> > +
+> > +       dev = &interface->dev;
+> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +       if (!priv)
+> > +               return -ENOMEM;
+> > +
+> > +       priv->udev = usb_get_dev(interface_to_usbdev(interface));
+> > +       priv->intf = interface;
+> > +       priv->intf_id = interface->cur_altsetting->desc.bInterfaceNumber;
+> > +
+> > +       priv->id = ida_simple_get(&gpio_mpsse_ida, 0, 0, GFP_KERNEL);
+> > +       if (priv->id < 0)
+> > +               return priv->id;
+> > +
+> > +       devm_mutex_init(dev, &priv->io_mutex);
+> > +       devm_mutex_init(dev, &priv->irq_mutex);
+> > +
+> > +       priv->gpio.label = devm_kasprintf(dev, GFP_KERNEL,
+> > +                                         "gpio-mpsse.%d.%d",
+> > +                                         priv->id, priv->intf_id);
+> > +       if (!priv->gpio.label) {
+> > +               err = -ENOMEM;
+> > +               goto err;
+> > +       }
+> 
+> So you are accomodating for several irqchips in the same device,
+> and handling it like we don't really know how many they will be?
+> Does it happen in practice that this is anything else than 0?
+
+Are you asking about intf_id? Yes, the hardware I'm supporting here populates
+as a composite USB device with 2 MPSSEs.
+
+The terminology is kind of confusing by the way. MPSSE is a functional unit inside one
+chip. The device I have here has one chip, and shows up as one usb device with two interfaces:
+
+$ lsusb -t # trimmed down to just the relevant bits
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/10p, 480M
+    |__ Port 5: Dev 4, If 0, Class=Vendor Specific Class, Driver=gpio-mpsse, 480M
+    |__ Port 5: Dev 4, If 1, Class=Vendor Specific Class, Driver=gpio-mpsse, 480M
+$ lsusb
+Bus 001 Device 004: ID 0c52:a064 Sealevel Systems, Inc. USB <-> Serial Converter
+
+Other models of this chip (FT232) only have 1 MPSSE. I don't have any to test with,
+but my assumption is that the 2nd interface won't populate.
+
+As for `priv->id`, I do that because these are USB peripherals, it's conceivable
+that more than one of these chips could be attached at once.
+
+> Yours,
+> Linus Walleij
+
+Thanks for taking the time to review!
+
+Mary Strodl
