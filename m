@@ -1,125 +1,190 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2881C1AD9E7;
-	Thu, 29 Aug 2024 14:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F081AE86C
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2024 14:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941090; cv=none; b=XyVaDL6xw8Woi7ghH4f7XZJHY2hIsYXNEIEOASSiSiPt8MzY0hQ6GxBCbq9Ny3oEBpKA4LXTbjqOkUPhHhtXdeIkp5nluT9ZWN4Hmu+iQvee46lgjIyG1BTaBwCzoQQcuIG2hI/JRh8VzZvPap6AzjMgMApOCmwvfObCbUvy7k8=
+	t=1724941133; cv=none; b=k2df8vzg8WVJJ601M679kMtm4PgF+9iclySRlpdnXkS9mXmxOzm6AmaXhjEaPXS+/Nr8WR9OFiGA1wCDyfOrpWmxJ5LRZwiMMUUdE4FHhVAyGKnvSk/pWePCCNZzwk4+/O0SrO9dIxT8HKbZKKT3HefnEK/1vqnuJ2QghnC6ZdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941090; c=relaxed/simple;
-	bh=t+RKO9TNWxY4HrBdBWb9BA8+VLsmoITn4UlYlIT7srY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MfLaDi/bGUE9OU7itVdbrTB9FKBXWRxcufyA4egl4FAxlIPelyvs94Kt4jMlULYWcwUOMAt1MI4svsXSusU0JOkXlVGGTo7KKnypE+ytVGOyHq0GYlTGM8p5tZq4RD8H/jvGupoU35IW2qa/ioce9r14HcGWVvRNhXvF57sw9VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DKZih9YA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724941133; c=relaxed/simple;
+	bh=bN72jrToXfY+vJucKr9xb19mZvJ9IN7YKnm5yOK/+sI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i8yFhPdvSOO6XgNVyFxAK41EDBwoiP3/GJ/VcJyqEuzBSY2R3DBvwHBFAGwF4F3DwZTSuI1H/M3vikbBHffTsFXVS+soGjyBjbybrNgRbbkjC1RFIi6G3q8d6K05dXiIJ6Hp2eF3mOa7ITo6M5QQQRJ8A0twDpAv7wfElCeOgyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B9j4hdm1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DKZih9YA"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8qot9013831;
-	Thu, 29 Aug 2024 14:17:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t+RKO9TNWxY4HrBdBWb9BA8+VLsmoITn4UlYlIT7srY=; b=DKZih9YAEWADMmXQ
-	sdVY89ixeiTr1iAWqukECdtYmZU3kK9mfKqDrNlx/2MVx07VTIMwYLUdAekmAwsY
-	idKsx1qQdliqNzMmL9RdIXevrNeCfsoOIu/ELTc56mEmrWjf8bp7ZM12e/GI96Ej
-	DaSElKuQYHRAdPzjCAJIT0bHx6RK176n9KnCyta/tsltRB8wTbcScppbSRTcVubo
-	j99yRUOew5+8MtfigQ8/CLlhRpcCeCY/3hx7u7J9A04mimYzRX4/Qhb9YlYA2RQK
-	n/OXRIp5JXMJRqhqv0LSHxthi6XoKGt/pFOZp7J5QLRmghU7c6sH5h4ksvCOZnOx
-	pIT7gw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv15ejs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 14:17:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TEHPsx001357
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 14:17:25 GMT
-Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
- 2024 07:17:21 -0700
-Message-ID: <d15927f9-bd00-4e32-9c25-535c69fe56f6@quicinc.com>
-Date: Thu, 29 Aug 2024 07:17:20 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B9j4hdm1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724941131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UljbUeQcl4wkbV7mOtS08F4hh+nFyo1TBvQFl+wrPVQ=;
+	b=B9j4hdm1OAj0oVwR13xBqHISjAHCGVkyutH9wkan0z9m9/R+qzptmO0Z6pxIrUkAUeWdYJ
+	qGjT/mxFR1TvHW3ZK5cGBmpJmHxxfLL9PGT/8YVS8dIEGN3iO2zQmssCmPnzRnk78ofB6H
+	xCmStquSUWYeaQGiIEV+EKVVMbhX3Bk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-_qTjRwoXOuKhUGzObjwCtA-1; Thu, 29 Aug 2024 10:18:50 -0400
+X-MC-Unique: _qTjRwoXOuKhUGzObjwCtA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42808efc688so7399335e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Aug 2024 07:18:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724941128; x=1725545928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UljbUeQcl4wkbV7mOtS08F4hh+nFyo1TBvQFl+wrPVQ=;
+        b=enR9pHhYoiok/8uBhBTOjNXaQ9+Vgw7y2ATFn5f+Q63B1yUnic3UNygQvWYYWEVG/G
+         3LpKITfK0UrfnQz25zi1CV9yZ3vNFoQzT1gt2xEjZDlNUxRLD0t8ifOFJJ+nvH/8aWSc
+         9jOrr5xHNHw8Y9SyjzOyh3tUXIgMNzRm1gdy2YcJNAINDiJB0wWxmoYRWp5FX5A9kVhh
+         mVvFU3uFzAAYEQNpcCWTFBE3Z4r77oAjuWiAl1JHjQIJAdNj9K14etcs6SYkosfW0XU2
+         4d2KYrzRn1ZRuarIK5Pg5dt82opL0QpyNUXqqEbPBuzzq3mrukOxdw8BwlHTkmdP2AzD
+         H9Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdzXnZWEyHog7SRMbSwFLLx5X2qMNGFV07u/GnOctDw6prL8foLlbCT92dQViSE5Ug+WWnjSvYXK5a@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaolROiSD3TUT3lIpJp3k1+diqUNkC2nvm1uBm9EBGX+MDuGQV
+	K15984G22JYIxYCPrEWhF7qLanVEIveVVPVqaDPiWivh2C3mR+dnAdGfib0/v/4N2axphGhYksM
+	Wh3g+gmOl328CkjzGRbWg9SXKeHJ0o1uYsk9jTGb2fcjI2cHPiNeR/KWj/mw=
+X-Received: by 2002:a05:600c:470f:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bb024d9d6mr24548625e9.11.1724941128534;
+        Thu, 29 Aug 2024 07:18:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaWAd/dk5mVFnN9RDmi+8yHhRiBHqeSEZqBrS5gu6xo2wvJc2Dt1Hm0EPgbT3w2rGsknEV9A==
+X-Received: by 2002:a05:600c:470f:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bb024d9d6mr24548445e9.11.1724941127865;
+        Thu, 29 Aug 2024 07:18:47 -0700 (PDT)
+Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abebdsm52670425e9.27.2024.08.29.07.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 07:18:47 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Philipp Stanner <pstanner@redhat.com>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v5 0/7] PCI: Remove pcim_iounmap_regions()
+Date: Thu, 29 Aug 2024 16:16:19 +0200
+Message-ID: <20240829141844.39064-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/22] pinctrl: qcom: sa8775p: Add support for SA8255p SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
-        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
-        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
-        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
-        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_shazhuss@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-12-quic_nkela@quicinc.com>
- <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5ZcCT-ksT85jhXv9aplZcsONon_gYS75
-X-Proofpoint-ORIG-GUID: 5ZcCT-ksT85jhXv9aplZcsONon_gYS75
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_03,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 impostorscore=0 malwarescore=0 spamscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290098
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+OK, so unfortunately it seems very challenging to reconcile the merge
+conflict pointed up by Serge between net-next and pci-devres regarding
+"ethernet: stmicro": A patch that applies to the net-next tree does not
+apply anymore to pci-devres (and vice versa).
+
+So I actually think that it would be best if we just drop the portation
+of "ethernet: stmicro" for now and port it as the last user in v6.13.
+
+Then we can also remove pcim_iounmap_regions() completely.
+
+That should then be trivial.
+
+Changes in v5:
+  - Patch "ethernet: cavium": Re-add accidentally removed
+    pcim_iounmap_region(). (Me)
+  - Add Jens's Reviewed-by to patch "block: mtip32xx". (Jens)
+
+Changes in v4:
+  - Drop the "ethernet: stmicro: [...] patch since it doesn't apply to
+    net-next, and making it apply to that prevents it from being
+    applyable to PCI ._. (Serge, me)
+  - Instead, deprecate pcim_iounmap_regions() and keep "ethernet:
+    stimicro" as the last user for now.
+  - ethernet: cavium: Use PTR_ERR_OR_ZERO(). (Andy)
+  - vdpa: solidrun (Bugfix) Correct wrong printf string (was "psnet" instead of
+    "snet"). (Christophe)
+  - vdpa: solidrun (Bugfix): Add missing blank line. (Andy)
+  - vdpa: solidrun (Portation): Use PTR_ERR_OR_ZERO(). (Andy)
+  - Apply Reviewed-by's from Andy and Xu Yilun.
+
+Changes in v3:
+  - fpga/dfl-pci.c: remove now surplus wrapper around
+    pcim_iomap_region(). (Andy)
+  - block: mtip32xx: remove now surplus label. (Andy)
+  - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
+    occurs. (Andy, Christophe)
+  - Some minor wording improvements in commit messages. (Me)
+
+Changes in v2:
+  - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
+    patch, put stable kernel on CC. (Christophe, Andy).
+  - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
+  - Consequently, drop patch "PCI: Make pcim_release_region() a public
+    function", since there's no user anymore. (obsoletes the squash
+    requested by Damien).
+  - vdap/solidrun:
+    • make 'i' an 'unsigned short' (Andy, me)
+    • Use 'continue' to simplify loop (Andy)
+    • Remove leftover blank line
+  - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
 
 
-On 8/29/2024 12:29 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 28, 2024 at 01:37:10PM -0700, Nikunj Kela wrote:
->> SA8255p platform uses the same TLMM block as used in SA8775p,
->> though the pins are split between Firmware VM and Linux VM.
->> let's add SA8255p specific compatible.
-> The change suggests devices are fully compatible, but above description
-> does not.
->
-> This looks conflicting.
->
-> Best regards,
-> Krzysztof
+Important things first:
+This series is based on [1] and [2] which Bjorn Helgaas has currently
+queued for v6.12 in the PCI tree.
 
-Hi Krzysztof,
+This series shall remove pcim_iounmap_regions() in order to make way to
+remove its brother, pcim_iomap_regions().
 
-Thanks for reviewing patches. TLMM HW block is exactly same as used in
-SA8775p however ownership of pins can be split between firmware VM and
-Linux VM. It is upto devices to decide what pins they want to use in
-what VM. I will extend the subject with same description as used in DT
-binding.
+@Bjorn: Feel free to squash the PCI commits.
 
 Regards,
+P.
 
--Nikunj
+[1] https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
+[2] https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
+
+Philipp Stanner (7):
+  PCI: Deprecate pcim_iounmap_regions()
+  fpga/dfl-pci.c: Replace deprecated PCI functions
+  block: mtip32xx: Replace deprecated PCI functions
+  gpio: Replace deprecated PCI functions
+  ethernet: cavium: Replace deprecated PCI functions
+  vdpa: solidrun: Fix UB bug with devres
+  vdap: solidrun: Replace deprecated PCI functions
+
+ drivers/block/mtip32xx/mtip32xx.c             | 18 +++---
+ drivers/fpga/dfl-pci.c                        | 16 ++---
+ drivers/gpio/gpio-merrifield.c                | 14 ++---
+ .../net/ethernet/cavium/common/cavium_ptp.c   |  7 +--
+ drivers/pci/devres.c                          |  8 ++-
+ drivers/vdpa/solidrun/snet_main.c             | 59 ++++++++-----------
+ include/linux/pci.h                           |  1 +
+ 7 files changed, 53 insertions(+), 70 deletions(-)
+
+-- 
+2.46.0
 
