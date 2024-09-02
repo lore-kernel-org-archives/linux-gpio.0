@@ -1,109 +1,97 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF45C186E20
-	for <linux-gpio@vger.kernel.org>; Mon,  2 Sep 2024 11:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BB1D6DC9
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Sep 2024 11:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278120; cv=none; b=jWmsltm+A5JZqXMuGkRXMCqLHn0bz0Fa7ARXZ3ZIls/fnMbtjFtGnvzRQZVFvE2sW8kRL5DHwTsmc/tu1s4t1KxY9vz2eZbz71t5DwfcnQfopIxJ3vukzncl8txTItOfbEnFZm1//1AxGOVbZkgcDpnwjKTpM8ymlHDeNfrE/7I=
+	t=1725278391; cv=none; b=k4ItwtuG66cdtH0ga0toeVHXXHh560zqxxDLTqk8Upxm291bRTVj/6RET9K8Jaj8StppZtun52yOgIhw22for/d+z9DXBh9wv/sfG68Na5OyyLvsx1jZEm5VbriesUW+0WiDyX8jb0KvxdRaY/HnUcLR8wCDdlN+BX0ZyjjzJHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278120; c=relaxed/simple;
-	bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZGwf6tG38FnJmj7HuKANMzlsiYVfQRaUJPKpmOeWIPhCR5KxX7PG31NFebsVS8aodIyuR47ktj85dwzfzZaN9YgJYj1BhB640OCOVyAhf12H8k4IVTpmiWQMB50qAspvwyoWpOUvxlT3CcXLSBW17VZ9f8QWvm8yJ4nbIVuO4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bmjy6fVO; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1725278391; c=relaxed/simple;
+	bh=lVCscaTXSEHSqr95AdLNdttjTqtkhn3BT5Tljc5pLfM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2Kj7kZdNah0dnK95DmNYcge9rz4QVra0Al4Lw/TqP3WAm0puiwq/n9mv6oqRO0cd7rFVwIKxmsfOA/w2DvtFosgBUMD23mxz0CUl7AjERlH9lpPmTTEZTjEPQwQRlOsp0+efIyAHXenGUn2/4+peGJWGZmEES1H3u29MOeJsG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=M/bSZdK7; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bmjy6fVO"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5334879ba28so5792910e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Sep 2024 04:55:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="M/bSZdK7"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374ba74e9b6so2003314f8f.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Sep 2024 04:59:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725278117; x=1725882917; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725278389; x=1725883189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
-        b=bmjy6fVOZyJN/gaFZfcrQWacC4/u8Y3lHGu1DkSKzMKb2ZkWM7HUNETClw7vQk5yrw
-         Nfy7CdbmyxxmtonZV9SYHh54ov3ZjB/JQDiwOz5XeI9vi2yBdvloeIUTwugPcpxKi6Fw
-         VpG3AKkAoYj6ejZAh5q78hU9/4qVeOZuU4V4iDl2NnPfQRK1i2LJYM/en6K0VV96rkhh
-         86TC5cy1pFbSccpNdaasOUdBvSKT6KFDYnPBci5APZx9Trl16mNzTJouo6Pf5PqdkvMA
-         epf6hWya2Bbd8M9lWVIpEEa3Nfa1F+5FIvh6zp5KlZzxxyKYGUfUCpnLgY3m61lmsDkQ
-         xmGQ==
+        bh=kyoVr8BB/oOd23z+sFTfjVLmisWnkSIUHhoyRM8oVTg=;
+        b=M/bSZdK7gj6WX39ee02WZzvkZDmMrr+GUfy8IC4bZ9uNJ1LMWk++tOv9AbsRyDqaVL
+         Cuu5fYBYmvKr2Sa04V6I90YnnyOgdHs2eHvP5AsZmwI3ixND+r1tXzeHzr+V2juykRkI
+         rfCo1ng7FBTr1Vg5LH9QHe1wTUrxs1cdGKBVDZ/dQn0EmvsFeQE1ZBDNwIfPEZnK9J3G
+         2Pj6Gd1v92jA+bRwXwEFDGw642DwoZVms5SX1chZ4Cet47qIULNqkivdHOYptmGBvTIn
+         mVuzdMth/+G3oC9aS5nyNmUoVJKjyeyRXJHXBg0McmO1hbHsKQhpA+k3icmSUoLZ7U7m
+         DaxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725278117; x=1725882917;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725278389; x=1725883189;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
-        b=grx7NjVkz0P01jibsQQp6EJUZcQvhikrBYNRMFL69En1W6d66BskuWnBUUBlTae3Tk
-         v+4LlP9DIbVrAu7Yg5swED9pvyzr7vS8EndLFTH/bu9CAp78YlqBXRKEfwyVG97oxnaF
-         p/hbYrLDGnoWzr10eGMxBLULUsBZ9u3OtKiVWl57bGzfzr8EoAyx7wr9KmXPLFrLe9AZ
-         vFVZtIUCtC9VPV5WGnEhCd0doPTla1WYE9ssTmTL6Yyd/3l0m7E1u2RgYnMhQZ0pVI2A
-         JOdfAk7yTKk+RYKbVkeFaTLKGnkureOl/GKDJWGP2BKVI8AX4u/RmFLdlFk9UoA9D1oy
-         wBoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOIqxr7e1Gnb8bCKAg36WxWenZZfa7Nct6mUz+5u9o9zw3GV4plI4zXTOPY0tFYHcEyCRMBXylnGXn@vger.kernel.org
-X-Gm-Message-State: AOJu0YymLOR56odRB9hI0wPh5++xQxTa3e+RISUu5VgAvjNuZpj7WylL
-	yw09Fd8qlWgB26zlkIOa9JdUi4CrW46YQREHVVF9r0+cZVOuhmfLL3uS1Lnju1UQ8PEIKhXxiCf
-	WJtFQFBvIfWJImPWmr3CB3Yejy9ccflPQqhw9rg==
-X-Google-Smtp-Source: AGHT+IEGE12FfStnUdBGy/2dKVU5vyf2aKrdPnQfwMUTc+zGFDGNenYTlMLP89onXE8zV0IWCEadu5GfRUaSGbS+0XM=
-X-Received: by 2002:a05:6512:3b2b:b0:533:71f:3a53 with SMTP id
- 2adb3069b0e04-53546b053admr8752543e87.19.1725278116390; Mon, 02 Sep 2024
- 04:55:16 -0700 (PDT)
+        bh=kyoVr8BB/oOd23z+sFTfjVLmisWnkSIUHhoyRM8oVTg=;
+        b=JCNnAdtUcr5eVF/MWQKrxbJjPjxGQ5dfEmwXzUfOkD5PJpbpEmYwRyVtQ0Lf/yTccZ
+         0PEVCtqHCTrxo1AQfAg2j1NtnK132+v1FitRP7/hPoW41ymwCD5kvOFJN5kNOF1ZdhEy
+         FW9zOkiyhbW9kIvsb80qsWbudLCas7nCmac8KZpssBjxkOZgRS+/v/zGUUReyf+uKKAH
+         ewvPGnHHjvChmhPvFZwz4MKOU+5rklN7F7N7d9gQH76Rw49/6arvZc80l+j374i5U4is
+         CTQ5Rm0GFMD2bDqBgg5nXnaSEZScnc2pS6GBVje1OG04ryz13/ZXqARZU7ot0gXAhXI0
+         iPXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ldwu7Uv+G6eUXK8u3uWrJZHDoXLCJbx2QSOHfAB2SLmV9cX5YyR37m8cMBjwzjOD6Kt/OIg/daYj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm6NDCCeKa2mO9LIWr3m152E7APJqvuWTwPrdy/gx8Rz2Rpo9C
+	cMHSIr8OR40rt7VQRUwW6mNbH8hrvJM0DU2HpFDhJwvAdtOGY0T5vWHnOlibgZ4=
+X-Google-Smtp-Source: AGHT+IFNXzfdptxamW5No+061oF+yQdKkFxAv/cK1FRmel8f0gd8phtl+Rg8+FXjcf0mHXbIJNvmXA==
+X-Received: by 2002:adf:e791:0:b0:374:bec7:8f with SMTP id ffacd0b85a97d-374bec700f2mr5403545f8f.28.1725278388074;
+        Mon, 02 Sep 2024 04:59:48 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f243sm551304666b.69.2024.09.02.04.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 04:59:47 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Rong Qianfeng <rongqianfeng@vivo.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1 2/2] gpio: zynq: Simplify using devm_clk_get_enabled()
+Date: Mon,  2 Sep 2024 13:59:45 +0200
+Message-ID: <172527838295.28083.11548950582839595377.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240820121651.29706-3-rongqianfeng@vivo.com>
+References: <20240820121651.29706-1-rongqianfeng@vivo.com> <20240820121651.29706-3-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829131051.43200-1-shenlichuan@vivo.com> <172527039219.21144.385699965145763717.b4-ty@linaro.org>
- <ZtWWoT75zCSB4g1x@smile.fi.intel.com>
-In-Reply-To: <ZtWWoT75zCSB4g1x@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 13:55:05 +0200
-Message-ID: <CAMRc=McgnoZz0TuwB0nWAdiRyZ0tNkX9NUKq9THH1Hh0rPk9CA@mail.gmail.com>
-Subject: Re: [PATCH v1] gpio: stmpe: Simplify with dev_err_probe()
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, Shen Lichuan <shenlichuan@vivo.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 2, 2024 at 12:42=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Mon, Sep 02, 2024 at 11:46:34AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > On Thu, 29 Aug 2024 21:10:51 +0800, Shen Lichuan wrote:
->
-> [...]
->
-> > Applied, thanks!
->
-> Be careful with patches from @vivo.com [1]!
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks for the heads-up!
 
-> This one in particular missed '\n' (and yes, I know that it's not an issu=
-e
-> for the ev_*() cases).
->
+On Tue, 20 Aug 2024 20:16:51 +0800, Rong Qianfeng wrote:
+> Use devm_clk_get_enabled() simplify zynq_gpio_probe() and zynq_gpio_remove().
+> 
+> 
 
-b4 didn't complain so I didn't pay attention.
+Applied, thanks!
 
-Bart
+[2/2] gpio: zynq: Simplify using devm_clk_get_enabled()
+      commit: 8d2aaf4382b7c2ae4eae17c3eb71474eddbb5c4b
 
-> [1]: https://lore.kernel.org/linux-spi/20240829033511.1917015-1-11162571@=
-vivo.com/
-> (read full discussion)
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
