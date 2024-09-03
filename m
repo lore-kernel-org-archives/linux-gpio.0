@@ -1,108 +1,101 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from mail-m1039.netease.com (mail-m1039.netease.com [154.81.10.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771C18BC3A;
-	Tue,  3 Sep 2024 17:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384209; cv=pass; b=EOiYF+N8rHu4h85f1i74sFO/DQJF44t74aNAyxGDfGYTK4lbX0R+GMSbPOiELASxQ/v4kpRJsu/HzYfwKt508Y3OzwXKDH5qSMMCwyjo2pjbMo5AZd8msrEbsqLgZxDD4gj2w6QKnAOYiA8jOxh9Fvhtkut5ClZilAhrnL3J+vc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384209; c=relaxed/simple;
-	bh=sNvkNTkQyaiNPWQjmkuwZf549NqTHwtFvXW9lBIvGX0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VIlOLMrubFXmHXfsvGanC0a37lsGPZqZzMNOhj+C+wfAPAG2Kl3d36gA9sBmDlooXQv6VZ7CaNrN65VNBF/H/K7s0w5zauxf7fx66qKg/P4262DknW4+X4gxUUO0FDLeh3Fn5tFbdw1SyEM/2BdVxrhI5Sq6VCElgbz7uG8PiRg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=dQy7SMxr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5418BC3A;
+	Tue,  3 Sep 2024 17:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.39
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725385335; cv=none; b=kww1ojFO8mOFz/iuGYs45uqY0FJ2wF2txvalCRtUBV7BslFZDwuVKYyTtbFbnKcZn8x7EQFhX1Ae3hWssw7TTuozsQvYEjL/xGqhrbCMQwBrFEsoyQDhSAGRcrXK456cvv6W0AOXhklKeyur4NROvgIfCwAhMJt87qfSjYo3Xqw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725385335; c=relaxed/simple;
+	bh=vc4ibhCpA4+1yW78pSHP7JSRblwfVrAHR54EsFS+sMk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Wn164mDMLCcqI4BZ6oDX4DXnSABCLu453ByFUfLAtnMXh79EHvCTk9lh90kPGGdM6zy9VBftXs2aW8qNa+Af9NwYTikvI0twLRbgz04i5yGDpgr4KJ/wd8mvIO77PwycyrUkD/Fcs5uvh4L568t8rO7jeIII2UmTaPaP4oY6Jb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=a4ohL4Hl; arc=none smtp.client-ip=154.81.10.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="dQy7SMxr"
-ARC-Seal: i=1; a=rsa-sha256; t=1725384202; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EehSrZ8ElJ6N0Ljti7bAq92MT3FS6U2zxd7bMpiOcfRMDSkolwHFvLqnKiN0isLmvQJozxZetBOc32yVllwt8sqLukMDIYx0TddOuJw9Lp+szOtL1qquu5+261kGn7+hpg1fOME4Qiz7jOOjA9DF18VrAqMogW0cbhtM1fCthCo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725384202; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=; 
-	b=nmuvfjaKpKHqC/ZwYe1xzhGn5AV5n6IwxTb/EnzTCC2wO7wb6TaAVmPUb4K+sX41bDuh3A1UmybMfLGPUijDdGeJf70hhH9a4lE43k9tR7/pAJvHSI7GiEZmAGoSo44V6WC1g4QzU8v4CdGfgIOA6+JQjISYi983Sxc81rZaaX0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725384202;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=;
-	b=dQy7SMxrw8H4+Nl4FEpPaRRfk7+mbXAEBp2lMiK/5l3D7062zRZKtGgLDwhMi6Uj
-	Vamm1EyBbdZWFaaHilh12PgEIl0zA4h3z4s/hZiOBRNEnFzH9sCTNYru2TpGynQSCHX
-	iTsSIeuYgvYbxHPx4pKY5/aixgqCBZFHHFZSxXQk=
-Received: by mx.zohomail.com with SMTPS id 172538420028422.02274509881522;
-	Tue, 3 Sep 2024 10:23:20 -0700 (PDT)
-Message-ID: <073a43d53e0befcb31adb1410d6dd0363c4911a2.camel@collabora.com>
-Subject: Re: [PATCH 1/2] gpio: mpc8xxx: order headers alphabetically
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
-	 <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Tue, 03 Sep 2024 18:23:17 +0100
-In-Reply-To: <20240903154533.101258-1-brgl@bgdev.pl>
-References: <20240903154533.101258-1-brgl@bgdev.pl>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="a4ohL4Hl"
+DKIM-Signature: a=rsa-sha256;
+	b=a4ohL4HlhTGP0jZauLjo3lFgPfY9LKR56FWV/mpCdiukP1y4Z1B2Its+Wx5Onl0z2/qCz8veBBULfNMFBVXUfbGBHqjSlKjSz8dyz5rw1H8XQWV5G7b+x0Ht4u8UZ2WCvGDPpJNO7pTMK81jHObSG1dB/JjGp1GZxVVhyFNnPG4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=tuUUQKIit1GImHErvUOMrTxOdciWFx+2Duf2CiFkka8=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 6C1FB7E0196;
+	Tue,  3 Sep 2024 15:37:07 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: [PATCH v3 04/12] gpio: rockchip: resolve underflow issue
+Date: Tue,  3 Sep 2024 15:36:41 +0800
+Message-Id: <20240903073649.237362-5-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk9JTVYeHk9JTxlNQx9CHk1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a91b6d0e13409cfkunm6c1fb7e0196
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OSo6DAw4EzI9EklKFhwoFSEs
+	TjwwCxpVSlVKTElOSE9CS0lDTE5MVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUxCQjcG
 
-On Tue, 2024-09-03 at 17:45 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> Cleanup the includes by putting them in alphabetical order.
->=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> =C2=A0drivers/gpio/gpio-mpc8xxx.c | 22 +++++++++++-----------
-> =C2=A01 file changed, 11 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-
-> mpc8xxx.c
-> index ab30c911c9d50..e084e08f54387 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -7,19 +7,19 @@
-> =C2=A0 */
-> =C2=A0
-> =C2=A0#include <linux/acpi.h>
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/spinlock.h>
-> -#include <linux/io.h>
-> -#include <linux/of.h>
-> -#include <linux/property.h>
-> -#include <linux/mod_devicetable.h>
-> -#include <linux/slab.h>
-> -#include <linux/irq.h>
-> -#include <linux/gpio/driver.h>
-> =C2=A0#include <linux/bitops.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/init.h>
-> =C2=A0#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> =C2=A0
-> =C2=A0#define MPC8XXX_GPIO_PINS	32
-> =C2=A0
+div_reg may be < 0 if debounce is zero, causing the unsigned int to
+overflow.
 
-Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 6dcb8bb0d1b4..26191197cd37 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -205,8 +205,11 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 	unsigned int cur_div_reg;
+ 	u64 div;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
++	if ((bank->gpio_type == GPIO_TYPE_V2) && !IS_ERR(bank->db_clk))
+ 		div_debounce_support = true;
++	else
++		div_debounce_support = false;
++	if (debounce && div_debounce_support) {
+ 		freq = clk_get_rate(bank->db_clk);
+ 		if (!freq)
+ 			return -EINVAL;
+@@ -217,8 +220,6 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 
+ 		div = (u64)debounce * freq;
+ 		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+-	} else {
+-		div_debounce_support = false;
+ 	}
+ 
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
+-- 
+2.34.1
+
