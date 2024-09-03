@@ -1,101 +1,61 @@
-Received: from mail-m1039.netease.com (mail-m1039.netease.com [154.81.10.39])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A911D54ED;
-	Tue,  3 Sep 2024 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F971CDFD9
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725349640; cv=none; b=hA5nJmoRzmoSh6qOeLYnLs9vWb/LA4xFZcAT03GdVuddj7BVLDdMaHT0a+rtI8pFn/q1mVTiLK6GpClK2lAr4PRyIi9y6wk6c28kBsl1wtEqWpGa+tOlQwpMVLrDvrPrfBNjBUXQeZX/OILYkDTzOAwwSLxMLGvcFF3zELChzdU=
+	t=1725351604; cv=none; b=Gq0tdwL02pg6bSZsa/H5jtvyZ4MgQD01D9cYK069Fjpl27Sk9OzeJzITaBwKOZrTFh7zBmLW0lOTkd4JvryAi53NiXiLOWF512NLuzc6yGTiS01nUGKzhiTPayY6bii584zVYlbaz4fVgUsVtLTfq6NqkDNy+utHnBPScF+vKiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725349640; c=relaxed/simple;
-	bh=hCiHTK06w23Zddhqps2mwwk9BO3ccbhl0gJYWdWVIHA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sCPNSBFb3cAcKeVb1ShLGvXzkTWLfJPmOgMQNw7BHqXocDiAPDRPdTLna4Q4jZtWcKcU1WHJhmKvzBVsYZmYQG975drYRqkmYPP6RpmmFv/QGUqUvtt8F4+jL9vQ6n5oHAfoN8G3w2mrq6mRM5fterN9DzyH2Ia4WVzOpl8ytBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=eHCUsYDi; arc=none smtp.client-ip=154.81.10.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="eHCUsYDi"
-DKIM-Signature: a=rsa-sha256;
-	b=eHCUsYDijVCUcxN5WpfM6rMoU/EtMl+FlpL0m4xDYX/kWcYs4aTZhpNYUnP864K/69dIWzDEpmNOtPg3TdSKD1ephNOcFUvyLoXvfLg7nfij5uiSrmanrAa9aTZs/2xewbQx5kp2QEA2QBbD1zIuH6qhP7Us7xa6TMzFDhCfzOo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=gdGxnEFCwoF+dZLxfO/pczGvZ3xJZOxamH4IgiqR/d4=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 046827E06E6;
-	Tue,  3 Sep 2024 15:37:05 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: [PATCH v3 03/12] gpio: rockchip: resolve overflow issues
-Date: Tue,  3 Sep 2024 15:36:40 +0800
-Message-Id: <20240903073649.237362-4-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1725351604; c=relaxed/simple;
+	bh=efBWNGHRrtSrmFuQULAf2TfI1mbhsfrBah6HXeHdNc4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uykgDsvdZoFH22wy/T2dFrLoSGVVxR1LnLJqRRxCfxVutAGnKly4YBvxbVb9vDOHgqrVJqXv/9wbiFUU/n/wPhbDnBY84bpnvMWv1ODW2kTJ1T7TbhS2Hb4ZevPXEVcSfGv4girqRHiiFB4UpGN0ocqmHb208rJ8LQzIIQ4dpog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WydmJ301BzpVNS;
+	Tue,  3 Sep 2024 16:18:08 +0800 (CST)
+Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
+	by mail.maildlp.com (Postfix) with ESMTPS id 62126140258;
+	Tue,  3 Sep 2024 16:19:59 +0800 (CST)
+Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
+ (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
+ 2024 16:19:58 +0800
+From: Zhang Zekun <zhangzekun11@huawei.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <vz@mleia.com>,
+	<linux-gpio@vger.kernel.org>
+CC: <zhangzekun11@huawei.com>
+Subject: [PATCH 0/4] Simplify code with helper function devm_clk_get*()
+Date: Tue, 3 Sep 2024 16:06:23 +0800
+Message-ID: <20240903080627.53652-1-zhangzekun11@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNNGlZJSxodSx0fGB5MSkhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91b6d0dbcf09cfkunm046827e06e6
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MSI6CDo*EDI6PEkVSxxMFSke
-	NTkwCktVSlVKTElOSE9CS0lMSElDVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUNPSTcG
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf500003.china.huawei.com (7.202.181.241)
 
-Prevent overflow issues when performing debounce-related calculations.
+Use helper function devm_clk_get_enabled() and
+devm_clk_get_optional_enabled() to simplify code.
 
-Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Zhang Zekun (4):
+  gpio: cadence: Use helper function devm_clk_get_enabled()
+  gpio: lpc18xx: Use helper function devm_clk_get_enabled()
+  gpio: mb86s7x: Use helper function devm_clk_get_enabled()
+  gpio: xilinx: Use helper function devm_clk_get_enabled()
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 5f60162baaeb..6dcb8bb0d1b4 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -22,6 +22,7 @@
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/units.h>
- 
- #include "../pinctrl/core.h"
- #include "../pinctrl/pinctrl-rockchip.h"
-@@ -209,11 +210,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 		freq = clk_get_rate(bank->db_clk);
- 		if (!freq)
- 			return -EINVAL;
--		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
-+		div = (u64)(GENMASK(23, 0) + 1) * 2 * HZ_PER_MHZ;
-+		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
- 		if (debounce > max_debounce)
- 			return -EINVAL;
- 
--		div = debounce * freq;
-+		div = (u64)debounce * freq;
- 		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
- 	} else {
- 		div_debounce_support = false;
+ drivers/gpio/gpio-cadence.c | 23 ++++++-----------------
+ drivers/gpio/gpio-lpc18xx.c | 23 ++++++-----------------
+ drivers/gpio/gpio-mb86s7x.c | 21 +++++++--------------
+ drivers/gpio/gpio-xilinx.c  | 11 +----------
+ 4 files changed, 20 insertions(+), 58 deletions(-)
+
 -- 
-2.34.1
+2.17.1
 
