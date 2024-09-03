@@ -1,118 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547C143748;
-	Tue,  3 Sep 2024 14:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B01C13D281
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 14:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374705; cv=none; b=RKPga6KtGKthQBilukkq69cAFi4eUPAAy42WFTlinBHDdS+NRDOV1zfVezCUx/cKS5YvUaEVjy36ixUo53UnaqIfkxNacni22lBQUZKXmY4gKj9RcHosjpVn3Wh2cJDJekmFD6Wm+iLrUgZraWMOi6Y11UfVCrSqwJOU+JOjWik=
+	t=1725375405; cv=none; b=I+brqOFJ0QlWPR962Uf7JVBUBSDCEEIV4ew/xvjK46O0EQOGy/NmDyHxKm/a0HV9L7e/feRY/5/wvR7qXbtty5g91LsDewckJN67/sdEdA4Iai88DCZ0lD+xEfCJ21vH3GwttkT4Fh942oTYYxl+U7TB8zM+hjvNy2ajEK/PANk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374705; c=relaxed/simple;
-	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIiPNE7dMqCqInvL6pdN0IASmqV/rTbvp318jsUz9pwS0Fi3bVqdVk9MCoeYeCu67sGqrUXIwIr5RkOV+tydNEh/G7MNbQxJy5/YLZgehQ1yXyPmB0QkcHrZkkcHVsbmnGSR4P37H0QahkiGjFguhnxSCxG6GfGXeZOJwrRf+dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNKw7RLt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725375405; c=relaxed/simple;
+	bh=gXdcYhlkFiZc7PZFYt6CuTb/sBzByoIKPWKoUDitZO4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=an2GDVuCeoO333DSfwLs80MDzboKrHjINd9uUseKAnft7imlqSLPQTp2gTCJhvnlC4hcfQAeZsTuHdqZ/FezAX2uAB2OVan/bJKnzlJxJyC8coJFC/BsUBGkeaz2RSA5Sco5+CF+hO4QzaEwIBcdJv/7+j8Fmg3z8OMyVU20db0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q0Tc4FtZ; arc=none smtp.client-ip=209.85.208.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNKw7RLt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3FFC4CEC4;
-	Tue,  3 Sep 2024 14:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725374705;
-	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fNKw7RLtWD+h+MVwSWb/heFmaDKUYskWslKnV2N4m/iIlCf4H7bLTJ+kaDdBI401P
-	 NPXeN9Pc9xnw7ODvmFgzKYA1LEz+/quhBboE5/UKUEeoerqReoH50aswqQhshgRcL9
-	 j5RcFhpMDmTHfK+tZrmKBtcjZgJ0HzIxqEsfEv94YYMvuH6z26JuUNaXOHLWE6Ggv6
-	 1W6S+4Pd1HS3xqyhH8KbJyptIbRM3lgQv1wvMOR79jEaFyTOIZbmKgten3tlVPwYhd
-	 LemBoGugplfgYGw+KV0F6F33m2wTYkqDQ6ofDGKS2MRzHEYbCQa6v8cGwE89qwN99u
-	 pb0Suyy9KekMw==
-Message-ID: <03e65361-790b-441e-b8e2-b8db4ffc6603@kernel.org>
-Date: Tue, 3 Sep 2024 16:45:00 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q0Tc4FtZ"
+Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2f4f8742138so61797091fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2024 07:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725375402; x=1725980202; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
+        b=Q0Tc4FtZ9SyE23cE51CxIDm3wr4xpdfEF1VKGG6D4hTRBcgGU5VbqgJQ2ZOvvsiokB
+         O897E9H8Ceu35GO2fLP7wWkVj1zNiOz8o/yzTXtv1IQpcjEu6FZE0i20hK5UhLjGfpm3
+         Tz6y34T9Z+D6FaXMRl6+35GiVoDPpbhYuIjsnFnc64aLPewU1Wpn9QNkXUdtRMzZjRF/
+         UOo6xTuJ2HKJHVHXFdcjiVlLeFiRL5Uvov8jurz90Zh9bm/54N4qQ0PIecWdbt1GRigt
+         wvuLIAD+7FbwJsD2yJkqpyEEpiIUpSI9lBYP8DhbFcnzaN5Kg/pp8wcDzR/7FMWCasNB
+         wjpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725375402; x=1725980202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DIv1iCvMP6bRoC9RIud+CJguG+zl0N1bX8dXz6wFLmQ=;
+        b=XK8lb6t8wkkfKZc1KxhYW10De1aRFH+CG/W55IkERkwtQ7Ntrqo2PX5TZWHrr2ED05
+         VI8BoXILkfpxHr/qjYyfAlFt0ARDtOlByANxmPE0MtMO+ZFYa5nvMjU2BdNC5QN3ppaD
+         dPtzIE/ahkgH/bbEMKTzb04yoyVvOuz6NZnz5M9lteACINObpmksncf381PaQ4/YA17z
+         ETTOYkfcSqnnML0Em0AUg3mFH1KgHA1MyTTvvrDu/3i4yPaKWnI3FCX2GIH9B0qc/hYi
+         xDQJiX8QgC4MsY/j5h8yaLXtr75+O6+zxmfCoC7sSqOcYZITqOlvKbDdwUYtaVhIm8O5
+         iE/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ/Clx19UbzIdx6Qwdu/5xo75pm5zADOoH0eW4I5hazYJ/Q8YR0gH/VyWz3WEbcnOX0fae7IMxP8mQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB3JgNws11cAEOb1YFbfubdRd+kZ3svllVU9f1DyFzr6/kPeSS
+	L4myzHaDiNPqYuKmG7hgxC4MoABSjjwfC6irRC0iAcu/6bCi1Nv0TZFoVnCeiH0=
+X-Google-Smtp-Source: AGHT+IGPXzXKjSyzj6ohNmy2x1Ly5xLLwbpSN9O7C4k6PqMn2bhMNSeS1m3Dv1qGKiKQSC913q2XHw==
+X-Received: by 2002:a2e:4e01:0:b0:2f3:b76e:4983 with SMTP id 38308e7fff4ca-2f64d4aa546mr6486601fa.22.1725375401093;
+        Tue, 03 Sep 2024 07:56:41 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a29bsm6517320a12.17.2024.09.03.07.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 07:56:40 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 3 Sep 2024 16:56:48 +0200
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZtcjsHnIb7iuDfhw@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+ <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26efbff0-ba1a-4e9a-bc5e-4fd53ac0ed99@lunn.ch>
 
-On 03/09/2024 14:44, Ivaylo Ivanov wrote:
-> Hi folks,
+Hi Andrew,
+
+On 16:21 Fri 30 Aug     , Andrew Lunn wrote:
+> On Fri, Aug 30, 2024 at 03:49:04PM +0200, Andrea della Porta wrote:
+> > Hi Krzysztof,
+> > 
+> > On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> > > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > > > The RaspberryPi RP1 is ia PCI multi function device containing
+> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > > > and others.
+> > > > Implement a bare minimum driver to operate the RP1, leveraging
+> > > > actual OF based driver implementations for the on-borad peripherals
+> > > > by loading a devicetree overlay during driver probe.
+> > > > The peripherals are accessed by mapping MMIO registers starting
+> > > > from PCI BAR1 region.
+> > > > As a minimum driver, the peripherals will not be added to the
+> > > > dtbo here, but in following patches.
+> > > > 
+> > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > > ---
+> > > >  MAINTAINERS                           |   2 +
+> > > >  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
+> > > 
+> > > Do not mix DTS with drivers.
+> > > 
+> > > These MUST be separate.
+> > 
+> > Separating the dtso from the driver in two different patches would mean
+> > that the dtso patch would be ordered before the driver one. This is because
+> > the driver embeds the dtbo binary blob inside itself, at build time. So
+> > in order to build the driver, the dtso needs to be there also. This is not
+> > the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
+> > ordered last wrt the driver it refers to.
+> > Are you sure you want to proceed in this way?
 > 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
+> It is more about they are logically separate things. The .dtb/dtbo
+> describes the hardware. It should be possible to review that as a
+> standalone thing. The code them implements the binding. It makes no
+> sense to review the code until the binding is correct, because changes
+> to the binding will need changes to the code. Hence, we want the
+> binding first, then the code which implements it.
+
+Ack.
+
+Cheers,
+Andrea
+
 > 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC.
-
-How did you resolve this comment:
-
-"I do not believe this was tested. See maintainer SoC profile for
-Samsung Exynos."
-
-?
-
-Best regards,
-Krzysztof
-
+> 	Andrew
