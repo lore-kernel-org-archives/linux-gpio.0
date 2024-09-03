@@ -1,36 +1,36 @@
 Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB47200128
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAEA201248
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 08:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725351606; cv=none; b=PU4dr7W8D+9Z0Wh4xaZFEkqqWmQxf1zGwWC888mdRfo4sIgezWmt1E7IMNbnkT73DC5kZuQ+tYxfntyQpXqyZJhPrk6Vv45hklOdwynOvBu++s9FwFaxEpQgFkXhTbiFzDZxRpBoMI9bnvLaEVvRbiVN6xwozIuM7orCV8nXJ14=
+	t=1725351607; cv=none; b=iZ5u7Mc3elqf+6kGYmkOSr51q7kC882id0CHRK48pb2Bv4Gm8xBBtZoOVeRtbVOsIzCG7NKQTwV6wFXwvWuUi/fMdlNlRqCBlE5jZe0umBIyekBPgNYL+Q/wPPwkgfUSQa1KK5A5Pv2p4+Cc1Ot2zn7CmiX9b7fVIK/cT5wVRGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725351606; c=relaxed/simple;
-	bh=nBhRPB/A6MGWJZBH/ew9zHT19JeK7AOx8iAuqZ3vF8M=;
+	s=arc-20240116; t=1725351607; c=relaxed/simple;
+	bh=G8BfkIiGQV8P32DgaMEUvaXHgpxPG8R4uhjactVkhUI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ND9akfrkDgMqPE5sOq401x5n7rlifK7H3oxlJp3zqj4DaJjyKoeLg+Q1OhKNp1e5OVO2Rx75hkyStzrAEWzx56apB/1fghlbDCqL1yrD47KN9Celd6XsCAg0aBVqnWEmJCqU9FQ9EKOskyTuMnZmzpxX/V8zLvfpjJcOcrh3kPs=
+	 MIME-Version:Content-Type; b=sWl9U5rpP2zOiRbt3dC4QNddMFphO6ISuLharIpNMpatA6kYzYaq6x1Fnq6TOkH011KaWm4tcdujdoQNEpbRn5JvVpBajOiAwfStK5Zq9durywmfNw0uBg7Dnm/IiqbO5Yjj4Co3cvAgeNIUigu9yAeYVERiDmyZcs/MJXYkWkA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wydp55SW3z1j823;
-	Tue,  3 Sep 2024 16:19:41 +0800 (CST)
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WydkW27x4z1HJ80;
+	Tue,  3 Sep 2024 16:16:35 +0800 (CST)
 Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7C64F1A0188;
-	Tue,  3 Sep 2024 16:20:00 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 8BD5B1A0188;
+	Tue,  3 Sep 2024 16:20:01 +0800 (CST)
 Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
  (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 16:19:59 +0800
+ 2024 16:20:00 +0800
 From: Zhang Zekun <zhangzekun11@huawei.com>
 To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <vz@mleia.com>,
 	<linux-gpio@vger.kernel.org>
 CC: <zhangzekun11@huawei.com>
-Subject: [PATCH 2/4] gpio: lpc18xx: Use helper function devm_clk_get_enabled()
-Date: Tue, 3 Sep 2024 16:06:25 +0800
-Message-ID: <20240903080627.53652-3-zhangzekun11@huawei.com>
+Subject: [PATCH 4/4] gpio: xilinx: Use helper function devm_clk_get_enabled()
+Date: Tue, 3 Sep 2024 16:06:27 +0800
+Message-ID: <20240903080627.53652-5-zhangzekun11@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240903080627.53652-1-zhangzekun11@huawei.com>
 References: <20240903080627.53652-1-zhangzekun11@huawei.com>
@@ -50,72 +50,51 @@ simplify code and avoid calling clk_disable_unprepare().
 
 Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
 ---
- drivers/gpio/gpio-lpc18xx.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/gpio/gpio-xilinx.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-lpc18xx.c b/drivers/gpio/gpio-lpc18xx.c
-index 5c6bb57a8c99..e7c0ef6e54fa 100644
---- a/drivers/gpio/gpio-lpc18xx.c
-+++ b/drivers/gpio/gpio-lpc18xx.c
-@@ -47,7 +47,6 @@ struct lpc18xx_gpio_pin_ic {
- struct lpc18xx_gpio_chip {
- 	struct gpio_chip gpio;
- 	void __iomem *base;
--	struct clk *clk;
- 	struct lpc18xx_gpio_pin_ic *pin_ic;
- 	spinlock_t lock;
- };
-@@ -328,6 +327,7 @@ static int lpc18xx_gpio_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct lpc18xx_gpio_chip *gc;
- 	int index, ret;
-+	struct clk *clk;
- 
- 	gc = devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
- 	if (!gc)
-@@ -352,16 +352,10 @@ static int lpc18xx_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gc->base))
- 		return PTR_ERR(gc->base);
- 
--	gc->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(gc->clk)) {
-+	clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(clk)) {
- 		dev_err(dev, "input clock not found\n");
--		return PTR_ERR(gc->clk);
--	}
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 7348df385198..afcf432a1573 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -333,12 +333,9 @@ static int __maybe_unused xgpio_suspend(struct device *dev)
+  */
+ static void xgpio_remove(struct platform_device *pdev)
+ {
+-	struct xgpio_instance *gpio = platform_get_drvdata(pdev);
 -
--	ret = clk_prepare_enable(gc->clk);
--	if (ret) {
--		dev_err(dev, "unable to enable clock\n");
--		return ret;
-+		return PTR_ERR(clk);
- 	}
- 
- 	spin_lock_init(&gc->lock);
-@@ -369,11 +363,8 @@ static int lpc18xx_gpio_probe(struct platform_device *pdev)
- 	gc->gpio.parent = dev;
- 
- 	ret = devm_gpiochip_add_data(dev, &gc->gpio, gc);
--	if (ret) {
--		dev_err(dev, "failed to add gpio chip\n");
--		clk_disable_unprepare(gc->clk);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add gpio chip\n");
- 
- 	/* On error GPIO pin interrupt controller just won't be registered */
- 	lpc18xx_gpio_pin_ic_probe(gc);
-@@ -387,8 +378,6 @@ static void lpc18xx_gpio_remove(struct platform_device *pdev)
- 
- 	if (gc->pin_ic)
- 		irq_domain_remove(gc->pin_ic->domain);
--
--	clk_disable_unprepare(gc->clk);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_disable_unprepare(gpio->clk);
  }
  
- static const struct of_device_id lpc18xx_gpio_match[] = {
+ /**
+@@ -644,15 +641,10 @@ static int xgpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(chip->regs);
+ 	}
+ 
+-	chip->clk = devm_clk_get_optional(&pdev->dev, NULL);
++	chip->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(chip->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(chip->clk), "input clock not found.\n");
+ 
+-	status = clk_prepare_enable(chip->clk);
+-	if (status < 0) {
+-		dev_err(&pdev->dev, "Failed to prepare clk\n");
+-		return status;
+-	}
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+@@ -699,7 +691,6 @@ static int xgpio_probe(struct platform_device *pdev)
+ err_pm_put:
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+-	clk_disable_unprepare(chip->clk);
+ 	return status;
+ }
+ 
 -- 
 2.17.1
 
