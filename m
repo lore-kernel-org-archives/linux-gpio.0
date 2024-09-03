@@ -1,101 +1,167 @@
-Received: from mail-m1039.netease.com (mail-m1039.netease.com [154.81.10.39])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5418BC3A;
-	Tue,  3 Sep 2024 17:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E2418FDD7;
+	Tue,  3 Sep 2024 18:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385335; cv=none; b=kww1ojFO8mOFz/iuGYs45uqY0FJ2wF2txvalCRtUBV7BslFZDwuVKYyTtbFbnKcZn8x7EQFhX1Ae3hWssw7TTuozsQvYEjL/xGqhrbCMQwBrFEsoyQDhSAGRcrXK456cvv6W0AOXhklKeyur4NROvgIfCwAhMJt87qfSjYo3Xqw=
+	t=1725388046; cv=none; b=ou/RFko5nRNMFP2DvXOcTkXlgT78LRbdGobEYFNevHkWhV1IJKBcC1Fi+ZJD40zNABztD+fMZZbHxMqW7nOVTr8d6npOAv9aSBrfqHEhGoZ9TSlW/gnsrB0oupFf45EcGAyMcwUa9k74TSsRQakIxJwZiS8+hv9bvn8iQggqtsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385335; c=relaxed/simple;
-	bh=vc4ibhCpA4+1yW78pSHP7JSRblwfVrAHR54EsFS+sMk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wn164mDMLCcqI4BZ6oDX4DXnSABCLu453ByFUfLAtnMXh79EHvCTk9lh90kPGGdM6zy9VBftXs2aW8qNa+Af9NwYTikvI0twLRbgz04i5yGDpgr4KJ/wd8mvIO77PwycyrUkD/Fcs5uvh4L568t8rO7jeIII2UmTaPaP4oY6Jb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=a4ohL4Hl; arc=none smtp.client-ip=154.81.10.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1725388046; c=relaxed/simple;
+	bh=jtq+NV2hFNSsN40Ko7LAblrCis08mq85mqLfSbvwx4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GVLkNy11Fcl92VrdgtiaJN7ybo/DNBZ3U3zPIg7ms9i+bEx0bOpLfvoTnD9DcsDsRgJsBfa+UncQO3u7gLswbZbmrk20SgJCqbciy6t8wDSoqkVa3GRfr1lHPQDDU/ULa0dPmmdMBLh9AZAP9cNasa62L543GgoIq2jFAchO6xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZUJ+bTe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="a4ohL4Hl"
-DKIM-Signature: a=rsa-sha256;
-	b=a4ohL4HlhTGP0jZauLjo3lFgPfY9LKR56FWV/mpCdiukP1y4Z1B2Its+Wx5Onl0z2/qCz8veBBULfNMFBVXUfbGBHqjSlKjSz8dyz5rw1H8XQWV5G7b+x0Ht4u8UZ2WCvGDPpJNO7pTMK81jHObSG1dB/JjGp1GZxVVhyFNnPG4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=tuUUQKIit1GImHErvUOMrTxOdciWFx+2Duf2CiFkka8=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 6C1FB7E0196;
-	Tue,  3 Sep 2024 15:37:07 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: [PATCH v3 04/12] gpio: rockchip: resolve underflow issue
-Date: Tue,  3 Sep 2024 15:36:41 +0800
-Message-Id: <20240903073649.237362-5-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZUJ+bTe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F48FC4CEC5;
+	Tue,  3 Sep 2024 18:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725388045;
+	bh=jtq+NV2hFNSsN40Ko7LAblrCis08mq85mqLfSbvwx4A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cZUJ+bTeqLi5y51bzBiYvYdQHngkR/4dba4aCV397G5bKm7jE99jg4yrTptWd3CTm
+	 /eEbjScXUiD/gVAKNKlGmafp3i5yrPI2V4t91OpF105/nMYV2sSVHssF8+W+QGmMLK
+	 JdqP/bwxwprfZCNmaFuoPq/FSWeGZ3iuFRCQbrV4iwdvxJYp3IGphdluTKzdOprdQH
+	 FZ3X4Cm1vfYA5tjyYrJbVaVIvudaOqno31GQQc5OpYL8+x3yoLziuN0Z9/7guSd5dE
+	 MIrzLZyOjhvGNjE1OkfiWm+GrcAuRgpr6pjLNN1jjchtLM+S3aPzAp3d5fU+tWc5fK
+	 UPPgxFN4IYuoA==
+Message-ID: <39735704-ae94-4ff8-bf4d-d2638b046c8e@kernel.org>
+Date: Tue, 3 Sep 2024 20:27:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk9JTVYeHk9JTxlNQx9CHk1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91b6d0e13409cfkunm6c1fb7e0196
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OSo6DAw4EzI9EklKFhwoFSEs
-	TjwwCxpVSlVKTElOSE9CS0lDTE5MVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUxCQjcG
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+ <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+ <ZtcoFmK6NPLcIwVt@apocalypse>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZtcoFmK6NPLcIwVt@apocalypse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-div_reg may be < 0 if debounce is zero, causing the unsigned int to
-overflow.
+On 03/09/2024 17:15, Andrea della Porta wrote:
+>>>>> +
+>>>>> +				rp1_clocks: clocks@c040018000 {
+>>>>
+>>>> Why do you mix MMIO with non-MMIO nodes? This really does not look
+>>>> correct.
+>>>>
+>>>
+>>> Right. This is already under discussion here:
+>>> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
+>>>
+>>> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
+>>> using CLK_OF_DECLARE.
+>>
+>> Depends. Where are these clocks? Naming suggests they might not be even
+>> part of this device. But if these are part of the device, then why this
+>> is not a clock controller (if they are controllable) or even removed
+>> (because we do not represent internal clock tree in DTS).
+> 
+> xosc is a crystal connected to the oscillator input of the RP1, so I would
+> consider it an external fixed-clock. If we were in the entire dts, I would have
+> put it in root under /clocks node, but here we're in the dtbo so I'm not sure
+> where else should I put it.
 
-Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+But physically, on which PCB, where is this clock located?
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 6dcb8bb0d1b4..26191197cd37 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -205,8 +205,11 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 	unsigned int cur_div_reg;
- 	u64 div;
- 
--	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
-+	if ((bank->gpio_type == GPIO_TYPE_V2) && !IS_ERR(bank->db_clk))
- 		div_debounce_support = true;
-+	else
-+		div_debounce_support = false;
-+	if (debounce && div_debounce_support) {
- 		freq = clk_get_rate(bank->db_clk);
- 		if (!freq)
- 			return -EINVAL;
-@@ -217,8 +220,6 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 
- 		div = (u64)debounce * freq;
- 		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
--	} else {
--		div_debounce_support = false;
- 	}
- 
- 	raw_spin_lock_irqsave(&bank->slock, flags);
--- 
-2.34.1
+> 
+> Regarding pclk and hclk, I'm still trying to understand where they come from.
+> If they are external clocks (since they are fixed-clock too), they should be
+> in the same node as xosc. CLK_OF_DECLARE does not seem to fit here because
+
+There is no such node as "/clocks" so do not focus on that. That's just
+placeholder but useless and it is inconsistent with other cases (e.g.
+regulators).
+
+If this is external oscillator then it is not part of RP1 and you cannot
+put it inside just to satisfy your drivers.
+
+> there's no special management of these clocks, so no new clock definition is
+> needed.
+
+> If they are internal tree, I cannot simply get rid of them because rp1_eth node
+> references these two clocks (see clocks property), so they must be decalred 
+> somewhere. Any hint about this?.
+> 
+
+Describe the hardware. Show the diagram or schematics where is which device.
+
+Best regards,
+Krzysztof
 
