@@ -1,94 +1,73 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDFD2AF16
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 15:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D562AE66;
+	Tue,  3 Sep 2024 15:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375690; cv=none; b=u3qSVurXP+maxOcIxKC+/oF3M3pm99/FciT/G2O7/bi/w2gmNnM5VEjS3ImYp6avfArEATI0KjtVbgzFEsgtyvC6syyTTy+AmiPk69DHqgl7crOT1sS843tUXdF5f2SRKijlkrTh2imAXSypOu/3lRgwJxkUazoi8GPLCDCGvdQ=
+	t=1725375935; cv=none; b=SPr48Ar8qGcAJ2osSLRE/80b3yMeqRAy63KZEQkQUbus4VRdpNgBChyId7cXhQi/q6S63IOfnmdI/kA8GZPWAl4k9upfD39YTEJ3Bxp32Ucwg0tFbGD7e0eYNDWd2HUryJI2IydmAMzkRr20AlB4eIywMNLpqsCMQr8bMLjtc18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375690; c=relaxed/simple;
-	bh=+8w2Z83ET8dVywGSWKR3appMQVb2k0hACxAZXPb4nxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sGJWakxQCZPvkEp1ONe5X4ZEM99/HNBBZrBPf5pREVtQFgczgsQ9PdvoZOuHeGaftLZ1zbe5eDmWQLqMxB7PAwjrDfFvrmEHMAOd04X1JhzowUvCC2Sg26Si59/d7vXKVbFY7CItsNZ4UszMBK1TWZuxry1C6NpSDTCibbKUkVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4WypW42FXpz4x4Vx
-	for <linux-gpio@vger.kernel.org>; Tue, 03 Sep 2024 16:52:16 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b015:4053:6b25:396c])
-	by laurent.telenet-ops.be with cmsmtp
-	id 7qs82D00f0nYyzV01qs8YR; Tue, 03 Sep 2024 16:52:09 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slUt3-001zen-W3;
-	Tue, 03 Sep 2024 16:52:08 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1slUt6-003oSS-M2;
-	Tue, 03 Sep 2024 16:52:08 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] pinctrl: renesas: Updates for v6.12 (take two)
-Date: Tue,  3 Sep 2024 16:52:07 +0200
-Message-Id: <cover.1725374961.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725375935; c=relaxed/simple;
+	bh=KL0RQRwssSJZNsqC3FsLLADFxblDIjhPUl1YLEacyms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dSUw611KMdZMvkfMvb3pvp36JfMYPeOZswvB5XLshWhb0D2rqHRR0m8pSmau/Uev+SyG54pocc4xSjiMNeRvQcoqyMOO7bH+XlAbhqoE7PRbQl08tgBUvfqaWZ8BonL+4BcG4Aww7G0coCvVeYbtU1T7AH5dP2aITHVkN7Ll1A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRIRAocq; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRIRAocq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E00C4CEC4;
+	Tue,  3 Sep 2024 15:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725375935;
+	bh=KL0RQRwssSJZNsqC3FsLLADFxblDIjhPUl1YLEacyms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DRIRAocqMOoyi0rW8os/xYVVD6vNIkBzoAlQ6hS2tSqR1dB70Nr3njU0wCyg3zgwu
+	 LacEso3uef9loUUnpQphxgtcE7qUvZSzFxL7C3t7jDK9reXbttX+aQ7Qz35fAggN0o
+	 lkn8P30kt6mxExCkPfIH18o2hQZhMeslMjkRnbqR8pQsmFuB9RGfxWBbFN/O/EzPo8
+	 6hw5ms6StC7SwGIY5PlV2myw4czbRwVcF3KNidbGniUstdvQJ458e83ikt7ISlZ3uL
+	 Onbf/nglN5e3FjWS9Wl8N/NCX9+JzjhDjF3IRsS9zdcTZ+i35Mg31/jZ7zmq7UHmGQ
+	 cgsEf0ky6UuxQ==
+Date: Tue, 3 Sep 2024 10:05:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-pwm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, linux-mediatek@lists.infradead.org,
+	upstream@airoha.com, Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-gpio@vger.kernel.org, benjamin.larsson@genexis.eu,
+	ansuelsmth@gmail.com,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: arm: airoha: Add the chip-scu node
+ for EN7581 SoC
+Message-ID: <172537593271.1018147.17791430767383351676.robh@kernel.org>
+References: <20240831-en7581-pinctrl-v3-0-98eebfb4da66@kernel.org>
+ <20240831-en7581-pinctrl-v3-1-98eebfb4da66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240831-en7581-pinctrl-v3-1-98eebfb4da66@kernel.org>
 
-	Hi Linus,
 
-The following changes since commit f73f63b24491fa43641daf3b6162d2a451bd8481:
+On Sat, 31 Aug 2024 16:27:46 +0200, Lorenzo Bianconi wrote:
+> This patch adds the chip-scu document bindings for EN7581 SoC.
+> The airoha chip-scu block provides a configuration interface for clock,
+> io-muxing and other functionalities used by multiple controllers (e.g.
+> clock, pinctrl, ecc.) on EN7581 SoC.
+> 
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>  .../bindings/arm/airoha,en7581-chip-scu.yaml       | 42 ++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
 
-  pinctrl: renesas: rzg2l: Use dev_err_probe() (2024-08-02 11:26:03 +0200)
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v6.12-tag2
-
-for you to fetch changes up to 1325820dd085809645bdd89a2fd408a05b4a5492:
-
-  pinctrl: renesas: rzg2l: Move pinconf_to_config_argument() call outside of switch cases (2024-09-02 10:13:59 +0200)
-
-----------------------------------------------------------------
-pinctrl: renesas: Updates for v6.12 (take two)
-
-  - Miscellaneous fixes and improvements.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      pinctrl: renesas: rzg2l: Replace of_node_to_fwnode() with more suitable API
-
-Lad Prabhakar (2):
-      pinctrl: renesas: rzg2l: Introduce single macro for digital noise filter configuration
-      pinctrl: renesas: rzg2l: Move pinconf_to_config_argument() call outside of switch cases
-
-Shen Lichuan (1):
-      pinctrl: renesas: Switch to use kmemdup_array()
-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 72 ++++++++++++---------------------
- drivers/pinctrl/renesas/pinctrl-rzv2m.c |  3 +-
- drivers/pinctrl/renesas/pinctrl.c       |  3 +-
- 3 files changed, 28 insertions(+), 50 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
