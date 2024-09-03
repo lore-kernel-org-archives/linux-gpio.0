@@ -1,119 +1,186 @@
-Received: from mail-m49253.qiye.163.com (mail-m49253.qiye.163.com [45.254.49.253])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899561D04BF;
-	Tue,  3 Sep 2024 08:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B901C7669;
+	Tue,  3 Sep 2024 09:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352334; cv=none; b=cfML9T++tg7AshDnQTPOYD9iIShCU8YF7g+vn8EQO/M6SwnrB2SiyTTmxMTFZ4LYp63j/Us+K3u8042YDVXPCkm9vZkipNXzlTBX9QBXf7pg4C/mnf9VnBjVpoiWOtcEnBLnZ9t6KTvL6ypMFGpQkxT51NJOgV7S1Bu1fjs3QFk=
+	t=1725354602; cv=none; b=rgJMiBdxklZWQncA9XlKadGNfXzMHKYpMF1fZG4QPlDC36v3HxJ/osgkH2D8ElO03zMse9REjYFm3eWVCHBIUQjOcPvNBu84J5sNHwrQj306Z1gkfYQR/JYWpLF3NVq4YCdVbmsZPzldOJnewT2T5FuC9Dcg9RMSiluZY1cgAaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725352334; c=relaxed/simple;
-	bh=rokfXuQadyjLoCc3SWEWRYyyosm0wNj7VcB5kkZNzZc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C10lx6X3SWXxI/2DQ6pxpoQv1B/SGLFcBXczcCbxl+13ziwYdlU0v5QaftUHo/iRHBJE2jQtLMAhjJdQkMtV6QMORYpGHf7Nq14RKmLacsS7XSdsocLDQXHceqGo1XyH1j8fDSiAeh4ZPycLpCzrb2eYcZlr/iY24UMGQ7R/IAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Svn1LfzB; arc=none smtp.client-ip=45.254.49.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1725354602; c=relaxed/simple;
+	bh=/tKo89+mcPizvF1Zm1NC+9oGmbQZWFYGqvMBFGbBTr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IqZ+FedI0Gzha7IgierK3iz7wWs5n+d1wGtQ3PmnTvwF2vGna11SmxmOYKfG7O1m4k2tjCYjdfF11dE0nR4cs13frJl9DlBogO7Q6PMy1bMxYOma60+vyXaFSyDe10VPKhaYTBxEZQ6fX9Ob30oQgqaSuZv5TDdrVipXtWWrdds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YLjxJgQe; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Svn1LfzB"
-DKIM-Signature: a=rsa-sha256;
-	b=Svn1LfzBXD6+X08id4l9jK0W/Cla+KEeOVEdn7IGloLESmycgijpufkzijYmggBJ5spOLgBeGqUeFSEdc0N8UlAFTvIqp68PCaGCfjsXywmzn++Iqemx3up6RQA/vZiX/g/OcB5IoGskpHPuAtgVuDEJZXxxFi84o9UnXIZdCwY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=mgSI3a/7dMdZbLCNsqhcURBOepC3DqKjtYsqMJY17gk=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 68C3B7E0292;
-	Tue,  3 Sep 2024 15:37:18 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: [PATCH v3 12/12] gpio: rockchip: replace mutex_lock() with guard()
-Date: Tue,  3 Sep 2024 15:36:49 +0800
-Message-Id: <20240903073649.237362-13-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YLjxJgQe"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C13424000B;
+	Tue,  3 Sep 2024 09:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725354597;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LttFW8rTrdCnShZkP1nFG0SbHb65v/96Px6RosbpqQ=;
+	b=YLjxJgQeUItsVJ9gFA+6szbHMMcy/jFztLjUTtOdnTE1kJJ1YNpr5SWSmSzrQ0Fcor3gGz
+	8UO1UWSm2NNGYm+PEtn65EfyIIl8iL8anFMsQ9vGc8MRsVuZ4Cyak/fSmlA/R2uLfCjrlM
+	XV9M2ZBOonlf+tO2sq2fJH7BtgFCKOgfePeGYqVoKJWChjb6MCbFLuJYCgbfq5/VL32JIG
+	9co31FIV9mpNOR7bRqHir+gL6DLowcQyXHkn1phPVoBTQVnidadKcHuyPSdJ4LM/gO013j
+	1E2uC57WvRuf0xJig2u1sfnT4uLMBRKvZZ9Ujr+I2eqYvrf50qlmXpWBKmodyw==
+Date: Tue, 3 Sep 2024 11:09:53 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, Dragan
+ Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arch@vger.kernel.org, Lee Jones
+ <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Stefan Wahren
+ <wahrenst@gmx.net>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <20240903110953.2b1f55b6@bootlin.com>
+In-Reply-To: <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+	<5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+	<20240821001618.GA2309328-robh@kernel.org>
+	<ZsWi86I1KG91fteb@apocalypse>
+	<CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
+	<ZtBJ0jIq-QrTVs1m@apocalypse>
+	<CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+	<ZtChPt4cD8PzfEkF@apocalypse>
+	<CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUwaTFYZTkIZGUlCGh5JTR5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91b6d10c2209cfkunm68c3b7e0292
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pk06Qzo6GjI1FklRLBEfFQgt
-	Qw1PCTpVSlVKTElOSE9CS0hCTUNIVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSEtNQjcG
+X-GND-Sasl: herve.codina@bootlin.com
 
-Replacing mutex_lock with guard() simplifies the code and helps avoid
-deadlocks.
+Hi,
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+On Fri, 30 Aug 2024 14:37:54 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 73e57efb46fc..d5c57617fc86 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -765,20 +765,19 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	ret = rockchip_get_bank_data(bank);
--	if (ret)
--		goto err_disabled_clk;
--
- 	/*
- 	 * Prevent clashes with a deferred output setting
- 	 * being added right at this moment.
- 	 */
--	mutex_lock(&bank->deferred_lock);
-+	guard(mutex)(&bank->deferred_lock);
-+	ret = rockchip_get_bank_data(bank);
-+	if (ret)
-+		goto err_disabled_clk;
- 
- 	ret = rockchip_gpiolib_register(bank);
- 	if (ret) {
- 		dev_err(bank->dev, "Failed to register gpio %d\n", ret);
--		goto err_unlock;
-+		goto err_disabled_clk;
- 	}
- 
- 	while (!list_empty(&bank->deferred_pins)) {
-@@ -805,14 +804,11 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
- 		kfree(cfg);
- 	}
- 
--	mutex_unlock(&bank->deferred_lock);
- 
- 	platform_set_drvdata(pdev, bank);
- 	dev_info(dev, "probed %pOF\n", np);
- 
- 	return 0;
--err_unlock:
--	mutex_unlock(&bank->deferred_lock);
- err_disabled_clk:
- 	if (bank->manual_clk_release)
- 		clk_disable_unprepare(bank->clk);
--- 
-2.34.1
+...
 
+> > this view is much like Bootlin's approach, also my pci-ep-bus node now would look
+> > like this:
+> >  ...
+> >  pci-ep-bus@0 {
+> >         ranges = <0xc0 0x40000000
+> >                   0x01 0x00 0x00000000
+> >                   0x00 0x00400000>;
+> >         ...
+> >  };
+> >
+> > and also the correct unit address here is 0 again, since the parent address in
+> > ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
+> > BAR1, I assume that for the unit address I should use only the address part that
+> > is 0, right?).  
+> 
+> No, it should be 1 for BAR1. It's 1 node per BAR.
+
+It should be 1 node per BAR but in some cases it is not.
+
+Indeed, in the LAN966x case, the pci-ep-bus need to have access to several
+BARs and we have:
+	...
+	pci-ep-bus@0 {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/*
+		 * map @0xe2000000 (32MB) to BAR0 (CPU)
+		 * map @0xe0000000 (16MB) to BAR1 (AMBA)
+		 */
+		ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
+		          0xe0000000 0x01 0x00 0x00 0x1000000>;
+	...
+
+Some devices under this bus need to use both BARs and use two regs values
+in their reg properties to access BAR0 and BAR1.
+
+
+> > > > > The assumption so far with all of this is that you have some specific
+> > > > > PCI device (and therefore a driver). The simple-buses under it are
+> > > > > defined per BAR. Not really certain if that makes sense in all cases,
+> > > > > but since the address assignment is dynamic, it may have to. I'm also
+> > > > > not completely convinced we should reuse 'simple-bus' here or define
+> > > > > something specific like 'pci-bar-bus' or something.  
+> > > >
+> > > > Good point. Labeling a new bus for this kind of 'appliance' could be
+> > > > beneficial to unify the dt overlay approach, and I guess it could be
+> > > > adopted by the aforementioned Bootlin's Microchip patchset too.
+> > > > However, since the difference with simple-bus would be basically non
+> > > > existent, I believe that this could be done in a future patch due to
+> > > > the fact that the dtbo is contained into the driver itself, so we do
+> > > > not suffer from the proliferation that happens when dtb are managed
+> > > > outside.  
+> > >
+> > > It's an ABI, so we really need to decide first.  
+> >
+> > Okay. How should we proceed?  
+> 
+> I think simple-bus where you have it is fine. It is really 1 level up
+> that needs to be specified. Basically something that's referenced from
+> the specific PCI device's schema (e.g. the RP1 schema (which you are
+> missing)).
+> 
+> That schema needs to roughly look like this:
+> 
+> properties:
+>   "#address-cells":
+>     const: 3
+>   "#size-cells":
+>     const: 2
+>   ranges:
+>     minItems: 1
+>     maxItems: 6
+>     items:
+>       additionalItems: true
+>       items:
+>         - maximum: 5  # The BAR number
+>         - const: 0
+>         - const: 0
+>         - # TODO: valid PCI memory flags
+> 
+> patternProperties:
+>   "^bar-bus@[0-5]$":
+>     type: object
+>     additionalProperties: true
+>     properties:
+>       compatible:
+>         const: simple-bus
+>       ranges: true
+> 
+
+IMHO, the node should not have 'bar' in the name.
+In the LAN966x PCI use case, multiple BARs have to be accessed by devices
+under this simple-bus. That's why I choose pci-ep-bus for this node name.
+
+Best regards,
+Hervé
