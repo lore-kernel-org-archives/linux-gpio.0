@@ -1,28 +1,27 @@
-Received: from mail-m3270.qiye.163.com (mail-m3270.qiye.163.com [220.197.32.70])
+Received: from mail-m3272.qiye.163.com (mail-m3272.qiye.163.com [220.197.32.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554EE3C485;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C713FE55;
 	Tue,  3 Sep 2024 14:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372733; cv=none; b=CuUH5SomoasE7tDw+5fFEz65U0wgFCw+GKBJRpOfBbCHc0mN535kvMCGUsVUVwnDkSov0CJrpHXpyxficb6tS5s57da8F2Iyn0pkKDtxKnLOOR3ZOfZuIsj0tT+lcy4mF7sQrIY4IHjR49gGNcq6NJWK7fGH+Q2R0Wh3GtFF6Sg=
+	t=1725372734; cv=none; b=mraAdLXRSxcT6eNdRZOWpNZv3bmlkmPxX9iNtv3UVFbCH2IHoBizhZgYXScexKSxF+i0Z282MrblWV5l94AlbAiWFuOq9IOdtkTTFdy0AXUy9zIXKhQgvJMScNDzXk50yw4lu4u+vkgKAzXoTHQnvdje3h7kIazWSk7wH/ikZPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372733; c=relaxed/simple;
-	bh=B2hSD/hfy8ZZHjqE3dI25ob3WX7HmZH+tuiyzq6q/J8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PCPslDkn6NxDCoNlr6ZSdJESXQd2LuuApQFc+7Q76l+w/kp492sa+cNWCr6phphvzSckhToiHl8MbHcxlCfc//YJe9xGxpp0oysEQvoXalDOmebPUQYjOEpARENs350M3/D8RhgF8GqvAoGVk/skXl4jPD3mOAF0WPTmES5tZ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=IUKg42GN; arc=none smtp.client-ip=220.197.32.70
+	s=arc-20240116; t=1725372734; c=relaxed/simple;
+	bh=UeiK1wLyZBDQlGDJCkhKV3j4EVW2BHI4KOCpr8fLuFo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e9AWi1n/gqgbV9g1i+PCi0ojw+MtuqOyiUEqus7zTw8KVrw/fnaQKV2efSst7y8mjZ72sK0NSKCHYhXEwAWRBfY/6uO4ksoQ1hmhguO3O2pzPfzfl6nX8R76JJ9KH7grze0neX2Uq9RasF3eYliJW/y2JwSK/e8EaTGgVE+Fz0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VfBjbu/G; arc=none smtp.client-ip=220.197.32.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="IUKg42GN"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VfBjbu/G"
 DKIM-Signature: a=rsa-sha256;
-	b=IUKg42GNT3xefHxZljlCyU0i5Ir/n0Tdxfi7ukaqzx/HGz+c4C/Idpy4zESZzqtC+jSEj0N09lQzk/dLj2E3YOLA/4szuvdCjKxw6CHBIh9oPIdzHOKMqYiGb1FeEyhCMHzmvRhc09QFRUi/Wb0f4QaqCxH8AXHk8KvtEAYkVmU=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=i3Ih0qHoA8BaoqENjDe44S2TQECjEhO9KvAw8e9oDoQ=;
+	b=VfBjbu/G4Zhzvb/kuPYrls1VcUI/FDjJPfg9g8uLZe2eq0bZiUgzDjpmQ+4Ntq8VpJi+j2fhDSaH+yaBTAo/9ZAQeeLVkyhXbQtNg2+RzdqbsZQhtFF1DTbQIAhoP+OpyCqmhPDtVOG0SqD7ohr90OX5EnF0jQQr+cObq9Gptn0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=mu4O+2UrPgqXaxroJrztwkPwlplzDcAtYXJiR52xTfE=;
 	h=date:mime-version:subject:message-id:from;
 Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id D3C227E03F6;
-	Tue,  3 Sep 2024 15:37:08 +0800 (CST)
+	by smtp.qiye.163.com (Hmail) with ESMTPA id C58307E06EC;
+	Tue,  3 Sep 2024 15:37:01 +0800 (CST)
 From: Ye Zhang <ye.zhang@rock-chips.com>
 To: Ye Zhang <ye.zhang@rock-chips.com>,
 	linus.walleij@linaro.org,
@@ -38,12 +37,10 @@ Cc: linux-rockchip@lists.infradead.org,
 	finley.xiao@rock-chips.com,
 	tim.chen@rock-chips.com,
 	elaine.zhang@rock-chips.com
-Subject: [PATCH v3 05/12] gpio: rockchip: fix debounce calculate
-Date: Tue,  3 Sep 2024 15:36:42 +0800
-Message-Id: <20240903073649.237362-6-ye.zhang@rock-chips.com>
+Subject: [PATCH v3 00/12] gpio: rockchip: Update the GPIO driver
+Date: Tue,  3 Sep 2024 15:36:37 +0800
+Message-Id: <20240903073649.237362-1-ye.zhang@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
-References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -52,48 +49,50 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ04dTFYYTE1PQ0MZTklLGUJWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtCGFZJGh4fT0JKSh5MGktWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
 	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91b6d0e6d209cfkunmd3c227e03f6
+X-HM-Tid: 0a91b6d0cb2d09cfkunmc58307e06ec
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NS46Aww6IjIrS0kZLBJKFRhO
-	H1FPFDVVSlVKTElOSE9CS0hLSktIVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUJDSjcG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M0k6FCo*FzIrMEk4PBJNFR4q
+	AQtPCjxVSlVKTElOSE9CS0lIS0pPVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUNJTTcG
 
-The previous configuration ensured that signals with a duration greater
-than the debounce value would always be detected, while signals with a
-duration less than debounce / 2 would always not be detected. After the
-modification, it is changed to ensure that signals with a duration greater
-than 2 * debounce will always be detected, while signals with a duration
-less than debounce/2 will still not be detected.
+GPIO driver support acpi and new version, set input direction in
+irq_request_resources, fix division error and debounce config error.
 
-Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since v1:
+- Split commits with multiple changes into separate commits.
+- Adjust backportable fix to the forefront.
+- Modify messages of some commits.
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 26191197cd37..75355f799751 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -213,13 +213,13 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 		freq = clk_get_rate(bank->db_clk);
- 		if (!freq)
- 			return -EINVAL;
--		div = (u64)(GENMASK(23, 0) + 1) * 2 * HZ_PER_MHZ;
-+		div = (u64)(GENMASK(23, 0) + 1) * HZ_PER_MHZ;
- 		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
- 		if (debounce > max_debounce)
- 			return -EINVAL;
- 
- 		div = (u64)debounce * freq;
--		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
-+		div_reg = DIV_ROUND_CLOSEST_ULL(div, USEC_PER_SEC) - 1;
- 	}
- 
- 	raw_spin_lock_irqsave(&bank->slock, flags);
+Changes since v2:
+- Optimize version number comments.
+- Modify the GPIO version judgment logic.
+- Use devm_clk_get_enabled to simplify the code.
+- Use guard instead of mutex_lock to simplify the code.
+- Use irq_hw_number_t and irqd_to_hwirq() in the request irq function.
+- Since list_first_entry cannot return NULL, remove the NULL check.
+- Temporarily do not add support for ACPI.
+
+Ye Zhang (12):
+  gpio: rockchip: avoid division by zero
+  gpio: rockchip: release reference to device node
+  gpio: rockchip: resolve overflow issues
+  gpio: rockchip: resolve underflow issue
+  gpio: rockchip: fix debounce calculate
+  gpio: rockchip: Update debounce config function
+  gpio: rockchip: support 'clock-names' from dt nodes
+  gpio: rockchip: explan the format of the GPIO version ID
+  gpio: rockchip: change the GPIO version judgment logic
+  gpio: rockchip: support new version gpio
+  gpio: rockchip: Set input direction when request irq
+  gpio: rockchip: replace mutex_lock() with guard()
+
+ drivers/gpio/gpio-rockchip.c       | 151 ++++++++++++++++++-----------
+ drivers/pinctrl/pinctrl-rockchip.h |   2 +
+ 2 files changed, 99 insertions(+), 54 deletions(-)
+
 -- 
 2.34.1
 
