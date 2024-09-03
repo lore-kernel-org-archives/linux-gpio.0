@@ -1,28 +1,28 @@
-Received: from mail-m127175.xmail.ntesmail.com (mail-m127175.xmail.ntesmail.com [115.236.127.175])
+Received: from mail-m49253.qiye.163.com (mail-m49253.qiye.163.com [45.254.49.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7F1D4608;
-	Tue,  3 Sep 2024 08:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899561D04BF;
+	Tue,  3 Sep 2024 08:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725352334; cv=none; b=ufwYzmXA/j1WFplF9P1o56wNU7KgSN1MYMn5Gxy+1R6vmpDeMuXsC/jiOf2K5xqsVQRYWYOwb6IIuPdpk25S/EOPhJfrE3NpXdes+D9+k83xMk0S7IjAjAXzuzJiTq+dNhdVBeoVvv/t+43uOe+7khGy6cuprBHg8QWTqaatWQg=
+	t=1725352334; cv=none; b=cfML9T++tg7AshDnQTPOYD9iIShCU8YF7g+vn8EQO/M6SwnrB2SiyTTmxMTFZ4LYp63j/Us+K3u8042YDVXPCkm9vZkipNXzlTBX9QBXf7pg4C/mnf9VnBjVpoiWOtcEnBLnZ9t6KTvL6ypMFGpQkxT51NJOgV7S1Bu1fjs3QFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725352334; c=relaxed/simple;
-	bh=WWQw228zRuzv+kvvTmtPfc+AZ2pZtv72NUZ5SG/zNvI=;
+	bh=rokfXuQadyjLoCc3SWEWRYyyosm0wNj7VcB5kkZNzZc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QiMgE1tepCRpHPZlOP5umigokAKLWFdANOniistzyK2laTFe+TzXwfVH5+HHLHeJ3vGhMXQtJl8McCgi8/3ZKI/4VD9rrEFNhzQd8oeA1BojpMeqsrZqOy+/1w+j1J0z/bKoa+yLyINL/LwSR/w91fFaSLtWYNjJFHBi6nLKDwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YUPQenCZ; arc=none smtp.client-ip=115.236.127.175
+	 MIME-Version; b=C10lx6X3SWXxI/2DQ6pxpoQv1B/SGLFcBXczcCbxl+13ziwYdlU0v5QaftUHo/iRHBJE2jQtLMAhjJdQkMtV6QMORYpGHf7Nq14RKmLacsS7XSdsocLDQXHceqGo1XyH1j8fDSiAeh4ZPycLpCzrb2eYcZlr/iY24UMGQ7R/IAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Svn1LfzB; arc=none smtp.client-ip=45.254.49.253
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YUPQenCZ"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Svn1LfzB"
 DKIM-Signature: a=rsa-sha256;
-	b=YUPQenCZLsF1LQYjiZQWJFdQfS1EbqjWN9BC3pkl+b59EEc0AKT9zaaK7QXHnMHeqUzze+eoOwnlkAqs3jDvg5zZnnJDON97rw+/PW3ylHjHJokBVdssjTAvtTZg577oVMxSeiwG3Y8OiNFv7MDV4UU8oKSGDO0E1ehlRtRUBxM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=aKIFSG7psQm1vWjapk5w2XfwNBNv7IDfrqqRzIJzccQ=;
+	b=Svn1LfzBXD6+X08id4l9jK0W/Cla+KEeOVEdn7IGloLESmycgijpufkzijYmggBJ5spOLgBeGqUeFSEdc0N8UlAFTvIqp68PCaGCfjsXywmzn++Iqemx3up6RQA/vZiX/g/OcB5IoGskpHPuAtgVuDEJZXxxFi84o9UnXIZdCwY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=mgSI3a/7dMdZbLCNsqhcURBOepC3DqKjtYsqMJY17gk=;
 	h=date:mime-version:subject:message-id:from;
 Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id B04CA7E06F3;
-	Tue,  3 Sep 2024 15:37:04 +0800 (CST)
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 68C3B7E0292;
+	Tue,  3 Sep 2024 15:37:18 +0800 (CST)
 From: Ye Zhang <ye.zhang@rock-chips.com>
 To: Ye Zhang <ye.zhang@rock-chips.com>,
 	linus.walleij@linaro.org,
@@ -38,9 +38,9 @@ Cc: linux-rockchip@lists.infradead.org,
 	finley.xiao@rock-chips.com,
 	tim.chen@rock-chips.com,
 	elaine.zhang@rock-chips.com
-Subject: [PATCH v3 02/12] gpio: rockchip: release reference to device node
-Date: Tue,  3 Sep 2024 15:36:39 +0800
-Message-Id: <20240903073649.237362-3-ye.zhang@rock-chips.com>
+Subject: [PATCH v3 12/12] gpio: rockchip: replace mutex_lock() with guard()
+Date: Tue,  3 Sep 2024 15:36:49 +0800
+Message-Id: <20240903073649.237362-13-ye.zhang@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
 References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
@@ -52,37 +52,68 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhNQ1ZIQ0lITEweQxpKTE5WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUwaTFYZTkIZGUlCGh5JTR5WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
 	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91b6d0d68609cfkunmb04ca7e06f3
+X-HM-Tid: 0a91b6d10c2209cfkunm68c3b7e0292
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRg6Sxw5AjI3GklWPBMRFRlI
-	UQsaCjVVSlVKTElOSE9CS0lOQkpLVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUhNSzcG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pk06Qzo6GjI1FklRLBEfFQgt
+	Qw1PCTpVSlVKTElOSE9CS0hCTUNIVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSEtNQjcG
 
-Added a call to of_node_put(pctlnp) in rockchip_gpio_probe to properly
-release the reference to the device node, improving memory management
-and preventing potential leaks.
+Replacing mutex_lock with guard() simplifies the code and helps avoid
+deadlocks.
 
-Fixes: 936ee2675eee ("gpio/rockchip: add driver for rockchip gpio")
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 ---
- drivers/gpio/gpio-rockchip.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-rockchip.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 712258224eb3..5f60162baaeb 100644
+index 73e57efb46fc..d5c57617fc86 100644
 --- a/drivers/gpio/gpio-rockchip.c
 +++ b/drivers/gpio/gpio-rockchip.c
-@@ -715,6 +715,7 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
+@@ -765,20 +765,19 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
- 	pctldev = of_pinctrl_get(pctlnp);
-+	of_node_put(pctlnp);
- 	if (!pctldev)
- 		return -EPROBE_DEFER;
+-	ret = rockchip_get_bank_data(bank);
+-	if (ret)
+-		goto err_disabled_clk;
+-
+ 	/*
+ 	 * Prevent clashes with a deferred output setting
+ 	 * being added right at this moment.
+ 	 */
+-	mutex_lock(&bank->deferred_lock);
++	guard(mutex)(&bank->deferred_lock);
++	ret = rockchip_get_bank_data(bank);
++	if (ret)
++		goto err_disabled_clk;
  
+ 	ret = rockchip_gpiolib_register(bank);
+ 	if (ret) {
+ 		dev_err(bank->dev, "Failed to register gpio %d\n", ret);
+-		goto err_unlock;
++		goto err_disabled_clk;
+ 	}
+ 
+ 	while (!list_empty(&bank->deferred_pins)) {
+@@ -805,14 +804,11 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
+ 		kfree(cfg);
+ 	}
+ 
+-	mutex_unlock(&bank->deferred_lock);
+ 
+ 	platform_set_drvdata(pdev, bank);
+ 	dev_info(dev, "probed %pOF\n", np);
+ 
+ 	return 0;
+-err_unlock:
+-	mutex_unlock(&bank->deferred_lock);
+ err_disabled_clk:
+ 	if (bank->manual_clk_release)
+ 		clk_disable_unprepare(bank->clk);
 -- 
 2.34.1
 
