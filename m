@@ -1,255 +1,133 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D441DA30F;
-	Tue,  3 Sep 2024 22:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5E51EBFE4;
+	Tue,  3 Sep 2024 22:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401318; cv=none; b=ScMzUW803REi2y4bFL2Gyo3pXf5GMjhf/0EqiLyZeDhKXTplHu6COCAgfFOeqJI6kmATFQCdQ+UYO91RHrYM3HDMKHx64L9UZM4OP3D0KkU2HwW6Oyo3Kn6mYAd2rjKO4kl+W/o3hjxOZtSnNcjYfzH3P3kiwg4sfsyZMwDM6fA=
+	t=1725402406; cv=none; b=nDLxfs5UW/Qeh6He6KB0MfPwPE/grdeGGxDR469836Ph5SgumU4hoAfGwWtwNIUiRVMsk5Pg8SiAL0SyAljToD++j8XLm1LHmMbnYmYjFIgsok8ddRUnkgKoZKji4ICjPc7+bspNSnIForNeZKgGyPakq/1B4+KI7VxE/InvPM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401318; c=relaxed/simple;
-	bh=vyrhUKou0XD4nZWQsn66DthQrAeicawTIpdpcWCMhr4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qtIBHug9YEg1FqDaiN4/L6HmlaTyY3JlGcXNr/puSc9M5gRPWc8MCO3RT0yRhTTKZhZBh5qBpxMTqbQwyq5uKFWl0L+sg0HjcYrU7m35LqQ4nC2xAcVOCnmNQjeMTN+7+K7thQV3x/jaIXzT0qdRo7smtbDg77HM/SKUGooVZU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JcmyexsI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1725402406; c=relaxed/simple;
+	bh=YXQIagdDPc90ZbJET9jNpaM1MPJKmJ5Y5fngYc6zZ5E=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VZMM6QfOdfOIsPgcFMIvR2Co69DR7Vwe9M2ZEKtZZ6911mC8xz9L4Hl6YD6H7dv+Je6L9OfqOa1ZE4MtzfXdRAzUeYBwUmlHv08Bru2sfpZq77UfYVbB/QVYjrrDWC9kFf02JsvFpcfQcj60PoXPtwU5KMExDBb2qHgOT07xXiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZn4TZXV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JcmyexsI"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LhYK1004948;
-	Tue, 3 Sep 2024 22:03:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VJ5ksTVw82HBrOjZW1RnoU3D+LfVJFMZlBTSgU8rxyA=; b=JcmyexsIdEgimOW+
-	ENNWT0ZlPkhARdzfxHLV9UWXNFbAcnunV3oR5pcI4mnE8Srq9PumvHAUNBjLIFbt
-	95ecofD5nXhPSgUeSB/2dupYz2RPhLChitp94y0FSv4OZOygdyb8JN9qMITXbVrp
-	BLORZp4Iqhm31g3zuPKvXGjBgqdG/Q/q73r/RHv3tq5ahOU2ihQ8BK2Y8REIFOv7
-	aBWNpXMOao1qzC4slqTVYAS5HRhKkOAJGwdeVH9bfr/y4A7oxNDWp1SuNBUK5sQ6
-	+NYtrs2D6NfjGeKYZBnT24L0OfBkWmyFkdS4Q3nB6hPePFJyYuZW/FKxn1STbPGZ
-	KYFm7Q==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe3444-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 22:03:01 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483M2x0u002338
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 22:02:59 GMT
-Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 3 Sep 2024 15:02:55 -0700
-From: Nikunj Kela <quic_nkela@quicinc.com>
-To: <quic_nkela@quicinc.com>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
-        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>
-Subject: [PATCH v2 00/21] arm64: qcom: Introduce SA8255p Ride platform
-Date: Tue, 3 Sep 2024 15:02:19 -0700
-Message-ID: <20240903220240.2594102-1-quic_nkela@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828203721.2751904-1-quic_nkela@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZn4TZXV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE497C4CEC4;
+	Tue,  3 Sep 2024 22:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725402406;
+	bh=YXQIagdDPc90ZbJET9jNpaM1MPJKmJ5Y5fngYc6zZ5E=;
+	h=Date:From:To:Subject:In-Reply-To:From;
+	b=dZn4TZXVbXEzEwa3ibet6GkytN3NXh0+F+/hWh7n22CyMZmwuMO1drbR6aDqPSH/m
+	 1onS+XmaNIzxiX4h1AD6FfLhQyYnaF2/AgM8LQSsl2aVq3kh1VZZBtMEcyN3NWmoV7
+	 WlGawzRAr97kNfsueOFPzVcWLHcCL9fx1uyE4BVpWiZCD3Br+lCJ4EnLT86dFuTSFv
+	 RNtwJ1gX9LNZsCrEFoRM1ff4GhTGAT9H3wladciEnJy5WJx+dAMD0kSmMMoulZg4hk
+	 aulQSWoX0q7ifdHNpRfXx5NwOgTa64bW7nZm0ZcA6mpu5hGiXwivszhbdpATg3smEr
+	 PHbM0Q+6gtxrw==
+Date: Tue, 3 Sep 2024 17:26:44 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <20240903222644.GA126427@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rr1wmp4df3_Phh0IuAStRJcDv9BszwT_
-X-Proofpoint-ORIG-GUID: rr1wmp4df3_Phh0IuAStRJcDv9BszwT_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_10,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409030177
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zszcps6bnCcdFa54@apocalypse>
 
-This series enables the support for SA8255p Qualcomm SoC and Ride
-platform. This platform uses SCMI power, reset, performance, sensor
-protocols for resources(e.g. clocks, regulator, interconnect, phy etc.)
-management. SA8255p is a virtual platforms that uses Qualcomm smc/hvc
-transport driver.
+On Mon, Aug 26, 2024 at 09:51:02PM +0200, Andrea della Porta wrote:
+> On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
+> > On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
+> > > The of_pci_set_address() function parses devicetree PCI range
+> > > specifier assuming the address is 'sanitized' at the origin,
+> > > i.e. without checking whether the incoming address is 32 or 64
+> > > bit has specified in the flags.  In this way an address with no
+> > > OF_PCI_ADDR_SPACE_MEM64 set in the flags could leak through and
+> > > the upper 32 bits of the address will be set too, and this
+> > > violates the PCI specs stating that in 32 bit address the upper
+> > > bit should be zero.
 
-Multiple virtual SCMI instances are being used to achieve the parallelism.
-SCMI platform stack runs in SMP enabled VM hence allows platform to service
-multiple resource requests in parallel. Each device is assigned its own
-dedicated SCMI channel and Tx/Rx doorbells.
+> > I don't understand this code, so I'm probably missing something.  It
+> > looks like the interesting path here is:
+> > 
+> >   of_pci_prop_ranges
+> >     res = &pdev->resource[...];
+> >     for (j = 0; j < num; j++) {
+> >       val64 = res[j].start;
+> >       of_pci_set_address(..., val64, 0, flags, false);
+> >  +      if (OF_PCI_ADDR_SPACE_MEM64)
+> >  +        prop[1] = upper_32_bits(val64);
+> >  +      else
+> >  +        prop[1] = 0;
+> > 
+> > OF_PCI_ADDR_SPACE_MEM64 tells us about the size of the PCI bus
+> > address, but the address (val64) is a CPU physical address, not a PCI
+> > bus address, so I don't understand why of_pci_set_address() should use
+> > OF_PCI_ADDR_SPACE_MEM64 to clear part of the CPU address.
+> 
+> It all starts from of_pci_prop_ranges(), that is the caller of
+> of_pci_set_address().
 
-Resource operations are grouped together to achieve better abstraction
-and to reduce the number of requests being sent to SCMI platform(server)
-thus improving boot time KPIs. This design approach was presented during
-LinaroConnect 2024 conference[1].
+> val64 (i.e. res[j].start) is the address part of a struct resource
+> that has its own flags.  Those flags are directly translated to
+> of_pci_range flags by of_pci_get_addr_flags(), so any
+> IORESOURCE_MEM_64 / IORESOURCE_MEM in the resource flag will
+> respectively become OF_PCI_ADDR_SPACE_MEM64 /
+> OF_PCI_ADDR_SPACE_MEM32 in pci range.
 
-Architecture:
-------------
-                                                          +--------------------+
-                                                          |   Shared Memory    |
-                                                          |                    |
-                                                          | +----------------+ |                +----------------------------------+
-     +----------------------------+                     +-+->  ufs-shmem     <-+---+            |            Linux VM              |
-     |        Firmware VM         |                     | | +----------------+ |   |            |   +----------+   +----------+    |
-     |                            |                     | |                    |   |            |   |   UFS    |   |   PCIe   |    |
-     | +---------+ f +----------+ |                     | |                    |   |            |   |  Driver  |   |  Driver  |    |
-     | |Drivers  <---+  SCMI    | |        e            | |         |          |   |            |   +--+----^--+   +----------+    |
-     | | (clks,  | g | Server   +-+---------------------+ |                    |   |            |      |    |                      |
-     | |  vreg,  +--->          | |        h              |         |          |  b|k           |     a|   l|                      |
-     | |  gpio,  |   +--^-----+-+ |                       |                    |   |            |      |    |                      |
-     | |  phy,   |      |     |   |                       |         |          |   |            |  +---v----+----+  +----------+   |
-     | |  etc.)  |      |     |   |                       |                    |   +------------+--+  UFS SCMI   |  | PCIe SCMI|   |
-     | +---------+      |     |   |                       |                    |                |  |  INSTANCE   |  | INSTANCE |   |
-     |                  |     |   |                       |  +---------------+ |                |  +-^-----+-----+  +----------+   |
-     |                  |     |   |                       |  |  pcie-shmem   | |                |    |     |                       |
-     +------------------+-----+---+                       |  +---------------+ |                +----+-----+-----------------------+
-                        |     |                           |                    |                     |     |
-                        |     |                           +--------------------+                     |     |
-                       d|IRQ i|HVC                                                                  j|IRQ c|HVC
-                        |     |                                                                      |     |
-                        |     |                                                                      |     |
-+-----------------------+-----v----------------------------------------------------------------------+-----v------------------------------+
-|                                                                                                                                         |
-|                                                                                                                                         |
-|                                                                                                                                         |
-|                                                               HYPERVISOR                                                                |
-|                                                                                                                                         |
-|                                                                                                                                         |
-+-----------------------------------------------------------------------------------------------------------------------------------------+
+> What is advertised as 32 bit at the origin (val64) should not become
+> a 64 bit PCI address at the output of of_pci_set_address(), so the
+> upper 32 bit portion should be dropped. 
 
-        +--------+   +--------+                                                                         +----------+  +-----------+
-        | CLOCK  |   |  PHY   |                                                                         |   UFS    |  |   PCIe    |
-        +--------+   +--------+                                                                         +----------+  +-----------+
+> This is explicitly stated in [1] (see page 5), where a space code of 0b10
+> implies that the upper 32 bit of the address must be zeroed out.
 
+OK, I was confused and thought IORESOURCE_MEM_64 was telling us
+something about the *CPU* address, but it's actually telling us
+something about what *PCI bus* addresses are possible, i.e., whether
+it's a 32-bit BAR or a 64-bit BAR.
 
-This series is based on next-20240903.
+However, the CPU physical address space and the PCI bus address are
+not the same.  Generic code paths should account for that different by
+applying an offset (the offset will be zero on many platforms where
+CPU and PCI bus addresses *look* the same).
 
-[1]: https://resources.linaro.org/en/resource/wfnfEwBhRjLV1PEAJoDDte
+So a generic code path like of_pci_prop_ranges() that basically copies
+a CPU physical address to a PCI bus address looks broken to me.
 
----
-Changes in v2:
-  - Patch 1/21 - 11/21
-    - Added Reviewed-by tag
+Maybe my expectation of this being described in DT is mistaken.
 
-  - Patch 12/21
-    - Already applied in the maintainers tree
-
-  - Patch 13/21
-    - Modified subject line
-    - Fixed schema to include fallback
-
-  - Patch 14/21
-    - Added constraints
-
-  - Patch 15/21
-    - Modified schema to remove useless text
-   
-  - Patch 16/21
-    - Modified schema formatting
-    - Amended schema definition as advised
-
-  - Patch 17/21
-    - Moved allOf block after required
-    - Fixed formatting
-    - Modified schema to remove useless text
-
-  - Patch 18/21
-    - Fixed clock property changes
-
-  - Patch 19/21
-    - Fixed scmi nodename pattern
-
-  - Patch 20/21
-    - Modified subject line and description
-    - Added EPPI macro
-
-  - Patch 21/21
-    - Removed scmichannels label and alias
-    - Modified scmi node name to conform to schema
-    - Moved status property to be the last one in scmi instances
-    - Changed to lower case for cpu labels
-    - Added fallback compatible for tlmm node
-
-Nikunj Kela (21):
-  dt-bindings: arm: qcom: add the SoC ID for SA8255P
-  soc: qcom: socinfo: add support for SA8255P
-  dt-bindings: arm: qcom: add SA8255p Ride board
-  dt-bindings: firmware: qcom,scm: document support for SA8255p
-  dt-bindings: mailbox: qcom-ipcc: document the support for SA8255p
-  dt-bindings: watchdog: qcom-wdt: document support on SA8255p
-  dt-bindings: crypto: qcom,prng: document support for SA8255p
-  dt-bindings: interrupt-controller: qcom-pdc: document support for
-    SA8255p
-  dt-bindings: soc: qcom: aoss-qmp: document support for SA8255p
-  dt-bindings: arm-smmu: document the support on SA8255p
-  dt-bindings: mfd: qcom,tcsr: document support for SA8255p
-  dt-bindings: thermal: tsens: document support on SA8255p
-  dt-bindings: pinctrl: Add SA8255p TLMM
-  dt-bindings: cpufreq: qcom-hw: document support for SA8255p
-  dt-bindings: i2c: document support for SA8255p
-  dt-bindings: spi: document support for SA8255p
-  dt-bindings: serial: document support for SA8255p
-  dt-bindings: qcom: geni-se: document support for SA8255P
-  dt-bindings: firmware: arm,scmi: allow multiple virtual instances
-  dt-bindings: arm: GIC: add ESPI and EPPI specifiers
-  arm64: dts: qcom: Add reduced functional DT for SA8255p Ride platform
-
- .../devicetree/bindings/arm/qcom.yaml         |    6 +
- .../bindings/cpufreq/cpufreq-qcom-hw.yaml     |   16 +
- .../devicetree/bindings/crypto/qcom,prng.yaml |    1 +
- .../bindings/firmware/arm,scmi.yaml           |    2 +-
- .../bindings/firmware/qcom,scm.yaml           |    2 +
- .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |   33 +-
- .../interrupt-controller/qcom,pdc.yaml        |    1 +
- .../devicetree/bindings/iommu/arm,smmu.yaml   |    3 +
- .../bindings/mailbox/qcom-ipcc.yaml           |    1 +
- .../devicetree/bindings/mfd/qcom,tcsr.yaml    |    1 +
- .../bindings/pinctrl/qcom,sa8775p-tlmm.yaml   |    8 +-
- .../serial/qcom,serial-geni-qcom.yaml         |   53 +-
- .../bindings/soc/qcom/qcom,aoss-qmp.yaml      |    1 +
- .../bindings/soc/qcom/qcom,geni-se.yaml       |   45 +-
- .../bindings/spi/qcom,spi-geni-qcom.yaml      |   60 +-
- .../bindings/thermal/qcom-tsens.yaml          |    1 +
- .../bindings/watchdog/qcom-wdt.yaml           |    1 +
- arch/arm64/boot/dts/qcom/Makefile             |    1 +
- arch/arm64/boot/dts/qcom/sa8255p-pmics.dtsi   |   80 +
- arch/arm64/boot/dts/qcom/sa8255p-ride.dts     |  148 +
- arch/arm64/boot/dts/qcom/sa8255p-scmi.dtsi    | 2312 ++++++++++++++++
- arch/arm64/boot/dts/qcom/sa8255p.dtsi         | 2405 +++++++++++++++++
- drivers/soc/qcom/socinfo.c                    |    1 +
- include/dt-bindings/arm/qcom,ids.h            |    1 +
- .../interrupt-controller/arm-gic.h            |    2 +
- 25 files changed, 5169 insertions(+), 16 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-pmics.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-ride.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-scmi.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sa8255p.dtsi
-
-
-base-commit: 6804f0edbe7747774e6ae60f20cec4ee3ad7c187
--- 
-2.34.1
-
+Bjorn
