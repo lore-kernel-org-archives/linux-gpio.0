@@ -1,187 +1,96 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mail-m127161.xmail.ntesmail.com (mail-m127161.xmail.ntesmail.com [115.236.127.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA03719F428
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Sep 2024 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A471A42D8;
+	Tue,  3 Sep 2024 11:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725362582; cv=none; b=ZhQ7ku0Mux0nCzqWAyfutbHxb3AKy4CCNtqnbCJSlQBShhpuYVn6Z62h/K4dO7sB1y17ZBHIVSOOGLWyZgCcnHrV6GX7sH9cDqp0VOvrQfdIeqS0czWGjf2czPv0vw4Nguxth9WeDNRCpXdx1W8Abc1+1wCcD2nxiVyFFa9Punk=
+	t=1725364334; cv=none; b=USvKeROPM/5WaOtp6Gvov7GGY0OlwEd8+YvIo+eQessP/IAODAFG8pV6TDycPetrQxCqygALJtUzjw+mi0IZDUt/cmsW/XThLon6q2l0SpKLl96a0PtHCJED4JrQSiFDZZB1YWPCZXI+SBRWsuwInNvZ05S5BGms/+N7ais0izI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725362582; c=relaxed/simple;
-	bh=UDFlxgc0v/qSFZ2BY1CwXlpPeobZMig9cVxUU+6x5Wk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=VuavFzBJMjkbWfJUfA47TFg+VyvSis9TyHnHgtiWtXCsX8QlJRHCWcw5FW2d2cbktA6Noad0IKI1Ki/GA/MUUq/JidX/2o99RPoNuFUnZyuZzOXVoVLp9itNuqEsSIwFoFFgFaKL2oPdxpv1h57p/vltIqKLFID5TOkwa6VrlvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2wB3/yM; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725364334; c=relaxed/simple;
+	bh=vDLuhUeVXrHrHoFj8BTmI0s1heOW8xcV1RkNZSws1bY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iBymv6W9+4O6XZxwwnkkR/BDslAQn18RlAgXWIuoCX7Oevn5lq6u1mZBOD91uRzMLLPfEREdHdM96VozqQi3uSoguoNzy07Zn8JZFaBpLHisD5CAvdoNL6bVuFajTkGpKFZyqTKLWEE3clfakcmAB+fu3PP0wIzhiX+BkC1xRCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=fdJxs/RD; arc=none smtp.client-ip=115.236.127.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2wB3/yM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725362581; x=1756898581;
-  h=date:from:to:cc:subject:message-id;
-  bh=UDFlxgc0v/qSFZ2BY1CwXlpPeobZMig9cVxUU+6x5Wk=;
-  b=T2wB3/yMwipIHvdBaNbwNYCsThJkEOnyNJE0GeaB6/WfUVVyLJDwy21C
-   LC1qh7hAJJW9EkJrH1lxINCfbxcq4MWXd849HbIRxb0d2ikWqVFH80XML
-   ixhCqfGnlzyf1/RmTugXdsk3YaUSo9xVfITIs+acwFa2T6fVxkoIVaGka
-   QF0j29h/mbIq/6B0xM5lbKWhLVCDeVylcrwtbqanB+lBCrCZlwoVR/owN
-   TRdU3VEhSs9qwQ8RR4BlZoA2BA9KVZHZ+aJOa9/G89tRY/aYbGM2+zIeJ
-   o9WT1RtfswRVV9ayUZVGiDYSBXSNTXoVm8Z2vPrwEDYe8UGb/TKd1zOlQ
-   Q==;
-X-CSE-ConnectionGUID: Wkz/lS5gSROzr5zQpZougg==
-X-CSE-MsgGUID: WWqa1iolSJiuDNBH7tGndQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23828717"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="23828717"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 04:23:00 -0700
-X-CSE-ConnectionGUID: r0N8BG96TSaOQTL8R40auw==
-X-CSE-MsgGUID: viJ7KVEmQYmqXjLUSb31VA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="65084551"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 03 Sep 2024 04:22:59 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slRcf-0006Z9-1E;
-	Tue, 03 Sep 2024 11:22:57 +0000
-Date: Tue, 03 Sep 2024 19:22:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- a5135526426df5319d5f4bcd15ae57c45a97714b
-Message-ID: <202409031938.ZI8Rx2us-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="fdJxs/RD"
+DKIM-Signature: a=rsa-sha256;
+	b=fdJxs/RD6w9KtJuqvJJCxbAHwT4Kwppi4tvayV5svYfh8Olp2z3Uv7eiQLNGeMY4rb+PQkamZ7X6OshAtuxDGMqIUSd2HfeF2NlATlaMND/PvHyJeV035OfPu+he0rmgRIHnBoBpXKM6ye8KZum4eRxdiAuQieO+L3KtnQ1js/M=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=W9W3b1cC6JwIHwdDAYaUZzjm26fmoNzaEXMwpd0X3Lc=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id E54487E0574;
+	Tue,  3 Sep 2024 15:37:12 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: [PATCH v3 08/12] gpio: rockchip: explan the format of the GPIO version ID
+Date: Tue,  3 Sep 2024 15:36:45 +0800
+Message-Id: <20240903073649.237362-9-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkoYT1ZDTU8eTxoZHR0dTENWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a91b6d0f6a209cfkunme54487e0574
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRA6Lww*MDI3EklKLBI#FQ8q
+	FRQaFBVVSlVKTElOSE9CS0hPSk1LVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSU1ITjcG
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: a5135526426df5319d5f4bcd15ae57c45a97714b  gpio: modepin: Enable module autoloading
+Remove redundant comments and provide a detailed explanation of the
+GPIO version ID.
 
-elapsed time: 1274m
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-configs tested: 110
-configs skipped: 4
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arc                        nsim_700_defconfig   clang-20
-arc                        nsimosci_defconfig   clang-20
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                     davinci_all_defconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                      jornada720_defconfig   clang-20
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240903   gcc-12
-i386         buildonly-randconfig-002-20240903   gcc-12
-i386         buildonly-randconfig-003-20240903   gcc-12
-i386         buildonly-randconfig-004-20240903   gcc-12
-i386         buildonly-randconfig-005-20240903   gcc-12
-i386         buildonly-randconfig-006-20240903   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240903   gcc-12
-i386                  randconfig-002-20240903   gcc-12
-i386                  randconfig-003-20240903   gcc-12
-i386                  randconfig-004-20240903   gcc-12
-i386                  randconfig-005-20240903   gcc-12
-i386                  randconfig-006-20240903   gcc-12
-i386                  randconfig-011-20240903   gcc-12
-i386                  randconfig-012-20240903   gcc-12
-i386                  randconfig-013-20240903   gcc-12
-i386                  randconfig-014-20240903   gcc-12
-i386                  randconfig-015-20240903   gcc-12
-i386                  randconfig-016-20240903   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                         db1xxx_defconfig   clang-20
-mips                     loongson1b_defconfig   clang-20
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                        fsp2_defconfig   clang-20
-powerpc                       maple_defconfig   clang-20
-powerpc                 mpc834x_itx_defconfig   clang-20
-powerpc                      pcm030_defconfig   clang-20
-powerpc64                        alldefconfig   clang-20
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                ecovec24-romimage_defconfig   clang-20
-sh                        edosk7760_defconfig   clang-20
-sh                          r7780mp_defconfig   clang-20
-sh                           se7619_defconfig   clang-20
-sh                           se7721_defconfig   clang-20
-sh                   sh7724_generic_defconfig   clang-20
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 83df1632112d..04a24f1d77eb 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -27,9 +27,15 @@
+ #include "../pinctrl/core.h"
+ #include "../pinctrl/pinctrl-rockchip.h"
+ 
++/*
++ * Version ID Register
++ * Bits [31:24] - Major Version
++ * Bits [23:16] - Minor Version
++ * Bits [15:0]  - SVN Number
++ */
+ #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
+-#define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
+-#define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
++#define GPIO_TYPE_V2		(0x01000C2B)
++#define GPIO_TYPE_V2_1		(0x0101157C)
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
