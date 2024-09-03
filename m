@@ -1,117 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF916F315;
-	Tue,  3 Sep 2024 17:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383290; cv=none; b=EYJ+XPJ7ItgMo7rCGAWXK2trDEaP60stmV+baBxWzk/ZlF9OSVCXHoGmuAm/RA23s5hMaiNu4TL552I0DxafwGYfSgcw12w9ROD0Uh4olcI9yoTC+Cym01Yn15geGtH/f+ukyKT8SFCQ7nYdNPTz1EnXSHSL2hdyaKI3faqpPQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383290; c=relaxed/simple;
-	bh=9nNi3scBnr8Vk69ggkoW6jfBHFxQMg5IiD0KQUEmAqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S1Un+eWY6nrRKyWUEEL0xuNzfXmyxGpbU/5/IZ+Mjmk1Rwpdn5N4b2kQ5ZRGgN8oPk3irdoeW86QziGtxne65HPiW976waLStNxC1x6tOEKJcOxzB7x3FIdnS31JoTxZgBBekey/P/Di0j4OrnW8RRTutJ0cz5MDFxHka79W3XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nMW5qUla; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771C18BC3A;
+	Tue,  3 Sep 2024 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725384209; cv=pass; b=EOiYF+N8rHu4h85f1i74sFO/DQJF44t74aNAyxGDfGYTK4lbX0R+GMSbPOiELASxQ/v4kpRJsu/HzYfwKt508Y3OzwXKDH5qSMMCwyjo2pjbMo5AZd8msrEbsqLgZxDD4gj2w6QKnAOYiA8jOxh9Fvhtkut5ClZilAhrnL3J+vc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725384209; c=relaxed/simple;
+	bh=sNvkNTkQyaiNPWQjmkuwZf549NqTHwtFvXW9lBIvGX0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VIlOLMrubFXmHXfsvGanC0a37lsGPZqZzMNOhj+C+wfAPAG2Kl3d36gA9sBmDlooXQv6VZ7CaNrN65VNBF/H/K7s0w5zauxf7fx66qKg/P4262DknW4+X4gxUUO0FDLeh3Fn5tFbdw1SyEM/2BdVxrhI5Sq6VCElgbz7uG8PiRg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=dQy7SMxr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nMW5qUla"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725383289; x=1756919289;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9nNi3scBnr8Vk69ggkoW6jfBHFxQMg5IiD0KQUEmAqk=;
-  b=nMW5qUla2NHnVClno9wWecnC7D4Aw4my5Y2JF/z6G5yu/FBfFxzjJD29
-   aQ3+VfxZBH7UAjEX9OR4VZoxieih9FueF9wtLH5BX+txipW7Jx7t1dQho
-   L56XcQMNXCuYrAkoJM8rD7pIAuqPCecRZW7XClUZsug3ZF43ERm9OH5Sq
-   4jD0MLemLLeh/0BwWv12X31miGbn1/2THIQgpY+CX9mtFf8r3BoTbY5h1
-   +JvCSwDwqbWYPPvCtqkNUzMNzHJeQCrWpOIozvc8anc6pfDzB3VWtQ/c+
-   +Gnb8ZqHWbJizYFSAXqJaIFT6bZQSsQkyrYZROmRYmETzDnnVudreHIks
-   w==;
-X-CSE-ConnectionGUID: noc8U4/kTR2lDeHwuU86sw==
-X-CSE-MsgGUID: gjHU/CdLRouW15j0CCPpRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34661710"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34661710"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:08:08 -0700
-X-CSE-ConnectionGUID: WyKWepZKS1KLNJypnXhnhg==
-X-CSE-MsgGUID: VRY3WbaeRheXO9Iuq8ZfCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69837981"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2024 10:08:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 8A92FB34; Tue, 03 Sep 2024 20:07:55 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/3] pinctrl: intel: Replace ifdeffery by pm_sleep_ptr() macro
-Date: Tue,  3 Sep 2024 20:04:49 +0300
-Message-ID: <20240903170752.3564538-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
-References: <20240903170752.3564538-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="dQy7SMxr"
+ARC-Seal: i=1; a=rsa-sha256; t=1725384202; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EehSrZ8ElJ6N0Ljti7bAq92MT3FS6U2zxd7bMpiOcfRMDSkolwHFvLqnKiN0isLmvQJozxZetBOc32yVllwt8sqLukMDIYx0TddOuJw9Lp+szOtL1qquu5+261kGn7+hpg1fOME4Qiz7jOOjA9DF18VrAqMogW0cbhtM1fCthCo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725384202; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=; 
+	b=nmuvfjaKpKHqC/ZwYe1xzhGn5AV5n6IwxTb/EnzTCC2wO7wb6TaAVmPUb4K+sX41bDuh3A1UmybMfLGPUijDdGeJf70hhH9a4lE43k9tR7/pAJvHSI7GiEZmAGoSo44V6WC1g4QzU8v4CdGfgIOA6+JQjISYi983Sxc81rZaaX0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725384202;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=LYz0ycJpQXYT27KJy4PvXFLhezFhzDNpICkvUMqXgjU=;
+	b=dQy7SMxrw8H4+Nl4FEpPaRRfk7+mbXAEBp2lMiK/5l3D7062zRZKtGgLDwhMi6Uj
+	Vamm1EyBbdZWFaaHilh12PgEIl0zA4h3z4s/hZiOBRNEnFzH9sCTNYru2TpGynQSCHX
+	iTsSIeuYgvYbxHPx4pKY5/aixgqCBZFHHFZSxXQk=
+Received: by mx.zohomail.com with SMTPS id 172538420028422.02274509881522;
+	Tue, 3 Sep 2024 10:23:20 -0700 (PDT)
+Message-ID: <073a43d53e0befcb31adb1410d6dd0363c4911a2.camel@collabora.com>
+Subject: Re: [PATCH 1/2] gpio: mpc8xxx: order headers alphabetically
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	 <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 03 Sep 2024 18:23:17 +0100
+In-Reply-To: <20240903154533.101258-1-brgl@bgdev.pl>
+References: <20240903154533.101258-1-brgl@bgdev.pl>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Explicit ifdeffery is ugly and theoretically might be not synchronised
-with the rest of functions that are assigned via pm_sleep_ptr() macro.
-Replace ifdeffery by pm_sleep_ptr() macro to improve this.
+On Tue, 2024-09-03 at 17:45 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Cleanup the includes by putting them in alphabetical order.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> =C2=A0drivers/gpio/gpio-mpc8xxx.c | 22 +++++++++++-----------
+> =C2=A01 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-
+> mpc8xxx.c
+> index ab30c911c9d50..e084e08f54387 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -7,19 +7,19 @@
+> =C2=A0 */
+> =C2=A0
+> =C2=A0#include <linux/acpi.h>
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/spinlock.h>
+> -#include <linux/io.h>
+> -#include <linux/of.h>
+> -#include <linux/property.h>
+> -#include <linux/mod_devicetable.h>
+> -#include <linux/slab.h>
+> -#include <linux/irq.h>
+> -#include <linux/gpio/driver.h>
+> =C2=A0#include <linux/bitops.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/init.h>
+> =C2=A0#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> =C2=A0
+> =C2=A0#define MPC8XXX_GPIO_PINS	32
+> =C2=A0
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 7a790c437f68..bfe891522044 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1482,7 +1482,6 @@ static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
- 
- static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- {
--#ifdef CONFIG_PM_SLEEP
- 	const struct intel_pinctrl_soc_data *soc = pctrl->soc;
- 	struct intel_community_context *communities;
- 	struct intel_pad_context *pads;
-@@ -1497,7 +1496,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- 	if (!communities)
- 		return -ENOMEM;
- 
--
- 	for (i = 0; i < pctrl->ncommunities; i++) {
- 		struct intel_community *community = &pctrl->communities[i];
- 		u32 *intmask, *hostown;
-@@ -1519,7 +1517,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- 
- 	pctrl->context.pads = pads;
- 	pctrl->context.communities = communities;
--#endif
- 
- 	return 0;
- }
-@@ -1649,7 +1646,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 	if (irq < 0)
- 		return irq;
- 
--	ret = intel_pinctrl_pm_init(pctrl);
-+	ret = pm_sleep_ptr(intel_pinctrl_pm_init) ? intel_pinctrl_pm_init(pctrl) : 0;
- 	if (ret)
- 		return ret;
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
