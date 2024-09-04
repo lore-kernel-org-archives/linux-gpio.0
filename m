@@ -1,180 +1,101 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7081D9345;
-	Wed,  4 Sep 2024 12:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9201D9D6A
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Sep 2024 12:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725454169; cv=none; b=OQd+RVTEqP58RivJLrv/j+HyspRdBOHSZgbdMfXNKPLveaiWrVOVsZJrfu/1Mb0pe80BWVHqCefAesSpHzatrU01WCbN/f5ID+kC8MPkGvW14nZ2tw/Mb1L5wqCsdge7YbTsqiqcjZc4ZbWqcAg+u7gUqrnluPiMWGDLafLvraU=
+	t=1725454227; cv=none; b=TXDpfHujkQ5PGJ9hpzNRcIjX2/o2SU+1LXbgTV1FkEC0ghmayI6JZsFnwrvQAWLbyns4LNnuZ3+leD1SNI/R4+4zJti2owb5aEZ3itkJj8fF6VjZTRzy/PbCp5l0aYgdefmqgWsj/q8malSzYL97kTPOnoTlXGyK3eYWC5PovbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725454169; c=relaxed/simple;
-	bh=azGb5AfJAgiTEYDuQyHOzUW0J1SqZRGExsvO7T/TmwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gDcO4ceqHCD3Pk/O0wpENLXj7iQUPolfR0r7NCrD+2FIgfirhMPLjNm5pLd8oAQETWJ4WT02IZPuSsMMaa8C4KI9NunJkAqiCD0+tt3wTWDmNcU46oRMgqolGbEV88L6fxbk5Wn23EpFjCerKGVhh6fy2dcw9tClVl+NLR7Q3TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CIhWxk6F; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1725454227; c=relaxed/simple;
+	bh=3JA6BzeZ2wwF6ZHRV534RLQs/6frLZZtgR8mol8rRaw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Aep7EvhL2qmenWEMWxnGLe5Lrv9mTYJkRTA7oL7q5Ei0k3ejEm9VvqThLlzSVz+SJ4GbwoJVGV910Ulm/VAFUjVSI6YHVdO1Gk/znZ1cczCVT3TMdi49Rm2/+1u/9gK/kTfcHCNDE+3CoZg0wiGVPgCVhg70ez7WmMCLqHu1ME8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiBQ56yZ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CIhWxk6F"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 484AQ995011042;
-	Wed, 4 Sep 2024 12:48:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	drXNeLYBuC6sbfU/KpueXIJR614bjNyR90QeHlTxI98=; b=CIhWxk6FDSFZjc6U
-	s4yNP2NWiicy4BWh7FRdjAM1oGV5bEt5Cix1X8r5M+OOVCWAuWgEd7suY3ezFo75
-	lxx5TCCUNGtt+po2nNu6u3emICh526eLcsAtblWwAa+LxwNx+3uJ+MGxC20NdemZ
-	OP1vSagT5NOtB+pxmifksCkjEX/ZYr7hBqDRRZOnO8c2dQyrrPPSZz6V9mbhfACA
-	tbBotviD2HUeppvyVPo9GVi4eOouGm94No4AfUSBb8YyGK690uiU0Oq1GoSCB+7T
-	ACKVEoolrynf+BenOfVGkdKS6JR1UZgBb0h5oPXadNEVvYhKVo61LRcYF/2Dy2Mn
-	LCpPRQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buxfak5t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Sep 2024 12:48:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 484Cmdt9028666
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Sep 2024 12:48:39 GMT
-Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Sep 2024
- 05:48:36 -0700
-Message-ID: <b369bd73-ce2f-4373-8172-82c0cca53793@quicinc.com>
-Date: Wed, 4 Sep 2024 05:48:35 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiBQ56yZ"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20573eb852aso4967635ad.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Sep 2024 05:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725454225; x=1726059025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b5Tug3jQKHRZQfvl5s+z3GnhPMxuVquk+2KivxoQ0rQ=;
+        b=eiBQ56yZzESGXaKAoCvkKpMHp7SDmq3Bx46dYX52/rQPzbMmvd/22SSvpTvD6KtKzB
+         mZWLTpNucH0DWIvCfxTOXtXn0EotHAb44meG/ix7e4YSvbsmesgI20VgTSaUhDQ/gES2
+         BcbuSQnyfQaGoGs75PVRPyUJFXGjhTISjiz4WSoO6b4vxgLEJnUmG5k0OgLZv3cAkHzk
+         OYP000l/xZgbHTm3JVyjfSPlX+Har8slc7hgj3v7+GjSvJAiQ/e3WKdVyxz2jULGXgIY
+         wNYS/QfU+Bf6P1fHFJb+OoAMaQqwN7yJZ/cbQtnDzwM/N827CSsPUqxDTa/+6mOFrToR
+         VHaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725454225; x=1726059025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b5Tug3jQKHRZQfvl5s+z3GnhPMxuVquk+2KivxoQ0rQ=;
+        b=kIvEX1vIGtHI3RURhc6/WiMIv3GeGKeeD05zYEl4grSN1hCWqFEifj4jA4/1xEpb3K
+         O9yntXt/MgS6WVdxPUU7X37igPgOdxatc4P86etSqlTi9N71+6PlVj0XYspC6hCQHOhm
+         BGQ5c58SCShHkQOEaNuj0kNNziOkBaXHe2rHI1H5XL14D+dphDbQpw6lRepXwoVaEcyv
+         x/fVUOcAgDu3iYTZSGHDM3dRAZOWj6eDIf3hpQCHAws+o6s7IoHQXVGB4mqhH8TyHbOs
+         sgGtu7mWBmnXVgTVKU5TK08achzqmAixNg/NL4mpEusLDu7Wug+Y544QbIVhgjtUJtiw
+         +lKw==
+X-Gm-Message-State: AOJu0YwfqMtGxbx5q4ivNcUZTrcobPYIoB79RhzdbhpKonze8OP2eWEI
+	0JMDcTGOCJt35DU8oaH9ekeKNVXI6GH1ElfFK9JB5Yw3bZBkwtx0mrvPSg==
+X-Google-Smtp-Source: AGHT+IHLv6FzwyQpemEbmrxGLRm0YH3jge8FbzpvGQhMBkKo1ajg7Mf/j/hX4v5iX7YDXwbSfHhAWw==
+X-Received: by 2002:a17:902:ccc7:b0:205:5284:e510 with SMTP id d9443c01a7336-206b7d00211mr32484825ad.1.1725454224855;
+        Wed, 04 Sep 2024 05:50:24 -0700 (PDT)
+Received: from rigel.home.arpa ([203.63.211.120])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206b9367925sm9871915ad.244.2024.09.04.05.50.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 05:50:24 -0700 (PDT)
+From: Kent Gibson <warthog618@gmail.com>
+To: linux-gpio@vger.kernel.org,
+	brgl@bgdev.pl
+Cc: Kent Gibson <warthog618@gmail.com>
+Subject: [libgpiod][PATCH] dbus: update glib dependency to 2.80
+Date: Wed,  4 Sep 2024 20:50:14 +0800
+Message-Id: <20240904125014.262715-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/21] dt-bindings: spi: document support for SA8255p
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
-        <tglx@linutronix.de>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jassisinghbrar@gmail.com>, <lee@kernel.org>,
-        <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-1-quic_nkela@quicinc.com>
- <20240903220240.2594102-17-quic_nkela@quicinc.com>
- <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <sdxhnqvdbcpmbp3l7hcnsrducpa5zrgbmkykwfluhrthqhznxi@6i4xiqrre3qg>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7EhcKdCr4xy2lalYszDfkLbRKP5Nk-Ng
-X-Proofpoint-ORIG-GUID: 7EhcKdCr4xy2lalYszDfkLbRKP5Nk-Ng
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-04_10,2024-09-04_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- adultscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- bulkscore=0 mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409040096
+Content-Transfer-Encoding: 8bit
 
+The gpio-manager makes use of g_log_writer_default_set_debug_domains()
+which was added in glib 2.80, but the dependency in configure.ac is only
+glib 2.54. This results in compile errors when built with glib between 2.54
+and 2.80.
 
-On 9/3/2024 11:34 PM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 03, 2024 at 03:02:35PM -0700, Nikunj Kela wrote:
->> Add compatible representing spi support on SA8255p.
->>
->> Clocks and interconnects are being configured in firmware VM
->> on SA8255p platform, therefore making them optional.
->>
-> Please use standard email subjects, so with the PATCH keyword in the
-> title.  helps here to create proper versioned patches.
-Where did I miss PATCH keyword in the subject here? It says "[PATCH v2
-16/21] dt-bindings: spi: document support for SA8255p"
-> Another useful tool is b4. Skipping the PATCH keyword makes filtering of
-> emails more difficult thus making the review process less convenient.
->
->
->> CC: Praveen Talari <quic_ptalari@quicinc.com>
->> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->> ---
->>  .../bindings/spi/qcom,spi-geni-qcom.yaml      | 60 +++++++++++++++++--
->>  1 file changed, 56 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
->> index 2e20ca313ec1..75b52c0a7440 100644
->> --- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
->> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
->> @@ -25,10 +25,45 @@ description:
->>  
->>  allOf:
->>    - $ref: /schemas/spi/spi-controller.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: qcom,sa8255p-geni-spi
-> Not much improved. All my previous (v1) and other patch (i2c) comments
-> apply.
->> +    then:
->> +      required:
->> +        - power-domains
->> +        - power-domain-names
->> +
->> +      properties:
->> +        power-domains:
->> +          minItems: 2
->> +
->> +    else:
->> +      required:
->> +        - clocks
->> +        - clock-names
->> +
->> +      properties:
->> +        power-domains:
->> +          maxItems: 1
->> +
->> +        interconnects:
->> +          minItems: 2
->> +          maxItems: 3
->> +
->> +        interconnect-names:
->> +          minItems: 2
->> +          items:
->> +            - const: qup-core
->> +            - const: qup-config
->> +            - const: qup-memory
->>  
->>  properties:
->>    compatible:
->> -    const: qcom,geni-spi
->> +    enum:
->> +      - qcom,geni-spi
->> +      - qcom,sa8255p-geni-spi
-> You have entire commit msg to explain why this device's programming
-> model is not compatible with existing generic compatible which must
-> cover all variants (because it is crazy generic).
->
-> Best regards,
-> Krzysztof
+Update the glib dependency, and related dependencies, to 2.80.
 
-I will put more details in the description of the patch, though, I had
-put the description in the cover letter for this entire series.
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+---
+ configure.ac | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/configure.ac b/configure.ac
+index 1ac1002..aa915ef 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -258,10 +258,10 @@ AM_CONDITIONAL([WITH_BINDINGS_GLIB], [test "x$with_bindings_glib" = xtrue])
+ 
+ if test "x$with_bindings_glib" = xtrue
+ then
+-	PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.54])
+-	PKG_CHECK_MODULES([GOBJECT], [gobject-2.0 >= 2.54])
+-	PKG_CHECK_MODULES([GIO], [gio-2.0 >= 2.54])
+-	PKG_CHECK_MODULES([GIO_UNIX], [gio-unix-2.0 >= 2.54])
++	PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.80])
++	PKG_CHECK_MODULES([GOBJECT], [gobject-2.0 >= 2.80])
++	PKG_CHECK_MODULES([GIO], [gio-2.0 >= 2.80])
++	PKG_CHECK_MODULES([GIO_UNIX], [gio-unix-2.0 >= 2.80])
+ 	PKG_PROG_PKG_CONFIG([0.28])
+ 	PKG_CHECK_VAR([GLIB_MKENUMS], [glib-2.0], [glib_mkenums], [],
+ 		AC_MSG_ERROR([glib-mkenums not found - needed to build GLib bindings]))
+-- 
+2.39.2
 
->
