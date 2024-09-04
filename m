@@ -1,36 +1,36 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A9B1CC16B
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Sep 2024 09:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B5E1CEAA4
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Sep 2024 09:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725442611; cv=none; b=HyNbal126VS5Mm+1TzeyGG4iss9ec7wsfCfiSB7b3V7CUicz7JvDVDrGz1DRuwG7wH+pbuFdflZrjv2RVIXpDWIv0KsajUjB6FzHvXJAIDCILvgFPs7WzQJ5qm6ETN0YUMMnxA4tMGd/+qzZbeK3+lemL9btbKPm3oBsf7dH+Z8=
+	t=1725442612; cv=none; b=ryJvvP+rBc4Aa6DqHSs7YywJKWn1tCudwDDLSt58JdOpkxTx+ZEdzMDtlHMme3nZe8ZG9WG3UoGavJXHhpxoN18Ifv3mQ/IEVSW/nhTGbrOKJskzVOaXaEl5s84L3f0NHkZ/Bagu+hQ0wlgwEXk7AAn2mKwxyIIIePQWgGTpcUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725442611; c=relaxed/simple;
-	bh=afQ+r20bE1hZSsnheHCvqeE8vwKMkWi6rg8PfJIrnoA=;
+	s=arc-20240116; t=1725442612; c=relaxed/simple;
+	bh=l3fkp/4GQjcqP4z7z937JQufbYMGHyjTSLHMtlEdIkQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ar9oNlMoEJvIqeHnMdgth30HXR5fEOoiH++QBlsx399YZ9G3Bj+Z1AVvs6Aqei4cva0yMOY3MaKkUa/UVQc/A/WTNupekYcMNagOz67+Hyfz7mkqH2A+CAvErNkEA0oGJnou96m5MPBadayT2/rkvF3BcLTuoXUZA+HpqTUJCW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=p8hz7/O4wQWCZ0INPg1rWwh0hdERlg3Uqm0D0zry5KvDSOrmEN0xIhbIodwjuaOPAXRUw8Yd948uGgv9gRtxHMCrSWiiwdldZPb89PBY3Zx8CzLNrMwLQREinL/zUfM0V/6EGa6bGZeKZ9ikN43QWtmZ4u71tdTc7PF2SMww240=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzHNZ2nmWz1HJ1D;
-	Wed,  4 Sep 2024 17:33:18 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WzHQ74wxKzgYvK;
+	Wed,  4 Sep 2024 17:34:39 +0800 (CST)
 Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7B7E1402C6;
-	Wed,  4 Sep 2024 17:36:45 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id DCD09180087;
+	Wed,  4 Sep 2024 17:36:46 +0800 (CST)
 Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
  (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Sep
- 2024 17:36:45 +0800
+ 2024 17:36:46 +0800
 From: Zhang Zekun <zhangzekun11@huawei.com>
 To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <vz@mleia.com>,
 	<linux-gpio@vger.kernel.org>
 CC: <zhangzekun11@huawei.com>
-Subject: [PATCH v2 1/4] gpio: cadence: Use helper function devm_clk_get_enabled()
-Date: Wed, 4 Sep 2024 17:23:08 +0800
-Message-ID: <20240904092311.9544-2-zhangzekun11@huawei.com>
+Subject: [PATCH v2 3/4] gpio: mb86s7x: Use helper function devm_clk_get_optional_enabled()
+Date: Wed, 4 Sep 2024 17:23:10 +0800
+Message-ID: <20240904092311.9544-4-zhangzekun11@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240904092311.9544-1-zhangzekun11@huawei.com>
 References: <20240904092311.9544-1-zhangzekun11@huawei.com>
@@ -44,96 +44,77 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemf500003.china.huawei.com (7.202.181.241)
 
-devm_clk_get() and clk_prepare_enable() can be replaced by helper
-function devm_clk_get_enabled(). Let's use devm_clk_get_enabled() to
-simplify code and avoid calling clk_disable_unprepare().
+devm_clk_get_optional() and clk_prepare_enable() can be replaced by helper
+function devm_clk_get_optional_enabled(). Let's simplify code with use of
+devm_clk_get_optional_enabled() and avoid calling clk_disable_unprepare().
 
 Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
 ---
- drivers/gpio/gpio-cadence.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+v2: Fix mistakes in commit message. 
 
-diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
-index 6a439cf78459..1b8ffd0ddab6 100644
---- a/drivers/gpio/gpio-cadence.c
-+++ b/drivers/gpio/gpio-cadence.c
-@@ -31,7 +31,6 @@
- 
- struct cdns_gpio_chip {
+ drivers/gpio/gpio-mb86s7x.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
+index 7fb298b4571b..ccbb63c21d6f 100644
+--- a/drivers/gpio/gpio-mb86s7x.c
++++ b/drivers/gpio/gpio-mb86s7x.c
+@@ -35,7 +35,6 @@
+ struct mb86s70_gpio_chip {
  	struct gpio_chip gc;
--	struct clk *pclk;
- 	void __iomem *regs;
- 	u32 bypass_orig;
+ 	void __iomem *base;
+-	struct clk *clk;
+ 	spinlock_t lock;
  };
-@@ -155,6 +154,7 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 	int ret, irq;
- 	u32 dir_prev;
- 	u32 num_gpios = 32;
+ 
+@@ -157,6 +156,7 @@ static int mb86s70_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
+ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mb86s70_gpio_chip *gchip;
 +	struct clk *clk;
+ 	int ret;
  
- 	cgpio = devm_kzalloc(&pdev->dev, sizeof(*cgpio), GFP_KERNEL);
- 	if (!cgpio)
-@@ -203,21 +203,14 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 	cgpio->gc.request = cdns_gpio_request;
- 	cgpio->gc.free = cdns_gpio_free;
+ 	gchip = devm_kzalloc(&pdev->dev, sizeof(*gchip), GFP_KERNEL);
+@@ -169,13 +169,9 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gchip->base))
+ 		return PTR_ERR(gchip->base);
  
--	cgpio->pclk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(cgpio->pclk)) {
--		ret = PTR_ERR(cgpio->pclk);
-+	clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
- 		dev_err(&pdev->dev,
- 			"Failed to retrieve peripheral clock, %d\n", ret);
- 		goto err_revert_dir;
- 	}
+-	gchip->clk = devm_clk_get_optional(&pdev->dev, NULL);
+-	if (IS_ERR(gchip->clk))
+-		return PTR_ERR(gchip->clk);
+-
+-	ret = clk_prepare_enable(gchip->clk);
+-	if (ret)
+-		return ret;
++	clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
  
--	ret = clk_prepare_enable(cgpio->pclk);
+ 	spin_lock_init(&gchip->lock);
+ 
+@@ -193,11 +189,9 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
+ 	gchip->gc.base = -1;
+ 
+ 	ret = gpiochip_add_data(&gchip->gc, gchip);
 -	if (ret) {
--		dev_err(&pdev->dev,
--			"Failed to enable the peripheral clock, %d\n", ret);
--		goto err_revert_dir;
+-		dev_err(&pdev->dev, "couldn't register gpio driver\n");
+-		clk_disable_unprepare(gchip->clk);
+-		return ret;
 -	}
--
- 	/*
- 	 * Optional irq_chip support
- 	 */
-@@ -234,7 +227,7 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 					     GFP_KERNEL);
- 		if (!girq->parents) {
- 			ret = -ENOMEM;
--			goto err_disable_clk;
-+			goto err_revert_dir;
- 		}
- 		girq->parents[0] = irq;
- 		girq->default_type = IRQ_TYPE_NONE;
-@@ -244,7 +237,7 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 	ret = devm_gpiochip_add_data(&pdev->dev, &cgpio->gc, cgpio);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
--		goto err_disable_clk;
-+		goto err_revert_dir;
- 	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "couldn't register gpio driver\n");
  
- 	cgpio->bypass_orig = ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE);
-@@ -259,9 +252,6 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, cgpio);
- 	return 0;
+ 	acpi_gpiochip_request_interrupts(&gchip->gc);
  
--err_disable_clk:
--	clk_disable_unprepare(cgpio->pclk);
--
- err_revert_dir:
- 	iowrite32(dir_prev, cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
+@@ -210,7 +204,6 @@ static void mb86s70_gpio_remove(struct platform_device *pdev)
  
-@@ -273,7 +263,6 @@ static void cdns_gpio_remove(struct platform_device *pdev)
- 	struct cdns_gpio_chip *cgpio = platform_get_drvdata(pdev);
- 
- 	iowrite32(cgpio->bypass_orig, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
--	clk_disable_unprepare(cgpio->pclk);
+ 	acpi_gpiochip_free_interrupts(&gchip->gc);
+ 	gpiochip_remove(&gchip->gc);
+-	clk_disable_unprepare(gchip->clk);
  }
  
- static const struct of_device_id cdns_of_ids[] = {
+ static const struct of_device_id mb86s70_gpio_dt_ids[] = {
 -- 
 2.17.1
 
