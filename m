@@ -1,126 +1,430 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1261313CFA1;
-	Mon, 16 Sep 2024 06:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EC377F01;
+	Mon, 16 Sep 2024 06:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726469296; cv=none; b=tBaU1VEcEqqEijX/pN4VuisrN9vsZylRnkyMiNekVdYseQwJfH+ZUFqPy6Tq+xtD2cmhDEi9f4Kk2eOEtAk58gWO6Ax2fBkDgzdzmvb9t4cm1NaTTqYKwXJ5PVvxXWN+ADbiCMh2DxzIeRVHjxssM7sz/j5vqkif8Cp6x0kCK2w=
+	t=1726469355; cv=none; b=PoJmcEf1VxelKj6Y+VaOU3a2k5pZGavO6WJ/fAejb/bwNdosQEKXdqDQ9fInmebnQLgX3pJ12qynkrzkNiTmD9FPXuepoBwZAhcEfVkF/BpAvNgXHmnKKuGo1yUT4VoaS1fOv2sERm9992Hf80wZDlZcmOJCM5TJIfYp2FALF6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726469296; c=relaxed/simple;
-	bh=V5pOIKNK/iaYsbW5aFd2nxQlgjiwL2xKi+uzlHVVSLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jWxDPTXdSgX3bIUctn3Dt4Ckl3a7YVhaPwGD8Tyy9MAEA4q+jyfFsTFqpYvHZtTXE4hl7rXLchB0DVLDYMrRu1JQPmPpqw3UIWEZQTtNiWjLFAW43IMrYgLUQ4uha3rl7v+xRxDobpzbZZa07aLyqJpTQoFUhBpP+0CatCa0zF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpidWDCV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726469355; c=relaxed/simple;
+	bh=OuCf5XtUpLEJAaXpvuO13tnAB9M9h8/21ajr7rCfodA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=N8W9QrgS3PYQGxuXNjIrKF6qYjJjiwK9oW9bMPOaJUDmTQFKNue1VVcUrT52xr57WqrQZbC4grtXOmCCKuwfrWkKjVqNbpO6GaYXN7rD8y/elEQMBlw5O4X6zegvb67vdiF7keGFc0zcjUTBRjK7gsgLEZggltaPYLLuVL9lmPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=B8Xgwcoo; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpidWDCV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB561C4CEC4;
-	Mon, 16 Sep 2024 06:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726469295;
-	bh=V5pOIKNK/iaYsbW5aFd2nxQlgjiwL2xKi+uzlHVVSLc=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
-	b=qpidWDCVMKahZQWfPqTbqjccBRhUCSoWLPEu1duJiIAMaF5lMLq4nJ0NBEQ4UYAbJ
-	 5sYQpW01tSP9ZPBDqPpsoqnPiQCVoJHgxfTW0CoF5D4AvzTIEFSSIMH6fCSX9sBt0/
-	 knnN/1K0umkdq52aiFsq0n0OrDNC5VujVwI2Bo8Dqbj2x5fxAgGEWX4airQqa3R+S0
-	 8JbydBPNK/R5e0NX+a0LO3znSfXDiw5xoS2rT3Nlx+J6w8olNIu5n7RtX1z2yfSTo/
-	 05sKuYhr45aw9mp5G852Fdt3zQ6j/HFfqeBbSZll1sRqMzHfbbn31YVbQeJjj635N8
-	 qPoQaw2oGzo7Q==
-Message-ID: <39f7ad59-f853-4a98-8832-d6d7b5a50ad6@kernel.org>
-Date: Mon, 16 Sep 2024 08:48:03 +0200
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="B8Xgwcoo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=JOP8q
+	SR7Z3yhaJZZrM54f9DxjIHXIEkaJJZCRMA+NSQ=; b=B8XgwcooT3tZy456I8T6E
+	2Xa/rMuLaQE1GqK7drij3MRffnHdtA3yQBUeqRugXjkv5CIzMYBdN4hPCEiTjBzx
+	0FcWEd3b497RwjwFpHvlNKSCpKDcivbSWOFyzvAVn+AdCTGoKUgm6HJxYCtLJCtO
+	IuwbeTzlmd5hkYPQJs7fyk=
+Received: from jean.localdomain (unknown [27.18.168.209])
+	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDHD2du1OdmyQfeBg--.30056S3;
+	Mon, 16 Sep 2024 14:47:13 +0800 (CST)
+From: Ze Huang <18771902331@163.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Ze Huang <18771902331@163.com>,
+	Yangyu Chen <cyy@cyyself.name>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [RESEND PATCH 3/3] riscv: dts: canaan: Add k230's pinctrl node
+Date: Mon, 16 Sep 2024 14:47:05 +0800
+Message-ID: <20240916064706.318793-2-18771902331@163.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20240916063021.311721-1-18771902331@163.com>
+References: <20240916063021.311721-1-18771902331@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/21] include: dt-binding: clock: add adi clock header
- file
-To: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Greg Malysa <greg.malysa@timesys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Utsav Agarwal <Utsav.Agarwal@analog.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>,
- Andi Shyti <andi.shyti@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Olof Johansson <olof@lixom.net>, soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-serial@vger.kernel.org, adsp-linux@analog.com,
- Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-6-458fa57c8ccf@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240912-test-v1-6-458fa57c8ccf@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHD2du1OdmyQfeBg--.30056S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtw15Ww1DXr4Dtr4fKF1UAwb_yoW3ZF1xpF
+	WS9rn3K34j9rWrK3y0vr1jgF1UWF4q9r1rK3srKry7tw10gFs5K3s5Cr1YqFn8ur1Yk34j
+	g395Zw4Ivrs7JwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRvPfLUUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiNwBcomXAnRlTLAADsU
 
-On 12/09/2024 20:24, Arturs Artamonovs via B4 Relay wrote:
-> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
-> 
-> Add adi clock driver header file
-> 
-> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
-> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
-> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
-> ---
->  include/dt-bindings/clock/adi-sc5xx-clock.h | 93 +++++++++++++++++++++++++++++
+Add pinctrl device, containing default config for uart, pwm, iis, iic and
+mmc.
 
-Also, filename as compatible, which would be easily visible if you
-organized the patches correctly.
+Signed-off-by: Ze Huang <18771902331@163.com>
+---
+ arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi | 316 +++++++++++++++++++
+ arch/riscv/boot/dts/canaan/k230-pinctrl.h    |  18 ++
+ arch/riscv/boot/dts/canaan/k230.dtsi         |   2 +
+ 3 files changed, 336 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
+ create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
 
-Best regards,
-Krzysztof
+diff --git a/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
+new file mode 100644
+index 000000000000..0737f50d2868
+--- /dev/null
++++ b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
+@@ -0,0 +1,316 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++/*
++ * Copyright (C) 2024 Ze Huang <18771902331@163.com>
++ */
++#include "k230-pinctrl.h"
++
++/ {
++	soc {
++		pinctrl: pinctrl@91105000 {
++			compatible = "canaan,k230-pinctrl";
++			reg = <0x0 0x91105000 0x0 0x100>;
++
++			jtag_pins: jtag-pins {
++				jtag-tck-cfg {
++					pinmux = <K230_PINMUX(2, 1)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-pull-down;
++					input-schmitt-enable;
++				};
++
++				jtag-tdi-cfg {
++					pinmux = <K230_PINMUX(3, 1)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-disable;
++				};
++
++				jtag-tdo-cfg {
++					pinmux = <K230_PINMUX(4, 1)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++				};
++
++				jtag-tms-cfg {
++					pinmux = <K230_PINMUX(5, 1)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-pull-up;
++				};
++			};
++
++			uart2_pins: uart2-pins {
++				uart2-pins-cfg {
++					pinmux = <K230_PINMUX(5, 3)>, /* uart2 txd */
++						 <K230_PINMUX(6, 3)>; /* uart2 rxd */
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-disable;
++				};
++			};
++
++			pwm2_pins: pwm2-pins {
++				pwm2-pin-cfg {
++					pinmux = <K230_PINMUX(7, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			pwm3_pins: pwm3-pins {
++				pwm3-pin-cfg {
++					pinmux = <K230_PINMUX(8, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			pwm4_pins: pwm4-pins {
++				pwm4-pin-cfg {
++					pinmux = <K230_PINMUX(9, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			iis_pins: iis-pins {
++				iis-clk-cfg {
++					pinmux = <K230_PINMUX(32, 2)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++				};
++
++				iis-ws-cfg {
++					pinmux = <K230_PINMUX(33, 2)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++				};
++
++				iis-din0-cfg {
++					pinmux = <K230_PINMUX(34, 2)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-disable;
++				};
++
++				iis-dout0-cfg {
++					pinmux = <K230_PINMUX(35, 2)>;
++					slew-rate = <0>;
++					drive-strength = <4>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++				};
++			};
++
++			uart4_pins: uart4-pins {
++				uart4-txd-cfg {
++					pinmux = <K230_PINMUX(36, 4)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++
++				uart4-rxd-cfg {
++					pinmux = <K230_PINMUX(37, 4)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			uart0_pins: uart0-pins {
++				uart0-txd-cfg {
++					pinmux = <K230_PINMUX(38, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++
++				uart0-rxd-cfg {
++					pinmux = <K230_PINMUX(39, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			iic1_pins: iic1-pins {
++				iic1-pins-cfg {
++					pinmux = <K230_PINMUX(40, 2)>, /* iic1 scl */
++						 <K230_PINMUX(41, 2)>; /* iic1 sda */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++			};
++
++			iic3_pins: iic3-pins {
++				iic3-pins-cfg {
++					pinmux = <K230_PINMUX(44, 2)>, /* iic3 scl */
++						 <K230_PINMUX(45, 2)>; /* iic3 sda */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++			};
++
++			iic4_pins: iic4-pins {
++				iic4-pins-cfg {
++					pinmux = <K230_PINMUX(46, 3)>, /* iic4 scl */
++						 <K230_PINMUX(47, 3)>; /* iic4 sda */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++			};
++
++			iic0_pins: iic0-pins {
++				iic0-pins-cfg {
++					pinmux = <K230_PINMUX(48, 3)>, /* iic0 scl */
++						 <K230_PINMUX(49, 3)>; /* iic0 sda */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_1V8>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++			};
++
++			uart3_pins: uart3-pins {
++				uart3-txd-cfg {
++					pinmux = <K230_PINMUX(50, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++
++				uart3-rxd-cfg {
++					pinmux = <K230_PINMUX(51, 1)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					input-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			key_pins: key-pins {
++				key-pins-cfg {
++					pinmux = <K230_PINMUX(52, 0)>, /* key0 */
++						 <K230_PINMUX(53, 0)>; /* key1 */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					input-enable;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++			};
++
++			mmc1_pins: mmc1-pins {
++				mmc1-cmd-cfg {
++					pinmux = <K230_PINMUX(54, 2)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++
++				mmc1-clk-cfg {
++					pinmux = <K230_PINMUX(55, 2)>;
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					output-enable;
++					bias-disable;
++					input-schmitt-enable;
++				};
++
++				mmc1-data-cfg {
++					pinmux = <K230_PINMUX(56, 2)>, /* mmc1 data0 */
++						 <K230_PINMUX(57, 2)>, /* mmc1 data1 */
++						 <K230_PINMUX(58, 2)>, /* mmc1 data2 */
++						 <K230_PINMUX(59, 2)>; /* mmc1 data3 */
++					slew-rate = <0>;
++					drive-strength = <7>;
++					power-source = <K230_MSC_3V3>;
++					input-enable;
++					output-enable;
++					bias-pull-up;
++					input-schmitt-enable;
++				};
++			};
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/canaan/k230-pinctrl.h b/arch/riscv/boot/dts/canaan/k230-pinctrl.h
+new file mode 100644
+index 000000000000..f240a980f37a
+--- /dev/null
++++ b/arch/riscv/boot/dts/canaan/k230-pinctrl.h
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++/*
++ * Copyright (C) 2024 Canaan Bright Sight Co. Ltd
++ * Copyright (C) 2024 Ze Huang <18771902331@163.com>
++ */
++
++#ifndef _K230_PINCTRL_H
++#define _K230_PINCTRL_H
++
++#define K230_MSC_3V3 0
++#define K230_MSC_1V8 1
++
++#define BANK_VOLTAGE_DEFAULT       K230_MSC_1V8
++#define BANK_VOLTAGE_IO50_IO61     K230_MSC_3V3
++
++#define K230_PINMUX(pin, mode) (((pin) << 8) | (mode))
++
++#endif /* _K230_PINCTRL_H */
+diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
+index 95c1a3d8fb11..a9354e538642 100644
+--- a/arch/riscv/boot/dts/canaan/k230.dtsi
++++ b/arch/riscv/boot/dts/canaan/k230.dtsi
+@@ -140,3 +140,5 @@ uart4: serial@91404000 {
+ 		};
+ 	};
+ };
++
++#include "k230-pinctrl.dtsi"
+-- 
+2.46.1
 
