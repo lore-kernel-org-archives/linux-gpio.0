@@ -1,91 +1,119 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53017BEDB;
-	Tue, 17 Sep 2024 17:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA63F8248C;
+	Tue, 17 Sep 2024 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726592469; cv=none; b=kDEcfK1eXNK1dWp5YYj8BXl6+OcozMt0YeIJsjJ+AcZwZfzZGHX4Au5njKGpmQo2ATuhY7DPsIXySDiGjmeF8HAcwp4SC6CNMN0prXUT3PCkvBL3eQJ9+HsFstptAEbKdx4nH+jc66LCoDsTkDAxtHgy1Ssqm09O/PJjPdkMzug=
+	t=1726594402; cv=none; b=m8hRJS9FAYlVvdyoPcIG5gTaT0UglXzjLi/6KO/A6TNhuy5i6ZmXt/yw28fENDI2Rf5d7D6SpayrIo6W0nE675ZrGrM14BVD/YUTPBRfYlvKfoCeHDEmww8vP7CnujGUjkb+3SjGzJkS+Qmiilh15c2nLoTQ5iKwUz2sQads/5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726592469; c=relaxed/simple;
-	bh=jvbcCJBr52FpyfBIzVczon1Y5B3UNMHZEqplRqigoKA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IDnWQ/vQnGoJ291LpERNa0bGtwLYAZ5w6MxyMJ/qFUbU0TC8FIuVbG89NkgpxwGpgpzktSfupnZnLQvStGwqH5zl6Bx0PYhaBEPpyOhX1QalZvRFGozTKgUgVEWvm6pYnJKDSO3bXJ6BBrDokBQwbGOkXv2mAfkMx42OGLo0VGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fdYmEkTm; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fdYmEkTm"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 77891FF806;
-	Tue, 17 Sep 2024 17:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726592459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0/hSb2bZCJGX1P0YzRSMvwqgG2+dprUxtsLtf7xEdZk=;
-	b=fdYmEkTmSpt+G7KEK2Jm5TSA95M0WqEDCpUzyCQ/5yDv2kkktQJfuQ2W1nDh8AB6k0JZQC
-	HS1j7quwAJm2R/fAvFPnr8JkP81jpjDtUu36rJT+Nc0blGKecFpisUIFg/m5TpqQzq9kK9
-	mchmy2BZXPQPRuNmgzIng0p2XnL0LdzOktFTVKVO0wHXWY6MQQrRfCMTJw6zS6ORUmokDu
-	FUNPKRv3l/yNJ9XVr6hbHB8n/wAeEn+ggl2ujY6WHjgYSenPbDkTac8GkoNR5YKNMiGYpe
-	Cha2bqxLVlJp4MGfV66IjNB6FpBRoeXwYQLnF4P4bTYB+eS3kSSxyg2Uy9iSJw==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Tue, 17 Sep 2024 19:00:51 +0200
-Subject: [PATCH v2 5/5] MAINTAINERS: Add entry for Congatec Board
- Controller
+	s=arc-20240116; t=1726594402; c=relaxed/simple;
+	bh=zn7mr17iND6Qec4B93T1SZ0t0V+QUf+1/BFKuoV2TzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=argUGOj0vizD4SzAIfpl7Enk42WvsnTVjGZAk1jHlzyNGf/7ub7HfPLBb3tw/gXj7VW2zm45troEigHRxvq/qjcGBNfxKdr6AWC+dw5jAfDOVmFstE89GHv4qFDKkM0YoiatZ2r7PCLi53B2vAWfcEf5STnAlpwFvm9WZ9HY97M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.10,235,1719846000"; 
+   d="scan'208";a="222945896"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2024 02:33:18 +0900
+Received: from mulinux.example.org (unknown [10.226.92.130])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0CDBD4011F7F;
+	Wed, 18 Sep 2024 02:33:15 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/6] pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
+Date: Tue, 17 Sep 2024 18:32:45 +0100
+Message-Id: <20240917173249.158920-3-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
+References: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240503-congatec-board-controller-v2-5-681511a01c8f@bootlin.com>
-References: <20240503-congatec-board-controller-v2-0-681511a01c8f@bootlin.com>
-In-Reply-To: <20240503-congatec-board-controller-v2-0-681511a01c8f@bootlin.com>
-To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.12.0
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Add the Congatec Board Controller drivers and header as Maintained by
-myself.
+The RZ/V2H(P) has 16 IRQ interrupts, while every other platforms
+has 8, and this affects the start index of TINT interrupts
+(1 + 16 = 17, rather than 1 + 8 = 9).
+Macro RZG2L_TINT_IRQ_START_INDEX cannot work anymore, replace
+it with a new member within struct rzg2l_hwcfg.
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cc40a9d9b8cd..63c61ecf9e0c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5653,6 +5653,15 @@ F:	fs/configfs/
- F:	include/linux/configfs.h
- F:	samples/configfs/
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 5a403915fed2..0aba75dce229 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -168,7 +168,6 @@
+ #define RZG2L_PIN_ID_TO_PIN(id)		((id) % RZG2L_PINS_PER_PORT)
  
-+CONGATEC BOARD CONTROLLER MFD DRIVER
-+M:	Thomas Richard <thomas.richard@bootlin.com>
-+S:	Maintained
-+F:	drivers/gpio/gpio-cgbc.c
-+F:	drivers/i2c/busses/i2c-cgbc.c
-+F:	drivers/mfd/cgbc-core.c
-+F:	drivers/watchdog/cgbc_wdt.c
-+F:	include/linux/mfd/cgbc.h
-+
- CONSOLE SUBSYSTEM
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- S:	Supported
-
+ #define RZG2L_TINT_MAX_INTERRUPT	32
+-#define RZG2L_TINT_IRQ_START_INDEX	9
+ #define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
+ 
+ /* Custom pinconf parameters */
+@@ -251,6 +250,7 @@ enum rzg2l_iolh_index {
+  * @func_base: base number for port function (see register PFC)
+  * @oen_max_pin: the maximum pin number supporting output enable
+  * @oen_max_port: the maximum port number supporting output enable
++ * @tint_start_index: the start index for the TINT interrupts
+  */
+ struct rzg2l_hwcfg {
+ 	const struct rzg2l_register_offsets regs;
+@@ -262,6 +262,7 @@ struct rzg2l_hwcfg {
+ 	u8 func_base;
+ 	u8 oen_max_pin;
+ 	u8 oen_max_port;
++	unsigned int tint_start_index;
+ };
+ 
+ struct rzg2l_dedicated_configs {
+@@ -2379,7 +2380,7 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+ 
+ 	rzg2l_gpio_irq_endisable(pctrl, child, true);
+ 	pctrl->hwirq[irq] = child;
+-	irq += RZG2L_TINT_IRQ_START_INDEX;
++	irq += pctrl->data->hwcfg->tint_start_index;
+ 
+ 	/* All these interrupts are level high in the CPU */
+ 	*parent_type = IRQ_TYPE_LEVEL_HIGH;
+@@ -3035,6 +3036,7 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg = {
+ 	},
+ 	.iolh_groupb_oi = { 100, 66, 50, 33, },
+ 	.oen_max_pin = 0,
++	.tint_start_index = 9,
+ };
+ 
+ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
+@@ -3067,12 +3069,14 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
+ 	.func_base = 1,
+ 	.oen_max_pin = 1, /* Pin 1 of P0 and P7 is the maximum OEN pin. */
+ 	.oen_max_port = 7, /* P7_1 is the maximum OEN port. */
++	.tint_start_index = 9,
+ };
+ 
+ static const struct rzg2l_hwcfg rzv2h_hwcfg = {
+ 	.regs = {
+ 		.pwpr = 0x3c04,
+ 	},
++	.tint_start_index = 17,
+ };
+ 
+ static struct rzg2l_pinctrl_data r9a07g043_data = {
 -- 
-2.39.5
+2.34.1
 
