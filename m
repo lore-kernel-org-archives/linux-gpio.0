@@ -1,235 +1,98 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C26BFA3;
-	Mon, 23 Sep 2024 10:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA851196C9B;
+	Mon, 23 Sep 2024 10:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727085862; cv=none; b=kUOSC4OT6zjj5mLiJm1oZ7Dpis7hInvEP13TcsBhIenbW0gk/dhW3Nsw+9NX+Df4wYnNwzNJ/SLNuGujw0q7yb/veXixoYg4yKjJuf6oFq5UTlEbQHvjK1aI9qnY+Nef6W36S16KwsSMjTBOm0yOPaPp0x0dVYk2rNllugeaVDw=
+	t=1727085976; cv=none; b=jf9TiN9ocuGm6Dtzj136lSTG2NwA+t07uGgEG4MQjMyDTicG5lslBc/vuAzltAhWwSjUOEHG4L9j4BNrRIAZ2Mz3/enX3YYhtG/OdODgcoecE6zQMc5eVoLU8tNzVWO2UvolaO68vVWca1+WtelJZLkgTTXcwPWKXBYSbkm5hXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727085862; c=relaxed/simple;
-	bh=n9V4KqCf25Lnq9DkKmw0iowk10dheuDSj2TPGJAsOUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bpd0dZIFJb0sFqa2tv2d43YR0PPBUQZp5eA0edb40Mz96D7jkCOL+EAwea8fpKMTcbqoGKaKyqeV4rlLWtk8EJxFWIooax0ZvoERCnmTDavygXD8ubn6rQ3L3c0gkFGNeclx8Tfoc4fVhbM1bhnP2zyWab4tzKSU2Kf+CfBt6hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=exkjM6cH; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="exkjM6cH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=ryrNTnBObv+2rQkEsJDfbBq2naG6AaoqUBl0vxgeKjk=;
-	b=exkjM6cHc5QSF/M7C65wteZk8D1FqdEY363xznXKV62nDASPPhXY+0oENY+GeL
-	Csn7l5XUrKM2bWihGHnU+0MU78e+3S3DfK5EWiw1AK6sVDdb3wRsxMrSoF0wPH6P
-	GQitUF/4jO8cCDPqij8piA2xqO3OIH03C0Q833nxYRosA=
-Received: from [192.168.31.242] (unknown [27.18.197.191])
-	by gzsmtp2 (Coremail) with SMTP id sSgvCgDnU7p0PPFmZNLEBw--.28765S2;
-	Mon, 23 Sep 2024 18:01:27 +0800 (CST)
-Message-ID: <521a14e0-cb85-419d-87ea-1848b119c86d@163.com>
-Date: Mon, 23 Sep 2024 18:01:25 +0800
+	s=arc-20240116; t=1727085976; c=relaxed/simple;
+	bh=NHvEfgQZfIfWc1/sMoswXKYerhj5bPrXrFuu/jZyTTw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qZwpZuSY3FSWxe9g1UX4lK7/gCZrRkOceWw9FSdgldmOsYsdIEiCnYlk9/CdG/3YgMtmL6F477gbtQ1xxeZAHxP5VU+aIo29vf2neZtkcI+xsTnkbMYzUssDc28kA8FxuFyfsxnMZgRIBYlYK4pWIik2wQI2iyiiIt/dDoqVpUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 23 Sep
+ 2024 18:06:11 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 23 Sep 2024 18:06:11 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>, <Peter.Yin@quantatw.com>, <Jay_Zhang@wiwynn.com>
+Subject: [PATCH v5 0/6] Add Aspeed G7 gpio support 
+Date: Mon, 23 Sep 2024 18:06:05 +0800
+Message-ID: <20240923100611.1597113-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for
- canaan,k230 SoC
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240916063021.311721-1-18771902331@163.com>
- <20240916064225.316863-1-18771902331@163.com>
- <20240918171320.GA1810164-robh@kernel.org>
-Content-Language: en-US
-From: Ze Huang <18771902331@163.com>
-In-Reply-To: <20240918171320.GA1810164-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sSgvCgDnU7p0PPFmZNLEBw--.28765S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWUCw13AF1fKrW5XrW8Zwb_yoWruFy3pF
-	ZxKa98KF18XF47t3yxt3W8uF1aqFs7Ar4xKryUKry7ta909F1xKrWakr48WFs5urn7Jw12
-	vFWjgry29w48ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UOzV8UUUUU=
-X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwBjombxPCUHAwAAss
+Content-Type: text/plain
 
-On 9/19/24 1:13 AM, Rob Herring wrote:
-> On Mon, Sep 16, 2024 at 02:42:23PM +0800, Ze Huang wrote:
->> Add device tree binding details for Canaan K230 pinctrl device.
->>
->> Signed-off-by: Ze Huang <18771902331@163.com>
->> ---
->>   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
->>   1 file changed, 128 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
->> new file mode 100644
->> index 000000000000..979c5bd71e3d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
->> @@ -0,0 +1,128 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Canaan Kendryte K230 Pin Controller
->> +
->> +maintainers:
->> +  - Ze Huang <18771902331@163.com>
->> +
->> +description:
->> +  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
->> +  multiplexing up to 5 different functions. Pin function configuration is
->> +  performed on a per-pin basis.
->> +
->> +properties:
->> +  compatible:
->> +    const: canaan,k230-pinctrl
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +patternProperties:
->> +  '-pins$':
->> +    type: object
->> +    additionalProperties: false
->> +    description:
->> +      A pinctrl node should contain at least one subnode representing the
->> +      pinctrl groups available on the machine.
->> +
->> +    patternProperties:
->> +      '-cfg$':
->> +        type: object
->> +        $ref: /schemas/pinctrl/pincfg-node.yaml
->> +        additionalProperties: false
->> +        description:
->> +          Each subnode will list the pins it needs, and how they should
->> +          be configured, with regard to muxer configuration, bias, input
->> +          enable/disable, input schmitt trigger, slew-rate enable/disable,
->> +          slew-rate, drive strength.
->> +
->> +        properties:
->> +          pinmux:
->> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> Drop. You need to add a $ref to pinmux-node.yaml (alongside
-> pincfg-node.yaml).
+The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+GPIO pins and another with 216 GPIO pins. The main difference from the
+previous generation is that the control logic has been updated to support
+per-pin control, allowing each pin to have its own 32-bit register for
+configuring value, direction, interrupt type, and more.
+This patch serial also add low-level operations (llops) to abstract the
+register access for GPIO registers and the coprocessor request/release in
+gpio-aspeed.c making it easier to extend the driver to support different
+hardware register layouts.
 
-OK. will use a allOf like this:
+Change since v4:
+- Add `reg_bank_get` callback
+- `reg_bits_get` -> `reg_bit_get
+- `dcache_require` -> `require_dcache`
+- Use `devm_clk_get_enabled` to get the clock source
+- g4 specific api doesn't need to use the callback function 
 
-patternProperties:
-   '-cfg$':
-   type: object
-   allOf:
-     - $ref: /schemas/pinctrl/pincfg-node.yaml#
-     - $ref: /schemas/pinctrl/pinmux-node.yaml#
+Change since v3:
+- Add `privilege_ctrl` and `privilege_init` callback
+- Use `bool aspeed_gpio_support_copro()` api to replace the
+`cmd_source_supoort` flag
+- Add the `dcache_require` flag and move the dcache usage into the
+reg_bit_set callback
+- `reg_bits_set` -> `reg_bit_set` and `reg_bits_read` -> `reg_bits_get`
+- `bool copro = 0` -> `bool copro = false`
+- `if (!gpio->config->llops->reg_bit_set || 
+!gpio->config->llops->reg_bits_get) return -EINVAL;`
+- Correct the access of reg_irq_status
+- Remove __init attribute to fix the compiler warning
 
->
->> +            description:
->> +              The list of GPIOs and their mux settings that properties in
->> +              the node apply to. This should be set with the macro
->> +              'K230_PINMUX(pin, mode)'
->> +
->> +          bias-disable: true
->> +
->> +          bias-pull-up: true
->> +
->> +          bias-pull-down: true
->> +
->> +          drive-strength:
->> +            minimum: 0
->> +            maximum: 15
->> +
->> +          input-enable: true
->> +
->> +          output-enable: true
->> +
->> +          input-schmitt-enable: true
->> +
->> +          slew-rate:
->> +            $ref: /schemas/types.yaml#/definitions/uint32
-> Drop. Already has a defined type.
+Change since v2:
+- Correct minItems for gpio-line names
+- Remove the example for ast2700, because it's the same as the AST2600
+- Fix the sparse warning which is reported by the test robot
+- Remove the version and use the match data to replace it.
+- Add another two patches one for deferred probe one for flush write.
 
-Acknowledged.
+Changes since v1:
+- Merge the gpio-aspeed-g7.c into the gpio-aspeed.c.
+- Create the llops in gpio-aspeed.c for flexibility.
 
->
->> +            description: |
->> +              slew rate control enable
->> +              0: disable
->> +              1: enable
->> +
->> +            enum: [0, 1]
->> +
->> +          power-source:
->> +            $ref: /schemas/types.yaml#/definitions/uint32
-> Drop. Already has a defined type.
+Billy Tsai (6):
+  dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
+  gpio: aspeed: Remove the name for bank array
+  gpio: aspeed: Create llops to handle hardware access
+  gpio: aspeed: Support G7 Aspeed gpio controller
+  gpio: aspeed: Change the macro to support deferred probe
+  gpio: aspeed: Add the flush write to ensure the write complete.
 
-Acknowledged.
+ .../bindings/gpio/aspeed,ast2400-gpio.yaml    |  19 +-
+ drivers/gpio/gpio-aspeed.c                    | 589 +++++++++++-------
+ 2 files changed, 381 insertions(+), 227 deletions(-)
 
->
->> +            description: |
->> +              Specifies the power source voltage for the IO bank that the
->> +              pin belongs to. Each bank of IO pins operate at a specific,
->> +              fixed voltage levels. Incorrect voltage configuration can
->> +              damage the chip. The defined constants represent the
->> +              possible voltage configurations:
->> +
->> +              - K230_MSC_3V3 (value 0): 3.3V power supply
->> +              - K230_MSC_1V8 (value 1): 1.8V power supply
->> +
->> +              The following banks have the corresponding voltage
->> +              configurations:
->> +
->> +              - bank IO0 to IO1: Fixed at 1.8V
->> +              - bank IO2 to IO13: Fixed at 1.8V
->> +              - bank IO14 to IO25: Fixed at 1.8V
->> +              - bank IO26 to IO37: Fixed at 1.8V
->> +              - bank IO38 to IO49: Fixed at 1.8V
->> +              - bank IO50 to IO61: Fixed at 3.3V
->> +              - bank IO62 to IO63: Fixed at 1.8V
->> +
->> +            enum: [0, 1]
->> +
->> +        required:
->> +          - pinmux
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    pinctrl: pinctrl@91105000 {
-> Drop unused labels.
-
-Will do.
-
->
->> +        compatible = "canaan,k230-pinctrl";
->> +        reg = <0x91105000 0x100>;
->> +
->> +        uart2_pins: uart2-pins {
->> +            uart2-pins-cfg {
->> +                pinmux = <0x503>, /* uart2 txd */
->> +                         <0x603>; /* uart2 rxd */
->> +                slew-rate = <0>;
->> +                drive-strength = <4>;
->> +                power-source = <1>;
->> +                input-enable;
->> +                output-enable;
->> +                bias-disable;
->> +            };
->> +        };
->> +    };
->> -- 
->> 2.46.1
->>
+-- 
+2.25.1
 
