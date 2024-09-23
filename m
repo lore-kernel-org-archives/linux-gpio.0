@@ -1,173 +1,235 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCFA8479;
-	Mon, 23 Sep 2024 09:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C26BFA3;
+	Mon, 23 Sep 2024 10:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727085237; cv=none; b=oguVboyZ6gOOkXU16oz/ncanXxgZYgq3jc0OCK7n+GXUNSeu2ugeD2CwDXm5ZjHH8rEVflDAXOEEviyIBs0qIwFrmxh/YejR2tebCx4R/eutOMHULwh/KFx3d5BQN1hvB5ENDz76MSkifw1WBb+SERNQAgF/P+Skxs/Do29gZ38=
+	t=1727085862; cv=none; b=kUOSC4OT6zjj5mLiJm1oZ7Dpis7hInvEP13TcsBhIenbW0gk/dhW3Nsw+9NX+Df4wYnNwzNJ/SLNuGujw0q7yb/veXixoYg4yKjJuf6oFq5UTlEbQHvjK1aI9qnY+Nef6W36S16KwsSMjTBOm0yOPaPp0x0dVYk2rNllugeaVDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727085237; c=relaxed/simple;
-	bh=2d106uzkR+8RT+3V8DfFcnrtgh3IoT5F3iqW40LwDNM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKyl7rNjmvctXYM0N3PI7Vr+At2bVPXGCBE9hxeKBrbXdt1p5bNQz+f6Yd6w6BPK+oVzr/V8URkR/rlbFmO5DL7N7Z481yO1eOb+vrgkjcYi3dqodcsT/8e5PpLB0fDK0cDfFFg+k+pAZe8hriWyDyBRlyzhuxG537cKxZB7doo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvUneDpE; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727085862; c=relaxed/simple;
+	bh=n9V4KqCf25Lnq9DkKmw0iowk10dheuDSj2TPGJAsOUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bpd0dZIFJb0sFqa2tv2d43YR0PPBUQZp5eA0edb40Mz96D7jkCOL+EAwea8fpKMTcbqoGKaKyqeV4rlLWtk8EJxFWIooax0ZvoERCnmTDavygXD8ubn6rQ3L3c0gkFGNeclx8Tfoc4fVhbM1bhnP2zyWab4tzKSU2Kf+CfBt6hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=exkjM6cH; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvUneDpE"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-378f600e090so2318874f8f.3;
-        Mon, 23 Sep 2024 02:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727085233; x=1727690033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/G5Y1Yc2GdbX/HaGBtPNbObghnd/ierGxsK5LlHR+M=;
-        b=TvUneDpEWXe0KAHmm/mAHmajWaaIDWHnd/P1qGgu+lVy3NFIh/Q68WxJiXTumSj6gk
-         kEdt9Mg8JQtz+snk9Jw6Hhxwxr70hS06IbvpdZMbzhQCVZMyEy80br5anDwKUuOV6x/a
-         9jEZqVZxBTNtFpbAgnmNXZx/KkQ/9s0RyFhDCpJgeSaTjlKpJ9N3sTZ3bQdIAIYpv27h
-         mgVrAK7/eM0J618HmGlJK78LztN+0JthrfnDG24AEz42afuuJ4pxmVUewM04EgfWAWci
-         hNv4kDNbVqdFYYFIqK4mlh172IlYrzlRwCI0614UDEjTQDxyD4nHl5Rq0Muqazeg74UR
-         p/Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727085233; x=1727690033;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/G5Y1Yc2GdbX/HaGBtPNbObghnd/ierGxsK5LlHR+M=;
-        b=O9yQ/BTnUvV27w0gXWM5DJE+dSAQRB1tahjXZbkYzrED7pSIR1Veg6U3sKQrxExE4P
-         mXGV83ji/4UvElyDTDtTQ3gbsxKRTojkJBKaOQJihxJgFG5irwMCGlzZQLzMfXa9iKp1
-         AzR+wO5fIGf1lQgnJyGDhMiVkr38/KjljozzKmhxru98gMb6ZlD0+wOFxhtEkFppfTWM
-         Tl7VuON5Q36ciuMFkEod9YT1JOS7SpZXttWcvXbXRYae3U64sQftg05tnsdY7V2rw9uK
-         MGyRver4b/PgDyzwmeSXYeAYMwOzLqYCZkHB/eT6YONNeS/nSR3K44SA/7sVQmgut+k6
-         z95g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8vmZSeRvJJ0rvzPNmDroQEM/edvY6azUI7i9yKK8oaG0SmG0CNsab3YnBbYszNgsIeHOewuDGiq3i@vger.kernel.org, AJvYcCWhVHE7IHYXj9Rz/S8D1zc02gMTHRQ/vllg8QrNJDlKoi158H89jdJNy+DoYWoK4aHq5FEBlv+bDcBTZg==@vger.kernel.org, AJvYcCWmPUHSO8Jwqkl9btt+SHw2+ILwWOMO7nxZoqFZYS3BryGkWWEFSo+4sQB1Z8ZLNdUp3tezH6/xOY1d@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVDaZhS4U68mTQUoELdGblKNSloNaVcqwDO8MBuJVO4kYgh8w4
-	d/PUcmk+L8gEVSlBRboqfPWEU5JRQB1VbQwcFIwyVJ8kATWdbGph
-X-Google-Smtp-Source: AGHT+IHFcRqze8NF48rSN4RfnRVSC5MCHRlQsylzZ05QxbfMJ+tA5vQe9UKElu6ng0HSNIhzNc4qfQ==
-X-Received: by 2002:a5d:5f83:0:b0:374:c977:363 with SMTP id ffacd0b85a97d-37a43154e86mr7174926f8f.24.1727085233174;
-        Mon, 23 Sep 2024 02:53:53 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7805193sm23850774f8f.98.2024.09.23.02.53.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 02:53:52 -0700 (PDT)
-Message-ID: <66f13ab0.5d0a0220.b0c27.b441@mx.google.com>
-X-Google-Original-Message-ID: <ZvE6rpnzlrUJHKLx@Ansuel-XPS.>
-Date: Mon, 23 Sep 2024 11:53:50 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lee Jones <lee@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	upstream@airoha.com, benjamin.larsson@genexis.eu,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] Add mfd, pinctrl and pwm support to EN7581 SoC
-References: <20240911-en7581-pinctrl-v4-0-60ac93d760bb@kernel.org>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="exkjM6cH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=ryrNTnBObv+2rQkEsJDfbBq2naG6AaoqUBl0vxgeKjk=;
+	b=exkjM6cHc5QSF/M7C65wteZk8D1FqdEY363xznXKV62nDASPPhXY+0oENY+GeL
+	Csn7l5XUrKM2bWihGHnU+0MU78e+3S3DfK5EWiw1AK6sVDdb3wRsxMrSoF0wPH6P
+	GQitUF/4jO8cCDPqij8piA2xqO3OIH03C0Q833nxYRosA=
+Received: from [192.168.31.242] (unknown [27.18.197.191])
+	by gzsmtp2 (Coremail) with SMTP id sSgvCgDnU7p0PPFmZNLEBw--.28765S2;
+	Mon, 23 Sep 2024 18:01:27 +0800 (CST)
+Message-ID: <521a14e0-cb85-419d-87ea-1848b119c86d@163.com>
+Date: Mon, 23 Sep 2024 18:01:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911-en7581-pinctrl-v4-0-60ac93d760bb@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for
+ canaan,k230 SoC
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240916063021.311721-1-18771902331@163.com>
+ <20240916064225.316863-1-18771902331@163.com>
+ <20240918171320.GA1810164-robh@kernel.org>
+Content-Language: en-US
+From: Ze Huang <18771902331@163.com>
+In-Reply-To: <20240918171320.GA1810164-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sSgvCgDnU7p0PPFmZNLEBw--.28765S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWUCw13AF1fKrW5XrW8Zwb_yoWruFy3pF
+	ZxKa98KF18XF47t3yxt3W8uF1aqFs7Ar4xKryUKry7ta909F1xKrWakr48WFs5urn7Jw12
+	vFWjgry29w48ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UOzV8UUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwBjombxPCUHAwAAss
 
-On Wed, Sep 11, 2024 at 09:50:00PM +0200, Lorenzo Bianconi wrote:
-> Introduce airoha-mfd driver in order to load pinctrl and pwm drivers for
-> EN7581 SoC. airoha-mfd is needed since both pinctrl and pwm drivers
-> needs to access the same memory block (gpio memory region) to configure
-> {gio,irq}_chip and pwm functionalities respectively, so model them as
-> childs of a parent mfd driver.
-> Current EN7581 pinctrl driver supports the following functionalities:
-> - pin multiplexing via chip_scu syscon
-> - pin pull-up, pull-down, open-drain, current strength,
->   {input,output}_enable, output_{low,high} via chip_scu syscon
-> - gpio controller
-> - irq controller
-> 
-> ---
-> Changes in v4:
-> - add 'Limitation' description in pwm driver
-> - fix comments in pwm driver
-> - rely on mfd->base __iomem pointer in pwm driver, modify register
->   offsets according to it and get rid of sgpio_cfg, flash_cfg and
->   cycle_cfg pointers
-> - simplify register utility routines in pwm driver
-> - use 'generator' instead of 'waveform' suffix for pwm routines
-> - fix possible overflow calculating duty cycle in pwm driver
-> - do not modify pwm state in free callback in pwm driver
-> - cap the maximum period in pwm driver
-> - do not allow inverse polarity in pwm driver
-> - do not set of_xlate callback in the pwm driver and allow the stack to
->   do it
-> - fix MAINTAINERS file for airoha pinctrl driver
-> - fix undefined reference to __ffsdi2 in pinctrl driver
-> - simplify airoha,en7581-gpio-sysctl.yam binding
-> - Link to v3: https://lore.kernel.org/r/20240831-en7581-pinctrl-v3-0-98eebfb4da66@kernel.org
-> 
-> Changes in v3:
-> - introduce airoha-mfd driver
-> - add pwm driver to the same series
-> - model pinctrl and pwm drivers as childs of a parent mfd driver.
-> - access chip-scu memory region in pinctrl driver via syscon
-> - introduce a single airoha,en7581-gpio-sysctl.yaml binding and get rid
->   of dedicated bindings for pinctrl and pwm
-> - add airoha,en7581-chip-scu.yaml binding do the series
-> - Link to v2: https://lore.kernel.org/r/20240822-en7581-pinctrl-v2-0-ba1559173a7f@kernel.org
-> 
-> Changes in v2:
-> - Fix compilation errors
-> - Collapse some register mappings for gpio and irq controllers
-> - update dt-bindings according to new register mapping
-> - fix some dt-bindings errors
-> - Link to v1: https://lore.kernel.org/all/cover.1723392444.git.lorenzo@kernel.org/
-> 
-> ---
-> Benjamin Larsson (1):
->       pwm: airoha: Add support for EN7581 SoC
-> 
-> Christian Marangi (2):
->       dt-bindings: mfd: Add support for Airoha EN7581 GPIO System Controller
->       mfd: airoha: Add support for Airoha EN7581 MFD
-> 
-> Lorenzo Bianconi (2):
->       dt-bindings: arm: airoha: Add the chip-scu node for EN7581 SoC
->       pinctrl: airoha: Add support for EN7581 SoC
-> 
->  .../bindings/arm/airoha,en7581-chip-scu.yaml       |   42 +
->  .../bindings/mfd/airoha,en7581-gpio-sysctl.yaml    |  433 +++
->  MAINTAINERS                                        |    7 +
->  drivers/mfd/Kconfig                                |    8 +
->  drivers/mfd/Makefile                               |    2 +
->  drivers/mfd/airoha-en7581-gpio-mfd.c               |   72 +
->  drivers/pinctrl/mediatek/Kconfig                   |   16 +-
->  drivers/pinctrl/mediatek/Makefile                  |    1 +
->  drivers/pinctrl/mediatek/pinctrl-airoha.c          | 2964 ++++++++++++++++++++
->  drivers/pwm/Kconfig                                |   10 +
->  drivers/pwm/Makefile                               |    1 +
->  drivers/pwm/pwm-airoha.c                           |  414 +++
->  include/linux/mfd/airoha-en7581-mfd.h              |    9 +
->  13 files changed, 3978 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 264c13114bd71ddfd7b25c7b94f6cda4587eca25
-> change-id: 20240818-en7581-pinctrl-1bf120154be0
-> prerequisite-change-id: 20240705-for-6-11-bpf-a349efc08df8:v2
-> 
+On 9/19/24 1:13 AM, Rob Herring wrote:
+> On Mon, Sep 16, 2024 at 02:42:23PM +0800, Ze Huang wrote:
+>> Add device tree binding details for Canaan K230 pinctrl device.
+>>
+>> Signed-off-by: Ze Huang <18771902331@163.com>
+>> ---
+>>   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
+>>   1 file changed, 128 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>> new file mode 100644
+>> index 000000000000..979c5bd71e3d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>> @@ -0,0 +1,128 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Pin Controller
+>> +
+>> +maintainers:
+>> +  - Ze Huang <18771902331@163.com>
+>> +
+>> +description:
+>> +  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
+>> +  multiplexing up to 5 different functions. Pin function configuration is
+>> +  performed on a per-pin basis.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: canaan,k230-pinctrl
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +patternProperties:
+>> +  '-pins$':
+>> +    type: object
+>> +    additionalProperties: false
+>> +    description:
+>> +      A pinctrl node should contain at least one subnode representing the
+>> +      pinctrl groups available on the machine.
+>> +
+>> +    patternProperties:
+>> +      '-cfg$':
+>> +        type: object
+>> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+>> +        additionalProperties: false
+>> +        description:
+>> +          Each subnode will list the pins it needs, and how they should
+>> +          be configured, with regard to muxer configuration, bias, input
+>> +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+>> +          slew-rate, drive strength.
+>> +
+>> +        properties:
+>> +          pinmux:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> Drop. You need to add a $ref to pinmux-node.yaml (alongside
+> pincfg-node.yaml).
+
+OK. will use a allOf like this:
+
+patternProperties:
+   '-cfg$':
+   type: object
+   allOf:
+     - $ref: /schemas/pinctrl/pincfg-node.yaml#
+     - $ref: /schemas/pinctrl/pinmux-node.yaml#
+
 >
+>> +            description:
+>> +              The list of GPIOs and their mux settings that properties in
+>> +              the node apply to. This should be set with the macro
+>> +              'K230_PINMUX(pin, mode)'
+>> +
+>> +          bias-disable: true
+>> +
+>> +          bias-pull-up: true
+>> +
+>> +          bias-pull-down: true
+>> +
+>> +          drive-strength:
+>> +            minimum: 0
+>> +            maximum: 15
+>> +
+>> +          input-enable: true
+>> +
+>> +          output-enable: true
+>> +
+>> +          input-schmitt-enable: true
+>> +
+>> +          slew-rate:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+> Drop. Already has a defined type.
 
-Hi,
+Acknowledged.
 
-any news with this? Rob reviewed the DT schemas and he is ok with them.
+>
+>> +            description: |
+>> +              slew rate control enable
+>> +              0: disable
+>> +              1: enable
+>> +
+>> +            enum: [0, 1]
+>> +
+>> +          power-source:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+> Drop. Already has a defined type.
 
-Any other comments for the MFD driver and/or the pinctrl or PWM driver?
+Acknowledged.
 
--- 
-	Ansuel
+>
+>> +            description: |
+>> +              Specifies the power source voltage for the IO bank that the
+>> +              pin belongs to. Each bank of IO pins operate at a specific,
+>> +              fixed voltage levels. Incorrect voltage configuration can
+>> +              damage the chip. The defined constants represent the
+>> +              possible voltage configurations:
+>> +
+>> +              - K230_MSC_3V3 (value 0): 3.3V power supply
+>> +              - K230_MSC_1V8 (value 1): 1.8V power supply
+>> +
+>> +              The following banks have the corresponding voltage
+>> +              configurations:
+>> +
+>> +              - bank IO0 to IO1: Fixed at 1.8V
+>> +              - bank IO2 to IO13: Fixed at 1.8V
+>> +              - bank IO14 to IO25: Fixed at 1.8V
+>> +              - bank IO26 to IO37: Fixed at 1.8V
+>> +              - bank IO38 to IO49: Fixed at 1.8V
+>> +              - bank IO50 to IO61: Fixed at 3.3V
+>> +              - bank IO62 to IO63: Fixed at 1.8V
+>> +
+>> +            enum: [0, 1]
+>> +
+>> +        required:
+>> +          - pinmux
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pinctrl: pinctrl@91105000 {
+> Drop unused labels.
+
+Will do.
+
+>
+>> +        compatible = "canaan,k230-pinctrl";
+>> +        reg = <0x91105000 0x100>;
+>> +
+>> +        uart2_pins: uart2-pins {
+>> +            uart2-pins-cfg {
+>> +                pinmux = <0x503>, /* uart2 txd */
+>> +                         <0x603>; /* uart2 rxd */
+>> +                slew-rate = <0>;
+>> +                drive-strength = <4>;
+>> +                power-source = <1>;
+>> +                input-enable;
+>> +                output-enable;
+>> +                bias-disable;
+>> +            };
+>> +        };
+>> +    };
+>> -- 
+>> 2.46.1
+>>
+
