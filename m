@@ -1,32 +1,31 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0282A14AD25;
-	Thu, 26 Sep 2024 15:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB50158DC3;
+	Thu, 26 Sep 2024 15:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727366315; cv=none; b=GprCvKDQiVn+no/ZUNIPaZWOhPoDwytyvnI9Iv/Exm37IYG27j7C8flXlAX3BwidmvI4J2hm+6p9/YhCV/B4vew/+kbdTL9woe97v8f/NMDgHs2DVMnhw8wnqOyBEuee7tk61eS/1Emk15Wpt57PR6+7d8ShcCG4JLO5UXGHQYs=
+	t=1727366318; cv=none; b=ESM9UroP8t7k9WJkSOLOEFJJfu2OK16j/gsIT0wy/Zj0L/tbyh+2CbBSh3jkJcmLbgyGKAq9ur3c8Mysg/JIZq7h5ZJGmtqTOFjcvYDm1KYhm/kX95XRN7ybuOexu6hU9j4a0nBIJkiQrmppjz/WPH1jVNCU/9FM4XEnBcQPoQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727366315; c=relaxed/simple;
-	bh=Nl29eGU+LqeBp/q6oMd/IBwgBjzcLkHRNHOWh5mHn+c=;
+	s=arc-20240116; t=1727366318; c=relaxed/simple;
+	bh=RJAlOij6i+RBsWNxwEJC6WQJ/+F/1w/EzLWl2qrNLKE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UZHatXVOuIRRZc3yHLTrk8GFCH9Wku+B13eQixxSCQl0jEaLIxtO43/8OLTa/N8FFTGMWYqHZt+xeUdlGmsh2t+vRKqvnvHe5RrfwoZAuFHhha4zPtRsPXAzfJOTIJKjLAv1aktSJIFxSjN9DzNAlg21Ra0uN2M32n/Pn7RNTJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PoymsWGC; arc=none smtp.client-ip=117.135.210.5
+	 In-Reply-To:To:Cc; b=mL8tMIOLJHQeLBOUGjJxNEF6EYsD3XxE2uC16111QQ6hozBwu+gaa6oro1k+7mIG+8V4HqXpjVMxywjVbNotLZVKBrcOzNMkALx49FqC/1lelP982ZnfzdEODSINiihxDkJa6psWv1JnCeHRwrg98+Yr0q01Y4x0fufoLTzDtQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e+JCUzk6; arc=none smtp.client-ip=220.197.31.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PoymsWGC"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e+JCUzk6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=From:Date:Subject:MIME-Version:Content-Type:
-	Message-Id; bh=mty+cdJRqv0WA4yEuN8JbkJ3vgLRawx+ZI6WiLYKKXg=; b=P
-	oymsWGC6QzTJn2BpALlcxIyJgWCCKLefjZHffOTQSKUKhZxj0tjLznSqq4jjoC38
-	YA2nH7/rDodr0spi5rrAmEI1D2jwmAcUGSNfLThiNiGf5mZ7svzt8Rf5WgqSYoUK
-	6iTQMc9f+JYpUJZf3JJgfbGbakTBbBwXRwWzQcA92w=
+	Message-Id; bh=Yzp0Hgtz2km4R/+38jhyIqcRGarlCpDum3ovNWdjGj0=; b=e
+	+JCUzk6JNSbnQ3z7Pkv9bMXHcIKeTbDNdKh6jcMkHUQ5WqgVx2/tek14tFg3Ev/S
+	5O83yvGsbacbGGdy36WZdewvi51i0CMIVnE4sJOs118vgdIiwR7A0o/7AXpIy7nA
+	j9fy3UEruwESMRVpYa+vyop40KG5GV2BZnEOqqtKfY=
 Received: from [127.0.0.1] (unknown [27.18.107.33])
-	by gzsmtp3 (Coremail) with SMTP id sigvCgBHA3OFhPVmTIX3AA--.42449S3;
-	Thu, 26 Sep 2024 23:57:58 +0800 (CST)
+	by gzsmtp3 (Coremail) with SMTP id sigvCgBHA3OFhPVmTIX3AA--.42449S5;
+	Thu, 26 Sep 2024 23:58:00 +0800 (CST)
 From: Ze Huang <18771902331@163.com>
-Date: Thu, 26 Sep 2024 23:57:43 +0800
-Subject: [PATCH v2 1/3] dt-bindings: pinctrl: Add support for canaan,k230
- SoC
+Date: Thu, 26 Sep 2024 23:57:45 +0800
+Subject: [PATCH v2 3/3] riscv: dts: canaan: Add k230's pinctrl node
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,7 +34,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240926-k230-pinctrl-v2-1-a9a36fba4b34@163.com>
+Message-Id: <20240926-k230-pinctrl-v2-3-a9a36fba4b34@163.com>
 References: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
 In-Reply-To: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -48,160 +47,390 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Ze Huang <18771902331@163.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727366277; l=4390;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727366277; l=8878;
  i=18771902331@163.com; s=20240926; h=from:subject:message-id;
- bh=Nl29eGU+LqeBp/q6oMd/IBwgBjzcLkHRNHOWh5mHn+c=;
- b=6btBS1Z9E2dC+EVFS5yNRzeMnx7sLUnEln7pk27eRXqfExuUY0NE0ZCPIBfn9sWkvk75HTIyY
- K0JrtKV/84oBVWfptRAJ75F5mE+i1g3+W7K6b6UI40DfiiHONLfP2oX
+ bh=RJAlOij6i+RBsWNxwEJC6WQJ/+F/1w/EzLWl2qrNLKE=;
+ b=iny35ryg6El26y7ZeuEI99xZY7YdrtzbWTm3lTCUKcGEs/KOxVFKU2xjbw0rq3y/GCnlvF0e+
+ OqZ+N/ihz9UCXSDfxlv18TJugpRB1eFPr1csa4ikCrEkj14KFhronrm
 X-Developer-Key: i=18771902331@163.com; a=ed25519;
  pk=M4cXLTlQ3syp0aIw4PNbFtajcroq/y7WBxK2F/jsUWI=
-X-CM-TRANSID:sigvCgBHA3OFhPVmTIX3AA--.42449S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF17Cr1rCw4rGw1UGr13XFb_yoW5KrWUpF
-	Z3KFW5Krs5WF47K3yfta18uF13Xa1kAF4Sqw1UKr9rJw45KF18Kr1akr4aqF4DuF1kJw1a
-	qFWIgry7Kr47Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEk9NDUUUUU=
-X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJw1momb1fqM32QABsP
+X-CM-TRANSID:sigvCgBHA3OFhPVmTIX3AA--.42449S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GF4DKrW8Gr1xtr45WFWxJFb_yoW3trW7pF
+	WSkFn3K3409FWrK3y0qw1jgF1UWr4q9r1rG3srKry7tw10gFs5K3s5Gr1YqFn8ur1Yk34j
+	g3ykZa1Ivrs7Jw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zMxR6-UUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiNw5momb1gfgWrAABss
 
-Add device tree binding details for Canaan K230 pinctrl device.
+Add pinctrl device, containing default config for uart, pwm, iis, iic
+and mmc.
 
 Signed-off-by: Ze Huang <18771902331@163.com>
 ---
- .../bindings/pinctrl/canaan,k230-pinctrl.yaml      | 127 +++++++++++++++++++++
- 1 file changed, 127 insertions(+)
+ arch/riscv/boot/dts/canaan/k230-canmv.dts | 304 ++++++++++++++++++++++++++++++
+ arch/riscv/boot/dts/canaan/k230-pinctrl.h |  18 ++
+ arch/riscv/boot/dts/canaan/k230.dtsi      |   6 +
+ 3 files changed, 328 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+index 9565915cead6ad2381ea8249b616e79575feb896..fc1429a31945b232e4bfcb735dbdb43dd655eb90 100644
+--- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
++++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+@@ -22,3 +22,307 @@ ddr: memory@0 {
+ &uart0 {
+ 	status = "okay";
+ };
++
++&pinctrl {
++	jtag_pins: jtag-pins {
++		jtag-tck-cfg {
++			pinmux = <K230_PINMUX(2, 1)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-pull-down;
++			input-schmitt-enable;
++		};
++
++		jtag-tdi-cfg {
++			pinmux = <K230_PINMUX(3, 1)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-disable;
++		};
++
++		jtag-tdo-cfg {
++			pinmux = <K230_PINMUX(4, 1)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++		};
++
++		jtag-tms-cfg {
++			pinmux = <K230_PINMUX(5, 1)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-pull-up;
++		};
++	};
++
++	uart2_pins: uart2-pins {
++		uart2-pins-cfg {
++			pinmux = <K230_PINMUX(5, 3)>, /* uart2 txd */
++				 <K230_PINMUX(6, 3)>; /* uart2 rxd */
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-disable;
++		};
++	};
++
++	pwm2_pins: pwm2-pins {
++		pwm2-pin-cfg {
++			pinmux = <K230_PINMUX(7, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	pwm3_pins: pwm3-pins {
++		pwm3-pin-cfg {
++			pinmux = <K230_PINMUX(8, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	pwm4_pins: pwm4-pins {
++		pwm4-pin-cfg {
++			pinmux = <K230_PINMUX(9, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	iis_pins: iis-pins {
++		iis-clk-cfg {
++			pinmux = <K230_PINMUX(32, 2)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++		};
++
++		iis-ws-cfg {
++			pinmux = <K230_PINMUX(33, 2)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++		};
++
++		iis-din0-cfg {
++			pinmux = <K230_PINMUX(34, 2)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-disable;
++		};
++
++		iis-dout0-cfg {
++			pinmux = <K230_PINMUX(35, 2)>;
++			slew-rate = <0>;
++			drive-strength = <4>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++		};
++	};
++
++	uart4_pins: uart4-pins {
++		uart4-txd-cfg {
++			pinmux = <K230_PINMUX(36, 4)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++
++		uart4-rxd-cfg {
++			pinmux = <K230_PINMUX(37, 4)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	uart0_pins: uart0-pins {
++		uart0-txd-cfg {
++			pinmux = <K230_PINMUX(38, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++
++		uart0-rxd-cfg {
++			pinmux = <K230_PINMUX(39, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	iic1_pins: iic1-pins {
++		iic1-pins-cfg {
++			pinmux = <K230_PINMUX(40, 2)>, /* iic1 scl */
++				 <K230_PINMUX(41, 2)>; /* iic1 sda */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++	};
++
++	iic3_pins: iic3-pins {
++		iic3-pins-cfg {
++			pinmux = <K230_PINMUX(44, 2)>, /* iic3 scl */
++				 <K230_PINMUX(45, 2)>; /* iic3 sda */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++	};
++
++	iic4_pins: iic4-pins {
++		iic4-pins-cfg {
++			pinmux = <K230_PINMUX(46, 3)>, /* iic4 scl */
++				 <K230_PINMUX(47, 3)>; /* iic4 sda */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++	};
++
++	iic0_pins: iic0-pins {
++		iic0-pins-cfg {
++			pinmux = <K230_PINMUX(48, 3)>, /* iic0 scl */
++				 <K230_PINMUX(49, 3)>; /* iic0 sda */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_1V8>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++	};
++
++	uart3_pins: uart3-pins {
++		uart3-txd-cfg {
++			pinmux = <K230_PINMUX(50, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++
++		uart3-rxd-cfg {
++			pinmux = <K230_PINMUX(51, 1)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			input-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	key_pins: key-pins {
++		key-pins-cfg {
++			pinmux = <K230_PINMUX(52, 0)>, /* key0 */
++				 <K230_PINMUX(53, 0)>; /* key1 */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			input-enable;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++	};
++
++	mmc1_pins: mmc1-pins {
++		mmc1-cmd-cfg {
++			pinmux = <K230_PINMUX(54, 2)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++
++		mmc1-clk-cfg {
++			pinmux = <K230_PINMUX(55, 2)>;
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			output-enable;
++			bias-disable;
++			input-schmitt-enable;
++		};
++
++		mmc1-data-cfg {
++			pinmux = <K230_PINMUX(56, 2)>, /* mmc1 data0 */
++				 <K230_PINMUX(57, 2)>, /* mmc1 data1 */
++				 <K230_PINMUX(58, 2)>, /* mmc1 data2 */
++				 <K230_PINMUX(59, 2)>; /* mmc1 data3 */
++			slew-rate = <0>;
++			drive-strength = <7>;
++			power-source = <K230_MSC_3V3>;
++			input-enable;
++			output-enable;
++			bias-pull-up;
++			input-schmitt-enable;
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/canaan/k230-pinctrl.h b/arch/riscv/boot/dts/canaan/k230-pinctrl.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..0b462eb6dfe169a292bf716503c03d029f1ac7ee
+index 0000000000000000000000000000000000000000..63dd999ca55b64ac5aea4026465f38f9fb7ee9ea
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
-@@ -0,0 +1,127 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/arch/riscv/boot/dts/canaan/k230-pinctrl.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Copyright (C) 2024 Canaan Bright Sight Co. Ltd
++ * Copyright (C) 2024 Ze Huang <18771902331@163.com>
++ */
 +
-+title: Canaan Kendryte K230 Pin Controller
++#ifndef _K230_PINCTRL_H
++#define _K230_PINCTRL_H
 +
-+maintainers:
-+  - Ze Huang <18771902331@163.com>
++#define K230_MSC_3V3 0
++#define K230_MSC_1V8 1
 +
-+description:
-+  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
-+  multiplexing up to 5 different functions. Pin function configuration is
-+  performed on a per-pin basis.
++#define BANK_VOLTAGE_DEFAULT       K230_MSC_1V8
++#define BANK_VOLTAGE_IO50_IO61     K230_MSC_3V3
 +
-+properties:
-+  compatible:
-+    const: canaan,k230-pinctrl
++#define K230_PINMUX(pin, mode) (((pin) << 8) | (mode))
 +
-+  reg:
-+    maxItems: 1
++#endif /* _K230_PINCTRL_H */
+diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
+index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..f7648d8c86ec16a8b0d3660067413d5ebd143dc7 100644
+--- a/arch/riscv/boot/dts/canaan/k230.dtsi
++++ b/arch/riscv/boot/dts/canaan/k230.dtsi
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include "k230-pinctrl.h"
+ 
+ /dts-v1/;
+ / {
+@@ -89,6 +90,11 @@ clint: timer@f04000000 {
+ 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
+ 		};
+ 
++		pinctrl: pinctrl@91105000 {
++			compatible = "canaan,k230-pinctrl";
++			reg = <0x0 0x91105000 0x0 0x100>;
++		};
 +
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
-+    description:
-+      A pinctrl node should contain at least one subnode representing the
-+      pinctrl groups available on the machine.
-+
-+    patternProperties:
-+      '-cfg$':
-+        type: object
-+        allOf:
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml
-+        additionalProperties: false
-+        description:
-+          Each subnode will list the pins it needs, and how they should
-+          be configured, with regard to muxer configuration, bias, input
-+          enable/disable, input schmitt trigger, slew-rate enable/disable,
-+          slew-rate, drive strength.
-+
-+        properties:
-+          pinmux:
-+            description:
-+              The list of GPIOs and their mux settings that properties in
-+              the node apply to. This should be set with the macro
-+              'K230_PINMUX(pin, mode)'
-+
-+          bias-disable: true
-+
-+          bias-pull-up: true
-+
-+          bias-pull-down: true
-+
-+          drive-strength:
-+            minimum: 0
-+            maximum: 15
-+
-+          input-enable: true
-+
-+          output-enable: true
-+
-+          input-schmitt-enable: true
-+
-+          slew-rate:
-+            description: |
-+              slew rate control enable
-+              0: disable
-+              1: enable
-+
-+            enum: [0, 1]
-+
-+          power-source:
-+            description: |
-+              Specifies the power source voltage for the IO bank that the
-+              pin belongs to. Each bank of IO pins operate at a specific,
-+              fixed voltage levels. Incorrect voltage configuration can
-+              damage the chip. The defined constants represent the
-+              possible voltage configurations:
-+
-+              - K230_MSC_3V3 (value 0): 3.3V power supply
-+              - K230_MSC_1V8 (value 1): 1.8V power supply
-+
-+              The following banks have the corresponding voltage
-+              configurations:
-+
-+              - bank IO0 to IO1: Fixed at 1.8V
-+              - bank IO2 to IO13: Fixed at 1.8V
-+              - bank IO14 to IO25: Fixed at 1.8V
-+              - bank IO26 to IO37: Fixed at 1.8V
-+              - bank IO38 to IO49: Fixed at 1.8V
-+              - bank IO50 to IO61: Fixed at 3.3V
-+              - bank IO62 to IO63: Fixed at 1.8V
-+
-+            enum: [0, 1]
-+
-+        required:
-+          - pinmux
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl@91105000 {
-+        compatible = "canaan,k230-pinctrl";
-+        reg = <0x91105000 0x100>;
-+
-+        uart2-pins {
-+            uart2-pins-cfg {
-+                pinmux = <0x503>, /* uart2 txd */
-+                         <0x603>; /* uart2 rxd */
-+                slew-rate = <0>;
-+                drive-strength = <4>;
-+                power-source = <1>;
-+                input-enable;
-+                output-enable;
-+                bias-disable;
-+            };
-+        };
-+    };
+ 		uart0: serial@91400000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x0 0x91400000 0x0 0x1000>;
 
 -- 
 2.46.2
