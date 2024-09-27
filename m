@@ -1,37 +1,40 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D7A16FF3B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E9B1C1ABE
 	for <linux-gpio@vger.kernel.org>; Fri, 27 Sep 2024 19:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463907; cv=none; b=hbtDHGWv/Pphsw30jVPtiHLveMYvyFpAxtvy34cBR8ljQdREzjeUUNBz+AIsSNJNIZKbWraixexWcEKkcD4fZ+zUBXy/DBAUB8Nqqq460zysPrGiMe+qvaHxh32+FEZLiBKkSfiUCpSUuhH/GuFEqz/Jv6x7GwKouf7Jad+GqVo=
+	t=1727463907; cv=none; b=Gxl2vb4ZB76cia721kupJYgQV82WEUMCZpoUTTpba54njcv9libFmMOvZzIUHwuBTLusUpZ0ctM6efK0Iy3Qq1ukfwotMXRrruXicmq5K3xYjSzuWcZH1Qva6S1a2icL0okm7rcNKkiJyOGOUhc4RogiXpYfu2/zdKU251VwUko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727463907; c=relaxed/simple;
-	bh=JXPn9O72WfVZf0JhbgF+k4m+M72LFiovl+va1/2nz2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VOKM5J/HtM0HtfAoy4Um17jA1tDG7dilBEM7HcZxFDyaNi1EPUCXe+W9pHfPTdujWOcqO4Ta2/kWdG2I9etzzvptx5T+XkZuX6NNchC2dmJLcMC8jsf21xv4cwXI8Cl5uoXnVnPei/bdNnRwqD/Xo2exvjA+N8+SV7L9FbDd8dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=lfhIos98; arc=none smtp.client-ip=162.248.234.2
+	bh=FfZnDXVBsvrJ6TH9MDumMusb+f/puIGNBfj/R8tk5YA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kIYBLLXF/aKrnFquxhsTn56YB/YKJi+FAz8z0SG/c1luOp7PBWJTK6dxDVwa0E4tC1X1I5wPOHbmF39sTGW7CsGLGPyruRwXdYr4+VIJX38H5dOp53Fd9wEOu8ZsOowCLNe/L0GHVukvtdosEyVqYkCndkpxYD7TbrgXcmb7NbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=qrP7WfZc; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="lfhIos98"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="qrP7WfZc"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id B3072201F8;
+	by mail.xes-mad.com (Postfix) with ESMTP id E0999205B1;
 	Fri, 27 Sep 2024 13:55:15 -0500 (CDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1727463315; bh=JXPn9O72WfVZf0JhbgF+k4m+M72LFiovl+va1/2nz2A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lfhIos98i9GhNtbr7CJbeKoT/5EQJwqPH9PG+d27vmKXg89PBp8zrVYHws3QkStad
-	 FXNSdpVpwo7VGby7XMnHuGDHUhskODnXsS7r82FlEoMQZZrQidPAGNNmq+VuPlT5ZT
-	 lB5SwqbqoFEwmeC7Sme3Fgvcqlb017xslcHXhRw8=
+	t=1727463315; bh=FfZnDXVBsvrJ6TH9MDumMusb+f/puIGNBfj/R8tk5YA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qrP7WfZcmSqEfX6QhDtVqY4/nRrQhqIaUsAOb5SPJKKUxe4StXBdEL2V2dkPUH4g5
+	 24ex7NeyN8/Hn9c8vDiFsJRRNk/miv2xeNaoV0GpoaTddW2Z0CJzyu/nMj/O2ZsLyl
+	 qN5voZMHpwChm/Z4+kVDde77kLdEgK2zlc0qUmc0=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH 00/22] bindings: python: conform to mypy and ruff linter recommendations
-Date: Fri, 27 Sep 2024 13:53:36 -0500
-Message-Id: <20240927-vfazio-mypy-v1-0-91a7c2e20884@xes-inc.com>
+Subject: [libgpiod][PATCH 02/22] bindings: python: make internal a private submodule
+Date: Fri, 27 Sep 2024 13:53:38 -0500
+Message-Id: <20240927-vfazio-mypy-v1-2-91a7c2e20884@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240927-vfazio-mypy-v1-0-91a7c2e20884@xes-inc.com>
+References: <20240927-vfazio-mypy-v1-0-91a7c2e20884@xes-inc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -39,110 +42,67 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Change-ID: 20240923-vfazio-mypy-2037e7d5bdd6
 Content-Transfer-Encoding: 8bit
 
-This patch series employs mypy [0] and ruff [1] to ensure the gpiod
-library has correctly typed public interfaces, is performing proper type
-checking internally, is consistently formatted in a standard code style
-that targets Python 3.9 syntax, and passes a subset of linting checks.
+The internal submodule shouldn't be exposed as part of the public
+interface, so mark it private following PEP 8 convention [0].
 
-Patches 1 and 2 remove unused imports, sort the remainder, and ensure
-the publicly usable classes are available from the gpiod base module.
+Also, add a type annotation to `sec` for its possible types.
 
-Patches 3 and 4 fix and add annotations to the gpiod bindings.
-
-Patches 5-13 fix type and lint errors internal to the bindings.
-
-Patch 14 fixes a duplicate test name identified by the linter.
-
-Patch 15 and 16 remove unused imports, sort the remainder, and fix lint
-errors related to a shadowed export.
-
-Patches 17 and 18 fix and add annotations to the test gpiod bindings.
-
-Patches 19-21 fix type and lint errors internal to the tests.
-
-Patch 22 adds mypy and ruff configuration to pyproject.toml and adds
-documentation to the readme so future patches can be evaluated against a
-standard set of rules.
-
-There should be no functional changes that impact existing code as part
-of this series.
-
-All unit tests continue to pass without changes and code coverage has
-not changed.
-
-After this series is applied, the public type annotations will reflect
-the argument expectations of the class methods so consumers can type
-check their code against the gpiod type annotations.
-
-[0]: https://mypy.readthedocs.io/en/stable/ 
-[1]: https://docs.astral.sh/ruff/ 
-
+[0]: https://peps.python.org/pep-0008/#public-and-internal-interfaces
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
-Vincent Fazio (22):
-      bindings: python: clean up imports and exports
-      bindings: python: make internal a private submodule
-      bindings: python: fix annotation of variable length tuples
-      bindings: python: add missing method type annotations
-      bindings: python: add type stubs for _ext
-      bindings: python: annotate internal members of Chip
-      bindings: python: fix Chip union-attr type errors
-      bindings: python: annotate internal members of LineRequest
-      bindings: python: fix LineRequest union-attr type errors
-      bindings: python: convert lines to offsets in LineRequest
-      bindings: python: cast return value of LineRequest.get_values
-      bindings: python: raise exception type, not exception instance
-      bindings: python: selectively use f-strings
-      bindings: python: tests: fix duplicate test name
-      bindings: python: tests: clean up imports and exports
-      bindings: python: tests: make EventType private to prevent export
-      bindings: python: tests: add type stubs for external modules
-      bindings: python: tests: add missing type annotations
-      bindings: python: tests: ignore purposeful type errors
-      bindings: python: tests: annotate internal members
-      bindings: python: tests: use f-strings
-      bindings: python: configure and document dev dependencies
+ bindings/python/gpiod/{internal.py => _internal.py} | 1 +
+ bindings/python/gpiod/chip.py                       | 2 +-
+ bindings/python/gpiod/line_request.py               | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
- bindings/python/README.md                          |  17 ++
- bindings/python/gpiod/__init__.py                  |  83 ++++++--
- bindings/python/gpiod/_ext.pyi                     |  93 +++++++++
- .../python/gpiod/{internal.py => _internal.py}     |   3 +-
- bindings/python/gpiod/chip.py                      |  56 ++++--
- bindings/python/gpiod/chip_info.py                 |   6 +-
- bindings/python/gpiod/edge_event.py                |   9 +-
- bindings/python/gpiod/exception.py                 |   4 +-
- bindings/python/gpiod/info_event.py                |  11 +-
- bindings/python/gpiod/line.py                      |   5 +-
- bindings/python/gpiod/line_info.py                 |  10 +-
- bindings/python/gpiod/line_request.py              |  80 +++++---
- bindings/python/gpiod/line_settings.py             |  15 +-
- bindings/python/pyproject.toml                     |  36 ++++
- bindings/python/setup.py                           |   2 +-
- bindings/python/tests/__init__.py                  |   6 +-
- bindings/python/tests/__main__.py                  |   5 +-
- bindings/python/tests/gpiosim/__init__.py          |   2 +
- bindings/python/tests/gpiosim/_ext.pyi             |  21 +++
- bindings/python/tests/gpiosim/chip.py              |   3 +-
- bindings/python/tests/helpers.py                   |   6 +-
- bindings/python/tests/procname/__init__.py         |   2 +
- bindings/python/tests/procname/_ext.pyi            |   1 +
- bindings/python/tests/tests_chip.py                | 105 ++++++-----
- bindings/python/tests/tests_chip_info.py           |  38 ++--
- bindings/python/tests/tests_edge_event.py          |  66 ++++---
- bindings/python/tests/tests_info_event.py          | 100 ++++++----
- bindings/python/tests/tests_line.py                |   5 +-
- bindings/python/tests/tests_line_info.py           |  49 +++--
- bindings/python/tests/tests_line_request.py        | 210 ++++++++++-----------
- bindings/python/tests/tests_line_settings.py       |  19 +-
- bindings/python/tests/tests_module.py              |  37 ++--
- 32 files changed, 710 insertions(+), 395 deletions(-)
----
-base-commit: f6c8c3321d8f30979fa593a4f6546ff3dccd2549
-change-id: 20240923-vfazio-mypy-2037e7d5bdd6
+diff --git a/bindings/python/gpiod/internal.py b/bindings/python/gpiod/_internal.py
+similarity index 94%
+rename from bindings/python/gpiod/internal.py
+rename to bindings/python/gpiod/_internal.py
+index d1e95e4ade3146f596643d52207b367e332e6f7e..c9b5d2850389d5314a12bf6d151774a96469a085 100644
+--- a/bindings/python/gpiod/internal.py
++++ b/bindings/python/gpiod/_internal.py
+@@ -9,6 +9,7 @@ __all__ = ["poll_fd"]
+ 
+ 
+ def poll_fd(fd: int, timeout: Optional[Union[timedelta, float]] = None) -> bool:
++    sec: Union[float, None]
+     if isinstance(timeout, timedelta):
+         sec = timeout.total_seconds()
+     else:
+diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
+index 257a31eba8d19634fd14e3b1d33a1345a0363946..1a1bba4d6dd9e840a60394f1b74903f6ad15a0f4 100644
+--- a/bindings/python/gpiod/chip.py
++++ b/bindings/python/gpiod/chip.py
+@@ -7,10 +7,10 @@ from errno import ENOENT
+ from typing import Optional, Union
+ 
+ from . import _ext
++from ._internal import poll_fd
+ from .chip_info import ChipInfo
+ from .exception import ChipClosedError
+ from .info_event import InfoEvent
+-from .internal import poll_fd
+ from .line import Value
+ from .line_info import LineInfo
+ from .line_request import LineRequest
+diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
+index e48830450dcb5b7fa6c7983a0fe074cd9bd32ab7..154174872e488fa478b27f5e83d65e6040aca367 100644
+--- a/bindings/python/gpiod/line_request.py
++++ b/bindings/python/gpiod/line_request.py
+@@ -6,9 +6,9 @@ from datetime import timedelta
+ from typing import Optional, Union
+ 
+ from . import _ext
++from ._internal import poll_fd
+ from .edge_event import EdgeEvent
+ from .exception import RequestReleasedError
+-from .internal import poll_fd
+ from .line import Value
+ from .line_settings import LineSettings, _line_settings_to_ext
+ 
 
-Best regards,
 -- 
-Vincent Fazio <vfazio@xes-inc.com>
+2.34.1
