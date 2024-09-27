@@ -1,37 +1,37 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624881C233F
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Sep 2024 18:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327391C231D
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Sep 2024 18:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727463329; cv=none; b=uTADHHhktH+JXis5Q1RzZjWybYQoCIg8+8SywnWfLo2rYSHjQxAiGVqoF6h+vMMajB5CS79kfM4kBFC2epHMkwRkneZDd8+IVuzS3ipwXOZdnCM5xIxtdNQvcIPGka8PxdpwAVy0vCbmW+s4MvhwgIyEA7HcDs8pDS+pdOFQoX0=
+	t=1727463329; cv=none; b=cUoH50Z/ujB2jsFwRrLJvInHt2l6BSQ82Mx9ESv/5iPRWNbfMluoSu5qFj1+EXirlGky5GNVXrVCtVEKyXkbwz2BxPY4YSlyELNK8FrjLyMzqXR8ViwQW/lDAVUqoUKWQR87XMA7ZEPCNzRNJOMPAkkakTptC6MWlFEAQEPkA3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727463329; c=relaxed/simple;
-	bh=g3Y99R0h2yatq0LeTDa8NE58aE8IF1GFOfiF5D6xGBM=;
+	bh=2s1XXzAu+y3GpmL2X+rhC8xv91qAFJNg4lLzRhK2S+M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MbIis5sAfrc7wBZPKQ16g0kcAjL82CqsUfoNk5DenR0H3Sa2xXAFn+og0zHJ+TZeN3yqs/picPqMTkgZc4eRxFd9PrtnXxNWqDNAGuqNfKSTWGLVaxIUw3UuYqy+X0dukCwXoTuUHWXZ7cgdG6CV1JCIN57qhapkkBllcB6vJ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=CEQrtyMk; arc=none smtp.client-ip=162.248.234.2
+	 MIME-Version:Content-Type; b=SPzXebgG00iZ3kSx3SyyodZzZ2WoLXWCDU+80py3efHV6ZJp1clfS/8Nms8t1A1wWng7ZI9CoS6m6QWPr95expCwwq75Emb+T9/e7jeXrVGoDVkiG4+vFqHXAjsd1KZLWv0vJ+uDYCSZAgKwY+ETy9lrxSGmQhWuwVicEGYY+Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=Ifgaqoov; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="CEQrtyMk"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="Ifgaqoov"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id 34D4D2183A;
+	by mail.xes-mad.com (Postfix) with ESMTP id C447022AE2;
 	Fri, 27 Sep 2024 13:55:17 -0500 (CDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1727463317; bh=g3Y99R0h2yatq0LeTDa8NE58aE8IF1GFOfiF5D6xGBM=;
+	t=1727463317; bh=2s1XXzAu+y3GpmL2X+rhC8xv91qAFJNg4lLzRhK2S+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CEQrtyMkEg8QJ9AlrLPtPE69xq9vPWWbk93LiY0Rgl2mMsO7VRlbQ2VyfrlOjZeOG
-	 H+Hz3L78jnFdc4a5LdiODc+khS3FgS2qyuvm1NoGWulVVKPojRH3EZ3M86ZHeXSp6N
-	 PvFnyLQ3tZgBzqrW6tuxK/bosHVaFhTbfRRYarbQ=
+	b=IfgaqoovD6oAD80qlAiYndqWWg9snIxhlhsfy0QSUajNJmd3dnGgF+KcCccJmJCRi
+	 7By6WwYyRSJZEH/LH+pQ+oYp9yoScrRqgyhqKOeSH0vvuQvzAbfX6Mrx+qNFmbsssa
+	 X0QK2kQU4ZzxneuEySitxy5Yq6Luwgtj0iiMPAnQ=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH 16/22] bindings: python: tests: make EventType private to prevent export
-Date: Fri, 27 Sep 2024 13:53:52 -0500
-Message-Id: <20240927-vfazio-mypy-v1-16-91a7c2e20884@xes-inc.com>
+Subject: [libgpiod][PATCH 22/22] bindings: python: configure and document dev dependencies
+Date: Fri, 27 Sep 2024 13:53:58 -0500
+Message-Id: <20240927-vfazio-mypy-v1-22-91a7c2e20884@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240927-vfazio-mypy-v1-0-91a7c2e20884@xes-inc.com>
 References: <20240927-vfazio-mypy-v1-0-91a7c2e20884@xes-inc.com>
@@ -44,127 +44,96 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+Mypy [0] is a popular static type checker that validates attribute and
+variable use and ensures function arguments adhere to type annotations.
+
+Ruff [1] is a popular Rust-based Python linter and code formatter. It
+has support for a large set of linting rules [2] and largely complies
+with the Black format [3].
+
+Add documentation to the README for how to run the tools.
+
+[0]: https://mypy.readthedocs.io/en/stable/
+[1]: https://docs.astral.sh/ruff/
+[2]: https://docs.astral.sh/ruff/rules/
+[3]: https://docs.astral.sh/ruff/formatter/#black-compatibility
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
- bindings/python/tests/tests_edge_event.py | 14 +++++++-------
- bindings/python/tests/tests_info_event.py | 10 +++++-----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ bindings/python/README.md      | 17 +++++++++++++++++
+ bindings/python/pyproject.toml | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/bindings/python/tests/tests_edge_event.py b/bindings/python/tests/tests_edge_event.py
-index 7e7fada38cf2a983172aaa9c8400fbfe0d3b7a7d..c24d344fdbd6a1b9eda9497afab8a61c5ecb8f09 100644
---- a/bindings/python/tests/tests_edge_event.py
-+++ b/bindings/python/tests/tests_edge_event.py
-@@ -12,7 +12,7 @@ from gpiod.line import Direction, Edge
+diff --git a/bindings/python/README.md b/bindings/python/README.md
+index cb5cee62cc46980ce2484bc85d8686ffb8622e59..89c824cebbd735624159a5b30a8bbee2c55e896e 100644
+--- a/bindings/python/README.md
++++ b/bindings/python/README.md
+@@ -112,3 +112,20 @@ make python-tests-run
  
- from . import gpiosim
+ from the `libgpiod/bindings/python` directory as root (necessary to be able
+ to create the **gpio-sims** used for testing).
++
++## Linting/Formatting
++
++When making changes, ensure type checks and linting still pass:
++
++```
++python3 -m venv venv
++. venv/bin/activate
++pip install mypy ruff
++mypy; ruff format; ruff check
++```
++
++Ideally the gpiod library will continue to pass strict checks:
++
++```
++mypy --strict
++```
+\ No newline at end of file
+diff --git a/bindings/python/pyproject.toml b/bindings/python/pyproject.toml
+index f6bf43c0a20edc76bfa51a98e7d523c8dadefea1..43e85a72daaea50c07a527d7b388ac9a4396a3d8 100644
+--- a/bindings/python/pyproject.toml
++++ b/bindings/python/pyproject.toml
+@@ -3,3 +3,39 @@
  
--EventType = gpiod.EdgeEvent.Type
-+_EventType = gpiod.EdgeEvent.Type
- Pull = gpiosim.Chip.Pull
- 
- 
-@@ -87,7 +87,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.RISING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.RISING_EDGE)
-             self.assertEqual(event.line_offset, 2)
-             ts_rising = event.timestamp_ns
- 
-@@ -95,7 +95,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.FALLING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.FALLING_EDGE)
-             self.assertEqual(event.line_offset, 2)
-             ts_falling = event.timestamp_ns
- 
-@@ -114,7 +114,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.RISING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.RISING_EDGE)
-             self.assertEqual(event.line_offset, 6)
- 
-             self.assertFalse(req.wait_edge_events(timedelta(microseconds=10000)))
-@@ -132,7 +132,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.FALLING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.FALLING_EDGE)
-             self.assertEqual(event.line_offset, 6)
- 
-             self.assertFalse(req.wait_edge_events(timedelta(microseconds=10000)))
-@@ -150,7 +150,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.RISING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.RISING_EDGE)
-             self.assertEqual(event.line_offset, 2)
-             self.assertEqual(event.global_seqno, 1)
-             self.assertEqual(event.line_seqno, 1)
-@@ -159,7 +159,7 @@ class WaitingForEdgeEvents(TestCase):
-             events = req.read_edge_events()
-             self.assertEqual(len(events), 1)
-             event = events[0]
--            self.assertEqual(event.event_type, EventType.RISING_EDGE)
-+            self.assertEqual(event.event_type, _EventType.RISING_EDGE)
-             self.assertEqual(event.line_offset, 4)
-             self.assertEqual(event.global_seqno, 2)
-             self.assertEqual(event.line_seqno, 1)
-diff --git a/bindings/python/tests/tests_info_event.py b/bindings/python/tests/tests_info_event.py
-index bbdbc0fa6e69c59a32d67d00f5e785105c90e840..1976f4be8b9a63942275875ada00472402524350 100644
---- a/bindings/python/tests/tests_info_event.py
-+++ b/bindings/python/tests/tests_info_event.py
-@@ -14,7 +14,7 @@ from gpiod.line import Direction
- 
- from . import gpiosim
- 
--EventType = gpiod.InfoEvent.Type
-+_EventType = gpiod.InfoEvent.Type
- 
- 
- class InfoEventDataclassBehavior(TestCase):
-@@ -101,7 +101,7 @@ class WatchingInfoEventWorks(TestCase):
- 
-         self.assertTrue(self.chip.wait_info_event(datetime.timedelta(seconds=1)))
-         event = self.chip.read_info_event()
--        self.assertEqual(event.event_type, EventType.LINE_REQUESTED)
-+        self.assertEqual(event.event_type, _EventType.LINE_REQUESTED)
-         self.assertEqual(event.line_info.offset, 7)
-         self.assertEqual(event.line_info.direction, Direction.INPUT)
-         ts_req = event.timestamp_ns
-@@ -109,14 +109,14 @@ class WatchingInfoEventWorks(TestCase):
-         # Check that we can use a float directly instead of datetime.timedelta.
-         self.assertTrue(self.chip.wait_info_event(1.0))
-         event = self.chip.read_info_event()
--        self.assertEqual(event.event_type, EventType.LINE_CONFIG_CHANGED)
-+        self.assertEqual(event.event_type, _EventType.LINE_CONFIG_CHANGED)
-         self.assertEqual(event.line_info.offset, 7)
-         self.assertEqual(event.line_info.direction, Direction.OUTPUT)
-         ts_rec = event.timestamp_ns
- 
-         self.assertTrue(self.chip.wait_info_event(datetime.timedelta(seconds=1)))
-         event = self.chip.read_info_event()
--        self.assertEqual(event.event_type, EventType.LINE_RELEASED)
-+        self.assertEqual(event.event_type, _EventType.LINE_RELEASED)
-         self.assertEqual(event.line_info.offset, 7)
-         self.assertEqual(event.line_info.direction, Direction.OUTPUT)
-         ts_rel = event.timestamp_ns
-@@ -146,7 +146,7 @@ class UnwatchingLineInfo(TestCase):
-         with self.chip.request_lines(config={0: None}) as request:
-             self.assertTrue(self.chip.wait_info_event(datetime.timedelta(seconds=1)))
-             event = self.chip.read_info_event()
--            self.assertEqual(event.event_type, EventType.LINE_REQUESTED)
-+            self.assertEqual(event.event_type, _EventType.LINE_REQUESTED)
-             self.chip.unwatch_line_info(0)
- 
-         self.assertFalse(
+ [build-system]
+ requires = ["setuptools", "wheel", "packaging"]
++
++[tool.mypy]
++python_version = "3.9"
++files = [
++  "gpiod/",
++  "tests/",
++]
++
++[[tool.mypy.overrides]]
++module = "gpiod.line.*"
++strict_equality = false # Ignore Enum comparison-overlap https://github.com/python/mypy/issues/17317
++
++[tool.ruff]
++target-version = "py39"
++include = [
++  "gpiod/**/*.py",
++  "gpiod/**/*.pyi",
++  "tests/**/*.py",
++  "tests/**/*.pyi",
++]
++
++[tool.ruff.lint]
++select = ["B", "E", "F", "I", "UP"]
++ignore=[
++  # Ignore chained exception warnings for now: https://docs.astral.sh/ruff/rules/raise-without-from-inside-except/
++  "B904",
++  # Never enforce line length violations. Let the formatter handle it. https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
++  "E501",
++  # Ignore new Union (|) syntax until we require 3.10+
++  "UP007",
++]
++
++[tool.ruff.lint.per-file-ignores]
++"gpiod/__init__.py" = ["F403", "F405"]  # ignore warnings about star imports
++"tests/__main__.py" = ["F403"]
++"tests/**.py" = ["F841"]  # ignore warnings about unused variables
+\ No newline at end of file
 
 -- 
 2.34.1
