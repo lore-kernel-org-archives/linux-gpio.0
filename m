@@ -1,61 +1,60 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A188219D8A8
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 19:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A7C19DF53
+	for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 19:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727725872; cv=none; b=FJZ8S13zd4d1uOiCsM6P47n1za6Zjoi8dk4w2pD4m9H94KZU3ap1rJRWX7wkdKf9dQg1BZT7Bp4R0+Rk4kP18iErn+uhRZ7WBRcObBOhY79QyCj0JoaN8dXvOmIx9DPgDezignbPTG/AUkQx4/1FJhdOf+GeN4PBibYX9D5fyK8=
+	t=1727725872; cv=none; b=TYAOgdDkxg48RGcx0iMLwYg0QYG+wYznIWr9hJ3YoZVLu+iO6tiQJhaZ/DOMVk9PK2IW+cfTtSBXCMvzlfyAwl7ppBEszA3oS1FYD4lAEoObnuFxOdkT/el0G94Xr3rLvWE+9LIaSLvgMq6FLnyk64DH40Bc4/pEkQ9Yf3gxNR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727725872; c=relaxed/simple;
-	bh=AYsgukbXqI2H2yRv+yRYvC4dB2cH63Mc53s8j4k73Do=;
+	bh=QOFY3NhTiXE558lxFJa40q0aIiFJXOat1xVrnr10WG0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qiOg6o40zYvw/7QntwhlXETT3QAeQMgAf5dooXjRORCn8nYy+PbKB5oRUItXC+6U9HtL8LBLkEWXAyvaG/S1yuWFrTT5vbOJaJGewC3sscOUv1wrJAGsk4QGMvY1j3Oha43S24iavwrXwWek7ZV8VuGdm8nnXhIgEm+UayoESIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=UzSjAcvM; arc=none smtp.client-ip=209.85.210.182
+	 In-Reply-To:To:Cc; b=RbnZXx2c2+xv6F0UmTIZgPJcdDfUoVQlicM1I4p+X4AWRc6yQcOECxSyWL3O98M8RSMhL69BtDM5dY0do/KrWB9sKJw/JiZ5V5JbqXHD+OM/RklfTZeYDrDo19xLB3r1WZlCj/+5sr+jJmAMLk5V/K1J9IMfos6EmahetskRbbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=FCbXOdNl; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="UzSjAcvM"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71979bf5e7aso3481661b3a.1
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 12:51:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="FCbXOdNl"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-719ba0654f9so3994504b3a.3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 12:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1727725869; x=1728330669; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1727725870; x=1728330670; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e/6hM/SLg9H5YNHVFJfYKuEoxKPox303WSs6Xqy7+H8=;
-        b=UzSjAcvM+Lm8nUd7GJmMyQv9gGnRr0oIgXK0dAU+zVkjQafmii7opkbyQseSuUsP39
-         QSEwyPtV3nTyseuiL/5/tBd95nsDQ1dBp+j3wvgvwA2phTXxQq35wnPzSZtnidR28d7T
-         570pk83t1HHypL/8a5JGZxJi0m73b5IXrRfqHeGasXaLav8mtqToCqqCQJG799g4TexP
-         kSCM596SPlXhWLS/U3yB/BxR/f+xp/pFWXUSqnwWZrICU1a75JosTiNVcJWLsyh2L9iD
-         ODqwKkjzXM2LcORbKoSsGr2LCL1isoLE7qMZOUTv3AVYJBvNPHNLQqI4C2ceexgFmz1A
-         w6kA==
+        bh=FOENnbNZqVpEixBn4r5uT9yCBf3nvHWmxb3PiDsNikI=;
+        b=FCbXOdNlCgL+z3RcgthaF5UiBIqlB/r3qQkdTBLHqHGw9h0PChI/HGCrKSja3ZCk2l
+         +OUuIfbhAUYk9UV4ntPCw9gzs4QZ6n428Aw6Pjhj2P8dm+VSLhFo0xwWl/pR1OyjH/SB
+         CdbMJA5PKVDo6m9r/UoJbSRgZXVrFl/vMkNSaiJpJstvfABfWQJ08kUDwv8LYWMbvJEX
+         OOm4XLSLa5/iGlgfV9aDw4vd/KW20HKzac58IO3l6V7VTVJSCl8dCOrL9V/g2xjn80xu
+         AyGedh47NA0GD/D6D65WV/JIBNZ3uVQgb2/m1DpZP58U863pN1G5aA0MmVvulAE/2mdI
+         hZsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727725869; x=1728330669;
+        d=1e100.net; s=20230601; t=1727725870; x=1728330670;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e/6hM/SLg9H5YNHVFJfYKuEoxKPox303WSs6Xqy7+H8=;
-        b=DH5LclfOy4aDCtfNQql3YU7xIh5RN8XHNB8l//Z5bNSLGJ5zSBT6LuST25mo9mqASv
-         lg26Zys1ydKOBijqDqk5sofWssp7xYzwEfa15PwFtG7f/YULMO/ecNZWm3o4clW1oEsb
-         WEGqtwvWyC5p+O3LTutv/htjDAJV7Cgm4UZdWrjDZRiaLHlP7v9EHctQ19MAQnFku5Ze
-         9gFwwMZcpyzj8BJUkfCWZk46/5oPkaFQRbR/F5TpNgNwae70TBDyZYLKdWTR71LG/UF+
-         GO7bb9wGTiPh8zTKxpaEQYMGormZPNIeKUyiwu2710PC2Px3m8D+WXn5/a7ZjL0/SikR
-         QkNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx9i0udHDGf4StMbgkwgGu8Wqzc6YYVUaTnv9dOpWDdBjdOiasA0D/bGxUK6ovUzu/uArkIiQRTiG/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH7MvUy1GbBEwWlNBf8QF+VUUPjqgjLW2CExumBaUsDRGsaNJk
-	KrL2FUxwBmdE90CJQlYiJ1KVfvu/HOP3fcoMlqGZjngGz/oGzyyG2OBgd68YGbY=
-X-Google-Smtp-Source: AGHT+IGZD7DzL8afx5Z7kSfSkPKuOCCOcV72lunJpztdT/+HSSzmn2ZPR4/QRqN8EaI/natCvse7mg==
-X-Received: by 2002:a05:6a00:1813:b0:718:dd53:70db with SMTP id d2e1a72fcca58-71b25f448a0mr20158214b3a.11.1727725868868;
-        Mon, 30 Sep 2024 12:51:08 -0700 (PDT)
+        bh=FOENnbNZqVpEixBn4r5uT9yCBf3nvHWmxb3PiDsNikI=;
+        b=MPbv3dsPy77N+Npznd0Jz3rLywE5uoxWE5DC395ZB2zPru99ynphKqaOsLexg6qkb5
+         Go+V2qqeCVAaFdsw1Wn71og3lP7PP1juDZXPW9IsV37vBngHF9HmNUyFObAClKd4OSYr
+         eRtaqY/7nQpXMOZQh3OiRcd5v8v4ionSiolp9P6N+EoJa4achUHbsBwCVlGnIwCW9M5b
+         dc7XpAmvhKZqZq4kRlHVJGBpYt52U78scgCQUP3IA34iq/AYdA9Zlu7rS//iimdRouhn
+         BSYYQ9mz9NDJiUYSZSA/qzK7XTysIB+Ru61gqnKz798BPoA1w/RjAH2bMH5zXBNemSjM
+         6wng==
+X-Forwarded-Encrypted: i=1; AJvYcCVQP7Y425TNVEx2dmgx/mIkBinl5TVnsLycxI/rEmDuUe8XMHzDheVFYRUyAFLHg6KaYGCQ0S/0+rD9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ5AGlbislC40FuWmjC5MC+PDTpWOFh0Il6VqvW6FrjAB9jKnI
+	R9o2lL+3ltLXSxQUUpi3RINv05XygCg2ufJdfG3ezVBgPuWH5SSTjOpQbi8xlaw=
+X-Google-Smtp-Source: AGHT+IE9wVO7c8Ywho+AqEJCOVbrSywl/1iA5AQOkKx/691Hbnt4288WiAeavD6A4I7Z24WVnR/k6Q==
+X-Received: by 2002:a05:6a00:3cce:b0:718:cabe:aa8 with SMTP id d2e1a72fcca58-71b26059666mr21143692b3a.18.1727725870528;
+        Mon, 30 Sep 2024 12:51:10 -0700 (PDT)
 Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d4bsm6630213b3a.158.2024.09.30.12.51.08
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d4bsm6630213b3a.158.2024.09.30.12.51.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 12:51:08 -0700 (PDT)
+        Mon, 30 Sep 2024 12:51:10 -0700 (PDT)
 From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Mon, 30 Sep 2024 12:50:51 -0700
-Subject: [PATCH v3 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl
- bindings
+Date: Mon, 30 Sep 2024 12:50:53 -0700
+Subject: [PATCH v3 3/8] riscv: dts: thead: Add TH1520 pin control nodes
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-th1520-pinctrl-v3-1-32cea2bdbecb@tenstorrent.com>
+Message-Id: <20240930-th1520-pinctrl-v3-3-32cea2bdbecb@tenstorrent.com>
 References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
 In-Reply-To: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
 To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
@@ -82,212 +81,106 @@ X-Mailer: b4 0.14.1
 
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
+Add nodes for pin controllers on the T-Head TH1520 RISC-V SoC.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-[dfustini: add thead,pad-group to select the pin controller instance]
 Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
- .../bindings/pinctrl/thead,th1520-pinctrl.yaml     | 176 +++++++++++++++++++++
- MAINTAINERS                                        |   1 +
- 2 files changed, 177 insertions(+)
+ arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  4 ++++
+ .../boot/dts/thead/th1520-lichee-module-4a.dtsi    |  4 ++++
+ arch/riscv/boot/dts/thead/th1520.dtsi              | 27 ++++++++++++++++++++++
+ 3 files changed, 35 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-new file mode 100644
-index 000000000000..21f86740a63d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-@@ -0,0 +1,176 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+index 497d961456f3..e88b4fce755e 100644
+--- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
++++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
+@@ -45,6 +45,10 @@ &osc_32k {
+ 	clock-frequency = <32768>;
+ };
+ 
++&aonsys_clk {
++	clock-frequency = <73728000>;
++};
 +
-+title: T-Head TH1520 SoC pin controller
+ &dmac0 {
+ 	status = "okay";
+ };
+diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+index 78977bdbbe3d..bf1c639072b8 100644
+--- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+@@ -25,6 +25,10 @@ &osc_32k {
+ 	clock-frequency = <32768>;
+ };
+ 
++&aonsys_clk {
++	clock-frequency = <73728000>;
++};
 +
-+maintainers:
-+  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
+ &dmac0 {
+ 	status = "okay";
+ };
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index 6992060e6a54..e4eda2a76595 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -216,6 +216,12 @@ osc_32k: 32k-oscillator {
+ 		#clock-cells = <0>;
+ 	};
+ 
++	aonsys_clk: aonsys-clk {
++		compatible = "fixed-clock";
++		clock-output-names = "aonsys_clk";
++		#clock-cells = <0>;
++	};
 +
-+description: |
-+  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
+@@ -354,6 +360,13 @@ portd: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl1_apsys: pinctrl@ffe7f3c000 {
++			compatible = "thead,th1520-pinctrl";
++			reg = <0xff 0xe7f3c000 0x0 0x1000>;
++			clocks = <&clk CLK_PADCTRL1>;
++			thead,pad-group = <2>;
++		};
 +
-+  The TH1520 has 3 groups of pads each controlled from different memory ranges.
-+  Confusingly the memory ranges are named
-+    PADCTRL_AOSYS  -> PAD Group 1
-+    PADCTRL1_APSYS -> PAD Group 2
-+    PADCTRL0_APSYS -> PAD Group 3
+ 		gpio0: gpio@ffec005000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0xff 0xec005000 0x0 0x1000>;
+@@ -392,6 +405,13 @@ portb: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl0_apsys: pinctrl@ffec007000 {
++			compatible = "thead,th1520-pinctrl";
++			reg = <0xff 0xec007000 0x0 0x1000>;
++			clocks = <&clk CLK_PADCTRL0>;
++			thead,pad-group = <3>;
++		};
 +
-+  Each pad can be muxed individually to up to 6 different functions. For most
-+  pads only a few of those 6 configurations are valid though, and a few pads in
-+  group 1 does not support muxing at all.
+ 		uart2: serial@ffec010000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0xff 0xec010000 0x0 0x4000>;
+@@ -538,6 +558,13 @@ porte: gpio-controller@0 {
+ 			};
+ 		};
+ 
++		padctrl_aosys: pinctrl@fffff4a000 {
++			compatible = "thead,th1520-pinctrl";
++			reg = <0xff 0xfff4a000 0x0 0x2000>;
++			thead,pad-group = <1>;
++			clocks = <&aonsys_clk>;
++		};
 +
-+  Pinconf is fairly regular except for a few pads in group 1 that either can't
-+  be configured or has some special functions. The rest have configurable drive
-+  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
-+  addition to a special strong pull up.
-+
-+  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
-+  are then meant to be used by the audio co-processor. Each such pad can then
-+  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
-+  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
-+  also configured in different registers. All of this is done from a different
-+  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - thead,th1520-pinctrl
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  thead,pad-group:
-+    description: |
-+      Select the pad group that is associated with the pin controller instance.
-+
-+        Base Address   Name           Group
-+        0xFF_FFF4_A000 PADCTRL_AOSYS  1
-+        0xFF_E7F3_C000 PADCTRL1_APSYS 2
-+        0xFF_EC00_7000 PADCTRL0_APSYS 3
-+
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 3]
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+patternProperties:
-+  '-[0-9]+$':
-+    type: object
-+    additionalProperties: false
-+
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        allOf:
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+
-+        additionalProperties: false
-+
-+        description:
-+          A pinctrl node should contain at least one subnode describing one
-+          or more pads and their associated pinmux and pinconf settings.
-+
-+        properties:
-+          pins:
-+            description: List of pads that properties in the node apply to.
-+
-+          function:
-+            enum: [ gpio, pwm, uart, ir, i2c, spi, qspi, sdio, audio, i2s,
-+                    gmac0, gmac1, dpu0, dpu1, isp, hdmi, bootsel, debug,
-+                    clock, jtag, iso7816, efuse, reset ]
-+            description: The mux function to select for the given pins.
-+
-+          bias-disable: true
-+
-+          bias-pull-up:
-+            oneOf:
-+              - type: boolean
-+                description: Enable the regular 48kOhm pull-up
-+              - enum: [ 2100, 48000 ]
-+                description: Enable the strong 2.1kOhm pull-up or regular 48kOhm pull-up
-+
-+          bias-pull-down:
-+            oneOf:
-+              - type: boolean
-+              - const: 44000
-+            description: Enable the regular 44kOhm pull-down
-+
-+          drive-strength:
-+            enum: [ 1, 2, 3, 5, 7, 8, 10, 12, 13, 15, 16, 18, 20, 21, 23, 25 ]
-+            description: Drive strength in mA
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          slew-rate:
-+            maximum: 1
-+
-+        required:
-+          - pins
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    padctrl0_apsys: pinctrl@ec007000 {
-+        compatible = "thead,th1520-pinctrl";
-+        reg = <0xec007000 0x1000>;
-+        clocks = <&apb_clk>;
-+        thead,pad-group = <3>;
-+
-+        uart0_pins: uart0-0 {
-+            tx-pins {
-+                pins = "UART0_TXD";
-+                function = "uart";
-+                bias-disable;
-+                drive-strength = <3>;
-+                input-disable;
-+                input-schmitt-disable;
-+                slew-rate = <0>;
-+            };
-+
-+            rx-pins {
-+                pins = "UART0_RXD";
-+                function = "uart";
-+                bias-disable;
-+                drive-strength = <1>;
-+                input-enable;
-+                input-schmitt-enable;
-+                slew-rate = <0>;
-+            };
-+        };
-+    };
-+
-+    padctrl1_apsys: pinctrl@e7f3c000 {
-+        compatible = "thead,th1520-pinctrl";
-+        reg = <0xe7f3c000 0x1000>;
-+        clocks = <&apb_clk>;
-+        thead,pad-group = <2>;
-+
-+        i2c5_pins: i2c5-0 {
-+            i2c-pins {
-+                pins = "QSPI1_CSN0",    /* I2C5_SCL */
-+                       "QSPI1_D0_MOSI"; /* I2C5_SDA */
-+                function = "i2c";
-+                bias-pull-up = <2100>;
-+                drive-strength = <7>;
-+                input-enable;
-+                input-schmitt-enable;
-+                slew-rate = <0>;
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c27f3190737f..dd74c9aa2009 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19942,6 +19942,7 @@ L:	linux-riscv@lists.infradead.org
- S:	Maintained
- T:	git https://github.com/pdp7/linux.git
- F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
- F:	arch/riscv/boot/dts/thead/
- F:	drivers/clk/thead/clk-th1520-ap.c
- F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+ 		ao_gpio1: gpio@fffff52000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0xff 0xfff52000 0x0 0x1000>;
 
 -- 
 2.34.1
