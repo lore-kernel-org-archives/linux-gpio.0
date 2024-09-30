@@ -1,60 +1,60 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0407519DF82
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 19:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85C619E964
+	for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 19:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727725874; cv=none; b=seLnO6VYE7VDR4xz+Agh+tCKJ5U/pCekXRkLug6oYxrQuWwOC8cwwIN8l+W8Mjd9Ha3qh+kMrbwvDEP1q9vdkWfmltznGcmBb7lGFDpPTjaBNscmbXjbcv+4tUFrj34PoE8bcV72iPB7opshWYnV1Fo8UXEau+fXLwtpy/06Z/8=
+	t=1727725875; cv=none; b=dMgo8u6EA4jwVKfluxxCiaJkKGl7RQrg8dG/L77ogRP1vgreuMpG9Ontu1atjPBRV7ujp+YH9haWRt9OnBxbhzNPxTDQeuLEUab4r0UZVL5vrT1vhqe1K8kMhABkJAoO/B3aeYnzqGHUQK7hxKWozy/oaP4A0tiXh4CPDsumGzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727725874; c=relaxed/simple;
-	bh=Fo9mbzY7tB9id9Wihj+7T0FzxmjzQji5RtLdYH8WSOE=;
+	s=arc-20240116; t=1727725875; c=relaxed/simple;
+	bh=B76aV4Em8a3xmayW/RJImnNKEvIAkhYk10NpylsHCDU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RIjVKM9qouHMtN2dpN7GnXsD3zynttRWunQyeB4E4McoEC8awFJVBNQrcgwalTqYV7abIUjcVZAYdZgIZsfz1fxk6CuGQA3Sk2L8X+PMus0LSL7rUCGMCU+HajYARWij/TK6gEOb6qD2kvaS51Yxs+pqCX1Z6O5vdhQ5dSLzw4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=YkSHsbYv; arc=none smtp.client-ip=209.85.210.170
+	 In-Reply-To:To:Cc; b=HpDD+p/QA2T8b4rVTp30zV5e6furwpggSRwEXSB3NodTIJW0UyzgqWBNRRkuqk/Cd5lGktAWlfzDXVy4N1r/173bAbTkB8jWvtAtqSDFRgH49sWoYPL4CkWK0Jh9lLtUjWeipch88z/+Fhc2HQnS8pMxzlcp7yTtFXKGqaCjsMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=AIdfytEN; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="YkSHsbYv"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71798a15ce5so4406274b3a.0
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 12:51:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="AIdfytEN"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso3660071a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Sep 2024 12:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1727725871; x=1728330671; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1727725873; x=1728330673; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=M+zkS9utG+elVqaNRPa3m7+e8A7ib0BG9HxHBkPLUws=;
-        b=YkSHsbYvFQHX0NPNARyl47QZC0P7YhlGa+V8FmKbqI7bMCedgb8pc1E4knm6x6sC5V
-         NbagLjx+Azb1eepAsC1I9lmfinR4q7DAZOsxb8yHCHBjRVTCbA+NF9s0tm5JYOZ/lmnr
-         zNPxiJvksria80tNLmvhkOvcQH51R0vUsaQDj3GX60NQtamouZfXEBUgmJccqHac48uI
-         5v3/TP5jsaRh5DMW4i+JZplvhM9svt+9Uly9mFZsyxNheyTjeevtQE8qKSqSJ8ZnqMZc
-         gHt6hOkKcdP3X3bq1QtBMOlNysL0lNIxyeOjrUwV6nx+lJVNafTRid2LeWYmmEya8j4c
-         Fn0w==
+        bh=1NRnxFx/6PuIcATbIYTaNby2KfWgKmyVkRGZl/5vDNM=;
+        b=AIdfytEN5gdt7nIY4v4dozbUworNAQQhkTuh5oD0PweuIZOvvrJPT0jzdlcIwkfZ6j
+         D+ByHkChIgq9Gp+gr37TTeQUVkTSgK+OGRRM3zdn9nISeCYco93kfYm/vnqSnsb96PrL
+         WQpMWs5y0el2I5x4nycIm9BwYRNRjzMOEgARzRiTmkBTvqUmJOR0pWnn5QCnJeMEitT6
+         Gb7fT8Is/z8Eugy54XxCmcINM+2hFsmHUc3oCM9Z5/whUrF6ZP+le8JQJgUNzYs6BOrL
+         64k3GftXttArFQGAwSUQ0otuJBSj3uEZWoz2YR0T9RBctrlcwHbIUD2SgiaFM9Mn0AZe
+         a3Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727725871; x=1728330671;
+        d=1e100.net; s=20230601; t=1727725873; x=1728330673;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M+zkS9utG+elVqaNRPa3m7+e8A7ib0BG9HxHBkPLUws=;
-        b=eZlJ/S251bsYBSTbn9S2NQuvrOpFkpJh8QDAv+Se2nHzc5mkTpSU6kxm8/uBHNlc8c
-         HqzRfvB5qJHmUEhvRqMkHfPr/G3u3xgMzZ8l0PAU7tijHDpCfj/2wACM1dIi0+j5y8Vw
-         kQsWmDZGOU7wwnGeOqQ8AAP5JWzYR8iNg6YGyghTNiMMAjwRD+FNmuXfXdz1yTFHHkDC
-         ViYt//+FHoGeJ37eBnS+iwAW00ZzHN8oD5KR/pMBwVZz4ueQ32mjt3JtNNsXFus54+rD
-         oGv8JI4eNV78pj/UmJPs2yCe0WLVNzp7u8W2IhvWTUCX4rsbJxs0KHOaKGU8bKtoiptX
-         yGTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXft/EVS5hE895MoCrI0C9uxVOBr+l/xeLy/y/i3M0sSRBwJY37RmI/CyZ5biBd1WhLb1Eh6hf/Tz75@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDuBdtPtSZH1J7Wudq+EB/HcpLys0xhzdSjI9KxvGX19RABa9n
-	zL33VY6AqKLBCy2lCFihKnfj31S7l58oJvHRWy2Rjp3wmw00v/wNhfh8m1P9LPg=
-X-Google-Smtp-Source: AGHT+IF2PKvsM6PB9HusoaPkI2XmTv9Pzg0C6UKFCwW+Q9Ek7QSJq0D9CPuTemm5tass/l1zHCN4Rg==
-X-Received: by 2002:a05:6a21:1706:b0:1d5:1250:44b4 with SMTP id adf61e73a8af0-1d52d19a5f7mr1108919637.24.1727725871417;
-        Mon, 30 Sep 2024 12:51:11 -0700 (PDT)
+        bh=1NRnxFx/6PuIcATbIYTaNby2KfWgKmyVkRGZl/5vDNM=;
+        b=VnPgWW7zkL/W9HupTyK0gRqwjodPJTHJRw3iELkI4tQg1UMn+Ap/hORMtjoXnp899j
+         4lQoOivppDpQs9jPbkTY8T4pVACcX1ew9ybJdnAm/14MMh0w/fA2BSowT2Lwf9HOxhBl
+         UIZUpnuGlx7Ce2aPDKZ4F05X+Pb5pFsEuXfD0Ixmqtxm5RxV5ndM+pq6teMCS7faBJnP
+         c9+ifO0RiGe/KAAkLfOxFywFx/dWnVfxA6lKAn4sf5jg+UKdZANwlPHKrY6nZ5xfCPI0
+         gIWMW7H37U/mmb5ZmfuNELc8FuC+ugB6f5/HgfaOyYDLz1QOgOyr5O8x8RJx1rHMTF3m
+         mniQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGZVNbMBVd4Ra+HHmKOu2W4gVgz27B7hGNLemm5zheIaZ1xuDmKPfnzhD0NC21N/I9UpkYB19isxf6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuorC2ltneeg8hDfu9q7SmcIt6df8kYKvSecQ5u6MiCdhUZ1a7
+	Tcm/OZtogLgZgcNy2FxBtLnJKXxhjeH0m9FZotgOt7zHMuhcPgFbk0CoYY4oD6I=
+X-Google-Smtp-Source: AGHT+IGuWHV6QY4y662SIjG7e1FawYnwe5bYeFQsWhe3H7kSD2DKfvEjruI/eO2d633gVfYkMVb69Q==
+X-Received: by 2002:a05:6a21:2d8c:b0:1cf:4da0:d95c with SMTP id adf61e73a8af0-1d4fa6f9a33mr20585388637.23.1727725873211;
+        Mon, 30 Sep 2024 12:51:13 -0700 (PDT)
 Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d4bsm6630213b3a.158.2024.09.30.12.51.10
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d4bsm6630213b3a.158.2024.09.30.12.51.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 12:51:11 -0700 (PDT)
+        Mon, 30 Sep 2024 12:51:12 -0700 (PDT)
 From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Mon, 30 Sep 2024 12:50:54 -0700
-Subject: [PATCH v3 4/8] riscv: dts: thead: Add TH1520 GPIO ranges
+Date: Mon, 30 Sep 2024 12:50:56 -0700
+Subject: [PATCH v3 6/8] riscv: dts: thead: Add Lichee Pi 4M GPIO line names
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-th1520-pinctrl-v3-4-32cea2bdbecb@tenstorrent.com>
+Message-Id: <20240930-th1520-pinctrl-v3-6-32cea2bdbecb@tenstorrent.com>
 References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
 In-Reply-To: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
 To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
@@ -81,80 +81,69 @@ X-Mailer: b4 0.14.1
 
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Add gpio-ranges properties to the TH1520 device tree, so user space can
-change basic pinconf settings for GPIOs and are not allowed to use pads
-already used by other functions.
+Add names for the GPIO00-GPIO14 lines of the SO-DIMM module.
 
-Adjust number of GPIOs available for the different controllers.
-
-Acked-by: Rob Herring <robh@kernel.org>
 Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
- arch/riscv/boot/dts/thead/th1520.dtsi | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index e4eda2a76595..7dcc250ee1d1 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -334,6 +334,7 @@ portc: gpio-controller@0 {
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				ngpios = <32>;
-+				gpio-ranges = <&padctrl0_apsys 0 0 32>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-@@ -352,7 +353,8 @@ portd: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
--				ngpios = <32>;
-+				ngpios = <23>;
-+				gpio-ranges = <&padctrl0_apsys 0 32 23>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-@@ -379,6 +381,7 @@ porta: gpio-controller@0 {
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				ngpios = <32>;
-+				gpio-ranges = <&padctrl1_apsys 0 0 32>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-@@ -397,7 +400,8 @@ portb: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
--				ngpios = <32>;
-+				ngpios = <31>;
-+				gpio-ranges = <&padctrl1_apsys 0 32 31>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-@@ -550,7 +554,8 @@ porte: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
--				ngpios = <32>;
-+				ngpios = <16>;
-+				gpio-ranges = <&padctrl_aosys 0 9 16>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
-@@ -575,7 +580,8 @@ portf: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
- 				gpio-controller;
- 				#gpio-cells = <2>;
--				ngpios = <32>;
-+				ngpios = <23>;
-+				gpio-ranges = <&padctrl_aosys 0 25 22>, <&padctrl_aosys 22 7 1>;
- 				reg = <0>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
+diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+index bf1c639072b8..ca84bc2039ef 100644
+--- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
+@@ -29,6 +29,12 @@ &aonsys_clk {
+ 	clock-frequency = <73728000>;
+ };
+ 
++&aogpio {
++	gpio-line-names = "", "", "",
++			  "GPIO00",
++			  "GPIO04";
++};
++
+ &dmac0 {
+ 	status = "okay";
+ };
+@@ -48,3 +54,36 @@ &sdio0 {
+ 	max-frequency = <198000000>;
+ 	status = "okay";
+ };
++
++&gpio0 {
++	gpio-line-names = "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "",
++			  "GPIO07",
++			  "GPIO08",
++			  "",
++			  "GPIO01",
++			  "GPIO02";
++};
++
++&gpio1 {
++	gpio-line-names = "", "", "",
++			  "GPIO11",
++			  "GPIO12",
++			  "GPIO13",
++			  "GPIO14",
++			  "", "", "", "", "", "", "", "", "", "",
++			  "", "", "", "", "",
++			  "GPIO06";
++};
++
++&gpio2 {
++	gpio-line-names = "GPIO03",
++			  "GPIO05";
++};
++
++&gpio3 {
++	gpio-line-names = "", "",
++			  "GPIO09",
++			  "GPIO10";
++};
 
 -- 
 2.34.1
