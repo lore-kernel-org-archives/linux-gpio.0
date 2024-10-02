@@ -1,101 +1,74 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FB51D1516;
-	Wed,  2 Oct 2024 15:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2221D0B8F;
+	Wed,  2 Oct 2024 15:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882767; cv=none; b=QECv6Gx9sPoHV2k4+71Z/Szqx9whhkF3zazRTXAbKR2fIUzir7Kdrtl9c+v4iVg5BsAYOA8G9CvbWsOev9//Uet/DbRhj2HPMRJK14Q9vCmMY7hqWl168RyipqKKHM6HQDzZJS+m3o6gVUg+IE+48MnsCAUiJcXksArLfr6wV50=
+	t=1727882883; cv=none; b=WcXFQk4YyTwYudZWO4XvZ9Boi7icQ0pZVV1R3/vVhuQU7c9AdLavclhAYFuaVwaLX3tmpAuJ2/KXoiBm4MrcV6aHHUN2z7MOUj5Mow3+wnSU58NACvX8/bKOmMvXSicte83tH5rCKZbASF+0iYIlD71strWfpfn9P7wnfg76bE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882767; c=relaxed/simple;
-	bh=UUNAgAv1R6DLPtknbTLKqD48NRSgGCvWXZNp6Cu8omw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FPWUHiOZtW/pYAjh6E1CNEyIQe/PFrNrrrkoRzBFB0KkMRDQpa4lnCdyMSJsHVzm/KDa2hbY0fFTJtJ9DFZPJnPj9BrSD0pPPzXZzg3AsajXWG4sj9YthtnYOWCFNCbDg0TxCp8yyRbxY4WSkZaCZ2WOPyw3gQkVYuOPS0VnOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=TWpgOz8/; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
+	s=arc-20240116; t=1727882883; c=relaxed/simple;
+	bh=g47XGvfHUtrw4Jh/YhmedZ7VELF5O07MOi5rpW6qj5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Te7VAdZWDtaIgwlur/iNqYR73qJc5LFq4ar8U06CGRJPKgMo0itAMjj3Iw3CK5aKfds0DMIEMcDzz06MrGJvI447Btz8l+VrRn9lob+Cq0rpoWkquK5ghJwbNmfAIJJvjh1jFe26PqTgEa/I4o0B+Cri8a8gIns2ZUKuxm8b8AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Obvsb5Sa; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="TWpgOz8/"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D321C23CFC;
-	Wed,  2 Oct 2024 17:26:04 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id uAgeXao0KEt7; Wed,  2 Oct 2024 17:26:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1727882764;
-	bh=UUNAgAv1R6DLPtknbTLKqD48NRSgGCvWXZNp6Cu8omw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TWpgOz8/e+xXXqWT8xZIektJSbGqGBBX9jNcKz7HWicYDdRKJZGydsNNJCjLQ5+5d
-	 3fpoty6M7ghz6RxiKoTM/eOVfiX/vUhv47tOStEtJRkC9ichfrJMgJGeDspkmbFBzY
-	 i/F+gVdAI7Jwiz6FujPhbt9kDYNffO49c60I8lkGyhA+WgC6jZNYWhmUmEcn3e/oRR
-	 BVllIytbNaaKdIr9EiD4jzdhcvQLvt0SqamOplFO8dqg9xKudcpYNFzIph3jxprBFo
-	 /DN5ziIdPzo/FS1w6N6L8LKGsf0CLtHiqO5JsZkf/H4V9AO7s3K4iSlS9pbguzm+0S
-	 3B78w3mKzBKFw==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linus.walleij@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Karl Chan <exxxxkc@getgoogleoff.me>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
-Date: Wed,  2 Oct 2024 23:24:19 +0800
-Message-ID: <20241002152419.30364-6-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241002152419.30364-1-exxxxkc@getgoogleoff.me>
-References: <20241002152419.30364-1-exxxxkc@getgoogleoff.me>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Obvsb5Sa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727882881; x=1759418881;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g47XGvfHUtrw4Jh/YhmedZ7VELF5O07MOi5rpW6qj5o=;
+  b=Obvsb5Sa9Df4F+BUMhixvf2ZTVeogr4/b/hcpPlO4Y76cofQPu7AZiUM
+   FxFE1DupBb/MNDf6728BUeYMvwQK2CPU6Ftj2NX1m+ymq+aeHaCdo5M7N
+   Hhp9onZRg3/zpiMsW8Q9/7dkcazymKurNQ1TAowbQYMGD0zy7u0wgtTXJ
+   R2BUqDxXy8ssos60qOHCdhrRtdmkMlCB9xoQaPAXVxDufAJlLlk5ZYjPi
+   HDrw4kHKawtIUfki92OZfbgbBoK+bs4RU4m7a2aDAPXmrudIvadirrr+0
+   M8ZBOmmXuy8cBWDAdac8GzHiEHk1FjuSv5IfeCp+15ikpjNp+zBvGtIHq
+   A==;
+X-CSE-ConnectionGUID: UiWd/15PScmpNVMv1Cz6vQ==
+X-CSE-MsgGUID: PwUtnoVgQgSSmuGsJSNNxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27181204"
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="27181204"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:28:01 -0700
+X-CSE-ConnectionGUID: 4RyxjIeNTY6GeWfOocw5dg==
+X-CSE-MsgGUID: C88evIq6SKu50RMJN7sPEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="78775818"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 02 Oct 2024 08:27:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 498C918E; Wed, 02 Oct 2024 18:27:58 +0300 (EEST)
+Date: Wed, 2 Oct 2024 18:27:58 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: platform: Add Panther Lake to the
+ list of supported
+Message-ID: <20241002152758.GL275077@black.fi.intel.com>
+References: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
 
-Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
+On Wed, Oct 02, 2024 at 06:00:36PM +0300, Andy Shevchenko wrote:
+> Intel Panther Lake is supported by the generic platform driver,
+> so add it to the list of supported in Kconfig.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The approach to include device tree files from other architectures is
-inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-used to build the device tree for both ARM32 and ARM64.
-
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/qcom/Makefile                         | 1 +
- arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
- 2 files changed, 3 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91..147dbeb30a6a 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk04.1-c3.dtb \
- 	qcom-ipq4019-ap.dk07.1-c1.dtb \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
-+	qcom-ipq5018-linksys-jamaica.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
- 	qcom-msm8226-microsoft-dempsey.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-new file mode 100644
-index 000000000000..9a6ad767ebd7
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-+#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
--- 
-2.46.1
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
