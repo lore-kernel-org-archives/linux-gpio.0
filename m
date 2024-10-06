@@ -1,37 +1,37 @@
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC5A1714CA;
-	Sun,  6 Oct 2024 10:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153B171E43;
+	Sun,  6 Oct 2024 10:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728209341; cv=none; b=B1fi9rLG89gOv4PpC9FmxioldGw4ctmXzICTEJArDCgQ+p4tzmOeFmwjuFgGocNAFQJjL12rQZ4jqbPZ7w/5xlZRl+K3z+sb9q/CR05bu7OUxMIWTBefAAN2aaMqqlt4qDdt+MW4ZYPPi53PEQiXehKDbso6FKrx7QEBGcW2zGQ=
+	t=1728209342; cv=none; b=JanZRjnuUn/1d1/JCIg7Y+docAGDFQrb+2AzNVKAA7IspZayMD+mp5TGbhUzcvMWRlPECjWwBR6zu6DrLhT9NROptyDNCy7DhOAsXUAGbNHow8fZIN6Cyw+ilqDGcichLVc/+9c9bHXsLi2lOq3Kvz5wX8DRi8yjJ2P7a2MU26Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728209341; c=relaxed/simple;
-	bh=bdyLieRPf6yjQgw4XtJXBy39oY02YGAVMtBF73rDX/4=;
+	s=arc-20240116; t=1728209342; c=relaxed/simple;
+	bh=X2AYz492IGwzeV/lL9o4hdoM82zMb6McD+iCKqSflNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PtipE88NiGKJgqJJvDZirE+QWNa3yAl/LaD6UzcYuUS0g1zYcSBHIqyitwgwt+w8vEjMURlv5YE2zKEAfNhoEV3zA5GMFfE17TgnLjWQSr8TO0To6shL669ZoO04PNpyHUy8gnxUBXHKcgk9XI6Pzg+mHieUISEMbC50/+FpZ3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=pS3qvlMr; arc=none smtp.client-ip=134.0.28.12
+	 MIME-Version; b=oV2lvBBNR/lGdPR4/KYznzcvtr2iATnOJHXK2lNgWf2Ma2ktaU8XA8UW0xeyajfeA+JQjV/WnHpRX+pwqhEJiPbMrIjM/v7pY1p6d2DX5BaNQF7D/DdW/YBauErIY3uAEvSzff5hU5J5rzHP20So8rucClwgsAE+Diy8LhFP7JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=t7OO4vOD; arc=none smtp.client-ip=134.0.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="pS3qvlMr"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="t7OO4vOD"
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id D1EF05FBD5;
-	Sun,  6 Oct 2024 10:08:50 +0000 (UTC)
+	by mxout1.routing.net (Postfix) with ESMTP id DFD3140027;
+	Sun,  6 Oct 2024 10:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1728209331;
+	s=20200217; t=1728209332;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GHaUG5cyywTVSn0olx177yyudjZMx8d30jdAXK4qx8Y=;
-	b=pS3qvlMr/um+DbXy0UBDx3yuXpTjbSnH0aGBQCL5RZ6a2mNlsHYrVzZBj34YT+UsxDy8cK
-	FyfhHT+ZN4xlPbF6GmoOAOWJ4Ivhh2TSLRTatNw3+7QkOeQxRHa1d7p6At3DQ+NFjaeUzH
-	vjooKk+M9UeKRi5AoQw0MYxAweAkIgM=
+	bh=vNCopJmZccHmcVKLfF7eeviRLCI1O70ul3xqsxNplgQ=;
+	b=t7OO4vODXLrsb3F1RD58364u6L1eKEEMSfKVYEcPxnDLFERakiTan7mMpFmPoVxTVCxDg0
+	CBrar6/jz8pJ+27uI/lBHSWHXlR32dnLPb+Yssbph2dpvm7/ILDRoxWwWReHaXXD/cWfEr
+	wtSRmafE10a2uA5hdGeJEQ7ZtgE6qnI=
 Received: from frank-u24.. (fttx-pool-217.61.153.101.bambit.de [217.61.153.101])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 117C6360398;
-	Sun,  6 Oct 2024 10:08:50 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 3CBD0360250;
+	Sun,  6 Oct 2024 10:08:52 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Rob Herring <robh@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	john@phrozen.org,
 	ansuelsmth@gmail.com,
 	eladwf@gmail.com
-Subject: [PATCH v2 1/4] pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
-Date: Sun,  6 Oct 2024 12:08:37 +0200
-Message-ID: <20241006100843.13280-2-linux@fw-web.de>
+Subject: [PATCH v2 4/4] arm64: dts: mediatek: mt7988: add pinctrl support
+Date: Sun,  6 Oct 2024 12:08:40 +0200
+Message-ID: <20241006100843.13280-5-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241006100843.13280-1-linux@fw-web.de>
 References: <20241006100843.13280-1-linux@fw-web.de>
@@ -63,124 +63,279 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 0aa48519-a5d9-4649-893a-a5bcd1d57872
+X-Mail-ID: 9fc0ef96-f68e-47a4-aa4b-763482a8fe5b
 
-From: Daniel Golle <daniel@makrotopia.org>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-The MediaTek MT7988 SoC got some pins which only got configurable
-pull-down but unlike previous designs there is no pull-up option.
-Add new type MTK_PULL_PD_TYPE to support configuring such pins.
+Add mt7988a pinctrl node.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 59 +++++++++++++++++++
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
- 2 files changed, 60 insertions(+)
+v2:
+- fix wrong alignment of reg values
+---
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++++
+ 1 file changed, 241 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 54301fbba524..eff2aecd31dd 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -601,6 +601,30 @@ static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
- 	return err;
- }
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index c9649b815276..7e15934efe0b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/clock/mediatek,mt7988-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy.h>
++#include <dt-bindings/pinctrl/mt65xx.h>
  
-+static int mtk_pinconf_bias_set_pd(struct mtk_pinctrl *hw,
-+				const struct mtk_pin_desc *desc,
-+				u32 pullup, u32 arg)
-+{
-+	int err, pd;
-+
-+	if (arg == MTK_DISABLE)
-+		pd = 0;
-+	else if ((arg == MTK_ENABLE) && pullup)
-+		pd = 0;
-+	else if ((arg == MTK_ENABLE) && !pullup)
-+		pd = 1;
-+	else {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
-+
-+out:
-+	return err;
-+
-+}
-+
- static int mtk_pinconf_bias_set_pullsel_pullen(struct mtk_pinctrl *hw,
- 				const struct mtk_pin_desc *desc,
- 				u32 pullup, u32 arg)
-@@ -758,6 +782,12 @@ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
- 			return 0;
- 	}
+ / {
+ 	compatible = "mediatek,mt7988a";
+@@ -105,6 +106,246 @@ clock-controller@1001e000 {
+ 			#clock-cells = <1>;
+ 		};
  
-+	if (try_all_type & MTK_PULL_PD_TYPE) {
-+		err = mtk_pinconf_bias_set_pd(hw, desc, pullup, arg);
-+		if (!err)
-+			return err;
-+	}
++		pio: pinctrl@1001f000 {
++			compatible = "mediatek,mt7988-pinctrl";
++			reg = <0 0x1001f000 0 0x1000>,
++			      <0 0x11c10000 0 0x1000>,
++			      <0 0x11d00000 0 0x1000>,
++			      <0 0x11d20000 0 0x1000>,
++			      <0 0x11e00000 0 0x1000>,
++			      <0 0x11f00000 0 0x1000>,
++			      <0 0x1000b000 0 0x1000>;
++			reg-names = "gpio", "iocfg_tr",
++				    "iocfg_br", "iocfg_rb",
++				    "iocfg_lb", "iocfg_tl", "eint";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pio 0 0 84>;
++			interrupt-controller;
++			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-parent = <&gic>;
++			#interrupt-cells = <2>;
 +
- 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
- 		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
- 		if (!err)
-@@ -878,6 +908,29 @@ static int mtk_pinconf_bias_get_pu_pd(struct mtk_pinctrl *hw,
- 	return err;
- }
- 
-+static int mtk_pinconf_bias_get_pd(struct mtk_pinctrl *hw,
-+				const struct mtk_pin_desc *desc,
-+				u32 *pullup, u32 *enable)
-+{
-+	int err, pd;
++			mdio0_pins: mdio0-pins {
++				mux {
++					function = "eth";
++					groups = "mdc_mdio0";
++				};
 +
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PD, &pd);
-+	if (err)
-+		goto out;
++				conf {
++					pins = "SMI_0_MDC", "SMI_0_MDIO";
++					drive-strength = <MTK_DRIVE_8mA>;
++				};
++			};
 +
-+	if (pd == 0) {
-+		*pullup = 0;
-+		*enable = MTK_DISABLE;
-+	} else if (pd == 1) {
-+		*pullup = 0;
-+		*enable = MTK_ENABLE;
-+	} else
-+		err = -EINVAL;
++			i2c0_pins: i2c0-g0-pins {
++				mux {
++					function = "i2c";
++					groups = "i2c0_1";
++				};
++			};
 +
-+out:
-+	return err;
-+}
++			i2c1_pins: i2c1-g0-pins {
++				mux {
++					function = "i2c";
++					groups = "i2c1_0";
++				};
++			};
 +
- static int mtk_pinconf_bias_get_pullsel_pullen(struct mtk_pinctrl *hw,
- 				const struct mtk_pin_desc *desc,
- 				u32 *pullup, u32 *enable)
-@@ -947,6 +1000,12 @@ int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
- 			return 0;
- 	}
- 
-+	if (try_all_type & MTK_PULL_PD_TYPE) {
-+		err = mtk_pinconf_bias_get_pd(hw, desc, pullup, enable);
-+		if (!err)
-+			return err;
-+	}
++			i2c1_sfp_pins: i2c1-sfp-g0-pins {
++				mux {
++					function = "i2c";
++					groups = "i2c1_sfp";
++				};
++			};
 +
- 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
- 		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
- 		if (!err)
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 23688ca6d04e..9c271dc2b521 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -24,6 +24,7 @@
-  * turned on/off itself. But it can't be selected pull up/down
-  */
- #define MTK_PULL_RSEL_TYPE		BIT(3)
-+#define MTK_PULL_PD_TYPE        BIT(4)
- /* MTK_PULL_PU_PD_RSEL_TYPE is a type which is controlled by
-  * MTK_PULL_PU_PD_TYPE and MTK_PULL_RSEL_TYPE.
-  */
++			i2c2_0_pins: i2c2-g0-pins {
++				mux {
++					function = "i2c";
++					groups = "i2c2_0";
++				};
++			};
++
++			i2c2_1_pins: i2c2-g1-pins {
++				mux {
++					function = "i2c";
++					groups = "i2c2_1";
++				};
++			};
++
++			gbe0_led0_pins: gbe0-led0-pins {
++				mux {
++					function = "led";
++					groups = "gbe0_led0";
++				};
++			};
++
++			gbe1_led0_pins: gbe1-led0-pins {
++				mux {
++					function = "led";
++					groups = "gbe1_led0";
++				};
++			};
++
++			gbe2_led0_pins: gbe2-led0-pins {
++				mux {
++					function = "led";
++					groups = "gbe2_led0";
++				};
++			};
++
++			gbe3_led0_pins: gbe3-led0-pins {
++				mux {
++					function = "led";
++					groups = "gbe3_led0";
++				};
++			};
++
++			gbe0_led1_pins: gbe0-led1-pins {
++				mux {
++					function = "led";
++					groups = "gbe0_led1";
++				};
++			};
++
++			gbe1_led1_pins: gbe1-led1-pins {
++				mux {
++					function = "led";
++					groups = "gbe1_led1";
++				};
++			};
++
++			gbe2_led1_pins: gbe2-led1-pins {
++				mux {
++					function = "led";
++					groups = "gbe2_led1";
++				};
++			};
++
++			gbe3_led1_pins: gbe3-led1-pins {
++				mux {
++					function = "led";
++					groups = "gbe3_led1";
++				};
++			};
++
++			i2p5gbe_led0_pins: 2p5gbe-led0-pins {
++				mux {
++					function = "led";
++					groups = "2p5gbe_led0";
++				};
++			};
++
++			i2p5gbe_led1_pins: 2p5gbe-led1-pins {
++				mux {
++					function = "led";
++					groups = "2p5gbe_led1";
++				};
++			};
++
++			mmc0_pins_emmc_45: mmc0-emmc-45-pins {
++				mux {
++					function = "flash";
++					groups = "emmc_45";
++				};
++			};
++
++			mmc0_pins_emmc_51: mmc0-emmc-51-pins {
++				mux {
++					function = "flash";
++					groups = "emmc_51";
++				};
++			};
++
++			mmc0_pins_sdcard: mmc0-sdcard-pins {
++				mux {
++					function = "flash";
++					groups = "sdcard";
++				};
++			};
++
++			uart0_pins: uart0-pins {
++				mux {
++					function = "uart";
++					groups =  "uart0";
++				};
++			};
++
++			snfi_pins: snfi-pins {
++				mux {
++					function = "flash";
++					groups = "snfi";
++				};
++			};
++
++			spi0_pins: spi0-pins {
++				mux {
++					function = "spi";
++					groups = "spi0";
++				};
++			};
++
++			spi0_flash_pins: spi0-flash-pins {
++				mux {
++					function = "spi";
++					groups = "spi0", "spi0_wp_hold";
++				};
++			};
++
++			spi1_pins: spi1-pins {
++				mux {
++					function = "spi";
++					groups = "spi1";
++				};
++			};
++
++			spi2_pins: spi2-pins {
++				mux {
++					function = "spi";
++					groups = "spi2";
++				};
++			};
++
++			spi2_flash_pins: spi2-flash-pins {
++				mux {
++					function = "spi";
++					groups = "spi2", "spi2_wp_hold";
++				};
++			};
++
++			pcie0_pins: pcie0-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0",
++						 "pcie_wake_n0_0";
++				};
++			};
++
++			pcie1_pins: pcie1-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_2l_1_pereset", "pcie_clk_req_n1",
++						 "pcie_wake_n1_0";
++				};
++			};
++
++			pcie2_pins: pcie2-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_1l_0_pereset", "pcie_clk_req_n2_0",
++						 "pcie_wake_n2_0";
++				};
++			};
++
++			pcie3_pins: pcie3-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_1l_1_pereset", "pcie_clk_req_n3",
++						 "pcie_wake_n3_0";
++				};
++			};
++		};
++
+ 		pwm@10048000 {
+ 			compatible = "mediatek,mt7988-pwm";
+ 			reg = <0 0x10048000 0 0x1000>;
 -- 
 2.43.0
 
