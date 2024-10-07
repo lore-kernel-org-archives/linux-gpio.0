@@ -1,64 +1,62 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5B118C013
-	for <linux-gpio@vger.kernel.org>; Mon,  7 Oct 2024 10:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948941C9B6B
+	for <linux-gpio@vger.kernel.org>; Mon,  7 Oct 2024 10:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297290; cv=none; b=mUb0X6B8PBrgNCrw8ZcoOjJfogBxTVkQUwPMBs6qMSjoRZ3yXVJP5q2j29ZKHa9p8Jssppfpkr2rHPv41XdSN0nXvIag8FObWVqxu4sr2oViKe5xusWxnGC1LzxlQrK2wfm8G2nRSz7qpHpDtN8y7rMNme+aL8fEC0+LRt+eqx8=
+	t=1728297659; cv=none; b=GNR001hEyv/pul564KXUmED6N9DrZoXlxdC85eC4hKFYprIqUMMcrwd6Tu4icLfxCA1vq6TwQd+XCfodt3BtppTVbZM5uhfj4TyYL8pGmpZJdrCnm9oYwKrmmYrA3d9bxe5ENQOMqNVpxRZdhX/UO1H2dC6v+kCtfJea94hgckI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297290; c=relaxed/simple;
-	bh=1qPlnzcMGjfYtKZcC+y8Ac/zKIwCECeIicdIk0nKk6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s+sCECiIukdVGzYFmJ4oLFX+gDZ2381FAnyq5V3UtRxnfyPTNeYztakwJaMThQPUHBVtrjO9OSWnXULP+vGcR32MZL3k2hgiKGrgod/dVEe1ghVqlTmYKdyBSLWXWXaaY63qU1XIPRhNwyHHbhsSPC0Xfvd6tRAyqAb2/MpCXUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XEGeSGfG; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1728297659; c=relaxed/simple;
+	bh=nZiIh8wnlcFC+dC0TYEiUd7EAPU85KmiRp50eWjyx7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rR/TmgtEbRHxgYGj/za35gTD6K1+PjDVb7zZORuE7DjwQbSGM/zR5JCsGrj22Ll1KHaMd7A1QNQ76Ihz7n00sUQugOBxfU09Wz2j6gPfd79sW+OlOUcXau33iK/3StaeItoSS3UUobeaaTms1McoQB5e3ex4XIF7JexYufvq1gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JR2MLbZi; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XEGeSGfG"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so43311475e9.3
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Oct 2024 03:34:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JR2MLbZi"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cfff59d04so3365684f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Oct 2024 03:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728297284; x=1728902084; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728297656; x=1728902456; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRttM15lACyttOFmnb/OMbzHtGbNczmJy3XXf3scjPQ=;
-        b=XEGeSGfGFy45yePMJxURX8fuFQvwbC7iiQmwT1n0WVmkyb+9t4i3fy4bEF48njHXba
-         772s49sRzVJb64BFViZl7jBfVq79NNTI8GOpiaQuLkwlMDe/iR17mtZ1Ej2LFvIDGG2I
-         kS6oT5AHfKCOyUiPdgGq0GqHIJxp840Pna3z2hn+pU2IfmOX7ntLlqfiZMgGFMAWe4BM
-         9RHDXA0vrDV0lMShKesijtjI8FX5I5KLM+eTJc7thZThectK1Kl5oS53R1FmuLaLFq32
-         w+hS+3E6jbcPqB7U0JAw8JoU6bzmSwKWbhfTni4v/GSBqyrzztQvwp/H7qovt4aVDVD/
-         kf8g==
+        bh=5gtX24rM5dRR0MpdZIAsxYJR5vb0OJDvfm8ACG2rLjE=;
+        b=JR2MLbZiFOutfBRmHFa9FEwHUax0HjnsdoqQotrMHyUyNvJD2PXdW7maYbGHVmHWrd
+         zYZ5qKo6sbL2Nkog+Pl57+uDEPhlVUEDSJmgd3D/9hoU30gI03ViPiymoIvykTWR0aW5
+         WSnCTbkXHCmtCBIdAVDbgpx4f+s0AxWhz6DGtMwgussWkBt8MYVCcIBTorWo3qTWMKwS
+         p9fZilryPjOIgzNwFOu4HFUkWeN8AjNoVNXRShPcQmsf1FvVOw1cx6oa7Lwg1tvNi/KD
+         8tbbLX8Gsxfa914fm4GKdnxINKzIXsl03ol5PlMm220k3bo1CJWId86OV+p4zzYx86Bm
+         wEDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728297284; x=1728902084;
+        d=1e100.net; s=20230601; t=1728297656; x=1728902456;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LRttM15lACyttOFmnb/OMbzHtGbNczmJy3XXf3scjPQ=;
-        b=uc5y/1/Ph9a5f0UUOR5tSWTkB+Qv5IgGzt/hP/BnFqiWSe7ynbHCv0JSPhxGRxetyv
-         jlCxep/oDUKLjo3x6SFjyfz4YHK4xR9lWWHaGiQdiGbibpax0usc08lviwT3Aom2U16H
-         DdvnCNTmL+elLkwPpASxyG69ZSrmfWbHaVRAqTz9oovb8KJSsbgewE8KZZowpxZaqko8
-         C0En+MTt4WQo0c4gqzUhFtliq7DmSmaoh5wfzbFthGfSdpbMZPLisbdnFUPzNj0bQ0jC
-         x2Gh4hf8nDYiVlZz6u4V3WI47f3NnYdArB/dMmYj7hxxhSN6uOX2++du6elRucFrBkQ7
-         s6Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjkwDwnYTBNdgLs+EGf5X6ZLFcGONl4gzsaHjJCZenBoctYigrLTt9GGP/uHCvQBYyM21ZpLoe5vPN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkjv52yMnv5Xlouar9XCLs2lCZYwnnIPwE/gbpsUqIsUwXqLuL
-	w1NrXgGkXIxBUTzAQgg1kL5jj5rkL8ktFsURhaizO0AM03kZDK2NpIkNR/HLGUo=
-X-Google-Smtp-Source: AGHT+IFbZ4vVupz3Z0AyGdqcEjlQyrpqCoFOFGurA7FovfZmkUQIYEZk+qKenthhIBMvVS2W2Ec/1Q==
-X-Received: by 2002:a5d:598f:0:b0:37c:cdcd:68ac with SMTP id ffacd0b85a97d-37d0e8f74e6mr8254107f8f.52.1728297284165;
-        Mon, 07 Oct 2024 03:34:44 -0700 (PDT)
+        bh=5gtX24rM5dRR0MpdZIAsxYJR5vb0OJDvfm8ACG2rLjE=;
+        b=n+O57l/8RsmQu6G58XLUqqJwhGVD5A8PkJrc86H9kflum+0lP7xxdvDDKxKwswX5gp
+         /8K4UecqMxlEupaxPE/pl5koJdUe4qYLex98OU10eYXI4gnZZqgPpJsYAdmCrgqJkG51
+         7gQeiVtOcaoy+/c7vXJPHCaHM/9wbxSy5GlGgceBJweqW4z651ep0XmVr2OC9DgrJu0s
+         v+4m9mbVMn7imMBemJlYhBa/FYwhEIQN5e20QKXepTc7Dmw9CfSLXAvxkcz3QFKWG6Do
+         TInMDZzMoNyRfVlEBc7Emf3VV7YSPj0HFCEjCiZcDTCa4usSj2qQJXbYDNsGM02lBywB
+         rGow==
+X-Gm-Message-State: AOJu0Yx9A1+P2c7nQPfHL7yOndIZmqUMBAKyvQprNhf4hViiyWCQwsvL
+	3oucn9YieVrTKQHz1/1pyHSKqxpn9q9zVBbiJU1+h8IIBAb8ingpuTDKMU3Fvzc=
+X-Google-Smtp-Source: AGHT+IGN+INg7r1OPDUzlA14lgX4GmFkJL4YfoB6G2zzkWnUEno8sj+zxEMpBokOQaUuFIDxm/83vw==
+X-Received: by 2002:a5d:4904:0:b0:374:be11:22d7 with SMTP id ffacd0b85a97d-37d0f6a4f46mr6254010f8f.13.1728297655930;
+        Mon, 07 Oct 2024 03:40:55 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6100:637:cbe9:f3bc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16973c2asm5423555f8f.111.2024.10.07.03.34.43
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690fc53sm5474682f8f.4.2024.10.07.03.40.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 03:34:43 -0700 (PDT)
+        Mon, 07 Oct 2024 03:40:55 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Keerthy <j-keerthy@ti.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 1/2] gpio: davinci: allow building the module with COMPILE_TEST=y
-Date: Mon,  7 Oct 2024 12:34:39 +0200
-Message-ID: <20241007103440.38416-1-brgl@bgdev.pl>
+Subject: [PATCH] gpio: ts4900: use generic device properties
+Date: Mon,  7 Oct 2024 12:40:52 +0200
+Message-ID: <20241007104052.39374-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -70,44 +68,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Make it possible to build the module when COMPILE_TEST is enabled for
-better build coverage. Stop using of_match_ptr() to avoid build warnings.
+There's no reason to use OF-specific variants of property getters.
+Switch to using the preferred, generic device property helpers.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changes in v2:
-- stop using of_match_ptr()
+ drivers/gpio/gpio-ts4900.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/gpio/Kconfig        | 2 +-
- drivers/gpio/gpio-davinci.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d93cd4f722b4..54770c917638 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -243,7 +243,7 @@ config GPIO_CLPS711X
- config GPIO_DAVINCI
- 	tristate "TI Davinci/Keystone GPIO support"
- 	default y if ARCH_DAVINCI
--	depends on (ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)
-+	depends on ((ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)) || COMPILE_TEST
- 	help
- 	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
+diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+index 0f6397b77c9d..5c806140fdf0 100644
+--- a/drivers/gpio/gpio-ts4900.c
++++ b/drivers/gpio/gpio-ts4900.c
+@@ -8,8 +8,8 @@
  
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 76b58c70b257..1da1d7c7ac2d 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -662,7 +662,7 @@ static struct platform_driver davinci_gpio_driver = {
- 	.driver		= {
- 		.name		= "davinci_gpio",
- 		.pm = pm_sleep_ptr(&davinci_gpio_dev_pm_ops),
--		.of_match_table	= of_match_ptr(davinci_gpio_ids),
-+		.of_match_table	= davinci_gpio_ids,
- 	},
- };
+ #include <linux/gpio/driver.h>
+ #include <linux/i2c.h>
+-#include <linux/of.h>
+ #include <linux/module.h>
++#include <linux/property.h>
+ #include <linux/regmap.h>
  
+ #define DEFAULT_PIN_NUMBER	32
+@@ -142,7 +142,7 @@ static int ts4900_gpio_probe(struct i2c_client *client)
+ 	u32 ngpio;
+ 	int ret;
+ 
+-	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
++	if (device_property_read_u32(&client->dev, "ngpios", &ngpio))
+ 		ngpio = DEFAULT_PIN_NUMBER;
+ 
+ 	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
+@@ -153,7 +153,7 @@ static int ts4900_gpio_probe(struct i2c_client *client)
+ 	priv->gpio_chip.label = "ts4900-gpio";
+ 	priv->gpio_chip.ngpio = ngpio;
+ 	priv->gpio_chip.parent = &client->dev;
+-	priv->input_bit = (uintptr_t)of_device_get_match_data(&client->dev);
++	priv->input_bit = (uintptr_t)device_get_match_data(&client->dev);
+ 
+ 	priv->regmap = devm_regmap_init_i2c(client, &ts4900_regmap_config);
+ 	if (IS_ERR(priv->regmap)) {
 -- 
 2.43.0
 
