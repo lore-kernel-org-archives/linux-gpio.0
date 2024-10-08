@@ -1,109 +1,97 @@
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61BC1FA247;
-	Tue,  8 Oct 2024 08:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2E770FE
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Oct 2024 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728375318; cv=none; b=AoJFZDeRumQV3Sdd2z5bNAm9MB2p5GeRooQSW5QQ/AYPBE9kf/UHgoVLPqCoM8dmMgobJI/vFEbR1v0hr4zdbvEOI/N98MJqQi5e/IyNGz5U68pjKfQGk4kh051l4xVCemotR7AzWAlG+e3v/9wIwyjXulNauXBH4zIT5nDuR48=
+	t=1728375362; cv=none; b=MzkDrQ/K4UzF1ZfmcTpIVMeV25LlGQ6C6OwLm4lMvNHSdII2Rt7ZDii/v53LaxcePeaNGcpee2BfZSZiSFckS3g1ok50N/FST1q7CpEaC04bD9OU9Hvt5Wb9u80sfyJcLg+IJ26oAS5KEga/qjJm5LmYzDUkgwv5WPKxOUdbF+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728375318; c=relaxed/simple;
-	bh=mxLA9YX+6XUjNVapaK0QymC5zJyAZAHtVHetJtX/9UI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+OqADX1RJfqK5Aja9A+HFQkbdPwTrzOccTqQxkPTmbJdJSmTHhK8SYkwI73/v4YwRX5V9H0qnORnGSfn6H2CAlrai4KqA7n/9KUVY37NGC9aU32qAt649CxFNDMVe3By5O2ECPeFWZ1n50gVYDCoJQ1XDaTF8t/HyYgzsSQ0sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 8 Oct
- 2024 16:14:51 +0800
-Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Tue, 8 Oct 2024 16:14:51 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<BMC-SW@aspeedtech.com>, <Peter.Yin@quantatw.com>, <Jay_Zhang@wiwynn.com>
-CC: Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v7 6/7] dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
-Date: Tue, 8 Oct 2024 16:14:49 +0800
-Message-ID: <20241008081450.1490955-7-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
-References: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1728375362; c=relaxed/simple;
+	bh=UEYJraEY/4Y2HOvK6ZVGKjPI2JChba/+KAdpE40jGKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZpMkSfa0z+p/AAcP6V/OYiaUoUqo3y8utpXuWFcZrW1V2LmHg9e/43EclXNJlcjsI4IJlSqvULMYmPFrLJgMyYf6cZ7uCXJmLu2W9w+elJv0IReYJ1fYqaFbEeW4UHdrkAwvM5Y+Y7o4MLcRVJ1zM8x+3ag71LhGawpegGcwcNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DtmtZsze; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DtmtZsze"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so47391335e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Oct 2024 01:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728375359; x=1728980159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EWgRCowkm008kJFVLy9y4f+hhyNI0jf/IB10ECXWRmo=;
+        b=DtmtZszeVpRg32vUzBBA7ziIKijFeFXs51Hl8xDve4VXjoIQ+5/3om7INSgw4z/P+y
+         nzowovb8P03O32EZfAUV+FYkwEL+0h+Lx6IgCT8LMFOLTBJ4dQECarVW7JCRraG6N64o
+         EP3FM24AwL/7fbQX6Z1+2lDp0Xqtnay7Mx7kYY/cc3ua7/bnHMO761TGvinUR54CXveR
+         nXWGAxIYpT77OuqQ3sqX++58PsqPAeoJZbS038RYEmV84xVWGRq/AOkVNgNrPUMUJ6Q0
+         Fy4NJqarQ/9Oc4znZa5WldDnBXFIaSFYNTREpGDF9It0uyzzBi8NzRcb1NDNo72ETkJ0
+         gwLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728375359; x=1728980159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EWgRCowkm008kJFVLy9y4f+hhyNI0jf/IB10ECXWRmo=;
+        b=IRIU+5gZRxKIZywZJytGS/7Fw8Nm5vZfAs3TeZtLRDNC32DSpbfOLW1u1oFAoruk1q
+         7m97BzIVQoj/gYUFX0GoNwCaI+2rNrQqrpw9ZV+pS03QSUbfIgCOBusvPwT364LG0gxB
+         roOB/OQe6i00ahFsMab6QNCUZvGu9H7RV/+09WA/5WJmenef6T/vSj0nSc/vHXTaMhGo
+         MJmmiF1KV9aBgy9e0rIl6waeG8uOIlhY3lBhtrjBR3NwUWthP5tXtMSwNkWUKd8ylqiH
+         XhQGAUprM5c+2WDjaitswOkI/YVBiPjgibaYtJTkMyOVeCn5Z4GkOUpoYmkSOgK9hXCM
+         Qhkg==
+X-Gm-Message-State: AOJu0Ywc/1Cg5xruSHRmwidxJRMlBnr/7k8I1jP9LGfqLQUOGAqIuoBM
+	bzBzqKm35lVI7dFA5uzw7NqthZ0411sONBxReYGPUo6eltPhY44es0JdJBlVDLE=
+X-Google-Smtp-Source: AGHT+IGKWkpI9mLOgAreEezYfLuvGOehSyb/NSFc2oMuBD6dCg10MIxmAr5oWCUqlWwWgmwWOofi1A==
+X-Received: by 2002:a05:600c:3146:b0:42a:a6aa:4135 with SMTP id 5b1f17b1804b1-42f85ac11b5mr98495885e9.20.1728375358868;
+        Tue, 08 Oct 2024 01:15:58 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:738a:20da:f541:94ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691ba45sm7492431f8f.44.2024.10.08.01.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 01:15:58 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: mvebu: drop dependency on OF_GPIO
+Date: Tue,  8 Oct 2024 10:15:55 +0200
+Message-ID: <20241008081555.23465-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-The AST2700 is the 7th generation SoC from Aspeed, featuring two GPIO
-controllers: one with 12 GPIO pins and another with 216 GPIO pins.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+This driver doesn't really depend on interfaces from OF_GPIO so the
+Kconfig dependency can be dropped.
+
+Suggested-by: Uwe Kleine-König <ukleinek@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- .../bindings/gpio/aspeed,ast2400-gpio.yaml    | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/gpio/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
-index cf11aa7ec8c7..b9afd07a9d24 100644
---- a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
-@@ -15,6 +15,7 @@ properties:
-       - aspeed,ast2400-gpio
-       - aspeed,ast2500-gpio
-       - aspeed,ast2600-gpio
-+      - aspeed,ast2700-gpio
- 
-   reg:
-     maxItems: 1
-@@ -25,7 +26,7 @@ properties:
- 
-   gpio-controller: true
-   gpio-line-names:
--    minItems: 36
-+    minItems: 12
-     maxItems: 232
- 
-   gpio-ranges: true
-@@ -42,7 +43,7 @@ properties:
-     const: 2
- 
-   ngpios:
--    minimum: 36
-+    minimum: 12
-     maximum: 232
- 
- required:
-@@ -93,6 +94,20 @@ allOf:
-           enum: [ 36, 208 ]
-       required:
-         - ngpios
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: aspeed,ast2700-gpio
-+    then:
-+      properties:
-+        gpio-line-names:
-+          minItems: 12
-+          maxItems: 216
-+        ngpios:
-+          enum: [ 12, 216 ]
-+      required:
-+        - ngpios
- 
- additionalProperties: false
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 98722e814e81..6643e81bf11e 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -488,7 +488,6 @@ config GPIO_MT7621
+ config GPIO_MVEBU
+ 	def_bool y
+ 	depends on PLAT_ORION || ARCH_MVEBU || COMPILE_TEST
+-	depends on OF_GPIO
+ 	select GENERIC_IRQ_CHIP
+ 	select REGMAP_MMIO
  
 -- 
-2.25.1
+2.43.0
 
