@@ -1,90 +1,121 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7771E4AE
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Oct 2024 12:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3801990CD
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Oct 2024 12:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728477784; cv=none; b=VwCqKBlDrm5QOh+VPCm/WVomjpQjtWOqJDKlVGVBvyjngsYVuLcX3u/4hdR61Pe5QdctuXX/YXqY+vc9vSWy7GtvlR7zBu/b68Wz/mffXOxj5+lE6zCWONEnyaXM4zOitXBtXje1k8lQaH6I05qyUP+wAi3UmvnGmoEWM8Hy7xI=
+	t=1728478170; cv=none; b=E62mGtbqolLvuY+e/hxV1nToiGpGESBRxUHcT2KSUJzw1AVtaFFHFe+xGlaB6351djskjq/ckBl8oBr9VxovdV1sL6uIvYzVLlQc1KiFa9kwqCBF6bquFor+fjAMkCt/CDXSnqDFaCc9HmU+DrkXFCZhU56K5aO/UssV7dFMadc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728477784; c=relaxed/simple;
-	bh=jlKRlQacEER6Za7EZRqVQpjIcMp+FPvaE/7TRDm3NVg=;
+	s=arc-20240116; t=1728478170; c=relaxed/simple;
+	bh=zmKg86BBC/UCHh8J2wejL3pyBpSiXneOPK7uQBs0h04=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h7B0ZgDNDywSF38NyT4KpmxN0GrDKBlFEkDn/nshB9hg9VXE+bl9H4/ZuPuzmTlzy6B3BH22PnlgLX1aVXMaFRrZGKvYwiNJsR38o62S0RbUqoe3t0BS9AgkFrw1UncF6E8I1+V0Qgz4a4cJEDhQoJf6Y6r3mSM3op0pxV6R0pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwUo3r6l; arc=none smtp.client-ip=209.85.208.180
+	 To:Cc:Content-Type; b=Bzx027IYudy5kZHNWantHzrunrzKTFbRF/IKEoPkkjNQ/bzs02BIFzIoh+sZTy89DJwi6rtDlwYHOZLJI0BTGwVcAioSh4/1BB056XNMSkEfJtq9RbhFB3czt0ok26JStxCD8K5W7EHEmTjTn88D+orQtvQA/fszPefstk0i2VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bx38SKuR; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwUo3r6l"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fabd2c4ac0so74946361fa.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Oct 2024 05:43:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bx38SKuR"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fad75b46a3so65999801fa.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Oct 2024 05:49:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728477781; x=1729082581; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728478165; x=1729082965; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bd2ajZJTXWCZQHWCkMWh5ZbyjSLmxQS7L7ieRQ73iRo=;
-        b=TwUo3r6lGnbD1I/WC8PiDuFylRK7PSkYgkVWCPRU9ILdC9a3fxnGj59PbzU8dSROt7
-         sXpeJ9f+jxr/LFB6VJRS1bkWGL4CbAwkQ9I32OIcZwmjeNsQX6Ui0+9HjO6/znpdd1hq
-         pBqlIFoL0Aalt32OGjUPOrBggdhLyEf3KW0S0Dst4T8+5Wdm0CkeUKkkiFH16b7IhLcQ
-         qU032dps6CFTHwDp0U1RtwILJVgHE3tKYeeLXN/jchHThi/bSmvxHDsTEphNsMTY6RUv
-         JxG+M9glNJd4RR57F5JjcQG8U4SJwhPvpgHCRcvbC8fvGMQjGkmZFWyujh5SipkPYPq3
-         8sSw==
+        bh=zmKg86BBC/UCHh8J2wejL3pyBpSiXneOPK7uQBs0h04=;
+        b=Bx38SKuRkDmQ1rBHVIS0LTtycico0brsqISy2AyQUiJS4Jx9Mpd0sHgOQfPis0cTx2
+         6vVs9NitQ0/iVS4bivatQ/iJANbwBUjroOAgUUsHLuYpIbS4gBJmOFPs7imhBQtH5pJ1
+         zuEl/gnqQ4F9+kHdTGUPAllVSL8RKE5d8CHL+1sjxVO9y+jKb9odLUfJnpSdGBN9WXIE
+         wHHTAe4dVemO8qvfQXVLorM1dHJSW6Hb+1tm0wThErfWt+lYsymbfAmV24Nt+EZpdOfs
+         j7wKrbFG9wMjQ0zbF0AHqaGd/2q7xvQktAG18FhiRZ8lKh43FK3UezmMNXrPlKFlpENc
+         rjXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728477781; x=1729082581;
+        d=1e100.net; s=20230601; t=1728478165; x=1729082965;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bd2ajZJTXWCZQHWCkMWh5ZbyjSLmxQS7L7ieRQ73iRo=;
-        b=XwCEzzTEyurU6qxLs9Ym7zYoHsGsdiABxBxEPSN8SjBai1/zH7IPvp3ed0gKUZD02/
-         jl6vq5sxha4HKWCNwH48/OWI0m2PndVSZAncv2Loesx2J31ZGNQNlE/xFHjRDT4iwk/V
-         ljKMtRbUlfp04i46lfnCrJ/iDd9HN4LniY4IGp+OIfwjyzGjcpqHWLdY53A4fVOCwZPc
-         EA3sv6vDXViI6yQySvkOW/b+z3QAy3gRzXkIRBPiDUSrvRDndRhLRAU8ozwd48MhxneJ
-         VTd367TA8GYlWrjV+R54XopSwSp4jcSztlYSC8H4Ty+AOAAkjjTVeuY4mjakqy1q0m+O
-         WIZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUPgcF5CLrxkzHf/QEWvyDAh7J9WecUAnux9YgnEd0qEfppshfM80zZNREmzl/jhTJjEUmkVm5Pn3Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn5g6gan3ds6HEP1r73LKryuvguAcbjTwq7fjOBk5SW0QJhC0z
-	6VksPAVaBR+7wCGvOUpTAaPTnK9Vrys72zIiwpZlNlI+WXoh6Bl2G0mvar7ODrVCOhDeYFbNTLl
-	UqmRcFF04qVRLZ+a/paYd6c6T8ZdtUN12tnEw2Q==
-X-Google-Smtp-Source: AGHT+IEFgCDjyhZzABbrE9/Mt3Cgr5SJ5rFDI1tE+jCgT6KNs1U7nwfDRGp32qlMOZ67IKjpEklL5xofkX663cD6H7A=
-X-Received: by 2002:a2e:bc1f:0:b0:2fa:cf5b:1e8e with SMTP id
- 38308e7fff4ca-2fb1872ba6amr16140461fa.2.1728477780725; Wed, 09 Oct 2024
- 05:43:00 -0700 (PDT)
+        bh=zmKg86BBC/UCHh8J2wejL3pyBpSiXneOPK7uQBs0h04=;
+        b=wsxuX6EQRSi5PzQCskGpDpKPQL/FlH9PfC7V0XALUxaPaIjnBCqsTxAOQazQHyj34p
+         6qFGBoifjR+lj72nnAxNGSF9fV0ZKhY32po93sJ8VVE70XCUWGQ2Cr4cM4teQnOLE6zX
+         Tf8Fzhs3jNCunVSpk82WhqeypkujlRFNYgoM+F6AhD81xLSOFQSA0j4WFI/3YTx9NSSr
+         eL83eDSWe+9DA7wB3zfywNwz71lT8/ktgq1VcysKnOS5M1IMO2+Q2l7wJxJOsyCGrUMC
+         0vK0SjaREGizfeLsVlgl6U7grwKuVvfr1U9ZMW5/TLbXPSGrWpBzSL0Nps2oWXBQi6LL
+         5qcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWU7AR9TiOmyeZwwylJL6NXJOIiObYuArEf25Zq/I7531OWUZaO3H7fSmDiTi+dT33QUysavtaXpPAd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs5EjmQCB3bpLGIQpDw8CSvfa6hMMAl68VRiQ+AimG2foCp584
+	uXwUaslm0h6QCe01AbGM8FzqfwV0Mj3sxELW+gl9mTg9vPqsKzM8J80JJlJ22aitjSiaD61pUjN
+	VRwaVPgXu7pooydfY02PFeJjevwriBEYH12/oM96GbA86AXJywC4=
+X-Google-Smtp-Source: AGHT+IFC8bZo+Ypy/z/+CyIloa16kUAcJSEzdSG5oyJFL4qkl4YFMP9/WcJN3VRB4pyRFymHg+LeYEVW1CrxJKESPeg=
+X-Received: by 2002:a2e:bc1a:0:b0:2fa:e4d0:eb4f with SMTP id
+ 38308e7fff4ca-2fb1872e631mr16576561fa.4.1728478164589; Wed, 09 Oct 2024
+ 05:49:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
-In-Reply-To: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
+References: <CA+V-a8vxUjTWccV-wLgy5CJiFYfEMsx-f+8weCJDP6uD_dh4AA@mail.gmail.com>
+In-Reply-To: <CA+V-a8vxUjTWccV-wLgy5CJiFYfEMsx-f+8weCJDP6uD_dh4AA@mail.gmail.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 9 Oct 2024 14:42:48 +0200
-Message-ID: <CACRpkda+Rrsfs706o+K1g-252sZG7FqZGO4uYoFEMnNbUzx53Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] pinctrl: th1520: Improve code quality
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+Date: Wed, 9 Oct 2024 14:49:13 +0200
+Message-ID: <CACRpkdYES8RTLZEWeKginLugUc8bGAvrvtNU6bJr4yGBmMG+RQ@mail.gmail.com>
+Subject: Re: [QUERY] : pinmux-pins GPIO interrupt pin
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 3:17=E2=80=AFAM Drew Fustini <dfustini@tenstorrent.c=
-om> wrote:
+On Tue, Oct 8, 2024 at 11:46=E2=80=AFAM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
 
-> This series contains code quality improvements for the new TH1520
-> pinctrl driver [1]:
+> When using GPIO pins as interrupts with the `gpios` DT property, it
+> follows the `gpio_request()`/`gpio_free()` path, and in this case, the
+> `pinmux-pins` sysfs file indicates that the pin is claimed by the
+> pinctrl/GPIO driver.
 >
->  - Fix smatch warning that the return value is not correctly set when an
->    unknown pin error occurs
->  - Linus suggested using guarded mutexs so I've converted the thp->mutex
->    lock to that usage.
->  - Linus also suggested using a scoped iterator for the DT for-each
->    child node loop: for_each_available_child_of_node_scoped.
+> However, when the same GPIO pin is used as an interrupt with the
+> `interrupts` property, it doesn't follow the
+> `gpio_request()`/`gpio_free()` path, and the `pinmux-pins` sysfs file
+> shows it as `UNCLAIMED`.
 >
-> The series is based on the linusw devel branch [2].
+> What would be the correct approach when using GPIO pins as interrupts
+> with the `interrupts` property?
 
-Thanks Drew all three patches applied, excellent work as usual!
+As mentioned on IRC:
+
+In theory the GPIO and irqchip abstractions are completely orthogonal.
+
+It should be entirely possible to use a GPIO as input GPIO, conveniently lo=
+ok
+up the IRQ wiith gpiod_to_irq() enable interrupt on it and have that going =
+for
+a while, then disable IRQs, turn it into an output and bitbang it a bit, th=
+en
+turn it back into an input and enable IRQs again.
+
+drivers/media/cec/platform/cec-gpio/cec-gpio.c
+is a driver that does this complex manouver...
+
+> One possible solution could be to hog the GPIO pin as an input when
+> using it as an interrupt with the `interrupts` property, ensuring it
+> is claimed by the pinctrl/GPIO driver.
+
+The driver should call these functions from <linux/gpio/driver.h>
+to make sure the GPIO is "locked" as IRQ when used as IRQ
+by an irqchip:
+
+int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset);
+void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset);
+
+This makes it impossible to request the GPIO as output (which
+would be a disaster) but it can still be requested as input,
+we can read the line even if it is used with IRQs.
+
+Doesn't your GPIO driver call these functions?
 
 Yours,
 Linus Walleij
