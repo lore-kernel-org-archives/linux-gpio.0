@@ -1,114 +1,139 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA619F11B
-	for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2024 17:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA541C32FE;
+	Fri, 11 Oct 2024 17:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667347; cv=none; b=B2nBXWz6K59HOt23mXZqvf9Ar6C4IR7pbDmjEmKZ5sOFEAf3bR2c//UCKcHYTcYeShADIMxfBIgBR03it4kCxOnJmiG4lWlSu35NlTC+SP+wkgnnbBCIHVaKUi/mVMD0mAE1rMO81kRVabTbTVSC+vLGPujINn3yTYXFTYwvr6k=
+	t=1728668061; cv=none; b=LV8Jd2KKP12ramUWl2rK8NSwEyypi5FeWtJE5slIOOD/lcJ40JOgs+bsIq+vFKDJsiD5xVidi4VINIwZPPeOg1s9sMTzBqSm+qSmQgy2TIJgkVseZEdyyzuOyo5zb1l3uKveezJ0dGWiY9UEeyeyitsBeivlqZKvmlWXnmZYIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667347; c=relaxed/simple;
-	bh=YEyVmkAzBO9qAgH5AgLJiUyq4QQZwdK2WOHvpX7uVV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qytNSOooiJSIsih1TMVnCfVmoGoeuQU2dA4bcjKhPUuHfELqM5mgB9XioO54IReFMnKLD1OJRX8CQmvzy3YX3+P7Z1oN45dzxeOT4vMgeMM2Elx1U3I/vEca3xHxsNx+K2trJSAimXYe2s9YoPsDN8IcfZHsjgQbPEIn2C+9cZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=Ezwi5EUg; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1728668061; c=relaxed/simple;
+	bh=KF6ZBghKX8r2+NHC4vx6iWGhrwimqzgmR2uLaghyfH4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W19JnW/2D847tgDNcZ2Dvf6jhs3MGJMPYMsFg/tPrB40BtL0cXQQ4ZQPu9IhrNErvcGVsS8FpnwHg92rUf08iVQit5prOc+xG5+nwDofsZysLifYQjvPtySUog6VdUhtAJLtLi5+xjm5KggrViqaEYwquWP9t2VR5JTSY6TZoNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nzxG0d12; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="Ezwi5EUg"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c803787abso15889665ad.0
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Oct 2024 10:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1728667345; x=1729272145; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5aZ52jmXTRU0WDuKnL6qTle0VwGKZCWaBSs2okeMFkY=;
-        b=Ezwi5EUgw5q/c5POjBTxem+a1i+pdvjSHjhXo71Gk+tkkBj1InoHV5qECqCohm6yuG
-         9vPIpBrCOUb5mSYBpYdf9TVnckMEk7f7gvn2W5UcMreyE1draptgbllDtgftuoNUUGIE
-         hZtQuwC4CQx0Y0RYq1Yf9Tj40caq2eAU6cgpxpYfncTErhWwfAdmOf4JtYmpBvMJ7ruQ
-         ja5o9hc8KiiUyZiPXU5cHXPMT0cf3Qp9TCxiui2l4eHiLqhpkouGtrwV1dIsdt1f0K8K
-         NXrOcrJLzDjHMYkQ92ztxx6ukwt2BmpGh/6sItnStLLMrgJd7etbVZ2TiPiaJMsrOeLq
-         ouMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728667345; x=1729272145;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5aZ52jmXTRU0WDuKnL6qTle0VwGKZCWaBSs2okeMFkY=;
-        b=OLLJj7umYxZmyWYIljxapgCoZ+FEldnkgd0c0YuLn7JhiFc7s0CFEC5MVQ0f3FsoYP
-         ClNdvelaLAlNAwjDPGCXIiLr8LVtIr3UjG33IRvzbKlBVocaZ2OkQuPY55sQXq7DSVBN
-         il/VVGH2up7FnSx7IlPpxxa+DFo8lU/Gn98djVYVaJ8vBgKOJx/UW/1oAe9ixhvTioDO
-         9l2t0QoFZQv11BRB8FeBggZqqEpw7W1YQzP0g+oaklbUVgFYDgzb2+3Ig6jTQbrNF/Io
-         cKgOZh3AX/PEhlXsuSHGGhQMGfzk3j8f5mZcW9FZ4pcuEH8CPXz1f4VJXPraZHWpHrrf
-         bXwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXV9dDQg+WB/6Zgs2c0vncUZ6eMjTZ2g2PDt46DxlYcQt7Y71wG5//8MS3IGE4v8pcm/yVA7V2KvPpw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGMDxgSFkDK2ZI2PF5Hc023swUeED9KEODq7YSqMmH8XEee4e+
-	SXqQ7PGoL+i6yhvezoqdZSyQuiDD1T5TFoKYBLJkideVRAiaMMDjxcTS9owtW6E=
-X-Google-Smtp-Source: AGHT+IGMU8kfRZQZdp7FUTBbkcU5ohX16bkO/daQ28hOFX/Z7i9mjCLTsIvmEcg9GdJ8EEGI7Ao9Tw==
-X-Received: by 2002:a17:902:da89:b0:20c:ad30:c891 with SMTP id d9443c01a7336-20cad30cbe2mr31776005ad.10.1728667345287;
-        Fri, 11 Oct 2024 10:22:25 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c0e751fsm25622875ad.139.2024.10.11.10.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:22:24 -0700 (PDT)
-Date: Fri, 11 Oct 2024 10:22:22 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] pinctrl: Add T-Head TH1520 SoC pin controllers
-Message-ID: <Zwlezn9V75hiLtPw@x1>
-References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nzxG0d12"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BHYCSh067649;
+	Fri, 11 Oct 2024 12:34:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728668052;
+	bh=V6VP1ZzsW7RRkGy/B/5eBX9/lIviBXV4MVOevoK+6Qk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=nzxG0d12U15LODfkroevrFRKxaag1mA9XcRZgepFNHdT6EzDQ60aEi/eKxUpdOaXN
+	 B2PqU1S2zJlYgfyFwXH4xqlsj99iyqxMksx8RqiCJ8zfZnY6Xc81ehagMeB6bTBt2/
+	 Bw0M+nIyKXTNR1gHtCVuIaSlba9PXi1W0Uv3d5KY=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BHYCEA026887
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Oct 2024 12:34:12 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 12:34:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 12:34:12 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BHY47D025973;
+	Fri, 11 Oct 2024 12:34:12 -0500
+From: Judith Mendez <jm@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz
+ Golaszewski <brgl@bgdev.pl>
+CC: <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
+        <linux-serial@vger.kernel.org>, Judith Mendez <jm@ti.com>
+Subject: [PATCH RESEND 1/2] gpio: omap: Add omap_gpio_disable/enable_irq calls
+Date: Fri, 11 Oct 2024 12:33:55 -0500
+Message-ID: <20241011173356.870883-2-jm@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241011173356.870883-1-jm@ti.com>
+References: <20241011173356.870883-1-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Sep 30, 2024 at 12:50:50PM -0700, Drew Fustini wrote:
-> This adds a pin control driver created by Emil for the T-Head TH1520
-> RISC-V SoC used on the Lichee Pi 4A and BeagleV Ahead boards and updates
-> the device trees to make use of it.
-> 
-> Changes in v3:
->  - Add Rb from Rob for the binding
->  - Rebase on 6.12-rc1 which enables AP_SUBSYS clock controller in dts
->  - Update dts to use AP_SUBSYS clock controller instead of fixed clocks
->  - Remove unneeded defines from the driver for dt unit addresses
->  - Link to v2: https://lore.kernel.org/linux-riscv/20240914-th1520-pinctrl-v2-0-3ba67dde882c@tenstorrent.com/
->
-> [...]
+Add omap_gpio_disable_irq and omap_gpio_enable_irq
+calls in gpio-omap.
 
-I've applied the dts patches to my thead-dt-for-next [1]
+Currently, kernel cannot disable gpio interrupts in
+case of a irq storm, so add omap_gpio_disable_irq
+so that interrupts can be disabled/enabled.
 
-[3/8] riscv: dts: thead: Add TH1520 pin control nodes
-      commit: ad36d24e4fac83a6cf916fbf7eb458ed5179758b
-[4/8] riscv: dts: thead: Add TH1520 GPIO ranges
-      commit: 5c0a6b845d1670c7a10d8016cb352c21b0133935
-[5/8] riscv: dts: thead: Adjust TH1520 GPIO labels
-      commit: 2a3aaf5fd062e9a820c420b02795acf6e031c855
-[6/8] riscv: dts: thead: Add Lichee Pi 4M GPIO line names
-      commit: 753c9640121235b3ea26137f3a2dcbb301fa8556
-[7/8] riscv: dts: thead: Add TH1520 pinctrl settings for UART0
-      commit: 5aa0a71414f1e4fcacd64146d40e78ecdfc26374
-[8/8] riscv: dtb: thead: Add BeagleV Ahead LEDs
-      commit: ddc5ab7259a525670fbea6e9bda5334022aae050
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Thanks,
-Drew
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 76d5d87e9681..913e6ece1238 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -711,6 +711,31 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
++static void omap_gpio_set_irq(struct irq_data *d, bool enable)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int offset = d->hwirq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	omap_set_gpio_irqenable(bank, offset, enable);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
++static void omap_gpio_disable_irq(struct irq_data *d)
++{
++	bool enable = 1;
++
++	omap_gpio_set_irq(d, !enable);
++}
++
++static void omap_gpio_enable_irq(struct irq_data *d)
++{
++	bool enable = 1;
++
++	omap_gpio_set_irq(d, enable);
++}
++
+ static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -723,6 +748,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_set_wake = omap_gpio_wake_enable,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+@@ -737,6 +764,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+ 	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+-- 
+2.47.0
 
-[1] https://github.com/pdp7/linux/commits/thead-dt-for-next/
