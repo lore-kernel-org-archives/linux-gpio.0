@@ -1,57 +1,57 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5082185B7;
-	Fri, 11 Oct 2024 12:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9BD218D92;
+	Fri, 11 Oct 2024 12:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648378; cv=none; b=SOBjbugI4gBmOVkv1Ty+9bh2Qq7LXhaeD+JByhgOhTkCN37et2DLb5Mtp2dquIGILZRj6IV0SXyBljBtK3nLFf7SirIF3+LCFqdKonxEfiXrHXP3h8wU/T06/SNDdM5cZtK4MUNK0fUUSCngCQr3T6qHbkfdnYs/72jP0h4BoBA=
+	t=1728648382; cv=none; b=OROJ3C7vqfqHg/ijKQO6cEDtyoUcVTvRa0hr+oF0BAv+qRUs32AcugurPZLn3asqzhiVUNl65fGpSr/rr36YwtsZYeNXASrof4NyHZlxlMbG01/vvsPc36A/PaCu51ioI0GffNPG7bT0+bOthEQbGarn8tQ/LxDNKvTj5Z3PH54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648378; c=relaxed/simple;
-	bh=txxHF1POvbs9W+OU5ZPdwI/MxfhkEGXSiHGfOnqmcK4=;
+	s=arc-20240116; t=1728648382; c=relaxed/simple;
+	bh=9yhQf5rK0Nup5VcMqWJSYAl37nX8gIQ1jEVUtaFHrrs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fht5Hl8ojwVFKuOKp9Ct/cogXvyYkPFr/A8ZorYL6IQYBtS4kMNrz6QJiNnKQ4ToRUB58YDQx6xFcFQYiJgCmpTygzuZ+GF4OeL5gwGjGE2LQQYWJJdkGS5UdXzsdCNxnmBNyLpr28HJvcYhIKPDYO6ZPIuc/9+m800leNrNFOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhV3Ep5a; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=Vod8ac6rmRXUULbvgVwk7YKBzNQ9EEpONy0UocUuB3O/DO72WD/zyKTnYPStE7Abuh5+yk3COcl4jOyQrDnsc0zrgPl2coKmvrkynJ2uT/9cjG+iCKsinbVRSK+wPpv8kdj6VQmmcMw7K0ZcOa7zYs+TK6cAQEay7lyvxw77ZWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNkP+f7I; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhV3Ep5a"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aa086b077so276392466b.0;
-        Fri, 11 Oct 2024 05:06:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNkP+f7I"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9941a48ac8so246804066b.3;
+        Fri, 11 Oct 2024 05:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728648375; x=1729253175; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728648379; x=1729253179; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vva6vEuZrAd8wNjfiY39AqSAgZ267m7z8GvSRPwkzFM=;
-        b=GhV3Ep5a93Hq+mz9UbpoxfhJTknxXNCuVq8eTbujt7J2hp2GY8BhwE/uicDfx/CDZ4
-         FU6XFrsdqqeMklvSi6oEj0nbLAVNvUuJHs1hHnJ6g1EjtAUrgGWsBD1iw+ZwyBdfFh1w
-         NOlVmHAtaTRDBmgakEAbje/oFEYxRMqeHgCfBRSLVMRadDP6Qt0/dR5xQH339BgS0HaM
-         3EMId2ah0ZQWhPJ/zECHPK53t03NQKh3iA0UWsr5B+WYDE1kVExi+/BSBKFxyEMf1URu
-         U/e76EWGxha99+F0RpitIsJ4xW2Ddlg5vP5F8zf8KmcdZm3Aah7IrpxBN0Sy36Elzzj6
-         1sQA==
+        bh=PPy/JaEQ+74CM7BsiYWdUowzUF5iiUzU6luFBpGHCd4=;
+        b=NNkP+f7IZS7URqqR9TAVo4raavbRubeq1QuS7jCfoAprOUuB/pgioPU3VXfSfnZ+gG
+         deo0UfmLaHA+8EDnEeDl6YQ9WKqQWinyD6cO7VDqUJCL2aovgvS+beZpJhqiCrFAHRCV
+         q3VcjswGNhhtSZ/gesqmYSSoOUe5kRNzaaBuDDO0JQEAgcXXKe8SnNFq7gMXqHZTkKSh
+         kio8uxCTgz0LM8M1wwEYt4v5LLXKNo3cucCQSrSfdB1xk9SlfRyZyd4OBm0LA7lNGkaj
+         bqlqVK94vnZxN88TxLrNditbJumSLJdYuzcKL3H0AmGZxqJ+hGYXVuP5QQshC0oNGfUQ
+         QVWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728648375; x=1729253175;
+        d=1e100.net; s=20230601; t=1728648379; x=1729253179;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vva6vEuZrAd8wNjfiY39AqSAgZ267m7z8GvSRPwkzFM=;
-        b=TSdruWpTWL5wOVk8bqi+irmmk5kE6ymvnybMowl9rifn8WNrXBaf1qo7wf9yWTZ0P0
-         DuNTbr0szB//qMykuCwmBDxfHPSiF8rC7a4iRVuyIoVixh7lLN8pjU6PIynm50U9S5nb
-         dZP4aNpLy03IyGYvV+APDRPx903ktx/TeLiPurcOUBDvudp6dfQdLjdSZ9eWVZqB5DVs
-         +El/6I75cdvZ0n+mSkodPENgbQJkF2UfK3pls/bypLRKAwW/k8XIyjymmAP3nKE7E8BM
-         QmuOht3gVv7ItDD2m09HI4+lBkFJftGO044MXeQOTNe5ROoNeuFqM7dEV6Z9SscOnOa8
-         mfpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSJGftwx+E4geMzgj1s7+dZt4f6TQRmZt7dBWnOtdBfs4lwwGzgdlOdwBbPD4YUw4S8QCmiAlUZki4E4gz@vger.kernel.org, AJvYcCUap9hgab36Y/NsbJLJj7syGhW0Ii7mFaTw14b2D5C65xttrKwLrOuQlHnYxqdzT4+nXt+7XIsAFfKk@vger.kernel.org, AJvYcCWx8b0j0UNwRICmpqCPUCSX6i50NjpjwQH14Mw8OS4BKPjJY128vxqMezQmcT+1Up31CTOzESsLmtjrag==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2G0U81k5mTllKu+DHsZlRaGTqsid/7APpHS8vM6QlrIS/Yi61
-	QBZg6P3xlLFMO0N0siizhQFqeoRuWtU8B+VzGezS7X56ywLQWozH
-X-Google-Smtp-Source: AGHT+IFDW7u55StACmVfDydYmpmeHkLFILWuJRItj9IqAhOfa7oLhobk4myIP5qU7gvT+2wARIfNog==
-X-Received: by 2002:a17:907:1c1f:b0:a99:3ebf:9371 with SMTP id a640c23a62f3a-a99b95f3d91mr196358566b.59.1728648374644;
-        Fri, 11 Oct 2024 05:06:14 -0700 (PDT)
+        bh=PPy/JaEQ+74CM7BsiYWdUowzUF5iiUzU6luFBpGHCd4=;
+        b=nzP7inycekkX/Avgp7oXi2AqxTw4iMSMZGquDBBdyZ6Wi5J5V3D4NBucAsT0pXNNws
+         3m/HfZ/9pSvB8a7nACVJ6vYw+QZyJ5VJ3EepE7Td0bo/TmhIRRbq8gpRpgGCbf3n0fON
+         HUf/A8Eckv/Pp9QnbnS0qzWkkwgcbI4uDZVsb2m3ao9mxC4VEOUitCRIWDiAm8DVncso
+         YTfIKWuOL4DR7nUtCL8PzYWpZGLvstld3VU6xOqfrUzlObz6PuubkIbIvIqoDbnIxNSo
+         7E/MxqRaKtVY/j02b2kEbBK1AQqcPnNuq/4phOM2Q7DbWquC7KzP/3LWSTBvnUlTCqNU
+         jPwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIdtOn/DoWXpOj35LQVwJkkqtzx3q9qC9LGQID+K7/gA2HfHfjwX8n72BHuQ5Z2jq4JRCjR8HIKJf4vDs/@vger.kernel.org, AJvYcCWErR3zR3xoC1cgIHhfAdvt8TkeUI+NVKZUPpK0G53B90La+Nc2xZ5z+PXkhKlXyuAl0H04MV5ic4NCCQ==@vger.kernel.org, AJvYcCWGf/OPbZoq17vthld13x9TiyBN3fU4iKibuDR/4UjzXWr2LDwj08plxPdqFY4zCGfte+6SQsH3e4tl@vger.kernel.org
+X-Gm-Message-State: AOJu0YytzVFqvsX/8kbjKV2Kb6mfgbhY2hri1N0K0X5PwQ2BS48oFo0x
+	ybXZploUbj5KBtBmE9UOAVrbNXJLABturnBHi7Ibzk/kcZkKLAH/
+X-Google-Smtp-Source: AGHT+IHL7ir630nJdNiKICbi8J/5EQ5uJqoVEV3o00M0P7xZFlkxzQf9s6O78G/qMtzdw43r7wVWrw==
+X-Received: by 2002:a17:907:d847:b0:a99:4b63:f810 with SMTP id a640c23a62f3a-a99b9604801mr214567666b.46.1728648379448;
+        Fri, 11 Oct 2024 05:06:19 -0700 (PDT)
 Received: from zenbook.agu.edu.tr ([95.183.227.31])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99b804ea59sm88962366b.151.2024.10.11.05.06.12
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99b804ea59sm88962366b.151.2024.10.11.05.06.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 05:06:14 -0700 (PDT)
+        Fri, 11 Oct 2024 05:06:18 -0700 (PDT)
 From: Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To: Sean Wang <sean.wang@kernel.org>,
@@ -69,9 +69,9 @@ Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 5/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Document MT6765 pin controller
-Date: Fri, 11 Oct 2024 15:03:50 +0300
-Message-ID: <20241011120520.140318-6-y.oudjana@protonmail.com>
+Subject: [PATCH v6 7/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Document MT6735 pin controller
+Date: Fri, 11 Oct 2024 15:03:52 +0300
+Message-ID: <20241011120520.140318-8-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241011120520.140318-1-y.oudjana@protonmail.com>
 References: <20241011120520.140318-1-y.oudjana@protonmail.com>
@@ -85,29 +85,39 @@ Content-Transfer-Encoding: 8bit
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-The MT6765 pin controller has had a driver for a while, but DT
-bindings were never documented for it.
+Add bindings for the pin controllers found on MediaTek MT6735 and
+MT6735M SoCs. The pin controllers on those SoCs are generally
+identical, with the only difference being the lack of MSDC2 pins
+(198-203) on MT6735M.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-index 7ac1a85f822f1..4bfbaebb790c3 100644
+index 4bfbaebb790c3..814a534038665 100644
 --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-@@ -18,6 +18,7 @@ description:
+@@ -10,6 +10,7 @@ maintainers:
+   - Andy Teng <andy.teng@mediatek.com>
+   - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+   - Sean Wang <sean.wang@kernel.org>
++  - Yassine Oudjana <y.oudjana@protonmail.com>
+ 
+ description:
+   The MediaTek pin controller on MT6779 is used to control pin functions, pull
+@@ -18,6 +19,8 @@ description:
  properties:
    compatible:
      enum:
-+      - mediatek,mt6765-pinctrl
++      - mediatek,mt6735-pinctrl
++      - mediatek,mt6735m-pinctrl
+       - mediatek,mt6765-pinctrl
        - mediatek,mt6779-pinctrl
        - mediatek,mt6795-pinctrl
-       - mediatek,mt6797-pinctrl
-@@ -61,6 +62,41 @@ required:
+@@ -62,6 +65,42 @@ required:
  
  allOf:
    - $ref: pinctrl.yaml#
@@ -115,23 +125,24 @@ index 7ac1a85f822f1..4bfbaebb790c3 100644
 +      properties:
 +        compatible:
 +          contains:
-+            const: mediatek,mt6765-pinctrl
++            enum:
++              - mediatek,mt6735-pinctrl
++              - mediatek,mt6735m-pinctrl
 +    then:
 +      properties:
 +        reg:
-+          minItems: 9
-+          maxItems: 9
++          minItems: 8
++          maxItems: 8
 +
 +        reg-names:
 +          items:
++            - const: gpio
 +            - const: iocfg0
 +            - const: iocfg1
 +            - const: iocfg2
 +            - const: iocfg3
 +            - const: iocfg4
 +            - const: iocfg5
-+            - const: iocfg6
-+            - const: iocfg7
 +            - const: eint
 +
 +        interrupts:
@@ -144,7 +155,7 @@ index 7ac1a85f822f1..4bfbaebb790c3 100644
 +            '^pins':
 +              properties:
 +                drive-strength:
-+                  enum: [1, 2, 4, 16]
++                  enum: [2, 4, 6, 8, 10, 12, 14, 16]
 +
    - if:
        properties:
