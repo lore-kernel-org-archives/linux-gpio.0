@@ -1,114 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176616B75C;
-	Tue, 15 Oct 2024 06:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9D6189B9B;
+	Tue, 15 Oct 2024 06:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728972107; cv=none; b=VFZM1c1/W6r+7QrWJGdW9+brmhi+aZF8JFk+yPXjdJVFeSmOjZJJCb6alNbkslrqaPjspHKktVWv7IyMNUNkIQ2P5cxHH4yaTL4rIzyMlGBWNGYSAOnNwd9BlMb55uxmmA3iwIAHWGhAyY4WhSuNTCVsF9Er052M8E/EBaMid7s=
+	t=1728973719; cv=none; b=njD10oJbqz60NW0ClUcSZS0PbhS0Gzinsx9GvL1xlMZD6sIQ9xhjhLG18mysn0zuyfzBwb/wbZ3WYf+5BllE4aNqwrnq+IJ7YPOrPorM7qWsB2Z8QXT7rvsunlfc6tK1QJwJjmdCI/P6uB8YY9WuCeqMq2brbofoQ9PMcU8wUHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728972107; c=relaxed/simple;
-	bh=hjLVAsAxmaKiJMaFRVR95Sfr8mL4+9Ch2JcbTvocQLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTSR/ax26cOgQVHpluvwf6Ld+xCdLCIKOi76WpuofkF6ErPQxTyy4WHfijL5HfLF2SwFulq6KUyKHsWWks5359SKDKd3Tx5wETvPr/AF0tRJ+0naM07c5pp1ZW+X9YKMUD6WBglGZ+NWlEH/W7wmOQ1fK2V5qZH1yne/jCcdixU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8qwitj+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728973719; c=relaxed/simple;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kmJ/OWUqEQVGygKBKhutNSEhJKwJ3fpBPh/ictPrwsDSn6rWb02f/l4q7rKdGfZLBtZw2W9zxMiIk0wGq67pmfysV1v/szQ7T5foo9K+rOv4iUYcTrOrPYNKJtrl+VlPf16N9wvQj5U9E9BEaT+YQaqmZkxflT2uk0xXaK9sCPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=aI+RI5Jj; arc=none smtp.client-ip=63.250.43.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8qwitj+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA9CC4CEC7;
-	Tue, 15 Oct 2024 06:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728972106;
-	bh=hjLVAsAxmaKiJMaFRVR95Sfr8mL4+9Ch2JcbTvocQLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f8qwitj+XNX7VmqfwUPzOqQ3tX62tj/bJMrhXxBiUBNPV7km+tKe3BmC/jGpu8aeO
-	 WY7Itdqyv3omV3ZJF4opKEmTc4TgT/isawrqO326Bw6GmW/FwKikym4GrYbm8J770O
-	 ZluFfdA3Je2ReIeCf9X7kc2PuAb2cPjQPuqmNhzGo0w5My0Alx/U04jrMBc4VF7KYf
-	 HVc7RCA7p3w2zV97n6tFG+i1+OYeKgm/IZsukdvLR6yFecXroGehmcCqWvcaDJx68u
-	 MI2hqVkRRaBKzPIwjlBsh0sQanM8jwCf9GMIiMbKYMP3OwhZxBDs7TjfuwNIMLTIKV
-	 XmT8ecabPa08g==
-Date: Tue, 15 Oct 2024 08:01:42 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] pinctrl: meson: Add driver support for Amlogic A4
- SoCs
-Message-ID: <aju3dgugbmj52i74j7csyuwejczsvk4sxtsdzuq62jutq7jxbe@wbc7fveloxv2>
-References: <20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com>
- <20241014-a4_pinctrl-v2-2-3e74a65c285e@amlogic.com>
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="aI+RI5Jj"
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XSPLX3c7mzGpTN;
+	Tue, 15 Oct 2024 06:28:36 +0000 (UTC)
+Received: from igor-systemproductname.lan (83.8.240.202.ipv4.supernova.orange.pl [83.8.240.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XSPLN4dLYz2x9B;
+	Tue, 15 Oct 2024 06:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1728973711;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aI+RI5Jj0ZuHMJrqNNHIK2d6BZ8Y9/nJP3Pzy03E32BGvPe2RKUXHle713jweG3Wx
+	 1botSQGLoy599cFXGE659COzlEQ8QMtCbffRAFB2lMRvVSCZa4AzcIHOCZrf57RVuw
+	 qsRD+/cVpRH5eT+80dBxbp6a+hlBNwIdefXYnBObvu5PmDpc5oTVaHSi4LhiJU+Y47
+	 9VaN7igxDX+FL4CluBvvs/MBvZP058A6oaoFPb5EzUfCR0mT9crcPJDB+B8ovbG0+Z
+	 DYmjknS2CnBdDWFR6wuyGVEZp2OXz9P36ONs6LfvsyzRqjaL5D7x1HZ/mfh9N7BxaF
+	 yGcazTKA0PeSw==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	david@mainlining.org
+Subject: [PATCH v1 3/7] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards.
+Date: Tue, 15 Oct 2024 08:27:42 +0200
+Message-ID: <20241015062746.713245-4-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
+References: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241014-a4_pinctrl-v2-2-3e74a65c285e@amlogic.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 05:05:52PM +0800, Xianwei Zhao wrote:
-> Add a new pinctrl driver for Amlogic A4 SoCs which share
-> the same register layout as the previous Amlogic S4.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  drivers/pinctrl/meson/Kconfig              |    6 +
->  drivers/pinctrl/meson/Makefile             |    1 +
->  drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1176 ++++++++++++++++++++++++++++
->  3 files changed, 1183 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-> index cc397896762c..3e90bb5ec442 100644
-> --- a/drivers/pinctrl/meson/Kconfig
-> +++ b/drivers/pinctrl/meson/Kconfig
-> @@ -67,6 +67,12 @@ config PINCTRL_MESON_S4
->  	select PINCTRL_MESON_AXG_PMX
->  	default y
->  
-> +config PINCTRL_AMLOGIC_A4
-> +	tristate "Amlogic A4 SoC pinctrl driver"
-> +	depends on ARM64
-> +	select PINCTRL_MESON_AXG_PMX
-> +	default y
-> +
->  config PINCTRL_AMLOGIC_C3
->  	tristate "Amlogic C3 SoC pinctrl driver"
->  	depends on ARM64
-> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
-> index 9e538b9ffb9b..c92a65a83344 100644
-> --- a/drivers/pinctrl/meson/Makefile
-> +++ b/drivers/pinctrl/meson/Makefile
-> @@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MESON_AXG) += pinctrl-meson-axg.o
->  obj-$(CONFIG_PINCTRL_MESON_G12A) += pinctrl-meson-g12a.o
->  obj-$(CONFIG_PINCTRL_MESON_A1) += pinctrl-meson-a1.o
->  obj-$(CONFIG_PINCTRL_MESON_S4) += pinctrl-meson-s4.o
-> +obj-$(CONFIG_PINCTRL_AMLOGIC_A4) += pinctrl-amlogic-a4.o
->  obj-$(CONFIG_PINCTRL_AMLOGIC_C3) += pinctrl-amlogic-c3.o
->  obj-$(CONFIG_PINCTRL_AMLOGIC_T7) += pinctrl-amlogic-t7.o
-> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-> new file mode 100644
-> index 000000000000..dee1ae43edb5
-> --- /dev/null
-> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-> @@ -0,0 +1,1176 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Pin controller and GPIO driver for Amlogic A4 SoC.
-> + *
-> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> + *         Huqiang Qin <huqiang.qin@amlogic.com>
-> + */
-> +
-> +#include <dt-bindings/gpio/amlogic-a4-gpio.h>
+Add devicetree bindings for Exynos 990 boards. Currently the Galaxy
+Note20 5G (c1s).
 
-I do not see any usage of it.
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 49884a7ab5c6..d25a17e69725 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -230,6 +230,12 @@ properties:
+               - samsung,dreamlte                # Samsung Galaxy S8 (SM-G950F)
+           - const: samsung,exynos8895
+ 
++      - description: Exynos990 based boards
++        items:
++          - enum:
++              - samsung,c1s                     # Samsung Galaxy Note20 5G (SM-N981B)
++          - const: samsung,exynos990
++
+       - description: Exynos Auto v9 based boards
+         items:
+           - enum:
+-- 
+2.45.2
 
