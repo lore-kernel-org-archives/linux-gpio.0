@@ -1,73 +1,119 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BE221E3CB;
-	Wed, 16 Oct 2024 10:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A13205E05;
+	Wed, 16 Oct 2024 10:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729073895; cv=none; b=g8G0os3LTyPhyMRliJt2x1+QzDJwyD25icDkbJqDf9ZcIn8nPkJESyl5YnrFI+hTgPzQkky0QBSuTpx8cY8EgKllQ5jai/eo0+ltxFyiS83YHB8bUoLMdAN0RGXsfxwpM8k46WWM+jDD5Xwrz21iobTI6CbFN++p/qsJ7LWKELo=
+	t=1729074055; cv=none; b=Fs7vMqVJJyqC/h2hLmiuX+JvW1Ude1ZocYpRFdZtXOVa30a41/C9pzsd8jQTo5x3HVKeN/quq1YHOChks+1bbvVAccJgXSkdaN/g5rYRlR97w4d5COTn8UEX8Cd05EGGZ9kJf8H+LWedx10K+TDW0fyG0yYE+BC357ENd6yvApw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729073895; c=relaxed/simple;
-	bh=e01MAog32dNCK03hUVw31ADUZmVfPeprGcllcGIs4wM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Au8Jpc/C38COESu82WDkDVRpQoqiznjFi9nFAazCFhlq3Wz7sc/W0hP6jSoNQjdgcruhS3V1Qo24YUJMf1+TLO9exWmzIIbMKP8v9xISuA9lWOV+KRMUvr7MRP7JYDODcCmpk2POIYBx6EXt9OHUdM20FoZHl5/6RcRYyRRFSbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XT6Lg55fGz10N33;
-	Wed, 16 Oct 2024 18:16:11 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 75CBA180106;
-	Wed, 16 Oct 2024 18:18:04 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
- 2024 18:18:03 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <avifishman70@gmail.com>, <tmaimon77@gmail.com>, <tali.perry1@gmail.com>,
-	<venture@google.com>, <yuenn@google.com>, <benjaminfair@google.com>,
-	<linus.walleij@linaro.org>
-CC: <openbmc@lists.ozlabs.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH] pinctrl: nuvoton: npcm8xx: Fix error handling in npcm8xx_gpio_fw()
-Date: Wed, 16 Oct 2024 18:35:18 +0800
-Message-ID: <20241016103518.3499455-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729074055; c=relaxed/simple;
+	bh=ENMUFRInE9klSlun29NmHuXOcxx7VuVD+PMep31qMtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LX7lk8I3sCDa9iRjw7SetBd8ff5ado3VxF9nLQ6uNa7WhoM5BiayMjg4JxneO2/OMhrfjKdQZWRXX6lXg9JDZ6lKxuRyEXEBTGjtkgSdmztjfooocW94hcOEkBGIDN/tOA5M4r2Q9j6E4/tuiUOjJY5tJ1qEqBhPddjvBgMQUCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JXxINKBd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JXxINKBd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729074051;
+	bh=ENMUFRInE9klSlun29NmHuXOcxx7VuVD+PMep31qMtc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JXxINKBdcyqRvlIMKmEMBywhwxqapd9TW4+9nqiZi9Z5eu2+cug2QboOs8bpyHwVK
+	 MdQq2r66x+5FFHmhUE7FyuWR8iTB565T/VMP9rr1UdBDTES09gJ+cJGHl0gqCrGgXw
+	 IVNuBezuLi2gaTUzCkwmY4NpZbYldTfrrZXZRoT7WyVUMpR9CisoZN5/PEj/FWFGyC
+	 1B4TSE8hYr5gAPy2HcGqV2BZ3TnpFTiC7OwO9f7LkT7qwIShZyc46VBhdgYfnM3XL2
+	 e2JSyMimvySBOuuUzQW9DXw0+o/VJNxoPprImdukZmhXZYorUxF7INCGZvzVRq9wy1
+	 drdB32bXizYoQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 04B3D17E1366;
+	Wed, 16 Oct 2024 12:20:50 +0200 (CEST)
+Message-ID: <834bfc12-4ce7-4ce1-a0c7-5bc8be3587b7@collabora.com>
+Date: Wed, 16 Oct 2024 12:20:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/6] dt-bindings: pwm: airoha: Add EN7581 pwm
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ upstream@airoha.com, benjamin.larsson@genexis.eu, ansuelsmth@gmail.com,
+ linux-pwm@vger.kernel.org
+References: <20241016-en7581-pinctrl-v7-0-4ff611f263a7@kernel.org>
+ <20241016-en7581-pinctrl-v7-3-4ff611f263a7@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241016-en7581-pinctrl-v7-3-4ff611f263a7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-fwnode_irq_get() was changed to not return 0, fix this by checking
-for negative error, also update the error log.
+Il 16/10/24 12:07, Lorenzo Bianconi ha scritto:
+> Introduce device-tree binding documentation for Airoha EN7581 pwm
+> controller.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>   .../devicetree/bindings/pwm/airoha,en7581-pwm.yaml | 34 ++++++++++++++++++++++
+>   1 file changed, 34 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/airoha,en7581-pwm.yaml b/Documentation/devicetree/bindings/pwm/airoha,en7581-pwm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f36387572a9781636aeacdbcc8947017c7ca75a0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/airoha,en7581-pwm.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/airoha,en7581-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha EN7581 PWM Controller
+> +
+> +maintainers:
+> +  - Lorenzo Bianconi <lorenzo@kernel.org>
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,en7581-pwm
+> +
+> +  "#pwm-cells":
+> +    const: 3
+> +
+> +required:
+> +  - compatible
+> +  - "#pwm-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pwm {
+> +      compatible = "airoha,en7581-pwm";
+> +
+> +      #pwm-cells = <3>;
+> +    };
+> 
 
-Fixes: acf4884a5717 ("pinctrl: nuvoton: add NPCM8XX pinctrl and GPIO driver")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+There are undocumented properties that the driver tries to parse. Please fix.
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-index 471f644c5eef..70e6966049e4 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-@@ -2361,8 +2361,8 @@ static int npcm8xx_gpio_fw(struct npcm8xx_pinctrl *pctrl)
- 			return dev_err_probe(dev, ret, "gpio-ranges fail for GPIO bank %u\n", id);
- 
- 		ret = fwnode_irq_get(child, 0);
--		if (!ret)
--			return dev_err_probe(dev, ret, "No IRQ for GPIO bank %u\n", id);
-+		if (ret < 0)
-+			return dev_err_probe(dev, ret, "Failed to retrieve IRQ for bank %u\n", id);
- 
- 		pctrl->gpio_bank[id].irq = ret;
- 		pctrl->gpio_bank[id].irq_chip = npcmgpio_irqchip;
--- 
-2.34.1
-
+Regards,
+Angelo
