@@ -1,62 +1,63 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9A61D517D
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Oct 2024 12:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FA01D4609
+	for <linux-gpio@vger.kernel.org>; Thu, 17 Oct 2024 12:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167295; cv=none; b=ue1M9diptbUaKlx5mw4cwy4W4d9yKNi6vNp244BlxHW9sClsaAGjpuTaTDFtR/j4h32XxGza8xaQB6aq/m4Js/9m7AdhamFVa0NjljaBLds01BmRWuDSxrEiaFlFoeM2ye7hnvExYx07LfhWVOObd8yUYKuSowKsYCqx9kseSt4=
+	t=1729168251; cv=none; b=ssBOA34F7F2/8QrCcoXeeScL7TU5579c7xnTGSbgQxnORmY/8KjC1wN4QG7q0osDBaJzWkbrjRzCMzx/To/pFgZ3jmmHPnzLEyOUYmTOBQ9xhU01y3Vd+mOL38CS4yzIxrAIWOQARlEOHfiQ4iCDBpxK+rMPu4vAbvq1zf0fzg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167295; c=relaxed/simple;
-	bh=EiEsIa7uzb/EJrDvk09DtCg4aPtoR/JNxYMIeuY2138=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UKxR9gXBC/tfuqclCY9fj31MU+oqRhUMeLoXLwBqaDo+Ahs2sDB46JoWLBDmooR0kmAd9DYGH8bTuaPT6WEfnRHl1MwjnbgBRc+IcbmQDYk/2TLSoMhvDUkaKhVC9PFf4kKW6rn2c8iJeeiA3TV5/A2kKf6503sAfas7i4g98Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nTQd8n36; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1729168251; c=relaxed/simple;
+	bh=UdvLwSkfZ9p4NNUx5rMxw9zV2Cpa0aatuHLhwHXEqEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TVljx7y5BZN3furoYqe2IFo7WVVBUkSQjpFSY9NWF6bURu3rIK/5IoZChMjGOMFfTmE8dUn6N0KNjrEeI/RLTgzLHyrKvGR04oQFLW/Xuf8JrWAjS5HxN6chE5I0YRQ1QOWT07OlPEGon5JMx/jwdb2hasWQmHwkGBfFQD8w7hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IqpeNyfx; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nTQd8n36"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so610692f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Oct 2024 05:14:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IqpeNyfx"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d461162b8so620709f8f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Oct 2024 05:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729167289; x=1729772089; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729168246; x=1729773046; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZ9MubZQbPmIWw0TP/sAI/QCOBR9Sgwv17kzjyNhAvM=;
-        b=nTQd8n36+3BUH0rACFIvX8Ls5LLlyScj3fBhSIoF55WL1rsNiD85m804yY3IQOJnsv
-         CqNJoUSVGcbYgGri+DTboLfUtJlv6GzZe1UD7VYCpKMDtF1BOUe/iGaXqIiSnr4LB+dR
-         ezav6dpJqakoDuAAlOULxWAujy6Wn5t9On0SYZQVoJjVbdlYSrJJpFmricD1Au2bfjHx
-         2kMYuEy3rqnhSiJTJug3QSNTpUJlnuURmdzA1oC8H4Yuduj8ip7++zHIXue1TLQLJlBe
-         tbDXYTuOk/MkDLnVoB2piAUsiaqTEI8nLkeh09+NWlJRAeZ/qNAEwKvCzXnaaCJzZ38n
-         qQwA==
+        bh=XhzanmcrrqCmOUOIjhfdf9j/E7IJw7OdqnOHDW8wxMs=;
+        b=IqpeNyfxRtMhIzdPH2q2t5JOhzMRuW3kmxF5Ak6Etu9alY7lWxrCcoJA2RgfN9Df2N
+         kBynfyCbzdG4Di9B2h26qjowzWfNmmdWye1sxmJsLNQ6W+bBv0HF2PmmGLor+0mNOIhU
+         VTXEpHqHaMhP3TplgosnlZp291+0g/Zzp7zXI+dtnsNZhul4kl41EgWBMBVnIbxrZTAK
+         g15lUrqVnvSFMjMGWhLOGzCBA24mcZ4nXaHaabpPkl1lzqlIkyVDvqFfSthnPK490TKR
+         dRROfj5geevZFtA+dY1tkPDUA13B04Frf1mYQl5nmEiqX4kMIADXYGvo4dXjpU7fcFwJ
+         MxWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729167289; x=1729772089;
+        d=1e100.net; s=20230601; t=1729168246; x=1729773046;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pZ9MubZQbPmIWw0TP/sAI/QCOBR9Sgwv17kzjyNhAvM=;
-        b=bD5FaSX85LmtJQ2cJBD56s3vZDw3osal6la+guiH7ueqO3c0gubRjzRHWTRIxI+bcD
-         bSVPPBwdF3aAjy7dwgsgN+QfcEuaoHOdomD5KZDp5RW3X1NFGFC2paaf3ueXuubZIrp+
-         noTsnH5yJlJ2rznI4/w/vdI6WA3trc4fIN+tA+XMFOv3iT2TuKOgBC0rKvKHR2vfUm4O
-         jXbDT+Ig85J6CXggd6F5OdA8bhYHzGEmpLdasXIIU1e+v/Hq5fXuUUCqn0zqgfVUaeRE
-         f6RRHSl1x8c5vgXhX6uu2E1wIsaunBIyPGVpqAfuV3SPkk9vBLDcKgQiTWuUjUvqgmJz
-         +2+g==
-X-Gm-Message-State: AOJu0YxvCV9lI5xgs+l5J5z7wVzZDvlc4zQ21Hci8rPCYE4TC+Ynp6kN
-	SX+hXmi+lL8iCzQs2nCkJGHtYLHFUcSBXZdTKpWQ/keJn9lvPIzgwIxBhva8R5Q=
-X-Google-Smtp-Source: AGHT+IE6TUfYPXsAbNZ+/l4g2e1jNYJVBi4RJpfuHlxC/fWasy6zFuXt9VgRiltQrBxozp7XjaFZZw==
-X-Received: by 2002:a5d:5192:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-37d86bb6740mr4289221f8f.7.1729167289470;
-        Thu, 17 Oct 2024 05:14:49 -0700 (PDT)
+        bh=XhzanmcrrqCmOUOIjhfdf9j/E7IJw7OdqnOHDW8wxMs=;
+        b=rAj++4VaCzkqpHes/PNuFqlAL7Wms+PE1HwARrXZRhOiph+9PiztnhphR48XuB/yCF
+         hjeJ812hw9kwNegX/9pHS9QIjdXMTbQ8C35S/cVxdmoPQ6FmuD7mrf71StWvnBRhFymk
+         UVVo7+RH7Yu126f5v02s8l5obZcWc+qBONTYPYMyV++zncQBj9/G0zJ5dUiC8KO4IsQY
+         QVheNSwyPAaTJXxy3LHOELKe44hp5D7vKpmuc4U/VUOszoAruDU5NBDOrt+41tC0jRlb
+         QiYC5bwB0CeF7Mp16D8bJRHHXUa/E0kUB/F5nBavUzlfzBKbGtMCfhR5lNDbb/8jMN4i
+         rskg==
+X-Gm-Message-State: AOJu0Yw42hKDd3MLMIrDQxEJJkBQK64Yn/NAtlPtHjoHrn++BPI6Rhhg
+	11B+71hl2GvSqECU2KRa49uUpOSZaSCOkrtPY0X3sjmHlJc+l3aU/JgPPoHUoY6Ka3DthHm8fqX
+	T
+X-Google-Smtp-Source: AGHT+IHl2iz81YfEltEl94AbYNgHsNH8XtOiMOH9EiputxO8ytXKdqEJeRa3kLv9+oRtfO52o+RAqw==
+X-Received: by 2002:a05:6000:1104:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-37d5fe954e9mr11651391f8f.4.1729168245926;
+        Thu, 17 Oct 2024 05:30:45 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3831:fc61:16eb:d0df])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87b5dsm7057299f8f.40.2024.10.17.05.14.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc11ff7sm7105638f8f.92.2024.10.17.05.30.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:14:49 -0700 (PDT)
+        Thu, 17 Oct 2024 05:30:45 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: max730x: use devres to shrink and simplify code
-Date: Thu, 17 Oct 2024 14:14:47 +0200
-Message-ID: <20241017121447.73754-1-brgl@bgdev.pl>
+Subject: [PATCH] gpio: ftgpio010: shrink code
+Date: Thu, 17 Oct 2024 14:30:44 +0200
+Message-ID: <20241017123044.75531-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -68,59 +69,103 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Use managed variants of gpiochip_add_data() and mutex_init() to drop a
-label and lose a couple LOC.
+Use devm_clk_get_enabled() to drop the goto label from probe() and the
+entire remove() callback. Drop platform_set_drvdata() as it's no longer
+needed. Drop log noise on success.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpio-max730x.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-ftgpio010.c | 45 +++++++----------------------------
+ 1 file changed, 9 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
-index 701795b9d329..e688c13c8cc3 100644
---- a/drivers/gpio/gpio-max730x.c
-+++ b/drivers/gpio/gpio-max730x.c
-@@ -165,7 +165,10 @@ int __max730x_probe(struct max7301 *ts)
+diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
+index 5b07749dbdff..c35eaa2851d8 100644
+--- a/drivers/gpio/gpio-ftgpio010.c
++++ b/drivers/gpio/gpio-ftgpio010.c
+@@ -253,18 +253,13 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
  
- 	pdata = dev_get_platdata(dev);
+-	g->clk = devm_clk_get(dev, NULL);
+-	if (!IS_ERR(g->clk)) {
+-		ret = clk_prepare_enable(g->clk);
+-		if (ret)
+-			return ret;
+-	} else if (PTR_ERR(g->clk) == -EPROBE_DEFER) {
++	g->clk = devm_clk_get_enabled(dev, NULL);
++	if (IS_ERR(g->clk) && PTR_ERR(g->clk) == -EPROBE_DEFER)
+ 		/*
+ 		 * Percolate deferrals, for anything else,
+ 		 * just live without the clocking.
+ 		 */
+ 		return PTR_ERR(g->clk);
+-	}
  
--	mutex_init(&ts->lock);
-+	ret = devm_mutex_init(ts->dev, &ts->lock);
+ 	ret = bgpio_init(&g->gc, dev, 4,
+ 			 g->base + GPIO_DATA_IN,
+@@ -273,10 +268,9 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 			 g->base + GPIO_DIR,
+ 			 NULL,
+ 			 0);
+-	if (ret) {
+-		dev_err(dev, "unable to init generic GPIO\n");
+-		goto dis_clk;
+-	}
 +	if (ret)
-+		return ret;
++		return dev_err_probe(dev, ret, "unable to init generic GPIO\n");
 +
- 	dev_set_drvdata(dev, ts);
+ 	g->gc.label = dev_name(dev);
+ 	g->gc.base = -1;
+ 	g->gc.parent = dev;
+@@ -293,10 +287,9 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 	girq->num_parents = 1;
+ 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
+ 				     GFP_KERNEL);
+-	if (!girq->parents) {
+-		ret = -ENOMEM;
+-		goto dis_clk;
+-	}
++	if (!girq->parents)
++		return -ENOMEM;
++
+ 	girq->default_type = IRQ_TYPE_NONE;
+ 	girq->handler = handle_bad_irq;
+ 	girq->parents[0] = irq;
+@@ -309,26 +302,7 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 	/* Clear any use of debounce */
+ 	writel(0x0, g->base + GPIO_DEBOUNCE_EN);
  
- 	/* Power up the chip and disable IRQ output */
-@@ -206,17 +209,11 @@ int __max730x_probe(struct max7301 *ts)
- 			int offset = (i - 1) * 4 + j;
- 			ret = max7301_direction_input(&ts->chip, offset);
- 			if (ret)
--				goto exit_destroy;
-+				return ret;
- 		}
- 	}
- 
--	ret = gpiochip_add_data(&ts->chip, ts);
--	if (!ret)
--		return ret;
+-	ret = devm_gpiochip_add_data(dev, &g->gc, g);
+-	if (ret)
+-		goto dis_clk;
 -
--exit_destroy:
--	mutex_destroy(&ts->lock);
+-	platform_set_drvdata(pdev, g);
+-	dev_info(dev, "FTGPIO010 @%p registered\n", g->base);
+-
+-	return 0;
+-
+-dis_clk:
+-	clk_disable_unprepare(g->clk);
+-
 -	return ret;
-+	return devm_gpiochip_add_data(ts->dev, &ts->chip, ts);
+-}
+-
+-static void ftgpio_gpio_remove(struct platform_device *pdev)
+-{
+-	struct ftgpio_gpio *g = platform_get_drvdata(pdev);
+-
+-	clk_disable_unprepare(g->clk);
++	return devm_gpiochip_add_data(dev, &g->gc, g);
  }
- EXPORT_SYMBOL_GPL(__max730x_probe);
  
-@@ -226,8 +223,6 @@ void __max730x_remove(struct device *dev)
- 
- 	/* Power down the chip and disable IRQ output */
- 	ts->write(dev, 0x04, 0x00);
--	gpiochip_remove(&ts->chip);
--	mutex_destroy(&ts->lock);
- }
- EXPORT_SYMBOL_GPL(__max730x_remove);
- 
+ static const struct of_device_id ftgpio_gpio_of_match[] = {
+@@ -350,6 +324,5 @@ static struct platform_driver ftgpio_gpio_driver = {
+ 		.of_match_table = ftgpio_gpio_of_match,
+ 	},
+ 	.probe = ftgpio_gpio_probe,
+-	.remove = ftgpio_gpio_remove,
+ };
+ builtin_platform_driver(ftgpio_gpio_driver);
 -- 
 2.43.0
 
