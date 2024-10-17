@@ -1,37 +1,37 @@
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EAE10F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC0D184D;
 	Thu, 17 Oct 2024 00:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729123720; cv=none; b=EuMkWNWmqLo92042vlEx6pcRuqF4TbzbIa7BE1RdHEEBYgf+9cRYpCjX/t0DGTbYhhEtDEy46GnnQwU1pHpWgG7IrO/+J74p237wf5bQTo68NmCovAEoAoZV4X/PkgXe+8hfCD1oe/z1ItI/rwrsiMJSIyCAy+YwEas1YiL+OWY=
+	t=1729123720; cv=none; b=hV2lMXtZFjT66xUwGL2auYXQtd8s/02tvRb/7Titnb3ZGz8P8L8F55a3D7wRHYBNdMp6GG0Rz9OBWoeaLfeJuYjoaoqPPccM023YSJp3LRAF68NE9y8OZvNDTswyFXO1JBoYYd5cgca4fY9eupaLGBgqFqVt4MUmlhT5YHGICoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729123720; c=relaxed/simple;
-	bh=AkaZZpyxa0ar4Vh8CM0JAX18j1X7QxXby32EFvezGJ4=;
+	bh=MeweiKooJ6uVvq0NEWrZYqTFp5OOCPxHXRqsXdmpDVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kv7xzQyE6lvT3ZeROTKFND/Y6ayTTYQZtWcmVML0zZ5tSTUcQMtKEeB1b2pSOfk3btOSNhYKOep9zCcV6P1YIjI1S2s24xiozEmwthQ1d+WhUcdfXa0U9flqJrEwHJPu7lWep9z0Wmv5j2464HJ5m8gAXMG5c3UdmEpXVQ9IV8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=afJqaLF6; arc=none smtp.client-ip=85.214.62.61
+	 MIME-Version; b=mYOk7zxhzfOUzlyRMsYOA79J+BDxg/B8A9BMeeZnMy633V5Vtdsu88WCQNi5nOcX7AxeoT8mSUUU/Q1Y+VyQ1WdL2vaaSkdMc1iOK2nF0/Enr3in3DBNuP1zWsicwVreV/jk6AuyaLJg2pbwwjqKlzP2Imz5UY7AgCz1udiNtl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Na78Rte+; arc=none smtp.client-ip=85.214.62.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="afJqaLF6"
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Na78Rte+"
 Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
 	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3684A88E31;
-	Thu, 17 Oct 2024 02:08:34 +0200 (CEST)
+	by phobos.denx.de (Postfix) with ESMTPSA id 9E8EE88E5F;
+	Thu, 17 Oct 2024 02:08:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729123714;
-	bh=vYSV0oHCDdhgWssZFIc2QwSWGapswZUxpsMug66FG0I=;
+	s=phobos-20191101; t=1729123716;
+	bh=rVUNiDsl8qiK0QNZu4GKqjxmkuTSCEzw2w+x4jgqAgk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=afJqaLF6wDv/enX5p61uwaUtXq2y6ce52k74CWJnLwqpglPc9+8Dt2ghnq05i7aYQ
-	 I+c4DDz7la04MLLrydPjr5HMbnJaPZQLwTjvaIbBnF6LWzF2MIybXjwX7E9nEPZ/5Z
-	 nhnUTI1Jz4OgnN6CMhqXOXdJTU2zCBVoSahHF40dhcXYkTewGe+kMfD8JzURQ/6L3I
-	 oV8LkBYaNXjyb5IbcojsbRoM0Xx0nSaobhpW2+fgP/5BBStip4D4cz+0gMLwT1Sl/K
-	 J+HJFCTrkvMxyQ6IhKgRH8b1jvIDytkstKn8/FswnuitagimS+9GE/5ifSfNTUqeny
-	 x8AYu4lUJ9EpQ==
+	b=Na78Rte+rPHgt7jkp3bneJ5c5MwN3879XhdYtBX04FXkHRf0w8B7zLlYb+v3QRa6S
+	 ENQIHPBtrcDB078GagQnyIU9dDfo+toztNybT88hcWiFi+h+0l1PzYRyGG5JTVRPCZ
+	 mIjz2bTJnBW/CJQDOjysPVCVqWP7UhCkBbgGjBqSIjN4GjzqaRGRdhsM7erO+Pfk/S
+	 rRFlbVKi6tzWHA+swYTqd93tu6QHr5Dj34XXwOlb6SPz1eqOqC4bPIeIEKUdYhyWRM
+	 2+oN59Lv0QzexK20tpAduIYt3ExNNpyXdxfgLPx10+6QY08+gZxkNhvWMXLVWltiyG
+	 cuY4wDXv7aRNg==
 From: Marek Vasut <marex@denx.de>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marex@denx.de>,
@@ -49,9 +49,9 @@ Cc: Marek Vasut <marex@denx.de>,
 	imx@lists.linux.dev,
 	kernel@dh-electronics.com,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH v2 09/12] ARM: dts: imx6qp: Align pin config nodes with bindings
-Date: Thu, 17 Oct 2024 02:06:55 +0200
-Message-ID: <20241017000801.149276-9-marex@denx.de>
+Subject: [PATCH v2 12/12] ARM: dts: imx6ul: Align pin config nodes with bindings
+Date: Thu, 17 Oct 2024 02:06:58 +0200
+Message-ID: <20241017000801.149276-12-marex@denx.de>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241017000801.149276-1-marex@denx.de>
 References: <20241017000801.149276-1-marex@denx.de>
@@ -94,144 +94,22 @@ Cc: linux-gpio@vger.kernel.org
 ---
 V2: New patch
 ---
- arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dts   |  2 +-
- .../arm/boot/dts/nxp/imx/imx6qp-sabreauto.dts | 40 ++++++-------
- arch/arm/boot/dts/nxp/imx/imx6qp-sabresd.dts  | 58 +++++++++----------
- 3 files changed, 48 insertions(+), 52 deletions(-)
+ arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dts b/arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dts
-index ae00d538a4dfc..fbe260c9872e3 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dts
-@@ -548,7 +548,7 @@ MX6QDL_PAD_SD3_RST__SD3_RESET			0x1b0b1
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi
+index 118df2a457c95..4c09bb3126966 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi
+@@ -322,7 +322,7 @@ MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x120b0
  		>;
  	};
  
--	pinctrl_wifi_npd: wifinpd {
-+	pinctrl_wifi_npd: wifinpdgrp {
+-	pinctrl_stmpe: stmpegrp  {
++	pinctrl_stmpe: stmpegrp {
  		fsl,pins = <
- 			/* WL_REG_ON */
- 			MX6QDL_PAD_NANDF_RB0__GPIO6_IO10		0x13069
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qp-sabreauto.dts b/arch/arm/boot/dts/nxp/imx/imx6qp-sabreauto.dts
-index 2bb3bfb18ec3e..c5b220aeaefd6 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qp-sabreauto.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qp-sabreauto.dts
-@@ -22,27 +22,25 @@ max7322: gpio@68 {
- };
- 
- &iomuxc {
--	imx6qdl-sabreauto {
--		pinctrl_enet: enetgrp {
--			fsl,pins = <
--				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
--				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
--				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
--				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
--				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
--				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
--				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
--				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
--				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
--				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
--				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
--				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
--				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
--				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
--				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
--				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
--			>;
--		};
-+	pinctrl_enet: enetgrp {
-+		fsl,pins = <
-+			MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
-+			MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
-+			MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
-+			MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
-+			MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
-+			MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
-+			MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
-+			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
-+			MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
-+			MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
-+			MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
-+			MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
-+			MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
-+			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
-+			MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
-+			MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
-+		>;
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qp-sabresd.dts b/arch/arm/boot/dts/nxp/imx/imx6qp-sabresd.dts
-index f69eec18d8657..792697bd45512 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qp-sabresd.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qp-sabresd.dts
-@@ -17,36 +17,34 @@ &reg_arm {
- };
- 
- &iomuxc {
--	imx6qdl-sabresd {
--		pinctrl_usdhc2: usdhc2grp {
--			fsl,pins = <
--				MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
--				MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10071
--				MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
--				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
--				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
--				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
--				MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
--				MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
--				MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
--				MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
--			>;
--		};
--
--		pinctrl_usdhc3: usdhc3grp {
--			fsl,pins = <
--				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
--				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10071
--				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
--				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
--				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
--				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
--				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x17059
--				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x17059
--				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x17059
--				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
--			>;
--		};
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
-+			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10071
-+			MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
-+			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
-+			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
-+			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
-+			MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
-+			MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
-+			MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
-+			MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
-+			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10071
-+			MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
-+			MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
-+			MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
-+			MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
-+			MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x17059
-+			MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x17059
-+			MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x17059
-+			MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
-+		>;
- 	};
- };
- 
+ 			MX6UL_PAD_UART1_CTS_B__GPIO1_IO18 0x1b0b0
+ 		>;
 -- 
 2.45.2
 
