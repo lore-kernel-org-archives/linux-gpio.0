@@ -1,88 +1,104 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E31E1D95B5;
-	Fri, 18 Oct 2024 13:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD713EA76;
+	Fri, 18 Oct 2024 13:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729259074; cv=none; b=Q2Bhag+TxZpPCNYJYJJFH37Y55cxOysuS9ZZdBeqA9Ph0wZ4Lbxl9cnULbWz4ISi9s+sVMLeMBYVCTHDc65sVqWQbHwpdg1KpFRIn3lO5HnzmxXWV1ThUUnUZL2V0gYRYcOCVouaes9iHnc1fdUB561qZJu8YZ9nXlJ5P/jsfeA=
+	t=1729259159; cv=none; b=FFMY2OalqAy6odtZgHelgHH1X7kCG0HygGKH9jC/x1rZ47JLbTxLRoPRcUu282YW/eFZiBSBnQEPWhD0ux2zrAybXp18NRm5O71sYH8OPHMrRaOT4ynw15AcgGFWB7n33k/+OZNHjeNX5h0MIcoa+DWog544U4z+717rmhVN/OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729259074; c=relaxed/simple;
-	bh=7FJz9go6NmDrdGqWGJYOcGvUN9zYPmW5q3YnQ1vjR/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIgxxzC4guAWgIIuD4ablMd1KNkcrjjMicam4aHM4E1/6R1RXs+ZVwvorYnXn5W1iTrWvb1JR6chWzKD9RnhLTRE+Ku+Q7q2wg1EEAVGA2y4AEFHJty1yJ+TVjZZjiGmRwVn0PsHJwZRdIoOt0DVMFAzmAvi5qk0iallJu8gU7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ew2iD+gs; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1729259159; c=relaxed/simple;
+	bh=EaXsiVIiRgaxgG7fRrDXgJJ9N6V1vsqdPGrPgKw+2KY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uUlTnfE1yZxXFLXEKqza05czdqrP+WUjnPa0Ya44dSBPtHGxxYFfvNMv3qt0BV04UkggszPN9NC573o1dPgOTx6eVZyzns+EUhPcktyBzZbWzkhgMwFFH7qTunLWAc8MSAh/vL5Wh0wB9omRo+dQ2ug66y/r9DdYW/hX50c2+84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h6i6NlX7; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ew2iD+gs"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h6i6NlX7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729259072; x=1760795072;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7FJz9go6NmDrdGqWGJYOcGvUN9zYPmW5q3YnQ1vjR/I=;
-  b=ew2iD+gsR6BRwhIKjI24eInZ4EZsPd74o5KCrQikYgOyWCQmGG4Z019A
-   LI8EIrOK8nJk05wl5vW0s1kpQDk4OO/PlfctXvIP8qdrXIHhOmyCCtRhs
-   qVrL4YeUKKoBACP2O6le1210sLxv8+xz7gVgv9kZ5mWiz8AFw/tE4LW7T
-   txjxxLzWO91xD3pzPvmbeuJ9cs9m2H+EXJFaT6SPIMeE+7HzA2PctZPAG
-   +trhbefZzKEZ9KFTVU5smaiq2N2KVVjJnpbVBeyDdf9ZQnCeLFWXxkb9F
-   fAqj3hDfm85agUEPAhYVcrW7FJ+AY1RIu/DmVivGJxUr6eVChSfAYlcQp
-   A==;
-X-CSE-ConnectionGUID: eeUYQLuYRkS+S7iosTa4Fw==
-X-CSE-MsgGUID: SA5/MpiNSpKjTCKK1B4lsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28668869"
+  t=1729259158; x=1760795158;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EaXsiVIiRgaxgG7fRrDXgJJ9N6V1vsqdPGrPgKw+2KY=;
+  b=h6i6NlX7MKRlOxNxrB+Xo5VvhSWRFxdGlxYZG/k1BLyEn0ChiyVW1vuk
+   jPigWPcXEfCmRxdZDfPs4CZTaF8Juezo5t4ePZNUQMT3kPPckiE/Ugaic
+   HxubA9c5onqsT3HM7hPi+HKyC4ljLOWzrtQ+XNAiy1YcQ0W8LXdfgpUKw
+   5FgEsLDzOtxwVNJRkxb2xl6cuqO1gm73IjweMl9Vw5PkIhpX8NSO4CNaT
+   T1HwzKDIi/KTrM9TnKWL5yWUcVro/AdxPBu+ocw4t6oU4+A+J0CEEB6xG
+   GrB8yqR6sHO+8CkUewMgAHH4/ZehivCV0NbPnD9S9Gt0mTSaiu5MlNiLa
+   g==;
+X-CSE-ConnectionGUID: nPGzfGgvTrGvMZckfEyZyQ==
+X-CSE-MsgGUID: UVVtN0MZRSmDLBEw/1qVjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11229"; a="28251811"
 X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="28668869"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:44:32 -0700
-X-CSE-ConnectionGUID: YjqSYosrTx+AFDfZaWoROw==
-X-CSE-MsgGUID: X/4xZGt5SKegZ3VIVbIstg==
+   d="scan'208";a="28251811"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:45:57 -0700
+X-CSE-ConnectionGUID: 4UoSXaaTQmaAMuziW1HNxQ==
+X-CSE-MsgGUID: d9Syj35mTuWfG6acH3pmwA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,213,1725346800"; 
-   d="scan'208";a="109698128"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2024 06:44:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1nHH-00000004Tvm-0gsm;
-	Fri, 18 Oct 2024 16:44:27 +0300
-Date: Fri, 18 Oct 2024 16:44:26 +0300
+   d="scan'208";a="83936181"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 18 Oct 2024 06:45:56 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id CDC975A7; Fri, 18 Oct 2024 16:45:54 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 0/4] gpio: xgene-sb: Improve ACPI and property related
- code
-Message-ID: <ZxJmOjvQAKUc0_4A@smile.fi.intel.com>
-References: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/4] gpio: xgene-sb: don't use "proxy" headers
+Date: Fri, 18 Oct 2024 16:45:03 +0300
+Message-ID: <20241018134550.2071101-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20241018134550.2071101-1-andriy.shevchenko@linux.intel.com>
+References: <20241018134550.2071101-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018134129.2058068-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 04:32:31PM +0300, Andy Shevchenko wrote:
-> Improve ACPI and property related code in the driver.
-> 
-> Andy Shevchenko (4):
->   gpio: xgene-sb: Remove unneeded definitions for properties
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
->   gpio: xgene-sb: don't use "proxy" headers
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-xgene-sb.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Ah, patch order is wrong (we will see CIs are not being happy),
-the above should be the last one.
-
->   gpio: xgene-sb: Drop ACPI_PTR() and CONFIG_ACPI guards
->   gpio: xgene-sb: Tidy up ACPI and OF ID tables
-
+diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+index 206f03a7a7aa..48b829733b15 100644
+--- a/drivers/gpio/gpio-xgene-sb.c
++++ b/drivers/gpio/gpio-xgene-sb.c
+@@ -8,12 +8,19 @@
+  *		Quan Nguyen <qnguyen@apm.com>.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/types.h>
++
+ #include <linux/gpio/driver.h>
+-#include <linux/acpi.h>
+ 
+ #include "gpiolib-acpi.h"
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0.rc1.1336.g36b5255a03ac
 
