@@ -1,158 +1,178 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D77C17BEC5
-	for <linux-gpio@vger.kernel.org>; Sat, 19 Oct 2024 14:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3B02F3E
+	for <linux-gpio@vger.kernel.org>; Sat, 19 Oct 2024 16:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729348843; cv=none; b=c9nBEMOQ95j8NZb+sAW0lQOK0kP6nHgh+MXH84LRBx8c4IpbX1FGJsJboYuINYyQh8ReD8FP/20cLvb1p6neR6MPaHnEo0YEc0gjg9AReCS68PVOsMcwYKT9TtRkjvZIlyTLTCgR9zLv0lm7/YPJDUrKSD5n71GLNt+VxwBFnv8=
+	t=1729353942; cv=none; b=u4pNW7T4c4KcVBjmoUqr4V1SKiZUls+uf/s8nKroM7wf6/INTDsAjFBKVy4xE0fCpE31Lk6gtg4+AzimziegCkDFwwGJbAvPnhgoh3sgL9k3uyzL+qY9SgKgZH83vqv8K4OOg8WBGOvpKb7zsZXkpUWR0pB9HtbaMc5GdZ6wMYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729348843; c=relaxed/simple;
-	bh=vYcLiI3IuK/ccfFwkPpMjzaA+I7DIut0fI5zAhFMpZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hBpDikXcSYo1T9LxntDHRK0d/7rrCrM6WBXwnHnsDnqhzuCMjM7YsFsJaaaVS2IKw+C21d8x62zNHIwNmWXbNutTi2Uqb6UR+RZYExPDSikZvGvXHi2bgZ55V/Uzvx/WoCClH2Bcc+7jUfFIsH885AibR4j5xi/pzyknNHIsKYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tWh5D1vc; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729353942; c=relaxed/simple;
+	bh=mJe338VpTjnbfGKvyCyttdRwe5W2tJfUJ6vivqMCmgU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=gwU7ynCuOi4+NjazHOgVFIsjZ56gabSNvqdkpZiVxrQE4OIwUqsF6R1UAEUg7MdjKmu80wfOgKGKbvLiPDM36vPCTadCk9BLr9scnUdjt31AoU0R1nkJZ2GFB4hrWODFGEoKtFEiYq5XGiiarFwo55zGrNqFSy++4SzbfG5/TRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xyf8NHyc; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWh5D1vc"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e5a5a59094so29958127b3.3
-        for <linux-gpio@vger.kernel.org>; Sat, 19 Oct 2024 07:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729348839; x=1729953639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uAsb3dViYkYUK08mSbBFYucBIF4FBJQvNLZYivX9oYQ=;
-        b=tWh5D1vcwYv51Pe4GcctrtaSnhsXBiJeDx7u6Fxxo2v/v3prGPQNMyhdmNvPsREeyY
-         IgmxrNlrzH6cQNBHSnayst483JUsiAhLKXG3BpFHXZIh+7J2j9UrOV7ssHUcfvLmFpc9
-         GdvEZquxwg0O02c+5HlfRVI2KApS9hQpqpGMJqrjMUToZCYCUTeT+DXMtBIcLXKCByaj
-         UOUjSgJEPKSX4K/oPdEijSnvSn6G2geDYnF+k8q77/SMg07AZYOy6PK5e9mQGpxWGVMt
-         0tr95A0EACwtnbgtCUJatD9khaoRkTYfejMLod9XU3NjVL9Q0WvyTJ8yZPp9y/6gedpr
-         CjKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729348839; x=1729953639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uAsb3dViYkYUK08mSbBFYucBIF4FBJQvNLZYivX9oYQ=;
-        b=JBfyduvd8c3K70EaR/QXWrVclJmRCn7iKMxxPgqaAW7oEfGkzaZSLD5+Ju1yA25mjo
-         U1vVOhh0MpCQX5JGhvSvL6LHW9JmdYWUnGp0xvWoD9iDw9v3TEixSV5L8Z6iF2rN3Fza
-         SGcXBCxf6/o64nu7KaVvZvhz0tT4/JGRQA0aiRbLOQ6/3uqEyhkVxBMqhJUYEmhVxfhs
-         eASh4lDW2bbyrsSAmBEXLHN2VQqDShQVgE4h4y95oiVa7SoLm74HPI/Ds3Nc7vNMhOLx
-         ZldzM/D0PoQrGbqFjt/wfG5Vh52+C5LmW4iZhYjJxNCyiCyLVqjeb4tVWJIZm7plIBcb
-         pfXg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/9BYWOPcLgB4MxHhzVs/6T6aOy7Sw72Yz7WwdUOhg8aRg5N3LzT+tgeC2IeBCQD6v0W0368LUdoRF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAztzE69H2JUUkC29HSnR5Tl9E7kVfl2sjbwEkau2vnq414N86
-	ytMa8bgQl3cTUQklXCzJwKP3n1mlLZWWlaveirZiZt2RNcIPN+cyNUJU45iysHOyXqtwCgovSi6
-	SsjFITrFMnTRY12paujP7f57hHjtB0rQffmcsHQ==
-X-Google-Smtp-Source: AGHT+IGqPF1hDI6npb1Ra3kQlC30zupo0zxsrPaYhHn5fC8eWJumubYNVNJKJ67xr80YljK2ct42Xs9mw7+sl7ixqIM=
-X-Received: by 2002:a05:690c:60c3:b0:6e2:167e:814f with SMTP id
- 00721157ae682-6e5bfc0c786mr61479077b3.31.1729348839350; Sat, 19 Oct 2024
- 07:40:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xyf8NHyc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729353939; x=1760889939;
+  h=date:from:to:cc:subject:message-id;
+  bh=mJe338VpTjnbfGKvyCyttdRwe5W2tJfUJ6vivqMCmgU=;
+  b=Xyf8NHyceEkMuanWDFhDWDCa6mWyFuZ+NP7yuRj+L/QV1JVdSiUgx9+0
+   j15GOz+je5qW60fXnbZXrcFIusRQT4S1/EtLkKL6L+O0YK5sc+RnGTxkp
+   r0DE9DAyN5gmVucMqi/ScgZFQHRuc3Wi1m5JJvbr/wSvxg2jrcdpNyJkG
+   Gj79fG80+Daj9Vl/1WmRD+rNXG8mBUNP93il035IuxGRxb+C6/ni5ZlL6
+   Fow58WgWWj9wq1IK4QFLJR7desOT+SrsbDYfYw9pAFtNCfmXRswjfEiOM
+   Sl3XWg3HDvV0EKm33gmQIb1TOe8v86bp+o2dBTR670wMBK7LCWawnJlx9
+   A==;
+X-CSE-ConnectionGUID: tqbNhXLqTTKUM/VHuu2/Ug==
+X-CSE-MsgGUID: k1wEYqL/Rzi0kUEUBDVtCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32558389"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="32558389"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2024 09:05:39 -0700
+X-CSE-ConnectionGUID: TyTMGP7JQAe0/3hBjvpyzg==
+X-CSE-MsgGUID: en5fNfmvRQa8swerhg21Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,216,1725346800"; 
+   d="scan'208";a="79150123"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 19 Oct 2024 09:05:39 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t2BxQ-000P8L-0A;
+	Sat, 19 Oct 2024 16:05:36 +0000
+Date: Sun, 20 Oct 2024 00:04:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-next] BUILD SUCCESS
+ b4c69d471b72aa70766d94a11c31bc4c13f29eac
+Message-ID: <202410200050.40A7rDlJ-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org>
- <20241019-msm8917-v1-14-f1f3ca1d88e5@mainlining.org> <pyr3t3kcpjj5zor226fwembjsbpp5zh7mpe2a3bqmwnbqccj7h@a55efscym3s7>
- <46f7b167220a7d54242e9457d00d67e2@mainlining.org> <jj4ky6uuidv3rdjl7q4ehe7cdgcjxtnmtcufmy462gznkjiex2@pptv6aufsudj>
-In-Reply-To: <jj4ky6uuidv3rdjl7q4ehe7cdgcjxtnmtcufmy462gznkjiex2@pptv6aufsudj>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 19 Oct 2024 17:40:28 +0300
-Message-ID: <CAA8EJprvDhvnphNitJqKkNFB-DbXfd_oGtBmgimjRB5n5VgEQA@mail.gmail.com>
-Subject: Re: [PATCH RFC 14/14] arm64: dts: qcom: Add Xiaomi Redmi 5A
-To: barnabas.czeman@mainlining.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 19 Oct 2024 at 17:38, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Sat, Oct 19, 2024 at 03:57:54PM +0200, barnabas.czeman@mainlining.org =
-wrote:
-> > On 2024-10-19 15:48, Dmitry Baryshkov wrote:
-> > > On Sat, Oct 19, 2024 at 01:50:51PM +0200, Barnab=C3=A1s Cz=C3=A9m=C3=
-=A1n wrote:
-> > > > Add initial support for Xiaomi Redmi 5A (riva).
-> > > >
-> > > > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@main=
-lining.org>
-> > > > ---
-> > > >  arch/arm64/boot/dts/qcom/Makefile                |   1 +
-> > > >  arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts | 295
-> > > > +++++++++++++++++++++++
-> > > >  2 files changed, 296 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/qcom/Makefile
-> > > > b/arch/arm64/boot/dts/qcom/Makefile
-> > > > index 065bb19481c16db2affd291826d420c83a89c52a..79add0e07d8a5f3362d=
-70b0aaaaa9b8c48e31239
-> > > > 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/Makefile
-> > > > +++ b/arch/arm64/boot/dts/qcom/Makefile
-> > > > @@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_QCOM) +=3D
-> > > > msm8916-wingtech-wt86518.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8916-wingtech-wt86528.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8916-wingtech-wt88047.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8916-yiming-uz801v3.dtb
-> > > > +dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8917-xiaomi-riva.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8929-wingtech-wt82918hd.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8939-huawei-kiwi.dtb
-> > > >  dtb-$(CONFIG_ARCH_QCOM)  +=3D msm8939-longcheer-l9100.dtb
-> > > > diff --git a/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
-> > > > b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
-> > > > new file mode 100644
-> > > > index 0000000000000000000000000000000000000000..7553f73603fc87797b0=
-d424a2af6f2da65c90f5f
-> > > > --- /dev/null
-> > > > +++ b/arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts
-> > > > @@ -0,0 +1,295 @@
-> > > > +// SPDX-License-Identifier: BSD-3-Clause
-> > > > +/*
-> > > > + * Copyright (c) 2023, Barnabas Czeman
-> > > > + */
-> > > > +
-> > > > +/dts-v1/;
-> > > > +
-> > > > +#include <dt-bindings/arm/qcom,ids.h>
-> > > > +#include <dt-bindings/gpio/gpio.h>
-> > > > +#include <dt-bindings/input/linux-event-codes.h>
-> > > > +#include <dt-bindings/leds/common.h>
-> > > > +#include "msm8917.dtsi"
-> > > > +#include "pm8937.dtsi"
-> > > > +
-> > > > +/ {
-> > > > + model =3D "Xiaomi Redmi 5A (riva)";
-> > > > + compatible =3D "xiaomi,riva", "qcom,msm8917";
-> > > > + chassis-type =3D "handset";
-> > > > +
-> > > > + qcom,msm-id =3D <QCOM_ID_MSM8917 0>;
-> > > > + qcom,board-id =3D <0x1000b 2>, <0x2000b 2>;
-> > >
-> > > Is this required to boot?
-> > Yes
->
-> Hmm, did you verify the dts against DT bindings? I think you need to fix
-> them.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: b4c69d471b72aa70766d94a11c31bc4c13f29eac  dt-bindings: gpio-mmio: Add ngpios property
 
-Hmm, ignore this. You added qcom,msm8917 to the allow list in the
-previous patch. Please expand the commit message there, describing
-that you are enabling msm-id / board-id for this SoC, which doesn't
-work otherwise.
+elapsed time: 1639m
 
---=20
-With best wishes
-Dmitry
+configs tested: 101
+configs skipped: 5
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                                 defconfig    gcc-14.1.0
+arc                        vdk_hs38_defconfig    clang-20
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm                         nhk8815_defconfig    clang-20
+arm                       omap2plus_defconfig    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+hexagon                          alldefconfig    clang-20
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                              allnoconfig    clang-18
+i386                             allyesconfig    clang-18
+i386        buildonly-randconfig-001-20241019    clang-18
+i386        buildonly-randconfig-002-20241019    clang-18
+i386        buildonly-randconfig-003-20241019    clang-18
+i386        buildonly-randconfig-004-20241019    clang-18
+i386        buildonly-randconfig-005-20241019    clang-18
+i386        buildonly-randconfig-006-20241019    clang-18
+i386                                defconfig    clang-18
+i386                  randconfig-001-20241019    clang-18
+i386                  randconfig-002-20241019    clang-18
+i386                  randconfig-003-20241019    clang-18
+i386                  randconfig-004-20241019    clang-18
+i386                  randconfig-005-20241019    clang-18
+i386                  randconfig-006-20241019    clang-18
+i386                  randconfig-011-20241019    clang-18
+i386                  randconfig-012-20241019    clang-18
+i386                  randconfig-013-20241019    clang-18
+i386                  randconfig-014-20241019    clang-18
+i386                  randconfig-015-20241019    clang-18
+i386                  randconfig-016-20241019    clang-18
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+m68k                        m5307c3_defconfig    clang-20
+m68k                          sun3x_defconfig    clang-20
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                          eyeq5_defconfig    clang-20
+mips                         rt305x_defconfig    clang-20
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                            defconfig    gcc-12
+parisc                            allnoconfig    clang-20
+parisc                              defconfig    gcc-12
+parisc                generic-32bit_defconfig    clang-20
+parisc64                            defconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                   currituck_defconfig    clang-20
+powerpc                       holly_defconfig    clang-20
+powerpc                    mvme5100_defconfig    clang-20
+powerpc                     tqm8541_defconfig    clang-20
+riscv                             allnoconfig    clang-20
+riscv                               defconfig    gcc-12
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                      rts7751r2d1_defconfig    clang-20
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64                              defconfig    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                  cadence_csp_defconfig    clang-20
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
