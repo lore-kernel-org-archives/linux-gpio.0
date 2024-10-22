@@ -1,81 +1,99 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AF819CD01;
-	Tue, 22 Oct 2024 12:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC8619B3C5
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 12:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601542; cv=none; b=S1bOfPdWqUnac5hYWEKvenxdG9zj2KmHfnW+Jhkai953Zy90U+5ZzfxaPXEgezNMD8jESc8PzOzzLf8kz6eBYqvr2evjQ5DKf13dbVRstdgJW4DASsZpW/CAyfFDTdNBBy88gObbI3ObikubLgjZZv5Db7Zjfa1GZZNZjhlTS4U=
+	t=1729601756; cv=none; b=XevQhnOtkdc10j8zYDdsq+6+tLOc8Cqdt3n79gBQl+Q0JJxkSx8QNf/I4+IgsnlUzSGHJeTKD3Q8I4DPPn/JNdao69IzTdqY66ZB06+h4OpCbtoXgIGGvv//36Agz4HFVL5auhu+rF/uDAQtcaevBAe8vzglcU8OMDQnpp5s+Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601542; c=relaxed/simple;
-	bh=5BJzw8OeL5RxI2XBz1iZG7KaTvXSK/izAGyBEdyk8sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qJv+Gc6o+4pXpHn3u4pZmzxHs3t10ZxMValSDMS3aWWxIYQ+jkBet2oD0wN6uAGvIeUUU6Jh4kC5OM74qchLhemTtqo3QpZ6hjS+l5XBrdZDf91q4dps3kqTTS7orwJ1hFNPe/xcPeA+OTTe28pLqNAxs77jimO3WulXzbVNqgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=zNeRSXLn; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1729601756; c=relaxed/simple;
+	bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JupzrZDWoHf80PxNgROVq7njBAPBMV09sJ/UPaGCUabK/nNoGqqWMb/1CknY9/q7nXB0KWxZLRhRkfD0oPwulyKwRJUBljv/5pgJZ9v9I6MKYq9iX15ZVWYdvukRw7T9jIima5CHSfwH8HuXrb8gtTz/6MUsx3KXBd5Tl8SrY9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w/BqTwcU; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="zNeRSXLn"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3D3FD88EBA;
-	Tue, 22 Oct 2024 14:52:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729601539;
-	bh=9DOx6O2cK3IrTdgG8pysn1acDSlZP8m21uO78nQpmWQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=zNeRSXLn9Z1iLHCgLS+g2i9ljpqBvKT9QR28j/93614sc+VbjIBfCXCZFSttbM1cb
-	 QatBSjzxmomh8OhXkOOP2CxuykCxJt2eQE88/sHM3aeoRDdmDXXEds9l/R2qkFjC8x
-	 cYJyLPMelL9Z2ahnz3U0ngtuS06Io741MMy8e0OepApq+M+Aik0B5LnV2v5wFsq71u
-	 UP1mKxQOfcTJni6lsk3WwogVOVMdDbyyd/o/fyHqClvhC12Oi0YPEe3F+VDUngzR2j
-	 l9WSGvzhx15+tw92NUi0PVr3ZESj5knYTy1FiCA9e7hIHVnkxn1+zGdt5G4FnqRS4z
-	 dqCFpLR6A0FJg==
-Message-ID: <d985668f-9e53-449a-9785-5cbb9b14a8fc@denx.de>
-Date: Tue, 22 Oct 2024 13:23:42 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w/BqTwcU"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so6307494e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 05:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729601753; x=1730206553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
+        b=w/BqTwcU1BugzWf/iOoeiivVrGg7FwQUJ6OJmJkXX1LObVlbYWUZQ7M2fnulc1W94O
+         VdpVRN3t1c8P+V2oKhLd2Zw1+9Ly+XAAUs51uvIP1kYE72HijsvB/4pxX2OqQlLFLvbO
+         PtOG9F+ncT2KEvVobtHrD0ikLunyVhi53ePhN2k17FE3O1YwnrBpjVuxKsRqhVy+rxSb
+         6oHQnA2Yu6hdCk8iJofXBU9r7curVRKVgxWLxBQo7SIIiDYggn9TCtvFQqL9c2zouBO9
+         rjeDvioLxMoGOxFrvwskk0q6/l5E45Zx1k0E6oNpIMEDzqWHTEJcLl/QQibvsmOpQqHt
+         Neig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729601753; x=1730206553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
+        b=aCh5HbZDtJ4pWsjiE9wJg4eps6W4WlIdVV/VPZVK8QFg2OSASqh2X3pSchHxreNN8j
+         3VzeSus0kZab5fnSLvAyBjcSP+Xf2tMt2OmZqz8rSU0QRlN4FLAZG69rJpw7sJNRGyJ6
+         Yja9s1lVw7FAOHsDlmjf2+id1jokyNOc87KYH/vWuoY+1ECK5FRCfBIsDnRqno7BMe93
+         t38jz/k9FRv+PUs/4KIOmq0rXrBDj10siowIMPZ5LZWIpEmz/qc0Ue7j2cGL62p0+gmC
+         g9eGmWN99fhRpRVNJ+XoTx5POkmSvovF5W6JAd0tM8LTNqHa+K2SD9UA8JkLEhzM/QLD
+         4lTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf7TMSe0B0hVEg8AYQXBFltxoBOjMtNHJ/oYSwwBTetl/PcCak7YHkpX14eaAEs1DigfRgVqS5GV9s@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwx8TpB+y1U4jyvxYhnrY6Mb6ddXnp/6bYCaeLULx8Y5yfva5l
+	cj9EeM0K/egj4Pzsw1GJLcl+m56aMTpas73ViOKbdEJ9TvVjc7Q4Dqpmtgt0q3nhcS5rak27OrS
+	jMAX1uuXKYqE2aTQm/km0sqkRVQLilzWMocA+0g==
+X-Google-Smtp-Source: AGHT+IEApsleJ++LyDXUKi77PnqAoKOGDzM+ehV1eZLJi+inAOZKg62iYgBKSaWzgGuDYSSU2dftJO0ptCxWO71V4Yw=
+X-Received: by 2002:a05:6512:401a:b0:539:eb82:d453 with SMTP id
+ 2adb3069b0e04-53b12c36e60mr1673392e87.39.1729601753275; Tue, 22 Oct 2024
+ 05:55:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20241017211241.170861-1-marex@denx.de>
+In-Reply-To: <20241017211241.170861-1-marex@denx.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 22 Oct 2024 14:55:42 +0200
+Message-ID: <CACRpkdYvMWABqw1tC5YSh+RXcHiCwUGsbOGAfkysThYQZTPWzg@mail.gmail.com>
 Subject: Re: [PATCH v3 01/12] dt-bindings: pinctrl: fsl,imx6ul-pinctrl:
  Convert i.MX35/5x/6 to YAML
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, kernel@dh-electronics.com, linux-gpio@vger.kernel.org
-References: <20241017211241.170861-1-marex@denx.de> <ZxcbHb5v05+XhFnM@dragon>
- <6eb23f6c-fe0c-4ee1-8f99-568041524073@denx.de> <ZxdDPSI4i/nRawlw@dragon>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZxdDPSI4i/nRawlw@dragon>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+To: Marek Vasut <marex@denx.de>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	kernel@dh-electronics.com, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/22/24 8:16 AM, Shawn Guo wrote:
-> On Tue, Oct 22, 2024 at 05:52:08AM +0200, Marek Vasut wrote:
->> On 10/22/24 5:25 AM, Shawn Guo wrote:
-> ...
->>> I'm not sure it makes a lot sense to have "fsl,imx6ul-pinctrl: " in the
->>> subject prefix.
->> I can change it to imx-pinctrl or something and send V4 , or can you tweak
->> it while applying since the series is somewhat large ? Which do you prefer ?
-> 
-> I expect this binding change go via pinctrl tree, so it's up to Linus.
-Oh ok, so just let me know. And ideally let me know what kind of prefix 
-do you expect there, imx- or imx35- or ... ?
+Hi Marek,
 
-Also, what about the DT changes, do you plan to pick those or shall I 
-send them separately ?
+thanks for your hard work on this!
+
+On Thu, Oct 17, 2024 at 11:13=E2=80=AFPM Marek Vasut <marex@denx.de> wrote:
+
+> The IOMUXC controller description is almost identical on i.MX35/5x/6 SoCs=
+,
+> except for the configuration bits which differ across SoCs. Rename the
+> fsl,imx6ul-pinctrl.yaml to fsl,imx35-pinctrl.yaml, fill in compatible
+> strings for the other SoCs and fill in the various bits into desciption.
+> This way, i.MX35/5x/6 series SoCs can all be converted to DT schema.
+> Remove the old text DT bindings description.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+
+Is this v5 patch 1/12 something I can just apply to the pinctrl
+tree or do you want it on some immutable branch or so to be able
+to pull it into the SoC tree for dependencies?
+
+Yours,
+Linus Walleij
