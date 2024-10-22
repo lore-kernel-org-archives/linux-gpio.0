@@ -1,87 +1,81 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3AE1E885
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 12:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AF819CD01;
+	Tue, 22 Oct 2024 12:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601135; cv=none; b=F0IdB7yjszgUHk1J+xMsj1IOMdgTdhEP3ePWz6SzJZq/kEY74TsE5E5iZR42A9s4Gl6dxRGozIWlt2NLhOcksHfp3XHLFk6ilMUXjwkT/BjSqm68bs9UKXD16zZ8iKFE5N8dvKT+A9MY2/GF5s0bkEQs2DLrEbQ3kDRrNUtnzRw=
+	t=1729601542; cv=none; b=S1bOfPdWqUnac5hYWEKvenxdG9zj2KmHfnW+Jhkai953Zy90U+5ZzfxaPXEgezNMD8jESc8PzOzzLf8kz6eBYqvr2evjQ5DKf13dbVRstdgJW4DASsZpW/CAyfFDTdNBBy88gObbI3ObikubLgjZZv5Db7Zjfa1GZZNZjhlTS4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601135; c=relaxed/simple;
-	bh=WmPfsYC5XxLwxgy7QyhoKQvCTq1ZP7iOmD4cZtl9AQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CkH+WI6stFtHXbxlN7JzYmJQT9GZRoXBeiG16H3akZ+Eq2F/IDiWe4jNBEcPkvbygCuZFiWZtzm14PLzo2hdg++FCexr31W6wiXp0uWw9zFXH9XFJ1FTBFOHEj01nu+jJcNTZJOCFHouHimEprXCHP1wQ6YyD8TKolWc6ae//2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ys1SotQF; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729601542; c=relaxed/simple;
+	bh=5BJzw8OeL5RxI2XBz1iZG7KaTvXSK/izAGyBEdyk8sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qJv+Gc6o+4pXpHn3u4pZmzxHs3t10ZxMValSDMS3aWWxIYQ+jkBet2oD0wN6uAGvIeUUU6Jh4kC5OM74qchLhemTtqo3QpZ6hjS+l5XBrdZDf91q4dps3kqTTS7orwJ1hFNPe/xcPeA+OTTe28pLqNAxs77jimO3WulXzbVNqgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=zNeRSXLn; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ys1SotQF"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so55962141fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 05:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729601132; x=1730205932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WmPfsYC5XxLwxgy7QyhoKQvCTq1ZP7iOmD4cZtl9AQw=;
-        b=ys1SotQFqgck++FDGN4LMK3T3+1PCjlyd0nRj/JpYXEWJdRbL+z+bsNt6j0DW/bnWu
-         tp0GsNZuMDiyb7k7dlvs+dltSNehbtT7Qu3K//8bgARPQYW7NO4iqp8YH647g2SmljwE
-         uETbDNhunRMH1/HjkIFbq2ZwAffMsUPHnQN5XgDuprVhQNek/L3HJW9GjitbMCvMBUW1
-         4PHcFSRijqw/8GkDwAZRKQJWEaUd6lheFIbIUsBr1iIQmrAASX4FssyvF1m5tZ8uXzl+
-         7WuplLOYVLKw6yweIKR9UhPi0XGMY4SrCEXAjpnE8vWVEsvaUV4NTcoaoFw2e4Qc4R1h
-         1H1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729601132; x=1730205932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WmPfsYC5XxLwxgy7QyhoKQvCTq1ZP7iOmD4cZtl9AQw=;
-        b=UggpFSK+bioy0kXBJGh+CIONnfdibDRbLmWQ5lA+khahOxgOPDlIfW0gm/8f/8mVz1
-         bjvZfCr2ouBEfLG4gueygAhXEZfHQY4NfK0nHxu3hdNhDgoSa/RUfVzNaqfaSGcQ0k1k
-         lxxBM/wTYRif9WO4hTBkhMPzNoYqbNsJwWYuJj+HDPZ6uSFudyT7uC40Na2XZbgv4/F5
-         WQGk+aizwk4y6Fs+6CJnRseKh8J3wy1+Qn7UzayqHmWVBGrtnOTC9Dmr5UAAARC1jMLQ
-         QQ2+/ILyFLN1eT/TLaf/C9zJmDpJFhii9xztKW4/96U2gn9i7YPAYTbPaZEQWqgrOnPk
-         6O2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVxJXqPER9bwpiGlQbCND5jAIfgWWtQKzMK/LinQcvun0JU4++0WXg9PThlxnb1ohwXuuUBJYurS4qu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsPT7vdpILJnBa5fiB8I0s7NaUgj9/ZAwFLavXZ8Zbtd3jZxlA
-	wF6hKf/QoTz5VoL3EwUttt6352t/7jrqurCQAdn+3PK99aiv/pVupxU28i/uN4XMD7wEwK7eT3g
-	YuupBGsjlwWM3+juzJBollQb7knRPlRIFIetgsA==
-X-Google-Smtp-Source: AGHT+IGcIByKZtdq0adKPnNWneZwqEUqTIt73JdOZNS52T9t2MPtuTBH2U31H8pdlHUFENcf3DKQJdHVOhl8MRblnkY=
-X-Received: by 2002:a05:651c:211d:b0:2fa:cc12:67de with SMTP id
- 38308e7fff4ca-2fb83208e04mr71395491fa.32.1729601132347; Tue, 22 Oct 2024
- 05:45:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="zNeRSXLn"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 3D3FD88EBA;
+	Tue, 22 Oct 2024 14:52:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729601539;
+	bh=9DOx6O2cK3IrTdgG8pysn1acDSlZP8m21uO78nQpmWQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=zNeRSXLn9Z1iLHCgLS+g2i9ljpqBvKT9QR28j/93614sc+VbjIBfCXCZFSttbM1cb
+	 QatBSjzxmomh8OhXkOOP2CxuykCxJt2eQE88/sHM3aeoRDdmDXXEds9l/R2qkFjC8x
+	 cYJyLPMelL9Z2ahnz3U0ngtuS06Io741MMy8e0OepApq+M+Aik0B5LnV2v5wFsq71u
+	 UP1mKxQOfcTJni6lsk3WwogVOVMdDbyyd/o/fyHqClvhC12Oi0YPEe3F+VDUngzR2j
+	 l9WSGvzhx15+tw92NUi0PVr3ZESj5knYTy1FiCA9e7hIHVnkxn1+zGdt5G4FnqRS4z
+	 dqCFpLR6A0FJg==
+Message-ID: <d985668f-9e53-449a-9785-5cbb9b14a8fc@denx.de>
+Date: Tue, 22 Oct 2024 13:23:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018-sar2130p-tlmm-v2-0-11a1d09a6e5f@linaro.org>
-In-Reply-To: <20241018-sar2130p-tlmm-v2-0-11a1d09a6e5f@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Oct 2024 14:45:21 +0200
-Message-ID: <CACRpkdbOf+VyUYXV-SM0ua1RpoTxuHhu9OCZMFKBOHmN1-YQfA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: qcom: add support for TLMM on SAR2130P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mayank Grover <groverm@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/12] dt-bindings: pinctrl: fsl,imx6ul-pinctrl:
+ Convert i.MX35/5x/6 to YAML
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
+ Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, kernel@dh-electronics.com, linux-gpio@vger.kernel.org
+References: <20241017211241.170861-1-marex@denx.de> <ZxcbHb5v05+XhFnM@dragon>
+ <6eb23f6c-fe0c-4ee1-8f99-568041524073@denx.de> <ZxdDPSI4i/nRawlw@dragon>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <ZxdDPSI4i/nRawlw@dragon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Fri, Oct 18, 2024 at 10:42=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On 10/22/24 8:16 AM, Shawn Guo wrote:
+> On Tue, Oct 22, 2024 at 05:52:08AM +0200, Marek Vasut wrote:
+>> On 10/22/24 5:25 AM, Shawn Guo wrote:
+> ...
+>>> I'm not sure it makes a lot sense to have "fsl,imx6ul-pinctrl: " in the
+>>> subject prefix.
+>> I can change it to imx-pinctrl or something and send V4 , or can you tweak
+>> it while applying since the series is somewhat large ? Which do you prefer ?
+> 
+> I expect this binding change go via pinctrl tree, so it's up to Linus.
+Oh ok, so just let me know. And ideally let me know what kind of prefix 
+do you expect there, imx- or imx35- or ... ?
 
-> Add driver for the pin controlling device as present on the Qualcomm
-> SAR2130P platform.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Up to v2, bindings ACKed, no reason to delay this patch set so
-patches applied!
-
-Yours,
-Linus Walleij
+Also, what about the DT changes, do you plan to pick those or shall I 
+send them separately ?
