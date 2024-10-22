@@ -1,99 +1,79 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC8619B3C5
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 12:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16167126BF2;
+	Tue, 22 Oct 2024 14:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729601756; cv=none; b=XevQhnOtkdc10j8zYDdsq+6+tLOc8Cqdt3n79gBQl+Q0JJxkSx8QNf/I4+IgsnlUzSGHJeTKD3Q8I4DPPn/JNdao69IzTdqY66ZB06+h4OpCbtoXgIGGvv//36Agz4HFVL5auhu+rF/uDAQtcaevBAe8vzglcU8OMDQnpp5s+Ak=
+	t=1729606356; cv=none; b=EVOhfWX93AxXAaPF4pJ6kpf7gJbOt8P6Pdx7CJtfJEEXcyakNPzd59lNL1LuDq3X41WF8mloOL/QUiX2qiLKWbIvfB6Rr5aj18mlZambgJnY2zlTk5kY9Cx5IMSX8i7mneTmset/6i9k/AzjKWBCEAeO9rlJ5QGpzdU6ZnTmRmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729601756; c=relaxed/simple;
-	bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JupzrZDWoHf80PxNgROVq7njBAPBMV09sJ/UPaGCUabK/nNoGqqWMb/1CknY9/q7nXB0KWxZLRhRkfD0oPwulyKwRJUBljv/5pgJZ9v9I6MKYq9iX15ZVWYdvukRw7T9jIima5CHSfwH8HuXrb8gtTz/6MUsx3KXBd5Tl8SrY9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w/BqTwcU; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729606356; c=relaxed/simple;
+	bh=aJ/CtBVx6FFfVFXY/A0bO7mFfyBTFpF5st9zugN4EtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qawRNf+CAzhux745/03p7PpOxNrul/ZfVT6OR774zSPeY5rsgw/kGtZH/MIJR6ypdLuLxUMCq2djnYDIy6ua0hhRczlqwny4+EGzJXKh1GyqApZtAmbUYn7p+AJQQuZ8D3VE+BQIImLsQ8O9Fe9Q+A1cdrFSAm0NhtLZmuMuRPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7s1WI6/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w/BqTwcU"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so6307494e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 05:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729601753; x=1730206553; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
-        b=w/BqTwcU1BugzWf/iOoeiivVrGg7FwQUJ6OJmJkXX1LObVlbYWUZQ7M2fnulc1W94O
-         VdpVRN3t1c8P+V2oKhLd2Zw1+9Ly+XAAUs51uvIP1kYE72HijsvB/4pxX2OqQlLFLvbO
-         PtOG9F+ncT2KEvVobtHrD0ikLunyVhi53ePhN2k17FE3O1YwnrBpjVuxKsRqhVy+rxSb
-         6oHQnA2Yu6hdCk8iJofXBU9r7curVRKVgxWLxBQo7SIIiDYggn9TCtvFQqL9c2zouBO9
-         rjeDvioLxMoGOxFrvwskk0q6/l5E45Zx1k0E6oNpIMEDzqWHTEJcLl/QQibvsmOpQqHt
-         Neig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729601753; x=1730206553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7fOT4Xjo1xMpe/0KKsIBBl8n9H1ikaNSOO20uuJA0HM=;
-        b=aCh5HbZDtJ4pWsjiE9wJg4eps6W4WlIdVV/VPZVK8QFg2OSASqh2X3pSchHxreNN8j
-         3VzeSus0kZab5fnSLvAyBjcSP+Xf2tMt2OmZqz8rSU0QRlN4FLAZG69rJpw7sJNRGyJ6
-         Yja9s1lVw7FAOHsDlmjf2+id1jokyNOc87KYH/vWuoY+1ECK5FRCfBIsDnRqno7BMe93
-         t38jz/k9FRv+PUs/4KIOmq0rXrBDj10siowIMPZ5LZWIpEmz/qc0Ue7j2cGL62p0+gmC
-         g9eGmWN99fhRpRVNJ+XoTx5POkmSvovF5W6JAd0tM8LTNqHa+K2SD9UA8JkLEhzM/QLD
-         4lTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWf7TMSe0B0hVEg8AYQXBFltxoBOjMtNHJ/oYSwwBTetl/PcCak7YHkpX14eaAEs1DigfRgVqS5GV9s@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwx8TpB+y1U4jyvxYhnrY6Mb6ddXnp/6bYCaeLULx8Y5yfva5l
-	cj9EeM0K/egj4Pzsw1GJLcl+m56aMTpas73ViOKbdEJ9TvVjc7Q4Dqpmtgt0q3nhcS5rak27OrS
-	jMAX1uuXKYqE2aTQm/km0sqkRVQLilzWMocA+0g==
-X-Google-Smtp-Source: AGHT+IEApsleJ++LyDXUKi77PnqAoKOGDzM+ehV1eZLJi+inAOZKg62iYgBKSaWzgGuDYSSU2dftJO0ptCxWO71V4Yw=
-X-Received: by 2002:a05:6512:401a:b0:539:eb82:d453 with SMTP id
- 2adb3069b0e04-53b12c36e60mr1673392e87.39.1729601753275; Tue, 22 Oct 2024
- 05:55:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7s1WI6/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A687C4CEC3;
+	Tue, 22 Oct 2024 14:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729606355;
+	bh=aJ/CtBVx6FFfVFXY/A0bO7mFfyBTFpF5st9zugN4EtI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O7s1WI6/WFEJgromr3RO8VlD+oxUWVWahu3qcL0mvBft3iY3ZekXK2wia2xjrprNV
+	 +m3vQJzJElv7nUU9Wjz5Z8CMSfXCBL5sjIzOcgMFS8Dk09l9Nkkbb795fh+h4rc0HG
+	 l+SbicRYLgcehwSt2FCKYz5Lw4SQ/gJ6Vx2O6mq3ev7r8w6qz00/y1BADtOxtbN5yi
+	 l2UY5CmE1dxaLFrPqyLyy78UD6Vo7fwWITRtFOsHFNokG6kf/VeznBBUFWQsfGAm8z
+	 SGfFbOVfSqnOgAsL2TsrfGtv/6x9YIzoaDnTjNcotiRA4XVI6HhCXN8x/XIBE//uRD
+	 1hdoAz1WxAg3A==
+Date: Tue, 22 Oct 2024 09:12:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
+ yaml format
+Message-ID: <20241022141234.GA450009-robh@kernel.org>
+References: <20241022060157.36372-1-himanshu.bhavani@siliconsignals.io>
+ <172958190288.3294457.18338479078694309889.robh@kernel.org>
+ <PN0P287MB201901C383FDC879CA7A61A89A4C2@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017211241.170861-1-marex@denx.de>
-In-Reply-To: <20241017211241.170861-1-marex@denx.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 22 Oct 2024 14:55:42 +0200
-Message-ID: <CACRpkdYvMWABqw1tC5YSh+RXcHiCwUGsbOGAfkysThYQZTPWzg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/12] dt-bindings: pinctrl: fsl,imx6ul-pinctrl:
- Convert i.MX35/5x/6 to YAML
-To: Marek Vasut <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	kernel@dh-electronics.com, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN0P287MB201901C383FDC879CA7A61A89A4C2@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
 
-Hi Marek,
+On Tue, Oct 22, 2024 at 09:22:52AM +0000, Himanshu Bhavani wrote:
+> Hi Rob,
+> 
+> Command  :  
+>                  make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.yaml
+>  
+> Output : 
+>                  DTEX    Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dts
+>                  DTC [C] Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.example.dtb
+>  
+> I am not getting any error or warnings 
 
-thanks for your hard work on this!
+Try applying the patch you sent. The applied patch truncates the file. 
+It looks to me like the line count in the diff chunk is wrong. It says 
+153 which is the length of the truncated file.
 
-On Thu, Oct 17, 2024 at 11:13=E2=80=AFPM Marek Vasut <marex@denx.de> wrote:
+>  
+> I checked dtschema is up to date 
+> dtschema Version: 2024.5
 
-> The IOMUXC controller description is almost identical on i.MX35/5x/6 SoCs=
-,
-> except for the configuration bits which differ across SoCs. Rename the
-> fsl,imx6ul-pinctrl.yaml to fsl,imx35-pinctrl.yaml, fill in compatible
-> strings for the other SoCs and fill in the various bits into desciption.
-> This way, i.MX35/5x/6 series SoCs can all be converted to DT schema.
-> Remove the old text DT bindings description.
->
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Marek Vasut <marex@denx.de>
+Not the latest version, but that doesn't matter here.
 
-Is this v5 patch 1/12 something I can just apply to the pinctrl
-tree or do you want it on some immutable branch or so to be able
-to pull it into the SoC tree for dependencies?
-
-Yours,
-Linus Walleij
+> yamllint 1.33.0
+> 
+> Regards,
+> Himanshu
