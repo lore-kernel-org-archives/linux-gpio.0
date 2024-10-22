@@ -1,150 +1,88 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28978199EBB
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 11:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9889E19D88F
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 12:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729597222; cv=none; b=Wc+qVUO2Wg8BcPg47FACMEFu4sLt3ZkRCm2l3P2BIGlJHR9tyYNssFO382E09VZNGIK6wPjdoQhThfPlx9wxHKXqgd86/sjgeItLCCHIhvAWNp7Jgvlqt5Tz1n7psOZUM5gc5JimVTYB5Bd+tOEL/W7GzrFVj6KKp7kMVA1c6SU=
+	t=1729600980; cv=none; b=AfTFvSPKxYVVtghA8Uws6S/4hNaYLZ/0hGXmGMjitGj0MEuEtamii3VttYI8SUpg9L93caGX8sq0+bDYTTvICoEAdDy5CNBWTZrY5Ub6vpQygxYdQq5gGNrEQJr0iYQpo+cG0YZJpXubU03qy2RIyZ69IWkPHHUnc9b0odIwCUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729597222; c=relaxed/simple;
-	bh=XR1E+NZ8/b7dsub/geA6i2XnOrNbJxDqVVEAiq9qP/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LMGbwiXyhu5HWQzJ6O6P2JpBSdJefouLI9vs910tQy7Zbpc8NFu0CuRbfSw4f4rqYqYoVnhBkls89t7lWFyigf7jkJO5+6qnG7zTyn/L5haC4QhWFhl3fehpcHmq2biHUpSWMl1z8dVATCSyCn0GWU1k4sHNAjytMUQ3kmBXbQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=01nK882K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eMP+3OCs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=01nK882K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eMP+3OCs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1729600980; c=relaxed/simple;
+	bh=ARtJ6kvqIGcFruTXV6okIoHVDlTbGuGMZPlyUCFrYwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=blex8Y4zYw+RwIXkmNUPtBYGw0K/JSLgoGHrHTYj/As6Z8er/GO4GFx9I63KP+FDUTEfrd5Gy2WO/fJz/S9N1bRhpdMyX/KVSjW1drxtdGsr4Eom4U4jscCJTP/MTnAoFFUk/Q1GJUI2QpzLKBVVKq0IBP/faNX7iHwFXiBnV2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BHEBE9hE; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="01nK882K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eMP+3OCs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="01nK882K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eMP+3OCs"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4EDDE1FD14;
-	Tue, 22 Oct 2024 11:40:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729597219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K+7MKnN4K++evGoFE6gZpaYOJjqEnBBRSY0tr/2wSXA=;
-	b=01nK882KpTHVYu0o8lVC7zfY+vmSCC1RRLUXQ4filMflBzkWSGq+JYd+PH+9f/UQlnhV86
-	ww4GabdXiM5tR8JCgSpEuNLLXgcruKdAsouAD9ylkOkf9VobzLlZst1L92EdFfbZwDnXl/
-	NVqHiHuMYXnZG2kwpkQQA6Yfvg9gkpU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729597219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K+7MKnN4K++evGoFE6gZpaYOJjqEnBBRSY0tr/2wSXA=;
-	b=eMP+3OCs7Hw+SAOmVBEN6lXpzljx64I4F8YOCmlEy4pacqlRGVlCXkhDvfrx9t3QX6bSkh
-	GXSq492fN4k0YsDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=01nK882K;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eMP+3OCs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729597219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K+7MKnN4K++evGoFE6gZpaYOJjqEnBBRSY0tr/2wSXA=;
-	b=01nK882KpTHVYu0o8lVC7zfY+vmSCC1RRLUXQ4filMflBzkWSGq+JYd+PH+9f/UQlnhV86
-	ww4GabdXiM5tR8JCgSpEuNLLXgcruKdAsouAD9ylkOkf9VobzLlZst1L92EdFfbZwDnXl/
-	NVqHiHuMYXnZG2kwpkQQA6Yfvg9gkpU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729597219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K+7MKnN4K++evGoFE6gZpaYOJjqEnBBRSY0tr/2wSXA=;
-	b=eMP+3OCs7Hw+SAOmVBEN6lXpzljx64I4F8YOCmlEy4pacqlRGVlCXkhDvfrx9t3QX6bSkh
-	GXSq492fN4k0YsDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00C4113AC9;
-	Tue, 22 Oct 2024 11:40:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UmXKOSKPF2fTOgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Tue, 22 Oct 2024 11:40:18 +0000
-Date: Tue, 22 Oct 2024 13:40:17 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: linux-gpio@vger.kernel.org
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Dong Aisheng
- <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo
- <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Linus Walleij
- <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: imx-scmi: Drop obsolete dependency on COMPILE_TEST
-Message-ID: <20241022134017.172411db@endymion.delvare>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BHEBE9hE"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb443746b8so58474191fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Oct 2024 05:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729600976; x=1730205776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ARtJ6kvqIGcFruTXV6okIoHVDlTbGuGMZPlyUCFrYwk=;
+        b=BHEBE9hEaqC6baMwuNBt5nYatLvADUvDXL9ZHcL3GcqprjCwLoe0MFvdQcYnOaIuf8
+         bfg6q4TtTS+CyqfLkgH48tpq2TIs/7MzjtrgbqH3rRpDWDKEmBU84+eBgEFJ/J4HZxoP
+         GolojXA9o5l91ZNCM3vBKGu0ktjcuJR/YZhFuypxwSfxzTn11jqmhmJffniOx6kxDQFt
+         wC5JSF7zpKfIBJC6REu9MoPfu6Z7br0oVn3MU4yaKitIUTVQXY/iaq1bpQg08t+oFqVP
+         pggl4lPEXz9hwyY4qgEQFinI6Bhf57bYwkGT8U8UcXJUO/oghEyMrbRphcd3xA0mjp/8
+         6/NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729600976; x=1730205776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ARtJ6kvqIGcFruTXV6okIoHVDlTbGuGMZPlyUCFrYwk=;
+        b=OxvBCcB3LGF2g51Re63CSjjUNS7UJSuqPHu0lYRnV4h4teNbQxMrrvOa8YgdbUEl4m
+         EhKpJcaVt/21SJxb9waT9iX0IifuucSEJhECTr1c9YtnjvaNDuL9IkZ3awlgDvGBF0FL
+         gFUHfT2LuMFvZUS+QgnzTskfVcPr1Y2wlqwwVxGqw2D2gbHGgCAvyADpuPq5OEQUFoiK
+         yN5ys6/C6g7t8ZAEDi4pFHvBXDJeZvkOdYNb7caiuZWwHddl2A6C8JF486xpRICjJeEw
+         FAWvHX5mIcLYXOHr272KXyQ++/gYteSS9ArQU7pBz6ErwS5Hzsc3qQw/bG0jQSvmX6uk
+         jzzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmdod7vPqQJz4Qoc5NhlTtDnCPFm6dw/GXkRnL239t3MG5vfpOTkFp1PDE48qk3GbcEKOtPKF3zdUH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwceZWSBQfamAJz+Blv/vPh4NdUOz2ImgRBWA+CvcXMKAPCcZKT
+	kxLlAh5RGPOcH6bVYnl0aB/O6ev4VUf0r3B2NPhSviQBh6aAiNy75Z3gvaQJ7PJT5/ImCBM05Su
+	sC8tCMl1WxE+M3V2SrZ/jSLSz8wYHij7Uj+vzIA==
+X-Google-Smtp-Source: AGHT+IEBcVfZ3JWaOM04XJNSL54UsLyONVoNwTnqh64hkWL8NFdGQD13XXBI25QnSA6vmIj5FcVBmPLEvaztSgYOWOI=
+X-Received: by 2002:a05:6512:2393:b0:539:f65b:401 with SMTP id
+ 2adb3069b0e04-53a154a2413mr6984977e87.57.1729600975700; Tue, 22 Oct 2024
+ 05:42:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4EDDE1FD14
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[pengutronix.de,nxp.com,gmail.com,kernel.org,linaro.org];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
+In-Reply-To: <20241018-qcs8300_tlmm-v3-0-8b8d3957cf1a@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 22 Oct 2024 14:42:43 +0200
+Message-ID: <CACRpkdYY=qLocvD_c-1TkJep3QMAOOWkmAYanvDzhyBgsC0RYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] pinctrl: qcom: Introduce Pinctrl for QCS8300
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, quic_tengfan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), OF
-can be enabled on all architectures. Therefore depending on
-COMPILE_TEST as an alternative is no longer needed.
+On Fri, Oct 18, 2024 at 5:20=E2=80=AFAM Jingyi Wang <quic_jingyw@quicinc.co=
+m> wrote:
 
-As ARM_SCMI_PROTOCOL already depends on COMPILE_TEST, we also don't
-need to add COMPILE_TEST as an alternative dependency for it.
+> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+> QCS8300 SoC.
+>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
----
- drivers/pinctrl/freescale/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ACKs on bindings, up to v3 and no maintainer comments, driver
+looks fairly standard. Patches applied!
 
---- linux-6.12-rc4.orig/drivers/pinctrl/freescale/Kconfig
-+++ linux-6.12-rc4/drivers/pinctrl/freescale/Kconfig
-@@ -9,7 +9,7 @@ config PINCTRL_IMX
- 
- config PINCTRL_IMX_SCMI
- 	tristate "i.MX95 pinctrl driver using SCMI protocol interface"
--	depends on ARM_SCMI_PROTOCOL && OF || COMPILE_TEST
-+	depends on ARM_SCMI_PROTOCOL && OF
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+Yours,
+Linus Walleij
