@@ -1,48 +1,48 @@
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B556B1BD017;
-	Tue, 22 Oct 2024 15:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCD91BD4E5;
+	Tue, 22 Oct 2024 15:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612797; cv=none; b=u9qpAxo3L+46IQTluPhKaURQHHVe5n9i5aBQu2r0fIlxXqg93PEBDhJBsmqdKvDzOokepz0etZgJOtunKoW1cIgwNQ66lmCwoSfhXFNl0ZnPSyL3VWi7kl/Hxs/rTatdMERdLkOav77uy25bl3MnAVJNqibxeFVuvdpvSSEVUsg=
+	t=1729612798; cv=none; b=cnt4hquyQ3gEFPxOa8ak8uJm8jzUG1U9FIslAI+TqY/0uN13KpZE6V7aVTB8wQb5CEx2eCnS9rt0U5D1lW/7EVxPZ1v7LlCXTxyphxKhYipvMEMFqw4pDhEnG1H6VMLK23emVStFS4cwURaaZstB52yd/clC4NRHGvCzn8fRdSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612797; c=relaxed/simple;
-	bh=Q1LPVL1qY11IL2pkDaSu29C2Tay92eFuvX2UT2SSlh0=;
+	s=arc-20240116; t=1729612798; c=relaxed/simple;
+	bh=s3cOtDIgKl2UZAIIJ03V7UYYm0flB+To6IAD5aVTkSI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lHtLZ9puUALjr+S/vPik25AgCUtVN5PmkEGyhi54kftgzxYWVCsbG4JMoqmgG25BPbLdLaGiusr+yBRdcJY8jU01vaxm5qyEdVpnuGMpOLOgqcUYnWt7vuvSbX+JKIZREHyiQ8jkbid5N6CMgHK21YtVf0qZK9tk6FMpx6gAgf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8Jp8x4lc; arc=none smtp.client-ip=185.132.182.106
+	 MIME-Version:Content-Type; b=dFlqfDKmctFLDkjaUIPflqZv2Vr3RY+/AE4sXqtc9ibkToHnL0rNSrRM7f78UniB/vZwVLw7m5QhjSAYtIPm93aMYqtqF+3nujyniVeOmOoW9EkbEL6zBCAjURhEXZDzzeGqJGGMl9Jjgz2eh15B1Rn1FBDpIAxdezNZ4+tqTL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CgBTAuIl; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8Jp8x4lc"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MBuEdV018515;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CgBTAuIl"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MFFZ1j000777;
 	Tue, 22 Oct 2024 17:59:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SQi4pHyG2P14Jz7LE4zkxL+ka34czOOwxK0/DKpZ6Gg=; b=8Jp8x4lcOdfLSjuB
-	iXDI9bBL7FRfJD7lmSEQoFJkciiGhYStPaGKoQE7x622JSYTWJ4yXM5b3+tXxIW7
-	g9EYR4qx2xamC8wIOItk6gHSA0OKqwYVuh2R1oAPEfniNPN8568MQ8KxrdMMve64
-	s8gJBnP2FgBLs+ST4Yxa6znYPoLK6Zd+A9Kx2OH0Ioeb074IOxbBlGAG+76CiCvY
-	yRb421cFIJTxI5WDmTXvrxT3KIz06wKS5N8U2xq5cDxVlO3y8TduKMtaVzEml5zL
-	1gLNaXTnFske9x7KVxOLUO54yoHRghhxVO3hY7bily6T/Qs5cADkx5GG52C1AbuD
-	thBgKQ==
+	mH466ITeHHX+vgZl8o4SmPtSbhyJZCD2fmPHFvd4rX4=; b=CgBTAuIljFwTbzPP
+	GMtieHZkLVehqlOo6L2ZwYxmiVE172eqVh/vpEB1Ct+383ZMQqYMgBBV1Ijqvv8s
+	R0DSv9R67bPY42vqgkM0J21OirhmAn1nZtfZy0+VSi0mNtwfhtiO0Yq3/C+TF1Pm
+	jvUE7Ul5/ageua/vay1pv04P/4VQWNSczCaLilVEfeUEOW3BABkAT30wAYnR9KVG
+	W0ZeKBzPDJvxbL4Jh2AiIWEyW5dj5Y06HRfMeJE7RjpwHxkSRlTZAkZt0W+d+9EW
+	jL5PI+65M5p9l7PJ3BNK/95Yhjad+N+pcQIPO0lrYQjhZuX8I8x7fpTWAdPLU3SM
+	N5iRIQ==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42cpb0v8k2-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42eehmr588-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 22 Oct 2024 17:59:44 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E7D2C4005B;
-	Tue, 22 Oct 2024 17:58:34 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1DEC540060;
+	Tue, 22 Oct 2024 17:58:35 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C7E3526E863;
-	Tue, 22 Oct 2024 17:57:33 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 83E8326E85D;
+	Tue, 22 Oct 2024 17:57:31 +0200 (CEST)
 Received: from localhost (10.48.87.33) by SHFDAG1NODE1.st.com (10.75.129.69)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 22 Oct
- 2024 17:57:33 +0200
+ 2024 17:57:31 +0200
 From: Antonio Borneo <antonio.borneo@foss.st.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -67,9 +67,9 @@ CC: Antonio Borneo <antonio.borneo@foss.st.com>,
 	<gatien.chevallier@foss.st.com>,
         Cheick Traore <cheick.traore@foss.st.com>,
         <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH 11/14] dt-bindings: pinctrl: stm32: support for stm32mp215 and additional packages
-Date: Tue, 22 Oct 2024 17:56:55 +0200
-Message-ID: <20241022155658.1647350-12-antonio.borneo@foss.st.com>
+Subject: [PATCH 07/14] dt-bindings: pinctrl: stm32: support IO synchronization parameters
+Date: Tue, 22 Oct 2024 17:56:51 +0200
+Message-ID: <20241022155658.1647350-8-antonio.borneo@foss.st.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
 References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
@@ -87,54 +87,80 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+From: Fabien Dessenne <fabien.dessenne@foss.st.com>
 
-Add support for st,stm32mp215-pinctrl and st,stm32mp215-z-pinctrl.
-Add packages AM, AN and AO (values : 0x1000, 0x2000 and 0x8000)
+Support the following IO synchronization parameters:
+- Delay (in ns)
+- Delay path (input / output)
+- Clock edge (single / double edge)
+- Clock inversion
+- Retiming
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
 Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 ---
- .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 +++-
- include/dt-bindings/pinctrl/stm32-pinfunc.h                   | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ .../bindings/pinctrl/st,stm32-pinctrl.yaml    | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-index 9a7ecfea6eb5b..0a2d644dbece3 100644
+index 5d17d6487ae9c..9a7ecfea6eb5b 100644
 --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-@@ -27,6 +27,8 @@ properties:
-       - st,stm32mp135-pinctrl
-       - st,stm32mp157-pinctrl
-       - st,stm32mp157-z-pinctrl
-+      - st,stm32mp215-pinctrl
-+      - st,stm32mp215-z-pinctrl
-       - st,stm32mp257-pinctrl
-       - st,stm32mp257-z-pinctrl
+@@ -207,6 +207,54 @@ patternProperties:
+               3: High speed
+             $ref: /schemas/types.yaml#/definitions/uint32
+             enum: [0, 1, 2, 3]
++          st,io-delay-path:
++            description: |
++              IO synchronization delay path location
++              0: Delay switched into the output path
++              1: Delay switched into the input path
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum: [0, 1]
++          st,io-clk-edge:
++            description: |
++              IO synchronization clock edge
++              0: Data single-edge (changing on rising or falling clock edge)
++              1: Data double-edge (changing on both clock edges)
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum: [0, 1]
++          st,io-clk-type:
++            description: |
++              IO synchronization clock inversion
++              0: IO clocks not inverted. Data retimed to rising clock edge
++              1: IO clocks inverted. Data retimed to falling clock edge
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum: [0, 1]
++          st,io-retime:
++            description: |
++              IO synchronization data retime
++              0: Data not synchronized or retimed on clock edges
++              1: Data retimed to either rising or falling clock edge
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum: [0, 1]
++          st,io-delay:
++            description: |
++              IO synchronization delay applied to the input or output path
++              0: No delay
++              1: Delay 0.30 ns
++              2: Delay 0.50 ns
++              3: Delay 0.75 ns
++              4: Delay 1.00 ns
++              5: Delay 1.25 ns
++              6: Delay 1.50 ns
++              7: Delay 1.75 ns
++              8: Delay 2.00 ns
++              9: Delay 2.25 ns
++              10: Delay 2.50 ns
++              11: Delay 2.75 ns
++              12: Delay 3.00 ns
++              13: Delay 3.25 ns
++            $ref: /schemas/types.yaml#/definitions/uint32
++            minimum: 0
++            maximum: 13
  
-@@ -59,7 +61,7 @@ properties:
-       Indicates the SOC package used.
-       More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
-     $ref: /schemas/types.yaml#/definitions/uint32
--    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800]
-+    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800, 0x1000, 0x2000, 0x4000]
- 
- patternProperties:
-   '^gpio@[0-9a-f]*$':
-diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
-index af3fd388329a0..01bc8be78ef72 100644
---- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
-+++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
-@@ -41,6 +41,9 @@
- #define STM32MP_PKG_AI	0x100
- #define STM32MP_PKG_AK	0x400
- #define STM32MP_PKG_AL	0x800
-+#define STM32MP_PKG_AM	0x1000
-+#define STM32MP_PKG_AN	0x2000
-+#define STM32MP_PKG_AO	0x4000
- 
- #endif /* _DT_BINDINGS_STM32_PINFUNC_H */
- 
+         required:
+           - pinmux
 -- 
 2.34.1
 
