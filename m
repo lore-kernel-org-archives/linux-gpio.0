@@ -1,134 +1,68 @@
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707CC154BEC;
-	Wed, 23 Oct 2024 07:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3091014B953;
+	Wed, 23 Oct 2024 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668790; cv=none; b=myYjNxo6ZwvDoLSBVIKFz9/LTLpi/665O5AldBLMM+rVsMQ67XxUbwv2/3JFcbm3CPZx0DuX8DkHtyT4ElU285gSemaJEQCcSqLptKZfXirdl7DucEKvRmx0nHn2X3K3ETuph+RX3+npPTe373iJNR2e4QpH6GkJIz3iC7ixJaU=
+	t=1729671420; cv=none; b=BwmEjRMFbMY7wZ6VVcpscIDVMm9KqZP0YkedXbX9MflsvzYgZBvaV+TlOYHAAR8AF6jgOY038VX+QF/gPybK9a9aIecv+SN5WPDDcUaqIQ1GCB6bZZPOanaIcY2/62ym0xE9SJsz0qzGjHMa8rEr9hr+WPXuCnQBhswpP7MH0Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668790; c=relaxed/simple;
-	bh=xEo0swbVCdrGjVdei/ZvZa4U5Cg1mfinNBvemiRZC+8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Wdl4/A3S1BPrftLGY3W44hPwg3meYg/fQAtQkoUX5/baLV58koXx87wOwXZniApTP+vbVo206zKGSA1d7K4+7vB9WUvKqlIgX8NqbhfFcmOUUUuafJTZo1KYq398PnbOeHoZtyASl9hgdnQ1mziT9yHIy4ymCpfU0PBQ/Ul6Zsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=SvSqZDdq; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+	s=arc-20240116; t=1729671420; c=relaxed/simple;
+	bh=QYHajk3T2JF3OLGAlZUyM1OjxiGZo1CHneOwHWEGwDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1yrhMYO1J+ICHgjd/sUrMwdUJiGAVjsQfZ9waWl7bdcLxSq8i0PYEAwaC3a48bLoDia2VzRq+Q/goFdqgTuoWHFNiNrMcX69RbWUbdhmop4QFbjAGgrBy63ZbdmnD3YChu7Ovc8oGAVTdCFXG3KWj5dVR0Lk505OCs9DICc004=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWRwiKoj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="SvSqZDdq"
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.100])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 4DC6A26761;
-	Wed, 23 Oct 2024 07:33:01 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id 4B4033E9D6;
-	Wed, 23 Oct 2024 07:32:53 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id F1FA140071;
-	Wed, 23 Oct 2024 07:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1729668771; bh=xEo0swbVCdrGjVdei/ZvZa4U5Cg1mfinNBvemiRZC+8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SvSqZDdqa/ICtW2R15erWVPbVyfE4hGMXwFYFIIFJULUy5Gsz/e9Obz0kKMRpZuuP
-	 qWt7ccWb2aX9Jr1l6fU1NnihUmbwmhhq3BEauxQRazcsa4UFnWWMyVWO4yVj3b5/HO
-	 +QksPHbpOl9qNeYXOjk0WVaL2Xvcd3NvmI8bkKZM=
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 457BE407D9;
-	Wed, 23 Oct 2024 07:32:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWRwiKoj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54BC4C4CEC6;
+	Wed, 23 Oct 2024 08:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729671419;
+	bh=QYHajk3T2JF3OLGAlZUyM1OjxiGZo1CHneOwHWEGwDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RWRwiKojER4NGGEyFOnV9joYwXAkbnzCaUaUQJGAa5GsQ0sRutjL7bPfQTiAk/Rep
+	 kxNjMBssoPWkMy67XRsI9lFPyG0JwUxqSSBtyj3qnlhnLWB6OB7aiwOzfAETKQO+sK
+	 yFK0RRkFlKLXzOIJtCt8yEc+8WE+3imf7UcjqRgbh5OMD+MR7NJLESr2/QoIbnnX+f
+	 PZyAMJHOLoXnFsX+lqNBhrpZ64lRK54A5/jGjieq5Pc3gLgRZr/70z48mCg+1B7ovo
+	 pL5+h6o1zYB/NxBgvRy0XQwmOunkyS9hDCxWMs3mNPpnoDT6K5Wiz7IppuwpI3XKvx
+	 fUS9I0U0FJ2KA==
+Date: Wed, 23 Oct 2024 10:16:56 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sm8750 pinctrl
+Message-ID: <3jkkbycv7eckchz5cm2afmafrm5e67egttzylvt6n2amvyzu5r@25vp6rkostth>
+References: <20241021230414.2632428-1-quic_molvera@quicinc.com>
+ <20241021230414.2632428-2-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 23 Oct 2024 15:32:50 +0800
-From: Mingcong Bai <jeffbai@aosc.io>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: gregkh@linuxfoundation.org, patches@lists.linux.dev, nikita@trvn.ru,
- ink@jurassic.park.msu.ru, shc_work@mail.ru, richard.henderson@linaro.org,
- mattst88@gmail.com, linux-alpha@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, fancer.lancer@gmail.com,
- linux-hwmon@vger.kernel.org, dmaengine@vger.kernel.org, xeb@mail.ru,
- netdev@vger.kernel.org, s.shtylyov@omp.ru, linux-ide@vger.kernel.org,
- serjk@netup.ru, aospan@netup.ru, linux-media@vger.kernel.org,
- ddrokosov@sberdevices.ru, linux-iio@vger.kernel.org, v.georgiev@metrotek.ru,
- linux-mips@vger.kernel.org, ntb@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-spi@vger.kernel.org, dushistov@mail.ru,
- manivannan.sadhasivam@linaro.org, conor.dooley@microchip.com,
- linux-fpga@vger.kernel.org, tsbogend@alpha.franken.de,
- hoan@os.amperecomputing.com, geert@linux-m68k.org,
- wsa+renesas@sang-engineering.com
-Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various
- compliance requirements.
-In-Reply-To: <A74519B4332040FA+20241023063058.223139-1-wangyuli@uniontech.com>
-References: <2024101835-tiptop-blip-09ed@gregkh>
- <A74519B4332040FA+20241023063058.223139-1-wangyuli@uniontech.com>
-Message-ID: <a08dc31ab773604d8f206ba005dc4c7a@aosc.io>
-X-Sender: jeffbai@aosc.io
-Organization: Anthon Open Source Community
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Rspamd-Queue-Id: F1FA140071
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.40 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCPT_COUNT_TWELVE(0.00)[36];
-	TAGGED_RCPT(0.00)[renesas];
-	MID_RHS_MATCH_FROM(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,lists.linux.dev,trvn.ru,jurassic.park.msu.ru,mail.ru,linaro.org,gmail.com,vger.kernel.org,lists.infradead.org,omp.ru,netup.ru,sberdevices.ru,metrotek.ru,microchip.com,alpha.franken.de,os.amperecomputing.com,linux-m68k.org,sang-engineering.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241021230414.2632428-2-quic_molvera@quicinc.com>
 
-Greetings all,
-
-在 2024-10-23 14:30，WangYuli 写道：
-> Although this commit has been merged, it's still important to know the 
-> specific reason (or even an example) that triggered this change for 
-> everyone here, right?
+On Mon, Oct 21, 2024 at 04:04:13PM -0700, Melody Olvera wrote:
+> Add documentation for the Qualcomm sm8750 tlmm.
 > 
-> And those maintainers who have been removed should be notified.
-
-Seconded.
-
-> It should be CC'd everyone who might need to be aware of this change, 
-> including the removed maintainers, other maintainers on the subsystem, 
-> and the subsystem's mailing list.
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  .../bindings/pinctrl/qcom,sm8750-tlmm.yaml    | 138 ++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml
 > 
-> To ensure transparency.
 
-This patch is one such instance where we find ourselves questioning the 
-legitimacy and indeed, the feasibility, of an international, open, and 
-open source project. Vagueness breeds distrust.
+With issue pointed out by Bjorn:
 
-It's not difficult to deduce what the "various compliance requirements" 
-are and I'm sure Greg is aware of this. The Linux Foundation, if 
-interested in continuing their governance role over the Linux kernel, 
-should be ready to explain themselves over this decision. Greg and 
-Linus, I'm not sure if I'm ready to believe that this is supposed to be 
-a political show - but if this is the case, please leave the ground for 
-the Foundation - they should be the one responsible and receiving the 
-scrutiny (or insult, as I'm sure many - myself included - find this 
-patch insulting).
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-So I repeat - call the decision-makers out and ask for their 
-explanation.
+Best regards,
+Krzysztof
 
-Best Regards,
-Mingcong Bai
