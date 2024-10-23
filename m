@@ -1,112 +1,190 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C6C1990C4
-	for <linux-gpio@vger.kernel.org>; Wed, 23 Oct 2024 10:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1480319E99E;
+	Wed, 23 Oct 2024 10:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677663; cv=none; b=h0R2l691CaU0zN4UhIV86kyn15oWBIB/SwF/Fu9Te3wjwZp4GNE8XAaHHtuvSfAkxC3q3naZ8ybXpIPiNVPuNgKlOeggoOuS/4ome4yn2/xm2Fi9L/JUr1twVv8QNJrleKh6VRa2cRnwbvhCEDw2TVhbwkGyqq/ZrcU9WfB5kDY=
+	t=1729678231; cv=none; b=Q1T5+wMUKuVxz4c9YeqcbEfgXsOl1bc3fR690nqMtWYgVb1a2IQ8ZYiLUaU7eeL3scFUbZbOQ/piKxPlvNKawJaKwF2WtX1t6lz68G5E5k7TMMsbtGwg4BVyAR+npPSmq6HPlhoC2YTUlbsJtj9Zl65YgZjwHgGUZ3lnOhas/LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677663; c=relaxed/simple;
-	bh=ZUGc29XkalHds14dCBS9QzTZFbVomRvEcXD27v6fsGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S/W3DqqpGLHFYGRtqJhC0+KZL2NcrHtHjL1vvAyZGz6L+muJqezZuziH0Ymb64ATMEqWwxR2ZfNszleYZ87V4McecQH+SN19U2TY2xs9aTA+H9YXxyG+ivVRRXtPj9yvqb1IE0oaAjQfF0A77v/NYEAbQHQ3MdoZ+bwmerPcE7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CrWmZRGm; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729678231; c=relaxed/simple;
+	bh=k3SnHG7oA3l5HZSfi1tB7TiZdo9WbfAs0mivdJqWgUA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ClprA59Dm1ZXxkrQs5niJ6O8VPNoYP7rWjihtgazvzI7U0o20z0rq6jWyflUEzO8nSwnAVxB0ZYyJk+1oDWQKAoVH7gyf8hIxKibxV1nY5GUwPTlVgnHZshFMsuECqF7KP1/Ep29HPC9Z4ZKKYBqpSLG07BIEH1BlzBLFlhZAOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=Umr0psrm; arc=none smtp.client-ip=159.100.241.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CrWmZRGm"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso102691161fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Oct 2024 03:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729677660; x=1730282460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AVT/oXvnz327r71R8h8SLtTXDuNUikJe/baXxzlt7M=;
-        b=CrWmZRGmVyhljKolnf1UewFXPdO4kYq6II1J4PCFj1zk2WPmxDIqhJD1XnAExw27sB
-         uB/o5hwtonzx0/wRijgWwGcgCpenXIQO2AD/i93m+qJ/jIWYuIYPYjphC2TCRbQKONGW
-         8TyT/uYR2KovKhIjaBQYB+qfqpotOz+38kMAhYmnDH0Kqv49RDVQvOu1OXkrIuVNu1Gw
-         5shpJos4LxmNP0mkuZU2sXd+pHVqcFcBBBiQIRjHw6TwtMkMCYyTOnY54ElY/p7qPuHK
-         7dnJJ36xubGyB3NDDy3b/Fi0hC2r9jx+Mq3PjmLe3Szg9hZB2eon7P/VgOLfY75XW9Tf
-         zsnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729677660; x=1730282460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1AVT/oXvnz327r71R8h8SLtTXDuNUikJe/baXxzlt7M=;
-        b=pVhZ8BrzMGszUNd4GL/UGJFcYlCW1gQeWN/eAGa63KfHI9H7+cCYMkxf+tePabO2Tc
-         xsGe8lVrlJMeA3UbJyMg0vxuGL/mUxhCUEBihkzKHO35i+zgKUIqhVjfBTqmcBMWwSlz
-         Mn5igmc/eK9BLufInfYVg5ozPyaVC92tkfcsVemabioKHBcASlgP+su+D2KwlZeXKAMD
-         keIGffk6dB3ziHtjC575mKyXP/RJbFINGI4ATSUYe4PBXoSi4MtK8TGQzgM1hV8Ss7Xe
-         +fcputR32GLKT5kevkfUE/cW2036WDqTkK54Dzc0QRvjSFVogFpkjUh0Oy7dGe/zg2XN
-         qlFg==
-X-Gm-Message-State: AOJu0YzkUoEG1lvfcZnzjrlsQXDfyBk6ENnWHjDcDfxSfHWIEIVaXlbs
-	nlH/IWm0+Ysz/u1wSrlhaBthbe7HL8HjIKnoDfMAbVTjgLa+15s3Y3Z2qhQFYxh7+vj7JaB3Acu
-	6b0EkN4DsWpp4LQhuzfQ97EE3lNPn/350nMdZzg==
-X-Google-Smtp-Source: AGHT+IHE0gsgDLAMHvDGbxM6ahyc/2CXAluj9jyUvAlvq5X0bwerV4oeMKszRONGYK1KtMvqz8Bpm1IOjWxZhoK3CgU=
-X-Received: by 2002:a2e:d12:0:b0:2fb:357a:be4d with SMTP id
- 38308e7fff4ca-2fc9d588b91mr13043511fa.43.1729677659658; Wed, 23 Oct 2024
- 03:00:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="Umr0psrm"
+Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.154])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 5BD4F20056;
+	Wed, 23 Oct 2024 10:10:27 +0000 (UTC)
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay4.mymailcheap.com (Postfix) with ESMTPS id 4D9932031B;
+	Wed, 23 Oct 2024 10:10:17 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 50CB940071;
+	Wed, 23 Oct 2024 10:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1729678215; bh=k3SnHG7oA3l5HZSfi1tB7TiZdo9WbfAs0mivdJqWgUA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Umr0psrmam/LzPClkicD6UONSbNtPFt2zd+HnRZ33WMqljjb/ERG1gQxqLuL/UALX
+	 zG1oHfQPfJpGIvCVJirzaft9phPUwh2VWYIbowP8RGXfcifTkvUpdgW1qijU76cBPO
+	 SNrwEqnmTJd/9tabIqPFGhObkbafmG+vYJZEA7po=
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id AAADC411E7;
+	Wed, 23 Oct 2024 10:10:14 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014192930.1539673-1-quic_mojha@quicinc.com>
-In-Reply-To: <20241014192930.1539673-1-quic_mojha@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 Oct 2024 12:00:48 +0200
-Message-ID: <CACRpkdaAVE8VMNCFA4jQ1+YLuC9=4mc9Bp2PRxeNFQoHB+NJrA@mail.gmail.com>
-Subject: Re: [PATCH v3] pinmux: Use sequential access to access desc->pinmux data
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Wed, 23 Oct 2024 18:10:14 +0800
+From: Mingcong Bai <jeffbai@aosc.io>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: WangYuli <wangyuli@uniontech.com>, gregkh@linuxfoundation.org,
+ patches@lists.linux.dev, nikita@trvn.ru, ink@jurassic.park.msu.ru,
+ shc_work@mail.ru, richard.henderson@linaro.org, mattst88@gmail.com,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ fancer.lancer@gmail.com, linux-hwmon@vger.kernel.org,
+ dmaengine@vger.kernel.org, xeb@mail.ru, netdev@vger.kernel.org,
+ s.shtylyov@omp.ru, linux-ide@vger.kernel.org, serjk@netup.ru,
+ aospan@netup.ru, linux-media@vger.kernel.org, ddrokosov@sberdevices.ru,
+ linux-iio@vger.kernel.org, v.georgiev@metrotek.ru,
+ linux-mips@vger.kernel.org, ntb@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-spi@vger.kernel.org, dushistov@mail.ru,
+ manivannan.sadhasivam@linaro.org, conor.dooley@microchip.com,
+ linux-fpga@vger.kernel.org, tsbogend@alpha.franken.de,
+ hoan@os.amperecomputing.com, geert@linux-m68k.org,
+ wsa+renesas@sang-engineering.com
+Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various
+ compliance requirements.
+In-Reply-To: <418359de-e084-47f9-9090-7980e41661e0@flygoat.com>
+References: <2024101835-tiptop-blip-09ed@gregkh>
+ <A74519B4332040FA+20241023063058.223139-1-wangyuli@uniontech.com>
+ <a08dc31ab773604d8f206ba005dc4c7a@aosc.io>
+ <444fa53bdfdee75522a1af41655a99b0@aosc.io>
+ <418359de-e084-47f9-9090-7980e41661e0@flygoat.com>
+Message-ID: <5d8614084599ff1b7f70aa1b427bdfb3@aosc.io>
+X-Sender: jeffbai@aosc.io
+Organization: Anthon Open Source Community
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Rspamd-Queue-Id: 50CB940071
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.40 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCPT_COUNT_TWELVE(0.00)[37];
+	TAGGED_RCPT(0.00)[renesas];
+	MID_RHS_MATCH_FROM(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
+	FREEMAIL_CC(0.00)[uniontech.com,linuxfoundation.org,lists.linux.dev,trvn.ru,jurassic.park.msu.ru,mail.ru,linaro.org,gmail.com,vger.kernel.org,lists.infradead.org,omp.ru,netup.ru,sberdevices.ru,metrotek.ru,microchip.com,alpha.franken.de,os.amperecomputing.com,linux-m68k.org,sang-engineering.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[]
 
-Hi Mukesh,
+Greetings again (oops),
 
-On Mon, Oct 14, 2024 at 9:29=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
-> wrote:
+I messed up the reference levels when I sent my disclosure. Jiaxun got 
+most of the references right but the last sentence.
 
-> When two client of the same gpio call pinctrl_select_state() for the
-> same functionality, we are seeing NULL pointer issue while accessing
-> desc->mux_owner.
->
-> Let's say two processes A, B executing in pin_request() for the same pin
-> and process A updates the desc->mux_usecount but not yet updated the
-> desc->mux_owner while process B see the desc->mux_usecount which got
-> updated by A path and further executes strcmp and while accessing
-> desc->mux_owner it crashes with NULL pointer.
->
-> Serialize the access to mux related setting with a mutex lock.
->
->         cpu0 (process A)                        cpu1(process B)
->
-> pinctrl_select_state() {                  pinctrl_select_state() {
->   pin_request() {                               pin_request() {
->   ...
->                                                  ....
->     } else {
->          desc->mux_usecount++;
->                                                 desc->mux_usecount && str=
-cmp(desc->mux_owner, owner)) {
->
->          if (desc->mux_usecount > 1)
->                return 0;
->          desc->mux_owner =3D owner;
->
->   }                                             }
->
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+在 2024-10-23 17:53，Jiaxun Yang 写道：
+> On 2024/10/23 09:26, Mingcong Bai wrote:
+>> No, no, no. Nuh, uh.
+>> 
+>> Greg has unfortunately decided to respond in private over a matter 
+>> that by no means should be glossed over. Here below is our 
+>> conversation:
+> 
+> I can't believe a senior maintainer is breaking our agreed netiquette 
+> [1], but that's happening.
+> 
+>> 在 2024-10-23 15:55，Greg KH 写道：
+> [...]
+>> 
+>> Request declined. Your response is now public knowledge (and hey, if 
+>> this is not by your will, my apologies). Again, this matter requires 
+>> public response.
+>> 
+>>> 在 2024-10-23 14:30，WangYuli 写道： Although this commit has been merged, 
+>>> it's still important to know the
+>>> specific reason (or even an example) that triggered this change for
+>>> everyone here, right?
+>>> 
+>>> And those maintainers who have been removed should be notified.
+>>> Seconded.
+>> 
+>> Sorry, but that's not how this is allowed to work.  Please contact 
+>> your
+>> company lawyers if you have any questions about this.  And this only
+>> affects maintainers, as you aren't listed in the MAINTAINERS file, 
+>> there
+>> should not be any issue, but again, contact your company if you have 
+>> any
+>> questions as they know what is going on.
+> 
+> I think there are no regulations on earth preventing itself from being 
+> referenced.
+> Even if the regulation prevents further communication with affected 
+> bodies,
+> the wider community still deserves an explanation.
+> 
+> As a person with M entries I found this behavior appalling. It shakes 
+> mutual
+> trust between maintainers, as we all assumed that patches being applied 
+> are
+> well scrutinized.
+> 
+> Besides, many of us are working on kernel as hobbyist  in a personal 
+> capacity.
+> That means we don't have access to lawyers, especially US one. While I 
+> understand
+> corporate participants may be the majority of the community, please 
+> don't leave
+> hobbyists behind!
+> 
+> I've had some interactions with some of people being removed here, and 
+> I would
+> say they are all brilliant individuals. It's  really sad to see them 
+> being turned away :-(
+> 
+>> 
+>> Just *wink* if you were compelled into this.
+> ^ It sounds unprofessional to me.
 
-Sorry for taking so long!
+For the record, I wrote that unprofessional sentence ("Just *wink*"), 
+since it was private.
 
-I was turning the patch over in my head for the fear that something will
-regress but I can only conclude that we need to test this in-tree, so
-patch applied so we can get some rotation and boot tests in linux-next!
+Best Regards,
+Mingcong Bai
 
-Yours,
-Linus Walleij
+> 
+> Thanks
+> - Jiaxun
+> 
+> [1]: https://people.kernel.org/tglx/notes-about-netiquette-qw89
+>> 
+>>> thanks,
+>>> 
+>>> greg k-h
+>> 
+>> Best Regards,
+>> Mingcong Bai
+>> 
