@@ -1,87 +1,108 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E31CDFA7;
-	Wed, 23 Oct 2024 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A20DDAB;
+	Wed, 23 Oct 2024 16:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700934; cv=none; b=SQMC0TuUwjqVnNHzfMtYIBtS0I6lf0es32nuJbgCWALvWMm4VK8FYr8dt/CM9ylh/+Kwd2HdqKallVaoPsHs70zH13bqjozl8P3i0G3s+hxExny86gURHlHXwRnxRL2d/VjTsnOK6HOniIlXj+1rlh1KC8pyvez3dhQLjncXv4w=
+	t=1729701174; cv=none; b=PIXOEAQ/y3jUWdRW4wHtywIRDpv1qdW1g77MPVmJTGtWUWCAEWBXiKqy0WFP0msfA5nNb7jBCSSRVrJ5FmQe1o6DpuFup1t+ms93oiBuVjvlNAkHPd5Lcltunl0rTVN585jN33NE2oJ4vImCY8f0mAaBXtgK08uwKa5tf8Nu27g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700934; c=relaxed/simple;
-	bh=ImGCMCLcj/skCiYbANA7Nn2kAh541W4YFyorni/4W34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+y91WcOkYhHbSmdH2D9tRbYrdWM8GalV3s3Fol55u2mAO2sP17Yn+OMROlMZNM+h8LsqGfoRU/eY8Ulvxz1802AL/5TW/xYSz2r3b/wBXAgnryV4rpcdY4Z0du5cIMJ1BAFqQw0sJ9Qcb/vkRSziB0XCSKkgSkUs7HQHNRtr9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mBhD5Z2i; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1729701174; c=relaxed/simple;
+	bh=TyywN/+wAMLWJRgELJOMExlGZYjMTxNyuaEfnm0ujeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jQlWGyHtQH3+OV6rwnvd+1ebRPjybpRVEswNcPrP418I3bKDKQbFy14ILGTPrgG4FDACiMMHk6VPl90X/Zf0k2uo44Xy7P9UMQkHK1xHwrAiMxTix7brtJ+BslvSm3vJFOq1Ho85HUcdNbFxK+/ZammV5T8XZOd8sPVV5r+zirI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iAf/g0I2; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mBhD5Z2i"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E875424F55;
-	Wed, 23 Oct 2024 18:23:23 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id LM4QKJJ_KumL; Wed, 23 Oct 2024 18:23:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1729700603; bh=ImGCMCLcj/skCiYbANA7Nn2kAh541W4YFyorni/4W34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mBhD5Z2iVFfmKpdSW/evjvBUJawTiTTumRRO/Q+FtBNYlc+tp3mwM4tCBMcXP/Hvh
-	 5l+8+NeYW5sllWZuLhhLWUGokX3pZNdf9ZZWbb+vKUjjDiu3AXuHz5BGJa8Lw/Wc4Z
-	 4mTOtkQR9Xc2DESVrl5IcQ3Oo/Z1IPJjJERSmoIu5Rhk2RZ+Izzf3gqLT9EdPE8y8k
-	 nvFCD8bkddNgrha80K6ja47euJ3Pp9jmZhFiOIAuOzrNXQuKQch1CWQsu3Uqta8WG4
-	 AYKkovqFgO11xipB9v5pp7TPiGHCF36nhchbDp1B0i8owc4T+PmVTKNXgM9BASQ/Sx
-	 qygChoYVCzn9A==
-Date: Wed, 23 Oct 2024 16:22:58 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Kexy Biscuit <kexybiscuit@aosc.io>, jeffbai@aosc.io,
-	gregkh@linuxfoundation.org, wangyuli@uniontech.com,
-	torvalds@linux-foundation.org
-Cc: aospan@netup.ru, conor.dooley@microchip.com, ddrokosov@sberdevices.ru,
-	dmaengine@vger.kernel.org, dushistov@mail.ru,
-	fancer.lancer@gmail.com, geert@linux-m68k.org,
-	hoan@os.amperecomputing.com, ink@jurassic.park.msu.ru,
-	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-spi@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	mattst88@gmail.com, netdev@vger.kernel.org, nikita@trvn.ru,
-	ntb@lists.linux.dev, patches@lists.linux.dev,
-	richard.henderson@linaro.org, s.shtylyov@omp.ru, serjk@netup.ru,
-	shc_work@mail.ru, tsbogend@alpha.franken.de, v.georgiev@metrotek.ru,
-	wsa+renesas@sang-engineering.com, xeb@mail.ru
-Subject: Re: [PATCH] Revert "MAINTAINERS: Remove some entries due to various
- compliance requirements."
-Message-ID: <Zxki4gooqoZfPoqD@pineapple>
-References: <a08dc31ab773604d8f206ba005dc4c7a@aosc.io>
- <20241023080935.2945-2-kexybiscuit@aosc.io>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iAf/g0I2"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 60BC940002;
+	Wed, 23 Oct 2024 16:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729701164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2mo5TXq2lM94AOYob7sigSv7lm1UH6+vMtcH4MaKVCI=;
+	b=iAf/g0I2OwQO00ReC6C88G//21aTCm8VlXqLUz0rDUOWS1CRki4N+V3xFVghUaJQNvn72n
+	Qpk5JQCZK/Sbi2XAyf4zsqDNUyew8tVwAhxmYx+ezK0zr5DZgZK5VWfAyA5fzY2IEgyWV7
+	DiH+k8QuSrgZsPY3p0v4k+Fws/eYodmishgCNQXEueUEzM3ZuN3oDY4gGT3ncZGbYTZzWP
+	rFabYPUeE2ili/emKROsPngRGFeG1VimgOrtiIRQrsXqDtagozfdquWUHB5T4aARxllfNU
+	6BsL05hnF4PrqEu0/dx/92y5hfmem7fy6oL2bPaBSJqrQEOsJjSzZonTu+JZGQ==
+Date: Wed, 23 Oct 2024 18:32:40 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Arnd
+ Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn
+ Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Luca
+ Ceresoli <luca.ceresoli@bootlin.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, St efan Wahren <wahrenst@gmx.net>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Will Deacon
+ <will@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ phil@raspberrypi.com, jonathan@raspberrypi.com
+Subject: Re: [PATCH v2 08/14] clk: rp1: Add support for clocks provided by
+ RP1
+Message-ID: <20241023183240.0dffae03@bootlin.com>
+In-Reply-To: <ZxkX5gnDkWrTynRv@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+	<022cf4920f8147cc720eaf02fd52c0fa56f565c5.1728300189.git.andrea.porta@suse.com>
+	<611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org>
+	<ZxkX5gnDkWrTynRv@apocalypse>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023080935.2945-2-kexybiscuit@aosc.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed, Oct 23, 2024 at 04:09:34PM +0800, Kexy Biscuit wrote:
-> Are the "compliance requirements" documented on docs.kernel.org? Who are
-> responsible for them? Are all that are responsible employees of
-> The Linux Foundation, which is regulated by the U.S. legislature?
+Hi Andrea,
 
-These should be answered publicly, but IMHO too emotional to be included
-in commit message.
 
-As a newcoming contributor, I work on some ARM SoCs unpaid. It's really
-a neat thing to write useful stuff for others, but this sort of removal
-is weakening my and definitely others' trust to maintainers: people's
-rights to maintain stuff written by themselves got removed silencely.
-It doesn't sound like a good sign to me.
+On Wed, 23 Oct 2024 17:36:06 +0200
+Andrea della Porta <andrea.porta@suse.com> wrote:
 
-We need an explanation. The patch except the last paragraph looks good
-to me.
+> Hi Stephen,
+> 
+> On 15:08 Wed 09 Oct     , Stephen Boyd wrote:
+> > Quoting Andrea della Porta (2024-10-07 05:39:51)  
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index 299bc678ed1b..537019987f0c 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
+> > >           These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
+> > >           Clkout1 is always on, Clkout2 can off by control register.
+> > >  
+> > > +config COMMON_CLK_RP1
+> > > +       tristate "Raspberry Pi RP1-based clock support"
+> > > +       depends on PCI || COMPILE_TEST  
+> > 
+> > A better limit would be some ARCH_* config.  
+> 
+> I've avoided ARCH_BCM2835 since the original intention is for this driver
+> to work (in the future) also for custom PCI cards with RP1 on-board, and not
+> only for Rpi5.
 
-Reviewed-by: Yao Zi <ziyao@disroot.org>
+Maybe depends on CONFIG_MISC_RP1 ?
+CONFIG_MISC_RP1 enables the RP1 PCI driver
+
+Best regards,
+Hervé
