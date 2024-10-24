@@ -1,152 +1,119 @@
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635991C726D;
-	Thu, 24 Oct 2024 11:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C251E1D096F
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2024 11:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769580; cv=none; b=q3eesvRmosBtWG1vsB89aYMoF6ZgRCSESdyim232jqRqQgu2s1J13i5+a8n4vpd0RQ46pGmlHTOeCed/ln/htIMuozztcuD/KtWGdboTbgfcaciG2vW0sm22yHzbDzRftwUqUvfsB+SR8KO8GVWlS1FwQG2DCzDdPlILxR61zLk=
+	t=1729769581; cv=none; b=jHrVEf+9d0otYKZNo2/2DqF434i64S4w4uT9OpS28I6FXNwhh7k6+7Jh4rsXH3j9g1Sy7dtZUaHw9VHaCPClG6mwDAkiavSP4uwevytTOePaDRasb4H+WeFi+UtvRDet/mORAvYCEcUvZpMsNQdhO27ox7xEafLCFYZ2FfMY+m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729769580; c=relaxed/simple;
-	bh=jaOLrmAOgefAgbtZ2Lh4kHXHkgV6DCOo2suKobuzSjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IOAZy1f2QbkM9oJ2XyuQdZDNdbSftTH8DfC/kS2B3DdNXgCSjjRT5MRDZtuyc9TlXglYsmmrQKr3wDtL/XfbqjpYVNwLPWn/fHwWoJt2x8ASvyVbgdgNgqyLhbSOzC3ttp45Hx5hooE+bPFV4RQVY5YF8pUyUG1kuxjXh98xfX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLWGWnyF; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729769581; c=relaxed/simple;
+	bh=Pgjbt4XEQg7IVvK0FnWvm567PSzKpKRl5JNn8e/2W1U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=RtRpg25vq5kFEzoc+iT6k/WxR7C6a8DuHMr3KdXG43mC+BrLHzcsqAEZbv2WK3Yl1uIc9+ybvVmpdWiG40n8HJSlwgUjSXbyUtC44J7J5CqVf7svcw3PVG6D3dKbUBO766A8D3kp9MdoWMQASjonEMz82oO5oX1DFwRFOFPpK6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ECmI8sZM; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLWGWnyF"
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20cdda5cfb6so6426175ad.3;
-        Thu, 24 Oct 2024 04:32:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ECmI8sZM"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-431616c23b5so5788515e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2024 04:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729769577; x=1730374377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tv6O+TghCU2f9mC++4kG9WDH4zCondacLVwevpdizzo=;
-        b=iLWGWnyFsPBsVi4R06t+mGR0ow0oKN/SOxv2hG/GR60jbOw2l7QqWbo1DVv0IPTro3
-         uWIuXEoAb6pF0hjXnnSN5uNBnbefoJXWBPSqryvo9R9pET87W1KaFVBo32JJtyCeFzsC
-         BbU6pNekE+9pkt1Su+64d9gRcFpiTfMsgX4gYP8JQNNnoEP+Y0ogwYuoXZfgEfbmy2i/
-         IiZSY4rpSDRBWzon/sN18VltdgduKKtl0rQS4WNerN/ATJ5yMgz3HBIEMdAMyQI35wJX
-         FzZy84AP4JPS9TCKcHVNZPjtm1j9RqRqQWtMlQSvaYzcr1/DrDstj5sYFd6iQJ3Uq0wM
-         ynGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729769577; x=1730374377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729769578; x=1730374378; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tv6O+TghCU2f9mC++4kG9WDH4zCondacLVwevpdizzo=;
-        b=u/MLFD1pL6qMiLP4NMDPvnJs6oCBllZPrjXNJ5DYS8RXFyxWnYX62K3UFuXXIWmcau
-         SFme8FqqnbKAdppTWkKYdOo9qMOHMiYsq5W1dyQT/pdAiiTIB1W8GG13T1AgqTTydT1L
-         eX3CgjmvpBVqz/wxPqQ7ZJKYlFcHzGWfVuCM/0N9pG7NIjA8OHnrBgUgl98hvgH1D2uR
-         1HqDulEbAWefNT1MiiU/jjM3dr7Unhhhve4h++oXuZJt/AZ15DKE+OkNu6yUQPmTArGg
-         EBTNKg9j7Y8ONTC0Qqlcnn5yozAqcQQsuVqwPWemBl/2nIzz758M+AHFHJ3FePduUKDc
-         08RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkWgc5gm4UiyzmY4/PLKLX8cQtKekK8FiEuvS6v+G7hINamxv7J5dM4g3BX3vczjqn6NqI7/XyFjK7JA==@vger.kernel.org, AJvYcCV+PKaWBqgSyVdy4vtZjwhCcjPbuzoiMdShSgZ+hdfKb1kx1WE4ckHsBRknAxACFs6fjNOyqp/LTBar@vger.kernel.org, AJvYcCVLwkSW60YTS0QyZvhvMYu8G4iN2tocv7D0rxiTAB5H/An6h4YdeCb1p95XHBCYAQFKd4V9DbJFkXtmsLs=@vger.kernel.org, AJvYcCVYJx3KuHEGTxXinf0Vf0Wrw5cf5jkUHFydigs/IRdiXWHwLWdw+R4oslcedUxYXOV5ZT6AP9ib@vger.kernel.org, AJvYcCVabQ1V5qOpTs9atHFd1E3ba/LlyPNiteGBNrSXJW7DMFO1e6CRaXHUM2gaTSwmv+T3l7l9nhchygkg@vger.kernel.org, AJvYcCVkFhSCc4LDtt+mF79R8IFdR7kNolg1rRKR2Z4kDjVE8u9ZucgoMl/wDJzwlRpcL6HvZXOsuYGsa80pVPg=@vger.kernel.org, AJvYcCVtU3mCAPPl07cj2YNeliKqIcxz69bDYob/OplIPn/aKail7mD9vfC0zrn5j8MTnQ+t6G0tsyMti7kc@vger.kernel.org, AJvYcCWakYHTt4t+K9TOql8I7dG1N3cF4D8c70kr+liWzVdhjxBhzky6LJpaJ010TBnUotbum/3MJf8fweVG2GgjGDCn36s=@vger.kernel.org, AJvYcCX55RlZou2yniR2m/aLR23gSxf+nkfLH4hC1KKDz+JNu0OPsox/CdtotQSop0b1En3Vbf9WOcfH28Xbxw==@vger.kernel.org, AJvYcCXHN+oh8GVE1UN53MYJouFzFL4/j/VNA3ONir7/pgSZK9TnKhd3SohMF818pwdz7mpWdfZz7vnXFcY=@vger.kernel.org, AJvYcCXOX+6Moi7o0LjdeOPO+b8e7OfuURi/6ng8uyu/ZqTuBusyaOa1YVeXXrRpxQDXHpDw8poVAUjSwH/XVnc=@vger.kernel.org, AJvYcCXdrhdwIzegOpRuKQGEt69P2TkPZQ9O5qDMT3OR8Q0NeHQ2p1+100KxKaj1aSffe381DzOsdOcosn5gSA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvPP/E7DuDUsdNswickcY60EGl2fjxcPzoMmqJWKp51ZT5qYOt
-	sG/US391zNvbl0UfGkBKLysnq8/NkJPegJnwQO4anTNZp8yTj3u2
-X-Google-Smtp-Source: AGHT+IGnX8BAozTq7iV5Cfb4iMWgUhRXOngKBX3V0+lNlRioh+e/fyzPpLUXG8x8OAUIikKgPta+wg==
-X-Received: by 2002:a17:902:e80c:b0:20c:e5b5:608a with SMTP id d9443c01a7336-20fa9de92a8mr80789405ad.5.1729769576555;
-        Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
-Received: from codespaces-a350b5.m2fxbej512jepnsor2itp05j3d.ix.internal.cloudapp.net ([23.97.62.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f364bsm70916385ad.264.2024.10.24.04.32.49
+        bh=eppHTEc5juuyQhtpfQNDsJTRqz3tSRocJdtDsSnuBKU=;
+        b=ECmI8sZM630DdPugC9s73Uq4toUSefGrB54Py84HMULLoBNlneoJXEjaK7EHl/61KZ
+         0XrUjlYdtelgBEY8m3O/YvrS/oGOMBqgQDWsT6yjCA2FU5MY5eP3SOqnMrfOIB8zWgM5
+         7JCPnGgGU9epz4SB2AREJULgZUcVVnlUSvO1eQ86otURnW+i1y32RHSRwkLNQvCT/B8S
+         4kjfwMyjkwCHAl7QMH1eCyPzeRtjW7YyK4JgQgaCts2UOYBrwjhMqjqsEx/PZ8jqqL3F
+         jfWSddxdy8emzTrhUWhnRx9Auny8bpptLBmR5Rv0dAMFi8+raMcw/1wJ0G8Gl4482O0J
+         RtcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729769578; x=1730374378;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eppHTEc5juuyQhtpfQNDsJTRqz3tSRocJdtDsSnuBKU=;
+        b=rII6kAAVqKSMaoRraFSux4C2CImYg6PsrEkX9O3R0zpG29qZ1gtDDMOwWuU0blutjn
+         rN7PD28tz4IAiMUbWMJ/npsM8ZvNBD2pNuXtRQnsqrDNUx7LVKnMrYqRv7NN+2qmYTNA
+         654+MCWEUM8ZnmW0G8OFKGfJxOlsGZntlWBxDSynpUzzo4LooXFrn04CtbJnHPQOHvgi
+         Po6snMpBj81kbs7gFisHB6dFHUs2LN3IB4E19IOmA+WYbrP4+Cn6SNLRzNZYS+uc+BD8
+         foIUC04yBt78YDL10YpWQoBEmnrBEwqUeXV0iSi5gnjgeaShakw++WLYD5/AQfLdkXvI
+         p3VA==
+X-Gm-Message-State: AOJu0YypQnPP/FqiPfZhdYQqg/iFXMei4JMTA3q3cGi3zxsG0OLZgfT9
+	RITXYddFAuXZ4vaeIJMh9r8F6afmE8mw1f10/YWJ/TMYbaqWc8r9gGzWe0HAGRg=
+X-Google-Smtp-Source: AGHT+IFAqZOlDHc20yl4zCduffrqTXZO5TEJq9dnErjWksgz18FfOD/vpC5qpY6ZCJZqLnaDJ5ChqQ==
+X-Received: by 2002:a05:600c:3d95:b0:431:4fbd:f571 with SMTP id 5b1f17b1804b1-4318bc8e1aemr10970115e9.13.1729769577994;
+        Thu, 24 Oct 2024 04:32:57 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f484sm14592705e9.13.2024.10.24.04.32.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
-From: Jensen Huang <jensenhuangnvdia@gmail.com>
-X-Google-Original-From: Jensen Huang <JensenHuangNVDIA@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: aospan@netup.ru,
-	conor.dooley@microchip.com,
-	ddrokosov@sberdevices.ru,
-	dmaengine@vger.kernel.org,
-	dushistov@mail.ru,
-	fancer.lancer@gmail.com,
-	geert@linux-m68k.org,
-	gregkh@linuxfoundation.org,
-	hoan@os.amperecomputing.com,
-	ink@jurassic.park.msu.ru,
-	jeffbai@aosc.io,
-	kexybiscuit@aosc.io,
-	linux-alpha@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	mattst88@gmail.com,
-	netdev@vger.kernel.org,
-	nikita@trvn.ru,
-	ntb@lists.linux.dev,
-	patches@lists.linux.dev,
-	richard.henderson@linaro.org,
-	s.shtylyov@omp.ru,
-	serjk@netup.ru,
-	shc_work@mail.ru,
-	torvic9@mailbox.org,
-	tsbogend@alpha.franken.de,
-	v.georgiev@metrotek.ru,
-	wangyuli@uniontech.com,
-	wsa+renesas@sang-engineering.com,
-	xeb@mail.ru,
-	Jensen Huang <JensenHuangNVDIA@gmail.com>
-Subject: [PATCH] MAINTAINERS: Remove some entries due to various compliance requirements.
-Date: Thu, 24 Oct 2024 11:32:46 +0000
-Message-ID: <20241024113246.22901-1-JensenHuangNVDIA@gmail.com>
-X-Mailer: git-send-email 2.46.2
+        Thu, 24 Oct 2024 04:32:57 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 24 Oct 2024 13:32:47 +0200
+Subject: [PATCH 4/5] gpio: sysfs: emit chardev line-state events on
+ active-low changes
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241024-gpio-notify-sysfs-v1-4-981f2773e785@linaro.org>
+References: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
+In-Reply-To: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=781;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=XnelKBDV2L3pjwhf9M2fvoOno9GcTcQCBzk36loA66E=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnGjBlyWyQzGnbxAarpCwmXTQ62BDPLfW2FkmRd
+ 1sEt7+T3ryJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxowZQAKCRARpy6gFHHX
+ cgW2D/946L+i6FaZgycLVtPIWSfoY21UtUpvxZt9JAC3byWmPIQ2BZrUcnTAun7sJFvVRDVPsy5
+ 7zGpkJXvMBSJftbE8Iaoz4aLadyVoD+aDPsbeT6Hqlfly7t1Fb+w1Jxye3dDbw496Uajz4uR5v0
+ jXEJDeQRqaX+zjm1+BqoKgUh+COKFo5GKGfmKGIVO07gGkQyIQi/IjntiTPB6LNbaSzVK240yQY
+ YNjNA1kszgmzc1OMX33hNztkMPhXZ+MuGGdeNFYrf9X09hy73iC/gtyQ3mBIsNY3TqKKDBAfDRe
+ jXS5l/r4aD6VdUUeHL4jJgi6pU8ZInK63OErro8unnGI0VXBaNVXvoMzIxrwnYAA1cXHZAnJ/Al
+ Xc0UXw8/ZaiA0HljspmQf9/B1XdiP0tENtBYK3xfh4PHolG8k77/Yt7A/divJwga2vXfLyFC93G
+ M5dRMt6ROZvVt1uoK/oZMbPAwJH/2OzqYmnIkPwluLbDzcg9iFGgtnIB7Om++q/9XMpkSP04oty
+ t+KZa0P0dTLvgoLIfoSYpeaPOlnTSmKYGPUbwHnQcIXp1ESFZ2urW7f35qJG1TRiZq7R9gXxqR0
+ X7ecYb4i+pjN/Sm0jG/clsbhh9bDZZQlXeswBF+wv1qad5ICn3RIRzTP0Z3fmiSGRcZxTPJkids
+ J2DGBrpG5SuDrUw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Remove some entries due to various compliance requirements. They can come
-back in the future if sufficient documentation is provided.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Jensen Huang <JensenHuangNVDIA@gmail.com>
+The sysfs active_low attribute doesn't go through the usual paths so it
+doesn't emit the line-state event. Add the missing call to
+gpiod_line_state_notify() to gpio_sysfs_set_active_low().
 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
+ drivers/gpio/gpiolib-sysfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Follow 6e90b67
-
----
-
-Linus Torvalds said
-
-"I'm Finnish. Did you think I'd be supporting Russian
-aggression? Apparently it's not just lack of real news, it's lack of
-history knowledge too."
-
-So we should remove Israeli developers too, because Israel is committing aggression and genocide.
-
-Link: https://lore.kernel.org/all/CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com/
----
- MAINTAINERS | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e9659a5a7..9ce642d40 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2275,13 +2275,6 @@ S:	Maintained
- T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git clkdev
- F:	drivers/clk/clkdev.c
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 3f24bf278b77..b967b76ea046 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -305,6 +305,8 @@ static int gpio_sysfs_set_active_low(struct device *dev, int value)
+ 		status = gpio_sysfs_request_irq(dev, flags);
+ 	}
  
--ARM/CONEXANT DIGICOLOR MACHINE SUPPORT
--M:	Baruch Siach <baruch@tkos.co.il>
--L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--S:	Maintained
--F:	arch/arm/boot/dts/cnxt/
--N:	digicolor
--
- ARM/CORESIGHT FRAMEWORK AND DRIVERS
- M:	Suzuki K Poulose <suzuki.poulose@arm.com>
- R:	Mike Leach <mike.leach@linaro.org>
++	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
++
+ 	return status;
+ }
+ 
+
 -- 
-2.46.2
+2.45.2
 
