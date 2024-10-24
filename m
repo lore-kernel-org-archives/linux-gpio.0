@@ -1,124 +1,152 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798511B392E
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2024 11:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635991C726D;
+	Thu, 24 Oct 2024 11:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769580; cv=none; b=Sc3cfX3Fc1oZ1/uPpwHetr+GulQ5YAEQ6JCG/rz9SwEfux/hIPW7uBuieA3zp3zIdefyk3Q7mL9aLRd6NDg7PLZJFbm2pk7mm4g9r8jyYQtFHXfmMcg9bR/mGYEDoTFf9FBlVxNv2KOBoFZ3UhT+UnJ6kdUQpssxmPyJHoYPpkE=
+	t=1729769580; cv=none; b=q3eesvRmosBtWG1vsB89aYMoF6ZgRCSESdyim232jqRqQgu2s1J13i5+a8n4vpd0RQ46pGmlHTOeCed/ln/htIMuozztcuD/KtWGdboTbgfcaciG2vW0sm22yHzbDzRftwUqUvfsB+SR8KO8GVWlS1FwQG2DCzDdPlILxR61zLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729769580; c=relaxed/simple;
-	bh=2ukGcetbJ073X0kVtfmH5NRy1q5c9OPJynatresKxrw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sJSAK4d/sslMwcB9QG6XsESdRTvEOMWrBxeO3XjzQHnCrQfx+QmDL9vFFFQjuVIWp8ZyRe0W1N95sXv4ourxT7kkk+mp+ZgoRrNyXihbZ4YYd76NvvkIQ756VtsjogkkymNwwuKIj2fz11hyyusjmGyzQ5kBbKhXesWorRIiJLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=leYyrihi; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	bh=jaOLrmAOgefAgbtZ2Lh4kHXHkgV6DCOo2suKobuzSjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IOAZy1f2QbkM9oJ2XyuQdZDNdbSftTH8DfC/kS2B3DdNXgCSjjRT5MRDZtuyc9TlXglYsmmrQKr3wDtL/XfbqjpYVNwLPWn/fHwWoJt2x8ASvyVbgdgNgqyLhbSOzC3ttp45Hx5hooE+bPFV4RQVY5YF8pUyUG1kuxjXh98xfX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLWGWnyF; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="leYyrihi"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso8376135e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLWGWnyF"
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20cdda5cfb6so6426175ad.3;
+        Thu, 24 Oct 2024 04:32:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729769574; x=1730374374; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2MgD7S88uo9sxVvvM9wYy+rEyYTBG9VG2cJ5wlIWLfY=;
-        b=leYyrihiCIPnCmPkzSgUZZ50mxO6FG0lbjFqMXMi8FxMqj1qUAeHOSk+bqJb/AhZGg
-         jb1/8YW05xG8j+ZX2fmY7WRyib8DkS0ySIFL8XO80h69FFcYh7O21BJcQVNmsgaHrY/N
-         5klBEx2S8FcDZey7tScnhPhNnS+k/8A/3Dsi4Cqp9PwEDOGIp+UGX59w1MVHeBZa9Yfo
-         wX6OV7qgPTjf2NS7evtABB9KEJhyBboOdOjeHp3bnDFOV7G1FT20Alcf8O9KFwJ6ojM5
-         P9GWilIDAO9+N7ikhIRgU/9TOXQ23t9wPmIIGkiXF+MdXoW7gQeH9KPhjygzuFvS6e8m
-         YQVg==
+        d=gmail.com; s=20230601; t=1729769577; x=1730374377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tv6O+TghCU2f9mC++4kG9WDH4zCondacLVwevpdizzo=;
+        b=iLWGWnyFsPBsVi4R06t+mGR0ow0oKN/SOxv2hG/GR60jbOw2l7QqWbo1DVv0IPTro3
+         uWIuXEoAb6pF0hjXnnSN5uNBnbefoJXWBPSqryvo9R9pET87W1KaFVBo32JJtyCeFzsC
+         BbU6pNekE+9pkt1Su+64d9gRcFpiTfMsgX4gYP8JQNNnoEP+Y0ogwYuoXZfgEfbmy2i/
+         IiZSY4rpSDRBWzon/sN18VltdgduKKtl0rQS4WNerN/ATJ5yMgz3HBIEMdAMyQI35wJX
+         FzZy84AP4JPS9TCKcHVNZPjtm1j9RqRqQWtMlQSvaYzcr1/DrDstj5sYFd6iQJ3Uq0wM
+         ynGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729769574; x=1730374374;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1729769577; x=1730374377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2MgD7S88uo9sxVvvM9wYy+rEyYTBG9VG2cJ5wlIWLfY=;
-        b=CDDgXZOgkeaHpRtCEzK5aCsuECaSxFkoH/Z0+Rcl9iT9nGPnWq71+zuNTS5cUMIuM1
-         NMFo52jPHZ/AaitXOAW5VKLiBT9y/AUZq6gRmGtWrUysXkIpnFXj0GaT8Qiwqo5T6+Mu
-         L1aAPRhbEFzzLHsJg1ePcwLtU4OczQX/vKNzKe5n10hLN89BadmBTB9/sghjbsxtHD/p
-         LIQvwrn/tqcPfMSxK14vTcKOuYHtXW0A7oZnbW1n36sDOpAtjoUXgJCNaN5qFjqw0MRe
-         EaH2Fp+9EeHP9XihGVm7iJ2ZmP3fg+bMRzaaTeWjbWQhGCgKxkg/67jLxzuLINFrzB2J
-         9SpQ==
-X-Gm-Message-State: AOJu0Yz+Iwdyn+3+RD9EqlVikvZ1OALvyFaNo+6r2mUaqmRQK7kLC4TD
-	bMq/YDOoPks9EbOatz1K2RVtYM/ziYUJJqdrSO364Ku90+B70M3oUUqUaYwPNycSOoxzxw7qYi8
-	e
-X-Google-Smtp-Source: AGHT+IGGbwM/wC/uvUgJAQYmtUs21huVciYy7jFw7cYJ95pfBma3Y0EzjxjA95ATZvJ/Szy1slJRog==
-X-Received: by 2002:a05:6000:1210:b0:374:b6f4:d8d1 with SMTP id ffacd0b85a97d-37efcf0b548mr3779635f8f.13.1729769574441;
-        Thu, 24 Oct 2024 04:32:54 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f484sm14592705e9.13.2024.10.24.04.32.53
+        bh=tv6O+TghCU2f9mC++4kG9WDH4zCondacLVwevpdizzo=;
+        b=u/MLFD1pL6qMiLP4NMDPvnJs6oCBllZPrjXNJ5DYS8RXFyxWnYX62K3UFuXXIWmcau
+         SFme8FqqnbKAdppTWkKYdOo9qMOHMiYsq5W1dyQT/pdAiiTIB1W8GG13T1AgqTTydT1L
+         eX3CgjmvpBVqz/wxPqQ7ZJKYlFcHzGWfVuCM/0N9pG7NIjA8OHnrBgUgl98hvgH1D2uR
+         1HqDulEbAWefNT1MiiU/jjM3dr7Unhhhve4h++oXuZJt/AZ15DKE+OkNu6yUQPmTArGg
+         EBTNKg9j7Y8ONTC0Qqlcnn5yozAqcQQsuVqwPWemBl/2nIzz758M+AHFHJ3FePduUKDc
+         08RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkWgc5gm4UiyzmY4/PLKLX8cQtKekK8FiEuvS6v+G7hINamxv7J5dM4g3BX3vczjqn6NqI7/XyFjK7JA==@vger.kernel.org, AJvYcCV+PKaWBqgSyVdy4vtZjwhCcjPbuzoiMdShSgZ+hdfKb1kx1WE4ckHsBRknAxACFs6fjNOyqp/LTBar@vger.kernel.org, AJvYcCVLwkSW60YTS0QyZvhvMYu8G4iN2tocv7D0rxiTAB5H/An6h4YdeCb1p95XHBCYAQFKd4V9DbJFkXtmsLs=@vger.kernel.org, AJvYcCVYJx3KuHEGTxXinf0Vf0Wrw5cf5jkUHFydigs/IRdiXWHwLWdw+R4oslcedUxYXOV5ZT6AP9ib@vger.kernel.org, AJvYcCVabQ1V5qOpTs9atHFd1E3ba/LlyPNiteGBNrSXJW7DMFO1e6CRaXHUM2gaTSwmv+T3l7l9nhchygkg@vger.kernel.org, AJvYcCVkFhSCc4LDtt+mF79R8IFdR7kNolg1rRKR2Z4kDjVE8u9ZucgoMl/wDJzwlRpcL6HvZXOsuYGsa80pVPg=@vger.kernel.org, AJvYcCVtU3mCAPPl07cj2YNeliKqIcxz69bDYob/OplIPn/aKail7mD9vfC0zrn5j8MTnQ+t6G0tsyMti7kc@vger.kernel.org, AJvYcCWakYHTt4t+K9TOql8I7dG1N3cF4D8c70kr+liWzVdhjxBhzky6LJpaJ010TBnUotbum/3MJf8fweVG2GgjGDCn36s=@vger.kernel.org, AJvYcCX55RlZou2yniR2m/aLR23gSxf+nkfLH4hC1KKDz+JNu0OPsox/CdtotQSop0b1En3Vbf9WOcfH28Xbxw==@vger.kernel.org, AJvYcCXHN+oh8GVE1UN53MYJouFzFL4/j/VNA3ONir7/pgSZK9TnKhd3SohMF818pwdz7mpWdfZz7vnXFcY=@vger.kernel.org, AJvYcCXOX+6Moi7o0LjdeOPO+b8e7OfuURi/6ng8uyu/ZqTuBusyaOa1YVeXXrRpxQDXHpDw8poVAUjSwH/XVnc=@vger.kernel.org, AJvYcCXdrhdwIzegOpRuKQGEt69P2TkPZQ9O5qDMT3OR8Q0NeHQ2p1+100KxKaj1aSffe381DzOsdOcosn5gSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvPP/E7DuDUsdNswickcY60EGl2fjxcPzoMmqJWKp51ZT5qYOt
+	sG/US391zNvbl0UfGkBKLysnq8/NkJPegJnwQO4anTNZp8yTj3u2
+X-Google-Smtp-Source: AGHT+IGnX8BAozTq7iV5Cfb4iMWgUhRXOngKBX3V0+lNlRioh+e/fyzPpLUXG8x8OAUIikKgPta+wg==
+X-Received: by 2002:a17:902:e80c:b0:20c:e5b5:608a with SMTP id d9443c01a7336-20fa9de92a8mr80789405ad.5.1729769576555;
+        Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
+Received: from codespaces-a350b5.m2fxbej512jepnsor2itp05j3d.ix.internal.cloudapp.net ([23.97.62.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f364bsm70916385ad.264.2024.10.24.04.32.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 04:32:54 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 0/5] gpio: sysfs: send character device notifications for
- sysfs class events
-Date: Thu, 24 Oct 2024 13:32:43 +0200
-Message-Id: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
+        Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
+From: Jensen Huang <jensenhuangnvdia@gmail.com>
+X-Google-Original-From: Jensen Huang <JensenHuangNVDIA@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: aospan@netup.ru,
+	conor.dooley@microchip.com,
+	ddrokosov@sberdevices.ru,
+	dmaengine@vger.kernel.org,
+	dushistov@mail.ru,
+	fancer.lancer@gmail.com,
+	geert@linux-m68k.org,
+	gregkh@linuxfoundation.org,
+	hoan@os.amperecomputing.com,
+	ink@jurassic.park.msu.ru,
+	jeffbai@aosc.io,
+	kexybiscuit@aosc.io,
+	linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	mattst88@gmail.com,
+	netdev@vger.kernel.org,
+	nikita@trvn.ru,
+	ntb@lists.linux.dev,
+	patches@lists.linux.dev,
+	richard.henderson@linaro.org,
+	s.shtylyov@omp.ru,
+	serjk@netup.ru,
+	shc_work@mail.ru,
+	torvic9@mailbox.org,
+	tsbogend@alpha.franken.de,
+	v.georgiev@metrotek.ru,
+	wangyuli@uniontech.com,
+	wsa+renesas@sang-engineering.com,
+	xeb@mail.ru,
+	Jensen Huang <JensenHuangNVDIA@gmail.com>
+Subject: [PATCH] MAINTAINERS: Remove some entries due to various compliance requirements.
+Date: Thu, 24 Oct 2024 11:32:46 +0000
+Message-ID: <20241024113246.22901-1-JensenHuangNVDIA@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFswGmcC/x3MMQqAMAxA0atIZgO1utSriIO2iWZppRFRpHe3O
- L7h/xeUspDC2LyQ6RKVFCu6tgG/L3EjlFAN1tihM9bidkjCmE7hB/VRVuzXENiR94tjqN2RieX
- +n9Ncygf0liMyYwAAAA==
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1440;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=2ukGcetbJ073X0kVtfmH5NRy1q5c9OPJynatresKxrw=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnGjBkSTkm2puOnNpzhe6QEjw1a37sxckcPMdRA
- TJj4dmLOTaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxowZAAKCRARpy6gFHHX
- csmFD/4mt3GUCKb0pbe/hBugOPx7qAbeAVjQt3ke4froV5sa5pmiv7XNHKMaBrGlAtS/wehzMYs
- bNdQNXC27nK5OSbFml7LTl9VmnPSYyIklgux8XtXIsT7Nmqu1A5IfLD91uU56yuFOEqaTn/BCyL
- Kh0e8SMaJdmAp41Bg1/XpCJ/SbG+hSASFrq6OiezeghjF4GMgMQDj4XWulufqiG+lfkEudgaQTu
- xRLvg8UgP7ez1FZhovxmd2fzfYZOORlyiIuLd4KkSlAgZQnz5wl3pT12z0VmHU5iBIOrghx84q1
- VGbNBg0As14O88OOqeSo4p8kzlcQOt0UR6Ip0wztnJHmyE/WY9+JR1Q8eHjwm1QyQUDBRf4Yn1g
- ZrwOqPi4Mj/Z8nF0SIWAxB16oqkPfso2X70vUPe2/EHQmMTqItUj1xve+n2gcYrZ+s1XqHPEm5+
- 9nPb8s4k0d3dshrb6k59GXAFxDYDeGNBfQn10bbR0P+/Zv/jKqrRjpSfS7jug2LzAsgZNpItzgq
- sMOVoW97I6OawIZx2rX9UnByUejv9pWzRv1eGm80Jh35Y82+xaYqU31GqoOfr2SO6bpgtfKVd8b
- OvvnGQ4mbM6Bj94yH0uHy8ryhpTYWwsyLcIH/krmZdgY5T14dBEyniuUwbwzV+ffrw7WtUTfixW
- Dvu30HRZfFbsdwA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
-This may be a total corner-case but for consistency and completeness I
-think it makes sense to also send out line state change events on actions
-triggered from the GPIO sysfs class.
+Remove some entries due to various compliance requirements. They can come
+back in the future if sufficient documentation is provided.
 
-The first two patches use cleanup helpers in sysfs code. The next three
-change the code to emit notifications on line export (unexport is
-already handled) and active_low & edge changes.
+Signed-off-by: Jensen Huang <JensenHuangNVDIA@gmail.com>
 
-One last thing I considered was also notifying user-space whenever
-gpiochip_un/lock_as_irq() is called but that doesn't make much sense as
-it's largely independent from the GPIO core and can be called for both
-requested and available lines whenever someone requests an interrupt
-from a GPIO controller.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Bartosz Golaszewski (5):
-      gpio: sysfs: use cleanup guards for gpiod_data::mutex
-      gpio: sysfs: use cleanup guards for the sysfs_lock mutex
-      gpio: sysfs: emit chardev line-state events on GPIO export
-      gpio: sysfs: emit chardev line-state events on active-low changes
-      gpio: sysfs: emit chardev line-state events on edge store
 
- drivers/gpio/gpiolib-sysfs.c | 143 +++++++++++++++++++------------------------
- 1 file changed, 62 insertions(+), 81 deletions(-)
+Follow 6e90b67
+
 ---
-base-commit: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
-change-id: 20241022-gpio-notify-sysfs-3bddf9ecca9f
 
-Best regards,
+Linus Torvalds said
+
+"I'm Finnish. Did you think I'd be supporting Russian
+aggression? Apparently it's not just lack of real news, it's lack of
+history knowledge too."
+
+So we should remove Israeli developers too, because Israel is committing aggression and genocide.
+
+Link: https://lore.kernel.org/all/CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com/
+---
+ MAINTAINERS | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e9659a5a7..9ce642d40 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2275,13 +2275,6 @@ S:	Maintained
+ T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git clkdev
+ F:	drivers/clk/clkdev.c
+ 
+-ARM/CONEXANT DIGICOLOR MACHINE SUPPORT
+-M:	Baruch Siach <baruch@tkos.co.il>
+-L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
+-F:	arch/arm/boot/dts/cnxt/
+-N:	digicolor
+-
+ ARM/CORESIGHT FRAMEWORK AND DRIVERS
+ M:	Suzuki K Poulose <suzuki.poulose@arm.com>
+ R:	Mike Leach <mike.leach@linaro.org>
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.46.2
 
