@@ -1,81 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31C71DA10B;
-	Mon, 28 Oct 2024 12:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996D01D6DAA
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2024 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119857; cv=none; b=DyEBbbGQAyvJsYR2JfFhEglSZZlILAQkYTSx6HVE9F3MdducVRo2Q7ksLRNwoKet1dHGA44QDBDmWtDMUPjyZEkwGG7fdmUbS12rAMP9ntV/IX6wb6exQRbxJMbRIoIYwG0u/5sP4+XK1h9IAv0q9WfyAI3tr+8IGWIpxwEBfH4=
+	t=1730120081; cv=none; b=GhZK1Ng6q+28GfxcwYTFkOt3PqIdFh/UL10fg8UyvloYtfpOQDZpTVJMgu4i9dwWX7ecSqCvgjgIMikR5iS2JbAM2zcrw7Znq07G9+q7eM0WZGwN1rZlHIqKzGOg8skFFoUwkKqJxPYrj7fI+AzO5Qy/xj6eRzVmyqyA9OGtg5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119857; c=relaxed/simple;
-	bh=ZWkrzQm10QvJ2T3sAn6epItT2KxYcYPw9jk27J4657w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oHLhiLLClvD2Ytff8hCcIzk3Wvb6CX28+ypigzP1w9Q55vSpTosSEv5cqDxp1BziPLAMHN/Hbsm+xu01wf7NsM0s+KhZFnVUP/8nTzJ0l/oOhMUo9CV0xa/WeG9PokTE4po9sfQdcCdYKNAGmIGtP93v3EArStzKRQvUJaCZ3oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJe+s8kT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730120081; c=relaxed/simple;
+	bh=seI8UO8liH/MjIwO0BVJ3zPmW5DvN1lsIKmmEv7NXaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezbLR1g0DemYZTrYnjy2sHRQwl0JbVe4niBarn0M7QzBNOEFSyW0i1RYwX27WqQYlM9YouqAIdaARiwBlgB4uJEeO2Sq/crt/OCASQ5uoY+POvdEaOgvWk8AjbntKTSaI+IBjKXrDEkhdxwckiwmWncPwG48JntYJRQU7xzb0PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cCgtsLct; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJe+s8kT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56EB4C4CEE7;
-	Mon, 28 Oct 2024 12:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730119857;
-	bh=ZWkrzQm10QvJ2T3sAn6epItT2KxYcYPw9jk27J4657w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SJe+s8kTUjuIvvmsiuLAzxeq59Hyg/U9Y6Fms9PEJYKrPlPbLW3M/brV5vi3+Gn7k
-	 v3s1hMbuO9i1ZEAFqlFXsw4VM2a26kbSxgxLc5UTJPLtS6QLyzpTV0rvaCMWfYzdTy
-	 g00gu+salOw1DKMKZvIB0XxzygUR39jwlevBRzSuBoSuUjvKkrEF14iUk98coLn+6r
-	 JHfFVEx1N5U1C1PrCULYJWoiElkoWzTIjS0elLugWrGLrWyZDqAHf6aoSlkZezt+e0
-	 aWl5yfWoXNs6CQiHVRoIrbqniDWEODQ8JuOhzTP6kKsAq/vTANTGQeixBLpm+zDULN
-	 bJF1H7ybJZk4g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1t5PDH-000000006IF-2PB8;
-	Mon, 28 Oct 2024 13:51:15 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/3] gpiolib: fix debugfs dangling chip separator
-Date: Mon, 28 Oct 2024 13:49:59 +0100
-Message-ID: <20241028125000.24051-3-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241028125000.24051-1-johan+linaro@kernel.org>
-References: <20241028125000.24051-1-johan+linaro@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCgtsLct"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5111747cso38146981fa.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Oct 2024 05:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730120078; x=1730724878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=cCgtsLctISLLOVkD2JfHx3DXEAKRHbBvGVz2c3+v4KfWascqOPvaLBpS6DHQ4uWQBB
+         CHNn8/f7SxNrEqCV5zhHdRGrvaiUd6VxT5k8o5hI/kAx0ebEHRud7SorqlMSieIpNfQt
+         VeqZ2oaHDKQM4UojFdMIHlgDwSMmvXYWnczte2kKdZTUVGapjSL5z1LDSqVHBFs0fcj+
+         J4fFuYyp3kVoocZ35CIDJKa6cGuSbnmltDC3Q7Puu8vepXzTHJ4ZDw3L5gHlSAAeguwv
+         f1tqeNoOALR1Dm4jqdG8fehR6Yv4LB2G9Ar9I1UQxIN7ODeXwZvRAa26vzae/xhQGzjD
+         PJNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730120078; x=1730724878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=T/fXAUEE6C84UalVuZhDjbiRvFTi+AzjEHA3wnkPHM4tiads3GPdDgG1aH3pqUMX1d
+         B852B18uRtoc5l1GmEZ1ASgF5okGXdt7a+3OFcj4LmZ2OYtLxFSoJhVGQRkcAgAk3X1j
+         WIEyC9Ph0u96gd1//dOnHT2E7Cr1dZPwQq5KdL6ol8RMfhe2XQVPUcgwFjyitSlLrdwZ
+         VejDWqS3DpVzcxLTNzlGpJSV0agEl19jhFF6MWRxiMFPgF8Cvn8PTEtHpfqbUdBCNpGT
+         dBISble7CWCl2K8lRaawBcnii37wRCZ8ukaUxch3ZrTzS1zUM6fZDMnbxsAyQ/7whW9I
+         z2RA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJBYw0qr3IhCvQSMTbkB5eXqeR5Vg+5F4XEqO9HH/eE49c9BiG8X7rd1XkdZL9k/J+p3h4m4Ic/5FK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMBuC1qW3XQPPpbADMDfWNnGiMbJ8IiYm3uTM8AlOnDn/DOdCq
+	e/plkhtkfjMCVXRvUMJMVGBgFOQfJNDuav27lV/Y1aDkLDVO2iu0h6b2SWt9+k8KhHC1RYXaf50
+	5+wZCVXmapWWNsgEYiQ2gCtvmZFTA+5Em14EYexVw0W0Gw0Dp
+X-Google-Smtp-Source: AGHT+IE0RFORu2qhCHVTzNL8EmTHxZvAv0CpOPcLoW/ThHRI1Ejo/uY+Ar9l2qfXZiVTY6d//qDHWFdO9TE8RAOq4Ro=
+X-Received: by 2002:a05:6512:3b98:b0:539:f51e:2465 with SMTP id
+ 2adb3069b0e04-53b348cad03mr3726018e87.22.1730120077585; Mon, 28 Oct 2024
+ 05:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+In-Reply-To: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 Oct 2024 13:54:26 +0100
+Message-ID: <CACRpkda=5rSCjoW0ScNg3pFFOjgSQEv8v+0ZkAw-d0pkF5CaZw@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: spacemit: fix double free of map
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the missing newline after entries for recently removed gpio chips
-so that the chip sections are separated by a newline as intended.
+On Wed, Oct 23, 2024 at 10:39=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-Fixes: e348544f7994 ("gpio: protect the list of GPIO devices with SRCU")
-Cc: stable@vger.kernel.org	# 6.9
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The map pointer is freed by pinctrl_utils_free_map().  It must not be a
+> devm_ pointer or it leads to a double free when the device is unloaded.
+>
+> This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
+> commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
+> ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
+> fix double free in cv1800_pctrl_dt_node_to_map()").
+>
+> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e27488a90bc9..2b02655abb56 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4971,7 +4971,7 @@ static int gpiolib_seq_show(struct seq_file *s, void *v)
- 
- 	gc = srcu_dereference(gdev->chip, &gdev->srcu);
- 	if (!gc) {
--		seq_printf(s, "%s%s: (dangling chip)",
-+		seq_printf(s, "%s%s: (dangling chip)\n",
- 			   priv->newline ? "\n" : "",
- 			   dev_name(&gdev->dev));
- 		return 0;
--- 
-2.45.2
+Patch applied!
 
+Yours,
+Linus Walleij
