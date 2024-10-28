@@ -1,904 +1,291 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2107.outbound.protection.outlook.com [40.107.215.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875FE1D88BF;
-	Mon, 28 Oct 2024 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730107390; cv=none; b=GSmd4yqc2iuIkDFB4lH3GcHULd3SN+RwTZBUt+ZxrgdXFDfWXtzWPLj0zaGvnokKWnfofeVFKNLv86GhN7WTNb1NzUm5kOZw/QNG8oOEI+uZyrsGgTV5VOe200s2lZ3ohRTDUTl5Gucwn8DpfMZY7wCKq/DHWAs3g5+KKWr4TkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730107390; c=relaxed/simple;
-	bh=aNgDMHp8chOHRipjYna59OZmYcyh6ZnmD2z7vDTAOHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sN6lbjqMYCezILau6Y+CBlF6FALCfOXgg4zxQ4Hv4RHuWsr+3CTlfM29cA2eI6eDnE3baRBMoVlumH2LRNe8Bzz5cq8nTywgC0NplDVDuI5ftFPb9SKAdgapdBgt2wklxBKFGhJTULIAMgYK8uUznSKMBEiS1g4amS8ViQiqILE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYZ+tB88; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89DD28DA1;
+	Mon, 28 Oct 2024 09:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730108187; cv=fail; b=hslUdTl72vlDS1We9asPJTjQx82bqE+7xApiWbLEDLM2/R2KDC3imUYYHIPwK4jE9nR5i3qhtkyX5hQPYW9kHU6qMfHl1WArUQQ0+q3o23gxC8fb5h2wawue+KEQ/sPG7r2wFcBRcDqwJjvrmMhFMOy8fMjOHC8aQn9M55vev4Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730108187; c=relaxed/simple;
+	bh=hdH4jZqdXssSxJiAtvQ7Bj6Zb5KR8wipuq1Ldlwu+dM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nv3nsWvSHwTbXgmSUupVTJanQZXYNLUx2Rf8OThEEzCW53Cb8DmLIJ2dNdF2src1BXcb4Ad5S0DGrU0sJBq8VbogstiFuQPj2Y4qyAfMMHl54/1YbBKn48SJtgs1XS1K/oLDiZopeQH9Yc1iWt/KEpl17g0GbW+GBSljjq22Yqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=C7+Pn+dm; arc=fail smtp.client-ip=40.107.215.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYZ+tB88"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539eb97f26aso3952237e87.2;
-        Mon, 28 Oct 2024 02:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730107384; x=1730712184; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D8ryoCnQa3x+2wA7PkI8xn3q6VJAS1LIktjHe3r9L6c=;
-        b=TYZ+tB88q9m7ySewNc8PG3UTT0Ln7nX3Qnz5M/7x/hM1qgKj9cnzJtgP8oIfQ8AzyK
-         5A4IKolyaZe16olceLh/uYVayx7lRsk5CL0doEEQ4O4IaGeBmMh+BgMPxtY7zKyqvuq+
-         Baf/2U2XqtUlpvYTH3OCFCVLCW6tDwOZ+/veWN2t2CsBM9COLaA+DTAFLKLhLxJ9Y1tv
-         sOW+HtgRoFxlNmEJCCq8VVoIRNErx4KySUQS36K0nJGwiXSbz3h1EWYa2LidfLAhWGbN
-         Xaoe/msLlh/l+6pKcivy06PDc9Ok/pLu+L1X6vtF5xAX0+JU5w01jg/k6OCFqIKD75VC
-         HYIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730107384; x=1730712184;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D8ryoCnQa3x+2wA7PkI8xn3q6VJAS1LIktjHe3r9L6c=;
-        b=eBcNZRFaaSmeSvnlfCH49VCqo8lMZZ3mxJxmz5UcgAmTDbrITgcrjYa08KfzNGoww5
-         iGuATpwtKesclmEgYEtx4av3jTntXr8ZTuag2UKzl9qOKOiOgbNZ0KemJkkAb/mQwNeL
-         WKpxfWjgioF1/dCuDnY5fcoQVlKHmYtzkcnD80PFnB0bdEYaBvyz8sGImR/cxNhtKpWl
-         qMGqzK3alVqw22tlyJ29ULkoaX7NHr6iO8J+YtuGQOfihB/zK2zKiyvf0WO9loV7MeSa
-         1TJjrjfHHO3mENu9nfBHzA0jf3zuKqNy9UG/ISXTKsLzW+QELOC4aILnPbPEYYaQuZIF
-         2Tkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYvGlFOytb8+3oUUVlRLWJsNulieW4aL/LY5qU8rvLsMGCFGp+albNbPR+ZG3pvsVc6IlSfrdFuEK30QnOk/L0r+Y=@vger.kernel.org, AJvYcCVn9DdCDEUPBzClPdvqscYMo2LbdY2rCQBKXqb3sgB4Zy09oSwYOwdPSwH2vfXASZfGBnxB1Y3LogyS@vger.kernel.org, AJvYcCVwRT1r0ojdCUlkwYKet4qSZelDjs4UfcXZiqrAbgHlkndqhbeUN8kRVY07tjzwYkUw4u6OcgsD04jOBC+5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh3oa8knsM0KlY18Ufjq63FmYXd85sQ6ec2LYokr04LSjQuWMQ
-	d1HpaokuManFkDZH5XzCDkmcWLg/jy9fK65GUiXLxtJkpn1VOCX8
-X-Google-Smtp-Source: AGHT+IEDL6ZRgkHlAbKQp2w1HR+u3P0Wn+uHEwS9aCrRaA5rJjnDkoBj6cDsDek5X9EDU1vcSzg16Q==
-X-Received: by 2002:a05:6512:10d6:b0:539:f7de:df6a with SMTP id 2adb3069b0e04-53b34a3208dmr2945860e87.52.1730107384246;
-        Mon, 28 Oct 2024 02:23:04 -0700 (PDT)
-Received: from [192.168.1.105] ([178.136.36.129])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1af331sm1043785e87.152.2024.10.28.02.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 02:23:03 -0700 (PDT)
-From: Markuss Broks <markuss.broks@gmail.com>
-Date: Mon, 28 Oct 2024 11:22:37 +0200
-Subject: [PATCH v4 09/10] arm64: dts: exynos: Add Exynos9810 SoC support
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="C7+Pn+dm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tr8z/j5SiC3FQc9tgCx2/a1/epg+7NlKByTkfTBQag1a4IHcSRl4jsV0+/mmaIi9AKm+Dqz49flHMYrKuq4avF9L4ArZS+W/IV+72Og5aRwMguXaSy96WcBujuvmF+5u9yRE0kfQZe3Pjpwxhh0GjJWl419RVKRMEfTPbTUpv84VE/Q4ohke1s0RKDVNYXcGDAxh/vf0u964EOYUp2MkP7Au2SXwmixeu07Ow3semukcJj97yzDo7Rn2GVM21ox89hLlSZ4bTPILVz7oOzo/+YvPm0ZKfVWff/eUHYYRx9z2Eu2bvGVt0AUY1CobEDsKaYROkesYvJIZQFyIXTWY3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vj7dJKstOKG2jwJmYvlVySZaTqYcboJuoN6wJUTgSnA=;
+ b=if5JKY8jrEqj76ykYNZoxSvRE+EYcm6V/5L1J+sGyAYDv0M/zwpv8pLv57VBEXHjYZwDcdDg71MGybzM8syZR4niFwKdSOFeVm6Y4HgpGEnhJVBLTkAsUf2JvRkGq8mDDcA22WxSLVBeypdzxb+roJyBsq6GmSy7HI10bE4+IGFTumVztJTTkNMT6XlyRDz/frVgSpzW6v/FVWwfJebOsTFcbdhyl1TTXmxhS31rwHV7jx5aR+WGgCv7La9ZlPQzSzXWuQhDaRJIPPFqjt+7jy3OxHUIZAPoFgGFYICROgXTLyKPC//E0aUlwB+LZcKSrVlpYJTWj7MyNeoY3CBiIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vj7dJKstOKG2jwJmYvlVySZaTqYcboJuoN6wJUTgSnA=;
+ b=C7+Pn+dm5dzTo+j3ydgMJ0YThCGztnhod+kSgisQfVt6VfyaBMdTEJ7lqDLAPrzRuC47eQOi6G8pWdhtF9ze5fn0jJa7u8AH+7uKUYqHOq5fV/NRujVG/QiEw3XoibbAIE2EOdyKSK5hB+pci1pKJayz6J6Sp8VwpKR7/AJp486cHjw7RX/cOAJMuzQ98hPTLLkVAjW06OQ7asy6Q+G0yfDM1jQ3aQEBn0Ztzm3jdsbVNTN3F6mi99t3FdwiDMMec6RDcWFe3ZQBbj3QvAoiIYnBKeLmvwC926XCwqgrl9C3PuKemg0J4C/qBsDL5zhrckFMLrLNz5/obqS8gY3y6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PUZPR03MB6888.apcprd03.prod.outlook.com (2603:1096:301:100::7)
+ by TY0PR03MB6774.apcprd03.prod.outlook.com (2603:1096:400:217::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 09:36:20 +0000
+Received: from PUZPR03MB6888.apcprd03.prod.outlook.com
+ ([fe80::57d0:f9e6:1d9f:91f]) by PUZPR03MB6888.apcprd03.prod.outlook.com
+ ([fe80::57d0:f9e6:1d9f:91f%3]) with mapi id 15.20.8093.021; Mon, 28 Oct 2024
+ 09:36:20 +0000
+Message-ID: <d4ae04da-d841-49e8-be88-b0fe0c7b3de5@amlogic.com>
+Date: Mon, 28 Oct 2024 17:36:16 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add support for Amlogic A4
+ SoCs
+Content-Language: en-US
+To: neil.armstrong@linaro.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com>
+ <20241018-a4_pinctrl-v3-1-e76fd1cf01d7@amlogic.com>
+ <4a79f996-9d82-48b2-8a93-d7917413ed8c@kernel.org>
+ <1jttd9rein.fsf@starbuckisacylon.baylibre.com>
+ <4127b448-a914-4c69-b938-29512995326f@amlogic.com>
+ <1jmsj1rclh.fsf@starbuckisacylon.baylibre.com>
+ <d654d2b2-977b-44c0-8b01-b26f5eb0a3fe@kernel.org>
+ <5ad8f396-84a5-486d-b90d-98fbf8882d1b@linaro.org>
+ <e6cd13b5-2f7a-4ab1-899c-5867bc0ea64f@kernel.org>
+ <fdb4d0eb-a5e5-4061-b3cc-14958473baf3@linaro.org>
+ <c8a03fa6-9ac5-434f-ba13-78e47ad341b8@kernel.org>
+ <f6c4cee8-dd22-4b30-a3b2-aee48e2c3611@linaro.org>
+ <91bcc765-2e56-433d-a629-c5255fc8d256@kernel.org>
+ <24acd645-4094-48aa-82e3-42d30a340884@amlogic.com>
+ <78e6ca30-9fd6-4384-9583-440c485fb8ed@linaro.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <78e6ca30-9fd6-4384-9583-440c485fb8ed@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TY2PR0101CA0003.apcprd01.prod.exchangelabs.com
+ (2603:1096:404:92::15) To PUZPR03MB6888.apcprd03.prod.outlook.com
+ (2603:1096:301:100::7)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241028-exynos9810-v4-9-6191f9d0c0f1@gmail.com>
-References: <20241028-exynos9810-v4-0-6191f9d0c0f1@gmail.com>
-In-Reply-To: <20241028-exynos9810-v4-0-6191f9d0c0f1@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Maksym Holovach <nergzd@nergzd723.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730107370; l=18139;
- i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
- bh=aNgDMHp8chOHRipjYna59OZmYcyh6ZnmD2z7vDTAOHo=;
- b=8quh1HDEe6zsSsoIJx9P7yflgO8XtRhS8dchukWqUX3v1bRif0NHQc0cc19BeKyDmtR7N6gCj
- ZSgslgT3jIaDNAHuP1hz8lNyJkzVxBq+KtiNn1fXvAlc2RQGKkJoNSr
-X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
- pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR03MB6888:EE_|TY0PR03MB6774:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1848bfaa-0cb5-4c2b-b2bc-08dcf733fad6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eWV5V044NGNxRHJEUUFjQ2xnLzBydjRsSlRzTXp3UkdxQjhxZG5MU3ErRDBQ?=
+ =?utf-8?B?UkMwczNjN0Q1bFc3dWR3MkFQbzQvTWtIVmJudEZjelVYeDcyZmRnVG1vTlRI?=
+ =?utf-8?B?b0NjU2xaVmxic1hWQkJ0bU5GWmx3d2NtR2FsZ29pejl4NXVJTGZ6TFU1Lzlk?=
+ =?utf-8?B?MnMzUU5qMUIzdkk2bnc3MHY3dnpWOGhybHpMd0pwZWg2UURnV2tXMVg0Q2Js?=
+ =?utf-8?B?alVkT1FXNzh2dCs5YTNEOWtLekNONitOZXlrd2R1Y0JQTHAxSTcyNnVIUHRV?=
+ =?utf-8?B?RERCdXgvbCt4Nk1VQWhUL2RFWGp3TFUxQVhUSmxMSDdEcGVSczRKWXVTUGFn?=
+ =?utf-8?B?TDZuSHdtWkV0SHRPN0dtbDM5WHNCN2tWTG03THFLb09xYWpSQkFLRXdKWmVN?=
+ =?utf-8?B?TFpNUDdjVUJIVDBaOWIrVGhiRnlnVFpBbDljNE44eGtCdVZkWWVJWEJ6TGhT?=
+ =?utf-8?B?anAzWUQ4dXJ6S0JsdFFxbHk4amVrSzJaWGxNNjJESU1GTmRmRW5waml3c2la?=
+ =?utf-8?B?Q3hEcURWV1p2bk5UbDdSeUNDQXc5bjRaamtsR28yM2xJb1JrRHk2OXNLSG11?=
+ =?utf-8?B?eEVEbTlDYVRVaE5zQmhVbzNrTW04ZmJINXB3VS9wUUp6MnJBbitZenlhTEFP?=
+ =?utf-8?B?UnVJbUkyRnQ2ZmV6UHJiQWNLUG10N3lkaTZUa3RFMUx4TE5kWElrUDB4Snpo?=
+ =?utf-8?B?VDhteUhWaks5SWRZVFhic3pvdnFtbjgxbkJYd0V2L05LekFUd2I2bG5RL2h4?=
+ =?utf-8?B?cG1MR09wS3BVcDFzNVF4QmtMQzFqcUFZUXYxMGdlSGFKOFdlRUxRZVFza2Uw?=
+ =?utf-8?B?TGZMb2RtQU9oc2hUb2Npc25oYlBzK0xlVkRHVytyc3lobUZ2eGxuajl5Nzdz?=
+ =?utf-8?B?Q21uRkxBbW8xUGdsaGQzQnorQ0FMRmZoaUpFUXJOR3hwbzhlMVowL0J6dHJh?=
+ =?utf-8?B?YzJpRUNoTE4zaTl3VXpZK01sM0RsTDJXWnRaQ1JadWFSK1NzZ29jczVjRVRk?=
+ =?utf-8?B?Vlp6RUdXQnhPdkpDYUVKN1I4RFFPdHNyb3N6K3Y5TDRVTGROQWJvVGZROFpF?=
+ =?utf-8?B?bjlDL2Y4OEpMVzUrU0xRRzkySnorYmVscVdqZVVyaldROFRrU1BHdjJVREVK?=
+ =?utf-8?B?UDlEd1NGbG9vTDNqNElBMkV6bW50UDFhREo3MFRPYVFYSWlVOWVGZXhVZG82?=
+ =?utf-8?B?aVJjNHN5UE9maSsrVFAvY3pDdURISGRtMlhUVkpVU1RSVUZPcmwzaDVCNXJP?=
+ =?utf-8?B?aUZ0VEdMdVBibVBuWjRKZEZpUE9XZjNlRzZPMzBIV05GOXdxeDdaZjJSYjAz?=
+ =?utf-8?B?d2FwY01Ka2xTemVCSDB2eTkyQ3Nyc2RVbnVJOWZ2TWpyZVRRT2cxN09yMHU2?=
+ =?utf-8?B?dTN0VmJLUnRoclJCdHpLcm9sU1Z3cHJYSVdVSnFuMTRpZ0NXbVdKWVpmUzhh?=
+ =?utf-8?B?dk1Fb3Mzbi9JOStJYldlU1dvWnRiMytQVUFwYTBxUGhtZFBBSWQrRTlRbnVz?=
+ =?utf-8?B?a25XU3I3WnFvLytRcGx4eTdtMUFHUnRXSHdyNXFpck1kKythajB6L3k0MXBj?=
+ =?utf-8?B?c1hWZTFlc1BBb1VVU1FrWFNVUHAzN0FYZEQxODMxOS9GeVpWTElTeEJDWmhw?=
+ =?utf-8?B?LzJkdTA2RGRqU3BaN2NheXEvczFSQUJSZzRpQ2l1YUNRQU9jUWd1YzBvUDVO?=
+ =?utf-8?B?ays5cVAvTDVjNlhCVml0Y0JEdFpKNTAzM0ZnR051TTlvdTg0UW5jWEw3aFBh?=
+ =?utf-8?Q?aw5s+0afkShP4Cyvw3+9xPxVpn7Hkki/Ma72ZJz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB6888.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Mm16SGxGRlFLU21XRHV0ZE1LNnFHdStQckNkeGdCeWZxcjRqWHhmcEUxa2k1?=
+ =?utf-8?B?Z2xyU0Evci9zM0xnWW1sKzNEeVZDQ1g1eHUvQVIxeTdOSStGcGdxUjg0MDJv?=
+ =?utf-8?B?bVJOZjcwQy9EV0d0Mm1zNWl2SHlIOXJFdlZvNzE2N1pRNHUwd0RvQlRvY3Jw?=
+ =?utf-8?B?VkVlL0FkY3pWY3ZRc1B6S0x5a0FrZTBCalp1WEE0WFoyYTM1RWVkemt4UkxX?=
+ =?utf-8?B?ZUJRK29xeHhaQmdEK3JzV08xdmltMzAzVlVEVW5PVk5WMWxYciszVnEzemlH?=
+ =?utf-8?B?aXdRZm5Ec1Erdk9seDNwQ3FOTUJIRER0a2dyZFNYYnMxM1JmcGRXa0x2Qmlr?=
+ =?utf-8?B?MjAzdklrMXVlMmwzNGtES0pGR0cxaC80K1ZibGVZcU1lbFpodE1jOEhXdjQy?=
+ =?utf-8?B?RDY0cmRGdnFSeDRxSithbUU4WExMR0tSTXd1RFJWUkZpajBIaWI4Rk9sNUxs?=
+ =?utf-8?B?Tzd4ZHBDUGkyd1lqQi91Qm45aFdqVmNsU0I4ZDU2WlFSaHp3M2o3eGRzMVpM?=
+ =?utf-8?B?ejFmQnlrRStEeWY0ZmpRNGd3Mlowd3NzTHVjV3phRmdkVXY0VEM0M0duVHlE?=
+ =?utf-8?B?WUFVcUwrckpxUVAwRlZ2MWpSb0x0dGM2OVBsSVZWY1huZDNHSzE5aENLUzhv?=
+ =?utf-8?B?RGR0WnZiMnFDa205c05HakhjNzN3SW5zaHVMbFhMd0g2bVBKUWtsa1dnb1c5?=
+ =?utf-8?B?amQ5NzlwTzV6K0xTQS8vcmdDWDVvakFSR0luVVlzNThEZVFlNW55dW05bk5m?=
+ =?utf-8?B?L2pVaUhqclZEVm02VFVSWWVPTXpnb3pkTlJkdFY0czFoSHFacWRpZWZnbTNx?=
+ =?utf-8?B?S1JRL0I3K2k5czVUd1ZrMUwvTzhlZGYwanV2dE1YSzZHbStYRnBPcGEyV1Z2?=
+ =?utf-8?B?QjF2Vlo1cGZJb3NJU3BkMHQ4aUhnUFNUaUhWQzBudnF2MHJGZFlwM0YrMnVv?=
+ =?utf-8?B?R0tLQ3RvSHc3S1lIVFIxRGNzMS8zSllRODhodjlYUStkaDF3ZDhGRDQ3S1Bw?=
+ =?utf-8?B?V0hDVG84anRjelN5K1g2NVdibDBEMWxXbmMzcHBTVm1ZQm42dG5pZHZVZXRi?=
+ =?utf-8?B?Vy9tRmNMakZWbnB0QWo1NGpqeG9zM0NzeUhGNm1Qa1BjeXpjcHBsUVJRVTFo?=
+ =?utf-8?B?UUkvZTFLL2V1QnVvY05SUlhnWUdsU3M0RjR4ZG5wcGU2L1VEYVJiek9UK3Jo?=
+ =?utf-8?B?WFpybHdpZTJoSkJNaFVFdjgrcEQxQ3pySTlWNmhncXZDVHI2dWhVd2Ewa2lB?=
+ =?utf-8?B?YnBkL2VsTG1wTUxsdU5FV3UyZk05bUtreHl2d0JnWURKdFhGUjdVblBCQUlU?=
+ =?utf-8?B?NVNFdjBuNVFieW02RUROUXo5NHNZbjIzcCtlYjZCWWNOTVhxelFiZ05ZaVZR?=
+ =?utf-8?B?RzduaWdPYTVkeDROQ0tkZ0dKVnNhTWJJTVNpeURHcDR2MjRVSVdFa0JaaEdB?=
+ =?utf-8?B?TmhJZE5BQkNmYm1qZ0t3VmZPYnRxZDFNQzN4dE9QTC9haW5ybk1qcElPRkVJ?=
+ =?utf-8?B?Wnl3QVJZT3dESjc1Mzh1R25xVnNJU1Z0YjVlWFhuRXh6NmRLU2NiQW5JQmhB?=
+ =?utf-8?B?TmZFL3E5cnJtVlBLczZURmEzWGtWM1kzcFM5MEpuMXFhbEU0U3lpWTF5cVNT?=
+ =?utf-8?B?SWxnRVY0dXJjRUVTMkd3aFlYTDR1M1FnaHFqQm1EbkhSRk1KSDlSbnhQeU1u?=
+ =?utf-8?B?dVdzRVMrWmVZeFR1eDFEa3NWZzV1M1dJTjBKMG1TZ2txYkZTSG1Nam5LeEF3?=
+ =?utf-8?B?THlDQUEwOVluQzRKU2JYVG55c05CQmJXQmdIeE54YzRLUGVrOUI3UytlbHhB?=
+ =?utf-8?B?Yys3akZFKzMrbFdTZUw3ZnRMWjBSM0hiWnhFUWRZdzM0OGZSR3lXaFNpMFdQ?=
+ =?utf-8?B?VGxON1pxQWx2cjVvUnlDWWp3WkNxclNsTXoyT2thWFVTaXNLdGt4SkhSb3pS?=
+ =?utf-8?B?RU0ybHdpM0tLTVJmNlFENmlHeHFPZ29CSkJXNVZjMUthaWx4RU00bDgvWDlh?=
+ =?utf-8?B?NUZrTnlvZDdDNFFVaVZNdGErMGJWWHVicUF5YzB3bGgvRWJkK3NyQ1NxT2ty?=
+ =?utf-8?B?R2FTZWRpRERXN0tCVDNBcHc1VlAxVi90THJvRDRFOEpoZFhLQnQyaGdEeEZP?=
+ =?utf-8?B?V0xOTXdpMHhSa3REVmt2dVNld1V0ckwzT21WVlFWQk9OU3Q4ZnRIYlQ2aFlS?=
+ =?utf-8?B?TFE9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1848bfaa-0cb5-4c2b-b2bc-08dcf733fad6
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB6888.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 09:36:20.4889
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KVWKt3Mf4tLm1SQnAPmxeaUUSeGWoLlgUPYpUgNn6LVxN2fZmOP+pcVqBvj3Z/Xt6whiixFxQUMqE/FfN3DBkuJHRFG0d8092dFKXYlWTWk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB6774
 
-Exynos 9810 is an ARMv8 mobile SoC found in various Samsung devices,
-such as Samsung Galaxy S9 (starlte), S9 Plus (star2lte),
-Note 9 (crownlte) and perhaps others.
+Hi Neil,
+    Thanks for your advice.
 
-Add minimal support for this SoC, including basic stuff like:
-- PSCI for bringing up secondary cores
-- ARMv8 generic timer
-- GPIO and pinctrl.
+On 2024/10/28 17:09, neil.armstrong@linaro.org wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On 28/10/2024 10:07, Xianwei Zhao wrote:
+>> Hi Neil,
+>>      Based on the current discussion results, GPIO index macro 
+>> definition does not belong to bindings. If so, the pinctrl driver 
+>> keeps the existing architecture, and use numbers instead in dts file.  
+>> Or the pinctrl driver use bank mode acess, this may not be compatible 
+>> with existing frameworks. This is done by adding of_xlate hook 
+>> functions in pinctrl_chip struct.
+>>
+>> What is your advice that I can implement in the next version. Thanks!
+> 
+> Keep the driver as-is, but move the header file into 
+> arch/arm64/boot/dts/amlogic like it was done for the last reset 
+> controller support:
+> arch/arm64/boot/dts/amlogic/amlogic-t7-reset.h
+>
 
-The firmware coming with the devices based on this SoC is buggy
-and doesn't configure CNTFRQ_EL0, as required by spec, so it's
-needed to hardcode the frequency in the timer node.
+I don't see examples C file applies dts header file.
+C file need to be defined once, and this needs to be defined again in 
+dts header file.
 
-Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
-Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
-Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi | 503 +++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos9810.dtsi         | 273 +++++++++++
- 2 files changed, 776 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..88091bf09e4e91b05801cafe956283984d564449
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi
-@@ -0,0 +1,503 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung's Exynos 9810 SoC pin-mux and pin-config device tree source
-+ *
-+ * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
-+ * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
-+ */
-+
-+#include "exynos-pinctrl.h"
-+
-+&pinctrl_alive {
-+	etc1: etc1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa0: gpa0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa1: gpa1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa2: gpa2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa3: gpa3-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa4: gpa4-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpq0: gpq0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_aud {
-+	gpb0: gpb0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb1: gpb1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb2: gpb2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_chub {
-+	gph0: gph0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gph1: gph1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_cmgp {
-+	gpm0: gpm0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm1: gpm1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm2: gpm2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm3: gpm3-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm4: gpm4-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm5: gpm5-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm6: gpm6-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm7: gpm7-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm10: gpm10-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm11: gpm11-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm12: gpm12-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm13: gpm13-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm14: gpm14-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm15: gpm15-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm16: gpm16-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm17: gpm17-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm40: gpm40-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm41: gpm41-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm42: gpm42-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	gpm43: gpm43-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+};
-+
-+&pinctrl_fsys0 {
-+	gpf0: gpf0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_fsys1 {
-+	gpf1: gpf1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf2: gpf2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_peric0 {
-+	gpg0: gpg0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg1: gpg1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg2: gpg2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp0: gpp0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp1: gpp1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp2: gpp2-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp3: gpp3-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_peric1 {
-+	gpc0: gpc0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpc1: gpc1-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpd0: gpd0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg3: gpg3-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp4: gpp4-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp5: gpp5-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpp6: gpp6-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_vts {
-+	gpt0: gpt0-gpio-bank {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos9810.dtsi b/arch/arm64/boot/dts/exynos/exynos9810.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..70b67b2574d5b66eb5fa421a87dd6f4e49f8f54e
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos9810.dtsi
-@@ -0,0 +1,273 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Exynos 9810 SoC device tree source
-+ *
-+ * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
-+ * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "samsung,exynos9810";
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+
-+	interrupt-parent = <&gic>;
-+
-+	aliases {
-+		pinctrl0 = &pinctrl_alive;
-+		pinctrl1 = &pinctrl_aud;
-+		pinctrl2 = &pinctrl_chub;
-+		pinctrl3 = &pinctrl_cmgp;
-+		pinctrl4 = &pinctrl_fsys0;
-+		pinctrl5 = &pinctrl_fsys1;
-+		pinctrl6 = &pinctrl_peric0;
-+		pinctrl7 = &pinctrl_peric1;
-+		pinctrl8 = &pinctrl_vts;
-+	};
-+
-+	arm-a55-pmu {
-+		compatible = "arm,cortex-a55-pmu";
-+		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>,
-+				     <&cpu1>,
-+				     <&cpu2>,
-+				     <&cpu3>;
-+	};
-+
-+	mongoose-m3-pmu {
-+		compatible = "samsung,mongoose-pmu";
-+		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu4>,
-+				     <&cpu5>,
-+				     <&cpu6>,
-+				     <&cpu7>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+				core2 {
-+					cpu = <&cpu2>;
-+				};
-+				core3 {
-+					cpu = <&cpu3>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&cpu4>;
-+				};
-+				core1 {
-+					cpu = <&cpu5>;
-+				};
-+				core2 {
-+					cpu = <&cpu6>;
-+				};
-+				core3 {
-+					cpu = <&cpu7>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x3>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "samsung,mongoose-m3";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "samsung,mongoose-m3";
-+			reg = <0x101>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "samsung,mongoose-m3";
-+			reg = <0x102>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "samsung,mongoose-m3";
-+			reg = <0x103>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	oscclk: osc-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-output-names = "oscclk";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci";
-+		method = "smc";
-+		cpu_off = <0x84000002>;
-+		cpu_on = <0xc4000003>;
-+		cpu_suspend = <0xc4000001>;
-+	};
-+
-+	soc: soc@0 {
-+		compatible = "simple-bus";
-+		ranges = <0x0 0x0 0x0 0x20000000>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		chipid@10000000 {
-+			compatible = "samsung,exynos9810-chipid",
-+				     "samsung,exynos850-chipid";
-+			reg = <0x10000000 0x100>;
-+		};
-+
-+		gic: interrupt-controller@10101000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x10101000 0x1000>,
-+			      <0x10102000 0x1000>,
-+			      <0x10104000 0x2000>,
-+			      <0x10106000 0x2000>;
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) |
-+						 IRQ_TYPE_LEVEL_HIGH)>;
-+			#address-cells = <0>;
-+			#size-cells = <1>;
-+		};
-+
-+		pinctrl_peric0: pinctrl@10430000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x10430000 0x1000>;
-+			interrupts = <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_peric1: pinctrl@10830000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x10830000 0x1000>;
-+			interrupts = <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_fsys0: pinctrl@11050000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x11050000 0x1000>;
-+			interrupts = <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_fsys1: pinctrl@11430000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x11430000 0x1000>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_vts: pinctrl@13880000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x13880000 0x1000>;
-+		};
-+
-+		pinctrl_chub: pinctrl@13a80000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x13a80000 0x1000>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_alive: pinctrl@14050000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x14050000 0x1000>;
-+
-+			wakeup-interrupt-controller {
-+				compatible = "samsung,exynos9810-wakeup-eint",
-+					     "samsung,exynos850-wakeup-eint",
-+					     "samsung,exynos7-wakeup-eint";
-+			};
-+		};
-+
-+		pmu_system_controller: system-controller@14060000 {
-+			compatible = "samsung,exynos9810-pmu",
-+				     "samsung,exynos7-pmu", "syscon";
-+			reg = <0x14060000 0x10000>;
-+		};
-+
-+		pinctrl_cmgp: pinctrl@14220000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x14220000 0x1000>;
-+
-+			wakeup-interrupt-controller {
-+				compatible = "samsung,exynos9810-wakeup-eint",
-+					     "samsung,exynos850-wakeup-eint",
-+					     "samsung,exynos7-wakeup-eint";
-+			};
-+		};
-+
-+		pinctrl_aud: pinctrl@17c60000 {
-+			compatible = "samsung,exynos9810-pinctrl";
-+			reg = <0x17c60000 0x1000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+		/*
-+		 * Non-updatable, broken stock Samsung bootloader does not
-+		 * configure CNTFRQ_EL0
-+		 */
-+		clock-frequency = <26000000>;
-+	};
-+};
-+
-+#include "exynos9810-pinctrl.dtsi"
-+#include "arm/samsung/exynos-syscon-restart.dtsi"
-
--- 
-2.46.2
-
+> Neil
+> 
+>>
+>> On 2024/10/21 23:27, Krzysztof Kozlowski wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On 21/10/2024 12:38, neil.armstrong@linaro.org wrote:
+>>>>>> ====><=================
+>>>>>> +/* Standard port */
+>>>>>> +#define GPIOB_START        0
+>>>>>> +#define GPIOB_NUM  14
+>>>>>> +
+>>>>>> +#define GPIOD_START        (GPIOB_START + GPIOB_NUM)
+>>>>>> +#define GPIOD_NUM  16
+>>>>>> +
+>>>>>> +#define GPIOE_START        (GPIOD_START + GPIOD_NUM)
+>>>>>> +#define GPIOE_NUM  2
+>>>>>> +
+>>>>>> +#define GPIOT_START        (GPIOE_START + GPIOE_NUM)
+>>>>>> +#define GPIOT_NUM  23
+>>>>>> +
+>>>>>> +#define GPIOX_START        (GPIOT_START + GPIOT_NUM)
+>>>>>> +#define GPIOX_NUM  18
+>>>>>> +
+>>>>>> +#define PERIPHS_PIN_NUM    (GPIOX_START + GPIOX_NUM)
+>>>>>> +
+>>>>>> +/* Aobus port */
+>>>>>> +#define GPIOAO_START       0
+>>>>>> +#define GPIOAO_NUM 7
+>>>>>> +
+>>>>>> +/* It's a special definition, put at the end, just 1 num */
+>>>>>> +#define    GPIO_TEST_N     (GPIOAO_START +  GPIOAO_NUM)
+>>>>>> +#define    AOBUS_PIN_NUM   (GPIO_TEST_N + 1)
+>>>>>> +
+>>>>>> +#define AMLOGIC_GPIO(port, offset) (port##_START + (offset))
+>>>>>> ====><=================
+>>>>>>
+>>>>>> is exactly what rob asked for, and you nacked it.
+>>>>>
+>>>>> No, this is not what was asked, at least according to my 
+>>>>> understanding.
+>>>>> Number of GPIOs is not an ABI. Neither is their relationship, where 
+>>>>> one
+>>>>> starts and other ends.
+>>>>
+>>>> I confirm this need some work, but it moved the per-pin define to start
+>>>> and ranges, so what did rob expect ?
+>>>>
+>>>>>
+>>>>> Maybe I missed something, but I could not find any users of these 
+>>>>> in the
+>>>>> DTS. Look:
+>>>>>
+>>>>> https://lore.kernel.org/all/20241014-a4_pinctrl-v2-3-3e74a65c285e@amlogic.com/
+>>>>
+>>>> So you want consumers before the bindings ? strange argument
+>>>>
+>>>>>
+>>>>> Where is any of above defines?
+>>>>>
+>>>>> Maybe they will be visible in the consumer code, but I did not imagine
+>>>>> such use. You expect:
+>>>>> reset-gpios = <&ctrl GPIOAO_START 1>???
+>>>>
+>>>> No I expect:
+>>>> reset-gpios = <&ctrl AMLOGIC_GPIO(B, 0) 1>;
+>>>>
+>>>> but the macro should go along the dts like we did for the reset 
+>>>> defines,
+>>>> so perhaps this is the solution ?
+>>>
+>>> OK, so I said it was not a binding:
+>>> https://lore.kernel.org/all/u4afxqc3ludsic4n3hs3r3drg3ftmsbcwfjltic2mb66foo47x@xe57gltl77hq/
+>>>
+>>> and you here confirm, if I understood you correctly, that it goes with
+>>> the DTS like reset defines (I assume non-ID like defines?), so also not
+>>> a binding?
+>>>
+>>> What are we disagreeing with?
+>>>
+>>> Just to recall, Jerome asked whether you have to now use arbitrary
+>>> numbers in DTS and my answer was: not. It's still the same answer.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+> 
