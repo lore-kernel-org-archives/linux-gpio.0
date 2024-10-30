@@ -1,95 +1,141 @@
-Received: from 1.mo560.mail-out.ovh.net (1.mo560.mail-out.ovh.net [46.105.63.121])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269001CEE89
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 21:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.63.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4551CF5E0;
+	Wed, 30 Oct 2024 22:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730324363; cv=none; b=qJg5/amrBMcplUlb4nqbs6/vK3aKcUVQQvGDK/ln1uwFZth5KEQBvkLg5G72SAxuDlHE2SCxL+zKeOLG4ceyWRCb1gxJMd5CqqFXvs1bAwk1b5uU6JRTov9x4/+114+CgMUd1WOS2tPn5tU+VMo7CJk+6hZeRHubc64/Cgr7u8o=
+	t=1730329155; cv=none; b=IpRaMUeeJ4UYyX61Az0mQzYAZyumjz8Wt/N4lcim4zynwJiGFOT3oI48YsQ8TZ1wQ9S5+ymM2bS9GAXX7ifdqKmgW7Y8yPfdCgigklsxy32dzRej4rqiDoD0USPNPG2htY3Yh33F0d6NrNh0ApUeZNErNMw3qLmfF1v9QIHcU5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730324363; c=relaxed/simple;
-	bh=MLkgZWuUa5ldTl2dW4/+4yInyl6iU2xE+/B8Rrxc9jU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=oGkeM/xJ0OxBWJBZ9CKD3TnL2OsOMZEIEh8j/etpj1zMLRSFDLgbWwwwSiacN0YWTKjmJbHeeMUIoXpamlGYPtDg6K/iy50H6WanhIis7g2oy7r0UVSxkZ0SKBn5t+7ztFCidBAFEBCXpoe4WV62GiYRkWwXize9pllc6J7XyHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chaudron-nautique.fr; spf=pass smtp.mailfrom=chaudron-nautique.fr; dkim=pass (2048-bit key) header.d=chaudron-nautique.fr header.i=@chaudron-nautique.fr header.b=SU4kj9w7; arc=none smtp.client-ip=46.105.63.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chaudron-nautique.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chaudron-nautique.fr
+	s=arc-20240116; t=1730329155; c=relaxed/simple;
+	bh=1MzvB5yUlO0rY30H+j8fLPLIINPuVbLXh4qjNidexYs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TL+C9h/zLYF/tbvD6B7axLhIo0f56HrBW363PK1uEEbL5ZWVCkxy12d+bLR6jSOsShJN7rZ/H18E6qRfU00mq2PxB+bwtJ/Dt4r5wyih5nqNiOh0l/wuT2mMdtfabdNKiicgOHN1DQMZifvrukD/u7QW408HGNrkTN2HDROk86k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GCA9x10E; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chaudron-nautique.fr header.i=@chaudron-nautique.fr header.b="SU4kj9w7"
-Received: from director5.ghost.mail-out.ovh.net (unknown [10.108.17.234])
-	by mo560.mail-out.ovh.net (Postfix) with ESMTP id 4Xdzyv5dr6z1WSr
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 20:59:51 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-4n9gt (unknown [10.110.118.160])
-	by director5.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 9BD261FE08
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 20:59:51 +0000 (UTC)
-Received: from chaudron-nautique.fr ([37.59.142.102])
-	by ghost-submission-5b5ff79f4f-4n9gt with ESMTPSA
-	id J2GXHkeeImfNMAAAgWZk7A
-	(envelope-from <vanvan@chaudron-nautique.fr>)
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 20:59:51 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-102R0046677c051-aed4-4da3-85c8-fe84506e1e68,
-                    770F74D5E79245AB0A6C75712EC1B03E302C65DA) smtp.auth=vanvan@chaudron-nautique.fr
-X-OVh-ClientIp:82.64.108.188
-Message-ID: <35d12c34-848d-4093-a0f2-30fb57b1299b@chaudron-nautique.fr>
-Date: Wed, 30 Oct 2024 21:59:05 +0100
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GCA9x10E"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UMx1dt107945;
+	Wed, 30 Oct 2024 17:59:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730329141;
+	bh=4ytvWiOQvLWl7zLeqbP754meWrgcjcPi8srBZ8kvprk=;
+	h=From:To:CC:Subject:Date;
+	b=GCA9x10Ea5z3bDwdxpF9sgrSAs063qNYL/SG4WodEtGHrwieCQOhBxaZP1z3/o5/T
+	 KLT3pMUXCA5iGJr+R6jTzU6wSXZrpuQnB4oPMus6yv9k/4AY2yr0FKDVCxSEAQqryB
+	 J7VBfxM/hMOGGIt8tifJYz9vWNDo3jmsRZPAYiQI=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UMx0t9084597;
+	Wed, 30 Oct 2024 17:59:00 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
+ Oct 2024 17:59:00 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 30 Oct 2024 17:59:00 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UMx0j2053988;
+	Wed, 30 Oct 2024 17:59:00 -0500
+From: Judith Mendez <jm@ti.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bin Liu <b-liu@ti.com>, Judith Mendez
+	<jm@ti.com>
+Subject: [PATCH v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
+Date: Wed, 30 Oct 2024 17:59:00 -0500
+Message-ID: <20241030225900.59844-1-jm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Le Chaudron Nautique <vanvan@chaudron-nautique.fr>
-Subject: libgpiod 2.2 installation on RaspberryPi 4
-Content-Language: en-US
-To: linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11405084584021117865
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgudegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhepkfffgggfhffuvfgtgfesthekredttddvjeenucfhrhhomhepnfgvucevhhgruhgurhhonhcupfgruhhtihhquhgvuceovhgrnhhvrghnsegthhgruhgurhhonhdqnhgruhhtihhquhgvrdhfrheqnecuggftrfgrthhtvghrnhepgfegfeduveelieevieegteegiefhheevffeuvddtfeeitedtuedtleehleetvefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpkedvrdeigedruddtkedrudekkedpfeejrdehledrudegvddruddtvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepvhgrnhhvrghnsegthhgruhgurhhonhdqnhgruhhtihhquhgvrdhfrhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheeitddpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=JGxH+4+kEwTOLTZv54AZw46zh3vGNT6tc2U6rBLkE8c=;
- c=relaxed/relaxed; d=chaudron-nautique.fr; h=From;
- s=ovhmo4169961-selector1; t=1730321991; v=1;
- b=SU4kj9w7r7zyOCp2i4vornKHTSV+a+BpKENm2lYyJQOZANx15XmCKVCiffo11u8PEka2uo2/
- IV1rSDuchbtRBAwOCVXwV11KUAxsdDXm8okmyt3DtTPH1nULfRlffUuTG9pwy1pl6BSqo6JH7/L
- nNLPY1DXj7dtZXLtxdyY6e6DWky9ni6lAHK1DckEfMvu8xozYoQ7YDFPnK2Hrf4VrUOmBF06v6x
- sNSH7G0rzeeTAsUFi/vuim0UCDB3Gm2l4Sjy0DOfel0u+EoIkUdrKOYgKMC7nv6SposZf4VCIy1
- woV147p7qvb80eH9sTkUM+/qQFUe1YzjsA0Yi89BeYT/Q==
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+Add omap_gpio_disable_irq and omap_gpio_enable_irq
+calls in gpio-omap.
 
-I have some trouble installing the release 2.2 of libgpiod (or rather in 
-linking it).
+Currently, kernel cannot disable gpio interrupts in
+case of a irq storm, so add omap_gpio_disable/enable_irq
+so that interrupts can be disabled/enabled.
 
-I want to use it on a RaspberryPi 4 (kernel 6.6.56-RT and 6.12-RT) which 
-are not provided by Raspberry but taken from https://git.kernel.org, 
-thus the problem might come from there.
+Signed-off-by: Bin Liu <b-liu@ti.com>
+[Judith: Add commit message]
+Signed-off-by: Judith Mendez <jm@ti.com>
+---
+Changes since v1 RESEND:
+- split patch from series [0]
+- Add disable/enable calls without wrapper functions
+[0] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
 
-I have taken the 2.2 tarball on 
-https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+Tested on am335x BeagleBone Black
+---
+ drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-when I compile my file it seems ok (just trying with one of the examples 
-from git : chip-info.c), but when I run the program obtained I have this 
-error :
-
-
-./prog: error while loading shared libraries: libgpiod.so.3: cannot open 
-shared object file: No such file or directory
-
-
-The path for ./autogen was /usr/local
-
-gpiod.h  is in /usr/local/include
-
-libgpiod.so.3  is in /usr/local/lib
-
-My programs are in ~/prog/userspace and the makefile uses -lgpiod.
-
-Am I missing and option or a path to be declared somewhere ?
-
-Thanks,
-
-Mathieu
-
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 76d5d87e9681e..137aabada26f9 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -711,6 +711,28 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
++static void omap_gpio_disable_irq(struct irq_data *d)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int offset = d->hwirq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	omap_set_gpio_irqenable(bank, offset, 0);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
++static void omap_gpio_enable_irq(struct irq_data *d)
++{
++	struct gpio_bank *bank = omap_irq_data_get_bank(d);
++	unsigned int offset = d->hwirq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	omap_set_gpio_irqenable(bank, offset, 1);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
+ static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -723,6 +745,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_set_wake = omap_gpio_wake_enable,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+@@ -737,6 +761,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
+ 	.irq_shutdown = omap_gpio_irq_shutdown,
+ 	.irq_mask = omap_gpio_mask_irq,
+ 	.irq_unmask = omap_gpio_unmask_irq,
++	.irq_disable = omap_gpio_disable_irq,
++	.irq_enable = omap_gpio_enable_irq,
+ 	.irq_set_type = omap_gpio_irq_type,
+ 	.irq_bus_lock = omap_gpio_irq_bus_lock,
+ 	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
 -- 
+2.47.0
+
