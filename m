@@ -1,104 +1,99 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF64213137;
-	Wed, 30 Oct 2024 17:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEF21CC88D
+	for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 19:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310102; cv=none; b=RcaOX9c4gBIudnTd16UKag475JmltvAqAKyxoM9g7beVThSi9OYiILJDwHKAV9zHgMEKoHHZEsYuNRewl3L/u5pCvZksWiLdXp0QjUnD2NFGQVv7mHMrpeuwjQCqJK1B20WjdKpjkgdOvy4HW38Ac+s2sbAIW71Z/+0yiJ/cAec=
+	t=1730316742; cv=none; b=mmk0dd4umg71QaKdixKrniU1XPuzNGsvqiJJmpcH/T4/tZFBVgRKwsqCfCDBURS9/ndIlG+uep0xisqva4E+8EVsd+0Gxkaf5AAOmk80/NGGl7FxPPvZaymWwO1EGpYvN37xGNgVF3J6f5lb01eU3YqMLs/1QSQVqI5uiA5SQjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310102; c=relaxed/simple;
-	bh=Sk7QeQJBqRm7lp0O8mrPrd3CqBxyDXwSDhA0nmNfHt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nwzrESoSv2/mvqbHizFpxwtUpYR90i2UMPHDihxwRi05+22g3CW8CNd0iya29Ak5MznRtU1cuIPxLey+O2lRiYBXq/yrSLyKLsiK9hdkJCrP+4CtCPyyI2LhaQc2qRFvRFwX1AeIWItxcN/Ps9VIsCm4DF5dEeYpFww/FN7c1P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iwi08Bnl; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730316742; c=relaxed/simple;
+	bh=usVZ4YEunIbHVvBSq748OooOQsnvI6vxSw64f7E497c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aiPfmNIRR1VdfYnjYoDj4ukYoAVhXWVhIMT2y5r4Jz8kRCQmpLdeCimGDvkmIw79ZBMgnuKYclAey43ifKSJpiqFUXKIPBmgGckGZVnus78tya4gVp0e5yBMqk6pg+ABqFYp9QQtyfrFHV0cNXZ3Eq09XI5/iSbTc9BfNHqOF2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vk5m7Sub; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iwi08Bnl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730310101; x=1761846101;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Sk7QeQJBqRm7lp0O8mrPrd3CqBxyDXwSDhA0nmNfHt4=;
-  b=Iwi08BnlnifE/OqVG0v9Ma3m6nvoYTqDdYinZcXtI3Z4wp5M/oOQUmPd
-   VM3r0ULqHA/B1xUg+S/kt+caj4f1AmzhvpWEJvKYKKg2y1jEbG0iTv9oI
-   WW+t/B9SdaknKRy8LJVdqF3ovucdzEkmYlyufTUWOSH9T8Q8Fjwgy2ZO9
-   fUDJKZMi86A87iqi66uRYHORLx5PqqiJcylw85rWJzkEJGQ2SZP3rj598
-   6k8z3YQTBnRIW8aISIfnbNS83j7zlQSWMaA3BWlbdlrBjiz5ljXAGv/N6
-   U9fq5uMaKBqwy4S1+5VdO7t3E1/jxg2VwKt1gxGkN6pmPzkP0KVN+oBKB
-   Q==;
-X-CSE-ConnectionGUID: e0moA1U4SkmIZe+UbYZulg==
-X-CSE-MsgGUID: 5JxBkUHKTwq5Kd7MJMIusw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29446067"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="29446067"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:41:37 -0700
-X-CSE-ConnectionGUID: L9ei8/SkQuSqPJxkD0u7iw==
-X-CSE-MsgGUID: OsTdu+HRS42Jyf0JJdA/aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="119846379"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 30 Oct 2024 10:41:35 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3EBBA93; Wed, 30 Oct 2024 19:41:33 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mary Strodl <mstrodl@csh.rit.edu>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 1/2] gpio: mpsse: Check for error code from devm_mutex_init() call
-Date: Wed, 30 Oct 2024 19:36:51 +0200
-Message-ID: <20241030174132.2113286-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
-References: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vk5m7Sub"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso2197541fa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Oct 2024 12:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730316738; x=1730921538; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usVZ4YEunIbHVvBSq748OooOQsnvI6vxSw64f7E497c=;
+        b=vk5m7SubHmGywyjEiuLTmzq4wLffQhwdVTLYb2YspBr6SNlhTQXI++sGEXTPr1kFoi
+         cmLW1APnsf+ZJYhKAp3gHzhK+g+bA6/0+a3ToQKCn378QZG3u9ZQ5q16w89F70ZHjmwh
+         H1wgbiN2Shl7KQO9pevvG1hc8l1ixJgte7ovHwXjpw7ppOAYEpcUO8qoDnYGdLFVFGNe
+         lMlVsMBbUUl/ptasJUyEPZI1Gbg0DX3ls9yVhzA6Mu8yAIraEGk+eilQ7Q+/QqupykBH
+         rvHWiet+EoQ9r9aA0wzPdSFK1RmW0AyAzK7zfJYQIO1odMRU8gnzUyCsBY5NVox4UqXT
+         D1+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730316738; x=1730921538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usVZ4YEunIbHVvBSq748OooOQsnvI6vxSw64f7E497c=;
+        b=AVkxjeKoKjW4ANydopXErjxffKYI6QkexEJnngKkWjfb6smdDQ0YNsbZwwq7ExXXhb
+         n6eM9FAzJ12ArKmhCirxAmQYZbCiQyO9co6OPSByKH98kB/I0BIGDnX0+qrXPbEWPQgf
+         A5RM+gc6rijrqKq4FbIOmnTmuylwNWVQXpJ5JAMw3UlDe0TRELhBPUsHO8GuDJUDS5I2
+         cAUWdcI3ei3XyDuVqBCFeCyncxlpy+7C7Eo6wJsjG2C0xQcaherMa/L9cYzNI/TOXgpP
+         e681XOrBpSAA4ikOI+lfnJhO24OLLYQ1fOBvTIxDkSbBxVvc4vBF4NAuR5iuIptA6F/m
+         OEmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/hrNtJn0IiczBuKewS5ow4cD8gu3kNexSmun/HAqNxLNSj8k+PIyGNxTLkMGGijsRrdWdjdb2T+Sb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq/wCm1MpqWev7T3nNZfsv1fg6b0ctckL4dUoEL6CTHZibO6FK
+	rs3zNa8XdgRYQWLgsggAyRMSaM4r4LjbSt3oiCMkZdKF9JRPNWBTKWhqFMSrsF0uppO6kfWHNdg
+	sdDvya36yXsOLwQMxSnqUpQ5/oOIHKe6q+UbLWQ==
+X-Google-Smtp-Source: AGHT+IFG7ijwW0f+Mp81RtWCW2V2VJcGxvm0/VX42o/gwTzTjjOH3/XQ/oqOur+E0bOLJYsbtRDWQz/jjZOssJBW5CI=
+X-Received: by 2002:a05:651c:896:b0:2fa:ce87:b7da with SMTP id
+ 38308e7fff4ca-2fcdc9470b8mr26994961fa.18.1730316737580; Wed, 30 Oct 2024
+ 12:32:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-3-tmyu0@nuvoton.com>
+ <CAMRc=Mc+SZN=EytxY=qA-qBEAY_F17GP-7FRE9oLojLbdUoPaQ@mail.gmail.com>
+ <CAOoeyxW4=+5-QMcd_wgncFC9jgx_1Zf1Tq8RTnBvVqZ1JcUBQg@mail.gmail.com>
+ <CAMRc=MexqwSCDrsBS0mK0fo_MCwngAH9XVgjRuDQjw0TVUBmPw@mail.gmail.com> <CAOoeyxXRrDuKJRMb3O2h3BF1vC=pwNN3DKfnEN9LnA+jiBCTQg@mail.gmail.com>
+In-Reply-To: <CAOoeyxXRrDuKJRMb3O2h3BF1vC=pwNN3DKfnEN9LnA+jiBCTQg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 30 Oct 2024 20:32:05 +0100
+Message-ID: <CAMRc=Me+R_i1WxFGeVe-MRREGn1YJvUon73A4FHDOPgs8wVaCg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] gpio: Add Nuvoton NCT6694 GPIO support
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, 
+	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Even if it's not critical, the avoidance of checking the error code
-from devm_mutex_init() call today diminishes the point of using devm
-variant of it. Tomorrow it may even leak something. Add the missed
-check.
+On Mon, Oct 28, 2024 at 9:57=E2=80=AFAM Ming Yu <a0282524688@gmail.com> wro=
+te:
+>
+> >
+> > No for line names - as this is a dynamic USB expander, I'd suggest to
+> > have them in the driver and assign to gc->names.
+>
+> Could I create an array to map each of the GPIO pins?
+>
 
-Fixes: c46a74ff05c0 ("gpio: add support for FTDI's MPSSE as GPIO")
-Reviewed-by: Mary Strodl <mstrodl@csh.rit.edu>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-mpsse.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Please trim the quoted email to only the relevant parts.
 
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index 3ab6651d2226..9ef24449126a 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -430,8 +430,13 @@ static int gpio_mpsse_probe(struct usb_interface *interface,
- 	if (err)
- 		return err;
- 
--	devm_mutex_init(dev, &priv->io_mutex);
--	devm_mutex_init(dev, &priv->irq_mutex);
-+	err = devm_mutex_init(dev, &priv->io_mutex);
-+	if (err)
-+		return err;
-+
-+	err = devm_mutex_init(dev, &priv->irq_mutex);
-+	if (err)
-+		return err;
- 
- 	priv->gpio.label = devm_kasprintf(dev, GFP_KERNEL,
- 					  "gpio-mpsse.%d.%d",
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+I'm not sure what you mean by that. There's a field in struct
+gpio_chip which you can use to set the line names from the driver
+code.
 
+Bart
