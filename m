@@ -1,49 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241001BD9C5;
-	Wed, 30 Oct 2024 17:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A9C1F4288;
+	Wed, 30 Oct 2024 17:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730310100; cv=none; b=aRtqT21j/aRLkpJJOWD2l3zKm027gxHRlEhKOryLzTT6V+NNoasKGVya+ORsxfmcEZ/D3kELGJKtu6RDD/GZo24vQRRojd9curqFd8+O8chBCnrQHhXPL680XnEL7CUp968K+J4j6M0xy76S4In2C7dOiXmGXxHScIUZ83o7lPU=
+	t=1730310102; cv=none; b=U8Otl4vD71oBywKELHcrPre77dhmOuFwurOCgsI+1MAKSSO7iz5mBUdEjkE6i9Pkw6p/xu18DgQT3/s9bflqIyoAEkgpvhruPqkxmL4HI+kpWjystdKDDKSrDty+yvOcvFHiOL3XajgWHX5lAI2BI2s5Z1XKONFPREQ08OE8KjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730310100; c=relaxed/simple;
-	bh=nLR225g0wrPdHzArOrZRQx8huvOONNWySiwoMroh1qQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pa+gCdzybrA1ZHsmK8Pf6xj3DggDzJqu6nZJPn/Og6K49vSg3JtuaPKDn2a1okiN8RZfOrQ9mf+h/2umCldSOiFuNQVfb/rwfc2XzKVyVVwYhFe6ofVkcAr0wpEVODvDb3F/v8ekVBTAhPmEBEAA5Smg369+kgk2BxfnbpBOYpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnXQk/QT; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1730310102; c=relaxed/simple;
+	bh=1JhAr/qSbGl0+jJqHyFn53hwrLBBQ7z05YXmMWrbeaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BGasDtluRPnmCy178psg+6OCiGH/gue9PnNHn12dGZP+IOVEHaKHtS/geuasWLJAFat7j844M5HeoOjW3nk96OLt70RwbDzhAQhVIbhSVO3WJMKwrVatgPndfwvtDbUchWbYH7dFc2dN3sY01HORvPLxEnTw/B99IveT5K8vAtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECapYbuW; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnXQk/QT"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECapYbuW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730310098; x=1761846098;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nLR225g0wrPdHzArOrZRQx8huvOONNWySiwoMroh1qQ=;
-  b=EnXQk/QTeybPzI0DYQvFmgD3TgFVjLMIyihnJEfNR5At7G/3q9bBbipB
-   PcH2tIhuwyVanGzFgnFacEsCtklBdvfaJc10HB2qN/HvJtKFOlgD0MH1/
-   RpiJ25XutIhBZv97PG52g/ROhB0q+cmkR8ivs5BdNGMARchiVBt8gc8ps
-   EZjVBaoYm16afahKvi9MeUDcbeugnqRPeJ3aXAIyznkX3y5YzY3IZvmGj
-   VnKvDVMk9gkt8HCsbsUsuOjFKjszrhhomh5ifXZ0vZio9lait7QZP2ZYH
-   12fWYapqeXOfZFSQ4w6uSNH6SEGGkgmDt0EdDBQ7hWpGq3KXpDQNu8lrd
-   w==;
-X-CSE-ConnectionGUID: aUzgW38nRzS26wdYYghUqQ==
-X-CSE-MsgGUID: onhX/BjtSWqBBewEsOJ0yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29446056"
+  t=1730310100; x=1761846100;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1JhAr/qSbGl0+jJqHyFn53hwrLBBQ7z05YXmMWrbeaM=;
+  b=ECapYbuWI9E5482nbU1yu9Wbbv7rUtA+pmCQg0I9GDTft661hZJ0JCu+
+   5D3frqxpwdyoSxov9CmAsAm/hs8AFkWhNT/HsK2O0WDRhY6yykqcsV6Md
+   u+RIPsJSFG4r56S4co7MOOzd16NVeOn82G5wqoW5tyq1grmqdl1xPRd9U
+   0T8vmyxYvtb+d333W6qaObRFAfyfnkQJknwHi6rjVjT4863OMGpMNRNuj
+   /gRvkjPnKt5LGYTVADXCQdwCI7EsjhHM9niv8kYtNU7GaSVmfiPaNNWWn
+   Dj6pV41f5KujMY5rYvihhwBhHxw6DSIAssNPQCyHBLMXP6sPMrRyWbjJV
+   A==;
+X-CSE-ConnectionGUID: hrQNBKojQFyYsIZnNQJ9xA==
+X-CSE-MsgGUID: PR+jjy+JTliY6CMEMxT5FQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29446062"
 X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="29446056"
+   d="scan'208";a="29446062"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
   by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:41:37 -0700
-X-CSE-ConnectionGUID: VDKIJOOCReKuvVr7gHOaBQ==
-X-CSE-MsgGUID: xpXdpLsSQmeoTICcCKB3vg==
+X-CSE-ConnectionGUID: 7kNOEoDKQ2Gg70LXNT/38A==
+X-CSE-MsgGUID: iYZLfrOYRJae39aFxcW8GQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="119846378"
+   d="scan'208";a="119846377"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa001.jf.intel.com with ESMTP; 30 Oct 2024 10:41:35 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2F8F71CF; Wed, 30 Oct 2024 19:41:33 +0200 (EET)
+	id 4AD162A0; Wed, 30 Oct 2024 19:41:33 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mary Strodl <mstrodl@csh.rit.edu>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -52,10 +53,12 @@ To: Mary Strodl <mstrodl@csh.rit.edu>,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/2] gpio: Check for error from devm_mutex_init()
-Date: Wed, 30 Oct 2024 19:36:50 +0200
-Message-ID: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/2] gpio: sloppy-logic-analyzer: Check for error code from devm_mutex_init() call
+Date: Wed, 30 Oct 2024 19:36:52 +0200
+Message-ID: <20241030174132.2113286-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
+References: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,23 +67,33 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Ignoring error checking from devm calls is a bad practice in general.
-While not critical today, it may become a problem tomorrow.
-Fix this for devm_mutex_init().
+Even if it's not critical, the avoidance of checking the error code
+from devm_mutex_init() call today diminishes the point of using devm
+variant of it. Tomorrow it may even leak something. Add the missed
+check.
 
-In v2:
-- fixed obvious typo (Mary)
-- collected tags (Mary, Wolfram)
-
-Andy Shevchenko (2):
-  gpio: mpsse: Check for error code from devm_mutex_init() call
-  gpio: sloppy-logic-analyzer: Check for error code from
-    devm_mutex_init() call
-
- drivers/gpio/gpio-mpsse.c                 | 9 +++++++--
+Fixes: 7828b7bbbf20 ("gpio: add sloppy logic analyzer using polling")
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
  drivers/gpio/gpio-sloppy-logic-analyzer.c | 4 +++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-sloppy-logic-analyzer.c b/drivers/gpio/gpio-sloppy-logic-analyzer.c
+index 64f2ca4a72b2..8cf3b171c599 100644
+--- a/drivers/gpio/gpio-sloppy-logic-analyzer.c
++++ b/drivers/gpio/gpio-sloppy-logic-analyzer.c
+@@ -234,7 +234,9 @@ static int gpio_la_poll_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	devm_mutex_init(dev, &priv->blob_lock);
++	ret = devm_mutex_init(dev, &priv->blob_lock);
++	if (ret)
++		return ret;
+ 
+ 	fops_buf_size_set(priv, GPIO_LA_DEFAULT_BUF_SIZE);
+ 
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
