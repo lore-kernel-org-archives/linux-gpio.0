@@ -1,103 +1,88 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69401F4738;
-	Wed, 30 Oct 2024 15:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7C11990C5;
+	Wed, 30 Oct 2024 15:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730302330; cv=none; b=SdDDWIJtVVytC2sqBDcxslQAF7gBIGseiERdjXHGVv7ZeSN2BEjxzlDlYShyVAbqeCS18Y+kxF9zv3xWsDzjAMtap/4UajlGRd88700zGgFOC++MZULm5F1u8n9KonHqOG5cFRjgmzCq5h5n0f3wldNRl2qdYOxdyEIVDn3VTlo=
+	t=1730303126; cv=none; b=Ql7Z6hAVYgEYTzT5PeEYzZjq7/CPGxkL+700sAVFE53bmTaDfi2uAFjz5Yc0XKVXqw0B6TMCoziY3OGv3sIWM9DfbQnG8IuXRtZrwsGT3TT+r3c7+bp9bkmY2Ns92tOpPXkMYLA65iFbmyDUt2IoNJE8ddTGyT+Vd6LjBELOSGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730302330; c=relaxed/simple;
-	bh=Espd9A6FO3Obk0zAkvp6qR5Nh3+IenL+AHa+mvmmXf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YVoY5kbU66wgSZCUEyGoroYICiPKMOdT8JSZM3tyFikZA8Wn39PDeJVRqqGiyZnJx4EfDmYj5dr0X5jyR9VRLDI8XXfLGBKNTp+lTdwkaEisVqI/RDFqqLGmElUBEHzsdj2Ez3t+UZm+8tVwgnsVfu4heLxJZsx9Lfb6NsCBPnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JNdGOsDt; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730303126; c=relaxed/simple;
+	bh=pv7vLdQ3ku4Y9BlqvessMPs3r63z01A7s/0z8AKv83w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AIW1tR60BIrBzhgpDHDq0V55dmOed65ctg5fzOpMoIA9b7NxwdO9qpwqXKULJno/JJN9l+pAsx6kHYNG5Yoie/9KrcBQh3hBc3CbeJMwx3ZNiHqjfuyklMy35GmbBMx/VRJ93lajLt5z9Fau9AscshsfUlAP6Mh787MZqaDhGhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=Pf3KCgqy; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JNdGOsDt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730302329; x=1761838329;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Espd9A6FO3Obk0zAkvp6qR5Nh3+IenL+AHa+mvmmXf4=;
-  b=JNdGOsDt5JfHJeg0bc/dmKHv7wI3FHxL3EUAghmKrQsM9GI7Tl+Qx80O
-   osfag/X3y1KQ3Qg4dyWymXp/Um0QlcQZR4efrI1X1rs/E5rnCsRx9Posk
-   X8R74f4APtXuWUdhY2FKsdsGOLHo5JTO3Id8pIGF3J20/eNlkfIqg0AU+
-   0G4v241wJz1fTS+j2+bHyQZ28K79uI9+1q2jCUK+Uy+Rua48tHCB5AjM6
-   DPxIChlXR7PAJo8VWb1I3f1Py8/LNb1e41MkKOBFRjdVfXO1HxaP30YR9
-   Rs9jjeeWhKGeUJTJXfeaX+a6RT3MZFxI8sQxJQYfwCSNdVX7+QucbIRVb
-   g==;
-X-CSE-ConnectionGUID: MEo1rujSQ0q086ldahx05w==
-X-CSE-MsgGUID: BPw9chXhRZadFjk1Dgv54A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33699868"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33699868"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 08:32:06 -0700
-X-CSE-ConnectionGUID: 54MBBOPQT+qQtlEwvbBsww==
-X-CSE-MsgGUID: DOt4cGQtQ9OxA5AcEJBVbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="82514081"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 30 Oct 2024 08:32:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 789301CF; Wed, 30 Oct 2024 17:32:02 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mary Strodl <mstrodl@csh.rit.edu>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 1/2] gpio: mpsse: Check for error code from devm_mutex_init() call
-Date: Wed, 30 Oct 2024 17:30:26 +0200
-Message-ID: <20241030153201.2078266-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
-References: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="Pf3KCgqy"
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4Xdrzs39NLz1FXSV;
+	Wed, 30 Oct 2024 16:45:13 +0100 (CET)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4Xdrzs1gjWz1FXSM;
+	Wed, 30 Oct 2024 16:45:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1730303113;
+	bh=RcjIBm8gFiHFoNhk0cnwIi80Gv6waCf1XdxsAhpY9EU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Pf3KCgqyQ63cZ8+SFqm0D42zS1KaVrQdIKDkwBWMtfjohY2eG7KbVArSXqfhaYMcg
+	 nXE6N25jnzmkEMuLd7Kk5RCt1FSZb1KJLnSCvme4KhNkgy11ii4mtr79SmEt2Ap0vf
+	 qG6zsPpyHIOEl45/xSFbXP1CckJkSBnlaUb6Z8XY=
+Message-ID: <04040095-27c2-49a1-b956-ac7bbd5f919a@gaisler.com>
+Date: Wed, 30 Oct 2024 16:45:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: GPIO_GRGPIO should depend on OF_GPIO
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, sparclinux@vger.kernel.org
+References: <140b0f7522ff2f86a7fad0be88c19111fa6cb5b1.1730282507.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <140b0f7522ff2f86a7fad0be88c19111fa6cb5b1.1730282507.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Even if it's not critical, the avoidance of checking the error code
-from devm_mutex_init() call today diminishes the point of using devm
-variant of it. Tomorrow it may even leak something. Add the missed
-check.
+On 2024-10-30 11:03, Geert Uytterhoeven wrote:
+> While the Aeroflex Gaisler GRGPIO driver has no build-time dependency on
+> gpiolib-of, it supports only DT-based configuration, and is used only on
+> DT systems.  Hence re-add the dependency on OF_GPIO, to prevent asking
+> the user about this driver when configuring a kernel without DT support.
+> 
+> Fixes: bc40668def384256 ("gpio: grgpio: drop Kconfig dependency on OF_GPIO")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/gpio/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 158ec0d7e52e2e51..a7b27a8541f572d5 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -341,6 +341,7 @@ config GPIO_GRANITERAPIDS
+>  
+>  config GPIO_GRGPIO
+>  	tristate "Aeroflex Gaisler GRGPIO support"
+> +	depends on OF_GPIO || COMPILE_TEST
+>  	select GPIO_GENERIC
+>  	select IRQ_DOMAIN
+>  	help
 
-Fixes: c46a74ff05c0 ("gpio: add support for FTDI's MPSSE as GPIO")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-mpsse.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Or alternatively:
 
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index 3ab6651d2226..8fba0779ae17 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -430,8 +430,13 @@ static int gpio_mpsse_probe(struct usb_interface *interface,
- 	if (err)
- 		return err;
- 
--	devm_mutex_init(dev, &priv->io_mutex);
--	devm_mutex_init(dev, &priv->irq_mutex);
-+	err = devm_mutex_init(dev, &priv->io_mutex);
-+	if (err)
-+		return err;
-+
-+	ret = devm_mutex_init(dev, &priv->irq_mutex);
-+	if (err)
-+		return err;
- 
- 	priv->gpio.label = devm_kasprintf(dev, GFP_KERNEL,
- 					  "gpio-mpsse.%d.%d",
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+	depends on OF || COMPILE_TEST
+
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+
+Thanks,
+Andreas
 
