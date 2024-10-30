@@ -1,66 +1,86 @@
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF4B1BD9C0;
-	Wed, 30 Oct 2024 17:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241001BD9C5;
+	Wed, 30 Oct 2024 17:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309928; cv=none; b=TA+RR1PDpeKi7qv/8Zzn7WiK8AEMioLIaKZopvHQrnJ9o2f7YctMbXVbGYuIu2QvQrsPAGSXfTHJNrvsL8I1MslSgnv8vujp972D/8mhG/8NtXoiHht7MeKICfeUvcA1jmJer6Y1RsuC9JYI8SYxUMhUB4p7E0PyfcT3UWW2/Ho=
+	t=1730310100; cv=none; b=aRtqT21j/aRLkpJJOWD2l3zKm027gxHRlEhKOryLzTT6V+NNoasKGVya+ORsxfmcEZ/D3kELGJKtu6RDD/GZo24vQRRojd9curqFd8+O8chBCnrQHhXPL680XnEL7CUp968K+J4j6M0xy76S4In2C7dOiXmGXxHScIUZ83o7lPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309928; c=relaxed/simple;
-	bh=FJ2GZLdujlPzhBjZH3MHuSAIcXkkdbERBD60uDV94oU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cslYRh6hyl0O3FI2iKGvkwwVKEaSk5Q2onITf609aj6Pr016q0XNLrmmbup7hEwKxSnKLJZbnf2SP83qxI+9qFyMDuYMkskLvydwlZlh/p8xThziJRqP/dr9OsSLNVHrEZ0o/5S0SxBT/K0BQxlxvfAwoKYSuAwobGu8aLLYCMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=DRfMLfTz; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+	s=arc-20240116; t=1730310100; c=relaxed/simple;
+	bh=nLR225g0wrPdHzArOrZRQx8huvOONNWySiwoMroh1qQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pa+gCdzybrA1ZHsmK8Pf6xj3DggDzJqu6nZJPn/Og6K49vSg3JtuaPKDn2a1okiN8RZfOrQ9mf+h/2umCldSOiFuNQVfb/rwfc2XzKVyVVwYhFe6ofVkcAr0wpEVODvDb3F/v8ekVBTAhPmEBEAA5Smg369+kgk2BxfnbpBOYpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnXQk/QT; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="DRfMLfTz"
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 6C2D7404CC3E;
-	Wed, 30 Oct 2024 13:38:45 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	in-reply-to:content-disposition:content-type:content-type
-	:mime-version:references:message-id:subject:subject:from:from
-	:date:date:received:received; s=mail; t=1730309925; x=
-	1732124326; bh=FJ2GZLdujlPzhBjZH3MHuSAIcXkkdbERBD60uDV94oU=; b=D
-	RfMLfTzfvWQvDg+hJPZCA8RnlXIOdsLcAr7R9Vo78nhV6q4uymYJudaVUhQoPYVW
-	BFLlrhqzpxOr774VU7bhl9ltv6/xEVqNZsC5+fC8k2CB+be8BxD4wKS19gDyZiE2
-	PTsDc0sO6dsmGu8MC6VKA8TdggNSTAMT4V/b7xn1QQ=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id 6ffjgijn3Men; Wed, 30 Oct 2024 13:38:45 -0400 (EDT)
-Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 097EC400A884;
-	Wed, 30 Oct 2024 13:38:45 -0400 (EDT)
-Date: Wed, 30 Oct 2024 13:38:43 -0400
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnXQk/QT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730310098; x=1761846098;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nLR225g0wrPdHzArOrZRQx8huvOONNWySiwoMroh1qQ=;
+  b=EnXQk/QTeybPzI0DYQvFmgD3TgFVjLMIyihnJEfNR5At7G/3q9bBbipB
+   PcH2tIhuwyVanGzFgnFacEsCtklBdvfaJc10HB2qN/HvJtKFOlgD0MH1/
+   RpiJ25XutIhBZv97PG52g/ROhB0q+cmkR8ivs5BdNGMARchiVBt8gc8ps
+   EZjVBaoYm16afahKvi9MeUDcbeugnqRPeJ3aXAIyznkX3y5YzY3IZvmGj
+   VnKvDVMk9gkt8HCsbsUsuOjFKjszrhhomh5ifXZ0vZio9lait7QZP2ZYH
+   12fWYapqeXOfZFSQ4w6uSNH6SEGGkgmDt0EdDBQ7hWpGq3KXpDQNu8lrd
+   w==;
+X-CSE-ConnectionGUID: aUzgW38nRzS26wdYYghUqQ==
+X-CSE-MsgGUID: onhX/BjtSWqBBewEsOJ0yw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="29446056"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="29446056"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:41:37 -0700
+X-CSE-ConnectionGUID: VDKIJOOCReKuvVr7gHOaBQ==
+X-CSE-MsgGUID: xpXdpLsSQmeoTICcCKB3vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="119846378"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 30 Oct 2024 10:41:35 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2F8F71CF; Wed, 30 Oct 2024 19:41:33 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mary Strodl <mstrodl@csh.rit.edu>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 1/2] gpio: mpsse: Check for error code from
- devm_mutex_init() call
-Message-ID: <ZyJvI_ZaVVC0-kvk@freedom.csh.rit.edu>
-References: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
- <20241030153201.2078266-2-andriy.shevchenko@linux.intel.com>
- <ZyJo4dvULIflwhXL@freedom.csh.rit.edu>
- <ZyJt3U-YTpQYwLrq@smile.fi.intel.com>
+Subject: [PATCH v2 0/2] gpio: Check for error from devm_mutex_init()
+Date: Wed, 30 Oct 2024 19:36:50 +0200
+Message-ID: <20241030174132.2113286-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyJt3U-YTpQYwLrq@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 07:33:17PM +0200, Andy Shevchenko wrote:
-> Thanks, I will fix that, I dunno how I missed that because I carefully read
-> the code before adding the checks.
-Proof that it happens to the best of us :)
+Ignoring error checking from devm calls is a bad practice in general.
+While not critical today, it may become a problem tomorrow.
+Fix this for devm_mutex_init().
 
-Thanks again!
+In v2:
+- fixed obvious typo (Mary)
+- collected tags (Mary, Wolfram)
+
+Andy Shevchenko (2):
+  gpio: mpsse: Check for error code from devm_mutex_init() call
+  gpio: sloppy-logic-analyzer: Check for error code from
+    devm_mutex_init() call
+
+ drivers/gpio/gpio-mpsse.c                 | 9 +++++++--
+ drivers/gpio/gpio-sloppy-logic-analyzer.c | 4 +++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
