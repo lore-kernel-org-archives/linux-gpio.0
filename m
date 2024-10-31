@@ -1,150 +1,245 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81C2141CA;
-	Wed, 30 Oct 2024 23:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4989D2FB;
+	Thu, 31 Oct 2024 01:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331702; cv=none; b=HnjFE1Zg2ROEZn8otOslmundojKVULSXkdo8YVLZ//1uCfTMoOObjnM+BxiLThCkyOUzh6KlOhE6mgsU+OTCPOZsRd5JrQiwNzef1y1AmMSl8WZmdIXqVUyQsnwO7GI/MnhAgMk+YttYhJ6pnMJpiHrF2iacP7NnlERBlygbJag=
+	t=1730337599; cv=none; b=NgAZSumKWS6k/MfLpsfjfEksp1fKgHMOuz7BAQr1KfgkYt9GxDuF2EVaN2Ep49s8Tbv2taDrFYFnD/vLzEjaiQMJ4zzFx/iikPP//pJUahpwzxRDpB9HE1Rtuwmiz71KoxW7jmAet38jRjkQdBpcWsxWY22ZOQsNp7FQKndiCkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331702; c=relaxed/simple;
-	bh=M0DDN+40heMq1MUyTEiggbwfVdfQi32sS1lu41JVgR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aReKudVo+0aUjP0y7U16poXCYjzJ+OGouSwnY87kL/sWhL29JWBkwP+UYErYRf/ifQf6gXwH6aeAULhcjgGY3CyTG4w85NgwVzsgacgmUr47MHF8JSlmA5MYH2NM5vm2WNUIffMLAnKFS1pT0J9k/UJTGueICt/tIPoQp9uU+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qgg/Bc8R; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1730337599; c=relaxed/simple;
+	bh=nKRAjGHplcBjSY8FGUHOTB8ghGJrx7beTyIEn7gCe/4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QwcVbi23+yLEpAfzua6YZQMf4+XpyU+hHVWkP7ez8IAvLSPA9nBD8mWDkVRYomcOTx/Wj2qxVsNxZyGZ4pWgG1cQmlWGVnz/z3nDXgGCgaJtYZTq2SLvtI55s/HaHvhZvaoVk1HM8Tijm+Rc/wJnyS5MYX7iJyiolKWzSS9WaSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=KLtygRBv; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qgg/Bc8R"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNc8107073;
-	Wed, 30 Oct 2024 18:41:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730331683;
-	bh=56mwxKqWIevGkZXhU/haryWJFMgZit1fhV8XrDFsqio=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Qgg/Bc8R5KjC8BWc1AZrdWzdx1M4rGmY8IZzuAS/fh0zC3R/Cr1reOwdMzklwTYYN
-	 kK4mv4EQHBOse+u0+m4CnKhM6Rm7tLQx3Ba/oshhO4WwI0a7Ly4gkkeMrcPyz+bDL0
-	 EPVmFlXbK/BNHPUGaiMsEdzCnnMd53Iws7CM6wTw=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNKW107369;
-	Wed, 30 Oct 2024 18:41:23 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
- Oct 2024 18:41:23 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 30 Oct 2024 18:41:23 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfMbj096597;
-	Wed, 30 Oct 2024 18:41:22 -0500
-Message-ID: <b0f15446-2e31-4776-84ec-99d96f65ef48@ti.com>
-Date: Wed, 30 Oct 2024 18:41:22 -0500
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="KLtygRBv"
+Received: from [192.168.0.162] (BC24936A.dsl.pool.telekom.hu [188.36.147.106])
+	by mail.mainlining.org (Postfix) with ESMTPSA id B37A7E45B9;
+	Thu, 31 Oct 2024 01:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1730337592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Olj9iYH7LcbphKshwr7qao2rM+CM/q0woKUYsmasCt4=;
+	b=KLtygRBvjM7NBuo9STN5vtaNcZ/6Pial8vWOAg072OGAnmcNY4XGnfYGKfnT8QTlHl+F5x
+	Sfuvj07EncyGTOJ+lNTOTsrD9bWdUmPlz+/zL9ZlKD9LHW7xzsfZCR6CHOiEzcCvvvq/uZ
+	3KdktVsmd5do3YQyzV3YzLh4pH4VOcMS+7LNHN/X+jGB4hgzAAPLoNSKedTB3e8Y3gYilC
+	RlGvVSOvGrhz/lyQmOT+AFY6FW0L7yi9FtFx+DNMl6fpAHpM58w0csU4IYeOsSmyk5iO62
+	p8VQ46/vMRXALaZXr1HL1EYyvyVmmVhH4iB8SuJklkeFKi4cGPvmCs5iLLiQ2w==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Thu, 31 Oct 2024 02:19:47 +0100
+Subject: [PATCH v2 06/15] dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
-To: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bin Liu <b-liu@ti.com>
-References: <20241030225900.59844-1-jm@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20241030225900.59844-1-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241031-msm8917-v2-6-8a075faa89b1@mainlining.org>
+References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
+In-Reply-To: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730337585; l=6514;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=nKRAjGHplcBjSY8FGUHOTB8ghGJrx7beTyIEn7gCe/4=;
+ b=x6HM8gqhgAjcaSrJLj/q14WVqE+C+/rziHJV7GCZhFXu4Vz3M2xze2opQDIDsMrSwL4amUG+Q
+ aKIa7jNAkoyBPJ9/FGZ0Fnh9a3th+tKkojFKhmwGWMxSElmBfpq71KK
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Hi all,
+Add device tree bindings documentation for Qualcomm MSM8917
+pinctrl driver.
 
-Please ignore this patch, will resend this patch
-with fixed recipients in the "to" list.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     | 155 +++++++++++++++++++++
+ 1 file changed, 155 insertions(+)
 
-Apologies for the noise.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8917-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8917-pinctrl.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..41349ce9898aaaf68a10f30ffe611dcedc1e9311
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8917-pinctrl.yaml
+@@ -0,0 +1,155 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,msm8917-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm MSM8917 TLMM pin controller
++
++maintainers:
++  - Barnabas Czeman <barnabas.czeman@mainlining.org>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm MSM8917 SoC.
++
++properties:
++  compatible:
++    const: qcom,msm8917-pinctrl
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  gpio-reserved-ranges: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-msm8917-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-msm8917-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-msm8917-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-3][0-9]|14[01])$"
++            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, sdc2_clk,
++                      sdc2_cmd, sdc2_data, qdsd_clk, qdsd_cmd, qdsd_data0,
++                      qdsd_data1, qdsd_data2, qdsd_data3 ]
++        minItems: 1
++        maxItems: 16
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ accel_int, adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1,
++                atest_char, atest_char0, atest_char1, atest_char2,
++                atest_char3, atest_combodac_to_gpio_native,
++                atest_gpsadc_dtest0_native, atest_gpsadc_dtest1_native,
++                atest_tsens, atest_wlan0, atest_wlan1, audio_ref,
++                audio_reset, bimc_dte0, bimc_dte1, blsp6_spi, blsp8_spi,
++                blsp_i2c1, blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_i2c5,
++                blsp_i2c6, blsp_i2c7, blsp_i2c8, blsp_spi1, blsp_spi2,
++                blsp_spi3, blsp_spi4, blsp_spi5, blsp_spi6, blsp_spi7,
++                blsp_spi8, blsp_uart1, blsp_uart2, blsp_uart3, blsp_uart4,
++                blsp_uart5, blsp_uart6, blsp_uart7, blsp_uart8, cam0_ldo,
++                cam1_rst, cam1_standby, cam2_rst, cam2_standby, cam_mclk,
++                cci_async, cci_i2c, cci_timer0, cci_timer1, cdc_pdm0,
++                codec_int1, codec_int2, codec_mad, coex_uart, cri_trng,
++                cri_trng0, cri_trng1, dbg_out, dmic0_clk, dmic0_data,
++                ebi_cdc, ebi_ch0, ext_lpass, forced_usb, fp_gpio, fp_int,
++                gcc_gp1_clk_a, gcc_gp1_clk_b, gcc_gp2_clk_a, gcc_gp2_clk_b,
++                gcc_gp3_clk_a, gcc_gp3_clk_b, gcc_plltest, gcc_tlmm, gpio,
++                gsm0_tx, key_focus, key_snapshot, key_volp, ldo_en,
++                ldo_update, lpass_slimbus, lpass_slimbus0, lpass_slimbus1,
++                m_voc, mag_int, mdp_vsync, mipi_dsi0, modem_tsync, nav_pps,
++                nav_pps_in_a, nav_pps_in_b, nav_tsync, nfc_pwr, ov_ldo,
++                pa_indicator, pbs0, pbs1, pbs2, pri_mi2s, pri_mi2s_mclk_a,
++                pri_mi2s_mclk_b, pri_mi2s_ws, prng_rosc,
++                pwr_crypto_enabled_a, pwr_crypto_enabled_b,
++                pwr_modem_enabled_a, pwr_modem_enabled_b, pwr_nav_enabled_a,
++                pwr_nav_enabled_b, qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
++                qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
++                qdss_cti_trig_out_a0, qdss_cti_trig_out_a1,
++                qdss_cti_trig_out_b0, qdss_cti_trig_out_b1, qdss_traceclk_a,
++                qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
++                qdss_tracedata_a, qdss_tracedata_b, sd_write, sdcard_det,
++                sec_mi2s, sec_mi2s_mclk_a, sec_mi2s_mclk_b, sensor_rst,
++                smb_int, ssbi_wtr1, ts_resout, ts_sample, uim1_clk,
++                uim1_data, uim1_present, uim1_reset, uim2_clk, uim2_data,
++                uim2_present, uim2_reset, uim_batt, us_emitter, us_euro,
++                wcss_bt, wcss_fm, wcss_wlan, wcss_wlan0, wcss_wlan1,
++                wcss_wlan2, webcam_rst, webcam_standby, wsa_io, wsa_irq ]
++
++    required:
++      - pins
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    tlmm: pinctrl@1000000 {
++        compatible = "qcom,msm8917-pinctrl";
++        reg = <0x01000000 0x300000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        gpio-ranges = <&tlmm 0 0 134>;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        blsp1-uart2-sleep-state {
++            pins = "gpio4", "gpio5";
++            function = "gpio";
++
++            drive-strength = <2>;
++            bias-pull-down;
++        };
++
++        spi1-default-state {
++            spi-pins {
++                pins = "gpio0", "gpio1", "gpio3";
++                function = "blsp_spi1";
++
++                drive-strength = <12>;
++                bias-disable;
++            };
++
++            cs-pins {
++                pins = "gpio2";
++                function = "gpio";
++
++                drive-strength = <16>;
++                bias-disable;
++                output-high;
++            };
++        };
++    };
 
-~ Judith
-
-
-On 10/30/24 5:59 PM, Judith Mendez wrote:
-> Add omap_gpio_disable_irq and omap_gpio_enable_irq
-> calls in gpio-omap.
-> 
-> Currently, kernel cannot disable gpio interrupts in
-> case of a irq storm, so add omap_gpio_disable/enable_irq
-> so that interrupts can be disabled/enabled.
-> 
-> Signed-off-by: Bin Liu <b-liu@ti.com>
-> [Judith: Add commit message]
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> Changes since v1 RESEND:
-> - split patch from series [0]
-> - Add disable/enable calls without wrapper functions
-> [0] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
-> 
-> Tested on am335x BeagleBone Black
-> ---
->   drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 76d5d87e9681e..137aabada26f9 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -711,6 +711,28 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
->   	raw_spin_unlock_irqrestore(&bank->lock, flags);
->   }
->   
-> +static void omap_gpio_disable_irq(struct irq_data *d)
-> +{
-> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> +	unsigned int offset = d->hwirq;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&bank->lock, flags);
-> +	omap_set_gpio_irqenable(bank, offset, 0);
-> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
-> +}
-> +
-> +static void omap_gpio_enable_irq(struct irq_data *d)
-> +{
-> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> +	unsigned int offset = d->hwirq;
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&bank->lock, flags);
-> +	omap_set_gpio_irqenable(bank, offset, 1);
-> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
-> +}
-> +
->   static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
->   {
->   	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-> @@ -723,6 +745,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
->   	.irq_shutdown = omap_gpio_irq_shutdown,
->   	.irq_mask = omap_gpio_mask_irq,
->   	.irq_unmask = omap_gpio_unmask_irq,
-> +	.irq_disable = omap_gpio_disable_irq,
-> +	.irq_enable = omap_gpio_enable_irq,
->   	.irq_set_type = omap_gpio_irq_type,
->   	.irq_set_wake = omap_gpio_wake_enable,
->   	.irq_bus_lock = omap_gpio_irq_bus_lock,
-> @@ -737,6 +761,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
->   	.irq_shutdown = omap_gpio_irq_shutdown,
->   	.irq_mask = omap_gpio_mask_irq,
->   	.irq_unmask = omap_gpio_unmask_irq,
-> +	.irq_disable = omap_gpio_disable_irq,
-> +	.irq_enable = omap_gpio_enable_irq,
->   	.irq_set_type = omap_gpio_irq_type,
->   	.irq_bus_lock = omap_gpio_irq_bus_lock,
->   	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+-- 
+2.47.0
 
