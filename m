@@ -1,102 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5119AA41;
-	Thu, 31 Oct 2024 10:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DF319CC11
+	for <linux-gpio@vger.kernel.org>; Thu, 31 Oct 2024 12:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372000; cv=none; b=Z9fjpnPTaWJCAD4hRXxLRZdhe4Mo9kVmw6QFSc3y0uaAfAjzxVHgyW6rqomNh3uLxm1c/vE1MAhVBnxGQK6J/9RL8WpVDfCIU3xR4N8ehcSkpQ6Q+xr+1559EJfjTMAobTTJ6c+szfiHSkz6Hf2zoUpYv8bGsyd07LkjbAPqlKY=
+	t=1730376282; cv=none; b=QlgnLPCSDyS56Q5lPxUi1TfW+83LB4M2d+8WOdJpV0Jxh1a/KQcYxzRmFinAqxkv1b5715b2rgcz3RYzm3b5jGtYVGmwJv7jPQp+ljOUQBi9cb0ne1h5h9J4rsUwD1BGIcF89SO5+9oYfC9WDx8FFCH9i5rBdvw72mH0jvKVkaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372000; c=relaxed/simple;
-	bh=B3VPOjcZCPaE9BVVoLeurOhtk6dcK/IkvH0s8KqwX28=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQ/TogXSpzCWZ0XK6hUCr17Ay/ncpPabDoLcPep7Ma8pmN0QDH8hn0f3MhfSm8yYpSan5udBNBSBkCP3UcD+yke+f5EhhActc/cxRdaHQoWgS3njXC7McD6SvnQZAVTLjnIq5J2jaKcxUD+BFEKNlpoEm1QXJ2vfrR13CbNi4v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4apDF2g; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730376282; c=relaxed/simple;
+	bh=EmvrBFLW1hRGPyDWPbdJGvNnPSF/Gyv8kUGUW9kTW+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=edurWUBzhVeQynDmuKP7/U5L6XUUyNkGPfzGKKuAHHm07ouGu5WHjd2qvLItk7g5WwZWLX9VMEuu8qtM6QrHeGaBLG/ptlKcXNcaPp+/7fz3vIiDhcRZ9SHkqsbbhQ5My6mB+UYbExRqL9NulNtXHh4P3TcvqI7/1UmP3EyNwsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rP4A2to4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4apDF2g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730371999; x=1761907999;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=B3VPOjcZCPaE9BVVoLeurOhtk6dcK/IkvH0s8KqwX28=;
-  b=L4apDF2gUELEDdbVu9qd2qRMoop+lHQFljbRlhUjqD4xLeqcA9HCdIE4
-   lEAz1L0Ey84FZoxv318zBoscX98FGl639tbvDrbu6XrIW5/Rg1y+8CpzJ
-   KfGIlSc/lAl6LHfqn42QutI3gUReskcOUWOjVovUuqnRm1HXMGmvLrcRp
-   Wd7tSDOGELHXRhs3V62H6jzp8EA4c0D4UbWNKrcevqrbO3ZrywIpZwD//
-   IGpWJfHHGqEXilbU0s55bsfNNHKARXWmRwHpZv4q7viCZOEEI6rIIWBP4
-   kPHbzG03PhpuvRqAkC0/+0nfczUeToIB8J2DPNg3kinVKpDHxjZtyxaF2
-   Q==;
-X-CSE-ConnectionGUID: GJMWxxSDRSOMVmRU6ft6lQ==
-X-CSE-MsgGUID: 1b+9tF9/R9qH7L7hl83uaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29871003"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29871003"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:53:18 -0700
-X-CSE-ConnectionGUID: cSYuM+g6QrO439w0diQYnA==
-X-CSE-MsgGUID: Cqq6vTZMT32z0vbtGXAEFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="113384156"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 31 Oct 2024 03:53:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id CC3931A0; Thu, 31 Oct 2024 12:53:14 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Subject: [rft, PATCH v2 1/1] gpio: Drop unused inclusions from of_gpio.h
-Date: Thu, 31 Oct 2024 12:52:03 +0200
-Message-ID: <20241031105314.2463446-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rP4A2to4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32C0C4AF53;
+	Thu, 31 Oct 2024 12:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730376281;
+	bh=EmvrBFLW1hRGPyDWPbdJGvNnPSF/Gyv8kUGUW9kTW+c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rP4A2to46yLp3640XWlTkPvTx+58UR8J6eex5lmCrsD02XG6CDxkyuOXGNrXJ6lQe
+	 qyAcgguOyvM2l21ySeF8JqPXf4IOHmPVS+pnKRrDlvu93L8WQ4MWWvKyQkMi84MTcN
+	 BA8wLC8pW9tZzDVEfbEdy+Khh0DyBG6pn4YV9ZHViKX1gKlZ+rZrw/Ly4KKIOuZqYg
+	 btCluDRGvETCO9ltnoWuvBRp+hlGjxkm5UJ06TijsvBX68wGkn8oKNZyWsVtC6825h
+	 gue9jnNDimPuzJnRrwto+tO8Hnq4opFRkMQCWwaEtQFnOtlDnAhFLWWewiZtmvwT0M
+	 eTK1SjFT9My8A==
+From: Conor Dooley <conor@kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	valentina.fernandezalanis@microchip.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v9 0/1] Polarfire SoC GPIO support
+Date: Thu, 31 Oct 2024 12:04:25 +0000
+Message-ID: <20241031-scouting-earmark-6b4dfc6bc6e2@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1939; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=xaaardwIdf7HNpbphNwIJ30gMOaGQm9oyLRUtxPbk74=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOnKRZ7zJRryIzMWvHohxnO1ifP8nhL+5sW+umuZltrLn vmWs0e6o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABPhOsnIcGFq1hRfkQ+zrk/R /bOK72Cr5qH9VQWyZfHqT9va38hP9GdkOHb7yU/rmyUXf884dLWb1+gQ+5L6fbF6T9r+17jsyuM X5QcA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-As a preliminary step, drop unused inclusions from of_gpio.h,
-so people will use the header only when it's really needed and
-not as a substitute of any of the dropped ones.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Hey all,
 
-For testing purposes on what will fail in CIs. People are also
-encouraged to test this, if have time / chance / wish.
+Lewis is no longer at Microchip, so I've taken over the GPIO controller
+patchset that he had been working on prior to that:
+https://lore.kernel.org/linux-gpio/20220815120834.1562544-1-lewis.hanly@microchip.com/
 
-Nothing special in v2, just to see the currect status of affairs as tons
-of the misuse of of_gpio.h has been fixed already.
+One thing that was wrong with Lewis' series was that it could only,
+depending on the iteration of the series, support GPIOs that had their
+interrupts muxed or GPIOs that had dedicated interrupts at the
+parent interrupt controller. I found that to be problematic, because the
+hardware itself always has a mix of muxed and dedicated interrupts and
+so there was always a controller rendered unusable for interrupts.
+I attempted to fix this by remodelling how the interrupt hierarchy in
+the devicetree is described, with a mux added between the GPIO
+controllers and the platform's interrupt controller. v7 introduced an
+irqchip driver for the mux between the GPIO controllers and PLIC to handle
+that problem.
 
- include/linux/of_gpio.h | 5 -----
- 1 file changed, 5 deletions(-)
+After some discussion with Linus on v7, I've opted to strip out the
+interrupt handling entirely, in order to upstream this piecemeal.
+Interrupt controller support will be added at a later date, when I've
+sorted out the bits that Thomas did not approve of.
 
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index d0f66a5e1b2a..bf6774632b5e 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -10,11 +10,6 @@
- #ifndef __LINUX_OF_GPIO_H
- #define __LINUX_OF_GPIO_H
- 
--#include <linux/compiler.h>
--#include <linux/gpio/driver.h>
--#include <linux/gpio.h>		/* FIXME: Shouldn't be here */
--#include <linux/of.h>
--
- struct device_node;
- 
- #ifdef CONFIG_OF_GPIO
+The binding for this GPIO controller is already upstream, so there's
+just one patch here now.
+
+Cheers,
+Conor.
+
+v7: https://lore.kernel.org/linux-gpio/20240723-supervise-drown-d5d3b303e7fd@wendy/
+
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: valentina.fernandezalanis@microchip.com
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-gpio@vger.kernel.org>
+
+Lewis Hanly (1):
+  gpio: mpfs: add polarfire soc gpio support
+
+ drivers/gpio/Kconfig     |   6 ++
+ drivers/gpio/Makefile    |   1 +
+ drivers/gpio/gpio-mpfs.c | 170 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 177 insertions(+)
+ create mode 100644 drivers/gpio/gpio-mpfs.c
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.45.2
 
