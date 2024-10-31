@@ -1,464 +1,122 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A129913A25F;
-	Thu, 31 Oct 2024 10:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D5114659B
+	for <linux-gpio@vger.kernel.org>; Thu, 31 Oct 2024 10:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369924; cv=none; b=gH3TpLY+JUKDJuX6wqN2kncopr/Ob2QB3f/EtD3Q0bhCr2b/Ov/RhOvNK4eNfROqcvIeuPi/N4/95kXbTWaLBHXSO7Bug3nPMGv6soItG/Spi76artIukP6qYV+RYKX6rybWD1QVv4nIgtzt7kAzTLMQCAhjpUZaT2ReT4LGxaI=
+	t=1730371992; cv=none; b=i/Kk7BC8X8KO17LQWjauTCfbOmu57U8+innfBM/7yfRnqQ9j+DkWj4yrf+mCpj9fZMA+EfCxugaab51cP5PwFYoXtyvc2ukynRAsclTesiYoiCZn/8nNYcXlX1M/7EDnzwPg+vnNwgYgsKcqWQjrkktrwISwPPsJEO8lCZ+EI/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369924; c=relaxed/simple;
-	bh=mlyzp1ZJ85G422tdgemWZVDuz+7yYvbN6xHy61rqCKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PEWMob/W+vD8STNGWeIEFeQ5O3qQsbHbFtVckr1Xdec7VoGgHl6I3FFQW1AYR7ntIS6c3/I3it3O7vJVbLHDfa/pNv4r4A4X54yr/ko94+6Cjn+hTPbdyJrjMkF2/sfO35u1DWqHwM0FWjQrs3Kzg2fRhhs7WiVnD0aXOwrxhaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mrE/xiKB; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730371992; c=relaxed/simple;
+	bh=VoH550F/rVtXbdjnsH8N0Kb36JWps2TBibjKOZE7pfE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXCEIgPrJUK7xz1IPGeAKlp+CYPVh+PYIF73s8Fg/BOzeiRxtd/xO52qzBVzpH9OfCVqTalBqQVIe3JZKEwcnxHFgUwQwcnJ9GoaFtQlirwesF1OtxoTgLSiNzcWxBSBp+YxzxW6pbAupkfANUkjUAMK37FT38oLZL/gruPZ2Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=e2+lkE7b; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mrE/xiKB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730369922; x=1761905922;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mlyzp1ZJ85G422tdgemWZVDuz+7yYvbN6xHy61rqCKo=;
-  b=mrE/xiKBksQNPB0SAXhhTkqwXgvGziZiChcA6E81/WQyQbsa6msAzvsE
-   sxXSZaH83iiLEUh1AYLd69vGTwuW4ahkMdGAzo3oZSAfQsyClNBRk9mF+
-   tx1BVZXCdUANfoytG+DEhyOlX5R3jffrE9ZzAluUF2xlHfS4t7wsGdGgN
-   oFF4+tc8aeLIbimLmWkgNnLCuviUiPx7LhMQVcN6c/ZanqcqXwBGq40g1
-   nFzqbingY6YvBnfKYLWB4qhOvNBkUYDfTXJFVy5r9zZItOJp2IsEQwkQC
-   vv7EsyS7xuhnASR4FvnJ1R6obbFJalNGoKxqwMimfikXjp0+GXuW4W3FI
-   w==;
-X-CSE-ConnectionGUID: vmbKHBO8S6CM5Lo8CoQFhA==
-X-CSE-MsgGUID: wEMBKnA1QmWMmOpBM8bytQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47559739"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47559739"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:18:42 -0700
-X-CSE-ConnectionGUID: ZXt5c5ZlTKyNXP41FG3DBw==
-X-CSE-MsgGUID: AC99m8z7T4O2SN6nDWnRsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
-   d="scan'208";a="87379713"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 31 Oct 2024 03:18:40 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id CB2421C4; Thu, 31 Oct 2024 12:18:37 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Mun Yew Tham <mun.yew.tham@intel.com>
-Subject: [PATCH v2 1/1] gpio: altera: Drop legacy-of-mm-gpiochip.h header
-Date: Thu, 31 Oct 2024 12:18:08 +0200
-Message-ID: <20241031101836.2434308-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="e2+lkE7b"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d47eff9acso510158f8f.3
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Oct 2024 03:53:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730371989; x=1730976789; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L2/PPaAetYxmKzv3sgVnjzcQ59oLRc0dcwRBbTXacjU=;
+        b=e2+lkE7bM/xRb95I0mlH9/THJb5QR6TIHHhZN22/tKMggJSbQ34YOxWLpqvDwgeHt0
+         lbbnbbQ/mzGWjeDtFVPFkrwO91uWer3dsqTeCecdfkMUzEcS4Ym/l8CecHRKHz3ecI+W
+         Jb4bGaOtWiy+lgSwqWqI+vD2x6TcJ5dfflLusj0DcOIyIP7XxUk8JmVyp1V3b945bOXk
+         9cyUyCjD2Jq3zLsdPezxxiLTH2ZS4ECFfTBZlYxLvn/EMTBtud5BIwlvJX3Y8qKpM7B4
+         kRXReLlbp76ykxf1drkIWKH1SVvZgkoak4yrKumLUjXL5UWs+YRnu7h6gX69A50aUY6t
+         KI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730371989; x=1730976789;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2/PPaAetYxmKzv3sgVnjzcQ59oLRc0dcwRBbTXacjU=;
+        b=qzY9Uvw64uIl74/p+xjpIKJYT1IFNbkXh29NcyTcML21ZfKM32KMoSkmc+JLdceFWe
+         y8sIWZd7pfYGU3Keh6U2zvYW3i7GzKqHy4gErvhGoyb4N01hR83uaXMhtIfnBDnO1VMb
+         QY+hWsRJzQTyxdhiMf9PwaNZ0LxAT1r0AmcUZAE1BEQwH4unE4sRNI0ZkitxEv96xEz1
+         a9dT26CaQ+RAn/u+6SHIfDPy6x6wt5ro6QGlcY2o077u3Xyl8OsASTFkhds/CQkfJlLk
+         Ch0Wr7+aiO496J4OsGy0jcajsDiJytAF+IcVBQ7OcQmChb+eiKFYHpeQMpu/cl3UIVtl
+         /9LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcHlIzNEdngp5ie9gSCeKxWwVK+ywMdvzhrWPbNE5Dwnrqv/ovg4JPIwYLr42Gzb+mdKdHZDb+ZSXX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVygVIxC2mjjpHJC0KbORZ+50hmcljCIPzHzzqf9gAxg4v/zuE
+	sws2TUUWswU6727A9rGhrhDdVAUfKT3twWzSQU0gYBNZZNBMjbD30tdsCh2jINU=
+X-Google-Smtp-Source: AGHT+IEj2PmCrm+rjaPGqCqvTA61rjlM2smHZN2BDqZGjYKUG6p+9lHCct26bf+Hc89r3OBtcRNNrg==
+X-Received: by 2002:a05:6000:ccd:b0:37d:2edd:b731 with SMTP id ffacd0b85a97d-380611639f9mr12661409f8f.30.1730371989006;
+        Thu, 31 Oct 2024 03:53:09 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c1esm1764015f8f.12.2024.10.31.03.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 03:53:08 -0700 (PDT)
+Date: Thu, 31 Oct 2024 11:53:07 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Benjamin Larsson <benjamin.larsson@genexis.eu>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Lee Jones <lee@kernel.org>, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	upstream@airoha.com, ansuelsmth@gmail.com, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v9 6/6] pwm: airoha: Add support for EN7581 SoC
+Message-ID: <ljpgey6oqeisnhnf3zojnmczxvpduabj6cgf3utef3oic2k27e@r5sbpdxwzghs>
+References: <20241023-en7581-pinctrl-v9-0-afb0cbcab0ec@kernel.org>
+ <20241023-en7581-pinctrl-v9-6-afb0cbcab0ec@kernel.org>
+ <bf5lpb3dwfywzgnbcel6de57ick7hfzxfaovyqrt7juif6tgp7@sdmugrua6t3c>
+ <184f8707-0b4b-474a-b2d4-b54a3438f4a3@genexis.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wg4oaapc6iokbp6v"
+Content-Disposition: inline
+In-Reply-To: <184f8707-0b4b-474a-b2d4-b54a3438f4a3@genexis.eu>
 
-Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
-and structs with appropriate alternatives.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: dropped unneeded dependencies in Kconfig
- drivers/gpio/Kconfig       |   2 -
- drivers/gpio/gpio-altera.c | 178 ++++++++++++++++---------------------
- 2 files changed, 78 insertions(+), 102 deletions(-)
+--wg4oaapc6iokbp6v
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9 6/6] pwm: airoha: Add support for EN7581 SoC
+MIME-Version: 1.0
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 03ace402b50c..50a5b05a837d 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -148,9 +148,7 @@ config GPIO_74XX_MMIO
- 
- config GPIO_ALTERA
- 	tristate "Altera GPIO"
--	depends on OF_GPIO
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO_MM_GPIOCHIP
- 	help
- 	  Say Y or M here to build support for the Altera PIO device.
- 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index 6340134d68c6..039fef26546e 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -4,11 +4,19 @@
-  * Based on gpio-mpc8xxx.c
-  */
- 
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/gpio/driver.h>
--#include <linux/gpio/legacy-of-mm-gpiochip.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+
-+#include <linux/gpio/driver.h>
- 
- #define ALTERA_GPIO_MAX_NGPIO		32
- #define ALTERA_GPIO_DATA		0x0
-@@ -18,7 +26,8 @@
- 
- /**
- * struct altera_gpio_chip
--* @mmchip		: memory mapped chip structure.
-+* @gc			: GPIO chip structure.
-+* @regs			: memory mapped IO address for the controller registers.
- * @gpio_lock		: synchronization lock so that new irq/set/get requests
- *			  will be blocked until the current one completes.
- * @interrupt_trigger	: specifies the hardware configured IRQ trigger type
-@@ -26,7 +35,8 @@
- * @mapped_irq		: kernel mapped irq number.
- */
- struct altera_gpio_chip {
--	struct of_mm_gpio_chip mmchip;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	raw_spinlock_t gpio_lock;
- 	int interrupt_trigger;
- 	int mapped_irq;
-@@ -34,40 +44,36 @@ struct altera_gpio_chip {
- 
- static void altera_gpio_irq_unmask(struct irq_data *d)
- {
--	struct altera_gpio_chip *altera_gc;
--	struct of_mm_gpio_chip *mm_gc;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	u32 intmask;
- 
--	altera_gc = gpiochip_get_data(irq_data_get_irq_chip_data(d));
--	mm_gc = &altera_gc->mmchip;
--	gpiochip_enable_irq(&mm_gc->gc, irqd_to_hwirq(d));
-+	gpiochip_enable_irq(gc, irqd_to_hwirq(d));
- 
- 	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
--	intmask = readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-+	intmask = readl(altera_gc->regs + ALTERA_GPIO_IRQ_MASK);
- 	/* Set ALTERA_GPIO_IRQ_MASK bit to unmask */
- 	intmask |= BIT(irqd_to_hwirq(d));
--	writel(intmask, mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-+	writel(intmask, altera_gc->regs + ALTERA_GPIO_IRQ_MASK);
- 	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
- }
- 
- static void altera_gpio_irq_mask(struct irq_data *d)
- {
--	struct altera_gpio_chip *altera_gc;
--	struct of_mm_gpio_chip *mm_gc;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	u32 intmask;
- 
--	altera_gc = gpiochip_get_data(irq_data_get_irq_chip_data(d));
--	mm_gc = &altera_gc->mmchip;
--
- 	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
--	intmask = readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-+	intmask = readl(altera_gc->regs + ALTERA_GPIO_IRQ_MASK);
- 	/* Clear ALTERA_GPIO_IRQ_MASK bit to mask */
- 	intmask &= ~BIT(irqd_to_hwirq(d));
--	writel(intmask, mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-+	writel(intmask, altera_gc->regs + ALTERA_GPIO_IRQ_MASK);
- 	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
--	gpiochip_disable_irq(&mm_gc->gc, irqd_to_hwirq(d));
-+
-+	gpiochip_disable_irq(gc, irqd_to_hwirq(d));
- }
- 
- /*
-@@ -77,9 +83,8 @@ static void altera_gpio_irq_mask(struct irq_data *d)
- static int altera_gpio_irq_set_type(struct irq_data *d,
- 				   unsigned int type)
- {
--	struct altera_gpio_chip *altera_gc;
--
--	altera_gc = gpiochip_get_data(irq_data_get_irq_chip_data(d));
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 
- 	if (type == IRQ_TYPE_NONE) {
- 		irq_set_handler_locked(d, handle_bad_irq);
-@@ -105,49 +110,39 @@ static unsigned int altera_gpio_irq_startup(struct irq_data *d)
- 
- static int altera_gpio_get(struct gpio_chip *gc, unsigned offset)
- {
--	struct of_mm_gpio_chip *mm_gc;
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 
--	mm_gc = to_of_mm_gpio_chip(gc);
--
--	return !!(readl(mm_gc->regs + ALTERA_GPIO_DATA) & BIT(offset));
-+	return !!(readl(altera_gc->regs + ALTERA_GPIO_DATA) & BIT(offset));
- }
- 
- static void altera_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- {
--	struct of_mm_gpio_chip *mm_gc;
--	struct altera_gpio_chip *chip;
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	unsigned int data_reg;
- 
--	mm_gc = to_of_mm_gpio_chip(gc);
--	chip = gpiochip_get_data(gc);
--
--	raw_spin_lock_irqsave(&chip->gpio_lock, flags);
--	data_reg = readl(mm_gc->regs + ALTERA_GPIO_DATA);
-+	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
-+	data_reg = readl(altera_gc->regs + ALTERA_GPIO_DATA);
- 	if (value)
- 		data_reg |= BIT(offset);
- 	else
- 		data_reg &= ~BIT(offset);
--	writel(data_reg, mm_gc->regs + ALTERA_GPIO_DATA);
--	raw_spin_unlock_irqrestore(&chip->gpio_lock, flags);
-+	writel(data_reg, altera_gc->regs + ALTERA_GPIO_DATA);
-+	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
- }
- 
- static int altera_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- {
--	struct of_mm_gpio_chip *mm_gc;
--	struct altera_gpio_chip *chip;
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	unsigned int gpio_ddr;
- 
--	mm_gc = to_of_mm_gpio_chip(gc);
--	chip = gpiochip_get_data(gc);
--
--	raw_spin_lock_irqsave(&chip->gpio_lock, flags);
-+	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
- 	/* Set pin as input, assumes software controlled IP */
--	gpio_ddr = readl(mm_gc->regs + ALTERA_GPIO_DIR);
-+	gpio_ddr = readl(altera_gc->regs + ALTERA_GPIO_DIR);
- 	gpio_ddr &= ~BIT(offset);
--	writel(gpio_ddr, mm_gc->regs + ALTERA_GPIO_DIR);
--	raw_spin_unlock_irqrestore(&chip->gpio_lock, flags);
-+	writel(gpio_ddr, altera_gc->regs + ALTERA_GPIO_DIR);
-+	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
- 
- 	return 0;
- }
-@@ -155,53 +150,46 @@ static int altera_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- static int altera_gpio_direction_output(struct gpio_chip *gc,
- 		unsigned offset, int value)
- {
--	struct of_mm_gpio_chip *mm_gc;
--	struct altera_gpio_chip *chip;
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	unsigned int data_reg, gpio_ddr;
- 
--	mm_gc = to_of_mm_gpio_chip(gc);
--	chip = gpiochip_get_data(gc);
--
--	raw_spin_lock_irqsave(&chip->gpio_lock, flags);
-+	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
- 	/* Sets the GPIO value */
--	data_reg = readl(mm_gc->regs + ALTERA_GPIO_DATA);
-+	data_reg = readl(altera_gc->regs + ALTERA_GPIO_DATA);
- 	if (value)
- 		data_reg |= BIT(offset);
- 	else
- 		data_reg &= ~BIT(offset);
--	writel(data_reg, mm_gc->regs + ALTERA_GPIO_DATA);
-+	writel(data_reg, altera_gc->regs + ALTERA_GPIO_DATA);
- 
- 	/* Set pin as output, assumes software controlled IP */
--	gpio_ddr = readl(mm_gc->regs + ALTERA_GPIO_DIR);
-+	gpio_ddr = readl(altera_gc->regs + ALTERA_GPIO_DIR);
- 	gpio_ddr |= BIT(offset);
--	writel(gpio_ddr, mm_gc->regs + ALTERA_GPIO_DIR);
--	raw_spin_unlock_irqrestore(&chip->gpio_lock, flags);
-+	writel(gpio_ddr, altera_gc->regs + ALTERA_GPIO_DIR);
-+	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
- 
- 	return 0;
- }
- 
- static void altera_gpio_irq_edge_handler(struct irq_desc *desc)
- {
--	struct altera_gpio_chip *altera_gc;
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
-+	struct irq_domain *irqdomain = gc->irq.domain;
- 	struct irq_chip *chip;
--	struct of_mm_gpio_chip *mm_gc;
--	struct irq_domain *irqdomain;
- 	unsigned long status;
- 	int i;
- 
--	altera_gc = gpiochip_get_data(irq_desc_get_handler_data(desc));
- 	chip = irq_desc_get_chip(desc);
--	mm_gc = &altera_gc->mmchip;
--	irqdomain = altera_gc->mmchip.gc.irq.domain;
- 
- 	chained_irq_enter(chip, desc);
- 
- 	while ((status =
--	      (readl(mm_gc->regs + ALTERA_GPIO_EDGE_CAP) &
--	      readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK)))) {
--		writel(status, mm_gc->regs + ALTERA_GPIO_EDGE_CAP);
--		for_each_set_bit(i, &status, mm_gc->gc.ngpio)
-+	        (readl(altera_gc->regs + ALTERA_GPIO_EDGE_CAP) &
-+	         readl(altera_gc->regs + ALTERA_GPIO_IRQ_MASK)))) {
-+		writel(status, altera_gc->regs + ALTERA_GPIO_EDGE_CAP);
-+		for_each_set_bit(i, &status, gc->ngpio)
- 			generic_handle_domain_irq(irqdomain, i);
- 	}
- 
-@@ -210,24 +198,21 @@ static void altera_gpio_irq_edge_handler(struct irq_desc *desc)
- 
- static void altera_gpio_irq_leveL_high_handler(struct irq_desc *desc)
- {
--	struct altera_gpio_chip *altera_gc;
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct altera_gpio_chip *altera_gc = gpiochip_get_data(gc);
-+	struct irq_domain *irqdomain = gc->irq.domain;
- 	struct irq_chip *chip;
--	struct of_mm_gpio_chip *mm_gc;
--	struct irq_domain *irqdomain;
- 	unsigned long status;
- 	int i;
- 
--	altera_gc = gpiochip_get_data(irq_desc_get_handler_data(desc));
- 	chip = irq_desc_get_chip(desc);
--	mm_gc = &altera_gc->mmchip;
--	irqdomain = altera_gc->mmchip.gc.irq.domain;
- 
- 	chained_irq_enter(chip, desc);
- 
--	status = readl(mm_gc->regs + ALTERA_GPIO_DATA);
--	status &= readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
-+	status = readl(altera_gc->regs + ALTERA_GPIO_DATA);
-+	status &= readl(altera_gc->regs + ALTERA_GPIO_IRQ_MASK);
- 
--	for_each_set_bit(i, &status, mm_gc->gc.ngpio)
-+	for_each_set_bit(i, &status, gc->ngpio)
- 		generic_handle_domain_irq(irqdomain, i);
- 
- 	chained_irq_exit(chip, desc);
-@@ -246,7 +231,7 @@ static const struct irq_chip altera_gpio_irq_chip = {
- 
- static int altera_gpio_probe(struct platform_device *pdev)
- {
--	struct device_node *node = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
- 	int reg, ret;
- 	struct altera_gpio_chip *altera_gc;
- 	struct gpio_irq_chip *girq;
-@@ -257,39 +242,42 @@ static int altera_gpio_probe(struct platform_device *pdev)
- 
- 	raw_spin_lock_init(&altera_gc->gpio_lock);
- 
--	if (of_property_read_u32(node, "altr,ngpio", &reg))
-+	if (device_property_read_u32(dev, "altr,ngpio", &reg))
- 		/* By default assume maximum ngpio */
--		altera_gc->mmchip.gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
-+		altera_gc->gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
- 	else
--		altera_gc->mmchip.gc.ngpio = reg;
-+		altera_gc->gc.ngpio = reg;
- 
--	if (altera_gc->mmchip.gc.ngpio > ALTERA_GPIO_MAX_NGPIO) {
-+	if (altera_gc->gc.ngpio > ALTERA_GPIO_MAX_NGPIO) {
- 		dev_warn(&pdev->dev,
- 			"ngpio is greater than %d, defaulting to %d\n",
- 			ALTERA_GPIO_MAX_NGPIO, ALTERA_GPIO_MAX_NGPIO);
--		altera_gc->mmchip.gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
-+		altera_gc->gc.ngpio = ALTERA_GPIO_MAX_NGPIO;
- 	}
- 
--	altera_gc->mmchip.gc.direction_input	= altera_gpio_direction_input;
--	altera_gc->mmchip.gc.direction_output	= altera_gpio_direction_output;
--	altera_gc->mmchip.gc.get		= altera_gpio_get;
--	altera_gc->mmchip.gc.set		= altera_gpio_set;
--	altera_gc->mmchip.gc.owner		= THIS_MODULE;
--	altera_gc->mmchip.gc.parent		= &pdev->dev;
-+	altera_gc->gc.direction_input	= altera_gpio_direction_input;
-+	altera_gc->gc.direction_output	= altera_gpio_direction_output;
-+	altera_gc->gc.get		= altera_gpio_get;
-+	altera_gc->gc.set		= altera_gpio_set;
-+	altera_gc->gc.owner		= THIS_MODULE;
-+	altera_gc->gc.parent		= &pdev->dev;
-+
-+	altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(altera_gc->regs))
-+		return dev_err_probe(dev, PTR_ERR(altera_gc->regs), "failed to ioremap memory resource\n");
- 
- 	altera_gc->mapped_irq = platform_get_irq_optional(pdev, 0);
--
- 	if (altera_gc->mapped_irq < 0)
- 		goto skip_irq;
- 
--	if (of_property_read_u32(node, "altr,interrupt-type", &reg)) {
-+	if (device_property_read_u32(dev, "altr,interrupt-type", &reg)) {
- 		dev_err(&pdev->dev,
- 			"altr,interrupt-type value not set in device tree\n");
- 		return -EINVAL;
- 	}
- 	altera_gc->interrupt_trigger = reg;
- 
--	girq = &altera_gc->mmchip.gc.irq;
-+	girq = &altera_gc->gc.irq;
- 	gpio_irq_chip_set_chip(girq, &altera_gpio_irq_chip);
- 
- 	if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
-@@ -306,24 +294,15 @@ static int altera_gpio_probe(struct platform_device *pdev)
- 	girq->parents[0] = altera_gc->mapped_irq;
- 
- skip_irq:
--	ret = of_mm_gpiochip_add_data(node, &altera_gc->mmchip, altera_gc);
-+	ret = devm_gpiochip_add_data(dev, &altera_gc->gc, altera_gc);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
- 		return ret;
- 	}
- 
--	platform_set_drvdata(pdev, altera_gc);
--
- 	return 0;
- }
- 
--static void altera_gpio_remove(struct platform_device *pdev)
--{
--	struct altera_gpio_chip *altera_gc = platform_get_drvdata(pdev);
--
--	of_mm_gpiochip_remove(&altera_gc->mmchip);
--}
--
- static const struct of_device_id altera_gpio_of_match[] = {
- 	{ .compatible = "altr,pio-1.0", },
- 	{},
-@@ -336,7 +315,6 @@ static struct platform_driver altera_gpio_driver = {
- 		.of_match_table = altera_gpio_of_match,
- 	},
- 	.probe		= altera_gpio_probe,
--	.remove		= altera_gpio_remove,
- };
- 
- static int __init altera_gpio_init(void)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Hello Benjamin,
 
+On Wed, Oct 30, 2024 at 11:14:41AM +0100, Benjamin Larsson wrote:
+> On 2024-10-30 08:32, Uwe Kleine-K=F6nig wrote:
+> > > +	/* Configure frequency divisor */
+> > > +	mask =3D WAVE_GEN_CYCLE_MASK(index % 4);
+> > > +	val =3D (period << __ffs(mask)) & mask;
+> > FIELD_PREP please.
+>=20
+> Per my understanding FIELD_PREP only work on compile time constants.
+
+Then please create an alternative macro with the same semantic that also
+works when the mask isn't known at compile time instead of open coding
+the same concept several times.
+
+Best regards
+Uwe
+
+--wg4oaapc6iokbp6v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcjYZAACgkQj4D7WH0S
+/k5i+Qf/QUXWMBOT0BMZ7vYNOddtUYFZcRph+Cgv/55I6yp0wo0c8gGiYBTgjdls
+BZkBjvIPurO3QEZd8dGjcYFSDkJFCfuikUofKD7RQ4wWxRsfmY88TBsztrkfqbg2
+aIjBeZlp3n3SyIQ4lsQV9HdMzUGvITEGLBN3k8cbmaZyfZU08CN9n6hmZN1EwduZ
++yQtVPlDRq2k7jUiTTLbRcSqb6ngR8FajPEP+s+vYXawI8a43BIBVHZzt80AXfkG
+NZTgD+fW8qmB4uUevfuVq8+yw5cTAGrTxkjh/fMNsIArbA5bNdVBUKLhTrUvMHTI
+NK5mFlK9MFcl5mK6ETI1KgnKNHa75Q==
+=lv66
+-----END PGP SIGNATURE-----
+
+--wg4oaapc6iokbp6v--
