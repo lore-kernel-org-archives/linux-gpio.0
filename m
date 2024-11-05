@@ -1,220 +1,234 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C991D6DD1;
-	Tue,  5 Nov 2024 13:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A561D54F4
+	for <linux-gpio@vger.kernel.org>; Tue,  5 Nov 2024 14:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730813692; cv=none; b=GZ9oLStBZbXuHVAwI8FwA0jx22j0qTl//lQBywKqauYgXs47j9n9Y9n45GOHeWjo1YoW+XSgDfd8dsDrOBMO1GmLv+zA0eGvTZxgm4CnMNAjspb0l1y+lbWHrw0I4s1Fj1T34I7KWzTME6GJV6HExYn7Ane2rwJdRIeac1SaTF8=
+	t=1730817077; cv=none; b=SqX4CV19x5PDomgVvuipa9Zdjj30WRr0GfsWbFIGpmRnDUXdK8hJHN8e1ctadCKN5HCI8Tm27opZO+Z1g86Emd1QL7LnkDz6GYysQuIHlXcZrxJIh0TFboRY68fMz3LSEJpuxsqHSEDY7wgM0gcd62+9vrgbHo/G3cFXQY0w1eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730813692; c=relaxed/simple;
-	bh=3wjFrl9fs9cJnx1W+rEd1Kdu1dvILXiWPVoP33XIYb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efU/Oxnr2hrDQ/dfPlrLv2EYQOF1YR2feTlitasVPF+BQMHIA2l365nrd7TP7nw/59T+qJDUdmyJ30Yrg/kwXpZqgfOLvN+6fddtfzgQFXWM/ScOXK8Uf6jGDXgjmEZdHGuu+EpMU1MGVdzl9lAAmS4Px8hec0VrRzTII9yeVs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=H2x8aTqt; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1730817077; c=relaxed/simple;
+	bh=XN8QvmjRYeFWUTEFIpNV8i5a0X+dKopOVH8Kub55aIU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTK/NyoefJpFZmN9G78k/vnxEToryI9RqlZcW249FLobBAS4E73smBu/gPxM7Pm0YzMZbp4pxopczsEqE1pO4Ci04KqDZxUUKirQeK18gIdaoK8ANhua5ATprLM/YPXqGtCE4DSLo8/hrMhw1ZEMtEXxZifLrPUR9BKv1GZfiJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A/L5QOZ3; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="H2x8aTqt"
-Received: from [192.168.1.107] (87-97-112-21.pool.digikabel.hu [87.97.112.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: hs@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5372D88CEC;
-	Tue,  5 Nov 2024 14:34:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1730813688;
-	bh=mFlJcbl3DlbfwuDN87mdbDM9flef9BgUD38InRXLEwQ=;
-	h=Date:Subject:To:Cc:References:Reply-To:From:In-Reply-To:From;
-	b=H2x8aTqtlPBSwXW4aaq1VQwaAQgR7Z+au0bqVyCYgRJiwEo33knSb3Dq2BAf1eTA+
-	 Qp4Gr63fZTuX4Sjfae9+D9aR7hW3pSH6VyynQ0C1tqF/B+GfQtx6BXO7RZmoiTKffD
-	 7CBsm2ovA0Bu+0GfQxTpB3w/h8YY1UYEeNhJZKzqqvq19lFFiJm/UwuJpJr2ch3YYN
-	 AgUMIbPt6fhzC7DxIbnp0cwr9R++G15V5ItS3yzuSJt7buTaj23O++4ZNp/mFlbnXH
-	 rTqBS1Oqq5w5uZoW0XRZBo79pzZyT2qmnjc0v5OG8SO59YjcNzjgeIpLCbuCudyXwQ
-	 8JYkuP2X1eVwg==
-Message-ID: <c8ebdc70-759e-d51a-d63e-00898ef59d1e@denx.de>
-Date: Tue, 5 Nov 2024 14:32:19 +0100
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A/L5QOZ3"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso890374266b.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Nov 2024 06:31:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730817073; x=1731421873; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
+        b=A/L5QOZ3FSpiHDXbZMSm2ijbcoVoXzXe47BZ9yCDwi8Chh3/inu1cZz4j1apI+mLFf
+         +ldKcFDRxhcM5U1APtwjtvVlQ4MemvkjLV5xwkTjivxpueHC9GQxLKUo+ipmAvaxippx
+         rvef1HLhWwmcpPtrG5w6w65LOLWx+kZebs7Ppg1ladFgfm5My80N3NOPMAqLBkM84fOH
+         0dwiOUeGgEXiW0niK/60jrWWxbjWbztW62yTZWpCsd0k4AZ4J9zeT5457vwJewwIJ2Lp
+         uaf181cqCfERC9Jw5PF1JgCEWEvxXKLIQ1qC2oRV6+3tiPyt5OdjBEcQ6wvUDhXD59BZ
+         MGuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730817073; x=1731421873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
+        b=M5leP0IRP/qawvOqDRIko3myzAJ+u4dENrdlsznO2Rnsz3sQ2KqqeUmwExSVFBwV4O
+         CAnwj4lvv7FxQ2txdphYr6Hz0rqHHQIfyLWxktzSWOLGj1+vqB+wjkhwVEyjxF+RVpWd
+         I7332jxXHr2hzwI64ZKOrbRKi7FUqrcpqxGK1Q60wEIJEfZxoFd2t5GLHtI8oWo6nBWc
+         23YDqJKdJcMe35ePOK+S7v19GzjL60VTvqnahG6A5yqQcxzpyz9/BU+XOE7lCc78SzSB
+         Az390/UXAGSay7Lqj/DkFjz89U2OGGlq8VfwET9G85mJUgJz0bpmsPWgcYf/0A5Cp0me
+         bcDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmo3q4vMT4o8rm2jyT60jl8a/5yVJCFywV6FK1YHI6KDdnytnBm+GJ8Vw8jlNzIfSZq10XH4MuGjQV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD8Q8WUyB11FDTc0y+IM+YA+YGB5UNBV9dd8gaoMVK88+gV46h
+	JJkpbdNB8l3G+25nynxGnNdK9RJ207bDtkyGxBaw4e5WmRv4e3RZF7tBBVcZe28=
+X-Google-Smtp-Source: AGHT+IGfFIA7pHiw/bQC/D2ASD/c0vYvs4DJcTYAQN6+XwmdDdmF15vw/BW0JRu8bqizSc9PGJFmeA==
+X-Received: by 2002:a17:906:a84a:b0:a9e:8522:19e1 with SMTP id a640c23a62f3a-a9e85221c0cmr968110466b.62.1730817073143;
+        Tue, 05 Nov 2024 06:31:13 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb169fc18sm140394466b.10.2024.11.05.06.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:31:12 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 5 Nov 2024 15:31:38 +0100
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 09/12] arm64: dts: rp1: Add support for RaspberryPi's
+ RP1 device
+Message-ID: <ZyosSv4ecKxohSrM@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <1f4cec50493ec5d3168735c0a005771787e5cd59.1730123575.git.andrea.porta@suse.com>
+ <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 0/3] arm64: dts: imx8mp: add support for the ABB SoM
- and carrier
-Content-Language: en-US
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Frieder Schrempf <frieder.schrempf@kontron.de>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Shawn Guo <shawnguo2@yeah.net>, Krzysztof Kozlowski <krzk@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Gregor Herburger <gregor.herburger@ew.tq-group.com>,
- Max Merchel <Max.Merchel@ew.tq-group.com>, imx@lists.linux.dev,
- Fabio Estevam <festevam@gmail.com>, linux-gpio@vger.kernel.org,
- Michael Walle <mwalle@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
- Tim Harvey <tharvey@gateworks.com>, devicetree@vger.kernel.org
-References: <20241105064206.43626-1-hs@denx.de>
- <173081219627.3053080.8796298549026571114.robh@kernel.org>
-Reply-To: hs@denx.de
-From: Heiko Schocher <hs@denx.de>
-In-Reply-To: <173081219627.3053080.8796298549026571114.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
 
-Hello Rob,
+Hi Stan,
 
-On 05.11.24 14:11, Rob Herring (Arm) wrote:
+On 15:29 Mon 04 Nov     , Stanimir Varbanov wrote:
+> Hi Andrea,
 > 
-> On Tue, 05 Nov 2024 07:42:03 +0100, Heiko Schocher wrote:
->> The board uses an ABB specific SoM from ADLink, based on NXP
->> i.MX8MP SoC. The SoM is used on 3 different carrier boards,
->> with small differences.
->>
->> series is based on:
->> 819837584309 - (tag: v6.12-rc5, origin/master, origin/HEAD) Linux 6.12-rc5
->>
->> patches are now checked with
->>
->> make W=1 dt_binding_check
->> make W=1 dtbs_check
->> make W=1 CHECK_DTBS=y {for each dtb introduced in this series)
->>
->> as Krzysztof suggested.
->>
->> Changes in v3:
->> added Reviewed-by from Krzysztof
->> - worked in comments from Krzysztof
->>    gpio-line-names should match the actual number of
->>    gpios of the device.
->> - added comments from Shawn Guo
->>    removed unneeded new lines
->>    sort nodes, properties alphabetical
->>    rename pcie0-refclk -> clock-xxx
->>    used GPIO_ACTIVE_HIGH instead of 0
->> - added comments from Fabio Estevam
->>    instead of settting each brightness-level in
->>    brightness-levels add num-interpolated-steps
->> - changes from me
->>    fix gpio-line-names for semtech gpio controller
->>    in imx8mp-aristainetos3-proton2s.dts as patch
->>    "dt-bindings: pinctrl: sx150xq: allow gpio line naming"
->>    of this series adds the dtb checks for them and 17 entries
->>    needed now.
->>
->> Changes in v2:
->> reworked the compatible strings for ABB imx8mp based boards
->> called dtb checks, no errors for this patch
->> patch dt-bindings: pinctrl: sx150xq: allow gpio line naming new in v2
->> - worked in comments from Krzysztof
->>    - removed unneeded dtbos and build now dtbs for each
->>      carrierboard.
->>    - removed user spidev entries, as I do not know the
->>      real spi devices connected to...
->>    - call dtb check targets as described in cover letter
->>      and fixed warnings except warnings see below:
->> not fixed dtb check warnings
->> - pci (warning pops up for each new dtb from this patch, but
->>    also for a lot of other boards, which are already in tree)
->> imx8mp-aristainetos3-adpismarc.dtb: pcie-ep@33800000: reg: [[864026624, 4194304], [402653184, 134217728]] is too short
->>          from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
->> imx8mp-aristainetos3-adpismarc.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space'] is too short
->>          from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
->> - proton2s dtb specific:
->>    - rs485
->>      imx8mp-aristainetos3-proton2s.dtb: serial@30a60000: rs485-rts-delay:0: 0 is not of type 'array'
->>          from schema $id: http://devicetree.org/schemas/serial/fsl-imx-uart.yaml#
->>      imx8mp-aristainetos3-proton2s.dtb: serial@30a60000: rs485-rts-delay:1: 0 is not of type 'array'
->>          from schema $id: http://devicetree.org/schemas/serial/fsl-imx-uart.yaml#
->>      imx8mp-aristainetos3-proton2s.dtb: serial@30a60000: Unevaluated properties are not allowed ('linux,rs485-enabled-at-boot-time', 'rs485-rts-active-low', 'rs485-rts-delay' were unexpected)
->>          from schema $id: http://devicetree.org/schemas/serial/fsl-imx-uart.yaml#
->>      do not see, what I am doing wrong, also rs485 works fine
->>    - led driver
->>      imx8mp-aristainetos3-proton2s.dtb: /soc@0/bus@30800000/i2c@30a30000/tlc59108@40: failed to match any schema with compatible: ['ti,tlc59108']
->>      I use the comaptible entry used in drivers/leds/leds-tlc591xx.c
->>      Ah, may because file
->>      Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
->>      is not converted to yaml?
->>    - pinctrl driver
->>      adding 'gpio-line-names' leads in a warning as this property
->>      is not checked yet (and so a warning is dropped).
->>      add this check in new patch
->>      dt-bindings: pinctrl: sx150xq: allow gpio line naming
->>      in v2
->>
->> Heiko Schocher (3):
->>    dt-bindings: arm: fsl: Add ABB SoM and carrier
->>    dt-bindings: pinctrl: sx150xq: allow gpio line naming
->>    arm64: dts: imx8mp: add aristainetos3 board support
->>
->>   .../devicetree/bindings/arm/fsl.yaml          |    9 +
->>   .../bindings/pinctrl/semtech,sx1501q.yaml     |   43 +
->>   arch/arm64/boot/dts/freescale/Makefile        |    5 +
->>   .../imx8mp-aristainetos3-adpismarc.dts        |   37 +
->>   .../imx8mp-aristainetos3-helios-lvds.dtso     |  113 ++
->>   .../freescale/imx8mp-aristainetos3-helios.dts |   98 ++
->>   .../imx8mp-aristainetos3-proton2s.dts         |  161 +++
->>   .../imx8mp-aristainetos3a-som-v1.dtsi         | 1107 +++++++++++++++++
->>   8 files changed, 1573 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dts
->>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
->>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dts
->>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dts
->>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
->>
->> --
->> 2.20.1
->>
->>
->>
+> On 10/28/24 16:07, Andrea della Porta wrote:
+> > RaspberryPi RP1 is a multi function PCI endpoint device that
+> > exposes several subperipherals via PCI BAR.
+> > Add a dtb overlay that will be compiled into a binary blob
+> > and linked in the RP1 driver.
+> > This overlay offers just minimal support to represent the
+> > RP1 device itself, the sub-peripherals will be added by
+> > future patches.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> > NOTE: this patch should be taken by the same maintainer that will take
+> > "[PATCH v3 10/12] misc: rp1: RaspberryPi RP1 misc driver", since they
+> > are closely related in terms of compiling.
+> > 
+> >  MAINTAINERS                           |  1 +
+> >  arch/arm64/boot/dts/broadcom/rp1.dtso | 61 +++++++++++++++++++++++++++
+> >  2 files changed, 62 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 06277969a522..510a071ede78 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19383,6 +19383,7 @@ F:	include/uapi/linux/media/raspberrypi/
+> >  RASPBERRY PI RP1 PCI DRIVER
+> >  M:	Andrea della Porta <andrea.porta@suse.com>
+> >  S:	Maintained
+> > +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >  F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > new file mode 100644
+> > index 000000000000..8d1bbf207a30
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > @@ -0,0 +1,61 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +/ {
+> > +	fragment@0 {
+> > +		target-path="";
+> > +		__overlay__ {
+> > +			compatible = "pci1de4,1";
+> > +			#address-cells = <3>;
+> > +			#size-cells = <2>;
+> > +			interrupt-controller;
+> > +			#interrupt-cells = <2>;
+> > +
+> > +			pci_ep_bus: pci-ep-bus@1 {
+> > +				compatible = "simple-bus";
+> > +				ranges = <0xc0 0x40000000
+> > +					  0x01 0x00 0x00000000
+> > +					  0x00 0x00400000>;
+> > +				dma-ranges = <0x10 0x00000000
+> > +					      0x43000000 0x10 0x00000000
+> > +					      0x10 0x00000000>;
+> > +				#address-cells = <2>;
+> > +				#size-cells = <2>;
+> > +
+> > +				rp1_clocks: clocks@c040018000 {
+> > +					compatible = "raspberrypi,rp1-clocks";
+> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
 > 
+> shouldn't this be:
 > 
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
+> 	rp1_clocks: clocks@18000 {
+> 		reg = <0x00 0x00018000 0x0 0x10038>;
+> 		...
+> 	}
 > 
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
+> ?
 > 
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
-> 
->    pip3 install dtschema --upgrade
-> 
-> 
-> New warnings running 'make CHECK_DTBS=y freescale/imx8mp-aristainetos3-adpismarc.dtb freescale/imx8mp-aristainetos3-helios.dtb freescale/imx8mp-aristainetos3-proton2s.dtb' for 20241105064206.43626-1-hs@denx.de:
-> 
-> arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: /soc@0/bus@30800000/i2c@30a30000/tlc59108@40: failed to match any schema with compatible: ['ti,tlc59108']
+> And for other nodes too...
 
-Yep, reason I explained above in commit comment:
+For that to be @18000 instead of @c040018000, you should also change
+the "ranges" entry in pci-ep-bus node, as follows:
 
- >>    - led driver
- >>      imx8mp-aristainetos3-proton2s.dtb: /soc@0/bus@30800000/i2c@30a30000/tlc59108@40: failed to 
-match any schema with compatible: ['ti,tlc59108']
- >>      I use the comaptible entry used in drivers/leds/leds-tlc591xx.c
- >>      Ah, may because file
- >>      Documentation/devicetree/bindings/leds/leds-tlc591xx.txt
- >>      is not converted to yaml?
+ranges = <0x00 0x00018000	//This was: 0xc0 0x40000000
+          0x01 0x00 0x00000000
+          0x00 0x00400000>;
 
-So the compatible entry is fully okay, just the check is poping up,
-as yaml file is missing...
+which is of course feasible, but I prefer to use addresses that 
+resemble (at least to some extent) the ones in RP1 docs.
 
-bye,
-Heiko
--- 
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
+Many thanks,
+Andrea
+
+> 
+> ~Stan
+> 
+> > +					#clock-cells = <1>;
+> > +					clocks = <&clk_rp1_xosc>;
+> > +					clock-names = "xosc";
+> > +					assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
+> > +							  <&rp1_clocks RP1_PLL_SYS>,
+> > +							  <&rp1_clocks RP1_CLK_SYS>;
+> > +					assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
+> > +							       <200000000>,  // RP1_PLL_SYS
+> > +							       <200000000>;  // RP1_CLK_SYS
+> > +				};
+> > +
+> > +				rp1_gpio: pinctrl@c0400d0000 {
+> > +					compatible = "raspberrypi,rp1-gpio";
+> > +					reg = <0xc0 0x400d0000  0x0 0xc000>,
+> > +					      <0xc0 0x400e0000  0x0 0xc000>,
+> > +					      <0xc0 0x400f0000  0x0 0xc000>;
+> > +					gpio-controller;
+> > +					#gpio-cells = <2>;
+> > +					interrupt-controller;
+> > +					#interrupt-cells = <2>;
+> > +					interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <1 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <2 IRQ_TYPE_LEVEL_HIGH>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> 
