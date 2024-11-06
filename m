@@ -1,43 +1,43 @@
-Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2661C1D358B;
-	Wed,  6 Nov 2024 10:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECD91DDC03;
+	Wed,  6 Nov 2024 10:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730887742; cv=none; b=ARfnLnhDafebCy9ul9ovsMdKTGfXWSgnI4nZ43at2NSj5JCgd4lxcsID9WIsoE6hhRAraKcXVY11CO3iwCTQ8RojwZQqNBcX8YlCvCOS3vFxDg61vG4MoYffACVaMwFNTo65ykzacbc/K+j5GXakIdQkdwaUwNn/ujXjUZKvuEk=
+	t=1730887750; cv=none; b=nsKHXndIUrXNFx+BywaFiW/x26iTIVnepQh43sBvD9iSSQrhhAetlJmjm4QroEnbdBugBU4QGqiIRHZ2wtDnwd8qrEL4GZpihyElBJIn626gu1gd9kfHXVTcYesiwHBs9HJCra3Ql3NMZCvG3EEPWOAPE/ZpO53OoA/+su6p0yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730887742; c=relaxed/simple;
-	bh=lrjTMFTRxq2vHscfSpg9nn5EnVN/Jl8BAr3xcwq1MQo=;
+	s=arc-20240116; t=1730887750; c=relaxed/simple;
+	bh=w8f6EHwbpuXfJsXd4Hk0fYwMmDt3B1x7ZQQNymSJp28=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bE9J/sJc+BEZAlQNQ+VYs4nXeHkDbACju/j4LNQweg2uvVAZmG3jM1Epx0CI4UBiNND4hhvra2+hMrm6/ZDF8oFufEWByOm4OQYcPPnsziuDnDklX2UotKuYXgIEssEb3iOSuDB/DNhxESZYnBXqbqELI9Fe4lHjb0wv8tolZUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=WOVov/Y6; arc=none smtp.client-ip=185.70.43.167
+	 MIME-Version:Content-Type; b=Nv0Fkdor74GivJDC+Ik8kaznRlCnPwuv8cDcPCc3c9vLEk7R/38qFDEIlSUKbdgq8s1ktON1c2XWpKyinXXbsa8ap2e35StqwalXQzDAs8O9eosuhPZHCbsSTZfY2ubm9yBRqNuc6kVzs8h9ne5/AvuARLHq1ayqs6rHoUUozp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Cyj05UIY; arc=none smtp.client-ip=185.70.43.166
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="WOVov/Y6"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Cyj05UIY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1730887733; x=1731146933;
-	bh=raa1QuOssjRSjAOLGufH2jaWU3a4AV7mLxX65wyZzvg=;
+	s=protonmail3; t=1730887746; x=1731146946;
+	bh=w8f6EHwbpuXfJsXd4Hk0fYwMmDt3B1x7ZQQNymSJp28=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=WOVov/Y6aF9HRq20xDsRRWfHandea1OP4GE+aDpb2CpZ91hcVDlWX9TQ+dI8cIju8
-	 j7QWHunfcqT3Lf2CkmBd1xahPY7MUmA7DkMaq1FDZQFBSUr8iSZiKYCmNMcrn9BGUi
-	 /Y8E4kqtTT5EMjze0QB33kBGqRZQVaF928YSaoSDkUZK/W/Wvk6SJ/uNW6oQXclcTt
-	 ktuLrOl2hoDwVWvtGmi43ZuY9ORs5Fgpc4QZABbYjVKNpMYN3LP+qVyaGicRELLO6t
-	 hHqI+yFRrXvdQe6fJa7KdYd76LdPk35RHimceYA3RMg+kfRo12J8oX5PGrO0hMousL
-	 dzwYAyfWAjWeg==
-Date: Wed, 06 Nov 2024 10:08:49 +0000
+	b=Cyj05UIYud+EGWKbDL/T2w+9INhPklVEKHI7ivjAwEMZIpfgBI6O9maYfGY2BeIJn
+	 e3xIn6yAisX2lPmR75opQnoz7GMJ2S/KNG2Qo9ewQI4O6cqogYLD7pJG1ScG3REj//
+	 NZzqL9qRna02ShS2BgJRkRsekOqZOioNym0LPxBW/goeHMxnPTYV1zK5mPMAA77qkJ
+	 mh7X3MIlRHqUe0PKBkIl74IAuZuFzPd3vtVR1fcvu4fIrRZGaWeDgFcEUcZkMeRY8E
+	 u3sYeIXcsBq78bbcgYYL0HrEqdCJJ9oEmlUZ/7coCy2sH9uwvhan6wHDbZnVuS3sUQ
+	 9gMd2/JqodGYQ==
+Date: Wed, 06 Nov 2024 10:09:03 +0000
 To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Andy Teng <andy.teng@mediatek.com>
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 Cc: Yassine Oudjana <y.oudjana@protonmail.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 2/7] dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Improve pinctrl subnode and property descriptions
-Message-ID: <20241106100741.173825-3-y.oudjana@protonmail.com>
+Subject: [PATCH v7 4/7] arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT bindings
+Message-ID: <20241106100741.173825-5-y.oudjana@protonmail.com>
 In-Reply-To: <20241106100741.173825-1-y.oudjana@protonmail.com>
 References: <20241106100741.173825-1-y.oudjana@protonmail.com>
 Feedback-ID: 6882736:user:proton
-X-Pm-Message-ID: f6a45456e31bec4fd61adc98755f5be4d95942ad
+X-Pm-Message-ID: 16d86c1d179cbb388235fe4342731305526f5975
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -47,81 +47,102 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Change "subnodes" to "subnode" in subnode description for better
-grammatical accuracy, capitalize pinmux description, wrap all descriptions
-at 80 characters, and remove literal style indicators from descriptions
-that don't need their new lines preserved.
+Add -pins suffix to pin configuration nodes to follow DT bindings
+and pass dtbs_check.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabor=
 a.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinc=
-trl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctr=
-l.yaml
-index 352a88d7b135e..bf8dc176553c1 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yam=
-l
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yam=
-l
-@@ -119,11 +119,11 @@ patternProperties:
-       '^pins':
-         type: object
-         description:
--          A pinctrl node should contain at least one subnodes representing=
- the
-+          A pinctrl node should contain at least one subnode representing =
-the
-           pinctrl groups available on the machine. Each subnode will list =
-the
--          pins it needs, and how they should be configured, with regard to=
- muxer
--          configuration, pullups, drive strength, input enable/disable and=
- input
--          schmitt.
-+          pins it needs, and how they should be configured, with regard to
-+          muxer configuration, pullups, drive strength, input enable/disab=
-le
-+          and input schmitt.
-         allOf:
-           - $ref: pinmux-node.yaml
-           - $ref: pincfg-node.yaml
-@@ -133,7 +133,8 @@ patternProperties:
-             description:
-               Integer array, represents gpio pin number and mux setting.
-               Supported pin number and mux varies for different SoCs, and =
-are
--              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h dir=
-ectly.
-+              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h
-+              directly.
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts=
+/mediatek/mt6797.dtsi
+index 0e9d11b4585be..a786d1d08f683 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -135,70 +135,70 @@ pio: pinctrl@10005000 {
+ =09=09gpio-controller;
+ =09=09#gpio-cells =3D <2>;
 =20
-           bias-disable: true
+-=09=09uart0_pins_a: uart0 {
++=09=09uart0_pins_a: uart0-pins {
+ =09=09=09pins0 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO234__FUNC_UTXD0>,
+ =09=09=09=09=09 <MT6797_GPIO235__FUNC_URXD0>;
+ =09=09=09};
+ =09=09};
 =20
-@@ -142,7 +143,7 @@ patternProperties:
-               - type: boolean
-               - enum: [100, 101, 102, 103]
-                 description: Pull up PUPD/R0/R1 type define value.
--            description: |
-+            description:
-               For normal pull up type, it is not necessary to specify R1R0
-               values; When pull up type is PUPD/R0/R1, adding R1R0 defines
-               will set different resistance values.
-@@ -152,7 +153,7 @@ patternProperties:
-               - type: boolean
-               - enum: [100, 101, 102, 103]
-                 description: Pull down PUPD/R0/R1 type define value.
--            description: |
-+            description:
-               For normal pull down type, it is not necessary to specify R1=
-R0
-               values; When pull down type is PUPD/R0/R1, adding R1R0 defin=
-es
-               will set different resistance values.
+-=09=09uart1_pins_a: uart1 {
++=09=09uart1_pins_a: uart1-pins {
+ =09=09=09pins1 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO232__FUNC_URXD1>,
+ =09=09=09=09=09 <MT6797_GPIO233__FUNC_UTXD1>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c0_pins_a: i2c0 {
++=09=09i2c0_pins_a: i2c0-pins {
+ =09=09=09pins0 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO37__FUNC_SCL0_0>,
+ =09=09=09=09=09 <MT6797_GPIO38__FUNC_SDA0_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c1_pins_a: i2c1 {
++=09=09i2c1_pins_a: i2c1-pins {
+ =09=09=09pins1 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO55__FUNC_SCL1_0>,
+ =09=09=09=09=09 <MT6797_GPIO56__FUNC_SDA1_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c2_pins_a: i2c2 {
++=09=09i2c2_pins_a: i2c2-pins {
+ =09=09=09pins2 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO96__FUNC_SCL2_0>,
+ =09=09=09=09=09 <MT6797_GPIO95__FUNC_SDA2_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c3_pins_a: i2c3 {
++=09=09i2c3_pins_a: i2c3-pins {
+ =09=09=09pins3 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO75__FUNC_SDA3_0>,
+ =09=09=09=09=09 <MT6797_GPIO74__FUNC_SCL3_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c4_pins_a: i2c4 {
++=09=09i2c4_pins_a: i2c4-pins {
+ =09=09=09pins4 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO238__FUNC_SDA4_0>,
+ =09=09=09=09=09 <MT6797_GPIO239__FUNC_SCL4_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c5_pins_a: i2c5 {
++=09=09i2c5_pins_a: i2c5-pins {
+ =09=09=09pins5 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO240__FUNC_SDA5_0>,
+ =09=09=09=09=09 <MT6797_GPIO241__FUNC_SCL5_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c6_pins_a: i2c6 {
++=09=09i2c6_pins_a: i2c6-pins {
+ =09=09=09pins6 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO152__FUNC_SDA6_0>,
+ =09=09=09=09=09 <MT6797_GPIO151__FUNC_SCL6_0>;
+ =09=09=09};
+ =09=09};
+=20
+-=09=09i2c7_pins_a: i2c7 {
++=09=09i2c7_pins_a: i2c7-pins {
+ =09=09=09pins7 {
+ =09=09=09=09pinmux =3D <MT6797_GPIO154__FUNC_SDA7_0>,
+ =09=09=09=09=09 <MT6797_GPIO153__FUNC_SCL7_0>;
 --=20
 2.47.0
 
