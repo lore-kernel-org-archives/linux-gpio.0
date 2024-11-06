@@ -1,101 +1,149 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AD21FA25A
-	for <linux-gpio@vger.kernel.org>; Wed,  6 Nov 2024 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C20D1FBF5B
+	for <linux-gpio@vger.kernel.org>; Wed,  6 Nov 2024 13:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900628; cv=none; b=JjjIGlC8yCZPo8iIJfq8awxqzwNNNPn4cMHgTRZQGYtfxmDYs4KKWSB3W3Lqifp84C4pNrPEgmpm7KA3QTpFvLP1lKrKAcfk4eb9qSQRZ6Sv0KLgh3QWm0d+OnawOXxLFZkga04S5yFUs7dNwXxoviXcbCI/4yt6H0hAr/vva0s=
+	t=1730900736; cv=none; b=jM7ktHP6K63wWCnWvj+7PlrchB+iQtArDtQiMubO1rXWPEZ/NJ6kTw1DdXIGPErTCj4FE+NAxV5tvPPWbEkk2u80zo/Kidm6WYkxadsGrPou7DMWVJgfhWT8FPkpxazsOEv1ZZQihVvez0d/OEZSef4hP8Ls/19t1QEHAHnA8ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900628; c=relaxed/simple;
-	bh=07turtyFaUtqmTN7irIArurWZHjH3oZpuJFzYmQgqlU=;
+	s=arc-20240116; t=1730900736; c=relaxed/simple;
+	bh=oe4ysEbOGugDdM+rEZI4gTDxZGKfGa+ZNN+0xqDf504=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nsH/+fUuHGfA8XIYE6snhyM4KF3N0YkVLwEsjx1BwMLsajGzMaL9XSOe4ArD4ANamAViLTNPLKUvaeRSgH07LCbLIMm+pYoxxkqjmoc9xkrYMzpxm7qVbaCh7NpTUO8vVKorUvgRV8RXaUAnVUSW1oXEZrekq+A+cuaSXN7uBR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f3CcdIPo; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	 To:Cc:Content-Type; b=nfj/chu4oow14nqlpn2vqaVT65CzyEn2RH7jnNi9HWMjbn7CtZMeeGpfsU9LmHKvqbCAG6d0fdfuv0XvLZH/NXtfUty/BCEHrtKkzAtOnBu4NsCLBtlZLffCTpO2hIOp/KYvjb0LS3/6RrGm1t3/9T8MvLvEjycCdaOiEWCWrAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z+cJjoeQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f3CcdIPo"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso10623021fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Nov 2024 05:43:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z+cJjoeQ"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e63c8678so7509985e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Nov 2024 05:45:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730900624; x=1731505424; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730900733; x=1731505533; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=07turtyFaUtqmTN7irIArurWZHjH3oZpuJFzYmQgqlU=;
-        b=f3CcdIPoULNOErGfe7BXfAsURIm4et373ySgVx6cdoUgNhp4INO93h6R/F2yDiDfLu
-         ldr/kxxfMhsdCTBO4RcOT3i+xlleOh6EIAVyvupoIGUXjOEbPAMoNDXWYyAQ8hjSTPPx
-         /FGUHI5TnpwImxyp5vlsMgDzQVhWKduYrGOtSRP5e4vGzQ8P6j7kkfO4CRCvfs4t8H/B
-         Pbl1MbBRrILWpxMq1M0rR85mBG77/ZXX20DC5hMUM8EJxMs6iRuQt1bvUHiqIbtq20zx
-         YrrDXLLp8jj09I7DE0vrVcdzxKLcZAI+zsSpF1DP+U+sKuXSwZ7YgxTCVPivyP50Lqby
-         NvvA==
+        bh=ns1m01mlBn0TEXlYPEz7IqH4BJxD81zb8MxCwYwjObU=;
+        b=Z+cJjoeQqf2SQFRLbSVXXzb4oAx36HxhUJ0ZApUEO40/TpA3i3YbMpVB67u3ZuoI3I
+         QLxECA1i1pkCLsqZ+EeBrgbI/coK13307FMpRWZAaV8mYGcjeauTjd8G6CNlL5QIAdmh
+         g+D8gNKVBxsGoPjWWmIne0LLchn5oJ4X2XswTwDlXvrtKgeQI/3jlA+xJ0htoq7U0GN4
+         962txxxBA93/Wd7qz2npkI7TbNcwJpgpqw/sdq4M45cSzv6RSMUeIyLscQMHqpW6W/h7
+         LzHaVtSk76nvzBtMe5EF0WJDGbmsMkgeajHkyZeoOa4JnmPyv+IRKRa5qj3Jh5gLfZ/r
+         qAKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730900624; x=1731505424;
+        d=1e100.net; s=20230601; t=1730900733; x=1731505533;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=07turtyFaUtqmTN7irIArurWZHjH3oZpuJFzYmQgqlU=;
-        b=gTObsGeWVQn1LlAjoPOkfXNx9joEWTHD3eJzQoipNevcO7i8hZEjGtk1Lljp94CkJU
-         M+Rc5ls6zd+EdS9uKRmi24rrcAmQg0r+Yvi5iH4FjPzydy8wi6ZS1hp91fxsQp3p7+uj
-         D6eaASuyTabNFdjRLk5hhq9KzqzvlS6YBLLBME7C3Z7isQuLfweRlQdjue+mXfrQhoYt
-         xhJalPDYqetIoxZ1WkL2Y6ONwirPGomAXnoPYcY66te7L3gyIey2SI/YBdCh2R/j80St
-         P208IZ00Z74ahaMQ48LB50XJZRK/x8Cm4p1tQswXoqkzf6I79Rd07v1l4sHemXLWS7l9
-         cysA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpeGJFttNdNCf0NcemgkqrTLnekfp9ifVKcUHd6k2Wn3Piaf3+XcG/Jo114s+ezCbudad+oyrsdXVt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUGfvhKlg22V28N0cuuviuZ6UNBc5QrQQ3uKlZKE6laa6wVx+8
-	3wJbFdUOGNZJGh/8a9n1U5XPVpVjpwdTEkUZcsto/rXXRRTndMrdIZ/KX0FyKAoRAoy9nC5tO1q
-	tr7ESJKJ2mG09RnfErw6+gVC3BDXq6wXyUQB17Q==
-X-Google-Smtp-Source: AGHT+IHUtnnhEva3lCB8uWh8uIWC06tcgEpMXvu5am5NhlAEbhUxeQ79Id1SoLC6uXkPBOCC/N9jH1BHhM6ITnKzWf8=
-X-Received: by 2002:a05:651c:210a:b0:2fa:ce0d:ec34 with SMTP id
- 38308e7fff4ca-2ff0cb2376emr8634191fa.2.1730900624427; Wed, 06 Nov 2024
- 05:43:44 -0800 (PST)
+        bh=ns1m01mlBn0TEXlYPEz7IqH4BJxD81zb8MxCwYwjObU=;
+        b=YVJ013gfV8N/1PIuxYgFyqlvlqKjaZhoKjmm3+4N5GKnzXs0bFrdpswd9H3mP2D6wS
+         0RhTHKTv2B31nsN6J2e7J4+vFZugASHEAO7xUv5pZdLd58L/B8+KYBGtNt0S+SM76QfM
+         XqT4n4k9FPInWs90PKq74zxv2Jd5WK+oye71lC8GDxacY8+kLCNcY9bIrrL2AYtXWZSf
+         MWq8hedSBpi5wi5YBYQ3H48g5QDH53rKJx7mAzluJaxcIzNqFbMPkFGJYWivhSQ0nwXX
+         nnOtHedx1DB2bo3cD1oNxremNoLASBfILCePa55dHCOTwJJeG6UT28yD1+fFS/cenA0B
+         iwuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP2Po4MzbbnkiBtel4I/t8yWFeR/3h0t0s7oOG6lfT+KOSRh09wcQW1qR3qqSWSP2SchgzOo89sPMz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP05HrhLjhyEO7DFyFggy2pF2Qp7tLQ4YFlxDS2sCxTUwu07GU
+	fEGjzp/noj1vk1ZBJ7WXDFOUHC1tNGypqeVosdXPy6nnzozyE3wKr7fTAALw8WpSviEOgtR6YAd
+	o3UUCK+PHbL+bqRGL2m6i4FsMs0jcp5FNhfSjPA==
+X-Google-Smtp-Source: AGHT+IHvynIL7AAsGHjP0xg8VCy9NFb8IBkKD896d3DxIuwUkQ972HHVN3qYlfPKYVhD5LyxxH0ykk/nP4raab/ulSQ=
+X-Received: by 2002:a05:651c:19ab:b0:2ef:243b:6dce with SMTP id
+ 38308e7fff4ca-2fedb770dfdmr103418931fa.10.1730900733100; Wed, 06 Nov 2024
+ 05:45:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com> <ZytP0XGgmz_R5gos@smile.fi.intel.com>
-In-Reply-To: <ZytP0XGgmz_R5gos@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 6 Nov 2024 14:43:32 +0100
-Message-ID: <CAMRc=MfQw1YmOoq-rK5Bq3uDK8cmjG_xsUgVDs28phsqkcHofA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/6] gpio: Get rid of deprecated GPIOF_ACTIVE_LOW
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, 
-	Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, 
-	Dominik Brodowski <linux@dominikbrodowski.net>, Daniel Mack <daniel@zonque.org>, 
-	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20241023-en7581-pinctrl-v9-0-afb0cbcab0ec@kernel.org>
+ <20241023-en7581-pinctrl-v9-4-afb0cbcab0ec@kernel.org> <173088099542.3237297.18018729158887853624.b4-ty@kernel.org>
+ <ZyssJpR7xwbMzUsm@lore-desk> <20241106110046.GR1807686@google.com>
+In-Reply-To: <20241106110046.GR1807686@google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 6 Nov 2024 14:45:21 +0100
+Message-ID: <CACRpkdbf4Pb+n-F-K-JaUvytwCGUHHh8d2rYP4A9KgVTzqSnGw@mail.gmail.com>
+Subject: Re: (subset) [PATCH v9 4/6] dt-bindings: mfd: Add support for Airoha
+ EN7581 GPIO System Controller
+To: Lee Jones <lee@kernel.org>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	upstream@airoha.com, benjamin.larsson@genexis.eu, ansuelsmth@gmail.com, 
+	linux-pwm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 12:15=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Nov 6, 2024 at 12:00=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+> On Wed, 06 Nov 2024, Lorenzo Bianconi wrote:
 >
-> On Mon, Nov 04, 2024 at 11:34:18AM +0200, Andy Shevchenko wrote:
-> > This series targets the deprecated GPIOF_ACTIVE_LOW as only a few users
-> > left. Convert those users to call modern APIs and drop this legacy piec=
-e
-> > from the source tree.
+> > On Nov 06, Lee Jones wrote:
+> > > On Wed, 23 Oct 2024 01:20:04 +0200, Lorenzo Bianconi wrote:
+> > > > Add support for Airoha EN7581 GPIO System Controller which provide =
+a
+> > > > register map for controlling the GPIO, pinctrl and PWM of the SoC v=
+ia
+> > > > dedicated pinctrl and pwm child nodes.
+> > > >
+> > > >
+> > >
+> > > Applied, thanks!
+> > >
+> > > [4/6] dt-bindings: mfd: Add support for Airoha EN7581 GPIO System Con=
+troller
+> > >       commit: f49f37f3cfe1482d4dc77d26f3e8c38eab630d52
+> > >
+> > > --
+> > > Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> > >
 > >
-> > The idea is to route this via GPIO tree, please Ack.
+> > Hi Lee,
+> >
+> > according to my understanding this patch has been already applied by Li=
+nus
+> > here:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.gi=
+t/commit/?h=3Ddevel&id=3D50dedb1eb1e6755ccab55f6140916c2d192be765
 >
-> Thank you for Acks, folks!
->
-> Dominik, is it possible to get yours or are you inactive nowadays (I saw
-> last mention of your name ca. 2023).
->
-> Bart, we have all Acks except pcmcia (see also above), and the change is
-> the same all over the places, do you think it's okay to apply if Dominik
-> won't respond for a few days?
->
+> An interesting choice.  Linus?
 
-If we don't get an ack until Friday, I will take it as is.
+Yes I suggested that I merge patches 1-5 on oct 29 and applied the
+day after:
+https://lore.kernel.org/linux-gpio/CACRpkdYshPusdA7bDW2y8H_wp-Fm3N-YCsY1_Qn=
+=3DdZqRiFy12w@mail.gmail.com/
 
-Bart
+It's because the bindings are dependent on each other, this one patch has:
+
++  pinctrl:
++    type: object
++    $ref: /schemas/pinctrl/airoha,en7581-pinctrl.yaml
++    description:
++      Child node definition for EN7581 Pin controller
++
++  pwm:
++    type: object
++    $ref: /schemas/pwm/airoha,en7581-pwm.yaml
++    description:
++      Child node definition for EN7581 PWM controller
+
+Those refs will explode unless the two others are merged at the same
+time.
+
+Usually we merge the whole shebang through MFD but this one felt
+different because there is no actual MFD driver, just using simple-mfd.
+
+In hindsight I should probs not have been so trigger happy and give
+some more time for this to settle... Merge window stress I guess. :/
+
+It's fine to apply textually identical patches to two trees though as
+git will sort
+that out so technically it's no big deal, you can keep it applied if you
+want.
+
+Yours,
+Linus Walleij
