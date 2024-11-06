@@ -1,119 +1,99 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA46B1F9EA2
-	for <linux-gpio@vger.kernel.org>; Wed,  6 Nov 2024 13:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D991F9EAB;
+	Wed,  6 Nov 2024 13:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900572; cv=none; b=iy59fy31wsKidwny8BtCAPu+imL4srgGUithk59B1heBkUOuiPtp4k62rJRqgAiDGMMxhFhO5zE/OVUmwjTn+cRY1ixM5/J+tCuJkXyvgR7yhJpyGftxURz2BnRN2DlSq/IBL1VHLH2UIczkzQBSHGBxX8bA6diApa3dzWxqNjs=
+	t=1730900621; cv=none; b=Ba8EaKXXmZ21ZuZz100zAMfnCptiIGeW0/BfV8Qt0xKuUxNr9h5JPdr/JIFjYNPzd64MJR+Sytziyt8nhBn7LAYhvMKIsxLqGT5qJMDTk9sdtE3UfzT8XaJjKuVRMRjeO1C5PRLN50tfIesTxt+SjTnqAMRnDfZp6QSjKh7j9IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900572; c=relaxed/simple;
-	bh=KeBTnd9dk1BPL5p+cp+YTLVoAgKuRdIN2zFZaIO++7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=CQDHC8+XKr2PfMUcmZST1V4ec9UnN9l2ZF+36xHuH5dIsRBlH3rA+eXPE2qzB54sZ/Q2CmHiZyQACRS1QqdH1Mg1Xz5+1sfDSEPhZRQlPOzZaqJOX0qldJ6lIXawNAo0TzTDzPGSpnM8xDkDb+gA2q+iKZJbo17sU2XddgkN9Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VTWXeJw6; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1730900621; c=relaxed/simple;
+	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4dcQivjX19G5DWDcUjkdb8fqqx7RE9J0/tq1kHBzu18VGS4rwEJlHbUjyGsrTRBcUYq7v489Gwgh0OEz8BhUulzg3GA92Kl08em1JTTkFjOOYui2oEe8s1Fg9JZLNJvKbo9krA51SHgVRtYgy8AK3iGwB02UCc0NzSbkpNSwaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfRrOfXm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VTWXeJw6"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so60439431fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Nov 2024 05:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730900569; x=1731505369; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hqS6jiGSHPo4vOg4tSYtx/2BV3Y8RQyaC1jG/J2IFvc=;
-        b=VTWXeJw6mbNZ8bex9PW+Lp3aRtx8hfpOkppBH8maLoO2RpYuuSoSu+D8l+VVc953MS
-         kbedUxYefzlfNCG2rvtXKw8ziS+9D71OLh4xmuZvtp5V/cIltBNWtaFv6OJwiAteD6rq
-         eb5JY90Q6wB9ISbMdulW6HnCXndv0JG6A5b0It2vZVi2K53p37lLDDlmZt5g+YVikXSa
-         KiXvb3ZsQLj/6X3fgoECfFYYiHVHh9Lfhtijn3ttjHfKyYnb8gwH5H/LT8L8G9QSjo/4
-         YEG6wHjEQDu9WM3H1FtolQIZ7UduIa8kkfcs0jf8VCCJvnXZsVv7yAjhy4SnI7O/g3Ml
-         m4MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730900569; x=1731505369;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hqS6jiGSHPo4vOg4tSYtx/2BV3Y8RQyaC1jG/J2IFvc=;
-        b=rZmc+g4z/miC/cnzo98QriRVorGayqn1uYFcMu9S3pnVsIpImQgrdiMbYYz7godfXt
-         uM2bWeFcmLlCbAzRweBF/ANL7wZ9+BI85pn5p5qyczE7c87JXhpzm9igwksH1dBQaB/p
-         EVMi89HNJKnPHvfFVdUNGVqVV/GiCvcaOcp9c5s0f0ahl+kgL9S9zHUPTMg43TPraXrz
-         Cg1EhKyPS6S7KcAafDWnHWWDks8UidgOK+cCXmC5Z90GSg+I6edBTL91i6IgD4r69PnH
-         O0qE7dKkplXeTX6Iv9h5vDecP5BUg1wchvDx0L+ioEHreJBau1LHRlSYmriCQffcaC9N
-         bcyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2cq8V5EmYX/SnvOJfX0gKRqz0yhCFFv2cvep5NbAigz/riDT97LA602lXZATEaAHPWeyaBdMhn/c7@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTVvxnxmoLdciFDpuktLFZAGOp+olofY3EBEF3qMRIi6asTD8+
-	0EDB8FUqTYGxbkaqJjE82RwBPiWw6tCb+WPIXXk4RWErp/LloWssMGLsYkoO3H9Y96z8iCIdYvj
-	LNHfm86+xRi+H98ubHzM+JIbIdsMHLOK0vvAaDw==
-X-Google-Smtp-Source: AGHT+IEHCVaQw8Cc2N4TDWFQRo6TwbO4VysfqY3eTkGEv36JhQCy52famljQArgTKiz8UVxsUufHkRMssP8f3wWEWhc=
-X-Received: by 2002:a05:651c:50c:b0:2fb:8920:99c6 with SMTP id
- 38308e7fff4ca-2fdec85890bmr110424251fa.23.1730900568922; Wed, 06 Nov 2024
- 05:42:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfRrOfXm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69956C4CECD;
+	Wed,  6 Nov 2024 13:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730900621;
+	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qfRrOfXmESwZyDQhPNkDJgGi8YWbap+zQSnnKTjNRq0K9d9rKEeLHS6ISBOc0j2kr
+	 T0QHzq7K9ZnLcN6d6mrBJQs6WBeU6BUvOvI/eGFXtWd9TAftn+cVheqed+TaW5m+CV
+	 +4GOrYK3gQL5KFhzalL9L/zI3KX4CE9yoQE/PygkdsjA1rOozplLuj2atjLsNY74RU
+	 BymKoASK8FGh9ttmyKOwg/REy7cughmQAKD0hJ1tXZl19CBJPWndXjjJ9UDHX3Ogy2
+	 GIxlLPsQIpKQyIWgT71PrAPTYYG03xd8zkC8uFT4SjN9JjkOjnwZVM8KoDdGea14Ou
+	 9k0LUcU284nkw==
+Date: Wed, 6 Nov 2024 13:43:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lgirdwood@gmail.com, magnus.damm@gmail.com,
+	linus.walleij@linaro.org, support.opensource@diasemi.com,
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
+	Adam.Thomson.Opensource@diasemi.com,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 22/31] ASoC: da7213: Populate max_register to
+ regmap_config
+Message-ID: <d3c28a8b-878c-4894-aa23-5b360153b85d@sirena.org.uk>
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031145652.342696-1-jm@ti.com> <7h5xp7owmy.fsf@baylibre.com>
- <520c7e6b-f9c0-441f-8810-8e5ede668f6a@ti.com> <20241105190005.cg6dpeedbirgflqm@iaqt7>
-In-Reply-To: <20241105190005.cg6dpeedbirgflqm@iaqt7>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 6 Nov 2024 14:42:37 +0100
-Message-ID: <CAMRc=MexFELAEVpEg39teG=Yr-R71gwxRR9TtGDwHjVijzDeWA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
-To: Bin Liu <b-liu@ti.com>, Judith Mendez <jm@ti.com>, Kevin Hilman <khilman@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qgBjwTwv0FsyKsIO"
+Content-Disposition: inline
+In-Reply-To: <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
+X-Cookie: Include me out.
+
+
+--qgBjwTwv0FsyKsIO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 8:00=E2=80=AFPM Bin Liu <b-liu@ti.com> wrote:
->
-> On Tue, Nov 05, 2024 at 12:47:58PM -0600, Judith Mendez wrote:
-> > Hi Kevin,
-> >
-> > On 11/1/24 9:29 AM, Kevin Hilman wrote:
-> > > Hi Judith,
-> > >
-> > > Judith Mendez <jm@ti.com> writes:
-> > >
-> > > > From: Bin Liu <b-liu@ti.com>
-> > > >
-> > > > Add omap_gpio_disable_irq and omap_gpio_enable_irq
-> > > > calls in gpio-omap.
-> > > >
-> > > > Currently, kernel cannot disable gpio interrupts in
-> > > > case of a irq storm, so add omap_gpio_disable/enable_irq
-> > > > so that interrupts can be disabled/enabled.
-> > > >
-> > > > Signed-off-by: Bin Liu <b-liu@ti.com>
-> > > > [Judith: Add commit message]
-> > > > Signed-off-by: Judith Mendez <jm@ti.com>
-> > >
-> > > Thanks for this patch.  Can you give a bit more context on the
-> > > problem(s) this solves and on which SoCs/platforms it was
-> > > developed/validated?
-> >
-> > Sorry for the late response. Patch was tested/developed on am335x
-> > device BBB, If you feed a PWM signal at 200KHz frequency to
-> > GPIO, and execute gpiomon 0 12 &, Linux will be unresponsive
-> > even after CTRL+C without these 2 functions in this patch. Once
-> > this patch is applied, you can get console back after hitting
-> > CTRL+C and then proceed to kill gpiomon.
->
-> In addtion to Judith's explanation, when the PWM is applied to a GPIO
-> pin, kernel detects the interrupt storm and disables the irq, however,
-> without these callbacks, this gpio platform driver doesn't really
-> disable the interrupt in the gpio controller, so the interrupt storm is
-> still happening and handled by this gpio controller driver then causes
-> Linux unresponsive.
->
-> -Bin.
+On Wed, Nov 06, 2024 at 10:18:17AM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> On the Renesas RZ/G3S SMARC Carrier II board having a DA7212 codec (using
+> da7213 driver) connected to one SSIF-2 available on the Renesas RZ/G3S SoC
+> it has been discovered that using the runtime PM API for suspend/resume
+> (as will be proposed in the following commits) leads to the codec not
+> being propertly initialized after resume. This is because w/o
+> max_register populated to regmap_config the regcache_rbtree_sync()
+> breaks on base_reg > max condition and the regcache_sync_block() call is
+> skipped.
+>=20
+> Fixes: ef5c2eba2412 ("ASoC: codecs: Add da7213 codec")
+> Cc: stable@vger.kernel.org
 
-I take it that this is a fix then and should have relevant Fixes and Cc tag=
-s?
+Why is this a stable fix when it only enables further work?
 
-Bart
+--qgBjwTwv0FsyKsIO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcrcoQACgkQJNaLcl1U
+h9B+uAf/T9UHiIXHURIt+YX7P9zWTkwxOYzQrVtIxV9Uz16GFNImxUT3T7ZkDJPm
+Erxp7p9mSMTejwQKY8qPBDBgFh00UE8ZNhdcb1PmRZTJ4DeK1mOmjl2SulAB/EM9
+v5g+3Cv95GmCpE0FfpsEwuhtz+wPWdJU3lqpG1rVtjMyXzuPqH5Ie4viG/I2pGO5
+RNoUFDOHu2pc7f3i3WzmmywjEDJIhOHXv/rQRy8ZG8TZyvNDDX0sP/+y0ElBUBsB
+81GcYxUjx+0h5uiE0XlXcfdemDG3L73XccwdWEJZ0xh+XKmrVLm1jFoJqLAiY7gM
+jGFGeURWY9VEnaDqJCf33O0nhkmAGQ==
+=RpAB
+-----END PGP SIGNATURE-----
+
+--qgBjwTwv0FsyKsIO--
