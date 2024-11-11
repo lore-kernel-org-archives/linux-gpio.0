@@ -1,24 +1,24 @@
-Received: from mail-m243.xmail.ntesmail.com (mail-m243.xmail.ntesmail.com [45.195.24.3])
+Received: from mail-m244.xmail.ntesmail.com (mail-m244.xmail.ntesmail.com [45.195.24.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119CE2E630;
-	Mon, 11 Nov 2024 02:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE94B13B592;
+	Mon, 11 Nov 2024 02:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731292475; cv=none; b=jX47Og2ZLut0l+Ikuv+yOgMWBITJ9r8F6Y/xcnilB5xGufl920d9fXqLWn2ixZeBxDSVAZKVwQBJBVbx5Y8Pkc9OFLNz+raGEl+QbF2MlyaeEB95AGCOG+cNp8nKhx65CEckAYzgUOb2CvGjygPTrLaqbZD+ScMjyoy7cQqU0NQ=
+	t=1731292477; cv=none; b=MuuVuglh9Qn+OK1Eh4DWsMLGjp1EzCJ7FBTGhUUTB/V5ueRDSVqhj6J2GlhaHVCZHxVkwijO2DZKtXNHOPbk5l7ircexcaocZIjg8WRXZYyV/aWG8URg6KCasFGCD7vHRXmXcS3EBT2DX/ZXpXRX+NcbyajCacj3Lvj7JzhZO98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731292475; c=relaxed/simple;
-	bh=hmbUtbzsm+2OKk8+VMFcgl6I8Mg6iPnYhEmNILMppbk=;
+	s=arc-20240116; t=1731292477; c=relaxed/simple;
+	bh=k31nfqs4XLuqABw+CYqLzarfy971jg3wjtFI/OPU2Vo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Soz2HF2XtwrxRpPWJZ0kmC4yySvrbG6cprgxPPMsZTlu1X0P+zy1jLWKdvxkFdKLK4zIuCCJd04guLsRW6VwnEKOD385jMY2joICpAg04uZDZQKx5c4pg/JoQpgYLCTETrOnowLWezP0DzU44SpMfUvQet5MlRIq78lx8ok2BFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PMDf6IZa; arc=none smtp.client-ip=45.195.24.3
+	 MIME-Version; b=JX4bXWCvhQ2JxSXIRZ9/mnX+zMIoop5CF1JF6hntTkvQjGkKOdXBqxcIOWZbx+fNxhbHQ6NvnSJKUiIFN9vPPrT+aNGhzZMS+HAfler/1SvJwmstHkgO1ffbr7MSzTPlYxmex7H+e8vyv6BZOvNaT7GG3IFLuewTrGpyExj0stA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S4nbMRNX; arc=none smtp.client-ip=45.195.24.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PMDf6IZa"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S4nbMRNX"
 Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 258a5851;
-	Mon, 11 Nov 2024 10:34:22 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 258a586a;
+	Mon, 11 Nov 2024 10:34:25 +0800 (GMT+08:00)
 From: Ye Zhang <ye.zhang@rock-chips.com>
 To: Ye Zhang <ye.zhang@rock-chips.com>,
 	linus.walleij@linaro.org,
@@ -34,9 +34,9 @@ Cc: linux-rockchip@lists.infradead.org,
 	finley.xiao@rock-chips.com,
 	tim.chen@rock-chips.com,
 	elaine.zhang@rock-chips.com
-Subject: [PATCH v4 2/4] gpio: rockchip: change the GPIO version judgment logic
-Date: Mon, 11 Nov 2024 10:34:10 +0800
-Message-Id: <20241111023412.3466161-3-ye.zhang@rock-chips.com>
+Subject: [PATCH v4 4/4] gpio: rockchip: Set input direction when request irq
+Date: Mon, 11 Nov 2024 10:34:12 +0800
+Message-Id: <20241111023412.3466161-5-ye.zhang@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
 References: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
@@ -48,60 +48,44 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxlJS1YfTUNKSE1NThpKSENWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ08fSVZIHUJMHU9JH0xLGUNWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
 	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9319127de209d8kunm258a5851
+X-HM-Tid: 0a9319128a6a09d8kunm258a586a
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Py46Khw6FjIjEixKMw8qGDFW
-	HUoaFAtVSlVKTEhKSUJJT01PSkJNVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSkhPQzcG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODo6Exw4IzIfCiwBMw4xGDwN
+	LBRPCRlVSlVKTEhKSUJJT01MSUtKVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBQkxJNwY+
 DKIM-Signature:a=rsa-sha256;
-	b=PMDf6IZaMBzkQAOU0WNh1boWHdQwaHX7M5knKr110MgtXf/f1kJs/a+nRS3PgETWkfOjjoMBP3OYfr5J8OpzrCBxQkm+LW7WAy/TYag5/HYkvJC5Dzr1qAQzmAPb3jmyHu1D09PLVHslTuJDAFkCmURbIxiofL6DE57qmOEauHo=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=vWJG8cvhxWAUIWFD+PqmL7Rgp7985cdAoAUoZrwNjjs=;
+	b=S4nbMRNXQ3eIAPG7NtbSJ2jTJJEm67pkoMh0tQThPPA69ReLy4qvuPUjnOY8dTv+sNY4CgwNRfrSFeCtucZnG4AiAXrQi9aIIKakdR2IK1wbuG6HTjYpmljpsbNf5C1TfPrjKAvLCLlQ7Boe02/1kr/q8nEsO6PQotNNHFxn1qA=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=wA6Lfw0pVK4KIHrVEahwSZAHmfqAeDyaeLLez6Fbs2s=;
 	h=date:mime-version:subject:message-id:from;
 
-Have a list of valid IDs and default to -ENODEV.
+Since the GPIO can only generate interrupts when its direction is set to
+input, it is set to input before requesting the interrupt resources.
 
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 ---
- drivers/gpio/gpio-rockchip.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-rockchip.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 71672d654491..f05b92e0e977 100644
+index b7a43e492965..40c2476699aa 100644
 --- a/drivers/gpio/gpio-rockchip.c
 +++ b/drivers/gpio/gpio-rockchip.c
-@@ -667,8 +667,13 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 	clk_prepare_enable(bank->clk);
- 	id = readl(bank->reg_base + gpio_regs_v2.version_id);
+@@ -476,8 +476,11 @@ static int rockchip_irq_reqres(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
  
--	/* If not gpio v2, that is default to v1. */
--	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
-+	switch (id) {
-+	case GPIO_TYPE_V1:
-+		bank->gpio_regs = &gpio_regs_v1;
-+		bank->gpio_type = GPIO_TYPE_V1;
-+		break;
-+	case GPIO_TYPE_V2:
-+	case GPIO_TYPE_V2_1:
- 		bank->gpio_regs = &gpio_regs_v2;
- 		bank->gpio_type = GPIO_TYPE_V2;
- 		bank->db_clk = of_clk_get(bank->of_node, 1);
-@@ -677,9 +682,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 			clk_disable_unprepare(bank->clk);
- 			return -EINVAL;
- 		}
--	} else {
--		bank->gpio_regs = &gpio_regs_v1;
--		bank->gpio_type = GPIO_TYPE_V1;
-+		break;
-+	default:
-+		dev_err(bank->dev, "cannot get the version ID\n");
-+		return -ENODEV;
- 	}
+-	return gpiochip_reqres_irq(&bank->gpio_chip, d->hwirq);
++	rockchip_gpio_direction_input(&bank->gpio_chip, hwirq);
++
++	return gpiochip_reqres_irq(&bank->gpio_chip, hwirq);
+ }
  
- 	return 0;
+ static void rockchip_irq_relres(struct irq_data *d)
 -- 
 2.34.1
 
