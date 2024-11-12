@@ -1,60 +1,60 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE67080D
-	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E542149C6A
+	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418120; cv=none; b=HNcEWJEXZwqbktM3XGX8lgs515g8ap75O21y/WD4oOwP0dVN7kODtWeE+2fV/1TPm75uVRk6dtAgLXLumCscQaP6poQo9U0x6h75oIdfBRe8XUPx5X7HwUFGHJQGeyhfV80XL3hlIPT/BMSP5QFvhI/L2mUAFnr4SGzC+e0u2DQ=
+	t=1731418396; cv=none; b=WZIIRBe+y+5Eaj6U6Pp5aOU0l4cYQAmYQizf8LPtYJnzaKkyVNYfbLg1IfgOOejyTukX7w6EbmwhIeikZV0Zoat2xXZ98WYMeYSAKOScgDqakWylmFEqcCyjaEZMJq9Kv3gH/9sXh7IRYcGkz+HBNCHyO+GS0cXA+fPx7HEHgVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418120; c=relaxed/simple;
-	bh=XJ80DbxIizVFPgfPrXifJvFLG8FIkBRi0n6SYjToORw=;
+	s=arc-20240116; t=1731418396; c=relaxed/simple;
+	bh=166m2vywSJoaXr+1NLOnoEpi4AaWPqxXD9TD/s2B/Gw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kE5pajvIV07n1C4vIKu2RSjjXSS415MazFQ3GlgCEBVlWHu3zcMagB8GhPeAO/NQPjgd0REMg85dx3tTJ8N3XFGtmxycXqpX0aP0g4AG4yri6r5V68BTSmSaTueRbjiVV+S/s+Fv+XmGjviJheyMdZbastcg5KBaHc8HhcciC9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sokRkpjP; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=nxpRUo9Ylzzq/GSQ2MrAv7vVns9/PpGLrtKdplbSjG3rXw+hktu1KeEb+cZsQOlYGRImFJkHsrPsYvg3RCtPBOZpxssoIsqhCzSGpnjxwSaWFJlNLJpjg7DZ4vylxo56BzVkHL4/c2xfjD4Rjl7Rcoa2f3nOwaq7Lz6+LTCeKh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yPz9x0Zt; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sokRkpjP"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d47eff9acso3443171f8f.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:28:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yPz9x0Zt"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-431481433bdso49887735e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:33:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731418116; x=1732022916; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731418392; x=1732023192; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YsaZoX49/UTmnCYipmJYozRv1F9KJT6zGJ2FPgwHPM0=;
-        b=sokRkpjPC4yYnenU1Dzj8ydI4gQk65vnXM5J8VD16gnbTtJDYxdZvh9NOP3swthUDS
-         VRpio6EwsvxhofyMTdWQDmmYo7P/T1thZ1dsmgQp/xJAMzVKbWqttQyizym1xByD8/VX
-         hK4tauKGLUX3Fj9u3QYWiwMd93CEk1fQJkNKB06SYaQc28TJlLfn2kisc/60aa8opV+z
-         XOzuJKs1/O11xQ6eM/84lBScFa/vF+0Ry+sxxdl2Q2cR4fR2MbiDgqZMHN+QudfUlGm/
-         DXolQopY+rcTkrl1lA0g24BiOU6QvXZ6pecG3+ZDd85/Mrn8Sl/CXGmoVy1SmnGKbr9M
-         AYmw==
+        bh=GPw/l+reEkoV+Lu4oU6btG+0aP6lGwA5rjJnh68HFbw=;
+        b=yPz9x0ZtZbiBDQL5owiOXzcYPbs+XI0Ig2oLHSMGNUbIKZkGj2EhL8oeafCHPApxFU
+         KL4Zj0TbLxZXwEdTpM9hxHa6VMWKcvSlwn2rCXPjAzK0T4CFVNMoLmrfHdBEriymRHDY
+         /a8CF/GBJCqhL8m/wdhRooCB6SBb65qtbpzgAbWwMVO2B/al52GhSbaEuAq/IjOAckPT
+         XlllUX0QQQ5HmEyv7wy54T6fED3kUh8+l6VR82/p9NbwGk+l1Gob8WHBt2iaO1poB1nI
+         JkQ/XrS0NrKo4X7LvI4G7QW8irQHnlGtE9qU75jd6c29Q8Fcd8t0Amc/1CeKwvm+HFWF
+         KTKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731418116; x=1732022916;
+        d=1e100.net; s=20230601; t=1731418392; x=1732023192;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=YsaZoX49/UTmnCYipmJYozRv1F9KJT6zGJ2FPgwHPM0=;
-        b=TZwQp9Z7R9OLNC9XnPo+jC0hjrjpX6Tw5bU1pqwyYM3G/lEvzTDteVtHpifY+kAcbU
-         +KwtpJkub7mjOZeqspof1PQTvxSL0Cz51BNEFooc9ExxMrVM/I2UfpL0VTQ2mfItv8yP
-         juLzumSk9LrRX8ws2+TRThlAHCvDXN4VmQtbQsQaosISwIdk1aPvT69EmlsI2oy6p6wC
-         Yz13QcEeoRddhN7Ng783TKFPJ5FK28khcOLyoerLv63ovNUyejDmXSGgWrWXWnqiwu4s
-         Nt/oqWHOV6EdRRwDlP5fudO4KBDul7R3OmBLiveMzL+N61DOmRCY3PWXxfzDZ9rPxhsh
-         cbag==
-X-Gm-Message-State: AOJu0YypAg8wu0Du14t8w+zKmma+L3Y0VNd+m8uRZziVF8U7EWv5UQNH
-	2qv8GpMy/nShJTHz06ipd1BnOUYX3W46hXZdBld+GUkbsHMnzQ088G1SYzvqys8=
-X-Google-Smtp-Source: AGHT+IGcxUmMqHN8a/cQuWmNKDKEmC6I6tUTcWYjNJv51eGA/I3ZpzDc+lB74YRdvxBPxcRvqG1PMg==
-X-Received: by 2002:a05:6000:186e:b0:382:b57:f0b5 with SMTP id ffacd0b85a97d-3820b57f16amr747635f8f.12.1731418115692;
-        Tue, 12 Nov 2024 05:28:35 -0800 (PST)
+        bh=GPw/l+reEkoV+Lu4oU6btG+0aP6lGwA5rjJnh68HFbw=;
+        b=RVPJvdHUVUe0f2ERU3owPgblVEX6HuKIHFHS2Y5M1Tzo3/d0kHSaMPIlYJnffLswm3
+         iaC1VhY8QLwkGY6ZVLu7QLK0IkCam6cjCNyJyyFcP+rMZyiupZ+yPkU7hUjCfgasYlwv
+         W1VcIblStPnU33RxXqO4RMPXpS+2Ap0WhSpF98pOFqTZCuZyw4SmXz+IKK6bDf1T9WD/
+         Wny5L1WhPiEPgUAD20TPhm4tFCg9aZUSuTVDlcm+n6U9b1F2K7azcIP1UKE9IBkQUUTq
+         1NGILIAe4gQgMoX7NLXYTVQy+g4XMp1EoJ+HKmOBanlDU2N1w0gtotA3S7YyPVBaAVnM
+         AJsQ==
+X-Gm-Message-State: AOJu0YwPTS3wHtJzI4pPxOnFnUvbPtqLCzwhko+GVS6AYu8K+TBWPsXB
+	s8tJtTcPWqlHje1vVOvUG45wiUwnuWjrtlU3tGW9qtucmsUPw2mYKpyD8iWl7v8=
+X-Google-Smtp-Source: AGHT+IHtI83EOKwQElqzf0zLEiSXsg9bq2SemcxgdG+nJ+/NT2acG2uq4owq26USdOdF0uX+SDabNA==
+X-Received: by 2002:a05:600c:4f04:b0:431:5f1c:8359 with SMTP id 5b1f17b1804b1-432b75091cdmr119544305e9.15.1731418392516;
+        Tue, 12 Nov 2024 05:33:12 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04111sm15330046f8f.92.2024.11.12.05.28.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5fb1sm254853375e9.8.2024.11.12.05.33.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:28:35 -0800 (PST)
-Message-ID: <69918f77-c0d6-4151-b725-e5051f0f6680@linaro.org>
-Date: Tue, 12 Nov 2024 14:28:34 +0100
+        Tue, 12 Nov 2024 05:33:12 -0800 (PST)
+Message-ID: <5913d10c-cf85-407b-948a-db082b0789ac@linaro.org>
+Date: Tue, 12 Nov 2024 14:33:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,7 +64,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 3/5] pinctrl: meson: add interface of of_xlate
+Subject: Re: [PATCH v5 4/5] pinctrl: meson: Add driver support for Amlogic A4
+ SoCs
 To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
@@ -75,7 +76,7 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
- <20241112-a4_pinctrl-v5-3-3460ce10c480@amlogic.com>
+ <20241112-a4_pinctrl-v5-4-3460ce10c480@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -102,55 +103,182 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20241112-a4_pinctrl-v5-3-3460ce10c480@amlogic.com>
+In-Reply-To: <20241112-a4_pinctrl-v5-4-3460ce10c480@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+
+Hi,
 
 On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
 > From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> Amlogic pinctrl software framework use system API of_gpio_simple_xlate
-> which only support linear one-to-one correspondence to translate gpiospec
-> to the GPIO number and flags before. It can not meet the non-linear needs.
-> Add the interface satisfies the underlying driver to implement the
-> transformation to meet the needs of various scenarios.
+> Add a new pinctrl driver for Amlogic A4 SoCs which share
+> the same register layout as the previous Amlogic S4.
 > 
 > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   drivers/pinctrl/meson/pinctrl-meson.c | 4 ++++
->   drivers/pinctrl/meson/pinctrl-meson.h | 4 ++++
->   2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 253a0cc57e39..fc0c0bef38c0 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -620,6 +620,10 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
->   	pc->chip.base = -1;
->   	pc->chip.ngpio = pc->data->num_pins;
->   	pc->chip.can_sleep = false;
-> +	if (pc->data->of_xlate) {
-> +		pc->chip.of_gpio_n_cells = pc->data->of_gpio_n_cells;
-> +		pc->chip.of_xlate = pc->data->of_xlate;
-> +	}
->   
->   	ret = gpiochip_add_data(&pc->chip, pc);
->   	if (ret) {
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-> index 7883ea31a001..cbb3f22552b9 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.h
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
-> @@ -120,6 +120,10 @@ struct meson_pinctrl_data {
->   	const struct pinmux_ops *pmx_ops;
->   	const void *pmx_data;
->   	int (*parse_dt)(struct meson_pinctrl *pc);
-> +	int (*of_xlate)(struct gpio_chip *gc,
-> +			const struct of_phandle_args *gpiospec,
-> +			u32 *flags);
-> +	int of_gpio_n_cells;
->   };
->   
->   struct meson_pinctrl {
+>   drivers/pinctrl/meson/Kconfig              |    6 +
+>   drivers/pinctrl/meson/Makefile             |    1 +
+>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1335 ++++++++++++++++++++++++++++
+>   3 files changed, 1342 insertions(+)
 > 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+<snip>
+
+> +
+> +static int a4_of_gpio_xlate(struct gpio_chip *gc,
+> +			    const struct of_phandle_args *gpiospec,
+> +			    u32 *flags)
+> +{
+> +	int gpio_num;
+> +
+> +	u32 bank  = gpiospec->args[0];
+> +	u32 offset = gpiospec->args[1];
+> +
+> +	if (gc->of_gpio_n_cells < 3) {
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+
+This check is unnecessary, drop it, it's already done by of_xlate_and_get_gpiod_flags(),
+and if you _really_ want to keep it, move it before accessing gpiospec->args array.
+
+> +
+> +	if (WARN_ON(gpiospec->args_count < gc->of_gpio_n_cells))
+> +		return -EINVAL;
+
+This one aswell, drop it.
+
+> +
+> +	switch (bank) {
+
+Just use: switch (gpiospec->args[0]) {
+
+You can even simplify further by dropping offset and using:
+
+int gpio_num = gpiospec->args[1];
+
+and then:
+
+> +	case AMLOGIC_GPIO_B:
+> +		if (offset >= GPIOB_NUM)
+
+if (gpio_num >= GPIOB_NUM)
+
+> +			return -EINVAL;
+> +		gpio_num = GPIOB_0 + offset;
+
+gpio_num += GPIOB_0;
+
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_D:
+> +		if (offset >= GPIOD_NUM)
+> +			return -EINVAL;
+> +		gpio_num = GPIOD_0 + offset;
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_E:
+> +		if (offset >= GPIOE_NUM)
+> +			return -EINVAL;
+> +		gpio_num = GPIOE_0 + offset;
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_X:
+> +		if (offset >= GPIOX_NUM)
+> +			return -EINVAL;
+> +		gpio_num = GPIOX_0 + offset;
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_T:
+> +		if (offset >= GPIOT_NUM)
+> +			return -EINVAL;
+> +		gpio_num = GPIOT_0 + offset;
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_TEST_N:
+> +		if (offset != 0)
+> +			return -EINVAL;
+> +		gpio_num = GPIO_TEST_N;
+> +		break;
+> +
+> +	case AMLOGIC_GPIO_AO:
+> +		if (offset >= GPIOAO_NUM)
+> +			return -EINVAL;
+> +		gpio_num = GPIOAO_0 + offset;
+> +		break;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (flags)
+> +		*flags = gpiospec->args[2];
+> +
+> +	return gpio_num;
+> +}
+> +
+> +static const struct meson_pinctrl_data a4_periphs_pinctrl_data = {
+> +	.name		= "periphs-banks",
+> +	.pins		= a4_periphs_pins,
+> +	.groups		= a4_periphs_groups,
+> +	.funcs		= a4_periphs_functions,
+> +	.banks		= a4_periphs_banks,
+> +	.num_pins	= ARRAY_SIZE(a4_periphs_pins),
+> +	.num_groups	= ARRAY_SIZE(a4_periphs_groups),
+> +	.num_funcs	= ARRAY_SIZE(a4_periphs_functions),
+> +	.num_banks	= ARRAY_SIZE(a4_periphs_banks),
+> +	.pmx_ops	= &meson_axg_pmx_ops,
+> +	.pmx_data	= &a4_periphs_pmx_banks_data,
+> +	.parse_dt	= &meson_a1_parse_dt_extra,
+> +	.of_gpio_n_cells = 3,
+> +	.of_xlate	= &a4_of_gpio_xlate,
+> +};
+> +
+> +static const struct meson_pinctrl_data a4_aobus_pinctrl_data = {
+> +	.name		= "aobus-banks",
+> +	.pins		= a4_aobus_pins,
+> +	.groups		= a4_aobus_groups,
+> +	.funcs		= a4_aobus_functions,
+> +	.banks		= a4_aobus_banks,
+> +	.num_pins	= ARRAY_SIZE(a4_aobus_pins),
+> +	.num_groups	= ARRAY_SIZE(a4_aobus_groups),
+> +	.num_funcs	= ARRAY_SIZE(a4_aobus_functions),
+> +	.num_banks	= ARRAY_SIZE(a4_aobus_banks),
+> +	.pmx_ops	= &meson_axg_pmx_ops,
+> +	.pmx_data	= &a4_aobus_pmx_banks_data,
+> +	.parse_dt	= &meson_a1_parse_dt_extra,
+> +	.of_gpio_n_cells = 3,
+> +	.of_xlate	= &a4_of_gpio_xlate,
+> +};
+> +
+> +static const struct of_device_id a4_pinctrl_dt_match[] = {
+> +	{
+> +		.compatible = "amlogic,a4-periphs-pinctrl",
+> +		.data = &a4_periphs_pinctrl_data,
+> +	},
+> +	{
+> +		.compatible = "amlogic,a4-aobus-pinctrl",
+> +		.data = &a4_aobus_pinctrl_data,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, a4_pinctrl_dt_match);
+> +
+> +static struct platform_driver a4_pinctrl_driver = {
+> +	.probe  = meson_pinctrl_probe,
+> +	.driver = {
+> +		.name	= "amlogic-a4-pinctrl",
+> +		.of_match_table = a4_pinctrl_dt_match,
+> +	},
+> +};
+> +
+> +module_platform_driver(a4_pinctrl_driver);
+> +
+> +MODULE_AUTHOR("Xianwei Zhao <xianwei.zhao@amlogic.com>");
+> +MODULE_DESCRIPTION("Pin controller and GPIO driver for Amlogic A4 SoC");
+> +MODULE_LICENSE("Dual BSD/GPL");
+> 
+
+Thanks,
+Neil
