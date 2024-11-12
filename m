@@ -1,43 +1,43 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E07213ECD;
-	Tue, 12 Nov 2024 17:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE8B201249;
+	Tue, 12 Nov 2024 18:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433088; cv=none; b=ThU5JswJ3yt1zeC14Vig/R2BQ3LKQprpTaxc8c0fwbwIId1/fNwFuDEwYPGrtDH3I/hLkyOs1Z/WexxQgpy0GyyNZmrlXzr63qlHh8PAqYjOb47cEuF6EfoZdelyhC0DYza4v348fATKa1dhMqNLr9x8YTf+fhGAzB3TY7sSp60=
+	t=1731437366; cv=none; b=MyLgRzVxciSs0aybpwwuB5wamMlGhuJo3QpdjYvFXiqUskg9qL4WBd99edSPn79Ruoxiy5Mk6SAt4ZqXERwX+vdlF2360XOBBvEb0B2jccgP1Qn8+GvjMpvgB4BwrV76wX3RXPkPjTIISTJfjBfRFakBu5yt39bokNhtbVKMu8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433088; c=relaxed/simple;
-	bh=tBI/we5cobDpwZqrIAP8VPpPpJdJhS7JFNBxvv/QOZQ=;
+	s=arc-20240116; t=1731437366; c=relaxed/simple;
+	bh=mEQre+K2Jof7YSqhQzQZt0O46vsmuqIaW/XRDC6I1RI=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ZttehIvATyYpwE6PCW/AyYRNZv8vSHA1al3kbrF2V5mvXJtOSItI1bxpTK1IUuWTUZjy1LmaZoVixTH/4UHcc8tAVI0HOXRfG18q00DNJ0+2vhgssqFOjRhfjYWatOhN4FhToUFHnK65RWUCFbcZvXkRklmITNGo1esoOkrAv28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=iiXG4ezv; arc=none smtp.client-ip=5.75.144.95
+	 Message-ID:Content-Type; b=ZJwBo43LSSxepKeAKQE/kEh3RUha+AiwZXfiQ4yq++fMedGyBpD+9PG2wijofFZT9AiQOSRGE9qq63j1wMPnz4hYRSkyeBQSzEyusnhfJVeP919xXpi4/q82EW6rfVB07qwjGNOHUVQs9KCBED8lZJj3TMHk9/citJRMsw6w86o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Xjko5r3q; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="iiXG4ezv"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Xjko5r3q"
 Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 8DAA7E45C8;
-	Tue, 12 Nov 2024 17:38:04 +0000 (UTC)
+	by mail.mainlining.org (Postfix) with ESMTPSA id C9B58E45C8;
+	Tue, 12 Nov 2024 18:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1731433084;
+	s=psm; t=1731437358;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Y18+Q1ZqjLCjhEM42biXLX0RAZwh7JK0eycDZZ0O8A8=;
-	b=iiXG4ezvnSWLdzZxkuJpyJk3g1GUNERFObVHqGgW7Mcskho3dVcdy5dWF5LAm85MdYltAH
-	qETgqzHAN5ZLAj/wxveW1mPEsx169OwBfKgYdIp/gbHh9B64re5skPKwQPktTFjPEOTDD5
-	hd+f5CKfzb+GyZElVdhQbmlcW/DjAdj2Q3Gwi2Po6tEXcCrLm7Gu08qhgrXEiLsNO2qDrw
-	V12n4LOiu7c8Pr0I6X13k91xdtXSumzImcgtNwajxnoKluvFrEoIAS7Dy/hFog2907usoE
-	O/d3NalFo68tQDiEeC7tPYklc5TnvYyd36burvq7FLqv/Eu893C5OGsq/BKrUA==
+	bh=x6fl+REPDaaxq1ljcrPGFk2JX/FX55Eh3bhEKDJ2hSM=;
+	b=Xjko5r3qntRxx+TWuY4S1pEkPQY8AzTMwxgfvNlOdKOx8ytnfgPttkCerD2I4mffnep577
+	anjd/MEqSlHSbb4oWVn79l6XbDIpVm9HqQ7l5jeIcFKecUeA1nW5jJHYSKkrktFXVR8+fT
+	23XEA02Ghw1quLUKJThVWxDplLXg+/72tli9RYBZXQJ4iGP+U68oWerJFZ0qghGwIhQN42
+	5FpGGdXLYFKjmNRQOp6aRnVsd6xhRKy7tUx9xFWoNrbD21aMY8wWx3kdLMTBYvi80YH5og
+	nlQw1BdDe4endHz/dYuDeHJIE96ToH3Z9sbO12YzJGiQFwAoJvYCbI1W+ih6LQ==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 12 Nov 2024 18:38:04 +0100
+Date: Tue, 12 Nov 2024 19:49:18 +0100
 From: barnabas.czeman@mainlining.org
 To: Stephan Gerhold <stephan.gerhold@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
@@ -58,7 +58,7 @@ In-Reply-To: <ZzOQEgLLhkH-IymV@linaro.org>
 References: <20241112-msm8917-v5-0-3ca34d33191b@mainlining.org>
  <20241112-msm8917-v5-8-3ca34d33191b@mainlining.org>
  <ZzOQEgLLhkH-IymV@linaro.org>
-Message-ID: <4c34cb8eec5eab92501011e446b5362d@mainlining.org>
+Message-ID: <0dae1cea420bd335be591e4b1be3d07c@mainlining.org>
 X-Sender: barnabas.czeman@mainlining.org
 Content-Type: text/plain; charset=UTF-8;
  format=flowed
@@ -108,6 +108,12 @@ On 2024-11-12 18:27, Stephan Gerhold wrote:
 > 
 > This is strange, the deeper sleep state has lower timings than the
 > previous one?
+I was reordering based on Konrad comments when i have renamed the nodes 
+maybe it is not correct then.
+I am searching for how to validate these levels, i have find these
+https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8917-pm.dtsi#L45-91
+Do you know where can i find psci-suspend-param-s? Should I also add wfi 
+level?
 > 
 >> +
 >> +			cluster_sleep_2: cluster-sleep-2 {
@@ -238,8 +244,6 @@ On 2024-11-12 18:27, Stephan Gerhold wrote:
 > is suspended so we can detect insertions/removals. Also should be 
 > placed
 > in the board-specific DT part.
-I have made these based on this 
-https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.9.6.2.r1-04800-89xx.0/arch/arm64/boot/dts/qcom/msm8917-pinctrl.dtsi
 > 
 > See commit dfbda20dabaa ("arm64: dts: qcom: msm8916/39: Fix SD card
 > detect pinctrl").
