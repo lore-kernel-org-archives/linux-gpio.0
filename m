@@ -1,172 +1,140 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC6314387B
-	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B505114D718
+	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418453; cv=none; b=Piz32wZ0O9nHKPKOApFAO9F+PX+uOeIxFCpjU9yNZkxmEmouxqJ9+QEYhEibgklcCUToXfwOhisOvCAD2lMd70SiBBx1wwJjxPZOknqWkLYfRvYukNiAdbaQUaAbBUdSKKTlRm9FQCjMx2ie1PuWypgz42CZ+6JRYbAsEUs2psE=
+	t=1731419392; cv=none; b=bKP88wOSJuwA94C870u+nq8k0T8++b16wmsX2r0+MiRK1T/lZYccGDnFgaRXcwDXOHp2pwYmYabEBZgkyfKcn0SuXjPhmVFz2mvWlik+RI+aY4znvMa6EBMQaEO80adfHdlKXFrOwuuCx2hFghw0XUftZmgN7D+/GKn7SdLrJrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418453; c=relaxed/simple;
-	bh=ccZAmJUZ84i4bnR7UC/egNqccA0sRyz2WPlTAVWeXeM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dTmZPYjiFlth0AijGkmeCsV5egzlJSjv+ykFa4+Gi8spCuhcCJTkY9DvaY3Sj3PNEcfcC/cRyYiv6Q2Z8P7eRpZ2tmp3olHZaA4Gs7oQIs1JxlHkTYQJKrpR29V2pWk+LkpL/TD4Rt+f1a8Pp/jtfUWMPCAfkAwHiFITrnZiNSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ExlVOz/z; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731419392; c=relaxed/simple;
+	bh=b/tz6t8emZ2B8dwA+ERmN9anAjhGd2BlkO2AWCSTy0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fyN/f+ppb9zHKmtPkL4KFYQ3aNYn4slHye2FjhI3UkVU/goqVuYyvliVHpTzmMi78uLDetPFp0i5b3NLoUW0Gq86yIFOJdRY+MPYdnMG9i35+iEkdrBALgzpSOibHFRNvwvr6quRQ6AKs6OUfEOpCrs6AlXMeKiZPpYd+1bArh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AeuJyDf+; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExlVOz/z"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314b316495so47294395e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:34:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AeuJyDf+"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so62241421fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:49:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731418450; x=1732023250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p+omseve6sEWaNT3PbUtmXKwUOZhyNZ+lRjB/niytBE=;
-        b=ExlVOz/zMJ8fiHHq1+K1ESYZWeUbM7CARwNaeQ2le3N2LosCbNBVAP9C9lAhEIEtZq
-         D1PnxxOEcshnmWt55styhcmR3+8vIBPJDuC5NUCp6NKJcnIfyZzfF6n6E74N9JCGeH0m
-         oC/9BHBnY86SgSzJWgleKYgJqZeBP+QRKFp1KBW/2BbYjxJPwEzjVkbHr4wa/ontHsGo
-         5ArJD0Mxsg/3VyWaQCZWJZRZG4jATnr8zsMb9mbUM/vMo2QQL6vdcaKPOxXjtDadPOwf
-         GGjEtjiwHH+m9pdbQMIKLfWfzCbuzt+pVFBPELjQjxAkmpEUXAQppHvLbOcJllTj5/7Y
-         R+BA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731419389; x=1732024189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/tz6t8emZ2B8dwA+ERmN9anAjhGd2BlkO2AWCSTy0A=;
+        b=AeuJyDf++L/QXek0yalOr2FDOyVtJ9sYUalEF5CvvC45QACr6o+cz1YpnI+qjZi2N3
+         /hvFvD1cE25iGnEONtUJQ1IKg09LnHSI5BWF26Tc5uEAHqcL8sLdp3qMNC/RiuBHi1za
+         iqyBleI0f3VaDb+NrykxNvGzpLdK9SN9Wsb1sA4DD+JxsJNCWchjtFoemX8r+fPYldIb
+         zgia4W2UP2cPhstiDFLgjSg/hVCUKbMKpf15wXGA/EqgQXCuO0i+uFvo/VfmZcjxfcY3
+         yp5azt+tQjHbAZKBnJqv9nL/CGdCDSERk/FNj2i71umUdJebvGVRP9UR1GcglgorwdvO
+         fskw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731418450; x=1732023250;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p+omseve6sEWaNT3PbUtmXKwUOZhyNZ+lRjB/niytBE=;
-        b=FJ76YDj3zTsGC8cvZ4bTvhdBilV+UvpCWjTZlK9GZqaV4N1aSIO9TWVoMKuTKJAgsE
-         RQwg4q7Phqp+9L+prdrje3wL0+DNnxCnL+O2mMHKZhCU7HASAr2mEdUA746pmR88G7u9
-         dIwzvuZNnCQek0YXMW5RfoqBH293io7OiXJTQ+GHaik0md5fegnu62Qa+lQsjghwS3RB
-         qEZqkSvMtCRdV2u9rB43ME4IIZ0oxBGZ+o4c4cgt4aor/BsQlqkPCAw/Ym5tmOQ06Pwn
-         0G9TbJbI3OMUwOI3QDQqTkRnvdltk3SA+g6eBhV6wxfyHnA8I2InhtTJaB0jMQMfCHtE
-         dtBw==
-X-Gm-Message-State: AOJu0Yx0pd18K0NqaR5gdLh8GKTTfY0gYLoAjruFbV6+tIgFKGYOrBgw
-	VLTPeMSQMnn+zvg2y/T3rRrBUFVbU2hPtCL0FJ8u+h5Qh7/88+bvPyNb73F4ms0=
-X-Google-Smtp-Source: AGHT+IE3ISTkzyh/KPRmrTOaebvxmXujGnc7RmLYTWKcmrFKgulLlHkQDLI+4AM/xhjc2ZCd/a/i1w==
-X-Received: by 2002:a05:600c:510a:b0:431:4e3f:9dee with SMTP id 5b1f17b1804b1-432b74fd7edmr145104225e9.4.1731418450344;
-        Tue, 12 Nov 2024 05:34:10 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c1a13sm210146095e9.29.2024.11.12.05.34.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:34:09 -0800 (PST)
-Message-ID: <950f4d06-e064-46f3-b8e7-8bfd48b2b16f@linaro.org>
-Date: Tue, 12 Nov 2024 14:34:08 +0100
+        d=1e100.net; s=20230601; t=1731419389; x=1732024189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b/tz6t8emZ2B8dwA+ERmN9anAjhGd2BlkO2AWCSTy0A=;
+        b=mqakoBBaSKSTxMRwkPJ5SkH2ZM6hMhsoqs7qEE8gjueJHgmji8DiOao1S75NNOPn61
+         vXRcDU7WeVwZ8n1D5IcwyJ6k1T5rfLMr9PyMnMzaLDTdP8pkeyZaH5AhVtoLkbWJwaO4
+         IIWXad2Yz5oNVrdUIz1L7ics5NO0+9CsSDk2aVeQSq2mWyTsIBgNZ7F5xDgL/0oZPLaI
+         ovitZt+pPJ4Mz1GNPSYI9p7FwjcDEzAUulW7WuX5ie8D51NKjsVrTwx0Pbt5MM3oGBRD
+         P164kOYtxKywKp4eTLf5TCa0I5yJ6Csze79cbK70w5l4RUW0wjBGHEwReXvinPIDkSKQ
+         kDvg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6p0/crZ5J5/d3gxqJa4Y5clcyjqPjyAhpR37lr74UeLuQKvhWsZ7HrRuBZ8NzuQjxijMjiLBTu+sq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr91dU6nLreIfoocAuy0Xy6rJ0r/ebfg8zp3eCBzO+FzPvOILH
+	HUOqY+FMCi8speOEYSKImxRjBLcNU3b5vzoKPTB/18or0PXh8BIXQvvUN0GOGW0I+x72s223tUl
+	nRvQw7zSqDprzzBcmF9iIreq1kx2zJNcSzyPgCw==
+X-Google-Smtp-Source: AGHT+IHWcY4HeLXrrsjlFeqF9hDRKyiwxqpUnrkcAstxBsqv/RvYFEsaSAglhvteVmoPlR9N2NfcmRsc49RXWORdTkQ=
+X-Received: by 2002:a2e:a552:0:b0:2fe:e45a:4f6c with SMTP id
+ 38308e7fff4ca-2ff20963bd5mr52169231fa.6.1731419388773; Tue, 12 Nov 2024
+ 05:49:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 5/5] arm64: dts: amlogic: a4: add pinctrl node
-To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
- <20241112-a4_pinctrl-v5-5-3460ce10c480@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241112-a4_pinctrl-v5-5-3460ce10c480@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+ <20241112015408.3139996-5-ye.zhang@rock-chips.com> <CAMRc=MfTmpLSEUVTXSu8jf9tyTfQc=iG9NpovFem-qSDOCnagQ@mail.gmail.com>
+ <ZzMwh2GMP-bE7aLO@smile.fi.intel.com> <CAMRc=MePqsQatxNy7p5c3sE4z8RepjjLeFgpppKgEctCU3jAUw@mail.gmail.com>
+ <CAMRc=MdY1idv1o_nZFb1fKLpM5DHCPmEu5t5MMa_kV9csLgQWw@mail.gmail.com> <qwlya3kten7ugxzruohmbmmymjd6trz3rlbflirr3yym2vfe32@rapst33wknmd>
+In-Reply-To: <qwlya3kten7ugxzruohmbmmymjd6trz3rlbflirr3yym2vfe32@rapst33wknmd>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 12 Nov 2024 14:49:37 +0100
+Message-ID: <CAMRc=MfVPn1+TL1XRtPfdCrD-TEy5mG-vuPJFtFyx73+EioSxQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] gpio: rockchip: Set input direction when request irq
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ye Zhang <ye.zhang@rock-chips.com>, 
+	linus.walleij@linaro.org, heiko@sntech.de, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
+	tao.huang@rock-chips.com, finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
+	elaine.zhang@rock-chips.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Add pinctrl device to support Amlogic A4.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 36 +++++++++++++++++++++++++++++
->   1 file changed, 36 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> index de10e7aebf21..a176faf7f1ef 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> @@ -5,6 +5,7 @@
->   
->   #include "amlogic-a4-common.dtsi"
->   #include <dt-bindings/power/amlogic,a4-pwrc.h>
-> +#include <dt-bindings/gpio/amlogic-gpio.h>
->   / {
->   	cpus {
->   		#address-cells = <2>;
-> @@ -48,3 +49,38 @@ pwrc: power-controller {
->   		};
->   	};
->   };
-> +
-> +&apb {
-> +	periphs_pinctrl: pinctrl@4000 {
-> +		compatible = "amlogic,a4-periphs-pinctrl";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x0 0x0 0x0 0x4000 0x0 0x02e0>;
-> +
-> +		gpio: bank@0 {
-> +			reg = <0x0 0x0 0x0 0x0050>,
-> +			      <0x0 0xc0 0x0 0x0220>;
-> +			reg-names = "mux", "gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <3>;
-> +			gpio-ranges = <&periphs_pinctrl 0 0 73>;
-> +		};
-> +	};
-> +
-> +	aobus_pinctrl: pinctrl@8e700 {
-> +		compatible = "amlogic,a4-aobus-pinctrl";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges = <0x0 0x0 0x0 0x8e700 0x0 0x0064>;
-> +
-> +		ao_gpio: bank@0 {
-> +			reg = <0x0 0x00 0x0 0x04>,
-> +			      <0x0 0x04 0x0 0x60>;
-> +			reg-names = "mux", "gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <3>;
-> +			gpio-ranges = <&aobus_pinctrl 0 0 8>;
-> +		};
-> +	};
-> +
-> +};
-> 
+On Tue, Nov 12, 2024 at 2:23=E2=80=AFPM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Hi,
+>
+> On Tue, Nov 12, 2024 at 01:53:48PM +0100, Bartosz Golaszewski wrote:
+> > On Tue, Nov 12, 2024 at 1:50=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev=
+.pl> wrote:
+> > > On Tue, Nov 12, 2024 at 11:40=E2=80=AFAM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Tue, Nov 12, 2024 at 09:48:06AM +0100, Bartosz Golaszewski wrote=
+:
+> > > > > On Tue, Nov 12, 2024 at 2:54=E2=80=AFAM Ye Zhang <ye.zhang@rock-c=
+hips.com> wrote:
+> > > > > >
+> > > > > > Since the GPIO can only generate interrupts when its direction =
+is set to
+> > > > > > input, it is set to input before requesting the interrupt resou=
+rces.
+> > > >
+> > > > ...
+> > > >
+> > > > > This looks like a fix to me, do you want it sent for stable? If s=
+o,
+> > > > > please add the Fixes tag and put it first in the series.
+> > > >
+> > > > Independently on the resolution on this, can the first three be app=
+lied to
+> > > > for-next? I think they are valuable from the documentation perspect=
+ive as
+> > > > it adds the explanation of the version register bit fields.
+> > > >
+> > > > The last one seems to me independent (code wise, meaning no potenti=
+al
+> > > > conflicts) to the rest and may be applied to for-current later on.
+> > > >
+> > > > --
+> > > > With Best Regards,
+> > > > Andy Shevchenko
+> > > >
+> > > >
+> > >
+> > > There's another issue I see with this patch. It effectively changes
+> > > the pin's direction behind the back of the GPIOLIB. If a GPIO is
+> > > requested, its direction set to output and another orthogonal user
+> > > requests the same pin as input, we'll never update the FLAG_IS_OUT
+> >
+> > I meant to say "same pin as interrupt". Sorry for the noise.
+>
+> GPIO output and interrupt at the same time looks like a misconfiguration
+> to me. Maybe check for that situation and return -EBUSY?
+>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Of course it is. That's why we check for it in
+gpiod_direction_output() and in gpiochip_lock_as_irq(): refuse to set
+direction to output if the GPIO is used as interrupt and refuse to use
+it as interrupt if direction already is output respectively.
+
+This patch however proposes to set the direction to input implicitly
+which is wrong. The underlying gpiochip_reqres_irq() will check the
+current direction and return -EIO if it's output.
+
+Bart
