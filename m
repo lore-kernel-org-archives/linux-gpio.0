@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9272141BD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113622141C5;
 	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407222; cv=none; b=ce/NSONYUwlEaLXedu+i5dssijvWX5rD5UBW2X4cXubEain46P9ynULN52EDQ6RAgi7O0z+HChdnsPA6x8BuM+viu+kVDJdyJPKQIDnxRMYbv/+Tu7/KFUDSSUIaU30jFD14s3025yVjyjgdawBUSUQVDAFOHbPyCgS8VHCx/jY=
+	t=1731407222; cv=none; b=dZTu3X3K3S/0tp1fnywwradRVMN99Ke3SRlouiRiFWnl7FY0EYtVXw7gw5rp7RRPNUKKxhMnuOqorRZK63tFZh4rOWYL43fL+xQ+voN1Bxq5GfwgfYf94WJ/Wd+KpsoyHgANUa2Alr1C8ON44CCWf4jS9G9fWFd07HbKD+oXJW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731407222; c=relaxed/simple;
-	bh=u/qw2hKCT9cFOoXZwF+MDoMtpUmJbTAMh7xRFAFXzgM=;
+	bh=pWVUou38JVsKCBaDMii9eHLeGckCyzdJUiFfL65PTUs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gS52HynUNhhf8nZ4CSw1h5Llm6he4WIjfn93GS+48oaSrwd/P2FaLOlIpnwJLNRhDpPESnkNeY4f78Xh6XQ961JyDapLTolNuKjzL9juTyYsJ1CSQlSgPnnC7YwPuZywFMyRdupBr7XSR+ZqF89cQhOVmq/nOoQdTYz/AKWG6Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuQK3yyH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=uAQW4xCHehQt5o9EKDNrenWlEkxEPsx+7A9ylZW4DyNkCqkPGb1ZpFmRsmSYT7nHrel5I/By2QM2fSqFTt4WIb9USkGiZ6gO3pINadGtrsnavyhXw2Xz5taCj800wndvaJO9lwHmXXG5QfoYkkZ4otzXbvc3g4fDNe/glUhceYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yenou9Mp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuQK3yyH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C1793C4CED9;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yenou9Mp"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A4BC9C4CECD;
 	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1731407221;
-	bh=u/qw2hKCT9cFOoXZwF+MDoMtpUmJbTAMh7xRFAFXzgM=;
+	bh=pWVUou38JVsKCBaDMii9eHLeGckCyzdJUiFfL65PTUs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cuQK3yyHEfjyRdxhpYVQ9ECWRsi3XAx3tFcYZZaW2U8ludaDJe2YhBrM49Gf79Fsy
-	 VXFPXEffx0cKJcTyJ6v87CQYtAmRukv1XDpb/2G2fOkFP69sXgkBfsveOYvQ2r+VV2
-	 svbFR/mETGARIz0/sNdtreSiCi/+VXvy78FU246v/5uQTi2qX4sKsgtKt2VlcQhVFy
-	 ztuUCc24neu9CPltj5+QjrRcpDb1SsYeC8KOcKE/AhyruftVodvFa+HcfUyLE/cTh3
-	 d8Uc+SVucmxWEiyDJk+kfYisLoVwNfDjvpduxPrRqAmFkPMBGX62DQjUCe7XlxRQSk
-	 YbL+ukXweyv6w==
+	b=Yenou9MptzFZF5YpRekidDbVw9UM3Om+C7iqD83ooYIYo6N1ncFXC77fyWN2cKpPY
+	 VrY+aL+6Veevv7fwlf9NiT/7YLHYn7ickctX8P/z9QbtL8SkZ3GFwMTXXlU8u+1/xW
+	 L1CVZK0lAhehjNHE4ARvY2y7Ghx+Mdx+zGOW4Zc56+c5RXf02zrSOGyqPC0MDyqneg
+	 an/Xq5f8DwHZGG/ZhTTHQe44QmttW6Hnb+FCGakbY29dYgfY2i5ktl7bCW0lilY/n/
+	 nebFAP9wnvaFxmajWj5JcAwMBQ+PSD9CMWOxRRkZcAmwGTrLFixk9oFS/BrYrRTht0
+	 r8PhmAMeDUW5Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55DFD32D8F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964C6D32D8B;
 	Tue, 12 Nov 2024 10:27:01 +0000 (UTC)
 From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 12 Nov 2024 18:26:57 +0800
-Subject: [PATCH v5 3/5] pinctrl: meson: add interface of of_xlate
+Date: Tue, 12 Nov 2024 18:26:55 +0800
+Subject: [PATCH v5 1/5] dt-bindings: pinctrl: modify gpio-cells property
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-a4_pinctrl-v5-3-3460ce10c480@amlogic.com>
+Message-Id: <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
 References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
 In-Reply-To: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -54,11 +54,11 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731407219; l=1697;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731407219; l=972;
  i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=knLIUCSGih56JEya5+7FKqp5xI+HFVaycdj15fbWv+g=;
- b=kS5VjjbODTrXUOWox21tZe1qSyaH88DvfQphEHJ7JKf/QXzT+qT28LcFHG/LOyiRxyG8VfTHJ
- vTcykybrR0ECTs1gRJFwW9G/HERuMExt8Yd1HgJvNU3qujCRR9DYMFd
+ bh=vZqjjnCO3zwPWuTy0qDsSgOCsxCV7fM7PewSW3T9rgc=;
+ b=vcZvhifPHORlWOS0LP5dmR4xmjVZApG64++PFcGo9B8LlLDz+aPXv1CK9UdzrxNjozCr6v3/S
+ tMKjBWTbJL1BDcc3W6TDDy84l6vUVuKboaEkrAnonuxhKjQFb/yba6X
 X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
  pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
 X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
@@ -68,48 +68,29 @@ Reply-To: xianwei.zhao@amlogic.com
 
 From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Amlogic pinctrl software framework use system API of_gpio_simple_xlate
-which only support linear one-to-one correspondence to translate gpiospec
-to the GPIO number and flags before. It can not meet the non-linear needs.
-Add the interface satisfies the underlying driver to implement the
-transformation to meet the needs of various scenarios.
+Extend the value range of #gpio-cells property, including [2, 3],
+to compatible with Amlogic A4 SoC and later chips's pinctrl module.
+The early GPIO parameter number is 2, and the later GPIO parameter
+number is 3.
 
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson.c | 4 ++++
- drivers/pinctrl/meson/pinctrl-meson.h | 4 ++++
- 2 files changed, 8 insertions(+)
+ .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 253a0cc57e39..fc0c0bef38c0 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -620,6 +620,10 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
- 	pc->chip.base = -1;
- 	pc->chip.ngpio = pc->data->num_pins;
- 	pc->chip.can_sleep = false;
-+	if (pc->data->of_xlate) {
-+		pc->chip.of_gpio_n_cells = pc->data->of_gpio_n_cells;
-+		pc->chip.of_xlate = pc->data->of_xlate;
-+	}
+diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+index e707c222a07f..6b53577dea59 100644
+--- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+@@ -36,7 +36,7 @@ $defs:
+       gpio-controller: true
  
- 	ret = gpiochip_add_data(&pc->chip, pc);
- 	if (ret) {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 7883ea31a001..cbb3f22552b9 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -120,6 +120,10 @@ struct meson_pinctrl_data {
- 	const struct pinmux_ops *pmx_ops;
- 	const void *pmx_data;
- 	int (*parse_dt)(struct meson_pinctrl *pc);
-+	int (*of_xlate)(struct gpio_chip *gc,
-+			const struct of_phandle_args *gpiospec,
-+			u32 *flags);
-+	int of_gpio_n_cells;
- };
+       "#gpio-cells":
+-        const: 2
++        enum: [2, 3]
  
- struct meson_pinctrl {
+       gpio-ranges:
+         maxItems: 1
 
 -- 
 2.37.1
