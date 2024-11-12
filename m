@@ -1,136 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA4D20010A;
-	Tue, 12 Nov 2024 14:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C705A1FF604;
+	Tue, 12 Nov 2024 15:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422673; cv=none; b=KPHJnNRihufnqR/HcUhNJrAcaTL5/iodm8aZttaBWLmew9TSHaRo2dmbvBfrP2Z2HcXesszgHBLghW/Y/03d+WA9cNpvDsVQ7uMrNdm6ukvfzLyzgMxmtdEWb96AMqMmY/3BnyttZtiSYEvAR1mCn61rrU7Ul0X6PgJvMYDRdyI=
+	t=1731425445; cv=none; b=CiSU1HVYg56i5dmMRFi7BKkLLn0usDMgsqTaXjWV2KJEhwmiSqaXgOvu3wnKduI9Y41oxN2zqskLxcv1ii9t1iMmVQ+e5bkk3/QHJ0Ma1AtiawqGBqReNgta1nIBSTE70xG/YQANt5SqiPNjxp+LM7pZUTFUxQ/H3srj+dAVDzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422673; c=relaxed/simple;
-	bh=EjPK34+AC2Pfhya/hAO/+gef3LLKikFCHohkMhTY3fI=;
+	s=arc-20240116; t=1731425445; c=relaxed/simple;
+	bh=/VOzond0xQ7szk6/KKyNiKYHsl8+KcOsCirRMFddYYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pH0O+723Y20RYot48oSYP9IrMq8HCzRdFIhkbSgK/1k65WQRneevcZswg/HFiLARmMl3KOmaQivBnS+LQRf1XBVtjKtRvDIkPrI29Kv3OeQYqp7GVb4+o00dcTvkalvNXylVTHW2ytVIfFRvyeDC4VNk+Cb0tNZc+6/twJfhO1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQkBdyJI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSE2+EtcGhcIjsIN2qhh797ya2P4oiNZFi07ezMSnLnENRGqwJLxXqnw8ZhMR8IhnPWFaj968NM7Vx3QDR1N4IoJNkxhZDYuU3una35FEn4esWJaldygtRz3Xk48tKgtrKi/CNuJV+Dg9a6WY+ocwTS8fk+QK41Ez+4AWS7RPzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbVCxXdF; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQkBdyJI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8B7C4CED0;
-	Tue, 12 Nov 2024 14:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731422673;
-	bh=EjPK34+AC2Pfhya/hAO/+gef3LLKikFCHohkMhTY3fI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uQkBdyJIPNx6GWYU+T7x82rGzvF8PeuQfl+zs/tOQRDrp2LJbaCDsytTuAlUH0nKQ
-	 CrX2QB6TyMhise0BmTtJRqJrEqwTUYLiVqRKSdXW8kTwoM5jYxXrY9mtWd73RAmiu7
-	 sXIhil1Q71nmi0K7oCMXIt8/aSH3EMQJuRs/RLsPuxJfNYmamJXsHZjRZYlLafXb1q
-	 nXE/pO6NON06KK6vDHDkJBqa2QPHDH/Isva5SRn4c2+qPRcGBZ5Yh6fG1JOZOKQI45
-	 MGy11AdgoqVsSGitWcvmduyYXmzKW+UEbGvYdnWMyWg4itCsl3YzwMhegY+dty5nZ6
-	 h7LyGhAFVB9Ig==
-Date: Tue, 12 Nov 2024 14:44:27 +0000
-From: Lee Jones <lee@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	upstream@airoha.com, benjamin.larsson@genexis.eu,
-	ansuelsmth@gmail.com, linux-pwm@vger.kernel.org
-Subject: Re: (subset) [PATCH v9 4/6] dt-bindings: mfd: Add support for Airoha
- EN7581 GPIO System Controller
-Message-ID: <20241112144427.GI8552@google.com>
-References: <20241023-en7581-pinctrl-v9-0-afb0cbcab0ec@kernel.org>
- <20241023-en7581-pinctrl-v9-4-afb0cbcab0ec@kernel.org>
- <173088099542.3237297.18018729158887853624.b4-ty@kernel.org>
- <ZyssJpR7xwbMzUsm@lore-desk>
- <20241106110046.GR1807686@google.com>
- <CACRpkdbf4Pb+n-F-K-JaUvytwCGUHHh8d2rYP4A9KgVTzqSnGw@mail.gmail.com>
- <20241111165120.GD8552@google.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbVCxXdF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731425444; x=1762961444;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/VOzond0xQ7szk6/KKyNiKYHsl8+KcOsCirRMFddYYc=;
+  b=IbVCxXdFK9G7SO07C6XxHGRedl3AD42Vi97Sf0KJ7gX0x0jXOKA24FHj
+   4tE0DjH6jcEIactda1ucUqrMTsW7YpIe6WKUSRPNd9qBxpiQP9oz27yai
+   NVoW7CVR+zmj/iqDNkLGF4WhL8yPPCnwGYbVHl3v5+mV7Nsf7/CEiq0SG
+   J/YuHUo66Pum1Ltvkh56Rmrjec8w4OZYC0NDSpw1ikQQU20Gx+UJ417Mt
+   DKHASZG/trskuZYwwJ737KHbEm0huYZLA9h2SlpiImflN70SmozLoZ66X
+   Vq8Kab/+awMN7pfhk1ZmEoSN8qRJImqAQkiaBmjdV5CTREDGxbW3O8r7H
+   Q==;
+X-CSE-ConnectionGUID: FI3ul5MKRNeipOBzTAQZzw==
+X-CSE-MsgGUID: Sg0zM4i0TkycvY9kpWPW7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="18876280"
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="18876280"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 07:30:42 -0800
+X-CSE-ConnectionGUID: UmoYofJpRSiSY5LHAFL43w==
+X-CSE-MsgGUID: 50YBXTuWQr2uQRtMlSyfgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
+   d="scan'208";a="87938433"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 07:30:41 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tAsqk-0000000E2iI-3unZ;
+	Tue, 12 Nov 2024 17:30:38 +0200
+Date: Tue, 12 Nov 2024 17:30:38 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Sai Kumar Cholleti <skmr537@gmail.com>
+Cc: bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
+	mmcclain@noprivs.com, stable@vger.kernel.org
+Subject: Re: [PATCH v3] gpio: exar: set value when external pull-up or
+ pull-down is present
+Message-ID: <ZzN0nn6WFw2J8HTF@smile.fi.intel.com>
+References: <ZykY251SaLeksh9T@smile.fi.intel.com>
+ <20241105071523.2372032-1-skmr537@gmail.com>
+ <ZyouKu8_vfFs20CB@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241111165120.GD8552@google.com>
+In-Reply-To: <ZyouKu8_vfFs20CB@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 11 Nov 2024, Lee Jones wrote:
-
-> On Wed, 06 Nov 2024, Linus Walleij wrote:
+On Tue, Nov 05, 2024 at 04:39:38PM +0200, Andy Shevchenko wrote:
+> On Tue, Nov 05, 2024 at 12:45:23PM +0530, Sai Kumar Cholleti wrote:
+> > Setting GPIO direction = high, sometimes results in GPIO value = 0.
+> > 
+> > If a GPIO is pulled high, the following construction results in the
+> > value being 0 when the desired value is 1:
+> > 
+> > $ echo "high" > /sys/class/gpio/gpio336/direction
+> > $ cat /sys/class/gpio/gpio336/value
+> > 0
+> > 
+> > Before the GPIO direction is changed from an input to an output,
+> > exar_set_value() is called with value = 1, but since the GPIO is an
+> > input when exar_set_value() is called, _regmap_update_bits() reads a 1
+> > due to an external pull-up.  regmap_set_bits() sets force_write =
+> > false, so the value (1) is not written.  When the direction is then
+> > changed, the GPIO becomes an output with the value of 0 (the hardware
+> > default).
+> > 
+> > regmap_write_bits() sets force_write = true, so the value is always
+> > written by exar_set_value() and an external pull-up doesn't affect the
+> > outcome of setting direction = high.
+> > 
+> > 
+> > The same can happen when a GPIO is pulled low, but the scenario is a
+> > little more complicated.
+> > 
+> > $ echo high > /sys/class/gpio/gpio351/direction
+> > $ cat /sys/class/gpio/gpio351/value
+> > 1
+> > 
+> > $ echo in > /sys/class/gpio/gpio351/direction
+> > $ cat /sys/class/gpio/gpio351/value
+> > 0
+> > 
+> > $ echo low > /sys/class/gpio/gpio351/direction
+> > $ cat /sys/class/gpio/gpio351/value
+> > 1
 > 
-> > On Wed, Nov 6, 2024 at 12:00 PM Lee Jones <lee@kernel.org> wrote:
-> > > On Wed, 06 Nov 2024, Lorenzo Bianconi wrote:
-> > >
-> > > > On Nov 06, Lee Jones wrote:
-> > > > > On Wed, 23 Oct 2024 01:20:04 +0200, Lorenzo Bianconi wrote:
-> > > > > > Add support for Airoha EN7581 GPIO System Controller which provide a
-> > > > > > register map for controlling the GPIO, pinctrl and PWM of the SoC via
-> > > > > > dedicated pinctrl and pwm child nodes.
-> > > > > >
-> > > > > >
-> > > > >
-> > > > > Applied, thanks!
-> > > > >
-> > > > > [4/6] dt-bindings: mfd: Add support for Airoha EN7581 GPIO System Controller
-> > > > >       commit: f49f37f3cfe1482d4dc77d26f3e8c38eab630d52
-> > > > >
-> > > > > --
-> > > > > Lee Jones [李琼斯]
-> > > > >
-> > > >
-> > > > Hi Lee,
-> > > >
-> > > > according to my understanding this patch has been already applied by Linus
-> > > > here:
-> > > >
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=50dedb1eb1e6755ccab55f6140916c2d192be765
-> > >
-> > > An interesting choice.  Linus?
-> > 
-> > Yes I suggested that I merge patches 1-5 on oct 29 and applied the
-> > day after:
-> > https://lore.kernel.org/linux-gpio/CACRpkdYshPusdA7bDW2y8H_wp-Fm3N-YCsY1_Qn=dZqRiFy12w@mail.gmail.com/
-> > 
-> > It's because the bindings are dependent on each other, this one patch has:
-> > 
-> > +  pinctrl:
-> > +    type: object
-> > +    $ref: /schemas/pinctrl/airoha,en7581-pinctrl.yaml
-> > +    description:
-> > +      Child node definition for EN7581 Pin controller
-> > +
-> > +  pwm:
-> > +    type: object
-> > +    $ref: /schemas/pwm/airoha,en7581-pwm.yaml
-> > +    description:
-> > +      Child node definition for EN7581 PWM controller
-> > 
-> > Those refs will explode unless the two others are merged at the same
-> > time.
-> > 
-> > Usually we merge the whole shebang through MFD but this one felt
-> > different because there is no actual MFD driver, just using simple-mfd.
-> > 
-> > In hindsight I should probs not have been so trigger happy and give
-> > some more time for this to settle... Merge window stress I guess. :/
-> > 
-> > It's fine to apply textually identical patches to two trees though as
-> > git will sort
-> > that out so technically it's no big deal, you can keep it applied if you
-> > want.
-> 
-> It's okay.  Life will be easier for everyone if I remove it.
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Okay, I dropped it from my tree.
-
-Next time I would like a say/opportunity to Ack please.
+Does this need to be applied, Bart?
+Seems it is missed in your branches...
 
 -- 
-Lee Jones [李琼斯]
+With Best Regards,
+Andy Shevchenko
+
+
