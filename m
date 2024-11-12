@@ -1,99 +1,81 @@
-Received: from mail-m1973173.qiye.163.com (mail-m1973173.qiye.163.com [220.197.31.73])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590020512A;
-	Tue, 12 Nov 2024 03:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA734C91;
+	Tue, 12 Nov 2024 03:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731381000; cv=none; b=BWFVz2nTXPKCzuJA8V0XKqJvwqgvS8P5fzwKmF4HMAztMxWxW5YyL59P/biME8UjnNWvEs7hPae9ooCRBrgVusF2N21uwU9n+LzQKlUF2gNhtXx8mVAHD7b5wJakJtEanNrB1rJxWJulg/qLdvOwgkE362lyDTTYkOSM0zVsnHY=
+	t=1731383841; cv=none; b=g7pXel8HwVLWARUkDVYi008gwYtPBnUWdMln/KfDIknohEc791YtkVpj2xc44OFI8cVfh2Ekxpi+E1ZVIE7kcUXFG1GWZMID2hHmhKB3jIh8SNXGNzg1Mzbbz8lbej8cuOdh/Fa9Lxa5TH5aNH4KM2Ep896uMpekkIy7VJOHjfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731381000; c=relaxed/simple;
-	bh=ANf6993tejPqzHmhVSsxoxdVhoMu/HJ3RWBKUAdLn9M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qm+eO/Z6YbzTu8pBhMdFyqf3F03y6VCUqNRPLA0dG9vO80mIBB5C2ivVyzlyi9m2x+tmO2BhYhxJrsPujzO1T4zRN8IJ+9uZZYereFN6uVBZLJ/hEzXFCJdGvkFIOuM5N3x5TctzzSdtO7iu8RmQjSlytseyh1ej3c2mMvZ47Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=f+N5aUGC; arc=none smtp.client-ip=220.197.31.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1731383841; c=relaxed/simple;
+	bh=9KO8cVztzjPZVNEUYaBIYLH2rz+B3tpahGgV0TOH+DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kREkcYBlHMzaXwgE59Bysnt6ogijteQ6O466fBwwufrf4pzxXzkL3Pa7FlQSdcxaCzr48h7i7m86yKpMZflaeslZ9u9p9nrtFWsufyUI22qH6dmhnb+YM8lt2NQFp3+Ud0C49ausTPUw0OSA8lcBjOAS6K5WgVj/B/6mq7pKSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8GOEA2n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="f+N5aUGC"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 275d3f1d;
-	Tue, 12 Nov 2024 09:54:13 +0800 (GMT+08:00)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH v5 1/4] gpio: rockchip: explan the format of the GPIO version ID
-Date: Tue, 12 Nov 2024 09:54:05 +0800
-Message-Id: <20241112015408.3139996-2-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
-References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8GOEA2n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699D3C4CECD;
+	Tue, 12 Nov 2024 03:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731383839;
+	bh=9KO8cVztzjPZVNEUYaBIYLH2rz+B3tpahGgV0TOH+DI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m8GOEA2nvns3mdKImNGl7Qgry7ji3Hud9mcem55vZZ/DQwmVeq5mTB9EyZCSRhsRN
+	 KXrasKECd+v3hf4GdZp2NSCyflIf8X+ucN5NnbgrK8ymq/IxW8dfnHw0YpMYIVFoZ2
+	 5Buimf9X5DJTI2iYVMNrS/1+70omOG7PkvEG0jOpsZugw3KTX9StZw1PPuDvq+hvfL
+	 WJneSCRyouAQ7veDVhsA5UltkLHh8zQT7lh6gnyBVwapGU7nY1mfaOUYfP9iLx8YL+
+	 a6QFVahM8b/5gWZhrDvfpnsHIZqbwp2ue3012AP7iy46mxXfTzWeAUy9McbX+sOmph
+	 9TrjgCPXjinuQ==
+Date: Mon, 11 Nov 2024 21:57:16 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] pinctrl: qcom: Introduce pinctrl for SM8750
+Message-ID: <kq6kk6gszl7c3nltxt3zihhepqlgm4ziajahnuvngyz4qg72vi@xtnwjnz4st3v>
+References: <20241112002843.2804490-1-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUkZHlZDGB0ZQ0gaGkhOGRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a931e14163509d8kunm275d3f1d
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NQw6Sww5HDIoMBoWPysZSRpL
-	Mw8aC0JVSlVKTEhKSExNT05PTkJIVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSkpDTjcG
-DKIM-Signature:a=rsa-sha256;
-	b=f+N5aUGCj+VLxIOLvKP23n978ZTd+BlIfa0hCJ9vp5lR/8Zf/aiF7anhUIdCXdvaBUd3/3lj4o+EtKERejIfmr2T5G7zTzZUK1B4HBM3JgOzsQUvQo6J3/WY37/5j0uUHiyfKP86nDaa/YcS4hOTa0Ojl1Cv03hxjUi5yJkERaM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=W3+qCrfZTihYEk4pDOtbMVILileo3xKIzptsJVcIneM=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112002843.2804490-1-quic_molvera@quicinc.com>
 
-Remove redundant comments and provide a detailed explanation of the
-GPIO version ID.
+On Mon, Nov 11, 2024 at 04:28:41PM -0800, Melody Olvera wrote:
+> Add pinctrl block for the SM8750 SoC.
+> 
+> The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
+> consumer mobile device SoCs. See more at:
+> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/gpio/gpio-rockchip.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 365ab947983c..702e711f9c23 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -26,9 +26,15 @@
- #include "../pinctrl/core.h"
- #include "../pinctrl/pinctrl-rockchip.h"
- 
-+/*
-+ * Version ID Register
-+ * Bits [31:24] - Major Version
-+ * Bits [23:16] - Minor Version
-+ * Bits [15:0]  - Revision Number
-+ */
- #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
--#define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
--#define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
-+#define GPIO_TYPE_V2		(0x01000C2B)
-+#define GPIO_TYPE_V2_1		(0x0101157C)
- 
- static const struct rockchip_gpio_regs gpio_regs_v1 = {
- 	.port_dr = 0x00,
--- 
-2.34.1
-
+> 
+> Changes in V2:
+> - corrected example dt node in the bindings
+> - removed reserved gpios (moved to dt)
+> - lowercased letters in hex numbers
+> 
+> Melody Olvera (2):
+>   dt-bindings: pinctrl: qcom: Add sm8750 pinctrl
+>   pinctrl: qcom: Add sm8750 pinctrl driver
+> 
+>  .../bindings/pinctrl/qcom,sm8750-tlmm.yaml    |  138 ++
+>  drivers/pinctrl/qcom/Kconfig.msm              |    8 +
+>  drivers/pinctrl/qcom/Makefile                 |    1 +
+>  drivers/pinctrl/qcom/pinctrl-sm8750.c         | 1729 +++++++++++++++++
+>  4 files changed, 1876 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml
+>  create mode 100644 drivers/pinctrl/qcom/pinctrl-sm8750.c
+> 
+> 
+> base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+> -- 
+> 2.46.1
+> 
