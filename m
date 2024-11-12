@@ -1,60 +1,60 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB41E188588
-	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE67080D
+	for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 13:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418012; cv=none; b=G21XnSBB8fj8tmYV3wVa0a5vjsR9Z67ykVQfoGNLOAFBY2f9VDAgnk7Hq5RdKBaFj/a4EAbuLg5071p4yXv9pRlNSI6ASjzRJuo5w3Vu6+fuJ5rUr3Y+B9xCogcnJjiGpK/QPrz3RJO+IEhLlAmEEd+A5jpIGWZgvJHj1jTHlqY=
+	t=1731418120; cv=none; b=HNcEWJEXZwqbktM3XGX8lgs515g8ap75O21y/WD4oOwP0dVN7kODtWeE+2fV/1TPm75uVRk6dtAgLXLumCscQaP6poQo9U0x6h75oIdfBRe8XUPx5X7HwUFGHJQGeyhfV80XL3hlIPT/BMSP5QFvhI/L2mUAFnr4SGzC+e0u2DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418012; c=relaxed/simple;
-	bh=tRnACknh/1EhHRTAz3cx2wXfmMECs90wmR2MIdzMzUE=;
+	s=arc-20240116; t=1731418120; c=relaxed/simple;
+	bh=XJ80DbxIizVFPgfPrXifJvFLG8FIkBRi0n6SYjToORw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Twfu3G30ZzhAsVdrRKMuIpPeELWtP1mECoZKauGOR1aFTctFmO5HW0Y3G6tSbS7uckgsGVKgaZmdt5Ptiyg86Fwrl2t5zMPP1SnY57Ah4nvzDlFPcn04jt0uwB7OJ9kBscmtAZ6CfMSpwcIAvUWZd8NHBlnKMkJBfwPdjgI+owM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTZHxdJt; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=kE5pajvIV07n1C4vIKu2RSjjXSS415MazFQ3GlgCEBVlWHu3zcMagB8GhPeAO/NQPjgd0REMg85dx3tTJ8N3XFGtmxycXqpX0aP0g4AG4yri6r5V68BTSmSaTueRbjiVV+S/s+Fv+XmGjviJheyMdZbastcg5KBaHc8HhcciC9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sokRkpjP; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTZHxdJt"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43159c9f617so44744145e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:26:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sokRkpjP"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d47eff9acso3443171f8f.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Nov 2024 05:28:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731418009; x=1732022809; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731418116; x=1732022916; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
-        b=kTZHxdJtUdGSuIEXQCVn9K03tYIzi3oadEzCKoygNbjRrQlvKZLj9BPFK841Aol5j0
-         bYLZi3gshr9FD7mPXtGzZV9mN4pX44OD04hjo/Fu/azkxv1lobLR5iCJW1V7OHstnMmy
-         lA971YAqm5ve8ReKIm2ItucLRMns3hr8R16OfopxwHqnkXYMNoIrDNXaYwZRkkupAg2c
-         GdAQWqUyGZwxbRn1dxlX/Amu8LugZEBMuT0rm2/8poujWyRD5v6L2iOC2QIrANmBo8MR
-         kF5J7nflDuPOf+LrXP5iCamdLAMBtXGMJ7pwXZ2FyRPVz5uXP8VJ/HplfCEP87yrMQCi
-         sqeA==
+        bh=YsaZoX49/UTmnCYipmJYozRv1F9KJT6zGJ2FPgwHPM0=;
+        b=sokRkpjPC4yYnenU1Dzj8ydI4gQk65vnXM5J8VD16gnbTtJDYxdZvh9NOP3swthUDS
+         VRpio6EwsvxhofyMTdWQDmmYo7P/T1thZ1dsmgQp/xJAMzVKbWqttQyizym1xByD8/VX
+         hK4tauKGLUX3Fj9u3QYWiwMd93CEk1fQJkNKB06SYaQc28TJlLfn2kisc/60aa8opV+z
+         XOzuJKs1/O11xQ6eM/84lBScFa/vF+0Ry+sxxdl2Q2cR4fR2MbiDgqZMHN+QudfUlGm/
+         DXolQopY+rcTkrl1lA0g24BiOU6QvXZ6pecG3+ZDd85/Mrn8Sl/CXGmoVy1SmnGKbr9M
+         AYmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731418009; x=1732022809;
+        d=1e100.net; s=20230601; t=1731418116; x=1732022916;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
-        b=GEnwS+gB99aTjqMxX88D5YCYGFNzld7TMiC6hlfAVgRxyYWDts/om1FBuhjqImUCNd
-         tGee0Z8L/Ep3AVoB6Osnv7LiaiPuS1TNTSCngnuxATfE+K0Z5C0fRzDLelICFCFj9gH3
-         Uhj+oPDQokjlCufpxH8FkHZt92P21Rprc03XyTrBz5KNYuK3cSrBeWrHWHu166roakaD
-         APgySupREhfPAsciYUcxLbJLsboX3V77rT2HHfVdaod1LlcPWzSE3CQLdm/92/SxVGTI
-         PuDvZp5tHq0WxEsQazQEMkKBtO0F37WvSr9lXEQtFGQXyGFQ5pXEbrjcLXDU1gyBxBjB
-         GYdw==
-X-Gm-Message-State: AOJu0Yw5ConCsAWYO7gA5SZnBC6TfxQ6S7bgfLrWkgIJ0aNKrqcVvfH2
-	7mnucOeyLDZzg5QZzmmc+LOQ3PWvbbiqFVpfm9Fg+yaOIMB11YX+ZgHwUF5xOus=
-X-Google-Smtp-Source: AGHT+IFTQlXSukq+djtZ02mrwHjUmWSAl2HtnKbbzOayDUOl3KycAHIOi0rl6/yfP9eUPu5iRkh9QA==
-X-Received: by 2002:a05:600c:3514:b0:42f:4f6:f8f3 with SMTP id 5b1f17b1804b1-432b74fde60mr137847665e9.7.1731418009251;
-        Tue, 12 Nov 2024 05:26:49 -0800 (PST)
+        bh=YsaZoX49/UTmnCYipmJYozRv1F9KJT6zGJ2FPgwHPM0=;
+        b=TZwQp9Z7R9OLNC9XnPo+jC0hjrjpX6Tw5bU1pqwyYM3G/lEvzTDteVtHpifY+kAcbU
+         +KwtpJkub7mjOZeqspof1PQTvxSL0Cz51BNEFooc9ExxMrVM/I2UfpL0VTQ2mfItv8yP
+         juLzumSk9LrRX8ws2+TRThlAHCvDXN4VmQtbQsQaosISwIdk1aPvT69EmlsI2oy6p6wC
+         Yz13QcEeoRddhN7Ng783TKFPJ5FK28khcOLyoerLv63ovNUyejDmXSGgWrWXWnqiwu4s
+         Nt/oqWHOV6EdRRwDlP5fudO4KBDul7R3OmBLiveMzL+N61DOmRCY3PWXxfzDZ9rPxhsh
+         cbag==
+X-Gm-Message-State: AOJu0YypAg8wu0Du14t8w+zKmma+L3Y0VNd+m8uRZziVF8U7EWv5UQNH
+	2qv8GpMy/nShJTHz06ipd1BnOUYX3W46hXZdBld+GUkbsHMnzQ088G1SYzvqys8=
+X-Google-Smtp-Source: AGHT+IGcxUmMqHN8a/cQuWmNKDKEmC6I6tUTcWYjNJv51eGA/I3ZpzDc+lB74YRdvxBPxcRvqG1PMg==
+X-Received: by 2002:a05:6000:186e:b0:382:b57:f0b5 with SMTP id ffacd0b85a97d-3820b57f16amr747635f8f.12.1731418115692;
+        Tue, 12 Nov 2024 05:28:35 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0566544sm205123355e9.24.2024.11.12.05.26.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04111sm15330046f8f.92.2024.11.12.05.28.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 05:26:48 -0800 (PST)
-Message-ID: <e1b810f6-b5b3-43aa-9cc1-e9601589ddf5@linaro.org>
-Date: Tue, 12 Nov 2024 14:26:47 +0100
+        Tue, 12 Nov 2024 05:28:35 -0800 (PST)
+Message-ID: <69918f77-c0d6-4151-b725-e5051f0f6680@linaro.org>
+Date: Tue, 12 Nov 2024 14:28:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,7 +64,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 1/5] dt-bindings: pinctrl: modify gpio-cells property
+Subject: Re: [PATCH v5 3/5] pinctrl: meson: add interface of of_xlate
 To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
@@ -75,7 +75,7 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
- <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
+ <20241112-a4_pinctrl-v5-3-3460ce10c480@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -102,45 +102,55 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
+In-Reply-To: <20241112-a4_pinctrl-v5-3-3460ce10c480@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-
-Hi,
 
 On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
 > From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> Extend the value range of #gpio-cells property, including [2, 3],
-> to compatible with Amlogic A4 SoC and later chips's pinctrl module.
-> The early GPIO parameter number is 2, and the later GPIO parameter
-> number is 3.
+> Amlogic pinctrl software framework use system API of_gpio_simple_xlate
+> which only support linear one-to-one correspondence to translate gpiospec
+> to the GPIO number and flags before. It can not meet the non-linear needs.
+> Add the interface satisfies the underlying driver to implement the
+> transformation to meet the needs of various scenarios.
 > 
 > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml       | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/pinctrl/meson/pinctrl-meson.c | 4 ++++
+>   drivers/pinctrl/meson/pinctrl-meson.h | 4 ++++
+>   2 files changed, 8 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> index e707c222a07f..6b53577dea59 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
-> @@ -36,7 +36,7 @@ $defs:
->         gpio-controller: true
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 253a0cc57e39..fc0c0bef38c0 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -620,6 +620,10 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
+>   	pc->chip.base = -1;
+>   	pc->chip.ngpio = pc->data->num_pins;
+>   	pc->chip.can_sleep = false;
+> +	if (pc->data->of_xlate) {
+> +		pc->chip.of_gpio_n_cells = pc->data->of_gpio_n_cells;
+> +		pc->chip.of_xlate = pc->data->of_xlate;
+> +	}
 >   
->         "#gpio-cells":
-> -        const: 2
-> +        enum: [2, 3]
+>   	ret = gpiochip_add_data(&pc->chip, pc);
+>   	if (ret) {
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+> index 7883ea31a001..cbb3f22552b9 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> @@ -120,6 +120,10 @@ struct meson_pinctrl_data {
+>   	const struct pinmux_ops *pmx_ops;
+>   	const void *pmx_data;
+>   	int (*parse_dt)(struct meson_pinctrl *pc);
+> +	int (*of_xlate)(struct gpio_chip *gc,
+> +			const struct of_phandle_args *gpiospec,
+> +			u32 *flags);
+> +	int of_gpio_n_cells;
+>   };
 >   
->         gpio-ranges:
->           maxItems: 1
+>   struct meson_pinctrl {
 > 
 
-This is not what I expected, this allows 3 cells for all Amlogic pinctrl,
-which is wrong.
-
-Instead, remove "#gpio-cells" definition from amlogic,meson-pinctrl-common.yaml
-and add them in all amlogic,meson-pinctrl-XXX.yaml with const: 2, and then when you
-introduce A4/A5, add a new amlogic,meson-pinctrl-a5.yaml with const: 3.
-
-Neil
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
