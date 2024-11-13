@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A66C175D38;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A70C185936;
 	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731482982; cv=none; b=RKZoOLAIk1uwB6LgmeW1+jkP/jk3qTDdPy83/W5ZDKJgD+B/HtW7PwV/MSEDgMk2SZZknF9KWwRcVwroQQm6isDcJIUBo/2MJ9muHtxXajsztW+xAJJRCCsw9cyE3Y4kcALOv33TXjJVM6m7OjiXc0EOysRv12s0Ju0RYp9BgRY=
+	t=1731482982; cv=none; b=VStbESUMo4LMaLDvHGEJlnYpVqWhOpmAW9zVLpJIMIMGGZUExWMRuzBuYwr0j4IQNiQFGIdujYL+ofAQrDDSPt4ZAxOh1OxeMdiD9Qc6JD/5h1/kRIV5qziNCwE7Pi6H5ofVVXFabGTCpwCBNx8d1aJ2O+hbtZSqcXZ4+aOOyho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731482982; c=relaxed/simple;
-	bh=jTZlTZlZlc/8oe7tDDpKMU27TjCaQVXWIYr+dhvV8jI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hibQO5Mv91Q0SAYdeRXG+Gh2uinT9FKFrL6JfFaiTTmz9g6M+v3YTS5DiAqFbzath8eWYeLH+B5SslmdCU+C4aAv8olowgI7zq29EfLqveJpWcO0grD7qnKadH0Opdc5qG1cAVSnplvRD4ZN2Ae/QytMN4x49aRf5HJdaEva1mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgsNtBFP; arc=none smtp.client-ip=10.30.226.201
+	bh=+q9+kwHimxzdccFM9WHvZ5oVGBm30GmyyXsl5gTpFDA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XOu2SdV9NSj84w39WN3VpWTYEoPiNtmM9aVR2V0Gy15pfzoGW9P/xDoPdA1y+/MxP4ofo0WniQovifb5Bw0rTDzRnNx1ORgEcoQoHmCsVzxXpKImUYXIfaUX2AtA8Ff87LR5JlJ+tH+aAthP7nY4o0NEMZXcoLbarltJn3kVa3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ao00HGCL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgsNtBFP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 01BD1C4CED0;
-	Wed, 13 Nov 2024 07:29:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ao00HGCL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 188FAC4CED7;
+	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1731482982;
-	bh=jTZlTZlZlc/8oe7tDDpKMU27TjCaQVXWIYr+dhvV8jI=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=kgsNtBFPiSUBR4Koe4a+lmtEI4IyQLsuaxD5Pnr4rjGjUvzjDvYoZA70VF0wtUr6C
-	 Hx8eTjL3EXnP/xdlhQGueDNpYK4V36oa7nWqJLbi7cWFiTdKyWCSxVpTVSQgmZ5GY4
-	 uwzH8/gF2NLSU+HW3OCopmNZujev3LTe17Z8O7HoqIz1I3ZcFI3sttEX5S0VpnPKEi
-	 IbXN5PqVbLgcvI0n6AaWVhWXCxXJa3RG3/R12AGxe7fqZ1Wp+L9nd6LLaCRaO+Rixa
-	 Kh+qKPxlYPF/VAAutuZqVkhqQ+SG0MC5Oy2kW8MtFr6Y4ZbyeC1HU5wxMmeWdPY1VF
-	 TQI9N8ydEJFtg==
+	bh=+q9+kwHimxzdccFM9WHvZ5oVGBm30GmyyXsl5gTpFDA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Ao00HGCL7zvsGbGfPUmnW1eYnHnHxiZWlzIcpjEtTC/VFHnsF9AiZIKu6+BnL3IGC
+	 9E2WD/t50hdPCs0WgJHEtkPJzw6+yPXRc9TPNcebC7sFifWKQQ5hzhZYStjnbfvqHR
+	 PUI74iCDlnJzgNgr5FAABQat31200ii/TorEM92D+v7mKX86N+lWXw56hyxUnQMEWR
+	 57jH5e4xotQnpmKtNzE6+PaEluOkPQPmiMynB8kjHaaAPSARiiZId9oGRsYM6EB7eW
+	 EyejNGquO6LAj0jsa44gRbanarge+6Jomhcu4Cu1gN9VxtWXkGbaRyECS7PI5wyVjV
+	 rwGaZCSrgCEMg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81ECD41C00;
-	Wed, 13 Nov 2024 07:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D75D41C10;
+	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
 From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Subject: [PATCH v6 0/5] Pinctrl: A4: Add pinctrl driver
-Date: Wed, 13 Nov 2024 15:29:38 +0800
-Message-Id: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+Date: Wed, 13 Nov 2024 15:29:40 +0800
+Subject: [PATCH v6 2/5] dt-bindings: pinctrl: Add support for Amlogic A4
+ SoCs
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,10 +41,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGJVNGcC/2XP0QqCMBTG8VeRXbfY5tFZV71HRKyzow7UxYxRh
- O/eDCLFy2/w+3P2ZiMFRyM7Zm8WKLrR+SGNcpcxbM3QEHc2baaEAimk4gaudzfgI3RcHKy8KSM
- 1gWYJ3APV7vmNnS9pt258+PD6tqOaX38ZWGai4oLnpMGUBaqqoJPpO9843KPv2RyK+RJXK5wnT
- LqsrcRaSKu3GP446RWGGdf2UJHF3FjY4mKB17+PxXw2lAJJCoRKrPE0TR/FIPJkXQEAAA==
+Message-Id: <20241113-a4_pinctrl-v6-2-35ba2401ee35@amlogic.com>
+References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+In-Reply-To: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -55,11 +55,11 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731482979; l=3167;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731482979; l=4174;
  i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=jTZlTZlZlc/8oe7tDDpKMU27TjCaQVXWIYr+dhvV8jI=;
- b=m4K96oRnL5/UOrRY29MRVvvw544CUEkerxoU9h9+7gESaPC+1p4F26yp8bt0b3sdQ+/DisqvJ
- TQPy19ewAEQCS6TZcCKjgOP75oiW4iuhjTXIynPf891+IeErHIFnSoj
+ bh=glcFuScc78HwQIkHOV1xZntvO1LAOj3S6vCcFCbIJOY=;
+ b=XLFohjqOxL/BLnyUIu5hkiuw7YShB73oyeH0qjwS51fnIh+U/WuMv1MyPopz9NCvFVzL7x8Z0
+ GucXBLFcXP4BJ9kmvnSvP7FH9GYXvMBy6PilJ0fWsWXJ6Wx6AiUZr8O
 X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
  pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
 X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
@@ -67,79 +67,158 @@ X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
 X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Reply-To: xianwei.zhao@amlogic.com
 
-Add pinctrl driver support for Amloigc A4 SoC
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-All of Amogic SoCs GPIO device requirement is met here by
-adding GPIO bank definition instead of the pin definition.
-Binding header files will no longer be added to future
-SoCs's pin devices.
+Add the dt-bindings for Amlogic A4 pin controller, and add a new
+dt-binding header file which document the GPIO bank names of all
+Amlogic subsequent SoCs.
 
-The pinctrl software only adds insterface of of_xlate to support
-for transformation without affecting the overall framework and
-is compatible with previous drivers.
-
-The code in DTS file is also readable when using GPIO, as below:
-
-reset-gpios = <&gpio AMLOGIC_GPIO_X 6 GPIO_ACTIVE_LOW>;
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
-Changes in v6:
-- Adjust code formatting and style.
-- Remove "#gpio-cells" definition from amlogic,meson-pinctrl-common.yaml
-  and add them in all amlogic,meson-pinctrl-XXX.yaml with const: 2, and then
-  add amlogic,meson-pinctrl-a4.yaml(copy form  amlogic,meson-pinctrl-a1.yaml) with const: 3.
-- Link to v5: https://lore.kernel.org/r/20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com
+ .../bindings/pinctrl/amlogic,meson-pinctrl-a4.yaml | 80 ++++++++++++++++++++++
+ include/dt-bindings/gpio/amlogic-gpio.h            | 45 ++++++++++++
+ 2 files changed, 125 insertions(+)
 
-Changes in v5:
-- Modify if to switch.
-- Dropped parameter combination, bank and offset as independent parameter passing
-- Link to v4: https://lore.kernel.org/r/20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com
+diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a4.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a4.yaml
+new file mode 100644
+index 000000000000..db1d58c29478
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a4.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/amlogic,meson-pinctrl-a4.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic A4 pinmux controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Xianwei Zhao <xianwei.zhao@amlogic.com>
++
++allOf:
++  - $ref: amlogic,meson-pinctrl-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - amlogic,a4-aobus-pinctrl
++      - amlogic,a4-periphs-pinctrl
++
++required:
++  - compatible
++
++patternProperties:
++  "^bank@[0-9a-f]+$":
++    $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-gpio
++
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        maxItems: 2
++
++      reg-names:
++        items:
++          - const: mux
++          - const: gpio
++
++      "#gpio-cells":
++        const: 3
++
++      gpio-line-names:
++        minItems: 8
++        maxItems: 73
++
++unevaluatedProperties:
++  type: object
++  $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
++
++examples:
++  - |
++    bus {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      periphs_pinctrl: pinctrl@4000 {
++        compatible = "amlogic,a4-periphs-pinctrl";
++        #address-cells = <2>;
++        #size-cells = <2>;
++        ranges = <0x0 0x0 0x0 0x4000 0x0 0x02e0>;
++
++        bank@0 {
++          reg = <0x0 0x0 0x0 0x0050>,
++                <0x0 0xc0 0x0 0x0220>;
++          reg-names = "mux", "gpio";
++          gpio-controller;
++          #gpio-cells = <3>;
++          gpio-ranges = <&periphs_pinctrl 0 0 73>;
++        };
++
++        cec_ao_a_h_pins: cec_ao_a_h {
++          mux {
++            groups = "cec_ao_a_h";
++            function = "cec_ao_a_h";
++            bias-disable;
++          };
++        };
++      };
++    };
+diff --git a/include/dt-bindings/gpio/amlogic-gpio.h b/include/dt-bindings/gpio/amlogic-gpio.h
+new file mode 100644
+index 000000000000..5bfdb39eeda8
+--- /dev/null
++++ b/include/dt-bindings/gpio/amlogic-gpio.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_AMLOGIC_GPIO_H
++#define _DT_BINDINGS_AMLOGIC_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* Normal GPIO bank */
++#define AMLOGIC_GPIO_A		0
++#define AMLOGIC_GPIO_B		1
++#define AMLOGIC_GPIO_C		2
++#define AMLOGIC_GPIO_D		3
++#define AMLOGIC_GPIO_E		4
++#define AMLOGIC_GPIO_F		5
++#define AMLOGIC_GPIO_G		6
++#define AMLOGIC_GPIO_H		7
++#define AMLOGIC_GPIO_I		8
++#define AMLOGIC_GPIO_J		9
++#define AMLOGIC_GPIO_K		10
++#define AMLOGIC_GPIO_L		11
++#define AMLOGIC_GPIO_M		12
++#define AMLOGIC_GPIO_N		13
++#define AMLOGIC_GPIO_O		14
++#define AMLOGIC_GPIO_P		15
++#define AMLOGIC_GPIO_Q		16
++#define AMLOGIC_GPIO_R		17
++#define AMLOGIC_GPIO_S		18
++#define AMLOGIC_GPIO_T		19
++#define AMLOGIC_GPIO_U		20
++#define AMLOGIC_GPIO_V		21
++#define AMLOGIC_GPIO_W		22
++#define AMLOGIC_GPIO_X		23
++#define AMLOGIC_GPIO_Y		24
++#define AMLOGIC_GPIO_Z		25
++/* Special GPIO bank */
++#define AMLOGIC_GPIO_DV		26
++#define AMLOGIC_GPIO_AO		27
++#define AMLOGIC_GPIO_CC		28
++#define AMLOGIC_GPIO_TEST_N	29
++
++#endif /* _DT_BINDINGS_AMLOGIC_GPIO_H */
 
-Changes in v4:
-- Add interface of of_xlate support.
-- Add const for some variable.
-- Link to v3: https://lore.kernel.org/r/20241018-a4_pinctrl-v3-0-e76fd1cf01d7@amlogic.com
-
-Changes in v3:
-- Remove head file from binding.
-- Move GPIO define to file *.c.
-- Link to v2: https://lore.kernel.org/r/20241014-a4_pinctrl-v2-0-3e74a65c285e@amlogic.com
-
-Changes in v2:
-- Use one marco instead of all pin define.
-- Add unit name for dts node.
-- Link to v1: https://lore.kernel.org/all/20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com/
-
----
-Xianwei Zhao (5):
-      dt-bindings: pinctrl: move gpio-cells property
-      dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
-      pinctrl: meson: add interface of of_xlate
-      pinctrl: meson: Add driver support for Amlogic A4 SoCs
-      arm64: dts: amlogic: a4: add pinctrl node
-
- .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |    3 +
- .../bindings/pinctrl/amlogic,meson-pinctrl-a4.yaml |   80 ++
- .../pinctrl/amlogic,meson-pinctrl-common.yaml      |    3 -
- .../pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml  |    3 +
- .../amlogic,meson-pinctrl-g12a-periphs.yaml        |    3 +
- .../pinctrl/amlogic,meson8-pinctrl-aobus.yaml      |    3 +
- .../pinctrl/amlogic,meson8-pinctrl-cbus.yaml       |    3 +
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |   36 +
- drivers/pinctrl/meson/Kconfig                      |    6 +
- drivers/pinctrl/meson/Makefile                     |    1 +
- drivers/pinctrl/meson/pinctrl-amlogic-a4.c         | 1324 ++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.c              |    4 +
- drivers/pinctrl/meson/pinctrl-meson.h              |    4 +
- include/dt-bindings/gpio/amlogic-gpio.h            |   45 +
- 14 files changed, 1515 insertions(+), 3 deletions(-)
----
-base-commit: 58e2d28ed28e5bc8836f8c14df1f94c27c1f9e2f
-change-id: 20241012-a4_pinctrl-09d1b2a17e47
-
-Best regards,
 -- 
-Xianwei Zhao <xianwei.zhao@amlogic.com>
+2.37.1
 
 
