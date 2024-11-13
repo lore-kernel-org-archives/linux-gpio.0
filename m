@@ -1,78 +1,118 @@
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACC67081F;
-	Wed, 13 Nov 2024 07:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6C518562F;
+	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731481932; cv=none; b=gCCzmiHgH5qgk1zNDjTIpMvXLcb0o6YFYB9AYufGLbblUVHSw1fSKO7WTP+dTe8oY/qcIRZnFoS9EViimAA8kD1d6DdC6vF5bM9kjBz554Qz9lJe/AaYoPkyY5pBqUednQO42nxF0SV7PAHSZ6nN1HCv6s6jR/PPz1ATVTlWMqg=
+	t=1731482982; cv=none; b=oQFrEqg5jEspf6QLHe2aWj+qyOAkLBprzkWXzHf4QhAwK2HMgJafxqM+2gD6IjNdGv4x5Pi6aJW/v6umHQVKNqw1PwbFmi+24Fh3Z7Cgx/yWx74SC2RuGR6NzgVKcwjFMOvNHsNs7NlBgE9205vZS2vvHwW3tWhaLZ8n6nHZETg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731481932; c=relaxed/simple;
-	bh=VW0RcWE6ESzxZakFAxwmSvtgoIN3Y/ZhwPy7PdJOFcY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnZvrCPNXi3Ma5SWmMV041NJ+SzbWC+HdMHEVMPmJbg1xTbjwMYZM9SE9tfyK4tnZUxbs/vWBOAobiTMjVtnl3OelV7QEcf3HPsW9aUeXlJbpa4U9CgQbQ26DWatbYLImHkgUI/nTJLBS1HBbiWA86gU/xd8WmyzkuAxwFYVR8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5673451443eb-16400;
-	Wed, 13 Nov 2024 15:12:04 +0800 (CST)
-X-RM-TRANSID:2ee5673451443eb-16400
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee567345143e77-7f007;
-	Wed, 13 Nov 2024 15:12:04 +0800 (CST)
-X-RM-TRANSID:2ee567345143e77-7f007
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: dlemoal@kernel.org
-Cc: linus.walleij@linaro.org,
-	linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH v4] pinctrl: k210: Undef K210_PC_DEFAULT
-Date: Wed, 13 Nov 2024 15:12:01 +0800
-Message-Id: <20241113071201.5440-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731482982; c=relaxed/simple;
+	bh=8TOv1Z5OyPH3FzN2qQ0QJp6OTICIwjthX/si2CeYrbw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=exR1jON9wDdtF7YeRXSpnPDD4kCU11udYo415g3Ss88c5s7CyWkhHx1N2LBOxOa2JTMWw6j/greG21xyk9HBJYYcy3B8YnnRT7QfMzIf2bKSrFIulVAcmuwOeSH44wqgYYpm+MKhn5528tR9aHY7xPIhzepy164yCbysziM54A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fM56Kuea; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM56Kuea"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27AD3C4CED5;
+	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731482982;
+	bh=8TOv1Z5OyPH3FzN2qQ0QJp6OTICIwjthX/si2CeYrbw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=fM56KueaqDCfmePk1psTjw1egBSo2uy5d3j7Yzn/KqQOkkswCSsmFE5SpC6RGsjRI
+	 r/pT7V9DsZ/PIf62TEXmd0ioF7vv8aTSuweXKBDSKQkZiQZDshCt/O8sBAymUj8xEg
+	 aE1i1gtd43ktRsNNeoiMlBMQbjos5WRszehH2yVKruy38rkKaAWJrNO7ciMRP8rDFd
+	 Xg7NSIbTlPsilIQM8XhoxdmddoL4L5gc7Nco8PSC8or0o85P0Z7xy5D+E1FaIw+4Lz
+	 mYKGEr95z0FAQqVNJmQBUc1EARql/mzFnLqiHzAtn+jT/r6n/DIcsSM1EAEL2w2ll0
+	 T0cgcodU4yXZg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135D2D41C12;
+	Wed, 13 Nov 2024 07:29:42 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Wed, 13 Nov 2024 15:29:41 +0800
+Subject: [PATCH v6 3/5] pinctrl: meson: add interface of of_xlate
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241113-a4_pinctrl-v6-3-35ba2401ee35@amlogic.com>
+References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+In-Reply-To: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731482979; l=1754;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=kZkfTxXyUa/bUEnikqRrRpqnocDlXw3ORsFp/T0SNwU=;
+ b=3PeJkCu/mERXBOEPe0kwA68C9B29lxXDsLkZNI/NHnkgbug00+MVamJFxMg0gFzBpfNsu045c
+ nhl6XxbpWEuBUECuNbdKEaGVM6i1h5S0pE8kNlbQh34oV1+/YzwJPQp
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-When the temporary macro K210_PC_DEFAULT is not needed anymore,
-use its name in the #undef statement instead of
-the incorrect "DEFAULT" name.
+Amlogic pinctrl software framework use system API of_gpio_simple_xlate
+which only support linear one-to-one correspondence to translate gpiospec
+to the GPIO number and flags before. It can not meet the non-linear needs.
+Add the interface satisfies the underlying driver to implement the
+transformation to meet the needs of various scenarios.
 
-Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
-v3->v4:
-	Modify commit info and add review tag.
+ drivers/pinctrl/meson/pinctrl-meson.c | 4 ++++
+ drivers/pinctrl/meson/pinctrl-meson.h | 4 ++++
+ 2 files changed, 8 insertions(+)
 
- drivers/pinctrl/pinctrl-k210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-index caf20215aaba..eddb01796a83 100644
---- a/drivers/pinctrl/pinctrl-k210.c
-+++ b/drivers/pinctrl/pinctrl-k210.c
-@@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
- 	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 253a0cc57e39..fc0c0bef38c0 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -620,6 +620,10 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
+ 	pc->chip.base = -1;
+ 	pc->chip.ngpio = pc->data->num_pins;
+ 	pc->chip.can_sleep = false;
++	if (pc->data->of_xlate) {
++		pc->chip.of_gpio_n_cells = pc->data->of_gpio_n_cells;
++		pc->chip.of_xlate = pc->data->of_xlate;
++	}
+ 
+ 	ret = gpiochip_add_data(&pc->chip, pc);
+ 	if (ret) {
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index 7883ea31a001..cbb3f22552b9 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -120,6 +120,10 @@ struct meson_pinctrl_data {
+ 	const struct pinmux_ops *pmx_ops;
+ 	const void *pmx_data;
+ 	int (*parse_dt)(struct meson_pinctrl *pc);
++	int (*of_xlate)(struct gpio_chip *gc,
++			const struct of_phandle_args *gpiospec,
++			u32 *flags);
++	int of_gpio_n_cells;
  };
  
--#undef DEFAULT
-+#undef K210_PC_DEFAULT
- 
- /*
-  * Pin functions configuration information.
--- 
-2.33.0
+ struct meson_pinctrl {
 
+-- 
+2.37.1
 
 
