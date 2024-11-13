@@ -1,97 +1,98 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A83201023
-	for <linux-gpio@vger.kernel.org>; Wed, 13 Nov 2024 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A543216EB5D
+	for <linux-gpio@vger.kernel.org>; Wed, 13 Nov 2024 16:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511868; cv=none; b=S4CPRb3oKVpiXYbwiZRWf3hNGX0ZFuwTrztQCQ9tmGa8hiYq5Y9oVOhpMXd9vXtw8wiXSKAua8II332KpYEPvXIUPwWSPAfpzFrJM9gUgVt+f4CCfklvZMceo5gwDV72MRFMHgh3dTwzE+j9O6r6hbF/99KnKKGH/cY5MDn420Y=
+	t=1731516755; cv=none; b=O1MreiK3iY/dFptTn2RT2k0jtDWH06QYrzuFE2t9eAORpcLGL29mUE6DzStNpaIUOLmI/k2Vgk6YIgtECyNiV85NZ/LN5c1N7e8rfgnH2UwZJY2pNLiTEn8bvPoH2Hl3n7IIIEtbrw8F9pNfsYND8VRdYo0/sexWpO8IoyPrORs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511868; c=relaxed/simple;
-	bh=dmowvGERgY4TYV5qsSHxo4jiVBehH9D2sEsbcb5smtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+dsw79rzJaQxHsOVa9etI+rtvvUsbbLTBdsxHFeWcTop05esKGPrS7clpInD9FlhHrM6VOu+b1bhTp4U9WVhjIneiXZat1ROf5tTOakfQmEPDyveAqRaXdC2WaKy9cajaeUCv88FxHtm+G3H5o11aG5aD20Kc9Wb5l0kl+Ldsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=I7Lg5x0w; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1731516755; c=relaxed/simple;
+	bh=J0HkSgQzNc8OYFQS9bFDW1H8fmICAVSm+mT8fMEBuBY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZISdGxB5J8XOrQYiFiLRDYFjkFYpe6z0H62yVsp7WoSvdQojfAoRPIBDI7X8ZvjSzKo8wcejWByC4aBlCt4DazxGrGqbkbL4EK8V8L1GvbaUBt1MKDzQjeKyIh0wiC7wAsu7XNcIen4Uzjsv1CuEH1hoJEs+urE1tDgIqXmMF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=kJqpUlWK; arc=none smtp.client-ip=78.46.137.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I7Lg5x0w"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso6587452f8f.1
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Nov 2024 07:31:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731511865; x=1732116665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LMJNZTmLIe3MG5xvr6+46zIRhs+qHa4NnfrYnjzTAzM=;
-        b=I7Lg5x0wIAHcZ6dci58l/8hs1ZjAyZES5bgQROVuj2KBw9F73RbyhCZgDi4Kl5BlJc
-         lFg3g2qCnf8Md+5J8IfbU4hawLo1cwp/Dv5ArfQ7dpBjKM/AgqIkntwbr7NJUsh/m6WR
-         GeLQmdNscg8S2stTx6Ccz7Cl5mvtAvPsazjIysYcH2IVCFwIp+ojMxW7LbKgiP1qNsTm
-         76WszN3j5wodKCpNt/nSlR/MYidMzPNe1LlwvBzejRJRs5px7U3DVsvtYDW6hULlfxhf
-         7sbkeY55Le10Z9x/4kkzTKKXc5GPxdr8WdRtkD5cTkeAWl2J4ugvWobSIOzVNQiE3020
-         ++RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731511865; x=1732116665;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LMJNZTmLIe3MG5xvr6+46zIRhs+qHa4NnfrYnjzTAzM=;
-        b=xO5nqT35HDf3R111jrPq+wyqUqqzrkr+CvbqyrMUMm91Zw/HGc/oqYFGkKyavHoXhy
-         ND5cR0kqcxgN6/9jcYC8N30ydBWLFeCFlhMKumDUT0r4o2kzAPUUTMnFffj8KeaBzwOk
-         zrTMYhZ+allMdLYfntqn6Wr9v8Q0nnBR506aVcdmBgyR8nYAQe3GHVJZOAAenbLWnvrc
-         pAdOGjkDpwVND9JOPLRaublQ76QwbKpvP9YG67pz8uwV1IMH/Ahzt/oYXvahLIohy5E9
-         KYCWfgk2X92dMhf1/HBXI6it/+nYeFFAplZKaazAaHrMCAkkbnWSztdsu6gs2Wsufjci
-         deIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2/yOyBu1zUy7VQLLNRrdnofELc6YW4/+6ZFPzh149qebY0XH8k5Sg2KUBUbanYNFoy+AZelZNDMre@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7VWS5ogu0A+WiwQtfAI0UhM8CgrJCouqA2FeaGqwXr/jMh2Xo
-	UvBINL6i0oPMA7Qpjc+mfAFzRS+tbkIaXsgQbjyZO3oC2enKBEDUaX3OVhetJBo=
-X-Google-Smtp-Source: AGHT+IFop4B2M15TV4M/Ojfn9D+ufIi+QinReamX3IaIZlM1Ga0KQ2kP7PRAqEQj2HL2z7tEAYjZAA==
-X-Received: by 2002:a5d:648b:0:b0:374:c1c5:43ca with SMTP id ffacd0b85a97d-381f18724admr22414229f8f.32.1731511865627;
-        Wed, 13 Nov 2024 07:31:05 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1b75:191:f7eb:da75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d555908bsm27731205e9.44.2024.11.13.07.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 07:31:04 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
+	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="kJqpUlWK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+	s=default2002; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=rExjREVy37H6/p5pG/NUSw/EDufiDBPizQhbEK53Fnc=; b=kJqpUlWKN1s2B2NCxQqtoNv4gk
+	NuhRY95ZHRFJRlXfxP6KcPosqkytAbs5nTWfoe0TDS8zjIMzfG+Iydlaupxu7EWZXVj3Jz38bwPwx
+	XhEnZ4J6Wj9EeKZRRjlXTH/R8hb9Q+9WwiAp/UohR2NAM/WUcMjoVTBoZIqg9KmVT1YsMkuU/52pi
+	dZ8LtQ6y/uUFTTWCvlnGkAt8A9wI9XKLKLaBFeQJHZWWFEhI6T/B6UnYdGl1Y1+nnPmkzr8DKoLs2
+	9a2ZNs1ORcuST4n2EHLBA1hnyfrcEx87V2AjyBu5xCa63CrXCGnQANwaLwWIAs2tdPWP0DrnQfNEf
+	8g8B9q+g==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <lars@metafoo.de>)
+	id 1tBGGB-000Knf-37;
+	Wed, 13 Nov 2024 17:30:28 +0100
+Received: from [136.25.87.181] (helo=lars-desktop.lan)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <lars@metafoo.de>)
+	id 1tBGGB-000GsZ-1E;
+	Wed, 13 Nov 2024 17:30:27 +0100
+From: Lars-Peter Clausen <lars@metafoo.de>
 To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thierry Reding <treding@nvidia.com>,
+	Prathamesh Shete <pshete@nvidia.com>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: gpio-exar: replace division condition with direct comparison
-Date: Wed, 13 Nov 2024 16:31:01 +0100
-Message-ID: <173151185740.90976.5826366364572229214.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241112201659.16785-1-surajsonawane0215@gmail.com>
-References: <20241112201659.16785-1-surajsonawane0215@gmail.com>
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH] gpio: tegra186: Allow to enable driver on Tegra234
+Date: Wed, 13 Nov 2024 08:29:39 -0800
+Message-Id: <20241113162939.886242-1-lars@metafoo.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27457/Wed Nov 13 10:35:46 2024)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Support for Tegra234 was added to the tegra186 driver in 1db9b241bb56 (
+"gpio: tegra186: Add support for Tegra234"). But the driver is not
+selectable on Tegra234. Update the Kconfig entry to allow the driver to be
+enabled on Tegra234.
 
+Enable the driver by default on Tegra 234 as well, similar to the other
+platforms it supports.
 
-On Wed, 13 Nov 2024 01:46:59 +0530, Suraj Sonawane wrote:
-> Fix an issue detected by the Smatch tool:
-> 
-> drivers/gpio/gpio-exar.c:52 exar_offset_to_sel_addr() warn:
-> replace divide condition 'pin / 8' with 'pin >= 8'
-> drivers/gpio/gpio-exar.c:62 exar_offset_to_lvl_addr() warn:
-> replace divide condition 'pin / 8' with 'pin >= 8'
-> 
-> [...]
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+---
+ drivers/gpio/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Applied, thanks!
-
-[1/1] gpio: gpio-exar: replace division condition with direct comparison
-      commit: 8f0aa162bcf818631e845c2e6c090c7b3c64fd9d
-
-Best regards,
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index cb90e3898bf0f..56fee58e281e7 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -715,13 +715,13 @@ config GPIO_TEGRA
+ 
+ config GPIO_TEGRA186
+ 	tristate "NVIDIA Tegra186 GPIO support"
+-	default ARCH_TEGRA_186_SOC || ARCH_TEGRA_194_SOC
+-	depends on ARCH_TEGRA_186_SOC || ARCH_TEGRA_194_SOC || COMPILE_TEST
++	default ARCH_TEGRA_186_SOC || ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC
++	depends on ARCH_TEGRA_186_SOC || ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC || COMPILE_TEST
+ 	depends on OF_GPIO
+ 	select GPIOLIB_IRQCHIP
+ 	select IRQ_DOMAIN_HIERARCHY
+ 	help
+-	  Say yes here to support GPIO pins on NVIDIA Tegra186 SoCs.
++	  Say yes here to support GPIO pins on NVIDIA Tegra186, 194 and 234 SoCs.
+ 
+ config GPIO_TS4800
+ 	tristate "TS-4800 DIO blocks and compatibles"
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.39.5
+
