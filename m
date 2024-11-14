@@ -1,37 +1,37 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1796133987
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1705336E
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595896; cv=none; b=MPEfU6qCKiFR9n5RBoD45SjFpauVn8aiaZ4e/vEYgrU5UyzrlNGatvBfBb3vicaqcggY7DEANCHmcOSEh2Z4+m/V8FMcuARViqIiP0LSnwvotGZo8ei3/k+SExs9SgR/ByuCNEdR/2VgKGdnCuyFe+0I5CeYEsyJ7N7rPXYf2Es=
+	t=1731595896; cv=none; b=LLCNTf7OJpH/lLldtGCqtjFqsP9YoFA2mIXyGifYtEYVWhqJZDIGvAK4hw7QBi5YbjRGyd5vDOvdn2bXB4wBLUj2QnH2bP2ObsC3Ygb8bCrhLi2eq8U/lL7wDoh9S5lrXHWA8K/H+g1OdBs0rqjYn0MIk0j/1WTrWTlThQs+Qs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731595896; c=relaxed/simple;
-	bh=+yW1lNtX3BKFoo/xRbe7YuEAUj8k0bc3UC9pBxL2csI=;
+	bh=3buoQxfsBeu/2LtnS6PhbYb3vk35HwEBDXbocvanbXE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HCGcE0wLxARaPayJ1y3eQfS7Zm4EmvwaqyytXDlkP8vZlojIdMucPfOm2aoIi8XZ1+LGosuk0rVWuva3s4j7lKOpT9jeKa3STVX6tDMiwG7/2PyXcxt9Vutp9LnY9k3j61tnZOGhdtTd6g/9kK8trNB44V9McnqOt58/XndnunY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=P44RjYjS; arc=none smtp.client-ip=162.248.234.2
+	 MIME-Version; b=BDhkUCk9jnXbDOfrNSjXhewJ1FEt45LV/9nujOSPiKXW8aS7ROq+nCeUiKbJy/PFAnjx4lCYV6lqZuc0RWVPPunIjL/0gg4d5HfU4G7pvoezJGxBJP0MMsvNwk1bS5x3LbI6V2iEgoydU29w+QWGoppn1mjZX6BThrdfkbqRlGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=tHgznKxK; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="P44RjYjS"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="tHgznKxK"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id F079120ABE;
-	Thu, 14 Nov 2024 08:51:23 -0600 (CST)
+	by mail.xes-mad.com (Postfix) with ESMTP id 2628E20AC0;
+	Thu, 14 Nov 2024 08:51:24 -0600 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1731595884; bh=+yW1lNtX3BKFoo/xRbe7YuEAUj8k0bc3UC9pBxL2csI=;
+	t=1731595884; bh=3buoQxfsBeu/2LtnS6PhbYb3vk35HwEBDXbocvanbXE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P44RjYjSstzHBDZJ1t5+Aa00N30YL/RiAQ7ARSP+TleSw5uXyMqUttns7cXkIkczz
-	 f/weJP8JcfiZY1RBFGZujKf3yuX6ECVbTXeMj3Psk4yjWIgLGNW2m8cw5I3dkjF6ed
-	 bP66j9fn5hVTIhrYgYyhdnwlHg8WWkHWUTANpcAw=
+	b=tHgznKxKKpTMJUtLE+JhLw2lb55Aa+SurYKeRHG2cZxdtf4JQQ3OH3MwyMBZ2jhZi
+	 I/Orz30JG4Cd7rcniZ9qnIKMpUFQABKFzbYist8ZRTj5D+/0iYTWJUeU3oW/M0Mjir
+	 hvA3XkCY9qPKPh2Cc3NFwfxSkzjQHCWLom4fUbr8=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH v2 21/23] bindings: python: tests: ignore purposeful type errors
-Date: Thu, 14 Nov 2024 08:51:14 -0600
-Message-Id: <20241114145116.2123714-22-vfazio@xes-inc.com>
+Subject: [libgpiod][PATCH v2 23/23] bindings: python: configure and document dev dependencies
+Date: Thu, 14 Nov 2024 08:51:16 -0600
+Message-Id: <20241114145116.2123714-24-vfazio@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
 References: <20241114145116.2123714-1-vfazio@xes-inc.com>
@@ -43,246 +43,96 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some of the unit tests intentionally call methods or assign properties
-with invalid values to ensure they fail in an expected way.
+Mypy [0] is a popular static type checker that validates attribute and
+variable use and ensures function arguments adhere to type annotations.
 
-Type checkers complain for these instances so inform them via directive
-that these lines should be ignore for specific errors.
+Ruff [1] is a popular Rust-based Python linter and code formatter. It
+has support for a large set of linting rules [2] and largely complies
+with the Black format [3].
 
-Additionally, some lines that access properties without assigning the
-value look like they perform no action to linters.
+Add documentation to README.md for how to run the tools.
 
-To appease the linter, read the value into a throw-away variable.
-
+[0]: https://mypy.readthedocs.io/en/stable/
+[1]: https://docs.astral.sh/ruff/
+[2]: https://docs.astral.sh/ruff/rules/
+[3]: https://docs.astral.sh/ruff/formatter/#black-compatibility
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
- bindings/python/tests/tests_chip.py         | 12 ++++++------
- bindings/python/tests/tests_chip_info.py    |  6 +++---
- bindings/python/tests/tests_info_event.py   | 12 ++++++------
- bindings/python/tests/tests_line_info.py    |  2 +-
- bindings/python/tests/tests_line_request.py | 16 ++++++++--------
- bindings/python/tests/tests_module.py       |  6 +++---
- 6 files changed, 27 insertions(+), 27 deletions(-)
+ bindings/python/README.md      | 17 ++++++++++++++++
+ bindings/python/pyproject.toml | 36 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-diff --git a/bindings/python/tests/tests_chip.py b/bindings/python/tests/tests_chip.py
-index 218f238..9b31e30 100644
---- a/bindings/python/tests/tests_chip.py
-+++ b/bindings/python/tests/tests_chip.py
-@@ -52,11 +52,11 @@ class ChipConstructor(TestCase):
+diff --git a/bindings/python/README.md b/bindings/python/README.md
+index cb5cee6..89c824c 100644
+--- a/bindings/python/README.md
++++ b/bindings/python/README.md
+@@ -112,3 +112,20 @@ make python-tests-run
  
-     def test_missing_path(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.Chip()
-+            gpiod.Chip()  # type: ignore[call-arg]
+ from the `libgpiod/bindings/python` directory as root (necessary to be able
+ to create the **gpio-sims** used for testing).
++
++## Linting/Formatting
++
++When making changes, ensure type checks and linting still pass:
++
++```
++python3 -m venv venv
++. venv/bin/activate
++pip install mypy ruff
++mypy; ruff format; ruff check
++```
++
++Ideally the gpiod library will continue to pass strict checks:
++
++```
++mypy --strict
++```
+\ No newline at end of file
+diff --git a/bindings/python/pyproject.toml b/bindings/python/pyproject.toml
+index f6bf43c..d6f5f9b 100644
+--- a/bindings/python/pyproject.toml
++++ b/bindings/python/pyproject.toml
+@@ -3,3 +3,39 @@
  
-     def test_invalid_type_for_path(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.Chip(4)
-+            gpiod.Chip(4)  # type: ignore[arg-type]
- 
- 
- class ChipBooleanConversion(TestCase):
-@@ -85,10 +85,10 @@ class ChipProperties(TestCase):
- 
-     def test_properties_are_immutable(self) -> None:
-         with self.assertRaises(AttributeError):
--            self.chip.path = "foobar"
-+            self.chip.path = "foobar"  # type: ignore[misc]
- 
-         with self.assertRaises(AttributeError):
--            self.chip.fd = 4
-+            self.chip.fd = 4  # type: ignore[misc]
- 
- 
- class ChipDevPathFromLink(TestCase):
-@@ -172,7 +172,7 @@ class ClosedChipCannotBeUsed(TestCase):
-         chip.close()
- 
-         with self.assertRaises(gpiod.ChipClosedError):
--            chip.path
-+            _ = chip.path
- 
-     def test_close_chip_and_try_controlled_execution(self) -> None:
-         sim = gpiosim.Chip()
-@@ -182,7 +182,7 @@ class ClosedChipCannotBeUsed(TestCase):
- 
-         with self.assertRaises(gpiod.ChipClosedError):
-             with chip:
--                chip.fd
-+                _ = chip.fd
- 
-     def test_close_chip_twice(self) -> None:
-         sim = gpiosim.Chip(label="foobar")
-diff --git a/bindings/python/tests/tests_chip_info.py b/bindings/python/tests/tests_chip_info.py
-index aabfbee..fdceda9 100644
---- a/bindings/python/tests/tests_chip_info.py
-+++ b/bindings/python/tests/tests_chip_info.py
-@@ -31,13 +31,13 @@ class ChipInfoProperties(TestCase):
- 
-     def test_chip_info_properties_are_immutable(self) -> None:
-         with self.assertRaises(AttributeError):
--            self.info.name = "foobar"
-+            self.info.name = "foobar"  # type: ignore[misc]
- 
-         with self.assertRaises(AttributeError):
--            self.info.num_lines = 4
-+            self.info.num_lines = 4  # type: ignore[misc]
- 
-         with self.assertRaises(AttributeError):
--            self.info.label = "foobar"
-+            self.info.label = "foobar"  # type: ignore[misc]
- 
- 
- class ChipInfoStringRepresentation(TestCase):
-diff --git a/bindings/python/tests/tests_info_event.py b/bindings/python/tests/tests_info_event.py
-index 1005647..e726a54 100644
---- a/bindings/python/tests/tests_info_event.py
-+++ b/bindings/python/tests/tests_info_event.py
-@@ -29,13 +29,13 @@ class InfoEventDataclassBehavior(TestCase):
-                 event = chip.read_info_event()
- 
-                 with self.assertRaises(FrozenInstanceError):
--                    event.event_type = 4
-+                    event.event_type = 4  # type: ignore[misc, assignment]
- 
-                 with self.assertRaises(FrozenInstanceError):
--                    event.timestamp_ns = 4
-+                    event.timestamp_ns = 4  # type: ignore[misc]
- 
-                 with self.assertRaises(FrozenInstanceError):
--                    event.line_info = 4
-+                    event.line_info = 4  # type: ignore[misc, assignment]
- 
- 
- def request_reconfigure_release_line(chip_path: str, offset: int) -> None:
-@@ -76,14 +76,14 @@ class WatchingInfoEventWorks(TestCase):
- 
-     def test_watch_line_info_no_arguments(self) -> None:
-         with self.assertRaises(TypeError):
--            self.chip.watch_line_info()
-+            self.chip.watch_line_info()  # type: ignore[call-arg]
- 
-     def test_watch_line_info_by_line_name(self) -> None:
-         self.chip.watch_line_info("foobar")
- 
-     def test_watch_line_info_invalid_argument_type(self) -> None:
-         with self.assertRaises(TypeError):
--            self.chip.watch_line_info(None)
-+            self.chip.watch_line_info(None)  # type: ignore[arg-type]
- 
-     def test_wait_for_event_timeout(self) -> None:
-         info = self.chip.watch_line_info(7)
-@@ -162,7 +162,7 @@ class UnwatchingLineInfo(TestCase):
- 
-     def test_unwatch_line_info_no_argument(self) -> None:
-         with self.assertRaises(TypeError):
--            self.chip.unwatch_line_info()
-+            self.chip.unwatch_line_info()  # type: ignore[call-arg]
- 
-     def test_unwatch_line_info_by_line_name(self) -> None:
-         self.chip.watch_line_info(4)
-diff --git a/bindings/python/tests/tests_line_info.py b/bindings/python/tests/tests_line_info.py
-index 7bc244d..5eb6cd5 100644
---- a/bindings/python/tests/tests_line_info.py
-+++ b/bindings/python/tests/tests_line_info.py
-@@ -46,7 +46,7 @@ class GetLineInfo(TestCase):
- 
-     def test_no_offset(self) -> None:
-         with self.assertRaises(TypeError):
--            self.chip.get_line_info()
-+            self.chip.get_line_info()  # type: ignore[call-arg]
- 
- 
- class LinePropertiesCanBeRead(TestCase):
-diff --git a/bindings/python/tests/tests_line_request.py b/bindings/python/tests/tests_line_request.py
-index 76edb1d..bae8815 100644
---- a/bindings/python/tests/tests_line_request.py
-+++ b/bindings/python/tests/tests_line_request.py
-@@ -24,10 +24,10 @@ class ChipLineRequestsBehaveCorrectlyWithInvalidArguments(TestCase):
- 
-     def test_passing_invalid_types_as_configs(self) -> None:
-         with self.assertRaises(AttributeError):
--            self.chip.request_lines("foobar")
-+            self.chip.request_lines("foobar")  # type: ignore[arg-type]
- 
-         with self.assertRaises(AttributeError):
--            self.chip.request_lines(None, "foobar")
-+            self.chip.request_lines(None, "foobar")  # type: ignore[arg-type]
- 
-     def test_offset_out_of_range(self) -> None:
-         with self.assertRaises(ValueError):
-@@ -39,7 +39,7 @@ class ChipLineRequestsBehaveCorrectlyWithInvalidArguments(TestCase):
- 
-     def test_request_no_arguments(self) -> None:
-         with self.assertRaises(TypeError):
--            self.chip.request_lines()
-+            self.chip.request_lines()  # type: ignore[call-arg]
- 
- 
- class ModuleLineRequestsBehaveCorrectlyWithInvalidArguments(TestCase):
-@@ -51,10 +51,10 @@ class ModuleLineRequestsBehaveCorrectlyWithInvalidArguments(TestCase):
- 
-     def test_passing_invalid_types_as_configs(self) -> None:
-         with self.assertRaises(AttributeError):
--            gpiod.request_lines(self.sim.dev_path, "foobar")
-+            gpiod.request_lines(self.sim.dev_path, "foobar")  # type: ignore[arg-type]
- 
-         with self.assertRaises(AttributeError):
--            gpiod.request_lines(self.sim.dev_path, None, "foobar")
-+            gpiod.request_lines(self.sim.dev_path, None, "foobar")  # type: ignore[arg-type]
- 
-     def test_offset_out_of_range(self) -> None:
-         with self.assertRaises(ValueError):
-@@ -66,7 +66,7 @@ class ModuleLineRequestsBehaveCorrectlyWithInvalidArguments(TestCase):
- 
-     def test_request_no_arguments(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.request_lines()
-+            gpiod.request_lines()  # type: ignore[call-arg]
- 
- 
- class ChipLineRequestWorks(TestCase):
-@@ -200,7 +200,7 @@ class LineRequestGettingValues(TestCase):
- 
-     def test_get_values_invalid_argument_type(self) -> None:
-         with self.assertRaises(TypeError):
--            self.req.get_values(True)
-+            self.req.get_values(True)  # type: ignore[arg-type]
- 
- 
- class LineRequestGettingValuesByName(TestCase):
-@@ -602,7 +602,7 @@ class ReleasedLineRequestCannotBeUsed(TestCase):
-             req.release()
- 
-             with self.assertRaises(gpiod.RequestReleasedError):
--                req.fd
-+                _ = req.fd
- 
- 
- class LineRequestSurvivesParentChip(TestCase):
-diff --git a/bindings/python/tests/tests_module.py b/bindings/python/tests/tests_module.py
-index 2718624..efd49db 100644
---- a/bindings/python/tests/tests_module.py
-+++ b/bindings/python/tests/tests_module.py
-@@ -17,15 +17,15 @@ class IsGPIOChip(TestCase):
- 
-     def test_is_gpiochip_invalid_argument(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.is_gpiochip_device(4)
-+            gpiod.is_gpiochip_device(4)  # type: ignore[arg-type]
- 
-     def test_is_gpiochip_superfluous_argument(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.is_gpiochip_device("/dev/null", 4)
-+            gpiod.is_gpiochip_device("/dev/null", 4)  # type: ignore[call-arg]
- 
-     def test_is_gpiochip_missing_argument(self) -> None:
-         with self.assertRaises(TypeError):
--            gpiod.is_gpiochip_device()
-+            gpiod.is_gpiochip_device()  # type: ignore[call-arg]
- 
-     def test_is_gpiochip_good(self) -> None:
-         sim = gpiosim.Chip()
+ [build-system]
+ requires = ["setuptools", "wheel", "packaging"]
++
++[tool.mypy]
++python_version = "3.9"
++files = [
++  "gpiod/",
++  "tests/",
++]
++
++[[tool.mypy.overrides]]
++module = "gpiod.line.*"
++strict_equality = false # Ignore Enum comparison-overlap: https://github.com/python/mypy/issues/17317
++
++[tool.ruff]
++target-version = "py39"
++include = [
++  "gpiod/**/*.py",
++  "gpiod/**/*.pyi",
++  "tests/**/*.py",
++  "tests/**/*.pyi",
++]
++
++[tool.ruff.lint]
++select = ["B", "E", "F", "I", "TCH", "UP"]
++ignore=[
++  # Ignore chained exception warnings for now: https://docs.astral.sh/ruff/rules/raise-without-from-inside-except/
++  "B904",
++  # Never enforce line length violations. Let the formatter handle it: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
++  "E501",
++  # Ignore new Union (|) syntax until we require 3.10+
++  "UP007",
++]
++
++[tool.ruff.lint.per-file-ignores]
++"gpiod/__init__.py" = ["F403", "F405"]  # ignore warnings about star imports
++"tests/__main__.py" = ["F403"]
++"tests/**.py" = ["F841"]  # ignore warnings about unused variables
+\ No newline at end of file
 -- 
 2.34.1
 
