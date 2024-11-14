@@ -1,37 +1,37 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF8A179BD
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE643AD2
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595894; cv=none; b=G8S7JJ5crPg9Iv0znEZVqaUw6yMKoxi87zL0X7orvHTxqtkdhD6OnoNzHcYYHJZiRvmfhBhOzPMrqkO4EkiAse+UOL+Nl7pUpDADpQ34jYmCRDBmAlRxaRfCL36qV6ALHIJrjFWj//PZjR2D/5mxZx4x+TNYn+WZjA47o8+Oye4=
+	t=1731595894; cv=none; b=sX8uq38e5f/SCyloQGOJg/RUwmIuGMthacHx1EZZxuJPMOze4hjP1f4d9lUtZUGjCTFiXIfASfFWUjaNojM5yf7BSWOQwBbGrEpz1/+QiiaveEip7CJK4FwW5i+HMRAE7LBp3zy6SjC9suypbB9hpWIrtPspD7TH04PBhA5keAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731595894; c=relaxed/simple;
-	bh=PoaQF24GHlIxevYL09mpbGzqdeEWvku20jXh44DvccE=;
+	bh=ZAPje8Lv+/hR8Gn0fHhrkcvWtUex3wV0GRH+5dkkX1Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qYb49dhhE115LlafYwadPXeCCnXsb1BOGI560iOzcc7i1IKGXptGM+6xIDGD64KOKcwfUqiV7qMengXneiEGBxmW3+EwmqU+/nofBj55cFme52wXk3l99iOmTP8pzs26SIWO4RQtdvLpOMy50KGaW1U+K2HK4uM+/P8vH5TIhKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=HSs26u5j; arc=none smtp.client-ip=162.248.234.2
+	 MIME-Version; b=LEXuRWGQj5FzuiKsZcnDZkN7sjtqOG/1UTalCP/JXIwK2svPjGZdG8FAuwYWohZ1HGTjHapPv6kAyKobIRN4EfjIMJeGl6Gkhas1dZ4odK2gstVMZebCboJw3fFELeb1QcFWEL8u89JXHJitI6TxMLpRIDQqRg9E3/NBntZGLYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=dKuDWkVE; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="HSs26u5j"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="dKuDWkVE"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id 480E720AB5;
+	by mail.xes-mad.com (Postfix) with ESMTP id 3389520AB4;
 	Thu, 14 Nov 2024 08:51:23 -0600 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1731595883; bh=PoaQF24GHlIxevYL09mpbGzqdeEWvku20jXh44DvccE=;
+	t=1731595883; bh=ZAPje8Lv+/hR8Gn0fHhrkcvWtUex3wV0GRH+5dkkX1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HSs26u5jNF/wT17KLqUGwrm8JCGR6PP33SAKoeEFdMl+5Cbrfob0RZwBr8ilOpGtD
-	 KUA1vnQljdqWdZmB2W0ezrP1QqdJO4o4qTZUlEw86RZkZd7WUGr5Mus4OBsh8q9CVr
-	 AM/NtxBxN175HAIje0FLCtSjxGjF0hgBH6bhQOQU=
+	b=dKuDWkVEJdN/+J4NX0l86qMtkvgrUoc7Yv/So9HLzGy6oMLZELjNilT0oCx/qI+0m
+	 XpvqYLNWY3nvPouejsDhL5caw4HsieqO3GZ+HRDM8lnviwYyoiuYmGU5keb7RMBtuX
+	 4R0Dp3xOUoiqCoGh2V2T3pWNuEDi5iAStbA9C/NI=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH v2 13/23] bindings: python: cast return value of LineRequest.get_values
-Date: Thu, 14 Nov 2024 08:51:06 -0600
-Message-Id: <20241114145116.2123714-14-vfazio@xes-inc.com>
+Subject: [libgpiod][PATCH v2 12/23] bindings: python: convert lines to offsets in LineRequest
+Date: Thu, 14 Nov 2024 08:51:05 -0600
+Message-Id: <20241114145116.2123714-13-vfazio@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
 References: <20241114145116.2123714-1-vfazio@xes-inc.com>
@@ -43,51 +43,78 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The `values` argument of `_ext.Request.get_values` uses a preallocated
-`list[None]` as a buffer that is populated with `Value`s by the external
-module that are then returned from the function.
+Remove `_check_line_name` in favor of a new function, `_line_to_offset`,
+that converts a line reference to an offset.
 
-Use `cast` to inform the type checker it's a `list[Value]` despite how
-it's allocated.
-
-Also, as `lines` is typed as an `Iterable`, there is no guarantee it has
-a `__len__` method. Instead, use the size of the `offsets` array to
-allocate the buffer.
+This new function helps narrow types and simplifies the iteration logic
+that is used to build objects to interface with `_ext.Request`.
 
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
- bindings/python/gpiod/line_request.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ bindings/python/gpiod/line_request.py | 29 +++++++++++----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
 diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
-index 3f181c9..7327274 100644
+index 81f2517..3f181c9 100644
 --- a/bindings/python/gpiod/line_request.py
 +++ b/bindings/python/gpiod/line_request.py
-@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional, Union, cast
- from . import _ext
- from ._internal import poll_fd
- from .exception import RequestReleasedError
-+from .line import Value
- from .line_settings import LineSettings, _line_settings_to_ext
+@@ -94,14 +94,15 @@ class LineRequest:
+         """
+         return self.get_values([line])[0]
  
- if TYPE_CHECKING:
-@@ -16,7 +17,6 @@ if TYPE_CHECKING:
-     from types import TracebackType
+-    def _check_line_name(self, line: Union[int, str]) -> bool:
+-        if isinstance(line, str):
+-            if line not in self._name_map:
+-                raise ValueError("unknown line name: {}".format(line))
+-
+-            return True
+-
+-        return False
++    def _line_to_offset(self, line: Union[int, str]) -> int:
++        if isinstance(line, int):
++            return line
++        else:
++            _line: Union[int, None]
++            if (_line := self._name_map.get(line)) is None:
++                raise ValueError(f"unknown line name: {line}")
++            else:
++                return _line
  
-     from .edge_event import EdgeEvent
--    from .line import Value
+     def get_values(
+         self, lines: Optional[Iterable[Union[int, str]]] = None
+@@ -121,10 +122,7 @@ class LineRequest:
  
+         lines = lines or self._lines
  
- __all__ = ["LineRequest"]
-@@ -124,7 +124,7 @@ class LineRequest:
+-        offsets = [
+-            self._name_map[line] if self._check_line_name(line) else line
+-            for line in lines
+-        ]
++        offsets = [self._line_to_offset(line) for line in lines]
  
-         offsets = [self._line_to_offset(line) for line in lines]
+         buf = [None] * len(lines)
  
--        buf = [None] * len(lines)
-+        buf = cast(list[Value], [None] * len(offsets))
+@@ -153,10 +151,7 @@ class LineRequest:
+         """
+         self._check_released()
  
-         cast(_ext.Request, self._req).get_values(offsets, buf)
-         return buf
+-        mapped = {
+-            self._name_map[line] if self._check_line_name(line) else line: values[line]
+-            for line in values
+-        }
++        mapped = {self._line_to_offset(line): value for line, value in values.items()}
+ 
+         cast(_ext.Request, self._req).set_values(mapped)
+ 
+@@ -186,7 +181,7 @@ class LineRequest:
+                 lines = [lines]
+ 
+             for line in lines:
+-                offset = self._name_map[line] if self._check_line_name(line) else line
++                offset = self._line_to_offset(line)
+                 line_settings[offset] = settings
+ 
+         for offset in self.offsets:
 -- 
 2.34.1
 
