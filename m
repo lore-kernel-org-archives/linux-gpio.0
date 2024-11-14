@@ -1,37 +1,37 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0E8126BEE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1AD84E18
 	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595895; cv=none; b=AcoejGOOxM+sNuZwNCVzIZHImKxbk2rZHQ+Ba7UAMm9lsoFzcITtm1aZtprFL/zdwn+JkSfdfwz2FqOlD3yy+/s5zjJJKDVTUr2ze+XKY7gmIZZEMEvv1SxeIwkdSmgLEjlOGLWb0rG2bmQuh7xwJRdI8AFcAGQbUEKqgOVlMQI=
+	t=1731595895; cv=none; b=N9Sqjbj0vhlnxNXCl/SzoB427hN4mW7GTEzcLtYdsUuLET+7kYhzl43iKqk5A168me8z5wEPsLLCKcaCH6HZUxpok+1aY3mD1zpoxWjnBY5UGoRdm2X2gWEbMWz7mlwd6vgR74gmDa+yVRAMJLvPX9uK5I58x+DWRMUY4lGdZmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731595895; c=relaxed/simple;
-	bh=dtQo05EoHgKE6Aqc8UbCYiRwjNavdVqKKbLEI0f3FoU=;
+	bh=r3TPDi30k3o1UDzICcKWj0WXToZFNPhUaaGaQgjpzis=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZIJ33qAx2xlkO8qPDgj8cs2K8F9Brk6MzxYwBkH/msd4xj1D7JW+Zwiy+40Z7K9wTzvqIz35Zkdux6RpP6d2jQThUgzAzWs4IeXdp72Ff636v+L9lBj1cbku4YGKALF0cJkukEdZJ2Z6TUcyv+NDUtO6ea20KnweoRBnV4J2vew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=P4C8kTHL; arc=none smtp.client-ip=162.248.234.2
+	 MIME-Version; b=eDjWqgXOZ48/1QspvQoOoBLLJPBTKngJHh+/tyhIlEo8iBQOS82Mf0jBBkQVtOSyYfORuD+RGLcYC1axBmg7gpx07mWkikPLm0xP9EcAC6csxTP+a8Bq8kui7YslPPBRhDQ9idG9k3795Sp1qgcqSTOfIIHnwx5UOQQaTcQAuBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=CtPMye0Z; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="P4C8kTHL"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="CtPMye0Z"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id 7128E20AB7;
+	by mail.xes-mad.com (Postfix) with ESMTP id AFD8E20ABA;
 	Thu, 14 Nov 2024 08:51:23 -0600 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1731595883; bh=dtQo05EoHgKE6Aqc8UbCYiRwjNavdVqKKbLEI0f3FoU=;
+	t=1731595883; bh=r3TPDi30k3o1UDzICcKWj0WXToZFNPhUaaGaQgjpzis=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P4C8kTHL5MNBa99dOW9fMv2ZbOWtK39hQD1J6l0GLEbCfzbYwxDaxIRiPgYCjtvVX
-	 yamygAx4BzYoLAGWmbSpHb4S0Tv0G8E0er43Aa03GMm9+bD4CgbYs3bOZEAyQr6nLu
-	 2e3KvTTaPZb7Et03YYxQI+ESg4JjIFWEVBKesZCI=
+	b=CtPMye0Z7Pcnj1X8Asp/ot1LDJdKbgtK2iYMzjMqUDPMGjsMZkZjH+YxehyAAqpTW
+	 K2yeQQsEQEFxpSWTX5Ln5VEuGyVBdKMvL6yKOciM5zwhyb90E5Ogtm+JLyntqoDUk3
+	 Lgo++omf1aHhzK33QibZbhkFppujUMrF1C6JXphY=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH v2 15/23] bindings: python: tests: fix duplicate test name
-Date: Thu, 14 Nov 2024 08:51:08 -0600
-Message-Id: <20241114145116.2123714-16-vfazio@xes-inc.com>
+Subject: [libgpiod][PATCH v2 18/23] bindings: python: tests: add type stubs for external modules
+Date: Thu, 14 Nov 2024 08:51:11 -0600
+Message-Id: <20241114145116.2123714-19-vfazio@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
 References: <20241114145116.2123714-1-vfazio@xes-inc.com>
@@ -43,32 +43,51 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously, the `test_rising_edge_event` test was defined twice.
-
-The second instance of the test actually tested the falling edge event
-and was shadowing the first test which tested the rising edge event.
-
-Now, the second instance is renamed to `test_falling_edge_event` to
-reflect what it is testing and to avoid the naming conflict.
+Add type stubs for the compiled external modules so that types and
+methods used from the modules are accurately type checked.
 
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
- bindings/python/tests/tests_edge_event.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ bindings/python/tests/gpiosim/_ext.pyi  | 21 +++++++++++++++++++++
+ bindings/python/tests/procname/_ext.pyi |  1 +
+ 2 files changed, 22 insertions(+)
+ create mode 100644 bindings/python/tests/gpiosim/_ext.pyi
+ create mode 100644 bindings/python/tests/procname/_ext.pyi
 
-diff --git a/bindings/python/tests/tests_edge_event.py b/bindings/python/tests/tests_edge_event.py
-index 17b2702..68ab17e 100644
---- a/bindings/python/tests/tests_edge_event.py
-+++ b/bindings/python/tests/tests_edge_event.py
-@@ -118,7 +118,7 @@ class WaitingForEdgeEvents(TestCase):
- 
-             self.assertFalse(req.wait_edge_events(timedelta(microseconds=10000)))
- 
--    def test_rising_edge_event(self):
-+    def test_falling_edge_event(self):
-         with gpiod.request_lines(
-             self.sim.dev_path, {6: gpiod.LineSettings(edge_detection=Edge.FALLING)}
-         ) as req:
+diff --git a/bindings/python/tests/gpiosim/_ext.pyi b/bindings/python/tests/gpiosim/_ext.pyi
+new file mode 100644
+index 0000000..69d4b63
+--- /dev/null
++++ b/bindings/python/tests/gpiosim/_ext.pyi
+@@ -0,0 +1,21 @@
++class Chip:
++    def __init__(self) -> None: ...
++    def set_label(self, label: str) -> None: ...
++    def set_num_lines(self, num_lines: int) -> None: ...
++    def set_line_name(self, offset: int, name: str) -> None: ...
++    def set_hog(self, offset: int, name: str, direction: int) -> None: ...
++    def enable(self) -> None: ...
++    def get_value(set, offset: int) -> int: ...
++    def set_pull(set, offset: int, pull: int) -> None: ...
++    @property
++    def dev_path(self) -> str: ...
++    @property
++    def name(self) -> str: ...
++
++PULL_DOWN: int
++PULL_UP: int
++VALUE_INACTIVE: int
++VALUE_ACTIVE: int
++DIRECTION_INPUT: int
++DIRECTION_OUTPUT_HIGH: int
++DIRECTION_OUTPUT_LOW: int
+diff --git a/bindings/python/tests/procname/_ext.pyi b/bindings/python/tests/procname/_ext.pyi
+new file mode 100644
+index 0000000..fdcd8ac
+--- /dev/null
++++ b/bindings/python/tests/procname/_ext.pyi
+@@ -0,0 +1 @@
++def set_process_name(name: str) -> None: ...
 -- 
 2.34.1
 
