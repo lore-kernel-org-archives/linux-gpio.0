@@ -1,99 +1,96 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE3B3D0C5
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CD936AF5
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595502; cv=none; b=azo0cIt2zaWSfP6wIEeJ75c0rxvV32XLGfP85YILyaDySG2L+4hr1w7FavmfkxkLDE575KOfWslj4damFXo45nY2F473kI+TA4HdL+UwJcnig6KnJOKeOqRZole12tE42owUo0cONMnNA28mdMXbhWf6fnukOWI8u3AvBYjRvhg=
+	t=1731595891; cv=none; b=HbL+wnK1GEiyuzx51bheMy+AHhJT3rUKvtq0X2E38zyISyZCf9PIQz/do/VbUTORW5O9EDN9y25UOWSrsicvLzlPihHB4ivl2ZWi1xwqbpAKts+cfoGqyRz/0HdV3CXe3rXykCxflkbDXZ6K3b2h2I4LUxUy/Axv8AujlYn9Gec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595502; c=relaxed/simple;
-	bh=+rMLXFzgqKZLk8rQ+k3N/R9MMAXehsTmRTsmokLBChY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dJLhBDweLl2duVOlNZP9gVq7C8fcKg0bmO/MekDnbRBHDQwRljFBqrPDkH/y+xjoKYkTST+SKd2idsFX+Csls/MTfKzXJwc81y9sMpNFnu24OFAYE7NF8SxQCE8QnLRxPIW3JyHANQQ4ZJVYFhwK55Dou7SPKn6LXyuh6bAK32Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zNzHCC/h; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1731595891; c=relaxed/simple;
+	bh=wF9pSdtjVo3E9lN0jl/IwguMz4v2m/clhyrfwxzDv3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Dc2LVqfoeIJVxFGm06lFqTnaRMULhi11WJI/4Yqg4pGUxp3eowHAnl2dr5uR2dLlHQE8rs8yCgc4g6KtKWBB5dpk+e5nqvPIVgbrznjuD03iQcVQCdfT4XcjGZ18yEDBrxeEblzll9/vmPjjNb+wuI1U5l/Mn5dOB34WqKJuIjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=mcmzmX8P; arc=none smtp.client-ip=162.248.234.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zNzHCC/h"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-432d866f70fso6434755e9.2
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 06:45:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731595499; x=1732200299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aEgpr39w0CcAsiKuCtl80T/zdi1/rF4sSBWwhuKglcU=;
-        b=zNzHCC/h5f8K6GCgsbToTwYTbQ4f0mVY/hum2IyKHnIWe/9P4LsLY+/fXVEfQ64mmO
-         7ykX3YGaQca8Rw4YCAWRhTC48kHolYHIa4mpB92YaxAsNQRFDFN/lXIklnQp3z8xQfWT
-         jRDmcnfriTi80vb3yw/vin+gDUg/1X68c+5Sv4/2Zc5PjNREFNlhV3P2fJkhT14qAJ9Q
-         U3XhPtjuLJHt63JBKZyZbrBrfu6O1/JtACRZDfAR5T0xYDThhVsQqeIJweaPLXZcHIPV
-         t3KQXb2UTE864Xqq6d8xfT0MU5JwqtfK3DoL+9vTGpPGyjK06r/77nB/5taWA9JuvqIj
-         qB2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731595499; x=1732200299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aEgpr39w0CcAsiKuCtl80T/zdi1/rF4sSBWwhuKglcU=;
-        b=sMZYI8ynOj7plMi/gfswJjB+mpPx0zpVP78fFf1Pm3NyYwXjCo9SvZF3EmQazv5VGS
-         Dz7bPvhqJuklNRJkFR5+xAKwlOqSAP9zWRlH5UnsEQGD7DEYQu+icL+3lLabCIWhzGT5
-         /3HsWa8z+GryQhZWanvZX6155FgxFu2k7/Enz4aX+9pWtboSarcNXgGpTrM8qkMFJRxV
-         Jhq9ji+n+zo+1H9P5pVJ846EF/+grmthgPej8RljPekMG10v5YgIXksdVfA7jzmNztNR
-         jiyBOqsi0aeojY1xXNdU2ktuIKA9afSAwOT8GxTS9qjSipfWfJ7mja2wfK8lCIv96GX5
-         eeWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXENZ6YV3GzguI0A7CJ38kS6rW/aZmWrIDvBAF71Q8+IUaHB//sKTH7hkHxLMhKgBH0qYhP95NeF+qs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMHnypNYeAvzgOm5f2sXA+HXruLqOaoWSVlPUue5McqYRcj9Js
-	M9DxtktUzkm2NS9W1X2IYPj2FpiY8Kvuva32JF/P88shEnZmK5/UHu6gbGOCO4U=
-X-Google-Smtp-Source: AGHT+IEFpp9RmzTQrpWugYQ7Zu1HutntmJdWfk/HE3B/Cs4tqZen/YgodsoFDkE2lDf4RFmjYyk4qw==
-X-Received: by 2002:a05:600c:5124:b0:42c:b995:2100 with SMTP id 5b1f17b1804b1-432b74faa3bmr199575445e9.6.1731595498566;
-        Thu, 14 Nov 2024 06:44:58 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:d8d6:4da5:9533:12ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab721efsm23527295e9.4.2024.11.14.06.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 06:44:58 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Prathamesh Shete <pshete@nvidia.com>,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: tegra186: Allow to enable driver on Tegra234
-Date: Thu, 14 Nov 2024 15:44:57 +0100
-Message-ID: <173159549500.53717.13347422076056240861.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241113162939.886242-1-lars@metafoo.de>
-References: <20241113162939.886242-1-lars@metafoo.de>
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="mcmzmX8P"
+Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
+	by mail.xes-mad.com (Postfix) with ESMTP id 83BBF20A91;
+	Thu, 14 Nov 2024 08:51:22 -0600 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
+	t=1731595882; bh=wF9pSdtjVo3E9lN0jl/IwguMz4v2m/clhyrfwxzDv3I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mcmzmX8P3b/qty4stMoVKsypWG/WlYUjieiiJDdNCykUkwKEFiy40KC21gpfY2N2D
+	 T02itKNpSx21apeq9vobFfU3B+IZ+Jswpbp1cUXEbuHmTMh16fZcoJNy1ET0I6dzln
+	 PZdTmguiytll6zpeOGm8lFpRgL7rqA+qGePkN+yU=
+From: Vincent Fazio <vfazio@xes-inc.com>
+To: linux-gpio@vger.kernel.org
+Cc: vfazio@gmail.com,
+	Vincent Fazio <vfazio@xes-inc.com>
+Subject: [libgpiod][PATCH v2 04/23] bindings: python: explicitly type gpiod.request_lines
+Date: Thu, 14 Nov 2024 08:50:57 -0600
+Message-Id: <20241114145116.2123714-5-vfazio@xes-inc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
+References: <20241114145116.2123714-1-vfazio@xes-inc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Explicitly define the arguments for `gpiod.request_lines` so there is a
+clearer linkage with the underlying `Chip.request_lines` interface.
 
+Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
+---
+ bindings/python/gpiod/__init__.py | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-On Wed, 13 Nov 2024 08:29:39 -0800, Lars-Peter Clausen wrote:
-> Support for Tegra234 was added to the tegra186 driver in 1db9b241bb56 (
-> "gpio: tegra186: Add support for Tegra234"). But the driver is not
-> selectable on Tegra234. Update the Kconfig entry to allow the driver to be
-> enabled on Tegra234.
-> 
-> Enable the driver by default on Tegra 234 as well, similar to the other
-> platforms it supports.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpio: tegra186: Allow to enable driver on Tegra234
-      commit: a5cc199f4de2a2a10e3c9d3fc2d07d634d1e5d0f
-
-Best regards,
+diff --git a/bindings/python/gpiod/__init__.py b/bindings/python/gpiod/__init__.py
+index aaa0474..817c755 100644
+--- a/bindings/python/gpiod/__init__.py
++++ b/bindings/python/gpiod/__init__.py
+@@ -7,6 +7,9 @@ Python bindings for libgpiod.
+ This module wraps the native C API of libgpiod in a set of python classes.
+ """
+ 
++from collections.abc import Iterable
++from typing import Optional, Union
++
+ from . import (
+     _ext,
+     chip,
+@@ -82,7 +85,13 @@ def is_gpiochip_device(path: str) -> bool:
+     return _ext.is_gpiochip_device(path)
+ 
+ 
+-def request_lines(path: str, *args, **kwargs) -> LineRequest:
++def request_lines(
++    path: str,
++    config: dict[Union[Iterable[Union[int, str]], int, str], Optional[LineSettings]],
++    consumer: Optional[str] = None,
++    event_buffer_size: Optional[int] = None,
++    output_values: Optional[dict[Union[int, str], line.Value]] = None,
++) -> LineRequest:
+     """
+     Open a GPIO chip pointed to by 'path', request lines according to the
+     configuration arguments, close the chip and return the request object.
+@@ -98,4 +107,9 @@ def request_lines(path: str, *args, **kwargs) -> LineRequest:
+       Returns a new LineRequest object.
+     """
+     with Chip(path) as chip:
+-        return chip.request_lines(*args, **kwargs)
++        return chip.request_lines(
++            config=config,
++            consumer=consumer,
++            event_buffer_size=event_buffer_size,
++            output_values=output_values,
++        )
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.34.1
+
