@@ -1,366 +1,153 @@
-Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A99436AF5
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D28013CFA8
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595898; cv=none; b=GmuvUtlW3aIu0ipkg9/woyk5BsbOT8pIk1fEhZGo+Fe8VFPu13kzFnqmce97Xk5ZZ6lRo9qBPzt96J3DwChQhRpyUGwXS+2tl42vFevAVQkpsy71RBGbwTN6z1QW+iLpFGiFw6TMoNZwnDBYqFs4qIQdNLQAWpXBLFX35B/2zwo=
+	t=1731597979; cv=none; b=TxbFrfjh9yXrmUGXCa/6N/55XTywb19JESMy0/1KBB4oR4p1aAbJWdWOW60X8tvSIJiTvltIrUnbRwRBe9jslIRn05/68sMf+5vAQiyVbhVWQspwu3/nyX9oizt9q2hSJ8oPHqR1xgcfd9ntHnmICoSAPG0tAqfbEWjvYl+tqOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595898; c=relaxed/simple;
-	bh=vpgqjTRjvH2hDTv+KIRi22Hv4ChI0YVrwWYMdkJw4JQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KR2kVVULnsPivajmCRVb8oV7Zu5jBxkLkp2OeEONkKJdlIx+Gap9LpvXN7W+AL0xXBOl/GiMEU44mK8Ugi/ZdFEzxlGyj7r3RKNHa4e+mjVnJNitPH4vt4e95jZqxKdEYTXeEuco20PGW55G0u/IyT17FgZxCSC5MfwALK5WbDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=itZuNDWO; arc=none smtp.client-ip=162.248.234.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
+	s=arc-20240116; t=1731597979; c=relaxed/simple;
+	bh=OXm964+HL/oy8I5JgLPsZUm+UieJrQIuj9T2oe/JmoI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilLaotwyrS9xyKyTXEK9NOl58xjaIiGeZdhZk0DncTwpjiWZaSYa0DmWtKLltZamMTtFZvnNgybnhxGxpzXUWCWLeEn8zn/ofgESJ7GhREHzGNmN7SPbuS7TfB4di5dJR0dIDs9aYZy6vOAxBcuCigHjCbC9aBUKzaH3D+W1ZjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T0lJt+QV; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="itZuNDWO"
-Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id 85D3020AB8;
-	Thu, 14 Nov 2024 08:51:23 -0600 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1731595883; bh=vpgqjTRjvH2hDTv+KIRi22Hv4ChI0YVrwWYMdkJw4JQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=itZuNDWOhP8+SGxZnSNgagTcMjMyOt/9JdTMcDd1kMjFfPCSHNO3L0zYgj9LDqigw
-	 zR65HpacjswNZ0DaYBebtgsTC+Agd/9FlhocmS/Q8k8ACzj+NdGdyfYOodmD2FD7Iw
-	 FFccKe1fOB0WeKyQpPuIlKRWaru5Q1uvcbAGmjsE=
-From: Vincent Fazio <vfazio@xes-inc.com>
-To: linux-gpio@vger.kernel.org
-Cc: vfazio@gmail.com,
-	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH v2 16/23] bindings: python: tests: clean up imports and exports
-Date: Thu, 14 Nov 2024 08:51:09 -0600
-Message-Id: <20241114145116.2123714-17-vfazio@xes-inc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
-References: <20241114145116.2123714-1-vfazio@xes-inc.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T0lJt+QV"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so135416066b.1
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 07:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731597975; x=1732202775; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BXfRuwtCQesbb+rpbVIxn9Ia55XQqIa+ED/3SCVnO+4=;
+        b=T0lJt+QVOgMpe98LyY/OQg5CauvRzz5aZotWG53qpiINIQPfuqm94oJDgqqTpxKQpy
+         VyPY7U+5O+0dC4OqfQqxD7ygF8MN4l31p3AAOahmwrJO8Jd/Zp5t1lx1dUKasPaKePKz
+         5u2zO7f6XsMG7Q/iCIl6hgyDRzi9MNPi/u0NjMCu8GgXrYxT4s+qzsU/tdKaHPLlG1TH
+         VTNCP7uaedHsnu4AIbUmGkCMNKJZTqEaX58qEthYKW73qRLo4BdAvR/OenXR7qAz4bQm
+         Jtb8z+RKl38uYnU4VOuJcnn7WfXWidfo4zsFFj8ZlEIoPZdxRc6NBYqiOkUt4Vg7iFb9
+         JjhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731597975; x=1732202775;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BXfRuwtCQesbb+rpbVIxn9Ia55XQqIa+ED/3SCVnO+4=;
+        b=Iw6vrral1TkuE1yLMS3MMHeJxr+DkTON62clfoM0O5+laebE8MFEu8YsLD3p6nYBd+
+         uCAPaO674YUcdjsFYgghFgdckpi8GSCMpUyQdz65RWJ+s/o8aK9quVZRBai0y7n9w8S/
+         CcnYsa4KGJqBYmlgZ+I7LdrllDQIFHpF2sOmhdnUe/9x3UtujuOadBSZr2/uhnkLF/BQ
+         rbsWOHcmxIEK56PaL5jO0YWk4z006jKhg4s3mj/RzKZUP/BvdqldMmA4kpoZoZhIGW71
+         uMaVIXsKNbFIZxV8FB2PIS96DEFYVMdsbJOkW0m89rMs6BX/1mm+9oDE2+6xfKiHMPOT
+         rd+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYHWtsme+S5slObZorcNxEiuggR4LuUyXp40s3mwvJ/s6FWDZ74UZSgoRSmb1x0tlJVgIGU9qdvvXf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Xy5fqYUwHj40+uRQXrl9xunm+EGijvW+uTf5GXQXTdkA6kKZ
+	F0Q9xQMrAoNH1Jt/fOw3ILd6nQ+isDzQ9HQTrSTWw0PyuFgcf0Qbh2GJiLJpzMU=
+X-Google-Smtp-Source: AGHT+IGhM6/BPmoBjuRiiI1ewZRW9R+eE3BQ4H3+p/OJfSdyeRMIoasVpFD+sR2v6s9C5C6vSshsww==
+X-Received: by 2002:a17:907:7b95:b0:a9a:c691:dcbc with SMTP id a640c23a62f3a-aa1b1024b29mr1127309766b.12.1731597974922;
+        Thu, 14 Nov 2024 07:26:14 -0800 (PST)
+Received: from localhost (host-79-19-144-50.retail.telecomitalia.it. [79.19.144.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e086ad4sm73543066b.199.2024.11.14.07.26.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 07:26:14 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 14 Nov 2024 16:26:42 +0100
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: of_property: Assign PCI instead of CPU bus address
+ to dynamic PCI nodes
+Message-ID: <ZzYWso5jLkUMehQ6@apocalypse>
+References: <20241108094256.28933-1-andrea.porta@suse.com>
+ <20241108110938.622014f5@bootlin.com>
+ <Zy3koxz4KnV39__V@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zy3koxz4KnV39__V@apocalypse>
 
-Remove unused imports and sort the remainder following isort rules.
+Hi,
 
-Update the submodules to use `__all__` to advertise available imports.
+On 11:14 Fri 08 Nov     , Andrea della Porta wrote:
+> Hi herve,
+> 
+> On 11:09 Fri 08 Nov     , Herve Codina wrote:
+> > Hi Andrea,
+> > 
+> > On Fri,  8 Nov 2024 10:42:56 +0100
+> > Andrea della Porta <andrea.porta@suse.com> wrote:
+> > 
+> > > When populating "ranges" property for a PCI bridge or endpoint,
+> > > of_pci_prop_ranges() incorrectly use the CPU bus address of the resource.
+> > > In such PCI nodes, the window should instead be in PCI address space. Call
+> > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > address.
+> > > 
+> > > Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > > Tested-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---
+> > > This patch, originally preparatory for a bigger patchset (see [1]), has
+> > > been splitted in a standalone one for better management and because it
+> > > contains a bugfix which is probably of interest to stable branch.
+> > 
+> > Nothing to say for the patch itself.
+> > 
+> > Just here, you mentioned "see [1]" but you didn't provide the link.
+> > 
+> > IMHO, this is not blocking for applying the patch but, just for other people
+> > looking at this email in the mailing list, can you reply providing the link?
+> 
+> Thanks for pointing that out, sorry about that. Here it is:
+> 
+> [1] - https://lore.kernel.org/all/f6b445b764312fd8ab96745fe4e97fb22f91ae4c.1730123575.git.andrea.porta@suse.com/
 
-Remove an unnecessary blank line in the VersionString class to abide by
-the ruff formatter's rules (compatible with black's formatting).
+Do I have to resubmit the patch with the referenced url fixed or is it
+ok as it is?
 
-Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
----
- bindings/python/tests/__init__.py            |  2 --
- bindings/python/tests/__main__.py            |  5 ++---
- bindings/python/tests/gpiosim/__init__.py    |  2 ++
- bindings/python/tests/gpiosim/chip.py        |  3 ++-
- bindings/python/tests/procname/__init__.py   |  2 ++
- bindings/python/tests/tests_chip.py          |  5 +++--
- bindings/python/tests/tests_chip_info.py     |  3 ++-
- bindings/python/tests/tests_edge_event.py    |  9 +++++----
- bindings/python/tests/tests_info_event.py    | 10 +++++-----
- bindings/python/tests/tests_line.py          |  3 ++-
- bindings/python/tests/tests_line_info.py     | 12 ++++++------
- bindings/python/tests/tests_line_request.py  |  6 +++---
- bindings/python/tests/tests_line_settings.py |  7 +++----
- bindings/python/tests/tests_module.py        |  7 +++----
- 14 files changed, 40 insertions(+), 36 deletions(-)
+Thanks,
+Andrea
 
-diff --git a/bindings/python/tests/__init__.py b/bindings/python/tests/__init__.py
-index 02f4e8d..2374e81 100644
---- a/bindings/python/tests/__init__.py
-+++ b/bindings/python/tests/__init__.py
-@@ -2,8 +2,6 @@
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- import os
--import unittest
--
- from distutils.version import LooseVersion
- 
- required_kernel_version = LooseVersion("5.19.0")
-diff --git a/bindings/python/tests/__main__.py b/bindings/python/tests/__main__.py
-index ea4143f..8b4260d 100644
---- a/bindings/python/tests/__main__.py
-+++ b/bindings/python/tests/__main__.py
-@@ -4,17 +4,16 @@
- 
- import unittest
- 
-+from . import procname
- from .tests_chip import *
- from .tests_chip_info import *
- from .tests_edge_event import *
- from .tests_info_event import *
- from .tests_line import *
- from .tests_line_info import *
-+from .tests_line_request import *
- from .tests_line_settings import *
- from .tests_module import *
--from .tests_line_request import *
--
--from . import procname
- 
- procname.set_process_name("python-gpiod")
- 
-diff --git a/bindings/python/tests/gpiosim/__init__.py b/bindings/python/tests/gpiosim/__init__.py
-index f65e413..64a1551 100644
---- a/bindings/python/tests/gpiosim/__init__.py
-+++ b/bindings/python/tests/gpiosim/__init__.py
-@@ -2,3 +2,5 @@
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from .chip import Chip
-+
-+__all__ = ["Chip"]
-diff --git a/bindings/python/tests/gpiosim/chip.py b/bindings/python/tests/gpiosim/chip.py
-index 6af883e..691bfe1 100644
---- a/bindings/python/tests/gpiosim/chip.py
-+++ b/bindings/python/tests/gpiosim/chip.py
-@@ -1,10 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--from . import _ext
- from enum import Enum
- from typing import Optional
- 
-+from . import _ext
-+
- 
- class Chip:
-     """
-diff --git a/bindings/python/tests/procname/__init__.py b/bindings/python/tests/procname/__init__.py
-index af6abdd..436ff40 100644
---- a/bindings/python/tests/procname/__init__.py
-+++ b/bindings/python/tests/procname/__init__.py
-@@ -2,3 +2,5 @@
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from ._ext import set_process_name
-+
-+__all__ = ["set_process_name"]
-diff --git a/bindings/python/tests/tests_chip.py b/bindings/python/tests/tests_chip.py
-index bd4ae34..9110beb 100644
---- a/bindings/python/tests/tests_chip.py
-+++ b/bindings/python/tests/tests_chip.py
-@@ -2,12 +2,13 @@
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- import errno
--import gpiod
- import os
-+from unittest import TestCase
-+
-+import gpiod
- 
- from . import gpiosim
- from .helpers import LinkGuard
--from unittest import TestCase
- 
- 
- class ChipConstructor(TestCase):
-diff --git a/bindings/python/tests/tests_chip_info.py b/bindings/python/tests/tests_chip_info.py
-index d392ec3..9474f38 100644
---- a/bindings/python/tests/tests_chip_info.py
-+++ b/bindings/python/tests/tests_chip_info.py
-@@ -1,10 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
-+from unittest import TestCase
-+
- import gpiod
- 
- from . import gpiosim
--from unittest import TestCase
- 
- 
- class ChipInfoProperties(TestCase):
-diff --git a/bindings/python/tests/tests_edge_event.py b/bindings/python/tests/tests_edge_event.py
-index 68ab17e..7e7fada 100644
---- a/bindings/python/tests/tests_edge_event.py
-+++ b/bindings/python/tests/tests_edge_event.py
-@@ -1,16 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--import gpiod
- import time
--
--from . import gpiosim
- from datetime import timedelta
- from functools import partial
--from gpiod.line import Direction, Edge
- from threading import Thread
- from unittest import TestCase
- 
-+import gpiod
-+from gpiod.line import Direction, Edge
-+
-+from . import gpiosim
-+
- EventType = gpiod.EdgeEvent.Type
- Pull = gpiosim.Chip.Pull
- 
-diff --git a/bindings/python/tests/tests_info_event.py b/bindings/python/tests/tests_info_event.py
-index a226e52..bbdbc0f 100644
---- a/bindings/python/tests/tests_info_event.py
-+++ b/bindings/python/tests/tests_info_event.py
-@@ -3,17 +3,17 @@
- 
- import datetime
- import errno
--import gpiod
- import threading
- import time
--import unittest
--
--from . import gpiosim
- from dataclasses import FrozenInstanceError
- from functools import partial
--from gpiod.line import Direction
- from unittest import TestCase
- 
-+import gpiod
-+from gpiod.line import Direction
-+
-+from . import gpiosim
-+
- EventType = gpiod.InfoEvent.Type
- 
- 
-diff --git a/bindings/python/tests/tests_line.py b/bindings/python/tests/tests_line.py
-index 70aa09b..2182567 100644
---- a/bindings/python/tests/tests_line.py
-+++ b/bindings/python/tests/tests_line.py
-@@ -1,9 +1,10 @@
- # SPDX-License-Identifier: LGPL-2.1-or-later
- # SPDX-FileCopyrightText: 2024 Kent Gibson <warthog618@gmail.com>
- 
--from gpiod.line import Value
- from unittest import TestCase
- 
-+from gpiod.line import Value
-+
- 
- class LineValue(TestCase):
-     def test_cast_bool(self):
-diff --git a/bindings/python/tests/tests_line_info.py b/bindings/python/tests/tests_line_info.py
-index 2779e7a..79281a8 100644
---- a/bindings/python/tests/tests_line_info.py
-+++ b/bindings/python/tests/tests_line_info.py
-@@ -1,17 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--import errno
-+from unittest import TestCase
-+
- import gpiod
--import unittest
-+from gpiod.line import Bias, Clock, Direction, Drive
- 
- from . import gpiosim
--from gpiod.line import Direction, Bias, Drive, Clock
- 
- HogDir = gpiosim.Chip.Direction
- 
- 
--class GetLineInfo(unittest.TestCase):
-+class GetLineInfo(TestCase):
-     def setUp(self):
-         self.sim = gpiosim.Chip(
-             num_lines=4,
-@@ -49,7 +49,7 @@ class GetLineInfo(unittest.TestCase):
-             self.chip.get_line_info()
- 
- 
--class LinePropertiesCanBeRead(unittest.TestCase):
-+class LinePropertiesCanBeRead(TestCase):
-     def test_basic_properties(self):
-         sim = gpiosim.Chip(
-             num_lines=8,
-@@ -86,7 +86,7 @@ class LinePropertiesCanBeRead(unittest.TestCase):
-             self.assertEqual(info6.debounce_period.total_seconds(), 0.0)
- 
- 
--class LineInfoStringRepresentation(unittest.TestCase):
-+class LineInfoStringRepresentation(TestCase):
-     def test_line_info_str(self):
-         sim = gpiosim.Chip(
-             line_names={0: "foo"}, hogs={0: ("hogger", HogDir.OUTPUT_HIGH)}
-diff --git a/bindings/python/tests/tests_line_request.py b/bindings/python/tests/tests_line_request.py
-index 285c9f1..c3e86c5 100644
---- a/bindings/python/tests/tests_line_request.py
-+++ b/bindings/python/tests/tests_line_request.py
-@@ -1,12 +1,12 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--import errno
-+from unittest import TestCase
-+
- import gpiod
-+from gpiod.line import Clock, Direction, Drive, Edge, Value
- 
- from . import gpiosim
--from gpiod.line import Clock, Direction, Drive, Edge, Value
--from unittest import TestCase
- 
- Pull = gpiosim.Chip.Pull
- SimVal = gpiosim.Chip.Value
-diff --git a/bindings/python/tests/tests_line_settings.py b/bindings/python/tests/tests_line_settings.py
-index 83be3d9..832ac8a 100644
---- a/bindings/python/tests/tests_line_settings.py
-+++ b/bindings/python/tests/tests_line_settings.py
-@@ -2,12 +2,11 @@
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- import datetime
--import gpiod
--
--from . import gpiosim
--from gpiod.line import Direction, Edge, Bias, Drive, Value, Clock
- from unittest import TestCase
- 
-+import gpiod
-+from gpiod.line import Bias, Clock, Direction, Drive, Edge, Value
-+
- 
- class LineSettingsConstructor(TestCase):
-     def test_default_values(self):
-diff --git a/bindings/python/tests/tests_module.py b/bindings/python/tests/tests_module.py
-index c6f07a6..f46729f 100644
---- a/bindings/python/tests/tests_module.py
-+++ b/bindings/python/tests/tests_module.py
-@@ -1,13 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
--import gpiod
- import os
--import unittest
-+from unittest import TestCase
-+
-+import gpiod
- 
- from . import gpiosim
- from .helpers import LinkGuard
--from unittest import TestCase
- 
- 
- class IsGPIOChip(TestCase):
-@@ -50,7 +50,6 @@ class IsGPIOChip(TestCase):
- 
- 
- class VersionString(TestCase):
--
-     VERSION_PATTERN = "^\\d+\\.\\d+(\\.\\d+|\\-devel|\\-rc\\d+)?$"
- 
-     def test_api_version_string(self):
--- 
-2.34.1
-
+> 
+> Many thanks,
+> Andrea
+> 
+> > 
+> > Best regards,
+> > Hervé
