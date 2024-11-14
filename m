@@ -1,37 +1,37 @@
 Received: from mail.xes-mad.com (mail.xes-mad.com [162.248.234.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE643AD2
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68196F2F3
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Nov 2024 14:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.248.234.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595894; cv=none; b=sX8uq38e5f/SCyloQGOJg/RUwmIuGMthacHx1EZZxuJPMOze4hjP1f4d9lUtZUGjCTFiXIfASfFWUjaNojM5yf7BSWOQwBbGrEpz1/+QiiaveEip7CJK4FwW5i+HMRAE7LBp3zy6SjC9suypbB9hpWIrtPspD7TH04PBhA5keAY=
+	t=1731595894; cv=none; b=otj2/7/t97fjlyLsnXSbrg3cIyIWdY8NIO0jb+dVRKuXPmNGMiv1f7BCIOLyMlS+hZ7gOvjGG2J1TxOxfL5wb3F0AkabBEMCWuzpr+e21huzHaEEXz4puCpmQibHKGKNYM4gjQjVpjuOTEUpRnIHgRz0TSsQPk8oSG3f+VIjoZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731595894; c=relaxed/simple;
-	bh=ZAPje8Lv+/hR8Gn0fHhrkcvWtUex3wV0GRH+5dkkX1Y=;
+	bh=h6aB99dT/vAmCz4535pHREsxBEfHYHJ+OD68VRVBLRs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LEXuRWGQj5FzuiKsZcnDZkN7sjtqOG/1UTalCP/JXIwK2svPjGZdG8FAuwYWohZ1HGTjHapPv6kAyKobIRN4EfjIMJeGl6Gkhas1dZ4odK2gstVMZebCboJw3fFELeb1QcFWEL8u89JXHJitI6TxMLpRIDQqRg9E3/NBntZGLYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=dKuDWkVE; arc=none smtp.client-ip=162.248.234.2
+	 MIME-Version; b=KC56uLw0jgZBfRxEKUW3yXWFzGg7NW6sZ7VWjxlyRYrgZyvNYUYYViJ8KfKr1hm09riNLDWLwiGdCfgdAJi3jeEHrd6L7VjC5SfDrnJDUIyo9BCCtI/H6RLiFK98I7cmkFhvNnXcJoOAbjf25NNX5k1xWu5Lv4S5cRXkXFKbWiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=w0aKWPES; arc=none smtp.client-ip=162.248.234.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="dKuDWkVE"
+	dkim=pass (1024-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="w0aKWPES"
 Received: from vfazio4.xes-mad.com (vfazio4.xes-mad.com [10.52.19.201])
-	by mail.xes-mad.com (Postfix) with ESMTP id 3389520AB4;
-	Thu, 14 Nov 2024 08:51:23 -0600 (CST)
+	by mail.xes-mad.com (Postfix) with ESMTP id D5ED520AAC;
+	Thu, 14 Nov 2024 08:51:22 -0600 (CST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xes-inc.com; s=mail;
-	t=1731595883; bh=ZAPje8Lv+/hR8Gn0fHhrkcvWtUex3wV0GRH+5dkkX1Y=;
+	t=1731595882; bh=h6aB99dT/vAmCz4535pHREsxBEfHYHJ+OD68VRVBLRs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dKuDWkVEJdN/+J4NX0l86qMtkvgrUoc7Yv/So9HLzGy6oMLZELjNilT0oCx/qI+0m
-	 XpvqYLNWY3nvPouejsDhL5caw4HsieqO3GZ+HRDM8lnviwYyoiuYmGU5keb7RMBtuX
-	 4R0Dp3xOUoiqCoGh2V2T3pWNuEDi5iAStbA9C/NI=
+	b=w0aKWPESzAuoPzJ0u7AZI4UOUlfPsb3FtZN5NaA3A2d3N0Zq4RRAPgJwK4NzqbiXr
+	 QJV/EVVF42OTCyigV0pqiL/m7LFVIJ86TIFXMrhWyFE0MDZCsj2jHr0qw7JM4IHSQb
+	 h3KCaJLdtECRlHzyPQU9FNNBawehljX/dL8MD6KY=
 From: Vincent Fazio <vfazio@xes-inc.com>
 To: linux-gpio@vger.kernel.org
 Cc: vfazio@gmail.com,
 	Vincent Fazio <vfazio@xes-inc.com>
-Subject: [libgpiod][PATCH v2 12/23] bindings: python: convert lines to offsets in LineRequest
-Date: Thu, 14 Nov 2024 08:51:05 -0600
-Message-Id: <20241114145116.2123714-13-vfazio@xes-inc.com>
+Subject: [libgpiod][PATCH v2 08/23] bindings: python: add type hints for Chip's internal members
+Date: Thu, 14 Nov 2024 08:51:01 -0600
+Message-Id: <20241114145116.2123714-9-vfazio@xes-inc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241114145116.2123714-1-vfazio@xes-inc.com>
 References: <20241114145116.2123714-1-vfazio@xes-inc.com>
@@ -43,78 +43,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove `_check_line_name` in favor of a new function, `_line_to_offset`,
-that converts a line reference to an offset.
-
-This new function helps narrow types and simplifies the iteration logic
-that is used to build objects to interface with `_ext.Request`.
+Add type hints for Chip's internal members so type checkers can ensure
+the code properly constrains to these types and accounts for scenarios
+where the values are `None`.
 
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
- bindings/python/gpiod/line_request.py | 29 +++++++++++----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ bindings/python/gpiod/chip.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
-index 81f2517..3f181c9 100644
---- a/bindings/python/gpiod/line_request.py
-+++ b/bindings/python/gpiod/line_request.py
-@@ -94,14 +94,15 @@ class LineRequest:
+diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
+index bf38c7f..69ea777 100644
+--- a/bindings/python/gpiod/chip.py
++++ b/bindings/python/gpiod/chip.py
+@@ -61,8 +61,8 @@ class Chip:
+           path:
+             Path to the GPIO character device file.
          """
-         return self.get_values([line])[0]
+-        self._chip = _ext.Chip(path)
+-        self._info = None
++        self._chip: Union[_ext.Chip, None] = _ext.Chip(path)
++        self._info: Union[ChipInfo, None] = None
  
--    def _check_line_name(self, line: Union[int, str]) -> bool:
--        if isinstance(line, str):
--            if line not in self._name_map:
--                raise ValueError("unknown line name: {}".format(line))
--
--            return True
--
--        return False
-+    def _line_to_offset(self, line: Union[int, str]) -> int:
-+        if isinstance(line, int):
-+            return line
-+        else:
-+            _line: Union[int, None]
-+            if (_line := self._name_map.get(line)) is None:
-+                raise ValueError(f"unknown line name: {line}")
-+            else:
-+                return _line
- 
-     def get_values(
-         self, lines: Optional[Iterable[Union[int, str]]] = None
-@@ -121,10 +122,7 @@ class LineRequest:
- 
-         lines = lines or self._lines
- 
--        offsets = [
--            self._name_map[line] if self._check_line_name(line) else line
--            for line in lines
--        ]
-+        offsets = [self._line_to_offset(line) for line in lines]
- 
-         buf = [None] * len(lines)
- 
-@@ -153,10 +151,7 @@ class LineRequest:
+     def __bool__(self) -> bool:
          """
-         self._check_released()
- 
--        mapped = {
--            self._name_map[line] if self._check_line_name(line) else line: values[line]
--            for line in values
--        }
-+        mapped = {self._line_to_offset(line): value for line, value in values.items()}
- 
-         cast(_ext.Request, self._req).set_values(mapped)
- 
-@@ -186,7 +181,7 @@ class LineRequest:
-                 lines = [lines]
- 
-             for line in lines:
--                offset = self._name_map[line] if self._check_line_name(line) else line
-+                offset = self._line_to_offset(line)
-                 line_settings[offset] = settings
- 
-         for offset in self.offsets:
 -- 
 2.34.1
 
