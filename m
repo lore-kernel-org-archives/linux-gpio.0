@@ -1,98 +1,132 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339F017C98;
-	Mon, 18 Nov 2024 09:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D8193060;
+	Mon, 18 Nov 2024 10:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731923648; cv=none; b=d6tOIXuv2XQt31kJ5ffSG3kLWocgOqLnVAuxw8sqcjsjeux/cn+iBH7bJN2pUWNhsXf7hdC5rgVwipVhkBvIdi47Ww/5RF2GVLC8MpsCtCZejXXVbfUqdulwbzxaNHREebkwIlXs0j8zW1spN9iGnxwWLIVhaN8CSnNFdaQ3GhY=
+	t=1731924799; cv=none; b=eXpMBqg5eC2BIDj3/kl7yWvnrYVrNusuQczyZCmL3aeMPtrJ2D/vgR6WabxaNgldKzL9NapkKIBsWArI8izbg9NTK45wezAxAJDwEUYmodKcU9sOwKakMS39NChRHpJtqX0BoxjydWsJHUc2W8DpU7O+H3cWKc2rnH2MVR9Qklg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731923648; c=relaxed/simple;
-	bh=tI+FgdPRksEAbc4BZG9O0l0bupYSJsgZBQ0vTwrBazs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SefkZs0w6RfN+GeFE32QcdaHp8Cpbt936IU/7Pi4+eOl1OH6SPlw7iVuo3a5DLYLeQYSf/z160oCTzwcHVNK6FH+P1a+hDiLR+Cv/pPXUmXe9/tXXjbLqfMyy54T8PyzMNaEncF/NVI0Ii5Gd+nO6rozIqKLOMnSjkC4qKWaZRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsJjyLA+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1731924799; c=relaxed/simple;
+	bh=VIIMBI0K2FJ+33FTK2CZfmZFFmVVhe/6BXur878pLF4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U+L5Nl4x9gsUE2GNhpKIBdzWrbdjngJJ+nlF0rCE2Ey01NmCSh21RYC7/z2HQbCE1GzyoYizbhLuW4LpgMWvc1QIHxlzeZ/c64Qx1Rbf//NlUO0Ql0MOinQcMXUH0T9cGz2dq/ipEyuQ4/0mG714SBlbroUjK3b97qCFRxahl7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LhcD49P7; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsJjyLA+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731923647; x=1763459647;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tI+FgdPRksEAbc4BZG9O0l0bupYSJsgZBQ0vTwrBazs=;
-  b=jsJjyLA+HkTQtoTkNxa2NYL+ogpH79dlsBVMA2cLPRe5PiXP89Kl3jEp
-   ehRlU/f4hB5bxgp2M1wPSKDuPvehubN3ANEPNj8n2kfR18GJ2TaUaaqMD
-   vJbrdn5/PDhYOJApINHII4sOrpfj5vK/bCbfIdz3Ymf1G0aEhIuSkhu7N
-   MtzdLeoAs5OCaf4bBHx9WDvQlYafBmdXh36M4uRBOPgiVKp3B442Va43k
-   XNxp+xzYU2TlcVG37qgqCj2yj3DBQj5hZgRkE5BETlB60Gw1IgxKqn3na
-   qhZN7kusOVp0ScnKlBVgZFqvheXFpOPLbAYHtAdfnF8ZVdi4bkpeKOsWT
-   w==;
-X-CSE-ConnectionGUID: 9enKWM3zTTKAFiSzRrBq+w==
-X-CSE-MsgGUID: 9/GsmDXaRauxEho76TkFoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="42508321"
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="42508321"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:54:06 -0800
-X-CSE-ConnectionGUID: fguY9azgTZO4+dracBBAZg==
-X-CSE-MsgGUID: UtVD6OTHTRW84Zwd/mYtjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="89303783"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 18 Nov 2024 01:54:05 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9DD43277; Mon, 18 Nov 2024 11:54:03 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mun Yew Tham <mun.yew.tham@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 1/1] gpio: altera: Add missed base and label initialisations
-Date: Mon, 18 Nov 2024 11:28:02 +0200
-Message-ID: <20241118095402.516989-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LhcD49P7"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 941B11BF203;
+	Mon, 18 Nov 2024 10:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731924788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ACDFHfM+SiIy9UjEXXOYcBvbsceiPAkm0g+8DdoGhXQ=;
+	b=LhcD49P7lHg0SccJBsjPVy2tmQbfuaxhed/4EpPZCpefxGC7uVP66uJox7KYaldqonlmlw
+	rzaW+iQAA7gV6ZAQt9mjWKZIufs04ZpOkJmqOtoSI14zpMmcGe6g6ksPXxETdt3WfwcReY
+	JI94VZPV0kOEQ361M+/7cSJKnTE4usuIHxrqdC3ElehQdMg7bGPl6d4XeQ9q3wMnQp4L1W
+	gspGq230YBgXFnFjcwE3p5ZCVf1GVXaVWSZ6H1lwZA2U1LEzXmD7R7o7dDnZfg5M/IovlG
+	gCB8FePLEbqlkwr7ER95XODME4MG5PWV6ZjRD/9Kk1D1NfOM4nLlcGm5Md4fIQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH v2 0/9] misc: Support TI FPC202 dual-port controller
+Date: Mon, 18 Nov 2024 11:12:59 +0100
+Message-Id: <20241118-fpc202-v2-0-744e4f192a2d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACwTO2cC/zWMwQ7CIBAFf6XZsxjApoCn/ofpQRDsJgoNNETT8
+ O+uNd5mXl5mg+Iz+gLnboPsKxZMkUQeOnDzNd49wxs5SC57wYViYXHEbAjcqpMhVhrovGQf8LW
+ HLhP5jGVN+b13q/iuv4Tg+p+ognEWfC/dYLR1Ro42pfWB8ejSE6bW2gdCNQDSngAAAA==
+X-Change-ID: 20241017-fpc202-6f0b739c2078
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: romain.gantois@bootlin.com
 
-During conversion driver to modern APIs the base field initial value
-of the GPIO chip was moved from -1 to 0, which triggers a warning.
-Add missed base initialisation as it was in the original code.
+Hello everyone,
 
-Initialise the GPIO chip label correctly as it was done by
-of_mm_gpiochip_add_data() before the below mentioned change.
+This is version two of my series which adds support for the TI FPC202
+dual-port controller. This is an unusual kind of device which is used as a
+low-speed signal aggregator for various types of SFP-like hardware ports.
 
-Fixes: 50dded8d9d62 ("gpio: altera: Drop legacy-of-mm-gpiochip.h header")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The FPC202 exposes an I2C, or SPI (not supported in this series) control
+interface, which can be used to access two downstream I2C busses, along
+with a set of low-speed GPIO signals for each port. It also has I2C address
+translation (ATR) features, which allow multiple I2C devices with the same
+address (e.g. SFP EEPROMs at address 0x50) to be accessed from the upstream
+control interface on different addresses.
+
+I've chosen to add this driver to the misc subsystem, as it doesn't
+strictly belong in either the i2c or gpio sybsystem, and as far as I know
+it is the first device of its kind to be added to the kernel.
+
+Along with the FPC202 driver itself, this series also adds support for
+dynamic address translation to the i2c-atr module. This allows I2C address
+translators to update their translation table on-the-fly when they receive
+transactions to unmapped clients. This feature is needed by the FPC202
+driver to access up to three logical I2C devices per-port, given that the
+FPC202 address translation table only has two address slots.
+
+Best Regards,
+
+Romain
+
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
-v2: explained why label should be initialised (Bart)
- drivers/gpio/gpio-altera.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes in v2:
+- Renamed port nodes to match i2c adapter bindings.
+- Declared atr ops struct as static const.
+- Free downstream ports during FPC202 removal.
+- Link to v1: https://lore.kernel.org/r/20241108-fpc202-v1-0-fe42c698bc92@bootlin.com
 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index 039fef26546e..73e660c5e38a 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -261,6 +261,11 @@ static int altera_gpio_probe(struct platform_device *pdev)
- 	altera_gc->gc.set		= altera_gpio_set;
- 	altera_gc->gc.owner		= THIS_MODULE;
- 	altera_gc->gc.parent		= &pdev->dev;
-+	altera_gc->gc.base		= -1;
-+
-+	altera_gc->gc.label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
-+	if (!altera_gc->gc.label)
-+		return -ENOMEM;
- 
- 	altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(altera_gc->regs))
+---
+Romain Gantois (9):
+      dt-bindings: misc: Describe TI FPC202 dual port controller
+      media: i2c: ds90ub960: Replace aliased clients list with bitmap
+      media: i2c: ds90ub960: Protect alias_use_mask with a mutex
+      i2c: use client addresses directly in ATR interface
+      i2c: move ATR alias pool to a separate struct
+      i2c: rename field 'alias_list' of struct i2c_atr_chan to 'alias_pairs'
+      i2c: support per-channel ATR alias pools
+      i2c: Support dynamic address translation
+      misc: add FPC202 dual port controller driver
+
+ .../devicetree/bindings/misc/ti,fpc202.yaml        |  83 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/i2c/i2c-atr.c                              | 480 ++++++++++++++-------
+ drivers/media/i2c/ds90ub913.c                      |   9 +-
+ drivers/media/i2c/ds90ub953.c                      |   9 +-
+ drivers/media/i2c/ds90ub960.c                      |  65 +--
+ drivers/misc/Kconfig                               |  11 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/ti_fpc202.c                           | 440 +++++++++++++++++++
+ include/linux/i2c-atr.h                            |  67 ++-
+ 10 files changed, 976 insertions(+), 196 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241017-fpc202-6f0b739c2078
+
+Best regards,
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+Romain Gantois <romain.gantois@bootlin.com>
 
