@@ -1,65 +1,97 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DC52500CD;
-	Mon, 25 Nov 2024 07:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938261537D7
+	for <linux-gpio@vger.kernel.org>; Mon, 25 Nov 2024 08:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732520970; cv=none; b=S2x62Zmt4afbnIIKQIJchMxVqYEEIS+pDsZ1DM9ejNpi+gXtlbl9PofEr4MGEqYpESu99N/vLMBoMgP1ory9aI3WuKVu5X5XsQFWlM4H0d7m+yXsG2juLFLV354ZHpppXwtsWjMufJSrhpEvlKdXRqnJTH7JV0u45b/W7G/N2JY=
+	t=1732523683; cv=none; b=jJJVYrIEL/2FlVMl2bcLxycg8oQfJOF+LcaY1QjpdvT4GuT+e0pSW5zljEDGuL16WN7+F7wubIljnmbBMr9AZPQVmqr7fqfaiYvVVQ7vSUP1fCXBXNVMI557iPs6cbIds7p0MKrh8A7B7vSad6wBDYkDI4vkw626Om+yn0vzMyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732520970; c=relaxed/simple;
-	bh=Q9pwQZ367/dYdTXJasRylk1GyYiolNOY2J8AWlFyzwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F50a61czkaJ7KiRmhhr1rbQcwBuZ1CCF8H140hDaekrrikaowaLFXbYoh44E4zfd54SQB8SyNC+4NhLe2clVH2UsRIXK1H+mJF24FLeptxfDsXqKZmrTGYSYHkkkAU3Y9ZrD9MVnvSai909IlUERvt1IMpHnsL56A8ksTsR+P8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=el8Y6miP; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1732523683; c=relaxed/simple;
+	bh=5Nhv1Mm0+fbxtk2KdzQJbKFpjj2DWs2QHyapg7sOW0E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3QZv+nv3dBlGigmZ4ulSNwDr+IxWHKsmbNsZDcK3G7n1SkQx8jHt3EmJ0oCU+UCB0tOSxJG/UnVMKDjw6g/+8Q4x6ZCwm7dPIimqW1spdWT64Kj5ZMTsDGkpUcoCIAuQYDZBViBvljDqVG67DhOAnOuFY32bnLnI7YSDJQes98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DDIv0taD; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="el8Y6miP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732520968; x=1764056968;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q9pwQZ367/dYdTXJasRylk1GyYiolNOY2J8AWlFyzwE=;
-  b=el8Y6miPxY0C37BHWkIBdk5kLS4dSNquIddkqTV3xmiCC41e2uI6oh0b
-   H+M1Kjb51ThO0ab3ruMl2KHhu8z06SJsE2dIQ9/d7NGLTjgpt3SQPWagq
-   UHuu9Zg1Um9Q18jPWiSHV7Q9fsxp/T3AwwFyjjf798AIUXd8bkn1767dl
-   w5DbRH/Flk5K1YBUfiXUQ28vZ4IdaJPKQyQPG8hcznR4fnkGXKvk6ZrYa
-   foYW2YnRq5w99hWTfKtloYWR1XL8ARftJOdhMHzYSdICn5V54gcR88ldO
-   zykL0LGofx0BPnf09P3LBNit0Z1xEKmC/txSg4NSiMkX9L63/wm4HMQ1R
-   w==;
-X-CSE-ConnectionGUID: 0TXTjPXJQNudr5DmyHKGRQ==
-X-CSE-MsgGUID: Ke2qRtTQQu647/b0M8xDgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32740347"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32740347"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:49:28 -0800
-X-CSE-ConnectionGUID: pxY7O9fcSuGdYlHOInkmPg==
-X-CSE-MsgGUID: R4o3wtvdTCW5wO1mRjziiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="122036046"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:49:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFTqU-00000000fmp-1knr;
-	Mon, 25 Nov 2024 09:49:22 +0200
-Date: Mon, 25 Nov 2024 09:49:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, gregkh@linuxfoundation.org,
-	linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
-	broonie@kernel.org, pierre-louis.bossart@linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v1 1/5] devres: Introduce devm_kmemdup_array()
-Message-ID: <Z0QsAm3FdZDJ8kY0@smile.fi.intel.com>
-References: <20241123200527.7830-1-raag.jadav@intel.com>
- <20241123200527.7830-2-raag.jadav@intel.com>
- <Z0LPyMed-4a8cajD@google.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DDIv0taD"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa549f2fa32so136948966b.0
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Nov 2024 00:34:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732523680; x=1733128480; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
+        b=DDIv0taDA8NxOu9j0vaARHXUXN4/MCxzDydDyuQWYRsU6gz+vewnPcxNbF5zL0IQUy
+         qBwx06I22FYw0quLmSmGeCa46iLIfjgp7JD+lcl+HAPlFLsBk6Ln4ZF8AGjC5iyBYbFy
+         gqp2M9QOQJY/OtQYJoRLyFJL3EPUYc+kCmwnbkfWl5TfRImvmS6ntM3BftwNAWDiQTws
+         9zy90N3EpUfI6BJBEh59TNYWyH56oSdrtTpUp8jG2m3TTaGd45+H4miYskgztd+fSZi0
+         8oVkI98JzMyUzc30rRJTLJQOoUmCYv6sLWr0j/GmAeMsOY+mmKo69aM7HoYritTbnsWu
+         BtNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732523680; x=1733128480;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
+        b=aeulqSL+wi7hb7NYXa8iAXmDPjKKZ33UDRY1soe+j/bfhyDsDTFTWRShKo+AZinJHM
+         zPNFuH3dwMl53e7NSjs1aZui0vuYruyJ/zav+0N0nvgl/BfRMvOGQezQNPvJIpJ6QCYF
+         KoQQahNyHWM5CtXrn/SK67pYhKoyhxE8Qyk6OMaXXUJqnjqjoQKvehVhGop1ldlsittk
+         czl1fy08XJOirrXXIX3y/MTc2RLylsOUd+nh/YelfSjJgdI1x9h/QHlJRToIFKIw3B2B
+         X2d9ciBmhOWojwbbF7QD6CN0LdxQrmFJmdsgTDSPWuUNr9R71LsxgjNwqTi8e9gG55Hr
+         9nfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeVSrxC9WzIa2dWH0L1AVgkKs48aSbMSLTK92Yy/TyPFlJLjr1Ad17jQEW8ZZI6U7DTUFCe1JelUgZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1fXG/0iy7HdrObmcAaXchdcFeTqeacTN1q//JY8RoJNRaDDcN
+	I8eXEelaNTeo5G0ECUxdxbzNSm6wyOxfnu4IFdo5GX+7FNhtaTgDecFNnqJVwSs=
+X-Gm-Gg: ASbGncsdcR/5E153gEbEfb+poyrkSUDR+YcXPqfYE2Swxl7Wms3skqlMnQG56rot0QI
+	eudo7uZGDQZLi6yb8SeTHuWUEDtE+c7imG40c1Jg4rDnvF5ppd2NV7X8jBPD6SxJXbUduB5+qUG
+	IKz50B8qMrnb0+X5jRjrpMsKG1+tSYWN9NR1nnlPCjCIE1wfOSYFryYbXlPfQawlXg9BmIRxRAY
+	bnqL51yurn98nUctqKUvYn1zHmJq/GnUmNaZ/NChg6UZJGT/fv9f27JaarRqWTYGZD4WapwXVQq
+	cGezO32iVKYLLz8fibW/
+X-Google-Smtp-Source: AGHT+IHTcfEoEYoZ9eKBklAA7GYxZ5kMOqK2yZ8KaAw01uPI3MZswrc9AVeFlfapHP8sHh0b3gsj9A==
+X-Received: by 2002:a17:906:3096:b0:aa5:1d0c:3671 with SMTP id a640c23a62f3a-aa51d0c36femr719670166b.23.1732523679890;
+        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57c19esm433460966b.154.2024.11.25.00.34.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 25 Nov 2024 09:35:12 +0100
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z0Q2wJBMdN1dyJWA@apocalypse>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <c48e6b9b178cdaa01b92ae82e8fd24c2ba5f170c.1732444746.git.andrea.porta@suse.com>
+ <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,27 +100,33 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z0LPyMed-4a8cajD@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
 
-On Sun, Nov 24, 2024 at 07:03:36AM +0000, Dmitry Torokhov wrote:
-> On Sun, Nov 24, 2024 at 01:35:23AM +0530, Raag Jadav wrote:
-> > Introduce '_array' variant of devm_kmemdup() for the users which lack
-> > multiplication overflow check.
+Hi Andrew,
+
+On 20:33 Sun 24 Nov     , Andrew Lunn wrote:
+> > +++ b/drivers/misc/rp1/rp1-pci.dtso
+> > @@ -0,0 +1,8 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +/* the dts overlay is included from the dts directory so
+> > + * it can be possible to check it with CHECK_DTBS while
+> > + * also compile it from the driver source directory.
+> > + */
+> > +
+> > +#include "arm64/broadcom/rp1.dtso"
 > 
-> I am not sure that this new helper is needed. Unlike allocators for
-> brand new objects, such as kmalloc_array(), devm_kmemdup() makes a copy
-> of already existing object, which is supposed to be a valid object and
-> therefore will have a reasonable size. So there should be no chance for
-> hitting this overflow unless the caller is completely confused and calls
-> devm_kmemdup() with random arguments (in which case all bets are off).
+> This is probably O.K, for now, but really the tooling should be
+> extended so that DT files can be checked anywhere in the tree. I can
+> see more such embedded DT overlays appearing with time, and there is
+> nothing actually arm64 specific here, it is architecture agnostic. It
+> is just a PCIe device, there is no reason it could not be used on a
+> S390, Risc-V, or loongarch.
 
-Don't we want to have a code more robust even if all what you say applies?
-Also this makes the call consistent with zillions of others from the alloc
-family of calls in the Linux kernel.
+I completely agree with you.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Andrea
 
-
+> 
+>       Andrew
