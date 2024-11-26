@@ -1,101 +1,139 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D9E1DDA1B;
-	Tue, 26 Nov 2024 17:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AA611187;
+	Tue, 26 Nov 2024 18:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641779; cv=none; b=Zl2sVAJVNxUcKXDo37djk6Lr/XG1JOXn9wRF/B5SoWEa7fqDlkAvbc8jnZrFPBPA2+0DPztFN6K9utqRMOv6krzVYKhTXLZ7wqo4HHd+ejOXNT/Gw1WeY4Ua0D+eCRU8y168PIp52SXix0J4WOCjNSbH6Lz0efL9n7+SASu9S6c=
+	t=1732644590; cv=none; b=nr18EGvAbUFZYtcw/JgbWYQXqtZirtK8OJ3fxUaHLvCyACt4iw/Tau1yhmuK6w6Ss2HFAFrzX/hnGaoJs5u+2ol4pBOYu0GURJbLqQS/LBgv9AS72i8rF8rI8LtG0unGZpN9jPQSrnwBH/WPD4BFhtyANAlECzDlIyeSCoRS2WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641779; c=relaxed/simple;
-	bh=3EIXoatjneQZ2uqGx9N3SU/Mn6t64EkwXr6y2DKjDv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TrXZUlep3QwLXEQ5WJ2EpRzbgscy9ULd+qrWBJSF+60qj/cq8zOP8BNpUHUD5N54+CFrXAIWVitYoenVIkrc+lC17wZ/fjb62aGYJr0Xm/ToudTpNeStmC3tGpqOqFCVfjuwcwdPjtw1Vi+c8rFqhamTmH1W4ZSaHPOrKCGh7aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NCNGWPyE; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
+	s=arc-20240116; t=1732644590; c=relaxed/simple;
+	bh=Dn68kwfusM/F6PFzcK9RRMgIKLG8Q2p95XVK2fHrCpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HdOb3CRsqfe9fYx8NLvdSWQtqA9LkkEO+B9/qVDmz4PC4Y5th0HlDAIA6e+i1PvExQYncUdHqwQSt14MftlBHKY3W7BCpgBc5dryCfvpWsxGJMbxGWa9vpJ/WcjYVKySLUL34scJqwIZcRtQQrWsWc3lJTdzQcJXAiLfYrbyG1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqFjblAH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NCNGWPyE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732641778; x=1764177778;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3EIXoatjneQZ2uqGx9N3SU/Mn6t64EkwXr6y2DKjDv4=;
-  b=NCNGWPyEZTv8ITQaQPhYxTYKY5hNRKu891DiqXVnsmusbR1SPVBT8m+B
-   05n/+f1vNvqZf+L/EafRm8v3VJgyNfT/TW2NTJgxgyiED+8ksdEuNkTcz
-   vEbhDC/8RjuxuiNs8FsNp7gT6KqbrpeXzFpwF91lTmy57Z1a9seB3sn4f
-   Uoa9VGRB//gsJXBMEzuLbcf3t56kd74TJpzrAuLVj1UnIzWEfoC/+vi/S
-   yXtiLEyfFzc/U1nJ9vo0pjekhz/5mRB244iSLYrv0NVNVyWWY9p73l4nE
-   7bSgdb5tTVrGwGJ703XRyHweHn07+b+BSgg7ibUQoA5Z4RGj+iZCDeLK5
-   Q==;
-X-CSE-ConnectionGUID: /FT7ZCVQSseb9YOTCAGFtg==
-X-CSE-MsgGUID: pcf5zJSsR5+4cgS1VFqk4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="43312976"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="43312976"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 09:22:56 -0800
-X-CSE-ConnectionGUID: 0AGLVF9FTmys5JSAxrF+KQ==
-X-CSE-MsgGUID: I7KIcx31R+qnTqmzkYEmvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96730579"
-Received: from inesxmail01.iind.intel.com ([10.223.57.40])
-  by orviesa003.jf.intel.com with ESMTP; 26 Nov 2024 09:22:52 -0800
-Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
-	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 4AEF11CAE2;
-	Tue, 26 Nov 2024 22:52:48 +0530 (IST)
-Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
-	id 3A8061600131; Tue, 26 Nov 2024 22:52:48 +0530 (IST)
-From: Raag Jadav <raag.jadav@intel.com>
-To: gregkh@linuxfoundation.org,
-	linus.walleij@linaro.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	dmitry.torokhov@gmail.com,
-	broonie@kernel.org,
-	pierre-louis.bossart@linux.dev
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v2 5/6] input: sparse-keymap: use devm_kmemdup_array()
-Date: Tue, 26 Nov 2024 22:52:39 +0530
-Message-Id: <20241126172240.6044-6-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20241126172240.6044-1-raag.jadav@intel.com>
-References: <20241126172240.6044-1-raag.jadav@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqFjblAH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27BBC4CECF;
+	Tue, 26 Nov 2024 18:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732644589;
+	bh=Dn68kwfusM/F6PFzcK9RRMgIKLG8Q2p95XVK2fHrCpI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EqFjblAHK+acST9EGdraw8bb/dxcuETdMlcHHy2i1lRe1YVc5tLv+qNV31V6Ab/fU
+	 IcrBVFs5YMywsHEUWNBWXWYDqHdQLGadZVOxLIoo+npNxHP62hOvbpPxwvC6jr1dDZ
+	 b1gy3AwfIi0HyO7znaTYGuIS92IrJUuIfkAg3fiiPVBlgoOnO8DfZqLoHtqYBXeqTS
+	 W+mUh9K6EAxwZLXGOyDtqxWVScl7Opw9Ms4Seyj8uidgfsZSRQ0HXA9GZNALdX/3EN
+	 PEdlmZsoef3RyvyalQg2Nm6tJfL2C9jEk6dNSRQdz5PidL7KZOgVxjhzxzD9ADbsee
+	 yb2EMIaRpeYog==
+Date: Tue, 26 Nov 2024 18:09:43 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] dt-bindings: misc: Describe TI FPC202 dual port
+ controller
+Message-ID: <20241126-precinct-corrode-516d3a476479@spud>
+References: <20241125-fpc202-v3-0-34e86bcb5b56@bootlin.com>
+ <20241125-fpc202-v3-1-34e86bcb5b56@bootlin.com>
+ <20241125-overhand-economist-5a3fc6339265@spud>
+ <2072150.UuDqf3iUMg@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hkZzaXn6Nj+Xev9H"
+Content-Disposition: inline
+In-Reply-To: <2072150.UuDqf3iUMg@fw-rgant>
 
-Convert to use devm_kmemdup_array() which is more robust.
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- drivers/input/sparse-keymap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--hkZzaXn6Nj+Xev9H
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/input/sparse-keymap.c b/drivers/input/sparse-keymap.c
-index 25bf8be6e711..5ec3b9ebcac5 100644
---- a/drivers/input/sparse-keymap.c
-+++ b/drivers/input/sparse-keymap.c
-@@ -176,8 +176,7 @@ int sparse_keymap_setup(struct input_dev *dev,
- 	for (e = keymap; e->type != KE_END; e++)
- 		map_size++;
- 
--	map = devm_kmemdup(&dev->dev, keymap, map_size * sizeof(*map),
--			   GFP_KERNEL);
-+	map = devm_kmemdup_array(&dev->dev, keymap, map_size, sizeof(*map), GFP_KERNEL);
- 	if (!map)
- 		return -ENOMEM;
- 
--- 
-2.35.3
+On Tue, Nov 26, 2024 at 09:05:42AM +0100, Romain Gantois wrote:
+> Hello Conor,
+>=20
+> On lundi 25 novembre 2024 19:26:35 heure normale d=E2=80=99Europe central=
+e Conor Dooley wrote:
+> > On Mon, Nov 25, 2024 at 09:45:15AM +0100, Romain Gantois wrote:
+> > > The FPC202 dual port controller serves as a low speed signal aggregat=
+or
+> > > for
+> ...
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - gpio-controller
+> > > +  - "#gpio-cells"
+> > > +  - reg
+> > > +  - "#address-cells"
+> > > +  - "#size-cells"
+> > > +  - i2c@0
+> > > +  - i2c@1
+> >=20
+> > btw, why are both downstream ports required?
+>=20
+> It's because both downstream ports are always present in an FPC202 unit
+> so in my opinion, it doesn't make sense to describe an FPC202 with only o=
+ne
+> downstream port.
+>=20
+> I suppose you could also consider that ports would only be described in t=
+he DT
+> if they were connected to something in the hardware, but I don't think it=
+ would
+> make sense to use an FPC202 in this way. After all, the whole point of th=
+is
+> component is to act as an I2C ATR and low-speed signal aggregator for
+> downstream devices which would have address collisions if you placed them
+> on the same I2C bus.
+>=20
+> But then again, you could consider that DT bindings should only describe =
+what is
+> possible, and not only what makes sense as a use case. I don't really kno=
+w how to
+> answer this question myself, so I'll refer to the maintainers' opinions.
 
+I don't really know what how this device works, which is why I am asking
+questions. If there is no use case were someone would only wire up one
+of the downstream ports then making both required is fine. I was just
+thinking that someone might only hook devices up to one side of it and
+leave the other unused entirely. Seemed like it could serve its role
+without both sides being used based on the diagram in
+https://docs.kernel.org/i2c/i2c-address-translators.html
+unless it is not possible for the atr to share the "parent" i2c bus with
+other devices?
+
+--hkZzaXn6Nj+Xev9H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YO5wAKCRB4tDGHoIJi
+0peVAP0Tx4IuAFRG1f+DIwASl/6j0oDlZVMHvalzkyIQp7Ma4QD/WL2qSBDyyW3P
+hTovWdSEjm5sUQSwdUr2MU+1r5AGpgo=
+=Hc1y
+-----END PGP SIGNATURE-----
+
+--hkZzaXn6Nj+Xev9H--
