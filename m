@@ -1,177 +1,447 @@
-Received: from USG02-BN3-obe.outbound.protection.office365.us (mail-bn3usg02on0046.outbound.protection.office365.us [23.103.208.46])
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CD982D66
-	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 17:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.103.208.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732729340; cv=fail; b=puRX5Dbze8EL8WV9R/HImt0yMCRay3a0ibpwTJCKxrFz+9uPc2NIecE0JyftKXmpXUt/gW/HqlXS9u9fGDgGrX8hx/CeKIjYw3EJZ9SL/nVz6JmOQrUWRLKYZ2pBfa/IYUhBnHzO4Cr60+7Btvn1mLf6BzY43igTrAISVMbYOgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732729340; c=relaxed/simple;
-	bh=AhiYUEGJTP6ShcD5W0o+2pd4z8nsrxwfw0gw4Atb0K4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lBaoTsXOWeg3SYoGrkUheThtVn1h6rvyY54SLxciWWVe+vkNCxFsiDfYkj4tf78tH3y3tJhOqrsM/wKmdiww82H8Hx0/wqmiU0VJvJyUW3RCQsoIjJqAzK4kePxHg3Mu2w3N8ZjSlol4s6UAVe/caArsmHKuG7CS8QLFVhUynl0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (2048-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=Hh5V3fMX; arc=fail smtp.client-ip=23.103.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1316613B2A2
+	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 18:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732733121; cv=none; b=VLb0KFycAu+eD/3vLcl/ZIlZbZeFHRE1IwIvjNZBSvqycJCgZvDMQkqnbjyavV41+mFi3cn55lzRcHD3IBEP6ZUE4UNyY6qgI6DF6uS7ieGWdBQJyW/z4ts1YUKIbi9s9/zfoe9SqF/q82y2yZffB2wYYnZrW0nTVutBF6yxO4I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732733121; c=relaxed/simple;
+	bh=NSub2cKOB+n9HzNB+Kf3pZUiuN/V+cWCYRqNML8oEX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IgfA2RY9r2Wt3VV37ZQFk7MjHihmmI5CMiB86611G39Awb6m/wdC2u9rKxcNUndg0avyOXJP04bZEXMYKARzCX/6/szbW8hlqxd1zPjQgou0iAbLUCQIQLLsQbl9vOIkSAuRDPGfGu6BU05oaI34oPpPMLkZZCSj2/SPRI+m5TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=SpYGPhig; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="Hh5V3fMX"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector5401; d=microsoft.com; cv=none;
- b=HgYvub9VYsUSyG0+m90y8TXXy4X5sK7w9WNoWhsUOxNQ08Y3LXDQfdvBrffUbqy2uHTft01B5JZfHzID+v5AKDmNHjzMTOzDh3yS+j2MtyudbuU7gErWdnmjqdtthl2D0OqqmjUtveSQH7UPZCsDQfFgJvCzFMdEvTfnIVTHSSGJrfLwGem3MtqzeByJPPodO6g9py82VH+OnvUgfKEQ7RDdX/RenbPQ0RP/uafkkZPrsWV5W1zAXmLWRJ1hQe5AUINJlaUweJcRlmxi74PQD6lDYp/FefOOr7t9nt9fyhzutYg2GD5z5bba06SryTt1d651nL4xk4BO6VWt4SQApQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector5401;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m3icwYTSuSDBusSGCyN9ipxPDseHke1e1Bv/1rakjk8=;
- b=s2weJDKIZd8r4t09NsNG8Qru4khmJ7Pksfo0Bul7bZifMMUq7QpGmB5AwnqIk6pBAG54kSqiZVkBEBXApdY6cYGXCUX3IUx3YBrbT7Dc8CeG5FBvSwV7oEQQuPajJggUi3LEK/NCXwNR7Rnzp5/K2zMWpOQ8W+l0LtOOpJF4WB5pUW5tBDU6LqSG/cc+hEKkRXe/3LGd4uc6sasffsVFYwDzGwkNbkMDgyuxlDlEFOKijNbpQTqmn8gdApdA3opgFAh9b9UirMdYb1LEWaTpcMEnZJCTzZ1e8a2wc4QthBYuQlqDVdDKQaRfdOfZ2B22PrB5HCgEAmFDivJaYWKDoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xes-inc.com; dmarc=pass action=none header.from=xes-inc.com;
- dkim=pass header.d=xes-inc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xes-inc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m3icwYTSuSDBusSGCyN9ipxPDseHke1e1Bv/1rakjk8=;
- b=Hh5V3fMXuCBuRrOpsnUnDF9lQxWw+pPmjcSZt4HQ6cfDCEBArU8V3KE/3gjp2Fj9bdiq+wEAqxON7zXWa75RvNMqFj8ekatTqgXCWdhNAQ0bNJ4AbQUXsuGuD4f+yTyOh4BhzwNrqAY/2UUtEMLGvU8bpp/PSQptixGh8FWRP5ADsmmwv+ugcGLM6qhYoNHRCQ3G12cQvlpFoBFU0oc2oUyVqCtIJSTsiP3HkiM0XRDITFZ4cAkRxxBBLs8Z3cZorcp36qhBDi8yoNRmYMVUcBZnytbCgZ5Yjo5EX167ZnBMfy4U63TP8g5McEGSIrGgbOLnGTBXj9l9CcoKVJuv8Q==
-Received: from PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM (2001:489a:200:18b::15)
- by PH1P110MB1235.NAMP110.PROD.OUTLOOK.COM (2001:489a:200:18f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Wed, 27 Nov
- 2024 15:10:07 +0000
-Received: from PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
- ([fe80::71c7:106d:6bd3:fa2e]) by PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
- ([fe80::71c7:106d:6bd3:fa2e%4]) with mapi id 15.20.8158.024; Wed, 27 Nov 2024
- 15:10:07 +0000
-From: Vincent Fazio <vfazio@xes-inc.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Phil Howard <phil@gadgetoid.com>,
-	Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: RE: [External] - [libgpiod][PATCH] bindings: python: fix license tags
-Thread-Topic: [External] - [libgpiod][PATCH] bindings: python: fix license
- tags
-Thread-Index: AQHbQN2sN9gqqCVJ70qJxkt1lJOg4rLLOxMQ
-Date: Wed, 27 Nov 2024 15:10:07 +0000
-Message-ID:
- <PH1P110MB16034D59F26D1C4A54BE81039F28A@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
-References: <20241127150529.126896-1-brgl@bgdev.pl>
-In-Reply-To: <20241127150529.126896-1-brgl@bgdev.pl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=xes-inc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH1P110MB1603:EE_|PH1P110MB1235:EE_
-x-ms-office365-filtering-correlation-id: 08f6f360-b914-4519-7b0f-08dd0ef59460
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|41320700013|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?uZ0eM8BXyZxulZbsbz8lyMtHsP3bKHEqdqo+us/8iTyUTUbmXWyJurFCK0U4?=
- =?us-ascii?Q?s4bKH4Ko4p1fL1OXCj4zVUjnF/GOzzuNL6zuE9sclj0qn7WA9fqDFuCnKLIH?=
- =?us-ascii?Q?wAIHF+6G2vGaMCyw0XgBRxtb58Dw/7wSwHHEIW1WsV2XqNEPvbr75wa/fZON?=
- =?us-ascii?Q?m4pMoLdY3d2XA7jZmZWo/ncjoz2iV4qOaXrvE63sGkfyUB7XNv70BtKeaA9R?=
- =?us-ascii?Q?JcGgd3btYq0E19H0rtu+iJAYoKDjgrcVxwAcD+LprBwpyBCBkRJrQegOm5VH?=
- =?us-ascii?Q?F7HthhbAfif/7dXDVxgSwxqU17ps/T1exqz6m4bT554xElMRojixmkl284jn?=
- =?us-ascii?Q?/cnHE8TGrUOBERxBB/JH0UkoAqYEOX77mlRSU9uvEoQnsZp4U7ZoqQt6iM0C?=
- =?us-ascii?Q?e+HuCojiDrXkFiB/ipLfxKScU4YA9jThPTXu8OSDwKfPDSBE3ecj9MeMN84/?=
- =?us-ascii?Q?BborxQoOZFOS45d/wdnii6fVxidzfW49ePpm5ZPrLBtET7KXByVGP5y9yJ+d?=
- =?us-ascii?Q?f+NLl26bZIePQ51F7seXtO4sxm0R0tgX3wvLvXYGUYUG17Co6WpC3o/gkZ5O?=
- =?us-ascii?Q?spolSbhTAnJkoAOEnswwtgdl301DwE1O4UGVARAxmbWUSMCmW54h2tutlJH9?=
- =?us-ascii?Q?yIisikCRKRjkl6y7y3vTn9zFZ0Qbycux/tec7qyBU7qN+2lgFgsT/yRxoME0?=
- =?us-ascii?Q?5JwtJ5WGMioETjrckNqTii4bRC7QDUAvCfXAbAFuuakzgntLq5YtDMrM8+uE?=
- =?us-ascii?Q?VyznmpAYFtclefR1JLp/AJ+Je/MM1mWuB6O8SR3fWaUnYL5/QRyYxcnQNurJ?=
- =?us-ascii?Q?W7G+z8uZpVr3DHdkb6M3fbzh1ECk3nthfodLokezO4j3VMY5YJXBbwAlZBcJ?=
- =?us-ascii?Q?l2K8xC042r+LDBo4qgSX2+SpaLdF76XShZhcGqcgwVsd/YivTlIjHslD/4j1?=
- =?us-ascii?Q?BTPLTljz4IC3YmXBS88hDEtkldtEZxh2LBItCljHzO59BQawAUQivgkJYzbC?=
- =?us-ascii?Q?48aEt4mxOaxUmo42r6WuvKR6lzqXDVTmbgRpYqN52HgBfLfv+emPA8+aoqx8?=
- =?us-ascii?Q?ThV1C8KCDDQJ5L1N/ZfWWzm0mjshj20PUffasmmSdwDpOFCsH9LEaSctubLf?=
- =?us-ascii?Q?Val/pMTQ4Sum0F4ejQix0vqfhm7Fi0+SjwveBYuoDq2FlEDTw/ZnDn3vLXKx?=
- =?us-ascii?Q?epVvOqN+r+vtb6osPnnMXb29OCvJVYvEQrWWgtpYVKnRNdlZGD9t83UeLd7Z?=
- =?us-ascii?Q?zKsFCp3ipP+N5Re1GzeZeuBIiSWcQPUMwIwvrL9SCjBGs7EpTGR+YT3W/iBH?=
- =?us-ascii?Q?Nm2+b4YkYEp6TZ0ngyAWujdqKTO5CbHAqyC8vajc9kPmbxU6EP8H8pJfYMRs?=
- =?us-ascii?Q?P7n3scwEc8zR9NeS43RIb8Nz9qxmaU4xS0NDsIjeUGTn/OMkDQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(41320700013)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?5adrdSlJu/mtDxYSfvWy8MqJj67G2UHEX/7k6PBkI51GX0McjFR84900WJLE?=
- =?us-ascii?Q?+/9Qn9QqpcbMIvdLRz0keC00IZndVeNVWVwQE1/NGkGBFNOeRZlBd0GAp/db?=
- =?us-ascii?Q?L+/+KZWHtWCIz+ZsUNUhzKJvHIS7k6flshVKtJbjygi41r1J+jXrejn2KADw?=
- =?us-ascii?Q?DSuN+4WH4uo+n3R0mtTagN33ePMER9pNkg6oAU/2UjXwvbzVEXTzyyuEzXEJ?=
- =?us-ascii?Q?fVJKQcw/I4cFSDaVNw90Fq0MJIa7ZAdyv3/MFc8XzjoZdSbI64epcYII1IeS?=
- =?us-ascii?Q?gnABICsqPjYH8R/CA7Vuwxr5qGECLLSEaUIkKpWV2/12g8LC0rx1KNq0/0tu?=
- =?us-ascii?Q?8N6vWwRroRlRkUsmRUpqXG82VLWRonfASNTySmGBTAqW5mu6YpAwffeF/UGB?=
- =?us-ascii?Q?KxGIpouyFXNQhIPmEMSarlVto+DumZoyx58L2una55sbIeBZ5ljfG3rtvjKV?=
- =?us-ascii?Q?6OwOcg0DdMskjWIy1+VWkp7QAQlLMQgZG2/IfuQ243zRTXeLAyuwyRGD/+rK?=
- =?us-ascii?Q?3r7K1R/pwTs4amk1gr1OXG+joYywR7QMZ33I2aSujKzLzr02gm3b5aLMPFPZ?=
- =?us-ascii?Q?Ak/W4j/hWjo1aFnABYK/MNy/S5x4DVUJl6UZ/6iOfX7ExuvztNq/t/ok9WmO?=
- =?us-ascii?Q?cX3ZJiVIWmoRxNYr2pR3n3OtAtCf5PmtJLyC7dqy97E3fjI7dIc9zatXCtvt?=
- =?us-ascii?Q?mtDJ0uH5d+7wqSzyCK1E46T6cy9iKTltzCkYKdC5Jdul3kdwphGhcnjtlQaA?=
- =?us-ascii?Q?ciQh2Q6Vd9sq/gFLCpraz+PQCb7JrBW2nX9yhygFFCSd3K5dq0qksTgLPpln?=
- =?us-ascii?Q?PmuUvpVJjCy1zGCvQC7NZvvrqtHe1qpXzkWuC4YLvAAotCOcCva+LC9Q4kaF?=
- =?us-ascii?Q?VdjUFzvLwoBkoLZe2Tm7pSnrtYLtKH1CuLKj2zt9+DekuJ+h7xPfhGHag1hB?=
- =?us-ascii?Q?gX5ijSQ5G4DwUfsCJx4sBl8pSgRxJA4WYePGtTLRQTSnRW7tX3yCuMZO+EY2?=
- =?us-ascii?Q?UVKMWcS8J1vo99zB6DGn4sgUp8EZ3LFuJmbnQ4yrmGZgwqvPIQunh4e0/BFh?=
- =?us-ascii?Q?rQBghn6tULQk/8RM2iNYKJxi/p9dia4ZWphGTwwAXGdcsNg0oEDowyqEj5Wp?=
- =?us-ascii?Q?Q8cudi3f2U+2eG1ZGKDcj94lK3kKCsYbCu0cG0/lDr0t2y7ddC8eerUwNv9h?=
- =?us-ascii?Q?X2CbhvwybqUxTr0cs7y7vhLKVJ/oFuYsOyO3LizWV2xAVwe6/QmFnt+k2lJU?=
- =?us-ascii?Q?dTlJvBvSiHsyTHeAx8bicmhWyI+TFwlTQ3I5xA5DUXBS76JoLrEwV/ieAW+9?=
- =?us-ascii?Q?EX/5qbi6m0ZjieH37D6HIxQ99tnXQMjt/pH0XZM1dL6rJHoDhBySsOUzFBMW?=
- =?us-ascii?Q?zZg6VwIah97iy/N+Gbd82vgkF1xagf7ZsXVzdsz0nAUe0y/bpNrk94aiczMz?=
- =?us-ascii?Q?N9chkCt2Pxua2+LDd5569hiOHaO8qiMaZGIX0gHOO87hpZKOVt/wiGpm99wu?=
- =?us-ascii?Q?Umxtw4F6pholzo8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="SpYGPhig"
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202411271845083ed5f38b552589ff2c
+        for <linux-gpio@vger.kernel.org>;
+        Wed, 27 Nov 2024 19:45:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=s3mbgWXFNUsvRMO58X9lemUQ0z+cOkdT4m/j9D8Qujk=;
+ b=SpYGPhigfXb5YXRBNybbFekhNafidOzz0ctwThsWsEGILEWbB2NFaI5+xKPPa2m+zq/76i
+ YOMGYjGH9usnXtRmYt1BfbaOO0eqS7NXvq0F1+r1xOnwi2gU9eHFJkOVdXryXZBAYAhuoNIa
+ gvjlHZ3qhNeybwhpB7PL6JLEZrrKPfc0r+OhMLyNVRruUQAnm+hR2wcpRtb6LPHjgMaRRPr+
+ 785y2+Ov4yR42VUlx+1ibPK0YnyhacuXg9N04hrrKsOnIIM5b2oty/tdY8yHQywihonz4YAb
+ COwgVLVCwUzGTeYBvmS17bNsRtLgzgKJUqemsW5H18v307ceGouZhMfQ==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-gpio@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-omap@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] gpio: omap: Silence lockdep "Invalid wait context"
+Date: Wed, 27 Nov 2024 19:45:03 +0100
+Message-ID: <20241127184506.962756-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: xes-inc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08f6f360-b914-4519-7b0f-08dd0ef59460
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 15:10:07.5581
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2925f1cd-bdc3-4a76-bb38-6159e20a17f1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH1P110MB1235
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
+The problem apparetly has been known since the conversion to
+raw_spin_lock() (commit 4dbada2be460
+("gpio: omap: use raw locks for locking")).
 
-> -----Original Message-----
-> From: Bartosz Golaszewski <brgl@bgdev.pl>
-> Sent: Wednesday, November 27, 2024 9:05 AM
-> To: Vincent Fazio <vfazio@xes-inc.com>; Phil Howard <phil@gadgetoid.com>;
-> Kent Gibson <warthog618@gmail.com>; Linus Walleij
-> <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org; Bartosz Golaszewski
-> <bartosz.golaszewski@linaro.org>
-> Subject: [External] - [libgpiod][PATCH] bindings: python: fix license tag=
-s
->=20
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> Several files under bindings/python/ have wrong license tags.
->=20
-> In general:
-> - Makefiles should be covered by GPL
-> - all python sources under bindings/python/gpiod/ and
->   bindings/python/tests/ that are part of importable modules should be
->   licensed under LGPL
-> - executable examples should be licensed under GPL
->=20
-> Reported-by: Vincent Fazio <vfazio@xes-inc.com>
-> Closes: https://github.com/brgl/libgpiod/issues/110
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Kent, Vincent:
->=20
-> This patch doesn't really relicense the code. It just makes the licensing
-> consistent across the python bindings. However - as the only two authors =
-of
-> the affected files other than me - could you please leave your acks?
+Symptom:
 
-Acked-by: Vincent Fazio <vfazio@xes-inc.com>
+[ BUG: Invalid wait context ]
+5.10.214
+-----------------------------
+swapper/1 is trying to lock:
+(enable_lock){....}-{3:3}, at: clk_enable_lock
+other info that might help us debug this:
+context-{5:5}
+2 locks held by swapper/1:
+ #0: (&dev->mutex){....}-{4:4}, at: device_driver_attach
+ #1: (&bank->lock){....}-{2:2}, at: omap_gpio_set_config
+stack backtrace:
+CPU: 0 PID: 1 Comm: swapper Not tainted 5.10.214
+Hardware name: Generic AM33XX (Flattened Device Tree)
+unwind_backtrace
+show_stack
+__lock_acquire
+lock_acquire.part.0
+_raw_spin_lock_irqsave
+clk_enable_lock
+clk_enable
+omap_gpio_set_config
+gpio_keys_setup_key
+gpio_keys_probe
+platform_drv_probe
+really_probe
+driver_probe_device
+device_driver_attach
+__driver_attach
+bus_for_each_dev
+bus_add_driver
+driver_register
+do_one_initcall
+do_initcalls
+kernel_init_freeable
+kernel_init
+
+Reorder clk_enable()/clk_disable() calls in a way that they always happen
+outside of raw_spin_lock'ed sections.
+
+Cc: stable@vger.kernel.org
+Fixes: 4dbada2be460 ("gpio: omap: use raw locks for locking")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+Changelog:
+v2: complete rework, I've totally missed the fact
+    clk_enable()/clk_disable() cannot avoid clk_enable_lock() even if the
+    clock is enabled; I had to extract all clk_*() calls out of
+    raw_spin_lock'ed sections
+
+ drivers/gpio/gpio-omap.c | 114 +++++++++++++++++++++++++++++----------
+ 1 file changed, 87 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 7ad4534054962..3e6c8dec7cacc 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -140,18 +140,22 @@ static void omap_set_gpio_dataout_mask(struct gpio_bank *bank, unsigned offset,
+ 					      BIT(offset), enable);
+ }
+ 
+-static inline void omap_gpio_dbck_enable(struct gpio_bank *bank)
++/* Returns true if debounce clock has to be enabled by the caller */
++static inline bool omap_gpio_dbck_enable(struct gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && !bank->dbck_enabled) {
+-		clk_enable(bank->dbck);
+ 		bank->dbck_enabled = true;
+-
+ 		writel_relaxed(bank->dbck_enable_mask,
+ 			     bank->base + bank->regs->debounce_en);
++
++		return true;
+ 	}
++
++	return false;
+ }
+ 
+-static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
++/* Returns true if debounce clock has to be disabled by the caller */
++static inline bool omap_gpio_dbck_disable(struct gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && bank->dbck_enabled) {
+ 		/*
+@@ -160,10 +164,12 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+ 		 * to detect events and generate interrupts at least on OMAP3.
+ 		 */
+ 		writel_relaxed(0, bank->base + bank->regs->debounce_en);
+-
+-		clk_disable(bank->dbck);
+ 		bank->dbck_enabled = false;
++
++		return true;
+ 	}
++
++	return false;
+ }
+ 
+ /**
+@@ -181,9 +187,11 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 				   unsigned debounce)
+ {
++	unsigned long		flags;
+ 	u32			val;
+ 	u32			l;
+ 	bool			enable = !!debounce;
++	bool			enable_clk;
+ 
+ 	if (!bank->dbck_flag)
+ 		return -ENOTSUPP;
+@@ -196,13 +204,18 @@ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 
+ 	l = BIT(offset);
+ 
++	/*
++	 * Ordering is important here: clk_enable() calls spin_lock_irqsave(),
++	 * therefore it must be outside of the following raw_spin_lock_irqsave()
++	 */
+ 	clk_enable(bank->dbck);
++	raw_spin_lock_irqsave(&bank->lock, flags);
++
+ 	writel_relaxed(debounce, bank->base + bank->regs->debounce);
+ 
+ 	val = omap_gpio_rmw(bank->base + bank->regs->debounce_en, l, enable);
+ 	bank->dbck_enable_mask = val;
+ 
+-	clk_disable(bank->dbck);
+ 	/*
+ 	 * Enable debounce clock per module.
+ 	 * This call is mandatory because in omap_gpio_request() when
+@@ -211,12 +224,16 @@ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 	 * used within _gpio_dbck_enable() is still not initialized at
+ 	 * that point. Therefore we have to enable dbck here.
+ 	 */
+-	omap_gpio_dbck_enable(bank);
++	enable_clk = omap_gpio_dbck_enable(bank);
+ 	if (bank->dbck_enable_mask) {
+ 		bank->context.debounce = debounce;
+ 		bank->context.debounce_en = val;
+ 	}
+ 
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++	if (!enable_clk)
++		clk_disable(bank->dbck);
++
+ 	return 0;
+ }
+ 
+@@ -229,16 +246,19 @@ static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+  * this is the only gpio in this bank using debounce, then clear the debounce
+  * time too. The debounce clock will also be disabled when calling this function
+  * if this is the only gpio in the bank using debounce.
++ *
++ * Return: true if bank->bdck clock has to be disabled by the caller,
++ *         false otherwise
+  */
+-static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
++static bool omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned int offset)
+ {
+ 	u32 gpio_bit = BIT(offset);
+ 
+ 	if (!bank->dbck_flag)
+-		return;
++		return false;
+ 
+ 	if (!(bank->dbck_enable_mask & gpio_bit))
+-		return;
++		return false;
+ 
+ 	bank->dbck_enable_mask &= ~gpio_bit;
+ 	bank->context.debounce_en &= ~gpio_bit;
+@@ -249,9 +269,12 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
+ 		bank->context.debounce = 0;
+ 		writel_relaxed(bank->context.debounce, bank->base +
+ 			     bank->regs->debounce);
+-		clk_disable(bank->dbck);
+ 		bank->dbck_enabled = false;
++
++		return true;
+ 	}
++
++	return false;
+ }
+ 
+ /*
+@@ -646,6 +669,7 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+ 	unsigned long flags;
+ 	unsigned offset = d->hwirq;
++	bool disable_clk = false;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	bank->irq_usage &= ~(BIT(offset));
+@@ -653,9 +677,17 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ 	omap_clear_gpio_irqstatus(bank, offset);
+ 	omap_set_gpio_irqenable(bank, offset, 0);
+ 	if (!LINE_USED(bank->mod_usage, offset))
+-		omap_clear_gpio_debounce(bank, offset);
++		disable_clk = omap_clear_gpio_debounce(bank, offset);
+ 	omap_disable_gpio_module(bank, offset);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
++
++	/*
++	 * This has to be done outside of bank->lock'ed section, because
++	 * spin_lock_irqsave(&enable_lock, ...) <= clk_enable_lock()
++	 * cannot be called from raw_spin_lock'ed section.
++	 */
++	if (disable_clk)
++		clk_disable(bank->dbck);
+ }
+ 
+ static void omap_gpio_irq_bus_lock(struct irq_data *data)
+@@ -825,17 +857,26 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = gpiochip_get_data(chip);
++	bool disable_clk = false;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	bank->mod_usage &= ~(BIT(offset));
+ 	if (!LINE_USED(bank->irq_usage, offset)) {
+ 		omap_set_gpio_direction(bank, offset, 1);
+-		omap_clear_gpio_debounce(bank, offset);
++		disable_clk = omap_clear_gpio_debounce(bank, offset);
+ 	}
+ 	omap_disable_gpio_module(bank, offset);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
++	/*
++	 * This has to be done outside of bank->lock'ed section, because
++	 * spin_lock_irqsave(&enable_lock, ...) <= clk_enable_lock()
++	 * cannot be called from raw_spin_lock'ed section.
++	 */
++	if (disable_clk)
++		clk_disable(bank->dbck);
++
+ 	pm_runtime_put(chip->parent);
+ }
+ 
+@@ -913,15 +954,11 @@ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+ 			      unsigned debounce)
+ {
+ 	struct gpio_bank *bank;
+-	unsigned long flags;
+ 	int ret;
+ 
+ 	bank = gpiochip_get_data(chip);
+ 
+-	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	ret = omap2_set_gpio_debounce(bank, offset, debounce);
+-	raw_spin_unlock_irqrestore(&bank->lock, flags);
+-
+ 	if (ret)
+ 		dev_info(chip->parent,
+ 			 "Could not set line %u debounce to %u microseconds (%d)",
+@@ -1131,7 +1168,8 @@ static void omap_gpio_restore_context(struct gpio_bank *bank)
+ 	writel_relaxed(bank->context.irqenable2, base + regs->irqenable2);
+ }
+ 
+-static void omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context)
++/* Returns true if debounce clock has to be disabled by the caller */
++static bool omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context)
+ {
+ 	struct device *dev = bank->chip.parent;
+ 	void __iomem *base = bank->base;
+@@ -1175,13 +1213,15 @@ static void omap_gpio_idle(struct gpio_bank *bank, bool may_lose_context)
+ 		bank->context_loss_count =
+ 				bank->get_context_loss_count(dev);
+ 
+-	omap_gpio_dbck_disable(bank);
++	return omap_gpio_dbck_disable(bank);
+ }
+ 
+-static void omap_gpio_unidle(struct gpio_bank *bank)
++/* Returns true if debounce clock has to be enabled by the caller */
++static bool omap_gpio_unidle(struct gpio_bank *bank)
+ {
+ 	struct device *dev = bank->chip.parent;
+ 	u32 l = 0, gen, gen0, gen1;
++	bool enable_clk;
+ 	int c;
+ 
+ 	/*
+@@ -1197,7 +1237,7 @@ static void omap_gpio_unidle(struct gpio_bank *bank)
+ 				bank->get_context_loss_count(dev);
+ 	}
+ 
+-	omap_gpio_dbck_enable(bank);
++	enable_clk = omap_gpio_dbck_enable(bank);
+ 
+ 	if (bank->loses_context) {
+ 		if (!bank->get_context_loss_count) {
+@@ -1207,7 +1247,7 @@ static void omap_gpio_unidle(struct gpio_bank *bank)
+ 			if (c != bank->context_loss_count) {
+ 				omap_gpio_restore_context(bank);
+ 			} else {
+-				return;
++				return enable_clk;
+ 			}
+ 		}
+ 	} else {
+@@ -1267,6 +1307,8 @@ static void omap_gpio_unidle(struct gpio_bank *bank)
+ 		writel_relaxed(old0, bank->base + bank->regs->leveldetect0);
+ 		writel_relaxed(old1, bank->base + bank->regs->leveldetect1);
+ 	}
++
++	return enable_clk;
+ }
+ 
+ static int gpio_omap_cpu_notifier(struct notifier_block *nb,
+@@ -1276,6 +1318,8 @@ static int gpio_omap_cpu_notifier(struct notifier_block *nb,
+ 	unsigned long flags;
+ 	int ret = NOTIFY_OK;
+ 	u32 isr, mask;
++	bool enable_clk = false;
++	bool disable_clk = false;
+ 
+ 	bank = container_of(nb, struct gpio_bank, nb);
+ 
+@@ -1291,17 +1335,23 @@ static int gpio_omap_cpu_notifier(struct notifier_block *nb,
+ 			ret = NOTIFY_BAD;
+ 			break;
+ 		}
+-		omap_gpio_idle(bank, true);
++		disable_clk = omap_gpio_idle(bank, true);
+ 		break;
+ 	case CPU_CLUSTER_PM_ENTER_FAILED:
+ 	case CPU_CLUSTER_PM_EXIT:
+-		omap_gpio_unidle(bank);
++		enable_clk = omap_gpio_unidle(bank);
+ 		break;
+ 	}
+ 
+ out_unlock:
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
++	/* This has to happen outside of raw_spin_lock'ed section */
++	if (enable_clk)
++		clk_enable(bank->dbck);
++	if (disable_clk)
++		clk_disable(bank->dbck);
++
+ 	return ret;
+ }
+ 
+@@ -1503,12 +1553,17 @@ static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+ {
+ 	struct gpio_bank *bank = dev_get_drvdata(dev);
+ 	unsigned long flags;
++	bool disable_clk;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+-	omap_gpio_idle(bank, true);
++	disable_clk = omap_gpio_idle(bank, true);
+ 	bank->is_suspended = true;
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
++	/* This has to happen outside of raw_spin_lock'ed section */
++	if (disable_clk)
++		clk_disable(bank->dbck);
++
+ 	return 0;
+ }
+ 
+@@ -1516,12 +1571,17 @@ static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+ {
+ 	struct gpio_bank *bank = dev_get_drvdata(dev);
+ 	unsigned long flags;
++	bool enable_clk;
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+-	omap_gpio_unidle(bank);
++	enable_clk = omap_gpio_unidle(bank);
+ 	bank->is_suspended = false;
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
++	/* This has to happen outside of raw_spin_lock'ed section */
++	if (enable_clk)
++		clk_enable(bank->dbck);
++
+ 	return 0;
+ }
+ 
+-- 
+2.47.0
+
