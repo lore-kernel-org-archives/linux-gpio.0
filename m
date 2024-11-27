@@ -1,133 +1,177 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from USG02-BN3-obe.outbound.protection.office365.us (mail-bn3usg02on0046.outbound.protection.office365.us [23.103.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736EA200B96
-	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 17:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728158; cv=none; b=RvnIshEPVXhykc21loMpmclaUbnctbzNd6zfHq3tbHXiJggkitHbEuVVJdqR4IuIcbjN2KplHWOyYYLBEySa/E4Jn55o7vA0x0O85JyBCYRTvx/KQd0xB/4FitytDbGbBqsQ6xji2MHx5nbYKEtDDdjRz+Xt/01FLUVS0nOPPuU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728158; c=relaxed/simple;
-	bh=+vUOed904fqCM56GvdT6y2ZFeUnRxD9XR7KdTjK+tA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lsUs4GDfgSNehMRWMsfueZg9HvW12TNjVyjzKam8s7LB/1AlC1gkqIYirpdMQkOdpFhvCpZW70qL6S7g77z+YGX0dR4n1xdZ9maiPW3USt1I/RYb8gpIprkM3ljo74t7L2dGy5SR1AIL24WgjQFJjx3oNPicoMTr3aEc4GDej/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JLkdulyq; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CD982D66
+	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 17:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.103.208.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732729340; cv=fail; b=puRX5Dbze8EL8WV9R/HImt0yMCRay3a0ibpwTJCKxrFz+9uPc2NIecE0JyftKXmpXUt/gW/HqlXS9u9fGDgGrX8hx/CeKIjYw3EJZ9SL/nVz6JmOQrUWRLKYZ2pBfa/IYUhBnHzO4Cr60+7Btvn1mLf6BzY43igTrAISVMbYOgw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732729340; c=relaxed/simple;
+	bh=AhiYUEGJTP6ShcD5W0o+2pd4z8nsrxwfw0gw4Atb0K4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lBaoTsXOWeg3SYoGrkUheThtVn1h6rvyY54SLxciWWVe+vkNCxFsiDfYkj4tf78tH3y3tJhOqrsM/wKmdiww82H8Hx0/wqmiU0VJvJyUW3RCQsoIjJqAzK4kePxHg3Mu2w3N8ZjSlol4s6UAVe/caArsmHKuG7CS8QLFVhUynl0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com; spf=pass smtp.mailfrom=xes-inc.com; dkim=pass (2048-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b=Hh5V3fMX; arc=fail smtp.client-ip=23.103.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xes-inc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xes-inc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JLkdulyq"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434aa472617so9408555e9.3
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 09:22:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732728155; x=1733332955; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=JLkdulyqxb43c14uPF8uuI26xrNrGsYlfXxllhrWCnD1RAhPMGrnv8YdW+0Uvspf5B
-         Ftk0/TLpJhYwwT6oQ48h8DEglzYrDyrNGnAvfkgUs6Owg5mpXWVR6y42D3L8BjyprAvU
-         xgh6hnA5r0d7gCH/ADoOe9h69Om8aAx8RFGaJpjmyuDL49nZvXtMTQqRNLGozR2DfJX2
-         YEiH5+2TYQBI/hMby14P1Wdy7akV3SIAAcON5P0a86ett9HcAUBTazMMblg5fDRSBY1e
-         Sz9/uQTRzu7b2dSWJ95bz3iZ4frM7Zoqtd3g+lBI3Rct2+QbXEf87lfYB2+cWkTsVu2Q
-         MLqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728155; x=1733332955;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=f9gQxkLwZJ9QzN+UUaQQT0+uPzHRa2y0kOgF6nnqdIukfCILYNuBpf47G0RTpZ8dv9
-         /mPH8dIDFJwWFXU7iF/yu2a6ani2S21mhbhuYwAntuRZrivFARDd1uWC5h2ORv6nKFy5
-         oQr9ugn+u6n79GLCtjtO2rnDwn5HHRJDrFUfACAVrSGoB9y4kPH5dIy3nw7nt5WoFUaH
-         oiCV0kLcjZk4JE4tt1/wA1x4HlA12A5dU7t3mqgvFFNPHZqoo36wHlNAtqAwYCXbfeaM
-         N6BM7WDncY4mx0Hwjjvw2MrYAD5fZY6uF/DjESABH3K+qiZmS9ChMit1tE9zqVJFyhID
-         aHeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJcUiJ+bVOWlAKyXTPVHu84n0Uf69OMM8qPG4WWWiVclH7DcVAgTN5t12WPJD55Hy0C+Bv3lBNW5Tw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq3DARapv+T+nwnlxGSiRLI+d8XA7ZZ5OKrikFu/YF4XACR1+b
-	7sUeLGrxh2QQhXG+j+kDaiFq+CIazYxDT6ccyJZL5zzT1+yiiG4Y2V4E65smxE4=
-X-Gm-Gg: ASbGncsON9x+4HRxhC+Xl0kwqXg7qMKEFEfz9PtE/m5YbQOOe6l+BBAPnZWvmsQ7EmT
-	CDMwez3VAEC4uGxtwa7mx5U5KZwiCt+GOr61/JBmt/JzovY+dN20CPJG4aao7OF+tCNQXqxY1/a
-	YtfyXlS5Vl7J6/x4KgOMKXBn1Tn/K/0uJ1BulUABJY5OCbVfA+OeOjxEnB075crDuGaTwtn2Ydg
-	R/e7ZKjOhptpbDTLYUG2PqUT3sP8+LecXxBzw8ZPExK8QlUyD3JqnTcXg==
-X-Google-Smtp-Source: AGHT+IFFWYbsBo99dq8o9ql/MRkTvADPckRvRFXRTZc5M9tvoTbk1c17SeAXZA4rqQw9msf2bDKKIA==
-X-Received: by 2002:a05:600c:1d9d:b0:434:9c1b:b36a with SMTP id 5b1f17b1804b1-434a9dbf226mr36685565e9.13.1732728153104;
-        Wed, 27 Nov 2024 09:22:33 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe3cbsm16741588f8f.38.2024.11.27.09.22.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 09:22:32 -0800 (PST)
-Message-ID: <9bc52590-3f68-423e-8eb6-4a9a06426709@tuxon.dev>
-Date: Wed, 27 Nov 2024 19:22:31 +0200
+	dkim=pass (2048-bit key) header.d=xes-inc.com header.i=@xes-inc.com header.b="Hh5V3fMX"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector5401; d=microsoft.com; cv=none;
+ b=HgYvub9VYsUSyG0+m90y8TXXy4X5sK7w9WNoWhsUOxNQ08Y3LXDQfdvBrffUbqy2uHTft01B5JZfHzID+v5AKDmNHjzMTOzDh3yS+j2MtyudbuU7gErWdnmjqdtthl2D0OqqmjUtveSQH7UPZCsDQfFgJvCzFMdEvTfnIVTHSSGJrfLwGem3MtqzeByJPPodO6g9py82VH+OnvUgfKEQ7RDdX/RenbPQ0RP/uafkkZPrsWV5W1zAXmLWRJ1hQe5AUINJlaUweJcRlmxi74PQD6lDYp/FefOOr7t9nt9fyhzutYg2GD5z5bba06SryTt1d651nL4xk4BO6VWt4SQApQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector5401;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m3icwYTSuSDBusSGCyN9ipxPDseHke1e1Bv/1rakjk8=;
+ b=s2weJDKIZd8r4t09NsNG8Qru4khmJ7Pksfo0Bul7bZifMMUq7QpGmB5AwnqIk6pBAG54kSqiZVkBEBXApdY6cYGXCUX3IUx3YBrbT7Dc8CeG5FBvSwV7oEQQuPajJggUi3LEK/NCXwNR7Rnzp5/K2zMWpOQ8W+l0LtOOpJF4WB5pUW5tBDU6LqSG/cc+hEKkRXe/3LGd4uc6sasffsVFYwDzGwkNbkMDgyuxlDlEFOKijNbpQTqmn8gdApdA3opgFAh9b9UirMdYb1LEWaTpcMEnZJCTzZ1e8a2wc4QthBYuQlqDVdDKQaRfdOfZ2B22PrB5HCgEAmFDivJaYWKDoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xes-inc.com; dmarc=pass action=none header.from=xes-inc.com;
+ dkim=pass header.d=xes-inc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xes-inc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m3icwYTSuSDBusSGCyN9ipxPDseHke1e1Bv/1rakjk8=;
+ b=Hh5V3fMXuCBuRrOpsnUnDF9lQxWw+pPmjcSZt4HQ6cfDCEBArU8V3KE/3gjp2Fj9bdiq+wEAqxON7zXWa75RvNMqFj8ekatTqgXCWdhNAQ0bNJ4AbQUXsuGuD4f+yTyOh4BhzwNrqAY/2UUtEMLGvU8bpp/PSQptixGh8FWRP5ADsmmwv+ugcGLM6qhYoNHRCQ3G12cQvlpFoBFU0oc2oUyVqCtIJSTsiP3HkiM0XRDITFZ4cAkRxxBBLs8Z3cZorcp36qhBDi8yoNRmYMVUcBZnytbCgZ5Yjo5EX167ZnBMfy4U63TP8g5McEGSIrGgbOLnGTBXj9l9CcoKVJuv8Q==
+Received: from PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM (2001:489a:200:18b::15)
+ by PH1P110MB1235.NAMP110.PROD.OUTLOOK.COM (2001:489a:200:18f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Wed, 27 Nov
+ 2024 15:10:07 +0000
+Received: from PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
+ ([fe80::71c7:106d:6bd3:fa2e]) by PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
+ ([fe80::71c7:106d:6bd3:fa2e%4]) with mapi id 15.20.8158.024; Wed, 27 Nov 2024
+ 15:10:07 +0000
+From: Vincent Fazio <vfazio@xes-inc.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Phil Howard <phil@gadgetoid.com>,
+	Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: RE: [External] - [libgpiod][PATCH] bindings: python: fix license tags
+Thread-Topic: [External] - [libgpiod][PATCH] bindings: python: fix license
+ tags
+Thread-Index: AQHbQN2sN9gqqCVJ70qJxkt1lJOg4rLLOxMQ
+Date: Wed, 27 Nov 2024 15:10:07 +0000
+Message-ID:
+ <PH1P110MB16034D59F26D1C4A54BE81039F28A@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
+References: <20241127150529.126896-1-brgl@bgdev.pl>
+In-Reply-To: <20241127150529.126896-1-brgl@bgdev.pl>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=xes-inc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH1P110MB1603:EE_|PH1P110MB1235:EE_
+x-ms-office365-filtering-correlation-id: 08f6f360-b914-4519-7b0f-08dd0ef59460
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|41320700013|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?uZ0eM8BXyZxulZbsbz8lyMtHsP3bKHEqdqo+us/8iTyUTUbmXWyJurFCK0U4?=
+ =?us-ascii?Q?s4bKH4Ko4p1fL1OXCj4zVUjnF/GOzzuNL6zuE9sclj0qn7WA9fqDFuCnKLIH?=
+ =?us-ascii?Q?wAIHF+6G2vGaMCyw0XgBRxtb58Dw/7wSwHHEIW1WsV2XqNEPvbr75wa/fZON?=
+ =?us-ascii?Q?m4pMoLdY3d2XA7jZmZWo/ncjoz2iV4qOaXrvE63sGkfyUB7XNv70BtKeaA9R?=
+ =?us-ascii?Q?JcGgd3btYq0E19H0rtu+iJAYoKDjgrcVxwAcD+LprBwpyBCBkRJrQegOm5VH?=
+ =?us-ascii?Q?F7HthhbAfif/7dXDVxgSwxqU17ps/T1exqz6m4bT554xElMRojixmkl284jn?=
+ =?us-ascii?Q?/cnHE8TGrUOBERxBB/JH0UkoAqYEOX77mlRSU9uvEoQnsZp4U7ZoqQt6iM0C?=
+ =?us-ascii?Q?e+HuCojiDrXkFiB/ipLfxKScU4YA9jThPTXu8OSDwKfPDSBE3ecj9MeMN84/?=
+ =?us-ascii?Q?BborxQoOZFOS45d/wdnii6fVxidzfW49ePpm5ZPrLBtET7KXByVGP5y9yJ+d?=
+ =?us-ascii?Q?f+NLl26bZIePQ51F7seXtO4sxm0R0tgX3wvLvXYGUYUG17Co6WpC3o/gkZ5O?=
+ =?us-ascii?Q?spolSbhTAnJkoAOEnswwtgdl301DwE1O4UGVARAxmbWUSMCmW54h2tutlJH9?=
+ =?us-ascii?Q?yIisikCRKRjkl6y7y3vTn9zFZ0Qbycux/tec7qyBU7qN+2lgFgsT/yRxoME0?=
+ =?us-ascii?Q?5JwtJ5WGMioETjrckNqTii4bRC7QDUAvCfXAbAFuuakzgntLq5YtDMrM8+uE?=
+ =?us-ascii?Q?VyznmpAYFtclefR1JLp/AJ+Je/MM1mWuB6O8SR3fWaUnYL5/QRyYxcnQNurJ?=
+ =?us-ascii?Q?W7G+z8uZpVr3DHdkb6M3fbzh1ECk3nthfodLokezO4j3VMY5YJXBbwAlZBcJ?=
+ =?us-ascii?Q?l2K8xC042r+LDBo4qgSX2+SpaLdF76XShZhcGqcgwVsd/YivTlIjHslD/4j1?=
+ =?us-ascii?Q?BTPLTljz4IC3YmXBS88hDEtkldtEZxh2LBItCljHzO59BQawAUQivgkJYzbC?=
+ =?us-ascii?Q?48aEt4mxOaxUmo42r6WuvKR6lzqXDVTmbgRpYqN52HgBfLfv+emPA8+aoqx8?=
+ =?us-ascii?Q?ThV1C8KCDDQJ5L1N/ZfWWzm0mjshj20PUffasmmSdwDpOFCsH9LEaSctubLf?=
+ =?us-ascii?Q?Val/pMTQ4Sum0F4ejQix0vqfhm7Fi0+SjwveBYuoDq2FlEDTw/ZnDn3vLXKx?=
+ =?us-ascii?Q?epVvOqN+r+vtb6osPnnMXb29OCvJVYvEQrWWgtpYVKnRNdlZGD9t83UeLd7Z?=
+ =?us-ascii?Q?zKsFCp3ipP+N5Re1GzeZeuBIiSWcQPUMwIwvrL9SCjBGs7EpTGR+YT3W/iBH?=
+ =?us-ascii?Q?Nm2+b4YkYEp6TZ0ngyAWujdqKTO5CbHAqyC8vajc9kPmbxU6EP8H8pJfYMRs?=
+ =?us-ascii?Q?P7n3scwEc8zR9NeS43RIb8Nz9qxmaU4xS0NDsIjeUGTn/OMkDQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(41320700013)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?5adrdSlJu/mtDxYSfvWy8MqJj67G2UHEX/7k6PBkI51GX0McjFR84900WJLE?=
+ =?us-ascii?Q?+/9Qn9QqpcbMIvdLRz0keC00IZndVeNVWVwQE1/NGkGBFNOeRZlBd0GAp/db?=
+ =?us-ascii?Q?L+/+KZWHtWCIz+ZsUNUhzKJvHIS7k6flshVKtJbjygi41r1J+jXrejn2KADw?=
+ =?us-ascii?Q?DSuN+4WH4uo+n3R0mtTagN33ePMER9pNkg6oAU/2UjXwvbzVEXTzyyuEzXEJ?=
+ =?us-ascii?Q?fVJKQcw/I4cFSDaVNw90Fq0MJIa7ZAdyv3/MFc8XzjoZdSbI64epcYII1IeS?=
+ =?us-ascii?Q?gnABICsqPjYH8R/CA7Vuwxr5qGECLLSEaUIkKpWV2/12g8LC0rx1KNq0/0tu?=
+ =?us-ascii?Q?8N6vWwRroRlRkUsmRUpqXG82VLWRonfASNTySmGBTAqW5mu6YpAwffeF/UGB?=
+ =?us-ascii?Q?KxGIpouyFXNQhIPmEMSarlVto+DumZoyx58L2una55sbIeBZ5ljfG3rtvjKV?=
+ =?us-ascii?Q?6OwOcg0DdMskjWIy1+VWkp7QAQlLMQgZG2/IfuQ243zRTXeLAyuwyRGD/+rK?=
+ =?us-ascii?Q?3r7K1R/pwTs4amk1gr1OXG+joYywR7QMZ33I2aSujKzLzr02gm3b5aLMPFPZ?=
+ =?us-ascii?Q?Ak/W4j/hWjo1aFnABYK/MNy/S5x4DVUJl6UZ/6iOfX7ExuvztNq/t/ok9WmO?=
+ =?us-ascii?Q?cX3ZJiVIWmoRxNYr2pR3n3OtAtCf5PmtJLyC7dqy97E3fjI7dIc9zatXCtvt?=
+ =?us-ascii?Q?mtDJ0uH5d+7wqSzyCK1E46T6cy9iKTltzCkYKdC5Jdul3kdwphGhcnjtlQaA?=
+ =?us-ascii?Q?ciQh2Q6Vd9sq/gFLCpraz+PQCb7JrBW2nX9yhygFFCSd3K5dq0qksTgLPpln?=
+ =?us-ascii?Q?PmuUvpVJjCy1zGCvQC7NZvvrqtHe1qpXzkWuC4YLvAAotCOcCva+LC9Q4kaF?=
+ =?us-ascii?Q?VdjUFzvLwoBkoLZe2Tm7pSnrtYLtKH1CuLKj2zt9+DekuJ+h7xPfhGHag1hB?=
+ =?us-ascii?Q?gX5ijSQ5G4DwUfsCJx4sBl8pSgRxJA4WYePGtTLRQTSnRW7tX3yCuMZO+EY2?=
+ =?us-ascii?Q?UVKMWcS8J1vo99zB6DGn4sgUp8EZ3LFuJmbnQ4yrmGZgwqvPIQunh4e0/BFh?=
+ =?us-ascii?Q?rQBghn6tULQk/8RM2iNYKJxi/p9dia4ZWphGTwwAXGdcsNg0oEDowyqEj5Wp?=
+ =?us-ascii?Q?Q8cudi3f2U+2eG1ZGKDcj94lK3kKCsYbCu0cG0/lDr0t2y7ddC8eerUwNv9h?=
+ =?us-ascii?Q?X2CbhvwybqUxTr0cs7y7vhLKVJ/oFuYsOyO3LizWV2xAVwe6/QmFnt+k2lJU?=
+ =?us-ascii?Q?dTlJvBvSiHsyTHeAx8bicmhWyI+TFwlTQ3I5xA5DUXBS76JoLrEwV/ieAW+9?=
+ =?us-ascii?Q?EX/5qbi6m0ZjieH37D6HIxQ99tnXQMjt/pH0XZM1dL6rJHoDhBySsOUzFBMW?=
+ =?us-ascii?Q?zZg6VwIah97iy/N+Gbd82vgkF1xagf7ZsXVzdsz0nAUe0y/bpNrk94aiczMz?=
+ =?us-ascii?Q?N9chkCt2Pxua2+LDd5569hiOHaO8qiMaZGIX0gHOO87hpZKOVt/wiGpm99wu?=
+ =?us-ascii?Q?Umxtw4F6pholzo8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com,
- broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org,
- perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: xes-inc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08f6f360-b914-4519-7b0f-08dd0ef59460
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 15:10:07.5581
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2925f1cd-bdc3-4a76-bb38-6159e20a17f1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH1P110MB1235
 
-Hi, Geert,
 
-On 27.11.2024 16:32, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Wed, Nov 13, 2024 at 2:35 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add audio clock pins. These are used by audio IPs as input pins to feed
->> them with audio clocks.
->>
->> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - collected tags
-> 
-> Thanks for the update!
-> 
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
->>                                                       PIN_CFG_SOFT_PS)) },
->>         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
->>         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
->> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
->> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
-> 
-> I'll move these before WDTOVF_PERROUT# while applying, to preserve
-> sort order (by port/pin number).
 
-OK, thank you!
+> -----Original Message-----
+> From: Bartosz Golaszewski <brgl@bgdev.pl>
+> Sent: Wednesday, November 27, 2024 9:05 AM
+> To: Vincent Fazio <vfazio@xes-inc.com>; Phil Howard <phil@gadgetoid.com>;
+> Kent Gibson <warthog618@gmail.com>; Linus Walleij
+> <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org; Bartosz Golaszewski
+> <bartosz.golaszewski@linaro.org>
+> Subject: [External] - [libgpiod][PATCH] bindings: python: fix license tag=
+s
+>=20
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Several files under bindings/python/ have wrong license tags.
+>=20
+> In general:
+> - Makefiles should be covered by GPL
+> - all python sources under bindings/python/gpiod/ and
+>   bindings/python/tests/ that are part of importable modules should be
+>   licensed under LGPL
+> - executable examples should be licensed under GPL
+>=20
+> Reported-by: Vincent Fazio <vfazio@xes-inc.com>
+> Closes: https://github.com/brgl/libgpiod/issues/110
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Kent, Vincent:
+>=20
+> This patch doesn't really relicense the code. It just makes the licensing
+> consistent across the python bindings. However - as the only two authors =
+of
+> the affected files other than me - could you please leave your acks?
 
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-pinctrl for v6.14.
-> 
->>         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
->>         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
->>                                                      PIN_CFG_IO_VMC_SD0)) },
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Acked-by: Vincent Fazio <vfazio@xes-inc.com>
