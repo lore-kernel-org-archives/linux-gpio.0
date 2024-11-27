@@ -1,223 +1,136 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045861442E8
-	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 15:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D878225D6
+	for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 17:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732719946; cv=none; b=feFTDIl4TlIC1qFx+ey8c2M6sBRWwKjqOfHnH536JG72b4nT328gJ+UPXL7ot+Snz7Y43cYHXEkYtPS9SPfx0zong9ti2YJrUHwKwQWyDUiXTg5FmSsblvbmD5q702T84fp55OfocAaDc8X/il1FIxEeHVEU7hzIhNDyVbRIEmg=
+	t=1732728112; cv=none; b=fciWa5uaNNLnXA3rK76lqxzfR4SOK4F7YSy65Nx05M+gnsB2/uB/ve8l2B9Fo/tlT866fzdZbxd1ECM9ShU2rhTBYA80G8FSM0H9MbI+qS0f0vrYaKxxTT9IcCTch1g5PwJpgOBQ/M/fqgsAWYZ2rsQfHdZvsMhc0lXrnmmw45I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732719946; c=relaxed/simple;
-	bh=ZtIZIYeVPB0qztgEfmHMwg6qqjX71qq75ZFIq7AHPq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1nfqvR7yj+TABMsvNl+BS0RwsiIyYiU1FRQA53+Ck5o4qYUYFlOFuUD7U0ECaJpqywDupJIRSFjHhyFbBuZ42/dgA29JUJk/2Sf4Mys9i4H0WWYdgaLH2YfQNvu/2RgekwkZrsD7gVOQR2DQhe9+Yc+//diGuN+seWZGe5q7oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0vAmF/FN; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1732728112; c=relaxed/simple;
+	bh=65aYM6N26qjzWOA+Lupo8UVQBrVj+zOdMVkxHTv50Fc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdAGc+yUjpvDS39e3gXd12OArZoIyKhzbRyxjdmoumvmhJ6zpOdEnlSumi9+yRQpeccTQTJ3WTp0x1goIWeb06nscD3nDJQCWYuMo9Hx7ByJrF1vx65q5G0RdtT79HYWgKz2k8zNAhGz/Lxj1JFghynXiPww4ER0BA6ZNC9RePs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=G77ziwA0; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0vAmF/FN"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3824aef833bso4946845f8f.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 07:05:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="G77ziwA0"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43497839b80so33608375e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Nov 2024 09:21:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732719942; x=1733324742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T3X5H8BIOZrHzO0tHJ+BPyQ/2wAyK0HZluCX19kRLhw=;
-        b=0vAmF/FN+dZWPL4g0WdRbx16vJRpuzz6bNJ4Czb6SzIzgb+GSg+tyJ17+8TmflZ1I/
-         LlLVODAdOmJP2y+dNXr3wPoVinOvumyGV8Bh03uEB0I6dauPPVlGxFsE4rpfvbWW0vTo
-         FmwjTO5W/VyUc+0HM3Rb/6Q/5pz6ZhHgdo98TwoQ0VXFUdwbVIj9YcwY78OdgfHRRMKt
-         z9ufH4gg4BF35QCYe8wAnz4aQunks5S93G1hhRY/MP4/h+NLufEUi1e09WlSnWqMyIl8
-         7S57su0h8LWATkGe4XMQ2EuWojhClK7mdZPjIMc5znkIWbZMiGU47cHVm+cywPjFdN1v
-         yeig==
+        d=tuxon.dev; s=google; t=1732728108; x=1733332908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=joY9jROGlnz2og0g8pwUmAhFhVOpMoCp26ajpyfTKYY=;
+        b=G77ziwA0y9G9j4cePwQnZAW154DzixMaIkHm0krR8wW8WEDoorADqsl5IHEwEBQtCG
+         YrIcl5JKcVl6DLcU9GdrfWhrbOF13k4LIT82pumvU+Suyn6Gqlju0ric9O3kYIoCa/2p
+         ZviuAWa7tPNucPLIzI6YFY5fE7VXwg3ywtr72B4RpOfUDXUW3yhK3pYJ5up8hXFUON3x
+         uDE/8uCQvPPE2kbdYM1O4qsTWIrSCgRSQy5zRUK/xnF0RpgQSc8XKKBvYj3vWoyNr5WQ
+         hZx8p3H/F+BbEwgBlF/ghshCNWgHDWQB7erhOEcb3BHtww5MnjLH7luagnTFO/zrfpyH
+         usVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732719942; x=1733324742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T3X5H8BIOZrHzO0tHJ+BPyQ/2wAyK0HZluCX19kRLhw=;
-        b=AQ3EwiYh+TXJEeAG0wgSiSm00640x/UJVX86UuWIvell4Mv32OXE4kiFzUR5oWpfv0
-         XeXCS7jAKaIalYf0CZX6k8zUVzejBrdErGXMoZP+URvIvQ6Qxhma4E/WmsrsgF6Rpxid
-         FMCAKOIg6Ka42/dboPiAndlk5XIBYCTMVNvMiP60g3r7cB26911G1VJ0eTEFptf9iqAQ
-         r/QXlMlutAv0dXpCCAIP6VNoUGi6qtT7tRAO/4eymdN37CCwo4r9NRPc0tesa5dgifCK
-         VmOxmAh+XGmcFjlRxMDaR4es2AyK5l50H7qcgINGAcw9KTh3Y5ePjZBWMlFe50J6k418
-         SyiA==
-X-Gm-Message-State: AOJu0YzkugU8noVojR7sWuDc+cgmhkUJXnutwiKYAEQvECLJW8RotLPV
-	ftLlGrfkM/ixMtx0WaNXgSeZXTOOXGm0MXDUbznQYBGb/oI/BVCKF8gDETkyzsk9cKNvg9DDPEy
-	J
-X-Gm-Gg: ASbGncvF1SKbuBrNvvMoL5wVgD8kif82W1YkG+e35la+0OW7nt5opngRJZvmJJzZLbX
-	knVDLpPJ+hXriGqq++PofVkuDJccSuEXcPXWawqbVuwG8xyi6SheiLfzNOtCugNa9jXmWJGsPEk
-	a2YpXHnGgRLHKsdZ/LAQAO47+4sS41tsP+MCGqcZbvAtSkhOlG1Wn2Zznq/EaOuSsIGm50kWAyb
-	EjYxhtPq9iIgqh6MaGffhUFdXrcHq0VO+z80HfKJrpNOIDkvQ==
-X-Google-Smtp-Source: AGHT+IGXxJaQOJa8xRcJJft2GesEpvO5PLc7M5KjEXN9cgNK7NlfxdFz+pJ3tj7g8q4xfTkgoAo3WA==
-X-Received: by 2002:a05:6000:2d83:b0:382:38e6:1ee4 with SMTP id ffacd0b85a97d-385c6ebadf9mr2057260f8f.25.1732719931386;
-        Wed, 27 Nov 2024 07:05:31 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:fecd:58cc:bc05:528d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedad6sm16475161f8f.91.2024.11.27.07.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 07:05:30 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Vincent Fazio <vfazio@xes-inc.com>,
-	Phil Howard <phil@gadgetoid.com>,
-	Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH] bindings: python: fix license tags
-Date: Wed, 27 Nov 2024 16:05:29 +0100
-Message-ID: <20241127150529.126896-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1732728108; x=1733332908;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=joY9jROGlnz2og0g8pwUmAhFhVOpMoCp26ajpyfTKYY=;
+        b=vgQyyGMF+QYJFiCsha7LgdMPa/Ql+FJjix/Cqy93QwpVW4Md31pc68GYRrwZfTZndf
+         l3LrBCVpikQ5WD4iCAXmhAAPyrF7PixOBQHvReYuMpFqERuulDxQ3h9Vd9zTprdAkwKN
+         nDGzSnaOrMX1kIO6Yq7GttHcw8DD2J+XM7ZLZfllDEpKcdQVLyTxgngDCn9LTdAz7lul
+         qdyfPvl61IGzSNxRDV+06LmNPPwbgFU1+bJ3a0jGMayh3az9fpRs7ngJOhHdbVskATJ3
+         arb/qYoeOxPuaCpqJlwCBhgQ2CMFimoykiB4tRH23REUjgi276GxST2bsZJPzStqnRHU
+         /8Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9eBqEU+duKk0hrY7Cn11GK3aGpTlOFCapwJXhTpW4PKOG7lpvbkGLzpFDPoNFnd8VSo3XnoIpazrV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy96HJmD0BwdbfdzAeewXZJOCA1fJpikNkxOzLp+ZRWtMrnZG8Q
+	HWH6VEXiGH9w/GPpR6mij8sUHgHla0RAmy5h4flITClQJ7ImkHfvytErHXW/lH0=
+X-Gm-Gg: ASbGncvGwZvhAL7r5U0xXdiiJIGmJAz1EM7+AaM/7XUINonmmfn/+oCE7/yKTKtqylM
+	T4Ahj/1gn9PU3PNYjcNpsO6RtK0U7b/6wb/LRn5JVHtOZMwRACGJmgfu17MQenUqk40ZMQJ7lLB
+	5WK8PZF0QcjYHW1sGZ53aioLKgFnFsyy6cMydJEBKudXMokvOxRsa02q9y7ul8DanANV4IPvmUA
+	Q7bD5UB14tgdcvCz3pv3uKt4zZCp72HqbTmGHLQsO9qbX3fR9On8TxiWg==
+X-Google-Smtp-Source: AGHT+IEwxFX2alAudU3RtsTrvMnoOq4JYgGY0fdaW4rv6kK+qa7GhKDhgceGlbe6flrzyyd7UpC7Pw==
+X-Received: by 2002:a05:6000:2b03:b0:37d:3735:8fe7 with SMTP id ffacd0b85a97d-385c6ec08e2mr2414458f8f.32.1732728107563;
+        Wed, 27 Nov 2024 09:21:47 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe3cbsm16741588f8f.38.2024.11.27.09.21.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 09:21:47 -0800 (PST)
+Message-ID: <9cc61971-4a0a-4421-a998-341cc3072d3b@tuxon.dev>
+Date: Wed, 27 Nov 2024 19:21:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/25] clk: renesas: r9a08g045-cpg: Add clocks, resets
+ and power domains support for SSI
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com,
+ linus.walleij@linaro.org, perex@perex.cz, tiwai@suse.com,
+ p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241113133540.2005850-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi, Geert,
 
-Several files under bindings/python/ have wrong license tags.
+On 27.11.2024 16:46, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Wed, Nov 13, 2024 at 2:35 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Add SSI clocks, resets and power domains support for the SSI blocks
+>> available on the Renesas RZ/G3S SoC.
+>>
+>> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v3:
+>> - collected tags
+> 
+> Thanks for the update!
+> 
+>> --- a/drivers/clk/renesas/r9a08g045-cpg.c
+>> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
+>> @@ -209,6 +209,14 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+>>         DEF_MOD("sdhi2_imclk2",         R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9),
+>>         DEF_MOD("sdhi2_clk_hs",         R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10),
+>>         DEF_MOD("sdhi2_aclk",           R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11),
+>> +       DEF_MOD("ssi0_pclk",            R9A08G045_SSI0_PCLK2, R9A08G045_CLK_P0, 0x570, 0),
+>> +       DEF_MOD("ssi0_sfr",             R9A08G045_SSI0_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 1),
+>> +       DEF_MOD("ssi1_pclk",            R9A08G045_SSI1_PCLK2, R9A08G045_CLK_P0, 0x570, 2),
+>> +       DEF_MOD("ssi1_sfr",             R9A08G045_SSI1_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 3),
+>> +       DEF_MOD("ssi2_pclk",            R9A08G045_SSI2_PCLK2, R9A08G045_CLK_P0, 0x570, 4),
+>> +       DEF_MOD("ssi2_sfr",             R9A08G045_SSI2_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 5),
+>> +       DEF_MOD("ssi3_pclk",            R9A08G045_SSI3_PCLK2, R9A08G045_CLK_P0, 0x570, 6),
+>> +       DEF_MOD("ssi3_sfr",             R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 7),
+> 
+> If you don't mind, I will rename "ssi[0123]_pclk" to "ssi[0123]_pclk2",
+> to match the define and the documentation.
 
-In general:
-- Makefiles should be covered by GPL
-- all python sources under bindings/python/gpiod/ and
-  bindings/python/tests/ that are part of importable modules should be
-  licensed under LGPL
-- executable examples should be licensed under GPL
+Sure, thank you!
 
-Reported-by: Vincent Fazio <vfazio@xes-inc.com>
-Closes: https://github.com/brgl/libgpiod/issues/110
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Kent, Vincent:
-
-This patch doesn't really relicense the code. It just makes the
-licensing consistent across the python bindings. However - as the only
-two authors of the affected files other than me - could you please leave
-your acks?
-
- bindings/python/gpiod/Makefile.am            | 2 +-
- bindings/python/gpiod/_internal.py           | 2 +-
- bindings/python/gpiod/ext/Makefile.am        | 2 +-
- bindings/python/tests/Makefile.am            | 2 +-
- bindings/python/tests/gpiosim/Makefile.am    | 2 +-
- bindings/python/tests/gpiosim/__init__.py    | 2 +-
- bindings/python/tests/helpers.py             | 2 +-
- bindings/python/tests/system/Makefile.am     | 2 +-
- bindings/python/tests/system/__init__.py     | 2 +-
- bindings/python/tests/tests_line.py          | 2 +-
- bindings/python/tests/tests_line_settings.py | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/bindings/python/gpiod/Makefile.am b/bindings/python/gpiod/Makefile.am
-index 49addcc..7e37b8d 100644
---- a/bindings/python/gpiod/Makefile.am
-+++ b/bindings/python/gpiod/Makefile.am
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- SUBDIRS = ext
-diff --git a/bindings/python/gpiod/_internal.py b/bindings/python/gpiod/_internal.py
-index c9b5d28..37f6661 100644
---- a/bindings/python/gpiod/_internal.py
-+++ b/bindings/python/gpiod/_internal.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-License-Identifier: LGPL-2.1-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from datetime import timedelta
-diff --git a/bindings/python/gpiod/ext/Makefile.am b/bindings/python/gpiod/ext/Makefile.am
-index 9c81b17..3a8a0d1 100644
---- a/bindings/python/gpiod/ext/Makefile.am
-+++ b/bindings/python/gpiod/ext/Makefile.am
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- EXTRA_DIST = \
-diff --git a/bindings/python/tests/Makefile.am b/bindings/python/tests/Makefile.am
-index d6e3ea3..1809206 100644
---- a/bindings/python/tests/Makefile.am
-+++ b/bindings/python/tests/Makefile.am
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- SUBDIRS = gpiosim system
-diff --git a/bindings/python/tests/gpiosim/Makefile.am b/bindings/python/tests/gpiosim/Makefile.am
-index b403f3c..cc8c11a 100644
---- a/bindings/python/tests/gpiosim/Makefile.am
-+++ b/bindings/python/tests/gpiosim/Makefile.am
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- EXTRA_DIST = \
-diff --git a/bindings/python/tests/gpiosim/__init__.py b/bindings/python/tests/gpiosim/__init__.py
-index 64a1551..ddb59be 100644
---- a/bindings/python/tests/gpiosim/__init__.py
-+++ b/bindings/python/tests/gpiosim/__init__.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-License-Identifier: LGPL-2.1-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from .chip import Chip
-diff --git a/bindings/python/tests/helpers.py b/bindings/python/tests/helpers.py
-index 2126901..ad272a1 100644
---- a/bindings/python/tests/helpers.py
-+++ b/bindings/python/tests/helpers.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-License-Identifier: LGPL-2.1-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from __future__ import annotations
-diff --git a/bindings/python/tests/system/Makefile.am b/bindings/python/tests/system/Makefile.am
-index dbc8e64..3590be3 100644
---- a/bindings/python/tests/system/Makefile.am
-+++ b/bindings/python/tests/system/Makefile.am
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- EXTRA_DIST = \
-diff --git a/bindings/python/tests/system/__init__.py b/bindings/python/tests/system/__init__.py
-index cba9b92..99fde9c 100644
---- a/bindings/python/tests/system/__init__.py
-+++ b/bindings/python/tests/system/__init__.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-License-Identifier: LGPL-2.1-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- from ._ext import check_kernel_version, set_process_name
-diff --git a/bindings/python/tests/tests_line.py b/bindings/python/tests/tests_line.py
-index c96f6de..5bc742a 100644
---- a/bindings/python/tests/tests_line.py
-+++ b/bindings/python/tests/tests_line.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2024 Kent Gibson <warthog618@gmail.com>
- 
- from unittest import TestCase
-diff --git a/bindings/python/tests/tests_line_settings.py b/bindings/python/tests/tests_line_settings.py
-index 66e01df..ad70921 100644
---- a/bindings/python/tests/tests_line_settings.py
-+++ b/bindings/python/tests/tests_line_settings.py
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-License-Identifier: GPL-2.0-or-later
- # SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
- 
- import datetime
--- 
-2.45.2
-
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.14.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
