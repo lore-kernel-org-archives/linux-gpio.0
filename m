@@ -1,64 +1,65 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E282420B211
-	for <linux-gpio@vger.kernel.org>; Mon,  2 Dec 2024 14:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C7420B80F
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Dec 2024 14:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149940; cv=none; b=AfcQE+rCffSQxtVTMoTyxKJMucWqpVYEUh36EFU/Zz7lMHCIFeNtepCs3wASoswdMMLSXNCEQv1teRN2sKmkbwkznXi91bgczn8apPxgWQQricExAOwU/N1wd8QL/skbTadOe21x66VYrPq0eO1gLxn+STY82XlxrYP+wAs11w4=
+	t=1733149942; cv=none; b=aWLzybpAtXWxWUT17HSJgjusVvb3Ucri70rGWu5Qt28ZTccORWBbUN7IZ2SH7oc2/Wn4qKpvyzT0nJU4Es/ab1I5ZSSh9aOZwaQnhzFs16BmnohrubFA3hE2n3ZiUOU+1gSF0V0WLLL04FMjRGPdx8mh1RUNyPsCHL09gur3Csw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149940; c=relaxed/simple;
-	bh=5zXjITbgA5FSFSmYOEMfbg84vfuGIoappc2/TOnidqA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iDWva645cMS3nKrZpFVE0S4zbScdsMvKZszBEaup2xjSPJr2lU6/2ryzfw46s6qFN1pWFEkdlDH1qaDPAjLSFzL5QcD/nexNmMBmcUDtM1OE/07Iow86F8PbLxFKA1LzxUKDUqt5vX0wKi3wNUYkPI1FdjF9ef73F+B22W/bP/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=JnAOaWtj; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1733149942; c=relaxed/simple;
+	bh=FQOZmUNicupuaj+h7+nIqZLEwfVhlNCxkDeqgMBEpIo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=S9CDXaTAQj+QRcUiKIlFXjwLD4Nv3ohGzTNQw751Slx0Hi5SLih54Y+FkggLeRp0/MZjkzdSBoeK4W7pMcyEnaO6LDPGUiil9BQ3F2RK9cYb8AgffCr1Jum6qDx4dnNMI9yZkYDo3r7VsxX7v8fpjWxVYRScI9/06IXolrajVnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=d3x+UxdZ; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="JnAOaWtj"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4349f160d62so36586395e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Dec 2024 06:32:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="d3x+UxdZ"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e27c75f4so1545242f8f.2
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Dec 2024 06:32:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1733149935; x=1733754735; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
-        b=JnAOaWtjEutUVX5FoLqjgsgCyMTJhtRjF8G8nLY1Ee/5lsmHIlR/1f9MYOSTlUBx4m
-         CYrSa9AN3gxy5Dltk8AIPUBcjFzVe71gdav0nzROfvW0QJebT0PptUfUigBsq9bR5KEK
-         Pz2bwvZJTVR+RWQrVLMFj3/y06LAzKPR6UBuHQsWPjrbubZ+7mQDP2FnnFCyMPHsimCK
-         tR7TfOaqq89NhpIM19SotIYGUmKYCNTRj5xUU5ByGd+WufZn9ALY8ks8EefHL1g1cPzf
-         f5dOo6SKcXMKqGjjndhktzDjM3oKm9GoLAx2QzKC6PvxhNCQiDJSPZn5GqgN1ptzNkxe
-         CJ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733149935; x=1733754735;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=raspberrypi.com; s=google; t=1733149937; x=1733754737; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
-        b=qXFtVLDDWDfS7KywdF4wbUOpkeeUpqZguSLprYMYfRVLhzSTqAoAuwtrumzCK/RU2C
-         DPLvB6zHSuK6RltqcXHf02DhgIlCHpQN7S7AGBYq7v1lT5Qca83LtOrvhQT7D6zU9MAQ
-         RrgInC0k4GqtDvzYCzMGXICAU77JnCnKjCTmcMTlSMwmFVBv/CeYNaQBwJCvcMJSg9qP
-         lxsf1ejFKExj3qwtqfy0xvvLtS0mCExjmTxsJkgDbKttx9MfMgfyVNauRfGjM92Fs7xW
-         nEkNOFPU8U91/72KqSYdi9fL7KNma0jevgLyiDlOmjFcqE8VJlsbnKu0LyDHnD+lis1r
-         JtNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLKXP0zmovQRZClvd65Csbbw12EWfqtgClkSvuOVfj9xTmxK/5Ah2fGl1yT2f7dNiIpiKVcZZy3p5w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGT6KCYNYrRlsmro5PEb87UT1xdy3UXzNU2LBjUcGVLDJNSn66
-	f1vINd9DuC9ZYnCGZfLMBd9MT4gJwzgpUFt6Du8uYaGjwoD8co0aQOcRpRQzG9Y=
-X-Gm-Gg: ASbGncu3PkjCqvLRWQBkEaYqG0ldXh1NYbkQhghdIGEYhD+CFAK4J1SpLvFYi/7jsro
-	VcRqjZRNXeORNaoZ87eNkJKsKEFtR7CzFQLtwkDdNidCmmN402+vyq6iT8hNyL73+MdCAsW4xW8
-	LgvDDzQ9kP7+/f/rdIvYkKqNMF+sI3gjpzc8H6SqaBiA702tSgcug4uTf72w4tB8W76C9c9gb3e
-	fehFMT2YRPoV68F2kM2nngx0wN5ik+2/Oa1EHEs8Q==
-X-Google-Smtp-Source: AGHT+IFjvnTvxoYoYzXeiS+rT48r6tDHyIvnEQ/xQrP8Q+YrgHiGsItI6q35+4octUNLW9uQ5Wq4wQ==
-X-Received: by 2002:a05:600c:1e09:b0:434:a8d8:760e with SMTP id 5b1f17b1804b1-434a9dc6774mr200107125e9.19.1733149935182;
-        Mon, 02 Dec 2024 06:32:15 -0800 (PST)
+        bh=7AFVILEGG6inA8zYmU/doFUBGD/IkzUATf3B1mIzQMQ=;
+        b=d3x+UxdZbLevh/ZBKcrsuOUyjOFQULhVF14UVtAk757k+6YDMiVWbX5ICak/lR8ihr
+         BsaH3S41avVqHG6VEgaVzL54U4Db7YaslfJ50wOcQzV5Q/PVa3dAf11jhz52X4IaQ7pu
+         WCXsgVcGkIuk+n1bYZ/C8cC34jpfv/qjsg+0vw1CroP8ZVZ2UA+blKW8tqrGrlPnrF6c
+         vm54BkjHlBzRfY/Mu5vmTCZ5/EQIzhwGzmxNHKUCJuh4rKdUP3LFPA+5Pm9+f7xXHPir
+         iDzw36qMwgYc+9cFRhYP2WJt7956NL1VOO8Gk7kQ7rP6xRB5XFPl2Ig77eRpJ7oNHqAI
+         sSMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733149937; x=1733754737;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7AFVILEGG6inA8zYmU/doFUBGD/IkzUATf3B1mIzQMQ=;
+        b=t31E921A2qzYpl7xkCyT49u3uK5KY72bpElz9awETAr5dnpj+nCFX/Lj5DuDjxpMKN
+         lhTY2PwCmplyztn+98foLtKw6gVFUc1nUDjKoHHfAwYOYRUv6oMpYqNkZhC87SQrB2b8
+         h11C6l7VzzFLH9EeRdY0+wrzzyR7GQYaiyb0RML7MlrOFufMuvbk2zT/cWgL32vaDGCD
+         gYt/lifguA6eJJsQYWo0ZeqirOu/zr4uxgpo6Rbql3Vf8s7HtcOyQ4YfTH7yj7NDv4YE
+         wYqEj6FTtHjLtKdYr6eQHZP/TI9ls4QYMqzvq2CVx3mmcdJm+5trxBhJx558pcLI2Bbb
+         /mVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVil5QHhhZDSV+EXEcwL8pbpJgV4KrQaY38o3kyH0knN7C3+cr31Ts8p6bo8kiVSQvOBTI3Q/NAuEQU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/UhnFy7OzM8mEcxFMNwqlvcx5YqjABJVzNBvqUrMLstwNkBm+
+	10LB5toyMFsxBtSeKP8wuNtmHd31dsGuJ2pJytIgo3SeLu8RAN8pg0PVqyWIwow=
+X-Gm-Gg: ASbGncv+rRJ5HR0sNw/eaFEZ+8LDhXwWxU/uvopiOEpNLeCXxbRlzleVqvRfAq137pl
+	QcQA30aVakskjV5yazptxAhZ4SsbGg+NqzKtGdlTHfWOKw3AkX3oSFjnHEkhMqSBW6fmAi15ST+
+	jpFvIIk8S8JCrGSH1YokwsCBXIp00oEML8feLnOCHCj1OZzjVorsRtKW8Bxxcl+WrlwUetNrqA7
+	7jKkSeQ4xGD4stE2QmefZd0kJQFEVZXEAhcLFq5PA==
+X-Google-Smtp-Source: AGHT+IEh8wUvPPp6fmiu8qi70G2dLIyR2cy0B8DQH6XpxZjumKSN1WVLLU9bXrhtMfH6hCylA9amQQ==
+X-Received: by 2002:a05:6000:4024:b0:385:e4a7:df07 with SMTP id ffacd0b85a97d-385e4a7e08dmr6305010f8f.42.1733149937090;
+        Mon, 02 Dec 2024 06:32:17 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.14
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:32:14 -0800 (PST)
+        Mon, 02 Dec 2024 06:32:16 -0800 (PST)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH 0/7] drm/vc4: Fixup DT and DT binding issues from recent
- patchset
-Date: Mon, 02 Dec 2024 14:31:53 +0000
-Message-Id: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
+Date: Mon, 02 Dec 2024 14:31:55 +0000
+Subject: [PATCH 2/7] dtbindings: display: Fix BCM2835 HVS bindings for
+ BCM2712
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -67,9 +68,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANnETWcC/x3LQQqAIBBA0avErBvQQVK6SrTQmmoWWWhEEN49a
- fn4/BcyJ+EMffNC4luyHLFCtw1Mm48ro8zVQIqM1uRwvjBMO1lNuMjDGf0SFDuvvLEd1O1M/Id
- 6DWMpHxlHVi9iAAAA
+Message-Id: <20241202-dt-bcm2712-fixes-v1-2-fac67cc2f98a@raspberrypi.com>
+References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
+In-Reply-To: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -89,58 +90,114 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-gpio@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-I missed the DT errors from the recent patchset[1] (DT patches
-in linux-next via Florian, DRM bindings patches on dri-misc-next)
-as Rob's bot report got spam filtered, so this is a fixup set.
+The previous patch adding the compatible string missed out that
+the number of interrupts and clocks changed with BCM2712 too.
 
-Largely it was changes to number of interrupts or clocks in the
-bindings, so those are now covered.
+Update to validate clock and interrupts for the variants.
 
-I've fixed up the missing "interrupt-controller" flags for 2711
-and 2712 whilst here.
-
-I can't get my head around what is meant to happen with ranges:
-"soc@107c000000: firmware: 'ranges' is a required property"
-The meaning seems obvious.
-
-However if I add it then I get:
-"firmware: '#address-cells', '#size-cells', 'dma-ranges', 'ranges' do
-not match any of the regexes: 'pinctrl-[0-9]+'
-from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-
-There's obviously some other flag I need to set in the bindings,
-but I can't work it out. We have similar errors for all the Pi
-platforms for one or more nodes.
-Please advise and I'll happily fix them all.
-
-Thanks
-  Dave
-
-[1] https://lore.kernel.org/linux-arm-kernel/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
-
+Fixes: 6cfcbe548a3a ("dt-bindings: display: Add BCM2712 HVS bindings")
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
-Dave Stevenson (7):
-      dtbindings: display: bcm2711-hdmi: Correct bindings for 2712
-      dtbindings: display: Fix BCM2835 HVS bindings for BCM2712
-      dt-bindings: gpio: brcmstb: add gpio-line-name
-      arm64: dts: broadcom: Fix device tree warnings for BCM2712 display pipeline
-      arm64: dts: broadcom: Add interrupt-controller flag for intc on BCM2712
-      arm: dts: broadcom: Add interrupt-controller flag for intc on BCM2711
-      arm64: dts: broadcom: Fix device tree errors on BCM2712.
-
- .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++----
  .../bindings/display/brcm,bcm2835-hvs.yaml         | 77 +++++++++++++++++-----
- .../bindings/gpio/brcm,brcmstb-gpio.yaml           |  2 +
- arch/arm/boot/dts/broadcom/bcm2711.dtsi            |  2 +
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  9 +--
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 10 +--
- 6 files changed, 106 insertions(+), 38 deletions(-)
----
-base-commit: 8c3f4a248f35817d2f604c0e3df1bccf27590228
-change-id: 20241128-dt-bcm2712-fixes-afb0e8a0a476
+ 1 file changed, 61 insertions(+), 16 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+index f91c9dce2a44..ab59edbcf32c 100644
+--- a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
++++ b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+@@ -19,12 +19,13 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  interrupts:
+-    maxItems: 1
++  interrupts: true
+ 
+-  clocks:
+-    maxItems: 1
+-    description: Core Clock
++  interrupt-names: true
++
++  clocks: true
++
++  clock-names: true
+ 
+ required:
+   - compatible
+@@ -33,17 +34,61 @@ required:
+ 
+ additionalProperties: false
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - brcm,bcm2711-hvs
+-          - brcm,bcm2712-hvs
+-
+-then:
+-  required:
+-    - clocks
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm2711-hvs
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Core Clock
++
++      required:
++        - clocks
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm2712-hvs
++
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: core
++            - const: disp
++        interrupts:
++          items:
++            - description: Channel 0 End of frame
++            - description: Channel 1 End of frame
++            - description: Channel 2 End of frame
++        interrupt-names:
++          items:
++            - const: ch0-eof
++            - const: ch1-eof
++            - const: ch2-eof
++      required:
++        - clocks
++        - clock-names
++        - interrupt-names
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: brcm,bcm2835-hvs
++
++    then:
++      properties:
++        interrupts:
++          maxItems: 1
+ 
+ examples:
+   - |
+
 -- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
+2.34.1
 
