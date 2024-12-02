@@ -1,102 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9C14CB5B;
-	Mon,  2 Dec 2024 15:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B641137C37
+	for <linux-gpio@vger.kernel.org>; Mon,  2 Dec 2024 15:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154403; cv=none; b=j0TPaR2GsVbfc1rhVMX8V+AaL6kYc9iJXj1dzzIFViu0kR3iJIxYEuPN1ilBz2p9euezkDJFEKOQzHGInoD4YrB5UsMirKtUmuw4Z4RRRwVzGTmJLSkc4zSeAubqDPrryPNSCaRRyGkGo+JE42zCDkixCUKEQmEvWSGTVMygnno=
+	t=1733154500; cv=none; b=k1u/BsxE0YlPY/DdX9A3geNUkcWSwBzz4fbt6xUU3IEnfuZ2NYCBXGgh7d7+Bslnb5fIWh1O6cNw69lwmIQeaGKkECwkkRkksF3df8rBRmYNlAq4V6pDeY6LU9l9XdMmwgAxJjvFIH2rRvisFuFcMENdS05PxW12pBcsKvxeBHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154403; c=relaxed/simple;
-	bh=nq9CApm2lwU3fpXbg/FXX6NMDF+2uS9tBRO+bf3mRTs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=EUjc5alotiSdT84/e0ed+GtHIdcp0ieLuBvgG2kZcu/xwV42A8rqNbp8tScaMdVBvg5LDr6uAkx1PQRtw5YQs2PGS7jBTARylvC17f9ztR6utWYBI1PEnoqaZBeNbiuhWG1x+pmtlTycY3+w61C7vmq64tBahO00+1lQIbFO9ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nno5o5gi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733154500; c=relaxed/simple;
+	bh=uHjedfVRrZ+e3sFGTNQ46N0aIuL9DX4TX/57voliHDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiVC7owfzu34VIvBdxRPFAKUDQqlqFXfguqJU+yiTn0V1Scpd0EnIU1/ci65UfSHyhWjABqyBShrugAU3spHo+AV7BoKawjL2/S7L1D2phYsYoiCR7Kz+NqhXg6npz4VJK6kgAq8SdF9OgnJXWhFIpDziknUdwk+TaiuAsXzkWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F6vuUL/d; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nno5o5gi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D32DC4CED1;
-	Mon,  2 Dec 2024 15:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154402;
-	bh=nq9CApm2lwU3fpXbg/FXX6NMDF+2uS9tBRO+bf3mRTs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Nno5o5ginogysZYOoinMPACfcmzLi+NvkvWdGsltRWpC9rd1iSKUzbuKi+dexEVC6
-	 VBtR9WlggSfrnvBoqJqs0HkfdK/167+6KxETARnP6EwNHRD5jVdxn6m4avfERluDb/
-	 5ss+bMZ4iGWtGQLEFZOa0nDNjhIxHi04yO8djXxrhWaRqpQhQhA8pJ/JeB/71CnHT9
-	 kIqWc4NVCgwZBbPXFy041BMzFegKtLFI70GfYZJZCjncRo2oi8cdWiCwxHRpyXWc3S
-	 npTdtucykpJxCkuIpL0b+1MP4REnLr1rGA+BZP8TpUGuEANUx/62bgjJYSDFun9x1z
-	 ReYvBWoS/hrYw==
-Date: Mon, 02 Dec 2024 09:46:40 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F6vuUL/d"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53de92be287so6349127e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Dec 2024 07:48:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733154496; x=1733759296; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfHRG0ckbabpB5WkAOGLFC/tsNXMkX3A9rmcYDbuN4Y=;
+        b=F6vuUL/dRzR82uF/XRVcmZTG8/Y4/wgxNwdZHxTWoxaPrEB/JZ5NMlnZqUdAjguM5F
+         ohGJYa+nj0V6bBpWDRK8oCNmQvNxbMO0E83UPzy8W3jIm07MSd2Y2GHjjyGcrRSwmVLz
+         d/GiO/N99sVuezwZ1NUljKwtaBCu+dB/SRoQyULOSEtSS4nh8JTtA6HLkZ4b6fjj3yJi
+         P5qPiFNiHi22Jijmjhh7FKABnHUdk9AxF0+pSAJAbYJFv4HO3Q5/jcpssYErye59ipuK
+         j5GWsnEJa9aqAy/r+N1BQ3y3Zakk2JqzN5NPScJyF/LPrwvoP1sFLYq16g9f1jIGMDFL
+         xKtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733154496; x=1733759296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xfHRG0ckbabpB5WkAOGLFC/tsNXMkX3A9rmcYDbuN4Y=;
+        b=SjwmYWD+k+8LdbceN+yx34Sg6ubuPlL+8mjfwrO8zy3/p+l6vxrvwkOkvUuLaM5ip0
+         /gsDX6C0iQtYOOn9/p6ZjjuzTWK8x5q7j0whBjq/DSzGPWJz+UoDMAkbGrnfvxHXvJzT
+         ayF27vhEkXJGrkDIKkDuBrTa/y4Jz0ZVlm/TqTaPfuf2skHFsYjukEBrANnxvn7uPvcR
+         +EPzSdvVdEr2n6htmVKxOu02S1AUH1A1mBUV7jiU/D0TfdYAcGDj+rZ3Nt2tfE1+cjtJ
+         mw+GE8WzJ9IUIl3MvkaRZ+17eFNHrPWZkYUhg6jhIVwNOI7zYThZDdDZHXJws5OSfkwS
+         ngpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaD6FgHVFGYPwhoTHkjkgTDAS4Bib8wlQBwVwZybWaPdL8mihPmEolPdBcjK4GFAcYgJn6kfMteY+w@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywifuuce9jjnBhh/BheQZt3vJV3ZwZRoYqBv+TMDLLE4hJRvBUY
+	cX4kqjG8OtHbqigUEXbrBHZrjJdbpj2Z3qQrVjjyKWmt63chjBtj/Lu6QFCtEAQ=
+X-Gm-Gg: ASbGnctbm69wtyMiaKzDsRM/azab/4J3cnxBVABVrYYQNzt0h3ttHuVwVrnLizbVs5O
+	LaLz7eXyx6BJuBSYvsrTpgG/D2vO07PWvd/TUrbzXcYKtv0Xc/zaRAcOqAKLmZwgzliXNGvK1vD
+	9G0Ig31LoPjYieSkL5NmHen+Sh4g8FkDjCh0Dh588lmcVFE/MvKUecI59sUuNLYstp1q+Ystm83
+	c85yQia5Hd0YttW6/hv17+q6o6cMhOKZZ19Ok0lFcGI+khEOSihsk/nTgns9A1NKse2iVg6RQjb
+	ETS9WtYiFDMziF/EnV0jZl01/B9VOA==
+X-Google-Smtp-Source: AGHT+IG0Q5k/W3ed0OQwMlkM6qlSogEM4cPmSjYiJhbwpudSDr/7EC5mlTOxyGWNLuXKmiBWsxS+wQ==
+X-Received: by 2002:a05:6512:3b0d:b0:53d:ed95:9bfa with SMTP id 2adb3069b0e04-53df00a96d2mr17148818e87.7.1733154496365;
+        Mon, 02 Dec 2024 07:48:16 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f638sm1511742e87.239.2024.12.02.07.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:48:15 -0800 (PST)
+Date: Mon, 2 Dec 2024 17:48:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
+ QCS615
+Message-ID: <gnrdym5o345fsbtxmfis6ykep7mzvhkxxnizlj5xplrsaaijjq@5465y2oamqoh>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+ <b310587f-c6c3-41dd-83bf-6affbcc65730@kernel.org>
+ <22600892-3b0d-4b0f-9c46-e74241960dda@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, devicetree@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Doug Berger <opendmb@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-rpi-kernel@lists.infradead.org, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, linux-gpio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- dri-devel@lists.freedesktop.org, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Simona Vetter <simona@ffwll.ch>, Ray Jui <rjui@broadcom.com>, 
- Eric Anholt <eric@anholt.net>, Linus Walleij <linus.walleij@linaro.org>, 
- Scott Branden <sbranden@broadcom.com>, David Airlie <airlied@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- linux-kernel@vger.kernel.org
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com>
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com>
-Message-Id: <173315440083.2722567.15501799626521434805.robh@kernel.org>
-Subject: Re: [PATCH 1/7] dtbindings: display: bcm2711-hdmi: Correct
- bindings for 2712
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22600892-3b0d-4b0f-9c46-e74241960dda@quicinc.com>
 
-
-On Mon, 02 Dec 2024 14:31:54 +0000, Dave Stevenson wrote:
-> The previous patch just adding the compatible missed out that the
-> number of interrupts changed
+On Mon, Dec 02, 2024 at 06:31:44PM +0800, Xiangxu Yin wrote:
 > 
-> Fixes: 62948c62abca ("dt-bindings: display: Add BCM2712 HDMI bindings")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++++++++-------
->  1 file changed, 30 insertions(+), 14 deletions(-)
 > 
+> On 11/29/2024 4:18 PM, Krzysztof Kozlowski wrote:
+> > On 29/11/2024 08:57, Xiangxu Yin wrote:
+> >> +static int qmp_usbc_com_init(struct phy *phy)
+> >>  {
+> >>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
+> >> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> >> -	void __iomem *pcs = qmp->pcs;
+> >> +	int num_vregs;
+> >>  	u32 val = 0;
+> >>  	int ret;
+> >> +	unsigned int reg_pwr_dn;
+> >>  
+> >> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+> >> +	if (qmp->type == QMP_PHY_USBC_USB) {
+> > 
+> > 
+> > Sorry, all this code is unreviewable. Organize your changes in logical,
+> > reviewable chunks.
+> > 
+> Will create new patch list and seperate patchsets.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Please respond to the comment regarding the single PHY vs multiple PHYs
+first.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml:59:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml:67:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml:76:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml:84:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+> >> +		struct qmp_phy_usb_cfg *cfg = to_usb_cfg(qmp);
+> >> +
+> >> +		num_vregs = cfg->num_vregs;
+> >> +		reg_pwr_dn = cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL];
+> >> +	} else {
+> > 
 
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+With best wishes
+Dmitry
