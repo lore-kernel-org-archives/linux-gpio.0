@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58EE2040AA;
-	Mon,  2 Dec 2024 15:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF32205AD0;
+	Mon,  2 Dec 2024 15:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152628; cv=none; b=ZnsMUWKnVqEx6TQ/qcO0d+wtEqQafs6fzoB9UkerwoO/bZ1UfIHVTGAz3ql8yb9/XUAbZj5f4xD8MlTCgH1RKjvVftSBXyjqaVwao6/Y/hiyNooQCO51RdpTuB+dn9RddYR9LVcpBSKYFYouReCuOucIR5Sgu5pz1xJbP8zfu58=
+	t=1733152709; cv=none; b=R+52+IOmlDM/5I3J7xdg7e/jCOvfUMDbGdg6GwOAiK+812E4N7GyOkwOPOJ5BIFe+Z+qJzZeY2HRSxkSw4MYGRi/Uklnlv7VVbdY2CpKwnDhgphQ2Wlck2hns4YzpVjusRkqV1Vhc1Z1jYwsVW7mm41/CIE/kch3po4OBTR3jM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152628; c=relaxed/simple;
-	bh=SoX6p1yA2O8NnnyxuSjhY3p8fMe5bc9Az3QhUnQrqNM=;
+	s=arc-20240116; t=1733152709; c=relaxed/simple;
+	bh=aX7gzIhJGHF2/34tUKFIjYrdsoJxefhzoc+j5VP6raE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7oCJTm5F6yPo0qe+zUiDbXUpdeS6OUiXTOhybd+FAckE380oxwd5lyVt01cdXUYOJoFeEQA3iNsSPN9Lh0sQd6CI03uBc9HM744zmDVKRM7AG6yO0/FISBQDNShdlIX+q0JHldgfGg+pH9Mh36YUViykyvQXFQpinla1QBNcLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rq2WOtSZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hBwQWSaRTE4zO+Jk9S3+v+pcxMJr4PV51GmiFkMrqvrWEDWiQpLa8IlnRe8PtXctKIoszI/jwbbCKtxSfVZSMWtriqg5ENr1tPWQyIMovEDEYGuYW+N2IZEID8IS6ncziu2gpb63YjAc/KyMeaJCAx138SKaP1TN54qcs7kh6H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jumvelwu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rq2WOtSZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950ECC4CED1;
-	Mon,  2 Dec 2024 15:17:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jumvelwu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EEA8C4CED1;
+	Mon,  2 Dec 2024 15:18:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733152628;
-	bh=SoX6p1yA2O8NnnyxuSjhY3p8fMe5bc9Az3QhUnQrqNM=;
+	s=k20201202; t=1733152708;
+	bh=aX7gzIhJGHF2/34tUKFIjYrdsoJxefhzoc+j5VP6raE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rq2WOtSZ8e/nyoYmqqWhc1AyEyiXxAGjZqUGOZ02LDFoLwpSQFxQ31jaKciYAK8EZ
-	 lz9quxcAAscQP+wh9Gld5g9v7Eipm7W5D7kso8XhlA38LnjbjLG+IJaB7DbuAJ0NvX
-	 BvZKbpDqowDreMnlbEg9I9Km4PqP/ZZKE4PsugfiOMbY75xsxn9Ayf7Vl88KasAl2G
-	 GIzwht0Wf+G7RcmSjzF4b9Jtjjz+J9mP2OYakm5iCiIlPAXY0Srs+3sXvs/+05IuW2
-	 JB+6qbRs0KhjYIuzj770vJF4HXUoQtk4jx5IYsoCUO2UmJKNWOU8m1PShKPl4FdeP/
-	 OeuB1ARmvFP3Q==
-Message-ID: <0167e83b-7b73-4784-b022-903272866fe1@kernel.org>
-Date: Mon, 2 Dec 2024 16:16:58 +0100
+	b=Jumvelwu0qO2UhKpEGXgqujPYdE5SjwbQGvnjZTenNXd/20idFBtejn/kDeze7Cue
+	 Xbzj2GVhZZs31zKLhujROYdyo77v8PEzS+ljcWIGimLO5O03rkujibvAx1KIFg9ljh
+	 mX4zYTEXJ6fvvf0IJinSIH/Lbf7WN50fwqsC8EXMKs1nVEQHFVO5WtTlQkyox5Zflc
+	 sSJY51BF9VedBSDFYCKXmZsL67iL0FNISSQORmginAoRrZM1EQsTWFt13A+5HsGDCT
+	 TiQh9UiKC2eEddtOjpeCwZVfsKvHliLowyle2b/BH+YX9HIT40vAyeo5JSY6z6gtWI
+	 qJGgqA+960XxQ==
+Message-ID: <36ea46ce-7add-4322-a030-1ee6c458d5db@kernel.org>
+Date: Mon, 2 Dec 2024 16:18:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dtbindings: display: bcm2711-hdmi: Correct bindings
- for 2712
+Subject: Re: [PATCH 2/7] dtbindings: display: Fix BCM2835 HVS bindings for
+ BCM2712
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -56,9 +56,9 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
  linux-gpio@vger.kernel.org
 References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20241202-dt-bcm2712-fixes-v1-2-fac67cc2f98a@raspberrypi.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -102,57 +102,58 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com>
+In-Reply-To: <20241202-dt-bcm2712-fixes-v1-2-fac67cc2f98a@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/12/2024 15:31, Dave Stevenson wrote:
-> The previous patch just adding the compatible missed out that the
-
-
-"The previous" is meaningless in this context. There is nothing
-previous. Refer to commit (see submitting patches).
-
-> number of interrupts changed
+> The previous patch adding the compatible string missed out that
+> the number of interrupts and clocks changed with BCM2712 too.
 > 
-> Fixes: 62948c62abca ("dt-bindings: display: Add BCM2712 HDMI bindings")
+> Update to validate clock and interrupts for the variants.
+> 
+> Fixes: 6cfcbe548a3a ("dt-bindings: display: Add BCM2712 HVS bindings")
 
-There is no such commit in linux-next. Fix patches while they are on the
-mailing list. If you refer here to broken DRM process, then basically
-you are on your own because we won't able to see it.
+
+No such commit on current next.
 
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-
-Typo in subject prefix. It's dt-bindings.
-
 > ---
->  .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++++++++-------
->  1 file changed, 30 insertions(+), 14 deletions(-)
+>  .../bindings/display/brcm,bcm2835-hvs.yaml         | 77 +++++++++++++++++-----
+>  1 file changed, 61 insertions(+), 16 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> index 6d11f5955b51..6af342c9b6b8 100644
-> --- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-> @@ -56,22 +56,38 @@ properties:
->        - const: cec
+> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+> index f91c9dce2a44..ab59edbcf32c 100644
+> --- a/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+> +++ b/Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
+> @@ -19,12 +19,13 @@ properties:
+>    reg:
+>      maxItems: 1
 >  
->    interrupts:
-> -    items:
-> -      - description: CEC TX interrupt
-> -      - description: CEC RX interrupt
-> -      - description: CEC stuck at low interrupt
-> -      - description: Wake-up interrupt
-> -      - description: Hotplug connected interrupt
-> -      - description: Hotplug removed interrupt
-> +    oneOf:
-> +      - items:
-> +        - description: CEC TX interrupt
-> +        - description: CEC RX interrupt
-> +        - description: CEC stuck at low interrupt
-> +        - description: Wake-up interrupt
-> +        - description: Hotplug connected interrupt
-> +        - description: Hotplug removed interrupt
+> -  interrupts:
+> -    maxItems: 1
+> +  interrupts: true
 
-You need to narrow these per variant in allOf:if:then.
+No, widest constrains are *always* here.
+
+>  
+> -  clocks:
+> -    maxItems: 1
+> -    description: Core Clock
+> +  interrupt-names: true
+> +
+> +  clocks: true
+> +
+> +  clock-names: true
+
+
+No, this has to be complete (widest) here.
+
+
+>  
+>  required:
+>    - compatible
+> @@ -33,17 +34,61 @@ required:
+>  
 Best regards,
 Krzysztof
