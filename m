@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701D31D545;
-	Mon,  2 Dec 2024 15:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CFB204F8F;
+	Mon,  2 Dec 2024 15:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152856; cv=none; b=reWV/setH+37y/SFspRwUZ6l4j0L+WhrSZfavz67d7qG9evRWnv2nDQbmEgKLZjLylamj2DsD9HRAL09r2o6d/eqF691NZ/vWyZI9cWPcK6DCfRxjcc04BkhDr6AdyqFEszPEHKVV4EuWAxbyZoTjc9dyB+xCiWLbBbv9V8kIu4=
+	t=1733152936; cv=none; b=m4wKKeaxGk9cfOjyrgvb8mAMkNEPNHl1suQrTNT3atf8thIZ9gDjvFiA1u0qC+Pc3gKIoLtOnKbtwsnQ6q/uJRTXGHCLZhUaTEcpF6ZkhrsPu/BZGXKQfBhzbwnGe0rkAvDGZbvcja7dQlp6ZvI1hFpmfXt0Bc7F/koOYtx6pSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152856; c=relaxed/simple;
-	bh=yWb+tTceECTkMaeb3y5YPHK4Zn30bJgkuIO5Tpla1b4=;
+	s=arc-20240116; t=1733152936; c=relaxed/simple;
+	bh=fMgv+yuJZSY3uaaQETMbs+RJU+yPn08IqtayuTbK6/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rKMxtwpuIOlXWOjL2w2ReNd8Xo1gtll2FdFtnRdZYh7PHUnGurzaPvUAkcqDpQ/KMQKfXj3XQUe/pJI5Tem0ScZFqml4ohDshES/E6QWFKfPXSADG3jSjIZhLbsq+0txAQYVvB0k0LPIhas19k3pOHkIINBye9hiBz1TLv0zr+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouXi79B4; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=fjSSBzw3wFCVi0SmlgZJ6Ws49Es8mvPatqR4ZssdOYOwgLf7iZNvt+O2ui9kaw9k1YBLVz26u7hD8aN7ur+M4F/Jn0mXwrdPx2mybHkjqJx3fCD+++fnhj86rfMAS1/T8SboGf/DmOntkMicKmCpvItfQSOjcDdo1/RvP7HZZj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUUx7lHf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouXi79B4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8918C4CED1;
-	Mon,  2 Dec 2024 15:20:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUUx7lHf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F95FC4CED6;
+	Mon,  2 Dec 2024 15:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733152856;
-	bh=yWb+tTceECTkMaeb3y5YPHK4Zn30bJgkuIO5Tpla1b4=;
+	s=k20201202; t=1733152936;
+	bh=fMgv+yuJZSY3uaaQETMbs+RJU+yPn08IqtayuTbK6/c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ouXi79B4x2irSAs8JUO2Z3rqtcBcPVFYv0nfTfO3yR0059jrNuF+vUSTNUlhLUA4J
-	 x2yaZAv0lxmKH4qwlwXZnYpQee3BK6N2F9OlogjRzmHd7NLq/WCL/1t27WefM1objS
-	 kP99HHtq96cevjZH2cH9CcJmqR+89DeIFoQgouC/t7KQYISQ3D199HEDrvFB6lYcYQ
-	 25iSCIZZ14IuGbugBZxok815kXt7dVmsPz5uRKIn0cvayyuzfFZD1yP5kRxeDUcdon
-	 Ht4uloJkpOsWFtfMPchDDhdOIeTGiUg4pFvK+1wOqBr/9An2KPHjIErKTxoTu3Zyh1
-	 D5AuFu/7tDnjQ==
-Message-ID: <c8093283-f2c1-4a66-823a-50aeabb3c82b@kernel.org>
-Date: Mon, 2 Dec 2024 16:20:46 +0100
+	b=UUUx7lHfUhva2ZxmhoIl2hQOl9DNlES3J4+BPvQ3+8OyGWmTKMFVE6zaT2pat5Nst
+	 ljE0gu0tVuCZUZDudHcX1odlZv9w2KqP42fLvARo42f1jTo8HT9twAjq92tCldRLJR
+	 gWkPziQX1V98Ksi6rxZSXqvtrEujuK7/DS7c3n3FFrh84TuL4oOj99Hj7VAZpbVx4k
+	 1B/7bCop+HaUKysizSj/hE2xc5Q1a/Dhg6kKnqF5tnpFHkJx5axVYDrp/1rWkhDp5w
+	 pReLyOtZJRoZWsBdPU5q2F5XrqTYsDr93gUcCJVwv4ozBMuC0o39apjlJmMRaFcHdi
+	 ZiT873HdU4BwA==
+Message-ID: <8b2863e7-d504-49dc-a2ad-d34bfbeb6de8@kernel.org>
+Date: Mon, 2 Dec 2024 16:22:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: broadcom: Fix device tree warnings for
- BCM2712 display pipeline
+Subject: Re: [PATCH 5/7] arm64: dts: broadcom: Add interrupt-controller flag
+ for intc on BCM2712
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -56,7 +56,7 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
  linux-gpio@vger.kernel.org
 References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-4-fac67cc2f98a@raspberrypi.com>
+ <20241202-dt-bcm2712-fixes-v1-5-fac67cc2f98a@raspberrypi.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,55 +102,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-4-fac67cc2f98a@raspberrypi.com>
+In-Reply-To: <20241202-dt-bcm2712-fixes-v1-5-fac67cc2f98a@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/12/2024 15:31, Dave Stevenson wrote:
-> Fixes up errors on HDMI and interrupt controllers that weren't
+> BCM2712 DT was producing dtbinding validation errors of
 
-What errors? I can't find anything in the commit. Describe the error.
+s/DT/DTS/
+No one uses term like "dtbinding". Use full make target name or DT schema.
 
-> noticed before merging.
+
 > 
-> Fixes: de9bc2dba3db ("arm64: dts: broadcom: Add display pipeline support to BCM2712")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> interrupt-controller@7cd00000: 'interrupt-controller' is a required
+> property
+> interrupt-controller@7cd00000: '#interrupt-cells' is a required property
 > 
-> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> index 39305e0869ec..f42fad2d8b37 100644
-> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> @@ -336,7 +336,7 @@ ddc1: i2c@7d508280 {
->  			#size-cells = <0>;
->  		};
->  
-> -		bsc_irq: intc@7d508380 {
-> +		bsc_irq: interrupt-controller@7d508380 {
+> Fix them by adding the required flags.
+
+But are these valid? Why do you think that binding is correct? Or you
+just silence the warning regardless whether this matches the hardware?
 
 
-Do not mix cleanups with bugfixes.
-
-BTW, do not mix DTS to DRM. DRM has its own development style. DTS
-*cannot* be merged there, so combining these series is not welcomed and
-leads to issues (like DRM applying DTS!).
-
->  			compatible = "brcm,bcm7271-l2-intc";
->  			reg = <0x7d508380 0x10>;
->  			interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -344,7 +344,7 @@ bsc_irq: intc@7d508380 {
->  			#interrupt-cells = <1>;
->  		};
->  
-> -		main_irq: intc@7d508400 {
-> +		main_irq: interrupt-controller@7d508400 {
->  			compatible = "brcm,bcm7271-l2-intc";
->  			reg = <0x7d508400 0x10>;
->  			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -352,7 +352,7 @@ main_irq: intc@7d508400 {
->  			#interrupt-cells = <1>;
->  		};
 Best regards,
 Krzysztof
