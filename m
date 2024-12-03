@@ -1,151 +1,105 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28C72BD1D
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Dec 2024 16:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB9F2BD1D
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Dec 2024 16:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733244082; cv=none; b=axAOpZ9cq3skj4WuorTWIHURJEnvRONOtZZ9T/TVKsAvl6Th/LDv+a77GQBvu4tVKslyi1I+RcE7+fzoz/p3ZRaZICH/GU/m6mDA2Bhdke6D+4svY0qwjrqfdBgqsZN+CSSZ4/IYbf5P1p9gS4G2XDok5nbTqbTTrpUsZaa5qyc=
+	t=1733244111; cv=none; b=UdSdC2UiVL9QjNBF+Hsx9FHGYACyJ6zgzDlNQNc9+ZfKaSFQjdmVNMMonSg+XGiVfVqbdKSYllLHLwpYh6KKQx5kC8i8waiMZajsNGhTZ5q4aamg2nC+9SDZJ0Q0lNt9QFt902daChqw+oxFfDc8AiUHU2Nukt4AKYb2BMG9/GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733244082; c=relaxed/simple;
-	bh=lYbDR2oS7Lr5SDoN1wnli3FOgTY/tUQ6zhWZKZOdyow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rHquesvOhP01Z9MXP93njiPmYcPiW4iFSYln5n35Rwf+BP0Kh71YQI7bp8XNt/yVk8NHw55ohcN8eU3tP2IqaNy7cXPanjOYJ5F52xeQB4Jq72pcrNzEl3FmKO/bVmZ7xR6luIgUSHEzya8hWI0J1KuRfhaUX9jWBcSSTmDO1mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ImoIQxh7; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1733244111; c=relaxed/simple;
+	bh=mi8ZKLBkRBFPTJhG12a+AsfcEAOw95iD8h4NMdD5Mqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hqr71y5H9RiursoAYbapvcsWUBMRh2M3WtEGUmoADjuk829bvSqLKas8568hlvC8NPLPjPmqQPsR+zgpGYg+grfQNLhLEU9pqUvY3v6vOX6d86kd+R8ANU3B83nX7xyvPAa8ACxTgyNa9MN5Yid5dygZDkHvYW9SZPxIhC6gNuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=p2/hedTi; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ImoIQxh7"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53de880c77eso6850631e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2024 08:41:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="p2/hedTi"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so67086591fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2024 08:41:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733244079; x=1733848879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R3cKcg9kF9rQPeRe4S6fxF/eadsgLyIFQpsrwW9a20M=;
-        b=ImoIQxh7nUBc5zE16H6St8zh7YdwHCTuoVetX+c/ZAKvzRSCcZ9oLEKaV+SkYclt0u
-         F2Hl2PyEoicz39fzpxddzAJKA5HRp5djWN2e0j7d9lzDmu+HOu4OodTHWeknppjoM9i1
-         KRA1514qpqrV8kCieco0wbUIN+j07argQW2w6zUIAoa95v4q0+UJm54ouJB8phun9yMl
-         AdvEFDf2ptrOKSSiXgYyfgjKLu9KQV1+rKbHKjsxyD+0Uhg0aPvlzZFr0f7O8nOZPc0w
-         A+gHbB127oCihcCf0GJtNOSL+a7pUx3np7OUrIJVQ8gzlzGHoiBGcdO6Er41AlTviqFW
-         FgQw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733244108; x=1733848908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=79YYTw4OLJH/nU0R7kGinztAGDupZuTEGxaRjZIufcY=;
+        b=p2/hedTi8rDsVJJskes+AiopOS0/VYtQ/i/AOwxPp15OZ4tHLSCotBBY6j5K+PMxxa
+         BPumUU1Ah+VfNIajsgwoUKR70qnLgkgbhMyNsiF3qgYB6JXCxzF4lFnDQ7M+5A7U2whI
+         nWmBhlcYqkXAw4XRmhGoRloFENx+LsdPapjHoyfzcGSe7xXgDUaUW048vCd4OCeFEWm9
+         WF08kkx/A8bDGsLjzXvLosM02sLLiA/wLYBP1/Xk5xmJUijt1ewfW9Shw3lSOsZXKzBJ
+         7Dt5TWbJhMQASkWzY3RV/bFgLNefN8LZdmfjoDJ5qu17GD4Oi6J6Cxe6Il0O7IjQFZsJ
+         9/tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733244079; x=1733848879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R3cKcg9kF9rQPeRe4S6fxF/eadsgLyIFQpsrwW9a20M=;
-        b=ZEne/W68Wnt1oJmWaSMRdEDIRVjrLjTmT6eGipcV28VxFAjg3j76xHQrcoKR5lnfuW
-         eOhZGQhF2z0ICGN0toqjKpCaLVZfK/CZFa8UhVpn+wkibTAJQxBgfCEtBKIZ/8WaTz+/
-         mktc4HT/J8qMDVU0oA7C4WjMx6gfvWeRjVTKreo6uR2jLkxCcNf8Ng3OIUi5AOqfT5xY
-         LN7Y/Ce/3Dc5PXQgDhQ5EmPsnTT/G0yk99yaC/Xj0vMsX+TSXI+ECmKXCXGcqjL7gZPG
-         GJa/QEN6EBjCd5N8VgnA+LGma8KY++DUpAFOd56WNCmrz3//ZIq1V7EK3BCSpBbbWh1a
-         mWkQ==
-X-Gm-Message-State: AOJu0YxVl1IPtvFDNmf4bGX/DvcSrY75Wh09ZRKlXjqtnu+XJuZk/GTY
-	5uM+4RodVnshI6863tsukfHQxbOxiEapE9EpwjwKC8nKi73SDvdo/4wJVEV9y+ZD2ZYoNj1mY5J
-	ONdTNoiOa2nziZAfIAtA2kHyXneC8qpqgs7IS3g==
-X-Gm-Gg: ASbGncsI/jhRO+1oj53gG18lKHUzpNEAA52Dc/6X/CVftMsO27vKh6tdmfp4FI0fOdJ
-	HpohVukGR+glUTm7tJD96T3XymTkTO+w=
-X-Google-Smtp-Source: AGHT+IHW+vsl0mYcoay/ASPlsom23HgQ21s30uqyqy8EPOs30ZTnPyOxBXGCdO8xyntMRDTjm/dm7vKdQmuCRnMPcw4=
-X-Received: by 2002:a05:6512:3a8f:b0:53d:a9a4:73c1 with SMTP id
- 2adb3069b0e04-53e12a2186emr2033000e87.39.1733244078951; Tue, 03 Dec 2024
- 08:41:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733244108; x=1733848908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=79YYTw4OLJH/nU0R7kGinztAGDupZuTEGxaRjZIufcY=;
+        b=HULbbBdCKl1/CikJxb7k0NmNOuxyVvZJgMcGgrwHvmElmv4YnqBWYfEIoeCBwGnLSd
+         2LkgycKPgWin8ugogvdWkf0QLOEgZ0NhX3yNQJTTKdMuh5Go3n4ytAoRERwPNjWV3sWA
+         iKV4mE4Xhww+Ql1X2dYlInA7icwGtFisEEpqq8wfylckqZgOuVQS4mX5d5NHEBpvJQ2U
+         2pNWr1+QFEVocUvfgEBg4D5+ocICvt5z71Xs1SwA7sQLj8AXRPsafEJbseVVZmGGbAjK
+         jdqppoU20PaOikzf8qndKrxuhpCc4QJ/SgK2wKWzjS30AJSAnXojp2neLau/dae2gQmL
+         C8Lg==
+X-Gm-Message-State: AOJu0YzemqO/4E+BDIYIeZ76V0JZD8WSA40q6NgCJphJIqvQKgFq95Vd
+	PkxwwBvaEYTxhYm09KGmIVTyxVAGxn+RdLdQo4aGCp1ZEI/YPgPCW32d2iCOmgA=
+X-Gm-Gg: ASbGncv7KSsQHzT8rXlyycqYgBGStqxfMon+j7pzQXEUxSNKEsyrJA+CW6oQPdPwuUy
+	18mcMdbe2Q9ASBsPPmdjKGokqw32072lhbULPQLCh8HtXmBKC7KIQnMhrpdtzwk/EWZqWQw7euV
+	sYPPcjmMNVGAndJwASP+m1qlyAHdoMFciDg4hCRrRShQtU+Dvk8trAojeO3l1dHj1ThzV0vD4Xm
+	JOSAst2zGr5rbv3sY0C32EZ+5dzLG7F4hEGuy09JKgZkY0QfUiatDVSO3dvXQ9eN2NexmZwupaF
+	PLMeLoR6Su8+/g==
+X-Google-Smtp-Source: AGHT+IESQkBNm3NGGmpXD3R9iAv+O3VG3UIwtvPMrzNoDzrMyo0u4WNNVUXmqMJ3+hGaEOr2LUgDGw==
+X-Received: by 2002:a05:651c:2210:b0:2fa:cdd1:4f16 with SMTP id 38308e7fff4ca-30009be4929mr19048471fa.14.1733244108166;
+        Tue, 03 Dec 2024 08:41:48 -0800 (PST)
+Received: from brgl-uxlite.home (217.97.33.231.ipv4.supernova.orange.pl. [217.97.33.231])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3000b262f32sm2482161fa.4.2024.12.03.08.41.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 08:41:47 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 1/2] gpio: omap: allow building the module with COMPILE_TEST=y
+Date: Tue,  3 Dec 2024 17:41:42 +0100
+Message-ID: <20241203164143.29852-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127184506.962756-1-alexander.sverdlin@siemens.com>
-In-Reply-To: <20241127184506.962756-1-alexander.sverdlin@siemens.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 3 Dec 2024 17:41:07 +0100
-Message-ID: <CAMRc=MeSVHjsrU6tbGwcu_TqOh_Pw-8OLRcqcdkZDpDP9n4Z4w@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: omap: Silence lockdep "Invalid wait context"
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 7:45=E2=80=AFPM A. Sverdlin
-<alexander.sverdlin@siemens.com> wrote:
->
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
->
-> The problem apparetly has been known since the conversion to
-> raw_spin_lock() (commit 4dbada2be460
-> ("gpio: omap: use raw locks for locking")).
->
-> Symptom:
->
-> [ BUG: Invalid wait context ]
-> 5.10.214
-> -----------------------------
-> swapper/1 is trying to lock:
-> (enable_lock){....}-{3:3}, at: clk_enable_lock
-> other info that might help us debug this:
-> context-{5:5}
-> 2 locks held by swapper/1:
->  #0: (&dev->mutex){....}-{4:4}, at: device_driver_attach
->  #1: (&bank->lock){....}-{2:2}, at: omap_gpio_set_config
-> stack backtrace:
-> CPU: 0 PID: 1 Comm: swapper Not tainted 5.10.214
-> Hardware name: Generic AM33XX (Flattened Device Tree)
-> unwind_backtrace
-> show_stack
-> __lock_acquire
-> lock_acquire.part.0
-> _raw_spin_lock_irqsave
-> clk_enable_lock
-> clk_enable
-> omap_gpio_set_config
-> gpio_keys_setup_key
-> gpio_keys_probe
-> platform_drv_probe
-> really_probe
-> driver_probe_device
-> device_driver_attach
-> __driver_attach
-> bus_for_each_dev
-> bus_add_driver
-> driver_register
-> do_one_initcall
-> do_initcalls
-> kernel_init_freeable
-> kernel_init
->
-> Reorder clk_enable()/clk_disable() calls in a way that they always happen
-> outside of raw_spin_lock'ed sections.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 4dbada2be460 ("gpio: omap: use raw locks for locking")
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> ---
-> Changelog:
-> v2: complete rework, I've totally missed the fact
->     clk_enable()/clk_disable() cannot avoid clk_enable_lock() even if the
->     clock is enabled; I had to extract all clk_*() calls out of
->     raw_spin_lock'ed sections
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This looks so much worse now. :(
+For better build coverage, allow building the gpio-omap driver with
+COMPILE_TEST Kconfig option enabled.
 
-I refuse to believe this is the only way to fix it.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Would it be possible to wrap the logic that disables the clock
-depending on the return value of omap_gpio_dbck_enable() in some
-abstraction layer? Basing the behavior on the boolean return value of
-a function named omap_gpio_dbck_enable() makes very little sense when
-looking at it now and it will make even less a year from now.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 56fee58e281e7..fb923ccd79028 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -530,7 +530,7 @@ config GPIO_OCTEON
+ config GPIO_OMAP
+ 	tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_TEST
+ 	default y if ARCH_OMAP
+-	depends on ARM
++	depends on ARM || COMPILE_TEST
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB_IRQCHIP
+ 	help
+-- 
+2.45.2
 
-Could we add functions like omap_gpio_dbck_clk_enable() and
-omap_gpio_dbck_clk_disable() plus some state in the driver data set by
-omap_gpio_dbck_enable() which would be then read by
-omap_gpio_dbck_clk_disable() in order to determine whether to disable
-the clock or keep it going?
-
-Bart
