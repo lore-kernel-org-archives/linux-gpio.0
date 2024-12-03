@@ -1,137 +1,138 @@
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464131E501B;
-	Tue,  3 Dec 2024 13:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE201F4738
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Dec 2024 13:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234324; cv=none; b=Fr11qB9Oylpl2vP4C2qzOVJJR8SWzHo0jQn6fdRnzKYiwvekrN7hukbzXNL7/O8K57QaA1Ikq0ecTWFdwnTI1p+0Xwm3pJ9wx4+PYudJZ0K4zEUjMULZ683GBbtY7jPjcf053nTbkv8YBHEj6uKxcDWXbTVh4piNNOWXPuiLmi4=
+	t=1733234342; cv=none; b=lrF/O1FRKoRWZ6GGDxOjDlgl9w/QdGuxp+hbBTCB/n0mYh4211tDv4PcwpQ/9/goDgo9+3nidPdy7SF3acswENGeT/z2+JjT8I2S86sBsDVGSfEXX3ky5vY0yLUeZk+ba+IGv8SeqGLt0hoXoLS6eQKTXnZR49Aqb4ZmklRJo34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234324; c=relaxed/simple;
-	bh=7NNwpckgQb/l67lVPPgzzJ1thEv5O/hEE7t3+p7Tpdo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Lp2nRC4Y8eXMMxGDYFkxze2wZLA4wJAWrY0cTzisEYaX79ONgWgM8A+TNATC/+jGmVNTfIId2y9TJdE8GaYJnnK5XIxoM7v+fS+NgGW8zb9TzGEdtb4hFCPmUBAMaknZFtpc5ToRSeK3YWxBM28o34vYpHNqs3hud4PEXg3tjYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=HLHxETwe; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=HLHxETwe; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1733234342; c=relaxed/simple;
+	bh=TF0PUhtQTicvC6M129Y4QTNRkQEuUNF1PsicyZbmyQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tIgGQtExKqEaS3mogMqbIFHOHmHAVtn55M6GUL1H8fToActJBBHduWnXpPHiwoxnXoizsTn5zGuq2e67PBoMIzUc/c6HvYM8sPf6HLtBj1QQZVCeeCFyfM9E7DtZKvM2J+vEjWcnV9VDr6u4THfgOT5CqbYupl7y5nCqV5SCdMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrf57wu3; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HLHxETwe";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HLHxETwe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1733234313;
-	bh=7NNwpckgQb/l67lVPPgzzJ1thEv5O/hEE7t3+p7Tpdo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=HLHxETwehA3Cu0w4lwkW4nLObpF8Giff37u3+xj5dkxb4nBTSHgrTtWMnR+w58SOE
-	 yEYBvXR2CCr/Kc1wmc35T5+9wQoejSmzftZx9/tmvGj615/rjVQ8eb6mbyvYpjuerz
-	 gvQLnlkjlWO9gVzyf/ZR5y3X9FcM7fRyWzEozQGI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id F07C11287999;
-	Tue, 03 Dec 2024 08:58:33 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 07HDiK-xPmbk; Tue,  3 Dec 2024 08:58:33 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1733234313;
-	bh=7NNwpckgQb/l67lVPPgzzJ1thEv5O/hEE7t3+p7Tpdo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=HLHxETwehA3Cu0w4lwkW4nLObpF8Giff37u3+xj5dkxb4nBTSHgrTtWMnR+w58SOE
-	 yEYBvXR2CCr/Kc1wmc35T5+9wQoejSmzftZx9/tmvGj615/rjVQ8eb6mbyvYpjuerz
-	 gvQLnlkjlWO9gVzyf/ZR5y3X9FcM7fRyWzEozQGI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2A12D1287986;
-	Tue, 03 Dec 2024 08:58:28 -0500 (EST)
-Message-ID: <8eb7c0c54b280b8eb72f82032ede802c001ab087.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 00/32] driver core: Constify API device_find_child()
- and adapt for various existing usages
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Zijun Hu <zijun_hu@icloud.com>, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>
-Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jean
- Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,  Martin
- Tuma <martin.tuma@digiteqautomotive.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Andreas Noever <andreas.noever@gmail.com>, Michael
- Jamet <michael.jamet@intel.com>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Yehezkel Bernat <YehezkelShB@gmail.com>,
-  Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,  Vladimir Oltean
- <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Dan Williams
- <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Dave
- Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, Takashi
- Sakamoto <o-takashi@sakamocchi.jp>, Jiri Slaby <jirislaby@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,  Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Lee Duncan <lduncan@suse.com>, Chris
- Leech <cleech@redhat.com>,  Mike Christie <michael.christie@oracle.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, Nilesh Javali
- <njavali@marvell.com>, Manish Rangankar <mrangankar@marvell.com>, 
- GR-QLogic-Storage-Upstream@marvell.com, Davidlohr Bueso
- <dave@stgolabs.net>,  Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>, Andreas Larsson
- <andreas@gaisler.com>, Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor
- <laurentiu.tudor@nxp.com>, Jens Axboe <axboe@kernel.dk>, Sudeep Holla
- <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, Ard
- Biesheuvel <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
-  dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
- linux-pwm@vger.kernel.org,  nvdimm@lists.linux.dev,
- linux1394-devel@lists.sourceforge.net,  linux-serial@vger.kernel.org,
- linux-sound@vger.kernel.org,  open-iscsi@googlegroups.com,
- linux-scsi@vger.kernel.org,  linux-cxl@vger.kernel.org,
- sparclinux@vger.kernel.org,  linux-block@vger.kernel.org,
- arm-scmi@vger.kernel.org, linux-efi@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Date: Tue, 03 Dec 2024 08:58:26 -0500
-In-Reply-To: <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
-References: <20241203-const_dfc_done-v2-0-7436a98c497f@quicinc.com>
-	 <g32cigmktmj4egkq2tof27el2yss4liccfxgebkgqvkil32mlb@e3ta4ezv7y4m>
-	 <9d34bd6f-b120-428a-837b-5a5813e14618@icloud.com>
-	 <2024120320-manual-jockey-dfd1@gregkh>
-	 <b9885785-d4d4-4c72-b425-3dc552651d7e@icloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrf57wu3"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de92be287so8238177e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Dec 2024 05:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733234338; x=1733839138; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ratoXWp/EmolcxNUAUNGQ1kmRPcGIDYTBbsytoKVT70=;
+        b=qrf57wu3TdmSGq5Rpxe3lX4V0TQeAepWhnssvHbbk8N159cFgJ90/doN8H5xLTXReZ
+         sXvpT7H3Eb0h7rWguridTBqAh2kIsyJIXuNCjUuYhpagjs093HORXq0W4Iez4dW0x5kY
+         M0gx8tCna6n21Fgt+Z76TQY0j/3Ikf3Z1rFmbRFKcJMKUmhoVKrMGNhmg8ToME3FS1EE
+         a1zIFEcPlQaoCuO2Cux+EQ2ivB5GHCAporzlupljAo8PDk04wZtB+zouiyJYzS8o938e
+         z0nABEzlRdn3gwkoPqUEirMQ7x/ujdwNEdufQ+MLOiMSWJ07CkZQgWTq4GPpbbKYWe6x
+         NONQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733234338; x=1733839138;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ratoXWp/EmolcxNUAUNGQ1kmRPcGIDYTBbsytoKVT70=;
+        b=g5U88Bnj1daFH4O1rMazXykSMXbZdbOqZvyTzQ1lX2T635AYqGc2lMnwO3e1TqCILz
+         nT4VQHCfyk8gue/vJaEUoRWNGnkBM+1TpyoPPJx5Q0o/73sBXyHEWwvKx4zg0idlfeCy
+         gxQ7gLBbvkl30Pp+fnmC6uqGOCHetHEC4H60GfoOC22VL/vcHUTEEJQc74TCcM+oEvic
+         qxmFF+2MJXsVb5T1lufq8soU/sexqz8HfnDcxMdvABhOkLoMSAIrd5bBY62t+4isv4EX
+         vSvCtozdT6Pwc2cBRuJLm+08a5CzXCffmb5+M4HvZGEp1pXev9pdZ3+9/EEiWglEtJdV
+         uADA==
+X-Forwarded-Encrypted: i=1; AJvYcCWchbuivHX66q1hoQHW/72cSBbU1yDW4pwmOiQi4S8tk/1hq4VomAmNd7TLW4qPj9BwZxcbXVpRjN4j@vger.kernel.org
+X-Gm-Message-State: AOJu0YySV9IxI4stQ0JgmSdxjWCYdioFuYMjIFwLPPlZGibntPUXFFeE
+	VZwQyxVddT7n0yfSY/lBTZZ/+laM3qOLEtF0wtoV/u6xdscIh0BEDvP/f6eKLns=
+X-Gm-Gg: ASbGncs6ih4JWebzu/fSHVHhtYjpmkV2TK8+2lsDmzo7efnttin71jCSc5gm0ynrDc8
+	z3Q25epiaexvdV3hop48QbhXLwPIs6f9LZKR/z3W6LeIDF1afcHxCbFLtwkOZosZTeoDggog5wx
+	KHJKmPmLm6wfwJOrBMO4zTlw338HjmvAppGY2SSe1FisEF2QwbU5PXz63Xt0bVWV98GO1AiMnzi
+	qVz4GSHLXurrosTG46x0bFATZsPxueHB7XjSzCHHgKAjG3xBTLHtWzekUWJgYUvLuTPvS0ID1pk
+	lumDStjk+ITCvnKwcZGrq+9KhIDgnQ==
+X-Google-Smtp-Source: AGHT+IGXwu7iAMc0T7nz4ZWr7DVCTldVmrbcWesEg5VeYru0HhyDfTDMH7KA7Bk8Gf9p7i1oKm3lyg==
+X-Received: by 2002:a05:6512:3182:b0:53d:a025:1142 with SMTP id 2adb3069b0e04-53e12a39336mr2285402e87.54.1733234338202;
+        Tue, 03 Dec 2024 05:58:58 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64a06fesm1843812e87.258.2024.12.03.05.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 05:58:56 -0800 (PST)
+Date: Tue, 3 Dec 2024 15:58:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 6/8] drm/msm/dp: Add maximum width limitation for modes
+Message-ID: <fb6enh3wzusadc6r7clg7n7ik2jsucimoi7dnecnsstcz4r6e6@dtahvlm522jj>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-6-09a4338d93ef@quicinc.com>
+ <CAA8EJpprTGRTxO+9BC6GRwxE4A3CuvmySsxS2Nh4Tqj0nDRT_Q@mail.gmail.com>
+ <95a78722-8266-4d5d-8d2f-e8efa1aa2e87@quicinc.com>
+ <CAA8EJpo-1o9i4JhZgdbvRxvoYQE2v18Lz_8dVg=Za7a_pk5EDA@mail.gmail.com>
+ <86b9a8be-8972-4c19-af0c-da6b3667cbf4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <86b9a8be-8972-4c19-af0c-da6b3667cbf4@quicinc.com>
 
-On Tue, 2024-12-03 at 21:02 +0800, Zijun Hu wrote:
-> On 2024/12/3 20:41, Greg Kroah-Hartman wrote:
-> > On Tue, Dec 03, 2024 at 08:23:45PM +0800, Zijun Hu wrote:
-[...]
-> > > or squash such patch series into a single patch ?
-> > > 
-> > > various subsystem maintainers may not like squashing way.
+On Tue, Dec 03, 2024 at 03:41:53PM +0800, Xiangxu Yin wrote:
+> 
+> 
+> On 12/2/2024 5:32 PM, Dmitry Baryshkov wrote:
+> > On Mon, 2 Dec 2024 at 11:05, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 11/29/2024 9:52 PM, Dmitry Baryshkov wrote:
+> >>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+> >>>>
+> >>>> Introduce a maximum width constraint for modes during validation. This
+> >>>> ensures that the modes are filtered based on hardware capabilities,
+> >>>> specifically addressing the line buffer limitations of individual pipes.
+> >>>
+> >>> This doesn't describe, why this is necessary. What does "buffer
+> >>> limitations of individual pipes" mean?
+> >>> If the platforms have hw capabilities like being unable to support 8k
+> >>> or 10k, it should go to platform data
+> >>>
+> >> It's SSPP line buffer limitation for this platform and only support to 2160 mode width.
+> >> Then, shall I add max_width config to struct msm_dp_desc in next patch? for other platform will set defualt value to ‘DP_MAX_WIDTH 7680'
 > > 
-> > Agreed, so look into either doing it in a bisectable way if at all
-> > possible.  As I don't see a full series here, I can't suggest how
-> > it needs to happen :(
+> > SSPP line buffer limitations are to be handled in the DPU driver. The
+> > DP driver shouldn't care about those.
+> > 
+> Ok, Will drop this part in next patch.
+
+If you drop it, what will be left from the patch itself?
+
+> >>>>
+> >>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+> >>>> ---
+> >>>>  drivers/gpu/drm/msm/dp/dp_display.c |  3 +++
+> >>>>  drivers/gpu/drm/msm/dp/dp_display.h |  1 +
+> >>>>  drivers/gpu/drm/msm/dp/dp_panel.c   | 13 +++++++++++++
+> >>>>  drivers/gpu/drm/msm/dp/dp_panel.h   |  1 +
+> >>>>  4 files changed, 18 insertions(+)
+> > 
 > > 
 > 
-> let me send you a full series later and discuss how to solve this
-> issue.
 
-It's only slightly more complex than what we normally do: modify all
-instances and then change the API.  In this case you have an additional
-problem because the prototype "const void *" will cause a mismatch if a
-function has "void *".  The easiest way to solve this is probably to
-make device_find_child a macro that coerces its function argument to
-having a non const "void *" and then passes off to the real function. 
-If you do that in the first patch, then you can constify all the
-consumers and finally remove the macro coercion in the last patch.
-
-James
-
+-- 
+With best wishes
+Dmitry
