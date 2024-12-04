@@ -1,87 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4151A21C9F2;
-	Wed,  4 Dec 2024 17:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1C7217738;
+	Wed,  4 Dec 2024 17:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733331725; cv=none; b=BCCmx4gvfe8TQ3LC9mx7bpJYnqIQcoLkiZcZdm++2cF7Y0V/wWYYcG4Z9slj6b53+ZUAbh9AsgG9HX0BKMq7LhKf2FacqR0hz+cWb149pE256LU0V/0vKwuljI3Phn/rxJRoL1GjQt/2UZE4OKG2fywJZ8a1ElwTw9V2cuMlYQs=
+	t=1733331746; cv=none; b=L50wU7IW7V51F68i/mh/Z6enrGceZ0rqWDlhjI1jHhWhhh7aVcsn8ZQyCfZu4ASt2oCbdGlazazE3mDlwdEI9NA5Eoc9O7QStW+xMye69HgrLxDdobqBBlOmnkvvilDeKUxR3ctCF2aWJ3QOKLU6J0wOwlFsueDlpJfQR1kSc+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733331725; c=relaxed/simple;
-	bh=+ZKVrXOCYBLVt8Ak43JKeh6DPrPVObu9UTY2iSU88Io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkLofDWIHbU1QN78dSFksAOhIIFbNb4E9b7dEbA9c7JiRQLHPEt/nOuWA+EdhEW0rsqAQuaGHJkWrRRSM/X0iGzPoA0/9ahkRL+EVNmnhC949W5oSRlyqysMAYiBbfr+W71IwlLHaAoxfqtF1lfvQAsMDJizv6PE15ubQvA/KK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koHK4Mng; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733331746; c=relaxed/simple;
+	bh=uJ8xeLxvMqeuFlk8XlRgpRa1Nai86MbCWmlWaytvUtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HJuSsLNXAFowEtB+2oeNARvzkTgHwgV+27vVqZh13XYApjx5COu7BaEc5bAOJllFv4IxBQugK43gYSVJ/iwkVcXdRSwJhoh5GJhRPFBo9LJ2vaapuQRxG2QlSqn9Bm4wYrukieKxTx03kbsPr7Uj1zb82phxleEXf60ONMoLN14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dxg17y1y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koHK4Mng"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4BFC4CECD;
-	Wed,  4 Dec 2024 17:02:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dxg17y1y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6CDC4CECD;
+	Wed,  4 Dec 2024 17:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733331724;
-	bh=+ZKVrXOCYBLVt8Ak43JKeh6DPrPVObu9UTY2iSU88Io=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=koHK4Mnga24xaPtTrPryirgMd9Ups21/TPRCKcZ4vAi6yNQbmaFoLn++d/+4ze+En
-	 ZldPIP3erjag4vpydfgSfjbMbBWKf7T4g3AyX8g3ZiGcscSuZMwr2JqzixubQojk9n
-	 iw+p6+4DFfyNko/8it+EwZc1SRSOO4uTJq2bZLOoCsuClBcydMDHscHkQZYiD/oJAr
-	 EyKJSJothUQJUWUB6M4xDg94IMP3Ji2i7k894d9//tYLuY9Gl+8NgvPWTJysHQoDao
-	 4yHKa9O7MUcbaxGDgTdVHpie33lsJUEikp+2zOgf/WOyUWdmKHnRH0rNLm6mUEMBT3
-	 Vg/WJrM095GDQ==
+	s=k20201202; t=1733331745;
+	bh=uJ8xeLxvMqeuFlk8XlRgpRa1Nai86MbCWmlWaytvUtc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Dxg17y1yVN4Cgq5ABreg/BSjNdflOzgPlptZfbat/QFR3Js1XjkizB31nF+PcshHl
+	 u1qsSfEIJH3aAX/10zP3JABD8+0zA3TBIkCx+aIwpk1LJlEZ3KD5Kr+P410sUXUQ8N
+	 otcy7YocspPV9GMtLpbKCSIXZCXyva+hjW3QklBPVtcJJolyFSSSEXy0hUFTcZP5o9
+	 2ojKnFAqwg5CPG3K7VbvHxZPw6S7GdPA8H0FCFErGnsqqHLKvk5aF8LuEEVqxgaSw6
+	 jG6Gnbec4oTvmJyu03iLzph27MwfkNq3aD3QHIsMb582FgNW5py8sOuBnroqBR0Hfj
+	 UwTl4zcGDRmaA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+Cc: Esben Haabendal <esben@geanix.com>,
+	kernel test robot <lkp@intel.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	andersson@kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	shawnguo@kernel.org,
+	ping.bai@nxp.com,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 20/24] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
-Date: Wed,  4 Dec 2024 10:49:40 -0500
-Message-ID: <20241204155003.2213733-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 01/15] pinctrl: freescale: fix COMPILE_TEST error with PINCTRL_IMX_SCU
+Date: Wed,  4 Dec 2024 10:50:40 -0500
+Message-ID: <20241204155105.2214350-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204155003.2213733-1-sashal@kernel.org>
-References: <20241204155003.2213733-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.63
+X-stable-base: Linux 6.1.119
 Content-Transfer-Encoding: 8bit
 
-From: Barnabás Czémán <barnabas.czeman@mainlining.org>
+From: Esben Haabendal <esben@geanix.com>
 
-[ Upstream commit f755261190e88f5d19fe0a3b762f0bbaff6bd438 ]
+[ Upstream commit 58414a31c5713afb5449fd74a26a843d34cc62e8 ]
 
-The PM8937 provides 4 MPPs.
-Add a compatible to support them.
+When PINCTRL_IMX_SCU was selected by PINCTRL_IMX8DXL or PINCTRL_IMX8QM
+combined with COMPILE_TEST on a non-arm platforms, the IMX_SCU
+dependency could not be enabled.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-Link: https://lore.kernel.org/20241031-msm8917-v2-4-8a075faa89b1@mainlining.org
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410031439.GyTSa0kX-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202410030852.q0Hukplf-lkp@intel.com/
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+Link: https://lore.kernel.org/20241003-imx-pinctrl-compile-test-fix-v1-1-145ca1948cc3@geanix.com
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/freescale/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index fe0393829c207..08255a87897cf 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -984,6 +984,7 @@ static const struct of_device_id pmic_mpp_of_match[] = {
- 	{ .compatible = "qcom,pm8226-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8841-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8916-mpp", .data = (void *) 4 },
-+	{ .compatible = "qcom,pm8937-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8941-mpp", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8950-mpp", .data = (void *) 4 },
- 	{ .compatible = "qcom,pmi8950-mpp", .data = (void *) 4 },
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index 7a32f77792d9a..86110fc3c1465 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -9,7 +9,7 @@ config PINCTRL_IMX
+ 
+ config PINCTRL_IMX_SCU
+ 	tristate
+-	depends on IMX_SCU
++	depends on IMX_SCU || COMPILE_TEST
+ 	select PINCTRL_IMX
+ 
+ config PINCTRL_IMX1_CORE
 -- 
 2.43.0
 
