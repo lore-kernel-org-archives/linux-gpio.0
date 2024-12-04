@@ -1,62 +1,62 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBD41A8F73
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Dec 2024 19:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B322A1B4130
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Dec 2024 19:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733339169; cv=none; b=PRGYLEDvTpFuvj4XmPR/tpqaDez/m2T8o2fuCtPC7DU/vCJLs8CMabRR3LtQLbxoMlT0gK7+zfDYidYYE8bbHD7xwUBG3geQxERf2k/eqBg2GKaCmilT/8HmNdm+TmWqn6ikvucy+YH9u11Z1h4rhF0dCxWi8/Ldq94PKWcE/F4=
+	t=1733339334; cv=none; b=mX0h/4+UU6biFwOhlLV/9uP8ckf6EYdEqnrG6BvesFHiXHER6sIz4z6NcVdv754Hy+3H6XvZMYdhzWIT+ssK3IdKnb9pk0Sr4wURK/BNFEIeAuttWMVH7YfH7GO3HQ24K3x+ne6TRkdGEuU6z7we+xyic5YkzMHF9sowpdROFhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733339169; c=relaxed/simple;
-	bh=65fxsdph7FrFvZX6a2W4aEbZiEgacsW3UUoh/EurRa0=;
+	s=arc-20240116; t=1733339334; c=relaxed/simple;
+	bh=zLhYmH3pdcVSFig/GYMQ01LrMzPhT3d1Puq9i0P/m24=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gzQh+Le037fFan4WnxjMJYhy2oizdVE7lP6MaWpQ880QM8JrpM2W95G0lrHLknA6bvPBqpTERX6bM2fUphqCtVaNfK5cUT2FH5mbrDDWVlOCCk6m38ALgI/KdvVLXUWDIcJEiCRjXZ8ZgHUp4RjneSgu+YqNt8kUWPyLv1mlQW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=e+HTR7Y4; arc=none smtp.client-ip=209.85.222.179
+	 In-Reply-To:Content-Type; b=B1YjadrH3X5tSA7WhDBmPc1qrjNAriQY5sDOOlvzzl4/tyJFt6WxMgMNW75vjOIwzd2Vb9HgjmisHKKYpqcUefi3XB32XerPVaWP8pjcySSRTvKlw1QcVyeuAfsfAafzgfJK195cW+Bl/OEEsCxWx506nljSZNf6EkfAAHj1dBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gFm1jmk2; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="e+HTR7Y4"
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b673aacf13so101233585a.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2024 11:06:05 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gFm1jmk2"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724d57a9f7cso130609b3a.3
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Dec 2024 11:08:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1733339165; x=1733943965; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1733339332; x=1733944132; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwAMqF5C2/XSwGsn6tg9idQ+gKok1OrDZ/TQYQQC3ME=;
-        b=e+HTR7Y4brFOEn+P1MjdI0U2YLGGW/MjqhUWA4PRZjUQoDrYnL7TzQZBODnxKDui8A
-         0DPv/2SW0ObETQh7aBmz27o3YfeEBxCT2t9g6d7ZHAgu8yvrL3U28ElCxA+0rpPnQe1N
-         2GXeUAqNt24Ptx5e/BJ2YnTYiiI19XTFJJSm4=
+        bh=CeaxonMXyIRT226phScRmc3Q71XZjLqP8a2LkKst8Q0=;
+        b=gFm1jmk28MDIV3WiyeefSZjKugZ4l6gGTtTh1DlS5fbmJYzSDX7eSWgw3CRrEOv4Dv
+         tSSmIsg0NK8LR6vbKAYS49vUFPwpTqg9nQAlSaA0KJkf/J6SvfO4LvSjruE/sOkoWmgY
+         V8NcQNYlai8GmBookKc1VNbv2DUFkKPeQq7D4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733339165; x=1733943965;
+        d=1e100.net; s=20230601; t=1733339332; x=1733944132;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rwAMqF5C2/XSwGsn6tg9idQ+gKok1OrDZ/TQYQQC3ME=;
-        b=uMfe15uIRnlddVy+gWvAbyeApsmHY+u+Xyvc8Y8v6E6bYoxzkskrswPUtZ9WtwWXcJ
-         ZFP0a86geVPsjWP4zI40K9BbrOZe/docJP+fGQ5URs0x2S8WBPTC9CRvVTW2EV5H/3Ao
-         qkXM08DI8gWujRHDptfPsskZNmixs2VQlSnDs0V+AFRZ0nVVa7ydgWl7kxiwUc0xT5sr
-         DF9ug8bpwiSFTqVqT8xAx9yOdzwNHwmxV5xCwU0C/ntm5gCBEWW4tToUB01LuC43RPXl
-         F+RnYEc4DA1bkV1Vm1lP90WVVcKx+OWb61uqyaSVrzOZkGvmC9zaWlYZxJUqQguehrpQ
-         MRJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpHlZoaHBDVq85ngiO70ZnferoqIHgEwv0U19T8VGinzk+98QjnJnFlWqCxRUJ1BgZa1iY4PNnS4eM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQJckYTjXobydqYhbogBrnGoSaaLqBfk+7eOx6W8SIIp87pzAi
-	bqnrWVcVxfiK1eTiWayjR3rUWNJf9K43pu9hV3y9Dsa/YMweKy0rHT8+RtnU2Q==
-X-Gm-Gg: ASbGnct4qAFvVG4deC7uFg3G2lcqh6+kDNPKd43Bps2Tv3R/TP7CXYC+STQ9QATUjNr
-	KfPKYrd6DpOVJYZ2OVOp/j3R4yj6zu9HzGg9Jthz9A3+nA7TSlWwyPz0B+YAr8jQEiHUkGLmfes
-	pAVbRORVzdZrAj2/ER0Emcm96phAfppWDP2KFZSKPiA2XnRV7csa4Fz8SwC7kefwMijAB7N7zOY
-	U890T8lsx1+uERLeCh0DM14CINE+0SGYheqIwL6CU5xd5ctvw8ih/jpcZKHb8blc7Px9SiTAzfw
-	dtcD0pxkmo5eVg==
-X-Google-Smtp-Source: AGHT+IET8ru0K2M3tO3OOrXNHAiQ22hdOskTrfOZXT2O7Z5zjNnzqqS/g1Ime/BQv4SnXZ/y8604qA==
-X-Received: by 2002:a05:620a:6005:b0:7b1:48d1:574d with SMTP id af79cd13be357-7b6b4185bdfmr97267185a.8.1733339164891;
-        Wed, 04 Dec 2024 11:06:04 -0800 (PST)
+        bh=CeaxonMXyIRT226phScRmc3Q71XZjLqP8a2LkKst8Q0=;
+        b=To3oAVMiGstoAn7N3ji3IYG1ib0KtWElyA1a8CJqLcY+ZRFODjk+BRAMdYEuLIqboH
+         A3vvuUxgOxalCLj0FubagcOXjZzeXpZVzBBeIOW5BvBF9QIEZ0BEu5OuTVRCO6rqsbaD
+         0QScVc1tiVjcqYwAwX8YaSCBGsYZ/lOxmTEqpNhgY0xuQh1DeHraPWaWTWjsfx49BtT/
+         HhKsKWHvcTrWM2BThS4ZI+oTnPaQR7zG0XQ48uYNpKecU2VtDhDPoNQDcL7bZDlRmABi
+         SjzfD9A7hUmp7xc/cf0uo4BHKr6awo5XEvgHZERVEb3udSW+69zI6rupEDH3Vuuz8/T5
+         R+1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3/NSd46PXsSGIByh2RncZbZw/yCazgVw/G8dYWMvU+9O6fcdsDQV7OuauqfBlNPzozTmqxtZSmzsW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIMy0wq369o7l2LJrbSCfMi9Ws2xktPeadN2hh+QvFompsKrZ3
+	UegbKnC+LXkaCREJp5JICkqpvrERitId580wJPfBDCBcqlwtl2o56doH+RyKjw==
+X-Gm-Gg: ASbGncsGqHQ4DUudZPOc8ptQ18FcH5GnHjJk2xvTBJre94olWi+E3N1HKSQReOLlv8e
+	jkvUlAu/vbZo7gbUxreujyNXqyyRZB7XQ7ZqNhVkc5cWMCCV1jl31c4cdNtKOL4MHlA31IUH4T0
+	B5c+hFJdAtYOWeRIfosIYv/qsZMm4ZzjTqiz8c1JTCQU/NLDpsCGioGyVaqhje5CYHl2woH0MtB
+	ocOC8uNhgq8lvtSfRczSGycPM16zKCL+s6RAaQKzN8ojBNR86p8OGJqMWEv3w09393kYYgbfzca
+	4KRirbPDbadyBg==
+X-Google-Smtp-Source: AGHT+IGmY+qzKW/9TmwBPBzx791pCA1vC+Wl3B3mwReYsRw8915lr3trZFeoT08VDI12exU8vOaX7Q==
+X-Received: by 2002:a05:6a00:230a:b0:725:4109:5b5f with SMTP id d2e1a72fcca58-7257fa611bfmr12599475b3a.8.1733339331930;
+        Wed, 04 Dec 2024 11:08:51 -0800 (PST)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aac82sm635574085a.94.2024.12.04.11.06.00
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72597347ec0sm946638b3a.48.2024.12.04.11.08.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2024 11:06:04 -0800 (PST)
-Message-ID: <5b36a3c7-f691-49e5-a4c6-803ddccdd5ea@broadcom.com>
-Date: Wed, 4 Dec 2024 11:05:58 -0800
+        Wed, 04 Dec 2024 11:08:51 -0800 (PST)
+Message-ID: <4ab9673a-03a7-4358-b95d-eef514607bc2@broadcom.com>
+Date: Wed, 4 Dec 2024 11:08:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,8 +64,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: broadcom: Fix device tree warnings for
- BCM2712 display pipeline
+Subject: Re: [PATCH 7/7] arm64: dts: broadcom: Fix device tree errors on
+ BCM2712.
 To: Krzysztof Kozlowski <krzk@kernel.org>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -85,8 +85,8 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
  linux-gpio@vger.kernel.org
 References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-4-fac67cc2f98a@raspberrypi.com>
- <c8093283-f2c1-4a66-823a-50aeabb3c82b@kernel.org>
+ <20241202-dt-bcm2712-fixes-v1-7-fac67cc2f98a@raspberrypi.com>
+ <44c233d7-87d7-4dbb-a0d0-9e93ea497622@kernel.org>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -121,50 +121,24 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <c8093283-f2c1-4a66-823a-50aeabb3c82b@kernel.org>
+In-Reply-To: <44c233d7-87d7-4dbb-a0d0-9e93ea497622@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/2/24 07:20, Krzysztof Kozlowski wrote:
-> On 02/12/2024 15:31, Dave Stevenson wrote:
->> Fixes up errors on HDMI and interrupt controllers that weren't
+On 12/2/24 07:24, Krzysztof Kozlowski wrote:
+> On 02/12/2024 15:32, Dave Stevenson wrote:
+>> Resolves the issues on clocks and power nodes
 > 
-> What errors? I can't find anything in the commit. Describe the error.
-> 
->> noticed before merging.
->>
->> Fixes: de9bc2dba3db ("arm64: dts: broadcom: Add display pipeline support to BCM2712")
->> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
->> ---
->>   arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> index 39305e0869ec..f42fad2d8b37 100644
->> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
->> @@ -336,7 +336,7 @@ ddc1: i2c@7d508280 {
->>   			#size-cells = <0>;
->>   		};
->>   
->> -		bsc_irq: intc@7d508380 {
->> +		bsc_irq: interrupt-controller@7d508380 {
-> 
-> 
-> Do not mix cleanups with bugfixes.
-> 
-> BTW, do not mix DTS to DRM. DRM has its own development style. DTS
-> *cannot* be merged there, so combining these series is not welcomed and
-> leads to issues (like DRM applying DTS!).
+> Which issues? Be specific. Such commit is unprecise and not really
+> helpful. We see it from the diff that this is "some issue". What we do
+> not see is WHY and WHAT the ISSUE is.
 
-That is not what was done, I took the DTS patches via the Broadcom ARM 
-SoC tree, as I usually do, unless someone tells me otherwise.
-
-We got a number of DTS warnings after I took Dave's patches so I asked 
-for those to be fixed, as it turns out there are binding and DTS fixes.
-
-I intend to squash these fixes with their original commit, so all of 
-those commit messages will be discarded, they are only meant to be 
-transitional.
+A link to the robot email would have probably been helpful in 
+understanding which dt checker errors are being fixed here. Regardless, 
+as indicated in patch #4, those commit messages will be discarded since 
+I intend to fixup the original commits directly into my tree I would not 
+put too much effort into addressing any comments there, unless there is 
+some piece of information that should have been provided in the original 
+commit, in which case I can squash, rather than fixup.
 -- 
 Florian
