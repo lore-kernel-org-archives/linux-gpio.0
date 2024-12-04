@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6F6188A3B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A21189BA2
 	for <linux-gpio@vger.kernel.org>; Wed,  4 Dec 2024 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733295864; cv=none; b=qEl/kf3kaGwmaXS4Q6L9zMmO8lliTCCFVP3qJJhSerYwAmBccblVN7vxOXs4LMAToWtYnoyODMHHwnNBAu7bkBiAV7hvCxIiTfSjC7kYo7YyLPJTTJju21KlJygYK0yFapVVLbwKB03m1xcGsxvb0yqmpumhaBTJ48GBop2lUBs=
+	t=1733295864; cv=none; b=bwk92VxyTvlLCBUzTJ1dCIDpYsgyrNYjw1zN7CNzLsGNOtE5EtemrNybvdZomJTLkSDPyp8b3LYocMlhFe+MCtnsvwAfkX39+tfQl2T+mumuDM8rjMxWz4yYKLUjm3IvrDuaCeVtdc5qddQ9oL+FLN99FU3dSUhEwDUfvFoTZmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733295864; c=relaxed/simple;
-	bh=EDtluHYUfQKPYx+4thPs1YkRJQ3lPEEPCgUC9g0M4+8=;
+	bh=y9aesYZIu8+NN2JItIOQ6+EFpGFSHMAEz0wiJUTYDLs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EAKpzwMro3UXXT/YB0rZ/x/xpOgjwvMUVrBrZOz6yljs8xB8q1ZaP3U1aLxN/N8BYTxiT4mphs3I/OXXH8jbkuXfJgu7TAIq2VXJD+qP6W94Qvj35t8+r8b7BhgrO8aZx3aZoTa9jQSeNemgAGlVXS8Vr3BcBUzQ1Ohi6FkrCoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+KZ+dah; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=RvGZaTShPz9NAJwju7B5A4I8qKwHtT/tb7OPkYCvMnjHnHB3PxruX4BeIxfO+23Jlekq75JOjcTW+IrKwkEG8nC0ANG6E1U73kJpBN5PrrJmbBckhbIxuDPimrmAJGiollmz118CyXJWEYO2sspV/yTllJ/qqE9VkcEqua9xA+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NC1qZTxK; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+KZ+dah"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NC1qZTxK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1733295863; x=1764831863;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EDtluHYUfQKPYx+4thPs1YkRJQ3lPEEPCgUC9g0M4+8=;
-  b=V+KZ+dahX1IZtjick8TfnB4rlwR52NO8Fmr4B79BaCgC1Ge+aMmjHGTC
-   cpIYOk0gDIsCRVo4tQ/AZUrKdV/v63HFMML8wMy+nrYVLjUZYPr1SmIpv
-   2JWuu5XfYmnP+baw6zEE9J216Woyih45FYbQnwTpcveLs1Xur/qfoOG51
-   EPDBXAKZi8uuGcyE1gaWxsXLqXKrFBmyQYz3c2JUVxkDZ2Zfm1vdIlggf
-   zOY2rFUZa1mNonCw5J23duZlBlkk7vJgzkHjdtqf//1jqWIzU9GQd9nBE
-   IcQ4EQ5HJnDna78Chq+yqYopIWLN2KuW7lKuT1nM69Da3OqEUCPxYeQDV
-   Q==;
-X-CSE-ConnectionGUID: FgLq9jmsR2uLQpMyPKsDhw==
-X-CSE-MsgGUID: DOzaZH6RTamQqxUC/SVtRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44022839"
+  bh=y9aesYZIu8+NN2JItIOQ6+EFpGFSHMAEz0wiJUTYDLs=;
+  b=NC1qZTxKJBU9Avi5+BEj8Am/OfKcMucs7l+szbOk8ir3hd43Gb7/BzSa
+   hD+JLsop79g9UZ99o2GBaIH2VZaHEL+sMgiXTYTjlJnqae777ixd9fMaE
+   3WN3RtI7YX6zKyVH2aKvZg2GpWUCqEHyc7+gSY3gXGYeqzqL6sjyFjdD4
+   8EReQJYZHIPhNDpOE9Ibn8v9HdQT5T1JfPVwjKTksKCfK3PMeEv5pjmRC
+   WJ5lDJGcHwFOozH5BO4cC1is0V9MwPpRNZ0rW5o83Dba7WyKwA6osvYHT
+   bl4esVgaS3aT3rJbm4w9Iw2tZmtDUoKysWkXx9WkXShJzT7fd9p/JJWMa
+   A==;
+X-CSE-ConnectionGUID: 5hF1TBwiSw+9deosGoW48g==
+X-CSE-MsgGUID: 5cIvgq1ORx+aFwMB+Fkapw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44573912"
 X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="44022839"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 23:04:21 -0800
-X-CSE-ConnectionGUID: G0N0CBh6T0e9OLsK+LpoLw==
-X-CSE-MsgGUID: 9ynmOB2QR1mHNRPeORETyA==
+   d="scan'208";a="44573912"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 23:04:22 -0800
+X-CSE-ConnectionGUID: GX292Ts3TTqX37yNsXPCdA==
+X-CSE-MsgGUID: +FWf/uO4QBOEcYKnH8lYfA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,207,1728975600"; 
-   d="scan'208";a="94104184"
+   d="scan'208";a="93540788"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 03 Dec 2024 23:04:17 -0800
+  by fmviesa007.fm.intel.com with ESMTP; 03 Dec 2024 23:04:20 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 39A8942D; Wed, 04 Dec 2024 09:04:16 +0200 (EET)
+	id 57F83AAF; Wed, 04 Dec 2024 09:04:16 +0200 (EET)
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: linux-gpio@vger.kernel.org
 Cc: Andy Shevchenko <andy@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Andy Shevchenko <andy@kernel.org>,
 	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
 	Shankar Bandal <shankar.bandal@intel.com>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 3/7] gpio: graniterapids: Fix invalid GPI_IS register offset
-Date: Wed,  4 Dec 2024 09:04:11 +0200
-Message-ID: <20241204070415.1034449-4-mika.westerberg@linux.intel.com>
+Subject: [PATCH 6/7] gpio: graniterapids: Check if GPIO line can be used for IRQs
+Date: Wed,  4 Dec 2024 09:04:14 +0200
+Message-ID: <20241204070415.1034449-7-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241204070415.1034449-1-mika.westerberg@linux.intel.com>
 References: <20241204070415.1034449-1-mika.westerberg@linux.intel.com>
@@ -67,31 +67,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Shankar Bandal <shankar.bandal@intel.com>
+From: Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>
 
-Update GPI Interrupt Status register offset to correct value.
+GPIO line can only be used as interrupt if its INTSEL register is
+programmed by the BIOS.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Shankar Bandal <shankar.bandal@intel.com>
 Signed-off-by: Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpio-graniterapids.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-graniterapids.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-graniterapids.c b/drivers/gpio/gpio-graniterapids.c
-index d2b542b536b6..be907784ccdb 100644
+index b12abe77299c..3a972d460fe2 100644
 --- a/drivers/gpio/gpio-graniterapids.c
 +++ b/drivers/gpio/gpio-graniterapids.c
-@@ -34,7 +34,7 @@
+@@ -39,6 +39,7 @@
  
- #define GNR_CFG_PADBAR		0x00
- #define GNR_CFG_LOCK_OFFSET	0x04
--#define GNR_GPI_STATUS_OFFSET	0x20
-+#define GNR_GPI_STATUS_OFFSET	0x14
- #define GNR_GPI_ENABLE_OFFSET	0x24
+ #define GNR_CFG_DW_HOSTSW_MODE	BIT(27)
+ #define GNR_CFG_DW_RX_MASK	GENMASK(23, 22)
++#define GNR_CFG_DW_INTSEL_MASK	GENMASK(21, 14)
+ #define GNR_CFG_DW_RX_DISABLE	FIELD_PREP(GNR_CFG_DW_RX_MASK, 2)
+ #define GNR_CFG_DW_RX_EDGE	FIELD_PREP(GNR_CFG_DW_RX_MASK, 1)
+ #define GNR_CFG_DW_RX_LEVEL	FIELD_PREP(GNR_CFG_DW_RX_MASK, 0)
+@@ -227,10 +228,18 @@ static void gnr_gpio_irq_unmask(struct irq_data *d)
+ static int gnr_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	irq_hw_number_t pin = irqd_to_hwirq(d);
+-	u32 mask = GNR_CFG_DW_RX_MASK;
++	struct gnr_gpio *priv = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++	u32 reg;
+ 	u32 set;
  
- #define GNR_CFG_DW_RX_MASK	GENMASK(25, 22)
++	/* Allow interrupts only if Interrupt Select field is non-zero */
++	reg = readl(gnr_gpio_get_padcfg_addr(priv, hwirq));
++	if (!(reg & GNR_CFG_DW_INTSEL_MASK)) {
++		dev_dbg(gc->parent, "GPIO %lu cannot be used as IRQ", hwirq);
++		return -EPERM;
++	}
++
+ 	/* Falling edge and level low triggers not supported by the GPIO controller */
+ 	switch (type) {
+ 	case IRQ_TYPE_NONE:
+@@ -248,7 +257,7 @@ static int gnr_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
+-	return gnr_gpio_configure_line(gc, pin, mask, set);
++	return gnr_gpio_configure_line(gc, hwirq, GNR_CFG_DW_RX_MASK, set);
+ }
+ 
+ static const struct irq_chip gnr_gpio_irq_chip = {
 -- 
 2.45.2
 
