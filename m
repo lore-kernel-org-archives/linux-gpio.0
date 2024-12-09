@@ -1,35 +1,37 @@
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF6233D99;
-	Mon,  9 Dec 2024 12:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB74234986;
+	Mon,  9 Dec 2024 12:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749085; cv=none; b=tuoZvLnC2tYUmaUKoSEtXFfNp6yb/LK9cayPvr9g6xiXCrbCd+u7B2uQ/njzcz9ox5uWwlUJpVFkn1Q3my484CJXeS273gcglw5QHx0CRarhGnHDVR3DyeTgTtGZC0TuXy6JjKh80uKoHi6do2sU2sSw/EnpXUthlitilXFkge4=
+	t=1733749088; cv=none; b=LLqBadWf0xkKMwrsb/rVtyxDe66bhIQ9yAb3GcdnYTVZ8Cm0ip9YKPvRx2Bk0ccAzDxuaC/wpqdj+fgMSBaQ9bbQdyA50EEGw/4wiLKwmFHMXOdMcGbpWNYZO/QEV111hXVnw35dShN1xraXGeIMSl/jx2qkAOkDQQvexhJ2jIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749085; c=relaxed/simple;
-	bh=MQxJACt2qf28gjS7xexq1Q9BaJXRKKxZU40I7tfb95s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RYjD84wrLYRd4cV8x65JwuRvPmMRQWlp3pZ6Qq297MEL+Fuh+JwCOUDERXCxAOnP0k90s/EjvzeTg/x6w4QUDbq1vYkE0nrU0BR1toBpyApewkIIEzxWCigi8OM23MoVL4f91npUso/1F5te8pMuWLwPW6RO2RRRZg9kseR65m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=bQRrTd6m; arc=none smtp.client-ip=134.0.28.12
+	s=arc-20240116; t=1733749088; c=relaxed/simple;
+	bh=DaHPd6SOKd8MfSu9ZfFUvr3WN62/OMs14KDuAXEquQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LkCNi1d1SkmImJ/YopFi3fDyOOeUiHiTT67UuOvWDmqWL88Nivqb+62tSkPqwnBzoqn0yH8xJpwKv9x0BbC3fI7l+MB9fbXfzV+BCRAsZnO0vFhS0ePuiRA1C9vE1rLH6kCFCcd20xxHUHa7M9ktb+SVHcHthmoKiCeG7Zxj8+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=bxlWsBXZ; arc=none smtp.client-ip=134.0.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="bQRrTd6m"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="bxlWsBXZ"
 Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout2.routing.net (Postfix) with ESMTP id 9AE375FC3D;
-	Mon,  9 Dec 2024 12:57:55 +0000 (UTC)
+	by mxout1.routing.net (Postfix) with ESMTP id B0ABF40452;
+	Mon,  9 Dec 2024 12:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733749075;
+	s=20200217; t=1733749078;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QbvJAK8CeaB2O9XIazN63jkXHsl6QMzYRIOD/43bDtM=;
-	b=bQRrTd6mxV7EwfWBJIgGWFVMpkZQMZRxqYEtSQyW0yFy9QLWY0RDnM1Qyx1gvVDdlOg6uB
-	8+4j/vP7QThfGRND9MwAIDKjtb1pRCQ7N5Uy/9kbfWFOwnfR2l8SfdixiglOnS+gsHc4xT
-	Q6ezJm0M6ZJGDG746kkKEiDQm/GKgxE=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VIpsPcGOjRyl5qUhr+7znCLWNsK6P7pZhuPfToLGzCI=;
+	b=bxlWsBXZP8f/zUpFSWRBa3yFdPImbW3Huhv4a0u7byeYlMhpxpR2N2unKS8k4/oGr5Kj7i
+	f4uW6Txj/ZeYY3N9Tcj7p1JVYISpZRXQAFNP71hvgl2iuGjjj/VAXDiNCp88eb82ZEJAAy
+	y/WOH0i+7GPW/DDFPN4dZ/xfhfC+R7Y=
 Received: from frank-u24.. (fttx-pool-80.245.75.28.bambit.de [80.245.75.28])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id AD48D80483;
-	Mon,  9 Dec 2024 12:57:54 +0000 (UTC)
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id F125180483;
+	Mon,  9 Dec 2024 12:57:57 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Rob Herring <robh@kernel.org>,
@@ -44,73 +46,109 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v6 0/5] Add pinctrl support for mt7988
-Date: Mon,  9 Dec 2024 13:57:34 +0100
-Message-ID: <20241209125742.9307-1-linux@fw-web.de>
+Subject: [PATCH v6 4/5] arm64: dts: mediatek: mt7988: Add pinctrl support
+Date: Mon,  9 Dec 2024 13:57:38 +0100
+Message-ID: <20241209125742.9307-5-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209125742.9307-1-linux@fw-web.de>
+References: <20241209125742.9307-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: a2e1c607-20e8-4b0b-9aec-6da01a38e817
+X-Mail-ID: 2a1d0a53-6c11-438e-951a-535d710498e4
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-This series adds pinctrl driver, dt-bindings and dts node for pinctrl
-on mediatek mt7988 SoC.
+Add mt7988a pinctrl node.
 
-changes in v6:
-- some fixes to binding
-- changed title and fixed typo in bpi-r4 patch
-- added RB's
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+v5:
+- drop pins with second function
 
-changes in v5:
-- rebased to 6.13-rc1
-- moved dt nodes with mutliple options to BPI-R4 board
-- changes suggested by angelo in v4
-- changed example in binding and dt node to not using const MTK_DRIVE_8mA
+v2:
+- fix wrong alignment of reg values
+---
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 54 +++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-changes in v4:
-- fixed fixed string binding error
-
-changes in v3:
-- rebase on rafals dts patches
-- update binding to have mux subnode as fixed string and conf with optional suffix
-
-changes in v2:
-  binding:
-  - drop gpio-cells description
-  - move ref in mux subnode up
-  - order uart-functions alphanumeric and fix typo
-  dts:
-  - fix indentation of reg-values
-
-
-Daniel Golle (2):
-  pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
-  pinctrl: mediatek: add MT7988 pinctrl driver
-
-Frank Wunderlich (3):
-  dt-bindings: pinctrl: add binding for MT7988 SoC
-  arm64: dts: mediatek: mt7988: Add pinctrl support
-  arm64: dts: mediatek: mt7988a-bpi-r4: Add pinctrl subnodes for bpi-r4
-
- .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  575 ++++++
- .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  189 ++
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |   54 +
- drivers/pinctrl/mediatek/Kconfig              |    7 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt7988.c     | 1556 +++++++++++++++++
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   73 +-
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    1 +
- 8 files changed, 2445 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988.c
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index c9649b815276..46969577c87a 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/clock/mediatek,mt7988-clk.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy.h>
++#include <dt-bindings/pinctrl/mt65xx.h>
+ 
+ / {
+ 	compatible = "mediatek,mt7988a";
+@@ -105,6 +106,59 @@ clock-controller@1001e000 {
+ 			#clock-cells = <1>;
+ 		};
+ 
++		pio: pinctrl@1001f000 {
++			compatible = "mediatek,mt7988-pinctrl";
++			reg = <0 0x1001f000 0 0x1000>,
++			      <0 0x11c10000 0 0x1000>,
++			      <0 0x11d00000 0 0x1000>,
++			      <0 0x11d20000 0 0x1000>,
++			      <0 0x11e00000 0 0x1000>,
++			      <0 0x11f00000 0 0x1000>,
++			      <0 0x1000b000 0 0x1000>;
++			reg-names = "gpio", "iocfg_tr",
++				    "iocfg_br", "iocfg_rb",
++				    "iocfg_lb", "iocfg_tl", "eint";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pio 0 0 84>;
++			interrupt-controller;
++			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-parent = <&gic>;
++			#interrupt-cells = <2>;
++
++			pcie0_pins: pcie0-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0",
++						 "pcie_wake_n0_0";
++				};
++			};
++
++			pcie1_pins: pcie1-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_2l_1_pereset", "pcie_clk_req_n1",
++						 "pcie_wake_n1_0";
++				};
++			};
++
++			pcie2_pins: pcie2-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_1l_0_pereset", "pcie_clk_req_n2_0",
++						 "pcie_wake_n2_0";
++				};
++			};
++
++			pcie3_pins: pcie3-pins {
++				mux {
++					function = "pcie";
++					groups = "pcie_1l_1_pereset", "pcie_clk_req_n3",
++						 "pcie_wake_n3_0";
++				};
++			};
++		};
++
+ 		pwm@10048000 {
+ 			compatible = "mediatek,mt7988-pwm";
+ 			reg = <0 0x10048000 0 0x1000>;
 -- 
 2.43.0
 
