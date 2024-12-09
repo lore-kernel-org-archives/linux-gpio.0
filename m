@@ -1,101 +1,220 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23B222619B;
-	Mon,  9 Dec 2024 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC9222E3EA;
+	Mon,  9 Dec 2024 12:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748909; cv=none; b=tL9d4iHOk6r16pA2UkbiLcV/VVyvtBwGSnsKS0A3MszmwKUQhITbYtHUJCwpcNAjKz1ChZVyO99c3KNwWUlJqnb45dFuLaM3PBBkUS+le6VH/dJUU0bF0jgZ1QN0jrCk47fMswTvISg3HhDB0vNFhsqTTs6OgZ7Qar4QwQi6pbA=
+	t=1733749081; cv=none; b=ialea/xHoKjaBQTgfrFSTfh1ykxEVPwSfj1fRrsiSdl0IakZBI/93lVUvk4kZmiZh75X5uIOH0CcDDNGZYrbZon9/i9bV7dLn9NqIXEpgbXdlQUBZeW3W6kjk15iDPvX7JKj/KgGYgOez/gxJ/qecGD/1qMzix+nQoiSiqLAWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748909; c=relaxed/simple;
-	bh=BoFHQnV2ZUJRZO3Onx/b6idYeF5wQgGinSz6ETWgvdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sQAihIxRsNyA0GsA/PFMk+v6wvdjku3V+P9F0L9KMOuKpZl0h26nsyoDASg8l/l84eQNageaQqkaCG+rCZSsqdeCS5PK1liKMOGeeTU5rBzeVLHmpVXMol4VWshX4MP5Ey8Ii79J++jQ2PPM7MX8wqU49Jp9BTp5ao4Bn0A5/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4afde39e360so627552137.0;
-        Mon, 09 Dec 2024 04:55:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733748905; x=1734353705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=flMWz4KvijWpTCU/Mae8t1bctkfOrFBTrsRYC6H9AOI=;
-        b=QN4VfUeNSFZDLqixw0hmavU8YVJorAqLHliHtnLYPA1/kngw5vHYzlAUs5MIQ6Xd3f
-         3KtEZQpswL+fLitGCfchGDQGRH8tJ4AB9Sei1qpGqCWHuMdvQ1AT/Aqma9+gZjJVwO6c
-         Yx62RV/68Ir7PMytGEMWDJKcneaGYj5fR0iXZoBweS2e24uLb1lhyTlbkfz3Q/LFmMUk
-         B7BrLbFxUC+tcWPjniwABzskvm6vZiXf3nL/rztHhluSuDgmBo7hglrlJ/Gc/n9tEQuZ
-         +hRs+beemHtHshrhzPTJUJ28dDq2QYMkbbmSRSVaXFYU8PD2nJPw+Fp7aWPlT+Fkobkb
-         RE9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7LwrlQpEUrc/mNRlLL4nXcNKUjORMBXVexuQEvnmrAhwVJRI/wNDm3/5JjjZzmZn7J7ClX7Dz5r1J@vger.kernel.org, AJvYcCUGz1YK2SbZGLYWDmYJ2f5Y01+m0UBjpDr7WIFzD9mSFmrqzZh8it0+HGrBq9jclkk4brcbU82dAgnt@vger.kernel.org, AJvYcCUMhYhBoXCVC7B6qUcXtRndL99NdsXolbg6VHrsyMMtf3nRCH2mjT/QcUUwZobtLj8KfmRVQlHa8UzilzE8@vger.kernel.org, AJvYcCV2GEoOt4JQZejB0kHDrzWdYh9wMYybD6ixUsOzoPXVLcBStKz02F/89TJa4PLWZ1WDBOIAhizNyJNb6Q==@vger.kernel.org, AJvYcCXf7eECvGWI6hdE+K5+T2s3ftxhCAy+NjF+ow7OAwznclXVF5GJX71aEfuzGtaQJCA9YoZmu8fFk/Bb28Q=@vger.kernel.org, AJvYcCXiqyqCpUcbKFxPIlBJBfWt1Lnc+A6nXrhMXY6NOD+B14tjTbZj+m1+TM7okZ5pXNftUAXsEhsBw9fi00uCamlrlG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywroq1tahT2LI2IJc8cz5uI0AjlPbAbB1NBxRFnMUpgxhizhn5u
-	EIJ8Yun1Srt1dmziwcaq9coeQGhSkNR8hnk5I/UwDynAUx/VoENTYMo+zAJcgFU=
-X-Gm-Gg: ASbGncv1OdHSQR6yqAZCQuw/mwGQYwYN+qw/7sDSlpwH3elZ8sTJoYOU3XtqIgVvDCj
-	blLpeP7dw1ClUElzywdJ2IPLTrHAzYNP3gaM8rc4WLYX7fB8HPSpU0isp9dA5aWO5rBGPhrjH/t
-	1jw0/DsTrLs+W0/UiiiwnViAKVj+6QWolE+7i6V149xwD0eoAMdIUVrdgTKNZ5DMwGP2asnTTF7
-	ZIcu1wzy/uoszm3ehBbnqOeYbR5HEyRfD3TMsZoNXaopd92k4tZSFetK4hzgGN6yRv/rI8oiyCy
-	mdFLN+o9Mp8/
-X-Google-Smtp-Source: AGHT+IH4hnTZxCmMLebS/O3QUWC+xA2zM1dVWbyUeqfS+PlrXtSXiImSZdRB47ehj3UFuGhZdcb7yQ==
-X-Received: by 2002:a05:6102:ccb:b0:4af:deaf:f891 with SMTP id ada2fe7eead31-4b116051204mr376410137.4.1733748905052;
-        Mon, 09 Dec 2024 04:55:05 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2ba7dc94sm976061241.16.2024.12.09.04.55.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 04:55:03 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-85c61388e68so288731241.3;
-        Mon, 09 Dec 2024 04:55:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMm+vwHBsKW2M2of129Th4T1cklHSH1cTgaXrY+GuYF23VVnbF08NVeQLEJfiEnXh5vERC4K8VEUsZMu+sWi7DfSs=@vger.kernel.org, AJvYcCVfuyTJRDg32iIcT0zl+rSSmZh1nn4ttiULZJVJ652iywuPJ+EdDcWJBjpRnyLXpuXIR4GrHxCvr7lGZA==@vger.kernel.org, AJvYcCVp057uc4nD8EEvE1jnnnDumhQEXDnX+RTpLhb9cU+yCmNfHqZX5YeZKBKO5E0qR3wT/YZful0SVP3y@vger.kernel.org, AJvYcCW3LC1vxoGZL8oYkk1vT9QObOs0cVUFOM8NyhewTadOawE0C9BnlWZLpWEyObeAJwzUmTmJAxhe7kXhOHoR@vger.kernel.org, AJvYcCWHVvOeUHlA+A7FvPpxitHYkKtTn6uXdC55igNSbvMfMyGFICun58+hc2RQplxm2meVvlXEj+VIe79U@vger.kernel.org, AJvYcCX6C1AzbnHox2XZMGC+6YHMeP6ROGd58aN7iUS1CZQIgPteaNDVnEgGdWmsdXGlPyY5a9wOl7NZFdWJ2ds=@vger.kernel.org
-X-Received: by 2002:a05:6102:510b:b0:4af:f6e5:2b3d with SMTP id
- ada2fe7eead31-4b1160dc12fmr337822137.15.1733748903246; Mon, 09 Dec 2024
- 04:55:03 -0800 (PST)
+	s=arc-20240116; t=1733749081; c=relaxed/simple;
+	bh=b/RAI/OQ/bsYkbKf1Z1frGgVURTC5GE2ZPLlJW5Bxkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z8gJodbz0Bk+5DMD14GoolYNNvskNKLgvsHFaLZMIsPgUIG0kD6N7xXXCTWOUVyRxOoJ3c8mnNc9+Ap87zjr5L+4uvvGSH7Qo9EB6f7oh78/tv1iMSAsCy5LJBmzuWQaNKXuhIzZVsrgmTWnBK7vimGa4pUGJgQRkJe0FsPc/XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=rAij7lCf; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="rAij7lCf"
+Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
+	by mxout3.routing.net (Postfix) with ESMTP id 548C560F60;
+	Mon,  9 Dec 2024 12:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1733749076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f++gLRWPvVGgWbSsk+IhO46hRl2VKlyKFRbj5WdDWtY=;
+	b=rAij7lCfwDtozqIcylDY/PMyDP58pws7YD+uOSPOufg8Co5FcjSimwrhrBTrquWfy/N3+e
+	2v1PzPMLGZcm73TKbj9CxZmlnzr1cgVfJ55wUhW4Sni2+P49QKbsKj0MWhlTdzh6OIosGV
+	DrlZqJZILHAos3KraFHWG9ogHO+MDFg=
+Received: from frank-u24.. (fttx-pool-80.245.75.28.bambit.de [80.245.75.28])
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 907AE80494;
+	Mon,  9 Dec 2024 12:57:55 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH v6 1/5] pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
+Date: Mon,  9 Dec 2024 13:57:35 +0100
+Message-ID: <20241209125742.9307-2-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209125742.9307-1-linux@fw-web.de>
+References: <20241209125742.9307-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-5-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 13:54:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXNokax91t-N3yrcLFupeWoejBz0wtP9tbEb+EaMns6wQ@mail.gmail.com>
-Message-ID: <CAMuHMdXNokax91t-N3yrcLFupeWoejBz0wtP9tbEb+EaMns6wQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/25] clk: versaclock3: Add support for the 5L35023 variant
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 62c31cf2-f7ea-4f25-bd7e-4db20a40060b
 
-On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add support for the 5L35023 variant of the Versa 3 clock generator.
->
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Daniel Golle <daniel@makrotopia.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The MediaTek MT7988 SoC got some pins which only got configurable
+pull-down but unlike previous designs there is no pull-up option.
+Add new type MTK_PULL_PD_TYPE to support configuring such pins.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+v5:
+- add changes suggested by angelo (pd_only), long version, tested with emmc
+---
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 73 ++++++++++++++++---
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
+ 2 files changed, 63 insertions(+), 11 deletions(-)
 
-                        Geert
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 54301fbba524..7b704cc55c9f 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -573,7 +573,7 @@ EXPORT_SYMBOL_GPL(mtk_pinconf_bias_get_rev1);
+  */
+ static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
+ 				const struct mtk_pin_desc *desc,
+-				u32 pullup, u32 arg)
++				u32 pullup, u32 arg, bool pd_only)
+ {
+ 	int err, pu, pd;
+ 
+@@ -587,18 +587,34 @@ static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
+ 		pu = 0;
+ 		pd = 1;
+ 	} else {
+-		err = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+-	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PU, pu);
+-	if (err)
+-		goto out;
++	if (!pd_only) {
++		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PU, pu);
++		if (err)
++			return err;
++	}
+ 
+-	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
++	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
++}
++
++static int mtk_pinconf_bias_set_pd(struct mtk_pinctrl *hw,
++				const struct mtk_pin_desc *desc,
++				u32 pullup, u32 arg)
++{
++	int err, pd;
++
++	if (arg != MTK_DISABLE && arg != MTK_ENABLE)
++		return -EINVAL;
++
++	if (arg == MTK_DISABLE || pullup)
++		pd = 0;
++	else if (!pullup)
++		pd = 1;
++
++	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
+ 
+-out:
+-	return err;
+ }
+ 
+ static int mtk_pinconf_bias_set_pullsel_pullen(struct mtk_pinctrl *hw,
+@@ -737,7 +753,7 @@ static int mtk_pinconf_bias_set_pu_pd_rsel(struct mtk_pinctrl *hw,
+ 			return err;
+ 	}
+ 
+-	return mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, enable);
++	return mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, enable, false);
+ }
+ 
+ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
+@@ -758,8 +774,14 @@ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
+ 			return 0;
+ 	}
+ 
++	if (try_all_type & MTK_PULL_PD_TYPE) {
++		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, true);
++		if (!err)
++			return err;
++	}
++
+ 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+-		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
++		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, false);
+ 		if (!err)
+ 			return 0;
+ 	}
+@@ -878,6 +900,29 @@ static int mtk_pinconf_bias_get_pu_pd(struct mtk_pinctrl *hw,
+ 	return err;
+ }
+ 
++static int mtk_pinconf_bias_get_pd(struct mtk_pinctrl *hw,
++				const struct mtk_pin_desc *desc,
++				u32 *pullup, u32 *enable)
++{
++	int err, pd;
++
++	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PD, &pd);
++	if (err)
++		goto out;
++
++	if (pd == 0) {
++		*pullup = 0;
++		*enable = MTK_DISABLE;
++	} else if (pd == 1) {
++		*pullup = 0;
++		*enable = MTK_ENABLE;
++	} else
++		err = -EINVAL;
++
++out:
++	return err;
++}
++
+ static int mtk_pinconf_bias_get_pullsel_pullen(struct mtk_pinctrl *hw,
+ 				const struct mtk_pin_desc *desc,
+ 				u32 *pullup, u32 *enable)
+@@ -947,6 +992,12 @@ int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
+ 			return 0;
+ 	}
+ 
++	if (try_all_type & MTK_PULL_PD_TYPE) {
++		err = mtk_pinconf_bias_get_pd(hw, desc, pullup, enable);
++		if (!err)
++			return err;
++	}
++
+ 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+ 		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
+ 		if (!err)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+index 23688ca6d04e..9c271dc2b521 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+@@ -24,6 +24,7 @@
+  * turned on/off itself. But it can't be selected pull up/down
+  */
+ #define MTK_PULL_RSEL_TYPE		BIT(3)
++#define MTK_PULL_PD_TYPE        BIT(4)
+ /* MTK_PULL_PU_PD_RSEL_TYPE is a type which is controlled by
+  * MTK_PULL_PU_PD_TYPE and MTK_PULL_RSEL_TYPE.
+  */
+-- 
+2.43.0
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
