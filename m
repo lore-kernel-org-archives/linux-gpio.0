@@ -1,112 +1,164 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AF81AA792
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 14:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9151A704C;
+	Tue, 10 Dec 2024 14:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733840504; cv=none; b=pYtagEYxD/RzQUueXg4OkqJ12I+iTdBt6vf1SP/E/1uybz2uIKq0VzzH7ki+SUz8e4lTvQRGAuhjd5fn7kvLATaImyezuV9SnSaFqgY6T8mlqAkf3lsXoqgQQ1GY9danuOA/gIMHUwsScUtTT4fhBanA+4ALBo3INWoYxAG08lI=
+	t=1733841525; cv=none; b=AjXBET5FtY22whkRCQYAb1UvmOu3pAboGM9hoQnFRo1MeFFmMGvhAfLvre7sUgiQzXSPN7EoWHF5Yws/L7lstnKNj5mt/dNZ10CZInHuGRuAdCdZQVvJf1CtTdBpOKMflNayvN6XupajPcUiaIG+XVyVT2s4sDAr4Kdt/IIvvjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733840504; c=relaxed/simple;
-	bh=MDuB7G95sw8Ghkjr69h3R4u1uJE3wDaCCF0bygKZHAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vCHAbgKIQVVL+EuMgZjnl1hY2yi6kmX50jGCJmuFecgAJDq0g6gVQ9KwejEZ2es26Yj+ntVwh+Bg71mkhRZZghcwcdAA3wheCiNTLSxZQWL/v70rr2VJlZfp5C/efu85mh1oybJKecD1rKuwXF9hE/gDBDtFxjHWD0oEnOmL7rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F8TsGm3s; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1733841525; c=relaxed/simple;
+	bh=4ptCUxlg3CS8R0UKDc4pEafLSFTcKyhRiAR5SRLDvcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FIEs2ejJATF/dRRf7zMgigUCgS1BXI7tckCz4bjuYOFrZGXY96gmhx+uedM5RqFAfHirjNEPiB/EPOHHdtTQYwJ4EWZGqTIcjPjrI2zVzLD3Jfefudc3TgHgoPYTdRe2t1/QUcg2OgzSrIHT96hqoAB9vD6iNWY4CJ59ozJk8vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vo4pWOiW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F8TsGm3s"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53e384e3481so3303228e87.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 06:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733840500; x=1734445300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fJ0DGWFlGIoGNqZ/R4FA96whdWcHMy7cbXSkJER04uI=;
-        b=F8TsGm3sZLptP+WMOjGW4IMioEZtsEC73AX2mGAPXhrXqG/o6XWZJpgQvcDAuB/4e8
-         bn/JKV/lOPJQD0L96PediWjscqs2QYsvamOyvObQHhCJ7ljwVd7/fzt+xLdZZr7HRTfT
-         LiVnUnINomB5dxF4nfbhuipeNcfII0MtWKizFApV47iGlGsXVcd6uZbIp2dHrwsZN29k
-         6M9KCc/UBf5kFkbT18ojMbYpL+Azj1ERESGT1/uE31w//EqDG3B7a1b6PscGIrhKtJlw
-         iIyDbej3D/Kut+0dXZZ13d256xq3SZReSs7ssvtbW6APWSexWehUCtlMaBR0e3ZUklx9
-         xEXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733840500; x=1734445300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fJ0DGWFlGIoGNqZ/R4FA96whdWcHMy7cbXSkJER04uI=;
-        b=Fr1qgMLsOmV97qDf+s+PN4WC9Dx53P41W7tbcOS9T0buKO+WoHnCcvS3CrPv66mkSF
-         H3k+qJN2RLTBD09yOZkOGKbC0nwV2TnWalJHYKE3XAwf89TO9e5t1PesOlBPVhrY2Hm/
-         mZbvkhgrZbXKd30WHhNDn+JU8eKHeLMHX0o90psGgotuUv6xYTIb6C1P/TUMUDvgpxlG
-         zMQe21WDkH0iavPCC+O3zz4mi/ujr9RntoAkw7fI1pyWhtisGF6GVfVHMEyy85jYSuBC
-         MrJUZCHvmYjjgLoEoDlRcVwkqyq/mvZZAmp/8bAULuXslmDh/BUTeRLU5SSDoU0REEdF
-         +d7w==
-X-Forwarded-Encrypted: i=1; AJvYcCX8A56m9A5+7ZbSGGcpaZDvk7XpguVVvDdh98omFYEJTGfXxJecCgNnNyebS1FZPMrurDXsR01PTXOF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvEqQhUssqE6HJHxOObV5mOm6SkiwHTqfPjlb4KcUccXYzRSto
-	bbGNh5dGM45nvsh+cm7B++ZDHyDLWOHT+c1yK+MhnIn37Wz9TXBYAzBEKquqnqiY94hEs13MsAA
-	m6hoz/gAWsPt9v6w6rrZJYeMKMr234fA8bomjKg==
-X-Gm-Gg: ASbGncuHZy2sOfnItdeg5lsajSygrmlpoxbFaK3UNUeDXaGBc3XAiWNCGA9hgfmMgSG
-	XQAfwT8lJcgwF9hB3/TDF1QAn7NyDPFZ70V2NiNm9mqAMTr+OECP8lWsBscRQoEgpB0k=
-X-Google-Smtp-Source: AGHT+IHAMPQmyKXGGXmfrAzIObrcJiNh68MX6RT6JoADZJ/kqWRPut7UliV1zsoq0G1xaOpxryXeMQJ6Drlrn+M2nvQ=
-X-Received: by 2002:a05:6512:10c4:b0:540:15b2:fd27 with SMTP id
- 2adb3069b0e04-54015b2fec5mr3728392e87.7.1733840500380; Tue, 10 Dec 2024
- 06:21:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vo4pWOiW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF30C4CED6;
+	Tue, 10 Dec 2024 14:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733841525;
+	bh=4ptCUxlg3CS8R0UKDc4pEafLSFTcKyhRiAR5SRLDvcA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vo4pWOiWSMnqeNGo33PfVZJSLxQ0uefa7VrHqCv3pinOTN79UdAMNguDjN1Be9anB
+	 xgDV0/TEQn7g1IAGJNnl76QyCIHStyd8afga31/p+OGduaGNkBcjKRDPtNvhzq+8C6
+	 TR2GlFFB8HRkMyZ2qUI15VOdOO8hSpX/skTlbtKGVW8ncAVWK0JIL8W1bUAwmbWT05
+	 OSPRA1s/CUITQBqwot8FhO1fcvDyDiGB75WvqY7tetI7MjaqU78EJzDACJzf9P1SJB
+	 G6qwEhheQK2T8qqWAZgBNsu+qjgdoWfDsAG4fHGsQWCa42fwSNWekzOXobcoVZk5r6
+	 u0lObBPlWWlrQ==
+Message-ID: <68d1490a-ba67-480b-943f-afa56e5b8436@kernel.org>
+Date: Tue, 10 Dec 2024 15:38:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PH1P110MB1603EC2CDF8B08F7C1FDADDA9F3DA@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
-In-Reply-To: <PH1P110MB1603EC2CDF8B08F7C1FDADDA9F3DA@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 10 Dec 2024 15:21:29 +0100
-Message-ID: <CAMRc=McLjp8J_jWqZcN-rGvc8aKqEyjZQj5kGxQ4zkJNnFJVBw@mail.gmail.com>
-Subject: Re: [PATCH libgpiod] bindings: python: provide fileno() for Chip and LineRequest
-To: Vincent Fazio <vfazio@xes-inc.com>
-Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: Ming Yu <a0282524688@gmail.com>, tmyu0@nuvoton.com, lee@kernel.org,
+ linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
+ mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+ jdelvare@suse.com, alexandre.belloni@bootlin.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org
+References: <20241210104524.2466586-1-tmyu0@nuvoton.com>
+ <20241210104524.2466586-2-tmyu0@nuvoton.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241210104524.2466586-2-tmyu0@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 10, 2024 at 3:17=E2=80=AFPM Vincent Fazio <vfazio@xes-inc.com> =
-wrote:
->
-> >
-> > @@ -131,6 +132,23 @@ class WatchingInfoEventWorks(TestCase):
-> >          self.assertGreater(ts_rel, ts_rec)
-> >          self.assertGreater(ts_rec, ts_req)
-> >
-> > +    def test_select_chip_object(self):
->
-> Nit:
->
-> def test_select_chip_object(self) -> None:
->
-> These fail `mypy --strict` otherwise. These are optional checks so I'll l=
-eave it up to you to decide if you want to implement them.
->
+On 10/12/2024 11:45, Ming Yu wrote:
+> +	nct6694->int_buffer = devm_kcalloc(dev, NCT6694_MAX_PACKET_SZ,
+> +					   sizeof(unsigned char), GFP_KERNEL);
+> +	if (!nct6694->int_buffer)
+> +		return -ENOMEM;
+> +
+> +	nct6694->int_in_urb = usb_alloc_urb(0, GFP_KERNEL);
+> +	if (!nct6694->int_in_urb)
+> +		return -ENOMEM;
+> +
+> +	nct6694->domain = irq_domain_add_simple(NULL, NCT6694_NR_IRQS, 0,
+> +						&nct6694_irq_domain_ops,
+> +						nct6694);
+> +	if (!nct6694->domain)
+> +		return -ENODEV;
+> +
+> +	nct6694->udev = udev;
+> +	nct6694->timeout = NCT6694_URB_TIMEOUT;	/* Wait until urb complete */
+> +	nct6694->cmd_header = cmd_header;
+> +	nct6694->response_header = response_header;
+> +
+> +	mutex_init(&nct6694->access_lock);
+> +	mutex_init(&nct6694->irq_lock);
+> +
+> +	usb_fill_int_urb(nct6694->int_in_urb, udev, pipe,
+> +			 nct6694->int_buffer, maxp, usb_int_callback,
+> +			 nct6694, int_endpoint->bInterval);
+> +	ret = usb_submit_urb(nct6694->int_in_urb, GFP_KERNEL);
+> +	if (ret)
+> +		goto err_urb;
+> +
+> +	dev_set_drvdata(dev, nct6694);
+> +	usb_set_intfdata(iface, nct6694);
+> +
+> +	ret = mfd_add_hotplug_devices(dev, nct6694_dev, ARRAY_SIZE(nct6694_dev));
+> +	if (ret)
+> +		goto err_mfd;
+> +
+> +	dev_info(dev, "Probed device: (%04X:%04X)\n", id->idVendor, id->idProduct);
 
-Ah! This is why I didn't see it, I missed the --strict switch. Thanks.
+Drop. Duplicating existing messages and interfaces. Your driver is
+supposed to be silent on success.
 
-On an unrelated note: mypy --strict is giving me this:
+> +	return 0;
+> +
+> +err_mfd:
+> +	usb_kill_urb(nct6694->int_in_urb);
+> +err_urb:
+> +	usb_free_urb(nct6694->int_in_urb);
+> +	return dev_err_probe(dev, ret, "Probe failed\n");
 
-bindings/python/gpiod/line.py:19: error: Non-overlapping equality
-check (left operand type: "Value", right operand type: "int")
-[comparison-overlap]
+No, this should go to individual call causing errors so this will be
+informative. Above is not informative at all and kernel already reports
+this, so drop.
 
-for:
+> +}
+> +
+> +static void nct6694_usb_disconnect(struct usb_interface *iface)
+> +{
+> +	struct usb_device *udev = interface_to_usbdev(iface);
+> +	struct nct6694 *nct6694 = usb_get_intfdata(iface);
 
-18     def __bool__(self) -> bool:
-19         return self =3D=3D self.ACTIVE
 
-How do I fix it?
-
-Bart
-
-> Otherwise-
->
-> Reviewed-by: Vincent Fazio <vfazio@xes-inc.com>
->
+Best regards,
+Krzysztof
