@@ -1,98 +1,112 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6B11A00EE
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 12:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AF81AA792
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 14:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733834818; cv=none; b=Zt3dgUd9SWBgjxoHvoIblqK0Nisbdg0XRfJtVzGN94zD2LlI96zARPcLsWHGuW88AsRHvUZbcnvdMcIaf5hCvtKm774ray2Ky0n2Xdwqd8AyyAUSocXUOIQSz7QMQ3X72VcML/0WhvtXNSuSjLAjekMaAd7Zc5jSmaMVfXNzi/c=
+	t=1733840504; cv=none; b=pYtagEYxD/RzQUueXg4OkqJ12I+iTdBt6vf1SP/E/1uybz2uIKq0VzzH7ki+SUz8e4lTvQRGAuhjd5fn7kvLATaImyezuV9SnSaFqgY6T8mlqAkf3lsXoqgQQ1GY9danuOA/gIMHUwsScUtTT4fhBanA+4ALBo3INWoYxAG08lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733834818; c=relaxed/simple;
-	bh=KX4EV3S5tpdSVPVaMW0IgVo/XNFVcw+zGMXFSjwdn4I=;
+	s=arc-20240116; t=1733840504; c=relaxed/simple;
+	bh=MDuB7G95sw8Ghkjr69h3R4u1uJE3wDaCCF0bygKZHAQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EiRvtcvHODWNSN3ONUWlJNdDPuHeXRLFcZSyAETRuHWdOyFJsalmQBqi/iqxGmMK+YXHUrMGhZK2+Zl0KpIKLZPG/UrlpJXZTKebKLUtZ+qW4P3+sAStLy5g1peh9aU37cfthPFF/yuRtsBlBmghZyD5eWTOtnXlvr+czuB7MHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N5GTBVsG; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=vCHAbgKIQVVL+EuMgZjnl1hY2yi6kmX50jGCJmuFecgAJDq0g6gVQ9KwejEZ2es26Yj+ntVwh+Bg71mkhRZZghcwcdAA3wheCiNTLSxZQWL/v70rr2VJlZfp5C/efu85mh1oybJKecD1rKuwXF9hE/gDBDtFxjHWD0oEnOmL7rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F8TsGm3s; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N5GTBVsG"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30229d5b22fso16009511fa.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 04:46:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F8TsGm3s"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53e384e3481so3303228e87.2
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Dec 2024 06:21:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733834815; x=1734439615; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733840500; x=1734445300; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q2gv17yRT4z0rHDfJ0xNPXvIsRkRnNe0DZfYlBqVB+Y=;
-        b=N5GTBVsG2KMmwjiFXXNZANCiDdkUOMEhZXubJTwofUPnyPJfittosAC9P85mzVRcUH
-         m1f6AVL/CWSwuJ/9xgi2NmpmQVIR9Yb32Nfsd7P6xqViG6WPfpSp5oCB/UsFnQkk9Cnb
-         z1KIfeQUX1c0ob0E8NQmktlYOJTBjZlb+7YKZnCL9qrw3D1LUJuUBLeXxGF9aDR8alkp
-         xmIZDjVBiYMtP6SDIvy559XqDYGBGWVQEscQOUVYL/uuqVKyZqI5U2p0I4dtUbViHixk
-         WraUB39L/Av+uWRqoJfwJ6383htCur/3f9CAi1UskwuBuzUDkZnRB1ZEIlrdZLIJzCQn
-         uBnw==
+        bh=fJ0DGWFlGIoGNqZ/R4FA96whdWcHMy7cbXSkJER04uI=;
+        b=F8TsGm3sZLptP+WMOjGW4IMioEZtsEC73AX2mGAPXhrXqG/o6XWZJpgQvcDAuB/4e8
+         bn/JKV/lOPJQD0L96PediWjscqs2QYsvamOyvObQHhCJ7ljwVd7/fzt+xLdZZr7HRTfT
+         LiVnUnINomB5dxF4nfbhuipeNcfII0MtWKizFApV47iGlGsXVcd6uZbIp2dHrwsZN29k
+         6M9KCc/UBf5kFkbT18ojMbYpL+Azj1ERESGT1/uE31w//EqDG3B7a1b6PscGIrhKtJlw
+         iIyDbej3D/Kut+0dXZZ13d256xq3SZReSs7ssvtbW6APWSexWehUCtlMaBR0e3ZUklx9
+         xEXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733834815; x=1734439615;
+        d=1e100.net; s=20230601; t=1733840500; x=1734445300;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q2gv17yRT4z0rHDfJ0xNPXvIsRkRnNe0DZfYlBqVB+Y=;
-        b=jx7eZ6MnlqFVaw4ngfDnyW36XsMwWScmroRTdQkgFeJ0DtW/YmNh19jcQPOkHGMY8T
-         ALcmkN8QpFYIgRZM7WdTWjwu0DJ5B9Iia/ydGRZSOg0D61TxoMiAc7AWzbY7P+azSh31
-         gsZTGu6JRweN0EZ9VURrZo9eIbqoc0XtQcSNKfQkTzk9mEfFEdNtBSKwzXf2XhOK0F2M
-         0Bo+PkssX5D3e3AFGv3Qz9aspYrx9c05Sc1pJeFvlI7e9izb2tbdf8NTpFkrXH0vQ9mB
-         z/0EI7kzLelIBApXR7acrMxd7fTO6X3P2QHczbsWBCc3/O0EXLPJ229PsJYU/vTk0dDy
-         +0nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6BzBXtv/jc3f82/6g0k9DCcguXrTalcURTKpE4eoBvm5BlVtwdNwDXKBrCEB09kCDz5QLU5OCfQ/U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFi5uxKT3LNTUBsW3m+dLZebt/oFJECmWoI0W8ngpGX6fxzkIl
-	iEQJWQxfyrdgG9s2tlGPfGbXDXvr6QPBzrFktP3BgPtxkHUyZmznG9TGI21KOqGJDJ479+Klisb
-	5NEIeYtTmFDZJtFOZY9vuWQuLn1iLOtA2HFx1cQ==
-X-Gm-Gg: ASbGncuintjqCk34oFnx/v9nmEsbzNhQjmyxDrTDQHt1b+Og807Ky++R6+lFvuviudv
-	0ntcKccJx8JVmH4jFMlqIKCcDxe3eDxVpm2l2Zv5NkyjQkb5Q2kp4NKF8ssuRL6laD44=
-X-Google-Smtp-Source: AGHT+IGlGjnX41lf5nD3xaDqv4/+1zouMo9m8MDdOTdpToJj+sYN673kMGyE3ysEnuS7DFynzHplBUGfucHdrqsCYuk=
-X-Received: by 2002:a2e:a163:0:b0:302:336a:898f with SMTP id
- 38308e7fff4ca-302336a8a1emr6922311fa.9.1733834815083; Tue, 10 Dec 2024
- 04:46:55 -0800 (PST)
+        bh=fJ0DGWFlGIoGNqZ/R4FA96whdWcHMy7cbXSkJER04uI=;
+        b=Fr1qgMLsOmV97qDf+s+PN4WC9Dx53P41W7tbcOS9T0buKO+WoHnCcvS3CrPv66mkSF
+         H3k+qJN2RLTBD09yOZkOGKbC0nwV2TnWalJHYKE3XAwf89TO9e5t1PesOlBPVhrY2Hm/
+         mZbvkhgrZbXKd30WHhNDn+JU8eKHeLMHX0o90psGgotuUv6xYTIb6C1P/TUMUDvgpxlG
+         zMQe21WDkH0iavPCC+O3zz4mi/ujr9RntoAkw7fI1pyWhtisGF6GVfVHMEyy85jYSuBC
+         MrJUZCHvmYjjgLoEoDlRcVwkqyq/mvZZAmp/8bAULuXslmDh/BUTeRLU5SSDoU0REEdF
+         +d7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX8A56m9A5+7ZbSGGcpaZDvk7XpguVVvDdh98omFYEJTGfXxJecCgNnNyebS1FZPMrurDXsR01PTXOF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvEqQhUssqE6HJHxOObV5mOm6SkiwHTqfPjlb4KcUccXYzRSto
+	bbGNh5dGM45nvsh+cm7B++ZDHyDLWOHT+c1yK+MhnIn37Wz9TXBYAzBEKquqnqiY94hEs13MsAA
+	m6hoz/gAWsPt9v6w6rrZJYeMKMr234fA8bomjKg==
+X-Gm-Gg: ASbGncuHZy2sOfnItdeg5lsajSygrmlpoxbFaK3UNUeDXaGBc3XAiWNCGA9hgfmMgSG
+	XQAfwT8lJcgwF9hB3/TDF1QAn7NyDPFZ70V2NiNm9mqAMTr+OECP8lWsBscRQoEgpB0k=
+X-Google-Smtp-Source: AGHT+IHAMPQmyKXGGXmfrAzIObrcJiNh68MX6RT6JoADZJ/kqWRPut7UliV1zsoq0G1xaOpxryXeMQJ6Drlrn+M2nvQ=
+X-Received: by 2002:a05:6512:10c4:b0:540:15b2:fd27 with SMTP id
+ 2adb3069b0e04-54015b2fec5mr3728392e87.7.1733840500380; Tue, 10 Dec 2024
+ 06:21:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-3-tmyu0@nuvoton.com>
-In-Reply-To: <20241210104524.2466586-3-tmyu0@nuvoton.com>
+References: <PH1P110MB1603EC2CDF8B08F7C1FDADDA9F3DA@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
+In-Reply-To: <PH1P110MB1603EC2CDF8B08F7C1FDADDA9F3DA@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 10 Dec 2024 13:46:40 +0100
-Message-ID: <CAMRc=Men4QM3a2rydxDYwLjJLYPB7Uid=y_DJ8YNa-So2H3NQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] gpio: Add Nuvoton NCT6694 GPIO support
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
+Date: Tue, 10 Dec 2024 15:21:29 +0100
+Message-ID: <CAMRc=McLjp8J_jWqZcN-rGvc8aKqEyjZQj5kGxQ4zkJNnFJVBw@mail.gmail.com>
+Subject: Re: [PATCH libgpiod] bindings: python: provide fileno() for Chip and LineRequest
+To: Vincent Fazio <vfazio@xes-inc.com>
+Cc: Kent Gibson <warthog618@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 11:46=E2=80=AFAM Ming Yu <a0282524688@gmail.com> wr=
-ote:
+On Tue, Dec 10, 2024 at 3:17=E2=80=AFPM Vincent Fazio <vfazio@xes-inc.com> =
+wrote:
 >
-> This driver supports GPIO and IRQ functionality for NCT6694 MFD
-> device based on USB interface.
+> >
+> > @@ -131,6 +132,23 @@ class WatchingInfoEventWorks(TestCase):
+> >          self.assertGreater(ts_rel, ts_rec)
+> >          self.assertGreater(ts_rec, ts_req)
+> >
+> > +    def test_select_chip_object(self):
 >
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
+> Nit:
+>
+> def test_select_chip_object(self) -> None:
+>
+> These fail `mypy --strict` otherwise. These are optional checks so I'll l=
+eave it up to you to decide if you want to implement them.
+>
 
-Looks much better now. Please address one more issue I just noticed.
+Ah! This is why I didn't see it, I missed the --strict switch. Thanks.
 
-> +
-> +       mutex_init(&data->irq_lock);
+On an unrelated note: mypy --strict is giving me this:
 
-This is never destroyed. Please use devm_mutex_init() preferably to
-not add remove(). Also, the other mutex doesn't seem to be initialized
-at all.
+bindings/python/gpiod/line.py:19: error: Non-overlapping equality
+check (left operand type: "Value", right operand type: "int")
+[comparison-overlap]
+
+for:
+
+18     def __bool__(self) -> bool:
+19         return self =3D=3D self.ACTIVE
+
+How do I fix it?
 
 Bart
+
+> Otherwise-
+>
+> Reviewed-by: Vincent Fazio <vfazio@xes-inc.com>
+>
