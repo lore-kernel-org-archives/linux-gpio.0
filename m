@@ -1,245 +1,115 @@
-Received: from out.smtpout.orange.fr (out-67.smtpout.orange.fr [193.252.22.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D651C222D67;
-	Thu, 12 Dec 2024 16:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E90A2288CD;
+	Thu, 12 Dec 2024 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020408; cv=none; b=heFrXqkO46TScbFRGnujpdTAxRMl1Wtxp5i/J1iQ25dGIjumJvffAIEUYAeABaShDGE5G2p6g3oq6lgmSXVUhG+Sn6rbBBvDSVDS/WzWWhU55yf3Gzp92FmIz6t/1hue8MliKi2vJD8kSCqv6UItKPYywstS+2pu6SCy7EQxLlc=
+	t=1734020724; cv=none; b=An1s9TrX6716RinQBroT38gkdnorw4JQXkMJgNyY6PXEmBA2xyGTSuWq7KVt+L3plLQaHhsQZbZHmEffqeUv2BySYeK9NTMPcN/eK+xNQ9aOL2Y+8pwsI7D+L9XhXp7YLxpF7CXe42YDTfBiH0nPNABERxyvfq9kyPgovaC1mNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020408; c=relaxed/simple;
-	bh=1WTawLpM22VVsO7MCnmppbiRvTxqh0PjOroEF1c+9og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PzNj4DgqKFSqnx/gt2OzpHPUKamD8rtQw+gfHBPbjVIH865X17/aCerEE9v2qbJiTBfFh5HK9CNoxXvNCplauxorN7RNtUN8sAJeN6DSg3hloWmv7xxXO8N1HzWFCaZK1jdTXvr9XCJmcPGuq6nGIaRxZT+NBcRYpvAYJAVp/mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hrBykZb6; arc=none smtp.client-ip=193.252.22.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1734020724; c=relaxed/simple;
+	bh=jmircCLNqfQBhuh2VCOQbpQ4E46VLkw0Jv1d0IeEevU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWxOpMmaWIjXmn/1Of0Si6BWTgTiBrrPvbbVhFPdKp6l4j4nFGpFXeWB6Cw2EnAu1ohWNE9jsvJbRVZkg7Dz8Tyn920IjuozIDDY45ifQnKzDpWtWMeWzzJCB1+LDaxHti2Fg6JkQdTIpEMrnnGyGdYPt+RRPxyO66nDm+5ucNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8a8uezA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hrBykZb6"
-Received: from mail-ej1-f45.google.com ([209.85.218.45])
-	by smtp.orange.fr with ESMTPSA
-	id LllstKMYjwPxvLllstdUPZ; Thu, 12 Dec 2024 17:10:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1734019836;
-	bh=BHm2u6jBHZpNa6IIRdcDt5V+yEj/eHfBKedn+I+Dfbk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=hrBykZb69u10gI+mbJc/HgFUoRt6LyqPBI7JddcZaTv4Y868d7nbJAofXVrGwVK+c
-	 C3N4RA6lO1Od4XYAem2a7cm9liIsNp4WR9U2TZCupxIZBbASScvfujhqcWrf8gzfhT
-	 oAkx/h5VnZ1xkHbXtyeDR6kgY8beBNxyuUrUrOhLWdewZTGJIOwEHigYXO1ME4505+
-	 MGybw937qi9Liii6qzv91W63x5LTzOT9fsZ7T/oTraulrhsuhwNioFDo5nUX3fGUZY
-	 Ieg2v3g4ScnttDfqNygU6X8wk9Bct0ug3jfspd5DU9bn4vOcxG/Vlv1Eeu1dLS1sHZ
-	 aMzTksBdxMiHw==
-X-ME-Helo: mail-ej1-f45.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 12 Dec 2024 17:10:36 +0100
-X-ME-IP: 209.85.218.45
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa6997f33e4so112756566b.3;
-        Thu, 12 Dec 2024 08:10:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUeKhSFGBP/u3aVDV786tkBDWSU0/P+c7UoqUQRFcPVcX/CulW2DzitTXrwymb/UyFSnZPR0e8BCpQvzQ==@vger.kernel.org, AJvYcCVSUQCp/PsqJ7mgCHVnqNg049G8g6WnBSDn9aXeknHg/Lr/YOABrS9gjPa+BhcUHdpvG/h5EDlCsAhg43Sh@vger.kernel.org, AJvYcCVtMeqjZ3UamKQzV9qi4W9+C9Ogfc98j4nj9SgbTHoeWnRGqlJ1jKpEjNv6Qf467l2rSrMt0eLToFhLpO8=@vger.kernel.org, AJvYcCWoKPAQW3u23LdDut8TUO/N+nLiyuf6wFxj/R1rk7QOmTNQaX2lwFanHFxy06hgmnIT5aiw1Ae4c37U3Ji/peI=@vger.kernel.org, AJvYcCXOQzBUmS/NzWWETPUYCjTLnwQK4fbW5sneG3I5evDSL0ucGO3wqX2jXZjzty77nW5L1cwjxJR5@vger.kernel.org, AJvYcCXX0CZrxqgHvyq3R2QLCWd4XFMtV7hc+RSGe8agje7DKhBBkc9C7UO2b2yKpHuFXBNHmJRGzR6W/ms=@vger.kernel.org, AJvYcCXoOYX88jvb51fu6evM0kfRJ8tWWHKeTdjML7mY8gaJXjaBcpU4z9LSF+FzcqjiIX8xAm1Xjql6Vr/+@vger.kernel.org, AJvYcCXuOF0Fc2h3+Jckbo3vQMSiZZ3Aq1ww+OHrNUKSZV4bAdyHzHDrnDf0jYHQcNUhNjoyTLNF5xQ33fUK@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf24S4MyE/XxIy97HBaKjt1Fy3VRzWOuTwrA8cpKRJLlfQ9FxP
-	qonzHl04PsCgLYXFstI6x9z81YHj8TtP0+N2ksoRepqITPGAQLJZ+k+dofMo603h7sLDMJ4UwII
-	z7mdFbLheC9A3DaFTUQ9xh2FVigk=
-X-Google-Smtp-Source: AGHT+IFvGS39Q624IKF07GqeqUCByzjY7zIhUSAblRV0CFMPxwMOrCpGqL4TwDw9irsDnBXj1+ssKbSOGJ7elO9bzQ0=
-X-Received: by 2002:a17:906:3ca9:b0:aa6:423c:8502 with SMTP id
- a640c23a62f3a-aa6b15007ccmr663042066b.60.1734019832762; Thu, 12 Dec 2024
- 08:10:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8a8uezA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734020723; x=1765556723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jmircCLNqfQBhuh2VCOQbpQ4E46VLkw0Jv1d0IeEevU=;
+  b=M8a8uezA0QeUDBHdtGWLJYrrs96aH4C1lkKscpE7ioapkn0GwKWj99Ut
+   63obqdxGzo3V1nkYoPAMYVLPXUXCFlNQA8wFUt19ZxctniOkf3PL+tXCV
+   cOehs3xJxjIaIArw16sKEHZ3ztIxIQo35uaF0B2/d56lMiEGMi6MJDTr/
+   RX56CDwCVNBwsyLH1eUARCL564nlWOlkqU6myygmKVbp9dmKh+AJEUdjH
+   xjNwbAL3HJTo9p2d+Fw9Pyk3YissF7FGPWauTRAc5bCaLOTwvQpSnGX+r
+   VRlhUcQ3seQ/yojw4NDNmWl75mqs9p70qC5NToJKKU36HyFgoIh4u7wlI
+   w==;
+X-CSE-ConnectionGUID: f7w2L+EiTVOcDzDIJGhbaw==
+X-CSE-MsgGUID: bT7KFElVSuqdBFlF86eX+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34368149"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="34368149"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:25:22 -0800
+X-CSE-ConnectionGUID: 2x7poQK9TiiSPVbNWMCpWQ==
+X-CSE-MsgGUID: Nvb/8M3pTEaYxgnQxD2u7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="96163080"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:25:20 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tLm04-00000006xxb-3o8b;
+	Thu, 12 Dec 2024 18:25:16 +0200
+Date: Thu, 12 Dec 2024 18:25:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Raag Jadav <raag.jadav@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
+	broonie@kernel.org, pierre-louis.bossart@linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Introduce devm_kmemdup_array() helper
+Message-ID: <Z1sObNubEnsFwzOD@smile.fi.intel.com>
+References: <20241126172240.6044-1-raag.jadav@intel.com>
+ <CACRpkdZqdE8gQCre=zR2cN17oKfwBSnWuVwzQsbRO7-ENVnPNg@mail.gmail.com>
+ <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
+ <Z1Rfuo3jq7rO0cqb@black.fi.intel.com>
+ <Z1r0EPC9gumruFKU@smile.fi.intel.com>
+ <2024121242-saturday-aqua-9ac6@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-7-tmyu0@nuvoton.com>
-In-Reply-To: <20241210104524.2466586-7-tmyu0@nuvoton.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 13 Dec 2024 01:10:21 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqK+B3nc9bLWR49vwDJX3=pbjOKKoa=e=Pnc7wJNQx7JPQ@mail.gmail.com>
-Message-ID: <CAMZ6RqK+B3nc9bLWR49vwDJX3=pbjOKKoa=e=Pnc7wJNQx7JPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] hwmon: Add Nuvoton NCT6694 HWMON support
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024121242-saturday-aqua-9ac6@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 10/12/2024 at 19:45, Ming Yu wrote:
-> This driver supports Hardware monitor functionality for NCT6694 MFD
-> device based on USB interface.
->
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
->  MAINTAINERS                   |   1 +
->  drivers/hwmon/Kconfig         |  10 +
->  drivers/hwmon/Makefile        |   1 +
->  drivers/hwmon/nct6694-hwmon.c | 768 ++++++++++++++++++++++++++++++++++
->  4 files changed, 780 insertions(+)
->  create mode 100644 drivers/hwmon/nct6694-hwmon.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 496fe7d5a23f..d6414eea0463 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16546,6 +16546,7 @@ M:      Ming Yu <tmyu0@nuvoton.com>
->  L:     linux-kernel@vger.kernel.org
->  S:     Supported
->  F:     drivers/gpio/gpio-nct6694.c
-> +F:     drivers/hwmon/nct6694-hwmon.c
->  F:     drivers/i2c/busses/i2c-nct6694.c
->  F:     drivers/mfd/nct6694.c
->  F:     drivers/net/can/nct6694_canfd.c
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index dd376602f3f1..df40986424bd 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1636,6 +1636,16 @@ config SENSORS_NCT6683
->           This driver can also be built as a module. If so, the module
->           will be called nct6683.
->
-> +config SENSORS_NCT6694
-> +       tristate "Nuvoton NCT6694 Hardware Monitor support"
-> +       depends on MFD_NCT6694
-> +       help
-> +         Say Y here to support Nuvoton NCT6694 hardware monitoring
-> +         functionality.
-> +
-> +         This driver can also be built as a module. If so, the module
-> +         will be called nct6694-hwmon.
-> +
->  config SENSORS_NCT6775_CORE
->         tristate
->         select REGMAP
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index b827b92f2a78..27a43e67cdb7 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -168,6 +168,7 @@ obj-$(CONFIG_SENSORS_MLXREG_FAN) += mlxreg-fan.o
->  obj-$(CONFIG_SENSORS_MENF21BMC_HWMON) += menf21bmc_hwmon.o
->  obj-$(CONFIG_SENSORS_MR75203)  += mr75203.o
->  obj-$(CONFIG_SENSORS_NCT6683)  += nct6683.o
-> +obj-$(CONFIG_SENSORS_NCT6694)  += nct6694-hwmon.o
->  obj-$(CONFIG_SENSORS_NCT6775_CORE) += nct6775-core.o
->  nct6775-objs                   := nct6775-platform.o
->  obj-$(CONFIG_SENSORS_NCT6775)  += nct6775.o
-> diff --git a/drivers/hwmon/nct6694-hwmon.c b/drivers/hwmon/nct6694-hwmon.c
-> new file mode 100644
-> index 000000000000..b2320d64090b
-> --- /dev/null
-> +++ b/drivers/hwmon/nct6694-hwmon.c
-> @@ -0,0 +1,768 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton NCT6694 HWMON driver based on USB interface.
-> + *
-> + * Copyright (C) 2024 Nuvoton Technology Corp.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nct6694.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +/* Host interface */
-> +#define NCT6694_RPT_MOD                        0xFF
-> +#define NCT6694_HWMON_MOD              0x00
-> +#define NCT6694_PWM_MOD                        0x01
-> +
-> +/* Report Channel */
-> +#define NCT6694_VIN_IDX(x)             (0x00 + (x))
-> +#define NCT6694_TIN_IDX(x)                     \
-> +       ({ typeof(x) (_x) = (x);                \
-> +        ((_x) < 10) ? (0x10 + ((_x) * 2)) :    \
-> +        (0x30 + (((_x) - 10) * 2)); })
-> +#define NCT6694_FIN_IDX(x)             (0x50 + ((x) * 2))
-> +#define NCT6694_PWM_IDX(x)             (0x70 + (x))
-> +#define NCT6694_VIN_STS(x)             (0x68 + (x))
-> +#define NCT6694_TIN_STS(x)             (0x6A + (x))
-> +#define NCT6694_FIN_STS(x)             (0x6E + (x))
-> +
-> +/* Message Channel*/
-> +/* HWMON Command */
-> +/* Command 00h */
-> +#define NCT6694_HWMON_CMD0_LEN         0x40
-> +#define NCT6694_HWMON_CMD0_OFFSET      0x0000  /* OFFSET = SEL|CMD */
-> +#define NCT6694_VIN_EN(x)              (0x00 + (x))
-> +#define NCT6694_TIN_EN(x)              (0x02 + (x))
-> +#define NCT6694_FIN_EN(x)              (0x04 + (x))
-> +#define NCT6694_PWM_EN(x)              (0x06 + (x))
-> +#define NCT6694_PWM_FREQ_IDX(x)                (0x30 + (x))
-> +/* Command 02h */
-> +#define NCT6694_HWMON_CMD2_LEN         0x90
-> +#define NCT6694_HWMON_CMD2_OFFSET      0x0002  /* OFFSET = SEL|CMD */
-> +#define NCT6694_SMI_CTRL_IDX           0x00
-> +#define NCT6694_VIN_HL(x)              (0x10 + ((x) * 2))
-> +#define NCT6694_VIN_LL(x)              (0x11 + ((x) * 2))
-> +#define NCT6694_TIN_HYST(x)            (0x30 + ((x) * 2))
-> +#define NCT6694_TIN_HL(x)              (0x31 + ((x) * 2))
-> +#define NCT6694_FIN_HL(x)              (0x70 + ((x) * 2))
-> +#define NCT6694_FIN_LL(x)              (0x71 + ((x) * 2))
-> +/* PWM Command */
-> +#define NCT6694_PWM_CMD1_LEN           0x18
-> +#define NCT6694_PWM_CMD1_OFFSET                0x0001
-> +#define NCT6694_MAL_VAL(x)             (0x02 + (x))
-> +
-> +#define NCT6694_FREQ_FROM_REG(reg)     ((reg) * 25000 / 255)
-> +#define NCT6694_FREQ_TO_REG(val)       \
-> +       (DIV_ROUND_CLOSEST(clamp_val((val), 100, 25000) * 255, 25000))
-> +
-> +#define NCT6694_LSB_REG_MASK           GENMASK(7, 5)
-> +#define NCT6694_TIN_HYST_MASK          GENMASK(7, 5)
-> +
-> +static inline long in_from_reg(u8 reg)
-> +{
-> +       return reg * 16;
-> +}
-> +
-> +static inline u8 in_to_reg(long val)
-> +{
-> +       if (val <= 0)
-> +               return 0;
-> +       return val / 16;
-> +}
-> +
-> +static inline long temp_from_reg(u8 reg)
-> +{
-> +       return reg * 1000;
-> +}
-> +
-> +static inline u8 temp_to_reg(long val)
-> +{
-> +       return val / 1000;
-> +}
-> +
-> +struct nct6694_hwmon_data {
-> +       struct nct6694 *nct6694;
-> +       struct mutex lock;
-> +       unsigned char *xmit_buf;
-> +       unsigned char hwmon_en[NCT6694_HWMON_CMD0_LEN];
-> +};
+On Thu, Dec 12, 2024 at 03:39:57PM +0100, Greg KH wrote:
+> On Thu, Dec 12, 2024 at 04:32:48PM +0200, Andy Shevchenko wrote:
+> > On Sat, Dec 07, 2024 at 04:46:18PM +0200, Raag Jadav wrote:
+> > > On Fri, Nov 29, 2024 at 04:20:14PM +0200, Andy Shevchenko wrote:
+> > > > On Fri, Nov 29, 2024 at 11:17:02AM +0100, Linus Walleij wrote:
+> > > > > On Tue, Nov 26, 2024 at 6:22 PM Raag Jadav <raag.jadav@intel.com> wrote:
+> > > > > 
+> > > > > > This series introduces a more robust and cleaner devm_kmemdup_array()
+> > > > > > helper and uses it across drivers.
+> > > > > 
+> > > > > For the series:
+> > > > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > > > > 
+> > > > > It seems like Andy will push it to me which is excellent.
+> > > > 
+> > > > Yep, that's the plan after we get all necessary ACKs.
+> > > 
+> > > Greg, anything I can do to move this forward?
+> > 
+> > Greg, is it possible to give your Ack or comment or guidance of the preferences
+> > with the first patch?
+> 
+> $ mdfrm -c ~/mail/todo/
+> 2293 messages in /home/gregkh/mail/todo/
 
-A global comment on this series: do not declare your buffers as some
-opaque unsigned char arrays. Instead, make it a structure (or an array
-of structures if needed) using the little endian types for the
-different fields.
+Oh my...
 
-You already applied this change to the CAN driver after I made a
-comment, please do the same throughout the series.
+> Please be patient.
 
-The same applies with any other comments made by anyone else: do not
-only apply to the patch where the comment is made, but apply it
-broadly to the series.
-
-Thank you.
+Sure!
 
 
-Yours sincerely,
-Vincent Mailhol
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
