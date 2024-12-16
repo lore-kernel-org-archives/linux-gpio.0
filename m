@@ -1,41 +1,37 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836F520765F;
-	Mon, 16 Dec 2024 19:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4DD20765F;
+	Mon, 16 Dec 2024 19:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378828; cv=none; b=XGsOSzigcT97KGpNYjRQD22I7/Hd4Y5sugw4a9XXahl1W92oTLTms7OmGU8mphKnqPrsTfYZwbjzxfAloQ0NEgOQSMKZvok/FyoA9600aHj2DRiutDkPR+bLVvLjBGaPbshFCHDdv9Zmdw770CeR3fCfKYQfUETLNy143bU+k+0=
+	t=1734378831; cv=none; b=a2m1KSqAgqf0PfZUnqm0pcw8Lwj03EHNsuRg4Ih7Ga/B8weMTpguaqpj3lLNVn5AnZnkhyKQgEtxtB3/xX+Oc+YuvR1TmFChFgaZmG7a829aOmX5NoxFiKFQHo9WPGubKTRBuFCGdj2JXKGEABoRb/PClDKUkUtcz/HTb20iFAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378828; c=relaxed/simple;
-	bh=TDSQNZcr8os0qRW79wXqC62W3vnvQSRbJd0a3V8vOlU=;
+	s=arc-20240116; t=1734378831; c=relaxed/simple;
+	bh=/d5Hz7MZ25rEoSZPJMN/gZrUxbL4u37m3x35qURLbnA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GFuaGWv8Dir5GHhAr1H5Ckb/4UGpGbI2rurGyaA1cH1Y1eGzNAbRsDL3UMDcFP/B2fCL5JS3e2Pp5N4/gI9LnNZdv3hKaOB+iaaZ9SVyy+j4iRdBU1InzphrH5Dy2jX8tYhMc77K+2E+2jBY/Y5GovPNH4w5CwxjhCtY5MOf+dA=
+	 MIME-Version; b=R3aZTwkfO4SjPj/FEt2NolNwD4t+kG3MdslFKOEGEtxFbE3n+FQzyVMwwIBUYdekquRFyS8cZyv2NFjp0Xcb6PxCPI1NWru+Vbd5EAjWBr4+Wmg+lvhCQYpnFm55m6Rk2oDO23acK9PBh2CIewGTpT4N3A1kG8TUpxngc4M0tJA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: Xfyo3feqQhmq0Py2ILNUEA==
-X-CSE-MsgGUID: DKwQVNqrSbO1dkjUeCUgQg==
+X-CSE-ConnectionGUID: ZqEcFmsdRaKRWKfB8RNm4w==
+X-CSE-MsgGUID: MO5/WkEbSyu/31u6oc6L4A==
 X-IronPort-AV: E=Sophos;i="6.12,239,1728918000"; 
-   d="scan'208";a="228014620"
+   d="scan'208";a="228014624"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Dec 2024 04:53:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 17 Dec 2024 04:53:48 +0900
 Received: from localhost.localdomain (unknown [10.226.93.40])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A6F8E406320F;
-	Tue, 17 Dec 2024 04:53:31 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8E73840638D0;
+	Tue, 17 Dec 2024 04:53:39 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 1/7] dt-bindings: pinctrl: renesas: Add alpha-numerical port support for RZ/V2H
-Date: Mon, 16 Dec 2024 19:53:11 +0000
-Message-ID: <20241216195325.164212-2-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v4 3/7] pinctrl: renesas: rzg2l: Update r9a09g057_variable_pin_cfg table
+Date: Mon, 16 Dec 2024 19:53:13 +0000
+Message-ID: <20241216195325.164212-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241216195325.164212-1-biju.das.jz@bp.renesas.com>
 References: <20241216195325.164212-1-biju.das.jz@bp.renesas.com>
@@ -47,57 +43,53 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-RZ/V2H has ports P0-P9 and PA-PB. Add support for defining alpha-numerical
-ports in DT using RZV2H_* macros.
+Currently r9a09g057_variable_pin_cfg table uses port 11 instead of port PB
+as mentioned in the hardware manual. Update the r9a09g057_variable_pin_cfg
+table with alpha-numeric port names to match with the hardware manual.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v3->v4:
- * Added new header file with separate RZV2H_P* definitions.
+ * Included header file renesas,r9a09g057-pinctrl.h
+ * Updated r9a09g057_variable_pin_cfg table replacing PORT_PB->RZV2H_PB
+   macro.
 v3:
  * New patch.
 ---
- .../pinctrl/renesas,r9a09g057-pinctrl.h       | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h b/include/dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h
-new file mode 100644
-index 000000000000..9008a7e71609
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * This header provides constants for Renesas RZ/V2H family pinctrl bindings.
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_RZV2H_PINCTRL_H
-+#define __DT_BINDINGS_RZV2H_PINCTRL_H
-+
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+/* RZV2H_Px = Offset address of PFC_P_mn  - 0x20 */
-+#define RZV2H_P0	0
-+#define RZV2H_P1	1
-+#define RZV2H_P2	2
-+#define RZV2H_P3	3
-+#define RZV2H_P4	4
-+#define RZV2H_P5	5
-+#define RZV2H_P6	6
-+#define RZV2H_P7	7
-+#define RZV2H_P8	8
-+#define RZV2H_P9	9
-+#define RZV2H_PA	10
-+#define RZV2H_PB	11
-+
-+#define RZV2H_PORT_PINMUX(b, p, f)	RZG2L_PORT_PINMUX(RZV2H_P##b, p, f)
-+#define RZV2H_GPIO(port, pin)		RZG2L_GPIO(RZV2H_P##port, pin)
-+
-+#endif /* __DT_BINDINGS_RZV2H_PINCTRL_H */
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 1a7be7d7b520..b5af69af937a 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -26,6 +26,7 @@
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ 
++#include <dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h>
+ #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+ 
+ #include "../core.h"
+@@ -382,12 +383,12 @@ static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct rzg2l_pinctrl *pctrl,
+ }
+ 
+ static const u64 r9a09g057_variable_pin_cfg[] = {
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 0, RZV2H_MPXED_PIN_FUNCS),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 1, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 2, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 3, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 4, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(11, 5, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 0, RZV2H_MPXED_PIN_FUNCS),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 1, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 2, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 3, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 4, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZV2H_PB, 5, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
+ };
+ 
+ #ifdef CONFIG_RISCV
 -- 
 2.43.0
 
