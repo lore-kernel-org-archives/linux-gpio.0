@@ -1,58 +1,55 @@
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120701DE4EB;
-	Tue, 17 Dec 2024 09:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1411DED58;
+	Tue, 17 Dec 2024 09:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734426270; cv=none; b=C07v23X6f13RbFRQBwuMB4ppD9Csha6ZShXrZgxzlGWlSItgG25/+Uio1VX3SRVPeAQucQd8ZgWrGC/Yz1Tk48bITFYPdDSJjrHrgzLSrVhmFzSkN4VqSDqJHsJ3MS6Ce3lY0iD8aHnqFjoYr4pLyzp7hYS/DpGUWPaCf5PYBYw=
+	t=1734426829; cv=none; b=JeuDujv+KZRIC1lroOHb0ogCzZZC7PTZ6M34PLNsdUmdBniJYe61b3oY3jBDnYWgX/otKtLc7MO7gZM1sWzJSvJvAui+f+S/MV1grbkJ3wS40pFeHfYeTFPsKdYayXxZ+qnvMb/2Ed4LPW1+yLF2g/rErxHreZIXDK3/D4w6CgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734426270; c=relaxed/simple;
-	bh=b/RAI/OQ/bsYkbKf1Z1frGgVURTC5GE2ZPLlJW5Bxkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VfiQ5X9i1rdYFfCRKy/ZqsCNOT/+vHi3NL+p8KnE90sX9TBZj0iQ4O+i89WKj3YC3awC02cueYRrrVl/6IhRTpuNkuxyx5BNzJTGN2CbM0FNNQCyKwk//IzNfAYX8U2HmakdGBKCVYo+vMcrLxtPzylyC6VEIhaGKbVBwE3GruQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=WCfSmsEx; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	s=arc-20240116; t=1734426829; c=relaxed/simple;
+	bh=pMj3M/O8IGph5Hs+eW6Nq4KmmIec27pIQXx1+eu+nAI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fph1HVvQ75Keo0mFIkiH7CLny163cHuewiN0BcpC4+gM+kJJXlzIaRwfgfRl6ka01UIlPGuLlFcvRhW0DSj4QNU5KOzV0Mrqwg+DLT7SjGDaepkwGkgCdN8VuaDZzoD0dsTNTzppRIizGYyEtJAXWMDR3gjcwgGCpfbo3wfTZoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JxWe63ZC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="WCfSmsEx"
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout3.routing.net (Postfix) with ESMTP id 027C960486;
-	Tue, 17 Dec 2024 08:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1734425686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f++gLRWPvVGgWbSsk+IhO46hRl2VKlyKFRbj5WdDWtY=;
-	b=WCfSmsExruXX1ZbcykZqKIHJFF3ZN9xMwQGRZrRKNy+xaPvEBLuCf87OUAfDG50nY82c19
-	azfR1yWSmXqq7BsVCpNK/k0B5LJFoSv246/YYWLh2ib4YmVgQFEG6SzigvWc2f30bHjtc0
-	9qiyhaiRfcdbOpSJCGXs8p0TDgSGARo=
-Received: from frank-u24.. (fttx-pool-217.61.150.187.bambit.de [217.61.150.187])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 1BFF91004DD;
-	Tue, 17 Dec 2024 08:54:45 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [PATCH v7 1/5] pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
-Date: Tue, 17 Dec 2024 09:54:26 +0100
-Message-ID: <20241217085435.9586-2-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241217085435.9586-1-linux@fw-web.de>
-References: <20241217085435.9586-1-linux@fw-web.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JxWe63ZC"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH4la4Z013531;
+	Tue, 17 Dec 2024 09:13:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HmGZFR/8CigOfofNpThp3U
+	/9ZsAg5kWYJm0QibuUrOs=; b=JxWe63ZCMu2h5QaJ79VIi4i0nBRn+Y9n71IRcY
+	SSdpLxud6vejDLHRzjYLOu03rN3dm6VcdxJGC0UpIe/+DqnHjSQH9qk9pQ0gfwX/
+	dPOmySCq9dYkZGxwEORZhmHKYaOyx7zdzaO8h6PVz/uzC7yOLt6aTLuMSWbxfpxg
+	eG+O4NDbR+mAm3/z/UUehs/qW3DWSVZvODKCKdSnts9q7QuRNw+qjNjZIkuiYgfx
+	E6wbtu1j5ZzEwivkpD17fluvrLc5j42DTzVihYQAuUeKzyr4Vdk7N6lo7xkhKOWu
+	TfVwk22R8FVV/tOvU+8/jTDnI+4I1k3uya8Z9PEDYKh7DqWA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k2k7gmut-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 09:13:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH9DiP4006749
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 09:13:44 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 17 Dec 2024 01:13:39 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <linus.walleij@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_varada@quicinc.com>
+Subject: [PATCH v2 0/4] Add SPI0 support for IPQ5424 
+Date: Tue, 17 Dec 2024 14:43:04 +0530
+Message-ID: <20241217091308.3253897-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,161 +57,47 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: e9f08bd2-cc29-48ec-b289-6c729c260012
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _x7e91nJwm0Ko--WeavxaBtzY88SZ7ES
+X-Proofpoint-GUID: _x7e91nJwm0Ko--WeavxaBtzY88SZ7ES
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=675 spamscore=0
+ clxscore=1015 adultscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412170075
 
-From: Daniel Golle <daniel@makrotopia.org>
+Add an SPI0 node to the IPQ5424 device tree and update the relevant
+bindings, GPIO pin mappings accordingly.
 
-The MediaTek MT7988 SoC got some pins which only got configurable
-pull-down but unlike previous designs there is no pull-up option.
-Add new type MTK_PULL_PD_TYPE to support configuring such pins.
+Changes in V2:
+	- Fixed all review comments from Konrad Dybico, Krzysztof
+	  Kozlowski
+	- Detailed change logs are added to the respective patches 
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
-v5:
-- add changes suggested by angelo (pd_only), long version, tested with emmc
----
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 73 ++++++++++++++++---
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
- 2 files changed, 63 insertions(+), 11 deletions(-)
+V1 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241122124505.1688436-1-quic_mmanikan@quicinc.com/
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 54301fbba524..7b704cc55c9f 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -573,7 +573,7 @@ EXPORT_SYMBOL_GPL(mtk_pinconf_bias_get_rev1);
-  */
- static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
- 				const struct mtk_pin_desc *desc,
--				u32 pullup, u32 arg)
-+				u32 pullup, u32 arg, bool pd_only)
- {
- 	int err, pu, pd;
- 
-@@ -587,18 +587,34 @@ static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
- 		pu = 0;
- 		pd = 1;
- 	} else {
--		err = -EINVAL;
--		goto out;
-+		return -EINVAL;
- 	}
- 
--	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PU, pu);
--	if (err)
--		goto out;
-+	if (!pd_only) {
-+		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PU, pu);
-+		if (err)
-+			return err;
-+	}
- 
--	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
-+	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
-+}
-+
-+static int mtk_pinconf_bias_set_pd(struct mtk_pinctrl *hw,
-+				const struct mtk_pin_desc *desc,
-+				u32 pullup, u32 arg)
-+{
-+	int err, pd;
-+
-+	if (arg != MTK_DISABLE && arg != MTK_ENABLE)
-+		return -EINVAL;
-+
-+	if (arg == MTK_DISABLE || pullup)
-+		pd = 0;
-+	else if (!pullup)
-+		pd = 1;
-+
-+	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
- 
--out:
--	return err;
- }
- 
- static int mtk_pinconf_bias_set_pullsel_pullen(struct mtk_pinctrl *hw,
-@@ -737,7 +753,7 @@ static int mtk_pinconf_bias_set_pu_pd_rsel(struct mtk_pinctrl *hw,
- 			return err;
- 	}
- 
--	return mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, enable);
-+	return mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, enable, false);
- }
- 
- int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
-@@ -758,8 +774,14 @@ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
- 			return 0;
- 	}
- 
-+	if (try_all_type & MTK_PULL_PD_TYPE) {
-+		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, true);
-+		if (!err)
-+			return err;
-+	}
-+
- 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
--		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
-+		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, false);
- 		if (!err)
- 			return 0;
- 	}
-@@ -878,6 +900,29 @@ static int mtk_pinconf_bias_get_pu_pd(struct mtk_pinctrl *hw,
- 	return err;
- }
- 
-+static int mtk_pinconf_bias_get_pd(struct mtk_pinctrl *hw,
-+				const struct mtk_pin_desc *desc,
-+				u32 *pullup, u32 *enable)
-+{
-+	int err, pd;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PD, &pd);
-+	if (err)
-+		goto out;
-+
-+	if (pd == 0) {
-+		*pullup = 0;
-+		*enable = MTK_DISABLE;
-+	} else if (pd == 1) {
-+		*pullup = 0;
-+		*enable = MTK_ENABLE;
-+	} else
-+		err = -EINVAL;
-+
-+out:
-+	return err;
-+}
-+
- static int mtk_pinconf_bias_get_pullsel_pullen(struct mtk_pinctrl *hw,
- 				const struct mtk_pin_desc *desc,
- 				u32 *pullup, u32 *enable)
-@@ -947,6 +992,12 @@ int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
- 			return 0;
- 	}
- 
-+	if (try_all_type & MTK_PULL_PD_TYPE) {
-+		err = mtk_pinconf_bias_get_pd(hw, desc, pullup, enable);
-+		if (!err)
-+			return err;
-+	}
-+
- 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
- 		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
- 		if (!err)
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 23688ca6d04e..9c271dc2b521 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -24,6 +24,7 @@
-  * turned on/off itself. But it can't be selected pull up/down
-  */
- #define MTK_PULL_RSEL_TYPE		BIT(3)
-+#define MTK_PULL_PD_TYPE        BIT(4)
- /* MTK_PULL_PU_PD_RSEL_TYPE is a type which is controlled by
-  * MTK_PULL_PU_PD_TYPE and MTK_PULL_RSEL_TYPE.
-  */
+Manikanta Mylavarapu (4):
+  dt-bindings: pinctrl: qcom: update spi0 function
+  pinctrl: qcom: ipq5424: split spi0 pin group
+  arm64: dts: qcom: ipq5424: add spi0 node
+  arm64: dts: qcom: ipq5424: configure spi0 node for rdp466
+
+ .../bindings/pinctrl/qcom,ipq5424-tlmm.yaml   |  4 +-
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts   | 43 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         | 11 +++++
+ drivers/pinctrl/qcom/pinctrl-ipq5424.c        | 34 +++++++++++----
+ 4 files changed, 82 insertions(+), 10 deletions(-)
+
+
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
 -- 
-2.43.0
+2.34.1
 
