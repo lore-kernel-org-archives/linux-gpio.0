@@ -1,72 +1,56 @@
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6451F9AAD;
-	Tue, 17 Dec 2024 19:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3A150994;
+	Tue, 17 Dec 2024 20:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734464712; cv=none; b=U7qjBMKuEN5t2VuWbLVeNb4kMqV50ijfjZC+KLDdpWRR0TQIq3NG6IxyxSTsodWc4vbpPd6XYmaEWUMJT8DVg22/Y9bi1ILTXED1MQacFkvWSCjWSQexX2/60ZVvkBQdJDCn3JYtnMS9wOduAnRzL+HqbV+kCZ51GJKpyLGqT1M=
+	t=1734468506; cv=none; b=llo4vZqS15FuVMaCsz/eHRqSXZYQeiGj+vfV3vyhdvUrmGgMYklBMticQLhdQlnqR/JddZ7wO2HjXr1Ue60KFQiECed9dRYRhDX0G9vaOy1bnB1MpW3bzVo6YQDuaypP5uUbYU7Ddv2gfYnZH2WpETqbOqkFY9IAf58g0BuHpDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734464712; c=relaxed/simple;
-	bh=13tm4e989tqq0diiIo8jbHoyqxNRWqqmhlqQUjJMQKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HLOwB8HVhDOYRvMT3qlKWQPtYxxupg62jkpmyK89qpv+KPsATLbiv9ngYJhMDaTmSTChnyHXKdT2gOemP9m0f/ofhhAPMV0b6PYTm8z5iCWqlikKEVZT1wQwkz21YI7xGQMCLshNuUq8nzIorRQcCIA1WaiU0CYTg7M5ZPwE+Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LurlS7pO; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1734468506; c=relaxed/simple;
+	bh=VGwN2IRMnIhPVWCwWW62o4eZYGILo8S5ix6UL4fDIDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YN9+B6I7mV5ZJ/N0i6GnQyigkw/TryYR9q3Nv/dpuhRLUde5DlHdyBgUEUbY6S2lOSW6W1VFFPMggIHZIfym6l4Gddb6GjAG4unr1lhmeyNRu4YYJvhihy+jr9u/sAd6QQzNYzWEwoT5jfAUR7KBbhsjrYEyqU+eY8VyH8TXpe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bJ+wx1r4; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LurlS7pO"
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 7BF77C00151E;
-	Tue, 17 Dec 2024 11:37:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 7BF77C00151E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1734464259;
-	bh=13tm4e989tqq0diiIo8jbHoyqxNRWqqmhlqQUjJMQKg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LurlS7pOu94HygNHDSLoy1C73amFoAZ9gU+cXj7dvC0ogbBuqjVOPmZhiJMcC6RNQ
-	 8sN10uBBTXPUg23OtU6UEt7LuVcXHkZld+OZDDKZz53us+mjeABbSIWXrSjx64oa3H
-	 UK4jg1CXPoXcVu8EyPIGpNni/HnqGo61cZyP10oM=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id EF09B18041CAC6;
-	Tue, 17 Dec 2024 11:37:38 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Eric Anholt <eric@anholt.net>,
-	=?iso-8859-1?b?TWHtcmE=?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stefan Wahren <wahrenst@gmx.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] arm64: dts: broadcom: Remove intc controller on BCM2712.
-Date: Tue, 17 Dec 2024 11:37:38 -0800
-Message-ID: <20241217193738.901055-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241212-dt-bcm2712-fixes-v3-7-44a7f3390331@raspberrypi.com>
-References: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com> <20241212-dt-bcm2712-fixes-v3-7-44a7f3390331@raspberrypi.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bJ+wx1r4"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHKltGP055178
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 14:47:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1734468476;
+	bh=LTOIe3GVKsSWdeJG4XQTfvePTsd9cRoeiTuF0rnAvKE=;
+	h=From:To:CC:Subject:Date;
+	b=bJ+wx1r4KCnEnhTmtjrbVat+VCtZBe7FbLLYuZlFlfDCONYCOqCm9neEScmzg1HGR
+	 m9Ubc5NkXTP7hVVzjBtPaznnAI9Ox/FR8rxDYniQJDvgWl2YnoBeolBmgctO2PhKEL
+	 Z/skKR3CxZGYZnDSomMwn32uPwF6fW322PmnR234=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHKlt7u130150
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 17 Dec 2024 14:47:55 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
+ Dec 2024 14:47:55 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 17 Dec 2024 14:47:55 -0600
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.8])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BHKltv6025808;
+	Tue, 17 Dec 2024 14:47:55 -0600
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>
+Subject: [PATCH v1 0/1] TPS65219 GPIO Driver Cleanup Series
+Date: Tue, 17 Dec 2024 14:47:54 -0600
+Message-ID: <20241217204755.1011731-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -74,20 +58,21 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+This series is in preparation to add 2 PMIC devices to the TPS65219 driver.
 
-On Thu, 12 Dec 2024 18:36:34 +0000, Dave Stevenson <dave.stevenson@raspberrypi.com> wrote:
-> The brcm,bcm2836-l1-intc controller isn't used on this platform.
-> It is used on 32-bit kernels for the smp_boot_secondary hook, but
-> BCM2712 can't run a 32-bit kernel.
-> 
-> Remove the node.
-> 
-> Fixes: e1417095a139 ("arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
+The changes involve using existing helper macros to simplify code. The 
+intention is to remove unnecessary noise from the new PMIC patches adding 
+support to this driver.
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
---
-Florian
+Shree Ramamoorthy (1):
+  gpio: tps65219: Use existing kernel gpio macros
+
+ drivers/gpio/gpio-tps65219.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
+
