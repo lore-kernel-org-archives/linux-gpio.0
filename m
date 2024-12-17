@@ -1,99 +1,435 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAB71F63CB
-	for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2024 14:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C731F4735
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2024 14:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447011; cv=none; b=LxNHJeK0QcxiJ6GbvMl/bIwXnImeKRFYeuAihRr1i+hZ9DXvr0J68lkc0dKi1f6tL/Lkw6rqgWpQOrjwysRKykn0Y/dPHJfq9hr1+AFZaPyhDcaahgU+I3UIokrfkPxosifpBHvEdd9lWAqXJpSHgcxUGuQB8wFtCSoNBIgl0Eg=
+	t=1734447197; cv=none; b=TVTFgnkM4tyLJwsAlV9gHBXM6ReyHNfQwdDclIyuBojnbM0tiINQXfl2HANNqt7ztkV2y2PfFUI/w8xJkyFSZenYsi+Yo77hPIOhXdGMiDQOHdWvSKXz7ovPuv0bCYFU6jo6YNMBrJu9NmidjG7fq0r/K4ByyV3xTKInxGB0rwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447011; c=relaxed/simple;
-	bh=Ae4g+o4SrUUouyU6JTQr8W/GSuESQPuA1a0/fO2H38I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LW2mM1Pw1rPMJ1vth4p1NQcS9SfGnl/DEMMHOzp0nkyWcFxbkCEygs3AJ+/QFMDpuq7f+pP6SxtQK18xO5pJrwxu5I1FQX4SLK8TbQj/NqQNEz27R8c/H5z6jcfxwPTBw68HR7OMWacIfvGBBMhULUTBxqxsKDuVybZ0tHFZ6rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L68v5LnV; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1734447197; c=relaxed/simple;
+	bh=F5AA/tWQENIaoRvA9cihAdT760EZI9PafF/28yfj0Wk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V2vDUstG/Af20lzlV7TqPkC47wv+4nUsjNfOiWXOVnx5tXwzs+okSJnZrQLADUOfwwkD+SjpRnItr8DnzzJorep0c2eW7C7IhGSkb5KzI2rW5pPmQzxFlNWqGe3cjAkg911D00lACzZo28YW6qmqLYsKOyarGEr4A67Iw5gxSfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NtuP8IG2; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L68v5LnV"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d3f28a4fccso8155216a12.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2024 06:50:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NtuP8IG2"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385dece873cso2504298f8f.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Dec 2024 06:53:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734447008; x=1735051808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ycke3T0FtYGNg3PwgW0NCCRZfN9GJ53dRhecaGhM6c=;
-        b=L68v5LnV0muBBasJV1djRNq3ePbO4F/NY8NwNGeqUJLjSlESOKO/ciUgX2FMuNnnOw
-         zW9+8gPIArejcDVyFnnSxufRajuaBXMGSy7adf6+0001J9GY3oVZZ/GDln9aHHDuOiXx
-         XVTSwxOUu/o4ogkANdZy2kNrHE/lIbxpq14DOoOvdRu7y9CNYcnYPKLYt/JZWP9E9SZV
-         P8Lbom7ZiDj487S1DpVF1N0n1Ac7ogGD8gAKe7+MtBWgzZmVtglLAINR7Wn3sn90Fjvc
-         RGaE1z9ZIzk9Jk1KP7BDHwGKySecFAYr+oNY5FCLsYfFeYewEey+IHF9vXitstzv44gm
-         tIFA==
+        d=linaro.org; s=google; t=1734447192; x=1735051992; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j1tz7BJRUwJXSa3Suo3gJKXsFFPCsySj/Okq0VxzRW4=;
+        b=NtuP8IG2QhS1nElWeiEca5Iu9ZEPuJtDVxebwYc0/vT6Zysjf2ltaH5DLREOY4wICk
+         YL0qZdudZ/7BMJa/SieiK1VcoQH+z34Y6w/4YEEiSi03WXqGVy0R3ZhYrTCOVFRsT5nt
+         I4+oWAmwKGXSaALAiNNeh7lERvAyHhhDJgwk6/jH8vgzFRpICnrNK/6eheBHTNMgZtXk
+         K9mLe51QjTnaVeLr0Jd1EdcZJ+r2FiXrmStKmywjU+fyuzh7fvrf09zmBB+ngOrsgo2D
+         Aq7kc2exTByFYg8qEkerpFvUIWZZZRLG8Hi0fpTVLg6jH8q32wRLsPw68xeR0jPAqxI0
+         5Emw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734447008; x=1735051808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Ycke3T0FtYGNg3PwgW0NCCRZfN9GJ53dRhecaGhM6c=;
-        b=xD6F44T//jI9xHcJsz7DhK5XsZOQIih+n1xBcF/01HnE3/1eZjHy7ppcWtpSWf5W5C
-         obM3VNNDQDjw+RxOOVkhylGx3ia0xEhbIEfl/e2sJKnPv1OTCTsUMIRxLqXG3TgBlHm6
-         n/HtOykpcr6EpmTo5bNvG+KaHYcYRMgkkudt8pZIjfKEHvRCnM1+chxfwyo9p8nmzXNS
-         7g+2xks+OA+Y4PYUXKpmJqy4MxlDOo/O4xuqtipJH6leWgPwZ5Jeo3XKI5KSZZ5RbV8I
-         TporfL4dOQaB+szEn7YjgQSknEv+SglC+r6tcMFwGJIXl/bMMHU3ioQ4wftvMh+96goe
-         X1Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxrVtu3ZXZMPaTxG303Hwi77wIws2RJTlXk6iczMWd+TPGV/9I3FGJlX3Rk9LO3SisI4uWId64ozK0@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm9xjV8GyGSyPYfwjjkoqalStvoOcfxGgqidKVlRfhXKFANV5l
-	k8viL8hgcJ1hz6NuKligC6yqoTP4gBCtyB3+knYiZ9ckI6EcbXuWEciTai3wHS8=
-X-Gm-Gg: ASbGncujrk1EIVT3qAh0zhx0TgTNHSNMmaULSP5PbeG2B1BH2knUJ7rkWkAkrrzU/nR
-	9D4T8JfcCsCIbfIoTajy067iW3oBxWCvUinURCMZyY0NsqIGF+zB5tZb8QshSkewQitslM71hPh
-	Y+ia6woNNG0JMxt0FX3ouXOZO4DCMcfMtjCglSJZOBx/0PTrFmfiqe2priySWnh4wbMcSPx+tvs
-	JfFJqGMA3eaqkw39FrKuA/vZX71A/OZjU9yxtMPtRNqNazQKHUIbYKdzM6gvg==
-X-Google-Smtp-Source: AGHT+IGOUjQCh7pdBsXmyuaUSolYMZWmt6XwrTMde3rBi1yLvFprfTSIzhaibeECiMuEQ9oaPdmyZQ==
-X-Received: by 2002:a05:6402:50d0:b0:5d1:2534:57bf with SMTP id 4fb4d7f45d1cf-5d63c3bc37dmr13657470a12.32.1734447007937;
-        Tue, 17 Dec 2024 06:50:07 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f33027sm4310953a12.74.2024.12.17.06.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 06:50:07 -0800 (PST)
-Date: Tue, 17 Dec 2024 17:50:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: gpiolib: fix refcount imbalance in
- gpiochip_setup_dev()
-Message-ID: <83a0821e-eac8-442f-bbeb-de2d439c02dd@stanley.mountain>
-References: <20241204122152.1312051-1-joe@pf.is.s.u-tokyo.ac.jp>
- <Z1GoskmQH0_FhxID@black.fi.intel.com>
- <CAMRc=Me004KgVZDVVCD1r_yDfpRjVsw2TAJCGiHd+TEiQ4xW6A@mail.gmail.com>
- <1cbec5a7-6c83-4abe-8532-041dbf891e16@pf.is.s.u-tokyo.ac.jp>
+        d=1e100.net; s=20230601; t=1734447192; x=1735051992;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j1tz7BJRUwJXSa3Suo3gJKXsFFPCsySj/Okq0VxzRW4=;
+        b=qt3lGAFtYlPZee5Qcv+m55Dm5P6LH0E6ajhnvFpEWLkUSX3wOZWrnwVt/GQKzYyT/V
+         wgq2tK6WZKuQzqi5gdqSTPkbc3hqJZwGFLi2nnLGbz44R8+gdFIiMhDAGgcZM4hYLuBh
+         UMqJ8X3J6pL+7MWr7nQhKM9pA0rW5v4PbNCwaZpcKb0ZbwFi9VXosSd0LVke6944fyoh
+         /eXc4xybN+BlyXuKqplBCI3tYtUiH/iByxuyd3n2cQQMRqBgEWatvlEUlfoHDY7DaLjY
+         fE1dVcbJSIFR1r//mw/z+AOBvQJZgt2JXEmm6yOaSTLo/ccKwekjE/OXNSZ3IaR32ftD
+         8Jgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIFQgqojIXZBQ297WkBnfChy/tkdGln6uXO+G9a6EWryTeW1BnJr2l8PiVGxGxxKVBgX5XqloKqMbJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBxfDUGPaGayjuT64GNtvxHa4RWU+nMlKxN/i9e3mnrqNCtFM7
+	5MAKyJn979XjdFa+9Zn0AK4WaqJP7T+u+1JAXZuXQz4fh7UFLiDC1zsxfJlEa/Q=
+X-Gm-Gg: ASbGncsW9aLyXBNKKHQsva71Sahw+3xomKobXJv2UuAqO6NPNEh6M2IAaPUT3QHLcDP
+	YxhgvBfBwnlpfpsh6SPY38HV+8DqSYCpIyO6FmiAIoe7qrAfuEbrNhg7RF0CZNNs9ZFnG3ZEeis
+	yZbyTV3dULnAvt+/6NYflj+64EY3g4bRQIRxWHJ7Pv3uPM6HnuMXb2xV/ZCLU2QJG7QzFS6Xcgq
+	IN/ZcILzKqB7//4+Yh0M5DJPiZMKRcLf1Xc1vhT+GlTiXKXPTV5xAFE08btXxS9G+0dZTKq+l+r
+	tfBi7q0Mnu9aLJyGDqAoYJVyTtUOtcU=
+X-Google-Smtp-Source: AGHT+IG5GTGpPbAS3DHo+ja0XGeUh4sbl11Qq10hVbOptwLvXE2zJoBNLuQgiep+WuXjibhAmUjEng==
+X-Received: by 2002:a05:6000:1544:b0:385:f060:b7fc with SMTP id ffacd0b85a97d-388da3a1286mr3600391f8f.25.1734447191589;
+        Tue, 17 Dec 2024 06:53:11 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:167:46b9:e709:12b5? ([2a01:e0a:982:cbb0:167:46b9:e709:12b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8012105sm11290506f8f.16.2024.12.17.06.53.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 06:53:11 -0800 (PST)
+Message-ID: <168829c7-fd56-4fd2-80b0-07c768779559@linaro.org>
+Date: Tue, 17 Dec 2024 15:53:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cbec5a7-6c83-4abe-8532-041dbf891e16@pf.is.s.u-tokyo.ac.jp>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 2/3] pinctrl: Add driver support for Amlogic SoCs
+To: Linus Walleij <linus.walleij@linaro.org>, xianwei.zhao@amlogic.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <20241211-amlogic-pinctrl-v1-0-410727335119@amlogic.com>
+ <20241211-amlogic-pinctrl-v1-2-410727335119@amlogic.com>
+ <CACRpkdbuj-_sPpdfcyg3_QNtzt9r7n-0HBGBKgy-rKUMhvGo4w@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CACRpkdbuj-_sPpdfcyg3_QNtzt9r7n-0HBGBKgy-rKUMhvGo4w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Most static checker stuff is cleanup code.  I've written a blog entry on
-clean up code.
+Hi,
 
-https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
+On 17/12/2024 15:49, Linus Walleij wrote:
+> Hi Xianwei,
+> 
+> thanks for your patch!
+> 
+> On Wed, Dec 11, 2024 at 7:48 AM Xianwei Zhao via B4 Relay
+> <devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
+> 
+>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>
+>> Add a new pinctrl driver for Amlogic SoCs. All future Amlogic
+>> SoCs pinctrl drives use this, such A4, A5, S6, S7 etc. To support
+>> new Amlogic SoCs, only need to add the corresponding dts file.
+>>
+>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> First: are we sure these new SoCs have nothing in common
+> with sunxi? Because then the sunxi code should be reused.
+> 
+> In any way I recommend:
+> 
+> - Renaming drivers/pinctrl/sunxi to drivers/pinctrl/amlogic
+>    so we keep this sorted by actual vendor, sunxi is apparently
+>    yours (AMlogic:s) isn't it?
 
-You mostly get this right, but one thing which could help is rule #6
-where ideally the cleanup in the function is copy and pasted to create
-the release function.
+Sunxi is Allwinner SoCs.
 
-So when you add cleanup to the error paths, check the release function
-and see what it does.  Sometimes you've seen the clean up code is missing
-in the release function.  Other times it calls wrapper like
-gpio_put_device() instead of calling put_device() directly.  The function
-calls should be in a specific order, (hopefully the reverse order of how
-they're allocated).
+Neil
 
-regards,
-dan carpenter
+> 
+> - Also fix MAINTAINERS accordingly.
+> 
+> - Add new driver under drivers/pinctrl/amlogic
+> 
+> - Do not change the Kconfig symbols for sunxi and
+>    we should be fine.
+> 
+>> +static int aml_dt_node_to_map(struct pinctrl_dev *pctldev,
+>> +                             struct device_node *np,
+>> +                             struct pinctrl_map **map,
+>> +                             unsigned int *num_maps)
+>> +{
+>> +       struct aml_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+>> +       const struct aml_pctl_group *grp;
+>> +       struct device *dev = info->dev;
+>> +       struct pinctrl_map *new_map;
+>> +       struct device_node *parent;
+>> +       int map_num, i;
+>> +
+>> +       grp = aml_pctl_find_group_by_name(info, np->name);
+>> +       if (!grp) {
+>> +               dev_err(dev, "unable to find group for node %pOFn\n", np);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       if (grp->num_configs)
+>> +               map_num = grp->npins + 1;
+>> +       else
+>> +               map_num = 1;
+>> +       new_map = devm_kcalloc(dev, map_num, sizeof(*new_map), GFP_KERNEL);
+>> +       if (!new_map)
+>> +               return -ENOMEM;
+>> +
+>> +       parent = of_get_parent(np);
+>> +       if (!parent) {
+>> +               devm_kfree(dev, new_map);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       *map = new_map;
+>> +       *num_maps = map_num;
+>> +       new_map[0].type = PIN_MAP_TYPE_MUX_GROUP;
+>> +       new_map[0].data.mux.function = parent->name;
+>> +       new_map[0].data.mux.group = np->name;
+>> +       of_node_put(parent);
+>> +
+>> +       if (grp->num_configs) {
+>> +               new_map++;
+>> +               for (i = 0; i < grp->npins; i++) {
+>> +                       new_map[i].type = PIN_MAP_TYPE_CONFIGS_PIN;
+>> +                       new_map[i].data.configs.group_or_pin =
+>> +                               pin_get_name(pctldev, grp->pins[i]);
+>> +                       new_map[i].data.configs.configs = grp->configs;
+>> +                       new_map[i].data.configs.num_configs = grp->num_configs;
+>> +               }
+>> +       }
+>> +
+>> +       dev_info(dev, "maps: function %s group %s num %d\n",
+>> +                (*map)->data.mux.function, grp->name, map_num);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void aml_dt_free_map(struct pinctrl_dev *pctldev,
+>> +                           struct pinctrl_map *map, unsigned int num_maps)
+>> +{
+>> +}
+>> +
+>> +static void aml_pin_dbg_show(struct pinctrl_dev *pcdev, struct seq_file *s,
+>> +                            unsigned int offset)
+>> +{
+>> +       seq_printf(s, " %s", dev_name(pcdev->dev));
+>> +}
+>> +
+>> +static const struct pinctrl_ops aml_pctrl_ops = {
+>> +       .get_groups_count       = aml_get_groups_count,
+>> +       .get_group_name         = aml_get_group_name,
+>> +       .get_group_pins         = aml_get_group_pins,
+>> +       .dt_node_to_map         = aml_dt_node_to_map,
+>> +       .dt_free_map            = aml_dt_free_map,
+>> +       .pin_dbg_show           = aml_pin_dbg_show,
+>> +};
+>> +
+>> +static int aml_pctl_dt_calculate_pin(struct aml_pinctrl *info,
+>> +                                    unsigned int bank_idx, unsigned int offset)
+>> +{
+>> +       struct aml_gpio_bank *bank;
+>> +       int retval = -EINVAL;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < info->nbanks; i++) {
+>> +               bank = &info->banks[i];
+>> +               if (bank->bank_idx == bank_idx) {
+>> +                       if (offset < bank->gpio_chip.ngpio)
+>> +                               retval = bank->pin_base + offset;
+>> +                       break;
+>> +               }
+>> +       }
+>> +       if (retval == -EINVAL)
+>> +               dev_err(info->dev, "pin [bank:%d, offset:%d] is not present\n", bank_idx, offset);
+>> +
+>> +       return retval;
+>> +}
+>> +
+>> +static int aml_pctl_dt_parse_groups(struct device_node *np,
+>> +                                   struct aml_pctl_group *grp,
+>> +                                   struct aml_pinctrl *info, int idx)
+>> +{
+>> +       struct device *dev = info->dev;
+>> +       struct aml_pinconf *conf;
+>> +       struct property *of_pins;
+>> +       unsigned int bank_idx;
+>> +       unsigned int offset, npins;
+>> +       int i = 0;
+>> +       int ret;
+>> +
+>> +       of_pins = of_find_property(np, "pinmux", NULL);
+>> +       if (!of_pins) {
+>> +               dev_info(dev, "Missing pinmux property\n");
+>> +               return -ENOENT;
+>> +       }
+>> +
+>> +       npins = of_pins->length / sizeof(u32);
+>> +       grp->npins = npins;
+>> +       grp->name = np->name;
+>> +       grp->pins = devm_kcalloc(dev, npins, sizeof(*grp->pins), GFP_KERNEL);
+>> +       grp->pin_conf = devm_kcalloc(dev, npins, sizeof(*grp->pin_conf), GFP_KERNEL);
+>> +
+>> +       if (!grp->pins || !grp->pin_conf)
+>> +               return -ENOMEM;
+>> +
+>> +       ret = pinconf_generic_parse_dt_config(np, info->pctl, &grp->configs,
+>> +                                             &grp->num_configs);
+> 
+> But can't you just move this code around? grp->num_configs give the
+> number of configs, so why do you have to go and look up pinmux
+> above, can't you just use grp->num_configs instead of of_pins
+> and npins above?
+> 
+>> +static int aml_pctl_parse_functions(struct device_node *np,
+>> +                                   struct aml_pinctrl *info, u32 index,
+>> +                                   int *grp_index)
+>> +{
+>> +       struct device *dev = info->dev;
+>> +       struct aml_pmx_func *func;
+>> +       struct aml_pctl_group *grp;
+>> +       int ret, i;
+>> +
+>> +       func = &info->functions[index];
+>> +       func->name = np->name;
+>> +       func->ngroups = of_get_child_count(np);
+>> +       if (func->ngroups == 0)
+>> +               return dev_err_probe(dev, -EINVAL, "No groups defined\n");
+>> +
+>> +       func->groups = devm_kcalloc(dev, func->ngroups, sizeof(*func->groups), GFP_KERNEL);
+>> +       if (!func->groups)
+>> +               return -ENOMEM;
+>> +
+>> +       i = 0;
+>> +       for_each_child_of_node_scoped(np, child) {
+>> +               func->groups[i] = child->name;
+>> +               grp = &info->groups[*grp_index];
+>> +               *grp_index += 1;
+>> +               ret = aml_pctl_dt_parse_groups(child, grp, info, i++);
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>> +       dev_info(dev, "Function[%d\t name:%s,\tgroups:%d]\n", index, func->name, func->ngroups);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static u32 aml_bank_pins(struct device_node *np)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_u32(np, "npins", &value) < 0)
+>> +               return 0;
+>> +       else
+>> +               return value;
+>> +}
+>> +
+>> +static u32 aml_bank_reg_gpio_offset(struct device_node *np)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_u32(np, "reg-gpio-offset", &value) < 0)
+>> +               return 0;
+>> +       else
+>> +               return value;
+>> +}
+>> +
+>> +static u32 aml_bank_reg_mux_offset(struct device_node *np)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_u32(np, "reg-mux-offset", &value) < 0)
+>> +               return 0;
+>> +       else
+>> +               return value;
+>> +}
+>> +
+>> +static u32 aml_bank_bit_mux_offset(struct device_node *np)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_u32(np, "bit-mux-offset", &value) < 0)
+>> +               return 0;
+>> +       else
+>> +               return value;
+>> +}
+>> +
+>> +static u32 aml_bank_index(struct device_node *np)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_u32(np, "bank-index", &value) < 0)
+>> +               return 0;
+>> +       else
+>> +               return value;
+>> +}
+> 
+> Do we really need helpers for all of this? Can't you just
+> open code it, at least if it's just used in one place?
+> 
+>> +static unsigned int aml_count_pins(struct device_node *np)
+>> +{
+>> +       struct device_node *child;
+>> +       unsigned int pins = 0;
+>> +
+>> +       for_each_child_of_node(np, child) {
+>> +               if (of_property_read_bool(child, "gpio-controller"))
+>> +                       pins += aml_bank_pins(child);
+>> +       }
+>> +
+>> +       return pins;
+>> +}
+>> +
+>> +static void aml_pctl_dt_child_count(struct aml_pinctrl *info,
+>> +                                   struct device_node *np)
+>> +{
+>> +       struct device_node *child;
+>> +
+>> +       for_each_child_of_node(np, child) {
+>> +               if (of_property_read_bool(child, "gpio-controller")) {
+>> +                       info->nbanks++;
+>> +               } else {
+>> +                       info->nfunctions++;
+>> +                       info->ngroups += of_get_child_count(child);
+>> +               }
+>> +       }
+>> +}
+> 
+> This looks like a weird dependency between gpio chips and
+> pins that I don't quite understand. Some comments and
+> references to the bindings will be needed so it is clear
+> what is going on.
+> 
+>> +static struct regmap *aml_map_resource(struct aml_pinctrl *info,
+>> +                                      struct device_node *node, char *name)
+>> +{
+>> +       struct resource res;
+>> +       void __iomem *base;
+>> +       int i;
+>> +
+>> +       i = of_property_match_string(node, "reg-names", name);
+>> +       if (of_address_to_resource(node, i, &res))
+>> +               return NULL;
+>> +
+>> +       base = devm_ioremap_resource(info->dev, &res);
+>> +       if (IS_ERR(base))
+>> +               return ERR_CAST(base);
+> 
+> This looks like reimplementation of
+> devm_platform_ioremap_resource_byname(), can't you just
+> pass your platform device here?
+> 
+>> +static int aml_pctl_probe_dt(struct platform_device *pdev,
+>> +                            struct pinctrl_desc *pctl_desc,
+>> +                            struct aml_pinctrl *info)
+> 
+> Because there is clearly a platform device involved.
+> 
+> I guess I will have more comments as the series progress, but this
+> is a good starting point!
+> 
+> Yours,
+> Linus Walleij
 
