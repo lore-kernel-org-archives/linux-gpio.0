@@ -1,39 +1,42 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m1973177.qiye.163.com (mail-m1973177.qiye.163.com [220.197.31.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63551AA1FA
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Dec 2024 10:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301481C3027;
+	Fri, 20 Dec 2024 10:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734690660; cv=none; b=UiwWTyVzUNHgvtOemrWN/6I+fD84iU2Jqz7evk9qiMVvkA8dTtfkgJL4Fob7iVljRI52hM32UbbQXyQmvbMUuh+awVmYIVbHe1fh3W3xBc4sMisJZoWUWG58tD9lN0y9Oi9H8MGfwL4tLhExZHj64uAWKqWv2No5pBK/6xIaxx0=
+	t=1734691128; cv=none; b=bn4AxClHLVLBfMhMcLUo940nskY5BhojHrskIQY4ERC753h7jpeUoKoV4IiztNEFpuQeAhOYMzVi8gOCaSEV8NF9phc9qLNK3EENmOymCMEaiPvkRvK8s5wAc/4pE31rD6fvgLgIRqf4uX2qoMIv2XtOMleWC4awaeSroJPOMyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734690660; c=relaxed/simple;
-	bh=qIe+lColQq+8aCZKpPrUPx8KcreNFTRmVQQgi4TRyOo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=shCJufX1n83Ql24b/2uJhhvFs5iSP4dVyIelZEeS/QhmDCsLHB/4mPuIivGfnDY+tvlXg8sei7Q35QdnjK4tw6ERYLQgurHOCgL6qaZ7OE8eZAPmeIeCT/vCLIZnSUofFuGpuk9HrWVE67dq/f6ov7j99hqfuNuuioRxkk6K1qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:7a4e:e361:29f2:181c])
-	by baptiste.telenet-ops.be with cmsmtp
-	id qyWq2D00B5V3mYk01yWqK1; Fri, 20 Dec 2024 11:30:50 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tOaHN-001s3a-2f;
-	Fri, 20 Dec 2024 11:30:50 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tOaG3-000gOf-0c;
-	Fri, 20 Dec 2024 11:29:23 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] pinctrl: renesas: Updates for v6.14
-Date: Fri, 20 Dec 2024 11:29:18 +0100
-Message-Id: <cover.1734690011.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734691128; c=relaxed/simple;
+	bh=ZBLCYhCSoD7pW+Ub0/1s0qdW9maOConMFHDfc0YErXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F+TKt0EIO2U7bTc7eZpSPi2wW6qI3ydxlqDUUN86LKfMTp9++fgiBqDAgEheuQUh4v4c6wHco49PGXHlAG+7RobmKNJ7aRdoqrmKx7su5A7eWA/OCV0IuqL5t4+X3XeOQ2WlQctrwD17Fd3xX1YXQSMF+I+J9ixiEGVMptlR/Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QvguwkaR; arc=none smtp.client-ip=220.197.31.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QvguwkaR"
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 65699807;
+	Fri, 20 Dec 2024 18:38:36 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 04/38] dt-bindings: pinctrl: Add rk3562 pinctrl support
+Date: Fri, 20 Dec 2024 18:37:50 +0800
+Message-Id: <20241220103825.3509421-5-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241220103825.3509421-1-kever.yang@rock-chips.com>
+References: <20241220103825.3509421-1-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,42 +44,40 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0kfTVYdQ0hCQ0xLH0JKTUNWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a93e3a5d73a03afkunm65699807
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nj46HBw5PDIKKgg1ThwIMSgP
+	TiEKCkNVSlVKTEhPTUJKSkpMQkJCVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFDSUI3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=QvguwkaRAR+DxhHrWtFUyQq5fDOxONOwftlH9eTUC3KB/+D29ccZfPKoN+FX9tLmHZzUwDQjhnx5JvgqYSLv219I+keluYqIaY7e4yCUh3IpPO8QPI/ozAtd5kVmZKtFN7C+VzZLrZB1JY1Ic+lFoquYvW2QrAdbLmxDH14uoGc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Xsz5HN/Gm6vz86vevKnGFWkVhhUxca+JtK1d2I18t4M=;
+	h=date:mime-version:subject:message-id:from;
 
-	Hi Linus,
+Add the compatible string for the rk3562 SoC.
 
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+---
 
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+ Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-are available in the Git repository at:
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index 6a23d845f1f2..80a2b1934849 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -44,6 +44,7 @@ properties:
+       - rockchip,rk3328-pinctrl
+       - rockchip,rk3368-pinctrl
+       - rockchip,rk3399-pinctrl
++      - rockchip,rk3562-pinctrl
+       - rockchip,rk3568-pinctrl
+       - rockchip,rk3576-pinctrl
+       - rockchip,rk3588-pinctrl
+-- 
+2.25.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v6.14-tag1
-
-for you to fetch changes up to 03fc60cd8e7b7e6f330d0a48c54545740addd9d8:
-
-  pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S (2024-12-20 10:58:46 +0100)
-
-----------------------------------------------------------------
-pinctrl: renesas: Updates for v6.14
-
-  - Add audio clock pin support for the RZ/G3S SoC.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Claudiu Beznea (1):
-      pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S
-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
