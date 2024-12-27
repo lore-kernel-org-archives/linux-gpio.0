@@ -1,31 +1,31 @@
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDB51F191D
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Dec 2024 11:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF921F238A
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Dec 2024 11:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735297784; cv=none; b=Izl1ytXq1aSjbQyFjFfHExI4NVXypuzPzMs/klg27b/fjhbxXEDAYINmKmj+VrpE8N4g+gEY0e559gqgDg0LyrIOCKb0DcK/OZ3JDSoZGei9FkB5TlMGSCll/oltfvyzZ9IPByBOH1FtlqFMfsZutlArBTF6VWcsisZSKLtT3I0=
+	t=1735297835; cv=none; b=c+MJcPiaXJ3Ip/BC8EmJpu0G3iA3FOYKz7Fumlb97/eNSE44+Fk0krGBrQ3OSlh7BAsJg+6x4GH8XKKI88fyd2lTCh2c+h2Nij1kn7UGVNjkFDlFSzxQbkHNRfNhKxwcgJ82FbYkz3viuHe6ZOIcGh1+liDbU4P181MQ4+m9Ryw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735297784; c=relaxed/simple;
-	bh=qvS7+D/RTyyMg86CwtqbsAA+5EMqHdzQTTB53paC81Y=;
+	s=arc-20240116; t=1735297835; c=relaxed/simple;
+	bh=jEGKbLhjRFmr2GAicFc1z+s3hUCh595jXAXzn9My3y0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z9W7D9HQKyjKzjbXwEp/I6GRfhONRv8i69H0PNOqqp1MpQ2EARgtwaGy+7ggPYC9aypseB45n50oT+twgmvk4X24weK5MNZVuaEwSX27/pJPMhjHbuIz3fBcdTlB+NTJSDe70RZbia6C5hzmEbsSRz8YOuK9NMtUhwVnpM9A6CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=PytkC0E6; arc=none smtp.client-ip=44.202.169.37
+	 In-Reply-To:To:Cc; b=qlXgLEHFjGjsW2yiW7TQkneKJkWGeXfOBbYFF8speZ/+S85VN4vDspXLGzXIUcqy06K9RNQ3SsU6QFGmMP4ZtujW5tvhSGfa7XKXAZVBfC6ix+p85BM0wyxrlQ2QfnLbgUrLzmaddc6kOVPEsktu0OFRKJG0DxSdZEoSPeU/ASY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=MONGxl3W; arc=none smtp.client-ip=44.202.169.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="PytkC0E6"
-Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="MONGxl3W"
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
 	by cmsmtp with ESMTPS
-	id QziNtwVmPjMK7R8DutLfSY; Fri, 27 Dec 2024 11:09:42 +0000
+	id R46etX9ABxoE1R8DItkiqQ; Fri, 27 Dec 2024 11:09:04 +0000
 Received: from md-in-79.webhostbox.net ([43.225.55.182])
 	by cmsmtp with ESMTPS
-	id R8Dst6kDnlDL5R8DttSakN; Fri, 27 Dec 2024 11:09:42 +0000
-X-Authority-Analysis: v=2.4 cv=LLtgQoW9 c=1 sm=1 tr=0 ts=676e8af6
+	id R8DFt36ERT3CkR8DHtx0dr; Fri, 27 Dec 2024 11:09:04 +0000
+X-Authority-Analysis: v=2.4 cv=EYHOQumC c=1 sm=1 tr=0 ts=676e8ad0
  a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
  a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=iM3t8g1HjrKnZeAfta4A:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
+ a=wzO6rqTgGfghY9OkdcwA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
  a=ZCPYImcxYIQFgLOT52_G:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
@@ -33,21 +33,22 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pGwPFK3xv/ptVPYpkqFPS9qGRy0Y0xu/iUwb0C9nXWg=; b=PytkC0E6+h8OO95GAaBDa6ToD/
-	X6RQBgyIH8yLV5owVMFw3iqDdsFtQ7HAhgXvnn++80/oOj9h12a7UwDVencs83+1ur5aknYnBbHfo
-	IlFfdbs9vOr14mDdckmSR3ntnnAZ39LJPqK9lC9zqTQ61W7VwgBb2fhR4dR/yqC4cBYD6L/VpumJT
-	bNXGByvvB0699BiYZg3Pq5nTJvZRms0xAAKqpyaFTYsQiwMDZS6p93PnIOLAOY9v21vNFe3extze8
-	/a7mKuI+Y37MesfcysEOGPf2nUBXtjkITvlJqeP9HiOAjVoEXo2OmIrM9S6dUT+v1OzkqfB4blkEA
-	K48J1JSA==;
+	bh=tQ0brnuopVNUKDJwJH0/VSRDFgILtmVRCbF+TM2fmxQ=; b=MONGxl3WeJf0arOy1cPFbArXcj
+	RMSebZo86+sT9oYvJlias60GqUv3Zg9+bheoQ+qKIRGcEtjIcWS9Q49pW/FhkQrHotmidpp4a/7/H
+	OAU396gG20Kp/cyTsoO2pX+1qMTLqVSbAOANlMBYOMQ16ebVXZatJc+jfPKPOsdJcq5zHBK83sn7i
+	UV4U+3Rq8EcP8C72VhG8Fc/dpyRe6TkTehNjDGnlENCkvLCOSTKpZm0vc94Hldj1AKepr5AiAvLTM
+	OlOcy8Vj++TXUVQdbCTERtAYLlVL+JH6tR2wIWUweXeaGIB7koEcVbtue4/cLFp9r1nPHJOcRbKr7
+	jNxpal6w==;
 Received: from [122.165.245.213] (port=50828 helo=[127.0.1.1])
 	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <parthiban@linumiz.com>)
-	id 1tR8Do-000bEK-38;
-	Fri, 27 Dec 2024 16:39:37 +0530
+	id 1tR8DA-000bEK-2T;
+	Fri, 27 Dec 2024 16:38:56 +0530
 From: Parthiban Nallathambi <parthiban@linumiz.com>
-Date: Fri, 27 Dec 2024 16:38:03 +0530
-Subject: [PATCH 16/22] clk: sunxi-ng: sun8i-de2: Add support for a100/a133
+Date: Fri, 27 Dec 2024 16:37:55 +0530
+Subject: [PATCH 08/22] dt-bindings: arm: sunxi: document Szbaijie A133
+ helper board
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -56,7 +57,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241227-a133-display-support-v1-16-13b52f71fb14@linumiz.com>
+Message-Id: <20241227-a133-display-support-v1-8-13b52f71fb14@linumiz.com>
 References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
 In-Reply-To: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
 To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
@@ -79,11 +80,11 @@ Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org,
  linux-phy@lists.infradead.org, 
  Parthiban Nallathambi <parthiban@linumiz.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=1043;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735297689; l=1029;
  i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
- bh=qvS7+D/RTyyMg86CwtqbsAA+5EMqHdzQTTB53paC81Y=;
- b=XNyGVAs9WW8vlM4qOOilUjJeSmld8IS3muoSSmNHF7R0BNHYwWiLQzsMYl1WyxP5KH08pxwbs
- XX/zJxP3xkCCWn9sKa9YqO1pD/IsNIo4ZzA57+3OXY2mrliF2tLuPq7
+ bh=jEGKbLhjRFmr2GAicFc1z+s3hUCh595jXAXzn9My3y0=;
+ b=wGVr4ngKuSoVabYMJ83xGl1sX/P27vzNoNcVRiBreH5glgRC0hjGBmu8/xaRvpjz0+HQviRNZ
+ Kl7VJO4tZIDDmoEuw1ZTkBz1LzFAJ32g+0k4pQHAUmeU87/GywdQTyk
 X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
  pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -94,47 +95,45 @@ X-AntiAbuse: Sender Address Domain - linumiz.com
 X-BWhitelist: no
 X-Source-IP: 122.165.245.213
 X-Source-L: No
-X-Exim-ID: 1tR8Do-000bEK-38
+X-Exim-ID: 1tR8DA-000bEK-2T
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:50828
 X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 486
+X-Email-Count: 254
 X-Org: HG=dishared_whb_net_legacy;ORG=directi;
 X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCZkgJqdc97rr8nsnBV3+vQxkZL5zbgnTTu7lBWyOTvARDE5z5kGPh95kXM8xZgRfIRd0v7omsyJCRHduJE49NoJr/paLC8SY0dEqlg5StLCrbemud3+
- 47211S33z8reTZKbHgJfqEZXXVXaCOV1Gmax8f7fz8wjJHfwMOFkwbEJpHopVycdRb03gmE/g0tJe9tW57DGUb/nlTRHu1msrdw=
+X-CMAE-Envelope: MS4xfNva9e0XzvD6zXs25zk+OOs8Lc547is4IGx3qBcic3FTjhQOizSid9VRO+qjgX18ugRoWRE6kqElXJx0SPX8i3hCtQk9mglgitxaH0rz0u8J6wsMjWgv
+ xO/Qc4vdOLTSHMqsZigj+W/bxqlPBUw4CaU2c7CkBjTsABRkUl8dSjmobtD6bu3rtqIN5HCsjtR2/g20kxQvauBzQuD8tRj98dI=
 
-Display clock uses 1 mixer without rotation support is same
-as v3s. There is also a hidden independent display engine
-with independent tcon_top available in A100/A133 bin (based
-on vendor BSP).
-
-Add new compatible for A100/A133 to accommodate the future changes
-for the independent DE.
+Szbaijie Baijie Technology A133 helper board is an evaluation
+board of their A133-Core SoM. Add its compatible (with the
+SoM compatible) to the sunxi board DT binding file.
 
 Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 3e28c32050e0..067820ab704d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -342,6 +342,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
- 		.compatible = "allwinner,sun50i-a64-de2-clk",
- 		.data = &sun50i_a64_de2_clk_desc,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-a100-de2-clk",
-+		.data = &sun8i_v3s_de2_clk_desc,
-+	},
- 	{
- 		.compatible = "allwinner,sun50i-h5-de2-clk",
- 		.data = &sun50i_h5_de2_clk_desc,
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+index 046536d02706..eb19f8b1fe68 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.yaml
++++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+@@ -891,6 +891,12 @@ properties:
+           - const: allwinner,sl631
+           - const: allwinner,sun8i-v3
+ 
++      - description: Szbaijie A133 Helper board
++        items:
++          - const: szbaijie,helper-a133
++          - const: szbaijie,helper-a133-core
++          - const: allwinner,sun50i-a133
++
+       - description: Tanix TX1
+         items:
+           - const: oranth,tanix-tx1
 
 -- 
 2.39.5
