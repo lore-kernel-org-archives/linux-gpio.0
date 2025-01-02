@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7EC1B4134;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5F41B4121;
 	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735842742; cv=none; b=kdJxm8F9ACR+BvnxD7B5yovGUr/9lDeOEdKVM8UBO4Wyycc59jbNZP7ZwRwIgkjZw9E66Gwx43oCjnM+lzRQD7VSYxWlkURnYhKgZQ3np7XbMKJlQeO51+kyPyIO1Pu0vb54ToCm6fJ8R0y1FYSXxlnGRkqCEwjGESNGmSnxdz0=
+	t=1735842742; cv=none; b=gEs1rEPNv9Rq5+O2z0wnWEE2VqCupcCpGqCZv8nlfd7mA6WIQKAtHRjRuFX6JUnXR2Pc0iITKT6M3mIB6BIf9od4uOj5obEmN5AEXZcW1L2mODqfJmL1eQ0TQoVUf3jHDi8asDASVTS100VrKednOPXHQ+AR/F1exufY2Q1mFKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1735842742; c=relaxed/simple;
-	bh=3IuI6Je6+KzTU4VEUrEMJiz+nfBZ75oArtG+0/qEXpA=;
+	bh=yfwmhYwiUSm9JlLr+hh+O0Bt/U2vgFRgg3zxSAIQS9o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Oobj17p8LV7gnugZCYryaxt7uA2JE6jvdGKv0jQv7vQT5SP57s2B8k4HKE87xlV4l3GP5lK5kaDaz/EmoJKKwNyhrn/ZqzEb6vpV43nS/vnQu1L6gDcAJjvds3N0dU8YkETseXYxv6p+5rD97bl9g4DEcAKiWkOZiI/qwm0m4uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXYNMcH2; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=O/c8fHLa8DiYQS7DRuHhjyTbu/l9PEweM49qxkInIqLWVrxhkzCcGGuS9UZ2Ld5lQSR5FvXbj40usWMZtiNeyJHNUlFvR8KH8WGvjvhAqAUO0KNetLt790sqe+CdHSddbbo344cI3I4e/Uj0kWqrj+1njr9F+5zribXBBFQyhnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHFVUiOZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXYNMcH2"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 07B13C4CEEC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHFVUiOZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CA86C4CEF3;
 	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1735842742;
-	bh=3IuI6Je6+KzTU4VEUrEMJiz+nfBZ75oArtG+0/qEXpA=;
+	bh=yfwmhYwiUSm9JlLr+hh+O0Bt/U2vgFRgg3zxSAIQS9o=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LXYNMcH2allQiI3peCetZ4GsFekCTANyRFHBpDj4gD/wP5L2UBgCxVouf+dvwVwFK
-	 Lmtj+9rIB8fuHM+lRsYN1INHzDOVB+fmfxZcFNkO8raJiLiDTRhdPvV1XYiaKBOO2n
-	 xHzdvmQp9ocz552Non0szpI3wV7pR6LWJ92UHV+YQtScbxVo+s5fYrE9YrzA+Z9PNO
-	 y+IPPl32S5mAO43ye4BK+8F9kFiS0AtmssDThBHndMfHEMGdgWjAG4kMUKjtgLugS5
-	 uvkI3lgVmfNN1xTZozacRTl958aY3SX4HyfAJ4kskJFNvkP3yuggyDxf1+w0s1Mlpz
-	 Su7x37siyUeUg==
+	b=ZHFVUiOZiYkzaQGtgHJr+NXmNv1sffFV7GHI16jLrGBqZ5qcRfVZwGTDEPXATAQRH
+	 1H6be+UlJgs9mhvKJZeiAebyFVbZPMu5ZGuI1HLiGyObGaz59vlovSAoPiM4vaFqqp
+	 z9XmSGKxj+9FtbqITxq3vx/SRSHrLU7ejKmiUQe93VY/x9xM/CoTZQxuKIcptf9KwZ
+	 zlimeCR9a1cD4iCFWltYUX+ZB6SsmqPopuJ5wR47FnL/kNhx/QxkVWalLWizfzWM3g
+	 3MMPM+CFMpDq8w2jdMqaD3dvWijBGChUZE24W3AjLnyRNhFaBKSePuOJYCweCJDC7T
+	 tvAOxuX1uagOw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B36E77197;
-	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25334E7718B;
+	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 02 Jan 2025 19:31:48 +0100
-Subject: [PATCH 07/19] powerpc: dts: mpc8315erdb: Add missing model
- property
+Date: Thu, 02 Jan 2025 19:31:50 +0100
+Subject: [PATCH 09/19] powerpc: boot: Build devicetrees when
+ CONFIG_MPC831x=y
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250102-mpc83xx-v1-7-86f78ba2a7af@posteo.net>
+Message-Id: <20250102-mpc83xx-v1-9-86f78ba2a7af@posteo.net>
 References: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 In-Reply-To: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 To: Michael Ellerman <mpe@ellerman.id.au>, 
@@ -56,11 +56,11 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=689;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=893;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=i2m+p125oOMi3j6Rp3j8r0hNlqhm4mTOC27OluxVi5k=;
- b=jz8B5ynuEhfVPpf7QliuUWYwuGE/+fLv6S4QEVZTSRKh9vuo7oKhx4K5ZB/3HV0XhXRxx4tyP
- owTd0RUdADtB3j8aGvSMkGCN+0FQkHxUZK5mCetV0Jkq/2JyV31JdqG
+ bh=XjJyRLNOBRP8dGxJA13fx4b2smChJ2cfKB3451J6wqs=;
+ b=gmnc4iytyw/+dvM1kg+2tdYLt8bjZsFxnmFDZtWUSklxe3fMmDu7KXGlPW8DD6cw1T4smCFzT
+ mLXZOMO1dRiCkO80JYXYkXfSTVloW/oUetQpX+gD5lCg5yh6cqAzjFz
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -70,26 +70,31 @@ Reply-To: j.ne@posteo.net
 
 From: "J. Neuschäfer" <j.ne@posteo.net>
 
-The mpc8315erdb devicetree did thus far not have a /model property, even
-though it is required by the devicetree specification.
+In order to produce useful FIT images, the kernel needs to know which
+devicetrees to build. To that end, follow the same approach as other
+architectures, and enable devicetrees per platform.
 
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
- arch/powerpc/boot/dts/mpc8315erdb.dts | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/boot/dts/mpc8315erdb.dts b/arch/powerpc/boot/dts/mpc8315erdb.dts
-index 28c06faf8ce0eb330a0108eba321b4c1127a8ae2..44e82d8b26302b72676badd70c5ab26eba3d08e4 100644
---- a/arch/powerpc/boot/dts/mpc8315erdb.dts
-+++ b/arch/powerpc/boot/dts/mpc8315erdb.dts
-@@ -9,6 +9,7 @@
+I've only enabled MPC831x devicetrees, because that's the hardware I have.
+---
+ arch/powerpc/boot/dts/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/powerpc/boot/dts/Makefile b/arch/powerpc/boot/dts/Makefile
+index 0cd0d8558b475cfe342f36f4b78240ef88dd2e37..6aee895d5baaa2c978d4b1c82a6d198d9e166ea2 100644
+--- a/arch/powerpc/boot/dts/Makefile
++++ b/arch/powerpc/boot/dts/Makefile
+@@ -3,3 +3,8 @@
+ subdir-y += fsl
  
- / {
- 	compatible = "fsl,mpc8315erdb";
-+	model = "MPC8315E-RDB";
- 
- 	aliases {
- 		ethernet0 = &enet0;
+ dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(src)/%.dts,%.dtb, $(wildcard $(src)/*.dts))
++
++dtb-$(CONFIG_MPC831x) += \
++	kmeter1.dtb \
++	mpc8313erdb.dtb \
++	mpc8315erdb.dtb
 
 -- 
 2.45.2
