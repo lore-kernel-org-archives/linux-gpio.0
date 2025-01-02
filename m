@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6491B4128;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6FD1B412C;
 	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735842742; cv=none; b=AJsar8cYBYPQtdrpqgI1nwyv3XqGVs6h5bvvkalksHq3kuTGawoXtHnkDSqnbYc10PCiWsmaCmB02rkhQ+KO8Pl0iwCUWHAyOlaflpw+AjyLpwtAIE3iJZsxAGn57awXQh3/LoMv6yeyQPr2iOJfM65uIhYFnW4RjeVfzXiDpWY=
+	t=1735842742; cv=none; b=szaJO1geuZuZxu4UNIo1kl47ac4/GrHgvSvt/NLQlau7qgLrEAqjKDQDndvPCJJLxyIGn7EPs+0YC0tiJedmkUyySK1b7vuFfvn36K8MTaTV7AT8hd4EDNfnsrekmmxMMS568nBG0lGGKEKglAD/cXq38qAbf3GsneMluKaFcCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1735842742; c=relaxed/simple;
-	bh=U8NBq+45lYclznlQ/hxQVS/dtqBtJm90/lN2DnIlpvQ=;
+	bh=Kn3Ba2q1476jBlKRXeE8z9xsQG14quWxXA7lZRjTCi8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C3BQe23tQ2sqd4Fqx/uBMN+hDkdMGbQw/etE7smbDzS9mK4jzgn0a2pHeTGptA5JKUbIrr/dhZYDR7KDY2HtMmLjF5xEUmM0lmeVqzzZc1zXRXo7spcv1oeRlWUcrYVXJi1nty4RRqktjI+q5UZwwbseawlRhNqVLEQHpRMDO3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaKoDQH1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=eHwkDF/ax7jO/d0hmbVjBb9fFr5RQhwnsLHyd4DmIiztRoYh3wpWK0B7GMEXMuNSNicQeN08z8K2UqzoQIhNUNiJNGVXlw6BCRByWmawRvrEkSPKfpoZHKg6DzChi8PYmiEfSsrIFnAWIErpgTKtzvy85z4J3rNa/vUMvbZZBOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTHpoNt5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaKoDQH1"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1B950C4CEF0;
-	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTHpoNt5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0705C4CEE7;
+	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735842742;
-	bh=U8NBq+45lYclznlQ/hxQVS/dtqBtJm90/lN2DnIlpvQ=;
+	s=k20201202; t=1735842741;
+	bh=Kn3Ba2q1476jBlKRXeE8z9xsQG14quWxXA7lZRjTCi8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gaKoDQH1+oHCuzOPxBHvqm4377EhIJwiYMiYqwtTt3q94cT/ZP9KXg/TCt2Q25uVO
-	 o7tOXXKI/+xm8rOxchl7SF5rIz0WqCVuvMIg4YW3FgRL5wZxMkZyEisQruEmy1ATYB
-	 rCTRLdSUOdD5IHVBf7nYN62jsUC6QSLs24Mjy7puiDSbdXapOt+jjco7Rt6z//VbjN
-	 DhCJSN4YOdB3ffrNqjgtmGe0jCKbtnB78KA7Ss27K7aH6E+J+PNcW5ktlxL+zDyvTm
-	 zkQBdXIdNkxJMwwqBwoaFOqw63h+lrVVn/VyYdlP/c+DysoaFpiZ9OO4cfOaz8B0dp
-	 qejfbK4mnahvg==
+	b=JTHpoNt5Nb3TB8gJV2YqDpCygbtELHgqITzOfFOuANfqMlu0vBrF4EqOrtKJymFBI
+	 d1qz3/3fqpKn3FOEYTfxtkG+1IOqtBzKQI94XlU2pHpgfmFd/9bUlAaYN7MFQ1iVgg
+	 Xuz03rLNBnHMqKQgq7RzZOq1ig2B7itgp3bbxFrCpoUQYYFUP3Hl2riEhn9lsZvRsu
+	 JPMFPIiwcl/w8SFjwApDn+v4PTZHzBTvSCKutjqPQaONAGeOV1RRq4tgASzz+BHWhl
+	 MD1GpfMIFN8rESLcw6YeZ+gWpIXXykQwVV6E9ip5Gb3YtrTwTJ/V28NqiXfDUu/Lpo
+	 vCvpw8ItkN7+g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E56E77188;
-	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65A1E77188;
+	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 02 Jan 2025 19:31:49 +0100
-Subject: [PATCH 08/19] powerpc: boot: Enable FIT image generation
+Date: Thu, 02 Jan 2025 19:31:46 +0100
+Subject: [PATCH 05/19] powerpc: dts: mpc8315e: Disable peripherals by
+ default
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250102-mpc83xx-v1-8-86f78ba2a7af@posteo.net>
+Message-Id: <20250102-mpc83xx-v1-5-86f78ba2a7af@posteo.net>
 References: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 In-Reply-To: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 To: Michael Ellerman <mpe@ellerman.id.au>, 
@@ -55,11 +56,11 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=2597;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=4954;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=gwgToc0kzqB+BXy5IXnLTTOxYYECLTdDBZaVu6gPiyM=;
- b=Zf345/Cls673vfLPBl8FI50FAUmAxpsp1Fvxct7loBav9XCC+T9a69RO9whzma99z7p8gIrp/
- E1AIylSmAzrBvcSfhIjrrIb6Bww/v+hPd4kyWILMBuuSU4x7NQybIIk
+ bh=AV1vR3Ihm+C41mrCgb+tb12Q+MpI9SpagJ/QC+gpFGE=;
+ b=wAqdmKvmfb4haqZrhf4yvl5DxXw4IUZoX/quIcvJQO27pvqD85KdryfzhT56KvFnLJJyCWpdQ
+ 1mLSXu6XjPqC04bSBxUiu5G7ZBCVaZiJa5DxY+VGR/xmQwAai02WvEV
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -69,81 +70,192 @@ Reply-To: j.ne@posteo.net
 
 From: "J. Neuschäfer" <j.ne@posteo.net>
 
-The Flat Image Tree (FIT) format combines a kernel, a set of
-devicetrees, and optionally additional resources into a single file that
-can be loaded by a bootloader such as U-Boot. Generating a FIT image as
-part of the kernel build reduces the need for additional build scripts,
-and produces a single boot image without falling back to one of the
-many legacy methods implemented in arch/powerpc/boot/Makefile, which
-would require additional changes for arch/powerpc/boot for each board.
+Peripherals with a connection to the outside of the chip aren't
+necessarily used on all board designs, so disable them by default,
+and enable them per-board.
 
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
+ arch/powerpc/boot/dts/mpc8315e.dtsi   | 15 +++++++++++++++
+ arch/powerpc/boot/dts/mpc8315erdb.dts | 12 ++++++++++++
+ 2 files changed, 27 insertions(+)
 
-Checkpatch warns:
-
-  arch/powerpc/boot/Makefile:364: WARNING: Possible repeated word: 'Image'
-
-for this line:
-
-  image-y += Image image.fit
-
-This is bogus and can be ignored.
----
- arch/powerpc/Makefile      |  3 ++-
- arch/powerpc/boot/Makefile | 11 +++++++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index f3804103c56ccfdb16289468397ccaea71bf721e..693c82c06072fb0529288736efee460e375b2476 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -225,7 +225,7 @@ KBUILD_CFLAGS += $(cflags-y)
- all: zImage
+diff --git a/arch/powerpc/boot/dts/mpc8315e.dtsi b/arch/powerpc/boot/dts/mpc8315e.dtsi
+index 2531e702648f1bf922a7112c9ddaeac1c3113572..7e61a78850433fa43795a2a5fb06ce6a148bb11d 100644
+--- a/arch/powerpc/boot/dts/mpc8315e.dtsi
++++ b/arch/powerpc/boot/dts/mpc8315e.dtsi
+@@ -51,6 +51,7 @@ localbus: localbus@e0005000 {
+ 		reg = <0xe0005000 0x1000>;
+ 		interrupts = <77 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-parent = <&ipic>;
++		status = "disabled";
+ 	};
  
- # With make 3.82 we cannot mix normal and wildcard targets
--BOOT_TARGETS1 := zImage zImage.initrd uImage
-+BOOT_TARGETS1 := zImage zImage.initrd uImage image.fit
- BOOT_TARGETS2 := zImage% dtbImage% treeImage.% cuImage.% simpleImage.% uImage.%
+ 	immr@e0000000 {
+@@ -77,6 +78,7 @@ i2c: i2c@3000 {
+ 			interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			dfsrr;
++			status = "disabled";
+ 		};
  
- PHONY += $(BOOT_TARGETS1) $(BOOT_TARGETS2)
-@@ -237,6 +237,7 @@ $(BOOT_TARGETS1): vmlinux
- $(BOOT_TARGETS2): vmlinux
- 	$(Q)$(MAKE) $(build)=$(boot) $(patsubst %,$(boot)/%,$@)
+ 		spi: spi@7000 {
+@@ -86,6 +88,7 @@ spi: spi@7000 {
+ 			interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			mode = "cpu";
++			status = "disabled";
+ 		};
  
-+image.fit: dtbs
+ 		dma@82a8 {
+@@ -135,6 +138,7 @@ usb: usb@23000 {
+ 			interrupt-parent = <&ipic>;
+ 			interrupts = <38 IRQ_TYPE_LEVEL_LOW>;
+ 			phy_type = "utmi";
++			status = "disabled";
+ 		};
  
- PHONY += bootwrapper_install
- bootwrapper_install:
-diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-index 1ff6ad4f6cd27755ea7bfe5b02af4a47ca33cea7..e0c62ab1cc5af99e43f6639be11bf1c64d352db8 100644
---- a/arch/powerpc/boot/Makefile
-+++ b/arch/powerpc/boot/Makefile
-@@ -360,6 +360,9 @@ ifdef CONFIG_PPC32
- image-$(CONFIG_PPC_PMAC)	+= zImage.coff zImage.miboot
- endif
+ 		enet0: ethernet@24000 {
+@@ -151,12 +155,14 @@ enet0: ethernet@24000 {
+ 				     <33 IRQ_TYPE_LEVEL_LOW>,
+ 				     <34 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
  
-+# FIT support (generic)
-+image-y += Image image.fit
+ 			mdio0: mdio@520 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				compatible = "fsl,gianfar-mdio";
+ 				reg = <0x520 0x20>;
++				status = "disabled";
+ 			};
+ 		};
+ 
+@@ -174,12 +180,14 @@ enet1: ethernet@25000 {
+ 				     <36 IRQ_TYPE_LEVEL_LOW>,
+ 				     <37 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
+ 
+ 			mdio1: mdio@520 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				compatible = "fsl,gianfar-tbi";
+ 				reg = <0x520 0x20>;
++				status = "disabled";
+ 			};
+ 		};
+ 
+@@ -191,6 +199,7 @@ serial0: serial@4500 {
+ 			clock-frequency = <133333333>;
+ 			interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
+ 		};
+ 
+ 		serial1: serial@4600 {
+@@ -201,6 +210,7 @@ serial1: serial@4600 {
+ 			clock-frequency = <133333333>;
+ 			interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
+ 		};
+ 
+ 		security: crypto@30000 {
+@@ -222,6 +232,7 @@ sata0: sata@18000 {
+ 			cell-index = <1>;
+ 			interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
+ 		};
+ 
+ 		sata1: sata@19000 {
+@@ -230,6 +241,7 @@ sata1: sata@19000 {
+ 			cell-index = <2>;
+ 			interrupts = <45 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
++			status = "disabled";
+ 		};
+ 
+ 		gtm1: timer@500 {
+@@ -324,6 +336,7 @@ pci0: pci@e0008500 {
+ 		       0xe0008300 0x8>;		/* config space access registers */
+ 		compatible = "fsl,mpc8349-pci";
+ 		device_type = "pci";
++		status = "disabled";
+ 	};
+ 
+ 	pci1: pcie@e0009000 {
+@@ -342,6 +355,7 @@ pci1: pcie@e0009000 {
+ 				 0 0 0 3 &ipic 1 IRQ_TYPE_LEVEL_LOW
+ 				 0 0 0 4 &ipic 1 IRQ_TYPE_LEVEL_LOW>;
+ 		clock-frequency = <0>;
++		status = "disabled";
+ 	};
+ 
+ 	pci2: pcie@e000a000 {
+@@ -360,5 +374,6 @@ pci2: pcie@e000a000 {
+ 				 0 0 0 3 &ipic 2 IRQ_TYPE_LEVEL_LOW
+ 				 0 0 0 4 &ipic 2 IRQ_TYPE_LEVEL_LOW>;
+ 		clock-frequency = <0>;
++		status = "disabled";
+ 	};
+ };
+diff --git a/arch/powerpc/boot/dts/mpc8315erdb.dts b/arch/powerpc/boot/dts/mpc8315erdb.dts
+index 2ea71514900131893a70b44bab7bcc0bf4d86e44..28c06faf8ce0eb330a0108eba321b4c1127a8ae2 100644
+--- a/arch/powerpc/boot/dts/mpc8315erdb.dts
++++ b/arch/powerpc/boot/dts/mpc8315erdb.dts
+@@ -25,6 +25,8 @@ memory {
+ 	};
+ 
+ 	localbus@e0005000 {
++		status = "okay";
 +
- # Allow extra targets to be added to the defconfig
- image-y	+= $(CONFIG_EXTRA_TARGETS)
+ 		// CS0 and CS1 are swapped when
+ 		// booting from nand, but the
+ 		// addresses are the same.
+@@ -83,8 +85,11 @@ ethernet@24000 {
+ 			tbi-handle = <&tbi0>;
+ 			phy-handle = < &phy0 >;
+ 			fsl,magic-packet;
++			status = "okay";
  
-@@ -398,6 +401,14 @@ $(obj)/dtbImage.%: vmlinux $(wrapperbits) $(obj)/dts/%.dtb FORCE
- $(obj)/vmlinux.strip: vmlinux
- 	$(STRIP) -s -R .comment $< -o $@
+ 			mdio@520 {
++				status = "okay";
++
+ 				phy0: ethernet-phy@0 {
+ 					interrupt-parent = <&ipic>;
+ 					interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+@@ -108,8 +113,11 @@ ethernet@25000 {
+ 			tbi-handle = <&tbi1>;
+ 			phy-handle = < &phy1 >;
+ 			fsl,magic-packet;
++			status = "okay";
  
-+OBJCOPYFLAGS += -O binary
+ 			mdio@520 {
++				status = "okay";
 +
-+$(obj)/Image: vmlinux FORCE
-+	$(call if_changed,objcopy)
-+
-+$(obj)/image.fit: $(obj)/Image $(obj)/dts/dtbs-list FORCE
-+	$(call if_changed,fit)
-+
- $(obj)/uImage: vmlinux $(wrapperbits) FORCE
- 	$(call if_changed,wrap,uboot)
+ 				tbi1: tbi-phy@11 {
+ 					reg = <0x11>;
+ 					device_type = "tbi-phy";
+@@ -119,6 +127,8 @@ tbi1: tbi-phy@11 {
+ 	};
  
+ 	pcie@e0009000 {
++		status = "okay";
++
+ 		pcie@0 {
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+@@ -134,6 +144,8 @@ pcie@0 {
+ 	};
+ 
+ 	pcie@e000a000 {
++		status = "okay";
++
+ 		pcie@0 {
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
 
 -- 
 2.45.2
