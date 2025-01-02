@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B4FD528;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAE1802B;
 	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735842742; cv=none; b=ufQRJ+WRyxPIjZ220RUpFi/+zmQ8zvVU/46GzYgbKla0dBVBVK4cMyq9xaN5XXwrIZO87X5uUDJqkuDqLRZ98E7srsesqtZH4+RFTaiKXsHt1ZyUQl0qTczyitJZ4QwKAQt585vMa0IPHDCsVKRqYR9kK5Sbchrsx6OjxiE5NZA=
+	t=1735842742; cv=none; b=RPrUk/nz0fQAvY9wH4NeE4jF0geuUQdczSj0efBqK+1IufLYSxNGYOInuQ3rB7HFLhhXCzs1D7pkByogj0h6bQEJxHxbSjWtN+YXT3lJmxbQ1FLCMxYVAMMShI6a8qKHYv5v/jttBpNktbwSmTi2RjlguLIYGZ5cAkdu+lcOEWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1735842742; c=relaxed/simple;
-	bh=iXEKfMZLPG1LksbWhM4v2lw0fm4m5xLanyUbnOMBf3Y=;
+	bh=mFttdxUf0zkS97qdKWAYSDQtG0SVAkS26FN4ZvrD4O8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Kw2GhMNjwRQ13opjuPSi34N/Nvc/gK0gdJw8wYQNPmePPOGptcU03+hH456u+O9ozwbRerqO2LhuBR18LXmKbnXT7cKa31/aStfed9XHYu8VDwUiWNamtWT8Zr0W96DE3dFQUE4zxN6TiKMpcrYiPj5R17KddFjYq2jesT/BGHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opQmjpo0; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=ut88Xg0U/NhaADglU32oyMp+UZDQ8AQNGdZsf6gHfhdnI5nbNQOrIC7xm3EIvXo6H5YO9M2+thCoNd4bfCPgDgjlmT/vpHGwtIWsKVUbkp4mb8jlFwaFpcdaKqSw6RKKxh+m+nERAXc7iJ4h7bWnOJGU9YUIQK4NZdiWffM31XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uo3yixYZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opQmjpo0"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A7A66C4CEDC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uo3yixYZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C0564C4CEDF;
 	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1735842741;
-	bh=iXEKfMZLPG1LksbWhM4v2lw0fm4m5xLanyUbnOMBf3Y=;
+	bh=mFttdxUf0zkS97qdKWAYSDQtG0SVAkS26FN4ZvrD4O8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=opQmjpo07S4Rn++saRB7U2Oux+6AbK2WkHGmLMP6XRu/RCtCjviuJ/ebXrbtI8beH
-	 xeJWpppwHD0uk8rEVh8zdjNYkHTlN8kojEDncqLa49KF0UW7kvk47t6tpUDeSRUd0x
-	 DFVxWZ7iokVyZ4CoecqMMgz6wFHTg8v2MH1dF8n0hg4WOszV2OSX7A2A+7hbGbFC7l
-	 JX7jm4waojlDLx45qoxCZ829Psvfi7qzkqysK6py0AxKyZ56UnB/b2Tc5rmiV1m3v4
-	 TsOlCraG6CvqGlUjuqXHzE9NV/WecIpkDbGLmRdWbr/YU4chAEPZP3WU9dk+TNsMEw
-	 13zukVeKliXYA==
+	b=uo3yixYZMMoVIueGO+G9SRCzblkf5+UPEV/AP1OeVZIG/WeDTGmR/ZAXM231WAgiH
+	 rqWF7k++R9Ovgk8ZA2FbKJ8xu93l5QokS5U5XM7d/bXC64QwZxVL+XmHqMHt2nMiWv
+	 8XqMv57EaAeHRmVAappmlVO1+wkEzxtNPR6UPtIbNyLtrrW4CUKHmhANtOwpXvMqdL
+	 P13aYe8GQqDMVGCQ/UdrOwgTvPVOGyEJfaFyIY3jChX9NUqllFf+ETFwGwLI1KMfPU
+	 7UC6Qtf6QdqfSbKFJd6flH0sbwRmokIIbBi/aY4xlp5pAp1l4ekTOzB5nINCS0reDg
+	 pWKNhO6fuvoIw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 944F9E77194;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6699E7718B;
 	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 02 Jan 2025 19:31:42 +0100
-Subject: [PATCH 01/19] powerpc: Generalize MPC831x platform support
+Date: Thu, 02 Jan 2025 19:31:44 +0100
+Subject: [PATCH 03/19] powerpc: dts: mpc8315e: Use IRQ_TYPE_* macros
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250102-mpc83xx-v1-1-86f78ba2a7af@posteo.net>
+Message-Id: <20250102-mpc83xx-v1-3-86f78ba2a7af@posteo.net>
 References: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 In-Reply-To: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 To: Michael Ellerman <mpe@ellerman.id.au>, 
@@ -55,11 +55,11 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=6164;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=10387;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=RIPGsNtRW50K3E4tftXP6LldK+TxlhvB+Y3BnDoaHb0=;
- b=S1HDm+U7HAgFAMYdFK1sGW5heveyGGuVt/bXnOqJRnKzc8lb3SZrRfo7dZbPGf35gYi+2oOU+
- WHSlyHLVF8qDaTcaoRJxeDgcmAFHC41G2zWKnsXqTwnXkEt+cm8SWLU
+ bh=27vJGZGlFwWizM+EMz5rgxyTnv087lEXb6iLZDOh3DE=;
+ b=9363Ysi+0bn7S8tWB0fh1Ub3SedQBf3xmMz9WI6sCYjeYHhNuAhanngotMhu7PndyysNJ7P0a
+ lqFKK9sAHo5AxNVhzQHHS8d20lltsGV001A4Puc90F4CesxY1Kukf+p
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -69,165 +69,325 @@ Reply-To: j.ne@posteo.net
 
 From: "J. Neuschäfer" <j.ne@posteo.net>
 
-The Reference Design Boards (RDB) don't have the same relevance they had
-then the MPC831x platform was new; if any work is done today, then
-likely based on used production boards, which are more readily available
-than NXP's discontinued devboards.
+This increases readability, because "0x8" isn't very descriptive.
 
-To further reduce the focus on RDBs, add DT compatible strings for all
-four MPC8314/5 variants.
+mpc8315erdb.dtb remains identical after this patch.
 
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
- arch/powerpc/configs/83xx/mpc8313_rdb_defconfig     |  2 +-
- arch/powerpc/configs/83xx/mpc8315_rdb_defconfig     |  2 +-
- arch/powerpc/configs/mpc83xx_defconfig              |  2 +-
- arch/powerpc/configs/ppc6xx_defconfig               |  2 +-
- arch/powerpc/platforms/83xx/Kconfig                 |  6 +++---
- arch/powerpc/platforms/83xx/Makefile                |  2 +-
- .../platforms/83xx/{mpc831x_rdb.c => mpc831x.c}     | 21 ++++++++++++++-------
- 7 files changed, 22 insertions(+), 15 deletions(-)
+ arch/powerpc/boot/dts/mpc8315e.dtsi   | 112 ++++++++++++++++++----------------
+ arch/powerpc/boot/dts/mpc8315erdb.dts |   4 +-
+ 2 files changed, 62 insertions(+), 54 deletions(-)
 
-diff --git a/arch/powerpc/configs/83xx/mpc8313_rdb_defconfig b/arch/powerpc/configs/83xx/mpc8313_rdb_defconfig
-index 16a42e2267fbe092ea2344f50548101bc1e344ce..38a4d1ceff6a9ea75d9d8a313adbd2e5e5c9ac67 100644
---- a/arch/powerpc/configs/83xx/mpc8313_rdb_defconfig
-+++ b/arch/powerpc/configs/83xx/mpc8313_rdb_defconfig
-@@ -12,7 +12,7 @@ CONFIG_PARTITION_ADVANCED=y
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_PPC_83xx=y
--CONFIG_MPC831x_RDB=y
-+CONFIG_MPC831x=y
- CONFIG_PCI=y
- CONFIG_NET=y
- CONFIG_PACKET=y
-diff --git a/arch/powerpc/configs/83xx/mpc8315_rdb_defconfig b/arch/powerpc/configs/83xx/mpc8315_rdb_defconfig
-index 80d40ae668eb6f1ae10bc0c1100d904946496112..788189a182458c92a62235c10fb3d21a87f4296b 100644
---- a/arch/powerpc/configs/83xx/mpc8315_rdb_defconfig
-+++ b/arch/powerpc/configs/83xx/mpc8315_rdb_defconfig
-@@ -12,7 +12,7 @@ CONFIG_PARTITION_ADVANCED=y
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_PPC_83xx=y
--CONFIG_MPC831x_RDB=y
-+CONFIG_MPC831x=y
- CONFIG_PCI=y
- CONFIG_NET=y
- CONFIG_PACKET=y
-diff --git a/arch/powerpc/configs/mpc83xx_defconfig b/arch/powerpc/configs/mpc83xx_defconfig
-index 83c4710017e949c358f3ba8b73f5c1873cfd10f8..4af5e3e8c5a7f44f5e97b8fb4cdf691686f8967b 100644
---- a/arch/powerpc/configs/mpc83xx_defconfig
-+++ b/arch/powerpc/configs/mpc83xx_defconfig
-@@ -9,7 +9,7 @@ CONFIG_PARTITION_ADVANCED=y
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_PPC_83xx=y
--CONFIG_MPC831x_RDB=y
-+CONFIG_MPC831x=y
- CONFIG_MPC832x_RDB=y
- CONFIG_MPC834x_ITX=y
- CONFIG_MPC836x_RDK=y
-diff --git a/arch/powerpc/configs/ppc6xx_defconfig b/arch/powerpc/configs/ppc6xx_defconfig
-index ca0c90e9583790cbca15ba956b371b8b0cb63c47..7e56dc497a48289614c8d01cc51be6d1edad7846 100644
---- a/arch/powerpc/configs/ppc6xx_defconfig
-+++ b/arch/powerpc/configs/ppc6xx_defconfig
-@@ -40,7 +40,7 @@ CONFIG_PPC_82xx=y
- CONFIG_EP8248E=y
- CONFIG_MGCOGE=y
- CONFIG_PPC_83xx=y
--CONFIG_MPC831x_RDB=y
-+CONFIG_MPC831x=y
- CONFIG_MPC832x_RDB=y
- CONFIG_MPC834x_ITX=y
- CONFIG_MPC836x_RDK=y
-diff --git a/arch/powerpc/platforms/83xx/Kconfig b/arch/powerpc/platforms/83xx/Kconfig
-index d355ad40995fdc0fc3b4355126c65c761c21c296..944ec44a1fa6044b03ac71c295e891cd411ce444 100644
---- a/arch/powerpc/platforms/83xx/Kconfig
-+++ b/arch/powerpc/platforms/83xx/Kconfig
-@@ -18,12 +18,12 @@ config MPC830x_RDB
- 	help
- 	  This option enables support for the MPC8308 RDB and MPC8308 P1M boards.
- 
--config MPC831x_RDB
--	bool "Freescale MPC831x RDB"
-+config MPC831x
-+	bool "Freescale MPC831x boards"
- 	select DEFAULT_UIMAGE
- 	select PPC_MPC831x
- 	help
--	  This option enables support for the MPC8313 RDB and MPC8315 RDB boards.
-+	  This option enables support for all MPC831x-based boards.
- 
- config MPC832x_RDB
- 	bool "Freescale MPC832x RDB"
-diff --git a/arch/powerpc/platforms/83xx/Makefile b/arch/powerpc/platforms/83xx/Makefile
-index 6fc3dba943dade4f63da090b520b0c35bb46a091..92fb0b34913e1113d3e6eac49acbb1c32fb06ab7 100644
---- a/arch/powerpc/platforms/83xx/Makefile
-+++ b/arch/powerpc/platforms/83xx/Makefile
-@@ -6,7 +6,7 @@ obj-y				:= misc.o
- obj-$(CONFIG_SUSPEND)		+= suspend.o suspend-asm.o
- obj-$(CONFIG_MCU_MPC8349EMITX)	+= mcu_mpc8349emitx.o
- obj-$(CONFIG_MPC830x_RDB)	+= mpc830x_rdb.o
--obj-$(CONFIG_MPC831x_RDB)	+= mpc831x_rdb.o
-+obj-$(CONFIG_MPC831x)		+= mpc831x.o
- obj-$(CONFIG_MPC832x_RDB)	+= mpc832x_rdb.o
- obj-$(CONFIG_MPC834x_ITX)	+= mpc834x_itx.o
- obj-$(CONFIG_MPC836x_RDK)	+= mpc836x_rdk.o
-diff --git a/arch/powerpc/platforms/83xx/mpc831x_rdb.c b/arch/powerpc/platforms/83xx/mpc831x.c
-similarity index 65%
-rename from arch/powerpc/platforms/83xx/mpc831x_rdb.c
-rename to arch/powerpc/platforms/83xx/mpc831x.c
-index 5c39966762e4264d2ef91b2c4ef75fdf2c2c5d65..7250fc11c7ee80b266f39d0b3aebb0deb777c129 100644
---- a/arch/powerpc/platforms/83xx/mpc831x_rdb.c
-+++ b/arch/powerpc/platforms/83xx/mpc831x.c
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * arch/powerpc/platforms/83xx/mpc831x_rdb.c
-+ * arch/powerpc/platforms/83xx/mpc831x.c
-  *
-- * Description: MPC831x RDB board specific routines.
-+ * Description: MPC831x board specific routines.
-  * This file is based on mpc834x_sys.c
-  * Author: Lo Wlison <r43300@freescale.com>
-  *
-@@ -22,24 +22,31 @@
- /*
-  * Setup the architecture
+diff --git a/arch/powerpc/boot/dts/mpc8315e.dtsi b/arch/powerpc/boot/dts/mpc8315e.dtsi
+index 4830c8e5cd5c6858ea3a0c25e4a1f26fa87a7111..8741482905f0f30bf893a08b2602fdc6e74c23ff 100644
+--- a/arch/powerpc/boot/dts/mpc8315e.dtsi
++++ b/arch/powerpc/boot/dts/mpc8315e.dtsi
+@@ -12,6 +12,7 @@
   */
--static void __init mpc831x_rdb_setup_arch(void)
-+static void __init mpc831x_setup_arch(void)
- {
- 	mpc83xx_setup_arch();
- 	mpc831x_usb_cfg();
- }
  
- static const char *board[] __initdata = {
-+	/* Reference design boards */
- 	"MPC8313ERDB",
- 	"fsl,mpc8315erdb",
-+
-+	/* Generic chip compatibles */
-+	"fsl,mpc8315e",
-+	"fsl,mpc8315",
-+	"fsl,mpc8314e",
-+	"fsl,mpc8314",
- 	NULL
+ /dts-v1/;
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	compatible = "fsl,mpc8315e";
+@@ -48,7 +49,7 @@ localbus@e0005000 {
+ 		#size-cells = <1>;
+ 		compatible = "fsl,mpc8315-elbc", "fsl,elbc", "simple-bus";
+ 		reg = <0xe0005000 0x1000>;
+-		interrupts = <77 0x8>;
++		interrupts = <77 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-parent = <&ipic>;
+ 	};
+ 
+@@ -73,7 +74,7 @@ i2c@3000 {
+ 			cell-index = <0>;
+ 			compatible = "fsl-i2c";
+ 			reg = <0x3000 0x100>;
+-			interrupts = <14 0x8>;
++			interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			dfsrr;
+ 		};
+@@ -82,7 +83,7 @@ spi@7000 {
+ 			cell-index = <0>;
+ 			compatible = "fsl,spi";
+ 			reg = <0x7000 0x1000>;
+-			interrupts = <16 0x8>;
++			interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			mode = "cpu";
+ 		};
+@@ -94,35 +95,35 @@ dma@82a8 {
+ 			reg = <0x82a8 4>;
+ 			ranges = <0 0x8100 0x1a8>;
+ 			interrupt-parent = <&ipic>;
+-			interrupts = <71 8>;
++			interrupts = <71 IRQ_TYPE_LEVEL_LOW>;
+ 			cell-index = <0>;
+ 			dma-channel@0 {
+ 				compatible = "fsl,mpc8315-dma-channel", "fsl,elo-dma-channel";
+ 				reg = <0 0x80>;
+ 				cell-index = <0>;
+ 				interrupt-parent = <&ipic>;
+-				interrupts = <71 8>;
++				interrupts = <71 IRQ_TYPE_LEVEL_LOW>;
+ 			};
+ 			dma-channel@80 {
+ 				compatible = "fsl,mpc8315-dma-channel", "fsl,elo-dma-channel";
+ 				reg = <0x80 0x80>;
+ 				cell-index = <1>;
+ 				interrupt-parent = <&ipic>;
+-				interrupts = <71 8>;
++				interrupts = <71 IRQ_TYPE_LEVEL_LOW>;
+ 			};
+ 			dma-channel@100 {
+ 				compatible = "fsl,mpc8315-dma-channel", "fsl,elo-dma-channel";
+ 				reg = <0x100 0x80>;
+ 				cell-index = <2>;
+ 				interrupt-parent = <&ipic>;
+-				interrupts = <71 8>;
++				interrupts = <71 IRQ_TYPE_LEVEL_LOW>;
+ 			};
+ 			dma-channel@180 {
+ 				compatible = "fsl,mpc8315-dma-channel", "fsl,elo-dma-channel";
+ 				reg = <0x180 0x28>;
+ 				cell-index = <3>;
+ 				interrupt-parent = <&ipic>;
+-				interrupts = <71 8>;
++				interrupts = <71 IRQ_TYPE_LEVEL_LOW>;
+ 			};
+ 		};
+ 
+@@ -132,7 +133,7 @@ usb@23000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			interrupt-parent = <&ipic>;
+-			interrupts = <38 0x8>;
++			interrupts = <38 IRQ_TYPE_LEVEL_LOW>;
+ 			phy_type = "utmi";
+ 		};
+ 
+@@ -146,7 +147,9 @@ enet0: ethernet@24000 {
+ 			reg = <0x24000 0x1000>;
+ 			ranges = <0x0 0x24000 0x1000>;
+ 			local-mac-address = [ 00 00 00 00 00 00 ];
+-			interrupts = <32 0x8 33 0x8 34 0x8>;
++			interrupts = <32 IRQ_TYPE_LEVEL_LOW>,
++				     <33 IRQ_TYPE_LEVEL_LOW>,
++				     <34 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 
+ 			mdio@520 {
+@@ -167,7 +170,9 @@ enet1: ethernet@25000 {
+ 			reg = <0x25000 0x1000>;
+ 			ranges = <0x0 0x25000 0x1000>;
+ 			local-mac-address = [ 00 00 00 00 00 00 ];
+-			interrupts = <35 0x8 36 0x8 37 0x8>;
++			interrupts = <35 IRQ_TYPE_LEVEL_LOW>,
++				     <36 IRQ_TYPE_LEVEL_LOW>,
++				     <37 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 
+ 			mdio@520 {
+@@ -184,7 +189,7 @@ serial0: serial@4500 {
+ 			compatible = "fsl,ns16550", "ns16550";
+ 			reg = <0x4500 0x100>;
+ 			clock-frequency = <133333333>;
+-			interrupts = <9 0x8>;
++			interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 		};
+ 
+@@ -194,7 +199,7 @@ serial1: serial@4600 {
+ 			compatible = "fsl,ns16550", "ns16550";
+ 			reg = <0x4600 0x100>;
+ 			clock-frequency = <133333333>;
+-			interrupts = <10 0x8>;
++			interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 		};
+ 
+@@ -203,7 +208,7 @@ crypto@30000 {
+ 				     "fsl,sec2.4", "fsl,sec2.2", "fsl,sec2.1",
+ 				     "fsl,sec2.0";
+ 			reg = <0x30000 0x10000>;
+-			interrupts = <11 0x8>;
++			interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			fsl,num-channels = <4>;
+ 			fsl,channel-fifo-len = <24>;
+@@ -215,7 +220,7 @@ sata@18000 {
+ 			compatible = "fsl,mpc8315-sata", "fsl,pq-sata";
+ 			reg = <0x18000 0x1000>;
+ 			cell-index = <1>;
+-			interrupts = <44 0x8>;
++			interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 		};
+ 
+@@ -223,14 +228,17 @@ sata@19000 {
+ 			compatible = "fsl,mpc8315-sata", "fsl,pq-sata";
+ 			reg = <0x19000 0x1000>;
+ 			cell-index = <2>;
+-			interrupts = <45 0x8>;
++			interrupts = <45 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 		};
+ 
+ 		gtm1: timer@500 {
+ 			compatible = "fsl,mpc8315-gtm", "fsl,gtm";
+ 			reg = <0x500 0x100>;
+-			interrupts = <90 8 78 8 84 8 72 8>;
++			interrupts = <90 IRQ_TYPE_LEVEL_LOW>,
++				     <78 IRQ_TYPE_LEVEL_LOW>,
++				     <84 IRQ_TYPE_LEVEL_LOW>,
++				     <72 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			clock-frequency = <133333333>;
+ 		};
+@@ -238,16 +246,16 @@ gtm1: timer@500 {
+ 		timer@600 {
+ 			compatible = "fsl,mpc8315-gtm", "fsl,gtm";
+ 			reg = <0x600 0x100>;
+-			interrupts = <91 8 79 8 85 8 73 8>;
++			interrupts = <91 IRQ_TYPE_LEVEL_LOW>,
++				     <79 IRQ_TYPE_LEVEL_LOW>,
++				     <85 IRQ_TYPE_LEVEL_LOW>,
++				     <73 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			clock-frequency = <133333333>;
+ 		};
+ 
+ 		/* IPIC
+-		 * interrupts cell = <intr #, sense>
+-		 * sense values match linux IORESOURCE_IRQ_* defines:
+-		 * sense == 8: Level, low assertion
+-		 * sense == 2: Edge, high-to-low change
++		 * interrupts cell = <intr #, type>
+ 		 */
+ 		ipic: interrupt-controller@700 {
+ 			interrupt-controller;
+@@ -261,14 +269,14 @@ ipic-msi@7c0 {
+ 			compatible = "fsl,ipic-msi";
+ 			reg = <0x7c0 0x40>;
+ 			msi-available-ranges = <0 0x100>;
+-			interrupts = <0x43 0x8
+-				      0x4  0x8
+-				      0x51 0x8
+-				      0x52 0x8
+-				      0x56 0x8
+-				      0x57 0x8
+-				      0x58 0x8
+-				      0x59 0x8>;
++			interrupts = <0x43 IRQ_TYPE_LEVEL_LOW>,
++				     <0x4  IRQ_TYPE_LEVEL_LOW>,
++				     <0x51 IRQ_TYPE_LEVEL_LOW>,
++				     <0x52 IRQ_TYPE_LEVEL_LOW>,
++				     <0x56 IRQ_TYPE_LEVEL_LOW>,
++				     <0x57 IRQ_TYPE_LEVEL_LOW>,
++				     <0x58 IRQ_TYPE_LEVEL_LOW>,
++				     <0x59 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = < &ipic >;
+ 		};
+ 
+@@ -276,7 +284,7 @@ pmc: power@b00 {
+ 			compatible = "fsl,mpc8315-pmc", "fsl,mpc8313-pmc",
+ 				     "fsl,mpc8349-pmc";
+ 			reg = <0xb00 0x100 0xa00 0x100>;
+-			interrupts = <80 8>;
++			interrupts = <80 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-parent = <&ipic>;
+ 			fsl,mpc8313-wakeup-timer = <&gtm1>;
+ 		};
+@@ -286,24 +294,24 @@ pci0: pci@e0008500 {
+ 		interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
+ 		interrupt-map = <
+ 				/* IDSEL 0x0E -mini PCI */
+-				 0x7000 0x0 0x0 0x1 &ipic 18 0x8
+-				 0x7000 0x0 0x0 0x2 &ipic 18 0x8
+-				 0x7000 0x0 0x0 0x3 &ipic 18 0x8
+-				 0x7000 0x0 0x0 0x4 &ipic 18 0x8
++				 0x7000 0x0 0x0 0x1 &ipic 18 IRQ_TYPE_LEVEL_LOW
++				 0x7000 0x0 0x0 0x2 &ipic 18 IRQ_TYPE_LEVEL_LOW
++				 0x7000 0x0 0x0 0x3 &ipic 18 IRQ_TYPE_LEVEL_LOW
++				 0x7000 0x0 0x0 0x4 &ipic 18 IRQ_TYPE_LEVEL_LOW
+ 
+ 				/* IDSEL 0x0F -mini PCI */
+-				 0x7800 0x0 0x0 0x1 &ipic 17 0x8
+-				 0x7800 0x0 0x0 0x2 &ipic 17 0x8
+-				 0x7800 0x0 0x0 0x3 &ipic 17 0x8
+-				 0x7800 0x0 0x0 0x4 &ipic 17 0x8
++				 0x7800 0x0 0x0 0x1 &ipic 17 IRQ_TYPE_LEVEL_LOW
++				 0x7800 0x0 0x0 0x2 &ipic 17 IRQ_TYPE_LEVEL_LOW
++				 0x7800 0x0 0x0 0x3 &ipic 17 IRQ_TYPE_LEVEL_LOW
++				 0x7800 0x0 0x0 0x4 &ipic 17 IRQ_TYPE_LEVEL_LOW
+ 
+ 				/* IDSEL 0x10 - PCI slot */
+-				 0x8000 0x0 0x0 0x1 &ipic 48 0x8
+-				 0x8000 0x0 0x0 0x2 &ipic 17 0x8
+-				 0x8000 0x0 0x0 0x3 &ipic 48 0x8
+-				 0x8000 0x0 0x0 0x4 &ipic 17 0x8>;
++				 0x8000 0x0 0x0 0x1 &ipic 48 IRQ_TYPE_LEVEL_LOW
++				 0x8000 0x0 0x0 0x2 &ipic 17 IRQ_TYPE_LEVEL_LOW
++				 0x8000 0x0 0x0 0x3 &ipic 48 IRQ_TYPE_LEVEL_LOW
++				 0x8000 0x0 0x0 0x4 &ipic 17 IRQ_TYPE_LEVEL_LOW>;
+ 		interrupt-parent = <&ipic>;
+-		interrupts = <66 0x8>;
++		interrupts = <66 IRQ_TYPE_LEVEL_LOW>;
+ 		bus-range = <0x0 0x0>;
+ 		ranges = <0x02000000 0 0x90000000 0x90000000 0 0x10000000
+ 			  0x42000000 0 0x80000000 0x80000000 0 0x10000000
+@@ -329,10 +337,10 @@ pci1: pcie@e0009000 {
+ 		          0x01000000 0 0x00000000 0xb1000000 0 0x00800000>;
+ 		bus-range = <0 255>;
+ 		interrupt-map-mask = <0xf800 0 0 7>;
+-		interrupt-map = <0 0 0 1 &ipic 1 8
+-				 0 0 0 2 &ipic 1 8
+-				 0 0 0 3 &ipic 1 8
+-				 0 0 0 4 &ipic 1 8>;
++		interrupt-map = <0 0 0 1 &ipic 1 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 2 &ipic 1 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 3 &ipic 1 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 4 &ipic 1 IRQ_TYPE_LEVEL_LOW>;
+ 		clock-frequency = <0>;
+ 	};
+ 
+@@ -347,10 +355,10 @@ pci2: pcie@e000a000 {
+ 			  0x01000000 0 0x00000000 0xd1000000 0 0x00800000>;
+ 		bus-range = <0 255>;
+ 		interrupt-map-mask = <0xf800 0 0 7>;
+-		interrupt-map = <0 0 0 1 &ipic 2 8
+-				 0 0 0 2 &ipic 2 8
+-				 0 0 0 3 &ipic 2 8
+-				 0 0 0 4 &ipic 2 8>;
++		interrupt-map = <0 0 0 1 &ipic 2 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 2 &ipic 2 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 3 &ipic 2 IRQ_TYPE_LEVEL_LOW
++				 0 0 0 4 &ipic 2 IRQ_TYPE_LEVEL_LOW>;
+ 		clock-frequency = <0>;
+ 	};
  };
+diff --git a/arch/powerpc/boot/dts/mpc8315erdb.dts b/arch/powerpc/boot/dts/mpc8315erdb.dts
+index b39903c8813d194c104d1e22c6167d8a9cea0076..2ea71514900131893a70b44bab7bcc0bf4d86e44 100644
+--- a/arch/powerpc/boot/dts/mpc8315erdb.dts
++++ b/arch/powerpc/boot/dts/mpc8315erdb.dts
+@@ -87,13 +87,13 @@ ethernet@24000 {
+ 			mdio@520 {
+ 				phy0: ethernet-phy@0 {
+ 					interrupt-parent = <&ipic>;
+-					interrupts = <20 0x8>;
++					interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+ 					reg = <0x0>;
+ 				};
  
--machine_device_initcall(mpc831x_rdb, mpc83xx_declare_of_platform_devices);
-+machine_device_initcall(mpc831x, mpc83xx_declare_of_platform_devices);
+ 				phy1: ethernet-phy@1 {
+ 					interrupt-parent = <&ipic>;
+-					interrupts = <19 0x8>;
++					interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
+ 					reg = <0x1>;
+ 				};
  
--define_machine(mpc831x_rdb) {
--	.name			= "MPC831x RDB",
-+define_machine(mpc831x) {
-+	.name			= "MPC831x",
- 	.compatibles		= board,
--	.setup_arch		= mpc831x_rdb_setup_arch,
-+	.setup_arch		= mpc831x_setup_arch,
- 	.discover_phbs		= mpc83xx_setup_pci,
- 	.init_IRQ		= mpc83xx_ipic_init_IRQ,
- 	.get_irq		= ipic_get_irq,
 
 -- 
 2.45.2
