@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C75D1B412F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6491B4128;
 	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735842742; cv=none; b=dOdFD9Y31v0FhAfZ+WyraE8+pObLEqct/yzRwIJhimSDhr0yGVYZ/GEZQVrr+wlLIYzbPMpLAL4k0yHFQqAcherobrKzcoEez1zak6Qo5ye77wnLjI6rnPCORKtZcGKfe1WAnikUKkHuOFxP25rwRywpLVkqeXiMwrHx9EtTZPQ=
+	t=1735842742; cv=none; b=AJsar8cYBYPQtdrpqgI1nwyv3XqGVs6h5bvvkalksHq3kuTGawoXtHnkDSqnbYc10PCiWsmaCmB02rkhQ+KO8Pl0iwCUWHAyOlaflpw+AjyLpwtAIE3iJZsxAGn57awXQh3/LoMv6yeyQPr2iOJfM65uIhYFnW4RjeVfzXiDpWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1735842742; c=relaxed/simple;
-	bh=2srrLyTRgX4m7OtpfeP/Huz2CwE+YlrW2T3rwErpCgc=;
+	bh=U8NBq+45lYclznlQ/hxQVS/dtqBtJm90/lN2DnIlpvQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hVAbudHRKSA8yzYRjVNJbCr4Y7otoYlGgs2NNAt/bip9U3nsmmKXZufWqf1hCOEYqvk392AivIdF8Jbuyb1VZRMGk+FMEDLEdHaZeSoqymeS3KdsePh6cb/Csyy6ozApNjsnLrGLjXK02In5sa32keqOTAsyAZ9LfVXcfWMVnNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+5A8Ctr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=C3BQe23tQ2sqd4Fqx/uBMN+hDkdMGbQw/etE7smbDzS9mK4jzgn0a2pHeTGptA5JKUbIrr/dhZYDR7KDY2HtMmLjF5xEUmM0lmeVqzzZc1zXRXo7spcv1oeRlWUcrYVXJi1nty4RRqktjI+q5UZwwbseawlRhNqVLEQHpRMDO3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaKoDQH1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+5A8Ctr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EF02DC4CEEA;
-	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaKoDQH1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1B950C4CEF0;
+	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1735842742;
-	bh=2srrLyTRgX4m7OtpfeP/Huz2CwE+YlrW2T3rwErpCgc=;
+	bh=U8NBq+45lYclznlQ/hxQVS/dtqBtJm90/lN2DnIlpvQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=I+5A8CtrF27j5RARWMbgi2VYd1BTVqmE5vvAJcdIugqpkKpd37tyYui7KvQUybgMe
-	 0g2fvsB5LduhL9VwYfUmWIr21hkn5YHu0MHbYJTR7c+stApTVuWDk9J1uqRKs0S75h
-	 aTZLxx5W9NNJnNWRBu7YB15oW8bGvnN+mJ+Pm9GyaqZmCUveBTkwHjbr9CUUsKCU6U
-	 nt2m9hapAmARyrq7Vn8AXhePe/fxl2uWLmvZ544p4gcw74G4sxSVbnUO7VTl82IVGM
-	 MdMpQYGZ+97dpahwpV4yx38PYXiBYMN7aF61LIFzMr+0bsBoegCl+MGDrfaqqPdMeH
-	 LukduV139/I+g==
+	b=gaKoDQH1+oHCuzOPxBHvqm4377EhIJwiYMiYqwtTt3q94cT/ZP9KXg/TCt2Q25uVO
+	 o7tOXXKI/+xm8rOxchl7SF5rIz0WqCVuvMIg4YW3FgRL5wZxMkZyEisQruEmy1ATYB
+	 rCTRLdSUOdD5IHVBf7nYN62jsUC6QSLs24Mjy7puiDSbdXapOt+jjco7Rt6z//VbjN
+	 DhCJSN4YOdB3ffrNqjgtmGe0jCKbtnB78KA7Ss27K7aH6E+J+PNcW5ktlxL+zDyvTm
+	 zkQBdXIdNkxJMwwqBwoaFOqw63h+lrVVn/VyYdlP/c+DysoaFpiZ9OO4cfOaz8B0dp
+	 qejfbK4mnahvg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6216E7718B;
-	Thu,  2 Jan 2025 18:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E56E77188;
+	Thu,  2 Jan 2025 18:32:22 +0000 (UTC)
 From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Thu, 02 Jan 2025 19:31:47 +0100
-Subject: [PATCH 06/19] powerpc: dts: mpc8315e: Add missing #cells
- properties to SPI bus
+Date: Thu, 02 Jan 2025 19:31:49 +0100
+Subject: [PATCH 08/19] powerpc: boot: Enable FIT image generation
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250102-mpc83xx-v1-6-86f78ba2a7af@posteo.net>
+Message-Id: <20250102-mpc83xx-v1-8-86f78ba2a7af@posteo.net>
 References: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 In-Reply-To: <20250102-mpc83xx-v1-0-86f78ba2a7af@posteo.net>
 To: Michael Ellerman <mpe@ellerman.id.au>, 
@@ -56,11 +55,11 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
  =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=702;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735842735; l=2597;
  i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=NGog7jJ8LoqfdQSewm8qpRr6JKendRjgTEchw06j2Sw=;
- b=VOECrtBjonUvDKztCwI/1P6FQh2InQlLhaxoEBEYIKZcGT00WtzybtKWtCEnhdX7KgjqGFrAP
- JbaC+XNS25pC+3bOX5AhFZt5TTtAa07uaLS/EQIa010kRMx7bqkY4vo
+ bh=gwgToc0kzqB+BXy5IXnLTTOxYYECLTdDBZaVu6gPiyM=;
+ b=Zf345/Cls673vfLPBl8FI50FAUmAxpsp1Fvxct7loBav9XCC+T9a69RO9whzma99z7p8gIrp/
+ E1AIylSmAzrBvcSfhIjrrIb6Bww/v+hPd4kyWILMBuuSU4x7NQybIIk
 X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
  pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
 X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
@@ -70,25 +69,80 @@ Reply-To: j.ne@posteo.net
 
 From: "J. Neuschäfer" <j.ne@posteo.net>
 
-These properties are required by the spi-controller binding.
+The Flat Image Tree (FIT) format combines a kernel, a set of
+devicetrees, and optionally additional resources into a single file that
+can be loaded by a bootloader such as U-Boot. Generating a FIT image as
+part of the kernel build reduces the need for additional build scripts,
+and produces a single boot image without falling back to one of the
+many legacy methods implemented in arch/powerpc/boot/Makefile, which
+would require additional changes for arch/powerpc/boot for each board.
 
 Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
- arch/powerpc/boot/dts/mpc8315e.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/powerpc/boot/dts/mpc8315e.dtsi b/arch/powerpc/boot/dts/mpc8315e.dtsi
-index 7e61a78850433fa43795a2a5fb06ce6a148bb11d..f9d1b48b08799822d33f5e7606030019a19b4743 100644
---- a/arch/powerpc/boot/dts/mpc8315e.dtsi
-+++ b/arch/powerpc/boot/dts/mpc8315e.dtsi
-@@ -88,6 +88,8 @@ spi: spi@7000 {
- 			interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-parent = <&ipic>;
- 			mode = "cpu";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 			status = "disabled";
- 		};
+Checkpatch warns:
+
+  arch/powerpc/boot/Makefile:364: WARNING: Possible repeated word: 'Image'
+
+for this line:
+
+  image-y += Image image.fit
+
+This is bogus and can be ignored.
+---
+ arch/powerpc/Makefile      |  3 ++-
+ arch/powerpc/boot/Makefile | 11 +++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index f3804103c56ccfdb16289468397ccaea71bf721e..693c82c06072fb0529288736efee460e375b2476 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -225,7 +225,7 @@ KBUILD_CFLAGS += $(cflags-y)
+ all: zImage
+ 
+ # With make 3.82 we cannot mix normal and wildcard targets
+-BOOT_TARGETS1 := zImage zImage.initrd uImage
++BOOT_TARGETS1 := zImage zImage.initrd uImage image.fit
+ BOOT_TARGETS2 := zImage% dtbImage% treeImage.% cuImage.% simpleImage.% uImage.%
+ 
+ PHONY += $(BOOT_TARGETS1) $(BOOT_TARGETS2)
+@@ -237,6 +237,7 @@ $(BOOT_TARGETS1): vmlinux
+ $(BOOT_TARGETS2): vmlinux
+ 	$(Q)$(MAKE) $(build)=$(boot) $(patsubst %,$(boot)/%,$@)
+ 
++image.fit: dtbs
+ 
+ PHONY += bootwrapper_install
+ bootwrapper_install:
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 1ff6ad4f6cd27755ea7bfe5b02af4a47ca33cea7..e0c62ab1cc5af99e43f6639be11bf1c64d352db8 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -360,6 +360,9 @@ ifdef CONFIG_PPC32
+ image-$(CONFIG_PPC_PMAC)	+= zImage.coff zImage.miboot
+ endif
+ 
++# FIT support (generic)
++image-y += Image image.fit
++
+ # Allow extra targets to be added to the defconfig
+ image-y	+= $(CONFIG_EXTRA_TARGETS)
+ 
+@@ -398,6 +401,14 @@ $(obj)/dtbImage.%: vmlinux $(wrapperbits) $(obj)/dts/%.dtb FORCE
+ $(obj)/vmlinux.strip: vmlinux
+ 	$(STRIP) -s -R .comment $< -o $@
+ 
++OBJCOPYFLAGS += -O binary
++
++$(obj)/Image: vmlinux FORCE
++	$(call if_changed,objcopy)
++
++$(obj)/image.fit: $(obj)/Image $(obj)/dts/dtbs-list FORCE
++	$(call if_changed,fit)
++
+ $(obj)/uImage: vmlinux $(wrapperbits) FORCE
+ 	$(call if_changed,wrap,uboot)
  
 
 -- 
