@@ -1,95 +1,79 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7027A1B6CF5
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jan 2025 20:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FB1BEF86;
+	Fri,  3 Jan 2025 20:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735936902; cv=none; b=Yl3r4dJBOBY/sm/dbz5ciWFPJkR7MsbJ9uWmFHM53AQbPt3hHLuVkM2JxZd4naztH0qZDzHQ7Y9TJ9a/n4x02RwD8EhS9/QVZUOJij0uOoypygesv1YueIA8V+lrXOcxHgnpRheT0e5+sx9+L+HxxgiPRtE+ZpasuU0t7+kshwc=
+	t=1735937381; cv=none; b=fgqh9SAJxhHprZgb0fTxnC9iRACmRk1FIC3bRE957B9kOwKNH0CryhQSYC8uGm8FxYOrDXTsUNGO14Qysj0DXu4nNp//L+ifzG9B9I3ZLl8n/qHCbtkc9fuazV+FrwylLdsTAUU0vd1uGS3+ZrnG1ATnt5sBf8O/8gmx5/pAkQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735936902; c=relaxed/simple;
-	bh=gXf96zYai8qp1sG5hrC46Ci+QBMBRzpANyI9zFZANdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AnupF9/tdttpI9g02uBLB3VUOj3KVJApUiPBeCy/SujARBA6pYj4W9bxlWvii2fD/xP1JTG5oBfO2JJhxdHIJLTvfFILS+dS3gpcgA1QydpPnfvD3Nemm75iUy15bbrIFXN6UEp378s5djGXTLyGX8y+1p8RxaBEEX3nRheJwEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3P5F9h79; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1735937381; c=relaxed/simple;
+	bh=ljbsvbPoHRqbc3TRpW2CsS66WkpHPHtjrTyzbbqkFrg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UeJBc7d6ptyWnnJjrumQ0UQTZRv5Raijr5x1OEJDExLJHWgf9f1faMk8PSUvbdJ3GMCpxQSJSjUtdE8RILJTDGYG2I6edNdXzU9NtRrIDMx5f3rCbmT/kzXDpzUm0EZTuYgOBgrnshpXVP1k7MOCA6mIHH22UkV12HOXHj55RBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=CXT/fWHX; arc=none smtp.client-ip=173.249.15.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3P5F9h79"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-540201cfedbso13097579e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jan 2025 12:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1735936899; x=1736541699; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gXf96zYai8qp1sG5hrC46Ci+QBMBRzpANyI9zFZANdE=;
-        b=3P5F9h79Cb9NxZnvEtYGMVcF6XIz2aRmd9XSjpJNuQnPKd9JKSe9owOQGwcfRCIwmL
-         i02aTqXdfQtFlPP51Nqh7y8hIlkZOPjJ8jiW6mG3IBHlgyYNaGwDLv7Ynxeo/x9QKcs9
-         y8wZyCnjpeGSlTHNTRaCncCBMoehFbDUtI5aO3ASVvggATvnzGvtdVr1A/GTEJ/BPBT2
-         0eFfAU9n7QQsJvNqy6Mk7RzX+M1w6NtzksnvEUvINvCiov3lN8p9gDR1YkSEETpDcKFR
-         ZC5lfOtCzUJ5LigEvzOFAS9eb/OezLO6Nbdxj735iT+8f55SLX8HoY14TYeKS2JXzxRE
-         hdzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735936899; x=1736541699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gXf96zYai8qp1sG5hrC46Ci+QBMBRzpANyI9zFZANdE=;
-        b=nVpUBmjlMf4TgwohAGn88yGS53o6DNeOeS0bipw4WpXYPzIWmTmJy2YNSX0Rnks3id
-         k0HAuZ9PGNSWW2/upvtEWL4iBzTUGvYcwOOseYK2CwXMDoyvGwJw/uT3h2cCi5OG7zje
-         oXgLf1ahc3LqbxMhXdY77x6Ec3i3b2rrjcapgBnGSBO4H0O54xgnGMc1tZNzQdhP73E0
-         c3YPd5BnfdIpRns+s3mmLfsuQmcy3zWvIBzla1udP60vFXVqZ/Equ/4hNrkQA5Q+w2Ci
-         CMcW9p2+og9E1YhO09EFcCiG0VzWCHwHcZftM/RnFymx0w0RBo0oc7chXakGE3nWRkI9
-         lh0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9DsQRVshPzdpW6ad/6f94xXewcnXsrCSP2si2c6vutFmyKoa6MtdDK8BUgF9CM8fNKOMeYlny98Ou@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+S7QNTdP4NOJE2uO2qIkky4OyA992b4qq3ZyFeM0NxWJ6UaF
-	mnDxQgbwfBUK2gi3oiwnonMvheyAsQHxC8QhOr5Yyd800KDTZ+Z/JTqxFexLTSPCRH3oXcjkZan
-	ODywxFQeJcZhuXGRANzgUdCF6JogeDQsg7OupSA==
-X-Gm-Gg: ASbGncuZOrfTw7Hwwymupj9x5saAEF/yL8+9O7UDVrwFfW+zpPFymbJHZxGFo2Velrl
-	EIh/K77uhNepaizhzrRPj/eRQj3m+oexdbIfp98pWthWLMqEK/zcWFAa7nHd6j8Q+3Jx4BQ==
-X-Google-Smtp-Source: AGHT+IFOiOOaakTmeMBG5eqydIK5cqSCBF8tUVuiOD4SosMI2146lUP4JdfUohPnFyyIaa57hUCKGFAMF4ciB7oy1BU=
-X-Received: by 2002:a05:6512:350e:b0:542:2991:e984 with SMTP id
- 2adb3069b0e04-5422991e989mr10799402e87.9.1735936898655; Fri, 03 Jan 2025
- 12:41:38 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="CXT/fWHX"
+dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
+	bh=Pce2DdCTncrOdzX7qPApVYKMrquNOHsZcFa01GvWLtc=;
+	b=CXT/fWHX1iFmomf4uvxMoDoueEw+QFWlyShNaENdxUfc2Di2ylmRfBNGnn1cUBlbR6uxk03Sbhtm+P0HtWwvT3vel+KfwzKkZD6XOu7RJ2AWXVixQxGhEw97QzW1PQaPmaA3gCMyI0PDh5jW20fAFyd8bbySO1tlwayqfHes+Xo=
+Received: from 854af3ed5e24.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
+	by mail.netcube.li with ESMTPA
+	; Fri, 3 Jan 2025 21:49:36 +0100
+From: Lukas Schmid <lukas.schmid@netcube.li>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: Lukas Schmid <lukas.schmid@netcube.li>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v3 3/4] dt-bindings: pinctrl: sunxi: Add gpio-reserved-ranges property
+Date: Fri,  3 Jan 2025 20:45:19 +0000
+Message-Id: <20250103204523.3779-4-lukas.schmid@netcube.li>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250103204523.3779-1-lukas.schmid@netcube.li>
+References: <20250103204523.3779-1-lukas.schmid@netcube.li>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217085302.835165-1-chensong_2000@189.cn> <ec5531e5-6fae-431e-bc58-73bb816d477d@189.cn>
-In-Reply-To: <ec5531e5-6fae-431e-bc58-73bb816d477d@189.cn>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 3 Jan 2025 21:41:27 +0100
-Message-ID: <CAMRc=McNWBNCbCsNPvqUHrMtwfveeMCy5am+yNxVKUficat_VA@mail.gmail.com>
-Subject: Re: [PATCH RFC] drivers:gpio: introduce variants of gpiod_get_array
-To: Song Chen <chensong_2000@189.cn>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 2, 2025 at 2:25=E2=80=AFAM Song Chen <chensong_2000@189.cn> wro=
-te:
->
-> Dear maintainers,
->
-> It has been a while after this patch was sent. I'm not sure if i
-> followed the idea suggested by Bart correctly, see [1], any comment will
-> be appreciated.
->
-> Best regards,
->
-> Song
->
-> [1]:https://lore.kernel.org/lkml/CAMRc=3DMfpwuMh-MH1UEHKky09iAs4g9=3DiGFP=
-ptARXzoZrVS8hdQ@mail.gmail.com/
->
+Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+---
+ .../bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml        | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I've been meaning to respond and it fell off my radar. We typically
-don't add new calls without users so I'd love to see this patch in
-conjunction with a conversion of some driver to using it in order to
-prove that the change makes sense.
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+index 450240570314..24b90a5538d6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+@@ -83,6 +83,11 @@ properties:
+ 
+   gpio-controller: true
+   interrupt-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 90
++
+   gpio-line-names: true
+ 
+   input-debounce:
+-- 
+2.47.1
 
-Bart
+
