@@ -1,87 +1,297 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender-op-o11.zoho.eu (sender-op-o11.zoho.eu [136.143.169.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D84A04
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Jan 2025 04:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736138113; cv=none; b=ObPH0Ku5aQYECy7xLZoozJvwDfJuEixWSck5F7CH4MssUlH9vfmxhqpi4fw2bFURn1hhiqiqYn0smSCGtlZb0zIaSt4FlmLB1GfcD0U3HaifWU1IISguPRL9Tu1bh3EayfmmKlVmZMKfMdcliUQGSF33pJABYenVScCsjc3/G7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736138113; c=relaxed/simple;
-	bh=OM5GYYJQIEZs6lnx+JXgGkzgb/3ca7LSN7LOFvTaN04=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38DBA936
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Jan 2025 06:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736145586; cv=pass; b=qkBbRd0XNyXlDC9k8kyD2msLDFrpIbOvdQ4PjjXEDq3HN95Z1to46Y1KOpb+BmgdBdrMZaYug3X/XGleX8ONCJ2fVWqutowUHa5KcXqQkHm8mEW2VejZzyMiby3DKyyitlOGxG+kGyGL/c1lc2wUQ9nLAj/IVLn5YbCzKackJaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736145586; c=relaxed/simple;
+	bh=L7GLmwygcEJeKpuwtLXat/1wvfMBgCE+5N0v2GZ9QN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaNzasP9XDAvsu3qHTeKIIa0kx3te91E887lnwGbFc8swiQ5ucQDS07uJVbeeJs4oM36uhz+ODnSZ6nZXR5M+F6fpDmof4otSTugMwe+kLo7qrImKWGWv2OK+Aig1pc3hyFlWb7bOGSGDLCboeTtDEMEA7qb3hzgIYUBVxo8J4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fn4M7rv/; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofKAFbeOZ1GIuNVMji29bdOYaQWm6USMAYMiiEEKuS1HbxmckLJxgsPbPfB+/0CcpoKGbe96sWQSHNjnEeHzWnsAX8rU2mNnoUhCOqyjnkOFakX8TvWo5F+JqAhQjFvKu06Dq9rWbQu5eT5V4rrXfzW5BPDKKxmiEMYnPBm4e9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kempniu.pl; spf=pass smtp.mailfrom=kempniu.pl; dkim=pass (1024-bit key) header.d=kempniu.pl header.i=kernel@kempniu.pl header.b=WI5eGfgw; arc=pass smtp.client-ip=136.143.169.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kempniu.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kempniu.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fn4M7rv/"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21636268e43so13554855ad.2
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Jan 2025 20:35:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736138111; x=1736742911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LfuLaRSTSw7gy1jnNNGfbkOz3vWlnSzgGTrYOpHrTuE=;
-        b=Fn4M7rv/wC0nFRSewE26H0GcvMOiTnl7Fi+1fLDEP1n7EpD+bC7cb1qQxI72DOFwrR
-         LovZQmpxoiE6eJ/WKPS+hvgXE+tHCMEOCdc+dBkwIoGQoaAje1bWecLUOwOBNJLuuOfh
-         qOexCcCYN+ptKmkB70DNUYHROAOXomHl1NIeWXpENKSCXC2FhPouGr7+Ex4PR1PBeJWF
-         lKkbcpntvrb16QJpXEAdhUvfIZRHPp1dxbt/N6z3ZoVtorUPpG8+8WyRK/wIiJk+cpgz
-         YlgtP2td1N30r82n1G3ivNze5HY5Y/LVkPgpuz8NuU02nl8CfY+m9GQejes4Lm5+A8Vg
-         a/aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736138111; x=1736742911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LfuLaRSTSw7gy1jnNNGfbkOz3vWlnSzgGTrYOpHrTuE=;
-        b=jBK/vuaOmO6vu0kQQZMcsFn9O1I+KdJ/gJBjpW8K+w3s4n1nN3ShKsT2XW91HmVdrV
-         ERX3IbAX5Paom1T0uSc/Dju2vRaiQopE00pD4fZo2TkkCca1PkHDbpQ870if88uzXPs5
-         Cr2UgmP4xXVqxd0hFYsv6h4a6a8wQ+nEK1ow96CeebNZ6tEOVFcmVrs8vuDzvUE11XMr
-         u7bZYECS8u/bt5bRsuBbPtCfk+mS5bFtSPggS1IUu2CCTRks5qVeB/abxzJEhfd375Tr
-         BEYL9N61x3UBmtJ3bViOKv7Yv2pQJ2oPuI3hodGNafOtDCgIeEoMisdpQQlDfjZFXPHG
-         YQ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWDndIrG5gsgPUyHIXCNQLX+CHCGfkYbXFhONWphu038+6hDQ6AYIqGGpWYvawLO0DEFhkCdhaYIH6w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZQ76IWrSdUihbG0mqxFs74ah4SyXIBKtM7Dd5RMpbyUhYewAE
-	cM1nhYGJhB6nMyFb81e/3Dy+/3wqGIIFXIj0FgZuTEcLHouhBPs86fI84y3etuY=
-X-Gm-Gg: ASbGnculNqQ2EjfVcLPQ7nwRbGefNgEZNSE1aD7aprOH7iMu1hH8yfeZa2yoUjQSxSd
-	wCV415AgL/DtG4tjAI+xrDj71Xo1RS7xTLTw1vQRn27NSjWxhoaNBVDyS1A1UL5MbLLDXjN+Lv2
-	Nd8x8zpyhRNYixpeOkc6XeU6cA1qeYdZBTyYiLHJQsYNvr4xztvrUfGwdpeIexlzJwwNS1Gn/wZ
-	Fk6z1DWB3sTD+4TrF+5VV/5q2wC86xyzmAqW5L2ku2gsF/9pwvg0PM2jDo=
-X-Google-Smtp-Source: AGHT+IH4OEI1Mvt9XR5zk2GUaRub3spOstatsKjyOJ/ychbjGr7H7IiUgtuZVsnqO2+cIEjfa/nh6A==
-X-Received: by 2002:a17:902:d2ca:b0:216:1543:196c with SMTP id d9443c01a7336-219e6ebb776mr651256725ad.27.1736138111209;
-        Sun, 05 Jan 2025 20:35:11 -0800 (PST)
-Received: from localhost ([122.172.84.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9716b3sm284208805ad.90.2025.01.05.20.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2025 20:35:10 -0800 (PST)
-Date: Mon, 6 Jan 2025 10:05:08 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: hlleng <a909204013@gmail.com>
-Cc: info@metux.net, vireshk@kernel.org, linux-gpio@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH] drivers:gpio: support multiple virtio-gpio controller
- instances
-Message-ID: <20250106043508.x3pwt3jzh37t265f@vireshk-i7>
-References: <20250103083520.1764441-1-a909204013@gmail.com>
+	dkim=pass (1024-bit key) header.d=kempniu.pl header.i=kernel@kempniu.pl header.b="WI5eGfgw"
+ARC-Seal: i=1; a=rsa-sha256; t=1736145528; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=Bs/W7ScE0hMa+c1ids2HiEEMNXoBUNpl+cZDPfVlvDoN/LjQGbmqeBj8R8CuFyXO7v47Bm45ScWOqgKG9VTe3ZZU5hBxoufYhNFzitMRlBmItnAuN5DGarCSSOKjH+nFU5Q5Fj4VYckYeLJFjfVXV81mdBUKZYmL7RJPEQabrzM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1736145528; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=LV5pMFf/JUB62o97t1fb8NbfRnUSaIY5yrC+NOWH5Ag=; 
+	b=VJ+Uc10VTe8+++GwIW1xha6/VU9gJLOK1GfNbYh4aLXM5saRS8W/oc16OBmSWmG6KET0AVqEUIllmyVy6x+B5cVxOuVxmc4k2l+zTyl5BrhgErteT4/eq6hjl8tDZ1Qnj/T7POYYNEEANA/LKnXbv3vDSW+XHlD6Why94vrcMkc=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=kempniu.pl;
+	spf=pass  smtp.mailfrom=kernel@kempniu.pl;
+	dmarc=pass header.from=<kernel@kempniu.pl>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1736145528;
+	s=zmail; d=kempniu.pl; i=kernel@kempniu.pl;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=LV5pMFf/JUB62o97t1fb8NbfRnUSaIY5yrC+NOWH5Ag=;
+	b=WI5eGfgw3sXxuDDaSRxaGLlfpjITa9hQrZKYwyr66imI3eqFTMVcleLEHpN32th4
+	krsDDX9K5dYxdjDiSBzhjlQzYzoHlNvwDbruspnbzIf0irE4w9+pyCgtrBemOZhYKNE
+	10Ejy9DyKvdMHpu78cFvKz4jVe/p/KpoezB21ehk=
+Received: by mx.zoho.eu with SMTPS id 1736145524364162.27989875496212;
+	Mon, 6 Jan 2025 07:38:44 +0100 (CET)
+Date: Mon, 6 Jan 2025 07:38:42 +0100
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kalle Valo <kvalo@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alban Bedel <albeu@free.fr>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] wifi: ath9k: Obtain system GPIOS from descriptors
+Message-ID: <Z3t6coHFgd9PBCeb@larwa.hq.kempniu.pl>
+References: <20240423-descriptors-wireless-v2-1-6d1d03b30bfa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250103083520.1764441-1-a909204013@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240423-descriptors-wireless-v2-1-6d1d03b30bfa@linaro.org>
+X-ZM-MESSAGEID: 1736143631011003900
+X-ZohoMail-Sender: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?=
+X-ZM-MESSAGEID: 1736144744012003600
+X-ZohoMailClient: External
 
-On 03-01-25, 16:35, hlleng wrote:
-> Modify the virtio-gpio driver to support multiple virtual GPIO controller
-> instances. The previous static global irq_chip structure caused conflicts
-> between multiple virtio-gpio device instances as they shared the same
-> interrupt controller configuration.
+Hi Linus,
 
-What is the conflict you are getting since all it has is callbacks only, I
-wonder why do we need to duplicate it.
+> The ath9k has an odd use of system-wide GPIOs: if the chip
+> does not have internal GPIO capability, it will try to obtain a
+> GPIO line from the system GPIO controller:
+> 
+>   if (BIT(gpio) & ah->caps.gpio_mask)
+>         ath9k_hw_gpio_cfg_wmac(...);
+>   else if (AR_SREV_SOC(ah))
+>         ath9k_hw_gpio_cfg_soc(ah, gpio, out, label);
+> 
+> Where ath9k_hw_gpio_cfg_soc() will attempt to issue
+> gpio_request_one() passing the local GPIO number of the controller
+> (0..31) to gpio_request_one().
+> 
+> This is somewhat peculiar and possibly even dangerous: there is
+> nowadays no guarantee of the numbering of these system-wide
+> GPIOs, and assuming that GPIO 0..31 as used by ath9k would
+> correspond to GPIOs 0..31 on the system as a whole seems a bit
+> wild.
+> 
+> Register all 32 GPIOs at index 0..31 directly in the ATH79K
+> GPIO driver and associate with WIFI if and only if we are probing
+> ATH79K wifi from the AHB bus (used for SoCs).
+
+I don't know how likely it is today that this patch will get merged, but
+it turned out to be useful for fixing an OpenWRT issue [1][2].  However,
+the patch required some tweaking in order to make it work, so I assumed
+it cannot hurt to provide some feedback on it.
+
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changes in v2:
+> - Define all the descriptors directly in the ATH79K
+>   GPIO driver in case the driver want to request them directly.
+> - Link to v1: https://lore.kernel.org/r/20240131-descriptors-wireless-v1-0-e1c7c5d68746@linaro.org
+> ---
+>  drivers/gpio/gpio-ath79.c           | 47 ++++++++++++++++++++++++++++++++++++-
+>  drivers/net/wireless/ath/ath9k/hw.c | 29 ++++++++++++-----------
+>  drivers/net/wireless/ath/ath9k/hw.h |  3 ++-
+>  3 files changed, 63 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+> index f0c0c0f77eb0..f83ce0595ea8 100644
+> --- a/drivers/gpio/gpio-ath79.c
+> +++ b/drivers/gpio/gpio-ath79.c
+> @@ -9,6 +9,7 @@
+>   */
+>  
+>  #include <linux/gpio/driver.h>
+> +#include <linux/gpio/machine.h> /* For WLAN GPIOs */
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/gpio-ath79.h>
+>  #include <linux/of.h>
+> @@ -222,6 +223,46 @@ static const struct of_device_id ath79_gpio_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, ath79_gpio_of_match);
+>  
+> +#if IS_ENABLED(CONFIG_ATH9K_AHB)
+> +/*
+> + * This registers all of the ath79k GPIOs as descriptors to be picked
+> + * directly from the ATH79K wifi driver if the two are jitted together
+> + * in the same SoC.
+> + */
+> +#define ATH79K_WIFI_DESCS 32
+> +static int ath79_gpio_register_wifi_descriptors(struct device *dev,
+> +						const char *label)
+> +{
+> +	struct gpiod_lookup_table *lookup;
+> +	int i;
+> +
+> +	/* Create a gpiod lookup using gpiochip-local offsets + 1 for NULL */
+> +        lookup = devm_kzalloc(dev,
+> +			      struct_size(lookup, table, ATH79K_WIFI_DESCS + 1),
+> +			      GFP_KERNEL);
+> +
+> +	if (!lookup)
+> +		return -ENOMEM;
+> +
+> +	lookup->dev_id = "ath9k";
+
+Since the devm_gpiod_get_index() call in ath9k_hw_gpio_cfg_soc() passes
+ah->dev as the first argument, "ath9k" is not the string that
+gpiod_find_lookup_table() will use for matching the lookup table;
+instead, it will be the wireless device's name, e.g. "18100000.wmac" on
+my router (which is built on Atheros 9344).  This causes
+devm_gpiod_get_index() to return -ENOENT [3].
+
+> +
+> +	for (i = 0; i < ATH79K_WIFI_DESCS; i++) {
+> +		lookup->table[i] = (struct gpiod_lookup)
+> +			GPIO_LOOKUP_IDX(label, 0, NULL, i,
+
+This sets the chip_hwnum member of every registered lookup table entry
+to 0 (second GPIO_LOOKUP_IDX() argument), which causes all 32 GPIOs
+registered here to be erroneously mapped to the GPIO chip's first line.
+I believe the second argument for GPIO_LOOKUP_IDX() should also be 'i'
+here - or at least that is what made the patch work for me (after fixing
+the lookup table matching issue).
+
+> +					GPIO_ACTIVE_HIGH);
+> +	}
+> +
+> +	gpiod_add_lookup_table(lookup);
+> +
+> +	return 0;
+> +}
+> +#else
+> +static int ath79_gpio_register_wifi_descriptors(struct device *dev,
+> +						const char *label)
+> +{
+> +}
+> +#endif
+> +
+>  static int ath79_gpio_probe(struct platform_device *pdev)
+>  {
+>  	struct ath79_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> @@ -291,7 +332,11 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>  		girq->handler = handle_simple_irq;
+>  	}
+>  
+> -	return devm_gpiochip_add_data(dev, &ctrl->gc, ctrl);
+> +	err = devm_gpiochip_add_data(dev, &ctrl->gc, ctrl);
+> +	if (err)
+> +		return err;
+> +
+> +	return ath79_gpio_register_wifi_descriptors(dev, ctrl->gc.label);
+>  }
+>  
+>  static struct platform_driver ath79_gpio_driver = {
+> diff --git a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
+> index 5982e0db45f9..ee6705836746 100644
+> --- a/drivers/net/wireless/ath/ath9k/hw.c
+> +++ b/drivers/net/wireless/ath/ath9k/hw.c
+> @@ -20,7 +20,7 @@
+>  #include <linux/time.h>
+>  #include <linux/bitops.h>
+>  #include <linux/etherdevice.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <asm/unaligned.h>
+>  
+>  #include "hw.h"
+> @@ -2727,19 +2727,25 @@ static void ath9k_hw_gpio_cfg_output_mux(struct ath_hw *ah, u32 gpio, u32 type)
+>  static void ath9k_hw_gpio_cfg_soc(struct ath_hw *ah, u32 gpio, bool out,
+>  				  const char *label)
+>  {
+> +	enum gpiod_flags flags = out ? GPIOD_OUT_LOW : GPIOD_IN;
+> +	struct gpio_desc *gpiod;
+>  	int err;
+>  
+> -	if (ah->caps.gpio_requested & BIT(gpio))
+> +	if (ah->gpiods[gpio])
+>  		return;
+>  
+> -	err = gpio_request_one(gpio, out ? GPIOF_OUT_INIT_LOW : GPIOF_IN, label);
+> -	if (err) {
+> +	/* Obtains a system specific GPIO descriptor from another GPIO controller */
+> +	gpiod = devm_gpiod_get_index(ah->dev, NULL, gpio, flags);
+
+Since using the resource-managed version of gpiod_get_index() requires
+providing a valid pointer to a struct device as the first argument and
+the name of that device is not going to be "ath9k", some other means of
+matching this call with the lookup table registered in
+ath79_gpio_register_wifi_descriptors() needs to be devised.
+
+I resorted to the NULL-matching fallback in gpiod_find_lookup_table(),
+which enables a lookup table with dev_id set to NULL to be matched for a
+gpiod_get_index() call with dev also set to NULL, coupled with setting
+con_id in all the lookup table entries and in the gpiod_get_index() call
+to a matching string, e.g.:
+
+	// in ath79_gpio_register_wifi_descriptors()
+
+	for (i = 0; i < ATH79K_WIFI_DESCS; i++) {
+		lookup->table[i] = (struct gpiod_lookup)
+			GPIO_LOOKUP_IDX(label, i, "ath9k", i,
+					GPIO_ACTIVE_HIGH);
+
+	// in ath9k_hw_gpio_cfg_soc()
+
+	gpiod = gpiod_get_index(NULL, "ath9k", gpio, flags);
+
+This requires manually releasing the GPIO descriptor when the wireless
+driver is done with it (because we're losing the benefits of using
+resource-managed functions), so...
+
+> +
+> +	if (IS_ERR(gpiod)) {
+> +		err = PTR_ERR(gpiod);
+>  		ath_err(ath9k_hw_common(ah), "request GPIO%d failed:%d\n",
+>  			gpio, err);
+>  		return;
+>  	}
+>  
+> -	ah->caps.gpio_requested |= BIT(gpio);
+> +	gpiod_set_consumer_name(gpiod, label);
+> +	ah->gpiods[gpio] = gpiod;
+>  }
+>  
+>  static void ath9k_hw_gpio_cfg_wmac(struct ath_hw *ah, u32 gpio, bool out,
+> @@ -2800,11 +2806,6 @@ void ath9k_hw_gpio_free(struct ath_hw *ah, u32 gpio)
+>  		return;
+>  
+>  	WARN_ON(gpio >= ah->caps.num_gpio_pins);
+> -
+> -	if (ah->caps.gpio_requested & BIT(gpio)) {
+> -		gpio_free(gpio);
+> -		ah->caps.gpio_requested &= ~BIT(gpio);
+> -	}
+
+...ath9k_hw_gpio_free() would still need a bit like this:
+
+	if (ah->gpiods[gpio]) {
+		gpiod_put(ah->gpiods[gpio]);
+		ah->gpiods[gpio] = NULL;
+	}
+
+I don't know if such an approach is appropriate, but it did at least
+make the patch work for me.
+
+Hope this helps,
+
+[1] https://github.com/openwrt/openwrt/pull/17402#issuecomment-2566157016
+[2] https://github.com/openwrt/openwrt/pull/17402#issuecomment-2566763575
+[3] https://github.com/openwrt/openwrt/pull/17445#issuecomment-2569439459
 
 -- 
-viresh
+Best regards,
+Michał Kępień
