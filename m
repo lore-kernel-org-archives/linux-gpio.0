@@ -1,243 +1,80 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFB11F4293;
-	Tue,  7 Jan 2025 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786891F75B5;
+	Tue,  7 Jan 2025 16:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736266124; cv=none; b=gyEvWrlhSvmv7t02M6vV0W7evMIkpc6hCFo/hH/lDkQFGnBDIK6Wx7MQjbzbCtKGIXbQziX+HiXHYWqjxBSmVeYysed+pZ++LhoNtMcCv2MBWkrT3hXXpMh/uCm+UW5bTT7SS32Pr2iFz2RAmxvS7vLCRFkhJp+Oq64eHpzSL2s=
+	t=1736267955; cv=none; b=tskAmG+Sl1dKorcB8DYz19jboeUI+nDhSlY+zLGgH0Ssbx0fmy6wiSBn2MwPzPOMgAgUDhkf158zAtD+6J3oRHSU6o45Jlt/ulzKxS+97HePtkP9onD1Va2t27o+Rj2Q8TSQB0vJLlY/FGs9BDSA2dZKzkjhHPLi5iFy+r6jyG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736266124; c=relaxed/simple;
-	bh=urfNn5rVdf7gcjV7bg+HRVF6ewJXcTZT7wfn3zRvj2Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kGahENe5szOW1dY88x9pHW0LnUAa/CK3b61wWcVCku71KQ3eC0hBLn9pE2t0T+NmHkvPaYl5v6vOxmlDT89TimhjAWdcdd5mRaiuhr9fI6rFURhR9m6iYowgCPcqH8eqAtOS5/TIq8+ybPQ7TLsylJeofcjlQpLmSOkT7Q4lbv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=atprrP7z; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1736267955; c=relaxed/simple;
+	bh=9HemNwXCla1HurzEoi/CnptD9OsC5NaOru+Ac77BG70=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cyL7WXtHTGMbTWMV+24FNOeKBE48kRDoItUrTHhuX89ZdnSwspluhoKjfdk/DM/4NxtxSxGLhbS0mueYj2gb6ruTfsDCmsTigaBMXuT7BIT4RnXyV0rQg5CNElt0Z2IwCUBHWXDEpBpBTGRYUFplbJZ3jV026Clo+wvcPmzyQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aReApzZl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="atprrP7z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1736266120; x=1767802120;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=urfNn5rVdf7gcjV7bg+HRVF6ewJXcTZT7wfn3zRvj2Y=;
-  b=atprrP7zlcuWu6TVeNy7PAzs3VOEsbaZ78GsSoC8qyYi3lE8oPnuc9Pp
-   nOGM6Jh1pqQuq7Jzz7gZMhPgjIF7leWCPFGAHvm/loTq7PF1IxZvxdGg7
-   3zkRkERf0AJa+uHbAPjSCKZ88j0i1jEB58epSnBQSFAWctN7mWYfF5j1g
-   ShnkrD8WU/JhKPG0+rWKXNNpTIIFXr3l697kIbzN7jCz7c1NU1BYLUsrZ
-   15+dlQAnLBDa+WvfE471KilBAnrTGi8lUI2kU/K9KtkinRFs6vuUA5+mk
-   9KNtvXChdYGaY8IyJMZURW5WObjCQP0RUCX2gerSPeIjjpAJdZPJDC6jC
-   A==;
-X-CSE-ConnectionGUID: lqpfnJzJQpCXzb9QKpQeRA==
-X-CSE-MsgGUID: dNICsMlrT3qhDCy3ycLAog==
-X-IronPort-AV: E=Sophos;i="6.12,296,1728975600"; 
-   d="scan'208";a="40091254"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jan 2025 09:08:26 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 7 Jan 2025 09:08:18 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 7 Jan 2025 09:08:18 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<arnd@arndb.de>
-CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
-	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>, Ryan Wanner
-	<Ryan.Wanner@microchip.com>
-Subject: [PATCH v5 4/5] ARM: dts: microchip: add sama7d65 SoC DT
-Date: Tue, 7 Jan 2025 09:07:26 -0700
-Message-ID: <20250107160850.120537-5-Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250107160850.120537-1-Ryan.Wanner@microchip.com>
-References: <20250107160850.120537-1-Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aReApzZl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F75C4CEDE;
+	Tue,  7 Jan 2025 16:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736267955;
+	bh=9HemNwXCla1HurzEoi/CnptD9OsC5NaOru+Ac77BG70=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aReApzZlze75+vx7Qnx7rrd64DTjsFwrzqUYqvjDC/xnxlSHPre5LgR12Hdua3phD
+	 h7lOlx2IYr3A+2DFC2iuw++JkxFlUicPQCnShoefTKV3K2NjfG1R78ZA5K7vUCAhg4
+	 h7grMGrio88ePMuhhUvlrrQxS6JPVY7DF5e57YqyHxxYlHr1sv7skmszQcXUCC08fb
+	 0TEUhfu0Kqinst3IC+c+y/kUd3GgFxnlLcDG49sYTvYugDPdTgJbgovL1SGvULgv3R
+	 CXoij+OizVuru0LqP66FTmYBIP7mvIuec84svfVZpPhyo8StgvC68w/OCCoxpML1X8
+	 rwNR2AqIMHUUw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingyi Wang <quic_jingyw@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: kernel@quicinc.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v2 0/6] Correct the number of GPIOs in gpio-ranges for QCS615 and QCS8300
+Date: Tue,  7 Jan 2025 10:38:45 -0600
+Message-ID: <173626793401.69400.2278973364367185634.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241219-correct_gpio_ranges-v2-0-19af8588dbd0@quicinc.com>
+References: <20241219-correct_gpio_ranges-v2-0-19af8588dbd0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Add Device Tree for sama7d65 SoC.
+On Thu, 19 Dec 2024 15:59:42 +0800, Lijuan Gao wrote:
+> The UFS_RESET pin on Qualcomm SoCs are controlled by TLMM and exposed
+> through the GPIO framework. It is expected to be wired to the reset pin
+> of the primary UFS memory so that the UFS driver can toggle it.
+> 
+> The UFS_RESET pin is exported as GPIOs in addtion to the real GPIOs. The
+> QCS615 TLMM pin controller has GPIOs 0-122, so correct the gpio-rangs to
+> 124. The QCS8300 TLMM pin controller has GPIOs 0-132, so correct the
+> gpio-rangs to 134.
+> 
+> [...]
 
-Co-developed-by: Dharma Balasubiramani <dharma.b@microchip.com>
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-Co-developed-by: Romain Sioen <romain.sioen@microchip.com>
-Signed-off-by: Romain Sioen <romain.sioen@microchip.com>
-Co-developed-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
----
- arch/arm/boot/dts/microchip/sama7d65.dtsi | 145 ++++++++++++++++++++++
- 1 file changed, 145 insertions(+)
- create mode 100644 arch/arm/boot/dts/microchip/sama7d65.dtsi
+Applied, thanks!
 
-diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-new file mode 100644
-index 000000000000..03e1adfdcd34
---- /dev/null
-+++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ *  sama7d65.dtsi - Device Tree Include file for SAMA7D65 SoC
-+ *
-+ *  Copyright (C) 2024 Microchip Technology, Inc. and its subsidiaries
-+ *
-+ *  Author: Ryan Wanner <Ryan.Wanner@microchip.com>
-+ *
-+ */
-+
-+#include <dt-bindings/clock/at91.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/mfd/at91-usart.h>
-+
-+/ {
-+	model = "Microchip SAMA7D65 family SoC";
-+	compatible = "microchip,sama7d65";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a7";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
-+			clock-names = "cpu";
-+		};
-+	};
-+
-+	clocks {
-+		main_xtal: clock-mainxtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
-+		 slow_xtal: clock-slowxtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		ranges;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		pioa: pinctrl@e0014000 {
-+			compatible = "microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl";
-+			reg = <0xe0014000 0x800>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		pmc: clock-controller@e0018000 {
-+			compatible = "microchip,sama7d65-pmc", "syscon";
-+			reg = <0xe0018000 0x200>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#clock-cells = <2>;
-+			clocks = <&clk32k 1>, <&clk32k 0>, <&main_xtal>;
-+			clock-names = "td_slck", "md_slck", "main_xtal";
-+		};
-+
-+		clk32k: clock-controller@e001d500 {
-+			compatible = "microchip,sama7d65-sckc", "microchip,sam9x60-sckc";
-+			reg = <0xe001d500 0x4>;
-+			clocks = <&slow_xtal>;
-+			#clock-cells = <1>;
-+		};
-+
-+		sdmmc1: mmc@e1208000 {
-+			compatible = "microchip,sama7d65-sdhci", "microchip,sam9x60-sdhci";
-+			reg = <0xe1208000 0x400>;
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 76>, <&pmc PMC_TYPE_GCK 76>;
-+			clock-names = "hclock", "multclk";
-+			assigned-clocks = <&pmc PMC_TYPE_GCK 76>;
-+			assigned-clock-rates = <200000000>;
-+			assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_MCK1>;
-+			status = "disabled";
-+		};
-+
-+		pit64b0: timer@e1800000 {
-+			compatible = "microchip,sama7d65-pit64b", "microchip,sam9x60-pit64b";
-+			reg = <0xe1800000 0x100>;
-+			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 66>, <&pmc PMC_TYPE_GCK 66>;
-+			clock-names = "pclk", "gclk";
-+		};
-+
-+		pit64b1: timer@e1804000 {
-+			compatible = "microchip,sama7d65-pit64b", "microchip,sam9x60-pit64b";
-+			reg = <0xe1804000 0x100>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 67>, <&pmc PMC_TYPE_GCK 67>;
-+			clock-names = "pclk", "gclk";
-+		};
-+
-+		flx6: flexcom@e2020000 {
-+			compatible = "microchip,sama7d65-flexcom", "atmel,sama5d2-flexcom";
-+			reg = <0xe2020000 0x200>;
-+			ranges = <0x0 0xe2020000 0x800>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 40>;
-+			status = "disabled";
-+
-+			uart6: serial@200 {
-+				compatible = "microchip,sama7d65-usart", "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 40>;
-+				clock-names = "usart";
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				atmel,fifo-size = <16>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@e8c11000 {
-+			compatible = "arm,cortex-a7-gic";
-+			reg = <0xe8c11000 0x1000>,
-+			      <0xe8c12000 0x2000>;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+		};
-+	};
-+};
+[5/6] arm64: dts: qcom: correct gpio-ranges for QCS615
+      commit: 80c82827327d80bde8fc96ebd4e637d0454062db
+[6/6] arm64: dts: qcom: correct gpio-ranges for QCS8300
+      commit: c57c39ee522d873db2cb23486581a8269c389cfe
+
+Best regards,
 -- 
-2.43.0
-
+Bjorn Andersson <andersson@kernel.org>
