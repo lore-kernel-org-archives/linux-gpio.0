@@ -1,403 +1,482 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2113.outbound.protection.outlook.com [40.107.255.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428961FF601;
-	Wed,  8 Jan 2025 16:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736352865; cv=none; b=nTdEMZhB6EckAUeXHkziE99Q2/oUHmcUNq5OvJx331GzuyXp5d1YDsHM2TQmik7MET3Vmx0Gn2fRzPk7QKXP7fRobEZL1AWrEg+P6TbAtB75/K46QV4VNAutVPSkzkM0s21V+WvjF/JvraKBo6O7txkqnj+0PF9feuwrA1IzmI4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736352865; c=relaxed/simple;
-	bh=pvd3yVsWuxzB/MWQ28RqlB0uRFDeZSWHEk9HqWHkyno=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aUR6doyeB/NLfl/W6qtatfDbWZBlHCRArHTO6cwd55pNe8KPgH75D0wSmudzxY3+NU/E4/WmKgBfDw4geBREiTMYy88MvJKLSs0+xI9G5z84MczTBLCD0oSQE/GUAJSswRoawk2z2GsVZ9h4ATVzSzWkf++ELD7k+DSc0P+76q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DfLYqu9j; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FAB81732;
+	Thu,  9 Jan 2025 02:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.113
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736389983; cv=fail; b=W8wHyyCM5/dTwc86LPT32RRBoNULAyiUKNjJQFKtjAJxBX6cTcBS3e7dgbZ74nrFbINiQKE3RYaXg2L1ngxYiC8MHxFYtAvv1FRalzGokQXs9PrL7x4xoSD9n2jJ1NTK4PIq4WbqVdBkeFsdCejrnDCxFzDoZx3xMcdEZQi2HHs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736389983; c=relaxed/simple;
+	bh=79haj9UGCHs/uoxGzRErU7Wv5GiZaeFvZ62KMg3VDPE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b8woo6nRMlMxY+92TuTILVye/UeOIJ/Dp6XgWL6IKtDTBZ6iSbJUt4KAELK2tCgONo7e+grdSTCZN/nIG+56nSBwpVIpA9ljM189qOLZhroTPbio20+gsmI/YiYu7lybmUNxNs94EzPca/B6mXWAJnQGObBjo4Az319H4noJL4U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=jhfmprFi; arc=fail smtp.client-ip=40.107.255.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DfLYqu9j"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8370560012;
-	Wed,  8 Jan 2025 16:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1736352855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O5cVFCY+TsCDTrv9EgLty2YjRj1DRRk5ohtcB0F/zDg=;
-	b=DfLYqu9jligxY2iKU5C8j0VwsU1II7ZzIYYbjhLaZ7PEw2QbQlp3KdYoyU///pN9WhqDWj
-	iO6yt38DwtpT9akaT1pX7QHYpfrPd2EAzPEVZwAppYua9cj3p0Bg4YXaUx4HkeOeZBqQcP
-	ifqOYi+KT+3rrZlok4kTOa8HyCieV6EJeSA2mDjtBNR1ot/dRYPKd+DfB6+V+NHHaBigkc
-	7Xc9sN326yayQp9yofwxRL/52HpmSRBb+FsAkmcXCuUqz5eWxR7NgbfPt/ZmLpZ6jcSdO2
-	Hk5SFTSafyp5XWPETOA0jNVtqZjHeZInHL00/kCB+88ZoTgnqERuOqDpQ8SHyg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 08 Jan 2025 17:14:06 +0100
-Subject: [PATCH v5 5/9] i2c: move ATR alias pool to a separate struct
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="jhfmprFi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GFQRRjJ/xOllgtJCsjOejhXX6GxM7R5z/poEIpcEcscL7eFem1tiZGeFEPy+vzpDTikkjUdNZOGsMzIhIKhba/xh7WWBhmZJ19wfL7rTeTET/RysILh/KzQUX6MD6SO5cXYxnkAQqbRVGICn72NOB25wqzDHouY4pGtfY3nUux+yVz3Z8Bm0f2iD1okJaenJj3pPZFTDy5K6QV6aDQbWZ9fQEPosM5jdbnFBv9H86onpZled+a1zNkJ+tvenTSwwP5B3/WhJ1+Egc+tcZXGexnzB+hZVTL5zFcw0ENEVniAyTiVjn7qhpE50Y04nTMU3NzLdvhFHiX7+9sOKSPmkOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rGMzp78C09ETjvzu/jCvVd+/cb/9tclMNdfhak5fr0M=;
+ b=m02uZBs6LXZwgcoYMhglEd6frLsQNDiMdhFWY4WIpDYxRQqa/vJIFvl8SEfnZNBrfcE+YOV8ARFnOQhuvUyP4Dsjo/TsFWduuLBGRWXeB2WV9+ROeKoEGRcfmK3ZNLieyHP9D4o5bnenJ7TAeqdyjjoyEi0aOrY74I2Q6wEmPlQQhmLv/htW3u/JlFrJkxsn1Et+uo661+ytMpTO1nuv1tfp6RRICyVuAmmOe2MId6mnDNPjKE6GHuZauAODnvx92sgc3YD7IdS01SB/gf/tUFvhYFB0f3PH+RWZ7fa7dNzlfJXDZ2rkkN1cJq5uzhZETCzbiHbd7aBTMmSu+DPflQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rGMzp78C09ETjvzu/jCvVd+/cb/9tclMNdfhak5fr0M=;
+ b=jhfmprFi6FdolWYvF5H1nDVFebpQsIHeepKskY+1lWl358rmAJk2rzLniQgA+cYKAjtgjNpCujG9Kf0u7zK1riNz9GchSPhuS1GioD0GKR4m4SFVBLkOvOqg14G9eBWsTOh90Ay05yvoZBfkpoc+PjV2smEcaokvc94fLxWKxHPAe2/j3UyfqEBE+gEJAfQcWXoZP5cqdCqF5WOkAjec1aURiB/PePsN8Z2xjoBZw8VEWyAs7Isfbo/22DGp6gfI2Vh9t7cJq9662poFKmZURFwS97AYDX2D+4JUnv7hFE2htEcS/Q3gIKcXyUxhK2UDPsALXBCbEWLBdjMQBnEsrg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by SEYPR03MB7814.apcprd03.prod.outlook.com (2603:1096:101:178::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.17; Thu, 9 Jan
+ 2025 02:32:57 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%7]) with mapi id 15.20.8314.015; Thu, 9 Jan 2025
+ 02:32:57 +0000
+Message-ID: <8ae1ee73-d710-40d2-bc70-605680421fb8@amlogic.com>
+Date: Thu, 9 Jan 2025 10:32:52 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: Add support for Amlogic SoCs
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+References: <20241226-amlogic-pinctrl-v2-0-cdae42a67b76@amlogic.com>
+ <20241226-amlogic-pinctrl-v2-1-cdae42a67b76@amlogic.com>
+ <20250102212422.GA554486-robh@kernel.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <20250102212422.GA554486-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:195::17) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250108-fpc202-v5-5-a439ab999d5a@bootlin.com>
-References: <20250108-fpc202-v5-0-a439ab999d5a@bootlin.com>
-In-Reply-To: <20250108-fpc202-v5-0-a439ab999d5a@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: romain.gantois@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SEYPR03MB7814:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84b328bd-b87f-41be-d63a-08dd3055ed6a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YUVWQ1BGMDIrY0FxUTBrNFBlSGREUmRsQjgwdG1DNTBOOXNxeU1GOGxkTTVi?=
+ =?utf-8?B?Q3FwVmVsWngydk5mcDBoTzViUzQ0emU3Yyt2aFAxNXdjUmk5UUlyUVhBaGUz?=
+ =?utf-8?B?R2oxekRINTZBU0FPdzVxVzQ4SFAyS05rNTdKRGc3Z2lSdUIwMkRDak5IS0NB?=
+ =?utf-8?B?ZFdZcFcvTHJaNzJRSXNqUVREV3hKeVZtTk1nbVVGWnhJa3hlSCt5VHpyWVVu?=
+ =?utf-8?B?VWx5Q2EwWWJZUmliKzJuYzFiM1R1bUFBUC8vOXpjUTRZMElkQkFYMU80Q25Z?=
+ =?utf-8?B?VUw4V1htQnVQYmJuRW9RbXc1Z3oyWXdGRmVJRHA2SG1Xck1nTUdxak10c3g5?=
+ =?utf-8?B?MTYrcGhnc21jT3JBRkZ3ZjAydmhJZlk0bjFNVHlNaVlMbjMxdmdoR3hMUU1J?=
+ =?utf-8?B?MGwzQVpmT2QzT0dLTVFYOUNtSHlaclZ3WUZOWjhPRDZ4SE4zS3VnTUJRTFlZ?=
+ =?utf-8?B?blUwQ2dTZGFrOFBMSmM4NEZWS1dkSHFuVXljd2c4eTM3ZUtkeWhtalFrSWhp?=
+ =?utf-8?B?SExPdHZzTTM1WXZBTCt1b3FJNGVMMkc4clp6M043MUc3UmUwd1QwRHF2RitN?=
+ =?utf-8?B?cDQ5ZG9VcmZQdXJIQ0w2R2VQeUFBRTJ1YURmb3lLQlk1MmdpcTlsK3p4WENX?=
+ =?utf-8?B?SDNvcUtRSUhDOXBLQkpBNWRHLzYwOWlGbHpKeVM1RVFJeUpiRFFQbDZSNTY4?=
+ =?utf-8?B?UUczNFNFZGVMUTQ0RXRmVytkRnhTRUtYVDZJTXFjK0NoMTN0RmZCbC84NG9W?=
+ =?utf-8?B?OURXOU5VQ3pmWi9VMWpzV3MyeXBJWWQ0SWM2MHFtSzJIRFdmdWN5NnhhT0Zv?=
+ =?utf-8?B?ck81eEplZ0FXVkxSUUpxT1dJNlduV0RVUFVrSVI5NnBZRmg2VUFJUTdkeStQ?=
+ =?utf-8?B?RjVkK01LSGNuZGd2NzNzM1oxaUxDejJOVjkxcjlpck9pbk9McDMwN1pnOGZ6?=
+ =?utf-8?B?bWs3UmJnTzJnRGJ6RjRodEdjRUplL0Uwd05TUE1wVlZ2NEtjWmZUSEEySzhx?=
+ =?utf-8?B?ZDY5Zysvd2JxWFduek9MVlhGTmkxd0gvMWN0UWZjeFNoMEtNRjJ1Qjg4cDFl?=
+ =?utf-8?B?MTI2blNqK2Q0NXlWWUJOZjhLeUFNN1JMVGVpVDRPdFpDdFBITk1BWVh3Qnls?=
+ =?utf-8?B?T2FiQkcwZ1dMek8wSkw5blVpVTRLSmZnTThiT2l2SXlHK2REanNSdncxYjFQ?=
+ =?utf-8?B?bFF2b01ndEdNMEdVeThsR00rODhMdXF3R0Q5UHU5Yy9mUUp3ektSSWo4SklJ?=
+ =?utf-8?B?Ty85UDhBTVZTQnI3RWZ2NS90a2NCKytOM3VMVG1xeFpDYUZwMGV5cDNMcG1u?=
+ =?utf-8?B?NjE1bEhXZDVaTFBVR05zbUFoSHlwajc3cG5VbzE0UjRkM29pZ1k4eHdwS3hx?=
+ =?utf-8?B?VG1SYzJuUkZCdVcvTzFRRERVdVZyc2x4YWdJb1NtVGZDUzhkVUM3UHp6dmFo?=
+ =?utf-8?B?cHluVGd3a1dnNHdhS3Y3L0MyZUtCTFZCajJFWWFTUXV2VHpndWs5TFZJR1ds?=
+ =?utf-8?B?Q3ArWi9OcFgzRmJMeUN2YjN1WExCQzhTems2eHFFR0x6Q1dOVWdtMm1tTlFK?=
+ =?utf-8?B?NURSeHNWdVdtRm5qeGJONUlkdHFUcXFDZStCY0JPQmMxYmdkaXVyRlhBb3Bu?=
+ =?utf-8?B?YVVKWEdLZnk0cUhmYnA1Nk9iNlQ5VWRMRUR4Q010TFV6UzNlbnd3dmJQc3Zs?=
+ =?utf-8?B?QjkyeTdIcXlFTFJBNURKSkxQUWFNbXZ5aWN3aWlycG1oOUEvaHhOemdzTm9i?=
+ =?utf-8?B?dWZTMmZtVFlGeTU1ZlZ3emJkSDRGZlpSbE15aUxXUDE4M0pQSXBkdWErYnpH?=
+ =?utf-8?B?WkV3dUd1N0t3Q0JjNU5tZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0gvekUvRnl3MjdYY1NSMUlMc2dLMWc1Um95bE9nbm9aVkp5REtsbnlGeUtF?=
+ =?utf-8?B?Z3A1ZmdvcjVLck5Ia2NpRFJ0Sm42YUNvMjRiZ294T2gvamJzc2VwSUdwWWpI?=
+ =?utf-8?B?MWRnVnh4d3lxeGdsUzVPVkxFanB1OUJPS3lVdHBLeUk2U1BhbDgxTlBJK1d6?=
+ =?utf-8?B?bkNqQ3J0Tkh4VHBCdm9RYUU0KzBieCtMeC9qemtkZU4vMHcva0Z2R0VDcGF3?=
+ =?utf-8?B?Zkg1SmpDSEdBMDA3eEFacFBIUnZtaHJHKzBpbVJwemRPcmJ2QkwvWStJaXRM?=
+ =?utf-8?B?NWE2RUE3TWxGZjBuR2hjMWsydzFDZ0JFT2lzczlKaENhUWdraVdtMmlEUVJM?=
+ =?utf-8?B?bXF0akMyZXpBWjZCRC9NbWN1NFd4TTU4anpBeEdYZklCQmxOYzl4Q1RuUUVw?=
+ =?utf-8?B?a1RxaW9xU2E4L1kyTzBCYjBKVEx6Y29IR2QvRWY5aHd0Vk1mQjhQMER6UjFU?=
+ =?utf-8?B?cjZ4T0dxZlZxUm9GcWs2MURYYlJ0YTRjUGpsK0JlV0d2eGNnTzR4am5FbU9w?=
+ =?utf-8?B?cjBRY3JlWlFsRm5DN1BBWWp4aHlWaE1jZFpneWVuZjdWb0lLRGdFdWR4N3Ni?=
+ =?utf-8?B?NW41TzNPM05Cc3gzTU4rTU1PV0ZTcDMrTzd1Z0hnUi9telhIZXYrSC9TVTVV?=
+ =?utf-8?B?d2ZMWWN3VmFIbHVUZHRDVC9rYWtxV1U3cVNBeEZQSkNibDFvRUt2cUl1MmpX?=
+ =?utf-8?B?SUI5OXZtZm5mQ3VQY0hxcTVjVzYvV3c4MnN6cVU2MHRwaEFaY0o2SlVpampV?=
+ =?utf-8?B?d2srdW1EcDRROWRBc2t3SFQ2VURXWmFNME1lbDRVQmZ0c2xSWkJraCtIMHEz?=
+ =?utf-8?B?blpiMnR3MFUxRzhFRy9PbUtzRTZpUlVOWmpYR3psQXFzMWdCTFVTNDBPYjhs?=
+ =?utf-8?B?aFUwTklRZ2NMZHFyL1FDN0kxM0JFMXBXdGRVTXg4b2tBMjZMSTVnSzVUWTBD?=
+ =?utf-8?B?ZjN4U0NKUkExbjJ4MUdmVkNiZ2o2Qy82YmdJZDJUM3RoSldJem5ZRWhOREJF?=
+ =?utf-8?B?VVhlQjJtUWZhU3dGYUErQndEQ0pWTmlsSXliaFRsaUpDd29FWmpHcVloUitw?=
+ =?utf-8?B?ZWw4bjMyTVlaMmJWcmErYXVaS1hMZWExT2dSVFhaU2RLcXdBZFlEVzlteW9F?=
+ =?utf-8?B?dCsrVjh4NXZ0UFdWMmJ3Z1JHRTh2blBiaSswcjk4bVkybUhxR1V4ZWNLdFVB?=
+ =?utf-8?B?K3B5cUo0d0p1MDJWSUFaK1BrZlhtdkdEd0V1UWozZjE0K0lMQVE3MzdKMDVY?=
+ =?utf-8?B?UFpVMVhMN3BEaVZPRHNubS95bmJLNVhmaHJjcFFndU5oQ0NYZXpLU2QzdDQx?=
+ =?utf-8?B?eFd2LzZuT3dia2h4S002YkxNWXF1YUxnSDZUVkRsRHg3ak1NU3Ftb05uM0VZ?=
+ =?utf-8?B?T0d0Q3p2QldzcVFFVEZhOVpXb0ZUR29FZkRFbFRQcFVucGFJWlNaMk92MEpx?=
+ =?utf-8?B?WlV3bWtjcVhWRTZpSTB4MjlNNVBkdHo3OGtaR1htUDlHR0oyN3ZjUXJTY29P?=
+ =?utf-8?B?YXlUbDV0R0RPZnFhRjhGaWl0M2laSUozZnhkSHVJNFh3RTBoME1lYnpibUs4?=
+ =?utf-8?B?TzRuVGFQWlA1Vnl5VE05VTVHM3ExU3BqMkt5Mk5JZFV0ZnBGLzN2enRWbVZh?=
+ =?utf-8?B?L0tUSTJDUDJmUktsZFBGK2pONWdLanFCMXZuT2VWMlJ6MFB1a2xHLzlrUTJy?=
+ =?utf-8?B?Qlp6aWtPdW1IZ0lXemFOTTVtMmpHNjJoeGo4QnFhVlBLTDdDV1l0bHZscitR?=
+ =?utf-8?B?Z1pxZ2R2WVVTZmNGaGYyeEYxMHk1U0VWamp1RU0wQTY2K1FSbTVZQ2V5MmMr?=
+ =?utf-8?B?dGZKK21mMXR6MnhKVmVyTE94STNTWS9qNmZVMGhjdDZYYm9YbjJyZmNkVncy?=
+ =?utf-8?B?OUpQRGhWSVFSRldaWjVQTy9KMFNhblVIbS9BWEgxUkxXMWtRcENLRzNFMWtB?=
+ =?utf-8?B?TEFhQ1RTMXA1L2NTN0poQy85K1ozR2x3bTJWbFpiQk93K2xSVmRHYm5VOVkw?=
+ =?utf-8?B?bWc4RVhVekhlWlZGdDI3REhUVnk3QVgySlV5SjBDWTZ1aFRodGR5dUJvbG9a?=
+ =?utf-8?B?WGdkbEFDZ3RNU0NDRkRZK1huSXVxcytqY0dkU0M3Um5mQVRkUGM2NUVodUIw?=
+ =?utf-8?B?N1p1N2dZQ2g5OHM5ajVDQTNlRW85THVFNmcxSnNjdlRvWXRyWWVuTCsvaFBK?=
+ =?utf-8?B?S3c9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84b328bd-b87f-41be-d63a-08dd3055ed6a
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2025 02:32:57.1821
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GKhFscyFUYPlJ6xuKqguTZgHD1jWTd5KIqliS17fVsGI3+f3nbXPvOzAIrrsB2elay/q0U9noR+cKNKe8jbtpat7VodDxUzJlixomW0KUOE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7814
 
-Each I2C address translator (ATR) has a pool of client aliases which can be
-used as translation targets. Some ATRs have a single alias pool shared by
-all downstream channels, while others have a separate alias pool for each
-channel. Currently, this alias pool is represented by the "aliases",
-"num_aliases", and "use_mask" fields of struct i2c_atr.
+Hi Rob,
+    Thanks for your reply.
 
-In preparation for adding per-channel alias pool support, move the
-"aliases", "num_aliases", "use_mask" and associated lock to a new struct
-called "struct alias_pool".
+On 2025/1/3 05:24, Rob Herring wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On Thu, Dec 26, 2024 at 03:57:41PM +0800, Xianwei Zhao wrote:
+>> Add the dt-bindings for Amlogic pin controller, and add a new
+>> dt-binding header file which document the GPIO bank names and
+>> alternative func value of all Amlogic subsequent SoCs.
+>>
+>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> ---
+>>   .../bindings/pinctrl/amlogic,pinctrl-a4.yaml       | 155 +++++++++++++++++++++
+>>   include/dt-bindings/pinctrl/amlogic,pinctrl.h      |  68 +++++++++
+>>   2 files changed, 223 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
+>> new file mode 100644
+>> index 000000000000..75863d179933
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
+>> @@ -0,0 +1,155 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pinctrl/amlogic,pinctrl-a4.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Amlogic pinmux controller
+>> +
+>> +maintainers:
+>> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> +
+>> +allOf:
+>> +  - $ref: pinctrl.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: amlogic,pinctrl-a4
+>> +
+>> +  reg:
+>> +    minItems: 2
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: mux
+>> +      - const: gpio
+>> +
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 0
+> 
+> The addresses in 'reg' below are MMIO, right? If so, #size-cells can't
+> be 0 and you also need 'ranges' here.
+> 
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/i2c/i2c-atr.c | 172 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 107 insertions(+), 65 deletions(-)
+Will add ranges here, reg and reg-names move into gpio object.
 
-diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-index f04bd4f9e3143837c035cd08d23d5dfc37f151cb..019089346ce4622e46a4802c990cdacd24d47734 100644
---- a/drivers/i2c/i2c-atr.c
-+++ b/drivers/i2c/i2c-atr.c
-@@ -34,6 +34,23 @@ struct i2c_atr_alias_pair {
- 	u16 alias;
- };
- 
-+/**
-+ * struct i2c_atr_alias_pool - Pool of client aliases available for an ATR.
-+ * @size:     Total number of aliases
-+ *
-+ * @lock:     Lock protecting @aliases and @use_mask
-+ * @aliases:  Array of aliases, must hold exactly @size elements
-+ * @use_mask: Mask of used aliases
-+ */
-+struct i2c_atr_alias_pool {
-+	size_t size;
-+
-+	/* Protects aliases and use_mask */
-+	spinlock_t lock;
-+	u16 *aliases;
-+	unsigned long *use_mask;
-+};
-+
- /**
-  * struct i2c_atr_chan - Data for a channel.
-  * @adap:            The &struct i2c_adapter for the channel
-@@ -67,10 +84,7 @@ struct i2c_atr_chan {
-  * @algo:      The &struct i2c_algorithm for adapters
-  * @lock:      Lock for the I2C bus segment (see &struct i2c_lock_operations)
-  * @max_adapters: Maximum number of adapters this I2C ATR can have
-- * @num_aliases: Number of aliases in the aliases array
-- * @aliases:   The aliases array
-- * @alias_mask_lock: Lock protecting alias_use_mask
-- * @alias_use_mask: Bitmask for used aliases in aliases array
-+ * @alias_pool: Pool of available client aliases
-  * @i2c_nb:    Notifier for remote client add & del events
-  * @adapter:   Array of adapters
-  */
-@@ -86,17 +100,54 @@ struct i2c_atr {
- 	struct mutex lock;
- 	int max_adapters;
- 
--	size_t num_aliases;
--	const u16 *aliases;
--	/* Protects alias_use_mask */
--	spinlock_t alias_mask_lock;
--	unsigned long *alias_use_mask;
-+	struct i2c_atr_alias_pool *alias_pool;
- 
- 	struct notifier_block i2c_nb;
- 
- 	struct i2c_adapter *adapter[] __counted_by(max_adapters);
- };
- 
-+static struct i2c_atr_alias_pool *i2c_atr_alloc_alias_pool(size_t num_aliases)
-+{
-+	struct i2c_atr_alias_pool *alias_pool;
-+	int ret;
-+
-+	alias_pool = kzalloc(sizeof(*alias_pool), GFP_KERNEL);
-+	if (!alias_pool)
-+		return ERR_PTR(-ENOMEM);
-+
-+	alias_pool->size = num_aliases;
-+
-+	alias_pool->aliases = kcalloc(num_aliases, sizeof(*alias_pool->aliases), GFP_KERNEL);
-+	if (!alias_pool->aliases) {
-+		ret = -ENOMEM;
-+		goto err_free_alias_pool;
-+	}
-+
-+	alias_pool->use_mask = bitmap_zalloc(num_aliases, GFP_KERNEL);
-+	if (!alias_pool->use_mask) {
-+		ret = -ENOMEM;
-+		goto err_free_aliases;
-+	}
-+
-+	spin_lock_init(&alias_pool->lock);
-+
-+	return alias_pool;
-+
-+err_free_aliases:
-+	kfree(alias_pool->aliases);
-+err_free_alias_pool:
-+	kfree(alias_pool);
-+	return ERR_PTR(ret);
-+}
-+
-+static void i2c_atr_free_alias_pool(struct i2c_atr_alias_pool *alias_pool)
-+{
-+	bitmap_free(alias_pool->use_mask);
-+	kfree(alias_pool->aliases);
-+	kfree(alias_pool);
-+}
-+
- static struct i2c_atr_alias_pair *
- i2c_atr_find_mapping_by_addr(const struct list_head *list, u16 phys_addr)
- {
-@@ -259,44 +310,42 @@ static const struct i2c_lock_operations i2c_atr_lock_ops = {
- 	.unlock_bus =  i2c_atr_unlock_bus,
- };
- 
--static int i2c_atr_reserve_alias(struct i2c_atr *atr)
-+static int i2c_atr_reserve_alias(struct i2c_atr_alias_pool *alias_pool)
- {
- 	unsigned long idx;
-+	u16 alias;
- 
--	spin_lock(&atr->alias_mask_lock);
-+	spin_lock(&alias_pool->lock);
- 
--	idx = find_first_zero_bit(atr->alias_use_mask, atr->num_aliases);
--	if (idx >= atr->num_aliases) {
--		spin_unlock(&atr->alias_mask_lock);
--		dev_err(atr->dev, "failed to find a free alias\n");
-+	idx = find_first_zero_bit(alias_pool->use_mask, alias_pool->size);
-+	if (idx >= alias_pool->size) {
-+		spin_unlock(&alias_pool->lock);
- 		return -EBUSY;
- 	}
- 
--	set_bit(idx, atr->alias_use_mask);
-+	set_bit(idx, alias_pool->use_mask);
- 
--	spin_unlock(&atr->alias_mask_lock);
-+	alias = alias_pool->aliases[idx];
- 
--	return atr->aliases[idx];
-+	spin_unlock(&alias_pool->lock);
-+	return alias;
- }
- 
--static void i2c_atr_release_alias(struct i2c_atr *atr, u16 alias)
-+static void i2c_atr_release_alias(struct i2c_atr_alias_pool *alias_pool, u16 alias)
- {
- 	unsigned int idx;
- 
--	spin_lock(&atr->alias_mask_lock);
-+	spin_lock(&alias_pool->lock);
- 
--	for (idx = 0; idx < atr->num_aliases; ++idx) {
--		if (atr->aliases[idx] == alias) {
--			clear_bit(idx, atr->alias_use_mask);
--			spin_unlock(&atr->alias_mask_lock);
-+	for (idx = 0; idx < alias_pool->size; ++idx) {
-+		if (alias_pool->aliases[idx] == alias) {
-+			clear_bit(idx, alias_pool->use_mask);
-+			spin_unlock(&alias_pool->lock);
- 			return;
- 		}
- 	}
- 
--	spin_unlock(&atr->alias_mask_lock);
--
--	 /* This should never happen */
--	dev_warn(atr->dev, "Unable to find mapped alias\n");
-+	spin_unlock(&alias_pool->lock);
- }
- 
- static int i2c_atr_attach_addr(struct i2c_adapter *adapter,
-@@ -308,9 +357,11 @@ static int i2c_atr_attach_addr(struct i2c_adapter *adapter,
- 	u16 alias;
- 	int ret;
- 
--	ret = i2c_atr_reserve_alias(atr);
--	if (ret < 0)
-+	ret = i2c_atr_reserve_alias(atr->alias_pool);
-+	if (ret < 0) {
-+		dev_err(atr->dev, "failed to find a free alias\n");
- 		return ret;
-+	}
- 
- 	alias = ret;
- 
-@@ -336,7 +387,7 @@ static int i2c_atr_attach_addr(struct i2c_adapter *adapter,
- err_free:
- 	kfree(c2a);
- err_release_alias:
--	i2c_atr_release_alias(atr, alias);
-+	i2c_atr_release_alias(atr->alias_pool, alias);
- 
- 	return ret;
- }
-@@ -357,7 +408,7 @@ static void i2c_atr_detach_addr(struct i2c_adapter *adapter,
- 		return;
- 	}
- 
--	i2c_atr_release_alias(atr, c2a->alias);
-+	i2c_atr_release_alias(atr->alias_pool, c2a->alias);
- 
- 	dev_dbg(atr->dev,
- 		"chan%u: detached alias 0x%02x from addr 0x%02x\n",
-@@ -411,12 +462,11 @@ static int i2c_atr_bus_notifier_call(struct notifier_block *nb,
- 
- static int i2c_atr_parse_alias_pool(struct i2c_atr *atr)
- {
-+	struct i2c_atr_alias_pool *alias_pool;
- 	struct device *dev = atr->dev;
--	unsigned long *alias_use_mask;
- 	size_t num_aliases;
- 	unsigned int i;
- 	u32 *aliases32;
--	u16 *aliases16;
- 	int ret;
- 
- 	ret = fwnode_property_count_u32(dev_fwnode(dev), "i2c-alias-pool");
-@@ -428,12 +478,23 @@ static int i2c_atr_parse_alias_pool(struct i2c_atr *atr)
- 
- 	num_aliases = ret;
- 
--	if (!num_aliases)
-+	alias_pool = i2c_atr_alloc_alias_pool(num_aliases);
-+	if (IS_ERR(alias_pool)) {
-+		ret = PTR_ERR(alias_pool);
-+		dev_err(dev, "Failed to allocate alias pool, err %d\n", ret);
-+		return ret;
-+	}
-+
-+	atr->alias_pool = alias_pool;
-+
-+	if (!alias_pool->size)
- 		return 0;
- 
- 	aliases32 = kcalloc(num_aliases, sizeof(*aliases32), GFP_KERNEL);
--	if (!aliases32)
--		return -ENOMEM;
-+	if (!aliases32) {
-+		ret = -ENOMEM;
-+		goto err_free_alias_pool;
-+	}
- 
- 	ret = fwnode_property_read_u32_array(dev_fwnode(dev), "i2c-alias-pool",
- 					     aliases32, num_aliases);
-@@ -443,43 +504,27 @@ static int i2c_atr_parse_alias_pool(struct i2c_atr *atr)
- 		goto err_free_aliases32;
- 	}
- 
--	aliases16 = kcalloc(num_aliases, sizeof(*aliases16), GFP_KERNEL);
--	if (!aliases16) {
--		ret = -ENOMEM;
--		goto err_free_aliases32;
--	}
--
- 	for (i = 0; i < num_aliases; i++) {
- 		if (!(aliases32[i] & 0xffff0000)) {
--			aliases16[i] = aliases32[i];
-+			alias_pool->aliases[i] = aliases32[i];
- 			continue;
- 		}
- 
- 		dev_err(dev, "Failed to parse 'i2c-alias-pool' property: I2C flags are not supported\n");
- 		ret = -EINVAL;
--		goto err_free_aliases16;
--	}
--
--	alias_use_mask = bitmap_zalloc(num_aliases, GFP_KERNEL);
--	if (!alias_use_mask) {
--		ret = -ENOMEM;
--		goto err_free_aliases16;
-+		goto err_free_aliases32;
- 	}
- 
- 	kfree(aliases32);
- 
--	atr->num_aliases = num_aliases;
--	atr->aliases = aliases16;
--	atr->alias_use_mask = alias_use_mask;
--
--	dev_dbg(dev, "i2c-alias-pool has %zu aliases", atr->num_aliases);
-+	dev_dbg(dev, "i2c-alias-pool has %zu aliases\n", alias_pool->size);
- 
- 	return 0;
- 
--err_free_aliases16:
--	kfree(aliases16);
- err_free_aliases32:
- 	kfree(aliases32);
-+err_free_alias_pool:
-+	i2c_atr_free_alias_pool(alias_pool);
- 	return ret;
- }
- 
-@@ -500,7 +545,6 @@ struct i2c_atr *i2c_atr_new(struct i2c_adapter *parent, struct device *dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	mutex_init(&atr->lock);
--	spin_lock_init(&atr->alias_mask_lock);
- 
- 	atr->parent = parent;
- 	atr->dev = dev;
-@@ -520,13 +564,12 @@ struct i2c_atr *i2c_atr_new(struct i2c_adapter *parent, struct device *dev,
- 	atr->i2c_nb.notifier_call = i2c_atr_bus_notifier_call;
- 	ret = bus_register_notifier(&i2c_bus_type, &atr->i2c_nb);
- 	if (ret)
--		goto err_free_aliases;
-+		goto err_free_alias_pool;
- 
- 	return atr;
- 
--err_free_aliases:
--	bitmap_free(atr->alias_use_mask);
--	kfree(atr->aliases);
-+err_free_alias_pool:
-+	i2c_atr_free_alias_pool(atr->alias_pool);
- err_destroy_mutex:
- 	mutex_destroy(&atr->lock);
- 	kfree(atr);
-@@ -543,8 +586,7 @@ void i2c_atr_delete(struct i2c_atr *atr)
- 		WARN_ON(atr->adapter[i]);
- 
- 	bus_unregister_notifier(&i2c_bus_type, &atr->i2c_nb);
--	bitmap_free(atr->alias_use_mask);
--	kfree(atr->aliases);
-+	i2c_atr_free_alias_pool(atr->alias_pool);
- 	mutex_destroy(&atr->lock);
- 	kfree(atr);
- }
+>> +
+>> +required:
+> 
+> Move after 'patternProperties'.
+> 
+Will do.
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+>> +
+>> +patternProperties:
+>> +  "^gpio@[0-9a-f]+$":
+>> +    type: object
+>> +
+>> +    properties:
+>> +      reg:
+>> +        minItems: 2
+> 
+> You need to describe what each entry is:
+> 
+> items:
+>    - description: foo
+>    - description: bar
+> 
+Will add description in next version
+>> +
+>> +      mask:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +
+>> +      gpio-controller: true
+>> +
+>> +      "#gpio-cells":
+>> +        const: 2
+>> +
+>> +      ngpios:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> Don't need a type here.
+> 
 
--- 
-2.47.1
+Will drop ngpios, use gpio_rangs instead.
 
+>> +        minimum: 1
+>> +        maximum: 32
+>> +
+>> +      identity:
+> 
+> Needs a better name. This is the bank number?
+> 
+
+named 'bank-number'.
+
+> But shouldn't you be able to use gpio-ranges here:
+> 
+> gpio-ranges = <&periphs_pinctrl 0 (bank# << 8) (value of npgios)>;
+> 
+> And do you really need ngpios if you have the value here?
+> 
+>> +        description: |
+>> +          identifier are provided by the pin controller header file at:
+>> +          <include/dt-bindings/pinctrl/amlogic,pinctrl.h>
+>> +
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +
+>> +    required:
+>> +      - reg
+>> +      - gpio-controller
+>> +      - "#gpio-cells"
+>> +      - ngpios
+>> +      - identity
+>> +
+>> +    additionalProperties: false
+>> +
+>> +  "^func-[0-9a-z-]+$":
+>> +    type: object
+>> +    additionalProperties:
+> 
+> Define a pattern for the node names instead. We only allow anything for
+> existing bindings.
+>
+
+Will use patternProperies
+
+>> +      type: object
+>> +      allOf:
+>> +        - $ref: pincfg-node.yaml#
+>> +        - $ref: pinmux-node.yaml#
+>> +
+>> +      description:
+>> +        A pin multiplexing sub-node describes how to configure a set of (or a
+>> +        single) pin in some desired alternate function mode.
+>> +        A single sub-node may define several pin configurations.
+>> +
+>> +      properties:
+>> +        pinmux:
+>> +          description: |
+>> +            Integer array representing pin number and pin multiplexing
+>> +            configuration.
+>> +            When a pin has to be configured in alternate function mode, use
+>> +            this property to identify the pin by its global index, and provide
+>> +            its alternate function configuration number along with it.
+>> +            bank identifier are provided by the pin controller header file at:
+>> +            <include/dt-bindings/pinctrl/amlogic,pinctrl.h>
+>> +            Integers values in "pinmux" argument list are assembled as:
+>> +            (((BANK << 8) + PIN) << 8)  | MUX_FUNC))
+>> +
+>> +      required:
+>> +        - pinmux
+>> +
+>> +      additionalProperties: true
+> 
+> No, not allowed to be true except on common schemas.
+> 
+
+This object  I will only save
+      allOf:
+        - $ref: pincfg-node.yaml#
+        - $ref: pinmux-node.yaml#
+others(description, properties,required,  additionalProperties) will be 
+dropped.
+
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/pinctrl/amlogic,pinctrl.h>
+>> +    apb {
+>> +      #address-cells = <2>;
+>> +      #size-cells = <2>;
+>> +      periphs_pinctrl: pinctrl@8e700 {
+>> +        compatible = "amlogic,pinctrl-a4";
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        reg = <0x0 0x8e700 0x0 0x04>,
+>> +              <0x0 0x8e704 0x0 0x60>;
+>> +        reg-names = "mux", "gpio";
+>> +
+>> +        gpio@14 {
+>> +          reg = <0x14>,<0x30>;
+>> +          gpio-controller;
+>> +          #gpio-cells = <2>;
+>> +          ngpios = <10>;
+>> +          identity = <AMLOGIC_GPIO_B>;
+>> +        };
+>> +
+>> +        func-uart-b {
+>> +          uart-b-default {
+>> +            pinmux = <AML_PINMUX(AMLOGIC_GPIO_B, 1, AF4)>;
+>> +            bias-pull-up;
+>> +            drive-strength-microamp = <4000>;
+>> +          };
+>> +
+>> +          uart-b-pins1 {
+>> +            pinmux = <AML_PINMUX(AMLOGIC_GPIO_B, 5, AF2)>;
+>> +            bias-pull-up;
+>> +            drive-strength-microamp = <4000>;
+>> +          };
+>> +        };
+>> +
+>> +        func-uart-c {
+>> +          uart-c-default {
+>> +            pinmux = <AML_PINMUX(AMLOGIC_GPIO_B, 3, AF1)>,
+>> +                     <AML_PINMUX(AMLOGIC_GPIO_B, 2, AF1)>;
+>> +            bias-pull-up;
+>> +            drive-strength-microamp = <4000>;
+>> +          };
+>> +        };
+>> +      };
+>> +    };
+>> diff --git a/include/dt-bindings/pinctrl/amlogic,pinctrl.h b/include/dt-bindings/pinctrl/amlogic,pinctrl.h
+>> new file mode 100644
+>> index 000000000000..03db0a730e8b
+>> --- /dev/null
+>> +++ b/include/dt-bindings/pinctrl/amlogic,pinctrl.h
+>> @@ -0,0 +1,68 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>> +/*
+>> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+>> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_AMLOGIC_PINCTRL_H
+>> +#define _DT_BINDINGS_AMLOGIC_PINCTRL_H
+>> +
+>> +/* define PIN modes */
+>> +#define AF0  0x0
+>> +#define AF1  0x1
+>> +#define AF2  0x2
+>> +#define AF3  0x3
+>> +#define AF4  0x4
+>> +#define AF5  0x5
+>> +#define AF6  0x6
+>> +#define AF7  0x7
+>> +#define AF8  0x8
+>> +#define AF9  0x9
+>> +#define AF10 0xa
+>> +#define AF11 0xb
+>> +#define AF12 0xc
+>> +#define AF13 0xd
+>> +#define AF14 0xe
+>> +#define AF15 0xf
+> 
+> There's no need for defines in the form "FOOn n".
+> 
+
+Will do.
+
+>> +
+>> +#define AML_PIN_ALT_FUNC_MASK        0xf
+>> +
+>> +/* Normal PIN bank */
+>> +#define AMLOGIC_GPIO_A               0
+>> +#define AMLOGIC_GPIO_B               1
+>> +#define AMLOGIC_GPIO_C               2
+>> +#define AMLOGIC_GPIO_D               3
+>> +#define AMLOGIC_GPIO_E               4
+>> +#define AMLOGIC_GPIO_F               5
+>> +#define AMLOGIC_GPIO_G               6
+>> +#define AMLOGIC_GPIO_H               7
+>> +#define AMLOGIC_GPIO_I               8
+>> +#define AMLOGIC_GPIO_J               9
+>> +#define AMLOGIC_GPIO_K               10
+>> +#define AMLOGIC_GPIO_L               11
+>> +#define AMLOGIC_GPIO_M               12
+>> +#define AMLOGIC_GPIO_N               13
+>> +#define AMLOGIC_GPIO_O               14
+>> +#define AMLOGIC_GPIO_P               15
+>> +#define AMLOGIC_GPIO_Q               16
+>> +#define AMLOGIC_GPIO_R               17
+>> +#define AMLOGIC_GPIO_S               18
+>> +#define AMLOGIC_GPIO_T               19
+>> +#define AMLOGIC_GPIO_U               20
+>> +#define AMLOGIC_GPIO_V               21
+>> +#define AMLOGIC_GPIO_W               22
+>> +#define AMLOGIC_GPIO_X               23
+>> +#define AMLOGIC_GPIO_Y               24
+>> +#define AMLOGIC_GPIO_Z               25
+>> +
+>> +/* Special PIN bank */
+>> +#define AMLOGIC_GPIO_DV              26
+>> +#define AMLOGIC_GPIO_AO              27
+>> +#define AMLOGIC_GPIO_CC              28
+>> +#define AMLOGIC_GPIO_TEST_N  29
+>> +
+>> +#define AML_PINMUX(bank, offset, mode)       (((((bank) << 8) + (offset)) << 8) | (mode))
+>> +#define AML_PINMUX_TO_BANK(pinmux)   (((pinmux) >> 16) & 0xff)
+>> +#define AML_PINMUX_TO_OFFSET(pinmux) (((pinmux) >> 8) & 0xff)
+>> +
+>> +#endif /* _DT_BINDINGS_AMLOGIC_PINCTRL_H */
+>>
+>> --
+>> 2.37.1
+>>
