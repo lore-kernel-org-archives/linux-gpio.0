@@ -1,97 +1,78 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E350211700;
-	Fri, 10 Jan 2025 15:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7A92066E5;
+	Fri, 10 Jan 2025 15:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736522826; cv=none; b=qX2B7Vdtf+RhyQGIY5r1Wc91RvfEk0ftIuUnpIj/69jP+6iSgqGOxOZP76FMpsBTIXwNYU9SmIByHhfwBfo8Sa2rWQESD3zvToZeHPYorgZz4WqrSuDPSLP5zWMFgMPxDVOA5Bh+znnRsf/sSeWgdy7zd/PzvoREkI0zWY6TWJE=
+	t=1736523666; cv=none; b=tSu0MoV3Cuks3rJCjFA8y+hpq+wviBxmXs2Uyo78GArKhdrJzwtIHAX94SiUUIJoiShnAvc5qy/2kkVkCIY/xIfWGIN1y81pahNJHAddtsqX2xd3cloF+lPudOLxGAlN7kP50U826JkZdsEi+hQWG5jGy0QVVhjKdavd52IMBbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736522826; c=relaxed/simple;
-	bh=tkTOYHY7R/B78zoatm15ZoMCaySho/QN7uoUcwZA5m0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k0+0qvrP3pHly67RRQuA1bsukKTsM4x+o3WcQYNLToZTfaPWy2LghZCEtJa42haMxNniGQgt/KHfKSz17xYeFBAjTL2UU37hs6nkZUh8oqTmACipjkGWZwnnLtuEUaQqZf3lIqfbnHH/5TiaWr5M7oqYlSS2iBTqS9QZWohuMYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hRA0fMXK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1736523666; c=relaxed/simple;
+	bh=Fz1hdRpMSaNxgYitNuIdWW/Q+HmiuFoLhZClbSqU+5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxP0Fjf/FO//7fGC/scTQq2lqNKm1OcSki7hALlPuPW3ZS+KKyNCQQ0xN4MQ9VLSEDSSiTZH152lp+/0yUnY25T3guImMdn9fKbBuYTxKSahnAf98r9S2BfkIPuGl9IqbDlhwSs70RaDDkFim6dereh20gg1K/p82B9Yg9zVtvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csOH5GaB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hRA0fMXK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1736522824; x=1768058824;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tkTOYHY7R/B78zoatm15ZoMCaySho/QN7uoUcwZA5m0=;
-  b=hRA0fMXKDUSdDep6+m1hhX29w7qO2H29bDUqQ59QXA2bEhii0sy7bypT
-   UkhSTbQmg33VjHkNtsif1QUt52q17kW6RvuxNVJZ6/3IggqpV/C/Ya39f
-   LeEA5U4JoT1VpRo7mIcZddikOTvv4jJ6LJUTIIhlPJPCW8ovZsqe1uEi0
-   6/Z+akRc0JO1DHFkeHCIJgFWwo8UAf3/813/Eax3ryB3QKSsgt0910haI
-   HTbYmYnxGIZZhbRQ0Q6uwrlE8mG3mIfHdlK6Ui6lojo8ds+utA+rCGJoc
-   rU73eWzqJ96Ed885/NjEyCeDO1U/8APQ/tF2pGLZmPET5qvnqlz3tM3Q4
-   w==;
-X-CSE-ConnectionGUID: EfVstCxrTPeDtavimu1NHw==
-X-CSE-MsgGUID: 52MgwlluTxOOs9zroo6fDg==
-X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
-   d="scan'208";a="203886132"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jan 2025 08:27:03 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 Jan 2025 08:25:52 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 10 Jan 2025 08:25:52 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<arnd@arndb.de>
-CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
-	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: [PATCH v6 2/3] dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
-Date: Fri, 10 Jan 2025 08:25:41 -0700
-Message-ID: <821255840c09d8d9cebbb1f2daaedd8a7c138875.1736522006.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1736522006.git.Ryan.Wanner@microchip.com>
-References: <cover.1736522006.git.Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csOH5GaB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB2CC4CED6;
+	Fri, 10 Jan 2025 15:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736523665;
+	bh=Fz1hdRpMSaNxgYitNuIdWW/Q+HmiuFoLhZClbSqU+5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=csOH5GaBLGUkXLKqbMmlyMLCK4kS4AsqClm5SXDSSpcYTDUl+H+BW3QLqllLG1+9v
+	 OLo1qD2zhk7rZajbRe2JsURbMwozC+vTIE1OAhub5uB1RjgVhNLdFmLwCF4vDVV8nw
+	 bkr4IxHePQQuHodzG20XM+hzgTXfy4FUka3w+4tGvP/o91CQkEaZhWfREz/G/bB+Vi
+	 fyZ3XaXFIPo5CXaJLHor9MiEanT2tz4OBSpK2t5YrIGP9bbCHrRkoDkg6qmhAqAU+q
+	 +KotOiCSZWSvh8wKgkTcTLwff4zmlyOXEtikAZH04E6jMpe2sOWBRPVx3QWZeyXQIn
+	 ptpCQRdVEI7Mw==
+Date: Fri, 10 Jan 2025 09:41:04 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	devicetree@vger.kernel.org,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-kernel@vger.kernel.org, TY Chang <tychang@realtek.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Correct indentation and style in
+ DTS example
+Message-ID: <173652366373.2919481.16688678408505042633.robh@kernel.org>
+References: <20250107125836.225447-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250107125836.225447-1-krzysztof.kozlowski@linaro.org>
 
-From: Dharma Balasubiramani <dharma.b@microchip.com>
 
-Add pinctrl bindings for microchip sama7d65 SoC.
+On Tue, 07 Jan 2025 13:58:34 +0100, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../pinctrl/atmel,at91rm9200-pinctrl.yaml     | 64 +++++++++----------
+>  .../pinctrl/realtek,rtd1315e-pinctrl.yaml     | 50 +++++++--------
+>  .../pinctrl/realtek,rtd1319d-pinctrl.yaml     | 50 +++++++--------
+>  .../pinctrl/realtek,rtd1619b-pinctrl.yaml     | 50 +++++++--------
+>  .../bindings/pinctrl/xlnx,pinctrl-zynq.yaml   | 53 +++++++--------
+>  5 files changed, 130 insertions(+), 137 deletions(-)
+> 
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt      | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-index 774c3c269c40..81a05a09f19f 100644
---- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-@@ -6,6 +6,7 @@ configure it.
- Required properties:
- - compatible:
- 	"atmel,sama5d2-pinctrl"
-+	"microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl"
- 	"microchip,sama7g5-pinctrl"
- - reg: base address and length of the PIO controller.
- - interrupts: interrupt outputs from the controller, one for each bank.
--- 
-2.43.0
 
