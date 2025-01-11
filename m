@@ -1,141 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8D7190482;
-	Sat, 11 Jan 2025 10:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF79214E2C2;
+	Sat, 11 Jan 2025 10:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736591716; cv=none; b=hBkS4TlIzRNO+UtBkRYBNUARI4VHvhh03WEBLjXSIkF26w8+Pc6tG086ZlMe5XJlezZ4PF5lwjaZPS6phs8Ktynpp7EjoW6fqHhRNiWWwRDMR0tSaxqNaWJ4KjKblcYnvwqfFsG7WE3slRI6VZFoJC0b3uEmomJ1cR2sgmAAvpU=
+	t=1736592651; cv=none; b=G7CTta6k0zFZXqxR3XcPsRE81Mt83F7li9ybgLpQv1lDoEIo7yzzkh6E6T3hzwP/QgCQlkAZzjYWCEIcUcxBAx7f3zblriIwHiRhdF1BUt/kTI3T676peIGTWF2WKOeIoGOQlzUFhW2iCZ1+lsDThFEfpvKedv8ZWDyTxTk3Qlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736591716; c=relaxed/simple;
-	bh=4BeJTqqm28Qv5oKR0dD1hGxB/DuI9FfILfZRugCKv8I=;
+	s=arc-20240116; t=1736592651; c=relaxed/simple;
+	bh=6H7mqgtjDqxxpuJcQGmQRoaOPqsjXHlYEEshni72eCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKhQ8oW72BCjFwB+BnTc3xCwQE0HgiomAHbb78+RTwALaaDg6gEjSbNp5iovaYQ5mZu0yRL0TJwvvha35gevw6gO2+rmAGp04x+dJv9+jgy+I+u6bYLJWW2rXy2FW1EwmY/WFIL3OBnFQzV7dwGEe4RgLENBF0s5LZL2/xtEdyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt/RYUat; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=So8vyyWc1h/V7p/KriKzyjzRBw9IbdIwQqEIKQ17Bba0KMc7Lnw625C24vkimvmR5QhZOo8+0El3wIyC1ReVh8ghivoQp/i6479gv2ZziG0Vb04QQHUw6BaFtwKJdiz/uvTJAXt/8xaC9q7pLkw/Xt02IuuebjvMg5ItpSqQZv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gc4rA1m5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt/RYUat"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736591714; x=1768127714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4BeJTqqm28Qv5oKR0dD1hGxB/DuI9FfILfZRugCKv8I=;
-  b=Rt/RYUatEkqFk0PURw+eHPZVP5ZXnpuGsS1jArM2H/TcPJZNtGnFhmye
-   2Ntyam4U0C4YssqYjwG7LiOSN24Extn+vIJpWk7z5X2KWgoe2jpcQk1O8
-   52AclS07ZISdLVVF4KwHZAga7ppEOPvqtRnR8PGcgU+IGrW83o7J2TpKh
-   NMgszGYhCZJ2dbsHli+Wvmo/slufafMpxnFJqvb7uDc6H1OLVoMTcZLTJ
-   Vpqx6ZOvNkg3k5kFJmOHNI/09QOWknCgH3kMWSJKitUNGTer5MQXms7m7
-   MmRaQFsZUMeYQQovoQO2BogkbhRtWc4L3vzkE6lzsY3u9flDxKZqb0BrB
-   A==;
-X-CSE-ConnectionGUID: QcSkjCh0SVGK6sWud3RiRQ==
-X-CSE-MsgGUID: 1hwKWwPuScafVx7c/CQT3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11311"; a="37112095"
-X-IronPort-AV: E=Sophos;i="6.12,306,1728975600"; 
-   d="scan'208";a="37112095"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2025 02:35:13 -0800
-X-CSE-ConnectionGUID: pGD7UTJTQc2Da3Y2xbpPoA==
-X-CSE-MsgGUID: CUAO05POTmibjKRUAVNYcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,306,1728975600"; 
-   d="scan'208";a="108970921"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 11 Jan 2025 02:32:32 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tWYn7-000KUR-1E;
-	Sat, 11 Jan 2025 10:32:29 +0000
-Date: Sat, 11 Jan 2025 18:31:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cathy Xu <ot_cathy.xu@mediatek.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>, Lei Xue <lei.xue@mediatek.com>,
-	wenbin.mei@mediatek.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Guodong Liu <guodong.liu@mediatek.com>,
-	Cathy Xu <ot_cathy.xu@mediatek.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: mediatek: add mt8196 driver
-Message-ID: <202501111834.dc1JHSLT-lkp@intel.com>
-References: <20250110104703.13625-3-ot_cathy.xu@mediatek.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gc4rA1m5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AEDC4CED2;
+	Sat, 11 Jan 2025 10:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736592650;
+	bh=6H7mqgtjDqxxpuJcQGmQRoaOPqsjXHlYEEshni72eCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gc4rA1m5Wev8AnaZqamLaO5ITJaCk0d/45hpUM4zSEl+lneqjxzGRuMOOPDvhO2QS
+	 LZ5ncqg8W57AkHh1hrmrwp9lrarvqWn2o7ncuAl3ySRGkZbuA7GUACTYjRNj0vigue
+	 ePOAM+Egqm+Px9dV9Q82+yFwDBm8TuskmKMtv5jpWheUFnmrugw/O3gGeYAQHhThD9
+	 b0eoUv3OMyEsqJfyqsH2puqNbo5WpbDlkxt761u54QMyi86iNHUhH20S3ncYLXVFB7
+	 8xRthH1PyFJksJFhtFjpMYFPCEIhM3zNPRPnaxLpb0680LKdgVOY3dc7SDc8nHdNcn
+	 7dmBEEzeevfnQ==
+Date: Sat, 11 Jan 2025 11:50:47 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	J =?utf-8?Q?=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>, =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>, 
+	"Geert Uytterhoeven via gmail . com" <geert@linux-m68k.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 2/2] dt-bindings: gpio: fairchild,74hc595: use a fallback
+ for Semi MC74HC595A
+Message-ID: <2pe3fr5fbt6ifbttknplrkiqhq4gv7qn5pcz7um36hdlcmwud3@jqray4yn75gk>
+References: <20250110130025.55004-1-brgl@bgdev.pl>
+ <20250110130025.55004-3-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250110104703.13625-3-ot_cathy.xu@mediatek.com>
+In-Reply-To: <20250110130025.55004-3-brgl@bgdev.pl>
 
-Hi Cathy,
+On Fri, Jan 10, 2025 at 02:00:25PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> This model is 1:1 compatible with fairchild,74hc595 so use the latter as
+> a fallback instead of adding a new stand-alone compatible.
+> 
+> Fixes: 0ba6cec7acbb ("dt-bindings: gpio: fairchild,74hc595: Add On Semi MC74HC595A compat")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  .../devicetree/bindings/gpio/fairchild,74hc595.yaml    | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> index a209c5b4f6e0..da462dddb140 100644
+> --- a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> @@ -28,10 +28,12 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - fairchild,74hc595
+> -      - nxp,74lvc594
+> -      - onnn,74hc595a
+> +    oneOf:
+> +      - const: fairchild,74hc595
+> +      - const: nxp,74lvc594
 
-kernel test robot noticed the following build errors:
+Keep enum for these two, preferred pattern.
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next robh/for-next krzk-dt/for-next pinctrl-samsung/for-next linus/master v6.13-rc6 next-20250110]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +      - items:
+> +          - const: onnn,74hc595a
+> +          - const: fairchild,74hc595
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cathy-Xu/dt-bindings-pinctrl-mediatek-add-support-for-mt8196/20250110-184846
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20250110104703.13625-3-ot_cathy.xu%40mediatek.com
-patch subject: [PATCH v2 2/2] pinctrl: mediatek: add mt8196 driver
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250111/202501111834.dc1JHSLT-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250111/202501111834.dc1JHSLT-lkp@intel.com/reproduce)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202501111834.dc1JHSLT-lkp@intel.com/
+Best regards,
+Krzysztof
 
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/cpumask.h:11,
-                    from include/linux/smp.h:13,
-                    from include/linux/lockdep.h:14,
-                    from include/linux/spinlock.h:63,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from drivers/pinctrl/mediatek/pinctrl-mt8196.c:7:
->> drivers/pinctrl/mediatek/pinctrl-mt8196.c:1753:37: error: 'mtk_eint_pm_ops' undeclared here (not in a function); did you mean 'mtk_eint_regs'?
-    1753 |                 .pm = pm_sleep_ptr(&mtk_eint_pm_ops),
-         |                                     ^~~~~~~~~~~~~~~
-   include/linux/kernel.h:48:44: note: in definition of macro 'PTR_IF'
-      48 | #define PTR_IF(cond, ptr)       ((cond) ? (ptr) : NULL)
-         |                                            ^~~
-   drivers/pinctrl/mediatek/pinctrl-mt8196.c:1753:23: note: in expansion of macro 'pm_sleep_ptr'
-    1753 |                 .pm = pm_sleep_ptr(&mtk_eint_pm_ops),
-         |                       ^~~~~~~~~~~~
-
-
-vim +1753 drivers/pinctrl/mediatek/pinctrl-mt8196.c
-
-  1748	
-  1749	static struct platform_driver mt8196_pinctrl_driver = {
-  1750		.driver = {
-  1751			.name = "mt8196-pinctrl",
-  1752			.of_match_table = mt8196_pinctrl_of_match,
-> 1753			.pm = pm_sleep_ptr(&mtk_eint_pm_ops),
-  1754		},
-  1755		.probe = mtk_paris_pinctrl_probe,
-  1756	};
-  1757	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
