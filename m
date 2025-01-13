@@ -1,15 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1624E1F9F66
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6181F9A91
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736806775; cv=none; b=YnpKTry8AvqPL5DUYYEZdZo4ebdvriU7BtqMFuo99JVvn8dJdoo2vgrh8I/RDZrgF+La6w+FvumcGEhNYek9IAKismlhZKoA4E1GdMFl8xe6imIv5E2qTtMKFj6f/E0m940IdRhdKef19HouaOC5qOZFxAxoHehSMGlrhRQPOyY=
+	t=1736806782; cv=none; b=loTPI5gbudLKzred+UMzd4s6b7RMY9S6PwmLK6A+vX5HtN1RU4SgWpPVX+XII7HXThK8qcx/dD4SsozDYvxRUJnFAghzJPM9nKWLr8TlAbCDfNEW/VjyIiXrm9uvmhiTPF43J0TEk9zqBOzAlFYeUq1u3fDWTrfsURRX1SMIwZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736806775; c=relaxed/simple;
-	bh=Bpm2ViqsTzJMnPDkDF4znANf1QeAIhwge2e79wg6Wew=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VARWOorW4TY9bbgasasQV133G0ffSX5+B1Dh6tuyjdsdAfsbQoxeFL+3u+RVAZxT6bN+nbObanZRFixPdZH+FrcudFaLhkDpoFqplvjv+GGEZPWsysb/kTGzsscy3iZhAoS8NmSORN1psRE5XY4SjNetgOlsH0sOVxhO7IC14Fs=
+	s=arc-20240116; t=1736806782; c=relaxed/simple;
+	bh=LZUqTKQG/VudoIdjL3NreEIvE2/yKrFha28dh32t4+g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tf7dXeNZTHu3QF/zHbQb3eLhO6X3CBSHrtS4NtkRc6Ax4Atqt66x1R/gn0rqHkNBllPVn4agkmccpho2WDwNsy0Kq6WOLzukj8HTLrOJBHz0EknmpIdTgSZxwbOVUfuXBQbOLIPCgzvLYT6AhYm0i1y/zZybD6qR3zD7Mvq/Bz0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -17,23 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmF-0005yi-7t; Mon, 13 Jan 2025 23:19:19 +0100
+	id 1tXSmF-0005ym-7s; Mon, 13 Jan 2025 23:19:19 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmD-000KYe-27;
+	id 1tXSmD-000KYi-2G;
 	Mon, 13 Jan 2025 23:19:18 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmE-008p8i-2b;
+	id 1tXSmE-008p8i-2f;
 	Mon, 13 Jan 2025 23:19:18 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: [PATCH 0/4] gpio: mxc: silence warning about GPIO base being
+Date: Mon, 13 Jan 2025 23:19:12 +0100
+Subject: [PATCH 4/4] gpio: mxc: silence warning about GPIO base being
  statically allocated
-Date: Mon, 13 Jan 2025 23:19:08 +0100
-Message-Id: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,10 +42,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFyRhWcC/x3MQQqAIBBA0avErBvQMrKuEi2sJptFKgoVhHdPW
- r7F/y8kikwJxuqFSBcn9q5A1hWsh3GWkLdiaETTCSlbXBTy+aAN7HExifA20bGzqPbBkB607jc
- BJQ+Rdn7+9TTn/AFVrBsJagAAAA==
-X-Change-ID: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
+Message-Id: <20250113-b4-imx-gpio-base-warning-v1-4-0a28731a5cf6@pengutronix.de>
+References: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
+In-Reply-To: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Andy Whitcroft <apw@canonical.com>, 
  Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
@@ -65,43 +64,96 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-The i.MX GPIO driver has had deterministic numbering for the GPIOs
-for more than 12 years.
+GPIO numbering has been deterministic since commit 7e6086d9e54a
+("gpio/mxc: specify gpio base for device tree probe"), a year after
+device tree support was first added back in 2011.
 
-Reverting this to dynamically numbered will break existing setups in the
-worst manner possible: The build will succeed, the kernel will not print
-warnings, but users will find their devices essentially toggling GPIOs
-at random with the potential of permanent damage. We thus want to keep
-the numbering as-is until the SysFS API is removed and script fail
-instead of toggling GPIOs dependent on probe order.
+Reverting to dynamically allocated GPIO base now would break most
+systems making use of the sysfs API. These systems will be eventually
+broken by the removal of the sysfs API, but that would result in GPIO
+scripts not working instead of essentially toggling at random according
+to probe order, which would happen if we change the base to -1.
 
-Yet, the warning:
+Yet, the warning is annoying and has resulted in many attempts
+to remove it over the years[1][2][3].
 
-  gpio gpiochip0: Static allocation of GPIO base is deprecated,
-  use dynamic allocation.
+Fix this by silencing the warning via the gpio_base_static_alloc
+opt-out instead.
 
-is annoying and prompts people to set the base to -1 from time to time.
+[1]: https://lore.kernel.org/all/20230226205319.1013332-1-dario.binacchi@amarulasolutions.com/
+[2]: https://lore.kernel.org/all/20230506085928.933737-2-haibo.chen@nxp.com/
+[3]: https://lore.kernel.org/all/20241121145515.3087855-1-catalin.popescu@leica-geosystems.com/
 
-Let's workaround this by adding an opt-out for existing drivers and have
-i.MX make use of it.
-
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
-Ahmad Fatoum (4):
-      gpiolib: add opt-out for existing drivers with static GPIO base
-      checkpatch: warn about use of legacy_static_base
-      gpio: mxc: remove dead code after switch to DT-only
-      gpio: mxc: silence warning about GPIO base being statically allocated
-
- drivers/gpio/gpio-mxc.c     | 23 +++++++++++++++++++++--
- drivers/gpio/gpiolib.c      |  2 +-
- include/linux/gpio/driver.h |  5 +++++
- scripts/checkpatch.pl       | 11 +++++++++--
- 4 files changed, 36 insertions(+), 5 deletions(-)
+This triggers the newly added checkpatch.pl warning, but this is
+intended.
 ---
-base-commit: 37136bf5c3a6f6b686d74f41837a6406bec6b7bc
-change-id: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
+ drivers/gpio/gpio-mxc.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 619b6fb9d833a4bb94a93b4209f01b49ad1cbdb0..c25a50abb02389e75b5ca2924828f4a7fb32fe6c 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -45,6 +45,11 @@ struct mxc_gpio_hwdata {
+ 	unsigned high_level;
+ 	unsigned rise_edge;
+ 	unsigned fall_edge;
++	/*
++	 * Static allocation of GPIO base is deprecated.
++	 * Set this to false for future SoCs.
++	 */
++	bool gpio_base_static_alloc;
+ };
+ 
+ struct mxc_gpio_reg_saved {
+@@ -88,6 +93,7 @@ static struct mxc_gpio_hwdata imx1_imx21_gpio_hwdata = {
+ 	.high_level	= 0x02,
+ 	.rise_edge	= 0x00,
+ 	.fall_edge	= 0x01,
++	.gpio_base_static_alloc = true,
+ };
+ 
+ static struct mxc_gpio_hwdata imx31_gpio_hwdata = {
+@@ -103,6 +109,7 @@ static struct mxc_gpio_hwdata imx31_gpio_hwdata = {
+ 	.high_level	= 0x01,
+ 	.rise_edge	= 0x02,
+ 	.fall_edge	= 0x03,
++	.gpio_base_static_alloc = true,
+ };
+ 
+ static struct mxc_gpio_hwdata imx35_gpio_hwdata = {
+@@ -118,6 +125,7 @@ static struct mxc_gpio_hwdata imx35_gpio_hwdata = {
+ 	.high_level	= 0x01,
+ 	.rise_edge	= 0x02,
+ 	.fall_edge	= 0x03,
++	.gpio_base_static_alloc = true,
+ };
+ 
+ #define GPIO_DR			(port->hwdata->dr_reg)
+@@ -490,7 +498,19 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	port->gc.request = mxc_gpio_request;
+ 	port->gc.free = mxc_gpio_free;
+ 	port->gc.to_irq = mxc_gpio_to_irq;
+-	port->gc.base = of_alias_get_id(np, "gpio") * 32;
++	port->gc.base = -1;
++
++	if (port->hwdata->gpio_base_static_alloc) {
++		/*
++		 * GPIO indices have been fixed for the i.MX GPIO controllers
++		 * for many years and changing that now will induce a lot of
++		 * breakage at runtime. Setting this member buys users some time
++		 * until they are forced to migrate when sysfs GPIO support is
++		 * removed completely.
++		 */
++		port->gc.legacy_static_base = true;
++		port->gc.base = of_alias_get_id(np, "gpio") * 32;
++	}
+ 
+ 	err = devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
+ 	if (err)
+
 -- 
-Ahmad Fatoum <a.fatoum@pengutronix.de>
+2.39.5
 
