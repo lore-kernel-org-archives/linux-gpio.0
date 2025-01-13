@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AF81F9AAC
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6541F9F40
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736806791; cv=none; b=mIHpPTGopv3p6QtZFrDircxvmyrDa4Lp9oSYXhsRdo/PRmDcCcCtGuhl3ajXLWt+hdeRBcqcC3w/DuxIvpJ3ZQMMWJIgXRbIDs3bFYoKgP/+av1egmenrwQ55PGWQGcK8+WeYs80St09CFzhxIaNHWVjV192xPBuVV8xiQ/LBk0=
+	t=1736806799; cv=none; b=sGqEaW4VJwOVv69YVIN8je5JNqGdYfLBRN3CNXRQlmJ6paRNMIl4jCz464tRwe9jWXyubqBS3FFiBpXmQ4ObVln04MTi9NNtOEZx09SDUD760xUL8LoYq0NTgr8y8DvMZqVQrlaGCuNOYWTJvVel87rPBU5RVOZnPiHC5cmygZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736806791; c=relaxed/simple;
-	bh=rsvZIG5C3LCxurR4WnzogyTG4fOHh6liz9gTArj2w9k=;
+	s=arc-20240116; t=1736806799; c=relaxed/simple;
+	bh=3tZhAPCNYwnEOO3+MI7+F0UKPfOLrwl6htzbycYw4qc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ruvwhOra89Ij/Z5w0uUkscYj6ToE77YvILI0v50UvWW3S0Wqrt2cW4oE0p7TF+zOoNLwlqGSAcfgsZeWCr0Y4QusxYjZtdqSoOll/6YBqy2Nm73xq20O8MmsnmTw8/7W7AxC+TPTITO7ePj8IrU8AVO7E5dbey66AB5w53fwht8=
+	 In-Reply-To:To:Cc; b=XYAG15Nehc2NJrPs2y2hZlu0EZpWaTfu7kOgIHWg1+P4P1cHLihOL0LBLsOdAcjHOJGFYZYuuATny/JEvHxDSxiWFfkGav+P0y4qq25hs9dnLYf7MVm17Fj3NLLV96UA/KwynOuFriSLqxzhZuzU5WVeqJvR0Au6jdv7xpYcnoo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,21 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmF-0005yl-7v; Mon, 13 Jan 2025 23:19:19 +0100
+	id 1tXSmF-0005yj-7t; Mon, 13 Jan 2025 23:19:19 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmD-000KYh-2C;
+	id 1tXSmD-000KYf-29;
 	Mon, 13 Jan 2025 23:19:18 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmE-008p8i-2e;
+	id 1tXSmE-008p8i-2c;
 	Mon, 13 Jan 2025 23:19:18 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 13 Jan 2025 23:19:11 +0100
-Subject: [PATCH 3/4] gpio: mxc: remove dead code after switch to DT-only
+Date: Mon, 13 Jan 2025 23:19:09 +0100
+Subject: [PATCH 1/4] gpiolib: add opt-out for existing drivers with static
+ GPIO base
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +42,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250113-b4-imx-gpio-base-warning-v1-3-0a28731a5cf6@pengutronix.de>
+Message-Id: <20250113-b4-imx-gpio-base-warning-v1-1-0a28731a5cf6@pengutronix.de>
 References: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
 In-Reply-To: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -63,34 +64,66 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-struct platform_device::id was only set by board code, but since i.MX
-became a devicetree-only platform, this will always be -1
-(PLATFORM_DEVID_NONE).
+Some drivers have had deterministic GPIO numbering for most of
+their existence, e.g. the i.MX GPIO since commit 7e6086d9e54a
+("gpio/mxc: specify gpio base for device tree probe"), more than
+12 years ago.
 
-Note: of_alias_get_id() returns a negative number on error and base
-treats all negative errors the same, so we need not add any additional
-error handling.
+Reverting this to dynamically numbered will break existing setups in
+the worst manner possible: The build will succeed, the kernel will not
+print warnings, but users will find their devices essentially toggling
+GPIOs at random with the potential of permanent damage.
 
-Fixes: 0f2c7af45d7e ("gpio: mxc: Convert the driver to DT-only")
+As these concerns won't go away until the sysfs interface is removed,
+let's add a new struct gpio_chip::legacy_static_base member that can be
+used by existing drivers that have been grandfathered in to suppress
+the warning currently being printed:
+
+  gpio gpiochip0: Static allocation of GPIO base is deprecated,
+  use dynamic allocation.
+
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- drivers/gpio/gpio-mxc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c      | 2 +-
+ include/linux/gpio/driver.h | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 4cb455b2bdee71ba4eb20c93567c3b8db100dbb2..619b6fb9d833a4bb94a93b4209f01b49ad1cbdb0 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -490,8 +490,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	port->gc.request = mxc_gpio_request;
- 	port->gc.free = mxc_gpio_free;
- 	port->gc.to_irq = mxc_gpio_to_irq;
--	port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
--					     pdev->id * 32;
-+	port->gc.base = of_alias_get_id(np, "gpio") * 32;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 679ed764cb143c4b3357106de1570e8d38441372..bedeb8f28badfb7287c4929f9ad0825e050a79c9 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1011,7 +1011,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 			 * drop this and assign a poison instead.
+ 			 */
+ 			gc->base = base;
+-		} else {
++		} else if (!gc->legacy_static_base) {
+ 			dev_warn(&gdev->dev,
+ 				 "Static allocation of GPIO base is deprecated, use dynamic allocation.\n");
+ 		}
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2dd7cb9cc270a68ddedbcdd5d44e0d0f88dfa785..6e820d79d03e61123f89aaf884d35d4a1a5918a7 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -382,6 +382,10 @@ struct gpio_irq_chip {
+  *	implies that if the chip supports IRQs, these IRQs need to be threaded
+  *	as the chip access may sleep when e.g. reading out the IRQ status
+  *	registers.
++ * @legacy_static_base: set for some existing drivers, where @base is non-negative
++ *	and changing that would induce so much breakage that they were
++ *	grandfathered in until GPIO sysfs support is removed altogether.
++ *	Do not set this for any new drivers.
+  * @read_reg: reader function for generic GPIO
+  * @write_reg: writer function for generic GPIO
+  * @be_bits: if the generic GPIO has big endian bit order (bit 31 is representing
+@@ -467,6 +471,7 @@ struct gpio_chip {
+ 	u16			offset;
+ 	const char		*const *names;
+ 	bool			can_sleep;
++	bool			legacy_static_base;
  
- 	err = devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
- 	if (err)
+ #if IS_ENABLED(CONFIG_GPIO_GENERIC)
+ 	unsigned long (*read_reg)(void __iomem *reg);
 
 -- 
 2.39.5
