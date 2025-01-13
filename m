@@ -1,149 +1,144 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B01A23A11D
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 14:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF61D5CFD;
+	Mon, 13 Jan 2025 18:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736780260; cv=none; b=qmtJTx3q0R1eoDiywUzn+9MN3GNqc/Egb7fDtPEHH6NPCf3VVqIt6bk2XfZGRFJdDaDPEOZIqx1KnpNc6eOnWpsidqloAVbMQEoLUvPYlyBVET48QiEFH4eeRKB8jJ4vBT1S3QGMFGL/Y41+GS1WPeoZWWPEaqOrxjvAeZvODMk=
+	t=1736793290; cv=none; b=ipumxh4S0NBXvQnh0mw6Eoh3LIhTidkjCPdRwSxVAr1QFwbrPVg5ULIxmQh8xb32bkYUk87HwFnvZRHe1D/1K0EEkh9+7i4ZI1+7G0pC7k1Kq5Ivn+VBehVjqvgwuiszYv4ec7fazcxU28Z1hOkIV52pgriTj7xBVhoMFprfSg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736780260; c=relaxed/simple;
-	bh=QMBFXNqBpFgYP2yitTOgzdsfZItshvzAST6FqjQRjNM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iv+KBpcoOgRqx6UUP/7O6X4hfQ66ojMU85UFwKhp+V3u1j6Hzf8Tf3oI7OMyHWZNveaor8Hqh5I/bt/P8LN/9Z7k30KnCUADKwOliSKWfcQ77gjdCw2VvypTQRdEES9mLLW/SOH+Vydldb33M3GUJCoxmKPNB9pDB6R9ic+lHPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LN1f6hUk; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1736793290; c=relaxed/simple;
+	bh=BVTpr2WgfB147t8nOT2ZNXSsU67zM/RobQ2D7pMpfgo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CmrchsKat8nMMfCjTczBa1xN7k4LAPYcs/xGgUfcKMM0MO31bdv1sb3qt0OmZCtIFyuOrsmhgHPTYaUbCtaFVY61MEdmrhiCxXOrIwiC6+khfKPH/iZbT12BkWIPxDSmRnbONb3a53MgnmDR1TwavvSURwpE0Khf4QZWNWuv71M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWtjyX+g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LN1f6hUk"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaeec07b705so714515166b.2
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 06:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1736780253; x=1737385053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+dNlxUlq/zQec54ENuov38IuayLoY+NtEDaFnmM1inQ=;
-        b=LN1f6hUk1ZwF41hlKguv5VymijYl8T6LFbmIU2a65XPQRamtQITn19vWMu/Ius+4CR
-         ODjHL/ubeWnT+ElvY9r15KxXmQLzyCzgdmQPTpTmDF4cd/H2jO7zLWtfpgjVlpr+QML5
-         AJdQBEIvMq2FCIifmt6f6jgAFrF7fKWj0vdYs06AtMkxiNm6xfKGm+5zi2nHistvxkCE
-         zLAEnXhgNpbRK3Kg7rJvGa8zg1qG8wdfJzTiF4GYY7ps6KUc3lSjRRgd+DjaskFh3Te/
-         1DBAxCg8UtIW7OG0opGw4hPkkv577CLfACNibbwchf3dsuDVnn/yRz7uLPm394mrmbZD
-         YB9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736780253; x=1737385053;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+dNlxUlq/zQec54ENuov38IuayLoY+NtEDaFnmM1inQ=;
-        b=vFn7V3fgou8F0vTdkvUAz7OoqVm1RuFIJB3qsp2CauF7+2tNoh6VoNKTWH7hgU1UZi
-         7lZo/Bv6j99BT7tct6aM9pmUthrrQ8OzrtdeHKFdSyqKqTTugQJOMQasVIwi+bHs9DN7
-         1znkcaFyUtLMSHM/wBOMum2erV/Qn/R8wMH8tM7ZDOsj7pQcatDNXWmFLLPBT/6H4YK8
-         Xtyy/Nu1WTGo2gzO9+Hufi7jCQIS4m2B963UssBdNSGhPNjuAxX7b+FYiVlenlhTHKKo
-         AoUj+iuWz9L8nN55/nIOl0HnjsDGtixJF1QfPkCC6jonzkH/f9MPoYnqUf5A7rcfKQCG
-         S5zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUly7poUnvzdLI0qwjHrzMq+1RwuqOcqEVsCow4adQrYFbvhRnwx7wWh3Q80+2u6tDGRNQlistkG8tj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7cIhHbKjxYgkOwfSlobeujHP7qejqFod439Fp7BnJBauRgGaR
-	jLnqo393IIfZgx5NMLOva3YL0CePB9DR+wLk8+UPqfnzAOMkxyoAOEax7LVHMbI=
-X-Gm-Gg: ASbGnctuy9wkhcubxl/jrbDH8FojvgRpyivu+lGheD0At1nuYDksYAPHI73DWmWWUTc
-	VPrcrAqe51l/MAdf66ngA0CRntjXtcxqosI+kCtpWKcKTTL6v/sOF13cLQ2yIRQ61WFJn9aKVTA
-	lcNOiIA+5NrgxPWSTzt2eIoIHHuaMi20GLGi5KY2h2512ZWzQrYo1cBy2QppUMXVHNBbYqR+CPh
-	7YYofE47+pTrhsCbkuyH2Aik+sHpL4MHoTSI8sDK0CKlMN8Vl3CPlIAjezinHiMkggrC1PTBauI
-	dVchhd5XU7GX+tKvlSAw2elAJxc=
-X-Google-Smtp-Source: AGHT+IGT7ZUyRqjYZDfn2augtPO24Nq1KfGdCS+zaijGp4OI6jVXn2a8avrfPMk2uXfMIqlZpqSwuQ==
-X-Received: by 2002:a17:907:6d29:b0:ab2:f8e9:5f57 with SMTP id a640c23a62f3a-ab2f8e9652bmr767188466b.21.1736780253509;
-        Mon, 13 Jan 2025 06:57:33 -0800 (PST)
-Received: from localhost (host-87-14-236-197.retail.telecomitalia.it. [87.14.236.197])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c96475besm506777166b.180.2025.01.13.06.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2025 06:57:33 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v6 10/10] arm64: defconfig: Enable RP1 misc/clock/gpio drivers
-Date: Mon, 13 Jan 2025 15:58:09 +0100
-Message-ID: <325cb9d9956344fad68c137b99a9c92bcd707481.1736776658.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1736776658.git.andrea.porta@suse.com>
-References: <cover.1736776658.git.andrea.porta@suse.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWtjyX+g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8484C4CEE3;
+	Mon, 13 Jan 2025 18:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736793289;
+	bh=BVTpr2WgfB147t8nOT2ZNXSsU67zM/RobQ2D7pMpfgo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mWtjyX+gw/tIFZ30N9xkti6DiA5/slg1kCADbORcBa80rBQzGGjQxUI7B8TPJPLEl
+	 a15M93rpLX2ZhQBxvnLV/ETP9CGLGaU3qHcXY7le7LdhfQTJvNoin/C9ZWs8Ikb6Fh
+	 HceiO/4z1XCOD6ta43xRvKtHGO/Z6K14JMRIOfB3UNDo4Bv1mLl8bi4U9To83ds2qi
+	 0htNbbPsMAdv+TwVhq16v2BABESQ8sfIjg65YGUvHQUhA27zm6p/F9t81Ifw0wuTqJ
+	 HlBB1nXR/D8lnDc2vVBiePIFWDvx9jEjuG9x9U9g6+z4rHKaDqXigmbbf5Ua5y82gd
+	 9OJCvKB3MHI3A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Koichiro Den <koichiro.den@canonical.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 10/20] gpio: virtuser: lock up configfs that an instantiated device depends on
+Date: Mon, 13 Jan 2025 13:34:15 -0500
+Message-Id: <20250113183425.1783715-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250113183425.1783715-1-sashal@kernel.org>
+References: <20250113183425.1783715-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.9
 Content-Transfer-Encoding: 8bit
 
-Select the RP1 drivers needed to operate the PCI endpoint containing
-several peripherals such as Ethernet and USB Controller. This chip is
-present on RaspberryPi 5.
+From: Koichiro Den <koichiro.den@canonical.com>
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+[ Upstream commit c7c434c1dba955005f5161dae73f09c0a922cfa7 ]
+
+Once a virtuser device is instantiated and actively used, allowing rmdir
+for its configfs serves no purpose and can be confusing. Userspace
+interacts with the virtual consumer at arbitrary times, meaning it
+depends on its existence.
+
+Make the subsystem itself depend on the configfs entry for a virtuser
+device while it is in active use.
+
+Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+Link: https://lore.kernel.org/r/20250103141829.430662-4-koichiro.den@canonical.com
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-virtuser.c | 47 ++++++++++++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c62831e61586..91b39026dc56 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -609,6 +609,7 @@ CONFIG_PINCTRL_QCM2290=y
- CONFIG_PINCTRL_QCS404=y
- CONFIG_PINCTRL_QDF2XXX=y
- CONFIG_PINCTRL_QDU1000=y
-+CONFIG_PINCTRL_RP1=m
- CONFIG_PINCTRL_SA8775P=y
- CONFIG_PINCTRL_SC7180=y
- CONFIG_PINCTRL_SC7280=y
-@@ -690,6 +691,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
- CONFIG_SENSORS_SL28CPLD=m
- CONFIG_SENSORS_INA2XX=m
- CONFIG_SENSORS_INA3221=m
-+CONFIG_MISC_RP1=m
- CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
- CONFIG_CPU_THERMAL=y
- CONFIG_DEVFREQ_THERMAL=y
-@@ -1272,6 +1274,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_FSL_SAI=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_COMMON_CLK_PWM=y
-+CONFIG_COMMON_CLK_RP1=m
- CONFIG_COMMON_CLK_RS9_PCIE=y
- CONFIG_COMMON_CLK_VC3=y
- CONFIG_COMMON_CLK_VC5=y
+diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
+index 91b6352c957c..615984cdd4ca 100644
+--- a/drivers/gpio/gpio-virtuser.c
++++ b/drivers/gpio/gpio-virtuser.c
+@@ -1532,6 +1532,30 @@ gpio_virtuser_device_deactivate(struct gpio_virtuser_device *dev)
+ 	kfree(dev->lookup_table);
+ }
+ 
++static void
++gpio_virtuser_device_lockup_configfs(struct gpio_virtuser_device *dev, bool lock)
++{
++	struct configfs_subsystem *subsys = dev->group.cg_subsys;
++	struct gpio_virtuser_lookup_entry *entry;
++	struct gpio_virtuser_lookup *lookup;
++
++	/*
++	 * The device only needs to depend on leaf lookup entries. This is
++	 * sufficient to lock up all the configfs entries that the
++	 * instantiated, alive device depends on.
++	 */
++	list_for_each_entry(lookup, &dev->lookup_list, siblings) {
++		list_for_each_entry(entry, &lookup->entry_list, siblings) {
++			if (lock)
++				WARN_ON(configfs_depend_item_unlocked(
++						subsys, &entry->group.cg_item));
++			else
++				configfs_undepend_item_unlocked(
++						&entry->group.cg_item);
++		}
++	}
++}
++
+ static ssize_t
+ gpio_virtuser_device_config_live_store(struct config_item *item,
+ 				       const char *page, size_t count)
+@@ -1544,15 +1568,24 @@ gpio_virtuser_device_config_live_store(struct config_item *item,
+ 	if (ret)
+ 		return ret;
+ 
+-	guard(mutex)(&dev->lock);
++	if (live)
++		gpio_virtuser_device_lockup_configfs(dev, true);
+ 
+-	if (live == gpio_virtuser_device_is_live(dev))
+-		return -EPERM;
++	scoped_guard(mutex, &dev->lock) {
++		if (live == gpio_virtuser_device_is_live(dev))
++			ret = -EPERM;
++		else if (live)
++			ret = gpio_virtuser_device_activate(dev);
++		else
++			gpio_virtuser_device_deactivate(dev);
++	}
+ 
+-	if (live)
+-		ret = gpio_virtuser_device_activate(dev);
+-	else
+-		gpio_virtuser_device_deactivate(dev);
++	/*
++	 * Undepend is required only if device disablement (live == 0)
++	 * succeeds or if device enablement (live == 1) fails.
++	 */
++	if (live == !!ret)
++		gpio_virtuser_device_lockup_configfs(dev, false);
+ 
+ 	return ret ?: count;
+ }
 -- 
-2.35.3
+2.39.5
 
