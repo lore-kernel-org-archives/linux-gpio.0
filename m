@@ -1,130 +1,151 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6541F9F40
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469E61D5CCC;
+	Mon, 13 Jan 2025 22:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736806799; cv=none; b=sGqEaW4VJwOVv69YVIN8je5JNqGdYfLBRN3CNXRQlmJ6paRNMIl4jCz464tRwe9jWXyubqBS3FFiBpXmQ4ObVln04MTi9NNtOEZx09SDUD760xUL8LoYq0NTgr8y8DvMZqVQrlaGCuNOYWTJvVel87rPBU5RVOZnPiHC5cmygZ0=
+	t=1736808951; cv=none; b=ntwhhEY2EZNVKk9UlxsAFMBG3dWVK7lMCQ9/SouChTZtsq673ws7gIH70BiU1FJ6erGUMuO+o11RGBIFVKNlh3F2ubL+6a+WtxDAefHcLPCNyPWaPzAtzb6YDpsjdPl5tHAUPZNd/MQzl6//HzJb0eTxXnlPFlv4+MdSevBhoiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736806799; c=relaxed/simple;
-	bh=3tZhAPCNYwnEOO3+MI7+F0UKPfOLrwl6htzbycYw4qc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XYAG15Nehc2NJrPs2y2hZlu0EZpWaTfu7kOgIHWg1+P4P1cHLihOL0LBLsOdAcjHOJGFYZYuuATny/JEvHxDSxiWFfkGav+P0y4qq25hs9dnLYf7MVm17Fj3NLLV96UA/KwynOuFriSLqxzhZuzU5WVeqJvR0Au6jdv7xpYcnoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmF-0005yj-7t; Mon, 13 Jan 2025 23:19:19 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmD-000KYf-29;
-	Mon, 13 Jan 2025 23:19:18 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmE-008p8i-2c;
-	Mon, 13 Jan 2025 23:19:18 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 13 Jan 2025 23:19:09 +0100
-Subject: [PATCH 1/4] gpiolib: add opt-out for existing drivers with static
- GPIO base
+	s=arc-20240116; t=1736808951; c=relaxed/simple;
+	bh=Fmb/nG+uD0XTG4I2Ot3fwepT/zZC/OX2GMKcSIhtlwQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOS0uu/ZFCpCV3d11P0mIAhVj7/lK61x6DOOQgu2Jlu3Qe7nsPpsu6F9mPOruNMQVuFfbl/m3mLtbT/YuKByD4F+Ng1DAJWtOV8hA6tkGf6O3DdiG++z1MOBBvITrtz3w2uKREWk7h17FZCoTYGBEJsPTJxSjuNH4ECKYR/6qQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gHkHqXHr; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gHkHqXHr"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 50DMtVto3760652
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 Jan 2025 16:55:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1736808931;
+	bh=ojOuWESO9FkVlOtfgnqTVX+eAvMKTt16l2Utsyj+/EM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=gHkHqXHropckwdylTndJLGnd6lh+ulVwgg7/kd6RPhre1cwbAp3hoFbskzh5aTTp4
+	 Jx3ObbXariSKS6+6nXw3KZJATPkHmtYIPPvkFW2iJ95xp/cL0yKc0AA7kMjvC43Q24
+	 yv5fmAeYOkUFDNT3Vlbz5CyhX0uouNSp5apfzXoo=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50DMtVJq037814
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 13 Jan 2025 16:55:31 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
+ Jan 2025 16:55:30 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 13 Jan 2025 16:55:30 -0600
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.11])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50DMtU57047817;
+	Mon, 13 Jan 2025 16:55:30 -0600
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>, <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3 3/3] gpio tps65215: Add support for varying gpio/offset values
+Date: Mon, 13 Jan 2025 16:55:30 -0600
+Message-ID: <20250113225530.124213-4-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250113225530.124213-1-s-ramamoorthy@ti.com>
+References: <20250113225530.124213-1-s-ramamoorthy@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250113-b4-imx-gpio-base-warning-v1-1-0a28731a5cf6@pengutronix.de>
-References: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
-In-Reply-To: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Whitcroft <apw@canonical.com>, 
- Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
- Andy Shevchenko <andy.shevchenko@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- Haibo Chen <haibo.chen@nxp.com>, 
- Catalin Popescu <catalin.popescu@leica-geosystems.com>, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Some drivers have had deterministic GPIO numbering for most of
-their existence, e.g. the i.MX GPIO since commit 7e6086d9e54a
-("gpio/mxc: specify gpio base for device tree probe"), more than
-12 years ago.
+Add device-specific structs to select the different PMIC .npgio and .offset
+values. With the chip_data struct values selected based on the match data,
+having a separate GPIO0_OFFSET macro is no longer needed.
 
-Reverting this to dynamically numbered will break existing setups in
-the worst manner possible: The build will succeed, the kernel will not
-print warnings, but users will find their devices essentially toggling
-GPIOs at random with the potential of permanent damage.
-
-As these concerns won't go away until the sysfs interface is removed,
-let's add a new struct gpio_chip::legacy_static_base member that can be
-used by existing drivers that have been grandfathered in to suppress
-the warning currently being printed:
-
-  gpio gpiochip0: Static allocation of GPIO base is deprecated,
-  use dynamic allocation.
-
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
 ---
- drivers/gpio/gpiolib.c      | 2 +-
- include/linux/gpio/driver.h | 5 +++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-tps65219.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 679ed764cb143c4b3357106de1570e8d38441372..bedeb8f28badfb7287c4929f9ad0825e050a79c9 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1011,7 +1011,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 			 * drop this and assign a poison instead.
- 			 */
- 			gc->base = base;
--		} else {
-+		} else if (!gc->legacy_static_base) {
- 			dev_warn(&gdev->dev,
- 				 "Static allocation of GPIO base is deprecated, use dynamic allocation.\n");
- 		}
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 2dd7cb9cc270a68ddedbcdd5d44e0d0f88dfa785..6e820d79d03e61123f89aaf884d35d4a1a5918a7 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -382,6 +382,10 @@ struct gpio_irq_chip {
-  *	implies that if the chip supports IRQs, these IRQs need to be threaded
-  *	as the chip access may sleep when e.g. reading out the IRQ status
-  *	registers.
-+ * @legacy_static_base: set for some existing drivers, where @base is non-negative
-+ *	and changing that would induce so much breakage that they were
-+ *	grandfathered in until GPIO sysfs support is removed altogether.
-+ *	Do not set this for any new drivers.
-  * @read_reg: reader function for generic GPIO
-  * @write_reg: writer function for generic GPIO
-  * @be_bits: if the generic GPIO has big endian bit order (bit 31 is representing
-@@ -467,6 +471,7 @@ struct gpio_chip {
- 	u16			offset;
- 	const char		*const *names;
- 	bool			can_sleep;
-+	bool			legacy_static_base;
+diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
+index 70a4410c473a..f2d8fd65d422 100644
+--- a/drivers/gpio/gpio-tps65219.c
++++ b/drivers/gpio/gpio-tps65219.c
+@@ -13,7 +13,6 @@
+ #include <linux/regmap.h>
  
- #if IS_ENABLED(CONFIG_GPIO_GENERIC)
- 	unsigned long (*read_reg)(void __iomem *reg);
-
+ #define TPS65219_GPIO0_DIR_MASK		BIT(3)
+-#define TPS65219_GPIO0_OFFSET		2
+ #define TPS6521X_GPIO0_IDX			0
+ 
+ struct tps65219_gpio {
+@@ -21,6 +20,11 @@ struct tps65219_gpio {
+ 	struct tps65219 *tps;
+ };
+ 
++struct tps65219_chip_data {
++	int ngpio;
++	int offset;
++};
++
+ static int tps65219_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
+@@ -71,7 +75,7 @@ static void tps65219_gpio_set(struct gpio_chip *gc, unsigned int offset, int val
+ 	struct device *dev = gpio->tps->dev;
+ 	int v, mask, bit;
+ 
+-	bit = (offset == TPS6521X_GPIO0_IDX) ? TPS65219_GPIO0_OFFSET : offset - 1;
++	bit = (offset == TPS6521X_GPIO0_IDX) ? (gpio->gpio_chip.offset - 1) : offset - 1;
+ 
+ 	mask = BIT(bit);
+ 	v = value ? mask : 0;
+@@ -148,14 +152,28 @@ static const struct gpio_chip tps65219_template_chip = {
+ 	.get			= tps65219_gpio_get,
+ 	.set			= tps65219_gpio_set,
+ 	.base			= -1,
+-	.ngpio			= 3,
+ 	.can_sleep		= true,
+ };
+ 
++static const struct tps65219_chip_data chip_info_table[] = {
++	[TPS65215] = {
++		.ngpio = 2,
++		.offset = 1,
++	},
++	[TPS65219] = {
++		.ngpio = 3,
++		.offset = 2,
++	},
++};
++
+ static int tps65219_gpio_probe(struct platform_device *pdev)
+ {
+-	struct tps65219 *tps = dev_get_drvdata(pdev->dev.parent);
+ 	struct tps65219_gpio *gpio;
++	const struct tps65219_chip_data *pmic;
++
++	struct tps65219 *tps = dev_get_drvdata(pdev->dev.parent);
++	enum pmic_id chip = platform_get_device_id(pdev)->driver_data;
++	pmic = &chip_info_table[chip];
+ 
+ 	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+ 	if (!gpio)
+@@ -164,6 +182,8 @@ static int tps65219_gpio_probe(struct platform_device *pdev)
+ 	gpio->tps = tps;
+ 	gpio->gpio_chip = tps65219_template_chip;
+ 	gpio->gpio_chip.label = dev_name(&pdev->dev);
++	gpio->gpio_chip.ngpio =  pmic->ngpio;
++	gpio->gpio_chip.offset = pmic->offset;
+ 	gpio->gpio_chip.parent = tps->dev;
+ 
+ 	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio_chip, gpio);
 -- 
-2.39.5
+2.43.0
 
