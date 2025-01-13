@@ -1,16 +1,15 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD6E1E9B13
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1624E1F9F66
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jan 2025 22:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736806768; cv=none; b=LKURBvJ95mjDEPYP2P3+s4gwluqvqNOI2vJr9ntCRhW/ca6IYiFnBWyFw4//RXCXuX9SOTipwN+GktmbhlhY94pN1L9RLwqormTTEDJB8f60ivWiZ1lGpGbpMfKoVHmy0F17WtSoLD75oJiTj+w1LSASWgpdiTsn3M9rcEw96Dw=
+	t=1736806775; cv=none; b=YnpKTry8AvqPL5DUYYEZdZo4ebdvriU7BtqMFuo99JVvn8dJdoo2vgrh8I/RDZrgF+La6w+FvumcGEhNYek9IAKismlhZKoA4E1GdMFl8xe6imIv5E2qTtMKFj6f/E0m940IdRhdKef19HouaOC5qOZFxAxoHehSMGlrhRQPOyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736806768; c=relaxed/simple;
-	bh=UEfyMNkflJZ2fhNc05ylC23IiSAozSl7+gLNlTjVK4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jOIKzw6lBrBzrsJH1cZGSpVyfYlL0gmGPC2Ct4U8kVKGLl7ArjhwFGgz/TwMFeNFB7nWrCuOsJ2BITHRUMw7wzygX9EIb1bOYTvcREXvl4/Dulhdg/IXO0NR9uRtgVCPNFsRbnb5Wo2bDkz95/Cd6D/cVN0949pb9xptWo7Lbss=
+	s=arc-20240116; t=1736806775; c=relaxed/simple;
+	bh=Bpm2ViqsTzJMnPDkDF4znANf1QeAIhwge2e79wg6Wew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VARWOorW4TY9bbgasasQV133G0ffSX5+B1Dh6tuyjdsdAfsbQoxeFL+3u+RVAZxT6bN+nbObanZRFixPdZH+FrcudFaLhkDpoFqplvjv+GGEZPWsysb/kTGzsscy3iZhAoS8NmSORN1psRE5XY4SjNetgOlsH0sOVxhO7IC14Fs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,21 +17,23 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmF-0005yk-7t; Mon, 13 Jan 2025 23:19:19 +0100
+	id 1tXSmF-0005yi-7t; Mon, 13 Jan 2025 23:19:19 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmD-000KYg-2A;
+	id 1tXSmD-000KYe-27;
 	Mon, 13 Jan 2025 23:19:18 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXSmE-008p8i-2d;
+	id 1tXSmE-008p8i-2b;
 	Mon, 13 Jan 2025 23:19:18 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 13 Jan 2025 23:19:10 +0100
-Subject: [PATCH 2/4] checkpatch: warn about use of legacy_static_base
+Subject: [PATCH 0/4] gpio: mxc: silence warning about GPIO base being
+ statically allocated
+Date: Mon, 13 Jan 2025 23:19:08 +0100
+Message-Id: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,9 +42,10 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250113-b4-imx-gpio-base-warning-v1-2-0a28731a5cf6@pengutronix.de>
-References: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
-In-Reply-To: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAFyRhWcC/x3MQQqAIBBA0avErBvQMrKuEi2sJptFKgoVhHdPW
+ r7F/y8kikwJxuqFSBcn9q5A1hWsh3GWkLdiaETTCSlbXBTy+aAN7HExifA20bGzqPbBkB607jc
+ BJQ+Rdn7+9TTn/AFVrBsJagAAAA==
+X-Change-ID: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Andy Whitcroft <apw@canonical.com>, 
  Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
@@ -63,49 +65,43 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-gpio_chip::legacy_state_base was recently added as opt-out for
-existing drivers and shouldn't be used for new drivers. It's thus
-sensible to add a deprecation warning whenever it's used.
+The i.MX GPIO driver has had deterministic numbering for the GPIOs
+for more than 12 years.
 
-This doesn't fit with the existing deprecated API check, because it
-requires a `(' to follow the symbol name, so a new member specific
-pattern is introduced instead.
+Reverting this to dynamically numbered will break existing setups in the
+worst manner possible: The build will succeed, the kernel will not print
+warnings, but users will find their devices essentially toggling GPIOs
+at random with the potential of permanent damage. We thus want to keep
+the numbering as-is until the SysFS API is removed and script fail
+instead of toggling GPIOs dependent on probe order.
 
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Yet, the warning:
+
+  gpio gpiochip0: Static allocation of GPIO base is deprecated,
+  use dynamic allocation.
+
+is annoying and prompts people to set the base to -1 from time to time.
+
+Let's workaround this by adding an opt-out for existing drivers and have
+i.MX make use of it.
+
 ---
- scripts/checkpatch.pl | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Ahmad Fatoum (4):
+      gpiolib: add opt-out for existing drivers with static GPIO base
+      checkpatch: warn about use of legacy_static_base
+      gpio: mxc: remove dead code after switch to DT-only
+      gpio: mxc: silence warning about GPIO base being statically allocated
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 7b28ad3317427a6bf9e27b77065aa3915cb13053..6c57a08833a4298573c7967b2a178fd7f46aa7ce 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -848,6 +848,13 @@ foreach my $entry (keys %deprecated_apis) {
- }
- $deprecated_apis_search = "(?:${deprecated_apis_search})";
- 
-+our %deprecated_members = (
-+	"legacy_static_base"			=> "setting .base to -1",
-+);
-+
-+our $deprecated_memb_search = "(?:" . join("|", keys %deprecated_members) . ")";
-+%deprecated_apis = (%deprecated_apis, %deprecated_members);
-+
- our $mode_perms_world_writable = qr{
- 	S_IWUGO		|
- 	S_IWOTH		|
-@@ -7407,8 +7414,8 @@ sub process {
- 		}
- 
- # check for deprecated apis
--		if ($line =~ /\b($deprecated_apis_search)\b\s*\(/) {
--			my $deprecated_api = $1;
-+		if ($line =~ /\b(?<old>$deprecated_apis_search)\b\s*\(|(?:->|\.)(?<old>$deprecated_memb_search)\b/) {
-+			my $deprecated_api = ${^CAPTURE}{old};
- 			my $new_api = $deprecated_apis{$deprecated_api};
- 			WARN("DEPRECATED_API",
- 			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
+ drivers/gpio/gpio-mxc.c     | 23 +++++++++++++++++++++--
+ drivers/gpio/gpiolib.c      |  2 +-
+ include/linux/gpio/driver.h |  5 +++++
+ scripts/checkpatch.pl       | 11 +++++++++--
+ 4 files changed, 36 insertions(+), 5 deletions(-)
+---
+base-commit: 37136bf5c3a6f6b686d74f41837a6406bec6b7bc
+change-id: 20250113-b4-imx-gpio-base-warning-4f9ae89887d0
 
+Best regards,
 -- 
-2.39.5
+Ahmad Fatoum <a.fatoum@pengutronix.de>
 
