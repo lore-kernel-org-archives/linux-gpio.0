@@ -1,98 +1,133 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4809722F383;
-	Wed, 15 Jan 2025 06:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FEF23243D
+	for <linux-gpio@vger.kernel.org>; Wed, 15 Jan 2025 07:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736923890; cv=none; b=Z6hXmKX/y7UZQqlLI00+GjVO1ziiwNo4S9L2VFh08Q+xM/1D+ugIbJyIsWWxjp1l0croMiSBAFZnrTUTgBlRwNeWLQPHPCH8CjM7mw1SIPSwmnI+QkxnwnNdZL80zppShauiy2hyluc1vHItE13nzItMgk9kT4YrkatlyakCXWM=
+	t=1736924598; cv=none; b=ohlb3j1bp42keIcXj8ixbr4v4PXiDRAMc5x/zGTN3N9Ll/NXUUmGl/fWJFc4yTd4DZpIsQnLfNM6hv5JM+wi0PON2JKx9ihWWG0U/W/sPFua/JZKuwtChtrd2RQfyYW4f0Jl4x7f3V47d4Qud+FyK7pEjt7LhnHTIxgF/P5nKs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736923890; c=relaxed/simple;
-	bh=TcUZwIOVrGoREH3F7Up6fKhVv3bIooUGMeR72MbG1xw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DlxD/r4hOLdWWDO76pmvSyk4t40BAwlFALXqtLI0y3mgfP2j3XXxfoJyWUGf7LDDJgEfb/7PGECuZieA9KddyWTzqc8YPGyQ6TqNarV+WVWJqjx8mI2+95emwfJJqxQ7LLqUS6E48tSUTpZkNjELMS4uuiK6QVumpdSCojw5YAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=seLoQJ07; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="seLoQJ07"
-X-UUID: 04697e26d30b11efbd192953cf12861f-20250115
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=RW+aY5XpsCKt8NyJHK435g5mg+Zd2fJskS2OpXAM0N0=;
-	b=seLoQJ070EuhZlGxCORFR9OHHmdaigXnmWFcbVy94N5IZIpKaBHlDWfZiAZyy15NeeUs+ViIRhK1Ul65B/f21acTkKuV1ZusZJ97NGwqKYSXn5uFF85wATZiR/ndZuXzzktoF0aJsyYDAFe7pHDxqMG9SSuL26J1bbY7+Z18E6Y=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:bfa2c399-01ad-4eaf-a69b-ab1d72687871,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:7d700f85-0f10-4f52-bb41-91703793d3e4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 04697e26d30b11efbd192953cf12861f-20250115
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <ot_cathy.xu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1911246317; Wed, 15 Jan 2025 14:36:14 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 15 Jan 2025 14:36:13 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Wed, 15 Jan 2025 14:36:12 +0800
-From: Cathy Xu <ot_cathy.xu@mediatek.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>,
-	Lei Xue <lei.xue@mediatek.com>, <wenbin.mei@mediatek.com>
-CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Cathy Xu <ot_cathy.xu@mediatek.com>
-Subject: [PATCH v3 0/2] MediaTek pinctrl patch on mt8196
-Date: Wed, 15 Jan 2025 14:35:37 +0800
-Message-ID: <20250115063555.32492-1-ot_cathy.xu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1736924598; c=relaxed/simple;
+	bh=jSEWg4EMuMVXUCaAkiVdII0DJ6CB33/BCGItwud/NWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q+HlCVFpud5rx4+6/kosqC9ycQvrMC0ZSFuJ3mv6oikojgkYfjjtI2vWbk2A9oK6/8a8il3DWdLXuDGtIQlq5xK2vexwB914yOmnjj3Rk0FpzXadC7bnH03OE0fkC+2t9ajt1whw6LnFlwT2RJJRzCtdJCYBkipeuY1w9lf8j7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tXxQf-0002M8-Ds; Wed, 15 Jan 2025 08:03:05 +0100
+Message-ID: <43ecfb45-d96b-46e5-95e1-2ece32532e74@pengutronix.de>
+Date: Wed, 15 Jan 2025 08:03:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] gpio: mxc: silence warning about GPIO base being
+ statically allocated
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andy Whitcroft <apw@canonical.com>,
+ Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ Haibo Chen <haibo.chen@nxp.com>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20250113-b4-imx-gpio-base-warning-v1-0-0a28731a5cf6@pengutronix.de>
+ <CAHp75Ve8d96Uw1obJVwRPyRE5E0eC8qU7uXe-UKuZeB-3XLPcA@mail.gmail.com>
+ <528b6695-387e-436d-98fc-6f576636d16f@pengutronix.de>
+ <CAHp75VfOhAmkpB_nhQE8m25p=3P2wvTfOnQFEsLR5KEktLy4vQ@mail.gmail.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <CAHp75VfOhAmkpB_nhQE8m25p=3P2wvTfOnQFEsLR5KEktLy4vQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Changes in v3:
-- remove drive-strength-microamp & rsel-resistence-in-si-unit
-  related description in mediatek,mt8196-pinctrl.yaml.
-- use pm_sleep_ptr() in pinctrl-mt8196.c to fix build error.
+Hello Andy,
 
-Changes in v2:
-- fix driver file's coding style.
-- add pinctrl binding document.
+On 14.01.25 20:43, Andy Shevchenko wrote:
+> On Tue, Jan 14, 2025 at 11:55 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>> On 14.01.25 10:46, Andy Shevchenko wrote:
+>>> On Tue, Jan 14, 2025 at 12:19 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>>>>
+>>>> The i.MX GPIO driver has had deterministic numbering for the GPIOs
+>>>> for more than 12 years.
+>>>>
+>>>> Reverting this to dynamically numbered will break existing setups in the
+>>>> worst manner possible: The build will succeed, the kernel will not print
+>>>> warnings, but users will find their devices essentially toggling GPIOs
+>>>> at random with the potential of permanent damage. We thus want to keep
+>>>> the numbering as-is until the SysFS API is removed and script fail
+>>>> instead of toggling GPIOs dependent on probe order.
 
-Changes in v1:
-- add mt8196 pinctrl driver.
-- add pinmux definition file.
+Please read my cover letter / commit messages. I do nowhere object to deprecation
+and removal of the sysfs interface. But I strongly disagree that a necessary step
+towards that is having Linux start toggling random GPIOs after an update on
+platforms that behaved consistently for >10 years.
 
-Cathy Xu (2):
-  dt-bindings: pinctrl: mediatek: add support for mt8196
-  pinctrl: mediatek: add mt8196 driver
+Can you explain why we can't remove the hardcoded base at the same time that
+sysfs support is removed for good?
 
- .../pinctrl/mediatek,mt8196-pinctrl.yaml      |  244 ++
- drivers/pinctrl/mediatek/Kconfig              |   12 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt8196.c     | 1764 +++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 2789 +++++++++++++++++
- include/dt-bindings/pinctrl/mt8196-pinfunc.h  | 1572 ++++++++++
- 6 files changed, 6382 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8196-pinctrl.yaml
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8196.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h
- create mode 100644 include/dt-bindings/pinctrl/mt8196-pinfunc.h
+>>> While I understand the issue this tends to get never fixed until the
+>>> entire support of iMX boards will be dropped.
+>>
+>> i.MX is an actively developed and widely used platform. Why should support
+>> be dropped?
+> 
+> Exactly, Which means "tend to get never fixed".
+
+Imagine ReiserFS deprecation strategy involved shipping an update that
+just corrupted your existing file system and developers insisted on calling
+it a fix, as ReiserFS is going to be removed anyway.
+
+>>> Personally I do not like
+>>> this series at all. Rather let's try to go the hard way and understand
+>>> what's going on to fix the current issues.
+>>
+>> /sys/class/gpio is deprecated and when it is finally removed, this series can
+>> be reverted again. The alternatives are either do nothing and live with 6 kernel
+>> warnings cluttering every boot or show users the finger as described in
+>> the cover letter.
+>>
+>> Do you see a different path forward?
+> 
+> Yes, try to write your scripts based on the libgpiod or the tools
+> provided by the project. I.o.w. follow the warning that SYSFS will be
+> removed at some point and prepare yourself for that. If some kernel
+> work needs to be done, contribute.
+
+I have been using libgpiod for many years, but have in the past used sysfs
+or been involved with projects using sysfs. I agree that these projects
+need to switch to the GPIO character device and that they will be eventually
+broken. Yet, I still get warnings despite doing everything correctly IMO and no,
+I don't want to fix a warning by doing negligent stuff like jumble GPIO numbers,
+with the reason that it's going to be broken for good in the future anyway.
+
+To reiterate, my issue is with the manner of breakage:
+
+  - broken, because /sys/class/gpio doesn't exist: good
+  - broken, because script executes successfully, but toggles arbitrary pins: bad
+
+Thanks,
+Ahmad
+
+> 
+
 
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
