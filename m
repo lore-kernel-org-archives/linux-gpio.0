@@ -1,59 +1,59 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8DC1990C1;
-	Fri, 17 Jan 2025 14:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322E919CC0C;
+	Fri, 17 Jan 2025 14:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737123799; cv=none; b=DQg59yvTpJ+hgL170Xakh1wEVZg+esHFL4yTBqMU84OZK4E0PGpfN4ZB8W0ry6EBaapw58kZn60yPFIytc+8vMQDCZAH6lxY6Ew0VW+ql8V2dLrx/Qk4yiQV+2Gn7Bg7HKdg7uxfsjhBcyLKNfaOOaIML5O3UvmGwlWovhCagig=
+	t=1737123800; cv=none; b=kWw4M+uL9GpW6Whplu4HfkkLbIIz+mE+lJ+K8jOhysdkJsSeU6KQcZUT9qrkKxrYYXfyBftrkbyMcsuVkHBzQR0cxQZAtTy18m/C6QAJoxqlwjSBppvxMYRKMxDkjWgg6Ap9ZVj/hYBveuVPxO5ALQKzpBSYmXplj5tBb88e/8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737123799; c=relaxed/simple;
-	bh=e+vy5gdsWQy17qO5/JqKII1U70Q5O6U013x6DVlLJPk=;
+	s=arc-20240116; t=1737123800; c=relaxed/simple;
+	bh=iimgZOs9g8vQE0CqP6Y63dqla7aGMw++DUMSU6qigeQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AL0pqqLYxuWZZzbwYRs2JVh9bd3K8Fa16my+k+bBirMNMG659nJwc9Cj0hvVWyGa0iYeE7o3Tt/w39OPZn8kK2aw/KcsOj/bL4alyvjL67cU2Fc+/A4nlQCLtt9TzWCmTvqGHvufUwcGtFp8pcb3+KqbANJHRYD3zl4Kw6fY4P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DvhWPoNW; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=h2xNXnCLS9zLwPfTjdfNMRLtxgx2SzE1YlUi+AxqRSh0Te0OKpOK3sH0LTCJtDofRJeLpUC6I5yLmeYaKlCFy6wZMvO78PhiwIz8T55oPXaElyst0nCTO6Lp/e9jEzxAUDc7p5nQQaFyYIh29Ql4rZ0Hs0qCJBLHsoN3huZC3nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeWZhI37; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DvhWPoNW"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeWZhI37"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737123798; x=1768659798;
+  t=1737123799; x=1768659799;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=e+vy5gdsWQy17qO5/JqKII1U70Q5O6U013x6DVlLJPk=;
-  b=DvhWPoNW3HH64i2QxdGjMdeBUgqf7eEXrDHTrIRIE7KYnK2FgJJCHbak
-   IBrIlQp9IjAMHOmeF0HEiF0ri7jzpQ8SKMnlTkdTokzctSHakbmqN9RnN
-   ynBRsYuPm+1ClzRKbvducVTQUEOIceO5TY6Ooep2k3v04XCna2LCfBajd
-   f9FmKlmdo3SC67ULQ7diB1665GceSY3cDsDwVbFejL9mse4KnF9rwrMt3
-   GORTAjyKaDzm09EESG+XRiK2YF0cm5t/5pIEA/uWeCd3mqRMfOeXqa6Bt
-   vedKpVJLoX4KJ4Xlj+1vycuCoeiL8cKccPftXv2+I/KFhww9MqkkMB6VS
-   Q==;
-X-CSE-ConnectionGUID: I6H+P4QmSuCLS/lzA3C/JQ==
-X-CSE-MsgGUID: sWYsERFwT+O9pw3rOECigw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11318"; a="37792848"
+  bh=iimgZOs9g8vQE0CqP6Y63dqla7aGMw++DUMSU6qigeQ=;
+  b=LeWZhI37w1SRxUSTlU8AxN1G7UBp8wP1/DxNrCv8myS7efWzw6c8sjXa
+   uDnv60QeObTs5rruuJMk3nsPGiE7pVNJiJo5kLIygvr0AN9TvJnxrMk+T
+   8uUdpPJDMMfUv4AzwaZHJ40VdaGDZ72x+/R9VYVyrPFIg0KOhfgIm371q
+   BnR8vGNnVvX7zJSfpnMGnL9QI71rjlpXBeHcO+NZHdx2NZCXSRfHB+2iX
+   fRgQj3W/IXOMAOlsdGtRoEgN9653jkBiFCEkwr9+vEw93iIjfk1FPoo63
+   47a8m1W2CsId1oqeJtpPInYiutzBtQFoxNyXD8ZzZH+xPX5DQsKOQ8dhQ
+   g==;
+X-CSE-ConnectionGUID: ay836z5XRX+5GIgI205gag==
+X-CSE-MsgGUID: tQtdK6s6R1KP2G8sTGo6Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11318"; a="37792856"
 X-IronPort-AV: E=Sophos;i="6.13,212,1732608000"; 
-   d="scan'208";a="37792848"
+   d="scan'208";a="37792856"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 06:23:12 -0800
-X-CSE-ConnectionGUID: ZHD3lPgSQ72bzYiPE2djtw==
-X-CSE-MsgGUID: OxkXDcCXSryGNjBfr14s1g==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 06:23:14 -0800
+X-CSE-ConnectionGUID: XyNwdmJgRJ20wPIbCprzyg==
+X-CSE-MsgGUID: 62kDm0XmRw60sQ2LzYaJQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,212,1732608000"; 
-   d="scan'208";a="105671229"
+   d="scan'208";a="105671235"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Jan 2025 06:23:11 -0800
+  by fmviesa006.fm.intel.com with ESMTP; 17 Jan 2025 06:23:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BD7D256B; Fri, 17 Jan 2025 16:23:07 +0200 (EET)
+	id DE224725; Fri, 17 Jan 2025 16:23:07 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 13/16] pinctrl: cy8c95x0: Get rid of cy8c95x0_pinmux_direction() forward declaration
-Date: Fri, 17 Jan 2025 16:21:57 +0200
-Message-ID: <20250117142304.596106-14-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 16/16] pinctrl: cy8c95x0: Fix comment style
+Date: Fri, 17 Jan 2025 16:22:00 +0200
+Message-ID: <20250117142304.596106-17-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20250117142304.596106-1-andriy.shevchenko@linux.intel.com>
 References: <20250117142304.596106-1-andriy.shevchenko@linux.intel.com>
@@ -65,93 +65,27 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function is used before being defined. Just move it up enough to
-get rid of forward declaration.
+One comment style is not aligned with the rest. Fix that.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 54 ++++++++++++++----------------
- 1 file changed, 25 insertions(+), 29 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 657e9fe40e38..fc9c6d293198 100644
+index 6ee21e697e43..b0e3d675dc8d 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -310,9 +310,6 @@ static const char * const cy8c95x0_groups[] = {
- 	"gp77",
- };
+@@ -501,7 +501,8 @@ static int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip,
+ 	if (ret < 0)
+ 		return ret;
  
--static int cy8c95x0_pinmux_direction(struct cy8c95x0_pinctrl *chip,
--				     unsigned int pin, bool input);
--
- static inline u8 cypress_get_port(struct cy8c95x0_pinctrl *chip, unsigned int pin)
- {
- 	/* Account for GPORT2 which only has 4 bits */
-@@ -671,6 +668,31 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	return 0;
- }
- 
-+static int cy8c95x0_pinmux_direction(struct cy8c95x0_pinctrl *chip, unsigned int pin, bool input)
-+{
-+	u8 port = cypress_get_port(chip, pin);
-+	u8 bit = cypress_get_pin_mask(chip, pin);
-+	int ret;
-+
-+	ret = cy8c95x0_regmap_write_bits(chip, CY8C95X0_DIRECTION, port, bit, input ? bit : 0);
-+	if (ret)
-+		return ret;
-+
+-	/* Mimic what hardware does and update the cache when a WC bit is written.
 +	/*
-+	 * Disable driving the pin by forcing it to HighZ. Only setting
-+	 * the direction register isn't sufficient in Push-Pull mode.
-+	 */
-+	if (input && test_bit(pin, chip->push_pull)) {
-+		ret = cy8c95x0_regmap_write_bits(chip, CY8C95X0_DRV_HIZ, port, bit, bit);
-+		if (ret)
-+			return ret;
-+
-+		__clear_bit(pin, chip->push_pull);
-+	}
-+
-+	return 0;
-+}
-+
- static int cy8c95x0_gpio_direction_input(struct gpio_chip *gc, unsigned int off)
- {
- 	return pinctrl_gpio_direction_input(gc, off);
-@@ -1228,32 +1250,6 @@ static int cy8c95x0_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	return cy8c95x0_set_mode(chip, pin, false);
- }
- 
--static int cy8c95x0_pinmux_direction(struct cy8c95x0_pinctrl *chip,
--				     unsigned int pin, bool input)
--{
--	u8 port = cypress_get_port(chip, pin);
--	u8 bit = cypress_get_pin_mask(chip, pin);
--	int ret;
--
--	ret = cy8c95x0_regmap_write_bits(chip, CY8C95X0_DIRECTION, port, bit, input ? bit : 0);
--	if (ret)
--		return ret;
--
--	/*
--	 * Disable driving the pin by forcing it to HighZ. Only setting
--	 * the direction register isn't sufficient in Push-Pull mode.
--	 */
--	if (input && test_bit(pin, chip->push_pull)) {
--		ret = cy8c95x0_regmap_write_bits(chip, CY8C95X0_DRV_HIZ, port, bit, bit);
--		if (ret)
--			return ret;
--
--		__clear_bit(pin, chip->push_pull);
--	}
--
--	return 0;
--}
--
- static int cy8c95x0_gpio_set_direction(struct pinctrl_dev *pctldev,
- 				       struct pinctrl_gpio_range *range,
- 				       unsigned int pin, bool input)
++	 * Mimic what hardware does and update the cache when a WC bit is written.
+ 	 * Allows to mark the registers as non-volatile and reduces I/O cycles.
+ 	 */
+ 	if (cy8c95x0_wc_register(reg) && (mask & val)) {
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
