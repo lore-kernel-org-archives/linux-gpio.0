@@ -1,59 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50C413C67C;
-	Fri, 17 Jan 2025 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF88D78F58;
+	Fri, 17 Jan 2025 14:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737123794; cv=none; b=CItMWL5j3gFRai9o4/pdYoGPDP7B/k/c/yn+qx0sQhqkoxMAW4a0hkEzjbQn+oac6h+ytBwb2X+Tr4CG3rg6/zzOC4J5OL1x8zQ4sG9yTuphplUdcYCMal82wgU/4rm7HUF5+yR59zKYtbtqcWGuy+J91VctiX0mG3xPgYm82lc=
+	t=1737123795; cv=none; b=rYo29VNsTPYSnsdp25Fy8S4/QvTbjcq1eZPXJCFky6BVEFG94GzOjTrDir6nRs5mJa8FOtuUrXkNkQ5I3q0lrBRuY3O8Z2qbYe+qveMLiiUpCdd0dnFiqE9Ea42wjQLi/KWCFICc2X6tbDdiqOst8PQ29aYw3HxzgRFE2RBW3ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737123794; c=relaxed/simple;
-	bh=U194qO0oDxlacr0GHJ18nz17MA3yydb1arfxnhd39aY=;
+	s=arc-20240116; t=1737123795; c=relaxed/simple;
+	bh=H32YdHMMv4yHDqvULzoY5QGRkWug33PDrCdVmxdPSBI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r5yk27STIbdgJmYRcm2wrilCkwdxRVT+QeahUaB5eG9s+L3qbdV7LX7/PtSl4CHv8TtVrTZuJnSi05Asumu2t8sxc62V25q88Cq6pfqpZ/xL75Ww12XtaoVvdbwyp7tyQO0ZdaYP+mI1VBGi8qTCamoAyw2TpSQ0LEFZmt1jFo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ilapTTo3; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=WTvyEtPZcov6YQsNDFrudPpbKOv/aVtzVGu/OxQarQ0s6Ap6eZh/+gFp04GC02S9H5hxr6iOzk1b5EugXLbTopqO52WOZdZKPQS4bhmwlRogjQsYZ81fTPxffZ6A2q79wufC/uMOjl8H4aMedC5IDLSO2CSV8HC1vuO0TqEaYkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f72iMeYA; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ilapTTo3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f72iMeYA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1737123793; x=1768659793;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=U194qO0oDxlacr0GHJ18nz17MA3yydb1arfxnhd39aY=;
-  b=ilapTTo3NXJsZGHn89KWS3vdOpFuG76rUX6SJcNoa2loYkgAedl8kItk
-   dwHgUEaDBFWLpELTyxs22mK6R4qzu6hylWFvftpX7fCjwcM5Zrx11lVPh
-   dxN1krN+Kvgu8tLJbPf0uSv0fOex2Zs9xYinhmybVgNUPk6/EgBWb/MJJ
-   YclvNU8KKYQ3MrhlLi12Q+gGGSNxebyl/wobK/uwFMuY/FQ60/IhHSuRz
-   Tsow5VcCeGvHEwbbO2VZLPpZpVDY/GWF9QMPd9AbviOAF0BXEhaod6ktQ
-   pD1P1moRimMj/eWvHTDPPk7oWWfTZmpru06K6YEI1aUhyG9b2GaTRVjWy
-   w==;
-X-CSE-ConnectionGUID: 2NIxqlkfQt+mXo9+UdqFfQ==
-X-CSE-MsgGUID: P6j9O//GQ2a8PExOhW2CzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11318"; a="41323650"
+  bh=H32YdHMMv4yHDqvULzoY5QGRkWug33PDrCdVmxdPSBI=;
+  b=f72iMeYAXAK/2YLnK1Tj0OjHjZHXWbO8ZxzOtNT4jrwHYiryaS0b5Phd
+   hEmNf0w1zFmP7a1QEjdoP1qWp5VmEKj9z3o7tmp5GL/lxExMlw9SqDIcn
+   fP3xuNJduSkzi5ciA9ZSdfNGNqnBhxBlq6jIPHwpVH5ehJNfDgkPEd8SK
+   g6etJ25I4Rcwsrekswhik0IaKIzmyFUtpDmyvj/+Xcx75WsVyHlyCshlm
+   IY6kxuZBMT1W4Z7MOe6Ys5FxPdh8QWh7ix1rVBlNBE1U7GnY27cslersR
+   YOO1PmmAtgoDNw0FE9VeakPdNqCN9b92+NHjhCdEHO+n2bpubqN9+AEoo
+   A==;
+X-CSE-ConnectionGUID: wW8lKGjCT2euudmdMFY9Rg==
+X-CSE-MsgGUID: Jr3qBa1bTmar6brU71ajqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11318"; a="37792829"
 X-IronPort-AV: E=Sophos;i="6.13,212,1732608000"; 
-   d="scan'208";a="41323650"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 06:23:10 -0800
-X-CSE-ConnectionGUID: PsupTb20Q1OWZ2Azo0smhg==
-X-CSE-MsgGUID: to4nBcNqTZ+ZLgBRqG3ztA==
+   d="scan'208";a="37792829"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2025 06:23:11 -0800
+X-CSE-ConnectionGUID: gsqgxV3DTsyTr6qRowkajw==
+X-CSE-MsgGUID: G5JKRW7HTOe2iMdvQxMCPA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="143100379"
+X-IronPort-AV: E=Sophos;i="6.13,212,1732608000"; 
+   d="scan'208";a="105671223"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 17 Jan 2025 06:23:08 -0800
+  by fmviesa006.fm.intel.com with ESMTP; 17 Jan 2025 06:23:10 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2D24E2C8; Fri, 17 Jan 2025 16:23:07 +0200 (EET)
+	id 6A66539C; Fri, 17 Jan 2025 16:23:07 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 01/16] pinctrl: cy8c95x0: Respect IRQ trigger settings from firmware
-Date: Fri, 17 Jan 2025 16:21:45 +0200
-Message-ID: <20250117142304.596106-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 06/16] pinctrl: cy8c95x0: Avoid accessing reserved registers
+Date: Fri, 17 Jan 2025 16:21:50 +0200
+Message-ID: <20250117142304.596106-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20250117142304.596106-1-andriy.shevchenko@linux.intel.com>
 References: <20250117142304.596106-1-andriy.shevchenko@linux.intel.com>
@@ -65,40 +65,62 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Som of the platforms may connect the INT pin via inversion logic
-effectively make the triggering to be active-low.
-Remove explicit trigger flag to respect the settings from firmware.
+The checks for vrtual registers in the cy8c95x0_readable_register()
+and cy8c95x0_writeable_register() are not aligned and broken.
 
-Without this change even idling chip produces spurious interrupts
-and kernel disables the line in the result:
+Fix that by explicitly avoiding reserved registers to be accessed.
 
-  irq 33: nobody cared (try booting with the "irqpoll" option)
-  CPU: 0 UID: 0 PID: 125 Comm: irq/33-i2c-INT3 Not tainted 6.12.0-00236-g8b874ed11dae #64
-  Hardware name: Intel Corp. QUARK/Galileo, BIOS 0x01000900 01/01/2014
-  ...
-  handlers:
-  [<86e86bea>] irq_default_primary_handler threaded [<d153e44a>] cy8c95x0_irq_handler [pinctrl_cy8c95x0]
-  Disabling IRQ #33
-
-Fixes: e6cbbe42944d ("pinctrl: Add Cypress cy8c95x0 support")
+Fixes: 71e4001a0455 ("pinctrl: pinctrl-cy8c95x0: Fix regcache")
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 0d6c2027d4c1..825bd1e528b5 100644
+index e98eba17cd13..970b6842b05b 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1347,7 +1347,7 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+@@ -328,14 +328,14 @@ static int cypress_get_pin_mask(struct cy8c95x0_pinctrl *chip, unsigned int pin)
+ static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
+ {
+ 	/*
+-	 * Only 12 registers are present per port (see Table 6 in the
+-	 * datasheet).
++	 * Only 12 registers are present per port (see Table 6 in the datasheet).
+ 	 */
+-	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) < 12)
+-		return true;
++	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) >= 12)
++		return false;
  
- 	ret = devm_request_threaded_irq(chip->dev, irq,
- 					NULL, cy8c95x0_irq_handler,
--					IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_HIGH,
-+					IRQF_ONESHOT | IRQF_SHARED,
- 					dev_name(chip->dev), chip);
- 	if (ret) {
- 		dev_err(chip->dev, "failed to request irq %d\n", irq);
+ 	switch (reg) {
+ 	case 0x24 ... 0x27:
++	case 0x31 ... 0x3f:
+ 		return false;
+ 	default:
+ 		return true;
+@@ -344,8 +344,11 @@ static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
+ 
+ static bool cy8c95x0_writeable_register(struct device *dev, unsigned int reg)
+ {
+-	if (reg >= CY8C95X0_VIRTUAL)
+-		return true;
++	/*
++	 * Only 12 registers are present per port (see Table 6 in the datasheet).
++	 */
++	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) >= 12)
++		return false;
+ 
+ 	switch (reg) {
+ 	case CY8C95X0_INPUT_(0) ... CY8C95X0_INPUT_(7):
+@@ -353,6 +356,7 @@ static bool cy8c95x0_writeable_register(struct device *dev, unsigned int reg)
+ 	case CY8C95X0_DEVID:
+ 		return false;
+ 	case 0x24 ... 0x27:
++	case 0x31 ... 0x3f:
+ 		return false;
+ 	default:
+ 		return true;
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
