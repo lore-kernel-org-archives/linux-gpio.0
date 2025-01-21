@@ -1,277 +1,165 @@
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20FAE57D;
-	Tue, 21 Jan 2025 13:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC563CF;
+	Tue, 21 Jan 2025 14:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737467957; cv=none; b=VzHwqKSn8AyRLsV21iL//1R5duXnppJQZBNLys8cyR3CM41gM48xVQZXh9luqEsoQy8B1eJdLxOD1+IN9I1LMlieS1lwjgOc2mVHHHG7FVq7CVNnj3eyUcz4iiyQsogbdcI9ArWpomDtAazlAuPd6WPc5mDTOy3HIQfcHb+lYOo=
+	t=1737469121; cv=none; b=TUI7FNmGUAT3CFp4pZi1Oyh7EiW0omcFPH4kERByS9O3qH5yEfw62TU1BG4rSRLS1WiNuF7xQIaipVJzWe2Umrq2iq+N35KkhoNmb8TnbuROklFqDOlaBH1zXi55PFeVQdWmhJQ8LFDjmYISD8BCYcS18FohTmYjUubGyJyWftc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737467957; c=relaxed/simple;
-	bh=0DWJYFRTL+8fpOx4VMor8cdYl8rl2RP4tlvfzc6r2ao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gPdV6+8I6CCimPkT0h+wikDLgZSg+NjocboQgwfjBuublInBHo5E9WA+2w+ZnMWq0HbohcKAhcRMb2GoJjCze9iOvoS1qDRlcdovIu8g8nT36wMwrXZ6wdw0596u0WpGP1SDeGDtBK8p06D7AUMpSm190d1+mul1shrkb+4AvNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=AcYD4CyC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CcqDvUa5; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1737469121; c=relaxed/simple;
+	bh=5i/X/Iz+JTYsKD4chZ95l9x8evxZABASz1O34jduQyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbfCJZqzulk/7riMb9OQTfO+xatp7iVxyzzZ/nw7jJP5nJIguTe0uWD7505yJ0cde0XOtk/eHcCwggNrJR63wKK8UmeCStp7Lwx2k8B9HlxRtZuTtsgR3PkILQRh/upck1UeRvnwWETT4Knu/APB4G7sX8Xva4GM3fcehNr3iG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I+z6qQ2E; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="AcYD4CyC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CcqDvUa5"
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 9BF6B254021A;
-	Tue, 21 Jan 2025 08:59:13 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 21 Jan 2025 08:59:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1737467953; x=1737554353; bh=p/
-	ctYWpKFst2pl6RZ952teyXW3LGpWHMYnbY8XMkYrg=; b=AcYD4CyChIcSyaTC96
-	V7MoRe03azsSrKEvZk2QxEUng7PUJ4UbL2PxdCKlrOmOEkXfcIY1voVnl53xgWLy
-	oNdszKggJOY1yxvjAPo2SndRkF8AhKMvoTqjO193zPej0aK2oj51f6wmDcfQZHZY
-	8FtiTduQFa1ED/1MEgEOUoWxCDfK++gJol7SfNLXqx1jxYmTbN4Cmc67Vc5hK48x
-	R3LEVcTCmHf4lV8bWhp5nNbkVzjYC7ocCPYvDBD2SBaBVI5ZeTdLYkkEtL6QOM9b
-	dSqw7EV+T2eVX/A0blkae62WyrrN8kIWHsQElwsOqm9qaBE5FNoHeUditzc0nBcj
-	PrAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1737467953; x=1737554353; bh=p/ctYWpKFst2pl6RZ952teyXW3LG
-	pWHMYnbY8XMkYrg=; b=CcqDvUa57+DrQ1/edbwP29jKaqGR7yqSSnugsz1wfvWs
-	17ZIk7ZD1JCQ78aycTLKGxZ2FrjTqNflkuLNicdmQCJb4NCVoUYW7A73SJkrtV9H
-	Uw+FrH8bcV0is1EYsUVhNXeF32mRmhxEooXX6nnPgnCB1vffVgEmJPwevDUbMw8N
-	Gw9CJWmjhMzKnkeUo43bznEOWQm1F+TutFsDGoDPp3QrMjpKFidVz/OIU2Z3fUNu
-	WNmVV/XLsEYfS0KYH4RCt2gsXOqX3zazE2YdiJuzokFEvuAfmxT8VrU/5Wm5kpci
-	qL/GBUIc3qJXkzwWxk/AW+BKIvF90Jj616zTV7bj5w==
-X-ME-Sender: <xms:MaiPZyI4P9IWaX1LaEKNaZJhR1WAoIVKGdqG-Aq-D6wOIo4-egxLNw>
-    <xme:MaiPZ6KOp9RJTS-gd160D0r4vVBTEmqKG0MwLi6rQjEsfGUTjnBnvZrKbu5jLuaI6
-    ID15lKsU9ut7nOScnQ>
-X-ME-Received: <xmr:MaiPZyufNQarfA2S_CtxNlo6Mbi-vb9tls53FZ5h5ZLvW4h-qw07UAsTZ1lcrDikus1DVsKO8eMJrKt0v-2_DuwwJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudejvddgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecu
-    hfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrh
-    hluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgv
-    rhhnpeehudelteetkefgffefudefuedvjeeivdekhfevieefgeffheeltddvvefhfeetge
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhk
-    lhgrshdrshhouggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtth
-    hopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtodhrvghnvghs
-    rghssehglhhiuggvrhdrsggvpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslh
-    hinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphht
-    thhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepnhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrg
-    hgnhgrthgvtghhrdhsvg
-X-ME-Proxy: <xmx:MaiPZ3bTXByANWZYi4RqHQ-O9aUxlp0BvtmuIE1J1Nj4lTdyEdN1RA>
-    <xmx:MaiPZ5bRjfrMXqYwesapGwJgQSUvrMKvEnfslMUsusD7Z_LZq6tI6w>
-    <xmx:MaiPZzCd3ePSK3kWovOkN_6Lv33oRpOTAvHli3oQ9A2VpY5KRN0kzw>
-    <xmx:MaiPZ_aechs_z7tdUf30Z7vjv3LTdbdKdUNN2QbuUTu9z60un4Gdzw>
-    <xmx:MaiPZ-PpUrs7b3hegRgppCBHay0jet9_9BhrK404UCnvknqBqihf2Qwj>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Jan 2025 08:59:12 -0500 (EST)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I+z6qQ2E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F920C4CEDF;
+	Tue, 21 Jan 2025 14:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1737469120;
+	bh=5i/X/Iz+JTYsKD4chZ95l9x8evxZABASz1O34jduQyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I+z6qQ2Evs42wV2TDzuc5tlgJ/P7u60q697JMC2ZKKTj7gESHiAbzkyGy29VHM+6X
+	 qmZjOt1uiBPFDO1bs5n3G4OwLGg/1t71x2AWSp880rxO1zrFvmig8Z/xS97RqVcMdn
+	 SqEHZJtLpYm2VMWN/o6CK8K2x4lvj8mYJodj9qKU=
+Date: Tue, 21 Jan 2025 15:18:37 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] gpio: rcar: Use raw_spinlock to protect register access
-Date: Tue, 21 Jan 2025 14:58:33 +0100
-Message-ID: <20250121135833.3769310-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.48.1
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v6 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2025012157-bonsai-caddie-19b2@gregkh>
+References: <cover.1736776658.git.andrea.porta@suse.com>
+ <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
+ <2025011722-motocross-finally-e664@gregkh>
+ <Z49eOdVvwknOoD3E@apocalypse>
+ <2025012143-rippling-rehydrate-581b@gregkh>
+ <Z4-oORWO4BgOqibB@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z4-oORWO4BgOqibB@apocalypse>
 
-Use raw_spinlock in order to fix spurious messages about invalid context
-when spinlock debugging is enabled. The lock is only used to serialize
-register access.
+On Tue, Jan 21, 2025 at 02:59:21PM +0100, Andrea della Porta wrote:
+> Hi Greg,
+> 
+> On 09:48 Tue 21 Jan     , Greg Kroah-Hartman wrote:
+> > On Tue, Jan 21, 2025 at 09:43:37AM +0100, Andrea della Porta wrote:
+> > > Hi Greg,
+> > > 
+> > > On 12:47 Fri 17 Jan     , Greg Kroah-Hartman wrote:
+> > > > On Mon, Jan 13, 2025 at 03:58:07PM +0100, Andrea della Porta wrote:
+> > > > > The RaspberryPi RP1 is a PCI multi function device containing
+> > > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > > > > and others.
+> > > > > 
+> > > > > Implement a bare minimum driver to operate the RP1, leveraging
+> > > > > actual OF based driver implementations for the on-board peripherals
+> > > > > by loading a devicetree overlay during driver probe.
+> > > > > 
+> > > > > The peripherals are accessed by mapping MMIO registers starting
+> > > > > from PCI BAR1 region.
+> > > > > 
+> > > > > With the overlay approach we can achieve more generic and agnostic
+> > > > > approach to managing this chipset, being that it is a PCI endpoint
+> > > > > and could possibly be reused in other hw implementations. The
+> > > > > presented approach is also used by Bootlin's Microchip LAN966x
+> > > > > patchset (see link) as well, for a similar chipset.
+> > > > > 
+> > > > > For reasons why this driver is contained in drivers/misc, please
+> > > > > check the links.
+> > > > 
+> > > > Links aren't always around all the time, please document it here why
+> > > > this is needed, and then links can "add to" that summary.
+> > > 
+> > > Ack.
+> > > 
+> > > > 
+> > > > > This driver is heavily based on downstream code from RaspberryPi
+> > > > > Foundation, and the original author is Phil Elwell.
+> > > > > 
+> > > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > > 
+> > > ...
+> > > 
+> > > > > diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..3e8ba3fa7fd5
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/misc/rp1/rp1_pci.c
+> > > > > @@ -0,0 +1,305 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Copyright (c) 2018-24 Raspberry Pi Ltd.
+> > > > > + * All rights reserved.
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/err.h>
+> > > > > +#include <linux/interrupt.h>
+> > > > > +#include <linux/irq.h>
+> > > > > +#include <linux/irqchip/chained_irq.h>
+> > > > > +#include <linux/irqdomain.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/msi.h>
+> > > > > +#include <linux/of_platform.h>
+> > > > > +#include <linux/pci.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +
+> > > > > +#include "rp1_pci.h"
+> > > > 
+> > > > Why does a self-contained .c file need a .h file?  Please put it all in
+> > > > here.
+> > > 
+> > > I agree with you. Indeed, the very first version of this patch had the header
+> > > file placed inside the .c, but I received concerns about it and some advice to
+> > > do it differently, as you can see here:
+> > > https://lore.kernel.org/all/ZtWDpaqUG9d9yPPf@apocalypse/
+> > > so I've changed it accordingly in V2. So right now I'm not sure what the
+> > > acceptable behaviour should be ...
+> > 
+> > It's a pretty simple rule:
+> > 	Only use a .h file if multiple .c files need to see the symbol.
+> > 
+> > So no .h file is needed here.
+> 
+> Perfect, I'll revert back that two lines to V1 then. Please be aware
+> though that this will trigger the following checkpatch warning:
+> 
+> WARNING: externs should be avoided in .c files
 
-    [    4.239592] =============================
-    [    4.239595] [ BUG: Invalid wait context ]
-    [    4.239599] 6.13.0-rc7-arm64-renesas-05496-gd088502a519f #35 Not tainted
-    [    4.239603] -----------------------------
-    [    4.239606] kworker/u8:5/76 is trying to lock:
-    [    4.239609] ffff0000091898a0 (&p->lock){....}-{3:3}, at: gpio_rcar_config_interrupt_input_mode+0x34/0x164
-    [    4.239641] other info that might help us debug this:
-    [    4.239643] context-{5:5}
-    [    4.239646] 5 locks held by kworker/u8:5/76:
-    [    4.239651]  #0: ffff0000080fb148 ((wq_completion)async){+.+.}-{0:0}, at: process_one_work+0x190/0x62c
-    [    4.250180] OF: /soc/sound@ec500000/ports/port@0/endpoint: Read of boolean property 'frame-master' with a value.
-    [    4.254094]  #1: ffff80008299bd80 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_one_work+0x1b8/0x62c
-    [    4.254109]  #2: ffff00000920c8f8
-    [    4.258345] OF: /soc/sound@ec500000/ports/port@1/endpoint: Read of boolean property 'bitclock-master' with a value.
-    [    4.264803]  (&dev->mutex){....}-{4:4}, at: __device_attach_async_helper+0x3c/0xdc
-    [    4.264820]  #3: ffff00000a50ca40 (request_class#2){+.+.}-{4:4}, at: __setup_irq+0xa0/0x690
-    [    4.264840]  #4:
-    [    4.268872] OF: /soc/sound@ec500000/ports/port@1/endpoint: Read of boolean property 'frame-master' with a value.
-    [    4.273275] ffff00000a50c8c8 (lock_class){....}-{2:2}, at: __setup_irq+0xc4/0x690
-    [    4.296130] renesas_sdhi_internal_dmac ee100000.mmc: mmc1 base at 0x00000000ee100000, max clock rate 200 MHz
-    [    4.304082] stack backtrace:
-    [    4.304086] CPU: 1 UID: 0 PID: 76 Comm: kworker/u8:5 Not tainted 6.13.0-rc7-arm64-renesas-05496-gd088502a519f #35
-    [    4.304092] Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-    [    4.304097] Workqueue: async async_run_entry_fn
-    [    4.304106] Call trace:
-    [    4.304110]  show_stack+0x14/0x20 (C)
-    [    4.304122]  dump_stack_lvl+0x6c/0x90
-    [    4.304131]  dump_stack+0x14/0x1c
-    [    4.304138]  __lock_acquire+0xdfc/0x1584
-    [    4.426274]  lock_acquire+0x1c4/0x33c
-    [    4.429942]  _raw_spin_lock_irqsave+0x5c/0x80
-    [    4.434307]  gpio_rcar_config_interrupt_input_mode+0x34/0x164
-    [    4.440061]  gpio_rcar_irq_set_type+0xd4/0xd8
-    [    4.444422]  __irq_set_trigger+0x5c/0x178
-    [    4.448435]  __setup_irq+0x2e4/0x690
-    [    4.452012]  request_threaded_irq+0xc4/0x190
-    [    4.456285]  devm_request_threaded_irq+0x7c/0xf4
-    [    4.459398] ata1: link resume succeeded after 1 retries
-    [    4.460902]  mmc_gpiod_request_cd_irq+0x68/0xe0
-    [    4.470660]  mmc_start_host+0x50/0xac
-    [    4.474327]  mmc_add_host+0x80/0xe4
-    [    4.477817]  tmio_mmc_host_probe+0x2b0/0x440
-    [    4.482094]  renesas_sdhi_probe+0x488/0x6f4
-    [    4.486281]  renesas_sdhi_internal_dmac_probe+0x60/0x78
-    [    4.491509]  platform_probe+0x64/0xd8
-    [    4.495178]  really_probe+0xb8/0x2a8
-    [    4.498756]  __driver_probe_device+0x74/0x118
-    [    4.503116]  driver_probe_device+0x3c/0x154
-    [    4.507303]  __device_attach_driver+0xd4/0x160
-    [    4.511750]  bus_for_each_drv+0x84/0xe0
-    [    4.515588]  __device_attach_async_helper+0xb0/0xdc
-    [    4.520470]  async_run_entry_fn+0x30/0xd8
-    [    4.524481]  process_one_work+0x210/0x62c
-    [    4.528494]  worker_thread+0x1ac/0x340
-    [    4.532245]  kthread+0x10c/0x110
-    [    4.535476]  ret_from_fork+0x10/0x20
+Well where are those externs defined at?  Shouldn't there be a .h file
+for them somewhere in the tree if they really are global?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
+thanks,
 
-Hi Geert,
-
-This is similar to what was done to other GPIO drivers to solve the same
-situation see [1], [2], [3] and [4] for some examples.
-
-1. 3c938cc5cebc ("gpio: use raw spinlock for gpio chip shadowed data")
-2. 37174f334130 ("gpio: tegra: Use raw_spinlock")
-3. 4dbada2be460 ("gpio: omap: use raw locks for locking")
-3. 505936131ea7 ("gpio: mpc8xxx: Convert mpc8xxx_gpio_chip.lock to raw_spinlock")
----
- drivers/gpio/gpio-rcar.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 2ecee3269a0c..8e0544e92488 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -40,7 +40,7 @@ struct gpio_rcar_info {
- 
- struct gpio_rcar_priv {
- 	void __iomem *base;
--	spinlock_t lock;
-+	raw_spinlock_t lock;
- 	struct device *dev;
- 	struct gpio_chip gpio_chip;
- 	unsigned int irq_parent;
-@@ -123,7 +123,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
- 	 * "Setting Level-Sensitive Interrupt Input Mode"
- 	 */
- 
--	spin_lock_irqsave(&p->lock, flags);
-+	raw_spin_lock_irqsave(&p->lock, flags);
- 
- 	/* Configure positive or negative logic in POSNEG */
- 	gpio_rcar_modify_bit(p, POSNEG, hwirq, !active_high_rising_edge);
-@@ -142,7 +142,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
- 	if (!level_trigger)
- 		gpio_rcar_write(p, INTCLR, BIT(hwirq));
- 
--	spin_unlock_irqrestore(&p->lock, flags);
-+	raw_spin_unlock_irqrestore(&p->lock, flags);
- }
- 
- static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
-@@ -246,7 +246,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
- 	 * "Setting General Input Mode"
- 	 */
- 
--	spin_lock_irqsave(&p->lock, flags);
-+	raw_spin_lock_irqsave(&p->lock, flags);
- 
- 	/* Configure positive logic in POSNEG */
- 	gpio_rcar_modify_bit(p, POSNEG, gpio, false);
-@@ -261,7 +261,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
- 	if (p->info.has_outdtsel && output)
- 		gpio_rcar_modify_bit(p, OUTDTSEL, gpio, false);
- 
--	spin_unlock_irqrestore(&p->lock, flags);
-+	raw_spin_unlock_irqrestore(&p->lock, flags);
- }
- 
- static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
-@@ -347,7 +347,7 @@ static int gpio_rcar_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 		return 0;
- 	}
- 
--	spin_lock_irqsave(&p->lock, flags);
-+	raw_spin_lock_irqsave(&p->lock, flags);
- 	outputs = gpio_rcar_read(p, INOUTSEL);
- 	m = outputs & bankmask;
- 	if (m)
-@@ -356,7 +356,7 @@ static int gpio_rcar_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	m = ~outputs & bankmask;
- 	if (m)
- 		val |= gpio_rcar_read(p, INDT) & m;
--	spin_unlock_irqrestore(&p->lock, flags);
-+	raw_spin_unlock_irqrestore(&p->lock, flags);
- 
- 	bits[0] = val;
- 	return 0;
-@@ -367,9 +367,9 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
- 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&p->lock, flags);
-+	raw_spin_lock_irqsave(&p->lock, flags);
- 	gpio_rcar_modify_bit(p, OUTDT, offset, value);
--	spin_unlock_irqrestore(&p->lock, flags);
-+	raw_spin_unlock_irqrestore(&p->lock, flags);
- }
- 
- static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-@@ -386,12 +386,12 @@ static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	if (!bankmask)
- 		return;
- 
--	spin_lock_irqsave(&p->lock, flags);
-+	raw_spin_lock_irqsave(&p->lock, flags);
- 	val = gpio_rcar_read(p, OUTDT);
- 	val &= ~bankmask;
- 	val |= (bankmask & bits[0]);
- 	gpio_rcar_write(p, OUTDT, val);
--	spin_unlock_irqrestore(&p->lock, flags);
-+	raw_spin_unlock_irqrestore(&p->lock, flags);
- }
- 
- static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
-@@ -505,7 +505,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	p->dev = dev;
--	spin_lock_init(&p->lock);
-+	raw_spin_lock_init(&p->lock);
- 
- 	/* Get device configuration from DT node */
- 	ret = gpio_rcar_parse_dt(p, &npins);
--- 
-2.48.1
-
+greg k-h
