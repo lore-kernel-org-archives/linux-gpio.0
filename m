@@ -1,49 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4967E1D9346;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9821DA0E0;
 	Wed, 29 Jan 2025 14:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738162322; cv=none; b=PsAtVj6M1lrWbqkZCSJ26p34FZcwS/yYWEZWaw2SzpYPKQxUnUZ6gCsDvGKPQjzQ04q9/xd4WQp8pKUtCXsmqK5mBElmtUEhMGkWWe+64tN3HemGX/fBkv/cGpJMTe48kj9R3MOnJ6Desu0WZJhlJ8x+won/X5ElICqaZ4pF6Uc=
+	t=1738162323; cv=none; b=kK6jTU4/ZbKNh1J4iLzlMHEAehWanKxgo/D8iWly8Nu9c6vNJGA52yqphgN2cVCjH8WxVBIHKqFZS0N4JMOiF/88UE7FoGHx1Bv/mZDCFtA9fkBtslXCdCL6J2RHEA8Yof5m/lgxkVm/NjuK9Zx9M1uz/AB+DcsRlXl2TVchElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738162322; c=relaxed/simple;
-	bh=9p6DvyFXa2vMQrMf5lfC30HHQkehXtdgN4AAr1zF6GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rpVmEtvXdUHL1McXI4rVW4au7T224k/ZV2LMY192ZvOR50Lp9vWHVZDAYNAILJPwCSqKerQZUN3mZ3Ng4N0l7YdnZX1joA+znFGymOjyXTrr6KB6rqz56VJWE7BnMT94Ckl/+++KWzdZQkh8z69Jz0wWQn1+bTOTjov3rwWHEy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFccGT2e; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1738162323; c=relaxed/simple;
+	bh=wXVNh7DQEQoTXiNwv7qR3Jv7wD33BNQa0hfgNcZRC/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E1Rm+RrzmRWId5nB+nDl6dQQMTvk6We5M+ZI2jqodCXBh1Ui0gn3uvcJlma3fZgrzLorvj8wqsPY2fx9MUpbaeobsRA9MHNNiiUV81A6yFR9GxB810lGTB7GlW6ayYkrKS6gfcVOMDiE5AzUlJ6mqf5V47hqNTu4n9s/WiPUXP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EO0rKouB; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFccGT2e"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EO0rKouB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738162322; x=1769698322;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9p6DvyFXa2vMQrMf5lfC30HHQkehXtdgN4AAr1zF6GQ=;
-  b=ZFccGT2ePYnRciK+ntBnNNUQU8CU7K7E02hFYoX0/uI3q6zcqLvq38aL
-   9ic3j6VBV5EoaorSU9Kx6krAMhOGL9Z81hrFFPKGibcmZyDs0YurZQ2vr
-   7UpdANOEQ0kpBfhidTebovJN/+NX+27tPJbZspSrT7jU+M0IM41pOldud
-   DzNp+VU5d6DNpat3ptvabr660JIvTp0jzdiUPUCAcR4zBeXon09Wh/Yyr
-   RCeY8i4fNz87I8TBp7wXrTrd/qeC0gbg1MbADZ/j+JyYK7P3kaNq2D+KR
-   ViTYn0Smf0XhBKbg+jjLK0pBxv6dqN/TrNRF8QA+W1lvTOL4jl+9Xyzdl
-   g==;
-X-CSE-ConnectionGUID: P3ngi6DsSVSB4WQD4abWog==
-X-CSE-MsgGUID: yppDCo3uQEy58LIqK4jtkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="49660529"
+  t=1738162321; x=1769698321;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=wXVNh7DQEQoTXiNwv7qR3Jv7wD33BNQa0hfgNcZRC/M=;
+  b=EO0rKouBFbTUjchBXJ99IEfA2io9hQVllSkBtQAf4fBs3YwfOz09FfV9
+   8tgHm/292YsgPPR5VlHNy+VHQwO1L2Haa3EuVh/ZBhwble9Db47CbW90L
+   eSy0i63nhcY9+YSEPBtfpcggcJt8JDwHo/keypxi2/eat0/V4RgHo4WhQ
+   /RV+5WMLJS9Hn6bCSeDk6cDjKWEYS9ABfjDUKwnC1Ge0YUi/trOrdbBBU
+   KLOPfF7eeWmZt7Kyn8aqSomjOoBBPX6+G/3NIgyEd1i7qblKTbvdrFwiX
+   eFPnTvsNfKEpyXGyJhrVew35ASlF1/SgFiDvLvjXNsVr5PysTrXndq9Fj
+   w==;
+X-CSE-ConnectionGUID: REevOgmCQiCNhq4EfKA30g==
+X-CSE-MsgGUID: brASXF7sQwOtA4RjI54+DQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="37922624"
 X-IronPort-AV: E=Sophos;i="6.13,243,1732608000"; 
-   d="scan'208";a="49660529"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 06:52:01 -0800
-X-CSE-ConnectionGUID: 8s9aw6OBRriPu5pbr1gK9Q==
-X-CSE-MsgGUID: CUOec/ZJTwi7Hv88SdX03w==
+   d="scan'208";a="37922624"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 06:52:01 -0800
+X-CSE-ConnectionGUID: aAt798I0Tlefj6oRO7cJ9g==
+X-CSE-MsgGUID: FSOXVPP/SV24I394++C/4w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,243,1732608000"; 
-   d="scan'208";a="109032392"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="139919499"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 29 Jan 2025 06:51:58 -0800
+  by fmviesa001.fm.intel.com with ESMTP; 29 Jan 2025 06:51:59 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 37FD3303; Wed, 29 Jan 2025 16:51:57 +0200 (EET)
+	id 13A1F3A4; Wed, 29 Jan 2025 16:51:58 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Hans de Goede <hdegoede@redhat.com>,
@@ -52,10 +53,12 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 0/2] pinctrl: intel: Unify the way of handling chained IRQ
-Date: Wed, 29 Jan 2025 16:49:38 +0200
-Message-ID: <20250129145155.1746876-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/2] pinctrl: lynxpoint: Use dedicated helpers for chained IRQ handlers
+Date: Wed, 29 Jan 2025 16:49:40 +0200
+Message-ID: <20250129145155.1746876-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20250129145155.1746876-1-andriy.shevchenko@linux.intel.com>
+References: <20250129145155.1746876-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,19 +67,41 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some of the drivers are using the dedicated helpers (chained_irq_enter(),
-chained_irq_exit() helpers) and some relies on the specific implementations
-of the parent IRQ chip and its configuration. Update the latter ones to
-use dedicated helpers that cover all possible scenarios.
+Instead of relying on the fact that the parent IRQ chip supports
+fasteoi mode and calling the respective callback at the end of
+the interrupt handler, surround it with enter and exit helpers
+for chained IRQ handlers which will consider all possible cases.
 
-Andy Shevchenko (2):
-  pinctrl: baytrail: Use dedicated helpers for chained IRQ handlers
-  pinctrl: lynxpoint: Use dedicated helpers for chained IRQ handlers
+This in particular unifies how GPIO drivers handle IRQ.
 
- drivers/pinctrl/intel/pinctrl-baytrail.c  | 5 ++++-
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
  drivers/pinctrl/intel/pinctrl-lynxpoint.c | 5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index cc5ede17c383..ac5459a4c63e 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -549,6 +549,8 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
+ 	unsigned long pending;
+ 	u32 base, pin;
+ 
++	chained_irq_enter(chip, desc);
++
+ 	/* check from GPIO controller which pin triggered the interrupt */
+ 	for (base = 0; base < lg->chip.ngpio; base += 32) {
+ 		reg = lp_gpio_reg(&lg->chip, base, LP_INT_STAT);
+@@ -560,7 +562,8 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
+ 		for_each_set_bit(pin, &pending, 32)
+ 			generic_handle_domain_irq(lg->chip.irq.domain, base + pin);
+ 	}
+-	chip->irq_eoi(data);
++
++	chained_irq_exit(chip, desc);
+ }
+ 
+ static void lp_irq_ack(struct irq_data *d)
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
