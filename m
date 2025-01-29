@@ -1,64 +1,79 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83681DBB3A;
-	Wed, 29 Jan 2025 14:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E960D1D6193
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jan 2025 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738162324; cv=none; b=NuUDz+mYfRbxxT3eQzH9mTKSCWfg9hT+1InFlCVlFPcuwxpM5FSjiemqOnGppo0GkcBHPHYmVzme3QWC/VSoL+yNc87TnnYHi9OOP4OpvqIgTGAsfxe7+3O6vkuVA86SR5WrK1448mMz6U/Hk69kO0wTTrbPIx8vPjVzCMAikFs=
+	t=1738166166; cv=none; b=If0NhLYEHCOc1aW9wa8qZivX+0/hKIgAZNzSwXxnbJp1J6rL/N4A5BHKISu+Co4FVl27Pzw1tW94kpjaC09szNCkvLtQ3yAyed4I3SU4rCEN+QKEcmR46Ynv/tX4PAaqO/EOlwVIotMjJZ3IIykdeOkzL+ZaAB/j7TmyXypHBqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738162324; c=relaxed/simple;
-	bh=NRorMT7Ai4NWgV9s2kkQDmqPzFKKDlNb2YMIg1z9kyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ic15aMScKd7OW0jDOy94oKI49GORqp7jCRNMQp328Um0njz5w4JPD1MVU6i3COJau9tdUuPRmcKCFkHRWwwNYsCjTXNXJNe68CvwRkhUeH1mjBGJqF7wK64nqtyAc+NJj9U31F8GSHk4Rs90vrhjCsgEOkwZLDx0Grd/DfadCyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kr7dj8HB; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1738166166; c=relaxed/simple;
+	bh=VtVAh2VfHgr31+drTgT7Pvcgcs24/ZSVTsXm8vfJN6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QMpSshoh8wegeqadhNeVMjOXDXH2T7SSTMK7SWLFvwnbp9SFgYYd9jeuu9AlP+TG+s3RGn23Zmce2WiR9ZyOoqu6WTOxPlQyGgPnnWvL/Uj/ZjxpWsQ5UjU93dPqCxz3HqGiiTcqU9JULoOttmFrmvoW5Exc54n4TcmD2ZlwO3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=u80WdXRt; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kr7dj8HB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738162324; x=1769698324;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NRorMT7Ai4NWgV9s2kkQDmqPzFKKDlNb2YMIg1z9kyM=;
-  b=kr7dj8HB/+pIlUKjiftqmWw21XwK+yn2E938pCZL6HdFila3IpNQAWxk
-   QswKGCFwV70g0gOzlZvcppYmzTPYcG8C3YdMWv9sOkYVk66VnTl+MtOes
-   XNqNHd/xJAKKxjggWh2QSIkLOBBU6q6GQpDN0zTHQ3iuwPa7y7wHuZYDh
-   qolSGTwM0Q42bBth0fRJiic8IDLx49AFXmB75IZwMXMsV1lha/+d7dgMZ
-   1UeNIWcvQo2I7xMQJSUziexCPuh4yQRBWjasnGp6fdIUpbs24/BEy2dx0
-   Dg5/9WvxOm21+YfvMY+FNAGYC7XdHL/gQrN2Gh+DKnnP/lH88nE3A60qO
-   g==;
-X-CSE-ConnectionGUID: 7iVFST7LTDucAhOH1VozvQ==
-X-CSE-MsgGUID: v5ttux5tQnS5K7f5gp/YWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11330"; a="49660533"
-X-IronPort-AV: E=Sophos;i="6.13,243,1732608000"; 
-   d="scan'208";a="49660533"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2025 06:52:01 -0800
-X-CSE-ConnectionGUID: lbWWjpKJTnqhP3rh3vpbmQ==
-X-CSE-MsgGUID: 4lkE05J8T2ariGqkIBaEQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,243,1732608000"; 
-   d="scan'208";a="109032394"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 29 Jan 2025 06:51:59 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A817F325; Wed, 29 Jan 2025 16:51:57 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-gpio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="u80WdXRt"
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E36873F284
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jan 2025 15:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1738166160;
+	bh=pmsvkeTFmLqKgoiwRtA7RMEXjEmdiy9fitR8oZ87sCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=u80WdXRtUNi6kZNQqZskxAW09EO5sgvgKLEuFY8AIYu8JMwTX3R993AnDyV+CSbvP
+	 hGfjVZQTREr3ipA4gyVzOZZZswbJNT4jM82nJMnNOvN8Rw+OR3JCagZ93cQiz5iYq7
+	 IJIzi/g7kTU8yzamfRs5duLYaCqrwdvMgYFl5ZnWtH8aXo0msbtVOSvzomm4bQFvGa
+	 cHjxIOWdcXptqiLyD0A4roF+EnHtsO4AdZ3PaWObeVm5bwjiVLQWiWM9s49kAMmoqg
+	 IsQH90MAwlyufZRKHTdMHg8WIU8GS31ENZ28XelQ+IbYMcYnJ3ULtpJ+XXVASJ1B/+
+	 VBUUT3tq40Fog==
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21655569152so142387775ad.2
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jan 2025 07:56:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738166159; x=1738770959;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pmsvkeTFmLqKgoiwRtA7RMEXjEmdiy9fitR8oZ87sCI=;
+        b=NNRmduHmq52BoJWwwemSM8DTHFZM3KUxUw74zbNJJFSw0wz/JSIogYTXkkI9js9uLx
+         +ix+BgMaZ/dOIcdj/i1YFXSjjb+aifA33/bKXGQz5Q0uCgCF69v7rSCe2m0uxwAfIlZn
+         YL1CiHN0Jn8HcR2P1pWnR6jK9WHeM1tEieRKsUVlncOXs2FlJVgVYKX4YP2bxkjBdyN0
+         /Nj4us/jhihCw/CNR5nmITCF+FK6dFNwM7rRLglBIYuCiy1vXrp4Kz9KSrga/ARwTTM6
+         wq/Z4bCX3FBBW0EfSTDNQV7Ak3Wpm8d7XjJa/zZuIR5qQeOYeNc+uWnzAt9bsKLtLGYo
+         FCkg==
+X-Gm-Message-State: AOJu0Yz858ApScOib+4RvwIQtCHFz+wgWiRIyYO3KyhCMqqqfpQsibNu
+	ieB02bk5E1dJSLIKmJZusmeg/ktfnIziwHuT8RFCngVbMkCegyFYlrlbuisvfIJ2mHgFFDcS8oh
+	wK4lsAfk0jMfTtSnRGvmE/OcCrvVCnCfnc1p8v5qdQONRFq2+YdEjFhnjA75dMrWg8DHnoRS+J7
+	BxKg2Xt6o=
+X-Gm-Gg: ASbGncu6DQfeQPK0D8BnDKBhnwuDaV3L/NKkqqSJ0UAaZqaSVXnP4HHsb8XlvFmewiZ
+	zLxTHL1q85oBDQMB9S2D3DPoSo0a7lOWhPgE4Th3D6t4O7B2ath/y9NG3uYpFV4jorK2SnQT1NU
+	B3myVoo/u64gJ9SDTM67cJJl+2K2fgQ23fM9iCWqscwmNO03ZgcYnjdcmVQ+Ei1Yl5GihMtUOu3
+	QjEnd5OCGyDTubuYS4vsYo96JlPf+PYFXO8VLczXy/pVJpCHIUHr7d9L+VOk0ueC8MEBgblvBYj
+	lHBQ3FN1cysXu0Wq0Yw0Zvc=
+X-Received: by 2002:a05:6a20:d809:b0:1e0:df27:10b5 with SMTP id adf61e73a8af0-1ed7a6e0e6bmr7049735637.29.1738166159202;
+        Wed, 29 Jan 2025 07:55:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEEFdYQAiWLLWYn0BlsNbCWmLkCAC1zrD8TYyIX3e6mEdy6xAmSuYP3uU+vfxFvw/KK/Y948Q==
+X-Received: by 2002:a05:6a20:d809:b0:1e0:df27:10b5 with SMTP id adf61e73a8af0-1ed7a6e0e6bmr7049693637.29.1738166158810;
+        Wed, 29 Jan 2025 07:55:58 -0800 (PST)
+Received: from localhost.localdomain ([240f:74:7be:1:daf2:7ab4:ebc3:f450])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72f8a77c4fasm11674432b3a.132.2025.01.29.07.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2025 07:55:58 -0800 (PST)
+From: Koichiro Den <koichiro.den@canonical.com>
+To: linux-gpio@vger.kernel.org
+Cc: geert+renesas@glider.be,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	maciej.borzecki@canonical.com,
 	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/2] pinctrl: baytrail: Use dedicated helpers for chained IRQ handlers
-Date: Wed, 29 Jan 2025 16:49:39 +0200
-Message-ID: <20250129145155.1746876-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20250129145155.1746876-1-andriy.shevchenko@linux.intel.com>
-References: <20250129145155.1746876-1-andriy.shevchenko@linux.intel.com>
+Subject: [RFC PATCH 0/2] Introduce configfs-based interface for gpio-aggregator
+Date: Thu, 30 Jan 2025 00:55:23 +0900
+Message-ID: <20250129155525.663780-1-koichiro.den@canonical.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -67,41 +82,50 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of relying on the fact that the parent IRQ chip supports
-fasteoi mode and calling the respective callback at the end of
-the interrupt handler, surround it with enter and exit helpers
-for chained IRQ handlers which will consider all possible cases.
+This RFC patch series proposes adding a configfs-based interface to
+gpio-aggregator to address limitations in the existing 'new_device'
+interface.
 
-This in particular unifies how GPIO drivers handle IRQ.
+The existing 'new_device' interface has several limitations:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+  #1. No way to determine when GPIO aggregator creation is complete.
+  #2. No way to retrieve errors when creating a GPIO aggregator.
+  #3. No way to trace a GPIO line of an aggregator back to its
+      corresponding physical device.
+  #4. The 'new_device' echo does not indicate which virtual gpiochip.<N>
+      was created.
+  #5. No way to assign names to GPIO lines exported through an aggregator.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 7340dc20349c..c4458ac539ff 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1355,6 +1355,8 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
- 	void __iomem *reg;
- 	unsigned long pending;
- 
-+	chained_irq_enter(chip, desc);
-+
- 	/* check from GPIO controller which pin triggered the interrupt */
- 	for (base = 0; base < vg->chip.ngpio; base += 32) {
- 		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
-@@ -1369,7 +1371,8 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
- 		for_each_set_bit(pin, &pending, 32)
- 			generic_handle_domain_irq(vg->chip.irq.domain, base + pin);
- 	}
--	chip->irq_eoi(data);
-+
-+	chained_irq_exit(chip, desc);
- }
- 
- static bool byt_direct_irq_sanity_check(struct intel_pinctrl *vg, int pin, u32 conf0)
+Although issues #1 to #3 could technically be resolved easily without
+configfs, using configfs offers a streamlined, modern, and extensible
+approach, especially since gpio-sim and gpio-virtuser already utilize
+configfs.
+
+This RFC patch series includes two commits:
+
+* [PATCH 1/2] implements the configfs interface and resolves the above
+  issues:
+  - #1, Wait for probe completion using a platform bus notifier,
+        in the same manner as gpio-virtuser.
+  - #2, Introduce a 'live' attribute (like gpio-virtuser/gpio-sim),
+        returning -ENXIO when probe fails.
+  - #3, Structure configfs directories to clearly map virtual lines to
+        physical ones.
+  - #4, Add a read-only 'dev_name' attribute exposing the platform bus
+        device name.
+  - #5, Allow users to set custom line names via a 'name' attribute.
+
+* [PATCH 2/2] provides documentation on using the new interface.
+
+
+Koichiro Den (2):
+  gpio: aggregator: Introduce configfs interface
+  Documentation: gpio: document configfs interface for gpio-aggregator
+
+ .../admin-guide/gpio/gpio-aggregator.rst      |  86 +++
+ drivers/gpio/gpio-aggregator.c                | 673 +++++++++++++++++-
+ 2 files changed, 757 insertions(+), 2 deletions(-)
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.45.2
 
