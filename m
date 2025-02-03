@@ -1,104 +1,132 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D601FA15E;
-	Mon,  3 Feb 2025 12:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558EE2036E1;
+	Mon,  3 Feb 2025 12:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738584835; cv=none; b=m32vuaKBpftZmUpLVi+MmJo7ZEouCMePeeSAPF7MjkQLXHOPJorNHVcfHvvb7jpqbCQIp5XVGui3w8aSQ+260+TeZomgGHfQNYHt++1fiGWcgKBTiByiucwTch3QEfczoyHI6pqBrGiMmzyyqmHioJO58OLf5tsQ1VZS6AWYasI=
+	t=1738585129; cv=none; b=A3SZToee7y70h/mqTWoTglyou8xerpe2vVnIVMk2zDXpKAz9ldhWl/vDsGFBt4UtQhx8ZqzEBh1T57aitaWyo5e20vVnlWKAnmG3Dj+wOdmcOJ3kaH59pvcVc5pGoQSqYBzdBJjC3UWzBxIKwt41yQ2i1oBrrsdk8oFDym7SZaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738584835; c=relaxed/simple;
-	bh=ct1m8qnSRoUG1BuJX26GQpfL2oSAy2xCl3eci1O0qH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7GpAWQS7nXOdBVwABuCcM9bH/j4UTAtylCBWm/h+orOxtvEmeTFddmtPT1A+9UeS8Xl5U3FpbcAlr7zLLTQxOvCPkg10HC6LoNAbr/NbRGphVFrZJnVJWRcQBU4QMfR12UauFZNngC998gS29+zS54/7s1a4RQTPAgnBDYdj8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GvhFuRnk; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1738585129; c=relaxed/simple;
+	bh=Hg+ZWkXcKMzpoi69OuZ67hZSAqFz2rwIYs4UrpX3Q1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cGy2gCa2YIVwH9NEdiGdb4qb8ZjC0O3tzbssDYH3Q6EPXDD7x8vTrFP7DbJG/s6UXVe+psgpHbpRt79IhRdAtUL5ZWLrd7IS5IJTjZ4n+eul9hiHATTF/b/KQyJZF5gRUou1/lThLk4HyrqR5lBgQzj/ekvNSO2XF6wl2ajFyVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JGNVf+R5; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GvhFuRnk"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JGNVf+R5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738584834; x=1770120834;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ct1m8qnSRoUG1BuJX26GQpfL2oSAy2xCl3eci1O0qH4=;
-  b=GvhFuRnkabjFSK84qxZbjBOSUPhE3f82An2XxS3LVjTx+qPqcu5qYqcW
-   /oNMc0LzWyQtwkEfcH8EhDLTEheacI7ykh/CJuUBL/qYlCn8HMEe9wWd4
-   4+EhaO/nqkysOmYChesWEB/wqm8zPJaFi7kc4gnOCmNGEc4gGNs+2V7dx
-   5IB6LqaBf7f5pqRWKJs056haQ7l6IJIAr7TBLJcR64eM5Ttj84oXNq8GS
-   Wy8IxnJjfD4B8snkyeu7s6OqKOKNOg0XCg+9cjnV4WUw1V1p2KsVyvV12
-   ESiDNksjvFYzytOSFJNiOX2u4d7+ao2B5Nv0/am8amfUR0SA/TVjGjSGp
-   A==;
-X-CSE-ConnectionGUID: u0+zT/R4Q7i8LyPf0D4PPg==
-X-CSE-MsgGUID: FBsKw/phQfWaH9lauzenRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="26676183"
+  t=1738585129; x=1770121129;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Hg+ZWkXcKMzpoi69OuZ67hZSAqFz2rwIYs4UrpX3Q1U=;
+  b=JGNVf+R5CUoZSxaDZFaj454feamTUn/2nr5C+aQ65qFIKbpxflv7TZF0
+   YpKMm2Vrxc1kR8MKfZ5Op31eDdjOc8nZOOd54morp5Duice4y4DdZfUMP
+   wtXrPIcjJR/LefUOSUgPYUYL5cG9yePsAe949N1p+KYE550zvSXakiqaG
+   MAiLucHkW8wpdS1WFu+XjMYXlzSV2CnWbVOhKoQP78ZnQSm/jbGS+/Rk9
+   rSUVwOGL3mN4POpTVTBI7na4cvThDAAhgHYUhcT3MlAIiqufgQV7ATBgs
+   ZomkY9IXGTKQ0hZk6kGJ7Ypo9+XNyRrb7eJi5r0KeQehK4TpsR8WIKx6c
+   Q==;
+X-CSE-ConnectionGUID: F9J0RjmZTySLRQPf7ibG8g==
+X-CSE-MsgGUID: ctdBajcsQ0iXSkLJ8iQRkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="56502983"
 X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="26676183"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 04:13:53 -0800
-X-CSE-ConnectionGUID: cPOMVMPeRGaRVLvglrh2PQ==
-X-CSE-MsgGUID: 03UBfc3AQB2QttB6A11ckA==
+   d="scan'208";a="56502983"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 04:18:48 -0800
+X-CSE-ConnectionGUID: U/dc3eLMTaagZAXlvCZv4A==
+X-CSE-MsgGUID: jQ1GOZbLQXuXeAO0Tpr6Tw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="110095012"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 04:13:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tevKn-00000007p5P-0Xuh;
-	Mon, 03 Feb 2025 14:13:49 +0200
-Date: Mon, 3 Feb 2025 14:13:48 +0200
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
+   d="scan'208";a="115279157"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 03 Feb 2025 04:18:46 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 62D423A7; Mon, 03 Feb 2025 14:18:44 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Rudolph <patrick.rudolph@9elements.com>
-Subject: Re: [PATCH v1 01/16] pinctrl: cy8c95x0: Respect IRQ trigger settings
- from firmware
-Message-ID: <Z6Cy_Nap7Euvb7Am@smile.fi.intel.com>
-References: <20250117142304.596106-1-andriy.shevchenko@linux.intel.com>
- <20250117142304.596106-2-andriy.shevchenko@linux.intel.com>
- <CACRpkdb=WDLxerQCS4oGoxe4p+A6VZDw-WH9NJuDaxoxju8PeQ@mail.gmail.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/7] gpio: 74x164: Annotate buffer with __counted_by()
+Date: Mon,  3 Feb 2025 14:17:19 +0200
+Message-ID: <20250203121843.3183991-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20250203121843.3183991-1-andriy.shevchenko@linux.intel.com>
+References: <20250203121843.3183991-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdb=WDLxerQCS4oGoxe4p+A6VZDw-WH9NJuDaxoxju8PeQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Jan 27, 2025 at 11:03:02AM +0100, Linus Walleij wrote:
-> On Fri, Jan 17, 2025 at 3:23 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Som of the platforms may connect the INT pin via inversion logic
-> > effectively make the triggering to be active-low.
-> > Remove explicit trigger flag to respect the settings from firmware.
-> >
-> > Without this change even idling chip produces spurious interrupts
-> > and kernel disables the line in the result:
-> >
-> >   irq 33: nobody cared (try booting with the "irqpoll" option)
-> >   CPU: 0 UID: 0 PID: 125 Comm: irq/33-i2c-INT3 Not tainted 6.12.0-00236-g8b874ed11dae #64
-> >   Hardware name: Intel Corp. QUARK/Galileo, BIOS 0x01000900 01/01/2014
-> >   ...
-> >   handlers:
-> >   [<86e86bea>] irq_default_primary_handler threaded [<d153e44a>] cy8c95x0_irq_handler [pinctrl_cy8c95x0]
-> >   Disabling IRQ #33
-> >
-> > Fixes: e6cbbe42944d ("pinctrl: Add Cypress cy8c95x0 support")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Patch applied for fixes! (Speling mistake on first line fixed in the process.)
+Add the __counted_by() compiler attribute to the flexible array member
+volumes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-Thanks! Any plans to take the rest of the fixes (except the one which Patrick
-rightfully objected on)?
+Use struct_size() instead of manually calculating the number of bytes to
+allocate the private structure with a buffer.
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-74x164.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index 70c662bbca7b..7844f8a58834 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -30,7 +30,7 @@ struct gen_74x164_chip {
+ 	 * register at the end of the transfer. So, to have a logical
+ 	 * numbering, store the bytes in reverse order.
+ 	 */
+-	u8			buffer[];
++	u8			buffer[] __counted_by(registers);
+ };
+ 
+ static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
+@@ -97,6 +97,7 @@ static int gen_74x164_direction_output(struct gpio_chip *gc,
+ 
+ static int gen_74x164_probe(struct spi_device *spi)
+ {
++	struct device *dev = &spi->dev;
+ 	struct gen_74x164_chip *chip;
+ 	u32 nregs;
+ 	int ret;
+@@ -116,10 +117,12 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+ 
+-	chip = devm_kzalloc(&spi->dev, sizeof(*chip) + nregs, GFP_KERNEL);
++	chip = devm_kzalloc(dev, struct_size(chip, buffer, nregs), GFP_KERNEL);
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
++	chip->registers = nregs;
++
+ 	chip->gpiod_oe = devm_gpiod_get_optional(&spi->dev, "enable",
+ 						 GPIOD_OUT_LOW);
+ 	if (IS_ERR(chip->gpiod_oe))
+@@ -133,10 +136,7 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 	chip->gpio_chip.set = gen_74x164_set_value;
+ 	chip->gpio_chip.set_multiple = gen_74x164_set_multiple;
+ 	chip->gpio_chip.base = -1;
+-
+-	chip->registers = nregs;
+ 	chip->gpio_chip.ngpio = GEN_74X164_NUMBER_GPIOS * chip->registers;
+-
+ 	chip->gpio_chip.can_sleep = true;
+ 	chip->gpio_chip.parent = &spi->dev;
+ 	chip->gpio_chip.owner = THIS_MODULE;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0.rc1.1336.g36b5255a03ac
 
