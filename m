@@ -1,59 +1,59 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6779320551B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A5A205519;
 	Mon,  3 Feb 2025 13:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738588517; cv=none; b=aNt47ljswjqiKZq5VrxxSpjCx3XfTrc/tDlpf5IyV/AztSsYmdFhrLyYptnO7rexkJDRTXhSLQCVq21N2hW/LwwcOBhW82GANI50GO/VijLnhCSIRVY7OVK4sdPEJuufsWPmitPR/D39milYtnEYiEYQ+6YhGSXUnQCKCKL4z5s=
+	t=1738588517; cv=none; b=X6rLJZb5fOXhmfeFb0njD9uTbNHkxJ4fDgIrvcoTu+WSXecB4ekAx8KPVKBBYchhrfA5O35kK0NqD4XYv506pVQN2GqrD58qsH3JIVHvxaRn3Uu3Vxyvb+UUXbyMXDK2AzqDxr0U+0beJ+KNJL2Ir52J82VLVxgNcaZqtbII30Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738588517; c=relaxed/simple;
-	bh=xe1zv0tzk/GSTJsUigGdLZtpoCH8O3sHDtIzPXb+VL4=;
+	bh=9hbhJ/OGcbx2u5M6L6AVNb9EanjkqtbRFH64m31jAH8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hY8Jf1DgEK2r8C7V5Oqnx9VOvsimVaUhwE1gInXf6Eia2YlxCiWcHHADaZ3tmVGTZny5U5+FBhdcnygLeGYBbTgjub9sQKmC944joXd7a9K8MHqxf+H84xR/k4ko1DmLRVRdkqEDUJdX7ai9Gm1GkwA2o5MS0AVUzNE5xKE9wmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PwpWbNHv; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=TlaZ4lhKdAdOjU8laaKz9NhTsMOFr7hy1Lqex/stQmQ7s+M6nlB3vm5NNwksf3vXJgxj5OOL6wqcCouhZSsuZxK2a0AZTcBEahBI7DFqLbFcOmHvezE5cdf1owwTh9sAaBO0h48Nbakh1UOjyNM3iRa1QLAgT0Z/MVoixSZYY2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L6blbxl4; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PwpWbNHv"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L6blbxl4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1738588515; x=1770124515;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xe1zv0tzk/GSTJsUigGdLZtpoCH8O3sHDtIzPXb+VL4=;
-  b=PwpWbNHvGnxNuzQmSGcK0FsNOAR1h5YuxoVSeIttYfrM4vW5vd7bWtyY
-   /SX6EuFp9PHKZGylMPiB2rnK6RMr4S3g+yj/sdP+a2WiG4KUkVcXjoa9x
-   EPtivkeTPGpCPFfZY/7Wcu/TBMk3uTrt9XpOsB3ckfpTcsH0sYpvGaqIA
-   WlRVi13xVGBPN9koIPoTwosoQM3XgNnTHQSL3zdHJHSDPsWRa9I3fE5Ie
-   eHbSJ3sW78hesfBlPgrUul75LD+T4t8pv+iJ5knF+Cngc+GE7CEhz674W
-   tFeMfjbR9J+YczP2dVgABPsU1mHcdiLhZyInlCD2O/6cqof1lKQDsmKlt
-   g==;
-X-CSE-ConnectionGUID: c4LAdA3kQqK5X/J1IE4c0w==
-X-CSE-MsgGUID: kDxkuxfwSC6f8wbhhxocuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="39217693"
+  bh=9hbhJ/OGcbx2u5M6L6AVNb9EanjkqtbRFH64m31jAH8=;
+  b=L6blbxl4rzWKdPAdquqKHzQFfmOW8iGncJzoQ9+DgD7hnfvL+NNx7+r5
+   j09C07VGV8Zdy7eWpMQ7euNUaMUQS1IEnobuy69iXdF6AJUwPTghjc8Qe
+   F+zwGjqnFNvkpzdEoQ32UZ9u9PTGOOjtaT1wNMDBcSX24TgVqWI5bSg0Q
+   DN12nRaDGqFRUkuFR7CjsCr5Le8LNU2iqoswKiJXtLtqyE6zeY2n42eMM
+   rrHV0zxwC17S7nq05Wl2XDq9RS2hqBOte9wXYaouFOqC1t2NQ7uqEcRwa
+   qC9498aBVzFYcocFwC8hZeYQiE7VuvkA+UHZCsgga8neWJRXjRIT5BzD9
+   A==;
+X-CSE-ConnectionGUID: tUXKU0MBTT2gW6oMej7RTA==
+X-CSE-MsgGUID: wjDAOAIvT+ewtDEemFg4RQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="39217692"
 X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="39217693"
+   d="scan'208";a="39217692"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 05:15:12 -0800
-X-CSE-ConnectionGUID: pBfBV4VBQTaqf0soQX8MTA==
-X-CSE-MsgGUID: j6rSZ+yaTAWu7m0sY7i1aA==
+X-CSE-ConnectionGUID: yNs2vvw9RwyGpCQN1sIZFA==
+X-CSE-MsgGUID: 0k4aAtZYSjyQ9uPqA1+y+w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="115287401"
+   d="scan'208";a="115287398"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa004.jf.intel.com with ESMTP; 03 Feb 2025 05:15:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0F4FD5E3; Mon, 03 Feb 2025 15:15:08 +0200 (EET)
+	id D73983A7; Mon, 03 Feb 2025 15:15:07 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 09/14] pinctrl: cy8c95x0: Replace 'return ret' by 'return 0' in some cases
-Date: Mon,  3 Feb 2025 15:10:35 +0200
-Message-ID: <20250203131506.3318201-10-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 05/14] pinctrl: cy8c95x0: Use better bitmap APIs where appropriate
+Date: Mon,  3 Feb 2025 15:10:31 +0200
+Message-ID: <20250203131506.3318201-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
 References: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
@@ -65,45 +65,98 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When it's known that the returned value can't be non-zero,
-use 'return 0' explicitly.
+There are bitmap_gather() and bitmap_scatter() that are factually
+reimplemented in the driver. Use better bitmap APIs where appropriate.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 33 +++++++++++-------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index cd191cb1101e..e02cab05cbfc 100644
+index d73004b4a45e..52d8a44bb44e 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -517,7 +517,7 @@ static int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip,
- 		regcache_cache_only(chip->regmap, false);
- 	}
+@@ -137,7 +137,7 @@ static const struct dmi_system_id cy8c95x0_dmi_acpi_irq_info[] = {
+  * @irq_trig_low:   I/O bits affected by a low voltage level
+  * @irq_trig_high:  I/O bits affected by a high voltage level
+  * @push_pull:      I/O bits configured as push pull driver
+- * @shiftmask:      Mask used to compensate for Gport2 width
++ * @map:            Mask used to compensate for Gport2 width
+  * @nport:          Number of Gports in this chip
+  * @gpio_chip:      gpiolib chip
+  * @driver_data:    private driver data
+@@ -158,7 +158,7 @@ struct cy8c95x0_pinctrl {
+ 	DECLARE_BITMAP(irq_trig_low, MAX_LINE);
+ 	DECLARE_BITMAP(irq_trig_high, MAX_LINE);
+ 	DECLARE_BITMAP(push_pull, MAX_LINE);
+-	DECLARE_BITMAP(shiftmask, MAX_LINE);
++	DECLARE_BITMAP(map, MAX_LINE);
+ 	unsigned int nport;
+ 	struct gpio_chip gpio_chip;
+ 	unsigned long driver_data;
+@@ -622,13 +622,8 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ 	int ret;
  
--	return ret;
-+	return 0;
- }
+ 	/* Add the 4 bit gap of Gport2 */
+-	bitmap_andnot(tmask, mask, chip->shiftmask, MAX_LINE);
+-	bitmap_shift_left(tmask, tmask, 4, MAX_LINE);
+-	bitmap_replace(tmask, tmask, mask, chip->shiftmask, BANK_SZ * 3);
+-
+-	bitmap_andnot(tval, val, chip->shiftmask, MAX_LINE);
+-	bitmap_shift_left(tval, tval, 4, MAX_LINE);
+-	bitmap_replace(tval, tval, val, chip->shiftmask, BANK_SZ * 3);
++	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
++	bitmap_scatter(tval, val, chip->map, MAX_LINE);
  
- /**
-@@ -1286,7 +1286,7 @@ static int cy8c95x0_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 				unsigned long *configs, unsigned int num_configs)
+ 	for (unsigned int i = 0; i < chip->nport; i++) {
+ 		/* Skip over unused banks */
+@@ -653,19 +648,13 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
  {
- 	struct cy8c95x0_pinctrl *chip = pinctrl_dev_get_drvdata(pctldev);
--	int ret = 0;
-+	int ret;
- 	int i;
+ 	DECLARE_BITMAP(tmask, MAX_LINE);
+ 	DECLARE_BITMAP(tval, MAX_LINE);
+-	DECLARE_BITMAP(tmp, MAX_LINE);
+ 	int read_val;
+ 	u8 bits;
+ 	int ret;
  
- 	for (i = 0; i < num_configs; i++) {
-@@ -1295,7 +1295,7 @@ static int cy8c95x0_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			return ret;
+ 	/* Add the 4 bit gap of Gport2 */
+-	bitmap_andnot(tmask, mask, chip->shiftmask, MAX_LINE);
+-	bitmap_shift_left(tmask, tmask, 4, MAX_LINE);
+-	bitmap_replace(tmask, tmask, mask, chip->shiftmask, BANK_SZ * 3);
+-
+-	bitmap_andnot(tval, val, chip->shiftmask, MAX_LINE);
+-	bitmap_shift_left(tval, tval, 4, MAX_LINE);
+-	bitmap_replace(tval, tval, val, chip->shiftmask, BANK_SZ * 3);
++	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
++	bitmap_scatter(tval, val, chip->map, MAX_LINE);
+ 
+ 	for (unsigned int i = 0; i < chip->nport; i++) {
+ 		/* Skip over unused banks */
+@@ -685,8 +674,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
  	}
  
--	return ret;
-+	return 0;
- }
+ 	/* Fill the 4 bit gap of Gport2 */
+-	bitmap_shift_right(tmp, tval, 4, MAX_LINE);
+-	bitmap_replace(val, tmp, tval, chip->shiftmask, MAX_LINE);
++	bitmap_gather(tval, val, chip->map, MAX_LINE);
  
- static const struct pinconf_ops cy8c95x0_pinconf_ops = {
+ 	return 0;
+ }
+@@ -1486,8 +1474,11 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 		return PTR_ERR(chip->regmap);
+ 
+ 	bitmap_zero(chip->push_pull, MAX_LINE);
+-	bitmap_zero(chip->shiftmask, MAX_LINE);
+-	bitmap_set(chip->shiftmask, 0, 20);
++
++	/* Setup HW pins mapping */
++	bitmap_fill(chip->map, MAX_LINE);
++	bitmap_clear(chip->map, 20, 4);
++
+ 	mutex_init(&chip->i2c_lock);
+ 
+ 	if (dmi_first_match(cy8c95x0_dmi_acpi_irq_info)) {
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
