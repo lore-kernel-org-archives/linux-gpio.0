@@ -1,136 +1,126 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4671FECDF
-	for <linux-gpio@vger.kernel.org>; Mon,  3 Feb 2025 12:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9D3201002;
+	Mon,  3 Feb 2025 13:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738587178; cv=none; b=JpZiCr+or48B9yI+KijAIm+Q9D95kMCzzvbpzL6SEOZB7Ps00JOnKXs6zRo7DhTFZPJcd3Mseur5yTsjjH4nArPOalbeiL2pqMfsSyoz+ReTew60olY6aLDAr8ufDkIizrXfkORICMiqQTNSfI7VmHl7lroZxqMvibp3XaXQ8I0=
+	t=1738588512; cv=none; b=QPY0P/4SHN2MdjSudZNkGUlE5LT49Wksy3RhzdPsWRiPBZS2vYjJ7hR5YAkH2oa1Nf2WfEThsS+Q3H1vU+P+uiXLPxycGdR+nPOg91VWb12DziIMtfCa2eGoUwaOgSt6YFNFGfiePKKwV+LsmAHb/6YjESkUuclLptWZRXC5PLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738587178; c=relaxed/simple;
-	bh=M3Kt5wuTT2F1a9ykRD0aslud2PJzB/uiZovD9dlqnhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxrDHP+v0BRbkBlgGsjgJUqkX8EjvvrQkb4N3jwCnPzX4ixg1yRoWbOB9/pIhRF0VNZ6v/AJ5mOzeVuYUXKieQPKKDUPVWeXFotO7AhKUngABHjr07jGNRcGEcNEiHpRV429azNUilvVZEiz3jbI0f/QkDIIBR0vuPf8V49Mtgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ND3cr9BK; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1738588512; c=relaxed/simple;
+	bh=gs4Zt0xEqSo1Z8vwU6FIloykVDGXSg9fCQEbpQ8eQ6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VuBFCeaIGrDTvMkRdG2plI8kV0Tj3KadKYG4PMfn2G+D/RBtIDqJnWsBtwrQmgkf44hzK6R6wUM1GyoNryuzAYqDDw84B54NUnF9LPwatbr6UCZMqdp9isgQpjpVYjjNlfFNH+7JIrjfYfzZrJeLypVpedbNnZMwEZ8VTIKFczU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fqrs+6n8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ND3cr9BK"
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D40FD3F2B8
-	for <linux-gpio@vger.kernel.org>; Mon,  3 Feb 2025 12:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1738587171;
-	bh=VhF9k3IAhHoTNkD1u2+baAbQZJeo4gcwGS+UKXk5kHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=ND3cr9BKuGcspJQ2bj2OVn52TDr/In1QcQp6wB6oMvibBDRPg8ApzW7hITgpK7Eqg
-	 v6FzSTiCJxznE11fLfXI6Srz4lGh67FH6PAHqU4kYsmCrHl1NmHEC0WpEGVExRKTSS
-	 HlBU3LQ/f+Uh3ZCrCXWa80AebzPp/1DC64rFN/ba/u+2eXe803ell5tE+fuUw9fMMk
-	 BID11z7PByC1KRCbbndsJbxY2rOV/cxkbIa92OqselZMbiETci4ZW/ZrPCsXq4RQP8
-	 yJMw8bikVsnoIKFAOzOvO8ukaAKq/irBi/gANKTMF0t2s1yjFvIHnNqc7JsjU6z5CP
-	 1bxvnLA25Qg3w==
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2166f9f52fbso143676665ad.2
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Feb 2025 04:52:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738587169; x=1739191969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VhF9k3IAhHoTNkD1u2+baAbQZJeo4gcwGS+UKXk5kHE=;
-        b=WJNkSKCVADDe5rIS1xeev3Qg+FIQ398RawIRnN3Kla1Fdnpiaa//YZYlJq/Q8K5rfs
-         lwVzkoMFDHNdgi0IdZsCNgjR9/c08KwSYdw3ElfRAGLVP4Yn18mCEWMJj5Lvf133A7yS
-         /Z9IKWRN7aewMg02KIAeSxJ6exJ6s+3nBJmlV1FYn2+YjP5FCq2KSemVSMhiP7VaWQlt
-         dD9li+FVTYW59X7/Q8WXX53aOrDp5x+iQxZ/NqgGBOpANZQq0Mbq4hia0HvHoXYcZ7Qo
-         o7Zd7v/YIJuccGkaaM5SHjImT8tiHjV8Ntx3EgoUv96U1KtgNpIL4tkDqTavtJW3DJSs
-         gUhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr2q3yP152OZSdTUGqrRt7gy+0RNHmisRX35lyvENm9VrN5/yikYh+P8NkUwJSIupJWvlRdVEyZdpS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrbmuuOQCwBg6UZkD/rm1UCDrZK+ZeYjKq+F9v8vX5qVDFjPQJ
-	SCzeI7OhSER3KEzAjWBxe2G8+MIQp/+j5/oodepJqGSrqB1c96zgulZRtN+B5OcmHZFoN5xjFkq
-	JCHLV672EM0KO2NTqdv1erkZJhkS1LAELqybUm2N9WKnDb291E2iN9tgVhBalN3T+VKJzM/SLV9
-	4=
-X-Gm-Gg: ASbGncsmiTYdK9p+ce+M5XDFtGBGPRcq91briaCt2Jm60w/zpwMr9st6XwkvTYxvt68
-	q9KmmWDOPn54b10/qzC8t0TWgM55RzVJ6f2NipIcVrlQGmpgQAF8YmApW26F1yvHYWRKIIgsm/Z
-	1N5XYfuxs7T/+USYHCrAqzL9m7W+6hV91GVzlPOzs8B/16/aMjx+NPsENZrT/83wzjZAhaf/5rY
-	iDPqtSt7NRwMqfVTvZ+5cmUFUsgKq66iZ0IbK2TS8sKUx/aslKWJ89+yFlJWaTiVSuZv0865OiI
-	W0OMEA==
-X-Received: by 2002:a17:903:94e:b0:216:3732:ade3 with SMTP id d9443c01a7336-21dd7dccd43mr372461855ad.35.1738587169143;
-        Mon, 03 Feb 2025 04:52:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHq1JilL8IMgEMb6RFyRt1fZ/pZTJMiA95sSjtcqZY7jRlr/1d8Bt+XG9+yC5UbiPiWCNJwfw==
-X-Received: by 2002:a17:903:94e:b0:216:3732:ade3 with SMTP id d9443c01a7336-21dd7dccd43mr372461495ad.35.1738587168698;
-        Mon, 03 Feb 2025 04:52:48 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:33e1:5e62:5b35:92b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-acebddbb1a4sm7873824a12.7.2025.02.03.04.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 04:52:48 -0800 (PST)
-Date: Mon, 3 Feb 2025 21:52:46 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpio: sim: lock hog configfs items if present
-Message-ID: <ve5d4rxl7z3fcn7iowf4u6oeq6656ivdjxknrnnx7fshj44574@f23vcqbu6vhc>
-References: <20250203110123.87701-1-brgl@bgdev.pl>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fqrs+6n8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738588510; x=1770124510;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gs4Zt0xEqSo1Z8vwU6FIloykVDGXSg9fCQEbpQ8eQ6A=;
+  b=Fqrs+6n8/HOz3yxeF0SoCrhUcKGHDHch1/pBz1xrTz39OiHcwoelPuqk
+   oZDs+LeRhnTRLDNm1WntdSh/vMnWw9r5B8G8+xmnfVYP3W7JnSSN4mogL
+   +up2jbr90m31USOgJKv3BYQYMbq5L9Eg/37AzXRtklp7YvlRo8biXlcv4
+   ozP+oPFdAFTqytnrA+Z7wfHDZDeTO2dSuQnbo/22sNmRJ5ypIyQ+kPS00
+   OvUdDQw78M7RNYWDPtfzxaGMC9TGt5bEspEHFDDMHcDLoqEFy5ntX+s2e
+   gjHZmtZE3Uvc05JBV5nCteEG/C4td/xcpB8s9JWuoB2n1v/dIVX+xfWCM
+   Q==;
+X-CSE-ConnectionGUID: A215SaStRy+NNw90fDnTIg==
+X-CSE-MsgGUID: u61jVJE9TXS7ZWFmHE0N/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="39217670"
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
+   d="scan'208";a="39217670"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 05:15:10 -0800
+X-CSE-ConnectionGUID: 7fczzyh7TOC1JDXJOJywcw==
+X-CSE-MsgGUID: oc6XXRZiSnGdlz4wZXgZdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
+   d="scan'208";a="115287393"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 03 Feb 2025 05:15:09 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id BAA05399; Mon, 03 Feb 2025 15:15:07 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 02/14] pinctrl: cy8c95x0: Avoid accessing reserved registers
+Date: Mon,  3 Feb 2025 15:10:28 +0200
+Message-ID: <20250203131506.3318201-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
+References: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250203110123.87701-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 03, 2025 at 12:01:23PM GMT, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Depending on the user config, the leaf entry may be the hog directory,
-> not line. Check it and lock the correct item.
-> 
-> Fixes: 8bd76b3d3f3a ("gpio: sim: lock up configfs that an instantiated device depends on")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/gpio/gpio-sim.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-> index a086087ada17..b843682b47e9 100644
-> --- a/drivers/gpio/gpio-sim.c
-> +++ b/drivers/gpio/gpio-sim.c
-> @@ -1028,6 +1028,7 @@ gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev, bool lock)
->  	struct configfs_subsystem *subsys = dev->group.cg_subsys;
->  	struct gpio_sim_bank *bank;
->  	struct gpio_sim_line *line;
-> +	struct config_item *item;
->  
->  	/*
->  	 * The device only needs to depend on leaf line entries. This is
-> @@ -1036,12 +1037,14 @@ gpio_sim_device_lockup_configfs(struct gpio_sim_device *dev, bool lock)
->  	 */
->  	list_for_each_entry(bank, &dev->bank_list, siblings) {
->  		list_for_each_entry(line, &bank->line_list, siblings) {
-> +			item = line->hog ? &line->hog->item
-> +					 : &line->group.cg_item;
-> +
->  			if (lock)
-> -				WARN_ON(configfs_depend_item_unlocked(
-> -						subsys, &line->group.cg_item));
-> +				WARN_ON(configfs_depend_item_unlocked(subsys,
-> +								      item));
->  			else
-> -				configfs_undepend_item_unlocked(
-> -						&line->group.cg_item);
-> +				configfs_undepend_item_unlocked(item);
->  		}
->  	}
->  }
-> -- 
-> 2.45.2
-> 
+The checks for vrtual registers in the cy8c95x0_readable_register()
+and cy8c95x0_writeable_register() are not aligned and broken.
 
-Thanks for spotting this and the fix.
+Fix that by explicitly avoiding reserved registers to be accessed.
 
-Tested-by: Koichiro Den <koichiro.den@canonical.com>
+Fixes: 71e4001a0455 ("pinctrl: pinctrl-cy8c95x0: Fix regcache")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
+index cda9e1b6fed6..192a37c28a1d 100644
+--- a/drivers/pinctrl/pinctrl-cy8c95x0.c
++++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
+@@ -328,14 +328,14 @@ static int cypress_get_pin_mask(struct cy8c95x0_pinctrl *chip, unsigned int pin)
+ static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
+ {
+ 	/*
+-	 * Only 12 registers are present per port (see Table 6 in the
+-	 * datasheet).
++	 * Only 12 registers are present per port (see Table 6 in the datasheet).
+ 	 */
+-	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) < 12)
+-		return true;
++	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) >= 12)
++		return false;
+ 
+ 	switch (reg) {
+ 	case 0x24 ... 0x27:
++	case 0x31 ... 0x3f:
+ 		return false;
+ 	default:
+ 		return true;
+@@ -344,8 +344,11 @@ static bool cy8c95x0_readable_register(struct device *dev, unsigned int reg)
+ 
+ static bool cy8c95x0_writeable_register(struct device *dev, unsigned int reg)
+ {
+-	if (reg >= CY8C95X0_VIRTUAL)
+-		return true;
++	/*
++	 * Only 12 registers are present per port (see Table 6 in the datasheet).
++	 */
++	if (reg >= CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) >= 12)
++		return false;
+ 
+ 	switch (reg) {
+ 	case CY8C95X0_INPUT_(0) ... CY8C95X0_INPUT_(7):
+@@ -353,6 +356,7 @@ static bool cy8c95x0_writeable_register(struct device *dev, unsigned int reg)
+ 	case CY8C95X0_DEVID:
+ 		return false;
+ 	case 0x24 ... 0x27:
++	case 0x31 ... 0x3f:
+ 		return false;
+ 	default:
+ 		return true;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
