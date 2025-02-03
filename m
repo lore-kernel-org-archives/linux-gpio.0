@@ -1,59 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6287204F63;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BDE204F8B;
 	Mon,  3 Feb 2025 13:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738588514; cv=none; b=c2SAtGutfKX2L37lRdN6eVE7epZfa72fV4Nzo7b13OV/qMXNyyb7dtYg57zIy7hOPffLlg2myHHfD6hQCnkUldsiAt8654N8gI7Z7ikPIM72x/Jg/0jWMTY8zjpiCJouqm7EWrXmoqPByToX4w7S8LLKN7k5knbMvnBTnKVJW00=
+	t=1738588514; cv=none; b=iBI4yI97gZHHIvwwvzPb4/UEJ+X92ivgwOd3sIeAHoShT4dssyhgpsvzbUIHNxkcxrb/RwxN8wEHcYfWPn3uWh7zQFFC6aQJTwQfvecStE1OZ+IDzJ0quZxxox2LpBv+QxYxQCkurLzvzFWCybSxeB4fW3OyH4EQM4vF9NKeoYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738588514; c=relaxed/simple;
-	bh=gXwz5Ujw6IWP5uaIKaqjpo3prwTqc/XmNMiFvq5Esi8=;
+	bh=MGRTKb3BRfce0g3Zemq37xOaocZsf88w4v3e8RmEEpY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r3f9V5iHrqOBFlj67Ll/NnumCPXxU3elGoq0cXjkVnf8JOeCbFHlspOKwaOHKb+0cCBhE+IEcvub6A4JwvTAPf63bERzT/X8QpQ+5hlFtz2KRZRoVfMdP+0wyI1XIPgZE33XnDsqb2oOahL9F7UAVRg+RfIYEHMllLPNTvrZ5+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HoEqkTVm; arc=none smtp.client-ip=192.198.163.8
+	 MIME-Version; b=Vgcu8WkkZPogE5yqqwDgzNgGn0c6+qBzMZdFSKf0ID+Kw3q52FuroYS799jrKr5L5KOsWVPEU0Y1d3ZS17jJ45YBYmQqAg4djK1yBdcaNwvw6lQdpmu8DNb1zmHo6kzrnxFvUi34psblgaTmpc0GXJ4hrtNDdJSgWCU4+/+7T/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cBnGrqay; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HoEqkTVm"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cBnGrqay"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1738588513; x=1770124513;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gXwz5Ujw6IWP5uaIKaqjpo3prwTqc/XmNMiFvq5Esi8=;
-  b=HoEqkTVm7WCcdiTZbLwzNjTcLRndL2BXhXXZaeezBwJLUGBF40nGkY7+
-   +LL7xgO0LBrYHEjlwtOfVRT3GmV8RUJrDL9zX43IX3sJlEJKiTaZnlrHI
-   V8csFdmV8fnAvR9OgJTLSP3A1wMnxKoOXHq+4LX0HwWmI2ho2XxAemWJj
-   0xjTWl3v2yfM9WkU8WB95U4MBqD2WQ1GMJTY7kUIunGYnhfJglkVMerNA
-   QBZSpRYKPTbyp8coAvyELHlHMBcbhqMiB2DETm/Yuy30kQjhDT9yqZid3
-   x3KjwFqi5WNGFrYqKWi97puna7gfYa2/awSVMKv1SZeERPHQWEoXIGxjh
-   w==;
-X-CSE-ConnectionGUID: 2OFxr12/QyimnIzpVi3Fvg==
-X-CSE-MsgGUID: zV0g/XRrRBq3vlwp65wdrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="56615947"
+  bh=MGRTKb3BRfce0g3Zemq37xOaocZsf88w4v3e8RmEEpY=;
+  b=cBnGrqayt33sxOGCJMgPks+fnfnUdR2RByVtRlsNP7QzCsAM0eRzR1aA
+   LrROId83J8xIBn8DkN0H07sD5hAFy/UEgjZw0C/Xh7Yg82+xcW8Y857dp
+   16KBcoJnPYSatYx4+oJ2VtPZii/9IUK7jGq8sRl51wXz//u9Js4VU64vS
+   hDr294UO9+82BiQHACXRIbS9RQZ2VCmR1Mx0MFijDKczutse1b1XkA6Rl
+   O41RBtAWrNqm+ueRxQdGBmN1+YNIJCS6bWu0vy+UoPD5EO7K9FbZS7eYu
+   cuftQMBAfzoDZrzXpCXAugXo7KSl1MR1mHYCYEc6E3nIgw/CCQHwvuApD
+   g==;
+X-CSE-ConnectionGUID: ZcRb6aumTEStGE3n+XEgHg==
+X-CSE-MsgGUID: fjXraRMrSrSAo4NfIkrsRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="39217680"
 X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="56615947"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 05:15:10 -0800
-X-CSE-ConnectionGUID: AEK6G9XaRTST1hQWO6A4hA==
-X-CSE-MsgGUID: 2ewiZXqGTvS8wgdLUOUOcg==
+   d="scan'208";a="39217680"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 05:15:12 -0800
+X-CSE-ConnectionGUID: jtFCd1AuSv6QoeIGk3oTNQ==
+X-CSE-MsgGUID: kapxb2AIRryaXgOi59cSeQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="110854190"
+   d="scan'208";a="115287397"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 03 Feb 2025 05:15:09 -0800
+  by orviesa004.jf.intel.com with ESMTP; 03 Feb 2025 05:15:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BFB5F353; Mon, 03 Feb 2025 15:15:07 +0200 (EET)
+	id E16A849A; Mon, 03 Feb 2025 15:15:07 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 03/14] pinctrl: cy8c95x0: Enable regmap locking for debug
-Date: Mon,  3 Feb 2025 15:10:29 +0200
-Message-ID: <20250203131506.3318201-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 06/14] pinctrl: cy8c95x0; Switch to use for_each_set_clump8()
+Date: Mon,  3 Feb 2025 15:10:32 +0200
+Message-ID: <20250203131506.3318201-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
 References: <20250203131506.3318201-1-andriy.shevchenko@linux.intel.com>
@@ -65,31 +65,78 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When regmap locking is disabled, debugfs is also disabled.
-Enable locking for debug when CONFIG_DEBUG_PINCTRL is set.
+for_each_set_clump8() has embedded check for unset clump to skip.
+Switch driver to use for_each_set_clump8().
 
-Fixes: f71aba339a66 ("pinctrl: cy8c95x0: Use single I2C lock")
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 192a37c28a1d..0bcecebb1c0c 100644
+index 52d8a44bb44e..93fb8afab643 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -470,7 +470,11 @@ static const struct regmap_config cy8c9520_i2c_regmap = {
- 	.max_register = 0,		/* Updated at runtime */
- 	.num_reg_defaults_raw = 0,	/* Updated at runtime */
- 	.use_single_read = true,	/* Workaround for regcache bug */
-+#if IS_ENABLED(CONFIG_DEBUG_PINCTRL)
-+	.disable_locking = false,
-+#else
- 	.disable_locking = true,
-+#endif
- };
+@@ -617,21 +617,18 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ {
+ 	DECLARE_BITMAP(tmask, MAX_LINE);
+ 	DECLARE_BITMAP(tval, MAX_LINE);
++	unsigned long bits, offset;
+ 	int write_val;
+-	u8 bits;
+ 	int ret;
  
- static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip,
+ 	/* Add the 4 bit gap of Gport2 */
+ 	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
+ 	bitmap_scatter(tval, val, chip->map, MAX_LINE);
+ 
+-	for (unsigned int i = 0; i < chip->nport; i++) {
+-		/* Skip over unused banks */
+-		bits = bitmap_get_value8(tmask, i * BANK_SZ);
+-		if (!bits)
+-			continue;
++	for_each_set_clump8(offset, bits, tmask, chip->tpin) {
++		unsigned int i = offset / 8;
+ 
+-		write_val = bitmap_get_value8(tval, i * BANK_SZ);
++		write_val = bitmap_get_value8(tval, offset);
+ 
+ 		ret = cy8c95x0_regmap_update_bits(chip, reg, i, bits, write_val);
+ 		if (ret < 0) {
+@@ -648,19 +645,16 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ {
+ 	DECLARE_BITMAP(tmask, MAX_LINE);
+ 	DECLARE_BITMAP(tval, MAX_LINE);
++	unsigned long bits, offset;
+ 	int read_val;
+-	u8 bits;
+ 	int ret;
+ 
+ 	/* Add the 4 bit gap of Gport2 */
+ 	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
+ 	bitmap_scatter(tval, val, chip->map, MAX_LINE);
+ 
+-	for (unsigned int i = 0; i < chip->nport; i++) {
+-		/* Skip over unused banks */
+-		bits = bitmap_get_value8(tmask, i * BANK_SZ);
+-		if (!bits)
+-			continue;
++	for_each_set_clump8(offset, bits, tmask, chip->tpin) {
++		unsigned int i = offset / 8;
+ 
+ 		ret = cy8c95x0_regmap_read(chip, reg, i, &read_val);
+ 		if (ret < 0) {
+@@ -669,8 +663,8 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ 		}
+ 
+ 		read_val &= bits;
+-		read_val |= bitmap_get_value8(tval, i * BANK_SZ) & ~bits;
+-		bitmap_set_value8(tval, read_val, i * BANK_SZ);
++		read_val |= bitmap_get_value8(tval, offset) & ~bits;
++		bitmap_set_value8(tval, read_val, offset);
+ 	}
+ 
+ 	/* Fill the 4 bit gap of Gport2 */
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
