@@ -1,99 +1,97 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842F6204C04;
-	Mon,  3 Feb 2025 12:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F8E201016;
+	Mon,  3 Feb 2025 12:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738585134; cv=none; b=pFyVDXrHWt5GFZ0JUeyHheLg8fbrzMNZdMF6gNHTNSUm5XCRhMuj04VPEexnFvIkUojBNZ/f2WCCRQRmcmxzlPwhvNbngcSP8A4q6fgfEnS+dSbrWFQd9OPjyMihSCE0BXtpw8Xxoqn7rGgM52vQcTM/5B2ftyuCNlhzrXZ6Ti0=
+	t=1738585507; cv=none; b=eDpAyhxg4lpnCc1hQcK7rlgyXy/akbWiODoOIbgQnainhmaN3+hmY3o05CbBxVyqTjKjP8t6MPdU7N5XRpF0PGFCYmAT7is3F+f931sjJHqofqbEk9c7YVcY/rou6BPgOND3uI4BFLxfBG4vYctLIG0625iXVlAYgGPIeZvJDqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738585134; c=relaxed/simple;
-	bh=AKEZmIwmmi49xx20Ic0IkNg47TcPP9PP5Xf66m4RXVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nFD2ADqPTrqjHev3kfPkbymRpUeUiVWzrB4mjpmvYyjBoPGPqW7fbPbvTtL+KqmSunli6dxxISk5StBPxAiGr20R07FUizyF6nKxf1tj1yDniPuMMF098CRTF93/WqyS1CfiP6+dM5HpVaKXB7x2lwpV2QR38ByaJfB1chybAXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l78clTPJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1738585507; c=relaxed/simple;
+	bh=Yy5ZhC9XApBt7e/QvLBQSPY6sVLlD4cP7bLWazn+hTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmqFP0PE7meW755ZYON7aloSA8PMqWbPFAJuikwlPKSesYNGRjmlnIwTG7rXrfXxCNZNERS44jGfsZVnqPEaHY5GZ8P8A8Q7VPtREa1E336CGUuMvDwrHhOhwNaJ2MZ5a6JpsaM0rkq1+dL56YY6HC0GedPMCkR7MbPFpoxohY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgyFBLHk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l78clTPJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738585133; x=1770121133;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AKEZmIwmmi49xx20Ic0IkNg47TcPP9PP5Xf66m4RXVA=;
-  b=l78clTPJR31VNxeBYfebQE+IwRSIGwsxEeDh2l5GByp2Sa0pgfNOprwG
-   9DTWhFPojXxM2QTWffyFMbLu4QodQ/B1jS3YSEz/nGqTmGhD/CjERhmes
-   qG7ICSpIIZ1XOfVO96w4m+llYAdJRX399HYqZt7lpncr5haaZjRfr+d0H
-   stoEJQcCBk5RwPIW/f7tdFb9Z7ndCcjantyhcCBHN5hUSfXvAMAFS7RCi
-   zgWKAiYlqAyHik4ju55S0UqbmcBli+sy+0q9zWIOzPY31XGX6WfQloDR1
-   vy4oNkWc3XHfslwnvhmklTW5HKNjaJb9sdobESOF5IxGVb55myoexl6Tc
-   Q==;
-X-CSE-ConnectionGUID: Tup2glKFSmGD7sK5aSaZJQ==
-X-CSE-MsgGUID: ozcYa+fOR+WeatdP1Z0y2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="42731528"
-X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
-   d="scan'208";a="42731528"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 04:18:51 -0800
-X-CSE-ConnectionGUID: im5GMaOTTzqjuSNCDD8+kg==
-X-CSE-MsgGUID: ijJD+OJ6R9ikHhe+Vsf9Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="141138411"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 03 Feb 2025 04:18:48 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 899593B1; Mon, 03 Feb 2025 14:18:44 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 6/7] gpio: 74x164: Switch to use dev_err_probe()
-Date: Mon,  3 Feb 2025 14:17:22 +0200
-Message-ID: <20250203121843.3183991-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20250203121843.3183991-1-andriy.shevchenko@linux.intel.com>
-References: <20250203121843.3183991-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgyFBLHk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8399FC4CED2;
+	Mon,  3 Feb 2025 12:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738585506;
+	bh=Yy5ZhC9XApBt7e/QvLBQSPY6sVLlD4cP7bLWazn+hTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgyFBLHkuVy8bN5kDhkP1EGbAK7ioccPHVyLC25mEIayv3DJK7Tm2uRsQq2Jh0fAa
+	 Int2NvfquWUvgrFZzmX67B845a0Y8UBFyg7F9lNoSnr141x2o7Hovef8R5iaJkW14L
+	 O8Mw7GQg0x3bUmkm8V0HFhTiojVKh8J8yYO+/SA0RETVXQghpzP8Z6pw3Yuc9w2wuP
+	 O/+dKCQy4+GohyTHCsRFy49HyIbtiUwOfs6Pip5+i0hyjjmkT3KjAT7BRymP6hhhlc
+	 +7Lo9yiSJ7ER7dh3tF9j6L7ovChKtZABgfMeLV3WJ2J1EU47uFYiskzBnfxrlg6XKZ
+	 xHQ+uFN17i2eg==
+Date: Mon, 3 Feb 2025 12:24:55 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 13/13] ASoC: adau1701: use gpiods_set_array_value_cansleep
+Message-ID: <a6e7f5c5-6dfa-4478-9a18-85d0897c7ca4@sirena.org.uk>
+References: <20250131-gpio-set-array-helper-v1-0-991c8ccb4d6e@baylibre.com>
+ <20250131-gpio-set-array-helper-v1-13-991c8ccb4d6e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QNJzo4TIn39F+gZd"
+Content-Disposition: inline
+In-Reply-To: <20250131-gpio-set-array-helper-v1-13-991c8ccb4d6e@baylibre.com>
+X-Cookie: May your camel be as swift as the wind.
 
-Switch to use dev_err_probe() to simplify the error path and
-unify a message template.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-74x164.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--QNJzo4TIn39F+gZd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-index 920d3b9c1087..2cf77c0a5615 100644
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -125,10 +125,8 @@ static int gen_74x164_probe(struct spi_device *spi)
- 		return ret;
- 
- 	ret = device_property_read_u32(&spi->dev, "registers-number", &nregs);
--	if (ret) {
--		dev_err(&spi->dev, "Missing 'registers-number' property.\n");
--		return -EINVAL;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Missing 'registers-number' property.\n");
- 
- 	chip = devm_kzalloc(dev, struct_size(chip, buffer, nregs), GFP_KERNEL);
- 	if (!chip)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+On Fri, Jan 31, 2025 at 02:24:53PM -0600, David Lechner wrote:
+> Reduce verbosity by using gpiods_set_array_value_cansleep() instead of
+> gpiods_set_array_value_cansleep().
 
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--QNJzo4TIn39F+gZd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmegtZYACgkQJNaLcl1U
+h9BWNAf8CyCYjo0Xa7gTkGLLmI7BwVTj9VwAQiohEN7S8mXh4x6BMNsbB+GhBmqK
+2cqPWAhXgBCR1kvmebge+UItA8kk9Hm/vKTZ2fJEuzIYpyKG6wVv65lqUDTGme3j
+svxI492/g6DoPUWI/ZaK8PUVOqmQNjE+wky7xOZdb2eG5WFl5OwmCxNLlXogEngj
+cWS5wNOJfsvcnrpTUwUP3HFFMEqmCU+KQAvQrEDnNEi5ad4AHR9kElX7nlTRNvtQ
+CEboCfNuVvPxROZwWiizYuHZ920bL96QbtbAOiaXsYF5okR3tpwqkS07hsFyNr0u
+JaOgDbfFUiICPW9L9H5h2OFYo5ZpxQ==
+=nBtG
+-----END PGP SIGNATURE-----
+
+--QNJzo4TIn39F+gZd--
