@@ -1,60 +1,72 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D430A2165FE;
-	Tue,  4 Feb 2025 17:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FC3212FA5;
+	Tue,  4 Feb 2025 18:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738691825; cv=none; b=DMTwI9AigUiv3ljwlSsQf7Yw1OYbFp3Ba6tNXXK+LqUlbTxxZMX+q6WVRbrBkNr0kcWayqxA0Q0Ab1+crn38GLHG0XcW0ZEBNjW6+VazZqmBqiZmVsTMw3pN6bZcreFwuC6J9Ptgnmg3EvFjRAnRudAIn0XOJiTOn2TlrVfaLkE=
+	t=1738694661; cv=none; b=AwKcg06wKmiLXcwEQGAvtJdzMeg1UiXoPtYHjVfd58wNVcfDC6/OfMoE1XvpvtxesPg8UA8JTakTwRDrfBNeJV5DgoHYKdjWpnKTaqpElN5sHipGNEsnc+nA6I5XqV29VmFutGaNwumzxNtgmWdcTlpi9CqYjnI3XtEvoiP0F3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738691825; c=relaxed/simple;
-	bh=1XxX20iSlyyJELFfLHxg8xyz52IkShrxCvKH0WZHkzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bfs4td/KQGzlXEd9DLPJehR+VzMwQNhZP8XVgKWhyG35dlwr0VwAJ7bQg9vLNSa3RxJJHmC/omq/2rwnXGP5uv+IoOpksMWqqRtlxL5tPLKHkopedd93P4UsZZZBk+BvfMBqccAT+bAXVWS21SpIdAf5QTOsFu/8Y1uH9zEcpk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DSXFLLg1; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1738694661; c=relaxed/simple;
+	bh=dw2tagafwYPmCPHnvayl3frhMoF5mszbZc6Q0inSJGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iAPu6ic4SFvpd32pLFdqYJ2H2wJLKh4wWRcjc1DJvJOx4rs8JVV/gMl8lB8yElY/4wuGdOgt3kXHc/4Ta9Hj9vljonZ18iBwB6m7JPkTRaCrysbUfr+4LM2RwmCyK1zO040xKCwDSwQ7a92IrEnYFfO3wzPFmi1u+khZWDHe4FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AjfjFydK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DSXFLLg1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738691823; x=1770227823;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1XxX20iSlyyJELFfLHxg8xyz52IkShrxCvKH0WZHkzs=;
-  b=DSXFLLg1gxr86Lg76dwwlD6wcHpPiSwUNyJq3NeO59Cafi+xNkv5HXaM
-   OIML3iQXjP9pWdrUQQgdOtqUl/A+AxCydzHIs8RwwCiTVaNVlHfQf2f/p
-   zaTD7CBzsdnfjX7YOFiVxrOJHX6lNxwQY+LSMW01cuswfsIjSDglbQx5D
-   e1ZArQDKnobwyDv74oXUJN2JfQRXkPKjhkK3K6LMNfzardtNp2ai4nh4H
-   Xv1TtokXYix3u+2RhJwQHMT4IvI/6san/fWNpJXcfUpfBcqTyPPD7uPyV
-   4c3wCSIwirhcvrhjdYspaRqV/GMtg2tZ4Auku/TVkfZgdCcxZRDTsLUx6
-   g==;
-X-CSE-ConnectionGUID: fcYAr7ARQDqRIyJGjLT0UQ==
-X-CSE-MsgGUID: 6wESHCeUS1uhMnBp07x7zg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11336"; a="50226398"
-X-IronPort-AV: E=Sophos;i="6.13,259,1732608000"; 
-   d="scan'208";a="50226398"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2025 09:57:03 -0800
-X-CSE-ConnectionGUID: UePsaAhgQjqO3X2tEwsDHA==
-X-CSE-MsgGUID: R5v2PqLASf6dlfed9HYmew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114721771"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Feb 2025 09:57:01 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 1EE0C353; Tue, 04 Feb 2025 19:57:00 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpiolib: Deduplicate some code in for_each_requested_gpio_in_range()
-Date: Tue,  4 Feb 2025 19:56:59 +0200
-Message-ID: <20250204175659.150617-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AjfjFydK"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 514GEn4I029264;
+	Tue, 4 Feb 2025 18:43:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=M2Jh7wxBPDIMXjM/I
+	X68myxQ1J5TffG1POfQiRFYLQc=; b=AjfjFydKDff+c5wYGZVU00441Ey86z3xy
+	JvIrQoy771i5MuCgRoOBfzZoYSjHzFzfw7jwuXKBufAKs16EfKB9vg4X/GRB8xji
+	f9mgQwfU5tFkhunYzYPr4a0HL7/F4VdeS4ADKRS7ngFJzRtbdAN0SY/lK/e7f+PY
+	XGbGnO6S2N0XMejAb2mrMaro+Uh80hdkvPvDLW7/V1X7I0LF7Df02GB5dM6Kt/Xn
+	WcMSgoSYqMmnyhldVj/BajvEAQ9m2DvIFncf5mgc8Uj3SJWcIDS96b7pyivgfYaD
+	WZbARgefIgP0UFbG1r8q5rTQ2ss9W53a59nXcDy/jn4Quf/SWwgHw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44k8y9mt42-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Feb 2025 18:43:45 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 514Fm5IB007139;
+	Tue, 4 Feb 2025 18:43:44 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44hxayn23g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Feb 2025 18:43:44 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 514IhhEI58655220
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Feb 2025 18:43:43 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 178775805F;
+	Tue,  4 Feb 2025 18:43:43 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2FAFB58059;
+	Tue,  4 Feb 2025 18:43:42 +0000 (GMT)
+Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Feb 2025 18:43:42 +0000 (GMT)
+From: Ninad Palsule <ninad@linux.ibm.com>
+To: brgl@bgdev.pl, linus.walleij@linaro.org, minyard@acm.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org,
+        openipmi-developer@lists.sourceforge.net, joel@jms.id.au,
+        andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+        eajames@linux.ibm.com, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc: Ninad Palsule <ninad@linux.ibm.com>, andrew@lunn.ch
+Subject: [PATCH v8 2/9] dt-bindings: gpio: ast2400-gpio: Add hogs parsing
+Date: Tue,  4 Feb 2025 12:43:28 -0600
+Message-ID: <20250204184337.3896834-3-ninad@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250204184337.3896834-1-ninad@linux.ibm.com>
+References: <20250204184337.3896834-1-ninad@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -62,66 +74,43 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sFc-oVvFKXRrELVI6Ibr7bLQ7FVj8kiA
+X-Proofpoint-ORIG-GUID: sFc-oVvFKXRrELVI6Ibr7bLQ7FVj8kiA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-04_08,2025-02-04_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ spamscore=0 mlxscore=0 adultscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502040140
 
-Refactor for_each_requested_gpio_in_range() to deduplicate some code
-which is basically repeats the for_each_hwgpio(). In order to achieve
-this, split the latter to two, for_each_hwgpio_in_range() and
-for_each_hwgpio().
+Allow parsing GPIO controller children nodes with GPIO hogs.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
 ---
- include/linux/gpio/driver.h | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ .../devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml       | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index a307d8ed9c51..24890ecfa0fb 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -549,20 +549,25 @@ DEFINE_CLASS(_gpiochip_for_each_data,
- 	     const char **label, int *i)
+diff --git a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+index b9afd07a9d24..b16273e69dfe 100644
+--- a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+@@ -46,6 +46,12 @@ properties:
+     minimum: 12
+     maximum: 232
  
- /**
-- * for_each_hwgpio - Iterates over all GPIOs for given chip.
-+ * for_each_hwgpio_in_range - Iterates over all GPIOs in a given range
-  * @_chip: Chip to iterate over.
-  * @_i: Loop counter.
-+ * @_base: First GPIO in the ranger.
-+ * @_size: Amount of GPIOs to check starting from @base.
-  * @_label: Place to store the address of the label if the GPIO is requested.
-  *          Set to NULL for unused GPIOs.
-  */
--#define for_each_hwgpio(_chip, _i, _label) \
-+#define for_each_hwgpio_in_range(_chip, _i, _base, _size, _label)			\
- 	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i); \
--	     *_data.i < _chip->ngpio; \
-+	     *_data.i < _size;								\
- 	     (*_data.i)++, kfree(*(_data.label)), *_data.label = NULL) \
- 		if (IS_ERR(*_data.label = \
--			gpiochip_dup_line_label(_chip, *_data.i))) {} \
-+			gpiochip_dup_line_label(_chip, _base + *_data.i))) {}		\
- 		else
- 
-+#define for_each_hwgpio(_chip, _i, _label)						\
-+	for_each_hwgpio_in_range(_chip, _i, 0, _chip->ngpio, _label)
++patternProperties:
++  "-hog(-[0-9]+)?$":
++    type: object
++    required:
++      - gpio-hog
 +
- /**
-  * for_each_requested_gpio_in_range - iterates over requested GPIOs in a given range
-  * @_chip:	the chip to query
-@@ -572,12 +577,8 @@ DEFINE_CLASS(_gpiochip_for_each_data,
-  * @_label:	label of current GPIO
-  */
- #define for_each_requested_gpio_in_range(_chip, _i, _base, _size, _label)		\
--	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i);			\
--	     *_data.i < _size;								\
--	     (*_data.i)++, kfree(*(_data.label)), *_data.label = NULL)			\
--		if ((*_data.label =							\
--			gpiochip_dup_line_label(_chip, _base + *_data.i)) == NULL) {}	\
--		else if (IS_ERR(*_data.label)) {}					\
-+	for_each_hwgpio_in_range(_chip, _i, _base, _size, _label)			\
-+		if (*_data.label == NULL) {}						\
- 		else
- 
- /* Iterates over all requested GPIO of the given @chip */
+ required:
+   - compatible
+   - reg
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.43.0
 
