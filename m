@@ -1,107 +1,141 @@
-Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15356238D52;
-	Fri,  7 Feb 2025 15:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B806A238D29;
+	Fri,  7 Feb 2025 15:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738940471; cv=none; b=PohG2zyZKZrzCfNcR1k99ffARgQJ7VD2Ne6nn7TsxkQMLScdRSVZn2E6ITATZxO9rsL7p5ju1w/ixah7r/qz59ktPmP/DgYB7tr5Jk/O6rPSL7MqqNROLIf8P08uvwUE5gu3I2xZWItPDg9iQ7vGGLMnPCVjrrERMZw1fCPOafE=
+	t=1738941115; cv=none; b=D7oG5sp/p0JeRH9zAVcZAj6lnzV0S8oiiLJC+6kl0wBh1y4dMt5ut6WRmL/XKBPUWsuq4EPe0j0MDj968kxzzKVSXNrhHBeoRjSPppnvoHMFc+BKgbLA82usqOXW1gVatUy4MUkPYvtyQFisH8PzofhnbrP507GvvUlt4V80tx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738940471; c=relaxed/simple;
-	bh=Ismxwm1c+xEaqBjLFJVdqK9TSoif2Fk0K+yMxRkINVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JYR9ybp/2M5pr5QzBHTMbiKESRtx582ocPyncHDLb1HU4p8DYS/hzclOcoTOkIXl22gDVKtV5f4iFuWAd/fjIp/j9K/sa2sIYdTeMpKQNZZSnk5xXZKIUHT/Ex5Ol+ORlgC57GoD4Z7DkOp/8TQAg47quKT8v2Uqd4h/ghW6dAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ltR/Bra9; arc=none smtp.client-ip=193.252.22.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1738941115; c=relaxed/simple;
+	bh=tlKUSEgfkOWxUCWS9Kma7VNMHWLG4r8SidwahNgYw8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r552MTBBY0Qz4rBU2igA8HetGxb/vBSwkSS0vaTmOQyIZwBRxM2rBpDFM0Iyfh9hMruWaP6ElLECn/Bhf8ENNqcEA7fM655v03/8ciLtzwQ/im7hneDzua2zBNb2bcOmvLZyH5kg93Ut7HrIIlAfIwCJoMyfJ2TnaOggNXU6Sb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S43s8UJe; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ltR/Bra9"
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id gPqWtL8WXFt3IgPqatESry; Fri, 07 Feb 2025 16:01:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1738940461;
-	bh=Pyha5odVGsX/CKqH1ZkXIQ53HwwjGzZ3ipFrj9lnhz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ltR/Bra9iY/vwRcNq/YBqz4kt3s9oCNpzfGigntH9sfQiTTrkWuSMYZeRdTVHAm9q
-	 ELN6QjvKXUDDagncZdtHNzfc4Dph6J9ZbNAMnJ2T8uTjBMkcQOy0w1CmQsZPJ0LpWT
-	 dOCxl+huYkYk1+Wj2h6oeNsysoenQmB6u8IMRd2y9Xmr3zkUCeN66z+Hha7pFLRs/W
-	 89ZI+zgAKMoUKsVRYls4qKSqE9WdR4rHvgwufNzfv2EPxKESy+aJXcg95jlM25oO+E
-	 8PurBrxhE+/r4TKOfBZKrvfxeXyUB4hsDku2l6X/asT6VfDK7fDLpwcmkDwpo0QgCf
-	 a+3PA3c1yBBLw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 Feb 2025 16:01:01 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <9a3f1242-794e-41f1-80a5-bc6d18ff6641@wanadoo.fr>
-Date: Sat, 8 Feb 2025 00:00:43 +0900
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S43s8UJe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738941113; x=1770477113;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tlKUSEgfkOWxUCWS9Kma7VNMHWLG4r8SidwahNgYw8s=;
+  b=S43s8UJeZJDL1k6gLgVgaiFo0L99Si2fkQaSMrTtZdZcChbhwNggkDbV
+   5A/xOUoBoCc65n7us7WzKOmHQ3nLWaHlyNfzHKi241MPx9jemAfMfcfqE
+   GoWLyD7Yax1z8KnpV2NEVEjNKQrAc8hmOkhEKlvvsbtvkrYZnxiviPJGX
+   +MDIEsueW4dqEg1N7CHY/mUOsU7gtIrsIsTCGH+GJ7vVmse+g+K/fwMkt
+   iXNA9G60O5mrBNS3iGNjElwZNGXPFyGP9yE28sZ6+jWqhONc3ECBwX1qu
+   XuSqU32azlBJfxjExm1AeIoarcQyx03tvQz1ltJ2K8AbEA1+4TnR8ExYX
+   Q==;
+X-CSE-ConnectionGUID: tq4Hs5gvS+irNuS+V8ar4A==
+X-CSE-MsgGUID: BRhMJC5vSP6UT65hFRXxxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11338"; a="39491581"
+X-IronPort-AV: E=Sophos;i="6.13,267,1732608000"; 
+   d="scan'208";a="39491581"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2025 07:11:53 -0800
+X-CSE-ConnectionGUID: rzRxEP5vRMWjZHWnSkf11A==
+X-CSE-MsgGUID: VIMm2EoXRyiybpNILX7A/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="111395741"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 07 Feb 2025 07:11:51 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 306A1116; Fri, 07 Feb 2025 17:11:50 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 1/3] gpiolib: Deduplicate some code in for_each_requested_gpio_in_range()
+Date: Fri,  7 Feb 2025 17:07:34 +0200
+Message-ID: <20250207151149.2119765-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20250207151149.2119765-1-andriy.shevchenko@linux.intel.com>
+References: <20250207151149.2119765-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] can: Add Nuvoton NCT6694 CANFD support
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org,
- brgl@bgdev.pl, andi.shyti@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
- jdelvare@suse.com, alexandre.belloni@bootlin.com,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250207074502.1055111-1-a0282524688@gmail.com>
- <20250207074502.1055111-5-a0282524688@gmail.com>
- <20250207-savvy-beaver-of-culture-45698d-mkl@pengutronix.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250207-savvy-beaver-of-culture-45698d-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/02/2025 at 21:15, Marc Kleine-Budde wrote:
-> On 07.02.2025 15:44:59, Ming Yu wrote:
+Refactor for_each_requested_gpio_in_range() to deduplicate some code
+which is basically repeats the for_each_hwgpio(). In order to achieve
+this, split the latter to two, for_each_hwgpio_in_range() and
+for_each_hwgpio().
 
-(...)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/gpio/driver.h | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
->> +static netdev_tx_t nct6694_can_start_xmit(struct sk_buff *skb,
->> +					  struct net_device *ndev)
->> +{
->> +	struct nct6694_can_priv *priv = netdev_priv(ndev);
->> +
->> +	if (can_dev_dropped_skb(ndev, skb))
->> +		return NETDEV_TX_OK;
->> +
->> +	netif_stop_queue(ndev);
->> +	can_put_echo_skb(skb, ndev, 0, 0);
->> +	queue_work(priv->wq, &priv->tx_work);
-
-What is the reason to use a work queue here? xmit() is not a hard IRQ.
-Also, the other USB CAN devices just directly send the USB message in
-their xmit() without the need to rely on such worker.
-
-Sorry if this was discussed in the past, I can not remember if this
-question has already been raised.
-
->> +	return NETDEV_TX_OK;
->> +}
-
-(...)
-
-Yours sincerely,
-Vincent Mailhol
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a307d8ed9c51..024112ef5a78 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -548,6 +548,23 @@ DEFINE_CLASS(_gpiochip_for_each_data,
+ 	     }),
+ 	     const char **label, int *i)
+ 
++/**
++ * for_each_hwgpio_in_range - Iterates over all GPIOs in a given range
++ * @_chip: Chip to iterate over.
++ * @_i: Loop counter.
++ * @_base: First GPIO in the ranger.
++ * @_size: Amount of GPIOs to check starting from @base.
++ * @_label: Place to store the address of the label if the GPIO is requested.
++ *          Set to NULL for unused GPIOs.
++ */
++#define for_each_hwgpio_in_range(_chip, _i, _base, _size, _label)			\
++	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i);			\
++	     *_data.i < _size;								\
++	     (*_data.i)++, kfree(*(_data.label)), *_data.label = NULL)			\
++		if (IS_ERR(*_data.label =						\
++			gpiochip_dup_line_label(_chip, _base + *_data.i))) {}		\
++		else
++
+ /**
+  * for_each_hwgpio - Iterates over all GPIOs for given chip.
+  * @_chip: Chip to iterate over.
+@@ -555,13 +572,8 @@ DEFINE_CLASS(_gpiochip_for_each_data,
+  * @_label: Place to store the address of the label if the GPIO is requested.
+  *          Set to NULL for unused GPIOs.
+  */
+-#define for_each_hwgpio(_chip, _i, _label) \
+-	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i); \
+-	     *_data.i < _chip->ngpio; \
+-	     (*_data.i)++, kfree(*(_data.label)), *_data.label = NULL) \
+-		if (IS_ERR(*_data.label = \
+-			gpiochip_dup_line_label(_chip, *_data.i))) {} \
+-		else
++#define for_each_hwgpio(_chip, _i, _label)						\
++	for_each_hwgpio_in_range(_chip, _i, 0, _chip->ngpio, _label)
+ 
+ /**
+  * for_each_requested_gpio_in_range - iterates over requested GPIOs in a given range
+@@ -572,13 +584,8 @@ DEFINE_CLASS(_gpiochip_for_each_data,
+  * @_label:	label of current GPIO
+  */
+ #define for_each_requested_gpio_in_range(_chip, _i, _base, _size, _label)		\
+-	for (CLASS(_gpiochip_for_each_data, _data)(&_label, &_i);			\
+-	     *_data.i < _size;								\
+-	     (*_data.i)++, kfree(*(_data.label)), *_data.label = NULL)			\
+-		if ((*_data.label =							\
+-			gpiochip_dup_line_label(_chip, _base + *_data.i)) == NULL) {}	\
+-		else if (IS_ERR(*_data.label)) {}					\
+-		else
++	for_each_hwgpio_in_range(_chip, _i, _base, _size, _label)			\
++		if (_label == NULL) {} else
+ 
+ /* Iterates over all requested GPIO of the given @chip */
+ #define for_each_requested_gpio(chip, i, label)						\
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
