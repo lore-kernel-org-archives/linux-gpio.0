@@ -1,161 +1,133 @@
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3859018DB3F
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Feb 2025 16:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289AC161320;
+	Fri,  7 Feb 2025 16:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738945758; cv=none; b=NNkqpmHY6RREuUsNX88kpgYzcNh4qB0S8TRaCKtcGGuKZhYr4w/bQrvRemtJs1BuEiotRDds7+5pOrUVGSSZtW40qrOix0ITUK94tiFdHRHnTO3ABZ73RMe6NIaVpQB5jejnsvJvTyFG8guEnarmg+mh3crbBBtsBnCbe7h6xV0=
+	t=1738946973; cv=none; b=QVwmgeezf2TCFINvp8Lsaqn/dMQPcyTVWYdI1d6ubbMGUUq4tlj89lYuU42srzvkGA1wumba8rSCBvyd9l9uIkeiRy/0MYHRigpdN7DBQoDwlOLEkF8EJ6hhrErXTw95w2ecaIhw6ePL1hlpEqEsLCNJvQGvIfztOKqb2GjsCJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738945758; c=relaxed/simple;
-	bh=57uHeJssUhSTwboeRjLbjHP/8gebXbxQ08iLQ68S9QU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ma7CBrouDYQfksZpQ6Igvvz69rcsschvl6dKORxE2kHmLiFRTFOiePX0mAxNtGtF4RlQZTYud7Mb13l1Ob4pmaz7VndOwrIchde7ThfbP0skMDeZoOArDLolsEHoGmIe5VDLVNNuN20NCfhBnIudN9c90XTtzwd2fH2xbCGDJSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mtEJ1Sr2; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1738946973; c=relaxed/simple;
+	bh=ItfnGfst8Hsw1pgzRl9nYJMmsBmHoauxcyRGeQCngLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gee5upgp3zwvOiw3RxEfuysL6/hINwqXkmC/36VkT1V+TA72HEANorxhicZKkgo4pmInjD90XZ79fE4aBAXqbC9ebX96dlpC5aATxLxhNsYg/6Jpq0/y5Pc0UQ72GGfoZMXDQBcApJXUE4pRtbcrTT41gLbFU0FJq5LPYd4/sVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyJ2i8Ov; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mtEJ1Sr2"
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3eba583fbe8so632331b6e.3
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Feb 2025 08:29:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1738945755; x=1739550555; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k5z98lSfe6WwRG+wC0Tg6PRqMgic/o2qF3h3J+ulLEk=;
-        b=mtEJ1Sr2l7/lIK8nvmtXf2sOSfDvQGnL/msUKLZ4fK99Rd4clSOcYOIj0eFfGaLOdX
-         PhbPZ29bbmJC0xUP5e0yRlFjkXShnUq/dnZ/WcJcZ9M7t7eYficY5G1lTOMk0+/DyFz7
-         e7suiMpue9zPF6ivH9gxewbO9CUN2xj5AcJLrNAWv/c297UzMkAI7UiZLl1csBec2nzX
-         TKEh6k+Px2lri8jnJt3ooEj+r4MH63cF5+lZ0wLdUaKwV8lZvZ4i9cjd0QcxPZu2haAn
-         qI9z/jykdLqcHLrqXuxBKAy1uKVNi2IOwAJY0Rl1NN0AWeZ68C+NE4/maNTj/grV7fSA
-         H/KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738945755; x=1739550555;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5z98lSfe6WwRG+wC0Tg6PRqMgic/o2qF3h3J+ulLEk=;
-        b=oT7rnmd0/huJ7P8v5klUkFrI8COu/B/XuzV6BkGa3u5EA4x7DtNB5vJKogZf7nllva
-         IlTxgYWrKJ2wxB66+rNJVIuxdpMDcCfVT5bima29XbpfZVmyGOaY1TpFmZIKZUH0aBnB
-         Ix1HUuY04ga6Sx6PjxV/TL1keLAAy7D3X/wzoUxuVK7HtjKdBE7zOjWYMY3mqFF9KrzB
-         ME7PmJZraV+8tVmqupgKCCUXiuRgoUzSnIg5xflaGSJxYqlfoc87Tkiui0dNLJc95Vd6
-         HMgZ9kmoel3CUi7I13UZ7urhRaNK40gHIjMprFUXqql32xlWdrNS9fxzR2Dr7a/1gH08
-         jpxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUijOhmkltWhFinPiNV3FHbK1H4mTis6Qdn5L6rZ5cJypBLXyJ+n0OUybddrjsjA7e4nzEbRhnJbbzv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHac2lIXWYDAOnYFjZBaIYjpUggA++PRJwMwLFnI2r3euGZfaq
-	dE2TDIYvPstz1rXcgKdoNWPoMnrFrFSe3f2WEiNBF6Mo7GwdmHRfBADVD4Z9HEg=
-X-Gm-Gg: ASbGnctr52eirZfVPXp/pEI8gwtXtakBLwkF6aHEFQtzuNeDXcyR6Td9KdIHI4MSBSE
-	K3Uh+G3t0LUxlKJNc34+0suNYcz7qwBx8lGTKV1Y2gBRpRlhz+NQaJo8zz5w+9geWk/A0bdH91J
-	i1lW3aFLoXwyVnxQ9uAZl0TbPE5CzP3P5mbcAxeGOxiKCuiFTPYcTQN4h/tSx8YSCNeGIaUL/4p
-	6ykO+CelOIHw8jN6Orf2WhUb3JCY9xNNpNAG+WcSKYgNh/SWZmnwRlZpwFLewMa8ogzFYvTQCcS
-	IGq/VEUVci8R8xyM39UxpHXUMuJsrjsMB4RHBclFx7zq4KMI/wZg
-X-Google-Smtp-Source: AGHT+IG7StedQ5Vnf2T8W9EtvcPrRVDItpyl7T3DBHEMIV0RzDgNrv3XTiomaadolzmBwJACvP6VXg==
-X-Received: by 2002:a05:6808:30a3:b0:3e3:bd1c:d584 with SMTP id 5614622812f47-3f3922d9a38mr2709674b6e.9.1738945755147;
-        Fri, 07 Feb 2025 08:29:15 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f389ed6220sm756084b6e.15.2025.02.07.08.29.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2025 08:29:13 -0800 (PST)
-Message-ID: <74ec33db-6721-4b86-86a6-e18b0a01fc47@baylibre.com>
-Date: Fri, 7 Feb 2025 10:29:11 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyJ2i8Ov"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D809DC4CEE5;
+	Fri,  7 Feb 2025 16:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738946972;
+	bh=ItfnGfst8Hsw1pgzRl9nYJMmsBmHoauxcyRGeQCngLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eyJ2i8Ovem9vEjhEOnzIOUbfpDskXresbo3Vu9Shg4H0KMRy/Z5mEROxqxaOCe2Do
+	 ytRsmC2tgpq8vRIyNCUqez2TR21GN+AZin39Bpr+gxXKDAFo57GSy2U6a34zsOKCH6
+	 dasozOdoK+VvcGPOm3SPt4Ic04PfNZZX+hTgv/UHcbZQq/395R+WKHZBejTNI/IZs3
+	 q0g7LeTNP7AZ1MDr2ZL3pyQRuY3bIRkm3FTPIbunNXhFxJ2TRI64f5XXqGBmP1BGMd
+	 IiZgUKVHtzYUoccrjxosruabdh+ZTlX8sJ9Om1lb2bn6MPRIgtJ1hShMrW9ImFNW7y
+	 cMy8mpcwByX2Q==
+Date: Fri, 7 Feb 2025 16:49:28 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH] pinctrl: spacemit: enable config option
+Message-ID: <20250207-promenade-hazily-d7900cbc127e@spud>
+References: <20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/13] gpiolib: add gpiod_multi_set_value_cansleep()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-sound@vger.kernel.org
-References: <20250206-gpio-set-array-helper-v2-0-1c5f048f79c3@baylibre.com>
- <20250206-gpio-set-array-helper-v2-1-1c5f048f79c3@baylibre.com>
- <CAMuHMdU5tt5_t2SfYO3OUsHenu_0PhpKeLHktNdCx-W6zCEymw@mail.gmail.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdU5tt5_t2SfYO3OUsHenu_0PhpKeLHktNdCx-W6zCEymw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rYTB+GBMkx5iLYMN"
+Content-Disposition: inline
+In-Reply-To: <20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org>
 
-On 2/7/25 3:10 AM, Geert Uytterhoeven wrote:
-> Hi David,
-> 
-> On Thu, 6 Feb 2025 at 23:48, David Lechner <dlechner@baylibre.com> wrote:
->> Add a new gpiod_multi_set_value_cansleep() helper function with fewer
->> parameters than gpiod_set_array_value_cansleep().
->>
->> Calling gpiod_set_array_value_cansleep() can get quite verbose. In many
->> cases, the first arguments all come from the same struct gpio_descs, so
->> having a separate function where we can just pass that cuts down on the
->> boilerplate.
->>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/include/linux/gpio/consumer.h
->> +++ b/include/linux/gpio/consumer.h
->> @@ -655,4 +655,11 @@ static inline void gpiod_unexport(struct gpio_desc *desc)
->>
->>  #endif /* CONFIG_GPIOLIB && CONFIG_GPIO_SYSFS */
->>
->> +static inline int gpiod_multi_set_value_cansleep(struct gpio_descs *descs,
->> +                                                unsigned long *value_bitmap)
->> +{
->> +       return gpiod_set_array_value_cansleep(descs->ndescs, descs->desc,
->> +                                             descs->info, value_bitmap);
-> 
-> I am wondering whether this needs a check for !IS_ERR_OR_NULL(descs),
-> to handle the !CONFIG_GPIOLIB and gpiod_get_array_optional() cases?
 
-I don't think it is strictly needed, but could be convenient for future use
-cases. If we add it, should it be:
+--rYTB+GBMkx5iLYMN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	if (IS_ERR_OR_NULL(descs))
-		return PTR_ERR(descs);
+On Fri, Feb 07, 2025 at 08:11:42PM +0800, Yixun Lan wrote:
+> Pinctrl is an essential driver for SpacemiT's SoC,
+> so let's enable it by default for this SoC.
+>=20
+> The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+> 'make defconfig' to select kernel configuration options.
+> This result in a broken uart driver where fail at probe()
+> stage due to no pins found.
+>=20
+> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+> Reported-by: Alex Elder <elder@kernel.org>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> This should fix problem that CONFIG_PINCTRL_SPACEMIT_K1 is not enabled
+> when using make defconfig, thus fail to initilize uart driver which requst
+> pins during probe stage.
+> ---
+>  arch/riscv/Kconfig.socs          | 1 +
+>  drivers/pinctrl/spacemit/Kconfig | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 1916cf7ba450ec9958265de2ca41dc504d4d2f7c..17606940bb5239d0fdfc6b5ae=
+fb50eeb982d14aa 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -26,6 +26,7 @@ config ARCH_SOPHGO
+> =20
+>  config ARCH_SPACEMIT
+>  	bool "SpacemiT SoCs"
+> +	select PINCTRL
+>  	help
+>  	  This enables support for SpacemiT SoC platform hardware.
+> =20
 
-or:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-	if (!descs)
-		return -EINVAL;
+> diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/=
+Kconfig
+> index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..aa3dea535def87ed75d86bc55=
+5b2b90643adbdea 100644
+> --- a/drivers/pinctrl/spacemit/Kconfig
+> +++ b/drivers/pinctrl/spacemit/Kconfig
+> @@ -7,6 +7,7 @@ config PINCTRL_SPACEMIT_K1
+>  	tristate "SpacemiT K1 SoC Pinctrl driver"
+>  	depends on ARCH_SPACEMIT || COMPILE_TEST
+>  	depends on OF
+> +	default ARCH_SPACEMIT
 
-	if (IS_ERR(descs))
-		return PTR_ERR(descs);
+This is effectively just "default y", since ARCH_SPACEMIT is a
+dependency.
 
-?
+>  	select GENERIC_PINCTRL_GROUPS
+>  	select GENERIC_PINMUX_FUNCTIONS
+>  	select GENERIC_PINCONF
+>=20
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250207-k1-pinctrl-option-de5bdfd6b42e
+>=20
+> Best regards,
+> --=20
+> Yixun Lan
+>=20
 
-For comparison, gpiod_set_array_value_cansleep() will return -EINVAL if the
-first argument is NULL.
+--rYTB+GBMkx5iLYMN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Slightly related: shouldn't gpiod_put_array() (both the implementation
-> and the !CONFIG_GPIOLIB dummy) allow the caller to pass NULL, to
-> streamline the gpiod_get_array_optional() case?
-> 
->> +}
->> +
->>  #endif
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6Y5mAAKCRB4tDGHoIJi
+0n9bAP9XtCzAV2iiq9j3juCE6vQIfvx2/7YUbFSqiWXDIxWXEgEAgRXKFqkntGmr
+M0aPk8b4FjhWokyIM7/Xo2cJz9vhlAI=
+=gtfL
+-----END PGP SIGNATURE-----
+
+--rYTB+GBMkx5iLYMN--
