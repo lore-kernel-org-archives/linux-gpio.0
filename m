@@ -1,155 +1,93 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF1E1802DD;
-	Fri,  7 Feb 2025 16:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC30023C8DB;
+	Fri,  7 Feb 2025 17:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738947178; cv=none; b=QXnfzQ0KpoPjSJnBgsUq94RoiSf9TX6DbSZJFC5lz43qH5J/ioeqpiYL9h4x9InQi3xljpV/vuRlT0ZQQipkGyOwck+M9oZ+M0y1mKdZKvEYTnzhIQJmVz39VBX3WYp6h2RpnfUK9Xac4ufugksSFwJhZRca+oOcEtLtqyAGBZc=
+	t=1738947797; cv=none; b=h/0+Vu2U+9+4d4en6EuJu3kxWD+GwMpEETUZVkKLtDXlCZlhh/KH+wPX0oSMjy2yfxMAUEoNaSirEM6FqvoARAOxYg4gNDeAnTN4l6Vpaqc3jRBDEEHqSDksOdtxCmb66hC9OZdN/4XRo/JvuFjLeEhkut3XlUpoVoJ8MM83kKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738947178; c=relaxed/simple;
-	bh=ecUYnd+W1q20dRwJBirTrue159dV174gldrH/T+f8q8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FW80jTR8fOjyriF2RNahW0mTXZ1918jzNSp5pstlpC4GsXWu0HJDo9gVeBP2MT6d1IUCpbH1uQlgyqgKic2vouVT1E3QCBZTX0aHBg6FOm4+2+SyjHXxR/XOzi6bJYUhKD/+IMAqa58aMiH9io4MwBNB0wDjV8JU4Z75GznJzLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e4505134c4so177796d6.2;
-        Fri, 07 Feb 2025 08:52:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738947175; x=1739551975;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCWtJ2W7sBii9exDfBQy+ICa40xLBzxTz8+SCx213a0=;
-        b=Wy15fqPSv7aRM94FdfxjEIG84zmvg6dlWvObC2B9CLj21Riik4X6QGAEK7eoycuDMR
-         5rZEi98kySIzo1MxfoQPAyp4HilcUnBMGwDdMidt2p4W20xSVEhsVO/GSKyyz0vbbgdy
-         P7pYWXChEZL9LZGzq8R8c3mqHeGRe0Rr/EZnQE3TfNCyE4/OtDl/6gOvsXLaSwLsIkzY
-         7ugznnmdv4zd6dAL05SAPXcrHb5SbSlKAR+otQkzJFaJeitB/ohy2/9ZE/beuYXCFwa5
-         lMvUuSkAOaO3PKsaQh3/JyUAB7dQr75/rjGsuB6Lrfn87IxkQfCPVdPvea6SVYa8pi/8
-         YU+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWQi+Nt3hWV7BlgSmRKdA5ihhOkcQ2V5m/BmyFVefM/9j5HjmRvON8GXm+ObWPE1mbhVydiYL++3K@vger.kernel.org, AJvYcCVPw1W5PKKsi8StRutrfIjTgltrfbRVkZmocfqh1MRHJY+lSOrVvsNmA9AjNbolWGCGVWNtHgUlDHH04NsZ@vger.kernel.org, AJvYcCVRzXnpo66f1f13bG1m5wwz2fw2kBiHMBhw7n+FiZXQdCE0IakFTfBugx2Ounn57/Us9bWUJpcG@vger.kernel.org, AJvYcCVcABQK/mrRdRX8X9y+Zq5HpOx4Rp8zlv70PiZpkFHtjZFRZOaj1ZQ9wCP4jD6+Ht8m4TlnTt+w8I9r@vger.kernel.org, AJvYcCX2OQTk8DRd/RjcLzJppNQkxo95c3gn+bThu91uOH5oQipZ1xy2YX7y1S5geLIh/CthC27JdUmWsMD6EJw=@vger.kernel.org, AJvYcCXLraVlYdUXnuW0lfMKr2yCKV6goAXRnT+iahPcakpnHnwrgpoGiEBp+lxAIWRRm0IusHwxivyaQjGs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRNXUw/z/9w3aKp4ZDFG8g3IOrqNa4Fp0Xk1KkQzaeRShc+dML
-	H4Oq0Pi4CGytjl+U+kiYnFp2KrNLurFi3UWCLUisCI26Lc7bRqkah/IO1zgE
-X-Gm-Gg: ASbGncsdRTeotgP5fqxpvRCsNglFnCJ3k/45gRLYwOY3rZwV1E738QKvYJ3kA/rrv5A
-	VHxW8+y/9F7GxoJdqHpkNLCwHMjhKiUosvW0Uqmd91Z6z9eARYTAq4Tamfb5X/AqlNWIN7f6l+2
-	CeHFcG6GLC2PeLscMGaS0blAK4k5gPjCRHLW2x+TQZBuphpUBguV0dlUMJXOQxjcUyN7AQmi0B5
-	D1qEQmQQWm1pq5i9Y664EqVjhkHW5R5jnr3nRUyUVoARRcQ2TSq8Oh1VUpHr3XGR8Kw5vT+0Ffm
-	wedrbKSFmTtPAjaPpft7Y9pLECKyMJn0A2baHL0PystoCPp7tw0Sx7g+HQ==
-X-Google-Smtp-Source: AGHT+IEqUFn2zV6/n21PVporJf34N/K7KLRCeFQnThNT/iIp3ZAdi3X7YAiPcT3jQB4g+3VQPWB5gQ==
-X-Received: by 2002:a05:6214:c26:b0:6d8:898a:a508 with SMTP id 6a1803df08f44-6e4456160d4mr55375976d6.16.1738947175314;
-        Fri, 07 Feb 2025 08:52:55 -0800 (PST)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e43d378e3esm16781956d6.4.2025.02.07.08.52.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Feb 2025 08:52:54 -0800 (PST)
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46788c32a69so29884951cf.2;
-        Fri, 07 Feb 2025 08:52:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUrEG4VTrvnRMnaHV9sxEboDQ7EMagqOP8xtP9E38sdQSTnI3zxHJ666KMLAjjlaoYxLPiBcX1CiHW+LRU=@vger.kernel.org, AJvYcCVGAsD0CnpIJyortGKZf9+Q2PEX/ioWQzDw68LBpdVX0dEYG69fZ8QvbYsFA7n54tCpp4LIpBoY@vger.kernel.org, AJvYcCWVOX9Rsr1JKDsWhfeGsB7QAjRVH8qp06/hPJpzKwjjMwLCMSbTdUhsRQTOsAosPs0eWRiF/HYWxdyJ@vger.kernel.org, AJvYcCXDSs4DUC+owKlhad1vSblWN8xxSsXasaoky3VLLaqKSMN3BaasGOKD9+YuF3zib+gzrjhC1qO7gJtx@vger.kernel.org, AJvYcCXUXgvNPr/y8QP9/H+7XBYFV7YgoVvyq/0QEw727FsUaaLuJoAt1kVkKfQxKTR8FNZyiodZEP8HOdPOuumE@vger.kernel.org, AJvYcCXjv5Kq4G0IhZs7hiYpUy4VixT3jvCwtZZCrNyOaW2YkbqTD/tQb4M7o6xacsc0vHh0idUwlrkkV4fx@vger.kernel.org
-X-Received: by 2002:a05:6122:794:b0:518:859e:87ae with SMTP id
- 71dfb90a1353d-51f2e1ed315mr3362597e0c.7.1738946694014; Fri, 07 Feb 2025
- 08:44:54 -0800 (PST)
+	s=arc-20240116; t=1738947797; c=relaxed/simple;
+	bh=oNUYLYJ3cBbS2gYJzUrPZKysiTn8zeg+2VOsqprROM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cEcLurwf4uy0/mQXj9EmsgjpX2VSsLs7ho3Eq5moroBrJGnu5Kc29mrWAJOOiu4XsxN/fZVCBPZM5QSM1TZnpEDQEXzpaoQGvHdCuh1cwTbrQ3sVYE730n7/Y7kZZRVDHXtj8NrcRbIVYax3CZL9rOj0YuuxL+Fa/CuX1+rNqCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NKtv0DZX; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NKtv0DZX"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 517H2qbu3039421
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Feb 2025 11:02:52 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1738947772;
+	bh=oNUYLYJ3cBbS2gYJzUrPZKysiTn8zeg+2VOsqprROM8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=NKtv0DZXtokLgalUpTO60zr4Cf092BJfxuhfrDpxAUoUfsROwTrh3/q9n5mXPkjbH
+	 YgRW3VjP4wISo23vbD+PR4PjwilQoT/OWyZdPDmrWqWUHlttRLYxn+LPNKbd4OM5xL
+	 HF8yee3ax0+YOWrbnW163mVqy7vQzwiCiPmxPLqw=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 517H2qI7040519
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Feb 2025 11:02:52 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Feb 2025 11:02:52 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Feb 2025 11:02:52 -0600
+Received: from [10.247.30.175] (lt5cd3040qtn.dhcp.ti.com [10.247.30.175])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 517H2qv4105448;
+	Fri, 7 Feb 2025 11:02:52 -0600
+Message-ID: <0c5f962b-3264-49c8-a1c5-893b8eb41b63@ti.com>
+Date: Fri, 7 Feb 2025 11:02:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206-gpio-set-array-helper-v2-0-1c5f048f79c3@baylibre.com>
- <20250206-gpio-set-array-helper-v2-1-1c5f048f79c3@baylibre.com>
- <CAMuHMdU5tt5_t2SfYO3OUsHenu_0PhpKeLHktNdCx-W6zCEymw@mail.gmail.com> <74ec33db-6721-4b86-86a6-e18b0a01fc47@baylibre.com>
-In-Reply-To: <74ec33db-6721-4b86-86a6-e18b0a01fc47@baylibre.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Feb 2025 17:44:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX0Kp_Rj5iQODW3omEYimE+taf+cgbEiHqWo3=fG3Am0Q@mail.gmail.com>
-X-Gm-Features: AWEUYZn5qJOQHPLw2LRF15YUSzvjDVeuWxyBTUf7OD7UgB93Hq8YufkWPyHtZXA
-Message-ID: <CAMuHMdX0Kp_Rj5iQODW3omEYimE+taf+cgbEiHqWo3=fG3Am0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/13] gpiolib: add gpiod_multi_set_value_cansleep()
-To: David Lechner <dlechner@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-sound@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] Add TI TPS65215 PMIC GPIO Support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <m-leonard@ti.com>, <praneeth@ti.com>,
+        <christophe.jaillet@wanadoo.fr>
+References: <20250113225530.124213-1-s-ramamoorthy@ti.com>
+ <CAMRc=Meqjy+cqfueM_dQE8uP32zS0ib41qE+OPPWFkhoVTGc2w@mail.gmail.com>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+In-Reply-To: <CAMRc=Meqjy+cqfueM_dQE8uP32zS0ib41qE+OPPWFkhoVTGc2w@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi David,
+Hi,
 
-On Fri, 7 Feb 2025 at 17:29, David Lechner <dlechner@baylibre.com> wrote:
-> On 2/7/25 3:10 AM, Geert Uytterhoeven wrote:
-> > On Thu, 6 Feb 2025 at 23:48, David Lechner <dlechner@baylibre.com> wrote:
-> >> Add a new gpiod_multi_set_value_cansleep() helper function with fewer
-> >> parameters than gpiod_set_array_value_cansleep().
-> >>
-> >> Calling gpiod_set_array_value_cansleep() can get quite verbose. In many
-> >> cases, the first arguments all come from the same struct gpio_descs, so
-> >> having a separate function where we can just pass that cuts down on the
-> >> boilerplate.
-> >>
-> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/include/linux/gpio/consumer.h
-> >> +++ b/include/linux/gpio/consumer.h
-> >> @@ -655,4 +655,11 @@ static inline void gpiod_unexport(struct gpio_desc *desc)
-> >>
-> >>  #endif /* CONFIG_GPIOLIB && CONFIG_GPIO_SYSFS */
-> >>
-> >> +static inline int gpiod_multi_set_value_cansleep(struct gpio_descs *descs,
-> >> +                                                unsigned long *value_bitmap)
-> >> +{
-> >> +       return gpiod_set_array_value_cansleep(descs->ndescs, descs->desc,
-> >> +                                             descs->info, value_bitmap);
-> >
-> > I am wondering whether this needs a check for !IS_ERR_OR_NULL(descs),
-> > to handle the !CONFIG_GPIOLIB and gpiod_get_array_optional() cases?
+On 2/7/2025 2:53 AM, Bartosz Golaszewski wrote:
+> On Mon, Jan 13, 2025 at 11:55 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
+>> TPS65215 is a Power Management Integrated Circuit (PMIC) that has
+>> significant register map overlap with TPS65219. The series introduces
+>> TPS65215 and restructures the existing driver to support multiple devices.
+>>
+>> This follow-up series is dependent on:
+>> Commit f84464ec8190 ("regulator: dt-bindings: Add TI TPS65215 PMIC bindings")
+>> Commit 8206c20f4c82 ("mfd: tps65215: Add support for TI TPS65215 PMIC")
+>> Commit 0e0b7f00c111 ("mfd: tps65215: Remove regmap_read check")
+>>
+> Did these go into v6.14?
 >
-> I don't think it is strictly needed, but could be convenient for future use
-> cases. If we add it, should it be:
->
->         if (IS_ERR_OR_NULL(descs))
->                 return PTR_ERR(descs);
+> Bart
 
-return PTR_ERR_OR_ZERO(descs);
+These didn't. I figured with the dependency feedback, it was easier to combine the series for TPS65215 and TPS65214 into 1 series.
 
-(the compiler should optimize away checks common to IS_ERR_OR_NULL()
- and PTR_ERR_OR_ZERO()).
+I submitted the combined mfd + dt-binding series [0] first, and once that was ACK'd, I will follow up with the gpio series for both devices.
+Let me know if there's a different approach you would recommend!
 
-> or:
->
->         if (!descs)
->                 return -EINVAL;
->
->         if (IS_ERR(descs))
->                 return PTR_ERR(descs);
->
-> ?
+[0]: https://lore.kernel.org/all/20250206173725.386720-1-s-ramamoorthy@ti.com/
 
-The former.
-
-> For comparison, gpiod_set_array_value_cansleep() will return -EINVAL if the
-> first argument is NULL.
-
-That function cannot take an argument returned by a *_optional() call,
-if I'm not mistaken.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
