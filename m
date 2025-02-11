@@ -1,143 +1,154 @@
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E821F8AF8;
-	Tue, 11 Feb 2025 11:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E44E1FBE9E
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2025 12:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739274995; cv=none; b=CzT0s0xNSM6o5XqbidNkIoYvhFgZJ58Ruv9itg/uLTeXFaDLTsAJVYyk1Nv27e4m7B2pvcqEX98y3drb9zVCCM9v6gXcppvmdTZZyAhMpD4I2x6vKfY1QPKvlzcZyrFU+bY8e6DNAVtHEnqI0gZki6rOmQA8ZaKSRzSbD6E7zuA=
+	t=1739275736; cv=none; b=d2gjtTOMtx70cpiEkibWK3i8QSGHvKDGGsYfybaWlGJjiyPEj8Llol7Vpdf0csl41CCNT+0G4zdBBbWrF0YuPzYOxSsWokhiDHUfyZhprOFHBszIxhAkrzSVLwc6D9THIAtFKLuj7mxkUouRPL+j0jz9sz5Ah6vNuN7IdIDzCRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739274995; c=relaxed/simple;
-	bh=rd29cpkgIwrU7/mh++kq6VmSBZdKxSQR4Rl/ZCGILEM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Iuym5OYRipWyXXmSgGCHinWia+9CZGpdt3vEx3wEZ6f4/9Btssv4rrAgyNtaUHuvjQpgrio2c9tucVWUegfRgs4tgIjjnkPuc1FK6Yc23+ff8fn/KGaIlT2XyINxbC6piHbTRGwSh4lqmKIsV6KQCOrd1srHDLa4TYLA7fcfMiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BOdRE3La; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Dj0NE2f9; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1739275736; c=relaxed/simple;
+	bh=UHUYIddf+n4H5dMnEJICjm1zFmW3Cc7Ddp9PK9+vm8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eTd/ve2ZCHozjf7feEY428i1r3PUqgQ2Rup9kNZbgdQ3WRSfryU5paZZBH+qAx2EKrb9L2PCE5LMiTOseYBcrDZ0cTWxB2IlHaFv0M5cEEEFvtVvGyGGuARUOhN7qcJPXorOg/uQ8xoEbFVe2D95eTylCqNWk4xEHceUfhq137E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tVZ2+aqB; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BOdRE3La";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Dj0NE2f9"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id ABA8413808C3;
-	Tue, 11 Feb 2025 06:56:32 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 11 Feb 2025 06:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1739274992;
-	 x=1739361392; bh=SCgFKCz0WVFlk+/nGWCfvkfQS3PqNaxn3RNPH9+mh7c=; b=
-	BOdRE3LaNTDlQADqs5Hkyc0y7uE6jlOpYdk72QHjqA3KEpUXPc2790a5yTzTGEc6
-	Zr/+8Xe0dhc/Tz9MgNlp5wbRMfY0BoAmdOZfzxg0X28OgC2tEKax9a4DT7SYy8mO
-	EoIy5GrlU4/8xaKMG6eqEAICm7+QGvHvY8Z8ex8czbEA0yn+/Rv4eQ6Y9xojZlyO
-	YXP5i0OdOHdsehprYT2+ksC4ICkW6eXshnB8Qur2hNp5uj54i6m8u5t9+01Yzhbv
-	CKAjOOJOqjy37PZNTUBXoFaPEtwlcvrjY/KQj9m4I/q9nl9+YtKAXr1rqynz4GhG
-	IkHIl/nUcchALoUnvdMoOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739274992; x=
-	1739361392; bh=SCgFKCz0WVFlk+/nGWCfvkfQS3PqNaxn3RNPH9+mh7c=; b=D
-	j0NE2f9eUybBDBypcXB0Gfr24ZHt7WcVOxeVohAZmLBADkM5pDpBpntNC5/NeGrM
-	TZn1DQNz83Gjw1Dcc1YKO9CmBigcqKE1JGyC3a3iH/OtRjbVqpLhtDLvUsJEvJky
-	td6QB3+QvNo4KYCFsHA3+OJdrk6dXm1mJx/YYLd1orbS3aCszO6URTp6dWSx+rVa
-	CXReLM09E+r4bbyvkEtfdv/dVAr70XnVU9BlMV+BKDQCMHc08CJOl4r3mb2fMLUm
-	u2zObocPX+AwbuoxCRk9SmAzm1TYr9u5TtxYXSyt1Uo7d98bD45Yv9Lbpmd2VrpY
-	BVTGugO0qHLamCmIB5A3A==
-X-ME-Sender: <xms:8DqrZyI6N5j27bQ0fsKkQT0JRPOSxt0UVyH-NRT8Eo80-VEvcrxX7g>
-    <xme:8DqrZ6JoDMm2ZDrHAl7RRE8bOM1rKWHM08TNqLleu3CQS8jBhEP8BSxTdbiUJq071
-    FFGa5Xh84tsIYVzCDw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegtdelgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhh
-    hovhesghhmrghilhdrtghomhdprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhl
-    rdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehprh
-    iivghmhihslhgrfidrkhhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopehr
-    rggrghdrjhgruggrvhesihhnthgvlhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhrvg
-    eskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:8DqrZytxAqlN6V9ootafxgtKy8n_5mIlmoC3PP1rtvg5YyxKtr832A>
-    <xmx:8DqrZ3Y9Pgo2Ue7-eGtuG9QM9Mxj_xw2jfwWHmRP4Uv-rHAGtD47HQ>
-    <xmx:8DqrZ5bzw4AXGhO8JrtwHxoRRRT4nJi83FYFnP31nMsJps87YOgfcg>
-    <xmx:8DqrZzAXdgPM9jr1Ft_sAe1Mn_YlatD3ZiSQMCFfUd0Zh3D98dvROA>
-    <xmx:8DqrZ1P1831GY0oWJVBAkqiyOEjQYHiHgePr2JAYS3uj3q6SN0AL5Irz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4443E2220072; Tue, 11 Feb 2025 06:56:32 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tVZ2+aqB"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43690d4605dso37325505e9.0
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Feb 2025 04:08:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739275732; x=1739880532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/LXQ6cLbViDtV5N9eGseg4G8vDo8CWaGoGPlt8jHaoQ=;
+        b=tVZ2+aqB5Z3QaMqHt07of/aKKe+ybG/ysHStS/kD/dl0tYmWfS2HvrLDoYMGddyEid
+         sJTuCYXMP4TjoIhdflvT45RjQrdvUMoik5aJjiH2XkSSB7gUhibhiq4E8HOgyjbA/Xfv
+         RYQNIRI5GTMAHogBOSFVqSNP3orl5EQlw/X6fDGe33pwdaZwWtqOOMMCxiG0xQOOA/p9
+         dj5fRhBEE1Wg9+QTgo4uHav6HGjTCbz2pIYOLCi2+3G8mDh609FtWJop6oE8HqWShcD1
+         p7N6m0ueykNr+rJYgptFmoTWvyKFbLoqnqZYFOujrTDcIooVzPfbEVdxac/AhujY2JDd
+         vpiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739275732; x=1739880532;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/LXQ6cLbViDtV5N9eGseg4G8vDo8CWaGoGPlt8jHaoQ=;
+        b=sfaUXzQ5eOm/Ctcgycu5EajBVrNgTpatrsL2W/waYrh1Dw0Ke1tcboUTyOQHSJQ7dH
+         oXQ3hlakgU+9lkvjp/l7lh9JQ06eYPdgA8ldCeEd4hMxR427JdQefZSAzipS8qfztWgP
+         loFtETOpnUu7BP0z9TCDL0SqrHpQHinRu/Fb0S4DhkVA9qJ5Lx7aMzplIw5+kkPNghyw
+         vPCJTKyLMKMamEJKSG4sav32ulUSe3uevzqY36/pHqwXMbmgeKCJsOgmgTnCz/rfUvSL
+         1IFZhgrK4XxYGqesVk/96o7RuXrFrrcoOtLn//tjno5WSfYmc9PfF4xP2eTWUg3S3jts
+         q2ig==
+X-Gm-Message-State: AOJu0Yzl+Gc6IMR8oWFpxg/CNvZ1ry7ex6ctY0gNouFiTxaPwhm2KlZn
+	RKnCWGeT1+iFJuvLp0MEKKP99MjRxLi+Ea+J3psHxnW2OcGZyWNfFpmKNqrPGsUidVOYRlVo1wa
+	RCoI=
+X-Gm-Gg: ASbGncsDI2M55xc+tVMP9J3Ma/44YY0kyDkiyfd4kF5O58au7SnQVra0DYHuwL7LvAv
+	NR5oUeFkQAXD1SBgWKmki7dhA9xiBNvf8vsLgOO8cclvkSBFk96g9p0xHXyBAs57A7aNbpnx4pb
+	44MXehVsa3OImRoqZP2v7Jhu2iRM900QlL5q9zcVVzyh1PwrWzUwJZlLr4mUz/OOHR7HaM9SCCb
+	9o5V//nozsrmS2cGKiUPCfdiCahFoRgUdfUifps4ZkpdW+Wm3DcF5M6v7p0QxJ5y+ACLn+JUihD
+	rw8jTBjYpqAmhA==
+X-Google-Smtp-Source: AGHT+IEUjN3gs/vgcSyV3xa8eYF+tOlngAqw3C6M762kb/hbi1cU/0PcGo2jLZC7dcyMer/PguHNxg==
+X-Received: by 2002:a05:600c:5811:b0:436:488f:4f3 with SMTP id 5b1f17b1804b1-43924991efamr149129625e9.17.1739275732441;
+        Tue, 11 Feb 2025 04:08:52 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:561:8978:1d41:636a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4393b66f3e3sm86966375e9.19.2025.02.11.04.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 04:08:52 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 2/2] gpio: latch: store the address of pdev->dev in a helper variable
+Date: Tue, 11 Feb 2025 13:08:47 +0100
+Message-ID: <20250211120847.42437-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250211120847.42437-1-brgl@bgdev.pl>
+References: <20250211120847.42437-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 11 Feb 2025 12:56:11 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "kernel test robot" <lkp@intel.com>, "Raag Jadav" <raag.jadav@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mika Westerberg" <mika.westerberg@linux.intel.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, lgirdwood@gmail.com,
- "Mark Brown" <broonie@kernel.org>, "Sebastian Reichel" <sre@kernel.org>,
- "Jonathan Cameron" <jic23@kernel.org>,
- "Przemek Kitszel" <przemyslaw.kitszel@intel.com>,
- oe-kbuild-all@lists.linux.dev,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-iio@vger.kernel.org
-Message-Id: <49396042-31f0-4d8e-aa54-d89093ab5709@app.fastmail.com>
-In-Reply-To: <Z6s2cGMM9R6SZ9Le@smile.fi.intel.com>
-References: <20250210064906.2181867-2-raag.jadav@intel.com>
- <202502102201.zLWaJC6V-lkp@intel.com> <Z6oZ9dnYrlp5djiQ@smile.fi.intel.com>
- <7c42e438-22f9-40d9-bb8e-24feb7d58e64@app.fastmail.com>
- <Z6sYAxRIeCzw12nY@smile.fi.intel.com>
- <c1184a91-e216-423d-b956-d4b22116a171@app.fastmail.com>
- <Z6siYlWfvfUvNLpX@smile.fi.intel.com>
- <279d9f32-a1c9-41aa-b15a-e1485877b2d5@app.fastmail.com>
- <Z6s2cGMM9R6SZ9Le@smile.fi.intel.com>
-Subject: Re: [PATCH v4 01/20] driver core: Split devres APIs to device/devres.h
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 11, 2025, at 12:37, Andy Shevchenko wrote:
->
-> The problem this series solves at the beginning is that not all the consumers
-> of device.h needs it, in many cases the device/devres.h (or subset of
-> device/*.h) is enough to include. While solving this, it appears that
-> the current code uses ERR_PTR() instead of IOMEM_ERR_PTR() in devm_*io*() APIs
-> and kernel test robot found this and complained about. While solving
-> this new issue, LKP found another issue that is circular dependency.
-> But the original code only wants to have an access to IOMEM_ERR_PTR() which
-> is in io.h and can be moved to err.h AFAICS. Does this sound reasonable?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Yes, that sounds fine to me. I agree that not including linux/io.h
-from device/devres.h is a good idea, same as no longer including
-linux/device.h from asm/io.h. Moving IOMEM_ERR_PTR() as you
-describe is the right idea.
+Make the code a bit more readable by using a helper variable to store
+the address of pdev->dev in probe().
 
-Side note: I looked at large-scale header file cleanups in the past,
-and in general the result of that was that the best way to reduce the
-indirect inclusions is by splitting data structure definitions from
-inline functions that use those data structures. The definition of
-"struct device" clearly has too many dependencies, and to make
-this one better. There has actually been some good preparatory work
-done by Kent Overstreet a while ago that moves structures out
-(e.g. work_struct and mutex), but not yet struct device and
-struct kobject, which are needed in many other headers. The tricky
-part that needs to happen to actually make it useful later on is
-to replace all the unnecessary indirect includes with the minimal
-ones, and that is a huge amount of work.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-latch.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-     Arnd
+diff --git a/drivers/gpio/gpio-latch.c b/drivers/gpio/gpio-latch.c
+index 722eb5b045f5..46cdfb08747a 100644
+--- a/drivers/gpio/gpio-latch.c
++++ b/drivers/gpio/gpio-latch.c
+@@ -143,22 +143,22 @@ static int gpio_latch_probe(struct platform_device *pdev)
+ 	struct gpio_latch_priv *priv;
+ 	unsigned int n_latches;
+ 
+-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	priv->clk_gpios = devm_gpiod_get_array(&pdev->dev, "clk", GPIOD_OUT_LOW);
++	priv->clk_gpios = devm_gpiod_get_array(dev, "clk", GPIOD_OUT_LOW);
+ 	if (IS_ERR(priv->clk_gpios))
+ 		return PTR_ERR(priv->clk_gpios);
+ 
+-	priv->latched_gpios = devm_gpiod_get_array(&pdev->dev, "latched", GPIOD_OUT_LOW);
++	priv->latched_gpios = devm_gpiod_get_array(dev, "latched", GPIOD_OUT_LOW);
+ 	if (IS_ERR(priv->latched_gpios))
+ 		return PTR_ERR(priv->latched_gpios);
+ 
+ 	n_latches = priv->clk_gpios->ndescs;
+ 	priv->n_latched_gpios = priv->latched_gpios->ndescs;
+ 
+-	priv->shadow = devm_bitmap_zalloc(&pdev->dev, n_latches * priv->n_latched_gpios,
++	priv->shadow = devm_bitmap_zalloc(dev, n_latches * priv->n_latched_gpios,
+ 					  GFP_KERNEL);
+ 	if (!priv->shadow)
+ 		return -ENOMEM;
+@@ -176,7 +176,7 @@ static int gpio_latch_probe(struct platform_device *pdev)
+ 	device_property_read_u32(dev, "setup-duration-ns",
+ 				 &priv->setup_duration_ns);
+ 	if (priv->setup_duration_ns > DURATION_NS_MAX) {
+-		dev_warn(&pdev->dev, "setup-duration-ns too high, limit to %d\n",
++		dev_warn(dev, "setup-duration-ns too high, limit to %d\n",
+ 			 DURATION_NS_MAX);
+ 		priv->setup_duration_ns = DURATION_NS_MAX;
+ 	}
+@@ -184,7 +184,7 @@ static int gpio_latch_probe(struct platform_device *pdev)
+ 	device_property_read_u32(dev, "clock-duration-ns",
+ 				 &priv->clock_duration_ns);
+ 	if (priv->clock_duration_ns > DURATION_NS_MAX) {
+-		dev_warn(&pdev->dev, "clock-duration-ns too high, limit to %d\n",
++		dev_warn(dev, "clock-duration-ns too high, limit to %d\n",
+ 			 DURATION_NS_MAX);
+ 		priv->clock_duration_ns = DURATION_NS_MAX;
+ 	}
+@@ -193,11 +193,11 @@ static int gpio_latch_probe(struct platform_device *pdev)
+ 	priv->gc.ngpio = n_latches * priv->n_latched_gpios;
+ 	priv->gc.owner = THIS_MODULE;
+ 	priv->gc.base = -1;
+-	priv->gc.parent = &pdev->dev;
++	priv->gc.parent = dev;
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &priv->gc, priv);
++	return devm_gpiochip_add_data(dev, &priv->gc, priv);
+ }
+ 
+ static const struct of_device_id gpio_latch_ids[] = {
+-- 
+2.45.2
+
