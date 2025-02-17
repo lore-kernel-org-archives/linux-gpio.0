@@ -1,30 +1,37 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5FF21B909;
-	Mon, 17 Feb 2025 12:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576CD215F49;
+	Mon, 17 Feb 2025 13:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739797139; cv=none; b=SHwBFygrdZINsViFqwK+XFbkbkWJb+TsJy9sc/rcUb7xxORX2LSsmr2MigVszeQAYOoZczLtVLCOfUqa5q+RFffAvqDQIyA2g9j+7DBm5eB1cMY7m5bZdafm+f01ZIRS/j/FkShbPsEIJ8WwMSoYECY1JKnNDnyiaL8xyvYpzg8=
+	t=1739797692; cv=none; b=F5wDGWtRWytb+SDfkVn/PMcG/C7iBDf2Dupj1wX9Ngj2kVc7CASvAbYS+WDQHzJqzfAx+z4N5meW/ncYThKbxAnZ9XoRZr7kqqMEkJ1s0WlT9ICLLbQnohLhQ2Ui2Dovq3bNWhcF0c7wDsXj6iR2gAxpVrL7Lq9ql/tN4qVxyg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739797139; c=relaxed/simple;
-	bh=Npl1hf2K8C0HFRJz0IJdWyuqL8ZWAqWbXOrkZ95CiDc=;
+	s=arc-20240116; t=1739797692; c=relaxed/simple;
+	bh=TRuesCIASsENowkyLfM2C67vODr26gLW9azX9UwdM3c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mAb6QS+hcDmdNHYGP7OuqrURhvdF5VKEMb+aUx3ZStLrI+9f7ae15QmdwR/sxkU62d5Nm4UXepHx8xPWzw4wdY4YJOJvNvljS/FOcC0BwW+vfYBf90Gw/x9NEugIQ8VQV4e0DDmKLfXhgUgXRacAZ/a3agc+DzaRFnBeb7o6zRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [180.172.76.141])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 82E273430DE;
-	Mon, 17 Feb 2025 12:58:51 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Mon, 17 Feb 2025 20:57:48 +0800
-Subject: [PATCH v5 5/5] riscv: dts: spacemit: add gpio LED for system
- heartbeat
+	 In-Reply-To:To:Cc; b=LoMIZMtUvwO35VGCcjf7fGi/hK+5302mMOWyjynKkHTcFssrvRr5ZMOb4YlyijidULsn8dnLNA4VHTl2NWhjjXdP6tcy//3adsBjp5nktEyjuNZ9VPHM5Vb6+5K/dSXvF2jOglwKyWIRJITkEtQzMQBmNOU7nsW91QYRS86cYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8RXlzdF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8RXlzdF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0138C4CEE2;
+	Mon, 17 Feb 2025 13:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739797692;
+	bh=TRuesCIASsENowkyLfM2C67vODr26gLW9azX9UwdM3c=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=k8RXlzdFhbS1/8QLQFRhux/AppJcJ6966iFhCyNP69b8K21nF1ZWolxY7zRYIgxrL
+	 MNEcwbDqeAb5m+dsBNRJ/IAfa7MTYsip3eFs1D9jHZSGSDDrxu0kINyIrokYJa2klJ
+	 1H3/99MDVSLUHPeYydA+bpe2YmDy8QQ16r5eNPw9kKxc7epbPCLV4kYizc7MB4qkuS
+	 Kw6l06vJoN3xQ9Ezq2CtsumlrmWjCkgdedUgAfykGA/QmT7zIV3Mp3wJOB/E4JVhba
+	 fqLPFMkZ8+TSv690LKNHObopWDorkslZcRsIytAJolY9G9F78HHfD8UKHnmJuQdSL4
+	 Pwc7lQ3cNJidA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FA7C021A9;
+	Mon, 17 Feb 2025 13:08:11 +0000 (UTC)
+From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
+Date: Mon, 17 Feb 2025 14:07:51 +0100
+Subject: [PATCH 1/2] drivers: gpio: Add support for PCF8574T.
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -32,72 +39,83 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-03-k1-gpio-v5-5-2863ec3e7b67@gentoo.org>
-References: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org>
-In-Reply-To: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250217-gpio-pcf8574t-v1-1-137e140df5fc@gmail.com>
+References: <20250217-gpio-pcf8574t-v1-0-137e140df5fc@gmail.com>
+In-Reply-To: <20250217-gpio-pcf8574t-v1-0-137e140df5fc@gmail.com>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
- Jesse Taube <mr.bossman075@gmail.com>, 
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=866; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=Npl1hf2K8C0HFRJz0IJdWyuqL8ZWAqWbXOrkZ95CiDc=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnszJm0HWAJxy2mTQGedoLSD4oLkE+RdZtfPiyd
- EkQX8ki7hqJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZ7MyZl8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277WkMEACWEq0KC8AkQFoqAZ
- M9mCR9BxNBPgd3SeG4MlzCrtXvmAcLK8UhKpf3y1u0QwhovsuBVTZNQQQ2DePrGxbbN85SvtK03
- J6A02R7uuQRVzx2G9rQC+gEJoqtn0PY/e+Xiv0FWyN+QJBmJtvCZFhKY7J/yMPWsaOS0BiE079z
- xd3NwDbQpboI+G43i3RG1wnpHnal33l2MNVHpKYTn8ED88TM5Z40gL8qR7IS5+UD/m8QlP9fduI
- ihji0GxfTVjBDYBk77Nd1W3bH4aS8o6gx+gGwBaeLS3M/7NXjBjfiGwDT85+vi49Z6wgDV/0giF
- /NzujTOAD10PlIMZSvech+gyhViUz6i4lTq4QdVKyTMVvIPgWV4PrJhT1Vm7fN2HftUSkoQo8nr
- 10I1Rd3m8J+5L6U6z6dYdYP1ec9tp8kcvvVCmkslF+gr2+pBj3nWnbhJlS1gBObpfeGgtm4ov4G
- yoWLyif56PX1MLBE0O9EqRP6Tr9kTPatpy8crxtLqG5a+BaDWAKgYMNotn6pdujE98Nwzp1Q5vI
- D8fziLE7cLatqN8M1FQNE1/lzIwwmpfLLSNPYuCxJn0s0MNWRsi8hAGCciMJNza+ypzS4RdJuQU
- zEBEv4KpZu396XUQD9Rb+8ac7YvYaRfQMSpdJ/rAKXGL1Xjvi9oXeCC7rFf9jH0mqtYQ==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+ Conor Dooley <conor+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739797690; l=1707;
+ i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
+ bh=NOilr3HjpQ2oJwKALY56/6mHBbZIdGAWuyLI56+xsUI=;
+ b=sKvDFTQlBO+NeSz7z25NPSzCWoyS+E5DMNcVsDhEZ2ucbeo25xuwX7zPYjlCj2BtSTvp9VAlo
+ wTn92AND2faCHsd5CjQONktugAJCSsLWoG7NodqPsx3MhLfrSobWM27
+X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
+ pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
+X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
+ auth_id=60
+X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+Reply-To: gomba007@gmail.com
 
-Leverage GPIO to support system LED to indicate activity of CPUs.
+From: Tóth János <gomba007@gmail.com>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Add support for the PCF8574T 8-bit I2C I/O expander.
+
+The driver is tested with:
+	+ tools/lsgpio
+	+ tools/gpio-hammer
+	+ some LEDs
+
+[1] https://www.nxp.com/docs/en/data-sheet/PCF8574_PCF8574A.pdf
+
+Signed-off-by: Tóth János <gomba007@gmail.com>
 ---
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpio/Kconfig        | 2 +-
+ drivers/gpio/gpio-pcf857x.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 1d617b40a2d51ee464b57234d248798aeb218643..816ef1bc358ec490aff184d5915d680dbd9f00cb 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -17,6 +17,17 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0";
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "sys-led";
-+			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+	};
- };
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 98b4d1633b25..d7cdc3cc1b00 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1193,7 +1193,7 @@ config GPIO_PCF857X
+ 	  Most of these parts are from NXP, though TI is a second source for
+ 	  some of them.  Compatible models include:
  
- &uart0 {
+-	  8 bits:   pcf8574, pcf8574a, pca8574, pca8574a,
++	  8 bits:   pcf8574, pcf8574a, pcf8574t, pca8574, pca8574a,
+ 	            pca9670, pca9672, pca9674, pca9674a,
+ 	            max7328, max7329
+ 
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 7c57eaeb0afe..2464c527a4e8 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -20,6 +20,7 @@
+ static const struct i2c_device_id pcf857x_id[] = {
+ 	{ "pcf8574", 8 },
+ 	{ "pcf8574a", 8 },
++	{ "pcf8574t", 8 },
+ 	{ "pca8574", 8 },
+ 	{ "pca9670", 8 },
+ 	{ "pca9672", 8 },
+@@ -38,6 +39,7 @@ MODULE_DEVICE_TABLE(i2c, pcf857x_id);
+ static const struct of_device_id pcf857x_of_table[] = {
+ 	{ .compatible = "nxp,pcf8574", (void *)8 },
+ 	{ .compatible = "nxp,pcf8574a", (void *)8 },
++	{ .compatible = "nxp,pcf8574t", (void *)8 },
+ 	{ .compatible = "nxp,pca8574", (void *)8 },
+ 	{ .compatible = "nxp,pca9670", (void *)8 },
+ 	{ .compatible = "nxp,pca9672", (void *)8 },
 
 -- 
-2.48.1
+2.34.1
+
 
