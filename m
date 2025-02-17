@@ -1,141 +1,105 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0ED2135AF
-	for <linux-gpio@vger.kernel.org>; Mon, 17 Feb 2025 10:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA038216E1B
+	for <linux-gpio@vger.kernel.org>; Mon, 17 Feb 2025 10:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739788769; cv=none; b=HdhzHThi83x+dZeTpnOmS24pfKebf2REX8FeqcRFve87r8PYEaE8JGrh0yJCsD0/aaIhYsY9/GbgSFmtGkAwBh7yN3FIRIIxsrt4JBAWhwepJ6BSqEPdzNnpMW1SUsUSHGZkZEXYLLX+InQUhIvQ7gaGgChnRVJdy0ylm0A0r/8=
+	t=1739789502; cv=none; b=e/+Xen/JQZrARBt53bt2GRsAX4NBMPKOLfLUCR0A8FlqriNkB4Tc328t6uGtJjVElkpdDBBEdG2fOUCM01zpaKmE4oN1qwr7epGzEFCieSIk2sdL6j6wXYmO4WGWRAa3tHAnAbmXZz2a3kYT1dDsfZ5fv1w9EiygsGh2TblvntM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739788769; c=relaxed/simple;
-	bh=xr3bci71BPUXSkfBFENqd5IrCtweRTea5NGCRVUdUgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gV54LwZMciKBhT5EvxY0QXI59W3m8+mwCiHH0T8CL1jLV6YCNa2fDjTZFiJi4hizNbGohgOFHQT0HFVrcTaLAYFSacf7gjuYL6J6n/xkBnYPQiVZLEvX+SsBE7DrO5KY+2W/krMRoSpRxdUX3otTyEFH6e2TaKnOstaVJOidMUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Pj9sCmvr; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1739789502; c=relaxed/simple;
+	bh=2a6DWia5aelo3+hT4preBpQwhiMBH04u1wwdvEZZTwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AIB7fWSKcfCHlVUl7fvoObgMHW8FFOQC6iXDyjKk5aM6eRiug/KTP20XNDH32b32yczNs1hWvP2KjkXk2zOGCtUh26y2E9/uvhPMu6hK+X8be+wf8anfaMNDlReW5nI6oSVue5LHJ/mR8Sc00TT/5owkA554Bl5Ba61ll5ahaAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Z01mC7QZ; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Pj9sCmvr"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso26814555e9.0
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Feb 2025 02:39:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Z01mC7QZ"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38f325dd90eso1275611f8f.3
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Feb 2025 02:51:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739788764; x=1740393564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HYro2OVhQtcA+5FjQleajegsLd+JYaJCTYUd5fxBcM=;
-        b=Pj9sCmvrPhdPaGmkXVRy6OS8PLNdjYgi2kGcjo0PHdQQ8OQkOjJdGDJaq/+QR6uq7Z
-         TY5bPY6DBi01qFf29W2l7eYl7utn2QrokZDS/5rq7qglrHBhVICffyvpL3rCyQNXKsok
-         ZlpDDEtH+3NJaArgeFGNflQKTzCc+brDLvzZ4ir1TAdAPgDt4ed2Pu9CnJW3LCkeFfe3
-         xbx3OE//eks0m9/u4oGvoOBdg4ksYpvzI0ZNn0LeeN6+dj2He5Jj+3sG7SGAbpb2QCO7
-         qG+iNwO2oo1hWw+QnYInbgkhVZxQd9+WjIROF96FWqBjn2KiHTzlIszhqtujxBPmMhYp
-         NWVg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1739789499; x=1740394299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j9rL7BFj/LGtJcja3SBY10iTH0HmL8V8oaNVVBtRsuM=;
+        b=Z01mC7QZwOxL1/XXOMz8nWKJZ3L8MAjS0d3cK2A7by6uQfstUzM4Y14rz6xBv/zpPW
+         64ynFLrOUDJCWhSemDJkL5Y1xc/m+vkZLc5PegYqS35Z8puUwKjAGUYd6KuudKb09Aoh
+         2JQrdPAOnccxglYFxBTqdOi6GVooWchcKg6q9sj8JEW/+5KYRi4XpXT1TrFzWPoFzBQu
+         y6gTdKZQE5/upc1psewJIGHEays7sgTxdVvh9q/SKja/ilAM02ZZrDatrSwiJlR3Df1i
+         cNqYmIiZ+SykBt4rivydr/pwudfbhl5nsqjxJtzmXRZMUNR/eF3Sjk7V0KtqmaNHnOXP
+         ScZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739788764; x=1740393564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1HYro2OVhQtcA+5FjQleajegsLd+JYaJCTYUd5fxBcM=;
-        b=aAzJl9D6k+iheZtY0zh4Er3PUuHeTLHPdDsa/kjqfG20w4jGF7TsGqvLp4DR7uVkyi
-         2mW2IQXu2I+mDiACMmRmE+jhRFneam/iLluH+6E1bNXopMi4ngF29LD0LraLqz4aqUBV
-         5YC9GC1BpoLIiUViTR4T7FnT4xRrseA8ppDhx9/VWGESab1vtzE/8lek4FmPp/6llPal
-         v83MZqoUOh3e07id8NBLvpjOBWgFZMHy1yaxhrue0MSwoNIaRml0fSNy/0I9G5K6apjO
-         EjsJ+5ChbkFInSCFSaJ578L4IAfP8bV1u13Vy+AgIagaQqcUd1GWpqgkWYHYDqiWkIOU
-         c30w==
-X-Gm-Message-State: AOJu0Yx/7aZa/eaegZ36jUtefHq+OaSF8mIZFJ9g6yS+9a3gh4X752Ld
-	4Bm2FoRp8/oSihqBDvhnKle8vev/jW1pkVLzdXlzoPm+IioXEYdY1xSZH1pPc34=
-X-Gm-Gg: ASbGncsAApczOwBVJBLrwP9LwMmTvZKzHLz4vo9ih28D22cShKAzCFv+mWmOiq7km7P
-	Q9tCaxVDvnbLe+uZ1/Pbz+Z0Xs8f0uTV2MMIVetH8kXdiJcf1WS2vE1W2qctzq31Yb4U5rKFC5s
-	35QTGRq5mMEyDzCODq9/uZJw/grD/umaVmXel5XNRkEbcpJV+74nYDdTXGAt7KotWSyGbtDf6kc
-	smU9Rw2yrLQz4Sm9fE6GbFpQiIQMa8Y42hNc220m8ETfEpNZT/NDo2O1VD0B+5m8ShLMOSfSxcE
-	j7OIYza54xEf
-X-Google-Smtp-Source: AGHT+IFhBaP2rw+cChlFIU4ELkEL9E5omA2StR9DW0zO8+P0LiXu1aUpYNygZP6CdmyuOYdfeg6S7g==
-X-Received: by 2002:a05:600c:3b05:b0:436:1be4:c9b4 with SMTP id 5b1f17b1804b1-4396e750814mr73869305e9.27.1739788764342;
-        Mon, 17 Feb 2025 02:39:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739789499; x=1740394299;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j9rL7BFj/LGtJcja3SBY10iTH0HmL8V8oaNVVBtRsuM=;
+        b=sDLyBg25CVMsaYHZlusQTJyM0JxtyDfgTWqfwKUC2rqjm089phr+vN4P9G4yx6fvg0
+         yfHFtL5lE21Z2qv1r8GfGmZdbN09H3fiWK69+mOhKjwx9XRwBpiujcC6URVb7yap9H22
+         59TIaZfkj1Vyn2E1SCWnwHfCMqIhuLgZHTFWXvZ5JoK0ec+ICKHC34Exqu7G0ToYbCRu
+         d/fcm6tn/nOzlceA4kHxIkoiHq3JqOsb8h8TrOviy1FsO6hDUQckq0A/vPorqgRUuPan
+         MoiOhYPmpgONP5bHNbER/a/bk8exOrW+6CUqYQkiBfLYAu/Ffz3D9BV9vDyEIyGeOdFS
+         2waA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7anyoo071z1LEUubYQdkxZUMpqxZpABZxWiYik8ok1XmV+UOtWrfEq4FLeomdW4Eak0UOt3rFBSz7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6FI/V1JIyWZ40H3HaPmNN2gmwr8/kLxOF2PZXfRyo6gLa54dK
+	gJcGPL38GGg9EhaFqYWW8I3/JWpKbQSFUePgK8nHDDsiHQ7WPvQL9uCvxHnQz40=
+X-Gm-Gg: ASbGncsXIs0W9Z94EtFcQ9HTrYR1+qTbGQfbSmmBnYorh99ya/ArPWyuzZrHSdb4cb4
+	N+ZBRt6JXu0ncJ77XKsiOh0/xm9ArSdYsZTq6G27xO2M3a4h9Rg97rf1ebvbZUp06UwVTuD2Doy
+	aMD2ubnjW1OfkB76YJAu0x7ROs6OOInd3dEH6fciDCAZrXPLXR0NjQ5ZXu0Y5xOW/FLPCbviMti
+	gPTt6ZtiT0uCRM9Bb+5PdAo8ZZFSfJb1WEZPJHGpecGJyTIh1cOQzrYcVrCHKhbhMkzm2b7ktRN
+	ts4e4Rs/kWHJ
+X-Google-Smtp-Source: AGHT+IEcFZLNABjtm5sf5QsAlzR9E7GKqtzQrNge8fNqrR3LiZfoVYgQ3/KTJrrfcZCS1hAQIBqFGw==
+X-Received: by 2002:a05:6000:145:b0:38d:b325:471f with SMTP id ffacd0b85a97d-38f33f1f725mr7557321f8f.15.1739789499204;
+        Mon, 17 Feb 2025 02:51:39 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8707:ccd:3679:187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a06d1f2sm147990095e9.18.2025.02.17.02.39.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7b68sm11717692f8f.85.2025.02.17.02.51.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:39:24 -0800 (PST)
+        Mon, 17 Feb 2025 02:51:38 -0800 (PST)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Dipen Patel <dipenp@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	timestamp@lists.linux.dev,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v4 1/2] gpiolib: move all includes to the top of gpio/consumer.h
-Date: Mon, 17 Feb 2025 11:39:21 +0100
-Message-ID: <20250217103922.151047-1-brgl@bgdev.pl>
+	stable@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/8] gpiolib: sanitize return values of callbacks
+Date: Mon, 17 Feb 2025 11:51:37 +0100
+Message-ID: <173978946845.153202.10192575435977387116.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We have several conditional includes depending on !CONFIG_GPIOLIB. This
-is supposed to reduce compilation time with CONFIG_GPIOLIB=y but in
-practice there's no difference on modern machines. It makes adding new
-stubs that depend on more than just GPIOLIB harder so move them all to
-the top, unduplicate them and replace asm/ with preferred linux/
-alternatives.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Changes in v4:
-- rebased after fixing conflicts
+On Mon, 10 Feb 2025 11:51:54 +0100, Bartosz Golaszewski wrote:
+> We've had instances of drivers returning invalid values from gpio_chip
+> calbacks. In several cases these return values would be propagated to
+> user-space and confuse programs that only expect 0 or negative errnos
+> from ioctl()s. Let's sanitize the return values of callbacks and make
+> sure we don't allow anyone see invalid ones.
+> 
+> The first patch checks the return values of get_direction() in kernel
+> where needed and is a backportable fix.
+> 
+> [...]
 
- include/linux/gpio/consumer.h | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+Queued this one for fixes. The rest will be picked up next week once this
+is upstream.
 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 5cbd4afd7862..0dc49b5fca5c 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -3,7 +3,10 @@
- #define __LINUX_GPIO_CONSUMER_H
- 
- #include <linux/bits.h>
-+#include <linux/bug.h>
- #include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
- #include <linux/types.h>
- 
- struct acpi_device;
-@@ -184,11 +187,6 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 
- #else /* CONFIG_GPIOLIB */
- 
--#include <linux/err.h>
--#include <linux/kernel.h>
--
--#include <asm/bug.h>
--
- static inline int gpiod_count(struct device *dev, const char *con_id)
- {
- 	return 0;
-@@ -609,8 +607,6 @@ int devm_acpi_dev_add_driver_gpios(struct device *dev,
- 
- #else  /* CONFIG_GPIOLIB && CONFIG_ACPI */
- 
--#include <linux/err.h>
--
- static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
- 			      const struct acpi_gpio_mapping *gpios)
- {
-@@ -636,8 +632,6 @@ void gpiod_unexport(struct gpio_desc *desc);
- 
- #else  /* CONFIG_GPIOLIB && CONFIG_GPIO_SYSFS */
- 
--#include <asm/errno.h>
--
- static inline int gpiod_export(struct gpio_desc *desc,
- 			       bool direction_may_change)
- {
+[1/8] gpiolib: check the return value of gpio_chip::get_direction()
+      commit: 9d846b1aebbe488f245f1aa463802ff9c34cc078
+
+Best regards,
 -- 
-2.45.2
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
