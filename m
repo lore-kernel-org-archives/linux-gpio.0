@@ -1,249 +1,103 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB25264A65
-	for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2025 12:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F11156F4A
+	for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2025 13:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883525; cv=none; b=CJtnchtpG7UgRs157SWM1ThjapYNYoJ/jnMpYVl7eb8XBhw7j39u66TjmSrRl8ZSXWVJxmyPsGzEth+fiObXxS5WDTRHaudZqoMv+ZYyWEa20lkWEDYIc/iLVsymMzVmojEPPTOlS+s6t0OJ85BtZMTmBMugm46XA8Lz5RUDcL8=
+	t=1739884210; cv=none; b=Nq4nQBgTKWxWaSRAquGFo5Fi7bIuRugU0Zobp4zvHBmIHm5TphYdk6gXXSCq7PwVxAiwcL4edKN9dCpkl92wUrxTWW4PfFtCMQVCKd7AlxOD39QQVKyLGEvmAmIXuyboiG2RiTYbiqUcgi6VgLbf67a1aXMLvRD8imjxCpTw7I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883525; c=relaxed/simple;
-	bh=oMH51VUXnnpfnm9nAkgicDi5ah+l53EWtaexQa428Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hf6p3f4zzNrJWwUNrkCKrop+gNBojmznlg5iPf5vxRTHoISwrlANvNLEBkpZYT8tjytm+qX8KffgIS05WkRPSZwysK7rGiJN98VigdNaes/JrFuVq8TKZz2hT5J/39q4dXr7xeiMZoinsS4fc9QDLbVs9K+bE9GYMkcKQMeYzEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=KQgVa3Wv; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1739884210; c=relaxed/simple;
+	bh=wChb/6g3sce1C+2S6hz0f4MqiwvzQlvCTwkos7PCRgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o59f8EenB1SwZFbrsQChU+pnbGo+0cdprHSC1kN4/QtyYplxMJ1rUegp8h88sBhu+nUrw7KL9tWddabaZvHm8Dr5z7fqsyU5hyr8g6Noqv3J8uiNVPyBtIjByXhU8ujVlQx0u72gH059+25zZykabMwiESnUy+0FDZfXC2DRkgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dtqxb1+r; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="KQgVa3Wv"
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 45D203F27D
-	for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2025 12:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1739883520;
-	bh=v9P5lSfpGSUeQi9lRANACSgvEEYXXekadVUZlYSjCmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=KQgVa3Wvke+1ffggoO/QErgOnlV4kh7aWXppzTxLyfScovyRDo/dwAiVw3nRPh/BT
-	 JiRPBURiZvDvMR/UXmpOh0jgvrzbVO5sqFiOzRrJ5M4ESIxSiIN86o8Gf1OEVQjFpV
-	 wldIRDEgJEveZ7pc95H63DYKdEYbIzUF1AAl/1P9jF3VQTWcmoG9cnRQHnynLj7Ws7
-	 f+s1xmNBLnZqKhL0XHbyIFtt8a90iwi2FRc59baLUvHYEqkHTfCqfnNUJvk6Mc4AF/
-	 Bpzkqj8WsfVuQbh05h5SGFgui0MuiPyBnvgUDGKSeLEevsmTYdKgzalTvrkY3sg18r
-	 l5uqB+Q3/jDXw==
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fc1eabf4f7so9821118a91.1
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2025 04:58:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dtqxb1+r"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5461b5281bcso2320241e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Feb 2025 05:10:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739884205; x=1740489005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x2H4CFTIInDOtT3tOm3edOpwQRv60P1DUgV4VG+RFkE=;
+        b=dtqxb1+rSM2DZ963SU9zTaHeOR3KsHJWnXi2IOv/fZFsl2tCgDBJsZLDZTWiomZ5gc
+         OdFRSA5aucfV7WEBNL5digHsP5itroS+yfuxrcaf/4memPvtzgN2r33bh7fN1Il9dQXX
+         6OU2oG2DojBUAbqR/xm//lOqJNlVG5nyQwZd31MRXVmlhP7It4aJ46uVRYr7+lshW+P1
+         HVyjwMUGTkK9wx90aFiSqyXOC1DWZL/ewgZ7Yw6l4LygiPjHWAnhZmil2ZKYqv5MiFd3
+         C+vfydEkwR1cTkVR7D9Pdi+X5Xe+sKd6xOiZJXEi73x+igMvsa5/LWEa00Bp5tAFTvrG
+         1ulA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883518; x=1740488318;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9P5lSfpGSUeQi9lRANACSgvEEYXXekadVUZlYSjCmQ=;
-        b=QklX3tDNOWYww4Umm97Ex9Lyw7Lqh4ORXMZs58nAW9ZxkN4x/JX6Jz57fMjTHEo7y1
-         nkiij9KJLPMB0cMNZl9NeQkk0RKIWRMXE4Ce22XW1T4S+3WjYe5KjSToHFEeOZW8vmo+
-         aNGJx3Y++WVL98Zztd688bRqpZHDzuc4Gw2qS6/N0LFPwGmLxDAUv9M6fecJQSmg9vT4
-         Yq5pHnrKR3lgmrpMOU7nxts6AgktwsyceriC4ncGLhbBCT23DzyFt0hJLY91Cs47WH3X
-         IsGXlMEsggEByaXEh5JbLH+TA1doGTH/R73aX+8cHuRWTxb99XtKTTE+i7IRDYsbEGlE
-         RQww==
-X-Gm-Message-State: AOJu0YxP70SFtD5RnsWGG9hk7ccVzJVRVwJMAPkQ2hTSTDoF3VCz74wu
-	bb1tbMLmPkUiztHl9QlyjvTUHMGw9k+4s6ScepUHzsY/YU64KqJZxsb1JEDBTrxEOy4y12kJtUL
-	FW5RVDhPy69mLa7u3/uySx2B8cly3uWbj0Yftw49odKLzzHPA9Xqjo6u6gJ4P8yb7Cy5G8qCL5O
-	0=
-X-Gm-Gg: ASbGncu1wFCaY5zSO5J4s++PcDqEWXfQbnnYR3sw1x3gwEwFZo0uNfJb6Tr8nFFYCt6
-	UAagGh+PLoBg45+WI0Mk/lS2Mc8Fzx6eWRTEAT933peLq+LDDxKcvT70Er6j1rujYoOvQoCeJmP
-	mZr0HPOuWRZMnXJJl+ObPUXXc/InbQ4dAWlW6kPHe6cOKKxwQ7Uceu7YYW+CKo5jgcmA4KDJqnl
-	7W74XR3sUhVhqGlCTKXTv/MzSVZYFMydLhr8soD3cnF0/iiM9sNCB0izp+HMqMCKOzyyVmHK7Ww
-	Cfdu0Z4=
-X-Received: by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37 with SMTP id 98e67ed59e1d1-2fc40f22cd2mr25120743a91.18.1739883518339;
-        Tue, 18 Feb 2025 04:58:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFs26rQasnQvPUPYlw9nkWCSmusj5EGnCxCbFo1IYGbCgwn1O208wtCVjgu8sox+hqj8fWUxQ==
-X-Received: by 2002:a17:90b:2d8d:b0:2f7:4cce:ae37 with SMTP id 98e67ed59e1d1-2fc40f22cd2mr25120700a91.18.1739883517907;
-        Tue, 18 Feb 2025 04:58:37 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:ad3a:e902:d78b:b8fa])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fbf999b602sm12136721a91.35.2025.02.18.04.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 04:58:37 -0800 (PST)
-Date: Tue, 18 Feb 2025 21:58:35 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: pseudo: common helper functions for pseudo
- gpio devices
-Message-ID: <zfyzhahnhtozrbtgdod7wyfhcdtwuofx4hl3ndtxglmzacd2at@q4hmczbylwcw>
-References: <20250217142758.540601-1-koichiro.den@canonical.com>
- <20250217142758.540601-2-koichiro.den@canonical.com>
- <CAMRc=McB0bcG4jERmUyrQ=eTP+kcfLBBAOaT7mCMKbgUB1W5nw@mail.gmail.com>
- <d2qdoq3f3jk6gzgsjeqszgaqk7z523r7cfnopxfq4ghsbsqgp3@zjw67ewqzi5u>
- <uogv4ckqo2e2byspffvfayu44v6fl46sxtu7eudweoye62sofi@5iwsumpttpca>
- <CAMRc=MdNtDW_Gbd6dsG345110SCWe1vD_rNd_QaWBYRApHBoxQ@mail.gmail.com>
- <saszavmizjwhzechspy6otune2xwtgjjygaitxminzclgj7zep@ofwfb5jdfcam>
- <CAMRc=MdDi6_neGThU3wq_uq2VA=DUHzTwvrv_wivj26ksNSnNA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1739884205; x=1740489005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x2H4CFTIInDOtT3tOm3edOpwQRv60P1DUgV4VG+RFkE=;
+        b=PCmlrvMOjM/h7/VGCXkJhM6nvt+aw0A7k8q8Ce/H5uqzM2MG9XkA+Hwn4YQ7lIQmDo
+         HzAAO+wibwQOpcZfvuqFSgaFkJZ3w22EjAPZwE7QqMMsRCHNOgLrVkR4CzqLsfkkVGTk
+         vV5BfV8G1cu5VNaLgW7cyPrKZxpwPwCmiSYNm4N2df9dRYMdtrhiAU3GdG5CuaItcMLu
+         tOm1oDD1/5DeYigoBsIWl7eVQW24kem8daazO0BcGZIi1De3JQaCl8brH+ZX9GYqg/E3
+         j8SwpjnnCitUFMCb45s6oNS7Ad6/CjX50QisXriOJjv1jT0hsVg954kOwsq45xeHOWp9
+         dh7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2evl/gbTEDB+VJOHr2QqgSBUsRv3Sxem2h2/N141vI3YrBMLhh2gvAS4JN812da40mmyTODGjoFz2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCN7yUrIrCpIdCIn3DpUGwvH4vjX80x8GJA9u9s1JWtU9gIwmB
+	4QZXd2oQEKlpSPymSVpB7CP3iC4fFihdOZ1iL72QXuQtUpS5cyrljkFHGK3hXYsFc+YvvK8YvFx
+	LYeGf4bwuM0dUWAzHTCDtCKhKh4BrPvOqI+CnEw==
+X-Gm-Gg: ASbGncusOV7UoWcUkT5cy94H/1ihKOImS1tmQjqJoT9LmVHOUn8R4at6nfn10QQpHFF
+	N9yVKZxtiUfXJgLWnt/B8i7fUlbU0R+n+qNmYu2sQNro8cuXet48zgplG6BtcvdSzQrhghw8O
+X-Google-Smtp-Source: AGHT+IHdB6MXsIp6ZqlQsI40sZGvOLeSKe+AB5abn2fY1o/Am7w1jOVveK3QMy7dhDaAVzYZIDd9lE1wi3yAkqHGnxI=
+X-Received: by 2002:a05:6512:3992:b0:545:2d27:5ae1 with SMTP id
+ 2adb3069b0e04-5452feae86fmr3466160e87.53.1739884205513; Tue, 18 Feb 2025
+ 05:10:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdDi6_neGThU3wq_uq2VA=DUHzTwvrv_wivj26ksNSnNA@mail.gmail.com>
+References: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org> <20250217-03-k1-gpio-v5-2-2863ec3e7b67@gentoo.org>
+In-Reply-To: <20250217-03-k1-gpio-v5-2-2863ec3e7b67@gentoo.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 18 Feb 2025 14:09:54 +0100
+X-Gm-Features: AWEUYZlVwAj_YWqJ9Lyi5dg687EoTYyaneVjRfcETc4JasvXfyarUzHN15z58MI
+Message-ID: <CACRpkdbxatfvPnOY_gNVAWdtoJ+xj3DbKNUqFU=9AC_UKM88sw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] dt-bindings: gpio: spacemit: add support for K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>, 
+	Jisheng Zhang <jszhang@kernel.org>, Jesse Taube <mr.bossman075@gmail.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 09:57:05AM GMT, Bartosz Golaszewski wrote:
-> On Tue, Feb 18, 2025 at 6:01 AM Koichiro Den <koichiro.den@canonical.com> wrote:
-> >
-> > On Mon, Feb 17, 2025 at 06:29:27PM GMT, Bartosz Golaszewski wrote:
-> > > On Mon, Feb 17, 2025 at 5:21 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > >
-> > > > On Tue, Feb 18, 2025 at 01:12:17AM GMT, Koichiro Den wrote:
-> > > > > On Mon, Feb 17, 2025 at 04:46:30PM GMT, Bartosz Golaszewski wrote:
-> > > > > > On Mon, Feb 17, 2025 at 3:28 PM Koichiro Den <koichiro.den@canonical.com> wrote:
-> > > > > > >
-> > > > > > > Both gpio-sim and gpio-virtuser share a mechanism to instantiate a
-> > > > > > > platform device and wait synchronously for probe completion.
-> > > > > > > With gpio-aggregator adopting the same approach in a later commit for
-> > > > > > > its configfs interface, it's time to factor out the common code.
-> > > > > > >
-> > > > > > > Add gpio-pseudo.[ch] to house helper functions used by all the pseudo
-> > > > > > > GPIO device implementations.
-> > > > > > >
-> > > > > > > No functional change.
-> > > > > > >
-> > > > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > > > ---
-> > > > > >
-> > > > >
-> > > > > Thanks for the review.
-> > > > >
-> > > > > > Looking at this patch now, I've realized that there is nothing
-> > > > > > GPIO-specific here. It's a mechanism for synchronous platform device
-> > > > > > probing. I don't think its place is in drivers/gpio/ if we're making
-> > > > > > it a set of library functions. Can I suggest moving it to lib/ and
-> > > > > > renaming the module as pdev_sync_probe or something else that's
-> > > > > > expressive enough to tell users what it does? You can make me the
-> > > > > > maintainer of that module if you wish (feel free to add yourself
-> > > > > > too!).
-> > > > >
-> > > > > I had vaguely envisioned that this might eventually contain some
-> > > > > GPIO-specific code for some reason, and also it's just a tiny utility to
-> > > > > reduce code duplication, which is why I placed it in the neighborhood,
-> > > > > drivers/gpio/. However, of course you’re right, there’s nothing
-> > > > > GPIO-specific here, so moving it to lib/ makes sense.
-> > > > >
-> > > > > I'm not really sure if this method for synchronous platform device probing
-> > > > > can be broadly accepted as a general solution, but I have no objections to
-> > > > > making the change. I'll move it as you suggested and send v2, setting you
-> > > > > as its maintainer.
-> > > >
-> > > > Regarding this series, I feel that it might make discussions smoother if
-> > > > you submit it directly. So if you're okay with it, please go ahead. In
-> > > > that case, there's even no need to mention me or CC me - I can track it on
-> > > > ML :)
-> > >
-> > > I'm not sure I'm following. Why would I submit it myself? You did most
-> > > of the work already. If you want the changes to gpio-aggregator
-> > > merged, then I think that it's time to refactor this code before we do
-> > > that because repeating it three times is just bad programming. I
-> > > probably wouldn't have done it otherwise at this point.
-> >
-> > As I mentioned earlier, I'm not really sure if this particular usage of
-> > platform devices will be generally acceptable. gpio-pseudo was intended
-> > solely to reduce code duplication in methods already accepted by the GPIO
-> > subsystem. Moving it to lib/ would shift the approach, effectively trying
-> > to promote this method as a standard solution.
-> >
-> 
-> Promote it as a solution for this specific use-case - the need to
-> probe "faux" platform devices synchonously.
+Hi Yixun,
 
-I think we're on the same page.
+On Mon, Feb 17, 2025 at 1:58=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
 
-> 
-> > For example, if for any reason drivers_autoprobe is set to 0 on the
-> > platform bus, the synchronous mechanism might be blocked indefinitely.
-> > Moreover, in the first place, I'm not sure whether employing the platform
-> > bus in this way is appropriate.
-> >
-> 
-> It's sketchy, I know. Back in the day I was advised by Greg to use the
-> auxiliary bus but I realized very fast that if I want to support
-> device-tree too, then I would end up reimplementing all the code that
-> already exists for supporting the platform bus. He eventually agreed
-> that it's better to use the platform bus. We had the same issue with
-> PCI pwrctrl recently and also ended up using the platform bus.
+> The GPIO controller of K1 support basic functions as input/output,
+> all pins can be used as interrupt which route to one IRQ line,
+> trigger type can be select between rising edge, failing edge, or both.
+> There are four GPIO banks, each consisting of 32 pins.
+>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+(...)
 
-Thanks for sharing the background history. My view/feeling remains unchanged.
+> +      gpio-ranges =3D <&pinctrl 0 0 32>,
+> +                    <&pinctrl 0 32 32>,
+> +                    <&pinctrl 0 64 32>,
+> +                    <&pinctrl 0 96 32>;
 
-> 
-> > For drivers like gpio-virtuser, which we can define virtual GPIO consumers
-> > via DT, or for gpio-aggregator, which we can use as a generic GPIO driver,
-> > the expectation is to use the platform bus/device mechanism as usual. In
-> > those cases, adding a synchronous mechanism via the platform bus notifier
-> > to piggyback on the existing platform bus probe implementation is
-> > understandable and obviously has already been accepted in the GPIO
-> > subsystem. However, moving just the synchronous mechanism into lib/ can
-> > potentially be perceived as an abuse of the platform device concept?
-> 
-> That's actually a good point. I guess this code could be reworked to
-> work with any bus (that would be specified by the user).
+In my core patch I assume that we encode the gpiochip instance number
+also into the ranges:
+<&pinctrl 0 0 0 32>, <&pinctrl 1 0 64 32> etc.
 
-Alright.
-
-> 
-> >
-> > Incidentally, Greg K-H’s faux bus work was recently merged into mainline:
-> > commit 35fa2d88ca94 ("driver core: add a faux bus for use when a simple
-> > device/bus is needed").
-> >
-> 
-> Thanks for bringing this to my attention, I wasn't aware this existed.
-> However it's not useful here - I still want to support OF.
-
-I have no intention of dropping the current OF support, as I wrote in my
-last email like ".. understandable and obviously has already been accepted
-..". In that sense, I think we're on the same page here as well.
-
-> 
-> > Correct me where I'm wrong. And I'd appreciate if you could share your
-> > thoughts.
-> >
-> 
-> I don't want to block the aggregator work but I also don't want to
-> have code triplication under drivers/gpio/. Let's do the following: I
-> don't like the sound of the word "gpio-pseudo" in this context. Let's
-> keep it under drivers/gpio/ but rename the module already to
-> "dev-sync-probe.c" and use the
-> dev_sync_probe_init/register/unregister/data naming scheme. Stick to
-> supporting platform devices exclusively for now. [...]
-
-I totally agree with "dev-sync-probe" and the overall idea. Thanks for the
-suggestion. I'll send v2 later.
-
-> [...] I don't have the time
-> just yet but maybe in the next release cycle, I'll try to make it more
-> generic (work for all device types) and move it out of drivers/gpio/.
-> How does it sound?
-
-Although I'm not sure whether there are many justifiable demand for such
-generic lib, probably that's just because I don't know relevant topics.
-
-Thanks,
-
-Koichiro
-
-> 
-> Bartosz
-> 
-> > Koichiro
-> >
-> > >
-> > > The code looks good other than that, just put it under lib/, rename
-> > > functions to pdev_sync_probe_init/register/unregister() and send it to
-> > > the list as usual. With that it's good to go. Just make sure to
-> > > mention to Andrew Morton the need for this to go through the GPIO
-> > > tree, I don't think he'll mind.
-> > >
-> > > Bart
+Yours,
+Linus Walleij
