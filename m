@@ -1,110 +1,113 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901351F76C0
-	for <linux-gpio@vger.kernel.org>; Thu, 20 Feb 2025 13:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E3A1B85CC;
+	Thu, 20 Feb 2025 14:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058961; cv=none; b=drri/L1OsxKQZ9beuZJ44mBDodahX33VQZYzhVoZBgPOwiLySF1xMNtIkJjQtq5p9FemZ4Byhy4gMwxj2Xd/IjbwaS3nuimgwpxIQoNHCp1/TgW37HexWXUdJg4KkmUimqxqIo0GckGow47s4zzPEWh/fga6BGKyZx0Lnr88y2M=
+	t=1740060457; cv=none; b=KqY4ML9eFq0vHtcVRMIln+XM67Sv0XOYW/aHxr49STm2LgeO66e0tO0utoymN8ZNNndi7aAMTf7yI08LbCjeRdrip/XGFeU6/STh/myRZoRA8nEWUBYFaUIuD97iDErxlkbbaKsuX0GqBp876b66Ii+HWHwp6/W1G3GxB1UiVw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058961; c=relaxed/simple;
-	bh=D6ilmU1e0gmJQ4XQmzFLPc+miX+i/mTkflP7SE2H/e4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u3rsFqQgnH07vHs5bdI1ymaKdeYSsELdnK4ms7eNXB52iFQRID+XfyCxhCIJ7vDr3xEyN6kdqmmrx6xpM9J0Z6vRvLFxJUZ0zKfen3B5esiohdRMC2w/l5PZo+7CvV0mPkzKfkU0rkZdyt9UOYjGEuOwPdGHp+NBciXIYExpHxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QIjnlpuZ; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1740060457; c=relaxed/simple;
+	bh=J7/kitJTLTdyWDF1KjUwMXmrNOH5srnmO1HoHeoc/+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxcAjqCggMmsWkAWZGdh6u9hhJmHKZKUC6z+3OZjVT36JTgDmJE1r7RYXU+X7/okpVSsLrfy3ozxAkfbVLgUUPMUBAvnf7wgnTfeSL5Zlm6yB2HYP36RPLRurfvwtBwql3t1iwKWcL89oDeH5Mo+skSX42GZ8eH/Z8/xPPLsdPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZYi2B1z0; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QIjnlpuZ"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5439e331cceso1053343e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Feb 2025 05:42:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740058958; x=1740663758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D6ilmU1e0gmJQ4XQmzFLPc+miX+i/mTkflP7SE2H/e4=;
-        b=QIjnlpuZ95kgaJ5CQqDPYSshx35VPid2Xn/upCjT1NdAT9cN679UxP/8peYNnOmZlT
-         2rPvbaW9V1bUmY5EFKevWkonvCBaRj7E/TT5nwFhGPOeq+LUEznPVP7On8zZcv6R2E4I
-         SIZTf4dPiP6RawNmPaugi1fu4qhlRoWsyqPlwdEzmKQxbh9ejn8P8FNNxn7aG8gUDqnb
-         D84e5syTO5GdDaGdLsyXDai1Ax22uXFgfOFZvpwlM/St5XshuVX2SYE4LEfjF2jFwb7Q
-         i4FC8dmIz11zuIHXAd9zFssa60TcZpyRx1hEDUow1ZqKEdcrIpLDbjwBZD8k8mOCFHLM
-         Mgaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740058958; x=1740663758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D6ilmU1e0gmJQ4XQmzFLPc+miX+i/mTkflP7SE2H/e4=;
-        b=gvI0dZy+F/V30r0QBg9y0SBnTH/+0t7nncPj+EaZtN7FyNtcAU20HJsnKlYuJcLrZv
-         O6dTIL+g0Sl2VMa7O2Hot6mfkdpAoSwizkqw9ZOB5VOtk8w5+IkBJ+/x/DHHj2XbZZf4
-         blj14/Wm6bVPy8IoW4/m/Ak53rpHMkLjAwlG+IM+aPzVG57FFLpVD5iqTo1MyVwD4eP+
-         pyDVO3KCvJtPQem16eZndnszgQHch4f/RaqNwQqsppo9YeHT6ZNWxaRYX4yaCl4MvpKG
-         Qi1jqCMPqg3bIpSA35XLgeqtEfV8dyRqbzOdHLAOwicllvcMqbYlCztv8+E3ZhGbipVM
-         F/xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzzgCWPiOiOPMbOQTPf5kB94FNN5lH1R1pU9m7IQzdX1pMfQFzZvYcUTTjzt3+Yb9yfbJMMeaXFQAJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRQ6WIlIhQSrbq3nPangC4+WulZmKBHRIn2n493nKhYcYKjPIo
-	NzaiGiJqseuYr7gw9UVz21jKQDNX4Ua9Wwc75NKYdIP6Cnq8bDEmb5SFbfNHP0gWulu2oEihEY7
-	lzeZidvsm+A0WSzGNCC9gjdsi+BaZwhgpIUOqdA==
-X-Gm-Gg: ASbGncsw1D+QauJYpGgQlnqe7xUNWOKnTAIyidYhS1pLfyYHiEQw0uh2IW3aaQms71m
-	2VbibZqd6hGdhIwdHGaS5La3jbfZbibuFEBawcJvQtArcfCSk8FbVSyYVhZNiRhNUY7JQuS/xJx
-	LFC+VRpIc4i75aFJREhYJABSHZsXc=
-X-Google-Smtp-Source: AGHT+IE/QljvxqQOucYkKkwJsqN1S8vDsR+44Cm6ZQGIEf/EuvBZuQI9TpJokvET0ulMZPKCYxVR86kKaprszD9K74A=
-X-Received: by 2002:a05:6512:3d0f:b0:545:646:7519 with SMTP id
- 2adb3069b0e04-5462ec7d6e7mr3495227e87.0.1740058957607; Thu, 20 Feb 2025
- 05:42:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZYi2B1z0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740060456; x=1771596456;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=J7/kitJTLTdyWDF1KjUwMXmrNOH5srnmO1HoHeoc/+U=;
+  b=ZYi2B1z0Ba79ctZY+whHaDsqFf8Kdc4u0+a1mtq2Xqs9QsVAGaP6xCBn
+   36Dp+thdeXytuvr2+w++mf2BfHb/hlONLLHaPnxBN2JNqp20fD1eLM9w8
+   beSmX2RTvzI/vmvklE4xRTRfeTTv6kxIB0yJEz6+KYxyWQY9IczNIFrl5
+   +4JT4bJOlZhbce+AgPDRVzVd+FIZj3nWSVFUMauT9sm3fUn2vsySHS+fb
+   pCpveTjbOSIVaFcP5OxHj60oFW5EUm+zPo7+tjGliDwoPpDp2kvT95OME
+   xNTUI6u1uQglh9i5idccdCh6ZUopQchJHclpV0Rv2XGFSNdHUMVx6YRt2
+   Q==;
+X-CSE-ConnectionGUID: Im6GkdX1SACwG4oo0skOhQ==
+X-CSE-MsgGUID: 7FjhPvLhQR2cJ4eMl+jsNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="28437166"
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="28437166"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:07:35 -0800
+X-CSE-ConnectionGUID: bMHiDdaCTm2xP/5SNq9DCw==
+X-CSE-MsgGUID: xobgfn3fR66qb+Org96jzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
+   d="scan'208";a="119670651"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:07:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tl7D8-0000000DM2E-3c34;
+	Thu, 20 Feb 2025 16:07:30 +0200
+Date: Thu, 20 Feb 2025 16:07:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>,
+	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
+Message-ID: <Z7c3IhC115rPbTMw@smile.fi.intel.com>
+References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdao27pu+9qFH2LBYNwYkBbWq1B-hE9nZGfTTCnQxhTiAQ@mail.gmail.com>
+ <Z7crrgl2iFn34gck@smile.fi.intel.com>
+ <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
+ <Z7cwv0gxRFFGBjR1@smile.fi.intel.com>
+ <Z7cxGOmwMIkkTRLs@smile.fi.intel.com>
+ <CAMRc=Mc0gaRxOBDFXf2WB2_mNxaQo+UjCc6oTM-azLzV=c3VgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213195621.3133406-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdao27pu+9qFH2LBYNwYkBbWq1B-hE9nZGfTTCnQxhTiAQ@mail.gmail.com>
- <Z7crrgl2iFn34gck@smile.fi.intel.com> <CAMRc=MfSn6xB4eNkFG7E2gQPiF+AmnaidO5=FbvPtvW0N4iDjQ@mail.gmail.com>
- <Z7cwv0gxRFFGBjR1@smile.fi.intel.com> <Z7cxGOmwMIkkTRLs@smile.fi.intel.com>
-In-Reply-To: <Z7cxGOmwMIkkTRLs@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Feb 2025 14:42:26 +0100
-X-Gm-Features: AWEUYZliCPB3V_r_oONc5tJdN0FzpW2Pf5o6wREFCqkcv8bP8WF1k2YFby64Wmo
-Message-ID: <CAMRc=Mc0gaRxOBDFXf2WB2_mNxaQo+UjCc6oTM-azLzV=c3VgA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/5] gpio: regmap: Make use of 'ngpios' property
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Michael Walle <mwalle@kernel.org>, 
-	athieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mc0gaRxOBDFXf2WB2_mNxaQo+UjCc6oTM-azLzV=c3VgA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Feb 20, 2025 at 2:41=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Feb 20, 2025 at 03:40:15PM +0200, Andy Shevchenko wrote:
-> > On Thu, Feb 20, 2025 at 02:22:29PM +0100, Bartosz Golaszewski wrote:
-> > > On Thu, Feb 20, 2025 at 2:18=E2=80=AFPM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, Feb 14, 2025 at 11:50:53AM +0100, Linus Walleij wrote:
->
-> ...
->
-> > > > Bart, do you think it can be applied?
+On Thu, Feb 20, 2025 at 02:42:26PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Feb 20, 2025 at 2:41 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Feb 20, 2025 at 03:40:15PM +0200, Andy Shevchenko wrote:
+> > > On Thu, Feb 20, 2025 at 02:22:29PM +0100, Bartosz Golaszewski wrote:
+> > > > On Thu, Feb 20, 2025 at 2:18 PM Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > On Fri, Feb 14, 2025 at 11:50:53AM +0100, Linus Walleij wrote:
+
+...
+
+> > > > > Bart, do you think it can be applied?
+> > > >
+> > > > Andy,
+> > > >
+> > > > I really rarely lose track of patches. It's been just under a week
+> > > > since this was posted. Please don't ping me to pick things up unless
+> > > > I'm not reacting for at least two weeks. I typically leave patches on
+> > > > the list for some time to give bots some time to react.
 > > >
-> > > Andy,
-> > >
-> > > I really rarely lose track of patches. It's been just under a week
-> > > since this was posted. Please don't ping me to pick things up unless
-> > > I'm not reacting for at least two weeks. I typically leave patches on
-> > > the list for some time to give bots some time to react.
+> > > I see, I thought your cadence is one week, that's why I have pinged you.
+> > > Will try to keep this in mind for the future and sorry to interrupt!
 > >
-> > I see, I thought your cadence is one week, that's why I have pinged you=
-.
-> > Will try to keep this in mind for the future and sorry to interrupt!
->
-> Btw, if it's easier to you, I can just combine this to my usual PR to you=
-.
->
+> > Btw, if it's easier to you, I can just combine this to my usual PR to you.
+> 
+> No, that's fine, let's stick to ACPI-only PRs.
 
-No, that's fine, let's stick to ACPI-only PRs.
+Hmm... Is the Intel GPIO stuff should go directly to your tree? Seems I missed
+some changes in the flow...
 
-Bart
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
