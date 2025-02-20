@@ -1,102 +1,73 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41E71FCCE9;
-	Thu, 20 Feb 2025 14:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E61E5B7F;
+	Thu, 20 Feb 2025 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740061015; cv=none; b=VafdQyPl5PtaT0Yg7dCkHOb05tUdlI3jRXxcCA09VJc6mSh+xU0d/85YpqsP9/JdDHpkQxv2Z2RCoCHIoGGYt3IDM4NwMufjq4LmTVidjC+Ctrrc+ofbjA1ud8fkYXNC5jelfB4DTeKlNQq26P3B86ZGwHCiniUIdY85l3jUpqM=
+	t=1740064688; cv=none; b=J/K60W3HGfdte0GJLocQCdntA9omuktwEYs/kA5CZYMo7UScip5gTe7ZHsz8MvQY9bPD7nCFaPWD8oR6nw8c08ZDw64S7oEyTar/K9CgQdqtOSaZ9rkFiHglwDGIOk3pLCmoKX1LDB79r4ZHRf6U0VzDvmTEF9HbaVCipDM/lNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740061015; c=relaxed/simple;
-	bh=s7VjF6617+n9tFAkxx2f2oZrFvw0Wa/Dbzzdv/P8Ge0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LyBHorMkHR7ofiXF7CiCUEQ8HxtnB9FrdGhcKnbpAyOdQAud1Qj5n6a/qcKN26im+sSqaCKLQRmQcqPECnacNzSVEEjYL0koHTDuaGMSVk8NHNdK9xC5fat7tN7kZNSgK4WR0x/XmHwdfzFx8NRB3YvfASpT62s4Znk+J2t0aqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Das1GRCt; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740064688; c=relaxed/simple;
+	bh=ZnaNzN8t662cNw4RKpiVdVtvTtxMXS8tMZ1bItrIqqQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=px7at+6/7MEje4QdMlndBS5T8af3Lk89KgJYcy8HsSXx08RZ5URxMY2znJYJWvy9Gk271SNANGmW3AjQNw7j8/nlJ3C0mGEXGhoXkBu8v1rntaS2348KY8CT+jOOqugrKSwsv2xMfW3VzOIGXI7HQ4w0A5d2nBk/KuBSwmaQcTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCzR170y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Das1GRCt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740061014; x=1771597014;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=s7VjF6617+n9tFAkxx2f2oZrFvw0Wa/Dbzzdv/P8Ge0=;
-  b=Das1GRCtrvtNsIa/GYteS3Fba70bu7wUuQkTAWAqK9rEG1PcehrEEWHk
-   kaKztNv0ItvFfIVSFDp/2vA+qwE0CwoC5UuUeXKnIBxHzFVx+H+R+Qn3j
-   smIwHj1yawv4ZHhkjC20qi01vZPNBLuMajcUv3BGeA/9efEACRmKeZ4uj
-   4b8wW1YkiG7a9D0e2vhO2ialxPMvkm8nOs7EhqFfnps/n5wSPXtEDJPsn
-   EHp66aAOwmX4TgPVWti/7KPAJVgonyTAFQF+XFczzKPjCfj+u9DYsVNpM
-   K1rksndvJztFexgS86S5+Y1w/GhaQtIoW01fS85p+mu7+kQjUcNAfcIh9
-   Q==;
-X-CSE-ConnectionGUID: iyLaTUXDRMOyJG1rRfSEHQ==
-X-CSE-MsgGUID: glgJjXzzSMqIr8DodpuLEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11351"; a="51458104"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="51458104"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 06:16:50 -0800
-X-CSE-ConnectionGUID: /+3y9CpmRja/YG4G/knkgQ==
-X-CSE-MsgGUID: 0/difwcWTDS7v0vMzVxigQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="114883167"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 20 Feb 2025 06:16:47 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3A9EA123; Thu, 20 Feb 2025 16:16:46 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1 0/4] gpiolib: finish conversion to devm_*_action*() APIs
-Date: Thu, 20 Feb 2025 15:44:56 +0200
-Message-ID: <20250220141645.2694039-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCzR170y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714E3C4CED1;
+	Thu, 20 Feb 2025 15:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740064687;
+	bh=ZnaNzN8t662cNw4RKpiVdVtvTtxMXS8tMZ1bItrIqqQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UCzR170yfjLMG8S5D0SUT2ScspgvWTdIxWLSdlOAEgbAHISizyWLXzDn0Nc/SM9zv
+	 tP5FbFNxE37YyoKO7zioIbiHzmJVtP0T9qyRnHYdUmwTa2h6DgEhAc/hFHJ2oWeApv
+	 Yyq6wu6ja8UAdPx5gvWDzEDa4RyTHjAieJKi7cpyj0TYWyj/vr5FQgy4CcvAJaaK+f
+	 5XWBmk8EjXapPCfOi+nBngW21GnmKa1eT7T+SJoH5+/v8JuMQaSbUSwASbXusUygSG
+	 jKN7RC8F6qvv0/BUbT+SUey5didbDHTSUe5FEbGWH6mSdcGixO1Gr2nvZNSbn45heU
+	 fLckq+tO+O9Ew==
+From: Lee Jones <lee@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev
+In-Reply-To: <20250211-msm8937-v1-5-7d27ed67f708@mainlining.org>
+References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
+ <20250211-msm8937-v1-5-7d27ed67f708@mainlining.org>
+Subject: Re: (subset) [PATCH 05/10] dt-bindings: mfd: qcom,tcsr: Add
+ compatible for MSM8937
+Message-Id: <174006468317.807943.10112581876441058365.b4-ty@kernel.org>
+Date: Thu, 20 Feb 2025 15:18:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-GPIOLIB has some open coded stuff that can be folded to the devm_*_action*()
-calls. This mini-series is for that. The necessary prerequisites are here
-as well, namely:
-1) moving the respective APIs to the devres.h;
-2) adding a couple of simple helpers that GPIOLIB will rely on;
-3) finishing the GPIOLIB conversion to the device managed action APIs.
+On Tue, 11 Feb 2025 23:37:49 +0100, Barnabás Czémán wrote:
+> Document the qcom,msm8937-tcsr compatible.
+> 
+> 
 
-The series is based on another series that's available via immutable tag
-devres-iio-input-pinctrl-v6.15 [1]. The idea is to route this via GPIOLIB
-tree (or Intel GPIO for the starter) with an immutable tag for the device
-core and others if needed. Please, review and acknowledge.
+Applied, thanks!
 
-Link: https://lore.kernel.org/r/Z7cqCaME4LxTTBn6@black.fi.intel.com [1]
-Cc: Raag Jadav <raag.jadav@intel.com>
+[05/10] dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8937
+        commit: c9498d76a96f84a80ca88a862b6112cdc2e7cb64
 
-Andy Shevchenko (4):
-  devres: Move devm_*_action*() APIs to devres.h
-  devres: Add devm_is_action_added() helper
-  devres: Add devm_remove_action_optional() helper
-  gpiolib: devres: Finish the conversion to use devm_add_action()
-
- drivers/base/devres.c         | 11 ++++
- drivers/gpio/gpiolib-devres.c | 94 ++++++++++-------------------------
- include/linux/device.h        | 38 --------------
- include/linux/device/devres.h | 54 ++++++++++++++++++++
- 4 files changed, 90 insertions(+), 107 deletions(-)
-
-
-base-commit: 9deb15de8ca27cf9cba0d2bac53bbe37c836591b
--- 
-2.45.1.3035.g276e886db78b
+--
+Lee Jones [李琼斯]
 
