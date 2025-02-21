@@ -1,37 +1,25 @@
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F651FBC93
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Feb 2025 19:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D01FF1BD
+	for <linux-gpio@vger.kernel.org>; Fri, 21 Feb 2025 19:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740166897; cv=none; b=TnSJXWBhIUcswWYrqsnULWUweX2ZRnwsJZ8mcGOjzCL5SCzq/YAZQ+cfdQc2IqEBnngCrkBUjCEr6PPNGIHs9D9F0V9QNIt2aOx2oyUGdyBqx5L/nw+yASZEKh/CTNDBFSPEi0RzE/dIeJIUCS5hh36xYMXl9SmdqCSBFT7wSGY=
+	t=1740167800; cv=none; b=MiB66TkNgvTY11EKOM47J7EOOeLWg7XypWHxmMSbGEm2QPIPEUPyq6GC1T5l6DmWz7Htr6xARqsv+Kk2/hMFJXK2vrH99SSlf5H+kjFwgDIMIFYvmAEzez3AidbJ91AsXzURTqafqpP6jL4g6qwUMemeIsKRZQmO9VxzqGHLDXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740166897; c=relaxed/simple;
-	bh=m7cs4zzvtULX46fKW0sUQXLrwwDkAKqyNIJh8VzHzJA=;
+	s=arc-20240116; t=1740167800; c=relaxed/simple;
+	bh=S1Oo65ZNvSFvSvIr0+0DWNYT4tmcutb6FFm1AYHItis=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tZGL6BqOy/ilt8dIXIRtD38c+SSalfj918nPN9Q3S8+KcWBLIzLtmhxCD1UQ0xODys3hY7xdCSobxWdWh2kvAx8yNG5S0X3pG7igujiM9BK8ID0aMQ5wdLLjYYVoiJYeVRbBnLMy8WDQZH4QsU7yFtHdmuo8+yL3v6L9DZo1pvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Mg28JmPm; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Mg28JmPm"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A7E0310382D3C;
-	Fri, 21 Feb 2025 20:41:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740166892;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A0QAegeRtgTsmf6i8nDwpToAmAw4phMNlcNIQAefgQ=;
-	b=Mg28JmPmG205qRzH5B/shpvAXJp7+V33zGZtgd3pQoXMnutFiJkoLwE8y1fv5ImrMachOT
-	d4WXKEGWf/xq5DBS7N08JELPU8jtYOaZsL8/xsDdPGld5MmM8k7cV7dAaFy4kit8ktSpC/
-	++cgq0CAF7w3hK2IimbOcbYotUf7aqjZbpE8Yu5bZqGe3EZsKQI/LAG9k/t27zZKwzQnpE
-	6af8Fn61lPx+I7k1STTkQvcRZVrPS93Q8xyfZKh67OdS7iUKaUo2Dq4BFa+1pd+tJF+7Fp
-	84oBSFnddUGe6HwTF1b5o7bCCZ4Acrm88GYBF9pHCdnrXseWjgV/D2ZcloTHPw==
-Message-ID: <e5bdcca6-4d1b-451c-8fde-990db9db23d8@denx.de>
-Date: Fri, 21 Feb 2025 19:01:35 +0100
+	 In-Reply-To:Content-Type; b=qdNMPe5BMJnnOBvwDzwwMDBG/qAEICSPaYbzbcGIoi3iJj7CEGcw9MAcKGOPreZLObfMEL2hzEBDZ6Sajbmu362YBOaiHhrDbBCioLuV0ISFYbqkqIO75M/wp2HHB9gpCc5ME4iFmz/ifrruHnTIc3+6QOiHpeo36Fs9HrYRVhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tlZ8R-0002ir-3K; Fri, 21 Feb 2025 20:56:31 +0100
+Message-ID: <9d3f1ca4-d865-45af-9032-c38cacc7fe93@pengutronix.de>
+Date: Fri, 21 Feb 2025 20:56:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,26 +30,27 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: Replacing global GPIO numbers in sysfs with hardware offsets
 To: Linus Walleij <linus.walleij@linaro.org>,
  Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>, Kent Gibson
- <warthog618@gmail.com>, =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>,
+Cc: Kent Gibson <warthog618@gmail.com>, =?UTF-8?Q?Jan_L=C3=BCbbe?=
+ <jlu@pengutronix.de>, Marek Vasut <marex@denx.de>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
  "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 References: <CAMRc=McUCeZcU6co1aN54rTudo+JfPjjForu4iKQ5npwXk6GXA@mail.gmail.com>
  <CACRpkdZXm9eFJ2nzb5Gsm_ddirt6XZTQyu2G+vX2FB+=L6Lttw@mail.gmail.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
 In-Reply-To: <CACRpkdZXm9eFJ2nzb5Gsm_ddirt6XZTQyu2G+vX2FB+=L6Lttw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-On 2/14/25 10:14 AM, Linus Walleij wrote:
+Hello Linus,
+
+On 14.02.25 10:14, Linus Walleij wrote:
 > On Sun, Feb 2, 2025 at 1:46 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-Hi,
-
-I'm sorry for the late reply.
-
+> 
 >> I think it was Ahmad or Marek who suggested that users aren't really
 >> attached to the global numbering but to the ease of use of sysfs.
 >>
@@ -76,19 +65,20 @@ I'm sorry for the late reply.
 >> Please let me know what you think about it?
 > 
 > Yes, I think it is mostly equivalent to what I say in drivers/gpio/TODO,
+
+I wasn't aware of this file. Thanks for pointing it out.
+
 > my only point being that when we add something like this, we
 > put it in debugfs where it belongs, and as illustrated by your
 > example, it is indeed used for debugging/exploring the
 > system:
 
-I would very much like to avoid having to enable debugfs on production 
-systems to access GPIOs in early userspace (e.g. initramfs). This was so 
-far possible via the sysfs API without tools, currently it is becoming 
-not easily possible. A sysfs API "v2" which makes that possible would be 
-very much appreciated.
+Why does it belong in debugfs? The whole premise of Bartosz's mail is
+to provide holdouts that haven't yet migrated away from the sysfs global
+number space an alternative _stable_ kernel interface they can rely on.
 
-Also note that I do not care about static GPIO number assignment in the 
-sysfs API, so that part can go.
+DebugFS is the opposite of that. It may not even be available in those
+resource-constrained systems that this would be useful for.
 
 > ----------------8<----------------------------8<------------------------
 > Debugfs in place of sysfs
@@ -99,18 +89,47 @@ sysfs API, so that part can go.
 > root filesystems where you only have a minimal set of tools such
 > as "cat", "echo" etc.
 
-Yes
+And most importantly having the kernel keep the line requested.
 
 > The old sysfs still need to be strongly deprecated and removed
 > as it relies on the global GPIO numberspace that assume a strict
 > order of global GPIO numbers that do not change between boots
 > and is independent of probe order.
 
-Yes
+The new proposal gets rid of the global numberspace all the same.
 
 > To solve this and provide an ABI that people can use for hacks
-> and development, implement a debugfs
+> and development, implement a debugfs interface to manipulate
+> GPIO lines that can do everything that sysfs can do today: one
+> directory per gpiochip and one file entry per line:
 
-sysfs please.
+[snip]
 
-[...]
+> The exact files and design of the debugfs interface can be
+> discussed but the idea is to provide a low-level access point
+> for debugging and hacking and to expose all lines without the
+> need of any exporting. Also provide ample ammunition to shoot
+> oneself in the foot, because this is debugfs after all.
+
+I am afraid that if we go the debugfs route, we end up with
+a solution that just needs maintenance, but doesn't win users
+over.
+
+The target audience is not developers doing interactive debugging
+or development. It's embedded folks having init scripts which need
+GPIO lines to stay requested or software like labgrid that needs
+to login to a remote host outside of its control and needs to toggle
+GPIOs.
+
+These users won't consider an unstable debugfs interface.
+
+Thanks,
+Ahmad
+
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
