@@ -1,123 +1,216 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5131624F8
-	for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 14:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F54C38DD8
+	for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 14:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407669; cv=none; b=sw3KnoxyhJcOdHQzLAUtlMJJYsC21DcVz8SuQXbo6uc7mP+tyUz46TJmHdrY4eoV7o2hkSTzumbvPLWHEaKB3TgTZTTBGdK/1aLjNB9dMXCBQydG61H1evCMkpGtr60SSNZ+ehQFINSU6BK+IVj3Ie8MtA+RTn2XCNBfCXV8X80=
+	t=1740408006; cv=none; b=TLG9KaHrFBuHh/MwkCrJohVZZRUhENRComBwVaI0zJYm21HHjAnWy+jGzU07+KIY53pftfTG1l3ysf1iejnRKLAAwAX1EwyTaed4mujRW69heKiH0qS0Kf+Ow59TG+A3Y8rGjzXJodNIL/DbZEx01ey2JmDGMr/ZGHI1A0G37Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407669; c=relaxed/simple;
-	bh=gtWoGKMaCntSoWB3c03NP4J9WjVIr1FotK1T44+GyYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uWYW8tYo+3oCIanqMjixxPRanb62qszSw3Vsk7tOt2p/OXCs7ZQPehBuXBm0EgrjF8CL6qyMRck4UwisUHvusISP9prvBcb5TUJA8L3sfsm42pwrCpha9qWs7dbS9iblpWcecU9uCDfllwJGEff0gXFmDYp11jb/NwKGuuDh4QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=eoLN/1nr; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1740408006; c=relaxed/simple;
+	bh=aLA3ZVDhrDy3RNwYW++kaJn2SQ84AkvFmu6stXF9mto=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pz2AZWD4zZyAHOpaAdBPDQLXGAOsvB6RLZ8Q6uMZBqJ12uGTH2swa0lQrlwrUzyk7PbWzusLxT0iLirTH+oBs5PTVn9lMqIsEZQwjdNe1xzLzFSqw+YO+0JsXrMfFddk26DwPcvmojYkzpTK/hVlaUJX/8xd+75z+yU9jUPsgpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Es9n6Ud/; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="eoLN/1nr"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Es9n6Ud/"
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 295F2403E3
-	for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 14:34:25 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5E6C53F687
+	for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 14:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1740407665;
-	bh=yhFJ4UHx5R5lOf0wcq1Nd4uhLZ5ZR5NOQL7ZBIbthnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=eoLN/1nrS8znZf4RX+gEGhlWGQlrRndvkWojrWEh37KqeJNz1hfQHKcmiRobkHgwE
-	 v7x7CuUuq2zfgr6hDYBFwmSEhD4ZMNXpt0gn3xhKyfQIqLK+EYlh/Rc/1hgda7uZgy
-	 xqq9UnSc4j190bYFbvZ8Rfqi5rTBX3AcOepxREGUhUj7+pIzvtNHk4eUS73NM3z9QW
-	 aUcqx+PK631wEdi+dK2VSkVd7cpvdWQwCwXByMTLcu9ogbH1uY+xkH6+Jr4fETR8hy
-	 Tldfds4EuP0hnvw3oWDSdCM6H6VsblxgOWmRZOsgp/DpiBzYvnsn216xc3AsPI+ZPU
-	 Hpp9kW3xJHOmw==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc45101191so8633401a91.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 06:34:25 -0800 (PST)
+	s=20210705; t=1740407514;
+	bh=gXHg3uCoBKmQSJJ70+DeTAJMIxaEY0B5wJevniOwqIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version;
+	b=Es9n6Ud/A4kQsQg2DEwiQBlyajL1jSzYqH+lK0L2TSc1uYQcvl/lJpn/Rq+uO6r7+
+	 7NgicTq7S12r/G5YOda/SJFxZHVAKu2ddz2ekXZgGTv81EaTFiDPHCI1UQIeMVIzSN
+	 iMDC5c0JYuXFonop8XlgTZQQSpyo4hk4KuUNMX1olH7BuvTjNNldZnfbQuCJTCLLOv
+	 oI9B/VyK7nZbN8MioLd4rRrxHQm6LIaaRN8jwnRJOt1X98uDjgE/P93+tsfTJLVoie
+	 aoApBZ+ooh41B+Ex6j4q0xVyJVf07dJLoP9LikyjjpQlWX5swwWefnffrh0Lsfr9sg
+	 70Kpsjk0qUAYA==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22114b800f0so19078255ad.1
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 06:31:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740407664; x=1741012464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yhFJ4UHx5R5lOf0wcq1Nd4uhLZ5ZR5NOQL7ZBIbthnY=;
-        b=UolZowNRJr6na4Hi3Dp5bOM9dFZTSpQRbkBcWRMo5Q9lAZybuRoL6h1kgonP1D8IKr
-         slhNazBzKSJhbzuRhIx/d+VZ4KUmuydX/e5ts6YKaRM4cTFdJ6I653m+RWHdVJZkKtMI
-         6TDAKSt5eCPAxMPuS4CeZRCWAi4LQ50PLB4m1fOaw7qaIkmwijdUZppn3fkbL4W7WmQr
-         FzlAzDk0ZfMdL7KKeRQyKFW2pBE7zCYIrFoy+ZNH7X9Jbr6UaPF5m0ENy5eWQ5RzuITT
-         ELSA9qXpQDNgwH/cc6cf+Kv/1Nd7AxDnds2nagZjq+F3C72QXV795QUwCd89yeOHfqkm
-         8Z/w==
-X-Gm-Message-State: AOJu0Yx+g5/ARI8iwtbms5coIMKmwgzo/BLODgrg9DSpMAQmin4ovKi4
-	+LjV/yZuKc5RdksVqGkv17Ngz0EQHge6unSlYgdawHT0fumOWjJ0Eu8+it7fQxD1az9FCnszf1b
-	Ndz5nP4puHPh1v8tF5WxYQxfC9tt7xSN1EMDIxFgZdkHSExCUEX4eHmR1YfbhhlYpva6uGVnOfw
-	Q=
-X-Gm-Gg: ASbGnctDRG8M75+kKLscUsdsCkvxoG10s2UmiT43m9iqZbVLUFGsnBSXrd2AYfZJMwG
-	11Hbh0StjbsThondZp8vkZMZ7qK85n3dQn5Kgm0eagzvFEw/Oe2XfUk0PPTU22Hog1SVRkuVagv
-	Rr9aPOxoxFA8ojkHI2yosox8xUUfq4KdgsNUfkq2jCcauSZnLlRsd/3T5nDu7VUOL0RVatFFd1o
-	thPwGP65M2Csv5VVXjPD26YneDUgOszhMJBE9JHOhJ6bK86CN38uwvDYdqVotlDH2r2rdbaXLx2
-	MTIfpbeLnoVA81hu2A==
-X-Received: by 2002:a05:6a21:4613:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eef3c889c7mr24653478637.15.1740407663753;
-        Mon, 24 Feb 2025 06:34:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZoGO5+6SYNEGvQLUG/Lrjbn6pkdcM+ukmw/rDgYUp43ttu6AmhAB4GYyEKrbM+g8j74n7bw==
-X-Received: by 2002:a05:6a21:4613:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eef3c889c7mr24653444637.15.1740407663438;
-        Mon, 24 Feb 2025 06:34:23 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:de7b:58db:ab85:24ee])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7328371e36esm14345854b3a.61.2025.02.24.06.34.22
+        d=1e100.net; s=20230601; t=1740407510; x=1741012310;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gXHg3uCoBKmQSJJ70+DeTAJMIxaEY0B5wJevniOwqIM=;
+        b=P6z3DStSd4TR1PafmyvozguV6+1iXK3AjHNz7aBPI9pdvBLobqidQxom2ZHVZcqXsd
+         MPuJa0G0T/4IpmF4u2pvrcVwRTqGeRkcVo2W7+ywRB622qleVrxOe6QW3P8npq2MsFmL
+         EDqxR5H6L7ZqY41NQBhZnwnGy1qKRgzkqSiae+0vPE+OFY3PINaOXJ+NsXmXO9Ga5wHb
+         FI8zi+kJYkPh8XlDp0anDqbCSNny4JSHnHLZpdiKt6DULSsUEuUIHKx/9xGER7gdscy9
+         FSbb9snMcEea7iBSC2X7/NUOcAIA2dKyPuqh85wFrL8WfMn9eZuvL0YRyUxOlMev80/W
+         J0Pw==
+X-Gm-Message-State: AOJu0YzyEd5Uf/O2tVpnaQchGZWFsNTpysVhxxzkp/ha5t6uC/+FsL5h
+	i7COBs8B9js6wn9onZpJKTwJw42eTcPeJVagbAZ2u/73HZejcE5v3kMEoQdlPga/aySYhiWMmw2
+	ZtW0wUAtdGRbREUkXTnMFwawFDGAdwl2dcici2WiaEgy3FCB13QXWnCeU6cLwCOp2j/HatN1eaj
+	x+NF15cco=
+X-Gm-Gg: ASbGnctgl2LhzOIodSS1RP8soaW6Yt7N0/WDj5//97A4sVQH2CZmzuJaOjz5x79fzLi
+	Ccq6kHBALpQhs7Wzs349MzAdfgGF4uj4CZx2TxRAvlp8l/4OuWUWNn8qtpCu9GGs1vMhiCoe61E
+	u7bEtCo2Wh5h+7wKojy6FCscbM0sQ/8qzqxAfWf6NMlB7zYmy1g6g6ZvWc0TW/hr3ObRXX1riFY
+	nyyRsZ2Aacj/Exy9J9KJsLm9yDl5THQpgEfqVNlzWBiJ5CI0A5YcOSu4bumCOgChaQIjJ6rbt45
+	QimCJNwAyt6V7jUo
+X-Received: by 2002:a17:902:f548:b0:20c:6399:d637 with SMTP id d9443c01a7336-2219ffb5ccdmr233011375ad.40.1740407510335;
+        Mon, 24 Feb 2025 06:31:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF1Jc0Yqwa4HwDO+K5r64/4KHjkg5DCcC3jCiIDfEPZrnBsn9cR2KGuGUfwAomXtnQycccupA==
+X-Received: by 2002:a17:902:f548:b0:20c:6399:d637 with SMTP id d9443c01a7336-2219ffb5ccdmr233011105ad.40.1740407510064;
+        Mon, 24 Feb 2025 06:31:50 -0800 (PST)
+Received: from z790sl.. ([240f:74:7be:1:de7b:58db:ab85:24ee])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545d067sm177613895ad.109.2025.02.24.06.31.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 06:34:22 -0800 (PST)
-Date: Mon, 24 Feb 2025 23:34:21 +0900
+        Mon, 24 Feb 2025 06:31:49 -0800 (PST)
 From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, geert+renesas@glider.be, linus.walleij@linaro.org, 
-	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Add synchronous fake device creation utility for
- GPIO drivers
-Message-ID: <htq76fls75dk7a5nn6u6lqwzm6k5evbgp4uip2jf7kuoq7tjaw@dck7tgbmek3y>
-References: <20250221133501.2203897-1-koichiro.den@canonical.com>
- <174040547574.48618.1949653889364615138.b4-ty@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: brgl@bgdev.pl,
+	geert+renesas@glider.be,
+	linus.walleij@linaro.org,
+	maciej.borzecki@canonical.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 3/9] gpio: aggregator: add aggr_alloc()/aggr_free()
+Date: Mon, 24 Feb 2025 23:31:28 +0900
+Message-ID: <20250224143134.3024598-4-koichiro.den@canonical.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250224143134.3024598-1-koichiro.den@canonical.com>
+References: <20250224143134.3024598-1-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174040547574.48618.1949653889364615138.b4-ty@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 02:58:58PM GMT, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> 
-> On Fri, 21 Feb 2025 22:34:58 +0900, Koichiro Den wrote:
-> > This patch series introduces a utility for some GPIO devices to reduce
-> > code duplication. There are no functional changes.
-> > 
-> > In this series, only gpio-sim and gpio-virtuser are updated to use
-> > dev-sync-probe, as the current gpio-aggregator does not benefit from it at
-> > all. A follow-up patch series that introduces a configfs interface for
-> > gpio-aggregator will convert it to use dev-sync-probe as well.
-> > 
-> > [...]
-> 
-> I don't see any further issues and it passes my libgpiod tests so I queued
-> this series for v6.15. You can now base your aggregator work on top of my
-> gpio/for-next branch. Thanks!
+Prepare for the upcoming configfs interface. These functions will be
+used by both the existing sysfs interface and the new configfs
+interface, reducing code duplication.
 
-Thank you! I've just sent the aggregator work v5:
-https://lore.kernel.org/all/20250224143134.3024598-1-koichiro.den@canonical.com/
+No functional change.
 
-Koichiro
+Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+---
+ drivers/gpio/gpio-aggregator.c | 58 +++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 22 deletions(-)
 
-> 
-> [1/3] gpio: introduce utilities for synchronous fake device creation
->       commit: eb5ab6ffb4ca2d28121455dd7452061367ed5588
-> [2/3] gpio: sim: convert to use dev-sync-probe utilities
->       commit: 2f41dbf9cb84349f510ebf2165c13102f79a550b
-> [3/3] gpio: virtuser: convert to use dev-sync-probe utilities
->       commit: 45af02f06f6943d73cf9309fd2a63a908b587f57
-> 
-> Best regards,
-> -- 
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+index 893cd56de867..a93b7d3de929 100644
+--- a/drivers/gpio/gpio-aggregator.c
++++ b/drivers/gpio/gpio-aggregator.c
+@@ -36,12 +36,41 @@
+ struct gpio_aggregator {
+ 	struct gpiod_lookup_table *lookups;
+ 	struct platform_device *pdev;
++	int id;
+ 	char args[];
+ };
+ 
+ static DEFINE_MUTEX(gpio_aggregator_lock);	/* protects idr */
+ static DEFINE_IDR(gpio_aggregator_idr);
+ 
++static int aggr_alloc(struct gpio_aggregator **aggr, size_t arg_size)
++{
++	struct gpio_aggregator *new __free(kfree) = NULL;
++	int ret;
++
++	new = kzalloc(sizeof(*new) + arg_size, GFP_KERNEL);
++	if (!new)
++		return -ENOMEM;
++
++	mutex_lock(&gpio_aggregator_lock);
++	ret = idr_alloc(&gpio_aggregator_idr, new, 0, 0, GFP_KERNEL);
++	mutex_unlock(&gpio_aggregator_lock);
++	if (ret < 0)
++		return ret;
++
++	new->id = ret;
++	*aggr = no_free_ptr(new);
++	return 0;
++}
++
++static void aggr_free(struct gpio_aggregator *aggr)
++{
++	mutex_lock(&gpio_aggregator_lock);
++	idr_remove(&gpio_aggregator_idr, aggr->id);
++	mutex_unlock(&gpio_aggregator_lock);
++	kfree(aggr);
++}
++
+ static int aggr_add_gpio(struct gpio_aggregator *aggr, const char *key,
+ 			 int hwnum, unsigned int *n)
+ {
+@@ -444,17 +473,15 @@ static ssize_t new_device_store(struct device_driver *driver, const char *buf,
+ {
+ 	struct gpio_aggregator *aggr;
+ 	struct platform_device *pdev;
+-	int res, id;
++	int res;
+ 
+ 	if (!try_module_get(THIS_MODULE))
+ 		return -ENOENT;
+ 
+ 	/* kernfs guarantees string termination, so count + 1 is safe */
+-	aggr = kzalloc(sizeof(*aggr) + count + 1, GFP_KERNEL);
+-	if (!aggr) {
+-		res = -ENOMEM;
++	res = aggr_alloc(&aggr, count + 1);
++	if (res)
+ 		goto put_module;
+-	}
+ 
+ 	memcpy(aggr->args, buf, count + 1);
+ 
+@@ -465,19 +492,10 @@ static ssize_t new_device_store(struct device_driver *driver, const char *buf,
+ 		goto free_ga;
+ 	}
+ 
+-	mutex_lock(&gpio_aggregator_lock);
+-	id = idr_alloc(&gpio_aggregator_idr, aggr, 0, 0, GFP_KERNEL);
+-	mutex_unlock(&gpio_aggregator_lock);
+-
+-	if (id < 0) {
+-		res = id;
+-		goto free_table;
+-	}
+-
+-	aggr->lookups->dev_id = kasprintf(GFP_KERNEL, "%s.%d", DRV_NAME, id);
++	aggr->lookups->dev_id = kasprintf(GFP_KERNEL, "%s.%d", DRV_NAME, aggr->id);
+ 	if (!aggr->lookups->dev_id) {
+ 		res = -ENOMEM;
+-		goto remove_idr;
++		goto free_table;
+ 	}
+ 
+ 	res = aggr_parse(aggr);
+@@ -486,7 +504,7 @@ static ssize_t new_device_store(struct device_driver *driver, const char *buf,
+ 
+ 	gpiod_add_lookup_table(aggr->lookups);
+ 
+-	pdev = platform_device_register_simple(DRV_NAME, id, NULL, 0);
++	pdev = platform_device_register_simple(DRV_NAME, aggr->id, NULL, 0);
+ 	if (IS_ERR(pdev)) {
+ 		res = PTR_ERR(pdev);
+ 		goto remove_table;
+@@ -500,14 +518,10 @@ static ssize_t new_device_store(struct device_driver *driver, const char *buf,
+ 	gpiod_remove_lookup_table(aggr->lookups);
+ free_dev_id:
+ 	kfree(aggr->lookups->dev_id);
+-remove_idr:
+-	mutex_lock(&gpio_aggregator_lock);
+-	idr_remove(&gpio_aggregator_idr, id);
+-	mutex_unlock(&gpio_aggregator_lock);
+ free_table:
+ 	kfree(aggr->lookups);
+ free_ga:
+-	kfree(aggr);
++	aggr_free(aggr);
+ put_module:
+ 	module_put(THIS_MODULE);
+ 	return res;
+-- 
+2.45.2
+
