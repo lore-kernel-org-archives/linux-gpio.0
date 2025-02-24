@@ -1,171 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFBAEEA9;
-	Mon, 24 Feb 2025 20:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF321DE4D3
+	for <linux-gpio@vger.kernel.org>; Mon, 24 Feb 2025 20:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740427570; cv=none; b=coYHiwXvFv1BlPfRGQ/3iskofl/7n9G72el+QtQxGis+8jQ4lYi5X9iAB7po74VE/3o22u7toDFjnVrGya5UVDTGB4fXengOl9a3wY1md9HGl8gglegEJdOCJaVmiDy3rI8F6xfLpDBMdmjYDaV6YRjC7UGZboU4PlOxQyw8zto=
+	t=1740428752; cv=none; b=i5IRg2ZJc7JVnG5QwoBkFk/5VTEicmAF4WBBH54JXKJ61M7BK/hsEWjJ7dGlXu4gHDMSoPfi1IrBPsFo7jAMKgNNiIDwuXOPg63YRT31NsO0cbrnAUfV1WjHrjb3ShQGBjgki9L8NoYl1BQXOsV6Cs7kHC25vamU6YNa1GcDWCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740427570; c=relaxed/simple;
-	bh=stM2IVR3b2kvR088SM8/A8kfusx7eVUGjEIOksI9LxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M21jG8gZOXq8JJhmHZ4ZS8oWunWejGi9F3Zx38wYVJXvfEPxfGONC/7PUEnsf/r1Zj5ngQiXcD3adcCxp6oBbnF4ZWxC2iivEd55K4I4CXLpLdsb8rK/MzC7S1ovmUpS1s4t8o5JnIP4TUfZTqWtRCipif7wpn4Hqbb5ndi0Byg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTxJYGAH; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTxJYGAH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF2CAC4CED6;
-	Mon, 24 Feb 2025 20:06:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740427570;
-	bh=stM2IVR3b2kvR088SM8/A8kfusx7eVUGjEIOksI9LxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fTxJYGAHV6FCp80DxZ0l0De/AoUhpsBvWAIfLfrdXZ80o3hrfPZJcAVurzbA8BNSE
-	 ASaGSNB347y5MyVhE+qziw0Ce1PMKxGyGf/2RcUzQwZuKkKrPnC1FWrk5kCtXJ4B32
-	 EEmrUZ1DwdjL4ABOXWIy1G8XsVVIHMU7oiLYdBYcfIsJe8OgeR01gjkkyrMYbQMjrQ
-	 1A2EZ8pjVSfvY8vlXok+kOgJGBJTLJ8knBy9aqg7pxs8LY/azao9rfsT7RG9v+VBCw
-	 hcxR6nQ8GJYBFQn8qTxlh5RZ3DeoF4fX86xb4wlOxj3g2MkPC7b40S5aSc2mYAGnLb
-	 1lcWhvij8UAGQ==
-Date: Mon, 24 Feb 2025 14:06:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v6 1/4] dt-bindings: gpio: spacemit: add support for K1
- SoC
-Message-ID: <20250224200608.GA4014994-robh@kernel.org>
-References: <20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org>
- <20250223-03-k1-gpio-v6-1-db2e4adeef1c@gentoo.org>
+	s=arc-20240116; t=1740428752; c=relaxed/simple;
+	bh=lSOhfgM9aqjP7uFmcecoJ5HzRf8wsz0vaLN16X+Vsy8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MYZj4L6rOiopaa5fJoTjnb41blLVgHrJ6g7yl9YF3OhcNtnpFT8lkuOcI54dCWeN27sYK2ku1ASXJBwQXe1jYy5BpfvryQIqpgli9HtCMCsX5a1303+WBREBbPdGLAhqSnDwLuM32ZGTjF71f3uj/QaNIbYYZH+nkOy29P5VKjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 80914f8f-f2ed-11ef-9d7a-005056bd6ce9;
+	Mon, 24 Feb 2025 22:25:35 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 24 Feb 2025 22:25:34 +0200
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 8/8] gpiolib: sanitize the return value of
+ gpio_chip::get_direction()
+Message-ID: <Z7zVvgcEeWnYr9vZ@surfacebook.localdomain>
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+ <20250210-gpio-sanitize-retvals-v1-8-12ea88506cb2@linaro.org>
+ <Z7yfTggRrk3K6srs@black.fi.intel.com>
+ <CAMRc=Md-bMUEKgF7srLFqwdetDcTDB-0YzrisccQmReDs-Ndvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250223-03-k1-gpio-v6-1-db2e4adeef1c@gentoo.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Md-bMUEKgF7srLFqwdetDcTDB-0YzrisccQmReDs-Ndvg@mail.gmail.com>
 
-On Sun, Feb 23, 2025 at 07:49:32PM +0800, Yixun Lan wrote:
-> The GPIO controller of K1 support basic functions as input/output,
-> all pins can be used as interrupt which route to one IRQ line,
-> trigger type can be select between rising edge, falling edge, or both.
-> There are four GPIO banks, each consisting of 32 pins.
+Mon, Feb 24, 2025 at 08:55:26PM +0100, Bartosz Golaszewski kirjoitti:
+> On Mon, Feb 24, 2025 at 5:33 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Feb 10, 2025 at 11:52:02AM +0100, Bartosz Golaszewski wrote:
+
+...
+
+> > > +static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     lockdep_assert_held(&gc->gpiodev->srcu);
+> > > +
+> > > +     if (WARN_ON(!gc->get_direction))
+> > > +             return -EOPNOTSUPP;
+> > > +
+> > > +     ret = gc->get_direction(gc, offset);
+> > > +     if (ret > 1)
+> >
+> > Would it be better to use the respective GPIO*... macro instead of 1?
+> >
 > 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 81 ++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
+> I did consider it but I don't like comparing against enums, it doesn't
+> feel right as the value behind the name can change. I think I prefer
+> it like this even if it's not the best solution either. Maybe we could
+> be more explicit and say:
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..017165d325565a6868700a9ac8298b61dffcfef4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/spacemit,k1-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT K1 GPIO controller
-> +
-> +maintainers:
-> +  - Yixun Lan <dlan@gentoo.org>
-> +
-> +description:
-> +  The controller's registers are organized as sets of eight 32-bit
-> +  registers with each set of port controlling 32 pins.  A single
-> +  interrupt line is shared for all of the pins by the controller.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^gpio@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    const: spacemit,k1-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 3
-> +    description:
-> +      The first two cells are the GPIO bank index and offset inside the bank,
-> +      the third cell should specify GPIO flag.
-> +
-> +  gpio-ranges: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 3
-> +    description:
-> +      The first two cells are the GPIO bank index and offset inside the bank,
-> +      the third cell should specify interrupt flag. The controller does not
-> +      support level interrupts, so flags of IRQ_TYPE_LEVEL_HIGH, IRQ_TYPE_LEVEL_LOW
-> +      should not be used. Refer <dt-bindings/interrupt-controller/irq.h> for valid flags.
-
-Wrap lines at 80 chars.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - interrupts
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +  - gpio-ranges
-> +
-> +additionalProperties: false
-> +
-> +dependencies:
-> +  interrupt-controller: [ interrupts ]
-
-You made 'interrupts' always required, so this is redundant.
-
-> +
-> +examples:
-> +  - |
-> +    gpio: gpio@d4019000 {
-
-Drop unused labels.
-
-> +      compatible = "spacemit,k1-gpio";
-> +      reg = <0xd4019000 0x800>;
-> +      gpio-controller;
-> +      #gpio-cells = <3>;
-> +      interrupts = <58>;
-> +      interrupt-controller;
-> +      interrupt-parent = <&plic>;
-> +      #interrupt-cells = <3>;
-> +      gpio-ranges = <&pinctrl 0 0 0 32>,
-> +                    <&pinctrl 1 0 32 32>,
-> +                    <&pinctrl 2 0 64 32>,
-> +                    <&pinctrl 3 0 96 32>;
-> +    };
-> +...
+>     if (!(ret == IN || ret == OUT || ret < 0)
 > 
-> -- 
-> 2.48.1
-> 
+> ?
+
+Yep, I like this.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
