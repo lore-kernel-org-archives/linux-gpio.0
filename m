@@ -1,233 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83911990D9;
-	Tue, 25 Feb 2025 16:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D792C18DB10;
+	Tue, 25 Feb 2025 17:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502685; cv=none; b=oQwpX3qcB4yoWr9xmQ7+LQsAVYDqp2fl4TdqIQdSANnsDu+SZmF2DHLkMIoluxrNp4JiyTEuaYsemVKwez6g1AKOV45Gu5XTo7i6ffVTpMMe8kpVB++/qU2enX+J81MHWKLzCmgaZIebsNHvjclRi9TEjoIkjWT+Pl9LmKT7zy8=
+	t=1740503240; cv=none; b=B/JhNRAETFwUsraz2lQJ0VRSH4Orcs/8sVmD/qNYGRxa6BbEOHP1svMntcAePTRgWepi/ViItROJJs+gQZ/NXyEzwyv/UzefZ87JSw7OJwlrv+yY3DT1KMNmTh0rV0jBBk+MC5oGyr+X3GDAhar/KbJfLLkpvfAK/fttFRA1tho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502685; c=relaxed/simple;
-	bh=UmlCUOifDi78PZ3sZ9Hgh4boP9yes+3i/SeSn4tG0PE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eI1HAnCcAPiEvllziR86c0VSjgEKbM0WjVtg2v8WRoW/n2hfxw+YjYpn4mRcX0pAKWqys5dVxW31G1/K5Ckz0FAibeK0dJ7wiwbcdfji8xr6qNBZ8G2AI7/BmlwK8MpgY3//3rkZySopXddJW2YLHBOGSVaxDO1q3bsbHCYdPMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1KtHPO/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740503240; c=relaxed/simple;
+	bh=Fo/kUnPVvwMN6d2mCTh4WVFN+z8TyGGlf8yYvgnANfA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=gRa1AZwJfozvyqZAKaE0g8T2lRrl0r5LJpAb/zz7eGCk84QRUW8m5EmmPJ1xkve/avVXCoBM5fNEAFd6l2S72Hf7aJdmycPUQ2FXyZuolEBvGxJ00k4cOwES8TmQKfPDPbJHpNx5HcLtSRIi8aKPaD/cefjsPPxvG22RaONbVQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FcPQ9Jey; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1KtHPO/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EB9C4CEE7;
-	Tue, 25 Feb 2025 16:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740502684;
-	bh=UmlCUOifDi78PZ3sZ9Hgh4boP9yes+3i/SeSn4tG0PE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j1KtHPO/x9OfCPfgUTJEoVspBhAw4LvI6vd9BERgctRxolycyO8a1Ss+y+O5kVDkX
-	 L3Xe+gvx/qSNTsSWaAbRqpf8YJFakCnsiU1aY1XHNuUg5cxStIwzxZJceDhzc2Me/Z
-	 iliz3c0NX/XWbK0pQZAcQDMuKhwSkPDFPIpDrCX3O/B8bTSSWmb7VBaSL/fLAt4TS/
-	 ZUcArHkzCklAuXAS5VJgDZcRlo32MeHXKKUTHA2TXB5znfIVVy4LuZYeruWZSiVZ4C
-	 8UBaU08wKJMR8qzeeE8luVmy2UJqnh2ptlWPjo2/4m5lNtMPd4kdhQco3uScr5auMJ
-	 2W++qBTGzZVrA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e0516e7a77so9002772a12.1;
-        Tue, 25 Feb 2025 08:58:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWOhrVhtSHR9cJjDP0gqZBsVV+H/gDDqeQ7MG8Kh7Oq5vCfjHbNavbsDeG1Y2KBdNNt1IygaHPV00JT@vger.kernel.org, AJvYcCWq0NyPwNHujjqNJwOkufdOhk39F7l9mBizZBMqpqNgL0/Dl3rkIFf3C5/YM5cuOvig04OzhBaLpHZEsw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ3uJZeZYkMr1EKTL/eOSzMv2uxwVQwAL+iaVi5GLwup7l2YzC
-	hoZ5OYGeqTEVaNInXJrCrved5BPfw6lMZTifhUhEJNkrsqRytpkSoYRaSNT7ZX4Dq7FqhaudUD9
-	6RYbH8VgVl+NL06WitxjMb2ID8A==
-X-Google-Smtp-Source: AGHT+IHU0VMm2qsc1xH1Uy1x2otaarsyDtRv2AMJTjxVs/z2V8zUUxlaQa+ad3iGfyDLjHh/RMZvjmmNUG/PgJyb0g0=
-X-Received: by 2002:a05:6402:3220:b0:5e0:82a0:50dd with SMTP id
- 4fb4d7f45d1cf-5e0b7252d44mr18879647a12.27.1740502682731; Tue, 25 Feb 2025
- 08:58:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FcPQ9Jey"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PEv1Fd023213;
+	Tue, 25 Feb 2025 18:07:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	T/Jb54THTfDypOaw3j9QTlja8nsXEGzKOXd88jtbmz0=; b=FcPQ9JeyT9/q5+3h
+	OsRL5WzXhKeLYyKAIBd/2RaNwppTEw4jT6g4cu9RW8r/S6xSfzlzVqMDH1FQD+qS
+	J1Q+eaPbzyEHnEH3aqOMdTOZygNqXR2w1SVcEkkZRxSssvNzJbVX1BOe0jKyzUqC
+	6WOOBKh32TcuCXyJL6Siwpg08uBKinAOivi3qiocwu6pj1IJeJNSgrl5R5jyv2el
+	FnQnT82E8iRK/B3VE3RTxyrEJI8510s0dRia93BYHFf3Bw64g0y6mYZlSgUYxtXe
+	Jx+yWTYEQjtOcdJSRBg0wh4hdF+g0/NuVKNv6Pt+M61ZD4cXV0xQtJYIrIYeccmr
+	BbACLw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp4ua5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 18:07:04 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9DA5D40065;
+	Tue, 25 Feb 2025 18:05:59 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 694ED4F37FF;
+	Tue, 25 Feb 2025 16:46:19 +0100 (CET)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 16:46:18 +0100
+Message-ID: <7bc5c425-1d6e-4e25-b913-287478d4149f@foss.st.com>
+Date: Tue, 25 Feb 2025 16:46:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-gpio-ranges-fourcell-v2-0-8da9998fa976@linaro.org> <20250225-gpio-ranges-fourcell-v2-2-8da9998fa976@linaro.org>
-In-Reply-To: <20250225-gpio-ranges-fourcell-v2-2-8da9998fa976@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 25 Feb 2025 10:57:50 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL1tLPP_Waw61ygTZECCRVBE_asTccCWMOQTYnJb9=wvA@mail.gmail.com>
-X-Gm-Features: AQ5f1JonlDqgjmGMTmM-l4DT7QnEMLGcmWUc1hpupPcXhY-rrPaX5FgWjOf9rDA
-Message-ID: <CAL_JsqL1tLPP_Waw61ygTZECCRVBE_asTccCWMOQTYnJb9=wvA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpiolib: of: Handle threecell GPIO chips
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Yixun Lan <dlan@gentoo.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Alex Elder <elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+Subject: Re: [PATCH 1/9] dt-bindings: pinctrl: stm32: Add HDP includes for
+ stm32mp platforms
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-1-9d049c65330a@foss.st.com>
+ <f17eadf3-eb2d-470d-ad77-909f00584d44@kernel.org>
+Content-Language: en-US
+In-Reply-To: <f17eadf3-eb2d-470d-ad77-909f00584d44@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
 
-On Tue, Feb 25, 2025 at 10:15=E2=80=AFAM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->
-> When describing GPIO controllers in the device tree, the ambition
-> of device tree to describe the hardware may require a three-cell
-> scheme:
->
-> gpios =3D <&gpio instance offset flags>;
+On 2/25/25 14:01, Krzysztof Kozlowski wrote:
+> On 25/02/2025 09:48, Clément Le Goffic wrote:
+>> Each file introduces helpers to choose the signal to monitor through the
+>> HDP pin.
+>> Signals are different for each platforms: stm32mp13, stm32mp15, stm32mp25.
+> 
+> Headers are part of bindings commit, assuming this stays...
 
-I think we have cases where bank/instance and offset are in 1 cell.
-Not sure if you want to make it possible to split those into separate
-gpio chips.
+Ok will squash with the next patch
 
-> This implements support for this scheme in the gpiolib OF core.
->
-> Drivers that want to handle multiple gpiochip instances from one
-> OF node need to implement a callback similar to this to
-> determine if a certain gpio chip is a pointer to the right
-> instance (pseudo-code):
->
-> struct my_gpio {
->     struct gpio_chip gcs[MAX_CHIPS];
-> };
->
-> static bool my_of_node_instance_match(struct gpio_chip *gc
->                                       unsigned int instance)
-> {
->     struct my_gpio *mg =3D gpiochip_get_data(gc);
->
->     if (instance >=3D MAX_CHIPS)
->         return false;
->     return (gc =3D=3D &mg->gcs[instance]);
-> }
->
-> probe() {
->     struct my_gpio *mg;
->     struct gpio_chip *gc;
->     int i, ret;
->
->     for (i =3D 0; i++; i < MAX_CHIPS) {
->         gc =3D &mg->gcs[i];
->         /* This tells gpiolib we have several instances per node */
->         gc->of_gpio_n_cells =3D 3;
->         gc->of_node_instance_match =3D my_of_node_instance_match;
->         gc->base =3D -1;
->         ...
->
->         ret =3D devm_gpiochip_add_data(dev, gc, mg);
->         if (ret)
->             return ret;
->     }
-> }
->
-> Rename the "simple" of_xlate function to "twocell" which is closer
-> to what it actually does.
->
-> In the device tree bindings, the provide node needs
-> to specify #gpio-cells =3D <3>; where the first cell is the instance
-> number:
->
-> gpios =3D <&gpio instance offset flags>;
->
-> Conversely ranges need to have four cells:
->
-> gpio-ranges =3D <&pinctrl instance gpio_offset pin_offset count>;
->
-> Reviewed-by: Alex Elder <elder@riscstar.com>
-> Tested-by: Yixun Lan <dlan@gentoo.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpiolib-of.c   | 93 +++++++++++++++++++++++++++++++++++++++=
-+-----
->  include/linux/gpio/driver.h | 24 +++++++++++-
->  2 files changed, 106 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 86405218f4e2ddc951a1a9d168e886400652bf60..614590a5bcd10e5605ecb66eb=
-d956250e4ea1fd8 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -929,7 +929,7 @@ struct notifier_block gpio_of_notifier =3D {
->  #endif /* CONFIG_OF_DYNAMIC */
->
->  /**
-> - * of_gpio_simple_xlate - translate gpiospec to the GPIO number and flag=
-s
-> + * of_gpio_twocell_xlate - translate twocell gpiospec to the GPIO number=
- and flags
->   * @gc:                pointer to the gpio_chip structure
->   * @gpiospec:  GPIO specifier as found in the device tree
->   * @flags:     a flags pointer to fill in
-> @@ -941,9 +941,9 @@ struct notifier_block gpio_of_notifier =3D {
->   * Returns:
->   * GPIO number (>=3D 0) on success, negative errno on failure.
->   */
-> -static int of_gpio_simple_xlate(struct gpio_chip *gc,
-> -                               const struct of_phandle_args *gpiospec,
-> -                               u32 *flags)
-> +static int of_gpio_twocell_xlate(struct gpio_chip *gc,
-> +                                const struct of_phandle_args *gpiospec,
-> +                                u32 *flags)
->  {
->         /*
->          * We're discouraging gpio_cells < 2, since that way you'll have =
-to
+>>
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>>   include/dt-bindings/pinctrl/stm32mp13-hdp.h | 130 +++++++++++++++++++++++++
+>>   include/dt-bindings/pinctrl/stm32mp15-hdp.h | 116 ++++++++++++++++++++++
+>>   include/dt-bindings/pinctrl/stm32mp25-hdp.h | 144 ++++++++++++++++++++++++++++
+>>   3 files changed, 390 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/pinctrl/stm32mp13-hdp.h b/include/dt-bindings/pinctrl/stm32mp13-hdp.h
+>> new file mode 100644
+>> index 000000000000..a3487e700143
+>> --- /dev/null
+>> +++ b/include/dt-bindings/pinctrl/stm32mp13-hdp.h
+>> @@ -0,0 +1,130 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+>> + * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_STM32MP13_HDP_H
+>> +#define _DT_BINDINGS_STM32MP13_HDP_H
+>> +
+>> +/* define a macro for each function a HDP pin can transmit */
+>> +#define HDP0_PWR_PWRWAKE_SYS			 "0"
+> 
+> 
+> Why this is a string not a number?
+> 
+> Where is it used? I don't see usage in the driver, so this does not look
+> like binding (and DTS is not a driver).
 
-Note that this function only rejects <2, but I doubt 3 cells worked
-for it. So it should probably check for !=3D2.
+Those files are helpers for the devicetrees and may be included in 
+stm32mp*-pinctrl.dtsi files.
+It is a string because it is an helper for the `function` property of 
+`pinmux-node.yaml` which is a string.
 
-> @@ -968,6 +968,49 @@ static int of_gpio_simple_xlate(struct gpio_chip *gc=
-,
->         return gpiospec->args[0];
->  }
->
-> +/**
-> + * of_gpio_threecell_xlate - translate threecell gpiospec to the GPIO nu=
-mber and flags
-> + * @gc:                pointer to the gpio_chip structure
-> + * @gpiospec:  GPIO specifier as found in the device tree
-> + * @flags:     a flags pointer to fill in
-> + *
-> + * This is simple translation function, suitable for the most 1:n mapped
-> + * GPIO chips, i.e. several GPIO chip instances from one device tree nod=
-e.
-> + * In this case the following binding is implied:
-> + *
-> + * foo-gpios =3D <&gpio instance offset flags>;
-> + *
-> + * Returns:
-> + * GPIO number (>=3D 0) on success, negative errno on failure.
-> + */
-> +static int of_gpio_threecell_xlate(struct gpio_chip *gc,
-> +                                  const struct of_phandle_args *gpiospec=
-,
-> +                                  u32 *flags)
-> +{
-> +       if (gc->of_gpio_n_cells !=3D 3) {
-> +               WARN_ON(1);
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (WARN_ON(gpiospec->args_count !=3D 3))
-> +               return -EINVAL;
-> +
-> +       /*
-> +        * Check chip instance number, the driver responds with true if
-> +        * this is the chip we are looking for.
-> +        */
-> +       if (!gc->of_node_instance_match(gc, gpiospec->args[0]))
+I understand that having a number as a string is not easily understandable.
+I'll consider it in a V2 by trying to use the `pinmux` property.
 
-I would just pass gpiospec here. Then it can look at anything it wants
-in the args.
+> Best regards,
+> Krzysztof
 
-Taking it a step further, if you made the function return the GPIO
-line number, you could combine the 2 translate functions. You'd need a
-default of_node_instance_match() to return args[0] for the 2 cell
-case.
+Best regards,
 
-> +               return -EINVAL;
-> +
-> +       if (gpiospec->args[1] >=3D gc->ngpio)
-> +               return -EINVAL;
-> +
-> +       if (flags)
-> +               *flags =3D gpiospec->args[2];
+Clément
 
-With the above, this would work for both cases:
-
-gpiospec->args[gpiospec->args_count - 1]
-
-
-Just an idea. Keep it as-is if you prefer.
-
-Rob
