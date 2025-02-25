@@ -1,434 +1,134 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0122826138E;
-	Tue, 25 Feb 2025 08:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F82256C91
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2025 09:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740473539; cv=none; b=DbZ1w7ZjS6m/qrmv3UjpW5+7iL+x6yRF09zba4bx4SNdydhZym+7Q1RFgMrwnd+z9/zbwbkKHFsr7J5ijyMUBW2yqv1oBmO0LRQr6KkvEhM4kKgaTPC44ydV6V2bsIVPRSJMHPef7V/0hQHnp9DpQNrJFZkc29S9LGvIjizp9N0=
+	t=1740477137; cv=none; b=hOxjZ9i4wbdzkPck5L0o1mnCttsKss6uDL2RJ0tfoA2puHSyNE83j/nz/6lOezwu/Li0WRNcb3zRu0q6tCHmVKwSPhYk8Yuj7rduYNknonm1WT1+5tKZnTxJ+GTE5GAVOMp9Qnyx0RymHIUJVx2E9JfImpi1/QIdOT0+IC1Kv1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740473539; c=relaxed/simple;
-	bh=K/ZNmYDQ1nyYLq+lA0MZmo48sBjGXKuYSMhcHqWMKVU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=IPC+SxnNd3F1XsoZhjnMfGUwy7SkNjpUMs04kFHgUnmTrQdzGEKOLR6aaPWQIwGC/iUTmiNu9sREaw5PhrzGpY5/PGEqoN6hIvu2WlnxPhYGibVcCm/rMZd//f6oj+JMEBeahVkVMtuCMzg6Ct4A28qGJ38wg/DzHweiR1KBtm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=acZoLLaf; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1740477137; c=relaxed/simple;
+	bh=XARi+YZOioq2dSvOxXxvznWL5FQ8OEc1/3zPe3u8PFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CEzYWvr8WCxq7+/R/S+2CUo9QKa9SheoMWWLh5x9M8ayO815yzTv39kxsZtJ7R44C1t2uF5Y+7LiBxCDN1lBFDyrmdXC4mp0LnhCRKKINwcq4lFP4jhZRZ+guOkyeiJHRQfc+24S8JvKCcyDsvILGifQFKTGy6SkPHq2dpp9yxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OrcFZeCH; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="acZoLLaf"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P7lqXC000766;
-	Tue, 25 Feb 2025 09:52:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	cVklkX4ls4DmGaHeHtD1Mqmy/EB9lIthesFAI0y01ZA=; b=acZoLLaf3zttcjr0
-	qrbM4xCG8yDoqlOAsqNWCOlRHtcfHrQbt+1iTbkZ+gkMjyszYCw5kjQa3b7Mq7Hx
-	XJ6QPp7ZEncO9iSFiucnbl+8oH1pZkxkUgyb1DLLhjY5l0SL3yvG0dlX0XtjYMpP
-	P6Xwap0C0oC7Z3cxL72Lnp+Gs4OICJ0ZhPL7U8phx1OMm4wReUQUb1jcKcIy1M6+
-	4NdONW+GSTKHEKdLC+iSvOeAOFA7TcSQEruRgoKQybUDWO5BOb/CxcaPw5K1PGxB
-	x5Ji++mQ3z1LxREJf14dLBYwRRT6tASqqaGPmQJIw84xg1OKi/SIhzKUfhFfK8+h
-	yZUF+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp1t4d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 09:52:01 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1B9CA40055;
-	Tue, 25 Feb 2025 09:50:51 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 386AF47A7A8;
-	Tue, 25 Feb 2025 09:48:08 +0100 (CET)
-Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 09:48:07 +0100
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Tue, 25 Feb 2025 09:48:02 +0100
-Subject: [PATCH 3/9] pinctrl: stm32: Introduce HDP driver
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OrcFZeCH"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so3896982f8f.0
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2025 01:52:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740477133; x=1741081933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5GHjrvlBNm+Fuw+mlPf6/5PhsQQqF/yxmPzmUGmJOQ=;
+        b=OrcFZeCHLhNiMi0Ap7Y2NJXa5TBrFHRWss8a9EAo/vi2Ev03jWWo4Ftg412YrzC8dm
+         /r5WbvKciPUJdNGQ15IVEJL+Du7SdMYoqAwZuBNH+Izw3kaueSyspIyKfSkJayJQmwBU
+         V8AKNUWAm7umSFgAE2woUCi84IpAsorwTJuQzNFhCgBsj0ATmXpzPI3tUCKSmLS7u+RU
+         TBdDWVQrmRNf4gX5q4GseGXBEjp+WQgrYKB4N5ar48GNULTWOrftCg7XfrArDMkdSepv
+         daxiZTxEmo4xVuHj6qUpTOKXRbLZ8ZiFxiULQEs1F0VIA7b/ep+W4CgAjEO/hVdmiRgQ
+         RsTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740477133; x=1741081933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5GHjrvlBNm+Fuw+mlPf6/5PhsQQqF/yxmPzmUGmJOQ=;
+        b=JRX4UpOu6alymamaU4xYg9LGLssJeoyvx25cohg0huxpOEW8LT4d5I9nvZTEAdnl9k
+         yLBnKr6aTcHkoOH6hRQHwA4Ymi2/1YAo5SaXyKcU+LLfk22ddqzmAlLkVdkZkIWPleDL
+         VMy6SQH3hR5qIfIGQ4Ay3TIG9nloBLMP8Pav5I5amQx4PDDGPpWAVfc1fg3zgN2Xxrv4
+         lAuZLSCJLKj60FkFNoo7wlkNlaAF1tLMqpsu26MmGIzJJ3vQ9oD0cuKYe8zXLwIOEsqS
+         vFT2fhUWnH5+b9wZKFmthF69a2WsY2d4XxLuKWfC/wlMHpLALKoxzV58FdVYReiJA+/j
+         NXgg==
+X-Gm-Message-State: AOJu0YyGz1+UeePIgjj9s1J8aGzehdD41u/bMaHKHrwVVbFYdiYpFi3W
+	9gcASdaa5LOTTxno3Mx/q1tGj8vHOlfILvYWkbvCBydWdsm6HxsH5o+4xS4i3qQ=
+X-Gm-Gg: ASbGnctw2HY2jaMIGLco1nqxgj1tNdE2OIl3NywwSGeFLTvpx9aurOEoimXO80FBU/V
+	Xla3e3C+BuWcxFnYMiNcLbjfd2cn09Sb/FOkJx4nWMd8vqtPf+MSm94EzpHqFYKwY0B8V7ZaEm9
+	CYW8W10ui2WukChDiVsozUht9+R8wzAPfZT7AWnrfIxAtN9USGgya4X3Z+nSbeGC/Zy7ixkIbPJ
+	dj0MM4/nrQk3GQ8Y9fuGqQgP34/YCBS+jMc2Cby88Xfq5Y2yltKnXBDZV1ZYgaWQ2IBsSx90vuw
+	9DmY7nYeik31B6qkaU696kBpjw==
+X-Google-Smtp-Source: AGHT+IHI72au0X7G/eU3XJtp8XN4UP3wf3anxfHDJsGzVLMKwudw09vKCm6cjU/0t4YhXRSZTAfuLg==
+X-Received: by 2002:a05:6000:186e:b0:38d:e572:4dc2 with SMTP id ffacd0b85a97d-38f70826839mr16248954f8f.40.1740477133387;
+        Tue, 25 Feb 2025 01:52:13 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:15ae:2cfe:447a:4a32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8fbef5sm1733781f8f.90.2025.02.25.01.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 01:52:12 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: [PATCH v2] gpiolib: use the required minimum set of headers
+Date: Tue, 25 Feb 2025 10:52:10 +0100
+Message-ID: <20250225095210.25910-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250225-hdp-upstream-v1-3-9d049c65330a@foss.st.com>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
-In-Reply-To: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-42535
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
 
-This patch introduce the driver for the Hardware Debug Port available on
-STM32MP platforms. The HDP allows the observation of internal SoC
-signals by using multiplexers. Each HDP port can provide up to 16
-internal signals (one of them can be software controlled as a GPO)
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+Andy suggested we should keep a fine-grained scheme for includes and
+only pull in stuff required within individual ifdef sections. Let's
+revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
+gpio/consumer.h") and make the headers situation even more fine-grained
+by only including the first level headers containing requireded symbols
+except for bug.h where checkpatch.pl warns against including asm/bug.h.
+
+Fixes: dea69f2d1cc8 ("gpiolib: move all includes to the top of gpio/consumer.h")
+Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Closes: https://lore.kernel.org/all/Z7XPcYtaA4COHDYj@smile.fi.intel.com/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pinctrl/stm32/Kconfig             |  14 ++
- drivers/pinctrl/stm32/Makefile            |   1 +
- drivers/pinctrl/stm32/pinctrl-stm32-hdp.c | 301 ++++++++++++++++++++++++++++++
- 3 files changed, 316 insertions(+)
+Changes in v2:
+- don't include asm/errno.h: it's already provided by linux/err.h which
+  must be included globally for this header due to
+  gpiod_multi_set_value_cansleep() needing it
 
-diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
-index 2656d3d3ae40..4b474cfd1f2c 100644
---- a/drivers/pinctrl/stm32/Kconfig
-+++ b/drivers/pinctrl/stm32/Kconfig
-@@ -57,4 +57,18 @@ config PINCTRL_STM32MP257
- 	depends on OF && HAS_IOMEM
- 	default MACH_STM32MP25
- 	select PINCTRL_STM32
-+
-+config PINCTRL_STM32_HDP
-+	tristate "STMicroelectronics STM32 Hardware Debug Port (HDP) pin control"
-+	depends on OF && HAS_IOMEM
-+	default ARM64 || (ARM && CPU_V7)
-+	select PINMUX
-+	select GENERIC_PINCONF
-+	select GPIOLIB
-+	help
-+	  The Hardware Debug Port allows the observation of internal signals.
-+	  It uses configurable multiplexer to route signals in a dedicated observation register.
-+	  This driver also permits the observation of signals on external SoC pins.
-+	  It permits the observation of up to 16 signals per HDP line.
-+
- endif
-diff --git a/drivers/pinctrl/stm32/Makefile b/drivers/pinctrl/stm32/Makefile
-index 7b17464d8de1..98a1bbc7e16c 100644
---- a/drivers/pinctrl/stm32/Makefile
-+++ b/drivers/pinctrl/stm32/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_PINCTRL_STM32H743)	+= pinctrl-stm32h743.o
- obj-$(CONFIG_PINCTRL_STM32MP135) += pinctrl-stm32mp135.o
- obj-$(CONFIG_PINCTRL_STM32MP157) += pinctrl-stm32mp157.o
- obj-$(CONFIG_PINCTRL_STM32MP257) += pinctrl-stm32mp257.o
-+obj-$(CONFIG_PINCTRL_STM32_HDP) += pinctrl-stm32-hdp.o
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
-new file mode 100644
-index 000000000000..e937d9b9f77a
---- /dev/null
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
-@@ -0,0 +1,301 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
-+ * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
-+ */
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+
-+#include "../core.h"
-+
-+#define DRIVER_NAME		"stm32_hdp"
-+#define HDP_CTRL_ENABLE		1
-+#define HDP_CTRL_DISABLE	0
-+#define NB_FUNCTIONS		16
-+
-+#define HDP_CTRL		0x000
-+#define HDP_MUX			0x004
-+#define HDP_VAL			0x010
-+#define HDP_GPOSET		0x014
-+#define HDP_GPOCLR		0x018
-+#define HDP_GPOVAL		0x01c
-+#define HDP_VERR		0x3f4
-+#define HDP_IPIDR		0x3f8
-+#define HDP_SIDR		0x3fc
-+
-+#define HDP_MUX_SHIFT(n)	((n) * 4)
-+#define HDP_MUX_MASK(n)		(GENMASK(3, 0) << HDP_MUX_SHIFT(n))
-+#define HDP_MUX_GPOVAL(n)	(0xf << HDP_MUX_SHIFT(n))
-+
-+struct stm32_hdp {
-+	struct device *dev;
-+	void __iomem *base;
-+	struct clk *clk;
-+	struct pinctrl_dev *pctl_dev;
-+	struct gpio_chip gpio_chip;
-+	u32 mux_conf;
-+	u32 gposet_conf;
-+};
-+
-+static const struct pinctrl_pin_desc stm32_hdp_pins[] = {
-+	PINCTRL_PIN(0, "hdp0"),
-+	PINCTRL_PIN(1, "hdp1"),
-+	PINCTRL_PIN(2, "hdp2"),
-+	PINCTRL_PIN(3, "hdp3"),
-+	PINCTRL_PIN(4, "hdp4"),
-+	PINCTRL_PIN(5, "hdp5"),
-+	PINCTRL_PIN(6, "hdp6"),
-+	PINCTRL_PIN(7, "hdp7"),
-+};
-+
-+static const char * const func_name[] = {
-+	"0", "1", "2", "3",
-+	"4", "5", "6", "7",
-+	"8", "9", "10", "11",
-+	"12", "13", "14", "15",
-+};
-+
-+static const char * const stm32_hdp_pins_group[] = {
-+	"hdp0",
-+	"hdp1",
-+	"hdp2",
-+	"hdp3",
-+	"hdp4",
-+	"hdp5",
-+	"hdp6",
-+	"hdp7"
-+};
-+
-+static int stm32_hdp_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	return GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static int stm32_hdp_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct stm32_hdp *hdp = gpiochip_get_data(gc);
-+
-+	if (((hdp->mux_conf & HDP_MUX_MASK(offset))) == HDP_MUX_GPOVAL(offset))
-+		return !!(readl_relaxed(hdp->base + HDP_GPOVAL) & BIT(offset));
-+	else
-+		return !!(readl_relaxed(hdp->base + HDP_VAL) & BIT(offset));
-+}
-+
-+static void stm32_hdp_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	struct stm32_hdp *hdp = gpiochip_get_data(gc);
-+
-+	if (value)
-+		writel_relaxed(BIT(offset), hdp->base + HDP_GPOSET);
-+	else
-+		writel_relaxed(BIT(offset), hdp->base + HDP_GPOCLR);
-+}
-+
-+static int stm32_hdp_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(stm32_hdp_pins);
-+}
-+
-+static const char *stm32_hdp_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						    unsigned int selector)
-+{
-+	return stm32_hdp_pins[selector].name;
-+}
-+
-+static int stm32_hdp_pinctrl_get_group_pins(struct pinctrl_dev *pctldev, unsigned int selector,
-+					    const unsigned int **pins, unsigned int *num_pins)
-+{
-+	*pins = &stm32_hdp_pins[selector].number;
-+	*num_pins = 1;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops stm32_hdp_pinctrl_ops = {
-+	.get_groups_count = stm32_hdp_pinctrl_get_groups_count,
-+	.get_group_name	  = stm32_hdp_pinctrl_get_group_name,
-+	.get_group_pins	  = stm32_hdp_pinctrl_get_group_pins,
-+	.dt_node_to_map	  = pinconf_generic_dt_node_to_map_all,
-+	.dt_free_map	  = pinconf_generic_dt_free_map,
-+};
-+
-+static int stm32_hdp_pinmux_get_functions_count(struct pinctrl_dev *pctldev)
-+{
-+	return NB_FUNCTIONS;
-+}
-+
-+static const char *stm32_hdp_pinmux_get_function_name(struct pinctrl_dev *pctldev,
-+						      unsigned int selector)
-+{
-+	return func_name[selector];
-+}
-+
-+static int stm32_hdp_pinmux_get_function_groups(struct pinctrl_dev *pctldev, unsigned int selector,
-+						const char *const **groups,
-+						unsigned int *num_groups)
-+{
-+	*groups = stm32_hdp_pins_group;
-+	*num_groups = ARRAY_SIZE(stm32_hdp_pins_group);
-+
-+	return 0;
-+}
-+
-+static int stm32_hdp_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned int func_selector,
-+				    unsigned int group_selector)
-+{
-+	struct stm32_hdp *hdp = pinctrl_dev_get_drvdata(pctldev);
-+	unsigned int pin = stm32_hdp_pins[group_selector].number;
-+	u32 mux;
-+
-+	mux = readl_relaxed(hdp->base + HDP_MUX);
-+	mux &= ~HDP_MUX_MASK(pin);
-+	mux |= func_selector << HDP_MUX_SHIFT(pin);
-+
-+	writel_relaxed(mux, hdp->base + HDP_MUX);
-+	hdp->mux_conf = mux;
-+
-+	return 0;
-+}
-+
-+static const struct pinmux_ops stm32_hdp_pinmux_ops = {
-+	.get_functions_count = stm32_hdp_pinmux_get_functions_count,
-+	.get_function_name   = stm32_hdp_pinmux_get_function_name,
-+	.get_function_groups = stm32_hdp_pinmux_get_function_groups,
-+	.set_mux	     = stm32_hdp_pinmux_set_mux,
-+	.gpio_set_direction  = NULL,
-+};
-+
-+static struct pinctrl_desc stm32_hdp_pdesc = {
-+	.name	 = DRIVER_NAME,
-+	.pins	 = stm32_hdp_pins,
-+	.npins	 = ARRAY_SIZE(stm32_hdp_pins),
-+	.pctlops = &stm32_hdp_pinctrl_ops,
-+	.pmxops	 = &stm32_hdp_pinmux_ops,
-+	.owner	 = THIS_MODULE,
-+};
-+
-+static const struct of_device_id stm32_hdp_of_match[] = {
-+	{
-+		.compatible = "st,stm32mp-hdp"
-+	},
-+	{}
-+};
-+
-+static int stm32_hdp_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct stm32_hdp *hdp;
-+	u8 version;
-+	int err;
-+
-+	hdp = devm_kzalloc(dev, sizeof(*hdp), GFP_KERNEL);
-+	if (!hdp)
-+		return -ENOMEM;
-+	hdp->dev = dev;
-+
-+	platform_set_drvdata(pdev, hdp);
-+
-+	hdp->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(hdp->base))
-+		return PTR_ERR(hdp->base);
-+
-+	hdp->clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(hdp->clk))
-+		return dev_err_probe(dev, PTR_ERR(hdp->clk), "No HDP clock provided\n");
-+
-+	err = devm_pinctrl_register_and_init(dev, &stm32_hdp_pdesc, hdp, &hdp->pctl_dev);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to register pinctrl\n");
-+
-+	err = pinctrl_enable(hdp->pctl_dev);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to enable pinctrl\n");
-+
-+	hdp->gpio_chip.label	     = "stm32-hdp";
-+	hdp->gpio_chip.parent	     = dev;
-+	hdp->gpio_chip.get_direction = stm32_hdp_gpio_get_direction;
-+	hdp->gpio_chip.get	     = stm32_hdp_gpio_get;
-+	hdp->gpio_chip.set	     = stm32_hdp_gpio_set;
-+	hdp->gpio_chip.base	     = -1;
-+	hdp->gpio_chip.ngpio	     = ARRAY_SIZE(stm32_hdp_pins);
-+	hdp->gpio_chip.can_sleep     = true;
-+	hdp->gpio_chip.names	     = stm32_hdp_pins_group;
-+
-+	err = devm_gpiochip_add_data(dev, &hdp->gpio_chip, hdp);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to add gpiochip\n");
-+
-+	writel_relaxed(HDP_CTRL_ENABLE, hdp->base + HDP_CTRL);
-+
-+	version = readl_relaxed(hdp->base + HDP_VERR);
-+	dev_dbg(dev, "STM32 HDP version %u.%u initialized\n", version >> 4, version & 0x0f);
-+
-+	return 0;
-+}
-+
-+static void stm32_hdp_remove(struct platform_device *pdev)
-+{
-+	struct stm32_hdp *hdp = platform_get_drvdata(pdev);
-+
-+	writel_relaxed(HDP_CTRL_DISABLE, hdp->base + HDP_CTRL);
-+}
-+
-+static int stm32_hdp_suspend(struct device *dev)
-+{
-+	struct stm32_hdp *hdp = dev_get_drvdata(dev);
-+
-+	hdp->gposet_conf = readl_relaxed(hdp->base + HDP_GPOSET);
-+
-+	pinctrl_pm_select_sleep_state(dev);
-+
-+	clk_disable_unprepare(hdp->clk);
-+
-+	return 0;
-+}
-+
-+static int stm32_hdp_resume(struct device *dev)
-+{
-+	struct stm32_hdp *hdp = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = clk_prepare_enable(hdp->clk);
-+	if (err)
-+		return dev_err_probe(hdp->dev, err, "Failed to prepare_enable clk");
-+
-+	writel_relaxed(HDP_CTRL_ENABLE, hdp->base + HDP_CTRL);
-+	writel_relaxed(hdp->gposet_conf, hdp->base + HDP_GPOSET);
-+	writel_relaxed(hdp->mux_conf, hdp->base + HDP_MUX);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_DEV_PM_OPS(stm32_hdp_pm_ops, stm32_hdp_suspend, stm32_hdp_resume);
-+
-+static struct platform_driver stm32_hdp_driver = {
-+	.probe = stm32_hdp_probe,
-+	.remove = stm32_hdp_remove,
-+	.driver = {
-+		.name = DRIVER_NAME,
-+		.pm = pm_sleep_ptr(&stm32_hdp_pm_ops),
-+		.of_match_table = stm32_hdp_of_match,
-+	}
-+};
-+
-+module_platform_driver(stm32_hdp_driver);
-+
-+MODULE_ALIAS("platform:" DRIVER_NAME);
-+MODULE_AUTHOR("Clément Le Goffic");
-+MODULE_DESCRIPTION("STMicroelectronics STM32 Hardware Debug Port driver");
-+MODULE_LICENSE("GPL");
+ include/linux/gpio/consumer.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 0b2b56199c36..824a1717e6d2 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -3,10 +3,7 @@
+ #define __LINUX_GPIO_CONSUMER_H
+ 
+ #include <linux/bits.h>
+-#include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/errno.h>
+-#include <linux/kernel.h>
+ #include <linux/types.h>
+ 
+ struct acpi_device;
+@@ -185,6 +182,9 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
+ static inline int gpiod_count(struct device *dev, const char *con_id)
+ {
+ 	return 0;
+@@ -549,6 +549,9 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
+ int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+ int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags);
+ #else
++
++#include <linux/bug.h>
++
+ static inline int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc,
+ 					       unsigned long flags)
+ {
 -- 
-2.43.0
+2.45.2
 
