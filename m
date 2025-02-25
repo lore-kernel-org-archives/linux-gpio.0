@@ -1,50 +1,64 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9457C197A7E;
-	Tue, 25 Feb 2025 17:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08881C84C8
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2025 18:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504618; cv=none; b=DkPsjB/DtUKKOSzv9edioic4zxA0Sp+IE8eaapc0lkajUkM7RxhqLJ0FJ9qBEUXI0vb2nsu0unltqjgGhMy8iLePY8gRGVsXqwhpC8/QGDzuP4r7GcFLNwV8YkqUqeG2cihy3tCei9S/fqfmiyEFY9moXRp0oi1JdIQczuXUiO8=
+	t=1740507920; cv=none; b=QsodnwNwSU3u0OH3EAwcGTW15t8tifW4G6vI2lk3ndPH06zP1JZkVGOa1Rk1oIFM18qNF6L6m0PSmIN2tVuBxTHTfI0OIrVsAhoBP+jqFL+6sGOzatjaZ819RVhlr3rtvZnWhuHZwm0Jk8Og5ieqGmPfCeKFd7ZSPBBpL2E2zOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504618; c=relaxed/simple;
-	bh=WJWgSb2paLZ+MN/WFfvZX9SdiP9wa/LhMyVe8shgwNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gQCDazcI7VkwBmRIgeomLfV7B8og2LLzHCh9YSqtYBC7wRXYxIyeGAcOrtSbNBOOHfqDnWgJWPPoJTjPevznA7oFV2FIBcnquubOnv9C/P2FOhma5pEnqnJEy5+8T0iIkBuIFMPp1evOFNEhEiXtqp/R+6sLifiLlBlo7P3MUKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wgvvxZWW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1740507920; c=relaxed/simple;
+	bh=RPMinrcewbWSFzvKzFkCx96B8wqsf87LcBRIynpZJQ0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=fTykkgl6RLNGqQGQkk3qAySm8s+vcbLLgko5OsvEJrO3gE5FIrOPzrmFL1v67D9jQaz4s5LKq2+r4+hy/SG4JkmBeuMleETmtXAVRd6q+qtpT0cJ3VOwrjzAJWGOeN5mVZwpR1cMptdETZz8yKmiZkxcptrijxTgEnWcJx/Dt3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAweMjQ2; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wgvvxZWW"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PF2BBx000811;
-	Tue, 25 Feb 2025 18:29:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	zboDa3cKQkLjfjJd+7M0V2NhLphn96I5A2P8IRJH05M=; b=wgvvxZWW/CqAHK3j
-	H8sgxDoRLndjNM9Sd34CXs4PXk5zv6HAYe1E3VwWDrRK8sHF482eocl9THKJ9N27
-	yUIfiqlKj2VdC+Ir8+dPwx5EA4NCnMKxl1X74e4c8S/swBVfsjJ5v5afQa3fhJwA
-	+wVJ268wjp6nEHEytQg/Qn8skofLorecSxqwEzRIZSUNK5tkojzeyZEkWpK/srzJ
-	aeOeQuvy7TX65vAKcnizUIptGUgD3I37OoEY1gX1imisG+4JVwTQoQmwekuHf55P
-	SdTs5UrdwLlMDkQhIEF1hSH752cpuFUHY6BKJf01wEcWhzjbcne0+Dwif5rwpHDr
-	RsHO+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp4xep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 18:29:59 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 877F4400E2;
-	Tue, 25 Feb 2025 18:28:50 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6783C4C5307;
-	Tue, 25 Feb 2025 17:09:41 +0100 (CET)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 17:09:40 +0100
-Message-ID: <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
-Date: Tue, 25 Feb 2025 17:09:40 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAweMjQ2"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-221057b6ac4so115314115ad.2
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Feb 2025 10:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740507918; x=1741112718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LqCPW7j6F9XVC6VBp6QdxnBfBGPyuHKxrntWntP6Kdk=;
+        b=hAweMjQ27vHmgUSa3QxDT/RLavg+mMWLXYbbMr4kCTG5SgbZGyMbJXY4zvVBAhGHrU
+         smt0JkhR3D1rWuvdCK2uJYgoyYOWAkE1EUk5JSOgMlC9r7P1voJ5PIQgc0PGML4sVrbn
+         Be9S1ySrfagcJAMZwCjctcvWdNX1MWeIxFvvLaLmoT/Yhxds8vXpIRhEZ5vo3Hauxo2l
+         lsyfgvJo7z8IvApt1vuHe/ajYPO+jLbQoHAegPWbLbX4BnhGwjyxKS7zP3ILOyYMk8kK
+         xV58Qzh7DTM+AV3khZy35FIDZ7i7GxmWVzanI9ojw9YhIR8BM2hs3lEg441JmHPvrg0B
+         QS0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740507918; x=1741112718;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LqCPW7j6F9XVC6VBp6QdxnBfBGPyuHKxrntWntP6Kdk=;
+        b=QCpql5qUFgwsPIJEqRnqCoqehKZRr4a+F0NwzTklIy6wniFB6w9EJMM+GELnZxYJo7
+         631ub0COOLF4r6A1mAdGbTUi3xPE3jCHkFkF1eD+iMaIOlKby0/soti8DWDZ3vod5eGS
+         bo7+m/EiXRk56VhjxJfFTKkC2DuwJ54+jpkQpLbsqEpRbrWIJyJuqzefQsdq67/E34OV
+         5L4khujHhT8hFtcS/rxwAcy6BIYB7UeEFhkQ0C7tW9wJjMkkavTp5b9dOpF/mVBNA7uv
+         8Bm522cf15VJHXo396pxKWyiI7wnwV9vMvbFeNKBnM6zoqoZAFkJGZI6d2C1OajPChYA
+         lLKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSQncQ3Ws1whWR7wwMy4ErecNHP9XUtDz2m4iuj4MzEzE6LrP+Kjh9ju+N9nvcfemLuIOjHBlw2Lu@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEde6wUqQL3BUti6YZxAETOS6g5Nw2Pfi9lUzmCyVUCoe7l6xf
+	g61EkICEOTcvbk96B8j7f3zk/Dz39FVpkTRi2ojDtIMxU6tRVt2DGQikwnjx
+X-Gm-Gg: ASbGncuToW6fZUZmg+pTgFBHGYrq1bNfh/npeF9zZQotzkAS4ATbLh+1fiRsRaHYfaX
+	LneGg1ARnZ0GyYlAK5G2AcsLG7PnToPKhJm2kXV+B4gWD7nwSWqe5ZZ1x9rRpXE8WUyLrbt5Olc
+	mORlLOlUcyrHOf/NaUyL0qFne9+mNIddL7Dw55cF/3qDYDli15dVnaOi8rEnTFaYRV2ZGzZpOyj
+	7SJ6ipiFNzuOMe8Z6k3AbAZkLrSUcGRzlo9FvPC/0t69Mua9W7dNrBf7mQwrc+YdMgmmLYlIy0o
+	weDslLYfgnLOKLwG0CDe/cx/xJK1FGo/pJL2kQ==
+X-Google-Smtp-Source: AGHT+IExUjDQlsJAZIVkcFxltmVn+miTGQCMhPjUZ+vYgo2XY7RbBtupbLbhcnArCOcvqrXzAbLRDg==
+X-Received: by 2002:a05:6a00:805:b0:730:9446:4d8a with SMTP id d2e1a72fcca58-73426d701efmr32987140b3a.16.1740507917574;
+        Tue, 25 Feb 2025 10:25:17 -0800 (PST)
+Received: from [172.16.119.211] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda8181c5bsm1692645a12.36.2025.02.25.10.25.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 10:25:17 -0800 (PST)
+Message-ID: <6c53bc06-34d1-4ac3-be12-f29d4e5031f8@gmail.com>
+Date: Tue, 25 Feb 2025 23:55:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -52,69 +66,48 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
+To: geert@linux-m68k.org
+Cc: a.fatoum@pengutronix.de, brgl@bgdev.pl, jlu@pengutronix.de,
+ linus.walleij@linaro.org, linux-gpio@vger.kernel.org, marex@denx.de,
+ warthog618@gmail.com
+References: <CAMuHMdVxZab5X4HyKj2d_21WohKfpFrsnRYYjx9X1ys22xCvLA@mail.gmail.com>
+Subject: Re: Replacing global GPIO numbers in sysfs with hardware offsets
 Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
+From: Ayush Singh <ayushsingh1325@gmail.com>
+In-Reply-To: <CAMuHMdVxZab5X4HyKj2d_21WohKfpFrsnRYYjx9X1ys22xCvLA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2/25/25 14:05, Krzysztof Kozlowski wrote:
-> On 25/02/2025 09:48, Clément Le Goffic wrote:
->> Add the hdp devicetree node for stm32mp25 SoC family
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> index f3c6cdfd7008..43aaed4fcf10 100644
->> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> @@ -918,6 +918,13 @@ package_otp@1e8 {
->>   			};
->>   		};
->>   
->> +		hdp: pinctrl@44090000 {
->> +			compatible = "st,stm32mp-hdp";
-> 
-> So here again - you have stm32mp251 SoC, but use entirely different
-> compatible.
+> Ah, the dreaded userspace GPIO drivers...
 
-Ok so I will use "st,stm32mp15-hdp"
+> Please point them to my ELCE2020 presentation "Gadgets and Trinkets,
+> The Upstream Linux Way"
+> https://elinux.org/ELC_Europe_2020_Presentations#Day_1_Presentations
 
-> Same feedback as with previous patchsets from ST. Please take it inside,
-> digest internally and do not repeat same issues.
-> 
-> Best regards,
-> Krzysztof
+> Gr{oetje,eeting}s,
 
-Best regards,
+>                        Geert
 
-Clément
+
+One of the reasons of the prevalence of userspace drivers (and probably
+the reason why kernel drivers for stuff like motors are not attractive)
+is the lack of upstream solution for runtime devicetree overlays. It is
+simply not attractive to have tutorials or examples that will require a
+reboot to work. And since a lot of people will start with those examples,
+they will continue using userspace drivers for their future projects.
+
+Connectors is also a problem that has been stuck for a while (although
+things seem to have started progressing).
+
+I personally, would love if I could use kernel drivers instead of
+userspace drivers since they are probably much better quality than
+random userspace drivers, and will not require any external deps
+(as long as they provide a good sysfs API). But I also dread
+having to ask a user to reboot the system to get their blinky
+example working, and reboot again, since they used the wrong
+pin in the overlay.
+
+
+Best Regards,
+Ayush Singh
+
