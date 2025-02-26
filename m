@@ -1,124 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B4E221DA1;
-	Wed, 26 Feb 2025 17:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740589599; cv=none; b=CaEeYgcns8BONft+EgJNvRfBAfjeDwKA8KD8rJbgYjpVxbuNK2kfV3xAxbRsWoB7yEAV/IUO43e2u9Acv3Lgja47HgHI/z+iWtP9VHhJs23tNiZC8xmFMCxehYwdZAjtKlwTRUSKeQQUFA1GnP/Sy9fIbA2Gb4IrS2/+3SjC9pY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740589599; c=relaxed/simple;
-	bh=2R180IJ7APaALd1g+yyfkVhGYnf3hIvGDgk8lsKLG8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m8TRhcxJ8E3aPz7bLSpfkPrnIcocCIott6ZVLDDO4z+gY8rni9T+BvmmjRIctFzF+QofmMWLcAbFzwExQjXQKv+VdbrC7nG5puN8Tlh/W1fTC0RneefW5rLhcyxMzR4OaDhIurtyCinpqBw8CK1ldNMHBnFs7mFA3Ih+1KSupnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/8x3DgJ; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4530C22424B;
+	Wed, 26 Feb 2025 17:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740590367; cv=pass; b=WRzRn8z9ILlubrns3FqTPQuzMSzb8mC+Xu7OwvkzN2YIeTYLF7VAZRae5fUekdNNgubeXaRmHOwpG/GcH39zXpmLkT5paUAUhL9+VyIKSAUcuYiPP5Jv2eSp9b1eolba47obg+N/HppkHOvTEk2OwBFP0S3sfOmNcEyKWDyjBZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740590367; c=relaxed/simple;
+	bh=5mwePBCwCXvsjiJovyQttiroz9hahldAy3COpDFXjWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OyZdUE4F/uJFPutgdYfDIMUeZvdrvTuiTgW4s8YNuWYWGXfsTpjIpHiqYABQbUxxjNt6jp0c9YV5AbSKv9iG3U/CM+OAf6p0rVjYw0/19giar3nhiwuT92hKC3UTTeDkbJ+YfMj1VMHZx9uFtq06HHLmV7079ViJ8Nw7c7Eiup4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=bntJpfrl; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=CqpcHxVg; arc=pass smtp.client-ip=85.215.255.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/8x3DgJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC56BC116B1;
-	Wed, 26 Feb 2025 17:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740589599;
-	bh=2R180IJ7APaALd1g+yyfkVhGYnf3hIvGDgk8lsKLG8A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a/8x3DgJgskglabgyo16PGJtzrAVaL3wlI4GWiUa2t3h6Arsj1fdxCDGHHUKE1qz+
-	 MkWqGYj4HEBPBct7yYViRQUjlal1IbYHMnBCcmswporwMRHlB0Nx9dMjqXBPC9R6BF
-	 4qXyHcAPiRTt8nxgOwp7kjYrgjhT3u1JQIevs3oxA6uy6x3/jSFm7QuEaI+C811iY+
-	 4AL2jhdvnuhR4d5R91R5M0A3eER7PnxdjHvqOLqUclMX+1F16ZGFfW+dcq/tsjnLMP
-	 kSGz3A674HrBV9uFQqMNpCDNbxrVVIxuFXU3Ie1gj1RsPLiIjEfUxTtzaPunB5VN6E
-	 gP899WOFULZWA==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5fcd811d939so580383eaf.0;
-        Wed, 26 Feb 2025 09:06:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1vPJFgkoyBTCdNw1rIiYiW8YUNF9HhM9VaqAZ4B4yEPdqoAAbEIDZ0o0Q6Rg5rux9WYh+meLb8lRKx12/@vger.kernel.org, AJvYcCUSDPE2Kl8M+7tbz7bCGjoKzqd1onjZylURVRI7FCYD6YzZyFNz6OdTPv/yOB0vjrMYKxRtBtjs5iD/hQ==@vger.kernel.org, AJvYcCUe+0MrzgLg5q81ot+3P7kXDFDDpCqjtquPJiLom3G8IZ/8+eEHtpmsu/JMEky5b95OP+iinJOa40YGBQ==@vger.kernel.org, AJvYcCV4bSwqvhjKgmoG7xQK1fRFqHrNEzNyFrQKgf8A3P/jZ7IA907+RNDZvJBWZJ6Bpirf5av6EhxOGc/4pd4ID/0=@vger.kernel.org, AJvYcCVPbHi1at06YwsIaMt0Yofh9Iwv1VohDT4wWsmGIcx4EpBCu4T/tD7p9UEfYG9rlvSwSAoVlLHREZrQFlwV@vger.kernel.org, AJvYcCVTiZbwv8Bom8+ndrw4bl9f5hnk6gLmH0fayyhA5BVKbndv4YgviLbEX6DI8qlpCDqPcjsvG5kv@vger.kernel.org, AJvYcCXMHLoZc61wf+WW7M961lIzX55prjUjgLz7iTtu4ijfS77SVyJYe4v5UlPajl+1kFx25VCrojkxJ0Oz@vger.kernel.org, AJvYcCXZPGPzuoeF0XjVRL9NSA/jtSnHijtGwqtGUeFEJ6VjYlVg8dhoxntEjp6qhuAJqrAI7eQ0MD8Nyrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUiLgECOSOV+P096p4zKi6lxpj31zoCwRXzUM5tyAHOu1AF5mD
-	ZW3hbalWNlyMwAQpTLuHY8M5UEb3cCkCAJm1MCd6JNjTztaTELU4KRvgfYXrI+t+qzqkEFYJi52
-	bSGcfhHiGLdpvzdJFsVkC6RobjMc=
-X-Google-Smtp-Source: AGHT+IHyPLVjXp7kw5kgInAMNb4jd7h5cWQZCWKEZs0yMGYHKslrekdKrqf86zX892n/fj3IchT6bMpb2Dem6Q8+U3o=
-X-Received: by 2002:a05:6871:d20d:b0:2bd:286:d713 with SMTP id
- 586e51a60fabf-2c155700434mr67466fac.11.1740589597661; Wed, 26 Feb 2025
- 09:06:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="bntJpfrl";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="CqpcHxVg"
+ARC-Seal: i=1; a=rsa-sha256; t=1740590185; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=BXigO50lUmZDJc0eYvf3TbRwC+uMMNBCFub7Y/bN/cND393aAJHc8r2+MipqqBTJvi
+    ehFSYQ7+bMVPsTkIV894KEBdPdzIrwd4Klv4TIvtHuj/hrorWRMa9kN3JNX8z9iVycBH
+    9uNLtGaibfIC3i1eEH8D9/w7BPUVhSgwiWip0atGJSOlXBU8r6DXPmwVCiYIYGkkfs+O
+    UjKosVfW+5lLbeP4CIONTZXIilHIL2axO24xcM5puJpVoCgy5pdaYnum7C3tbaBJv5H8
+    wqmop0CSff1u/zJtnDCGel8eoP+C08TpgyCnJI4oFRsOWl9bO79xCLI0GcXk2cuab6za
+    C6BA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740590185;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=h8CwoKvG9Pwt69O9WiZ6bp0I9e71uskXS7kq1c8Dssg=;
+    b=Uts6vIT0qQg4lnoDXsLmI+v2OuyzhloIZ0BVBLCq3D6wAeguVv9Itn5j1nsX08Rytq
+    AIr2DJHfrDR2FGwsz7zGAzZ43eoBbF+uBL1ecg1godWJGotJ8Nt7M6Z9fS3zjGPcj6iE
+    f3hVOxb0bxJxP1xf6HgTo8Upw7lysVRijE47yFO26CO5PMcRmFmpbdWTghLENMgzN3kA
+    jTCsonPzI3x+POXh+VkhVbHvZEsBOSGtDUfgvlNTBpSTXKr1V8MchPrlpnAaYmcknrxo
+    P4KJZVMmlczPI0s11s6AsSBe8RzBvGJGYshoddWc62vMU/brGKbeNJzAqorJkVy8fy3o
+    v38Q==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740590185;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=h8CwoKvG9Pwt69O9WiZ6bp0I9e71uskXS7kq1c8Dssg=;
+    b=bntJpfrlseWP8h0sdy9qc9UnUMRqZ+bivXTegTZYrHrGMo9XZs8iGDnSaGSq+TjqpQ
+    aYn403ZfGXyFmftqWtQiSVGQwKPviZgP6BRNvCvjLCXIwc1OzHI8pMsZkcIZPNUNuIqp
+    4h8IEqV0nkNANnAmX3Yt7rNOKgRD01zABdMGQcMVnCL3GA5HHGbMaZda7drkD9A33J1e
+    dYCdDSbBLlZvqDYc3z1J93LgdjOj09o6ruDMSMF3qHB9C0JCWs4rf9vrJCMXTelGci91
+    o/XwII+qMXJfyQT/TRT3s41cSHaKoxq1oJk61I1f3nD7eg4BHObsRAv7w+Bv4JWjOFs5
+    m/Uw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740590185;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=h8CwoKvG9Pwt69O9WiZ6bp0I9e71uskXS7kq1c8Dssg=;
+    b=CqpcHxVgfXE5jvVZ8w26IFrOVvbulQCs9KYtf4HKz1hntaychfninFZ3L61JfYeQj1
+    MBrimqkHPDmb8ThaRIBQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeD0Z"
+Received: from localhost.localdomain
+    by smtp.strato.de (RZmta 51.2.23 DYNA|AUTH)
+    with ESMTPSA id Qe5b2211QHGOfpz
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 26 Feb 2025 18:16:24 +0100 (CET)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	Paul Boddie <paul@boddie.org.uk>,
+	Tim Bysun <tim.bysun@ingenic.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	letux-kernel@openphoenux.org,
+	"H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH 3/4] pinctrl: ingenic: jz4730: add pinmux for MII
+Date: Wed, 26 Feb 2025 18:16:06 +0100
+Message-ID: <17fd3f58a3c565b6dd6e2a7dc2783fe20474381b.1740590093.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <cover.1740590093.git.hns@goldelico.com>
+References: <cover.1740590093.git.hns@goldelico.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com> <20250221-rmv_return-v1-14-cc8dff275827@quicinc.com>
-In-Reply-To: <20250221-rmv_return-v1-14-cc8dff275827@quicinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 26 Feb 2025 18:06:26 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i-_08mhOpsecuU+XzS8rKbk9mtgr_Kwx-QGRPh9jumKw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jo18T3Py72uAV75_Jf5fdQvWu4rZ8JYWNQWcMOGXjnJR1QY3tpi4Yj9mbE
-Message-ID: <CAJZ5v0i-_08mhOpsecuU+XzS8rKbk9mtgr_Kwx-QGRPh9jumKw@mail.gmail.com>
-Subject: Re: [PATCH *-next 14/18] PM: wakeup: Remove needless return in three
- void APIs
-To: Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Will Deacon <will@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, Thomas Graf <tgraf@suug.ch>, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Zijun Hu <zijun_hu@icloud.com>, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Feb 21, 2025 at 2:03=E2=80=AFPM Zijun Hu <quic_zijuhu@quicinc.com> =
-wrote:
->
-> Remove needless 'return' in the following void APIs:
->
->  __pm_wakeup_event()
->  pm_wakeup_event()
->  pm_wakeup_hard_event()
->
-> Since both the API and callee involved are void functions.
->
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  include/linux/pm_wakeup.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> index d501c09c60cd..51e0e8dd5f9e 100644
-> --- a/include/linux/pm_wakeup.h
-> +++ b/include/linux/pm_wakeup.h
-> @@ -205,17 +205,17 @@ static inline void device_set_awake_path(struct dev=
-ice *dev)
->
->  static inline void __pm_wakeup_event(struct wakeup_source *ws, unsigned =
-int msec)
->  {
-> -       return pm_wakeup_ws_event(ws, msec, false);
-> +       pm_wakeup_ws_event(ws, msec, false);
->  }
->
->  static inline void pm_wakeup_event(struct device *dev, unsigned int msec=
-)
->  {
-> -       return pm_wakeup_dev_event(dev, msec, false);
-> +       pm_wakeup_dev_event(dev, msec, false);
->  }
->
->  static inline void pm_wakeup_hard_event(struct device *dev)
->  {
-> -       return pm_wakeup_dev_event(dev, 0, true);
-> +       pm_wakeup_dev_event(dev, 0, true);
->  }
->
->  /**
->
-> --
+The MII interface is used for the Ethernet connection of the Alpha400.
 
-Applied as 6.15 material, thanks!
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index dfdc89ece9b8a..86d285a800c5d 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -210,6 +210,9 @@ static int jz4730_nand_cs5_pins[] = { 0x57, };
+ static int jz4730_pwm_pwm0_pins[] = { 0x5e, };
+ static int jz4730_pwm_pwm1_pins[] = { 0x5f, };
+ 
++static int jz4730_mii_pins[] = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
++				 0x77, 0x78, 0x19, 0x7a, 0x1b, 0x7c, };
++
+ static u8 jz4730_lcd_8bit_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, };
+ 
+ static const struct group_desc jz4730_groups[] = {
+@@ -231,6 +234,7 @@ static const struct group_desc jz4730_groups[] = {
+ 	INGENIC_PIN_GROUP("nand-cs5", jz4730_nand_cs5, 1),
+ 	INGENIC_PIN_GROUP("pwm0", jz4730_pwm_pwm0, 1),
+ 	INGENIC_PIN_GROUP("pwm1", jz4730_pwm_pwm1, 1),
++	INGENIC_PIN_GROUP("mii", jz4730_mii, 1),
+ };
+ 
+ static const char *jz4730_mmc_groups[] = { "mmc-1bit", "mmc-4bit", };
+@@ -246,6 +250,7 @@ static const char *jz4730_nand_groups[] = {
+ };
+ static const char *jz4730_pwm0_groups[] = { "pwm0", };
+ static const char *jz4730_pwm1_groups[] = { "pwm1", };
++static const char *jz4730_mii_groups[] = { "mii", };
+ 
+ static const struct function_desc jz4730_functions[] = {
+ 	INGENIC_PIN_FUNCTION("mmc", jz4730_mmc),
+@@ -257,6 +262,7 @@ static const struct function_desc jz4730_functions[] = {
+ 	INGENIC_PIN_FUNCTION("nand", jz4730_nand),
+ 	INGENIC_PIN_FUNCTION("pwm0", jz4730_pwm0),
+ 	INGENIC_PIN_FUNCTION("pwm1", jz4730_pwm1),
++	INGENIC_PIN_FUNCTION("mii", jz4730_mii),
+ };
+ 
+ static const struct ingenic_chip_info jz4730_chip_info = {
+-- 
+2.47.0
+
