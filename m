@@ -1,187 +1,131 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695CD24E01A
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2025 10:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D0A214A96
+	for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2025 11:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567536; cv=none; b=HPELKYCIAYLcSBtWYRm8lwqpzy19ZcpVEjeKkTH6IOw55vrtZ18oSlsDC3IxDZDt0AqAB9oPS/eQvwDRp05/B3TW4oCT4hlpwuJE63e+1fmX4fjvvQFsef2uF69fkZl+GH8gSYMGpBgjkvZSCditi0ooBHfYk3PhKTd7iFiBuQo=
+	t=1740569439; cv=none; b=FqHAyGEP8Drhq0zo8nGU6SlhoIWq+FbuzAtEkQIl/voEyDnUUqcjHOqN7wzwMn1hw6nlogFuWGE8vsd6qxKrjOzdxmhck5Mwv46SCCR7tvSQMp3OygyA+wZd30c8IkCqYPmiMbbj5XQBYdFl3D31Krw4KAE6T8o0adxIxTqN+CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567536; c=relaxed/simple;
-	bh=wQrTNXOaYvZZQfj2urkS0hNPEAm/KGL1zbtYXzrqddQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhkgNVKT8wlsF08MYk/dKtBW7sP3ABJ6PtR5NnMTZaMtyxInvLcWj/BUdB3dCiDRA5ad70zuvAWP34xGLIq6WoVdI6XvwCUNGmB2Ee6llmzRgvk8o8zc9uK+2KoOrroMS/euE/JswwcTawgMOyLT+XeZcfMCmA1aOSYq/ghxl3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiwAoG3F; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740569439; c=relaxed/simple;
+	bh=SNcREccD3RAme9xYt3R+kilxl7SAdbri9ontWGXnon8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NATwmVanCs5baVK1/l8S0p3WIm48X6Se3M3TuL+tlPtnraRmF931pCL2aMWQwSe9vqJrPLCmJx0/Zi9JXc8jioWVX03fNH3wPZNG9GQRtgTKZNBTH4ik0dJK9xF3fHxW3YOGNm4YwsYVh0ANh1xNqZWlZfnAhvqryHoWMPwSq/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rWtw35VN; arc=none smtp.client-ip=17.58.6.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiwAoG3F"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220ec47991aso92491865ad.1
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2025 02:58:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740567533; x=1741172333; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7BXN2njMIOVKy5U58cU01R+hqwDE0YNBwpxVzVjFM+o=;
-        b=OiwAoG3FyJkYP1iL6qCgRhOwU/dChf/th+K23aR8amQvbamQC0CpFfVh8LEel8SQJU
-         NH8l6yaqr3otkfAiSOYjaibko0ENB017tHjAknePqgNZ/ISk3Gv2ncVoOWN9l7BkLt74
-         qiopWpc1qoSF9GkBg+54+9lZuHvj3Q/Uo9amCogIXw0Li/CI7iVAKRdIasMYA8BGlY6D
-         74gGDaMAv8tFrXnOBhxVD4BI0Eyvd0jwQPr8Ve3LV24SHqdKydmUyaOGJQnjcWspbMFN
-         vyU7Xg05CuRqj5ufAOCtsecKZdOOTE4YBNmttpg8Kz/RmTYcUnbf3SbGCZsWcpeWmAxd
-         jSgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740567533; x=1741172333;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BXN2njMIOVKy5U58cU01R+hqwDE0YNBwpxVzVjFM+o=;
-        b=FqqhVjvATnDb1qM3gDbZnJ3YqMdTpF/vW4pRi5YRB+neAresZQFYzKnm/IUUHbdypi
-         q1TgZJQI2/hQS9f7UoeuGIgPg/31oKpphdI80/6YqjQrwT0YnSG9FqEl+JKGdc/gUZu2
-         cC6XnFUlQDuW95Sun+VVttmVkwUWQxI+n7jKh/J8byLK8cJRQxzvZG3dr20bEd+jcDOa
-         ePE2MBZIZzeIzX1P3nUoKj4U4vMK2F8rDEVY8Io7/29OAC8rlDwm0siyTEADHxfmG81a
-         Hwi8dyIb635o5Vizu5IKdBCQ2FwAMr74Bxi4yQ/1da17n17aYv9QR92eBF7wXCJib/zt
-         UAbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZnD3SFQ0Mn5gi4nOixgGftAIpqKj+Ke1AGdIdBYjsbZaEDJBZuSaGyLi73cjea76vy3qIt1UgBETp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMjC/jEx1S7YzNkcOgoVg9QSudnZT65NzMUDm7BwJzyymTByog
-	eGYWSbtR2x3avOn2uI4Hg5dCiJiujT3jlKX6EqOnt9O8M8VEeqeX3YFJzQ==
-X-Gm-Gg: ASbGncuLHMfF/RwQqqgEyLxgOdjrTSX+ieT7VXmt80/gZzoiOAtJLfJt7kjFWExWaKY
-	cLho57mVWI1+qnbx4l5EnCeVir+mwGcqDvsgnGUXQQKGt/tPq5nbGkmGJCpAshxYLi/x3IMl7KD
-	NYIJiczAcLoHXXuR48QL37Y1GpynfL7AcsKn2cx7W6YABYYDZd9Md/Jy4DeGjZDzhjUWbEJjAdE
-	M030vh8FufSXjjOwpTpmAyTYwIb+pWF7oB0nyKYUP+WYGxA/xlYCdxIONweNQHasfAhBxf9PSoF
-	nuwQcxZjhDPLLCQNv/3JyQZjDkwKijydDtBn64IEwH/lLkgH3w==
-X-Google-Smtp-Source: AGHT+IHikSxDUI74+hTWMV2+32OE0GH5Is7+JWjjdXe2PGnwXJSZR5aFRgm2YXP7vCCvhST1OjpbQw==
-X-Received: by 2002:a05:6a00:1808:b0:730:f1b7:9bc4 with SMTP id d2e1a72fcca58-7348bda7ee6mr4146145b3a.4.1740567533497;
-        Wed, 26 Feb 2025 02:58:53 -0800 (PST)
-Received: from rigel (27-32-83-166.static.tpgi.com.au. [27.32.83.166])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f8233sm3166808b3a.96.2025.02.26.02.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:58:52 -0800 (PST)
-Date: Wed, 26 Feb 2025 18:58:47 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: Replacing global GPIO numbers in sysfs with hardware offsets
-Message-ID: <20250226105847.GA127161@rigel>
-References: <CAMRc=McUCeZcU6co1aN54rTudo+JfPjjForu4iKQ5npwXk6GXA@mail.gmail.com>
- <20250224014936.GA12854@rigel>
- <CAMRc=Md6_vhs452OM=u7MofSRwFgPNyVeAvkxZ-qULWQCufG8A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rWtw35VN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=SOdlXl7RXO630hj2D8KbTA/iuYN0f3n9ChpjV2oMRbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=rWtw35VN5C7ebUryxGYabBiGNkfRxevNXaKu3lmmbcfRwCfqvGmsARTKGVlEDc3vJ
+	 IUw+i/jF2/O7wPykYL7GtrScwR7YHPk2KZArZBlYEByVg4HG2euMsCf4SLAhxqqINe
+	 T4aLRNRVMNlFJyn+/hO3Lmf6LkZiGLt8eWLCMvUUCNYIgCuhqhS16/5+FYQBrqDBv9
+	 cTNT5EvlskIwUWEEZthrUNkKMbaMBoPHtGY9C1f3/Wkj+mhDFLP1F1CqAqbIZvoN+x
+	 V8XpPNLsrc2QkugOEEdKPXC0Zg7dBaQpmDQ+gMVmCM7ShlzUTzFJzMqx6xBRgIBMy+
+	 ioIbkere3zE9w==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id EAC1C18036A;
+	Wed, 26 Feb 2025 11:30:23 +0000 (UTC)
+Message-ID: <d70d059e-37aa-431d-986c-5666f006d610@icloud.com>
+Date: Wed, 26 Feb 2025 19:30:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH *-next 01/18] mm/mmu_gather: Remove needless return in
+ void API tlb_remove_page()
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Zijun Hu <quic_zijuhu@quicinc.com>, Peter Zijlstra
+ <peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-mtd@lists.infradead.org
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <20250221-rmv_return-v1-1-cc8dff275827@quicinc.com>
+ <20250221200137.GH7373@noisy.programming.kicks-ass.net>
+ <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
+ <20250224132354.GC11590@noisy.programming.kicks-ass.net>
+ <a28f04e5-ccde-4a08-b8fa-a9fa685240b1@icloud.com>
+ <15c121c7-aeed-480e-8b1a-8ff23b4a3654@intel.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <15c121c7-aeed-480e-8b1a-8ff23b4a3654@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Md6_vhs452OM=u7MofSRwFgPNyVeAvkxZ-qULWQCufG8A@mail.gmail.com>
+X-Proofpoint-GUID: BXt7ADwYEBiuzX8MsPltF1M0d6Q_8HN4
+X-Proofpoint-ORIG-GUID: BXt7ADwYEBiuzX8MsPltF1M0d6Q_8HN4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 mlxscore=0 adultscore=0 mlxlogscore=993
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2502260092
 
-On Wed, Feb 26, 2025 at 10:23:37AM +0100, Bartosz Golaszewski wrote:
-> On Mon, Feb 24, 2025 at 2:49 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> >
-> > As it stands the user needs to search the gpiochipXYZs looking for the
-> > matching label. It would be easier if the chip was identified in sysfs by
-> > its label, rather than (as well as) its base address.
-> > So no searching required.
-> >
->
-> TBH that's technically easy and backward compatible - just have a link
-> named after the label pointing to the chip.
->
-> > Aside: Speaking of which, once the global numberspace is removed does
-> > exposing the base address serve any purpose?
-> >
->
-> Good point, at this point we'd have to switch to fully identifying
-> chips by label and possibly the device name (gpiochipX, not
-> gpiochip$BASE).
->
+On 2025/2/26 01:27, Przemek Kitszel wrote:
+>>>>> It might not be your preferred coding style, but it is not completely
+>>>>> pointless.
+>>>>
+>>>> based on below C spec such as C17 description. i guess language C does
+>>>> not like this usage "return void function in void function";
+>>>
+>>> This is GNU extension IIRC. Note kernel uses GNU11, not C11
+>>
+>> any link to share about GNU11's description for this aspect ? (^^)
+> this is new for C17 or was there for long time?
+> 
 
-That works for me.  Though are chip labels quaranteed unique?
+Standard C spec has that description for long time.
+Standard C11 spec also has that description.
 
-> > Similarly, it would be even simpler if the line could be exported by
-> > name, so the user wouldn't need to pull magic chip labels and offsets out
-> > of the air.
-> > Though that would be a much more extensive change.
-> >
-> > Btw, I am well aware that line names are not guaranteed unique, so this
-> > approach would only be viable/enabled (potentially on a line by line
-> > basis) where they are - and that would provide some incentive for them to
-> > be made unique downstream, if not in mainline.
-> >
-> > > Bart
-> > >
-> > > [1] https://fosdem.org/2025/schedule/event/fosdem-2025-5288-the-status-of-removing-sys-class-gpio-and-the-global-gpio-numberspace-from-the-kernel/
-> >
-> > My primary takeaway from your talk is that you are more of a thrill
-> > seeker than I am comfortable with - making jokes about Rust in a
-> > live forum - THAT is living on the edge ;).
-> >
-> > Wrt the Q&A at 19:42 - the Pi BCM driver with its module parameter and
-> > "why only this one driver is allowed to have it and the others not" and
-> > the suggestion that there be some flag that can be passed to the driver
-> > to request persistence:  I don't like your answer - it conflates specifying
-> > the default/safe state, generally defined at boot time, with an ability to
-> > override that at runtime.
->
-> Yeah I was taken by surprise, I wasn't aware of the RPi driver having
-> this parameter.
->
-> > Extending the driver API to allow the gpio_chip user to request that the
-> > driver NOT reset an output to its default state when released seems like a
-> > viable solution to me.  Am I missing something?
-> >
->
-> This is not that simple actually. struct gpio_chip has the .free()
-> callack which leaves to the driver the freedom to do anything at
-> release - including reverting the state or not. What and when should
-> the core framework code do then? But I'm not saying no if we can have
-> a good solution here.
->
+> even if this is an extension, it is very nice for generating locked
+> wrappers, so you don't have to handle void case specially
+> 
+> void foo_bar(...)
+> {
+>     lockdep_assert_held(&a_lock);
+>     /// ...
+> }
+> 
+> // generated
+> void foo_bar_lock(...)
+> {
+>     scoped_guard(mutex, &a_lock)
+>         return foo_bar(...);
 
-That is exactly the point - the driver has the freedom to do whatever
-once .free() is called.  What I am suggesting is that while the user has
-the line requested they could set a flag, say via .set_config(), to request
-the driver NOT to revert the line, but to leave it as is when freed.
-That would stand until the next time the line is requested when the flag
-would automatically be cleared.
+above is able to be written as below:
+      scoped_guard(mutex, &a_lock) {
+	foo_bar(...);
+	return;
+      }
+> }
+i will list my reasons why this usage "return void function in void
+function" is not good in cover letter [00/18] of this series.
 
-It would be opt-in, so the driver would not have to support it.
-And it could be exposed to userspace via a flag in the uAPI.
 
-> > It also didn't address the fact that, even at FOSDEM, there are developers
-> > out there that think that some drivers are getting special treatment.
-> > In this case the Pi devs have pushed their own downstream solution
-> > upstream to reduce their own maintenance burden.  And that was accepted as
-> > it didn't conflict with anything in mainline.
-> > There is nothing preventing other drivers doing the same, though no one
-> > has AFAIAA.
-> > Though the module parameter solution is rather crude - if we are going to
-> > start touching all the drivers then why not address it via the API?
-> >
->
-> I don't know the history of this. It's a driver under drivers/pinctrl/
-> and I was never Cc'ed on the patch that added it. I probably would
-> have objected to doing it inside an individual module.
->
-
-Actually you were on the cc list[1], as was I, but it was a pinctrl change
-so you probably skimmed over it.
-I only looked at it as the bcm caught my eye, and I'm somewhat familiar
-with how the Pi devs addressed the gpioset persistence issue downstream.
-
-I wasn't totally comfortable with the change either, certainly not as a
-general solution, but it was contained to the module so I didn't object -
-I figured either you or Linus would if it bothered you.
-
-Cheers,
-Kent.
-
-[1] https://lore.kernel.org/linux-gpio/20240503062745.11298-1-wahrenst@gmx.net/
