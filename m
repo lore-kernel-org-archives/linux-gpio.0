@@ -1,189 +1,171 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C084217718;
-	Wed, 26 Feb 2025 12:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6180A214803;
+	Wed, 26 Feb 2025 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740571205; cv=none; b=EvHfmikrgSXo5w8kFTNstOIR5XaCa+ngZJu/d5jkvHGOBUIlebKgfkT1Z5q9GIywdgRY9fyNDMsghxqTCDBYZMDHbanpswFgv1smYF/NCAuWYhFJhEyf6vIBKi277UXg5t9FNR2j0HZUCr9uRBmhdsbh9tAmKgQrHgu4frM5ZuI=
+	t=1740572880; cv=none; b=tsWsO2en/oN5CzQjWe2zdKrRQtQVtd19VTLdrEyCo0ysOQOAqvetljVRKEje3QAT7IuZ1SvKAiui2hCQNF2q+71h4fE38hHvcCjJa6V2rHoNjREiV0YV75hQWcyXH5X6Fz7wQIkCvJ2QIfc3IUvON2YiaVUzNhXK3OjrQPgGEPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740571205; c=relaxed/simple;
-	bh=1rPLZ7Ny+tavg+eVzEq79uWoftJ4xcrjRHDV3jxiGGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jo+x+Bgc50sOmDftw0iUezZlUGt1C2pHJTwsypnm0shftDgrS1Hba1vAN8zwZ6tVRmiM8qpaef1FhUdA1bokzmhk41UhVbmf4DMq4zyOP6ahkDP1Q8Q0c3iU+sUBvPs3Ab0KGKRPZWK/JoVHXdBrkKMPxsN1sMq+wdIIxFGtgKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 7197134133B;
-	Wed, 26 Feb 2025 12:00:01 +0000 (UTC)
-Date: Wed, 26 Feb 2025 11:59:57 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v7 0/4] riscv: spacemit: add gpio support for K1 SoC
-Message-ID: <20250226115957-GYA45508@gentoo>
-References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
- <20250226010108-GYA44567@gentoo>
- <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
+	s=arc-20240116; t=1740572880; c=relaxed/simple;
+	bh=K9oUygm4AKDUmgMf4aFOL3Lbp7QFh/wmXeF8uUXzjec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tM7CtNEWIS2dBlhmxGRzbwHSvZ6ab/QVcDvj5iXrEEa6vZtz5m/iYX0v9x21GiVAs9Tm09GWGz8aKr6reOPI3/b5eUI3ltDc+LrTBfVsd3Vdiw9NT/KUMjBm8ElvkZaUoEwtmnW/1+2Lxds+RjJRHQ2jp+pwkV03mDc1e1znNYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MdEAhItm; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MdEAhItm"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q8wODq012375;
+	Wed, 26 Feb 2025 13:27:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	hZZuGvujbz+DHcZWLDWVwgKdZX6e4AC0NKcxZ1Mlhwc=; b=MdEAhItmw3+E1u3C
+	r8HueeBOvKLTCaKleXHh1C8dodj135VyASWo0XfJ2NifRuQ+x5lYfjjzWR3X6tNZ
+	802co02i0Mxx6VYM7W6BoZCSIULZCePY/KRWEATaZLQAxf5AYkJ0yf4vhcgUHl3s
+	OmG3W/wVw4GweHAFey0xk3IMjY1X0qCo7jpD4FsoH7GScd27EdJwj2wfRnV9ZNLn
+	T6F4onw9J6qRweP5pioK2Dxie2OQQG5w26nW5KoQeoJaD7ajkK9qrFwT2+Qe41e7
+	ZZYxL9oEobWQ1SoYMT7XqbOFC2djKKvCQh73Gtl5HSr/Ui749DxYb++YCioXf4fu
+	SJFQ5A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451psv4a64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 13:27:41 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DA74B40051;
+	Wed, 26 Feb 2025 13:26:31 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CC916495277;
+	Wed, 26 Feb 2025 11:52:59 +0100 (CET)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
+ 2025 11:52:59 +0100
+Message-ID: <264d7fb8-06c2-4ada-82bc-4d3a7cc5e184@foss.st.com>
+Date: Wed, 26 Feb 2025 11:52:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
+ <20250225-hdp-upstream-v1-2-9d049c65330a@foss.st.com>
+ <6fc80544-6fc3-4450-a0cc-bfc740fe97bb@kernel.org>
+ <91f19306-4b31-41fe-8ad2-680b1a339204@foss.st.com>
+ <00526b1d-b753-4ee5-8f83-67d27d66a43c@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <00526b1d-b753-4ee5-8f83-67d27d66a43c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdY7nzzu3-+FwpSYqmX+O559LoXHiqcvP2OxkhX+9f-3wg@mail.gmail.com>
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
 
-Hi Linus Walleij:
-
-On 11:24 Wed 26 Feb     , Linus Walleij wrote:
-> On Wed, Feb 26, 2025 at 2:01 AM Yixun Lan <dlan@gentoo.org> wrote:
+On 2/26/25 08:21, Krzysztof Kozlowski wrote:
+> On 25/02/2025 16:51, Clement LE GOFFIC wrote:
+>> On 2/25/25 14:04, Krzysztof Kozlowski wrote:
+>>> On 25/02/2025 09:48, Clément Le Goffic wrote:
+>>>> +
+>>>> +maintainers:
+>>>> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
+>>>> +
+>>>> +description: |
+>>>
+>>>
+>>> Do not need '|' unless you need to preserve formatting.
+>>
+>> Ok
+>>
+>>>> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
+>>>> +  It allows to output internal signals on SoC's GPIO.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: st,stm32mp-hdp
+>>>
+>>> There is a mess in STM SoCs. Sometimes you call SoC stm32, sometimes
+>>> stm32mp and sometimes stm32mpXX.
+>>>
+>>> Define for all your STM contributions what is the actual SoC. This
+>>> feedback was already given to ST.
+>>>
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +patternProperties:
+>>>> +  '-pins$':
+>>>> +    type: object
+>>>> +    $ref: pinmux-node.yaml#
+>>>> +
+>>>> +    properties:
+>>>> +      function:
+>>>> +        enum: [ "0", "1", "2", "3", "4", "5", "6", "7",
+>>>> +                "8", "9", "10", "11", "12", "13", "14",
+>>>> +                "15" ]
+>>>
+>>> Function which has a number is not really useful. What does it even express?
+>>
+>> As said in my previous answer, function names are very different from
+>> one platform to another. Numbers were used as string to be generic.
+>> I'll consider it in a V2.
 > 
-> > Current this v7 version work great with request irq from gpio, like:
-> >         pin = devm_gpiod_get_optional(dev, "myirq", GPIOD_IN);
-> >         irq = gpiod_to_irq(pin);
-> >         devm_request_threaded_irq(dev, irq, ..)
-> >
-> > but have problem if request irq via of_irq_get(), something like this:
-> > DT part
-> >         mytst {
-> >                 ..
-> >                 interrupt-parent = <&gpio>;
-> >                 interrupts = <1 28 IRQ_TYPE_EDGE_RISING>;
-> >                 interrupt-names = "wakeup";
-> >         }
-> >
-> > In source code
-> >         irq = of_irq_get_byname(dev->of_node, "wakeup");
-> >
-> > I've made an attempt to patch gpiolib to support three cells "interrupts"
-> > syntax, but still fail, it always get last gpio irqchip of four, thus using
-> > the wrong pin (e.g: will always get 3 from gpiochips 0, 1, 2, 3)
-> 
-> Right, we need a proper patch to fix this.
-> 
-> Can you paste your patch so I can see if I can spot/fix
-> the problem?
-> 
-> I think the irq cell parser needs to call out to
-> of_node_instance_match() - or similar - as well.
-do you have any suggestion where to implement this similar function?
+> What does it mean "one platform to another"? This is one platform! Is
+> this some sort of continuation of SoC compatible mess?
 
-I actually miss this logic, the patch here only support parsing
-interrupts with 3 cells
+I may used incorrectly the word platform.
+This driver is the same for the three SoC families STM32MP13, STM32MP15 
+and STM32MP25 because the hardware is mostly the same.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 679ed764cb14..9aa88c3fa485 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1454,6 +1454,10 @@ static int gpiochip_hierarchy_irq_domain_translate(struct irq_domain *d,
- 		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
- 	}
- 
-+	if (is_of_node(fwspec->fwnode) && fwspec->param_count == 3) {
-+		return irq_domain_translate_threecell(d, fwspec, hwirq, type);
-+	}
-+
- 	/* This is for board files and others not using DT */
- 	if (is_fwnode_irqchip(fwspec->fwnode)) {
- 		int ret;
-@@ -1758,7 +1762,8 @@ static const struct irq_domain_ops gpiochip_domain_ops = {
- 	.map	= gpiochip_irq_map,
- 	.unmap	= gpiochip_irq_unmap,
- 	/* Virtually all GPIO irqchips are twocell:ed */
--	.xlate	= irq_domain_xlate_twocell,
-+	/* FIXME: force switch to three cells */
-+	.xlate	= irq_domain_xlate_threecell,
- };
- 
- static struct irq_domain *gpiochip_simple_create_domain(struct gpio_chip *gc)
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index e432b6a12a32..69a9540ec253 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -568,10 +568,18 @@ int irq_domain_xlate_onecell(struct irq_domain *d, struct device_node *ctrlr,
- int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type);
-+int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
-+			const u32 *intspec, unsigned int intsize,
-+			irq_hw_number_t *out_hwirq, unsigned int *out_type);
- int irq_domain_xlate_onetwocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type);
- 
-+int irq_domain_translate_threecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type);
-+
- int irq_domain_translate_twocell(struct irq_domain *d,
- 				 struct irq_fwspec *fwspec,
- 				 unsigned long *out_hwirq,
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index ec6d8e72d980..995e5e0ec2db 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -1132,6 +1132,17 @@ int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
- }
- EXPORT_SYMBOL_GPL(irq_domain_xlate_twocell);
- 
-+int irq_domain_xlate_threecell(struct irq_domain *d, struct device_node *ctrlr,
-+			const u32 *intspec, unsigned int intsize,
-+			irq_hw_number_t *out_hwirq, unsigned int *out_type)
-+{
-+	struct irq_fwspec fwspec;
-+
-+	of_phandle_args_to_fwspec(ctrlr, intspec, intsize, &fwspec);
-+	return irq_domain_translate_threecell(d, &fwspec, out_hwirq, out_type);
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_xlate_threecell);
-+
- /**
-  * irq_domain_xlate_onetwocell() - Generic xlate for one or two cell bindings
-  * @d:		Interrupt domain involved in the translation
-@@ -1216,6 +1227,19 @@ int irq_domain_translate_twocell(struct irq_domain *d,
- }
- EXPORT_SYMBOL_GPL(irq_domain_translate_twocell);
- 
-+int irq_domain_translate_threecell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type)
-+{
-+	if (WARN_ON(fwspec->param_count < 3))
-+		return -EINVAL;
-+	*out_hwirq = fwspec->param[1];
-+	*out_type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_translate_threecell);
-+
- int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
- 			   int node, const struct irq_affinity_desc *affinity)
- {
+Why mostly ?
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+The peripheral is behaving as a mux, there are 8 HDP ports, for each 
+port there is up to 16 possible hardware signals. Numbered from 0 to 15.
+Each of this number represent a signal on the port.
+
+But the hardware signal behind the number is not the same from one SoC 
+family to another.
+As example, in STM32MP15 family the HDP is able to output GPU hardware 
+signals because the family has a GPU but in the STM32MP13 family this 
+signal is not present.
+
+The purpose of my helpers was to give a readable name to facilitate the 
+configuration in boards devicetree's. If needed I can get rid of that 
+and use only the number as string.
+
+> What are the exact functions written in datasheet?
+
+The exact functions name written in the datasheet are the ones of my 
+helper file without the HDP prefix.
+
+
+> Best regards,
+> Krzysztof
+
