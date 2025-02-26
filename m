@@ -1,146 +1,187 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE44238170;
-	Wed, 26 Feb 2025 10:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695CD24E01A
+	for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2025 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566365; cv=none; b=TN9iWkaus2Q+c9KS3URhuR6XBkbuc4A2Rtg/30xyfIxdXQCag2Vz8eq/IBmrjWx+K2HsvfCq3MTjGufwjS1QFVRXzg7Q9PdZ0dxhuGl88ShrA0aDgvE13wDg8NJArQQGKSIhCBTpO/yJlxt1gFmXG7m6M+3dLwEiH9luNh1+1Nw=
+	t=1740567536; cv=none; b=HPELKYCIAYLcSBtWYRm8lwqpzy19ZcpVEjeKkTH6IOw55vrtZ18oSlsDC3IxDZDt0AqAB9oPS/eQvwDRp05/B3TW4oCT4hlpwuJE63e+1fmX4fjvvQFsef2uF69fkZl+GH8gSYMGpBgjkvZSCditi0ooBHfYk3PhKTd7iFiBuQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566365; c=relaxed/simple;
-	bh=NrarBek56uZxDZEPM93Oqgy8N6FqDNNWnxTnWqaqfFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P8YYGcXuttqB88AGJ9smwc0p+KUVVSV8x1bcjhBY/LgtA2eYkWNQ4h0xCyjgbbOo1N8F2KJVyF4tvNs9EfpFEkqFC+LY5k8ugXNPO3hBI2/23ZB2hUsgpbKP6ecuUL4uq5N9Rl4LBLHEHj+u6+0j2wpwaP2N9z22b2whl0NOjvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=L5QE9qAH; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1740567536; c=relaxed/simple;
+	bh=wQrTNXOaYvZZQfj2urkS0hNPEAm/KGL1zbtYXzrqddQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhkgNVKT8wlsF08MYk/dKtBW7sP3ABJ6PtR5NnMTZaMtyxInvLcWj/BUdB3dCiDRA5ad70zuvAWP34xGLIq6WoVdI6XvwCUNGmB2Ee6llmzRgvk8o8zc9uK+2KoOrroMS/euE/JswwcTawgMOyLT+XeZcfMCmA1aOSYq/ghxl3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiwAoG3F; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="L5QE9qAH"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q8p0Zu015440;
-	Wed, 26 Feb 2025 11:39:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	r6EeS/1e2mk1YAgnjgtBzqRGy/8kMpjtGs49piq0D0c=; b=L5QE9qAHsY8p2q2y
-	GK0BVRIAOPU8OoNVa7s5NOyCOPheqBGKtNDvftIP7T4ipdE0mnTg65cidM8ReFuk
-	7C2yUAr/qqFd/1fLzL7KL39sGOn9EyWyOWNy5qoSfWkvJ+0wbQUlHGWxK869loTx
-	rya5AyDXShceg/vx3gmE6B83sZWoB79G0jqZhHpXDInQAs+qCR4E5W8AxT66XVYv
-	xduJw6vKpU5l1vGHMuTqTnrprUQ194zHSEUIZsVe5OHVosFYp3kCa0iTgOGLIKeD
-	h5yvghK+Mnn5oGDguugDLCkyI5X78jOsNq88slAI+GFPE7Dx9vtIU9uTuDyr32Wl
-	gqgxBw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451psubfhv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Feb 2025 11:39:10 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4A22A4004C;
-	Wed, 26 Feb 2025 11:38:01 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 252624E1E64;
-	Wed, 26 Feb 2025 10:33:37 +0100 (CET)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
- 2025 10:33:36 +0100
-Message-ID: <988667a4-4bc0-4594-8dfd-a7b652b149b2@foss.st.com>
-Date: Wed, 26 Feb 2025 10:33:35 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiwAoG3F"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220ec47991aso92491865ad.1
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Feb 2025 02:58:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740567533; x=1741172333; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7BXN2njMIOVKy5U58cU01R+hqwDE0YNBwpxVzVjFM+o=;
+        b=OiwAoG3FyJkYP1iL6qCgRhOwU/dChf/th+K23aR8amQvbamQC0CpFfVh8LEel8SQJU
+         NH8l6yaqr3otkfAiSOYjaibko0ENB017tHjAknePqgNZ/ISk3Gv2ncVoOWN9l7BkLt74
+         qiopWpc1qoSF9GkBg+54+9lZuHvj3Q/Uo9amCogIXw0Li/CI7iVAKRdIasMYA8BGlY6D
+         74gGDaMAv8tFrXnOBhxVD4BI0Eyvd0jwQPr8Ve3LV24SHqdKydmUyaOGJQnjcWspbMFN
+         vyU7Xg05CuRqj5ufAOCtsecKZdOOTE4YBNmttpg8Kz/RmTYcUnbf3SbGCZsWcpeWmAxd
+         jSgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740567533; x=1741172333;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7BXN2njMIOVKy5U58cU01R+hqwDE0YNBwpxVzVjFM+o=;
+        b=FqqhVjvATnDb1qM3gDbZnJ3YqMdTpF/vW4pRi5YRB+neAresZQFYzKnm/IUUHbdypi
+         q1TgZJQI2/hQS9f7UoeuGIgPg/31oKpphdI80/6YqjQrwT0YnSG9FqEl+JKGdc/gUZu2
+         cC6XnFUlQDuW95Sun+VVttmVkwUWQxI+n7jKh/J8byLK8cJRQxzvZG3dr20bEd+jcDOa
+         ePE2MBZIZzeIzX1P3nUoKj4U4vMK2F8rDEVY8Io7/29OAC8rlDwm0siyTEADHxfmG81a
+         Hwi8dyIb635o5Vizu5IKdBCQ2FwAMr74Bxi4yQ/1da17n17aYv9QR92eBF7wXCJib/zt
+         UAbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZnD3SFQ0Mn5gi4nOixgGftAIpqKj+Ke1AGdIdBYjsbZaEDJBZuSaGyLi73cjea76vy3qIt1UgBETp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMjC/jEx1S7YzNkcOgoVg9QSudnZT65NzMUDm7BwJzyymTByog
+	eGYWSbtR2x3avOn2uI4Hg5dCiJiujT3jlKX6EqOnt9O8M8VEeqeX3YFJzQ==
+X-Gm-Gg: ASbGncuLHMfF/RwQqqgEyLxgOdjrTSX+ieT7VXmt80/gZzoiOAtJLfJt7kjFWExWaKY
+	cLho57mVWI1+qnbx4l5EnCeVir+mwGcqDvsgnGUXQQKGt/tPq5nbGkmGJCpAshxYLi/x3IMl7KD
+	NYIJiczAcLoHXXuR48QL37Y1GpynfL7AcsKn2cx7W6YABYYDZd9Md/Jy4DeGjZDzhjUWbEJjAdE
+	M030vh8FufSXjjOwpTpmAyTYwIb+pWF7oB0nyKYUP+WYGxA/xlYCdxIONweNQHasfAhBxf9PSoF
+	nuwQcxZjhDPLLCQNv/3JyQZjDkwKijydDtBn64IEwH/lLkgH3w==
+X-Google-Smtp-Source: AGHT+IHikSxDUI74+hTWMV2+32OE0GH5Is7+JWjjdXe2PGnwXJSZR5aFRgm2YXP7vCCvhST1OjpbQw==
+X-Received: by 2002:a05:6a00:1808:b0:730:f1b7:9bc4 with SMTP id d2e1a72fcca58-7348bda7ee6mr4146145b3a.4.1740567533497;
+        Wed, 26 Feb 2025 02:58:53 -0800 (PST)
+Received: from rigel (27-32-83-166.static.tpgi.com.au. [27.32.83.166])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f8233sm3166808b3a.96.2025.02.26.02.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 02:58:52 -0800 (PST)
+Date: Wed, 26 Feb 2025 18:58:47 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
+	Marek Vasut <marex@denx.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: Replacing global GPIO numbers in sysfs with hardware offsets
+Message-ID: <20250226105847.GA127161@rigel>
+References: <CAMRc=McUCeZcU6co1aN54rTudo+JfPjjForu4iKQ5npwXk6GXA@mail.gmail.com>
+ <20250224014936.GA12854@rigel>
+ <CAMRc=Md6_vhs452OM=u7MofSRwFgPNyVeAvkxZ-qULWQCufG8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Clement LE GOFFIC
-	<clement.legoffic@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
- <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
- <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
+In-Reply-To: <CAMRc=Md6_vhs452OM=u7MofSRwFgPNyVeAvkxZ-qULWQCufG8A@mail.gmail.com>
 
-Hi Krzysztof
+On Wed, Feb 26, 2025 at 10:23:37AM +0100, Bartosz Golaszewski wrote:
+> On Mon, Feb 24, 2025 at 2:49 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> >
+> > As it stands the user needs to search the gpiochipXYZs looking for the
+> > matching label. It would be easier if the chip was identified in sysfs by
+> > its label, rather than (as well as) its base address.
+> > So no searching required.
+> >
+>
+> TBH that's technically easy and backward compatible - just have a link
+> named after the label pointing to the chip.
+>
+> > Aside: Speaking of which, once the global numberspace is removed does
+> > exposing the base address serve any purpose?
+> >
+>
+> Good point, at this point we'd have to switch to fully identifying
+> chips by label and possibly the device name (gpiochipX, not
+> gpiochip$BASE).
+>
 
-On 2/26/25 08:23, Krzysztof Kozlowski wrote:
-> On 25/02/2025 17:09, Clement LE GOFFIC wrote:
->> On 2/25/25 14:05, Krzysztof Kozlowski wrote:
->>> On 25/02/2025 09:48, Clément Le Goffic wrote:
->>>> Add the hdp devicetree node for stm32mp25 SoC family
->>>>
->>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->>>> ---
->>>>    arch/arm64/boot/dts/st/stm32mp251.dtsi | 7 +++++++
->>>>    1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->>>> index f3c6cdfd7008..43aaed4fcf10 100644
->>>> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->>>> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->>>> @@ -918,6 +918,13 @@ package_otp@1e8 {
->>>>    			};
->>>>    		};
->>>>    
->>>> +		hdp: pinctrl@44090000 {
->>>> +			compatible = "st,stm32mp-hdp";
->>>
->>> So here again - you have stm32mp251 SoC, but use entirely different
->>> compatible.
->>
->> Ok so I will use "st,stm32mp15-hdp"
-> 
-> 
-> This means this is stm32mp15 SoC. I do not see such SoC on list of your
-> SoCs in bindings. What's more, there are no bindings for other SoC
-> components for stm32mp15!
+That works for me.  Though are chip labels quaranteed unique?
 
-Yes stm32mp15 is not a "real SoC". I agree that at the beginning of the 
-STM32 story we didn't have a clear rule/view to correctly naming our 
-compatible. We tried to improve the situation to avoid compatible like 
-"st,stm32", "st,stm32mp" or "st,stm32mp1". So we introduced 
-"st,stm32mp13", "st,stm32mp15" or "st,stm32mp25" for new drivers. So yes 
-it represents a SoC family and not a real SoC. We haven't had much 
-negative feedback it.
+> > Similarly, it would be even simpler if the line could be exported by
+> > name, so the user wouldn't need to pull magic chip labels and offsets out
+> > of the air.
+> > Though that would be a much more extensive change.
+> >
+> > Btw, I am well aware that line names are not guaranteed unique, so this
+> > approach would only be viable/enabled (potentially on a line by line
+> > basis) where they are - and that would provide some incentive for them to
+> > be made unique downstream, if not in mainline.
+> >
+> > > Bart
+> > >
+> > > [1] https://fosdem.org/2025/schedule/event/fosdem-2025-5288-the-status-of-removing-sys-class-gpio-and-the-global-gpio-numberspace-from-the-kernel/
+> >
+> > My primary takeaway from your talk is that you are more of a thrill
+> > seeker than I am comfortable with - making jokes about Rust in a
+> > live forum - THAT is living on the edge ;).
+> >
+> > Wrt the Q&A at 19:42 - the Pi BCM driver with its module parameter and
+> > "why only this one driver is allowed to have it and the others not" and
+> > the suggestion that there be some flag that can be passed to the driver
+> > to request persistence:  I don't like your answer - it conflates specifying
+> > the default/safe state, generally defined at boot time, with an ability to
+> > override that at runtime.
+>
+> Yeah I was taken by surprise, I wasn't aware of the RPi driver having
+> this parameter.
+>
+> > Extending the driver API to allow the gpio_chip user to request that the
+> > driver NOT reset an output to its default state when released seems like a
+> > viable solution to me.  Am I missing something?
+> >
+>
+> This is not that simple actually. struct gpio_chip has the .free()
+> callack which leaves to the driver the freedom to do anything at
+> release - including reverting the state or not. What and when should
+> the core framework code do then? But I'm not saying no if we can have
+> a good solution here.
+>
 
-But, if it's not clean to do it in this way, lets define SoC compatible 
-for any new driver.
-For the HDP case it is: "st,stm32mp157" and used for STM32MP13, 
-STM32MP15 end STM32MP25 SoC families (if driver is the same for all 
-those SoCs).
+That is exactly the point - the driver has the freedom to do whatever
+once .free() is called.  What I am suggesting is that while the user has
+the line requested they could set a flag, say via .set_config(), to request
+the driver NOT to revert the line, but to leave it as is when freed.
+That would stand until the next time the line is requested when the flag
+would automatically be cleared.
 
-regards
-Alex
+It would be opt-in, so the driver would not have to support it.
+And it could be exposed to userspace via a flag in the uAPI.
 
+> > It also didn't address the fact that, even at FOSDEM, there are developers
+> > out there that think that some drivers are getting special treatment.
+> > In this case the Pi devs have pushed their own downstream solution
+> > upstream to reduce their own maintenance burden.  And that was accepted as
+> > it didn't conflict with anything in mainline.
+> > There is nothing preventing other drivers doing the same, though no one
+> > has AFAIAA.
+> > Though the module parameter solution is rather crude - if we are going to
+> > start touching all the drivers then why not address it via the API?
+> >
+>
+> I don't know the history of this. It's a driver under drivers/pinctrl/
+> and I was never Cc'ed on the patch that added it. I probably would
+> have objected to doing it inside an individual module.
+>
 
-> Something is here not matching - this change, this DTSI, top level
-> bindings or all of your SoC device/blocks bindings.
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+Actually you were on the cc list[1], as was I, but it was a pinctrl change
+so you probably skimmed over it.
+I only looked at it as the bcm caught my eye, and I'm somewhat familiar
+with how the Pi devs addressed the gpioset persistence issue downstream.
+
+I wasn't totally comfortable with the change either, certainly not as a
+general solution, but it was contained to the module so I didn't object -
+I figured either you or Linus would if it bothered you.
+
+Cheers,
+Kent.
+
+[1] https://lore.kernel.org/linux-gpio/20240503062745.11298-1-wahrenst@gmx.net/
