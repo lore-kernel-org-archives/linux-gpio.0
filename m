@@ -1,177 +1,171 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EEB22D7BE;
-	Thu, 27 Feb 2025 12:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9E22EB11;
+	Thu, 27 Feb 2025 12:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740658732; cv=none; b=gJLe10ZgRpSEsRtsa3Hm8OXl7AbilT0Z11D9FQU+jobPQNV6Q6U+Mqm++o5s8z+afJ9X0rJ+yeVl1plryfm7GVcoYclPuVcdnHqgZHgI4549NVGO5aMIU84HFZybYv7hPs6YtDhLtN9jycodWOr8gEeBlrT+LT2nLm0PHrKSYDk=
+	t=1740660415; cv=none; b=mnga0R0zGK4ZDjdjoyg37hYBFZWZkteQpWP57pNbz3a4iSvKC2Dq21TpV71BnhOyx1OVdlP3XfQ0/tKq5ogZq2TPMKED8tIh6AayqR+hO7+RDj74LVL3asP+Mv1DrWJjsoimHihl2vWtXs1G4M08PZ9qwU6qqrqCyreJOxlI8eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740658732; c=relaxed/simple;
-	bh=MslIQA5QHTBZ8/xByWEGkAlB0Wtbl/MEE+cgVdbemrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kLa0RLvXx2COsd0udkifgHryCFXJG5ppljmnq+s1ZfdWYjjVcM4awZ4Ymzw3pJGrTWSNMNbSHUqpnR+uyCZgp++KSA/sUAfV9ZfzT5E1DUBlc+Da6ORt/n+N2otpLwN011hXJ5RefcGVVPHUQhObzxMxdtekANJH29vmIqFMNPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nJwZcULP; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nJwZcULP"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R9RU3K012382;
-	Thu, 27 Feb 2025 13:18:38 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5VtVpJbGl3ABqgeyotfSFZTXggVBvrafMpv9raSwNMI=; b=nJwZcULPguYTFbLK
-	s00zfJzJvVpHQh6/3RohsrUhqhjn5Uu6s/W72KrdQhfvtEj9v+b+VBIjBKouXUJc
-	cTA0ai1DvN6SC2Qa3r7gMUqs2gSODT9cie56XWXiyf9MYzV1yuPJgY7Gtu0dmXvh
-	Z/3KS9y5wUYK6E415GV7CkqaP48Iv9fyC018NbQ/6iRK99WgnP/BKdDKh66+hW5Y
-	LZqNKHjDzI9l8hcBnnQ8qB8f1u8X80M9IY0sAcmgA2fNjLo9VizKFhsty8DZWyti
-	Hny0mmZFyCUzaLhMZyZdzQn3vcIdkOp13Whwhn8ebzvG13LCYBjw22njwSWnOnHs
-	NRhWRw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451psvah7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Feb 2025 13:18:38 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 45CEC40045;
-	Thu, 27 Feb 2025 13:17:31 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 73A2540E4F0;
-	Thu, 27 Feb 2025 13:16:43 +0100 (CET)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Feb
- 2025 13:16:42 +0100
-Message-ID: <df74157e-d141-4045-a244-3168c58c0ff4@foss.st.com>
-Date: Thu, 27 Feb 2025 13:16:42 +0100
+	s=arc-20240116; t=1740660415; c=relaxed/simple;
+	bh=U7PCzUZnVYRvejULBSq6O8X9s2whc0HDjN7qBWSOoYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJR65yDJ1DalgxdSeAvNQtGI2X5SOOlKnzqHa37ShjGyXeqe4inRPTSXHIVIYEg7xuufkMaifZbPXJbTUICekhZDcUAVUn+t8RAN/XDy3sYS1z7/nZsNSO3j886m7ReWHwZvTJHPtzdulfzcdiL6uMmvfmpVXCHyQaGTQhBzuig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso10860791fa.2;
+        Thu, 27 Feb 2025 04:46:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740660411; x=1741265211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wTt5QbyADMJ+0WvsKLYId9FZQBGxvlR5X8sImHZOIM4=;
+        b=B/ceRzhz6Ickyx7fg4XKjE4TnJ2LhcXE28GHNpGaNhRohHA+nlxOffkzeNo+g46XEW
+         cgI6CCq7omYr4zj+vaheadxbiytn6arWTIEs4Gw2bGuZPQukQb9oCAuwbMddlOdgLR9J
+         U7uZl8BRQDO7bR3CL6NBWz1MXM9n2Q55C1Dv0exnKhfw8eI/9CTy8fkp8Qh1kjF6PTuj
+         CwT7j9mCQcKaeI7pDjF84k6859VHBNpoCsNR9BZBIP1KnCTq+Fa1wbqsGNk7O3UBPyau
+         a7iliZhM3mXyMen98ZZavxy1TptfTbJoToNzpFekyvDCfWTXm95GOk8B5qZRN+Sp4v0o
+         wJVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZUMOWfW0X2mtdAeKulkTF22SypV+vg2iAVhkzets8bJfUoVCvt6DLoH5e6P9AsxQ3veqIXKaorW7s4w==@vger.kernel.org, AJvYcCWA54vcKmBKdvWeGBpuU2CIKp8jvMgOOiXN54Wtvr0mLXeIeBOl9aMdMaIM8c/IumehyCx6+E60ogpr@vger.kernel.org, AJvYcCX1Hi5mYBXhgCgxER8u8AyfdczF3EiEx7Hbfi6vzRy+yxHQfCCYaYHerPb3Cs2xPyNivD0MOB8/mKR/R+8L@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVoYcpMGyfDepJuiM+7vM8TMR37gveFg9tYCm+1LJ6kCZCwQN2
+	JiIxeAUnwfluc/2OQCXcYYf5RPX/hHVcENH5ydVOJ5n+QS0k9FZwn/tugWqX
+X-Gm-Gg: ASbGncs5LDroJONOovx3rTRrBmkI5HpDP0plr6+3ToLADl/pT538i9qxjQAJT0n8GW5
+	Faq5hHvfCbxZS8fbj3IgzeSxclluQI0VZFhlF2nam78y6Jnlgb7+GAPDqBoEuX0863HTfxsOpno
+	bgCWl2J3YE1SgqXRS6lQrx1aQFspyqOnVjKMJ9MnnhNXPKZ17maFAAOjugWm3/ENlC5La1Bt7U8
+	6xP3lRg6eMqtuubDoButHfRCfozRAMnjPZXDfB1ObHWq4ujN5UUXLuA6umJCRVTMqTQJKAN7xpk
+	WlaueMjsx0qh0i2HdwpnAqNZorac2H/WmIH5ZLZWFqAzRAedz/WfnCfK6uc=
+X-Google-Smtp-Source: AGHT+IH/TbUuTK566vWhxF15bp6nFz2gE52GHN85DStmE4iVQlV87kNNgIsyqNczRtMJsnsCMh84OA==
+X-Received: by 2002:a2e:b386:0:b0:308:e803:1175 with SMTP id 38308e7fff4ca-30a59777b35mr103031201fa.0.1740660410378;
+        Thu, 27 Feb 2025 04:46:50 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b867a74c4sm1570121fa.19.2025.02.27.04.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2025 04:46:49 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30a36eecb9dso10860391fa.2;
+        Thu, 27 Feb 2025 04:46:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVZKG1YK37945gsD7pbKKTsfWiE6BEOvKKcwOtPyoq1vDqzBSJdQjBA6bvN3gYYZEhOOvpyGuVnou857g==@vger.kernel.org, AJvYcCWwhdsbRT2LwbcNTmzhjowap4WE8qvZnN2jE5wzewtaWn5yS1M9qTaiVgEBJqKYUK2wxa5oTuK46RAY@vger.kernel.org, AJvYcCXL3lqjoqmXnj1NqmYN9LwAlu1sfsE2s3zr+nWQmUvOs4AMzL+X2cT75cIGSYOFY1F9BWn4SnoutL98xQX5@vger.kernel.org
+X-Received: by 2002:a2e:8743:0:b0:308:eb34:1037 with SMTP id
+ 38308e7fff4ca-30a599702f2mr99762991fa.23.1740660409212; Thu, 27 Feb 2025
+ 04:46:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp25
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Clement LE GOFFIC
-	<clement.legoffic@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
- <20250225-hdp-upstream-v1-7-9d049c65330a@foss.st.com>
- <418a80a9-8c08-4dd1-bf49-1bd7378321aa@kernel.org>
- <b257aa79-6ca9-4f57-988a-ec00225992ab@foss.st.com>
- <b57e3c9e-244e-435b-8a7b-cf90f3a973b3@kernel.org>
- <988667a4-4bc0-4594-8dfd-a7b652b149b2@foss.st.com>
- <55beb3e7-65ac-4145-adae-fb064378c78d@kernel.org>
- <8cdc7e52-f9e2-4fc9-be68-0dd72a25ee1b@foss.st.com>
- <48cc626a-d632-444f-8563-07a9ea0ecc71@kernel.org>
- <17450f7d-d398-4a75-8b53-6c9c396661ab@kernel.org>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <17450f7d-d398-4a75-8b53-6c9c396661ab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-27_05,2025-02-27_01,2024-11-22_01
+References: <20250214003734.14944-1-andre.przywara@arm.com>
+ <20250214003734.14944-7-andre.przywara@arm.com> <173949598874.895319.6861900349653451498.robh@kernel.org>
+ <20250227114611.67a1ba00@donnerap.manchester.arm.com>
+In-Reply-To: <20250227114611.67a1ba00@donnerap.manchester.arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 27 Feb 2025 20:46:37 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66eOuT+0n71OEPUky_rLd37_msT4b1+QC+8Nyhwtqarng@mail.gmail.com>
+X-Gm-Features: AQ5f1Jrl692zM4GeD3auZTYmCOG5P6JcCZDXCDM_tdSURnSO6l5VyT64A9SuHe4
+Message-ID: <CAGb2v66eOuT+0n71OEPUky_rLd37_msT4b1+QC+8Nyhwtqarng@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] dt-bindings: pinctrl: add compatible for Allwinner A523/T527
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Feb 27, 2025 at 7:46=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> On Thu, 13 Feb 2025 19:19:48 -0600
+> "Rob Herring (Arm)" <robh@kernel.org> wrote:
+>
+> Hi Rob,
+>
+> > On Fri, 14 Feb 2025 00:37:32 +0000, Andre Przywara wrote:
+> > > The A523 contains a pin controller similar to previous SoCs, although
+> > > using 10 GPIO banks (PortB-PortK), all of them being IRQ capable.
+> > > With this SoC we introduce a new style of binding, where the pinmux v=
+alues
+> > > for each pin group are stored in the new "allwinner,pinmux" property =
+in
+> > > the DT node, instead of requiring every driver to store a mapping bet=
+ween
+> > > the function names and the required pinmux.
+> > >
+> > > Add a new binding file, since all the different variants of the old
+> > > binding are making the file a bit unwieldy to handle already, and the=
+ new
+> > > property would make the situation worse.
+> > >
+> > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > > ---
+> > >  .../allwinner,sun55i-a523-pinctrl.yaml        | 177 ++++++++++++++++=
+++
+> > >  1 file changed, 177 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/allwinn=
+er,sun55i-a523-pinctrl.yaml
+> > >
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > yamllint warnings/errors:
+> >
+> > dtschema/dtc warnings/errors:
+> > Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl=
+.example.dts:24:18: fatal error: dt-bindings/clock/sun55i-a523-r-ccu.h: No =
+such file or directory
+> >    24 |         #include <dt-bindings/clock/sun55i-a523-r-ccu.h>
+> >       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Ah yeah, of course, that's in another series. What's the best approach
+> here? I could cheekily import an existing header file, the symbol names i=
+n
+> there are often the same (ccu-sun20i-d1-r.h defines the same symbol, even
+> with the same number).
+> Or I just replace it below with the number "1"?
 
+This, or just drop in a random number.
 
-On 2/26/25 22:31, Krzysztof Kozlowski wrote:
-> On 26/02/2025 22:26, Krzysztof Kozlowski wrote:
->> On 26/02/2025 16:30, Alexandre TORGUE wrote:
->>>
->>>
->>> On 2/26/25 16:08, Krzysztof Kozlowski wrote:
->>>> On 26/02/2025 10:33, Alexandre TORGUE wrote:
->>>>>>>>> +		hdp: pinctrl@44090000 {
->>>>>>>>> +			compatible = "st,stm32mp-hdp";
->>>>>>>>
->>>>>>>> So here again - you have stm32mp251 SoC, but use entirely different
->>>>>>>> compatible.
->>>>>>>
->>>>>>> Ok so I will use "st,stm32mp15-hdp"
->>>>>>
->>>>>>
->>>>>> This means this is stm32mp15 SoC. I do not see such SoC on list of your
->>>>>> SoCs in bindings. What's more, there are no bindings for other SoC
->>>>>> components for stm32mp15!
->>>>>
->>>>> Yes stm32mp15 is not a "real SoC". I agree that at the beginning of the
->>>>> STM32 story we didn't have a clear rule/view to correctly naming our
->>>>> compatible. We tried to improve the situation to avoid compatible like
->>>>> "st,stm32", "st,stm32mp" or "st,stm32mp1". So we introduced
->>>>> "st,stm32mp13", "st,stm32mp15" or "st,stm32mp25" for new drivers. So yes
->>>>> it represents a SoC family and not a real SoC. We haven't had much
->>>>> negative feedback it.
->>>>>
->>>>> But, if it's not clean to do it in this way, lets define SoC compatible
->>>>> for any new driver.
->>>>
->>>> Compatibles are for hardware.
->>>>
->>>>> For the HDP case it is: "st,stm32mp157" and used for STM32MP13,
->>>>> STM32MP15 end STM32MP25 SoC families (if driver is the same for all
->>>>> those SoCs).
->>>>
->>>> No, it's three compatibles, because you have three SoCs. BTW, writing
->>>> bindings (and online resources and previous reviews and my talks) are
->>>> saying that, so we do not ask for anything new here, anything different.
->>>> At least not new when looking at last 5 years, because 10 years ago many
->>>> rules were relaxed...
->>>
->>> So adding 3 times the same IP in 3 different SoCs implies to have 3
->>
->> Yes. Always, as requested by writing bindings.
->>
->>> different compatibles. So each time we use this same IP in a new SoC, we
->>> have to add a new compatible. My (wrong) understanding was: as we have
->>
->> Yes, as requested by writing bindings and followed up by all recent
->> platforms having decent/active upstream support. See qcom, nxp, renesas
->> for example.
->>
->>> the same IP (same hardware) in each SoC we have the same compatible (and
->>
->> You do not have same hardware. You have same IP, or almost same because
->> they are almost never same, implemented in different hardware.
->>
->>> IP integration differences (clocks, interrupts) are handled by DT
->>> properties.
->>
->> Which binding doc/guide suggested such way? Countless reviews from DT
->> maintainers were saying opposite.
-> I was not precise: IP integration differences are of course handles as
-> DT properties, but I wanted to say that it does not solve the problem
-> that IP integration means you might have differences in this device and
-> you should have different quirks.
+ChenYu
 
-Yes I agree. We'll take care of it for future development. Maybe, It 
-would be nice to apply this rule in our current drivers/DT already 
-upstream ?
-
-> 
-> And the example in this patchset: entirely different pin functions is a
-> proof. This device behaves/operates/integrates differently, thus
-> different compatible.
-
-Yes, discussing with Clement, it is clear that we need 3 different 
-compatibles.
-
-> Best regards,
-> Krzysztof
+> Or let git format-patch append the patch-id of the clock binding header
+> patch?
+>
+> Cheers,
+> Andre
+>
+> > compilation terminated.
+> > make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindi=
+ngs/pinctrl/allwinner,sun55i-a523-pinctrl.example.dtb] Error 1
+> > make[2]: *** Waiting for unfinished jobs....
+> > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_b=
+inding_check] Error 2
+> > make: *** [Makefile:251: __sub-make] Error 2
+> >
+> > doc reference errors (make refcheckdocs):
+> >
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/2025=
+0214003734.14944-7-andre.przywara@arm.com
+> >
+> > The base for the series is generally the latest rc1. A different depend=
+ency
+> > should be noted in *this* patch.
+> >
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> >
+> > pip3 install dtschema --upgrade
+> >
+> > Please check and re-submit after running the above command yourself. No=
+te
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checkin=
+g
+> > your schema. However, it must be unset to test all examples with your s=
+chema.
+> >
+>
+>
