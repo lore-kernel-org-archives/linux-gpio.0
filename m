@@ -1,114 +1,136 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA651CDFD4
-	for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2025 06:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA32A1C5496
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Feb 2025 07:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740724866; cv=none; b=ZQ9SWKUcftZtLnKp/7VcyoycV6W99tEn57+jQ4JCRObaB17QVE0sY3AOTZ/qNe6Ud9/ZK+f7zpAyKQMeE1SdcWIXMeFrh4jPmk3sRZyNWWPPNY/w4OtKng6lIgbCFm8OyaGEEVWLc9NJ+dRwfJpcR84Am58z/mUMW1cwbeL6CdY=
+	t=1740726655; cv=none; b=pp7VthkGZvIbQJL2/CeXxrhZ1f7vSfluCObv9G54aMRRjn2CzFOkKkvC8XLFizK4N8P8EoKYCqRP2i6C6rM+FluAGr3e5+rfEnHy/pGzfwgqrMdeOxBey+0vSmQXo3dHedpGS6VufhSFFiGFhNrqISrXCPg075PHZWMWIjI6Epw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740724866; c=relaxed/simple;
-	bh=+Se3hzcxltQqG7wGkSUeYBocE0VirOcVIliyTsxeR9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S3uABVi/7jqk8d1duoh9D3TjZMN7tx9JLn/0tvse6KoqJWFOtK1iZMyVaTFS+dVLsKz3iJPz5DQbh+Y3m57OCj0PwPSIQh3E9572KM8+1cq8gLQm+wXtf7G5/unx88jgSlktmm3wc4w60u9UBMMrxDiyckenZB5vvH0ekf/7Y8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=SIuPOk3l; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+	s=arc-20240116; t=1740726655; c=relaxed/simple;
+	bh=e5rDJP51pJSQA9OjMXcqMI2dne8pHRlzXVWljVTaMqU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FRGaRkMoyF8rb1ov0Zw/ndZobvgMxyKJS1TsoMR8Fvmrf+eff1MR+yOqc7L4MYrsKb9vWf10h58Izh5LzmtJMSrsf6a/etiokxd617QSDM1WcZPoMq3/P7HbvbxieZn3saNNJmR/GuuV0eBJBj+0F4/TOIilHalD/4uH3lRYe8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FgLa4Ayp; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="SIuPOk3l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1740724863; bh=LFxsWR3l8emE9VbLBSkEoA10aFZjqSCs6/nvHtvdILw=;
- b=SIuPOk3lP2O2C32iK0TQL6bkiLuFv4+4/SKLVADPTq5B3bR3AzihWkfS0e0rJTv43FoIkG68l
- ubd7H2DudVQKh0yv2H7FombrOXtqpB9N5vjiJkJqS/h1OtYDFD3ko/EL5BZ8vEwlHTIdJNOauKa
- Ts2cYBgnvC5fWo16HnvRbfxMl+8nLsZIjQ2601qT53YbcKT341lWWwijZ1SOKjbDnq1vkujNoVW
- m8g/ROjrrV6/Q9nQQf9xcxedXFsEibllUAxUdwwG0owWqPTedKzLw1OnCnmWP3/wi1RhS5/1Pct
- yRnQhjLJH3WDRrA+/UZD4I9rMt3I2zH1uk8JvcQPLaLw==
-X-Forward-Email-ID: 67c15a79bcf1d1bd23db021a
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 6/7] arm64: dts: rockchip: Add user button to Radxa E20C
-Date: Fri, 28 Feb 2025 06:40:12 +0000
-Message-ID: <20250228064024.3200000-7-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228064024.3200000-1-jonas@kwiboo.se>
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgLa4Ayp"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-546210287c1so1744506e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Feb 2025 23:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740726652; x=1741331452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6t8UyiXR6dJzEwnQ10IpflUTVUpmG0RA8RwVK5o31Pc=;
+        b=FgLa4AypjRg2k4PGgpJh47iyy/rk+LZMqTTQOFizacfm7rUpLBqAavE78clgPuhZGU
+         xu10q/QSArFRNXK5qcHKZYQk+UV3i9jg5T8Lmc+g3g57vo/WN55uttJhSqdWwRlrY69C
+         3XbN4252ku/368UI3CHlsLueGumYrC1MGc+ENg352GgepcSHiCi5qI3isbAovPgnd0hV
+         JxAGRfmkAUKNzyWRMSgL0iby5h7qXOKvFYRczufhVMAh2H3EusjULuQk+aZIGd+I9R1y
+         AkRPgHy4Qyqq+8KeCSWecbreycIwznp+m1ABeJI5DhLZ+H9Zxm1rJ8MCrYRkaSROpuyJ
+         NxEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740726652; x=1741331452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6t8UyiXR6dJzEwnQ10IpflUTVUpmG0RA8RwVK5o31Pc=;
+        b=jBttOxzQbMkYAlr0hsKnMQ7e537uiSxJ6pnpinxkvcOP1M51LnSEZ/D0pZt0bfgLa5
+         8laI5r9dNnl9/YfwbQHEBLscVbomPkhcPQ3z0hpxK5mpPdzSkWZp5Q8BlZ8JcFVQ664R
+         elAkQWKOUUufIqDft7j5Za0ifCZEkK/oPhsM+q7Lk7Cvmy5+AIDrdy6rxmUupio8Zd3C
+         jsNzkt/NlN0tJ5IDQ30/HFIqY9Ll5/TUqS/WHMHF3xDO5c2+zzel9f3h655nNovVlZxq
+         tY+cnQ0alWvpJ66DjeMDFOP9ZTKQS5hYUgVMmLzqV/J6yXs7Ugcy3sYJJvWfIIgrAote
+         qxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLKIPASH26YiJOQLxoAxPRXaLvwk6EqSlp8kwbGmkLPCY6h1qh/ozJtJVFXeEcgFU3nnSHcobLWHGv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG1S2GAWVOXAzTnFcLYINDBRKKh3D8JHSy9yUOpIN3nfOtaqFm
+	JGjwR09WAfILiwekh6EzY0STZQEfDgoMFB+hHDgvF539C1CfJgEMLG0t4NI1lKEZPAV4VQR8p56
+	U5ETLYa4OJKww8aagbzL2qkP3Kr1/VikoN6EDyw==
+X-Gm-Gg: ASbGncsAh2TpGeiPHu/Tui88IS6ZZCNd2orz0ybY+yGnKN0BaVfq/HQY4NxoOfYaTtt
+	48UHR5Py+9DBmjcDeDXFj7REWBiMfyEmhCoq+ako+HA7ZmJStZ1ZHNWU2YCL7PZKUM0ZeD4tDB5
+	6FUH9QCvQ=
+X-Google-Smtp-Source: AGHT+IEC8EFfAnGhrHuegVK0MjbEHUyO9MnPQrdToy4hgdsyyArn7uO/+zOsNOpafVCwixOTgScGZBK94+hpQYf/RDo=
+X-Received: by 2002:ac2:4e14:0:b0:545:93b:30bf with SMTP id
+ 2adb3069b0e04-5494c37d894mr945955e87.41.1740726651750; Thu, 27 Feb 2025
+ 23:10:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org> <20250226-max77759-mfd-v2-5-a65ebe2bc0a9@linaro.org>
+In-Reply-To: <20250226-max77759-mfd-v2-5-a65ebe2bc0a9@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 28 Feb 2025 08:10:39 +0100
+X-Gm-Features: AQ5f1JoHHtaG81ilR6V1iA1OlWE3XjM-gnPRidsiCBk8KODwITMM0tJzyfBKqBU
+Message-ID: <CACRpkdYoWuJzjqiKrSNzdXV+5N9Gp0n+pdCwSZgocwy0JHo7Vw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Radxa E20C has two buttons, one SARADC maskrom button and one GPIO user
-button.
+Hi Andr=C3=A9,
 
-Add support for the user button using a gpio-keys node.
+thanks for your patch!
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+mostly looks fine, given the MFD design is accepted.
+Nitpicks below:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index b9a66c6a1dfb..d19e319b4100 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -32,6 +32,19 @@ button-maskrom {
- 		};
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&user_key>;
-+
-+		button-user {
-+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
-+			label = "USER";
-+			linux,code = <BTN_1>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	vcc_1v8: regulator-1v8-vcc {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc_1v8";
-@@ -62,6 +75,14 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
- 	};
- };
- 
-+&pinctrl {
-+	gpio-keys {
-+		user_key: user-key {
-+			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
-+};
-+
- &saradc {
- 	vref-supply = <&vcc_1v8>;
- 	status = "okay";
--- 
-2.48.1
+On Wed, Feb 26, 2025 at 6:51=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 
+> +static irqreturn_t max77759_gpio_irqhandler(int irq, void *data)
+> +{
+> +       int handled =3D 0;
+
+bool handled =3D false;
+
+(...)
+> +               for_each_set_bit(offset, &pending, MAX77759_N_GPIOS) {
+> +                       unsigned int virq;
+
+I usually just call this "irq", as it's not any more virtual than any other
+Linux magic number, and it can confuse people working with
+actual virtualization when we call things virtual like this.
+
+> +
+> +                       /*
+> +                        * ACK interrupt by writing 1 to bit 'offset', al=
+l
+> +                        * others need to be written as 0. This needs to =
+be
+> +                        * done unconditionally hence regmap_set_bits() i=
+s
+> +                        * inappropriate here.
+> +                        */
+> +                       regmap_write(chip->map, MAX77759_MAXQ_REG_UIC_INT=
+1,
+> +                                    BIT(offset));
+> +
+> +                       virq =3D irq_find_mapping(gc->irq.domain, offset)=
+;
+> +                       handle_nested_irq(virq);
+> +
+> +                       handled =3D 1;
+
+handled =3D true;
+
+> +       chip->gc.base =3D -1;
+> +       chip->gc.label =3D dev_name(&pdev->dev);
+> +       chip->gc.parent =3D &pdev->dev;
+> +       chip->gc.owner =3D THIS_MODULE;
+
+The core already assigns THIS_MODULE so you can leave it
+unassigned.
+
+Yours,
+Linus Walleij
