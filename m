@@ -1,128 +1,172 @@
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B031D6DC8;
-	Sat,  1 Mar 2025 10:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740823436; cv=pass; b=pKiElAUIXMmsVhOtvQT6IgrIgHHZ+rSsuHGiAtmwRbKhT0CZ0o27xQ541G8GGvmRbDD2HlSwuS+Ij8WhdB8ZxIp3E02dCXkx2BUc4t3EsE6T43jrnWRtORMeQHuFlbYwgfnmOcho/qSIUDcwQM5pstEI2LdX/Eqzr4gAoKvxJd8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740823436; c=relaxed/simple;
-	bh=Rn/w/lrOPl+6Z/ejlk3nn0vA6sXamygIoAjnNZ6QoL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GMK2+MkFC5dhzKTs+4InvjY37dq0a3dYEGIMon6K0OhWUUwDe8R9mxYO6yeynuQgdVLw87vxU5KKC7ZeJPk0uP7Qh83r4djoA9F/OKw/rmsnNZ38eWG6wKeNcBT0i/Q4PZhaAew3V1aMwl0ENktkDSQqUhCfy5p83Hz3ACkNw7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=YCSL+ZCX; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=wcqUjdTw; arc=pass smtp.client-ip=85.215.255.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF501DE4E3
+	for <linux-gpio@vger.kernel.org>; Sat,  1 Mar 2025 11:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740829428; cv=none; b=aWvriBCbzF6l4eQyK3ZMCmfYpLQAmDYHwSVCPoKWkiqwMt9FoM4zK7JZxa1EgxAYGqdD9VqQm9eXQMPl5co5gwYD7PfjJWSNPWIN4s0QXSmHqfa1Z0yGNIvEbY3/LdcvN90HJfu89+Hj+8HBTo8XtqjoRYZX+bbeipYxUPIsx5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740829428; c=relaxed/simple;
+	bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bQRzduHyIy3DOg3BQdjRqc7FS5rrrTPgQDj3sAi4itRb5ua1S8/cCVAhvFr6oSPUANlh7KOBnw8+d5/8wNCU5ZhEzp+TgwtPfUHt2MGWrgWzTTWwtYh3SuE01oOFZr1Mv3bONW95xU7maoWQaIyIeyccieEFEbltX1byGJ5t+8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKAZzmvE; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="YCSL+ZCX";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="wcqUjdTw"
-ARC-Seal: i=1; a=rsa-sha256; t=1740823244; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=VfGLBiyuuul7M5Jh4cuZyMbLX48q2HddResoH33nydVhvupAHaLjbd+fQwTygLu3xd
-    xQcK+rz54QnUCGEP7PvUmzj4qIc7NE+zgVMQnvLC1FfsgZ6o1WeWmbNr3y83WeaTb1l4
-    Qsu5aoipVHWePuQ83IDJdcJ9eEScC6IqS7t8U/cpxIHhUQrY77Y0Yjgj84/dfqgg6huj
-    gidh9rXRglovd9s+TiEu8tzOcjMOzKgCvizjenapxJ8brTOXcvhncNhUuckBLrWH0M5r
-    6eGvqJKshk4altmp/zIC60nmP/1jVLnQqxH1PhBkBkSLuqd9Wupdxdl1fFIwm7HYC1EH
-    sVAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740823244;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=jQHkoK6XIUS+W/XJnNra9kSPHkGbD84yfUBClpEfK14=;
-    b=owU9sDCrg3+r9Qe9omYgoNZObZ3GUHd+/YYbtFLwdflvTXi9/06XZBIVbQVdyLKYBl
-    HpPjL5Tb0StQHs4RFCQ11CD0goKi5kVy4pQMj2QiX2D2eJOMb1nAIOjyFUFeiryVlcSj
-    tfk1vBylRl5BSqrHrSckciTEuIDNatEfCCOgC2890q/NQf3GC4oBBhUiDyju5SHTbp2B
-    HPUfTxiDdRCGEceNTsSVQtZodqU20kx39AOdWxn+MVuNFjQ7mbTHXzm4+C40UDiY/d6H
-    HvB4prxUgvt85PBDdUjMq4+BUikOOyb342bWnFbP6+/NBvJt304YOaTNvNDFNHKbG53d
-    TaEw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740823244;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=jQHkoK6XIUS+W/XJnNra9kSPHkGbD84yfUBClpEfK14=;
-    b=YCSL+ZCX1HMFEZz0lYwmft2xiKDXGknLSxammPr/P93NuBVBDPMHj3fdnva4afNSx+
-    PfUjryNeVZkebUjnaJn/McDNyUTDySQsmWqYV50GJQlAZCPPJ76oNzEQDoVjuCuvS/Yo
-    WE2AyV1z0ELj3xMAlMJdJru4/xZ6AG4rhGtgQyQOu33/hD6hDIHzYBln6l/feE+0cAkD
-    y4+v1clU2BAmvqR3EPIVrxCwAtBbADkZ2n6kmBM+5TeRChOyRxgS5MtYtt0n0r5PtEag
-    WKXWRYqAqYeqqoZBvmKJR+DE9ljDFJdHDoyz32Q5JI1Xwb+3nPHZS1G2VPvbd38Ty/7C
-    FoAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740823244;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=jQHkoK6XIUS+W/XJnNra9kSPHkGbD84yfUBClpEfK14=;
-    b=wcqUjdTw7TB0GskEKt703SipSmVMBCBl7OhgFwLkja9cGIzoyL3FExijRRWlXg3q8N
-    ywFNz5gv51mfYqD+HmCQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjEZ"
-Received: from localhost.localdomain
-    by smtp.strato.de (RZmta 51.3.0 DYNA|AUTH)
-    with ESMTPSA id Q56adc121A0hbff
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sat, 1 Mar 2025 11:00:43 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	Paul Boddie <paul@boddie.org.uk>,
-	Tim Bysun <tim.bysun@ingenic.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	kernel@pyra-handheld.com,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v3 0/4] pinctrl: ingenic: add support for x1600 SoC and MII and I2S for jz4730
-Date: Sat,  1 Mar 2025 11:00:37 +0100
-Message-ID: <cover.1740823241.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKAZzmvE"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43690d4605dso19138915e9.0
+        for <linux-gpio@vger.kernel.org>; Sat, 01 Mar 2025 03:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740829423; x=1741434223; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=BKAZzmvEnRwuhsv9v4/KVlBMZnCpKTqe54ZB754nB34LVLjvwh9yquL6RlB1ZlWf0r
+         F5Fem34fjyR8qWVS9AzF0tjVl3pv0RTfcoatq3z0ORs2iax9g2u/1Ybn9CcJJtvwfsuS
+         q8gTMSyS2C0mcpmuU8I9ZlW4yWcm2RHFef96B0nVLLVnwAJ81ZtKTosArCZLlGxQhGux
+         rkjlkdLAcQUP+wSTE/8PzfkoRTa4aE6tndAn+N1QNJynh5EODK05MxWZMzjSA7sbr6dr
+         KPPpcnj0VvO8TAMH+m5W2WPmOmK+s4aPxqbyVzznxQ7nv7lJdHfYZlB9dBfcoXAgTKYa
+         nlxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740829423; x=1741434223;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nZbaxd2WRcoQQt1caRaFSEAx+9Lny/NjRCBroTTZogk=;
+        b=WuOQW0zDjpUfXhroE/KcQigoq70B4bVQE8n81zEAFqVCq2YHZ4qD9FTc8gNrWTsC1b
+         nrqPgKmF926CPnK+/Fi9RW//h+tjnekMptuigfY1mgq+a0gZAUE9iC9eOSorLeHXYnZ4
+         N7SUcbYv02gscdLuJno07y06OcLJkAeOdcCcmiDlP9F0y+hWJE1cvtBmTBQlSWPuAQMx
+         dp9G37eDd0gkO0CL6VXbRqCnspGBS0YT+pL58dmeSIS4eieaeknyszCXPEM8CIKggCaD
+         PmpX/qMG2Exv1tjBrYsduIbGqOeITQi1Ztxx93oR1ld1inn9g/r/wH1oUDN2cpBXbmWv
+         0csw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpueFz5DBZHIvKaK7ySSjocQrdqzwCJyej6hYplFnosTltLDtvsiwP03ylAfto4muucfIRdxHiy+Yh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeRnU+FHnU8xUIY2Alvh0on3+j3S9h/P1twvNjPxKa8/4BZ3UG
+	eYKtaC/gNRKfSY4S3AmE6JZLtrpZxwHF0tUOBnI2lm38sNMFNlklk09ssY/ezhs=
+X-Gm-Gg: ASbGnctpFwivYt6KZlwzvSXBK7gwqPIRcp+sZbhyyk/cvP2l33DNrEVBoId+8tHqY2M
+	vpjQ9Ix1+z6FQMjfTVBL1TQtxvkFMih7uCakMM1IJefURM6+pSS5L/cy4ZGJrPIZcR5DPDVxQP7
+	Vk1vjCPAcNl/1dn3Le/JM/XZnYiAhZQsUtW7CTYhg4kfXEPDVL5XUiP7WOS3eMxdrxMiZbibogw
+	EBVeG60KDLhHPVcbOcBL950seIfF4C+4Bn2f+jZpqYpIj9o8ABEEtar45br5U7Qh/MlzQakL7qh
+	f9urFr0FGn7RLwJoPZboJqqJFdnJnIKfbBde8SgHnRhfqCKsshdwqy7kA6OhqLkU/Cc8kBJtRN4
+	=
+X-Google-Smtp-Source: AGHT+IHj61UYuOocbWw/qWMpr+RAho3zm2+puTeioLvnRLnuw4Nm2xW7pb1mJ8SKDz4411HtZ7isXQ==
+X-Received: by 2002:a05:6000:1a86:b0:38d:dc4d:3473 with SMTP id ffacd0b85a97d-390eca384b1mr5985832f8f.51.1740829423579;
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.23])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796600sm8002871f8f.20.2025.03.01.03.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Mar 2025 03:43:43 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Sat, 01 Mar 2025 11:43:18 +0000
+Message-Id: <20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANfywmcC/4WNTQ6CMBBGr0Jm7Zj+QFBX3sOwqGWASUhLpkg0p
+ He3cgGX7yXf+3ZIJEwJbtUOQhsnjqGAOVXgJxdGQu4Lg1GmUdooXDj4VWYc5tXHgOmVFgo9Gmu
+ t07b1dV9DGS9CA7+P8KMrPHFao3yOn03/7N/kplEhte1Vqadxl6a+zxycxHOUEbqc8xc35uC0v
+ QAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2738;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=evUvX4RMBfKC8FqkgyOYIu49UpyYWqsRchzfwT3wFVE=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnwvLngUxy+MXzTvUcVPQf/Vn4XqYkl8kM3dwFf
+ DmYVxaFXSaJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8Ly5wAKCRDO6LjWAjRy
+ ur9qEACDSxzR9tumJKwuhzgEo08hXMNwYrOiJWy/GhOTxgmk29YjAovMmjaayFfJqUgF7V6beFA
+ RS8OXsLqcO17SXY0d8+7nvES0yXgElnsfTy5oWlfypPngGZBMH+Biq/7EvmLugypVzKweBk1eQL
+ iRIFYE2ni3ce+dpFxDC5nTUXJ0B11DYR9t6EIP8Dct0YsYZ4NaCR9MWefbPleW80/Tk95sAaRdg
+ kbOPiWLJbRUC6OMqxC4wv9KlsjaHY2QnUfMhbX3bekG2kSoZW3pr7oEB5wr1ZQfvzV4BF4rpJWy
+ w/gz8M1oJe+mW43GReWWF1qlsMcmKbVFTbwSGOlnRZlrC7H6XA7MEm73BoNnV/dm4ujVKqez6KA
+ tNTQbdaQz5/Arem/o4eNCTdcR7bAixbuhs59y5uF+iIL2ShlzZGtjYTfhHK3XpvmcS5Clwfws1J
+ PKbznYWGc1YodbsuGi3reJJAAsT8vLDmSWc6HBTpWchXnF4OTcU5aDkMKwJSEvd2KlbNNQac021
+ Xd+aKXq0mvd9gUZZUCUeUrC7itF/yLQNy3yHdDNVR4VJihubXy94XNjCiX58Phmy3rMgSq976Kj
+ M5h01vqEECANqtD0xLX/F6NP9ybFg+t7xohWnoLPZGokCX5v/EcMtf5UFUh5VxBM33oUaPSV+zK
+ CfwOuaI8VtCo3lw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-PATCH V3 2025-03-01 11:00:41:
-Fix some nits reported by Conor and Paul during their review and add
-their acked/reviewed-by.
+Hi folks,
 
-PATCH V2 2025-02-28 14:33:57:
-Fix pwm5/pwm6/pwm7 pin groups (each one can be muxed to one of two
-pads while pwm0-4 have only one pad) for X1600.
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
 
-PATCH V1 2025-02-26 18:14:53:
-This series expands pinctrl support for some Ingenic/Lumissil SoC.
-For the jz4730 we add MII and I2S pinctrl and general x1600 support.
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
 
-The x1600 parts were jointly developed.
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
 
-Code was tested on LX16 board (x1600) and Alpha400 (jz4730) and
-on CI20 (jz4780).
+regards,
 
-Co-authored-by: Andreas Kemnade <andreas@kemnade.info>
-Co-authored-by: H. Nikolaus Schaller <hns@goldelico.com>
+Peter
 
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
 
-H. Nikolaus Schaller (3):
-  bindings: pinctrl: ingenic: add x1600
-  pinctrl: ingenic: jz4730: add pinmux for MII
-  pinctrl: ingenic: jz4730: add pinmux for I2S interface
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
 
-Paul Boddie (1):
-  pinctrl: ingenic: add x1600 support
+---
+Peter Griffin (4):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
 
- .../bindings/pinctrl/ingenic,pinctrl.yaml     |   2 +
- drivers/pinctrl/pinctrl-ingenic.c             | 262 +++++++++++++++++-
- 2 files changed, 262 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 293 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  51 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 321 insertions(+), 197 deletions(-)
+---
+base-commit: f7da3699c901aea6a009d38116d24c67a4c9662e
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
 
+Best regards,
 -- 
-2.47.0
+Peter Griffin <peter.griffin@linaro.org>
 
