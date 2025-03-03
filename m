@@ -1,128 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBE72356BD;
-	Mon,  3 Mar 2025 16:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42497215043;
+	Mon,  3 Mar 2025 16:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017833; cv=none; b=GCD3x7GJ5IR1+ElyCRWyvPaNBt0Cw+7zW8nRLpfT7nVAit+Y7HnSIPhQnhF9otnx+atAGVylP7BkJk1hemOAsvEsKI6Xpt+PhOgAqVPV/BwRL5HXcxy/cTHxYcOItn47pM6q0/yGbMmxpSer3f0mMNypbadIbBUwbjUJP5PpzwU=
+	t=1741017999; cv=none; b=STIGNtFCr/yVMmMPgpb9pDkI64Vxxu1SkstaH2/1geeZaH9BYZd+EDvZ9R6mM5G8yldewoy9SD/pHKagTVzbpHpAgeC1bUv5JN350+skCXKXSmzMCgLU4b9BswZUEyCDhXjIpuqixngppQyv3SDlUj1ygJjF3Zm75PSdmG4Pyf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017833; c=relaxed/simple;
-	bh=augAjJ6JBGkm/7HH6cDggAy9sIwGeNJ3Wqj6kBfuH3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X3ICuJP0HcMrgyZ0X2jG6+QZxZwwDHCntu47WncfATUUsSzR/M0l5MBd6dcBPJ8AB4dW4ssgfVamtn72fIROG9PyLcEKYq1tKEeDDtS39QEcanFjbrLFYSmLduR58ZrrjDMCXZ7nIj/3kUrJQUiG6wd+TimJw3OTERC9tAbeAkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGXtLRUA; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1741017999; c=relaxed/simple;
+	bh=0o/eLy1rhcIG2D9DbO5Vv2RfGE5XdW9XH+TnUEAbStY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FUzpDv+jD04v366otnpqquhY0yo6X3/tkBs/EGZzVggEGAq14+ZHWKINlE6NVnPIiAr+cI0qggmktKpBY7NZgmwjNtgHBVBJFE96QiwFfMSshgrOBcLR0PaOTaYMmhuUFCrgx2St406ZDTNvKrXdr20yGx2lMD1Vzuu2JSu9WjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N6yCfVR8; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGXtLRUA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741017832; x=1772553832;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=augAjJ6JBGkm/7HH6cDggAy9sIwGeNJ3Wqj6kBfuH3A=;
-  b=gGXtLRUAB7s5nENSx+7qtT9gbmvulSALViexwhnrJlVC4hvCIe9K3U4i
-   HX3B0geMqfce27Y0yfcYCqlHmmVmkh6MNcyI5aAAbkEqRecE5zAUpuFPB
-   aPUlXlzDvHUcA7S5v54SGJYeFaWySYykp+pCp1WdWrYr7/Kc6qBnk2wYV
-   akMeggDSwisnrdZkbrmet7olISgemJcg6nm/YoZhG+GXZHtCXmguHTllT
-   4mXd5oWwzcdMfviHBCTEF+MI5FvkL4GtG0F2MT5SOSaC7Xs0IZVgYb9Do
-   8+MaGTClR87vZwyUO/7BcH7rZKWJeil3pRu4vle6XpjJNog8hVYRRwcjt
-   A==;
-X-CSE-ConnectionGUID: b6e88eTVTsGLl+9akR0Q4g==
-X-CSE-MsgGUID: vUvFUJFfQ9e5dx210TYjaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41606704"
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="41606704"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 08:03:48 -0800
-X-CSE-ConnectionGUID: i7L2M9F0RVu//8paJfl1yg==
-X-CSE-MsgGUID: ShdMkc4fS/CEU86m0ora/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,330,1732608000"; 
-   d="scan'208";a="141285581"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 03 Mar 2025 08:03:44 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id F38D0DC; Mon, 03 Mar 2025 18:03:42 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v1 1/3] gpiolib: Align FLAG_* definitions in the struct gpio_desc
-Date: Mon,  3 Mar 2025 18:00:32 +0200
-Message-ID: <20250303160341.1322640-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N6yCfVR8"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A55444319;
+	Mon,  3 Mar 2025 16:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741017994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t5ZXzMX1/ykUU6pr/kSKc0XUxU+Kw7kuEgt8sySazL0=;
+	b=N6yCfVR852JO4sAGmx+EWlLVcGPCi4iQqEr3qvnd6nWeZO1PAaXRIvYad5O0oOwOJZs7vN
+	OsczmmoAOyH8/VIjNDHU3Mb/lqqQzzHU3nZAGoUBX8XwRtNyaXfhy9orvJ5BbywOv6IaWv
+	H116Fzl2m98+fQuI5aRfAniIbVCSea6sFoZQ6t0h32ipfRh8tuwhckRp48Wu69L1WBLyVI
+	47KtN7nyc+9+bvDrfR2EfEiVMS0cjhNqHgW+gelli50yR2qZ/tJ3cMjqeO2Ck8oya5zReM
+	cAo6Jx2ozblE91/XmM/71ChfwyJ3YwvxDl5UFgvF8S2w8YTHiwYerPpBWQPy7g==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-wpan@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-gpio@vger.kernel.org,  Alexander
+ Aring <alex.aring@gmail.com>,  Stefan Schmidt <stefan@datenfreihafen.org>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Linus
+ Walleij <linus.walleij@linaro.org>,  Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH net-next v1 1/2] ieee802154: ca8210: Use proper setter
+ and getters for bitwise types
+In-Reply-To: <20250303150855.1294188-2-andriy.shevchenko@linux.intel.com>
+	(Andy Shevchenko's message of "Mon, 3 Mar 2025 17:07:39 +0200")
+References: <20250303150855.1294188-1-andriy.shevchenko@linux.intel.com>
+	<20250303150855.1294188-2-andriy.shevchenko@linux.intel.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 03 Mar 2025 17:06:32 +0100
+Message-ID: <87mse285fb.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleehjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepiedtleehfeeggeegtddvgffftdeutdetiedvgfelgeegkeefieefgfffieeuheffnecuffhomhgrihhnpegtrghstghouggrrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdifphgrnhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrr
+ dhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrrghrihhnghesghhmrghilhdrtghomhdprhgtphhtthhopehsthgvfhgrnhesuggrthgvnhhfrhgvihhhrghfvghnrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Align FLAG_* definitions in the struct gpio_desc for better readability.
+Hello,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.h | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+On 03/03/2025 at 17:07:39 +02, Andy Shevchenko <andriy.shevchenko@linux.int=
+el.com> wrote:
 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 7663c9caebaf..65db879d1c74 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -183,24 +183,24 @@ struct gpio_desc {
- 	struct gpio_device	*gdev;
- 	unsigned long		flags;
- /* flag symbols are bit numbers */
--#define FLAG_REQUESTED	0
--#define FLAG_IS_OUT	1
--#define FLAG_EXPORT	2	/* protected by sysfs_lock */
--#define FLAG_SYSFS	3	/* exported via /sys/class/gpio/control */
--#define FLAG_ACTIVE_LOW	6	/* value has active low */
--#define FLAG_OPEN_DRAIN	7	/* Gpio is open drain type */
--#define FLAG_OPEN_SOURCE 8	/* Gpio is open source type */
--#define FLAG_USED_AS_IRQ 9	/* GPIO is connected to an IRQ */
--#define FLAG_IRQ_IS_ENABLED 10	/* GPIO is connected to an enabled IRQ */
--#define FLAG_IS_HOGGED	11	/* GPIO is hogged */
--#define FLAG_TRANSITORY 12	/* GPIO may lose value in sleep or reset */
--#define FLAG_PULL_UP    13	/* GPIO has pull up enabled */
--#define FLAG_PULL_DOWN  14	/* GPIO has pull down enabled */
--#define FLAG_BIAS_DISABLE    15	/* GPIO has pull disabled */
--#define FLAG_EDGE_RISING     16	/* GPIO CDEV detects rising edge events */
--#define FLAG_EDGE_FALLING    17	/* GPIO CDEV detects falling edge events */
--#define FLAG_EVENT_CLOCK_REALTIME	18 /* GPIO CDEV reports REALTIME timestamps in events */
--#define FLAG_EVENT_CLOCK_HTE		19 /* GPIO CDEV reports hardware timestamps in events */
-+#define FLAG_REQUESTED			0
-+#define FLAG_IS_OUT			1
-+#define FLAG_EXPORT			2	/* protected by sysfs_lock */
-+#define FLAG_SYSFS			3	/* exported via /sys/class/gpio/control */
-+#define FLAG_ACTIVE_LOW			6	/* value has active low */
-+#define FLAG_OPEN_DRAIN			7	/* Gpio is open drain type */
-+#define FLAG_OPEN_SOURCE		8	/* Gpio is open source type */
-+#define FLAG_USED_AS_IRQ		9	/* GPIO is connected to an IRQ */
-+#define FLAG_IRQ_IS_ENABLED		10	/* GPIO is connected to an enabled IRQ */
-+#define FLAG_IS_HOGGED			11	/* GPIO is hogged */
-+#define FLAG_TRANSITORY			12	/* GPIO may lose value in sleep or reset */
-+#define FLAG_PULL_UP			13	/* GPIO has pull up enabled */
-+#define FLAG_PULL_DOWN			14	/* GPIO has pull down enabled */
-+#define FLAG_BIAS_DISABLE		15	/* GPIO has pull disabled */
-+#define FLAG_EDGE_RISING		16	/* GPIO CDEV detects rising edge events */
-+#define FLAG_EDGE_FALLING		17	/* GPIO CDEV detects falling edge events */
-+#define FLAG_EVENT_CLOCK_REALTIME	18	/* GPIO CDEV reports REALTIME timestamps in events */
-+#define FLAG_EVENT_CLOCK_HTE		19	/* GPIO CDEV reports hardware timestamps in events */
- 
- 	/* Connection label */
- 	struct gpio_desc_label __rcu *label;
--- 
-2.47.2
+> Sparse complains that the driver doesn't respect the bitwise types:
+>
+> drivers/net/ieee802154/ca8210.c:1796:27: warning: incorrect type in assig=
+nment (different base types)
+> drivers/net/ieee802154/ca8210.c:1796:27:    expected restricted __le16 [a=
+ddressable] [assigned] [usertype] pan_id
+> drivers/net/ieee802154/ca8210.c:1796:27:    got unsigned short [usertype]
+> drivers/net/ieee802154/ca8210.c:1801:25: warning: incorrect type in assig=
+nment (different base types)
+> drivers/net/ieee802154/ca8210.c:1801:25:    expected restricted __le16 [a=
+ddressable] [assigned] [usertype] pan_id
+> drivers/net/ieee802154/ca8210.c:1801:25:    got unsigned short [usertype]
+> drivers/net/ieee802154/ca8210.c:1928:28: warning: incorrect type in argum=
+ent 3 (different base types)
+> drivers/net/ieee802154/ca8210.c:1928:28:    expected unsigned short [user=
+type] dst_pan_id
+> drivers/net/ieee802154/ca8210.c:1928:28:    got restricted __le16 [addres=
+sable] [usertype] pan_id
+>
+> Use proper setter and getters for bitwise types.
+>
+> Note, in accordance with [1] the protocol is little endian.
+>
+> Link: https://www.cascoda.com/wp-content/uploads/2018/11/CA-8210_datashee=
+t_0418.pdf [1]
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Looks correct indeed,
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Thanks,
+Miqu=C3=A8l
