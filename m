@@ -1,91 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B86259CA0;
-	Tue,  4 Mar 2025 16:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D2127EC90
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Mar 2025 18:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105106; cv=none; b=YjPA/uGAqaSmMZ5Z1UgQ3DBHrgAurfXHUcl2lplC5DZsSUq7KQm7JE3sGMuteT1GiEcteXBFrZqgQqlCgZjE8SBnpbgALAbovJrIblf6UI5FH7yMGJqPFfJliadUNubIMz1Xf/USTsVy/EE9X60iPxKdK57oPhD+tVN7LB/3wb8=
+	t=1741112007; cv=none; b=YUzPV4xWEIPFC+tISDKVecZn7CMh4maW8kuyGHtpyMK66EY5y64gCOjJUjI8NyFIm+lNPYxmhBy5LkC8qRMTka4Ho9PFTzoC0Rp7p2FPMfkPzu+XInvHUbdoBYGI8MpAe00YB87h+hxM7cVFXaXS5V8HcGVrP1g8kcnK30q9Ob4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105106; c=relaxed/simple;
-	bh=XhtYLV02qtbsJ7+TV85fVvw/Qxk6F/Hh9cvsI0OjeqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boeYWl3E3q/5pp0qEp7uZImZzWKyWxEeLvIJCtOd8Xu88mIJF+IwR2tL7bAsAeLFZ0LkfPoMD0HocLxk7twwYtNYfVpPRRkVTSjg/VwhDnPr/3zOmErS0bY79HzOwH6zj0SHRCc++aCDCsB+xpqGK4cdKvc0Bk34X4SFHV0qxis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dpvztu/U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741112007; c=relaxed/simple;
+	bh=ypPytUNQebnWYDRP7fpFEAJF942EcMHF5lireOs6gk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BsKNBKkbnFurYB/oavhQ+UrwxQMhOd4h0SkPKlCKdV6DWmLNqE3Xm7kRYMfL0DoHuQtvbDJ6YDJe4pv7MxZqfzI+ApVb/on96oyheX2pZ8jvDywOAZRHjnjCAj8uu9vfvnr6YiHnDAjOY1qXI7zT7ktZB7iXkHpAyc8fxVhU7gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=KqEYbZrk; arc=none smtp.client-ip=121.127.44.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dpvztu/U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000EFC4CEE5;
-	Tue,  4 Mar 2025 16:18:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741105104;
-	bh=XhtYLV02qtbsJ7+TV85fVvw/Qxk6F/Hh9cvsI0OjeqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dpvztu/URG1nraLrZK66ui8QddhoqBabtvjnTJ45RdC3oW/wrWuuoM/q1Pq+7B97d
-	 P/NuEzIsAX7tegU4t6n9LSh1DViOr2G2n8vMDOSgZLfo9xPHm3FEdxAiVcwiZgdlHT
-	 980Weqz3d1eL4c3JeVxQwTH1duzb3mH3zayiKFEmG6fz/4bX7Wl/NKPmoBw1riJuJc
-	 66v4Fi94oEo8SEYU1/7RIBUzTSrcWYcFJUAMgdZno8OYZiAtJ1jhH7s1jJmQ0wlbSZ
-	 e7gAIvKWkl2qP1FjQLsyCs9EAE5sgUjRBD95IA5CqGlgpZgnRJtezba1T4ObgSDQNB
-	 FC62RSs+eu4bA==
-Date: Tue, 4 Mar 2025 16:18:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 0/6] ASoC: samsung: GPIO descriptor conversion
-Message-ID: <7da76b50-67fd-4273-83a3-300f734f7922@sirena.org.uk>
-References: <20250303-samsung-codecs-v1-0-56a2299dd928@linaro.org>
- <174110255924.87345.17067818310965896666.b4-ty@kernel.org>
- <CAMRc=MfqNSZeQxBuEfM1nAo0F3NmEkyG-Les3dyxxuun=4XpuQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="KqEYbZrk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741111998;
+ bh=xjqXCgfra637s+rpk4UdFAWQVXX9B5blSLtqx3MNrXQ=;
+ b=KqEYbZrkYoM2a8EOqYL75O4oNNU42Kt0WKaWvm7j2fCvgIPr74ds292+aIPClYWBAVZvSQxMv
+ subtPZ3tfDvUPKez4iqIOcww3Poe7DOQLndRCjjwbYUcYFvCqZUUTLMJKJHqpdHfU0ExX0QcZut
+ vKE0VZr4uXpH+gV1mI/7CD9/XcQrgjXYbCY0rK4fTIBKAo2IjjQa2P1RcxwDiJHJBHPMpXzN+aM
+ ve9G/NOw2zrATDFkenq7mHgD4WRolVhoY8I+9sGZC+J9LkNi9yg2WI++0Bmpl8geUFcDoLN4Gok
+ QLNfjNB7QcPIE+BmI1xfUqAmN1VOroxMoO5viz/pgzQA==
+X-Forward-Email-ID: 67c742bb2e5baeec949f6b1e
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.59
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <03c34bdf-d470-4c99-bb06-0eb7496465a3@kwiboo.se>
+Date: Tue, 4 Mar 2025 19:13:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+ZFwNRSVfzGqExSp"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfqNSZeQxBuEfM1nAo0F3NmEkyG-Les3dyxxuun=4XpuQ@mail.gmail.com>
-X-Cookie: Do not disturb.
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH 0/7] rockchip: Add support for leds and user
+ button on Radxa E20C
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Yao Zi <ziyao@disroot.org>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250228064024.3200000-1-jonas@kwiboo.se>
+ <174108970986.65436.4272591414898454986.b4-ty@sntech.de>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <174108970986.65436.4272591414898454986.b4-ty@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Heiko,
 
---+ZFwNRSVfzGqExSp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2025-03-04 13:02, Heiko Stuebner wrote:
+> 
+> On Fri, 28 Feb 2025 06:40:06 +0000, Jonas Karlman wrote:
+>> The Radxa E20C has three gpio leds and one gpio button.
+>>
+>> This series adds dt-binding, driver support, DT node in SoC .dtsi and
+>> gpio-keys and gpio-leds nodes in board DT to support the leds and user
+>> button.
+>>
+>> This series builds on top of the "rockchip: Add support for maskrom
+>> button on Radxa E20C" series [1].
+>>
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [1/7] dt-bindings: soc: rockchip: Add RK3528 ioc grf syscon
+>       commit: ac32ad07a97648eb8330b2c4cb840b0ef46903ae
+> [4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for RK3528
+>       commit: a31fad19ae39ea27b5068e3b02bcbf30a905339b
+> [5/7] arm64: dts: rockchip: Add uart0 pinctrl to Radxa E20C
+>       commit: 0d2312f0d3e4ce74af0977c1519a07dfc71a82ac
+> 
+> Patches 6+7 depend on the parallel saradc support series and thus
+> do not apply - and need too much rework to safely apply.
 
-On Tue, Mar 04, 2025 at 04:48:54PM +0100, Bartosz Golaszewski wrote:
-> On Tue, Mar 4, 2025 at 4:36=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
+Do you want me to rebase/reorder and send an updated version with
+remaining patches? Look like the iio saradc patches [2] is pending apply
+so maybe not needed?
 
-> > [4/6] ASoC: samsung: speyside: Convert to GPIO descriptor
-> >       commit: da9146c19b1774926148ff271c4a3dc8d7891b18
+[2] https://lore.kernel.org/all/20250304144648.29f376f9@jic23-huawei/
 
-> I pointed out an issue with patch 4. :(
+Regards,
+Jonas
 
-Oh, sorry - you didn't cut any context so I think it just flashed by
-while paging through the entire message as I was scanning for responses.
-One of the reasons for cutting uneeded context is it makes it easier to
-spot the new content in your message.  It's an issue which can be easily
-addressed incrementally in any case.
+> 
+> 
+> Best regards,
 
---+ZFwNRSVfzGqExSp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfHJ8sACgkQJNaLcl1U
-h9DH9gf+OVJU37vK8yaU3Mz+qk5DhrweZGTM0BSg//dtPms0VpXZBfsfYezs+Ok8
-o06hRnLequ9qlMSYpbCZKTlIUD/VLWxtamnw+qQByA4UtUGoaCyaHafblWNii8Pt
-szMAIGyzN+Px7YCqVUe1OH0kJNThyGmx6OAnOFfqTuDHzGXEFnJ5FUoxfEZlFcFp
-GBB/Q7XZDebfnMpdzY54PCiNl+yHYJ1UwczZMqlEULygHg8/IGa++nsHXm+ciOJF
-il1UQ/GHk5e9CXm2cdYp38Bj2UmN6Zs3hmkWuVE34+gTcAc2si3QW2tD8LhTeFrr
-WLOhgUgjBEd1+bA99iuE7JdJjec3FQ==
-=Qt2b
------END PGP SIGNATURE-----
-
---+ZFwNRSVfzGqExSp--
