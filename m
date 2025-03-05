@@ -1,240 +1,113 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5909722A4DF;
-	Wed,  5 Mar 2025 10:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BADD245024
+	for <linux-gpio@vger.kernel.org>; Wed,  5 Mar 2025 12:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172228; cv=none; b=ctKLFBYTXWqSNtnpO9x1LBGDncbhcTLtg3CDpPGBtH+oHIgUcmw2Di9a4bIwWju8RShYSa+1awn+ugdC7D9gHL9AjfdVrWBdRzTCzo6Kq4FvbqdCJmufi+Vk8wN3SvwXoI8SECcvq+KTS+cb5lQCP10gHHtn6KfAa5VDdOq9TFI=
+	t=1741176951; cv=none; b=LDHLJG+zfIlGmogBUj+Hu3DC8MjwP7e7coisQu/T3lKaglbY1eGVWCzjjR7kpsRWMEYFHDa2xVMUmCh/oDtHKfEN9avPEEZg/haVMW6dNcN3+nZU/xsd409oxlMm7v1KuP4D+2XKuJtyNgErqj/Us4J8ZBKNjvR5ecmQ3/APcUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172228; c=relaxed/simple;
-	bh=4mWiSaWYOBSBHZ9umfa/gZfpmXrkDhdbnk2oA30pHHE=;
+	s=arc-20240116; t=1741176951; c=relaxed/simple;
+	bh=Gmr3CVW4KCL8FrdHAQy2UDexIgSGUd2VWojLQkupXkA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CkgxQLb/kKTz3Gi2wILapkzpt8PfEL0d57BR7hfvNsleC+r2WoucEb+mlgZX2wWh4zdx6bzkzP1o0z+tOrFv2Y/4q7dOTIocxtsFGgq2jn4tzndShbST9ZAwlV5KqBs3k+XjXns8ODpTQoK+eOJztltWrMq4t7O+s6XMpKt7pkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=er8CLQyT; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 MIME-Version:Content-Type; b=R3zoIpVRellDm4VyTu7cxO0IiYAvKtXw2SBqrMA5Uy4JuQQwKyZMy6c7xaqOyIk0AnM8hxtu9hEjHDMrq89jVtx3ATkXXH4SV5rDqc0QvSOC9WXeNjaCW+1d1Daxib7k9eqq7niOhyvXKJPcEIHoCdaskKqwIBEQSNpG6g2sqiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bcgMQ+1A; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="er8CLQyT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741172227; x=1772708227;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4mWiSaWYOBSBHZ9umfa/gZfpmXrkDhdbnk2oA30pHHE=;
-  b=er8CLQyTvMNhcpnAn1WYg5mwPobTT4oMT8FyVLwWFN0gANGzRrSkw2p7
-   FcGXaqpg3pNwI1SVasfzj0K5/kWT5rsO/ticRFItcp62H88+qLifdgXex
-   r9eS2BKD0QNRhAgyGwLaWPoSOGs2hA93c0e/Vo/HTUt0X3endP+MbH0hI
-   4Vi5hUYKHHbUmPCpfFwmo5ug7g8UdUWp3kDKVaGCkyPGWNXEk5IcyE3hv
-   YFxyzMD/saSVdcFNcmIdxpu8w/1fCnoJAw7zLyoDiS6/lgjLhQ5bvqhpf
-   irNjqpMxSCtgH6jMFia5CNlGw9repEi45zMaxSWPRlwiwshecNAaDqbdE
-   Q==;
-X-CSE-ConnectionGUID: QjBeELr5ReuYCX/2qubWlQ==
-X-CSE-MsgGUID: Bp4bxZTZQC6OiAcUUfZTiw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45783928"
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="45783928"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:57:04 -0800
-X-CSE-ConnectionGUID: YdFP/EZ3RLi2eaiBqmj98g==
-X-CSE-MsgGUID: 7P8XXUEXQyKZmFetVQl47g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="123245749"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Mar 2025 02:56:58 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A218B2CA; Wed, 05 Mar 2025 12:56:57 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-wpan@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>
-Subject: [PATCH net-next v4 3/4] ieee802154: ca8210: Switch to using gpiod API
-Date: Wed,  5 Mar 2025 12:55:36 +0200
-Message-ID: <20250305105656.2133487-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250305105656.2133487-1-andriy.shevchenko@linux.intel.com>
-References: <20250305105656.2133487-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bcgMQ+1A"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bccfa7b89so13621555e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 05 Mar 2025 04:15:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741176947; x=1741781747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g2GFPnGsi09/8I/8w+iTT/QIwkPrcH5VHbNtZhD12ug=;
+        b=bcgMQ+1AEp1SwgynFr4H62rZ80juhRzB+aqgzgQn/82CCKUJE+x+1tOarAPb2daifb
+         T4UmJE5rOU7GuhbNnpcedKes89EXXhPzh4T8LtIxrXJ49uMdfZWt+ZfSRzwvPzOyVr2O
+         ER9k9QSPV0JOPQh9o00t+Rz/WL3cdB57Y3hjmcRjYLRH0VtlCfcphMSL1vgrO9yLFHgb
+         32hyrjTLqNDbWq7nTANJygKVF7UE1Mh5ZxKkM21o5juULlNJT1MDOnyt/g7US2ZbIqRQ
+         eDhXNd5mZ/KXxytnXjaIM+R8+wDKazkzCMx4noLtzEPlvRgup+TVSXpR5obp8xv++y9Y
+         pZvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741176947; x=1741781747;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g2GFPnGsi09/8I/8w+iTT/QIwkPrcH5VHbNtZhD12ug=;
+        b=NsOuLSdroF93fz+lg2CZ56bS3YBDBJEjxQ8wVFZIPvs5dwRf70wwkfNS8qvt82Drwl
+         LtFrEVWCd4OQepWmxJWns+cv7+AosI/VReNNRjSoSNUVf/jR2lnh719EvV5R/L3AOdyN
+         4w5QFmcaIZ5/8vNxAxj7AbanAine26Y29MpGa81Z2dWTbqEDuiPg/8jAz2BgbcDE5SXM
+         tAq3I4mQHmKhE4YGOHcUcOx9MzpzLj3/R204fYeHnYvzZkCsze8043F9JGzTgauMmAyG
+         yhdFS2XHo+qtDMja3DQYyV6XhTrk+Y1qUV2jCNdiGbb3LtMEzt0s9GUFTnz/Yv/Pi/qU
+         dvVA==
+X-Gm-Message-State: AOJu0YyXOQZaSpFCRK56AMHBe/KMYHUKmuIzXztcGdjcX1FqhphRSYxV
+	P80L/eV2qrTJB1kDeXS5VmzcSU5037XSedYuf5iSVazBKw/05PZ8+8j+TP/zlMpx91jWFBgxrDT
+	K
+X-Gm-Gg: ASbGncvt4SdwEQu2EuAjRotjeTB/GEgOa9C5mdy/b3dsJj9NMOxUI7aHeWmQSw7m/tS
+	maNNd3hVcVCIl4OCgthYpMMfredXm+4ui2mq6Z+gWbKyPScYFstvAL96JCv5KnD5Ryuc5WmsHR8
+	I3DQM4Z1RIc7HQst75LFZMNsZNTVWQotem5Ln3Yme4QbC93EcsKJFi20J2XCuM79NsuAT4hiXJF
+	RjNbQEwJP5QBTV/hhdXfBJUTB1sT2lqOyEYlFt2kmBXS2+9Uqpsasd9S7sqhiYcTM9Qnl1oAcWh
+	0vEByiKNV08BqpdHD6K6pnZXbI9i3dSaDgbScOh718Gp
+X-Google-Smtp-Source: AGHT+IFcgYjq00qPIwqVIYZzDQS3HF2VIF0S3SyacTf9nYgadrmt2P4HSYpN+uMXawLFNISH9Bryow==
+X-Received: by 2002:a05:600c:1988:b0:43b:c1ba:21aa with SMTP id 5b1f17b1804b1-43bd2aea5camr18296955e9.25.1741176947407;
+        Wed, 05 Mar 2025 04:15:47 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e514:53b3:5af8:e408])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426c01bsm16061945e9.2.2025.03.05.04.15.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 04:15:47 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Koichiro Den <koichiro.den@canonical.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	brgl@bgdev.pl,
+	geert+renesas@glider.be,
+	linus.walleij@linaro.org,
+	maciej.borzecki@canonical.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/9] Introduce configfs-based interface for gpio-aggregator
+Date: Wed,  5 Mar 2025 13:15:42 +0100
+Message-ID: <174117687651.61264.9467200851509383581.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250224143134.3024598-1-koichiro.den@canonical.com>
+References: <20250224143134.3024598-1-koichiro.den@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-This updates the driver to gpiod API, and removes yet another use of
-of_get_named_gpio().
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-With this, invert the logic of the reset pin which is active-low
-and add a quirk for the legacy and incorrect device tree descriptions.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-of.c       |  9 ++++++
- drivers/net/ieee802154/ca8210.c | 57 +++++++++++----------------------
- 2 files changed, 28 insertions(+), 38 deletions(-)
+On Mon, 24 Feb 2025 23:31:25 +0900, Koichiro Den wrote:
+> This patch series introduces a configfs-based interface to gpio-aggregator
+> to address limitations in the existing 'new_device' interface.
+> 
+> The existing 'new_device' interface has several limitations:
+> 
+>   Issue#1. No way to determine when GPIO aggregator creation is complete.
+>   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
+>   Issue#3. No way to trace a GPIO line of an aggregator back to its
+>            corresponding physical device.
+>   Issue#4. The 'new_device' echo does not indicate which virtual
+>            gpiochip<N> was created.
+>   Issue#5. No way to assign names to GPIO lines exported through an
+>            aggregator.
+> 
+> [...]
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a7370fa48556..280d56736844 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -203,6 +203,15 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
- 		 */
- 		{ "qi,lb60",		"rb-gpios",	true },
- #endif
-+#if IS_ENABLED(CONFIG_IEEE802154_CA8210)
-+		/*
-+		 * According to the datasheet, the NRST pin 27 is an active-low
-+		 * signal. However, the device tree schema and admittedly
-+		 * the out-of-tree implementations have been used for a long
-+		 * time incorrectly by describing reset GPIO as active-high.
-+		 */
-+		{ "cascoda,ca8210",	"reset-gpio",	false },
-+#endif
- #if IS_ENABLED(CONFIG_PCI_LANTIQ)
- 		/*
- 		 * According to the PCI specification, the RST# pin is an
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index 65f042c8734b..ebc4f1b18e7b 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -52,12 +52,10 @@
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
--#include <linux/gpio.h>
- #include <linux/ieee802154.h>
- #include <linux/io.h>
- #include <linux/kfifo.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/poll.h>
-@@ -350,8 +348,8 @@ struct work_priv_container {
-  * @extclockenable: true if the external clock is to be enabled
-  * @extclockfreq:   frequency of the external clock
-  * @extclockgpio:   ca8210 output gpio of the external clock
-- * @gpio_reset:     gpio number of ca8210 reset line
-- * @gpio_irq:       gpio number of ca8210 interrupt line
-+ * @reset_gpio:     ca8210 reset GPIO descriptor
-+ * @irq_gpio:       ca8210 interrupt GPIO descriptor
-  * @irq_id:         identifier for the ca8210 irq
-  *
-  */
-@@ -359,8 +357,8 @@ struct ca8210_platform_data {
- 	bool extclockenable;
- 	unsigned int extclockfreq;
- 	unsigned int extclockgpio;
--	int gpio_reset;
--	int gpio_irq;
-+	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *irq_gpio;
- 	int irq_id;
- };
- 
-@@ -632,10 +630,10 @@ static void ca8210_reset_send(struct spi_device *spi, unsigned int ms)
- 	struct ca8210_priv *priv = spi_get_drvdata(spi);
- 	long status;
- 
--	gpio_set_value(pdata->gpio_reset, 0);
-+	gpiod_set_value(pdata->reset_gpio, 1);
- 	reinit_completion(&priv->ca8210_is_awake);
- 	msleep(ms);
--	gpio_set_value(pdata->gpio_reset, 1);
-+	gpiod_set_value(pdata->reset_gpio, 0);
- 	priv->promiscuous = false;
- 
- 	/* Wait until wakeup indication seen */
-@@ -2788,24 +2786,14 @@ static int ca8210_reset_init(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
- 	struct ca8210_platform_data *pdata = dev_get_platdata(dev);
--	int ret;
- 
--	pdata->gpio_reset = of_get_named_gpio(
--		spi->dev.of_node,
--		"reset-gpio",
--		0
--	);
--
--	ret = gpio_direction_output(pdata->gpio_reset, 1);
--	if (ret < 0) {
--		dev_crit(
--			&spi->dev,
--			"Reset GPIO %d did not set to output mode\n",
--			pdata->gpio_reset
--		);
-+	pdata->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(pdata->reset_gpio)) {
-+		dev_crit(dev, "Reset GPIO did not set to output mode\n");
-+		return PTR_ERR(pdata->reset_gpio);
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -2820,20 +2808,15 @@ static int ca8210_interrupt_init(struct spi_device *spi)
- 	struct ca8210_platform_data *pdata = dev_get_platdata(dev);
- 	int ret;
- 
--	pdata->gpio_irq = of_get_named_gpio(
--		spi->dev.of_node,
--		"irq-gpio",
--		0
--	);
-+	pdata->irq_gpio = devm_gpiod_get(dev, "irq", GPIOD_IN);
-+	if (IS_ERR(pdata->irq_gpio)) {
-+		dev_crit(dev, "Could not retrieve IRQ GPIO\n");
-+		return PTR_ERR(pdata->irq_gpio);
-+	}
- 
--	pdata->irq_id = gpio_to_irq(pdata->gpio_irq);
-+	pdata->irq_id = gpiod_to_irq(pdata->irq_gpio);
- 	if (pdata->irq_id < 0) {
--		dev_crit(
--			&spi->dev,
--			"Could not get irq for gpio pin %d\n",
--			pdata->gpio_irq
--		);
--		gpio_free(pdata->gpio_irq);
-+		dev_crit(dev, "Could not get irq for IRQ GPIO\n");
- 		return pdata->irq_id;
- 	}
- 
-@@ -2844,10 +2827,8 @@ static int ca8210_interrupt_init(struct spi_device *spi)
- 		"ca8210-irq",
- 		spi_get_drvdata(spi)
- 	);
--	if (ret) {
-+	if (ret)
- 		dev_crit(&spi->dev, "request_irq %d failed\n", pdata->irq_id);
--		gpio_free(pdata->gpio_irq);
--	}
- 
- 	return ret;
- }
+I don't see anything wrong with this patch so I queued it for fixes. I
+will pull it back into my gpio/for-next branch once it's upstream and
+apply the rest of the aggregator changes for v6.15.
+
+[1/9] gpio: aggregator: protect driver attr handlers against module unload
+      commit: 12f65d1203507f7db3ba59930fe29a3b8eee9945
+
+Best regards,
 -- 
-2.47.2
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
