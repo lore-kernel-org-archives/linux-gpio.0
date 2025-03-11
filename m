@@ -1,34 +1,34 @@
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B6A1E3772;
-	Tue, 11 Mar 2025 01:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BC31E3787;
+	Tue, 11 Mar 2025 01:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741657818; cv=none; b=I50NQzmxGqINOfxxbUs0slMUfydyLbxMq8WJr0tBPz4JxchGScwEzWD1w+KVWb6sti/AOHWkU+pW9SM7waT4GLh2QaABvrolrMdis1xYz/mzCc1K3Lb4T0KC6IqDHhBDQWuD+/E86/k+WVGBVU7y7FP3Z56a/F1Lg8pVqNPl5Mc=
+	t=1741657819; cv=none; b=U9yx4O2A5rawSyuxkIG79Knu72xm/YePfklmaNlipeQ23W+I/7NxG6kspznkqO7Fu0J0ZqdTiLA7SJeXJKwpFxGRKAHP7FyfD60Tuh3qmS7ZzxDUTDjbNgYrjjOU3Z3nHxiWCL2b7NxP9wVscuoR2irVOYZLtZ0XDBDw7rPAJkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741657818; c=relaxed/simple;
-	bh=wYx1CQ78Ndu5nSXyKLNPEjFV9YURlYIneK/YC1bkDgk=;
+	s=arc-20240116; t=1741657819; c=relaxed/simple;
+	bh=8Jm3quf1LQQLKsLRTdaBM1ql/g0Rrq3sFfEcTMJgiik=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IpnxvyUZ3JvzK9BUQZt4MnKqLlKZmoeW+2vPdTgXIdXO/olSzjKNSd4eGSK+iuySRRQQHiPZVkZucSlevCkRlIK66bFamXcQExdqs3+mkj9wAs9uOu1SdoYxQ9eUn1tDIPZNG1veR5XCBK5LbSSEbkZIE0i4+cMqQUr/8K5lbuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=r+DzR7xI; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=OZQpeJE4Pw+dBWk0fBNygnRBObllk7lvP5/v0JovEQZ6B7tKWJtcvcgd2P9vgXYR6gHyYvm21fk7pRtVOpR9WN015GPqIQb9YtiYfHrogLa0/BKMdqXVomuwCm8JLrmybVWf87NQRYX5HozusuPNqhCrPNvglCCnIqHv7ZW1cKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HqA/qxtP; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="r+DzR7xI"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HqA/qxtP"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=m9R48WkcPvqp+088QwO4h5yu2gGi1ZdqKqOstpglSDI=; b=r+DzR7xIbpxJpxrF
-	Vle1nM4Mww2qn9rY0gEH6/N4yluw+PcbqRVd+ICIz0S/vsnqKiDjooyiqJMWroJNM0T9sFXQ2+BHF
-	9aZEmSQ9n3Vd7qOzGQ6jFpI51vTJz1O0ga4vCK8W/vMWg24HtXHthfgd1kGUyrIIy5QWbPXVFQcFK
-	8fmX8QvPCnF2GXvn7x37Y4SaZINHBoU903w7j2OvlMCkEv607xpf9yf6xm2D9EHFStqDggRlbz8hM
-	LyKkZ+Vm0cSMQ/XtSwKnL0VgomOcwyUwL27zPIxNdSP9ZRt/MugHKeSuGiP84M4rt9q6V/ajLWy10
-	/VSeFvgC3OqCDMlxGA==;
+	:Subject; bh=VY/DIWys+9hgx9n38Wl/0AM82g3+b7rakdL8YW8mjII=; b=HqA/qxtPHqcoCg1P
+	uYMBkSqV2kjXFS4TOiTlYQ5s1wy/r41djyLh9abngkvDfZZvZ8VWlkxqs2n4Bw2L1X8gDW/kVeVQ7
+	Js8hJ7w6B95gxzeVgO3tRuf65+nOIzMBb1ffpTtOQbODpg9KU6id+tUskaj5SfVYlYte6LOSJ0oec
+	z3utgS93uL4un6fZAuD2GA+2wRe+9b8XZ2IiAVI4/uBhl8IHPTvVIHIGH0qH4/UYCw2Um3XJC5b+W
+	kfeGZflgvhcXOYBixnSXjkW6WgOqfpZzJEZmumc85JA7oo/gFFTO8OEmbPpqXKqYDYxfZwaoA5p9l
+	ijFEGAttOPZ1iLUkog==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1trokt-0042n5-1N;
-	Tue, 11 Mar 2025 01:50:03 +0000
+	id 1trokr-0042n5-04;
+	Tue, 11 Mar 2025 01:50:01 +0000
 From: linux@treblig.org
 To: arnd@arndb.de,
 	lee@kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-mips@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2 5/9] regulator: pcf50633-regulator: Remove
-Date: Tue, 11 Mar 2025 01:49:55 +0000
-Message-ID: <20250311014959.743322-6-linux@treblig.org>
+Subject: [PATCH v2 1/9] mfd: pcf50633-adc:  Remove
+Date: Tue, 11 Mar 2025 01:49:51 +0000
+Message-ID: <20250311014959.743322-2-linux@treblig.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250311014959.743322-1-linux@treblig.org>
 References: <20250311014959.743322-1-linux@treblig.org>
@@ -78,172 +78,393 @@ Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/regulator/Kconfig              |   7 --
- drivers/regulator/Makefile             |   1 -
- drivers/regulator/pcf50633-regulator.c | 124 -------------------------
- 3 files changed, 132 deletions(-)
- delete mode 100644 drivers/regulator/pcf50633-regulator.c
+ arch/mips/configs/ip27_defconfig |   1 -
+ drivers/mfd/Kconfig              |   7 -
+ drivers/mfd/Makefile             |   1 -
+ drivers/mfd/pcf50633-adc.c       | 255 -------------------------------
+ include/linux/mfd/pcf50633/adc.h |  69 ---------
+ 5 files changed, 333 deletions(-)
+ delete mode 100644 drivers/mfd/pcf50633-adc.c
+ delete mode 100644 include/linux/mfd/pcf50633/adc.h
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 39297f7d8177..1236b3a1f93f 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -988,13 +988,6 @@ config REGULATOR_PCAP
- 	 This driver provides support for the voltage regulators of the
- 	 PCAP2 PMIC.
+diff --git a/arch/mips/configs/ip27_defconfig b/arch/mips/configs/ip27_defconfig
+index b08a199767d1..66085bb71bc4 100644
+--- a/arch/mips/configs/ip27_defconfig
++++ b/arch/mips/configs/ip27_defconfig
+@@ -256,7 +256,6 @@ CONFIG_I2C_STUB=m
+ # CONFIG_HWMON is not set
+ CONFIG_THERMAL=y
+ CONFIG_MFD_PCF50633=m
+-CONFIG_PCF50633_ADC=m
+ CONFIG_PCF50633_GPIO=m
+ # CONFIG_VGA_ARB is not set
+ CONFIG_LEDS_LP3944=m
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 6b0682af6e32..051272126fe1 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1129,13 +1129,6 @@ config MFD_PCF50633
+ 	  facilities, and registers devices for the various functions
+ 	  so that function-specific drivers can bind to them.
  
--config REGULATOR_PCF50633
--	tristate "NXP PCF50633 regulator driver"
+-config PCF50633_ADC
+-	tristate "NXP PCF50633 ADC"
 -	depends on MFD_PCF50633
 -	help
--	 Say Y here to support the voltage regulators and converters
--	 on PCF50633
+-	  Say yes here if you want to include support for ADC in the
+-	  NXP PCF50633 chip.
 -
- config REGULATOR_PF8X00
- 	tristate "NXP PF8100/PF8121A/PF8200 regulator driver"
- 	depends on I2C && OF
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 3d5a803dce8a..8dca3567437f 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -132,7 +132,6 @@ obj-$(CONFIG_REGULATOR_PWM) += pwm-regulator.o
- obj-$(CONFIG_REGULATOR_TPS51632) += tps51632-regulator.o
- obj-$(CONFIG_REGULATOR_PBIAS) += pbias-regulator.o
- obj-$(CONFIG_REGULATOR_PCAP) += pcap-regulator.o
--obj-$(CONFIG_REGULATOR_PCF50633) += pcf50633-regulator.o
- obj-$(CONFIG_REGULATOR_RAA215300) += raa215300.o
- obj-$(CONFIG_REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY)  += rpi-panel-attiny-regulator.o
- obj-$(CONFIG_REGULATOR_RC5T583)  += rc5t583-regulator.o
-diff --git a/drivers/regulator/pcf50633-regulator.c b/drivers/regulator/pcf50633-regulator.c
+ config PCF50633_GPIO
+ 	tristate "NXP PCF50633 GPIO"
+ 	depends on MFD_PCF50633
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 9220eaf7cf12..e085da3f13c3 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -185,7 +185,6 @@ obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
+ 
+ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+ obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
+-obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+ obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+ obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
+ obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
+diff --git a/drivers/mfd/pcf50633-adc.c b/drivers/mfd/pcf50633-adc.c
 deleted file mode 100644
-index 9f08a62c800e..000000000000
---- a/drivers/regulator/pcf50633-regulator.c
+index 1fbba0e666d5..000000000000
+--- a/drivers/mfd/pcf50633-adc.c
 +++ /dev/null
-@@ -1,124 +0,0 @@
+@@ -1,255 +0,0 @@
 -// SPDX-License-Identifier: GPL-2.0-or-later
--/* NXP PCF50633 PMIC Driver
+-/* NXP PCF50633 ADC Driver
 - *
 - * (C) 2006-2008 by Openmoko, Inc.
 - * Author: Balaji Rao <balajirrao@openmoko.org>
 - * All rights reserved.
 - *
 - * Broken down from monstrous PCF50633 driver mainly by
-- * Harald Welte and Andy Green and Werner Almesberger
+- * Harald Welte, Andy Green and Werner Almesberger
+- *
+- *  NOTE: This driver does not yet support subtractive ADC mode, which means
+- *  you can do only one measurement per read request.
 - */
 -
 -#include <linux/kernel.h>
+-#include <linux/slab.h>
 -#include <linux/module.h>
--#include <linux/init.h>
 -#include <linux/device.h>
--#include <linux/err.h>
 -#include <linux/platform_device.h>
+-#include <linux/completion.h>
 -
 -#include <linux/mfd/pcf50633/core.h>
--#include <linux/mfd/pcf50633/pmic.h>
+-#include <linux/mfd/pcf50633/adc.h>
 -
--#define PCF50633_REGULATOR(_name, _id, _min_uV, _uV_step, _min_sel, _n) \
--	{							\
--		.name = _name,					\
--		.id = PCF50633_REGULATOR_##_id,			\
--		.ops = &pcf50633_regulator_ops,			\
--		.n_voltages = _n,				\
--		.min_uV = _min_uV,				\
--		.uV_step = _uV_step,				\
--		.linear_min_sel = _min_sel,			\
--		.type = REGULATOR_VOLTAGE,			\
--		.owner = THIS_MODULE,				\
--		.vsel_reg = PCF50633_REG_##_id##OUT,		\
--		.vsel_mask = 0xff,				\
--		.enable_reg = PCF50633_REG_##_id##OUT + 1,	\
--		.enable_mask = PCF50633_REGULATOR_ON,		\
+-struct pcf50633_adc_request {
+-	int mux;
+-	int avg;
+-	void (*callback)(struct pcf50633 *, void *, int);
+-	void *callback_param;
+-};
+-
+-struct pcf50633_adc_sync_request {
+-	int result;
+-	struct completion completion;
+-};
+-
+-#define PCF50633_MAX_ADC_FIFO_DEPTH 8
+-
+-struct pcf50633_adc {
+-	struct pcf50633 *pcf;
+-
+-	/* Private stuff */
+-	struct pcf50633_adc_request *queue[PCF50633_MAX_ADC_FIFO_DEPTH];
+-	int queue_head;
+-	int queue_tail;
+-	struct mutex queue_mutex;
+-};
+-
+-static inline struct pcf50633_adc *__to_adc(struct pcf50633 *pcf)
+-{
+-	return platform_get_drvdata(pcf->adc_pdev);
+-}
+-
+-static void adc_setup(struct pcf50633 *pcf, int channel, int avg)
+-{
+-	channel &= PCF50633_ADCC1_ADCMUX_MASK;
+-
+-	/* kill ratiometric, but enable ACCSW biasing */
+-	pcf50633_reg_write(pcf, PCF50633_REG_ADCC2, 0x00);
+-	pcf50633_reg_write(pcf, PCF50633_REG_ADCC3, 0x01);
+-
+-	/* start ADC conversion on selected channel */
+-	pcf50633_reg_write(pcf, PCF50633_REG_ADCC1, channel | avg |
+-		    PCF50633_ADCC1_ADCSTART | PCF50633_ADCC1_RES_10BIT);
+-}
+-
+-static void trigger_next_adc_job_if_any(struct pcf50633 *pcf)
+-{
+-	struct pcf50633_adc *adc = __to_adc(pcf);
+-	int head;
+-
+-	head = adc->queue_head;
+-
+-	if (!adc->queue[head])
+-		return;
+-
+-	adc_setup(pcf, adc->queue[head]->mux, adc->queue[head]->avg);
+-}
+-
+-static int
+-adc_enqueue_request(struct pcf50633 *pcf, struct pcf50633_adc_request *req)
+-{
+-	struct pcf50633_adc *adc = __to_adc(pcf);
+-	int head, tail;
+-
+-	mutex_lock(&adc->queue_mutex);
+-
+-	head = adc->queue_head;
+-	tail = adc->queue_tail;
+-
+-	if (adc->queue[tail]) {
+-		mutex_unlock(&adc->queue_mutex);
+-		dev_err(pcf->dev, "ADC queue is full, dropping request\n");
+-		return -EBUSY;
 -	}
 -
--static const struct regulator_ops pcf50633_regulator_ops = {
--	.set_voltage_sel = regulator_set_voltage_sel_regmap,
--	.get_voltage_sel = regulator_get_voltage_sel_regmap,
--	.list_voltage = regulator_list_voltage_linear,
--	.map_voltage = regulator_map_voltage_linear,
--	.enable = regulator_enable_regmap,
--	.disable = regulator_disable_regmap,
--	.is_enabled = regulator_is_enabled_regmap,
--};
+-	adc->queue[tail] = req;
+-	if (head == tail)
+-		trigger_next_adc_job_if_any(pcf);
+-	adc->queue_tail = (tail + 1) & (PCF50633_MAX_ADC_FIFO_DEPTH - 1);
 -
--static const struct regulator_desc regulators[] = {
--	[PCF50633_REGULATOR_AUTO] =
--		PCF50633_REGULATOR("auto", AUTO, 1800000, 25000, 0x2f, 128),
--	[PCF50633_REGULATOR_DOWN1] =
--		PCF50633_REGULATOR("down1", DOWN1, 625000, 25000, 0, 96),
--	[PCF50633_REGULATOR_DOWN2] =
--		PCF50633_REGULATOR("down2", DOWN2, 625000, 25000, 0, 96),
--	[PCF50633_REGULATOR_LDO1] =
--		PCF50633_REGULATOR("ldo1", LDO1, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_LDO2] =
--		PCF50633_REGULATOR("ldo2", LDO2, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_LDO3] =
--		PCF50633_REGULATOR("ldo3", LDO3, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_LDO4] =
--		PCF50633_REGULATOR("ldo4", LDO4, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_LDO5] =
--		PCF50633_REGULATOR("ldo5", LDO5, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_LDO6] =
--		PCF50633_REGULATOR("ldo6", LDO6, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_HCLDO] =
--		PCF50633_REGULATOR("hcldo", HCLDO, 900000, 100000, 0, 28),
--	[PCF50633_REGULATOR_MEMLDO] =
--		PCF50633_REGULATOR("memldo", MEMLDO, 900000, 100000, 0, 28),
--};
--
--static int pcf50633_regulator_probe(struct platform_device *pdev)
--{
--	struct regulator_dev *rdev;
--	struct pcf50633 *pcf;
--	struct regulator_config config = { };
--
--	/* Already set by core driver */
--	pcf = dev_to_pcf50633(pdev->dev.parent);
--
--	config.dev = &pdev->dev;
--	config.init_data = dev_get_platdata(&pdev->dev);
--	config.driver_data = pcf;
--	config.regmap = pcf->regmap;
--
--	rdev = devm_regulator_register(&pdev->dev, &regulators[pdev->id],
--				       &config);
--	if (IS_ERR(rdev))
--		return PTR_ERR(rdev);
--
--	platform_set_drvdata(pdev, rdev);
--
--	if (pcf->pdata->regulator_registered)
--		pcf->pdata->regulator_registered(pcf, pdev->id);
+-	mutex_unlock(&adc->queue_mutex);
 -
 -	return 0;
 -}
 -
--static struct platform_driver pcf50633_regulator_driver = {
+-static void pcf50633_adc_sync_read_callback(struct pcf50633 *pcf, void *param,
+-	int result)
+-{
+-	struct pcf50633_adc_sync_request *req = param;
+-
+-	req->result = result;
+-	complete(&req->completion);
+-}
+-
+-int pcf50633_adc_sync_read(struct pcf50633 *pcf, int mux, int avg)
+-{
+-	struct pcf50633_adc_sync_request req;
+-	int ret;
+-
+-	init_completion(&req.completion);
+-
+-	ret = pcf50633_adc_async_read(pcf, mux, avg,
+-		pcf50633_adc_sync_read_callback, &req);
+-	if (ret)
+-		return ret;
+-
+-	wait_for_completion(&req.completion);
+-
+-	return req.result;
+-}
+-EXPORT_SYMBOL_GPL(pcf50633_adc_sync_read);
+-
+-int pcf50633_adc_async_read(struct pcf50633 *pcf, int mux, int avg,
+-			     void (*callback)(struct pcf50633 *, void *, int),
+-			     void *callback_param)
+-{
+-	struct pcf50633_adc_request *req;
+-	int ret;
+-
+-	/* req is freed when the result is ready, in interrupt handler */
+-	req = kmalloc(sizeof(*req), GFP_KERNEL);
+-	if (!req)
+-		return -ENOMEM;
+-
+-	req->mux = mux;
+-	req->avg = avg;
+-	req->callback = callback;
+-	req->callback_param = callback_param;
+-
+-	ret = adc_enqueue_request(pcf, req);
+-	if (ret)
+-		kfree(req);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(pcf50633_adc_async_read);
+-
+-static int adc_result(struct pcf50633 *pcf)
+-{
+-	u8 adcs1, adcs3;
+-	u16 result;
+-
+-	adcs1 = pcf50633_reg_read(pcf, PCF50633_REG_ADCS1);
+-	adcs3 = pcf50633_reg_read(pcf, PCF50633_REG_ADCS3);
+-	result = (adcs1 << 2) | (adcs3 & PCF50633_ADCS3_ADCDAT1L_MASK);
+-
+-	dev_dbg(pcf->dev, "adc result = %d\n", result);
+-
+-	return result;
+-}
+-
+-static void pcf50633_adc_irq(int irq, void *data)
+-{
+-	struct pcf50633_adc *adc = data;
+-	struct pcf50633 *pcf = adc->pcf;
+-	struct pcf50633_adc_request *req;
+-	int head, res;
+-
+-	mutex_lock(&adc->queue_mutex);
+-	head = adc->queue_head;
+-
+-	req = adc->queue[head];
+-	if (WARN_ON(!req)) {
+-		dev_err(pcf->dev, "pcf50633-adc irq: ADC queue empty!\n");
+-		mutex_unlock(&adc->queue_mutex);
+-		return;
+-	}
+-	adc->queue[head] = NULL;
+-	adc->queue_head = (head + 1) &
+-				      (PCF50633_MAX_ADC_FIFO_DEPTH - 1);
+-
+-	res = adc_result(pcf);
+-	trigger_next_adc_job_if_any(pcf);
+-
+-	mutex_unlock(&adc->queue_mutex);
+-
+-	req->callback(pcf, req->callback_param, res);
+-	kfree(req);
+-}
+-
+-static int pcf50633_adc_probe(struct platform_device *pdev)
+-{
+-	struct pcf50633_adc *adc;
+-
+-	adc = devm_kzalloc(&pdev->dev, sizeof(*adc), GFP_KERNEL);
+-	if (!adc)
+-		return -ENOMEM;
+-
+-	adc->pcf = dev_to_pcf50633(pdev->dev.parent);
+-	platform_set_drvdata(pdev, adc);
+-
+-	pcf50633_register_irq(adc->pcf, PCF50633_IRQ_ADCRDY,
+-					pcf50633_adc_irq, adc);
+-
+-	mutex_init(&adc->queue_mutex);
+-
+-	return 0;
+-}
+-
+-static void pcf50633_adc_remove(struct platform_device *pdev)
+-{
+-	struct pcf50633_adc *adc = platform_get_drvdata(pdev);
+-	int i, head;
+-
+-	pcf50633_free_irq(adc->pcf, PCF50633_IRQ_ADCRDY);
+-
+-	mutex_lock(&adc->queue_mutex);
+-	head = adc->queue_head;
+-
+-	if (WARN_ON(adc->queue[head]))
+-		dev_err(adc->pcf->dev,
+-			"adc driver removed with request pending\n");
+-
+-	for (i = 0; i < PCF50633_MAX_ADC_FIFO_DEPTH; i++)
+-		kfree(adc->queue[i]);
+-
+-	mutex_unlock(&adc->queue_mutex);
+-}
+-
+-static struct platform_driver pcf50633_adc_driver = {
 -	.driver = {
--		.name = "pcf50633-regulator",
--		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+-		.name = "pcf50633-adc",
 -	},
--	.probe = pcf50633_regulator_probe,
+-	.probe = pcf50633_adc_probe,
+-	.remove = pcf50633_adc_remove,
 -};
 -
--static int __init pcf50633_regulator_init(void)
--{
--	return platform_driver_register(&pcf50633_regulator_driver);
--}
--subsys_initcall(pcf50633_regulator_init);
--
--static void __exit pcf50633_regulator_exit(void)
--{
--	platform_driver_unregister(&pcf50633_regulator_driver);
--}
--module_exit(pcf50633_regulator_exit);
+-module_platform_driver(pcf50633_adc_driver);
 -
 -MODULE_AUTHOR("Balaji Rao <balajirrao@openmoko.org>");
--MODULE_DESCRIPTION("PCF50633 regulator driver");
+-MODULE_DESCRIPTION("PCF50633 adc driver");
 -MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:pcf50633-regulator");
+-MODULE_ALIAS("platform:pcf50633-adc");
+-
+diff --git a/include/linux/mfd/pcf50633/adc.h b/include/linux/mfd/pcf50633/adc.h
+deleted file mode 100644
+index 6a81896d4889..000000000000
+--- a/include/linux/mfd/pcf50633/adc.h
++++ /dev/null
+@@ -1,69 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * adc.h  -- Driver for NXP PCF50633 ADC
+- *
+- * (C) 2006-2008 by Openmoko, Inc.
+- * All rights reserved.
+- */
+-
+-#ifndef __LINUX_MFD_PCF50633_ADC_H
+-#define __LINUX_MFD_PCF50633_ADC_H
+-
+-#include <linux/mfd/pcf50633/core.h>
+-#include <linux/platform_device.h>
+-
+-/* ADC Registers */
+-#define PCF50633_REG_ADCC3		0x52
+-#define PCF50633_REG_ADCC2		0x53
+-#define PCF50633_REG_ADCC1		0x54
+-#define PCF50633_REG_ADCS1		0x55
+-#define PCF50633_REG_ADCS2		0x56
+-#define PCF50633_REG_ADCS3		0x57
+-
+-#define PCF50633_ADCC1_ADCSTART		0x01
+-#define PCF50633_ADCC1_RES_8BIT		0x02
+-#define PCF50633_ADCC1_RES_10BIT	0x00
+-#define PCF50633_ADCC1_AVERAGE_NO	0x00
+-#define PCF50633_ADCC1_AVERAGE_4	0x04
+-#define PCF50633_ADCC1_AVERAGE_8	0x08
+-#define PCF50633_ADCC1_AVERAGE_16	0x0c
+-#define PCF50633_ADCC1_MUX_BATSNS_RES	0x00
+-#define PCF50633_ADCC1_MUX_BATSNS_SUBTR	0x10
+-#define PCF50633_ADCC1_MUX_ADCIN2_RES	0x20
+-#define PCF50633_ADCC1_MUX_ADCIN2_SUBTR	0x30
+-#define PCF50633_ADCC1_MUX_BATTEMP	0x60
+-#define PCF50633_ADCC1_MUX_ADCIN1	0x70
+-#define PCF50633_ADCC1_AVERAGE_MASK	0x0c
+-#define PCF50633_ADCC1_ADCMUX_MASK	0xf0
+-
+-#define PCF50633_ADCC2_RATIO_NONE	0x00
+-#define PCF50633_ADCC2_RATIO_BATTEMP	0x01
+-#define PCF50633_ADCC2_RATIO_ADCIN1	0x02
+-#define PCF50633_ADCC2_RATIO_BOTH	0x03
+-#define PCF50633_ADCC2_RATIOSETTL_100US 0x04
+-
+-#define PCF50633_ADCC3_ACCSW_EN		0x01
+-#define PCF50633_ADCC3_NTCSW_EN		0x04
+-#define PCF50633_ADCC3_RES_DIV_TWO	0x10
+-#define PCF50633_ADCC3_RES_DIV_THREE	0x00
+-
+-#define PCF50633_ADCS3_REF_NTCSW	0x00
+-#define PCF50633_ADCS3_REF_ACCSW	0x10
+-#define PCF50633_ADCS3_REF_2V0		0x20
+-#define PCF50633_ADCS3_REF_VISA		0x30
+-#define PCF50633_ADCS3_REF_2V0_2	0x70
+-#define PCF50633_ADCS3_ADCRDY		0x80
+-
+-#define PCF50633_ADCS3_ADCDAT1L_MASK	0x03
+-#define PCF50633_ADCS3_ADCDAT2L_MASK	0x0c
+-#define PCF50633_ADCS3_ADCDAT2L_SHIFT	2
+-#define PCF50633_ASCS3_REF_MASK		0x70
+-
+-extern int
+-pcf50633_adc_async_read(struct pcf50633 *pcf, int mux, int avg,
+-		void (*callback)(struct pcf50633 *, void *, int),
+-		void *callback_param);
+-extern int
+-pcf50633_adc_sync_read(struct pcf50633 *pcf, int mux, int avg);
+-
+-#endif /* __LINUX_PCF50633_ADC_H */
 -- 
 2.48.1
 
