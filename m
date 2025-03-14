@@ -1,93 +1,91 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA62B2F4A
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 10:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1880C1DDA33
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 10:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948563; cv=none; b=fW7g7T4cSXuU8sVXjgc7hyK+1MmW+dXDeMYN+57DJynRIf/xulScRYeHCdOSTYUCaKdmArlUVY0m91IyF1LAmZZi8t/CYI0UwCoPHMVauvDyaXTkUYZiqCMufON/EFFqHq7Uxmws0YOTNGyj7i/fyJce5CBPAy8Jnyn+dLOTEvo=
+	t=1741948741; cv=none; b=OCeJqkCCd9euH9V40bJN613soK3eBSwhSjqmsRMC3ZpRTNwEWOE1u6CVBX0mxuo4ADSU9dTqLV8VkXzyRUzmCAqPzXuFuXdwM876tUfLVBM26wlqrnxVZkxAgFlPqsAyYvby1Zc5Ts1YPGX6RW3lKFtCc7NmK2oQwQhXjP2TUOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948563; c=relaxed/simple;
-	bh=oNB6/brWRYGDcdPEdCxCrOD4XLyJDxlEhSU5P3Fiuf8=;
+	s=arc-20240116; t=1741948741; c=relaxed/simple;
+	bh=NyeLesu/6qOxsTAaXie5nFM1At2JPy33BMSuqodw/Vc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jw1qem2vUf04svg8DspkoDmg7sqmPcCT7JFtm4ETSuqzWtyHDLEGQrN2MGcXVuwuMFXC/LrMADC2V89H6pYuhFo4LJrOt9u++NhiwQBjVnOs6HISMYo5kzhwjHMePzB9TuL51ZxKl0UxOeKJwQuZZNE8G2+cxXHw00MeumOrFzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=omDiJGhD; arc=none smtp.client-ip=209.85.167.51
+	 To:Cc:Content-Type; b=h3+xt+rE6gEY/o8WC1rDbytLtiAtpU3ngoqTarKyBF3vhynP7oGOLrQa1ze9ZtY2UYY37B5Db9JAubAfP7XU3wMVvEUJrbOnVr2n5pcc530+5Ao/8VCucSmJZe7PGDo/DotK4XNzYjDgrH2mS9O/Nv1k2BDs/8Q1oXW26O7fmc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ky3DEI/o; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="omDiJGhD"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-549b159c84cso1929657e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 03:35:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ky3DEI/o"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5499c5d9691so2102886e87.2
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 03:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741948558; x=1742553358; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741948738; x=1742553538; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PBq11ylwu5R382gZxqzXZy+KZY3NpzkBPWG/tVivh9M=;
-        b=omDiJGhDxS3+hUgKz1Y1jnh68d8j7Ok/WVf+jrxI8Ejn8Yip4r5u01KlomR63wMrOD
-         pJT0cu5XpUWXcmotKerqrpMkYZwkjmD3nqb1tNPPasnPjTUmYKDMhtQ5Ov+Ay4ETGTEr
-         cAHuDPoM3vwxx5nOC69sR8qf8fex88zpMk3765hQnpsjNqqI7FtYzuIk54SwWtOj+tAP
-         fXGoulDMTPdlvoe6WCIwA1NWxgLjgXM8OQ86jdbGaAKiNrLvNI1iuxg0s19Vkrc54mQY
-         vFT3Tag2hNGU2pKnt9jE8TbZbWpRu+LuXspJ1N1NNBK6In2S4uX3L9UbMYSiimQ7Hf8f
-         ppXg==
+        bh=NyeLesu/6qOxsTAaXie5nFM1At2JPy33BMSuqodw/Vc=;
+        b=Ky3DEI/ojdNomHzrTkgJ5n80G+gVyhrXzrC4wCU4Y8GkPoZm4IcrFfijqPumlEc9/y
+         COfbmkidsngyMd+SNwaTdaujLJWiY1Lct5s+kCXfM+b83ib5O87/xUYpPm1nmgroq3Pg
+         Q+c9O/UK4V//rekxxEsbtTo7XQJkjyRxLcOaqae7X8eSx3EfxBwecrSolv2U4kdNeWNd
+         FBnmlIbuJWTZkqzQ4Tzo8+HPiShXVpOhTIi1pLS4lMjHGkrhpu/vj84Jncq+h9W4kvGk
+         kOWdHjZNCAZ3WGknuySX8gMp3Ey4qZtLYSdMn8kojUHcQC/HTPiAFCgo3fwBDcuSUcoA
+         TJSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741948558; x=1742553358;
+        d=1e100.net; s=20230601; t=1741948738; x=1742553538;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PBq11ylwu5R382gZxqzXZy+KZY3NpzkBPWG/tVivh9M=;
-        b=WnD9/3bf6UScBNwSWMUnmwbQRaK0Fwrdow8+kbPp0FKX0yHCfI2dDDilF/FUlYhVUN
-         FM9afBixPfyLqf+PP697iKtjKOBLaPS8wk9n5zh4Kt6jflRRx0A9CIaVFXW5poGcsXC9
-         6q0poAP9awVqsOGf3ifo3NUHUDHayP6hZqWyTgUH4B+jDZ3XnWnqGIOMd9v4blq+ygVs
-         gJoa8i0WbD1P6lkJzH6rB2mn62fkC1XHWyiVwrG4c73Ed3UwKRNsbs2wTEA5BGVKz7+F
-         bbDxe04TkcKWPhDdnCG/ipWalSwG2it7DgTK4wNoOeqdEGjVOBpII5Q9FTGG03YZci9W
-         uErQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkwZ6hdcBWL21sGDaJ2rQgYnCLBb3EaV7WAiCi4xCi0p2zhknWix5P31AWNW9W96asxR+oJmGgqRq0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBKhI27mDQ8HUR35ZPZasWt2XqLNu7IjwqladmX7lrE7pw2QwW
-	eJywxTK22H8xfhQ3Muut8FA4tKbBUG7zn7PqBzSMYSMKqptLIkL24TSmwT/O0LfVQtUckExqf0t
-	JtO42QewOl8UFo2LLbSCajYiT7n6jn7anuHiwgA==
-X-Gm-Gg: ASbGnctJVj8kqccjFzxviTL99m4a0FPr1Rqex5KGNwJXhnGh7TmhBijK7CyglMk5xnL
-	lhTJfvOhAEj/bh9yhD4dtqIVUJCT2vrzYfNyvZV6KMaJYZHFtD5S+iN1uklPbd3uURyawv+DNFY
-	eMA3WqDq4AF0kEBiXPb6qrPPQ=
-X-Google-Smtp-Source: AGHT+IFo7a8aP8LrtXsMzS05IJF+N+ZjJx5DRyPZKzboYtcGh7BYc7nkwi3Kg4DoP3cYib1OWjtVARzILEhT3JyV8rs=
-X-Received: by 2002:a05:6512:2350:b0:545:2b24:c714 with SMTP id
- 2adb3069b0e04-549c3911e6bmr755718e87.18.1741948557930; Fri, 14 Mar 2025
- 03:35:57 -0700 (PDT)
+        bh=NyeLesu/6qOxsTAaXie5nFM1At2JPy33BMSuqodw/Vc=;
+        b=Uu1tLtdK8CdBWETNiKcqh5cfbQWrXneZ+RLs6k7+7IDdK0XgYiaRjpX1vGMP2CszsR
+         1hxTCl9BOdL9VOH+2w9fyS03KV7bZaHLEex856SQArYQUfvWiYzhHyUB4nojvzlwMNYO
+         UaY2Kes4R1BVUjoSGf/WV2UHXrRPeKNrUGDAgrU5LVOW0BeWhgeifuQTnF4GWbTT4gXm
+         9DhJMbpTCzxUszlq/viSUn2FAMaybz09xN0f9cB7CGadLK8a8SIN1cPbLf/wVmt9eMA2
+         5+xonJ0pn88OKvpCjdEPnyy1WHijRMZ/fsLExUXDjptNumjt0Gkxkt5Azo5CTMNBjMvF
+         Yu9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXb9jHQb94jlBpT7zWt1Ck500FZxWnN431zRPUHkdfOQi5XlJAR+YrWX+0cXtRRXdTcW0L1PgaZZhVp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+X5krAi/cIao2F4N59U25T921UU/K8C94LpQcqyKXv0mP4TA2
+	QxUlJ5mo4K4nGhBBoAvHGFlXQWSaJJ9io6tF1UuXtJnXXnLFTidBwB0sZYQgGPR1K+IEuEMp1aK
+	a7+EwWz9D5YBvYnXI1b0Me8vqYl3QYNLQj3+CwQ==
+X-Gm-Gg: ASbGncs8h77bY4VOBIomF+4USc27T3wUmhjMgtRFOKUB7xOeXFEbaZ4LVe5+zMbta9O
+	p271deBvhcr31mWuFIgc/sLnquJziA5GSTE6QYj1GFd0qvG9+FxHkVgiwpuT16iES7YnnPjRjSN
+	z5GWrAJ4viULHytTzO4LEly8o=
+X-Google-Smtp-Source: AGHT+IHxhAnR8E+RwasBnU+EVae5M55GP8ujY0PhZJ8YjGHRbmG1lTmcDhu2uwV0HMJdLPp8ZnEwtoKmC+WIjWFCG9k=
+X-Received: by 2002:a05:6512:2343:b0:549:4de9:22df with SMTP id
+ 2adb3069b0e04-549c3612160mr635995e87.0.1741948738199; Fri, 14 Mar 2025
+ 03:38:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-In-Reply-To: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
+References: <20250307-en7581-gpio-range-v1-0-de1262105428@kernel.org> <20250307-en7581-gpio-range-v1-1-de1262105428@kernel.org>
+In-Reply-To: <20250307-en7581-gpio-range-v1-1-de1262105428@kernel.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 14 Mar 2025 11:35:45 +0100
-X-Gm-Features: AQ5f1JpewYNdVReOE7yOz7Jhb_-0BXB-6RAsfqpo9dfZwpZcAV2B4PUacGG94IY
-Message-ID: <CACRpkdYkvTr9ijyEVSzevHdHFDb0iJTOzCS_3gQG0eNcpR7tcw@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: bcm281xx: Add missing assignment in bcm21664_pinctrl_lock_all()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Artur Weber <aweber.kernel@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Fri, 14 Mar 2025 11:38:47 +0100
+X-Gm-Features: AQ5f1Jo9_mqBFukwygbuTda_hEtN2V8hjFmv1KBkHq8fVH1jsyHNXjQJZyWyfVk
+Message-ID: <CACRpkdZpj9q+yH7VEQJ=tOjpR6S3GTeHbyYpqaTYxCOJgGd7+w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: airoha: Add missing gpio-ranges property
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 10, 2025 at 11:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
+On Fri, Mar 7, 2025 at 6:08=E2=80=AFPM Lorenzo Bianconi <lorenzo@kernel.org=
+> wrote:
 
-> The next line checks if this regmap_write() failed, but it doesn't
-> work because the assignment was accidentally left out.  Add the
-> assignment.
+> Introduce leftover gpio-ranges property for Airoha EN7581 pinctrl binding
 >
-> Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux"=
-)
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Fixes: d0c15cb96b74 ("dt-bindings: pinctrl: airoha: Add EN7581 pinctrl")
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-Patch applied!
+This patch 1/2 applied to the pinctrl tree.
+
+Please funnel 2/2 through the SoC tree.
 
 Yours,
 Linus Walleij
