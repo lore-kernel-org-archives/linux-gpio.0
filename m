@@ -1,102 +1,176 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758811DA617
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 10:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608361F3FD3;
+	Fri, 14 Mar 2025 10:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948536; cv=none; b=bu7dKnBIqceDSVXPGbu6OuXe8w07lFzkZEcGu7oDjGHolcye6c/7mK+WODmI0JFEHb1e+CFmhP6JqoBKNpA+m+FyYmxhcLNnFct10aNnoPivmkMYd7IWiuzpjR1Zdlqyjz6dNyhI12Ims5XW2+G5ifSm9Pf3mY4Q5Se+4oHGCSI=
+	t=1741948562; cv=none; b=e/J49SZXO8EktCqTCZjRCtzNq4sRhFkYU8L5KFWaqdgxZBqJ1EGfkI6IYYaDqFfz724z5C4Q6RvebgWpcucw1RGmUrTKIM2wD8NNdL09n6B/NNV+Rel4YyHgXlUNqh9+gh2mCTZNTzFNBZhe9ANKVyEp6+X7sW/Co+zuIQd7c9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948536; c=relaxed/simple;
-	bh=byp0CMONitAS83Z+cofs0zoqBUKuIOo2HHl452cNy7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hcw/fBNRDD4T2Dw46qiKWGTVCcHX9om2XyCz8xOqp7+QNd1lr0VDgcc8MoCE7X+gNQ77Le4aJFIz9X5NStwQwv1gGzVDmwKCVKAA3S1tPS6D251ry0cBs0xeyDiW0ySGXNdhhEXaIyY02UBhT17ZNBE+RGicjv8aILTuOJepZNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UX/9XGJQ; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1741948562; c=relaxed/simple;
+	bh=LRk5FiXCZAm/QLOqWOprpG9wIHqysVDkW9SPn6Y74UY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mumjIPcPAo9afu3HhhiiffOg/B95Dn3v9c2HiyCAS64AJsZoViLlw47hRn16JloKtXqOuq96IzGq15fbALnZgafjpakyyRv+9uvjdEJXednm8Pollj/vP2l0p7bY5Dtffo41lgUdGIGtwyTi+RCHPeMARm3pO9x1ETwPVlYl1Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=o8Jm4H04; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UX/9XGJQ"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-549b116321aso2205575e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Mar 2025 03:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741948532; x=1742553332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=byp0CMONitAS83Z+cofs0zoqBUKuIOo2HHl452cNy7w=;
-        b=UX/9XGJQUW2crxkYTjxrGqcXoM8pEebdnEb2H1RPSI8o8aN4TXVoEvdH7XvoASCpcC
-         3PBoICaexwlMgQ22NBV6R/E8dGv7MtHKastT3I3fXqgFB9oqC7/09rtVZySq2KxVGDYV
-         ENe/60NfeLQkeeqs7TPNdAsZi6z4U/smDf2UUxk/jV5QyXJLPjQ7sICH/H3CKMqGLemB
-         QolHUWXt5aY7mO72gOCnkDIgqyXY8xHiGIddIuMCNzCFoFIyPi8FXifMBxnt6WNeHSPG
-         rczMF/MOzX+RLqyzEeo7t7O883z5qoJNVE3M9hdzMLBe6xFSEY/BKJF6pWxhj91KEVFS
-         sc3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741948532; x=1742553332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=byp0CMONitAS83Z+cofs0zoqBUKuIOo2HHl452cNy7w=;
-        b=RDYvpP8+tyX/RKzRB9IXLgLYePbhKR7f6CmNgsoI7Iiw6+gZ5zPH2EUU56gyCq5B4w
-         EvEk6duFK5MlEf5FjursA06R6x54F3qqtVIAAnWyeLgKr771e7slpvM523z3y2sP35ZE
-         PrECmTvHbOifzA16GjCHyThtAVYdm5mwnGAA0qT1UIsTyW8IMy98JfolB7OA7uMXp4BQ
-         66F0MvkZgOJ5V54C2OxcBkCcoU/mjFXHswPaZ54JXZ+NUUNluuJjE+f+oaBkZrEa4Drw
-         nxCPcJ33ZXAR6sTb09oHTin3sebdYuA6Sj8+Itlvpdh15zlZ0AOpF0Tv9TubFar1qHJI
-         aQZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhGXd624FM1KUzwKgUmrl+5VP6Uom8ZwRdnFww0LlQsBrwe7eLpIaCpTNmwklFFrCev7vvHiMbEg8N@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZXrSfhomSHNvM8+9zRNNnhnvm1b/78HRwKAlBsuTJoV2zX3q7
-	/4kcqLdPmGJ5slWXI9RzdZdtW4sj4U1Bl0GZPepyg7uJ50T5HXjy8ILYfRWAqfvSIYSe7GE5PJv
-	YdvfEDz2yGCmpuRMgYRq8rrR6VPV3+IQ6jgVmBg==
-X-Gm-Gg: ASbGncv5l7wjeJi7lgTb7nuPvgBVXyg0/z/DjHOWdKeY6Mog5iC7QhhqdcRqiIOx49d
-	3NY+xSCVa6V6kwREl2kqm4YJ3eJG9irMCM4pOn8TWxUjxBvIZh2+KXuZ/hs3AjsaRtqptIbfgq6
-	zxFYzjDlgBGVB4pIe5FB8NKePGw+G7MbWdGh+SZ0avcv5uzyt90HmYhZG3Jg==
-X-Google-Smtp-Source: AGHT+IHNSwbjzbuzRPAiJD00Jt5nD26NtrsgQ3Lc7gQxLhe707fef4I+GVhiAwy5zJX0S/yQtbxvirtc4ueDEeSIyFY=
-X-Received: by 2002:a05:6512:ba9:b0:549:5b54:2c77 with SMTP id
- 2adb3069b0e04-549c3924ecfmr680660e87.32.1741948532345; Fri, 14 Mar 2025
- 03:35:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="o8Jm4H04"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741948558;
+	bh=LRk5FiXCZAm/QLOqWOprpG9wIHqysVDkW9SPn6Y74UY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o8Jm4H0499PVZUsmP41hbpJxEZtW+GATf073GkU3+PVx0hzH0NaAHMax6kJ4rVO4R
+	 p7OiUuBgIMoXxI7pQALVCzDvtwFNq/Tr4yyUMtScGddFL4MBsgNm5zrscSh3t7eA7S
+	 PhSWlOTThdGgqc2sW2NL0i1AA1+WD3Es7980ZMTkQlcHnq1Q36Eph+Ny8n3DVltn8b
+	 zyHKWwtgyL4jqKWxxN9amhMZ1kTBjV50WJcKgpD4uf3wBNpdKkyt9YCE0oEn92R/dC
+	 8/RT3RrUKLY5dM+NfW1qZcWTrmLgoKztvozDvd0a5yW588jt1zRoJBgtK7YzIGWWMs
+	 yHnNmzH52vTzg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F131717E0CA6;
+	Fri, 14 Mar 2025 11:35:56 +0100 (CET)
+Message-ID: <d4b3bc28-b96b-4b11-a99d-d3492ad19438@collabora.com>
+Date: Fri, 14 Mar 2025 11:35:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-gpio-set-check-output-v1-1-d971bca9e6fa@linaro.org> <CACRpkdYujYhF8VP-_6O4Bt2tWL-NO-GgQPr=DeqE9QwCq12gqg@mail.gmail.com>
-In-Reply-To: <CACRpkdYujYhF8VP-_6O4Bt2tWL-NO-GgQPr=DeqE9QwCq12gqg@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 14 Mar 2025 11:35:21 +0100
-X-Gm-Features: AQ5f1JoZTZzrHSsu-v4vWCd9D7G2LfPqDBPbesIa9dWZsnlLy03UiQNrMNRR14M
-Message-ID: <CAMRc=MdwQZMDaHn15n4zgCujtDRg=UUwz3A9ZUYY9Uv7FFgz2Q@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: don't allow setting values on input lines
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kent Gibson <warthog618@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic documents
+To: Krzysztof Kozlowski <krzk@kernel.org>, "Lu.Tang" <Lu.Tang@mediatek.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Chen Zhong <chen.zhong@mediatek.com>,
+ Sen Chu <shen.chu@mediatek.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
+ <20250314073307.25092-6-Lu.Tang@mediatek.com>
+ <19ddb133-7f11-4c1b-b0e1-91523d42040c@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <19ddb133-7f11-4c1b-b0e1-91523d42040c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 11:33=E2=80=AFAM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->
-> On Tue, Mar 11, 2025 at 3:20=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Some drivers as well as the character device and sysfs code check
-> > whether the line actually is in output mode before allowing the user to
-> > set a value.
-> >
-> > However, GPIO value setters now return integer values and can indicate
-> > failures. This allows us to move these checks into the core code.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Makes sense, if there are regressions let's smoke them out
-> in linux-next.
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Il 14/03/25 11:32, Krzysztof Kozlowski ha scritto:
+> On 14/03/2025 08:32, Lu.Tang wrote:
+> 
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> 
+> There is no subsystem "pmic".
+> 
+>> Add new pmic mfd and adc documents for mt8196
+>>
+>> Signed-off-by: Lu.Tang <Lu.Tang@mediatek.com>
+> 
+> Are you sure Latin transcription of your name includes '.' or you just
+> copy-paste email address?
+> 
+> 
+> ...
+> 
+>> +  - Lu Tang <lu.tang@mediatek.com>
+>> +
+>> +description:
+>> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
+>> +  in some MediaTek PMICs, performing various PMIC related measurements
+>> +  such as battery and PMIC internal voltage regulators temperatures,
+>> +  other than voltages for various PMIC internal components.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - mediatek,mt6363-auxadc
+>> +      - mediatek,mt6373-auxadc
+> 
+> Just fold the device to the parent node.
+> 
+> 
+> 
+> ..
+> 
+> 
+> 
+>> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
+>> new file mode 100644
+>> index 000000000000..a8f1231623cf
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/mediatek,spmi-pmic.yaml
+> 
+> Filename matching one of the compatibles, e.g. the oldest one.
+> 
 
-Thanks. I decided not to queue it for v6.15 for exactly that reason,
-I'll pick it up early into the v6.16 cycle and let it sit in next for
-several weeks.
+Yeah but besides that I don't see valid reasons why this should be a different
+binding (and also why this should use a different driver, fwiw) - when it can
+most probably just extend the current PMIC MFD driver... and the same goes for
+the PMIC AUXADC: there's a mt6359-auxadc binding and driver that can be extended
+to 6363 and 6373 rather easily.
 
-Bart
+There's nothing "really special" about those.....
+
+Cheers
+
+>> @@ -0,0 +1,173 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/mediatek,spmi-pmic.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek SPMI PMICs multi-function device
+>> +
+>> +maintainers:
+>> +  - Lu Tang <lu.tang@mediatek.com>
+>> +
+>> +description: |
+>> +  Some Mediatek PMICs are interfaced to the chip via the SPMI (System Power
+>> +  Management Interface) bus.
+>> +
+>> +  The Mediatek SPMI series includes the MT6363, MT6373, MT6316 and other
+>> +  PMICs.Please see the sub-modules below for supported features.
+>> +
+>> +   MT6363/MT6373 is a multifunction device with the following sub modules:
+>> +  - Regulators
+>> +  - ADC
+>> +  - GPIO
+>> +  - Keys
+>> +   MT6316 is a multifunction device with the following sub modules:
+>> +  - Regulators
+> 
+> I don't get why they are in the same schema. It would result in
+> unnecessary big if:then with half of children not applicable for other
+> variants.
+> 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - enum:
+>> +          - mediatek,mt6363
+>> +          - mediatek,mt6373
+>> +          - mediatek,mt6316
+> Sort these with alphanumeric order.
+> 
+> Best regards,
+> Krzysztof
+
+
+
