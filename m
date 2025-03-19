@@ -1,201 +1,172 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F6B1F8756
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Mar 2025 10:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9979A259C87;
+	Wed, 19 Mar 2025 11:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742381110; cv=none; b=Lugzgs78FWYOTf2h+UbjYmDkm0O4rjs29rmPKuqMvi7bxOPLP4rBdVSe+t+2kTTqtf3QccrUhYr9BxvKpud7tcGJEgH2zv9dMxcI1HwhLSXzlgWCtAo0qfeg6tLz7Ec3daAgNyv+tYoqoNAAlJGGwndOZzd2q61lllYzO7tzm58=
+	t=1742382621; cv=none; b=aoFcjwW9H9L1nhbG1zM/VgWKY9lVgbdLL5BJgaVBhWMTGUoVgotXJZ+KH0KjAMl7wes0lkKTk9au8n4i1mCaOFkT0CCGhxCtsrZ1CymXw+TUlvAI5noI3Pbhrjk2cqNiUnENvURBnnltSVbTELBxNG8Osru6csMM4NwwgYizUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742381110; c=relaxed/simple;
-	bh=S8vGshdn8RRbsZYn6J9oF2c66aklH17RHpt39QvXbN8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=VpLpswkpqMmp6y+UAgJCYKud4id9v3v3VpRUaGyqq6V/4atYlXukeyv4QlDFjeE1x3kA2IQSr2NuiTtKrFD7KvtzGliSQDT8jqIQ/5Kg1fV/69nPWu91/sUWAPLa1LsWkauZ6BNsEOj47/ZKzdGI1zypVOH5r3DNe1qo7dN30Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLt18ig+; arc=none smtp.client-ip=198.175.65.21
+	s=arc-20240116; t=1742382621; c=relaxed/simple;
+	bh=D2Cq8iIAp6HweR2nbmA1TB76dT/fH6luqINPIIVMPNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=stD+POL0do2IYbMGf17k/79zFjI2JX3U2zeJ5gm+T1NYBxDtbsAL7g3b0+Aorc71nCBF56MgAkGPuvNZAj3vtbXZRNvYroLUSy25YVAGarPkwWAadRHGXNEg1ITS12UNMFCEARr772P6dhJ0hz2aV364p7MrzAq6tQZ+HpbYwAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNmgAyPS; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLt18ig+"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNmgAyPS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742381108; x=1773917108;
-  h=date:from:to:cc:subject:message-id;
-  bh=S8vGshdn8RRbsZYn6J9oF2c66aklH17RHpt39QvXbN8=;
-  b=iLt18ig+EboSfc1H347TIIUr4iztAo4Kavy3DfWZ8WwaGmqPYds0dD8t
-   Z+pH2C5xeWsukSJsr7wFAmCndZiJlpgfrj/hpTpMbFK2bx7hUzjTFf4as
-   AWKdFl9LhqCndtoxIDMtaM8VgZcPxH8LOWz8/MC22iM03LUrIrPdFBGqi
-   71tF7dPc2WYQVfJjZKe+bkH1pJWinolfQMP0GmQbQvKf04URkYCct0Cvu
-   2ocophghR/MP3eDDeNckjLtqVjZdvJWHcg4hd0JBT0Luvcq5WKp/lOINr
-   ynhEysRmolx43OdBd+We5FHNJFpZbCm91r+IEUfNS717fECg1eu1q+9Wq
-   Q==;
-X-CSE-ConnectionGUID: iyg/TtqXT4SS7dpLLxvVqA==
-X-CSE-MsgGUID: DkVHBwfESGidBv8fcTZ4Vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43483244"
+  t=1742382619; x=1773918619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D2Cq8iIAp6HweR2nbmA1TB76dT/fH6luqINPIIVMPNw=;
+  b=iNmgAyPSl10PBHkXLvNhfsUZKOwDuGPS6ojpV5gzZ0FlQUbWnPDKn7/a
+   k6qw66U/yrRqqXhgWRpd3k+bWDpha0j3TGIVXTX1u9IiE4YRWnpajzvk0
+   osIaK0QF2jBslCwNWbKj70VHY/ls3pw/72x5D+rQ+KwfJJdznkOiR+IVe
+   S+quwEzE7fREuM5/Sw+FILpbPZ58cIvGVGp4gYELyhoJNVUCAALRTEMJN
+   5Ztf/wZwTD0d5V4EqbeEEVSK/TjoGhXNBaZmELTdXn+pnB3VCqm3bo1HP
+   QerMNxKsdfvZfFRiGNaUzNa1OskQetUX5svUq6TIXpqZUVgArdCrf5GpX
+   g==;
+X-CSE-ConnectionGUID: KZh6o8Q5S9uEL2NxBejdPg==
+X-CSE-MsgGUID: Lc2jgSF6SeanxSYND6WriA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43752257"
 X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="43483244"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 03:45:06 -0700
-X-CSE-ConnectionGUID: 6dMDklN1Ri+v7BTeJIZtIA==
-X-CSE-MsgGUID: MZKahlTQSoqmTRy2emdd0g==
+   d="scan'208";a="43752257"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:10:14 -0700
+X-CSE-ConnectionGUID: F/1SQWZbROuCtQPRNY9oCw==
+X-CSE-MsgGUID: foZQBo2fSGugTKGChOHigA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="123317949"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 19 Mar 2025 03:45:05 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuqv0-000Ebp-2w;
-	Wed, 19 Mar 2025 10:45:02 +0000
-Date: Wed, 19 Mar 2025 18:44:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- 8bbdb4baf4292bb5d6e2320bd2809da6ba51db78
-Message-ID: <202503191820.RVKd10uh-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="122306576"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 04:10:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1turJG-00000003tmp-3xN5;
+	Wed, 19 Mar 2025 13:10:06 +0200
+Date: Wed, 19 Mar 2025 13:10:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: mathieu.dubois-briand@bootlin.com
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 02/11] mfd: Add max7360 support
+Message-ID: <Z9qmDkwSpZHxwuQj@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-2-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-2-fb20baf97da0@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 8bbdb4baf4292bb5d6e2320bd2809da6ba51db78  Merge branch 'devel' into for-next
+On Tue, Mar 18, 2025 at 05:26:18PM +0100, mathieu.dubois-briand@bootlin.com wrote:
+> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> 
+> Add core driver to support MAX7360 i2c chip, multi function device
+> with keypad, GPIO, PWM, GPO and rotary encoder submodules.
 
-elapsed time: 1445m
+...
 
-configs tested: 124
-configs skipped: 2
++ array_size.h
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> +#include <linux/bits.h>
+> +#include <linux/delay.h>
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-9.3.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-13.3.0
-arc                              allyesconfig    gcc-10.5.0
-arc                   randconfig-001-20250318    gcc-8.5.0
-arc                   randconfig-002-20250318    gcc-8.5.0
-arm                              allmodconfig    gcc-13.3.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                          pxa910_defconfig    gcc-8.5.0
-arm                   randconfig-001-20250318    gcc-14.2.0
-arm                   randconfig-002-20250318    clang-21
-arm                   randconfig-003-20250318    gcc-14.2.0
-arm                   randconfig-004-20250318    clang-21
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-8.5.0
-arm64                 randconfig-001-20250318    clang-21
-arm64                 randconfig-002-20250318    clang-14
-arm64                 randconfig-003-20250318    gcc-13.3.0
-arm64                 randconfig-004-20250318    gcc-6.5.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250318    gcc-14.2.0
-csky                  randconfig-002-20250318    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250318    clang-21
-hexagon               randconfig-002-20250318    clang-17
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250318    clang-20
-i386        buildonly-randconfig-002-20250318    clang-20
-i386        buildonly-randconfig-003-20250318    clang-20
-i386        buildonly-randconfig-004-20250318    clang-20
-i386        buildonly-randconfig-005-20250318    clang-20
-i386        buildonly-randconfig-006-20250318    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250318    gcc-14.2.0
-loongarch             randconfig-002-20250318    gcc-14.2.0
-m68k                             allmodconfig    gcc-8.5.0
-m68k                              allnoconfig    gcc-5.5.0
-m68k                             allyesconfig    gcc-6.5.0
-m68k                          hp300_defconfig    gcc-8.5.0
-m68k                        mvme147_defconfig    gcc-5.5.0
-microblaze                       allmodconfig    gcc-9.3.0
-microblaze                        allnoconfig    gcc-11.5.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-10.5.0
-mips                           ip27_defconfig    gcc-11.5.0
-mips                        qi_lb60_defconfig    clang-21
-nios2                             allnoconfig    gcc-8.5.0
-nios2                 randconfig-001-20250318    gcc-9.3.0
-nios2                 randconfig-002-20250318    gcc-5.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-openrisc                  or1klitex_defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-5.5.0
-parisc                            allnoconfig    gcc-5.5.0
-parisc                           allyesconfig    gcc-9.3.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250318    gcc-8.5.0
-parisc                randconfig-002-20250318    gcc-14.2.0
-powerpc                          allmodconfig    gcc-10.5.0
-powerpc                           allnoconfig    gcc-8.5.0
-powerpc                          allyesconfig    clang-21
-powerpc                 mpc8315_rdb_defconfig    clang-21
-powerpc               randconfig-001-20250318    clang-21
-powerpc               randconfig-002-20250318    clang-21
-powerpc               randconfig-003-20250318    gcc-14.2.0
-powerpc64             randconfig-001-20250318    clang-21
-powerpc64             randconfig-002-20250318    gcc-14.2.0
-powerpc64             randconfig-003-20250318    gcc-8.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-7.5.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250318    clang-21
-riscv                 randconfig-002-20250318    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-13.2.0
-s390                                defconfig    clang-15
-s390                  randconfig-001-20250318    clang-15
-s390                  randconfig-002-20250318    gcc-12.4.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-10.5.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-11.5.0
-sh                    randconfig-001-20250318    gcc-14.2.0
-sh                    randconfig-002-20250318    gcc-7.5.0
-sh                           se7780_defconfig    gcc-7.5.0
-sh                           sh2007_defconfig    gcc-9.3.0
-sparc                            allmodconfig    gcc-6.5.0
-sparc                             allnoconfig    gcc-6.5.0
-sparc                 randconfig-001-20250318    gcc-14.2.0
-sparc                 randconfig-002-20250318    gcc-14.2.0
-sparc64                             defconfig    gcc-10.5.0
-sparc64               randconfig-001-20250318    gcc-11.5.0
-sparc64               randconfig-002-20250318    gcc-11.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-21
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250318    clang-21
-um                    randconfig-002-20250318    gcc-12
-um                           x86_64_defconfig    clang-15
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250318    clang-20
-x86_64      buildonly-randconfig-002-20250318    clang-20
-x86_64      buildonly-randconfig-003-20250318    clang-20
-x86_64      buildonly-randconfig-004-20250318    clang-20
-x86_64      buildonly-randconfig-005-20250318    gcc-12
-x86_64      buildonly-randconfig-006-20250318    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250318    gcc-14.2.0
-xtensa                randconfig-002-20250318    gcc-7.5.0
+> +#include <linux/device.h>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Since it won;t make v6.15-rc1 anyway the above can be better specified as
+
+device/devres.h
+dev_printk.h
+
+as device.h is monstrous.
+
++ err.h
+
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/max7360.h>
+
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+
+...
+
+> +	ret = regmap_write(regmap, MAX7360_REG_GPIOCFG,
+> +			   MAX7360_GPIO_CFG_GPIO_RST);
+
+I would suggest to leave it as a single line. In this and similar cases
+when it is ~83 characters, it's still fine (and even for strict 80 there is
+a documented exception)
+
+...
+
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+Just
+
+	return ret;
+
+?
+
+> +	ret = max7360_mask_irqs(regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Could not mask interrupts\n");
+
+Hmm... As far as I can read this masks GPIO interrups. Does it do anything
+else? If it's covered by the GPIO/pin control drivers, one want probably to
+see that to be done there in the respective callback (init_hw_irq or alike,
+I don't remember the name by heart).
+
+...
+
+> +#ifndef __LINUX_MFD_MAX7360_H
+> +#define __LINUX_MFD_MAX7360_H
+> +
+> +#include <linux/bits.h>
+
+> +#include <linux/types.h>
+
+Do you need types.h here? I don't see for what...
+
+> +struct device;
+
+Neither this. Perhaps it's for the following changes? Then add when required,
+not now.
+
+> +#endif
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
