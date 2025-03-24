@@ -1,73 +1,70 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A0226158E;
-	Mon, 24 Mar 2025 16:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028DC2E3367;
+	Mon, 24 Mar 2025 20:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832650; cv=none; b=IrymhD5Y4BYtOkQSktsMpnvv2fZozuTmyDpgUuub8KPCKXibiL/W2NWMN+tiTSoM4ruA0mbvBmg8QCqZ7msuuTk26o+HkZvgxSixG9iF3DnkLm7UDIvF3XauAcsC1yJV/5oWH3MpXVs12AnAb6CpradwZHAxL0X0kRf/C83Pe3c=
+	t=1742847501; cv=none; b=mtFv94KlmPgER7ZCyOHwVr74DAj1K3H0BzVRT/psqKWrkNZcIfCXvVelWh+z+uHlhr36fqikf7i/QjylPP3j0UnljmXd+P/n3ZjOiWLNMgQY1V7GQKA+tOdMiqWghUTGRWJgHg3QxJmsXU02TgXa6jSv6TX3tySYeqc5GXeQaQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832650; c=relaxed/simple;
-	bh=Yt3UrsjkedkYE/1CYuEeJN8oJ93eMzK1Z86WS4MGAaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TOULiL8/FSOl9oJu62niBcyx3Zn8WjFAYMxI7GURXAF1Hu1VzrD7Szx0Em7RjFFs3QG+M5pdFK+3jO+leLnC4uAGL9prX0XysBfOcOZ/2ZA8Ot8qM1roPkQzNnVWUhMFm5L1AU8kGCeauJZDyO7nIcW+1qAYfttqp7E4LckF25c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T51an9kg; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1742847501; c=relaxed/simple;
+	bh=NnWv+qAJjyydShD2opgIyPjRUBku9e2zXaoi4Dh+lXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sglbSJFjh+mtLS9pnb18mPPnjzjMtqOVA7isTX/pCtW5pFogewEiWLmVs07f0OSn/J585LhHrWvmKWMZN4WdO/yEJFwIFwPnyWnQ/NJbxM1NYvRUhq1n0U3sJerZf8AorZRWle+Kdw7kOM/gXvZ50d+Wlt440H+JbBvWROdlwwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sGbiLowv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T51an9kg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742832646;
-	bh=Yt3UrsjkedkYE/1CYuEeJN8oJ93eMzK1Z86WS4MGAaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T51an9kgoMO6xmet3WCYCP90WzglJReKQMheqUVoZqg8TNXEMJ2jFJpSmTIYXpkM2
-	 X2jhcU2liEBJg/VIBV09cNURdA7RtvOd28g0J4cO99sPAddfQRyRVbtXMLte07EROQ
-	 bb1LFjHLuTiEuGPgaHdKcim+NIgVvDoPPzrvaZBBRHpA+IHBHLQsleOfpX4F1Y5q6d
-	 rRJqK3440KK9fKG0z3t6a6INUKR+QxdrNpXz01Y58uDNBntrXuQT+WVvq0jIDXK3kl
-	 YPy0NVBF+Nu65/E9awClszeYx2QF5s41CDOU0tbxwctRBvapbTAscchGorGM4dwWPp
-	 Ex5BDM3J6GGzQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DB64417E0A62;
-	Mon, 24 Mar 2025 17:10:44 +0100 (CET)
-Message-ID: <334d0492-1707-4299-99c0-feacb5954de1@collabora.com>
-Date: Mon, 24 Mar 2025 17:10:42 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGbiLowv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25CF9C4CEDD;
+	Mon, 24 Mar 2025 20:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742847499;
+	bh=NnWv+qAJjyydShD2opgIyPjRUBku9e2zXaoi4Dh+lXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sGbiLowv7wzD93y9r1HB2YDp0gsAInUeOtuyQ50pYwOHxm6jzie0j6Q2IQTQv535S
+	 id9QWjB3T128AvmAZMoCdwPSFsfoAPXzaJJbyTk9ZcW85hre46Xx0wYNabn1Vr+YK1
+	 9VFx/91shwNAKH/STumDqk18bLOu/6At5QAG3kXuz7tu7jwbOuPY3i6RngMQRRyOAO
+	 K8E4PdExxpsozvFLUQnf+vCfxNtdptU9sSdhqNWpxD/qHoGBlCEIXTOi5GPn53uWom
+	 fpf5vCW8cKD3F6UhS8l8t7cVd8tAcui+QwxxkDEnCDygd8ntlBNilu1zPX/rI2atRf
+	 bHP7BpjpZJt7A==
+Date: Mon, 24 Mar 2025 15:18:18 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Andy Teng <andy.teng@mediatek.com>,
+	linux-mediatek@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: mediatek: Drop unrelated nodes
+ from DTS example
+Message-ID: <174284749693.804487.17057148980208397199.robh@kernel.org>
+References: <20250324125105.81774-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] arm64: dts: mediatek: mt8196: Add pinmux macro
- header file
-To: Cathy Xu <ot_cathy.xu@mediatek.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sean Wang <sean.wang@kernel.org>
-Cc: Lei Xue <lei.xue@mediatek.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- yong.mao@mediatek.com, Axe.Yang@mediatek.com, Jimin.Wang@mediatek.com,
- Wenbin.Mei@mediatek.com, Guodong Liu <guodong.liu@mediatek.com>
-References: <20250321084142.18563-1-ot_cathy.xu@mediatek.com>
- <20250321084142.18563-3-ot_cathy.xu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250321084142.18563-3-ot_cathy.xu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324125105.81774-1-krzysztof.kozlowski@linaro.org>
 
-Il 21/03/25 09:39, Cathy Xu ha scritto:
-> Add the pinctrl header file on MediaTek mt8196.
+
+On Mon, 24 Mar 2025 13:51:04 +0100, Krzysztof Kozlowski wrote:
+> Binding example should not contain other nodes, e.g. consumers of
+> pinctrl of, because this is completely redundant and adds unnecessary
+> bloat.
 > 
-> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
-> Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml      | 10 ----------
+>  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml      |  5 -----
+>  2 files changed, 15 deletions(-)
+> 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
