@@ -1,71 +1,71 @@
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC2259CAD
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 14:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AFA259C90
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 14:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912010; cv=none; b=SiSqheLGytCnfGj4dPLZsjqTpNS6gUSlb8CFEd/IohIabJ/5kMjs1B2yq0kpWzUuNnyQwpsiWc0KJ29KdI4QDki8+kaQ97TPPLYzKKgRvIMUI1Nh0n/QSwaKabyzi+U7/ZRjd3EFLJY6Z5+2c5oqWjDh/AMKxDgXUZzeVqTiHP8=
+	t=1742912015; cv=none; b=XGeMNz7xmsWCevF0lb0na9fP46Vv4MZSLEhhpk1H3h9o8hMsORhVfDjTlYXiyXw9fZoNUhYxREHiqtCH4iMt4+u4rLePQGR6pSajttTy80euyhd8JBtsJ8bP9ZTxP7dicH+0f4ELIonzvoxJlSgpzELqhkqt6bDvLXWTno8eS5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912010; c=relaxed/simple;
-	bh=3yXpnSWDBQq0p64UvqJmPhV+biVOzsfuFqv9izqoaNs=;
+	s=arc-20240116; t=1742912015; c=relaxed/simple;
+	bh=nJ76qnpAiA1hIrK3TfkbYTYfWRCX/J8sNAMB6mmLa10=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MNuFMCrwkWK6iU/zsk4omYIEhd4ozkjTyIywnxmnBNYcYnz9Xq2U4rf87eDSIyzaoYZsOi5vt/A/Y9zf81Wk3+cAb8pfn1jsNph0LBMwg8RODlwBcNmGq5KD9hMRZni0XipTEM8nM/AOOn4c5/O8M6Z7ELS1I2emAuwKz3whL9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rZIbUwSY; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=uJPZh/aUufurvwUiF3BSViCcAJ5p/GGQq5d9FmQzItAmN1Euz82WrT13ZN5AiCo/E6AF8JptS3aEOJ7LSaj6yVyuJ2wsankhlTNsge8eqyPxzJ8c9N8rQVLCEBj9lbH30DpuXNxIyjouX2n0nD0EGtgOGw4cwq+tHVpg8Nisdls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rcUlCT2d; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rZIbUwSY"
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rcUlCT2d"
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6AD76400F7
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 14:13:16 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 42A9A403F7
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 14:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742911996;
-	bh=dQe7H9U1jfXffyxDZew1boCw61jbY/93ewTdhDfN7Fg=;
+	s=20210705; t=1742911999;
+	bh=ruY4mx+ycuBPq+bKcBygbtDAkYa1zJT+mxxboy0e/q8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=rZIbUwSY9eQsDnlMCUw4fvI9i+1ndg4EeafC0ZTTmp5bujvq9szVshPU2heSfewEN
-	 4Ua2wfIt2efIAEpc+NtZxijd9XzEj0F5khrrR7Y0WGx89b399sr/iVLkRTTv3UVeE5
-	 sfULLrbiA+eXr5uSIon2cFSz5MXll52MWHQDru9Xi6+qj+N8wWDyYH48Vp/1TCbG+k
-	 9eI9NWUWbAM0TOJjdiX8RGlmGSCCkrEvdgVH90+ZlYmrlwQrOwCou+1XHaUgwYatlv
-	 lMhZM3Bq49xzP+nlEjI7hzb/vXdTVkBN4PgqJJ3cA2oBqW7FoOShHPLMMFgQsw13p7
-	 1YxdcFGsBrhWA==
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-391425471ddso3336045f8f.0
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 07:13:16 -0700 (PDT)
+	b=rcUlCT2dFVZ+4HeiYFAIm07G3TOlpGtKv8q4WqzRom+aZhSdY0hShWYe+THsaz0yb
+	 jocWf2d36qtKjT+bzn/94Fpc9hLf11Tj/9VDvp/zL9i1Xm+Sk2REpIY0GM2yVsN+v1
+	 INWseXESGCu83xTrq0s8+1nqY7+faEkT3tpL8KvC3y/xS6TQNj3/sdZzGPlGTcvRXb
+	 MINFspTdgJVT7X8SN4t9JbkoaZ+V7s+Sa6UNs3MOnVvVWt7e26w6C9x0WcmZQlkiHt
+	 L5SogMZLOAiXtFn85J8js/kTO/cpZQjMi6q1PNRhWJn7D3T15zxfx/p9NRJMyH049l
+	 N7UxEyEDYwkJw==
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso2894685f8f.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Mar 2025 07:13:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742911995; x=1743516795;
+        d=1e100.net; s=20230601; t=1742911997; x=1743516797;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dQe7H9U1jfXffyxDZew1boCw61jbY/93ewTdhDfN7Fg=;
-        b=dj+WLZxMmT96K3zapeHq2jjo0R6BXf56cSTz59pX1ZMOAJh7kAen614N6OCwv9IDTR
-         t4UKg/piyZQqykaoxhK66sQp0tTZbmtcBfGVZ16adKKlB452yNMaxUn3fQOwPmuuJNMt
-         pWUegOJrenpv/1JfIMRymd4YbRPOfLfJZX2da+QUlDw0PqPe9FmlaAdNtl9Jm6yk2mNf
-         TmFTD7NhFSbLGUFO7EIDyHT3xOAzLqENOtQLO6LFfqRx+9L6KJzEA8umqCRFwlJGo1ov
-         yuv0UHNZYq1t+QEV+Qpjelcun6wdM5yRVIV8puzGnYaSV9chl4+g9Plb5AXngFX0lkhP
-         C7Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCnFtnyM7kO9ryRjcl2uoDi5j950GorQii+XnOeP8HJrVvpMebIWjOqmJZASmkndh28laF0xfS/p9d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/2nFeRWbJZ4tdRgIVpL9VDiiSZeoqXOWM+O34xkSUIZBhBdR8
-	TUQc9TqdPwyqSTHX3aoShRM/eK9mQCrt3QqSbVmEPtt//jMZD3y07n49Y9jR3zW1IIGxB5j8WTe
-	ol7NPNUHgn5PqUWzREse23hpTK1d6UiRwwjUZeJx+jZCbZTGpVP6ovPd2+iE7QPuFbxKzZRDAWx
-	c=
-X-Gm-Gg: ASbGncv3NOOfXttqj1jUJa8bxX/BSotDcJxwl9KI4e9AyThZob+LK4NxgpEUA61YMIH
-	pIDGeaGA4DrA1YtOJ/QXCyugYypgRvqrua+XT4P+8IhI1gVFQgeK1a2MiHhPePRgEj/RnPx9Zb+
-	XwWIn0ZXf0xUzHnzPXWlhOTAz+HY35tG/EKdy+tnnHIWoeKkWxtdTwFIOdzbXFwEzMuSH82Rt1Z
-	EF3iei8SVgTkbv0RfXf3SivZA+s8ptrXzK1LwlxsBt6klQpqjfKeA2ksMu83SNoZTzBarY4Cs3A
-	MV68B/Pn7Hro2tnF75o6/I7UnEGEgw==
-X-Received: by 2002:a05:6000:2a6:b0:391:2c67:7999 with SMTP id ffacd0b85a97d-3997f9404aemr17107071f8f.48.1742911995059;
-        Tue, 25 Mar 2025 07:13:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE78N/yKFkd5sACTOi600OYQuNXlhXVEUf7SmL8hC+Ivi0buOCNdKaf2rmPFabBaYZo9IAMmQ==
-X-Received: by 2002:a05:6000:2a6:b0:391:2c67:7999 with SMTP id ffacd0b85a97d-3997f9404aemr17106995f8f.48.1742911994481;
-        Tue, 25 Mar 2025 07:13:14 -0700 (PDT)
+        bh=ruY4mx+ycuBPq+bKcBygbtDAkYa1zJT+mxxboy0e/q8=;
+        b=aREQ9CCum64P3Wy0S0mesP4FsTpP98Z+FIR09yB/QeRX/ws5W6d6sld21KAYB4TSns
+         1U3xvX2TUP1/k2WBiUognrYJ9wwqyhmGXCDBFvTmr41ECebCGOQrR5GL3pSxJSgKULVL
+         /NZFyGHttmfzVgmmvlE/PRk03N704PKuYWP55XiT+HpUkf1C79eK5jF+f7ZBDyn8w9Il
+         VLQrR0ofuzIsCnDwa+hHqc+Mmcn9yv4BQy4XLCwe7t3PQjdX33GTQC4h08KAkmbQoMwY
+         y00BmgwLDw1AVCyuI1h2g4K+15Y0pH5zu+GMF6e+pVfWVlsnbTiiavMTsozQTCYQkzmp
+         I8XA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdLMhHiDr0rQMTHmHVh7Op9SSrlx00LubKvBMGFmsjBRKgpMaMiohONABzAt9zHG/eK4sn8giaO0v7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy665rfNyDlFSH54e/7Lc1jrVcnWolkhUwmO+mNfeDVOj9dS6yZ
+	xdIclzM8vRa/g2lm/YbnhFn4Ry7GBOB/vpJv8M0+1D16QEr+WB8QxXaN5x6RsjiqNs8ChFJqUeM
+	rsqzx7slq1XBZvi0GAZ68/dUCkLLV3H82ODDkN3u0gS6LgCUDPArrgd8+yvQGhzFbWicHf2l2us
+	8=
+X-Gm-Gg: ASbGncvOl34SXrL9Fm/J9QSsiURCl2AluEhMJIJCywxmbNEahL+qbJLxcFWeF90raya
+	n8f+i8RsrjuSM7OTyg2gPjfXCkAx1OZPa0LgoPllqn4P4dzXTAmbF//2DJ+Zu74r/DHZpYbl/BD
+	blMbWpHpEjVkWEFltsZ+KGg6dTbkiTbeJ+NniC526jiILkrVwSA7QhRcAH/gUOAnqQu8j45TnPa
+	2xJp4zOToxF7WUFH0RFVB6RxB6toYdRF9ojq5V7d7PQqKSMOvLPEtZluRAhO1jr4ed17HaYXgyt
+	ZgnRTJ0OhPqHms+qJSXsjn6n3uqWcw==
+X-Received: by 2002:a05:6000:1a8d:b0:38f:2a32:abbb with SMTP id ffacd0b85a97d-3997f8f9d54mr13315754f8f.4.1742911997508;
+        Tue, 25 Mar 2025 07:13:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIxyJ37OZghcxQ+a/pWrQYrdFkF1ltdT3GNn4+fygXg02/lhRChSV9UcnQAQLd+3Joudp+Ag==
+X-Received: by 2002:a05:6000:1a8d:b0:38f:2a32:abbb with SMTP id ffacd0b85a97d-3997f8f9d54mr13315703f8f.4.1742911997011;
+        Tue, 25 Mar 2025 07:13:17 -0700 (PDT)
 Received: from stitch.. ([80.71.142.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a6326sm13532091f8f.29.2025.03.25.07.13.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a6326sm13532091f8f.29.2025.03.25.07.13.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 07:13:14 -0700 (PDT)
+        Tue, 25 Mar 2025 07:13:16 -0700 (PDT)
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
 	Pritesh Patel <pritesh.patel@einfochips.com>,
@@ -83,9 +83,9 @@ Cc: Samuel Holland <samuel.holland@sifive.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [RFC PATCH 1/4] dt-bindings: pinctrl: Add eswin,eic7700-pinctrl binding
-Date: Tue, 25 Mar 2025 15:13:03 +0100
-Message-ID: <20250325141311.758787-2-emil.renner.berthing@canonical.com>
+Subject: [RFC PATCH 3/4] riscv: dts: Add EIC7700 pin controller node
+Date: Tue, 25 Mar 2025 15:13:05 +0100
+Message-ID: <20250325141311.758787-4-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250325141311.758787-1-emil.renner.berthing@canonical.com>
 References: <20250325141311.758787-1-emil.renner.berthing@canonical.com>
@@ -97,162 +97,66 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device tree binding for the pin controller on the ESWIN EIC7700
-RISC-V SoC.
+Add node for the pin controller on the ESWIN EIC7700 SoC and gpio-ranges
+properties mapping GPIOs to pins.
 
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 ---
- .../pinctrl/eswin,eic7700-pinctrl.yaml        | 141 ++++++++++++++++++
- 1 file changed, 141 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
+ arch/riscv/boot/dts/eswin/eic7700.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-new file mode 100644
-index 000000000000..8ef966cebc5e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/eswin,eic7700-pinctrl.yaml
-@@ -0,0 +1,141 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/eswin,eic7700-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/riscv/boot/dts/eswin/eic7700.dtsi b/arch/riscv/boot/dts/eswin/eic7700.dtsi
+index 9cef940f07e4..7226647919b7 100644
+--- a/arch/riscv/boot/dts/eswin/eic7700.dtsi
++++ b/arch/riscv/boot/dts/eswin/eic7700.dtsi
+@@ -312,6 +312,13 @@ porta: gpio-port@0 {
+ 					<324>, <325>, <326>, <327>, <328>, <329>, <330>,
+ 					<331>, <332>, <333>, <334>;
+ 				gpio-controller;
++				gpio-ranges = <&pinctrl  0 12  1>,
++					      <&pinctrl  1 14 12>,
++					      <&pinctrl 13  1  4>,
++					      <&pinctrl 17 32  1>,
++					      <&pinctrl 18 40  5>,
++					      <&pinctrl 23 51  7>,
++					      <&pinctrl 30 68  2>;
+ 				ngpios = <32>;
+ 				#gpio-cells = <2>;
+ 			};
+@@ -320,6 +327,9 @@ portb: gpio-port@1 {
+ 				compatible = "snps,dw-apb-gpio-port";
+ 				reg = <1>;
+ 				gpio-controller;
++				gpio-ranges = <&pinctrl  0 70  3>,
++					      <&pinctrl  3 79  7>,
++					      <&pinctrl 10 89 22>;
+ 				ngpios = <32>;
+ 				#gpio-cells = <2>;
+ 			};
+@@ -328,6 +338,7 @@ portc: gpio-port@2 {
+ 				compatible = "snps,dw-apb-gpio-port";
+ 				reg = <2>;
+ 				gpio-controller;
++				gpio-ranges = <&pinctrl 0 111 32>;
+ 				ngpios = <32>;
+ 				#gpio-cells = <2>;
+ 			};
+@@ -336,9 +347,15 @@ portd: gpio-port@3 {
+ 				compatible = "snps,dw-apb-gpio-port";
+ 				reg = <3>;
+ 				gpio-controller;
++				gpio-ranges = <&pinctrl 0 143 16>;
+ 				ngpios = <16>;
+ 				#gpio-cells = <2>;
+ 			};
+ 		};
 +
-+title: ESWIN EIC7700 SoC pin controller
-+
-+maintainers:
-+  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
-+
-+description: |
-+  Pinmux and pinconf controller in the ESWIN EIC7700 RISC-V SoC.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - eswin,eic7700-pinctrl
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+patternProperties:
-+  '-[0-9]+$':
-+    type: object
-+    additionalProperties: false
-+
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        allOf:
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+
-+        additionalProperties: false
-+
-+        description:
-+          A pinctrl node should contain at least one subnode describing one
-+          or more pads and their associated pinmux and pinconf settings.
-+
-+        properties:
-+          pins:
-+            items:
-+              enum: [ CHIP_MODE, MODE_SET0, MODE_SET1, MODE_SET2, MODE_SET3,
-+                      XIN, RTC_XIN, RST_OUT_N, KEY_RESET_N, GPIO0, POR_SEL,
-+                      JTAG0_TCK, JTAG0_TMS, JTAG0_TDI, JTAG0_TDO, GPIO5, SPI2_CS0_N,
-+                      JTAG1_TCK, JTAG1_TMS, JTAG1_TDI, JTAG1_TDO, GPIO11, SPI2_CS1_N,
-+                      PCIE_CLKREQ_N, PCIE_WAKE_N, PCIE_PERST_N, HDMI_SCL, HDMI_SDA,
-+                      HDMI_CEC, JTAG2_TRST, RGMII0_CLK_125, RGMII0_TXEN,
-+                      RGMII0_TXCLK, RGMII0_TXD0, RGMII0_TXD1, RGMII0_TXD2,
-+                      RGMII0_TXD3, I2S0_BCLK, I2S0_WCLK, I2S0_SDI, I2S0_SDO,
-+                      I2S_MCLK, RGMII0_RXCLK, RGMII0_RXDV, RGMII0_RXD0, RGMII0_RXD1,
-+                      RGMII0_RXD2, RGMII0_RXD3, I2S2_BCLK, I2S2_WCLK, I2S2_SDI,
-+                      I2S2_SDO, GPIO27, GPIO28, GPIO29, RGMII0_MDC, RGMII0_MDIO,
-+                      RGMII0_INTB, RGMII1_CLK_125, RGMII1_TXEN, RGMII1_TXCLK,
-+                      RGMII1_TXD0, RGMII1_TXD1, RGMII1_TXD2, RGMII1_TXD3, I2S1_BCLK,
-+                      I2S1_WCLK, I2S1_SDI, I2S1_SDO, GPIO34, RGMII1_RXCLK,
-+                      RGMII2_RXDV, RGMII2_RXD0, RGMII2_RXD1, RGMII2_RXD2,
-+                      RGMII2_RXD3, SPI1_CS0_N, SPI1_CLK, SPI1_D0, SPI1_D1, SPI1_D2,
-+                      SPI1_D3, SPI1_CS1_N, RGMII1_MDC, RGMII1_MDIO, RGMII1_INTB,
-+                      USB0_PWREN, USB1_PWREN, I2C0_SCL, I2C0_SDA, I2C1_SCL, I2C1_SDA,
-+                      I2C2_SCL, I2C2_SDA, I2C3_SCL, I2C3_SDA, I2C4_SCL, I2C4_SDA,
-+                      I2C5_SCL, I2C5_SDA, UART0_TX, UART0_RX, UART1_TX, UART1_RX,
-+                      UART1_CTS, UART1_RTS, UART2_TX, UART2_RX, JTAG2_TCK, JTAG2_TMS,
-+                      JTAG2_TDI, JTAG2_TDO, FAN_PWM, FAN_TACH, MIPI_CSI0_XVS,
-+                      MIPI_CSI0_XHS, MIPI_CSI0_MCLK, MIPI_CSI1_XVS, MIPI_CSI1_XHS,
-+                      MIPI_CSI1_MCLK, MIPI_CSI2_XVS, MIPI_CSI2_XHS, MIPI_CSI2_MCLK,
-+                      MIPI_CSI3_XVS, MIPI_CSI3_XHS, MIPI_CSI3_MCLK, MIPI_CSI4_XVS,
-+                      MIPI_CSI4_XHS, MIPI_CSI4_MCLK, MIPI_CSI5_XVS, MIPI_CSI5_XHS,
-+                      MIPI_CSI5_MCLK, SPI3_CS_N, SPI3_CLK, SPI3_DI, SPI3_DO, GPIO92,
-+                      GPIO93, S_MODE, GPIO95, SPI0_CS_N, SPI0_CLK, SPI0_D0, SPI0_D1,
-+                      SPI0_D2, SPI0_D3, I2C10_SCL, I2C10_SDA, I2C11_SCL, I2C11_SDA,
-+                      GPIO106, BOOT_SEL0, BOOT_SEL1, BOOT_SEL2, BOOT_SEL3, GPIO111,
-+                      LPDDR_REF_CLK ]
-+            description: List of pads that properties in the node apply to.
-+
-+          function:
-+            enum: [ csi, debug, ddr, fan, gpio, hdmi, i2c, i2s, jtag, mipi,
-+                    mode, oscillator, pci, pwm, rgmii, reset, sata, spi, sdio,
-+                    uart, usb ]
-+            description: The mux function to select for the given pins.
-+
-+          bias-disable: true
-+
-+          bias-pull-up:
-+            oneOf:
-+              - type: boolean
-+              - const: 25000
-+            description: Enable internal 25kOhm pull-up
-+
-+          bias-pull-down:
-+            oneOf:
-+              - type: boolean
-+              - const: 22000
-+            description: Enable internal 22kOhm pull-down
-+
-+          drive-strength-microamp:
-+            enum: [ 3100, 6700, 9600, 12900, 18000, 20900, 23200, 25900 ]
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+        required:
-+          - pins
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl: pinctrl@51600080 {
-+        compatible = "eswin,eic7700-pinctrl";
-+        reg = <0x51600080 0xff80>;
-+
-+        uart0_pins: uart0-0 {
-+            tx-pins {
-+                pins = "UART0_TX";
-+                function = "uart";
-+                bias-disable;
-+                drive-strength-microamp = <6700>;
-+                input-disable;
-+                input-schmitt-disable;
-+            };
-+
-+            rx-pins {
-+                pins = "UART0_RX";
-+                function = "uart";
-+                bias-pull-up;
-+                drive-strength-microamp = <6700>;
-+                input-enable;
-+                input-schmitt-enable;
-+            };
-+        };
-+    };
++		pinctrl: pinctrl@51600080 {
++			compatible = "eswin,eic7700-pinctrl";
++			reg = <0x0 0x51600080 0x0 0xff80>;
++		};
+ 	};
+ };
 -- 
 2.43.0
 
