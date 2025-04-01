@@ -1,106 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7165214F9D6;
-	Tue,  1 Apr 2025 02:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD8235966;
+	Tue,  1 Apr 2025 05:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743473183; cv=none; b=dXHT+9620aEKAQUkM49cSo/waoNZkESFNZz46J6W+sykJOJ5IIzy/awUpFWyXKyfKjaPbvYGJuKTsis9+6+0wt9liImjXkfc+Ic3yP8FsBuHNKTJ6L8qorZFebwrW+7iPJ07lCFGoegMSBwU+R48Mzl7Akdz6f+4QfnPc2NnUww=
+	t=1743486546; cv=none; b=JFxjLXGCh2JdgtB9PYrf+M0cuqzDrK+LnKobJh9HxiDiSwgemWkKUxg+6v7ChacWUQSsTdoaL1mJJMp+OZrc4OasfJ36BgL8YsZA8iU/J/a3QSyN2EG0Nob731554zra9a5H6uPKjwBysEB03bTTHxm6oVHHEJwekPMh5+lYEVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743473183; c=relaxed/simple;
-	bh=mzchwkYo8Cop0lyIAFbQzmQzlnagfFBZUWy82TqnAgE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P8hUpASuJpj3/WJz+Tp7IBDN+HFSHfy1CQemFdcy34LbcEOu2LYcoSke7SWs6I5fXj+2TXk6EJBpPx7uHYJI1wFPW2UBBkb4dhvTvxTxEp70SZXdeY7op7nIZBxmiwTqNnOZa1O4AyAz5WwcmJF0Ap0KNOdV2eqNj2K2hZQVREI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgJUkT2m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743486546; c=relaxed/simple;
+	bh=4ck3CYGW3Vg+HHDmnKzNFjxEDklhvy/u2mK3FYu2Rrs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=odgYQWe2h2QMG8KLo2r9RUy6H5jwanzNGa80+LuSIM21cq4G2+if+xjN72NQCnk51wUdgpH1O+TRpFGLW8XZyaVQNBWWpBgSHwbahKQbp05Iv5wdUZWpJM8bjGJnoj/VgV/KmkX79gUBcKgw/EHsNJRuxVm3PnR2caND6lF3REA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=aUS77l+6; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgJUkT2m"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03CC5C4CEEA;
-	Tue,  1 Apr 2025 02:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743473183;
-	bh=mzchwkYo8Cop0lyIAFbQzmQzlnagfFBZUWy82TqnAgE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mgJUkT2mJn3PijYyDielrwg0coWbTgJZcQQsXx/i9URNKo4uc28aWCCBDE0cESPXw
-	 kAZQl4es5CLzOVI709ICNvokM/5sPuDNB8mt0dAy47xs9u5WLclSZ/13pT/ujtVnpf
-	 o1TFGoR6es9WJPNHUBHl/okuctAcAtlqb7wG3P/8tTmhyJF8qkQqk9Zw1o60hdDDVp
-	 58VCXMj256/hz+rg1Sz44g5UUhK5BdZVaqI0fFQnP0ROZZNNWY5JPI3lxwCLWyBS9e
-	 tbc+8HVvRCA0hMZk+W198A+QM6yTzKTA3GdgdYovpSOfvlgc67RHenPahB4OtG53gO
-	 PtGQNBzzfKpFQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55E1C36017;
-	Tue,  1 Apr 2025 02:06:22 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 01 Apr 2025 10:06:21 +0800
-Subject: [PATCH v2 1/2] dt-bindings: pinctl: amlogic,pinctrl-a4: Add
- compatible string for A5
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="aUS77l+6"
+X-UUID: ffed9f6a0ebc11f08eb9c36241bbb6fb-20250401
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=oLzSObFZ8GWkeA06gsbil9g+nG95as4Jy0XV74XNVOs=;
+	b=aUS77l+67qTKhG9GL93v3Hy3MSGOpMdhYeOiO077pRuC3h0AFHyo+qBvQolnngilnZOp9QA8fLmnyIvvaF8DyHGpZelq8Kamk6GzeiSh/ZJTh0zX5DVv+5g5Oh6atiUEvClZYJGHLN2bo6aYkUd1OyO6Z8iBGCMv2R9zkw1ExwA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:a8dac336-6607-4da1-8401-9dab92325dca,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:70c50ac7-16da-468a-87f7-8ca8d6b3b9f7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ffed9f6a0ebc11f08eb9c36241bbb6fb-20250401
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <ot_cathy.xu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 630762457; Tue, 01 Apr 2025 13:48:55 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 1 Apr 2025 13:48:54 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 1 Apr 2025 13:48:53 +0800
+From: Cathy Xu <ot_cathy.xu@mediatek.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>,
+	Lei Xue <lei.xue@mediatek.com>
+CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <yong.mao@mediatek.com>,
+	<Axe.Yang@mediatek.com>, <Jimin.Wang@mediatek.com>,
+	<Wenbin.Mei@mediatek.com>, <Andy-ld.Lu@mediatek.com>, Cathy Xu
+	<ot_cathy.xu@mediatek.com>
+Subject: [PATCH v6 0/3] pinctrl: mediatek: Add pinctrl driver on mt8196
+Date: Tue, 1 Apr 2025 13:48:09 +0800
+Message-ID: <20250401054837.1551-1-ot_cathy.xu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250401-a5-pinctrl-v2-1-a136c1058379@amlogic.com>
-References: <20250401-a5-pinctrl-v2-0-a136c1058379@amlogic.com>
-In-Reply-To: <20250401-a5-pinctrl-v2-0-a136c1058379@amlogic.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743473181; l=1067;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=Pz16Z/QIM4IDWi5UYrztmMtclbTkct1CDyubtK9KYn4=;
- b=tIqYXqlrL3cEMBuUkhDpDT5x01qWCw09VqlUKfVE39cA28tUMi3sre+NqfzZ/BF1MsNdR5Y+x
- JnrhDuK6GLjDEIESc2nkxjj654ABNisplxGeYWxPACxP6Q7yX2w4EQd
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Changes in v6:
+- Simplify the register description and adjust the order of properties
+  in dt-binding.
 
-Amlogic A5 SoCs uses the same pintrl controller as A4 SoCs. There is
-no need for an extra compatible line in the driver, but add A5
-compatible line for documentation.
+Changes in v5:
+- Remove header file to fix dt-binding check error.
+- Add /* sentinel */ in pinctrl-mt8196.c.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Changes in v4:
+- Add rsel-resistence-in-si-unit and remove RSEL macro magic
+  number in mediatek,mt8196-pinctrl.yaml.
+- Add values in SI units option to |struct mtk_pin_soc| in
+  pinctrl-mt8196.c.
+- Move pinmux macro header file to arch/arm64/boot/dts/mediatek.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-index 8eb50cad61d5..3bebccaf0c9f 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-@@ -14,8 +14,12 @@ allOf:
- 
- properties:
-   compatible:
--    const: amlogic,pinctrl-a4
--
-+    oneOf:
-+      - const: amlogic,pinctrl-a4
-+      - items:
-+          - enum:
-+              - amlogic,pinctrl-a5
-+          - const: amlogic,pinctrl-a4
-   "#address-cells":
-     const: 2
- 
+Changes in v3:
+- Remove drive-strength-microamp & rsel-resistence-in-si-unit
+  related description in mediatek,mt8196-pinctrl.yaml.
+- Use pm_sleep_ptr() in pinctrl-mt8196.c to fix build error.
+
+Changes in v2:
+- Fix driver file's coding style.
+- Add pinctrl binding document.
+
+Cathy Xu (3):
+  dt-bindings: pinctrl: mediatek: Add support for mt8196
+  arm64: dts: mediatek: mt8196: Add pinmux macro header file
+  pinctrl: mediatek: Add pinctrl driver on mt8196
+
+ .../pinctrl/mediatek,mt8196-pinctrl.yaml      |  220 ++
+ arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h | 1574 ++++++++++
+ drivers/pinctrl/mediatek/Kconfig              |   12 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c     | 1859 +++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 2789 +++++++++++++++++
+ 6 files changed, 6455 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8196-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8196.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h
 
 -- 
-2.37.1
-
+2.45.2
 
