@@ -1,243 +1,125 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D4342A94;
-	Tue,  1 Apr 2025 12:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB91E47A9
+	for <linux-gpio@vger.kernel.org>; Tue,  1 Apr 2025 12:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743509762; cv=none; b=PbAexvRjWaP294M8e5iP1m0UeZixMQ02UV/awGxX2BHcXaQn+qiw3Df0qgODfKH5bWVx0TJN96hz5vXBjfegyQkZjf17YBSuSEkFOjr7+Gy3z9WOz9tOyV3Ypdlf9Nmx9UH2JrdbEPrZYCjRMg9SNvwJCthkslsoZCYLS2K4r1Y=
+	t=1743511620; cv=none; b=PkQ8Ye+vE6YUKX8WXQpuLOf8O+s90jm09QH340pdVfCVNqk1hlH2QwEh93Z8D37Ivo0jIqvIjiui59kwVhtMxA2vkrVH8H6fA43KlNa4TWsmLtGjotL2qBL7R13qDJEDgEQK+/v7KsFqLXucVW+RK5BeaONhjEHV+Gy00fLF1OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743509762; c=relaxed/simple;
-	bh=tJ/nY5DmjGkUEyUIKawES06pKMf+xtUebkpWoQY+V7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubZD3U+Pb8lMhg2FAWOWsZ+3oYsQWb3x+ckuo+y4yfh/RszD2l4Q3oClKXJVIOXTjC6T/26K6PCjKKMbnAqNlLGLyqOM/c/LPBAXjp5TNvGK98eikKWxSu6RaQpE09idcr9whdT64ai46dfQW/ytZ5ewBKpSsF0T1Lcgtz+H2B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=BI8ZYVDD; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1743511620; c=relaxed/simple;
+	bh=temwGwuAaoC5zTFBClo/qvp6AjaDT4RZkI46P4DarK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CnQ0173a1bF/9MFUJvKNJp7RSCJJaU+I1Y/5wUIzGz8LF3vW0Z6W9iJd8iOdIJgcUsi9iYSbCjTTYzKN1yoftRn4ufnP0fRyW+R1eYGs24hfvvram5BO2vBORS25H8rjzbPr9OO0UOH57Z9K1EYsL0RBkpRUoST9Lcfmf+97q/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eqAcMubW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="BI8ZYVDD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=cpHa3hRcyYE+oveSMpWWau+9FeOL1orHAEbMAeTSCY0=; b=BI8ZYVDD+A/bplQt
-	Lxzx6WknmOncFAkzbg2GZCQjMX0EAq3hUE9F4Aes1QlpQGYc2jv803aIWQnkSeu1SB4HcnYScO+yg
-	vxZPEWAte1PAaam76hgaooRGKH/oYX6y6tnP4nfGIO/WmayF48Jf/Y+bbe+FDkYOV0L7ozJaO7fF4
-	cxqDUiRvIoIGCHx3CjyqPfvSEXQ/zYYbs4d642O+Op3BWzlkgU8N8wRfC0Bt6yr30AMrT3jketCEJ
-	sRmONLJWJkJ+tiAsl0gyRjWasE+3VPQ2kYY994EuQop1SvJlb/h7dGwe9C/0e3Ijd/HG6FuSc006A
-	tJHj4XYIBZWId1R7kw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tzZpw-008Jmf-0j;
-	Tue, 01 Apr 2025 11:31:20 +0000
-Date: Tue, 1 Apr 2025 11:31:20 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: arnd@arndb.de, lee@kernel.org, dmitry.torokhov@gmail.com,
-	sre@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, danielt@kernel.org,
-	jingoohan1@gmail.com, deller@gmx.de, linus.walleij@linaro.org,
-	brgl@bgdev.pl, tsbogend@alpha.franken.de
-Cc: linux-mips@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] Input: pcf50633-input - Remove
-Message-ID: <Z-vOiJ9tdovS-Guq@gallifrey>
-References: <20250311014959.743322-1-linux@treblig.org>
- <20250311014959.743322-5-linux@treblig.org>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eqAcMubW"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so33684895e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Apr 2025 05:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743511617; x=1744116417; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xe7kdEUowiq8TBvJ84z72BfPVI79Uk7veEXXBETFIOc=;
+        b=eqAcMubWKJ4gAC3rO+37fSR7TlLQ7k/fWNGqDef4ArA05UeyAczxmOQcyZ18aFt0wf
+         5qLyY/WGRvCEHAogvEVMGTI8GizsByFt4N6RN/VFGCxvc6haqqNYt6PZ5U3vvEvlN2Gy
+         vmVRMKj4RpvdZf9GYPMUzGpMWUWwpUmWcb6Pu5L3gDAGrUopJxbga90w69ywmpTXlWA7
+         ALwOFCbJTmtzwUrq1h4qS4sCiSUwCjIpSrpvmQI16ye0U1YsNLp7Z38xSxa60KShB/ef
+         ObhpWN2A9DATZ3lhIGa8xNdt+d2S70eUxJ0eMKVkNp8fKB5wJmog0TV/O6eGhuVnQ14Q
+         h/oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743511617; x=1744116417;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xe7kdEUowiq8TBvJ84z72BfPVI79Uk7veEXXBETFIOc=;
+        b=F3IOOPAyc+2OgbqISPqr2wEUY1W5LKagRHQ8tAij37TS/hsMinQa2O8BoWqfsMqWkg
+         KH9xBuhI9qUVw4Kehc5pz+S9zNndEyo3OP1jS5RsHZIP/3oRjMUf9naELr/o843pLe41
+         R2RngfmrJ+m+rLZWBSAdSZ31pzNdRQD57gaK8vjCEph3P9SZ2lOW4L3seajOPICKFxcK
+         vfxejsOfAgHJ0QvZk/oi8st1IwCXJINcYzN2fpF0/X/uyQ3BgztQyigXVPt5bRY5OLRE
+         Z+Zm1WnekdCk9szDKDOIi9uH7yA01cIAGjVu4cYR3nuiRnnkmkEtgwFONzINUzVptJeu
+         Tcaw==
+X-Gm-Message-State: AOJu0YzmfDTKmUpGM883R0/rx1kz4mmOm/VUtiELAqc1vFBJ5BdU7SMm
+	er68YfvfNzMKFP1WWTISs2jBlgNW5fCviogo96uAwnB2zQeUlV7VzR0nqih+AzsVoxvnYXYHi3W
+	a
+X-Gm-Gg: ASbGncsaBJeEmCc0tLkUvNEmeej28ezf93X7z7eJq8Ak5zZhUI99e9TF4J/cxZcoB6u
+	+0OyLDsA/Yza1EhdtvUdetQH5F+pbYFW8xY8c/fT3j6NqzpZRFONX5k+OWPZUiOGWqrKi+eecCb
+	689XDiWBvLcpsMxVPTGqGy7HOKjuW/mLHwRuGir4Q9USB5kZQ4SCACuQIRrQGelBhrAuoM+A+LD
+	wju9DxPvI8KgVIM41VVsMX2o4SnggDCl/qiowxeHiPzDn8BjKC82oWAPjioFSxWnzG0mhWA0fKb
+	+J0RwgHS1BZAPqP0m7dybrbQtXqwwNQMZaF7
+X-Google-Smtp-Source: AGHT+IGf0u46IWU3CO/BVxxVBOy8SucBu63MYXRuUp8B+WfcdRIPeQ6B7KQe1s4LIVosuvQteU9tqg==
+X-Received: by 2002:a05:600c:6b6a:b0:43c:ec72:3daf with SMTP id 5b1f17b1804b1-43d9118f70cmr145110815e9.14.1743511616731;
+        Tue, 01 Apr 2025 05:46:56 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:a1d1:bbb:e2a6:2a9c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8fbc1889sm154711095e9.16.2025.04.01.05.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 05:46:56 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 01 Apr 2025 14:46:42 +0200
+Subject: [PATCH v2 1/4] gpio: deprecate the GPIOD_FLAGS_BIT_NONEXCLUSIVE
+ flag
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250311014959.743322-5-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:28:53 up 327 days, 22:42,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250401-gpio-todo-remove-nonexclusive-v2-1-7c1380797b0d@linaro.org>
+References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+In-Reply-To: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Mark Brown <broonie@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=923;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=Q2fStXzgr+tzcMl62MNu7piyURnbnFyqKrL7W40dDzY=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn6+A+b3G/t7nNpboJqZXMuCSfP94fJXXp8nKTZ
+ eJ1E6+JUW+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ+vgPgAKCRARpy6gFHHX
+ cixzD/9nSVZXqJagl5jSQHjbsNryvTmOQsXiTQ0JT42XW8WAgd+yJi+SbFEv+z8viaawLoo6mTf
+ Rf7qLG6rhFTV2idbRaXe3/YepxKRfP85PXbPqq8eoKHaruClgNG3x3heEDt1dFqRfuaEbvnovDE
+ 3awvA2RHnuSWRsiohCpVToG34tUmQhgMRYkqC/fKuHIa5Ie3CDPpygXwDRn0Xbjmahvtt+5HNpT
+ HOi8knpnYwRiC3mv29XzJ+YpGPAXuwiRo+HwHBE+9AJ6Yz0L9Fk03Wq7zaOlugwFAZSohhAqRP9
+ +EPTRivj40N9t/T4QkBkv3CC7ebd/BkeMowK/2Z8PeuKwWYdxxVdFOMWofyevKYoNmGu1Qzpjrd
+ lhiAok2kdsFv0OcqRz16dU/QkcCoi/cpqCuV9umKdXNW4kDld3BmTLw5J5DBEV7mgh2oIYEU/Se
+ mDOLE28+QBdylpgcr4F2ZDQtatXvCikmZLpHGe0ChLDDCZxC7oVkf5u2NfymRMO3ZwyV37N62B6
+ Reenbux3KkyuLLIpWleo6YLn5fTqENagSjVR6DrACPaSqrKIUjFlQISPn0rIgghzkL+RZVEJjc9
+ DDLofhQ8DQ0y0N29vsmymNWW0hzIbHInAfXsVlv4UosMFf0OBx7PG3qsFP8O3Hd1Mfac9k+Zb1m
+ iSgISzMBWwYQhvQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> The pcf50633 was used as part of the OpenMoko devices but
-> the support for its main chip was recently removed in:
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support")
-> 
-> See https://lore.kernel.org/all/Z8z236h4B5A6Ki3D@gallifrey/
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Has anyone got this input patch lined up?
-I think most of the other parts are there; the rtc I see in next.
-Then once those go there is a core.h that needs nuking.
+The non-exclusive GPIO request flag looks like a functional feature but
+is in fact a workaround for a corner-case that got out of hand. It should
+be removed so deprecate it officially so that nobody uses it anymore.
 
-Dave
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ include/linux/gpio/consumer.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->  drivers/input/misc/Kconfig          |   7 --
->  drivers/input/misc/Makefile         |   1 -
->  drivers/input/misc/pcf50633-input.c | 113 ----------------------------
->  3 files changed, 121 deletions(-)
->  delete mode 100644 drivers/input/misc/pcf50633-input.c
-> 
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 13d135257e06..62819144bd8c 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -584,13 +584,6 @@ config INPUT_PALMAS_PWRBUTTON
->  	  To compile this driver as a module, choose M here. The module will
->  	  be called palmas_pwrbutton.
->  
-> -config INPUT_PCF50633_PMU
-> -	tristate "PCF50633 PMU events"
-> -	depends on MFD_PCF50633
-> -	help
-> -	 Say Y to include support for delivering  PMU events via  input
-> -	 layer on NXP PCF50633.
-> -
->  config INPUT_PCF8574
->  	tristate "PCF8574 Keypad input device"
->  	depends on I2C
-> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-> index 6d91804d0a6f..d468c8140b93 100644
-> --- a/drivers/input/misc/Makefile
-> +++ b/drivers/input/misc/Makefile
-> @@ -59,7 +59,6 @@ obj-$(CONFIG_INPUT_MC13783_PWRBUTTON)	+= mc13783-pwrbutton.o
->  obj-$(CONFIG_INPUT_MMA8450)		+= mma8450.o
->  obj-$(CONFIG_INPUT_PALMAS_PWRBUTTON)	+= palmas-pwrbutton.o
->  obj-$(CONFIG_INPUT_PCAP)		+= pcap_keys.o
-> -obj-$(CONFIG_INPUT_PCF50633_PMU)	+= pcf50633-input.o
->  obj-$(CONFIG_INPUT_PCF8574)		+= pcf8574_keypad.o
->  obj-$(CONFIG_INPUT_PCSPKR)		+= pcspkr.o
->  obj-$(CONFIG_INPUT_PM8941_PWRKEY)	+= pm8941-pwrkey.o
-> diff --git a/drivers/input/misc/pcf50633-input.c b/drivers/input/misc/pcf50633-input.c
-> deleted file mode 100644
-> index 6d046e236ba6..000000000000
-> --- a/drivers/input/misc/pcf50633-input.c
-> +++ /dev/null
-> @@ -1,113 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/* NXP PCF50633 Input Driver
-> - *
-> - * (C) 2006-2008 by Openmoko, Inc.
-> - * Author: Balaji Rao <balajirrao@openmoko.org>
-> - * All rights reserved.
-> - *
-> - * Broken down from monstrous PCF50633 driver mainly by
-> - * Harald Welte, Andy Green and Werner Almesberger
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/device.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/input.h>
-> -#include <linux/slab.h>
-> -
-> -#include <linux/mfd/pcf50633/core.h>
-> -
-> -#define PCF50633_OOCSTAT_ONKEY	0x01
-> -#define PCF50633_REG_OOCSTAT	0x12
-> -#define PCF50633_REG_OOCMODE	0x10
-> -
-> -struct pcf50633_input {
-> -	struct pcf50633 *pcf;
-> -	struct input_dev *input_dev;
-> -};
-> -
-> -static void
-> -pcf50633_input_irq(int irq, void *data)
-> -{
-> -	struct pcf50633_input *input;
-> -	int onkey_released;
-> -
-> -	input = data;
-> -
-> -	/* We report only one event depending on the key press status */
-> -	onkey_released = pcf50633_reg_read(input->pcf, PCF50633_REG_OOCSTAT)
-> -						& PCF50633_OOCSTAT_ONKEY;
-> -
-> -	if (irq == PCF50633_IRQ_ONKEYF && !onkey_released)
-> -		input_report_key(input->input_dev, KEY_POWER, 1);
-> -	else if (irq == PCF50633_IRQ_ONKEYR && onkey_released)
-> -		input_report_key(input->input_dev, KEY_POWER, 0);
-> -
-> -	input_sync(input->input_dev);
-> -}
-> -
-> -static int pcf50633_input_probe(struct platform_device *pdev)
-> -{
-> -	struct pcf50633_input *input;
-> -	struct input_dev *input_dev;
-> -	int ret;
-> -
-> -
-> -	input = kzalloc(sizeof(*input), GFP_KERNEL);
-> -	if (!input)
-> -		return -ENOMEM;
-> -
-> -	input_dev = input_allocate_device();
-> -	if (!input_dev) {
-> -		kfree(input);
-> -		return -ENOMEM;
-> -	}
-> -
-> -	platform_set_drvdata(pdev, input);
-> -	input->pcf = dev_to_pcf50633(pdev->dev.parent);
-> -	input->input_dev = input_dev;
-> -
-> -	input_dev->name = "PCF50633 PMU events";
-> -	input_dev->id.bustype = BUS_I2C;
-> -	input_dev->evbit[0] = BIT(EV_KEY) | BIT(EV_PWR);
-> -	set_bit(KEY_POWER, input_dev->keybit);
-> -
-> -	ret = input_register_device(input_dev);
-> -	if (ret) {
-> -		input_free_device(input_dev);
-> -		kfree(input);
-> -		return ret;
-> -	}
-> -	pcf50633_register_irq(input->pcf, PCF50633_IRQ_ONKEYR,
-> -				pcf50633_input_irq, input);
-> -	pcf50633_register_irq(input->pcf, PCF50633_IRQ_ONKEYF,
-> -				pcf50633_input_irq, input);
-> -
-> -	return 0;
-> -}
-> -
-> -static void pcf50633_input_remove(struct platform_device *pdev)
-> -{
-> -	struct pcf50633_input *input  = platform_get_drvdata(pdev);
-> -
-> -	pcf50633_free_irq(input->pcf, PCF50633_IRQ_ONKEYR);
-> -	pcf50633_free_irq(input->pcf, PCF50633_IRQ_ONKEYF);
-> -
-> -	input_unregister_device(input->input_dev);
-> -	kfree(input);
-> -}
-> -
-> -static struct platform_driver pcf50633_input_driver = {
-> -	.driver = {
-> -		.name = "pcf50633-input",
-> -	},
-> -	.probe = pcf50633_input_probe,
-> -	.remove = pcf50633_input_remove,
-> -};
-> -module_platform_driver(pcf50633_input_driver);
-> -
-> -MODULE_AUTHOR("Balaji Rao <balajirrao@openmoko.org>");
-> -MODULE_DESCRIPTION("PCF50633 input driver");
-> -MODULE_LICENSE("GPL");
-> -MODULE_ALIAS("platform:pcf50633-input");
-> -- 
-> 2.48.1
-> 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 45b651c05b9c..8adc8e9cb4a7 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -31,6 +31,7 @@ struct gpio_descs {
+ #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
+ #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
+ #define GPIOD_FLAGS_BIT_OPEN_DRAIN	BIT(3)
++/* GPIOD_FLAGS_BIT_NONEXCLUSIVE is DEPRECATED, don't use in new code. */
+ #define GPIOD_FLAGS_BIT_NONEXCLUSIVE	BIT(4)
+ 
+ /**
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.45.2
+
