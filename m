@@ -1,62 +1,65 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F51239082;
-	Wed,  2 Apr 2025 12:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3712356AB;
+	Wed,  2 Apr 2025 12:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596467; cv=none; b=IbGz6quupazIL/bgAT1KtBk9NB6JYl7iuEFUHWkJnJiVzpZjPwTAzg6qysA+X3n1exwzQoqWT+L0UJ+STTphnKttYP+9loaTlIShC8kNuSGrPJ0XCO/3nka2f9KyAxYIop7EvFJL3YTz/w5K4tspH4fSEYzxL43FVB3vnQbTusU=
+	t=1743596588; cv=none; b=Sry3xQqkipCVJCtHOAjkrZ+BA1mPU4XHFTRz/Ua6XYR5RKqwJyWzUmHDssDoa0uUhAcQ9u7fKrWKsImq4RHAabbKOwm0xd2TxN9sBEbvrLst359p41Izp06JYjCyqeYokMEDfLRv68dnHczHE0+R16EzaG7M7ajn+IMeAajugGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596467; c=relaxed/simple;
-	bh=n8S2byZR5SUZKqPL8dvy9unDTv3hjcY6QS1TvVw8b7o=;
+	s=arc-20240116; t=1743596588; c=relaxed/simple;
+	bh=jrQuqRPZTLRY/Nv4wjP8wiHYwDHsodAh6RSZDaxljOA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iDoRkDcesfB9qSVwuudeXVgmx9Sk3/JnJyPGmQpUuVepbpZS1EqoOnPuqKHBWEwa+uhhtRfRshKtssTcO5TsnEvDyUeUwHlzTKzf/YlxVBEZsIGPXLv1PZEZWI3o8LiRWGYbfv+zWHb2yFxsJB5ITBaR5GPU8ZpDfgtB81f8EFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wln9Nji0; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=LKU+T32mSafDmM14YybpaKnFq39tLVAMm60tZbycxLP7lW6Dh45TElHXbffPztoUAYVUaonogRRQoWZfvSH5i236cLy0pkuexj2TULBgRpHrEjsnnTrh70h9FD5VEoRfihlqUzsvkXm2fjlmZT5Dldek6oav5zz6KLKDby3U5UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjhJ0zT0; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wln9Nji0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjhJ0zT0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743596466; x=1775132466;
+  t=1743596587; x=1775132587;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=n8S2byZR5SUZKqPL8dvy9unDTv3hjcY6QS1TvVw8b7o=;
-  b=Wln9Nji0Rbrk4yzK6oujZjH6x/Rx1b2wbWMTbyazPed6jStbp66FWd32
-   n1ISK8/E7o6D+wRxSuYMFgvZNam3gfDFV9SD+akKjaJVaqtKHFu2CPOXo
-   3YBWXdTOn5XupOzfdakY5446FRAkBd/t052EUmTqTRPpfZJ5U2/Rkqcn8
-   /fap0vsqcVJ5kSMlq7Dg2xoSHeXUssAR2pIU9TXYsvaStb/inN/EDuJfM
-   rtnznCbo6MM656KF40il5mS1sOcVgX5cfRULGT5VpxwThC+REmMwobTvD
-   f+MVAQFfBrnuRw8rBDwRh0W1kJ0ix8iFupbycVJx/8MGyBogklXzX1Let
+  bh=jrQuqRPZTLRY/Nv4wjP8wiHYwDHsodAh6RSZDaxljOA=;
+  b=TjhJ0zT0Km3lLyIPt5zqZ0N8KOBWO8ybNLcL1G9H8Xx85rvay0FaWGLR
+   3ouy4aJk98jGVPbwHdz7AQx1bjsbus6XwJPggZ6C032HgWebjijg8+n9i
+   sVPPbfNHAtoLcq5BRZ/2peTNsgfBfJBytTXGOaJYaTMLvOeNjxxwkX4zG
+   VHwtZRCu1W7e15/hVpOL8neNWdpLJGoPdVoPgQTaa+FEdDDQMOlN/HqBB
+   OYdm+V8yDjqgoVQTOL8MJzxGhW+vp6g2UvNRhOhOJxOhsQDws6bMDBWUT
+   ZAjmOD7YYd26LirEPeGgqbOs+28tTpBWxMafAmvWtWKL453rsl+pc/GMV
    w==;
-X-CSE-ConnectionGUID: 4tY0R4SkTD+MnsUkq3hbTA==
-X-CSE-MsgGUID: 5W1mvg1UTGy+yNv1wxRs2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="62357538"
+X-CSE-ConnectionGUID: YEahfclmTBysQWaARrbT/w==
+X-CSE-MsgGUID: FLDrPTH9RAqmilNwInep1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44104530"
 X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="62357538"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:21:02 -0700
-X-CSE-ConnectionGUID: Gt280GVVQdSNBmNU5NI8dg==
-X-CSE-MsgGUID: 1Hyf3AiMTpi9UKSewvGZoQ==
+   d="scan'208";a="44104530"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:23:06 -0700
+X-CSE-ConnectionGUID: ss7ZNeBlRhKHvpd1/tEbwA==
+X-CSE-MsgGUID: JBaTt+7QRqWAk6a/fiZEVA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="127584273"
+   d="scan'208";a="149872337"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 02 Apr 2025 05:21:01 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 02 Apr 2025 05:23:04 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 92F2526F; Wed, 02 Apr 2025 15:20:59 +0300 (EEST)
+	id 745794B0; Wed, 02 Apr 2025 15:23:03 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
 	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Cc: Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 2/2] gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment
-Date: Wed,  2 Apr 2025 15:20:01 +0300
-Message-ID: <20250402122058.1517393-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/5] gpiolib: acpi: Reuse struct acpi_gpio_params in struct acpi_gpio_lookup
+Date: Wed,  2 Apr 2025 15:21:19 +0300
+Message-ID: <20250402122301.1517463-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250402122058.1517393-1-andriy.shevchenko@linux.intel.com>
-References: <20250402122058.1517393-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250402122301.1517463-1-andriy.shevchenko@linux.intel.com>
+References: <20250402122301.1517463-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -65,40 +68,128 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The regulator comment in of_gpio_set_polarity_by_property()
-made on top of a couple of the cases, while Atmel HSMCI quirk
-is not related to that. Make it clear by moving Atmel HSMCI
-quirk up out of the scope of the regulator comment.
+Some of the contents of struct acpi_gpio_lookup repeats what we have
+in the struct acpi_gpio_params. Reuse the latter in the former.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-of.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-acpi.c | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 8fff6fdfb4a1..65f6a7177b78 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -268,6 +268,9 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
- 		{ "fsl,imx8qm-fec",  "phy-reset-gpios", "phy-reset-active-high" },
- 		{ "fsl,s32v234-fec", "phy-reset-gpios", "phy-reset-active-high" },
- #endif
-+#if IS_ENABLED(CONFIG_MMC_ATMELMCI)
-+		{ "atmel,hsmci",       "cd-gpios",     "cd-inverted" },
-+#endif
- #if IS_ENABLED(CONFIG_PCI_IMX6)
- 		{ "fsl,imx6q-pcie",  "reset-gpio", "reset-gpio-active-high" },
- 		{ "fsl,imx6sx-pcie", "reset-gpio", "reset-gpio-active-high" },
-@@ -293,9 +296,6 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
- #if IS_ENABLED(CONFIG_REGULATOR_GPIO)
- 		{ "regulator-gpio",    "enable-gpio",  "enable-active-high" },
- 		{ "regulator-gpio",    "enable-gpios", "enable-active-high" },
--#endif
--#if IS_ENABLED(CONFIG_MMC_ATMELMCI)
--		{ "atmel,hsmci",       "cd-gpios",     "cd-inverted" },
- #endif
- 	};
- 	unsigned int i;
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index afeb8d1c7102..750724601106 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -744,9 +744,7 @@ static int acpi_gpio_update_gpiod_lookup_flags(unsigned long *lookupflags,
+ 
+ struct acpi_gpio_lookup {
+ 	struct acpi_gpio_info info;
+-	int index;
+-	u16 pin_index;
+-	bool active_low;
++	struct acpi_gpio_params par;
+ 	struct gpio_desc *desc;
+ 	int n;
+ };
+@@ -754,6 +752,7 @@ struct acpi_gpio_lookup {
+ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ {
+ 	struct acpi_gpio_lookup *lookup = data;
++	struct acpi_gpio_params *par = &lookup->par;
+ 
+ 	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
+ 		return 1;
+@@ -765,12 +764,12 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 		u16 pin_index;
+ 
+ 		if (lookup->info.quirks & ACPI_GPIO_QUIRK_ONLY_GPIOIO && gpioint)
+-			lookup->index++;
++			par->crs_entry_index++;
+ 
+-		if (lookup->n++ != lookup->index)
++		if (lookup->n++ != par->crs_entry_index)
+ 			return 1;
+ 
+-		pin_index = lookup->pin_index;
++		pin_index = par->line_index;
+ 		if (pin_index >= agpio->pin_table_length)
+ 			return 1;
+ 
+@@ -796,7 +795,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 			lookup->info.polarity = agpio->polarity;
+ 			lookup->info.triggering = agpio->triggering;
+ 		} else {
+-			lookup->info.polarity = lookup->active_low;
++			lookup->info.polarity = par->active_low;
+ 		}
+ 
+ 		lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio, lookup->info.polarity);
+@@ -834,7 +833,8 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode, const char *p
+ 				     struct acpi_gpio_lookup *lookup)
+ {
+ 	struct fwnode_reference_args args;
+-	unsigned int index = lookup->index;
++	struct acpi_gpio_params *par = &lookup->par;
++	unsigned int index = par->crs_entry_index;
+ 	unsigned int quirks = 0;
+ 	int ret;
+ 
+@@ -857,9 +857,9 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode, const char *p
+ 	if (args.nargs != 3)
+ 		return -EPROTO;
+ 
+-	lookup->index = args.args[0];
+-	lookup->pin_index = args.args[1];
+-	lookup->active_low = !!args.args[2];
++	par->crs_entry_index = args.args[0];
++	par->line_index = args.args[1];
++	par->active_low = !!args.args[2];
+ 
+ 	lookup->info.adev = to_acpi_device_node(args.fwnode);
+ 	lookup->info.quirks = quirks;
+@@ -897,10 +897,11 @@ static struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
+ 						 struct acpi_gpio_info *info)
+ {
+ 	struct acpi_gpio_lookup lookup;
++	struct acpi_gpio_params *par = &lookup.par;
+ 	int ret;
+ 
+ 	memset(&lookup, 0, sizeof(lookup));
+-	lookup.index = index;
++	par->crs_entry_index = index;
+ 
+ 	if (propname) {
+ 		dev_dbg(&adev->dev, "GPIO: looking up %s\n", propname);
+@@ -909,9 +910,9 @@ static struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
+ 		if (ret)
+ 			return ERR_PTR(ret);
+ 
+-		dev_dbg(&adev->dev, "GPIO: _DSD returned %s %d %u %u\n",
+-			dev_name(&lookup.info.adev->dev), lookup.index,
+-			lookup.pin_index, lookup.active_low);
++		dev_dbg(&adev->dev, "GPIO: _DSD returned %s %u %u %u\n",
++			dev_name(&lookup.info.adev->dev),
++			par->crs_entry_index, par->line_index, par->active_low);
+ 	} else {
+ 		dev_dbg(&adev->dev, "GPIO: looking up %d in _CRS\n", index);
+ 		lookup.info.adev = adev;
+@@ -943,6 +944,7 @@ static struct gpio_desc *acpi_get_gpiod_from_data(struct fwnode_handle *fwnode,
+ 						  struct acpi_gpio_info *info)
+ {
+ 	struct acpi_gpio_lookup lookup;
++	struct acpi_gpio_params *par = &lookup.par;
+ 	int ret;
+ 
+ 	if (!is_acpi_data_node(fwnode))
+@@ -952,7 +954,7 @@ static struct gpio_desc *acpi_get_gpiod_from_data(struct fwnode_handle *fwnode,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	memset(&lookup, 0, sizeof(lookup));
+-	lookup.index = index;
++	par->crs_entry_index = index;
+ 
+ 	ret = acpi_gpio_property_lookup(fwnode, propname, &lookup);
+ 	if (ret)
 -- 
 2.47.2
 
