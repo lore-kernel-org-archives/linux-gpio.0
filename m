@@ -1,126 +1,107 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01B7221F12
-	for <linux-gpio@vger.kernel.org>; Mon,  7 Apr 2025 07:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE37A188A0E
+	for <linux-gpio@vger.kernel.org>; Mon,  7 Apr 2025 07:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011489; cv=none; b=Wt5Qcje4ivJe6DLHvjOiOIaZCCbeE0QAX48OYFDAXjvpHYQVFABcnyEDyAxL+GM34IvIYU+wBxIO9iL2zbASUsoX0iGW7tgZrarBstjPIa0GDKnGABGgFiVzKqy5I+ZbydTpqh6Wg2R1OC5bPTX/WoA7WC3dVDH4zMeLCFL6YKU=
+	t=1744011694; cv=none; b=BgfdgVKGZ7WPz/tPE4e1jakvXOo8dF6h45fnxEiYCtOYsz9vGnFA4R+n7PAj7jyyd3iomzNDltr4+RlVZ9Vv14yUiZYkS7uAFxto656zpkyfG1mpoxEHvy8u+Z2j2xXRVk0O+cxps1VVRed/czxrljkxXi6MhCz2/mG4d30Z5U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011489; c=relaxed/simple;
-	bh=n3y5S+O7kQ6BuzA99tkggUIPSJO+2r1CKhEXkaomFp0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M2PzJ9EO5N9zl9LM7/lIbJ9/TodyRr88brmeF0HiHIrbIVs/Rp5tCMrnnvKpbIC5Hv9SOxFSakNZX52naliPuQ6Z8n61/mu7jBTDyA0A/UBPg8tvjB7isOY1aR4y4nOPbl1hZF0MFuk3Q/gBH+wwT7LHG1mYvk6ORmMWMZM5cyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RYa1l+wL; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1744011694; c=relaxed/simple;
+	bh=wUxnoVJrOkhN8ol+6ufOgx0J5Xy6IYNdh22iPwhPO0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aux+bja0z/xYLgVwQe3UpgSyRsdLLv5RYVTmMWWBCm/LGyxN6JzRi1RqtVNvKmGnOdlULkzokq+u664De06IZbQgQb+qtH9uKsYis8c4O6zk/hq7Pq+a6WJperU50DhtJdlUbqHE/YLbUUaORD9LnpkCm6PzT43t6fFSwJ54NmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RxdWrJGi; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RYa1l+wL"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso416406066b.0
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2025 00:38:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RxdWrJGi"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf848528aso33073835e9.2
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Apr 2025 00:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744011486; x=1744616286; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xKdjaegSMAM/rqAxMCD9Qx149zQwzIx25XoQ9FIROmk=;
-        b=RYa1l+wLBzgmaNKvb8FBqxT9BR9KcELWq+iuUf2F8T2BYpVrzsSc2qC9vtrVRSG66V
-         fzBtzD5gIOrTbKoBzmyGoJvlMpbjG7N0Yttb6zMVydzd36TUitSLjRfkcTwaPOJLEsqL
-         Kx9YA0+CJ995zBOaAaRIcMI4aNzfj9vzLCapx6lcZUnlGJkOCOcS1QaBf5wpym0dxSmb
-         8/pMDjYlWBXHcBcIBGgVdMpqb4DkCOL+QlhFCIY4k7bnkDtZTYURGiLQFqlZe9jIbHgc
-         x867yr8LCrRDNJqV1Cm3axXFulhz4vdyiA9y/OvMiKz81st3LOG5NHe+JXupienDokqf
-         lKxQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744011691; x=1744616491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uz22H0sKHi0P6ChA8f8l89RVIB0HG3tTa0TbQ2D4N4E=;
+        b=RxdWrJGiH2w8Wlfhk1ImgZ4sTnRqHYSa/norO4NdFlG6iIhWXeX8T7TrYP+Qsqc72i
+         dnpQ08vDVGWt/hQvcT5vYLE0RNNLcJKHK0XPGdY7NbW5DpmSNxALhiKVCqnkiitnjgwc
+         hoNTi7GpkYP7x/BGmP/EvFEFwx84Y865pEGEXr995F/Ekg9xwcT7vUcQ9rhHRRTZij3b
+         QGLUFAuwA74I7EhNrCYLGNXcuTUigOqIXG7fczNr+gPCr8xw1HTdkUomJ2TDpQ4A9+dm
+         sKzqfnodOyIyU6ZzyvQtmHUSAkgJOD5UXGtHtYpY9wGiw5dMWWs7+KZMrg2SeBtHmV2m
+         bPgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744011486; x=1744616286;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xKdjaegSMAM/rqAxMCD9Qx149zQwzIx25XoQ9FIROmk=;
-        b=GCpHPgEt8oKhBbKdiOKa9S+bzIf+K5DUj8TogCRo1gYIbGz707BrOre0NmGuAnTiiz
-         W2O4L1Q42IVhLez6ExzY3+3IHFJnhVfNyP+15i6y/EX9J45DNrhk6VlognGHWjY9kKzI
-         YNm9XW6sBouZWfvADr0GiWU93aOVDEeVSRFEl8Evtw+auCNSlBuT9X3PZrP9k9E54H7P
-         A5psb6XA8dFIidKz5KwKltKuPYwtm9kzUo/wPIkbKNzRt3WFgVxbtxvXlql1Xjvbemog
-         kvIVdxL3+TZ4LIVZ41Bg7DTxpLcbeVEqfPP1kw03rXP9ZlRAFbvtSrRwCvchvwKr5ndW
-         Rwfw==
-X-Gm-Message-State: AOJu0YzTsH27T/T9Io4D/Ri8L3kClODNWxHhD/7UfNpiJFvC8HRyIvJ5
-	df/SgUL7bQJ8EniIkOYs/g8ZqpiwdfQvDrlzdmteCP59IChVxvm+ZvZVweKCG3eh9Ytqu/rsqad
-	OPYc=
-X-Gm-Gg: ASbGncs/3dV61DGbETyTfBFuv5Xg8+5G8/jOU0OMSGC+1QrFj42f9lFnbRVY6RhRbnM
-	Czul0rKqierS96810BIYKsFTlnaYGVrQZW8m4I2XKnkIkxQxWDsJOOVK9Lw8lmWEVXB3l2SIFV5
-	CtzowkzksV59z1NIhDx+107RyhTSND+yoARR4zCejyIAAACSXI3R0PRgmsBMDwUhvfVlUa8WWbK
-	2w7kWxnKdfMxqsU9wea4NmexxI5f8HBLllAnlwuQYDaO1QnsVqK87Nj9JZphIr4toUxGyGgu6lf
-	+U9D4V62DhN2XRuOzgcwMfkzkAwEqzmfeCxIrzEeIqRZLKM8
-X-Google-Smtp-Source: AGHT+IGVJL2F1/8I/lWwJ31vPm5jJXx6hPrzpL71kYNbYKzzALSjHc3IlX+0r79eE3W6Jj2Qgam/hA==
-X-Received: by 2002:a05:600c:3ecb:b0:43d:7588:66a5 with SMTP id 5b1f17b1804b1-43ecfa06563mr113287175e9.31.1744010003499;
-        Mon, 07 Apr 2025 00:13:23 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ea97895e1sm145267115e9.1.2025.04.07.00.13.22
+        d=1e100.net; s=20230601; t=1744011691; x=1744616491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uz22H0sKHi0P6ChA8f8l89RVIB0HG3tTa0TbQ2D4N4E=;
+        b=h67fdgzWrUseBI+bL/ZqvxObTukZOhQ4RTf01mKOQJf7TGGaYAAmOUEwWpRMgn8abg
+         SjcfMZ5w9sUf4v1EEPINOm8t+gL2et3c+sPOR1RENRodmYXgm3vKQTkwEVlrBDhonfC3
+         6CmmM5Te1RhyL2407JGS/ihh4ZfIE3fbBB34i66Klxa7T/WJMfePZNcHqvqtsE4dGkM1
+         p6s/FrNI0vaDzH5UiuPqsoLZgN36I6q7U1e+ednE4p1a3OMIxMGeGfyNP7+c7HJ1jE7V
+         YIBDxgaU0Mwk+zPYeWdTIXZR/qebjwFzAN+Yy02J7g9ackGhMRBhiEFTAQ3iQpyZsUhg
+         bKsw==
+X-Gm-Message-State: AOJu0Ywnb6ZQN1WvaiFK77PAqz1Bwbs8+c4qP3xAz6Q88EK4g7K+nlRE
+	VKjQGZGmQCfwuO3rlu9L9ElDl2ohZwsvXOwo+RPBD7SN5MnC7XvZ0cEdbGiaxHs=
+X-Gm-Gg: ASbGnctpuQVhI4G4jxwxLj6D54y5jvOgoRv3TnnQYWGac0iP3GqlN56+4sf4cAT6J0t
+	fXxgCdlNhF4EV2oGNhYroXzbOVNLKmEpzLvzZP2nJlLw5saH24pn+96dd6wZgUs1XtSkZNR2orH
+	zIS4D7swWdsElyEaUc05deNq5lwZKZeW9+G6mXDd+Y9+z2YHTuSGdOdFyUaex67TTb9yI19lKiD
+	lvbC7Tm/GCl7AiCXGhQ7vJF6Mc/tQfLR741ktcVcaK4LPHXnAvIw3ZLIgPaAIylH6IwRodaVTLU
+	0BSBZ5ijZjunpjR4+TlJUahJ7QiJAj5nj1dY0cCQmwHp
+X-Google-Smtp-Source: AGHT+IFHFUB/LjMCMRZ1FmL1ZohnhrBOQtU3VyuHCtAN6Bq4uju9hGTT9QfacVvXg7wSnqGBuluI6w==
+X-Received: by 2002:a05:600c:4754:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43ee0640054mr73289405e9.11.1744011691047;
+        Mon, 07 Apr 2025 00:41:31 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a6a60sm11029472f8f.29.2025.04.07.00.41.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:13:23 -0700 (PDT)
+        Mon, 07 Apr 2025 00:41:29 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 07 Apr 2025 09:13:18 +0200
-Subject: [PATCH 09/12] gpio: htc-egpio: enable building with COMPILE_TEST=y
+To: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio: immutable tag between the GPIO and regulator tree for the s5m8767 polarity quirk
+Date: Mon,  7 Apr 2025 09:41:22 +0200
+Message-ID: <20250407074122.23773-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-gpiochip-set-rv-gpio-part1-v1-9-78399683ca38@linaro.org>
-References: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org>
-In-Reply-To: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
- Peter Tyser <ptyser@xes-inc.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=682;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=KsRxiW0W4vPyxl96QeRBfnOsz6q4m3Ci9vZGWLs5JTM=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83sJFjAf8szaIrgU5fOqH/7amZ26nGC766Hem
- EIDJGZEXr+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N7CQAKCRARpy6gFHHX
- cq6qEACSrOsrL/eTz+OWDhz4LW60zXJaDDg5Nuceeu5AW1ALzN/2p0KC/vTlpXXplL6RdF7BLRf
- 2hgVRiqsLE5E03qR0u/5QvjgXLpcIZLvA/diAZ4XpZ4snRlDvtCxE0PjAFuOHG5bY3TD5oJXRHZ
- AYjngYn1l+FQwvCZbDR1pEgQdgx11SkyUGQduyHYyYrYL1JqGwJpe6wGTNUHAUxAHQL3FvVnVCI
- 9kERiaMzIwJuLFc/Zl3M0+O67yijJGaMVWhLu4LuQ/lXL0WLApQGgc9ZfQJbflHt+N6v1ks4Hcn
- ckZx0oGiwVo2rrKoTI9s/LKhVzGqBocBtL6md2qZm/thsYmcxHiEAaoQyF1Hq28m7b6Nbd06T7L
- mPbAEcwvF66QinqBunjXweN2uCn4H2323sSgaQk2aD9ZCV17q72vySB1My7hgAGeylyutpAfM5y
- W7dYHtRhWpYpfdF0i0BVuv9A7TWKT6GoaWCKVezB9rGzX9a4JAniOrnnACa8w85M3GkxutuiqO1
- 0TmbiI1/mcptGer4guYOBZkhxl/oDwmc0/GA5d6DfPnXP5Bzp7l4C7GjsovTpIFNyrgRhm8fDhS
- WzOqAEi4kuFxf/EW59WI5sce39+te4RlicHYmTDxAJWuSfpOE/mKC11EQughtuzgyvQHJ1bBLFM
- gdvtyhemCdzldcw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Extend the build coverage by allowing to build the module with
-COMPILE_TEST enabled.
+Mark,
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please pull the following GPIO change allowing you to apply the patch[1]
+converting the s5m8767 regulator driver to using GPIO descriptors.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 5bbc7f724a09..decd150810b7 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1365,7 +1365,7 @@ config GPIO_DLN2
- 
- config HTC_EGPIO
- 	bool "HTC EGPIO support"
--	depends on ARM
-+	depends on ARM || COMPILE_TEST
- 	help
- 	  This driver supports the CPLD egpio chip present on
- 	  several HTC phones.  It provides basic support for input
+Bartosz
 
--- 
-2.45.2
+[1] https://lore.kernel.org/all/20250327004945.563765-2-peng.fan@oss.nxp.com/
 
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-s5m8767-polarity-quirk-for-v6.16-rc1
+
+for you to fetch changes up to 4e310626eb4df52a31a142c1360fead0fcbd3793:
+
+  gpiolib: of: Add polarity quirk for s5m8767 (2025-04-07 09:33:29 +0200)
+
+----------------------------------------------------------------
+gpiolib: of: Add polarity quirk for s5m8767
+
+----------------------------------------------------------------
+Peng Fan (1):
+      gpiolib: of: Add polarity quirk for s5m8767
+
+ drivers/gpio/gpiolib-of.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
