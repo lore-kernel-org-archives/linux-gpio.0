@@ -1,171 +1,144 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0379261579
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Apr 2025 07:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C3A261589;
+	Tue,  8 Apr 2025 07:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744096991; cv=none; b=nrlFrgtqpz2mZmmvxD7ygplzzJo0CyfWCLoGBuLKNtLIhebyc2UnUFIk34XNKu46uviBV/IHj2EWJ2NTkGycfJ2f9V2rx2kYLiuqNxrEn3S7SojvstgoxZ8tnEHduLGCApguI6Vg1698VZqtelWHgdS+enstO7TFDBFMNd1SJ3I=
+	t=1744097044; cv=none; b=HwbQSs8yeJwGZLTXWqGu3IKjIYYxnq5191SN9X6abggDWM11Os+Vf2pZRFjoqh2VrDNEn1EX4DUhpuLGJWyfeLs9t97TUqQMZ4GNn6YgWTRwtOK7iiiByeftGDncyyJVQAK328nX9jGwXlqfehoUpVgaffEi9PhIgC2XhOHG2dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744096991; c=relaxed/simple;
-	bh=oFDJBxlaVibC5gJZK7MUiCXZSDcBAlZc/J2265/ifHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KH6TuJYlUZ160tQUtdGU5LS/FOHsHlmCsC+k66PbspihJ+poDFGhSXu0Z5vyg+VfwJMMmvu6yf/jFOB8v6FLND5JHzhiwVpX4UjVPjIhu6Wta/BkCICzKjHaoPb+mbV7EPW4Q8ZLNpwMuyt6YOFCiGvth8yncDr+TD9lVISzPOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=m2FBcXMs; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="m2FBcXMs"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30db3f3c907so47595081fa.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Apr 2025 00:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744096988; x=1744701788; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6bblWb/A3f8Vp31ZlZJvX8Y6uILdxWWSmqIBQEBD8XE=;
-        b=m2FBcXMsTgUZt+ROH1fx4qrDAgOngmqIeHm0pSUnykfrXp0lep/rfcqx9XPkT/bT/6
-         +vtGVpdM3bwEPRpHTVrp6Ae9vyP49/w2B1Nci9dXeinMv9fbiYWLD7pEEdSEd2JwBYfB
-         h+RlqzWDwOshKbd0FFZo2kIosUhrbTtP5Qktmtq1ZMfxAOxZt/vmF76Id4RtizuxGaXy
-         bDapLImQP1Ziz7ciGR7d4NExJJrIl3iT+X0FL+kdLPg88lue5qcwy0ZjqfH9Jyz09V45
-         8NDJ4iXKM+a+loYLp5KV9uBevjlzx5A5YTsSiZkgxX9WgnykGmKNMkaT8tbWk050JGVB
-         Jo1A==
+	s=arc-20240116; t=1744097044; c=relaxed/simple;
+	bh=iTDpusoco6Y+4k6a2+IWTCtigaSRBwJqfYGPmGoeLII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mvAJZIKUwLzpRA+dJiTY+PieIkwb7iWjTuTXiPZCFwL38AbHVqUm1tDndyyKQXzT0D6rm7oStgjVsEGH2qXH5H9HEP2nPYWpt9D6wJFNGFNccdqUIQ73EQQ743WoJnebb4qQeaNz7vpFT0IDAxZtF67l8bguLIqFBBMQSCAnl1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51eb18130f9so2795370e0c.3;
+        Tue, 08 Apr 2025 00:24:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744096988; x=1744701788;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6bblWb/A3f8Vp31ZlZJvX8Y6uILdxWWSmqIBQEBD8XE=;
-        b=QwNhCp0LUJqz0HR0lIwLjnboxiJcMyywkXOjxyRhjcBwCMRKYSzJ0sL8dd+0kW4FmT
-         vj939QIzY14KldmYBO3BiWTY+5hlp+XGeT2HODXmOH8hrLGZmrUWS/VX6L3mJn+EtS80
-         Q+qzmnr4hqhA8CNyyG95aTl8Y/DmKyndXPUaLXu/iMJTy3l1+HDcXThB1B4C/8hO5H5F
-         7hGUhc+VxWGRgQuqDqlQp8yjKlSKWeOukMzT1jq84uzm4ldlL4qgnd9N3C8Q/xJfwAKL
-         2ZDlQiFp0KTwQjYbM453UFyd2U/eYYT2eJhRk4ixExu8h75pkR01FahNPgYAv1fxBH0/
-         i3tA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpOf+QjZebvt0s9sx1T1Z216fosivGYDv/MK+OQCMO5FQRhBUzNnVNrmeghO4MVvxQxqL3kwgZERqS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1hNrETaP1DDL9oduSYF78NEqJsV0IYnY3zU2k4OK1vsSmX4RX
-	/Q7UKpmFgeFERJXDLLijhU+uhvquBZSxZWVEygLUI8zK4JiPB9yl8OK4dYF9o7VQD64dkmEnK9c
-	PCrw=
-X-Gm-Gg: ASbGncup8ufp+jUUjDeC++oPre+yB09hmL5z7ZJpn8OteiUROSZB26KoLmv82PasQ9h
-	QwEXvKYmft9rfE6iRWFxC4sCU6jRnDtCPwC0ueyOMh6ToomAsLBlggHUncwiLBkACikTq6tka9C
-	fc0S5/Lh+mLbYSjF0hyHojZedVqku7W6ZXPzTMWFsO9P4ojg5lzQkFT+oItSuaxMJe+PEYVuLXA
-	jgjJlc1kLZOksh0LU0gYt95s1bYu8gifoaueywzh9WGZaSLJ5aq6tdx2ejSV5QVw8esaGRyjAWV
-	aTjTuZILj796yj+dmqe1rGAGtG0621od//SfZA==
-X-Google-Smtp-Source: AGHT+IHqIWuX5sWz9MJQWDS2IT6lTfF85m614lClDoVvdHMGky/Ix50ZxwKNqFgfUZCLhjcPg/Mzog==
-X-Received: by 2002:a05:6000:4313:b0:39c:2669:d786 with SMTP id ffacd0b85a97d-39cb359830amr12025582f8f.19.1744096669312;
-        Tue, 08 Apr 2025 00:17:49 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d5d1sm14257694f8f.77.2025.04.08.00.17.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:17:48 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 08 Apr 2025 09:17:38 +0200
-Subject: [PATCH 01/10] pinctrl: at91-pio4: use new GPIO line value setter
- callbacks
+        d=1e100.net; s=20230601; t=1744097041; x=1744701841;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=710dm2DYp+gy41dXZbNWGaKY57T4AIMJf61TXzyo8AQ=;
+        b=pbcKGj9E2sAWv4fdfRvCdF/zLXGA/j5bxnMweoN8ZMRXbD+31KOLcTcKHX6dSHAWGR
+         Rx+Y///7m51W2r3A6BMWAC/A2WSBjZm6vgCh71rMnAT4tHAomhBoXouYM9SySZLjvvEG
+         0VW6OQ4tKKuncjBkFVlEDef9JGdvS2izqHGvfhHHiCHfoflE8Td/AyLRkqLP9UOTDoI1
+         3U+8q9nLy7mfId+jJmSayIJ3z+H6sRS7/CYoN+A6OgrBPOTavSExdoEIoHz924DqJups
+         uak67xC9b7U54bkrsAjDh55u05P5V5CHUE6RyJZ6bny+j9Ylhrs4Xhav6Drbmx3oQA2N
+         OHNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPJbwbprMiB2AKu6JmP8L16CjtHQS8xRMqPXxp5antlx86yFSo4sNnpS4JRX4CtEwUtlEridVOQHmnrf8b@vger.kernel.org, AJvYcCUPeJjfrSadSJ0NHmouJF1zNXGiLoUM18JzFaykcB/JzceVMa7s+YRnIInmJt4r6Q0RBffdw74aSa7m@vger.kernel.org, AJvYcCVDJ/SsjGw65jgPEOpPL3Mk/bWpx2cQyPWm8zaZkhiKHjha8S+rbl+SYiZ6QzTGjnwk/4+NekTwOe7wNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3G22BGHnvoeLuCc/hP7kRvQvAbQtLM2qUqADSzdiAaxZvygBM
+	04KqjkYo+KfgwmARkPg0tEA2MbjwoTjp6QRfqCg372PomlYIIDWuC0lvINZ0
+X-Gm-Gg: ASbGnctwg7OcI6qlBt8OyH421BO2vl4tjJrQOXDDASRvgY2q7aLOjqY7tu+jYvet3mW
+	Ql7tATgOaVYp2fXu4mStDEWDKP16RnknYm6n7SgYMIJCc3B1qrYlX3mc7rp0/4fr8qE9CAM65gH
+	iTf2RtgcOTHhjgETVRwwHkclkvmUiCoxquWqvipQ6lL+VOC3jYCXdOCvzjFVEcSHbXiptfbZURI
+	bvsKJI/JZGLnBzzFBWEgPX0Z7UgrQrbukP39KvxsQIIT6rShitqdcxu4w73EOu7RCOF94hCRSS8
+	wqXXXXyj6DLINA3/2EB4b5hRhtY559Yk0EFM1riZ8+62lGZnEABU5OQrCZwwfFEu5OqhGd6o2lC
+	EZIH+vfQ=
+X-Google-Smtp-Source: AGHT+IHXLB/4lChI27Q1TOSUxDf5kKCJBourXFVGUUh/cssJjtbt8qWYZRmFvq3W6L0m+qvpiQPiJA==
+X-Received: by 2002:a05:6102:1485:b0:4bb:d062:43e with SMTP id ada2fe7eead31-4c8551ce16bmr13850886137.0.1744097041129;
+        Tue, 08 Apr 2025 00:24:01 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-873ca8d0f27sm215567241.15.2025.04.08.00.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 00:24:00 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86d42f08219so2189425241.0;
+        Tue, 08 Apr 2025 00:24:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhDuieywCZ5tmbDcchfbwaaKYXWaN5BlyROb1gux096k+a+uendw3dhe0CRpnb1HpKFowit3v9Fm2VNQ==@vger.kernel.org, AJvYcCWCUzVsCRN3l4a+S0RgznBtO/32rcNwdgEY6PXHVW1wE8sV4w7Medsu3d/JAXUuIj2DFLVcmq4cY3oLUTFq@vger.kernel.org, AJvYcCX0CgoeZinr7DNfwt9RUNeNy14YX7NovZIYnKAfzUg/etXLsNU0KQinYUNN6wrA2ozktCg2wRWFX4wb@vger.kernel.org
+X-Received: by 2002:a05:6102:38c8:b0:4bb:c490:7d6c with SMTP id
+ ada2fe7eead31-4c8553ba032mr12630312137.9.1744097040243; Tue, 08 Apr 2025
+ 00:24:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-gpiochip-set-rv-pinctrl-part1-v1-1-c9d521d7c8c7@linaro.org>
-References: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
-In-Reply-To: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
-To: Ludovic Desroches <ludovic.desroches@microchip.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2256;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=6oXQdDn+JiYI7kPrR9MR4Ulr8BlxDaIdgOQst72f6aI=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9M2ZS1CVSr+OpPpLt+g73dsnxK7Cn+5jOBkEm
- S4RhLYFpI2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/TNmQAKCRARpy6gFHHX
- ckshEADgmKAecLNRDwbY5cLUNohPOOEtx7wPD6IeqZgsOFSImxcR1AYiTklwNvcEyx4WnHhAmzb
- oG3lzRmS0xFVCzQi9mX4uHbuIJXP1MxN2ddsgnB6lg1CEj1b4qv6DNNxxtBQ0ipnDwRNuawQcwH
- aeYqABy61n2vfrZJBJVOSi9TQAkdSEJwgvanfueiX/vJnvVKET+cxjJqHSgRCxlPdre/sm0kKMI
- CCPKVMovBcpT7OOGP0j4+p0kCB6NCqevlaTewuoV/h4tWjYpF6SH9gESREPjsk7R213eO+DWr4n
- UFTfB1ByxQw7vd5agHmcng2yl1ZV7SUNOsT5kf6nSoI4cvkeO4ons+t63tePlkRUDoQumIQzhga
- N/mIkjV7W2xjVvZrcZEGS63D38/fzY4sA7sVuWaWgZwWrCrfhPajPxotxjxOsvTWXSWJkfh6ixI
- f2yLdNBgi9wSYNat2UoYPTLeRh3lzFjphWxPajFb+ZQczTx/bXcjtpDXNQewa78BXhZ30rEIrF/
- M3gIErsXpEjyv3RmSJV7CGPdxfLwaxjHq9SZNfNqeeYValUtoqirxITK0jSaQrmdUBMmUx/IqJs
- XwWZMdG3msE++lZ6NvgjhT2WFVsie3VhFAI2l/WdsxXhiwXItFE0r0m2V8VtqyUKn2/YCh5ew2+
- nnZya7p1LkYH6fg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+References: <20250326-04-gpio-irq-threecell-v3-0-aab006ab0e00@gentoo.org>
+In-Reply-To: <20250326-04-gpio-irq-threecell-v3-0-aab006ab0e00@gentoo.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Apr 2025 09:23:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX8ES618Hr+6xq-p11S573HcFKdRrz8sUc685yDa=cDGA@mail.gmail.com>
+X-Gm-Features: ATxdqUGYGVzv3sgPFJoJZKKUaDCZ3SrbEz5zs3DshQWEXWWo_KwIHTOtR51_N8M
+Message-ID: <CAMuHMdX8ES618Hr+6xq-p11S573HcFKdRrz8sUc685yDa=cDGA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] gpio: irq: support describing three-cell interrupts
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alex Elder <elder@riscstar.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC devicetree
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+The first patch was already applied as commit 0a02e1f4a54ace74
+("irqdomain: Support three-cell scheme interrupts") in irqchip/irq/core.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+On Tue, 25 Mar 2025 at 23:08, Yixun Lan <dlan@gentoo.org> wrote:
+> In this patch [1], the GPIO controller add support for describing
+> hardware with a three-cell scheme:
+>
+>     gpios = <&gpio instance offset flags>;
+>
+> It also result describing interrupts in three-cell as this in DT:
+>
+>     node {
+>             interrupt-parent = <&gpio>;
+>             interrupts = <instance hwirq irqflag>;
+>     }
+>
+> This series try to extend describing interrupts with three-cell scheme.
+>
+> The first patch will add capability for parsing irq number and flag
+> from last two cells which eventually will support the three-cells
+> interrupt, the second patch support finding irqdomain according to
+> interrupt instance index.
+>
+> Link: https://lore.kernel.org/all/20250225-gpio-ranges-fourcell-v3-0-860382ba4713@linaro.org [1]
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> Changes in v3:
+> - explicitly introduce *_twothreecell() to support 3 cell interrupt
+> - Link to v2: https://lore.kernel.org/r/20250302-04-gpio-irq-threecell-v2-0-34f13ad37ea4@gentoo.org
+>
+> Changes in v2:
+> - introduce generic irq_domain_translate_cells(), other inline cells function
+> - hide the OF-specific things into gpiolib-of.c|h
+> - Link to v1: https://lore.kernel.org/r/20250227-04-gpio-irq-threecell-v1-0-4ae4d91baadc@gentoo.org
+>
+> ---
+> Yixun Lan (2):
+>       irqdomain: support three-cell scheme interrupts
+>       gpiolib: support parsing gpio three-cell interrupts scheme
+>
+>  drivers/gpio/gpiolib-of.c |  8 +++++++
+>  drivers/gpio/gpiolib-of.h |  6 +++++
+>  drivers/gpio/gpiolib.c    | 22 +++++++++++++++----
+>  include/linux/irqdomain.h | 20 ++++++++---------
+>  kernel/irq/irqdomain.c    | 56 +++++++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 98 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+> change-id: 20250227-04-gpio-irq-threecell-66e1e073c806
+> prerequisite-change-id: 20250217-gpio-ranges-fourcell-85888ad219da:v3
+> prerequisite-patch-id: 9d4c8b05cc56d25bfb93f3b06420ba6e93340d31
+> prerequisite-patch-id: 7949035abd05ec02a9426bb17819d9108e66e0d7
+>
+> Best regards,
+> --
+> Yixun Lan
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 8b01d312305a..5db839fa9b3f 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -390,7 +390,7 @@ static int atmel_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
--static void atmel_gpio_set(struct gpio_chip *chip, unsigned int offset, int val)
-+static int atmel_gpio_set(struct gpio_chip *chip, unsigned int offset, int val)
- {
- 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
- 	struct atmel_pin *pin = atmel_pioctrl->pins[offset];
-@@ -398,10 +398,12 @@ static void atmel_gpio_set(struct gpio_chip *chip, unsigned int offset, int val)
- 	atmel_gpio_write(atmel_pioctrl, pin->bank,
- 			 val ? ATMEL_PIO_SODR : ATMEL_PIO_CODR,
- 			 BIT(pin->line));
-+
-+	return 0;
- }
- 
--static void atmel_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
--				    unsigned long *bits)
-+static int atmel_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-+				   unsigned long *bits)
- {
- 	struct atmel_pioctrl *atmel_pioctrl = gpiochip_get_data(chip);
- 	unsigned int bank;
-@@ -431,6 +433,8 @@ static void atmel_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
- 		bits[word] >>= ATMEL_PIO_NPINS_PER_BANK;
- #endif
- 	}
-+
-+	return 0;
- }
- 
- static struct gpio_chip atmel_gpio_chip = {
-@@ -438,8 +442,8 @@ static struct gpio_chip atmel_gpio_chip = {
- 	.get                    = atmel_gpio_get,
- 	.get_multiple           = atmel_gpio_get_multiple,
- 	.direction_output       = atmel_gpio_direction_output,
--	.set                    = atmel_gpio_set,
--	.set_multiple           = atmel_gpio_set_multiple,
-+	.set_rv                 = atmel_gpio_set,
-+	.set_multiple_rv        = atmel_gpio_set_multiple,
- 	.to_irq                 = atmel_gpio_to_irq,
- 	.base                   = 0,
- };
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.45.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
