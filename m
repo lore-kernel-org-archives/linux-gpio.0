@@ -1,476 +1,402 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2955C25A62C
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Apr 2025 11:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744199180; cv=none; b=p7NKb1KqKDhRp6evzML5lWI4UrHo2WZ8L0nOIy+ActCZIKxGbSZatSXj96zSEIw/aZMzXReuoaJ1vyghMYiHNKnAtiQ8HfGvVsJhgBb/RXA+DoTSXlvn65XcvhnBvgCVIGlI2S69Kt/CfWZdScJTtm8n9EIBkeRMI7Nvu47JkGk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744199180; c=relaxed/simple;
-	bh=YV5gMdkO+/+2FcO7tTPABjN5QSfMLkWV2ElqF7C7urI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bFkmAsNiNak/eLOb71enMTTzd7YPJQkukvu+hQkDHKjghTofIkekLV/cY12cPCyP6Q8Nm6Lt/pVoRxTEs0J916C60iDSa23xyFuHScumRM2Kpb4VL/HoTWVeT4nomn/wpZiM6t4D8i6tiOSItfpEHpd26XdSknOZhUiRcbo0zF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AzGQRU7l; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DC625634;
+	Wed,  9 Apr 2025 13:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744203741; cv=pass; b=kKrY3jqQ8N1JA/DpuWVepVm/7fSuDim1sjjS/JebNPyP8Qr+IiwJaRG4uC5l0mUE6D9aRCCi7Nr2y9KKBD8gYTH3l5CjTkHZ7LGOhPjQhzq1u4XMX5hOWPT2aGIH3Mj0nqBu6AXeU8CLJAnT8jX+EycQSasjt9VApiID8eOQEcs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744203741; c=relaxed/simple;
+	bh=fJCRIdvfNIin7h3bUErme7A3yqHBqeHhSkc/RmGxjxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RazT1BjFI4heaabuUwyEWZrwbQAyDtPEQp7l03Dn34LvxHkhKu0k/e0T0Ut0Y9nEDH2OFOLGKYFEqqnsilxov98Bdsey50Wn59/hPxs8mRlarQI5Dfn97zvoFS1LpUqV/pWDVjFmVf3Tb6yd+fB4WsTJeB9K+wXxSNqpcZbxp1Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=U5Ze5L32; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AzGQRU7l"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30db3f3c907so60313121fa.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Apr 2025 04:46:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744199176; x=1744803976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fm1H2iOoMU914vn168iDtpV2IXQ45QvGTjlCPNbgJX8=;
-        b=AzGQRU7lY84ZNxUe+/twVT0J8XCo/8qZPWK6M1hZpxPqt55IxiDXKr11/bdgb5duqT
-         8cYcRMyAYtjRKWNLxGtbim6FMt7aD3lcdo4mZh/pC3TFeEEmPRvM+yKxVIT7q3sRqnsy
-         GbhEijnYg3F9vgpMT45kLIEof4V5hFos+PXAwsBHLEH9F4yLHX2KYofkHRgBLTtZmoZY
-         9Ba6Nj33mcQnCqas44LGAy5GWB/oC63lezCfVha5p8PZrGPDT2U02nsUJKFqInmfQ0CG
-         2h0I8oPkMX0JkjOVOd60/4EfMANEBbpXDgTWut3uDdoX3j8qVURzvrBHwEiEfxz2Zehp
-         OGHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744199176; x=1744803976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fm1H2iOoMU914vn168iDtpV2IXQ45QvGTjlCPNbgJX8=;
-        b=HQezoqJzh18WVyebHAZJdcu/suqkXAB+CWffuKFeNI9yBQddtTn8ceTQpry7n2S21W
-         YKfXsACIclhrAqH+nzeQq41EDnOwL/q2DW2iRgudStmNeaVEefj07Yxw+w3+INsuawca
-         qu8RQ3NPRscmXDtWgU4B+JnPtxj+Dh9hS/b/MBawvqIv1TXTLoHiWy8QCweBiCc2zg05
-         jX0nAfdzygVtuhk5f5LTgpoCRu7WG4YfhwTPnG7ApAN41QuLXtvuB2McIlGFb9h+NOeF
-         0EtdkeF4leHquF3VCsuCRU6Ng4gVEysaemk9dR1ZG8p0AIfaMICLx3zQU0EsbHCTaNOt
-         torg==
-X-Forwarded-Encrypted: i=1; AJvYcCViTQkmwwJ26PjP9iVCpbO3c9woj+hbMU1CN6aIzM55M1kk4EhcmjqbVd0KDI6UkDDf/SZOBTw5jXNA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+4LTL6ZYd6Y1CCJjrrj0NtKQl6Ed9wVp+OeFFGOWIRVaKBnNe
-	7Xi9VfvC2znG1sj4FPvwQ08slxvOZDGagZfd8+tqZLB9IX3OFMDxzk8mK/LwID3vCndAK07q+oc
-	UujYiAAfix+PJnM4TKg0aYSd/O+Q1hAK+DAltFQ==
-X-Gm-Gg: ASbGncueghuJlFF9GToXjjzqx/9dzbAZ9/jzFZkpbuPoS5d8mcSEdn+Hq8ihmw5akZF
-	eYd7OKr4gp/+viqcVt2X4HDfwy8tDClqbPHp72gGB50Z4/W9563L/646/iqdWZkPbdypq0OrOas
-	tr1AHvXgSVXrMCkrZhp3AQl1t7ftqpeLfrdlvoUO1OoNeCkBjNQ14XUnuA673w5JKj
-X-Google-Smtp-Source: AGHT+IG2f2EIhmVND4mptsZ59DtoY6ddNGGuygIixmEqILHnYtU9D/9WVgHR1l9X34LMKjLXjbH3Ht74O1Fb5m3pEbw=
-X-Received: by 2002:a2e:b541:0:b0:30d:b309:21c6 with SMTP id
- 38308e7fff4ca-30f44f4b81bmr4557591fa.5.1744199176089; Wed, 09 Apr 2025
- 04:46:16 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="U5Ze5L32"
+ARC-Seal: i=1; a=rsa-sha256; t=1744203700; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nqF/dZ/ZJmPpsF+zuJVRYR6v2/GGtjr42uD+/aZQ5PBrWi4fN4jt5b3N153fLgHPfgx1BvhY/byBv97VIiwsLqk8qi6+i2SzydnS4uLfbC4VGeusoW/SbVftEhLqzWZopJOOHLibYUzih3oCFaPerXsYs0Vj4rltpA5xXRuItJE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744203700; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=U+QoT2IyJTsl4lBDNM3YDzV0X1IfFE9Y/W4KVU4CS7M=; 
+	b=EuUSJEljX7eD5WlXjT8V4urpU/ITkOC8USzXoNUyoG0xjE+3fPBWv2E5BbhiAYP/oSlnrw/oLpDBM1PrWPv2teaDhHaL4DVsiL8zDJeFd/W533RcNMIGOQTNtSbBzary/SlqUY7laO/W9boVOA4+rwnqnuq7nLHqxdZ2zfAiVlI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744203699;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=U+QoT2IyJTsl4lBDNM3YDzV0X1IfFE9Y/W4KVU4CS7M=;
+	b=U5Ze5L32qzWPB68f4ekcTdFf4WLdofjD58DI3WZnba5Ow9rWxutxMt9YWA5ryDMn
+	u56NCov5U2ZhbEqPz6wfNCw/9Zobon98zd+phh7947BLHn/q+NIkN73PYtxE5idfZ0F
+	zN7RhFi3GmkCT/bwq8MqfUKmbAmJdMvBn2LZg270=
+Received: by mx.zohomail.com with SMTPS id 1744203697644149.25126288812328;
+	Wed, 9 Apr 2025 06:01:37 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>,
+ William Breathitt Gray <wbg@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-iio@vger.kernel.org, kernel@collabora.com,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Subject: Re: [PATCH 4/7] soc: rockchip: add mfpwm driver
+Date: Wed, 09 Apr 2025 15:01:30 +0200
+Message-ID: <3362145.mvXUDI8C0e@workhorse>
+In-Reply-To: <5559308.Sb9uPGUboI@diego>
+References:
+ <20250408-rk3576-pwm-v1-0-a49286c2ca8e@collabora.com>
+ <20250408-rk3576-pwm-v1-4-a49286c2ca8e@collabora.com>
+ <5559308.Sb9uPGUboI@diego>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e0e9e958-2a04-43e8-b2e4-fdc97906fd9d@portwell.com.tw>
-In-Reply-To: <e0e9e958-2a04-43e8-b2e4-fdc97906fd9d@portwell.com.tw>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 9 Apr 2025 13:46:04 +0200
-X-Gm-Features: ATxdqUEWq4vyEznbPSMl5TVpg-VzAOyz6XYx-KEbUJar_aH61-dEB3vmXt_3G7Y
-Message-ID: <CAMRc=MensaCPF4PL3C0PgfgR=YY++KRqa3EcXzKkQFu4VftQMA@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: portwell-ec: Add GPIO and WDT driver for
- Portwell EC
-To: Yen-Chi Huang <jesse.huang@portwell.com.tw>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	linus.walleij@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net, 
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	jay.chen@canonical.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Apr 9, 2025 at 1:26=E2=80=AFPM Yen-Chi Huang
-<jesse.huang@portwell.com.tw> wrote:
->
-> Adds a driver for the ITE Embedded Controller (EC) on Portwell boards.
-> It integrates with the Linux GPIO and watchdog subsystems to provide:
->
-> - Control/monitoring of up to 8 EC GPIO pins.
-> - Hardware watchdog timer with 1-255 second timeouts.
->
-> The driver communicates with the EC via I/O port 0xe300 and identifies
-> the hardware by the "PWG" firmware signature. This enables enhanced
-> system management for Portwell embedded/industrial platforms.
->
-> Signed-off-by: Yen-Chi Huang <jesse.huang@portwell.com.tw>
-> ---
-> V2:
->   - Add DMI system check to avoid running on unsupported platforms
->   - Add 'force' module parameter to override DMI matching
->   - Use request_region() to claim I/O port access
->   - Extend WDT timeout handling to use both minute and second registers
->   - Increase WDT max timeout from 255s to 15300s
->   - Use named defines for WDT enable/disable
->   - Remove dummy pr_info() messages
->   - Fix several coding style issues (comments, alignment, spacing)
->
-> ---
->  MAINTAINERS                        |   6 +
->  drivers/platform/x86/Kconfig       |  14 ++
->  drivers/platform/x86/Makefile      |   3 +
->  drivers/platform/x86/portwell-ec.c | 268 +++++++++++++++++++++++++++++
->  4 files changed, 291 insertions(+)
->  create mode 100644 drivers/platform/x86/portwell-ec.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d5dfb9186962..c52f819786dc 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19132,6 +19132,12 @@ F:     kernel/time/itimer.c
->  F:     kernel/time/posix-*
->  F:     kernel/time/namespace.c
->
-> +PORTWELL EC DRIVER
-> +M:     Yen-Chi Huang <jesse.huang@portwell.com.tw>
-> +L:     platform-driver-x86@vger.kernel.org
-> +S:     Maintained
-> +F:     drivers/platform/x86/portwell-ec.c
-> +
->  POWER MANAGEMENT CORE
->  M:     "Rafael J. Wysocki" <rafael@kernel.org>
->  L:     linux-pm@vger.kernel.org
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 43407e76476b..2f26d1bf0a75 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -779,6 +779,20 @@ config PCENGINES_APU2
->           To compile this driver as a module, choose M here: the module
->           will be called pcengines-apuv2.
->
-> +config PORTWELL_EC
-> +       tristate "Portwell Embedded Controller driver"
-> +       depends on X86 && HAS_IOPORT && WATCHDOG && GPIOLIB
-> +       help
-> +         This driver provides support for the GPIO pins and watchdog tim=
+On Tuesday, 8 April 2025 22:03:01 Central European Summer Time Heiko St=C3=
+=BCbner wrote:
+> Hi,
+>=20
+> not a full review, just me making a first pass.
+>=20
+> > +unsigned long mfpwm_clk_get_rate(struct rockchip_mfpwm *mfpwm)
+> > +{
+> > +	if (!mfpwm || !mfpwm->chosen_clk)
+> > +		return 0;
+> > +
+> > +	return clk_get_rate(mfpwm->chosen_clk);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(mfpwm_clk_get_rate, "ROCKCHIP_MFPWM");
+>=20
+> aren't you just re-implemeting a clk-mux with the whole chosen-clk
+> mechanism? See drivers/clk/clk-mux.c, so in theory you should be
+> able to just do a clk_register_mux(...) similar to for example
+> sound/soc/samsung/i2s.c .
+
+Probably yes. I didn't know clk-mux was a thing. If I do decide to keep the
+clock switching at all (more on that below), then I'll rewrite it around
+clk-mux.
+
+> > +
+> > +__attribute__((nonnull))
+> > +static int mfpwm_do_acquire(struct rockchip_mfpwm_func *pwmf)
+> > +{
+> > +	struct rockchip_mfpwm *mfpwm =3D pwmf->parent;
+> > +	unsigned int cnt;
+> > +
+> > +	if (mfpwm->active_func && pwmf->id !=3D mfpwm->active_func->id)
+> > +		return -EBUSY;
+> > +
+> > +	if (!mfpwm->active_func)
+> > +		mfpwm->active_func =3D pwmf;
+> > +
+> > +	if (!check_add_overflow(mfpwm->acquire_cnt, 1, &cnt)) {
+> > +		mfpwm->acquire_cnt =3D cnt;
+> > +	} else {
+> > +		WARN(1, "prevented acquire counter overflow in %s\n", __func__);
+>=20
+> dev_warn, as you have the mfpwm pointing to a pdev?
+
+Will do.
+
+> > +		return -EOVERFLOW;
+> > +	}
+> > +
+> > +	dev_dbg(&mfpwm->pdev->dev, "%d acquired mfpwm, acquires now at %u\n",
+> > +		pwmf->id, mfpwm->acquire_cnt);
+> > +
+> > +	return clk_enable(mfpwm->pclk);
+> > +}
+>=20
+> > +/**
+> > + * mfpwm_get_clk_src - read the currently selected clock source
+> > + * @mfpwm: pointer to the driver's private &struct rockchip_mfpwm inst=
+ance
+> > + *
+> > + * Read the device register to extract the currently selected clock so=
+urce,
+> > + * and return it.
+> > + *
+> > + * Returns:
+> > + * * the numeric clock source ID on success, 0 <=3D id <=3D 2
+> > + * * negative errno on error
+> > + */
+> > +static int mfpwm_get_clk_src(struct rockchip_mfpwm *mfpwm)
+> > +{
+> > +	u32 val;
+> > +
+> > +	clk_enable(mfpwm->pclk);
+> > +	val =3D mfpwm_reg_read(mfpwm->base, PWMV4_REG_CLK_CTRL);
+> > +	clk_disable(mfpwm->pclk);
+> > +
+> > +	return (val & PWMV4_CLK_SRC_MASK) >> PWMV4_CLK_SRC_SHIFT;
+> > +}
+> > +
+> > +static int mfpwm_choose_clk(struct rockchip_mfpwm *mfpwm)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret =3D mfpwm_get_clk_src(mfpwm);
+> > +	if (ret < 0) {
+> > +		dev_err(&mfpwm->pdev->dev, "couldn't get current clock source: %pe\n=
+",
+> > +			ERR_PTR(ret));
+> > +		return ret;
+> > +	}
+> > +	if (ret =3D=3D PWMV4_CLK_SRC_CRYSTAL) {
+> > +		if (mfpwm->osc_clk) {
+> > +			mfpwm->chosen_clk =3D mfpwm->osc_clk;
+> > +		} else {
+> > +			dev_warn(&mfpwm->pdev->dev, "initial state wanted 'osc' as clock so=
+urce, but it's unavailable. Defaulting to 'pwm'.\n");
+> > +			mfpwm->chosen_clk =3D mfpwm->pwm_clk;
+> > +		}
+> > +	} else {
+> > +		mfpwm->chosen_clk =3D mfpwm->pwm_clk;
+> > +	}
+> > +
+> > +	return clk_rate_exclusive_get(mfpwm->chosen_clk);
+> > +}
+> >
+> > +/**
+> > + * mfpwm_switch_clk_src - switch between PWM clock sources
+> > + * @mfpwm: pointer to &struct rockchip_mfpwm driver data
+> > + * @clk_src: one of either %PWMV4_CLK_SRC_CRYSTAL or %PWMV4_CLK_SRC_PLL
+> > + *
+> > + * Switch between clock sources, ``_exclusive_put``ing the old rate,
+> > + * ``clk_rate_exclusive_get``ing the new one, writing the registers and
+> > + * swapping out the &struct_rockchip_mfpwm->chosen_clk.
+> > + *
+> > + * Returns:
+> > + * * %0        - Success
+> > + * * %-EINVAL  - A wrong @clk_src was given or it is unavailable
+> > + * * %-EBUSY   - Device is currently in use, try again later
+> > + */
+> > +__attribute__((nonnull))
+> > +static int mfpwm_switch_clk_src(struct rockchip_mfpwm *mfpwm,
+> > +					  unsigned int clk_src)
+> > +{
+> > +	struct clk *prev;
+> > +	int ret =3D 0;
+> > +
+> > +	scoped_cond_guard(spinlock_try, return -EBUSY, &mfpwm->state_lock) {
+> > +		/* Don't fiddle with any of this stuff if the PWM is on */
+> > +		if (mfpwm->active_func)
+> > +			return -EBUSY;
+> > +
+> > +		prev =3D mfpwm->chosen_clk;
+> > +		ret =3D mfpwm_get_clk_src(mfpwm);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +		if (ret =3D=3D clk_src)
+> > +			return 0;
+> > +
+> > +		switch (clk_src) {
+> > +		case PWMV4_CLK_SRC_PLL:
+> > +			mfpwm->chosen_clk =3D mfpwm->pwm_clk;
+> > +			break;
+> > +		case PWMV4_CLK_SRC_CRYSTAL:
+> > +			if (!mfpwm->osc_clk)
+> > +				return -EINVAL;
+> > +			mfpwm->chosen_clk =3D mfpwm->osc_clk;
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		clk_enable(mfpwm->pclk);
+> > +
+> > +		mfpwm_reg_write(mfpwm->base, PWMV4_REG_CLK_CTRL,
+> > +				PWMV4_CLK_SRC(clk_src));
+> > +		clk_rate_exclusive_get(mfpwm->chosen_clk);
+> > +		if (prev)
+> > +			clk_rate_exclusive_put(prev);
+> > +
+> > +		clk_disable(mfpwm->pclk);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+>=20
+> ok, the relevant part might be the=20
+> 	/* Don't fiddle with any of this stuff if the PWM is on */
+> thing, which will require special set_rate operation, but in general I
+> think, if it ticks like a clock, it probably should be a real clock ;-) .
+
+I agree; we can guarantee it doesn't get changed after all by just marking =
+it
+as exclusive instead of marking either pwm_clk or osc_clk as exclusive.
+
+> > +static ssize_t chosen_clock_show(struct device *dev,
+> > +				 struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct rockchip_mfpwm *mfpwm =3D dev_get_drvdata(dev);
+> > +	unsigned long clk_src =3D 0;
+> > +
+> > +	/*
+> > +	 * Why the weird indirection here? I have the suspicion that if we
+> > +	 * emitted to sysfs with the lock still held, then a nefarious program
+> > +	 * could hog the lock by somehow forcing a full buffer condition and
+> > +	 * then refusing to read from it. Don't know whether that's feasible
+> > +	 * to achieve in reality, but I don't want to find out the hard way
+> > +	 * either.
+> > +	 */
+> > +	scoped_guard(spinlock, &mfpwm->state_lock) {
+> > +		if (mfpwm->chosen_clk =3D=3D mfpwm->pwm_clk)
+> > +			clk_src =3D PWMV4_CLK_SRC_PLL;
+> > +		else if (mfpwm->osc_clk && mfpwm->chosen_clk =3D=3D mfpwm->osc_clk)
+> > +			clk_src =3D PWMV4_CLK_SRC_CRYSTAL;
+> > +		else
+> > +			return -ENODEV;
+> > +	}
+> > +
+> > +	if (clk_src =3D=3D PWMV4_CLK_SRC_PLL)
+> > +		return sysfs_emit(buf, "pll\n");
+> > +	else if (clk_src =3D=3D PWMV4_CLK_SRC_CRYSTAL)
+> > +		return sysfs_emit(buf, "crystal\n");
+> > +
+> > +	return -ENODEV;
+> > +}
+>=20
+> which brings me to my main point of contention. Why does userspace
+> need to select a clock source for the driver via sysfs.
+
+It doesn't need to. Basically, this is a weird hardware feature. Downstream=
+ did
+not bother implementing it at all, and I found out through the TRM's regist=
 er
-> +         embedded in Portwell's EC.
-> +
-> +         Theoretically, this driver should work on multiple Portwell pla=
-tforms,
-> +         but it has only been tested on the Portwell NANO-6064 board.
-> +         If you encounter any issues on other boards, please report them=
-.
-> +
-> +         To compile this driver as a module, choose M here: the module
-> +         will be called portwell-ec.
-> +
->  config BARCO_P50_GPIO
->         tristate "Barco P50 GPIO driver for identify LED/button"
->         depends on GPIOLIB
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
-e
-> index 650dfbebb6c8..83dd82e04457 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -92,6 +92,9 @@ obj-$(CONFIG_XO1_RFKILL)      +=3D xo1-rfkill.o
->  # PC Engines
->  obj-$(CONFIG_PCENGINES_APU2)   +=3D pcengines-apuv2.o
->
-> +# Portwell
-> +obj-$(CONFIG_PORTWELL_EC)      +=3D portwell-ec.o
-> +
->  # Barco
->  obj-$(CONFIG_BARCO_P50_GPIO)   +=3D barco-p50-gpio.o
->
-> diff --git a/drivers/platform/x86/portwell-ec.c b/drivers/platform/x86/po=
-rtwell-ec.c
-> new file mode 100644
-> index 000000000000..e94377906745
-> --- /dev/null
-> +++ b/drivers/platform/x86/portwell-ec.c
-> @@ -0,0 +1,268 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * portwell-ec.c: Portwell embedded controller driver.
-> + *
-> + * Tested on:
-> + *  - Portwell NANO-6064
-> + *
-> + * This driver provides support for GPIO and Watchdog Timer
-> + * functionalities of the Portwell boards with ITE embedded controller (=
-EC).
-> + * The EC is accessed through I/O ports and provides:
-> + *  - 8 GPIO pins for control and monitoring
-> + *  - Hardware watchdog with 1-15300 second timeout range
-> + *
-> + * It integrates with the Linux GPIO and Watchdog subsystems, allowing
-> + * userspace interaction with EC GPIO pins and watchdog control,
-> + * ensuring system stability and configurability.
-> + *
-> + * (C) Copyright 2025 Portwell, Inc.
-> + * Author: Yen-Chi Huang (jesse.huang@portwell.com.tw)
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/dmi.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/ioport.h>
-> +#include <linux/module.h>
-> +#include <linux/string.h>
-> +#include <linux/watchdog.h>
-> +
-> +#define PORTWELL_EC_IOSPACE 0xe300
-> +#define PORTWELL_EC_IOSPACE_LEN 0x100
-> +
-> +#define PORTWELL_GPIO_PINS 8
-> +#define PORTWELL_GPIO_DIR_REG 0x2b
-> +#define PORTWELL_GPIO_VAL_REG 0x2c
-> +
-> +#define PORTWELL_WDT_EC_CONFIG_ADDR 0x06
-> +#define PORTWELL_WDT_CONFIG_ENABLE 0x1
-> +#define PORTWELL_WDT_CONFIG_DISABLE 0x0
-> +#define PORTWELL_WDT_EC_COUNT_MIN_ADDR 0x07
-> +#define PORTWELL_WDT_EC_COUNT_SEC_ADDR 0x08
-> +#define PORTWELL_WDT_EC_MAX_COUNT_SECOND 15300 //255*60secs
-> +
-> +#define PORTWELL_EC_FW_VENDOR_ADDRESS 0x4d
-> +#define PORTWELL_EC_FW_VENDOR_LENGTH 3
-> +#define PORTWELL_EC_FW_VENDOR_NAME "PWG"
-> +
-> +static bool force;
-> +module_param(force, bool, 0444);
-> +MODULE_PARM_DESC(force, "Force loading ec driver without checking DMI bo=
-ardname");
-> +
-> +static const struct dmi_system_id pwec_dmi_table[] =3D {
-> +       {
-> +               .ident =3D "NANO-6064 series",
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_NAME, "NANO-6064"),
-> +               },
-> +       },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(dmi, pwec_dmi_table);
-> +
-> +/* Functions for access EC via IOSPACE*/
-> +
-> +static void pwec_write(u8 index, u8 data)
-> +{
-> +       outb(data, PORTWELL_EC_IOSPACE + index);
-> +}
-> +
-> +static u8 pwec_read(u8 address)
-> +{
-> +       return inb(PORTWELL_EC_IOSPACE + address);
-> +}
-> +
-> +/* GPIO functions*/
-> +
-> +static int pwec_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       return (pwec_read(PORTWELL_GPIO_VAL_REG) & (1 << offset)) ? 1 : 0=
-;
-> +}
-> +
-> +static void pwec_gpio_set(struct gpio_chip *chip, unsigned int offset, i=
-nt val)
-> +{
-> +       u8 tmp =3D pwec_read(PORTWELL_GPIO_VAL_REG);
-> +
-> +       if (val)
-> +               tmp |=3D (1 << offset);
-> +       else
-> +               tmp &=3D ~(1 << offset);
-> +       pwec_write(PORTWELL_GPIO_VAL_REG, tmp);
-> +}
-> +
-> +static int pwec_gpio_get_direction(struct gpio_chip *chip, unsigned int =
-offset)
-> +{
-> +       u8 direction =3D pwec_read(PORTWELL_GPIO_DIR_REG) & (1 << offset)=
-;
-> +
-> +       if (direction)
-> +               return GPIO_LINE_DIRECTION_IN;
-> +       else
-> +               return GPIO_LINE_DIRECTION_OUT;
-> +}
-> +
-> +/*
-> + * Changing direction causes issues on some boards,
-> + * so direction_input and direction_output are disabled for now.
-> + */
-> +
-> +static int pwec_gpio_direction_input(struct gpio_chip *gc, unsigned int =
-offset)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +static int pwec_gpio_direction_output(struct gpio_chip *gc, unsigned int=
- offset, int value)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
-> +static struct gpio_chip pwec_gpio_chip =3D {
-> +       .label =3D "portwell-ec-gpio",
-> +       .get_direction =3D pwec_gpio_get_direction,
-> +       .direction_input =3D pwec_gpio_direction_input,
-> +       .direction_output =3D pwec_gpio_direction_output,
-> +       .get =3D pwec_gpio_get,
-> +       .set =3D pwec_gpio_set,
+listing and thought "that's weird, I wonder if it even works", and lo and b=
+ehold
+it does. At that point, like two rewrites ago, I was committed to ensuring =
+that
+the driver can handle this edge case of the PWM clock being changed. As I l=
+acked
+the imagination as to why someone would change it and the knowledge as to w=
+hich
+kernel interfaces exist to change it, sysfs offered itself as a natural dum=
+ping
+ground for switches that probably shouldn't exist.
 
-Please use the set_rv() variant, set() is deprecated as of v6.15-rc1.
+> Neither the commit message nor the code does seem to explain that,
+> or I'm just blind - which is also a real possibility.
+>=20
+> In general I really think, userspace should not need to care about if
+> a PLL or directly the oscillator is used a clock input.
+> I assume which is needed results from some runtime factor, so the
+> driver should be able to select the correct one?
+>=20
+> A mux-clock could ust use clk_mux_determine_rate_flags() to select
+> the best parent depending on a requested rate instead.
 
-> +       .base =3D -1,
-> +       .ngpio =3D PORTWELL_GPIO_PINS,
-> +};
-> +
-> +/* Watchdog functions*/
-> +
-> +static int pwec_wdt_trigger(struct watchdog_device *wdd)
-> +{
-> +       int retry =3D 10;
-> +       u8 min, sec;
-> +       unsigned int timeout;
-> +
-> +       do {
-> +               pwec_write(PORTWELL_WDT_EC_COUNT_MIN_ADDR, wdd->timeout /=
- 60);
-> +               pwec_write(PORTWELL_WDT_EC_COUNT_SEC_ADDR, wdd->timeout %=
- 60);
-> +               pwec_write(PORTWELL_WDT_EC_CONFIG_ADDR, PORTWELL_WDT_CONF=
-IG_ENABLE);
-> +               min =3D pwec_read(PORTWELL_WDT_EC_COUNT_MIN_ADDR);
-> +               sec =3D pwec_read(PORTWELL_WDT_EC_COUNT_SEC_ADDR);
-> +               timeout =3D min * 60 + sec;
-> +               retry--;
-> +       } while (timeout !=3D wdd->timeout && retry >=3D 0);
-> +       if (retry < 0) {
-> +               pr_err("watchdog started failed\n");
-> +               return -EIO;
-> +       } else
-> +               return 0;
-> +}
-> +
-> +static int pwec_wdt_start(struct watchdog_device *wdd)
-> +{
-> +       return pwec_wdt_trigger(wdd);
-> +}
-> +
-> +static int pwec_wdt_stop(struct watchdog_device *wdd)
-> +{
-> +       pwec_write(PORTWELL_WDT_EC_CONFIG_ADDR, PORTWELL_WDT_CONFIG_DISAB=
-LE);
-> +       return 0;
-> +}
-> +
-> +static int pwec_wdt_set_timeout(struct watchdog_device *wdd, unsigned in=
-t timeout)
-> +{
-> +       if (timeout =3D=3D 0 || timeout > PORTWELL_WDT_EC_MAX_COUNT_SECON=
-D)
-> +               return -EINVAL;
-> +       wdd->timeout =3D timeout;
-> +       pwec_write(PORTWELL_WDT_EC_COUNT_MIN_ADDR, wdd->timeout / 60);
-> +       pwec_write(PORTWELL_WDT_EC_COUNT_SEC_ADDR, wdd->timeout % 60);
-> +       return 0;
-> +}
-> +
-> +static unsigned int pwec_wdt_get_timeleft(struct watchdog_device *wdd)
-> +{
-> +       u8 min, sec;
-> +
-> +       min =3D pwec_read(PORTWELL_WDT_EC_COUNT_MIN_ADDR);
-> +       sec =3D pwec_read(PORTWELL_WDT_EC_COUNT_SEC_ADDR);
-> +       return min  * 60 + sec;
-> +}
-> +
-> +static const struct watchdog_ops pwec_wdt_ops =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .start =3D pwec_wdt_start,
-> +       .stop =3D pwec_wdt_stop,
-> +       .ping =3D pwec_wdt_trigger,
-> +       .set_timeout =3D pwec_wdt_set_timeout,
-> +       .get_timeleft =3D pwec_wdt_get_timeleft,
-> +};
-> +
-> +static struct watchdog_device ec_wdt_dev =3D {
-> +       .info =3D &(struct watchdog_info){
-> +       .options =3D WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGIC=
-CLOSE,
-> +       .identity =3D "Portwell EC Watchdog",
-> +       },
-> +       .ops =3D &pwec_wdt_ops,
-> +       .timeout =3D 60,
-> +       .min_timeout =3D 1,
-> +       .max_timeout =3D PORTWELL_WDT_EC_MAX_COUNT_SECOND,
-> +};
-> +
-> +static int pwec_firmware_vendor_check(void)
-> +{
-> +       u8 buf[PORTWELL_EC_FW_VENDOR_LENGTH + 1];
-> +       u8 i;
-> +
-> +       for (i =3D 0; i < PORTWELL_EC_FW_VENDOR_LENGTH; i++)
-> +               buf[i] =3D pwec_read(PORTWELL_EC_FW_VENDOR_ADDRESS + i);
-> +       buf[PORTWELL_EC_FW_VENDOR_LENGTH] =3D '\0';
-> +
-> +       return (strcmp(PORTWELL_EC_FW_VENDOR_NAME, buf) =3D=3D 0) ? 0 : -=
-ENODEV;
-> +}
-> +
-> +static int __init pwec_init(void)
-> +{
+Yeah, the only use-case I can come up with is that we really want to use an
+either 100 MHz or 50 MHz clock on one chip, but have a channel hit a precise
+timing with the 24 MHz clock on the same chip. If the fixed crystal oscilla=
+tor
+were 25 MHz instead of 24 MHz, this would be entirely pointless, as they're=
+ all
+multiples of it.
 
-I'm not an expert in x86 platform drivers but shouldn't this be
-implemented as an actual platform driver, not a hand-coded
-quasi-driver?
+Thanks for the hint about clk_mux_determine_rate_flags, it doesn't appear t=
+o be
+documented (classic) but it looks to do at least half of what a proper solu=
+tion
+would need to do. The other half is figuring out what ideal target rate we
+actually want to optimise for for a given e.g. waveform consisting of period
+and duty cycle in nanoseconds. There's some logic to think about regarding =
+where
+rounding errors are acceptable, e.g. a long period with a low duty cycle is
+probably better off using the 100-50-24 mux with 100 MHz as the rate. I'm n=
+ot
+sure if 50 MHz is ever a sensible option since it is a dividend of 100 MHz,=
+ and
+I'm not about to reason about imagined power draw of the PWM hardware witho=
+ut
+laboratory grade test equipment.
 
-Bart
+=46or what it's worth, this is a niche enough hardware feature that if it c=
+auses
+too much friction getting it supported in a driver, I'll just drop it entir=
+ely
+instead. I tried to preemptively combat technical debt by supporting this in
+some way, but instead managed to introduce scope creep.
 
-> +       int result;
-> +
-> +       if (!force) {
-> +               if (!dmi_check_system(pwec_dmi_table)) {
-> +                       pr_info("unsupported platform\n");
-> +                       return -ENODEV;
-> +               }
-> +       }
-> +
-> +       if (!request_region(PORTWELL_EC_IOSPACE, PORTWELL_EC_IOSPACE_LEN,=
- "portwell-ec")) {
-> +               pr_err("I/O region 0xE300-0xE3FF busy\n");
-> +               return -EBUSY;
-> +       }
-> +
-> +       result =3D pwec_firmware_vendor_check();
-> +       if (result < 0)
-> +               return result;
-> +
-> +       result =3D gpiochip_add_data(&pwec_gpio_chip, NULL);
-> +       if (result < 0) {
-> +               pr_err("failed to register Portwell EC GPIO\n");
-> +               return result;
-> +       }
-> +
-> +       result =3D watchdog_register_device(&ec_wdt_dev);
-> +       if (result < 0) {
-> +               gpiochip_remove(&pwec_gpio_chip);
-> +               pr_err("failed to register Portwell EC Watchdog\n");
-> +               return result;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void __exit pwec_exit(void)
-> +{
-> +       watchdog_unregister_device(&ec_wdt_dev);
-> +       gpiochip_remove(&pwec_gpio_chip);
-> +       release_region(PORTWELL_EC_IOSPACE, PORTWELL_EC_IOSPACE_LEN);
-> +}
-> +
-> +module_init(pwec_init);
-> +module_exit(pwec_exit);
-> +
-> +MODULE_AUTHOR("Yen-Chi Huang <jesse.huang@portwell.com.tw");
-> +MODULE_DESCRIPTION("Portwell EC Driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.34.1
->
+One option is to always just choose the PLL muxed clock and then always set=
+ it
+to 100 MHz, because it's probably the best option unless there are specific
+PWM-based applications that make heavy use of 24-derived timings (maybe the=
+ IR
+stuff?)
+
+>=20
+> > +static ssize_t chosen_clock_store(struct device *dev,
+> > +				  struct device_attribute *attr,
+> > +				  const char *buf, size_t count)
+> > +{
+> > +	struct rockchip_mfpwm *mfpwm =3D dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	if (sysfs_streq(buf, "pll")) {
+> > +		ret =3D mfpwm_switch_clk_src(mfpwm, PWMV4_CLK_SRC_PLL);
+> > +		if (ret)
+> > +			return ret;
+> > +		return count;
+> > +	} else if (sysfs_streq(buf, "crystal")) {
+> > +		ret =3D mfpwm_switch_clk_src(mfpwm, PWMV4_CLK_SRC_CRYSTAL);
+> > +		if (ret)
+> > +			return ret;
+> > +		return count;
+> > +	} else {
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> > +
+> > +static DEVICE_ATTR_RW(chosen_clock);
+> > +
+> > +static ssize_t available_clocks_show(struct device *dev,
+> > +				     struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct rockchip_mfpwm *mfpwm =3D dev_get_drvdata(dev);
+> > +	ssize_t size =3D 0;
+> > +
+> > +	size +=3D sysfs_emit_at(buf, size, "pll\n");
+> > +	if (mfpwm->osc_clk)
+> > +		size +=3D sysfs_emit_at(buf, size, "crystal\n");
+> > +
+> > +	return size;
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(available_clocks);
+> > +
+> > +static struct attribute *mfpwm_attrs[] =3D {
+> > +	&dev_attr_available_clocks.attr,
+> > +	&dev_attr_chosen_clock.attr,
+> > +	NULL,
+> > +};
+>=20
+> Not understanding the need for the sysfs stuff was my main point this
+> evening :-)
+>=20
+> Heiko
+>=20
+
+Thank you for your quick preliminary review! This already gives me some good
+points to look into for a v2.
+
+Kind regards,
+Nicolas Frattaroli
+
+
