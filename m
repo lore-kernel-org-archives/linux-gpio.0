@@ -1,44 +1,61 @@
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018762620F5
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Apr 2025 13:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6045325DD13;
+	Wed,  9 Apr 2025 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744204073; cv=none; b=RzE3ymqpVWDuqrazCNVMkSwe7veSAAK82jzyGnXtH7zkewyfgUpkMh3U1tSGt2BC3pNj4U4plyf0iGdRFR18bzCvU/Q8FStpWUGwC8eLX7I0k3yGyReVB6ZlqSbxJfiec1s/kUEIlAz3VZRQzCgXgXkG8h1o2l4avvW8BO9+uGg=
+	t=1744205389; cv=none; b=Oy7uPIz/6lwSDxQill/REXMIkX8bitklMmIAQKgsiI0/Bq2qpYJ7L7vcTgtps1PgVUQjluBHwSUARyyZOc/SBTrUKjhZSD9iYKBXk31b080XyCkOHWqeiYWy7wQ/EAYPNsgQ2peeYhEEP2AvVPazByYueOyLuJ2y6GrBVo0oN0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744204073; c=relaxed/simple;
-	bh=AgR2NJ1i6IkFYhAepi/wcBw7sVFp4/vtZB2JgbedQ/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MV/9A9AvzglMDgYu1h/4Wzs5ACKgwGRc+4zNcwYtkxMaYSwcuRnF35IN1Pyhqzj5Ck9jDzwBhcSsZ9w0uBdwFrDbd9UvczCnROG58QlSNnao2Jin9jNtXuWKnWwth/nuOhAttmt2vmoVaJsj5U/H0nuBfu4lg8x+KZCJq3joVbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4ZXjsw3qypz4x7lB
-	for <linux-gpio@vger.kernel.org>; Wed, 09 Apr 2025 15:07:48 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d6c1:79b5:9acd:4fad])
-	by laurent.telenet-ops.be with cmsmtp
-	id b17g2E00G1LzlAN0117gX0; Wed, 09 Apr 2025 15:07:41 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2V9X-00000000DQW-2Bw7;
-	Wed, 09 Apr 2025 15:07:40 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2Rdk-00000002xPc-0RiY;
-	Wed, 09 Apr 2025 11:22:36 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: GPIO_BLZP1600 should depend on ARCH_BLAIZE
-Date: Wed,  9 Apr 2025 11:22:35 +0200
-Message-ID: <a75af4b623579a193b4a59350c063969aabb5b71.1744190524.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744205389; c=relaxed/simple;
+	bh=7hk/iOjkyz02HGui3e7azlVSIa1Sa2ofqEyKDdJ5iJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hipnHjtKKx+uzbbaJJ0p1GYDyrQhJ7K3jx8VN/FsO7w5WjKLoKx7slxfJvAKq33ZEeaSb/1bdoaJP9PvZm1Yc++w/ZXp5aizitAP7yQIMc8bb4gh05hI8k31TarZBZobHMlCFTfEnH4UjNlnHJO1QHyyBI9x9c3fgd11P7KUg+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=esxzOJm5; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="esxzOJm5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744205387; x=1775741387;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7hk/iOjkyz02HGui3e7azlVSIa1Sa2ofqEyKDdJ5iJg=;
+  b=esxzOJm51YP2O0Rja5tV9oPp20LivPSpCqrU5+A7Ap5mj10xNvt3jF0x
+   ZgHwI0BWrQ9dL58m0Lo1/IE3HKbMkhnCTahxSh6Xp/Dyam/wZVMDy/9Jm
+   bwks91qhIJYptJP8IX0vu9VAVl023tF54OclWTuDdwxpEGStDcgtyMYe6
+   /RLPjaGEcVuRG2+dB7IrLETxnb4UoTRg+nJzoYIUFws6IeiJ3Cm4bLlMO
+   d+ql/BLk7jTsZ6ZlrBC4sTquv6J2pKPGfIvTZDsoouhOXKpwKMQJi2CpN
+   nzm7cFDjy6H14Hfc1zZjg3j0cRcSwuoNDq30THkiOCmbRyoADGDQx1US1
+   w==;
+X-CSE-ConnectionGUID: vmKGT4axQVa5HF3/6cjcZg==
+X-CSE-MsgGUID: iq4RAG6JSHmlQrgeZbMjCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48384170"
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="48384170"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 06:29:46 -0700
+X-CSE-ConnectionGUID: TH4YnD0lTLyUQr+qky6OAA==
+X-CSE-MsgGUID: l7+IB56iSJq74LUGUK+hVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="128564680"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 09 Apr 2025 06:29:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 64EE2541; Wed, 09 Apr 2025 16:29:43 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 0/2] gpiolib: acpi: Fix missing info filling
+Date: Wed,  9 Apr 2025 16:27:52 +0300
+Message-ID: <20250409132942.2550719-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -47,29 +64,18 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Blaize BLZP1600 GPIO controller is only present on BLaize BLZP1600
-SoCs.  Hence add a dependency on ARCH_BLAIZE, to prevent asking the user
-about this driver when configuring a kernel without Blaize platform
-support.
+Kees reported that code, while being refactored, missed the point of
+filling the info structure which supplies GPIO flags to the upper layer.
+Indeed, without that part the GPIO expander get no IRQ on Intel Edison,
+for example. Fix this in this series.
 
-Fixes: 602ae04f56542d8e ("gpio: Enable Blaize BLZP1600 GPIO support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Andy Shevchenko (2):
+  gpiolib: acpi: Use temporary variable for struct acpi_gpio_info
+  gpiolib: acpi: Make sure we fill struct acpi_gpio_info
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ae458fdb9da7dd8a..5f8cd5445c7121ae 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -216,6 +216,7 @@ config GPIO_BCM_XGS_IPROC
- config GPIO_BLZP1600
- 	tristate "Blaize BLZP1600 GPIO support"
- 	default y if ARCH_BLAIZE
-+	depends on ARCH_BLAIZE || COMPILE_TEST
- 	depends on OF_GPIO
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
+ drivers/gpio/gpiolib-acpi.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
+
 -- 
-2.43.0
+2.47.2
 
