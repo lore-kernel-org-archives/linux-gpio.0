@@ -1,109 +1,133 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E236214A91;
-	Thu, 10 Apr 2025 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A66256C9D
+	for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2025 09:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744278328; cv=none; b=TzqeDa75BnSwnjI9D4G+sOTdlnp3Pynl3G9y4vr/Pt7DrOTJr3ws9gXafJdCdoQS5IWKbhr1gPpgRZfH/Vijz/9Idydqr3RSUPGOilktLpafmPDg817NIgvgf0YWyURH3dWZ6sB1X/J7mHOs9S1hyLsH3mhCaHM+z9sNiT1jvMg=
+	t=1744278372; cv=none; b=Q39vKB5WNV1c91m7rzFS5F2fy5selfhqYnP57hIBnHT7yB4PqOYeGTxWGJEdrtQku9zKb8nuvzQeMI3VvjkALv5RmRl49I0TQMtEdpGImYUFMvenCS+AQRF4CnXCfDupC3qX6UdKd//fFLuEuSaYdamw2EH9D0gmhkB6BiVgMCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744278328; c=relaxed/simple;
-	bh=e5daXCLRVh6mf+AAlTCD0T2AR1+6dAICJsUqcnLpWgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHvYg8PJKWnOFcOZkNRc4ABNkx/OYgn0aUR5JhyazpwhDQrNFn7Zjf+LopEhzl6SaSV9h3Gx5+7RGkatlLCc1KVmLE6Zj748QqZw8uJ3MggAhiY5t8iu0E8tIr8oV9Gv7mZu2oIDcsSHTFIGmu0dYDHLAlDFZCSli/JZkop4YN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-523eb86b31aso329643e0c.0;
-        Thu, 10 Apr 2025 02:45:25 -0700 (PDT)
+	s=arc-20240116; t=1744278372; c=relaxed/simple;
+	bh=pI3vfIbLqPbWsDOQuTX/utAtCX0Ma5Hr4cLa843LCc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGRnK2seWKTyfVZ86UQgWPNUAgQ6NrBhzuSa9Xaeow1x/dVtWj8RVr+SWsfKRcXD6U/NyXHDqkCLmnkHO4m4aEAx+N1ENTLD70nrfdpfH/gbjTFQteN+d+KzQp/dZQX2kF1hMDrB+eKsBNQjgFo8H6d3fO8/kyiJr7nN7/8MX+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oQLls0Yh; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oQLls0Yh"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so4878615e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Apr 2025 02:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744278368; x=1744883168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyPa6ldlaK56MEPUp6to8FxZZbTIhKB6rIkU4vhMvLs=;
+        b=oQLls0YhBKowCzaJDD9qfB3e6ic3+QdPpO2U8z+RfRjnG6CtR/LOfEVc4tYT6TR67I
+         qdl8I73vhCLlI6hR0vS+x9zN4co5XKwFgn08IBinhQs8JVaKEQzzzqHiTNOW7sB69EvS
+         +Z3UycOc4c8oMCVkzlMwxZMsN8d9bwjKgoYYCE5IMyQDaWfP8DIqxTXV4ujPKiahYpLV
+         sz0TyRwr3p9WbBN5pW2x3HyiM9EPwh+NTrsqhGYx6Q45qR6am3vieYdAXjQuU24N2VDO
+         Q62rp+r9r+aNeMYCGd0qoWUA2fgsmslCPZ7tqkVw6uoS0/0E79TvIU7BArgu+YrVQq8a
+         QSsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744278324; x=1744883124;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1744278368; x=1744883168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wF3flOwwpTsOVsGjDVbuxPI3IVs9tE7hL82LS5qidH8=;
-        b=KAwkTOPfd2bCdSB9B6jLxrUFaILaZEjaDgIN472N1kDa85fY9qnFaMv5CZnKQBwrCi
-         m5cZI4cJrcKGT/lzrtytR34oClYxXJjKgLgwOT1l29PWVPMCjo+ci82DGMOlIIiTj3w/
-         JwYZIYovRgIiCC/hqE9/E+1+k3yyjxGvwBryGNpGoD7zmAVa86QhhgdLtV/40IyGrKCw
-         5vVstJqqolmX57os2OjUD06ATwmKPxSXrnPDcnLHhLBNhyHYyk3T+Aw5uPG4dA6ctVl5
-         hQpJHGqY9QBCa9LOsPI54agNxd674UQU6p6mDKsgHwqncPoLjN1jNCD1dE9ANEerd5ap
-         lbUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUc6GCMa6S23W8Mx5v2KIq8mvLKtHcqxcwVitQ4CnyrXouZJzE4QDSTnSp7e9eg2RRv/Ey4PARu9jpQABHB2yGAb4M=@vger.kernel.org, AJvYcCW5m27dcgSgNO/gWbl5tghMK+AJp4xUkjNGGCehCOB03tTPa21ePlgAH1OkxbqN//ZIUEme1WXsWYGDAw==@vger.kernel.org, AJvYcCWF7nYBcZ0YXX8ROvX/xfamOHPk2tZR7mzMYeSOQ+ycB6OzaiqjGQHcUZqtLoxzpZVZprWZ5x0c9/7Q@vger.kernel.org, AJvYcCWIbyWSiGI+UpDwoxt48RIWh/bVcSIj+bWHxj3ceBODQc4t2Ba0h3aN2iJhOwqSYBfJ/XInlX0qEcD3hsoF@vger.kernel.org, AJvYcCWrZLXflrBifkwPsUnYtdYKP0YTheN+EGxJRZxjwZDvD+bzYedKv+d11AVpZ7FtiNwsz/3a8KUIDZQk3UbS@vger.kernel.org, AJvYcCXypAlAvkxq47MWmGvQDHcylWAuYA0ktM7PTlhnJM8noAvkT0tRekaogtQSCvWlngvT9erLkUWzf/rU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo20JeGSiPqEjUry+r8MsSAI+/0QXCoAv90lN7wiVV4ezkkJZj
-	8mXDy0ZGxFHaVQ86LGaOv23Vzj0b2UC8QfJZ9jXIaGPrIRFnt+4joYwLIGs5
-X-Gm-Gg: ASbGncuMmsgHV+heQigFNB/FiyqdJXsam4AUnVdlxA3mdlQjKtPFDGlGRFHUIxIpECJ
-	9JagIEPO1170aGzxVT+UvqfEtSnG6pHvVMDEOtWXFqdCY0vXQHxlqQKMLjIz/Yhahc1euOlrrx0
-	DxusgGBcKURCCZBs8ybYbqDcTid9vAx3i+JdNoSxwVNuahcQ+7xh7l0ZHrCiDItiFwL0ZfnRs7A
-	j2Fw5sDn/NHL2empeCZj85eVOCdQxMxLAqcsc9GQr1kIOiOskGI41Pp0BbWgheqOiCmI1uaVRBN
-	V/uUky0uYs/P0HdTM2EWthEhMD8YMReUVehKXjum6MS0R3IlOMMHZnin38wi+dJ8K9swN4NUM//
-	Dc7M=
-X-Google-Smtp-Source: AGHT+IELT+nIcNIHpRd0VURQSfms7/9rnXrvQSKKP8WDZhL+Ping8e5aExYUvTBzzunkWbrk3CQGQg==
-X-Received: by 2002:a05:6122:da1:b0:526:1ddc:6354 with SMTP id 71dfb90a1353d-527b4e40effmr1192778e0c.0.1744278323832;
-        Thu, 10 Apr 2025 02:45:23 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd4eab6sm581548e0c.5.2025.04.10.02.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 02:45:23 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86715793b1fso236154241.0;
-        Thu, 10 Apr 2025 02:45:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV25S5XGwEIkYArn5jTiUl+FS3metWcubaYSgJu46Q2ilojnBO9LP24dv3H4Gbwjn4V9+r/NjYfjlhHhtr8UfEeoLM=@vger.kernel.org, AJvYcCVFDMfY1Gb5LuAdX+BtYBCW/yBkanJgwp0SmX3cIvli3+/5qAKoOVCi0hbNEKxG8ROZJx2CU9tC7845eX61@vger.kernel.org, AJvYcCWPdbxMZwfURuq78FVvO/AxLNzRbixDog9U1roepYIz0Bxw8i1MlC790PPfQN4qUdCcM02RaYiOX1kl@vger.kernel.org, AJvYcCWpPss8C2eMGSzTivS0UMOpcT1Kr0yphMutvLItq3UJ3qY9QT1UiRsrRdz+XxjI9sH1AgiPrcYmkcELsIMV@vger.kernel.org, AJvYcCWsQJ6ocrO6SxP9wgvpDJ7FTOZBcc9cDZeCehaR2J0GtlgTjjASIZH2iTwFW6b9oNr1d1TNtgoC/C93@vger.kernel.org, AJvYcCXtftODtSMjIaA66kIJIsjJKRliW4RqYUw2hi31rSk0/c3dIaBw5t4e42u6vua8lqkTqhNcM/0G8IkrtQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:3309:b0:4ba:971a:41fd with SMTP id
- ada2fe7eead31-4c9d35c5deamr1124974137.19.1744278323244; Thu, 10 Apr 2025
- 02:45:23 -0700 (PDT)
+        bh=AyPa6ldlaK56MEPUp6to8FxZZbTIhKB6rIkU4vhMvLs=;
+        b=QA+VUK8yFrHholj5pt8pblX0qo9hRL4iM7zJZBxyCUw+E5dR7A4q5tIPPE4xi3To+N
+         gi2wog3Dv3s/SBrwAOgJedr0kFgwd1Cu/YDOsvpqvq6wJzvmhP/T3Xx4x7KNmpOw/+Dr
+         b9eZjO3PlsmOa+EBMA8VjX4rfabqGnCxYNhz8RsgnNVrKrwZdijoI3CLhtgq8zyCWSDx
+         LsTF4Tb7Ixo4JO4H40FE/w/hf4ZKqecULBG3CiXkY7JrqKhhTJCdRdX58QFPLpQ+PgwW
+         mrON9Q1o7DkjXQy/USu99pZHrAiVdy6RZzVRZ50a2l3Vr5wws0pZu7AXMOCiXz1jxqCD
+         WP4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVs3CB1priYj3NjMZOnVzEormvL5eIAPMwDHsZ9T8XoPmyb8zvSvLM09SPOI4ups/xYS4n5FTKBr/Fg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVZDiM3enPDiS3E1NW8FOLnW61JMWEk5s4cDD4JhntTnWSWt8u
+	7sS/BUi8v1YFlj2UGv5V+xGnnMdSwJxHD9E808hBzrZ+YjQaRXaWKkXg7hzGaNk=
+X-Gm-Gg: ASbGncta5cS2nwov0TKREH5188OxT4alFdUvvB/MTX0q/FphA9QDQu2haswpwUU1ZMI
+	Uo22bOpVVTNpfcnnJVMZLGpoRKWnU8v8kWukpcrUkUImPNX/PIq5tOBrt8TsVRa0jEL7+kMTw3G
+	8QLncOrQPknSC5aNOqVzWh8eDi/Q5g9CoP39fzQasaQWgqUh4hursELwDvP7Aey1ggOHaHfv0Iq
+	WgyKE5vY6qCavyXdMKg6xc1ATNBQYifk4InNDXGBz1pYUAKp06jdAg3kJsbLPQrknNTy4LOHNr8
+	3YdO6UbWYzCKe6wswcxMIy+oCcGBixJKaWFMk7X0
+X-Google-Smtp-Source: AGHT+IHVdnD6pkQJ1mtCB+lyukhVO9gye/40iBh+MDKdPiJJHPaca88NCEFrQ3Hp/AwTWVnFHC9fGA==
+X-Received: by 2002:a05:600c:3ac4:b0:43c:f5fe:5c26 with SMTP id 5b1f17b1804b1-43f2fdcd138mr16185205e9.4.1744278368045;
+        Thu, 10 Apr 2025 02:46:08 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7c4f:f9d1:94e0:53f8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm44847075e9.10.2025.04.10.02.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 02:46:07 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.15-rc2
+Date: Thu, 10 Apr 2025 11:46:05 +0200
+Message-ID: <20250410094605.38665-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407191628.323613-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 11:45:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVMmuUsz7SFKXwgN18tEg1DFa6mYTkN7aLD8zu64Lb11Q@mail.gmail.com>
-X-Gm-Features: ATxdqUFqo0ZMceN1rxkhX4aDFIuAr-nMIpzKU-j05xv-Wz1pn3oTcGBOENSelMY
-Message-ID: <CAMuHMdVMmuUsz7SFKXwgN18tEg1DFa6mYTkN7aLD8zu64Lb11Q@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Document the device tree bindings for the Renesas RZ/V2N (R9A09G056)
-> SoC Clock Pulse Generator (CPG).
->
-> Update `renesas,rzv2h-cpg.yaml` to include the compatible string for
-> RZ/V2N SoC and adjust the title and description accordingly.
->
-> Additionally, introduce `renesas,r9a09g056-cpg.h` to define core clock
-> constants for the RZ/V2N SoC. Note the existing RZ/V2H(P) family-specific
-> clock driver will be reused for this SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in a branch shared by renesas-clk for v6.16 and
-renesas-devel for v6.16.
+Linus,
 
-Gr{oetje,eeting}s,
+Please pull the following set of fixes from the GPIO tree for the next RC.
 
-                        Geert
+Thanks,
+Bartosz
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.15-rc2
+
+for you to fetch changes up to b8c7a1ac884cc267d1031f8de07f1a689a69fbab:
+
+  gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment (2025-04-08 11:06:45 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.15-rc2
+
+- fix resource handling in gpio-tegra186
+- fix wakeup source leaks in gpio-mpc8xxx and gpio-zynq
+- fix minor issues with some GPIO OF quirks
+- deprecate GPIOD_FLAGS_BIT_NONEXCLUSIVE and devm_gpiod_unhinge()
+  symbols and add a TODO task to track replacing them with a better
+  solution
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      gpiolib: of: Fix the choice for Ingenic NAND quirk
+      gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment
+
+Bartosz Golaszewski (4):
+      gpio: deprecate the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag
+      gpio: deprecate devm_gpiod_unhinge()
+      MAINTAINERS: add more keywords for the GPIO subsystem entry
+      gpio: TODO: track the removal of regulator-related workarounds
+
+Guixin Liu (1):
+      gpio: tegra186: fix resource handling in ACPI probe path
+
+Krzysztof Kozlowski (2):
+      gpio: mpc8xxx: Fix wakeup source leaks on device unbind
+      gpio: zynq: Fix wakeup source leaks on device unbind
+
+ MAINTAINERS                   |  2 ++
+ drivers/gpio/TODO             | 34 ++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-mpc8xxx.c   |  4 +++-
+ drivers/gpio/gpio-tegra186.c  | 25 +++++++++++++------------
+ drivers/gpio/gpio-zynq.c      |  1 +
+ drivers/gpio/gpiolib-devres.c |  6 +++++-
+ drivers/gpio/gpiolib-of.c     |  8 +++++---
+ include/linux/gpio/consumer.h |  1 +
+ 8 files changed, 64 insertions(+), 17 deletions(-)
