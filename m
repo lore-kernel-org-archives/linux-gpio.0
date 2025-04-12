@@ -1,102 +1,399 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE25C1DB95E
-	for <linux-gpio@vger.kernel.org>; Sat, 12 Apr 2025 10:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD8E155382;
+	Sat, 12 Apr 2025 11:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452938; cv=none; b=WT4m1HfSwSawbu/BEB6npT/h7RGtPswN05emB+uLF1WBUlLPZE6lrZ5LKRicQBm8I++z3mnhiuYFYXN/UqloO98KDWIMo6zlIkEf3tzRhV3mfOODAa6EfuPrjrJhLMp82D8UMucafMgVxc4h81PmovsQGo/oasP+yYITfMwTss4=
+	t=1744457516; cv=none; b=kagTpx1MZ/NUPUTHtsVRA6CAFVyiBJveN4AWXhdDnEl0E8mtaulDRQqGyYCOKQoKSp1T4tXfsA66YOyphXn3DRI9tKBXuRSWDO50yjV3+R9LMWA1iBUggAlCyM9kJARlUj0Pv06RKr48dCxxzpRtixst6XfMZPNLOaVJH3r3N0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452938; c=relaxed/simple;
-	bh=U5hk+MMWODIgneoe/y7sjmG33jRN88m0448jMEiqvfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKcaJFuF75Y5VIQpGmZFAV8icLl+ctHH20iARh7QRC0uHkL1F/Caet+pnKocXpNfeVJ1uwQdwfw7re0rv28HhKcjRdLRNkLF4kNZBrKWC3hlSjYBJ4GE5uN3PX3BcqXYNYVIvT3N6+PdismP4Bp5dp0W56G0lqE1vg2su/aLlDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8QrKQ0Y; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744457516; c=relaxed/simple;
+	bh=Q/XDAnnrTFh+gGcYvTYdzvUbJSofwqgwFXv1Q4LryyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K+o0S07hIJl5SORFiiQd2ozW+a023C3EbGqjeacMZAuD5xwYNaBJ4htpCM8iGiL4d2ItWfNZYFj8+EiUB4BPX/5IT/m3BaeTGsuQLv79vS1IKeqQrnp5p6n6XkZL/4pPirzNkQcSKRWZJ3+aYqwUh/p24jwK45bjbCuUCLbRIAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1F/+HU6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8QrKQ0Y"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf257158fso20314695e9.2
-        for <linux-gpio@vger.kernel.org>; Sat, 12 Apr 2025 03:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744452935; x=1745057735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4ZyWmi66QBBd2EXEOk510Gi6AUK8otoa49t7kPH6c0=;
-        b=s8QrKQ0YLrkvny7p8Vk4mO2D3IloATv5VmLyHCobKJi+7GeacHSRw9nmz4XUUBHUAk
-         fT4IIXnCwFA7ZR2O+H7ICECgzt4XBo3H+r1XR27fvH9NWCPh+8Amxqe191qAOwAhawdx
-         IK5Ss70MdpVbXL2zWsmM44rHOCcA5X+djAHUap92JMn3GkYkXGVkVq5Vi7s/OakqUGR8
-         cq7IkzWo9aS+OPY+3vLgIeSAYaPMUvf5eAfdUxujUVBvb8NuXoTb3UZyIxMtLlgXfTrh
-         L4lLP/sXYHqKLCA3lc+vAPuC6YJBrV2azftWWH4Oiy1dVM7eCcXLx9rRCw1MKrkHrCzL
-         jSCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744452935; x=1745057735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e4ZyWmi66QBBd2EXEOk510Gi6AUK8otoa49t7kPH6c0=;
-        b=SeE/0cca6l/EOoYk05UlbHlhRM5WN+VSULC64XtGj2imPlI8x+5QvDMHaIetVQKtZ4
-         Sz5+P5WwIDy/0NzR9rW7YDncn+Ia1+hDWa05ViW5fNRqX3zRKNWLdiGtnxagzRsAsFKX
-         32IzjbNeTaN/RXZTBUzdO0rvPhvw5aHZ5MUiw+eYb1XqdGES4V4Uw26PLtrrfvk6RlF7
-         qCGxW2elArIsZDloQYyZV07op2NiMBiolSI107MZe9hSMwI7dDb7yp0BBCOUJN2sZI7D
-         HT4uEGL9kKrgRx8Wv3iUJGvTK3EQHUSVGgJ5KjT2PjYFjY3DkwwyoARkALbC7LgEQT7n
-         JFtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnczRia7VH5L6d9G9pZ2/ZgfrnD7TlBSJJnvGHUfyxaSCoV7MLIdIFJ+Bp9cRP/43iQAZBu0ae6rSn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz09qypRZbD+7CF/kO680r9T5HFggs0qkxOFFyfy15exgvkiSG
-	Lv8tqxXUnLZtl+zQZrHMR9Kyc5sAMP4f1jnWQae0LsbOm5gmJH9vFnK6CVWh9Z0=
-X-Gm-Gg: ASbGncsEyH6xREkyS7/aW4CpJGC9TOkWnrxd9EsZiO32lDTj70+1NaH1GLrKEUqfcPc
-	Qa7BBPFCd+xtN4Psw9wq8fJEfBlwY2ZQE9qkEpfyd3xJIGp4RhjeCzO1IZelJOO5j6vVEGr35JK
-	LGRNrRBmux3EHJU16cDK2X5IlkaZgy3fTnm1J+6JGkFTlM7uM+QkREc+MrQ4LJUJ+B4Tlvfb1tG
-	f8I7RbmQ2KeqKEKF8MU5dyCFSDECRHWd/AujfkLT79HynDb+VMAJ1msI+yN6UUbJ0G6yzupYh5I
-	s8jRmiVqJVmPPBwEdo3IahOqVLNWjkIKCAMCzIXKHMygbg==
-X-Google-Smtp-Source: AGHT+IGQa6VYeWqqBTxj6y7PlQMkElGotH4Th/ZzP0eMaB+7v7hp4x7EvVajjz8OyBown1N1qO/VMQ==
-X-Received: by 2002:a05:600c:c87:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43f4aafa03amr1252175e9.18.1744452935145;
-        Sat, 12 Apr 2025 03:15:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae9640e3sm4735171f8f.12.2025.04.12.03.15.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 03:15:34 -0700 (PDT)
-Date: Sat, 12 Apr 2025 13:15:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] gpio: aggregator: Fix leak in gpio_aggregator_parse()
-Message-ID: <e023bfe52509ce1bef6209ec7c47e99279c551dd.1744452787.git.dan.carpenter@linaro.org>
-References: <cover.1744452787.git.dan.carpenter@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1F/+HU6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADDEC4CEE3;
+	Sat, 12 Apr 2025 11:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744457515;
+	bh=Q/XDAnnrTFh+gGcYvTYdzvUbJSofwqgwFXv1Q4LryyE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=U1F/+HU66v4A3k/MfjlGq6viUiOl1nwo2sEzGfIqcqMLjunxFMTzo/D3gLYYoVlAJ
+	 2n02EpWP5cxz0L3EF5P1mxoTE9ptEMeN1K9GrmkHdEioGRXjc/r9kFM/ETErSJe/Dm
+	 9qNh9ZjDETI7WOyNEuE5X5N3uixS+LSRMPBuQkjTbT95rNTkkxoFPwpeROQwyefpst
+	 4ULwEYJQnP4hYBodMOqfaj0BQVlkWJYAgcd5hZj6EUclpFx8t1U5MuvXx9km1kPOW+
+	 crJEvJDk8WjOmNo4S4ipKbi8QBkS6Zu8pmlCrRhsh7yBmWmX9suja693aitMlw9NC2
+	 SLzZWPhoExI/w==
+Date: Sat, 12 Apr 2025 12:31:48 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 2/7] iio: dac: ad5592r: use lock guards
+Message-ID: <20250412123148.00124102@jic23-huawei>
+In-Reply-To: <20250409-gpiochip-set-rv-iio-v2-2-4b36428f39cb@linaro.org>
+References: <20250409-gpiochip-set-rv-iio-v2-0-4b36428f39cb@linaro.org>
+	<20250409-gpiochip-set-rv-iio-v2-2-4b36428f39cb@linaro.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1744452787.git.dan.carpenter@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Call gpio_aggregator_free_lines() before returning on this error path.
+On Wed, 09 Apr 2025 10:40:40 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Fixes: 83c8e3df642f ("gpio: aggregator: expose aggregator created via legacy sysfs to configfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpio/gpio-aggregator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 071d76dbfcec..6f941db02c04 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -1101,7 +1101,7 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
- 		error = bitmap_parselist(offsets, bitmap, AGGREGATOR_MAX_GPIOS);
- 		if (error) {
- 			pr_err("Cannot parse %s: %d\n", offsets, error);
--			return error;
-+			goto err;
- 		}
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Use lock guards from linux/cleanup.h to simplify the code and remove
+> some labels.
+> 
+> Note that we need to initialize some variables even though it's not
+> technically required as scoped_guards() are implemented as for loops.
+Needed a tweak for my llvm test build to work.
+diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
+index ada60f5ff1b6..32e63a159d86 100644
+--- a/drivers/iio/dac/ad5592r-base.c
++++ b/drivers/iio/dac/ad5592r-base.c
+@@ -414,7 +414,7 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+                *val2 = chan->scan_type.realbits;
  
- 		for_each_set_bit(i, bitmap, AGGREGATOR_MAX_GPIOS) {
--- 
-2.47.2
+                return IIO_VAL_FRACTIONAL_LOG2;
+-       case IIO_CHAN_INFO_OFFSET:
++       case IIO_CHAN_INFO_OFFSET: {
+                ret = ad5592r_get_vref(st);
+ 
+                guard(mutex)(&st->lock);
+@@ -425,6 +425,7 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+                        *val = (-75365 * 25) / ret;
+ 
+                return IIO_VAL_INT;
++       }
+        default:
+                return -EINVAL;
+        }
+
+Scope gets messy in switch statements.
+
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/iio/dac/ad5592r-base.c | 132 +++++++++++++++++------------------------
+>  1 file changed, 54 insertions(+), 78 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
+> index eb85907f61ae..ada60f5ff1b6 100644
+> --- a/drivers/iio/dac/ad5592r-base.c
+> +++ b/drivers/iio/dac/ad5592r-base.c
+> @@ -7,6 +7,7 @@
+>   */
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/module.h>
+> @@ -24,16 +25,14 @@ static int ad5592r_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  {
+>  	struct ad5592r_state *st = gpiochip_get_data(chip);
+>  	int ret = 0;
+> -	u8 val;
+> +	u8 val = 0;
+>  
+> -	mutex_lock(&st->gpio_lock);
+> -
+> -	if (st->gpio_out & BIT(offset))
+> -		val = st->gpio_val;
+> -	else
+> -		ret = st->ops->gpio_read(st, &val);
+> -
+> -	mutex_unlock(&st->gpio_lock);
+> +	scoped_guard(mutex, &st->gpio_lock) {
+> +		if (st->gpio_out & BIT(offset))
+> +			val = st->gpio_val;
+> +		else
+> +			ret = st->ops->gpio_read(st, &val);
+> +	}
+>  
+>  	if (ret < 0)
+>  		return ret;
+> @@ -45,7 +44,7 @@ static void ad5592r_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>  {
+>  	struct ad5592r_state *st = gpiochip_get_data(chip);
+>  
+> -	mutex_lock(&st->gpio_lock);
+> +	guard(mutex)(&st->gpio_lock);
+>  
+>  	if (value)
+>  		st->gpio_val |= BIT(offset);
+> @@ -53,8 +52,6 @@ static void ad5592r_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>  		st->gpio_val &= ~BIT(offset);
+>  
+>  	st->ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+> -
+> -	mutex_unlock(&st->gpio_lock);
+>  }
+>  
+>  static int ad5592r_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+> @@ -62,21 +59,16 @@ static int ad5592r_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+>  	struct ad5592r_state *st = gpiochip_get_data(chip);
+>  	int ret;
+>  
+> -	mutex_lock(&st->gpio_lock);
+> +	guard(mutex)(&st->gpio_lock);
+>  
+>  	st->gpio_out &= ~BIT(offset);
+>  	st->gpio_in |= BIT(offset);
+>  
+>  	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> +		return ret;
+>  
+> -	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+> -
+> -err_unlock:
+> -	mutex_unlock(&st->gpio_lock);
+> -
+> -	return ret;
+> +	return st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+>  }
+>  
+>  static int ad5592r_gpio_direction_output(struct gpio_chip *chip,
+> @@ -85,7 +77,7 @@ static int ad5592r_gpio_direction_output(struct gpio_chip *chip,
+>  	struct ad5592r_state *st = gpiochip_get_data(chip);
+>  	int ret;
+>  
+> -	mutex_lock(&st->gpio_lock);
+> +	guard(mutex)(&st->gpio_lock);
+>  
+>  	if (value)
+>  		st->gpio_val |= BIT(offset);
+> @@ -97,18 +89,13 @@ static int ad5592r_gpio_direction_output(struct gpio_chip *chip,
+>  
+>  	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+>  	if (ret < 0)
+> -		goto err_unlock;
+> +		return ret;
+>  
+> -	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+> -
+> -err_unlock:
+> -	mutex_unlock(&st->gpio_lock);
+> -
+> -	return ret;
+> +	return st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+>  }
+>  
+>  static int ad5592r_gpio_request(struct gpio_chip *chip, unsigned offset)
+> @@ -171,10 +158,9 @@ static int ad5592r_reset(struct ad5592r_state *st)
+>  		udelay(1);
+>  		gpiod_set_value(gpio, 1);
+>  	} else {
+> -		mutex_lock(&st->lock);
+> -		/* Writing this magic value resets the device */
+> -		st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
+> -		mutex_unlock(&st->lock);
+> +		scoped_guard(mutex, &st->lock)
+> +			/* Writing this magic value resets the device */
+> +			st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
+>  	}
+>  
+>  	udelay(250);
+> @@ -249,46 +235,44 @@ static int ad5592r_set_channel_modes(struct ad5592r_state *st)
+>  		}
+>  	}
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	/* Pull down unused pins to GND */
+>  	ret = ops->reg_write(st, AD5592R_REG_PULLDOWN, pulldown);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = ops->reg_write(st, AD5592R_REG_TRISTATE, tristate);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	/* Configure pins that we use */
+>  	ret = ops->reg_write(st, AD5592R_REG_DAC_EN, dac);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = ops->reg_write(st, AD5592R_REG_ADC_EN, adc);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	ret = ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+>  	if (ret)
+> -		goto err_unlock;
+> +		return ret;
+>  
+>  	/* Verify that we can read back at least one register */
+>  	ret = ops->reg_read(st, AD5592R_REG_ADC_EN, &read_back);
+>  	if (!ret && (read_back & 0xff) != adc)
+> -		ret = -EIO;
+> +		return -EIO;
+>  
+> -err_unlock:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int ad5592r_reset_channel_modes(struct ad5592r_state *st)
+> @@ -305,7 +289,7 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
+>  	struct iio_chan_spec const *chan, int val, int val2, long mask)
+>  {
+>  	struct ad5592r_state *st = iio_priv(iio_dev);
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> @@ -316,11 +300,11 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
+>  		if (!chan->output)
+>  			return -EINVAL;
+>  
+> -		mutex_lock(&st->lock);
+> -		ret = st->ops->write_dac(st, chan->channel, val);
+> -		if (!ret)
+> -			st->cached_dac[chan->channel] = val;
+> -		mutex_unlock(&st->lock);
+> +		scoped_guard(mutex, &st->lock) {
+> +			ret = st->ops->write_dac(st, chan->channel, val);
+> +			if (!ret)
+> +				st->cached_dac[chan->channel] = val;
+> +		}
+>  		return ret;
+>  	case IIO_CHAN_INFO_SCALE:
+>  		if (chan->type == IIO_VOLTAGE) {
+> @@ -335,7 +319,7 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
+>  			else
+>  				return -EINVAL;
+>  
+> -			mutex_lock(&st->lock);
+> +			guard(mutex)(&st->lock);
+>  
+>  			ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
+>  						&st->cached_gp_ctrl);
+> @@ -360,11 +344,8 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
+>  						~AD5592R_REG_CTRL_ADC_RANGE;
+>  			}
+>  
+> -			ret = st->ops->reg_write(st, AD5592R_REG_CTRL,
+> -						 st->cached_gp_ctrl);
+> -			mutex_unlock(&st->lock);
+> -
+> -			return ret;
+> +			return st->ops->reg_write(st, AD5592R_REG_CTRL,
+> +						  st->cached_gp_ctrl);
+>  		}
+>  		break;
+>  	default:
+> @@ -379,15 +360,15 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+>  			   int *val, int *val2, long m)
+>  {
+>  	struct ad5592r_state *st = iio_priv(iio_dev);
+> -	u16 read_val;
+> -	int ret, mult;
+> +	u16 read_val = 0;
+> +	int ret = 0, mult = 0;
+>  
+>  	switch (m) {
+>  	case IIO_CHAN_INFO_RAW:
+>  		if (!chan->output) {
+> -			mutex_lock(&st->lock);
+> -			ret = st->ops->read_adc(st, chan->channel, &read_val);
+> -			mutex_unlock(&st->lock);
+> +			scoped_guard(mutex, &st->lock)
+> +				ret = st->ops->read_adc(st, chan->channel,
+> +							&read_val);
+>  			if (ret)
+>  				return ret;
+>  
+> @@ -400,9 +381,8 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+>  			read_val &= GENMASK(11, 0);
+>  
+>  		} else {
+> -			mutex_lock(&st->lock);
+> -			read_val = st->cached_dac[chan->channel];
+> -			mutex_unlock(&st->lock);
+> +			scoped_guard(mutex, &st->lock)
+> +				read_val = st->cached_dac[chan->channel];
+>  		}
+>  
+>  		dev_dbg(st->dev, "Channel %u read: 0x%04hX\n",
+> @@ -420,16 +400,14 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+>  			return IIO_VAL_INT_PLUS_NANO;
+>  		}
+>  
+> -		mutex_lock(&st->lock);
+> -
+> -		if (chan->output)
+> -			mult = !!(st->cached_gp_ctrl &
+> -				AD5592R_REG_CTRL_DAC_RANGE);
+> -		else
+> -			mult = !!(st->cached_gp_ctrl &
+> -				AD5592R_REG_CTRL_ADC_RANGE);
+> -
+> -		mutex_unlock(&st->lock);
+> +		scoped_guard(mutex, &st->lock) {
+> +			if (chan->output)
+> +				mult = !!(st->cached_gp_ctrl &
+> +					AD5592R_REG_CTRL_DAC_RANGE);
+> +			else
+> +				mult = !!(st->cached_gp_ctrl &
+> +					AD5592R_REG_CTRL_ADC_RANGE);
+> +		}
+>  
+>  		*val *= ++mult;
+>  
+> @@ -439,15 +417,13 @@ static int ad5592r_read_raw(struct iio_dev *iio_dev,
+>  	case IIO_CHAN_INFO_OFFSET:
+>  		ret = ad5592r_get_vref(st);
+>  
+> -		mutex_lock(&st->lock);
+> +		guard(mutex)(&st->lock);
+>  
+>  		if (st->cached_gp_ctrl & AD5592R_REG_CTRL_ADC_RANGE)
+>  			*val = (-34365 * 25) / ret;
+>  		else
+>  			*val = (-75365 * 25) / ret;
+>  
+> -		mutex_unlock(&st->lock);
+> -
+>  		return IIO_VAL_INT;
+>  	default:
+>  		return -EINVAL;
+> 
 
