@@ -1,149 +1,134 @@
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CA615DBB3;
-	Mon, 14 Apr 2025 08:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC325DAE8
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Apr 2025 09:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620027; cv=none; b=KL0x9lxJg1JqMMnj5Ug1dKMuNRXK13vPRvTpVK/q0961szpxtzDWFFwM1NfgPs5+gW4a2hZ8xws2KgB+wPQqUT+jZmD54z1hEAMkOQUMWOM2V2/YrTMDU9JAjavp0sGy07qw9fH/Jo/V3RORFF1KrRUQjIAzT2QOMC9ymgbgiIc=
+	t=1744621300; cv=none; b=G/EmawMYe69C+CHcGWm/0CnpW8BRLMR2o/Y4PbVzee6+0U41BTCM0UwqdiUXTSR8TKib2F4tEXXkfI+NW7Sd+JttvL0TTEv+rwUxzuHj74dhrod5pVXG4DBdw5P1Fn0dgy3TjWg9JdZ0hUY0QKxYCws+1j3UxzPLJXWz2wRhEGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620027; c=relaxed/simple;
-	bh=zKaosKnqxAEMJEQPHKc8iNMMQCXDKe5oSZ2DRY1bgWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JDTS0SfRcYUBzHsSZ0PdPirLhMnQG5H2PlY2MT7foLYiFEeNe4vCtvJtwGYdb857hB0SpCTnD8jWt+fHjM2hTrKaHxQxUarJuQ3aVvqXunKWaEuis+ItMvllnv63RRv8T0Lz7aC5AsSZGGjvG6aDhbFoEj+HFnjo2djbqmTPUgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TahVKnII; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744621300; c=relaxed/simple;
+	bh=NL2TGpDIJnKJLRnd23h9LgHRVuBV+Ktt+8xcaN6KIFI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uApdhSWhvc84ssH6e13HBcnhBb7SMtUsiGbArTpxltGvgCeXV/sY3oPZq2DANhCxDI+ZUmb2ZdVe82SyyPnw2xeqgAx2Mgq/5Y13hJelrnp+AVa9mrOB6tXLlqwR6QkJUFOHtIrHb0rfQcXCYe3B10Ic1hvudve33l0eae1V/x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BWt7J/s9; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TahVKnII"
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-524038ba657so4055770e0c.0;
-        Mon, 14 Apr 2025 01:40:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BWt7J/s9"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so684044266b.0
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Apr 2025 02:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744620025; x=1745224825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uWMxGH9MN2lw9UiJgZXH2sA9J8cJGOnXvoh40QjiLJY=;
-        b=TahVKnIIsRU1HpboyrV0cL4n709KE4bPEkvR2NpKjrlucZaR9DLKDCcopa/WgWjK27
-         wE+Xb8b5Hl8YajAR3Qu0YQgi6sTZLNOD/v3FhOiBC/qf09yPtSIpaOYu049QRv71HIxm
-         6GjxJD/c3n1WBJVMPsB2huoWJJSmlywNX7sHyfBQ3usgg7M4mLVD2t6/Za7F80FGQV0f
-         PJ+Q8eFXEu+pTk01RwCMsm8usb1W1vH/Uj2DwL4ONalv90LEsH5gNJb3ERPikai8MoFG
-         rRhdy6fHAKatQ3FIrpxeYH/mL2fJtW2zWT/SioQo5gvyo/cSc7mSubafE1axgvvgH88A
-         MtJg==
+        d=suse.com; s=google; t=1744621296; x=1745226096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPOEfxN91t6VGg4utPDevtYddqW0HAL5VO9JP2cPRZo=;
+        b=BWt7J/s9YV/VAOEc7OQF2YUju7YbYeIpodRYNsYtyweNtzkQWUaNq6rFFh0nNbpv9L
+         idr0VZ9J78Nl8S34s9+ZJtl7DFyE3vNr8SEZ87JdZy4hImG1WlnI2RjpSfkHs6BmWW2B
+         87Wm1xcJ2Wz+zjLBnPYAhMQ+C6P8/+PlGIpysxb2v5mGH4VIPIOGSSMxh5Ag8LA3jLk3
+         RVdaghf11CqCg6skFuM+3LaigbGU9f7Uiy6T6rqIYeiUrI8xlj9mi6m5xyUYNUKRVlfr
+         UqRV6QgDzRXAt5ulhv68I7aDg41Sh4eoJiGIOijRHIEaJ5W2tAstR4nYmEFNvUqCY9Dl
+         iBGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744620025; x=1745224825;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uWMxGH9MN2lw9UiJgZXH2sA9J8cJGOnXvoh40QjiLJY=;
-        b=a9UNQdAiC6yGMweuMBaImSir0QiwfAloTxjBvnUlqAKNObXWNW8qSOWBJ/66rKt8T1
-         0vtOt3g0cfLLUe8RJxJDiaOXCkkxngMUifuBkpJvnrTX7GcFPVZCU9MrDLwXif1QBldH
-         34am4fSxlVMFyuiiKiBCpvYpPIlLKgAfY8SV2i+gGgpdZBdUszsr9kXr6/usNO3MnxSL
-         K1GOHn0iagDUCFFCFpQCI9q/M4z/nMlk+sLAYeyQRLDGYH0d7ZzB//ErhDzwxdi5MW65
-         /DXwUQjJXXHnqrel3ATiWlCIPOESccMIC+6/44mX298WUSC+oeMO4yRrnqqSWycdrdNq
-         w95A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrR4sR0mcD1qxUIBgd+M/JMZ/zBby4oRF6k9UsjfQEJNFz5kn1m+jiLkP+edJCDFGNBw4aiHTyD8njM3T@vger.kernel.org, AJvYcCVXgUQ9yDG1IvWfptbupnWCNzeWMrZ8Eyx2WFYnTRFVwR90+hWPqrSJ+/XhvRnoCI9xoTnCrzpNTWiV5XiZ3QaZwaM=@vger.kernel.org, AJvYcCVwfFWIhF/m0OsANW5acaqc2xMdjM62gbyOSsRrH47t9h3dyYciaXsHdAd7alWHPYWP2HJxyXPBJuR7@vger.kernel.org, AJvYcCW9CnbvKKXm3Nqo2ZqeZAPcV6OIb/uptRdMNLGS6HeUKZu8C/nPApSCWrnlYTsrXkF2Il9z5Uw7elUeIQ==@vger.kernel.org, AJvYcCWWbyNzE54M1TE7HQVzK9fe/bast6Xt0P9CJZ9KeqjXX0myxH6qScaVOZcubjg+vIzGe2ToXbRfMP4STXaR@vger.kernel.org, AJvYcCX/D3B+Km0kOkhQdRHKuimlDxBS21UptLPELdkJjaHMjmtEFW386VwKqCxrw3i8NP4tsTSn3c+U7AIH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl6tXJqXXx7BzLTC/4cXTzOelgi1dd0YQfkoWGmA6+UT0EJRpP
-	QidB+9jQzY6vqeLps+xuIwCoQKljkhmpSWd0MPY+5dR969LPbvhLCQdeZMTHVcAVXUUJ+qVQzxi
-	5hKSvmVs0HHZ96Fw53jiDIdzD7F0=
-X-Gm-Gg: ASbGncsPHsYMa3YZvAdQWhQr+zDkFaJtvYo28Kl7L8f+PQA2WiUfDpeO94K6dAWu6df
-	Qo0ZVOcWKy7CZ8/WQfV/9YsL/1FGbSs/3WVcxL3IsX3IFKBxV5V7srRvqO6byfQvD+K/UAla4dT
-	Gvvg8jsgupJtg0894GH4Vv0P5gRVkG22Gf
-X-Google-Smtp-Source: AGHT+IET2qRXboEKhidUb5hBJlClL8RXUpYBKRhEnEi/wLWquyPq+HRgvLZKLIrzDsDjB07VIxygOjghYhgLKS7v14g=
-X-Received: by 2002:a05:6122:3417:b0:523:eb47:2884 with SMTP id
- 71dfb90a1353d-527b5ecadcbmr12260095e0c.6.1744620024811; Mon, 14 Apr 2025
- 01:40:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744621296; x=1745226096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FPOEfxN91t6VGg4utPDevtYddqW0HAL5VO9JP2cPRZo=;
+        b=uyDDRatVpaDLFUfX8w4I/Hz5hGIS+rqRePx09LUqJIB2Q6iw5I0dsr55qwH/izMZuN
+         RhWnN5jYfhG6JwWZEb3N3PfbYUQbpiUX7pnyitOjcbpdT0sdRX0dUKSwOIrt4/bItuOR
+         DAsV5UZe/jXPriFSkX8e6i/yWWjbz4QgCvQGYyGbsW0nGoKPe54R23tk/zEkh0rWmDfW
+         FwbI+39r/oXYMKQTHTdcP6WUCZGY4dQvZMrdJYpxhv+0UcssgXMM6SK4S+wyh97ROIre
+         f/yS2NtrBNvrTcFVsy3Bf2FoydygteVkFEEJaV75gV/nsG5dpxA9SBMqM6WmhhClsm8D
+         y+mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwV6mUt9I3+WQp+2S9XpAygCih2pzjVtmIrCDydKwq7+ZcnjGuK28aq90qCpChH93KUokPuEgKxeua@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpFrg0605ldprAG82DXQ6xFF+y10NtI8evgJBaYvLFcg4dpLuB
+	bb7XIgRezr6N/FxOeXt4cIM514DidpfKEa3cEXCHrJ6PuYAeWwz6WdOdHGt33CM=
+X-Gm-Gg: ASbGncueXW3gEbhpW6aqXrEoYEOekd2K5/2jUoH5m97gZqeu77nBHsfc5RHrRT9Q4O4
+	jX1WlqG/uscuip8SGIdKYRXXkL+mdBnwgP84shPCS8VNi3QjJqt/MS2ef/iuZNz8yuphPf9hxJi
+	JDbQyiZ2KwPXExzz8gQVNAYkin74MeWEp55yhaj6NYWJzhFK5xXO7v49sQr9W1GIFu2zZiFwDBD
+	cXyp1kZSZ8g2aWrXZ8Eb0Y09gE44lIa/iGv+V+H1IZ7k+us31LwF7JySMl6J6KONKhoWkgbmR6I
+	fX61ukY01okk34eCh3DP+u2RTD7/O6jYXgs4ji8E0eE3Gjx6aLAj9530SZz5sj1A1V7WWbdRaBa
+	YEalefg==
+X-Google-Smtp-Source: AGHT+IFmbGr9kZB05oV1EN/0KfR241wQsclfRn1B+/FEvNm78/Bf5RFw5+zsFio1fzhhJ8sSkqIJlQ==
+X-Received: by 2002:a17:906:730e:b0:ac4:4d2:3867 with SMTP id a640c23a62f3a-acad3499ff8mr901526366b.23.1744621296460;
+        Mon, 14 Apr 2025 02:01:36 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce7fdcsm883504566b.176.2025.04.14.02.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 02:01:36 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 14 Apr 2025 11:02:58 +0200
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 00/13] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <Z_zPQpyjZXzVxroB@apocalypse>
+References: <cover.1742418429.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 14 Apr 2025 09:39:58 +0100
-X-Gm-Features: ATxdqUHlsc5uJ7-xCYIyly9sEU832hppwQxRaNf8N6phxVH69LOeEigYs5a45bg
-Message-ID: <CA+V-a8vzPuxAqJ8waJWw0TNRqV5FMeuojZ7bxfPJzLMPNdy79g@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for
- RZ/V2N EVK
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1742418429.git.andrea.porta@suse.com>
 
-Hi Geert,
+Hi,
 
-Thank you for the review.
+On 22:52 Wed 19 Mar     , Andrea della Porta wrote:
+> RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+> a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+> etc.) whose registers are all reachable starting from an offset from the
+> BAR address.  The main point here is that while the RP1 as an endpoint
+> itself is discoverable via usual PCI enumeraiton, the devices it contains
+> are not discoverable and must be declared e.g. via the devicetree.
+> 
+...
 
-On Thu, Apr 10, 2025 at 1:07=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-> > the R9A09G056N48 SoC. Enable basic board functionality, including:
-> >
-> > - Memory mapping (reserve the first 128MB for the secure area)
-> > - Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-> > - PINCTRL configurations for peripherals
-> > - Serial console (SCIF)
-> > - SDHI1 with power control and UHS modes
-> >
-> > Update the Makefile to include the new DTB.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - Followed DTS coding style guidelines
->
-> Thanks for the update!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.16.
->
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
->
-> > +&pinctrl {
->
-> > +       sdhi1_pins: sd1 {
-> > +               sd1-dat-cmd {
-> > +                       pins =3D "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1D=
-AT3", "SD1CMD";
-> > +                       input-enable;
-> > +                       renesas,output-impedance =3D <3>;
-> > +                       slew-rate =3D <0>;
-> > +               };
-> > +
-> > +               sd1-clk {
-> > +                       pins =3D "SD1CLK";
-> > +                       renesas,output-impedance =3D <3>;
-> > +                       slew-rate =3D <0>;
-> > +               };
-> > +
-> > +               sd1-cd {
-> > +                       pinmux =3D <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD=
-1_CD */
-> > +               };
->
-> I will sort these subnodes while applying.
->
-Thanks for taking care.
+since there has been no feedback for a while, a gentle reminder about this
+patchset. 
+Several patches have at least one Reviewed-by tag, with the exception of:
 
-Cheers,
-Prabhakar
+- PATCH 5, 8: those are, respectively, the driver for RP1 clock and misc core
+  which have no major rework since the inception.
+
+- PATCH 9, 10: those are new patches, where the most relevant change is a
+  rearrangement of the dts include hierarchy to be flexible enough to support
+  both the dtb overlay approach and the monolithic dtb.
+
+- PATCH 13: just enables OF_OVERLAY config option. Some metric data have been
+  added to help evaluating the impact.
+
+Many thanks,
+
+Andrea
