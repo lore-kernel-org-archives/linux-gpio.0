@@ -1,130 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ECC250BE1;
-	Tue, 15 Apr 2025 19:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B6E2528F1
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Apr 2025 21:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744745934; cv=none; b=MRWlCj2NgRCpij9CUuxaRQ0zOy+/cA/3uqgAT8D028qcHngTeOYksBkZZoaeCBNX+QbDApxEhLYHxG2IFdbyZKuBBrBsAJ51HZlcmCkmG9SIXy6qoqJ4jJDwk3fzgNTB0SetUnBIdsMcYkaeFjd3QqTrY5AOr+nAkzez2J5T+sg=
+	t=1744752793; cv=none; b=qoYyfLVB3sfaEyaGQXwhOpSJJSTWlqSYze4ela7j64P9XuYl2OV634PZZS7C66VsBwX9fZlZ0qvuvry40cOGjPqSA0U34R1vbtIkcjDNt+lWaa+zZXhzy2VPb/Ujxh+qTR3aH+656pP+J78Q4CcuISo5cOZqFkwNrf5Oo3Jz1/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744745934; c=relaxed/simple;
-	bh=+X8PZp7ZJAtaPIiDYEIFalIVsT/0lgcDfgcWZzUFk0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bi/lIPaFhFHWbapyshCUhY5XUO2mxXNY9u3pc8UYHqLXJ/910xwgxbAUuPIZHJDfOnAsHepRv7kOFplJPRSw1/HGhSNfAFPNcacNtBKCnSKPNNPRAwmEtfMahoOMdlsrBNT4lhVBHDQBS8+0jlCTXsX9gDr/T8omVD8n2PN4SdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwXmHwmr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744752793; c=relaxed/simple;
+	bh=YFZbjOYvL3XWX9zYO837GJEEHfNhtkIC3obvjgRgC9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g9u/6E31LoCduVenEvc97XrJuJrCutNurR45mV6eS+jfDAdrjE1lde8QN5jBK2h6OWppUXlHVyoBJJgg8cIMiPOgrEsjm3jbikRLeWx5vgkiKdQlayieiaOOmGbNCtAaDrRMInTUOcs27iZ2RSy8s7IloaNV9r1Y55s969A+5j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EcCfDXKh; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwXmHwmr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996C0C4CEF1;
-	Tue, 15 Apr 2025 19:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744745933;
-	bh=+X8PZp7ZJAtaPIiDYEIFalIVsT/0lgcDfgcWZzUFk0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QwXmHwmr9n+SApeHzUas+OtoRZJMrhoeh0R81kyW0D+KMv7H0dYo6A0zVAIE14s6l
-	 9OioSxFrNEzCZqkR/ZPwAP8Mt7QfkHTwZXdB9+TeUcGUXgwRDHGnHg0CyH6VskKTM8
-	 bCDj7haedPkBA+8xnkLnjIfr0vcYnTTdaBRXNz6RbgCJFX2bVULWtPtwJmkIVdEGxn
-	 BxaHnstuq1TeVO5g3PiMSCbHCzIfMgZmxH7n4wX3SZ6F9kBOA7Kh6yk5l23wyzruAy
-	 6M/5t2SIRmRgrcIU7QC0aIODXbZZEbfY75ctd2n+299mrucX5kX9JVaJdIoGd+c1be
-	 wHoAGPF3Wu57g==
-Date: Tue, 15 Apr 2025 14:38:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: spacemit: add clock support for K1 SoC
-Message-ID: <20250415193851.GA846160-robh@kernel.org>
-References: <20250412-02-k1-pinctrl-clk-v1-0-e39734419a2d@gentoo.org>
- <20250412-02-k1-pinctrl-clk-v1-2-e39734419a2d@gentoo.org>
- <20250412182737.GA1425287-robh@kernel.org>
- <20250412223431-GYA25375@gentoo>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EcCfDXKh"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso30556431fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Apr 2025 14:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744752788; x=1745357588; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YFZbjOYvL3XWX9zYO837GJEEHfNhtkIC3obvjgRgC9M=;
+        b=EcCfDXKhkEseCVqVobSv+W2S8zfWuQuLn7dA9RuHxiSYcCLRq+uMd2oMlCVi7IomU3
+         3EeJ3Bh0hDaPyIPw1aPjyQwu1m73lJhSkAslYgfpSsLSOYNw7EIz5LEvhJ0ugHoldinC
+         7HBmdGmi/1lEj1pgzJAEBHTsMo7PV1QHZDQHyqRlZvExw/8Mc0r5vFwoUn2A5suOBAPP
+         qQCU2/ZnVRReshiIJgDuAp4p+OzVrM3jc3lIEP66MiNdcu7B1wYErFJ3C37FY9Ke7kML
+         4VGm0lCJ7B5B6obycSgb4+qxVvcJY47JrdPjZehd+6pqbDA2DeIdAMsA0YVFdFTYdDbN
+         txMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744752788; x=1745357588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YFZbjOYvL3XWX9zYO837GJEEHfNhtkIC3obvjgRgC9M=;
+        b=ihDZol8WKSpZYGc5K2I+KEii3ll9/UoHSCIjBfMPLtTqm7X16TtNE7Fz4bBbMUsZRx
+         mGZuCZavw93k8jW0ys9ZehNhNxbw755XlPfBx+vX87eD38fUvG/bxGkkVOUQvpm0tvnm
+         ojKlmCM530vATWNOyAfFAQUI/SA6OPbq6hEBXCGSgIXFvf2iC3HWyWP1qBR2KealfYGZ
+         kDVgq3by2YW3TdHOeo6LVyLW7UO7Q/SuPefUDVu+bQS7kw/aKNA8R+XFdE5AW/4nNiz0
+         UhWxf0xpX++cR14euNXh1LnF2YzcPmg3XIEx9jNaJKo4twOppXRu1I3OrhEwXokOhHfM
+         tXCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmxIaVvTYmYQ/8gQWsrkMxIOqXboRjYe0lZDYNDIT/CQRjNk2SApnk0M0gHC1mDfapvyQUzxp8HS04@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8yYqyJ+tWBEq3L19DkgbzujEsp08pks2d3V9SwxY2uhgaemXS
+	9gGEcbrCm2Een0BeDhYAQB/kGCZHanjIUNAwCRUOxmzPibGtgoj19/1lW5O8E6yxwf0Vrmi0Uqv
+	F8/k911TGgLpmpM51A7DOCNHVTrVL1onVOCa8QA==
+X-Gm-Gg: ASbGncsD2EO6GWsX8Co5blC3yiGUnX+wpdBq1E1ZUaYHSTjj+KNjPuwvQJRX11aksGz
+	yuZZcqaWtlkH2XywlghU5Ios+M8hnH+p4V/ywk1FMG20e0QU1cdOvki4Vbbe6WzVPuWXn8tpT/n
+	t6zNq0OWkclndf80EH3LOXL7Hq5W84Spl8
+X-Google-Smtp-Source: AGHT+IH1fPwXoYdrYrXs1HiLQVKcj1Nwq0ZaBfB+nrG4HDkRYGKbjDxTH83CFz9bMaIy6Rb3CT8kdAniAZ27nk0a6L4=
+X-Received: by 2002:a05:651c:312c:b0:30b:d656:1485 with SMTP id
+ 38308e7fff4ca-3107c317096mr2058281fa.32.1744752788108; Tue, 15 Apr 2025
+ 14:33:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412223431-GYA25375@gentoo>
+References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+ <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk> <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
+ <846010c0-7dc1-421c-8136-9ae2894c9acd@sirena.org.uk> <CAMRc=Mff0TkeiHbM3TAJLJ2HYU_nnPFUpUjbWsdCnW6O4E=+gQ@mail.gmail.com>
+ <c3bb82f9-5a2f-4a14-9726-f3e10bf5d427@sirena.org.uk> <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
+In-Reply-To: <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 15 Apr 2025 23:32:57 +0200
+X-Gm-Features: ATxdqUFVO-oOAadK97uz-Zvz-g6yn5__IY5aUh4Sy7yRB8wzgdG91TigfSAKxqk
+Message-ID: <CACRpkdaBNVyXUwErHTtGBnUjh4+6Ojb6fu9M4E7LnRCu_Oovpg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
+ workarounds for regulators
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 12, 2025 at 10:34:31PM +0000, Yixun Lan wrote:
-> Hi Rob,
-> 
-> On 13:27 Sat 12 Apr     , Rob Herring wrote:
-> > On Sat, Apr 12, 2025 at 02:58:11PM +0800, Yixun Lan wrote:
-> > > For SpacemiT K1 SoC's pinctrl, explicitly acquiring clocks in
-> > > the driver instead of relying on bootloader or default hardware
-> > > settings to enable it.
-> > > 
-> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > > ---
-> > >  drivers/pinctrl/spacemit/pinctrl-k1.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > index 67e867b04a02ea1887d93aedfdea5bda037f88b1..3805fb09c1bc3b8cf2ccfc22dd25367292b397b9 100644
-> > > --- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > +++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> > > @@ -2,6 +2,7 @@
-> > >  /* Copyright (c) 2024 Yixun Lan <dlan@gentoo.org> */
-> > >  
-> > >  #include <linux/bits.h>
-> > > +#include <linux/clk.h>
-> > >  #include <linux/cleanup.h>
-> > >  #include <linux/io.h>
-> > >  #include <linux/of.h>
-> > > @@ -721,6 +722,7 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct device *dev = &pdev->dev;
-> > >  	struct spacemit_pinctrl *pctrl;
-> > > +	struct clk *func_clk, *bus_clk;
-> > >  	const struct spacemit_pinctrl_data *pctrl_data;
-> > >  	int ret;
-> > >  
-> > > @@ -739,6 +741,14 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(pctrl->regs))
-> > >  		return PTR_ERR(pctrl->regs);
-> > >  
-> > > +	func_clk = devm_clk_get_optional_enabled(dev, "func");
-> > > +	if (IS_ERR(func_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(func_clk), "failed to get func clock\n");
-> > > +
-> > > +	bus_clk = devm_clk_get_optional_enabled(dev, "bus");
-> > > +	if (IS_ERR(bus_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(bus_clk), "failed to get bus clock\n");
-> > 
-> > Do you really need these to be optional? Yes, it maintains 
-> >
-> Yes, the motivation here to make it optional is maintaining the 
-> compatibility, to not break the case of using old dtb with new kernel,
-> since the serial console device (uart0) is activated now [1]
-> 
-> IIUC, from the DT perspective, it's mandatory to keep this compatibility?
+Hi Bartosz,
 
-It's up to the platform. It's only mandatory to understand you are 
-breaking compatibility when you do.
+this caused me to think about a thing:
 
-> 
-> In dt-binding of patch [1/2], the clocks/clock-names has been described as 
-> required property, so it's sort of mandatory from DT's view.
-> 
-> One lesson I learned is that the pinctrl dt node shouldn't be activated
-> untill all prerequisite dependencies meet.. it's ok to push the driver,
-> but should postpone the DT part..
-> 
-> > compatibility, but if this platform isn't stable, then do you really 
-> > need that?
-> > 
-> I don't get what's your meaning of "isn't stable" here, the fact won't
-> change for K1 SoC: the pinctrl controller requires two clocks
+On Wed, Apr 2, 2025 at 12:05=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-You required 1 clock and now you require 2. That's not stable. 
-Generally, early on with platforms, their DT is not complete enough to 
-maintain compatibility. There's also likely not many users or h/w 
-availability for compatibility to be an issue. So requiring the DT to be 
-in-sync with the kernel is not a problem.
+> This is bothering me. This is the abstraction reversal I'm talking
+> about. Should the regulator drivers even be concerned about whether
+> they share resources or not?
+(...)
+> The part where "the higher level users want to understand that there
+> is GPIO sharing going on" does not sound correct.
 
-Rob
+There are precedents for this type of semantic IRQF_SHARED
+is used whenever two devices share the same IRQ line,
+and that is something the drivers have to specify, i.e. the
+driver has to be aware that it may be sharing the IRQ
+with other devices, and whenever it gets an IRQ it has
+to check "was it for me?" and in case it was, return
+IRQ_HANDLED else IRQ_NONE.
+
+Yours,
+Linus Walleij
