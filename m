@@ -1,150 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D045B1B6D06;
-	Wed, 16 Apr 2025 19:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9C5149C4D
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Apr 2025 20:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744831916; cv=none; b=OQsjKR52oi6pvpr8WLfdz7ycNd/V9o5dHJNXKZuAOBBn13OjAwbyQ7w2TloT1RqSwdtIAvw/t11MrNju6TWFxKeW0+tMyLIqZUAVX7VPNIbWBuK1osbX0iLTdPgNhQOL6dHiFnqbBQME6/ELJDTy6nCcCOzGr2ed+mHfgMVw3vk=
+	t=1744836004; cv=none; b=CmQltTUL5F80f0U24K6BRorLMT63JGFeDCg+HSoWR+gjkWHZsfPnPn0/nB9kO78/ASz8hwXChWCzNkdABQCtn26S0w1P7zArkfD/Tb5PmIm5Hj94ZkQHWQ2Db1ZQoA53+x9r/9jB3Hr2cGmzW9KZpgnCBBVvqB3Ps9Ovbm2/X2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744831916; c=relaxed/simple;
-	bh=vxpDIaAEC9SyCL3ZAht0iZtYPbSSyHUAE7sjCOL8EDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=selu/w4Q4Ok/dVCqGfJUOGxN2rTAx5zNaSa3kByk2sg8N61iQBcaOX/QfWoHKAVaq0BzMSSfW2X6m2FSQdTC0cH3GI+3DarvXcemr/h8xjQ7BRHJScYa6wMFD0T/hGukxR2RwTji5jCMVNphf/Ey6cRrY0HzmV/wcZ9JOHaKb2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIPgOR5M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744836004; c=relaxed/simple;
+	bh=kDu+tIWiiv3RG9q2EWbYK6uCMzCFUTTLqRKVLC0mQKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIOOtpG+FL6QE1Ie1rtiX2hwc5znbn/o5nnMm8eEkaEh/Q0iQC3b5I0uBdEODkGIPN+voKstKQ92MOqJodwDf/wfUDS9tDuPKxc5Bi4We9QxFH/lqX6cpC2JRTZxolK+W6TI2a3toYpCnVa1SARghPdTaI0m0eIrCkPmlKrCwqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DpwLEau3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIPgOR5M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057FFC4CEE2;
-	Wed, 16 Apr 2025 19:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744831914;
-	bh=vxpDIaAEC9SyCL3ZAht0iZtYPbSSyHUAE7sjCOL8EDI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VIPgOR5MNLdSjfdlkkjOwUf7qmUNhO0t4OBBHheK/N7avBHoXTTT2X7PgAWUWSr6U
-	 vf6BnQNC8DMs9hIRLLzpHjG624jNYTy10DS/RSWYn9KZbyn/ivV+rMU/Zd0/BTdyZy
-	 q8XxR9s32JWMSxvMgE+Zh69OKXLDQbl49qB8slxphi+AY5vbUF47wlXp+hZxGiOUKW
-	 WIEdjXDxPt1+xNoBRrafov/YQdPTvhKjikwKTMygIT/l2oH4Wl3YbdDaZ5ZZsceDQP
-	 xkyYbxXs27Dc6CLTp+1j/V3eDxj7j+HG1tH1mOmQRPVUZFeglvnsCDlp7S0xAmJnDT
-	 KtMHgXZ/kR/aA==
-Date: Wed, 16 Apr 2025 14:31:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 08/13] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <20250416193152.GA78446@bhelgaas>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DpwLEau3"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G9mXeN021614
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Apr 2025 20:40:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kDu+tIWiiv3RG9q2EWbYK6uCMzCFUTTLqRKVLC0mQKo=; b=DpwLEau3Y+2DkDDL
+	ps32G63sJlVwJ+6ZIG1FsHA4/Lf9gvmuju9s2ftVVke9aTTJgbxdMGcEqNlRdyrm
+	JuCidCMnz+IxQbVu0b8ol00Bcg+vXY4HBmC5rpBoUtSJmd9eRETmMJsfPug5UTRl
+	DDo5pzRE4mVhbHhfuJLtL5SWfzgi/T0Zy9GLlVSBS9EgFZm1iaceMOTwlY37RjGc
+	RtsBJNsOLdFaF9xhCGMP7a2hv+OtYDB67xR8aSejmYLhnom4kyKRbTsk/OIDy9yx
+	1vuYV8eyNzjmAEW/d+CeDkWn+8DlUF3z+jEZsliRiy69HgGzz2F1ndr6wfqXv5Uk
+	ZDudgw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yf69vrk1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Apr 2025 20:40:00 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5560e0893so342485a.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Apr 2025 13:40:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744835999; x=1745440799;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kDu+tIWiiv3RG9q2EWbYK6uCMzCFUTTLqRKVLC0mQKo=;
+        b=I+JQdi1TUZgre3NGHZHI6k1D0OLpdjbBV9G4mB9baSa4Ka5nUB32xfhWmgDmqYmZoh
+         OfaQbxDSK5A1Y/Ts2+AFatUog77ZHCubHc6UKbCZY2L0N2HRWfoPqBMIQxiZLCNYuD6h
+         UbDkFfBXSs0AhRiLOkO5zj3HO30G4/nALPbU0PDx1Gzla+uzVVVv2qWxqDw4iiIQL2R/
+         sckvy3UTxGd1F0ICyDl6Nt1j5H0Y255IkUZhW/EEDPA2byrIVLreAHPrktw84QXmJyoE
+         ltRgOPJwhfS+v3AjvyZSAxq2KKd6bPa1frNzLx9YJiJlJr+SjdoPsGRwS9xj2V1rShxL
+         S75A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZkdbN8R4I5Mo5I5XeSVglzy1ACu+P5cjFwd46hWadQKCNVEkirBcx0WrRKSZCjkSxharuOmqHIPsc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4J+ovjrTC1q8xxKhxsfmkXCQz6e8gXwxhS8WoyyIx9Y/Mtn3S
+	NYGxg+C2CWNQfz2CU2rMtlfwqAkPp4No2XUHuUpm+UbnElIr9ddMJ+3OP+FANfAaqJByjotVbfn
+	lRoZsT1yV6NAGd83P0aQVZa2dwyHaqsTe8zmvYTWOb1lgmmfnvrTNzCp4Afq7
+X-Gm-Gg: ASbGncvNUPkgTN87zqoG4N/JlL4N9aixuFvhBun8c7HVYCQCTGc86Aft2kzbJ+2F/QK
+	ztNrNXC8Nxuiy/rXzw4/GfRQwZJFqgTCzVTazBMtPv5I3RiGiqyJq5aRFwjNDDQioNpZI2d7ZP4
+	qMVV3XdzLSg+exgmlg/Y/sDjSAStkIqZmvT/ToqH0olBzo+oZLJpXOu9Il9E/lrXxQBmbhqhyKL
+	HnFygpmHjF0VRR0mVi7AjOG7kaE1Qf2N4EVaMwU3NXAjqVIlTdGP8PE+T2WHF+OH//Y0+2FIrPJ
+	Mb02HFqPF0/hTE3ja5cRjOJ3GboIHSrUHWiAEC4LAfIBUhdfot9KROoP70xRwV3AF8U=
+X-Received: by 2002:a05:620a:288d:b0:7c3:dd6d:54e4 with SMTP id af79cd13be357-7c91d0602ebmr62125885a.10.1744835999369;
+        Wed, 16 Apr 2025 13:39:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzgDHx0UMfpo23gp5XKth2J0840BeS/rB+zsXeevtnGVzubmJ5n0ka+mRD1Wk7yKLA+/G4gQ==
+X-Received: by 2002:a05:620a:288d:b0:7c3:dd6d:54e4 with SMTP id af79cd13be357-7c91d0602ebmr62122985a.10.1744835998836;
+        Wed, 16 Apr 2025 13:39:58 -0700 (PDT)
+Received: from [192.168.65.126] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3cd618ebsm186163466b.16.2025.04.16.13.39.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 13:39:58 -0700 (PDT)
+Message-ID: <b9fd463b-5a34-4c3b-a6e8-7432e1a0f2c6@oss.qualcomm.com>
+Date: Wed, 16 Apr 2025 22:39:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: Add initial support for MSM8937
+To: barnabas.czeman@mainlining.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
+        Dang Huynh <danct12@riseup.net>
+References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
+ <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
+ <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
+ <ddf29d5743e25f311cd86711f39f7ad0@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ddf29d5743e25f311cd86711f39f7ad0@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: cKlp4DBsP7jaq5lm41FjArXCMintBUeH
+X-Authority-Analysis: v=2.4 cv=JNc7s9Kb c=1 sm=1 tr=0 ts=680015a0 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=OuZLqq7tAAAA:8 a=bBqXziUQAAAA:8 a=KIKYxIlc2-mGyxiTgOQA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=AKGiAy9iJ-JzxKVHQNES:22 a=BjKv_IHbNJvPKzgot4uq:22
+X-Proofpoint-ORIG-GUID: cKlp4DBsP7jaq5lm41FjArXCMintBUeH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_08,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=852 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504160168
 
-On Wed, Mar 19, 2025 at 10:52:29PM +0100, Andrea della Porta wrote:
-> The RaspberryPi RP1 is a PCI multi function device containing
-> peripherals ranging from Ethernet to USB controller, I2C, SPI
-> and others.
-> 
-> Implement a bare minimum driver to operate the RP1, leveraging
-> actual OF based driver implementations for the on-board peripherals
-> by loading a devicetree overlay during driver probe if the RP1
-> node is not already present in the DT.
-> 
-> The peripherals are accessed by mapping MMIO registers starting
-> from PCI BAR1 region.
-> 
-> With the overlay approach we can achieve more generic and agnostic
-> approach to managing this chipset, being that it is a PCI endpoint
-> and could possibly be reused in other hw implementations. The
-> presented approach is also used by Bootlin's Microchip LAN966x
-> patchset (see link) as well, for a similar chipset.
-> In this case, the inclusion tree for the DT overlay is as follow
-> (the arrow points to the includer):
-> 
->  rp1-pci.dtso <---- rp1-common.dtsi
-> 
-> On the other hand, to ensure compatibility with downstream, this
-> driver can also work with a DT already comprising the RP1 node, so
-> the dynamically loaded overlay will not be used if the DT is already
-> fully defined.
-> 
-> The reason why this driver is contained in drivers/misc has
-> been paved by Bootlin's LAN966X driver, which first used the
-> overlay approach to implement non discoverable peripherals behind a
-> PCI bus. For RP1, the same arguments apply: it's not used as an SoC
-> since the driver code is not running on-chip and is not like an MFD
-> since it does not really need all the MFD infrastructure (shared regs,
-> etc.). So, for this particular use, misc has been proposed and deemed
-> as a good choice. For further details about that please check the links.
-> 
-> This driver is heavily based on downstream code from RaspberryPi
-> Foundation, and the original author is Phil Elwell.
-> 
-> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> Link: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
-> Link: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
-> Link: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
-> Link: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+On 4/16/25 10:33 PM, barnabas.czeman@mainlining.org wrote:
+> On 2025-04-14 22:55, Konrad Dybcio wrote:
+>> On 3/15/25 3:57 PM, Barnabás Czémán wrote:
+>>> From: Dang Huynh <danct12@riseup.net>
+>>>
+>>> Add initial support for MSM8937 SoC.
+>>>
+>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> ---
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# quirks.c, pci_ids.h
+[...]
 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index b84ff7bade82..4dfda527c76b 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -6283,6 +6283,7 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5020, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5021, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REDHAT, 0x0005, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_EFAR, 0x9660, of_pci_make_dev_node);
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0, of_pci_make_dev_node);
->  
->  /*
->   * Devices known to require a longer delay before first config space access
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index de5deb1a0118..b7a2c0fd589e 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2620,6 +2620,9 @@
->  #define PCI_VENDOR_ID_TEKRAM		0x1de1
->  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
->  
-> +#define PCI_VENDOR_ID_RPI		0x1de4
-> +#define PCI_DEVICE_ID_RPI_RP1_C0	0x0001
-> +
->  #define PCI_VENDOR_ID_ALIBABA		0x1ded
->  
->  #define PCI_VENDOR_ID_CXL		0x1e98
-> -- 
-> 2.35.3
-> 
+>>> +    thermal_zones: thermal-zones {
+>>> +        aoss-thermal {
+>>> +            polling-delay-passive = <250>;
+>>
+>> There are no passive trip points> +
+> Should i remove polling-delay-passive?
+
+yes, please do
+
+>>> +            thermal-sensors = <&tsens 0>;
+>>> +
+>>> +            trips {
+>>> +                aoss_alert0: trip-point0 {
+>>> +                    temperature = <85000>;
+>>> +                    hysteresis = <2000>;
+>>> +                    type = "hot";
+>>> +                };
+>>
+>> Please convert these to 'critical' instead
+>>
+>> [...]
+>>
+>>> +        cpuss1-thermal {
+>>> +            polling-delay-passive = <250>;
+>>
+>> You can drop polling-delay-passive under CPU tzones, as threshold
+>> crossing is interrupt-driven
+> Should I remove polling-delay-passive then?
+
+yeah
+
+Konrad
