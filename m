@@ -1,39 +1,39 @@
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9A1F4629;
-	Wed, 16 Apr 2025 14:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE8A1F8755;
+	Wed, 16 Apr 2025 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744812500; cv=none; b=jopSvmn5VnUB7iYXAULvDNeFwoFKhrG8Pl6BLyunyFidbEJfzM1s71aLvP9+fRoZPbs6UVCBjE4t4r+67x1cwnjDWdugo23xoS0sgmnY8M4A38ysu/bIYvCPZLw6pnEml5K2LzxDkEWC8B3VD+JSiuPp7fs8C8xkAqDbecWbhek=
+	t=1744812502; cv=none; b=em+b5RtkViDuRJsyq7Qmx+gY/q48m+KI4VlMZTSjed9Z4l/Lo73jhE1s/a39hFfMFB218w3xvCVPa3tqJo20+nYcHN4Vk7I+OB/bxXTCFo68jgPW3kSkI4gicZRGexA5pr752qmuZ5Yb09MJRjpQw0gdoDivrcwkaDEy759LrDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744812500; c=relaxed/simple;
-	bh=xe/iHdNUbRWY8ph2m/sMx3WsY6MqUEGtkEiU+Pt5zBs=;
+	s=arc-20240116; t=1744812502; c=relaxed/simple;
+	bh=IUSSnH50SEv3wK+IpC9qmWyKF/i4h3ZwyjGbfYa21u8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Txsby0/A0IJLQUfeoItlpAh8/7gsGvK6hRuLlyHjlG3Ooc6QI+rjn7YuODWFNxtM2RXKNFY58emFkot6fls3khVFgFocGIA7WYm5mg0Q7beNij5mJe7hAlAKNX8ubTMEuGmarvE61SAGf+e7/CYf9eGiUBWaaIknbRrhvYoqyiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VIURbba1; arc=none smtp.client-ip=217.70.183.194
+	 In-Reply-To:To:Cc; b=NkrDmKTShiMDm0Ah9XxUiy6xdwbp+sC0/htmNsB+wwfNhhkv/l5HDDjD8FaO1FisocJutnrq6JHNFXYwiM6NvTUcSnFFnA7HJY8/48OTkMQlnny+zzzIpYmvqqwTCc6yR2uEmuphXeQn1UcYUewj9n622pqrg32ix4GVpTmOJks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S0ab/Feq; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VIURbba1"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 00D5F4386C;
-	Wed, 16 Apr 2025 14:08:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S0ab/Feq"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 552F44314D;
+	Wed, 16 Apr 2025 14:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744812495;
+	t=1744812498;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cmTpTZDU/4RdRhaUbj82fIw4RwehjZBATlmwP/BesC0=;
-	b=VIURbba1mlhwA+49Bt6YqJ9N/LFj8HQI5+0MG0o5ToxY389IB083EGNNYf878Zaml5rjdh
-	sImHY0WAgEWYHEzti52vStMhXZovF/wEAgAlyFwbwSV9pzQVeZ1YZKq6rt5yjjNyGTqNva
-	ofBfziRA+yuJNwha5YsMY8QNqMwiGBfnHjpK7nO+EVg+v8mheaUWbhUs8wfh27oT+ObJJ4
-	/pP1Zpfn5DdCg/56+RpvqF3nTBAoEYpycABfnu7hQ6+PZFdmm5b2OZ5kMjuQSLH36mow/D
-	DV0ODR6otEylSx8cmIsZuB4me6fwuXtCCbVcuG5XLulU4096C1HkHTJgYWj3XQ==
+	bh=53EIucSGozzlxQnWzP+KpPtvBMYT/F8TJYe8VlTnG/Y=;
+	b=S0ab/FeqPsNsvikHIQ5o7MFem0JlpYxEG1Rh3/2dp5LHR/QWRhYc26G2+6E0xCTyFcT3Sc
+	qLGj0CHPzL/oc68Gbui2cOf/PdilYL1n9I0nTAg/ehVnM7mhtULSOxMmupM4TmoaWS7S3k
+	VjFhesZnqtuu3yzjt3rfNx/P0xYRCLZZv5lQVBcEQsQIoEscYg1f8m9OQ1ASchMZAW2MVO
+	I5J9Uuyq2etE1erg36xU75wIwTEy10tW8OrGQB4vp754Eyi3Nrq4K4RR1cNMM54JR/qUSE
+	uWLKEmOlEwXUHBhsZRhBKWVZYvqdekuPzG9z5v9mBYaYt+ZDkcJ+jR7cOhNe4A==
 From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Wed, 16 Apr 2025 16:08:11 +0200
-Subject: [PATCH v3 03/10] gpio: aggregator: move GPIO forwarder allocation
- in a dedicated function
+Date: Wed, 16 Apr 2025 16:08:13 +0200
+Subject: [PATCH v3 05/10] gpio: aggregator: refactor the forwarder
+ registration part
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250416-aaeon-up-board-pinctrl-support-v3-3-f40776bd06ee@bootlin.com>
+Message-Id: <20250416-aaeon-up-board-pinctrl-support-v3-5-f40776bd06ee@bootlin.com>
 References: <20250416-aaeon-up-board-pinctrl-support-v3-0-f40776bd06ee@bootlin.com>
 In-Reply-To: <20250416-aaeon-up-board-pinctrl-support-v3-0-f40776bd06ee@bootlin.com>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -55,96 +55,64 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.1
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeiheejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeektdehvdeiteehtdelteffheduveelgeelvdetgedvueejgefhhfekgefgfeduveenucfkphepvdgrtddumegtsgdtleemugdtgeejmeelieefrgemvdgvfhdumedujeeimeejsgegudemudhffheknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtleemugdtgeejmeelieefrgemvdgvfhdumedujeeimeejsgegudemudhffhekpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopefirghrhighrghnghesrggrvghonhdrtghomhdrthifpdhrt
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdeiheejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeektdehvdeiteehtdelteffheduveelgeelvdetgedvueejgefhhfekgefgfeduveenucfkphepvdgrtddumegtsgdtleemugdtgeejmeelieefrgemvdgvfhdumedujeeimeejsgegudemudhffheknecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtleemugdtgeejmeelieefrgemvdgvfhdumedujeeimeejsgegudemudhffhekpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopefirghrhighrghnghesrggrvghonhdrtghomhdrthifpdhrt
  ghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
 X-GND-Sasl: thomas.richard@bootlin.com
 
-Move the GPIO forwarder allocation and static initialization in a dedicated
-function.
+Add a new function gpiochip_fwd_register(), which finalizes the
+initialization of the forwarder and registers the corresponding gpiochip.
 
 Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- drivers/gpio/gpio-aggregator.c | 48 ++++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-aggregator.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index d232ea865356..a5e3ae4d8813 100644
+index 4d6e41e02659..66ea3daafc03 100644
 --- a/drivers/gpio/gpio-aggregator.c
 +++ b/drivers/gpio/gpio-aggregator.c
-@@ -498,6 +498,37 @@ static int gpiochip_fwd_setup_delay_line(struct device *dev, struct gpio_chip *c
+@@ -566,6 +566,21 @@ static int gpiochip_fwd_add_gpio_desc(struct gpiochip_fwd *fwd,
+ 	return 0;
  }
- #endif	/* !CONFIG_OF_GPIO */
  
-+static struct gpiochip_fwd *
-+devm_gpiochip_fwd_alloc(struct device *dev, unsigned int ngpios)
++static int gpiochip_fwd_register(struct gpiochip_fwd *fwd)
 +{
-+	const char *label = dev_name(dev);
-+	struct gpiochip_fwd *fwd;
-+	struct gpio_chip *chip;
++	struct gpio_chip *chip = &fwd->chip;
++	int error;
 +
-+	fwd = devm_kzalloc(dev, struct_size(fwd, tmp, fwd_tmp_size(ngpios)),
-+			   GFP_KERNEL);
-+	if (!fwd)
-+		return ERR_PTR(-ENOMEM);
++	if (chip->can_sleep)
++		mutex_init(&fwd->mlock);
++	else
++		spin_lock_init(&fwd->slock);
 +
-+	chip = &fwd->chip;
++	error = devm_gpiochip_add_data(chip->parent, chip, fwd);
 +
-+	chip->label = label;
-+	chip->parent = dev;
-+	chip->owner = THIS_MODULE;
-+	chip->get_direction = gpio_fwd_get_direction;
-+	chip->direction_input = gpio_fwd_direction_input;
-+	chip->direction_output = gpio_fwd_direction_output;
-+	chip->get = gpio_fwd_get;
-+	chip->get_multiple = gpio_fwd_get_multiple_locked;
-+	chip->set_rv = gpio_fwd_set;
-+	chip->set_multiple_rv = gpio_fwd_set_multiple_locked;
-+	chip->to_irq = gpio_fwd_to_irq;
-+	chip->base = -1;
-+	chip->ngpio = ngpios;
-+
-+	return fwd;
++	return error;
 +}
 +
  /**
   * gpiochip_fwd_create() - Create a new GPIO forwarder
   * @dev: Parent device pointer
-@@ -518,14 +549,12 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
- 						struct gpio_desc *descs[],
- 						unsigned long features)
- {
--	const char *label = dev_name(dev);
- 	struct gpiochip_fwd *fwd;
- 	struct gpio_chip *chip;
- 	unsigned int i;
- 	int error;
- 
--	fwd = devm_kzalloc(dev, struct_size(fwd, tmp, fwd_tmp_size(ngpios)),
--			   GFP_KERNEL);
-+	fwd = devm_gpiochip_fwd_alloc(dev, ngpios);
- 	if (!fwd)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -549,19 +578,6 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
- 			chip->set_config = gpio_fwd_set_config;
+@@ -603,18 +618,13 @@ static struct gpiochip_fwd *gpiochip_fwd_create(struct device *dev,
+ 			return ERR_PTR(error);
  	}
  
--	chip->label = label;
--	chip->parent = dev;
--	chip->owner = THIS_MODULE;
--	chip->get_direction = gpio_fwd_get_direction;
--	chip->direction_input = gpio_fwd_direction_input;
--	chip->direction_output = gpio_fwd_direction_output;
--	chip->get = gpio_fwd_get;
--	chip->get_multiple = gpio_fwd_get_multiple_locked;
--	chip->set_rv = gpio_fwd_set;
--	chip->set_multiple_rv = gpio_fwd_set_multiple_locked;
--	chip->to_irq = gpio_fwd_to_irq;
--	chip->base = -1;
--	chip->ngpio = ngpios;
- 	fwd->descs = descs;
+-	if (chip->can_sleep)
+-		mutex_init(&fwd->mlock);
+-	else
+-		spin_lock_init(&fwd->slock);
+-
+ 	if (features & FWD_FEATURE_DELAY) {
+ 		error = gpiochip_fwd_setup_delay_line(dev, chip, fwd);
+ 		if (error)
+ 			return ERR_PTR(error);
+ 	}
  
- 	if (chip->can_sleep)
+-	error = devm_gpiochip_add_data(dev, chip, fwd);
++	error = gpiochip_fwd_register(fwd);
+ 	if (error)
+ 		return ERR_PTR(error);
+ 
 
 -- 
 2.39.5
