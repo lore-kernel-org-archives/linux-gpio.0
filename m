@@ -1,86 +1,83 @@
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BCD19994F;
-	Thu, 24 Apr 2025 08:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+Received: from pokefinder.org (pokefinder.org [135.181.139.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FBB19CCEA;
+	Thu, 24 Apr 2025 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745482527; cv=none; b=s7YDqkjJ7u/HWfmIhLwSKt6d/VV5e6qsyn1KrbQWqUDw/cFGRXLws80hJit06egSotZLv61zqplG+GTrcKoBj5sj3p9L/IdciEcZPZrdjr1yq/usPrYNNENvZvsVlVtBWkCA075W0NIHF4VaP141FJSN8vQZgyAQ26dNcbdLptw=
+	t=1745482805; cv=none; b=WZF42kKyAeKWwhu8CQslmAgsAPL1GoCxvIV4NxoLpNzK6adywlMDkClXHEQJ2d9hHpI+pNG3AXWWJbCacjQAv98PtbNw1pASjPTmkAvoKp4FV6WJhqJVsprD6xIScLnPLSHCiVBBYIi1PmGobQDXUAwnZUleL2bZk+zvyesk1RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745482527; c=relaxed/simple;
-	bh=p1rDUK8rdI5Szwyaio0ijicup4XX8ctN1sOZD2658Mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fsIp6QZTpFpIYF5TsbsLXYC0xuqdiaXGWXOkQogVPK4Y77ERcgBzt7mo8yzKMmm/hryKDrJydzgqpSdXMgiXjvLo8eFAVgUF6v29ZX4rA3XPS7bqy/xODQuxxBnXLJJ/S/embR6YdTo0kj0sLlUD75eI3pc6qZ7aBNdoUJfipSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.35] (unknown [98.97.25.173])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 712A4B2C201A;
-	Thu, 24 Apr 2025 10:15:19 +0200 (CEST)
-Message-ID: <60891c52-eeca-4358-8f38-789533016495@freeshell.de>
-Date: Thu, 24 Apr 2025 01:15:16 -0700
+	s=arc-20240116; t=1745482805; c=relaxed/simple;
+	bh=RrjENBwGBydfJ3wNE3Qb/aLC0QcnJGiP9/DanmF+4TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G37Lpd0L0N1aocnWOLm5DRt8dmRnQfkYPP8viOwMWQwvcf62zMbU5BZSCi+INh9FaS9nN5UYDaQKUz3fNr8STxsh8HRjogQeE7QDNHhf2mlkU1p/RugWM0llizvpele6ux54Y8uNUW1csyp+42WYG87vwIB60hHOCRbSk3TOglE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
+Received: from localhost (p5486c924.dip0.t-ipconnect.de [84.134.201.36])
+	by pokefinder.org (Postfix) with UTF8SMTPSA id 8CF42A400EE;
+	Thu, 24 Apr 2025 10:10:41 +0200 (CEST)
+Date: Thu, 24 Apr 2025 10:10:40 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] i2c: mux: ltc4306: use new GPIO line value setter
+ callbacks
+Message-ID: <aAnyAASQID8SK107@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin <peda@axentia.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250407-gpiochip-set-rv-i2c-mux-v1-1-7330a0f4df1a@linaro.org>
+ <16b14e5e-e5eb-5203-4cdf-44fbde9a5688@axentia.se>
+ <CAMRc=MeYs0W31Kj-o530_8+EvhoDNzyZunk4xu6PbwK8N1OE4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: starfive,jh7110: add
- PAD_INTERNAL_* virtual pins
-To: Icenowy Zheng <uwu@icenowy.me>, Emil Renner Berthing <kernel@esmil.dk>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Hal Feng <hal.feng@starfivetech.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250424062017.652969-1-uwu@icenowy.me>
- <20250424062017.652969-2-uwu@icenowy.me>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <20250424062017.652969-2-uwu@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wOEuWl4I5xqqjUrR"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeYs0W31Kj-o530_8+EvhoDNzyZunk4xu6PbwK8N1OE4Q@mail.gmail.com>
 
-On 4/23/25 23:20, Icenowy Zheng wrote:
-> The JH7110 SoC could support internal GPI signals to be routed to not
-> external GPIO but internal low/high levels.
-> 
-> Add two macros, PAD_INTERNAL_LOW and PAD_INTERNAL_HIGH, as two virtual
-> "pads" to represent internal GPI sources with fixed low/high levels.
-> 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
->  include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> index 3865f01396395..3cca874b2bef7 100644
-> --- a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> +++ b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-> @@ -126,6 +126,10 @@
->  #define	PAD_GMAC0_TXEN		18
->  #define	PAD_GMAC0_TXC		19
->  
-> +/* virtual pins for forcing GPI */
-> +#define PAD_INTERNAL_LOW	254
-> +#define PAD_INTERNAL_HIGH	255
-> +
->  #define GPOUT_LOW		0
->  #define GPOUT_HIGH		1
->  
 
-Asking about the choice of 255 and 254 values for virtual high/low pins,
-here. There's not much result when grep Linux source for 'virtual pin'
-to compare with. Are these the best values for this approach?
+--wOEuWl4I5xqqjUrR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What happens when devicetree has in it to route PAD_INTERNAL_LOW to
-PAD_INTERNAL_HIGH and other unlikely combinations?  Or a devicetree blob
-with this computed value is paired to Linux kernel that does not have
-the code to handle these virtual pins, for compatibility concern?
 
-Do we know yet if JH8100 will share some of this design?
+> I just realized their emails didn't pop up in b4 --auto-to-cc. Cc'ed
+> now. Wolfram, Andi: do you want to pick it up or should I take it via
+> the GPIO tree?
 
--E
+If there is no dependency in your tree, then I prefer to pick it myself.
+
+
+--wOEuWl4I5xqqjUrR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgJ8f0ACgkQFA3kzBSg
+Kbb2ORAApGJ1FGxEhKM7cqNVETbPYWu4LnFSMldEADzZTfDj0OoYrLg+CAuFKdwE
+spNDQiLi0INKL5ldauQ/c8NoeS8hadkLt3WR50O9/PTQrOO0Qf9iEJAi5yXwT7P0
+hl/lbU2UXE7CIFateJVGygip7S6zA8fX8LQtzn2DR2oMkqA5FnAumCCNae2o2LI8
+m4zTu93KjvtdOugKgatkGS0BllpuhxxWJOTTRwKcEa9QJdU6/rmmp/5GCP40RlnE
+kyJAIAnk/CM+2b/GEWDQYKYTPfMYvn1hTDZw7v5p7/YqZ6tRsi0alompjEWfbnpc
+Q12EbzS5D2U+cTg5KLFdhFESCHeFqRrsjQyVWi6lCvXSvovB7h1F8JG/FsDQK79d
+ytIif5tEriAOMKzcJ1/z8X0/BCFT0KjhMAgOFp16rP4+ZI7mCEAq3s2OuhXnCFUR
+h0X8n35Q2y2RYTRKwm+CyY4JTck1frJR0vz/oLFO7hE50ruW+z8YZP3XcOE9sYM2
+zjx7tFUUeVoM/C0xL2lDQjboZQ+Z6DgITFo/C0d9c5ETnSkwbQF1PrDVNrBdMXd9
+cFedWmv3ujOtYtidRDDglywAoJfMtUBXD4h+sqFlkEPVxQnVuFTm2w3pLiaKL1Mp
+Cs8kKEWODT0vq5zDvQBVUKXEagBM5a6dvo7bFLl9HX+1m3ue9xs=
+=hxPe
+-----END PGP SIGNATURE-----
+
+--wOEuWl4I5xqqjUrR--
