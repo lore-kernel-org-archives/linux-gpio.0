@@ -1,173 +1,218 @@
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2042.outbound.protection.outlook.com [40.107.103.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFF2262FFD;
-	Mon, 28 Apr 2025 11:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745838907; cv=fail; b=gxgYntfqMr0EGB+AShEU82cPx5rN4b+TT3LvhEmEP2gNamwijX8y8vHSPUW3AGk0qs46UqSyhJDZSBGo5I9QMG816N6GUOwZyYX1u3u+p+sKf1bge3/+7+7yJ7BXvzSTCExxdguamYeRGZ6CECo5NIY9MQw5Co839A3QApSjB/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745838907; c=relaxed/simple;
-	bh=LWHKYdTmlQ1NLfvrfH935mPAifCASFGYzhBTaTfWAx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fRtKJoKKxcxnvr+D0c0wPzdh+cyn5WXV9Qic+/r4gQzzYfX9xb6svX72BSsfS3xj7WDoNRlbHHjuqzn4Q7gsfPYOVE68/0V1Ou4tAN98xNfZ7hHqAjt51lYVX5dobhHHo+LFQYmejcS0z/s2N9gdLX9EU3MzLcyNRzjohL12ka4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=aOUSlBSt; arc=fail smtp.client-ip=40.107.103.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CEC267701
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Apr 2025 11:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745840171; cv=none; b=EYbYJkKjLblYhkfipjQlGEBNiN26aQjlOxUj51q27BZ44XAYBNmRG7Nl9Btb+J0T5urYWwvZJaopX9E7RXH0gEPIDhizHrS7DSPNPLmtDfko0c/Ws6Mt+uryoW9tUXuovkumhYhzQDX13bXNRoAJ8tOn3HO3Db43VtDULVxsTNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745840171; c=relaxed/simple;
+	bh=eidpo+RHarAjPhf4Wn+n/8wPoKZOIs5bIp3f754wNAc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WQFw509uLbRC4Ib1C8+5Vu2tDlq7wMhWw8vfwjtEr6sh0P4pDN1sJSbCEmPTyuC5UGEzZtQbiCmSOXynk/coaPuqykFTVOHyt/k7VmDE86+hOc8e5eI5OiUB8Fopq12DcZTPz//Shkx37aDoWn5gvlBu5UfDMfYKbfACt47UTKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oP+2P46G; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="aOUSlBSt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nHK+uEYgTwxO6eRsm/VsaYJ59mogFHY7q3Jt7P/tZj/94aZmhaJZmZUKWQye770Cw0L6Jp5qWY4JylbAjH16Rpo1Vuku40G+G01JeA0y6cor+OWl0rNLYlGDEoI6YTOiel/kl+L8+GCiywDZQ5qCzbLtbW3Bv8zjbm4HoOQoqpI9VQuQMRaDvM2beTZGhWdn4TdtR0MW+8UMsLqvu2lP2HuVqTIAllKGnAZW5HUSlZlQAbuDWDgHwlWpj3bmwkzTnqVWlnRbex6/haM6eFnsuQ7/RixBJYI5Ix/7Om7tcxfmg9vyvFISKLPEvDo1VweLBdz9WyRe2COdJ97TnQ3hiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5hxmcrbJm+engMSOEL/VU8L2b1u80pntXcFh8fynBRs=;
- b=oaf8XBRgnjHUuTmnfApkB6SWqpi4z49+M3IGdNMBAYc7Y6LTUfFmhZfGAPNdXA0zfnPrQ0ZGK1vksPmXHAp3ir1npl1mSRTXCkp1RLs4xCabnRGEbCmp41qpfo7WJNOCLLnzLkTN8bbq8vm3nuq5SdMY032sr692z/fwWDxRrwr4UWQ2GANWXGQaizVtGXFFPFvrhU4T/I9Rv/yK63yGBax72jWXrlzPkmrnGYRVV8t4JRlXqqucrcDDZCqrR5/0QtpMdFMbot7lvlpz2w41TKLX3ydTadYmTCIwlkZCnYdCNYpP4aYm66BnFlwmAPrE7BcIasSl7nzVz2FAdVQZQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5hxmcrbJm+engMSOEL/VU8L2b1u80pntXcFh8fynBRs=;
- b=aOUSlBStoOghKXiJIL6dixi7lnQDO3SBJFqyWltdQlZcQz4Lhq70kM94VnSA1KZU0+gUFMGGeRbs9Mbol23p3Dx4zVOC6zo0+slQaUe6DnEOcv51MLLayvNINHbjSF9JWCB9qwo6d3EbPPItM49zdu9UrwP3WS6BipOtuNxujtRrG2Ag5sCk2WbSjlcZIY9Cjd3A/IMugKYSg9E7FPpKvvIEuNof/+9W8u6xsVclk4ZGAmD6uKZfyWuPKGULpPWde9nKi4Xe+bYja+4/lgM+lrdLjRUg5OvR+gK25Zrtck2NDmM2Ctcc6nQ75dF/QZu0LMf6BOuE1Y7VuPrgYTbC+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM9PR04MB7683.eurprd04.prod.outlook.com (2603:10a6:20b:2d7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.30; Mon, 28 Apr
- 2025 11:15:01 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
- 11:15:01 +0000
-Date: Mon, 28 Apr 2025 20:23:53 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>, linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 00/12] gpio: convert more GPIO chips to using new value
- setters - part 2 for v6.16
-Message-ID: <20250428122353.GA28789@nxa18884-linux>
-References: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423-gpiochip-set-rv-gpio-part2-v1-0-b22245cde81a@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2PR02CA0077.apcprd02.prod.outlook.com
- (2603:1096:4:90::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oP+2P46G"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2c663a3daso916950166b.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Apr 2025 04:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745840167; x=1746444967; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=igDDxeHaTBC8idF8WoV6aqXk3OpWnaEdmdH1olhNzQg=;
+        b=oP+2P46GbEznBQSxU3KfQC6BrpAc865hjLpVkXgW9OowoSrRVIXMnza5AxYz6UJshg
+         ksd5t5U3fzCdTUDEBssw9wA68tjV22vwjrxKhimsooJAqrVU6QY5uuE+jnSaEwvCwdhV
+         y0IpAaoKvNsHGrNWrXRFc+A/A/hFreHPPrBqAE3qEtsMnQDkH+TPeuXiQPI9KYRfs2QI
+         3gdAJ06oHyLggaOut0WH3YBJG8KtxIBKkBn5K3vqW9ch5M0AROL8metBG8c+WLsKg+WB
+         LUn7NTqPGq6Jsx5+phyLdVACaS/B6bOznOskhUX9A49EzoELosVMQLhu1kdqsGemPQIk
+         Er3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745840167; x=1746444967;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=igDDxeHaTBC8idF8WoV6aqXk3OpWnaEdmdH1olhNzQg=;
+        b=I3Q+BQVXMgTmArCVpzu6UXrHzzSFQHuKvVLoj0dzCyHW0NhkGA6TJongfAlSrcwpIv
+         PVqypDigDURzDsDZNTeNbz2rEjcA2tC3drWve/BJDFpdjC0/31oObRrO+6jsAZxNhE2f
+         zE5t1Oyw2SYkHVQQ1QXuFwp4UFYWWwYVKU3Cz8Y07SX7Gq8OOj6eQoi9R5N9yk8Q/DD4
+         pl45XCGkWgVSomzFfakqWzajS3xTGo7UFZxyFDArC72PHMZkAf2SbhwBsjy4nAixOvxO
+         j5dy/ksRggcCnakwBmGrxR9tpXMWKjkvwjRGnFev/YjhZ25eRdQtX9M8E0j85b8VDZXE
+         K8UA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu+C+MIo9jY/U7A8j7g2xsvyDqz7zj2A+A/ukb58qFyOm8mgjpQh2a4FgtEnvlj9UT983FrNJtqaXG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc5WePAVMAfeu1SVpoU7swHbhIz3pM8gzJWwGmE1nORs3hj8C4
+	VLiZ5fFqCvVnvkURRgeSjZ+7Yh0C7oXctD+oPsrhcJegokiv0KRTnmcYFDTguTxdjZssZyhRu5E
+	33xQ=
+X-Gm-Gg: ASbGncvRS+LzRBcLs0gqR+5HTRoXItr9gcQlyD4oz7EBG1mslteI88X3BDhMWqQZc7P
+	kl7nKD8GOGKHo6roz1BtU35xh/0FR58gWGfw0g95h0MR3PCRX2WcUpy52LcaCAplVkEoCMKPvOF
+	uFi7pYONPud+/KBPny/fcwTtsfhS2wBBHID60x+8Uazvb91cGOwQfPe4BoEpIO+Z5MgQAB6DIXq
+	O8ZyLboy5mrcOYIDBGcitpJFcwAYyAbsPTSxXmG3XuwyunSO9CEwJT3s8VRVhn+P4beR0J9t2sh
+	AKjPhBynKXO6fI0lDvsGZh8EQS2S2ZotYQhim/HDporEN2garlMI6UWUx5m2aRsGn2c3GaA+r/X
+	RXK8yWEgGMrl5yQ1j1vbpbm7O
+X-Google-Smtp-Source: AGHT+IFWWhs8yiQOOm4i2sK1ZBH1fWgKhQaGZ0sZr7TEtC9VAGG3tk2XO9DCdq0s/WKIDaV1FA3//g==
+X-Received: by 2002:a17:906:730d:b0:ace:6f8e:e857 with SMTP id a640c23a62f3a-ace846073f4mr750465866b.0.1745840167501;
+        Mon, 28 Apr 2025 04:36:07 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1580sm619937766b.175.2025.04.28.04.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 04:36:07 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v7 0/6] Maxim Integrated MAX77759 PMIC MFD-based drivers
+Date: Mon, 28 Apr 2025 12:36:03 +0100
+Message-Id: <20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM9PR04MB7683:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53c38837-67af-4f36-0c64-08dd8645eb13
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pRUy21kRc+4x1VYQv1bOFOGDDOXkek7GCbq97BPxpAk8ChwQq9fkQuUbcBho?=
- =?us-ascii?Q?c7LWC081kdrdlo8cunfojRN5fv83wytrXm9wuwMoK3rOAcMdFUQN7XWijoXG?=
- =?us-ascii?Q?+yCBaFsoK0+QBRaOYOCFz7F24xSDj9JfPrqfOz3CCZgymwKx0AuQnA+KB7mw?=
- =?us-ascii?Q?v6/lEziFzvK3NjCTEIK9WFNSXINeVFa2SZ88/bvEVTcnMC+5BaGREWpua2IA?=
- =?us-ascii?Q?Hq1rvIOFZ35s7A62ilXz49g2io43w2yzdNL7kLcM9slYYl1qHW5XL1kF+Xpv?=
- =?us-ascii?Q?F813mrq50QeOaUPvXMF7LJ47Wm0dJct6y2Pv85MXAZ3vxIrhmj3CRonUtbZ9?=
- =?us-ascii?Q?Jgpm5S2/b6mPbD3t5UDT6K3WhUiKjsSn2wDVKyWQ0vVDRdpdUgLEzAVbemsg?=
- =?us-ascii?Q?9V9Ps5Azs8PADLaEKKnS4Hc5hGQvxVRGeFQE9C4C0rXbuDnFJeQdU+uJP84H?=
- =?us-ascii?Q?9NlOoNGa7r02VQzyXIPY8k9WWIMqZyHsd6XtC81a54l09/vQ1kzPlIVy+Mup?=
- =?us-ascii?Q?UWXzRBZD98FajRVZ92qqqJLsL14QoWf3l5ywzX0RmQZPVhMVRHUILC9ejhwp?=
- =?us-ascii?Q?/FZ79dspRwBPq+99Qa4O2YD6DmPAVZjt97lYpKA6kuwfdqN437PPqWZL7D1r?=
- =?us-ascii?Q?bVrCDe1p5sMI4Z7dSQ3RaQl651M4yog9HZ4RnS8kaWoXFpEF9rTr+7lECGMH?=
- =?us-ascii?Q?D8ni0TTWIF28eYlZO16/TB9BKHeWSFV/yzpteOhKzT0LAqx4aCcQp0Ul2qtw?=
- =?us-ascii?Q?8g7nG94pimj3bcmUL7tGSoedJgL4wu5Nuzo05lhpDCLz+eWRpRu1lDTPWkok?=
- =?us-ascii?Q?e6Lgli1jocHtfwelHBR27XmbkmHBXqKlgZzdqg9epKGUIZDNVK+GdsjnWNpc?=
- =?us-ascii?Q?11a+raR3a8hsZ+DiAXYGYGpF9R/RO3iSwFJ73jseCwlb1nTC/83Nrh4J2vKA?=
- =?us-ascii?Q?S+oHVVt2dK0y76ot+QzD8ulpFuYfUd2zGHLR25/BkXJ3pfuDajDOhJhTyXrs?=
- =?us-ascii?Q?hOjdHZ4f4ZmVihJZQhGqf27G/dJe1+PwkdGmvKDZyfDpv2lh5unMBXo5BAiv?=
- =?us-ascii?Q?/JBpYl7GaKvLbcYgfesXrGVLhtTEBxf9udaB2LtJ9V3kAQUJLy8lAhjN+/v8?=
- =?us-ascii?Q?qn116eZG3bOMUDzrv4nPw5F+7fIt+Nt1lJot78APPClR61QBgFyVzC1a/tK5?=
- =?us-ascii?Q?npn4LRtWdxzf7mJjKjzq8TY53CB0k9GoOyEaxTL7StEmy6X1o97O+O2KyC4N?=
- =?us-ascii?Q?ZJMbar+tPLO+n2Ngpi+w+px5mEbSePbe1k662ozGM8HHEJC+5jLTCwhy+fYp?=
- =?us-ascii?Q?bXNDzrfTpglu5xuto+y0NNmcQHaUfuXKfWktyixu7v11ZWTxYNa5wZD9Zyxy?=
- =?us-ascii?Q?3/7hl7o3X5JaCKCnT64EHRVFOgRktUD8M1NiznK3d/dHWGjv5aE8RN6D9RQd?=
- =?us-ascii?Q?rlnGlJYoBfXIXUMBzAHZGbifisH70RhR7k/z93AZ0kCJWHm6/EAm9g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rHSRZ+7QBj8GMIGIcVY82QrW2Vh/WTo09RgpO5SfqZ3WouAV5WS1+90gux/+?=
- =?us-ascii?Q?6rEwzXdXuWAcxOzkan4ctHV9yx3uJEkpVbYERAhkFFR0vNZ3sgsPV2PVLVwy?=
- =?us-ascii?Q?RtOzTGmeqwQLqHO3wZoFinDxiaCU/zYdRpPVVF89cPVnZw3Auoj/mfqq7n5e?=
- =?us-ascii?Q?Ox7IVxDf2aGaXyYXvan5RPMuUtFCLGlEko22CDFQ6zZksFkqqetWVwlvJUyC?=
- =?us-ascii?Q?8Wmf/T6Wan1x7j+bbLR05x8+7I2/kOMLEuipChwFWJV8NWxz7HMIXGAGOPbp?=
- =?us-ascii?Q?IvS6g6mpWdcnLW9Bg8gbiFGLihRu104MhMBNGhszLLjBEPTWQ53Zias+Tw3b?=
- =?us-ascii?Q?t+KyeSyw/MwmFB3u9XuiYT6ZNaMQJgmNcNvNagYKwxKHs8Hz6ggeYGlGRzTs?=
- =?us-ascii?Q?N6h+pYLpiFrd6UJEH36HQQVIzPd/OKZSM3Lk4ijdH6i3o/XpclbEwEKo4q/8?=
- =?us-ascii?Q?CzKhy9RkLyBzfvedRmvH6nYuvM3Daz5NyBik0flkcWG/kPFHmQQsCfAtibis?=
- =?us-ascii?Q?ghTfQazoJvfcR6dt7clBuI0K2cpGqEZfRkO+UpxdNHQxwx6lP8EyAHoQggDd?=
- =?us-ascii?Q?IhGHxnbL1iQZ6MpAsjXMlDUnUNZMGObHXtNJgh3bWwoxI/2kw9PGoLXDcK8v?=
- =?us-ascii?Q?MlnCUZhcWYZ6JrYEgZFD4mROeuyuCBn5fua8QJ/A3ZN6oDi/shns7h8xtvHd?=
- =?us-ascii?Q?opqIbPM2sCQAepJ5pR+G5UD9NkI8+zHh+CAUA4MnZFOVYoYKdq+K6jStpHik?=
- =?us-ascii?Q?aNmE5BbQyXvLSzmPz7YnQsx0tM6Ypvnh9OzKH6mjuZLHfCHzsqZwQVW3pTgl?=
- =?us-ascii?Q?dS9/Zp7ZbtUAMvoCj4FWw+QIn7e5vp8zrE2YIQvPAnwHNJBScZlAcpUAKnmj?=
- =?us-ascii?Q?yoKuYtA1lrKByLbfqjLFfholllYFXKogu6bwBtCca/BVUK8cOnMoht6TUiRp?=
- =?us-ascii?Q?Gc9pxGfONNNqtz1SbzGQlb7DsjyR2D6lUVqoWrCcyYrCQ7cB7XF6GDVbUUMA?=
- =?us-ascii?Q?FM+Qbz1VAAHsI2QnV18DKZdbmnNhzij3db11eBKB5uZm+T9ny6oGLDnSnJhP?=
- =?us-ascii?Q?o4VOHaM090mGtp3dOozOXZ3Fo1nynKuPpaN/uJ2Ha4bdGtUn6vSdF3KQIHhI?=
- =?us-ascii?Q?9C6ZKKwQAT61aqMC5cnauzFI90Z/oi79QtTkxMwKkaWsVC7F+e3h534BtS0q?=
- =?us-ascii?Q?mT87NaTJx7Ix9ATh3+ht1Gh+8exKW3av6YVgVH7wGq3ELQwx/xoq/sKdH81L?=
- =?us-ascii?Q?NkKDTCFPiP+xdmdVoOl5YIGGvXby1iNlY8C21knrm2SqqToVndoo5L8+zuug?=
- =?us-ascii?Q?Vpria7qc5jzjjmw+TYoiWAQ633vPQ42yviTZAElzq92z8dkHwF6Sehx4R5ac?=
- =?us-ascii?Q?Lx6Pci0X/Ht62h4EnyZQ1duEYCwQsGczqRi7+fMlQDypw8eAkOQEjPVB/1Fj?=
- =?us-ascii?Q?Z/L9WauvUPxp8bqXT1cAh1P+nWw7GZzM7tzp1SQXT8CACo6vxWNz/WbqfZNJ?=
- =?us-ascii?Q?D09eftGPHIwHAe82JyFx4vZo4+MsAso2DhoWTCvipnWsuJOYhktC3+/y4lcy?=
- =?us-ascii?Q?c/ghFPPxxUfV+mrcOrCtCeVw56O7DPnNbA+8eFcr?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53c38837-67af-4f36-0c64-08dd8645eb13
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 11:15:01.4658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mZFG/MFyCW9RbwGEG0QVkhgiEv8ApO2IQU2+JhR4UXcobNgqUz7XywAWkefJdeKeyPatE0GPmQCvjopP9L7AvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7683
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACNoD2gC/33PTWrDMBCG4asErasyHlkzdle9R+li9JcIGjvIx
+ aQE371KNnVt2uU38LwwNzXFkuOkXg43VeKcpzwOdfDTQfmTDMeoc6hbIaAFxFaf5crMttfnFLS
+ IsJgGG0eoKrmUmPL1kXt7r/uUp8+xfD3qc3O//hGaGw0aXUqGUh/A2tePPEgZn8dyVPfSjGtNG
+ 41VC9noIjoP0u+0Wetuo03V4A0hhxYt0k63P7o+u9Ft1a6HLhCQ77zbabvSaDfaVk29C5SAhXm
+ v6T9NVXvoGLwQoZNfelmWb6c/SY/fAQAA
+X-Change-ID: 20250224-max77759-mfd-aaa7a3121b62
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Apr 23, 2025 at 09:15:02AM +0200, Bartosz Golaszewski wrote:
->struct gpio_chip now has callbacks for setting line values that return
->an integer, allowing to indicate failures. We're in the process of
->converting all GPIO drivers to using the new API. This series converts
->another round of GPIO controllers.
->
->Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->---
->Bartosz Golaszewski (12):
->      gpio: imx-scu: don't check the GPIO range
->      gpio: imx-scu: use lock guards
->      gpio: imx-scu: destroy the mutex in detach path
->      gpio: imx-scu: use new line value setter callbacks
+Hi,
 
-For patch 1-4,
+This series improves support for the Maxim Integrated MAX77759
+companion PMIC for USB Type-C applications using the MFD framework.
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+This series must be applied in-order, due to interdependencies of some
+of the patches:
+* to avoid use of undocumented compatibles by the newly added drivers,
+  the bindings are added first in this series
+* patch 1 ("dt-bindings: gpio: add max77759 binding") also creates a
+  new MAINTAINERS entry, including a wildcard match for the other
+  bindings in this series
+* patch 3 ("dt-bindings: mfd: add max77759 binding") references the
+  bindings added in patch 1 and 2 and can not work if those aren't
+  available
+* patch 4 ("mfd: max77759: add Maxim MAX77759 core mfd driver") adds
+  the core MFD driver, which also exposes an API to its leaf drivers
+  and is used by patches 5 and 6
+* patches 5 and 6 won't compile without patch 4
 
-Thanks,
-Peng
+The MAX77759 PMIC includes Battery Charger, Fuel Gauge, temperature
+sensors, USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+
+This PMIC is used on the Google Pixel 6 and 6 Pro (oriole / raven).
+
+This series adds support for the top-level MFD device, the gpio, and
+nvmem cells. Other components are excluded for the following reasons:
+
+    While in the same package, Fuel Gauge and TCPC have separate and
+    independent I2C addresses, register maps, interrupt lines, and
+    aren't part of the top-level package interrupt hierarchy.
+    Furthermore, a driver for the TCPC part exists already (in
+    drivers/usb/typec/tcpm/tcpci_maxim_core.c).
+
+    I'm leaving out temperature sensors and charger in this submission,
+    because the former are not in use on Pixel 6 and I therefore can
+    not test them, and the latter can be added later, once we look at
+    the whole charging topic in more detail.
+
+To make maintainers' work easier, I am planning to send the relevant
+DTS and defconfig changes via a different series, unless everything
+is expected to go via Lee's MFD tree in one series?
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v7:
+- rebased against next-20250424
+- Link to v6: https://lore.kernel.org/r/20250325-max77759-mfd-v6-0-c0870ca662ba@linaro.org
+
+Changes in v6:
+- add one missing change in core driver
+- Link to v5: https://lore.kernel.org/r/20250325-max77759-mfd-v5-0-69bd6f07a77b@linaro.org
+
+Changes in v5:
+- core: incorporate Lee's comments (hoping I didn't miss any :-)
+- Link to v4: https://lore.kernel.org/r/20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org
+
+Changes in v4:
+- collect tags
+- mfd: add missing build_bug.h include
+- mfd: update an irq chip comment
+- mfd: fix a whitespace in register definitions
+- Link to v3: https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org
+
+Changes in v3:
+- collect tags
+- mfd: drop gpio-controller and gpio-cells, GPIO is provided by the
+  child (Rob)
+- gpio: drop duplicate init of 'handled' variable in irq handler
+- gpio: use boolean with IRQ_RETVAL() (Linus)
+- gpio: drop 'virq' variable inside irq handler to avoid confusion
+  (Linus)
+- gpio: drop assignment of struct gpio_chip::owner (Linus)
+- Link to v2: https://lore.kernel.org/r/20250226-max77759-mfd-v2-0-a65ebe2bc0a9@linaro.org
+
+Changes in v2:
+- reorder bindings patches to avoid validation failures
+- add dependency information to cover letter (Krzysztof)
+- fix max77759_gpio_direction_from_control() in gpio driver
+- gpio: drop 'interrupts' property from binding and sort properties
+  alphabetically (Rob)
+- nvmem: drop example from nvmem binding as the MFD binding has a
+  complete one (Rob)
+- nvmem: rename expected nvmem subdev nodename to 'nvmem-0' (Rob)
+- mfd: add kernel doc
+- mfd: fix an msec / usec typo
+- mfd: error handling of devm_mutex_init (Christophe)
+- whitespace fixes & tidy-ups (Christophe)
+- Link to v1: https://lore.kernel.org/r/20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org
+
+---
+André Draszik (6):
+      dt-bindings: gpio: add max77759 binding
+      dt-bindings: nvmem: add max77759 binding
+      dt-bindings: mfd: add max77759 binding
+      mfd: max77759: add Maxim MAX77759 core mfd driver
+      gpio: max77759: add Maxim MAX77759 gpio driver
+      nvmem: max77759: add Maxim MAX77759 NVMEM driver
+
+ .../bindings/gpio/maxim,max77759-gpio.yaml         |  44 ++
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  99 +++
+ .../bindings/nvmem/maxim,max77759-nvmem.yaml       |  32 +
+ MAINTAINERS                                        |  10 +
+ drivers/gpio/Kconfig                               |  13 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77759.c                       | 524 ++++++++++++++++
+ drivers/mfd/Kconfig                                |  20 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77759.c                             | 690 +++++++++++++++++++++
+ drivers/nvmem/Kconfig                              |  12 +
+ drivers/nvmem/Makefile                             |   2 +
+ drivers/nvmem/max77759-nvmem.c                     | 156 +++++
+ include/linux/mfd/max77759.h                       | 165 +++++
+ 14 files changed, 1769 insertions(+)
+---
+base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+change-id: 20250224-max77759-mfd-aaa7a3121b62
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
