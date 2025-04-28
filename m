@@ -1,132 +1,139 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF262673B0
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Apr 2025 11:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5315626562B;
+	Mon, 28 Apr 2025 11:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745841302; cv=none; b=ls4fXf3d6L9BZWOH5maWDJSyfKOYkVzyZZd4yieUkLltB6PWprFq7lW3F0BFc25t/yXenECkTakkYdai6BWV/uaeJxRtgPIJfhs5bIBMHqPcWIha5iQoZMG/FQySv0w51aM9AltJGXLo1YQwf4+ivCUSrf4WGdCgTJzkuvEf8cw=
+	t=1745841468; cv=none; b=nglxKFKbZ7BPMP6QiD5VH1aLuG58Jn9pDjJv9fthiQ9OH4/bpVCaqiaW693/hD2ZQBSmtsDY2zQyBd7SZv1r9rs3kLJNuTHxge+58LUjNYvLCboas99QtlGzQfKfm/Hd57Vb5ryAFGSdwvR6E+r6uJldJL5XIMng1RKyoIBTBbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745841302; c=relaxed/simple;
-	bh=dF1jVHWmjbKqqo+EJfyQwXDZ3U69f8KTOGtxyvNJ0mg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HNfizTfkEG1OKUNFvHjBzxMuWudE5PoBr87jaslB65LCaPOUFrzu8SYhBbizjByt7qNdPsPLYHM5JdxZCOw30sy/bNK1FCZMQ1/1Kn9XJg6G3SVP4mPVnFk4Jdf6LK9UwPnH4vqCRsc4AjijhXRP40Qqgmd4EhHWOctZkUyHER8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ba1DLWn0; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745841468; c=relaxed/simple;
+	bh=bnqDDSUw67uMCw0TA2I9vpvFQ2UMJGa2QZAL3Fzcc2I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=l3pzK2ylJfhKsDycc0Y5hZEp8qWGePFvZFVtY/FurCoIssycmiBW+cNeEvOdSiEm9sSa2fOTKJMTAtoDf8qeE7ATrOXOxAVyQCcXxKcn3WEmXqfv8s9cTsHeOaWAM4pLUP1PWnQAW50INOrWOvimvXrv+7QYUOmRvBQkjOHmJyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GsSkgh8c; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ba1DLWn0"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso33112305e9.1
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Apr 2025 04:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745841298; x=1746446098; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dF1jVHWmjbKqqo+EJfyQwXDZ3U69f8KTOGtxyvNJ0mg=;
-        b=ba1DLWn08sYg1j7byJwZnLxbDxPtd51mzWKTGURkLUxAbcRrd2MaPTP1+y6tWChmSz
-         vxf3ka9WNUKi1g+wvCEOq7ZJ5A1yyq7bwwpALnnxeDcVxMS1emvEq7kGiVM/UyqG/3yV
-         VKphvi1G7gPG3Xs+Nx6vUtzFUp0sxVcaA5+OsAj7RoN9WIq3pmrgbqDvT+x6eKrwMDse
-         SvqipAxT9X0dLtAOzVWWJGvwzlEF+hU5ZZnDKVQY0kH1sYDQpA1LJ4t0YxALtU1fU4pd
-         jx/Q059OrnH3kFssZgY5yelKwkIBaNI4AhSf5yFgXLLQlBHE/icXZBaJK7E3biBjBhyd
-         VkJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745841298; x=1746446098;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dF1jVHWmjbKqqo+EJfyQwXDZ3U69f8KTOGtxyvNJ0mg=;
-        b=FRKHDUXs1bo2uvG02W9SGDa3ytLYxbt+ucxGjUbA9FF8KmGeHrOZocA6Nw2G2tq2WB
-         ocbHEffhjI+7vTnWHHklBJB862tcxpojyMDU3tBI0d+wvl8jy6OrzCuvAdEA3+XRi1dj
-         RjSTSfj+1RjbM3ZPrlmmLuMq2WNhgHBMgds+IQpaIHnkpkFOBDiCOczYXi0Cl/A8cEYf
-         0JuepFliAzsfoKKQ/Yjl5TerEyBgf3myMO7UZO8xB85U5Hb95i8Al3b/kWvFSlcLsDw0
-         AJivfLcw528/of2UVC+C+IMRFVcNJuQWmLuxh0wAc7Gq8T5nWJp+ng1ATmF72Uc1POX4
-         2aag==
-X-Forwarded-Encrypted: i=1; AJvYcCWEb1CnAUfeMCKhm+ib8ohwZznsBIVY+9xfvRnSvinaU5HNedu0CgijoLNCW2lzG/BgQ17LqTG8Pw5P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTLbyUnhm1DnSDIiXw8DZEr0KFYV/5izF3pqnjJzc6ksNqB0xX
-	R8HCJojz4/tq2xrEm4nPMYNRaO87xyz3PgHK7exYZi5YpR4CeVdfGoecj/KhiCc=
-X-Gm-Gg: ASbGncuinTgT/c4PnP/KUMzb3LZOt+1Lqi5TA9/zQOHlRAFLS3/2tfweHtH9oaTXZ/h
-	n8v1odkx7NOPylVmbyYA8oTPY+Qtnt6UgpVtB+QsWCe8pl4MQAFYku1GM6zSoeIsvAjG34XA32h
-	Mkk0a+8HX/j16FK+FBHpcwOkJoGjjM+q4FiQLUnE388/oDV4+1ndSS1H2riCq49SwETV7wDInJ+
-	uuFhsnLkVhjTE05fS6rNXBj8WdUWVgkkf5d+dO4sFFST8+KWKD+EPnndkzXNiHYWgpSx/Prp4ll
-	w0YWxhfdLoZ7Nb+7Swg8o21IvgLN9RDJoi836cctqbG4
-X-Google-Smtp-Source: AGHT+IEBcPzlcTmJtEtdW5Ozka0R7E2yC2SNtOU96655gZWCsIYU9mMeiYm5x9urXTEOXj7XnSxR1w==
-X-Received: by 2002:a05:600c:1e04:b0:43c:eeee:b70a with SMTP id 5b1f17b1804b1-440ab846cecmr67580645e9.22.1745841298305;
-        Mon, 28 Apr 2025 04:54:58 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a536a1ddsm122802275e9.30.2025.04.28.04.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 04:54:56 -0700 (PDT)
-Message-ID: <a365be041bab36fe20e1e5d34b583d3b350a488d.camel@linaro.org>
-Subject: Re: [PATCH v7 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus
- Walleij	 <linus.walleij@linaro.org>, Kees Cook <kees@kernel.org>, "Gustavo
- A. R. Silva"	 <gustavoars@kernel.org>, Srinivas Kandagatla
- <srini@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org, Bartosz
- Golaszewski	 <bartosz.golaszewski@linaro.org>
-Date: Mon, 28 Apr 2025 12:54:55 +0100
-In-Reply-To: <CAMRc=MdDH7UPkhjBKr6hO-j2J158_u4Mp=++hjh=V0OtoJHX1g@mail.gmail.com>
-References: <20250428-max77759-mfd-v7-0-edfe40c16fe8@linaro.org>
-	 <20250428-max77759-mfd-v7-5-edfe40c16fe8@linaro.org>
-	 <CAMRc=MdDH7UPkhjBKr6hO-j2J158_u4Mp=++hjh=V0OtoJHX1g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3-2+build1 
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GsSkgh8c"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E878343A17;
+	Mon, 28 Apr 2025 11:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745841464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxO9n7kzYqDZ1mf4RDLfXt3OXq/5RzLLZD0JQyoUnmY=;
+	b=GsSkgh8cnYJTYAhxBQdZxHrbqWBu0MsH/TQQbd5vnmyrhX4+88/0ISQ6/so4vpUKrtNtjb
+	JO7/KIC7U0dLLyP2GuUaSAkyKV4qQb6EygQawX4dXMEVODO8MXbbLRETOz4PiUAWpRT9RX
+	0BmWmpKeh0qhrQerkwwMfLWyl+SHmnh/DKy28texRppasJpGAXJSwLaTs20+4Xl2krU3+s
+	Iz/Vhx6UXeCBftyOnWaiZplMEqE/52AWpPKMkgdPWi07NetnEFx3J+DyquQa3lUqO7J5nF
+	MOFvR9wEpBas+TU3scI++liLbgQWRvlAFZtoDfPLhjha85wquQerfdmY5Ae47g==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Mon, 28 Apr 2025 13:57:25 +0200
+Subject: [PATCH v7 07/11] gpio: regmap: Allow to provide init_valid_mask
+ callback
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250428-mdb-max7360-support-v7-7-4e0608d0a7ff@bootlin.com>
+References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
+In-Reply-To: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kamel Bouhara <kamel.bouhara@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745841456; l=2166;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=bnqDDSUw67uMCw0TA2I9vpvFQ2UMJGa2QZAL3Fzcc2I=;
+ b=p21Ze4aRI4dHtR3yvMdzCjF88ezG72v2iYQlyKIlMRVd+KUh9BgMM40A9PYgexmtayNWO+joU
+ SV3GUwCb1NIDBFgAl+KUGf/RoomfVCt3T0EyCDIP+SGONHG+jhZZDI3
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddviedtkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedthfegtedvvdehjeeiheehheeuteejleektdefheehgfefgeelhfetgedttdfhteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhko
+ heslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhm
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Hi Bartosz,
+Allows to populate the gpio_regmap_config structure with
+init_valid_mask() callback to set on the final gpio_chip structure.
 
-On Mon, 2025-04-28 at 13:43 +0200, Bartosz Golaszewski wrote:
-> On Mon, Apr 28, 2025 at 1:36=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik=
-@linaro.org> wrote:
-> >=20
-> > The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-> > includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-> > Port Controller (TCPC), NVMEM, and a GPIO expander.
-> >=20
-> > This driver supports the GPIO functions using the platform device
-> > registered by the core MFD driver.
-> >=20
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
->=20
-> [snip]
->=20
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.names =3D max77759_gpio_=
-line_names;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.ngpio =3D MAX77759_N_GPI=
-OS;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.get_direction =3D max777=
-59_gpio_get_direction;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.direction_input =3D max7=
-7759_gpio_direction_input;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.direction_output =3D max=
-77759_gpio_direction_output;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.get =3D max77759_gpio_ge=
-t_value;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->gc.set =3D max77759_gpio_se=
-t_value;
->=20
-> Please use the set_rv variant now, the old set is deprecated. Until
-> that's changed, my Ack is revoked.
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ drivers/gpio/gpio-regmap.c  | 1 +
+ include/linux/gpio/regmap.h | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-Thanks Bartosz for pointing this out, will update.
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 9cbbbaf82609..3d6a37be6411 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -256,6 +256,7 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 	chip->names = config->names;
+ 	chip->label = config->label ?: dev_name(config->parent);
+ 	chip->can_sleep = regmap_might_sleep(config->regmap);
++	chip->init_valid_mask = config->init_valid_mask;
+ 
+ 	chip->request = gpiochip_generic_request;
+ 	chip->free = gpiochip_generic_free;
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 19b52ac03a5d..622a2939ebe0 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -6,6 +6,7 @@
+ struct device;
+ struct fwnode_handle;
+ struct gpio_regmap;
++struct gpio_chip;
+ struct irq_domain;
+ struct regmap;
+ 
+@@ -40,6 +41,8 @@ struct regmap;
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
++ * @init_valid_mask:	(Optional) Routine to initialize @valid_mask, to be used
++ *			if not all GPIOs are valid.
+  * @regmap_irq_chip:	(Optional) Pointer on an regmap_irq_chip structure. If
+  *			set, a regmap-irq device will be created and the IRQ
+  *			domain will be set accordingly.
+@@ -93,6 +96,10 @@ struct gpio_regmap_config {
+ 			      unsigned int offset, unsigned int *reg,
+ 			      unsigned int *mask);
+ 
++	int (*init_valid_mask)(struct gpio_chip *gc,
++			       unsigned long *valid_mask,
++			       unsigned int ngpios);
++
+ 	void *drvdata;
+ };
+ 
 
-Cheers,
-Andre'
+-- 
+2.39.5
 
