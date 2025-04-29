@@ -1,66 +1,66 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D3E297A49
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Apr 2025 08:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192A29B773
+	for <linux-gpio@vger.kernel.org>; Tue, 29 Apr 2025 08:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745914934; cv=none; b=P3EXY6/wmKnWzdsF0Dnhws355Fue376QOMXTUz6OobFQFaf0GPb9T0pPVAtLHsb6lQaBv7WU2xn0YNxqSs+NMrYpHh62bKmj2jqb5cKxBvmpOYxQ0p1C+fqnyqZQB6UNROl88vQ1Qq5qJw4X3kbQLW5Ma7YuUEguxfdFuwm57Do=
+	t=1745914935; cv=none; b=kkxoDGzIyVpU5hWQkK/wwdhwJ7XS8V2mMs8DgrlJbHP3GWB25Wn9xjAbdX5gwWL37T+91XX2xI3UsCxTBW6HYmQUS9aPoh3bcWJ4DDg+qcRtqxb7Qm+rRSev4OEzx96rL3Y7iVi2/nC34zj3jhZVF1LgPDwZlxE+4UPZlIs08ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745914934; c=relaxed/simple;
-	bh=bFksOeknh8d+JfpwdhA3LClj8Y8cCin0vyzLAmX/vl4=;
+	s=arc-20240116; t=1745914935; c=relaxed/simple;
+	bh=fzKstZUVeQBSYl0cS0pI2cvSc+v8nYyTBa1Wr1QDJPU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YtXEvzDptXULbKmn5n1y1vTkSATCupfOOFenwhE+6oteJ+HfVy7p23NiJMXiO+Gf5lZ62LE9PG/8OlbOgRI95Ymgc81XI6iIHmrIP4XA21uspnIExORDTgpSqr/bv6OO4RRoCzdKEV3+5F12uE0r8rWzx0BMsKCRv37nAxYfQ5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bd/1cZk0; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:To:Cc; b=Uzo7uXQqC2JQvgp6V5/I8ogN4pBup31vT27KdscNA1ZANS5T0sdTDKMsXrrZEUpDRrD3XyP61PWhZvDAjVvkMxOrK2G7H0BmE46encboRXkWwim1SSXgo8YYEsqb6IpQkC83n21B9A4fuJUyK6RsrYGNfjgt7msSJtbi/csVuLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yN+9lhIx; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bd/1cZk0"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f7ec0e4978so4422088a12.1
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Apr 2025 01:22:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yN+9lhIx"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f861d16622so25651a12.2
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Apr 2025 01:22:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745914929; x=1746519729; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745914930; x=1746519730; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kyiytjDRdFd6s+6c7xd37xzCdnxjjI1OzqbZfUcJ7Kk=;
-        b=bd/1cZk0rWDbHxQ3J04toubS5K18q6pCmY+V22R06qt0mORt1LVXtuh8L/MUzJU8DZ
-         Oj0AS2oNl3+O2cFdJDYo8FPXdVC2idJb+Z3UzbyHoi3NTBTdlU8NgZdpULc5vM4xcPjZ
-         b/OUdUEjHfQH0OPfRQnQn7+W9fwwD5kbHuV1WB5+867mYp34oQTsIRAVDSVYCErJqSvc
-         8uO2D7+wa1o3kjFJo//YdwFru+RyYUC7ZCyeEPzLZtm8BWDwMk5cbtQHUl2x30beRwFg
-         9cINqr27apkfAMIG+gA+mzbruGQ0IheHCapeifIVPSM45naZU2O9F5otH040IooI7WXT
-         QOrA==
+        bh=mygQ5tEgtTV0ftu+MUNaQUht9cpvP+4gLNPLiSnhTGk=;
+        b=yN+9lhIxmLUNQQ6VTb7P2pYYJVQoRum3/Vzpndv5HyyiyW4o4vDjAgilaAe3J1i34B
+         HylJHJ8HldSrZ9iTjxJVjyI4opF+eqmuQ9G66V7WvfjFojflMtBwkCCCe9KIDuvVFhaj
+         AwxmZMJaU/2R5Za6M9efcd5PFcYh8f8TVLLp7eXPR97Z+1BFSuqUXdBcmrJMWeLoOhSi
+         kVahVP7iYP7edpJTi41JFS5q+4aqUH4AC0+LX7+vOohx/dES7APMIpvFxTTghCOaULiq
+         P03kn4ZeeT+z0s9RpeDVlhwfOzIhmpSw5Q9M8Oz7GSbrfDI2lTR7OxLQjoznfrXceGEQ
+         fS3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745914929; x=1746519729;
+        d=1e100.net; s=20230601; t=1745914930; x=1746519730;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kyiytjDRdFd6s+6c7xd37xzCdnxjjI1OzqbZfUcJ7Kk=;
-        b=vY+o3sJtnvmsRnUGOW4JUtcwCv2NbjwWuqEUlcx3aWLfjPBB/1P4TJ2zB6kl3y0oeQ
-         DCsYwVy6LMb8om2PM5NtBOkAK7L2tiguYZSlPNivin0yb2R175Uw8NAQHr333fPowG24
-         M10Glfsvu4nKXLLxOoBU6yG2cCVFVxTHZJI8cmYk1yeScRYhVRhtbO6A5i2V6yLHNqGn
-         MWclgm2qevW5fT1J9cyUI6fC8Gjgmgs3sCrHceaI6cAVYUPX0vPwREEif4KtzNw02qYg
-         TG16KUmzNBZy+n7HOhxb55PYVbgqHisK1yhyO+AyeOLyyH0jJ4OZ+p2nhzIBYEqcD2Nr
-         1XTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdbUeecr5P1ly3dwiy3RnpCqBtwQV0xGEUdXfGhkA+oBwrrFMPbO2gaDmIRuVH99ZlRHYGKgFtapxS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9mKYzGJkwj21a5Kq02sgxev2t1s+NqYZ+WY5foXgqw9Z0kfb2
-	WOezKqJrTB4NPMth219Fcv4uppFaSm890/8BA3IzrLH92BmFOzfTY75qfR8Wsr4=
-X-Gm-Gg: ASbGncuBoAAT9v7ID5Rdeip6Ms9sKxnTQW6IDw3Jv1RENlVTwRB8oRfPbxJQXmhNutt
-	dPYJqt2kTX6/ediMv1+yscbBzxEOIx/EyQA11PB0VEMK2xYXyQJk0Y68ya9Z2NoZdDu2Il+geo1
-	RoBwOi3CUDIifTQ5wtTduGK2v5GF6MIUgsbbCjFSLmuyO6Y4mLVkIwA2o1N1+2ec43Fdu4/X1pD
-	QKZZqq82MDXJyd0HLafsTbISNe97hM3m2y2/Rg9Ugm7n8ct9XR6CQjAeWF1RJ8yp1/vcjLruQqR
-	bWT5csMUY35GsXXjbShhP4UOaq44AdwnVcH/S28Ee3GJ6Xgvd6+ZwzhH07bUjkikyqOYrw4Ezcq
-	sDcfhni485ZT5LK250nwqDDq6WHFBPs2Bg+w=
-X-Google-Smtp-Source: AGHT+IHzcQQ+9hyFiMjckDJ0NsHxoITKhor7RUapPEL2dlwcirTYuq+HRPXA4/n2SoNbKNkmp3RVPg==
-X-Received: by 2002:a17:907:72d0:b0:acb:b08c:76ae with SMTP id a640c23a62f3a-acec84d2cb7mr160276166b.16.1745914928732;
-        Tue, 29 Apr 2025 01:22:08 -0700 (PDT)
+        bh=mygQ5tEgtTV0ftu+MUNaQUht9cpvP+4gLNPLiSnhTGk=;
+        b=ruPT2e+dXzWKEpEdMQvRPdaiw0/02CnsLOD+zG3reHoD86/3p5BjJPSjSjCRmdywUD
+         sfhIFrbnOYSBwmuElFtqlgeMOkx91mGnNO6oyEre4fAYqxLczhGo1IZcxT4VKqC74qfx
+         aNK2aJ8Q/2m1YPgAzn1OwIgWkM54jk4csQLUGR+Hj1twQx1MLH5rDxiBhXuH0K4bP6Jc
+         eJMpy1nYMUNKC3COtXrHhSzYrJhKWLS2lZV+uBT3lUqW77+R9E5HIJVDXLhSP1M2/3tp
+         kRcqCh5ROfsJMSFthAWpBG7Yami3zPeic8q+UIcJCXzUspaVwin6Hg0P7ZgbdAqikzR3
+         m7xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwvnm8jKdpuKoMO2W35twUl6YnvWj86bQYpZz0kPQp0HMnv56U8kD2lmoenU6C0Ecn7FtGjoIzngPr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeKhzINhc0uFwcHmZH0GpRTNXUepogqNGf56yh82o2dQVbFWz2
+	YnX2yScNlEL3G4OGV24V6qT93MkeJX/tJ8vI6XUmlLCdED4FK7XS7h1BHHgy2j0=
+X-Gm-Gg: ASbGnct1rYnRmAjJE0btS1tbAo9Ox/Lqhhyve2X26f7R7xhh4c5WQyr2yU9qvmkVsq1
+	i4zMaD1s1qgsyPyRUR1OIKeemadrIgxqn9yqhhdTVR4z8dZ+WmEhYYAlGdtcTIOsldnYicFJWsI
+	BoM2nwz9smZS+5UnjtTfMylN1NS8pgMOXxgR62NwtilJzUPzp00K4ngIibOLDlc7b5b5JtMfSxh
+	g+bPpNp6ec7RdbW1uNdwCP0PszcGaQY5XhM7t4n7f1eEldKTs7hD5zGVCe3iqc3/ZCsiYIIm30V
+	7dfcESJ515v4UL8ePAf+YrX9B/mmZ5t09DYeBiwS2N7MdTTCXnQdN7lrDi7XsHbRNQUz+dgynhC
+	MXppf8BSe0ReGhBolGyODEb9j
+X-Google-Smtp-Source: AGHT+IGJBIyjyssjwSYc5tWtf3900ENeYx9rADm33OqV4nrIeVXZ4KdXhVTJ7NWmlVnzTjqPm/LxNw==
+X-Received: by 2002:a17:907:2d90:b0:ac3:5c8e:d3f5 with SMTP id a640c23a62f3a-ace8493ae33mr1140096066b.27.1745914929932;
+        Tue, 29 Apr 2025 01:22:09 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bbf4sm737905466b.36.2025.04.29.01.22.08
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e41bbf4sm737905466b.36.2025.04.29.01.22.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 01:22:08 -0700 (PDT)
+        Tue, 29 Apr 2025 01:22:09 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 29 Apr 2025 09:21:39 +0100
-Subject: [PATCH v8 3/6] dt-bindings: mfd: add max77759 binding
+Date: Tue, 29 Apr 2025 09:21:41 +0100
+Subject: [PATCH v8 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250429-max77759-mfd-v8-3-72d72dc79a1f@linaro.org>
+Message-Id: <20250429-max77759-mfd-v8-5-72d72dc79a1f@linaro.org>
 References: <20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org>
 In-Reply-To: <20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -90,131 +90,621 @@ The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
 includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
 Port Controller (TCPC), NVMEM, and a GPIO expander.
 
-This describes the top-level device.
+This driver supports the GPIO functions using the platform device
+registered by the core MFD driver.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
+v8:
+* switch to gpio_chip::set_rv() (Bartosz)
+* replace MODULE_ALIAS() with .id_table (Krzysztof)
+* drop previous tags
+
+v5:
+* follow API updates of max77759 core driver
+
 v3:
-* drop gpio-controller and gpio-cells, GPIO is provided by the child
-  (Rob)
+* drop duplicate init of 'handled' variable in irq handler
+* use boolean with IRQ_RETVAL() (Linus)
+* drop 'virq' variable inside irq handler to avoid confusion (Linus)
+* drop assignment of struct gpio_chip::owner (Linus)
 
 v2:
-* rename expected nvmem subdev nodename to 'nvmem-0'
-  I'd have preferred just 'nvmem', but that matches nvmem-consumer.yaml
-  and fails validation.
-
-Note: MAINTAINERS doesn't need updating, the binding update for the
-first leaf device (gpio) adds a wildcard matching all max77759 bindings
+* fix max77759_gpio_direction_from_control()
+* add missing error handling of devm_mutex_init() (Christophe)
+* align sentinel in max77759_gpio_of_id[] with other max77759 drivers
+  (Christophe)
 ---
- .../devicetree/bindings/mfd/maxim,max77759.yaml    | 99 ++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ MAINTAINERS                  |   1 +
+ drivers/gpio/Kconfig         |  13 ++
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-max77759.c | 530 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 545 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1259d09e700a21215e8ae2facef858df5304346e..0db5e1fe64930e85265913e6a7dd2669c645cf42 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14668,6 +14668,7 @@ M:	André Draszik <andre.draszik@linaro.org>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
++F:	drivers/gpio/gpio-max77759.c
+ F:	drivers/mfd/max77759.c
+ F:	include/linux/mfd/max77759.h
+ 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 9ae806f45e19c1494d156b7f04b1882be68d3e3f..bbc71cdde9ed66b2fe69dcbc7508d51690d2cfa4 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1483,6 +1483,19 @@ config GPIO_MAX77650
+ 	  GPIO driver for MAX77650/77651 PMIC from Maxim Semiconductor.
+ 	  These chips have a single pin that can be configured as GPIO.
+ 
++config GPIO_MAX77759
++	tristate "Maxim Integrated MAX77759 GPIO support"
++	depends on MFD_MAX77759
++	default MFD_MAX77759
++	select GPIOLIB_IRQCHIP
++	help
++	  GPIO driver for MAX77759 PMIC from Maxim Integrated.
++	  There are two GPIOs available on these chips in total, both of
++	  which can also generate interrupts.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called gpio-max77759.
++
+ config GPIO_PALMAS
+ 	bool "TI PALMAS series PMICs GPIO"
+ 	depends on MFD_PALMAS
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 9aabbb9cb4c61ea57833adf2edb265c204b42cdf..1abae4477ed76b88aff08e83f6d41e58d0b71ff5 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -106,6 +106,7 @@ obj-$(CONFIG_GPIO_MAX730X)		+= gpio-max730x.o
+ obj-$(CONFIG_GPIO_MAX732X)		+= gpio-max732x.o
+ obj-$(CONFIG_GPIO_MAX77620)		+= gpio-max77620.o
+ obj-$(CONFIG_GPIO_MAX77650)		+= gpio-max77650.o
++obj-$(CONFIG_GPIO_MAX77759)		+= gpio-max77759.o
+ obj-$(CONFIG_GPIO_MB86S7X)		+= gpio-mb86s7x.o
+ obj-$(CONFIG_GPIO_MC33880)		+= gpio-mc33880.o
+ obj-$(CONFIG_GPIO_MENZ127)		+= gpio-menz127.o
+diff --git a/drivers/gpio/gpio-max77759.c b/drivers/gpio/gpio-max77759.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..525de9ab3c2b7b431e48497330640857540625b1
+index 0000000000000000000000000000000000000000..7fe8e6f697d044ebf9c620f41e59f150a6ae086a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-@@ -0,0 +1,99 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/gpio/gpio-max77759.c
+@@ -0,0 +1,530 @@
++// SPDX-License-Identifier: GPL-2.0-only
++//
++// Copyright 2020 Google Inc
++// Copyright 2025 Linaro Ltd.
++//
++// GPIO driver for Maxim MAX77759
 +
-+title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
++#include <linux/dev_printk.h>
++#include <linux/device.h>
++#include <linux/device/driver.h>
++#include <linux/gpio/driver.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqreturn.h>
++#include <linux/lockdep.h>
++#include <linux/mfd/max77759.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/overflow.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/seq_file.h>
 +
-+maintainers:
-+  - André Draszik <andre.draszik@linaro.org>
++#define MAX77759_N_GPIOS   ARRAY_SIZE(max77759_gpio_line_names)
++static const char * const max77759_gpio_line_names[] = { "GPIO5", "GPIO6" };
 +
-+description: |
-+  This is a part of device tree bindings for the MAX77759 companion Power
-+  Management IC for USB Type-C applications.
++struct max77759_gpio_chip {
++	struct regmap *map;
++	struct max77759 *max77759;
++	struct gpio_chip gc;
++	struct mutex maxq_lock; /* protect MaxQ r/m/w operations */
 +
-+  The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors, USB
-+  Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
++	struct mutex irq_lock; /* protect irq bus */
++	int irq_mask;
++	int irq_mask_changed;
++	int irq_trig;
++	int irq_trig_changed;
++};
 +
-+properties:
-+  compatible:
-+    const: maxim,max77759
++#define MAX77759_GPIOx_TRIGGER(offs, val) (((val) & 1) << (offs))
++#define MAX77759_GPIOx_TRIGGER_MASK(offs) MAX77759_GPIOx_TRIGGER(offs, ~0)
++enum max77759_trigger_gpio_type {
++	MAX77759_GPIO_TRIGGER_RISING = 0,
++	MAX77759_GPIO_TRIGGER_FALLING = 1
++};
 +
-+  interrupts:
-+    maxItems: 1
++#define MAX77759_GPIOx_DIR(offs, dir) (((dir) & 1) << (2 + (3 * (offs))))
++#define MAX77759_GPIOx_DIR_MASK(offs) MAX77759_GPIOx_DIR(offs, ~0)
++enum max77759_control_gpio_dir {
++	MAX77759_GPIO_DIR_IN = 0,
++	MAX77759_GPIO_DIR_OUT = 1
++};
 +
-+  interrupt-controller: true
++#define MAX77759_GPIOx_OUTVAL(offs, val) (((val) & 1) << (3 + (3 * (offs))))
++#define MAX77759_GPIOx_OUTVAL_MASK(offs) MAX77759_GPIOx_OUTVAL(offs, ~0)
 +
-+  "#interrupt-cells":
-+    const: 2
++#define MAX77759_GPIOx_INVAL_MASK(offs) (BIT(4) << (3 * (offs)))
 +
-+  reg:
-+    maxItems: 1
++static int max77759_gpio_maxq_gpio_trigger_read(struct max77759_gpio_chip *chip)
++{
++	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length, 1);
++	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length, 2);
++	int ret;
 +
-+  gpio:
-+    $ref: /schemas/gpio/maxim,max77759-gpio.yaml
++	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_GPIO_TRIGGER_READ;
 +
-+  nvmem-0:
-+    $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
++	ret = max77759_maxq_command(chip->max77759, cmd, rsp);
++	if (ret < 0)
++		return ret;
 +
-+required:
-+  - compatible
-+  - interrupts
-+  - reg
++	return rsp->rsp[1];
++}
 +
-+additionalProperties: false
++static int max77759_gpio_maxq_gpio_trigger_write(struct max77759_gpio_chip *chip,
++						 u8 trigger)
++{
++	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length, 2);
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
++	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_GPIO_TRIGGER_WRITE;
++	cmd->cmd[1] = trigger;
 +
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++	return max77759_maxq_command(chip->max77759, cmd, NULL);
++}
 +
-+        pmic@66 {
-+            compatible = "maxim,max77759";
-+            reg = <0x66>;
-+            interrupts-extended = <&gpa8 3 IRQ_TYPE_LEVEL_LOW>;
++static int max77759_gpio_maxq_gpio_control_read(struct max77759_gpio_chip *chip)
++{
++	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length, 1);
++	DEFINE_FLEX(struct max77759_maxq_response, rsp, rsp, length, 2);
++	int ret;
 +
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
++	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_GPIO_CONTROL_READ;
 +
-+            gpio {
-+                compatible = "maxim,max77759-gpio";
++	ret = max77759_maxq_command(chip->max77759, cmd, rsp);
++	if (ret < 0)
++		return ret;
 +
-+                gpio-controller;
-+                #gpio-cells = <2>;
++	return rsp->rsp[1];
++}
 +
-+                interrupt-controller;
-+                #interrupt-cells = <2>;
-+            };
++static int max77759_gpio_maxq_gpio_control_write(struct max77759_gpio_chip *chip,
++						 u8 ctrl)
++{
++	DEFINE_FLEX(struct max77759_maxq_command, cmd, cmd, length, 2);
 +
-+            nvmem-0 {
-+                compatible = "maxim,max77759-nvmem";
++	cmd->cmd[0] = MAX77759_MAXQ_OPCODE_GPIO_CONTROL_WRITE;
++	cmd->cmd[1] = ctrl;
 +
-+                nvmem-layout {
-+                    compatible = "fixed-layout";
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
++	return max77759_maxq_command(chip->max77759, cmd, NULL);
++}
 +
-+                    reboot-mode@0 {
-+                        reg = <0x0 0x4>;
-+                    };
++static int
++max77759_gpio_direction_from_control(int ctrl, unsigned int offset)
++{
++	enum max77759_control_gpio_dir dir;
 +
-+                    boot-reason@4 {
-+                        reg = <0x4 0x4>;
-+                    };
++	dir = !!(ctrl & MAX77759_GPIOx_DIR_MASK(offset));
++	return ((dir == MAX77759_GPIO_DIR_OUT)
++		? GPIO_LINE_DIRECTION_OUT
++		: GPIO_LINE_DIRECTION_IN);
++}
 +
-+                    shutdown-user-flag@8 {
-+                        reg = <0x8 0x1>;
-+                    };
++static int max77759_gpio_get_direction(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	int ctrl;
 +
-+                    rsoc@10 {
-+                        reg = <0xa 0x2>;
-+                    };
-+                };
-+            };
-+        };
-+    };
++	ctrl = max77759_gpio_maxq_gpio_control_read(chip);
++	if (ctrl < 0)
++		return ctrl;
++
++	return max77759_gpio_direction_from_control(ctrl, offset);
++}
++
++static int max77759_gpio_direction_helper(struct gpio_chip *gc,
++					  unsigned int offset,
++					  enum max77759_control_gpio_dir dir,
++					  int value)
++{
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	int ctrl, new_ctrl;
++
++	guard(mutex)(&chip->maxq_lock);
++
++	ctrl = max77759_gpio_maxq_gpio_control_read(chip);
++	if (ctrl < 0)
++		return ctrl;
++
++	new_ctrl = ctrl & ~MAX77759_GPIOx_DIR_MASK(offset);
++	new_ctrl |= MAX77759_GPIOx_DIR(offset, dir);
++
++	if (dir == MAX77759_GPIO_DIR_OUT) {
++		new_ctrl &= ~MAX77759_GPIOx_OUTVAL_MASK(offset);
++		new_ctrl |= MAX77759_GPIOx_OUTVAL(offset, value);
++	}
++
++	if (new_ctrl == ctrl)
++		return 0;
++
++	return max77759_gpio_maxq_gpio_control_write(chip, new_ctrl);
++}
++
++static int max77759_gpio_direction_input(struct gpio_chip *gc,
++					 unsigned int offset)
++{
++	return max77759_gpio_direction_helper(gc, offset,
++					      MAX77759_GPIO_DIR_IN, -1);
++}
++
++static int max77759_gpio_direction_output(struct gpio_chip *gc,
++					  unsigned int offset, int value)
++{
++	return max77759_gpio_direction_helper(gc, offset,
++					      MAX77759_GPIO_DIR_OUT, value);
++}
++
++static int max77759_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
++{
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	int ctrl, mask;
++
++	ctrl = max77759_gpio_maxq_gpio_control_read(chip);
++	if (ctrl < 0)
++		return ctrl;
++
++	/*
++	 * The input status bit doesn't reflect the pin state when the GPIO is
++	 * configured as an output. Check the direction, and inspect the input
++	 * or output bit accordingly.
++	 */
++	mask = ((max77759_gpio_direction_from_control(ctrl, offset)
++		 == GPIO_LINE_DIRECTION_IN)
++		? MAX77759_GPIOx_INVAL_MASK(offset)
++		: MAX77759_GPIOx_OUTVAL_MASK(offset));
++
++	return !!(ctrl & mask);
++}
++
++static int max77759_gpio_set_value(struct gpio_chip *gc,
++				   unsigned int offset, int value)
++{
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	int ctrl, new_ctrl;
++
++	guard(mutex)(&chip->maxq_lock);
++
++	ctrl = max77759_gpio_maxq_gpio_control_read(chip);
++	if (ctrl < 0)
++		return ctrl;
++
++	new_ctrl = ctrl & ~MAX77759_GPIOx_OUTVAL_MASK(offset);
++	new_ctrl |= MAX77759_GPIOx_OUTVAL(offset, value);
++
++	if (new_ctrl == ctrl)
++		return 0;
++
++	return max77759_gpio_maxq_gpio_control_write(chip, new_ctrl);
++}
++
++static void max77759_gpio_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	chip->irq_mask &= ~MAX77759_MAXQ_REG_UIC_INT1_GPIOxI_MASK(hwirq);
++	chip->irq_mask |= MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(hwirq, 1);
++	chip->irq_mask_changed |= MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(hwirq, 1);
++
++	gpiochip_disable_irq(gc, hwirq);
++}
++
++static void max77759_gpio_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	gpiochip_enable_irq(gc, hwirq);
++
++	chip->irq_mask &= ~MAX77759_MAXQ_REG_UIC_INT1_GPIOxI_MASK(hwirq);
++	chip->irq_mask |= MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(hwirq, 0);
++	chip->irq_mask_changed |= MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(hwirq, 1);
++}
++
++static int max77759_gpio_set_irq_type(struct irq_data *d, unsigned int type)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	chip->irq_trig &= ~MAX77759_GPIOx_TRIGGER_MASK(hwirq);
++	switch (type) {
++	case IRQ_TYPE_EDGE_RISING:
++		chip->irq_trig |= MAX77759_GPIOx_TRIGGER(hwirq,
++						MAX77759_GPIO_TRIGGER_RISING);
++		break;
++
++	case IRQ_TYPE_EDGE_FALLING:
++		chip->irq_trig |= MAX77759_GPIOx_TRIGGER(hwirq,
++						MAX77759_GPIO_TRIGGER_FALLING);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	chip->irq_trig_changed |= MAX77759_GPIOx_TRIGGER(hwirq, 1);
++
++	return 0;
++}
++
++static void max77759_gpio_bus_lock(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++
++	mutex_lock(&chip->irq_lock);
++}
++
++static int max77759_gpio_bus_sync_unlock_helper(struct gpio_chip *gc,
++						struct max77759_gpio_chip *chip)
++					       __must_hold(&chip->maxq_lock)
++{
++	int ctrl, trigger, new_trigger, new_ctrl;
++	unsigned long irq_trig_changed;
++	int offset;
++	int ret;
++
++	lockdep_assert_held(&chip->maxq_lock);
++
++	ctrl = max77759_gpio_maxq_gpio_control_read(chip);
++	trigger = max77759_gpio_maxq_gpio_trigger_read(chip);
++	if (ctrl < 0 || trigger < 0) {
++		dev_err(gc->parent, "failed to read current state: %d / %d\n",
++			ctrl, trigger);
++		return (ctrl < 0) ? ctrl : trigger;
++	}
++
++	new_trigger = trigger & ~chip->irq_trig_changed;
++	new_trigger |= (chip->irq_trig & chip->irq_trig_changed);
++
++	/* change GPIO direction if required */
++	new_ctrl = ctrl;
++	irq_trig_changed = chip->irq_trig_changed;
++	for_each_set_bit(offset, &irq_trig_changed, MAX77759_N_GPIOS) {
++		new_ctrl &= ~MAX77759_GPIOx_DIR_MASK(offset);
++		new_ctrl |= MAX77759_GPIOx_DIR(offset, MAX77759_GPIO_DIR_IN);
++	}
++
++	if (new_trigger != trigger) {
++		ret = max77759_gpio_maxq_gpio_trigger_write(chip, new_trigger);
++		if (ret) {
++			dev_err(gc->parent,
++				"failed to write new trigger: %d\n", ret);
++			return ret;
++		}
++	}
++
++	if (new_ctrl != ctrl) {
++		ret = max77759_gpio_maxq_gpio_control_write(chip, new_ctrl);
++		if (ret) {
++			dev_err(gc->parent,
++				"failed to write new control: %d\n", ret);
++			return ret;
++		}
++	}
++
++	chip->irq_trig_changed = 0;
++
++	return 0;
++}
++
++static void max77759_gpio_bus_sync_unlock(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct max77759_gpio_chip *chip = gpiochip_get_data(gc);
++	int ret;
++
++	scoped_guard(mutex, &chip->maxq_lock) {
++		ret = max77759_gpio_bus_sync_unlock_helper(gc, chip);
++		if (ret)
++			goto out_unlock;
++	}
++
++	ret = regmap_update_bits(chip->map,
++				 MAX77759_MAXQ_REG_UIC_INT1_M,
++				 chip->irq_mask_changed, chip->irq_mask);
++	if (ret) {
++		dev_err(gc->parent,
++			"failed to update UIC_INT1 irq mask: %d\n", ret);
++		goto out_unlock;
++	}
++
++	chip->irq_mask_changed = 0;
++
++out_unlock:
++	mutex_unlock(&chip->irq_lock);
++}
++
++static void max77759_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++
++	seq_puts(p, dev_name(gc->parent));
++}
++
++static const struct irq_chip max77759_gpio_irq_chip = {
++	.irq_mask		= max77759_gpio_irq_mask,
++	.irq_unmask		= max77759_gpio_irq_unmask,
++	.irq_set_type		= max77759_gpio_set_irq_type,
++	.irq_bus_lock		= max77759_gpio_bus_lock,
++	.irq_bus_sync_unlock	= max77759_gpio_bus_sync_unlock,
++	.irq_print_chip		= max77759_gpio_irq_print_chip,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
++static irqreturn_t max77759_gpio_irqhandler(int irq, void *data)
++{
++	struct max77759_gpio_chip *chip = data;
++	struct gpio_chip *gc = &chip->gc;
++	bool handled = false;
++
++	/* iterate until no interrupt is pending */
++	while (true) {
++		unsigned int uic_int1;
++		int ret;
++		unsigned long pending;
++		int offset;
++
++		ret = regmap_read(chip->map, MAX77759_MAXQ_REG_UIC_INT1,
++				  &uic_int1);
++		if (ret < 0) {
++			dev_err_ratelimited(gc->parent,
++					    "failed to read IRQ status: %d\n",
++					    ret);
++			/*
++			 * If !handled, we have looped not even once, which
++			 * means we should return IRQ_NONE in that case (and
++			 * of course IRQ_HANDLED otherwise).
++			 */
++			return IRQ_RETVAL(handled);
++		}
++
++		pending = uic_int1;
++		pending &= (MAX77759_MAXQ_REG_UIC_INT1_GPIO6I
++			    | MAX77759_MAXQ_REG_UIC_INT1_GPIO5I);
++		if (!pending)
++			break;
++
++		for_each_set_bit(offset, &pending, MAX77759_N_GPIOS) {
++			/*
++			 * ACK interrupt by writing 1 to bit 'offset', all
++			 * others need to be written as 0. This needs to be
++			 * done unconditionally hence regmap_set_bits() is
++			 * inappropriate here.
++			 */
++			regmap_write(chip->map, MAX77759_MAXQ_REG_UIC_INT1,
++				     BIT(offset));
++
++			handle_nested_irq(irq_find_mapping(gc->irq.domain,
++							   offset));
++
++			handled = true;
++		}
++	}
++
++	return IRQ_RETVAL(handled);
++}
++
++static int max77759_gpio_probe(struct platform_device *pdev)
++{
++	struct max77759_gpio_chip *chip;
++	int irq;
++	struct gpio_irq_chip *girq;
++	int ret;
++	unsigned long irq_flags;
++	struct irq_data *irqd;
++
++	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->map = dev_get_regmap(pdev->dev.parent, "maxq");
++	if (!chip->map)
++		return dev_err_probe(&pdev->dev, -ENODEV, "Missing regmap\n");
++
++	irq = platform_get_irq_byname(pdev, "GPI");
++	if (irq < 0)
++		return dev_err_probe(&pdev->dev, irq, "Failed to get IRQ\n");
++
++	chip->max77759 = dev_get_drvdata(pdev->dev.parent);
++	ret = devm_mutex_init(&pdev->dev, &chip->maxq_lock);
++	if (ret)
++		return ret;
++	ret = devm_mutex_init(&pdev->dev, &chip->irq_lock);
++	if (ret)
++		return ret;
++
++	chip->gc.base = -1;
++	chip->gc.label = dev_name(&pdev->dev);
++	chip->gc.parent = &pdev->dev;
++	chip->gc.can_sleep = true;
++
++	chip->gc.names = max77759_gpio_line_names;
++	chip->gc.ngpio = MAX77759_N_GPIOS;
++	chip->gc.get_direction = max77759_gpio_get_direction;
++	chip->gc.direction_input = max77759_gpio_direction_input;
++	chip->gc.direction_output = max77759_gpio_direction_output;
++	chip->gc.get = max77759_gpio_get_value;
++	chip->gc.set_rv = max77759_gpio_set_value;
++
++	girq = &chip->gc.irq;
++	gpio_irq_chip_set_chip(girq, &max77759_gpio_irq_chip);
++	/* This will let us handle the parent IRQ in the driver */
++	girq->parent_handler = NULL;
++	girq->num_parents = 0;
++	girq->parents = NULL;
++	girq->default_type = IRQ_TYPE_NONE;
++	girq->handler = handle_simple_irq;
++	girq->threaded = true;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
++	if (ret < 0)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to add GPIO chip\n");
++
++	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
++	irqd = irq_get_irq_data(irq);
++	if (irqd)
++		irq_flags |= irqd_get_trigger_type(irqd);
++
++	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++					max77759_gpio_irqhandler, irq_flags,
++					dev_name(&pdev->dev), chip);
++	if (ret < 0)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to request IRQ\n");
++
++	return ret;
++}
++
++static const struct of_device_id max77759_gpio_of_id[] = {
++	{ .compatible = "maxim,max77759-gpio", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, max77759_gpio_of_id);
++
++static const struct platform_device_id max77759_gpio_platform_id[] = {
++	{ "max77759-gpio", },
++	{ }
++};
++MODULE_DEVICE_TABLE(platform, max77759_gpio_platform_id);
++
++static struct platform_driver max77759_gpio_driver = {
++	.driver = {
++		.name = "max77759-gpio",
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
++		.of_match_table = max77759_gpio_of_id,
++	},
++	.probe = max77759_gpio_probe,
++	.id_table = max77759_gpio_platform_id,
++};
++
++module_platform_driver(max77759_gpio_driver);
++
++MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
++MODULE_DESCRIPTION("GPIO driver for Maxim MAX77759");
++MODULE_LICENSE("GPL");
 
 -- 
 2.49.0.901.g37484f566f-goog
