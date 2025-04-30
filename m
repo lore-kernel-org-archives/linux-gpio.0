@@ -1,120 +1,146 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C944138FB9
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Apr 2025 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0831A3177
+	for <linux-gpio@vger.kernel.org>; Wed, 30 Apr 2025 17:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746027179; cv=none; b=NzdrJ+PirQkwinV88H4aTDOX5zslAnsSGdi577Y3TlnPPtC4wh9T5HG03sNqldD5HiettcRX5WmLGuNo2aqlCHfSQjEN6xHxkgDKauO6aXbq7WearUetviU1hL5r+5ID4W41U2pEgckoFA1O7JbInz39ZqZvs+XX4IRIUghIfVI=
+	t=1746034651; cv=none; b=oT1OaXhj1mWx5rUSxzdLz6aSqdo6k2vHLpBMhTsX1qz8ebQMhZ16duubg+6gG0QEUH7maevU6CD6XcAFiP0Y7CQ/s5PHO+8PgQVorXRi981yLsCfgVi7BnCHS0tJSOMdQlowEZv8sDSOvwHPxedOL/z85JC7nnFpPLXaz5bBXUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746027179; c=relaxed/simple;
-	bh=/JDey4FU4P0QUZ3U1QjVg4P2FtVicPr9lHY9lypG6dI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hiRjlrqkyd1XRZqgZJC5yTIfTIy73aIqZzPZylkiFjl5q93cJO2cSJx5TcOEAh9bxRw8UhF+zz8UrDbNydyc7QIQbnAJL0sE+PAjBQDOXPt2CbQJpNk6CzMtD0Chy07v+YHH5bnISt3N8xLfA2Gb8NO7jYW2dS7Q45Wu42n7eMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simulevski.at; spf=pass smtp.mailfrom=simulevski.at; dkim=pass (2048-bit key) header.d=simulevski.at header.i=@simulevski.at header.b=Cyq7OFlq; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simulevski.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simulevski.at
+	s=arc-20240116; t=1746034651; c=relaxed/simple;
+	bh=OaA5OCQkvQnVP7nf8AXqDZtBH7PFGtrlg3Uojswc5M0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kdKxQNojhV2/K7w32AOesWjOYUs4dCrsAm8OK0w7z9f+yVDFeGWh+1Ov87S6iLDVuZUforFy4fk9RROQNbWJ+gn9L3TBbKoJPnVX8cW9MSrps2Re/uJlZKh+Y0wSw2MDktxcj+PhEqGDAzAt8crpRFFfO/keb3wwi0TNbAIEhJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wEgiSrDm; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=simulevski.at header.i=@simulevski.at header.b="Cyq7OFlq"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so11756120a12.1
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Apr 2025 08:32:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wEgiSrDm"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30f30200b51so426311fa.3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Apr 2025 10:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=simulevski.at; s=google; t=1746027175; x=1746631975; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yW4IzDdMLC+ISL10lrfjeXQ0u1JQS4Zd6C+Vb5vP0E=;
-        b=Cyq7OFlq8yzdAPhZaMoB+mLZim1kjxQuWd0YTzb6V5i+td+yhqkAu0F7yGr/keF/0u
-         hF9AoBz0Mny9s9YzLsIx5bh0iQKb7qpAQG1LyC3t3GYJhdDj+fd9i3wsssmGz7hS9nbD
-         nW4cKLyFWNLMYvuTuaTHi7DM/4bXnwTf29yxYr9HQZJq7vZfLjti4KiJvP8ovYPmrvdG
-         i/VoPTWee181TA/ZmlQXyisZ2E2rtT6MuwYso72dweeIAQ6SBD0Oglq3pE5O+sbRiOBl
-         FpYPlu+575eU/oAqcS8A6p0DmB26rrpGzsBXToS5KtL1k6/3vpPvg1uiOjJDXU5pHOTj
-         1NPA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746034647; x=1746639447; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B80QHmr+sB5OMT7DkCFdd8/2a+nIvyDwd83EjF1b7wg=;
+        b=wEgiSrDm4PpSIjcw4EnkIIIArFYyjm6Q9haUgNQ/RKw3qhK51kDS61qWy497RzVCua
+         80fVOm38TTTHGnJF8FCvpw3Pjc7Br3IQz30Rr0iivVfXN3ShsRdQxUM0A1e9jzp872yM
+         WciFlw222dUjrrGLh/nLG3GXF5jNzh7DTD30hKTGeMABlJ6SZEwY0rB0CouP5MNEJ0vo
+         a7kSoZ26W54U/U6Jt701vdd7yNzl0a0bapMZxb/chsDgKtWGi5B2NleAwwlv423wjY0N
+         LhCppanyRKWo9jNiK7AWFJA2svGZ6obonekccVTObeR8Jf5Gg37Lbaek1uhu83CHepJd
+         uTuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746027175; x=1746631975;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2yW4IzDdMLC+ISL10lrfjeXQ0u1JQS4Zd6C+Vb5vP0E=;
-        b=ftwX7Y8zRXncEeHhhinWF3UY1i5Hrpocgz2hNiRu/rPNeux31dltSeaLv642wYxaCZ
-         uM9/zxeHLIAj+63LP4+Qct8+TF2cQk4xkyV904jowXXFhB6xNmXwesmv1mhlCMHRAlvG
-         IPdL4WXPG4ivWD2ziJefjruFdAJdEhEaFoHpAq5CS+fhzA0UrXHXiSypNcNLyxrLJlaM
-         gFcotd33x092md8CYCNzp0ADMwfndptrIhkzD5khmVN/cTbpeEQLBRR9i553uEadFMDu
-         sbp+yihJGNpfpDTmJDJmWHoekG49oGEksFOFm/dS66is0EOmPADRoLGQnIaQCPdVHKvB
-         gtFw==
-X-Gm-Message-State: AOJu0Yx7t6CBMH/4FQBsRqjVVzwHVCJrDCwq0Ds+C2a2wGlfwFlg74I6
-	iAYyMqt9dfywtJqXYGG8dl8Neo7O7/EdVR8BBjQPnfsnTck452umNjfQuNNCwCE=
-X-Gm-Gg: ASbGncug93yzOLPS96gKX9z6PGFbV1pKiq9eoG5nboBSrCSzVHIE5BVQkHbPj6Cweln
-	vISAUA8bx3Idz0pbT9iXvk6bmNBH1Nmf4y6re6gljEbi+OCo+EpEZit+oErNwxmgJsi34nCDkFy
-	ykDe8JlcvHH7MAH67FYF6hAH5QnP+v8/HAHyBOxu5Lm7OfF1M7ESwGt7N4KYa18K0jUbeE/X1Mt
-	EI/79l2tRxlKylWrgOoqLFjuAh7GcPN0MfXRVQmNG7YGBDFszIuQlCsA4Vi+p44V8fkrsO9TkAh
-	IfqhJ9hxdTpKY0ddHN7fsdJ/TPqkzPqfGldmjQs0SCABOmQMkaCrJbuD
-X-Google-Smtp-Source: AGHT+IEL5/+RsQSF7TYc17i2auHKOvrGNCSMLsnS0CnF7H7Qhjv7jm1RqolFT3S6nwkdOoxrpFsV2Q==
-X-Received: by 2002:a05:6402:240a:b0:5f8:e853:1f8 with SMTP id 4fb4d7f45d1cf-5f8e853020bmr1076156a12.17.1746027174936;
-        Wed, 30 Apr 2025 08:32:54 -0700 (PDT)
-Received: from fedora.home.simulevski.at ([91.65.134.65])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f701106bcbsm8670914a12.10.2025.04.30.08.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 08:32:54 -0700 (PDT)
-From: Ariel Simulevski <ariel@simulevski.at>
-To: andy@kernel.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ariel Simulevski <ariel@simulevski.at>,
-	Guido Trentalancia <guido2022@trentalancia.com>
-Subject: [PATCH] pinctrl: tigerlake: Document supported platforms in Kconfig help
-Date: Wed, 30 Apr 2025 17:32:39 +0200
-Message-ID: <20250430153239.7137-1-ariel@simulevski.at>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1746034647; x=1746639447;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B80QHmr+sB5OMT7DkCFdd8/2a+nIvyDwd83EjF1b7wg=;
+        b=wky8TuymQFHGmkdOicRL3EwY0OY9jOqqDN1fzdM7P1HkjqJgGpNZK6FQOpaIVOjgVa
+         z4Ikz64pYDmNTQlLZfvTc0Tywm7Fdxh5d9U36cTREKAtg3gjZdiVAh0Y11eKl+UNj6q9
+         rDHrbVXVehLK0rOzowpUykJIJLyaNj6KRFiaDeYhqUDE0IChnimpfgj2yscneRO3Wg8+
+         oOyrpWRqDAx0mhTzep4+tefBUIPf7mNPxOyzA8lpFllR7i9Hcasv7SWYNFbDFT8N5U54
+         7Un6aGOoO1OYDcp2WRi5lmIdbi1/FRnVFVDRqllx8t7z4gj9Od3fzlpVvc9vv1ddOeLV
+         QrPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnZ9HirhgaZGIdqyo2vQ61wyklwNbb7A7+ZFPFagNpJa1jtaVDd7SLKcduTc+XNg5lMsWlPiTNFMk8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbYOM3UVIxu+HNLlStSIIdBqTP8yMnzvB7yGho0UCCvLHsXUFF
+	OWixh8bQDsvvso2ixsKVsm0Kr52uJsoJcIMPPDFu70KKdBmkgrrcHrAya0412GeUVFIe8kcLANM
+	8voxc+4uGuCK21TSYbd9AKCydQB6zo/6IT+ElNw==
+X-Gm-Gg: ASbGncv2qGCPUSpNSrigYV75JVlT11RyHSWVm0oQMxg3iUFvKEMRwCNhE0PlVHNp6ew
+	7OdGZyRhnrQ2fMbdVAb8m5w9dT/OS8ETmuXpaFmpwviqe08fjxbuHT5zd4lcWk2w4HMdpy79+Gv
+	BWMao4N0LE7UyzbSBB22DrqN13p7cStpSysr39JLUjICrpLdHCgGDIFg==
+X-Google-Smtp-Source: AGHT+IHEUyDS2y73x5UTLVTCAeSkmZ9cGIaS0WUiShuP4klNjjtKcVRhzpqZk/qxLOTTSObt/mVmSixEfyP9TzJHf3w=
+X-Received: by 2002:a05:651c:2112:b0:30b:a185:47d8 with SMTP id
+ 38308e7fff4ca-31e69d17438mr13186651fa.4.1746034647109; Wed, 30 Apr 2025
+ 10:37:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
+ <20250408-gpiochip-set-rv-powerpc-v1-2-73dc1ebc6ef1@linaro.org> <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
+In-Reply-To: <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 30 Apr 2025 19:37:14 +0200
+X-Gm-Features: ATxdqUEh34Gz1POqWO9v2IKaGBTgS6zz7pi2s7vMr2oV8EN8tMuslc97xocJ6hQ
+Message-ID: <CAMRc=MesdgXAivzDnm1RW-jcxs_5goZiyKvK0-JLwqDv=9F6LQ@mail.gmail.com>
+Subject: Re: [PATCH 2/5] powerpc: 83xx/gpio: use new line value setter callbacks
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Tiger Lake pinctrl driver is also used by some Alder Lake platforms
-that reuse the same GPIO IP blocks.
+On Wed, Apr 30, 2025 at 7:33=E2=80=AFPM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+>
+>
+> Le 08/04/2025 =C3=A0 09:21, Bartosz Golaszewski a =C3=A9crit :
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > struct gpio_chip now has callbacks for setting line values that return
+> > an integer, allowing to indicate failures. Convert the driver to using
+> > them.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >   arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 6 ++++--
+> >   1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powe=
+rpc/platforms/83xx/mcu_mpc8349emitx.c
+> > index 4d8fa9ed1a67..d4ba6dbb86b2 100644
+> > --- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
+> > +++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
+> > @@ -92,7 +92,7 @@ static void mcu_power_off(void)
+> >       mutex_unlock(&mcu->lock);
+> >   }
+> >
+> > -static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int =
+val)
+> > +static int mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int v=
+al)
+> >   {
+> >       struct mcu *mcu =3D gpiochip_get_data(gc);
+> >       u8 bit =3D 1 << (4 + gpio);
+> > @@ -105,6 +105,8 @@ static void mcu_gpio_set(struct gpio_chip *gc, unsi=
+gned int gpio, int val)
+> >
+> >       i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL, mcu->reg_ctr=
+l);
+> >       mutex_unlock(&mcu->lock);
+> > +
+> > +     return 0;
+>
+> i2c_smbus_write_byte_data() can fail, why not return the value returned
+> by i2c_smbus_write_byte_data() ?
+>
 
-Update the Kconfig help texts for both drivers to document supported
-platforms and clarify when CONFIG_PINCTRL_TIGERLAKE may be required.
+The calls to i2c_smbus_write_byte_data() in this driver are
+universally not checked. I cannot test it and wasn't sure if that's on
+purpose so I decided to stay safe. Someone who has access to this
+platform could potentially fix it across the file.
 
-Supported platforms:
-  - Tiger Lake (all variants)
-  - Alder Lake-P
+Bartosz
 
-Reported-by: Guido Trentalancia <guido2022@trentalancia.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=220056
-Signed-off-by: Ariel Simulevski <ariel@simulevski.at>
----
- drivers/pinctrl/intel/Kconfig | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
-index 248c2e558ff3..f1114828457d 100644
---- a/drivers/pinctrl/intel/Kconfig
-+++ b/drivers/pinctrl/intel/Kconfig
-@@ -54,6 +54,9 @@ config PINCTRL_ALDERLAKE
- 	  This pinctrl driver provides an interface that allows configuring
- 	  of Intel Alder Lake PCH pins and using them as GPIOs.
- 
-+	  Some platforms may reuse GPIO IP blocks from earlier generations
-+	  and require CONFIG_PINCTRL_TIGERLAKE instead.
-+
- config PINCTRL_BROXTON
- 	tristate "Intel Broxton pinctrl and GPIO driver"
- 	select PINCTRL_INTEL
-@@ -161,5 +164,11 @@ config PINCTRL_TIGERLAKE
- 	  This pinctrl driver provides an interface that allows configuring
- 	  of Intel Tiger Lake PCH pins and using them as GPIOs.
- 
-+	  Also used on some Alder Lake platforms that share compatible GPIO IP.
-+
-+	  Supported platforms:
-+	    - Tiger Lake (all variants)
-+	    - Alder Lake-P
-+
- source "drivers/pinctrl/intel/Kconfig.tng"
- endmenu
--- 
-2.49.0
-
+> >   }
+> >
+> >   static int mcu_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, =
+int val)
+> > @@ -123,7 +125,7 @@ static int mcu_gpiochip_add(struct mcu *mcu)
+> >       gc->can_sleep =3D 1;
+> >       gc->ngpio =3D MCU_NUM_GPIO;
+> >       gc->base =3D -1;
+> > -     gc->set =3D mcu_gpio_set;
+> > +     gc->set_rv =3D mcu_gpio_set;
+> >       gc->direction_output =3D mcu_gpio_dir_out;
+> >       gc->parent =3D dev;
+> >
+> >
+>
