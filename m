@@ -1,123 +1,185 @@
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4294629408;
-	Wed, 30 Apr 2025 18:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD8D264637;
+	Wed, 30 Apr 2025 18:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746037236; cv=none; b=gkssEMn6xXi+4JhYgYyNS9QFoXowso1OkEpisc7xmnR8kmIAyr4bf5Qq+nlpf4SmAit6HDJ7RePQYzF5bHhhsqf3RT+QJZ3KYdjswh8ksS/coc7bknciZUJ9yweGcjKYecQVfCQPWEMtyKo3iQ91xVmVsHF2Hhng+bRyX/JVOko=
+	t=1746037671; cv=none; b=lHuY8wN1aHwFil6gIfeyZhuZZyQDI8PNlxg5nUAFKAPSaqkC6MD1FK9+GAizK/ZkG9vgEkAIRXT5oVuJixHx9HKXpS4ThDd/nq3SIvqWBGXno4akZ00h2Vib66rzKp7Cp3+Grim/8ntgdVRGf4nzb7Pf0uIowxOuz5zP3kniV7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746037236; c=relaxed/simple;
-	bh=xZmXq/yHV4PYm9VEKiW5gq0YpRzlOAJesgu2pi+Pgos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d3krSNMh6Vj6fEp8Qoi/MsdH5pPKb1riRdyLLhlvCbwLOdaE1W6ZLjNy/k/bhOuGYoDyLIRgFTehjPhQFht34d/E9cKgi8hRisLTc+SwmV+jFU1MHiFnPDVnACRwca/Ov/Dd7LrIA8m0eeyju+U9xgM3AT29QQtbQFuD4OwTDAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Znl4k5gw7z9slR;
-	Wed, 30 Apr 2025 19:47:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id CRILqcdhiA9l; Wed, 30 Apr 2025 19:47:18 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Znl4k4hwwz9slF;
-	Wed, 30 Apr 2025 19:47:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 91A0F8B765;
-	Wed, 30 Apr 2025 19:47:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id CGL3eL1v_ASl; Wed, 30 Apr 2025 19:47:18 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 765C98B763;
-	Wed, 30 Apr 2025 19:47:17 +0200 (CEST)
-Message-ID: <11e1a1e7-7bd3-4d48-804c-45b53b5e15d5@csgroup.eu>
-Date: Wed, 30 Apr 2025 19:47:17 +0200
+	s=arc-20240116; t=1746037671; c=relaxed/simple;
+	bh=BAnu53X6LUhNIJoXvEr0FZYi1TI93lQ+xX62tTdscNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HO+KlPRYjATbORfkxx/8/fOgiYsWVeaVhDZY6eq/PDaLNEZTcw9J+sfqcMiYwcKoRgOsDvQt13C18lfHgYNCYXCdeiSs+Umfjrr/2BHD+T4Bn7fxiMyX8hGySvt4KzEpsxT2+6/pxj/8INLVX5TWSpKP2ZERUE4J42OTOaYYPgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ckf6iXag; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ckf6iXag"
+Received: from kreacher.localnet (unknown [217.114.34.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 5A6FE666854;
+	Wed, 30 Apr 2025 20:27:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1746037661;
+	bh=BAnu53X6LUhNIJoXvEr0FZYi1TI93lQ+xX62tTdscNE=;
+	h=From:Subject:Date;
+	b=Ckf6iXagpU23zp9V/WVAVTY/2vc3c9NUaz4YTy+UK6EfUYSysN/pgMpEbPMkXfAIn
+	 BinPDShn4fU7MmcdwlnXXH3ZcVEhPAAqkepYfoYMd1R8y4vurcKhmvl1bR10wwpRei
+	 Mln2Uzvl+6EkDu2iGHJBEjN3OIZT8bck/1nWpSnUDfG4kYaGaXrj5bLM23eU5lTAxV
+	 LohGuSqf+CdU/QHD1mKFV3vUYqb/SOlC1p4ZEEHyi19qctA5N27rvW2/2wtQBk4rxD
+	 6gjVeHyUZIxzPxfTtEXjAwwxCRl6JBuVwdb0BNU6BAw5PmHBgxUpyIFWw4UkXr1n8y
+	 rHsXP5Z8LWJhQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject:
+ [PATCH v1] pinctrl: amd: Fix hibernation support with CONFIG_SUSPEND unset
+Date: Wed, 30 Apr 2025 20:27:41 +0200
+Message-ID: <5889368.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] powerpc: 83xx/gpio: use new line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
- <20250408-gpiochip-set-rv-powerpc-v1-2-73dc1ebc6ef1@linaro.org>
- <4a6e8ac1-b4e8-49e1-bc8a-d1854985bb31@csgroup.eu>
- <CAMRc=MesdgXAivzDnm1RW-jcxs_5goZiyKvK0-JLwqDv=9F6LQ@mail.gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <CAMRc=MesdgXAivzDnm1RW-jcxs_5goZiyKvK0-JLwqDv=9F6LQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 217.114.34.19
+X-CLIENT-HOSTNAME: 217.114.34.19
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvieejgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddujedruddugedrfeegrdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvudejrdduudegrdefgedrudelpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushd
+X-DCC--Metrics: v370.home.net.pl 1024; Body=8 Fuz1=8 Fuz2=8
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+After recent changes, pinctrl-amd will not support hibernation when
+CONFIG_HIBERNATION is set and CONFIG_SUSPEND isn't because it will not
+register amd_gpio_pm_ops then.
+
+Address this by restoring dependencies on CONFIG_PM_SLEEP where
+necessary for hibernation support.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+Mario, this is on top of:
+
+https://patchwork.kernel.org/project/linux-acpi/patch/20250414203551.779320-1-superm1@kernel.org/
+
+which is currently in my bleeding-edge branch only.
+
+---
+ drivers/pinctrl/pinctrl-amd.c |   63 ++++++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 27 deletions(-)
+
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -894,26 +894,7 @@
+ 	}
+ }
+ 
+-#ifdef CONFIG_SUSPEND
+-static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+-{
+-	const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
+-
+-	if (!pd)
+-		return false;
+-
+-	/*
+-	 * Only restore the pin if it is actually in use by the kernel (or
+-	 * by userspace).
+-	 */
+-	if (pd->mux_owner || pd->gpio_owner ||
+-	    gpiochip_line_is_irq(&gpio_dev->gc, pin))
+-		return true;
+-
+-	return false;
+-}
+-
+-#ifdef CONFIG_ACPI
++#if defined(CONFIG_SUSPEND) && defined(CONFIG_ACPI)
+ static void amd_gpio_check_pending(void)
+ {
+ 	struct amd_gpio *gpio_dev = pinctrl_dev;
+@@ -936,8 +917,40 @@
+ static struct acpi_s2idle_dev_ops pinctrl_amd_s2idle_dev_ops = {
+ 	.check = amd_gpio_check_pending,
+ };
++
++static void amd_gpio_register_s2idle_ops(void)
++{
++	acpi_register_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
++}
++
++static void amd_gpio_unregister_s2idle_ops(void)
++{
++	acpi_unregister_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
++}
++#else
++static inline void amd_gpio_register_s2idle_ops(void) {}
++static inline void amd_gpio_unregister_s2idle_ops(void) {}
+ #endif
+ 
++#ifdef CONFIG_PM_SLEEP
++static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
++{
++	const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
++
++	if (!pd)
++		return false;
++
++	/*
++	 * Only restore the pin if it is actually in use by the kernel (or
++	 * by userspace).
++	 */
++	if (pd->mux_owner || pd->gpio_owner ||
++	    gpiochip_line_is_irq(&gpio_dev->gc, pin))
++		return true;
++
++	return false;
++}
++
+ static int amd_gpio_suspend_hibernate_common(struct device *dev, bool is_suspend)
+ {
+ 	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
+@@ -1211,9 +1224,7 @@
+ 
+ 	platform_set_drvdata(pdev, gpio_dev);
+ 	acpi_register_wakeup_handler(gpio_dev->irq, amd_gpio_check_wake, gpio_dev);
+-#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+-	acpi_register_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
+-#endif
++	amd_gpio_register_s2idle_ops();
+ 
+ 	dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
+ 	return ret;
+@@ -1232,9 +1243,7 @@
+ 
+ 	gpiochip_remove(&gpio_dev->gc);
+ 	acpi_unregister_wakeup_handler(amd_gpio_check_wake, gpio_dev);
+-#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+-	acpi_unregister_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
+-#endif
++	amd_gpio_unregister_s2idle_ops();
+ }
+ 
+ #ifdef CONFIG_ACPI
+@@ -1251,7 +1260,7 @@
+ 	.driver		= {
+ 		.name	= "amd_gpio",
+ 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
+-#ifdef CONFIG_SUSPEND
++#ifdef CONFIG_PM_SLEEP
+ 		.pm	= &amd_gpio_pm_ops,
+ #endif
+ 	},
 
 
-
-Le 30/04/2025 à 19:37, Bartosz Golaszewski a écrit :
-> On Wed, Apr 30, 2025 at 7:33 PM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->>
->>
->>
->> Le 08/04/2025 à 09:21, Bartosz Golaszewski a écrit :
->>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>
->>> struct gpio_chip now has callbacks for setting line values that return
->>> an integer, allowing to indicate failures. Convert the driver to using
->>> them.
->>>
->>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>> ---
->>>    arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 6 ++++--
->>>    1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
->>> index 4d8fa9ed1a67..d4ba6dbb86b2 100644
->>> --- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
->>> +++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
->>> @@ -92,7 +92,7 @@ static void mcu_power_off(void)
->>>        mutex_unlock(&mcu->lock);
->>>    }
->>>
->>> -static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->>> +static int mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->>>    {
->>>        struct mcu *mcu = gpiochip_get_data(gc);
->>>        u8 bit = 1 << (4 + gpio);
->>> @@ -105,6 +105,8 @@ static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->>>
->>>        i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL, mcu->reg_ctrl);
->>>        mutex_unlock(&mcu->lock);
->>> +
->>> +     return 0;
->>
->> i2c_smbus_write_byte_data() can fail, why not return the value returned
->> by i2c_smbus_write_byte_data() ?
->>
-> 
-> The calls to i2c_smbus_write_byte_data() in this driver are
-> universally not checked. I cannot test it and wasn't sure if that's on
-> purpose so I decided to stay safe. Someone who has access to this
-> platform could potentially fix it across the file.
-
-As far as I can see this function is called three times in this file.
-
-First time is in mcu_power_off(), which must return void.
-Second time is inside a forever loop in shutdown_thread_fn(), and I 
-can't see what could be done with the returned value.
-
-Last time is in the function you are changing. Wouldn't it make sense to 
-take the value into account here ? IIUC it is the purpose of the change, 
-isn't it ?
-
-Christophe
 
