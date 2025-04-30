@@ -1,112 +1,127 @@
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2283266B41;
-	Wed, 30 Apr 2025 17:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A260264F81;
+	Wed, 30 Apr 2025 18:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746035459; cv=none; b=Y/XhGPzM9HrHkhYOyd4le2r2GqFaiESdQFCFin0TSCDyUuaKKTbUzgnEFB+qzQ9A+bucwT3Plaba7UVVx8gcfgQ2Ovb30rHva69zzLJW6huzyS+DTJXTayqhyQK5sqKViOpWZ/VT9fDQIk+uxLfzhJq75CCK/qiAENxjxY+r4B0=
+	t=1746036928; cv=none; b=nA0xKSrU0AzfLIvlPYQ4fp+jiD4gFREQfa/23zbxAbDRD8Niuer6bdFJxL3WD4uezVCNR2HjGZ2KfniSpwOtpZat17/XOZzFkiG8tjE+LrGDQmXPGlx2eEsrmZbZvXCU22YAgr1bXKhfR5IH/UcluabCAdfMdBEBJQvVcu5cam0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746035459; c=relaxed/simple;
-	bh=6DnXcuIB7kw/wgnKG59umpRn+P/6qnNW2bGCf3Dec4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SCfJ00sfMKM5/sBSX7ddeoWk3k9WJCXftuWS0alO2Vx7ZnNEJHNQRIZeNd1WN5AcV7HNgIxKeoFhmyfWtA5R2yCxxgYbQmumZSrW78PkliWos4lfZZg6+L8EdHXmbLYA938H97EhLhkv91m5wnGM4Zm/vkVq627N6kmmMsGIbww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4Znkq45ny8z9sgs;
-	Wed, 30 Apr 2025 19:35:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id iqe3FYWY-FyS; Wed, 30 Apr 2025 19:35:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4Znkq40BnRz9sgR;
-	Wed, 30 Apr 2025 19:35:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 009548B765;
-	Wed, 30 Apr 2025 19:35:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id g5LcEjKmwqYi; Wed, 30 Apr 2025 19:35:27 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D3A228B763;
-	Wed, 30 Apr 2025 19:35:26 +0200 (CEST)
-Message-ID: <fab558c6-0403-45f4-97c3-9c71db678a20@csgroup.eu>
-Date: Wed, 30 Apr 2025 19:35:26 +0200
+	s=arc-20240116; t=1746036928; c=relaxed/simple;
+	bh=LQK7ATJYL9e453xGrlw5YiQkPyacBR+AanT7imH/Efw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUWxGoQvNO1vMHZJkYjPlZzKozOHjFRRz8vbP16hBqFGyksYDuVWruvDNo3IXln0uYBYpNG0WcJqO83EzYi4S1P0WZR5VcQtBftWSkZx958Ptin5Lc/XYD7rSxpE1EkFH2VOpZphwxGfAQojsUzumjFA7TCF/5VAvksG4cZ44x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mpm+J6P9; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mpm+J6P9"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aca99fc253bso19697066b.0;
+        Wed, 30 Apr 2025 11:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746036925; x=1746641725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4dSDcdYRcALkJ+3hIY53iFlkhSBYjRT1X+GuwsMkgvw=;
+        b=Mpm+J6P9QZKPuvlpY5/R/64Eo1zFBzQ/0AA5DyQfW9pEdfS54xTOYH13PJLVdqUqKP
+         Z+ma3TszRGLkZhJJd1o3SQhxU5pdwGB1pUHBG7K+JIJteaoaJ5UqqtV8GCoqkVOS/DE9
+         L/p1WoAm2zSRtDOmulLlNuTOmXuGpeJSXzqNZfrG+/zf4R/12kleIPYmF36zzfwp7fEM
+         wfmxs1Ixw44Yc4QCvw+Pfwrj5K91dD4zczkQOd4mlH4B+a2IAkSxnNuqiWZd263nyQ7I
+         dijfr9AG5uegCUBZhWJ4hDzup3OKoJKhHO5LXpYqLnjHYU6Wn5lp922rT0XYk7AF3zST
+         8lyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746036925; x=1746641725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4dSDcdYRcALkJ+3hIY53iFlkhSBYjRT1X+GuwsMkgvw=;
+        b=gNg1fral/XcZxPgcXb85VePK/bk4aPCykFOn4ulcfdjsM4C9ur2yu79bqalsTDg8nP
+         +8K/XsWgrEvQm5Q73TLQa9CVrgOZLOz4adIW0OjAuweVd+V1VcJz9nfWxdiqXC5JqURO
+         ezKoeWmvdM32juKMy+8WbO6pOsqdhIWIPzkWx+NbcRtKUSGXVGsaHJFLUu2xNPNkho3C
+         QglORwDr3p6r6//2EOjsWOi0D2Jmgmv2aE0pNohYAh3PKavVJClCVs8xvUXWEGqnaZRX
+         aOgY3ehDtRvCXvU24k7kL34j7o88gSYatJwrAkUhql/WDy24xZX6/tE/EJ/p0uUKpOLS
+         CcvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWo9RWI4JnuYJdn4XHjvuiB3jqzLKtfbKO0aF5Hy/UyCH1iEGc8BEAw8rPaR1ef8HXkHMIY/ggc9IU7Cjm5@vger.kernel.org, AJvYcCXRPH9QM2Gg4SUhrYcxHnteyDh/rhAjY5TGqG6nNEUGWMBZVSHEE7F0q9WaVThKUoc4WOd914fxAeol@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCascPHpmNMtG/gff5nuXSlFipK6ane6lEcdGT1kCgplTMdnqW
+	5c9Fxjx4vDW05bSDptiLYhVfcQdKRO0dbMLYvD1KQOLEaalIGdLYuZmNplHLyzAhLgh1bDFDMgV
+	SBYCtrxdcAlDqMFn/wlzrOPBs6OugsRB6
+X-Gm-Gg: ASbGnctpus7PJ09ABLNgdfAOZQ0by2cPSHTmDDThRvJGgmdbhMC6BpC14CvpHEj1lpP
+	UWaq8BF5UlUfWDjf2Emr9VBUIaZTFJEdTr/dP89gBuhPm0a76YD7ddjfLlgCTvrZocW0e1q8gE0
+	kKVbNyLNe63QqDTRewioZ9Dg==
+X-Google-Smtp-Source: AGHT+IFDhBSYiFRAp3szTZ7l8oZ2MlAWLqqkLN7hZXy8W4eiXluAWboNNQ5Ct7ap0did7zutNAEEWe9zN/XRrH4KGZY=
+X-Received: by 2002:a17:907:9811:b0:aca:c789:133e with SMTP id
+ a640c23a62f3a-acee25ff0admr328805866b.50.1746036924384; Wed, 30 Apr 2025
+ 11:15:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] powerpc: 44x/gpio: use new line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Anatolij Gustschin <agust@denx.de>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
- <20250408-gpiochip-set-rv-powerpc-v1-3-73dc1ebc6ef1@linaro.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250408-gpiochip-set-rv-powerpc-v1-3-73dc1ebc6ef1@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250430153239.7137-1-ariel@simulevski.at>
+In-Reply-To: <20250430153239.7137-1-ariel@simulevski.at>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 30 Apr 2025 21:14:48 +0300
+X-Gm-Features: ATxdqUHbELQqHdubC4QO1U9OD9HlxUSTSPgHdL8vE0YrLiXSO2lHwQGyKQhQTac
+Message-ID: <CAHp75VdzqoxKwVhSqHVcnjCyBT1+y+020iTADc0isX-kqDJY8w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: tigerlake: Document supported platforms in
+ Kconfig help
+To: Ariel Simulevski <ariel@simulevski.at>
+Cc: andy@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guido Trentalancia <guido2022@trentalancia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Apr 30, 2025 at 6:32=E2=80=AFPM Ariel Simulevski <ariel@simulevski.=
+at> wrote:
 
+Technically this is a v2 of the previous patch, but it has been
+changed a lot, so for _this_ time it's okay to have it still v1. Also
+note when v2 or any new version of patch is required the changelog
+must be provided (after the cutter '---' line below).
 
-Le 08/04/2025 à 09:21, Bartosz Golaszewski a écrit :
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> The Tiger Lake pinctrl driver is also used by some Alder Lake platforms
+> that reuse the same GPIO IP blocks.
+>
+> Update the Kconfig help texts for both drivers to document supported
+> platforms
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> and clarify when CONFIG_PINCTRL_TIGERLAKE may be required.
 
-> ---
->   arch/powerpc/platforms/44x/gpio.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/44x/gpio.c b/arch/powerpc/platforms/44x/gpio.c
-> index e5f2319e5cbe..d540e261d85a 100644
-> --- a/arch/powerpc/platforms/44x/gpio.c
-> +++ b/arch/powerpc/platforms/44x/gpio.c
-> @@ -75,8 +75,7 @@ __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   		clrbits32(&regs->or, GPIO_MASK(gpio));
->   }
->   
-> -static void
-> -ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-> +static int ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
->   	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
->   	unsigned long flags;
-> @@ -88,6 +87,8 @@ ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
->   	spin_unlock_irqrestore(&chip->lock, flags);
->   
->   	pr_debug("%s: gpio: %d val: %d\n", __func__, gpio, val);
-> +
-> +	return 0;
->   }
->   
->   static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
-> @@ -179,7 +180,7 @@ static int __init ppc4xx_add_gpiochips(void)
->   		gc->direction_input = ppc4xx_gpio_dir_in;
->   		gc->direction_output = ppc4xx_gpio_dir_out;
->   		gc->get = ppc4xx_gpio_get;
-> -		gc->set = ppc4xx_gpio_set;
-> +		gc->set_rv = ppc4xx_gpio_set;
->   
->   		ret = of_mm_gpiochip_add_data(np, mm_gc, ppc4xx_gc);
->   		if (ret)
-> 
+This should be done in the same way....
 
+> Supported platforms:
+>   - Tiger Lake (all variants)
+
+Have you checked this (that's all versions of Tiger Lake are in this driver=
+)?
+
+>   - Alder Lake-P
+
+> +         Some platforms may reuse GPIO IP blocks from earlier generation=
+s
+> +         and require CONFIG_PINCTRL_TIGERLAKE instead.
+
+Just list the supported platforms:
+- Alder Lake-N
+- Alder Lake-S
+
+And I believe some of Raptor Lake:s are also require this driver.
+
+> +         Also used on some Alder Lake platforms that share compatible GP=
+IO IP.
+
+No need to have this text, it's obvious from the below list.
+
+> +         Supported platforms:
+> +           - Tiger Lake (all variants)
+> +           - Alder Lake-P
+
+...
+
+With that, waiting for v2.
+
+--=20
+With Best Regards,
+Andy Shevchenko
