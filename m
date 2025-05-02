@@ -1,133 +1,110 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB524677F
-	for <linux-gpio@vger.kernel.org>; Fri,  2 May 2025 11:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453841DF75C;
+	Fri,  2 May 2025 12:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746186986; cv=none; b=nAXeUOvqthrJHlfyhfZVcfMLGcOhldtO/TYDNzE3b2XdjwOqqkVBkbD2JJRJnql8q5DkmioumDKGygiL+hROfnCJi3LJK8lSIxPMwFOhHR5f+sCb2eOBIUHPVmd2XQsopDEUvF5Iy4aXP4dAALGfqLkXVgm8Bxx3j00YGpx34QQ=
+	t=1746188044; cv=none; b=l4LKV7wzsVgnWbrpU94SCMbnFdeRO+GAEIDqGqVemlGZRd4bWMngJ+PHwEUB/opHVNS6Ee3S2ei8Xvcdoh0jlWkA1KY/8PwmCYwtwdJ1yuELNwGcwTnAuEDKwwL9BVcALOn3X9fCuH+9DgpG2vjdl63vEppZdZs4RKHX6MlRA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746186986; c=relaxed/simple;
-	bh=c+gKYUvL+mRmw0LVpyp2dts7T0YVjJ1xgr2xwpHqjV8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WUnZFIJLYjNnAVwyYg7EgfovWwb1XS4bRVbn9WBfnAg82rjuEW2KGXnRTQgaZHDraXogvVwMx9hzYhm2UZS31hcbAQ1qlkaoSS2w+LtrxhNmvA5aFBy3diIPVXGYVjInDC5WC1arkaJe/2EoVxmM1qqz673qy12sFD24yoSMZO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pJpgYU1j; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746188044; c=relaxed/simple;
+	bh=qzjeHjcOjowLZFXG/jZEPH3BZj/3SWbgVlFBrv8GAno=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=Ujf8FCWuMzoAyxWc/LgbU4y3vBU87am760gdLLZ6S0m8BrcQbe8pND4bENGjbjIgaFoFdDThI1EILm98eVv98q4IH51CWA6sZUT7oNdGsrY1QZcc8QYKDISWVht5o3GirphP81H4SROz8oyix1qyO2jn/xDL4vTm8RDQ3wqHKKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d/uuvasm; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pJpgYU1j"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3105ef2a071so19297291fa.1
-        for <linux-gpio@vger.kernel.org>; Fri, 02 May 2025 04:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746186982; x=1746791782; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rUNwIJ6BVyXnCNfhB8YdWYkkIgckWrMjQ8cfZd889F4=;
-        b=pJpgYU1ji4jGfIxLLtgJESHZTiUhNJ7ZklNVnZg6HcCtRxbwWGmFOhORaqK377mJVh
-         UY0FfG85ofIeI0S9Z6Ka+4N3lb/RR355qxMs4v4iLj8M68kvqGXhE57ucVeQTHM9yzKs
-         BibeDf7FnbQdCS4zhQ5wpnnIZLIrDpAuCmp4Zjv4uNCvhLmfRHB8Gg0fWcE8tcQvMiE2
-         Qk8p64t4tb2nAgBmAEdgdrJRwVlQ6LFEBU0ybhjVGZjvnLzGRT86oXj8WzEyw3MGkyOW
-         EP/wHTa18vLupIM1egkY8dD0lAzU2hUnBC3Iaxfv6uUKM6lJqyaTJMfIl3/kPRJaLwYD
-         jdKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746186982; x=1746791782;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rUNwIJ6BVyXnCNfhB8YdWYkkIgckWrMjQ8cfZd889F4=;
-        b=fUFDBTn3WJY0UIPk4C2Kk+ca0au1o4EIKxtZsT61naEVlRD157dZ1rjJDlnkeS/cV8
-         ownyIlPIa4yjHJY+X9DM8jCRAORDjcGj08MhK8KGSlUdk+oCQXFMgX/RzsTq66QL9eYP
-         sflQD5bPcVeJF9lAMWr1vJbOaPlH3xx+SKW8c/4TvZK7rv9spSOAgbqeq+pm3M48kaLU
-         YOYA1k3mCqon57t4Tk1/v4NviCr2IouJydtQp/7DnjwA+oX5q6Tw+Ie9qg2LPzVwqA8w
-         OPQqXkE6hiDBnHixxuv2aqM3aBvGl0a4F3lQi8aMT4JT7LyDBJouYWzDvKiu2b90LDWJ
-         8tVA==
-X-Gm-Message-State: AOJu0Yy+5cpTL8BNGr+tgIEK/mOOJ1rPp3kSTnWx/5RD8ylfLvnuOGg/
-	PwRDncQtQiTGaZ2Zf4MDJhytNa16683KW2o+b4/FiU+6dYfGHivJ/CxB0ofT5VqTihKHjCCqhpB
-	uBTyVyeDdPG2/Xlwac+H56emOX4aX6ZzHZTb8CKzZ1/z0/UBrNEs=
-X-Gm-Gg: ASbGncujBevB1/Vuv73k7yRW0ZSU974/j13O72M0aUtD4glUx+MW8gfpScU0QMHz4tC
-	gE2gsxzBTanTzDEskVdhTYkzDDNVVWfUZGPK4eLywouULT5gTxER0TGoJHixtjWdBYkaS4wIGjk
-	4BCo1COapbUs9e7zZNZtXslA==
-X-Google-Smtp-Source: AGHT+IFVQ8JKPYO1rnLcM2Y70dcTgwStoWvcnB2aoZEyQzs4B/b3M5+Y/SlSIKfzxsXCMLRLq9S0sgzPIPFIrl/mQKs=
-X-Received: by 2002:a2e:a812:0:b0:310:85ba:115f with SMTP id
- 38308e7fff4ca-320c5be28efmr7733421fa.33.1746186981975; Fri, 02 May 2025
- 04:56:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d/uuvasm"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 19C0B43302;
+	Fri,  2 May 2025 12:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1746188033;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ThJ+c2xPN7+O9usD5U/qLq9TQibJ4VHLal34gC1vvYI=;
+	b=d/uuvasmN9JzH4M4NCNhdkVa5tRVmROXv4Mq8GrwEzVYZj8oYVsai3/iqwy08Q7Df6UGr+
+	xsG1TOu1eXgtMRRcoC3XPsWbwLuVqvDE4S6QJL9fiZZbn5NCYuhJrCNLtzl8bDnOysj/Y3
+	VbxXGtFHZIEETA276bBvEl/fq/YkRLieftEni44Kq778fZ1aV+wAxSgCvqZkJQfG5fc5pf
+	vzBkBuSrMkClwr6lKdpUSogXCcEv57SVZDahpLLsHUddVaiRmMto/vd6Klt64+ACM+8nYi
+	Td/L9MKGKSB+zRNqstUgCNmPs+0vxZdmVOnJpimSYIXaZg/RfhGdIx1wjqWkQg==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 May 2025 13:56:10 +0200
-X-Gm-Features: ATxdqUEieMo6zqI_jOq2JYpn2sJsyAQVwKrVkhKfiEUEH0GD9sH8kJFEH6gZSHg
-Message-ID: <CACRpkdbhYTFpA_jfMPFZ4t4bcVdO0+9iCsjtBnLpy9ok0U_wvQ@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v6.15
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 May 2025 14:13:51 +0200
+Message-Id: <D9LNZVEKP7VV.2UC5AY0D45CR2@bootlin.com>
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v7 04/11] pwm: max7360: Add MAX7360 PWM support
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com>
+ <20250428-mdb-max7360-support-v7-4-4e0608d0a7ff@bootlin.com>
+ <aBScGRN-1C81gtC5@smile.fi.intel.com>
+In-Reply-To: <aBScGRN-1C81gtC5@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeftedvgfegteehjeejtdefgffhteevvddtvdejleeghfefuefgledtteduvdetkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Hi Linus,
+On Fri May 2, 2025 at 12:19 PM CEST, Andy Shevchenko wrote:
+> On Mon, Apr 28, 2025 at 01:57:22PM +0200, mathieu.dubois-briand@bootlin.c=
+om wrote:
+>> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>>=20
+>> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, str=
+uct pwm_device *pwm,
+>> +					     const void *_wfhw, struct pwm_waveform *wf)
+>> +{
+>> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
+>> +
+>> +	wf->period_length_ns =3D wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
+>> +	wf->duty_offset_ns =3D 0;
+>> +	wf->duty_length_ns =3D DIV64_U64_ROUND_UP(wfhw->duty_steps * MAX7360_P=
+WM_PERIOD_NS,
+>
+> Does the numerator have already 64-bit type? Otherwise (u)int*(u)int will=
+ be
+> just an (u)int.
+>
 
-here are som Valborg-patches for pincontrol. All are driver
-fixes, nothing exciting at all other than that they fix bugs which
-is nice.
+Err no, this section has been modified back and forth, but today we have
+u8 * 2 * 1000000L, so we will always fit in a u32.
 
-Details are in the signed tag, please pull it in!
+I will use DIV_ROUND_UP() instead.
 
-Yours,
-Linus Walleij
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+> ...
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+OK with all other comments.
 
-are available in the Git repository at:
+Thanks for your review.
+Mathieu
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.15-2
 
-for you to fetch changes up to 12b8a672d2aa053064151659f49e7310674d42d3:
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-  pinctrl: qcom: Fix PINGROUP definition for sm8750 (2025-04-29 10:27:25 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v6.15 series:
-
-- Fix potential NULL dereference in the i.MX driver.
-
-- Fix the pull up/down resistor values in the Meson driver.
-
-- Fix the mapping of the PHY LED pins in the Airhoa driver.
-
-- Fix EINT interrupts on older controllers and a debounce value
-  issue in the Mediatek driver.
-
-- Fix an erronoeus PINGROUP define in the Qualcomm driver.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      pinctrl: mediatek: common-v1: Fix EINT breakage on older controllers
-
-Christian Marangi (1):
-      pinctrl: airoha: fix wrong PHY LED mapping and PHY2 LED defines
-
-Dan Carpenter (1):
-      pinctrl: mediatek: common-v1: Fix error checking in mtk_eint_init()
-
-Hao Chang (1):
-      pinctrl: mediatek: Fix new design debounce issue
-
-Hui Wang (1):
-      pinctrl: imx: Return NULL if no group is matched and found
-
-Martin Blumenstingl (1):
-      pinctrl: meson: define the pull up/down resistor value as 60 kOhm
-
-Maulik Shah (1):
-      pinctrl: qcom: Fix PINGROUP definition for sm8750
-
- drivers/pinctrl/freescale/pinctrl-imx.c       |   6 +-
- drivers/pinctrl/mediatek/mtk-eint.c           |   2 +-
- drivers/pinctrl/mediatek/pinctrl-airoha.c     | 159 ++++++++++++--------------
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  12 +-
- drivers/pinctrl/meson/pinctrl-meson.c         |   2 +-
- drivers/pinctrl/qcom/pinctrl-sm8750.c         |   4 +-
- 6 files changed, 87 insertions(+), 98 deletions(-)
