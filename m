@@ -1,47 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B4F2D903E;
-	Mon,  5 May 2025 22:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED073745A5;
+	Mon,  5 May 2025 22:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485512; cv=none; b=MCX33a/DJiM3g0vTA4s6IKTa3ZgGMaUNYCYQ/qogAiTqyE/p9zTX1P/QLmkMSBEXYbAKvM5GCz0xpzFShtm1/uiPaXrvCs4ElvpSQqLA8tWIIx27MK2JpF9TrnIiM7h44jk6TjEi+mhykScyESuRvKw2jBKt6IF3JlBmGyLaEDU=
+	t=1746485936; cv=none; b=o56+D2lHnTdiNyi8Y6lLVGVhGWAEzGDxDi9bT/zhvMKGwplPI/77BCqByq7cne0VvTS5rKMIIRI/m+eGaSQ4UG0dKCU4anzSB90FiP7gjW2cuBAjUpc92pstUFRNvDZTqvMQ404fGKqOJNEYiH710wJWoG8LfmaxXtHVyhufM30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485512; c=relaxed/simple;
-	bh=TWNIECLFDrGssxfIRWwMyGx7uVm/cZCl4qk3I1Gtj7Q=;
+	s=arc-20240116; t=1746485936; c=relaxed/simple;
+	bh=rOo8j2xsQXpsL82NQglsa2dm1Nhqx7YdR2/zchL6+xw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bhC1D7aN9ZAVAXf4hvarLKHoQ3t+4C9PqVlUgIQiLmSaNTnPjNb3KdIGWHpdp2gu7XQTOqpbc9isCFS0orDHisBSqkBx6JEEwZsj44bsdSxHZdge8ZqCovSrWDKUO6kA0rHGee1hvtVWJuHAC4tH5A7R3mvt3Bx8pTP7cjwQ8yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWo4kDR7; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=ijIr8AqH5v7i0EZ3YvaTN20mKEAbnflfNV2973vIOSMwRfo2Js8tDpx6qMIZNPPkOSKadLuD23IkHK2i/Fmn1eqKFwdhBXdSgkYHjiyAHX1zJpF4+UzeXq1MeJEykTj3RwZk0TIQVigZxlanhDKAmTEka8dmWL+o4UHP7HqKKLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdWdDeV2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWo4kDR7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7FDC4CEEE;
-	Mon,  5 May 2025 22:51:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdWdDeV2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32C4C4CEE4;
+	Mon,  5 May 2025 22:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485511;
-	bh=TWNIECLFDrGssxfIRWwMyGx7uVm/cZCl4qk3I1Gtj7Q=;
+	s=k20201202; t=1746485936;
+	bh=rOo8j2xsQXpsL82NQglsa2dm1Nhqx7YdR2/zchL6+xw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YWo4kDR7SPVh2TxUYcsHYhyCS//M6slchxdkzi6pt5AEmWZWAieLvZ3KkN0wwIuvh
-	 Tt9/sgU8Zjqn5pf5GyQ2e6WSVN8nl2NskywrayzieYkqVDhfDJBdv7sz6tKH/KJRFc
-	 nNPX+gq7XLIdvdGjHijQONyh+JrMfpafbznzipK8v4aXc+4vE7atSsCVVlevqwpzZc
-	 uiEGq+AXnkZ8bwZJM4fHOIYI1nWYvwX76UbkqeHiUZfZsFGXkEltlGq1sGaeqWoT7v
-	 1ZvLC8msGBN8Lz8uWbSmcgrI1dLMr7Cg2iBHxQ3raCx7L8HHQSK+PDXrHvOVtXaoA8
-	 8INRjoMzaSqVw==
+	b=hdWdDeV22HCRz9/iITCEYS9i19b0Mktg24weWKu2z2Yp1Ft/C4uWY50q8WtNX4SjN
+	 IPJzweayWLXzzEzFi2WXkmyzqOxhMD8XMis/J+KxYxn9IvD6ueiv6pRSZFz91MQOCI
+	 nwrAFMfntwdIkS1uthW+DOdbDbPuNicGwkjQ67b9E8J/mniLDjGs5gHaSR2MnAkBN8
+	 Ovx/xt6jYO6UtoK2AXCNlSpwC8OkdssSy8I+1m3rbt2LUcGox0SqlixgCBKQO8c7Xk
+	 iXqNy0HJj6xFn/7rPmw9FGB9A5h67bRsXsh0fjBRxdGEPWco0OwjPnHD6u9hK9wfut
+	 7I2z36JD4nAQg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Prathamesh Shete <pshete@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	linus.walleij@linaro.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 353/486] pinctrl: renesas: rzg2l: Add suspend/resume support for pull up/down
-Date: Mon,  5 May 2025 18:37:09 -0400
-Message-Id: <20250505223922.2682012-353-sashal@kernel.org>
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	brgl@bgdev.pl,
+	peng.fan@nxp.com,
+	kunwu.chan@linux.dev,
+	dan.carpenter@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 074/294] pinctrl-tegra: Restore SFSEL bit when freeing pins
+Date: Mon,  5 May 2025 18:52:54 -0400
+Message-Id: <20250505225634.2688578-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
-References: <20250505223922.2682012-1-sashal@kernel.org>
+In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
+References: <20250505225634.2688578-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,93 +54,184 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.26
+X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Prathamesh Shete <pshete@nvidia.com>
 
-[ Upstream commit b2bd65fbb617353e3c46ba5206b3b030fa0f260c ]
+[ Upstream commit c12bfa0fee65940b10ff5187349f76c6f6b1df9c ]
 
-The Renesas RZ/G3S supports a power-saving mode where power to most of
-the SoC components is lost, including the PIN controller.  Save and
-restore the pull-up/pull-down register contents to ensure the
-functionality is preserved after a suspend/resume cycle.
+Each pin can be configured as a Special Function IO (SFIO) or GPIO,
+where the SFIO enables the pin to operate in alternative modes such as
+I2C, SPI, etc.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250205100116.2032765-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The current implementation sets all the pins back to SFIO mode
+even if they were initially in GPIO mode. This can cause glitches
+on the pins when pinctrl_gpio_free() is called.
+
+Avoid these undesired glitches by storing the pin's SFIO/GPIO
+state on GPIO request and restoring it on GPIO free.
+
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Link: https://lore.kernel.org/20250305104939.15168-2-pshete@nvidia.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.h |  6 +++
+ 2 files changed, 57 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index d90685cfe2e1a..bde58f5a743cb 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -311,6 +311,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @pmc: PMC registers cache
-  * @pfc: PFC registers cache
-  * @iolh: IOLH registers cache
-+ * @pupd: PUPD registers cache
-  * @ien: IEN registers cache
-  * @sd_ch: SD_CH registers cache
-  * @eth_poc: ET_POC registers cache
-@@ -324,6 +325,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u32	*pfc;
- 	u32	*iolh[2];
- 	u32	*ien[2];
-+	u32	*pupd[2];
- 	u8	sd_ch[2];
- 	u8	eth_poc[2];
- 	u8	eth_mode;
-@@ -2539,6 +2541,11 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
- 		if (!cache->ien[i])
- 			return -ENOMEM;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 7c12a3470642c..1350ab56fbc03 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -280,8 +280,8 @@ static int tegra_pinctrl_set_mux(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
  
-+		cache->pupd[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pupd[i]),
-+					      GFP_KERNEL);
-+		if (!cache->pupd[i])
-+			return -ENOMEM;
-+
- 		/* Allocate dedicated cache. */
- 		dedicated_cache->iolh[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
- 							sizeof(*dedicated_cache->iolh[i]),
-@@ -2779,7 +2786,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
- 
- 	for (u32 port = 0; port < nports; port++) {
--		bool has_iolh, has_ien;
-+		bool has_iolh, has_ien, has_pupd;
- 		u32 off, caps;
- 		u8 pincnt;
- 		u64 cfg;
-@@ -2791,6 +2798,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 		caps = FIELD_GET(PIN_CFG_MASK, cfg);
- 		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
- 		has_ien = !!(caps & PIN_CFG_IEN);
-+		has_pupd = !!(caps & PIN_CFG_PUPD);
- 
- 		if (suspend)
- 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[port]);
-@@ -2809,6 +2817,15 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 			}
+-static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
+-					unsigned int offset)
++static int tegra_pinctrl_get_group_index(struct pinctrl_dev *pctldev,
++					 unsigned int offset)
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	unsigned int group, num_pins, j;
+@@ -294,12 +294,35 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
+ 			continue;
+ 		for (j = 0; j < num_pins; j++) {
+ 			if (offset == pins[j])
+-				return &pmx->soc->groups[group];
++				return group;
  		}
+ 	}
  
-+		if (has_pupd) {
-+			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
-+						 cache->pupd[0][port]);
-+			if (pincnt >= 4) {
-+				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PUPD(off),
-+							 cache->pupd[1][port]);
-+			}
-+		}
+-	dev_err(pctldev->dev, "Pingroup not found for pin %u\n", offset);
+-	return NULL;
++	return -EINVAL;
++}
 +
- 		RZG2L_PCTRL_REG_ACCESS16(suspend, pctrl->base + PM(off), cache->pm[port]);
- 		RZG2L_PCTRL_REG_ACCESS8(suspend, pctrl->base + P(off), cache->p[port]);
++static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *pctldev,
++							    unsigned int offset,
++							    int group_index)
++{
++	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	if (group_index < 0 || group_index > pmx->soc->ngroups)
++		return NULL;
++
++	return &pmx->soc->groups[group_index];
++}
++
++static struct tegra_pingroup_config *tegra_pinctrl_get_group_config(struct pinctrl_dev *pctldev,
++								    unsigned int offset,
++								    int group_index)
++{
++	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	if (group_index < 0)
++		return NULL;
++
++	return &pmx->pingroup_configs[group_index];
+ }
  
+ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+@@ -308,12 +331,15 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct tegra_pingroup *group;
++	struct tegra_pingroup_config *config;
++	int group_index;
+ 	u32 value;
+ 
+ 	if (!pmx->soc->sfsel_in_mux)
+ 		return 0;
+ 
+-	group = tegra_pinctrl_get_group(pctldev, offset);
++	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
++	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
+ 
+ 	if (!group)
+ 		return -EINVAL;
+@@ -321,7 +347,11 @@ static int tegra_pinctrl_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
+ 		return -EINVAL;
+ 
++	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
++	if (!config)
++		return -EINVAL;
+ 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
++	config->is_sfsel = (value & BIT(group->sfsel_bit)) != 0;
+ 	value &= ~BIT(group->sfsel_bit);
+ 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
+ 
+@@ -334,12 +364,15 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
+ {
+ 	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct tegra_pingroup *group;
++	struct tegra_pingroup_config *config;
++	int group_index;
+ 	u32 value;
+ 
+ 	if (!pmx->soc->sfsel_in_mux)
+ 		return;
+ 
+-	group = tegra_pinctrl_get_group(pctldev, offset);
++	group_index = tegra_pinctrl_get_group_index(pctldev, offset);
++	group = tegra_pinctrl_get_group(pctldev, offset, group_index);
+ 
+ 	if (!group)
+ 		return;
+@@ -347,8 +380,12 @@ static void tegra_pinctrl_gpio_disable_free(struct pinctrl_dev *pctldev,
+ 	if (group->mux_reg < 0 || group->sfsel_bit < 0)
+ 		return;
+ 
++	config = tegra_pinctrl_get_group_config(pctldev, offset, group_index);
++	if (!config)
++		return;
+ 	value = pmx_readl(pmx, group->mux_bank, group->mux_reg);
+-	value |= BIT(group->sfsel_bit);
++	if (config->is_sfsel)
++		value |= BIT(group->sfsel_bit);
+ 	pmx_writel(pmx, value, group->mux_bank, group->mux_reg);
+ }
+ 
+@@ -785,6 +822,12 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	pmx->dev = &pdev->dev;
+ 	pmx->soc = soc_data;
+ 
++	pmx->pingroup_configs = devm_kcalloc(&pdev->dev,
++					     pmx->soc->ngroups, sizeof(*pmx->pingroup_configs),
++					     GFP_KERNEL);
++	if (!pmx->pingroup_configs)
++		return -ENOMEM;
++
+ 	/*
+ 	 * Each mux group will appear in 4 functions' list of groups.
+ 	 * This over-allocates slightly, since not all groups are mux groups.
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index b3289bdf727d8..b97136685f7a8 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -8,6 +8,10 @@
+ #ifndef __PINMUX_TEGRA_H__
+ #define __PINMUX_TEGRA_H__
+ 
++struct tegra_pingroup_config {
++	bool is_sfsel;
++};
++
+ struct tegra_pmx {
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctl;
+@@ -21,6 +25,8 @@ struct tegra_pmx {
+ 	int nbanks;
+ 	void __iomem **regs;
+ 	u32 *backup_regs;
++	/* Array of size soc->ngroups */
++	struct tegra_pingroup_config *pingroup_configs;
+ };
+ 
+ enum tegra_pinconf_param {
 -- 
 2.39.5
 
