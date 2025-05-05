@@ -1,97 +1,230 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944882D1105;
-	Mon,  5 May 2025 22:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C6A385350;
+	Mon,  5 May 2025 23:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485455; cv=none; b=U4lU4Uxity5POl5vniFaxXQ/5TnBH2/3R4tMbjHRUUSsy/H5tXnA4d6b/TbZTjgdHlO2swE8nEKzzLLXaSCSI/Sznmx9UIjEIZnYK+m3CuJKoAMVfjVh5oo8mpbp0pVlr0k7Mgx4tbzk35uT4xoSlBCJHanVoN9GAXywOAD9CCk=
+	t=1746486037; cv=none; b=QL3GcVvCV+MPkhREQGWe86cQMudSURB+5147eq3zXeIO1OL4823624jPUrwf9CHbOsrIKlyPLzOAB3LhEEGfeSMmiwc0cfEzZrazU87jQ38RGNCbExc0Cv75KzEt3BevZRDkC+pcaeg5tq/Q3W5Ns/S/QwJOnjWyt23i5ezB9so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485455; c=relaxed/simple;
-	bh=h93WNiWTrCyQI3Nh7+7mDmYhlhKFljlivtTz1PbBYDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhhFXNl5dOGHX5MPoWvM8FgVvOYIuP1JHErdbrj0SyAy1Wv8TZzXf6ULwrkfhOPjbGKC/4mshbhNC76Mxt5D9EuL6jDyyyQtDApe8A4GObxUR8qspFV/yQM++GeQZurVsOVysL1L4IgT/KUOaakEWlXJl+FcKgCKSEvQPFyUU7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Utq2YDpG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746486037; c=relaxed/simple;
+	bh=dax5wqEKuM333ZcfbQ21Tr60WY5WK+s4KXT4IfgTIks=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sLBNRJSDTmv8APw2vr//KMoKgXoL18Ve/FkoqEogt2vm/2JpM5dvG16zPoQ7CxwlHG7NE+ejT/l8Qam4SaM4WbD/9WSNTTm3JkBuxBdaewc6ZktyT5+dHmbLAqXp6CM262ae218Bys/Z8uyDrIWAedgVZwMqQQPUb9EagP4feoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qivaZwFv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Utq2YDpG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8D7C4CEED;
-	Mon,  5 May 2025 22:50:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qivaZwFv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 977E7C4CEF1;
+	Mon,  5 May 2025 23:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485455;
-	bh=h93WNiWTrCyQI3Nh7+7mDmYhlhKFljlivtTz1PbBYDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Utq2YDpGylG1fsAlgziWYcuoLBLkJgK12hvOUP8xdcbhzKCLQPCyJ9I39YZ0bUtiu
-	 SluMlGiZLvb46N2Q4DG5PamA5XC+QgziPQKWy3txE91Uos+8Kg1tuEc40Uio6IzLCq
-	 at8qeKmDlXN9PpJnAbQt6rvI4gQIM0qDoB/t1Kbwcw1rLmw7Rzw++kaY2Ro15+7fCs
-	 JmRlrZ9/6bE+FjZjbijUZh+xKD/Mu7I6PLff8kwqsVrdNvmVDPB2je4bZdOkmAIs3b
-	 SXB+sR5TFafIb43E9kBAPPiGcMNOVr0FzbPZ7q6XwXkku4rBrcB2aYOfSAinQDz4ta
-	 EvBzXeQjV/7iQ==
-Date: Tue, 6 May 2025 07:50:50 +0900
-From: Mark Brown <broonie@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	s=k20201202; t=1746486035;
+	bh=dax5wqEKuM333ZcfbQ21Tr60WY5WK+s4KXT4IfgTIks=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qivaZwFvvQDlRLfHAvQZdD5vJSWe5FLRM4nqVCOAv2gBkMFU3up0MTH6uY2DWfhOz
+	 ipV/zqGE6oJgQ3wi+FC6CbV0ZMjyvA17WO8BMHFd/a0wjCC2Th9SGMvZ2HGwCFd3L+
+	 I9hzQ3mhOKm94SPidDErWKkTWD0wFnSFekkK3cyjWEjScfpIOSF+dU76IIGUBZzEGh
+	 IeAbKweFHPQzsX3lEkbKhwzkONdvwpGlyivdwBvHHLCI7ZgU1ldyc9Z9uTdWtw++ua
+	 TYCkEnYJE0E4ycVNix57V+oVeUJPLMzSgMCKaSdaKCfllTcWmGvdrzCiaRK4WlA5/4
+	 9Nu6TOzOz/7vw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Artur Weber <aweber.kernel@gmail.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/9] ASoC: codec: cs42l56: Drop cs42l56.h
-Message-ID: <aBlAys_SvQRHNTcp@finisterre.sirena.org.uk>
-References: <20250428-csl42x-v2-0-e8056313968f@nxp.com>
- <20250428-csl42x-v2-2-e8056313968f@nxp.com>
+	Sasha Levin <sashal@kernel.org>,
+	florian.fainelli@broadcom.com,
+	rjui@broadcom.com,
+	sbranden@broadcom.com,
+	dan.carpenter@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 121/294] pinctrl: bcm281xx: Use "unsigned int" instead of bare "unsigned"
+Date: Mon,  5 May 2025 18:53:41 -0400
+Message-Id: <20250505225634.2688578-121-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
+References: <20250505225634.2688578-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v5vMaPAMM9Oxt2fN"
-Content-Disposition: inline
-In-Reply-To: <20250428-csl42x-v2-2-e8056313968f@nxp.com>
-X-Cookie: "Elvis is my copilot."
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.89
+Content-Transfer-Encoding: 8bit
 
+From: Artur Weber <aweber.kernel@gmail.com>
 
---v5vMaPAMM9Oxt2fN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 07b5a2a13f4704c5eae3be7277ec54ffdba45f72 ]
 
-On Mon, Apr 28, 2025 at 10:09:03AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> There is no in-tree user of "include/sound/cs42l56.h", so move
-> 'struct cs42l56_platform_data' to cs42l56.c and remove the header file.
-> And platform data is mostly for platforms that create
-> devices non using device tree. CS42L56 is a discontinued product,
-> there is less possibility that new users will use legacy method
-> to create devices. So drop cs42l56.h to prepare using GPIOD API.
+Replace uses of bare "unsigned" with "unsigned int" to fix checkpatch
+warnings. No functional change.
 
-This breaks an x86 allmodconfig build:
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+Link: https://lore.kernel.org/20250303-bcm21664-pinctrl-v3-2-5f8b80e4ab51@gmail.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c | 44 +++++++++++++-------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-/build/stage/linux/sound/soc/codecs/cs42l56.c:26:10: fatal error: 'sound/cs=
-42l56.h' file not found
-   26 | #include <sound/cs42l56.h>
-      |          ^~~~~~~~~~~~~~~~~
-1 error generated.
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+index cf6efa9c0364a..a039b490cdb8e 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+@@ -72,7 +72,7 @@ static enum bcm281xx_pin_type hdmi_pin = BCM281XX_PIN_TYPE_HDMI;
+ struct bcm281xx_pin_function {
+ 	const char *name;
+ 	const char * const *groups;
+-	const unsigned ngroups;
++	const unsigned int ngroups;
+ };
+ 
+ /*
+@@ -84,10 +84,10 @@ struct bcm281xx_pinctrl_data {
+ 
+ 	/* List of all pins */
+ 	const struct pinctrl_pin_desc *pins;
+-	const unsigned npins;
++	const unsigned int npins;
+ 
+ 	const struct bcm281xx_pin_function *functions;
+-	const unsigned nfunctions;
++	const unsigned int nfunctions;
+ 
+ 	struct regmap *regmap;
+ };
+@@ -941,7 +941,7 @@ static struct bcm281xx_pinctrl_data bcm281xx_pinctrl = {
+ };
+ 
+ static inline enum bcm281xx_pin_type pin_type_get(struct pinctrl_dev *pctldev,
+-						  unsigned pin)
++						  unsigned int pin)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -985,7 +985,7 @@ static int bcm281xx_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *bcm281xx_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
+-						   unsigned group)
++						   unsigned int group)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -993,9 +993,9 @@ static const char *bcm281xx_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int bcm281xx_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
+-					   unsigned group,
++					   unsigned int group,
+ 					   const unsigned **pins,
+-					   unsigned *num_pins)
++					   unsigned int *num_pins)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -1007,7 +1007,7 @@ static int bcm281xx_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
+ 
+ static void bcm281xx_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 					  struct seq_file *s,
+-					  unsigned offset)
++					  unsigned int offset)
+ {
+ 	seq_printf(s, " %s", dev_name(pctldev->dev));
+ }
+@@ -1029,7 +1029,7 @@ static int bcm281xx_pinctrl_get_fcns_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *bcm281xx_pinctrl_get_fcn_name(struct pinctrl_dev *pctldev,
+-						 unsigned function)
++						 unsigned int function)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -1037,9 +1037,9 @@ static const char *bcm281xx_pinctrl_get_fcn_name(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int bcm281xx_pinctrl_get_fcn_groups(struct pinctrl_dev *pctldev,
+-					   unsigned function,
++					   unsigned int function,
+ 					   const char * const **groups,
+-					   unsigned * const num_groups)
++					   unsigned int * const num_groups)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -1050,8 +1050,8 @@ static int bcm281xx_pinctrl_get_fcn_groups(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int bcm281xx_pinmux_set(struct pinctrl_dev *pctldev,
+-			       unsigned function,
+-			       unsigned group)
++			       unsigned int function,
++			       unsigned int group)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct bcm281xx_pin_function *f = &pdata->functions[function];
+@@ -1082,7 +1082,7 @@ static const struct pinmux_ops bcm281xx_pinctrl_pinmux_ops = {
+ };
+ 
+ static int bcm281xx_pinctrl_pin_config_get(struct pinctrl_dev *pctldev,
+-					   unsigned pin,
++					   unsigned int pin,
+ 					   unsigned long *config)
+ {
+ 	return -ENOTSUPP;
+@@ -1091,9 +1091,9 @@ static int bcm281xx_pinctrl_pin_config_get(struct pinctrl_dev *pctldev,
+ 
+ /* Goes through the configs and update register val/mask */
+ static int bcm281xx_std_pin_update(struct pinctrl_dev *pctldev,
+-				   unsigned pin,
++				   unsigned int pin,
+ 				   unsigned long *configs,
+-				   unsigned num_configs,
++				   unsigned int num_configs,
+ 				   u32 *val,
+ 				   u32 *mask)
+ {
+@@ -1207,9 +1207,9 @@ static const u16 bcm281xx_pullup_map[] = {
+ 
+ /* Goes through the configs and update register val/mask */
+ static int bcm281xx_i2c_pin_update(struct pinctrl_dev *pctldev,
+-				   unsigned pin,
++				   unsigned int pin,
+ 				   unsigned long *configs,
+-				   unsigned num_configs,
++				   unsigned int num_configs,
+ 				   u32 *val,
+ 				   u32 *mask)
+ {
+@@ -1277,9 +1277,9 @@ static int bcm281xx_i2c_pin_update(struct pinctrl_dev *pctldev,
+ 
+ /* Goes through the configs and update register val/mask */
+ static int bcm281xx_hdmi_pin_update(struct pinctrl_dev *pctldev,
+-				    unsigned pin,
++				    unsigned int pin,
+ 				    unsigned long *configs,
+-				    unsigned num_configs,
++				    unsigned int num_configs,
+ 				    u32 *val,
+ 				    u32 *mask)
+ {
+@@ -1321,9 +1321,9 @@ static int bcm281xx_hdmi_pin_update(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int bcm281xx_pinctrl_pin_config_set(struct pinctrl_dev *pctldev,
+-					   unsigned pin,
++					   unsigned int pin,
+ 					   unsigned long *configs,
+-					   unsigned num_configs)
++					   unsigned int num_configs)
+ {
+ 	struct bcm281xx_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
+ 	enum bcm281xx_pin_type pin_type;
+-- 
+2.39.5
 
---v5vMaPAMM9Oxt2fN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgZQMkACgkQJNaLcl1U
-h9A1Igf/Q06MRKirMShcv/TcB5l7drBIkDOMikE6u4JLDnDWRMiKvQMv5hBWmf2Z
-7dZ+Yj++8mN06HJICtBEhWgF5f8qKM0GEheCbe8AfHEDqsf4mJiSVkPOFF6KNkV5
-XAFg+fU7SpLPVhFpF2k02l734j1AP4OrlfYz1MwwRPit2bG94oFdaH7u/zEnxAIf
-1YYC8qYRiHUUavnPJIX8V9T4TAKw8n9EMLCLK8ApjYgwuxoDVIbnCgyVyyEhL3Mj
-3dj5sLe9lYtVXu7O3+nF4R6W7MrNHJ2rimlRnRhP/oEs3pxkvtwhHbQPty6bn9UQ
-mEN4LZ+tPfGWW+aoIYgdma+8Tm/ong==
-=Eg3Q
------END PGP SIGNATURE-----
-
---v5vMaPAMM9Oxt2fN--
