@@ -1,121 +1,115 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA5F42A89
-	for <linux-gpio@vger.kernel.org>; Wed,  7 May 2025 14:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B88289E1A
+	for <linux-gpio@vger.kernel.org>; Wed,  7 May 2025 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746627202; cv=none; b=eUGJEDZnFEWycZRtg51xn8R3X7P2nii2NRjPqo6v66d7pvLvJ1EY+ni+W/eDPQhhlCGFSXkN1cvF+Nr5Lzdywclf/icp+qutDMPWiL899ZYm5dq4cxFsEjZDu9qY3lsvBtUYKcZ3QzgDR8hSszpPLTzXYkbDlgJavJLSpv17gRM=
+	t=1746628558; cv=none; b=nCJLVjvUzwIJGjw4bgGZhlZdRHZJP4uDhj+lg4dUITfJ1xs9qRKxgLTWajL8gbJ275NE5OGZ6hJ7mOpdnPZbTQxcEcLM7DDKDi0GqUXhePPPro/wtWcSbCNuwN1VxY/QMsVlr6Bb4+ZEjOeysbYWEMTCsFnGqrA06SaPGcI/Jzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746627202; c=relaxed/simple;
-	bh=eXOONkfVY9iiUi1gt/PCl2fNqtt2ZQN4P5+cb3Bcn+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/NlDM0rWqXf/5SA0qQMDCTwmNletOpaYHIe7IBvvClm3xY4zdiyQ2+Zb4RvY5C1VdjtWUI4y9CEyyaXut86xObIeqc54Zn3v4MwBvexJBVn0QFAWEzBzaW1n+7ry2lfcR/lSwxYhohzU2sEI6JPS4H9E79f7W68vzBtWbnqut4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LtT0ylzm; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1746628558; c=relaxed/simple;
+	bh=1vJaV5IB3PQLrcO3XwAI003ot8u30fZLIj9vvrH7iAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KgzUiL3Vg41vxxO5q8NdAIz6ouA0Vo+ASdxEPoAAZACxtUIx/zCE/EHkO3Zae3by11LT85qVthFYoqDu0YiOQjSJTgV87K2xQqW3Zp+ceUV3w9cyUrO/yOyBqEBpjILIdYg4ds2UhhgmaleiWr2rEsw5dALCS7Pkmh+yx62T1EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nh62yrhR; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LtT0ylzm"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54e816aeca6so9138729e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 May 2025 07:13:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nh62yrhR"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a0adcc3e54so1200882f8f.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 May 2025 07:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746627198; x=1747231998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+XKwR69PLxxy85KWouRANyfmgCyvHOTmvcG/jK1yua4=;
-        b=LtT0ylzmDO4XJGxdYMDWNQ4Zcxtr6FlQxIOQEnXDNevgtLtQYaA6fXkKn0+SYCWUSY
-         gsCGowvoLCqA/PTRZi86e5GJXoM1HjJeOZ6H51V0aJS5m89b61XLZBQCI2ZdgBOyzVXN
-         zt+3smG2DVBDdwVbaM7sow+QY5gyd6nQ5zBPX7ONmdgE97l0gUCRD5bBHk/HDELXTioL
-         3ayCDDEWjLh052svgNiAXSZNQNG7B2vuQwdnu2EuWPwwe9YFb1GEIGwan9/I1KYJNxSs
-         dM7Rf1w+J9PwruB4posLjeD1LAFaSKJ90SkEq3UQbdbTPpoHI1bg2fcO/Q+tsNTyXxpm
-         WwPA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1746628554; x=1747233354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZP+vwFNWuh5ghEI4qOKuQl+IJHm3W7oUZPfVYjUgRU=;
+        b=nh62yrhRcUjU+nz7qykKCBu474EfYvXE1KqrWFiUo06p9xJSHYzeRYXSXfzCt5mh1/
+         T/i0e5UhCuosauWgV2Zk0Wivpx1RvSIMnvNG2g5QNWXiOv4l313YkWn5FguiVjTwkm4C
+         bPGOQnAF9k9A8rehzSSfPor7ESRVu3iuYTVzrM47gcrg0tvTwLt2RGgrA3wgtWXe8Tgk
+         0UMp7SNyoT6ZppBYl/9Xpav+8YKoVcRlX7QSeRyC9YMrvKWR+hZPi10MUc+N4B8AQOej
+         3jozzO6V6rYShCF4zyPOgkW2OGqXsN6vt8JVl+Kaji1mjX5YHaK+nJSIK62Rzm8K0v6u
+         Zhvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746627198; x=1747231998;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+XKwR69PLxxy85KWouRANyfmgCyvHOTmvcG/jK1yua4=;
-        b=twAn4hYoGjDXylr/dLhv4uytC7ilQ1/DF+xrwP+Pp48Nh8qnL38Yfige2ThVkwn3Iz
-         vrsspZWgWX6iCw7BHKzapyBwbsHXszJSDOrIuagRnHj3CHX0dbr4luWGCrrbjilkwJeM
-         Lf/Ctr2wV/zOdWV+Gsmi+TlbrM75yJYNbHo+PFeiDHPPgWmbrhfOCnl2X0OdgQP8QoF9
-         V5kgnf5aABv3+KRTNUqILOjEKw3vOJBV6NrsnNWhfhSawi0pUtGM3oAZpSkv+gXS17NC
-         zs95d2zy+dXZ3UG4SoqkIFwGYemI5NpVQkRylsfQz9UqPufHyOUdNFEApYolESK0b583
-         e73w==
-X-Gm-Message-State: AOJu0Yx1NZFRus9/gcoZo0jxxlMRlo/HF+KejqXSqH7vAuXlxGig6b7e
-	VTwpZbgSLQ5JaDZR3UVRjhy5bMF/IanTzzTCi4P2fn/vPdxel95pqpMblNt1CAndaWYbAqA+v0O
-	VGSWzmYRNKcbJE7Ca3FgVaN/Pu7MHhZpC2OE36Q==
-X-Gm-Gg: ASbGncuVpRAyiU7FNwpUqQgmO0n0TM4HUUNh5V2Wff6seYmmiLD20jxFVRXxAMVQMmT
-	MBELFX02xxGp2sOaTW3kihQFqiSRnbqBC7D7qe3erqhhtOsljrYdf+7/Qpp21wKNCr0UbpaP7iJ
-	IrgU46t6BMfOVrF4k/EqZa65aepAE2nwDMIcJY/q6iBbhF2OV68hbnBKPEId8P3kxt
-X-Google-Smtp-Source: AGHT+IF+13vH/Tucy6FJc2tpu4ONu7h+cxvpO55vMEqjd0zmlBV2H5HARIILcufF+MpkR2WYpDhimLvao4XJprqEy8I=
-X-Received: by 2002:ac2:4bce:0:b0:549:8e5e:9d8e with SMTP id
- 2adb3069b0e04-54fb9241b25mr1617333e87.0.1746627198587; Wed, 07 May 2025
- 07:13:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746628554; x=1747233354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PZP+vwFNWuh5ghEI4qOKuQl+IJHm3W7oUZPfVYjUgRU=;
+        b=H8/0lpGzJk0f/m9ajkpa/Nj28or4T3wJS5nVLULLU8BS/B9v40BAhWhZZ9Em7Du6RS
+         Yn0djYnzRdNxm6RMl+SJL+FhMpM2GH/eRSSSv96hE0GiJX6LT+R7kG7iI0f7MWn71JcS
+         5wbLjaF34f5ooyOJOmTFmunRcegD6/aY7cyu35L8RqxXlGCFFEYZakvR+AhPBBl3Ljim
+         SP2tO/to71a1d9UrE1Jb29u+ZJk/J+pnuQUyjXtj3GWeaN0rJ7uKhfwU/gXeY2rOnetx
+         bU2I+izoBW2hyTLmxzRF9HYiDVS3bKSGaCKJM69DpFkOfcUKf27oaJkP+88qVu2S5Q93
+         G87A==
+X-Gm-Message-State: AOJu0YyzC1D9tAn7Jj9NdC2a6WKQgIVM/9JfADGny4/ONEOr7ouZSvWh
+	qEUqqt2Lvf8CDZARDTHWcPLF+vpJoyFndSJauAGg0eDEfQYpmaBW6dI7VSlcHuc=
+X-Gm-Gg: ASbGncuVAyBnwooCiR03m3zeF/RS0VbwvCU8hhK5xKLAUOlwlb78mUM59vAduXJe+DN
+	nmcdIiDJV8uKnSqO9UBs+eLV7gs+JECc/C914icxfbo76TSk5lJIKDOBSTn6A4LTxWqSdIL9IVM
+	duT2XsFoNGlgz+9doRCkM3rnw0B26RTj6RsXYBWpfgrC/9cR8bb6l27muvciIXobSLWKSSecEls
+	u7qp4DxYSj8KVs0GJ3h9098BQD88VqiL3PmC31qx1nlNF48lP8XNLRJOOnDYuE1kDbWwTquGT57
+	A1u5PESw/BQh/n0FZReEYy810lbppgr4CLRUIXXEdA==
+X-Google-Smtp-Source: AGHT+IFha+RZUAi+OttzpPGZymHN1i6U1q2b9g+xVfZMh7twm5F69jMyZbgHMqWJlmduu30guOSv0g==
+X-Received: by 2002:adf:a458:0:b0:3a0:b53a:7b3b with SMTP id ffacd0b85a97d-3a0b53a7b97mr1913697f8f.12.1746628553963;
+        Wed, 07 May 2025 07:35:53 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b323:3744:4800:6909])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a0b9322eb9sm123475f8f.3.2025.05.07.07.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 07:35:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] pinctrl: add stubs for OF-specific pinconf functions
+Date: Wed,  7 May 2025 16:35:51 +0200
+Message-ID: <20250507143551.47056-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1d00c056-3d61-4c22-bedd-3bae0bf1ddc4@pengutronix.de>
-In-Reply-To: <1d00c056-3d61-4c22-bedd-3bae0bf1ddc4@pengutronix.de>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 7 May 2025 16:13:07 +0200
-X-Gm-Features: ATxdqUFYChlfm2buzigbVf4BUVqPRkb82fOcIeyCaDTbI87U8XuidCIMw05XLeg
-Message-ID: <CAMRc=MejoUX=ZWe-BvwnRnu7-k5=g+y6hVcsLFzEp5CY8eyHRQ@mail.gmail.com>
-Subject: Re: AT91 GPIO driver reading back struct gpio_chip::base
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 7, 2025 at 3:15=E2=80=AFPM Ahmad Fatoum <a.fatoum@pengutronix.d=
-e> wrote:
->
-> Hi,
->
-> just stumbled upon this comment in drivers/gpio/gpiolib.c:
->
->   /*
->    * TODO: it should not be necessary to reflect the
->    * assigned base outside of the GPIO subsystem. Go over
->    * drivers and see if anyone makes use of this, else
->    * drop this and assign a poison instead.
->    */
->   gc->base =3D base;
->
-> and thought to mention that there are drivers that indeed rely on the
-> base, e.g. drivers/pinctrl/pinctrl-at91.c uses struct gpio_chip::base
-> to find out which bit to set in a register:
->
->   dev_dbg(npct->dev, "enable pin %u as GPIO\n", offset);
->
->   mask =3D 1 << (offset - chip->base);
->
-> This needs to be fixed of course, but I don't have time for that right
-> now. Thus settling instead for writing this heads up. Maybe someone is
-> motivated to fix this and then do the equivalent of
->
-> https://lore.kernel.org/all/20250507-b4-imx-gpio-base-warning-v2-1-d43d09=
-e2c6bf@pengutronix.de/
->
-> for AT91 as well, given that the driver is DT-only. :-)
->
-> Cheers,
-> Ahmad
->
-> --
-> Pengutronix e.K.                  |                             |
-> Steuerwalder Str. 21              | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
->
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks! Would you mind adding a task to the TODO list under drivers/gpio/?
+Allow building drivers using these interfaces with COMPILE_TEST enabled
+and OF disabled by providing stub definitions.
 
-Bart
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202505072245.OgSXI1hh-lkp@intel.com/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/pinctrl/pinconf.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/pinctrl/pinconf.h b/drivers/pinctrl/pinconf.h
+index a171195b36159..e1ae716105261 100644
+--- a/drivers/pinctrl/pinconf.h
++++ b/drivers/pinctrl/pinconf.h
+@@ -142,4 +142,21 @@ int pinconf_generic_parse_dt_config(struct device_node *np,
+ int pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
+ 				    unsigned int **pid, unsigned int **pmux,
+ 				    unsigned int *npins);
++#else
++static inline int
++pinconf_generic_parse_dt_config(struct device_node *np,
++				struct pinctrl_dev *pctldev,
++				unsigned long **configs,
++				unsigned int *nconfigs)
++{
++	return -ENOTSUPP;
++}
++
++static inline int
++pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
++				unsigned int **pid, unsigned int **pmux,
++				unsigned int *npins)
++{
++	return -ENOTSUPP;
++}
+ #endif
+-- 
+2.45.2
+
