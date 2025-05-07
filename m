@@ -1,114 +1,145 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED628936D;
-	Wed,  7 May 2025 13:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF1E28B4F0
+	for <linux-gpio@vger.kernel.org>; Wed,  7 May 2025 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626072; cv=none; b=XqnupDncxV9KAoKqbNRRnh1wEjIOB4YbaiT3dnhMLPyOKKA7JLG6FH9ViE79H3xhQsvXQ/66o94v/gkO0B2aSfgBgivUt+kSuj0Gv0NXwu92QqYhfEfZ7vw2t8r0N89JoliWOd/u6n7wTbkl6r5QwkwDUQfUwG4UmSEIhcgsgi8=
+	t=1746627121; cv=none; b=IJFI7OmaRRAuss385dzVrWcisAeG+NXx8KDqo5j7OlTChyc0FA9VIhw8SUcptNORViU7mwgBPF9MV2XcHUPDT2sYphXLJqwFWnxzIDeIh4t+GoKb0JykP9GbBSga/rL4cay/4YAbFRMlS2OPpyo3vaVVaJU44geusP6Xv5r5rpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626072; c=relaxed/simple;
-	bh=C02ObScTFbiaNdWfFXvVyCLtKf11sLD6lCT0jJlOvwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGTLDcCDBu3RL5ZtFKPJxAUMy+kRaIBsMRN0bqVTnUScfLvIg5oHEy0Gw0/UEEGY3Akfhp8bt5jkcWBBlKGe2BuzuFVZWaGelUBe2CJaeDeouIx0LpMqpYiWxufYDyw1c84LjlWa3q+pfDfAahQUP2E5r6Zjq+uvZ0vRBSt8/vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RWcUEBVG; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1746627121; c=relaxed/simple;
+	bh=WyCz/ArAVmQO+g1cZbQC9HYihMwNLT5tXWBdJxpyI3o=;
+	h=From:Date:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcH2+lizE5Hz2STn/vAKgWnJpxSNd0iU34pIJL4Y30A14hEa0H5e74YMxWVeir2BJw0YE3NLqa5QL0nhWjiA+0KmMiHk7/rFIqXHlo9VdDwmC3ooSu3NnVSC7i3zQTQ/AJxXYeUQ+dkgz+oRK/JmD3E1am5/XTu+ObTdTs7zwvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RW72+a1q; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RWcUEBVG"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 437C843989;
-	Wed,  7 May 2025 13:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1746626068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZ2N7o6h8qE4U3KVspLCs0bJ9tD0zoPZrZLgbdQrquw=;
-	b=RWcUEBVGojXNeqqjDdOmecevKuK2UFooi2yT5TIDhRowDMIgazVgUuwKMhr/r+ueMjOgBh
-	bjBNvV8U0XZFFeMhSBSeISa1ovvPbc17tqHTYWbe2h3wBQ17twTcwtbRwU8RnO4qbLuaLN
-	dZFwwu030ylFvHVWZUIrUZbdC/bqbktpAI65Y4cVqzXLKJ2PnO8aNUN5AKGy8gakvMsZ6z
-	JPVEJlYSFiklVxTGPeIOqKKiWJD89ZuUN4f5bhr5vEKAqfvwMuWYd+KDDkLK0nrgMKH88x
-	CWZP+eHSlnXJ5gWrva4cv0O4vpq2+w/VjtacPF9c/lMHzc3G95M4EJP7MG7/SQ==
-Message-ID: <2f02284d-2922-4bc3-ab2a-8848023019b7@bootlin.com>
-Date: Wed, 7 May 2025 15:54:26 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RW72+a1q"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so11300533a12.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 May 2025 07:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1746627117; x=1747231917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xp53MoIMHo7AsEpO8Qe4lYIdt8fxx6H0xofmt5rFOgc=;
+        b=RW72+a1qzFrEk8+0g5TjeMhM3Seef2Ya9K9OUP1ZZ0+9GQUAM6+XEp3Lry/LNcW1la
+         tL2hdZ5FcbCJlJ6OIdHxsXbVs3RcJI5IKfLczh+qAEOfivvlCl5iFIAJTU0t6vxp8Oz6
+         /ywZV3oxlC/LPAQP3cSkJkdrEy/qIeW/ESNhnfNnxv71sHdR3cNZ5cIFwLZ9bXuBMGLZ
+         5LwjGDLUIbwQSrnfprunfLqdRiDCWUil/m74yw+WGTHD0GUa4Ht0qIsPB/NUL9BFMIH+
+         cFIW/+KXbYJoK4LU98SrKGAsJsuMI70r3ps2K7y4LHIwyqTXX0OWEQiB1v6WRgEHo6c1
+         mdbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746627117; x=1747231917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xp53MoIMHo7AsEpO8Qe4lYIdt8fxx6H0xofmt5rFOgc=;
+        b=YoxQM0aytajkpV1TbkSgja2WP7oKzPfqYAq9OX6lBgA17kURH0hRe1V+Adibjcp3LY
+         dLHKl2soygj/lioUMczUJ7mQIsNQo89qS96s230yAzDgv6zJxrbPUjbCvfkfybjYr6kU
+         HWUwkR6DVwJzPr/cFr3Jl1S9uyXa+JSuu4K/C2cA8536zSCNCp479lzqo7y5yCNZfUcY
+         GRtmdLwKDNjwfyA6h7iIE7J4Bbtc7FkIWJsLdM+gvkdgd4Uj7NvLbVyDeM1ynlhTJpMW
+         rUWVtqPFDaXs7A1jDq5WZfIym8CLxPAYfg83ohmkHXOr0YwHc8ah8gvOsVeDzl8CB/53
+         WS0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXj9mP68fk2VIJwONol77ml0GvJBANxSceDVtuGznoCw60VQm7ppyF8sP0KKrGvi9T6RYGRNUi39QWV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYKZzRXGDUDml2+APzJpSkDIGrW/Ikqr67AitsxbTjHZ1u0l95
+	6+yqj723NlfY2nwmHWVvl20hgDHz3+zlzxRDqHRF75MY70kdZb74HboIMpBaWvNYJx/Hiyb0JS7
+	bUG0=
+X-Gm-Gg: ASbGncuy5qn5wf8kkR8Ge2nBmWBuSwT2HdrCUkK7jGzHeJ9i9d3DcOdE3vu019O6skp
+	kINvh3HxPHWRaUvavedKjZUP0Y4Q86C2exAWkpMi2kpRgoiX0VX2q9sRJErPj2ktMUUtCQ6ydt2
+	s0zrqDxL/1iGq3NJQzWzGMWanRgIA3GofrcGRqygNmGiq2NSZ9Sk6eOE9kFP/8PrQJscwFAZrmE
+	CJnvn9Ngox565oMChqGHUwvRkC3/HYijna36KTViJ6q+RIEWyHCKR/AODvzo4+DCHqESevRVJBV
+	9iMnvPD/wR0DCR8YPONPcOpNd1USjl7HQP8hJ5P+wQq0IICgInIrs9P1DcjWgExTm5e3kh4FoZk
+	G+S/YZg==
+X-Google-Smtp-Source: AGHT+IEAIOFFJLOZCm96czkAy45BL7wcAh0Bc4vKalFIoRDdZw1taF3C6vTBolVNjObPDoUwRAM9aw==
+X-Received: by 2002:a05:6402:5c9:b0:5e7:8501:8c86 with SMTP id 4fb4d7f45d1cf-5fbe9f46ef0mr2916040a12.22.1746627117121;
+        Wed, 07 May 2025 07:11:57 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fbf761f95esm806596a12.63.2025.05.07.07.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 07:11:56 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 7 May 2025 16:13:24 +0200
+To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v9 -next 08/12] arm64: dts: bcm2712: Add external clock
+ for RP1 chipset on Rpi5
+Message-ID: <aBtqhCc-huQ8GzyK@apocalypse>
+References: <cover.1745347417.git.andrea.porta@suse.com>
+ <38514415df9c174be49e72b88410d56c8de586c5.1745347417.git.andrea.porta@suse.com>
+ <aBp1wye0L7swfe1H@apocalypse>
+ <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/12] gpio: aggregator: handle runtime registration of
- gpio_desc in gpiochip_fwd
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, linux-hardening@vger.kernel.org
-References: <20250506-aaeon-up-board-pinctrl-support-v5-0-3906529757d2@bootlin.com>
- <20250506-aaeon-up-board-pinctrl-support-v5-9-3906529757d2@bootlin.com>
- <CAHp75Vdg2LE885+qjpYLkQrdNqaahJc3=Ki7op=6jJUJfJM+sw@mail.gmail.com>
- <c3b9c494-599e-4d99-8645-589c1c0c106c@bootlin.com>
- <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CAHp75VcKsq5_+uwwVKeq8++H+Rw1giH-TKUErsFmdKPiu5kY+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvkeejtdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetueefgeetveffheevkedvffeugfevhefgueegieelveejjeefgfeigefggfdvkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrngdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghnugihrdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdprhgtphhtthhop
- ehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
 
-On 5/7/25 15:24, Andy Shevchenko wrote:
-> On Wed, May 7, 2025 at 1:10 PM Thomas Richard
-> <thomas.richard@bootlin.com> wrote:
->> On 5/7/25 08:34, Andy Shevchenko wrote:
->>> On Tue, May 6, 2025 at 6:21 PM Thomas Richard
->>> <thomas.richard@bootlin.com> wrote:
+Hi Florian
+
+On 09:32 Wed 07 May     , Florian Fainelli wrote:
 > 
-> ...
 > 
->>>> +       /*
->>>> +        * get_direction() is called during gpiochip registration, return input
->>>> +        * direction if there is no descriptor for the line.
->>>> +        */
->>>> +       if (!test_bit(offset, fwd->valid_mask))
->>>> +               return GPIO_LINE_DIRECTION_IN;
->>>
->>> Can you remind me why we choose a valid return for invalid line? From
->>> a pure code perspective this should return an error.
->>
->> I reproduced gpiolib behavior. During gpiochip registration, we get the
->> direction of all lines. In the case the line is not valid, it is marked
->> as input if direction_input operation exists, otherwise it is marked as
->> output. [1]
->>
->> But in fact we could return an error and the core will mark the line as
->> input. Maybe ENODEV ?
+> On 5/6/2025 10:49 PM, Andrea della Porta wrote:
+> > Hi Florian,
+> > 
+> > On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
+> > > The RP1 found on Raspberry Pi 5 board needs an external crystal at 50MHz.
+> > > Add clk_rp1_xosc node to provide that.
+> > > 
+> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > 
+> > A gentle reminder for patches 8 through 12 of this series, which I guess
+> > would ideally be taken by you. Since the merge window is approaching, do
+> > you think it's feasible to iterate a second pull request to Arnd with my
+> > patches too?
+> > 
+> > With respect to your devicetree/next branch, my patches have the following
+> > conflicts:
+> > 
+> > PATCH 9:
+> > - arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts: &pcie1 and &pcie2
+> >    reference at the end, my patch was rebased on linux-next which has them
+> >    while your devicetree branch has not. This is trivial to fix too.
+> > 
+> > PATCH 9 and 10:
+> > - arch/arm64/boot/dts/broadcom/Makefile on your branch has a line recently
+> >    added by Stefan's latest patch for RPi2. The fix is trivial.
+> > 
+> > PATCH 11 and 12:
+> > - arch/arm64/configs/defconfig: just a couple of fuzz lines.
+> > 
+> > Please let me know if I should resend those patches adjusted for your tree.
 > 
-> I am fine with this error code, but do we have similar cases already
-> in the kernel? Do they use the same or different error code(s)?
+> Yes please resend them today or tomorrow so I can send them the following
+> day. Thanks
 
-I dumped all get_direction() operations in drivers/gpio and
-drivers/pinctrl and returned values are:
-- GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN (make sense).
-- -EINVAL (for example [1]).
-- -EBADE in gpiochip_get_direction() [2].
-- regmap_read() return code.
+Sorry, what's the best wasy to provide the updated patch 8 to 12 to you? 
 
-But from my point of view -EINVAL and -EBADE do not match our case.
+1) Resend the entire patchset (V10) with relevant patches updated
+2) Send only updated patches 8 through 12 (maybe as an entirely new patchset with
+   only those specific patches)
+3) Asking you to pull teh relevant commit from my own git repo
 
-[1]
-https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpio-cros-ec.c#L70
-[2]
-https://elixir.bootlin.com/linux/v6.15-rc5/source/drivers/gpio/gpiolib.c#L359
+Many thanks,
+Andrea
 
-Regards,
 
-Thomas
+> -- 
+> Florian
+> 
