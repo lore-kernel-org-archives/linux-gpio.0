@@ -1,15 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804EA28C5D0
-	for <linux-gpio@vger.kernel.org>; Wed,  7 May 2025 17:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039D228C864
+	for <linux-gpio@vger.kernel.org>; Wed,  7 May 2025 17:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638904; cv=none; b=RjrwdmeeLA31SDpn4hBxyeuqQCFhgyHnh2GMJArGDH7cRu+dS9FBfGsRAFwAXLNDae0YNeVwHumejOOvaD7iQsulSQasXaXCu8nxld8A4RJoCcMz6Q5tOn44xHweDio5vPr4RcO5ztVnckuFg70d3XUsVF3dgHi8pW0mDB/VHVI=
+	t=1746638905; cv=none; b=lGCguCbwvmiUb595f+uVLYJFh69MZl5t/AsRZsN2wkpRzZRtEf6HTGGziT6BUNlwL+V8AqX9S71dSn37H+LdrVoOL5lKM5sGCWevPBao2kT+KD3jfZ3+5CjTbLjn5NF0RcWuHMtNnjqW119zctIckwV8tHLQWI3N5LtjZaBSnu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638904; c=relaxed/simple;
-	bh=LUbZ2ZVksxFfFOy/YMs2XJTER9hG3sAfvocQkpgZo5c=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HYH3kO4RIGgE67Gsd1vTeVySp1mNNr0L90rYFrDNhQWccSCCC+koiwGo+DsbA4mQW73NusIr69i8u2shpqlZnoZgkstnLJvCbq5zyYelxX+u9ul98Nyx7f8QSYsbbWNc1rgJKWV9j7KCPxP645+dT5anjShozNrH+oRKwLmi4a4=
+	s=arc-20240116; t=1746638905; c=relaxed/simple;
+	bh=Z1JmpgVecB6yzG5XqAzSSlmLXEyS3//+7bggBnpdz9Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UuQSILD5toy8jMsd8f9/GfFbLGhs4Gr/4eZcllUnGGgi9t1rhKXqdaSE8ir9NFc9r7NleTpgikvpHjuJmkfhnfdpA3kZo4IWqqmNP3R4VzUxqZuua/4jTMzef/vmaMOOQ4gDXupjpJUXF81t+5aMr5YCwTEs1+vy2K8TsWofEn8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -17,23 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1uCiYz-0001Ex-DO; Wed, 07 May 2025 19:28:09 +0200
+	id 1uCiYz-0001Ez-DN; Wed, 07 May 2025 19:28:09 +0200
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1uCiYy-001axS-1u;
+	id 1uCiYy-001axU-1y;
 	Wed, 07 May 2025 19:28:08 +0200
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1uCiYy-000ING-3D;
+	id 1uCiYz-000ING-01;
 	Wed, 07 May 2025 19:28:08 +0200
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: [PATCH 0/2] gpio: TODO: add item about GPIO drivers reading struct
+Date: Wed, 07 May 2025 19:28:02 +0200
+Subject: [PATCH 2/2] pinctrl: at91: add FIXME about read back of struct
  gpio_chip::base
-Date: Wed, 07 May 2025 19:28:00 +0200
-Message-Id: <20250507-gpio-chip-base-readback-v1-0-ade56e38480b@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,10 +42,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACCYG2gC/x3MQQqAIBBA0avErBuwIrKuEi10nHIIVBQiiO6et
- HyL/x8onIULLM0DmS8pEkNF1zZA3oSDUVw19Kof1agmPJJEJC8JrSmMmY2zhk6kyWm22g7kZqh
- 1yrzL/Z/X7X0/GKFvzmkAAAA=
-X-Change-ID: 20250507-gpio-chip-base-readback-c7d8eb8b3cd9
+Message-Id: <20250507-gpio-chip-base-readback-v1-2-ade56e38480b@pengutronix.de>
+References: <20250507-gpio-chip-base-readback-v1-0-ade56e38480b@pengutronix.de>
+In-Reply-To: <20250507-gpio-chip-base-readback-v1-0-ade56e38480b@pengutronix.de>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, 
@@ -54,7 +53,6 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
  Ludovic Desroches <ludovic.desroches@microchip.com>, 
  linux-gpio@vger.kernel.org, kernel@pengutronix.de, 
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Ahmad Fatoum <a.fatoum@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -62,25 +60,43 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Bartosz requested that I add this to the TODO, so here goes.
-While at it, I also added a FIXME into the driver.
+drivers/gpio/gpiolib.c has this:
 
-I'll be away most of the month, so feel free to squash changes as
-appropriate.
+  /*
+   * TODO: it should not be necessary to reflect the
+   * assigned base outside of the GPIO subsystem. Go over
+   * drivers and see if anyone makes use of this, else
+   * drop this and assign a poison instead.
+   */
+  gc->base = base;
 
+This would break the driver, because it assumes gpio_chip::base to be
+the same static base that was written into it.
+
+Point that out in a comment, until it's fixed.
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
-Ahmad Fatoum (2):
-      gpio: TODO: add item about GPIO drivers reading struct gpio_chip::base
-      pinctrl: at91: add FIXME about read back of struct gpio_chip::base
-
- drivers/gpio/TODO              | 7 +++++++
  drivers/pinctrl/pinctrl-at91.c | 5 +++++
- 2 files changed, 12 insertions(+)
----
-base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
-change-id: 20250507-gpio-chip-base-readback-c7d8eb8b3cd9
+ 1 file changed, 5 insertions(+)
 
-Best regards,
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index 93ab277d9943cff3a0b771f3e997594cb144826c..b0e00f3793312de2288aa1b900793d9e2b6125d6 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -949,6 +949,11 @@ static int at91_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 
+ 	dev_dbg(npct->dev, "enable pin %u as GPIO\n", offset);
+ 
++	/*
++	 * The GPIO chip base is an internal detail that will
++	 * eventually go away alongside sysfs and the global numberspace.
++	 * FIXME: stop reading it back here
++	 */
+ 	mask = 1 << (offset - chip->base);
+ 
+ 	dev_dbg(npct->dev, "enable pin %u as PIO%c%d 0x%x\n",
+
 -- 
-Ahmad Fatoum <a.fatoum@pengutronix.de>
+2.39.5
 
