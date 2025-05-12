@@ -1,125 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2FB2951DB;
-	Mon, 12 May 2025 12:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63478F43;
+	Mon, 12 May 2025 12:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747053540; cv=none; b=X4p236xXZ5bnt/IR3TMMQUcmJ7tHmvYrttvJVGCsHFwJuy8sWBHh/JPxj+CrJUsBqLFRdENyPBHdLYyM49l/KARAzOm80+22n16PQuyXORsGAkQM+Nliek10+yaUHONUcAJ6fhswNEQq3cvUMOw4cUGPewcRt1Qq8SuxXB13saI=
+	t=1747054784; cv=none; b=hsfTXy1HMSN8bDLHUDG7YbCRFSLcwVAtgzVfAzK/rE798CzacIcrd25q06+HL7eZBSd/uolWlw6lIvMxqgO9g3M1t/qgwPe/Eic6rOuM/AB4g88sy5oZBtZSG/zrJ+abJnm2jaToYLvJZOvD4IDezjl25bZZB+10E+v108SVFec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747053540; c=relaxed/simple;
-	bh=9pI7TDIzBeTDNXjeuoImE6pIAEtmx1yMC34/Lq1dOrg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gOFV3DYzFrDfAB7mEPmM8IXvyJFOjffuQweSpK1uxPjqh/NuEQkjbgfR4lDrK+F8KWWjx+67DfDpP09H5+NjgJ7ZykliJtve4kX9LkK/cQCDpFVpFb/KImPVluu+wH+raQ6RZuAiN0vsuLS0vGqm+JKomfuy3eQgynhvMqOfYo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H98yMLC6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747054784; c=relaxed/simple;
+	bh=Sl9HhishayHhuvvB5bQuDThhoqmbFaMgmkYIGRlpRog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bz13aRkb17Oned2NuzkVEf7pWwqEH7l+6M/LybfjeejdWOGGAGG4BX/iGNleurF31IDIa8UNxlQjJmgPWe5103/YqaW6Y8kj8rObHuOin3yyQ4ilA4T6Lw9jGSlsps/oZS13c/wT46rGKdlg95ZgM6nJhkIq6l5Cd/Ae+ZhXg40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsdY9hbU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H98yMLC6"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 940EAC4CEFE;
-	Mon, 12 May 2025 12:38:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsdY9hbU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7B9C4CEE7;
+	Mon, 12 May 2025 12:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747053539;
-	bh=9pI7TDIzBeTDNXjeuoImE6pIAEtmx1yMC34/Lq1dOrg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=H98yMLC6bZ8g1cxf2PSXsrtw+lPUcqhiBLfIdxOYP4uHpFTKHlwfOTQIgjNDqqaSl
-	 29fDCkGJP+XlPftwq1BdfheST4MIgDMlg8HJUSae1hrlapuoDiepnQr0eI3Izf4kZj
-	 yFHEDN95N/0UZHZUq/Q30r8wnEWJsgDa9v0Blu4priAQQ+7vddNJc0qGD4ClleMy34
-	 S3QM3v6DVLkMt70RnZxrD9PCgT6BhDwigvILv55eQYC+cZKzBIpynz+FuAhbeV/SqF
-	 Kc//MMZduOWLjrwkTxJAzhe6b/kDgynefNCdyu/nvA3qnsFP+71hfQZFa/YqzjYBy/
-	 TdIf3POMUd4DA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B204C3ABCD;
-	Mon, 12 May 2025 12:38:59 +0000 (UTC)
-From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Mon, 12 May 2025 13:39:13 +0100
-Subject: [PATCH v3 21/22] mfd: adp5585: add support for a reset pin
+	s=k20201202; t=1747054783;
+	bh=Sl9HhishayHhuvvB5bQuDThhoqmbFaMgmkYIGRlpRog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VsdY9hbUj7lzvgCG+qD3jMnd/6+YmALHBCgEFxiAI5SeZV0QsLiluVIisah5mqeQJ
+	 caJXV365FgBEgoe/qhzjhhu7c3uteuwTTdTE3bRKWDQ5K3dNAqMTjp94iGN/dcDq5M
+	 dPlrnJtUEJTnW0mCls7X2FaBzWgrV2yiQNPfv0cdFuXUnMbhqlTChttFa4QXMIDG+/
+	 BB8J4IKc2qJUPnTY6PslvQOhR2xmcm2HEPMRJ3G04adrg2HGyCg3xA/wYv5+4TMwpm
+	 889vc2UYfKPbKuRjWHqDQwoOLvnXaMtx57t8OGRjD4w5t36XsqpPMiGGg+BbLyKttv
+	 LZAAXBB1X+qRg==
+Date: Mon, 12 May 2025 07:59:41 -0500
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, andy@kernel.org, nuno.sa@analog.com,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	marcelo.schmitt1@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+	lgirdwood@gmail.com, broonie@kernel.org, jonath4nns@gmail.com,
+	dlechner@baylibre.com, David Lechner <dlechner@baylirbe.com>
+Subject: Re: [PATCH v7 03/12] dt-bindings: iio: adc: ad7768-1: add
+ trigger-sources property
+Message-ID: <20250512125941.GA2952373-robh@kernel.org>
+References: <cover.1746662899.git.Jonathan.Santos@analog.com>
+ <731196750f27eee0bad5493647edb2f67a05a6e2.1746662899.git.Jonathan.Santos@analog.com>
+ <20250509-gala-unfiled-fd273655b89d@spud>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250512-dev-adp5589-fw-v3-21-092b14b79a88@analog.com>
-References: <20250512-dev-adp5589-fw-v3-0-092b14b79a88@analog.com>
-In-Reply-To: <20250512-dev-adp5589-fw-v3-0-092b14b79a88@analog.com>
-To: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Liu Ying <victor.liu@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747053537; l=1527;
- i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=tFAINTSoMBnF/ZmEAfpC4hVQDXmxCmyzkOry/geHrT8=;
- b=g8s7nFQP21zeOxkinuEvv2rhlHsyuC6IQnojYR1oyjiGZg+zS+aw46WEiwTUdtp8/0RkqpPmY
- V5MxDoGQDkeA1d0gylEKZiNNSUOQ6RD1VOrvGliHEsWtzhDWwmQTxYx
-X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
- pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
-X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
- auth_id=100
-X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Reply-To: nuno.sa@analog.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509-gala-unfiled-fd273655b89d@spud>
 
-From: Nuno Sá <nuno.sa@analog.com>
+On Fri, May 09, 2025 at 05:18:55PM +0100, Conor Dooley wrote:
+> On Thu, May 08, 2025 at 02:03:30PM -0300, Jonathan Santos wrote:
+> > +dependencies:
+> > +  adi,sync-in-gpios:
+> > +    not:
+> > +      required:
+> > +        - trigger-sources
+> > +  trigger-sources:
+> > +    not:
+> > +      required:
+> > +        - adi,sync-in-gpios
+> 
+> Actually, this is normally not written like this. Usually it is done as
+> an allOf entry:
+>   - if:
+>       required:
+>         - maxim,gpio-poc
+>     then:
+>       properties:
+>         poc-supply: false
+>         gpio-controller: false
 
-Make sure to perform an Hardware reset during probe  if the pin is given
-in FW.
+Using 'dependencies' is fine here. It's actually shorter.
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
----
- drivers/mfd/adp5585.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
-index 88401668f30e06ac201175470eeaf6216f3121d9..0fbe1f7f2582408b2e1b99f629182ceebce73fd7 100644
---- a/drivers/mfd/adp5585.c
-+++ b/drivers/mfd/adp5585.c
-@@ -11,6 +11,7 @@
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/mfd/adp5585.h>
- #include <linux/mfd/core.h>
- #include <linux/mod_devicetable.h>
-@@ -712,6 +713,7 @@ static int adp5585_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regmap_config regmap_config;
- 	struct adp5585_dev *adp5585;
-+	struct gpio_desc *gpio;
- 	struct mfd_cell *devs;
- 	unsigned int id;
- 	int ret, n_devs;
-@@ -730,6 +732,20 @@ static int adp5585_i2c_probe(struct i2c_client *i2c)
- 	if (ret)
- 		return ret;
- 
-+	gpio = devm_gpiod_get_optional(&i2c->dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpio))
-+		return PTR_ERR(gpio);
-+
-+	/*
-+	 * Note the timings are not documented anywhere in the DS. They are just
-+	 * reasonable values that work...
-+	 */
-+	if (gpio) {
-+		fsleep(30);
-+		gpiod_set_value_cansleep(gpio, 0);
-+		fsleep(60);
-+	}
-+
- 	adp5585->regmap = devm_regmap_init_i2c(i2c, &regmap_config);
- 	if (IS_ERR(adp5585->regmap))
- 		return dev_err_probe(&i2c->dev, PTR_ERR(adp5585->regmap),
-
--- 
-2.49.0
-
-
+Rob
