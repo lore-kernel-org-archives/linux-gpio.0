@@ -1,183 +1,228 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87E31D555;
-	Tue, 13 May 2025 15:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944271A83E8;
+	Tue, 13 May 2025 15:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148443; cv=none; b=rheEF3IJwAvQgVEDoCpILvhos/MdSPuVD8BS8A5apYh59nNmg4ENWI6gnRj0fq6zFoP559nayupeYJPZZPq382vPq59HazooMAX+xgk7Svr+/13lA1w4rEV2yQxlEFfVB/LgLxnZ4EXgiB5xOfCKO+58icv5RlyytJbCSKgE3aY=
+	t=1747148536; cv=none; b=Xq+ui/ygNfK5ggCQnfrZUqTOxmdqRHgNs1kdNw+o3BlkrD53S5oneFEUeirQ/Gm2g9GaKBsUyeung75TcVJy/V1+mPUgbQBBorFhfouNk8DBZIgw2305iTE3ac5nhiVjZJyNR+cRtP3cIyebCuNmRVpgGca7d/DEKMmkicWNnkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747148443; c=relaxed/simple;
-	bh=Lucx0KH9MaH/7UpmN5KbkNHQmkYf5YHbGDtSWRCjDiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sm5f0FYzVuqmVZVeG2pq6XJysNbGj7h+r51DbzLhwtddtT7Mlib6QAObwfWxLSzqTvuyaC+UnRrbFVoy+liSViukGP0rVMRZUXjGX7F7MAZLOEATNTfKvxCu/JO2EZg9kHZlP5rW18qB+EPZaHFBEWfASujyWPJbNkha/JXkYFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DOrhuriI; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=REGEktdO reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1747148536; c=relaxed/simple;
+	bh=WInLL8WA9vIjI6a7eRJXj/qQBRdU8k7DUO65gKcnXzs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P4en/L5NKJe/cpadniw5EZY3VCF0P4xfleZ6CoRDx+EAEGHdEIYrhowBUlIPusescORW0nSYQYwSkKfV852tVQSbvGWVQ0ha5I+hMAupt8bdc30wP8t+6dg9S4w0s0KTuL7SENcoTwjXWOJTqdBqxf5vKtkvMChwCRgGzB1HdGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjWMegew; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DOrhuriI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="REGEktdO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjWMegew"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a0adcc3e54so3512943f8f.1;
+        Tue, 13 May 2025 08:02:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1747148439; x=1778684439;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gh2NMO7qJrdv3iG60qbGVCR0O4srfdQABWtiiWuAUlw=;
-  b=DOrhuriI8a4Nw3OlNGY+cL+LEFaxdENf6Y6X/C1aA2F+AgGjDUYqkrDR
-   3O1OxznGt/Fb1DjI1J5mYbQ53xMY8PSi7lRnxSxW4NP565lgjqaDXvxPl
-   XEPDnSHmeJfgMwkIBvzN07gIV+1HozxvR7HHh/4kIl60goxSPmdQabn+o
-   NEf94gEpO7F9Selb0yB6vDbHtrKyPveDI5Fp4uPyDFo9CAqF7jfwXtb1X
-   2wIKO26vQheVJpo1QOviSS0OR1uNlg77pg+Wowv+QrNEFnaZQhhjcV7lR
-   QqL8D0JW2pQIFeSb4AVc97WHY+1pa6dMT0SjU4awDH8F5VDQoll2Kvehx
-   A==;
-X-CSE-ConnectionGUID: BWWvUYNuSImKxyj+5+dKgg==
-X-CSE-MsgGUID: 2iIUzI4OSQKYJDou9ZNbKg==
-X-IronPort-AV: E=Sophos;i="6.15,285,1739833200"; 
-   d="scan'208";a="44051266"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 May 2025 17:00:31 +0200
-X-CheckPoint: {68235E8E-25-3689CF63-CB8C500E}
-X-MAIL-CPID: 8AF5C25384C644D3101B75723DB32111_3
-X-Control-Analysis: str=0001.0A006375.68235E91.0079,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E6FB166837;
-	Tue, 13 May 2025 17:00:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1747148426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gh2NMO7qJrdv3iG60qbGVCR0O4srfdQABWtiiWuAUlw=;
-	b=REGEktdOJSZB22vxLke68pavWt63t07eXLNHdPVOsHqS+kedsJ7991/Gup3ZFTdO6yuVrZ
-	WxnhB7OgzS8x/KPu70JHOi7gfOuJxq+nBJhXWiIm7mCS71GPqU4rqiVSW4kXl4iKdM6TLY
-	kbzHPyiMUYPa1wYzqbIEwbFkFTLE9ycxO1qZInz5U5WnDe0oPa5ZaWmT0cWikYL0fmn93k
-	vqkxai4ooXNPGs2VrhnkNLwOTVWIMVJQQ8UbYheLbpwV4hzBPESIGq/YVCwjhL5D4zKoHu
-	+iStl/v1wasjLk9KQs3/X9lshXEUQ6uTSS5bE9eQlTCewudBw8itNWY7Ah2Xyg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Esben Haabendal <esben@geanix.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] pinctrl: freescale: Enable driver if platform is enabled.
-Date: Tue, 13 May 2025 17:00:09 +0200
-Message-ID: <20250513150010.600656-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+        d=gmail.com; s=20230601; t=1747148533; x=1747753333; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p+OzLkN7UqJiKQOxonaRhxSZwqluN/JbQC6AxIU8wfQ=;
+        b=OjWMegewb6SRHp+rx4uDTuA1kqAoay58qJCXf/Lrlzi9YmEeDdn1MPvu4aDgCD8jZB
+         VmNTDtJVxYAXoEr3Wn/hMaTXYUqVMFUZzItEMKa6LojJilqHG2EFWAOA5PGr4pQYkC3R
+         y53HSH5MuTnSflfygedlRmxOOWdF88AkxviMLuDFfCpn1WnSd5/EDRBFECz7dopkG4eZ
+         wTwfYVkkUl79WYrQUMk+BZQsbqptI81q8ag/iK4IefZ8xtXw6GEAWcaJnD7Yd8xsLN36
+         3uaPvHeXk5SLegV/u0ExIh+/BzMsK/N/BF5rtlZ0Ta3fR7nfhHyGfIhHnrC9oclRApP9
+         aZ3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747148533; x=1747753333;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p+OzLkN7UqJiKQOxonaRhxSZwqluN/JbQC6AxIU8wfQ=;
+        b=mvUouhHy0ZotgosVqAjzx9Hs8EA5Iy/9C+rpbAAWKuf+8L9ZFbjGKdKfTw+hlE4UpG
+         IxjdBk36sKsJnpJvNBlHMoVnEJZUaNrVXbiZjW7a8GfBOUNHnmxKtY66Cl3vESv/BsyA
+         O40JJ9mH22u6kThRQ/PsgorD2E2zS5ftcVCAauq7/zX1E7wUFtEL28DDBIebpM8e8/TV
+         mi/+aDqNo3V+wqwbvjcfjBlrK+9ODOZzQquzpOBj6cfkznftUv/47NG9msI2Hs598B+l
+         4TcKZxL3Fv6H8GX1fbvZXX0M0jnBHpe9afGFApiOh7WPOczTJGqmLRWQdYYGTdaaKeD1
+         z1TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ3V4VaOiTXznFCZu12otL1DBXDxmdvxEZ3URlgXpBwe0VU7/zIydQPRAMDERtU2RkqDJIBGGmEVyE@vger.kernel.org, AJvYcCVX3dmrafOS+zEUl7RiDXhOzQaC+0z9h/NuqkgINbw/84R8N84/+y841kxM0MlzJTIWnPZHoyfx1LYg1gY=@vger.kernel.org, AJvYcCVoBhHtWT6S0OfxovQEJYsRlC45RKZcxrliUoFQbzkVSDzgHVb9MCr39E2IGgu0UpfJIX+lE3t2rJiD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYb7NtUU0lzxqdTaowW5MdwC5oQrVBMTg4n67C0IKUCieBwv0r
+	5Ej1mwuEoenIAamXR6jT/L2By+rfGXqTp5m4yCOS3J/uwHbj0lEt
+X-Gm-Gg: ASbGncurJmK6XOXkSqwibkTQcFkDHoigVE3jj6GgWo1ba5uGj8aOzdz5Ajb7xk90C/H
+	UfnPSuRKCrVwKF36t7hPbSaXxrvAkrGSwL1nZf22tXKc4qJdcmnZJvF9Y/X+rOqm5IscNXpFKUY
+	9j/rchXru8YFxMXwkXQfkxILRPBnHeHu+MpnJwPPjwmt2V4IZ5lkovZ7t4Ppc18yaC77p8PmzO9
+	30GtpRsaIavGmWY3HdAswvyDg3mc4c+DcxIIec9coXMQjgH8vE7Vjaf2ZWKyIUxZXsFH5o/Rjht
+	tSBkDMCnoW2I32D35L7iUrvt0anz4QQmWBonjJn8BSfTegdTlcrW
+X-Google-Smtp-Source: AGHT+IEqDtG6ORSOpnz1hH1E5/allMsCMknYWhd3b4CYO4/SXSfG8BHpxF3fH+P/k2Vy1moESrBPYQ==
+X-Received: by 2002:a05:6000:2a9:b0:3a0:ad15:440f with SMTP id ffacd0b85a97d-3a1f646d80bmr14552627f8f.8.1747148532591;
+        Tue, 13 May 2025 08:02:12 -0700 (PDT)
+Received: from [10.5.0.2] ([195.158.248.94])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a2ce36sm16737956f8f.71.2025.05.13.08.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 May 2025 08:02:11 -0700 (PDT)
+Message-ID: <8863db9b433d4911abba4480bb6ac59f799ed5c5.camel@gmail.com>
+Subject: Re: [PATCH v3 02/22] mfd: adp5585: only add devices given in FW
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Lee Jones <lee@kernel.org>, nuno.sa@analog.com
+Cc: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <ukleinek@kernel.org>,  Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov	 <dmitry.torokhov@gmail.com>,
+ Laurent Pinchart	 <laurent.pinchart@ideasonboard.com>, Liu Ying
+ <victor.liu@nxp.com>
+Date: Tue, 13 May 2025 16:02:11 +0100
+In-Reply-To: <20250513143450.GM2936510@google.com>
+References: <20250512-dev-adp5589-fw-v3-0-092b14b79a88@analog.com>
+	 <20250512-dev-adp5589-fw-v3-2-092b14b79a88@analog.com>
+	 <20250513143450.GM2936510@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-The pinctrl drivers are not enabled in defconfig. Instead of listing
-each driver in the defconfig, enable then by default if the platform/soc
-support is enabled as well.
+On Tue, 2025-05-13 at 15:34 +0100, Lee Jones wrote:
+> On Mon, 12 May 2025, Nuno S=C3=A1 via B4 Relay wrote:
+>=20
+> > From: Nuno S=C3=A1 <nuno.sa@analog.com>
+> >=20
+> > Not all devices (features) of the adp5585 device are mandatory to be
+> > used in all platforms. Hence, check what's given in FW and dynamically
+> > create the mfd_cell array to be given to devm_mfd_add_devices().
+> >=20
+> > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> > ---
+> > =C2=A0drivers/mfd/adp5585.c | 45 ++++++++++++++++++++++++++++++++++++++=
++++----
+> > =C2=A01 file changed, 41 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
+> > index
+> > 160e0b38106a6d78f7d4b7c866cb603d96ea673e..02f9e8c1c6a1d8b9516c060e0024d=
+69886
+> > e9fb7a 100644
+> > --- a/drivers/mfd/adp5585.c
+> > +++ b/drivers/mfd/adp5585.c
+> > @@ -17,7 +17,13 @@
+> > =C2=A0#include <linux/regmap.h>
+> > =C2=A0#include <linux/types.h>
+> > =C2=A0
+> > -static const struct mfd_cell adp5585_devs[] =3D {
+> > +enum {
+> > +	ADP5585_DEV_GPIO,
+> > +	ADP5585_DEV_PWM,
+> > +	ADP5585_DEV_MAX
+> > +};
+> > +
+> > +static const struct mfd_cell adp5585_devs[ADP5585_DEV_MAX] =3D {
+> > =C2=A0	{ .name =3D "adp5585-gpio", },
+> > =C2=A0	{ .name =3D "adp5585-pwm", },
+> > =C2=A0};
+> > @@ -110,12 +116,40 @@ static const struct regmap_config
+> > adp5585_regmap_configs[] =3D {
+> > =C2=A0	},
+> > =C2=A0};
+> > =C2=A0
+> > +static int adp5585_parse_fw(struct device *dev, struct adp5585_dev
+> > *adp5585,
+> > +			=C2=A0=C2=A0=C2=A0 struct mfd_cell **devs)
+> > +{
+> > +	unsigned int has_pwm =3D 0, has_gpio =3D 0, rc =3D 0;
+> > +
+> > +	if (device_property_present(dev, "#pwm-cells"))
+> > +		has_pwm =3D 1;
+>=20
+> This is a little sloppy.=C2=A0 Instead of using throwaway local variables=
+, do
+> what you're going to do in the if statement.
+>=20
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* default pinctrl driver depending on SoC support
+Then I would need to realloc my device cells... But as I realized below, th=
+is is
+indeed not needed.
 
-The discussion at [1] resulted it is better to default SoC-specific pinctrl
-drivers to thei SoC support instead of adding to defconfig or selecting
-pinctrl.
+> > +	if (device_property_present(dev, "#gpio-cells"))
+> > +		has_gpio =3D 1;
+> > +
+> > +	if (!has_pwm && !has_gpio)
+> > +		return -ENODEV;
+>=20
+> Are we really dictating which child devices to register based on random
+> DT properties?=C2=A0 Why not register them anyway and have them fail if t=
+he
+> information they need is not available?=C2=A0 Missing / incorrect propert=
+ies
+> usually get a -EINVAL.
 
-[1] https://lore.kernel.org/all/20250507124414.3088510-1-alexander.stein@ew.tq-group.com/
+Well, this was something Laurent asked for... In the previous version I was
+registering all the devices unconditionally.
+=20
+>=20
+> > +	*devs =3D devm_kcalloc(dev, has_pwm + has_gpio, sizeof(struct
+> > mfd_cell),
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0 GFP_KERNEL);
+> > +	if (!*devs)
+> > +		return -ENOMEM;
+> > +
+> > +	if (has_pwm)
+> > +		(*devs)[rc++] =3D adp5585_devs[ADP5585_DEV_PWM];
+> > +	if (has_gpio)
+> > +		(*devs)[rc++] =3D adp5585_devs[ADP5585_DEV_GPIO];
+>=20
+> Passing around pointers to pointers for allocation (and later, pointer
+> to functions) is not the way we wish to operate.=C2=A0 See how all of the
+> other MFD drivers handle selective sub-drivers.
 
- drivers/pinctrl/freescale/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Any pointer from the top of your head (example driver)? Honestly, I do not =
+see
+this being that bad. Pretty much is a dynamic array of struct mfd_cel but
+anyways, no strong feelings
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 4c420b21b804d..18962bc93b87d 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -21,6 +21,7 @@ config PINCTRL_IMX_SCMI
- config PINCTRL_IMX_SCU
- 	tristate
- 	depends on IMX_SCU || COMPILE_TEST
-+	default IMX_SCU
- 	select PINCTRL_IMX
- 
- config PINCTRL_IMX1_CORE
-@@ -159,6 +160,7 @@ config PINCTRL_IMX8MM
- 	tristate "IMX8MM pinctrl driver"
- 	depends on OF
- 	depends on SOC_IMX8M || COMPILE_TEST
-+	default SOC_IMX8M
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mm pinctrl driver
-@@ -167,6 +169,7 @@ config PINCTRL_IMX8MN
- 	tristate "IMX8MN pinctrl driver"
- 	depends on OF
- 	depends on SOC_IMX8M || COMPILE_TEST
-+	default SOC_IMX8M
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mn pinctrl driver
-@@ -175,6 +178,7 @@ config PINCTRL_IMX8MP
- 	tristate "IMX8MP pinctrl driver"
- 	depends on OF
- 	depends on SOC_IMX8M || COMPILE_TEST
-+	default SOC_IMX8M
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mp pinctrl driver
-@@ -183,6 +187,7 @@ config PINCTRL_IMX8MQ
- 	tristate "IMX8MQ pinctrl driver"
- 	depends on OF
- 	depends on SOC_IMX8M || COMPILE_TEST
-+	default SOC_IMX8M
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mq pinctrl driver
-@@ -191,6 +196,7 @@ config PINCTRL_IMX8QM
- 	tristate "IMX8QM pinctrl driver"
- 	depends on OF
- 	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
-+	default ARCH_MXC
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8qm pinctrl driver
-@@ -199,6 +205,7 @@ config PINCTRL_IMX8QXP
- 	tristate "IMX8QXP pinctrl driver"
- 	depends on OF
- 	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
-+	default ARCH_MXC
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8qxp pinctrl driver
-@@ -207,6 +214,7 @@ config PINCTRL_IMX8DXL
- 	tristate "IMX8DXL pinctrl driver"
- 	depends on OF
- 	depends on (IMX_SCU && ARCH_MXC && ARM64) || COMPILE_TEST
-+	default ARCH_MXC
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8dxl pinctrl driver
-@@ -215,6 +223,7 @@ config PINCTRL_IMX8ULP
- 	tristate "IMX8ULP pinctrl driver"
- 	depends on OF
- 	depends on ARCH_MXC || COMPILE_TEST
-+	default ARCH_MXC
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8ulp pinctrl driver
-@@ -239,6 +248,7 @@ config PINCTRL_IMX93
- 	tristate "IMX93 pinctrl driver"
- 	depends on OF
- 	depends on ARCH_MXC || COMPILE_TEST
-+	default SOC_IMX9
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx93 pinctrl driver
--- 
-2.43.0
+But... I was actually being very stupid. First I did looked at an API to on=
+ly
+add one mfd device and failed to realize that I can use devm_mfd_add_device=
+s()
+with n_devs =3D 1
 
+Nevermind, will refactor in v4
+
+>=20
+> > +	return rc;
+> > +}
+> > +
+> > =C2=A0static int adp5585_i2c_probe(struct i2c_client *i2c)
+> > =C2=A0{
+> > =C2=A0	const struct regmap_config *regmap_config;
+> > =C2=A0	struct adp5585_dev *adp5585;
+> > +	struct mfd_cell *devs;
+> > =C2=A0	unsigned int id;
+> > -	int ret;
+> > +	int ret, n_devs;
+> > =C2=A0
+> > =C2=A0	adp5585 =3D devm_kzalloc(&i2c->dev, sizeof(*adp5585), GFP_KERNEL=
+);
+> > =C2=A0	if (!adp5585)
+> > @@ -138,9 +172,12 @@ static int adp5585_i2c_probe(struct i2c_client *i2=
+c)
+> > =C2=A0		return dev_err_probe(&i2c->dev, -ENODEV,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "Invalid device ID 0x%02x\n", id);
+> > =C2=A0
+> > +	n_devs =3D adp5585_parse_fw(&i2c->dev, adp5585, &devs);
+> > +	if (n_devs < 0)
+> > +		return n_devs;
+> > +
+> > =C2=A0	ret =3D devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> > -				=C2=A0=C2=A0 adp5585_devs, ARRAY_SIZE(adp5585_devs),
+> > -				=C2=A0=C2=A0 NULL, 0, NULL);
+> > +				=C2=A0=C2=A0 devs, n_devs, NULL, 0, NULL);
+> > =C2=A0	if (ret)
+> > =C2=A0		return dev_err_probe(&i2c->dev, ret,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to add child devices\n");
+> >=20
+> > --=20
+> > 2.49.0
+> >=20
+> >=20
