@@ -1,96 +1,77 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC92520468C
-	for <linux-gpio@vger.kernel.org>; Tue, 13 May 2025 09:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD8721C17B;
+	Tue, 13 May 2025 09:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747127875; cv=none; b=cG6vL53BCmSKXDIJYwi/dI1GZnszrI4hSLDmQm65zLF+nfb/gGjzyhzr+nrR7T5ojEEP/rdTOSIZPQhSBGTOVaVVceTG5kXmlFO0COgFvfQsIEw5XwrsLDsh3HliYPkqJCopTK8mPY34zC7hmEYOhjpOthW4loW56aTDHxoyqk0=
+	t=1747127990; cv=none; b=aFwzJAhGqQwMGmBAQ205USgd44UKj7u199ob3xqXnEAB2Qm1QYoDgp6t4t951B8IEHCBwUKZ8p8xy2J4F/2TQib/eg92wSXl2BVUFa4Gcst8MKCRkwvy/vwv+0qqppgLsyXblmzfI6i5joeRk4EhKgsiRIWKrZaQzuVTWyQUw2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747127875; c=relaxed/simple;
-	bh=fYj5KQcmLHEMEZBytxHFM2PZV8baZG30rM4LCErfAUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gdXYS5fX1pwJuguJtuMfuLLXzyVxdZTnQZtD3BR5XXTSu5q+RXusMuuIdJlTfm7YmPtm+nwe4gukgKLZcz3UZ/e2/0kdbVUsAJxfkBYFZ1zcyNRSbVqjQHVgBcrc4NxqcSAeAFJdIsAQHEldxMwquzzMctbbzGxCB9oI8BRnRzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rpZhtYvG; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1747127990; c=relaxed/simple;
+	bh=F+9+GV6PR4vz3HrC1iJgRo/ICi0mkT4spMSTxAe5JUc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uIwyXSt016Hgy8V1NMnlvmFtVrVVDrxc4yu2/DR9a5GU//cvldpqClv1Xn/ra1dUMxuCHSSlNSjGWVdxyyQjU1XCBR1kBqIZVEKhCsXrpBwh9nvBGyUXo5vH7GFf3R5DO3tCYa7C19QoTkuNAZRheND7qr0hsYqmj4V8+lXw98A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JzNYpOwX; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rpZhtYvG"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-326ca53a7e8so37235951fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 13 May 2025 02:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747127871; x=1747732671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fYj5KQcmLHEMEZBytxHFM2PZV8baZG30rM4LCErfAUA=;
-        b=rpZhtYvGCX1OdO9DcHoF55s92TPmzmY6DdTVtCEqd334WBobDLW3RPPl2JdKKR8kDy
-         m7u1SrMSaPk0qSf5R9gSpL3lvIuDZm3Tfw+X08M9S8i2gvwSYoXljbSPk1JyJS2+B3RE
-         Gvg1jLkF/tqcIheNbEVn4ZzH3AHNOVU+UwIccJ3kdz4Mpr2DtlQmd80M2uHfiXgmjDQo
-         wt0HKMmFtQThRVfh0dGFUAZ9Rq5nzPTI/vZqL58ucAx5bVqB8GC2bprcdvFn8ApkMUQS
-         TAOY+tXSfA/Byvx+CqitUk0tG7PzcMLIU05ogojXI3FLXaYYkqV8IZwDJDbElRJRnMp1
-         3i5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747127871; x=1747732671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fYj5KQcmLHEMEZBytxHFM2PZV8baZG30rM4LCErfAUA=;
-        b=Z1urwPch6gZtUQDzRjSZuEuy3hfdMQjv/JqU1G21E3rvB1KPek8s2XMelXXkw17rLe
-         B5F7IBRIIC42egoBZuLE1gywy7+SSSDnqe+nRb4Dod6HkP49RzpXcIyFNLWxb0/2Y+CC
-         xHe3Xf1Ai5xAx7QmbbaBoq5U9r6/pKakad/+lQSaUZlYzEVDt4JX+A16vcrFg1H5iyJ3
-         R34viAjKWfZ5NKvG2DawModEGXwC+n/IVi/ZwcskZ6/gQqzo40yrig4f85vVrFBRKJYa
-         I4LD2mqYOcrYwvQOxYimYApNTUfH+a8Sru5f0+2S/nzOItwvZ2HJULNVoJZbI5uD8vSN
-         zqMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAuL7pErKBJ/Lp+xFq3XDmWM6Av4zmZysNq03ic4OewUubwLDYivArPDhhuGi+pUUwfzbqzhbgq3yz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyobveKXkPXhCTUr73wLhk8tL3MzEo9auiybuUNXyaPEFVrt6UW
-	jPX3wX1qXoC862JdEUGpmCNxI5in4PI2MaN7Nm7SP2gRYhRIzvO7mZR63942WMHa0J6oKgrGuaj
-	ExWoHoAWRP/heJzoE80oyWIxDUdkmm/a53fdwuQ==
-X-Gm-Gg: ASbGnculGR3H6sMv/n0VAH48TDUqV26KkLavANNs+jfxt1js2Xfq6HHt3KyDEIQ5yVU
-	U1EE7xIcq9slzuN+Q3MUf3DWYk9tGyf5PI8nOtuTikf4jpC2ouSQKkiR4dXmahZNS9oqF5CT14c
-	Cmmwr7h/eOcZRoDN+SaEcL5iuWDt+SNlGfCEXn8LE2OIA=
-X-Google-Smtp-Source: AGHT+IGF5AAEtxjDLnWwB2KhlBfA9BpWe7QwP/k4X0BBbK9pCsdG9d1Hz5QqjrJe/oAyVtJZCXkbt+hJdfoDbRz+p5M=
-X-Received: by 2002:a2e:a542:0:b0:308:e54d:61b1 with SMTP id
- 38308e7fff4ca-326c4686abamr73346771fa.34.1747127871028; Tue, 13 May 2025
- 02:17:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JzNYpOwX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1747127988; x=1778663988;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=F+9+GV6PR4vz3HrC1iJgRo/ICi0mkT4spMSTxAe5JUc=;
+  b=JzNYpOwXuStUgCprOi+dL+6afWw3HCPKzBMcZQhIz0yfpV6BZiBu7X27
+   yzNTetaR81/Ae1zLdvtVMTrTWOtSgopmChJzLLec8yoT9wpX93f8Q76XA
+   nr65abDJtbkSMqv4B2VzitepBtvUFkUwaKI/wMKduegz4rUTbDITrXpXi
+   BqcOMaDbpc9kGsN6T5VojoSS3kYmHJTNrqCDNBVxvVTdkRAJ4YN4mHVU2
+   zjBd1PwMXI+xzgHoAlmk0d7IhhuwGev15wr4t7LW8CAqZQa3L/pTFf0mU
+   m8hdNMjU/klaq8jEJEJD91KmRnwVdpH1puOTmnirBrd9awY3hEAZSa9Pc
+   Q==;
+X-CSE-ConnectionGUID: 4la2DOakSDynwZsvbJGMbg==
+X-CSE-MsgGUID: tY78326VT2eXjS8LPxCs9g==
+X-IronPort-AV: E=Sophos;i="6.15,284,1739862000"; 
+   d="scan'208";a="209027473"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 May 2025 02:19:47 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 13 May 2025 02:19:17 -0700
+Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 13 May 2025 02:19:13 -0700
+From: Rengarajan S <rengarajan.s@microchip.com>
+To: <vaibhaavram.tl@microchip.com>, <kumaravel.thiagarajan@microchip.com>,
+	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <linus.walleij@linaro.org>,
+	<brgl@bgdev.pl>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <unglinuxdriver@microchip.com>
+CC: <rengarajan.s@microchip.com>
+Subject: [PATCH v1 char-misc-next 0/2] Add GPIO Hot reset and Wakeup Support
+Date: Tue, 13 May 2025 14:45:55 +0530
+Message-ID: <20250513091557.3660-1-rengarajan.s@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-max77759-mfd-v8-0-72d72dc79a1f@linaro.org> <20250429-max77759-mfd-v8-5-72d72dc79a1f@linaro.org>
-In-Reply-To: <20250429-max77759-mfd-v8-5-72d72dc79a1f@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 13 May 2025 11:17:40 +0200
-X-Gm-Features: AX0GCFvKQMhZ-KOCmIthKIc7OzU6GLwrFz4eRraag3cmXbQnfR3YMu1flp3ZUNg
-Message-ID: <CACRpkdZUTJX4ht3CTN6AuEVRgbM38Bs_kLj2yx_NwrRCryE-uw@mail.gmail.com>
-Subject: Re: [PATCH v8 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Apr 29, 2025 at 10:22=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
-linaro.org> wrote:
+This patch series adds the support for GPIO Hot reset from C0 device
+revisions. In addition, GPIO Wakeup support is added using irq_set_wake.
 
-> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
-> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
-> Port Controller (TCPC), NVMEM, and a GPIO expander.
->
-> This driver supports the GPIO functions using the platform device
-> registered by the core MFD driver.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Rengarajan S (2):
+  misc: microchip: pci1xxxx: Add PCIe Hot reset disable support for Rev
+    C0 and later devices
+  misc: microchip: pci1xxxx: Add GPIO Wakeup Support
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+ .../misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c   | 92 +++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-Yours,
-Linus Walleij
+-- 
+2.25.1
+
