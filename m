@@ -1,399 +1,288 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BBE4B1E44;
-	Thu, 15 May 2025 07:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EAA2222CB;
+	Thu, 15 May 2025 07:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747294098; cv=none; b=RMgr8A4gJlMneNBa30T3N7bnFdi2oBpnPHcHEYJLFtfd6H5ovYpElrGud0C16p57Y/bGS7aN4l3Vzf/1t4m0zcNM0hINPVfE7/KNTBI6waRClJjID2mIh5jN+GMa8mMTGeG1psEo8K/aZXcoAIqPWzvxeS0Vm2bxMhJtaFRR6so=
+	t=1747295056; cv=none; b=QAjDw18rKaL8PzIvUaRdntJNZV26OPFJSrpPdm1iASR29yYKsF/IvxqT9bA1xYI0UeZHuneM3mcFEPTqE4PqUROd50pWx1AoHixHsuRx3upjb2k6yadNtLZm+m5RsQvuxtToDPmLvdSF8lSC9P5eB16uT/89DeGQDFFy4XYGDeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747294098; c=relaxed/simple;
-	bh=BrbhlZMAbRwWVb+rJM0+CbCBkLoIEnrmBwVee7Dhod0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dHkmiQJ+UqmtMmz1x3Ar0LS+aBJobh14KSjEGjMzwgA5wTIVdR6GTmCDXFYBFuFDQ6sd6PodhpnMd9JIgWxPzM0GT+709L1biDaj7JiVOdSWEOOtxjYwgJUJTZJE0mQV5NynudAj3S/P1Nv91MNO63KWlTnk5c1LPB1Dm0nI7pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHjubw2r; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1747295056; c=relaxed/simple;
+	bh=Mlac3xE6wcJ6Jis+XaIwCBuS6dH+sSkuAxiSfCJzkyE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=fYeMTBiP5PGEraP7h+x2TkKJABu5f4ZJV6vC+NuZFUaUVmAP73oCllaPY/d6ZmOm5RK3jA0AzXkrJEwO49OiVTiERYtaJ0X0pEhotYVJb/bg4/iBwy35LpTV3vOIE71WsmwQXCqOMH0d8vD+flH7VxRwARRJgDh+MKTLtKlmt5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AlV76Kx0; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHjubw2r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747294096; x=1778830096;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BrbhlZMAbRwWVb+rJM0+CbCBkLoIEnrmBwVee7Dhod0=;
-  b=iHjubw2rXelFLPe22mPaHvGEaGaCGTeCkL4yap5GCkxCBwFJ4fMv+oNy
-   UXK3fDc8ZECNjpbvnM9vuQAC+lv9Tf95FTuAJ/r+fJFCawihYizMnc6JH
-   aH+L6s1AQoxnDzxgKqJPy0jvZbLGqQGBK9EFMYOfm6DcL98Gu4A85XHjB
-   rLht1GxeoBEqk5K5Ne/fjCoBX0y+CKJbn20ZpQzHy5UHq0AgW+V9MFrTY
-   v176anRUEvdaL8YLDI14Tt5TIyZcrJ+/iGinkrpahnSN0g9wLu7f2I1UK
-   30l0MXpeWKvc2ZbgtZjZhcxXTlWYxo8qtskM/TPv7krlc3NRd1tx0KArU
-   A==;
-X-CSE-ConnectionGUID: 9k5ROk+uRi2c3CjiFUqcIQ==
-X-CSE-MsgGUID: Cn3cDdA5RzCQtDic35YzZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="48333764"
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="48333764"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 00:28:15 -0700
-X-CSE-ConnectionGUID: BgVJ0W6zSKCNBo/IHQckHg==
-X-CSE-MsgGUID: hHubUriKQcmZDZBp9m3Cdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,290,1739865600"; 
-   d="scan'208";a="143387119"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 15 May 2025 00:28:10 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uFT0i-000I4B-07;
-	Thu, 15 May 2025 07:28:08 +0000
-Date: Thu, 15 May 2025 15:27:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Darren.Ye" <darren.ye@mediatek.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	Darren Ye <darren.ye@mediatek.com>
-Subject: Re: [PATCH v3 09/10] ASoC: mediatek: mt8196: add machine driver with
- nau8825
-Message-ID: <202505151544.DAAAOmfW-lkp@intel.com>
-References: <20250514081125.24475-10-darren.ye@mediatek.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AlV76Kx0"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id F09A65864E1;
+	Thu, 15 May 2025 07:14:51 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A1C3443B4A;
+	Thu, 15 May 2025 07:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747293283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mX1woD7s+wGWYgmpuE+SHHxupgRU2OvGk0U0nEWZuU=;
+	b=AlV76Kx09zhkdC+dl4JnfmpX3qVYdHqlFCoLbANvcSm/AwUsqVCN4fZyCRYM4tnAwm8Io1
+	+ioDLSdbJ1b8AjppXGYfaxY5cYFfZdCdRMlKgZgPZcF5UgMh/0Ev4F8UWJoBhMBMANddB/
+	3wqWNTExt4MaZlpmg9MZtpzUzqDXhGbeb/NhpcKowlwppTQr8q7xBXFD3VUZAUdXUUNCAw
+	DRHvrvfGki6dVG6SdbbpkQKheIC2bOdtogIUWy4op/bmuWO64M3YeEgYNb/mYCq2efiuSU
+	tAFMWlbAd8mDhcn1zBfIXz07+8pB2JnxO36YrPMlRpz6WcvqDP5gZC0fv6DNig==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250514081125.24475-10-darren.ye@mediatek.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 May 2025 09:14:40 +0200
+Message-Id: <D9WJRVV500O3.GUV0MKHRGTH2@bootlin.com>
+Subject: Re: [PATCH v8 04/11] pwm: max7360: Add MAX7360 PWM support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com>
+ <20250509-mdb-max7360-support-v8-4-bbe486f6bcb7@bootlin.com>
+ <5eb7xqo7bfzath3xy7i6v5fep7qwfeg4z3rtzifmgnyvlc3o5b@yi6hzur52hl3>
+In-Reply-To: <5eb7xqo7bfzath3xy7i6v5fep7qwfeg4z3rtzifmgnyvlc3o5b@yi6hzur52hl3>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdelvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtdegmegtvggttdemfhdthegsmegtvdgsmeduvggvudemrgelfhekmeefiegrmeguheegkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtgeemtggvtgdtmehftdehsgemtgdvsgemudgvvgdumegrlehfkeemfeeirgemugehgeekpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ heprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Hi Darren.Ye,
+On Tue May 13, 2025 at 12:08 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>
+> On Fri, May 09, 2025 at 11:14:38AM +0200, mathieu.dubois-briand@bootlin.c=
+om wrote:
+>> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>>=20
+>> Add driver for Maxim Integrated MAX7360 PWM controller, supporting up to
+>> 8 independent PWM outputs.
+>>=20
+>> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.co=
+m>
+>> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+>> ---
+>>  drivers/pwm/Kconfig       |  10 +++
+>>  drivers/pwm/Makefile      |   1 +
+>>  drivers/pwm/pwm-max7360.c | 186 +++++++++++++++++++++++++++++++++++++++=
++++++++
+>>  3 files changed, 197 insertions(+)
+>>=20
+>> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+>> index 4731d5b90d7e..0b22141cbf85 100644
+>> --- a/drivers/pwm/Kconfig
+>> +++ b/drivers/pwm/Kconfig
+>> @@ -755,4 +755,14 @@ config PWM_XILINX
+>>  	  To compile this driver as a module, choose M here: the module
+>>  	  will be called pwm-xilinx.
+>> =20
+>> +config PWM_MAX7360
+>> +	tristate "MAX7360 PWMs"
+>> +	depends on MFD_MAX7360
+>> +	help
+>> +	  PWM driver for Maxim Integrated MAX7360 multifunction device, with
+>> +	  support for up to 8 PWM outputs.
+>> +
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called pwm-max7360.
+>> +
+>>  endif
+>> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+>> index 539e0def3f82..9c7701d8070b 100644
+>> --- a/drivers/pwm/Makefile
+>> +++ b/drivers/pwm/Makefile
+>> @@ -36,6 +36,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+=3D pwm-lpc32xx.o
+>>  obj-$(CONFIG_PWM_LPSS)		+=3D pwm-lpss.o
+>>  obj-$(CONFIG_PWM_LPSS_PCI)	+=3D pwm-lpss-pci.o
+>>  obj-$(CONFIG_PWM_LPSS_PLATFORM)	+=3D pwm-lpss-platform.o
+>> +obj-$(CONFIG_PWM_MAX7360)	+=3D pwm-max7360.o
+>>  obj-$(CONFIG_PWM_MESON)		+=3D pwm-meson.o
+>>  obj-$(CONFIG_PWM_MEDIATEK)	+=3D pwm-mediatek.o
+>>  obj-$(CONFIG_PWM_MICROCHIP_CORE)	+=3D pwm-microchip-core.o
+>> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
+>> new file mode 100644
+>> index 000000000000..af2006ec7a96
+>> --- /dev/null
+>> +++ b/drivers/pwm/pwm-max7360.c
+>> @@ -0,0 +1,186 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright 2025 Bootlin
+>> + *
+>> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+>> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+>> + *
+>> + * Limitations:
+>> + * - Only supports normal polarity.
+>> + * - The period is fixed to 2 ms.
+>> + * - Only the duty cycle can be changed, new values are applied at the =
+beginning
+>> + *   of the next cycle.
+>> + * - When disabled, the output is put in Hi-Z.
+>> + */
+>> +#include <linux/bits.h>
+>> +#include <linux/dev_printk.h>
+>> +#include <linux/err.h>
+>> +#include <linux/math64.h>
+>> +#include <linux/mfd/max7360.h>
+>> +#include <linux/minmax.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pwm.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/time.h>
+>> +#include <linux/types.h>
+>> +
+>> +#define MAX7360_NUM_PWMS			8
+>> +#define MAX7360_PWM_MAX_RES			255
+>> +#define MAX7360_PWM_PERIOD_NS			(2 * NSEC_PER_MSEC)
+>> +
+>> +struct max7360_pwm_waveform {
+>> +	u8 duty_steps;
+>> +	bool enabled;
+>> +};
+>> +
+>> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device=
+ *pwm)
+>> +{
+>> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
+>> +	int ret;
+>> +
+>> +	ret =3D regmap_write_bits(regmap, MAX7360_REG_PWMCFG(pwm->hwpwm),
+>> +				MAX7360_PORT_CFG_COMMON_PWM, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return regmap_write_bits(regmap, MAX7360_REG_PORTS, BIT(pwm->hwpwm), B=
+IT(pwm->hwpwm));
+>
+> What is the effect of these writes? It doesn't need to be undone in a
+> matching .free()?
+>
 
-kernel test robot noticed the following build errors:
+The first one (MAX7360_PORT_CFG_COMMON_PWM) asks to use a specific duty
+cycle for this PWM output and not a value shared across all PWMs. I
+believe this one have no reason to be ever reverted.
 
-[auto build test ERROR on broonie-sound/for-next]
-[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.15-rc6 next-20250514]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+About the second one, it does switch the output value. Reading the
+datasheet, it's not clear if and why setting this here is required. I
+will make some tests on the hardware a bit later this week. Still, I
+believe there is no need to revert it later.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Darren-Ye/ASoC-mediatek-common-modify-mtk-afe-platform-driver-for-mt8196/20250514-161921
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250514081125.24475-10-darren.ye%40mediatek.com
-patch subject: [PATCH v3 09/10] ASoC: mediatek: mt8196: add machine driver with nau8825
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250515/202505151544.DAAAOmfW-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250515/202505151544.DAAAOmfW-lkp@intel.com/reproduce)
+>> +}
+>> +
+>> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+>> +					   struct pwm_device *pwm,
+>> +					   const struct pwm_waveform *wf,
+>> +					   void *_wfhw)
+>> +{
+>> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
+>> +	u64 duty_steps;
+>> +
+>> +	/*
+>> +	 * Ignore user provided values for period_length_ns and duty_offset_ns=
+:
+>> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of=
+ 0.
+>> +	 */
+>> +	duty_steps =3D mul_u64_u64_div_u64(wf->duty_length_ns, MAX7360_PWM_MAX=
+_RES,
+>> +					 MAX7360_PWM_PERIOD_NS);
+>> +
+>> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX_RES, duty_steps);
+>> +	wfhw->enabled =3D !!wf->duty_length_ns;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, str=
+uct pwm_device *pwm,
+>> +					     const void *_wfhw, struct pwm_waveform *wf)
+>> +{
+>> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
+>> +
+>> +	wf->period_length_ns =3D wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
+>> +	wf->duty_offset_ns =3D 0;
+>> +	wf->duty_length_ns =3D DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PER=
+IOD_NS,
+>> +					  MAX7360_PWM_MAX_RES);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int max7360_pwm_write_waveform(struct pwm_chip *chip,
+>> +				      struct pwm_device *pwm,
+>> +				      const void *_wfhw)
+>> +{
+>> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
+>> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
+>> +	unsigned int val;
+>> +	int ret;
+>> +
+>> +	val =3D wfhw->enabled ? BIT(pwm->hwpwm) : 0;
+>> +	ret =3D regmap_write_bits(regmap, MAX7360_REG_GPIOCTRL, BIT(pwm->hwpwm=
+), val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (wfhw->duty_steps)
+>> +		return regmap_write(regmap, MAX7360_REG_PWM(pwm->hwpwm), wfhw->duty_s=
+teps);
+>
+> Would it make sense to first write duty_steps and only then enable?
+> Otherwise it might happen that you enable and still have a wrong duty
+> configuration in the MAX7360_REG_PWM register and emit a wrong period?
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505151544.DAAAOmfW-lkp@intel.com/
+Yes, I believe it does make sense: I will try to invert them.
 
-All errors (new ones prefixed by >>):
+> Do you need to write duty_steps =3D 0 if enabled is false?
+>
 
->> sound/soc/mediatek/mt8196/mt8196-nau8825.c:451:49: error: 'SND_SOC_DAIFMT_CBS_CFS' undeclared here (not in a function); did you mean 'SND_SOC_DAIFMT_CBP_CFC'?
-     451 |                 .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-         |                                                 ^~~~~~~~~~~~~~~~~~~~~~
-         |                                                 SND_SOC_DAIFMT_CBP_CFC
+No, this is not needed: output will be in hi-Z mode. As we have
+"wfhw->enabled =3D !!wf->duty_length_ns", this should be correct here. But
+reading this, I believe I could modify above code to be more clear with:
+
+if (wfhw->enabled)
+	return regmap_write(regmap, MAX7360_REG_PWM(pwm->hwpwm), wfhw->duty_steps)=
+;
 
 
-vim +451 sound/soc/mediatek/mt8196/mt8196-nau8825.c
+>> +	return 0;
+>> +}
+>
+> Best regards
+> Uwe
 
-   245	
-   246	/* FE */
-   247	SND_SOC_DAILINK_DEFS(playback1,
-   248			     DAILINK_COMP_ARRAY(COMP_CPU("DL1")),
-   249			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   250			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   251	SND_SOC_DAILINK_DEFS(playback_24ch,
-   252			     DAILINK_COMP_ARRAY(COMP_CPU("DL_24CH")),
-   253			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   254			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   255	SND_SOC_DAILINK_DEFS(capture0,
-   256			     DAILINK_COMP_ARRAY(COMP_CPU("UL0")),
-   257			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   258			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   259	SND_SOC_DAILINK_DEFS(capture1,
-   260			     DAILINK_COMP_ARRAY(COMP_CPU("UL1")),
-   261			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   262			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   263	SND_SOC_DAILINK_DEFS(capture2,
-   264			     DAILINK_COMP_ARRAY(COMP_CPU("UL2")),
-   265			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   266			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   267	SND_SOC_DAILINK_DEFS(playback_hdmi,
-   268			     DAILINK_COMP_ARRAY(COMP_CPU("HDMI")),
-   269			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   270			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   271	SND_SOC_DAILINK_DEFS(playback2,
-   272			     DAILINK_COMP_ARRAY(COMP_CPU("DL2")),
-   273			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   274			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   275	SND_SOC_DAILINK_DEFS(capture_cm0,
-   276			     DAILINK_COMP_ARRAY(COMP_CPU("UL_CM0")),
-   277			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   278			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   279	/* BE */
-   280	SND_SOC_DAILINK_DEFS(ap_dmic,
-   281			     DAILINK_COMP_ARRAY(COMP_CPU("AP_DMIC")),
-   282			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   283			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   284	SND_SOC_DAILINK_DEFS(ap_dmic_ch34,
-   285			     DAILINK_COMP_ARRAY(COMP_CPU("AP_DMIC_CH34")),
-   286			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   287			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   288	SND_SOC_DAILINK_DEFS(ap_dmic_multich,
-   289			     DAILINK_COMP_ARRAY(COMP_CPU("AP_DMIC_MULTICH")),
-   290			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   291			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   292	SND_SOC_DAILINK_DEFS(i2sin6,
-   293			     DAILINK_COMP_ARRAY(COMP_CPU("I2SIN6")),
-   294			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   295			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   296	SND_SOC_DAILINK_DEFS(i2sout3,
-   297			     DAILINK_COMP_ARRAY(COMP_CPU("I2SOUT3")),
-   298			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   299			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   300	SND_SOC_DAILINK_DEFS(i2sout4,
-   301			     DAILINK_COMP_ARRAY(COMP_CPU("I2SOUT4")),
-   302			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   303			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   304	SND_SOC_DAILINK_DEFS(i2sout6,
-   305			     DAILINK_COMP_ARRAY(COMP_CPU("I2SOUT6")),
-   306			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   307			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   308	SND_SOC_DAILINK_DEFS(tdm_dptx,
-   309			     DAILINK_COMP_ARRAY(COMP_CPU("TDM_DPTX")),
-   310			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   311			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   312	SND_SOC_DAILINK_DEFS(AFE_SOF_DL_24CH,
-   313			     DAILINK_COMP_ARRAY(COMP_CPU("SOF_DL_24CH")),
-   314			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   315			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   316	SND_SOC_DAILINK_DEFS(AFE_SOF_DL1,
-   317			     DAILINK_COMP_ARRAY(COMP_CPU("SOF_DL1")),
-   318			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   319			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   320	SND_SOC_DAILINK_DEFS(AFE_SOF_UL0,
-   321			     DAILINK_COMP_ARRAY(COMP_CPU("SOF_UL0")),
-   322			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   323			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   324	SND_SOC_DAILINK_DEFS(AFE_SOF_UL1,
-   325			     DAILINK_COMP_ARRAY(COMP_CPU("SOF_UL1")),
-   326			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   327			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   328	SND_SOC_DAILINK_DEFS(AFE_SOF_UL2,
-   329			     DAILINK_COMP_ARRAY(COMP_CPU("SOF_UL2")),
-   330			     DAILINK_COMP_ARRAY(COMP_DUMMY()),
-   331			     DAILINK_COMP_ARRAY(COMP_EMPTY()));
-   332	
-   333	static struct snd_soc_dai_link mt8196_nau8825_dai_links[] = {
-   334		/*
-   335		 * The SOF topology expects PCM streams 0~4 to be available
-   336		 * for the SOF PCM streams. Put the SOF BE definitions here
-   337		 * so that the PCM device numbers are skipped over.
-   338		 * (BE dailinks do not have PCM devices created.)
-   339		 */
-   340		{
-   341			.name = "AFE_SOF_DL_24CH",
-   342			.no_pcm = 1,
-   343			.playback_only = 1,
-   344			.ops = &mt8196_sof_be_ops,
-   345			SND_SOC_DAILINK_REG(AFE_SOF_DL_24CH),
-   346		},
-   347		{
-   348			.name = "AFE_SOF_DL1",
-   349			.no_pcm = 1,
-   350			.playback_only = 1,
-   351			.ops = &mt8196_sof_be_ops,
-   352			SND_SOC_DAILINK_REG(AFE_SOF_DL1),
-   353		},
-   354		{
-   355			.name = "AFE_SOF_UL0",
-   356			.no_pcm = 1,
-   357			.capture_only = 1,
-   358			.ops = &mt8196_sof_be_ops,
-   359			SND_SOC_DAILINK_REG(AFE_SOF_UL0),
-   360		},
-   361		{
-   362			.name = "AFE_SOF_UL1",
-   363			.no_pcm = 1,
-   364			.capture_only = 1,
-   365			.ops = &mt8196_sof_be_ops,
-   366			SND_SOC_DAILINK_REG(AFE_SOF_UL1),
-   367		},
-   368		{
-   369			.name = "AFE_SOF_UL2",
-   370			.no_pcm = 1,
-   371			.capture_only = 1,
-   372			.ops = &mt8196_sof_be_ops,
-   373			SND_SOC_DAILINK_REG(AFE_SOF_UL2),
-   374		},
-   375		/* Front End DAI links */
-   376		{
-   377			.name = "HDMI_FE",
-   378			.stream_name = "HDMI Playback",
-   379			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   380				    SND_SOC_DPCM_TRIGGER_PRE},
-   381			.dynamic = 1,
-   382			.playback_only = 1,
-   383			SND_SOC_DAILINK_REG(playback_hdmi),
-   384		},
-   385		{
-   386			.name = "DL2_FE",
-   387			.stream_name = "DL2 Playback",
-   388			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   389				    SND_SOC_DPCM_TRIGGER_PRE},
-   390			.dynamic = 1,
-   391			.playback_only = 1,
-   392			SND_SOC_DAILINK_REG(playback2),
-   393		},
-   394		{
-   395			.name = "UL_CM0_FE",
-   396			.stream_name = "UL_CM0 Capture",
-   397			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   398				    SND_SOC_DPCM_TRIGGER_PRE},
-   399			.dynamic = 1,
-   400			.capture_only = 1,
-   401			SND_SOC_DAILINK_REG(capture_cm0),
-   402		},
-   403		{
-   404			.name = "DL_24CH_FE",
-   405			.stream_name = "DL_24CH Playback",
-   406			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   407					SND_SOC_DPCM_TRIGGER_PRE},
-   408			.dynamic = 1,
-   409			.playback_only = 1,
-   410			SND_SOC_DAILINK_REG(playback_24ch),
-   411		},
-   412		{
-   413			.name = "DL1_FE",
-   414			.stream_name = "DL1 Playback",
-   415			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   416					SND_SOC_DPCM_TRIGGER_PRE},
-   417			.dynamic = 1,
-   418			.playback_only = 1,
-   419			SND_SOC_DAILINK_REG(playback1),
-   420		},
-   421		{
-   422			.name = "UL0_FE",
-   423			.stream_name = "UL0 Capture",
-   424			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   425					SND_SOC_DPCM_TRIGGER_PRE},
-   426			.dynamic = 1,
-   427			.capture_only = 1,
-   428			SND_SOC_DAILINK_REG(capture0),
-   429		},
-   430		{
-   431			.name = "UL1_FE",
-   432			.stream_name = "UL1 Capture",
-   433			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   434					SND_SOC_DPCM_TRIGGER_PRE},
-   435			.dynamic = 1,
-   436			.capture_only = 1,
-   437			SND_SOC_DAILINK_REG(capture1),
-   438		},
-   439		{
-   440			.name = "UL2_FE",
-   441			.stream_name = "UL2 Capture",
-   442			.trigger = {SND_SOC_DPCM_TRIGGER_PRE,
-   443					SND_SOC_DPCM_TRIGGER_PRE},
-   444			.dynamic = 1,
-   445			.capture_only = 1,
-   446			SND_SOC_DAILINK_REG(capture2),
-   447		},
-   448		/* Back End DAI links */
-   449		{
-   450			.name = "I2SIN6_BE",
- > 451			.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-   452				| SND_SOC_DAIFMT_GATED,
-   453			.ops = &mt8196_nau8825_i2s_ops,
-   454			.no_pcm = 1,
-   455			.capture_only = 1,
-   456			.ignore_suspend = 1,
-   457			.be_hw_params_fixup = mt8196_i2s_hw_params_fixup,
-   458			SND_SOC_DAILINK_REG(i2sin6),
-   459		},
-   460		{
-   461			.name = "I2SOUT4_BE",
-   462			.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-   463				| SND_SOC_DAIFMT_GATED,
-   464			.ops = &mt8196_nau8825_i2s_ops,
-   465			.no_pcm = 1,
-   466			.playback_only = 1,
-   467			.ignore_suspend = 1,
-   468			.ignore_pmdown_time = 1,
-   469			.be_hw_params_fixup = mt8196_i2s_hw_params_fixup,
-   470			SND_SOC_DAILINK_REG(i2sout4),
-   471		},
-   472		{
-   473			.name = "I2SOUT6_BE",
-   474			.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-   475				| SND_SOC_DAIFMT_GATED,
-   476			.ops = &mt8196_nau8825_i2s_ops,
-   477			.no_pcm = 1,
-   478			.playback_only = 1,
-   479			.ignore_suspend = 1,
-   480			.be_hw_params_fixup = mt8196_i2s_hw_params_fixup,
-   481			SND_SOC_DAILINK_REG(i2sout6),
-   482		},
-   483		{
-   484			.name = "AP_DMIC_BE",
-   485			.no_pcm = 1,
-   486			.capture_only = 1,
-   487			.ignore_suspend = 1,
-   488			SND_SOC_DAILINK_REG(ap_dmic),
-   489		},
-   490		{
-   491			.name = "AP_DMIC_CH34_BE",
-   492			.no_pcm = 1,
-   493			.capture_only = 1,
-   494			.ignore_suspend = 1,
-   495			SND_SOC_DAILINK_REG(ap_dmic_ch34),
-   496		},
-   497		{
-   498			.name = "AP_DMIC_MULTICH_BE",
-   499			.no_pcm = 1,
-   500			.capture_only = 1,
-   501			.ignore_suspend = 1,
-   502			SND_SOC_DAILINK_REG(ap_dmic_multich),
-   503		},
-   504		{
-   505			.name = "TDM_DPTX_BE",
-   506			.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-   507				| SND_SOC_DAIFMT_GATED,
-   508			.ops = &mt8196_dptx_ops,
-   509			.be_hw_params_fixup = mt8196_dptx_hw_params_fixup,
-   510			.no_pcm = 1,
-   511			.playback_only = 1,
-   512			.ignore_suspend = 1,
-   513			SND_SOC_DAILINK_REG(tdm_dptx),
-   514		},
-   515		{
-   516			.name = "I2SOUT3_BE",
-   517			.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS
-   518				| SND_SOC_DAIFMT_GATED,
-   519			.ops = &mt8196_nau8825_i2s_ops,
-   520			.no_pcm = 1,
-   521			.playback_only = 1,
-   522			.ignore_suspend = 1,
-   523			SND_SOC_DAILINK_REG(i2sout3),
-   524		},
-   525	};
-   526	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
