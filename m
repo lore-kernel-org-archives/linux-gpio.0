@@ -1,96 +1,108 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9980A1C4609;
-	Tue, 20 May 2025 13:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641DC1D554;
+	Tue, 20 May 2025 15:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747748035; cv=none; b=LmPaQmn2HjweZc0CrjGYG+TItM8kFRkHxl7E57YCGOde59cqGjARZFqR1q31QwRv7/YYqtB0V5IBOuRi63BDLFGgu5obXW5MLywmNSOacFfXNXQptsONWmc9mBgNkh1JXt+HwVD7EgBq+3BW3EJOyQD6Z+PHphomnsdDKbI3hsY=
+	t=1747753477; cv=none; b=QAOrHCoq0kYN8jUP1fdiCjgrT3rBLSXZ+z2r0Y0l1EEt+hP+VXmUuOYDlI4t8LwktoOrSFaFNlnZrfyynSmuKoQTlGet3ZRl73Xv4GsYpXBJ4V8epJoLLehpx5cpHAcObMGfrvFYs8I/ufturzGL6aOHs968EviOevUsrjy1t5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747748035; c=relaxed/simple;
-	bh=rIqoGaaGyavsM7na6Hvy5JvsqPVDZt9ZL8/zRvC/W7A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=MDPz/nzoIpcNkdNeSDgjvr0JUdj+XzwYN+36dqV+2bkBO1dz3lJn/FUqxQnmuO9sFe2v3N/vcoyLyRDI8Y3Q3WaUxD99aiHoPHteep2PT5MlxcDdcxD9RjFW/7tNGtJIzoYLdchu+EEGdl73K+h/5YPRbEdTXNquYB9ZP0VMzZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aCmoeg6n; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1747753477; c=relaxed/simple;
+	bh=901IAHIHJiuCeovVY8qXNI5JjqYObVTJQjv49am/DJI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=ngLQOZtxBr9WY/BLa9MeWpgJer2oJulJGw5eTzwM0BuvHB/2FCJVPtCQMFq3FgVVr4g5ehLN9reFnme8Dqc2GfElwXarkEF6bjprUxsgWOrHH5txqSyXfn9zdtlk+6vzd5BLqm1aH0yJ2FzO0Sml1Xf02PR7567dP287GrktIkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=P/E43kiI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aCmoeg6n"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E25DC43194;
-	Tue, 20 May 2025 13:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747748030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4iZngiHNbvjN/vY+Ll5XMZSl5RZys/uNJtWIz71Yrs=;
-	b=aCmoeg6ncauNRhPdtUHMe9VF96k4jHDadH1GmHqKNnF/3K5oBMy4TSTgNHV1kNfG5fMYTk
-	CigyTNqENADWTUAnCkZ9Ir6XHxgX/+UbnzK6i+zC4Xfz3bga5JWBrmIdNznkjnR39eiM47
-	38l0uZYklSrvG+eGsbuTZMoT2WuFGELScNuFOvHi+yiru/XnZH5uVT2W4ZC8P9TBvAfRtK
-	CxGkOwLhVVrSwRgmwWiqerLIQJKeBwjL/m8xEDl+0gJR4xjIiXjeQzFHR65vDVWZ/Blcn3
-	F1gcIJDFhc5o0STm+X/eqc1IXaFNpnlqlu8VWZO8MEb3u9KcNQ9NaRKXLCb8lQ==
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="P/E43kiI"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KEnRIG019007;
+	Tue, 20 May 2025 17:04:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VsJ9BwEz1wd8EF9lpOMOQsDImQr6kHRBw5n5nBd+jPE=; b=P/E43kiInuUCyuB/
+	2h64dMzcDGpB6Y0buaRhmzsROovX0DXm0/bfJjXTLvbm2Pu+g4cYkmLq933Hcfmj
+	keZEhjcmZbRa0aPZa7HVUNUcsjx0cBs8rmVj1wdJ+bOUpD/Ln/vCgRF7KylNeBHX
+	fFllBDmBRxLQ/uobyKfFyjBkf24SaLIC1FZwiBeuzs9Hao1Oqv/Li95dcSazAq/u
+	YJ39Bx+XcHzYEe6OeUb3HPAbtCj02wJxqk5MF77LEhvuTw8KDAnuEgZV/U33TMmW
+	70Smzt58kW2Dz5EKkOv3R+r35IeqFpRZDzXrtqFzGqLoUh6ESGYygcY/I4M1FyV9
+	pYhnlw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46pfka5sst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 17:04:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9588140057;
+	Tue, 20 May 2025 17:03:18 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E2C73B20AE7;
+	Tue, 20 May 2025 17:02:34 +0200 (CEST)
+Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 17:02:34 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Tue, 20 May 2025 17:02:31 +0200
+Subject: [PATCH v2 4/8] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp13
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 May 2025 15:33:49 +0200
-Message-Id: <DA10YWIDW9TD.3NHV65FWMG7ZC@bootlin.com>
-Subject: Re: [PATCH v8 08/11] gpio: max7360: Add MAX7360 gpio support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Bartosz Golaszewski"
- <bartosz.golaszewski@linaro.org>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com>
- <20250509-mdb-max7360-support-v8-8-bbe486f6bcb7@bootlin.com>
- <aCsv3Me2J8cotW6s@smile.fi.intel.com>
-In-Reply-To: <aCsv3Me2J8cotW6s@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrg
- hdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250520-hdp-upstream-v2-4-53f6b8b5ffc8@foss.st.com>
+References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
+In-Reply-To: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-6f78e
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-20_01,2025-03-28_01
 
-On Mon May 19, 2025 at 3:19 PM CEST, Andy Shevchenko wrote:
-> On Fri, May 09, 2025 at 11:14:42AM +0200, Mathieu Dubois-Briand wrote:
->> Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
->>=20
->> Two sets of GPIOs are provided by the device:
->> - Up to 8 GPIOs, shared with the PWM and rotary encoder functionalities.
->>   These GPIOs also provide interrupts on input changes.
->> - Up to 6 GPOs, on unused keypad columns pins.
->
-> ...
->
->> +	for (unsigned int i =3D 0; i < MAX7360_MAX_GPIO; ++i) {
->
-> Is there any special reaso to use pre-increment?
->
+Add the hdp devicetree node for stm32mp13 SoC family
 
-No, I will switch it to post-increment.
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp131.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
+index 8512a6e46b33..b0537bcdb9d5 100644
+--- a/arch/arm/boot/dts/st/stm32mp131.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
+@@ -951,6 +951,12 @@ dts: thermal@50028000 {
+ 			clocks = <&rcc DTS>;
+ 			clock-names = "pclk";
+ 			#thermal-sensor-cells = <0>;
++		};
++
++		hdp: pinctrl@5002a000 {
++			compatible = "st,stm32mp131-hdp";
++			reg = <0x5002a000 0x400>;
++			clocks = <&rcc HDP>;
+ 			status = "disabled";
+ 		};
+ 
 
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+2.43.0
 
