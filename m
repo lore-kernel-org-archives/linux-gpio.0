@@ -1,100 +1,71 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2E238D53
-	for <linux-gpio@vger.kernel.org>; Wed, 21 May 2025 09:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE5C239E74;
+	Wed, 21 May 2025 09:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818753; cv=none; b=XJ4+RDdYsTa10a0XCHVdRH5+Cc2kMKP4xtvkevV2C8vyZ20VvAPxh+t7oZ0h4dQNFnpQWcrdb3E6wUUehlL5G2NhrnPLvEvDszdVUhHJshP/QXLWdORL9CGr99Dmnd4fYe/4xXv9SEeOijHvgE+fPHafsFoztC/9akunT+vOBq8=
+	t=1747818937; cv=none; b=poibooXJ70pNsNfG+tqhiGe5LohMiD9JoF7Y3F8SCEzSudo6sK8J6sJ6uyMaRn7p10GIPYd0Y51EjkbNAKiuZO79YtBKBSe6ZXDJ6oAItu5HWhjcaF9+2YlMrgD5y2uDO5yvQgxeEhU5/VHnPpBeKTCSwdGXNm+pCnX8B8Qmh3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818753; c=relaxed/simple;
-	bh=QFKNZvDbXSe1MHFbyHHsrmWveGN+OlWpUW7e5hHi6gY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gR4qobD3499vw/5kAE+Ry3P4kWCfAUdlKd/0ryOuJU2+IWfRo6od3qKr68oeVSQ2J5LvUdr5J5THz8MLxH8xPgNkQmFduKbF5MU6pHLeR+Ym48fwkI7rHdSigkCnweaD2LzjWLYKP/e8p/ohnBzzRQmZDMPd9tBX6UJSX0ekf8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vxFsyQd5; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1747818937; c=relaxed/simple;
+	bh=Ac1qjRLgENN/x/3NhLFz+/OEtJ22b5k//0P8ES5W7vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qg+m/Ti3SPNKqq7AWewNavZfL8ilAdFyENAYFVkXvduuHEa7HYmtk2u18cKbSIg7AjTWVDNZNQCuMMQksrK6wZsSRIrjFuAGHelIADjnL9n3OUe01wlZRtCcTCwQ3QIM/4CYfseHTuR10h6o6qOcog/a0OHfy99eY7SNEmQE9rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axkvbxKJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vxFsyQd5"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54d6f933152so10072259e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 21 May 2025 02:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747818750; x=1748423550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dh9o4fpIUVGSGHu7S7cRDAzq07I5BwJlujMFINVUUGA=;
-        b=vxFsyQd5Fhj0/t6JWdrPZz9OYrXUxpvz3Ghag8iop325CQqCjKuJwBH66WvHEowIoz
-         I2EV/GV3wlDtS9Sw9CX2HlhIV7nD15LiMmfIAdxttGarQfdpa+1g3ddZ+Y+g1l+LA/x4
-         ttoY2gRXy2sEBu/jf301p5spW7IjGjSYckc+2dnSMRUWnzCCsojzvYNewexJaG7nM/A1
-         RLPrEBfxwomZ1jjk7hGsr7leTk+xShHmNo6mDCgZFcCmtdnXZDoTEZY0xv71hiKweplQ
-         Tj8uDjkmtHv9k9LclnLBogtXvYdd0UWZ39PrTMlsLz9vvguYWwqmD8yxp2OeM3bEN7ct
-         FeRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747818750; x=1748423550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dh9o4fpIUVGSGHu7S7cRDAzq07I5BwJlujMFINVUUGA=;
-        b=HHzyWe+p3DRGM061VajsdqabNKBFuWv1Pg5Q9fwqwgdAch4YdF/Gi8sJKBnT8bVKXK
-         wWQuyMx4KZ9m+ADKt0JnjdExmVPi9qoo9XgMRsfPTsv2pI3T83OqWxksH9zH1fhmYvPT
-         KlxBVN207TdHzG2rXCtQ/IjNQzpaHJWs6fPiLv7m5uB6hlOzmLF0TRbs2wljKz1HPwQV
-         +v70DTVguUjXYKemLxw9Pk2uGCKm1WYKKfnIST6S/mBWovEBhs1xw50xXeKM8qQiP2Hn
-         UC3SKYgsWaBEK7mk1TKoXWF2ShrYOfA6ymXlzko99vIZFu7QmDt1/tHjXapAMQ8TiKDs
-         ViyA==
-X-Gm-Message-State: AOJu0YzRy1p0sIfW3GG65CjWOtYfZbxg0/MlJ3WW3mhq7l3lqK6oeAJ/
-	m2STxbSEYiHO09iRHZCS5ALdiHbjk1mh8gYlgoRseWWKqkpXeU6lQdCKHGkBHppkKktMfU9tZrH
-	8HQqdzPZFsdDvKIS3wqi4tG4dnejVQ6Wj42fW6KkPG9SZkkUjXRib
-X-Gm-Gg: ASbGncvHuKGLyStv6ISaKhNlP1qnWyaWKCRirgbusWp/5QhTDe0ysYW7hLE69gN7d4b
-	1DltYLnBWLLLYbjNNkTFgCaH7i0trBn3YDy4lyi4aJwebhPcKOVvH/bKATgeQY9K7tXxcN/UUdN
-	ZsIJ1d7bxnsqyDP4Uw1wxw0bv2rZnbRYufQ4yxEjclW5ykZQGruyOt3AS2VwkOwOJm
-X-Google-Smtp-Source: AGHT+IHwi86hWSRjKj/WHJaAnsouifxHP9NMbCvyr5//3z4ybvV0Xnt+Q0rWOgLy3x0y7WW7Qc74cWlT6Yh7WiNvwjM=
-X-Received: by 2002:a05:651c:3041:b0:30b:ca48:1089 with SMTP id
- 38308e7fff4ca-3280969a0e9mr55892561fa.2.1747818748198; Wed, 21 May 2025
- 02:12:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axkvbxKJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094A5C4CEEA;
+	Wed, 21 May 2025 09:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747818936;
+	bh=Ac1qjRLgENN/x/3NhLFz+/OEtJ22b5k//0P8ES5W7vI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=axkvbxKJYTwsYQU8tUXkUbC3fZodTNzKKfMfzDHrAYOsyJ5U9Wzijd2s2SmuA7joT
+	 h/8QhCOthYBrGUuQEw2aZY/6Fbe0tM7Srlr0pdmgODd/uK91IMV/Y285oqnCY51HQk
+	 zCdTYsjqdPI781iUP53706ytYhJfql0bwfG/NpAZ8UGuJqA0c2gcHPh6w7fuEKfN1k
+	 uFPEQftaSUuC+q7XzglHLoTzHxff7SRhU4Ysw5PNmWa+P/1nFRBe6ZHp4TGfG7XXTP
+	 /OzQap1HUhcJE1tweOTL3vKQBfOghkOTcZpNfSRno9TAJgxBabbGnX5bDJZMFUJOId
+	 mcVkpR0mbQcug==
+Date: Wed, 21 May 2025 11:15:33 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/8] dt-bindings: pinctl: amlogic,pinctrl-a4: Add
+ compatible string for S7D
+Message-ID: <20250521-azure-cougar-of-modernism-f35481@kuoka>
+References: <20250521-s6-s7-pinctrl-v2-0-0ce5e3728404@amlogic.com>
+ <20250521-s6-s7-pinctrl-v2-2-0ce5e3728404@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aCzbya_FW7hg1Wkr@black.fi.intel.com> <CAMRc=McMOH_S8Kf1TPV3Z0QYPz+cfS9hxZh++fNvMc_U+TssLQ@mail.gmail.com>
- <aC2W84mKGzgbRsL9@smile.fi.intel.com>
-In-Reply-To: <aC2W84mKGzgbRsL9@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 21 May 2025 11:12:17 +0200
-X-Gm-Features: AX0GCFsy6hBZuhmK5HNUD7r4ZFDsWtHrT4LrSlGpGCveZM_hEc2zeNDawyRzRtg
-Message-ID: <CAMRc=MeXzWZ9YaxfEZwbeO7ApVMGN_cV=71e2U+OpPnD-UZ4=Q@mail.gmail.com>
-Subject: Re: [GIT PULL] intel-gpio for 6.16-1
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux GPIO <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250521-s6-s7-pinctrl-v2-2-0ce5e3728404@amlogic.com>
 
-On Wed, May 21, 2025 at 11:03=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, May 21, 2025 at 10:44:16AM +0200, Bartosz Golaszewski wrote:
-> > On Tue, May 20, 2025 at 9:45=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> ...
->
-> > > Bartosz Golaszewski (2):
-> > >       gpio: graniterapids: use new line value setter callbacks
-> > >       gpio: ich: use new line value setter callbacks
-> >
-> > These have been in my gpio/for-next branch for a long time and the
-> > ones in your PR have different commit hashes. Please remove them. I
-> > don't see any notification about you having picked those up neither in
-> > my inbox.
->
-> Really? I though I commented a few weeks ago that I prefer to take them
-> when Stephen complained on dups. After that there were no dups noticed.
-> Since you haven't answered to that email, I (rightfully) assumed you are
-> okay with the proposed course of actions.
->
+On Wed, May 21, 2025 at 11:19:56AM GMT, Xianwei Zhao wrote:
+> Update dt-binding document for pinctrl of Amlogic S7D SoC.
+> 
+> Amlogic S7D SoCs uses the same pintrl controller as S7 SoCs. There is
+> no need for an extra compatible line in the driver, but add S7D
+> compatible line for documentation.
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Can you point me to this email? I have not seen anything and can't
-find anything.
+Squash it with the previous patch, so it will be obvious that s7 is
+documented.
 
-Bartosz
+Best regards,
+Krzysztof
+
