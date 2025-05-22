@@ -1,65 +1,65 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983529ACE6
-	for <linux-gpio@vger.kernel.org>; Thu, 22 May 2025 17:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925A429AAFD
+	for <linux-gpio@vger.kernel.org>; Thu, 22 May 2025 17:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935672; cv=none; b=fg5G/ZZHn5jvBTJddGcQmpHNjqeJ0k+TkSU/OrwStYkr053d0vwJMfajj+ZMJFJyWsxHI9/Jaik418IZ3BAgpsPHInBoaJBx2i8jAIj9qh9Nubus9NlHue1vlZNmTnClVUR4lp9LlMGO6V6c2Ym3kSAV1jfI1lpR2rgi2YF8GbY=
+	t=1747935672; cv=none; b=Kxeu8JwYOPrvgHkxPRW/lhhQxlQz6fpOKRHEpPHGLZYlqJ4TAd96FTHRgCsEhfAqeOBwv7dUtaFZT5TOsqAa3baVgU3EfJ2fsKJVvLwxsELrJac/v0+nAAtYyJRBmFOqYXgV0ZwRW8OWD3jPiYj92K5uxCcH7TNfyS7XKpdNQpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747935672; c=relaxed/simple;
-	bh=lhEc6CmxoeqjBbJ8Pm6+cHPF11xa+fHx4k1bho3h33w=;
+	bh=BNbG5QUv7yLKoab3TN7OeJodqrgw8mMfg67bIKIfSyw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HAzdUN+3HTnJp6gbGjziq2y4nsD4E5HnL6urk7zcO7Nao+FzdX0lszLZO6dJc3CLKJAEMkHUcEcWgCcoE+93nu8UoxQJO75TiXQQiiArGg+IPDB2Uh7LMwdav2DLVe0YzkeBgoJxI7EfO3y+Pd+iXZG1ReUzsrOvnPsG49nq96I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgeLvx+O; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=lYKlWBI2e8JAMzCC9j917dMoL1YUuvBc4Ulz2HowleyQvaBCDY1bMbWiKgf/ye1Al6GkLYrnK4DoEfpvugMoNKQ+YVQB31NcralqdCpil6qXCcTlAqO0DPNxSJsyZcThkvOUEliwQ+Ms2TqcYsJ7y8Ybb4iBpM2yHV+SF06YR1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eysVpu5I; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgeLvx+O"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfe574976so61180845e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 22 May 2025 10:41:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eysVpu5I"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ede096d73so61762205e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 22 May 2025 10:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747935668; x=1748540468; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747935664; x=1748540464; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BEEzJQh+mi4rzI2yTuNmUyI1HaStAMzjYAaHLCvcS3s=;
-        b=KgeLvx+OI+jG+o6JN/k0nt7mU7lmKxFh+tO9GjHoHGMwxJL/ggYaa3SCDqYJj/gLZ1
-         nhD72yfmRxBhtCZCshuTyiyug2BBSBr1T5UY9/5F9tagYqU2mgAVRA4DbUBkRaVJ9NWp
-         psp/aZ6OwaNmhF4z1LQSrTsCTC/W46VScNc+Z67JU4mX7FvplFjvxZ+Zx+UETFtp4H4G
-         AKVnVQjgeFmBreKOhVcO0t5XN+mWY+WnWWOzNfqqXZl6BkmUblF3Rh08/sYAj/pDy1Rn
-         s7BsIfN94WV1nUPqDBMN2jpbv1efjeta9BbRCV24F+2O+j+YBUO1QmbJ47ePjVWUvjoI
-         OQZA==
+        bh=g6FKwmF5+jLRfV9vx9YGmsHlRfBCaucMwtc4QEoZcek=;
+        b=eysVpu5ICm4N9f8+bYyVYcwLGCJzWoCwwCRQErXFDVDy6xdxFMfxDGrJNgJvqR1k+n
+         DTVVmxObFK7eX9vnNOjhfzFhq/CVwkwbDSZpqc/UwAF94JXdcz4vFVz0sjWanWK/gkO1
+         5dMWeVGia4G84QapwIK1jw1MMMCId1TmLM2RqYmjQ1cE5ODMkXaG27W118L1UodKglQ1
+         cNvZOxhfpA5c3D6nbAtpjGpBdElwwmlz0VepUn0nAZD7lsElRVQlLSfY/N6ex9CuDFv7
+         wXyHfXJMuv2KMJ3Zga2D4M6BDV+UZU2+cJ/J1zmwyCXN5FeRDeDsxm1Fe8ny1/y5H75i
+         fueg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747935668; x=1748540468;
+        d=1e100.net; s=20230601; t=1747935664; x=1748540464;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BEEzJQh+mi4rzI2yTuNmUyI1HaStAMzjYAaHLCvcS3s=;
-        b=g4J2OcqXKPlT23ZWYc44SfnzrmiIGgtslgCSITAs9LidJA6SFvsCiSuJQSv65wY97Z
-         kmTEQdQDk1m6S/0o+webzm0PZ2PZkcukJNvfw+NmUicQst3BqNN2rGKMcHuyqM8LYs/O
-         FXjF/ITyNg0qr6YxOO4duL9gRNsCvAlmai2MxeIvPwe1NWrpujUqoNMVQbM9pFCcnkQY
-         IG/OH+uboUU/32TNs1XJ138Zb7vGvEBU4fWbDWx0pl/ZW9/JP+oXlSV/RNJBuGkz9B8P
-         rPT9/+esDudF+wmgdcnk9rRd6jn2SU4faynsfHrGUXhMknpcjF+QrJR/EnunUGq/EIKA
-         E8aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUFki9GNhywRc0DFc+mLSzfktJVj4sBUJFzUmnI3YflDH2z0dYhJUuSd2m19SSlzsSmFywgb2BZei/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzxUS7wyEmnzg818MZMkXSCU6lPtP3KX/xnaNu0PbiZeFQc7+4
-	VP4kiIpz/reY1Ycfov6FU70zhC0LOeggtrYo0XPuKSM/933pDT6KGlLa5OqlwXWVi/Y=
-X-Gm-Gg: ASbGncuLx9p8Spho2te8YZ61En2h2P+R0zonNH/gYVQ2rAFaRF8HNukIa99ukZVYEx5
-	3M+qpBcthZv+nC1imubgzXgWtitgV5cYeiDVRg9i/bJTPUWHd3aly86B8HBh5CuTFki0S7bSSin
-	KjbUeGVGbhJA2r5aLMIJYarTyzJjqYZkGM2Zn3xlTAPyGFbybJJsC6iumCeP+GCIGIXybdN1Hlw
-	aq181mYoSpCycydQAwBDYl0MfdLK8iXPR3npeJLksUj/sEi28W+Iz0DvLCJCKxoW3yJR+hEm6XX
-	QDyW+56yjoCb7zk0yHmI58/GytHYWBIdOPj03o+f1v8nITD+41Pa4LzT5U4=
-X-Google-Smtp-Source: AGHT+IGgojgkTlxJMrB0QdTOFW9DwcjfnE2HsPWKTiCh2DyT3aGjZFJfYpsdBpxBzniyJBoPRyM8gg==
-X-Received: by 2002:a05:600c:a369:b0:43c:f1b8:16ad with SMTP id 5b1f17b1804b1-442fd678b83mr295575445e9.30.1747935668030;
-        Thu, 22 May 2025 10:41:08 -0700 (PDT)
+        bh=g6FKwmF5+jLRfV9vx9YGmsHlRfBCaucMwtc4QEoZcek=;
+        b=DVbadvy8uZoJgmVN4dxxRaY5RJi4tN6ZWORvxjLN1tVSYRpthtoiwoCS33Zt3zLE4G
+         ertZ89MElMgUGew4zM8ihW0VoCRX57Ecqg5AQsR15zSN8HGNAHlYBHRrayUP2TAXNKK7
+         I2kHG+lpfN3ucNhfZSGsdaOFAw8DkpVtzuu7QWxh77QOodJMduHNhrXk59/Xqxxx/boZ
+         ZiBQFolH94rpPKLRFSs0pVaoVhKgVO7oEArvUm3jaXDsreX9O9qWcncXZ/U+FZqLI1pD
+         5dzaHwkWbKXmdkwibe2rf/qwI2yP3i5nUJhQdg5ndCTPOo+GnhL/Sr/7yZXaOv2NGE/x
+         jYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWA7BbeHlX11hVjavs9eixvCdfeTmFD2S81JnD68bCitsFUMNLW5RLHYIr0PSRTg7FAjTTZDv0gPLaG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUvH655kuT3O+NS57EXps4ReiDVCDq6PxxV7W0TdvoFu8lGnGk
+	n2vZfEaRQEP8oUpbcv8QUD3ZUxGPMnEF5WmTLLk59DgN2tf9TMJe4Wqm7chfwR2y3bA=
+X-Gm-Gg: ASbGncv+dYaqnVRpqkJg92Hj3vVoUCeBEPVMMqHm44eLTzjsBHLzRjBUAHQYWet+Trt
+	/tzP96G/kmb6+oI2fgsORX6b6xFj7ycu7se5W1oQ+sgFKbhm0DBrBSpY+j2OgZLw69WOPG29qfm
+	qEPfnBp9YSdh+E0NKWGqCFzHb4uhc45GiBECGe9c0rBPu1+1oXxynx5ZtfWjRSAa7j6k+cg2m7B
+	SkCS93wQ691ls16sVyij5vM4QyDY9FK7kYRLxdCysICN2Albe9WUqnow0Z22KBE6GtojvgmHPn/
+	ZuanbI3YtQAj7zoy0+XGon3aO4TexeH1NrG12WgqEv0GW18UtoPADbIujYA=
+X-Google-Smtp-Source: AGHT+IFCO2nalfynMbnFtpdrYcmt4ThnBH12O66Yu9VQd9AYmKtc0tqcoyEJ/k10JkCOLl8VaER1HQ==
+X-Received: by 2002:a05:600c:3f07:b0:43d:77c5:9c1a with SMTP id 5b1f17b1804b1-442fd60b516mr271515455e9.4.1747935664465;
+        Thu, 22 May 2025 10:41:04 -0700 (PDT)
 Received: from orion.home ([2a02:c7c:7213:c700:6c33:c245:91e5:a9f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm109563195e9.36.2025.05.22.10.41.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm109563195e9.36.2025.05.22.10.41.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 10:41:07 -0700 (PDT)
+        Thu, 22 May 2025 10:41:03 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 22 May 2025 18:41:02 +0100
-Subject: [PATCH v3 12/12] arm64: dts: qcom: qrb4210-rb2: add VA capture
+Date: Thu, 22 May 2025 18:40:59 +0100
+Subject: [PATCH v3 09/12] arm64: dts: qcom: qrb4210-rb2: add wcd937x codec
  support
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-rb2_audio_v3-v3-12-9eeb08cab9dc@linaro.org>
+Message-Id: <20250522-rb2_audio_v3-v3-9-9eeb08cab9dc@linaro.org>
 References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
 In-Reply-To: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
 To: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>, 
@@ -85,64 +85,96 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
  linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Add support for audio capture using onboard DMIC. It is directly
-connected to vamacro and txmacro without any soundwire interfaces.
-
-The capture was verified using the following commands:
-
-amixer -c0 cset iface=MIXER,name='MultiMedia3 Mixer VA_CODEC_DMA_TX_0' 1
-amixer -c0 cset iface=MIXER,name='VA_AIF1_CAP Mixer DEC0' 1
-amixer -c0 cset iface=MIXER,name='VA_DEC0 Volume' 110
-amixer -c0 cset iface=MIXER,name='VA DMIC MUX0' 2
-
-arecord -D hw:0,2 -f S16_LE -c 2 -r 48000 -d 5 record.wav
+wcd937x codec contains soundwire RX and TX slave devices
+and can convert digital audio to analog audio and vice versa.
+The codec node also requires description of reset pin/gpio.
 
 Cc: Srinivas Kandagatla <srini@kernel.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 47 ++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index 1e2b9d2516b62e2e80c40ed6c3a0c4548a02630c..1c125ae4e2f3eb4f715bd0aac42a60b9132ecfbc 100644
+index a37860175d2733214f1b257e84d5cb4821033242..6bce63720cfffd8e0e619937fb1f365cbbbcb283 100644
 --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
 +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -169,6 +169,22 @@ platform {
- 				sound-dai = <&q6routing>;
- 			};
+@@ -5,6 +5,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/sound/qcom,q6afe.h>
+ #include <dt-bindings/sound/qcom,q6asm.h>
+@@ -152,6 +153,25 @@ codec {
  		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			codec {
-+				sound-dai = <&vamacro 0>;
-+			};
-+
-+			cpu {
-+				sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6routing>;
-+			};
-+		};
  	};
  
- 	wcd937x: codec {
-@@ -833,6 +849,12 @@ &usb_qmpphy_out {
- 	remote-endpoint = <&pmi632_ss_in>;
++	wcd937x: codec {
++		compatible = "qcom,wcd9370-codec";
++		pinctrl-0 = <&wcd_reset_n>;
++		pinctrl-names = "default";
++		reset-gpios = <&tlmm 82 GPIO_ACTIVE_LOW>;
++		vdd-buck-supply = <&vreg_l9a_1p8>;
++		vdd-rxtx-supply = <&vreg_l9a_1p8>;
++		vdd-px-supply = <&vreg_l9a_1p8>;
++		vdd-mic-bias-supply = <&vdc_vbat_som>;
++		qcom,micbias1-microvolt = <1800000>;
++		qcom,micbias2-microvolt = <1800000>;
++		qcom,micbias3-microvolt = <1800000>;
++		qcom,micbias4-microvolt = <1800000>;
++		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
++		qcom,rx-device = <&wcd937x_rx>;
++		qcom,tx-device = <&wcd937x_tx>;
++		#sound-dai-cells = <1>;
++	};
++
+ 	vreg_hdmi_out_1p2: regulator-hdmi-out-1p2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VREG_HDMI_OUT_1P2";
+@@ -605,6 +625,26 @@ &sleep_clk {
+ 	clock-frequency = <32764>;
  };
  
-+&vamacro {
-+	pinctrl-0 = <&lpass_dmic01_active>;
-+	pinctrl-names = "default";
-+	qcom,dmic-sample-rate = <2400000>;
++&swr1 {
++	status = "okay";
++
++	wcd937x_rx: codec@0,4 {
++		compatible = "sdw20217010a00";
++		reg = <0 4>;
++		qcom,rx-port-mapping = <1 2 3 4 5>;
++	};
 +};
 +
- &wifi {
- 	vdd-0.8-cx-mx-supply = <&vreg_l8a_0p664>;
- 	vdd-1.8-xo-supply = <&vreg_l16a_1p3>;
++&swr0 {
++	status = "okay";
++
++	wcd937x_tx: codec@0,3 {
++		compatible = "sdw20217010a00";
++		reg = <0 3>;
++		qcom,tx-port-mapping = <1 1 2 3>;
++	};
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <43 2>, <49 1>, <54 1>,
+ 			       <56 3>, <61 2>, <64 1>,
+@@ -689,6 +729,13 @@ sdc2_card_det_n: sd-card-det-n-state {
+ 		drive-strength = <2>;
+ 		bias-pull-up;
+ 	};
++
++	wcd_reset_n: wcd-reset-n-state {
++		pins = "gpio82";
++		function = "gpio";
++		drive-strength = <16>;
++		output-high;
++	};
+ };
+ 
+ &uart3 {
 
 -- 
 2.47.2
