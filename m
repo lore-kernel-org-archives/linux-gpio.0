@@ -1,288 +1,237 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D701990B7;
-	Fri, 23 May 2025 12:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EA049620;
+	Fri, 23 May 2025 12:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004050; cv=none; b=iE+9oNO/GieHEJB6x0SggApFOKIPEyx+GwpdC8lgaITkLycuuQIjwbZYY3PCGIOxzM8oiaoy8ZK1jmuyxeQFw1jnRyerGQS1DBvvVpUZnqvGvNh1VHwGg1VX97un+6BTq56tVd6Q5PkUtpNMMCoo9U9z41ieQ77XYc3rbQgWPBM=
+	t=1748005198; cv=none; b=CMnXcvBPGDJz7xI+okvQrfndvSDir5qGU2/rxpaLmvfvTDAJ3qMr+qyYiqll2dYFYZwWeuOx4RCwjBhVfalgbHCySB+TaAOgK+3XJPjiYBheADc+cdHetlYNePxbXKb9GzyY8iCosMjaoIvgPu8S3qz9js9j4zWwzCyKbtWfnE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004050; c=relaxed/simple;
-	bh=60Lytop5QRT7hWox+9DGnHQNfcuEz1mTPbr0yH91xEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=djq75pb9hUGYDbwAlWvFH47vaOsTrInfBMIZnJH++yRroQgH0ku9mgM236jyzp6yi/k2QUSqNQVgyr6S+RGJvDfApW6MpvhuhhbQUUyVG/jQgdeMjwsfRcbZXby4YmfD85cXaM80rG26va841oUDMct5VfbeibobOiDpJsmvyqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Tgz0lzEM; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1748005198; c=relaxed/simple;
+	bh=8Oii3f2EpE50r9YcogV8EDUUJwl4GHW6cOuBxkjjA80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lB4H1qKkcuC34WAQrhftdPmT1a9yG66Or5/u+lC/QGp66chOJLDI9G2ME9h5M+BxF0D3fjZ9H2jqSpeEMtpGDCl6R1sWAcm7hIyzOXy4PmUoHdnCa/YpfYDN9vZNWgMOFU7g1/EsN+D7ChxYWQd440A2rNFNeTwlNEYIXOpqS+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EIk8o8b8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Tgz0lzEM"
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N825pX024875;
-	Fri, 23 May 2025 14:40:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SQBVzz0Egh5/tAEDQB7PQNM8C8b4H+HbUQrw6IxTXjw=; b=Tgz0lzEMB908257+
-	gZ3s4DQbv7219ZQ9cuKhxHWwO2PUzbIRPwE9Z4U9a8j8b4xYX7KwFoOJV0SKm61N
-	zA1CkGls/2rH7NGnGx0F9MahyYpXx2GTBVQ05sbR717UjDi4LuoMhtckM3ZUGG2c
-	tyC6pgCVdaCyPPNtSb9hJinBeSr+8ypi2PlUBpaoSmO9GUc5oXxUQPfsp3dUFLHE
-	bP5T2yCyX25GnehMFtKI0hHx0vF3mzTv1Z2IDjCvcJ+EkhjfNdk9QRo611mdAGj/
-	Zo8FtdHUPZacYTTVc/qtZPatoSG9SJRKNYiK3E7lmr0tvQuCXFkZTM0J08Fl17Ia
-	9xHg2Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwfap5h8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 14:40:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F14A640050;
-	Fri, 23 May 2025 14:39:09 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 651B5A0D918;
-	Fri, 23 May 2025 14:38:25 +0200 (CEST)
-Received: from localhost (10.48.81.67) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 May
- 2025 14:38:25 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Fri, 23 May 2025 14:38:14 +0200
-Subject: [PATCH v3 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EIk8o8b8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748005197; x=1779541197;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8Oii3f2EpE50r9YcogV8EDUUJwl4GHW6cOuBxkjjA80=;
+  b=EIk8o8b8FbtsydVr9vD/xHIQQPqFybgbSaOKx23MnKP5Wkga6I88w6Pz
+   vbWDLeZfqBq1MF1ixQiVQC6kddmR5E4+stugg53SW7baO+bewOETq6zW6
+   8op++gavux3QgPL97i7bqarzI41+e/7iRxWsTOcsYHXZdV8VnexuSEiTM
+   nx3EgDeMR1QFrHU5XFmefjBfakiBnh+4POJqpSxhsr7eLayGSmOGkBLxF
+   6y0QmLkVimef/k0PaXCD+jEh8I9AIR6qBymfpvb05wmvX4qxP4tKRt7YN
+   BNQGMQRDavQVmuac2Rqjy6w+48avhsl2nOG18IfJPnZ67XvVRBFHJmTAd
+   Q==;
+X-CSE-ConnectionGUID: ReCGIyeaQMOMuqzyEei87g==
+X-CSE-MsgGUID: ReNfqDedRHqzmcoeyAExlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50114861"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="50114861"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 05:59:56 -0700
+X-CSE-ConnectionGUID: R0SfHCEYSQGGhBW06eSNNQ==
+X-CSE-MsgGUID: 4WRagGqCRoWo4F1rbnk8EQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="146123824"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 23 May 2025 05:59:51 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uIS05-000QOa-1H;
+	Fri, 23 May 2025 12:59:49 +0000
+Date: Fri, 23 May 2025 20:59:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 06/12] ASoC: codecs: add wsa881x-i2c amplifier codec
+ driver
+Message-ID: <202505232000.eTkDhRzd-lkp@intel.com>
+References: <20250522-rb2_audio_v3-v3-6-9eeb08cab9dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250523-hdp-upstream-v3-2-bd6ca199466a@foss.st.com>
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
-In-Reply-To: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-6f78e
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-23_03,2025-05-22_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522-rb2_audio_v3-v3-6-9eeb08cab9dc@linaro.org>
 
-'HDP' stands for Hardware Debug Port, it is an hardware block in
-STMicrolectronics' MPUs that let the user decide which internal SoC's
-signal to observe.
-It provides 8 ports and for each port there is up to 16 different
-signals that can be output.
-Signals are different for each MPU.
+Hi Alexey,
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- .../bindings/pinctrl/st,stm32-pinctrl-hdp.yaml     | 187 +++++++++++++++++++++
- 1 file changed, 187 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
-new file mode 100644
-index 000000000000..416b41275714
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
-@@ -0,0 +1,187 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) STMicroelectronics 2025.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl-hdp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STM32 Hardware Debug Port Mux/Config
-+
-+maintainers:
-+  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
-+
-+description:
-+  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
-+  It allows to output internal signals on SoC's GPIO.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - st,stm32mp131-hdp
-+      - st,stm32mp151-hdp
-+      - st,stm32mp251-hdp
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+patternProperties:
-+  "^hdp[0-7]-pins$":
-+    type: object
-+    $ref: pinmux-node.yaml#
-+    additionalProperties: false
-+
-+    properties:
-+      pins:
-+        pattern: '^HDP[0-7]$'
-+
-+      function: true
-+
-+    required:
-+      - function
-+      - pins
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp131-hdp
-+    then:
-+      patternProperties:
-+        "^hdp[0-7]-pins$":
-+          properties:
-+            function:
-+              enum: [ pwr_pwrwake_sys, pwr_stop_forbidden, pwr_stdby_wakeup, pwr_encomp_vddcore,
-+                      bsec_out_sec_niden, aiec_sys_wakeup, none, ddrctrl_lp_req,
-+                      pwr_ddr_ret_enable_n, dts_clk_ptat, sram3ctrl_tamp_erase_act, gpoval0,
-+                      pwr_sel_vth_vddcpu, pwr_mpu_ram_lowspeed, ca7_naxierrirq, pwr_okin_mr,
-+                      bsec_out_sec_dbgen, aiec_c1_wakeup, rcc_pwrds_mpu, ddrctrl_dfi_ctrlupd_req,
-+                      ddrctrl_cactive_ddrc_asr, sram3ctrl_hw_erase_act, nic400_s0_bready, gpoval1,
-+                      pwr_pwrwake_mpu, pwr_mpu_clock_disable_ack, ca7_ndbgreset_i,
-+                      bsec_in_rstcore_n, bsec_out_sec_bsc_dis, ddrctrl_dfi_init_complete,
-+                      ddrctrl_perf_op_is_refresh, ddrctrl_gskp_dfi_lp_req, sram3ctrl_sw_erase_act,
-+                      nic400_s0_bvalid, gpoval2, pwr_sel_vth_vddcore, pwr_mpu_clock_disable_req,
-+                      ca7_npmuirq0, ca7_nfiqout0, bsec_out_sec_dftlock, bsec_out_sec_jtag_dis,
-+                      rcc_pwrds_sys, sram3ctrl_tamp_erase_req, ddrctrl_stat_ddrc_reg_selfref_type0,
-+                      dts_valobus1_0, dts_valobus2_0, tamp_potential_tamp_erfcfg, nic400_s0_wready,
-+                      nic400_s0_rready, gpoval3, pwr_stop2_active, ca7_nl2reset_i,
-+                      ca7_npreset_varm_i, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
-+                      eth1_out_pmt_intr_o, eth2_out_pmt_intr_o, ddrctrl_stat_ddrc_reg_selfref_type1,
-+                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, tamp_nreset_sram_ercfg,
-+                      nic400_s0_wlast, nic400_s0_rlast, gpoval4, ca7_standbywfil2,
-+                      pwr_vth_vddcore_ack, ca7_ncorereset_i, ca7_nirqout0, bsec_in_pwrok,
-+                      bsec_out_sec_deviceen, eth1_out_lpi_intr_o, eth2_out_lpi_intr_o,
-+                      ddrctrl_cactive_ddrc, ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2,
-+                      pka_pka_itamp_out, nic400_s0_wvalid, nic400_s0_rvalid, gpoval5,
-+                      ca7_standbywfe0, pwr_vth_vddcpu_ack, ca7_evento, bsec_in_tamper_det,
-+                      bsec_out_sec_spniden, eth1_out_mac_speed_o1, eth2_out_mac_speed_o1,
-+                      ddrctrl_csysack_ddrc, ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3,
-+                      saes_tamper_out, nic400_s0_awready, nic400_s0_arready, gpoval6,
-+                      ca7_standbywfi0, pwr_rcc_vcpu_rdy, ca7_eventi, ca7_dbgack0, bsec_out_fuse_ok,
-+                      bsec_out_sec_spiden, eth1_out_mac_speed_o0, eth2_out_mac_speed_o0,
-+                      ddrctrl_csysreq_ddrc, ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4,
-+                      rng_tamper_out, nic400_s0_awavalid, nic400_s0_aravalid, gpoval7 ]
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp151-hdp
-+    then:
-+      patternProperties:
-+        "^hdp[0-7]-pins$":
-+          properties:
-+            function:
-+              enum: [ pwr_pwrwake_sys, cm4_sleepdeep, pwr_stdby_wkup, pwr_encomp_vddcore,
-+                      bsec_out_sec_niden, none, rcc_cm4_sleepdeep, gpu_dbg7, ddrctrl_lp_req,
-+                      pwr_ddr_ret_enable_n, dts_clk_ptat, gpoval0, pwr_pwrwake_mcu, cm4_halted,
-+                      ca7_naxierrirq, pwr_okin_mr, bsec_out_sec_dbgen, exti_sys_wakeup,
-+                      rcc_pwrds_mpu, gpu_dbg6, ddrctrl_dfi_ctrlupd_req, ddrctrl_cactive_ddrc_asr,
-+                      gpoval1, pwr_pwrwake_mpu, cm4_rxev, ca7_npmuirq1, ca7_nfiqout1,
-+                      bsec_in_rstcore_n, exti_c2_wakeup, rcc_pwrds_mcu, gpu_dbg5,
-+                      ddrctrl_dfi_init_complete, ddrctrl_perf_op_is_refresh,
-+                      ddrctrl_gskp_dfi_lp_req, gpoval2, pwr_sel_vth_vddcore, cm4_txev, ca7_npmuirq0,
-+                      ca7_nfiqout0, bsec_out_sec_dftlock, exti_c1_wakeup, rcc_pwrds_sys, gpu_dbg4,
-+                      ddrctrl_stat_ddrc_reg_selfref_type0, ddrctrl_cactive_1, dts_valobus1_0,
-+                      dts_valobus2_0, gpoval3, pwr_mpu_pdds_not_cstbydis, cm4_sleeping, ca7_nreset1,
-+                      ca7_nirqout1, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
-+                      eth_out_pmt_intr_o, gpu_dbg3, ddrctrl_stat_ddrc_reg_selfref_type1,
-+                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, gpoval4, ca7_standbywfil2,
-+                      pwr_vth_vddcore_ack, ca7_nreset0, ca7_nirqout0, bsec_in_pwrok,
-+                      bsec_out_sec_deviceen, eth_out_lpi_intr_o, gpu_dbg2, ddrctrl_cactive_ddrc,
-+                      ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2, gpoval5,
-+                      ca7_standbywfi1, ca7_standbywfe1, ca7_evento, ca7_dbgack1,
-+                      bsec_out_sec_spniden, eth_out_mac_speed_o1, gpu_dbg1, ddrctrl_csysack_ddrc,
-+                      ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3, gpoval6,
-+                      ca7_standbywfi0, ca7_standbywfe0, ca7_dbgack0, bsec_out_fuse_ok,
-+                      bsec_out_sec_spiden, eth_out_mac_speed_o0, gpu_dbg0, ddrctrl_csysreq_ddrc,
-+                      ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4, gpoval7 ]
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: st,stm32mp251-hdp
-+    then:
-+      patternProperties:
-+        "^hdp[0-7]-pins$":
-+          properties:
-+            function:
-+              enum: [ pwr_pwrwake_sys, cpu2_sleep_deep, bsec_out_tst_sdr_unlock_or_disable_scan,
-+                      bsec_out_nidenm, bsec_out_nidena, cpu2_state_0, rcc_pwrds_sys, gpu_dbg7,
-+                      ddrss_csysreq_ddrc, ddrss_dfi_phyupd_req, cpu3_sleep_deep,
-+                      d2_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_0,
-+                      pcie_usb_cxpl_debug_info_ei_8, d3_state_0, gpoval0, pwr_pwrwake_cpu2,
-+                      cpu2_halted, cpu2_state_1, bsec_out_dbgenm, bsec_out_dbgena, exti1_sys_wakeup,
-+                      rcc_pwrds_cpu2, gpu_dbg6, ddrss_csysack_ddrc, ddrss_dfi_phymstr_req,
-+                      cpu3_halted, d2_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_1,
-+                      pcie_usb_cxpl_debug_info_ei_9, d3_state_1, gpoval1, pwr_pwrwake_cpu1,
-+                      cpu2_rxev, cpu1_npumirq1, cpu1_nfiqout1, bsec_out_shdbgen, exti1_cpu2_wakeup,
-+                      rcc_pwrds_cpu1, gpu_dbg5, ddrss_cactive_ddrc, ddrss_dfi_lp_req, cpu3_rxev,
-+                      hpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_2,
-+                      pcie_usb_cxpl_debug_info_ei_10, d3_state_2, gpoval2, pwr_sel_vth_vddcpu,
-+                      cpu2_txev, cpu1_npumirq0, cpu1_nfiqout0, bsec_out_ddbgen, exti1_cpu1_wakeup,
-+                      cpu3_state_0, gpu_dbg4, ddrss_mcdcg_en, ddrss_dfi_freq_0, cpu3_txev,
-+                      hpdma2_clk_bus_req, pcie_usb_cxpl_debug_info_ei_3,
-+                      pcie_usb_cxpl_debug_info_ei_11, d1_state_0, gpoval3, pwr_sel_vth_vddcore,
-+                      cpu2_sleeping, cpu1_evento, cpu1_nirqout1, bsec_out_spnidena, exti2_d3_wakeup,
-+                      eth1_out_pmt_intr_o, gpu_dbg3, ddrss_dphycg_en, ddrss_obsp0, cpu3_sleeping,
-+                      hpdma3_clk_bus_req, pcie_usb_cxpl_debug_info_ei_4,
-+                      pcie_usb_cxpl_debug_info_ei_12, d1_state_1, gpoval4, cpu1_standby_wfil2,
-+                      none, cpu1_nirqout0, bsec_out_spidena, exti2_cpu3_wakeup, eth1_out_lpi_intr_o,
-+                      gpu_dbg2, ddrctrl_dfi_init_start, ddrss_obsp1, cpu3_state_1,
-+                      d3_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_5,
-+                      pcie_usb_cxpl_debug_info_ei_13, d1_state_2, gpoval5, cpu1_standby_wfi1,
-+                      cpu1_standby_wfe1, cpu1_halted1, cpu1_naxierrirq, bsec_out_spnidenm,
-+                      exti2_cpu2_wakeup, eth2_out_pmt_intr_o, gpu_dbg1, ddrss_dfi_init_complete,
-+                      ddrss_obsp2, d2_state_0, d3_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_6,
-+                      pcie_usb_cxpl_debug_info_ei_14, cpu1_state_0, gpoval6, cpu1_standby_wfi0,
-+                      cpu1_standby_wfe0, cpu1_halted0, bsec_out_spidenm, exti2_cpu1__wakeup,
-+                      eth2_out_lpi_intr_o, gpu_dbg0, ddrss_dfi_ctrlupd_req, ddrss_obsp3, d2_state_1,
-+                      lpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_7,
-+                      pcie_usb_cxpl_debug_info_ei_15, cpu1_state_1, gpoval7 ]
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+
-+    pinctrl@54090000 {
-+      compatible = "st,stm32mp151-hdp";
-+      reg = <0x54090000 0x400>;
-+      clocks = <&rcc HDP>;
-+      pinctrl-names = "default";
-+      pinctrl-0 = <&hdp2_gpo>;
-+      hdp2_gpo: hdp2-pins {
-+        function = "gpoval2";
-+        pins = "HDP2";
-+      };
-+    };
+[auto build test ERROR on 7bac2c97af4078d7a627500c9bcdd5b033f97718]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Klimov/ASoC-dt-bindings-qcom-Add-SM6115-LPASS-rxmacro-and-vamacro-codecs/20250523-014432
+base:   7bac2c97af4078d7a627500c9bcdd5b033f97718
+patch link:    https://lore.kernel.org/r/20250522-rb2_audio_v3-v3-6-9eeb08cab9dc%40linaro.org
+patch subject: [PATCH v3 06/12] ASoC: codecs: add wsa881x-i2c amplifier codec driver
+config: x86_64-buildonly-randconfig-004-20250523 (https://download.01.org/0day-ci/archive/20250523/202505232000.eTkDhRzd-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250523/202505232000.eTkDhRzd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505232000.eTkDhRzd-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> sound/soc/codecs/wsa881x-i2c.c:555:5: warning: variable 'reg_addr' set but not used [-Wunused-but-set-variable]
+     555 |         u8 reg_addr = 0;
+         |            ^
+>> sound/soc/codecs/wsa881x-i2c.c:1263:24: error: cannot assign to non-static data member 'driver' with const-qualified type 'const struct snd_soc_component_driver *'
+    1263 |         wsa881x->driver->name = devm_kasprintf(dev, GFP_KERNEL, "wsa-codec%d",
+         |         ~~~~~~~~~~~~~~~~~~~~~ ^
+   sound/soc/codecs/wsa881x-common.h:260:41: note: non-static data member 'driver' declared const here
+     260 |         const struct snd_soc_component_driver *driver;
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   1 warning and 1 error generated.
+
+
+vim +1263 sound/soc/codecs/wsa881x-i2c.c
+
+  1171	
+  1172	static int wsa881x_i2c_probe(struct i2c_client *client)
+  1173	{
+  1174		struct device *dev = &client->dev;
+  1175		struct wsa881x_priv *wsa881x;
+  1176		int leftright;
+  1177		int ret;
+  1178	
+  1179		ret = wsa881x_probe_common(&wsa881x, dev);
+  1180		if (ret)
+  1181			return ret;
+  1182	
+  1183		wsa881x->mclk_pin = devm_gpiod_get(dev, "mclk",
+  1184						   GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+  1185		if (IS_ERR(wsa881x->mclk_pin))
+  1186			dev_err_probe(dev, PTR_ERR(wsa881x->mclk_pin),
+  1187				      "MCLK GPIO not found\n");
+  1188	
+  1189		wsa881x->wsa_mclk = devm_clk_get_enabled(&client->dev, NULL);
+  1190		if (IS_ERR(wsa881x->wsa_mclk))
+  1191			return dev_err_probe(dev, PTR_ERR(wsa881x->wsa_mclk),
+  1192					     "failed to get mclk\n");
+  1193		gpiod_direction_output(wsa881x->mclk_pin, 1);
+  1194		clk_set_rate(wsa881x->wsa_mclk, 9600000);
+  1195	
+  1196		wsa881x->client[DIGITAL] = client;
+  1197		ret = check_wsa881x_presence(wsa881x);
+  1198		if (ret < 0) {
+  1199			dev_err(&client->dev,
+  1200				"failed to ping wsa with addr:%x, ret = %d\n",
+  1201				client->addr, ret);
+  1202			return -ENODEV;
+  1203		}
+  1204	
+  1205		wsa881x->regmap = devm_regmap_init_i2c(client,
+  1206						&wsa881x_ana_regmap_config[DIGITAL]);
+  1207		if (IS_ERR(wsa881x->regmap)) {
+  1208			dev_err(dev, "digital regmap init failed %d\n", ret);
+  1209			return PTR_ERR(wsa881x->regmap);
+  1210		}
+  1211		regcache_cache_bypass(wsa881x->regmap, true);
+  1212	
+  1213		wsa881x_init_common(wsa881x);
+  1214	
+  1215		wsa881x->version = wsa881x_i2c_read_device(wsa881x, WSA881X_CHIP_ID1);
+  1216		if (wsa881x->version == WSA881X_2_0) {
+  1217			wsa881x_update_reg_defaults_2_0();
+  1218			wsa881x_update_regmap_2_0(wsa881x->regmap, DIGITAL);
+  1219		}
+  1220	
+  1221		/*
+  1222		 * If we reached this point, then device is present and we're good to
+  1223		 * go to initialise analog part of the amplifier
+  1224		 */
+  1225		wsa881x->client[ANALOG] = devm_i2c_new_dummy_device(&client->dev,
+  1226								    client->adapter,
+  1227						client->addr + I2C_ANALOG_OFFSET);
+  1228		if (IS_ERR(wsa881x->client[ANALOG])) {
+  1229			dev_err(dev,
+  1230				"failed to register i2c device for analog part\n");
+  1231			return PTR_ERR(wsa881x->client[ANALOG]);
+  1232		}
+  1233	
+  1234		wsa881x->regmap_analog = devm_regmap_init_i2c(wsa881x->client[ANALOG],
+  1235						&wsa881x_ana_regmap_config[ANALOG]);
+  1236		if (IS_ERR(wsa881x->regmap_analog)) {
+  1237			dev_err(dev, "analog regmap init failed %d\n", ret);
+  1238			return PTR_ERR(wsa881x->regmap_analog);
+  1239		}
+  1240		regcache_cache_bypass(wsa881x->regmap_analog, true);
+  1241	
+  1242		wsa881x->client[ANALOG]->dev.platform_data = wsa881x;
+  1243		i2c_set_clientdata(wsa881x->client[ANALOG], wsa881x);
+  1244		wsa881x->regmap_flag = true;
+  1245	
+  1246		if (wsa881x->version == WSA881X_2_0)
+  1247			wsa881x_update_regmap_2_0(wsa881x->regmap_analog, ANALOG);
+  1248		/* finished initialising analog part */
+  1249	
+  1250		leftright = wsa881x_i2c_read_device(wsa881x, WSA881X_BUS_ID) & 0x1;
+  1251	
+  1252		wsa881x->driver = devm_kmemdup(dev, &soc_codec_dev_wsa881x,
+  1253					       sizeof(*wsa881x->driver), GFP_KERNEL);
+  1254		if (!wsa881x->driver)
+  1255			return -ENOMEM;
+  1256	
+  1257		wsa881x->dai_driver = devm_kmemdup(dev, wsa_dai,
+  1258						   sizeof(struct snd_soc_dai_driver),
+  1259						   GFP_KERNEL);
+  1260		if (!wsa881x->dai_driver)
+  1261			return -ENOMEM;
+  1262	
+> 1263		wsa881x->driver->name = devm_kasprintf(dev, GFP_KERNEL, "wsa-codec%d",
+  1264						       leftright);
+  1265		if (!wsa881x->driver->name)
+  1266			return -ENOMEM;
+  1267	
+  1268		wsa881x->dai_driver->name = devm_kasprintf(dev, GFP_KERNEL,
+  1269							   "wsa_rx%d", leftright);
+  1270		if (!wsa881x->dai_driver->name)
+  1271			return -ENOMEM;
+  1272	
+  1273		wsa881x->dai_driver->playback.stream_name = devm_kasprintf(dev,
+  1274						GFP_KERNEL, "WSA881X_AIF%d Playback",
+  1275						leftright);
+  1276		if (!wsa881x->dai_driver->playback.stream_name)
+  1277			return -ENOMEM;
+  1278	
+  1279		pm_runtime_set_autosuspend_delay(dev, 3000);
+  1280		pm_runtime_use_autosuspend(dev);
+  1281		pm_runtime_mark_last_busy(dev);
+  1282		pm_runtime_set_active(dev);
+  1283		pm_runtime_enable(dev);
+  1284	
+  1285		return devm_snd_soc_register_component(dev,
+  1286						       wsa881x->driver,
+  1287						       wsa881x->dai_driver,
+  1288						       ARRAY_SIZE(wsa_dai));
+  1289	}
+  1290	
 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
