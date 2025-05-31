@@ -1,89 +1,142 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45761CCEE0;
-	Sat, 31 May 2025 21:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D279C1ACE0C;
+	Sat, 31 May 2025 21:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748726624; cv=none; b=apkNlaO8zfhGcNSm/wxfL33E3ZDFpECb1lLF6NILzGLFqHG5Xy2NVC/L3ks8vJLZs/cQKfCWyrX5sY6WVYmW0qHqMVVAz/y1N6RSsMR11U86vJF+Bey8vad6HVfzISdLxIhsIxS4noxIGovXu4jthl//oU+9pMVo1gAGA/79mxo=
+	t=1748728122; cv=none; b=orv2GTHXDICSB/zhEQEI17r+xj5Ks9RUWpJTeEaRAYiwB6fxr12b1ab/RHIfxWg94YPBfzJN+VpI0/g6tA5BFiDtRp1TSTkQEbWsU6EwHrhhAKow6cGp97HisjPEmEGDiiRDTVrG365/9OV1r9Dfv35LzJ6rb3CqMESTGY0Vk9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748726624; c=relaxed/simple;
-	bh=409EzBnRZl7HCyBHlkiarMMZ5YH45JJDUcocJR01ODQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbTV0wJ+y2b9k1mANr1/8B9r26X4dAhOvbkaZlr9XiVAGJ2eJxApXUGtdzMgYwclbQsTYN0+BaBQPP2lhK1zns8JABMyzE6l2f7FrScKLvuG/Bkol1N+T1SZ+1RWOYNOVYKO/SfD7HkYP8bUX3uH/wZrGvvMuzFMk+CONTW2NDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/xA0RzE; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1748728122; c=relaxed/simple;
+	bh=dr5WfIFnDvxt8uCn0X7Wh0AAlu8MV4VHpUff1slIYog=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iFYxdfu8MXiWLpJDLIEkngqXcB6ntMvbb9yZCy3jnaFee+TEgy8PRqx0QSGBcP2kMslR8Tdu3X6Ro5HlXBkOeffFywegjm75wlLmasc/EmPd0tz5ZRpRYjUnWq91WG2dCm18zOucUjBxPfqRCS9wcbf2t8B5Mc6amwZ7l+hQpBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=S/veJHBk; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/xA0RzE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748726623; x=1780262623;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=409EzBnRZl7HCyBHlkiarMMZ5YH45JJDUcocJR01ODQ=;
-  b=X/xA0RzEI10RUYQ078TJdEz2Io7ifskaMfqLjyUFbSJAdGkBNvNCu1+U
-   zpmpJm6yXmVlba4Wnh8s0rKm/hvTYoxkuyVzdtGb8celu7rW/eL26zXfZ
-   T540PObBmyYOQR/Zb1ov9Bz5gJpAlkct5ISf/kM8h6hGkBBvwGY7YTlYj
-   RKZbPxzn/Desi0P1N4mRMViuBPSKfhifE36SaMNJk/iDRE7R/9QWDTMVr
-   eZypr2YZgBUD6M9Os7N6o9ukudMsykIArtuEQd4fAQSAlsPUVrySKE+km
-   9g66vyve2X0MK7kjTkcjCGFL+RPT+5GwDCBQD4ewcXiVSUHyAIDQbuzfx
-   A==;
-X-CSE-ConnectionGUID: jGaLmwAxRIuj75g691nbUA==
-X-CSE-MsgGUID: jOrC6kBURKai5muZb9QXaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="50941383"
-X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
-   d="scan'208";a="50941383"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 14:23:42 -0700
-X-CSE-ConnectionGUID: btzh5O+XQRClxfZzyVkLNg==
-X-CSE-MsgGUID: SmPlBnKISje07NJUeixbHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
-   d="scan'208";a="149465595"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 31 May 2025 14:23:38 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5CA72202; Sun, 01 Jun 2025 00:23:35 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-usb@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v1 0/2] gpiolib: get rid of devm_gpio_request()
-Date: Sun,  1 Jun 2025 00:21:37 +0300
-Message-ID: <20250531212331.3635269-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="S/veJHBk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=7u2qauzFTP/rcfL2a+zDfaRZel9Pi3gl/2pshUKS3Yk=; b=S/veJHBk4K4AhMATBTSQloGQ/s
+	SExGYxn3vLkx2Q5mkmsp0Kv0K+HTFKscAq30eVlszyNmHjpIMlxe/wFsDhlRhxi/yl2bItdRpd/c3
+	YP4DoEl8pZojG29DsB8iQbYu6yCJ0Id9+IuvCdPqOIV/cAMqalAKqDw6vmBtKD/L0UKJVIeHaLKg1
+	S1cNU9BLdN+/Nw1QA81Z2eyTzfCHis7/U5yc1Vh/VPMWkmL45r+AKeIdy/7b3dTX39inxEWjBsoMT
+	9Ij0k2rb6NW1oewrgOJadOIq1GjyOWNqT9uiD5ORDZ/YR9vh5FDP+HssP53zQGw5j8slLg9mO45xs
+	RNYOc6kg==;
+Received: from i53875a3e.versanet.de ([83.135.90.62] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uLU46-0001IH-Ji; Sat, 31 May 2025 23:48:30 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>,
+ William Breathitt Gray <wbg@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-iio@vger.kernel.org, kernel@collabora.com,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH 4/7] soc: rockchip: add mfpwm driver
+Date: Sat, 31 May 2025 23:48:29 +0200
+Message-ID: <2188729.OBFZWjSADL@diego>
+In-Reply-To: <20250408-rk3576-pwm-v1-4-a49286c2ca8e@collabora.com>
+References:
+ <20250408-rk3576-pwm-v1-0-a49286c2ca8e@collabora.com>
+ <20250408-rk3576-pwm-v1-4-a49286c2ca8e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-devm_gpio_request() is used by a single driver. Replace it there and
-kill the legacy API. Assumed to be routed via GPIO tree.
+Am Dienstag, 8. April 2025, 14:32:16 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> With the Rockchip RK3576, the PWM IP used by Rockchip has changed
+> substantially. Looking at both the downstream pwm-rockchip driver as
+> well as the mainline pwm-rockchip driver made it clear that with all its
+> additional features and its differences from previous IP revisions, it
+> is best supported in a new driver.
+>=20
+> This brings us to the question as to what such a new driver should be.
+> To me, it soon became clear that it should actually be several new
+> drivers, most prominently when Uwe Kleine-K=C3=B6nig let me know that I
+> should not implement the pwm subsystem's capture callback, but instead
+> write a counter driver for this functionality.
+>=20
+> Combined with the other as-of-yet unimplemented functionality of this
+> new IP, it became apparent that it needs to be spread across several
+> subsystems.
+>=20
+> For this reason, we add a new platform bus based driver, called mfpwm
+> (short for "Multi-function PWM"). This "parent" driver makes sure that
+> only one device function driver is using the device at a time, and is in
+> charge of registering the platform bus devices for the individual device
+> functions offered by the device.
+>=20
+> An acquire/release pattern is used to guarantee that device function
+> drivers don't step on each other's toes.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Andy Shevchenko (2):
-  usb: gadget: pxa25x_udc: Switch to use devm_gpio_request_one()
-  gpiolib: Remove unused devm_gpio_request()
+actually trying to compile this, led me to
 
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/gpio/gpiolib-legacy.c                 | 38 -------------------
- drivers/usb/gadget/udc/pxa25x_udc.c           |  5 +--
- include/linux/gpio.h                          |  8 ----
- 4 files changed, 2 insertions(+), 50 deletions(-)
+aarch64-linux-gnu-ld: drivers/soc/rockchip/mfpwm.o: in function `mfpwm_reg_=
+read':
+/home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/../include/s=
+oc/rockchip/mfpwm.h:423: multiple definition of `mfpwm_reg_read'; drivers/p=
+wm/pwm-rockchip-v4.o:/home/devel/hstuebner/00_git-repos/linux-rockchip/_bui=
+ld-arm64/../include/soc/rockchip/mfpwm.h:423: first defined here
+aarch64-linux-gnu-ld: drivers/soc/rockchip/mfpwm.o: in function `mfpwm_reg_=
+write':
+/home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/../include/s=
+oc/rockchip/mfpwm.h:428: multiple definition of `mfpwm_reg_write'; drivers/=
+pwm/pwm-rockchip-v4.o:/home/devel/hstuebner/00_git-repos/linux-rockchip/_bu=
+ild-arm64/../include/soc/rockchip/mfpwm.h:428: first defined here
+make[3]: *** [../scripts/Makefile.vmlinux_o:72: vmlinux.o] Fehler 1
 
--- 
-2.47.2
+
+during the linking stage - with the driver as builtin
+
+
+> +inline u32 mfpwm_reg_read(void __iomem *base, u32 reg)
+> +{
+> +	return readl(base + reg);
+> +}
+> +
+> +inline void mfpwm_reg_write(void __iomem *base, u32 reg, u32 val)
+> +{
+> +	writel(val, base + reg);
+> +}
+
+making that a "static inline ..." solves that.
+
+
+On a more general note, what is the differentiation to an MFD here?
+
+Like you can already bind dt-nodes to MFD subdevices, and can implement
+the exclusivity API thing on top of a general mfd device, to make sure only
+one mfd-cell gets activated at one time.
+
+Other than that, this looks like it reimplements MFDs?
+
+Also handing around a regmap might be nicer, compared to readl/writel.
+
+
+Heiko
+
+
 
