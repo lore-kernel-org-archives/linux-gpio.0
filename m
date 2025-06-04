@@ -1,264 +1,125 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013019.outbound.protection.outlook.com [40.107.162.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C47A4C97;
-	Wed,  4 Jun 2025 14:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749048412; cv=fail; b=V/Z/adObIo64BOsaHDRaG7lBhaGOCV8ZhQbuNxKjsLf5KTiPxHd/2Fs5wPB4f8zU8LUNEFgWdGXKysSABgpGa8FGiD4kGLrOcb/GEvO6XdfZd5xR32U2tz1NUIbGOdCrQyGXZ07Yu+NvDHm1ApECbv1c5QY9HfwxMZPQGqJE9Qs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749048412; c=relaxed/simple;
-	bh=M6jDCqInL78JzxGkU8M8UFpgcgZd1X6U6Hi1FC2idko=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QNjw5hu8WM1XjyNRfAP32z7EinGingDMCm/S1+wfjSzRP5zQjnZdQiYrp1b9znOtivpMgfwXFGvWP0+2mWe/JpLbIt+T4aG4l8/fDCDQGoE8+v5x3fQ2ulOC9XYwIXbOT0Fdj1YjjhkI2tMTsjTMAHu5+k7VSBSpwJn9RQOiOA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=l4Ucq/49; arc=fail smtp.client-ip=40.107.162.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE4A18DF8D
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Jun 2025 15:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749050748; cv=none; b=XnYgN6T6dZ7cEHOekRTcpmTe18B1nvuzAJUT7ZsaK5WNUlnsxFag5TyVwQ7Wr8rvZ9tUG/yAO7dBnLrpBpYn+7F3r12T4+VuFhZIWPYytMS++g6ec0zBgddxXJ/XxsxZ3R5Cq85dvBGuuJrr6SKRykJ8jsA23Ym8CJ4gb6f+1IA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749050748; c=relaxed/simple;
+	bh=/zu0WY1mTLJkmQKe0QzKVdlleBAaRvg5u4/DVEDJoYs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qri1V1PaNRJeHSmjs+a4X4gyMDZ8KNcIS0fBXJ/Kt+7O4yucm/ftNMEOCg+KVFOPtMDC9A2tiuw2RHCTtKymUy8v321ebatDWabw9CCo8KQCdC5iqOt9NU4vW0cnK2xKenvrfzCXSPku3GEV9HfbLL7oqlRYICgqSLkyRREioeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qI8omZnY; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="l4Ucq/49"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jmuN20T8lKq5wvmvbBYrbaeyrPgMZNj+kfKGef8Yq0IGzOvq2NTbLYTTom9VPhEASlQ7UfXznGeYP8rlGCpVzPrM2GQ9MgnqeWbdUbhi3PYQuhNFfFjUlv4IoIzJ88rw0lb9rGjppfBqGzzmWU9nLbdvAF1JZRrpoNVBodwlfOeZBNCc4dI8IpTSburYulr+bXdsujKpUIVlDBLheSIp7v8mkTnx9UoPApNKSvOMT4f/Xl678MEN4zNtaaIuypzxDcvbnew8/xEJfRI2+dh4E7Lgqsfv4rSd7lY8of3MaY9qv7eZaIEOCKEBzPOwGK6RbADDeyk/xX6d8lQBDhaXmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aOaO1NLX4p7IBd/tPilSfu6EonttEk/jSUrKuqI7dtg=;
- b=pJchaLWsuKU/0GKruOsECVsj+AljXAkXDGhebF7O3vKF03o0kLQl9dw35LuX9dvoUHc0LiXtigWtoqFtPIi8Sg8MJVlMmjYmRZs/65ExYUKwOcXPAKKsT0DNiCEnlmvVVY9XKbJOr9nRu4XqXeAZq/c24gfvP8+BTC+2wK24uRDN6TCRjThO5F/wHprCNexoGF48p9Rz83v7QIc1I4IplqXhVibvx369BewX+nQa8MNJin3ZvBggel/E1TzLI4A6vFjeRd4ZdM4+L5FralDuoXJhsA0nlQrsd/BWv8dy4wiP+TkagrhJM0KYcdV1KptwNbwfmk0hiztSzAoXj5G1AQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aOaO1NLX4p7IBd/tPilSfu6EonttEk/jSUrKuqI7dtg=;
- b=l4Ucq/4993fr64YhlOmEf4jUn4vo+gt2k60swYEs4Me4PsNEQuXWDh6Qne0jRoxFK8E3CoUnpOamdsKq2JkCjm2A8k/GHxy/Eq6dcvvvbqKwOhCrARJx8Rs6SMzu13FyNsR+785gRE9NAuRmMoyEzmF+2ClZyMjwM2k1GV1WYWLv03vzElwLPwj2XE5QpkMWKzPnTvLMEitW19/pM6NIsQRwng9sf7KmI8twyiZzx4IDoRAfq1u/5LS8ocLoFDpkWm82t+xjw0dEwN0qj4AEGbS0bMbXZVrmnvJunZltY80POVrOXW9TrRdVC6PCamjJEAm1NSgcBcs99eHZNcEyiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI2PR04MB10667.eurprd04.prod.outlook.com (2603:10a6:800:278::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Wed, 4 Jun
- 2025 14:46:47 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Wed, 4 Jun 2025
- 14:46:47 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v3 1/1] dt-bindings: gpio: convert gpio-74xx-mmio.txt to yaml format
-Date: Wed,  4 Jun 2025 10:46:30 -0400
-Message-Id: <20250604144631.1141430-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH7P220CA0130.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:327::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qI8omZnY"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-606fdbd20afso1477095a12.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Jun 2025 08:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749050745; x=1749655545; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tj36HcfLXbrHMi0m60w9d5+4mHUGkz0YH63xXCl7mlk=;
+        b=qI8omZnYK63Gb3gfqVrMQYrcAeOkEb7jdjavka/WAWHIxL/QL5ypm1bm5xzQsrx2DV
+         ljun/e+RnC0KerzAN1vGJ07NRXgwlz+wbzV+WsH3g8pzg3UrZfamdIySsqhV9aWnzXrB
+         V3vbLMhg9JfSP/rSmTuu6iYGxwXw6KW5pT9DaJ1TBTqs583OYDJ+blmh80W9BZvWb6dE
+         mEDCsvZuY0zj7+rwBxMs05Le9ZmeX9pY4At4EzMURjgqoo18iXr7m5Ztkgd5WE1pV9W6
+         mR0QY7S4KwByWpvk92AiVpT4jS9MUKHA/2jHtwD1S4UTYUagd/Txp563a9yt3lzQDSGf
+         5VoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749050745; x=1749655545;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tj36HcfLXbrHMi0m60w9d5+4mHUGkz0YH63xXCl7mlk=;
+        b=lHFVEISEjDmuGaUHf3jOKbyJRdltZycmqPoA4vHnceFmLkLRxOqHNolu3xQ7O5pbXX
+         fWuCAnuPQBiRugAnjqB6beQxx3Jk+L/yc1BJJYSRBv0WZjoEaGVgUyUSvidekFORXHNg
+         h6Gd4loc5avBjFpXyg+EqkH1ubFH9hfIVLT2dVGRpdfzixL2WZIUldRGvFaMci3rFyJ6
+         C3NrBhYCG/Q8TSyWy5jWZX+xMGNXqn4jzcQqAjZJ+RbpPbAyi1yGhqRdfxiroGeO1IGb
+         xttD2mNtYbXkOEnNU6MfkwLiZo9Xyz1lMmECtsqQHn9wfuvr5wXISUxLMl9O5ut1iQ5V
+         LmlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRsRaYwPQ/2AS5RKAeiF8novT5E8afQumD1P3Ls8JcrtmGluwgx9DyepG+Vene2GdPAWKC/8O4dZSC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzauTQy0GTvtrC0AzXJFuh3Vpn6P4KmAH/UvgC5MscNtw4SPfI6
+	0nTGxznKqQ3zldbvbdGcgJrryODjpRNqd+GaTlCzI5qP+o1CE2Pr+l+OXMrI38lDmpE=
+X-Gm-Gg: ASbGncuFIY6sYYMD8ZGsydh+QGBQq5u0J+XLp/qMf86qfFtjRmSE4svyCzQjV5zX737
+	NNP4iMo7NtBcvYZoSCM87Wl9NEDFGFwhaqZUrnCs+LVPw/GvEGwSuWXhPE1AdeXfxPgpWSNhNfl
+	O6Tuz6+NDeK0VBp9Cqur3I85HKTtmMcDi41GUt+Aqy8L9Tz/+nddp6RMlcO/jKuoqhM9+zRlaq4
+	WOqw3rR+neZwIVCl7/8JtR4x6pgdOYzaLHch2yaam19RuclresZlg2K98P9sQo53jkTaUopHdF7
+	qWNEXrLIVAqe5J9CAj2xTBsQ/AB7pBYtw36L4W0dR7a+oOMoEedmtAKt5ztT9iq5PCd+g/UiwuZ
+	8T0cnkbY1gVMbURqUVyn4EKmbpr5hzC6PGd2gsf+4lAVVBQ==
+X-Google-Smtp-Source: AGHT+IHDbl+PPXNilHwRHoApPiua2emH1u8FPEEM6gtKEx+PJ/5CtghVWo7/Vf4dwmLj4wdHx4mOIQ==
+X-Received: by 2002:a05:6402:510a:b0:602:120c:f8d8 with SMTP id 4fb4d7f45d1cf-606ea179fb9mr3445618a12.18.1749050744799;
+        Wed, 04 Jun 2025 08:25:44 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-606ed984f63sm1051640a12.58.2025.06.04.08.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 08:25:44 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 04 Jun 2025 16:25:40 +0100
+Subject: [PATCH 01/17] dt-bindings: firmware: google,gs101-acpm-ipc:
+ convert regulators to lowercase
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10667:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2380c9bf-b775-4c65-4c62-08dda376a191
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zLVGz4kv9n5uW4bavBKSYtX/7UfoRImasRdHAjtASfsNDFG57/Y7d+jVPsN9?=
- =?us-ascii?Q?lNCZWy9AOCVdoLZ5/hpT41uJxg+6HRoO0mGiqJykrk8RksaJxWuHMEvfA/ef?=
- =?us-ascii?Q?j6zELE+yDkUTO7TvloEKwV6d6/AK8LMTKpau2GbAFiICYGhNvvrlIQBGRVT7?=
- =?us-ascii?Q?b4JFlsnSHu1V9UoYo7UgbG0UMSqXjUZ5/TlvCcEoNOmxlbGZDV+VP0NGluzb?=
- =?us-ascii?Q?uMwJG6bsaNYqQqFquGPl5DsR+Nf6/J2tTr3PEcYhZe4fdyQXPXn+qSIeGsp1?=
- =?us-ascii?Q?GAsW7SgvzaEFjOD4VG60RzV14CXW8ZpUyrXDe/dSb1aDs10XB0yBfSAkfAc/?=
- =?us-ascii?Q?6B+1B3T28FsRXgzunruV6J4GpfbuTDlA+kSxn925LzldSPEVnE8kPTTn8OWI?=
- =?us-ascii?Q?xqzC4RQmQEvKOQRpc9IOJh/SsdbLnXDN9JOH4kJDM9SlN7MxNrMyN0vnw/Yl?=
- =?us-ascii?Q?AFZSAR1beTil73rLaKOjgTVQgERll4q2JHgJmF8v3n9C3ZkA1QdBRRNNruVp?=
- =?us-ascii?Q?iQldnoPQAtIrlPDsZyL9I9Yx4nLcPjPFChyVxXv+RJz8gx7/tDS6Maa4sHyN?=
- =?us-ascii?Q?fxZHGfCgAxPQbSwPL72EqwiBQQQIYWzUFVaohcKJh+RUrIOCM7qsJOO7dfqS?=
- =?us-ascii?Q?MgQ7hlOgi8i9v3NcV6Kdri8nRixjKUNVuG0Aly2nCnyYwy4gnbBd/mJct6Oz?=
- =?us-ascii?Q?FpSBaD3A/our3WBia5nVCB5ifuDW55lmhvgJo54d5O0NjEmhtaoHohkuSWmf?=
- =?us-ascii?Q?ah/ZQR0P1ZyzneM/3a8LA5CVZTzwtSphaudgcs8741gVp0mhgDoT+kWcf1HG?=
- =?us-ascii?Q?3BUCFpPN+kYjzsWAeF/Dy2YTYV1ueOS9h7aQ8T+PigNiEUk6DDtUdGW0PpLS?=
- =?us-ascii?Q?6b53cDmBDW1sneqqU++HDBfOBdI8H9ebknyD+dnKefXNtBhCCTvda+uT+Nx9?=
- =?us-ascii?Q?m4UUMiygmmahGbD/8DY2SfT1N/XYDotPiGnllUZXzifCuXV+E+YN9Y/mHEWj?=
- =?us-ascii?Q?XQO2X7amSOdYYfrrDvBaMZ0KWZBYlom+dYuhuZyvFrYeKKhVVdRLUAHCb5BC?=
- =?us-ascii?Q?d3cgUKLIpqL17nQEF8ETq0QnIqgh9HzcXr26bcJP/5fSv8gBe6uIWQH7OB0o?=
- =?us-ascii?Q?LnTdn4/C9h5TBsj6+TPY6t+y3+UIq2VzXt7U5bJLAKge2A8vsp/fR6AFCuSu?=
- =?us-ascii?Q?+dSEJBKXGvd1SaCZA9uDcVgf8lbFGN2qIF9fUG9mfigzQP1CFT0Q9SzhmAVl?=
- =?us-ascii?Q?jTAhBVnCSw5K8XDYl0bS1aPqEEYF4Ks42CF1/r8O2w93qF/nZQf16exbhcWi?=
- =?us-ascii?Q?lAAjF9xwOLaIcfAJL0gIP6KCIKlogvv8bsJoJKlxS0LWfoJ5aP7uPkUAAnFU?=
- =?us-ascii?Q?ZSkg4L+3a6RvwIikzwuGvxYuxE6Od01eirAEvbg49IALT2i83TwT0Uh7L5Vp?=
- =?us-ascii?Q?SuTH9kDv3qdD74t5aABe97NOfX7T66lA?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SSioaExSNpVzpAPIOyMHuckutrLQx0qom81mw0sSd8eMUwZPZkKuElrT17ib?=
- =?us-ascii?Q?dj2DNw8VyGtxyc9c6i+loclInbLw5qi4Ssmtur2KVf0ZqAOhNsNW7RumGK1S?=
- =?us-ascii?Q?Fa+1dCdjAz1YD9ZDim86qwP3nOvpSxxNZunwmmZMt2VB1wV1AbDKthCHVpAw?=
- =?us-ascii?Q?Y6ljhokiC7PDq7OjjX+U4zb2pwHnZMv0W0gPoTYvVyd/qsGdof9wdppfT3ZU?=
- =?us-ascii?Q?meUWFpx7aPGOESlaedk/N8+4uTo7FYGHJX0koTbpxSQqUCbbwKUpNXS6HxhK?=
- =?us-ascii?Q?BbWPj7fdlyIVtXC41/RsvgcDBKbVKYsxE0HZmkSDT2PmRnYhybVyyO1Hq16h?=
- =?us-ascii?Q?2NoWHwsZ5K+u0e42NBqTzCJLHZmG8ogc0vzWcMwUE0J1d8eLEVcdGCz/z7hq?=
- =?us-ascii?Q?RJlLvJqhFkHqC9SKd9bilnFr4q6/HdUiBA6O/SPLODJXWcFf27HVHe5MBoml?=
- =?us-ascii?Q?J/vpYxodl2QG5NNjnYyhRZrcWX5Ko7vPIxCoXKN1LF2ngoFvSMWBZAXtybYW?=
- =?us-ascii?Q?10L4aSjz0dtS7Py4E7Wg4ErUIWn99GGbrYxIGp2Ex/Gnz8Xq+1xVJv1vbpNM?=
- =?us-ascii?Q?2NjuiWr7tudBtiiml6Jk8P850febF1h8E4pazdIkzd3Ku7xCg2PqldXwyHcs?=
- =?us-ascii?Q?FpToewxjiRULbTlq+vGdCvJhHV6VTKccKK48D5mosgUXeqiSa/hHnBir23JW?=
- =?us-ascii?Q?uMNfziVffJHkKvWucoOMy6bSEuuZYqcl+EhhQy2TDWsDjXLDgXEnWihLKk9A?=
- =?us-ascii?Q?Nj5UnfUi3jS5yJdtpc4VwxQq6fW0VtlpX/dxQWCP28YJjrB1QPB9H8hvNha8?=
- =?us-ascii?Q?HPpYavRm73wXMrNJniAUR3+pZuYT4MegFkvHbBK6g3H/BMDb1WuRASKaVFUm?=
- =?us-ascii?Q?rPebJeX+2Nv8CEmmwZpskxU361JcWfozM5WPuDncj2XoGHYfDjfQr+XezTgt?=
- =?us-ascii?Q?rqUgruxmUOJ4Sy0NsM/w6wt3kAn09Ra/TaujbqjGDHgEejsuPi5rk+we7oCv?=
- =?us-ascii?Q?fXheSJ+sjq4KhzWo/o7lXkMoYgnMxMkF3GsFANNZfFA2imcCnpmB/POIdY/a?=
- =?us-ascii?Q?tXhj29eHpjEwg463vzWtuT7VHpkQdsXaMS8M2LPWUWvy52ZQgzJVovQZXoO1?=
- =?us-ascii?Q?WvQrr9+lDnT4uw3b2TWiLWsWXIGErlwCBlhyGKgt0qhPWihVQVZNqTEitkfG?=
- =?us-ascii?Q?9jdppx/E9S9cogr3BKAFydiuT09MTTnjeUtwuaO3v3izupSeIkOIg9vAmEI7?=
- =?us-ascii?Q?gvZJ/YOULGucOpM3P4P+fEMelJncwIvS5PGy+ujEihm6YyTmwyWMKeX5DlC+?=
- =?us-ascii?Q?QYjyaemI49uJlkSGWGGD6DLNWjB7oJTu68YjkWyqVbnzQVWjlbiya915ZnZD?=
- =?us-ascii?Q?GyCSpapPHBazrjWFXpzhvtlyAtWBGAHanuqilDiV7gQl6EQxwmQx4n1WZgjB?=
- =?us-ascii?Q?Mi0T+eBwVpiPoxnqvoSySbrOoLKArWOmCtcw3ZH6ky2/A8fU7bDztLrbZw+7?=
- =?us-ascii?Q?pqcXbdcGT5qetcssESWp1R15Yt/e+iE1ZshFsyE552s7weIS8HO5R9wfmlD3?=
- =?us-ascii?Q?MpMa2XYnCua8agGG4H1LG3J2qoNVa3Jn/EFmj0Gk?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2380c9bf-b775-4c65-4c62-08dda376a191
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 14:46:47.0845
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XwGnekNIvtVnNrCI8vWRHsJ4y+Mt1NoX2Wphav/odqbTrgp2Y5cBxpBP/e5WJuTmMFTQPzvJxcapBiWDoOMxTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10667
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250604-s2mpg1x-regulators-v1-1-6038740f49ae@linaro.org>
+References: <20250604-s2mpg1x-regulators-v1-0-6038740f49ae@linaro.org>
+In-Reply-To: <20250604-s2mpg1x-regulators-v1-0-6038740f49ae@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-Convert gpio-74xx-mmio.txt to yaml format.
+Using lowercase for the buck and ldo nodenames is preferred, as
+evidenced e.g. in [1].
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Convert the example here to lowercase before we add any bindings
+describing the s2mpg1x regulators that will enforce the spelling.
+
+Link: https://lore.kernel.org/all/20250223-mysterious-infrared-civet-e5bcbf@krzk-bin/ [1]
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-change in v3
-- add Krzysztof Kozlowski's review tag
-- remove "driver" in title
+ Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-change in v2
-- remove trivial changes in commit message
-- add TI in title
-- fix additionalProperties
----
- .../bindings/gpio/gpio-74xx-mmio.txt          | 30 ----------
- .../devicetree/bindings/gpio/ti,7416374.yaml  | 56 +++++++++++++++++++
- 2 files changed, 56 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
- create mode 100644 Documentation/devicetree/bindings/gpio/ti,7416374.yaml
+diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+index 9785aac3b5f34955bbfe2718eec48581d050954f..62a3a7dac5bd250a7f216c72f3315cd9632d93e1 100644
+--- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
++++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+@@ -64,7 +64,7 @@ examples:
+             interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
+ 
+             regulators {
+-                LDO1 {
++                ldo1m {
+                     regulator-name = "vdd_ldo1";
+                     regulator-min-microvolt = <700000>;
+                     regulator-max-microvolt = <1300000>;
+@@ -73,7 +73,7 @@ examples:
+ 
+                 // ...
+ 
+-                BUCK1 {
++                buck8m {
+                     regulator-name = "vdd_mif";
+                     regulator-min-microvolt = <450000>;
+                     regulator-max-microvolt = <1300000>;
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt b/Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
-deleted file mode 100644
-index 7bb1a9d601331..0000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio-74xx-mmio.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--* 74XX MMIO GPIO driver
--
--Required properties:
--- compatible: Should contain one of the following:
--   "ti,741g125": for 741G125 (1-bit Input),
--   "ti,741g174": for 741G74 (1-bit Output),
--   "ti,742g125": for 742G125 (2-bit Input),
--   "ti,7474"   : for 7474 (2-bit Output),
--   "ti,74125"  : for 74125 (4-bit Input),
--   "ti,74175"  : for 74175 (4-bit Output),
--   "ti,74365"  : for 74365 (6-bit Input),
--   "ti,74174"  : for 74174 (6-bit Output),
--   "ti,74244"  : for 74244 (8-bit Input),
--   "ti,74273"  : for 74273 (8-bit Output),
--   "ti,741624" : for 741624 (16-bit Input),
--   "ti,7416374": for 7416374 (16-bit Output).
--- reg: Physical base address and length where IC resides.
--- gpio-controller: Marks the device node as a gpio controller.
--- #gpio-cells: Should be two. The first cell is the pin number and
--   the second cell is used to specify the GPIO polarity:
--    0 = Active High,
--    1 = Active Low.
--
--Example:
--	ctrl: gpio@30008004 {
--		compatible = "ti,74174";
--		reg = <0x30008004 0x1>;
--		gpio-controller;
--		#gpio-cells = <2>;
--	};
-diff --git a/Documentation/devicetree/bindings/gpio/ti,7416374.yaml b/Documentation/devicetree/bindings/gpio/ti,7416374.yaml
-new file mode 100644
-index 0000000000000..33472f0911011
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/ti,7416374.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/ti,7416374.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI 74XX MMIO GPIO
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,741g125 # for 741G125 (1-bit Input),
-+      - ti,741g174 # for 741G74 (1-bit Output),
-+      - ti,742g125 # for 742G125 (2-bit Input),
-+      - ti,7474    # for 7474 (2-bit Output),
-+      - ti,74125   # for 74125 (4-bit Input),
-+      - ti,74175   # for 74175 (4-bit Output),
-+      - ti,74365   # for 74365 (6-bit Input),
-+      - ti,74174   # for 74174 (6-bit Output),
-+      - ti,74244   # for 74244 (8-bit Input),
-+      - ti,74273   # for 74273 (8-bit Output),
-+      - ti,741624  # for 741624 (16-bit Input),
-+      - ti,7416374 # for 7416374 (16-bit Output).
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+    description: |
-+      The first cell is the pin number and
-+      the second cell is used to specify the GPIO polarity:
-+        0 = Active High,
-+        1 = Active Low.
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio@30008004 {
-+        compatible = "ti,74174";
-+        reg = <0x30008004 0x1>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+    };
 -- 
-2.34.1
+2.49.0.1204.g71687c7c1d-goog
 
