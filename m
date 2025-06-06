@@ -1,484 +1,326 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012034.outbound.protection.outlook.com [52.101.71.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C286628A716
-	for <linux-gpio@vger.kernel.org>; Fri,  6 Jun 2025 15:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749222208; cv=none; b=vCXdqUDlyGCiYDTEzSl6Vg5qMes9mZMQKsmFEa7nwGhjo+HbK1ZvfYPgI16OX11emL56nIw84eYOBqQcM5PvVGxFH2UL9o+60sqhP3DB96mfLZ/0b2UFVdCNd2oI4lP1KEvbVnw5cMJ4dohA8w18rt+XzVXMfmZbhT65dYH9K7A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749222208; c=relaxed/simple;
-	bh=syZqlGzC72/t8vkCP+G/vfPzkzAsoIw8JOd/I56yBTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gRBzFMtemFpIq7POtn7Sep3nSNaChBc12hk9D0EPwOt4M3qqFkTxxJWB9dhfMGoOHp0aYqj5baq5DhUWaqx0nBl6Y0zjp3bpCllBUipROC1U5fgo3PdsuI94z1v/QqA27z0Z4McvhfBJBAFYNv6ua142FtVY5pMcoToEQc8pp8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmguJ+CX; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE219D071;
+	Fri,  6 Jun 2025 16:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749225858; cv=fail; b=Vl313PcFtgobIDbG5O2vLEGas+QB78F93GkO8nmMRAnXKH0LqXv4nwZNPbzA5JIytzud7NFtNxY6twVaZrU6Pn2i4rV6v6PoCg3NLo+Tz4tA+UnZTI3NikRMQLQK7iVguNoSyDmoKMvoDohKPpjp6MEhvzFszYc2Ph2TIsEe9xw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749225858; c=relaxed/simple;
+	bh=hg8c2ZcafLgh7IISbDqwjy3Ld4mQU+pb59/OBfCQS4I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SL9/V67zToeq29ijdhDkDSWQw1IYtk86QVeI00Hvw7UoVhAGle6RG0pY19bkT9IFWB0JJGf1aM5F3iFTyR0b42BnFhmN5p9QsIOyxk6fTEOl1tLNv8j4BDydG3/HWNI4Y24ILxq0NWB7tY0+UhZN1aLnud6Ufd2w7fzh77KMRq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bsTP1r+R; arc=fail smtp.client-ip=52.101.71.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmguJ+CX"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6069d764980so6327791a12.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Jun 2025 08:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749222203; x=1749827003; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TxuFgIOh2mgMCY+EKEZtpxVIWFIGfgf2zHxoAajskPM=;
-        b=WmguJ+CXGspvSr+oIn/PQ1MUjeEHCGI+ZfgeETj+0o3HtZ79wQ0ePv43jv6ZqSpWJV
-         OEw1Cpp0mTFlwaRmTsgU5e12X1Q0RxwucNZzD1KSXlmRgPu/itakZFVh1LyYmIsnCbMm
-         n2W8J7aEeI/ODoMKH/A6QT8U6DRIYkIsyAllMzFpqIrvVn0nYkWliRF8M0Z9TzE6cmdM
-         p3Y1Q2aFS3lc4d2dpaLn4ia69Fd48Efm1YomiYI8SgRjxR1fX/7nN5x4PkiqsSyEYNwL
-         QIYCznsn+HyerMFYormtoz7JjwPXxd0vvI+jaVn8tCyBjOJm/QIIF3taKxxXn9/0E93K
-         67sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749222203; x=1749827003;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TxuFgIOh2mgMCY+EKEZtpxVIWFIGfgf2zHxoAajskPM=;
-        b=i03Jxv/qd6QsJ8PR61ivJvuksoyJVaKIkrBRKi5vI68+9LB/Re09VsV7GPT1Ww9f0U
-         ng9iWQDd/DhkI5UZYmNjMUUEEisbfUjksieOIeDdIRybxfBD1YsrnsmGsRMnT4yjEQIM
-         vBhgq9CP+53elCqk8FqWA0cNQYDVHGy92kKY9DO+AHRHD7ztmTSdvwI7fyuWXdnPCLkC
-         YbD83OnBIPXnIsPVzhky2RM16FbEogQoqv9QCj3ERSkDPQbvQMVTnQu2D0ybxTc46vTT
-         NqUtLgsCtd9BG8oQioekfRmZGGiC4Z6YptbYp42WDnvsEXXjz4ctwNBQeYOlkMrp6iP+
-         V/Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBFyyUFOpwSeWfIGEWHihLy4LEux93o2W9Z5FfWgOFor1sycepQKazppdoi2fR8xfXkWNe3WM7Ap0a@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQA2Yh96H4XK2/9Ax+hDoty3BJWRnPRObCWN5IVov6XQgnL41r
-	DImAuvL5AfYgKikwVoSu8RXDJZ6NoRK5nnuQ+Oto8k9tR1t5/m8ifSrqcbrgcK6NoTg=
-X-Gm-Gg: ASbGncuEuBfjvyMNtmEIGmJgBizlXUtKF3GyzW4ntMUQym6V9A7q58sQxhimacMnIxB
-	+R1kWKcCwmG4IPjJg3u8aimy3Gn01nn8AhvdH3NLUMXoIVBxVR6wRItDd7K18l5yLOPB9E0x8sK
-	Hy5qgAfoLRNZ/1gdtita3ElBtKxnVgUORHd/DwFzq4TxHvmd4773GvyX0mYmA/R74XIHkhYpwt4
-	IaCxfQ5XQRfdizhWaiQHvQFbdJxVZZRk5pcc3msqRugfeHLaxWBQq77S5Iu4FfELycei5iTPdSQ
-	mMuH3xQ0jQLpu4a6ZZX3VYjQvM02Cjm1LKput5OCHlmFajnCUGYyyBhPrxrpY1QiCICAeKDUYhC
-	W3xfCvpDCiSl7XNo1xQq6q1sGfKWIYwabLMk=
-X-Google-Smtp-Source: AGHT+IFQ9GdhBmsl8Wmw5y1twbzw8bstB4oQUdlQnMwH7xyg/21qXcgF4oPPHSFacZvABtKOeaLB5Q==
-X-Received: by 2002:a17:906:99c2:b0:ad8:8f3b:de2d with SMTP id a640c23a62f3a-ade07606d85mr625857866b.9.1749222200718;
-        Fri, 06 Jun 2025 08:03:20 -0700 (PDT)
-Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc38cf2sm127735066b.121.2025.06.06.08.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 08:03:20 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Jun 2025 16:03:12 +0100
-Subject: [PATCH v2 16/17] regulator: s2mps11: add S2MPG11 regulator
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bsTP1r+R"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P1cIL+lZaYux/akZJnbW7M8gs+JZL+PerAb+FWzuyZAyNYJcByzs5LsoI88kZfRll7/GFolmSSP9O/HNaYQ4/Atys/HMc2duMkO1e3k5tIX0oPis9YzN5Ml0/F5WnwVb9XXUFv/RMMOC0mee6iKjEmIv2xzlS2eqsPuZFiLlURGy7Ll+dnzOVsy/dk5BfSLNjtw+XTUAOeQOPay4hlPPOQw1gHYrCoXE3vuhMtyqvp39D7QZjKIaxMOU9egxCpQCxAF6fLeJoiTNyHXnBTXhxshNamdw9OWWI5WZdttHtILCF2xPqE+ZLUj52fVG3mOxDEeEGY+gA5l6F8EEDXc6OA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G3yFRJpNj4ljKDXeHGNibszkf+FPY81/fdf3l7w51N4=;
+ b=kUjLvlq2yPfbGFkepcH/s9pe/hySXgHBDbB/SZ03Gcpjv80YOyLpBMnSkvN3lyoFy22CofX7AUqtgOq7LAlOEg63whvsWSZ9AZnfpGh2NHiX826oMXm2+hWCdWiQqFAxgWuZC94AHcOkndgHzzFi6LhsDn8RXPVobQAXe/7XcZ5vTWIyqEwrFP056GYsxhNy7tnsywqbSUuZQ0zJZZtOrhhX2Dqspx/ycMK+EWWpxZ4BRBszgoXMpIdQRURgJS5D8FIx+UVjUalRNVIMDWBO0L01UgYQHa1SRCMAkLDD52DsqNQK/+xzTAC08jNTWHA+0yZRBXEKgGW4RO4ueVQi1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G3yFRJpNj4ljKDXeHGNibszkf+FPY81/fdf3l7w51N4=;
+ b=bsTP1r+R/1qrNot80a4sEtqR4rRbN0AE+KyF0SWOpe9K24cHnZU6qRWPB0ACuXzG9uEuNIPAuByOjnzHMVtPi3cNheEkq2DmC01PokEc7LjaoQEqk21us3+5+7AMAFMJqdokEfjuxkaTK5YDS/CTSVPPBSFU1BbEidfm9iOttPakadqmNE1QFssdGBsm/jXuRJQwjqE2WVW2D0h2iI4ltOcmYcd1pTLWMhplZsWk/MvrpnszWV84EgmqP1a87GRtHDvDTydfKeQulsULqFtDc0vws4lKiEAgBREet6yJzEwjlrI6//od3cZHwna3oxmNSSB7WfUe0kIcrLwoyhn4QQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB10045.eurprd04.prod.outlook.com (2603:10a6:150:11a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Fri, 6 Jun
+ 2025 16:04:11 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Fri, 6 Jun 2025
+ 16:04:11 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: pinctrl: convert nxp,lpc1850-scu.txt to yaml format
+Date: Fri,  6 Jun 2025 12:03:58 -0400
+Message-Id: <20250606160359.1356555-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0216.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f::11) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250606-s2mpg1x-regulators-v2-16-b03feffd2621@linaro.org>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-In-Reply-To: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10045:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6a91ef2-3dce-4cfd-570b-08dda513c6b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?04YluEjFDxiUr/8qtEslzW3lLMVENM9hKwQxkKTkiMyQV/Vhm/xEdjLWKtBV?=
+ =?us-ascii?Q?r0hqEcbmZagaUt0LR+x/uFw8kDG/Q0LlKNFkIXjFyJRQZgfX/BMGqd47JyNX?=
+ =?us-ascii?Q?OJV/+A8NYzpOcnthWNIukuNjfDFcOThW+W1cbv1xQJT8FyKdJiT5IvZvt46+?=
+ =?us-ascii?Q?Lnwxp6SpqpjwSNBhHOcWQXiLuCFzUR4Z9lg4eqaHoUdrFSyRMWLmYAE9MyX4?=
+ =?us-ascii?Q?LWoFLdAGFaoK3HQM0BHIY8qm79a0u+nd852lYaGMRKKDjEvH5WGOwNx3T5+R?=
+ =?us-ascii?Q?ECHsAJvE+RsDtwMRyY31S4i0UBC8vWi5THGBOlU6eKsu/yTnQGHVX7AaRt31?=
+ =?us-ascii?Q?1EsateANlUGBLLUgVNxz2WV2NQkZ+tgrI916C0ymUx2RCVzkYJC2eTn5k0JN?=
+ =?us-ascii?Q?tO6w7y6eoea0NO5ddsDmzz6gYp20GjbQjlTYELPw2Gz8DFCiiQ/F3JasJH4h?=
+ =?us-ascii?Q?zFr4lMv4L/8Fwktb050yBQRmDLstvY4Y1BsvORHgv922bnA3W0hf1lElsxbo?=
+ =?us-ascii?Q?ychktPg4VDkc5ohOImgYt8wU/noFMIkTiE2hCuy2VWN8Ruw8SluZ3eraSwkZ?=
+ =?us-ascii?Q?aise+ozlWx14Br7cGur4dAr9i70pEFga7gtNY344yHwLBXdF7nJhoJccdTlp?=
+ =?us-ascii?Q?6qsImnb0Yn4H/WFIQFDOmJjHv3OJbvMAszt9llsk+Pt1lN71X3ODSmBUy5CA?=
+ =?us-ascii?Q?zFjMnZOGv8TOhrx6OWe/9WJ1+CNflSJ7Vpvb8AxDx4pCBqEZO7P3XXRocv5c?=
+ =?us-ascii?Q?XiUu0illIMF/8XAAjrYoHP/KkiWnJEc+OFA+5mgAR26dQbz2IXxQ3vTbsi3t?=
+ =?us-ascii?Q?PNoFM14DATKkfzQzOAqusmT20wSxTQ7Uw9JU5oaEyoYdclZrlNbZZ41dQyKb?=
+ =?us-ascii?Q?bs07Z7+pvPnpFaTsQNxLkUIKJt2+fFyfia+1b2wcUK6BTL2391ZsxY+CYzm/?=
+ =?us-ascii?Q?1Y8I6w6Za6x1YRhD88+DHoUZ12KWxJDVf3mIgUhAiA+p94IpVDuq8yWkdWuW?=
+ =?us-ascii?Q?Mx64+wybReZGSFuMTge+APk2j42j3Mjqfglm1NLbBb/JaS0gZwc+eEX3RLiY?=
+ =?us-ascii?Q?Wv/+osaGE3PIEcJDOMeVN92C6dszaEjpUFlN2o+rQ8g+qGEvYjIVMvXe0Ssv?=
+ =?us-ascii?Q?KLmpKDIegu1iG7EmZCxAhoKqhDvBRQctxLbtps+VHYKSqaKZF6IpgocauLnV?=
+ =?us-ascii?Q?j5+z1ZlfdTXnCvYkL2NpX+wwQ+QzOK8LPy9WVVD8xqbqbeYc+Rx5mwIFN/gn?=
+ =?us-ascii?Q?gZIEBeWYIXTeIk6ly3OXeaO8yFOIlUxnleGfk1quUgpFO6VKSM+Idq6gb/Si?=
+ =?us-ascii?Q?lk3vvNfbNj2sdWHhzU20jlQq1VAWZG+Oa+lQ2gBdHHA23tPc8eJuSs3qerkG?=
+ =?us-ascii?Q?TD76lf4/d8qNged/jl9GJhUjytUP5L9rB7RITue/fsECN/e3KxzzuQJyW/lG?=
+ =?us-ascii?Q?N5VNxrHyGxfSBZFEpszH4Gvn7MdHr1mC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7ASvrZm/UEmCAtq5zJ8xJxPfzv2TKkpMcUJDYJ3Fos5+tWa8+rpK93t7ZdqR?=
+ =?us-ascii?Q?BWo5VhealQssHGRhC6EMvYL0s1uLybun20s/UbE69j+0ZoeJLhFbdLdR5ljn?=
+ =?us-ascii?Q?6qmFwE4+m+sjM7A0KdVF1Bb1lXgnzWXKx83SZon8HmOSsJI+elxsBBtBcbcT?=
+ =?us-ascii?Q?gwGMAq+AW5D363CT/UfGhHqdvIjCaM8j0TryCxWNnrPijtbxkep+JEVhAD/u?=
+ =?us-ascii?Q?ZaWM9LBUbb9MMFcaunlWRLwsfBat2ZL2a8nnQ96D7rqZT+OYOUEW17gnGtJI?=
+ =?us-ascii?Q?vjO8t0Yznf5xQ1cmGF7PjNEbuYTsj5L1jZtktJYW0NVL2+3X22f1Gxji0x25?=
+ =?us-ascii?Q?HXpxK7zhaFsvVEWVfkNODeXdy8oZUM0c8k2qCS68zEx7MMRbcg/kpgGF2r5v?=
+ =?us-ascii?Q?Sc3GOztZsjimfHxXqavT1Gi0/OJAmvzDnHPLCzaiAhk7GUif6Kp3d4Senmc6?=
+ =?us-ascii?Q?fms0YqgADW0GVuMNqOc2GwR0wbdkbvub0nuxWtKFN0NMMK+5ynpD2UlnnzZt?=
+ =?us-ascii?Q?TdfI3PSUdjzTBS82lywA/Kf+yV3Hjkv1cTuXKBjJgFIf9hrU03aQ6IA7e01k?=
+ =?us-ascii?Q?AW3dYox4mGj85DCyT6NDrFFGsUA3JuUfG2jOfQgX4PUQmznbf6dblJH55Ul7?=
+ =?us-ascii?Q?/XJiATjFkWXqPCK9L1Hr+3oMiAIAoDntJCjcPmxfkSebWCGQhKugTUR4ZwSG?=
+ =?us-ascii?Q?MGoD9zcuKguvYawp+KQiyBVUGEfpZ2WaRbZ/SFtPDcgsXT/1axlmWrovTAkD?=
+ =?us-ascii?Q?/T5i2jVF2NjY5n+HQtJJllY0fX9mbOTUrf5l+dLJ+/o8AfeaLqU/YzG6K8ix?=
+ =?us-ascii?Q?hURELXHoJSKM7f8CpTloqP2k/naKzQfVucdZGaF2dZ06wwVWFjK7q1N0Rbbn?=
+ =?us-ascii?Q?9HQDE82iXl1k+PAOFtmngEIUmi4XjKpezmZE9id+Af+t7MQ5tsCHFsjGEc/0?=
+ =?us-ascii?Q?0FQpKp4Ljo+R47JoS5TLLr49FAhhwCtymT+wHXzWkTzql3Bj8SBuu2Gyhz2y?=
+ =?us-ascii?Q?dPMBMxurnnhbn42C5uHPC+47h6vggoNaeq3QCO1+uWHBfR8o+O/TJ7LgpB7+?=
+ =?us-ascii?Q?pyHQb6cDjHGaCSS5U1YQ183R3PZ1IItNVAFrnPM999gZYp6VtL59Bluv/f7h?=
+ =?us-ascii?Q?qSnYNWtHWfmRTz8dLN1suBTA7kDa4nx67R2bnhy5eSRjujAGph//atrWBKKy?=
+ =?us-ascii?Q?RdccBDXe+nk5mK6OWeOorNo3tXBzqvUEo1V0N1bBrr52lSxbTvEzsQfaAjce?=
+ =?us-ascii?Q?RSbStffu4gvLvPkhWDQX2r8agfDg19kCsrf/Lx9A36rHqVD4TmpiewzzFbgp?=
+ =?us-ascii?Q?ENUlBrXBClAjhlIIow67FuW0mLaqgY+wHkGZ8g0XH12ICxhti2ruxeokiwsE?=
+ =?us-ascii?Q?MxDQKJrXYMQMRkOm3DNOLFPJjRZtvFKZnqG2Rr/M+1ITQlSfPu5FdMnE/zp+?=
+ =?us-ascii?Q?4o1TvROcAlcsD/X62oNBD9m4Hqu3H3W0w/9ucYuRpRbsKhL5eq/DoxYnwJF8?=
+ =?us-ascii?Q?qRS+jZZfXYc2OMuOoDMQ9glXMvIAq71M3mivNafRNuVgvmtc745GwYhxDnau?=
+ =?us-ascii?Q?o5zIJfDl40ot8Y+GomDSkgWJ7wZDWfHFl8iXhofE?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6a91ef2-3dce-4cfd-570b-08dda513c6b7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2025 16:04:11.5142
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wTBfuVwn8abw2FpATyqiEogREAzp45qj+Rq/ddmWKZWZU1fIiaE2LD1K7wDxZf5710DbNYVfpxYl6Q4cf2xLzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10045
 
-The S2MPG11 PMIC is a Power Management IC for mobile applications with
-buck converters, various LDOs, power meters, and additional GPIO
-interfaces. It typically complements an S2MPG10 PMIC in a main/sub
-configuration as the sub-PMIC.
+Convert nxp,lpc1850-scu.txt to yaml format.
 
-It has 12 buck, 1 buck-boost, and 15 LDO rails. Several of these can
-either be controlled via software or via external signals, e.g. input
-pins connected to a main processor's GPIO pins.
+Additional changes:
+- keep child name *_cfg to align legancy very old platform dts file.
+- remove label in examples.
+- just keep one examples.
 
-This commit implements support for these rails.
-
-The rails are instantiated as separate driver instances for bucks and
-LDOs, because S2MPG11 is typically used with an S2MPG10 main-PMIC where
-some bucks of one typically supply at least some of the LDOs of the
-other.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-v2:
-- fix commit message typo
-- mention GPIOs in commit message
+change in v2
+- drop generic pin list at top description
+- fix subject miss n at vendor prefix
 ---
- drivers/regulator/s2mps11.c | 301 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 300 insertions(+), 1 deletion(-)
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt      | 71 -----------------
+ .../bindings/pinctrl/nxp,lpc1850-scu.yaml     | 79 +++++++++++++++++++
+ 2 files changed, 79 insertions(+), 71 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.yaml
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 2829062c54a49a17911cd091cf0ffb7950393787..d46b743d4c6f5e745e101d054581a74e992fbaea 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -18,6 +18,7 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mpg10.h>
-+#include <linux/mfd/samsung/s2mpg11.h>
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
- #include <linux/mfd/samsung/s2mps14.h>
-@@ -413,7 +414,7 @@ static int s2mpg10_of_parse_cb(struct device_node *np,
- 	struct s2mpg10_regulator_desc *s2mpg10_desc = to_s2mpg10_regulator_desc(desc);
- 	u32 ext_control;
- 
--	if (s2mps11->dev_type != S2MPG10)
-+	if (s2mps11->dev_type != S2MPG10 && s2mps11->dev_type != S2MPG11)
- 		return 0;
- 
- 	if (of_property_read_u32(np, "samsung,ext-control", &ext_control))
-@@ -439,6 +440,27 @@ static int s2mpg10_of_parse_cb(struct device_node *np,
- 		}
- 		break;
- 
-+	case S2MPG11:
-+		switch (desc->id) {
-+		case S2MPG11_BUCK1 ... S2MPG11_BUCK3:
-+		case S2MPG11_BUCK5:
-+		case S2MPG11_BUCK8:
-+		case S2MPG11_BUCK9:
-+		case S2MPG11_BUCKD:
-+		case S2MPG11_BUCKA:
-+		case S2MPG10_LDO1:
-+		case S2MPG10_LDO2:
-+		case S2MPG10_LDO8:
-+		case S2MPG10_LDO13:
-+			if (ext_control > S2MPG11_PCTRLSEL_LDO13S_EN)
-+				return -EINVAL;
-+			break;
+diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+deleted file mode 100644
+index bd8b0c69fa447..0000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
++++ /dev/null
+@@ -1,71 +0,0 @@
+-NXP LPC18xx/43xx SCU pin controller Device Tree Bindings
+---------------------------------------------------------
+-
+-Required properties:
+-- compatible		: Should be "nxp,lpc1850-scu"
+-- reg			: Address and length of the register set for the device
+-- clocks		: Clock specifier (see clock bindings for details)
+-
+-The lpc1850-scu driver uses the generic pin multiplexing and generic pin
+-configuration documented in pinctrl-bindings.txt.
+-
+-The following generic nodes are supported:
+- - function
+- - pins
+- - bias-disable
+- - bias-pull-up
+- - bias-pull-down
+- - drive-strength
+- - input-enable
+- - input-disable
+- - input-schmitt-enable
+- - input-schmitt-disable
+- - slew-rate
+-
+-NXP specific properties:
+- - nxp,gpio-pin-interrupt : Assign pin to gpio pin interrupt controller
+-			    irq number 0 to 7. See example below.
+-
+-Not all pins support all properties so either refer to the NXP 1850/4350
+-user manual or the pin table in the pinctrl-lpc18xx driver for supported
+-pin properties.
+-
+-Example:
+-pinctrl: pinctrl@40086000 {
+-	compatible = "nxp,lpc1850-scu";
+-	reg = <0x40086000 0x1000>;
+-	clocks = <&ccu1 CLK_CPU_SCU>;
+-
+-	i2c0_pins: i2c0-pins {
+-		i2c0_pins_cfg {
+-			pins = "i2c0_scl", "i2c0_sda";
+-			function = "i2c0";
+-			input-enable;
+-		};
+-	};
+-
+-	uart0_pins: uart0-pins {
+-		uart0_rx_cfg {
+-			pins = "pf_11";
+-			function = "uart0";
+-			bias-disable;
+-			input-enable;
+-		};
+-
+-		uart0_tx_cfg {
+-			pins = "pf_10";
+-			function = "uart0";
+-			bias-disable;
+-		};
+-	};
+-
+-	gpio_joystick_pins: gpio-joystick-pins {
+-		gpio_joystick_1_cfg {
+-			pins =  "p9_0";
+-			function = "gpio";
+-			nxp,gpio-pin-interrupt = <0>;
+-			input-enable;
+-			bias-disable;
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.yaml
+new file mode 100644
+index 0000000000000..11f41359b5c8b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/nxp,lpc1850-scu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
++title: NXP LPC18xx/43xx SCU pin controller
 +
- 	default:
- 		return -EINVAL;
- 	}
-@@ -476,6 +498,7 @@ static int s2mpg10_enable_ext_control(struct s2mps11_info *s2mps11,
- 
- 	switch (s2mps11->dev_type) {
- 	case S2MPG10:
-+	case S2MPG11:
- 		s2mpg10_desc = to_s2mpg10_regulator_desc(rdev->desc);
- 		break;
- 
-@@ -603,6 +626,21 @@ static int s2mpg10_regulator_buck_set_voltage_time(struct regulator_dev *rdev,
- 						       rdev->desc->ramp_mask);
- }
- 
-+static int s2mpg11_regulator_buck_set_voltage_time(struct regulator_dev *rdev,
-+						   int old_uV, int new_uV)
-+{
-+	unsigned int ramp_mask;
++description:
++  Not all pins support all pin generic node properties so either refer to
++  the NXP 1850/4350 user manual or the pin table in the pinctrl-lpc18xx
++  driver for supported pin properties.
 +
-+	ramp_mask = rdev->desc->ramp_mask;
-+	if (old_uV > new_uV)
-+		/* The downwards mask is at a different position. */
-+		ramp_mask >>= 2;
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
 +
-+	return s2mpg1x_regulator_buck_set_voltage_time(rdev, old_uV, new_uV,
-+						       rdev->desc->ramp_reg,
-+						       ramp_mask);
-+}
++properties:
++  compatible:
++    const: nxp,lpc1850-scu
 +
- /*
-  * We assign both, ::set_voltage_time() and ::set_voltage_time_sel(), because
-  * only if the latter is != NULL, the regulator core will call neither during
-@@ -918,6 +956,249 @@ static const struct s2mpg10_regulator_desc s2mpg10_regulators_bucks[] = {
- 					 PCTRLSEL4, GENMASK(7, 4))
- };
- 
-+static const struct regulator_ops s2mpg11_reg_buck_ops[] = {
-+	{
-+		.list_voltage		= regulator_list_voltage_linear_range,
-+		.map_voltage		= regulator_map_voltage_linear_range,
-+		.is_enabled		= regulator_is_enabled_regmap,
-+		.enable			= regulator_enable_regmap,
-+		.disable		= regulator_disable_regmap,
-+		.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+		.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+		.set_voltage_time	= s2mpg11_regulator_buck_set_voltage_time,
-+		.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+		.enable_time		= s2mpg10_regulator_buck_enable_time,
-+		.set_ramp_delay		= regulator_set_ramp_delay_regmap,
-+	}, {
-+		.list_voltage		= regulator_list_voltage_linear_range,
-+		.map_voltage		= regulator_map_voltage_linear_range,
-+		.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+		.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+		.set_voltage_time	= s2mpg11_regulator_buck_set_voltage_time,
-+		.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+		.enable_time		= s2mpg10_regulator_buck_enable_time,
-+		.set_ramp_delay		= regulator_set_ramp_delay_regmap,
-+	}
-+};
++  reg:
++    maxItems: 1
 +
-+#define s2mpg11_regulator_desc_ldo_cmn(_num, _supply, _vrange,		\
-+		_vsel_reg_sfx, _vsel_mask, _en_reg, _en_mask,		\
-+		_ramp_delay, _r_reg, _r_mask, _r_table, _r_table_sz,	\
-+		_pc_reg, _pc_mask)					\
-+	{								\
-+		.desc = regulator_desc_s2mpg1x_ldo_cmn(#_num"s",	\
-+				S2MPG11_LDO##_num, _supply,		\
-+				s2mpg10_reg_ldo_ops,			\
-+				_vrange,				\
-+				S2MPG11_PMIC_L##_num##S_##_vsel_reg_sfx, \
-+				_vsel_mask,				\
-+				S2MPG11_PMIC_##_en_reg, _en_mask,	\
-+				_ramp_delay, _r_reg, _r_mask, _r_table,	\
-+				_r_table_sz),				\
-+		.pctrlsel_reg = _pc_reg,				\
-+		.pctrlsel_mask = _pc_mask,				\
-+	}
++  clocks:
++    maxItems: 1
 +
++patternProperties:
++  '-pins$':
++    type: object
++    additionalProperties: false
 +
-+/* standard LDO via LxM_CTRL */
-+#define s2mpg11_regulator_desc_ldo(_num, _supply, _vrange)		\
-+	s2mpg11_regulator_desc_ldo_cmn(_num, _supply, _vrange,		\
-+		CTRL, GENMASK(5, 0),					\
-+		L##_num##S_CTRL, BIT(7),				\
-+		0, 0, 0, NULL, 0,					\
-+		0, 0)
++    patternProperties:
++      '_cfg$':
++        type: object
 +
-+/* standard LDO but possibly GPIO controlled */
-+#define s2mpg11_regulator_desc_ldo_gpio(_num, _supply, _vrange,		\
-+					_pc_reg, _pc_mask)		\
-+	s2mpg11_regulator_desc_ldo_cmn(_num, _supply, _vrange,		\
-+		CTRL, GENMASK(5, 0),					\
-+		L##_num##S_CTRL, GENMASK(7, 6),				\
-+		0, 0, 0, NULL, 0,					\
-+		S2MPG11_PMIC_##_pc_reg, _pc_mask)
++        allOf:
++          - $ref: pincfg-node.yaml#
++          - $ref: pinmux-node.yaml#
 +
-+/* LDO with ramp support and possibly GPIO controlled */
-+#define s2mpg11_regulator_desc_ldo_ramp(_num, _supply, _vrange,		\
-+		_en_mask, _r_reg_sfx, _pc_reg, _pc_mask)		\
-+	s2mpg11_regulator_desc_ldo_cmn(_num, _supply, _vrange,		\
-+		CTRL1, GENMASK(6, 0),					\
-+		LDO_CTRL1, _en_mask,					\
-+		6250, S2MPG11_PMIC_##_r_reg_sfx, GENMASK(1, 0),		\
-+		s2mpg10_ldo_ramp_table,					\
-+		ARRAY_SIZE(s2mpg10_ldo_ramp_table),			\
-+		S2MPG11_PMIC_##_pc_reg, _pc_mask)
++        unevaluatedProperties: false
 +
-+#define s2mpg11_buck_to_ramp_mask(n) (GENMASK(3, 2) << (((n) % 2) * 4))
++        properties:
++          nxp,gpio-pin-interrupt:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            minimum: 0
++            maximum: 7
++            description:
++              Assign pin to gpio pin interrupt controller
++              irq number 0 to 7. See example below.
 +
-+#define regulator_desc_s2mpg11_buckx(_name, _id, _supply, _vrange,	\
-+		_vsel_reg, _en_reg, _en_mask, _r_reg)			\
-+	regulator_desc_s2mpg1x_buck_cmn(_name, _id, _supply,		\
-+		s2mpg11_reg_buck_ops,  _vrange,				\
-+		S2MPG11_PMIC_##_vsel_reg, GENMASK(7, 0),		\
-+		S2MPG11_PMIC_##_en_reg, _en_mask,			\
-+		S2MPG11_PMIC_##_r_reg,					\
-+		s2mpg11_buck_to_ramp_mask(_id - S2MPG11_BUCK1),		\
-+		s2mpg10_buck_ramp_table,				\
-+		ARRAY_SIZE(s2mpg10_buck_ramp_table), 30)
++required:
++  - compatible
++  - reg
++  - clocks
 +
-+#define s2mpg11_regulator_desc_buck_xm(_num, _vrange, _vsel_reg_sfx,	\
-+				       _en_mask, _r_reg, _en_rrate)	\
-+	.desc = regulator_desc_s2mpg11_buckx(#_num"s",			\
-+				S2MPG11_BUCK##_num, "vinb"#_num"s",	\
-+				_vrange,				\
-+				B##_num##S_##_vsel_reg_sfx,		\
-+				B##_num##S_CTRL, _en_mask,		\
-+				_r_reg),				\
-+	.enable_ramp_rate = _en_rrate
++allOf:
++  - $ref: pinctrl.yaml#
 +
-+#define s2mpg11_regulator_desc_buck_cm(_num, _vrange, _vsel_reg_sfx,	\
-+				       _en_mask, _r_reg)		\
-+	{								\
-+		s2mpg11_regulator_desc_buck_xm(_num, _vrange,		\
-+			_vsel_reg_sfx, _en_mask, _r_reg, 12500),	\
-+	}
++unevaluatedProperties: false
 +
-+#define s2mpg11_regulator_desc_buckn_cm_gpio(_num, _vrange,		\
-+		_vsel_reg_sfx, _en_mask, _r_reg, _pc_reg, _pc_mask)	\
-+	{								\
-+		s2mpg11_regulator_desc_buck_xm(_num, _vrange,		\
-+			_vsel_reg_sfx, _en_mask, _r_reg, 12500),	\
-+		.pctrlsel_reg = S2MPG11_PMIC_##_pc_reg,			\
-+		.pctrlsel_mask = _pc_mask,				\
-+	}
++examples:
++  - |
++    #include <dt-bindings/clock/lpc18xx-ccu.h>
 +
-+#define s2mpg11_regulator_desc_buck_vm(_num, _vrange, _vsel_reg_sfx,	\
-+				       _en_mask, _r_reg)		\
-+	{								\
-+		s2mpg11_regulator_desc_buck_xm(_num, _vrange,		\
-+			_vsel_reg_sfx, _en_mask, _r_reg, 25000),	\
-+	}
++    pinctrl@40086000 {
++        compatible = "nxp,lpc1850-scu";
++        reg = <0x40086000 0x1000>;
++        clocks = <&ccu1 CLK_CPU_SCU>;
 +
-+#define s2mpg11_regulator_desc_bucka(_num, _num_lower, _r_reg,		\
-+				     _pc_reg, _pc_mask)			\
-+	{								\
-+		.desc = regulator_desc_s2mpg11_buckx(#_num_lower,	\
-+				S2MPG11_BUCK##_num, "vinb"#_num_lower,	\
-+				s2mpg11_buck_vranges##_num_lower,	\
-+				BUCK##_num##_OUT,			\
-+				BUCK##_num##_CTRL, GENMASK(7, 6),	\
-+				_r_reg),				\
-+		.enable_ramp_rate = 25000,				\
-+		.pctrlsel_reg = S2MPG11_PMIC_##_pc_reg,			\
-+		.pctrlsel_mask = _pc_mask,				\
-+	}
-+
-+#define s2mpg11_regulator_desc_buckboost()				\
-+	{								\
-+		.desc = regulator_desc_s2mpg1x_buck_cmn("boost",	\
-+				S2MPG11_BUCKBOOST, "vinbb",		\
-+				s2mpg10_reg_ldo_ops,			\
-+				s2mpg11_buck_vrangesboost,		\
-+				S2MPG11_PMIC_BB_OUT1, GENMASK(6, 0),	\
-+				S2MPG11_PMIC_BB_CTRL, BIT(7),		\
-+				0, 0, NULL, 0, 35),			\
-+		.enable_ramp_rate = 17500,				\
-+	}
-+
-+/* voltage range for s2mpg11 LDO 1, 2 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 1, 300000, 450000, 950000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 LDO 3, 7, 10, 11, 12, 14, 15 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 3, 700000, 1600000, 1950000, STEP_25_MV);
-+
-+/* voltage range for s2mpg11 LDO 4, 6 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 4, 1800000, 2500000, 3300000, STEP_25_MV);
-+
-+/* voltage range for s2mpg11 LDO 5 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 5, 1600000, 1600000, 1950000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 LDO 8 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 8, 979600, 1130400, 1281200, 5800);
-+
-+/* voltage range for s2mpg11 LDO 9 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 9, 725000, 725000, 1300000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 LDO 13 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_ldo, 13, 1800000, 1800000, 3350000, STEP_25_MV);
-+
-+/* voltage range for s2mpg11 BUCK 1, 2, 3, 4, 8, 9, 10 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, 1, 200000, 450000, 1300000, STEP_6_25_MV);
-+
-+/* voltage range for s2mpg11 BUCK 5 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, 5, 200000, 400000, 1300000, STEP_6_25_MV);
-+
-+/* voltage range for s2mpg11 BUCK 6 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, 6, 200000, 1000000, 1500000, STEP_6_25_MV);
-+
-+/* voltage range for s2mpg11 BUCK 7 */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, 7, 600000, 1500000, 2200000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 BUCK D */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, d, 600000, 2400000, 3300000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 BUCK A */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, a, 600000, 1700000, 2100000, STEP_12_5_MV);
-+
-+/* voltage range for s2mpg11 BUCK BOOST */
-+S2MPG10_VOLTAGE_RANGE(s2mpg11_buck, boost,
-+		      2600000, 3000000, 3600000, STEP_12_5_MV);
-+
-+static const struct s2mpg10_regulator_desc s2mpg11_regulators_ldos[] = {
-+	s2mpg11_regulator_desc_ldo_ramp(1, "vinl1s", s2mpg11_ldo_vranges1,
-+					GENMASK(5, 4), DVS_SYNC_CTRL1,
-+					PCTRLSEL5, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_ldo_ramp(2, "vinl1s", s2mpg11_ldo_vranges1,
-+					GENMASK(7, 6), DVS_SYNC_CTRL2,
-+					PCTRLSEL5, GENMASK(7, 4)),
-+	s2mpg11_regulator_desc_ldo(3, "vinl3s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo(4, "vinl5s", s2mpg11_ldo_vranges4),
-+	s2mpg11_regulator_desc_ldo(5, "vinl3s", s2mpg11_ldo_vranges5),
-+	s2mpg11_regulator_desc_ldo(6, "vinl5s", s2mpg11_ldo_vranges4),
-+	s2mpg11_regulator_desc_ldo(7, "vinl3s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo_gpio(8, "vinl2s", s2mpg11_ldo_vranges8,
-+					PCTRLSEL6, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_ldo(9, "vinl2s", s2mpg11_ldo_vranges9),
-+	s2mpg11_regulator_desc_ldo(10, "vinl4s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo(11, "vinl4s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo(12, "vinl4s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo_gpio(13, "vinl6s", s2mpg11_ldo_vranges13,
-+					PCTRLSEL6, GENMASK(7, 4)),
-+	s2mpg11_regulator_desc_ldo(14, "vinl4s", s2mpg11_ldo_vranges3),
-+	s2mpg11_regulator_desc_ldo(15, "vinl3s", s2mpg11_ldo_vranges3),
-+};
-+
-+static const struct s2mpg10_regulator_desc s2mpg11_regulators_bucks[] = {
-+	s2mpg11_regulator_desc_buckboost(),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(1, s2mpg11_buck_vranges1,
-+					     OUT1, GENMASK(7, 6), DVS_RAMP1,
-+					     PCTRLSEL1, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(2, s2mpg11_buck_vranges1,
-+					     OUT1, GENMASK(7, 6), DVS_RAMP1,
-+					     PCTRLSEL1, GENMASK(7, 4)),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(3, s2mpg11_buck_vranges1,
-+					     OUT1, GENMASK(7, 6), DVS_RAMP2,
-+					     PCTRLSEL2, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_buck_cm(4, s2mpg11_buck_vranges1,
-+				       OUT, BIT(7), DVS_RAMP2),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(5, s2mpg11_buck_vranges5,
-+					     OUT, GENMASK(7, 6), DVS_RAMP3,
-+					     PCTRLSEL2, GENMASK(7, 4)),
-+	s2mpg11_regulator_desc_buck_cm(6, s2mpg11_buck_vranges6,
-+				       OUT1, BIT(7), DVS_RAMP3),
-+	s2mpg11_regulator_desc_buck_vm(7, s2mpg11_buck_vranges7,
-+				       OUT1, BIT(7), DVS_RAMP4),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(8, s2mpg11_buck_vranges1,
-+					     OUT1, GENMASK(7, 6), DVS_RAMP4,
-+					     PCTRLSEL3, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_buckn_cm_gpio(9, s2mpg11_buck_vranges1,
-+					     OUT1, GENMASK(7, 6), DVS_RAMP5,
-+					     PCTRLSEL3, GENMASK(7, 4)),
-+	s2mpg11_regulator_desc_buck_cm(10, s2mpg11_buck_vranges1,
-+				       OUT, BIT(7), DVS_RAMP5),
-+	s2mpg11_regulator_desc_bucka(D, d, DVS_RAMP6, PCTRLSEL4, GENMASK(3, 0)),
-+	s2mpg11_regulator_desc_bucka(A, a, DVS_RAMP6, PCTRLSEL4, GENMASK(7, 4)),
-+};
-+
- static const struct regulator_ops s2mps11_ldo_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
-@@ -1802,6 +2083,7 @@ static int s2mps11_handle_ext_control(struct s2mps11_info *s2mps11,
- 		break;
- 
- 	case S2MPG10:
-+	case S2MPG11:
- 		/*
- 		 * If desc.enable_val is != 0, then external control was
- 		 * requested. We can not test s2mpg10_desc::ext_control,
-@@ -1861,6 +2143,22 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		BUILD_BUG_ON((enum s2mpg10_regulators) S2MPS_REGULATOR_MAX <
- 			     S2MPG10_REGULATOR_MAX);
- 		break;
-+	case S2MPG11:
-+		switch (pdev->id + 1) {
-+		case S2MPG10_REGULATOR_CELL_ID_BUCKS:
-+			rdev_num = ARRAY_SIZE(s2mpg11_regulators_bucks);
-+			s2mpg10_regulators = s2mpg11_regulators_bucks;
-+			break;
-+		case S2MPG10_REGULATOR_CELL_ID_LDOS:
-+			rdev_num = ARRAY_SIZE(s2mpg11_regulators_ldos);
-+			s2mpg10_regulators = s2mpg11_regulators_ldos;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		BUILD_BUG_ON((enum s2mpg11_regulators) S2MPS_REGULATOR_MAX <
-+			     S2MPG11_REGULATOR_MAX);
-+		break;
- 	case S2MPS11X:
- 		rdev_num = ARRAY_SIZE(s2mps11_regulators);
- 		regulators = s2mps11_regulators;
-@@ -1939,6 +2237,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 
- static const struct platform_device_id s2mps11_pmic_id[] = {
- 	{ "s2mpg10-regulator", S2MPG10},
-+	{ "s2mpg11-regulator", S2MPG11},
- 	{ "s2mps11-regulator", S2MPS11X},
- 	{ "s2mps13-regulator", S2MPS13X},
- 	{ "s2mps14-regulator", S2MPS14X},
-
++        gpio-joystick-pins {
++            gpio-joystick-1_cfg {
++                pins = "p9_0";
++                function = "gpio";
++                nxp,gpio-pin-interrupt = <0>;
++                input-enable;
++                bias-disable;
++            };
++        };
++    };
 -- 
-2.50.0.rc0.604.gd4ff7b7c86-goog
+2.34.1
 
