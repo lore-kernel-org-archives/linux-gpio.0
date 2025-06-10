@@ -1,139 +1,119 @@
-Received: from borehabit.cfd (ip160.ip-51-81-179.us [51.81.179.160])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22206230993
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2025 14:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.179.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A446B235060;
+	Tue, 10 Jun 2025 15:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567372; cv=none; b=sZZIVNJnMZWWIlbSIbeH4rLIglRZYbVvPM69vjMZr25LSMIIpR5xe63k98/phfZqyg/KEdT4/A72FbzOrvrkIN6Wg+jEs7VHblKDIOuGpmQuGF0JhNw3Id1JlSrVdHbC1VZCEDqxqCZBtLu8KpRj6eI5xi32YFUsGE3MHbU4IRg=
+	t=1749568832; cv=none; b=RwQYLXj82NOttE4YTa7eVwAXEBh07H9eitN5KUPYfEtL7h8DkUFGcEx+2Jlsfr1EK3gG15f/PNbqW9iLR7qXkqyUYezI827UL4+9Mfn19PG8sVDgKP6yt77Dee0gt0FKVeeHQxyX0tFN9imhS7XtYCsHRAVBM+NcraHoO9N4/u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567372; c=relaxed/simple;
-	bh=j/qZ6nCFDOcbnwIbag40JF9HDzOLw0n9TJz9U1mz3X8=;
-	h=To:Subject:Date:From:Message-ID:MIME-Version:Content-Type; b=gCOA6AMcVra6hu3Ee61lLlqLxlEmbDrdeOTTzK8LGbSF3E/wBte7VotMk7xalIM7SQ0YsMbh1N5ST7XFE7uzWx6zBcK/qE4U5hClLMPxMERoo568a/VzvkRs0dbS3iJ6y8gUzsxFxE/2JXrIQrg1HsOu1AwCsrLDC9CbyQNm8g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=borehabit.cfd; spf=pass smtp.mailfrom=borehabit.cfd; dkim=pass (1024-bit key) header.d=borehabit.cfd header.i=@borehabit.cfd header.b=azX5Anhz; arc=none smtp.client-ip=51.81.179.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=borehabit.cfd
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=borehabit.cfd
+	s=arc-20240116; t=1749568832; c=relaxed/simple;
+	bh=LMw9B13I0H9SXVXuGdE+hvMWY8Sl3UGv48j/sluw2Mo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZrDvwCIN6PIAn+HP+4X4tkSp8RUiyGsjWOC8qqQfjn/z+u+Ke/sccBKqOxAmx+/wjUxn2kF4Gmx066rvbqmDtMCPGP1g3Z1jO1wBfSWXY19EqUHh51lO3/iSCBglrWitsYSAdWervou1fU3oX/AzoXFQQd7q2UTcxHcINbIR/Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yfULawb1; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=borehabit.cfd header.i=@borehabit.cfd header.b="azX5Anhz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=borehabit.cfd; s=mail; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Reply-To:From:Date:Subject:To:Sender:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CFYjPvEUim5mD5QwWelE+Axpgk7p2gwnF2M5gpb++Rg=; b=azX5AnhzTe4ptv8C08ERQ/sw/C
-	etdcQHcQLC7mlQ1xzq1o4OPcMnNX0J/Oxc7P4jwbzQ/y26a24yznSNfR2AUdh2uxfebVDVE4lp4aA
-	mIPlu8OUeLVc4DZOv32/NcvHupkgpyAx8JXzbv0OV0w8GsS3Kcxy1UvfQFhSKkZasVwU=;
-Received: from admin by borehabit.cfd with local (Exim 4.90_1)
-	(envelope-from <support@borehabit.cfd>)
-	id 1uP0OY-000WDw-BZ
-	for linux-gpio@vger.kernel.org; Tue, 10 Jun 2025 21:56:10 +0700
-To: linux-gpio@vger.kernel.org
-Subject: WTS Available laptops and Memory
-Date: Tue, 10 Jun 2025 14:56:10 +0000
-From: Exceptional One PC <support@borehabit.cfd>
-Reply-To: info@exceptionalonepc.com
-Message-ID: <3e84e0d3a38fd5c280d9e8ae15afc23e@borehabit.cfd>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yfULawb1"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLDiq020330;
+	Tue, 10 Jun 2025 17:20:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	zgHCfxHCSrQZLBdhcD+8YVibXqq6yEAZb7msrNjGwik=; b=yfULawb1xYoeXaOH
+	H7Iw6CuLSzfK3VIpACq7JNmiqWLNx0hOvamJOUBoCiwREQ9UcI+RsQH9dnmh186l
+	Tl0gFFn08o1E1qKOfI7Tcu2zB14z0r5ntteiwYvSUYAGNQz+Q/AaO3GA6BscJ7Vt
+	30ZZRgFqp8QutVCGrLefqyVzUdvDw3/j0t68qQNsuMNeOR97J/1evh2xjUWKE96x
+	b66uuLb+B/9agX2lSQ0dSg0JH4gmk51MIbBZGAsz0KAAiTMy94o7YtwbuLsWbPM1
+	kRUYfUNnPLQFRg89iCfMJ1lqrsJD52dlJXWLEOFJQSRxhRpwTtxPsnDthWS/HFtw
+	m4IuwA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474aja58g3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 17:20:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6202B40046;
+	Tue, 10 Jun 2025 17:19:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A9CDFB74DC5;
+	Tue, 10 Jun 2025 17:18:43 +0200 (CEST)
+Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 17:18:43 +0200
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 3/5] ARM: dts: stm32: Add pinmux for CM4 leds pins
+Date: Tue, 10 Jun 2025 17:18:35 +0200
+Message-ID: <20250610151837.299244-4-antonio.borneo@foss.st.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250610151837.299244-1-antonio.borneo@foss.st.com>
+References: <20250610151837.299244-1-antonio.borneo@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
 
-Hello,
+The GPIO H7 on boards stm32mp15xx-dkx and the GPIO D8 on boards
+stm32mp15xx-ed1 are used by the coprocessor Cortex-M4.
+Linux running on Cortex-A should not use the GPIO and should left
+it available for the coprocessor.
 
-Looking for a buyer to move any of the following Items located in USA.
+Add two pinmux groups, one for each families of boards, setting
+the GPIO function as Reserved (RSVD).
 
+Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Used MICRON SSD 7300 PRO 3.84TB 
-U.2 HTFDHBE3T8TDF SSD 2.5" NVMe 3480GB
-Quantity 400, price $100 EACH 
-
-
- 005052112 _ 7.68TB HDD -$200 PER w/ caddies refurbished 
- Quantity 76, price $100
-
-
-
-Brand New CISCO C9300-48UXM-E
-Available 5
-$2000 EACH
-
-
-Brand New C9200L-48T-4X-E
-$1,200 EACH
-QTY4
-
-HP 1040G3 Elite Book Folio Processor :- Intel Core i5
-◻Processor :- Intel Core i5
-◻Generation :- 6th
-◻RAM :- 16GB
-◻Storage :- 256G SSD
-◻Display :- 14 inch" Touch Screen 
-QTY 340 $90 EA
-
-
-
-SK HYNIX 16GB 2RX4 PC4 - 2133P-RAO-10
-HMA42GR7AFR4N-TF TD AB 1526
-QTY560 $20 EA
-
-
-Xeon Gold 6442Y (60M Cache, 2.60 GHz)	
- PK8071305120500	 
- QTY670 700 each 
-
-
-SAMSUNG 64GB 4DRX4 PC4-2666V-LD2-12-MAO
-M386A8K40BM2-CTD60 S
-QTY 320 $42 each
-
-
-
-Brand New CISCO C9300-48UXM-E
-Available 5
-$2500 EACH
-
-
-Core i3-1315U (10M Cache, up to 4.50 GHz)	
- FJ8071505258601
-QTY50  $80 EA
-
-Intel Xeon Gold 5418Y Processors
-QTY28 $780 each
-
-
-Brand New C9200L-48T-4X-E  
-$1000 EACH
-QTY4
-
-
-Brand New Gigabyte NVIDIA GeForce RTX 5090 AORUS
-MASTER OC Graphics Card GPU 32GB GDDR7
-QTY50 $1,300
-
-
- Brand New N9K-C93108TC-FX-24 Nexus
-9300-FX w/ 24p 100M/1/10GT & 6p 40/100G
-Available 4
-$3000 each
-
-
-
-Brand New NVIDIA GeForce RTX 4090 Founders
-Edition 24GB - QTY: 56 - $700 each
-
-
-
-
-Charles Lawson
-Exceptional One PC
-3645 Central Ave, Riverside
-CA 92506, United States
-www.exceptionalonepc.com
-info@exceptionalonepc.com
-Office: (951)-556-3104
+diff --git a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+index 40605ea85ee1d..835b034d0aa7e 100644
+--- a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+@@ -1304,6 +1304,20 @@ pins {
+ 		};
+ 	};
+ 
++	/omit-if-no-ref/
++	m4_leds_orange_pins_a: m4-leds-orange-0 {
++		pins {
++			pinmux = <STM32_PINMUX('H', 7, RSVD)>;
++		};
++	};
++
++	/omit-if-no-ref/
++	m4_leds_orange_pins_b: m4-leds-orange-1 {
++		pins {
++			pinmux = <STM32_PINMUX('D', 8, RSVD)>;
++		};
++	};
++
+ 	/omit-if-no-ref/
+ 	mco1_pins_a: mco1-0 {
+ 		pins {
+-- 
+2.34.1
 
