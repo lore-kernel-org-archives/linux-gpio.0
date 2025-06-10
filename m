@@ -1,171 +1,215 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33564238C10
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2025 16:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4CB1EFFB0;
+	Tue, 10 Jun 2025 16:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749571570; cv=none; b=Fk5OZl1GTPCk9GzZ56O3hxprJv8/rX+uAmUKmMg07ViBwgc7QFQ0amsB6xnGtBuY9h7FdBHdo1G6iQ9f6NQvaxIkN2d6k1haZbiswQAoEUiOaBnBktINl93Qsoclir+HjKIBSNC54GqXU4LuY3taVR5qmXYGn0bt554184T0NSM=
+	t=1749571839; cv=none; b=umITsl5VD3+4RZGMZUazjo8qbGt8kxhWudI64KGe8JBXHRpIsTZ1erZmJ4N2oIX4jLcyjpJEQxKPQ1yj+UIe3JbDpZbWJVmYLTby+MGGr+ZvPbJ4fM8LysClA5fxjp5gflxJ+ASaA9fg37t8+6EmaPJ5TWch57v+fXycHeZl2yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749571570; c=relaxed/simple;
-	bh=u6cGggZH3SoNATQpjfjKdz2DCIZcJJHBoyp8JLYX+lk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwPeRGSC7YsxLPK75RkLnbsFAghE26vEOfMN0sZ7ZDBa3WJ95lio6A/XD338fVZuNuYdUnb9+Y9Lg32CAQq0L6rOoo+A9Vq1JnuEAIr12hhLoU2/8UZynS1tc9Wdhe251YWgUrxooV9YIzEImq0QXYJK/57EB92UTcK0GVadqc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eQLzL2y0; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1749571839; c=relaxed/simple;
+	bh=G6G21+hjtH2bOLL4/jVWPD0fGJK8bLCuFpdREfk6nLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oEvPivRJO26/NTuCpe3l8h0ze/fgs2BUmZSomiPUBhq84ssqTyIZ7A8MaD5tzJVDlX4mF6hEMu/9C16C1rCZneCkLpMvXtZipfVOWqzPHOcGfODzsLe+Fvxh2+LQgnr7X4jQTkTLfmFjJmfgjON4AaSKD7JQJSwQsmOH+1w1zuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5/9TmYS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eQLzL2y0"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54d98aa5981so6875465e87.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2025 09:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749571567; x=1750176367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hBeEGoByLmNx0JymY4xT4q6q7D7j914xDLGGfvyG00M=;
-        b=eQLzL2y00GZ30dqiHn6Z1b8t15Dk78jqEBxhQOW7DYZJ0tatu3bvWrxkImq7R8+6oH
-         Sk8Kk+HmW4erRVPpuqSQuziMhY5h1ClbUuyf/rTCVyxgYXLDylH9a9OGKF3TVDx6lrPq
-         fOpbWE6tBhoIQP2vUi5otZpT255Az8Jvmm3wLpN2NnaUTa6/b2R3Wiw7BfuSNUgBjC7A
-         VV/DWSmphV21TDzFLEyvzo399gowzCR4YUxHsbkpXFU9yNrjmehqsArk5TBpsXeGWoyj
-         kJyEbitcGIs7cWEScx/9kS9/nm7sPOvjoDJr/zTudNI+DuDG1c8KD+TvjhgdXQ3Qg4i7
-         fX3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749571567; x=1750176367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hBeEGoByLmNx0JymY4xT4q6q7D7j914xDLGGfvyG00M=;
-        b=jUc9CjT0I9QteL8+A5LmS0uBKIsKSofYdHwx4jfklXXx02yIrH4QlIeS0tpHhmjj0+
-         JRd0cPjbQ4+VVSw2ZqCL1y+7rO7dRwGRKGQf8fGKuDIjwwf2YBWzLqf274OrkqWf90Xp
-         kvSJT50bHH1McBZ6A3RVzsf3wjJQojFzbnQhxNrcbSD339t8IEbtZLxwrFuW5FwfHJUP
-         dMXaDUsOy6x8UgyTBsRtuHQmJc8PQpfFPjHOfpHnP65rz7qfRjOu3X3T0MQN56cSwfvM
-         WOl+MzHT2h/frFBKQ5NWtzxSjLepKeMFoawFUf1hMnucq7E/t+f/JdTT+yFlaeVtcOKO
-         oNJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqMA+aijz1rUnVEWnDpM8hnO6vAWLVm1tLw2d764d6xjGMvFmN7KSoMxx2yYaXAnydUCq/o3SsPDQk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZwLbjzPdjt6q7ZDFfe4ywrsdTO9HfpVz3Q1jc2fqVFPpvoLbe
-	N409ivQwXZEOT9VrZ1WaQ14PSNuJ46YPJULCTD0s9XF/bdQuq60JeahiZumlGu1CymJJSc3eINz
-	vF1kMEPUnNVpIOenCc+x2o43uoF8FN+sBg0gn50kF8iQ6oMtH9xyLusU=
-X-Gm-Gg: ASbGncuivs4ewyFWGune+MZRjURbV54oub6XLrF18n80plO0NbAgKnlWmCTc4KSMjvd
-	MR75Z35yXT/yw1zNmvrGeBlvKwoHCakU/BDJHN0rraSXidDRzttDlMdiBWriEQDq0fNr0H+T7nZ
-	6IGxf2Ltq3KQujNacalDFgVHes1Cm5KKgmpX/01sVZTAlLFC/VdktqVcRtp3Rk2EMh9uBiPjZA
-X-Google-Smtp-Source: AGHT+IHd3I1OVEWgMny7h2Baqh5DBJB572YkfzrpOW/nSB1wjoInAYuzH6/ihFE+HkYDZj2j7lo3/mOOSaalg7HeZM0=
-X-Received: by 2002:a2e:bc23:0:b0:32a:87ce:1235 with SMTP id
- 38308e7fff4ca-32adfc3f54fmr52666951fa.36.1749571567213; Tue, 10 Jun 2025
- 09:06:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5/9TmYS"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F741C4CEED;
+	Tue, 10 Jun 2025 16:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749571839;
+	bh=G6G21+hjtH2bOLL4/jVWPD0fGJK8bLCuFpdREfk6nLY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=O5/9TmYSjJU98jFm0Hr5jzKvMsR34UKTRzurHNRgQBuLfAf7E2dJkedoW3KLLvV6x
+	 TpCZQQ5twrq6JCGod5u1/OPwRkwRFoC6rw52t+wg9Xki0A+Xplhf4FEDuJwE4/7APF
+	 ab2tiW34uoU9MqmHd3eJbtUnUa8vpfODrvPQK6mSSAg5IhiPpIaYhvQVubPS4wrCXu
+	 citu/41eVkSbDgfjSreKjNDWPH75EieKNObFTZ8VSkBUfMOjbx4CXbUCR4tQewUv6B
+	 LCxDDThyeMEmB0QS6aK3QB5KERDwLgm/fCs20gZM+jflXsfkHfeg9DLtz9HELBTDVF
+	 jL6P0kvs+rg/g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353DBC5B543;
+	Tue, 10 Jun 2025 16:10:39 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Subject: [PATCH v7 00/10] Apple Mac System Management Controller
+Date: Tue, 10 Jun 2025 15:29:41 +0000
+Message-Id: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610-gpiochip-set-rv-net-v1-0-35668dd1c76f@linaro.org>
- <20250610-gpiochip-set-rv-net-v1-3-35668dd1c76f@linaro.org>
- <b2f87cff-3a81-482b-bfdd-389950b7ec8e@wanadoo.fr> <CAMRc=MfCwz3BV15aATr_5er7wU=AmKV=Z=sHJyrjEvLwx2cMjQ@mail.gmail.com>
- <b9ea7e0e-7dd1-460b-950a-083620dd52e9@wanadoo.fr>
-In-Reply-To: <b9ea7e0e-7dd1-460b-950a-083620dd52e9@wanadoo.fr>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 10 Jun 2025 18:05:55 +0200
-X-Gm-Features: AX0GCFsFWH4b7yJkolxQLHQKmDUo4N7FgPgYNia8CjJoC_PxTolZxLLShEa2WEo
-Message-ID: <CAMRc=Mf4qupdJEm9mWPF3-B3hprn6AvP7Po2=aQYbaSvFf8OeA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] net: can: mcp251x: use new GPIO line value setter callbacks
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, "Chester A. Unal" <chester.a.unal@arinc9.com>, 
-	Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGVPSGgC/23MQQ6CMBCF4auYrq2ZQqeAK+9hXNB2Kl0IpCWNh
+ nB3Cy4kxuWbzPfPLFLwFNn5MLNAyUc/9HlUxwMzXdvfiXubNyugQChB8vgwXHGB3AFZJRoqhZU
+ sv4+BnH9uqest787HaQivrZzkev1EcuYbSZIDRwDdaIVSOXOJifqRJgonS4mtoYQ7LMQOY8YOm
+ xq01aLW9h9We4w7rDI2stKCnNTQ0i9eluUNRgkYQh4BAAA=
+X-Change-ID: 20250304-smc-6-15-f0ed619e31d4
+To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6948; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=G6G21+hjtH2bOLL4/jVWPD0fGJK8bLCuFpdREfk6nLY=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4aHf0FJdtfeqBvX28XU5QL+651omvHsbNX/I3P/xFZaM
+ 780PFfSUcrCIMbBICumyLJ9v73pk4dvBJduuvQeZg4rE8gQBi5OAZjIxUsM/0yKbl/d8an3p3rL
+ 5CcJLXWqNj+XL4pw+xfbf3yDpueqeWsYGTpexL9982FZLH/6F3Emp4MtUwrbNd8U3jbKnKD357t
+ yKhMA
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-On Tue, Jun 10, 2025 at 5:48=E2=80=AFPM Vincent Mailhol
-<mailhol.vincent@wanadoo.fr> wrote:
->
-> On 10/06/2025 at 23:05, Bartosz Golaszewski wrote:
-> > On Tue, Jun 10, 2025 at 3:55=E2=80=AFPM Vincent Mailhol
-> > <mailhol.vincent@wanadoo.fr> wrote:
-> >>
-> >> On 10/06/2025 at 21:37, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>
-> >>> struct gpio_chip now has callbacks for setting line values that retur=
-n
-> >>> an integer, allowing to indicate failures. Convert the driver to usin=
-g
-> >>> them.
-> >>>
-> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >>
-> >> This does not match the address with which you sent the patch: brgl@bg=
-dev.pl
-> >>
-> >>> ---
-> >>>  drivers/net/can/spi/mcp251x.c | 16 ++++++++++------
-> >>>  1 file changed, 10 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp2=
-51x.c
-> >>> index ec5c64006a16f703bc816983765584c5f3ac76e8..7545497d14b46c6388f39=
-76c2bf7b9a99e959c1e 100644
-> >>> --- a/drivers/net/can/spi/mcp251x.c
-> >>> +++ b/drivers/net/can/spi/mcp251x.c
-> >>> @@ -530,8 +530,8 @@ static int mcp251x_gpio_get_multiple(struct gpio_=
-chip *chip,
-> >>>       return 0;
-> >>>  }
-> >>>
-> >>> -static void mcp251x_gpio_set(struct gpio_chip *chip, unsigned int of=
-fset,
-> >>> -                          int value)
-> >>> +static int mcp251x_gpio_set(struct gpio_chip *chip, unsigned int off=
-set,
-> >>> +                         int value)
-> >>>  {
-> >>>       struct mcp251x_priv *priv =3D gpiochip_get_data(chip);
-> >>>       u8 mask, val;
-> >>> @@ -545,9 +545,11 @@ static void mcp251x_gpio_set(struct gpio_chip *c=
-hip, unsigned int offset,
-> >>>
-> >>>       priv->reg_bfpctrl &=3D ~mask;
-> >>>       priv->reg_bfpctrl |=3D val;
-> >>> +
-> >>> +     return 0;
-> >>
-> >> mcp251x_gpio_set() calls mcp251x_write_bits() which calls mcp251x_spi_=
-write()
-> >> which can fail.
-> >>
-> >> For this change to really make sense, the return value of mcp251x_spi_=
-write()
-> >> should be propagated all the way around.
-> >>
-> >
-> > I don't know this code so I followed the example of the rest of the
-> > codebase where the result of this function is never checked - even in
-> > functions that do return values. I didn't know the reason for this and
-> > so didn't want to break anything as I have no means of testing it.
->
-> The return value of mcp251x_spi_write() is used in mcp251x_hw_reset(). In=
- other
-> locations, mcp251x_spi_write() is only used in functions which return voi=
-d, so
-> obviously, the return value is not checked.
->
+Hi,
 
-Wait, after a second look GPIO callbacks (including those that return
-a value like request()) use mcp251x_write_bits() which has no return
-value. It probably should propagate what mcp251x_spi_write() returns
-but that's material for a different series. The goal of this one is to
-use the new setters treewide and drop the old ones from struct
-gpio_chip.
+This series adds support for the System Management Controller found in
+Apple Silicon devices which we model as a mfd. It also includes support
+for the GPIO block and the power/reset block as sub-devices.
 
-Bart
+Changes between v6 and v7:
+  - Rebased on 6.16-rc1
+  - Dropped mfd- prefix from the macsmc driver name
+  - Removed the check if the MBSE key exists in the reboot driver since
+    we can rely on the device tree now
+  - Changed my mail address to kernel.org
+
+Changes between v5 and v6:
+  - Actually reorder struct members this time, start comments with an
+    uppercase letter, and use devm_ for mfd_register_devices instead of
+    dropping those fixup commits by accident
+  - Stefan's comment: Renamed ret to bfr in the reboot driver
+  - Sebastian's comments on the reboot driver:
+    - Moved Kconfig dependencies to MFD device and made reboot only
+      depend on that one
+    - Removed sysfs file to configure "reboot after power loss" for now
+      since this probably belongs in a userspace tool that directly
+      writes to nvmem instead
+    - Dropped setting pdev->dev.of_node since that's already done
+      automatically and adjusted #include to linux/mod_devicetable.h
+    - Dropped MODULE_ALIAS which was probably a leftover from a previous
+      version that did not use of_match_table
+  - Rob's comments to the dt-bindings
+    - Removed examples from sub-devices and added them to the main smc
+      binding
+    - Removed a spurious |
+
+Changes between v4 and v5:
+  - Alyssa's comments:
+    - Made the WARN_ON in the reboot driver more obvious
+    - Added missing brackets around a for loop in the reboot driver
+    - Used min instead of open-coded variant inside the gpio driver
+    - Reoder struct memebers to prevent padding inside the mfd driver
+  - Lee's comments:
+    - All comments now start with an uppercase letter
+    - Removed apple_smc_read_ioft_scaled and apple_smc_read_f32_scaled
+      since these are not yet used and likely don't belong into
+      drivers/mfd
+    - Relaced if (ret != 0) with if (ret) when possible
+    - Used devm_platform_get_and_ioremap_resource to get and map the
+      SRAM resource
+    - Used reverse Christmas-tree formating when declaring variables
+    - Dropped _platform left-overs from probe and remove functions
+    - Removed dev_dbg prints which are no long required after
+      development
+    - Reworked is_alive/is_initialized so that it's obvious how errors
+      during boot are propagated from the callback to the probe function
+    - Used dev_warn instead of dev_err in a few places
+    - Removed no-op apple_smc_rtkit_shmem_destroy; this required an
+      additional change in rtkit.c because we had a check there that's a
+      bit too strict
+    - Removed struct resource in apple_smc_rtkit_shmem_setup and
+      open-coded resource_contains instead
+    - Unwrapped lines with less than 100 chars
+    - Made sure to compile with W=1 and ran scripts/kernel-doc -v
+      on macsmc.h once and fixed any fallout
+  - Removed first_key/last_key from struct smc and moved
+    apple_smc_find_first_key_index to the gpio driver since it's only
+    used there anyway to find the index of the first GPIO key (gP00)
+  - Return -EIO when a command fails instead of whatever SMC returns
+    which does not map to Linux errnos on errors
+
+Changes between v3 and v4:
+  - Added documentation for all functions and structs
+  - Fixed dt-bindings and re-ordered commits so that the mfd one comes
+    last and can include the gpio subdevice
+  - Added the reset driver and corresponding bindings
+  - Reworked the atomic mode inside SMC since the previous implementation
+    called mutex_lock from atomic context
+  - Removed the backend split for now which lead to a quite intense discussion
+    for the previous versions which hadn't been solved as far as I could tell
+    from the old threads.
+    It's also been 2+ years and I haven't heard of any backend implementation
+    for T2 or even older macs. It's also unclear to me which sub-devices
+    are actually useful there because at least GPIO and shutdown/reboot
+    from this series will not work as-is there.
+    I'd rather have this initial version which only supports M1+ macs upstream
+    and then iterate there if any other backend is developed.
+    I'll gladly help to re-introduce backend support if it's ever required.
+
+v6: https://lore.kernel.org/asahi/20250515-smc-6-15-v6-0-c47b1ef4b0ae@svenpeter.dev/
+v5: https://lore.kernel.org/asahi/20250511-smc-6-15-v5-0-f5980bdb18bd@svenpeter.dev/
+v4: https://lore.kernel.org/asahi/20250503-smc-6-15-v4-0-500b9b6546fc@svenpeter.dev/
+v3: https://lore.kernel.org/asahi/Y2qEpgIdpRTzTQbN@shell.armlinux.org.uk/
+v2: https://lore.kernel.org/asahi/YxdInl2qzQWM+3bs@shell.armlinux.org.uk/
+v1: https://lore.kernel.org/asahi/YxC5eZjGgd8xguDr@shell.armlinux.org.uk/
+
+Best,
+
+Sven
+
+---
+Hector Martin (5):
+      gpio: Add new gpio-macsmc driver for Apple Macs
+      power: reset: macsmc-reboot: Add driver for rebooting via Apple SMC
+      arm64: dts: apple: t8103: Add SMC node
+      arm64: dts: apple: t8112: Add SMC node
+      arm64: dts: apple: t600x: Add SMC node
+
+Russell King (Oracle) (2):
+      dt-bindings: gpio: Add Apple Mac SMC GPIO block
+      dt-bindings: mfd: Add Apple Mac System Management Controller
+
+Sven Peter (3):
+      dt-bindings: power: reboot: Add Apple Mac SMC Reboot Controller
+      soc: apple: rtkit: Make shmem_destroy optional
+      mfd: Add Apple Silicon System Management Controller
+
+ .../devicetree/bindings/gpio/apple,smc-gpio.yaml   |  29 ++
+ .../devicetree/bindings/mfd/apple,smc.yaml         |  79 ++++
+ .../bindings/power/reset/apple,smc-reboot.yaml     |  40 ++
+ MAINTAINERS                                        |   7 +
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi          |  35 ++
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  35 ++
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  35 ++
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-macsmc.c                         | 292 ++++++++++++
+ drivers/mfd/Kconfig                                |  18 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/macsmc.c                               | 498 +++++++++++++++++++++
+ drivers/power/reset/Kconfig                        |   9 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/macsmc-reboot.c                | 290 ++++++++++++
+ drivers/soc/apple/rtkit.c                          |   3 +-
+ include/linux/mfd/macsmc.h                         | 279 ++++++++++++
+ 18 files changed, 1660 insertions(+), 2 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250304-smc-6-15-f0ed619e31d4
+
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
+
+
