@@ -1,95 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262623A9AE;
-	Tue, 10 Jun 2025 15:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804AF230BF5;
+	Tue, 10 Jun 2025 15:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569075; cv=none; b=Ba0htS5Ed5c9wT8zJkbFNmuBNcln567z2/HurBkIecY6uoqRDAr8r7su1bhK2gSIq0ID3lKyHzOUtCDDhzaxd4MF1wZ35SsUvFV+dH88aGqM6GZ3Bfrps24ZQ/qEt8dcgTpPh5DA0/9p77U9SRBrol4rwdiSPvqRHl/VfTfMbw0=
+	t=1749569096; cv=none; b=XfQ4VYeL5MeKUPOtoPSpWWQ3ZXRVoY1+NixSU2B302SNJKm0i2w4brI3sx39thyAWfjEymDoJfIOZA7VViGQYV69CuGBXY5L+K4lQSkeHHfjaToIqukNqIHsBwnFCVrRgvLLapPSYGf6LeixNog7YaXlGkhhES8gyhBGVh7VwDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569075; c=relaxed/simple;
-	bh=9EzG50zmklwqkLtNYDsMxJRJq9OzH8/9w1jVUWFTeec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fDd49s5iRH7fzLy/qXC0lqNTdE5HPPtRgISip9MnJTp8ZxEnPKUrYpWTWhkBEtVlSeP8voy3r/NUGGNNRAjiHgCERtYGga87V1JN7CliYNKnXiFdNheVOKSAS+BI4qQdELbr+oESILB9AHkon7Y3QuOC37G6Kh0r579OIvAnRLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEmtT1/U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749569096; c=relaxed/simple;
+	bh=djeR04w/75lWxkApA8z7LUOUKkq030Zmb0bpaqVQ+Yc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WLeRVP9i4H4NAtddH/1kcOXQphFlsR3rLXIJnMxs0S1iKPYiUfm+FSKFVN8B8sFlOsWkg+nuvOlUuvAmxa+rK7cFj2+dC7N5LjW6X6UH6D/n7+X7r07KeOlQihYbaJN/VCi53MWT9eCtpuG4+ybYcVRAp9arZnpVMMrsS1GiM/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yxXbp0Mw; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEmtT1/U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B471C4CEED;
-	Tue, 10 Jun 2025 15:24:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749569074;
-	bh=9EzG50zmklwqkLtNYDsMxJRJq9OzH8/9w1jVUWFTeec=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oEmtT1/UAyqoeKTCGCTiyB6HA7bai3cyL0Nn/hBCDcizAbWkEiRYf1ujzdNUkP/A0
-	 CRP7luS3i4k6sedzpFkq/VgbUaDf63c59qcSuqd/G6lZxrtrRxWv5zwrkzflMbR7dc
-	 cfC0vs6PmURonti47/5FNasrmQMhi9FyB8T8Q296+Fwjy9YrkdZZUwHuN8IfdX7GBP
-	 7wuBAcTSH1nZrkiN4D1X6ufMKyiwT47yYokDHNF85zxxbbJbZEjjSuBJH39TQTyLc/
-	 I4Y/HwMw0+tqnDFg1Cjd1zTYpX2qrwmAWrowI9aqhHbRzsl+BS/PUYAIVnnPtpvMWx
-	 uwfS405/Uqh4Q==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so9166816a12.3;
-        Tue, 10 Jun 2025 08:24:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDUXlDQk/gns7rjRJa3iCk0SComsojzxPen84nYJLmHkqIReK4GgF0FuTClCJ49vlzZsOlYE1CINjl@vger.kernel.org, AJvYcCXgJn9QhDboIZPjhhRoDBIFHFVQJfcynOE5DKK0Gkx+3Y+8ZmqbBbbo5cz9RrAsbQjGssvCaDw37EGfgtXU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXaMxOUd3vjg8Zjtpib0gkusSwGgRnx3Xqtnz69yx/SxJpTxqD
-	+kjwF732p7mhM/lAfn9KE2FDEnKdo2BflHdLfGFNR1D0IGGuZcQz47GaThRclol41UP0I7Z4qnK
-	RLOnBpE6qbhn1W5xQzb3z6Fxy2vfuQw==
-X-Google-Smtp-Source: AGHT+IE/bTf41c1MCWAs/qaN8tJRT4CrBsJmwTgJ2Ig3qBSTWnCihvTZO1jnrYtYgLXlw8GISSG55IL54srBs4PbEbM=
-X-Received: by 2002:a17:906:ee87:b0:adb:23e0:9290 with SMTP id
- a640c23a62f3a-ade1a916fe3mr1622209066b.4.1749569073224; Tue, 10 Jun 2025
- 08:24:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yxXbp0Mw"
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLF7D010719;
+	Tue, 10 Jun 2025 17:24:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	PV6mynfuvv42D/ePAoYQa09aeqeL9wkOTzavUKrfpmo=; b=yxXbp0MwRqkezWKJ
+	ghM1nwfNNx/HR2jk1frQY0dGqtCYxDMUHc9yWPAVyTnMIZYEcjLEyPIO0JSkvslw
+	aX1bFJLXMisqBYo59e3qAhC8Uvbo3XvBGGLp7iuanIOprPfdf9MrnS5tGtllLm1t
+	+Zzvq5SKzdRn92qVaBLqx5PStMIipZ/iW3sAh4yuTlz/weKLo8uQiK13jsN5RUx1
+	SbHSWHFrcuPq9DA4pcccp2z8UvVP5h712Oy/T9JxtFP3MYslpUzycwhIOyBBWaCE
+	f+b+9RzUhe5hcO4yx4e90g7KAKiX4vzh9SpWRC5W/Eh0iwkQcW3SdHK1dhIPN+xd
+	nGFexQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474y053dsf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 17:24:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9D6634004B;
+	Tue, 10 Jun 2025 17:23:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EF1CFB79BAE;
+	Tue, 10 Jun 2025 17:23:13 +0200 (CEST)
+Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 17:23:13 +0200
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [RESEND PATCH v2 2/5] dt-bindings: pinctrl: stm32: Add RSVD mux function
+Date: Tue, 10 Jun 2025 17:23:06 +0200
+Message-ID: <20250610152309.299438-3-antonio.borneo@foss.st.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250610152309.299438-1-antonio.borneo@foss.st.com>
+References: <20250610152309.299438-1-antonio.borneo@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609220900.3035642-1-robh@kernel.org>
-In-Reply-To: <20250609220900.3035642-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 10 Jun 2025 10:24:21 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK6uEtAKwAdaC3gbORQxKuZ0xNp3H=KrN=oh0eLELYZ1w@mail.gmail.com>
-X-Gm-Features: AX0GCFugunme4yfbhJ71CA25rsSPK5iPYIbKpy3-oWLjfXfpa3P4TwhSGt4kirU
-Message-ID: <CAL_JsqK6uEtAKwAdaC3gbORQxKuZ0xNp3H=KrN=oh0eLELYZ1w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: arm,pl011: Drop interrupt properties
- as required
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
 
-On Mon, Jun 9, 2025 at 5:09=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org> =
-wrote:
->
-> It is possible that the PL011 doesn't have any interrupt connected and
+From: Fabien Dessenne <fabien.dessenne@foss.st.com>
 
-err, PL061
+Document the RSVD (Reserved) mux function, used to reserve pins
+for a coprocessor not running Linux.
 
-> can't be an interrupt provider, so drop the interrupt properties as
-> required.
->
-> The LG LG131x SoCs are one example of this.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/gpio/pl061-gpio.yaml | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Doc=
-umentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> index bd35cbf7fa09..c51e10680c0a 100644
-> --- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> @@ -60,9 +60,6 @@ properties:
->  required:
->    - compatible
->    - reg
-> -  - interrupts
-> -  - interrupt-controller
-> -  - "#interrupt-cells"
->    - clocks
->    - "#gpio-cells"
->    - gpio-controller
-> --
-> 2.47.2
->
+Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml     | 8 ++++++++
+ include/dt-bindings/pinctrl/stm32-pinfunc.h               | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+index a28d77748095a..5d17d6487ae9c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+@@ -160,9 +160,13 @@ patternProperties:
+               * ...
+               * 16 : Alternate Function 15
+               * 17 : Analog
++              * 18 : Reserved
+               To simplify the usage, macro is available to generate "pinmux" field.
+               This macro is available here:
+                 - include/dt-bindings/pinctrl/stm32-pinfunc.h
++              Setting the pinmux's function to the Reserved (RSVD) value is used to inform
++              the driver that it shall not apply the mux setting. This can be used to
++              reserve some pins, for example to a co-processor not running Linux.
+               Some examples of using macro:
+                /* GPIO A9 set as alternate function 2 */
+                ... {
+@@ -176,6 +180,10 @@ patternProperties:
+                ... {
+                           pinmux = <STM32_PINMUX('A', 9, ANALOG)>;
+                };
++               /* GPIO A9 reserved for co-processor */
++               ... {
++                          pinmux = <STM32_PINMUX('A', 9, RSVD)>;
++               };
+ 
+           bias-disable:
+             type: boolean
+diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+index 28ad0235086a6..af3fd388329a0 100644
+--- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
++++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+@@ -26,6 +26,7 @@
+ #define AF14	0xf
+ #define AF15	0x10
+ #define ANALOG	0x11
++#define RSVD	0x12
+ 
+ /* define Pins number*/
+ #define PIN_NO(port, line)	(((port) - 'A') * 0x10 + (line))
+-- 
+2.34.1
+
