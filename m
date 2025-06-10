@@ -1,113 +1,94 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FC4252284;
-	Tue, 10 Jun 2025 15:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C8D23A993
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2025 15:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569100; cv=none; b=YmnKTcrpj9DFbmrLJyBA/IdPf4rWz2MdlHbO+O93h3XE+PeqY1EXyYwzf9qkNXxlvXl9wCjA0h8nnXwjSx4d53OHW4LqgOUinLXJFiwBCbRKAROHEqP6lkNQ8WUkSSAOjUX+B8TA/ktxpIjgu/EdG/74VfeVWvXp+Fy6NL8gFAA=
+	t=1749569590; cv=none; b=VXZRnIxPuBqRw0wASqtduvzfCxO+VwIZ/3NwsA0eac03021Jl3gUQyu0Vh3o9zlmIVoKj7gG9p7X6trewWqokJE4lczNGEnTzy4AYr/jbogq5f0t4oBaaTVMSTRp+PiLQeY5m0f5B+zAw12O4HE9TUyKl9U9LSbAIJcUDtPDOEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569100; c=relaxed/simple;
-	bh=6CTIG54ldEtBHRVvsF1cC3SKsD3cwAiQewve9PGFX/A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fRLXMJyKaY5/sI3cH/2y9hfar1AnmotlImLeE4edrit8ctmfIXEOcbtX3nDjgdrf6+ht/kkgUgSLiltIF4OTOT3Y+SUnqurmatiHCYSRlQgBrGQYSiQ3LhDjK6Uol7l6EOLNcbiYZSqkwGuqOM8hwQ3/t2FEoJIjLFyu9I5MKeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TpN4N10T; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1749569590; c=relaxed/simple;
+	bh=bp6yjjTLV7IPhWsZQeYxGqlOtogpgQvGIcdZj1dlExU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D9UCTDewYoST9Ejv0U2ZuSdQadZTibbMyUj/RyWtQ0mK2hb+TuwCIQG/Ljl78kWXQGFUwiPmmC6n1oEd7apWb1drs2MHvKDG5B9sJ79OrbuRcJcWkkuXdtLheP0FaiKURsYn4xJLQL1x5UBG8QlfNi2OdSYdxh7eGyK5+8zoZko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=emkml6A4; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TpN4N10T"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AEYo1Q005348;
-	Tue, 10 Jun 2025 17:24:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=Mmod6GyCvN+xKlhUHyHmJv
-	0MBU3r0IJh4g+WMqECjq0=; b=TpN4N10TD7/Ta96HeLV3PHeOLQVvVjlxnjEF4Z
-	sUyPyu98fN+cdvqhcpjiUX2r0yiMIrvY08OU6f8qEKcFvWDRWnHzz/c0Z7kCYw7q
-	rxilDs7VK+yG9zU0UVYvKBcqAt+2P6tWbeuR5YyMQPeKIKvNcJfrjn19zmAoAK08
-	O1Jm8q3CgGYZvxwh0FrFIuUyVmtOwTHEmKqrdFMRteYnCd5sE2sZA9b82Luwq/J9
-	js3ZeEjewG43OJ7BQJXYiLPUtFV+6gUSDlgSMm/uw200CTSYqOsayj9CxreZ4p2I
-	eAh4+LZ2fAYt7D7Nuj6WPq96ZvTtWe5A86GWG6FALPnQX5Fg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2nuej-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 17:24:45 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8AA5B4002D;
-	Tue, 10 Jun 2025 17:23:51 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D0B50B79BB7;
-	Tue, 10 Jun 2025 17:23:12 +0200 (CEST)
-Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 17:23:12 +0200
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND PATCH v2 0/5] STM32 pinctrl: Add mux function RSVD
-Date: Tue, 10 Jun 2025 17:23:04 +0200
-Message-ID: <20250610152309.299438-1-antonio.borneo@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="emkml6A4"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5534edc6493so6046614e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Jun 2025 08:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749569587; x=1750174387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bp6yjjTLV7IPhWsZQeYxGqlOtogpgQvGIcdZj1dlExU=;
+        b=emkml6A4scKtYToH2UfRwmtkomcJA92cboDZo5Wbf2QUBl192QiChEA2OksFv5Uzwh
+         lyGzfbgxsJnSljo7itb3IRTHZoFbZFasBcRwuzLeVMb3KCJW4Xs2UU92aTrK7VCV2bE+
+         3qvqoINlpbyoSzKxbNbltaoJPpeedmXr6hkwLLc3PeVds3Ne63gx6vvkvIZWROKDQKFJ
+         dvhUC6h0l5XMSeD7x5PcBlt3BnfBpr5r6YEzufTmUzpA8MbkYLXYyms96r8nd4nGGe7W
+         yMrAXbhlOz3dxV9JKHx//xV7MyHtg5njqzbralDxqbKhKdw4i7TaLEKR1J/IAdISUbo1
+         V33Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749569587; x=1750174387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bp6yjjTLV7IPhWsZQeYxGqlOtogpgQvGIcdZj1dlExU=;
+        b=WR4r496sG66j+/utA2lHDHQaMwvy4yjl4yCZnEwDBYQGsBgvEK+j0Cx1/qAa8x6Bza
+         wPk8bSuaA0+rLLwYpbDFvJCf3FUj+QtVm3BtCgw/K7VgYWOEpYPI6cfwlD+nUkXXS63h
+         RPsKUjGU8i9zoD4bOaI8vvNj5k/kecTFie2O4U11ZwSgsQHIZzrGamTlBETYF7WE01ko
+         h0maUr/tlg3ntlUCYT9f4MbMyT1sK/rGA35VAxRP41CRxz/1JJt8QjEa4A7bESG98SMY
+         rEX8CAv/98JrLt5FOWJcn1kB7ImBdkzQBe0CMlRSJ4PXz6A86A4n5PRshhKnaRIPuIfG
+         0RCg==
+X-Gm-Message-State: AOJu0YwkTPpE1PgOh0DMUZ+rhG4TIaLrmroXl+sfAKlCDMYO6gcB4EkD
+	thvM1toK4FOrwZEJJVLTcET0z2TcKfQyTk2QHezE7Dr6c1VObO1BPOXw1d7V3R0X4pZOrrLw2qb
+	3+j4vL4gtQSiFGMttX7ZSaYh3OnkLPs6wHRVCgQlZ7A==
+X-Gm-Gg: ASbGncujI0uWsjZZyPb+CTeeqx1pZrHVV5dNNASvWSZb/5GX+mHntnJ2GKmVVYUCgeI
+	E6UM0wkxI7X2e3JxXwSi4hEqOV/VNuTLrMNA2XJDsyCNHUKTDVVmjCtqT6Zpk0jVaovpu5ocz1j
+	zIh15gwMNTbtrRNUV4uQesyV6RhJKfa+BItuAAjP4N+3mjosgmHWqvjvXNoRgsMvJro2FWaOEJ
+X-Google-Smtp-Source: AGHT+IHGiKRnkaIlNk4u6LKClD4MxD98f9NAtcNzrwse7wwO6WLcbYkMf2R+94+P+5WFQq+X5DJHtk2xMP667cpSuUc=
+X-Received: by 2002:a05:6512:1320:b0:553:51db:69c3 with SMTP id
+ 2adb3069b0e04-5539c1f9ebcmr6861e87.48.1749569586725; Tue, 10 Jun 2025
+ 08:33:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
+References: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
+ <PH7PR11MB845555F9AA0823B53EFD48BF9A6AA@PH7PR11MB8455.namprd11.prod.outlook.com>
+In-Reply-To: <PH7PR11MB845555F9AA0823B53EFD48BF9A6AA@PH7PR11MB8455.namprd11.prod.outlook.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 10 Jun 2025 17:32:53 +0200
+X-Gm-Features: AX0GCFs4hmh1CGl7MqLsRMX92XhvhaRT6oxbXwW1TT6_s3aNJC4HGWUWBfcKYDk
+Message-ID: <CAMRc=MepPni55s9mpCkZ_XrWtT3hOhSTN_QTzpNr_Qzk-YKP7Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] pinctrl: intel: use new GPIO line value setter callbacks
+To: "Miao, Jun" <jun.miao@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This v2 is a subset of the v1, split-out to simplify the review.
+On Tue, Jun 10, 2025 at 5:30=E2=80=AFPM Miao, Jun <jun.miao@intel.com> wrot=
+e:
+>
+>
+> Excuse me,
+> I have a problem
+> echo 631 > /sys/class/gpio/export
+> echo rising > /sys/class/gpio/gpio631/edge
+> [18090.472396] emmitsburg-pinctrl INTC1071:00: pin 119 cannot be used as =
+IRQ
+> [18090.472408] genirq: Setting trigger mode 1 for irq 245 failed (intel_g=
+pio_irq_type+0x0/0x130)
+>
+> How to set the gpio631 as IRQ mode ?
+>
 
-This subset:
-- introduces the pinctrl mux function RSVD,
-- adds two use cases requiring RSVD,
-- minor re-format of the dt-bindings.
+Is this a regression caused by this series?
 
-Changes v1 -> v2 subset:
-- rebased on v6.16-rc1,
-- added use cases of the new mux function RSVD,
-- added Reviewed-by: on 2/5 (former 04/14 in v1),
-- added commit to re-format the dt-bindings,
-- Link to v1: https://lore.kernel.org/lkml/20241022155658.1647350-1-antonio.borneo@foss.st.com/
-
-
-Antonio Borneo (3):
-  ARM: dts: stm32: Add pinmux for CM4 leds pins
-  ARM: dts: stm32: Add leds for CM4 on stm32mp15xx-ed1 and
-    stm32mp15xx-dkx
-  dt-bindings: pinctrl: stm32: Add missing blank lines
-
-Fabien Dessenne (2):
-  pinctrl: stm32: Handle RSVD pin configuration
-  dt-bindings: pinctrl: stm32: Add RSVD mux function
-
- .../bindings/pinctrl/st,stm32-pinctrl.yaml    | 25 +++++++++++++++++++
- arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi   | 14 +++++++++++
- arch/arm/boot/dts/st/stm32mp157c-ed1.dts      |  2 ++
- arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi     |  2 ++
- drivers/pinctrl/stm32/pinctrl-stm32.c         |  9 +++++++
- drivers/pinctrl/stm32/pinctrl-stm32.h         |  3 ++-
- include/dt-bindings/pinctrl/stm32-pinfunc.h   |  1 +
- 7 files changed, 55 insertions(+), 1 deletion(-)
-
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
--- 
-2.34.1
-
+Bart
