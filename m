@@ -1,169 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6E624339D;
-	Wed, 11 Jun 2025 08:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F4925E448;
+	Wed, 11 Jun 2025 09:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749632276; cv=none; b=iLb3mFaK1T7OWuDlu0bItrgNbCb9RFFj/iuNMXrZ5UaKOm4ZAJU1ioA0pbstoNcp8dQq9H3db8Yv9KyGzV1z2VCM2Yl5pemGB4b/ebzjDMhp4VSnL3dTkrkXKc2mbq+hpeQhsikr2NdLPqW7g6uje8Dg4iazT2ncTV41cZiFgpc=
+	t=1749632421; cv=none; b=RhYDwV38SUTv0ZdFjZlO1VPXO/vcrRDGGYEos0dRdXmBrtWAXZ+xZo+y558ChreNbEQXshdBx+VsQirn1SIDaQqcoJqif6nVot5hX6pDQUvIXs6VfPFiODFK7QV8bCthkneeN4OxJlHSwaRb/7+x+qfj7FyYtvh5nBujCtfB/+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749632276; c=relaxed/simple;
-	bh=oCz3V+7ZTi4hFmVrBJWM7NCWZDfRFBK/IEiwC/HpnyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dkiVSZSjWnWs1rGRk7lUtG3Q8oTotxIVMKWYUpZpHlzToH+e6E1CJGwam+kQm27I6DaFcgA/gYhj3d/l4vEfjzAPgviyq/y8ZBAolBaVtOr7E9sbKx1yAWG44VeTbrW3nAewjJDdXsVHZxs4P8XO4qJnGcmahbgxSONXrU0lneo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry/wUV//; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749632421; c=relaxed/simple;
+	bh=aHZ+jMSZEkyXYnMKzBmBv0lQ/0bHBeqk8lVije5YWNI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jIQZNoZRdi8qPN2FqEtVNTtuj/PpKBUy2P4SoATYAnPN4uj5v4EVSDeBYHyrjWsXvSatjA9PBTS10qe8aCynWBmwe45PhvfG+nMPCKz8WQGO1HdwWgMDsB+SzFI8wQ6jbqKYk5gyfqmiB2WeXalgngBWazDAgQixPLMm1uZHpiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FIVDCRB3; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry/wUV//"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE43C4CEEF;
-	Wed, 11 Jun 2025 08:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749632276;
-	bh=oCz3V+7ZTi4hFmVrBJWM7NCWZDfRFBK/IEiwC/HpnyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ry/wUV///yloc7ZH6Z3DbDtkoWmr7OVO/u0DivsYbyhoZBnaBorMu9v5hUhXBncNC
-	 YoxHmILhOHrEfJTJi0nHycFYs0UF0JcddVe3oB/pN4P7zz17WOTVk+KbvIOlNb9myu
-	 ZW0Hlant5vbqQnPMJDnN4ewgVxmw3geWBQP3BkyDtrq8zeJoh0mdV2luoHm9sOpnHT
-	 X5m/7JqIF5vcvfqNeYMeCUlvkque0Bc+1nmQ6L6uIEiAeJSQ2p+pKhiZVkJT52E0uS
-	 SuuZ1pg1RU391hCzzdzM67q0tYp1DfBLnKyVQ+5oMURIFdL5U+vYL3fzjeA77sX7wR
-	 Sfc8KkK5zWsIA==
-Date: Wed, 11 Jun 2025 10:57:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Peter Griffin <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 03/17] regulator: dt-bindings: add s2mpg11-pmic
- regulators
-Message-ID: <20250611-spectral-bullfrog-of-perfection-cb8e01@kuoka>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
- <20250606-s2mpg1x-regulators-v2-3-b03feffd2621@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FIVDCRB3"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EEA49432E9;
+	Wed, 11 Jun 2025 09:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749632416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1F5hX8BhZOECQ5k1Z5A4npb6Ke1hWNVmAe0Y0rR02nw=;
+	b=FIVDCRB3BlNkC3bP6+JYFM+z4JmsvNlgvaC24Ht1YLYxO31U6mc0JQ8urKX7mpP3FLuhi/
+	CdBCEXCkDRnXgQuML5fT6ifJDcV+F13h1m2sNlpDgVd4Iu/joQRVQ5b9ulYTN7VDeoW5O8
+	qyDyHxvqUBZ5fy6OxD/5bWBm3sWqqkSWAmK0XoDGI1cWqzOpyRqFAiPC8FTWez9mq82pWo
+	wvRl+Bv4eIgRImqbpEhZAlROoKybIoPLug02tVepwX80nC/iKP6GYB1bKzN/YCLfbodPZc
+	hLtwidEnfBd9Swu7kj7Roc7ME4RlI6PtlFO6ezWW4tBLp946NrZa0eGOp7UZIQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Wed, 11 Jun 2025 11:00:06 +0200
+Subject: [PATCH v8 01/10] gpiolib: add support to register sparse pin range
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250606-s2mpg1x-regulators-v2-3-b03feffd2621@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250611-aaeon-up-board-pinctrl-support-v8-1-3693115599fe@bootlin.com>
+References: <20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com>
+In-Reply-To: <20250611-aaeon-up-board-pinctrl-support-v8-0-3693115599fe@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+ linux-hardening@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduudeljecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefvhhhomhgrshcutfhitghhrghrugcuoehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkedthedvieethedtleetffehudevleegledvteegvdeujeeghffhkeeggfefudevnecukfhppedvrgdtudemtggsudegmehfgedtmegsfhdttdemfhdtheegmegtlegtvdemvddutgefmeduheeiieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmehfgedtmegsfhdttdemfhdtheegmegtlegtvdemvddutgefmeduheeiiedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrt
+ ghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Fri, Jun 06, 2025 at 04:02:59PM GMT, Andr=C3=A9 Draszik wrote:
-> The S2MPG11 PMIC is a Power Management IC for mobile applications with
-> buck converters, various LDOs, power meters, and additional GPIO
-> interfaces. It typically complements an S2MPG10 PMIC in a main/sub
-> configuration as the sub-PMIC.
->=20
-> S2MPG11 has 12 buck, 1 buck-boost, and 15 LDO rails. Several of these
-> can either be controlled via software or via external signals, e.g.
-> input pins connected to a main processor's GPIO pins.
->=20
-> Add documentation related to the regulator (buck & ldo) parts like
-> devicetree definitions, regulator naming patterns, and additional
-> properties.
->=20
-> Since S2MPG11 is typically used as the sub-PMIC together with an
-> S2MPG10 as the main-PMIC, the datasheet and the binding both suffix the
-> rails with an 's'.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
-> Note: checkpatch suggests to update MAINTAINERS, but the new file is
-> covered already due to using a wildcard.
->=20
-> v2:
-> - fix commit message typos: s2mp1 -> s2mpg1
-> - mention GPIOs in commit message
-> ---
->  .../regulator/samsung,s2mpg11-regulator.yaml       | 150 +++++++++++++++=
-++++++
->  .../regulator/samsung,s2mpg10-regulator.h          |  18 +++
->  2 files changed, 168 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-=
-regulator.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpg1=
-1-regulator.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f2d596642501c197e2911ee3b=
-9caac189cf541a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpg11-regulat=
-or.yaml
-> @@ -0,0 +1,150 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/samsung,s2mpg11-regulator.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S2MPG11 Power Management IC regulators
-> +
-> +maintainers:
-> +  - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> +
-> +description: |
-> +  This is part of the device tree bindings for the S2MG11 Power Manageme=
-nt IC
-> +  (PMIC).
-> +
-> +  The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO regulators.
-> +
-> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
-> +  additional information and example.
-> +
-> +definitions:
-> +  s2mpg11-ext-control:
-> +    properties:
-> +      samsung,ext-control:
-> +        description: |
-> +          These rails can be controlled via one of several possible exte=
-rnal
-> +          (hardware) signals. If so, this property configures the signal=
- the PMIC
-> +          should monitor. The following values generally corresponding t=
-o the
-> +          respective on-chip pin are valid:
-> +            - 0 # S2MPG11_PCTRLSEL_ON - always on
+Add support to register for GPIO<->pin mapping using a list of non
+consecutive pins. The core already supports sparse pin range (pins member
+of struct pinctrl_gpio_range), but it was not possible to register one. If
+pins is not NULL the core uses it, otherwise it assumes that a consecutive
+pin range was registered and it uses pin_base.
 
-Use regulator-always-on
+The function gpiochip_add_pin_range() which allocates and fills the struct
+pinctrl_gpio_range was renamed to gpiochip_add_pin_range_with_pins() and
+the pins parameter was added.
 
-> +            - 1 # S2MPG11_PCTRLSEL_PWREN - PWREN pin
+Two new functions were added, gpiochip_add_pin_range() and
+gpiochip_add_sparse_pin_range() to register a consecutive or sparse pins
+range. Both use gpiochip_add_pin_range_with_pins().
 
-That's duplicating regulator in standby properties.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+ drivers/gpio/gpiolib.c      | 29 ++++++++++++++++++--------
+ include/linux/gpio/driver.h | 51 ++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 68 insertions(+), 12 deletions(-)
 
-> +            - 2 # S2MPG11_PCTRLSEL_PWREN_TRG - PWREN_TRG bit in MIMICKIN=
-G_CTRL
-> +            - 3 # S2MPG11_PCTRLSEL_PWREN_MIF - PWREN_MIF pin
-> +            - 4 # S2MPG11_PCTRLSEL_PWREN_MIF_TRG - PWREN_MIF_TRG bit in =
-MIMICKING_CTRL
-> +            - 5 # S2MPG11_PCTRLSEL_AP_ACTIVE_N - ~AP_ACTIVE_N pin
-> +            - 6 # S2MPG11_PCTRLSEL_AP_ACTIVE_N_TRG - ~AP_ACTIVE_N_TRG bi=
-t in MIMICKING_CTRL
-> +            - 7 # S2MPG11_PCTRLSEL_G3D_EN - G3D_EN pin
-> +            - 8 # S2MPG11_PCTRLSEL_G3D_EN2 - G3D_EN & ~AP_ACTIVE_N pins
-> +            - 9 # S2MPG11_PCTRLSEL_AOC_VDD - AOC_VDD pin
-> +            - 10 # S2MPG11_PCTRLSEL_AOC_RET - AOC_RET pin
-> +            - 11 # S2MPG11_PCTRLSEL_UFS_EN - UFS_EN pin
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index fdafa0df1b43..e196463e7c04 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2340,11 +2340,13 @@ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ EXPORT_SYMBOL_GPL(gpiochip_add_pingroup_range);
+ 
+ /**
+- * gpiochip_add_pin_range() - add a range for GPIO <-> pin mapping
++ * gpiochip_add_pin_range_with_pins() - add a range for GPIO <-> pin mapping
+  * @gc: the gpiochip to add the range for
+  * @pinctl_name: the dev_name() of the pin controller to map to
+  * @gpio_offset: the start offset in the current gpio_chip number space
+  * @pin_offset: the start offset in the pin controller number space
++ * @pins: the list of non consecutive pins to accumulate in this range (if not
++ *	NULL, pin_offset is ignored by pinctrl core)
+  * @npins: the number of pins from the offset of each pin space (GPIO and
+  *	pin controller) to accumulate in this range
+  *
+@@ -2356,9 +2358,12 @@ EXPORT_SYMBOL_GPL(gpiochip_add_pingroup_range);
+  * Returns:
+  * 0 on success, or a negative errno on failure.
+  */
+-int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+-			   unsigned int gpio_offset, unsigned int pin_offset,
+-			   unsigned int npins)
++int gpiochip_add_pin_range_with_pins(struct gpio_chip *gc,
++				     const char *pinctl_name,
++				     unsigned int gpio_offset,
++				     unsigned int pin_offset,
++				     unsigned int const *pins,
++				     unsigned int npins)
+ {
+ 	struct gpio_pin_range *pin_range;
+ 	struct gpio_device *gdev = gc->gpiodev;
+@@ -2376,6 +2381,7 @@ int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 	pin_range->range.name = gc->label;
+ 	pin_range->range.base = gdev->base + gpio_offset;
+ 	pin_range->range.pin_base = pin_offset;
++	pin_range->range.pins = pins;
+ 	pin_range->range.npins = npins;
+ 	pin_range->pctldev = pinctrl_find_and_add_gpio_range(pinctl_name,
+ 			&pin_range->range);
+@@ -2385,16 +2391,21 @@ int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 		kfree(pin_range);
+ 		return ret;
+ 	}
+-	chip_dbg(gc, "created GPIO range %d->%d ==> %s PIN %d->%d\n",
+-		 gpio_offset, gpio_offset + npins - 1,
+-		 pinctl_name,
+-		 pin_offset, pin_offset + npins - 1);
++	if (pin_range->range.pins)
++		chip_dbg(gc, "created GPIO range %d->%d ==> %s %d sparse PIN range { %d, ... }",
++			 gpio_offset, gpio_offset + npins - 1,
++			 pinctl_name, npins, pins[0]);
++	else
++		chip_dbg(gc, "created GPIO range %d->%d ==> %s PIN %d->%d\n",
++			 gpio_offset, gpio_offset + npins - 1,
++			 pinctl_name,
++			 pin_offset, pin_offset + npins - 1);
+ 
+ 	list_add_tail(&pin_range->node, &gdev->pin_ranges);
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(gpiochip_add_pin_range);
++EXPORT_SYMBOL_GPL(gpiochip_add_pin_range_with_pins);
+ 
+ /**
+  * gpiochip_remove_pin_ranges() - remove all the GPIO <-> pin mappings
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index b53233051bee..58492c57063f 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -785,16 +785,50 @@ struct gpio_pin_range {
+ 
+ #ifdef CONFIG_PINCTRL
+ 
+-int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+-			   unsigned int gpio_offset, unsigned int pin_offset,
+-			   unsigned int npins);
++int gpiochip_add_pin_range_with_pins(struct gpio_chip *gc,
++				     const char *pinctl_name,
++				     unsigned int gpio_offset,
++				     unsigned int pin_offset,
++				     unsigned int const *pins,
++				     unsigned int npins);
+ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ 			struct pinctrl_dev *pctldev,
+ 			unsigned int gpio_offset, const char *pin_group);
+ void gpiochip_remove_pin_ranges(struct gpio_chip *gc);
+ 
++static inline int
++gpiochip_add_pin_range(struct gpio_chip *gc,
++		       const char *pinctl_name,
++		       unsigned int gpio_offset,
++		       unsigned int pin_offset,
++		       unsigned int npins)
++{
++	return gpiochip_add_pin_range_with_pins(gc, pinctl_name, gpio_offset,
++						pin_offset, NULL, npins);
++}
++
++static inline int
++gpiochip_add_sparse_pin_range(struct gpio_chip *gc,
++			      const char *pinctl_name,
++			      unsigned int gpio_offset,
++			      unsigned int const *pins,
++			      unsigned int npins)
++{
++	return gpiochip_add_pin_range_with_pins(gc, pinctl_name, gpio_offset, 0,
++						pins, npins);
++}
+ #else /* ! CONFIG_PINCTRL */
+ 
++static inline int
++gpiochip_add_pin_range_with_pins(struct gpio_chip *gc,
++				 const char *pinctl_name,
++				 unsigned int gpio_offset,
++				 unsigned int pin_offset,
++				 unsigned int npins)
++{
++	return 0;
++}
++
+ static inline int
+ gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 		       unsigned int gpio_offset, unsigned int pin_offset,
+@@ -802,6 +836,17 @@ gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ {
+ 	return 0;
+ }
++
++static inline int
++gpiochip_add_sparse_pin_range(struct gpio_chip *gc,
++			      const char *pinctl_name,
++			      unsigned int gpio_offset,
++			      unsigned int const *pins,
++			      unsigned int npins)
++{
++	return 0;
++}
++
+ static inline int
+ gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ 			struct pinctrl_dev *pctldev,
 
-Now I have doubts these are real signals. Are you saying that S2MPG11
-has a pin named UFS_EN (such pin on ballmap)?
-
-> +            - 12 # S2MPG11_PCTRLSEL_LDO13S_EN - VLDO13S_EN pin
-> +
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 12
-> +
-> +      samsung,ext-control-gpios:
-
-Same comments as previous patch.
-
-Best regards,
-Krzysztof
+-- 
+2.39.5
 
