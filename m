@@ -1,61 +1,52 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED692D321E;
-	Fri, 13 Jun 2025 10:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9D01A4F12;
+	Fri, 13 Jun 2025 10:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749809696; cv=none; b=r81fLR0jTFPBA0hjMw8ZcL4C/ZPG3qGY/pGc3/nBNpRV3o6JXEKWYBsNgXwsNPLJVhb2TsfvJJxlnDskmA1C787rKkJqQH20Czvy7HOZKQ6+Z1T15SmsvLfhHDLnceHwJitXy3jbraCBAbH6KOYybp4fQnucSHL7DRjd18/HpQs=
+	t=1749809790; cv=none; b=VoKPdYWBwtYJCkbebWg4p6yld/BQ4vg0EnMC4nyY2iiEvGvFMIV+EZABtlz5gJxnCSBphKUsfF8MMQp9JKGjuqC6YYXzd++LT/AALLbP2wO9j8yhzBky6i56B97j+HcrIFYXpA/EbZY6KrBvVyj7BxCpB6nIg3RQMA9PFPp/vGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749809696; c=relaxed/simple;
-	bh=gByBTNxwvW1EiKdeCpLmynGhuaVyyIF/uFiIPh6OLck=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WKLqGseD1UfCxom6nAsuOQhCZQdMrW5DLz3I5ukQY++Smx/XruZWFQejN/L4eJdU9icc0rKr3jRY9HTkHmx28e/iPT/8lVDNA/aGpJG0Ba0VLpBR4XAScWfzAT/9CIdDUHq4+45YICtM6TLpANp0WrCRB0pw0OHvqFRl0h9CXI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmM6BQWZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1749809790; c=relaxed/simple;
+	bh=ogK2zalKCdo23aiqZ8GXfEgqboFf4a0hyZdeZHJ07Bc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=Pe8NWUvYWW2geUtrvFUYDTTACvJL1EddeOipdlGPsBBxfITuqIhcsjPspXtuJ+lEy/KXHV0X2J4SqVZHn3AyXloj/YSrMDZru3krT7EyfUMtcSMFzGeM2RkZrhdYHuef5qF4d5oer5shQpUz4bDrNtP3fuJWEnaAu2W5lg1YjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8NxR359Z; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmM6BQWZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749809694; x=1781345694;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=gByBTNxwvW1EiKdeCpLmynGhuaVyyIF/uFiIPh6OLck=;
-  b=gmM6BQWZnMShDce3BNgD0skGbsQ09pIdekBWId1+7mGMOVSrAh56OSiU
-   ffUFuS/NQAPGyt7YST43dk3M33SFo+K/rdq5SEh+V4+baPudy8v6shgNS
-   dgOdFq9s0MVPX1++b+fiGWMyaR8S+aFr2YgvHRN6+FzDfHFzJ+f9Jlpw9
-   mNXyZBTBDvjHVsM4AE1atQdAC3HJSQS6XWkyT+DD+qcPCbQBo8i2dB0Nt
-   x2QCWhq++hK3dSzs6UCcQzimVfnibt/7pP3vSmAtE01YnTMKl5miG9GlK
-   JIBWwop+t1PnzMflXtJJcrYMt0mxZEH1Fj09o5FVWSGMG+C0ChYHgScCk
-   g==;
-X-CSE-ConnectionGUID: nuqMDpBjRnC+ciGgVdxIfA==
-X-CSE-MsgGUID: Fo034qf2Ta+aeQvxWmvZTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="69595193"
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="69595193"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 03:14:54 -0700
-X-CSE-ConnectionGUID: e7H7TKf/QFyiMIali7GIyA==
-X-CSE-MsgGUID: wR+kdvDFRqi/SlGSh5wtGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
-   d="scan'208";a="178690144"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.102])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 03:14:51 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-In-Reply-To: <20250612074835.13800-1-brgl@bgdev.pl>
-References: <20250612074835.13800-1-brgl@bgdev.pl>
-Subject: Re: [PATCH v2] platform/x86: silicom: remove unnecessary GPIO line
- direction check
-Message-Id: <174980968591.26331.10662658251864445664.b4-ty@linux.intel.com>
-Date: Fri, 13 Jun 2025 13:14:45 +0300
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8NxR359Z"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55D9r6he023723;
+	Fri, 13 Jun 2025 12:16:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	soCA1TZ0DhY5YcbIv8yTONB+anARgZKgPRV/EvTfcRg=; b=8NxR359Zqy+fSwh3
+	qvK2htwumIHxxsigcx31wFV42Sr2el/kQOCjwRelYmsKsRSGu2O78DCkKthJvXzn
+	BS/pr3aCcQMfIoH+MpOaL+HZLArA+EEVP+OUVv8ZjQ9xiPVBt0NH0Vy8XgMUPY5Z
+	FMatzkVjRA8BtwvD0WfAr/05Yyg/56s3gO76Ofb1PidmKIGVvWWv3WmGCMRFule+
+	p8Jo+y0onsNEvDCmq71egC8L+eaUTzZBQkDoMfOTo1zBCQgqG3thOq7xQQRvQDs/
+	RDUPDuUDjWkxZ/s5vtvGExynBHyxeLD+VI0278h+br3VSmNO9BB2nA0G5Tx0XWcS
+	Q7rhLw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs3569r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Jun 2025 12:16:06 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 450F140065;
+	Fri, 13 Jun 2025 12:15:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 56E7339DE0E;
+	Fri, 13 Jun 2025 12:14:23 +0200 (CEST)
+Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Jun
+ 2025 12:14:23 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Fri, 13 Jun 2025 12:14:19 +0200
+Subject: [PATCH v5 8/9] ARM: dts: stm32: add alternate pinmux for HDP pin
+ and add HDP pinctrl node
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,27 +54,83 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250613-hdp-upstream-v5-8-6fd6f0dc527c@foss.st.com>
+References: <20250613-hdp-upstream-v5-0-6fd6f0dc527c@foss.st.com>
+In-Reply-To: <20250613-hdp-upstream-v5-0-6fd6f0dc527c@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-0537a
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-12_10,2025-06-12_02,2025-03-28_01
 
-On Thu, 12 Jun 2025 09:48:35 +0200, Bartosz Golaszewski wrote:
+Introduce hdp node to output a user defined value on port hdp2.
+Add pinctrl nodes to be able to output this signal on one SoC pin.
 
-> As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on input
-> lines"), the GPIO core makes sure values cannot be set on input lines.
-> Remove the unnecessary check.
-> 
-> 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
+diff --git a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+index 40605ea85ee1..4a31e9f7a897 100644
+--- a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+@@ -5,6 +5,14 @@
+  */
+ #include <dt-bindings/pinctrl/stm32-pinfunc.h>
+ 
++&hdp {
++	/omit-if-no-ref/
++	hdp2_gpo: hdp2-pins {
++		function = "gpoval2";
++		pins = "HDP2";
++	};
++};
++
+ &pinctrl {
+ 	/omit-if-no-ref/
+ 	adc1_ain_pins_a: adc1-ain-0 {
+@@ -731,6 +739,23 @@ pins {
+ 		};
+ 	};
+ 
++	/omit-if-no-ref/
++	hdp2_pins_a: hdp2-0 {
++		pins {
++			pinmux = <STM32_PINMUX('E', 13, AF0)>; /* HDP2 */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <2>;
++		};
++	};
++
++	/omit-if-no-ref/
++	hdp2_sleep_pins_a: hdp2-sleep-0 {
++		pins {
++			pinmux = <STM32_PINMUX('E', 13, ANALOG)>; /* HDP2 */
++		};
++	};
++
+ 	/omit-if-no-ref/
+ 	i2c1_pins_a: i2c1-0 {
+ 		pins {
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: silicom: remove unnecessary GPIO line direction check
-      commit: 5a7c909a53875e9c0c64cdf8e52b5716d8a74523
-
---
- i.
+-- 
+2.43.0
 
