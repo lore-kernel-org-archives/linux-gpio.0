@@ -1,82 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA21F0E58;
-	Sat, 14 Jun 2025 11:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACD81FC8;
+	Sat, 14 Jun 2025 14:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749901100; cv=none; b=nEPbyEGoBiVWarH3TIpbcDSAQy6bX5u7GwjSnMqjsmXe1hv4mmCT8tdV5ZiIzc94CmcCDou1iNo5eKFpcub24vUNmcc97qQtmTj5/DeG6U+Rzi3+dqQSf3G9q0qL98c4G5iO0cCzzgzj6P9M8RjJmW3ELqqUH/lduARZ4Zc99Fo=
+	t=1749911830; cv=none; b=JzhayILQwIMAYqB/tTXntoUO8rJJVMYIFhu6KcnJJVvN5+bXNGWjfDhMORhYN9uk0CLPSrZ5Y6J3EFXWU6kQauBAheyBs8+JLYI6rpbAJ7OjxAPkj1nu1r++WZFQ1fAiWqniBvwPU6j1IokBnHaDy2zM9BXulkVWWy6jAQ5yPug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749901100; c=relaxed/simple;
-	bh=fpbBffDgjhog3qXMyHUoM68Q8rOI2jUHMB121Vi9XHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dto1NfXu2KypZXBo5NT4c62V9Ef64oGwYOI1ncF3rtn09EOdzR8qOqvuTJeSnafKv78V9xaRMfFJJ3J7zdkOmwPVidwbIqwZgs3QsbcByB8nYt44ec1CKn+s0yQ12VfG4Ytuqoh5YWqoaFbVPDL3lIGxr6/sjF/8OuWoGhnEfUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGraheyN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749911830; c=relaxed/simple;
+	bh=qXfPxK8iv4HT71BwVc8bhCncHX7rV2HtucsltCoXbLw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bxEuUdlIDY3LXLMuedZ0D9Ox/oSqq7zyTfjYW55/8kHSF0o1FZfCJn0EiWi9MOlO8DInsFsRrPb2hkz9QLOE+elVaHWMdYtoLhUnm1E8pSp+vav0MEQrFIsk8XNC6JTC3RPbdQhNlotjyV5wrE2tTQgXwQgPCjo+OOQ1RtEFVQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scTZlIPj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGraheyN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16486C4CEEB;
-	Sat, 14 Jun 2025 11:38:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scTZlIPj"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52DD2C4CEEE;
+	Sat, 14 Jun 2025 14:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749901100;
-	bh=fpbBffDgjhog3qXMyHUoM68Q8rOI2jUHMB121Vi9XHs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BGraheyNjgq7rmP2OW6sETnjy1RJVbvX2IrD5bOtFvQE6EagmFOVc244Lm1+7CWOf
-	 BakLQuTykgIh8aaF3eFpPlVXIuQva6lg601038oVgP2YmqkiLgTKoQWwsCg/6v1NjY
-	 Gz0ei/isYqshh4xPqbH1mZNbE+kLaFeaVfVFx+h90/CRcxzN7vSPEcLXxohUeRoa6q
-	 u7IVUWpHorwViXLKdG+jCm3Euoy5Z62HdrnH1oMXpo2WyDtydi/izEMrz/z2wkswpq
-	 JIeHqWnS3PSmnhoRVaW3IVg+9Yxrrh0omYuRtJ9Eq2gz8VcWcIC/Qp0wsaZzTsYoNp
-	 +ZTTPEem4qAZw==
-Date: Sat, 14 Jun 2025 12:38:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, andy@kernel.org, nuno.sa@analog.com,
- Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
- linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
- broonie@kernel.org, jonath4nns@gmail.com, dlechner@baylibre.com
-Subject: Re: [PATCH v11 00/11] iio: adc: ad7768-1: Add features,
- improvements, and fixes
-Message-ID: <20250614123807.3ded6764@jic23-huawei>
-In-Reply-To: <aEweNqhLsL_Hg_gl@smile.fi.intel.com>
-References: <cover.1749569957.git.Jonathan.Santos@analog.com>
-	<aEweNqhLsL_Hg_gl@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1749911830;
+	bh=qXfPxK8iv4HT71BwVc8bhCncHX7rV2HtucsltCoXbLw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=scTZlIPjIL6mjGzkwJTLIK/ALWMjRU+4mMH5dITludibpwHJyHnjA31bZSwSnpni/
+	 dwZwjsaPKyivW+7O+gsTSr+CVWibLps27Y7PuvXNbh7FFJS5vE99s6tD0dojo92/1G
+	 a6F7R+Cck1MejzI1IY1EPKpEfhbeRvLT5m1oaOh2INOthcKiqMwl4U58jC/+T0GVDR
+	 v8yjUCzsT4L3sqmt5BPr2sh6bQhG7MEeTuRo7KgbKKbVSakejDmaShsPItrPxNEZ0h
+	 ymRTx8BpD4+hASf1Eynojhua1CPFGRi/cfIPDeZ1Pd/1avHiylxKz8XMEy1Lqqtl1B
+	 qwqjzY5hiQSpA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42820C71150;
+	Sat, 14 Jun 2025 14:37:10 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Sat, 14 Jun 2025 15:35:52 +0100
+Subject: [PATCH v5 01/20] dt-bindings: mfd: adp5585: ease on the required
+ properties
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250614-dev-adp5589-fw-v5-1-7e9d84906268@analog.com>
+References: <20250614-dev-adp5589-fw-v5-0-7e9d84906268@analog.com>
+In-Reply-To: <20250614-dev-adp5589-fw-v5-0-7e9d84906268@analog.com>
+To: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749911835; l=1054;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=HMDwWGXqEZmH5tU21NJ2ISWhkpP+9+F+CVII73zXj8U=;
+ b=37JW1MYQFq6kxw5XjaQswGtoV+USbqu2VBX8fgxpE7QNTkw9SCU9gwqgmHIVymorPyHOGBPJM
+ 0ms+K3XHtsEAjodEA2zmBHl4NutMOKn9KKm+eYqZKezH7pNAdGg+cHl
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-On Fri, 13 Jun 2025 15:48:54 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+From: Nuno Sá <nuno.sa@analog.com>
 
-> On Wed, Jun 11, 2025 at 08:49:34AM -0300, Jonathan Santos wrote:
-> > 
-> > This patch series introduces some new features, improvements,
-> > and fixes for the AD7768-1 ADC driver.
-> > 
-> > The goal is to support all key functionalities listed in the device
-> > datasheet, including filter mode selection, common mode voltage output
-> > configuration and GPIO support. Additionally, this includes fixes
-> > for SPI communication and for IIO interface, and also code improvements
-> > to enhance maintainability and readability.  
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> (for all except DT patches)
-> 
-> The nit-picks can be addressed either in next version (if needed) or whilst
-> applying. Up to maintainers and you.
-> 
+It is not mandatory to use all the capabilities of the device. One can
+very well only use it as a gpio controller without the PWM support. This
+will be even more evident when support for the matrix keymap is added.
+Hence drop the requirements for PWM and GPIO.
 
-Applied patches 1-10 (with 10 tweaked as suggested).
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+---
+ Documentation/devicetree/bindings/mfd/adi,adp5585.yaml | 3 ---
+ 1 file changed, 3 deletions(-)
 
-For 11 I'll wait on answers to questions.
+diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+index ee2272f754a339569c793102928ddd13249f8fee..e30e22f964f78519b2ec207e9415e4897db5c702 100644
+--- a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
++++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+@@ -52,9 +52,6 @@ patternProperties:
+ required:
+   - compatible
+   - reg
+-  - gpio-controller
+-  - "#gpio-cells"
+-  - "#pwm-cells"
+ 
+ allOf:
+   - if:
 
-Thanks,
+-- 
+2.49.0
 
-Jonathan
+
