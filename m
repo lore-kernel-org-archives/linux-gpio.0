@@ -1,112 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA192EBB96;
-	Wed, 18 Jun 2025 14:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A7A3B1AB
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Jun 2025 14:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750257918; cv=none; b=otsEKpjV6EFOuMZeEbxDkqCU0k/5Kw5baT3dvG2E1+exi1bQ0uXBDBDp6/8k6Fe7vo6D9C5kzM+pVj3n9v27y8Uj+/oTJxXvz25gbFSTM7GULpGMFviFQ7iIrwHx9ZGKR2wRAuMdVkMiPEJYGfTilMIxriIjbVgl+P+gefFTseQ=
+	t=1750258422; cv=none; b=EHc6Bmg7YkDaziWZ5RJTXzyl7qVBcrkfdUTV2e+COTcbjfi6Pr6TKxYUuLfDI0exJoO5jZPNdQc8QJEIu25qEYL/WX6AcQrBUfv9/Qt2zEcFR6TYyangQPPznTwMwj2/yYeGl8tvSAiorytiqJBf0w9h3lJcR6bIC6dywj5PnaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750257918; c=relaxed/simple;
-	bh=V32Lxoh+JWBZUtGJvr4ddA6AvsipGh9FWI2K8eeI8/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxVaIOKHOG168v4PHIfJlHZABk8eW5+ijL/Mw+j2baa0copoEfXhk8D4sjKg3dpCBCEP7Fc7bqtglBOvAJQFB7xT4D597JJ62cfSxKREWnPFeSsYOELAzZHAoERqxWlJEip7VYRKK2C5qsJSQ+JkrUSVADLmbQKOOoF10T9kGxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijl85kXx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750258422; c=relaxed/simple;
+	bh=d1bTMcMzxYwoA+D7FedJtqCDcbroa+Mc/37/DE2ipe8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pq1y62ACQ/ypDDAn86KOCkF5G5lkrAa85aOeQViIUHRZ5I8NK7jTxZPZyWfpiefgc+xexCRsRmaA1bLslzJQZ47eMwaGhxCVkt2cHRFp/278id+6FVoI4SmUsXLjeL6VqktR9xLU66ChVvdiLsnariFW5tTbxZRbPa421rs3Mr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=V5RWvryj; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijl85kXx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2298EC4CEE7;
-	Wed, 18 Jun 2025 14:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750257917;
-	bh=V32Lxoh+JWBZUtGJvr4ddA6AvsipGh9FWI2K8eeI8/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ijl85kXx5K3iAg46xVHFDAG/f1yyfGNLk+aeiggM+PUA3YmAkN8giMBDRRQ/N48Bv
-	 LAO/252JYcE/vM+fkcdL739enNH+00FWYHRD3EPLwAYB1Pt4tDIQZdXoI5ajMNMhuW
-	 XmCvEknPyFylshhTmC38x84xYg42YfM/zzRm25PL4prBpkbdwY8qheDZkf+sOV8k9i
-	 eY7oE4KQZZll+LytWGhfk423/5+Jkjo7tCKXli6NieqsNHw/UZgvFGuyyXXvko5n0n
-	 3lsAPWmqTvJjhBxVAhco2QVMZsufTTQ/8hUl0in7tVQruy4cOBJh+I/KbtCbQpacP7
-	 ci8x4OqEfrZPA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uRu2O-000000005IN-2icM;
-	Wed, 18 Jun 2025 16:45:16 +0200
-Date: Wed, 18 Jun 2025 16:45:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/2] USB: serial: cp210x: use new GPIO line value setter
- callbacks
-Message-ID: <aFLQ_G0HnGWVSE12@hovoldconsulting.com>
-References: <20250610-gpiochip-set-rv-usb-serial-v1-0-a9343ca109e8@linaro.org>
- <20250610-gpiochip-set-rv-usb-serial-v1-2-a9343ca109e8@linaro.org>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="V5RWvryj"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54e98f73850so6620389e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Jun 2025 07:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750258417; x=1750863217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QILoQ0cg9dCm9DSe1PZh99lLZifnpwxayvJF2llOsWw=;
+        b=V5RWvryjKoVyvKHsAXD/uO7JeR1qYTCtKWPezfMlGA+LLwyN2NBVjsygv7V76Lg9vE
+         ZLDkj0K0Okgk/qq2pLtVBrncrXmhds1l9mMaZTZLk0PynuZvvZrphCzp4kQQB3chZ2o1
+         +W+/RomCET7vFeGZkJoP6toOI5Y///Lc/oRsr//dwlD/MKaYV0wODRRRtgui3g2v5HbG
+         zaoCTJtaEgva+aiximCDFF+C9jzinv7N+8EJRFGAoUU/vW++uvbtNEcD7nlxujtnjdxb
+         5+iC3lXf11U5KlJ5rPZ9Zl4UNhCHKPqChhRxqE8HVL2WY7tr8L0gcOnmospuW1eaM3LW
+         iWBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750258417; x=1750863217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QILoQ0cg9dCm9DSe1PZh99lLZifnpwxayvJF2llOsWw=;
+        b=GmzSMgT3tejzJcCt1C0CHn2rYf8xCTfkl33pJYFJliMqfYHYJBQH1JBvz9vw8TTqRA
+         mWXGG7peJZvfmNqEAwZbqy0V9mGgvPR2ebekChO0HZyZ7OcaQQW/xu8YN5QDmR17myiW
+         1lDMILDITjSrlrkyW0i7xGLcDna7HKmuk+N5aITtlBtoXkJN1DmtTtnzKL1SX8j9k9IH
+         2VkBsWNiIpRsdTdN48DN9u4QgwykAVG5eW/ZsowLveLjY89VaRukgiJ6j53yVICTTVKl
+         Ir/oC5H+22/zhOGihrxJO9AlB/9osjmSvYSM5MKntE3GNONZl56FpfVqyvGTah6xTYPJ
+         a2vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeZwcZL6TLmoJKekwQWD4zDK/KNl6S9DsRlnsun71+gYq8cItJblJqvGuZPnbk0hIOKKICDNsH5R7f@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT5tUmb25BqaVSqzCh3Ex7aALqeY8h+ppI/EpDwX9+y7RcGayT
+	S7xFIT0KMYhbhlpyxmAQUDbzJU88r1NtuhbUFl56i4V+H6g//JGvwLXCLFaPFIz2iaSbqlsTXLD
+	cFcukaGI3G3Y/FNDHYZE2ApJ98HJA2+qA3mQ9YE/v8Q==
+X-Gm-Gg: ASbGncs1SIsHhV0XFQf4AbkSapX791OBiZO8N18+gWvf574L35N9MBW5htKod/3GL/x
+	KFHxywWp6lAJ118aG6E3V8IDdiEg7OLDf4ANdxQoh1PsXmDaLNC+OqaozurXoq1cJFpHRe3kJ0C
+	KpQPU7Zssl8qXCr6rxcg+CQzRYi9IL4ChSdW1EaAX7RVloWbNoj2NcoW2F5QrJORBtsSssmcLq1
+	Q==
+X-Google-Smtp-Source: AGHT+IGiCcrgYRMbum6nuXJpOo6iTxGGvz1fmMPK+AhjjIqJxDaE2WGG9FQliOn9F9chuEGZlOPblHk5QtCZaRkBmoU=
+X-Received: by 2002:a05:6512:b97:b0:553:241d:4e7d with SMTP id
+ 2adb3069b0e04-553b6f25d30mr4824208e87.42.1750258417343; Wed, 18 Jun 2025
+ 07:53:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610-gpiochip-set-rv-usb-serial-v1-2-a9343ca109e8@linaro.org>
+References: <20250610-gpio-sysfs-chip-export-v1-0-a8c7aa4478b1@linaro.org> <8570dedab1a7478c39b31125ad279038fe31ac13.camel@pengutronix.de>
+In-Reply-To: <8570dedab1a7478c39b31125ad279038fe31ac13.camel@pengutronix.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 18 Jun 2025 16:53:26 +0200
+X-Gm-Features: AX0GCFv-EtuLfkkAl-rHEpXj6Jbb19BXN6r2Zc9P3RRMCwt_-SJ6mmJG2IaqrXo
+Message-ID: <CAMRc=MdgYqk3RuM7vVUJPdtPH8zSCmr8fuDvV++7UE9F10WVzg@mail.gmail.com>
+Subject: Re: [PATCH RFC/RFT 00/15] gpio: sysfs: add a per-chip export/unexport
+ attribute pair
+To: =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>
+Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>, Kent Gibson <warthog618@gmail.com>, 
+	Marek Vasut <marex@denx.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 02:43:47PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/usb/serial/cp210x.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-> index 9960ac2b10b719192dfbab0a6e81b2cf80f40d36..caeb2873a60451fb7a9a5b5d25071547b5401d52 100644
-> --- a/drivers/usb/serial/cp210x.c
-> +++ b/drivers/usb/serial/cp210x.c
-> @@ -1504,7 +1504,7 @@ static int cp210x_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  	return !!(mask & BIT(gpio));
->  }
->  
-> -static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
-> +static int cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
->  {
->  	struct usb_serial *serial = gpiochip_get_data(gc);
->  	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
-> @@ -1522,8 +1522,8 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
->  	mask = BIT(gpio);
->  
->  	result = usb_autopm_get_interface(serial->interface);
-> -	if (result)
-> -		goto out;
-> +	if (result < 0)
-> +		return result;
+On Wed, Jun 18, 2025 at 3:38=E2=80=AFPM Jan L=C3=BCbbe <jlu@pengutronix.de>=
+ wrote:
+>
+> Hi Bartosz,
+>
+> On Tue, 2025-06-10 at 16:38 +0200, Bartosz Golaszewski wrote:
+> > Following our discussion[1], here's a proposal for extending the sysfs
+> > interface with attributes not referring to GPIO lines by their global
+> > numbers in a backward compatible way.
+> >
+> > Long story short: there is now a new class device for each GPIO chip.
+> > It's called chipX where X is the ID of the device as per the driver
+> > model and it lives next to the old gpiochipABC where ABC is the GPIO
+> > base. Each new chip class device has a pair of export/unexport
+> > attributes which work similarly to the global ones under /sys/class/gpi=
+o
+> > but take hardware offsets within the chip as input, instead of the
+> > global numbers. Finally, each exported line appears at the same time as
+> > the global /sys/class/gpio/gpioABC as well as per-chip
+> > /sys/class/gpio/chipX/gpioY sysfs group.
+> >
+> > First, there are some documentation updates, followed by a set of
+> > updates to the sysfs code that's useful even without the new
+> > functionality. Then the actual implementation of a parallel GPIO chip
+> > entry not containing the base GPIO number in the name and the
+> > corresponding sysfs attribute group for each exported line that lives
+> > under the new chip class device. Finally: also allow to compile out the
+> > legacy parts leaving only the new elements of the sysfs ABI.
+> >
+> > This series passes the compatibility tests I wrote while working on the
+> > user-space compatibility layer for sysfs[2].
+> >
+> > [1] https://lore.kernel.org/all/CAMRc=3DMcUCeZcU6co1aN54rTudo+JfPjjForu=
+4iKQ5npwXk6GXA@mail.gmail.com/
+> > [2] https://github.com/brgl/gpio-sysfs-compat-tests
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> thanks for implementing this! I tried it on one of our boards and noticed=
+ a few
+> things.
+>
+> After unexporting a GPIO from the chipX dir, the subdirectory is not remo=
+ved:
+>  root@lxatac-00006:/sys/class/gpio/chip9# echo 1 > export
+>  root@lxatac-00006:/sys/class/gpio/chip9# echo 1 > unexport
+>  root@lxatac-00006:/sys/class/gpio/chip9# ls -l gpio1/
+>  total 0
+>  -rw-r--r-- 1 root root 4096 Jun 18 12:52 active_low
+>  -rw-r--r-- 1 root root 4096 Jun 18 12:52 direction
+>  -rw-r--r-- 1 root root 4096 Jun 18 12:52 edge
+>  -rw-r--r-- 1 root root 4096 Jun 18 12:52 value
+> Subsequent attempts to export it again fail.
+>
 
-This is arguably an unrelated change, please keep it as is.
+Ah, seems like one of the last-minute rebases made me drop the
+relevant sysfs_remove_groups(). Thanks for catching it.
 
->  	switch (priv->partnum) {
->  	case CP210X_PARTNUM_CP2105:
-> @@ -1555,11 +1555,8 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
->  	}
->  
->  	usb_autopm_put_interface(serial->interface);
-> -out:
-> -	if (result < 0) {
-> -		dev_err(&serial->interface->dev, "failed to set GPIO value: %d\n",
-> -				result);
-> -	}
+> The contents of /sys/kernel/debug/gpio don't really fit any more:
+>  gpiochip10: GPIOs 660-663, parent: i2c/0-0024, pca9570, can sleep:
+>   gpio-660 (DUT_PWR_EN          |tacd                ) out hi
+>   gpio-661 (DUT_PWR_DISCH       |tacd                ) out lo
+>   gpio-662 (DUT_PWR_ADCRST      |reset               ) out lo
+> The header is inconsistent: it uses the 'gpiochip' prefix, but not the ba=
+se as
+> the old class devices in /sys/class/gpio/. Perhaps something like this?
+>  chip10: GPIOs 0-2 (global IDs 660-663), parent: i2c/0-0024, pca9570, can=
+ sleep:
+>   gpio-0 (660) (DUT_PWR_EN          |tacd                ) out hi
+>   gpio-1 (661) (DUT_PWR_DISCH       |tacd                ) out lo
+>   gpio-2 (662) (DUT_PWR_ADCRST      |reset               ) out lo
+> If GPIO_SYSFS_LEGACY is disabled, the global IDs could be hidden.
+>
 
-And keep this in place too, and just result if negative.
+I have not paid attention to the debugfs output TBH. Let me check it in v2.
 
-> +
-> +	return result < 0 ? result : 0;
+> Unix permissions/ownership just works.
+>
+>
+> As far as I can see, this is basically everything I need to replace the o=
+ld
+> global ID based GPIO access in labgrid. Thanks again! :)
+>
 
-And return 0 explicitly here to avoid using the ternary operator.
-
->  }
-
-Johan
+Bart
