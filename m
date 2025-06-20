@@ -1,124 +1,129 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB31E515
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Jun 2025 13:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B63223183F
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Jun 2025 13:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750426629; cv=none; b=gNIHJXDZqLrz0tz6eZ7KqaxzerDctgKVs6RScUr/mAvxaavUv+9VfVDayZaqxA1c0p5+yDOdAcrLjRZYvehhi6oOHKVIV0SbLWX/FPlQuEhCHnEZEWC38feoHoJK+0HnWgJWagc0wGTGwrNVjIWmedXfTQtN1kDYi11dOgpwXl8=
+	t=1750427168; cv=none; b=U6M6hZu20+w7Ny8nXgRUVdSUnXL2wz1SGUokxa2Qh7PnduA1QNbwKukwo+nPWzYN2fPm6sx3bNm4MtGPyLX97EelqIt+QR4JmmzVsWlniatjr4tZnc2FRF3FIuh6Qz0Tq72X+sfhTPk/rmIwBhCwiX6rTYaiiDCcx0JgRCndso0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750426629; c=relaxed/simple;
-	bh=M0YT2iBaogn/DyTFdR1V9sCYLGYvYdijypQw0oPDd3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YjO9ul8ekG3BcnOfmvHjnpU9sC28Q8GvDxfzL/1w3q1W8kwBvSyQOiev6UjCM9vgy7sfjjEww9mJ3VeWuHmQruiS35qiWzs/6nWgdzt6KpDfYCqhq+x1waNFt+8nmsWQcFpoqRskZsmyPdePHbtknJwAxcChTJJxJUfYlKtO3Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ci4zGjDF; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1750427168; c=relaxed/simple;
+	bh=IJPxx/8CSit5u8YWIiRwcIVEMyk6eioXTZfQ0C6DKrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PBUOPNb6LxCHVPTzr8f1dkkDjXdl4FYEntV6MrW+8oTJOElxkQOizLXd4/AilhR9s19p2tsyI01ZZHLac2Wi+qdEBysJxTbNXTYURzlUSKGES0VWL+cwzrvL9nqDBmYVRCIhn8VNSAhunEmLXcYi9pvekvU6LBOR9PeeU+8L0WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Yf9CBPs2; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ci4zGjDF"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553e5df44f8so536079e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Jun 2025 06:37:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Yf9CBPs2"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-453647147c6so9048695e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Jun 2025 06:46:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750426625; x=1751031425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aJt4fkup5IZNsrpvVhEKVipXbYCZJtOBbKMV7cDmJU=;
-        b=ci4zGjDFWHYuu0WmVl9fluwbbv4bE3t1sFzuIOyfRkehuAcoUZGUJxGMVSMMcKexJW
-         unnVOFcFe5J+nMU7ujtEflCPJtY1/W3PwYcLpfDYy6zATpZID/wdXvcp1GdQV2ZLedDK
-         7B45w58ZmPPlXVczKv5mG+UIx1sQO7luYxJH2AeymvpOuoohxY6knJoXJ2JIo2W05cxU
-         TsjtlMGYlwsiCv+p9lGnTIZLygFNNzaV3n0TBaywRiRlxnn3/PtAfQG+Viqcpy832DSM
-         jLt+X0nsyvlBz9S4lKp7KEk8HkIEbDsrEHoiv19C4+Q54SWDRfMshHMQ5KYQ/W9EULwj
-         kL+g==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750427165; x=1751031965; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xnbbZF0mgVLEqOkcFAOg1RxmEXcv9IgRKhCyVN6STvE=;
+        b=Yf9CBPs2+ODUhv4qVlya7qnegjzL8Q+TPsYye3uiyevXUtGlXDvRsQnoDBizZ6smBE
+         bXQv5Hvq+JycUpCD5EfUwal/JHVQKJ4GkEl7Ex8P6Fi9IttyGedQn3nCsnAld6zD5uxQ
+         kQH1XjjoFS1tbSW6G5S2tTbQv+dBYrJ13MqZ9GfX0cKtq42KUJ7pv4KtRQWRSXWtzyRh
+         dGJHp2mkKZubgbRpqUfI7myBFNiTDzLB64PSp+bjSVdZkrwWWWiY8j5rkDUcCzo77nLg
+         Xai9KSSTD3RcIYN3SSolh7WEmMCyXSurBc/cvlfJb6gJtiypO/sEJvByhfDZXwaDwQpY
+         KDzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750426625; x=1751031425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aJt4fkup5IZNsrpvVhEKVipXbYCZJtOBbKMV7cDmJU=;
-        b=Zi4UvTJz3dQZDjyPjcYIP5dLik0jsn9JtX+hgqI9UB/4VyTV6gbxUeZ1e/FD+erUZF
-         GKyeDC/Ae+qGwa91Vf+yeciJt3zeTzQrffAS7NTBwI48lTBo6/hzzxzoiBrEZMhkna7z
-         +dchDFsAse0cm+Y5bAO9EOtNsalqdGHaBRuNSq4xakJaGkFaIADfASYOeH/5ytqXAMn4
-         dYNZYm79mdG7/+/xWho/ImpLNA8yD6QG0O1/VEE5oiHF6vnt/JpAItHJxU+kjIhoMBqk
-         9kAjIKs03v5aZ64g3gudo4Zk2uOprljCEi5YOSVwNZ/50hisdY0R8vixa0Zu/g1mr8x9
-         WAkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQblg6Hvtuh8br8jwB7RFrkJeW2pKSsE9/sm4K3F9JX87pkDWjwdjHzy/kGvCx8CfHnvVENLOkHN0n@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVgf+LTMuBN6m+qrA5LuqkBBIPSzwogQhP8pXGzCt76uoRMNvr
-	CBFCmzcx578nfwCXK2neEz1FaVlZHIiUFUrcn6CgtxTU9wrX6F8CZ2XDsITVBZibFcpDfqRjU3x
-	5a/096a4spQj5sGBGaGlL409xA4lJ7RdHOJTIXaLRdQ==
-X-Gm-Gg: ASbGncschJHXvuBlEOlKcLkc5UG7yO87NBJS6trUB0M1yEt1CCdrJnZa6+bU9fU7h5g
-	NDvpz6HGtv4nYCVYdtc5NUBx6zCvvbtKvdgV/Xx49rxaugyYiDr7o5QyNms4Fah8wKmv5AlAgpt
-	WIeojXTpJXXQyhpJr1/3b3g6sKfC5CekIxPRQyTxFFpf36ID8qdIxuY7/+L5V1E/fyKGW8KIRu+
-	MM=
-X-Google-Smtp-Source: AGHT+IF5fLhfuC8hz4Rv1krK7DbtYye+VXaU6bceTUWd3ZX5FC4oEcmGEW+wthmMe7jT3GYqphVFIC0r8DxUKFP+CT8=
-X-Received: by 2002:ac2:4e06:0:b0:553:37e7:867c with SMTP id
- 2adb3069b0e04-553e3d028b0mr1105854e87.50.1750426625405; Fri, 20 Jun 2025
- 06:37:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750427165; x=1751031965;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xnbbZF0mgVLEqOkcFAOg1RxmEXcv9IgRKhCyVN6STvE=;
+        b=dhFPrW4EGFb6CwF7wD6w4X+cdJeklN4m8zCPoP/FQgp20ClazjYwWk1ayMftyJxXwF
+         cUyg35c95uOkCQWV2BqA5rZ7Dkl59J5YJikUS3cwDRcP4jrMHyUKRmuKlUjleBZpwLCq
+         UK7paSIZvF8XUWv7KCesrNEGkBGDOMf1kI0wrN00nteaYS8LP34tW+8VUelKCjWHR6Wv
+         O6ztU3pFUdExvZsnanZB9GZIMndq2M7aUgC8QKWUl7YhjztWCXBRlGxTM5vcPrNX0i+H
+         Hw2PliF6/6sQhb23FSBOOCNsZ6TPcwcAgx3GIDo/g1r/Q/pd5+ASw++0bmJ8jXUdW3fF
+         oBUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcdhzNWLQ6DodYf9BLWeORFh+08RbcTwm96Riu6i2Y0429D8uw/hwT9l5vxPs1/r7m7RpI6Fv1MDpr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv/ov4WIPGbalvUo/B4eAK3oz82SzseM7j05e/ncksE1iBy9B6
+	8TCU5K0CqvFgYtBOXBY+bXnLqeM/aFC2S5PeapE1N90Ja18AVNEo+/nyaUxhA8cFG18=
+X-Gm-Gg: ASbGncsRg3Ywou8euzfs7pl+s+461Xc1KVlAHhKE1+AKUzJ7DP4VSQCEercro5Bn5GC
+	CdfCy55AiffE/Q5+kbdl6JwtrI4/5HDFd5Zd5l5UBhuNP8GsuPey4rusME+0Mef5YCyzYrumr62
+	VHQPZDAwBwTT00L3FVr9IQvi0CUc9d2mak+KtR1cJvoXpxXAk4dpamgjBbIbmWCBEkQTT4ZOhpX
+	iminlmuPd8eoQ8wJfcDD69vJyDfO1OsD+KeQdoLTZb58LK9jyfkB0k464wQHNL/yE9mZ43e5+wN
+	ACl15l653u5PR7aN/TsbXYLrfmkVq71VZwF8GgAe322XaeFURXwA75mGaMBFUOt/W9D0wG1/Kw=
+	=
+X-Google-Smtp-Source: AGHT+IHE23+lfQrmmrvOY4gXFo8XmhpszpPqyuXRd+QCzWbJDAGWy+pg7cxPcbBy7LIK3eHWbQ1xQQ==
+X-Received: by 2002:a05:600c:1e0d:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-45364791b6cmr33843335e9.0.1750427165627;
+        Fri, 20 Jun 2025 06:46:05 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69fe:2655:53a6:f735])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45364705748sm25637935e9.28.2025.06.20.06.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 06:46:05 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.16-rc3
+Date: Fri, 20 Jun 2025 15:46:02 +0200
+Message-ID: <20250620134602.111269-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620130814.2580678-1-arnd@kernel.org>
-In-Reply-To: <20250620130814.2580678-1-arnd@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 20 Jun 2025 15:36:53 +0200
-X-Gm-Features: AX0GCFveiLVvzbVVb4pbzshJs5knTsbLzp0XOfzNaJNTrqpVl3158pRzAoNLUfc
-Message-ID: <CAMRc=Mep0SNj6anWcmaNh4v8Z=J7eomujU69Gz_exuG2Wsd=8A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: zynq: add CONFIG_OF dependency
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Pratap Nirujogi <pratap.nirujogi@amd.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 20, 2025 at 3:08=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The zynq driver can be enabled for compile-testing on builds without
-> CONFIG_OF, leading to a link error:
->
-> ld.lld-21: error: undefined symbol: pinconf_generic_dt_node_to_map
->  referenced by pinconf-generic.h:231 (/home/arnd/arm-soc/include/linux/pi=
-nctrl/pinconf-generic.h:231)
->           drivers/pinctrl/pinctrl-zynq.o:(pinconf_generic_dt_node_to_map_=
-all) in archive vmlinux.a
->
-> Prevent this with the proper compile time dependency.
->
-> Fixes: 1982621decaf ("pinctrl: Allow compile testing for K210, TB10X and =
-ZYNQ")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/pinctrl/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index 753692e9ecf5..ddd11668457c 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -603,6 +603,7 @@ config PINCTRL_TH1520
->  config PINCTRL_ZYNQ
->         bool "Pinctrl driver for Xilinx Zynq"
->         depends on ARCH_ZYNQ || COMPILE_TEST
-> +       depends on OF
->         select PINMUX
->         select GENERIC_PINCONF
->         help
-> --
-> 2.39.5
->
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I don't think this is the actual problem. I can build (and link)
-pinctrl-zynq with COMPILE_OF disabled alright. Can you paste the
-entire offending .config somewhere?
+Linus,
 
+Please pull the following set of GPIO driver fixes for the upcoming RC.
+
+Thanks,
 Bartosz
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.16-rc3
+
+for you to fetch changes up to 10af0273a35ab4513ca1546644b8c853044da134:
+
+  gpio: mlxbf3: only get IRQ for device instance 0 (2025-06-18 12:19:39 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.16-rc3
+
+- correct the ACPI GPIO access mode in gpio-loongson-64bit
+- only obtain the interrupt for a single instance of the chip controlled
+  by gpio-mlxbf3
+- fix an invalid value return from probe() in gpio-pca953x
+- add missing MODULE_DEVICE_TABLE() to gpio-spacemit
+- update the HiSilicon GPIO driver maintainer entry
+
+----------------------------------------------------------------
+Binbin Zhou (1):
+      gpio: loongson-64bit: Correct Loongson-7A2000 ACPI GPIO access mode
+
+David Thompson (1):
+      gpio: mlxbf3: only get IRQ for device instance 0
+
+Sascha Hauer (1):
+      gpio: pca953x: fix wrong error probe return value
+
+Vivian Wang (1):
+      gpio: spacemit: Add missing MODULE_DEVICE_TABLE
+
+Yang Shen (1):
+      MAINTAINERS: Update HiSilicon GPIO driver maintainer
+
+ MAINTAINERS                        |  2 +-
+ drivers/gpio/gpio-loongson-64bit.c |  2 +-
+ drivers/gpio/gpio-mlxbf3.c         | 52 +++++++++++++++++++++++++-------------
+ drivers/gpio/gpio-pca953x.c        |  2 +-
+ drivers/gpio/gpio-spacemit-k1.c    |  1 +
+ 5 files changed, 38 insertions(+), 21 deletions(-)
