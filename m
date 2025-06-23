@@ -1,129 +1,176 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E591B4240
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Jun 2025 07:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC2F1519A6
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Jun 2025 07:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663669; cv=none; b=AkHHO4B82dMR0d1L5s9J6k7dE+kPeFD+dLyHZ/h+EU+GN/lE2H9BVTzVG7lRRzmww3qn8kCFG5qEqDOGPSe55bHJ6frAQMOf2lpZ9Ct4MIqpGnyYrFB4CyScOxhj3gFBR7YWzHs0FHZfNwVJDQUqFyDbk/EglSrcgKOUESPcOKA=
+	t=1750663823; cv=none; b=ok/lwYj6F21LFXFr0UyPm6m0AzoEn0u5Ppx4ZAR4fPTUPvYcoJ6XgNa5I+mpqseFtWe/5hVW7DwKqXVTRaSKyy7CLdjYvWCzdTNwUNtYQhn7kCvVSzibGVv7WgHfgfWHGBrGMVq3fz1wIImpi5dpKFzmM4bDbb6xUR9t5dzk9VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663669; c=relaxed/simple;
-	bh=C+48779ON5P+8zTEnrkBq4r4x9ehytQXvQ32kKfQ+VQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qY/INQ4cQVn+ULqzOUsk25Fg72KsTQDUK9sRTpUP5Xm6FU6DJE20tezaTcpjqExp2ej+2PyaixGvTpwW0M8JJAq7IxhfzmZF9RXiKsBy/uSag2lJKdmLBT+Vb2yshQMu9lFFHokg2AOBOxk6dkQHzftnMOUpuLr1aINCOEFVHSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZOGR+RNb; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1750663823; c=relaxed/simple;
+	bh=1H4Bg1xSrIFZOITWzyXEdnXralTg6Df4XFkD/EzqYK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TeVOx6csiwXSDhrZhRlRRHZNq33PNmRCJakdDGGkxfeXNzcy37C+Qdie77eEA06cA3Dci9lskSX98gFKLT3NoByNVrCrMm1Xqi2wQ2nVtZKqSAqHFVZmo5zzVZwDFiguhTVuxRrh4tSAkuoh/FcV4vLoRuIKXsyocLfAD+2saAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zmh8NBlJ; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZOGR+RNb"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45348bff79fso42614555e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jun 2025 00:27:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zmh8NBlJ"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso565349f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Jun 2025 00:30:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750663666; x=1751268466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzPqdhEKbFE4WKMT2toUuYysK0Z15a9xzSQs3F9Y55s=;
-        b=ZOGR+RNbi+N0pKQ0/ldFktxEB3KaTGuaVXO8k7CH1G8qy56B9YEu+V/DMDfiVX3UPI
-         o8slT/5OZecy0EzlVKbHHWXKib7aYYnUKpN3cPPHHvJLjJlPpds7dBLEHk4749ZQUMGn
-         RR56gAig2WzZdeMKVoMwo6cCGaUg1yqLNt+bZ7nY3LIvLQDqewcX6FDkFpl9yU2gbVZA
-         YxUHW3XsySINrD4zH9f6PFJ5zgTH4WjG0fMAVa5Eh40EcuS+PGKw2taPbjI5t1ieWX+f
-         FYskOg/iyrvzxZyC2ACCU1BF9L6NY0m/KeXrxcgMQkgGpxr/ftCcWJ1UAkI7dCUhwzAT
-         a/oQ==
+        d=linaro.org; s=google; t=1750663818; x=1751268618; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JyX7Id45J55w0I/fP0ufUOPO5FO7kbptXGfhsQYTedw=;
+        b=zmh8NBlJ43y+YhVlIOzdEx82ohFYHpmrNJYOsfx7RTzGSJOR4D1yrF1GamsOXuBV59
+         yUsfQLWfopbxfhZl0PSIgFBjzR/ywxemqJaMYfvjwLAZzooaMI9/8uHtnhlXnahTVgBO
+         mt+gZWv6b40oo3HZaOgaOiu+SNXXYaPj6xnezt9dLIimEk919ivtIxtq+Nf22M9k4Qlo
+         HR5srk46NTpMr47ZNGbQ/wWA9BKOiBgdpKpZfXBl3yoxGCezBA4key8KSeT4lik0l95c
+         rcmHVU5Eu9isRI7nMdAYsvzR8X8zzP/F6ko0gY8oF8rIOA0AzjeD2lGz/BfXtxBWWbeC
+         ea7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750663666; x=1751268466;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dzPqdhEKbFE4WKMT2toUuYysK0Z15a9xzSQs3F9Y55s=;
-        b=DEAo0iQqrHEaaNw3Ulsxc/sdw/55jJ6wRURoHznTJxIbgLPIc/f7AXtMauSxc+4Gxx
-         gAGCkNHn95EHEj/sPeDueWe1Pjjgphgo4mYwDSLtMYKmFq6P7ejszrwcpqIqSxyXlcV/
-         HYbF4Y5GN+hF9U3AmiR9AuXloEP1DpIi1EhuWGSH4az0zBVcgbZorjnT2XEi3gBYjt1g
-         jmBvp3zhUr02nUvCxVPmGTGgl6QvXlx917z04+Vm/1uDfwhNrfYEkEOFl9AbTBaN1h+v
-         mrSUWOZHHCph9VGTYtHUdrEywN7HBHO4xQS5xkbriFYMy/F3IPFuOB0bajqHWp6mj5Wg
-         3Ztg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkeU6gj5eWxbgV9B1IugPQSQ4FaR1wsYhBjzJZ63oc6q2oOKu6sdOUfxZgo3g1H1jTFLPkzirNKjPr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxValGV1p2Olr7/z/vRhC+wOnX+jMX8iHaYVJk1WHXS4ilPgG9L
-	NMwfoRq1etjxaUAUuevfGZP7dJJMez87rRemNOowEfI7dWIAhmQUDZsgsNcAmD2DESs=
-X-Gm-Gg: ASbGnctgD4TJhbDKZYc1tH8VyUbMXXaEWAjfWXHgR1C4DiOX9AQWtoRo+X7zMFuAhJ3
-	uM1SRo1GkyueUEksQ76ihX2Sg+AI5+GKpQD+he1aXOtHO7g+VhLGNJca7HrzNpMkUiZ19l5fNE2
-	/lUJjHIKuhkZSdU/BTcmwKsJ70otPmcsiHyC5evAKNKJ6hrqT9uUmi9qixfHkzBOLbp+ukkOXKr
-	XSnUyCZTfCLVT1EY0SR6IfBvpY9WdatxgWM/4EgIg8m6hMKi1MpOG7tDKGAEjFaaxuJ29NvJdxa
-	/Rfl38wH3NKgmW4CDEygq2XDLqNIYB8MPQS8XLp+bxSFR5XRdoE/SJS4O/bnjw==
-X-Google-Smtp-Source: AGHT+IH9rEDeNXFSSnMBqu6I5pB5WPT7zqUetHOerVAMMI8lCebpPpqi/qM3evPjb+mgZmc3Iz0qeg==
-X-Received: by 2002:a05:600c:3b2a:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-453659b68afmr92295725e9.6.1750663666401;
-        Mon, 23 Jun 2025 00:27:46 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5ce:238e:62a6:cbbc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646d7fe5sm100018525e9.16.2025.06.23.00.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 00:27:46 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 00/12] gpio: use new GPIO line value setter callbacks
-Date: Mon, 23 Jun 2025 09:27:44 +0200
-Message-ID: <175066365840.13100.13826929521170869175.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250619-gpiochip-set-rv-gpio-v2-0-74abf689fbd8@linaro.org>
-References: <20250619-gpiochip-set-rv-gpio-v2-0-74abf689fbd8@linaro.org>
+        d=1e100.net; s=20230601; t=1750663818; x=1751268618;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JyX7Id45J55w0I/fP0ufUOPO5FO7kbptXGfhsQYTedw=;
+        b=ttBXmxveaThhjoeV0NWVgv9U6qsRmCdgkrO0IAVX3EC3YA8AUHMfsd2nehTPnYCuU4
+         b3GtafHEgjPy/xHB12dhOn3Q08Gul1JaXd/dFeZJNiepG2iPFtKo2ic5jglVP3V+q4om
+         isTUMseZjVctVYGcyIq4CNFB7bUwHDSksxlzMkohdAQGzw6iyj2dHmuDkuZy22GRPmQ6
+         mB+yqYljOV3pavRkOeJp3m7+UHVGw8L2rncq/HJ1j4YLDUYTHhI5X4ecpoGIiWxtkQeL
+         /AAJ1OR5Oq/AA2e3t3Vi37ffH05EF9How5QwHZWC4C9tB2kfBhGBHCWjv1vLZyQCDOyP
+         61Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX82gYF73v0f4GZSDSfNME+Jlxbuy/mP5RTDgOYpL053p+FynRgPmqFYaezhPt1e3PkRGTVYUqS8p0h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6dJD17SwrFKO2ORAfA8x2EuqI6oGHd+Z7jhMezuM56STs43Yz
+	D566ocIH/0qEJjKLxl3oVOVJp0wZo0w4xV+8THE0Ql7EBbnnUXGgyETIyGdeVRFvOJM=
+X-Gm-Gg: ASbGncs6+cs/lPBtgcF0EHff9HWcXHDANxUi5lchwYW/mYYXqU4Rm6yFWe893iQUigB
+	rL6+h2Afkv7GRPDvWnpzplYZQNLtkM+JbAMq24pMNTVNxH5MbY7L2uGuGrxVV3JsUaCabSnAVvD
+	V2EbXSB4xivNm0CpAgbG2XoFPXejYXxnPfkoL345d437MKAePTV1YbmTCRZENwoI8OuMO7BtPyJ
+	NvaPuUAVs2c+m1Z3oXd2pFgaOE6SvUY46xGA1lsr/Xx1DlRs7wOJY/AuiYmVM/xTun1DycKOKYF
+	4V16yhU0hfzrdRX4TfoEobmftM8wofL2zqVzSdnunAg+BQdno6OxGWXZWUR4EjMNy4QgGReWaiN
+	6Bbl0yvbh6GrU0y+uvg==
+X-Google-Smtp-Source: AGHT+IE5sAJn2EldwKQPeiP4adLRE3U5OsQwf6bTownItGgAHFLMi64HBwYJ6D64VqjEns0LJrnYrg==
+X-Received: by 2002:a05:600c:3549:b0:43d:fa5e:50e6 with SMTP id 5b1f17b1804b1-453659ddde0mr39535235e9.9.1750663818470;
+        Mon, 23 Jun 2025 00:30:18 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646fd816sm101186905e9.24.2025.06.23.00.30.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 00:30:17 -0700 (PDT)
+Message-ID: <16ae3a9e-4ba5-48a0-959c-4c593d1f90b6@linaro.org>
+Date: Mon, 23 Jun 2025 09:30:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/10] ASoC: dt-bindings: mediatek,mt8196-afe: add
+ support for MT8196 audio AFE controller
+To: =?UTF-8?B?RGFycmVuIFllICjlj7bpo54p?= <Darren.Ye@mediatek.com>,
+ "krzk@kernel.org" <krzk@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "tiwai@suse.com"
+ <tiwai@suse.com>, "robh@kernel.org" <robh@kernel.org>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "perex@perex.cz"
+ <perex@perex.cz>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20250620094140.11093-1-darren.ye@mediatek.com>
+ <20250620094140.11093-9-darren.ye@mediatek.com>
+ <011093f8-85a1-4c3c-b3fa-7be9e6df8a25@kernel.org>
+ <3562cdd32d6f723a35ed063b65560a8e25801255.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <3562cdd32d6f723a35ed063b65560a8e25801255.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Thu, 19 Jun 2025 10:33:13 +0200, Bartosz Golaszewski wrote:
-> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
-> values") added new line setter callbacks to struct gpio_chip. They allow
-> to indicate failures to callers. We're in the process of converting all
-> GPIO controllers to using them before removing the old ones. This series
-> converts another round of GPIO drivers.
+On 23/06/2025 08:52, Darren Ye (叶飞) wrote:
+>>> This patch adds initial support for the audio AFE(Audio Front End)
+>>> controller
+>>
+>> Why this was changed to undesired 'This patch' (see submitting
+>> patches)?
+>> I think you are circling back to previous versions, reintroducing
+>> issues
+>> fixed in between.
+> 
+> Thanks for you feedback. Just to confirm, for the next version, should
+> I revert the subject/description back to previous version and only drop
+> the document part, whitout making other changes?
 > 
 > 
-> [...]
+> Please see the following change:
+> 
+> ASoC: dt-bindings: mediatek,mt8196-afe: add audio AFE
 
-Applied, thanks!
+Yes
 
-[01/12] gpio: pca9570: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/40b71f1171da13664e9677fbd993d9098315d71e
-[02/12] gpio: pcf857x: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/4027438be823abdcfb50ee2abed06fa4e6af4b7c
-[03/12] gpio: pch: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/74260fb09cc6f6e7bb6741bedca4463079800ead
-[04/12] gpio: pl061: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/201e0f24a5b73fa73606ae2261d155f00cb6d577
-[05/12] gpio: pmic-eic-sprd: drop unneeded .set() callback
-        https://git.kernel.org/brgl/linux/c/fecdef830c442e4375a3bbdde26af385583fb05c
-[06/12] gpio: pxa: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/f1ff31c8ef80f4720ebf7854e6af6204dddd9ce3
-[07/12] gpio: rc5t583: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/309ea5811136a06f572c7abbeae2dcf773629a5e
-[08/12] gpio: rdc321x: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/76033f1f927cd93907c1e9eb3f86e54015e4366d
-[10/12] gpio: rockchip: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/6731ad96e8770595d4a6ceb07e587b07d22da110
-[11/12] gpio: rtd: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/d68ddf651dd2faea5cdc6f6656148b739c38645b
-[12/12] gpio: sa1100: use new GPIO line value setter callbacks
-        https://git.kernel.org/brgl/linux/c/cb908f3699fb137e28017a8fdf506c35762b3eb6
+> 
+> Add mt8196 audio AFE.
+
+This can be longer, but just read submitting patches regarding preferred
+style. Changing to less preferred makes me thinking you did not read
+that document.
+
+Anyway, don't send new version just for that.
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Krzysztof
