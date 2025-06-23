@@ -1,52 +1,52 @@
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAE81EFF9B;
-	Mon, 23 Jun 2025 07:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622961F7580;
+	Mon, 23 Jun 2025 07:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663951; cv=none; b=R4VWtua7xkJAd7tgLpHAWAnE/bCWauzgal8TcVwnFd3vcHRIb7TEgsj+Ix5IBgskFAJFaVyMJbSPR2ik6exPoOe2Zhcfrr/tfaKv+sm6VR+aHOg6r8nFpxpZGPGa9BoYuCOHOq4bw6LEB73M1ejuXK1sbq1vQ74sdT6cWVcwoAg=
+	t=1750663976; cv=none; b=ks67LiA2la2VlmuJw0juXpKGlvvUKb2XhhNDa6PBFkW1F3F6DXErFndLEnPCldjf8Y0rr4oeyMPOgZpk9XnJP4BIW1gQZw1fpwL4dNLqJjODdQnR3ODtCc8yGthWEiQD9vv4WpMAeROArT2mqAXoDP0ryXWwKxAL3tm6BM5wfHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663951; c=relaxed/simple;
-	bh=P8a+DcLfMOt2qJJBryEw3cxweFZmrrMySmHyPB0vk8g=;
+	s=arc-20240116; t=1750663976; c=relaxed/simple;
+	bh=1m5OnnxjWL9VN+wtnRzuA+rlHA6x1D626ue2vnZfXyI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=a6sglNyKGz6Gn7vCa9UiBqY9RuesyR4TFZkaMV/6o8zNzaKUuVLMlwZZi6Hm+S0JWsTd5ctuc74uqTLQ1Oi0aKN8UiKaer5A++sQdzTz/VTZ6ILlZAxF/LAJgywKmi+ETrGtqMXQ9lIbwta4NfFpQcMitG7aAkdar5fL3WN4VLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oKgafiSA; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=UFQRkciZ7/jEgrRdLerURMnL2dEKFRcZ2vExSCWsglThWvlO2vKNR/IbcBGFrPsOBTMVZoaDI7sqRCaK02ftngk3WQsAjB00xG2hKnh3PXZWC5g3IkeEIsHT7j7q3uj+AQAOPKx5DxWgxkUCG0BbKvV7pCiK9pgnt8TJNjeDIy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Rd3Wt/Th; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oKgafiSA"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Rd3Wt/Th"
 Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N4bYPo006473;
-	Mon, 23 Jun 2025 09:32:01 +0200
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N5NbDc016501;
+	Mon, 23 Jun 2025 09:32:41 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZTQBEKKpUKJ2EHlkrbcRSsrVXSaMIyD8QzSmT3bFAXA=; b=oKgafiSAS9XMZXqt
-	6jwgcRnnZpdvlS6FwFHA8XzABA4P2yY9hEXfb7wsIqHy2ebDOHW78vobjJRSUlGr
-	kNrFUWkq/lX5npdq704U+E0h6xFpsUK+aW1lVwqm/aUYQWhzU7/Y4NyIJAV5zhob
-	3mr8Q5XOU15RfsjW1s/A76DPrrHmh+UMsmdWLEiAsjrgh6bYpKnJUUlmcenNirUr
-	aTnnY5eXnENVyc9uZV0rQhnIaW7LiZmnT6blwPtBSMvOLw/C8b5xIuMexdP/SdDT
-	SbYOfXOI2gCdrIQ3UKLcJK7KQ4H+uLQL7zDmcpWSW+VWqALioBTCZECuESjKxajS
-	vo3KiQ==
+	bdfof7YVHPqqVJskqcp8Mb6z68TEM/cVCbIwTuZD4YU=; b=Rd3Wt/ThdNvCV5K3
+	Yl3NsW8IsJA2RKKJT1xL9OCVDGEfIwRcLR9CMYMT28jNbUlwrKZB/yC9evK/WPX1
+	Kkdl2nMClijS9DuzJM44QZ3Zo3RW66z707vRzaLU5xCVdGJJ85BsPt7znm2+spLs
+	hYHEDz2msv/BBGyrfgrHsFgHh/6rieyotldixKIBtSRo5T36+fhRa4mrHVkZCCnk
+	ZLx8grgk2SXKU/G9IjalCKICwQcsaXAdaBQagWVsJVDs2Mt2JPffJoJJGLhXPu+V
+	Pj+3lmBX7GV6wpzWk0gWWo/3DOYBVcXF5x37Zd5cHGo1xnKgAWqMkQgLvISEyCGY
+	7vvpaQ==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5ner57-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5ner7w-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Jun 2025 09:32:01 +0200 (MEST)
+	Mon, 23 Jun 2025 09:32:41 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 64DD740057;
-	Mon, 23 Jun 2025 09:30:51 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 58E0F4004C;
+	Mon, 23 Jun 2025 09:31:34 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 56593B5A33F;
-	Mon, 23 Jun 2025 09:29:48 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C7582B54BB9;
+	Mon, 23 Jun 2025 09:29:43 +0200 (CEST)
 Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
- 2025 09:29:48 +0200
+ 2025 09:29:43 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Mon, 23 Jun 2025 09:29:18 +0200
-Subject: [PATCH v6 8/8] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp157c-dk2 board
+Date: Mon, 23 Jun 2025 09:29:13 +0200
+Subject: =?utf-8?q?=5BPATCH_v6_3/8=5D_MAINTAINERS=3A_add_Cl=C3=A9ment_Le_?=
+ =?utf-8?q?Goffic_as_STM32_HDP_maintainer?=
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250623-hdp-upstream-v6-8-387536f08398@foss.st.com>
+Message-ID: <20250623-hdp-upstream-v6-3-387536f08398@foss.st.com>
 References: <20250623-hdp-upstream-v6-0-387536f08398@foss.st.com>
 In-Reply-To: <20250623-hdp-upstream-v6-0-387536f08398@foss.st.com>
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -80,33 +80,30 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-23_02,2025-06-20_01,2025-03-28_01
 
-On the stm32mp157fc-dk2 board, we can observe the hdp GPOVAL function on
-SoC pin E13 accessible on the pin 5 on the Arduino connector CN13.
-Add the relevant configuration but keep it disabled as it's used for
-debug only.
+Add Clément Le Goffic as STM32 HDP maintainer.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- arch/arm/boot/dts/st/stm32mp157c-dk2.dts | 6 ++++++
+ MAINTAINERS | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-index 1b34fbe10b4f..a6ae6ca14cdc 100644
---- a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-+++ b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-@@ -63,6 +63,12 @@ &dsi_out {
- 	remote-endpoint = <&panel_in>;
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8afc99d4284d..b65ee4f24a14 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23460,6 +23460,12 @@ F:	drivers/bus/stm32_etzpc.c
+ F:	drivers/bus/stm32_firewall.c
+ F:	drivers/bus/stm32_rifsc.c
  
-+&hdp {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&hdp2_gpo &hdp2_pins_a>;
-+	pinctrl-1 = <&hdp2_sleep_pins_a>;
-+};
++ST STM32 HDP PINCTRL DRIVER
++M:	Clément Le Goffic <clement.legoffic@foss.st.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/st,stm32-hdp.yaml
++F:	drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
 +
- &i2c1 {
- 	touchscreen@38 {
- 		compatible = "focaltech,ft6236";
+ ST STM32 I2C/SMBUS DRIVER
+ M:	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>
+ M:	Alain Volmat <alain.volmat@foss.st.com>
 
 -- 
 2.43.0
