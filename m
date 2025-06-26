@@ -1,169 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76D82E336E;
-	Thu, 26 Jun 2025 13:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311822E5422;
+	Thu, 26 Jun 2025 13:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750942876; cv=none; b=c1aKcSXYjTQ7QGOSPTd8Bm2UoHD9yIhDIFX8oZfwujmajEBNr7FOScnezRe00qt6oZLr8L6Al9QGs5c7pWT4oeOmSXsMtBFMV1c4jHZzoHeL1oeil85pBBdZjgnuoitK0hpcqN8nBSRxy5gYXB7jQCKtmAf10cKHsZy2DhB86yY=
+	t=1750943103; cv=none; b=p9IC4HuxIhh0lik9Po5EzrYrkFkQNpmiWKoKdCKwobqrECw1DAXMdMJatFaBClroqB1sY1ux8QtvIPhFxJfdFvAosdkUThUMUd0IW9aO4zziSLEqgFtqmIWeEN7pQK+cYBmXz1zff6ydzejtPEP5V2O4h0ZDGaqlGRhbUqbcpqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750942876; c=relaxed/simple;
-	bh=yIokvzezyxkaDoR3N6Db1QnHti3wLHxdRvurH4Gd3hQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CiAX0H22kCBiKqX8ovzyD/ymhUYKHmyxqBoQSdldMNyxIKTE2rSp+nDLIP8Yq+cH3rFwNoo8xKsBs2O8G8G7M+H8yFw86jvB9rn8B6vsVhZ5mPwE4KI/MkNHEFMynzUs0rL7usVt5xo3q5uAkE0bAIP3rJIiS2AbJlndHuxHyvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q28LkwpJ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q28LkwpJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750942875; x=1782478875;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yIokvzezyxkaDoR3N6Db1QnHti3wLHxdRvurH4Gd3hQ=;
-  b=Q28LkwpJD91V9C2PpGlriGKY1Ti1Crda0ka8xO2wHlCYkD5b1bOfp6gx
-   LG7h7IPLDQivtRi59e0Td4V1YIppR0t6yx1Etv+lFWQbIxiUSMkbqbUoC
-   pquddECptbu18NylqIYgYMjLnOLc0LAwSIWxFK0arZmdw3v3vQed79lWt
-   hY5SV0AE6Uhj4XYfqRoB04hSWA2bB+Au1wMhEnsjEi6sTflGTo07aDC9M
-   PWPZhQEW6AyTjmSO2Vrv+mhfaa+PvR5xTu8yRHC1NnZoHHgfe1TTW/9Ug
-   CJg+G2NHlH4Gn1OhiGfpzYXuPyNvsmzunuo1robCzmJbqvPeAyfOdYui6
-   g==;
-X-CSE-ConnectionGUID: ffUVeZtAQburegXcMPnnAw==
-X-CSE-MsgGUID: T9TpO67TTeSVhUfyVN7umA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="78672894"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="78672894"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 06:01:14 -0700
-X-CSE-ConnectionGUID: Om+uTs5ZRLepCITQ05kCIw==
-X-CSE-MsgGUID: 4veAPY2LToqV56gdbka4rQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="153014283"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 26 Jun 2025 06:01:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 650952E2; Thu, 26 Jun 2025 16:01:10 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Subject: [PATCH v1 1/1] Documentation: firmware-guide: gpio-properties: Spelling and style fixes
-Date: Thu, 26 Jun 2025 16:01:09 +0300
-Message-ID: <20250626130109.215848-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1750943103; c=relaxed/simple;
+	bh=Zg6n9+fDJweT6Uz/V3QgsqAq8lS5PEBp9NwmbTssgA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBTj8XhmcZSRJdyyHVg+G72y+v2I9BRnOmnx3yI1IBBvCGNLx0GG/SPBGF5q+GrnCiiXcFykwicgpgKklHGKoOijRLj6/kwswaSeuwjjCxDMSxCHf29X3CTxZXx85Uahs0y5gNn2ifBD0aQM8+Sa7SkOgugSWycRvy3VNfEkCp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6118c1775dbso274136eaf.1;
+        Thu, 26 Jun 2025 06:05:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750943100; x=1751547900;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nwelGdzzBqrFi3lwFmRNoT/LP3o0akWT3IDqwLELD1k=;
+        b=KhMPZmh0CBdCYzwP+fxeGqEMRgjFZOz2Jk2mwYlc9V46pFwqmH2TwxGq+PohPvWbpf
+         6iNQJtOPeHPmzrQf/czp231PP4qdgQ47H+UsM/UX90CMTA2NEHYAir+SwlaL+nK6eHSa
+         OqXg3bh0SH6efkMVhWDaLFarJNETqVzYjK0RnaIi9HPJVr0P+L2bwRX9CeZMPdZOBVrI
+         pBJFB6kOoSJW/UCwO6PvuLj6AHSdqmSQwCkQBieSWHVZp2k8u29Z7FDufdWmZZaUEe7v
+         ccPr8yHcnIo8+g3OO0sj9jA3xLHqaGe4+dEhzI8BVn8X83JTKQdi/txg3IKVsr4NbX1c
+         Q0Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7a5YuHKVreQ0TXFtZ5d/8UEwpCU0ptlIcx9zcP+D6R2ssqZNSKjYXL3aWSIrgoDw5nIg5LHwEidKS@vger.kernel.org, AJvYcCWc7ggN7H/Ros6uEGCIpPkC3x0wwggxKeDvKY6xCbQmV0HFxK1GYTaeCWloOt+V6QCwvFhG9yGSU6q29vfaujXIpj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPZxyNLsRCUJHEQB7YAUce1XT+FMADV+zJNCxocvb3Inj4pzvH
+	DRo7ViLdF/37+M2fUnkCaZ7xglZfXo5FcRia/Xr46ApNW+81dGoMfjsCsgq7BhJE
+X-Gm-Gg: ASbGncuCAON2EDqUNSyVX1VxpMaId9quL3ZHcCV0zdz+mZ4fEq1bBR0XmeHkyawEGm2
+	GB6uG8xxbEK2g0VDWjEOPc46YHIs8zmK4bjM8PyQSZSdx1cv38jiQOiSaJXV2IG4b+8MLcv2ZMF
+	i4Tv6HoW6iGv6KbqFvOaLMM5Xtwy5GFqq2SIsAei5c5/OLGihMutqGKRWsuFCiVF68lumo225bx
+	cOMbPnqii2iFuOYvH02APWRjJpyvBaKxwYEGIW5GKLyOqdgvjc4PUuVBpL7UZyyRS67+sfQM9lW
+	IRLbs0hb5+J4dxsGsELEGc1XNd6m6MZly9o7JXmHBBdPIAUmXs8t9mLGZC7ToEe/if5nO7qVVwg
+	rs46MMWwRCTiKCK2cKldJ5b/coCRP
+X-Google-Smtp-Source: AGHT+IGGUO/djx5ci9ymgTZlwzvkYRMPKBgz09qc5Iy1jat69qtGf5YQi1gSousJ9ZekxAG5iR6mWw==
+X-Received: by 2002:a05:6871:5829:b0:2ea:7101:7dc0 with SMTP id 586e51a60fabf-2efb23f9f8dmr4744469fac.32.1750943100441;
+        Thu, 26 Jun 2025 06:05:00 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a90cc31d4sm2592240a34.65.2025.06.26.06.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 06:04:59 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-407a6c6a6d4so301789b6e.1;
+        Thu, 26 Jun 2025 06:04:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+cZVu0xG+IY6fOimEZvHAqoU3GBxYsuGOEUnANQRRhm3E8tx85E5fIqwYsdr2+GYHZyS2oAN0Z+XL@vger.kernel.org, AJvYcCX17/CNtEhsIV5D2QY7ftk2vzWKjBP07MSgPG7N3dVlogHO1biwDBX6ceMh5Da3wtxywEbLos9fqdvgCygRBEvn0X0=@vger.kernel.org
+X-Received: by 2002:a05:6808:f14:b0:3f6:a9ea:eab3 with SMTP id
+ 5614622812f47-40b0572bdddmr5486277b6e.5.1750943099433; Thu, 26 Jun 2025
+ 06:04:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <87ecv9ragd.wl-kuninori.morimoto.gx@renesas.com> <875xgk4j9l.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <875xgk4j9l.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jun 2025 15:04:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWst5fhcUgWbTqzG_DQmuL8tWtUuCpg4BoeqhnCfo_MVw@mail.gmail.com>
+X-Gm-Features: Ac12FXxAH1k0xY_ndZNBs6UhvgeFvXcCG7-OjQDOK2TAr9u1UpT2qx3HmqzT9j4
+Message-ID: <CAMuHMdWst5fhcUgWbTqzG_DQmuL8tWtUuCpg4BoeqhnCfo_MVw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: renesas: tidyup Kconfig
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-- Use consistent style for active-high and active-low
-- For C and ASL code snippets use 4-space indentation consistently
-- Interleave case examples with the explanations of the certain case
-- Remove or add commas when appropriate
+Hi Morimoto-san,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- .../firmware-guide/acpi/gpio-properties.rst   | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+On Wed, 25 Jun 2025 at 05:01, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> > Current Renesas pincontrol Kconfig is randomly sorted.
+> > And, the menu prompt is also ramdom.
+> > This patches tidyup these.
+>
+> Ah... this is menu alphabetical order, instead of SYMBOL...
 
-diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Documentation/firmware-guide/acpi/gpio-properties.rst
-index db0c0b1f3700..5addf7aaa833 100644
---- a/Documentation/firmware-guide/acpi/gpio-properties.rst
-+++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
-@@ -6,7 +6,7 @@ _DSD Device Properties Related to GPIO
- 
- With the release of ACPI 5.1, the _DSD configuration object finally
- allows names to be given to GPIOs (and other things as well) returned
--by _CRS.  Previously, we were only able to use an integer index to find
-+by _CRS. Previously we were only able to use an integer index to find
- the corresponding GPIO, which is pretty error prone (it depends on
- the _CRS output ordering, for example).
- 
-@@ -49,11 +49,11 @@ index
- pin
-   Pin in the GpioIo()/GpioInt() resource. Typically this is zero.
- active_low
--  If 1, the GPIO is marked as active_low.
-+  If 1, the GPIO is marked as active-low.
- 
- Since ACPI GpioIo() resource does not have a field saying whether it is
--active low or high, the "active_low" argument can be used here.  Setting
--it to 1 marks the GPIO as active low.
-+active-low or active-high, the "active_low" argument can be used here.
-+Setting it to 1 marks the GPIO as active-low.
- 
- Note, active_low in _DSD does not make sense for GpioInt() resource and
- must be 0. GpioInt() resource has its own means of defining it.
-@@ -231,8 +231,8 @@ In those cases ACPI device identification objects, _HID, _CID, _CLS, _SUB, _HRV,
- available to the driver can be used to identify the device and that is supposed
- to be sufficient to determine the meaning and purpose of all of the GPIO lines
- listed by the GpioIo()/GpioInt() resources returned by _CRS.  In other words,
--the driver is supposed to know what to use the GpioIo()/GpioInt() resources for
--once it has identified the device.  Having done that, it can simply assign names
-+the driver is supposed to know what to use from the GpioIo()/GpioInt() resources
-+for once it has identified the device. Having done that, it can simply assign names
- to the GPIO lines it is going to use and provide the GPIO subsystem with a
- mapping between those names and the ACPI GPIO resources corresponding to them.
- 
-@@ -252,9 +252,9 @@ question would look like this::
-   static const struct acpi_gpio_params shutdown_gpio = { 0, 0, false };
- 
-   static const struct acpi_gpio_mapping bluetooth_acpi_gpios[] = {
--    { "reset-gpios", &reset_gpio, 1 },
--    { "shutdown-gpios", &shutdown_gpio, 1 },
--    { }
-+      { "reset-gpios", &reset_gpio, 1 },
-+      { "shutdown-gpios", &shutdown_gpio, 1 },
-+      { }
-   };
- 
- Next, the mapping table needs to be passed as the second argument to
-@@ -270,7 +270,7 @@ Using the _CRS fallback
- 
- If a device does not have _DSD or the driver does not create ACPI GPIO
- mapping, the Linux GPIO framework refuses to return any GPIOs. This is
--because the driver does not know what it actually gets. For example if we
-+because the driver does not know what it actually gets. For example, if we
- have a device like below::
- 
-   Device (BTH)
-@@ -292,7 +292,7 @@ The driver might expect to get the right GPIO when it does::
- 	...error handling...
- 
- but since there is no way to know the mapping between "reset" and
--the GpioIo() in _CRS desc will hold ERR_PTR(-ENOENT).
-+the GpioIo() in _CRS the desc will hold ERR_PTR(-ENOENT).
- 
- The driver author can solve this by passing the mapping explicitly
- (this is the recommended way and it's documented in the above chapter).
-@@ -318,15 +318,15 @@ Case 1::
-   desc = gpiod_get(dev, "non-null-connection-id", flags);
-   desc = gpiod_get_index(dev, "non-null-connection-id", index, flags);
- 
-+Case 1 assumes that corresponding ACPI device description must have
-+defined device properties and will prevent from getting any GPIO resources
-+otherwise.
-+
- Case 2::
- 
-   desc = gpiod_get(dev, NULL, flags);
-   desc = gpiod_get_index(dev, NULL, index, flags);
- 
--Case 1 assumes that corresponding ACPI device description must have
--defined device properties and will prevent to getting any GPIO resources
--otherwise.
--
- Case 2 explicitly tells GPIO core to look for resources in _CRS.
- 
- Be aware that gpiod_get_index() in cases 1 and 2, assuming that there
+Courtesy of your commit d89a08f52b0dd30d ("pinctrl: sh-pfc: Tidy up
+driver description title") in v5.10...
+
+> OK, please drop this patches.
+
+Actually I prefer the sorting by Kconfig symbol/part number, and
+somewhat regret applying the aforementioned commit.  So if you agree,
+I am happy to take this series!
+
+Then we're just left with fixing drivers/pmdomain/renesas/Kconfig
+and drivers/soc/renesas/Kconfig ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.47.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
