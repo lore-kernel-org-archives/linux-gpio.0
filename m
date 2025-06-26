@@ -1,92 +1,201 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ED62EE606;
-	Thu, 26 Jun 2025 18:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1979194AD5;
+	Thu, 26 Jun 2025 18:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961979; cv=none; b=c4f9oQotC8v5TAig+c25IFFu1w3UxKC4uA7C0+qNY/14pfaXmqxeKCIigW48+jKsE4dNhF0n3Zyd0IM4UKbr/RRUyWrj7BPaObtHsXZyf9G+sKeiBXIN3Yvvl/FSYRFutBwhGvI0WLXB7JxwIuGMC9O6T5Tp0r8P7a7wv+UPI4A=
+	t=1750962058; cv=none; b=a39NczTYOexXEhEg3WY9rhUwGZEM6KYI4sClGYX4kaHRG2WJxqxwWpJvPCjQLTZAX51xefv4EelC93ERrPoFmK+wDavjpwcryPoAzPStQc/DZkBeXz5bZpncvC+G3i4xmlfUZGtrFHhh7vvKlfbrbYw8QD127mgNU9tV+Mjj2sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961979; c=relaxed/simple;
-	bh=QNkQXNj81suZNdgejPQ/g8TgMMxfckamBb6SyqSWugk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cUqx/0bly7mzloOuhm6UxjdXHPjx+w+8PWzrTx6Q9sgIMmRckZs2U+kmcNI9EOIXvNnJ08xPaN9pFMBS+ass5eU257z6K7GU4wuq7sdgPv3IAGSKjuxcGf0xGFVnU2SbYxkJRrIBCk+hrZNwFz1pxznG6y5bdnT3v66qAR7Jvqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UfkC2P/I; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1750962058; c=relaxed/simple;
+	bh=wfIlpLMZLEp7iEI0/9yZjuSwtSYUGXsKA3C6nGksKZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z3oPoTy7eu2Hi4PuGZhmGocG3062CcHIGz4it06S7u4H4S1RQskzCVV8CULtOUC31tID4mxZZeQbeXRYLFeai2oKWVkj6EhShuJHDOeMu/+iUQcvKpHVPQPiKSeD5ZpySrw7MkNxc+TrfLQgbCkLEn8E9xCnVsZ9jcu+YOm7CA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxJyu2GI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UfkC2P/I"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QG6Ak2025531;
-	Thu, 26 Jun 2025 20:19:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=v4xN43MYu3e3S0oexgiTVn
-	3iIbbwbmNw+3LdQPITQ9s=; b=UfkC2P/IykYF5tUIvNYKlakfc/jQsk7sbMry14
-	CpFISpfAe/7UADp8LrZfoJo4JDLQF7Iwxw8VE0I8YZu78MPG9s9x5MNCffwVkJKV
-	Opzevu9WwtdPeoGVtJkiglWOvYxwJ/diU22cSbgLyyxhorRIbA6UdduPqjlw1qA6
-	BLHpPVwotIrJaGfWrw6px1xeAxLYC3ozWYZEy8kTQhrTPWbAqEFWSUR1JfCqHZ54
-	6q2bbYW8FkSv4oEM9crQzD9Ta85vltZjcRsGzwWlj72zVLi+IIfGwIIlBVsJSrhk
-	3CA3VsmVWsl2sovE0OUZVKJjiNufHxH3xa8yDzEDkQtDOWDg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dhvbysfc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 20:19:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DF59540055;
-	Thu, 26 Jun 2025 20:18:02 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2FC45BAE253;
-	Thu, 26 Jun 2025 20:15:41 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 20:15:40 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>
-CC: <linux-pci@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-Subject: [PATCH 0/2] Add pinctrl_pm_select_init_state helper function
-Date: Thu, 26 Jun 2025 20:15:35 +0200
-Message-ID: <20250626181537.1872159-1-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxJyu2GI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A41C4CEEB;
+	Thu, 26 Jun 2025 18:20:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750962056;
+	bh=wfIlpLMZLEp7iEI0/9yZjuSwtSYUGXsKA3C6nGksKZA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PxJyu2GIGhPRAH6dE+pDZmNZXOtkj9toMN5pOarveVaVI8dLP9SnRN4sDeiPMocST
+	 3b89QJhvwFDJ0BafbAfX2DoDIYi3TqQmo9ZhfbHKTj9GC1tXFxB2y35DVMOqpkSCpi
+	 RgLeQBUYzvyuHlvzI2jAphGsYSLkfoXyoLVM6zLvI7sVk36bqKBcCFhrtkpMMgbc2P
+	 9Nt+0ZKBBMq1CNb84qgJgOzOQGstckj/dXRhh1zUbkppzD6yoYCxcEUBOIRRinT2Ae
+	 ker2RR3fa/G1/3DivxomVJ+9fKVwHmnxLCMO2xVxDVPTixiH79T2B2ZoyRyxkfHsRQ
+	 euOHV13x2fcNQ==
+Message-ID: <cbbf0caf-82ce-4427-9844-b11e0f5cacdb@kernel.org>
+Date: Thu, 26 Jun 2025 13:20:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake
+ system
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+ "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
+References: <20250625215813.3477840-1-superm1@kernel.org>
+ <20250625215813.3477840-5-superm1@kernel.org>
+ <710f7c04-0099-4611-b2ea-4dd4219ad5e2@kernel.org>
+ <23f30094-68cc-47fe-86e0-5289cb41e940@kernel.org>
+ <rn2kp5tog2agvswva2ipqq2ytiqdcgccnocudsg6ckwfh4roei@provk2g6dita>
+ <363c2b92-4bfc-4537-9fca-025eef09526f@kernel.org>
+ <nxticocp26r5mmpkttritw76h5igw7bdpus6zaf5krkso2h5xy@wna6m2quekfi>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <nxticocp26r5mmpkttritw76h5igw7bdpus6zaf5krkso2h5xy@wna6m2quekfi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some platforms need to set the pinctrl to an initial state during
-pm_resume, just like in probe. To achieve this, the function
-pinctrl_pm_select_init_state is added.
+On 6/26/2025 1:07 PM, Dmitry Torokhov wrote:
+> On Thu, Jun 26, 2025 at 12:53:02PM -0500, Mario Limonciello wrote:
+>>
+>>
+>> On 6/26/25 12:44 PM, Dmitry Torokhov wrote:
+>>> Hi Mario,
+>>>
+>>> On Thu, Jun 26, 2025 at 06:33:08AM -0500, Mario Limonciello wrote:
+>>>>
+>>>>
+>>>> On 6/26/25 3:35 AM, Hans de Goede wrote:
+>>>>> Hi Mario,
+>>>>>
+>>>>> On 25-Jun-25 23:58, Mario Limonciello wrote:
+>>>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>>>
+>>>>>> Sending an input event to wake a system does wake it, but userspace picks
+>>>>>> up the keypress and processes it.  This isn't the intended behavior as it
+>>>>>> causes a suspended system to wake up and then potentially turn off if
+>>>>>> userspace is configured to turn off on power button presses.
+>>>>>>
+>>>>>> Instead send a PM wakeup event for the PM core to handle waking the system.
+>>>>>>
+>>>>>> Cc: Hans de Goede <hansg@kernel.org>
+>>>>>> Fixes: 0f107573da417 ("Input: gpio_keys - handle the missing key press event in resume phase")
+>>>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>>>> ---
+>>>>>>     drivers/input/keyboard/gpio_keys.c | 7 +------
+>>>>>>     1 file changed, 1 insertion(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+>>>>>> index 773aa5294d269..4c6876b099c43 100644
+>>>>>> --- a/drivers/input/keyboard/gpio_keys.c
+>>>>>> +++ b/drivers/input/keyboard/gpio_keys.c
+>>>>>> @@ -420,12 +420,7 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
+>>>>>>     		pm_stay_awake(bdata->input->dev.parent);
+>>>>>>     		if (bdata->suspended  &&
+>>>>>>     		    (button->type == 0 || button->type == EV_KEY)) {
+>>>>>> -			/*
+>>>>>> -			 * Simulate wakeup key press in case the key has
+>>>>>> -			 * already released by the time we got interrupt
+>>>>>> -			 * handler to run.
+>>>>>> -			 */
+>>>>>> -			input_report_key(bdata->input, button->code, 1);
+>>>>>> +			pm_wakeup_event(bdata->input->dev.parent, 0);
+>>>
+>>> There is already pm_stay_awake() above.
+>>
+>> But that doesn't help with the fact that userspace gets KEY_POWER from this
+>> and reacts to it.
+>>
+>>>
+>>>>>>     		}
+>>>>>>     	}
+>>>>>
+>>>>> Hmm, we have the same problem on many Bay Trail / Cherry Trail
+>>>>> windows 8 / win10 tablets, so  this has been discussed before and e.g.
+>>>>> Android userspace actually needs the button-press (evdev) event to not
+>>>>> immediately go back to sleep, so a similar patch has been nacked in
+>>>>> the past.
+>>>>>
+>>>>> At least for GNOME this has been fixed in userspace by ignoring
+>>>>> power-button events the first few seconds after a resume from suspend.
+>>>>>
+>>>>
+>>>> The default behavior for logind is:
+>>>>
+>>>> HandlePowerKey=poweroff
+>>>>
+>>>> Can you share more about what version of GNOME has a workaround?
+>>>> This was actually GNOME (on Ubuntu 24.04) that I found this issue.
+>>>>
+>>>> Nonetheless if this is dependent on an Android userspace problem could we
+>>>> perhaps conditionalize it on CONFIG_ANDROID_BINDER_DEVICES?
+>>>
+>>> No it is not only Android, other userspace may want to distinguish
+>>> between normal and "dark" resume based on keyboard or other user
+>>> activity.
+>>>
+>>> Thanks.
+>>>
+>> In this specific case does the key passed up to satisfy this userspace
+>> requirement and keep it awake need to specifically be a fabricated
+>> KEY_POWER?
+>>
+>> Or could we find a key that doesn't require some userspace to ignore
+>> KEY_POWER?
+>>
+>> Maybe something like KEY_RESERVED, KEY_FN, or KEY_POWER2?
+> 
+> The code makes no distinction between KEY_POWER and KEY_A or KEY_B, etc.
+> It simply passes event to userspace for processing.
 
-This allows a driver to balance pinctrl_pm_select_sleep_state()
-with pinctrl_pm_select_default_state() and
-pinctrl_pm_select_init_state() in pm_runtime_suspend and pm_runtime_resume.
+Right.  I don't expect a problem with most keys, but my proposal is to 
+special case KEY_POWER while suspended.  If a key press event must be 
+sent to keep Android and other userspace happy I suggest sending 
+something different just for that situation.
 
-Christian Bruel (2):
-  pinctrl: Add pinctrl_pm_select_init_state helper function
-  PCI: stm32: use pinctrl_pm_select_init_state() in
-    stm32_pcie_resume_noirq()
+Like this:
 
- drivers/pci/controller/dwc/pcie-stm32.c | 10 +++++++---
- drivers/pinctrl/core.c                  | 13 +++++++++++++
- include/linux/pinctrl/consumer.h        | 10 ++++++++++
- 3 files changed, 30 insertions(+), 3 deletions(-)
+diff --git a/drivers/input/keyboard/gpio_keys.c 
+b/drivers/input/keyboard/gpio_keys.c
+index 773aa5294d269..66e788d381956 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -425,7 +425,10 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void 
+*dev_id)
+                          * already released by the time we got interrupt
+                          * handler to run.
+                          */
+-                       input_report_key(bdata->input, button->code, 1);
++                       if (button->code == KEY_POWER)
++                               input_report_key(bdata->input, 
+KEY_WAKEUP, 1);
++                       else
++                               input_report_key(bdata->input, 
+button->code, 1);
+                 }
+         }
 
 
-base-commit: 5a972a01e24b278f7302a834c6eaee5bdac12843
--- 
-2.34.1
+
+> 
+> You need to fix your userspace. Even with your tweak it is possible for
+> userspace to get a normal key event "too early" and turn off the screen
+> again, so you still need to handle this situation.
+> 
+> Thanks.
+> 
+
+I want to note this driver works quite differently than how ACPI power 
+button does.
+
+You can see in acpi_button_notify() that the "keypress" is only 
+forwarded when not suspended [1].  Otherwise it's just wakeup event 
+(which is what my patch was modeling).
+
+https://github.com/torvalds/linux/blob/v6.16-rc3/drivers/acpi/button.c#L461 
+[1]
 
