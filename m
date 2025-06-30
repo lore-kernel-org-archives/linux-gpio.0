@@ -1,117 +1,148 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB924DD14;
-	Mon, 30 Jun 2025 10:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C92454918;
+	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277927; cv=none; b=LmPVo0tIS0lALk2ncJWa+Zu/lHkGiSNA5kEmzG8E2brATbVc/0QMZM+6fq8PV8JT2ur7TlcdEm749cf2ZHcisX+65lRMUkPPKkjNRQ5ZjKV4qR1mxQxIghibfs9/g/C3H7SUhTDPkTYkHgAmPGyzT0Cr44mWX9FPUitvLt6/xVc=
+	t=1751284365; cv=none; b=PxcZ3QD1r03Tc1MCj75PYa5VCMkJyt8Z7cRScqMcpvfzXgoWKARPZ+nSBTxTvcY92bfntpYGYHSys4rtF5W+NuRirR+cLx+jSY3WA94VX6TiuLwcG9WD39dC/RrRJaZA8Iu++pyGqZRwhxUaF5OPkTn4VgjtezUf4c+1uQqOJ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277927; c=relaxed/simple;
-	bh=ZkxpKL7HyuHwZc3WHtxTqeW1UtBpp9vPfi99JxpA4x0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUQMFXIlNIWDYY0mHfQfUJLGgE0NRbzUqzptFnSHcuDG2gBXpM3vHT/sw4Lr5PKAxSWYPRVjmcVK5j8zHxoDFWrD+RE9m2IuFlniz6D+NKh1XM21Rzt8miu1LMPdaXvkwnhiv7RLFy3l+RxRCDwloHOfX7LZfyfinGDuQeLE9y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+sC/Taw; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1751284365; c=relaxed/simple;
+	bh=JiHYRMPGdiaiJDp2Yy2cbdzBFEz0+t64SK2Znk3Vw18=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QEXdl88i8vYAc1EN0dXpLzfCisdJIY0FZ67R/Tb+gVUYnRv1l3hkivPpUECquBl1qd1g+NJ+/oCDjIatESFMfvGpb++vCu0WA1bAdDMw61Bsb7rvTQ6AVFBNzIAKXUnRf1i0FJAFtcOFZ/T3F+qJnVgj/LAJmK8kkbEjxRuG0M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4Rgfq5c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+sC/Taw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751277926; x=1782813926;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZkxpKL7HyuHwZc3WHtxTqeW1UtBpp9vPfi99JxpA4x0=;
-  b=L+sC/TawAgQeNPkPK8y7kFW34JEVuxri6mWomA6oUq68M63BjbcKl1Hx
-   7CHCgA/LyFALobNqfbqVtHJjir4ElMO9XMOErj6zybCpPxO9wt193yLNA
-   +KjehdyJ73enhYeB6fh2FCqI4Qv9v4VkS8s9hctdIeqibP6jhhihBqw6h
-   nV+o8Gc7oxj/9CC7X4ruUGrsl/qLA/sTYioYV2UQgkfVVdsZ8p4m0KmAG
-   faGTCOQAdcWBJauvfQnaznXLerubQahQ3ae5nH1cfcjmxAJ8Ip5iA+7mO
-   tmePRRq42G9LbmYVBU9u+WiT/35j2BzEykkYKhx2KQxsMmKdiT2JzvvVa
-   A==;
-X-CSE-ConnectionGUID: +T8jNg4cQ3iYTn9SCZfdLA==
-X-CSE-MsgGUID: rBIyA9HNQNGFFHgtynfa5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57277759"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="57277759"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:05:25 -0700
-X-CSE-ConnectionGUID: 1fuKA7zuRaCBuxOw1I0PTQ==
-X-CSE-MsgGUID: gduxAuPNSU6vx8Op17+ALA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="190588077"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:05:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uWBO3-0000000BGrq-1AeU;
-	Mon, 30 Jun 2025 13:05:19 +0300
-Date: Mon, 30 Jun 2025 13:05:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Kent Gibson <warthog618@gmail.com>,
-	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 4/9] gpio: sysfs: don't use driver data in sysfs
- callbacks for line attributes
-Message-ID: <aGJhX9MhFAIopdwy@smile.fi.intel.com>
-References: <20250623-gpio-sysfs-chip-export-v2-0-d592793f8964@linaro.org>
- <20250623-gpio-sysfs-chip-export-v2-4-d592793f8964@linaro.org>
- <aF67oAqLmRJzy4Zt@black.fi.intel.com>
- <CAMRc=MfXVTqncPsJ3QKqsGDi36gK4weWX1iygpqg1C-XinCEGg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4Rgfq5c"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 66B57C4CEF0;
+	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751284365;
+	bh=JiHYRMPGdiaiJDp2Yy2cbdzBFEz0+t64SK2Znk3Vw18=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Y4Rgfq5cqo3kXDJSRsRaZFwob7+dKKIQ9Gcj/WZyf5oSwUKsknisKJY5msRA40owI
+	 MNAKnBSYIf2AGDKhGVjzF4YCfhvgWaT5QdLxJxFVHuNJqDfCxqGEzqH546cYVOrFxY
+	 azT0JF/fIe3TeUw9be3Q4SyFGQP4vuOQE0dxl32XfGElijfSSNYjWrLFe5Ye9tuuLb
+	 j4lxSujZ4g20PFT/HiLRsE4yblxV15jYutlUFTBq7MsX7oKrmP2nuZrkOOA9jODUj4
+	 rkg/YZHI8x/GYHK6lgBBjOfav++GtiAD9JLiCpofISFNTOlPF9i9YzVt3bjBgs2Egb
+	 8XG6Hbo+4WvOw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE1DC8302E;
+	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Mon, 30 Jun 2025 12:52:53 +0100
+Subject: [PATCH v6 02/20] mfd: adp5585: Only add devices given in FW
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfXVTqncPsJ3QKqsGDi36gK4weWX1iygpqg1C-XinCEGg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-Id: <20250630-dev-adp5589-fw-v6-2-a0f392a0ba91@analog.com>
+References: <20250630-dev-adp5589-fw-v6-0-a0f392a0ba91@analog.com>
+In-Reply-To: <20250630-dev-adp5589-fw-v6-0-a0f392a0ba91@analog.com>
+To: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Liu Ying <victor.liu@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751284374; l=2284;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=soe5P9JSSfqBEOhKOq8V4GIoTzj5UMGmO8QTcPbpojY=;
+ b=ldTUhKgNf3oEoIeX/hwN0Y/PNQms6bN4J+oLnumOoBmrJjsUWjOUvo3bRKZBevD+/aT/Y1f2y
+ Yl67OpuFbl4Cmvmywho+69XjhaigcFSc8hPiGaWZcHaDH4nS1oVRYI/
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-On Mon, Jun 30, 2025 at 10:57:06AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Jun 27, 2025 at 5:41 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Mon, Jun 23, 2025 at 10:59:52AM +0200, Bartosz Golaszewski wrote:
+From: Nuno Sá <nuno.sa@analog.com>
 
-...
+Not all devices (features) of the adp5585 device are mandatory to be
+used in all platforms. Hence, check what's given in FW and dynamically
+create the mfd_cell array to be given to devm_mfd_add_devices().
 
-> > Defining once something like
-> >
-> > #define to_gpiod_data() ...
-> >
-> > we may leave this and others as one-liners.
-> 
-> We'd need one per every attribute. Look closer, we do get a different
-> attr address in every pair of callbacks.
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+---
+ drivers/mfd/adp5585.c | 38 +++++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
-I see, thanks for pointing that out.
-
-...
-
-> > > +     attrs[GPIO_SYSFS_LINE_ATTR_ACTIVE_LOW] =
-> > > +                                             &data->active_low_attr.attr;
-> >
-> > What's the point of two lines here?
-> >
-> 
-> I tend to stick with the 80 chars limit even though it was lifted.
-
-The above looks just ugly. Saving one character on the line here doesn't
-justify readability loss.
-
+diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
+index 160e0b38106a6d78f7d4b7c866cb603d96ea673e..53a46734f2d022ec54b3efc2ebbf389357f8d85a 100644
+--- a/drivers/mfd/adp5585.c
++++ b/drivers/mfd/adp5585.c
+@@ -17,7 +17,13 @@
+ #include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+-static const struct mfd_cell adp5585_devs[] = {
++enum {
++	ADP5585_DEV_GPIO,
++	ADP5585_DEV_PWM,
++	ADP5585_DEV_MAX
++};
++
++static const struct mfd_cell adp5585_devs[ADP5585_DEV_MAX] = {
+ 	{ .name = "adp5585-gpio", },
+ 	{ .name = "adp5585-pwm", },
+ };
+@@ -110,6 +116,27 @@ static const struct regmap_config adp5585_regmap_configs[] = {
+ 	},
+ };
+ 
++static int adp5585_add_devices(struct device *dev)
++{
++	int ret;
++
++	if (device_property_present(dev, "#pwm-cells")) {
++		ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO,
++					   &adp5585_devs[ADP5585_DEV_PWM], 1, NULL, 0, NULL);
++		if (ret)
++			return dev_err_probe(dev, ret, "Failed to add PWM device\n");
++	}
++
++	if (device_property_present(dev, "#gpio-cells")) {
++		ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO,
++					   &adp5585_devs[ADP5585_DEV_GPIO], 1, NULL, 0, NULL);
++		if (ret)
++			return dev_err_probe(dev, ret, "Failed to add GPIO device\n");
++	}
++
++	return 0;
++}
++
+ static int adp5585_i2c_probe(struct i2c_client *i2c)
+ {
+ 	const struct regmap_config *regmap_config;
+@@ -138,14 +165,7 @@ static int adp5585_i2c_probe(struct i2c_client *i2c)
+ 		return dev_err_probe(&i2c->dev, -ENODEV,
+ 				     "Invalid device ID 0x%02x\n", id);
+ 
+-	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+-				   adp5585_devs, ARRAY_SIZE(adp5585_devs),
+-				   NULL, 0, NULL);
+-	if (ret)
+-		return dev_err_probe(&i2c->dev, ret,
+-				     "Failed to add child devices\n");
+-
+-	return 0;
++	return adp5585_add_devices(&i2c->dev);
+ }
+ 
+ static int adp5585_suspend(struct device *dev)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.50.0
 
 
