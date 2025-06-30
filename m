@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C1D283CAA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D809425F976;
 	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751284365; cv=none; b=Q8R/BkulU9ND4yhiYi5+8FNuc5LjKgr0FKtI9fI5m6lMIl051pGW8Y0vWuTOgEMc5+jCUrgqNCG/n5C10eQZzMiQ7H0zY4GaIjSmH9Hg0a2j+uM0dQgtem88mcsOWOFcMbWhZFdh1neUi1nTa4nszQEbMeN4NmqHjO8T8oXXIPQ=
+	t=1751284366; cv=none; b=R7MwuiWaNsSpNpyn0+46NhMeOdHPpVicnNRFU/HWMSjIWuJhxn188sOl5RcwAfCA9FdxcMJHTk5qh+PbNwLhFwUawGSbVJWC5xEibnWp+80NXtovIUHkNjwItR44+rWYA75XktoRFf5gLmQUXau9NiJC5h20vU8eNVLDdIk3LR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751284365; c=relaxed/simple;
-	bh=xE9LEXnv+f+pNg2IH3v72SIq7f78Vz1orUlvYd/H3bA=;
+	s=arc-20240116; t=1751284366; c=relaxed/simple;
+	bh=4PvbGlrI1P+giC0KvVcc0NiGRwA6ey+0tghLU2TBysI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q+lkzjQZP04owKXZwxCz1xsCsKRJ2MliJG2XCh1WpmxgIbRC8Y3KdjCOgQEHTeOhYS7yGvZMfFLZYHXNJdXZ8Cmerm5uieN0LHgppYO3xT8FTPcIwg1aJpwBHRlIjZ6oRdMREVSUJAoPxxDsWK+Yif9ky0fsgaas8+BF+8f3Ai0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiNqt3Br; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=dzHIw8Q4wnDVIO3hOnD8lydMeGd09C5pl9JgnGrslIhNt4KElqY3IT5PFu4CO9IvkNTDhELkuw/bPPiLCq7nwIu609tkbRyPWRBU1UqyC4WCob7GJ3X9O3zNKHlZx7lewCIhLL/TD+cSFpyXTnGWsB2YTo36GfnX48V8QqrZWNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEXOU9h/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiNqt3Br"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5897EC4CEEF;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEXOU9h/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7303DC4CEF5;
 	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751284365;
-	bh=xE9LEXnv+f+pNg2IH3v72SIq7f78Vz1orUlvYd/H3bA=;
+	bh=4PvbGlrI1P+giC0KvVcc0NiGRwA6ey+0tghLU2TBysI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LiNqt3Brj533vjGZvGgd819TpxQ2WVkRh9JN/WRRyssWVT7QZV0qG/9vv2QWhcehb
-	 1CMvYpcI6wrdgygK/4XTBM0pgPG2XV58MA5RrlaDH5VGTIueAs2elzuM03oRomseSH
-	 5M7BffrOMAogiRJv9Ty+JYKSypd+6QC+JI8Xk2KhFeyX28/KnHev0/xn4+xThUJ/L6
-	 vhEwYOdbkfdD/y+mUk9aSFUGjDQKdrbxtyWA5A3ok8SRDSLgiGnjvYEZajq9oQVI6E
-	 tJtO3+nSW3ZWdQHG1hVL9geLTXVKZNvTryokHc1qcfe+H243+5R2EVBz7O1Wh1awdp
-	 4BxHx+mS0CDNw==
+	b=TEXOU9h/ejFYpaAuf6MGglSVJAgHMWVL7Ji6KpJwCmbdkcxH/twSrlRtHiqdUfmRP
+	 daKE6cYgztPcPD4MbWWJzRrf22qd68INfuO8zjAnu23WfzlRSbAXSbW90Wspc+Pr6+
+	 pyS+hVPNvrn482lRG4AF+xFH5lJDLQen01OmafUClDM5L5ioDwO+1hleYNahjSO+Eg
+	 JR+Nt+01g8grGHZpAwMqMffa/AnrdAH8whzU+gcIJnqSFgm3u05/5xTT2UpHNkV67R
+	 5GwhiolAl/MxkuNPcfydH638DHmNhRwh/9KohLLwSyAhhHo2om08mU7DTPVR0iCrYu
+	 t2HEL9Xs1WWZA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 507FFC8302D;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B42AC7EE2A;
 	Mon, 30 Jun 2025 11:52:45 +0000 (UTC)
 From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Mon, 30 Jun 2025 12:52:52 +0100
-Subject: [PATCH v6 01/20] dt-bindings: mfd: adp5585: ease on the required
- properties
+Date: Mon, 30 Jun 2025 12:52:54 +0100
+Subject: [PATCH v6 03/20] mfd: adp5585: Enable oscilator during probe
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250630-dev-adp5589-fw-v6-1-a0f392a0ba91@analog.com>
+Message-Id: <20250630-dev-adp5589-fw-v6-3-a0f392a0ba91@analog.com>
 References: <20250630-dev-adp5589-fw-v6-0-a0f392a0ba91@analog.com>
 In-Reply-To: <20250630-dev-adp5589-fw-v6-0-a0f392a0ba91@analog.com>
 To: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
@@ -56,11 +55,11 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
  Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Liu Ying <victor.liu@nxp.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751284374; l=1054;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751284374; l=2443;
  i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=fiqzA9oHr6utDnbinR+jWc5MyikFuofO+NDW02/Pf/k=;
- b=AlRM5a5JENjifQyfQBd1SLrpF07cVFC9GwHVP51wDBvLbn6uMIROb++nE42I1viyO0NOOMZZJ
- jCGUvZ3b3wdAHSAzzG6/E9DjdPV/TpQjUKpGXVKsbiHTch1NtSn2yVa
+ bh=F/DXXnAPAkUgV64qgRRmO7h2jG/qAQ82WBe+62i0xRU=;
+ b=ipoQMw3RECRN9nilRAoS4GDR2xhrgJygmTm+whzNsy1k2R5hExRKo77P+qxzFM4oF9y5BuqlX
+ wGCdSipYk9QDQaHTT3k5D/zRBtRI8KPnyAMk70ja5Cq6lSP55K00ZWh
 X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
  pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
 X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
@@ -70,32 +69,78 @@ Reply-To: nuno.sa@analog.com
 
 From: Nuno Sá <nuno.sa@analog.com>
 
-It is not mandatory to use all the capabilities of the device. One can
-very well only use it as a gpio controller without the PWM support. This
-will be even more evident when support for the matrix keymap is added.
-Hence drop the requirements for PWM and GPIO.
+Make sure to enable the oscillator in the top device. This will allow to
+not control this in the child PWM device as that would not work with
+future support for keyboard matrix where the oscillator needs to be
+always enabled (and so cannot be disabled by disabling PWM).
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 ---
- Documentation/devicetree/bindings/mfd/adi,adp5585.yaml | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mfd/adp5585.c     | 19 +++++++++++++++++++
+ drivers/pwm/pwm-adp5585.c |  5 -----
+ 2 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-index ee2272f754a339569c793102928ddd13249f8fee..e30e22f964f78519b2ec207e9415e4897db5c702 100644
---- a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-+++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-@@ -52,9 +52,6 @@ patternProperties:
- required:
-   - compatible
-   - reg
--  - gpio-controller
--  - "#gpio-cells"
--  - "#pwm-cells"
+diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
+index 53a46734f2d022ec54b3efc2ebbf389357f8d85a..e4a75ae9b2696d5ca8dfe7882660ed08bcd5ba2d 100644
+--- a/drivers/mfd/adp5585.c
++++ b/drivers/mfd/adp5585.c
+@@ -137,6 +137,13 @@ static int adp5585_add_devices(struct device *dev)
+ 	return 0;
+ }
  
- allOf:
-   - if:
++static void adp5585_osc_disable(void *data)
++{
++	const struct adp5585_dev *adp5585 = data;
++
++	regmap_write(adp5585->regmap, ADP5585_GENERAL_CFG, 0);
++}
++
+ static int adp5585_i2c_probe(struct i2c_client *i2c)
+ {
+ 	const struct regmap_config *regmap_config;
+@@ -165,6 +172,18 @@ static int adp5585_i2c_probe(struct i2c_client *i2c)
+ 		return dev_err_probe(&i2c->dev, -ENODEV,
+ 				     "Invalid device ID 0x%02x\n", id);
+ 
++	/*
++	 * Enable the internal oscillator, as it's shared between multiple
++	 * functions.
++	 */
++	ret = regmap_set_bits(adp5585->regmap, ADP5585_GENERAL_CFG, ADP5585_OSC_EN);
++	if (ret)
++		return ret;
++
++	ret = devm_add_action_or_reset(&i2c->dev, adp5585_osc_disable, adp5585);
++	if (ret)
++		return ret;
++
+ 	return adp5585_add_devices(&i2c->dev);
+ }
+ 
+diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+index 40472ac5db6410a33e4f790fe8e6c23b517502be..c8821035b7c1412a55a642e6e8a46b66e693a5af 100644
+--- a/drivers/pwm/pwm-adp5585.c
++++ b/drivers/pwm/pwm-adp5585.c
+@@ -62,7 +62,6 @@ static int pwm_adp5585_apply(struct pwm_chip *chip,
+ 	int ret;
+ 
+ 	if (!state->enabled) {
+-		regmap_clear_bits(regmap, ADP5585_GENERAL_CFG, ADP5585_OSC_EN);
+ 		regmap_clear_bits(regmap, ADP5585_PWM_CFG, ADP5585_PWM_EN);
+ 		return 0;
+ 	}
+@@ -100,10 +99,6 @@ static int pwm_adp5585_apply(struct pwm_chip *chip,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_set_bits(regmap, ADP5585_GENERAL_CFG, ADP5585_OSC_EN);
+-	if (ret)
+-		return ret;
+-
+ 	return regmap_set_bits(regmap, ADP5585_PWM_CFG, ADP5585_PWM_EN);
+ }
+ 
 
 -- 
 2.50.0
