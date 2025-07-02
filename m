@@ -1,152 +1,119 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A776C26B747;
-	Wed,  2 Jul 2025 11:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10A9267713;
+	Wed,  2 Jul 2025 11:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751457357; cv=none; b=U/ouRaowwLE1/Utdh8G5mJ7upreIUElqZeZkl5S3JfOgzQyVjWZHZNXIZAd/hxAFYbwpjya5TLMUX2DCQ3wE8wgClM39qhGVCe1ZuAU24Vi64iWuGIXPNUh3DXO6yGr+E5l4icOUx9wpIY9it5cit4bp+MhPj7OPJMQGNzU+o2I=
+	t=1751457525; cv=none; b=cMSqCNxUorsK2f8LVsGodY0pmPdQwfjoBJIEvzVexCsKVf4M8b9y1hohhFOoZZGiSdjOdgYa5iSIvqAvT/pJI1BtOnQ1bTfRCmR6GgK1Yo7BsWqBLlOmpkF/iyFKniRbaVVmhv63dqv30xCmrBXPjZqkbEHXD+O1CsS9XH2rqZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751457357; c=relaxed/simple;
-	bh=g03WbLNZnymRJkzgiUNFPnT4bm9PVGkM7Z/dtaddMEo=;
+	s=arc-20240116; t=1751457525; c=relaxed/simple;
+	bh=j4zaQk3443uwBFzN3RZeEtxMq4iWxUJyfn0v7hoCR7Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jkKDPqWthRE1CdHsbtkovYtTfCOc8fyf1vmv3YBzlmauOM1YxoEevBmUuuLoI9NWT51I4L1mHkM1qupLJGWmpmm4bp2B+VKmtT33bz+EGMH9ZKLRE6Go/BiMhUvbB8JQGPLvSuADV1dNLYeOxO5cvVgRy2DbllThcZ73cctGsG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XkHRZmA5; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6ELi/JM05pl8etXcWcnPEzT+CHMMZaxk2e0yGa3EcosWRrvZfnnh7bvBuE31ekoNiqavhWFgY2Ep/fd5V4BUF7UfWDdzxkktprkAnx9a7/VF6ZK+Pd0wOIFyyADRwqtBGx5TgZg7ZWZZARSCYKmMvb6Dh53zWsd5sQU2fI0xfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6V1V95K; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XkHRZmA5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751457355; x=1782993355;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=g03WbLNZnymRJkzgiUNFPnT4bm9PVGkM7Z/dtaddMEo=;
-  b=XkHRZmA5Gd7NI5HeZJ0A4WWx3ND1EVY2065gBgO2vCdKNlHWaQJLKXQR
-   yylttb33tiO8zU8vKitWLxkZB1NXhRxJtBMLkQNhz19D3gCgBKzm+/y68
-   leQCKPZZhKN/tpaoTep07AKM5CUd0Dj8/z8Cxc8rzY0CPY6CaK5HgzvK3
-   /qA6uUKau9FmsbIb08eNFKP1xcn0uYjPDxy+TjDUhLTGOG41XVVHjVU+6
-   O8dAtDwUL3KtjeqamN/6IhtWYyG6r23akoCmR1sIypFeTyHQKjk6adgOW
-   yaiCepsEHe8rDV5SKR+qiVKtcc7uIQPwFdo/rZgSGxDidm4ZH6ttuMaoK
-   g==;
-X-CSE-ConnectionGUID: Gk+RLseAR7KMiehQlFqHjA==
-X-CSE-MsgGUID: 9bTgAnmFSWSmRfy1XYI9/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="52864650"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="52864650"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:55:54 -0700
-X-CSE-ConnectionGUID: +2gLogIhRPGSmh5F8ZHXcw==
-X-CSE-MsgGUID: a67MzHEfTO2IY6hGuxzJ7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="177731054"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:55:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uWw45-0000000BuPh-20ff;
-	Wed, 02 Jul 2025 14:55:49 +0300
-Date: Wed, 2 Jul 2025 14:55:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 00/10] gpio: sysfs: add a per-chip export/unexport
- attribute pair
-Message-ID: <aGUeRczCNJLg-KON@smile.fi.intel.com>
-References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
- <aGPrFnDxG4W7S9Ym@smile.fi.intel.com>
- <20250702035439.GA20273@rigel>
- <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6V1V95K"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso75306006d6.3;
+        Wed, 02 Jul 2025 04:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751457523; x=1752062323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AHdUSz6zdOBXdzjVDNzo7fcMdTxOR8Umz2c1aHrjcZM=;
+        b=S6V1V95KSpxBoT11m3dXCJWoc/ikc2fGEE+OQwKmRchFCnjwzFqC7J/ukzlkVwf5X6
+         bKztY/adz+RtTGU18DUTFBpSZwPGkA1b9yAmuR03TwX2noIv078U3JYE/RVGdXtEri52
+         xxJQR0tEqPKfeZYNjE4OBwGfZFzyt//AQ7M7DwL9XiFzYZqCPNTHxzKZMG+4NYKMddFD
+         fNWh+XLXfjT4yDnOKUG2dwnnU/8NDRpwuzRjhqVHUEi6Fh2kpScKeOHohYKxr7iy6QSz
+         yU3Pt52lThaQ0vp4BrR8o8/BEnw4wLkM9v763St49R/LZrZuYIyjBG8BlkJvhV9Z9dul
+         nfsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751457523; x=1752062323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AHdUSz6zdOBXdzjVDNzo7fcMdTxOR8Umz2c1aHrjcZM=;
+        b=dhcJswMZOrni8oB6e3Q6a/vrEVOLTJWlpAMJiH913CVsozsRkkfeFA4CzZ0bbVCdyM
+         rDHFTZlRctpx2Nwn4VaZZsmyJL2sUfqZTPkWkgrrYw/CkqRK83gEbw/Q4GC3a+j6kYFx
+         DDlLZz+erAfxPlMJpBURr05DFi38j0Q+oFj/0wOA2PzzsHiKg17/no5tMfkTn1dEjTJp
+         XKWWYYDKaFyftVgG0yzeyFVEEUbCRIJxttO59aG4W1Jty7GEvAiBEynhRpEkmr4nnJNc
+         egLTgzkoMFH/DU/HBElCpGO/lpb8q5K3WdljdPIjzSi6vKfSDYmtMEMwz2gOu+eUHz11
+         ooQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaSqwyY+o99abdteEKkfKWuxgSQ+q5MjZmvASqciBKAloLx/hy9owPUHwpvCKXfYniqHJ0GQouqBEZbQ==@vger.kernel.org, AJvYcCWRfn8dXV8EbATrI4HoOKOq6CJV8EvvyKPGBdDFUCzj/Mp/OdmdFWig9DYvbgrjNxbYULTqDd0QFYXP@vger.kernel.org, AJvYcCX4BJ4pdmWR611CsJjdyPWZkJM+e5CkO/clXNUlib/Fq2BiMQ4HmTnt1Jj8qkoG2/Ff8JoZJhAnLibI4YAX@vger.kernel.org, AJvYcCXNaj3tveLLg3cfWhIX38d8fQMCbygX2frlYOrVAT1zeUIP5wHKc6kCyJH9hP2nGbpUjMhsG1nu2EjH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHr3fsb2TCV2OQzJwdKYtDed3jtvog52//3SZk/LbNxlM/CleL
+	3cRCzJYQ72yL1gLVmJ6RvC8m0lYHbs8syUT15UZgD6rBDfqhra1t28eO
+X-Gm-Gg: ASbGncuC2c6hk9zGazZwJW0OIlSGeM4vPMEHLJutRTTB4flR/cruXZ+AwLGJTG21c5N
+	6iX66ysQsLScc/C9MU0kBMOPWoDCs0QukpYtJiDsnGjngl4EYWw6dCKCRv94pGeeInyKPmISD4T
+	bP4CTH6oxEgvViP2Szj2s/BsPSz/4b9eKqwNlukxJzS/77M68F5T+QgxYI11zfuxAInT4pBN5DB
+	PTvh35hzGGSrbGKZqgOQtK1j3V442NkjhopoW+XHEcv6pzi5jk3Y9K0BvBFa7CtElvoEbfMlbtc
+	co1FYuOyHjrmI2RJsI411sdOrnKyM0AUZcVp1EL5Nu8RJV96zq+51zPPYEfN8y9yi6MU1w==
+X-Google-Smtp-Source: AGHT+IEf0/M+lgmZ5heO4bWoN5HQq4mwLRCA+lYJli7e01rqSm4ANHsGq8i+pZuPVqMEdYxF2RE6Tg==
+X-Received: by 2002:ad4:5dc2:0:b0:6fa:a0af:7644 with SMTP id 6a1803df08f44-702b1be899amr39658716d6.27.1751457522760;
+        Wed, 02 Jul 2025 04:58:42 -0700 (PDT)
+Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fd7730b726sm98600096d6.114.2025.07.02.04.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 04:58:42 -0700 (PDT)
+Date: Wed, 2 Jul 2025 09:00:42 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl, broonie@kernel.org, lgirdwood@gmail.com
+Subject: Re: [PATCH v7 00/12] iio: adc: Add support for AD4170 series of ADCs
+Message-ID: <aGUfapky2uh2tsFt@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1751289747.git.marcelo.schmitt@analog.com>
+ <aGTpNNaW7cXC18Jt@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <aGTpNNaW7cXC18Jt@smile.fi.intel.com>
 
-On Wed, Jul 02, 2025 at 11:45:02AM +0200, Bartosz Golaszewski wrote:
-> On Wed, Jul 2, 2025 at 5:54 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > On Tue, Jul 01, 2025 at 05:05:10PM +0300, Andy Shevchenko wrote:
-> > > It seems I never expressed my overall opinion about this. I think the poking
-> > > sysfs and making it working with a new schema won't solve the issues that
-> > > character device was developed to target. If so, doing this just brings yet
-> > > another broken interface. I would be happy to be mistaken!
-> > >
-> > > If I am mistaken, I would like to see a summary here that explains that clearly
-> > > that the new sysfs approach does not inherit design flaws of the original
-> > > implementation.
+On 07/02, Andy Shevchenko wrote:
+> On Mon, Jun 30, 2025 at 10:57:32AM -0300, Marcelo Schmitt wrote:
+> > Hello,
+> > 
+> > AD4170 support v7 comes after testing the driver with even more variations of
+> > channel setups. Signal offset and amplification can be tricky to grasp at times.
+> > 
+> > Thank you to all reviewers of previous versions. This intends to comply with all
+> > comments and suggestions to v6.
+> > 
+> > Same amount of patches than v6.
 > 
-> You cut out the link to the discussion that preceded this series where
-> a good summary is in the very first email. Anyway: the gist is: people
-> need to do some basic GPIO fiddling early on from initramfs that may
-> not have any tools other than basic shell utils from busybox. This
-> series is not about improving or extending the sysfs interface - it's
-> about removing its reliance on global GPIO numbers. And that's about
-> it. We don't add any new features really, just move the GPIO line
-> groups into their respective chip directories and make exporting use
-> the hardware offsets, not global numbers.
-
-I see it differently. This adds the second variant of how sysfs can be handled
-and it needs to be rotten in the same way as the original sysfs. I really don't
-see a point to prolonging the life of the broken interface in such a way. If somebody
-wants to check the GPIO without accessing character device interface, they probably
-are simply lazy to think of how to do that on early stages properly. The desire
-sounds like a workaround against proper thinking.
-
-> > Indeed.  I've already expressed my reservations about supporting the whole
-> > of the existing sysfs capabilties, but I've otherwise tried to remain out
-> > of the discussion.
-> >
-> > To reiterate my position:
-> > While I am all for maintaining sysfs in some form to cater for those
-> > rare cases where cdev is too heavyweight, IMHO it is a mistake to
-> > support the existing sysfs capabilities in toto.  Take the opportunity to
-> > remove the parts of the sysfs interface that don't work well.
+> ...
 > 
-> Doesn't the last patch do it? We cannot remove it without giving
-> user-space some time to switch.
-
-Famous Last Words. How many years the sysfs is being rotten?! This just makes
-it a Frankenstein.
-
-> This series does everything in a
-> backward compatible way and then isolates the old bits under ifdefs so
-> that when the time comes it's just a matter of removing everything
-> guarded by them.
+> >  6 files changed, 3601 insertions(+)
 > 
-> > The new sysfs should only provide the features required by those rare use
-> > cases, which IIUC would be basic sets and gets, and exclude those features
-> > not required, particularly warts like edges.
-> >
-> > If you need more advanced features then use cdev.
-> > If all you need is basic sets and gets then sysfs is probably fine.
-> >
-> > If that isn't the case then there should be some explanation as to why those
-> > sysfs features are being maintained.  Treat this as a new interface.
+> This is weird. At least patches 11 & 12 have '-' lines...
 > 
-> I tend to not interpret it as adding new features. We really just
-> *move* what exists under a slightly different path when you think
-> about it.
+Yeah, sorry about that. These ADCs are fancy such that the base driver is about
+1500 LoCs due to channel setup handling and support for multiple combinations of
+voltage references and channel setups.
+
+About the '-' lines, I will rework ad4170_parse_channel_node() on earlier
+patches to avoid 3 line removals in patch 11. Patch 12 is only makes sense
+after patch 7 and I think it would lead to '-' lines if coming before patch 10
+since both increment the number of IIO channels. Anyway, I'll see how to further
+reduce the number of lines being removed.
+
+
+Best regards,
+Marcelo
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 > 
-> So what are you suggesting, remove the `edge` attribute and polling
-> features from the new `value` attribute?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> 
