@@ -1,148 +1,139 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED74F253F15;
-	Wed,  2 Jul 2025 12:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A77C2749EE
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Jul 2025 12:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751457934; cv=none; b=UgHiSWs+KpxEjQsOzkjcZYUiyUKVzWm143zY5KZZLeY79sIXNYCMXjczNfiRqZfa1nEXLIDzOVxsmX/94rn7e81MInM0pPGpRPGPbK8y9lvWSxh4WoV/ag4A8XrYEhaFhPVuaM2m1NE5o9JX/l5ijUjZ4OfXME0abNrd7zyz4Iw=
+	t=1751458531; cv=none; b=H9sQXawnhCp4lvo4xK/CTT0LumoZcIDkprWDp3eGpAmyORZLtx6STjPvf4sKQPez5mRcMPAvCTCcvzkWItipaG2bORYWoow+pHdufq8yu+pVIPqIzbAfgDtla9f5dFBmJEpRVBqEtGJotsvEGITiCCgZq2azTzL9zqQISy2eNNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751457934; c=relaxed/simple;
-	bh=UiDm7a9UThCV+8q/0XXk+kAX0bvrKKV7VdUwrD2V2OU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZY9rOxkd6PaLeLSUrN8p+G8Shfub9oXqEGAsaJUlXrZBlWrQxis4K/i3OkaWQGCqgBRJECiQmFdMZkq0mS0PV+FRjQqa+IHDj6RIyjOgIjXc358rb8iiE2jj7FA7isUCIs5DD/6Id0jxatg8RV3ODRXG4tHJdaPMB8oefK/jPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d09f11657cso623010685a.0;
-        Wed, 02 Jul 2025 05:05:31 -0700 (PDT)
+	s=arc-20240116; t=1751458531; c=relaxed/simple;
+	bh=Sonnye7hZy2wt/2sdkee8anX7maKzoAKHEmbBG3T8tA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FF4LGCCRYvgPolXur6GoTmlWobky7/w0X/lPptCj6ECEri3AFaAc9jYdQ1/xlZaCH5WsGMiKEuRiNcUTK0kAeviBU4yHg1CK3aH2cXX4ltdpNg2ZxcZfbRrv3h8NrX9OpYZwH1ptHTs6fG7PlM71DDIHe9yLY7QpxC1sfVm3b6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBJA5grf; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBJA5grf"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4535fbe0299so25793255e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Jul 2025 05:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751458528; x=1752063328; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x9pvwsjMWPA9nQD+iBKKTHpsU97t1wWZ+fWjmxW/6k4=;
+        b=CBJA5grfPo7uThx18W4+K4wM2sAUrX5doEu77eyR6b7Akxr7rMCwfSHynjWM+tNklw
+         +7c0DZrdi8mpCNtKjWS+XIXcQX6bk6yv7z7ncjzYBcfVF92VNhMpFyofp7bP7F0oW1AS
+         YEwgEwQqPqc6PKBs519K3R1y9hY5RleQQoBrw+p7MAfymks2KAz9XES6kqYt41/6cZyS
+         xZte1f23kIYlx/WLK/Kis2xZjwfY/fPd6lrMwRwuMPUG7BFrD8sO9LiVqRVSSDq+DJ3y
+         hH4vEW/vzwy1nU/omZRP60ByaQF1DpQzziJ/nQkkdGxyRdwkOdWa+BINcVmD41HjtP4f
+         5VDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751457930; x=1752062730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FHdlp2ZdrIG3etpYbGlvmwT2yy2H0TFuQerZNRAw3Xg=;
-        b=MdOcOfEGn4JerMUTgBCFPSmwwRaqFYB/zWKEMjgqqvbCsXvXiyqNSiJnRcblDR3+Gn
-         UzjA6Kc20qugJRulalmjmCHL0EK3ERt3B3a0c0tGOOKQK0J/ZOx/ocmUwoNH39PQYXLq
-         oGsW0kOuo3wGXiO4zYYT/6OeYppLu2ckjXfXmTCE6VarXqVi+jr/+8i9+OwbLuCAZ931
-         HOgOzPB4MrD8nWSosbu8Bm9SLYsb0djVdwWBbllWI6ItB4HNe3bRwNvNVLhyGZhlS4LW
-         IyNVD04ZzX0NIdusxZaAy51hLrdzwIiAPOnASaoBFQljmA9/7TutT9+1BkEX8SBLPxwT
-         crpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZTi1FDeRK+tFIVJumg1/8ZDouyT5e0x+YBN5KQ6cNdQgK9cz5o/D0Dll6RdnNeA66vXxUoYqvFGc@vger.kernel.org, AJvYcCVYeJIY9MkhrVcDO80BTFcxejWxd2vFOjxvLD8+YuVoZEOp2gogom9wnXICXcVFoBpoYQIdMwIU9EnzLWf8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyzwWRjc3LwnwGm7feYML/BY4+TzA24vgBWwk1jg9FpwOQ5GsG
-	mlj6xHS0bVfqifiTxSPCSX3ehliNG4U9eExVBnipJ4WJyjEFYgiug3YKjINrDI56
-X-Gm-Gg: ASbGncuCLcdL922g9v2PJrfuYxSROieKwX0loGgI9wsvrXyY9svYGrRMiiBSNB72Wlc
-	EJOZovsAi4pZJ3WJJ+40IitMbFGMiz7gUlTMimA6R7uKhizhmkhGs4jn+6m7OAcLPOX90w9EkQd
-	OvxHjPY7GKLh54jijEIBZ2LuWXFCZTPkwlPRibDLdOiTXthBVSnbxI15Wxo30qSMvx5XOU1Ppt/
-	KUtni85tzPGU94HYqxVkbFevO/rceoH6DETFaBENuQyU1gEO0ABOncg3zDaafTXHATi58Br4Vq7
-	mzuMKVbFi9GPUUgo0Z7lj/ZUIvOLPyZ5/smkyMqnDCCoZC/RzEx6Y/jKgapf6XY0rdUF71aJCm9
-	NNH/q+Yj0xb1WtQH0LlteL8/9vou8
-X-Google-Smtp-Source: AGHT+IFe6DUfG+wlnC4UE9wPq5TXur0VjbKotgt0+clxjN+Sv0Oc3dniv/8Ovz9/ANPcH0lXlND05w==
-X-Received: by 2002:a05:620a:2693:b0:7ce:b7fc:6b6f with SMTP id af79cd13be357-7d5c47f757cmr366406185a.58.1751457930252;
-        Wed, 02 Jul 2025 05:05:30 -0700 (PDT)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44320572dsm920928185a.69.2025.07.02.05.05.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 05:05:29 -0700 (PDT)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d09f11657cso623005785a.0;
-        Wed, 02 Jul 2025 05:05:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj3iHUS1bnQB3W0NbsqhNFogIH2l8/Bu5KHewzBxbXLQdkAhEgjZ+LaibWC+s7arr6+I3R/3/cHW8Yep3B@vger.kernel.org, AJvYcCWvkXtJXA8eTJxLEbAR9iMSfR773dTpU27ZJJ9/t6yiGGAwhbT+IrJcmwLzxgEY1JOAYobxh+19xqpu@vger.kernel.org
-X-Received: by 2002:a05:620a:46a0:b0:7d4:5e0a:28cd with SMTP id
- af79cd13be357-7d5c47c60d8mr449259985a.49.1751457928033; Wed, 02 Jul 2025
- 05:05:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751458528; x=1752063328;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x9pvwsjMWPA9nQD+iBKKTHpsU97t1wWZ+fWjmxW/6k4=;
+        b=ZkK2d0XT7DySWwh6KvbFi5F5Nw8lU/KBFHSmnoKBkw3iv4EXyIADrTZBd7eXqZ3GYl
+         4wM5KIEtaRRAzPAzU5t9310WN/qliUlCp8xdrSsV7RB12+K6iX/sDa9RfomzWhc2sTpd
+         1eYkPeLpsdX/dUW5uQCqGr1VQWSzKgv5JWsfucUO41TXPSZyIcuwyb6WZa5Mk9WJqH0W
+         4KkX7mAXj+osrilQmKJu9ZMteAot58xTFByx9MVG5++rApnzDuMxokjaizh98Ch0Y/Nq
+         03vr6qn1056rn0Lnkasb780HAXto6rhEn4kibe3MXLIp6L4xWpzko33jQRtBgtE8MTZu
+         YNvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeWz40NXmRXmj2Cky+8GYLDMg1Wm1E4HGI/4dPftCPyOY6B7eV4tPHeqWq/bi3Ob4rHagXIBkbMhgz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCyYFXkulsCfd9iqj1hGRskWrbHZqZrRvbXKXIpjgY3Z4PbVuH
+	H419b61Xzh4CA+tQzrOYveqc1He4vUZuKQbzSlNzyYEBWZHRrCoVPTVSmCqIGllhBGE=
+X-Gm-Gg: ASbGncvLvMjiJPkeJqclSSRYcLbyS9QuC9gkAyX/O2S+v/AGTPOybW6wfiPLHjQyAkk
+	qy7glq3h/Qun4oNi8jbu1t/mcYSUcZ6qk9+CmTJhbxhakj0hgNhGq3Go9AunTvl6jMcUfwllwEU
+	C8V4PQoq8i2bQAkiq4CAD4tgaEpVrQu9UEE++pPwb+U9ullaXhteXMD2h4BV9SiW3z5ApH1iszl
+	nR8J5sA7oUT8jpcxkh/xKk+TICWo2w5ZgFDpJ9wXeREifHtdoEWF1aGi2CpqSljuA4sZJnE3bDf
+	xe5r6vDg2Cv69Hk7TH+6/rTNUuMa0HbG7u6/rsmElSj+PZBNYaqPr7yW+xfChGx0p3cqoYFGGlP
+	Vr62MeE2zsxmxLo2Z
+X-Google-Smtp-Source: AGHT+IELgg5UZzqaTlSfiyc6Ytkoj6C/RHdaT40F4scmmqS3AYJLBC3dMjYCI068eBu4lplMXDVdzA==
+X-Received: by 2002:a05:600c:4f13:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-454a36ec540mr34363525e9.15.1751458528249;
+        Wed, 02 Jul 2025 05:15:28 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.164])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad01csm228256345e9.22.2025.07.02.05.15.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 05:15:27 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 02 Jul 2025 13:15:24 +0100
+Subject: [PATCH] pinctrl: samsung: Fix gs101 irq chip
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
- <aGPrFnDxG4W7S9Ym@smile.fi.intel.com> <20250702035439.GA20273@rigel>
- <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com>
- <20250702101212.GA47772@rigel> <CAMRc=MeuMpo0=ym+FvDh5sCNXM00+iOSNFgTxMqagO78ZS64_g@mail.gmail.com>
- <20250702110127.GA51968@rigel>
-In-Reply-To: <20250702110127.GA51968@rigel>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Jul 2025 14:05:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVFURtVovo4xUddULjchzK2Qae+ePHA3VKBeBo700a=gg@mail.gmail.com>
-X-Gm-Features: Ac12FXxAle-6go22Q_dabyHOkvjGoV0yuEFExkrpUFVeVY3yXxBt9jQV-ftKO74
-Message-ID: <CAMuHMdVFURtVovo4xUddULjchzK2Qae+ePHA3VKBeBo700a=gg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] gpio: sysfs: add a per-chip export/unexport
- attribute pair
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
-	Marek Vasut <marex@denx.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250702-fix-gs101-irqchip-v1-1-ccc84b44ad72@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANsiZWgC/x2MywqAIBAAfyX23MJq734lOoRuuhcrhQjCf086D
+ szMC4mjcIK5eiHyLUmOUEDVFRi/BccotjBo0h0NpHGXB11SpFDiZbycOFqlbdNPbUsGSndGLtL
+ /XNacPzMOKGhjAAAA
+X-Change-ID: 20250702-fix-gs101-irqchip-8d12d369440c
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1589;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=Sonnye7hZy2wt/2sdkee8anX7maKzoAKHEmbBG3T8tA=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoZSLecwK0sxfmoygPy9wJSjKSBq78rF5mEbSPI
+ jagEn353PyJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaGUi3gAKCRDO6LjWAjRy
+ ujWQD/9dX1YTX9ZBnRCltukRwwg2+Ex5ETtEJVtNrSYJtAj6JDjMCK32q+2ExEr8o4nxkdDbNZq
+ tcQqwCP3OtUaNf5+cZALlUvIrAB9j7MfFyhCK+4V3um44lc60sulhIZZ9X427vxU6Oy2DovBzpn
+ 1/22Zjj3t2R9QmskA4AlInV2Rhr3PkPEeQGNS8xa5YGt0kV+oPVPJG94ckz6k0zUh2cvaFeuLfZ
+ aPe9UVsynX81YvNMCyFXHB3aH81kI0VBciFnhcky7rL24T7ir+8tADpsIa5rrw9jFYrIWyRv5jy
+ AgdOP44wde/WX6EnfhCJHFnQZG8LnefXO9dl0CykpuwsOXzssPy4QjFDm5ZWNHGB/K4t//kezHa
+ 9Z/xVRjGJrPI3aS5fvcIgx7kDjGkMSLFln7PadJmY2QzYMB8YJqe7IzXbu3jJ/lMBslF8K1RUNB
+ 6EQNW4j3/5j0SmdweFTVhgH6TmxLbKEYqblLtss4jgFvUI1d4eqTlYKzJyQoVsWOliXDsL1/Pa4
+ NZSYa+eSrD0GMcItjGp9a6g4VPJcOG+9JgTcU+9kc5VzedjCQP7RrYcXkS2ysi4emDOh5K1sXrV
+ bIYsUU73Un5KFJlI4nJsce3Zg58KY/Lm/r4SWokTVsUB/BaD4BGPkOl4lVPNR2nHk4NFvTe1Lwc
+ rrGx4t9wNbgLsJQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Wed, 2 Jul 2025 at 13:01, Kent Gibson <warthog618@gmail.com> wrote:
-> On Wed, Jul 02, 2025 at 12:28:01PM +0200, Bartosz Golaszewski wrote:
-> > On Wed, Jul 2, 2025 at 12:12=E2=80=AFPM Kent Gibson <warthog618@gmail.c=
-om> wrote:
-> > >
-> > > >
-> > > > I tend to not interpret it as adding new features. We really just
-> > > > *move* what exists under a slightly different path when you think
-> > > > about it.
-> > > >
-> > > > So what are you suggesting, remove the `edge` attribute and polling
-> > > > features from the new `value` attribute?
-> > > >
-> > >
-> > > Exactly. I'm not suggesting ANY changes to the old sysfs, only your n=
-ew
-> > > non-global numbering version.  The idea being don't port everything o=
-ver
-> > > from the old sysfs - just the core feature set that non-cdev users ne=
-ed.
-> > >
-> >
-> > I mean, if someone shows up saying they need this or that from the old
-> > sysfs and without they won't switch, we can always add it back I
-> > guess... Much easier than removing something that's carved in stone.
->
-> Exactly - expect to be supporting whatever goes in now forever.
->
-> > Anything else should go away? `active_low`?
-> >
->
-> I don't personally see any value in 'active_low' in the sysfs API if you
-> drop edges. It is easy enough to flip values as necessary in userspace.
-> (From time to time I think it should've been dropped from cdev in v2 but,=
- as
-> above, it is carved in stone now so oh well...)
+When adding the dedicated gs101_wkup_irq_chip struct to support the eint
+wakeup mask the .eint_con, eint_mask and .eint_pend fields were missed. The
+result is that irqs on gs101 for the buttons etc are broken.
 
-IMHO active_low is only really useful if you have some hardware
-description that provides it, at which point you may be better off
-having a real Linux
-driver for the thing connected to the GPIO...
+Reported-by: André Draszik <andre.draszik@linaro.org>
+Fixes: 2642f55d44ce ("pinctrl: samsung: add support for gs101 wakeup mask programming")
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Note: no Closes tag as issue was reported on private chat. Permission has
+been obtained for using the Reported-by tag.
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-People who mess with GPIO /sysfs better know their hardware,
-so they should be aware of the polarity.
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 5554768d465fe0d8bf6e423b2e835965cde5d8f5..81fe0b08a9af5682421e5a5533a6cb4c9561cd24 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -665,6 +665,9 @@ static const struct exynos_irq_chip gs101_wkup_irq_chip __initconst = {
+ 		.irq_request_resources = exynos_irq_request_resources,
+ 		.irq_release_resources = exynos_irq_release_resources,
+ 	},
++	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
++	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
++	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
+ 	.eint_num_wakeup_reg = 3,
+ 	.eint_wake_mask_reg = GS101_EINT_WAKEUP_MASK,
+ 	.set_eint_wakeup_mask = gs101_pinctrl_set_eint_wakeup_mask,
 
-From my toolbox:
-  - For pcf857x (which is pseudo-bi-directional), I usually just set
-    direction to "in" (pulled high) or "out" (driven low),
-  - For everything else, switching direction to "out" is ill-defined,
-    so I do not write to ".../value", but set direction and value
-    together by writing "high" or "low" to ".../direction",
-  - For reading, I do use ".../value", of course.
+---
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
+change-id: 20250702-fix-gs101-irqchip-8d12d369440c
 
-My 0.02=E2=82=AC...
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
