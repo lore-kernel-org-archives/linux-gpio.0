@@ -1,768 +1,295 @@
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+Received: from smtpout2.mo533.mail-out.ovh.net (smtpout2.mo533.mail-out.ovh.net [51.210.94.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854D19D880;
-	Mon,  7 Jul 2025 13:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659752BD5BC
+	for <linux-gpio@vger.kernel.org>; Mon,  7 Jul 2025 14:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.210.94.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751896510; cv=none; b=r5ych+CWr3JrAH7MdbLjAAhsMi2PZvlOicoqig8Sqa/EVwg6XILHAxpT8BQoWGSwXHLKVBD9U0DtoO8BhxM5TPfsDfKa6fQDogbVMp16MFkCRViJQNdBpBa17HjH58jsPfY++FaN0bcZKhyF4evPlWqp7S7kuzj0swgAy60flXQ=
+	t=1751896805; cv=none; b=b0h0Rcs6NccKDtT8CnwLxjdC1OkngtFHV5dwhrdsCDGD/QCXcH5ZtE8n1i8ac4PJZGTBcQOBQtikc98sHIhY2wjBHAb75BL5i4+GZIkQ/YMI48jUuNjPLAvnW6oXJhoOdvXOYmEdCWa2+ZtX2/+e7YCxtEnByJm0q97W/aim2a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751896510; c=relaxed/simple;
-	bh=iUbEjQ0itCS6XDKVyYlzv4Vq2CkvMDnUhJ1WmP3sacM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SBiUq5fRjm9w+FU2DYSdzkRaqcj9J5GXphTdxullgcyBuJ6gMBnA+T4VBSoOOyTQ9OTyHDUMs+RiaZIsOHa780InWyb9OMMFVv0VC9Eg/exo1nH7CS9jxakoSAk2PiYYUoon5CAWaVW9kdmZUW8AFZKFdowfu5Q4m+Yl1EipOvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=U+B0VIA6; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="U+B0VIA6"
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567DBY55026983;
-	Mon, 7 Jul 2025 09:54:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=MGGK7
-	5xxeKv/Z7hMV1RimTUL04g2dee7BogVVyYMPcQ=; b=U+B0VIA6rtIylAMusJ+L6
-	wucnWZehqvc63fGvR5ypjf6x/UNr+STYmdG+YeM5Sky5qXgPap9PKQQSnq3IG7eC
-	RwRq+NurL7BdwJJnl68Y3YFO02gzm3OeRXL4Tti1hQMeTykCCGKzFCqdP3HtP6bw
-	/j7Q935SNXO4LwDWYW8dMKCPX6uWQ/XvlpClLqH+QIZ5KmMMfU3Ep4mxrZLi/I66
-	rEV6Mfx7sNiKlGofQISxsEA+STbytDJK8Gou4+h/T/hGYhy+AJc+g4ce8Qpf5t+5
-	D0YvDljAHnbPhqHIH3o1fQTkI/kPTPqbnpaNMy2ZLfDFUgY+O2xUW1KU9QkI1xHc
-	A==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47rayqh73r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 09:54:50 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 567DsnUp011879
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Jul 2025 09:54:49 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
- 2025 09:54:49 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 7 Jul 2025 09:54:49 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 567DsUE8016360;
-	Mon, 7 Jul 2025 09:54:33 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <andriy.shevchenko@intel.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v8 12/12] iio: adc: ad4170-4: Add support for weigh scale, thermocouple, and RTD sens
-Date: Mon, 7 Jul 2025 10:54:29 -0300
-Message-ID: <52686943040ecad34cc89833d4d5d37f1a51f412.1751895245.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1751895245.git.marcelo.schmitt@analog.com>
-References: <cover.1751895245.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1751896805; c=relaxed/simple;
+	bh=MwcR/DXMTj/JAiWzH/o5SeI/n04Ums7+03DlTeSZFYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Nk2TNbXCJWyxEO0f/32M1Z0Zjb9kwuY56dQGwIUe1oZJO4B07g/ivzIhuteop+OeT0arBpeUuMNl9C4S8vVTQM7ROfY/UegVLbaCE/kRTEgrjgR7/rk19/KCihwCConYrSblOjXwU4AQIOsDm0hiNPIJHVVOSFlumt4+UpnAwSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; arc=none smtp.client-ip=51.210.94.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4bbPzb43ZSz6Mmp;
+	Mon,  7 Jul 2025 13:22:19 +0000 (UTC)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
+        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Mon,  7 Jul 2025 13:22:19 +0000 (UTC)
+Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.168.57])
+	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4bbPzb2ZL9z1xrj;
+	Mon,  7 Jul 2025 13:22:19 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.7])
+	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id A2E14BA429A;
+	Mon,  7 Jul 2025 13:22:18 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-102R004443e23e6-7882-48e7-9962-a2a9bd782506,
+                    F886D19416C0B9BC8E07D11B456840F184BAC853) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:147.156.42.5
+From: Marcos Del Sol Vives <marcos@orca.pet>
+To: linux-kernel@vger.kernel.org
+Cc: marcos@orca.pet,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: vortex86: add new GPIO device driver
+Date: Mon,  7 Jul 2025 15:21:51 +0200
+Message-Id: <20250707132154.771758-1-marcos@orca.pet>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=AP9nYgXq c=1 sm=1 tr=0 ts=686bd1aa cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=Wb1JkmetP80A:10 a=gAnH3GRIAAAA:8 a=b54mGPezs8RaO1Bbk_YA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA4MSBTYWx0ZWRfXzJIyS5Da7eaE
- BrMMK7pWYEFsgEOPOkwZrkdYbbuNQFSuPlD4ZMNMqd6AZ+WGAV28GYqbT4duHz5JFw59208W7c9
- eJiiSxjD7ONrBKbukWKDEWGXjA2nEgLNNRCQJ0DCz+Jg4qclkfyRA/EG7d3Q0aFkIcdQMUOE2Gb
- BvD1A84IGWjQHT6OP6aRW99hXek7+50ENGecUe+6e6QrM845ioJ7j4/1VBObsLgaicDImnMMvJ4
- pyAE+y0/SLwB3k/gB4XoYs98ndO3gQmCKHQNt8vqIQpIZASzslD2c20lmsHcw801wz9MQUvlRR+
- 1sHFPUl9iZrpjn/SdRb0vp60fSj7iS+TouQPqb2OQJ58/CUSHpMRbefHRA6UWxURCQXehKGxakx
- 4A47GPxSSF4yF0pALdoo8YfM6da7Wei3BiqRl78zl+tlsa031usnR0q7ZLfjiheFO7cbOWop
-X-Proofpoint-ORIG-GUID: mSkP4bpycPFNNcnoHCnrQMe5aXDVacIj
-X-Proofpoint-GUID: mSkP4bpycPFNNcnoHCnrQMe5aXDVacIj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501
- clxscore=1015 lowpriorityscore=0 impostorscore=0 malwarescore=0 adultscore=0
- spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070081
+X-Ovh-Tracer-Id: 14558730224674428635
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefudeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnhepveeiueeugeeuteekgeegudegveeljeduieekkeeuleehiefhieeiudelhfdvieffnecuffhomhgrihhnpegumhhprdgtohhmrdhtfienucfkphepuddvjedrtddrtddruddpudegjedrudehiedrgedvrdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehmrghrtghoshesohhrtggrrdhpvghtpdhnsggprhgtphhtthhopeehpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehmrghrtghoshesohhrtggrrdhpvghtpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehfeefmgdpmhhoug
+ gvpehsmhhtphhouhht
 
-The AD4170-4 design provides features to aid interfacing with weigh scales,
-thermocouples, and RTD sensors, which are set up with additional circuitry
-for proper sensor operation. A key characteristic of those sensors is that
-the circuit they are in must be excited with a single, a pair, or two pairs
-of signals. The external circuit can be excited either by a voltage supply
-or by AD4170-4 excitation signals. The sensor can then be read through a
-different pair of lines that are connected to the AD4170-4 ADC.
+Add a new simple GPIO device driver for Vortex86 lines of SoCs,
+implemented according to their programming reference manual [1].
 
-Extend the ad4170-4 driver to handle external circuit sensors.
+This is required for detecting the status of the poweroff button and
+performing the poweroff sequence on ICOP eBox computers.
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+IRQs are not implemented as they are available for less than half the
+GPIO pins, and they are not the ones required for the poweroff stuff, so
+polling will be required anyway.
+
+[1]: http://www.dmp.com.tw/tech/DMP_Vortex86_Series_Software_Programming_Reference_091216.pdf
+
+Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
 ---
-Change log v7 -> v8
-- Reworded external sensor support patch description.
-- Reduced number of line removals in code diff.
-- Updated ad4170_parse_external_sensor() param: u8 s_type -> unsigned int s_type.
+ MAINTAINERS                  |   6 ++
+ drivers/gpio/Kconfig         |  10 +++
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-vortex86.c | 161 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/gpio/gpio-vortex86.c
 
- drivers/iio/adc/ad4170-4.c | 500 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 499 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-index 2a20868a1db7..6cd84d6fb08b 100644
---- a/drivers/iio/adc/ad4170-4.c
-+++ b/drivers/iio/adc/ad4170-4.c
-@@ -69,6 +69,8 @@
- #define AD4170_FILTER_FS_REG(x)				(0xC7 + 14 * (x))
- #define AD4170_OFFSET_REG(x)				(0xCA + 14 * (x))
- #define AD4170_GAIN_REG(x)				(0xCD + 14 * (x))
-+#define AD4170_V_BIAS_REG				0x135
-+#define AD4170_CURRENT_SRC_REG(x)			(0x139 + 2 * (x))
- #define AD4170_GPIO_MODE_REG				0x191
- #define AD4170_GPIO_OUTPUT_REG				0x193
- #define AD4170_GPIO_INPUT_REG				0x195
-@@ -100,6 +102,10 @@
- #define AD4170_CHAN_MAP_AINP_MSK			GENMASK(12, 8)
- #define AD4170_CHAN_MAP_AINM_MSK			GENMASK(4, 0)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fad6cb025a19..3e0ef902d003 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26574,6 +26574,12 @@ VOLTAGE AND CURRENT REGULATOR IRQ HELPERS
+ R:	Matti Vaittinen <mazziesaccount@gmail.com>
+ F:	drivers/regulator/irq_helpers.c
  
-+/* AD4170_MISC_REG */
-+#define AD4170_MISC_CHOP_IEXC_MSK			GENMASK(15, 14)
-+#define AD4170_MISC_CHOP_ADC_MSK			GENMASK(9, 8)
++VORTEX86 GPIO DRIVER
++R:	Marcos Del Sol Vives <marcos@orca.pet>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/gpio/gpio-vortex86.c
 +
- /* AD4170_AFE_REG */
- #define AD4170_AFE_REF_BUF_M_MSK			GENMASK(11, 10)
- #define AD4170_AFE_REF_BUF_P_MSK			GENMASK(9, 8)
-@@ -110,12 +116,19 @@
- /* AD4170_FILTER_REG */
- #define AD4170_FILTER_FILTER_TYPE_MSK			GENMASK(3, 0)
+ VRF
+ M:	David Ahern <dsahern@kernel.org>
+ L:	netdev@vger.kernel.org
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 44f922e10db2..b51aa06bb11b 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1066,6 +1066,16 @@ config GPIO_TS5500
+ 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
+ 	  LCD port.
  
-+/* AD4170_CURRENT_SRC_REG */
-+#define AD4170_CURRENT_SRC_I_OUT_PIN_MSK		GENMASK(12, 8)
-+#define AD4170_CURRENT_SRC_I_OUT_VAL_MSK		GENMASK(2, 0)
++config GPIO_VORTEX86
++	tristate "Vortex86 GPIO support"
++	depends on CPU_SUP_VORTEX_32 || COMPILE_TEST
++	help
++	  Driver to access the five 8-bit bidirectional GPIO ports present on
++	  all DM&P Vortex86 SoCs.
 +
- /* AD4170_GPIO_MODE_REG */
- #define AD4170_GPIO_MODE_GPIO0_MSK			GENMASK(1, 0)
- #define AD4170_GPIO_MODE_GPIO1_MSK			GENMASK(3, 2)
- #define AD4170_GPIO_MODE_GPIO2_MSK			GENMASK(5, 4)
- #define AD4170_GPIO_MODE_GPIO3_MSK			GENMASK(7, 6)
- 
-+/* AD4170_GPIO_OUTPUT_REG */
-+#define AD4170_GPIO_OUTPUT_GPIO_MSK(x)			BIT(x)
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-vortex86.
 +
- /* AD4170 register constants */
- 
- /* AD4170_CLOCK_CTRL_REG constants */
-@@ -139,6 +152,11 @@
- #define AD4170_CHAN_MAP_REFIN2_N		28
- #define AD4170_CHAN_MAP_REFOUT			29
- 
-+/* AD4170_MISC_REG constants */
-+#define AD4170_MISC_CHOP_IEXC_PAIR1			0x1
-+#define AD4170_MISC_CHOP_IEXC_PAIR2			0x2
-+#define AD4170_MISC_CHOP_IEXC_BOTH			0x3
-+
- /* AD4170_PIN_MUXING_REG constants */
- #define AD4170_PIN_MUXING_DIG_AUX1_DISABLED		0x0
- #define AD4170_PIN_MUXING_DIG_AUX1_RDY			0x1
-@@ -156,6 +174,10 @@
- #define AD4170_FILTER_FILTER_TYPE_SINC5			0x4
- #define AD4170_FILTER_FILTER_TYPE_SINC3			0x6
- 
-+/* AD4170_CURRENT_SRC_REG constants */
-+#define AD4170_CURRENT_SRC_I_OUT_PIN_AIN(x)		(x)
-+#define AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(x)		((x) + 17)
-+
- /* AD4170_GPIO_MODE_REG constants */
- #define AD4170_GPIO_MODE_GPIO_INPUT			1
- #define AD4170_GPIO_MODE_GPIO_OUTPUT			2
-@@ -171,6 +193,7 @@
- #define AD4170_INVALID_SETUP				9
- #define AD4170_SPI_INST_PHASE_LEN			2
- #define AD4170_SPI_MAX_XFER_LEN				6
-+#define AD4170_NUM_CURRENT_SRC				4
- #define AD4170_DEFAULT_SAMP_RATE			(125 * HZ_PER_KHZ)
- 
- #define AD4170_INT_REF_2_5V				2500000
-@@ -192,8 +215,19 @@
- 
- #define AD4170_ADC_CTRL_CONT_READ_EXIT			0xA5
- 
-+/* Analog pin functions  */
-+#define AD4170_PIN_UNASSIGNED				0x00
-+#define AD4170_PIN_ANALOG_IN				0x01
-+#define AD4170_PIN_CURRENT_OUT				0x02
-+#define AD4170_PIN_VBIAS				0x04
-+
- /* GPIO pin functions  */
- #define AD4170_GPIO_UNASSIGNED				0x00
-+#define AD4170_GPIO_AC_EXCITATION			0x02
-+#define AD4170_GPIO_OUTPUT				0x04
-+
-+/* Current source */
-+#define AD4170_CURRENT_SRC_DISABLED			0xFF
- 
- static const unsigned int ad4170_reg_size[] = {
- 	[AD4170_CONFIG_A_REG] = 1,
-@@ -232,6 +266,8 @@ static const unsigned int ad4170_reg_size[] = {
- 	[AD4170_OFFSET_REG(5) ... AD4170_GAIN_REG(5)] = 3,
- 	[AD4170_OFFSET_REG(6) ... AD4170_GAIN_REG(6)] = 3,
- 	[AD4170_OFFSET_REG(7) ... AD4170_GAIN_REG(7)] = 3,
-+	[AD4170_V_BIAS_REG] = 2,
-+	[AD4170_CURRENT_SRC_REG(0) ... AD4170_CURRENT_SRC_REG(3)] = 2,
- 	[AD4170_GPIO_MODE_REG] = 2,
- 	[AD4170_GPIO_OUTPUT_REG] = 2,
- 	[AD4170_GPIO_INPUT_REG] = 2,
-@@ -301,8 +337,39 @@ static const unsigned int ad4170_sinc5_filt_fs_tbl[] = {
- 	1, 2, 4, 8, 12, 16, 20, 40, 48, 80, 100, 256,
- };
- 
-+static const unsigned int ad4170_iout_pin_tbl[] = {
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(0),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(1),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(2),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(3),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(4),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(5),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(6),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(7),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_AIN(8),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(0),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(1),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(2),
-+	AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(3),
-+};
-+
-+static const unsigned int ad4170_iout_current_ua_tbl[] = {
-+	0, 10, 50, 100, 250, 500, 1000, 1500,
-+};
-+
- enum ad4170_sensor_enum {
- 	AD4170_ADC_SENSOR = 0,
-+	AD4170_WEIGH_SCALE_SENSOR = 1,
-+	AD4170_RTD_SENSOR = 2,
-+	AD4170_THERMOCOUPLE_SENSOR = 3,
-+};
-+
-+/* maps adi,sensor-type property value to enum */
-+static const char * const ad4170_sensor_type[] = {
-+	[AD4170_ADC_SENSOR] = "adc",
-+	[AD4170_WEIGH_SCALE_SENSOR] = "weighscale",
-+	[AD4170_RTD_SENSOR] = "rtd",
-+	[AD4170_THERMOCOUPLE_SENSOR] = "thermocouple",
- };
- 
- struct ad4170_chip_info {
-@@ -387,6 +454,7 @@ struct ad4170_state {
- 	unsigned int clock_ctrl;
- 	unsigned int pins_fn[AD4170_NUM_ANALOG_PINS];
- 	int gpio_fn[AD4170_NUM_GPIO_PINS];
-+	unsigned int cur_src_pins[AD4170_NUM_CURRENT_SRC];
- 	struct gpio_chip gpiochip;
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the transfer buffers
-@@ -909,6 +977,19 @@ static int ad4170_get_ain_voltage_uv(struct ad4170_state *st, int ain_n,
- 	int v_diff;
- 
- 	*ain_voltage = 0;
-+	/*
-+	 * The voltage bias (vbias) sets the common-mode voltage of the channel
-+	 * to (AVDD + AVSS)/2. If provided, AVSS supply provides the magnitude
-+	 * (absolute value) of the negative voltage supplied to the AVSS pin.
-+	 * So, we do AVDD - AVSS to compute the DC voltage generated by the bias
-+	 * voltage generator.
-+	 */
-+	if (st->pins_fn[ain_n] & AD4170_PIN_VBIAS) {
-+		int v_diff = st->vrefs_uv[AD4170_AVDD_SUP] - st->vrefs_uv[AD4170_AVSS_SUP];
-+		*ain_voltage = v_diff / 2;
-+		return 0;
-+	}
-+
- 	if (ain_n <= AD4170_CHAN_MAP_TEMP_SENSOR)
- 		return 0;
- 
-@@ -963,6 +1044,19 @@ static int ad4170_get_ain_voltage_uv(struct ad4170_state *st, int ain_n,
- 	}
- }
- 
-+static int ad4170_validate_analog_input(struct ad4170_state *st, int pin)
-+{
-+	if (pin <= AD4170_MAX_ANALOG_PINS) {
-+		if (st->pins_fn[pin] & AD4170_PIN_CURRENT_OUT)
-+			return dev_err_probe(&st->spi->dev, -EINVAL,
-+					     "Pin %d already used with fn %u.\n",
-+					     pin, st->pins_fn[pin]);
-+
-+		st->pins_fn[pin] |= AD4170_PIN_ANALOG_IN;
-+	}
-+	return 0;
-+}
-+
- static int ad4170_validate_channel_input(struct ad4170_state *st, int pin, bool com)
- {
- 	/* Check common-mode input pin is mapped to a special input. */
-@@ -977,7 +1071,7 @@ static int ad4170_validate_channel_input(struct ad4170_state *st, int pin, bool
- 				     "Invalid analog input pin number. %d\n",
- 				     pin);
- 
--	return 0;
-+	return ad4170_validate_analog_input(st, pin);
- }
- 
- /*
-@@ -1719,6 +1813,371 @@ static int ad4170_gpio_init(struct iio_dev *indio_dev)
- 	return devm_gpiochip_add_data(&st->spi->dev, &st->gpiochip, indio_dev);
- }
- 
-+static int ad4170_validate_excitation_pin(struct ad4170_state *st, u32 pin)
-+{
-+	struct device *dev = &st->spi->dev;
-+	unsigned int i;
-+
-+	/* Check the pin number is valid */
-+	for (i = 0; i < ARRAY_SIZE(ad4170_iout_pin_tbl); i++)
-+		if (ad4170_iout_pin_tbl[i] == pin)
-+			break;
-+
-+	if (i == ARRAY_SIZE(ad4170_iout_pin_tbl))
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Invalid excitation pin: %u\n",
-+				     pin);
-+
-+	/* Check the pin is available */
-+	if (pin <= AD4170_MAX_ANALOG_PINS) {
-+		if (st->pins_fn[pin] != AD4170_PIN_UNASSIGNED)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Pin %u already used with fn %u\n",
-+					     pin, st->pins_fn[pin]);
-+
-+		st->pins_fn[pin] |= AD4170_PIN_CURRENT_OUT;
-+	} else {
-+		unsigned int gpio = pin - AD4170_CURRENT_SRC_I_OUT_PIN_GPIO(0);
-+
-+		if (st->gpio_fn[gpio] != AD4170_GPIO_UNASSIGNED)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "GPIO %u already used with fn %u\n",
-+					     gpio, st->gpio_fn[gpio]);
-+
-+		st->gpio_fn[gpio] |= AD4170_GPIO_AC_EXCITATION;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad4170_validate_excitation_pins(struct ad4170_state *st,
-+					   u32 *exc_pins, int num_exc_pins)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0; i < num_exc_pins; i++) {
-+		ret = ad4170_validate_excitation_pin(st, exc_pins[i]);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+static const char *const ad4170_i_out_pin_dt_props[] = {
-+	"adi,excitation-pin-0",
-+	"adi,excitation-pin-1",
-+	"adi,excitation-pin-2",
-+	"adi,excitation-pin-3",
-+};
-+
-+static const char *const ad4170_i_out_val_dt_props[] = {
-+	"adi,excitation-current-0-microamp",
-+	"adi,excitation-current-1-microamp",
-+	"adi,excitation-current-2-microamp",
-+	"adi,excitation-current-3-microamp",
-+};
-+
+ config GPIO_WINBOND
+ 	tristate "Winbond Super I/O GPIO support"
+ 	select ISA_BUS_API
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 88dedd298256..9d9ce589cc78 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -196,6 +196,7 @@ obj-$(CONFIG_GPIO_VIPERBOARD)		+= gpio-viperboard.o
+ obj-$(CONFIG_GPIO_VIRTUSER)		+= gpio-virtuser.o
+ obj-$(CONFIG_GPIO_VIRTIO)		+= gpio-virtio.o
+ obj-$(CONFIG_GPIO_VISCONTI)		+= gpio-visconti.o
++obj-$(CONFIG_GPIO_VORTEX86)		+= gpio-vortex86.o
+ obj-$(CONFIG_GPIO_VX855)		+= gpio-vx855.o
+ obj-$(CONFIG_GPIO_WCD934X)		+= gpio-wcd934x.o
+ obj-$(CONFIG_GPIO_WHISKEY_COVE)		+= gpio-wcove.o
+diff --git a/drivers/gpio/gpio-vortex86.c b/drivers/gpio/gpio-vortex86.c
+new file mode 100644
+index 000000000000..6f79db392baa
+--- /dev/null
++++ b/drivers/gpio/gpio-vortex86.c
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Parses firmware data describing output current source setup. There are 4
-+ * excitation currents (IOUT0 to IOUT3) that can be configured independently.
-+ * Excitation currents are added if they are output on the same pin.
++ *  GPIO driver for Vortex86 SoCs
++ *
++ *  Author: Marcos Del Sol Vives <marcos@orca.pet>
++ *
++ *  Based on the it87xx GPIO driver by Diego Elio Pettenò
 + */
-+static int ad4170_parse_exc_current(struct ad4170_state *st,
-+				    struct fwnode_handle *child,
-+				    unsigned int *exc_pins,
-+				    unsigned int *exc_curs,
-+				    unsigned int *num_exc_pins)
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/errno.h>
++#include <linux/ioport.h>
++#include <linux/gpio/driver.h>
++#include <linux/spinlock.h>
++
++#define GPIO_PORTS	5
++#define GPIO_PER_PORT	8
++#define GPIO_COUNT	(GPIO_PORTS * GPIO_PER_PORT)
++
++#define GPIO_DATA_BASE		0x78
++#define GPIO_DIRECTION_BASE	0x98
++
++static DEFINE_SPINLOCK(gpio_lock);
++
++static int vortex86_gpio_get(struct gpio_chip *chip, unsigned int gpio_num)
 +{
-+	struct device *dev = &st->spi->dev;
-+	unsigned int num_pins, i, j;
-+	u32 pin, val;
-+	int ret;
++	uint8_t port = gpio_num / GPIO_PER_PORT;
++	uint8_t bit  = gpio_num % GPIO_PER_PORT;
++	uint8_t val;
 +
-+	num_pins = 0;
-+	for (i = 0; i < AD4170_NUM_CURRENT_SRC; i++) {
-+		/* Parse excitation current output pin properties. */
-+		pin = AD4170_CURRENT_SRC_I_OUT_PIN_AIN(0);
-+		ret = fwnode_property_read_u32(child, ad4170_i_out_pin_dt_props[i],
-+					       &pin);
-+		if (ret)
-+			continue;
++	val = inb(GPIO_DATA_BASE + port);
++	return !!(val & (1 << bit));
++}
 +
-+		exc_pins[num_pins] = pin;
++static int vortex86_gpio_direction_in(struct gpio_chip *chip, unsigned int gpio_num)
++{
++	uint8_t port = gpio_num / GPIO_PER_PORT;
++	uint8_t bit  = gpio_num % GPIO_PER_PORT;
++	unsigned long flags;
++	uint8_t dir;
 +
-+		/* Parse excitation current value properties. */
-+		val = ad4170_iout_current_ua_tbl[0];
-+		fwnode_property_read_u32(child,
-+					 ad4170_i_out_val_dt_props[i], &val);
++	spin_lock_irqsave(&gpio_lock, flags);
 +
-+		for (j = 0; j < ARRAY_SIZE(ad4170_iout_current_ua_tbl); j++)
-+			if (ad4170_iout_current_ua_tbl[j] == val)
-+				break;
++	dir = inb(GPIO_DIRECTION_BASE + port);
++	dir &= ~(1 << bit); /* 0 = input */
++	outb(dir, GPIO_DIRECTION_BASE + port);
 +
-+		if (j == ARRAY_SIZE(ad4170_iout_current_ua_tbl))
-+			return dev_err_probe(dev, -EINVAL, "Invalid %s: %uuA\n",
-+					     ad4170_i_out_val_dt_props[i], val);
-+
-+		exc_curs[num_pins] = j;
-+		num_pins++;
-+	}
-+	*num_exc_pins = num_pins;
++	spin_unlock_irqrestore(&gpio_lock, flags);
 +
 +	return 0;
 +}
 +
-+static int ad4170_setup_current_src(struct ad4170_state *st,
-+				    struct fwnode_handle *child,
-+				    struct ad4170_setup *setup, u32 *exc_pins,
-+				    unsigned int *exc_curs, int num_exc_pins,
-+				    bool ac_excited)
++static void vortex86_gpio_set(struct gpio_chip *chip, unsigned int gpio_num, int value)
 +{
-+	unsigned int exc_cur_pair, i, j;
-+	int ret;
++	uint8_t port = gpio_num / GPIO_PER_PORT;
++	uint8_t bit  = gpio_num % GPIO_PER_PORT;
++	unsigned long flags;
++	uint8_t dat;
 +
-+	for (i = 0; i < num_exc_pins; i++) {
-+		unsigned int exc_cur = exc_curs[i];
-+		unsigned int pin = exc_pins[i];
-+		unsigned int current_src = 0;
++	spin_lock_irqsave(&gpio_lock, flags);
 +
-+		for (j = 0; j < AD4170_NUM_CURRENT_SRC; j++)
-+			if (st->cur_src_pins[j] == AD4170_CURRENT_SRC_DISABLED)
-+				break;
-+
-+		if (j == AD4170_NUM_CURRENT_SRC)
-+			return dev_err_probe(&st->spi->dev, -EINVAL,
-+					     "Too many excitation current sources\n");
-+
-+		current_src |= FIELD_PREP(AD4170_CURRENT_SRC_I_OUT_PIN_MSK, pin);
-+		current_src |= FIELD_PREP(AD4170_CURRENT_SRC_I_OUT_VAL_MSK, exc_cur);
-+		st->cur_src_pins[j] = pin;
-+		ret = regmap_write(st->regmap, AD4170_CURRENT_SRC_REG(j),
-+				   current_src);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (!ac_excited)
-+		return 0;
-+
-+	if (num_exc_pins < 2)
-+		return dev_err_probe(&st->spi->dev, -EINVAL,
-+			"Current chopping requested but only one pin provided: %u\n",
-+			exc_pins[0]);
-+
-+	/*
-+	 * Two use cases to handle here:
-+	 * - 2 pairs of excitation currents;
-+	 * - 1 pair of excitation currents.
-+	 */
-+	if (num_exc_pins == 4) {
-+		for (i = 0; i < AD4170_NUM_CURRENT_SRC; i++)
-+			if (st->cur_src_pins[i] != exc_pins[i])
-+				return dev_err_probe(&st->spi->dev, -EINVAL,
-+						     "Unable to use 4 exc pins\n");
-+	} else {
-+		/*
-+		 * Excitation current chopping is configured in pairs. Current
-+		 * sources IOUT0 and IOUT1 form pair 1, IOUT2 and IOUT3 make up
-+		 * pair 2. So, if current chopping was requested, check if the
-+		 * first end of the first pair of excitation currents is
-+		 * available. Try the next pair if IOUT0 has already been
-+		 * configured for another channel.
-+		 */
-+		i = st->cur_src_pins[0] == exc_pins[0] ? 0 : 2;
-+
-+		if (st->cur_src_pins[i] != exc_pins[0] ||
-+		    st->cur_src_pins[i + 1] != exc_pins[1])
-+			return dev_err_probe(&st->spi->dev, -EINVAL,
-+					     "Failed to setup current chopping\n");
-+
-+		st->cur_src_pins[i] = exc_pins[0];
-+		st->cur_src_pins[i + 1] = exc_pins[1];
-+
-+		if (i == 0)
-+			exc_cur_pair = AD4170_MISC_CHOP_IEXC_PAIR1;
-+		else
-+			exc_cur_pair = AD4170_MISC_CHOP_IEXC_PAIR2;
-+	}
-+
-+	/*
-+	 * Configure excitation current chopping.
-+	 * Chop both pairs if using four excitation pins.
-+	 */
-+	setup->misc |= FIELD_PREP(AD4170_MISC_CHOP_IEXC_MSK,
-+				  num_exc_pins == 2 ?
-+				  exc_cur_pair :
-+				  AD4170_MISC_CHOP_IEXC_BOTH);
-+
-+	return 0;
-+}
-+
-+static int ad4170_setup_bridge(struct ad4170_state *st,
-+			       struct fwnode_handle *child,
-+			       struct ad4170_setup *setup, u32 *exc_pins,
-+			       unsigned int *exc_curs, int num_exc_pins,
-+			       bool ac_excited)
-+{
-+	unsigned long gpio_mask;
-+	unsigned int i;
-+	int ret;
-+
-+	/*
-+	 * If a specific current is provided through
-+	 * adi,excitation-current-n-microamp, set excitation pins provided
-+	 * through adi,excitation-pin-n to excite the bridge circuit.
-+	 */
-+	for (i = 0; i < num_exc_pins; i++)
-+		if (exc_curs[i] > 0)
-+			return ad4170_setup_current_src(st, child, setup, exc_pins,
-+							exc_curs, num_exc_pins,
-+							ac_excited);
-+
-+	/*
-+	 * Else, use predefined ACX1, ACX1 negated, ACX2, ACX2 negated signals
-+	 * to AC excite the bridge. Those signals are output on GPIO2, GPIO0,
-+	 * GPIO3, and GPIO1, respectively. If only two pins are specified for AC
-+	 * excitation, use ACX1 and ACX2 (GPIO2 and GPIO3).
-+	 *
-+	 * Also, to avoid any short-circuit condition when more than one channel
-+	 * is enabled, set GPIO2 and GPIO0 high, and set GPIO1 and GPIO3 low to
-+	 * DC excite the bridge whenever a channel without AC excitation is
-+	 * selected. That is needed because GPIO pins are controlled by the next
-+	 * highest priority GPIO function when a channel doesn't enable AC
-+	 * excitation. See datasheet Figure 113 Weigh Scale (AC Excitation) for
-+	 * the reference circuit diagram.
-+	 */
-+	if (num_exc_pins == 2) {
-+		setup->misc |= FIELD_PREP(AD4170_MISC_CHOP_ADC_MSK, 0x3);
-+
-+		gpio_mask = AD4170_GPIO_MODE_GPIO3_MSK | AD4170_GPIO_MODE_GPIO2_MSK;
-+		ret = regmap_update_bits(st->regmap, AD4170_GPIO_MODE_REG, gpio_mask,
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO3_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT) |
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO2_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT));
-+		if (ret)
-+			return ret;
-+
-+		/*
-+		 * Set GPIO2 high and GPIO3 low to DC excite the bridge when
-+		 * a different channel is selected.
-+		 */
-+		gpio_mask = AD4170_GPIO_OUTPUT_GPIO_MSK(3) |
-+			    AD4170_GPIO_OUTPUT_GPIO_MSK(2);
-+		ret = regmap_update_bits(st->regmap, AD4170_GPIO_OUTPUT_REG, gpio_mask,
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(3), 0) |
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(2), 1));
-+		if (ret)
-+			return ret;
-+
-+		st->gpio_fn[3] |= AD4170_GPIO_OUTPUT;
-+		st->gpio_fn[2] |= AD4170_GPIO_OUTPUT;
-+	} else {
-+		setup->misc |= FIELD_PREP(AD4170_MISC_CHOP_ADC_MSK, 0x2);
-+
-+		gpio_mask = AD4170_GPIO_MODE_GPIO3_MSK | AD4170_GPIO_MODE_GPIO2_MSK |
-+			    AD4170_GPIO_MODE_GPIO1_MSK | AD4170_GPIO_MODE_GPIO0_MSK;
-+		ret = regmap_update_bits(st->regmap, AD4170_GPIO_MODE_REG, gpio_mask,
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO3_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT) |
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO2_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT) |
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO1_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT) |
-+					 FIELD_PREP(AD4170_GPIO_MODE_GPIO0_MSK,
-+						    AD4170_GPIO_MODE_GPIO_OUTPUT));
-+		if (ret)
-+			return ret;
-+
-+		/*
-+		 * Set GPIO2 and GPIO0 high, and set GPIO1 and GPIO3 low to DC
-+		 * excite the bridge when a different channel is selected.
-+		 */
-+		gpio_mask = AD4170_GPIO_OUTPUT_GPIO_MSK(3) |
-+			    AD4170_GPIO_OUTPUT_GPIO_MSK(2) |
-+			    AD4170_GPIO_OUTPUT_GPIO_MSK(1) |
-+			    AD4170_GPIO_OUTPUT_GPIO_MSK(0);
-+		ret = regmap_update_bits(st->regmap, AD4170_GPIO_OUTPUT_REG, gpio_mask,
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(3), 0) |
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(2), 1) |
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(1), 0) |
-+					 FIELD_PREP(AD4170_GPIO_OUTPUT_GPIO_MSK(0), 1));
-+		if (ret)
-+			return ret;
-+
-+		st->gpio_fn[3] |= AD4170_GPIO_OUTPUT;
-+		st->gpio_fn[2] |= AD4170_GPIO_OUTPUT;
-+		st->gpio_fn[1] |= AD4170_GPIO_OUTPUT;
-+		st->gpio_fn[0] |= AD4170_GPIO_OUTPUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad4170_setup_rtd(struct ad4170_state *st,
-+			    struct fwnode_handle *child,
-+			    struct ad4170_setup *setup, u32 *exc_pins,
-+			    unsigned int *exc_curs, int num_exc_pins, bool ac_excited)
-+{
-+	return ad4170_setup_current_src(st, child, setup, exc_pins,
-+					exc_curs, num_exc_pins, ac_excited);
-+}
-+
-+static int ad4170_parse_external_sensor(struct ad4170_state *st,
-+					struct fwnode_handle *child,
-+					struct ad4170_setup *setup,
-+					struct iio_chan_spec *chan,
-+					unsigned int s_type)
-+{
-+	unsigned int num_exc_pins, reg_val;
-+	struct device *dev = &st->spi->dev;
-+	u32 pins[2], exc_pins[4], exc_curs[4];
-+	bool ac_excited;
-+	int ret;
-+
-+	ret = fwnode_property_read_u32_array(child, "diff-channels", pins,
-+					     ARRAY_SIZE(pins));
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to read sensor diff-channels\n");
-+
-+	chan->differential = true;
-+	chan->channel = pins[0];
-+	chan->channel2 = pins[1];
-+
-+	ret = ad4170_parse_exc_current(st, child, exc_pins, exc_curs, &num_exc_pins);
-+	if (ret)
-+		return ret;
-+
-+	/* The external sensor may not need excitation from the ADC chip. */
-+	if (num_exc_pins == 0)
-+		return 0;
-+
-+	ret = ad4170_validate_excitation_pins(st, exc_pins, num_exc_pins);
-+	if (ret)
-+		return ret;
-+
-+	ac_excited = fwnode_property_read_bool(child, "adi,excitation-ac");
-+
-+	if (s_type == AD4170_THERMOCOUPLE_SENSOR) {
-+		if (st->pins_fn[chan->channel2] & AD4170_PIN_VBIAS) {
-+			reg_val = BIT(chan->channel2);
-+			ret = regmap_write(st->regmap, AD4170_V_BIAS_REG, reg_val);
-+			if (ret)
-+				dev_err_probe(dev, ret, "Failed to set vbias\n");
-+		}
-+	}
-+	if (s_type == AD4170_WEIGH_SCALE_SENSOR)
-+		ret = ad4170_setup_bridge(st, child, setup, exc_pins, exc_curs,
-+					  num_exc_pins, ac_excited);
++	dat = inb(GPIO_DATA_BASE + port);
++	if (value)
++		dat |= (1 << bit);
 +	else
-+		ret = ad4170_setup_rtd(st, child, setup, exc_pins, exc_curs,
-+				       num_exc_pins, ac_excited);
++		dat &= ~(1 << bit);
++	outb(dat, GPIO_DATA_BASE + port);
 +
-+	return ret;
++	spin_unlock_irqrestore(&gpio_lock, flags);
 +}
 +
- static int ad4170_parse_reference(struct ad4170_state *st,
- 				  struct fwnode_handle *child,
- 				  struct ad4170_setup *setup)
-@@ -1848,12 +2307,26 @@ static int ad4170_parse_channel_node(struct iio_dev *indio_dev,
- 	if (ret)
- 		return ret;
- 
-+	ret = fwnode_property_match_property_string(child, "adi,sensor-type",
-+						    ad4170_sensor_type,
-+						    ARRAY_SIZE(ad4170_sensor_type));
++static int vortex86_gpio_direction_out(struct gpio_chip *chip, unsigned int gpio_num, int value)
++{
++	uint8_t port = gpio_num / GPIO_PER_PORT;
++	uint8_t bit  = gpio_num % GPIO_PER_PORT;
++	unsigned long flags;
++	uint8_t dir, dat;
 +
-+	/* Default to conventional ADC channel if sensor type not present */
-+	s_type = ret < 0 ? AD4170_ADC_SENSOR : ret;
- 	switch (s_type) {
- 	case AD4170_ADC_SENSOR:
- 		ret = ad4170_parse_adc_channel_type(dev, child, chan);
- 		if (ret)
- 			return ret;
- 
-+		break;
-+	case AD4170_WEIGH_SCALE_SENSOR:
-+	case AD4170_THERMOCOUPLE_SENSOR:
-+	case AD4170_RTD_SENSOR:
-+		ret = ad4170_parse_external_sensor(st, child, setup, chan, s_type);
-+		if (ret)
-+			return ret;
++	spin_lock_irqsave(&gpio_lock, flags);
 +
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -2060,10 +2533,13 @@ static int ad4170_clock_select(struct iio_dev *indio_dev)
- 
- static int ad4170_parse_firmware(struct iio_dev *indio_dev)
- {
-+	unsigned int vbias_pins[AD4170_MAX_ANALOG_PINS];
- 	struct ad4170_state *st = iio_priv(indio_dev);
- 	struct device *dev = &st->spi->dev;
-+	unsigned int num_vbias_pins;
- 	int reg_data, ret;
- 	u32 int_pin_sel;
-+	unsigned int i;
- 
- 	ret = ad4170_clock_select(indio_dev);
- 	if (ret)
-@@ -2073,6 +2549,9 @@ static int ad4170_parse_firmware(struct iio_dev *indio_dev)
- 	if (ret)
- 		return ret;
- 
-+	for (i = 0; i < AD4170_NUM_CURRENT_SRC; i++)
-+		st->cur_src_pins[i] = AD4170_CURRENT_SRC_DISABLED;
++	/* Have to set direction first. Else writes to data are ignored. */
++	dir = inb(GPIO_DIRECTION_BASE + port);
++	dir |= (1 << bit); /* 1 = output */
++	outb(dir, GPIO_DIRECTION_BASE + port);
 +
- 	/* On power on, device defaults to using SDO pin for data ready signal */
- 	int_pin_sel = AD4170_INT_PIN_SDO;
- 	ret = device_property_match_property_string(dev, "interrupt-names",
-@@ -2091,6 +2570,25 @@ static int ad4170_parse_firmware(struct iio_dev *indio_dev)
- 	if (ret)
- 		return ret;
- 
-+	ret = device_property_count_u32(dev, "adi,vbias-pins");
-+	if (ret > 0) {
-+		if (ret > AD4170_MAX_ANALOG_PINS)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Too many vbias pins %u\n", ret);
++	dat = inb(GPIO_DATA_BASE + port);
++	if (value)
++		dat |= (1 << bit);
++	else
++		dat &= ~(1 << bit);
++	outb(dat, GPIO_DATA_BASE + port);
 +
-+		num_vbias_pins = ret;
++	spin_unlock_irqrestore(&gpio_lock, flags);
 +
-+		ret = device_property_read_u32_array(dev, "adi,vbias-pins",
-+						     vbias_pins,
-+						     num_vbias_pins);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to read vbias pins\n");
++	return 0;
++}
 +
-+		for (i = 0; i < num_vbias_pins; i++)
-+			st->pins_fn[vbias_pins[i]] |= AD4170_PIN_VBIAS;
++static char labels[GPIO_COUNT][sizeof("vortex86_gpXY")];
++static char *labels_table[GPIO_COUNT];
++
++static struct gpio_chip gpio_chip = {
++	.label			= KBUILD_MODNAME,
++	.owner			= THIS_MODULE,
++	.get			= vortex86_gpio_get,
++	.direction_input	= vortex86_gpio_direction_in,
++	.set			= vortex86_gpio_set,
++	.direction_output	= vortex86_gpio_direction_out,
++	.base			= -1,
++	.ngpio			= GPIO_COUNT,
++	.names			= (const char * const *)labels_table,
++};
++
++static int __init vortex86_gpio_init(void)
++{
++	int rc = 0, i;
++
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_VORTEX) {
++		pr_err("Not a Vortex86 CPU, refusing to load\n");
++		return -ENODEV;
 +	}
 +
- 	ret = ad4170_parse_channels(indio_dev);
- 	if (ret)
- 		return ret;
++	/* Request I/O regions for data and direction registers */
++	if (!request_region(GPIO_DATA_BASE, GPIO_PORTS, KBUILD_MODNAME))
++		return -EBUSY;
++	if (!request_region(GPIO_DIRECTION_BASE, GPIO_PORTS, KBUILD_MODNAME)) {
++		release_region(GPIO_DATA_BASE, GPIO_PORTS);
++		return -EBUSY;
++	}
++
++	/* Set up GPIO labels */
++	for (i = 0; i < GPIO_COUNT; i++) {
++		sprintf(labels[i], "vortex86_gp%u%u", i / 8, i % 8);
++		labels_table[i] = &labels[i][0];
++	}
++
++	rc = gpiochip_add_data(&gpio_chip, &gpio_chip);
++	if (rc) {
++		release_region(GPIO_DATA_BASE, GPIO_PORTS);
++		release_region(GPIO_DIRECTION_BASE, GPIO_PORTS);
++		return rc;
++	}
++
++	return 0;
++}
++
++static void __exit vortex86_gpio_exit(void)
++{
++	gpiochip_remove(&gpio_chip);
++	release_region(GPIO_DATA_BASE, GPIO_PORTS);
++	release_region(GPIO_DIRECTION_BASE, GPIO_PORTS);
++}
++
++module_init(vortex86_gpio_init);
++module_exit(vortex86_gpio_exit);
++
++MODULE_AUTHOR("Marcos Del Sol Vives <marcos@orca.pet>");
++MODULE_DESCRIPTION("GPIO driver for Vortex86 SoCs");
++MODULE_LICENSE("GPL");
 -- 
-2.47.2
+2.34.1
 
