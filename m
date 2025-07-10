@@ -1,116 +1,264 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB280A92E;
-	Wed,  9 Jul 2025 21:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6047C125D6
+	for <linux-gpio@vger.kernel.org>; Thu, 10 Jul 2025 00:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752096922; cv=none; b=WADJmlOxJsWHWOboLQOlpwWphOA7pv18UFQS9Iw9ZV4+rmErX9QWJ2g+TbNJJcBGpXNB6dGy6P3nx43BSMuV2lv+96ytOlGd9ufT6OzNOVHjx7gSkTFZ4j0JNXbvgBi9W61h6IwiSoCpKcQy6x9XRxJJM9Q7Q9+rlj8Nl2fZheE=
+	t=1752106863; cv=none; b=THy2GdTPtlQeS1xT1ua8/HXykobCshrM3kXHwR+BxNmZI3rpAgWz1lWKAeWPznm1udzv+JFCMGLT3QvTVEst2EF5IygtVq4C2Qb9WM+l4EuA7uqQA7mJH4DTxR1QXuQDg18lFitrV8yZBP9gkx4OkFlCbRbdk7iV4iCunyWjvIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752096922; c=relaxed/simple;
-	bh=ZfO4tTpnHhlOVCTzI4QpGxMpQ9KbzzhoLV0RV1GM5Ew=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GD0ee0nHBAVK0SJRXc2K36C0Rn/svXXhnPHGjHq9EgwKVQO5SOJJ2hQnGRVKpvWQjcFwJU3/SRyVD9tBLZNM5p21qGb0h+MT9jvbLwyVyVSVeKVC84qUtuZJBeBofH5r3rI1/ezmCDYyGTRQIHj3K5Z92qrnvsQRm3I1HsZGfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=iVF8f94E; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1752106863; c=relaxed/simple;
+	bh=DyFX5NVU0qfu6w33KZd1xOrQORMsGM0vYCT7ZpTXwlo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NGH+v0m9bFxKwLpzt2G256+A/xpQ/GOdoJUCJ3tBIZs+5yR1NWxnUxW7Dpflt3cZthPiMlo5i9coo3N02Rq6H3c1mhY/fC27JyAsobxPHh0AJLMwe8GFW86sBWVC2FyEDpuaVwIvFBEIlACnba8c33wUEICiiA5fpOuePClw0OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=vh5S674m; arc=none smtp.client-ip=112.168.119.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="iVF8f94E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1752096392;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AeNyhU0IbImTOM2sec3z2E+lKGcfLSldUoaa9IlHjM8=;
-	b=iVF8f94E7W50OAweMt+hTHDfgObOse4sZp8Eo5dQc8thX1hkibCzhxy/9KVJUZHhnhvRMH
-	4eM0KB6bD8knnRyAYR8EVPHw3dxxkjb9768f3Nvq8ePRJgS9TJDf6pTcpd4E4aNpTbvJ0u
-	DRWRu5b09tEtU9ZhjgXJKyC9Lf2wwfE=
-Message-ID: <5a2c7d244d0467d7236dbce920319c6df519bad7.camel@crapouillou.net>
-Subject: Re: [PATCH v2 07/12] pinctrl: ingenic: use
- pinmux_generic_add_pinfunction()
-From: Paul Cercueil <paul@crapouillou.net>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij	
- <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Konrad
- Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>,
- Lorenzo Bianconi	 <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
- Matthias Brugger	 <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 09 Jul 2025 23:25:30 +0200
-In-Reply-To: <20250709-pinctrl-gpio-pinfuncs-v2-7-b6135149c0d9@linaro.org>
-References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
-	 <20250709-pinctrl-gpio-pinfuncs-v2-7-b6135149c0d9@linaro.org>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="vh5S674m"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
+	t=1752106850; bh=DyFX5NVU0qfu6w33KZd1xOrQORMsGM0vYCT7ZpTXwlo=;
+	l=4651; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=vh5S674mIvXVosNkJsEGHaPWeduY8Ag4VBabLfEEwvW3o5DycqS4EdFl8pQYA/FPo
+	 ygmb4clDvQFkVscMIC02TQcJn/HJiKKQCyy4jXhqcHeH9YbWo/LW1rX04NGzloTJmU
+	 eFESaz1fIyCReTrtdaGPR5JMXBiyvKUZWYnQB83Q=
+Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
+	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:50 +0900
+X-Original-SENDERIP: 115.23.218.194
+X-Original-SENDERCOUNTRY: KR, South Korea 
+X-Original-MAILFROM: ksk4725@coasia.com
+X-Original-RCPTTO: jesper.nilsson@axis.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	linus.walleij@linaro.org,
+	tomasz.figa@gmail.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	ravi.patel@samsung.com,
+	ksk4725@coasia.com,
+	smn1196@coasia.com,
+	kenkim@coasia.com,
+	pjsin865@coasia.com,
+	gwk1013@coasia.com,
+	hgkim05@coasia.com,
+	mingyoungbo@coasia.com,
+	pankaj.dubey@samsung.com,
+	shradha.t@samsung.com,
+	inbaraj.e@samsung.com,
+	swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com,
+	dj76.yang@samsung.com,
+	hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+From: ksk4725@coasia.com
+To: Jesper Nilsson <jesper.nilsson@axis.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Ravi Patel <ravi.patel@samsung.com>,
+	SeonGu Kang <ksk4725@coasia.com>,
+	SungMin Park <smn1196@coasia.com>
+Cc: kenkim <kenkim@coasia.com>,
+	Jongshin Park <pjsin865@coasia.com>,
+	GunWoo Kim <gwk1013@coasia.com>,
+	HaGyeong Kim <hgkim05@coasia.com>,
+	GyoungBo Min <mingyoungbo@coasia.com>,
+	Pankaj Dubey <pankaj.dubey@samsung.com>,
+	Shradha Todi <shradha.t@samsung.com>,
+	Inbaraj E <inbaraj.e@samsung.com>,
+	Swathi K S <swathi.ks@samsung.com>,
+	Hrishikesh <hrishikesh.d@samsung.com>,
+	Dongjin Yang <dj76.yang@samsung.com>,
+	Sang Min Kim <hypmean.kim@samsung.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+Subject: [PATCH 01/16] dt-bindings: clock: Add CMU bindings definitions for ARTPEC-8 platform
+Date: Thu, 10 Jul 2025 09:20:31 +0900
+Message-Id: <20250710002047.1573841-2-ksk4725@coasia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Bartosz,
+From: Ravi Patel <ravi.patel@samsung.com>
 
-Le mercredi 09 juillet 2025 =C3=A0 16:39 +0200, Bartosz Golaszewski a
-=C3=A9crit=C2=A0:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> Instead of passing individual fields of struct pinfunction to
-> pinmux_generic_add_function(), use pinmux_generic_add_pinfunction()
-> and
-> pass the entire structure directly.
->=20
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Add device tree clock definitions constants for ARTPEC-8 platform.
+ARTPEC-8 platform has separate instances for each particular CMU.
+So clock IDs in this bindings header also start from 1 for each CMU block.
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+---
+ include/dt-bindings/clock/axis,artpec8-clk.h | 122 +++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
 
-Cheers,
--Paul
+diff --git a/include/dt-bindings/clock/axis,artpec8-clk.h b/include/dt-bindings/clock/axis,artpec8-clk.h
+new file mode 100644
+index 000000000000..69adfa999e34
+--- /dev/null
++++ b/include/dt-bindings/clock/axis,artpec8-clk.h
+@@ -0,0 +1,122 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
++ *             https://www.samsung.com
++ * Copyright (c) 2022-2025  Axis Communications AB.
++ *             https://www.axis.com
++ *
++ * Device Tree binding constants for ARTPEC-8 clock controller.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_ARTPEC8_H
++#define _DT_BINDINGS_CLOCK_ARTPEC8_H
++
++/* CMU_CMU */
++#define PLL_SHARED0				1
++#define DOUT_PLL_SHARED0_DIV2			2
++#define DOUT_PLL_SHARED0_DIV3			3
++#define DOUT_PLL_SHARED0_DIV4			4
++#define PLL_SHARED1				5
++#define DOUT_PLL_SHARED1_DIV2			6
++#define DOUT_PLL_SHARED1_DIV3			7
++#define DOUT_PLL_SHARED1_DIV4			8
++#define PLL_AUDIO				9
++#define DOUT_CLKCMU_BUS_BUS			10
++#define DOUT_CLKCMU_BUS_DLP			11
++#define DOUT_CLKCMU_CDC_CORE			12
++#define DOUT_CLKCMU_OTP				13
++#define DOUT_CLKCMU_CORE_MAIN			14
++#define DOUT_CLKCMU_CORE_DLP			15
++#define DOUT_CLKCMU_CPUCL_SWITCH		16
++#define DOUT_CLKCMU_DLP_CORE			17
++#define DOUT_CLKCMU_FSYS_BUS			18
++#define DOUT_CLKCMU_FSYS_IP			19
++#define DOUT_CLKCMU_FSYS_SCAN0			20
++#define DOUT_CLKCMU_FSYS_SCAN1			21
++#define DOUT_CLKCMU_GPU_3D			22
++#define DOUT_CLKCMU_GPU_2D			23
++#define DOUT_CLKCMU_IMEM_ACLK			24
++#define DOUT_CLKCMU_IMEM_JPEG			25
++#define DOUT_CLKCMU_MIF_SWITCH			26
++#define DOUT_CLKCMU_MIF_BUSP			27
++#define DOUT_CLKCMU_PERI_DISP			28
++#define DOUT_CLKCMU_PERI_IP			29
++#define DOUT_CLKCMU_PERI_AUDIO			30
++#define DOUT_CLKCMU_RSP_CORE			31
++#define DOUT_CLKCMU_TRFM_CORE			32
++#define DOUT_CLKCMU_VCA_ACE			33
++#define DOUT_CLKCMU_VCA_OD			34
++#define DOUT_CLKCMU_VIO_CORE			35
++#define DOUT_CLKCMU_VIO_AUDIO			36
++#define DOUT_CLKCMU_VIP0_CORE			37
++#define DOUT_CLKCMU_VIP1_CORE			38
++#define DOUT_CLKCMU_VPP_CORE			39
++
++/* CMU_BUS */
++#define MOUT_CLK_BUS_ACLK_USER			1
++#define MOUT_CLK_BUS_DLP_USER			2
++#define DOUT_CLK_BUS_PCLK			3
++
++/* CMU_CORE */
++#define MOUT_CLK_CORE_ACLK_USER			1
++#define MOUT_CLK_CORE_DLP_USER			2
++#define DOUT_CLK_CORE_PCLK			3
++
++/* CMU_CPUCL */
++#define PLL_CPUCL				1
++#define MOUT_CLK_CPUCL_PLL			2
++#define MOUT_CLKCMU_CPUCL_SWITCH_USER		3
++#define DOUT_CLK_CPUCL_CPU			4
++#define DOUT_CLK_CLUSTER_ACLK			5
++#define DOUT_CLK_CLUSTER_PCLKDBG		6
++#define DOUT_CLK_CLUSTER_CNTCLK			7
++#define DOUT_CLK_CLUSTER_ATCLK			8
++#define DOUT_CLK_CPUCL_PCLK			9
++#define DOUT_CLK_CPUCL_CMUREF			10
++#define DOUT_CLK_CPUCL_DBG			11
++#define DOUT_CLK_CPUCL_PCLKDBG			12
++
++/* CMU_FSYS */
++#define PLL_FSYS				1
++#define MOUT_FSYS_SCAN0_USER			2
++#define MOUT_FSYS_SCAN1_USER			3
++#define MOUT_FSYS_BUS_USER			4
++#define MOUT_FSYS_MMC_USER			5
++#define DOUT_FSYS_PCIE_PIPE			6
++#define DOUT_FSYS_ADC				7
++#define DOUT_FSYS_PCIE_PHY_REFCLK_SYSPLL	8
++#define DOUT_FSYS_EQOS_INT125			9
++#define DOUT_FSYS_OTP_MEM			10
++#define DOUT_FSYS_SCLK_UART			11
++#define DOUT_FSYS_EQOS_25			12
++#define DOUT_FSYS_EQOS_2p5			13
++#define DOUT_FSYS_BUS300			14
++#define DOUT_FSYS_BUS_QSPI			15
++#define DOUT_FSYS_MMC_CARD0			16
++#define DOUT_FSYS_MMC_CARD1			17
++#define DOUT_SCAN_CLK_FSYS_125			18
++#define DOUT_FSYS_QSPI				19
++#define DOUT_FSYS_SFMC_NAND			20
++#define DOUT_SCAN_CLK_FSYS_MMC			21
++
++/* CMU_IMEM */
++#define MOUT_IMEM_ACLK_USER			1
++#define MOUT_IMEM_GIC_CA53			2
++#define MOUT_IMEM_GIC_CA5			3
++#define MOUT_IMEM_JPEG_USER			4
++
++/* CMU_PERI */
++#define MOUT_PERI_IP_USER			1
++#define MOUT_PERI_AUDIO_USER			2
++#define MOUT_PERI_I2S0				3
++#define MOUT_PERI_I2S1				4
++#define MOUT_PERI_DISP_USER			5
++#define DOUT_PERI_SPI				6
++#define DOUT_PERI_UART1				7
++#define DOUT_PERI_UART2				8
++#define DOUT_PERI_PCLK				9
++#define DOUT_PERI_I2S0				10
++#define DOUT_PERI_I2S1				11
++#define DOUT_PERI_DSIM				12
++
++#endif /* _DT_BINDINGS_CLOCK_ARTPEC8_H */
+-- 
+2.34.1
 
-> ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 5 ++---
-> =C2=A01 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index
-> 3c660471ec6911ee494f45d2ffc13c4dc496fd2e..79119cf20efcf8cc701647d9ff9
-> 79c2b71bf7589 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -4574,9 +4574,8 @@ static int __init ingenic_pinctrl_probe(struct
-> platform_device *pdev)
-> =C2=A0		const struct function_desc *function =3D &chip_info-
-> >functions[i];
-> =C2=A0		const struct pinfunction *func =3D &function->func;
-> =C2=A0
-> -		err =3D pinmux_generic_add_function(jzpc->pctl, func-
-> >name,
-> -						=C2=A0 func->groups,
-> func->ngroups,
-> -						=C2=A0 function->data);
-> +		err =3D pinmux_generic_add_pinfunction(jzpc->pctl,
-> func,
-> +						=C2=A0=C2=A0=C2=A0=C2=A0 function-
-> >data);
-> =C2=A0		if (err < 0) {
-> =C2=A0			dev_err(dev, "Failed to register function
-> %s\n", func->name);
-> =C2=A0			return err;
