@@ -1,301 +1,115 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534427FD40;
-	Fri, 11 Jul 2025 10:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3BF279DC3
+	for <linux-gpio@vger.kernel.org>; Fri, 11 Jul 2025 10:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228042; cv=none; b=UsQu5I+niS5sdgG5Qi189GZVkunYDZ1jcI7xpXCnEoQXK6aAln58zQoLFcft9rYzSVRaEdBQ21+lvvGGhrE1yO9xxulM5bm0nis5IQozBfoR1O2giAPBHUVvydS+t2DlpyvRrWYVoarU0pt4GUsIJu17IdNq6eyFu7nYtG+wSlE=
+	t=1752229190; cv=none; b=NGuD4EOFIeNdr5g+nxhMyynLq/LagwtQ7YCo711uO5+m1Rr8ajhH5Ljob6883hhVvaIqVZSq456G0JC+zv537HtFdIITChPHoKeIggmWgqJJjZ56WjLUpUX8ADjZqBnsnvzmOYAfblcYAvPTM5H7VJs0q481xIAm/gZgvF8o36A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752228042; c=relaxed/simple;
-	bh=KqqF/lZSiJHdQ+0LsQspVZaqAlDYuxiCOHRS/1UhIII=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CfUu/MJ5ySrhhZ1rKk6U7kWUZ2KdfZEDZJdJl/b2SmZtj8uEHlLIpTG6jcerhBNNbGLYZQXBMlwI8+tCiZI4v9PwSZWBHZMKq5lhXKzAhlU8LjXPTWgzDVKV5DRAbdny2mw1xNAZ6iLM1DwtkuY87zN/F8WHQYFx/IvO6aYM+Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XzrkEgMC; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1752229190; c=relaxed/simple;
+	bh=cbmSGL/Y1Z4mlwSQSHxQV7KiqM9G9CxIi3R6tcvoELM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YdvJRTN/u16lZ6ncb+lIbNCN3l291v0trUsl5/FfZNJbO5a+2Zvjma+L2UydkzOk0rz3LF/ff4Q3Ri8piNEKoBoCLaG2Y6l4YYzhJS/OYX6aHQlfzlraitDWeEXRRMmKmVU30zk67gYMpR1ssRNl09NpLK0I4g5asDwoFvbXN08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PWZGHuam; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XzrkEgMC"
-X-UUID: c4546ab45e3b11f0b33aeb1e7f16c2b6-20250711
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Uod/JMQEO4KbUCsWai7WYan9PqxL0GvkbMgC6cj/V5A=;
-	b=XzrkEgMC3M2EEOZcDh7zSTBkt5GqTUJsOxLcn99q+0gKF0MqgOrM3MryZQdtN4fLr9C1mqL3gLBJ5vontdkvg1Q4F9EDZZSLU00cY6a4pW9xdp4LafrFqudJKuCFzbn3U2/EabPpF4VDV0incA8d9hls17Y9FzKShB+p/6ZpLmU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:4b19f819-e482-4cc8-9eda-568084dbf49b,IP:0,UR
-	L:25,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:3eee19d8-b768-4ffb-8a44-cd8427608ba6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:97|99|83|106|11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
-	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: c4546ab45e3b11f0b33aeb1e7f16c2b6-20250711
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <ot_cathy.xu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 274200033; Fri, 11 Jul 2025 17:45:23 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 11 Jul 2025 17:45:21 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 11 Jul 2025 17:45:20 +0800
-From: Cathy Xu <ot_cathy.xu@mediatek.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>
-CC: Lei Xue <lei.xue@mediatek.com>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Yong Mao <yong.mao@mediatek.com>, Wenbin Mei <Wenbin.Mei@mediatek.com>, Axe
- Yang <Axe.Yang@mediatek.com>, Cathy Xu <ot_cathy.xu@mediatek.com>
-Subject: [PATCH v2 1/3] dt-bindings: pinctrl: mediatek: Add support for mt8189
-Date: Fri, 11 Jul 2025 17:44:57 +0800
-Message-ID: <20250711094513.17073-2-ot_cathy.xu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250711094513.17073-1-ot_cathy.xu@mediatek.com>
-References: <20250711094513.17073-1-ot_cathy.xu@mediatek.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PWZGHuam"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55516abe02cso1934159e87.0
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Jul 2025 03:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752229187; x=1752833987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwenZ9KMIUFAX6jrS0AK85gcymUf9NvXLhbThM1sPR4=;
+        b=PWZGHuamwJUhoiK/Sou093nchqpKHXczhmhMqMA1Q/GQiOfcNxA7il9VFY7XrgWGu6
+         5ogTPUFddkQEb+ca/b0xymLR76Vs5TZyyPNenmZwTc78b/tC6JKuR89hpLCbdHRAutAX
+         ZhBTSmyF2dI7MuNNm2d1K5U953+XCgk3xhvizXF72huyxaP7av8zOKXwXYd2sTKTDYZJ
+         TRjqehXh77I9k+57J6PP+vqCtRt93JWZfF8tKAXrvCcpTQNITOhIGRHGTmbY9HtFx1oI
+         c2rVJwupwIpCsjZ8AmFGcAbesJShuD5LDVw9nCWuQAxv5xt89RHskkADfJzEtftpff/H
+         7dBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752229187; x=1752833987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uwenZ9KMIUFAX6jrS0AK85gcymUf9NvXLhbThM1sPR4=;
+        b=axjvDG0bksynBQeJC791jr/f4Nic1ghnlMBgrrBy1NSKJ40+1YLtuM5Z8IRmKeETa3
+         n2pNUIJWpQeo1hvNWMFW4vyEkOk5nsi4YkGc+s/f04njN1i1tu8kK0T1Ug3JujpgZnlP
+         X54ad5PTy/WLOQoTyzxg1runBUxc7tX4S6/KyxnmV/lITz/llsvHGwgcXSQiFQgk6gUT
+         ssl/TLUIUJqEtE5w1w/ZlCF1CFXLMs5jiBwpBEE0J3uIDN2QQW9Iodwghb3jSJjp66Ow
+         ZHIReNf1mIN/h+KMupHq0675kONUxMG6dhf6ltCGSizyVUe1TRUiZxyMA8icGfccVFjo
+         VGow==
+X-Forwarded-Encrypted: i=1; AJvYcCU1cCSHDw6jbl4EF1NHaHXzoEEgxPGzbpV/6yuF7HnmK5QwcHFtB4XBcXmg0enVH97B0SFyjmmJPGxh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2mTulqopyymzlHJ5QnfEmuUXBER1D1fuxNx8ebqZZ12iCfwaZ
+	QGGKy8SECcIwly85OwSvhO14FXXL6kkXGKW2jlkvbzbfuSN8sbEAU+vh5cOxji11VM9xobAqe6G
+	xXkzJXjJEp7UiyCr3QlzX89xW4wwTLwtYmRU6oFOzvb8mhyiuXPTp
+X-Gm-Gg: ASbGncsmdKq7nOKNFheBNK3KJ8UQqqDCihHBagTzXU62YBOxqb8gtLCTVL+nDBZrtqt
+	vH5IVFzRny+E5S601s4WdzndklDGq1Qay8mxeTFHuYlvwmPf67tfz4rFtzBiZHeizANvGF9LXHN
+	WTt70Ee7uDg0oyIm/awAheaGUX42Dpgt/wg2Z7h8qW9+cQN/BC/o4uyefyOXL1kz1Q1/7pkVsbz
+	/CpDTrgMN7NpnIE8KX0CNVF9fb/Mrd35M1YEg==
+X-Google-Smtp-Source: AGHT+IEW/M1REGVCK4E45GEKXbT3V9smSB8rKq/nvr0qctMYIRgEI+I64Yc2BwkbQM3QHr+TWvfrQBwSBy9bCPmHwSQ=
+X-Received: by 2002:a05:6512:234a:b0:553:a34e:71d4 with SMTP id
+ 2adb3069b0e04-55a036ba994mr917962e87.0.1752229186800; Fri, 11 Jul 2025
+ 03:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250709091542.968968-1-marcos@orca.pet>
+In-Reply-To: <20250709091542.968968-1-marcos@orca.pet>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 11 Jul 2025 12:19:35 +0200
+X-Gm-Features: Ac12FXzsNlwwCPXmWdiqW-RqPJYd46pBsoR9iDovUEPXzuCSAy7cSpXF0__qwB8
+Message-ID: <CAMRc=MdLXP=DgHEh6hoNYhDgB4aESmC29VH6hsH=AONNgsjXQQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
+To: Marcos Del Sol Vives <marcos@orca.pet>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the new binding document for pinctrl on MediaTek mt8189.
+On Wed, Jul 9, 2025 at 11:16=E2=80=AFAM Marcos Del Sol Vives <marcos@orca.p=
+et> wrote:
+>
+> Add a new simple GPIO device driver for Vortex86 lines of SoCs,
+> implemented according to their programming reference manual [1].
+>
+> This is required for detecting the status of the poweroff button and
+> performing the poweroff sequence on ICOP eBox computers.
+>
+> IRQs are not implemented as they are available for less than half the
+> GPIO pins, and they are not the ones required for the poweroff stuff, so
+> polling will be required anyway.
+>
 
-Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
----
- .../pinctrl/mediatek,mt8189-pinctrl.yaml      | 213 ++++++++++++++++++
- 1 file changed, 213 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8189-pinctrl.yaml
+(...)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8189-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8189-pinctrl.yaml
-new file mode 100644
-index 000000000000..32e4653da5db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8189-pinctrl.yaml
-@@ -0,0 +1,213 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/mediatek,mt8189-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT8189 Pin Controller
-+
-+maintainers:
-+  - Lei Xue <lei.xue@mediatek.com>
-+  - Cathy Xu <ot_cathy.xu@mediatek.com>
-+
-+description:
-+  The MediaTek's MT8189 Pin controller is used to control SoC pins.
-+
-+properties:
-+  compatible:
-+    const: mediatek,mt8189-pinctrl
-+
-+  reg:
-+    items:
-+      - description: gpio base
-+      - description: lm group IO
-+      - description: rb0 group IO
-+      - description: rb1 group IO
-+      - description: bm0 group IO
-+      - description: bm1 group IO
-+      - description: bm2 group IO
-+      - description: lt0 group IO
-+      - description: lt1 group IO
-+      - description: rt group IO
-+      - description: eint0 group IO
-+      - description: eint1 group IO
-+      - description: eint2 group IO
-+      - description: eint3 group IO
-+      - description: eint4 group IO
-+
-+  reg-names:
-+    items:
-+      - const: base
-+      - const: lm
-+      - const: rb0
-+      - const: rb1
-+      - const: bm0
-+      - const: bm1
-+      - const: bm2
-+      - const: lt0
-+      - const: lt1
-+      - const: rt
-+      - const: eint0
-+      - const: eint1
-+      - const: eint2
-+      - const: eint3
-+      - const: eint4
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  gpio-line-names: true
-+
-+# PIN CONFIGURATION NODES
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
-+
-+    patternProperties:
-+      '^pins':
-+        type: object
-+        $ref: /schemas/pinctrl/pincfg-node.yaml
-+        additionalProperties: false
-+        description:
-+          A pinctrl node should contain at least one subnode representing the
-+          pinctrl groups available on the machine. Each subnode will list the
-+          pins it needs, and how they should be configured, with regard to muxer
-+          configuration, pullups, drive strength, input enable/disable and input
-+          schmitt.
-+
-+        properties:
-+          pinmux:
-+            description:
-+              Integer array, represents gpio pin number and mux setting.
-+              Supported pin number and mux varies for different SoCs, and are
-+              defined as macros in arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h
-+              directly, for this SoC.
-+
-+          drive-strength:
-+            enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+
-+          bias-pull-down:
-+            oneOf:
-+              - type: boolean
-+              - enum: [100, 101, 102, 103]
-+                description: mt8189 pull down PUPD/R0/R1 type define value.
-+              - enum: [75000, 5000]
-+                description: mt8189 pull down RSEL type si unit value(ohm).
-+            description: |
-+              For pull down type is normal, it doesn't need add R1R0 define
-+              and resistance value.
-+
-+              For pull down type is PUPD/R0/R1 type, it can add R1R0 define to
-+              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
-+              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
-+              "MTK_PUPD_SET_R1R0_11" define in mt8189.
-+
-+              For pull down type is PD/RSEL, it can add resistance value(ohm)
-+              to set different resistance by identifying property
-+              "mediatek,rsel-resistance-in-si-unit".
-+
-+          bias-pull-up:
-+            oneOf:
-+              - type: boolean
-+              - enum: [100, 101, 102, 103]
-+                description: mt8189 pull up PUPD/R0/R1 type define value.
-+              - enum: [1000, 1500, 2000, 3000, 4000, 5000, 75000]
-+                description: mt8189 pull up RSEL type si unit value(ohm).
-+            description: |
-+              For pull up type is normal, it don't need add R1R0 define
-+              and resistance value.
-+
-+              For pull up type is PUPD/R0/R1 type, it can add R1R0 define to
-+              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
-+              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
-+              "MTK_PUPD_SET_R1R0_11" define in mt8189.
-+
-+              For pull up type is PU/RSEL, it can add resistance value(ohm)
-+              to set different resistance by identifying property
-+              "mediatek,rsel-resistance-in-si-unit".
-+
-+          bias-disable: true
-+
-+          output-high: true
-+
-+          output-low: true
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+        required:
-+          - pinmux
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/pinctrl/mt65xx.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #define PINMUX_GPIO51__FUNC_SCL0 (MTK_PIN_NO(51) | 2)
-+    #define PINMUX_GPIO52__FUNC_SDA0 (MTK_PIN_NO(52) | 2)
-+
-+    pio: pinctrl@10005000 {
-+        compatible = "mediatek,mt8189-pinctrl";
-+        reg = <0x10005000 0x1000>,
-+              <0x11b50000 0x1000>,
-+              <0x11c50000 0x1000>,
-+              <0x11c60000 0x1000>,
-+              <0x11d20000 0x1000>,
-+              <0x11d30000 0x1000>,
-+              <0x11d40000 0x1000>,
-+              <0x11e20000 0x1000>,
-+              <0x11e30000 0x1000>,
-+              <0x11f20000 0x1000>,
-+              <0x11ce0000 0x1000>,
-+              <0x11de0000 0x1000>,
-+              <0x11e60000 0x1000>,
-+              <0x1c01e000 0x1000>,
-+              <0x11f00000 0x1000>;
-+        reg-names = "base", "lm", "rb0", "rb1", "bm0" , "bm1",
-+                    "bm2", "lt0", "lt1", "rt", "eint0", "eint1",
-+                    "eint2", "eint3", "eint4";
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&pio 0 0 182>;
-+        interrupt-controller;
-+        interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH 0>;
-+        #interrupt-cells = <2>;
-+
-+        i2c0-pins {
-+            pins {
-+                pinmux = <PINMUX_GPIO51__FUNC_SCL0>,
-+                         <PINMUX_GPIO52__FUNC_SDA0>;
-+                bias-disable;
-+            };
-+        };
-+    };
--- 
-2.45.2
+> +
+> +static int __init vortex_gpio_init(void)
+> +{
+> +       if (boot_cpu_data.x86_vendor !=3D X86_VENDOR_VORTEX) {
+> +               pr_err("Not a Vortex86 CPU, refusing to load\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       pdev =3D platform_create_bundle(&vortex_gpio_driver, vortex_gpio_=
+probe,
+> +                       vortex_gpio_resources, ARRAY_SIZE(vortex_gpio_res=
+ources),
+> +                       NULL, 0);
+> +       return PTR_ERR_OR_ZERO(pdev);
+> +}
+> +
 
+This looks better but I admit I'm not an expert in x86 platforms so
+I'll allow myself to Cc Andy. Is this how it's typically done in x86?
+Is this module visible in ACPI in any way that would allow us to
+leverage the platform device core? Or do we need to try to register
+the device unconditionally on all Vortex platforms?
+
+Bart
