@@ -1,125 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F761F0985;
-	Fri, 11 Jul 2025 07:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678B91F12FB;
+	Fri, 11 Jul 2025 07:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219601; cv=none; b=SZ0cbzYxtQUFjUQc5q/qGuVH2ccnfgzHGmWsNeOyEO87pRU0+MdO6OpqJP4PAKj3LizdEQmQB5slbbEaUn/7NtQKlUT8kc5QukoDVRX9yCpHHHLEqkgxf8+0K9zHM9vd+76vd29eBHmUTHjJ1D/17PqvwpV4QKnRM8LskGJenCU=
+	t=1752219841; cv=none; b=OHBqUdCRBECpBK6Mm4KiF+7v0+Ue0BDJVJCKdPhsNJmGw2yD4NYuWOw4HliHRRkKZS2TdjQ6qs9XXhfXlcEwC+vcA65qg46YlITpOzExY9/ZmdwQD6U8gofeLIEH51IZV1WvnAFOg8+caU4LvRAoB2YhUDbuUkPFzO2Zx3ucpGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219601; c=relaxed/simple;
-	bh=v1UKmxLgqeJQ99ZtIwzdfNnTf17LbvFnV7H8H/rBmII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTlBUd5uo71HYwF937jcLz9HAipyOr/AF4MCD33PviVc7R9/L0stNRwMFBiY4/Awxe1kHsTCJerxdna4GptjoPoT9DNx5PGhYNTR3VzqQRUCNIQQZjePgtpotPw2choFL5ffg+LVhg3pVMzxJWemwBUcQ93RTiVRq5B0dpnYXkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B59pt+FB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752219841; c=relaxed/simple;
+	bh=ogK2zalKCdo23aiqZ8GXfEgqboFf4a0hyZdeZHJ07Bc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=iDr6iYWIQ5X8FwY+v/MHGGFwUBY2A5ELB+vvH1tk4AEqwU6e71Bf6eWF7SNm3sBHVl6btHFeqWtBhvVmfvdA2cVzQkSWC0P2a151HjqQZ6WZnWITk/O8tpxeosC2anoG4Lr6ox1JE4fGiSH97lUrbU+Zdr681YWgKCswWqxVex8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=U5tJqTX5; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B59pt+FB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C18BC4CEED;
-	Fri, 11 Jul 2025 07:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752219601;
-	bh=v1UKmxLgqeJQ99ZtIwzdfNnTf17LbvFnV7H8H/rBmII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B59pt+FBc4SVitZEEflQkbZNoMBo9iDvTidx1AFsec47Vzgp/aG3u+fnOvxg2nMVQ
-	 a/PJNdf/I7OrxIBSRjQ4/02rOG77wMSmtRTCr8LenaXpIMsAe4sEAQ79fV4RLzJs8/
-	 wALzB/zSRV+Y4lgU7iAq+C0EezzPbt/ItCuVkkGc5HgrpB5JpRmyL4qigo2+YZbx6W
-	 CoVbCOuO4GvdPIQjwP9WqoIJcJc5EAjgJLaVdNsSebl0HebeQRUZZ62jYPncNa4eSq
-	 o1FvJ1v9YIxSAzCV5GwHGwC6RFpuCzbLtPHpjYDEa9nsTcDVdQV748GiZSHQych1uR
-	 hKrdP0Mn0Q2JQ==
-Date: Fri, 11 Jul 2025 09:39:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com, mbrugger@suse.com, 
-	Ghennadi.Procopciuc@nxp.com, larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com, ping.bai@nxp.com, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, srini@kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, s32@nxp.com, clizzi@redhat.com, aruizrui@redhat.com, 
-	eballetb@redhat.com, echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev, 
-	vincent.guittot@linaro.org
-Subject: Re: [PATCH v7 01/12] dt-bindings: mfd: add support for the NXP SIUL2
- module
-Message-ID: <20250711-enchanted-blond-manul-f8bd3d@krzk-bin>
-References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
- <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="U5tJqTX5"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B6d1H1005183;
+	Fri, 11 Jul 2025 09:43:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	soCA1TZ0DhY5YcbIv8yTONB+anARgZKgPRV/EvTfcRg=; b=U5tJqTX58u5gclYU
+	gZP8ypa6Es0JxUubJoRquJEJZhTgwwqn/S2Q7JIK9Tr8yA9103NebQbDu4YDIYly
+	gpWSkWyI1shezADYrcoNo35UTuM4rFpNjNpHYCr27uFuj8xlQXc0Tex04Zt4ytfE
+	5LuntdNu+QY4/0ZPIQBN3E/uxon2WKTPPOD4cOG1sgxVquWibD+f4FvRtzmUV8x+
+	UeccT6J7Zo1UoREI6hWjvWgOvlhzvBrVNZamt4upCmyVjX/vTRligvWSvnQxBUVV
+	hZa4EsxkmijI4SnHgV4FJnIYvOoK3Xvh48rNPb5Gl2dQsA6kEop0OBPJ9FgRWkxw
+	TX/4MA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47pud3ne8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 09:43:37 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BAE1D40050;
+	Fri, 11 Jul 2025 09:42:37 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 55C8DB157CA;
+	Fri, 11 Jul 2025 09:41:43 +0200 (CEST)
+Received: from localhost (10.252.16.187) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 09:41:43 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Date: Fri, 11 Jul 2025 09:41:25 +0200
+Subject: [PATCH v7 7/8] ARM: dts: stm32: add alternate pinmux for HDP pin
+ and add HDP pinctrl node
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250711-hdp-upstream-v7-7-faeecf7aaee1@foss.st.com>
+References: <20250711-hdp-upstream-v7-0-faeecf7aaee1@foss.st.com>
+In-Reply-To: <20250711-hdp-upstream-v7-0-faeecf7aaee1@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Antonio
+ Borneo <antonio.borneo@foss.st.com>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<legoffic.clement@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-7616d
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_02,2025-07-09_01,2025-03-28_01
 
-On Thu, Jul 10, 2025 at 05:20:24PM +0300, Andrei Stefanescu wrote:
-> Add the dt-bindings for the NXP SIUL2 module which is a multi
-> function device. It can export information about the SoC, configure
-> the pinmux&pinconf for pins and it is also a GPIO controller with
-> interrupt capability.
-> 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> ---
->  .../bindings/mfd/nxp,s32g2-siul2.yaml         | 163 ++++++++++++++++++
->  1 file changed, 163 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml b/Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
-> new file mode 100644
-> index 000000000000..8ae185b4bc78
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
-> @@ -0,0 +1,163 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2024 NXP
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/nxp,s32g2-siul2.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32 System Integration Unit Lite2 (SIUL2)
-> +
-> +maintainers:
-> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> +
-> +description: |
-> +  SIUL2 is a hardware block which implements pinmuxing,
-> +  pinconf, GPIOs (some with interrupt capability) and
-> +  registers which contain information about the SoC.
-> +  There are generally two SIUL2 modules whose functionality
-> +  is grouped together. For example interrupt configuration
-> +  registers are part of SIUL2_1 even though interrupts are
-> +  also available for SIUL2_0 pins.
-> +
-> +  The following register types are exported by SIUL2:
-> +    - MIDR (MCU ID Register) - information related to the SoC
-> +    - interrupt configuration registers
-> +    - MSCR (Multiplexed Signal Configuration Register) - pinmuxing and pinconf
-> +    - IMCR (Input Multiplexed Signal Configuration Register)- pinmuxing
-> +    - PGPDO (Parallel GPIO Pad Data Out Register) - GPIO output value
-> +    - PGPDI (Parallel GPIO Pad Data In Register) - GPIO input value
-> +
-> +  Most registers are 32bit wide with the exception of PGPDO/PGPDI which are
-> +  16bit wide.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nxp,s32g2-siul2
-> +      - items:
-> +          - enum:
-> +              - nxp,s32g3-siul2
-> +          - const: nxp,s32g2-siul2
-> +
-> +  reg:
-> +    minItems: 2
+Introduce hdp node to output a user defined value on port hdp2.
+Add pinctrl nodes to be able to output this signal on one SoC pin.
 
-Eh, and after reading your deprecated patch I went back here and see
-this changed... Why? Why are you making random changes?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-I retract my review, I was too hasty.
+diff --git a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+index 40605ea85ee1..4a31e9f7a897 100644
+--- a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
+@@ -5,6 +5,14 @@
+  */
+ #include <dt-bindings/pinctrl/stm32-pinfunc.h>
+ 
++&hdp {
++	/omit-if-no-ref/
++	hdp2_gpo: hdp2-pins {
++		function = "gpoval2";
++		pins = "HDP2";
++	};
++};
++
+ &pinctrl {
+ 	/omit-if-no-ref/
+ 	adc1_ain_pins_a: adc1-ain-0 {
+@@ -731,6 +739,23 @@ pins {
+ 		};
+ 	};
+ 
++	/omit-if-no-ref/
++	hdp2_pins_a: hdp2-0 {
++		pins {
++			pinmux = <STM32_PINMUX('E', 13, AF0)>; /* HDP2 */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <2>;
++		};
++	};
++
++	/omit-if-no-ref/
++	hdp2_sleep_pins_a: hdp2-sleep-0 {
++		pins {
++			pinmux = <STM32_PINMUX('E', 13, ANALOG)>; /* HDP2 */
++		};
++	};
++
+ 	/omit-if-no-ref/
+ 	i2c1_pins_a: i2c1-0 {
+ 		pins {
 
-Best regards,
-Krzysztof
+-- 
+2.43.0
 
