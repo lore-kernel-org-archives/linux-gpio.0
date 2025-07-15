@@ -1,204 +1,140 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAD72DE6E7
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Jul 2025 12:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556E9246BD7;
+	Tue, 15 Jul 2025 12:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752582010; cv=none; b=jSjkCC2WZTDMnMLF0aPRoZ/7iRX8EmN8I/qWVQGodxYzyPao1Ac13+zcyFiNTgKWP1DkLNjZCGRNewqZX3/9AR60NBkHGPRbkF/v/ogefLtT9kLmxdnwwFe4na7Vs4blncriOqqmCmS2SBpQCgb30zoCPoP/izJYUW5K3PRu9PE=
+	t=1752583868; cv=none; b=Xe2G+HM3SW5mB5AMBQULwzWCKHjP/qG3Wn3fonUYALrfsDkIwyALGE6kwY8WKdT0o9GmNULY7Yo0xrSkrU57BSY1T5pfaOcCVF0906GWujXb9e5X26yee+iTEcbYHRc/ecjnC5hxyjHQc1K+BOu811Kh09MPnj08nOMUyJYQYPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752582010; c=relaxed/simple;
-	bh=XOViqbdzd1g1f0nmq07CeP1cxaskXf3NO6K3OrD3rM8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=DGo68Dhx3SkQsLuZKgbsCANZ4xCsK/O4BNSPzYTYSranQW5IsmfGOWEZgpmjiUOA7xtevbuGYLkNFOxZRtobO6p15Mf6T1p8dgUkauT1HiV/7Xw2Rv7y3eMNANcnlp2+h7QRDLuFtZiJekHbgL653y/DymHChGY1PHXrNEudnfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNANxI3l; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1752583868; c=relaxed/simple;
+	bh=SYqdH0nbo/soJyG407Y7VfgSiFhIAFxZHSCoScU9FK0=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=UnqJ1Vr7cXSILkJ9e5SdMYxjGFj3l9DC2a5Y28bU7/HKJwFC8YRB2bf4iUaVifv8SMszjU433RO9K9JAJ4Hqh8BzOsXSwSNmd986yWL6af54qxBRrO4AvF50V5UnXiOWGtT324k5rXLijGNK9myi1opFwBfXpO6XXq/zwEiRjjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9/iwWRg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNANxI3l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752582008; x=1784118008;
-  h=date:from:to:cc:subject:message-id;
-  bh=XOViqbdzd1g1f0nmq07CeP1cxaskXf3NO6K3OrD3rM8=;
-  b=XNANxI3lVznVGPBpLOe1x+yS/DiGEiw/2i//OIrzErlpp5oajnj/VTlc
-   82YQTqnVEp1BxWlh1y10hpaiyfFUTfZFdDzZ7EngrBtdSiLA2tEH0LSKV
-   RGsFJ7xIY/jsIFQal3LgBHQcrkmk9Mp2AQbsS5I9a8RIt6YLNDLZgp6c0
-   hKsA+eUIMoZXitMguWBGWCOX1G2RdKv5rTX1wDC9JPctM5iuUIyb0sxC8
-   4JERpndLJlaIeu4iqAFN1Ruq4276QrCM7kyhu+8kmz5EFPgrrWcGAdu2K
-   luPKRDiw8J1AW+CGipKjxpJvB0w05s/yw9LHY6ZUlFMCF3DZyWFaJR79+
-   A==;
-X-CSE-ConnectionGUID: qKsXwzomTY61gRaD3SjoBQ==
-X-CSE-MsgGUID: smjhQTBgR1C0J4E6lVH16Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="72250370"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="72250370"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2025 05:20:08 -0700
-X-CSE-ConnectionGUID: AhQlmtMuTo+W6eP3djpkwA==
-X-CSE-MsgGUID: +YTjEjCCT+S4vOj8qTvvNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; 
-   d="scan'208";a="157301992"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 15 Jul 2025 05:20:06 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ubedg-000A2S-1W;
-	Tue, 15 Jul 2025 12:20:04 +0000
-Date: Tue, 15 Jul 2025 20:19:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- a1459bbb75f9d84890493e35eccd545bb9acb52f
-Message-ID: <202507152008.U529CaTh-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9/iwWRg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F67C4CEE3;
+	Tue, 15 Jul 2025 12:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752583867;
+	bh=SYqdH0nbo/soJyG407Y7VfgSiFhIAFxZHSCoScU9FK0=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=O9/iwWRge4o3xkYF0GIBAevq1B/CZpGE0WPXQr2yKNDytYayI51CvSw1FALWIDe/q
+	 sfD6OGm6lZ3ClTA9ZS1MLIpHdn77PfGKzcYSbZUR1Dfuh5EMkwanZXYx7OR7F4SfCD
+	 BdNdpJDdGjMkJo+41UhCEVencI0tcu5sViP2tcRIxbuGJahIkv+gsCzw9/VzgWUNAH
+	 MU9ha3GNnKWSJlovwr5HHj9m3pM/gWbQwEdNH/0PmUWEwmusGbEmsUTDEPP11BG8Aq
+	 OfIey3BylZsQ29U2ljtYbu8IjkfiraOl4EJeEHtW76TLp4AT/WtLab1FRpPYEy3jYd
+	 PHYMwoDFdd3kQ==
+Content-Type: multipart/signed;
+ boundary=ec4565a1291b5d1d81a6a11630de29101cca86d2a1c006a83cf8c92e6fb6;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 15 Jul 2025 14:51:03 +0200
+Message-Id: <DBCN4NYM5NF3.S9SFP077EKFK@kernel.org>
+Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Andrew Lunn"
+ <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Lee Jones" <lee@kernel.org>, "Frank Li"
+ <Frank.Li@nxp.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Ioana Ciornei" <ioana.ciornei@nxp.com>
+Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
+X-Mailer: aerc 0.16.0
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-5-ioana.ciornei@nxp.com>
+ <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
+ <CACRpkdYDTXA7+YN2zRCsQxu2AKEAwbDVq8-m27ah5XTw9iRNPw@mail.gmail.com>
+ <55e7aeb5-565f-4452-bc11-55968dcc0a9e@lunn.ch>
+ <CACRpkda+=A5R4vZZQZKmF3LnGd6xMYbNomahgTW+j9aX9swBFA@mail.gmail.com>
+ <DBBKJ05VNSDG.30MNWDWT9JAEC@kernel.org>
+ <c4ff34jwaiyby52ambcxtu2mrjlkcv44scjsveb6s6pvaps33u@bvl3wz6mvsuo>
+In-Reply-To: <c4ff34jwaiyby52ambcxtu2mrjlkcv44scjsveb6s6pvaps33u@bvl3wz6mvsuo>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: a1459bbb75f9d84890493e35eccd545bb9acb52f  Merge branch 'devel' into for-next
+--ec4565a1291b5d1d81a6a11630de29101cca86d2a1c006a83cf8c92e6fb6
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-elapsed time: 1177m
+Hi,
 
-configs tested: 127
-configs skipped: 4
+> > > Then the core can use is_fixed_direction() together
+> > > with gpio_get_direction() to check if it can do
+> > > a certain set_direction().
+> > >
+> > > Pseudocode:
+> > >
+> > > mydir =3D get_direction(line)
+> > > if (is_fixed_direction(line) && (mydir !=3D requested_dir)
+> > >   return -ERROR;
+> >=20
+> > You don't need a .is_fixed_direction(). You can deduce that if only
+> > .get_direction() is set in the gpio-regmap config.
+> >=20
+> > mydir =3D get_direction(line)
+> > if (!config->set_direction && mydir !=3D requested_dir)
+> >   return -ERROR;
+>
+> This implies that gpio_regmap_config gets two new callbacks
+> .get_direction() and .set_direction() and that in case .set_direction()
+> is set in gpio-regmap config, then its used directly from
+> gpio_regmap_set_direction(), right?
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yes. Or just .get_direction() for now and assume that .set_direction
+is NULL, i.e. it just covers your use case for the fixed direction.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                          axs103_defconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250715    gcc-8.5.0
-arc                   randconfig-002-20250715    gcc-11.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-15.1.0
-arm                       aspeed_g4_defconfig    clang-21
-arm                          collie_defconfig    gcc-15.1.0
-arm                        mvebu_v5_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250715    clang-21
-arm                   randconfig-002-20250715    gcc-10.5.0
-arm                   randconfig-003-20250715    clang-21
-arm                   randconfig-004-20250715    gcc-12.4.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250715    clang-16
-arm64                 randconfig-002-20250715    gcc-12.3.0
-arm64                 randconfig-003-20250715    gcc-8.5.0
-arm64                 randconfig-004-20250715    clang-21
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250715    gcc-9.3.0
-csky                  randconfig-002-20250715    gcc-12.4.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250715    clang-18
-hexagon               randconfig-002-20250715    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250715    gcc-12
-i386        buildonly-randconfig-002-20250715    gcc-12
-i386        buildonly-randconfig-003-20250715    gcc-12
-i386        buildonly-randconfig-004-20250715    clang-20
-i386        buildonly-randconfig-005-20250715    clang-20
-i386        buildonly-randconfig-006-20250715    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-21
-loongarch             randconfig-001-20250715    clang-21
-loongarch             randconfig-002-20250715    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-microblaze                      mmu_defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                           ip30_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-nios2                 randconfig-001-20250715    gcc-11.5.0
-nios2                 randconfig-002-20250715    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250715    gcc-10.5.0
-parisc                randconfig-002-20250715    gcc-9.3.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-21
-powerpc                 mpc834x_itx_defconfig    clang-16
-powerpc               randconfig-001-20250715    clang-21
-powerpc               randconfig-002-20250715    clang-21
-powerpc               randconfig-003-20250715    gcc-8.5.0
-powerpc64             randconfig-001-20250715    clang-21
-powerpc64             randconfig-003-20250715    clang-17
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250715    clang-21
-riscv                 randconfig-002-20250715    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250715    gcc-8.5.0
-s390                  randconfig-002-20250715    gcc-12.4.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250715    gcc-11.5.0
-sh                    randconfig-002-20250715    gcc-15.1.0
-sh                            titan_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250715    gcc-8.5.0
-sparc                 randconfig-002-20250715    gcc-8.5.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250715    clang-20
-sparc64               randconfig-002-20250715    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-21
-um                    randconfig-001-20250715    gcc-12
-um                    randconfig-002-20250715    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250715    clang-20
-x86_64      buildonly-randconfig-002-20250715    gcc-12
-x86_64      buildonly-randconfig-003-20250715    gcc-12
-x86_64      buildonly-randconfig-004-20250715    gcc-11
-x86_64      buildonly-randconfig-005-20250715    gcc-12
-x86_64      buildonly-randconfig-006-20250715    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250715    gcc-8.5.0
-xtensa                randconfig-002-20250715    gcc-14.3.0
+.. Oh I just noticed that this will really limit the use to either
+all or nothing. You cannot mix set user defined directions with
+fixed directions. Linus' .is_fixed_direction() will allow that.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Though I wonder if we really want to let the user override
+.get_direction() and .set_direction(). I still prefer the bitmap.
+
+> > That or either Andrew's idea of setting a bitmap within the
+> > gpio-regmap config which already tells the gpio-regmap core and then
+> > amend gpio_regmap_get_direction() to return that fixed direction if
+> > that bitmap is not NULL.
+>
+> Even though at first glance I was under the impression that the bitmap
+> solution is cleaner, how big should the bitmap be knows only the final
+> gpio driver. Without this information, we cannot know the bitmap size so
+> that we can use the DECLARE_BITMAP macro in gpio-regmap config.
+
+Actually, I had the same thought. But there is also bitmap_alloc()
+and friends, no? And the gpio-regmap config contains the ngpios.
+
+In gpio_regmap_get_direction():
+
+if (gpio->fixed_direction_output && test_bit(offset, gpio->fixed_direction_=
+output))
+	return GPIO_LINE_DIRECTION_OUT;
+
+Which implies that once .fixed_direction is set it will always be
+checked. So if someone in the future wants to mix and match
+.fixed_direction with .reg_dir_{in,out}_base we have to add a second
+bitmap which tells you what pins are fixed.
+
+You'd probably need to make sure offset is smaller than ngpio.
+
+-michael
+
+--ec4565a1291b5d1d81a6a11630de29101cca86d2a1c006a83cf8c92e6fb6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaHZOuBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/jVpQF+NoJo814cmBH+vHHm8ckC5v4daX6Bw6ES
+oRBk0K+1tCH3Dj4lZ2+8iHri4IjcdFZhAX9VG0PCxJXduNN2yFaXPrmuMHUuQp1w
+LDLbANDZ8lC0qwzD9T/zhyjuqoiIMz/18Zo=
+=yvBU
+-----END PGP SIGNATURE-----
+
+--ec4565a1291b5d1d81a6a11630de29101cca86d2a1c006a83cf8c92e6fb6--
