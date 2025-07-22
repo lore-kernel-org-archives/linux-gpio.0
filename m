@@ -1,170 +1,199 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2101.outbound.protection.outlook.com [40.107.223.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10F1203710;
-	Tue, 22 Jul 2025 18:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753208205; cv=none; b=JxQqUTbJb264K37Vv8xgjZECuXPmWdhtDUQ30QkpmeP87vaZdhFNnyPIebZObvhLqsgmsxvrm7g875Rw1dbeJVccstSExuO7T1CwQtDapb0fCqogW3jnd2oTd1VQac5cLbsajUBspFcz766ObT38Sw8vpSliqEm2TiOE90T05WQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753208205; c=relaxed/simple;
-	bh=lCUzP+vtfIdd7n5EmTL1hCqebJg2HBRvrLqa4ncDqs0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TRRuKcSbHb7GuJ8eM+vVGko1B4E065TNvX6ulvbtF/yxrDnezhb0xxi2ZDbziRoUWyBiECJKzhY2O+hlqP6VuT/uG06lo61s0n0fJi8wAQc4oKcIyfwHaCLQw4dmlp/Sfs4j0qUBpQltZu032p+/xrwOLoDxzABFO5c3jpDtMec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M/4ySAVH; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68AD1C1AB4;
+	Tue, 22 Jul 2025 20:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.101
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753215374; cv=fail; b=KpyrRUjEhsdHxpl342ZeVl3/zJaMO3JBBJkq2cFEOKlmOEfez9Fr5OjQ0Sjc4W9BHClyNhs3TQTei06FWJOdDZS51ESHYwJhboYezdgbgv2ebD6vzYE9WJ/GjXp/TmQGABudIhRu2xmdwVqhDQZZ1KydZGqwBdA6uXvcEOdCkpU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753215374; c=relaxed/simple;
+	bh=2P0fqQ4rK4FrrY5jP0Z+4ts52LSAML5KAClXxLndh0k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ViC+AZppnRbXZKw9VtcR586nhU8U25CfuoAa/3v6m2ppr1INpZr3wCPgJR05e1UJYj05VAt5Ulqbka8GNpIdTrr/4zVPR5QHb1Nok4BFNmxSsxe76DYaKdkHULcq4l+i/BdqZCCpfEj3mdQKS9yOdOJUWhVuBj/ct2IUwqINOAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=Y/sYZMjb; arc=fail smtp.client-ip=40.107.223.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M/4ySAVH"
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56MIGANi1101246;
-	Tue, 22 Jul 2025 13:16:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753208170;
-	bh=JBDT0Ehj3XKv8xsVtDh4S7J542IWSQ4Up/4CghZnREc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=M/4ySAVHUNPJpedQ74fEHDYIP/WLPXxiMACDOec4s5V4OYdP/WS9yqz4pvbxddKrR
-	 Zs4xcSF6Xf6uMDkkZrh7xXnSRI6sluLJl4BgynlFf6HWYwWBmYllnJm3tOAvjDbmNe
-	 qTv+JmBo73V4EcPi8n+lesj5UKD2TgRz2BHKWUyk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56MIGA0o1205368
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 22 Jul 2025 13:16:10 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 22
- Jul 2025 13:16:09 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 22 Jul 2025 13:16:10 -0500
-Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56MIG9iF1439422;
-	Tue, 22 Jul 2025 13:16:09 -0500
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: <m-leonard@ti.com>, <praneeth@ti.com>, <jcormier@criticallink.com>,
-        <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v8 1/2] gpio: tps65219: Update _IDX & _OFFSET macro prefix
-Date: Tue, 22 Jul 2025 13:16:08 -0500
-Message-ID: <20250722181609.1541739-2-s-ramamoorthy@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250722181609.1541739-1-s-ramamoorthy@ti.com>
-References: <20250722181609.1541739-1-s-ramamoorthy@ti.com>
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="Y/sYZMjb"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EeiN8zQ8Pz799J/cpRtcp3878CphwUQjqNcf3SW9v9MRVXjLz2qQwcSuJDaUm1PwymzoAcwQQh3+TJpB0nfM48wFKi33zBWh/zeRdt4xpbGbAPc93EGjeGaHkIygBYnZmVjYnQj2dnvO4Eo2uK8GK1uirFSrbL1Y64Mr18soBIZ+39Q0ruXt+CjK0qZ8RjPx5QNzLbWW8TQ260W96HVg3528jFxbnS3s+N2+yKvAIHPzrkYp7sz76Ye7kO2hoRjVNG0R8VxKuEVuWZZfFvxuJdtY4Vy+LSXM2nnNZx5KdtcPj6JacznK70ZNMvRMlCFDfh3qglQytqsUD2XR47WhJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=84FxozLh+z3Mz5Az4nAW/8Rmh+SGSo1C4c0QaxoJcYs=;
+ b=AAyttlb51m8/muxw3ljYLdODbk1Sr71GQRhTF+tF9YhLz3TM3VRpRi9U1E2JxK1ovu30UGQ0CfIdA32rPia/k0d1mEd5PQd5yl0NmCmkYu3QdyuQLZU1st2hK65K80KXMKHAB/5k5LuDEz39CgopBFXyjl756ys6Y852MDBURRLdxzTVvXfjp/O11SPespGeR+u7SWOhUeuz5Abfw9eI2NGmlU14aDTBG+4NghqAXNRaiW9SDz3iecpzjz+iHDDah5iSqrf9BSmCPDacoE4dhkgVPLjgEP6WwClnfF192PrmwbtfQeZPg3LPBxv6SQIf/lkL8+BqK71fel1Y/rJxWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=arndb.de smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=84FxozLh+z3Mz5Az4nAW/8Rmh+SGSo1C4c0QaxoJcYs=;
+ b=Y/sYZMjb4GgKzJt0KOivAohjHTnqrOEbMJHmnmH5sFcUNFv9EN8PXdAoDMRga170Pi7yiz117xBRGkGvFFVrwJesWxXfsAgSnSD+dtSEI3c7h1daZFkfKbiCQBHlccXlBPdrk0QLpc3CH8MUrYi2hlUPe4pgj0jrqNqdbDCddiykTicES/tdyT+7RZqFQrum/w3HA9Q8eEdhdHxdhfrGby8EXUOhhSW3+wtuXRuJ9DgcZIItU8WPZ1wk+q+v+GpKwFeh801Nn7JjNOpfTOBbXL2zCDKtKgfiufMAK41UgATmANo+bAO1TdejfMOXN8WAyc4VioSKUXGTeM5GGhTqmw==
+Received: from CH0PR03CA0014.namprd03.prod.outlook.com (2603:10b6:610:b0::19)
+ by CH0PR18MB4209.namprd18.prod.outlook.com (2603:10b6:610:bc::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 20:16:08 +0000
+Received: from CY4PEPF0000EDD7.namprd03.prod.outlook.com
+ (2603:10b6:610:b0:cafe::2a) by CH0PR03CA0014.outlook.office365.com
+ (2603:10b6:610:b0::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Tue,
+ 22 Jul 2025 20:16:08 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
+Received: from [127.0.1.1] (50.233.182.194) by
+ CY4PEPF0000EDD7.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
+ via Frontend Transport; Tue, 22 Jul 2025 20:16:07 +0000
+From: Harshit Shah <hshah@axiado.com>
+Date: Tue, 22 Jul 2025 13:15:30 -0700
+Subject: [PATCH v6 02/10] dt-bindings: arm: axiado: add AX3000 EVK
+ compatible strings
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-2-543979a60ccf@axiado.com>
+References: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-0-543979a60ccf@axiado.com>
+In-Reply-To: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-0-543979a60ccf@axiado.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ =?utf-8?q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Frank Li <Frank.Li@nxp.com>, Boris Brezillon <bbrezillon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ soc@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ Jan Kotas <jank@cadence.com>, linux-serial@vger.kernel.org, 
+ linux-i3c@lists.infradead.org, Harshit Shah <hshah@axiado.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1383; i=hshah@axiado.com;
+ h=from:subject:message-id; bh=2P0fqQ4rK4FrrY5jP0Z+4ts52LSAML5KAClXxLndh0k=;
+ b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBof/GCLbQbEnjQAsxiyOVVeqw4Tg7dbu7EOX3UA
+ lQG1o/cVamJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaH/xggAKCRDxWHMRoTLV
+ +3eiC/9mOqb0FtVNnEOGOy2qIuMa3N+EfIBjkKDU4OL8T6Zg4NIk5CzNYnuMnv3BNycWCTXL77f
+ 3EaGsDEbhKv1wt5jJNwBhMgSuACMSeTnibpR/osVniTViu+tdNTR6oxu2qhhxOQQn4EvLv3L7+Z
+ pehhKAdXQ4A3BkwhaD6DRPN5tzIfy9ByIO5XN8dsalFBRo83gV1LPZ66FLPImNUpuu1+ediYZQK
+ ZMtP5+vZy7hX0rFBX6rXcy96lDpOOt3KURDHFKdA+lPVno/eNBNHxrZzfipVkmq2MDiCRJ60Sky
+ A4aPP8TSuYp+BbiwpLvQdTvMVKnVX7kTsL/0BDP5u2rCF14969fljw39FvYxoOmt1rDBb789Hmb
+ EVWLBCuiFbbByi2X9izler5YOKAqxFMAqKApeqk8hz0Q0mpBY/nn9EQJtmYmPINBRv8/BBhw3Vn
+ 4ya/5KNkOjwaZzkHEh1hN+4Q73Yslt7eDSbzuLBQAxL4VHGIxL0MfToiOuZk26FYRiXGU=
+X-Developer-Key: i=hshah@axiado.com; a=openpgp;
+ fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD7:EE_|CH0PR18MB4209:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca15ff05-2f73-4e92-ac5a-08ddc95c9816
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Ly84U2ZXanhTUmkvSmlHWTUwaHJqeVNMV0VoTmUrVUhGazRONTZDbjRyZUpK?=
+ =?utf-8?B?TytDQzk5K1pQckJjVnBTT0VhMzYwWjVONXRIbFpoK0c0SmxCYXUwN2xhSnRW?=
+ =?utf-8?B?dFJBcFpBRWw1QWdEb3BlUWRSdFFIUmZXaVhWTWhuZ211di9nbzR4VWRXb1h2?=
+ =?utf-8?B?ZklsVGk2dmtDSHNiNXF5bURZa0xPUWQ1V3d1UXNNZS9OejUyeHB2L2pyQVJo?=
+ =?utf-8?B?ZS9hK0l6ZmdxQWxSSVdvT2U0amlzRWl1ZTl6KzBYcExaOGphaGNEZUd5ak5J?=
+ =?utf-8?B?OEIrZzdZT3dJcERLZ2JtS1hVTzFNa3FTUnBZMzFESkRiem1IbVMzaGVRa2dl?=
+ =?utf-8?B?b2pxcmpoUmRpUUFLQnJxSWNrSHdNa0tVcG8yVUttRXczWTU2ZkpGTDMxLzJk?=
+ =?utf-8?B?YkNuNnpGM0IzVXFzM1d0VjZuOGI1NE5qNmNFWStvZkFTZkZYanBuTDB1RW84?=
+ =?utf-8?B?ZFBxTHpQMzVDcU0vTE53Ym5ldUMzd2E1R3pSSkw3eksxNURUTk9ac05sSEw4?=
+ =?utf-8?B?cDNSSEQ3K1ZGR3NmUTdjTTE1ald3Wk5Gd05wSTIvTXlLUXRCTkpKSHluQVNY?=
+ =?utf-8?B?WUdmR3E5NWd5OVZ5M1RyWUtCQlhuRXFkKytuZjQ2bjdVOUhTQ1RNWFM3WDZU?=
+ =?utf-8?B?Qzk3RnJXdnNqWXlsNG4waUlTb01tVElGdVNTUUk3THBXSm1zNHVnYk9PY3Js?=
+ =?utf-8?B?b2dEMEpPWDZEQkFONEE5eFlnVGpxQW00cjJ1bHd3V05keHo4U1BzcFNMVUY5?=
+ =?utf-8?B?bnFJM1pSTzNrdTJjVlcxbWV2Y3ZTYUxUcEx0b2tmNTVCMkZ4ditSWENqemdP?=
+ =?utf-8?B?cDR2d085TmJ6d3RZZlJ5aTcwSUlYSjJrZXVuTkVmdFlhZ0Y3cTNlYnFocDVk?=
+ =?utf-8?B?NElzNnpGVUpQL0dkekloMVM5YkZkTDN6cjJrTHVqNlg5WFdSL2pMdURncGNE?=
+ =?utf-8?B?S2FmM01PdGNoVEJhVnIrZGVIMklmTW4rQ3RwMC9SbzdKK0JhMEUvODBLTnQy?=
+ =?utf-8?B?NzBXb2VDQjRmeS96VzBwSDJvcnlCQUt5L1E5S0JsTGlRTk83eEZHSXpXeDF5?=
+ =?utf-8?B?UnVQSUZHUGVnS2ppM2ZuUHBaNytCVWY0R0RhSG9uc1BTT0xJRHNubUhUcWZR?=
+ =?utf-8?B?RjRmTFFoZ3hzMnhBZEtncEpoM3k3T0p0N3hvTUZOdXRHZ25NTVJ0aTZIU0dY?=
+ =?utf-8?B?dlhYaFJ4aUlpY3hHUUxGZTltMVQySEN6Umd3N1BuZzRTS2NFUEFKQWFmUHg3?=
+ =?utf-8?B?NTVoMW1mTW1qQXAvdjFkTmltYzhMWjUrNmphSk4wSlV3ZnJrbjIyU2F6ZlFO?=
+ =?utf-8?B?alo2RTQzRk9IcjlIYXdGNGVEWmpkZGJBUWM5MGxLVlhUZE42MVZJTnJUbWJj?=
+ =?utf-8?B?Y2JjNW9aaWFMUkN2QUoyMk9PdTI1eWF4ZHhGSjM2enRsTlJDSjYyODdQZnJo?=
+ =?utf-8?B?OU9MSnFCZ2xpdURXQzJZMUtMbjNjV0dtQ1FXdmhzZDdtOWFUQkdKa1Vwempo?=
+ =?utf-8?B?emhSc1grTXNhOFdVZ0kvY3JjMXBCUGZJeHBEU042VHFMVEg5ei9XcVdFR1lK?=
+ =?utf-8?B?K3UydXZwQlNsOEpLVjNQVDVkWXl2aVU5a1ZEelRtQXNETC9wYkxlN2ttUjdL?=
+ =?utf-8?B?bWQ5VGlPZ2k3QTlLWHdaVk5SeXcxNmdpU2dFUkhPWjVDeUVSaUExTXZDZmJp?=
+ =?utf-8?B?a1NCdjMyYXdXcjJleHp1MEdEU3FmTTAyQzVNSHBQaXlQY292Q1NNZUorN0Qz?=
+ =?utf-8?B?QStPbU9pZm1mTk9tTXg5OVJkbjVMaVBLSkNDYlZCUXF1dTFxV2J2Vmx3M01B?=
+ =?utf-8?B?S3Z4UUdUSXA2RHc5VDhsa0xTMjlyMTh1a2tjL3NvMVMvNVVwRHdhUUtNV2hN?=
+ =?utf-8?B?cjRRSGJ5bDlwZGsyeWFxbnR6eFMwVGM5UFdNNFArbi9KZXdpTG9oMWovSndD?=
+ =?utf-8?B?UWNtaHJlVjhPRUx4TUFkMmhBa1l6Wll4N05YN0dQaUNyL3N3Tmx5NDZBTDBI?=
+ =?utf-8?Q?HMA29/AFTrtYHgxSGb0XChaAofUVco=3D?=
+X-Forefront-Antispam-Report:
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(921020);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 20:16:07.4970
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca15ff05-2f73-4e92-ac5a-08ddc95c9816
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR18MB4209
 
-TPS65215 and TPS65219 are overlapping PMIC devices. While their regulator
-features differe, the GPIO features are the same. In the TPS65219 MFD
-driver, the 2 PMICs share the same "tps65219-gpio" compatible string to
-limit support for TPS65215 in this GPIO driver to comments.
+Add device tree binding schema for Axiado platforms, specifically the
+AX3000 SoC and its associated evaluation board. This binding will be
+used for the board-level DTS files that support the AX3000 platforms.
 
-The TPS6521X_GPIO0_IDX and TPS6521X_GPIO0_OFFSET macro name prefixes are
-updated to indicate these macros apply to both PMICs.
-
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
-Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Harshit Shah <hshah@axiado.com>
 ---
- drivers/gpio/gpio-tps65219.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ Documentation/devicetree/bindings/arm/axiado.yaml | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
-index 630cb41e77a4..c8f8f88b4239 100644
---- a/drivers/gpio/gpio-tps65219.c
-+++ b/drivers/gpio/gpio-tps65219.c
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * GPIO driver for TI TPS65219 PMICs
-+ * GPIO driver for TI TPS65215/TPS65219 PMICs
-  *
-- * Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com/
-+ * Copyright (C) 2022, 2025 Texas Instruments Incorporated - http://www.ti.com/
-  */
- 
- #include <linux/bits.h>
-@@ -13,8 +13,15 @@
- #include <linux/regmap.h>
- 
- #define TPS65219_GPIO0_DIR_MASK		BIT(3)
--#define TPS65219_GPIO0_OFFSET		2
--#define TPS65219_GPIO0_IDX		0
-+#define TPS6521X_GPIO0_OFFSET		2
-+#define TPS6521X_GPIO0_IDX		0
+diff --git a/Documentation/devicetree/bindings/arm/axiado.yaml b/Documentation/devicetree/bindings/arm/axiado.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..bfabe7b32e65fb06d1f4faecfad032219f95dfca
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/axiado.yaml
+@@ -0,0 +1,23 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/axiado.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/*
-+ * TPS65215 & TPS65219 GPIO mapping
-+ * Linux gpio offset 0 -> GPIO (pin16) -> bit_offset 2
-+ * Linux gpio offset 1 -> GPO1 (pin8 ) -> bit_offset 0
-+ * Linux gpio offset 2 -> GPO2 (pin17) -> bit_offset 1
-+ */
- 
- struct tps65219_gpio {
- 	struct gpio_chip gpio_chip;
-@@ -26,7 +33,7 @@ static int tps65219_gpio_get_direction(struct gpio_chip *gc, unsigned int offset
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
- 	int ret, val;
- 
--	if (offset != TPS65219_GPIO0_IDX)
-+	if (offset != TPS6521X_GPIO0_IDX)
- 		return GPIO_LINE_DIRECTION_OUT;
- 
- 	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG, &val);
-@@ -42,7 +49,7 @@ static int tps65219_gpio_get(struct gpio_chip *gc, unsigned int offset)
- 	struct device *dev = gpio->tps->dev;
- 	int ret, val;
- 
--	if (offset != TPS65219_GPIO0_IDX) {
-+	if (offset != TPS6521X_GPIO0_IDX) {
- 		dev_err(dev, "GPIO%d is output only, cannot get\n", offset);
- 		return -ENOTSUPP;
- 	}
-@@ -70,7 +77,7 @@ static int tps65219_gpio_set(struct gpio_chip *gc, unsigned int offset, int valu
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
- 	int v, mask, bit;
- 
--	bit = (offset == TPS65219_GPIO0_IDX) ? TPS65219_GPIO0_OFFSET : offset - 1;
-+	bit = (offset == TPS6521X_GPIO0_IDX) ? TPS6521X_GPIO0_OFFSET : offset - 1;
- 
- 	mask = BIT(bit);
- 	v = value ? mask : 0;
-@@ -116,7 +123,7 @@ static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offs
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
- 	struct device *dev = gpio->tps->dev;
- 
--	if (offset != TPS65219_GPIO0_IDX) {
-+	if (offset != TPS6521X_GPIO0_IDX) {
- 		dev_err(dev, "GPIO%d is output only, cannot change to input\n", offset);
- 		return -ENOTSUPP;
- 	}
-@@ -130,7 +137,7 @@ static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offs
- static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int offset, int value)
- {
- 	tps65219_gpio_set(gc, offset, value);
--	if (offset != TPS65219_GPIO0_IDX)
-+	if (offset != TPS6521X_GPIO0_IDX)
- 		return 0;
- 
- 	if (tps65219_gpio_get_direction(gc, offset) == GPIO_LINE_DIRECTION_OUT)
-@@ -178,5 +185,5 @@ module_platform_driver(tps65219_gpio_driver);
- 
- MODULE_ALIAS("platform:tps65219-gpio");
- MODULE_AUTHOR("Jonathan Cormier <jcormier@criticallink.com>");
--MODULE_DESCRIPTION("TPS65219 GPIO driver");
-+MODULE_DESCRIPTION("TPS65215/TPS65219 GPIO driver");
- MODULE_LICENSE("GPL");
++title: Axiado Platforms
++
++maintainers:
++  - Harshit Shah <hshah@axiado.com>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: AX3000 based boards
++        items:
++          - enum:
++              - axiado,ax3000-evk       # Axiado AX3000 Evaluation Board
++          - const: axiado,ax3000       # Axiado AX3000 SoC
++
++additionalProperties: true
+
 -- 
-2.43.0
+2.25.1
 
