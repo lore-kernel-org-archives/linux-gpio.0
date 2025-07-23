@@ -1,120 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF945277CBC;
-	Wed, 23 Jul 2025 08:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7B2279DAB
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Jul 2025 08:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258190; cv=none; b=eRzmiKooPcig5eZoG3IE3/PKh2l+5QxwohU6Kvsi9pPl5ZeyFqw43jGeBk/VpforO6G1+EFUc6NXHX4PzSNm+9FP/HlUW/8YXnnPhhoiNxwzXSxWRlb8geyw3DOb22qXRZeI0Nj7pKyGF3zrteNI0VQ7x/DedxzZTiGkPx6OIjI=
+	t=1753258615; cv=none; b=TJeU0MMiIc2iw2WjThXNTNMJ06XQnk6i0uTo+q/rZ3Gx8/uRomDZfBNqXOR4yaf2EZ/aUEOqt0woYMGRud6nWAB4gKAHEdm/zx+d2WG8R/e+nTOgtqQWgRhJUE8wlyIgLBlu1rNVMlim6RRUeCgQEiXy16XYTI5m648ZIZKcTgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258190; c=relaxed/simple;
-	bh=LxJCKNaYA9utLydF4LwnIGn2Dwycy87pcr0r6ICUYNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XdVRHGHF4LlrHBNoby+KKN0E6PANo7vNGKKQWCwrdqEniIE3nCO3UHs7BHyUETk/SfIFe/qPBVPmhMaynrlj8+QZMfDx0/4bCrmxcwqOcug3OcXU9A5p0owCaUSqoL2fnRCa32loS0Ol3p/XmfwSWJL+a34pzqBKqAskbL1xuWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqkUdV37; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753258615; c=relaxed/simple;
+	bh=sAZ3bMEXHLNhsOxH1yjzhZ9+Dt6HlSgub4giuU1zmB8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iPxcLyhi7KtpfhspP0ZntIDXASnmJxmQZkrSxLaWgOcfkmlsWLd0dSjuaYnEV+rUP2Xsui5466V0srnuB7dZsPmjOiMAPifSz7zkF/eB09VarZ+CD3+eI2wxqFhLxKo2FGdAFpWtGn8djNZb+w1zp3xCgO8ViuXRjW760YSR4qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wpn1eQRg; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqkUdV37"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93350C4CEE7;
-	Wed, 23 Jul 2025 08:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753258189;
-	bh=LxJCKNaYA9utLydF4LwnIGn2Dwycy87pcr0r6ICUYNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QqkUdV37UJcctH/hziiJadGQY7yWccop0IyxfWjMgd84AlfdMLtpfP7nHAHKcoUT9
-	 EM29665kEdEy7A0p5Q/7K1e3npoJJQj7cIyL+h0IBCnjEsk1XzeIbVb3ZdI4HuYtph
-	 plUPKB5xQG4ub4GrERvU+NJlRlC47KPXB6CUvMlK0TZ3NSL6jbPSuU7LkLY0xgH0zs
-	 ULrf3kaZa9Se/J2Y4Sf6RS2pVaoMO7cU5VJ00ZdZvMcTdvgMUgiG8DqxbLeDMLTqg/
-	 yraGpyhwydXEZZG9aDr/hzDV2LU1A2fpGbFJi/Zkmn2mrMWHyBH5zmd0aZRv3FGcjv
-	 tRDWB/folhjDw==
-Date: Wed, 23 Jul 2025 09:09:42 +0100
-From: Lee Jones <lee@kernel.org>
-To: Sven Peter <sven@kernel.org>
-Cc: Nick Chan <towinchenmi@gmail.com>, asahi@lists.linux.dev,
-	Neal Gompa <neal@gompa.dev>, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Hector Martin <marcan@marcan.st>,
-	Conor Dooley <conor+dt@kernel.org>, Janne Grunau <j@jannau.net>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v7 07/10] power: reset: macsmc-reboot: Add driver for
- rebooting via Apple SMC
-Message-ID: <20250723080942.GN11056@google.com>
-References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
- <20250610-smc-6-15-v7-7-556cafd771d3@kernel.org>
- <7297d4b1-84a2-4bb1-8a33-29c827247df7@gmail.com>
- <d6b778ee-02c0-4dd2-b33f-cec16c17807c@kernel.org>
- <20250723080615.GM11056@google.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wpn1eQRg"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so48937715e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Jul 2025 01:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753258612; x=1753863412; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hITnEF2+b/5GcXEXP0UXkcaJPo8GqvDGTmCRnm0OY4w=;
+        b=wpn1eQRgVYK8dLcDLSPNyJp8fpbYpUNZSEoabxC7PtxInIuUFvD1W4tp1XX0ewbtf5
+         RJopS1S6QflUh8xkoTjLeAyeNGZpSknB7RImQHR/fk1J97Rv6+i+aCUAQqyHiNJw3nLt
+         FNaFxbYxphtQLADqtsk9tn2y5QJed6dZ3RulC9HwEr6I6NbGKMvWNDdugnWuecMcU0gM
+         TNnR2tTxWZJ+XBe6a2q0OM4TNccMek41EWA3YeAOuox/NZruez2A46bWa2NesX+av29y
+         aYQ1DESrj6jiRQbPyYJMFu3outyZvTlMC+rljvTUGvavJB6NlkTBBaPcNC4IOMhjk+hf
+         bptA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753258612; x=1753863412;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hITnEF2+b/5GcXEXP0UXkcaJPo8GqvDGTmCRnm0OY4w=;
+        b=MhBVmMFSxyJ0F8v8vXLQVmXzsJIZ3ak5jPQDu4ACCy0rKlvlNW0roG3leip/UloEIV
+         UEbgCGFhE730gakf4EvrKF/Ts4KUZfRHWuyBuRA9Zh8xm8Q9pYNNphVRnwS7ph3pYMAl
+         NyqsaECPkC1sxRjmZ4imC76SwvcEbkI9WYZhAEl59L2Z40UATA0JL05+RJPRQG/nLoGl
+         ngWzRBinz8PgcUifqm1mpyvtw0Yd6pQqn332D0C6XM7HoyOmixkAc9hqiQvvOmjYwUvC
+         gWp3f6j6Q0GusRwsDc4eDyql9zqF3YkrFzFDjAV7hiWxdHfInBVYa66nZyKcpxVUe+sc
+         qA2Q==
+X-Gm-Message-State: AOJu0YxWn2DhfSu+S1lBuG8psbe83S7iTYoEN1EmKh/5MFMAlX5riZNo
+	E7shjGANIRorqTzFfqALxC4N8kXDAGGxPS73uBOjmb9KvuZIZGwsgsj2HP0EXvUhZn4=
+X-Gm-Gg: ASbGncsLFIlKJ5w6F/X6ftmQpw61JV5P7SZ3coIyHhYEnXVs41ppMtZYqi/R0RihEKb
+	a35L0oyXpCwx+hC0Ojwxb30O//K0w5wvp17gTeh4mE4KQzdF1Oq/uGGWmSzFp2U14ICln0ZZLZ1
+	TjIh6G4zugcc5O5dONHosA1VtIFV4Y6uIv6YEm0X7TSlTaQuIEKV4GUI6a9pNO1VimL/r9cbm/Y
+	h6q+DA2B3r0YX27AbiFvj+zd8lpi23G7xWoMfXdfMYKtLgxNoH1tZqzjUrDh1stTNLHzUod69pB
+	BBEp62cWFDgMm9chNUn6bpkeplsw5AT7Ibq7KlX5fNyXAuziRe8mpA3BUZClSKUlnbNRA+xbLcb
+	8pohNvj8EB5fnN8g=
+X-Google-Smtp-Source: AGHT+IG4rQ45zwJvy5pWWHMJs8oDQHcJxkv6zWsHNygUoS7+amYPg+iXW/n3Dpdk/x6GWcIEn2a4Xw==
+X-Received: by 2002:a05:600c:358c:b0:456:11db:2f1e with SMTP id 5b1f17b1804b1-45868ca7563mr15091635e9.15.1753258611775;
+        Wed, 23 Jul 2025 01:16:51 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34cd:b1d:d4f9:be03])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586919708asm15096495e9.13.2025.07.23.01.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 01:16:51 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 23 Jul 2025 10:16:47 +0200
+Subject: [PATCH libgpiod 1/2] bindings: rust: fix formatting in examples
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250723080615.GM11056@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-rust-examples-imports-v1-1-4c87e07a9b79@linaro.org>
+References: <20250723-rust-examples-imports-v1-0-4c87e07a9b79@linaro.org>
+In-Reply-To: <20250723-rust-examples-imports-v1-0-4c87e07a9b79@linaro.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Erik Wierich <erik@riscstar.com>
+Cc: linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1790;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=OCrCjoIEDqnJU9oQ3Gc5/mlTL1vjnayspyLDjRykZdA=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBogJpyv+ObtCtGsXo67Xx6QtN5tofzozS1sQTKN
+ rWce0wLSVuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaICacgAKCRARpy6gFHHX
+ cj/sEADXt+70/4xjbdIOSQ5NslTIPF1Zz7H8LzDnlWHAqi63b8wgPrYbb2ABE1DLkGKkOfbgbPX
+ WuxTM16JsmCOHhRBLznOrY0hqyS82JF72XsFOM7uulKfU8CU2YwHh87UWwFzxYLQ9jLl222l5uq
+ TT+1POEv5gX8jkOXrsa7ANLc7hN2RR48Wi1eylI651xHjO7m7qubvgkfQCmCEFbuNmcJoGZu25u
+ FiVlwXdj1Cn3i8VH7e3RYFQcU051nPS1Pgeh1vpjZHGAx6l64wdOTt5G5m0OeCZv14ykdQBvJJY
+ l8yHtaK+ohyP9EESBzy/u47jljfj8r0YgIgtcFAFBSAH68JTi0/DqTYPh2sCzMXM8+9WNJ66qep
+ Jjh4LzjDI9INomSCkGO4SCuSq0r2XpcxpBAEauxiOSxHsnqd4kxPJ1Gl2tOjMNJqoLKP6GliIJY
+ KY69mxbKXB4e9IC28sqzsQ7uIPXmH+VyCKP/t7DmNsdxBen98efGQrK6O2YKZuYnH7iVXPH1K8S
+ qhbXVlcSB0thCtW36y7ieZeNsQzA3VRqTCY2XEyxLAWJCg3RdW/D8a47n0iU4AV5zjTNJrN/hFa
+ bz+R7H+ay5qLpcKHT/2dg7daBTsE3nHuqpDXoa/DAVD32GqSMikoTv24vY+hw2SSH6lUu1Hrnr8
+ JdW+Si/LDJ0F86A==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Wed, 23 Jul 2025, Lee Jones wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On Sat, 21 Jun 2025, Sven Peter wrote:
-> 
-> > On 16.06.25 06:13, Nick Chan wrote:
-> > > 
-> > > 
-> > > On 10/6/2025 23:29, Sven Peter wrote:
-> > > > From: Hector Martin <marcan@marcan.st>
-> > > > 
-> > > > This driver implements the reboot/shutdown support exposed by the SMC
-> > > > on Apple Silicon machines, such as Apple M1 Macs.
-> > > > 
-> > > > Signed-off-by: Hector Martin <marcan@marcan.st>
-> > > > Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> > > > Reviewed-by: Neal Gompa <neal@gompa.dev>
-> > > > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > > Signed-off-by: Sven Peter <sven@kernel.org>
-> > > > ---
-> > > >   MAINTAINERS                         |   1 +
-> > > >   drivers/power/reset/Kconfig         |   9 ++
-> > > >   drivers/power/reset/Makefile        |   1 +
-> > > >   drivers/power/reset/macsmc-reboot.c | 290 ++++++++++++++++++++++++++++++++++++
-> > > >   4 files changed, 301 insertions(+)
-> > > [...]
-> > > 
-> > > It seems that the reboot driver still probes even without the smc_reboot node in the smc node:
-> > 
-> > 
-> > That's odd...
-> > 
-> > Lee, is it expected that a mfd sub-device declared with
-> > MFD_CELL_OF("macsmc-reboot", NULL, NULL, 0, 0, "apple,smc-reboot"),
-> > is loaded even if there's no corresponding node in the device tree?
-> > 
-> > I'll have to re-add the check that makes sure the sub-device is available
-> > then.
-> 
-> Yes, that's expected.  MFD is orthogonal to DT with respect to device
-> registration, unless you specifically disable the node in DT.  If the
-> node is missing, the device will still be registered, but no link will
-> be made from the (non-existent) node to the 'of_node' pointer.
-> 
-> You have 3 choices; provide a DT node and explicitly set the status to
-> 'disabled', optionally omit registration from MFD (i.e. do not call
-> mfd_add_devices()) or check for (!pdev->dev.of_node) in the sub-device's
-> .probe() and bomb out early if true.
+Use rustfmt to fix formatting of println!() in two examples. The lines
+here don't need to be broken as they don't reach the character limit.
 
-Did you see this warning in your bootlog:
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ bindings/rust/libgpiod/examples/find_line_by_name.rs | 7 +------
+ bindings/rust/libgpiod/examples/get_line_info.rs     | 4 +---
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-  pr_warn("%s: Failed to locate of_node [id: %d]\n", cell->name, platform_id);
-
-It's just a warning - the device will still be registered.
+diff --git a/bindings/rust/libgpiod/examples/find_line_by_name.rs b/bindings/rust/libgpiod/examples/find_line_by_name.rs
+index 6d6a37b083efce4c61ecfb8c57292c4ee299466c..c563c45eac793d9547b729ed58712f61a9d8e338 100644
+--- a/bindings/rust/libgpiod/examples/find_line_by_name.rs
++++ b/bindings/rust/libgpiod/examples/find_line_by_name.rs
+@@ -14,12 +14,7 @@ fn main() -> libgpiod::Result<()> {
+ 
+         if offset.is_ok() {
+             let info = chip.info()?;
+-            println!(
+-                "{}: {} {}",
+-                line_name,
+-                info.name()?,
+-                offset?
+-            );
++            println!("{}: {} {}", line_name, info.name()?, offset?);
+             return Ok(());
+         }
+     }
+diff --git a/bindings/rust/libgpiod/examples/get_line_info.rs b/bindings/rust/libgpiod/examples/get_line_info.rs
+index 7fb91a0cffaf5d7419722e9c503ab75cef44488a..9eb8d0fae7ad2d0f09c2721f010513e074f98e58 100644
+--- a/bindings/rust/libgpiod/examples/get_line_info.rs
++++ b/bindings/rust/libgpiod/examples/get_line_info.rs
+@@ -28,9 +28,7 @@ fn main() -> libgpiod::Result<()> {
+         "active-high"
+     };
+ 
+-    println!(
+-        "line {line_offset:>3}: {name:>12} {consumer:>12} {dir:>8} {low:>10}"
+-    );
++    println!("line {line_offset:>3}: {name:>12} {consumer:>12} {dir:>8} {low:>10}");
+ 
+     Ok(())
+ }
 
 -- 
-Lee Jones [李琼斯]
+2.48.1
+
