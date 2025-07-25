@@ -1,82 +1,83 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D12E2DE71E
-	for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 10:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA5C2E11CA
+	for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753439962; cv=none; b=jVn/S0gsctI0DPXDhUhDXMY49l58RpHJl35N5GPCpVEn8M8Xy7Bao26Z0l3MS9/tQFPpz+y3Y/MR+QJ3VSpLoukmyRnaQnWLMdhShVHDBry1D38hV5l5X6ljnVEbNRsK7BZ4qis/+rjE3KzM0GoY5X3s2YPKBwQ9oy7BLjQFeGo=
+	t=1753440683; cv=none; b=Q5NXUQ7iapdt26CvY2/bXN53W4smvvXKjLdiAPUg4C4IoTN0FumOAVpTggxFb5sZf5h9iV6LNXOVAB4IMNnAQHeZtBbk1s5JmSa7JSKhXF4byxIt+HKdN+LEP5fgQpFGi8aj+tUSqMR4M4Jl1DL1hq4q2VmjaY/wMvgCEWIv6Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753439962; c=relaxed/simple;
-	bh=DZf8o481vjpJ7QSUoolpwJajFBT1Vwo8xHyfUgSq//c=;
+	s=arc-20240116; t=1753440683; c=relaxed/simple;
+	bh=70cZJ5+MOSuyvoTc0hRAELy7cfRbFrHaFdQesC+yVH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SRYaJHIJIUz1CDf9si35uJs+eP06rTGD+fcASuhyi0hpGIx7PGupJpaCvmPBvFjnv6AIs1HNsjWqbVH+D+m6HyBb0cxDuNt2DA5AiYIklv/Xj7UvKN+bsgXPk1qIknXBnIN+347BcfibZMfC9RNbdpRbAIz6Hn6JwPw/8xUsJfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TGile5JJ; arc=none smtp.client-ip=209.85.221.182
+	 To:Cc:Content-Type; b=uazKZvH77KE9k8TPVTFogR2H0jGXdSjZWzsXSV30kZhi4Hb1p3RMT5Zy2fD4CePJpYLHHuR0umU/rndE2yw8PzFc6IxWThAk4JXQdoyHcNXsC5HVLYQF70zDO0CdNWoO2cB5KzDY2VC0CtM32IUfgXL1YX0OSSUeYvFa4qREzFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g8nmxEcz; arc=none smtp.client-ip=209.85.221.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TGile5JJ"
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-53167fb5690so662007e0c.3
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 03:39:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g8nmxEcz"
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-532d498eb95so638553e0c.1
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 03:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753439959; x=1754044759; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753440681; x=1754045481; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PlkE41QL6s4x1GqYESsGC6jimQ+2xKl71+VqMJsnR/Q=;
-        b=TGile5JJ7cX1FsGdos/GgVrD9YkSRBbLDQ4Xb8JDu6j+CVVWr1xUrRtqWJP//8oj9V
-         Qy1e9FW9Hk8sm22hFIF2tCv8U8LFFqys0nm4F1kUYfOiIclF8YhGw0fL0wg+Y1ayzjxQ
-         yzhJt4LRhCe0XaYFrvoAgb2qn4+HesnO12PiU=
+        bh=lj71s94DBO5ChtWnhYstkEV7QIcBC/2WSymKueRnDS4=;
+        b=g8nmxEczZ5N91ms8uVxH9pa4W9tMVwZZ0mwoFGGt8Zjko4qEEIFKab3G8OQ1r2O+i3
+         JYk8jkkb8Irs7SsoiQKb6KvGszUviwPmkBPESPSz0dggiU0pt5+mQ8JHxS/ULsUY75A/
+         kHZDnOQO/GLsPszHofAs0L/0GNrGGAZmFGeK8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753439959; x=1754044759;
+        d=1e100.net; s=20230601; t=1753440681; x=1754045481;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PlkE41QL6s4x1GqYESsGC6jimQ+2xKl71+VqMJsnR/Q=;
-        b=Kbcww18dBSQQMP/R3GNsgD8Lirw3/mMeRzk/RbZSoFs6MJJ2Onl1++j0wEXsrgKtwH
-         gpfnQq3ojFZ2vQqFjzXSUTcENuda3ve+BqJKjOUyx6g2r7kENOk/6cAqhpGW59v/oh3/
-         wuwtPw9hYhoGzaHYBBHbzfi1nmHLUOS7ULAMeTcZzKJG042Rt/wcum9oPBHpIB8TXCg3
-         r2xZrVW4FbgVlgWp6aXtmBUsJVjGFg0zuN2qwQXEYr8IvdtawUeZpSPuzgzrK+C1z3BH
-         csI780qLuOgOV/pzDVBWE43fEJ1GeuKouqyQFcDGnW6lcNg8LfvXIaQ4VX0JuQBKduTB
-         JHeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU3WLpBDRDpDtXgicLVVIGLgzM2cRbUntYcJWNaUcJWa2/tTIO/VRVy7t6rPuFS7qeySpcQlv/blCz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzqRTOsBi+3pFphi67lUDB/gl6I9Z/WbmAPeOC6C2MazhrBbov
-	iTNQB1v3ifFQXK0if/PLSyr4HDGP6Zz80/PqBHHtgRSOftys1GKNEJF/vWCpdVTZv2SSdZ68Znm
-	B26IP+A==
-X-Gm-Gg: ASbGnct2y7RNk40MYdxfaQ7osLWQljfuFlf4tJi3zT7E40G8NTYALMXa0aGmapNeKsN
-	yoR3/NffHo4ZdsWq9j5NRpHB90TDsvLZ2ooa+9zUqDBUF9yChGIsnksECh3e/SMTXK0HJq2o7u8
-	bocOtB5Em2pbt+/6M6XlEJTn3QrUulHiz/g1Mdyl0KuRw6D8TtvtDrKzWrw9qnnkyrH83kOvzYN
-	cIXbVMvxry7waowdfVA2r8ipH8w9jhly4/YuMWW7t/dG7aSaknmsIcUjQ3xAP6dFSv+yQHc4fea
-	xuLjJZJ6eXUdLwoWRxPf/DwyTi/RngPmLWlR7iiYUGyasDjMnz2nhmMyBMCaN7r4HYtl5YZWm8W
-	sZx67XTagxbqU9CHJb7Z1sMty1bH9DroCCqJF209kXoiikbWcQkrAWkH8up/jmA==
-X-Google-Smtp-Source: AGHT+IHn5yA9lHHWxEwFzqB09QhpDpj8IYjD1iqMV9qub/v//zMX0pqiwcpC7mKUc2PKzgx/JX/iag==
-X-Received: by 2002:a05:6122:3c91:b0:535:b383:c91e with SMTP id 71dfb90a1353d-538db4f6638mr332385e0c.6.1753439958968;
-        Fri, 25 Jul 2025 03:39:18 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-537bf85be4fsm919802e0c.21.2025.07.25.03.39.18
+        bh=lj71s94DBO5ChtWnhYstkEV7QIcBC/2WSymKueRnDS4=;
+        b=oSPFUt3pHoVwwN/fHRNyzAM89zfLNX4j0mupe+GyUgL+myCQ2iKLt3irYWqXZTPK25
+         8bIc4FPnPBRngSKaSf4RtGQRGkdSGi2rXkHv0pDBf9dwrw3Jj6OSqaMPqLlct1uk9lF6
+         ByL9K+pRSh+oWicSYjOiWi/wFp9hYNfr0pyOKKHF6m/q3wZ0j9RWZq8mPMHx4kaayXX2
+         ckqjCP3IGq/C/QzXvOpcN3e0SpO6Xr3x1RtjLk/guvOer7VA1aS50CjGkKWQoA88HfkB
+         NLb7t8wmH7dDJw98vvz2qVKY6yZq5BpSoC6mbZ9zJsMlMU0aUW02RM7FnvkJV+S/U4vW
+         5IcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBM3O88ztJMpXsiiw1S8ysv9B0CXKDLAD24TB/6LyoOaosGU4SIMHq8pXG+UZDJeskKPbKfN4S2FSO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJwzqHoJapFXppVCTjwjfSid6k1ahoJIchjZEhGHe4R7ipqI0u
+	XzZM9R69zOwXS1h1bpCEgCbbeayS9rJCT2ZKzPi7yn5Rh5RCSHHS3zHXXyqzm9kGHxaXy3Ggmiy
+	ueewLdA==
+X-Gm-Gg: ASbGncuQxn2Zn13aeHeJadSKTNvukNPaVgY2exnL+NHqhEIV7NJ7th+XTUZwMwwKa7F
+	sFB2TTdjl6fFdNE2CB9kPfWAfWCtGRJiJgYNRTol0/uHpTT//9i26iuiCsgHR1LAVUeVCyiWPAf
+	yVk36wu3spXPPInzzxecwnhyhKRYc3p3Rq9PNuCPR5vCyXwAEiCR0w5ljhUZy/4BU6LoAJkV1Jw
+	FfdTe//pNKrAw8u+ielcPZbjuJxcO8R9IxMf3L5BS3BFLgInVqkwCXwXwGJQd6bWLyLjqfmvS+m
+	5KewX5d1nix9BcSZlFJ8cF5fGzDzrDhPe1ROPMUswSJhJDR7IJMQcrU3hitU/IEfnZNVG8j1M2x
+	i/g/BO7982S1OXbAkXPrecR51mzDcFyYKZye9wYjWQrEAcHG6sybUUr8LW1EO3w==
+X-Google-Smtp-Source: AGHT+IFnUjVkE8NbbyNFcrrYM18rohItAFq4xel8awIG2+yk5nRBO259h3+xTtT48mv99uo8wJto9A==
+X-Received: by 2002:a05:6122:178c:b0:531:4708:3d45 with SMTP id 71dfb90a1353d-538db5e207dmr270544e0c.10.1753440680504;
+        Fri, 25 Jul 2025 03:51:20 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b6fa801b6sm682894241.9.2025.07.25.03.51.19
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 03:39:18 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-537a0d384b2so667307e0c.2
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 03:39:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXNy0T0HAaF+xzxZ77E0Xxyi6JXTUJzDmw3P8AkjL6BmTbeD/1lrh3UtowLnFBQpVJ3di4yVVezQfZ4@vger.kernel.org
-X-Received: by 2002:a05:6102:4a8f:b0:4e9:a2bd:b456 with SMTP id
- ada2fe7eead31-4fa3feb1976mr334393137.12.1753439957846; Fri, 25 Jul 2025
- 03:39:17 -0700 (PDT)
+        Fri, 25 Jul 2025 03:51:20 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5314b486207so650093e0c.2
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Jul 2025 03:51:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/24yet73OJ63t7+8qkUmBiiMU6NSa0TnAwaNOLzE2UtlbOfNEeyVdQ0LClAEb6X+yF0ymTWykZ9XA@vger.kernel.org
+X-Received: by 2002:a05:6102:358d:b0:4eb:f003:a636 with SMTP id
+ ada2fe7eead31-4fa3f8f1683mr313640137.0.1753440679035; Fri, 25 Jul 2025
+ 03:51:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-39-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250724083914.61351-39-angelogioacchino.delregno@collabora.com>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-25-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-25-angelogioacchino.delregno@collabora.com>
 From: Fei Shao <fshao@chromium.org>
-Date: Fri, 25 Jul 2025 18:38:40 +0800
-X-Gmail-Original-Message-ID: <CAC=S1njc7_+EhDA_HrVsPfhYsrFEmeb5TQ55X+YOKE=NrpoCaA@mail.gmail.com>
-X-Gm-Features: Ac12FXzORC58mPF_B982fHDjnhtiL_-5O2nAq5PI4bkUJDNwvq8vw0VlaVEnRW8
-Message-ID: <CAC=S1njc7_+EhDA_HrVsPfhYsrFEmeb5TQ55X+YOKE=NrpoCaA@mail.gmail.com>
-Subject: Re: [PATCH 38/38] arm64: dts: mediatek: mt8516-pumpkin: Fix machine compatible
+Date: Fri, 25 Jul 2025 18:50:41 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhS8yY6iWNDfv4Lwz8zUJEy0nMxC5MVZGb983hDsg7bhA@mail.gmail.com>
+X-Gm-Features: Ac12FXxJVbrVgIPSlm6u4--DKBHxaHRjM_36IT45XEIgpl9bR5PM8dE-s5Wt-28
+Message-ID: <CAC=S1nhS8yY6iWNDfv4Lwz8zUJEy0nMxC5MVZGb983hDsg7bhA@mail.gmail.com>
+Subject: Re: [PATCH 24/38] arm64: dts: mediatek: mt7986a-bpi-r3: Fix SFP I2C
+ node names
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
 	daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org, 
@@ -101,37 +102,62 @@ Cc: linux-mediatek@lists.infradead.org, robh@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 5:51=E2=80=AFPM AngeloGioacchino Del Regno
+On Thu, Jul 24, 2025 at 5:49=E2=80=AFPM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> This devicetree contained only the SoC compatible but lacked the
-> machine specific one: add a "mediatek,mt8516-pumpkin" compatible
-> to the list to fix dtbs_check warnings.
+> The binding wants the node to be named "i2c-number", alternatively
+> "i2c@address", but those are named "i2c-gpio-number" instead.
 >
-> Fixes: 9983822c8cf9 ("arm64: dts: mediatek: add pumpkin board dts")
+> Rename those to i2c-0, i2c-1 to adhere to the binding and suppress
+> dtbs_check warnings.
+>
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
+
+It'd be nice to mention in v2 (if needed) that this patch also drops
+redundant #address-cells and #size-cells, but it's minor.
 
 Reviewed-by: Fei Shao <fshao@chromium.org>
 
 > ---
->  arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts b/arch/arm64=
-/boot/dts/mediatek/mt8516-pumpkin.dts
-> index cce642c53812..3d3db33a64dc 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8516-pumpkin.dts
-> @@ -11,7 +11,7 @@
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/a=
+rch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> index ed79ad1ae871..6d2762866a1a 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
+> @@ -64,23 +64,19 @@ wps-key {
+>         };
 >
->  / {
->         model =3D "Pumpkin MT8516";
-> -       compatible =3D "mediatek,mt8516";
-> +       compatible =3D "mediatek,mt8516-pumpkin", "mediatek,mt8516";
+>         /* i2c of the left SFP cage (wan) */
+> -       i2c_sfp1: i2c-gpio-0 {
+> +       i2c_sfp1: i2c-0 {
+>                 compatible =3D "i2c-gpio";
+>                 sda-gpios =3D <&pio 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 scl-gpios =3D <&pio 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 i2c-gpio,delay-us =3D <2>;
+> -               #address-cells =3D <1>;
+> -               #size-cells =3D <0>;
+>         };
 >
->         memory@40000000 {
->                 device_type =3D "memory";
+>         /* i2c of the right SFP cage (lan) */
+> -       i2c_sfp2: i2c-gpio-1 {
+> +       i2c_sfp2: i2c-1 {
+>                 compatible =3D "i2c-gpio";
+>                 sda-gpios =3D <&pio 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 scl-gpios =3D <&pio 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAI=
+N)>;
+>                 i2c-gpio,delay-us =3D <2>;
+> -               #address-cells =3D <1>;
+> -               #size-cells =3D <0>;
+>         };
+>
+>         leds {
 > --
 > 2.50.1
 >
