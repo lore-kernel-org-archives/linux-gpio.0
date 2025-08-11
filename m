@@ -1,94 +1,94 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64A26ACC
-	for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2025 13:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D662D77EF;
+	Mon, 11 Aug 2025 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918051; cv=none; b=hyPCvla6o88tjdqG8FikbhkXnjuL0FSdV1FqFpfbuABHpV9OG23BdoXVDMXCLaOb1L5nbJC5Q+PXUWZNZPqMa2ubPLiF5rEeAA8qiPX4izuuHVU7OociMCR7rFUkghQweyrIKE3Lyqs4ZjYusgrd2O6iuThUJVq0e0KrlMmhScE=
+	t=1754918760; cv=none; b=i67GodR9lqoP1gdkH8xPrXsmVfSS1wyw/e2sdlPf+0ZN2xMeroJZtUiDO0OOBLoJV7bpPcp8xq8gjGGaEn9rD37GbhUMo+ZlaRlWOq8xEpUefCNUlo7UW1Y8mzFZ+cHWedE5eMB3DR54QjbqRNKMdiDKCYD4VyFK3uW1KoatIJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918051; c=relaxed/simple;
-	bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s79DI0LCy8qXLpwtCsy55wxmA52uUrqf+CcztDuxUaRBU0XJLYRhahmQSL0JYfU/bhCTlhTt0iCUkx53nqA37kVa1orvcCDQ2Vh/BdI2kaULFL/5i4pjm6MDJG2Hb5YVvnjfqZWjw7iIv7v3VuvOKqskOk2uMZSwliXghx22hZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f5oQrLjE; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1754918760; c=relaxed/simple;
+	bh=Oa6PGNktYAyJJ8mYhilxeSCGzZaIJPTOJCChM3oL7UA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DSU5/fc4GWmXLFdCq0bBcBsQZUge0Rxe/bWGqL/Zx8ar8RUE24ipxDs/cwSnJUUbSlGVCPSsDHENrX3Pu+dpvRtwT1+yOjKgEaC5VFX7gSFy2GJcbTJFOjuO7RGfmzlUdjR140mDghgKGH63mvw2YDDNs2ud6B6i4rWvUY3vSgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jQDGVufM; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f5oQrLjE"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b93104888so5543581e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Aug 2025 06:14:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754918048; x=1755522848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
-        b=f5oQrLjE4aWrgSA0Jtv/SpOaCuNkrKhR2nX4k31U0mExkM/G1pvEriSiEyXNnn/EKi
-         68++wRPh4kLXduAVsU7csQxfnaQw4Ts/I5x/V0gCeSxL6XmYRTOAlTfa9nwX6SKT/z+I
-         6/NZ+23/45Wj8eey5/aomzzRVf/6Z4W8qb6N0ly2HAnsl/0lmwuNReDnfenIrocFlzzW
-         IonGfKt1xisHyds9bnITOy/xPbYvSQOvouCNyR/xddlwm1y3EN1bZmW7czx7ASoDdX6+
-         3JZlNemv6vpij0FkB0VkYJ7mMDV1lem9mUxYRX+lH2rPjtSOGe3nGvmTaz0bX4BT0p0J
-         PKDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754918048; x=1755522848;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOnD7019wVvxnfkBWIX0WWOVJOpXgqATuZMihxMEtFw=;
-        b=i5ToY0SQM44wBBTrBpHGx6b/mOn5Gqgsp9T/YxCGR88p7OXG8ikKFMxnnnBaAZ5voo
-         Po2Ni8JXq5NSMyAR+wqNyNeZiHnlkptLQFvjuQMwCDcopzM0T4W+1ZFQCQ5SOFluZQ21
-         rP4tMMaGRHOdYmKj0YIjwDLCkirf1zaymZ7lpuWBjngeMH+yWawJHe1XPL42MP9HbSye
-         ssBwrWR+p7IUmTqD5Wug6+wAg6yqa8AciMzwzMfy76TVqz+zgL/mTfcO0EUt6uMrWfdl
-         Ffe0TrkHR1BUCG2OQ48u498Ih2kzsm3DRscS/LsrwEtF7oxOoqsJkIxvUX8//i4fXLZf
-         pzkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8A9dlYvfKNtBIpkNgtXnLCFjOdOWW56h+8EFE2r1S2Cir3EtLztF+j2nFc52WwTBYErIp+HoKkcYB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkQrLf8ZHiYLoebVov+C9TPNO9yv/2ocrd9xnO6rGzPekuL3gS
-	TTf4FGMMwi4okxEkRzPWJK94Fc/Qmd6d6QlM748ohbwrRaz2WUSC7VbxYnCLgVL/T7R21LMEsHc
-	AaA1nB7bBiExHmfMA46n7FR3OgcW/UkgXA3c8Octv3g==
-X-Gm-Gg: ASbGncs7qOeoA1QF/PQR8/3xez+qeRoGGcrdnDlCFXDHr3BHihnoLS+ci8K+nOVGFOr
-	Jy3vOuuIs9aqcsZXEFxFrif+L6a+J4wNhbHDtdS3Zd6bygA6lm0JFhAhFPN7Omo1E6znDEA0Y+5
-	sL9IRYFlMntPoONPtPDm7b+dJg0UtoaeWVLwD/zYChqlt46cAh1Nrya0wX3LsCg71mR6IVZNWOo
-	1YRERO6CMPj9/G6MwEPG+0bIWBfI+U3fmLRT90=
-X-Google-Smtp-Source: AGHT+IFGt5Nc5qscJVVYLtl2huw/aQCNMj0ucn+BAnsYObx2dNoeuixSI2C0/qNBtOnndla2Tjm079hTvc/NwKkkRbw=
-X-Received: by 2002:a05:6512:3ca4:b0:55b:8698:6a1d with SMTP id
- 2adb3069b0e04-55cc00ad9f0mr3805004e87.3.1754918048081; Mon, 11 Aug 2025
- 06:14:08 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 11 Aug 2025 09:14:06 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 11 Aug 2025 09:14:06 -0400
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <20250808151822.536879-8-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jQDGVufM"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 427E744422;
+	Mon, 11 Aug 2025 13:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754918756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PMbnsyfodIC11cMFdOiz1GSjGnrF1D7qYv+UyuAQ6c=;
+	b=jQDGVufM650eZrb7vluHNK+o9G6FQ55Nh4tdFufSWlMZ0kdJN/K5N9coQLMB1ysaVEffmN
+	zWDzYgQF3BI4D95lBukG+xngrfLNITfIgaATpaMJ0YKMauSpWB//2Sfj3v+PTcVdGFNYll
+	cWol12wMl9Ry405ZvLq45nYvub0JShMW8G7+Wtful1m54wc5pq7cW3wJXFu1cDqRzSohG/
+	h0rxz5LRltYhs/tUXHRm37dR4HeTSePS6VhbB+9SPlyNhxEaeMl7u2f3NYRHC5ESkTGYtn
+	R6a3TG6+a6ZBeVSmxI7p/rzyYcGO9mbVahPNIDIKhOWoVANKRiMwnTKiPzUzvg==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Mon, 11 Aug 2025 15:25:52 +0200
+Subject: [PATCH v9 09/10] lib/string_choices: Add str_input_output() helper
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808151822.536879-1-arnd@kernel.org> <20250808151822.536879-8-arnd@kernel.org>
-Date: Mon, 11 Aug 2025 09:14:06 -0400
-X-Gm-Features: Ac12FXxrP0SlfDebLOcuh07PmX_2s3-W5WKUuJmVyKDnXLV2k8bO61Zh8tXjxhI
-Message-ID: <CAMRc=Mfm_w4R-63eNpzrYQfE9OAhSO2wY3iPVJVnbSqTzq7rjw@mail.gmail.com>
-Subject: Re: [PATCH 07/21] mfd: wm8994: remove dead legacy-gpio code
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, patches@opensource.cirrus.com, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250811-aaeon-up-board-pinctrl-support-v9-9-29f0cbbdfb30@bootlin.com>
+References: <20250811-aaeon-up-board-pinctrl-support-v9-0-29f0cbbdfb30@bootlin.com>
+In-Reply-To: <20250811-aaeon-up-board-pinctrl-support-v9-0-29f0cbbdfb30@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw, 
+ linux-hardening@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeektdehvdeiteehtdelteffheduveelgeelvdetgedvueejgefhhfekgefgfeduveenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgepgeenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepifgrrhihhggrnhhgsegrrggvohhnrdgtohhmrdhtfidprhgtphhtthhopeffrghnihgvlhgvvehlvghrihesrggrvghonhdrvghupdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtt
+ hhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Fri, 8 Aug 2025 17:17:51 +0200, Arnd Bergmann <arnd@kernel.org> said:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The old-style gpio handling in wm8994 came from a commit 7c8844481a1c
-> ("mfd: wm8994: Emulate level triggered interrupts if required") in
-> linux-3.11, but nothing in the kernel ever set the 'irq_gpio' member
-> in the wm8994_pdata structure, so this was always dead code.
->
-> Remove it now to reduce the dependency on the legacy gpio interfaces.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->
+Add str_input_output() helper to return 'input' or 'output' string literal.
+Also add the inversed variant str_output_input().
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Suggested-by: Andy Shevchenko <andy@kernel.org>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+ include/linux/string_choices.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
+index f3ba4f52ff2601f2eb5b974602dd075db2ff5d86..a27c87c954ae0de03cb804fdad6f490f2b003e13 100644
+--- a/include/linux/string_choices.h
++++ b/include/linux/string_choices.h
+@@ -41,6 +41,12 @@ static inline const char *str_high_low(bool v)
+ }
+ #define str_low_high(v)		str_high_low(!(v))
+ 
++static inline const char *str_input_output(bool v)
++{
++	return v ? "input" : "output";
++}
++#define str_output_input(v)	str_input_output(!(v))
++
+ static inline const char *str_on_off(bool v)
+ {
+ 	return v ? "on" : "off";
+
+-- 
+2.47.2
+
