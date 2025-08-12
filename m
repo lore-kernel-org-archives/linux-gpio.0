@@ -1,66 +1,66 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0236A2EF65C
-	for <linux-gpio@vger.kernel.org>; Tue, 12 Aug 2025 12:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA682EE289
+	for <linux-gpio@vger.kernel.org>; Tue, 12 Aug 2025 12:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755000653; cv=none; b=t2bGvd+KPs95mkugiOyNHbQ4MQHy2CF3UMRZ8TyF0FJzYxJskoY2ocQ/SNsst9RFEc7TjNHO9titv3sZEWml1MH4lc5vyWxHxOe16c3JaKCfmIcWB/vnE71KyFlnZVACGNelv7YWWk5Srgpv6BbPdCYUIr+pc5RfYSSp2nwn164=
+	t=1755000656; cv=none; b=mkfoRXdmcxZ1hq3QVt72E8GDGt5ZCpXaonhaiLgv3YR/LH1alkGfLG3QtyAayCRW4u+HCVv4d8jfZqSdslKh/eAtYfIZxbJfDlSEvyaRDfjeDEwuiFFDBg1ni7v4UMV/TmJ81os6wu1KSe/lZmVjxBYzgWskoOmMUPxV9BjTUwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755000653; c=relaxed/simple;
-	bh=f4mmX3DnDN9WPZ0ZlMT/3SKrn3Rg6eYqTFkxnIsKE88=;
+	s=arc-20240116; t=1755000656; c=relaxed/simple;
+	bh=SBzGrLq6EUDrMXHfJIZTAwVI8UqxQVnSVETlJklzUck=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nj4m7IvRsN/cKR173Lc/u/TmFYMCRa+JyaiT0+gLKAJklP8ZK+vAFldu5c6p8Je4rQ0ZTyTHGHsKN1QsdV/UaAu/g6YbUgAwBe2Iz+fTGKXZK0Iojjhf5a7/s11Y8sFpVo5crnbS9AuKx6xcJqr7CE+X6pRSxb3ZIVC/Sd97TXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iJ2APG8P; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:To:Cc; b=N/GYxnkDVvbVBg8Jb+qzkpA6b/ylmTnzpDBTMx4brWKMhdTUAIUpEG0Nh8w1X7FRmjx3a2Qj4inkRiTzsL1K19ASByh+9F5AlgBhlr4OCJ2kkapuGT+/Q6LaIfizcJgVxTGOTHnnnqexBJtlE7nPPNqUEigE1hFMLYqyy62bkis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VXRwviY8; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iJ2APG8P"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-459eb4ae596so49486375e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Aug 2025 05:10:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VXRwviY8"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b79bdc9a7dso3273248f8f.1
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Aug 2025 05:10:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755000650; x=1755605450; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755000653; x=1755605453; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sfRZccYyalaxYSxCz0vvdl3bBP0fExSvS+eG4znUNEI=;
-        b=iJ2APG8PEce7kV1PzGc/V38nEpbCGEuocq9guwQy0U37Q6vW9z4kfd6pZyJ4UzxALB
-         jBr0uCgM58Qo0sJTPplDB+VqcArd556+phQ82dHjTdaMKiJ4e4DeIbjjEaKpO6UKNxU2
-         KTBd1waNxYpFbc3b9NmxVhmEMOWyZZF1C4a9x/WGbfWqugb7+9arcOpVIivnP+lYYoQp
-         qnUwTcqlgrl5JFduLsstda63CFJOtD/Q6hm4rM1Xj+A2JO8PYueqAyZkLi8oUTeiSSJu
-         R7S31NTuBR34GH7Yz+Hjuzyrjp861B5OY+tFebdIhAiXkYgXGkmWfSzEy33PnUsr3l0s
-         pX/Q==
+        bh=68esTO4CCg4CDNSqRAKd5ZI6uFL1qQRfR+vgdsJKbwQ=;
+        b=VXRwviY8stwrZnPJhAkIhaZDG+ujvwYNkC+SLETvPE/B8OjJBLpctY5LXcQAgw/KaO
+         D1WajbD728jzuOJZkarxbJkPY9m32hESeIP/QFMhbWzm5ad3nuGwy+KZxMegrh6vbTX4
+         v7cbQtOVaSG9SNgvOL7S69mzvAXoxqQ79JR2zcXWJT53Bo9cqKq4RhvqVCO1C3fNtx9L
+         c6EAzSg6cunTdK/fhSyO28tJHmkEgC3lhtKTWvkSnAWb5eJOy8nSCYbe8Rez2NCeH1uc
+         d/SZlqxcuMm1tYGIWDol9b+d4wMq9b/6MMGuqvUrzGOyaaPg1ctDbBvFcvTMecK0ln0+
+         2uWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755000650; x=1755605450;
+        d=1e100.net; s=20230601; t=1755000653; x=1755605453;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sfRZccYyalaxYSxCz0vvdl3bBP0fExSvS+eG4znUNEI=;
-        b=Sdu41wutotvvQHF7K+9/LigsVPc71uWoRFzqtliKCHNhEhmDi6qRKGdAoc1j10ho2S
-         0PkSpNZmHMmAc1DzFn2dO813qayg4+VjRu1a3TzmyCeRahQNHaz8Ib0/zAA5zS0LKcgo
-         Jy0ZhOx/F1PRJDjopClgX+pYqIeiUAuKIBC/aNC9hrKWEiPn0bnKca0lsSoL9rD27JIo
-         lIHENm9m3tohgjYfGePJkayYOlHdxoL3jXBrqQEr79qoAzyKla8uU6AQnBkJ79ZfZngE
-         M3XfbW1sy7O4M/VKW9SGJntlskkGCtv/BDtZ0lQWhsmI/iQvjbQzvd2UdjEslw6Za/8Y
-         /c/w==
-X-Gm-Message-State: AOJu0YyskF70/1p9DNWrZw9lqng9fVwD2cHM/vjUclhznAyNCpXUPQMQ
-	6UKltxSxalLgAE6kapz+T5SW8sZNQTUZA5NYvCBOuH/CdU8/NgT0F9T+n5BwJvIUVkxWavQtJm7
-	pADTB
-X-Gm-Gg: ASbGncvARTl0mixYWvb/aUOIEE4RwHEc8BZdhD0J9bxxbsshczEBbbSAauSHh5zFtGf
-	wSLDsZSSAgsLe15KXF8qqPmnm1WLK2zRp+SQXdEyMs93hRIdmo7q2H7KR78dMBQ/GvK4mIP/FSZ
-	Dx6OqIzioEqsAEDvhlyHMWogciRvZySh1MT5Bj0g0erW3vzJdWnBdWsS4KVvwNEbMryPg8JUXSN
-	vK8/Aoqz8JLnFRQrtRmlCFHCZVDMY8eWI3yj+rPUC90froTc+/HLCspTqSDCl2WqyZXL1xGh4xe
-	m5F/iQzRyi8Hy928frhQznE0A55ksudkptV65bVIS/Tan2HfIRp4+pG1xjltqTUp3t1AJxXQYVa
-	O7OplW80kXVyRngk=
-X-Google-Smtp-Source: AGHT+IEIGdq1QQlrMY5iXpHdJGhm623X9iO1yw1jQqvbAzny//vbaphDudM091BUd7WzrUSfTrxgNw==
-X-Received: by 2002:a05:600c:3b10:b0:458:bf9c:274f with SMTP id 5b1f17b1804b1-459f4facbd3mr130994235e9.29.1755000650212;
-        Tue, 12 Aug 2025 05:10:50 -0700 (PDT)
+        bh=68esTO4CCg4CDNSqRAKd5ZI6uFL1qQRfR+vgdsJKbwQ=;
+        b=wVPaQKW0WfE4jjOpqAiyfRUZaELy5LhjQt5SYL0tezGAOXGL0euC+wuzvhtJ0P1+q5
+         rdmXKnsylvDyeyxUc65O3qzoT9sKUII1X/A5EYfKWNI4jFGuMwExLwMYXoQRqz6Wt707
+         XDsvsmXYw/551oVjq/78yEIjsKMCvq0Np2A+u0YzkbF/AqnXKMBW5HS5iO6DKCQ5g7bK
+         wl4+WvHQ5+2RajBoccuN4kew9C2JsHzhlKmTWE3Xsxpv8H+PikR/2hits+e80tTJ55O1
+         y5P0Mqz7wRVfGSIdcLQivKY2NG/vJ5h7RGxnMGG3evpv55OkV8IYgt9JdZz8pYU3530x
+         cPMA==
+X-Gm-Message-State: AOJu0YzhKa/oMQ5QBjbSZA5UEI8qRyglo9188A73HR8pMM3Vs2HDz6TB
+	MPj8bu/NY8t3Tsg8lGGTqGL3hDZFIVRuMw7Nn1uz7bQW6p55xRld8vmIHW3zfSJwIc7eR0T4ArK
+	vbS8v
+X-Gm-Gg: ASbGncuR+RkkJR4/Nlto3wMC9Zf2lN+PnkaaQJ6bp8MMdxaTgy6WkZPMS4mgvyC01OS
+	U5TCXn0ScjAo3iIdP/Qa5LC5u3XH05v+5O9HPbLI82a3em0HQs25Gj3J/A+uY7mDQ9QAysFbVAf
+	1j9o9ZxDO3pCOtp+qImFZ1rvFCvl8sL7B1qh/li0x4J8RKx1kq9dgsbDx/zXyoOo4GE/CxVHnhQ
+	ulEDhKGqKbUQCYxXmrY+EB+fCLpMMrTcPnAvpTRaNrax9eXw3wkEZG/m0cZ8xMzO7/6RsfaukWh
+	GklekhNvNpohCVR480RrcnOwlb+ZAw3OjMdYgq+A/C9tcWS8INVa8lFxNusxywRHTnP9yyxafpW
+	fnO9mymLS5kYfQUM=
+X-Google-Smtp-Source: AGHT+IET2sk2g9u0EAaFYv8+wRHsHeO1ChmnueAx1sYGHQcHl7S4Wxx8zX5MLjRRnKe2loAh46R1oA==
+X-Received: by 2002:adf:e750:0:b0:3b9:48f:4967 with SMTP id ffacd0b85a97d-3b9048f4a22mr9689667f8f.56.1755000652859;
+        Tue, 12 Aug 2025 05:10:52 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:16c8:50:27fe:4d94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e1cb7deesm34268788f8f.2.2025.08.12.05.10.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e1cb7deesm34268788f8f.2.2025.08.12.05.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 05:10:49 -0700 (PDT)
+        Tue, 12 Aug 2025 05:10:51 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 12 Aug 2025 14:10:35 +0200
-Subject: [PATCH libgpiod 05/10] bindings: rust: update cc dependency
+Date: Tue, 12 Aug 2025 14:10:37 +0200
+Subject: [PATCH libgpiod 07/10] bindings: rust: update thiserror dependency
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250812-rust-1-0-0-release-v1-5-372d698f23e8@linaro.org>
+Message-Id: <20250812-rust-1-0-0-release-v1-7-372d698f23e8@linaro.org>
 References: <20250812-rust-1-0-0-release-v1-0-372d698f23e8@linaro.org>
 In-Reply-To: <20250812-rust-1-0-0-release-v1-0-372d698f23e8@linaro.org>
 To: Viresh Kumar <viresh.kumar@linaro.org>, 
@@ -77,44 +77,47 @@ To: Viresh Kumar <viresh.kumar@linaro.org>,
 Cc: linux-gpio@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=689;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=790;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=0ZAsfoeaHw2perkiRoNKxpPhSTLE9xczZpCn5Bg2rzg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomy9CBfMI2Zq0MxW8e/B8yQCnVelAdefPt14N4
- iuKyBnt7wmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJsvQgAKCRARpy6gFHHX
- co50EACNWUTkrWG+01VTgBADa1sxf9E771V4JgpOCD1wqgWD0DJR5SFBJZYajr8HHDRRcUI4wTy
- ut4vPo8OMPRcRENLFOfuMqVZqpdL5gpo6JkUO4tg1K8N4XIwNkGbCl42WbyGP8pMmtibnuwDvj0
- RlCCoef1GFxuvpEUBxpVvZBanQr7ng/ag9nQ4hCUkD9TeZp5X4XX5uoxAxPsHi+5ltB4CzCAZLm
- 7kTBn4R4YA9seRECzUoMvX7bbJDoXTHeeR6Ub/T+MXrUoqbnm9iPKlcXrCqSJ9RMURJ9kBXu5kT
- PXVpwvP1z5IV5NGsask6aFPF7wzQyddG5vjp5wKhyFnZxWOuF0LkiOdZTtH0tCVBt8QAVF3gPwf
- hj86Z5fXMU9GQ3uADhQY2ns5bVyH2YaPc+PLcU84O7awGMfKUdRw3EuLg10Q0z+JVfwbpMIQI3k
- 165rrR7zBNfB+t6ULYrUu8Egi00RNGoF/rYqB9A9zVTZGv8jTJMigP5rqEMeTNJQ6gUyU8pkIT/
- wnXfk0KZV1h29Hqy2jisePYvQtoLC20a8T67/i/XnDNGM9hh7nwXE1z1fq/X6U0/fg1WEBuemrv
- fWo+CO2UrbGasQShYa8bSItY5axASnH2dadlgn/ybIgcqpTVa3bqPnMqSZWvqA1akTc4HeBktLT
- G2djIXnsH2LbwVQ==
+ bh=2wBjSHD1y9j832TsQ1hKXsoiUWiJ2RT78WNyG4tVc00=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBomy9Clr38vg9C3uOtCwbGuzNq7icwKgdnXoeVh
+ pePkw4OOCaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaJsvQgAKCRARpy6gFHHX
+ clyTEADCupQUVCQUWNQZql57ApTSA+14a1MY7UQtGPyJzeX//ZNkEIkL6pAo8BgZ4rr9JABdttH
+ 4PD7RSaqtoEdWQ8EIay9PNFr2VdQ5SWsgqgwvuOdiIsShDTSdZaLNERnZqqb25LEWSjByUSfBQo
+ 7sn6r3R1o8U7ZrK6kaPv/FCQsu3OrKeZNU8HL0Ku7osLo62zhnmhQ4UahL/l5ImGl+ow2pmgFlb
+ cYJDHK/QWNPn+ytBBGvUwQpI7j8Bh9RjNE5LmlPskNZuXzJLgsWZtdzPQMyZQtNODiwei8wqoO7
+ A6czn8p4Lx+IOPx8kn5vHrHnGSIwG9OD1OdOBhCJp84EykN8jdFKFZIAahMoxwG46RKDypx7opz
+ OOl3/5nu1qglyacrYGCWdgJoMmjpjHBbVIJj69gwdoO06hQv1UvYOlbQhKe7W/v8Mpw92jzAWak
+ gGXw/q8kHKIK9XZMeerireUbC9pDbA3kui2/GefLJkadH6l5UZ+Y6VjEcjEQb9tkNijunDz2Iib
+ RnLvVRnMkNMKY9kjcjLlKGIp4yGDAborCAxcz2u0Zdc2NTkYKJsD2Gq02YNU9J11GEQ3eTjEc3b
+ Lh9qCfSKZmcclRNLMgI95y9BX9YJRNo42PPpuHKLL+upQeBMrKRZ0PQkAbDw+yffcEkwZw8yA6j
+ uOtoVhCujwYegNQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Bump the cc dependency for gpiosim-sys to the most recent version. No
-code changes required.
+Bump the thiserror dependency for libgpiod to the most recent version.
+No code changes required.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/rust/gpiosim-sys/Cargo.toml | 2 +-
+ bindings/rust/libgpiod/Cargo.toml | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/bindings/rust/gpiosim-sys/Cargo.toml b/bindings/rust/gpiosim-sys/Cargo.toml
-index 52ed43410ef5154a57a15e362344347a2b2cee57..7c092db1a4ff30f28a55bd35573cb9cc11393661 100644
---- a/bindings/rust/gpiosim-sys/Cargo.toml
-+++ b/bindings/rust/gpiosim-sys/Cargo.toml
-@@ -20,4 +20,4 @@ libgpiod = { path = "../libgpiod" }
+diff --git a/bindings/rust/libgpiod/Cargo.toml b/bindings/rust/libgpiod/Cargo.toml
+index 7c285592777fd6399591691076e0bb301ebabcc0..8b719b7647910269ca2c91fee685da7fcc67feb7 100644
+--- a/bindings/rust/libgpiod/Cargo.toml
++++ b/bindings/rust/libgpiod/Cargo.toml
+@@ -27,7 +27,7 @@ errno = "0.3.13"
+ intmap = "2.0.0"
+ libc = "0.2.39"
+ libgpiod-sys = { version = "0.1", path = "../libgpiod-sys" }
+-thiserror = "1.0"
++thiserror = "2.0"
  
- [build-dependencies]
- bindgen = "0.72"
--cc = "1.0.46"
-+cc = "1.2.32"
+ [dev-dependencies]
+ gpiosim-sys = { path = "../gpiosim-sys" }
 
 -- 
 2.48.1
