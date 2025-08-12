@@ -1,259 +1,132 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B632ED86F;
-	Tue, 12 Aug 2025 11:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A72C2EB5C7;
+	Tue, 12 Aug 2025 11:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754997664; cv=none; b=tTNmYrNLo/tyakzuCd+QeUW23v0OZ2+BF1kdVlAMd4h3MeShAFLuahwskqyk4H0tR5uFs0DR7D7eDEnZKP1Vpl9cYWiEoIMvB4j7mc+2KNeIjoyvcbJNTYuwmJar2FLT/awk1fuiLNbFX8lDSG6iIAvZ9y9QgyJaFrIttDYhE88=
+	t=1754998690; cv=none; b=tB3tSGeLydSmPtmAb5mzGsMfqVQyq5qJ0mRwYbsDMSqNifsFwmrzBTdgNI9F3llI57bykHEsLZCcssViTc+vUM7aTSWxLA3BkxfWpRF+W2zmN0NcyZ9JcQIfDkstlX2NK3XSEyehk0ZfP5AfukXE1M2/9Sm/ECeojYV8xgwI5ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754997664; c=relaxed/simple;
-	bh=WPex1Yqsty/iZf3dA0/61+TQ4SmTdE50vpw/kqBQT0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qqSTlWJHz9pY00e2AaOjT0sTDWsJ5Ix4OHX7ZBd1f+097XDG0qeGi5wE+nbAaW0i5Qs0VaVKdW1XczkDQxS0c03t6JS5ZVKZowRjCTrC6V+OHAxTzm6uw4nSNZMIqYZrPTxqyb/pPdeMEEsPGtp/8zE3BhiwUeaGC6JdkzuRCjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c1TBN1Y3Gz9sSr;
-	Tue, 12 Aug 2025 13:03:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id aqZGFjYI7JVc; Tue, 12 Aug 2025 13:03:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c1TBN0bxcz9sSj;
-	Tue, 12 Aug 2025 13:03:08 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F32678B765;
-	Tue, 12 Aug 2025 13:03:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id goOITLSSY6vA; Tue, 12 Aug 2025 13:03:07 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5D1B88B763;
-	Tue, 12 Aug 2025 13:03:07 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/4] soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
-Date: Tue, 12 Aug 2025 13:02:51 +0200
-Message-ID: <1dcc9528e97d228ea7889caa00cc254ef0375ed4.1754996033.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1754996033.git.christophe.leroy@csgroup.eu>
-References: <cover.1754996033.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1754998690; c=relaxed/simple;
+	bh=w4Okp2vqbeOHnwzraNE9RYXZ4qgaoN/u3iuePL+3Ddc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IcTwM5obyLDYFbeFtd819F71a3f8s38Cuaa+jLBgE6Ds2qbRjowU07Syr1tDfUEhFmYlu5vER7NrbwyRJErIJ2DeZvy6eQFuYWEoAsg+l5T1QBlCsUOV1JY9uqNxcdw/naJl/TsjM3ZeukoPUqhOulyRc9feYBv1VB3csM1GJJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-500006b3efdso4896603137.1;
+        Tue, 12 Aug 2025 04:38:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754998687; x=1755603487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Am/i9gJ56QhlGGBrTKvZRFDN8RKSA6du4RdJCjyJ/PU=;
+        b=ittW/yU9wrnbx/eJP7WX83vIORQsKIqY+xjJCLsol7yOJ/ZtGZQ2t4t0m/6aN43vdv
+         nULquJAIwuJJBGm24ZWWLHxTlvI2tPalUV3ZboNEkIgWThFZNKArw5ggYmnYmxkzI90f
+         LuXsyPFSktVRIfslykXZ5iiHzc5vJBrCv6B4P4JH3VXq4Tiu13ZjxRDCf7i32fDmZVPb
+         UepWlBir15l2D6dx7gzWhD2WreAwjluuf/SWNDiqspe2juC7AZt/7UuciQMz0lSAOk5o
+         ggXwSKHQlm8K+AQDslNZPJnisBWrnRcCYRdyjWSO0dMPFBHD0jfIEagIuKhcblO/209m
+         pH8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJoNNC0Ot551SeycOmaAkxYy/52UPU4telknGEup3OzIv+EGMhKeYbkIaMjil6FK2jUiKPa1oMSbQg@vger.kernel.org, AJvYcCUkH15ZvvKpPW3deg7whS8pqOZy4SXxRjwxzHrsfT5ijVTe8CNSQtD20FnpYTagDqY2nA+2irY6vJn3@vger.kernel.org, AJvYcCXpUBj5inIl0SKuG+ZXA3Dc9U5xKjgtiEW8t/ZNvdaYniPEXExB0DmcZU/miAyy0A4AYrbE5XU0thviC6xO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5WSF+PmWHJ9hlGrJYc+hquw1qX4OmPOYXWBgbLrYvkjOuyzHr
+	9i8x985CAnMu2Y3aMWQvt7J6rymd59QwLpm+dlCmCRhCGhOAZz/rIJ9aX5CG4B9G
+X-Gm-Gg: ASbGncs4D+LHA6s39MYNL4xwqRmY+sTA5BHIMHjxKq4hJnEPOa040G37cwO4SDVQedI
+	7/HtfeJxa4kN727IAViQe8tQ5OlokKkmroHtuvj7+PDRjMoZDXWjjWw3v8LYBMG1O4K8hLvcL0N
+	g2kLoVRDQjf57cA6eW8eAWCq9hiBOV2dNuqH/jjhT4dU4GaE2JhFtv7XUZFCf1XxdfSoI+o1nfg
+	7xkxIjMcyCWc1jNEauVHPZd1OYJsY/EriESc160jtV8JI9XB9loSfkA17A4ZVQ9yT6gu0Hb4okQ
+	yKxlM4A53D9NEPagD1LDmacINTWMS27sBEL1NMqpVe2qmRTPOgtvPxjqePqf642B2ccSvCrEtnt
+	EdUStUPM64EkhStJ8v96cjbmglikoB268yu4r9YJjNl+fPoa6wqpT4MHq4/pW4fKDzAbPQlA=
+X-Google-Smtp-Source: AGHT+IFrA7DrI3lpPSPbAExAZt6D1APqqnXIG+OUjVGBFUBwYZajjfwv3kKRIJYUQBVCNTI8Eo3w+Q==
+X-Received: by 2002:a05:6102:3e1b:b0:4e6:443d:9b1a with SMTP id ada2fe7eead31-50cbee69bf7mr1507469137.24.1754998686894;
+        Tue, 12 Aug 2025 04:38:06 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0268d452sm2194418241.5.2025.08.12.04.38.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 04:38:06 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-88bc87958d3so2516993241.0;
+        Tue, 12 Aug 2025 04:38:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9rQfzyH+huo9EmlJnVCZkahHC2ZPN5qIXSM37Ge9bgfjfT2kwAlxa+mTUdA4TERsld3IM8eJ4GxqJ@vger.kernel.org, AJvYcCVui5v4bC2g+RfCDZdq7Skf2cqINI/tgoxL9WR+pPVPw4F9ht3SREreEgkjmO77Qr5HNM+R6yvn0eY9@vger.kernel.org, AJvYcCXrvDz3ZlmCSC1Ve0ntfYSX1DMmDhYscfPdC6I6V4mTgR7Djpa83AZeVJshw4VkXsypqNHBUCsL0r7D0Kn+@vger.kernel.org
+X-Received: by 2002:a05:6102:3594:b0:4c3:64bd:93ba with SMTP id
+ ada2fe7eead31-50cbd1e1ee2mr1421381137.11.1754998685794; Tue, 12 Aug 2025
+ 04:38:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754996575; l=5167; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=WPex1Yqsty/iZf3dA0/61+TQ4SmTdE50vpw/kqBQT0g=; b=iuEPS/cUKH08Rr6/vdpWQIiuCh6T4gHqCrBGgyTNoCggCQ5IQOipYvvM6kxoRgpryGcWp+iGG bSNEG57GtPrCjg0JSMitvJRZ6t/FAF660q0V+hXERQCi0jLJn23HOsH
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <5366fcd01c9f8b374914e6137f01d156033c8a9e.1754986373.git.geert+renesas@glider.be>
+ <z7wqrfqvx5rtm6ztvwnb4po5dvabgb2lyse6nws6ojzjdr6k3e@qzpopioosaai>
+In-Reply-To: <z7wqrfqvx5rtm6ztvwnb4po5dvabgb2lyse6nws6ojzjdr6k3e@qzpopioosaai>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 12 Aug 2025 13:37:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUDy5ZtDBYkkVOWE4C=h3L85+R6HFzY1fYt51uDCG2-mg@mail.gmail.com>
+X-Gm-Features: Ac12FXwHP-2ivaSJEo1Z8tczA_UaeK9I-9xB-dON_4HXW7qtJ7lIzB5Od4FdiBA
+Message-ID: <CAMuHMdUDy5ZtDBYkkVOWE4C=h3L85+R6HFzY1fYt51uDCG2-mg@mail.gmail.com>
+Subject: Re: [PATCH] pwm: Rename GPIO set_rv callback back to its original name
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, linux-pwm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The QUICC Engine provides interrupts for a few I/O ports. This is
-handled via a separate interrupt ID and managed via a triplet of
-dedicated registers hosted by the SoC.
+Hi Uwe,
 
-Implement an interrupt driver for it for that those IRQs can then
-be linked to the related GPIOs.
+On Tue, 12 Aug 2025 at 12:44, Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org> w=
+rote:
+> On Tue, Aug 12, 2025 at 10:14:59AM +0200, Geert Uytterhoeven wrote:
+> > As of commit d9d87d90cc0b10cd ("treewide: rename GPIO set callbacks bac=
+k
+> > to their original names"), the .set_rv() callback no longer exists:
+> >
+> >     drivers/pwm/core.c: In function =E2=80=98__pwmchip_add=E2=80=99:
+> >     drivers/pwm/core.c:2514:26: error: =E2=80=98struct gpio_chip=E2=80=
+=99 has no member named =E2=80=98set_rv=E2=80=99
+> >      2514 |                         .set_rv =3D pwm_gpio_set,
+> >         |                          ^~~~~~
+> >     drivers/pwm/core.c:2514:35: error: initialization of =E2=80=98int (=
+*)(struct gpio_chip *, unsigned int)=E2=80=99 from incompatible pointer typ=
+e =E2=80=98int (*)(struct gpio_chip *, unsigned int,  int)=E2=80=99 [-Werro=
+r=3Dincompatible-pointer-types]
+> >      2514 |                         .set_rv =3D pwm_gpio_set,
+> >         |                                   ^~~~~~~~~~~~
+> >     drivers/pwm/core.c:2514:35: note: (near initialization for =E2=80=
+=98(anonymous).direction_input=E2=80=99)
+> >
+> > Fixes: 1c84bb7fc0ad5841 ("pwm: Provide a gpio device for waveform drive=
+rs")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Probably to be folded into the original commit, when pwm/for-next is
+> > rebased to v6.17-rc1.
+>
+> That's what I did, before seeing your patch. Note that the Fixes line
+> isn't accurate, because it only gets wrong when it's merged in a tree
+> that contains d9d87d90cc0b ("treewide: rename GPIO set callbacks back to
+> their original names"). I don't know in which tree you found the two
+> commits together (I think Stephen fixed it for next?), but then
 
-The number of ports for which interrupts are supported depends on
-the microcontroller:
-- mpc8323 has 10 interrupts
-- mpc8360 has 28 interrupts
-- mpc8568 has 18 interrupts
-So add this information as data of the compatible.
+I found it while preparing today's renesas-drivers release.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/soc/fsl/qe/Makefile      |   2 +-
- drivers/soc/fsl/qe/qe_ports_ic.c | 156 +++++++++++++++++++++++++++++++
- 2 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
+> technically the merge commit would be at fault.
 
-diff --git a/drivers/soc/fsl/qe/Makefile b/drivers/soc/fsl/qe/Makefile
-index ec8506e131136..901a9c40d5eb7 100644
---- a/drivers/soc/fsl/qe/Makefile
-+++ b/drivers/soc/fsl/qe/Makefile
-@@ -11,4 +11,4 @@ obj-$(CONFIG_UCC_SLOW)	+= ucc_slow.o
- obj-$(CONFIG_UCC_FAST)	+= ucc_fast.o
- obj-$(CONFIG_QE_TDM)	+= qe_tdm.o
- obj-$(CONFIG_QE_USB)	+= usb.o
--obj-$(CONFIG_QE_GPIO)	+= gpio.o
-+obj-$(CONFIG_QE_GPIO)	+= gpio.o qe_ports_ic.o
-diff --git a/drivers/soc/fsl/qe/qe_ports_ic.c b/drivers/soc/fsl/qe/qe_ports_ic.c
-new file mode 100644
-index 0000000000000..2ab82ac259564
---- /dev/null
-+++ b/drivers/soc/fsl/qe/qe_ports_ic.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * QUICC ENGINE I/O Ports Interrupt Controller
-+ *
-+ * Copyright (c) 2025 Christophe Leroy CS GROUP France (christophe.leroy@csgroup.eu)
-+ */
-+
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/platform_device.h>
-+
-+/* QE IC registers offset */
-+#define CEPIER		0x0c
-+#define CEPIMR		0x10
-+#define CEPICR		0x14
-+
-+struct qepic_data {
-+	void __iomem *reg;
-+	struct irq_domain *host;
-+};
-+
-+static void qepic_mask(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	clrbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static void qepic_unmask(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	setbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static void qepic_end(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	out_be32(data->reg + CEPIER, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static int qepic_set_type(struct irq_data *d, unsigned int flow_type)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+	unsigned int vec = (unsigned int)irqd_to_hwirq(d);
-+
-+	switch (flow_type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_FALLING:
-+		setbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		return 0;
-+	case IRQ_TYPE_EDGE_BOTH:
-+	case IRQ_TYPE_NONE:
-+		clrbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		return 0;
-+	}
-+	return -EINVAL;
-+}
-+
-+static struct irq_chip qepic = {
-+	.name = "QEPIC",
-+	.irq_mask = qepic_mask,
-+	.irq_unmask = qepic_unmask,
-+	.irq_eoi = qepic_end,
-+	.irq_set_type = qepic_set_type,
-+};
-+
-+static int qepic_get_irq(struct irq_desc *desc)
-+{
-+	struct qepic_data *data = irq_desc_get_handler_data(desc);
-+	u32 event = in_be32(data->reg + CEPIER);
-+
-+	if (!event)
-+		return -1;
-+
-+	return irq_find_mapping(data->host, 32 - ffs(event));
-+}
-+
-+static void qepic_cascade(struct irq_desc *desc)
-+{
-+	generic_handle_irq(qepic_get_irq(desc));
-+}
-+
-+static int qepic_host_map(struct irq_domain *h, unsigned int virq, irq_hw_number_t hw)
-+{
-+	irq_set_chip_data(virq, h->host_data);
-+	irq_set_chip_and_handler(virq, &qepic, handle_fasteoi_irq);
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops qepic_host_ops = {
-+	.map = qepic_host_map,
-+};
-+
-+static int qepic_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct qepic_data *data;
-+	int irq;
-+	int nb;
-+
-+	nb = (int)of_device_get_match_data(dev);
-+	if (nb < 1 || nb > 32)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->reg = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(data->reg))
-+		return PTR_ERR(data->reg);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	data->host = irq_domain_add_linear(dev->of_node, nb, &qepic_host_ops, data);
-+	if (!data->host)
-+		return -ENODEV;
-+
-+	irq_set_handler_data(irq, data);
-+	irq_set_chained_handler(irq, qepic_cascade);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qepic_match[] = {
-+	{
-+		.compatible = "fsl,mpc8323-qe-ports-ic",
-+		.data = (void *)10,
-+	},
-+	{
-+		.compatible = "fsl,mpc8360-qe-ports-ic",
-+		.data = (void *)28,
-+	},
-+	{
-+		.compatible = "fsl,mpc8568-qe-ports-ic",
-+		.data = (void *)18,
-+	},
-+	{},
-+};
-+
-+static struct platform_driver qepic_driver = {
-+	.driver	= {
-+		.name		= "qe_ports_ic",
-+		.of_match_table	= qepic_match,
-+	},
-+	.probe	= qepic_probe,
-+};
-+
-+static int __init qepic_init(void)
-+{
-+	return platform_driver_register(&qepic_driver);
-+}
-+arch_initcall(qepic_init);
--- 
-2.49.0
+Stephen indeed fixed it in today's linux-next release (which happened
+after I encountered the issue), which is also the first linux-next release
+that contains both commits.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
