@@ -1,163 +1,267 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A03279784;
-	Thu, 14 Aug 2025 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E24318138;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755166007; cv=none; b=rvHRrjFykP0lbKmWkyMJprmbIKTzZh5Quzzr6vnATVVBMnIeKGvKellXEYED0q0OZxKik+I7Hsp82i0zJl3LVga4Ck1s2ScASIxEIg0BiJv7MFLUWIWOrsdVpYhL/yxjYT8YXZMjV8GDZUqI5ekpusTG13btRw4SorDisjUm5jY=
+	t=1755168734; cv=none; b=bni/X6inJBZ8eJaF4abXH8f3MfG5bGVaP9Li0UaUZxsEEcpPdmCq7H23g3IHodM1GscZ2otXS2e0+u6SHNvLmjqQQfwo/kqXqh/iMOPfBRUPs9NiQhfeJI/ruPBIvqEUu/flKx7pcGDZgEfd+nAvZhUTP7iaCoG2Ip86kgL7gFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755166007; c=relaxed/simple;
-	bh=pjA1Ka2oWY97YGnAX3DCceJhO8IsETdHhyuyUc5PTF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfZlLtOmPGE5P8LGouoSisr5/jgr3Gg/Y+d71VHMq3/FoMHNmJo3AL6WHbMRYfa1RzeudtOvWHDi9BvxlqO3DbbFMgaSI9Rs7GMl6Pc2fJBO9JHzZivupv/DwYV6kkXI3Zdv9GSPEls36H6ivdx39uTiavFDSSMUnAe1pPl+f60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=fd8xE1P3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FXv5wkyK; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1755168734; c=relaxed/simple;
+	bh=tuNThMyK+20yfHoL5Rs3ghED3P4RDx1PE6VnCgjUVfg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=prRPgAGA8UwAwaLqBLijPGf+Neo+6kMH1Fj2p61HChWdPC7dFlS6wjbB7EACoL//dJZeUo+54MS0VEPsjgZUNeEGM2j6l0BflNqtj+278xMtdAJdTaF9/FFpwBHVLj4zta5J0JurHBZI1WZG9ei81gsCFPggMvwRo7OWLoIBLJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlz8Xjz5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="fd8xE1P3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FXv5wkyK"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5A69114000B6;
-	Thu, 14 Aug 2025 06:06:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 14 Aug 2025 06:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1755166003;
-	 x=1755252403; bh=JsAxzXgjzHRP9fzvgrE35OsqNZuMVG8ONOw7NsIFeyk=; b=
-	fd8xE1P3L2QeBPxLJVYmAh6XY56rFGyLgqK4ZGRmSQa+BVoVmrmNjeYK1aqccqqa
-	ORAbph4UjuUsxZPPxTI4gGTN0lV2SZuIxwOtTHIyiqC8k0oi1XPYrhiWmdYShn+B
-	Yg0oc7XJLyc+vqU/TUd85+dH6B526jkgu2oUrZrar2dWUAUyKBKqTeFMXCElTCMy
-	YwKC66QUe3scpODzKvUTJeAP1U6oHdR2tnbUfn0uNWjKRV2SpSHdPV6DGZ0IRAY0
-	EWCsVFbwcQy1lhzaQGtUTe14gbHf1b1wC/T8Lac6brxetDVeiQvonliHrXLIEJVf
-	3w2jWGo/OTn0krkHXNt9Ig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755166003; x=
-	1755252403; bh=JsAxzXgjzHRP9fzvgrE35OsqNZuMVG8ONOw7NsIFeyk=; b=F
-	Xv5wkyKvuwerPh76xTFQOwCkunA4A/fSotTHZitILk5DcqaQU/IGq04s1YvhulKs
-	aoNAQzjBxluEcjtKbHz9P9+ngZKysnCEa/o+AGY0XTReebCNhn2pLDpZV6Ec8Inu
-	zuT6bDzIc0MD6v4B6cPBrWShzH6x5j4KCjJbnmQZQrnYdOASZVT2RaVHOxOHqbwn
-	NljAQyP0f8CeunVDjU/ouOml3BrZlxb9mIH65oAxfzX+b2IZTW90RQzlNJdioycn
-	hOaFDNUP//KYyyxxacpXcbAlfDGlLloB7Z3W+9zG9QW+6qaCzZEshMuckb30Zfqd
-	KdlnYt8dVlRb8ATYuAhqg==
-X-ME-Sender: <xms:MrWdaAw8v7w6a9jrt8-G4QUzVR-B97XJQsC8fnXbcne1Y3DwiKETow>
-    <xme:MrWdaBYWhSW54znxsDHtiiMNIgXaCFZfan8f-e2con7bfMlXft2HqycPnP1RXOy3J
-    KfKcmaNvqdOMtcY9E0>
-X-ME-Received: <xmr:MrWdaBWFxv_D3jM-qSzisRwsMn1SHSXX62bJ6261ue5TDwoeyWW9s1Cq_gWj5DbGWIJm-UNSnwWCZQgJ8tAtUVvVAh5FbSXXWQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtkedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
-    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpefftdegfeevfefguedtveevlefgleek
-    uedvfeeggfefheefieejhedulefhjeekgfenucffohhmrghinhepkhgvrhhnvghlrdhorh
-    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhi
-    khhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpth
-    htohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrthdorhgvnhgv
-    shgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjse
-    hlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghp
-    thhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:MrWdaPjPrH5e4gJxe03MJ5cPW_mv5fds-zHtzjK8aW3S3OnTXsLI6g>
-    <xmx:M7WdaPudfvLDf3Q7kCz01cldyWRvZcucNRwPpyB7Xu8mO7ag3hhkqg>
-    <xmx:M7WdaI4gAJi-khNx2a_4mi-jjityqa5UWTQxPeVkzUNSzD9GkgHN9g>
-    <xmx:M7WdaDPgIuC5meITyGRQttDrnex0HGtc1OR2H4KYGR7hthI1Kdth8A>
-    <xmx:M7WdaOHkhz1-HcL7m-JlseELkGa7TSh-Wjtwr-TAAc1zFWqSlLf7G3j9>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Aug 2025 06:06:42 -0400 (EDT)
-Date: Thu, 14 Aug 2025 12:06:40 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: renesas: rza1: Make mux_conf const in
- rza1_pin_mux_single()
-Message-ID: <20250814100640.GA2197757@ragnatech.se>
-References: <470389b1411074f0da2cef8c6c3531f16aba6589.1755164114.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlz8Xjz5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BAD74C4CEF9;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755168733;
+	bh=tuNThMyK+20yfHoL5Rs3ghED3P4RDx1PE6VnCgjUVfg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=mlz8Xjz5GT3DDcebvIT5SkVmi+R425lYHqib6cLHMV32xbKOuf5Oej6eMtCQevu26
+	 A1ikRwePb22yXfpIiOEGbsrnoDVAB4vFP6gGDqHmvOqbdOLPOLYXsNfhxIOLy/P5Uh
+	 0qmp+KQIE8EuYtgWdI3+Ayg5muS/4pRMxjRgPbsCaI3ZMFhC+G+p+WRYmlLGGzQn7U
+	 TLNKGxW76WIGbZ6e8BR6UDEWkhixLbjA/jBjKeZ5jK8DHFJNWZoaDnrPf2chuxTrYH
+	 skeErxXIZa0xby/a4UEKUjK2qJ42ssQUMJWa4uvKkuNX4QHofBHTwhnKoT/uVA+O7u
+	 rYQ8raJS51AfQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A8FCA0ED1;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Thu, 14 Aug 2025 11:52:25 +0100
+Subject: [PATCH 3/6] dt-binbings: hwmon: Add bindings for the LTC4283 Swap
+ Controller
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <470389b1411074f0da2cef8c6c3531f16aba6589.1755164114.git.geert+renesas@glider.be>
+Message-Id: <20250814-ltc4283-support-v1-3-88b2cef773f2@analog.com>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+In-Reply-To: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+To: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755168752; l=6973;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=HsDdoBnjwJgf7HxiAniojdoW83Qd+owHP8CXaML6ml4=;
+ b=27DMRJsVWDaaEnYZxcgcr1RPm+1aGmpgHyXN6+ElU4OO6MijcnZbwKuFjtle603REtvrHnXt8
+ 6WuU+XcNdczC7Vq78GUn/aJ7QykX/fjLWcYAasrgDsFaJrrXyz4HwJ2
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-Hi Geert,
+From: Nuno Sá <nuno.sa@analog.com>
 
-Thanks for your work.
+Document the bindings for the Hardware monitoring functions of the
+LTC4283 Hot Swap Controller.
 
-On 2025-08-14 11:50:55 +0200, Geert Uytterhoeven wrote:
-> The rza1_mux_conf object pointed to by the mux_conf parameter of
-> rza1_pin_mux_single() is never modified.  Make it const.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Special note for the "adi,vpower-drns-enable" property. It allows to choose
+between the attenuated MOSFET drain voltage or the attenuated input
+voltage at the RTNS pin (effectively choosing between input or output
+power). This is a system level decision not really intended to change at
+runtime and hence is being added as Firmware property.
 
-I like improvements like this!
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+---
+ .../devicetree/bindings/hwmon/adi,ltc4283.yaml     | 159 +++++++++++++++++++++
+ MAINTAINERS                                        |   1 +
+ 2 files changed, 160 insertions(+)
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> This has a small conflict with "[PATCH v4 09/15] pinctrl: constify
-> pinmux_generic_get_function()"[1], which I have already acked.
-> Perhaps the best solution is for Bartosz to include this in his series?
-> Or I can resend an updated version for LinusW to apply after Bartosz
-> series has handled?
-> 
-> Thanks!
-> 
-> [1] https://lore.kernel.org/all/20250812-pinctrl-gpio-pinfuncs-v4-9-bb3906c55e64@linaro.org/
-> 
->  drivers/pinctrl/renesas/pinctrl-rza1.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
-> index 23812116ef42682d..4613d2c8cccc1dab 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-> @@ -669,7 +669,7 @@ static inline int rza1_pin_get(struct rza1_port *port, unsigned int pin)
->   * @mux_conf: pin multiplexing descriptor
->   */
->  static int rza1_pin_mux_single(struct rza1_pinctrl *rza1_pctl,
-> -			       struct rza1_mux_conf *mux_conf)
-> +			       const struct rza1_mux_conf *mux_conf)
->  {
->  	struct rza1_port *port = &rza1_pctl->ports[mux_conf->port];
->  	unsigned int pin = mux_conf->pin;
-> @@ -1119,7 +1119,7 @@ static int rza1_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
->  			   unsigned int group)
->  {
->  	struct rza1_pinctrl *rza1_pctl = pinctrl_dev_get_drvdata(pctldev);
-> -	struct rza1_mux_conf *mux_confs;
-> +	const struct rza1_mux_conf *mux_confs;
->  	struct function_desc *func;
->  	struct group_desc *grp;
->  	int i;
-> @@ -1132,7 +1132,7 @@ static int rza1_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
->  	if (!func)
->  		return -EINVAL;
->  
-> -	mux_confs = (struct rza1_mux_conf *)func->data;
-> +	mux_confs = (const struct rza1_mux_conf *)func->data;
->  	for (i = 0; i < grp->grp.npins; ++i) {
->  		int ret;
->  
-> -- 
-> 2.43.0
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..5630623fd3dafa1d86e1877de6cd8844e2826ed2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/adi,ltc4283.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HWMON LTC4283 Negative Voltage Hot Swap Controller
++
++maintainers:
++  - Nuno Sá <nuno.sa@analog.com>
++
++description: |
++  This module is part of the LTC4283 MFD device.
++  See Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
++  This implements the HWMON bindings for the LTC4283 negative voltage hot swap
++  controller.
++
++properties:
++  compatible:
++    enum:
++      - adi,ltc4283-hwmon
++
++  adi,rsense-nano-ohms:
++    description: Value of the sense resistor.
++
++  adi,current-limit-sense-microvolt:
++    description:
++      The current limit sense voltage of the chip is adjustable between
++      15mV and 30mV in 1mV steps. This effectively limits the current
++      on the load.
++    minimum: 15000
++    maximum: 30000
++    default: 15000
++
++  adi,current-limit-foldback-factor:
++    description:
++      Specifies the foldback factor for the current limit. The current limit
++      can be reduced (folded back) to one of four preset levels. The value
++      represents the percentage of the current limit sense voltage to use
++      during foldback. A value of 100 means no foldback.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [10, 20, 50, 100]
++    default: 100
++
++  adi,cooling-delay-ms:
++    description:
++      Cooling time to apply after an overcurrent fault, FET bad or
++      external fault.
++    enum: [512, 1002, 2005, 4100, 8190, 16400, 32800, 65600]
++    default: 512
++
++  adi,fet-bad-timer-delay-ms:
++    description:
++      FET bad timer delay. After a FET bad status condition is detected,
++      this timer is started. If the condition persists for the
++      specified time, the FET is turned off and a fault is logged.
++    enum: [256, 512, 1002, 2005]
++    default: 256
++
++  adi,power-good-reset-on-fet:
++    description:
++      If set, resets the power good status when the MOSFET is turned off.
++      Otherwise, it resets when a low output voltage is detected.
++    type: boolean
++
++  adi,fet-turn-off-disable:
++    description:
++      If set, the MOSFET is turned off immediately when a FET fault is detected.
++    type: boolean
++
++  adi,tmr-pull-down-disable:
++    description: Disables 2uA pull-down current on the TMR pin.
++    type: boolean
++
++  adi,dvdt-inrush-control-disable:
++    description:
++      Enables dV/dt inrush control during startup. In dV/dt mode, the inrush
++      current is limited by controlling a constant output voltage ramp rate.
++      If not set, the inrush control mechanism is active current limiting.
++    type: boolean
++
++  adi,fault-log-enable:
++    description:
++      If set, enables logging fault registers and ADC data into EEPROM upon a
++      fault.
++    type: boolean
++
++  adi,vpower-drns-enable:
++    description:
++      If set, enables the attenuated MOSFET drain voltage to be monitored. This
++      effectively means that the MOSFET power is monitored. If not set, the
++      attenuated input voltage (and hence input power) is monitored.
++    type: boolean
++
++  adi,external-fault-fet-off-enable:
++    description: Turns MOSFET off following an external fault.
++    type: boolean
++
++  adi,undervoltage-retry-disable:
++    description: Do not retry to turn on the MOSFET after an undervoltage fault.
++    type: boolean
++
++  adi,overvoltage-retry-disable:
++    description: Do not retry to turn on the MOSFET after an overvoltage fault.
++    type: boolean
++
++  adi,external-fault-retry-enable:
++    description: Retry to turn on the MOSFET retry after an external fault.
++    type: boolean
++
++  adi,overcurrent-retries:
++    description: Configures auto-retry following an Overcurrent fault.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [latch-off, "1", "7", unlimited]
++    default: latch-off
++
++  adi,fet-bad-retries:
++    description:
++      Configures auto-retry following a FET bad fault and a consequent MOSFET
++      turn off.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [latch-off, "1", "7", unlimited]
++    default: latch-off
++
++  adi,pgio1-func:
++    description: Configures the function of the PGIO1 pin.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [inverted_power_good, power_good]
++    default: inverted_power_good
++
++  adi,pgio2-func:
++    description: Configures the function of the PGIO2 pin.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [inverted_power_good, power_good, active_current_limiting]
++    default: inverted_power_good
++
++  adi,pgio3-func:
++    description: Configures the function of the PGIO3 pin.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [inverted_power_good_input, power_good_input]
++    default: inverted_power_good_input
++
++  adi,pgio4-func:
++    description: Configures the function of the PGIO4 pin.
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [inverted_external_fault, external_fault]
++    default: inverted_external_fault
++
++dependencies:
++  adi,external-fault-retry-enable:
++    - adi,pgio4-func
++  adi,external-fault-fet-off-enable:
++    - adi,pgio4-func
++
++required:
++  - compatible
++  - adi,rsense-nano-ohms
++
++additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b5f4f1c41c64b738d57c1fb5552a60b4c6b9985c..5f344ed81c80c9c30d6b2ee81bb00a44874e3b4c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14505,6 +14505,7 @@ M:	Nuno Sá <nuno.sa@analog.com>
+ L:	linux-hwmon@vger.kernel.org
+ L:	linux-gpio@vger.kernel.org
+ S:	Supported
++F:	Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
+ F:	Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+ F:	drivers/mfd/ltc4283.c
+ F:	include/linux/mfd/ltc4283.h
 
 -- 
-Kind Regards,
-Niklas Söderlund
+2.50.1
+
+
