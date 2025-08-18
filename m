@@ -1,36 +1,37 @@
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94BB30E83F;
-	Mon, 18 Aug 2025 12:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41B30E83F;
+	Mon, 18 Aug 2025 12:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521447; cv=none; b=gA1a3uTzZLSss0wlu7n6KgKhfTcdRwMgOzDlYhANetghehCbqvngswwaSPGKwmNRQuc/TotXSKqGcHXHppgzwkyL24zbjvoReQ+LLV4DT4Xu7Care2ODGmPkChqCVVbrggOdr//MuHaoH3vwib3mBvp8ur8r67f41fEtu1lbPSE=
+	t=1755521452; cv=none; b=c6WCqaO4wMMeznN2kA2XU9jiz6mp4T4gdChvNeRIcKssG2kSiMeooLNCfxtD/nGyFmk01dC2DeqcSXGTNHFxZgDt6qfn0J30StsaimC4+8hflqH89CnR6BFXpMqBktgsFn6+NNweu1wOukk6Tt0cxg/qGDgtDx8KHOu3SV08rwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521447; c=relaxed/simple;
-	bh=8RKYPBgcb30PVBpGEIRd0OTuJmNgZfajD3OtFlexfHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s26Dk9yRlRTu1rRh1KN4ECOvUb1JusG+i0OZrdm73K2i5H5Bi8uF/VCMwpGUtVtN8XBpVH6pECJNazvEzBRcdxhwnA74jR7rjxwD8kcarO76pXSV5ReYtSPmiQ6o9MOxZ9ktFZ6Aa+pWfJjKsUpmC7Atc0IgJUtxohdP/DQWO1M=
+	s=arc-20240116; t=1755521452; c=relaxed/simple;
+	bh=PLM/65JvqNc3NilFjJ1vKDYuZPfhd7TFnkWsRNB/R5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R7dSiGGcsiMJUyfMnHfgt5L/M/SJAcflalplAKk7n5uKnSFw2kS+nP0UFs78loYhSUKK0kCtd9VbdlhUK/FIL/Dgnk21uC63jj+mkpPwbFqH2KEayxjiwN8BJVMecVayYLp82DPxf5KkwFS7NiomwXqtBOxhSOR+NNJX1XoVpVg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c5BVG53JJz9sV1;
-	Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4c5BYd0rhsz9sV3;
+	Mon, 18 Aug 2025 14:17:41 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ts7rHCiLYxVq; Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	with ESMTP id LUzjzR3pCnxq; Mon, 18 Aug 2025 14:17:41 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c5BVG3hg9z9sTn;
-	Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c5BYc0gBfz9sV0;
+	Mon, 18 Aug 2025 14:17:40 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 689778B764;
-	Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2A748B763;
+	Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id v5SaTmB0tJsW; Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	with ESMTP id Ump101Aa9xV9; Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 38B258B763;
-	Mon, 18 Aug 2025 14:14:46 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C3BEB8B764;
+	Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Michael Ellerman <mpe@ellerman.id.au>,
 	Nicholas Piggin <npiggin@gmail.com>,
@@ -41,17 +42,19 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-gpio@vger.kernel.org,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] powerpc/cpm2: Drop legacy-of-mm-gpiochip.h header
-Date: Mon, 18 Aug 2025 14:14:36 +0200
-Message-ID: <2662f24c539db393f11b27f0feae2dc14bb2f08f.1755518891.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH 2/2] powerpc/44x: Drop legacy-of-mm-gpiochip.h header
+Date: Mon, 18 Aug 2025 14:17:35 +0200
+Message-ID: <2f8f16eac72b9ec202b6e593939b44308891a661.1755519343.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <29d89aa43536714b193d9710301341f838fcb5b7.1755519343.git.christophe.leroy@csgroup.eu>
+References: <29d89aa43536714b193d9710301341f838fcb5b7.1755519343.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755519277; l=7042; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=8RKYPBgcb30PVBpGEIRd0OTuJmNgZfajD3OtFlexfHU=; b=oOokUcmjwNZdcWy7b9jBwmz8uDBVVsYb17+K9YIYEqRQ/tfkozSrMR/zQWauwjNc4KoOTkrEo ITurVnxbWMWCwbbqG0Q9Sp+slmTw0vaf0jZ++qyPYlLuBG7qPM4B33e
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755519455; l=4820; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=PLM/65JvqNc3NilFjJ1vKDYuZPfhd7TFnkWsRNB/R5A=; b=Zjq/6FK9sXzyA80Ffb9ZnhDUHevV7VYAjbbUcFcnIkEAr3H0LvJ9wrxocZC5UcGLVp3Oh7hrV 3XC/VOwClHACT50kbShSMq0VXZqNlEjXjdKEW/gab6AUUSk0gOtmVyK
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
@@ -66,197 +69,129 @@ alternative is appear we can move drivers again to use that one.
 As a side effect this change fixes a potential memory leak on
 an error path, if of_mm_gpiochip_add_data() fails.
 
-[text copied from commit 34064c8267a6 ("powerpc/8xx:
-Drop legacy-of-mm-gpiochip.h header")]
+[Text copied from commit 34064c8267a6 ("powerpc/8xx: Drop
+legacy-of-mm-gpiochip.h header")]
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- arch/powerpc/platforms/8xx/Kconfig |  1 -
- arch/powerpc/platforms/Kconfig     |  1 -
- arch/powerpc/sysdev/cpm_common.c   | 56 +++++++++++++++---------------
- 3 files changed, 28 insertions(+), 30 deletions(-)
+ arch/powerpc/platforms/44x/Kconfig |  1 -
+ arch/powerpc/platforms/44x/gpio.c  | 33 +++++++++++++++++-------------
+ 2 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/arch/powerpc/platforms/8xx/Kconfig b/arch/powerpc/platforms/8xx/Kconfig
-index 8623aebfac48..abb2b45b2789 100644
---- a/arch/powerpc/platforms/8xx/Kconfig
-+++ b/arch/powerpc/platforms/8xx/Kconfig
-@@ -101,7 +101,6 @@ comment "Generic MPC8xx Options"
- config 8xx_GPIO
- 	bool "GPIO API Support"
+diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
+index 35a1f4b9f827..fc79f8466933 100644
+--- a/arch/powerpc/platforms/44x/Kconfig
++++ b/arch/powerpc/platforms/44x/Kconfig
+@@ -231,7 +231,6 @@ config PPC4xx_GPIO
+ 	bool "PPC4xx GPIO support"
+ 	depends on 44x
  	select GPIOLIB
 -	select OF_GPIO_MM_GPIOCHIP
  	help
- 	  Saying Y here will cause the ports on an MPC8xx processor to be used
- 	  with the GPIO API.  If you say N here, the kernel needs less memory.
-diff --git a/arch/powerpc/platforms/Kconfig b/arch/powerpc/platforms/Kconfig
-index fea3766eac0f..364eef32ddcc 100644
---- a/arch/powerpc/platforms/Kconfig
-+++ b/arch/powerpc/platforms/Kconfig
-@@ -243,7 +243,6 @@ config CPM2
- 	select CPM
- 	select HAVE_PCI
- 	select GPIOLIB
--	select OF_GPIO_MM_GPIOCHIP
- 	help
- 	  The CPM2 (Communications Processor Module) is a coprocessor on
- 	  embedded CPUs made by Freescale.  Selecting this option means that
-diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
-index f469f6a9f6e0..07ea605ab0e6 100644
---- a/arch/powerpc/sysdev/cpm_common.c
-+++ b/arch/powerpc/sysdev/cpm_common.c
-@@ -28,10 +28,6 @@
+ 	  Enable gpiolib support for ppc440 based boards
  
- #include <mm/mmu_decl.h>
- 
--#if defined(CONFIG_CPM2) || defined(CONFIG_8xx_GPIO)
+diff --git a/arch/powerpc/platforms/44x/gpio.c b/arch/powerpc/platforms/44x/gpio.c
+index a025b3248342..aea0d913b59d 100644
+--- a/arch/powerpc/platforms/44x/gpio.c
++++ b/arch/powerpc/platforms/44x/gpio.c
+@@ -14,7 +14,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
 -#include <linux/gpio/legacy-of-mm-gpiochip.h>
--#endif
--
- static int __init cpm_init(void)
- {
- 	struct device_node *np;
-@@ -91,32 +87,33 @@ void __init udbg_init_cpm(void)
- 
- #if defined(CONFIG_CPM2) || defined(CONFIG_8xx_GPIO)
- 
-+#include <linux/gpio/driver.h>
-+
- struct cpm2_ioports {
- 	u32 dir, par, sor, odr, dat;
- 	u32 res[3];
+ #include <linux/gpio/driver.h>
+ #include <linux/types.h>
+ #include <linux/slab.h>
+@@ -46,7 +45,8 @@ struct ppc4xx_gpio {
  };
  
- struct cpm2_gpio32_chip {
+ struct ppc4xx_gpio_chip {
 -	struct of_mm_gpio_chip mm_gc;
 +	struct gpio_chip gc;
 +	void __iomem *regs;
  	spinlock_t lock;
- 
- 	/* shadowed data register to clear/set bits safely */
- 	u32 cpdata;
  };
  
--static void cpm2_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
-+static void cpm2_gpio32_save_regs(struct cpm2_gpio32_chip *cpm2_gc)
- {
--	struct cpm2_gpio32_chip *cpm2_gc =
--		container_of(mm_gc, struct cpm2_gpio32_chip, mm_gc);
--	struct cpm2_ioports __iomem *iop = mm_gc->regs;
-+	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
+@@ -58,8 +58,8 @@ struct ppc4xx_gpio_chip {
  
- 	cpm2_gc->cpdata = in_be32(&iop->dat);
+ static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
++	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
++	struct ppc4xx_gpio __iomem *regs = chip->regs;
+ 
+ 	return !!(in_be32(&regs->ir) & GPIO_MASK(gpio));
  }
- 
- static int cpm2_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
+@@ -67,8 +67,8 @@ static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ static inline void
+ __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
  {
 -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm2_ioports __iomem *iop = mm_gc->regs;
-+	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(gc);
-+	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
- 	u32 pin_mask;
+-	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
++	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
++	struct ppc4xx_gpio __iomem *regs = chip->regs;
  
- 	pin_mask = 1 << (31 - gpio);
-@@ -124,11 +121,9 @@ static int cpm2_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
- 	return !!(in_be32(&iop->dat) & pin_mask);
- }
+ 	if (val)
+ 		setbits32(&regs->or, GPIO_MASK(gpio));
+@@ -94,9 +94,8 @@ static int ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
  
--static void __cpm2_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
--	int value)
-+static void __cpm2_gpio32_set(struct cpm2_gpio32_chip *cpm2_gc, u32 pin_mask, int value)
- {
--	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm2_ioports __iomem *iop = mm_gc->regs;
-+	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
- 
- 	if (value)
- 		cpm2_gc->cpdata |= pin_mask;
-@@ -140,14 +135,13 @@ static void __cpm2_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
- 
- static int cpm2_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
  {
 -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(gc);
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+-	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
++	struct ppc4xx_gpio __iomem *regs = chip->regs;
  	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
  
- 	spin_lock_irqsave(&cpm2_gc->lock, flags);
- 
--	__cpm2_gpio32_set(mm_gc, pin_mask, value);
-+	__cpm2_gpio32_set(cpm2_gc, pin_mask, value);
- 
- 	spin_unlock_irqrestore(&cpm2_gc->lock, flags);
- 
-@@ -156,16 +150,15 @@ static int cpm2_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 
- static int cpm2_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	spin_lock_irqsave(&chip->lock, flags);
+@@ -124,9 +123,8 @@ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ static int
+ ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
  {
 -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(gc);
--	struct cpm2_ioports __iomem *iop = mm_gc->regs;
-+	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+-	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
++	struct ppc4xx_gpio __iomem *regs = chip->regs;
  	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
  
- 	spin_lock_irqsave(&cpm2_gc->lock, flags);
- 
- 	setbits32(&iop->dir, pin_mask);
--	__cpm2_gpio32_set(mm_gc, pin_mask, val);
-+	__cpm2_gpio32_set(cpm2_gc, pin_mask, val);
- 
- 	spin_unlock_irqrestore(&cpm2_gc->lock, flags);
- 
-@@ -174,9 +167,8 @@ static int cpm2_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int cpm2_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(gc);
--	struct cpm2_ioports __iomem *iop = mm_gc->regs;
-+	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
- 	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
- 
-@@ -193,19 +185,17 @@ int cpm2_gpiochip_add32(struct device *dev)
- {
+ 	spin_lock_irqsave(&chip->lock, flags);
+@@ -161,7 +159,6 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
+ 	struct device *dev = &ofdev->dev;
  	struct device_node *np = dev->of_node;
- 	struct cpm2_gpio32_chip *cpm2_gc;
+ 	struct ppc4xx_gpio_chip *chip;
 -	struct of_mm_gpio_chip *mm_gc;
  	struct gpio_chip *gc;
  
--	cpm2_gc = kzalloc(sizeof(*cpm2_gc), GFP_KERNEL);
-+	cpm2_gc = devm_kzalloc(dev, sizeof(*cpm2_gc), GFP_KERNEL);
- 	if (!cpm2_gc)
- 		return -ENOMEM;
+ 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+@@ -170,16 +167,24 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
  
- 	spin_lock_init(&cpm2_gc->lock);
+ 	spin_lock_init(&chip->lock);
  
--	mm_gc = &cpm2_gc->mm_gc;
+-	mm_gc = &chip->mm_gc;
 -	gc = &mm_gc->gc;
-+	gc = &cpm2_gc->gc;
++	gc = &chip->gc;
  
--	mm_gc->save_regs = cpm2_gpio32_save_regs;
 +	gc->base = -1;
  	gc->ngpio = 32;
- 	gc->direction_input = cpm2_gpio32_dir_in;
- 	gc->direction_output = cpm2_gpio32_dir_out;
-@@ -214,6 +204,16 @@ int cpm2_gpiochip_add32(struct device *dev)
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
+ 	gc->direction_input = ppc4xx_gpio_dir_in;
+ 	gc->direction_output = ppc4xx_gpio_dir_out;
+ 	gc->get = ppc4xx_gpio_get;
+ 	gc->set = ppc4xx_gpio_set;
  
--	return of_mm_gpiochip_add_data(np, mm_gc, cpm2_gc);
+-	return of_mm_gpiochip_add_data(np, mm_gc, chip);
 +	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
 +	if (!gc->label)
 +		return -ENOMEM;
 +
-+	cpm2_gc->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(cpm2_gc->regs))
-+		return PTR_ERR(cpm2_gc->regs);
++	chip->regs = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(chip->regs))
++		return PTR_ERR(chip->regs);
 +
-+	cpm2_gpio32_save_regs(cpm2_gc);
-+
-+	return devm_gpiochip_add_data(dev, gc, cpm2_gc);
++	return devm_gpiochip_add_data(dev, gc, chip);
  }
- #endif /* CONFIG_CPM2 || CONFIG_8xx_GPIO */
+ 
+ static const struct of_device_id ppc4xx_gpio_match[] = {
 -- 
 2.49.0
 
