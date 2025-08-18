@@ -1,197 +1,118 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41B30E83F;
-	Mon, 18 Aug 2025 12:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDE35A283
+	for <linux-gpio@vger.kernel.org>; Mon, 18 Aug 2025 14:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755521452; cv=none; b=c6WCqaO4wMMeznN2kA2XU9jiz6mp4T4gdChvNeRIcKssG2kSiMeooLNCfxtD/nGyFmk01dC2DeqcSXGTNHFxZgDt6qfn0J30StsaimC4+8hflqH89CnR6BFXpMqBktgsFn6+NNweu1wOukk6Tt0cxg/qGDgtDx8KHOu3SV08rwc=
+	t=1755527054; cv=none; b=LdcwSL9tXds9tfzQcK5ProrPYcFomc4HtZsRAQHYCNodwMmSh4j9VGX4/gcu+at1oujZWJTNdXhT/epQNR5Opv/j6n0U7PMtXN02qFmq5cdrrBx19L9uW0GJJYvkqe/5OrCW4rADlexCGWedMKv1xmcbkReaqh7NPb8DOglTi1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755521452; c=relaxed/simple;
-	bh=PLM/65JvqNc3NilFjJ1vKDYuZPfhd7TFnkWsRNB/R5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R7dSiGGcsiMJUyfMnHfgt5L/M/SJAcflalplAKk7n5uKnSFw2kS+nP0UFs78loYhSUKK0kCtd9VbdlhUK/FIL/Dgnk21uC63jj+mkpPwbFqH2KEayxjiwN8BJVMecVayYLp82DPxf5KkwFS7NiomwXqtBOxhSOR+NNJX1XoVpVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c5BYd0rhsz9sV3;
-	Mon, 18 Aug 2025 14:17:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id LUzjzR3pCnxq; Mon, 18 Aug 2025 14:17:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c5BYc0gBfz9sV0;
-	Mon, 18 Aug 2025 14:17:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2A748B763;
-	Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Ump101Aa9xV9; Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C3BEB8B764;
-	Mon, 18 Aug 2025 14:17:39 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
+	s=arc-20240116; t=1755527054; c=relaxed/simple;
+	bh=GQ5ftdYWjc1ggmTXk0Nbj6QK5jviPLomx0fpZtjccPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SU2livJgnzROPLUE+OF2xT6V57865Vci0pRZiXQV+n4nycK27B7PvZgRcqffT3MQEiXKQfyc7eODl5rLlcqltvnJWZQinfEcLZWCW0I2ZbMIQE9boA/uzDbAT1rG+1uns2W329ElJBdkmK5gXnf50cJhrsGlh+EjXRUh0cKANF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QoMj9hyO; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QoMj9hyO"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb72b3a1bso76640266b.0
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Aug 2025 07:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755527050; x=1756131850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QamokhfM1GcyheOMdy3Zz4jkOrdWtl4wsYSaEK3Ivkw=;
+        b=QoMj9hyOnlsba5x1RCnXKx7newWyshWX1ot+tb/73K9KyLlL4HdalFoO9PuiuRlmod
+         LPeiT52VoRnLknov3b4xxSG+8mMZEpYeTsA1VVP+zPPVNLfMi65+nJB7uocPk8t5gbvd
+         0oWPBH6CRIfbIGHlYpC4wnP4yVFZCU8ftgPXY9dthYoq2wXCmFvkhB6l3ODsfdPynaIK
+         +Tyk+TY3X8I0gOKvoSjDNUnX+rO3nYP7AF/BxEcCmowLRm1gEl2q0ijlu6gACXjVxvCN
+         3sXr0E7KOTXM8yV2hICwVXWkxaPmEkMGYRkyBIVvyGMgXkWivwQsflJj7njwful35Su+
+         4bDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755527050; x=1756131850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QamokhfM1GcyheOMdy3Zz4jkOrdWtl4wsYSaEK3Ivkw=;
+        b=kfaObhndpcaacnUEdeeCxwZivDQmbhthAwJso3/RhCUiAuh8xgOQlmFoLOOvFjzFDe
+         fs+u0oeVYP2iMdp8RoIpeejEeObfDzEmikYfbH1S6P8zs2q3r1QPZIuE24mvClkU25BT
+         vRRtaz0VGwsgPQc6jH7iS/TLtvZUN9apgXxRRdl115ydoHV3e3t516RjL7ffZEX7yi3z
+         Wjw4mvzZ3Bmi/iBDxj2/n6eRGPyc/WMBLfCdmnLhB8NFk4f+klvxk8CWFElCYAwdknHP
+         FLIzI2u+pu3MnQdYMRi/8wcKsxKGApd24Aiixs1dyYCiGn2C0wUzL9PdYK2texkt8yCT
+         fphA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJlOWKLrTYipzPqXjpmU8zhcsJGr/fl36TzSgSpGfDbkyu/Mr1Hvzy6Xadk4on+3jZusr8dvMEeHbg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoD2t5XtFCBq0MUzsvlRL77U2Dns+tsDKKwUJck1JBIc9ywMFE
+	lfOJr311FTtBbHGwL3pXP/poyQw7WPi+BDEsmQjxWjGsx5g/iCWQTMDmBSXHB/E5l7M=
+X-Gm-Gg: ASbGncsZeJh9BnB8ODJp2uZxSvjVgvK3cAn26F/NqnsGRbEl9YIn5Kual0bEO/CAvF6
+	qwLF2JJyij2DRS6pB4X4qdMz727NtPa3/aJzTnANh6Qlvv2EHMk7XmdZMX2FXC9WWYxGn/b+o0y
+	rGXKYseyyZKJd5BfUEGVL8U4QpGV735d3MO531QEJGA4H/4raeMtyLmW/MM6R2SG7Lbmt5po7BL
+	Ey9bd9n30w9hGkB331XkIsNtobcGbQ4H9WgiBws5lnvU6tJ884EOhAIHfp0PRdTRs3GgZkSBrr6
+	08vGPlISHWUufDWsGx0FSneoXq9iT0OqrtAOC4g7yH9ANNx8lgMlLlWpu1QpBCnBJDeQXSAtcb6
+	z6a9ne6ZJ4p6O/CpBE6lRDibMWr1+A52sJA==
+X-Google-Smtp-Source: AGHT+IF0eQL4ER7n043LGZ/uWkPZXG/pygEg35URndrpoalaoUz4uPyviRVbuOk3OWfAjWq8XjlDiA==
+X-Received: by 2002:a17:907:7fa7:b0:af9:566c:4cd2 with SMTP id a640c23a62f3a-afcdc2367a4mr462998666b.10.1755527049798;
+        Mon, 18 Aug 2025 07:24:09 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afcdce53dd5sm803192366b.5.2025.08.18.07.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Aug 2025 07:24:09 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <legoffic.clement@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] powerpc/44x: Drop legacy-of-mm-gpiochip.h header
-Date: Mon, 18 Aug 2025 14:17:35 +0200
-Message-ID: <2f8f16eac72b9ec202b6e593939b44308891a661.1755519343.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <29d89aa43536714b193d9710301341f838fcb5b7.1755519343.git.christophe.leroy@csgroup.eu>
-References: <29d89aa43536714b193d9710301341f838fcb5b7.1755519343.git.christophe.leroy@csgroup.eu>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] pinctrl: stm32: Constify static 'pinctrl_desc'
+Date: Mon, 18 Aug 2025 16:24:03 +0200
+Message-ID: <20250818142402.132008-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755519455; l=4820; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=PLM/65JvqNc3NilFjJ1vKDYuZPfhd7TFnkWsRNB/R5A=; b=Zjq/6FK9sXzyA80Ffb9ZnhDUHevV7VYAjbbUcFcnIkEAr3H0LvJ9wrxocZC5UcGLVp3Oh7hrV 3XC/VOwClHACT50kbShSMq0VXZqNlEjXjdKEW/gab6AUUSk0gOtmVyK
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=840; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=GQ5ftdYWjc1ggmTXk0Nbj6QK5jviPLomx0fpZtjccPw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoozeCHbXUKSjJp2DSxgX9G/1zAJfSI1ztiFFmO
+ GadvdBbwOOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaKM3ggAKCRDBN2bmhouD
+ 1yoED/4kiZrB9q1OBGXP/IDolXlLyozFqO4AV9Emhx7w6pECE6srTXNW0Io7CnrMi0NzZMG58Ok
+ fm+15O1C8b/juIQEqd21izzXzrGo27C3MZyD0BRrXqiwig7D2md0Om36cPq5qhacQ/zDmTpqwre
+ RB3kZssnYEetCx0yNNlo+4FilIdI73HUOLBe7NjhjdgYyinQ1CUFjyQBrIkfunSZqcBZezmsQ++
+ D0K40lIyY0h5nBjRIKpz+x6o7wDitTdHR41tBju6dC/iGlvLJy+EEOpTTi8OuybUdMZTjyXH+AW
+ v3l7+uSupThYNKmIPHmI+dgJTg6wYmF+RRwgTwlKOIVSkrjSK0qlmYJxDubNzMVhPGQtLju+zZf
+ yrapLhuKFH6b2QE3QQigfWAWcilF9rdt7gD/mr8FljvXYBKtQVazVxlky4pZWXtJnk0acqX4+bu
+ JRmGZ08gufYi08WEAQ4Fbq4ef0x1HR4/6epHh6Kyf033ep138BhgWHGz5jinmmwQmCTJPowT+Iu
+ ZRAS5U1JPvwEAQHEQsFTMttnyATQyBPYpJ7NZiTc+QJMTnYhxHhQBnpIrcUZuQ8gjf9Aw+NoO5s
+ cCDK8474FZvZaoSSTtwZPWx9SuZLQQmpjUT5Yjad3ZHNO4LYiv5uT/wfKA8WZczUAJ1ziod5OIU fbYKk48w9jEUxLw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-file provides an OF API that's deprecated. There is no agnostic
-alternatives to it and we have to open code the logic which was
-hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-drivers are using their own labeling schemas and resource retrieval
-that only a few may gain of the code deduplication, so whenever
-alternative is appear we can move drivers again to use that one.
+The local static 'struct pinctrl_desc' is not modified, so can be made
+const for code safety.
 
-As a side effect this change fixes a potential memory leak on
-an error path, if of_mm_gpiochip_add_data() fails.
-
-[Text copied from commit 34064c8267a6 ("powerpc/8xx: Drop
-legacy-of-mm-gpiochip.h header")]
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/powerpc/platforms/44x/Kconfig |  1 -
- arch/powerpc/platforms/44x/gpio.c  | 33 +++++++++++++++++-------------
- 2 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/pinctrl/stm32/pinctrl-stm32-hdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/44x/Kconfig b/arch/powerpc/platforms/44x/Kconfig
-index 35a1f4b9f827..fc79f8466933 100644
---- a/arch/powerpc/platforms/44x/Kconfig
-+++ b/arch/powerpc/platforms/44x/Kconfig
-@@ -231,7 +231,6 @@ config PPC4xx_GPIO
- 	bool "PPC4xx GPIO support"
- 	depends on 44x
- 	select GPIOLIB
--	select OF_GPIO_MM_GPIOCHIP
- 	help
- 	  Enable gpiolib support for ppc440 based boards
- 
-diff --git a/arch/powerpc/platforms/44x/gpio.c b/arch/powerpc/platforms/44x/gpio.c
-index a025b3248342..aea0d913b59d 100644
---- a/arch/powerpc/platforms/44x/gpio.c
-+++ b/arch/powerpc/platforms/44x/gpio.c
-@@ -14,7 +14,6 @@
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/of.h>
--#include <linux/gpio/legacy-of-mm-gpiochip.h>
- #include <linux/gpio/driver.h>
- #include <linux/types.h>
- #include <linux/slab.h>
-@@ -46,7 +45,8 @@ struct ppc4xx_gpio {
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
+index e91442eb566b..0cd41f3f7a52 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
+@@ -575,7 +575,7 @@ static const struct pinmux_ops stm32_hdp_pinmux_ops = {
+ 	.gpio_set_direction  = NULL,
  };
  
- struct ppc4xx_gpio_chip {
--	struct of_mm_gpio_chip mm_gc;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	spinlock_t lock;
- };
- 
-@@ -58,8 +58,8 @@ struct ppc4xx_gpio_chip {
- 
- static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
-+	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
-+	struct ppc4xx_gpio __iomem *regs = chip->regs;
- 
- 	return !!(in_be32(&regs->ir) & GPIO_MASK(gpio));
- }
-@@ -67,8 +67,8 @@ static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- static inline void
- __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
-+	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
-+	struct ppc4xx_gpio __iomem *regs = chip->regs;
- 
- 	if (val)
- 		setbits32(&regs->or, GPIO_MASK(gpio));
-@@ -94,9 +94,8 @@ static int ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
--	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
-+	struct ppc4xx_gpio __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -124,9 +123,8 @@ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- static int
- ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
- 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
--	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
-+	struct ppc4xx_gpio __iomem *regs = chip->regs;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -161,7 +159,6 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
- 	struct device *dev = &ofdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct ppc4xx_gpio_chip *chip;
--	struct of_mm_gpio_chip *mm_gc;
- 	struct gpio_chip *gc;
- 
- 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-@@ -170,16 +167,24 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
- 
- 	spin_lock_init(&chip->lock);
- 
--	mm_gc = &chip->mm_gc;
--	gc = &mm_gc->gc;
-+	gc = &chip->gc;
- 
-+	gc->base = -1;
- 	gc->ngpio = 32;
- 	gc->direction_input = ppc4xx_gpio_dir_in;
- 	gc->direction_output = ppc4xx_gpio_dir_out;
- 	gc->get = ppc4xx_gpio_get;
- 	gc->set = ppc4xx_gpio_set;
- 
--	return of_mm_gpiochip_add_data(np, mm_gc, chip);
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	chip->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(chip->regs))
-+		return PTR_ERR(chip->regs);
-+
-+	return devm_gpiochip_add_data(dev, gc, chip);
- }
- 
- static const struct of_device_id ppc4xx_gpio_match[] = {
+-static struct pinctrl_desc stm32_hdp_pdesc = {
++static const struct pinctrl_desc stm32_hdp_pdesc = {
+ 	.name	 = DRIVER_NAME,
+ 	.pins	 = stm32_hdp_pins,
+ 	.npins	 = ARRAY_SIZE(stm32_hdp_pins),
 -- 
-2.49.0
+2.48.1
 
