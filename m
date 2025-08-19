@@ -1,157 +1,168 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68286221FD4;
-	Tue, 19 Aug 2025 08:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FDA31A059;
+	Tue, 19 Aug 2025 09:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755592828; cv=none; b=ifQlEa6kixvY5k6EBq5pDQmN58zziteqHnQqj3eyIEuvj0RyixUwEgtdgBgbxvKCtE1bo/4V0WULl/ifDmwWCLeBIk1i0fMfI8hLKVp9u/Hbo11Zb6iF73asIup2V3Dk9UwY3SyD7iIFfLwddjBKfL9SGct4RgPOhBpa8OqD7AI=
+	t=1755594784; cv=none; b=Jl4Br/8roRolIV3TMcRPoazRDnqkvI+qV2SwpqtzP1mOyX2j4aYjfkqaHSM8Hk68xratRUi36euxL0QB3gAnjg0ilDdy3fAxh9qRnUbyHCccInpJxJ4yilHBdntN7NDpk7XPTdtxd0NVGEevcY3WOXTRWk0QbfZj6PHoh4Nlkqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755592828; c=relaxed/simple;
-	bh=empdr60v+2Uql+3EL8V6FDzYMeaEXq4MpvGqceYYH84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpHU/7jXzkuw/lhg6SD4yrGFf9u7wZO2oSvEfAXuVIHXryLkwAQuvkiJfqlNPeXZeqcssWL1Wo41fu+X8iF7oaSd3JfxkTaF2dqp4oa4e3PLTN55NDWy9Eye2iLPeQILshU53CDFr4syk0Q8yqYwJNgUws/dS7ynn1idYKt/OL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjVwMI/M; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755594784; c=relaxed/simple;
+	bh=nLwgX0rt2w+Inkkf34i/Uun1hxhNuo283Du7mGcFnw0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZSi0SXwrQia02d7my7896EmyweuT69QttDbDux3dDcihaubLf8oXTqNTiQlJG0ZMHs6sd1yHD5PDVDXlDEgXaEBl06kBkq7hH2XTxc+pIIhmcbeSJm93dOMStLk7dq0EYLGxLW4lGXgrRJ+0ALwy112O+jfLpbJl/9vp1jjwRm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dmyJzvwd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjVwMI/M"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a286135c8so12141105e9.0;
-        Tue, 19 Aug 2025 01:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755592825; x=1756197625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJpA359eG0b9Ks8j3opG1XWCGaxB+D6I1gp5oSK+e6E=;
-        b=OjVwMI/MTbfkRdnHektMm8hTyJ+cbTMZ/sZ74XXAU6QY1kE4ebCAnI7JOKyBtF+nS7
-         JHSQzi3edEaav0qC1iTbb+GKTxsIjMAT1ThUaoQPG+qb+Ct3tT62QHglCnh2yVr3yJFC
-         3I7F2xFRzbeMny2+CRy/7NHWYvhnVvbuH7GDfN97SlAn5loIwvgxFKjI/civX1JtBqHz
-         0BpzlJeGLKA/lLI0zSO6lhgbHr/uBHALkrH7xOTDXnBNnG+jJHiKkvKWzZaf36oXSEwG
-         TW7wSdOVUkTj2D3zN+PONCfgEWCVFzc+hJC/JMvzs6uG5yztuLeC/tJ0bUt/ekkOXkqC
-         lYxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755592825; x=1756197625;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pJpA359eG0b9Ks8j3opG1XWCGaxB+D6I1gp5oSK+e6E=;
-        b=NdwE3Q1J8s8AaIzxFZKhL4M9eEMermg3Ctb7+l+ru2C2TdIgQtNUenrUK+yVPmfH6X
-         nuDP3prQWi1jZ3MSD0s7GJ8NVuBzGVU/epmJjFr8yewjua7XX4dc33z7KdkPZa2Z0o1B
-         vV2dKfwx4kZs0NtybM9X3gX41hcZzpUXBEkk/R/nAbbYlCkxZ/7dJcLw6zNmAOsal1Mk
-         e4cw4V7/CM1SOGsmd6AMPRgJDPDmAVCnAqloJyLN71BJGg8+THqxKogadzrdyV4OwySy
-         +bLveMX3PldID0/taMteQhPDJ92e6nB7PEUE1sh7K+alnRuqV/8SYbo70iBjC/OiClSb
-         4HWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgZXXuVSvGz3p/6rtiKc7zIAcvHAie+J7vzez/osg7rGnjGo9oxnikzSuzW6OSKXzzCHYU5G1SAUWFkfuK@vger.kernel.org, AJvYcCWiNhOa0vZiuYSoNTnE/EAF0sjPhiaLzvbpXad4Xz1q7nZ97ugAKVIP3Vxz/7T3dSrF8ZJiBs2U0e/c@vger.kernel.org, AJvYcCXpmYxBnQldAaSeDBxPMNEo6q3/0atzhA51dY3x24AUpL5IPVBf7qtN/+5nR0YCEO5AYbcFRR7irlYXO2ihxtdZEYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk0NmZ06GxcOSInAuAO7zhszzQ6VwFSdXe48gDynR5z7IvoZio
-	dW2dTS//OvLhmAAr3gA5oWpzULvbbc5sAKn/cKWOJCTAABNqBgxyWvZ8
-X-Gm-Gg: ASbGnctgQRIugZ4560Z+o1wiperrS2rrT2bZiBcN5aJA+tLGS8RVn68tEKc51k1IL92
-	PVv7Cs/z/50PeNVUpEqcWHd3vrqmr5TeKG5LGE8U2nJwW5/Ko6jwyIM01IRZBJS9Zxs5iV5WHs5
-	bGY7mWC+66bvXBSvFtQCf75xke+DQXfWwk/EYZkSDUDq1gg+AZCKADWw+96IlL0v+dcFoGf3Mmn
-	870/f+ut/AP8mh0B/HmbNElvUiPoil9wEzWd9TkcEFRD1zjiJP1urNCuWjXF6mWXWPzAGBICL2h
-	m0xgvKqJ8C5uvcOWC/UtlP23482ScKryolPWNs4/Lq0nwTddbhlldg/4zGPy8uLzFAtwM34/aRt
-	yNLKj75fGgrj7bWLkT8fFeCkXQzPessSVP7LJLv43V33PdogkwndZ/WM3xBM42Sqeqe27Y2xK9u
-	L89eDuFVZF
-X-Google-Smtp-Source: AGHT+IEGy3sdqE03Pv2GZCwYc38JDfpKrn5DxztIAZ2aHStWAim31GPjOqX/WqFWMKVlJUhBglzggg==
-X-Received: by 2002:a05:600c:1ca2:b0:456:ed3:a488 with SMTP id 5b1f17b1804b1-45b43f61f49mr11950505e9.1.1755592824682;
-        Tue, 19 Aug 2025 01:40:24 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c61a66esm203895015e9.0.2025.08.19.01.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 01:40:24 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] pinctrl: renesas: rzg2l: Add suspend/resume support for Schmitt control registers
-Date: Tue, 19 Aug 2025 09:40:20 +0100
-Message-ID: <20250819084022.20512-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dmyJzvwd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1755594779;
+	bh=nLwgX0rt2w+Inkkf34i/Uun1hxhNuo283Du7mGcFnw0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=dmyJzvwdD2oD2FA+P7Jf0WYb7DiNDMsSsqqC+w3eByrplSvm5P6/JiN4Bnmc9RXZg
+	 ZBzFkqlUjidrS5O2k++VziehpoX4z+eoBg/tDFXcfbuaULb5mNpaCDbaHK4qc/OK6P
+	 KaKLwfcXifGQyx4e0J9Wnnoco2dFwUx4ZNr63+kEyHp2PFncQGwJNx885D7bLnYWUP
+	 wLNMiYKllEWYiYE0nZXQ4R+e2YdR0wmf8bR7VSNN8x7k68F3XpwLdN+VQje1uZISaE
+	 2OKFTumwkHm729xNyan5REMukD1yFfBl1w8P9ZmspuNCF/YKVRGPQCCt4RjVPY3HPY
+	 SVaDtz8wlAsxA==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2d600c8f85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DC5FA17E0154;
+	Tue, 19 Aug 2025 11:12:58 +0200 (CEST)
+Message-ID: <8be063910b553945da12263818bd05c4e90e27f6.camel@collabora.com>
+Subject: Re: [PATCH 8/9] arm64: dts: mediatek: mt8183-kukui: Fix
+ pull-down/up-adv values
+From: Julien Massot <julien.massot@collabora.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Linus Walleij
+ <linus.walleij@linaro.org>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>, Ikjoon Jang <ikjn@chromium.org>,
+  Enric Balletbo i Serra	 <eballetbo@kernel.org>, Weiyi Lu
+ <weiyi.lu@mediatek.com>, Eugen Hristev	 <eugen.hristev@linaro.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>, Julien
+ Massot <jmassot@collabora.com>, Sean Wang	 <sean.wang@kernel.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Tue, 19 Aug 2025 11:12:58 +0200
+In-Reply-To: <CAGXv+5FXZ_byK8Ftb9LjfQMkgtLd7mTmWgz_Nsvcv8=jy53T=g@mail.gmail.com>
+References: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
+	 <20250801-mtk-dtb-warnings-v1-8-6ba4e432427b@collabora.com>
+	 <CAGXv+5EHk=f62+KiLo-aWMcd0-q+_59kno+uOW5rdYaq5q+5tQ@mail.gmail.com>
+	 <CACRpkdbWctNH0XJfcHfVJM9Etp0WCXpdyhhyaQemH-Xc0LDr0A@mail.gmail.com>
+	 <CAGXv+5ECsP7_wbdcaAkWuD=RyJiJpPe4r60bhD5U8xUvEBzmXw@mail.gmail.com>
+	 <CAGXv+5FXZ_byK8Ftb9LjfQMkgtLd7mTmWgz_Nsvcv8=jy53T=g@mail.gmail.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi,
+On Tue, 2025-08-19 at 13:29 +0800, Chen-Yu Tsai wrote:
+> On Tue, Aug 19, 2025 at 1:27=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
+ wrote:
+> >=20
+> > On Mon, Aug 18, 2025 at 11:22=E2=80=AFPM Linus Walleij <linus.walleij@l=
+inaro.org> wrote:
+> > >=20
+> > > On Wed, Aug 6, 2025 at 8:38=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.o=
+rg> wrote:
+> > > > On Fri, Aug 1, 2025 at 7:18=E2=80=AFPM Julien Massot wrote
+> > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 pins-clk {
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ pinmux =3D <PINMUX_GPIO124__FUNC_MSDC0_CLK>;
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ drive-strength =3D <MTK_DRIVE_14mA>;
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media=
+tek,pull-down-adv =3D <10>;
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media=
+tek,pull-down-adv =3D <2>;
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bias-pull-down =3D <MTK_=
+PUPD_SET_R1R0_10>;
+> > > >=20
+> > > > and so on.
+> > > >=20
+> > > > ChenYu
+> > >=20
+> > > I agree with ChenYu, the more standardized properties are the better =
+it is.
+> > >=20
+> > > All the custom properties makes sense for an engineer working with ju=
+st
+> > > that one SoC (like the SoC vendor...) but for field engineers who hav=
+e
+> > > to use different SoCs every day this is just a big mess for the mind.
+> > >=20
+> > > The standard properties are clear, concise and tell you exactly what
+> > > they are about.
+> > >=20
+> > > The argument should be in Ohms though, according to the standard
+> > > bindings, but maybe the value of MTK_PUPD_SET_R1R0_10 is
+> > > something like that?
+> >=20
+> > For reasons I can't recall clearly these are just placeholder values
+> > that the driver then maps to the R1 and R0 settings. But at least they
+> > use the standard properties.
+> >=20
+> > The reason was either one of the following or both:
+> >=20
+> > =C2=A0 a. not every group of pins had the same resistance values for R1=
+ & R0
+> > =C2=A0 b. there are no known precise values; the values depend on the p=
+rocess
+> > =C2=A0=C2=A0=C2=A0=C2=A0 and batch
+>=20
+> I don't know for (b), but no there is a lot of different values for R1 & =
+R0
+>=20
 
-The Renesas RZ/G3E supports a power-saving mode where power to most of
-the SoC components is lost, including the PIN controller.  Save and
-restore the Schmitt control register contents to ensure the
-functionality is preserved after a suspend/resume cycle.
+From what I saw in the register table
+We can have for the pull up resistors
+75K / 200K
+2K  / 75K
+5K  / 20K
+50k / 10K=20
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-This patch is on top of [1]
-[1] https://lore.kernel.org/all/20250817143024.165471-1-biju.das.jz@bp.renesas.com/
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+And for the pull down ones:
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 8422a5429ca3..8ba6d82f335f 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -321,6 +321,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @iolh: IOLH registers cache
-  * @pupd: PUPD registers cache
-  * @ien: IEN registers cache
-+ * @smt: SMT registers cache
-  * @sd_ch: SD_CH registers cache
-  * @eth_poc: ET_POC registers cache
-  * @oen: Output Enable register cache
-@@ -334,6 +335,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u32	*iolh[2];
- 	u32	*ien[2];
- 	u32	*pupd[2];
-+	u32	*smt;
- 	u8	sd_ch[2];
- 	u8	eth_poc[2];
- 	u8	oen;
-@@ -2707,6 +2709,10 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
- 	if (!cache->pfc)
- 		return -ENOMEM;
- 
-+	cache->smt = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->smt), GFP_KERNEL);
-+	if (!cache->smt)
-+		return -ENOMEM;
-+
- 	for (u8 i = 0; i < 2; i++) {
- 		u32 n_dedicated_pins = pctrl->data->n_dedicated_pins;
- 
-@@ -2968,7 +2974,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
- 
- 	for (u32 port = 0; port < nports; port++) {
--		bool has_iolh, has_ien, has_pupd;
-+		bool has_iolh, has_ien, has_pupd, has_smt;
- 		u32 off, caps;
- 		u8 pincnt;
- 		u64 cfg;
-@@ -2981,6 +2987,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
- 		has_ien = !!(caps & PIN_CFG_IEN);
- 		has_pupd = !!(caps & PIN_CFG_PUPD);
-+		has_smt = !!(caps & PIN_CFG_SMT);
- 
- 		if (suspend)
- 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[port]);
-@@ -3019,6 +3026,9 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
- 							 cache->ien[1][port]);
- 			}
- 		}
-+
-+		if (has_smt)
-+			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SMT(off), cache->smt[port]);
- 	}
- }
- 
--- 
-2.43.0
+75k/2k
+75k/75k
+10k/50k
 
+And we can have a combination of both resistors that will give odd values=
+=20
+(e.g 1948 Ohm for 2k/75K, 545454 Ohm for 75k/200k) to express in the device=
+ tree=20
+
+
+>=20
+> Also, their customers seemed more accustomed to dealing with toggling
+> R1 & R0 vs setting some actual value. I presume that comes with the
+> uncertainty of the actual hardware value, and they just try which
+> combination works better.
+>=20
+> ChenYu
+
+Regards,
+Julien
