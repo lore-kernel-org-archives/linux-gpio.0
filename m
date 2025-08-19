@@ -1,90 +1,98 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EF633A03C
-	for <linux-gpio@vger.kernel.org>; Tue, 19 Aug 2025 12:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC4A3431EA
+	for <linux-gpio@vger.kernel.org>; Tue, 19 Aug 2025 12:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755605955; cv=none; b=tgUNG3qShxB+WJenNoza6CgULBfDCOyNdgKgopvzzQ7kIswLQvTU1gXaPiqLYfMtWkjFbG0nnc/T50KEen9uHQjMaBL2oQ7ZrumrmJfR4i0SibQTXqnetzB0JDo4jUpdfzyEhlwMbneXNECFAU9KHzc9aCl8ss8oW20bl2lrePY=
+	t=1755606085; cv=none; b=KLYL2SJ8UZKVVnMiBVcB1HgYYrPvpO9/zQ43VSgfg5ytTXg4NSBBvNosBRj24jLrhTAJHPMzTQvqVFY+3om+TzxcwBtdlCq4uZmrNU1u96CD4+BCi6brwRokDfYw/OmvPfNzZq088X3iflwqBfjJ6JCLxMrOMc87Qj9hrCjc4VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755605955; c=relaxed/simple;
-	bh=u2Y/gfnxlc437mpb6PhnysrCJ1QgGq/sgZI77ejaYT0=;
+	s=arc-20240116; t=1755606085; c=relaxed/simple;
+	bh=du4ZhCLp6jwzz1WznFiWC20I7LWdN5CARyDoG5mPfUE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lPw9mqlA32YqAHK8zUJVqo0ZVUDbCutifhXr4tAIm6v6dCJYbDiYxgCjGbFMEDS4H9emvFgkfbFcRr1iZ2qWqK99OwCcx3xlhel1ReybRsP0arjmdu+71zn0O/glOwLTb6YtWsuTD2fEoqZRekSo/GFp/Azpbx6dvEQbgo3Rf4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MF6QWanc; arc=none smtp.client-ip=209.85.208.178
+	 To:Cc:Content-Type; b=oFSpkUIlIWyvW6FyNW3hSCLOdfzoPKESEpaVoV58ZjH9Y4wOy2cOI73RLl1r6wVIa0qRjr2CRCBQxdzszXRuSUtak0sr781w3gpTLRCNMlGRLArP+PvMzhWxydeqlHlmB4W0kNhVNS+jG5nJfcABdlSb9ge2+J+aBZWrnecZR+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CMJtx/vu; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MF6QWanc"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f8f5ca72so37118661fa.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Aug 2025 05:19:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CMJtx/vu"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f92cb94eso40539741fa.3
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Aug 2025 05:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755605952; x=1756210752; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755606081; x=1756210881; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u2Y/gfnxlc437mpb6PhnysrCJ1QgGq/sgZI77ejaYT0=;
-        b=MF6QWancNVDnFcIzKm+4rAQAkk52B9JC8H019EHqPTT39Mw6rnfV9hkusKUOckHQ2C
-         HtS4v95VOcAM+wAK52qhdHSttQeS64HTOkxnappQA+lDaDyNxa8NvOcEjqqNCnXCN66B
-         VgGweEPDx9lTUC2NgYdvSIXR2/Q2l8nu6r5xUqS1mqbmw1sV4SEReyjkmp9gxBy0BwgN
-         CAHaijAMoczdoC5Jgg68Eil0PcCXnaJwibNQpgfkaOmkIaYah3UYwvrZ7KwoM4zFV3EJ
-         RkAtRdbPDNxU4W+9PHJWBTE48qHVr7gwrynzFHLrUL6wVAaQ9kvHNYPYvlYiI2mumdpl
-         Hbww==
+        bh=BeH/5E9EduNToqMljlnTlRgquiWKLO96iiPG3OImUmQ=;
+        b=CMJtx/vudOdYAc+kWgu64kHjCOQyCbb7NR2Tee/0CQrj42W1bIemk8WchLUNBgrtmo
+         C96ZWVolF0kfo6UgxQrnzrfer2QF4LPXadWjhhGIHsrkbkO7l9hV3VI/cdCkKsd4srCJ
+         YNyu95hgyj8ahat7avJY2pMHcAyAD3/gH0pZA69CcKx9p126DfJIteqp4nCHbzTc5umz
+         5QbSRapAl6RNf/LBXQfd5aWOhxq9XbDf4Ri9HzjbcMtnJiE1VHqEtzDqEwot0gUQ46qk
+         CndkyCYKAYjAF1/qLip5z3jyXvRxpB7MRQcnELUg0Ea9Rp801J2ocSSkuhubJImpmfps
+         Vt0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755605952; x=1756210752;
+        d=1e100.net; s=20230601; t=1755606081; x=1756210881;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u2Y/gfnxlc437mpb6PhnysrCJ1QgGq/sgZI77ejaYT0=;
-        b=cVxpFgB8p1xDOWpsp+T9zJwWXuvsAZE8D+XOSOSgS7TWI4Dw/a3ozNSWboNE2hMNqz
-         fjI6ji9y85e9uiGWliM6mKdHWsBa5W2tVCurmRJk9hHKD7Y4QSvx9VBvd/KD/RfK2okE
-         zss9Q6frsK7+9xmgqm1SS2cVSKj3Krb2pInmrmd0DgXiuMol5pOJlzTDhAeXl9XATQcN
-         NkT2/ccMmy6yq+1KN0YzZPZ3YcfOdRF7TzAbxu/8fRi8G1B9SmA7dbQ3iDiv80PP8gxz
-         XOiui5WId64STP4mK5xyO5ICnDRlcLBZAaepQ7o1KYcrkk6w14eaqGp1cdrQHXiZdQ3a
-         zQdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaxwDxwqvZLfKJN8+3twO2IWFCKSGi+7Wva9NQVn20PRQL31Hd0R3cC7VLwEFJ55HtujpSV5/Xcctx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQihfyjuky12BFcesXqg4Y1mUW77bII1ZYqWUxjwbb+Zfir6+H
-	+pqwTe4pnOJpQhlXmNcrN0U5x3/DN5bNsvwHJLza7viRV4vntYOmEfIiV1qFmbfxV9cDio6W1uP
-	HJk/c+QB1VSXP6Hkn7j2rVcAVflJuLfR4b6noYYMPcQ==
-X-Gm-Gg: ASbGncuK2vd9fv3NDVSOmcOTL/DIFWH2f5CAbUoZmaARZLK5rdtCJ1qP9Sr4rmHE5fW
-	gxWuEoWYSRzkcm5Tgw9bsAcdDegejr4xnCpLSirIOsJ/THFatjEV4Ic69uAFtG31jLt8sFCOKP0
-	xjjk8na/hUXZsaEIYMZ6udofMhN5xvhtloDCZ3ak2+j72m791epH/nbUZEAZ+N+/E7hlvKcoR6p
-	Su9omfwih3W
-X-Google-Smtp-Source: AGHT+IHsaqPH9hjr7u54X1LUFS04SWJNAP7LPz98uFiQfhrqMU6MDbmAcQVfPn//Z7iM44rJEqEQbl5npay+fB7TPz8=
-X-Received: by 2002:a05:651c:1503:b0:32f:45e5:df46 with SMTP id
- 38308e7fff4ca-3353073c91dmr5858371fa.37.1755605952075; Tue, 19 Aug 2025
- 05:19:12 -0700 (PDT)
+        bh=BeH/5E9EduNToqMljlnTlRgquiWKLO96iiPG3OImUmQ=;
+        b=Q+Q2CTWqz+6gNrTxlO7ZzYGh/FEmrZwTIV/S+S9uhY3YQwnxEI9BpB14uGNsDpfyZk
+         dJYqfIX0pH3h2fLzdWwsB7NLdgkqq3s0pp0cUrBCp2d7532Eif/qHb68F5vuHl/jk3aZ
+         XBXxQJHQ6FLZmz8o0/4bRu117HCDvBBDa5QCDF94ThNUk0TmOesXWep0wCoR3gzUhxuG
+         vxdLt6B+ssbZPQ23Z0y4Vdx2huGZAqmGsalW0brsIuOeaRP3kjIvAdhEqx0gFrqDN2QQ
+         qnlJs8/00n4i9aM9OUdLVr5bCbV1t7XThvyA9tTqD878Zd26GQmgKdqhUgyeOXQ2mj6E
+         gYig==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVjWx475d9pUlZxPLf/EGnIVR1G86SSBD+a76v9Szsx3PawmEKcMb/lIEy/FUzKWOt+h+Iz780UJB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkEwHfuK6PHmq53/INJtBd4n7jarfiYccQv3mMPZ9vUrYb0E5b
+	dxDdMN86tWf6S4QXohIISnhwJ2VnJEJZFqAs/kcKTyl+2HmwD8+tmhfBhSIJmRfZndvNPrbAYdt
+	vP/w/9UAQiSrvcL6rkzHPKdxAnMYhD3QiOIS0fQbExA==
+X-Gm-Gg: ASbGnctqqv+mAj8iatVsmrRpSKS0qUF/5mBLqbKMa4C+jfkUp5WXdf/IQ/76KzBqIpd
+	VKCBFwZ1Z3p0ovfxC5QMeQLNJETjMt6ADcmsaaxkHr1v6kGIq+7piQcFbApa/NtKMuMfVVbJ2z4
+	+/Bj5JDBCaPq33BFaytakkXQ4rj+jgo9Nz29Ik8Net7kijTFRdmvPxqkxzGTqtjKQtEmSFkk2sQ
+	ZZi2G0=
+X-Google-Smtp-Source: AGHT+IHeRrn6G/22XsZ1QiTrxbXODwTyBntlQVbiPlHb0TqImCDAlPIZxwjYQYw85X5R6vMRBa9HTIMznhFsXD83yrU=
+X-Received: by 2002:a2e:8a8e:0:b0:32b:50c5:2593 with SMTP id
+ 38308e7fff4ca-335305cec84mr2984981fa.18.1755606081286; Tue, 19 Aug 2025
+ 05:21:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814181236.1956731-1-da@libre.computer>
-In-Reply-To: <20250814181236.1956731-1-da@libre.computer>
+References: <20250815022721.1650885-1-rdunlap@infradead.org>
+In-Reply-To: <20250815022721.1650885-1-rdunlap@infradead.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Aug 2025 14:19:00 +0200
-X-Gm-Features: Ac12FXyeObfcMrouhnaGZFteU5KOKCRkIGy1hUn_EywbJRo053Gro_IOs7It1sg
-Message-ID: <CACRpkdb=OTwGyz0ArKPDdcBWU3nzrBF5d6LMHgNRgVsb9zH=bw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson-g12a: add GPIOC_7 pcie_clkreqn pinmux
-To: Da Xue <da@libre.computer>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 19 Aug 2025 14:21:10 +0200
+X-Gm-Features: Ac12FXxRmb1YwqQ6HwzM4AEiqQ6wLPibOkhxcYw04VdUzA3RJ_ksFtnMCiihScg
+Message-ID: <CACRpkda2Q6UgmVjjCRkXUGPfo62SaOPwG-Bifwia-jYCrh5qCQ@mail.gmail.com>
+Subject: Re: [PATCH] pintctl: STMFX: add missing HAS_IOMEM dependency
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amelie Delaunay <amelie.delaunay@st.com>, 
+	Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 8:12=E2=80=AFPM Da Xue <da@libre.computer> wrote:
+On Fri, Aug 15, 2025 at 4:27=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
 
-> Amlogic G12 exposes PCIe clock request signal on GPIOC_7 pinmux func 1
+> When building on ARCH=3Dum (which does not set HAS_IOMEM), kconfig
+> reports an unmet dependency caused by PINCTRL_STMFX. It selects
+> MFD_STMFX, which depends on HAS_IOMEM. To stop this warning,
+> PINCTRL_STMFX should also depend on HAS_IOMEM.
 >
-> Add the relevant pinmux and pin groups
+> kconfig warning:
+> WARNING: unmet direct dependencies detected for MFD_STMFX
+>   Depends on [n]: HAS_IOMEM [=3Dn] && I2C [=3Dy] && OF [=3Dy]
+>   Selected by [y]:
+>   - PINCTRL_STMFX [=3Dy] && PINCTRL [=3Dy] && I2C [=3Dy] && OF_GPIO [=3Dy=
+]
 >
-> Signed-off-by: Da Xue <da@libre.computer>
+> Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO drive=
+r")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Patch applied.
+Patch applied for fixes!
 
 Yours,
 Linus Walleij
