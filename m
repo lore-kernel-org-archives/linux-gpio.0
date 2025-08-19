@@ -1,126 +1,121 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F24353346;
-	Tue, 19 Aug 2025 22:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7313326FA58;
+	Tue, 19 Aug 2025 23:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755641517; cv=none; b=V6YdNoX+6EeSNXT8LfRWJBwnv2u9IL0pq7hJzFnGMhHpNmkAh9wjQr5U9awEOcEf6bN53ROtdMlpLc1rnP4CYUCwHTXHcd3pxOoUeNX5qztg5Udel9sAPdx0ovJe3s5EsJru0nx5rtCTTx5d3i1bGB54guyDONyHKFlD4h15K6Y=
+	t=1755646738; cv=none; b=jZQj9HoCjvLwkyFao8pguL163rOkTMKiGYQnCkwkjHkPFJlc/GSD1ij0WC/dIcXqN/7PqMrQMD7u7v1cjd7w5Z5+nyeNMX8xaZkY4DOMGJCA0VO7F5sC2uR9r0+EBlp34fd46tmTtbGwVZa9V/ISle+CthxMtcBKnw9f/Pdw32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755641517; c=relaxed/simple;
-	bh=kYEvO72qwKAcgrTjw0m7kGc9zYNpF5QkLDN1F7vM59M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JA8HzZ6z3mHyEaueOWqCSVrmHFN59LC8cOZn+460hjo0ER+8zUBN4rYD0KjddzNTphR05e9WKqdiQZKA4wIollRbJj7zZe/epMjL//2t3P5zYoAQ46NRv5gFMVLt6//sSwjhM03ZypV5/31ES92OgoTy5lNU/uhfn0E4Cq926G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJ3KS+9h; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755646738; c=relaxed/simple;
+	bh=gPKnGnK5W7HEK0sHmqtti9jpZR9ebsmqij0kJEgnkBg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GJHU5pnLaU5M3+NOWwBM7oo4lJXxvm37u66VKDjznSWmCeeMFuUgr0HfkwHJ9/5ghZLq+/bXnpZNxye+OdKi4TeP3UYlM+EcnAB6WSnIX2ho46tRqWsQ8htp8vQsfx8miEZeaN1XGmZe75fKqp1Fs6o6RT8GzaJ4oEIbvp19gJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=n2guvqGo; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=5qHUoDTg; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJ3KS+9h"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b004954so42906045e9.0;
-        Tue, 19 Aug 2025 15:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755641513; x=1756246313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K35SvQhw00YjEa/o8MaVe7A+urCu90afaTwYqbkOP6I=;
-        b=IJ3KS+9hFhwNvqOubgLS4D7UZqb2DDQmMe0JB1esojn6tMqoCoSrpjVP+qZteca4UD
-         IQpx1Emuz8RYvse+DGU72Ofr1kiI5vvFs1jr8+i1CjDYIcrwP74yn19LoM0RKdIIN21P
-         tROuFmcdeZYhCc7pBRNMmPyxH4B8WVWyJA59hvIdzmrGOQXWOhSKJvFPw/4M6jdWRycL
-         uaceEtGFbBzvB/5KHBvSwBBeUUYDTkmLAEDlepcmTsVlGu2/Gly2VGBmqyrAJx8f14Yg
-         +dhwRpHUBWCFBT9f3NPMEwdxvlIJd+fkn6uFslbrHQ9bAFzrzTO7+IrgY3dAORp+M5w6
-         lohg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755641513; x=1756246313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K35SvQhw00YjEa/o8MaVe7A+urCu90afaTwYqbkOP6I=;
-        b=XXfwR6x3bMDzVVTXMQIeKjhjTUHDokRKncumvEg//nNCGhYpxd7df1eMttn8ZR505Y
-         95amEvc4JxZqkIeOwzVY6OTfYf+ns8PrO+faz9wHSjmBm+Bkw5YyPZbV+sUR9guHkVBh
-         3GcQmy0koTzDbO0tkNSee9R2Gc3PqA3prF/JOxWGCsdGw7SuXs2jvTnXEq7pJFqKE9yJ
-         3bymlR+of1jMr8D4W04YMo5Jw72Sp18UbixjeKXFaHjfSu+iXNss92nHQx69WC/N0WQO
-         tHYiTA23tVjG0l1kFUuAgolBjr9VaCbgM+6KlcSgdMT4EdC4jKUQv6m9WPtPEIFEpL/z
-         qR7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBs6Q84zA7PH4UxgRUg+Y0/WJ1mdaYkxVbYCfz7ncNny9I8mmz923tbNK+3ai0jsl4mi55FCLxahwi5A==@vger.kernel.org, AJvYcCVLQ5AxMdsF4IpMZxM04IyU/ROldLmXuMq3jGRR4rR1QemXuFmelNYcmsFam6UazAZQf4l5co+00IgN@vger.kernel.org, AJvYcCXII4gC3JOi3YJYbEsZhmGMn9Lkalzq0gbTjx/0KghZiaRWtuTWkazxYSsYvq8dRGS1y6Kwp50MAg6K2lTS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIKWtT5YJF/FD29M3JPxaZ7WUtvraO4PnWHbSJFHc35hamwmGP
-	gvmkFDdi2+9XEEUmMForfR6PYJU4bE9dqN4vZTEfWo2bRVv3aCQ+dFhVgxng
-X-Gm-Gg: ASbGncsmQlD8b8Tfwd0XGpRPKZiOKQj9PBVBQ1Qtxcl4at6a78oJPqWsIZfmIagQtPI
-	S73ttvw6KJeSKQLxi4oKixYTFB359f2U1REpl+OuPf2YYmdHhUOGoP1+DQbwTnXptpTES5X190X
-	0zL1pq8S7fL8Lw8CeFAhXTtLWS2Z+PHQSoYIJYn1SNK8Izu8XTpeojebgB5WZPJluje4SVEop4X
-	wHELS1vRVCsXx19u2/fwuj/ATgm+eXgyY2r59JmfprCy3cg1MLVUxfTHr5ncyog/1WxAeY1JFCI
-	1EAyL3pAPTySJ0KKt2NFPKhpkWSFNRrnsijG5+3Z3wCcCTeczm0M1waMTtfyZGjXr4Qz6jRxENu
-	BkUuAQUP3KWiNS8Xb91u1vNVbAm0MUkHDdUx62upXNEqbkC0=
-X-Google-Smtp-Source: AGHT+IFn0OLLqP/S61PjcsImiOsgF1HcBK9jbpGZOKFooDXzboGlVyWdLc7HcawB/Ew+vRFm/h1qIQ==
-X-Received: by 2002:a5d:5f53:0:b0:3b9:1635:c13 with SMTP id ffacd0b85a97d-3c32de52722mr310399f8f.16.1755641510343;
-        Tue, 19 Aug 2025 15:11:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:216f:2f7a:74c6:177a:3b99:868c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b47c6b14csm3804085e9.25.2025.08.19.15.11.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 15:11:49 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com
-Cc: krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	peter.ujfalusi@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4] dt-bindings: gpio: ti,twl4030: Correct the schema $id path
-Date: Wed, 20 Aug 2025 00:11:26 +0200
-Message-Id: <20250819221126.144968-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="n2guvqGo";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="5qHUoDTg"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1755646726; bh=K9ZKUwooLjx52q/ZtM98T33
+	7bMeJAJ4XytjUaP6r4lc=; b=n2guvqGokAxMzzoDEjTisvl8FxYHPMf8kNQdgKEKiPKDR5av88
+	AC6OETKK8xbk1BO74KkioZflxONx/ymILIamZCA2mR/BiQMUsAo7BVODgjKA18QngnjXpMvrFaD
+	QlB0A0pYDaVbpngfsZtkJxKE0ZfJIf5qBtmOA2DwnWGUvxkQ0e+XDzCWJdcJ6bA9vuTb3NJWGox
+	HwKI/GubKGawsbaikZtyQavSNMlpVLhkQJ6aKC0BFm/MS8W/sz1I1c/Ny6vCp5BycKFAQA8ZxSo
+	f3gbqandbj6ET7+XS1LRAKANxU5PKwvaZkR1yblPXsd+ajydr0vCRL62Mj7kPsG5y6g==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1755646726; bh=K9ZKUwooLjx52q/ZtM98T33
+	7bMeJAJ4XytjUaP6r4lc=; b=5qHUoDTg3FLIyRxXe5XrWUojy5TLPPeCMgxetOJZBwbhA3dASj
+	nH83CH8oHBKu+011L722v0po9FEJPyuD74DA==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Wed, 20 Aug 2025 01:37:49 +0200
+Subject: [PATCH v6 5/6] dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250820-msm8937-v6-5-b090b2acb67e@mainlining.org>
+References: <20250820-msm8937-v6-0-b090b2acb67e@mainlining.org>
+In-Reply-To: <20250820-msm8937-v6-0-b090b2acb67e@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755646705; l=1178;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=gPKnGnK5W7HEK0sHmqtti9jpZR9ebsmqij0kJEgnkBg=;
+ b=JidHmyw6f8QMdA3+bDYt5vOS/LEpTeFaJ0xaBNQ7ITPeJMPewbCqm4ht/6JAvTaVSdecYVpDi
+ sM8iPDvdOVPDRODoPijfCVmqaN9W3kkscX5MltGaMHX6zrslcoTvaG0
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-The $id for a binding should match its file path. The ti,twl4030-gpio
-binding is located in the gpio/ subdirectory but was missing this from
-its $id.
+Document Xiaomi Redmi 3S (land).
+Add qcom,msm8937 for msm-id, board-id allow-list.
 
-Correct the path to follow the standard convention.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- Changes in v4:
- - No changes.
- - This patch is split from larger series per maintainer feedback.
- - v3 link:
-    https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+ Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- Changes in v3:
- - This patch was added to the patch series in v3.
----
- Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-index 5e3e199fd..96d50d14c 100644
---- a/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/ti,twl4030-gpio.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/ti,twl4030-gpio.yaml#
-+$id: http://devicetree.org/schemas/gpio/ti,twl4030-gpio.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 55e5eb75af8905c93e6604d54d516585f70a8e29..16e003ef0e1892cf8b1d2e5c581358e344b46349 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -191,6 +191,11 @@ properties:
+               - xiaomi,riva
+           - const: qcom,msm8917
  
- title: TI TWL4030 GPIO controller
++      - items:
++          - enum:
++              - xiaomi,land
++          - const: qcom,msm8937
++
+       - items:
+           - enum:
+               - motorola,potter
+@@ -1153,6 +1158,7 @@ allOf:
+               - qcom,apq8094
+               - qcom,apq8096
+               - qcom,msm8917
++              - qcom,msm8937
+               - qcom,msm8939
+               - qcom,msm8953
+               - qcom,msm8956
+
 -- 
-2.39.5
+2.50.1
 
