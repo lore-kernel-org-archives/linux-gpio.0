@@ -1,105 +1,103 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3C42E282D
-	for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 16:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242AE1E8333;
+	Thu, 21 Aug 2025 17:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755795053; cv=none; b=RnDNSL/uHWuC6gRTrQBWDWIHMj6b++HXQJdEUC3U7wu5bRD3IfxzwFq3klfcP4n+qCTMu+Moews2E0HUPXE11emfJVgqpr92TKLA+32VHOcLrkIHXFQORWtKfqwdktxUtAavuuFTT/o7iWjUBQd6+NF5yo5pdyK22csLC0pP0kU=
+	t=1755795733; cv=none; b=MbeFUDXWRrgBoLmPHHU162CWKcLk7qs9yWWMGQ9Nx89pRF5XnH69Eodqxg6IUI4rcW18iffJNiAiPP+WVsH+vD8Dw4nAwo+M0Klar1Gmhparpw1w0rvga9vm8DlaUvIBOm5hYktcoqA9+n7KRcGZqUbfGcavQ+d1hbT4X5VBctg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755795053; c=relaxed/simple;
-	bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQXUqU+8wbPVRbi0ZNgvdivnhrbbjAzCcBi2SOlBcHL5C+4uYV+8TEIELb+FwgHIQDNdjeiVCBeUKqNxpRk1UzFeYxnrT2n/GQyRsMPHzkadSlCPYbPEcO0mgdQvbmOBSkpTR4PtlAnV3pQ7Z8+zDEglizAEMKsJLj+Bh6Y86/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkWlqK7d; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755795733; c=relaxed/simple;
+	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMNqmwDKNSiMv1wsR6lcHVsV1XMQfG9w2zwmX/hl833HI8oChYm7Pk5CNy/+pYeS8Czb1Cd1jmdXfWC3bpSSeJAyqDcky2CU2mzpYSalmezhwrIGFrhOyBi4R/4i/3k/DJHvnon1nOyAcwTVhs5/XAMGrwKNE9zmJHAO6hJ2U9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OL94fan1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkWlqK7d"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33541f0ea9dso10212321fa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 09:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755795049; x=1756399849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
-        b=wkWlqK7dAOZ1y+MgUubgf3rcCYYAXyFlwlaf6n4BDE1E8OdI9GvbbFHWXkFl/JUFpg
-         QKfV51wUQLLQmaYPN84dofbifww2acVr069Lix2t8jO531wrxko2uFTV43AqOPGFcPC2
-         WI2CIbzgrmnkREqIIFNuu2TPj9+XqcicbgOur3++CAajgcp1uC8YwLk5Fwy7lmsjwGok
-         75qkS0ue+edCqf8SETxtdazBQpUu9ZXtTajUIpPtPT6xsd1EBJvuWNjHjaa7OPUO71m5
-         bNJnhuWZ4pei0ddwxz9G8ZSvM8adFkmUF72vyFqcPzooTr27LGesDsqJ0Z61m+Om3WsQ
-         McEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755795049; x=1756399849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MA5CoRznscTD/9JPv2I1fgD+UFpMWzRT7Bcr37nG6ws=;
-        b=ELbbX2CyEn77YnPRUxBcquaWxtk/t+X1TMUxkl7o31+9kIJF+tA5MplJ1dMJdXWdSr
-         rcSM/mjNC42qPiUpZ4JSS9qxeOZFy70j2DSnK6qyj0MK60ae5DnTzErwbZYKbgC0h7V6
-         ioytw78WU3BSXlHYKpX4jTqTICShPrBx+qRH6BjE2n/H6MJ12cI/DlqYvsizkG6J+aaj
-         0ksqNhHBVzwTEWpYMFvFL6M2z6iwuLA1YWmaodvZ3qMbDbFM5gAAD9XNe3wRxV0DHVHA
-         MM8jnUX1/IzPfk5hb3V4PaQgP7Tj0T0mmy4iE7Q5wz8WAn3HX8XvhL8ga38pSh/aXF/B
-         3TvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiJFEhvqGPfhamkad6FKgozKOmrgVXgamGfb82LK544o+y5HrpntES5l4sfSfkZOr8uoKTqy++6bBD@vger.kernel.org
-X-Gm-Message-State: AOJu0YybRCRn2FSks5pjIMdWRLTFcUPAkul4fpWEVvmth/ThTEqA8FXI
-	7OWfg1lycRXura2zO6kgHnlpAFVfs9TKPJS7fkAzMR79NchShbWC6m5wfH/AEVHNlwwiBNo05O6
-	dfg54LqVBW8Ao36MEVb5p6//DwnBKXmN6zPkHic/tSw==
-X-Gm-Gg: ASbGncu7B5XGJ0YEx/oAQcX4craOroRMLZcCIkRk2f5LZvdic+hzyKDpzbKxeOtL2T9
-	TeTM2RNesbrsCvprqg2D1wPXEDlX5fQ7FdELE68Sb75OWxNiw7rE93UdJsNjesp6JxaR1WemIE+
-	VQQFOWtihQJrck2qxM9A2HbaV8AnA3A5HHkLTo39dKEWncap+KYbyd2fNXf8sJsB42P5UcldjJg
-	jOunVilPkxBhvTOmQ==
-X-Google-Smtp-Source: AGHT+IHXxJmnZpxwlzV39CihpI1fip8jHsQ3wqrQIPStR8+WqibfCJ2j76EEt47pzZKFul7hhblBfkLJ4pGoe6B1jMM=
-X-Received: by 2002:a05:651c:23c8:20b0:32a:78f7:9bef with SMTP id
- 38308e7fff4ca-33549e3ad61mr6524161fa.8.1755795049223; Thu, 21 Aug 2025
- 09:50:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OL94fan1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F21C4CEEB;
+	Thu, 21 Aug 2025 17:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755795732;
+	bh=QlyP+EybHdG/BjvDs4e1GOTfEiPxKwv1SmW3xs+WcNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OL94fan15xuckPr35axKla7h8MZtGA8yIcVd+buWXzAQSG05oIGUBiqEBb53XRhle
+	 JmeFYsuGXJGOunPKsS1Lbfbr70a40ig3+CNUml+LCM4CLjRStOkv9+PzortwXBztYv
+	 RkypUQ7qLmOuK0P5rdvLNOi1hBU/5yZ+GdWob8NfDtHKYfXYdCVz9UH0/XTolmBFCh
+	 kZoIzbEGtG9kun8xTlL20/iCNyBFn13AtJsXb/uF+eLHMoMU+MHvFu8nOb9qMCU/zR
+	 RqEipU7pPALnBOKvCOhPuQVSUaCq7k2Miy1P5EUFNH+taITrJVdEsun71ru50sR1kH
+	 9W8Udw2mBmj2A==
+Date: Fri, 22 Aug 2025 00:44:54 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 01/16] gpio: dwapb: Use modern PM macros
+Message-ID: <aKdNBhpNofchexgb@xhacker>
+References: <20250820154037.22228-1-jszhang@kernel.org>
+ <20250820154037.22228-2-jszhang@kernel.org>
+ <CAHp75VfxSBPzvohrW4tywd4VS0r1_mp8WLvdKcN_yn=zNS49HQ@mail.gmail.com>
+ <20250820191039.4f8af41e@barney>
+ <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710002047.1573841-1-ksk4725@coasia.com> <CGME20250821124039epcas5p34b77813c9936b8b70c801e0e1b67891a@epcas5p3.samsung.com>
- <20250821123310.94089-1-ravi.patel@samsung.com> <20250821123310.94089-6-ravi.patel@samsung.com>
-In-Reply-To: <20250821123310.94089-6-ravi.patel@samsung.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Aug 2025 18:50:38 +0200
-X-Gm-Features: Ac12FXwqIo6zLlw0fIpSEAb-CCiAQ7nCYe-8wPk85-SMsx3heqK_K_zSrsS4110
-Message-ID: <CACRpkdbdpcPBC8mwazoXHy+HE+hH-XWDkfHV4Uz38YhZU7UH7w@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific configuration
-To: Ravi Patel <ravi.patel@samsung.com>
-Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
-	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com, 
-	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
-	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev, 
-	Priyadarsini G <priya.ganesh@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vdpgf3DUMQw0mYqhG=9UrYG8KWrobbd387QZapBor_LHg@mail.gmail.com>
 
-On Thu, Aug 21, 2025 at 2:40=E2=80=AFPM Ravi Patel <ravi.patel@samsung.com>=
- wrote:
+On Wed, Aug 20, 2025 at 10:04:39PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 20, 2025 at 8:11 PM Michael Büsch <mb@bues.ch> wrote:
+> >
+> > On Wed, 20 Aug 2025 19:54:44 +0300
+> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> >
+> > > > The dwapb_context structure is always embedded into struct
+> > > > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
+> > > > data overhead for !CONFIG_PM_SLEP.
+> > >
+> > > I don't think it's a good approach to add a lot of data for peanuts in
+> > > case of PM_SLEEP=n.
+> >
+> > It wastes 36 bytes in case of PM=n.
+> 
+> ...per port.
+> 
+> > The driver currently allocates the struct with kzalloc and stores a pointer to it
+> > in case of PM=y.
+> > So this probably has an overhead in the same order of magnitude (pointer +
+> > malloc overhead/alignment/fragmentation) in case of PM=y now.
+> 
+> ...per driver.
 
-> From: SeonGu Kang <ksk4725@coasia.com>
->
-> Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
->
-> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Before the patch, struct dwapb_context *ctx is also per port.
 
-Looks good to me.
+> 
+> So, I can't say it's equal, but I leave this to maintainers to decide,
 
-I expect that Krzysztof will queue this and send
-to me with a pull request once he's happy with it.
-
-Yours,
-Linus Walleij
+What in my mind now: this is linux rather than RTOS. After greping the
+the arm/arm64/riscv dts dir, the max port number is 6, the berlin2q
+soc families, so this means current we have wasted 216 bytes memory which
+is trivial compared to the system memory.
