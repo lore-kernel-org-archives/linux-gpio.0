@@ -1,107 +1,112 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D05321F50
-	for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 12:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306F42DC349;
+	Thu, 21 Aug 2025 12:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755780072; cv=none; b=aUCae5wZh7zUyysuIOHy0iskImb7F/dI+sgGCDthyok8G7Gg8gqfnJut20iyDtM/dYGjoK+jCNANAORIHhHSKCIJQZflopi0k7Bfn45fpGa6drmlZ+OQw+r5vmwc7n80y3yqjboaB+9CsQne0nt+68cNCc4I7vqJtXSU8iLazGg=
+	t=1755780648; cv=none; b=l0KwkCfXdZP3Q605lAinfx3bvKBvX8bPYP33yuw0c3FqRspPOQZ4cpubosS0XFlYnEVZFuyqftCne2dfi9IibSqCgKBin8aTvzAGMKhm8dqEaYaF1SGF0LeNvvcdmm6XyV/IknY8YrTWQ2P15R4KJYrie9vNNDSERkSTPQsnxwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755780072; c=relaxed/simple;
-	bh=9jpgKSSMok4duRe0b+RWtWp7OmcmSdefUa27stJuCIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Baa5zdiHJk89Hpj2GRXCFRH0Ork17BzB+h0Jq6DyZoD2/2uiC3urdOXARiwir526mAwnadUoQzPPkk3Ro+U8ndtaxDkZSa4wRNV4Ao2ecZuLJxDQaOtcTKrpxJrRClhCCUvXGIh2T0YKKbSdSk6ym+/CkQ4dDydcYbRxfX8SBRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QWXx8Tb2; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1755780648; c=relaxed/simple;
+	bh=rXNuKnioQFz3rtqWC/tP7w8NaCHmc1EB5yrCK1qULiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qUxmGd349BlDaqgOeascfVnyOTqmQKJNHSzGfhF4LZYIur4V5RDCOitfgtEBwr8zWARMN7JU2vMwMHXvtUE5myRJ7jFE5ph6hpOvaGArOFBX9ljXrKdrlLRmFIUHTow5QWg3fOUYb5uHf29M5eSQGEdFheba5k/EGbr/VtL8Wrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=buDC3VUv; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QWXx8Tb2"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250821124108epoutp0445c12a55aa58c3396997e54345af3290~dyKt0uO-N1816418164epoutp04Y
-	for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 12:41:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250821124108epoutp0445c12a55aa58c3396997e54345af3290~dyKt0uO-N1816418164epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755780068;
-	bh=YSW64KWlEWguGEP5S6aHwmfVaZSZlb36SUEt3aN4gtI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QWXx8Tb211F14jUMSrcwT07DY7tg/o+idoGrQraXOqpAfx+TwGAeM9Y8kBjDv+4Ox
-	 4YDHdVWNmCKBzze9otwaUXMP8wH8BEAlYTNhm4ENoecs6qsA0141K6a97exhYIgwd+
-	 uZFv1gmF08usf6AqhXs0eeQlC3tr4Wt7o80yXL7M=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250821124107epcas5p3d0165e6d8c4fefbe9990d4ed54b437af~dyKtBAz0d1592915929epcas5p37;
-	Thu, 21 Aug 2025 12:41:07 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4c72xG4gNtz3hhT3; Thu, 21 Aug
-	2025 12:41:06 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80~dyKrZpFEa1534115341epcas5p41;
-	Thu, 21 Aug 2025 12:41:05 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250821124100epsmtip24bf607fee6cda2466f7f16b0c3a40894~dyKmvfG7k2624826248epsmtip2b;
-	Thu, 21 Aug 2025 12:41:00 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
-	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
-	ravi.patel@samsung.com, inbaraj.e@samsung.com, swathi.ks@samsung.com,
-	hrishikesh.d@samsung.com, dj76.yang@samsung.com, hypmean.kim@samsung.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, soc@lists.linux.dev
-Subject: [PATCH v2 10/10] arm64: defconfig: Enable Axis ARTPEC SoC
-Date: Thu, 21 Aug 2025 18:02:54 +0530
-Message-ID: <20250821123310.94089-11-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250821123310.94089-1-ravi.patel@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="buDC3VUv"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7ace3baso154749166b.3;
+        Thu, 21 Aug 2025 05:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755780645; x=1756385445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rXNuKnioQFz3rtqWC/tP7w8NaCHmc1EB5yrCK1qULiA=;
+        b=buDC3VUvrqr7NJTCBpgToqs75kFMPD6NtAFw59w88S9swopOW4OJtETBLp2UMEpcGU
+         OfEf7dmkMmWG+IqjJp3+2IlwSx2dmDenxFdx3f4YjP2Gh1B7XGcOcDUz5n8lPSaz9QGF
+         8EjKRg9YzUBDYuMWk7qwWFCXm7HQBEDviJnbzrCkav6DdwsppNq+pMASVY4rFOeXg3A9
+         qgxVMSAFXYJV5pF0fAWeajRkfX6Z2HD6/2hME9NvXE/jlJfTSvTMpiIjRJr2WYiZ+vOX
+         csF/Jrp1c/YCEycfWXTbJrFmob2345V5TO4RcaaIid4p/OKpY5vI8eyc0zQaNqPuscnV
+         o9uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755780645; x=1756385445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rXNuKnioQFz3rtqWC/tP7w8NaCHmc1EB5yrCK1qULiA=;
+        b=N3TAJYVi6L4Wj+rXKc6tTitiR2GVgm2wfrood/wmqMDop0sTpo9Jzpwq7s6ZM6m/wk
+         Dd9j2tkvoRvnBU7M5z7ufRUBw4DmmAdXLwYtq3kkf/u52iTmPHHzYJzv5nqYCDYFenAe
+         Mf+Y+LdO+2CBuyCgyZJse+bt6oN2rG20nEllIWjZ81TPTkqSNrK0cxTUtBvoGGdaw3W6
+         JpHi4RDOpw8sT5j1n0MiOqHQb8YGZIXfi5rWOB6P3onNb/p85bdQcPgHhU9OZC/u972s
+         SRo9eajHIPp7/AoXkI8tX/fxMJ7QyBOa2Rf4zugsYetHH1NUDyngt4cyBxgcSxNzzFf2
+         aq0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVrQ+QE6xUSn/uAHZYIAJ2Luv+GWwxi2wuk8A/AptNC9UAx/GjI+zr/BoMIUJFMUNabKGHC35+vAD/tZw==@vger.kernel.org, AJvYcCX41En+8FOkNMyhvwIUOrd4TlE7KjReIQlxdSIsuMaEfj0XcD/PYVXpdLUUnTFrY9Bja6k3fzaDegOYsqh1@vger.kernel.org, AJvYcCX4ds4rSu+eL71/eknWbeSzMaH/yLuMdZ7q0DifXsjxEpT/Ess2tXsDswhQ2uMKliEgTLGIWjcFrp7c@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC5XbG87H+Zb7oGuOjIcJ5wRFjE1FOZxvmA85NdUjfDHcriUgw
+	tDtDuaPxzGBFJl0QrF67XedXR3IVNzhS9HrNa2O8pN5Q7+w4g2gP2sNRiHhzVy8lZoK4zbw9uF5
+	/KXINJTp89z2EnWltC69NARtvM1f4LTk=
+X-Gm-Gg: ASbGncuCWW8/bPdEF/QHF2Wv6pVKxp1h7fpo4HH1t/Eelpl8ZHyK6UZ4DKaYEr5OBDe
+	WD2pkye5DNC3s6flRxrWCmRHVEFc1fZj/5/Ve2fazPgsSmznBkRCtfFGyph8fq9zDd6IcZDTMhf
+	h2+C6Y5GwFW9CL6R/97Kz25/sDtdl+f/27gcL40asM47mPjZZtM9RWDH1eGQBZ09WowWaqbCthk
+	rwyBjROFA==
+X-Google-Smtp-Source: AGHT+IFqLJzfxlE9IzrL92NoVUr6Ne6ykptrtie8d+0UYuYwU8A8dTBLaLR16KfvelH/Vi8PA7WIvYgckc571ZyT4n8=
+X-Received: by 2002:a17:906:4fc9:b0:af2:91c7:f2f8 with SMTP id
+ a640c23a62f3a-afe07d3fba2mr219920066b.50.1755780645163; Thu, 21 Aug 2025
+ 05:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	<20250821123310.94089-1-ravi.patel@samsung.com>
-	<CGME20250821124105epcas5p402a0f6ec6a893d0e5e305547976e4c80@epcas5p4.samsung.com>
+References: <20250820154037.22228-1-jszhang@kernel.org> <20250820154037.22228-6-jszhang@kernel.org>
+ <CACRpkdYQLqDxh=zqrZ+wK_Ky2wD5AUoVLmCV_JDfmaqJC4Yzqg@mail.gmail.com>
+In-Reply-To: <CACRpkdYQLqDxh=zqrZ+wK_Ky2wD5AUoVLmCV_JDfmaqJC4Yzqg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 21 Aug 2025 15:50:07 +0300
+X-Gm-Features: Ac12FXzttMVTUGZEGb0vWnktV7PySLes6yhjoNd5Y9rUABfh--T1PQfOw84YMT0
+Message-ID: <CAHp75VfauP9=fkoZd8D-kGOXye_uE8TE0k47YTogPDSk18gDNA@mail.gmail.com>
+Subject: Re: [PATCH 05/16] gpio: pl061: Use modern PM macros
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Doug Berger <opendmb@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Michael Buesch <m@bues.ch>, Hoan Tran <hoan@os.amperecomputing.com>, 
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, 
+	Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux@ew.tq-group.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: SungMin Park <smn1196@coasia.com>
+On Thu, Aug 21, 2025 at 2:52=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+> On Wed, Aug 20, 2025 at 5:58=E2=80=AFPM Jisheng Zhang <jszhang@kernel.org=
+> wrote:
 
-Enable the Axis ARTPEC-8 SoC in arm64 defconfig.
+...
 
-Signed-off-by: SungMin Park <smn1196@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> > The pl061_context_save_regs structure is always embedded into struct
+> > pl061 to simplify code, so this brings a tiny 8 bytes memory overhead
+> > for !CONFIG_PM_SLEP.
+> >
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+>
+> Hm true, 8 bytes is not a big deal.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5bb8f09422a2..f94c1357d6f5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
-+CONFIG_ARCH_ARTPEC=y
- CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM2835=y
- CONFIG_ARCH_BCM_IPROC=y
--- 
-2.49.0
+It's better to double check. This data is per GPIO chip, the Q is how
+many chips can be present on one system. Then the calculus will be N *
+8 bytes.
 
+Knowing gpio-dwapb (and having even a HW with it) the commit message
+(there) seems like a slight manipulation as it doesn't clarify this
+detail.
+
+--=20
+With Best Regards,
+Andy Shevchenko
