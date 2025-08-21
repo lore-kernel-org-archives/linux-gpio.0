@@ -1,127 +1,144 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A292C28C869
-	for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 12:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89E19E97B
+	for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755777985; cv=none; b=LgsIFPrjvifYqqZUQA2QhZFqyg3bxUo75yZpe5fVBst60anc2Kyfd70ZP5WbS43ISYZ4k7cvM5tRnOz4gQdnYUHhOv8PTSWRHoTGGZBX2XNf7xJjgWd0UOTH6ywQRwmDKr9owurB5230PawSrQfvG3KgilwdoOM2fFRxdGXq+Wk=
+	t=1755779725; cv=none; b=V6j8gq++UJ+68WQWFWITXrEeTEGCxw+Xc9vv4UzCL6MHyTJ4cS2xT2RaSdYez70I7RKsbmqDx6mZxIFB4NNlM2eVqfQW/LV6cjPrZcC4mzPoWG3WWAq/JsFDv3ywu26E0Ke+rZ/CPUu/wlMv4NbHBh2uPAfhsEFTGkphTFjqwWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755777985; c=relaxed/simple;
-	bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
+	s=arc-20240116; t=1755779725; c=relaxed/simple;
+	bh=6SsyLR5JLHjbKtKd89+UE2OomTPPbF3m8LLiO2yv1Fw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLjK5M7Do/Fgu24dQy5QOaRCvzDNuORGhHqsAqXv632Zy4DRJfh9+UuWHETHooiaWRmUIp8L9p+joDzn8muLqGth4zHvIou/Q58lI8HrpvaTjmT3OuDdHY0ut4gEq0je+v5k7PrS38KFocVkBVXkVGZlyJw0vu79biASBaBwfh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NzzFcGxt; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=bru29yOpTB9GjAVmAFSKx5CygA58kInINVNlDvwZ0/LtLdThqNvpJpVoX8cOSrai0GgXDCwzk7K2wRDeMMwDzdHlJ5uIOqlD+phbu783OY6ZaI/D+c9MzmUBjg7vsU0EYga4lJoxA1+cZAaND1mpLClFK1Ycthht/muJnT3+Isg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECUKSgZ8; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NzzFcGxt"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-333f92f1911so6599261fa.3
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 05:06:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECUKSgZ8"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55ce509f80dso983975e87.0
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Aug 2025 05:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755777982; x=1756382782; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755779722; x=1756384522; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
-        b=NzzFcGxtagRSaXmQ90qDHpMpg0V+GJbMNS2fMBIsfgZTfzijlYbpMr+k7eo/JxCxip
-         DNz1O7FPLl9CEUERoghlQkigiooJ48pppA+nTJBxK8iArpXE7bWo3Ie4L7mbKeuCY/Kz
-         zMDQ1pZF2pfiKSyMJ3vzVw7a3imKVC3uj8nSYNQ/X2MkwSa1CT3+58yXllYrAwSYWhKz
-         5PebktTTpKQodCnxnU/LKYXmta3it+hOE2UA34wJgGCJ7iAqqIFrWvLnYQua9k/Zj1ow
-         KYYAoacyUQF6ef93EgZ+r8F1oVS7NHim1DLVubXi4GW4yO18GnTwCo76S5fvDkYXzkAa
-         YiHQ==
+        bh=GhK/5iEdOsHso7WQOtGlojYYvxbDlPHKTAFa/LVoWKk=;
+        b=ECUKSgZ88yvUOQQSqH+KAq94mlBisWLvZo0kYCGyDd0SC2CIdfiMf76EY0kcPO/P5I
+         BuxRrVAHVr6TvExHV+Vv5JlsXY8XytQZ+fmiDIc+L8g2G9L3iLI9UVIzwdjowxOd/lHY
+         2I4nl9Y49+L3N0tcV3wQalryQqti1anNDxdmaxNNP/MYLSHX1FvBlaWsr+4DIpdc6gKs
+         InwKiDuhwUGQndmCuG2tEvIQ31seIwiLoSV9RJcDYJtUsQj9/qqC3E8lJPV6+oLNmzMq
+         AhB+hcYNahK8VuJuvdgtZG1KbbOwkuo5ZYVjhoEMsywnOk0eTClY1FLAcmh9zIyyOpBp
+         TvkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755777982; x=1756382782;
+        d=1e100.net; s=20230601; t=1755779722; x=1756384522;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EqOATe6lxC8lL+rMjGZLssQp3T91Kjl3xSz+jvx0DUc=;
-        b=IJL5JuX+hM/KV9Pt7yJ2MhesnXpKja+sMemM3rPOU6BjmCz9IITzc08cnXpFZBpdsW
-         GaC5DnrgEgLelH1vZb6Qawl+cAr6BEF6TsalsG4shUufQn75nu2Htxo0R9ig00yKN7uo
-         3vqwEHTcniVWcVJQ2v9GDPQb2iVmV4oTHlLLjXMmvaKUbBmHIVf1tfhQKnMtrSqcfSkG
-         dPRgTdnRWbM30dR8PSPIoMweOwsg98g5Jf3HoGKK6plVV4MNXC65h3OWrR6HyaVR0obx
-         IV/fU9eclgx9iyIY3pYIXlXk86C2h4OJx5A6W7PePAeOIyJSE3W9u+oLPax/r2nzrEuX
-         khJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLiWeixSmr+L2LP4Ewaop3oGirhXYTBcyV54JXlLeY+1B4yApCZlTCXNzIwOvco7alkYc3iLG4zNrp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnQp39SS3rEMOWd95MiYR54pmMgQ8xA/5gCALHYpWwEKZw25BR
-	4SJsY4eA8MruQvm1fmH5CoXU/l5fW0VK7R6bLLunZ60E+PdOT4GbnZnZnRq88PpWvJYgWGKnwby
-	OWjd9rH3WijLlKVvRD9lq5RZXo+g0ZhkTiQXb2BXN/g==
-X-Gm-Gg: ASbGncufWWUDRjPKgAJtRmRRITX2uf2NGL9u140q0of3TDR1r/j09pppvtG0j2UzIKY
-	Ty4Dj73XrDqkbFfeNCOUb0z4RpfdWV5vuIfOCgB0Y5iChDWa9gOVeippZlV1Sof/zfGadgvHRSj
-	9VUfiFgiknXX4GC0v53I/g9VYrzFvrPuYr390E+2kgOYpz/ZuY7GBlV4Y7zOUNqgC+8VoRE21LK
-	0U124I=
-X-Google-Smtp-Source: AGHT+IGVtqYhx03rZLGlR0AUldfQFleIV8XTQ56VN7QoZ+/jtWggdq8uZGuLFW7FEnNgvU5NHrdHkWFWoRsaEWfWGQg=
-X-Received: by 2002:a2e:a272:0:b0:333:be30:5adb with SMTP id
- 38308e7fff4ca-33549ea13e1mr5180611fa.14.1755777981770; Thu, 21 Aug 2025
- 05:06:21 -0700 (PDT)
+        bh=GhK/5iEdOsHso7WQOtGlojYYvxbDlPHKTAFa/LVoWKk=;
+        b=ull8zMWYVPCyFYwdzar31hEnsx7zAHmfzFHCgIOyn0fBZsBtneO9yOD2/Lm29USQRQ
+         6AbQCeXVLXETuT2YW7dV5P+OH3u0y/mBA80D03u5VO2wrJjAxLmb50s+/NA6EUMXmT0G
+         KuZfqMczAoRvAbZ97Duyx4inqld4EYwzY3EdW/TTIZPozipEaPjQJlMY+DYXBiT8PVS+
+         86hBZPaCRJ71hzFMb281LoRjwbGI7QlhauHP973NAdHQHAyLPKxela9b6Ms7101EcsVr
+         T7UmRaCXabe5CKWS77GzZduY6WgJY9rlpQ3bCNu3i0ZNtGQKZfD/3jhXh2lMETNMbYf6
+         aE5A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1/WqUeGmDrh2DZg9MNc0VOjCAiqMy6LrcnIZaLkV2ipJlz8pfBLniVWl6Z38H7KVvcmSJz9B13PC1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Fq0n1fUjHsmX5IyxsptSoltXzBgvfH/WyueDw6on/8ZYTsO4
+	/mXaPJD9c7FS2j3cOt9WL0Jq2Od7CGu2wj2g5cC6eyqD0CGKfAkVHFt5repsOv9PVJOTn6RDylt
+	CFdRJdv+X10lOhhIAj2HAgDtPCPrAgXMCiCkDuLtvfw==
+X-Gm-Gg: ASbGncvaWh/d7wIHFVqb5wCxz3p/SvXTodWoo5T+eietDsCpbdPKayw+G8P8b0QVBoy
+	W0sFk+56GBxdjAGj0i5SfqtLP9KAT42zklJTL8TnHfdRlQs6C0YIGPryomC7gj3Yhb30CmzOa66
+	RVpZFPz1/clYAMv1d5MRYGxwyzmpzuT2vgwOh8SVvdDmdK1MWhZOl8biNsYKsp2+C7ivwvUowVq
+	UXe5Ak=
+X-Google-Smtp-Source: AGHT+IGFT1SOHRHnznv0j24jQt6OItG+VkUUqGfuDCNg03+god9R2F302j/+MpxBGP6QnhkRVuIKkbhRbFIemE8O8FM=
+X-Received: by 2002:a2e:3314:0:b0:32c:b83d:64ab with SMTP id
+ 38308e7fff4ca-33549f4a0e2mr4716741fa.24.1755779721325; Thu, 21 Aug 2025
+ 05:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <CACRpkdYWNgU8PxVaxDe3F6Cbb15J5cgEV1-kgDooOHdBoXXs3g@mail.gmail.com> <5f456224-d26f-4cca-a2f2-31418da287c2@roeck-us.net>
-In-Reply-To: <5f456224-d26f-4cca-a2f2-31418da287c2@roeck-us.net>
+References: <20250821004232.8134-1-andre.przywara@arm.com> <20250821004232.8134-7-andre.przywara@arm.com>
+In-Reply-To: <20250821004232.8134-7-andre.przywara@arm.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 21 Aug 2025 14:06:10 +0200
-X-Gm-Features: Ac12FXxIcyY_DhShmyxPbMRYnHac2dfkJsh4yDQXH3sgZV0u5dJUBt6Cww9nAa0
-Message-ID: <CACRpkdYQa21PeAHTUPY2XRVnknnDS+v3Ci8DGyiYSdJdYVJCEA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: nuno.sa@analog.com, Jonathan Cameron <jic23@kernel.org>, linux-hwmon@vger.kernel.org, 
+Date: Thu, 21 Aug 2025 14:35:10 +0200
+X-Gm-Features: Ac12FXyGD4nO__iucr4UwJuUtNZrpHlCHuWUThm0Y3PsAmwji1zokHx8_NHiyLM
+Message-ID: <CACRpkdb-cudZE6mZH7vEOLU=aJFaNLX2dHz8Q_=2cfh1-JBRgQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/9] pinctrl: sunxi: add support for set/clear regs
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
 	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 6:11=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
-> On 8/19/25 05:36, Linus Walleij wrote:
-> > On Thu, Aug 14, 2025 at 12:52=E2=80=AFPM Nuno S=C3=A1 via B4 Relay
-> > <devnull+nuno.sa.analog.com@kernel.org> wrote:
-> >
-> >> The LTC4283 device features programmable current limit with foldback a=
-nd
-> >> independently adjustable inrush current to optimize the MOSFET safe
-> >> operating area (SOA). The SOA timer limits MOSFET temperature rise for
-> >> reliable protection against overstresses.
-> >>
-> >> An I2C interface and onboard ADC allow monitoring of board current, vo=
-ltage,
-> >> power, energy, and fault status.
-> >>
-> >> It also features 8 pins that can be configured as GPIO devices. But si=
-nce
-> >> the main usage for this device is monitoring, the GPIO part is optiona=
-l
-> >> while the HWMON is being made as required.
-> >
-> > This main device just screams Industrial I/O, IIO.
-> >
->
-> Really ? I would have assumed that the sensors on a chip like this are su=
-pposed
-> to be used for hardware monitoring, and that IIO is supposed to be used i=
-n cases
-> where the data itself is the relevant information. What exactly makes a h=
-ot swap
-> controller screaming IIO ? Am I missing something here ?
->
-> I am not going to argue about this if IIO wants to extend into hardware m=
-onitoring,
-> I just wonder about the rationale behind it.
+Hi Andre,
 
-It was mainly because the text talks about regulating currents and current
-rush, and an onboard ADC. There is admittedly even a bit of regulator
-framework-related business going on.
+thanks for your patch!
 
-On second look it's fine to keep as hwmon, discard my previous
-opinion, I should have looked closer and now I changed my mind.
-I'ts good with some pushback!
+On Thu, Aug 21, 2025 at 2:45=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+
+> -       raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> +       if (pctl->flags & SUNXI_PINCTRL_HAS_SET_CLEAR_REGS) {
+> +               if (value)
+> +                       writel(mask, pctl->membase + reg + DATA_SET_OFFSE=
+T);
+> +               else
+> +                       writel(mask, pctl->membase + reg + DATA_CLR_OFFSE=
+T);
+> +       } else {
+> +               raw_spin_lock_irqsave(&pctl->lock, flags);
+> +               val =3D readl(pctl->membase + reg);
+> +               if (value)
+> +                       val |=3D mask;
+> +               else
+> +                       val &=3D ~mask;
+> +               writel(val, pctl->membase + reg);
+> +               raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> +       }
+
+This is now starting to re-implement the generic MMIO GPIO chip,
+which I'm not so happy about, this is simply the difference between
+passing just a single data register to the generic config or
+passing a set and clear register.
+
+        ret =3D bgpio_init(&g->gc, dev, 4,
+                         g->base + GPIO_DATA_IN,
+                         g->base + GPIO_DATA_SET,
+                         g->base + GPIO_DATA_CLR,
+                         g->base + GPIO_DIR,
+                         NULL,
+                         0);
+
+...
+
+I also notice:
+pctl->chip->of_gpio_n_cells =3D 3;
+
+Is Allwinner one of those drivers that could actually start using
+select GPIO_GENERIC nowadays?
+
+Please look at
+commit bd3ce71078bde4ecbfc60d49c96d1c55de0635cc
+"gpiolib: of: Handle threecell GPIO chips"
+
+And the example user:
+drivers/gpio/gpio-spacemit-k1.c
+esp how it uses spacemit_of_node_instance_match().
+
+If it's possible to switch over to GPIO_GENERIC this hopeless
+maintainer would love if that could be done first so the picture
+gets more clear.
+
+Yours,
+Linus Walleij
+
+
 
 Yours,
 Linus Walleij
