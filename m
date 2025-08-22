@@ -1,135 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BBE34A324;
-	Fri, 22 Aug 2025 15:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C53225A5B
+	for <linux-gpio@vger.kernel.org>; Fri, 22 Aug 2025 15:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755876974; cv=none; b=UMHp4GOJPQ8BVIGbVrQd0Ikmu4W7wR9MYh4B8BydHzS79yEVrxT0RaYPu+YR0asVHXuYvAaMfYxwCVNVQuns3RkAg9TXyTyy1tNtukscrUKmz3xBpNBITa+MfXgfY8Yjx7s1/ZfQEuRjFNAPwyrleM8EodLwcds7gZjHbDUqYZ4=
+	t=1755877599; cv=none; b=E9EsTKA/U7b240tNKYf/jV5stENUv9iVo7MeeI7OuApRUxejpEdyOq0FMycPqbjQ+iUYmIG/C0GW2sMnld3r69XytR8VZ7eCJG2cp40wn93Odxkwsur+H7nKXc5E5YhaUl7SsfezeBQQUUpqTTK8CTHrOveeAD4h9RiKO8CCxUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755876974; c=relaxed/simple;
-	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=o2Ob5mdBgrZP5JoFZ9w4FbA3nXtRT7li1NESUsEiRpmSurZwg3LvDRpGYgvtNqnornkg1a4jr/rjHCd8U8m49J+ipi1YwhAmaiSnUzCz0xPuKtClA8KC9FjzriW2draMdgy6D2nMc0Np7FBFt4ZoUphkAfOceDBe5AELfsxQMcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gkm3JskI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755877599; c=relaxed/simple;
+	bh=z1hUv6KsVfdsqANkHfljJHbn19cLr05ZqjD4NTsAvxo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=q7x1V4EHtTUk98pPaDtzifJ6AbY8ztMUIhkxc0yfvUyVvfaeMspCBnygsKYB/d3OL5CZTjz3jQsyjLsPyRcDErHtK3sMcGSfTyqLF96LTtHt8496R+KupvAXDt4FaHtjLo5Q+wcT6L9aXv0xGN7uaU7H6orY4Zf+h+2XjFJDT6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JfO9TjCs; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gkm3JskI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9AE6C4CEED;
-	Fri, 22 Aug 2025 15:36:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755876974;
-	bh=M4axMQs8H13c09qWo6K3CitPMFiulFvZkPJOaBof5qk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Gkm3JskIl9AEISSDTxGOPEQ5Ekw+yO/AvQdomznGVF8QhL2AKSjB9ug0fr1l8cDAC
-	 R5sn0gLRNWsiAEXDV/8IqKrKhmFhfaIV0eZ2Ifeh4tLF63tK6IWjZnREefRXi/M03D
-	 sonYkEFxAHk5WnTO9vZYeGm/kLZ++fqGgDYfTihFHvZFAojKUxRz39rTZqvajG+zmS
-	 C5cdC9xRurIk0OtWquWGUHHvSsQMbdCi9wn8LX+sUhjGWTlzoGERhtdVdDoJXui0e5
-	 RMD+nlwye1ZCE/pFkHY1ti7fjopPKBrl36OGkQOSbkQ95P59TCZ58RYnkJ70Qa5E+H
-	 M8+0Xh8w08Hdg==
-Date: Fri, 22 Aug 2025 10:36:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	BMC-SW <BMC-SW@aspeedtech.com>
-Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [PATCH v2 09/10] PCI:
- aspeed: Add ASPEED PCIe RC driver
-Message-ID: <20250822153611.GA684739@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JfO9TjCs"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55ce52807f8so2178363e87.2
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Aug 2025 08:46:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755877596; x=1756482396; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gHPjvts8CpUfCJyt05T/dLXMLgVzDOK8mKME/4LBuUs=;
+        b=JfO9TjCsi/qo/lf8GtnhyQY11eAAhLVscgW1jkTkR2MjlyLWnDyIxwXT5FTgZH6CaP
+         iN3rMP4P8sCGFFXUk2zewZ3EWZkKKZajv+OLVufVMH4BTnX8OMpc7kwjmhfm9PuXJg4s
+         SzYFNIn7LRBJZ32Nwoh+V0EEJzjvdwOzJHZNcRNguRtvuZ2YRazPtEZJZLkm63JWZ21t
+         rkR71vyyaK/eF82iG/tFrGWY7gTBDWJpRFdhMmswuOAvQViabVbXpQyT8q2Fhtaa5H/A
+         WcIV821PbxleIwubCtjeLWCO/SZJb9aTS07c99OrUUYMZMCxRCSKdotyECe4f4bSaOIK
+         SecA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755877596; x=1756482396;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gHPjvts8CpUfCJyt05T/dLXMLgVzDOK8mKME/4LBuUs=;
+        b=PXcQmrt3Jua4+K89oPLimEixjeCdMwSID8VskwfGVr9UvravulwJlf3SPzUoz9SIT/
+         SqyAesQ/Xz7SAhZGF10QVfwmb39UQSlOaIQP5QEHuVzcVLKaI9+1JzZtLKJ1ctiqffcj
+         dZT/yrhRsD2aFURT6PlLDiMuS8AvbdqVk1LLBdIZj3rNNRLJKGT46/fp1HIHVwRzWuwH
+         8XBMW10AIYluLQs1aDCu2W6TShGJzzOhvfrN6TzA6LcL5eSpvuvkhXAgsh4++BMkxx0e
+         NqKnufPIzIoaqPl+X4b4kGxWSwOosEBz5bn+qaCJHWHSiTrnSHcvwCufSd4iEPkQTPeE
+         mL4A==
+X-Gm-Message-State: AOJu0YwCUhUw3pmyC1Yj7i4UzmrhMvn+5ZKaxyShPNC+HPPXFuC8af/l
+	qgt8aKFZYflcxAFD73Efkd1no/I6QjA0pB2xw0Q6dbiWMXEvscMA9ue/5iZJ5D5cCyy7KWohQyy
+	ebE2142Y=
+X-Gm-Gg: ASbGncsQnIhDrAIFm/bpoWbG4rcro2sowzOROuody4MjSHONIwQqwgtTM1R57zwAz+i
+	/myW48ISyXoM6tlgDdpfoi8fXktN8YyJ4YYPnJx7rZL14E6OOMmPnMaIiDn28vY7TcPwQ9etB9V
+	DiIE5vYlWiGWVCy21oNLRYscLESXR2mZSyYmYtPLtCdjUZWoP+O4fnh63vetfDzGgmx6IlxG4ti
+	xCd0x7sZskr5LQ1WhejfT5hLhd5fLLq7h3rZHo15JwpWLrHFQDTJyfiucgWs7nJjWXD7HA9FNF/
+	ZKCXfMFHz1xJM1ny2JAK99fbtqYQW2BOn87sWIIplQBU3K65xnFPK91lOp+wkspu1oETBV562kO
+	J5/wiUxk5nPikVTXDKl8JXf3zfCAfC99RyI6qUlRSM9I=
+X-Google-Smtp-Source: AGHT+IHen6twnK0xg5Kvf9PnMf7cOX0tVM9CEp626hj9X4Vutbt4jpw8zdjkHneKZreTIxDKcPpRcQ==
+X-Received: by 2002:a05:6512:4281:b0:55b:9424:dda5 with SMTP id 2adb3069b0e04-55f0d39675cmr1038292e87.44.1755877596170;
+        Fri, 22 Aug 2025 08:46:36 -0700 (PDT)
+Received: from [192.168.1.140] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5d1a6fsm56541fa.49.2025.08.22.08.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Aug 2025 08:46:35 -0700 (PDT)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 22 Aug 2025 17:46:26 +0200
+Subject: [PATCH v2 1/3] dt-bindings: gpio-mmio: Support hogs
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB5134692DCCFD55F5ABD812F39D3DA@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250822-ixp4xx-eb-mmio-gpio-v2-1-bd2edd4a9c74@linaro.org>
+References: <20250822-ixp4xx-eb-mmio-gpio-v2-0-bd2edd4a9c74@linaro.org>
+In-Reply-To: <20250822-ixp4xx-eb-mmio-gpio-v2-0-bd2edd4a9c74@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Imre Kaloz <kaloz@openwrt.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Fri, Aug 22, 2025 at 07:00:25AM +0000, Jacky Chou wrote:
-> > v1 posting was
-> > https://lore.kernel.org/r/20250613033001.3153637-1-jacky_chou@aspeedtech
-> > .com
-> > Links to previous postings are helpful in the cover letter.
-> > 
-> > On Tue, Jul 15, 2025 at 11:43:19AM +0800, Jacky Chou wrote:
-> > > Introduce PCIe Root Complex driver for ASPEED SoCs. Support RC
-> > > initialization, reset, clock, IRQ domain, and MSI domain setup.
-> > > Implement platform-specific setup and register configuration for
-> > > ASPEED. And provide PCI config space read/write and INTx/MSI interrupt
-> > > handling.
+We use hogs on some MMIO GPIO controllers so make sure the
+bindings support this using a pattern property.
 
-> > > +#define MAX_MSI_HOST_IRQS	64
-> > > +#define PCIE_RESET_CONFIG_DEVICE_WAIT_MS	500
-> > 
-> > Where does this value come from?  Is there a generic value from
-> > drivers/pci/pci.h you can use?
-> 
-> We check the PCIe specification to find these contents.
->
-> "With a Downstream Port that supports Link speeds greater than 5.0
-> GT/s, software must wait a minimum of 100 ms after Link training
-> completes before sending a Configuration Request to the device
-> immediately below that Port."
->
-> So, we think delay 500ms to let kernel issue the first configuration
-> command is enough after deassert PERST.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio-mmio.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Isn't this PCIE_RESET_CONFIG_WAIT_MS?
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+index 87e986386f32a4a8ba257d6a4d8da492b05d5bbf..ca32317dff85bc72aace6638dabbdd91de5e569b 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+@@ -89,6 +89,12 @@ properties:
+     description:
+       If this property is present, the controller cannot drive the GPIO lines.
+ 
++patternProperties:
++  "^.+-hog(-[0-9]+)?$":
++    type: object
++    required:
++      - gpio-hog
++
+ required:
+   - compatible
+   - reg
 
-I prefer to use #defines from the PCI core whenever possible because
-it makes it easier to ensure that all drivers include the required
-delays.
+-- 
+2.50.1
 
-> > > +#define PCIE_RESET_CONFIG_RC_WAIT_MS		10
-> > 
-> > Ditto.  If it's an Aspeed-specific value, can you point to the
-> > source in the Aspeed datasheet?
-> 
-> This delay is set to ensure that the RC internal settings are
-> completely reset.  We do not put its usage in our datasheet.
-
-The "PCIE_" prefix suggests something required by the PCIe base spec.
-If this is an Aspeed-specific value, perhaps remove the "PCIE_"
-prefix?
-
-> > > +static int aspeed_ast2700_child_config(struct pci_bus *bus, unsigned int
-> > devfn,
-> > > +				       int where, int size, u32 *val,
-> > > +				       bool write)
-> > > +{
-> > > +	struct aspeed_pcie *pcie = bus->sysdata;
-> > > +	u32 bdf_offset, status, cfg_val;
-> > > +	int ret;
-> > > +
-> > > +	bdf_offset = aspeed_pcie_get_bdf_offset(bus, devfn, where);
-> > > +
-> > > +	cfg_val = CRG_PAYLOAD_SIZE;
-> > > +	if (write)
-> > > +		cfg_val |= (bus->number == 1) ? CRG0_WRITE_FMTTYPE :
-> > CRG1_WRITE_FMTTYPE;
-> > > +	else
-> > > +		cfg_val |= (bus->number == 1) ? CRG0_READ_FMTTYPE :
-> > > +CRG1_READ_FMTTYPE;
-> > 
-> > I don't think you should assume that bus 0 is the root bus.  The root bus
-> > number should come from the DT bus-range.
-
-Just making sure you saw this part since you didn't mention it.
-
-Bjorn
