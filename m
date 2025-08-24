@@ -1,40 +1,40 @@
 Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761901F95C;
-	Sun, 24 Aug 2025 20:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84CC1F95C;
+	Sun, 24 Aug 2025 20:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756068593; cv=none; b=sW2dfvPyk15bvaZMfLymBUcLwBp8OI6hJFtT7dYIipTY1Gi8KtpOzfn3hbWtJV5YSTPHlLvJNZ2MfpWpKoUY+a9kVJ4lqLb+etJT94pore7JI+elWCyzcVZ1pMNRBJJ0A015PM5d6O1NtP7v1Gj+wJF0tFlgrlQWwr5rqMPC06Q=
+	t=1756068604; cv=none; b=s61wrooIr9Lb8SYsVcIzIzDhinHWGU91UIdj5p6mMvtlPHi5tbUDbIZpc/qRGGeNTuMnoLpFjZGLf3dbta/L+aV2GOSFx2n8MCL4M8z9blylQvKkR7hFlbukiitLXfx64ZTU5BCk9fq3HyTJUJflMKEAVoXle8sZ1dGipilp2hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756068593; c=relaxed/simple;
-	bh=fqEukYyRD5T1ITLm7ZKJ9tO/J2dsjjzmG78Xal6Ywtc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lbHrMUKnWCopfAz8wnpvVokQwallO4blm6532VdtI0PiSsDNEovzwJlyYTzY+vOkU5VINtMJIjn5pmh+ykg5HSdQ2RWo1Hj2xL4QV3p3gGZXks4edQ+jmUN8gBcmqGpr4fAGz9x41g5lVaq1UAqRQDOtKa3r/8ViFfE4Zz6vUP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=r4CHROGQ; arc=none smtp.client-ip=178.154.239.153
+	s=arc-20240116; t=1756068604; c=relaxed/simple;
+	bh=lw+wkCHuwJi81P9r9kd3s9iM9l26tF2/jGo2tCXg0SE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WbJ1CBfLXVvUffkmw/KaCWWQljuf9pVnm09f17tX68kepkAiak5sGYEpDnE14qepBtsOy+5RkcZTpoXEnUFF2RMoMrayh/4mHHO3ls88I/R2zSr/kvcdeQCHFmtyLnX3MyZxveMzCzSpkhYj79MnayM42pHhIFGLfKZNhhRmf94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=pZyGAFlH; arc=none smtp.client-ip=178.154.239.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="r4CHROGQ"
-Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d101])
-	by forward204b.mail.yandex.net (Yandex) with ESMTPS id 8C70682B44;
-	Sun, 24 Aug 2025 23:42:32 +0300 (MSK)
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="pZyGAFlH"
+Received: from forward100b.mail.yandex.net (forward100b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d100])
+	by forward204b.mail.yandex.net (Yandex) with ESMTPS id 50CB482B50;
+	Sun, 24 Aug 2025 23:42:35 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:7521:0:640:a008:0])
-	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 75082C0009;
-	Sun, 24 Aug 2025 23:42:24 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MgdcKKcLCa60-2Qlavu3s;
-	Sun, 24 Aug 2025 23:42:24 +0300
+	by forward100b.mail.yandex.net (Yandex) with ESMTPS id CD97080618;
+	Sun, 24 Aug 2025 23:42:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MgdcKKcLCa60-Ig04LBeh;
+	Sun, 24 Aug 2025 23:42:25 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1756068144; bh=xCx8FW0uSugXQ6aPOTyb0QRe4AEJBbn7xSyH0CrfJQw=;
-	h=Cc:To:Message-Id:Date:Subject:From;
-	b=r4CHROGQveIeOF8XCZ12PDOs1Qwtiy62tjyYepPpTwGMcrp6/gk8sUM78ZPoSxDuM
-	 jcUTH5Z6v3WAk0y0QRh4yyur0zCLP+kBsdB//ikBxHbzcWvbxUrSkUTSKcZq/4Afna
-	 eIZb5PPB6BXINZnFQaHyCSTmHed6M40FYcksaTL0=
+	t=1756068145; bh=vJiDsVwE5O5ovqLkchcKAZLTA0N7DfACsKJu+Tw8KmU=;
+	h=Cc:In-Reply-To:Message-Id:To:Date:References:From:Subject;
+	b=pZyGAFlHlMfTbXq7+479HHUWmahlPoPx7QT1p3JLtOtSa2vNiqyGLa5vzLJtEExf2
+	 2AlqWeRxAyc0LkLTGaIf10m9HKEDkryBca4K+V9PKgC1T8VQsMlpnUR8aww46FFj4W
+	 zRyw3MNDLDsSqUsaDRZ1fJXOw0gREDQT2OUMz7x0=
 Authentication-Results: mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
 From: Nickolay Goppen <setotau@yandex.ru>
-Subject: [PATCH 0/3] Add SDM660 LPASS LPI TLMM
-Date: Sun, 24 Aug 2025 23:42:22 +0300
-Message-Id: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
+Date: Sun, 24 Aug 2025 23:42:24 +0300
+Subject: [PATCH 2/3] dt-bindings: pinctrl: qcom: Add SDM660 LPI pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -43,10 +43,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAC55q2gC/x2MQQqAMAzAviI9O9iqjuFXxEPVqgWdsoII4t8dX
- gI5JA8oJ2GFtngg8SUqR8ziygLGleLCRqbsgBYbG7A2Ou3eW7OdpJophsJgkbAK3hHk7Ew8y/0
- vu/59Pyf1xCZiAAAA
-X-Change-ID: 20250824-sdm660-lpass-lpi-a8b02a23861a
+Message-Id: <20250824-sdm660-lpass-lpi-v1-2-003d5cc28234@yandex.ru>
+References: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
+In-Reply-To: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -56,51 +55,105 @@ Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, Nickolay Goppen <setotau@yandex.ru>, 
  Richard Acayan <mailingradian@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756068142; l=1795;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756068142; l=2866;
  i=setotau@yandex.ru; s=20250815; h=from:subject:message-id;
- bh=fqEukYyRD5T1ITLm7ZKJ9tO/J2dsjjzmG78Xal6Ywtc=;
- b=N0MYLssRaw3soWfekocvfuWLMHEb44z6WbaToINBJ26Vc9lr7JFl38Re8F+QUXrrr9tggXgG9
- xuVfCSu2PXeCK8+PAT080okee3cLAWEhUQH+K8d2pa9gPANLePEebyl
+ bh=lw+wkCHuwJi81P9r9kd3s9iM9l26tF2/jGo2tCXg0SE=;
+ b=F7pibNqUfOJePDY6F5m7GczkuEvLs0+A1Xs1LrpODEcu/2APuimP5R1tjqIkIA+HQK/LS7G9N
+ 6SggJcLH1biBs0+h7bhqeL2o66ST5QLia7QuAkDesnn2CdF1d3BRizX
 X-Developer-Key: i=setotau@yandex.ru; a=ed25519;
  pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-This patch series adds SDM660 LPASS LPI TLMM pinctrl driver and
-introduces pin_offset callback for LPI pinctrl drivers to support
-SDM660's quirky pin_offset function which uses an array with 
-predefined offsets [1].
+Add bindings for pin controller in SDM660 Low Power Audio SubSystem
+(LPASS).
 
-[1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
-
+Co-developed-by: Richard Acayan <mailingradian@gmail.com>
+Signed-off-by: Richard Acayan <mailingradian@gmail.com>
 Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
 ---
-Nickolay Goppen (2):
-      pinctrl: qcom: lpass-lpi: Introduce pin_offset callback
-      dt-bindings: pinctrl: qcom: Add SDM660 LPI pinctrl
+ .../pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml     | 74 ++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-Richard Acayan (1):
-      pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..6b930a5b914bc79a00dbaead41189efc525c2eb2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SDM660 SoC LPASS LPI TLMM
++
++maintainers:
++  - Nickolay Goppen <setotau@yandex.ru>
++
++description:
++  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
++  (LPASS) Low Power Island (LPI) of Qualcomm SDM660 SoC.
++
++properties:
++  compatible:
++    const: qcom,sdm660-lpass-lpi-pinctrl
++
++  reg:
++    items:
++      - description: LPASS LPI TLMM Control and Status registers
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-sdm660-lpass-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-sdm660-lpass-state"
++        additionalProperties: false
++
++$defs:
++  qcom-sdm660-lpass-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,lpass-lpi-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          pattern: "^gpio([0-9]|1[0-9]|2[0-6])$"
++
++      function:
++        enum: [ gpio, comp_rx, dmic12, dmic34, mclk0, pdm_2_gpios,
++                pdm_clk, pdm_rx, pdm_sync ]
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++allOf:
++  - $ref: qcom,lpass-lpi-common.yaml#
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    lpi_tlmm: pinctrl@15070000 {
++        compatible = "qcom,sdm660-lpass-lpi-pinctrl";
++        reg = <0x15070000 0x20000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&lpi_tlmm 0 0 32>;
++    };
 
- .../pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml     |  74 ++++++++
- drivers/pinctrl/qcom/Kconfig                       |  10 ++
- drivers/pinctrl/qcom/Makefile                      |   1 +
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           |  13 +-
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h           |   2 +
- drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c  |   1 +
- drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c    | 196 +++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm8350-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c    |   1 +
- drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c    |   1 +
- 15 files changed, 303 insertions(+), 2 deletions(-)
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250824-sdm660-lpass-lpi-a8b02a23861a
-
-Best regards,
 -- 
-Nickolay Goppen <setotau@yandex.ru>
+2.51.0
 
