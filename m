@@ -1,37 +1,40 @@
-Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [178.154.239.149])
+Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F4F23D7DD;
-	Sun, 24 Aug 2025 20:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761901F95C;
+	Sun, 24 Aug 2025 20:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756068156; cv=none; b=J7ytI5wIYV6NnWtbPhZMe+NGop71X95zHHJZ7t01GFWoF7zTAZTohsXi/7ALvcUuNx7GAunBsYmoOBw4jjWMYYab8OdQ1s1Me5RiRb0+vVADDqpAsT9qOt2VIjInczqa+Cx8IkJ6B8DfqGl2nPR42WWPAkvdj2d+KcZRlww90Ws=
+	t=1756068593; cv=none; b=sW2dfvPyk15bvaZMfLymBUcLwBp8OI6hJFtT7dYIipTY1Gi8KtpOzfn3hbWtJV5YSTPHlLvJNZ2MfpWpKoUY+a9kVJ4lqLb+etJT94pore7JI+elWCyzcVZ1pMNRBJJ0A015PM5d6O1NtP7v1Gj+wJF0tFlgrlQWwr5rqMPC06Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756068156; c=relaxed/simple;
-	bh=2rG/G9NBxbqTu6CuJVAkY8SKvl3EGxAO04K3tqLr340=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TQUBHee0Gv0h6oB5M2qgUowG10mzdB1NQoAQaETr1gj1/dugrZgBThkbuTnjtiFgwdJbdZsK7B8Ni1Rz56pbwt/ZSsOcPpPo4pwGqtMmjAddEosKh/kQLZ4eehvJpHWQRa2qZb/JOToPcC/tOjcKmeVO0xvTEw308mb7gYoDsMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=U5jcIcbA; arc=none smtp.client-ip=178.154.239.149
+	s=arc-20240116; t=1756068593; c=relaxed/simple;
+	bh=fqEukYyRD5T1ITLm7ZKJ9tO/J2dsjjzmG78Xal6Ywtc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lbHrMUKnWCopfAz8wnpvVokQwallO4blm6532VdtI0PiSsDNEovzwJlyYTzY+vOkU5VINtMJIjn5pmh+ykg5HSdQ2RWo1Hj2xL4QV3p3gGZXks4edQ+jmUN8gBcmqGpr4fAGz9x41g5lVaq1UAqRQDOtKa3r/8ViFfE4Zz6vUP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=r4CHROGQ; arc=none smtp.client-ip=178.154.239.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="U5jcIcbA"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="r4CHROGQ"
+Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d101])
+	by forward204b.mail.yandex.net (Yandex) with ESMTPS id 8C70682B44;
+	Sun, 24 Aug 2025 23:42:32 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:7521:0:640:a008:0])
-	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 5D404C0006;
-	Sun, 24 Aug 2025 23:42:26 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MgdcKKcLCa60-bf40ep3f;
-	Sun, 24 Aug 2025 23:42:26 +0300
+	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 75082C0009;
+	Sun, 24 Aug 2025 23:42:24 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id MgdcKKcLCa60-2Qlavu3s;
+	Sun, 24 Aug 2025 23:42:24 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1756068146; bh=T7mI96+5ebnUKGoLkkPBcQK3Tj7pFqnEqbDek2swFQA=;
-	h=Cc:In-Reply-To:Message-Id:To:Date:References:From:Subject;
-	b=U5jcIcbAnBwiPUQOENbvgmrFjedx8iZBK4VJkaBKb/YhOLjdW3+zHvuDDdU7eLyu4
-	 E+1YPVcZEfcVk+NyBVoLjymyMw0wbXViZkpIw4M3PQ1wsO8FlPev37woe4YYxKa6eN
-	 gduiu2X2ptA8K4vz/PLvypZm7+1pjWVcODAgcOa4=
+	t=1756068144; bh=xCx8FW0uSugXQ6aPOTyb0QRe4AEJBbn7xSyH0CrfJQw=;
+	h=Cc:To:Message-Id:Date:Subject:From;
+	b=r4CHROGQveIeOF8XCZ12PDOs1Qwtiy62tjyYepPpTwGMcrp6/gk8sUM78ZPoSxDuM
+	 jcUTH5Z6v3WAk0y0QRh4yyur0zCLP+kBsdB//ikBxHbzcWvbxUrSkUTSKcZq/4Afna
+	 eIZb5PPB6BXINZnFQaHyCSTmHed6M40FYcksaTL0=
 Authentication-Results: mail-nwsmtp-smtp-production-main-73.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
 From: Nickolay Goppen <setotau@yandex.ru>
-Date: Sun, 24 Aug 2025 23:42:25 +0300
-Subject: [PATCH 3/3] pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+Subject: [PATCH 0/3] Add SDM660 LPASS LPI TLMM
+Date: Sun, 24 Aug 2025 23:42:22 +0300
+Message-Id: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,9 +43,10 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250824-sdm660-lpass-lpi-v1-3-003d5cc28234@yandex.ru>
-References: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
-In-Reply-To: <20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru>
+X-B4-Tracking: v=1; b=H4sIAC55q2gC/x2MQQqAMAzAviI9O9iqjuFXxEPVqgWdsoII4t8dX
+ gI5JA8oJ2GFtngg8SUqR8ziygLGleLCRqbsgBYbG7A2Ou3eW7OdpJophsJgkbAK3hHk7Ew8y/0
+ vu/59Pyf1xCZiAAAA
+X-Change-ID: 20250824-sdm660-lpass-lpi-a8b02a23861a
 To: Bjorn Andersson <andersson@kernel.org>, 
  Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -52,268 +56,51 @@ Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, Nickolay Goppen <setotau@yandex.ru>, 
  Richard Acayan <mailingradian@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756068142; l=8797;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756068142; l=1795;
  i=setotau@yandex.ru; s=20250815; h=from:subject:message-id;
- bh=yyEQydoIE+MJbMTGAvlVS0a75IXP1UAi2TgmCLS314Q=;
- b=AsyhebLKXBpyIjE6gAjEbut4/bSkvN7vpr4LWsN8R0LDxPoexqgm9gkSmkEi+4xHFZ52M47e/
- IkGrjjSywe+CQPHP549cNFggQSZ9VHkM6+ISGjs1bR4BvpqzwfYefPp
+ bh=fqEukYyRD5T1ITLm7ZKJ9tO/J2dsjjzmG78Xal6Ywtc=;
+ b=N0MYLssRaw3soWfekocvfuWLMHEb44z6WbaToINBJ26Vc9lr7JFl38Re8F+QUXrrr9tggXgG9
+ xuVfCSu2PXeCK8+PAT080okee3cLAWEhUQH+K8d2pa9gPANLePEebyl
 X-Developer-Key: i=setotau@yandex.ru; a=ed25519;
  pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-From: Richard Acayan <mailingradian@gmail.com>
-
-The Snapdragon 660 has a Low-Power Island (LPI) TLMM for configuring
-pins related to audio. Add the driver for this.
-Also, this driver uses it's own quirky pin_offset function like downstream
-driver does [1].
+This patch series adds SDM660 LPASS LPI TLMM pinctrl driver and
+introduces pin_offset callback for LPI pinctrl drivers to support
+SDM660's quirky pin_offset function which uses an array with 
+predefined offsets [1].
 
 [1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
 
-Co-developed-by: Nickolay Goppen <setotau@yandex.ru>
 Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
 ---
- drivers/pinctrl/qcom/Kconfig                    |  10 ++
- drivers/pinctrl/qcom/Makefile                   |   1 +
- drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c | 196 ++++++++++++++++++++++++
- 3 files changed, 207 insertions(+)
+Nickolay Goppen (2):
+      pinctrl: qcom: lpass-lpi: Introduce pin_offset callback
+      dt-bindings: pinctrl: qcom: Add SDM660 LPI pinctrl
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index dd9bbe8f3e11c37418d2143b33c21eeea10d456b..ef42520115f461302098d878cb76c6f25e55b5e4 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -68,6 +68,16 @@ config PINCTRL_SC7280_LPASS_LPI
- 	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
- 	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
- 
-+config PINCTRL_SDM660_LPASS_LPI
-+	tristate "Qualcomm Technologies Inc SDM660 LPASS LPI pin controller driver"
-+	depends on GPIOLIB
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PINCTRL_LPASS_LPI
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-+	  (Low Power Island) found on the Qualcomm Technologies Inc SDM660 platform.
-+
- config PINCTRL_SM4250_LPASS_LPI
- 	tristate "Qualcomm Technologies Inc SM4250 LPASS LPI pin controller driver"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 954f5291cc37242baffc021e3c68d850aabd57cd..cea8617ac650ecfc75c2a0c745a53d6a1b829842 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_PINCTRL_SC7280_LPASS_LPI) += pinctrl-sc7280-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SC8180X)	+= pinctrl-sc8180x.o
- obj-$(CONFIG_PINCTRL_SC8280XP)	+= pinctrl-sc8280xp.o
- obj-$(CONFIG_PINCTRL_SDM660)   += pinctrl-sdm660.o
-+obj-$(CONFIG_PINCTRL_SDM660_LPASS_LPI) += pinctrl-sdm660-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SDM670) += pinctrl-sdm670.o
- obj-$(CONFIG_PINCTRL_SDM845) += pinctrl-sdm845.o
- obj-$(CONFIG_PINCTRL_SDX55) += pinctrl-sdx55.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..788e1c019b0b7a22360d8c32180b5abf4d0fc0dc
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-@@ -0,0 +1,196 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * This driver is solely based on the limited information in downstream code.
-+ * Any verification with schematics would be greatly appreciated.
-+ *
-+ * Copyright (c) 2023, Richard Acayan. All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-lpass-lpi.h"
-+
-+enum lpass_lpi_functions {
-+	LPI_MUX_comp_rx,
-+	LPI_MUX_dmic12,
-+	LPI_MUX_dmic34,
-+	LPI_MUX_mclk0,
-+	LPI_MUX_pdm_2_gpios,
-+	LPI_MUX_pdm_clk,
-+	LPI_MUX_pdm_rx,
-+	LPI_MUX_pdm_sync,
-+
-+	LPI_MUX_gpio,
-+	LPI_MUX__,
-+};
-+
-+static const u32 sdm660_lpi_offset[] = {
-+	0x00000000,
-+	0x00001000,
-+	0x00002000,
-+	0x00002010,
-+	0x00003000,
-+	0x00003010,
-+	0x00004000,
-+	0x00004010,
-+	0x00005000,
-+	0x00005010,
-+	0x00005020,
-+	0x00005030,
-+	0x00006000,
-+	0x00006010,
-+	0x00007000,
-+	0x00007010,
-+	0x00005040,
-+	0x00005050,
-+	0x00008000,
-+	0x00008010,
-+	0x00008020,
-+	0x00008030,
-+	0x00008040,
-+	0x00008050,
-+	0x00008060,
-+	0x00008070,
-+	0x00009000,
-+	0x00009010,
-+	0x0000A000,
-+	0x0000A010,
-+	0x0000B000,
-+	0x0000B010,
-+};
-+
-+static const struct pinctrl_pin_desc sdm660_lpi_pinctrl_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+	PINCTRL_PIN(23, "gpio23"),
-+	PINCTRL_PIN(24, "gpio24"),
-+	PINCTRL_PIN(25, "gpio25"),
-+	PINCTRL_PIN(26, "gpio26"),
-+	PINCTRL_PIN(27, "gpio27"),
-+	PINCTRL_PIN(28, "gpio28"),
-+	PINCTRL_PIN(29, "gpio29"),
-+	PINCTRL_PIN(30, "gpio30"),
-+	PINCTRL_PIN(31, "gpio31"),
-+};
-+
-+static const char * const comp_rx_groups[] = { "gpio22", "gpio24" };
-+static const char * const dmic12_groups[] = { "gpio26", "gpio28" };
-+static const char * const dmic34_groups[] = { "gpio27", "gpio29" };
-+static const char * const mclk0_groups[] = { "gpio18" };
-+static const char * const pdm_2_gpios_groups[] = { "gpio20" };
-+static const char * const pdm_clk_groups[] = { "gpio18" };
-+static const char * const pdm_rx_groups[] = { "gpio21", "gpio23", "gpio25" };
-+static const char * const pdm_sync_groups[] = { "gpio19" };
-+
-+const struct lpi_pingroup sdm660_lpi_pinctrl_groups[] = {
-+	LPI_PINGROUP(0, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(1, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(2, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(3, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(4, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(5, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(6, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(7, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(8, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(9, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(10, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(11, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(12, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(13, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(14, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(15, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(16, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(17, LPI_NO_SLEW, _, _, _, _),
-+
-+	/* The function names of the PDM GPIOs are derived from SDM670 */
-+	LPI_PINGROUP(18, LPI_NO_SLEW, pdm_clk, mclk0, _, _),
-+	LPI_PINGROUP(19, LPI_NO_SLEW, pdm_sync, _, _, _),
-+	LPI_PINGROUP(20, LPI_NO_SLEW, pdm_2_gpios, _, _, _),
-+	LPI_PINGROUP(21, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(22, LPI_NO_SLEW, comp_rx, _, _, _),
-+	LPI_PINGROUP(23, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(24, LPI_NO_SLEW, comp_rx, _, _, _),
-+	LPI_PINGROUP(25, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(26, LPI_NO_SLEW, dmic12, _, _, _),
-+	LPI_PINGROUP(27, LPI_NO_SLEW, dmic34, _, _, _),
-+	LPI_PINGROUP(28, LPI_NO_SLEW, dmic12, _, _, _),
-+	LPI_PINGROUP(29, LPI_NO_SLEW, dmic34, _, _, _),
-+
-+	LPI_PINGROUP(30, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(31, LPI_NO_SLEW, _, _, _, _),
-+};
-+
-+const struct lpi_function sdm660_lpi_pinctrl_functions[] = {
-+	LPI_FUNCTION(comp_rx),
-+	LPI_FUNCTION(dmic12),
-+	LPI_FUNCTION(dmic34),
-+	LPI_FUNCTION(mclk0),
-+	LPI_FUNCTION(pdm_2_gpios),
-+	LPI_FUNCTION(pdm_clk),
-+	LPI_FUNCTION(pdm_rx),
-+	LPI_FUNCTION(pdm_sync),
-+};
-+
-+static u32 pin_offset_sdm660(int pin_id)
-+{
-+	return sdm660_lpi_offset[pin_id];
-+}
-+
-+static const struct lpi_pinctrl_variant_data sdm660_lpi_pinctrl_data = {
-+	.pins = sdm660_lpi_pinctrl_pins,
-+	.npins = ARRAY_SIZE(sdm660_lpi_pinctrl_pins),
-+	.groups = sdm660_lpi_pinctrl_groups,
-+	.ngroups = ARRAY_SIZE(sdm660_lpi_pinctrl_groups),
-+	.functions = sdm660_lpi_pinctrl_functions,
-+	.nfunctions = ARRAY_SIZE(sdm660_lpi_pinctrl_functions),
-+	.flags = LPI_FLAG_SLEW_RATE_SAME_REG,
-+	.pin_offset = pin_offset_sdm660,
-+};
-+
-+static const struct of_device_id sdm660_lpi_pinctrl_of_match[] = {
-+	{
-+		.compatible = "qcom,sdm660-lpass-lpi-pinctrl",
-+		.data = &sdm660_lpi_pinctrl_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sdm660_lpi_pinctrl_of_match);
-+
-+static struct platform_driver sdm660_lpi_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcom-sdm660-lpass-lpi-pinctrl",
-+		.of_match_table = sdm660_lpi_pinctrl_of_match,
-+	},
-+	.probe = lpi_pinctrl_probe,
-+	.remove = lpi_pinctrl_remove,
-+};
-+module_platform_driver(sdm660_lpi_pinctrl_driver);
-+
-+MODULE_AUTHOR("Richard Acayan <mailingradian@gmail.com>");
-+MODULE_DESCRIPTION("QTI SDM660 LPI GPIO pin control driver");
-+MODULE_LICENSE("GPL");
+Richard Acayan (1):
+      pinctrl: qcom: Add SDM660 LPASS LPI TLMM
 
+ .../pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml     |  74 ++++++++
+ drivers/pinctrl/qcom/Kconfig                       |  10 ++
+ drivers/pinctrl/qcom/Makefile                      |   1 +
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           |  13 +-
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h           |   2 +
+ drivers/pinctrl/qcom/pinctrl-sc7280-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sc8280xp-lpass-lpi.c  |   1 +
+ drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c    | 196 +++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm6115-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm8350-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm8450-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm8550-lpass-lpi.c    |   1 +
+ drivers/pinctrl/qcom/pinctrl-sm8650-lpass-lpi.c    |   1 +
+ 15 files changed, 303 insertions(+), 2 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250824-sdm660-lpass-lpi-a8b02a23861a
+
+Best regards,
 -- 
-2.51.0
+Nickolay Goppen <setotau@yandex.ru>
 
