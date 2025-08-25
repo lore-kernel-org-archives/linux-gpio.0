@@ -1,91 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6F8282EB;
-	Mon, 25 Aug 2025 09:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907382C08DF;
+	Mon, 25 Aug 2025 09:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113181; cv=none; b=kXtwu5cJ2nvsqSRZWtLDy2zxaXmvIIYEevfe12cSsxi2x5vtFB9DDO7OlTr95uAgg8TCOk35U2ihemvqzik5h4XjEdaApmpRkEtx/A5dVDIVV4dvdPv7zX/JmISwJ4+rpQVNCnsR4sZj4fBfjTID0qiBKFYxKIEWzlLkSSG2Rvo=
+	t=1756113188; cv=none; b=a2yPtmOVdL+NsSNB4ijWJTOVRo/9p4BqH90sAMDGK+TTbCsPUaeATrbfhakrRl8PhDDbmqHhM6VQPg0fafDTvg1S0oWna43FfBi+fKwJ1z29i74P7WIvbgX3k+f2InFP/JzIl2qbNYsFlPN5eCcb/TPGu7mCHa5UAbA19eoe/lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113181; c=relaxed/simple;
-	bh=QGG3NNlk9OGBVg03phJ4sNiqWVIhxi8fTuW6G22kXqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ikg8goonPxDl2YT088y1rsE/vpt9CxelZ7mVnQp22G3XZFQBCua9z66kfh2gj9RGE7JWCEQ7Sts/cGJbul+lo8EPNb+yLai29OGCXb/Ak4VDWIr1/RZjtYzLF+G22Z4+kbyFiHv/kiZt0JnO9txSJOluCRr5l9BBAkdnY1vzYts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CAeMfNQS; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1756113188; c=relaxed/simple;
+	bh=89SJ+CeTRw/ZOip4rlLEx2j30XPwB/TJtFZLnmPX8Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNu6SE3E4uOd6sMNvePME6o2PBEgJy7X4pChjgS1aKwTgEohilI7GXccEZ1i4JsFCnlppO28HGSVHec32niX7Myha6FK0xWRAnPm7TPu96CImtlMmCHopm55uELzWaDvglqfLpVZ4GmSaY4FG8TNreN915X3is3nwX5wEjnsEuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7iWC4YS; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CAeMfNQS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756113180; x=1787649180;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QGG3NNlk9OGBVg03phJ4sNiqWVIhxi8fTuW6G22kXqo=;
-  b=CAeMfNQSa9+W7Jb5T9GLpC2A3HM6ZIHNBO6QkhTgWLruC/BtN7JghYcV
-   9fjtqgvgb1prMXPsd8R69Tm4dsskpz0gA+AML9uD+YZK4AMUnBG8LfOVY
-   nncW156z11XdfOmYqc8ZXt3FqWGp49iNRxFzZCmdNBDs4wPAQOieq89TJ
-   IqEJkrAMXHF8HoIrCFa2ZU34MmTOZpM9jscaBaLffvx3YcBjS4DhrZ+40
-   v9RwPW/sh9Hcm+ep8YhE+gvLL/e0xfKF2ESAZr68aSuB8J6aIKzzn3LPy
-   SVuD50px8oL5uj2stRXVCqSXXlDpkYXMM0/mphXoNQi6woi03X5dr8Koq
-   g==;
-X-CSE-ConnectionGUID: kYQ7Zi/9RyeUssB9QDub8g==
-X-CSE-MsgGUID: pzFbCii7SsShJ0676J82qg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="58466036"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58466036"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 02:12:59 -0700
-X-CSE-ConnectionGUID: 9YGFqjHoSzKUXwjuOv1mFw==
-X-CSE-MsgGUID: bddS08ZcRGq2Jk6rQJbzUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="170071189"
-Received: from junjie-nuc.bj.intel.com ([10.238.156.181])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 02:12:57 -0700
-From: Junjie Cao <junjie.cao@intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Junjie Cao <junjie.cao@intel.com>
-Subject: [PATCH] gpio: timberdale: fix off-by-one in IRQ type boundary check
-Date: Mon, 25 Aug 2025 17:08:50 +0800
-Message-ID: <20250825090850.127163-1-junjie.cao@intel.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7iWC4YS"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso20713345e9.3;
+        Mon, 25 Aug 2025 02:13:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756113185; x=1756717985; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=db4P+0rJIoVMAf9aCGAunwkOJVROKaFbOov+4nNddVY=;
+        b=j7iWC4YSxEsLFcmTLjQutM53PVZa18MiKgqdX2cTtLoEAIxkvKLAAiCPDZKI5SA49g
+         sekkG7WR8LdNXn1frcMXL39IhOaZ3VEu0WQRiTIHNMBig0T6ENanwnHoUAzmns8XBY3l
+         r2HZo9e4sZ9RSZjDj7g3PcTfZ4ZVL14eeyPJPM/JmTnL9pM/9KQPTLtpOYeUpEZfTZAq
+         KNfX3maywqj7PvDrnM37MNMNxhDZusuPwbbUJG5csri/v1JFuJTTi5l2HspLIMbj4XHm
+         ocdQUtKc2ecL2orgBc8Qiuoxzu6vp4r9A4ynpgO5LewiqXuSuiPkNwiXtyM/c+TDmlzr
+         rNqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756113185; x=1756717985;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=db4P+0rJIoVMAf9aCGAunwkOJVROKaFbOov+4nNddVY=;
+        b=lXR4tXTHHNeMHNM0HN6+EXJeD7tZceCfO2SEH/j4M2phCJ8x9ktw4E4XkcAodIZOl5
+         rRauYxtKwswWvZokaje0ZKVfwNt0uMevZbk0wkbMp58OVEn/i557/PafyfS/s+2gMxd+
+         Ou7psIFUYkHbqdPlk20IC/I88s4L9Py/ZmjbT1pqT1q+13IdwM6hbfbr1Jwkwm1Zh0yw
+         slRGe99F2cnF6BKZEbw/F+/eyi1RUgpboKF37mRwMhpM0rA14dW1Fj0ZAU4SjLAh0MIF
+         mbDezG6ccCWaykA0gpZP9tiEGIpf+CbwZGnzRngWRKbh9+jWHbHcaNGvVabO95Rro8yY
+         4vzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoEGTpZkXRU/yduE1wBqFlrFOHL0/zycVUdUscfpDggC2i0aV7c2BsFCZcvayYloQ5Lp7N4ZbTzEq9BQ==@vger.kernel.org, AJvYcCUw389aC/JSXfTs1SYyztheL+u3qDULGmJU2hB2ema1cQIrWVxG4MZEF3PBsyNb8P6ngp0OtAAZIvUC@vger.kernel.org, AJvYcCVLwmtsyyVJS9htlPQ5gWgNb6FMwsFuGSkIV2KHlOQlMfns6JrLn/snFRH4w5/QbkPGRwqiUl4jeNNGPlQ=@vger.kernel.org, AJvYcCVtBo10CmbB4CVE/fW3nierLiiEMSvNzxBw8DRgo09ydeeZWiJwq05/KLl2XTapTkA4KVOs9qgVkEj50RD2@vger.kernel.org, AJvYcCW5d2d/sWJYGd/Mgc59E6DrE6eueWnM2k7xByCB7WAILFX8Fiu6Up04MuOufoby1ZIKNVwDPI1AB4p/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx79tLnHzYzrJ9AQaR2m6A0Ludh5B8mdQa97xUa0Z26YCfk5Yex
+	zaFl/+Uhg75faegH2u26cBMPwUgX5zlevrIHsWokpucaMrhUIrCV0Oxf
+X-Gm-Gg: ASbGncvzph6voQGuc5Zv8olUBvjunJgvn9j7br8X43C1F50d6ZQkpEv7pksFmVpoqeb
+	2PuS0rDjQfTB61EQgpQENd4i09wyq1b5CEgJk3jb9hxE9H+Oq4RCKYf199MyUH7AxlyGdxwodsf
+	h0NcMsAdgM2t0MN0A16sO4TI2bz1y9zqNuhh07IXs+P6Ba3DIkqb8RfKi15E7Zcszc6Fx3K9L4s
+	hiRcUbJ4Fz+vasW+1HFKicY46peE42RKa377JpcAYTGfCwIlc9OvYrZ8ol76/3rnDIGpEl7Y6AU
+	9SwfsKJemQ6Co9/rKXh0cva5hISdKzhtGTjkAhPWJo1DuKZN9MY8B0vUAI+cx/FdyNLev9jO7KG
+	T9i6l1fF17GToWA==
+X-Google-Smtp-Source: AGHT+IE03utt4ThdNe6shpSXgFmCA5mbksDv1S7T8WZiNoIZMCptGYie8W77bfRxLDIMs5p1gZhy8A==
+X-Received: by 2002:a05:600c:19cd:b0:456:db0:4f3d with SMTP id 5b1f17b1804b1-45b517b9571mr120173075e9.24.1756113184697;
+        Mon, 25 Aug 2025 02:13:04 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c712178161sm10638818f8f.67.2025.08.25.02.13.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:13:04 -0700 (PDT)
+Date: Mon, 25 Aug 2025 10:13:25 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: nuno.sa@analog.com, linux-hwmon@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 6/6] gpio: gpio-ltc4283: Add support for the LTC4283 Swap
+ Controller
+Message-ID: <y6qiierd6qdzcyghzaisv3ajlt53f74hk64tomm57kqouci5k5@cgpxvsnz4jks>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-6-88b2cef773f2@analog.com>
+ <CACRpkdax9THwKRZmaAHVcKbnBdi1LxjgvibAFOUVnVQJBhBiwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdax9THwKRZmaAHVcKbnBdi1LxjgvibAFOUVnVQJBhBiwA@mail.gmail.com>
 
-timbgpio_irq_type() currently accepts offset == ngpio, violating
-gpiolib's [0..ngpio-1] contract. This can lead to undefined behavior
-when computing '1 << offset', and it is also inconsistent with users
-that iterate with for_each_set_bit(..., ngpio).
+On Tue, Aug 19, 2025 at 02:12:51PM +0200, Linus Walleij wrote:
+> Hi Nuno,
+> 
+> thanks for your patch!
+> 
+> On Thu, Aug 14, 2025 at 12:52 PM Nuno Sá via B4 Relay
+> <devnull+nuno.sa.analog.com@kernel.org> wrote:
+> 
+> > From: Nuno Sá <nuno.sa@analog.com>
+> >
+> > The LTC4283 device has up to 8 pins that can be configured as GPIOs.
+> >
+> > Note that PGIO pins are not set as GPIOs by default so if they are
+> > configured to be used as GPIOs we need to make sure to initialize them
+> > to a sane default. They are set as inputs by default.
+> >
+> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> (...)
+> 
+> Can you check if you can use gpio-regmap.c helper?
+> 
+> select GPIO_REGMAP
+> 
+> git grep devm_gpio_regmap_register
+> for example drivers using this.
+> 
+> I think it can further cut down the code to very little.
 
-Tighten the upper bound to reject offset == ngpio. No functional change
-for in-range offsets.
+Sure, I'll have that in mind for v2.
 
-Signed-off-by: Junjie Cao <junjie.cao@intel.com>
----
- drivers/gpio/gpio-timberdale.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- Nuno Sá
 
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index 679e27f00ff6..f488939dd00a 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -137,7 +137,7 @@ static int timbgpio_irq_type(struct irq_data *d, unsigned trigger)
- 	u32 ver;
- 	int ret = 0;
- 
--	if (offset < 0 || offset > tgpio->gpio.ngpio)
-+	if (offset < 0 || offset >= tgpio->gpio.ngpio)
- 		return -EINVAL;
- 
- 	ver = ioread32(tgpio->membase + TGPIO_VER);
--- 
-2.43.0
-
+> 
+> Yours,
+> Linus Walleij
