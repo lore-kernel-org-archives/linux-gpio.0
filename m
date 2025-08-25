@@ -1,100 +1,248 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFF729D283
-	for <linux-gpio@vger.kernel.org>; Mon, 25 Aug 2025 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0B31F4198;
+	Mon, 25 Aug 2025 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113030; cv=none; b=p2Rp+vPyD9EMEiXv9SEQhWGLEY9QQjQLu7jmFoZ4nrhJSP1VDxnZI3L1EbRZ8t2FGd4Z0sMxc5jeetMq1CdgmNeeoANQEt19N82CNAzv/HWe9XpwOxoWfKHI3CD+ly70U8zKKSCvYFRO2C68y97bPhhqrQ/bIEXkfcyLN3nA7IY=
+	t=1756113102; cv=none; b=f3BsxnzzsvGAB20KLaGXdwXZ7fhj5RWqEfM3ZwHwdmkA1FRdknL8drM0wud36Y7P56gr74HhGjgjnEAHg4kFw6o7bqvWm2z+0LDlYmVybZEJSpXc3+l+aHe1YJSKF56b7rUw0lZUAwKxlW3VIHEwDQ0XKH4m7oTOcqQdU5lI5SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113030; c=relaxed/simple;
-	bh=K6PyU0GsbatkF2Dnw0veoFSf+BGczxcVhhUScrXAiLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pm+Kpub2qG9wpOD4ej2KIJc7jpS2ntuVJBTlXvRQU7DngG6uPs0dtMsUGyjVNLaDiXLCAwzGTx8swCvCO37LdMQWQMtknk76u+VMq8tpASF65PSBTKXQLjCmBP/IqGOr0pt4pHILn30i4m2cjBxTqdsd5/u5M/h/oRx0NN8APCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NqwNVgAU; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1756113102; c=relaxed/simple;
+	bh=x+c6BrjmQrqMl/8bNmYcOMK/G4hGL0dIcPdibI66gWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjZ9xNZHkg/6RXxqRylbgDBui1oh6c9oD2mvFHMomTfahqT6Ea+4glh0Kb6xqjf786yS+jrWCjQharhakYQM0VvWOe6l5JXUOFyNSHWjGxHgKKxEMVBmygLhCu/UZuyVO+iDFW0GKIHyyZmDntY/pCZAaU4zqTu10xtl9z6Pz+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRjriIhU; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NqwNVgAU"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3367f35d129so1693911fa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Aug 2025 02:10:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRjriIhU"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b60fd5a1dso5245435e9.2;
+        Mon, 25 Aug 2025 02:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756113027; x=1756717827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9+ip/B1cOdz45Ch9sh9CoC/HT80R58+cTC3VtE9YsY=;
-        b=NqwNVgAUAs6RxU/7KvsowSaqE8na0dasiBxgEKRdgRogMWjbM8sWcYUj1su99UZQCK
-         ZTqD/H8PzI0E/g49Z7O3qRqXXfjk0EpIQ7sqF2m5uzKQoXrEl0vKqjgh/gxpXTC3hG1t
-         4reeeyxng4ZwvSnrJ4BwaP/m08LvLotWD4xLpqs4WvQmqxPGcbdMEa6oMUElMmeKl/7o
-         VjruiJqUQwSa8IQta3UVnFAX5JOIDQreuskXdWkJHR6WQ0X9yshI1DZ2OGScgu/EUHHr
-         2y4tn7KoUqIeQxXhpd6djpkQz1v3Zru+63hdfKtFovj6QXrBFqDSKtndwkjrhZjXi09Q
-         jVvA==
+        d=gmail.com; s=20230601; t=1756113099; x=1756717899; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DCuOFYwxz4o6YK+ZyP6M6oLOXp3nZBia4u3KkuMHyYo=;
+        b=lRjriIhUejfow7vd2lm3XJSxp/ww0ck9jtYJgT+zLtPuD83aqSgpV4EDZhOOVmqRa2
+         02SWLV3i0pgPwoM3An3clqrSP7hxcNroSon7NBq3/Zq2rrHztiHjUKB4R36aK/kKaZbn
+         Rg0smFe6OFmgJhSqT/T0ZWMQFpe/ECaaMi6QOMI7iRVKlwfy1jXsIY2MzPcWSq1OTcC5
+         dYX6zQ1C0NzuOlOZPBjmsMuHxyHAsi0iNh1934KYw7aLzdqfl7cU1BUMRJspmnLcDPeM
+         rrvTmDrqRUHn6NmMzK4mMI2vz44lTVurbeIFGXlWfgooaIfLfYJe/CdueUk5rIWocVZy
+         VVeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113027; x=1756717827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9+ip/B1cOdz45Ch9sh9CoC/HT80R58+cTC3VtE9YsY=;
-        b=Di/RcWZFCV6wy1IcoLlCLTaEk1Q7DaqQPU1zoKmqgPy/1H9hLQeWZjHNSa8syIcLR5
-         j0vEoxGr0Y6WRhN6zCj5YIhBUYl5yPdkIBzOx9g68s7NzvX1Lsicl3sDgdOQzl6l3SSA
-         8nQuE25weW8V730btBs3ZBAUCGw/Jxsfoai8RFkHndaoLXYAHUOCAYYhtZkVn6KVX+J5
-         LGEiv4yY2wTzS8CYtew2UhvqxSbxxon0ejhtGJZajKBRXkYlWjtikx0qjJRWzsw2YbIa
-         W9tDGf7N+r7y/m1emJIMrDGN2E647w1L3LMfB/TbTjusb93TNitkf0UEE7v4uSWgwrOf
-         oKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQaYXezajOpIsS1/UQyv7iq6RbblrOp6JA5e+4tg6X8rPqSNuIQbyJXYLSszEqk0TraarJmI955QfW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZRb7Y6rnISkX36mCS3LMtN5PazTAg973Vo+XEBddJj86sqKyF
-	6VprcCq3JEuQ/kYO95bX/Rnx1X1f6JCqCWS8t3cn5uM728tIu4HmmiBC40P/5sdCQCUDaQ/xraH
-	mvbcsl2isEXpHdf9ew0aHr8AO8vecibe1vcHyNIWU/g==
-X-Gm-Gg: ASbGncslekyLnlYlFAUSryXzD2ysbiL95wbigQom65kUfnSUrZGeR/e4iBmQgz698Vz
-	lFBMjO6vlt3BLcia969cFzUeOAOU79f8KmAF6VQYLAQq+lc02YTaFQB1hJ2nsXS9VZsZih+4Jv/
-	vnQB4rUmx11/qRi1OU9VT8AR8vLpFrQ/kWl+KUlZU1y6n5QumoR36lC/k1lVk8fZTBv6VqQ7VQJ
-	kweBz8=
-X-Google-Smtp-Source: AGHT+IHDpAZbDBO+P1KWHMFH2puuWSDWYfqPFdD8RvYPD2rHyprBhEUNN62NBhXGRZs8RUFrVFKwGRZe7oYI+GC3DWY=
-X-Received: by 2002:a05:651c:31d5:b0:32c:ab57:b03 with SMTP id
- 38308e7fff4ca-33650de911dmr32208511fa.3.1756113027149; Mon, 25 Aug 2025
- 02:10:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756113099; x=1756717899;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DCuOFYwxz4o6YK+ZyP6M6oLOXp3nZBia4u3KkuMHyYo=;
+        b=OTS9qhc1bNJW9LQ1EnbmIl7MpJGWzj2qICeEQr4pUvMKNBQ+X6sDNG7lmwbCJXOOtN
+         Rd9E5TUGhPHTdDlg4uFngpPQ39RSqbkic5dYaR4cC1GQlMz7YJny1DoQUwdtUCQDSQ3T
+         +x0NecfSLxUpvVoaC53ymg5DnMMLwZeYrlsD/f2daWgoKJLpNhdeZli77UKkDfSxmFcN
+         KwcM73RvUYum/HxIi1jMInoNJBF5rNkTwuHhgigI3vogjzFi8LND2lRA63SiZaA/EhlK
+         x95KgS8aY1QvGsS5vCY2cfIdUgePlt/mTPbs3RzWOThcytLtRYDa4nDOt32LCyh3mnp0
+         T/vg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8De3++7HLU2KWIQCVJ8DfNBbN7DZEzozU0dcbf0xKiPqSi++1ahQITNrzipz2964BKKk8NB1xw6EH5to=@vger.kernel.org, AJvYcCUfjG8Dc4KcQmvUdGRqMeh6L6jAIfETmhbAu0DKOuDDEMRqqDvHiQR+mY1sM0NKonsMKkeI+A/BcOwKGBEr@vger.kernel.org, AJvYcCUje5EcEDYdHR6QPAdVi4HPvWWvTxJAi6yTT5JfLKryl9zhsrgmi/jJFBlIvObte6tc7QuAVNaNnxSy@vger.kernel.org, AJvYcCVIKF5tDN55OrGVasKlVp/y1dh+FuxHd9PVpYDa7Zf7JYiRBr0aY5DH55iU7dLuYZm1uMAscfRDZwW/lA==@vger.kernel.org, AJvYcCWbTacmIbv29wBsOfpHHXrDetLlqHuHHyhGg7dTpdwbyP4Glubr405YqmQ912aKWvcHNTyokijexSP1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpWvnZ5e3xjHEUbUuyKnuuQ8pzsGiRDE/1eNV9MXd9SI2F1z4n
+	aCnOeZ9vgMbL1v/tA29j7qmokVXGw/oIL81ts+LjTnHbOceUZyiJNxUc
+X-Gm-Gg: ASbGncttGlrB9mwqNo0+/+kPgNZFtqPc3C+yXh8PaOVwbpza4ochB+JzWfwwqJ0Vuen
+	coGHsWgHwdUf3NbMTsiMMU0Wgsuy379ptPO1mMdAnNi9xKAWSxWH8mz/jbFRS82EOMNEfruSdPY
+	dV+lkZJna2ZTtU3+bN/cGnhJNeU9bJLgT8wbIQ3T5OSyWxky5MriKP/1MHTPu3sH2xI1Z6uBJXP
+	9RPl6E4LJvVSuJx5a2AzknhKf7+KAfM5RC4hN+Hlf9Pa0REspoK5bsIJXrBGBLW3XnzY1Q8DSjP
+	pXXKGLmYRkg44id3cs3PiWhEKEFWrM7knOxC17ywHZRnYxfbu+w+wWtVfO7x29LBSgiOXMU7zTb
+	GBNh+GCphMqKNJv+v+prERFMq
+X-Google-Smtp-Source: AGHT+IEhx0xp5HZzCjChvt+iGvjSrB3+Rzugq2SXKx8CoWISlw5f6kVeMj6cta5LseKPpxtKIfPj/Q==
+X-Received: by 2002:a05:600c:4511:b0:456:1156:e5f5 with SMTP id 5b1f17b1804b1-45b517d27f6mr112084995e9.31.1756113098783;
+        Mon, 25 Aug 2025 02:11:38 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57498d9csm99824125e9.22.2025.08.25.02.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:11:38 -0700 (PDT)
+Date: Mon, 25 Aug 2025 10:11:59 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 1/6] dt-binbings: mfd: Add bindings for the LTC4283 Swap
+ Controller
+Message-ID: <tpqebtepsnp5slukdiwn3rrcrrxj7cl22vrblrldo4x73e42py@yslhryqvsacb>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
+ <20250814215724.GA3975144-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
- <CACRpkdYEzbM33HBAhHEmAg9f4Zpi=2WvqPdZ35=M2eVCqcTTFg@mail.gmail.com> <c81019f3-3570-4437-a10a-d49cabc4952d@quicinc.com>
-In-Reply-To: <c81019f3-3570-4437-a10a-d49cabc4952d@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 25 Aug 2025 11:10:15 +0200
-X-Gm-Features: Ac12FXyjszIfUK2JZwcA6e7nLVD1sdGnLR4S34aGz88q5xxgv2NTEWTCwRbER78
-Message-ID: <CACRpkdY0tva_Ss+GhAA99g8tMWhbFVJh0fbYakMh4AZG1K=c1A@mail.gmail.com>
-Subject: Re: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
-	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814215724.GA3975144-robh@kernel.org>
 
-On Fri, Aug 22, 2025 at 7:33=E2=80=AFPM Prasad Kumpatla
-<quic_pkumpatl@quicinc.com> wrote:
-> On 8/21/2025 7:04 PM, Linus Walleij wrote:
-> > On Thu, Aug 21, 2025 at 6:49=E2=80=AFAM Prasad Kumpatla
-> > <quic_pkumpatl@quicinc.com> wrote:
-> >
-> >> Mohammad Rafi Shaik (9):
-> >>    dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
-> >>      clock property
-> >
-> > Can I just apply this one patch to the pinctrl tree?
+On Thu, Aug 14, 2025 at 04:57:24PM -0500, Rob Herring wrote:
+> On Thu, Aug 14, 2025 at 11:52:23AM +0100, Nuno Sá wrote:
+> > The LTC4283 is a negative voltage hot swap controller that drives an
+> > external N-channel MOSFET to allow a board to be safely inserted and
+> > removed from a live backplane.
+> 
+> What's a binbing?
+> 
+> When you fix that, don't say 'bindings' twice in the subject. Subject 
+> space is precious.
+
+oh, sure...
+
+> 
+> > 
+> > Main usage is as an Hardware Monitoring device. However, it has up to 8
+> > pins that can be configured and used as GPIOs and hence, the device can
+> > also be a GPIO controller.
+> > 
+> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> > ---
+> >  .../devicetree/bindings/mfd/adi,ltc4283.yaml       | 85 ++++++++++++++++++++++
+> >  MAINTAINERS                                        |  7 ++
+> >  2 files changed, 92 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml b/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..c5e8aec887d9cfad9052a7c28783396efd6804a9
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> > @@ -0,0 +1,85 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: LTC4283 I2C Negative Voltage Hot Swap Controller
+> > +
+> > +maintainers:
+> > +  - Nuno Sá <nuno.sa@analog.com>
+> > +
+> > +description: |
+> > +  The LTC4283 negative voltage hot swap controller drives an external N-channel
+> > +  MOSFET to allow a board to be safely inserted and removed from a live
+> > +  backplane.
+> > +
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4283.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,ltc4283
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  gpio:
+> > +    $ref: /schemas/gpio/adi,ltc4283.yaml
+> > +  hwmon:
+> > +    $ref: /schemas/hwmon/adi,ltc4283.yaml
+> 
+> This patch has to come after these are added. However...
 >
-> yes, please go ahead.
 
-Patch 2 applied!
+Yeah, I realized that when I got your bot build failure email.
 
-Yours,
-Linus Walleij
+> > +
+> > +  adi,gpio-pins:
+> > +    description:
+> > +      The pins to use as GPIOs. The device has 4 ADIO and 4 PGIO
+> > +      pins than can be used as GPIOs. The ADIO pins are numbered from 0 to 3
+> > +      and the PGIO pins are numbered from 4 to 7.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +    minItems: 1
+> > +    maxItems: 8
+> > +    items:
+> > +      minimum: 0
+> > +      maximum: 7
+> > +
+> > +dependencies:
+> > +  gpio:
+> > +    - adi,gpio-pins
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - hwmon
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        swap-controller@15 {
+> > +            compatible = "adi,ltc4283";
+> > +            reg = <0x15>;
+> > +
+> > +            /* pgio1 to pgio4 as gpios */
+> > +            adi,gpio-pins = <0 1 2 3>;
+> > +
+> > +            gpio {
+> > +                compatible = "adi,ltc4283-gpio";
+> > +                gpio-controller;
+> > +                #gpio-cells = <2>;
+> > +            };
+> > +
+> > +            hwmon {
+> > +                compatible = "adi,ltc4283-hwmon";
+> > +
+> > +                adi,rsense-nano-ohms = <500>;
+> 
+> Seems like a current sense resistor might be a common thing.
+>
+
+At least ltc4282 has the same property so I can add a common property if
+you want me too.
+
+> > +                adi,current-limit-sense-microvolt = <25000>;
+> > +                adi,current-limit-foldback-factor = <10>;
+> > +                adi,cooling-delay-ms = <8190>;
+> > +                adi,fet-bad-timer-delay-ms = <512>;
+> 
+> All these child node properties can be moved to the parent node.
+>
+
+Hmm, if I move to the auxiliary device, this will "fix" itself but just
+out of curiosity, why should it be on the parent node? These properties
+only make sense for the hwmon device.
+
+- Nuno Sá
+
+> > +            };
+> > +        };
+> > +    };
+> > +...
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index e90710a9b40d7b32c151472a9ac3b02efd95f346..413bb77d5eebe2b51aa9c3af86e7cfd5ab142044 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14500,6 +14500,13 @@ F:	Documentation/devicetree/bindings/hwmon/adi,ltc4282.yaml
+> >  F:	Documentation/hwmon/ltc4282.rst
+> >  F:	drivers/hwmon/ltc4282.c
+> >  
+> > +lTC4283 HARDWARE MONITOR AND GPIO DRIVER
+> > +M:	Nuno Sá <nuno.sa@analog.com>
+> > +L:	linux-hwmon@vger.kernel.org
+> > +L:	linux-gpio@vger.kernel.org
+> > +S:	Supported
+> > +F:	Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> > +
+> >  LTC4286 HARDWARE MONITOR DRIVER
+> >  M:	Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+> >  L:	linux-hwmon@vger.kernel.org
+> > 
+> > -- 
+> > 2.50.1
+> > 
