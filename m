@@ -1,130 +1,100 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A32220F5C;
-	Mon, 25 Aug 2025 09:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFF729D283
+	for <linux-gpio@vger.kernel.org>; Mon, 25 Aug 2025 09:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756112856; cv=none; b=GlpThw9RvoueP1evagmTI0JPvHvx90akDKBkupnHDo/asv1Nx7xGgcMML4hiUfBBtWfYhtvkqK9ZqomYTX0Yjo5bT5lxRJ8Q9Vty7s3SC4//fvhd5VT8mqYrT0I3W8GfYVBwgz9yeU9PKugNXLn9dwsps9SNiaUKQY86X3HsZRA=
+	t=1756113030; cv=none; b=p2Rp+vPyD9EMEiXv9SEQhWGLEY9QQjQLu7jmFoZ4nrhJSP1VDxnZI3L1EbRZ8t2FGd4Z0sMxc5jeetMq1CdgmNeeoANQEt19N82CNAzv/HWe9XpwOxoWfKHI3CD+ly70U8zKKSCvYFRO2C68y97bPhhqrQ/bIEXkfcyLN3nA7IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756112856; c=relaxed/simple;
-	bh=0afVbdqJuKr1Gb8UF4vauT+qwqgRsD9QKUHqhLHj8uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PHttZktMOu+uCrGxV1UO7W4Pqkn4YBbDRUpEOp+yqyehARQD+nqB16s4piYC6P7MpVqSOgSx+ThUa6O9Zap27iM6ts9K7G70AbgjPRBw3BqTdn6NgkbG8yrqqLOVA3tyjtju+oVGLoC382uSnJb3D8kzEXeuMk3yRwwRQUoI+xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mv4/xmRP; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1756113030; c=relaxed/simple;
+	bh=K6PyU0GsbatkF2Dnw0veoFSf+BGczxcVhhUScrXAiLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pm+Kpub2qG9wpOD4ej2KIJc7jpS2ntuVJBTlXvRQU7DngG6uPs0dtMsUGyjVNLaDiXLCAwzGTx8swCvCO37LdMQWQMtknk76u+VMq8tpASF65PSBTKXQLjCmBP/IqGOr0pt4pHILn30i4m2cjBxTqdsd5/u5M/h/oRx0NN8APCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NqwNVgAU; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mv4/xmRP"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so32924175e9.3;
-        Mon, 25 Aug 2025 02:07:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NqwNVgAU"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3367f35d129so1693911fa.1
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Aug 2025 02:10:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756112853; x=1756717653; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Vr4qgg8QvT1htSr17vcKZvoQkQdbfOPGu2eF2Rhex4Y=;
-        b=mv4/xmRPPwFDawaaocz+O8wCMWAbL5mn1nPV7HKjaF1BR40haXbVDd62n8vhyxuynd
-         dxo+HMNGFEAwSZXRyS6YfAZSJ3veXexLsRANggsCMzPMdbas/rl3FsHBUYsfsCNbz4/C
-         J0yOZYZR/zdegFxOVXF67pxu0hU0H6HzHeZDbKqRXP3cDqshx+mHztygIVes/Fxm1RDm
-         vvfwkK/hFAzm3pAM3ihJid64P3XyEWcwN9nruxS1Wa3fdzmVE8yrpW1qwOLmSwZsQKSO
-         XB7mMAYAXN20+UyAAiABO9ffqr9VmBFkj3g+iw1NnJq5Rzl2KZ6+cu7MtZvPZMtPFHwF
-         iF2A==
+        d=linaro.org; s=google; t=1756113027; x=1756717827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S9+ip/B1cOdz45Ch9sh9CoC/HT80R58+cTC3VtE9YsY=;
+        b=NqwNVgAUAs6RxU/7KvsowSaqE8na0dasiBxgEKRdgRogMWjbM8sWcYUj1su99UZQCK
+         ZTqD/H8PzI0E/g49Z7O3qRqXXfjk0EpIQ7sqF2m5uzKQoXrEl0vKqjgh/gxpXTC3hG1t
+         4reeeyxng4ZwvSnrJ4BwaP/m08LvLotWD4xLpqs4WvQmqxPGcbdMEa6oMUElMmeKl/7o
+         VjruiJqUQwSa8IQta3UVnFAX5JOIDQreuskXdWkJHR6WQ0X9yshI1DZ2OGScgu/EUHHr
+         2y4tn7KoUqIeQxXhpd6djpkQz1v3Zru+63hdfKtFovj6QXrBFqDSKtndwkjrhZjXi09Q
+         jVvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756112853; x=1756717653;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vr4qgg8QvT1htSr17vcKZvoQkQdbfOPGu2eF2Rhex4Y=;
-        b=kOHFl7EOtquGvP2NW2ZmOIT+w+IOe/gCy8+qUZ8Wsimu5FN+aJlQV5fpHrTGCrvdYI
-         G29Zp4OcXsp6mD4vRtdpX5wZJkVK/DjHIQgNKy408y+/kxJZAvjyGatkU1pO/RLkzA6L
-         BcmQfZAWme4zPrDWwSPe2NIk/G0lxPYKyeEhq6ZRuezuhvbVPLtKtgdFHQ5iYpvbk21/
-         Sf+4rhrvp+0LNQVHaEVgS8ooK4Sa2YvR/fpD/mwEQPpVBwbQTCAneE41pdodNcrwSzuh
-         Rvuyoo6XkTa/MQPZuaSzCDKVH2sarh87XoZCV32AdaeVXWbDPl1Nm8kOx1X0c8XB5UoL
-         vINA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVAPfw/it1NIlBvEQhlPqYqI1i8+h2Cp+eGsEroe48vxm0qjtx9BgN7JAE4R9uOKqaYsuObBxNZIjPvAQ=@vger.kernel.org, AJvYcCVdDWbxUdbNmpZDNeR26REMPzs7p3ZX8Md0tCTaH6yl14go8z6xdFJJN7O0L6prqdtOZB00Za8Nq8EFCA==@vger.kernel.org, AJvYcCVz0KHc3qo9rxTSziNxaZCOFsAe4fWc/aHbHjQdABqMWD7ainQjtIpL4ttHw0yLgi5IvtLZjG13/ixl@vger.kernel.org, AJvYcCWZ8Sdydz4O+9nHOg5rFZJpw7KE/XZG3+6/PkPn26g2kz511VtG4MDUVJiLoGTGu8GMKbK4ezQZjM3zbKC1@vger.kernel.org, AJvYcCXmCtcZR9JEL1V7jRXPjr9Hotnw7yBVRj+jKYjK0+eYU03bDzNewxj7slTOOUu2GOwKDLHgFuSW1CHE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNKIJNK68y1hSiruErqjxLMdl65sjYHp306vCKCS4/81NvzWE1
-	1Y8OKICFy8AeNjYM4Ax3ygrtaanQYFuTpHD52zp/f5RENv0vfdncefgz
-X-Gm-Gg: ASbGncvCxCWIPbRMmgTGKkdLZ1L6LrguFVl9wQR5YkFz0SKZiQKlVmgeWAuIKiuvAJP
-	Dis2LvgsoD1cnNy4Mb3LZIWv6vNH4Db0VmbT2kHTeG86Ji/039XzmjqB7vmiNopZwIwmb6oTydd
-	jEL7XpXdA6USYnOHZAp9SsmpdzSCmmCD/G3mMLAfGB1iQ29vBqbS8/L589A99l+GCpwRGsexpRA
-	oplVDJcbqWlDidhLrx1fFOH1T0x8D6BvCEiQj0BjB8a96SfjpdYxPfOo9qWbInK2dw4j0EC+s80
-	NAKEsOBIa/4M/nH4Xr4tgLBJcuEKMpV6A/sgvgvd/Q9tju0aC/gFOBTL6oa6gzoMEfWW7o9KFpj
-	YknI+KMucrVuldw==
-X-Google-Smtp-Source: AGHT+IGdoM8nFDuaCsN//itvQR4DcfYOTg4viMn0MCLDJ9tOT8DXHl3CreL1W3WiJ/o4L5cjBiOFOw==
-X-Received: by 2002:a05:600c:3147:b0:459:d408:d890 with SMTP id 5b1f17b1804b1-45b517db8e6mr107941905e9.33.1756112852397;
-        Mon, 25 Aug 2025 02:07:32 -0700 (PDT)
-Received: from nsa ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57498d9csm99679345e9.22.2025.08.25.02.07.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:07:32 -0700 (PDT)
-Date: Mon, 25 Aug 2025 10:07:52 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, nuno.sa@analog.com, 
-	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
-Message-ID: <jhtvuwdako2r3pgj6lwxlgb6godnleqezh6kdiswn2mqslqy7w@6p6ixj3hrckq>
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <5713bb5b-3301-46bc-b30a-d2e4c58d1036@roeck-us.net>
- <2svr42ee7akwxwj5nizwe4a4hqdk4rslv7ivxraqg3jy6m3mxz@lfpn2nx4jdmm>
- <20250820200354.GA602656-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1756113027; x=1756717827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S9+ip/B1cOdz45Ch9sh9CoC/HT80R58+cTC3VtE9YsY=;
+        b=Di/RcWZFCV6wy1IcoLlCLTaEk1Q7DaqQPU1zoKmqgPy/1H9hLQeWZjHNSa8syIcLR5
+         j0vEoxGr0Y6WRhN6zCj5YIhBUYl5yPdkIBzOx9g68s7NzvX1Lsicl3sDgdOQzl6l3SSA
+         8nQuE25weW8V730btBs3ZBAUCGw/Jxsfoai8RFkHndaoLXYAHUOCAYYhtZkVn6KVX+J5
+         LGEiv4yY2wTzS8CYtew2UhvqxSbxxon0ejhtGJZajKBRXkYlWjtikx0qjJRWzsw2YbIa
+         W9tDGf7N+r7y/m1emJIMrDGN2E647w1L3LMfB/TbTjusb93TNitkf0UEE7v4uSWgwrOf
+         oKmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQaYXezajOpIsS1/UQyv7iq6RbblrOp6JA5e+4tg6X8rPqSNuIQbyJXYLSszEqk0TraarJmI955QfW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZRb7Y6rnISkX36mCS3LMtN5PazTAg973Vo+XEBddJj86sqKyF
+	6VprcCq3JEuQ/kYO95bX/Rnx1X1f6JCqCWS8t3cn5uM728tIu4HmmiBC40P/5sdCQCUDaQ/xraH
+	mvbcsl2isEXpHdf9ew0aHr8AO8vecibe1vcHyNIWU/g==
+X-Gm-Gg: ASbGncslekyLnlYlFAUSryXzD2ysbiL95wbigQom65kUfnSUrZGeR/e4iBmQgz698Vz
+	lFBMjO6vlt3BLcia969cFzUeOAOU79f8KmAF6VQYLAQq+lc02YTaFQB1hJ2nsXS9VZsZih+4Jv/
+	vnQB4rUmx11/qRi1OU9VT8AR8vLpFrQ/kWl+KUlZU1y6n5QumoR36lC/k1lVk8fZTBv6VqQ7VQJ
+	kweBz8=
+X-Google-Smtp-Source: AGHT+IHDpAZbDBO+P1KWHMFH2puuWSDWYfqPFdD8RvYPD2rHyprBhEUNN62NBhXGRZs8RUFrVFKwGRZe7oYI+GC3DWY=
+X-Received: by 2002:a05:651c:31d5:b0:32c:ab57:b03 with SMTP id
+ 38308e7fff4ca-33650de911dmr32208511fa.3.1756113027149; Mon, 25 Aug 2025
+ 02:10:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820200354.GA602656-robh@kernel.org>
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+ <CACRpkdYEzbM33HBAhHEmAg9f4Zpi=2WvqPdZ35=M2eVCqcTTFg@mail.gmail.com> <c81019f3-3570-4437-a10a-d49cabc4952d@quicinc.com>
+In-Reply-To: <c81019f3-3570-4437-a10a-d49cabc4952d@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 25 Aug 2025 11:10:15 +0200
+X-Gm-Features: Ac12FXyjszIfUK2JZwcA6e7nLVD1sdGnLR4S34aGz88q5xxgv2NTEWTCwRbER78
+Message-ID: <CACRpkdY0tva_Ss+GhAA99g8tMWhbFVJh0fbYakMh4AZG1K=c1A@mail.gmail.com>
+Subject: Re: [PATCH v8 0/9] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
+	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 03:03:54PM -0500, Rob Herring wrote:
-> On Thu, Aug 14, 2025 at 03:15:29PM +0100, Nuno Sá wrote:
-> > On Thu, Aug 14, 2025 at 05:54:26AM -0700, Guenter Roeck wrote:
-> > > On 8/14/25 03:52, Nuno Sá via B4 Relay wrote:
-> > > > The LTC4283 device features programmable current limit with foldback and
-> > > > independently adjustable inrush current to optimize the MOSFET safe
-> > > > operating area (SOA). The SOA timer limits MOSFET temperature rise for
-> > > > reliable protection against overstresses.
-> > > > 
-> > > > An I2C interface and onboard ADC allow monitoring of board current, voltage,
-> > > > power, energy, and fault status.
-> > > > 
-> > > > It also features 8 pins that can be configured as GPIO devices. But since
-> > > > the main usage for this device is monitoring, the GPIO part is optional
-> > > > while the HWMON is being made as required.
-> > > > 
-> > > > Also to note that the device has some similarities with the already
-> > > > supported ltc4282 hwmon driver but it is different enough to be in it's own
-> > > > driver (apart from being added as MFD). The register map is also fairly
-> > > > different.
-> > > > 
-> > > > Last time (for the ltc4282) I tried to add the gpio bits directly in the
-> > > > hwmon driver but Guenter did not really liked it and so this time I'm doing
-> > > > it as MFD.
-> > > > 
-> > > Nowadays I suggest that people use auxiliary drivers in such situations.
-> > 
-> > I see. But do you have any issue with it being MFD?
-> 
-> I do...
-> 
-> > I'm anyways tempted to the auxiliary device idea. The main usage for
-> > this device is HWMON and I dunno anyone would use it only as a GPIO
-> > controller. With the auxiliary device we would only need one bindings file
-> > and slightly better bindings for the pins functionality.
-> 
-> For this reason. The driver structure influencing the binding design is 
-> a problem, but I think MFD is more to blame on that.
-> 
+On Fri, Aug 22, 2025 at 7:33=E2=80=AFPM Prasad Kumpatla
+<quic_pkumpatl@quicinc.com> wrote:
+> On 8/21/2025 7:04 PM, Linus Walleij wrote:
+> > On Thu, Aug 21, 2025 at 6:49=E2=80=AFAM Prasad Kumpatla
+> > <quic_pkumpatl@quicinc.com> wrote:
+> >
+> >> Mohammad Rafi Shaik (9):
+> >>    dt-bindings: pinctrl: qcom,sc7280-lpass-lpi-pinctrl: Document the
+> >>      clock property
+> >
+> > Can I just apply this one patch to the pinctrl tree?
+>
+> yes, please go ahead.
 
-Alright, it seems we're aligning for auxiliary device on v2.
+Patch 2 applied!
 
-- Nuno Sá
-> Rob
+Yours,
+Linus Walleij
