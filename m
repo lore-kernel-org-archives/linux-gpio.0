@@ -1,197 +1,127 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F632D2382;
-	Mon, 25 Aug 2025 14:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC02FD1C5;
+	Mon, 25 Aug 2025 15:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133506; cv=none; b=hWNVgEow2cPWjm4OR3pXqWnVSVfeenWw4yN/zLCl+6qGIuh0sOPKrts4243g0I29ndTi/nv6BfqUwqNdjuFnNqY+M+N8JgBhKqBPlAw+o0oIiec8ZlKuzsBR8N2dosNsH+MRdPQQlyP73CCAkgAkjZ5tTseAw+9TvHko9arENJs=
+	t=1756136098; cv=none; b=Ndph17qRehGOx/3eKl+LJhfhJ2VLzsXjCyGz/pdWz1gcPPXcTwLkc9OwD9WvXwJGS7KhItckbsBSKUk0ayrH+5FDgYDJ/gOekiD1ajw4ACP12kNchnQWAZek0roZP3zr6itIB/IUhpRf/1vesSC6ZVZdfbaizz/CCpfz+89J1yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133506; c=relaxed/simple;
-	bh=q1CN+D5OKlckJ+DvfarKqNMMhOJ5GG1uwlK2GcPDfvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GQ7gYufxibLpS0yIQ8Wv+pEGI6HhasWAWYDI6avWB0vHhjYsGDqtg6ARenRBH45H+Q1bAAh4435g7ZHRKn5dUaxs/Ws1a/3Yt1nb9Gqv25D/ub3Yv9W+C0eL4dtLStNjhb2DyRc0toGiFE1TjZJt5fG6a6S3gKJC6Rm7o6MrI+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gBL1zgHl; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1756136098; c=relaxed/simple;
+	bh=92FvKfWnhbgX/oEXcYLlIFBi8KWdGOA8VnyRR7wf9Hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BAhpKJzO8lonWnAtIYnOifoSZqzxqjiZtP+++CvOZKoL6vErdh3qyxXUia0KOllGheSlUtkZw5HyXTbf+AgjS8BRggc35AJ6tdYILaZHJNGVfiQffN9SPhwsbLMQBgtBe6qkO7YEwfqLDxBvU4JkEYJk0RxxygJG8y78YN7Ah+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZUWUDfk; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gBL1zgHl"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PEdf3l029476;
-	Mon, 25 Aug 2025 16:50:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	31laoDor+DKdLySueg4nAlgo6l/Od+GBgTYs+d1By2g=; b=gBL1zgHlFG1i+vG8
-	sHR3BY79R9r2+5mkIbUSTLE3skJ6ei5w1EfRLcTl+hppvHwOY5j7Zrujatt+oedK
-	zec7GTyTDPieBIqSDzEkKXjpZqqvclo7lPkBKSYMSWo6vuVJW4K5Wpdss2vUIEbc
-	j23THcwMRHSoEamghxzZKpiTJiaiIpKN+V51E66ndqY/9HsdiUOLIMSWWw0tjeul
-	eY//tnmBYM+vkzWMHgohgabbLQQJAwsjnGe/iXx+8JIdegVbiS5tw9jvN+nTQoMh
-	8CY0+uPEpSKSEgoKe3/bnW3C3W6jtel7HP7Hn6Z3gWMEaatUeCzlQIpPMp/ph+ZQ
-	pOsfFA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48q5uyybbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 16:50:51 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8640B40044;
-	Mon, 25 Aug 2025 16:49:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC2CF71FDBE;
-	Mon, 25 Aug 2025 16:47:42 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
- 2025 16:47:41 +0200
-Message-ID: <7378edca-12f4-44a1-9c2a-ea07ebab4ad0@foss.st.com>
-Date: Mon, 25 Aug 2025 16:47:40 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZUWUDfk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756136096; x=1787672096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=92FvKfWnhbgX/oEXcYLlIFBi8KWdGOA8VnyRR7wf9Hc=;
+  b=kZUWUDfkWYOIMb5AEvoRF06C9cj5G6nEZtQXHI/z8RFF4rJ2epThynAM
+   o3Tc4R9tPJ1+eAOf8Jc1k0MU8FTTnA47ybHEFXOwZxU0F8UCemAeK3Jln
+   Phyl2Te9kO9288RhUt5SfCRJKf+R0aW06/EX1/O/X4O7kgZkvP2NvhZIi
+   9RoydN7HGowHAMkhUloIPkuJD4NDvG9jOwN2luIHzwDZmFgXOWmI7TLi/
+   l9LD6Mk73R0dmxWy5HXZ9yK2VOZ6VT1l1tiKfMQ6Yz7nJQd5Lui9zESBk
+   1IxKeu+re1z4S2JClFeajynFj32Qaw9T7hn06KE977KdM5V4zCjAmKRl+
+   g==;
+X-CSE-ConnectionGUID: KLKT5Dg1SbSv2VHAnf1FWA==
+X-CSE-MsgGUID: tcJhG1fmS3uhZxw0GP9IGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="75951669"
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="75951669"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:34:54 -0700
+X-CSE-ConnectionGUID: PNS3coS5SjCQJuHiK1Gh4g==
+X-CSE-MsgGUID: avPdlaS8SRu9E4evfbts1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="200215687"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:34:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uqZDc-00000008Y0G-020s;
+	Mon, 25 Aug 2025 18:34:48 +0300
+Date: Mon, 25 Aug 2025 18:34:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Askar Safin <safinaskar@zohomail.com>,
+	Linux i2c <linux-i2c@vger.kernel.org>,
+	linux-acpi <linux-acpi@vger.kernel.org>,
+	regressions <regressions@lists.linux.dev>,
+	DellClientKernel <Dell.Client.Kernel@dell.com>,
+	linux-gpio <linux-gpio@vger.kernel.org>,
+	Raul E Rangel <rrangel@chromium.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Werner Sembach <wse@tuxedocomputers.com>
+Subject: Re: [REGRESSION][BISECTED] Dell Precision 7780 wakes up on its own
+ from suspend
+Message-ID: <aKyCl_ly_LhtEOpc@smile.fi.intel.com>
+References: <197ae95ffd8.dc819e60457077.7692120488609091556@zohomail.com>
+ <5d7ee2bc-6595-46f1-8c8f-0c439f033407@kernel.org>
+ <197af82e9e7.10ca643e5467232.6943045931834955890@zohomail.com>
+ <6f42c722-cfa5-416d-8b63-730ad88e6b9d@kernel.org>
+ <197bfafc23e.e6344936595425.1881540896161671378@zohomail.com>
+ <9eac81e6-b4ee-4210-84ac-cbf7bf811130@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 04/11] PCI: stm32: Add PCIe host support for STM32MP25
-To: Philipp Zabel <p.zabel@pengutronix.de>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <linus.walleij@linaro.org>, <corbet@lwn.net>, <shradha.t@samsung.com>,
-        <mayank.rana@oss.qualcomm.com>, <namcao@linutronix.de>,
-        <qiang.yu@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
-        <inochiama@gmail.com>, <quic_schintav@quicinc.com>
-CC: <johan+linaro@kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20250820075411.1178729-1-christian.bruel@foss.st.com>
- <20250820075411.1178729-5-christian.bruel@foss.st.com>
- <e67d5a27fb00040ba87a0b108322747ecca8d05b.camel@pengutronix.de>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <e67d5a27fb00040ba87a0b108322747ecca8d05b.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9eac81e6-b4ee-4210-84ac-cbf7bf811130@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-
-
-On 8/25/25 11:15, Philipp Zabel wrote:
-> On Mi, 2025-08-20 at 09:54 +0200, Christian Bruel wrote:
->> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
->> controller based on the DesignWare PCIe core.
->>
->> Supports MSI via GICv2m, Single Virtual Channel, Single Function
->>
->> Supports WAKE# GPIO.
->>
->> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
->> ---
->>   drivers/pci/controller/dwc/Kconfig      |  12 +
->>   drivers/pci/controller/dwc/Makefile     |   1 +
->>   drivers/pci/controller/dwc/pcie-stm32.c | 360 ++++++++++++++++++++++++
->>   drivers/pci/controller/dwc/pcie-stm32.h |  15 +
->>   4 files changed, 388 insertions(+)
->>   create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
->>   create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
->>
->> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
->> index deafc512b079..a8174817fd5b 100644
->> --- a/drivers/pci/controller/dwc/Kconfig
->> +++ b/drivers/pci/controller/dwc/Kconfig
->> @@ -423,6 +423,18 @@ config PCIE_SPEAR13XX
->>   	help
->>   	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
->>   
->> +config PCIE_STM32_HOST
->> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (host mode)"
->> +	depends on ARCH_STM32 || COMPILE_TEST
->> +	depends on PCI_MSI
->> +	select PCIE_DW_HOST
->> +	help
->> +	  Enables Root Complex (RC) support for the DesignWare core based PCIe
->> +	  controller found in STM32MP25 SoC.
->> +
->> +	  This driver can also be built as a module. If so, the module
->> +	  will be called pcie-stm32.
->> +
->>   config PCI_DRA7XX
->>   	tristate
->>   
->> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
->> index 6919d27798d1..1307a87b1cf0 100644
->> --- a/drivers/pci/controller/dwc/Makefile
->> +++ b/drivers/pci/controller/dwc/Makefile
->> @@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
->>   obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
->>   obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
->>   obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
->> +obj-$(CONFIG_PCIE_STM32_HOST) += pcie-stm32.o
->>   
->>   # The following drivers are for devices that use the generic ACPI
->>   # pci_root.c driver but don't support standard ECAM config access.
->> diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
->> new file mode 100644
->> index 000000000000..964fa6f674c8
->> --- /dev/null
->> +++ b/drivers/pci/controller/dwc/pcie-stm32.c
->> @@ -0,0 +1,360 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * STMicroelectronics STM32MP25 PCIe root complex driver.
->> + *
->> + * Copyright (C) 2025 STMicroelectronics
->> + * Author: Christian Bruel <christian.bruel@foss.st.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/phy/phy.h>
->> +#include <linux/pinctrl/consumer.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/pm_wakeirq.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset.h>
->> +#include "pcie-designware.h"
->> +#include "pcie-stm32.h"
->> +#include "../../pci.h"
->> +
->> +struct stm32_pcie {
->> +	struct dw_pcie pci;
->> +	struct regmap *regmap;
->> +	struct reset_control *rst;
+On Mon, Jun 30, 2025 at 02:40:28PM -0400, Mario Limonciello wrote:
+> On 6/30/2025 3:14 AM, Askar Safin wrote:
+> >   ---- On Fri, 27 Jun 2025 07:58:15 +0400  Mario Limonciello <superm1@kernel.org> wrote ---
+> >   > That's odd.  It should be made when the PMC core driver binds.  Maybe
+> >   > others will know what's missing here.
+> > 
+> > Command "grep -r -E -I last_hw_sleep ." in culpit kernel (1796f808e4bb2c074824d)
+> > shows nothing. (This is somewhere around 6.1).
+> > 
+> > So, culpit commit is too old.
+> > 
+> > If you want, I can retest this thing on current master and on current master with
+> > revert 1796f808e4bb2c074824d.
+> > 
+> >   > I see in your bad config interrupt 14 is waking the system.  In the good
+> >   > config interrupt 8 is waking it.
+> >   >
+> >   > What is in /proc/interrupts?
+> > 
+> > /proc/interrupts from culpit kernel: https://paste.debian.net/1382819/
+> > 
+> > --
+> > Askar Safin
+> > https://types.pl/@safinaskar
+> > 
 > 
-> This could be a local variable in stm32_pcie_probe().
-
-
-Thank you for pointing that out.
-
-Since we use the same common resources in stm32_pcie for both the host 
-and endpoint drivers, aligning the same fields in the struct stm32_pcie 
-seems more consistent.
-
-Additionally, we could improve the code by moving regmap, clk, and rst 
-out of probe into a new function, stm32_pcie_resource_get().
-
-Which approach do you think is best? Moving rst to stm32_pcie_probe() 
-offers slight optimization, while using a new stm32_pcie_resource_get() 
-provides better modularity.
-
-Shall I re-spin a v14 with either of these options?
-
-thank you,
-
-Christian
-
+> Looks like your interrupt 14 is ACPI device INTC1085:00.
 > 
-> regards
-> Philipp
+> Some quick searches this seems to be an Intel GPIO controller.
+> 
+> Andy,
+> 
+> Any ideas how to debug next?
+
+I believe it's related to the touchpad (can you check that wake happens due to
+actually IRQ on pin 355 of the GPIO controller?
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
