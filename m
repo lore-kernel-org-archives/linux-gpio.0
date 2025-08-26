@@ -1,114 +1,129 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65103314B66
-	for <linux-gpio@vger.kernel.org>; Tue, 26 Aug 2025 17:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AED23AB95
+	for <linux-gpio@vger.kernel.org>; Tue, 26 Aug 2025 17:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230188; cv=none; b=UreD+T00d7qmldXMyMliO4NaCMGWrAhFH042CXSsEBQcduWpQ2UAt7ia5MSCG6f/oi4JuhLAgPGTj75H7eiouO65BRUw8Y7gJqCk0bZv05wB4+OZmmXXIE83nwlLHRhMLuwMF3chHj4YC7UeahalG0eVtbXmuPu8/BsTccPFe/k=
+	t=1756231080; cv=none; b=Qik+n55UYiLAvwYA7e41lqHubJONKRsm0xjuynHumr3aK4OqM3BqWUkA1blUfwdbQDRRnUG7SETurJDPmZz/Dv+2MmwUh8wtBI2hTSDM4tVGDPDIRs4vq7y77H/+mNxyOail/HfDBtbJ0M6AF7HapNNxSJpjOGgAH95nSg0zonw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230188; c=relaxed/simple;
-	bh=/NH0Scep+LFps2LseFARTSvkcGrDm7sCfQzi0LT+EK8=;
+	s=arc-20240116; t=1756231080; c=relaxed/simple;
+	bh=Wz7IuQEieJ82ppZyNl9OwbGMLBADxreXpQ5ATGSSSSM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aiq/1C+braZWFlgDTRWP78/R3CrsWZYlv1I0oAAVNlPWXtVyNGWqK5i4j1pSQx+ZtszVvWgBs06d6p+t+K4nRBi+eTMRlyKCbjQO/h/zJCVfiPToMs+JMDMrEr3Reo46+eo0r2Mp45tLksmGv0jyNYQkgn7YRaihY0CGoMErY5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sMbTKtDJ; arc=none smtp.client-ip=209.85.167.47
+	 To:Cc:Content-Type; b=JM7qxppCi4dTvfzvnjHZdM/DQF7m8ALTvO63aX9nWy/qkcEHqU2b30WQYq7wjZmZdUyu5MdrzVsIivxyWp4EQ+5yBcsm73tQt+JLxtAfph2EmDMZb+l470H5Nq8ULk+iU35YAvwZoCVV6b86DpYaimL7sMhqiM+oGIXu2IyufIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XLJp38fH; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sMbTKtDJ"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f467f3c06so1692211e87.2
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Aug 2025 10:43:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XLJp38fH"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f3533fd05so4134024e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Aug 2025 10:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756230184; x=1756834984; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756231076; x=1756835876; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xdfOUyp5g+LkbfVmSjDDYLk7SD8x/p4fgyP4dtdVoWk=;
-        b=sMbTKtDJLHIurgYR+P+dPyZmVdfGVCFxty/I93ZG6LixwqBGumlSIUbPb0JHOHxLvK
-         PQcwEW5bU14fZEBifOCmsG9ueAUR67v6w/IRo+Pmi9i1h9mkOBR3JKEepx3KsEozR/k8
-         x4Uob6V/2QnA7Df5otk+v+ZPF3eh60jf3d8EUtxvn9NyO8toilL95gHNSPb2NhzuDYXd
-         2jSusP9G+6EZQoh708MTix9li1fp9VraxREjPP2r01OW4+des6RYwYQoMuOXxryarLax
-         EwNphZQe+DC8R8ucGg84o893nWv1tGNMNlKenBiT5DJJV/o6hWfAL98wJYcUeuD1+xf0
-         t+5A==
+        bh=O0W/rNg9hKGxRH0cJX+JwxMCE4m7o2nGOfQgFSmK0jA=;
+        b=XLJp38fH7zExfWHsNFsUXChfRRLYc/90owWqY5bjT7GKkHZnopDoGHe48KSsknhYle
+         uAaXCH13hFgyOpucMAXIBh28xrlCOZboa/12Zdr9wswG0UDDkmC8OYVcEi3458Yiyveo
+         ry4DYRr46mv+d3STCSoPDPoKIkIkNeenvTIcnlztoXqLhUAUY4es121IkCtF3s4llF0Y
+         CgzZRJl2ic5eOLepkZmVD/b5MvmP8Nlg43wLab2ZYzgnMFiJnz8lF/sqXEjt2dgc0gWW
+         4idttN3TMHB6aj3xB4N28nY2Jt/KGphup94Z9UGOPg6qLzVSQzvIzHNlwf/PFntaspzG
+         jOmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756230184; x=1756834984;
+        d=1e100.net; s=20230601; t=1756231076; x=1756835876;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xdfOUyp5g+LkbfVmSjDDYLk7SD8x/p4fgyP4dtdVoWk=;
-        b=fz1bRMGK6uI9Oz0bqQeJ10qaix44Nx0YbTXDwWj8s43RI3YZ5NvUoyCIwuz/ldieJY
-         qjV6I7YvUmRkplYra+aR1f0zDPvEw/egYNoi+pstmme1Uo11lgwWMJGf8m8hTU4Nrfno
-         acs3wd8Wmqz5xKH2Cp2/E/8/4FElPlauqqcX0FPtai+XyQwuusjuB3TjIL+VI9I2AE2f
-         TKhM8GwVq2Nll1CX6QmfCxgIHUzMeFL/VCmkLeW+YyMUn0OPVYpojTrplheOvhFgoO2K
-         lry0wu4hfU5A4ExxqKkVg8LFmIkmimQTuUyMhPPr03avPnz79TkZIZ3tbQEQp/JCXeKh
-         H2rA==
-X-Gm-Message-State: AOJu0YxxCniGsPF/bW82n73h6oHFoGSM8hTu50ULAOzktJ8zJ2c2Aoc+
-	rhtndtE1axfrGMmqiMhSUKtzJppHttQq9wn4NOImbWOEMK3Ia3+k7NclLvVXh3geCMQXU+HsZd5
-	LfaI+5AzuMyQm0wWNgDOgn7OLkwwjOdQGavzvyaYfIw==
-X-Gm-Gg: ASbGncuSsppOsPcLg+PTlfy3dayOA8HNY8LByuLRcqgKw4ZshvFIbjTli137esQF0Cb
-	B4o3W5H3ugjHRo+4FcN3peda4ZvAqycqavN69aHvkGrsFzFmY9qDO8OTn/dcYIIIQfU1DKlQYrs
-	w/g6h8nG12HLwyTNqXPaAkx+SUopfNMl/CZHjLJ9N5gf26W0Ro0vO45SmQbavtnXFtK9dcm1z+X
-	mFaSPyild/b8DWS6Qs3d+FhxGueWrXazkT56e4=
-X-Google-Smtp-Source: AGHT+IG+6nUtMqPYbdfnJ7v7uhh2LTc5j4r5xCecfnjEHS82LeRxDaqQlwVVhyuqPKj+t9rauBv3tN88u/NYfVkoPr0=
-X-Received: by 2002:a05:6512:618a:b0:55f:496e:99a8 with SMTP id
- 2adb3069b0e04-55f496ea237mr1648474e87.21.1756230184184; Tue, 26 Aug 2025
- 10:43:04 -0700 (PDT)
+        bh=O0W/rNg9hKGxRH0cJX+JwxMCE4m7o2nGOfQgFSmK0jA=;
+        b=idd475w9nfAyF7SlaQT02mcJeoXmt58WJ+GgZRId8IeZ38x46KpLzUc1GflJGb+v4Z
+         XR6zTWOa2v6dvxcj7yvJscICQzKn0y7BQEqG4axSd4jbIRuPO59WwwwgPc1WD7+hNK4l
+         EEkWOAS0JohZFMFrvkLAN2quClaAnhJDGOA6mMmcDEoKeXz87ZNywy3T+3+pithywGi3
+         T1TPgcm3FQyxwryjvKc9meuEzkg1WbbG7KeAOgpZU5lJf35Q4uwjzi8Jy+3Wy4J2aeg8
+         +Fft01BJ/9QIbaeH57sBMb/y+KQ39E+eegJW4VkBFF214oMkjF09I3ULoCg2BHQ9T3Kj
+         miIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWifGWiCsuXsCMyA8dTDDpWxNEb3t9nzmWsg9QzU16YKzicOv/VzWLRmUaFfH3u8XFJy5GyJOvlV2Nf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+r8exl9Gsaz1S19MDoPZ2pSMyCY+hTtdWjVLC3o8YJp1Uxx3L
+	ilQOlrEgz1ZEFUmav11wfCMcDOBY8MDQJse4op2PWUuZ26YQGpan/EMwh2FEWXDRL/Wopek7DFs
+	4ooKJWtowieFZFcoCNdjLRPJrcfFfF1umgCmvXTpvcg==
+X-Gm-Gg: ASbGnctaH/t96JASqPqnaW+UvVUjCGGNBtJky6EVILvAXjvLOBBX2Cj+Mc+LXwcZUNk
+	pzyJYS4HRUTzkcb5oW/WYQwoo5utT0h0aepxBIJjScPDwuqEtuAYiaG+ZaopZqT4Vw2A88X+hP1
+	M6mE9AxiLV36pp2QAIn4UiEm76KACCeCut628DF1eVnH5/dPmxb9qC9zVy5snAUERuQ6yDQJCDi
+	DoiM91sfffuJ8QeFnYKStdLPWQmJlsqhB8U05K6YMg5wYd9SA==
+X-Google-Smtp-Source: AGHT+IEVnH3FJFAyLvm6EQBQlV8iRR5jmBrZkysg2WSA/Gieb/NIrV224GvmDwbt/g+byP/9WYvwXGoEamgsnHxLlH4=
+X-Received: by 2002:a05:6512:6285:b0:55f:4016:ad2b with SMTP id
+ 2adb3069b0e04-55f4016af4dmr2923464e87.30.1756231076006; Tue, 26 Aug 2025
+ 10:57:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826174123.56862-1-brgl@bgdev.pl>
-In-Reply-To: <20250826174123.56862-1-brgl@bgdev.pl>
+References: <PH1P110MB160390AB37F4D9216E5A7FA09F39A@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
+In-Reply-To: <PH1P110MB160390AB37F4D9216E5A7FA09F39A@PH1P110MB1603.NAMP110.PROD.OUTLOOK.COM>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 26 Aug 2025 19:42:52 +0200
-X-Gm-Features: Ac12FXzJwJh4uCey9ayFNTulzs-4iA3aQelhzXKMCedXOGJFFn6Vrc_vEYJAI4o
-Message-ID: <CAMRc=Meuq_xHVPJEAos8sfOwMykmHGGm8hQ928yX6UcAS=90AA@mail.gmail.com>
+Date: Tue, 26 Aug 2025 19:57:44 +0200
+X-Gm-Features: Ac12FXyTSqLXnqjdWcGtxriA-6thy_BfxlSgHOwawLv8GeJ24u9-V2u0FdpkSeI
+Message-ID: <CAMRc=McyDvuWA37ZXWUac2OZPa8Sgcbye7tRKh8gHVxzA7Ve-A@mail.gmail.com>
 Subject: Re: [PATCH libgpiod] build: bump required GLib version for tests to 2.74
-To: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
-	Vincent Fazio <vfazio@xes-inc.com>
-Cc: linux-gpio@vger.kernel.org, 
+To: Vincent Fazio <vfazio@xes-inc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 7:41=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+On Tue, Aug 26, 2025 at 7:54=E2=80=AFPM Vincent Fazio <vfazio@xes-inc.com> =
+wrote:
 >
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Oh and I forgot:
+> >
+> > Reported-by: Vincent Fazio <vfazio@xes-inc.com>
 >
-> Since commit c116b6f6f118 ("tests: add a test-case checking line-config
-> memory usage") we're using a symbol - G_TEST_SUBPROCESS_DEFAULT - that's
-> only available in GLib v2.74 and later. This version is already almost
-> three years old so should be widely available. Bump the required version
-> in configure.ac.
+> Thanks!
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > > ---
+> > >  configure.ac | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/configure.ac b/configure.ac
+> > > index 9b6c862..fe96739 100644
+> > > --- a/configure.ac
+> > > +++ b/configure.ac
+> > > @@ -157,8 +157,8 @@ then
+> > >         PKG_CHECK_MODULES([MOUNT], [mount >=3D 2.33.1])
+> > >
+> > >         # For core library tests
+> > > -       PKG_CHECK_MODULES([GLIB], [glib-2.0 >=3D 2.50])
+> > > -       PKG_CHECK_MODULES([GIO], [gio-2.0 >=3D 2.50])
+> > > +       PKG_CHECK_MODULES([GLIB], [glib-2.0 >=3D 2.74])
+> > > +       PKG_CHECK_MODULES([GIO], [gio-2.0 >=3D 2.74])
+>
+> I know there was a lot of noise in the Github issue (my fault), but did y=
+ou decide that it's not worthwhile to implement Philip's suggestion of GLIB=
+_VERSION_{MAX_ALLOWED, MIN_REQUIRED} to "enforce" the cap?
+>
 
-Oh and I forgot:
+I don't believe it makes sense for us. Users are already unable to
+build with anything less than v2.74 as configure will bail-out.
 
-Reported-by: Vincent Fazio <vfazio@xes-inc.com>
+> I didn't have time to try that out via Makefile.am in the respective subf=
+olders.
+>
+> > >
+> > >         AC_CHECK_FUNC([atexit], [], [FUNC_NOT_FOUND_LIB([atexit])])
+> > >         AC_CHECK_FUNC([asprintf], [], [FUNC_NOT_FOUND_LIB([asprintf])=
+])
+> > > --
+> > > 2.48.1
+> > >
+>
 
-> ---
->  configure.ac | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/configure.ac b/configure.ac
-> index 9b6c862..fe96739 100644
-> --- a/configure.ac
-> +++ b/configure.ac
-> @@ -157,8 +157,8 @@ then
->         PKG_CHECK_MODULES([MOUNT], [mount >=3D 2.33.1])
->
->         # For core library tests
-> -       PKG_CHECK_MODULES([GLIB], [glib-2.0 >=3D 2.50])
-> -       PKG_CHECK_MODULES([GIO], [gio-2.0 >=3D 2.50])
-> +       PKG_CHECK_MODULES([GLIB], [glib-2.0 >=3D 2.74])
-> +       PKG_CHECK_MODULES([GIO], [gio-2.0 >=3D 2.74])
->
->         AC_CHECK_FUNC([atexit], [], [FUNC_NOT_FOUND_LIB([atexit])])
->         AC_CHECK_FUNC([asprintf], [], [FUNC_NOT_FOUND_LIB([asprintf])])
-> --
-> 2.48.1
->
+One more tag I forgot:
+
+Closes: https://github.com/brgl/libgpiod/issues/143
+
+Bart
