@@ -1,64 +1,66 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF7A257831
-	for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2025 17:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E10322543
+	for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2025 17:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756402995; cv=none; b=bqOTGOi0jNxcVoqax5HFdbYI1ysEjLfcU34ksBCkwLGomPU/kOgZAztsjRjVcyxDt89+YMYqKW99/Es5Xn8zflmiGN8kr89cwEu0F7y8JHdqgRDTDEhe5e7JZ4GIirjCOpBuQ3pNDq+vQCYBTeSbtaJmz2LiCQKt5sTmu+fSRXY=
+	t=1756402996; cv=none; b=GEUmnwaPrtC4q8pprPJSbNchPhvkSVjzoE25InW3OhkqSs37IZuUwag1TuNF7K4p6dsrQa/MiAkVKssBSVsUttzKzVGOeYXDOXUGR7pvaZy8UCGxYbZ2puNNLIvktHRs8DraR5ELnrIK1hysebZpTPVYiB2BtTQl6IXLm9min4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756402995; c=relaxed/simple;
-	bh=4IlHy3KnPGIue3r/NBeKeBP95YpYxgltEGZ+hQv8gcg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SXS6rODXxNedqW/UYJLjsqdHzMvIB//fpQOjIqvjEUeKkqFogK++qKEXBXG5p5pQT1gJQckuXl4uN74tIiEuv5I41SVMJJS38BLhDQTpP4b60UhyUG1z6y93PwMhQFsyjeE7TIi1JZqRmdx805w1ldVfYE1C42amni/0VUydWMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=eHy4YRGd; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1756402996; c=relaxed/simple;
+	bh=th6Mue+Jlx0Y4akANJrIZztW6E4HgxYxOP2aIh0tIac=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oAAylheA4navWvD7qCQhOh3yIRTE6NNTUMLbMDYBN2/y4mwNS6/OH7CeOlot0zETT8wEaKChz+XXbnHu0riHgvCTDpf0kdN9yJmYm/WqunboI1+irXKB/VdQPhEP3w5eDXBFUDK056RZwOwmS6HXRVqyLx5rq9kNKL2N9R6HX04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EEPaCBCK; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="eHy4YRGd"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b7c01a8c1so7215775e9.2
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2025 10:43:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EEPaCBCK"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b7d87b90fso3900435e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Aug 2025 10:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756402991; x=1757007791; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=26B6z+HPxKQuBUM0jDAltBuzbAAx+EjPMnoHFkMFMVw=;
-        b=eHy4YRGdODJPOH5TFlk/Ot9GzjT7Jlb/stT+7/6Ly4qI1VOtMp4w+a7rOPk1S9zcuK
-         vn078IMLKALMqlcKmtcOd9CONmfN4eHiraC56h+n1SQYeF6NenUehFONU2R7oPgHx6wE
-         OnpfTVq3kRVR8XvVbCXomiciQYZGzvzAGn3HiJBsT2B/nXgnlDfqkjinvRHn4rRX3PC+
-         ak/uAbTpRgPHS5RNpJ8LKL7BxJpQ2Ouy12aJ8kNsXOrTKaICyjTdvSOlyEGMPzF1lKqZ
-         gTjlng0PgW5pP9GDHF/DVTrcoZQhkD8pOx5PIjywWhoO78N1CZ/g0/jpXpiuNKx7U8Z+
-         qUbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756402991; x=1757007791;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756402993; x=1757007793; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=26B6z+HPxKQuBUM0jDAltBuzbAAx+EjPMnoHFkMFMVw=;
-        b=ezDO9XZiHgk42EvhZ9GTj2tiDbgLmq/a1GHeainPjfx9Vp2lf5c/FLDvyQWxcJJxhS
-         3XFpl83hzfyXT21O9V0BG2vzh73vIrxQvfnGme5cZGowbZ7EZ3WtTDuuqTsrrJb98tMc
-         jmFiL+vp5MX+au/5zPRJKqVY/TbUdzotD7+JeHoDmSTUslqbQo5QCUq+WPPKe9uTS/UG
-         klfIzPQq4IzsjZ3aeZc3p6NUgTJS0nipsoBZENE1bLloiiWlxVxbR40Eas47r7KiNVAY
-         XHu4xqSNDRhVh09j/Pn4wJUKJUDjzBq60tyZsyJXmHGIppc6ZdIWJIDku1PZ9eYpGaUf
-         cQXw==
-X-Gm-Message-State: AOJu0Yz5ZFIWj2Os1RsO4mQ/H6gzuVCsFiA8mrSjk/yf9y/O4j5ITo1f
-	Po83fo6rXUevpx0pwikrST1DGSLlzj13Zd/j5CCJVc3o9ehqhDfOLu587UaXvhGqSFk=
-X-Gm-Gg: ASbGnctvWcqYdD6vV3VBp2MzUWZEF5is2+R9A46Oce8/+cVRMJVIoEHTO/ILix9wqBD
-	PIuo9EtcREWTbeyHNHtiXOHBjA3+BEBvfMWBQtPqp+jRhQQQK7002cjHzkEK7VYCqvNVleP7h/s
-	l3C/8TrH9xkWutfQIZS+BkoHeR2qnCTQeH0kBds4O+tp7kk/FbRl2eaEtlkvZWjNqNuAw1YxOeC
-	z3RvHbU+TOIRgbDxmELTMHRV8ko7zeq/MmcWtpKCWRVoowr+LcSXePw5J+rlwuAWcvV60DUZmgS
-	vRVTSbuqny+F0/BS9/KTOB1O+7duM3dT9Bhk5Hyiir3Ss/LmHOXdKiD7ZZobP3NFk/PHpT2etWb
-	L5pSTUr+njyzxuEDy5g==
-X-Google-Smtp-Source: AGHT+IEFn6/gzyXyD3UURLRTsxdkR4VdDHiY8WnOpB8hlgggILgVixqfibH779OEa3DzZnm6J9BOaQ==
-X-Received: by 2002:a05:600c:4fcd:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b517db94dmr178653235e9.34.1756402991110;
-        Thu, 28 Aug 2025 10:43:11 -0700 (PDT)
+        bh=WaWSeJO3ztNKJX/kgI5xbPZqqI6FcbuatLTwZobM21c=;
+        b=EEPaCBCKykdgLjmiMi0jgQYGsRFXIQTAq5tJJECSYLNJWbHfL/+AJFPV3GaPIWo/Xv
+         KRtrCGAMdue76Kidy+5iCbtJH2QX5lKHLMVceilZnEbkJ0ZOS3BIYO4M5jbDAnGMWh+O
+         TwTqOtDYbY2XYN/+nBACH4gFXtAfFSIOH6RkZml7qEgvDGrEI5hSuq6syctoXYHBivRL
+         +iDy5xzcvGphjrIwyXHsel8/sQp56E4F4s4zAumVxKpcHGSoqg5G1gfcU3Ge8p/Fz7l+
+         lBHSxadQ5m2lfyOJ+zAl1BmnpAyIx6nop6SRCes/9YU1xacX/H3Wuz/sye9jnSJ3+kra
+         y8vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756402993; x=1757007793;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WaWSeJO3ztNKJX/kgI5xbPZqqI6FcbuatLTwZobM21c=;
+        b=GfSy6ZP/6kYrzyRG+0fi82cMBh4A9ylbcBNBzyRkUjz6pj1avyBuUwseC7Xjs5i5rm
+         weSupGauB/Gi50LSEUyPrGIWATxd6Ki5iqK1j0bsIo4Ix4S0WpGPI0Zy7J8uBDkBPn1E
+         o7GNYzqEvK+u35q/Y+QTageITPDcKsf/FNgbS8OEiqZSo24dA+IXRpmqOomFMFltJ+Iz
+         0987GsUD5xU6s/AmLN6LUR1dgos8x2XNipt7Qd0rjzNm5+i6MSUQa4FiQSnoZLsFqJve
+         kOTVLhqyf111TyDV75HHe5tND8AWeLQFGbSQF0jMZKCBJDwLNEYb3qvr4/VNATkQMktR
+         +s/w==
+X-Gm-Message-State: AOJu0YxOKr2ftJnEqpnPEVaw5JnXQrl+Qxd25cN06kL+jCncOYwnSxEq
+	fWz96Am5PICheHTYAfu6Hl3qx5kSE+H8xp2GHzyURJ2ZagYGBSxdkqa6Lcsg3NWgpJU=
+X-Gm-Gg: ASbGncvpXiU5Qua7pFjqsb4E76AFF+H/2gxbheo2zFgZFV2XoN+/E5wWg55q8r7Xauh
+	1r2eXQwzF3hrvJ9aqd4bJkVxIDVUt00VfRDPyuINzuazAjN/BdtCTfssPnR2jYifdCAJKKNzNXJ
+	Nn0Yj9iMVSAfnqdyEFqlol1R4IQ/POTdimj4rzqnqRYmGlyKNR8R4vhUZ9i9j5Qx4fRZnG7GNGF
+	ZvF0kI/XS0+84yPPJtsO99X6PrsXfuXFxv0fIvRLQt0JDzO35X0sEJiuitqRyjSn/acFxfATOGO
+	CKo4quWXFDn0oU+lTCOXF4WswdkNZs/WgXnEZYAx9FkE6UijnVvl44ucPeG6hWQDKs86KRfeFCE
+	BZeBkMsYVGrTmR1yv8w==
+X-Google-Smtp-Source: AGHT+IEcrkMBX1HMee5DPSAcVOkz6/rkL5dN6iNy359nkqVJ45QiyPfVt20K1JGTO2ejJDUu2iL+uA==
+X-Received: by 2002:a05:600c:c493:b0:45b:7bba:c79f with SMTP id 5b1f17b1804b1-45b7bbaca16mr22679125e9.13.1756402992932;
+        Thu, 28 Aug 2025 10:43:12 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4933:4d7c:cf69:9502])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d2393sm3812075e9.3.2025.08.28.10.43.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d2393sm3812075e9.3.2025.08.28.10.43.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 10:43:10 -0700 (PDT)
+        Thu, 28 Aug 2025 10:43:12 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH libgpiod v3 00/10] bindings: rust: prepare v1.0.0 release
-Date: Thu, 28 Aug 2025 19:43:02 +0200
-Message-Id: <20250828-rust-1-0-0-release-v3-0-0f9c6c1c4808@linaro.org>
+Date: Thu, 28 Aug 2025 19:43:04 +0200
+Subject: [PATCH libgpiod v3 02/10] bindings: rust: add missing unsafe block
+ ahead of rust version bump
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -67,82 +69,61 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACaVsGgC/23NzQqDMAzA8VeRntfRpvVrp73H2MFq1IBYaV3ZE
- N99XdlhA8npT8gvG/PoCD27ZBtzGMiTnWOoU8basZkH5NTFZiAgF5WU3D38yiUXcRxO2HjkRa4
- 0FKIUWiCLh4vDnp4JvbGJzLCQ7dg9bkbyq3Wv9C3ItP/CcASHT6oSuqKuelBYXSeaG2fP1g3JC
- /Br5IcGxDCyrHVrtKkN/hn7vr8B14wXNAMBAAA=
-X-Change-ID: 20250811-rust-1-0-0-release-65342607040e
+Message-Id: <20250828-rust-1-0-0-release-v3-2-0f9c6c1c4808@linaro.org>
+References: <20250828-rust-1-0-0-release-v3-0-0f9c6c1c4808@linaro.org>
+In-Reply-To: <20250828-rust-1-0-0-release-v3-0-0f9c6c1c4808@linaro.org>
 To: Viresh Kumar <viresh.kumar@linaro.org>, 
  Linus Walleij <linus.walleij@linaro.org>, Erik Wierich <erik@riscstar.com>
 Cc: linux-gpio@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2355;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1292;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=4IlHy3KnPGIue3r/NBeKeBP95YpYxgltEGZ+hQv8gcg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBosJUozb4QNOOWTQ6JjUrpUJCLTvKvBreXWHr/4
- 7bluw1E6reJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaLCVKAAKCRARpy6gFHHX
- cpR0D/9eOOqWRgaFxTVD1yRF34JvcCM/vLk8YXIDHZbbFd69pU6Zv0hZtqqWFcfd7Vp0tNxOi4c
- vRusq1gFJC/KIMJ9AtKhJSdV7bXOx7qyuI/wZ2L/xC8/hMfnR99AJ+4b/mu6UNLs45sRY1Lj3Z8
- Sba6IwWYr8bz17fk+CJ0upYK1HWban2O4N51meVwh2IQ7IIXGhBPIrrgRl77S89abdz4B18/06H
- rTtaTa/f7qLl961vNwMP9nxKWcj4qGZzHH7LrMgs+8EjdVwDVFz8o321nTwpuocLAnQKjs2bVLt
- FzAb35OAf6hKj6EmthLu5w7awGluDAKdZpvGDdI15OkMW6583eAPQRGHyXJZ+AFeagGCtArIuvL
- 24ek7km8F6H7YHwlCS7DPmWKzVtRrxuu/4Dc76Y6Vmcm4uqzBoVIJAh6ARHrJTTamMVQhoy2SVT
- Y37ar15SH8m6ltCo/3jTyUUonF0hFmv3yMWpLDdQ/4XqoS8cVA5n5MCH4GGZrQr08KOVYMzQ2yT
- GSTqGdd+al4+N8PupXMC1UQvMZv0BBoybtMXBJ0Vgyx0GWvfRgESVa25ZeKyY7G2SKSkxm/81In
- TTwnm6BLgJdXH533/LIZpQ0UmN1k1SEw9anLDpJbFIwE6zlpd8dKy0VY38tmsE/GAKSfL6Q9Y6B
- 0dIusP2fHNtqM/g==
+ bh=/8yx2RhpPwP71KkYQKmEHcN483C0e+kgp8yhtwq9YZk=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBosJUsOts9grEPTLPYTeSX1PWzAPAhC+PnfIDwf
+ dukoxe0jtSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaLCVLAAKCRARpy6gFHHX
+ cszDD/0fkwKwcSlTIXO8pZXSC+TFxmmcksZMMsUzk5CDD/2oAUB9aT4jC+RK3BL8VKeOgmiy1SV
+ wutSGa5ey18Df4YMNKieUBcDyd/SJkydOiGMNUOBGFDlgtBo92G4jDaeV3iOv0JLOdqBSfQfnzq
+ 6kIq2hVIubjC6sAWueg6zYCmste61ESpm765cxhj2HCL7t0nMZ6QAkBQazLVcHw8Ria977ASUJA
+ L/cvgk5ffspp5mTXpwdRRcpbELoWako9sNu337NL72Adovlk583RchdsGAsfnncOzFCLYtHD46Y
+ vcwbTTq0K65bkMqJOzaP5k/CvvM7OFMQmd2Hm4CStasXaDMy7ZA7GsQU/jmsbSHxmD62yHcXGnh
+ qW7bfp32YwAEeqnGYecaEyVxF5aJo7S7nqp91CRQHO4iD36a/hWDV+yKaNe4qkMIEAuxPDrVveA
+ NWNKKYejoo+Xl4qzBDueHQqusgf6ug/IKKGvZzD1ms9WKwITAhqRmd7nkTD4vEXRF036RK2Ri4r
+ t0zea37ViUXzvuUi1554dEtyrsLasfYGPhaUPik9PlWJQllKZFCm1O+6/3bGJ7JP7ZQMS1D43qx
+ 1j2Kj1Cj/n1E79ZW07UPEqp/h64gvoLTcYhxRclOxl63nxPFYT1iFoLX+XffmfYvD72v15kdCah
+ V2+MBu3TQL4GHTQ==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-The libgpiod rust bindings interface has stayed quite stable over the
-last months so it's time for it to stop being a v0.x release and become
-officially carved in stone. Bump dependencies to the most recent versions
-available, fix some issues and then bump versions of the crates ahead of
-the official release.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Rust edition 2024 changed the semantics of the unsafe keyword used as
+function modifier[1]. Unsafe operations inside unsafe functions must
+still be wrapped in an unsafe {} block. Update the code in case we want
+to bump the rust version or check it with clippy --edition 2024.
+
+[1] https://rust-lang.github.io/rfcs/2585-unsafe-block-in-unsafe-fn.html
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changes in v3:
-- Bump the minimum required rustc version to v1.78 after all to satisfy
-  more recent versions of bindgen and system-deps
-- Link to v2: https://lore.kernel.org/r/20250815-rust-1-0-0-release-v2-0-b1794cb4b9be@linaro.org
+ bindings/rust/libgpiod/src/line_info.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- drop the patch bumping the minimum required rust version
-- loosen the requirements on the dependency versions: specify only the
-  major number for stable crates and the major.minor for unstable ones
-- Link to v1: https://lore.kernel.org/r/20250812-rust-1-0-0-release-v1-0-372d698f23e8@linaro.org
+diff --git a/bindings/rust/libgpiod/src/line_info.rs b/bindings/rust/libgpiod/src/line_info.rs
+index bd290f6e1369a3968a39178c5bcfb9f6aaf26239..8def1ab4e52962fffa6911976e64204c3d02df6f 100644
+--- a/bindings/rust/libgpiod/src/line_info.rs
++++ b/bindings/rust/libgpiod/src/line_info.rs
+@@ -51,7 +51,7 @@ impl InfoRef {
+     /// owned by the thread invoking this method. The owning object may not be
+     /// moved to another thread for the entire lifetime 'a.
+     pub(crate) unsafe fn from_raw<'a>(info: *mut gpiod::gpiod_line_info) -> &'a InfoRef {
+-        &*(info as *mut _)
++        unsafe { &*(info as *mut _) }
+     }
+ 
+     fn as_raw_ptr(&self) -> *mut gpiod::gpiod_line_info {
 
----
-Bartosz Golaszewski (10):
-      bindings: rust: make Buffer::read_edge_events() lifetimes more explicit
-      bindings: rust: add missing unsafe block ahead of rust version bump
-      bindings: rust: bump the minimum required rustc version
-      bindings: rust: update bindgen dependency
-      bindings: rust: update errno dependency
-      bindings: rust: update cc dependency
-      bindings: rust: update system-deps dependency
-      bindings: rust: update thiserror dependency
-      bindings: rust: update intmap dependency
-      bindings: rust: update crate versions to v1.0.0
-
- bindings/rust/gpiosim-sys/Cargo.toml       | 10 +++++-----
- bindings/rust/gpiosim-sys/build.rs         |  2 +-
- bindings/rust/libgpiod-sys/Cargo.toml      |  8 ++++----
- bindings/rust/libgpiod-sys/build.rs        |  6 +++---
- bindings/rust/libgpiod/Cargo.toml          | 12 ++++++------
- bindings/rust/libgpiod/src/event_buffer.rs |  2 +-
- bindings/rust/libgpiod/src/lib.rs          |  4 ++--
- bindings/rust/libgpiod/src/line_config.rs  |  2 +-
- bindings/rust/libgpiod/src/line_info.rs    |  2 +-
- bindings/rust/libgpiod/src/line_request.rs |  4 ++--
- 10 files changed, 26 insertions(+), 26 deletions(-)
----
-base-commit: cd32f27dd550753488bff4918aef4e230ce01512
-change-id: 20250811-rust-1-0-0-release-65342607040e
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.48.1
 
