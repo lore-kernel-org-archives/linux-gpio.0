@@ -1,113 +1,164 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD8D2DECD4
-	for <linux-gpio@vger.kernel.org>; Sat, 30 Aug 2025 19:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEE11F91C8;
+	Sat, 30 Aug 2025 22:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756583665; cv=none; b=ppWUjweTuw4HT2+RT+uSkYBqwE7P3ocPeiUMSJYWrHnYXqZMZ2ZUrkCjhfKT+UWfpULQeh24H2ftms+ZvuhIC8sZDY8gWntcqUQ2DOABV5XyYjtKW+c4xmi1OuGTQ//R3XGRzk2D5pqAO7caeOiXw8F8iAFHiGxZrjPCxzB23+M=
+	t=1756593624; cv=none; b=ezrUDXqgwg8U1BZp66MXEB5Vzez8XJ0JwFVGizTZjK8g9ZyzlfC8OovwvRbxow+BFf8bPDEVFlHHZnEIlIlpEsYG0YE+DeLJVYvW8b9KgK1YihRmSc99t6v5ruB+ByWoLbta8abcMGWlcxMvWoEpgvnShg8fvt/kPJQe+wRr+xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756583665; c=relaxed/simple;
-	bh=VcMB6i9mLkUmp4G6fTpg7CesKanMOCwBBXFfIoLjtrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F453YIT6ZsYYa31TojlX60mdaw3fr91bz4+fQ+QEiVNzzJCeJYVDLQszYgTwzdeXa3N+46oR0eIG9FdAym+s2sY031QfdixpD4mNvFQ4XeUdRjCAXsvZjSoJrvFGJCPMiNsrBOozuxHrE2td9VykBhfk3fmfRUukyWAVunJkVTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bNtKBn2P; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1756593624; c=relaxed/simple;
+	bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IijS5l/vzVq8uRpvFfx26Om9jX/od7S+6IdQhbccQdYFCHym7vCIxUDqhOaNTZXKJReBUs/PR37ExpbAqRH802oIqgtB4w9O4nOieNEYucR2g7dpNA5Jt6Li2800/GAGle12/mXJW4fb9RkI/E8z1hpIjwHXrQSTbmYmJEXvaBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=We2pdkut; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=vRSfIWUQ; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bNtKBn2P"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso2468003f8f.3
-        for <linux-gpio@vger.kernel.org>; Sat, 30 Aug 2025 12:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756583661; x=1757188461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WWCJ+1za7yqATipqpoHH2837nCEX0b9cfMM3RbSb7qI=;
-        b=bNtKBn2PmGS2A08cqTfCLHvhDobUCX6JzRXpxClB8cbI93zrvW5mO9Y6TqPbkJ8KoR
-         celyidiXgS0Q5Z7rQMVyZlknkpOoRkbntGVz05+KoHxT/4cI/Dq3QvnOA87GOyL7Ppbe
-         IiuYQUakjcpsIhSsJNo/M1ioaVKHzCklWpMcFqVYwFL1yj1FTrD4mZhBQbHrm9G0mPLo
-         pvymA3QOFuDQy0kV94eASY5Iyo6AtRrxK/YahtmJcyur9griw0olX/LDkWuov21H4Jqp
-         RsTNfpUg3wq6Ax71hz6+xSDRpRLDDWPGpQl8W9azNxXmbW0UUHW0BAfSjzGBiVQJ5rAB
-         phQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756583661; x=1757188461;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WWCJ+1za7yqATipqpoHH2837nCEX0b9cfMM3RbSb7qI=;
-        b=riPCiWmodJIBacOlBYDVJlpAblGe0TGuUgT3gcESlRCEEoJ0rKTaUNtVtfcoiGvWQ4
-         xqnaoYYybaSgzFeaQ84WRmvGv5KG3p08aqJ7rRBFcKTkpgyOzYa7FVzfT8OtXB5NHSsO
-         qoyD7kZJ4WKlMOnRdfY6HuRYJkWt8RIB0g7XIDHKwSTvUUeVItgoFu6R/Nnx8hsCjMCm
-         Za3ppf/QbHE2M8ZoCPRaplXTXBTyEjhP2U6fUOpvLoO6YbBhaslFqhbTRGa+UrtpcSM8
-         mK4PqQWePeNReUvZ0v826nNn18vYwl+JeIq4VzWblgh0Ynj10tOWglG7jG7BfypoxFJO
-         7jwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJWCN/hvYrtvinZ1I9st3WiDa8cbuBB3rcqU2BIhjPjVS1fVL5rgFNFhPOyCxWLxG8/gA/jr9TaQNi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbN+P9V0JMDsi1EgDC0rJP4Uz8D0y1Yc0uPNuEVEPpvPGDZXPy
-	Kl+rXWP85gquHnMLiLwd3P9y0cudMv5KccKv04dKLmeROlDRZTJ6XPkWc9pQaHeJO4U=
-X-Gm-Gg: ASbGncuhp05Ffqb/2vdFKdvhq9hgt3Vk/RP4TtvEn2LCVcl8ewhdwRjDqNH9S/2iT5m
-	g4ikEsCc81Ly4qeY2ARAv849HVQE9t9TPu1kLI7CI/FgWDsTDycT3NZzDj3k5JU7G9DXVDUUyfm
-	bohYEP5atBbWufIuLOy8srPoagif9hp6yU0sY8bZJgnoPq76Ufh35waukfgXUGEY54DWBL5D+cS
-	kumt+bPCyNnA5nGpN28Q9cF4XRnZA+UYJHv9MxltxemvP7ZNodXxrj0me17dLZ5vdyMtVdil9ZV
-	g3/5JbYwN7Xvsoraa+p57ffyGvxvNg/SmPCIO4PN0NJEwVDTDlhXAxaoLrw/H56cSq7PRAW8l1K
-	8/DYBI8ybjqqj6penigWKvsKA
-X-Google-Smtp-Source: AGHT+IF/Ozf3VwEqoSzRGTCZ2bOJ0FXinNTHiBmEMhey6+4fvCJAgqEnaUl1gG/65IwAcEHSH6K+Yg==
-X-Received: by 2002:a05:6000:21c2:b0:3d3:494b:4e5d with SMTP id ffacd0b85a97d-3d3494b514cmr504381f8f.0.1756583660998;
-        Sat, 30 Aug 2025 12:54:20 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7402:75f4:2258:3fae])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc496sm8456113f8f.1.2025.08.30.12.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 12:54:20 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.17-rc4
-Date: Sat, 30 Aug 2025 21:54:17 +0200
-Message-ID: <20250830195417.8262-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="We2pdkut";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="vRSfIWUQ"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
+	GuZQp+Mi+3zTPjxiaEug=; b=We2pdkutSDpgFO7ThJOWkr3Xh14gRYQXsBK0m1jvmWS9dwQ/1Q
+	5ZakAQoratAmfIYsjadVJ4RTLt9onK0FMmzWV2yVCAss9bYLseeEg1IvtBZVJJ4pjCDZnkwp7Ry
+	fz3oKuQSPtepCSY2UuEQ20Ib+Vox5gSnrFvRoUesfTMHWfcZqyLREjYttozsXknjTfwPRlNP9gw
+	R1R31qmsx74qmFXkR1/mkonqm1xRyaEA7Ly59HLAI3mSt+7SQlcC2HeYC8ODYNPprx6i2+agdFA
+	Dv/U2xoiChdoaxVqhq8wmunHVhg7VxnVI0qDJnEHlh1PeGRVCBduF8BMwANf4qcYWXg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
+	GuZQp+Mi+3zTPjxiaEug=; b=vRSfIWUQfdh4cTR5f/jxKink47sa7Uyi8W49AjGwzAoy8aqGO2
+	3INo66qUtCJKVjqCAPjYpQ+VqmxCg6ApFOCg==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Sun, 31 Aug 2025 00:38:13 +0200
+Subject: [PATCH v7 1/6] dt-bindings: clock: qcom: Add MSM8937 Global Clock
+ Controller
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250831-msm8937-v7-1-232a9fb19ab7@mainlining.org>
+References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+In-Reply-To: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756593498; l=3026;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
+ b=MtLbUHknAvcy+vFuA6otWwb8o7X459E/zexNKP9F1CpXCqjsXcP7H3YKb2xpJPPv6Aq+6rMFS
+ 9gWqqueSuejCiusUz0FBHkAivQa2txPUkZiP0DZG2aCHu9AoIopaU2s
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Add device tree bindings for the global clock controller on Qualcomm
+MSM8937 platform.
 
-Linus,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
+ include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++++++++
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-Please pull the following set of GPIO fixes for the next RC.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+index fe1f5f3ed992453a347062a556b1ddb2a011db6f..f2e37f439d28b3ec066f407927955b3b82b5c10a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+@@ -9,16 +9,21 @@ title: Qualcomm Global Clock & Reset Controller on MSM8953
+ maintainers:
+   - Adam Skladowski <a_skl39@protonmail.com>
+   - Sireesh Kodali <sireeshkodali@protonmail.com>
++  - Barnabas Czeman <barnabas.czeman@mainlining.org>
+ 
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+-  domains on MSM8953.
++  domains on MSM8937 or MSM8953.
+ 
+-  See also: include/dt-bindings/clock/qcom,gcc-msm8953.h
++  See also::
++    include/dt-bindings/clock/qcom,gcc-msm8917.h
++    include/dt-bindings/clock/qcom,gcc-msm8953.h
+ 
+ properties:
+   compatible:
+-    const: qcom,gcc-msm8953
++    enum:
++      - qcom,gcc-msm8937
++      - qcom,gcc-msm8953
+ 
+   clocks:
+     items:
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+index 4b421e7414b50bef2e2400f868ae5b7212a427bb..4e3897b3669d9149b61a6feec31ca35e2058dcb9 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -170,6 +170,23 @@
+ #define VFE1_CLK_SRC				163
+ #define VSYNC_CLK_SRC				164
+ #define GPLL0_SLEEP_CLK_SRC			165
++/* Addtional MSM8937-specific clocks */
++#define MSM8937_BLSP1_QUP1_I2C_APPS_CLK_SRC		166
++#define MSM8937_BLSP1_QUP1_SPI_APPS_CLK_SRC		167
++#define MSM8937_BLSP2_QUP4_I2C_APPS_CLK_SRC		168
++#define MSM8937_BLSP2_QUP4_SPI_APPS_CLK_SRC		169
++#define MSM8937_BYTE1_CLK_SRC				170
++#define MSM8937_ESC1_CLK_SRC				171
++#define MSM8937_PCLK1_CLK_SRC				172
++#define MSM8937_GCC_BLSP1_QUP1_I2C_APPS_CLK		173
++#define MSM8937_GCC_BLSP1_QUP1_SPI_APPS_CLK		174
++#define MSM8937_GCC_BLSP2_QUP4_I2C_APPS_CLK		175
++#define MSM8937_GCC_BLSP2_QUP4_SPI_APPS_CLK		176
++#define MSM8937_GCC_MDSS_BYTE1_CLK			177
++#define MSM8937_GCC_MDSS_ESC1_CLK			178
++#define MSM8937_GCC_MDSS_PCLK1_CLK			179
++#define MSM8937_GCC_OXILI_AON_CLK			180
++#define MSM8937_GCC_OXILI_TIMER_CLK			181
+ 
+ /* GCC block resets */
+ #define GCC_CAMSS_MICRO_BCR			0
+@@ -187,5 +204,7 @@
+ #define VENUS_GDSC				5
+ #define VFE0_GDSC				6
+ #define VFE1_GDSC				7
++/* Additional MSM8937-specific GDSCs */
++#define MSM8937_OXILI_CX_GDSC				8
+ 
+ #endif
 
-Thanks,
-Bartosz
+-- 
+2.51.0
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.17-rc4
-
-for you to fetch changes up to 6fe31c8b53003134e5573cfb89aea85f96a43afd:
-
-  MAINTAINERS: Change Altera-PIO driver maintainer (2025-08-26 12:17:39 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v6.17-rc4
-
-- fix an off-by-one bug in interrupt handling in gpio-timberdale
-- update MAINTAINERS
-
-----------------------------------------------------------------
-Adrian Ng Ho Yin (1):
-      MAINTAINERS: Change Altera-PIO driver maintainer
-
-Junjie Cao (1):
-      gpio: timberdale: fix off-by-one in IRQ type boundary check
-
- MAINTAINERS                    | 2 +-
- drivers/gpio/gpio-timberdale.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
