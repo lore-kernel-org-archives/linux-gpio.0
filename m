@@ -1,37 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEE11F91C8;
-	Sat, 30 Aug 2025 22:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9090733F9;
+	Sat, 30 Aug 2025 22:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756593624; cv=none; b=ezrUDXqgwg8U1BZp66MXEB5Vzez8XJ0JwFVGizTZjK8g9ZyzlfC8OovwvRbxow+BFf8bPDEVFlHHZnEIlIlpEsYG0YE+DeLJVYvW8b9KgK1YihRmSc99t6v5ruB+ByWoLbta8abcMGWlcxMvWoEpgvnShg8fvt/kPJQe+wRr+xk=
+	t=1756593826; cv=none; b=ZCWlJDTQU75ZJQcg8r5g1fidk/PXgKAAMTwcudAKlm6DQaf7mF4FrTkb7Rk5vTPDQS5mgTnDiYhdBrwgN5pc1DguHdWJQ95PyxpW+cDlkp6Wm1B4lU9XEIfm+Bm1FfRjrvXLMDcvNUOPsTyEFrwTY4DjHkYxHXHmXb5P4eaWPCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756593624; c=relaxed/simple;
-	bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
+	s=arc-20240116; t=1756593826; c=relaxed/simple;
+	bh=MnWusNcFCa2Zg4e3EfsWg+xVTvEHMbXZjtCTnraquOw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IijS5l/vzVq8uRpvFfx26Om9jX/od7S+6IdQhbccQdYFCHym7vCIxUDqhOaNTZXKJReBUs/PR37ExpbAqRH802oIqgtB4w9O4nOieNEYucR2g7dpNA5Jt6Li2800/GAGle12/mXJW4fb9RkI/E8z1hpIjwHXrQSTbmYmJEXvaBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=We2pdkut; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=vRSfIWUQ; arc=none smtp.client-ip=5.75.144.95
+	 In-Reply-To:To:Cc; b=WTEp6ll/KjfYGxiE0stQynfA/rN68n9+4wrzGdXIyXdTQ2p+jymwtal5tBE5/gP9iJwFpd8tQ8uyQhtkS5dwN40DwCTgnjN4SOmSgdD4InjyjLw6fvLYCGIy7YVqpMV0TawfTjlVyNZ9K4zxrY6BujZyT9NNK8nqAfXGV0yum6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oGyubIDu; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=t5GVM7Ew; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="We2pdkut";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="vRSfIWUQ"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oGyubIDu";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="t5GVM7Ew"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
-	GuZQp+Mi+3zTPjxiaEug=; b=We2pdkutSDpgFO7ThJOWkr3Xh14gRYQXsBK0m1jvmWS9dwQ/1Q
-	5ZakAQoratAmfIYsjadVJ4RTLt9onK0FMmzWV2yVCAss9bYLseeEg1IvtBZVJJ4pjCDZnkwp7Ry
-	fz3oKuQSPtepCSY2UuEQ20Ib+Vox5gSnrFvRoUesfTMHWfcZqyLREjYttozsXknjTfwPRlNP9gw
-	R1R31qmsx74qmFXkR1/mkonqm1xRyaEA7Ly59HLAI3mSt+7SQlcC2HeYC8ODYNPprx6i2+agdFA
-	Dv/U2xoiChdoaxVqhq8wmunHVhg7VxnVI0qDJnEHlh1PeGRVCBduF8BMwANf4qcYWXg==;
+	h=To:Message-Id:Subject:Date:From; t=1756593510; bh=c4MGC8FIVSrF83JvXLuGkEw
+	gC/SqBYt8eFhZPlAakzM=; b=oGyubIDuIxZDQfdx8p/JGECzhv7FYH+5EceEVR/TjQpv7Noby/
+	qb9gomsQVJpBAE2WxUBCFmiutZPiq/7SNtLCy4dIOesP3sb4fStf13v4uEG4ErUBCKToYK6c8rz
+	s0Vfydfv2yOgcBv28CYdGcryXBv1tXiscsS7fFCMEAAXdcaRm5K4Syy/5ZN2eHyYEVWtlhpu+Uh
+	Xt4+8DCb79mrG0pIsy52fWU57u4O1HJSsVX/JtXo/vZmqa0FlJwPLE3uzDK2R7VX/j0ejGake3q
+	Z67rcNBH3edN/qjEG7TpcG7ltNnmia9O0WqPV+QfkeAFQmP/C1EGOBhMJZcva64Bzkg==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756593502; bh=75jbWC6rzZi0qzMwWHXrcn6
-	GuZQp+Mi+3zTPjxiaEug=; b=vRSfIWUQfdh4cTR5f/jxKink47sa7Uyi8W49AjGwzAoy8aqGO2
-	3INo66qUtCJKVjqCAPjYpQ+VqmxCg6ApFOCg==;
+	h=To:Message-Id:Subject:Date:From; t=1756593510; bh=c4MGC8FIVSrF83JvXLuGkEw
+	gC/SqBYt8eFhZPlAakzM=; b=t5GVM7Ew8aWwR6aIUTGKN23w6nky59kGB25AWU5QgRVXmKeWwJ
+	KIez5BzIlV5ypCBRMv3jIePwZl/GmstNljCw==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sun, 31 Aug 2025 00:38:13 +0200
-Subject: [PATCH v7 1/6] dt-bindings: clock: qcom: Add MSM8937 Global Clock
- Controller
+Date: Sun, 31 Aug 2025 00:38:17 +0200
+Subject: [PATCH v7 5/6] dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +39,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250831-msm8937-v7-1-232a9fb19ab7@mainlining.org>
+Message-Id: <20250831-msm8937-v7-5-232a9fb19ab7@mainlining.org>
 References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
 In-Reply-To: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -75,89 +74,47 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756593498; l=3026;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756593498; l=1178;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
- b=MtLbUHknAvcy+vFuA6otWwb8o7X459E/zexNKP9F1CpXCqjsXcP7H3YKb2xpJPPv6Aq+6rMFS
- 9gWqqueSuejCiusUz0FBHkAivQa2txPUkZiP0DZG2aCHu9AoIopaU2s
+ bh=MnWusNcFCa2Zg4e3EfsWg+xVTvEHMbXZjtCTnraquOw=;
+ b=c/UauX69QuEokVwm+qA6a1d6tY0ILmj+/oE6RJSbCgRuF5sDcEc4QANicOuwKnSSN0mmvjgaU
+ wQGfWra3sAxBi8Fa/9zs3NBoioZP9LH7PvWoRXSHPvGdeAILub7bfpy
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Add device tree bindings for the global clock controller on Qualcomm
-MSM8937 platform.
+Document Xiaomi Redmi 3S (land).
+Add qcom,msm8937 for msm-id, board-id allow-list.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
- include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++++++++
- 2 files changed, 27 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-index fe1f5f3ed992453a347062a556b1ddb2a011db6f..f2e37f439d28b3ec066f407927955b3b82b5c10a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-@@ -9,16 +9,21 @@ title: Qualcomm Global Clock & Reset Controller on MSM8953
- maintainers:
-   - Adam Skladowski <a_skl39@protonmail.com>
-   - Sireesh Kodali <sireeshkodali@protonmail.com>
-+  - Barnabas Czeman <barnabas.czeman@mainlining.org>
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 55e5eb75af8905c93e6604d54d516585f70a8e29..16e003ef0e1892cf8b1d2e5c581358e344b46349 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -191,6 +191,11 @@ properties:
+               - xiaomi,riva
+           - const: qcom,msm8917
  
- description: |
-   Qualcomm global clock control module provides the clocks, resets and power
--  domains on MSM8953.
-+  domains on MSM8937 or MSM8953.
- 
--  See also: include/dt-bindings/clock/qcom,gcc-msm8953.h
-+  See also::
-+    include/dt-bindings/clock/qcom,gcc-msm8917.h
-+    include/dt-bindings/clock/qcom,gcc-msm8953.h
- 
- properties:
-   compatible:
--    const: qcom,gcc-msm8953
-+    enum:
-+      - qcom,gcc-msm8937
-+      - qcom,gcc-msm8953
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
-index 4b421e7414b50bef2e2400f868ae5b7212a427bb..4e3897b3669d9149b61a6feec31ca35e2058dcb9 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
-@@ -170,6 +170,23 @@
- #define VFE1_CLK_SRC				163
- #define VSYNC_CLK_SRC				164
- #define GPLL0_SLEEP_CLK_SRC			165
-+/* Addtional MSM8937-specific clocks */
-+#define MSM8937_BLSP1_QUP1_I2C_APPS_CLK_SRC		166
-+#define MSM8937_BLSP1_QUP1_SPI_APPS_CLK_SRC		167
-+#define MSM8937_BLSP2_QUP4_I2C_APPS_CLK_SRC		168
-+#define MSM8937_BLSP2_QUP4_SPI_APPS_CLK_SRC		169
-+#define MSM8937_BYTE1_CLK_SRC				170
-+#define MSM8937_ESC1_CLK_SRC				171
-+#define MSM8937_PCLK1_CLK_SRC				172
-+#define MSM8937_GCC_BLSP1_QUP1_I2C_APPS_CLK		173
-+#define MSM8937_GCC_BLSP1_QUP1_SPI_APPS_CLK		174
-+#define MSM8937_GCC_BLSP2_QUP4_I2C_APPS_CLK		175
-+#define MSM8937_GCC_BLSP2_QUP4_SPI_APPS_CLK		176
-+#define MSM8937_GCC_MDSS_BYTE1_CLK			177
-+#define MSM8937_GCC_MDSS_ESC1_CLK			178
-+#define MSM8937_GCC_MDSS_PCLK1_CLK			179
-+#define MSM8937_GCC_OXILI_AON_CLK			180
-+#define MSM8937_GCC_OXILI_TIMER_CLK			181
- 
- /* GCC block resets */
- #define GCC_CAMSS_MICRO_BCR			0
-@@ -187,5 +204,7 @@
- #define VENUS_GDSC				5
- #define VFE0_GDSC				6
- #define VFE1_GDSC				7
-+/* Additional MSM8937-specific GDSCs */
-+#define MSM8937_OXILI_CX_GDSC				8
- 
- #endif
++      - items:
++          - enum:
++              - xiaomi,land
++          - const: qcom,msm8937
++
+       - items:
+           - enum:
+               - motorola,potter
+@@ -1153,6 +1158,7 @@ allOf:
+               - qcom,apq8094
+               - qcom,apq8096
+               - qcom,msm8917
++              - qcom,msm8937
+               - qcom,msm8939
+               - qcom,msm8953
+               - qcom,msm8956
 
 -- 
 2.51.0
