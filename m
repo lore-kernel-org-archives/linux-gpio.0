@@ -1,162 +1,102 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604EA45029;
-	Sun, 31 Aug 2025 12:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C18634C
+	for <linux-gpio@vger.kernel.org>; Sun, 31 Aug 2025 12:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756644397; cv=none; b=Ddg4HCx4+OOxg2sNR++bw7qSyq7mzXbY/3lTJ2vqEBp6Lj6/Wmt1wqYjPmf6FBNbpBupTj5J5DMDAyx1WxSY/RRLjd9WtfCSQqERYpLEEfeh+pjublfaEP1t3+3iwNnr5utiFAcyEtZGqmaTU4pvvJtICtc4WMTMM5KcdRDwPdE=
+	t=1756644959; cv=none; b=PWJpLHrrwPiqy/lPxlk1RBuhJSxbFACyIfXJ/tgPIOK6Xz9hz6C6u3nAeQuJBI0m4b/N596dx60VOKXiIXKeUmc39xj7YIFJC1aBL76aEv7L3nIPd4FrBm3WxPx/d5bUOPdWc0uUjEoXkNOq0M+cS4NNGxOxDXhO/OhHkcyup0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756644397; c=relaxed/simple;
-	bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KT75Bo32SAagUiSKNdQPh1IrnAKA+lv3zVShqgY7Co9eVSZu1oGtkQSVrHQK2oI3EHGY1jd51E/l6R6QURyOjXYfYRGVfw6EW2S/hYMlgvsGQsksMf9JjBX0oL4hSoq6jPoape5ucUPLSCmJGbHqYSSkaNPZzRlxNz21daMgReA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ov45dU1p; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=CY413ftE; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1756644959; c=relaxed/simple;
+	bh=kQt5ZAHwLEoOMcqUxZJRYUW4ABPDrG3OFWpa0JEgif4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J8xAI2kXOg5Y54rEHTGCEHTSH2J5ZdG+3bjkET6EuJPzQXZNCj23x53Pznuhb7MhvYhLCyQoofYZS4mL/QIWiaeFiy7bYEh76SesccPR/7dZMRzeGhGx+xOYLGNLaEz9GdS48ILgFvk5zScklpAnnvl9ZLhRcK8j/WXdbdMcH9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YCsrnuh9; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ov45dU1p";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="CY413ftE"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756643370; bh=75jbWC6rzZi0qzMwWHXrcn6
-	GuZQp+Mi+3zTPjxiaEug=; b=ov45dU1pyTfipssKly3Wo6HbmoEqklclEB3vjkStFPKI58m3it
-	QPsXzjObrVkcLwcTPvx9Dt8ZpN988GzeuDWt5BeW8pR2u4M49+5qfriEBYq1xmx0R/5QMmKBXUN
-	joZGv864Z8/DUTevIQHGcN6eApnuwSi/SpPx79B7Hg5kOvLwlugCvivmIxAAVXN3Yw1bp18XPEK
-	16X8gQ+6ztoEbP83iQ2kEVi8Si5IhV80FxFj3Wpap3LEftWYB2Vrel7gkzNoxmAP7zxuVdYC8y+
-	yLcbRcscOkoWjSnKg1Q+kka74uSeoiLEmEE8NMsACoPy2Y/3PgRXMWJzwBPKsxJXOkw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756643370; bh=75jbWC6rzZi0qzMwWHXrcn6
-	GuZQp+Mi+3zTPjxiaEug=; b=CY413ftEpGdrGc2YR6hmicv9wenoD8tTx2JNk+uUbeD87xHQoq
-	k+3tVuf8rj38idhohfVVs7VIZ71p6ssBpYDQ==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sun, 31 Aug 2025 14:29:24 +0200
-Subject: [PATCH v8 1/7] dt-bindings: clock: qcom: Add MSM8937 Global Clock
- Controller
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YCsrnuh9"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f68d7a98aso2006197e87.3
+        for <linux-gpio@vger.kernel.org>; Sun, 31 Aug 2025 05:55:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756644956; x=1757249756; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vi/Fu/AVii1gBs16M7Z6P1XZ4bS6zvGwg2JRMC6pZNY=;
+        b=YCsrnuh9pTqZlfy7c6Qy849mQzW/frPpodxbRsBcEd8V7UwZDGrU1c1DB/fmXecX64
+         btpta39CQq6ODInJeoOQIMhPvQwH1VmATja1yIi55VyPcE/GT8nwAhzZ8HyRfsXLURgz
+         9LTMjdMMEQnF9G4CLOpx74MxoUhaHDkVr2FS67WDHMFnJYmJqbXaONugRWT1H946uSe2
+         j8X2c6TjWzWVBTXhBTIZLTiSCcMUTnR3Apsh89O+Se1t31fza6nADsBhX9Kl8L7P/r/W
+         NY6SYf7zqXKQ0Cs4/05rbQvJDiC3xjPkdRYX5nZJHbg4BKLHn1zqZx8qvGqXWMVYkuU2
+         NeOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756644956; x=1757249756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vi/Fu/AVii1gBs16M7Z6P1XZ4bS6zvGwg2JRMC6pZNY=;
+        b=p3hlKg9H5QVHrwOUo4pMZ5XQeKr6GbLiV7Sh0zfTIX6UOiYc1RTmBKdnecvIQXNysy
+         fTOz/+QLH7USw/5M1j4yYHa84Yf87ggdS3wP7OcFb/sou5ur9It14+X4u++xu4ms8XWR
+         qCaEKN9vzkzFBaFyW55IOiJgs236+0Jvy1B5zxpawmhFRyLoCrr5lJbezn6wGHPy5WRb
+         lAwRBw+gXPRx321OLAPL2/m5I8Grb4FXPkg3FyV7EC8zK2HRsB/98ONsiy6vN9ToXqWo
+         1voqrn8J1fwDhH4eIVxT18USKE2vuQNTsdef3e5D6CjHoJ00cYgoQcwAd6ZMEoDT5vCZ
+         0AOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLTbvUae5U49mLzUoHSHvSHI+sSh8c+8y1TQhMB+JCUH9g8H27m/fIA9hO/BuO7sIzyl5KfvxA/WUb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym1cCHvgP16a1da4hylAw+3dKpcUlwnUf8+JH4XofAGfeTDQQx
+	erqCb9wThmcjLqc18hpiXsYFVo1rQ4pBHv2C9R7oF0/I+Kt1xyWBxouxLriaitr/feLkScWhfM0
+	6pqJB5mIGWut0PFcS1ir2MNqxpXDJ28Fbi3g9HzVWXg==
+X-Gm-Gg: ASbGncucHyTx00wyROALImZCALknljgncBPw7stzc4DM3QoHdGEnJZnAxd2h3LQj76Z
+	9JIhO076Cjr7DwjYqe/KUXuNZGBgNVFblEVm4Sp+jxR7o1ZxiRRmMAsJDCjvXiSnsgUTpsahV4k
+	BQjtPZtxf1cFYEWEqLR60ChZ7Lyd7SFeP14aVYDjupxvf32uku/r87arxUAhjZvdi/Wau5amTWy
+	MNflrkswG96P6iiECXTvvy8wJfEfU5FfNnpptHsm75gXJs=
+X-Google-Smtp-Source: AGHT+IHniTXa5/4UjcWJoEBwBQbEyZw/BW9AAZMM7U+Hb9xB55u2uHi/PlTM610ZTLzfQpPenEMzKjZmWLh4kF49NLk=
+X-Received: by 2002:a05:6512:244b:b0:55f:3c07:958c with SMTP id
+ 2adb3069b0e04-55f709240e4mr909229e87.37.1756644955560; Sun, 31 Aug 2025
+ 05:55:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250831-msm8937-v8-1-b7dcd63caaac@mainlining.org>
-References: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
-In-Reply-To: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756643366; l=3026;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=wtKe9H6U+LhS2f603AlELwNS+homIUhNUwT6Z3ZM8hU=;
- b=92EZ3ek69QF+JXNJZCUMqPFNCG6oXM9SrVT2zRtD0aMPiUxLAZRvLj5NOikGsXngeEbqQ6BwU
- cYc1zpaEDA0Cvuij6vhSyCDbdNQoTYDaq9GH2mp/A6Oa2mDKZ+edRmN
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+References: <20250831030855.957707-1-alex.t.tran@gmail.com>
+In-Reply-To: <20250831030855.957707-1-alex.t.tran@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Sun, 31 Aug 2025 14:55:44 +0200
+X-Gm-Features: Ac12FXyAQEHnGX5GrlT1HPWQ5rbSTaGU-1EY7XEDobHljDh5pDPBlDId2SDPZLg
+Message-ID: <CAMRc=Me5L4XtriaFSwcE9Vqri+6d+Rfn-4FzKUrN_VSOgfA_WA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: codecs: tlv320dac33: switch to gpiod api
+To: Alex Tran <alex.t.tran@gmail.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+	linus.walleij@linaro.org, shenghao-ding@ti.com, kevin-lu@ti.com, 
+	baojun.xu@ti.com, linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add device tree bindings for the global clock controller on Qualcomm
-MSM8937 platform.
+On Sun, Aug 31, 2025 at 5:09=E2=80=AFAM Alex Tran <alex.t.tran@gmail.com> w=
+rote:
+>
+> Changelog:
+> - Changed reset GPIO setup that uses 'gpio_request' and
+>   'gpio_direction_output' to use 'devm_gpio_request_one' instead
+>   for legacy support.
+> - Convert to gpio descriptor for use.
+> - Better error handling with 'gpiod_set_value'.
+> - Removed cleanup of reset gpio as gpiod api is now used.
+>
+> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml   | 11 ++++++++---
- include/dt-bindings/clock/qcom,gcc-msm8917.h          | 19 +++++++++++++++++++
- 2 files changed, 27 insertions(+), 3 deletions(-)
+The fact that the call to gpio_request() is still there made me think
+immediately that the conversion is incomplete. I looked into why you
+didn't change that and noticed that the global GPIO number comes
+through platform data, specifically: struct tlv320dac33_platform_data.
+That platform data struct however is not used in the kernel -and even
+the header that defines it - sound/tlv320dac33-plat.h - is never
+included outside of the driver. Seems to me like the main obstacle to
+completing the conversion is not even used in mainline and can be
+dropped?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-index fe1f5f3ed992453a347062a556b1ddb2a011db6f..f2e37f439d28b3ec066f407927955b3b82b5c10a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-@@ -9,16 +9,21 @@ title: Qualcomm Global Clock & Reset Controller on MSM8953
- maintainers:
-   - Adam Skladowski <a_skl39@protonmail.com>
-   - Sireesh Kodali <sireeshkodali@protonmail.com>
-+  - Barnabas Czeman <barnabas.czeman@mainlining.org>
- 
- description: |
-   Qualcomm global clock control module provides the clocks, resets and power
--  domains on MSM8953.
-+  domains on MSM8937 or MSM8953.
- 
--  See also: include/dt-bindings/clock/qcom,gcc-msm8953.h
-+  See also::
-+    include/dt-bindings/clock/qcom,gcc-msm8917.h
-+    include/dt-bindings/clock/qcom,gcc-msm8953.h
- 
- properties:
-   compatible:
--    const: qcom,gcc-msm8953
-+    enum:
-+      - qcom,gcc-msm8937
-+      - qcom,gcc-msm8953
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
-index 4b421e7414b50bef2e2400f868ae5b7212a427bb..4e3897b3669d9149b61a6feec31ca35e2058dcb9 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
-@@ -170,6 +170,23 @@
- #define VFE1_CLK_SRC				163
- #define VSYNC_CLK_SRC				164
- #define GPLL0_SLEEP_CLK_SRC			165
-+/* Addtional MSM8937-specific clocks */
-+#define MSM8937_BLSP1_QUP1_I2C_APPS_CLK_SRC		166
-+#define MSM8937_BLSP1_QUP1_SPI_APPS_CLK_SRC		167
-+#define MSM8937_BLSP2_QUP4_I2C_APPS_CLK_SRC		168
-+#define MSM8937_BLSP2_QUP4_SPI_APPS_CLK_SRC		169
-+#define MSM8937_BYTE1_CLK_SRC				170
-+#define MSM8937_ESC1_CLK_SRC				171
-+#define MSM8937_PCLK1_CLK_SRC				172
-+#define MSM8937_GCC_BLSP1_QUP1_I2C_APPS_CLK		173
-+#define MSM8937_GCC_BLSP1_QUP1_SPI_APPS_CLK		174
-+#define MSM8937_GCC_BLSP2_QUP4_I2C_APPS_CLK		175
-+#define MSM8937_GCC_BLSP2_QUP4_SPI_APPS_CLK		176
-+#define MSM8937_GCC_MDSS_BYTE1_CLK			177
-+#define MSM8937_GCC_MDSS_ESC1_CLK			178
-+#define MSM8937_GCC_MDSS_PCLK1_CLK			179
-+#define MSM8937_GCC_OXILI_AON_CLK			180
-+#define MSM8937_GCC_OXILI_TIMER_CLK			181
- 
- /* GCC block resets */
- #define GCC_CAMSS_MICRO_BCR			0
-@@ -187,5 +204,7 @@
- #define VENUS_GDSC				5
- #define VFE0_GDSC				6
- #define VFE1_GDSC				7
-+/* Additional MSM8937-specific GDSCs */
-+#define MSM8937_OXILI_CX_GDSC				8
- 
- #endif
-
--- 
-2.51.0
-
+Bart
