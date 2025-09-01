@@ -1,146 +1,132 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22C62556E;
-	Mon,  1 Sep 2025 11:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283F2254B09;
+	Mon,  1 Sep 2025 12:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756727116; cv=none; b=DyeiymXbu82qTkJVtcrC7cWlFXvfhvnOir7L6gSbsHX/8rrF+5erM0p21Okqh6MeTD9MfbbNroYLtEfzig9rCwzD+DlIcKxdTxaUD75EEq+zWcfaz0xemL/x3EwgvZ9iOtGojTWlJgXFjfKVAUSiM1CqYsSMEqkk+TEI6Dh4+aE=
+	t=1756728420; cv=none; b=IE2cMFZjf1UQQvMZeiGckhKoTftTKt8VJ5tVebrpgle7EyPDy8eRGY6Wds25tYMzjg3vs7gJ01oYxdyvpdVJW9HHd7id9sEwUlfSzXU+eCHlta5Mj4sRJb7wKe8si8gw5RiaUfjlaCfuvN49lQF6N/Gcmp+mrSd9fGAn4ZKeMiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756727116; c=relaxed/simple;
-	bh=bEIzW3/fXPb01KjYlShH/QlkM+z3ZeP3wwyYkd1vGKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kwJSRLBOV4hUO5CmA6JHCv3i9oY01BiA8NHtSK0L4Lqze/p6h0drCydF41cNeiXDMLM1J0sZwygpoISIX3QhbLAGJ/HHca8wM5u25/HDCRhoNieJGnrZA/4JRAk21godSKaaDm+32ph8rY2elUqXDwN21CQcOzRkcWJ4BqmbEF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzLy0yZo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1756728420; c=relaxed/simple;
+	bh=KLozvW2/PZEE4MLEPg7Ckr+Jd7gWELOn6bfbOk7IAwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUT9oqMqyXpIFydXbq+pD/vAqZKgIdnTH2LYCUxuaUvSH4IMe5wSgvMBolr3zwCxzlse/xGP18jXnAld2zc57zRmQAyfvQwjJ9a6+G3wkfQEAYVegFvGVFbX4+FVGtYBhOMmF+6jBsEG4q+u92kX2H+UEmpVOUCZONt7rO5LF+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=subnAYt3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzLy0yZo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D718CC4CEF0;
-	Mon,  1 Sep 2025 11:45:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="subnAYt3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750A4C4CEF0;
+	Mon,  1 Sep 2025 12:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756727116;
-	bh=bEIzW3/fXPb01KjYlShH/QlkM+z3ZeP3wwyYkd1vGKQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=DzLy0yZo0SFY5zVZxWNtmB9b9IdrZuqLdqwb4/lb1W3HOCEkNChfjFs2cVvVqWp8y
-	 LvvMJS0OhaExZHIrVBhiN+dm1u/hUE+hbKjgUv7II0SKoVjLBuaAuTArhPS2lWYh6D
-	 74mvwLq86sYnzKLiPXF6zIY5bjwQR3Gl2t4EFzWmLJrkfkeY8a+9HjHeWuLosa+cc3
-	 OoWx/GmhM+gXAOZ/lXbmrRg+nBqkjuvoSX8nLWP/tsn2lXc8i2mAVEVXj9KmfKFNRr
-	 w0egS63UTgrFo/ULS4ylFytpfLIzwc+rosXSTujDcerQH6GsCTvsdw4FCIQh+aJrq+
-	 E/ntz6i4X9YFQ==
-Message-ID: <451f147b-a193-44e3-b7ca-90136de31a17@kernel.org>
-Date: Mon, 1 Sep 2025 13:45:08 +0200
+	s=k20201202; t=1756728419;
+	bh=KLozvW2/PZEE4MLEPg7Ckr+Jd7gWELOn6bfbOk7IAwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=subnAYt3W6iRYWiLe4R1hyk02hHWugF12CkdwNtfWO6oweESVzkr4HHQSgrGdK/hQ
+	 8F1KuLkxbirhX9eTa+UlHzROt6oVHRMDVtFWN5s14w38M5Is6TmFeJ5JJ8je4krspg
+	 pBRIf5eDDzE+sPD131SIUvsN9YtFG8xjdavT9OTqqYxDYZRUulC8RH0fZzQh+efv6M
+	 zm0xO5wdKFGcsgmWDEVbNVw84C2PinGI3Z8RXMoIob2mUpV8kkm7QMdnJyTfUcaJ1e
+	 cCDoP5GnBM8z+lPd7plFSP8PsGAkGVMDl6cqmwfcIkGDifWC/YBbKkp9x6hig/ZOBh
+	 elTOdLAEWl7eQ==
+Date: Mon, 1 Sep 2025 13:06:48 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v6 06/15] pinctrl: imx: don't access the pin function
+ radix tree directly
+Message-ID: <61bad868-d976-4f49-805c-8d14d4d8b3e4@sirena.org.uk>
+References: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org>
+ <20250828-pinctrl-gpio-pinfuncs-v6-6-c9abb6bdb689@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/10] dt-bindings: soc: aspeed: Add ASPEED PCIe Config
-To: Jacky Chou <jacky_chou@aspeedtech.com>, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- joel@jms.id.au, andrew@codeconstruct.com.au, vkoul@kernel.org,
- kishon@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
- linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org,
- linux-gpio@vger.kernel.org
-References: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
- <20250901055922.1553550-2-jacky_chou@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250901055922.1553550-2-jacky_chou@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 01/09/2025 07:59, Jacky Chou wrote:
-> +description:
-> +  The ASPEED PCIe configuration syscon block provides a set of registers shared
-> +  by multiple PCIe-related devices within the SoC. This node represents the
-> +  common configuration space that allows these devices to coordinate and manage
-> +  shared PCIe settings, including address mapping, control, and status
-> +  registers. The syscon interface enables for various PCIe devices to access
-> +  and modify these shared registers in a consistent and centralized manner.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - aspeed,ast2700-pcie-cfg
-
-Why this cannot be part of standard syscon binding file?
-
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    soc0 {
-
-soc {
-
-although why do you need it in the first place...
-
-> +      #address-cells = <2>;
-> +      #size-cells = <1>;
-> +
-> +      syscon@12c02a00 {
-> +        compatible = "aspeed,ast2700-pcie-cfg", "syscon";
-> +        reg = <0 0x12c02a00 0x80>;
-> +      };
-> +    };
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ck2hWlO4+9LtMqEh"
+Content-Disposition: inline
+In-Reply-To: <20250828-pinctrl-gpio-pinfuncs-v6-6-c9abb6bdb689@linaro.org>
+X-Cookie: Auction:
 
 
-Best regards,
-Krzysztof
+--ck2hWlO4+9LtMqEh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 28, 2025 at 06:00:14PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> The radix tree containing pin function descriptors should not be
+> accessed directly by drivers. There are dedicated functions for it. I
+> suppose this driver does it so that the memory containing the function
+> description is not duplicated but we're going to address that shortly so
+> convert it to using generic pinctrl APIs.
+
+This is still failing for me:
+
+[    0.628221] Unable to handle kernel NULL pointer dereference at virtual =
+address 0000000000000000
+[    0.636506] Mem abort info:
+
+=2E..
+
+[    0.801855]  __pi_strcmp+0x20/0x140 (P)
+[    0.805704]  pinmux_generic_add_pinfunction+0x28/0xe0
+[    0.810777]  imx_pinctrl_parse_functions.isra.0+0xf8/0x4a0
+[    0.816289]  imx_pinctrl_probe+0x404/0x520
+
+Full log:
+
+   https://lava.sirena.org.uk/scheduler/job/1758025#L704
+
+--ck2hWlO4+9LtMqEh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi1jFcACgkQJNaLcl1U
+h9BGhwf/dS46HMJilXSgdHmEKJbp5ioFAwW8a4pof2TF7vY7Jpo/qiFqnKkvqhYC
+tZO4exJFROsDCUKlVPp+Qawyyhy3CCU2p+vHcuz8p07gmzIEOw9QkjMf8IMlPGyA
+UKEr+nQae21YF/iNRFDQGH9hqHAT76YwExslci+ilyDzaJeWu6ACPhVMFMNO9a/q
+BjCieo2alJTBGdLUFgFDoMmVmqebVqIBYO0m966vo/efy8UG1BTlGE++FYa1OVnt
+bVDlzyyNsdl94L6s8pxhABsajGCsOXj0inSK7SXdnJ4XusoEfuSIKKSieCGsjMEG
+qkdS6DTMFfXrzPQZI5S3dgsmyVchug==
+=JXXf
+-----END PGP SIGNATURE-----
+
+--ck2hWlO4+9LtMqEh--
