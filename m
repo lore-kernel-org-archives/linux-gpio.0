@@ -1,103 +1,126 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D852580E4
-	for <linux-gpio@vger.kernel.org>; Mon,  1 Sep 2025 05:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A8E145355;
+	Mon,  1 Sep 2025 05:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756705389; cv=none; b=cb/WoK25+I191mWB/to3VCVeraGmRI2kvc4UTCWEBNqBaXXnLSTaQs5Lp9YQOz1hBJ9g3+HWDJ898okWLuC9uLIxMGfhIlGWHrARDNZU9J9Q12dQ79cM/wkXW+9EhohSBdrVFSPmuusL27CuI1xgJT3C7HokTcRrE3YvwKPwSII=
+	t=1756706366; cv=none; b=irK087UNhP+xKGalfw1NJajF5su4l06AQYl5mMN4WeR0xbbWOWr7PUDT5odSjrz35rYYOTv9/n8AJWBF7fdiS09lt379yOEWKBHUi4aKzpYhwcgodpwQDjW6ToXDuCrDpqzct6tEAOzIeTCYUSOE3eX19QCkvyGuMFloZjn3tdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756705389; c=relaxed/simple;
-	bh=m9oTjZ7C8dnATQroPNEjk8bOwR1sXKUbfmI6z8BGwFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=hiXpWJh3S3kGQ/OLwZyUZeEapb8YRtwq4XiLyyM/Y3CLCPp3Uz2H/hN1jWKAWTpO5oqTBR268kVgOjfuYdGfCEoW8FgV0D1T5yRPM5gMSzXCiTZBELV8uDDO0tdXr2YL2RdpgX+5pkr3M7f9KutDl+nUQVpHrLbZPsLwvH379ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=II5Cequg; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="II5Cequg"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250901054306epoutp03d46baaaf3a1adc36cfb82b51124dac66~hEj3hEfRM1865218652epoutp03J
-	for <linux-gpio@vger.kernel.org>; Mon,  1 Sep 2025 05:43:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250901054306epoutp03d46baaaf3a1adc36cfb82b51124dac66~hEj3hEfRM1865218652epoutp03J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756705386;
-	bh=AnmAPrcDCYbR1J1LfBH1PHR8aqxWFYZaUH5QmVjWvUc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=II5Cequgt6q9CtOhYCIb3N+bn9QdzOGomIY/0+Cb9GThx2JqCaKIri702R0rLA0nz
-	 Hy1f2ZMTxeu2y74p0/j6RBwq3wSs4v61oHYvgyuca4K306G30wSgtfz9FL710NsrfD
-	 H+QDmCj+AwTMIb2fU8dyKX6XVq/VxzyWeXZm7OQo=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250901054305epcas5p3486a5537dd8999135776b1141f184bd5~hEj2klCpO1883718837epcas5p3u;
-	Mon,  1 Sep 2025 05:43:05 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFd7r44bQz6B9m9; Mon,  1 Sep
-	2025 05:43:04 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250901054303epcas5p3d8079b7806d995bfaf3004cbb4f95e41~hEj08CsBi1883718837epcas5p3o;
-	Mon,  1 Sep 2025 05:43:03 +0000 (GMT)
-Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250901054259epsmtip210578938dcab54c7343fe60c0383dde6~hEjww4qJX0605106051epsmtip2W;
-	Mon,  1 Sep 2025 05:42:59 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com,
-	will@kernel.org, arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
-	smn1196@coasia.com, shradha.t@samsung.com, ravi.patel@samsung.com,
-	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
-	dj76.yang@samsung.com, hypmean.kim@samsung.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v4 6/6] arm64: defconfig: Enable Axis ARTPEC SoC
-Date: Mon,  1 Sep 2025 10:49:26 +0530
-Message-Id: <20250901051926.59970-7-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250901051926.59970-1-ravi.patel@samsung.com>
-X-CMS-MailID: 20250901054303epcas5p3d8079b7806d995bfaf3004cbb4f95e41
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250901054303epcas5p3d8079b7806d995bfaf3004cbb4f95e41
-References: <20250901051926.59970-1-ravi.patel@samsung.com>
-	<CGME20250901054303epcas5p3d8079b7806d995bfaf3004cbb4f95e41@epcas5p3.samsung.com>
+	s=arc-20240116; t=1756706366; c=relaxed/simple;
+	bh=wLiM9nosk3p2z406tp4z8uPFX5uJmOynNM4NmY2fO7g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nwqQmSAvT+Qsx7Lo02VN7MQZ+jp5xoxnpSZSny9fGwDL/JbBttCwwxzdaNbOHTDRvlUIdDnNTMHns3irqQLEDHkJpM52WQhS8AdWLoilz/qIsbp/6TRefkjC0CqYDBWsJzNXseGozsL/z3sVn+R2XiMO8NRkB+cVQXxe/iijxHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 1 Sep
+ 2025 13:59:22 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 1 Sep 2025 13:59:22 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>,
+	<lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <linus.walleij@linaro.org>, <p.zabel@pengutronix.de>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-phy@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
+	<linux-gpio@vger.kernel.org>
+CC: <jacky_chou@aspeedtech.com>
+Subject: [PATCH v3 00/10] Add ASPEED PCIe Root Complex support
+Date: Mon, 1 Sep 2025 13:59:12 +0800
+Message-ID: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: SungMin Park <smn1196@coasia.com>
+This patch series adds support for the ASPEED PCIe Root Complex,
+including device tree bindings, pinctrl support, and the PCIe host controller
+driver. The patches introduce the necessary device tree nodes, pinmux groups,
+and driver implementation to enable PCIe functionality on ASPEED platforms.
+Currently, the ASPEED PCIe Root Complex only supports a single port.
 
-Enable the Axis ARTPEC-8 SoC in arm64 defconfig.
+Summary of changes:
+- Add device tree binding documents for ASPEED PCIe PHY, PCIe Config, and PCIe RC
+- Update MAINTAINERS for new bindings and driver
+- Add PCIe RC node and PERST control pin to aspeed-g6 device tree
+- Implement ASPEED PCIe PHY driver
+- Implement ASPEED PCIe Root Complex host controller driver
 
-Signed-off-by: SungMin Park <smn1196@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+This series has been tested on AST2600/AST2700 platforms and enables PCIe device
+enumeration and operation.
+
+Jacky Chou (10):
+  dt-bindings: soc: aspeed: Add ASPEED PCIe Config
+  dt-bindings: phy: aspeed: Add ASPEED PCIe PHY
+  dt-bindings: PCI: Add ASPEED PCIe RC support
+  dt-bindings: pinctrl: aspeed,ast2600-pinctrl: Add PCIe RC PERST# group
+  ARM: dts: aspeed-g6: Add AST2600 PCIe RC PERST#
+  ARM: dts: aspeed-g6: Add PCIe RC and PCIe PHY node
+  PHY: aspeed: Add ASPEED PCIe PHY driver
+  PCI: Add FMT and TYPE definition for TLP header
+  PCI: aspeed: Add ASPEED PCIe RC driver
+  MAINTAINERS: Add ASPEED PCIe RC driver
+
+ .../bindings/pci/aspeed,ast2600-pcie.yaml     |  179 +++
+ .../bindings/phy/aspeed,ast2600-pcie-phy.yaml |   42 +
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    2 +
+ .../soc/aspeed/aspeed,ast2700-pcie-cfg.yaml   |   46 +
+ MAINTAINERS                                   |   11 +
+ .../boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |    5 +
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |   56 +
+ drivers/pci/controller/Kconfig                |   16 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-aspeed.c          | 1137 +++++++++++++++++
+ drivers/pci/pci.h                             |   12 +
+ drivers/phy/Kconfig                           |    1 +
+ drivers/phy/Makefile                          |    1 +
+ drivers/phy/aspeed/Kconfig                    |   15 +
+ drivers/phy/aspeed/Makefile                   |    2 +
+ drivers/phy/aspeed/phy-aspeed-pcie.c          |  209 +++
+ 16 files changed, 1735 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/aspeed,ast2600-pcie-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/aspeed,ast2700-pcie-cfg.yaml
+ create mode 100644 drivers/pci/controller/pcie-aspeed.c
+ create mode 100644 drivers/phy/aspeed/Kconfig
+ create mode 100644 drivers/phy/aspeed/Makefile
+ create mode 100644 drivers/phy/aspeed/phy-aspeed-pcie.c
+
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+ - Add ASPEED PCIe PHY driver
+ - Remove the aspeed,pciecfg property from AST2600 RC node, merged into RC node
+ - Update the binding doc for aspeed,ast2700-pcie-cfg to reflect the changes
+ - Update the binding doc for aspeed,ast2600-pcie to reflect the changes
+ - Update the binding doc for aspeed,ast2600-pinctrl to reflect the changes
+ - Update the device tree source to reflect the changes
+ - Adjusted the use of mutex in RC drivers to use GRAND
+ - Updated from reviewer comments
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 58f87d09366c..6660d3ee6f99 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
-+CONFIG_ARCH_ARTPEC=y
- CONFIG_ARCH_AXIADO=y
- CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM2835=y
+v2:
+ - Moved ASPEED PCIe PHY yaml binding to `soc/aspeed` directory and
+   changed it as syscon
+ - Added `MAINTAINERS` entry for the new PCIe RC driver
+ - Updated device tree bindings to reflect the new structure
+ - Refactored configuration read and write functions to main bus and
+   child bus ops
+ - Refactored initialization to implement multiple ports support
+ - Added PCIe FMT and TYPE definitions for TLP header in
+   `include/uapi/linux/pci_regs.h`
+ - Updated from reviewer comments
+---
+
 -- 
-2.49.0
+2.43.0
 
