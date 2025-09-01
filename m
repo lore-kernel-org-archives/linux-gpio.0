@@ -1,132 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283F2254B09;
-	Mon,  1 Sep 2025 12:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F55A267387;
+	Mon,  1 Sep 2025 12:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728420; cv=none; b=IE2cMFZjf1UQQvMZeiGckhKoTftTKt8VJ5tVebrpgle7EyPDy8eRGY6Wds25tYMzjg3vs7gJ01oYxdyvpdVJW9HHd7id9sEwUlfSzXU+eCHlta5Mj4sRJb7wKe8si8gw5RiaUfjlaCfuvN49lQF6N/Gcmp+mrSd9fGAn4ZKeMiQ=
+	t=1756729236; cv=none; b=iq8QTP6PQMAIDsV3gyiOb+lKLXL2nRqoWhcUQj3TxaoCawJ+IH/SKo7TSoerz33lyLrco63pDe0E4TimVxG/4JXk99+qgJCYTSGStFW18qNftZ4db5sW0dkoogl8IEHmVkcMCSoqpDDGangEIyKvt4Vh/qoJ1thfusCQF3CZOew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728420; c=relaxed/simple;
-	bh=KLozvW2/PZEE4MLEPg7Ckr+Jd7gWELOn6bfbOk7IAwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUT9oqMqyXpIFydXbq+pD/vAqZKgIdnTH2LYCUxuaUvSH4IMe5wSgvMBolr3zwCxzlse/xGP18jXnAld2zc57zRmQAyfvQwjJ9a6+G3wkfQEAYVegFvGVFbX4+FVGtYBhOMmF+6jBsEG4q+u92kX2H+UEmpVOUCZONt7rO5LF+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=subnAYt3; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="subnAYt3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750A4C4CEF0;
-	Mon,  1 Sep 2025 12:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756728419;
-	bh=KLozvW2/PZEE4MLEPg7Ckr+Jd7gWELOn6bfbOk7IAwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=subnAYt3W6iRYWiLe4R1hyk02hHWugF12CkdwNtfWO6oweESVzkr4HHQSgrGdK/hQ
-	 8F1KuLkxbirhX9eTa+UlHzROt6oVHRMDVtFWN5s14w38M5Is6TmFeJ5JJ8je4krspg
-	 pBRIf5eDDzE+sPD131SIUvsN9YtFG8xjdavT9OTqqYxDYZRUulC8RH0fZzQh+efv6M
-	 zm0xO5wdKFGcsgmWDEVbNVw84C2PinGI3Z8RXMoIob2mUpV8kkm7QMdnJyTfUcaJ1e
-	 cCDoP5GnBM8z+lPd7plFSP8PsGAkGVMDl6cqmwfcIkGDifWC/YBbKkp9x6hig/ZOBh
-	 elTOdLAEWl7eQ==
-Date: Mon, 1 Sep 2025 13:06:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6 06/15] pinctrl: imx: don't access the pin function
- radix tree directly
-Message-ID: <61bad868-d976-4f49-805c-8d14d4d8b3e4@sirena.org.uk>
-References: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org>
- <20250828-pinctrl-gpio-pinfuncs-v6-6-c9abb6bdb689@linaro.org>
+	s=arc-20240116; t=1756729236; c=relaxed/simple;
+	bh=6GGB8fj116M7fld93yabp+Sk9w91NwwwbI5I6K0AiZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YmtHDAG0ZytzhNw5KUAFjRSE/KcbvA+ll8angr09NST/aXR2L4Onb4FIP4K7wTrNeNCfJTwLoU9gkZ+Zm+62aGnM9ZMvqo/Ppg4V3bQslnGiL4FpuMSFJfVRC12mSuzkcgqcTTE1B8C8FU7sZMVPsWeHSXYkyv8qyTvggKQwEGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cFndJ2RLlz9sSp;
+	Mon,  1 Sep 2025 14:05:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Uqek8JJfWF8y; Mon,  1 Sep 2025 14:05:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFndC5GNSz9sSq;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A3ED18B790;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id UrGKXVX00Xao; Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7B3FA8B78C;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 5/7] dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
+Date: Mon,  1 Sep 2025 14:05:12 +0200
+Message-ID: <b36ab796493fedd607f05287706bfa5ce22d8543.1756727747.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1756727747.git.christophe.leroy@csgroup.eu>
+References: <cover.1756727747.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ck2hWlO4+9LtMqEh"
-Content-Disposition: inline
-In-Reply-To: <20250828-pinctrl-gpio-pinfuncs-v6-6-c9abb6bdb689@linaro.org>
-X-Cookie: Auction:
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756728308; l=2384; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=6GGB8fj116M7fld93yabp+Sk9w91NwwwbI5I6K0AiZU=; b=jR+31eCAFRr4bN9Eu6xmfDeciVfmvlPu9ExV5VARP8nsAOGNFwb90XySqHjMyi1lIHHu36+2y LGi6cKMqC+ICyMni+CveDj7l2leszHXF7NXGxdBQNi1fciTurQMzy/U
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
+The QUICC Engine provides interrupts for a few I/O ports. This is
+handled via a separate interrupt ID and managed via a triplet of
+dedicated registers hosted by the SoC.
 
---ck2hWlO4+9LtMqEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Implement an interrupt driver for it for that those IRQs can then
+be linked to the related GPIOs.
 
-On Thu, Aug 28, 2025 at 06:00:14PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->=20
-> The radix tree containing pin function descriptors should not be
-> accessed directly by drivers. There are dedicated functions for it. I
-> suppose this driver does it so that the memory containing the function
-> description is not duplicated but we're going to address that shortly so
-> convert it to using generic pinctrl APIs.
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
 
-This is still failing for me:
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+new file mode 100644
+index 000000000000..a356ad8b13f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale QUICC Engine I/O Ports Interrupt Controller
++
++maintainers:
++  - Christophe Leroy <christophe.leroy@csgroup.eu>
++
++description:
++  Interrupt controller for the QUICC Engine I/O ports found on some Freescale/NXP PowerQUICC and QorIQ SoCs.
++
++properties:
++  compatible:
++    enum:
++      - fsl,mpc8323-qe-ports-ic
++      - fsl,mpc8360-qe-ports-ic
++      - fsl,mpc8568-qe-ports-ic
++
++  reg:
++    maxItems: 1
++    description: Base address and size of the QE I/O Ports Interrupt Controller registers.
++
++  interrupt-controller: true
++
++  '#address-cells':
++    const: 0
++
++  '#interrupt-cells':
++    const: 1
++
++  interrupts:
++    maxItems: 1
++    description: Interrupt line to which the QE I/O Ports controller is connected.
++
++required:
++  - compatible
++  - reg
++  - interrupt-controller
++  - '#address-cells'
++  - '#interrupt-cells'
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    interrupt-controller@c00 {
++      compatible = "fsl,mpc8323-qe-ports-ic";
++      reg = <0xc00 0x18>;
++      interrupt-controller;
++      #address-cells = <0>;
++      #interrupt-cells = <1>;
++      interrupts = <74 0x8>;
++      interrupt-parent = <&ipic>;
++    };
+-- 
+2.49.0
 
-[    0.628221] Unable to handle kernel NULL pointer dereference at virtual =
-address 0000000000000000
-[    0.636506] Mem abort info:
-
-=2E..
-
-[    0.801855]  __pi_strcmp+0x20/0x140 (P)
-[    0.805704]  pinmux_generic_add_pinfunction+0x28/0xe0
-[    0.810777]  imx_pinctrl_parse_functions.isra.0+0xf8/0x4a0
-[    0.816289]  imx_pinctrl_probe+0x404/0x520
-
-Full log:
-
-   https://lava.sirena.org.uk/scheduler/job/1758025#L704
-
---ck2hWlO4+9LtMqEh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi1jFcACgkQJNaLcl1U
-h9BGhwf/dS46HMJilXSgdHmEKJbp5ioFAwW8a4pof2TF7vY7Jpo/qiFqnKkvqhYC
-tZO4exJFROsDCUKlVPp+Qawyyhy3CCU2p+vHcuz8p07gmzIEOw9QkjMf8IMlPGyA
-UKEr+nQae21YF/iNRFDQGH9hqHAT76YwExslci+ilyDzaJeWu6ACPhVMFMNO9a/q
-BjCieo2alJTBGdLUFgFDoMmVmqebVqIBYO0m966vo/efy8UG1BTlGE++FYa1OVnt
-bVDlzyyNsdl94L6s8pxhABsajGCsOXj0inSK7SXdnJ4XusoEfuSIKKSieCGsjMEG
-qkdS6DTMFfXrzPQZI5S3dgsmyVchug==
-=JXXf
------END PGP SIGNATURE-----
-
---ck2hWlO4+9LtMqEh--
