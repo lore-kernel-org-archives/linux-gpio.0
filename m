@@ -1,36 +1,37 @@
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCDD17A2E6;
-	Mon,  1 Sep 2025 12:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F973326D50;
+	Mon,  1 Sep 2025 12:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729236; cv=none; b=PSWAb/2bjweEHvragHdJP8AtWR4WUqTiuo6Se14sXwQEyQ3FdFzz7tAQkWYpaME5QKyH5m8Gy8eJxaZBF4dk6Vmj2eSP7pB/zptZWVBOwhMo1c7WIPg24K5srEPhThHjOoIA5HJmBSKmNTWRQCusk8FpEPj/vKwjYt0ad+6ifIc=
+	t=1756729242; cv=none; b=aGnl/dtgUQYR+Zd7fXVHdykaidvC4O7NhMky092uoWrtVQccWqCKibZddPx+B1c+ojgnxPLQw/F3uf+9XglILwp6Dcnq+oI8prszY6sqrmCOQ9/inBoVE5c3q62Cgkk5pmQ9d0FVx6tt/cmKEGLgDqjSyVJzYuMEBCeH5iGJ230=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729236; c=relaxed/simple;
-	bh=OQso3M18Z5ORcR/fPWxtfj+ukdTn1jxV4K9Dtp+9ezM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+2/VxqoFIOA0rrp5m51IFnwnstEHrwTChvYT39WUdoNuL+D2iQJO06xCZLscN46Hh5U0xyuM0Md+IWHL1ePO0IyuW82nEpOZVJPJYGPAPRphVowfhAgy7+lKuGy93BdvLdD2Kewurag5chdNj+0C1OeH2syEQFTxnYNlSyFBvY=
+	s=arc-20240116; t=1756729242; c=relaxed/simple;
+	bh=zHMhkGOir99C4zE6CP2P9w4fbrPG2js+Iq37Oh0usVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=snR8QLllVsfCBYEGuOCuWUAa2jFok7MbvcRjktwGVV3j37SaX+J5cqFm/clPe079rtLf8ry0+f7vANy/SPsOmS57zfQtVkTlrQcJYju7n4Zgl8iyCHebLedooMiqfH/bCStpzZSFZGuMduOAoOLyaiy9lmX2NiD25BI4kYY7tIE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cFndC21Vkz9sSh;
-	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4cFndG1JW7z9sSj;
+	Mon,  1 Sep 2025 14:05:38 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id eGxryqrUX_hV; Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+	with ESMTP id YjItXt-aDJex; Mon,  1 Sep 2025 14:05:38 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFndC0tmwz9sSb;
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFndC3wLgz9sSn;
 	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0A7888B790;
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6DFC88B790;
 	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id MoqCpBZoSEHQ; Mon,  1 Sep 2025 14:05:34 +0200 (CEST)
+	with ESMTP id 8IHJKJa_apLX; Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D60908B77B;
-	Mon,  1 Sep 2025 14:05:34 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 397938B796;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Qiang Zhao <qiang.zhao@nxp.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
@@ -44,75 +45,224 @@ Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v5 0/7] Add support of IRQs to QUICC ENGINE GPIOs
-Date: Mon,  1 Sep 2025 14:05:07 +0200
-Message-ID: <cover.1756727747.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v5 3/7] soc: fsl: qe: Drop legacy-of-mm-gpiochip.h header from GPIO driver
+Date: Mon,  1 Sep 2025 14:05:10 +0200
+Message-ID: <c5788504a473625faeb9f99b08d3bca5e7135120.1756727747.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1756727747.git.christophe.leroy@csgroup.eu>
+References: <cover.1756727747.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756728307; l=2473; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=OQso3M18Z5ORcR/fPWxtfj+ukdTn1jxV4K9Dtp+9ezM=; b=Sa0OBzCBpoGN4HMRxzJnWdq9fZNM5lvmxW/10//o9X7BqvBcy9RkfTft0Q6Nj/WX5r6Z8iMS8 woenspJQt4yAzoKwVux1Pqldu+JN1n3addpi4kD64aZS57VTiqX3XlF
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756728308; l=7337; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=zHMhkGOir99C4zE6CP2P9w4fbrPG2js+Iq37Oh0usVQ=; b=JCxpWDQg8OT10Z6xzFFQz7qWBVLJ3RJwav5YcIOtO07QXfDpRAg1A9uG5tFz3Z3jwLeuwAyfi deFgDBXXM30Alvf3L3FJ/ZG2MGYKdoX18I2J2JmSoeiso2DstWnIpJG
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-The QUICC Engine provides interrupts for a few I/O ports. This is
-handled via a separate interrupt ID and managed via a triplet of
-dedicated registers hosted by the SoC.
+Remove legacy-of-mm-gpiochip.h header file. The above mentioned
+file provides an OF API that's deprecated. There is no agnostic
+alternatives to it and we have to open code the logic which was
+hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
+drivers are using their own labeling schemas and resource retrieval
+that only a few may gain of the code deduplication, so whenever
+alternative is appear we can move drivers again to use that one.
 
-Implement an interrupt driver for those IRQs then add change
-notification capability to the QUICC ENGINE GPIOs.
+As a side effect this change fixes a potential memory leak on
+an error path, if of_mm_gpiochip_add_data() fails.
 
-The number of GPIOs for which interrupts are supported depends on
-the microcontroller:
-- mpc8323 has 10 GPIOS supporting interrupts
-- mpc8360 has 28 GPIOS supporting interrupts
-- mpc8568 has 18 GPIOS supporting interrupts
+[Text copied from commit 34064c8267a6 ("powerpc/8xx: Drop
+legacy-of-mm-gpiochip.h header")]
 
-Changes in v5:
-- Replaced new DT property "fsl,qe-gpio-irq-mask" by a mask encoded
-in the of_device_id table
-- Converted QE QPIO DT bindings to DT schema
+Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/platforms/Kconfig |  1 -
+ drivers/soc/fsl/qe/gpio.c      | 51 ++++++++++++++++++----------------
+ 2 files changed, 27 insertions(+), 25 deletions(-)
 
-Changes in v4:
-- Removed unused headers
-- Using device_property_read_u32() instead of of_property_read_u32()
-
-Changes in v3:
-- Splited dt-bindings update out of patch "soc: fsl: qe: Add support of IRQ in QE GPIO"
-- Reordered DTS node exemples iaw dts-coding-style.rst
-
-Changes in v2:
-- Fixed warning on PPC64 build (Patch 1)
-- Using devm_kzalloc() instead of kzalloc (Patch 2)
-- Stop using of-mm-gpiochip (New patch 3)
-- Added fsl,qe-gpio-irq-mask propertie in DT binding doc (Patch 4)
-- Fixed problems reported by 'make dt_binding_check' (Patch 5)
-
-Christophe Leroy (7):
-  soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
-  soc: fsl: qe: Change GPIO driver to a proper platform driver
-  soc: fsl: qe: Drop legacy-of-mm-gpiochip.h header from GPIO driver
-  soc: fsl: qe: Add support of IRQ in QE GPIO
-  dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC
-    Engine Ports
-  dt-bindings: soc: fsl: qe: Convert QE GPIO to DT schema
-  dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
-
- .../fsl/cpm_qe/fsl,mpc8323-qe-pario-bank.yaml |  76 +++++++
- .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       |  58 +++++
- .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     |  26 +--
- arch/powerpc/platforms/Kconfig                |   1 -
- drivers/soc/fsl/qe/Makefile                   |   2 +-
- drivers/soc/fsl/qe/gpio.c                     | 209 ++++++++++++------
- drivers/soc/fsl/qe/qe_ports_ic.c              | 156 +++++++++++++
- 7 files changed, 438 insertions(+), 90 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,mpc8323-qe-pario-bank.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
- create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
-
+diff --git a/arch/powerpc/platforms/Kconfig b/arch/powerpc/platforms/Kconfig
+index fea3766eac0f..5b689bd3ddf4 100644
+--- a/arch/powerpc/platforms/Kconfig
++++ b/arch/powerpc/platforms/Kconfig
+@@ -232,7 +232,6 @@ config QE_GPIO
+ 	bool "QE GPIO support"
+ 	depends on QUICC_ENGINE
+ 	select GPIOLIB
+-	select OF_GPIO_MM_GPIOCHIP
+ 	help
+ 	  Say Y here if you're going to use hardware that connects to the
+ 	  QE GPIOs.
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 04b44fc2bb58..c54154b404df 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -12,7 +12,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+-#include <linux/gpio/legacy-of-mm-gpiochip.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/slab.h>
+@@ -24,7 +23,8 @@
+ #define PIN_MASK(gpio) (1UL << (QE_PIO_PINS - 1 - (gpio)))
+ 
+ struct qe_gpio_chip {
+-	struct of_mm_gpio_chip mm_gc;
++	struct gpio_chip gc;
++	void __iomem *regs;
+ 	spinlock_t lock;
+ 
+ 	/* shadowed data register to clear/set bits safely */
+@@ -34,11 +34,9 @@ struct qe_gpio_chip {
+ 	struct qe_pio_regs saved_regs;
+ };
+ 
+-static void qe_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
++static void qe_gpio_save_regs(struct qe_gpio_chip *qe_gc)
+ {
+-	struct qe_gpio_chip *qe_gc =
+-		container_of(mm_gc, struct qe_gpio_chip, mm_gc);
+-	struct qe_pio_regs __iomem *regs = mm_gc->regs;
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 
+ 	qe_gc->cpdata = ioread32be(&regs->cpdata);
+ 	qe_gc->saved_regs.cpdata = qe_gc->cpdata;
+@@ -51,8 +49,8 @@ static void qe_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+ 
+ static int qe_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct qe_pio_regs __iomem *regs = mm_gc->regs;
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 	u32 pin_mask = PIN_MASK(gpio);
+ 
+ 	return !!(ioread32be(&regs->cpdata) & pin_mask);
+@@ -60,9 +58,8 @@ static int qe_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 
+ static int qe_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+-	struct qe_pio_regs __iomem *regs = mm_gc->regs;
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = PIN_MASK(gpio);
+ 
+@@ -83,9 +80,8 @@ static int qe_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int qe_gpio_set_multiple(struct gpio_chip *gc,
+ 				unsigned long *mask, unsigned long *bits)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+-	struct qe_pio_regs __iomem *regs = mm_gc->regs;
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 	unsigned long flags;
+ 	int i;
+ 
+@@ -111,13 +107,12 @@ static int qe_gpio_set_multiple(struct gpio_chip *gc,
+ 
+ static int qe_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+ 
+-	__par_io_config_pin(mm_gc->regs, gpio, QE_PIO_DIR_IN, 0, 0, 0);
++	__par_io_config_pin(qe_gc->regs, gpio, QE_PIO_DIR_IN, 0, 0, 0);
+ 
+ 	spin_unlock_irqrestore(&qe_gc->lock, flags);
+ 
+@@ -126,7 +121,6 @@ static int qe_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 
+ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 
+@@ -134,7 +128,7 @@ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+ 
+-	__par_io_config_pin(mm_gc->regs, gpio, QE_PIO_DIR_OUT, 0, 0, 0);
++	__par_io_config_pin(qe_gc->regs, gpio, QE_PIO_DIR_OUT, 0, 0, 0);
+ 
+ 	spin_unlock_irqrestore(&qe_gc->lock, flags);
+ 
+@@ -240,7 +234,7 @@ EXPORT_SYMBOL(qe_pin_free);
+ void qe_pin_set_dedicated(struct qe_pin *qe_pin)
+ {
+ 	struct qe_gpio_chip *qe_gc = qe_pin->controller;
+-	struct qe_pio_regs __iomem *regs = qe_gc->mm_gc.regs;
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 	struct qe_pio_regs *sregs = &qe_gc->saved_regs;
+ 	int pin = qe_pin->num;
+ 	u32 mask1 = 1 << (QE_PIO_PINS - (pin + 1));
+@@ -269,7 +263,6 @@ void qe_pin_set_dedicated(struct qe_pin *qe_pin)
+ 
+ 	iowrite32be(qe_gc->cpdata, &regs->cpdata);
+ 	qe_clrsetbits_be32(&regs->cpodr, mask1, sregs->cpodr & mask1);
+-
+ 	spin_unlock_irqrestore(&qe_gc->lock, flags);
+ }
+ EXPORT_SYMBOL(qe_pin_set_dedicated);
+@@ -284,7 +277,7 @@ EXPORT_SYMBOL(qe_pin_set_dedicated);
+ void qe_pin_set_gpio(struct qe_pin *qe_pin)
+ {
+ 	struct qe_gpio_chip *qe_gc = qe_pin->controller;
+-	struct qe_pio_regs __iomem *regs = qe_gc->mm_gc.regs;
++	struct qe_pio_regs __iomem *regs = qe_gc->regs;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+@@ -301,7 +294,6 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+ 	struct device *dev = &ofdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct qe_gpio_chip *qe_gc;
+-	struct of_mm_gpio_chip *mm_gc;
+ 	struct gpio_chip *gc;
+ 
+ 	qe_gc = devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
+@@ -310,18 +302,29 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+ 
+ 	spin_lock_init(&qe_gc->lock);
+ 
+-	mm_gc = &qe_gc->mm_gc;
+-	gc = &mm_gc->gc;
++	gc = &qe_gc->gc;
+ 
+-	mm_gc->save_regs = qe_gpio_save_regs;
++	gc->base = -1;
+ 	gc->ngpio = QE_PIO_PINS;
+ 	gc->direction_input = qe_gpio_dir_in;
+ 	gc->direction_output = qe_gpio_dir_out;
+ 	gc->get = qe_gpio_get;
+ 	gc->set = qe_gpio_set;
+ 	gc->set_multiple = qe_gpio_set_multiple;
++	gc->parent = dev;
++	gc->owner = THIS_MODULE;
++
++	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
++	if (!gc->label)
++		return -ENOMEM;
++
++	qe_gc->regs = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(qe_gc->regs))
++		return PTR_ERR(qe_gc->regs);
++
++	qe_gpio_save_regs(qe_gc);
+ 
+-	return of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
++	return devm_gpiochip_add_data(dev, gc, qe_gc);
+ }
+ 
+ static const struct of_device_id qe_gpio_match[] = {
 -- 
 2.49.0
 
