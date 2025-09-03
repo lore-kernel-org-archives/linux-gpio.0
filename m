@@ -1,121 +1,71 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCD12AE66;
-	Wed,  3 Sep 2025 09:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1952EB5BD;
+	Wed,  3 Sep 2025 09:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891190; cv=none; b=Yo1uqjGEFsTzw9H99bQWslSJqq0kFwusspYnEm654hfdhpQXXII3zD4xsv4miT/5GDw7fl5xh2Fvu5bPAxJnGsvMj+nntFh82Asl7kwgCFGIqocHNI/ORB9sa6AbRvxXShxFvStMxfDKRhtRP+4WV2hy/x4WfuJ9lg/fypjzVyU=
+	t=1756891678; cv=none; b=e7EzWgq2MNihAEdzbpe7OnWjfNha5VsEwhYRFCDzTyuRTvwPsm2oa4jGgiMHhpLqP6NDdd8sWnZKZo207whlrKGBsLiqNEo8tTNpz9LXNLfX8bUUc2ME/S+KdRn3MPKvJ8XEBUYs0GhzILeBTd0qoyaPV+DLrsRdMgZ8KyV1h48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891190; c=relaxed/simple;
-	bh=HEdeRtV5Q1OZXNw9HdTPR1mlzpEiS6bDQlDTVG298EU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nE6JdeqwTzPqvMD0F2qBZWS27IlTbyg3cri24XfGBPNw/LOVjurzQzz3Jpqj7R+ADTi8PsDAEhayeVuzk8sXmGipHA3ReXyLtipx5DnUaluLFAYehMtL2dbe8SkWrr/tnZG8pRfhTPco4aVrNG3E0roPnFM1Y+PPjcjrYvubER0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgDX7Q4WCLhoPozHAA--.31055S2;
-	Wed, 03 Sep 2025 17:19:20 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v2] pinctrl: eswin: Fix regulator error check and Kconfig dependency
-Date: Wed,  3 Sep 2025 17:19:15 +0800
-Message-Id: <20250903091915.2026-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1756891678; c=relaxed/simple;
+	bh=zoygvyrvbpRQP0lvFaQr5ZvBPQrrVcLHonREwQLABLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1fxwRSilvqOszdpkL1hYBIDVSkQNt+pzpB130KhXKmhpap8ryjjiVrm1WlqssNg2Ki9XN0zo1z3vwlszlgRjzXJykI/kqyqv8Az5FE44PUVlVhCDEpb+0zFv8m6Z+XFd0JNF1BDthpljebKmYhWAln1aKPBjuCKFm8I3O/FdL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaJiHxMm; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaJiHxMm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094DEC4CEF0;
+	Wed,  3 Sep 2025 09:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756891677;
+	bh=zoygvyrvbpRQP0lvFaQr5ZvBPQrrVcLHonREwQLABLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aaJiHxMmxm+KDWV54GEw0wFKqHa23MozUT9t1F6E6ykgPQidtVov9eFpwyt2PT/e1
+	 ykvXi8dABrzbhFHZac+ksIqZX5jqvgdo+i/bFDYYqs72VAONSagJP7/hSdvvYCxKz1
+	 eI1/thKT/ROliJ9DvpqJgMsGdmQ2Nm7CxoQr1q03RenOSahf10HJFkPQBnUPtjYevu
+	 7P7PWKjHLGsxIaf3fDgTDHGDy72eJAoJ0j0J3xFjm2UsyWc53a8WTuSfAJkdS7HDlA
+	 Rn/Cqm6KHIE+bQpWm2+d5YOls7aiPXWdMtpkunQRf6ofwIiK55Vv7GdgjI45bB7G7g
+	 0BP6SbigvujPw==
+Date: Wed, 3 Sep 2025 10:27:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: a0282524688@gmail.com
+Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+	andi.shyti@kernel.org, mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+	jdelvare@suse.com, alexandre.belloni@bootlin.com,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH RESEND v14 0/7] Add Nuvoton NCT6694 MFD drivers
+Message-ID: <20250903092750.GG2163762@google.com>
+References: <20250825092403.3301266-1-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgDX7Q4WCLhoPozHAA--.31055S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF4fCry3Jr1fZw47WF4kJFb_yoW5JF4UpF
-	Z3GFy3Ar15tF4xJryUJa4I9Fy3Wan7GrW7Cw18K39xZFs8AFykA3s09FW5AFWqkr4kJw1Y
-	y345tFyUuF9rZFDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+In-Reply-To: <20250825092403.3301266-1-a0282524688@gmail.com>
 
-Smatch reported the following warning in eic7700_pinctrl_probe():
+On Mon, 25 Aug 2025, a0282524688@gmail.com wrote:
 
-  drivers/pinctrl/pinctrl-eic7700.c:638 eic7700_pinctrl_probe()
-  warn: passing zero to 'PTR_ERR'
+> From: Ming Yu <a0282524688@gmail.com>
+> 
+> This patch series introduces support for Nuvoton NCT6694, a peripheral
+> expander based on USB interface. It models the chip as an MFD driver
+> (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
+> WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
 
-The root cause is that devm_regulator_get() may return NULL when
-CONFIG_REGULATOR is disabled. In such case, IS_ERR_OR_NULL() triggers
-PTR_ERR(NULL) which evaluates to 0, leading to passing a success code
-as an error.
+Doesn't apply.
 
-However, this driver cannot work without a regulator. To fix this:
+Please rebase onto v6.17-rc1 and submit a [RESEND].
 
- - Change the check from IS_ERR_OR_NULL() to IS_ERR()
- - Update Kconfig to explicitly select REGULATOR and
-   REGULATOR_FIXED_VOLTAGE, ensuring that the regulator framework is
-   always available.
-
-This resolves the Smatch warning and enforces the correct dependency.
-
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Fixes: 5b797bcc00ef ("pinctrl: eswin: Add EIC7700 pinctrl driver")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-gpio/aKRGiZ-fai0bv0tG@stanley.mountain/
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
----
-Changes in v2:
- - Add Reported-by with Closes in the commit message.
- - Link to v1:
-   https://lore.kernel.org/linux-gpio/20250902094508.288-1-luyulin@eswincomputing.com/
----
- drivers/pinctrl/Kconfig           | 2 ++
- drivers/pinctrl/pinctrl-eic7700.c | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index be1ca8e85754..0402626c4b98 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -211,6 +211,8 @@ config PINCTRL_EIC7700
- 	depends on ARCH_ESWIN || COMPILE_TEST
- 	select PINMUX
- 	select GENERIC_PINCONF
-+	select REGULATOR
-+	select REGULATOR_FIXED_VOLTAGE
- 	help
- 	  This driver support for the pin controller in ESWIN's EIC7700 SoC,
- 	  which supports pin multiplexing, pin configuration,and rgmii voltage
-diff --git a/drivers/pinctrl/pinctrl-eic7700.c b/drivers/pinctrl/pinctrl-eic7700.c
-index 4874b5532343..ffcd0ec5c2dc 100644
---- a/drivers/pinctrl/pinctrl-eic7700.c
-+++ b/drivers/pinctrl/pinctrl-eic7700.c
-@@ -634,7 +634,7 @@ static int eic7700_pinctrl_probe(struct platform_device *pdev)
- 		return PTR_ERR(pc->base);
- 
- 	regulator = devm_regulator_get(dev, "vrgmii");
--	if (IS_ERR_OR_NULL(regulator)) {
-+	if (IS_ERR(regulator)) {
- 		return dev_err_probe(dev, PTR_ERR(regulator),
- 					 "failed to get vrgmii regulator\n");
- 	}
 -- 
-2.25.1
-
+Lee Jones [李琼斯]
