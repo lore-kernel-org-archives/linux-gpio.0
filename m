@@ -1,89 +1,109 @@
-Received: from smtpout3.mo533.mail-out.ovh.net (3.mo533.mail-out.ovh.net [46.105.35.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67F2DFA32
-	for <linux-gpio@vger.kernel.org>; Wed,  3 Sep 2025 07:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.35.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449EE2D594A
+	for <linux-gpio@vger.kernel.org>; Wed,  3 Sep 2025 07:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756885906; cv=none; b=oVEE7BC7Ol+N64m0yuOPSg3/cSCfxAB8oo3Pn51PgqMpfkkfyP3NZ8e4avpEJIJ2oYCf7hys6BMnlWGRXPk2Uw8A4/VBZASY678uvkniayHxRMA8ltc0hMYNeV0tX7JTglmys0/Y8q+fHkvjBmS5DswgLElOeRadnzk2CNc8YYU=
+	t=1756886317; cv=none; b=GQamhcBENxL/g3jdj5AUXoU9N7IOQJmZoeSYbOO+w02HgrQlu2dUEnFXTyOSOtd89b/pN3qdzf163/LbWTWJqedNt7ERokNUjZmpChUPXsiZ7DHHqPPTq9VHYW/CwK846F3npAqz8JB4f6KM3eahKnw2FVIopMVN1RBrWmQZ/1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756885906; c=relaxed/simple;
-	bh=663KoJU1ldM4IAb3QXT68+FeZh2kwq0BYEZ09XzUgbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YLntWzIxum+51QFJgkmR3CUX8liyQBXxwKEUEaul3fzvqd8wltC7m+4+3yT5pfi8bq5PAykJk8k9Lzcw9/VdS1yHXVV5zlycp+KQVbDvkIZq6MBlObr+pRXB6NV7ZhPH0+5zcVCkqNl0VkwcoGTcCJ8mkaLdK/InVi18RHr0HpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=aXiXgkj8; arc=none smtp.client-ip=46.105.35.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+	s=arc-20240116; t=1756886317; c=relaxed/simple;
+	bh=rcEWxO0itYV5thJHkwKpX8dt21eqtq4uCIa72lzQx4E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tr5Q9dGsB8gMFCCzM01ICE7e4D6eAIEIOtbrDldrb4lxE4uzhBnZSWU6dGrskyqT4G/MLLI9n02jvUYWAOBJ+zg418oPTzoL5LTzv+fHmnXZuijK/hrUiIsZF6etYj/RWg/zhzOe/xCHaNPD7JVgzCtg2dxoqDO2bkL7apkihWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RqE/Oa1l; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="aXiXgkj8"
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4cGvkM5C5Rz6S7S;
-	Wed,  3 Sep 2025 07:43:55 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <brgl@bgdev.pl>; Wed,  3 Sep 2025 07:43:55 +0000 (UTC)
-Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.113.54])
-	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cGvkM1bbPz5vR1;
-	Wed,  3 Sep 2025 07:43:55 +0000 (UTC)
-Received: from orca.pet (unknown [10.1.6.5])
-	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 11D093E3354;
-	Wed,  3 Sep 2025 07:43:54 +0000 (UTC)
-Authentication-Results:garm.ovh; auth=pass (GARM-99G0031b4fb290-efa1-475b-aec7-15426595f32d,
-                    FA25AB0AA1A9BF3DCBEBCC83EEB30DB7881EF5C4) smtp.auth=marcos@orca.pet
-X-OVh-ClientIp:79.117.41.176
-Message-ID: <4057768b-82f3-4b5b-b301-afae30bd5bca@orca.pet>
-Date: Wed, 3 Sep 2025 09:43:54 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RqE/Oa1l"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b045d56e181so166453566b.2
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Sep 2025 00:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756886314; x=1757491114; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vc5TDK1H8Xst9gKhvws3EuxZaIkfxswLhF5fBNdm9fc=;
+        b=RqE/Oa1lHTJpIZgNtHZTwIZpFKhZTWSjVp1rIZHh8DQl4+/VhxXClWPk7noA3VW+Tg
+         l21LNTX4YCzWlu/ywDfrJ5PInw+zPFU06agZTW80Dw8bg9SvN1Um8KnKm2aIjRi2f83y
+         LiaUJ2kct1nEHTI6vKndMSVkRYKH1XB99+xZZvo5XdC2nyxAitmvq6ycOFTkRj4S0ykQ
+         Pou/2TEdVSDoBCznTjYzT91nlMYjlsFRL1CFsU+5b47iZ1fvrRqXPGbjkp2Kc7zRUHt5
+         aLkWub1j5PtmMysxt+Ys/WsUZlMslfa8bXVszKMK6ZB4+16M/H6pJMZFaAuW2GPHqtZP
+         sy8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756886314; x=1757491114;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vc5TDK1H8Xst9gKhvws3EuxZaIkfxswLhF5fBNdm9fc=;
+        b=kBXgCX8ue1lcN7EEsFROLG6v7WB99nFEcNWiQICffoKE9uyjbxR3fQDLrYNdOXeC0N
+         vQjxohncJCjzGWUR8C7PaSAwESKc//fjQp2c4RFWsfFCzyDUPB9KQyGaaUL6d0r45iqu
+         3XEhnZdz2rXyN8PyTfU93PSzcJGMTyhCSQr4Q59ftH2vFP1g6d8mGHUrspkEsdS7TF9K
+         wwS+NvfwK9ywrqg9tj57nxHsSpmjGq9H1J2Gx2Ryl++VU+z2jMaxbk0POYq3T3L3uQ3Z
+         b5NYXCt4soqsEiUAUXs7SQMJ576gSRwz6PT7PvHiM/HDCRu8PeHF2tpRG4wxGBtk0S9C
+         c1EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxbEOzG5XRxHld+meBl8hNkknw00+yYqpngSRSdkmyiCdTU9w850OYh1z8X/9+FYgCDkx2PNipma7t@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZKvGrY8Hj1fApbMgW93cQUZjCwu3mCrjWuyDsLg9v6jHpnLRU
+	6Ygth1CVYiwlVvCvpfwoOh8LvtjrRHmmvWhlLJsNL1klXNoq4B9IH7g7dspuo5riDmg=
+X-Gm-Gg: ASbGncs0OYWYXwb3z23xtmKuIi4HGek2S3mWEtQOlJGn+C58DWYxsRMndbmXc0NhrLg
+	MgCtOHyFm6QdcotI5rLuyAOiI0wkBByuD8DmbB8C5B39ZYd6pH0y215LiL2+Ltu4Zu7I7ok8ZI8
+	96WYcTwI3JSgtIx2H8TfntAGD0V+BTajvLOgoxZjq1VEK7A/zL0cQNT6VGgLWzO7pD+9gI0PmBy
+	H9ja9beeXGxR3XPWqe1UOSqEpO37OGWFNa8J3hRSf2HrFNpG1uyceMGn8zDDa9pbQQFCE2E8jyh
+	XeIVhOHVhXuF6fstN7VNcAyOJaVJGq//1rPqwxO7ZJvqvZ5IzyW5+8NQp4JX4M+EC7gDW8Ywa8Y
+	sBXaqUKH1PyKjeuZxxXgS6hsLqJslCVCFmcnDgi6tgzSLglRW4Jx5AKD1gTkvgJ8FrF7RsbEz3z
+	ZO9T50mffI52A/LsoxHUVXgfE5nfQ=
+X-Google-Smtp-Source: AGHT+IEn64Dxy1FDWMJAmp+prlXFdQxbLUeI9Tc0ZftSDAzkPfUTGMaspxdMpVBKzN42VG8J7KFQzQ==
+X-Received: by 2002:a17:906:c10d:b0:b04:20c0:b219 with SMTP id a640c23a62f3a-b0420c0b768mr1025270966b.64.1756886313590;
+        Wed, 03 Sep 2025 00:58:33 -0700 (PDT)
+Received: from localhost (host-79-36-0-44.retail.telecomitalia.it. [79.36.0.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm875084566b.35.2025.09.03.00.58.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 00:58:33 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 3 Sep 2025 10:00:29 +0200
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	florian.fainelli@broadcom.com, wahrenst@gmx.net,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, iivanov@suse.de, svarbanov@suse.de,
+	mbrugger@suse.com, Jonathan Bell <jonathan@raspberrypi.com>,
+	Phil Elwell <phil@raspberrypi.com>
+Subject: Re: [PATCH v4 0/3] Add pin control driver for BCM2712 SoC
+Message-ID: <aLf1nc20SRkWJW51@apocalypse>
+References: <cover.1756372805.git.andrea.porta@suse.com>
+ <CACRpkdb8fFvgyWPAaP6AumwHUYhnvc7BXX0V5kwO4sts6zSGUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
- <20250902151828.GU2163762@google.com>
- <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
- <20250903072117.GY2163762@google.com>
-Content-Language: es-ES
-From: Marcos Del Sol Vives <marcos@orca.pet>
-In-Reply-To: <20250903072117.GY2163762@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 17418515985921168998
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrdeguddrudejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
- hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheeffegmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=SBwCDNG5ruuO0roHhgmwKoJ1Cs1X4uZOY7er01eXoUI=;
- c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756885435;
- v=1;
- b=aXiXgkj81uCW4s1t3tuig22XwNhncczb1zlf7lPR+84igv15/kf8LVLteBOQ01F+GJOuDPKm
- hI0ZJaT0nkJzGvFgbt7vS2lnzzNMW9g4mUmfqsTRH7aT7xsw9Mb1LMZW4tkp00mYwDFFizhHY+h
- U9nozsL3rSTFfkkNM/hLQM6pzdT6bvBbubIBCakC8+Yw8ROg2MUA4r9iH0S8GBWH8GDYOwiJlTO
- SCgNcjGmH/PbAP+esraOOWqeMVC95PJRi6uIipBj7Ic6+0/dAGeIomhR7+WfQefFRMp3g+TQiR7
- MomPGPaAMDx7KrUNPSut/VtviZqyI6SXauSVYHejum7ug==
+In-Reply-To: <CACRpkdb8fFvgyWPAaP6AumwHUYhnvc7BXX0V5kwO4sts6zSGUA@mail.gmail.com>
 
-El 03/09/2025 a las 9:21, Lee Jones escribió:
->> vortex_dx_sb are "struct vortex_southbridge" type, not raw MFD API data.
+Hi Linus,
+
+On 08:58 Wed 03 Sep     , Linus Walleij wrote:
+> On Thu, Aug 28, 2025 at 2:45 PM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
 > 
-> I like your style, but nope!
+> > The following patches add a pin control driver for the BCM2712 SoC.
 > 
-> vortex_southbridge contains MFD data and shouldn't exist anyway.
+> I have merged the prerequisites providing .function_is_gpio(),
+> do you want to do any last minute changes or shall I just apply
+> the v4 version and fix up anything minor in the process?
 
-I'm not sure if I follow.
+No further changes from my side, please go ahead with V4.
 
-You're suggesting not using driver_data at all and using a big "if" instead,
-matching manually myself on the correct cells to register against the PCI
-device ID, instead of relying on PCI matching giving me already the cells
-structure inside driver_data?
+Many thanks,
+Andrea
 
-That seems to increase code size and be more error prone for no reason.
-
+> 
+> Yours,
+> Linus Walleij
