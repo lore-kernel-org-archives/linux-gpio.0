@@ -1,210 +1,303 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AC732F755;
-	Wed,  3 Sep 2025 21:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1843EEC0;
+	Wed,  3 Sep 2025 21:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934903; cv=none; b=pqV5BBpIhCaEFKVUIDrln4sovlMfuHqwSlJRC7O3gZl5FgAoyg+YYq7N+OPMYq59eW+Gznqb/ByLt09lHKDtuXUI+MlYkIVCH3ayq3S+VhWaJwhUqOYIDk7w/2BOVOn3e/8S8xAo+Zy2MN4j5DWKeKHI6kN9jmxC2/79KGnqCeU=
+	t=1756936134; cv=none; b=kfdmrMNoDKVvWFTLHT5+44xOWZBfkQ5Jm2AD6D2Mv5CHeAKpNW3qQIDGDmpYiAmXUlitY05TqmLBR5dYbQqHZqxLWYhC9EzdNzLzrR1gthUjWok0hVCYaE6xFVAvGg8VBMCVqXSWRlDQl7bkFEYdPq1AUaVS5wj7o+6SB9p1fF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934903; c=relaxed/simple;
-	bh=e1gjdWn0vKRwDlsZj/ZBmgG7bHXaMkWeD/hnuty2IY0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=az8AAQ0wG7rM7tjLgqW5TeEpi68bnpG28LQOgq6lhSmDYEbALQwTqgUOfcGNm+oHzp/+EtiSG0SZwpNQFov7NQ5Y4Ke8P7JAjgKb8S3bu1vLiKTjMg314G6mj/EYbmTinBRWv5CLzbagorKe2WQUA3QbuUoEPFqXOpAilFY2YvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=m9Kwi8LT; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=VKxRCq3G; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1756936134; c=relaxed/simple;
+	bh=99FlZ2W4JrgSZaHdYWVvCc0lO4vikrYMc6uJDPeIhNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mnw8ESDc9xysK/dl40xISvS8xeEGgfVEySYVjQ+/dOG19l6VvPywPwiowWaJOPsnEEjBYqu8/WmzV3EOY3SMKvLAxK6J2iJ2iTXivvcmV5XVkXwBLmwJy9h5bz51zWFTL0+lEdZTCq+bv1XOCPRZmmY54zsBzlyDy4sP2oJagDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aP10IDRS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="m9Kwi8LT";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="VKxRCq3G"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1756933741; bh=bqzHAqPKSIfqbGTnCGmLkW+
-	yGY7a0Pdl1meacZYhxxA=; b=m9Kwi8LTmBFMnmoU7p1Qafwr25r/1A1zb91u0Ke/4xTxVWtsUF
-	Krn22Yj3cma5ReSQ2KuVNuHtQRh8jz91JI7DYBwy2+EhtK5F0r/kauMFctbDrgk5h3WVwi3qnXJ
-	3+Nk4ihPR63UlAT4stOREltJ21dRqwKtORAS0yxH880qC+B0BuTwG0PB13KXhzEkCG2dqobSPOt
-	QV3fyDKIwhiPqMiDr4mOC8AybZg4eUcgUyX6QkDNzlxYoHRF3LrnwVV8zY2az43kWRrCAqfmcVa
-	zPyfBA3AET57O+LvsjAm8eatRvlc813GBb8ioKLU0TsOd+Kl7S8S9StIY9ulbTcAxeQ==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1756933741; bh=bqzHAqPKSIfqbGTnCGmLkW+
-	yGY7a0Pdl1meacZYhxxA=; b=VKxRCq3GfZGFxVtbP/7IcagYnTUr5Tj5DXSGGMtNbx8u+ib1I2
-	bKC9+ypFN/NjXUiiTSVOplkNzLREuBKzuOCA==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Subject: [PATCH v9 0/7] Initial support of MSM8937 and Xiaomi Redmi 3S
-Date: Wed, 03 Sep 2025 23:08:20 +0200
-Message-Id: <20250903-msm8937-v9-0-a097c91c5801@mainlining.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aP10IDRS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F07C4CEE7;
+	Wed,  3 Sep 2025 21:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756936133;
+	bh=99FlZ2W4JrgSZaHdYWVvCc0lO4vikrYMc6uJDPeIhNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aP10IDRS1OINVx/CNzUtFmTeJeA51BwvwlV0wfZK9lBBx2uyu7nuaaQbXj9C7pIoP
+	 B1P2mFgXAxs6+vfSepEZC8Aby7WZWsyalbwGKBGon8KC0Kd6xZyDDuayY+ORxdDSgr
+	 W1t+mZ2+6ooPvHjhCV5Ih+rQtBjYZ9cmh6twM4cihlwdwUIXUR8jIr6Jy0VPVjhWS4
+	 TIYwnDAgik2/W+akimwth2cNfT0nhU7l6t30XZfl8uyJ8NhETa1iSNqikNE+JsJBmi
+	 WXESYC7wWevAlGQe/kuf60GD/932tHmYX6Vp9Ct4gz5EcLgr2WfqQLZNN+YTtKmCbN
+	 KMiV+h0mQr/Cg==
+Date: Wed, 3 Sep 2025 16:48:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Cc: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 1/3] dt-binbings: hwmon: Document the LTC4283 Swap
+ Controller
+Message-ID: <20250903214850.GA2762411-robh@kernel.org>
+References: <20250903-ltc4283-support-v2-0-6bce091510bf@analog.com>
+ <20250903-ltc4283-support-v2-1-6bce091510bf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAESuuGgC/3XQzU7FIBAF4Fe5YW0NzFAGXPkexgW/vSS2Na1pN
- Dd9d+lNlCbi8kz4zgA3tsYlx5U9XW5siVte8zyVYB4uzF/tNMQuh5IZcOg5CN6N66gNUgegY+L
- BY/SGldPvS0z589708lryNa8f8/J1L97EMf3pEL8dm+h4RwEoBkWJuH4ebZ7e8pSn4XFeBnYUb
- XDCgBVDwc4YKkOFMWAT4xnLirHgYAN5ocF775pYVoyir1gWLJJAiJq4laaJ+4olnN7cH9dORpO
- JScjQxqpiDfXTN3VgbrgD652i2MR0wnjaTAUDgjXJCWMdNbH+B+tjMwUfFHprrf+D933/BkWfB
- ytOAgAA
-X-Change-ID: 20250210-msm8937-228ef0dc3ec9
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Robert Marko <robimarko@gmail.com>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>, 
- Das Srinagesh <quic_gurus@quicinc.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Daniil Titov <daniilt971@gmail.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Dang Huynh <danct12@riseup.net>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756933738; l=4333;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=e1gjdWn0vKRwDlsZj/ZBmgG7bHXaMkWeD/hnuty2IY0=;
- b=xwPgJP+tj3ynGr1IcC2se1Xgm9RgJVHOyt8jT9LlbvM1HeYAYCt2hye+dVRU398Ye36vwSn/K
- BazDpx0Wtu/BwBi+rx/yasMb4aEiWsWaYPh6+39glEPuVl3bM2lKBA/
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+In-Reply-To: <20250903-ltc4283-support-v2-1-6bce091510bf@analog.com>
 
-This patch series add initial support for MSM8937 SoC
-and Xiaomi Redmi 3S (land).
+On Wed, Sep 03, 2025 at 11:04:59AM +0100, Nuno S� wrote:
+> The LTC4283 is a negative voltage hot swap controller that drives an
+> external N-channel MOSFET to allow a board to be safely inserted and
+> removed from a live backplane.
+> 
+> Special note for the "adi,vpower-drns-enable" property. It allows to choose
+> between the attenuated MOSFET drain voltage or the attenuated input
+> voltage at the RTNS pin (effectively choosing between input or output
+> power). This is a system level decision not really intended to change at
+> runtime and hence is being added as a Firmware property.
+> 
+> Signed-off-by: Nuno S� <nuno.sa@analog.com>
+> ---
+>  .../devicetree/bindings/hwmon/adi,ltc4283.yaml     | 280 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 286 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ec7768467e66f18f06d8a5258b3b115f23ea996d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/adi,ltc4283.yaml
+> @@ -0,0 +1,280 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/adi,ltc4283.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LTC4283 Negative Voltage Hot Swap Controller
+> +
+> +maintainers:
+> +  - Nuno S� <nuno.sa@analog.com>
+> +
+> +description: |
+> +  The LTC4283 negative voltage hot swap controller drives an external N-channel
+> +  MOSFET to allow a board to be safely inserted and removed from a live
+> +  backplane.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4283.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ltc4283
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  adi,rsense-nano-ohms:
+> +    description: Value of the sense resistor.
+> +
+> +  adi,current-limit-sense-microvolt:
+> +    description:
+> +      The current limit sense voltage of the chip is adjustable between
+> +      15mV and 30mV in 1mV steps. This effectively limits the current
+> +      on the load.
+> +    minimum: 15000
+> +    maximum: 30000
+> +    default: 15000
+> +
+> +  adi,current-limit-foldback-factor:
+> +    description:
+> +      Specifies the foldback factor for the current limit. The current limit
+> +      can be reduced (folded back) to one of four preset levels. The value
+> +      represents the percentage of the current limit sense voltage to use
+> +      during foldback. A value of 100 means no foldback.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [10, 20, 50, 100]
+> +    default: 100
+> +
+> +  adi,cooling-delay-ms:
+> +    description:
+> +      Cooling time to apply after an overcurrent fault, FET bad or
+> +      external fault.
+> +    enum: [512, 1002, 2005, 4100, 8190, 16400, 32800, 65600]
+> +    default: 512
+> +
+> +  adi,fet-bad-timer-delay-ms:
+> +    description:
+> +      FET bad timer delay. After a FET bad status condition is detected,
+> +      this timer is started. If the condition persists for the
+> +      specified time, the FET is turned off and a fault is logged.
+> +    enum: [256, 512, 1002, 2005]
+> +    default: 256
+> +
+> +  adi,power-good-reset-on-fet:
+> +    description:
+> +      If set, resets the power good status when the MOSFET is turned off.
+> +      Otherwise, it resets when a low output voltage is detected.
+> +    type: boolean
+> +
+> +  adi,fet-turn-off-disable:
+> +    description:
+> +      If set, the MOSFET is turned off immediately when a FET fault is detected.
+> +    type: boolean
+> +
+> +  adi,tmr-pull-down-disable:
+> +    description: Disables 2uA pull-down current on the TMR pin.
+> +    type: boolean
+> +
+> +  adi,dvdt-inrush-control-disable:
+> +    description:
+> +      Enables dV/dt inrush control during startup. In dV/dt mode, the inrush
+> +      current is limited by controlling a constant output voltage ramp rate.
+> +      If not set, the inrush control mechanism is active current limiting.
+> +    type: boolean
+> +
+> +  adi,fault-log-enable:
+> +    description:
+> +      If set, enables logging fault registers and ADC data into EEPROM upon a
+> +      fault.
+> +    type: boolean
+> +
+> +  adi,vpower-drns-enable:
+> +    description:
+> +      If set, enables the attenuated MOSFET drain voltage to be monitored. This
+> +      effectively means that the MOSFET power is monitored. If not set, the
+> +      attenuated input voltage (and hence input power) is monitored.
+> +    type: boolean
+> +
+> +  adi,external-fault-fet-off-enable:
+> +    description: Turns MOSFET off following an external fault.
+> +    type: boolean
+> +
+> +  adi,undervoltage-retry-disable:
+> +    description: Do not retry to turn on the MOSFET after an undervoltage fault.
+> +    type: boolean
+> +
+> +  adi,overvoltage-retry-disable:
+> +    description: Do not retry to turn on the MOSFET after an overvoltage fault.
+> +    type: boolean
+> +
+> +  adi,external-fault-retry-enable:
+> +    description: Retry to turn on the MOSFET retry after an external fault.
+> +    type: boolean
+> +
+> +  adi,overcurrent-retries:
+> +    description: Configures auto-retry following an Overcurrent fault.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [latch-off, "1", "7", unlimited]
+> +    default: latch-off
+> +
+> +  adi,fet-bad-retries:
+> +    description:
+> +      Configures auto-retry following a FET bad fault and a consequent MOSFET
+> +      turn off.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [latch-off, "1", "7", unlimited]
+> +    default: latch-off
+> +
+> +  adi,pgio1-func:
+> +    description: Configures the function of the PGIO1 pin.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [inverted_power_good, power_good, gpio]
+> +    default: inverted_power_good
+> +
+> +  adi,pgio2-func:
+> +    description: Configures the function of the PGIO2 pin.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [inverted_power_good, power_good, gpio, active_current_limiting]
+> +    default: inverted_power_good
+> +
+> +  adi,pgio3-func:
+> +    description: Configures the function of the PGIO3 pin.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [inverted_power_good_input, power_good_input, gpio]
+> +    default: inverted_power_good_input
+> +
+> +  adi,pgio4-func:
+> +    description: Configures the function of the PGIO4 pin.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [inverted_external_fault, external_fault, gpio]
+> +    default: inverted_external_fault
+> +
+> +  adi,gpio-on-adio1:
+> +    description: If set, the ADIO1 pin is used as a GPIO.
+> +    type: boolean
+> +
+> +  adi,gpio-on-adio2:
+> +    description: If set, the ADIO2 pin is used as a GPIO.
+> +    type: boolean
+> +
+> +  adi,gpio-on-adio3:
+> +    description: If set, the ADIO3 pin is used as a GPIO.
+> +    type: boolean
+> +
+> +  adi,gpio-on-adio4:
+> +    description: If set, the ADIO4 pin is used as a GPIO.
+> +    type: boolean
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +dependencies:
+> +  adi,gpio-on-adio1:
+> +    - gpio-controller
+> +    - '#gpio-cells'
+> +  adi,gpio-on-adio2:
+> +    - gpio-controller
+> +    - '#gpio-cells'
+> +  adi,gpio-on-adio3:
+> +    - gpio-controller
+> +    - '#gpio-cells'
+> +  adi,gpio-on-adio4:
+> +    - gpio-controller
+> +    - '#gpio-cells'
+> +  adi,external-fault-retry-enable:
+> +    - adi,pgio4-func
+> +  adi,external-fault-fet-off-enable:
+> +    - adi,pgio4-func
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - adi,rsense-nano-ohms
+> +
+> +allOf:
+> +  - if:
+> +      required:
+> +        - adi,pgio1-func
+> +    then:
+> +      if:
+> +        properties:
+> +          adi,pgio1-func:
+> +            const: gpio
+> +      then:
+> +        required:
+> +          - gpio-controller
+> +          - '#gpio-cells'
 
-The series is extending the MSM8917 gcc and pinctrl drivers
-because they are sibling SoCs.
-MSM8937 have 4 more A53 cores and have one more dsi port then
-MSM8917.
-It implements little-big architecture and uses Adreno 505.
+if:
+  properties:
+    adi,pgio1-func:
+      const: gpio
+  required:
+    - adi,pgio1-func
+then:
+  required:
+    - gpio-controller
+    - '#gpio-cells'
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-Changes in v9:
-- msm8937:
-  - Update vbif size to 0x3000.
-  - Update qfprom size to 0x3000.
-  - Remove extra line below wcnss-wlan2-pins.
-  - Update gpu_speedbin address to 0x201b.
-- qcom.yaml: Rebase on latest next.
-- Link to v8: https://lore.kernel.org/r/20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org
+With that and the following ones fixed,
 
-Changes in v8:
-- msm8937:
-  - Fix scm compatible.
-  - Fix position of sram@60000 node.
-- Document qcom,scm-msm8937 compatible
-- Link to v7: https://lore.kernel.org/r/20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org
-
-Changes in v7:
-- gpu.yaml: update adreno 505 pattern
-- Link to v6: https://lore.kernel.org/r/20250820-msm8937-v6-0-b090b2acb67e@mainlining.org
-
-Changes in v6:
-- msm8937:
-  - Fix nodes ordering.
-  - Format clocks, reg, dmas and -names properties.
-  - Add gpu_speedbin.
-- Describe A505 clocks.
-- Link to v5: https://lore.kernel.org/r/20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org
-
-Changes in v5:
-- msm8937:
-  - Remove wrongly defined idle-states.
-  - Fix thermal zones.
-  - Use the header with DSI phy clock IDs.
-  - Fix the nodes order.
-  - Fix the pinctrls style.
-  - Follow gcc header changes.
-- msm8937-xiaomi-land:
-  - Remove headphone switch and speaker amplifier bindings.
-  - Unify status property style.
-- gcc bindings:
-  - Expand MSM8953 gcc schema with MSM8937.
-  - Add MSM8937 prefix for MSM8937 specific clocks.
-- gcc:
-  - Follow the bindings changes.
-- Drop alwayson clock documentation it will be handled in another
-  patchset.
-- Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
-
-Changes in v4:
-- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
-- msm8937: add missing space after s9-p1@230
-- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
-- Remove applied patches
-- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
-
-Changes in v3:
-- Fix qcom,gcc-msm8937 dtbinding example 
-- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
-
-Changes in v2:
-- drop applied patches
-- drop gcc schema commits infavor of a new schema for gcc-msm8937
-- document always on clock for adreno 505/506/510
-- msm8937:
-  - set cache size
-  - rename cpu labels
-  - fix style issues addressed by review
-- msm8937-xiaom-land:
-  - remove unused serial0 alias
-  - remove regulator-always-on from pm8937_l6
-  - add blue indicator led for aw2013
-- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
-
----
-Barnabás Czémán (5):
-      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
-      dt-bindings: firmware: qcom,scm: Add MSM8937
-      dt-bindings: display/msm/gpu: describe A505 clocks
-      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
-      arm64: dts: qcom: Add Xiaomi Redmi 3S
-
-Dang Huynh (1):
-      arm64: dts: qcom: Add initial support for MSM8937
-
-Daniil Titov (1):
-      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
-
- Documentation/devicetree/bindings/arm/qcom.yaml    |    6 +
- .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
- .../devicetree/bindings/display/msm/gpu.yaml       |    2 +-
- .../devicetree/bindings/firmware/qcom,scm.yaml     |    3 +
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
- arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2133 ++++++++++++++++++++
- drivers/clk/qcom/Kconfig                           |    6 +-
- drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
- include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
- 10 files changed, 3168 insertions(+), 11 deletions(-)
----
-base-commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-change-id: 20250210-msm8937-228ef0dc3ec9
-
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
