@@ -1,100 +1,110 @@
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3421B85F8
-	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 15:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB02301036
+	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 16:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998993; cv=none; b=HUK7tBvVdXya9+dvyZzD4XImO/8mMc8M4Kg9EWwlG5TeDwOVdCs7fniBWNgY3lwFeP9EifedNMMVqtvhi3+rA0RojKcMXNJRKsfCtiJNS+SA3fqNfEsUIFt5QC6B+AnvvRQuwikWtpayNm27jVpUu+e3GPI5rjS5abFvdy0wQ0k=
+	t=1757004320; cv=none; b=B78cqwEfIN9RD1zFuKA+4Tp7cP6HfLXZFkvYkdUFe2GHGj94oblR0pgSL2z0Fy/bHy0bfYuUmZQezxhJjFkOQXx7zeAlIfPm8pY6NKr+BZvlOk0Q3NQENn6TsjcgsEWSgsk/PfeQQujiCwICSk/KAQFwTA1dnOU1umRl6eqXe7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998993; c=relaxed/simple;
-	bh=kGHx+2hvlk+s/C5InmRZGzQib9BkkISU8qMkaFbeH2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EfgRJEJ5sXQpOYy9GwhfDYpsNqnPleMd5vHTYoRZVe1f5NSjXloTrrT7V9TjtKmRaspdVqzJwVL9qu+CyQEviB4gwubWDMuhF0IbYqJ/ocITR2f6C3dIgBUl6x1lkeGULstzAgzOCAVZK6+GluhJssfBtYwgU5RIYbt3aHY8Sp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=tls13l0o; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+	s=arc-20240116; t=1757004320; c=relaxed/simple;
+	bh=s59DBpnh/Bni9KPUdtjHKw9HmnP1CEzQJd7Re0FgJ/U=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mbIHN7GMP4S6QIdkIxZQmdUizs6Y919Gy1O9uPXZepn++cvopRpz8YXUhEkGyijA1tDzZJrIkNjrwX1cW2BelVkAGpgk4dnVdOrBZmPwOpkYvRhd81EErGJa97dju9+pK9S/w4PqJyqlJrzFXuz6tTMNV6yD9UmTIaJkcnSKIzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ANcnECMl; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="tls13l0o"
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 1B0E8104D004
-	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 20:46:17 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 1B0E8104D004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1756998977; bh=kGHx+2hvlk+s/C5InmRZGzQib9BkkISU8qMkaFbeH2c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tls13l0oHdoB0mkCCtbv0Q7xKoASSioyJQxINbQOFRuhWmfpjMyRZ59vLJfz4vwNQ
-	 Nn41L2YsEaypntzvM15ZkP4wzBysRrjjPIZxmONF4gafuAflnvGE02GFwA60NQrruh
-	 N+0cm+SOmpQl2wjMaJAJ03vnaoZCg5p7O4OWv3ng=
-Received: (qmail 11093 invoked by uid 510); 4 Sep 2025 20:46:17 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.134336 secs; 04 Sep 2025 20:46:17 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 4 Sep 2025 20:46:14 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id 8B3E236004B;
-	Thu,  4 Sep 2025 20:46:14 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 6E9C91E81442;
-	Thu,  4 Sep 2025 20:46:14 +0530 (IST)
-Date: Thu, 4 Sep 2025 20:46:09 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: linus.walleij@linaro.org, brgl@bgdev.pl
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] gpio: Kconfig: Update help for GPIO_PCA953X
-Message-ID: <aLmtOWjAWPtWe/gH@bhairav-test.ee.iitb.ac.in>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ANcnECMl"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f92a69d4so11697311fa.2
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Sep 2025 09:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757004316; x=1757609116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s59DBpnh/Bni9KPUdtjHKw9HmnP1CEzQJd7Re0FgJ/U=;
+        b=ANcnECMlnGABmCNbBMpYN+bOWJTZP88/pim0Kte42qce7gdI3mFpIaJbegZNnossSR
+         4ao9kU8Ms9w5mzcH3gxzrCpj06JTCI/HQzcWpL4s+6of7XCsuci+g8jzQA4L4vZu2RxK
+         VSyOBT2y3wVD7XUqSoZYBAUSrNQ3HfLt/ZN6qyVxmEPrmqb40gM40ufETh9X+ZC5n7Zk
+         6M5QeqlwnZyU6v0h9sHJhoITuGlB1OPVtPiDxcPX6yWVB+jzUUTwKkxDsjguUXyEQ03C
+         f749+6jivuHP1Kbp8Cnp+Ysg9Dx3sZ9k+1Ry+PD2bCISVqVwE98o9q4nesOXGFc5gbhP
+         GSCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757004316; x=1757609116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s59DBpnh/Bni9KPUdtjHKw9HmnP1CEzQJd7Re0FgJ/U=;
+        b=vUJ0j+Mz5sbjSNV12z8J4qlmAdaQAeLSyf0gcMqKFszq5YtJ8OXrYdvWOURYqjuFI+
+         rJ3glXCymu9/TkE8YxTna09VnGyHczjik6LmOTZVGjUijWyaTDna/wm0rHwgz5ZOOOyt
+         lYcRTrHMEB+KDKzGdepjFs/49f1Yqt7t0YxnG3RPHbE0UYycytuxRb/0S6rKJvUqt8VG
+         s3OQ8MIX8Ka/zFzdjVHEiwlFjqx06BcuqX7ws6EIZE28PFmwt8xi+ZlhFPFRL0J/Qt3f
+         otJn4We6i4PnKvBc3ocK0LrpvSSMEsMy57CsShuE8TQ3r2D093Ct9JcZQfmdOBydVnqI
+         nQFA==
+X-Forwarded-Encrypted: i=1; AJvYcCURWD2XJW5iFZGfPJv2bPkGBFeMB8mQLUrpjfsz+nl+HESZ63Am9mts20CPAbulXjTli/2JKeTTmE1l@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkIrlByRveSTv1BQ/LdM8i6rbwA3nbR5xIkdD1Q4LXl54J8dWb
+	KOXeeByQx1bmVba+VUGE+dA1erMZZrzNsbrNbI+RqfgfBn8hkAhGPu7Wl5RbV/cCdONLf6nafq5
+	qYbaVCt5A6fJ7hvwW4afQ4Q0bgnOWYgVRWGH2VcQeLQ==
+X-Gm-Gg: ASbGnct37Z7v+X/kLGNt4xCz3hNgAEwY4igagExHH9ZJHoKirgpDSpUMND+FNacl96/
+	TXHiZehDLKX1bYM1U7DGXKCLX1V7a/KGBARbBYZwGL1J2Jl7tygKnPu/PvuF9/Rvg92GoXYb/Y4
+	Ug/CQ3QcdvUKW18n4EZGXwEgaFySuS95OCyaTLsmXT1k4EKoD+CaTuHoyhVSJb6Uh79eFKQWxXA
+	ZiVdt8h85lUxRM/yDlNjMXZwRF7CPQTth3Agg==
+X-Google-Smtp-Source: AGHT+IHODX9nL+jalzSRHRkJwxaYzf9a7w+AWw5w5Ry9jDLJs9T5DohamwIN94OX93CogB6gTeiJGbjrzMXKX0KJ93k=
+X-Received: by 2002:a05:651c:2343:20b0:336:b47b:d145 with SMTP id
+ 38308e7fff4ca-336ca9f4367mr47380591fa.2.1757004315902; Thu, 04 Sep 2025
+ 09:45:15 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 4 Sep 2025 12:45:15 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 4 Sep 2025 12:45:15 -0400
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20250904-hid-cp2112-fix-set-value-v1-1-17d2e26dc8c9@armadeus.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250904-hid-cp2112-fix-set-value-v1-1-17d2e26dc8c9@armadeus.com>
+Date: Thu, 4 Sep 2025 12:45:15 -0400
+X-Gm-Features: Ac12FXzndUbHuaQzJ_4VZEEORe4fBHBc3Z2g8YpNt0l-Cdtkqn6cNAIAkwgPB28
+Message-ID: <CAMRc=Mc8RZBi_OF5rDY8ky5pNW3xCBaR+21Anefs=B=enStPrw@mail.gmail.com>
+Subject: Re: [PATCH] HID: cp2112: fix setter callbacks return value
+To: =?UTF-8?Q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update help description with supported ICs from gpio-pca953x.c
-Include missing IC names.
+On Thu, 4 Sep 2025 18:42:07 +0200, "S=C3=A9bastien Szymanski"
+<sebastien.szymanski@armadeus.com> said:
+> Since commit 6485543488a6 ("HID: cp2112: use new line value setter
+> callbacks"), setting a GPIO value always fails with error -EBADE.
+>
+> That's because the returned value by the setter callbacks is the
+> returned value by the hid_hw_raw_request() function which is the number o=
+f
+> bytes sent on success or a negative value on error. The function
+> gpiochip_set() returns -EBADE if the setter callbacks return a value >
+> 0.
+>
+> Fix this by making the setter callbacks return 0 on success or a negative
+> value on error.
+>
+> While at it, use the returned value by cp2112_gpio_set_unlocked() in the
+> direction_output callback.
+>
+> Fixes: 6485543488a6 ("HID: cp2112: use new line value setter callbacks")
+> Signed-off-by: S=C3=A9bastien Szymanski <sebastien.szymanski@armadeus.com=
+>
+> ---
 
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
- drivers/gpio/Kconfig | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Eek! With the number of conversions it was bound to happen to some drivers
+since I can't really functionally test most of them. :(
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e43abb322fa6..02e4cf83b9bf 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1194,14 +1194,18 @@ config GPIO_PCA953X
- 	  4 bits:       pca9536, pca9537
- 
- 	  8 bits:       max7310, max7315, pca6107, pca9534, pca9538, pca9554,
--	                pca9556, pca9557, pca9574, tca6408, tca9554, xra1202
-+	                pca9556, pca9557, pca9574, tca6408, tca9554, xra1202,
-+			pcal6408, pcal9554b, tca9538
- 
- 	  16 bits:      max7312, max7313, pca9535, pca9539, pca9555, pca9575,
--	                tca6416
-+	                tca6416, pca6416, pcal6416, pcal9535, pcal9555a, max7318,
-+			tca9539
- 
--	  24 bits:      tca6424
-+	  18 bits:	tca6418
- 
--	  40 bits:      pca9505, pca9698
-+	  24 bits:      tca6424, pcal6524
-+
-+	  40 bits:      pca9505, pca9698, pca9506
- 
- config GPIO_PCA953X_IRQ
- 	bool "Interrupt controller support for PCA953x"
--- 
-2.34.1
+Thanks for spotting it and fixing it!
 
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
