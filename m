@@ -1,150 +1,127 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 3.mo583.mail-out.ovh.net (3.mo583.mail-out.ovh.net [46.105.40.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896101BD035
-	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 19:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C3627D77A
+	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 20:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.40.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757015860; cv=none; b=Not0wzpPnj/ALNAOQVr2eEIhVyIMvV9d886VjN1BGuClnYZZIlnfJIpWnWa9s6caghvcQ29tq2bFjRppFVbLBVNWX3Xomr+nlB7qzyv3H+2NuoDhJrGem2c88Tc7OH3+KFshPVl8M+PnwRmytt1T7vrFfvnKoN0l/x9q/CI8eqs=
+	t=1757017169; cv=none; b=epgdiFoLvJHo6n5kTvErZxRIzKfPJaCoG21L7Fikx0iaytJQ+4J20XTFZF1TNU3UZ1YZtNoIRJ/zYFOnW/gFAqGc45hJNmyEsyhzeHJrMkzg4GHqvj9f7/eqWLH0AvesPyeDmeChq6AU8jHsOXpvXZNPpDENaOoTFSA71SUlqQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757015860; c=relaxed/simple;
-	bh=AkQDfljW56aeK9hFyEplI/9Ee67wMd+uq6QJcRF62eo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AA1Sqk5+uW482JP66HUXAbgYkDCAiyj6dxV65H07zW9t7YYUupg8pGWj0Sbv0n9MQVkm7QNoQbddCl0JobvcfXIYHGUjI+dHnFht2wcGudTroyrx1o/e2oB/3zVA8HsNh7g7hIPL709yrlIpyfjgS83o7TJ3XY8iyR/n6y4tvX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iv+32+pl; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757017169; c=relaxed/simple;
+	bh=9zcNQP9m+mY9M0THwqxOYRx5V0BtNFsXoxQfLjlPZdQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DpaLG7HVP8D7RTAm5kEHYcg+vy2/SBmXQpGM/tUoqHAvgNcXbs6yX7nYQ2ln3gXM2zwI6xKkEJj1EiQ1aZB3iML9SclUxhZNklDz/0hpvfrbW11qCR6b7ZLH2F6OIHZU12OGPgFKoFrQvDdZF474f/ngz8hEZ87QQwyphYvDSHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com; spf=pass smtp.mailfrom=armadeus.com; dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b=suPBrdPb; arc=none smtp.client-ip=46.105.40.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armadeus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iv+32+pl"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f68d7a98aso1498168e87.3
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Sep 2025 12:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757015857; x=1757620657; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6kwPz46AfjWSljE81nGPsJRjk/PBKufX3IFU3DIxO20=;
-        b=Iv+32+pl+RF/5u9CXQ2H/5eyAmAkycT/gu4sr+1dppOQN7ClaN1+UkvsAo99TDI91J
-         JZTVbf1mcgBfbJyKlqFd/ymeo2YWyWes8minSpK/VUiXqtkViDeOzo2lbrRAE5bQek52
-         q7j1d2+8Ch3M7w8baGcVVxySNOnd3S8w3zQ1FKgO/1yjTjh5HXjnSgWETLcT72Gu/vjb
-         ffs9gc7cT4wIel3sXqOYcTnic/NCW8dGMWJ7sHdrnzLj4QQ/LSUXF7Rmr0UlikLNkxeq
-         gW2jIybvjzI3HKgnIZedva/HORa3f5dytWHHplPHe20DUd1v5W8Uzb2HzpDXsUZFSytk
-         aCsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757015857; x=1757620657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6kwPz46AfjWSljE81nGPsJRjk/PBKufX3IFU3DIxO20=;
-        b=WixM7XYej8/3jqUW1yV+ecdCD48WYgDd/YW/H4yz1C96Aum6BREIb4bM2hThqJzPdX
-         y2JiLXGtPkHXiuSFglaPgjPFoDiXcSBzBd/O7dpyr2d5PP+cN5dqQs9R1wGf2Kod/rP2
-         ALioqAejOIX9AOhIqqoe/nWrCmGlBz8oIcBnW6BQVvt3+noTldTjqXM6j7K3qff0gZZa
-         06UjBUVjrfDhthoXZs5AdUMtD8OZ7X5rvPOBUf32Ogi5MIWxm+hWkMyVQKTSQbJmUULi
-         ZYZZiBW6zvCvdZ5q1Wq+2dVACTww9uVAi6mwcB9IP4NiXXq1EVELBz/gr6Qzugc8Cs1B
-         Uu6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDgg3/141MqIxpD2UGNC3p3SDmjFQ3/YUB/py8Sm24TNE97KhNzKh3RCuMZJNYsvPx74svZ1LfQQXr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxrRfkxG5Xj9+b6kl+vY5okbpw5d/T1/Dm3eieUBX/yXM3CcS0
-	0j0r/Cb7niPonC9H2Oh74L3Zr9jZficlfjm6U/BHOZM68eENH9kQUMVZUqnUdePB63Qn3wIW9qv
-	EmiAqcf8jH6VAPtacKfvZBbzStX1jUyhOX/8/jdZhdA==
-X-Gm-Gg: ASbGncu0QoJCxh+BryygWxEpfCVdLsou0bx62Nc14KoaGvpVkilq7m/AVs44mV5ouFu
-	UiXeGiZaWEz8D329/JSwiCrubtk5V9xIVbkhRZ9dlU4CaLoTYoJ2nJfq/VlKeU8hSkwbSrOIf5p
-	K7uxmXNtHVCFp8Nc6qhl4MCvC6EJ1DBj0xcCtlmGD6HX61mkF8mDO5jIFm3X2TlIbdU89jn5h+9
-	SO1qiE=
-X-Google-Smtp-Source: AGHT+IGSNGuoZa0tGd2MuceeY+rWx4+fE98zKz5kXJNG5SS9yafrJ2IfBrrLXPyBqms3qzMRhIcBxsxK/c607/IOLes=
-X-Received: by 2002:a2e:a4d8:0:b0:32c:abf4:d76a with SMTP id
- 38308e7fff4ca-336caf58af5mr43186631fa.38.1757015856723; Thu, 04 Sep 2025
- 12:57:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b="suPBrdPb"
+Received: from director8.ghost.mail-out.ovh.net (unknown [10.110.54.180])
+	by mo583.mail-out.ovh.net (Postfix) with ESMTP id 4cHld84xX1z6X06
+	for <linux-gpio@vger.kernel.org>; Thu,  4 Sep 2025 16:42:20 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-v9gcr (unknown [10.110.118.54])
+	by director8.ghost.mail-out.ovh.net (Postfix) with ESMTPS id EFDF7C02DE;
+	Thu,  4 Sep 2025 16:42:19 +0000 (UTC)
+Received: from armadeus.com ([37.59.142.108])
+	by ghost-submission-5b5ff79f4f-v9gcr with ESMTPSA
+	id xzN5MmvBuWjlnwAAJZEplA
+	(envelope-from <sebastien.szymanski@armadeus.com>); Thu, 04 Sep 2025 16:42:19 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-108S0025b848ee2-3489-4988-acd6-dcb84b63b1b0,
+                    86F439A93EF419A5F8DFEFFE961FF85F9AC47286) smtp.auth=sebastien.szymanski@armadeus.com
+X-OVh-ClientIp:86.243.209.203
+From: =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+Date: Thu, 04 Sep 2025 18:42:07 +0200
+Subject: [PATCH] HID: cp2112: fix setter callbacks return value
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-ltc4283-support-v2-0-6bce091510bf@analog.com> <20250903-ltc4283-support-v2-3-6bce091510bf@analog.com>
-In-Reply-To: <20250903-ltc4283-support-v2-3-6bce091510bf@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 4 Sep 2025 21:57:25 +0200
-X-Gm-Features: Ac12FXySP_jPTakETmSTujg6AZkgjLE-3L81eBmgyMtwcrvqz9e4_hK7r8cr0mE
-Message-ID: <CACRpkdbgcCjZbZ2HtrNO7vK1HXzrwxkrNFCzqGguq=ckKg3cFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] gpio: gpio-ltc4283: Add support for the LTC4283
- Swap Controller
-To: nuno.sa@analog.com
-Cc: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250904-hid-cp2112-fix-set-value-v1-1-17d2e26dc8c9@armadeus.com>
+X-B4-Tracking: v=1; b=H4sIAF7BuWgC/x2MQQqAMAzAvjJ6trAWBfUr4mFsVQuisqkIw787P
+ AaSZEgSVRL0JkOUW5PuWwGqDPjFbbOghsLAlhvbWcZFA/qDiRgnfTDJibdbL0Fqu9a5RmxNE5T
+ 8iFKEfz2M7/sBV+n8tGoAAAA=
+X-Change-ID: 20250902-hid-cp2112-fix-set-value-1898aa5e041f
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+X-Mailer: b4 0.14.2
+X-Ovh-Tracer-Id: 13937514947645991849
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeihedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtkeertdertdejnecuhfhrohhmpefurogsrghsthhivghnucfuiiihmhgrnhhskhhiuceoshgvsggrshhtihgvnhdrshiihihmrghnshhkihesrghrmhgruggvuhhsrdgtohhmqeenucggtffrrghtthgvrhhnpeetudffuedugeffuddvhfefjedufeejleekgefhjeeuuedtvdegheeikefhleehgeenucfkphepuddvjedrtddrtddruddpkeeirddvgeefrddvtdelrddvtdefpdefjedrheelrddugedvrddutdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekfegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=0FeKAQxjy6vo6196zHIUsEHi4EuwsIHIs8qqJrNf2iA=;
+ c=relaxed/relaxed; d=armadeus.com; h=From; s=ovhmo103079-selector1;
+ t=1757004140; v=1;
+ b=suPBrdPbNHYAteDart3sbrNHPZP3kovOzIj9XBwisohzZ1T03wPjNOcs0TtYN+av6DbCJHkO
+ P0IJa9qCE3Gu2a6LYSMjYb1uRKR4LxntG7BHLmB3lJHOu39OMky3E9zKG/XtNepLs3oepzIMLnH
+ iee8RpdTizQp4+wkGG8B+zCbkM9aYe7c55OnbaRKLh0/gVumkfVBtHYoPwgTbnXRgEubzqKo3x2
+ iE6g6tludTpHI87vXOoV9ycUnxMIIw+ZXwMVPQ4Cp6QWsXCTJ8tm40jjgqLh0FRKOUkYspE9g5I
+ cZvDIZSbnlt9BsQ+r0uGdCz7MWWY/xJCjXVYUJD1o7VuA==
 
-Hi Nuno,
+Since commit 6485543488a6 ("HID: cp2112: use new line value setter
+callbacks"), setting a GPIO value always fails with error -EBADE.
 
-thanks for your patch!
+That's because the returned value by the setter callbacks is the
+returned value by the hid_hw_raw_request() function which is the number of
+bytes sent on success or a negative value on error. The function
+gpiochip_set() returns -EBADE if the setter callbacks return a value >
+0.
 
-On Wed, Sep 3, 2025 at 12:04=E2=80=AFPM Nuno S=C3=A1 via B4 Relay
-<devnull+nuno.sa.analog.com@kernel.org> wrote:
+Fix this by making the setter callbacks return 0 on success or a negative
+value on error.
 
-> From: Nuno S=C3=A1 <nuno.sa@analog.com>
->
-> The LTC4283 device has up to 8 pins that can be configured as GPIOs.
->
-> Note that PGIO pins are not set as GPIOs by default so if they are
-> configured to be used as GPIOs we need to make sure to initialize them
-> to a sane default. They are set as inputs by default.
->
-> Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+While at it, use the returned value by cp2112_gpio_set_unlocked() in the
+direction_output callback.
 
-(...)
+Fixes: 6485543488a6 ("HID: cp2112: use new line value setter callbacks")
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+---
+ drivers/hid/hid-cp2112.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> +config GPIO_LTC4283
-> +       tristate "Analog Devices LTC4283 GPIO support"
-> +       depends on SENSORS_LTC4283
+diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
+index 482f62a78c4155a50cceea3c8894ee5959e9aaed..5a95ea3bec9805453712b7b9e3d3fefec2351822 100644
+--- a/drivers/hid/hid-cp2112.c
++++ b/drivers/hid/hid-cp2112.c
+@@ -229,10 +229,12 @@ static int cp2112_gpio_set_unlocked(struct cp2112_device *dev,
+ 	ret = hid_hw_raw_request(hdev, CP2112_GPIO_SET, buf,
+ 				 CP2112_GPIO_SET_LENGTH, HID_FEATURE_REPORT,
+ 				 HID_REQ_SET_REPORT);
+-	if (ret < 0)
++	if (ret != CP2112_GPIO_SET_LENGTH) {
+ 		hid_err(hdev, "error setting GPIO values: %d\n", ret);
++		return ret < 0 ? ret : -EIO;
++	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int cp2112_gpio_set(struct gpio_chip *chip, unsigned int offset,
+@@ -309,9 +311,7 @@ static int cp2112_gpio_direction_output(struct gpio_chip *chip,
+ 	 * Set gpio value when output direction is already set,
+ 	 * as specified in AN495, Rev. 0.2, cpt. 4.4
+ 	 */
+-	cp2112_gpio_set_unlocked(dev, offset, value);
+-
+-	return 0;
++	return cp2112_gpio_set_unlocked(dev, offset, value);
+ }
+ 
+ static int cp2112_hid_get(struct hid_device *hdev, unsigned char report_number,
 
-Could that be
-depends on REGMAP && (SENSOR_LTC4283 || COMPILE_TEST)
-?
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250902-hid-cp2112-fix-set-value-1898aa5e041f
 
-Or does something blow up if you do that? (I guess it also needs
-AUXBUS but more on that below)
+Best regards,
+-- 
+Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 
-should it also be
-
-default SENSOR_LTC4283
-
-Sof if that is compiled in (=3Dy) or module (=3Dm) then this becomes
-the same by default?
-
-> +       help
-> +         If you say yes here you want the GPIO function available in Ana=
-log
-> +         Devices LTC4283 Negative Voltage Hot Swap Controller.
-> +
-> +         This driver can also be built as a module. If so, the module wi=
-ll
-> +         be called gpio-ltc4283.
-> +
->  config GPIO_MB86S7X
-
-This is placed among the memory-mapped drivers, but:
-
-> +#include <linux/auxiliary_bus.h>
-(...)
-> +static struct auxiliary_driver ltc4283_gpio_driver =3D {
-> +       .probe =3D ltc4283_gpio_probe,
-> +       .id_table =3D ltc4283_aux_id_table,
-> +};
-> +module_auxiliary_driver(ltc4283_gpio_driver);
-
-Create a new submenu for auxiliary bus drivers and add it
-there. We already have a submenu for MFD so why not?
-
-menu "AUXBUS GPIO expanders"
-  depends on AUXILIARY_BUS
-...
-
-Have you looked into using GPIO_REGMAP?
-I guess some specials are used here so maybe it is
-not possible.
-
-Yours,
-Linus Walleij
