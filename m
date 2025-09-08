@@ -1,121 +1,97 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3008238C26;
-	Mon,  8 Sep 2025 19:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D10D246797
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Sep 2025 19:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757358897; cv=none; b=eU8VCxLUnsJPtE6CipphjvFweHDvef/9i3oIYgiC6Oz5J0BtiH0yHAIXf9dnCyta6EkYFzR4gfSSrtvarcCZ5TiYM9BS2IHllofgbizyyZ7sHZT2Wsn/t3aLTa3JCOZmHGM9iMOtJGGVlmM1M5qch5rQGWoVpRfd3hI24AS1BPY=
+	t=1757359114; cv=none; b=fRRPdey+ePYNY2DLNqFhAifyDNBBkCv8SXDhHex5sbO/ZRqYLA7Tta8uC1OejK9T0rXt1oR0ICnywez9kO9FXFhgd4kBIv7vdgRDdFSb1KIbqzDgUeJjr6F3uhLSmzcCrrmA1FUW3B4qxgHL+ohBItpVt3i4Gmv9ZpY+vAdJyqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757358897; c=relaxed/simple;
-	bh=QXGuf1VVAykG+B3ZsO/oBKnwI0j3Mud9gIZCGS/X+ic=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2u6uGPkLgLv2ZPkSkK652wuwCjOTxj4XYPAoTQJMSuJ5ofABTvNWdPhQNmIXZPXD9BKv1Nsb0LJEmHJTsvzI4IJSsQnsg+vik/gbIPCC3pB3J4gjuICJ564GDHX5O28suPjGho3dcrMRzd3yFRS7cYK2WD6oTZyaBOb9v1Dhos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JChBP4GH; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1757359114; c=relaxed/simple;
+	bh=69wZ5GHrPC28zn0t4afWJoHx8q9PR+vnYPu2VWKajxo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GbJXNaeZCkBcaj8RbI2DbWKq/g3nF18Tk8P3asioG2JZnJelxmKQJ4U3FPEoRWDUpGPy/3taJEOuIB/pyxD9KtHFLNFfaIxLNzsqgXNYHSUIl8GkrVRsQx0hKUBSp2x3s4wI+I58NQivdQxplVDYdd8HqHv8hh63924agI997+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=GkuWSbhV; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JChBP4GH"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e07ffffb87so2239091f8f.2;
-        Mon, 08 Sep 2025 12:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757358894; x=1757963694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=srx4MAFwGWE7Nwzpo2SsNjXaK3mzSAkkPEoW4/Hw/ic=;
-        b=JChBP4GHSqB58LNwIbhm+xuf3HYtWJ53IzupCXneqbP7mOJSqPTK2LtkeBwBCf6mGd
-         yniUnGkfRCb3Syvqa/ZAnGYq+kgg1yPHD3oRNnPR9szSQnIWZwrQDRawy1Nt4Wr9prh5
-         MIEP4j8xmwoxNQ5/D9ycQbILdIvu9Ayv/fXl6qd7ecTGYvwdovqrBofE608CC5DX08Qn
-         LRNta5QdPt1EctvJ8WGSqWqoKW4EomkWelqGPrTc0+7BvJPuDbuetyeiyUXInJzLPvo7
-         pEKLqNjztHIeg7Pcsq4YaeRhtPtTimJ+F82tBKCCH5p21LQ+YQhbg6iMbSOXAzdyCmi1
-         c2DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757358894; x=1757963694;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=srx4MAFwGWE7Nwzpo2SsNjXaK3mzSAkkPEoW4/Hw/ic=;
-        b=H3SZrw1PBaYmTR/m089b10lxJNn1uIzM7D/wkVEJhWlWWiGl4eRXX4i7xNjIgIyHGJ
-         RQ10ojQYa2kAL6fMsud/HDNvfSUKH8Qqt2apnsVkqbPIvT5l7Ugwv/h0zvvM9h+TD5eg
-         v9Ksx+yshcRtUA4lcEo2AEhBQlHVIjqvbJYo8qt2C/BdRFQ/dehU/wcd8IQtkDXAG7rF
-         ttANoc8EoaPQFgMLmCYgGmrDxaWKpgen1UHqV+mBYKIbeAsm7bQ+svI3Ci1oPhPMyvmm
-         fTefqWyrlhEuy1ryc70vkOqwq+W0rAFFv6p8FVvG0X/HuKoU4yZh9bSz/upt1Pgj6DKO
-         0r5A==
-X-Forwarded-Encrypted: i=1; AJvYcCURRk4YY4yBfPZ0wnPJmM6a5FFgXl++Df+O4Cpv23RDP/d3jaokTT1zNFI9p0KAXmdYau36ddmTgXt5InpW@vger.kernel.org, AJvYcCWC8PhT5lyCsB26g5YaEIWv4duFH/2LVlcm2sLLyBac3DKTjr99/BVIng/umpwXOCmhMXt1belzR4hg@vger.kernel.org, AJvYcCX00y1kps7rnDDt13BlmqcaRgqwNFecPssntlTSCRe8gVGfo5BwagczSGeHqrJqmYXk8sIaXd2F@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0N+HAhPD9RyA5UAIJ9cGXVkPaEWnhMsWa10pJKyguLE9Aw1KE
-	PzGzWeW+9oCr17tpuzpLTLGwOzwwrKidf851BEkuqQLyXMWLoVNOg2Tx
-X-Gm-Gg: ASbGncvwMZUXmwPk6gHJjY6ofuABOuCTn0jUhMIkq6hk5o0sRDp9YfMkQ0LvyKCVP7T
-	PPlv4QSWCAPZXCukQwya9yymmukdLglDGnKiLRy8AokG2A6Bo2ESoU2oS/m2+X+kEbtHc/T+fNw
-	Yd+8aqPTyp9XzjtNs+L9ifl6ndCKFfM38Ugp3iYE6EjSiDzkMph5208dNCTXAFAh6DM9hUdj8X/
-	A4h8IXR3pwfclPYX3rxk6tQtpvlkL1oCZ8XD/AI0sthRl16sNmKSr62gbloc34TZoeFhvm+UVAE
-	TqsMwb7iRY06NHx7rF4mWURCNHcFgTRK+fg/20UIAvUw81ZdQ18/SLDXhUkSv3hbZJve/zv8eYN
-	enEXvudGFklk7wiNegnI6mHGxUINw1+4RGfmX01UjZy2pygInjc9H4vABmg/fiL67c1v2Bs6myL
-	NGLazz
-X-Google-Smtp-Source: AGHT+IFziGLQzNAImKhYRQ8IDTrD1/2WSj934yaWV0EXCVxUAxpFR9rChLUkdsHXYck7WZfp1SktZA==
-X-Received: by 2002:a05:6000:2389:b0:3c9:f4a3:f145 with SMTP id ffacd0b85a97d-3e64355556bmr7434762f8f.27.1757358893920;
-        Mon, 08 Sep 2025 12:14:53 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd2304e16sm202559135e9.7.2025.09.08.12.14.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Sep 2025 12:14:53 -0700 (PDT)
-Message-ID: <68bf2b2d.050a0220.7d5a6.b11c@mx.google.com>
-X-Google-Original-Message-ID: <aL8rKX72YDo7iU_V@Ansuel-XPS.>
-Date: Mon, 8 Sep 2025 21:14:49 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: airoha: fix wrong MDIO function bitmaks
-References: <20250908113723.31559-1-ansuelsmth@gmail.com>
- <583981f9-b2ed-45fe-a327-4fd8218dc23e@lunn.ch>
- <68bf16e5.df0a0220.2e182c.b822@mx.google.com>
- <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="GkuWSbhV"
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=GkuWSbhVXHil6qIMMVjeb4t5gL7UJ7Yi4LzVMs5TQLBluMeuudRFY1o9X3oxzkxw+2XThPtfuccv7WFGQQcS8mqq8NH68LTfNaAb9FxtKOsOm2Q95oduqqC6DPQdjV6DJWvUGZCi9BhdheZsfDEbPW4/1qpFxvmJM0ey09+ELw3jC5v4fFzrl7HirltiyKwb2l1RL4XfLGA2ab3l4Xxx2NBOSMusZb3SWlK2tCl7SQa6Zbw+HvmiRyA0rz3g2OokGryIbBajAVeOeLIw6g+ZFCQK6A+nRTPX3mfUd1BU1Ywb7FlFxqhIdyG8fXK3uUDvyWT5SWPfbJ4wuyzYZaJ5lQ==; s=purelymail2; d=purelymail.com; v=1; bh=69wZ5GHrPC28zn0t4afWJoHx8q9PR+vnYPu2VWKajxo=; h=Feedback-ID:Received:From:Date:Subject:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-gpio@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 292196779;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 08 Sep 2025 19:18:14 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Date: Mon, 08 Sep 2025 21:17:57 +0200
+Subject: [PATCH 3/4] pinctrl: mediatek: Add debounce times for MT6878
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1bc3887-5b88-4fb9-8f89-4b520427ccdc@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250908-mt6878-pinctrl-support-v1-3-3fb78c8ab4e8@mentallysanemainliners.org>
+References: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org>
+In-Reply-To: <20250908-mt6878-pinctrl-support-v1-0-3fb78c8ab4e8@mentallysanemainliners.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sean Wang <sean.wang@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757359086; l=1463;
+ i=igor.belwon@mentallysanemainliners.org; s=20250908;
+ h=from:subject:message-id; bh=69wZ5GHrPC28zn0t4afWJoHx8q9PR+vnYPu2VWKajxo=;
+ b=DdLiMNyKJkAG5VtyMqqRyNaNB2fQY33/0dbJMn98gXZidxqgMaWMM6c02MQBPL8pcqhuIk6XU
+ iG1FN2hUtMSD5YJm/3HnNCCKKeAYejNjD37oKJS8NKmftXIB42Y0Y+z
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=t9Kz6B3jEwJD7YAKcp8XftfEz7SUSlGbrsfFlbrrFwA=
 
-On Mon, Sep 08, 2025 at 09:06:03PM +0200, Andrew Lunn wrote:
-> On Mon, Sep 08, 2025 at 07:48:17PM +0200, Christian Marangi wrote:
-> > On Mon, Sep 08, 2025 at 06:54:15PM +0200, Andrew Lunn wrote:
-> > > On Mon, Sep 08, 2025 at 01:37:19PM +0200, Christian Marangi wrote:
-> > > > With further testing with an attached Aeonsemi it was discovered that
-> > > > the pinctrl MDIO function applied the wrong bitmask. The error was
-> > > > probably caused by the confusing documentation related to these bits.
-> > > > 
-> > > > Inspecting what the bootloader actually configure, the SGMII_MDIO_MODE
-> > > > is never actually set but instead it's set force enable to the 2 GPIO
-> > > > (gpio 1-2) for MDC and MDIO pin.
-> > > 
-> > > Is the MDIO bus implemented using the GPIO bitbanging driver?
-> > > 
-> > 
-> > No it does use the MDIO bus integrated in the MT7530 Switch. It's just
-> > that the MDIO pin can be muxed as GPIO usage.
-> 
-> Then i do not understand this patch. Why configure the pinmux for GPIO
-> when you want it connected to the MDIO bus device?
->
+MT6878 uses different debounce times than other SoCs. Add them to the
+EINT driver.
+---
+ drivers/pinctrl/mediatek/mtk-eint.c | 5 +++++
+ drivers/pinctrl/mediatek/mtk-eint.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-The usage of GPIO might be confusing but this is just to instruct the
-SoC to not mess with those 2 PIN and as Benjamin reported it's also an
-Errata of 7581. The FORCE_GPIO_EN doesn't set them as GPIO function
-(that is configured by a different register) but it's really to actually
-""enable"" those lines.
-
-Normally the SoC should autodetect this by HW but it seems AN7581 have
-problem with this and require this workaround to force enable the 2 pin.
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 9f175c73613f84b47c0160947f32da7aca7d5a18..c8c5097c11c4d14eb41bdd7f9cb93b4a5756d2b2 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -66,6 +66,11 @@ const unsigned int debounce_time_mt6795[] = {
+ };
+ EXPORT_SYMBOL_GPL(debounce_time_mt6795);
+ 
++const unsigned int debounce_time_mt6878[] = {
++	156, 313, 625, 1250, 20000, 40000, 80000, 160000, 320000, 640000, 0
++};
++EXPORT_SYMBOL_GPL(debounce_time_mt6878);
++
+ static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
+ 					 unsigned int eint_num,
+ 					 unsigned int offset)
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+index fc31a4c0c77bf28b106943e9292d0dcc425c4922..3cdd6f6310cd0da5aa74623c5f1dbe8f8495d689 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.h
++++ b/drivers/pinctrl/mediatek/mtk-eint.h
+@@ -52,6 +52,7 @@ struct mtk_eint_pin {
+ extern const unsigned int debounce_time_mt2701[];
+ extern const unsigned int debounce_time_mt6765[];
+ extern const unsigned int debounce_time_mt6795[];
++extern const unsigned int debounce_time_mt6878[];
+ 
+ struct mtk_eint;
+ 
 
 -- 
-	Ansuel
+2.51.0
+
