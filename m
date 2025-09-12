@@ -1,62 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734E91E32B7;
-	Fri, 12 Sep 2025 14:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B065930F924;
+	Fri, 12 Sep 2025 14:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757685980; cv=none; b=drcD++6DNCVsB64OeziMZ+4YU4pXb9n6Qk8PbMQEoX+4UdB+Xh1QU54HbUZCXg1DM0DDS0ptD3NC6EzxdD7ksNYsUd34OBMtdKohWeVIRh4io9/KInqIbUjjJseRDswJh9TEOsWElecfUzbFNhFS4kKuugCnbgxSS3TQZ+g/mu8=
+	t=1757686757; cv=none; b=mEXhOPwmyXWRCqSC+RLan27ca5WbIL+wVCcF3DQLvGndDRc73eQane3UNS2Kjo3sY6+pkUjNgXKDbkbA1Wro1HL8KAcXcuV39e3pwsE0YwN+vUxgLxK/S24LFDDeKnTq9uKFsHJNrsb763nWndv6a2ewDpQP3681sn7Kd49IXnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757685980; c=relaxed/simple;
-	bh=gQYcfi405JQ9buqQxkTP7o9NnD/8vJsE/3UdfYC31Vk=;
+	s=arc-20240116; t=1757686757; c=relaxed/simple;
+	bh=PSxYq2ubTxu1tLMT4DKVAGcg+k7YJbgFqjIaawl5S3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+KEjLNmux7tdeSbXfEkMgcpwTN6sSD742Ym+xA6xbU8hT5jwGH32BilhsTqmNx4flfOKpC7/ttRp2W6KOMQ3AljUjjR9UEFfKD80therHBSZF+nX4rjeLQl0rurLgN964m1z0muE5o12aNgdfU/BEi/gm7x2gG12kGcW/9k9Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzznp34s; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYNpiakUPewvZW52AHFgVXh11sCKTDGB5hx5qF5l/2F2LHlMzeIqYbeAx85PJCITThm2LNEvsAgRpvUwEPDH3rPOudQ8gmhcKTccPDOBpTLqSHCq6m7Jx1/tpdUhiTgTNoQO6CcRHDfWaop5iOJ/AxyOFZl1I/x010rj3ZrsskU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7ULSFcN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzznp34s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3BA2C4CEF1;
-	Fri, 12 Sep 2025 14:06:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7ULSFcN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8EEC4CEF4;
+	Fri, 12 Sep 2025 14:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757685979;
-	bh=gQYcfi405JQ9buqQxkTP7o9NnD/8vJsE/3UdfYC31Vk=;
+	s=k20201202; t=1757686757;
+	bh=PSxYq2ubTxu1tLMT4DKVAGcg+k7YJbgFqjIaawl5S3w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jzznp34s7YFwrDjEEJkZ6iekjTLnPUhXzJLoPxBZyYG7N5CYK4W0PMCRqN5AARwKl
-	 VymP7CBqTch6oU3Dxu+8CbAWzZ0kIqydRCrxLBhWWMw1bhQ7Z0t2YuRuWT8PhZMYIS
-	 Kfz1cNTv0+6uUTVt0rhcsIvu+8XBwwvlvJbDRBPtUXZi6WaKHo+fJ4EgKll7QJ1KOo
-	 UF6gaG8l5++/aG16KdKtx01G+jonZrF4pNSs9q4TWqU3ki3ZkruTpdg/M5gSykWMLS
-	 gn47pNV+L6Wki7pJ42z98l/YWp8hyHWCGWhDKKhEbjU7tW/W+1B318r/PjuvYKi3cx
-	 6YB8Oj981CRLQ==
-Date: Fri, 12 Sep 2025 09:06:19 -0500
+	b=N7ULSFcNhUwPip5ZGQjDHF8BRxMGJs/tTb+aAPO85WFZx3/TPtG5mB8Pu7sXtqNzz
+	 Cd1F60y4y6lJkZXJB40Ov9Ed2KGYzF7U9NTt1w2RGCjgkBeDgpNXQ1p3D9fsz1be6e
+	 T8j2o47OLq/1uSPeEGtnooEP12z3/nd93lg0AiOqy+L9e3nTmVry01+N/nH03xLPnz
+	 Hr2G5Yv9gsvSWOIhh8XFXccehuffFv8cLgqZC/vRzqlAmAkIfCUlB3xPcDZZIwplow
+	 Z7imIVx59ZXIr+pWq4gqxoGm22ANUELll1XsHPLsWOZKS3FBD/sfrUONpyC4x3XcRT
+	 6YaOE9diGR7Ug==
+Date: Fri, 12 Sep 2025 09:19:16 -0500
 From: Rob Herring <robh@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
-	chunkuang.hu@kernel.org, conor+dt@kernel.org, davem@davemloft.net,
-	dmitry.torokhov@gmail.com, edumazet@google.com,
-	flora.fu@mediatek.com, heiko@sntech.de, houlong.wei@mediatek.com,
-	jeesw@melfas.com, kernel@collabora.com, krzk+dt@kernel.org,
-	kuba@kernel.org, lgirdwood@gmail.com, linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com, luiz.dentz@gmail.com,
-	maarten.lankhorst@linux.intel.com, marcel@holtmann.org,
-	matthias.bgg@gmail.com, mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com, mripard@kernel.org,
-	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
-	simona@ffwll.ch, support.opensource@diasemi.com,
-	tiffany.lin@mediatek.com, tzimmermann@suse.de,
-	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-bluetooth@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 03/12] dt-bindings: net: Convert Marvell 8897/8997
- bindings to DT schema
-Message-ID: <20250912140619.GA1293647-robh@kernel.org>
-References: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
- <20250911151001.108744-4-ariel.dalessandro@collabora.com>
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: linus.walleij@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com
+Subject: Re: [v2 2/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
+Message-ID: <20250912141916.GA1339383-robh@kernel.org>
+References: <20250912060650.2180691-1-gary.yang@cixtech.com>
+ <20250912060650.2180691-3-gary.yang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -65,35 +45,117 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250911151001.108744-4-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250912060650.2180691-3-gary.yang@cixtech.com>
 
-On Thu, Sep 11, 2025 at 12:09:52PM -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for Marvell 8897/8997
-> (sd8897/sd8997) bluetooth devices controller to a DT schema.
+On Fri, Sep 12, 2025 at 02:06:49PM +0800, Gary Yang wrote:
+> The pin-controller is used to control the Soc pins.
+> There are two pin-controllers on Cix Sky1 platform.
+> One is used under S0 state, the other is used under
+> S5 state.
+
+Wrap lines at 72 chars.
+
 > 
-> While here:
-> 
-> * bindings for "usb1286,204e" (USB interface) are dropped from the DT
->   schema definition as these are currently documented in file [0].
-> * DT binding users are updated to use bluetooth generic name
->   recommendation.
-> 
-> [0] Documentation/devicetree/bindings/net/btusb.txt
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
 > ---
->  .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 ++++++++++++++++++
->  .../devicetree/bindings/net/btusb.txt         |  2 +-
->  .../bindings/net/marvell-bt-8xxx.txt          | 83 -------------------
+>  .../bindings/pinctrl/cix,sky1-pinctrl.yaml    | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..c4a127fd8330
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/cix,sky1-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cix Sky1 Pin Controller
+> +
+> +maintainers:
+> +  - Gary Yang <gary.yang@cixtech.com>
+> +
+> +description:
+> +  The pin-controller is used to control Soc pins. There are two pin-controllers
+> +  on Cix Sky1 platform. one is used under S0 state, the other one is used under
+> +  S5 state.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - cix,sky1-iomuxc
+> +      - cix,sky1-iomuxc-s5
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +# Client device subnode's properties
+> +patternProperties:
+> +  'pins$':
+> +    type: object
+> +    additionalProperties: false
+> +    patternProperties:
+> +      '(^pins|pins?$)':
+> +        type: object
+> +        additionalProperties: false
+> +        description:
+> +          A pinctrl node should contain at least one subnodes representing the
+> +          pinctrl groups available on the machine. Each subnode will list the
+> +          pins it needs, and how they should be configured, with regard to muxer
+> +          configuration, pullups, and drive strength.
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> +
+> +        properties:
+> +          pinmux:
+> +            description:
+> +              Integer array, represents gpio pin number and mux setting.
+> +              Supported pin number and mux varies for different SoCs, and are
+> +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinfunc.h directly.
+> +
+> +          bias-disable: true
+> +
+> +          bias-pull-up: true
+> +
+> +          bias-pull-down: true
+> +
+> +          drive-strength:
+> +            description:
+> +              Can support 15 levels, from DS_LEVEL1 to DS_LEVEL15.
+> +              See arch/arm64/boot/dts/cix/sky1-pinfunc.h for valid arguments.
 
->  .../dts/rockchip/rk3288-veyron-fievel.dts     |  2 +-
->  .../boot/dts/rockchip/rk3288-veyron-jaq.dts   |  2 +-
->  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  2 +-
+Constraints on the values?
 
-.dts files should be separate patches. Please send the bindings patches 
-separately per subsystem so subsystem maintainers can apply them. All 
-the Mediatek dts changes can be 1 series.
-
-The schema looks good.
-
-Rob
+> +
+> +        required:
+> +          - pinmux
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Pinmux controller node
+> +  - |
+> +    #define CIX_PAD_GPIO012_FUNC_GPIO012 (11 << 8 | 0x0)
+> +    #define DS_LEVEL4 (4)
+> +    iomuxc: pinctrl@4170000 {
+> +        compatible = "cix,sky1-iomuxc";
+> +        reg = <0x4170000 0x1000>;
+> +
+> +        wifi_vbat_gpio: wifi-vbat-gpio-pins {
+> +            pins-wifi-vbat-gpio {
+> +                pinmux = <CIX_PAD_GPIO012_FUNC_GPIO012>;
+> +                bias-pull-up;
+> +                drive-strength = <DS_LEVEL4>;
+> +           };
+> +        };
+> +    };
+> -- 
+> 2.49.0
+> 
