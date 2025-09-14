@@ -1,69 +1,69 @@
-Received: from shrimp.cherry.relay.mailchannels.net (shrimp.cherry.relay.mailchannels.net [23.83.223.164])
+Received: from rusty.tulip.relay.mailchannels.net (rusty.tulip.relay.mailchannels.net [23.83.218.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0991F5842;
-	Sun, 14 Sep 2025 18:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937381C5486;
+	Sun, 14 Sep 2025 18:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.252
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757874901; cv=pass; b=UokkCn5Ch0F1dlJaPHK/e48xEJ535und1wbeVnYH8RuzWiWqNYd123i1+C84/uiurMM21fM5NHA63KzlEfCEQ+rpzPv2KQKOXjLfGvFCX9WFjpGWJN1F9z/IfBtQJb2vyb0i46Q7/4Jjh98zLZq3zsZVxiCwxNUoWt9uKRTYuRc=
+	t=1757874906; cv=pass; b=fpTb6LtDO0BvR06hA3RQ0oGpjivdd7S4MC8QrQQe/yclC+MPP7jum19gpJQ+xmhfx//wxyuTcnfBsGI4bIxF6ZZz3lgDnxna4hDfuBI6OUZqf7bLrYsnX6nKbR8LBgUYfP3zi9/g2wGfIlridsiM8OriY1r9gDXXEHKfN5fii6U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757874901; c=relaxed/simple;
-	bh=jwdJ57SPFeChMt3qLbsltswA6/cvWM94uNE0Q/m7Nmc=;
-	h=From:Subject:Message-Id:MIME-Version:Content-Type:To:Cc:Date; b=U0Bnm/pyOZDaVr6+fzhAMTS3KzgsCWcA6aNVxFY0maPOEGZ9+vy1z0qWFbovBUZbhuT+l+oYDqtl+DftfkWdCq97qdSi9vZ8L413Jcg1Ew6W5Yd2bB/aXWO+CItgEVXE8PrMkJDzroYESu5Lte+fE2jGK4ALNLpLOn6a5nMWwgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; arc=pass smtp.client-ip=23.83.223.164
+	s=arc-20240116; t=1757874906; c=relaxed/simple;
+	bh=r9EW8lsk7L1ZKaVLDs7YGy4q1WneZFW+VHsShdtd59Q=;
+	h=From:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc:Date; b=Y9a7bDyy2dw4VU+Z18/Fw3CcEMZDTpsR8n63uI8bNpEvwm0E3Xkgtd96yroGlSkOgRKKppgd+wstQNMlMzfiZ3jnjfiThTLEk4OhWb+4DrscBAWtOhc2uEOHt4JUzwa41C6VY1foGwDkvp5RvjnLrlkTe4Yql54Yo6zSglpDKbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; arc=pass smtp.client-ip=23.83.218.252
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id E73546C0D51;
-	Sun, 14 Sep 2025 18:34:49 +0000 (UTC)
-Received: from uk-fast-smtpout10.hostinger.io (100-107-5-190.trex-nlb.outbound.svc.cluster.local [100.107.5.190])
+	by relay.mailchannels.net (Postfix) with ESMTP id 0C74E900F81;
+	Sun, 14 Sep 2025 18:34:58 +0000 (UTC)
+Received: from uk-fast-smtpout10.hostinger.io (100-107-6-72.trex-nlb.outbound.svc.cluster.local [100.107.6.72])
 	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id C97FE6C0D20;
-	Sun, 14 Sep 2025 18:34:44 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757874887; a=rsa-sha256;
+	by relay.mailchannels.net (Postfix) with ESMTPA id 05767900FA8;
+	Sun, 14 Sep 2025 18:34:52 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757874895; a=rsa-sha256;
 	cv=none;
-	b=13JhPclN37mXgfrnYhvcGJFkdeUPPbmJ8ys1WYjMW+haB3dddrJyQ+/jdWnS5MQjgWEspr
-	4sbv4XRU7k/TPmFHmvwXU+7zGfCKiXl0utfiRuIzavBH3W1OxEjo8e+349omKn+46KuN6m
-	R6iGKWEW3bL7yIsKxaMqJitiqAehM5Tz64ARenfjKGeiBYMSDlcE9wv00Cezaecssm94WA
-	xVK19qAzrpjIb77hifJt6m5h7Z1Le8GFUoAr+/eekAq3grVlOZ9N7iy28MI1w7KIftkekB
-	0L5c8sW/I2dO9U/Lu3x+IFXBlJhHU1rmnF17wNfK1AMV4w309QXkvFNaveZfoA==
+	b=GRuWUgfS07T+QayZBsIWb1roVaGZCUZaNOAsw9dtvyKR9eN1hE1GdVqBfcMDfd9+BKC4i6
+	HYPJsdEtVtE/o+f8uJFrX+fIQ9XV0nWS/1Z3Fgxn8ghzv4w5VJ0epYzDKrNzOdrY0B0Vce
+	5qwQG44aXu3nvdHIbEe8C8scq6tVmaMpQpkMenpzgsP9YyQRMjibG8EUTcB3Q6o+u5hm3o
+	9qxol6ow/QgAaEayN7dXoCiVxaV53+N/5CyPCkkihqAcnYW/XTmv/wqm5pBpEVmmsOqaXy
+	Im8ce14grcTIHvywNhZZKuFF8udWXXKAeXOk7CcIETu7LFcZDeh5aA9zeU/NRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=mailchannels.net;
-	s=arc-2022; t=1757874887;
+	s=arc-2022; t=1757874895;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=REfKBUMlwDoG5LT4Qmitt7dxpBlc/HPo7D6odawzDm8=;
-	b=uy0rvurB6uC+a//v6tOxeS8DSDYONBMcuQtcxe3QuJlsAnoMR59ZgZp3OT0JQXhuiY6Nl9
-	mTscyyhrGyVXYNCwjXFz3fKRK76HfzKLaTcHUGOGejQ0y74AoJIwApI/LyLc4r0HAZ3mmi
-	oyTZ5JXZUUIzVKp6Je49+ct37PdfMIItJ+sS2AYsDaC1b8XqbkSAJUDBvIyJQA8U0yV1Nd
-	nEECtNpM2neWXGlQk8c/oOe9J1isduKszkkkF20GVXkycTSa2Ad58Ucf2E+523lQZipTza
-	lPgczBXHI74OSZnqmLJhIYMV2yo0u+9QnLN42WFObRdodJg6h/pPKdPz0jVG6A==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7YX2udSABX2OKTQjxQlMx6xUpyjumB9hyJa1HkptWZQ=;
+	b=czXSoUMZkcKplYrzYhobuqS2uX+cqJcpLziNw6fnQTUenp9KIED4PcQaD0uS0MqHCKnM+1
+	Zpv1eF4bRNPG4kbUHpDqdPcd1hemKnWUX69DDzTax2g/SEfrb09+jsCZjSaIPd5zcw9iIb
+	IYV3Pl7Q6gjrvFtwxQMweWu1y6933gUTF6S5NPXGtd3K4FUCX6/17Ueu7OLkLSQfkL3fPc
+	zUOBmB7g8IYNMKTuh81Wc/25COj02qHn7eq43dsuuDxpUC99oyZlfA/m39vUhVXyXAirm3
+	2UjHI+zJbXS/QhUaP6E7GvDKbTooDo13ZC1W1pNr/MYP2ibASs9CdjeW1lU9og==
 ARC-Authentication-Results: i=1;
-	rspamd-54bcd779b6-sqm4z;
+	rspamd-54bcd779b6-gz6f7;
 	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 X-MC-Relay: Neutral
 X-MC-Copy: stored-urls
 X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
 X-MailChannels-Auth-Id: hostingeremail
-X-Whimsical-Eyes: 6b96161a1abc02c0_1757874889625_1313890535
-X-MC-Loop-Signature: 1757874889625:1636616220
-X-MC-Ingress-Time: 1757874889625
+X-Troubled-Abiding: 7364522300eaa2ba_1757874897944_755572181
+X-MC-Loop-Signature: 1757874897943:4142536531
+X-MC-Ingress-Time: 1757874897943
 Received: from uk-fast-smtpout10.hostinger.io (uk-fast-smtpout10.hostinger.io
  [145.14.155.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.107.5.190 (trex/7.1.3);
-	Sun, 14 Sep 2025 18:34:49 +0000
+	by 100.107.6.72 (trex/7.1.3);
+	Sun, 14 Sep 2025 18:34:57 +0000
 Received: from [172.17.0.2] (unknown [110.138.220.153])
 	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cPxf723bmzFK6mV;
-	Sun, 14 Sep 2025 18:34:38 +0000 (UTC)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cPxfH4dYZzFK5MY;
+	Sun, 14 Sep 2025 18:34:47 +0000 (UTC)
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
-Subject: [PATCH 0/6] ARM: dts: qcom: msm8960: cleanup and add missing I2C
- nodes
-Message-Id: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
+Subject: [PATCH 2/6] ARM: dts: qcom: msm8960: inline qcom-msm8960-pins.dtsi
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,10 +72,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHYKx2gC/x3MOwqAMBBF0a3I1AYS4ye6FbEQ89QpojIBESR7N
- 1ie4t6XIoQRaSheEtwc+TwyTFnQss/HBsU+mypdNdpZo0IMrm+1EpziIcq4uveAdaZbKVeXYOX
- nP45TSh9vOxzjYQAAAA==
-X-Change-ID: 20250831-msm8960-reorder-1849dee3817f
+Message-Id: <20250915-msm8960-reorder-v1-2-84cadcd7c6e3@smankusors.com>
+References: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
+In-Reply-To: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,66 +88,171 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  Shinjo Park <peremen@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757874878; l=2340;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757874878; l=3742;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=jwdJ57SPFeChMt3qLbsltswA6/cvWM94uNE0Q/m7Nmc=;
- b=aj83fKSEVrbAz5jLUJ+BWO2KgrjsHjAfOpKQblx0XkM7pa+WOygJQAGZO3DHqGVErAO/IZCvY
- 8d7cWJ9QE8VCjQjK9wxrutVdH8lz1UMDVzx/bMlZ6XMFIeqaajJV9WU
+ bh=r9EW8lsk7L1ZKaVLDs7YGy4q1WneZFW+VHsShdtd59Q=;
+ b=+r511htSNB6QPsPCyYFWWkW1SuqUApXe6lqQcnTm3ciOkV5P4a78kpBxXdfihuE3W/Aw8UqlE
+ Jku2Bid3uPZCF9hl65mGfaAzN47VURBAO3V4HyUlM1RLanA1zgshrIt
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
-Date: Sun, 14 Sep 2025 18:34:38 +0000 (UTC)
-X-CM-Envelope: MS4xfHdV8pYgGT2KC9F9XckX976bcsuuN2D1O5znkT15m46YwZt8zbpFoniUu8z8gD8YyxzouGHItdWk6HkMCuVJXqGZwtbPFGO7cbLQ2A5ySllCMBYpJbbU SgpTje4ROyQN8c2ukKr9FLinurxC0+hZ+PigIZl6vyplozMgStHUaTYBhgM/uTahCC1fB7CwI+Er9A33eFloJili4VVghO+RhRHBJZpyrWJfa10Jr8fppiCJ uOfctqJ3d0hvuz45mzr/6nSFP9M8D6fENKiaYt1wG6vlpAMwyMH2YlS2EyIbXsEz63DqukyD4ZO5vPjUzeDKPBbr9HSgR1EwF552UBmU2eJxcybvHhqPyK8R TNOESYVP8EQeC15+QK7LQCVgGI/TgGZdJRPU57i8y0xPExr3tsuHnEjCZitqb9M8BmVoabPlwC3qNNTB4gVexavSy7gpR2WIfyuYDLBNb5SZkMhI7JXcvKAN 6kBxL/2OkawG0ILtM9aHKPCNZaY+ambJv9BP9VK9vLxEwdAYY4yXJMSbsny/eHVEogL4W+nhriSX4iTKOt4eFBkJFsgxHufqQvyaQMkUQpoPsA4sWimmaKvi 3mNM36yaUzLAEN0AKI5tLuL2kcVraYBw5YianLOPH+i655YpMOET2CPCqyvEgxwXUMOK1SFHkABCMv0V46/tu2VcbTgzuHbKwK/8ewNDugN1FA==
-X-CM-Analysis: v=2.4 cv=LvvAyWdc c=1 sm=1 tr=0 ts=68c70ac2 a=3tJJDl7MZm1GcYeSp/W8Jw==:117 a=3tJJDl7MZm1GcYeSp/W8Jw==:17 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=wxLWbCv9AAAA:8 a=Fg_ZwnXJ7CBUc7Ulf-0A:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+Date: Sun, 14 Sep 2025 18:34:47 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=LvvAyWdc c=1 sm=1 tr=0 ts=68c70acb a=3tJJDl7MZm1GcYeSp/W8Jw==:117 a=3tJJDl7MZm1GcYeSp/W8Jw==:17 a=IkcTkHD0fZMA:10 a=pGLkceISAAAA:8 a=wxLWbCv9AAAA:8 a=CxMuIbg76hbZoAQaLtoA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-CM-Envelope: MS4xfJUN8rKxGAVxzeGLtQxP7+h1aJoyUDgrcHMRJkfyNmDmKrO1oYbnUi7kgj0cNQLXG86LRmPJntTSfyUUOL9/8mMSUKrsW0QstvuaH3OFu73CfdBI4Bmy a+9t7sxLDQTY3/RIz/GN9lBUmPTENRAzF4edY9vLNQnAxj0NtgZ5MA5D2KxUH2H3pECgiftzZRzlHcq/HKZaXAKcNDcaKo2EV84X8sBYZhZPbvx5lDWFxudc vwaCyxZdeFq3kgp9CpWXWGbhgAGU9M8XPdPVbxvde+E80Xk2FkNOuXTP6eeixhkZqmbfQrUB8Nq8phO2WNFKDDvMOVO3TJOVJe352uSOga2p/6Y+ZeqvG84F 6KUhGa+7RjC0G/fxHWXgXe3Kf9kaEgMEEOGfWXD2Xvd83gb/DJ1gMdCs0U0qubDgadrbppP3ZtrohRY4SvvmNZH/OVmUuEBn6DjBS/ue2Zn1cGfVf42XkP9s CSoRMY7N0QwfVq4c0aBKt2QAMwgKlDH9ulURWVl+egrotLEjbd7lUmRGwOpnLcu8nUzMu7Yu2sQfkWPrsVHBDfP0fi1eNTrc4l4aeZqd3E72PPH5txWL62G+ h5sWGbjJouw2euuaSCS+w8aq3aUzuI6p6pnPEjCYwa0606fTsesp3PS+2aKtZAfejvdx9+02FasXd893lPBprkzWUuyv592w/ti+YIyILhuc9Q==
 X-AuthUser: linux@smankusors.com
 
-While working on adding support for the Sony Xperia SP (msm8960t), it
-was pointed out [1] that the msm8960 dtsi could use some general
-cleanup and reordering. This series applies those suggestions and also
-fills in missing I2C nodes that are required by several phones based on
-msm8960.
+Inline qcom-msm8960-pins.dtsi into the main SoC dtsi. Most Qualcomm
+SoCs embed their TLMM definitions directly, with only msm8960 and
+apq8064 using a separate pins file. After this change, only apq8064
+remains split.
 
-Changes included:
+This is a cosmetic change only, with no functional impact.
 
-1. Reorders nodes by unit address and sorts properties to comply with
-   the Devicetree style guide. Cosmetic only.
-2. Inlines qcom-msm8960-pins.dtsi into the main SoC dtsi. Most Qualcomm
-   SoCs embed their TLMM definitions directly, so this removes an
-   uncommon split file pattern. Cosmetic only.
-3. Adds I2C child nodes for GSBI10 and GSBI12, which are present on
-   MSM8960 and required by devices such as the Sony Xperia SP.
-4. Adds I2C child nodes for GSBI1 and GSBI8, which are present on
-   MSM8960 and required by devices such as the Casio G'zOne. This work
-   was contributed by Shinjo Park.
-5. Updates the binding documentation to rename the GPIO controller node
-   from "msmgpio" to "tlmm".
-5. Renames the GPIO controller node label from "msmgpio" to "tlmm" to
-   match the convention used by other Qualcomm SoCs. Cosmetic only.
-
-[1] https://lore.kernel.org/all/rcazqdcr747ujkba6z2j2oci27ajkqfi4hydgc2kiavm73y37x@g63jga2fcwmo/
-
-Thanks,
-
+Tested-by: Rudraksha Gupta <guptarud@gmail.com>
+Tested-by: Shinjo Park <peremen@gmail.com>
+Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
-Antony Kurniawan Soemardi (6):
-      ARM: dts: qcom: msm8960: reorder nodes and properties
-      ARM: dts: qcom: msm8960: inline qcom-msm8960-pins.dtsi
-      ARM: dts: qcom: msm8960: add I2C nodes for gsbi10 and gsbi12
-      ARM: dts: qcom: msm8960: add I2C nodes for gsbi1 and gsbi8
-      dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node to tlmm
-      ARM: dts: qcom: msm8960: rename msmgpio node to tlmm
+ arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi | 59 ---------------------------
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi      | 57 +++++++++++++++++++++++++-
+ 2 files changed, 56 insertions(+), 60 deletions(-)
 
- .../bindings/pinctrl/qcom,msm8960-pinctrl.yaml     |   4 +-
- arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts        |  10 +-
- arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi      |  59 --
- .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |  12 +-
- .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    |   2 +-
- arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           | 727 ++++++++++++++-------
- 6 files changed, 491 insertions(+), 323 deletions(-)
----
-base-commit: 9e410f58e82ea0c0e865f688d84edad1da7824d2
-change-id: 20250831-msm8960-reorder-1849dee3817f
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi
+deleted file mode 100644
+index 77fe5be24b36fbda83ba73034939db10db6ef4c8..0000000000000000000000000000000000000000
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi
++++ /dev/null
+@@ -1,59 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-
+-&msmgpio {
+-	i2c3_default_state: i2c3-default-state {
+-		i2c3-pins {
+-			pins = "gpio16", "gpio17";
+-			function = "gsbi3";
+-			drive-strength = <8>;
+-			bias-disable;
+-		};
+-	};
+-
+-	i2c3_sleep_state: i2c3-sleep-state {
+-		i2c3-pins {
+-			pins = "gpio16", "gpio17";
+-			function = "gpio";
+-			drive-strength = <2>;
+-			bias-bus-hold;
+-		};
+-	};
+-
+-	sdcc3_default_state: sdcc3-default-state {
+-		clk-pins {
+-			pins = "sdc3_clk";
+-			drive-strength = <8>;
+-			bias-disable;
+-		};
+-
+-		cmd-pins {
+-			pins = "sdc3_cmd";
+-			drive-strength = <8>;
+-			bias-pull-up;
+-		};
+-
+-		data-pins {
+-			pins = "sdc3_data";
+-			drive-strength = <8>;
+-			bias-pull-up;
+-		};
+-	};
+-
+-	sdcc3_sleep_state: sdcc3-sleep-state {
+-		clk-pins {
+-			pins = "sdc3_clk";
+-			drive-strength = <2>;
+-			bias-disable;
+-		};
+-
+-		cmd-pins {
+-			pins = "sdc3_cmd";
+-			drive-strength = <2>;
+-		};
+-
+-		data-pins {
+-			pins = "sdc3_data";
+-			drive-strength = <2>;
+-		};
+-	};
+-};
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+index 9a0c87fd6d4752f7ef3d91f480c48efc55a08e74..9bdde91375320343c51b8a402087830666abe8b6 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+@@ -128,6 +128,62 @@ msmgpio: pinctrl@800000 {
+ 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++
++			i2c3_default_state: i2c3-default-state {
++				i2c3-pins {
++					pins = "gpio16", "gpio17";
++					function = "gsbi3";
++					drive-strength = <8>;
++					bias-disable;
++				};
++			};
++
++			i2c3_sleep_state: i2c3-sleep-state {
++				i2c3-pins {
++					pins = "gpio16", "gpio17";
++					function = "gpio";
++					drive-strength = <2>;
++					bias-bus-hold;
++				};
++			};
++
++			sdcc3_default_state: sdcc3-default-state {
++				clk-pins {
++					pins = "sdc3_clk";
++					drive-strength = <8>;
++					bias-disable;
++				};
++
++				cmd-pins {
++					pins = "sdc3_cmd";
++					drive-strength = <8>;
++					bias-pull-up;
++				};
++
++				data-pins {
++					pins = "sdc3_data";
++					drive-strength = <8>;
++					bias-pull-up;
++				};
++			};
++
++			sdcc3_sleep_state: sdcc3-sleep-state {
++				clk-pins {
++					pins = "sdc3_clk";
++					drive-strength = <2>;
++					bias-disable;
++				};
++
++				cmd-pins {
++					pins = "sdc3_cmd";
++					drive-strength = <2>;
++				};
++
++				data-pins {
++					pins = "sdc3_data";
++					drive-strength = <2>;
++				};
++			};
+ 		};
+ 
+ 		gcc: clock-controller@900000 {
+@@ -526,4 +582,3 @@ vsdcc_fixed: vsdcc-regulator {
+ 		regulator-always-on;
+ 	};
+ };
+-#include "qcom-msm8960-pins.dtsi"
 
-Best regards,
---
-Antony Kurniawan Soemardi <linux@smankusors.com>
+-- 
+2.34.1
 
