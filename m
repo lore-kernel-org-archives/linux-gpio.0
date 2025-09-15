@@ -1,167 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A0030BF53;
-	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644AA30BF55
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Sep 2025 12:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940362; cv=none; b=DOznAL3x8Qqn4bn0TAG4qgFh5aDhOpCZ/8HJnqB3oiRrei2omokkUePB4Vmx3MW8QyvDyUk6o9oqbHa5HS2WySnTexKRabzFnmOjzo7/2qqBiTZyQXl0vO76gGdrNnA/2KtCTdceH1uOMsLpEADrgJLZqSUGPRXEPFtY+2+H2Xk=
+	t=1757940435; cv=none; b=C+EM0kmes8r5yz5r+kQ420mSfK131J0CMK8oCa3ZGcjJSz13iRlnjHjdNicE/RiV/k5eNWRpaDVxSDhkKrNd5qHEu5LGgxF75dObQLaGUq2ODYA7iYVb8PNltKuLk005ePOl1d2CP47Y92eDGAlUArLEuFWa2NYjiB7bVxXZMFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940362; c=relaxed/simple;
-	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=bQ7rB4WZGgXa0SYDWjvzGNY3pGZ9MCEfGb2Azjm4bCrIiqLPJVwbkSM9GEvFvMC3I2+MXk3YrBmNTxf0UorNh1FavxOv3mutflDFjpI8OnKXljw//RYD+s2QDlOwIqsIa1gXQrJwe1x2vAeb9faHvA3cTtrxitne7UM7aGlgMYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5MQNHjd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757940435; c=relaxed/simple;
+	bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NmAJCR3YUVm68Qn1r0zg4KBIEQBf/KOjHcgJnhKMB8J/tPkoKEB8Y21FdgS6xJ2RafZHw+5PS7agL8KNvpCbJtprNF0IRdD5BPjQnxAIHvEFBSJoxSpliXEsx78jaoqxDlytovOnDGcUJDIQqRkdK1kITyZzpNmzYPjc+DcQ4Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=uu/gMIxT; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5MQNHjd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7B9C4CEF1;
-	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757940362;
-	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
-	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
-	b=P5MQNHjdJOR5OvJ2seL9fNaXLlcWGaiKyZi6zDxypyw2W59qIZyeDLkNYYkRcwAfx
-	 YVfCzRNxSYdK9dRclEKMCbWxHfe5vM9u4Phd8LR6GeD0LQ9mRSyHLbD812YZ+EUalj
-	 a+f4aAP5uEn0IQs46QKp5fQ9/IP3U2JKi6i34zTB++GhmJd7z0NkCu5YQapAbH6eev
-	 vgfsiT0TR8NJcy94zbNNStasbKd+28YOJtnR0ZQ42KEZSzDPVqzSNVrfRqgE/cejaZ
-	 FsPmE4okkwbYujW8ISwyubXxYnp+Da7R7oto/toJ+Ir+krtFNPP1/s7B7b9EH5BvVk
-	 S/jkQ3yHVBvyA==
-Content-Type: multipart/signed;
- boundary=b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 15 Sep 2025 14:45:58 +0200
-Message-Id: <DCTDUJO0PS8B.1LD03WTEMNRVP@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Ioana Ciornei" <ioana.ciornei@nxp.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn Guo" <shawnguo@kernel.org>,
- "Lee Jones" <lee@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/9] gpio: regmap: add the .fixed_direction_output
- configuration parameter
-Cc: "Frank Li" <Frank.Li@nxp.com>
-X-Mailer: aerc 0.16.0
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-5-ioana.ciornei@nxp.com>
-In-Reply-To: <20250915122354.217720-5-ioana.ciornei@nxp.com>
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="uu/gMIxT"
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=uu/gMIxTOJZHAzP8oYJjcIpztQhHUgf09obUDi3ID1xeRLz9DRf3VWMWg4ECpxT0To7+QfDzfnlMkXL3dOrKUKjRD3kW+oQzP9GWTWT31zByp+BYgrLouVPsn70DfaHIClDbgpGK7mNHH6/lWYHVPmV5G6hsGNH/2D8zfmZdCXhUCu4U8FLxEO9NLOHfTx18TxIPpb1l077186jKGEmlFeIZDiTVQeLsqBwFxoIs0wzcEDmHE/8Boy2CLKPCq+Z5KDWaCLtOUT+8HcEoSYYVfC3VC5B1oPC2Ny2pqW1xdIQaQB6HsL54O2ijru34AVI3ybJjvppM6B1/qqHk6lv3dw==; s=purelymail3; d=purelymail.com; v=1; bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=; h=Feedback-ID:Received:From:Date:Subject:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-gpio@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1506483826;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 15 Sep 2025 12:46:32 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Date: Mon, 15 Sep 2025 14:46:24 +0200
+Subject: [PATCH v3 2/4] pinctrl: mediatek: Add debounce times for MT6878
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250915-mt6878-pinctrl-support-v3-2-593cc007d4cf@mentallysanemainliners.org>
+References: <20250915-mt6878-pinctrl-support-v3-0-593cc007d4cf@mentallysanemainliners.org>
+In-Reply-To: <20250915-mt6878-pinctrl-support-v3-0-593cc007d4cf@mentallysanemainliners.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sean Wang <sean.wang@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757940385; l=1617;
+ i=igor.belwon@mentallysanemainliners.org; s=20250908;
+ h=from:subject:message-id; bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=;
+ b=U+bY7U9xUd0C4Z7k+0r/AwFbEZznVSRDowQDdQjlcm7N6QSO4UdkET41xnzth3uOtFhOcnt9v
+ Jz3FjqFJ0s8D7dX9UbiW99RK2v6PUFV70apsJLXq7h7psGgaNN2LS3R
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=t9Kz6B3jEwJD7YAKcp8XftfEz7SUSlGbrsfFlbrrFwA=
 
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+MT6878 uses different debounce times than other SoCs. Add them to the
+EINT driver.
 
-Hi Ioana,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+ drivers/pinctrl/mediatek/mtk-eint.c | 5 +++++
+ drivers/pinctrl/mediatek/mtk-eint.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-On Mon Sep 15, 2025 at 2:23 PM CEST, Ioana Ciornei wrote:
-> There are GPIO controllers such as the one present in the LX2160ARDB
-> QIXIS FPGA which have fixed-direction input and output GPIO lines mixed
-> together in a single register. This cannot be modeled using the
-> gpio-regmap as-is since there is no way to present the true direction of
-> a GPIO line.
->
-> In order to make this use case possible, add a new configuration
-> parameter - fixed_direction_output - into the gpio_regmap_config
-> structure. This will enable user drivers to provide a bitmap that
-> represents the fixed direction of the GPIO lines.
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 9f175c73613f84b47c0160947f32da7aca7d5a18..c8c5097c11c4d14eb41bdd7f9cb93b4a5756d2b2 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -66,6 +66,11 @@ const unsigned int debounce_time_mt6795[] = {
+ };
+ EXPORT_SYMBOL_GPL(debounce_time_mt6795);
+ 
++const unsigned int debounce_time_mt6878[] = {
++	156, 313, 625, 1250, 20000, 40000, 80000, 160000, 320000, 640000, 0
++};
++EXPORT_SYMBOL_GPL(debounce_time_mt6878);
++
+ static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
+ 					 unsigned int eint_num,
+ 					 unsigned int offset)
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+index fc31a4c0c77bf28b106943e9292d0dcc425c4922..3cdd6f6310cd0da5aa74623c5f1dbe8f8495d689 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.h
++++ b/drivers/pinctrl/mediatek/mtk-eint.h
+@@ -52,6 +52,7 @@ struct mtk_eint_pin {
+ extern const unsigned int debounce_time_mt2701[];
+ extern const unsigned int debounce_time_mt6765[];
+ extern const unsigned int debounce_time_mt6795[];
++extern const unsigned int debounce_time_mt6878[];
+ 
+ struct mtk_eint;
+ 
 
-I wonder about the ownership of that allocated memory in the config
-structure (and btw, I guess you leak the memory in your driver) and
-if it's not better and more error proof to allocate and copy the
-bitmap in gpio-regmap too (and maybe use devm_bitmap_alloc()) and
-leave it to the caller to handle the passed bitmap. I.e. it could
-also be on the stack.
+-- 
+2.51.0
 
-Otherwise, this looks good.
-
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
-> - Add the fixed_direction_output bitmap to the gpio_regmap_config
->
->  drivers/gpio/gpio-regmap.c  | 12 ++++++++++++
->  include/linux/gpio/regmap.h |  2 ++
->  2 files changed, 14 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index e8a32dfebdcb..2489768686d3 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -31,6 +31,7 @@ struct gpio_regmap {
->  	unsigned int reg_clr_base;
->  	unsigned int reg_dir_in_base;
->  	unsigned int reg_dir_out_base;
-> +	unsigned long *fixed_direction_output;
-> =20
->  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
->  			      unsigned int offset, unsigned int *reg,
-> @@ -129,6 +130,16 @@ static int gpio_regmap_get_direction(struct gpio_chi=
-p *chip,
->  	unsigned int base, val, reg, mask;
->  	int invert, ret;
-> =20
-> +	if (offset >=3D chip->ngpio)
-> +		return -EINVAL;
-
-Not sure this can happen. I tried to look into gpiolib.c but
-couldn't find anything obvious that it can't happen. Maybe Linus or
-Bartosz can comment on that.
-
-> +
-> +	if (gpio->fixed_direction_output) {
-> +		if (test_bit(offset, gpio->fixed_direction_output))
-> +			return GPIO_LINE_DIRECTION_OUT;
-> +		else
-> +			return GPIO_LINE_DIRECTION_IN;
-> +	}
-> +
->  	if (gpio->reg_dat_base && !gpio->reg_set_base)
->  		return GPIO_LINE_DIRECTION_IN;
->  	if (gpio->reg_set_base && !gpio->reg_dat_base)
-> @@ -247,6 +258,7 @@ struct gpio_regmap *gpio_regmap_register(const struct=
- gpio_regmap_config *config
->  	gpio->reg_clr_base =3D config->reg_clr_base;
->  	gpio->reg_dir_in_base =3D config->reg_dir_in_base;
->  	gpio->reg_dir_out_base =3D config->reg_dir_out_base;
-> +	gpio->fixed_direction_output =3D config->fixed_direction_output;
-> =20
->  	chip =3D &gpio->gpio_chip;
->  	chip->parent =3D config->parent;
-> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-> index c722c67668c6..34c143aca42d 100644
-> --- a/include/linux/gpio/regmap.h
-> +++ b/include/linux/gpio/regmap.h
-> @@ -78,6 +78,8 @@ struct gpio_regmap_config {
->  	int ngpio_per_reg;
->  	struct irq_domain *irq_domain;
-> =20
-> +	unsigned long *fixed_direction_output;
-
-Please add some documentation.
-
--michael
-
-> +
->  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
->  			      unsigned int offset, unsigned int *reg,
->  			      unsigned int *mask);
-
-
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMgKhhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/g/OQGApkK4RyQeR27/lOz7UgmjxXWviLT24rk7
-HomZpRwCI1WRHKWuke8PKCKR4WSGZcYjAYDBPXI1xnHdn8m/n1TIQChwQTK5HsFI
-3TxEofLzFPbcaU5PkHKQoroE+2VZNlrfg8A=
-=QdL8
------END PGP SIGNATURE-----
-
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5--
