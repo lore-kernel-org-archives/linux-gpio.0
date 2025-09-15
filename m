@@ -1,31 +1,31 @@
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644AA30BF55
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Sep 2025 12:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44E30EF87
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Sep 2025 12:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940435; cv=none; b=C+EM0kmes8r5yz5r+kQ420mSfK131J0CMK8oCa3ZGcjJSz13iRlnjHjdNicE/RiV/k5eNWRpaDVxSDhkKrNd5qHEu5LGgxF75dObQLaGUq2ODYA7iYVb8PNltKuLk005ePOl1d2CP47Y92eDGAlUArLEuFWa2NYjiB7bVxXZMFQ=
+	t=1757940446; cv=none; b=HMUXux0q66G6LM5QwGZx47b1Iq09D5P4ajwKN8LeqJ/YeuVSPtCMth/HJQ0AeIJ84qPcEznP4MLOqXS4a8UvNNsHjRbl1BjlV4hGmbaDm6txlfGJDa106AOdLezzoSvqqRQF/5NxTcYrlyxlaaqQD3NzTmxLVct1+SAa+tmBCuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940435; c=relaxed/simple;
-	bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NmAJCR3YUVm68Qn1r0zg4KBIEQBf/KOjHcgJnhKMB8J/tPkoKEB8Y21FdgS6xJ2RafZHw+5PS7agL8KNvpCbJtprNF0IRdD5BPjQnxAIHvEFBSJoxSpliXEsx78jaoqxDlytovOnDGcUJDIQqRkdK1kITyZzpNmzYPjc+DcQ4Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=uu/gMIxT; arc=none smtp.client-ip=34.202.193.197
+	s=arc-20240116; t=1757940446; c=relaxed/simple;
+	bh=nZ7OKo1OumVzkuKry68ZUJeaNsWtdwCoQlST8Zyjk5k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hdtl29y7RBD3/BetIz0OIe0b55CKFC0t5EgFlPqSHDc0OrH+/HWAn/y203LS4OtRoJEqdXyY65i8E8iRSgpvHcZPdMWFzrxPpIW6oApq4BfkoeR7eqA9qjJliADbGkecIL583fVIS+GvB2k0YTMk5BdrXellcjIWpYT5bKiMwbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=mrh2NbHx; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="uu/gMIxT"
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="mrh2NbHx"
 Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=uu/gMIxTOJZHAzP8oYJjcIpztQhHUgf09obUDi3ID1xeRLz9DRf3VWMWg4ECpxT0To7+QfDzfnlMkXL3dOrKUKjRD3kW+oQzP9GWTWT31zByp+BYgrLouVPsn70DfaHIClDbgpGK7mNHH6/lWYHVPmV5G6hsGNH/2D8zfmZdCXhUCu4U8FLxEO9NLOHfTx18TxIPpb1l077186jKGEmlFeIZDiTVQeLsqBwFxoIs0wzcEDmHE/8Boy2CLKPCq+Z5KDWaCLtOUT+8HcEoSYYVfC3VC5B1oPC2Ny2pqW1xdIQaQB6HsL54O2ijru34AVI3ybJjvppM6B1/qqHk6lv3dw==; s=purelymail3; d=purelymail.com; v=1; bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=; h=Feedback-ID:Received:From:Date:Subject:To;
+DKIM-Signature: a=rsa-sha256; b=mrh2NbHx0ApUEq6mOLe51fG0WP5c6GZwIxnZXPh5zzAsiHX28BeTTHgK4ARDvNuM3zf/zMPq4HRMC3XpO4xAcg60zZmrhd4D73R0O6qTK2xTOqGjdn/Na3neNJIc7Z1XO5Ez5yGpdb53j1YGfRfsuGgApfcOG3OnEF8HtyGKirGRuSJetp4bPc1hl69xPPWA72kUWBbFdgmkTdwznUc8BKp/xmu8MZdRTJL+3thPTDtacmBQ+lhUjyTwLTYPAL3ifO/G5HTbl/krO55g6vjoye2ESvMIBz5H+yNZu+sIlioiWii9odijx17Zr3HXxEz6qf+fcK4JXNNuHGIh1U2TKA==; s=purelymail3; d=purelymail.com; v=1; bh=nZ7OKo1OumVzkuKry68ZUJeaNsWtdwCoQlST8Zyjk5k=; h=Feedback-ID:Received:From:Subject:Date:To;
 Feedback-ID: 68247:10037:null:purelymail
 X-Pm-Original-To: linux-gpio@vger.kernel.org
 Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1506483826;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 15 Sep 2025 12:46:32 +0000 (UTC)
+          Mon, 15 Sep 2025 12:46:27 +0000 (UTC)
 From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Date: Mon, 15 Sep 2025 14:46:24 +0200
-Subject: [PATCH v3 2/4] pinctrl: mediatek: Add debounce times for MT6878
+Subject: [PATCH v3 0/4] Add support for mt6878 pinctrl
+Date: Mon, 15 Sep 2025 14:46:22 +0200
+Message-Id: <20250915-mt6878-pinctrl-support-v3-0-593cc007d4cf@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -34,9 +34,11 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-mt6878-pinctrl-support-v3-2-593cc007d4cf@mentallysanemainliners.org>
-References: <20250915-mt6878-pinctrl-support-v3-0-593cc007d4cf@mentallysanemainliners.org>
-In-Reply-To: <20250915-mt6878-pinctrl-support-v3-0-593cc007d4cf@mentallysanemainliners.org>
+X-B4-Tracking: v=1; b=H4sIAJ4KyGgC/4XNQQ7CIBCF4asY1mKAtoKuvIdxQdtpOwkFAtjYN
+ L27tCs36vKfZL63kAgBIZLrYSEBJozobI7ieCDNoG0PFNvcRDBRsQtTdExnJRX1aJsUDI1P711
+ IVPOWc8lLBl1N8rMP0OFrh++P3APG5MK870x8u/4lJ04ZLbpaqkbpugR1G8EmbcwctYVRozVoI
+ cSTCz3ZNibx4fLyqyuyK6pSFlzromvET3dd1zcjm61oJQEAAA==
+X-Change-ID: 20250908-mt6878-pinctrl-support-a1d117140efb
 To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -48,53 +50,53 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-mediatek@lists.infradead.org, 
  Igor Belwon <igor.belwon@mentallysanemainliners.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757940385; l=1617;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757940385; l=1613;
  i=igor.belwon@mentallysanemainliners.org; s=20250908;
- h=from:subject:message-id; bh=EocTBfRhuqVV5QheA/P/utq8S19upYhfTSQz2Zpf1do=;
- b=U+bY7U9xUd0C4Z7k+0r/AwFbEZznVSRDowQDdQjlcm7N6QSO4UdkET41xnzth3uOtFhOcnt9v
- Jz3FjqFJ0s8D7dX9UbiW99RK2v6PUFV70apsJLXq7h7psGgaNN2LS3R
+ h=from:subject:message-id; bh=nZ7OKo1OumVzkuKry68ZUJeaNsWtdwCoQlST8Zyjk5k=;
+ b=vT5USx8yXGrkJw4bzhrJotrS/vOL8+/o4FILRu/5UGNxjhXiDDrY8dLNbeJwsoMscv99/cDg/
+ xlLNTYlDzbIBG6pVYxyM0/nPSLh2vnIdVsyKZaJ0U31pjsEmSWEw6k5
 X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
  pk=t9Kz6B3jEwJD7YAKcp8XftfEz7SUSlGbrsfFlbrrFwA=
 
-MT6878 uses different debounce times than other SoCs. Add them to the
-EINT driver.
+Hi all,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+This patchset adds support for the pin controller found in the MediaTek
+MT6878 SoC. This SoC has 9 pinctrl groups, and 4 EINT controller
+instances.
+
+This SoC also uses the new "eh" bit for controlling i2c driving, support
+for which is also added here.
+
+Changes in V3:
+- (Krzysztof) DT binding: Limit gpio-line-names
+
+Link to V2: https://lore.kernel.org/linux-mediatek/20250914-mt6878-pinctrl-support-v2-0-254731aa3fc2@mentallysanemainliners.org/
+
+Kind regards,
+Igor
+
 Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 ---
- drivers/pinctrl/mediatek/mtk-eint.c | 5 +++++
- drivers/pinctrl/mediatek/mtk-eint.h | 1 +
- 2 files changed, 6 insertions(+)
+Igor Belwon (4):
+      dt-bindings: pinctrl: mediatek: Document MT6878 pin controller bindings
+      pinctrl: mediatek: Add debounce times for MT6878
+      pinctrl: mediatek: Add support for MT6878 pinctrl
+      arm64: dts: mediatek: Add MT6878 pinmux macro header file
 
-diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-index 9f175c73613f84b47c0160947f32da7aca7d5a18..c8c5097c11c4d14eb41bdd7f9cb93b4a5756d2b2 100644
---- a/drivers/pinctrl/mediatek/mtk-eint.c
-+++ b/drivers/pinctrl/mediatek/mtk-eint.c
-@@ -66,6 +66,11 @@ const unsigned int debounce_time_mt6795[] = {
- };
- EXPORT_SYMBOL_GPL(debounce_time_mt6795);
- 
-+const unsigned int debounce_time_mt6878[] = {
-+	156, 313, 625, 1250, 20000, 40000, 80000, 160000, 320000, 640000, 0
-+};
-+EXPORT_SYMBOL_GPL(debounce_time_mt6878);
-+
- static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
- 					 unsigned int eint_num,
- 					 unsigned int offset)
-diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-index fc31a4c0c77bf28b106943e9292d0dcc425c4922..3cdd6f6310cd0da5aa74623c5f1dbe8f8495d689 100644
---- a/drivers/pinctrl/mediatek/mtk-eint.h
-+++ b/drivers/pinctrl/mediatek/mtk-eint.h
-@@ -52,6 +52,7 @@ struct mtk_eint_pin {
- extern const unsigned int debounce_time_mt2701[];
- extern const unsigned int debounce_time_mt6765[];
- extern const unsigned int debounce_time_mt6795[];
-+extern const unsigned int debounce_time_mt6878[];
- 
- struct mtk_eint;
- 
+ .../bindings/pinctrl/mediatek,mt6878-pinctrl.yaml  |  211 ++
+ arch/arm64/boot/dts/mediatek/mt6878-pinfunc.h      | 1201 +++++++++++
+ drivers/pinctrl/mediatek/Kconfig                   |   10 +
+ drivers/pinctrl/mediatek/Makefile                  |    1 +
+ drivers/pinctrl/mediatek/mtk-eint.c                |    5 +
+ drivers/pinctrl/mediatek/mtk-eint.h                |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6878.c          | 1478 +++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6878.h      | 2248 ++++++++++++++++++++
+ 8 files changed, 5155 insertions(+)
+---
+base-commit: 9bee9db994df9f1a2572e3ecd61996fbe9a871b0
+change-id: 20250908-mt6878-pinctrl-support-a1d117140efb
 
+Best regards,
 -- 
-2.51.0
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
 
