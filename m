@@ -1,154 +1,212 @@
-Received: from duck.ash.relay.mailchannels.net (duck.ash.relay.mailchannels.net [23.83.222.52])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886CE3016E3;
-	Tue, 16 Sep 2025 16:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041428; cv=pass; b=eBEv/VXT1EH+zDq5LqBnC8Rom8wdCAT3ZQdQ9o1PZx7ehITtEJlImQfclycOgsSOnxHfkZmOYlbzOVyeyWBe66yu0hryiZE3xZvuwwOIyZvpi52m1gu8TAJS65Do5KwFwC5LEqNcYpy69Pq3S7HCDMLGxqMWb8qPnNsWrSt4zWE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041428; c=relaxed/simple;
-	bh=yhXVa71sDBUgi0LPtey2+2lzNURpCWB+Qkf4tQIq4Kk=;
-	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Date; b=hGZ0Cc7kB6nr5eyxkjDWr7qvoeeACne0mtUXbtil9c/Mx7CADCMkcQGlNCoyqdWwSzZBxBhscXuiLsU+gOR1bZidQs2ZtKBZbyH2J1dD1KsS4FyXYpG2W/VxKK75g9fw9aV7c23ttNYsj13zhOOyFsFM9RgofbapfSXtVFc3v9E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; arc=pass smtp.client-ip=23.83.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 70E05501331;
-	Tue, 16 Sep 2025 16:42:55 +0000 (UTC)
-Received: from uk-fast-smtpout7.hostinger.io (100-107-230-183.trex-nlb.outbound.svc.cluster.local [100.107.230.183])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 5A548501D00;
-	Tue, 16 Sep 2025 16:42:52 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1758040975; a=rsa-sha256;
-	cv=none;
-	b=ePmlcPRtCV/0ShNdrgD1Mjg96XQJvym93uOpBeSpFzQ5w4sdYLqPhf3J+URcBQ0/m/gmSf
-	pDPYCHvlTSrUuVoSmXG3AzTEKSBD5r/xuL8WOmJ/6frznMqKkwg/VIzRBJdgxNJHsKDFo0
-	IxaylrrIInilLlsvIyk5um9ukOBZ+AjyNlFPWHa5dV6E8ikgOW9EmfwU2w73mH0VKaTryR
-	hJHLkDRRsYGRxehVJTj3o69bRrpd5bqVLIac93kwaGvixdfl4qaaw3I1OPoLU46nh/vNSP
-	E/nLIBJuv1y+8iofbLxR9cRuFJC+bxQJ7kBjkVvKJJibilgZd6ohK3btypd+uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1758040974;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxOgn2m3Ie6XRNXGpzXojSezWCxjH7PiZ55WICf67Uo=;
-	b=f9k17mgZoziwe6TbxuSvwG/U/GPHYy7L0haf5OUWiqKYfOcjw87HGh3orreJ3fEeRhkpUV
-	i89R+HLNnrow15OafKDrKIovz+4ruXQKdCshaQhddCxMnj3uh17tnkzSDjaH78LQnI8xGA
-	SD46cEk9isU3TXtcU5jVNUxxhMl6INkssRzhtWPrQoMpBJOs8UfTh7ynNcCqGMtxC/hqn2
-	OE78050lzrCHoJo2RsLsH5PpNINq1rK8P6MPGMLi37Tr3G2TukQI7ZwuP1gJgv2CbpQeGf
-	1msn79uui+KLXDaIjvRFsRr81Roy3BYRRpdHu9xwURLI8EoErUUmyd6xPnkLkQ==
-ARC-Authentication-Results: i=1;
-	rspamd-76d5d85dd7-nns68;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MC-Copy: stored-urls
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Obese-Vacuous: 0200e2b907012c5c_1758040975185_202464574
-X-MC-Loop-Signature: 1758040975185:2572315587
-X-MC-Ingress-Time: 1758040975185
-Received: from uk-fast-smtpout7.hostinger.io (uk-fast-smtpout7.hostinger.io
- [31.220.23.87])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.107.230.183 (trex/7.1.3);
-	Tue, 16 Sep 2025 16:42:55 +0000
-Received: from [IPV6:2001:448a:c020:7f9:78ea:f170:5907:64ea] (unknown [IPv6:2001:448a:c020:7f9:78ea:f170:5907:64ea])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cR74570KgzHTnHl;
-	Tue, 16 Sep 2025 16:42:45 +0000 (UTC)
-Message-ID: <1a0ad7a7-7119-4df9-9f26-c2cd7b4ad084@smankusors.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FCF2DF15A;
+	Tue, 16 Sep 2025 20:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758053386; cv=none; b=sESXzhB4wBz9iTg1eeLoko6r/an7UVIYE61LErQ4apZ/hYXcqbLJgUnLQqO9kPvInl60lkTu+YaNwPRFjynAes35U2wKIfYuc891YSdawlHon3RkJ4T702bi61b48m2oVZZ9qp1v921qVJdIRFr99/khrGNgttf1OWV5tal6q/A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758053386; c=relaxed/simple;
+	bh=F0hJeg4vF8n1IM7OJY4KSBkC9cZRnfQ7Ctr7Iv83zwo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZU5s9z2JxuRtJZBbIfd+4HwlY1BqjEwjrppxf1OSNC+wi3F04sPAWxe9PC1cVpyqDO+7KZBSrvQcD3OqeVe0uV4o38MiZ8jPRB384obZMup5PuYoPzPMB2LZLvjy37E06YwapKT5c9gDajwNHEXqaUZdbTLzQ2fMcKQUOX7F+00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=GAvx5qwG; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=UzO03XcR; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="GAvx5qwG";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="UzO03XcR"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1758053336; bh=WlrpMszuag375++3au3AQMu
+	mLE/Z1ZoZmJDjJqd8ieY=; b=GAvx5qwGFbxhNRkxwhc5JSYB1VRIMjT5ITBEWXUjVNyQ0BNZ7n
+	sPJRK49nsYSihF6htA0vNokgdRIR+nQd0zL96pFlmWIrCntfk8gd5ENYJKXzz0hxoB2VikAnAhM
+	pZFG08Xt/Aw1XeI2Ygsr5tq4QthZmwtGBBU3En3e3ezDluZx5QW73yYfSUWU3hpBrQDL9fBKirG
+	ReGGVxNrWIv22KM00QZaDIvPKsnL+PUP3+VPkjeLArQes/PIm5LGDaEN334/+3Q162yDD8Z9OVz
+	Sv+iSk9BiyPut/O3rwwaTq54MfwPbnUKeTZ1bw0Vta8J/i5rFf6L154KEr+qR+hTahQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1758053336; bh=WlrpMszuag375++3au3AQMu
+	mLE/Z1ZoZmJDjJqd8ieY=; b=UzO03XcRaN3wGrSqDtBkO/u7EMhC+mKUBkEupBvSBqMoLn/K9o
+	n56YX+PHZY+jiYPCh5W/1ggBp9Tr5ku7pFAw==;
+From: Dang Huynh <dang.huynh@mainlining.org>
+Date: Wed, 17 Sep 2025 03:07:26 +0700
+Subject: [PATCH 09/25] dt-bindings: clock: Add RDA Micro RDA8810PL
+ clock/reset controller
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] ARM: dts: qcom: msm8960: cleanup and add missing I2C
- nodes
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-gpio@vger.kernel.org, David Heidelberg <david@ixit.cz>,
- Max Shevchenko <wctrl@proton.me>, Rudraksha Gupta <guptarud@gmail.com>,
- Shinjo Park <peremen@gmail.com>
-References: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
- <5ge4fmciy5khy7axvzapmdv55abouzmr6t5j7irz2glznetr6y@ky6v43cyf6ir>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <5ge4fmciy5khy7axvzapmdv55abouzmr6t5j7irz2glznetr6y@ky6v43cyf6ir>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date: Tue, 16 Sep 2025 16:42:45 +0000 (UTC)
-X-CM-Envelope: MS4xfInjyC6GXOUoTNbBFng6dnayO+J969j96SunuboAQ5W8qKsAtxlEBSkbRdMDkmYkqPqtW1WKbsiDhgoHQ8YBCXlw2QXjYkU2/lg94QSJsGw6ezJ1UFnL Aqnbn+oGRcv7z/Yma9stlx0GpCkuxHxLAUcnxQ75KxjwctUa6FylOXvvXM8gVA9GQ6ZZIufs3/6wmei9W2FrB0uHxMIyTOZIOxjVJaohiSdNb46VzRPSx1Ao xqA0Uk1A9fduPn9jyN2OPIyT8K5idX8K1EM2i1g13/erkWOdhc96DJVn2sd9pvQY4LmnABSyRkO+PtG+ovf+/6GM0foxZaWAuwhmnUYiHnGRC5xHx3LHKPl+ ETaDMYk+Dnh3bu/+UiHuDiHywHIGIFIHiClMOXrnnPVny2LyPhJO+o+F/v4OCkxxscJj58VfY4umIirzu5mdvS2CdEaZyJPKdMlg9MgcV45XKcJ2z3XGUfy5 3pyP0M4eDXsWNuG/VQpYKUsl1CVwVP8vPEMUkDXdS9A4/KmWof3X3bqF6E0LGo9OzJLyQ/5NF2c/ATVChc2f0Ue8xqGAIc9Iypre3ZGX5/cGezRXRZM7nZ5c 2ynicQdoZYGFCjFyE46JUiCl0Ap7S7O+QYMSW6yVdeXGT0rUp+Ymm87Sf4RtmyKtQ+WYhFh9oidFEURmA42KMfYhaJ0P+Qf6tOIg3JzuTW5rcEwGr+CSOf8f eNmVYVnhg0/OergMIFsf6UX+7+XBgya/H0nhp0oiYihkgPN5fHLE/9eyj+dhaYkqbh3JkPEvbhk=
-X-CM-Analysis: v=2.4 cv=LvvAyWdc c=1 sm=1 tr=0 ts=68c9938a a=bykdxRat2dt2OE9oJy4UGw==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=SGA4CQ9yz7DMjX97Oe0A:9 a=QEXdDO2ut3YA:10
-X-AuthUser: linux@smankusors.com
+Message-Id: <20250917-rda8810pl-drivers-v1-9-74866def1fe3@mainlining.org>
+References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
+In-Reply-To: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
+To: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, Dang Huynh <dang.huynh@mainlining.org>
+X-Mailer: b4 0.14.2
 
-On 9/16/2025 10:24 PM, Bjorn Andersson wrote:
-> On Sun, Sep 14, 2025 at 06:34:38PM +0000, Antony Kurniawan Soemardi wrote:
->> While working on adding support for the Sony Xperia SP (msm8960t), it
->> was pointed out [1] that the msm8960 dtsi could use some general
->> cleanup and reordering. This series applies those suggestions and also
->> fills in missing I2C nodes that are required by several phones based on
->> msm8960.
->>
->> Changes included:
->>
->> 1. Reorders nodes by unit address and sorts properties to comply with
->>     the Devicetree style guide. Cosmetic only.
->> 2. Inlines qcom-msm8960-pins.dtsi into the main SoC dtsi. Most Qualcomm
->>     SoCs embed their TLMM definitions directly, so this removes an
->>     uncommon split file pattern. Cosmetic only.
->> 3. Adds I2C child nodes for GSBI10 and GSBI12, which are present on
->>     MSM8960 and required by devices such as the Sony Xperia SP.
->> 4. Adds I2C child nodes for GSBI1 and GSBI8, which are present on
->>     MSM8960 and required by devices such as the Casio G'zOne. This work
->>     was contributed by Shinjo Park.
->> 5. Updates the binding documentation to rename the GPIO controller node
->>     from "msmgpio" to "tlmm".
->> 5. Renames the GPIO controller node label from "msmgpio" to "tlmm" to
->>     match the convention used by other Qualcomm SoCs. Cosmetic only.
->>
->> [1] https://lore.kernel.org/all/rcazqdcr747ujkba6z2j2oci27ajkqfi4hydgc2kiavm73y37x@g63jga2fcwmo/
->>
->> Thanks,
->>
->> ---
->> Antony Kurniawan Soemardi (6):
->>        ARM: dts: qcom: msm8960: reorder nodes and properties
->>        ARM: dts: qcom: msm8960: inline qcom-msm8960-pins.dtsi
->>        ARM: dts: qcom: msm8960: add I2C nodes for gsbi10 and gsbi12
->>        ARM: dts: qcom: msm8960: add I2C nodes for gsbi1 and gsbi8
->>        dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node to tlmm
->>        ARM: dts: qcom: msm8960: rename msmgpio node to tlmm
->>
->>   .../bindings/pinctrl/qcom,msm8960-pinctrl.yaml     |   4 +-
->>   arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts        |  10 +-
->>   arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi      |  59 --
->>   .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |  12 +-
->>   .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    |   2 +-
->>   arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           | 727 ++++++++++++++-------
->>   6 files changed, 491 insertions(+), 323 deletions(-)
->> ---
->> base-commit: 9e410f58e82ea0c0e865f688d84edad1da7824d2
-> I unfortunately don't have this commit, and I can't fine a branch where
-> patch 1 applies cleanly. Can you please rebase this on top of linux-next
-> and resubmit it?
->
-> Regards,
-> Bjorn
-ah sorry, I was using Rudraksha's branch. Should I send the dt-bindings
-patch separately now, or grouped together like this again on resubmit?
+Add documentation describing the RDA8810PL Clock and Reset
+controller.
 
-Thanks,
-Antony K. S.
+Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+---
+ .../bindings/clock/rda,8810pl-apsyscon.yaml        | 44 ++++++++++++
+ include/dt-bindings/clock/rda,8810pl-apclk.h       | 79 ++++++++++++++++++++++
+ 2 files changed, 123 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..988b609403a96abc4964ab366daa6fec0514595c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rda,8810pl-apsyscon.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: RDA Micro RDA8810PL AP Clock Controller
++
++maintainers:
++  - Dang Huynh <dang.huynh@mainlining.org>
++
++properties:
++  compatible:
++    items:
++      - const: rda,8810pl-apsyscon
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/rda,8810pl-apclk.h>
++
++    ap_syscon: syscon@0 {
++      compatible = "rda,8810pl-apsyscon", "syscon";
++      reg = <0x0 0x1000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/rda,8810pl-apclk.h b/include/dt-bindings/clock/rda,8810pl-apclk.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..372358e72436a28c0775519f49626c9c5f4c6046
+--- /dev/null
++++ b/include/dt-bindings/clock/rda,8810pl-apclk.h
+@@ -0,0 +1,79 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
++
++#ifndef _DT_BINDINGS_CLK_RDA8810_H_
++#define _DT_BINDINGS_CLK_RDA8810_H_
++
++/* soc clocks */
++#define CLK_CPU 0
++#define CLK_BUS 1
++#define CLK_MEM 2
++
++#define CLK_USB 3
++#define CLK_AXI 4
++#define CLK_GCG 5
++#define CLK_AHB1 6
++#define CLK_APB1 7
++#define CLK_APB2 8
++
++#define CLK_GPU 9
++#define CLK_VPU 10
++#define CLK_VOC 11
++#define CLK_SFLSH 12
++
++#define CLK_UART1 13
++#define CLK_UART2 14
++#define CLK_UART3 15
++
++#define CLK_VOC2 16
++#define CLK_EMMC 17
++
++#define CLK_COUNT (CLK_EMMC + 1)
++
++/* resets */
++#define RST_CPU 0
++
++#define RST_AXI_VOC 1
++#define RST_AXI_DMA 2
++#define RST_AXI_CONNECT 3
++#define RST_AXI_VPU 4
++
++#define RST_GCG_GOUDA 5
++#define RST_GCG_CAMERA 6
++#define RST_GCG_LCDC 7
++
++#define RST_AHB1_USBC 8
++#define RST_AHB1_SPIFLASH 9
++
++#define RST_APB1_TIMER 10
++#define RST_APB1_KEYPAD 11
++#define RST_APB1_GPIO 12
++#define RST_APB1_PWM 13
++#define RST_APB1_AIF 14
++#define RST_APB1_AUIFC 15
++#define RST_APB1_I2C1 16
++#define RST_APB1_I2C2 17
++#define RST_APB1_I2C3 18
++#define RST_APB1_COMREGS 19
++#define RST_APB1_DMC 20
++#define RST_APB1_DDRPHY_P 21
++
++#define RST_APB2_IFC 22
++#define RST_APB2_UART1 23
++#define RST_APB2_UART2 24
++#define RST_APB2_UART3 25
++#define RST_APB2_SPI1 26
++#define RST_APB2_SPI2 27
++#define RST_APB2_SPI3 28
++#define RST_APB2_SDMMC1 29
++#define RST_APB2_SDMMC2 30
++#define RST_APB2_SDMMC3 31
++#define RST_APB2_NAND 32
++
++#define RST_MEM_GPU 33
++#define RST_MEM_VPU 34
++#define RST_MEM_DMC 35
++#define RST_MEM_DDRPHY_P 36
++
++#define RST_COUNT (RST_MEM_DDRPHY_P + 1)
++
++#endif /* _DT_BINDINGS_CLK_RDA8810_H_ */
+
+-- 
+2.51.0
+
