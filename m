@@ -1,259 +1,223 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C26E253950;
-	Thu, 18 Sep 2025 16:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9935F29A9CD
+	for <linux-gpio@vger.kernel.org>; Thu, 18 Sep 2025 18:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758214269; cv=none; b=F1HOoVVcUieUrxU+fbCStT2rH2aIG0WxR30FN0eC/M/0n+wxxq+kOcC1sGC/dc2M7oj9Cz8tn/I2cPgQ5uukak8Wl4P8RKIeWLiWe+bPxZBeaXElJ5ojcKNqPoOMtxPxds7t/iXUzwmnWRb5clfmbLb3NbFR0kTWSOU/TEkRkQw=
+	t=1758220532; cv=none; b=ggTGWfqUHQ/u6bd7tK0VQy/mHg31HsBFOjFU5/RVMIyIYTrYhA2WsBKUM1RoyU6VPsaLqFskHhNjqI/kdi69nSZEvE2v6zY+2YwASwzFcI1QxzwtolQ6F/SM4ob9Wk6j/5flpxpYNdP2e2PL9Nc+7CIQMcHJQD+2jjOHusio1cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758214269; c=relaxed/simple;
-	bh=G7scsgL+yrYA4D+2n/22/LhhZgPYYRLFCIoU4FAox1M=;
+	s=arc-20240116; t=1758220532; c=relaxed/simple;
+	bh=7JWrZqhhxtwxsKzUS484cYA9BE4S3MG4+Hm4TzvixgE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u4xwa1em9DqzA6W3LQLDkgTGnUQdl27L+2N4mxFPnQMwH12oyuI4NIhdoziq+TnD3dRMNLpZQRcZerkibT+sqrKhm8QbxHzcdhW6cpnO65ACgT2lxiTTPe/yWjGWIqZ5D3ZRUWe9Ip8c5LQbsCCz2fJN1Gx9HZ2x/mBHih7lxfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cSLY20nLBz9sfk;
-	Thu, 18 Sep 2025 18:23:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id DC6pAqwuh5tc; Thu, 18 Sep 2025 18:23:34 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cSLY160R7z9sfj;
-	Thu, 18 Sep 2025 18:23:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BBD638B776;
-	Thu, 18 Sep 2025 18:23:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id DYqBu_E8srgz; Thu, 18 Sep 2025 18:23:33 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D63CA8B767;
-	Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
+	 MIME-Version; b=TIkp4nBKWjIGRidFBABpf5sn9eqWR24HogLUOmSNhO1Ykym0/rPTloHR6jKhJTDhMxSwBKDUCz6bFSw+i6FQbOUrCri16lIi/VAr4Qvpzlk2+Fa4oBuR9fl//b8uz4d5d4EYV2lT2cLRr0bK4OF1aoAwnLSw9wDkIklZ5sHK1PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQMvyfT+; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQMvyfT+"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b07883a5feeso244489966b.1
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Sep 2025 11:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758220529; x=1758825329; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9DF8mdGy7rQ30a9eWz48AP7z4kPvyfSZCRABtJwRlC0=;
+        b=MQMvyfT+31xh4GtjqMt6G0oQ4ieG03Yk0cpxXjIjDvGJMKGZMBbbLVPxdW7CSIqHSa
+         Ti/I3Wo9KvSoXCQLxKvYr2HsKFdd4tyCFAJ56N6p6FTYjqOwyCV5FF6Ofpf2jhdXHCbS
+         gXWSghAewwgM6v34qLIRwCycGspdyrDlXWEONuSiiIVCLnRa+h+160ZXSh43cgJggUXy
+         1YwaOS5d9nf43A0e3gvjp6VXkoIkIZ5klNja3Hos/Kq+CROhxiiQezRidbE/M907dT3L
+         qCMlwl1nAoNJ4W/cQiJswbsT7VW6wPOffpwxFh4HVZfxjt30QjHSErSrVxufrsoK/d+1
+         v55A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758220529; x=1758825329;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9DF8mdGy7rQ30a9eWz48AP7z4kPvyfSZCRABtJwRlC0=;
+        b=WarSBvH+pUW708KhtwyASXy/faW0EdlvYEA/pxE9hhzStZ3qcKjZn+4rpd7nNCEfKv
+         culh0shr9yr3LoZkUXIZV6wMXD0QONFondspXaO3sOZvOXWQfGRdmqCZx60+xoZJ6WKI
+         S/C1qk+0NDxckdAk4yMZKDLbO9kcDM8Bzfe3O1tRJ53IzTvGg555f/H+B3FBSmI89lIZ
+         z5qsdZYX6PoXC7m+6VbMUdXCxj2pmmp2tUq2WNoxKItJwKtYReWvOxZQnTHTUVtumUUM
+         qvtgXX/9yHqL/718aRZMf1+X7r3dpZenQ5DJ7F3C5IGwqmeI1sfBNagP5X+yy/rhkB80
+         Hgbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWytdukMeTIVJQKq9Pplt3sgdSR0UglqbOBUKrqIxL6NGoxeD02/tZf0sQvQXA4uz6qUrMY+Y3D1ffd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyg9DyC7Jt5gWMfuuPUYApk3kxA3X+RpSYm26qj7jalyI2OdFL
+	HfCRTtTKi+SRxyUfPBoqViNxTJbchh68z0ymWCLJLGB3xAUsU20Q1hCx
+X-Gm-Gg: ASbGnctHhlvRA/S8U8n1UzPw3ThhBq8ugWbUlo8xBvgJL7WxNJVrzQsvTDcCcdYR6v/
+	WtKdR29N4sygT4rhNnsraLKrEiW949C80FL7OsBNrbz1qThABYUYSoPvP9uxQBoOehj5U3c89Pw
+	S86dCCtwkKxcYxGR3UgQ4I3MGFRfpm1355aPh1Oelm+JX46H2oGAsAmKeq725Qe6MkVWRX9PcFe
+	oqTIFvDr0uRHhqueZHb1F5v9kwB2Zxu8iVSm31d9fpK4lA/ZgehdsiPJEW+NoByI2XDQdoge1l5
+	bIxECPETSXmT6xSVLGbhircKk7SEP3+kaQO1MoLeDxcD8iVl1/8bPeweQgA18dpt+O/SHYl3tVM
+	0h0gfBfUeGeNSjFVokCdJ8JL8atxFbAxQZCNnKtk=
+X-Google-Smtp-Source: AGHT+IG+2F9Tdqn75yCUehgh0hWjS/B3B6NaTXRMxweuRMKUwCI/DRvlIaiDT/f+5WUUCMePXP8wBQ==
+X-Received: by 2002:a17:907:728f:b0:b04:9468:4a21 with SMTP id a640c23a62f3a-b24ee6ef486mr25159666b.14.1758220528565;
+        Thu, 18 Sep 2025 11:35:28 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fcfe88d97sm245887466b.58.2025.09.18.11.35.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 11:35:28 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: andriy.shevchenko@linux.intel.com
+Cc: Dell.Client.Kernel@dell.com,
+	bartosz.golaszewski@linaro.org,
+	benjamin.tissoires@redhat.com,
+	dmitry.torokhov@gmail.com,
+	linux-acpi@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v6 1/7] soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
-Date: Thu, 18 Sep 2025 18:23:21 +0200
-Message-ID: <74d4a911a6d17eae7b94a8f30a4d24498a217e71.1758212309.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1758212309.git.christophe.leroy@csgroup.eu>
-References: <cover.1758212309.git.christophe.leroy@csgroup.eu>
+	linux-i2c@vger.kernel.org,
+	regressions@lists.linux.dev,
+	rrangel@chromium.org,
+	safinaskar@zohomail.com,
+	superm1@kernel.org,
+	wse@tuxedocomputers.com
+Subject: Re: [REGRESSION][BISECTED] Dell Precision 7780 wakes up on its own from suspend
+Date: Thu, 18 Sep 2025 21:33:36 +0300
+Message-ID: <20250918183336.5633-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aKyDB7h7cUBOLbiJ@smile.fi.intel.com>
+References: <aKyDB7h7cUBOLbiJ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758212605; l=5183; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=G7scsgL+yrYA4D+2n/22/LhhZgPYYRLFCIoU4FAox1M=; b=65/ofNRoICaFrDJaLuae+CUguGjCMPj2TeU/+DM/ipRDBymnjuE1lMxVfJbnOEbS/w0Z3PfLY NrutJyTMFh2AgW1ounjp+1wosQbl9Iczz5pisy0QH7GbqYcL+KNjGY2
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-The QUICC Engine provides interrupts for a few I/O ports. This is
-handled via a separate interrupt ID and managed via a triplet of
-dedicated registers hosted by the SoC.
+Andy Shevchenko:
+> In other words we need to enable debug of the pin control subsystem and see
+> what it will print in dmesg.
 
-Implement an interrupt driver for it for that those IRQs can then
-be linked to the related GPIOs.
+You mean I should enable CONFIG_DEBUG_PINCTRL? Okay, I did this.
 
-The number of ports for which interrupts are supported depends on
-the microcontroller:
-- mpc8323 has 10 interrupts
-- mpc8360 has 28 interrupts
-- mpc8568 has 18 interrupts
-So add this information as data of the compatible.
+So, today I tested everything on fresh kernel, 6.17.0-rc6, without any
+patches.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/soc/fsl/qe/Makefile      |   2 +-
- drivers/soc/fsl/qe/qe_ports_ic.c | 156 +++++++++++++++++++++++++++++++
- 2 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
+My config is: https://zerobin.net/?ebecc538f6caa22b#88c2k08G8+cZoMjgU9N/WYy28qQjyBW+/H78ygujZxY=
+It was generated from Debian config using localmodconfig.
+I added few tweaks, in particular I enabled CONFIG_DEBUG_PINCTRL.
 
-diff --git a/drivers/soc/fsl/qe/Makefile b/drivers/soc/fsl/qe/Makefile
-index ec8506e13113..901a9c40d5eb 100644
---- a/drivers/soc/fsl/qe/Makefile
-+++ b/drivers/soc/fsl/qe/Makefile
-@@ -11,4 +11,4 @@ obj-$(CONFIG_UCC_SLOW)	+= ucc_slow.o
- obj-$(CONFIG_UCC_FAST)	+= ucc_fast.o
- obj-$(CONFIG_QE_TDM)	+= qe_tdm.o
- obj-$(CONFIG_QE_USB)	+= usb.o
--obj-$(CONFIG_QE_GPIO)	+= gpio.o
-+obj-$(CONFIG_QE_GPIO)	+= gpio.o qe_ports_ic.o
-diff --git a/drivers/soc/fsl/qe/qe_ports_ic.c b/drivers/soc/fsl/qe/qe_ports_ic.c
-new file mode 100644
-index 000000000000..9715643d36a6
---- /dev/null
-+++ b/drivers/soc/fsl/qe/qe_ports_ic.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * QUICC ENGINE I/O Ports Interrupt Controller
-+ *
-+ * Copyright (c) 2025 Christophe Leroy CS GROUP France (christophe.leroy@csgroup.eu)
-+ */
-+
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/platform_device.h>
-+
-+/* QE IC registers offset */
-+#define CEPIER		0x0c
-+#define CEPIMR		0x10
-+#define CEPICR		0x14
-+
-+struct qepic_data {
-+	void __iomem *reg;
-+	struct irq_domain *host;
-+};
-+
-+static void qepic_mask(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	clrbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static void qepic_unmask(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	setbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static void qepic_end(struct irq_data *d)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+
-+	out_be32(data->reg + CEPIER, 1 << (31 - irqd_to_hwirq(d)));
-+}
-+
-+static int qepic_set_type(struct irq_data *d, unsigned int flow_type)
-+{
-+	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+	unsigned int vec = (unsigned int)irqd_to_hwirq(d);
-+
-+	switch (flow_type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_FALLING:
-+		setbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		return 0;
-+	case IRQ_TYPE_EDGE_BOTH:
-+	case IRQ_TYPE_NONE:
-+		clrbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		return 0;
-+	}
-+	return -EINVAL;
-+}
-+
-+static struct irq_chip qepic = {
-+	.name = "QEPIC",
-+	.irq_mask = qepic_mask,
-+	.irq_unmask = qepic_unmask,
-+	.irq_eoi = qepic_end,
-+	.irq_set_type = qepic_set_type,
-+};
-+
-+static int qepic_get_irq(struct irq_desc *desc)
-+{
-+	struct qepic_data *data = irq_desc_get_handler_data(desc);
-+	u32 event = in_be32(data->reg + CEPIER);
-+
-+	if (!event)
-+		return -1;
-+
-+	return irq_find_mapping(data->host, 32 - ffs(event));
-+}
-+
-+static void qepic_cascade(struct irq_desc *desc)
-+{
-+	generic_handle_irq(qepic_get_irq(desc));
-+}
-+
-+static int qepic_host_map(struct irq_domain *h, unsigned int virq, irq_hw_number_t hw)
-+{
-+	irq_set_chip_data(virq, h->host_data);
-+	irq_set_chip_and_handler(virq, &qepic, handle_fasteoi_irq);
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops qepic_host_ops = {
-+	.map = qepic_host_map,
-+};
-+
-+static int qepic_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct qepic_data *data;
-+	unsigned long nb;
-+	int irq;
-+
-+	nb = (unsigned long)of_device_get_match_data(dev);
-+	if (nb < 1 || nb > 32)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->reg = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(data->reg))
-+		return PTR_ERR(data->reg);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	data->host = irq_domain_add_linear(dev->of_node, nb, &qepic_host_ops, data);
-+	if (!data->host)
-+		return -ENODEV;
-+
-+	irq_set_handler_data(irq, data);
-+	irq_set_chained_handler(irq, qepic_cascade);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qepic_match[] = {
-+	{
-+		.compatible = "fsl,mpc8323-qe-ports-ic",
-+		.data = (void *)10,
-+	},
-+	{
-+		.compatible = "fsl,mpc8360-qe-ports-ic",
-+		.data = (void *)28,
-+	},
-+	{
-+		.compatible = "fsl,mpc8568-qe-ports-ic",
-+		.data = (void *)18,
-+	},
-+	{},
-+};
-+
-+static struct platform_driver qepic_driver = {
-+	.driver	= {
-+		.name		= "qe_ports_ic",
-+		.of_match_table	= qepic_match,
-+	},
-+	.probe	= qepic_probe,
-+};
-+
-+static int __init qepic_init(void)
-+{
-+	return platform_driver_register(&qepic_driver);
-+}
-+arch_initcall(qepic_init);
+# cat /proc/cmdline 
+BOOT_IMAGE=/@rootfs/boot/vmlinuz-6.17.0-rc6 root=UUID=015793d4-ad51-4da7-844b-fcc3bcb13a0b ro rootflags=subvol=@rootfs log_buf_len=4M ignore_loglevel
+
+I run this script:
+https://zerobin.net/?327f3aa3ef7ce845#Ycu017J9YbRga8uGaCKRzsH7J/lB8D4RudpwTll5lbo=
+
+This script runs "rtcwake -s 6 -m mem" multiple times. Sometimes my laptop wakes on timer (because of rtcwake),
+and sometimes it wakes up too early on its own (and this is a bug).
+
+My script did suspend 7 times:
+
+# dmesg | grep s2idle
+[  117.934504] PM: suspend entry (s2idle)
+[  127.141741] PM: suspend entry (s2idle)
+[  131.299554] PM: suspend entry (s2idle)
+[  140.034802] PM: suspend entry (s2idle)
+[  144.592260] PM: suspend entry (s2idle)
+[  154.038621] PM: suspend entry (s2idle)
+[  163.034299] PM: suspend entry (s2idle)
+
+Out of them my laptop woke up on timer 4 times and on its own (i. e. due to bug) 3 times:
+
+# dmesg | grep 'woke up'
+[  126.087936] will-wake: attempt 0: woke up in time
+[  130.248820] will-wake: attempt 1: woke up early
+[  138.988770] will-wake: attempt 2: woke up in time
+[  143.545973] will-wake: attempt 3: woke up early
+[  152.993654] will-wake: attempt 4: woke up in time
+[  161.988956] will-wake: attempt 5: woke up in time
+[  166.329080] will-wake: attempt 6: woke up early
+
+Here is full output of "dmesg --level=debug+":
+https://zerobin.net/?f704a2d56603f4ec#SRrzc2mt2FNNqcltx/ULmtLZRdRH9frdgoODU03AXwE=
+
+/proc/interrupts:
+https://zerobin.net/?b7ba5047ca84ab29#TjMUjkAdhpIuKbnvPpuYyNWa/ilA/ciGKwwSbx6KRFc=
+
+# head -n 1000 /sys/class/dmi/id/*
+==> /sys/class/dmi/id/bios_date <==
+07/15/2025
+
+==> /sys/class/dmi/id/bios_release <==
+1.23
+
+==> /sys/class/dmi/id/bios_vendor <==
+Dell Inc.
+
+==> /sys/class/dmi/id/bios_version <==
+1.23.6
+
+==> /sys/class/dmi/id/board_asset_tag <==
+
+
+==> /sys/class/dmi/id/board_name <==
+0C6JVW
+
+==> /sys/class/dmi/id/board_serial <==
+/JNLHW44/VNCMV0046P029A/
+
+==> /sys/class/dmi/id/board_vendor <==
+Dell Inc.
+
+==> /sys/class/dmi/id/board_version <==
+A00
+
+==> /sys/class/dmi/id/chassis_asset_tag <==
+
+
+==> /sys/class/dmi/id/chassis_serial <==
+JNLHW44
+
+==> /sys/class/dmi/id/chassis_type <==
+10
+
+==> /sys/class/dmi/id/chassis_vendor <==
+Dell Inc.
+
+==> /sys/class/dmi/id/chassis_version <==
+
+
+==> /sys/class/dmi/id/ec_firmware_release <==
+1.18
+
+==> /sys/class/dmi/id/modalias <==
+dmi:bvnDellInc.:bvr1.23.6:bd07/15/2025:br1.23:efr1.18:svnDellInc.:pnPrecision7780:pvr:rvnDellInc.:rn0C6JVW:rvrA00:cvnDellInc.:ct10:cvr:sku0C42:
+
+==> /sys/class/dmi/id/power <==
+head: error reading '/sys/class/dmi/id/power': Is a directory
+
+==> /sys/class/dmi/id/product_family <==
+Precision
+
+==> /sys/class/dmi/id/product_name <==
+Precision 7780
+
+==> /sys/class/dmi/id/product_serial <==
+JNLHW44
+
+==> /sys/class/dmi/id/product_sku <==
+0C42
+
+==> /sys/class/dmi/id/product_uuid <==
+4c4c4544-004e-4c10-8048-cac04f573434
+
+==> /sys/class/dmi/id/product_version <==
+
+
+==> /sys/class/dmi/id/subsystem <==
+head: error reading '/sys/class/dmi/id/subsystem': Is a directory
+
+==> /sys/class/dmi/id/sys_vendor <==
+Dell Inc.
+
+==> /sys/class/dmi/id/uevent <==
+MODALIAS=dmi:bvnDellInc.:bvr1.23.6:bd07/15/2025:br1.23:efr1.18:svnDellInc.:pnPrecision7780:pvr:rvnDellInc.:rn0C6JVW:rvrA00:cvnDellInc.:ct10:cvr:sku0C42:
+
+
+Output of dmidecode:
+https://zerobin.net/?e7783ba3bd93c895#EAVgKSZQrn0aGC6t9a/RKeZpp1/9TAYlDhHMh2lcpfQ=
+
 -- 
-2.49.0
-
+Askar Safin
