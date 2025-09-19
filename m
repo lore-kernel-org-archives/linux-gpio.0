@@ -1,110 +1,221 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66B313D48;
-	Fri, 19 Sep 2025 13:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C546246327;
+	Fri, 19 Sep 2025 14:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758290376; cv=none; b=PoE11hclhN90S/Bl330/c/SDmrHOh6F8hHPZG6Dn+pWY0UqBxwEeWxSZC5x7exK8G5LFLRSY6YLXERwuv7vhw3WLFUx1tnapsFOSCVVH6Gh5Lduvk0IDlecC6JU/aPuRYgE/qsbGMNS6OgMeZ060B4KFHZFKbQf/YlGb7hwygD8=
+	t=1758290448; cv=none; b=IS4/nKrG6YKn0XwJuXfcjeRn5x8W0Cb5yrVkRVE5SkK/l/qrnHIht5zsJAATMChI7jkbdjgpaqKu8USkWNig9dppVtqO0ZEYFpr/jRDnGII82MHPQ3n8LqxEjN1hSyYB5/PIZeI8t5qqjvRsM/GyoNsACGXeAyGS/RgQHEJ3tUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758290376; c=relaxed/simple;
-	bh=rYm7TDSt7m3UIo26WMvRENt6r9Gc+DAQRE/S6hKjId4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kOD5gz5TqzXSHL9TA3hJVbFHKMQC5Ye+RFT8DIbpH1w1PGztVPZAyOrTsE/61AcZ+GGnhn43QEw8smYsoaU8J9sBAQjeJb6phKnT7/1rUrukqtJgqbKcylqjpMTrJ+sbIpls7QbeompGo5LKgq5PUOdGNSgRotFkXgN/n3duKpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S8U1p6lk; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1758290448; c=relaxed/simple;
+	bh=2Fw6+9wC1pe/2aHJyHIT5pgPlo5xcUmfFXENMUNHfqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NS3/aWbccHvQS3Sj26GPyhlkX7ZS0afffeLQ2Gr+CsdGHELrSVnxEUHc79EX2kB0p0rO3SYkV9q7QfRUQbxCdnDMVO6AKkagItmVwUnyfPMOsBq+0pd7AWjr7xFh7yx7cgywivO60Jj1YtjFcRj//vcxwrFK7EoHynOaIFNaZbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYmZ8UPD; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S8U1p6lk"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E2DB41A0F18;
-	Fri, 19 Sep 2025 13:59:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B6B02606A8;
-	Fri, 19 Sep 2025 13:59:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 757D2102F1BCB;
-	Fri, 19 Sep 2025 15:59:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758290370; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=dWYgA9dXzIHOPv9DWHE+oxQc2sRvSmlPdD1Mhljo75M=;
-	b=S8U1p6lkz1TkcMx0Lx7dsXI7Kddmg+uVELN9GHpySFHyJ2gk1ThiVW0Ya+PpybT6exc9ir
-	wIbyd/ulU+97JOw74n87KFkRy2DwhRKtueVABl1T4qIL8gyh7hWyH5b1zwBUig4Uj5+qF+
-	wBUbg8bHk6dIV4ydjeSwxjXKSMAI/WFc4zzB9bodtyq0MM7BUh6IuYi/AhSiwVZstgnFTo
-	rGoYqdY/RafwrWkZRO3L7Yhavyw4azaKKvM+itxgU5CFgpv9YsidHU9AjU7xbERlbPW6D8
-	PpD1EfNJvk7BY5MFrpomAw46ybV6NP/ps8+UcccH7gEU1RO8YZXoNhbGyVcKTg==
-Date: Fri, 19 Sep 2025 15:59:10 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
- Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
- Eberhard <pascal.eberhard@se.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 8/8] ARM: dts: r9a06g032: Add support for GPIO
- interrupts
-Message-ID: <20250919155910.4d106256@bootlin.com>
-In-Reply-To: <aM0llhn054OI9rA8@ninjato>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-9-herve.codina@bootlin.com>
- <aM0llhn054OI9rA8@ninjato>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYmZ8UPD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758290447; x=1789826447;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2Fw6+9wC1pe/2aHJyHIT5pgPlo5xcUmfFXENMUNHfqk=;
+  b=IYmZ8UPDVLRSFePSrHiSKVhVvRIgRs1HU26zTUyYq/t7jWyQKBlILFZR
+   /MY/o1ObMsTXjiihP7MUAF57o/4T0b/xGZrBWfVz1y/4nW+/BWwacx1eC
+   e0gcY2elE5eMXEBefDTPzSXiJIgZLfHTg1SO3uVNgc5HqxwiurbdN2Boz
+   E8KsBX78vdz4kgqBOcay7Rr1U7spdfNR2MEfmkz/48oB/huNYKQpSwxEA
+   sfzOI4FxVcOoqybRQfzVyhYmTX9W91VZ13TumkHQlwRTx6vW9/tRVDqkk
+   ozj2IwGfR/EjlE9AZGi/j3vcJlIMB4GwcJdpcsgY/r6CzkFigxfYS7WX7
+   g==;
+X-CSE-ConnectionGUID: GtM1mu5CR2qhw9j2+YosuQ==
+X-CSE-MsgGUID: 742BhsfcSHqbzEEbxK0uTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60523789"
+X-IronPort-AV: E=Sophos;i="6.18,278,1751266800"; 
+   d="scan'208";a="60523789"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 07:00:45 -0700
+X-CSE-ConnectionGUID: KLjTf8AqQCqudD5ECbxUSQ==
+X-CSE-MsgGUID: 8I+0wv0HRzSTzVRIDmNthQ==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 19 Sep 2025 07:00:39 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzbfB-0004Ln-1N;
+	Fri, 19 Sep 2025 14:00:37 +0000
+Date: Fri, 19 Sep 2025 21:59:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org,
+	Dang Huynh <dang.huynh@mainlining.org>
+Subject: Re: [PATCH 06/25] rtc: Add driver for RDA Micro SoC
+Message-ID: <202509192152.OXdK6bpd-lkp@intel.com>
+References: <20250917-rda8810pl-drivers-v1-6-9ca9184ca977@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-rda8810pl-drivers-v1-6-9ca9184ca977@mainlining.org>
 
-On Fri, 19 Sep 2025 11:42:46 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+Hi Dang,
 
-> > +			/*
-> > +			 * interrupt-map has to be updated according to GPIO
-> > +			 * usage. The order has to be kept. Only the src irq
-> > +			 * (0 field) has to be updated with the needed GPIO
-> > +			 * interrupt number.
-> > +			 */
-> > +			interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-> > +					<0 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;  
-> 
-> I'd think this should be dropped from the include and added in the board
-> file instead. I did this with my board and it works fine.
-> 
+kernel test robot noticed the following build errors:
 
-I can only reduce the table but I need to keep the interrupt-map property.
+[auto build test ERROR on 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1]
 
-'interrupt-map' is a required property. If the board doesn't use any interrupt
-GPIO, its dts has no reason to set the interrupt-map.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dang-Huynh-via-B4-Relay/ARM-dts-unisoc-rda8810pl-Add-label-to-GPIO-nodes/20250917-043025
+base:   590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+patch link:    https://lore.kernel.org/r/20250917-rda8810pl-drivers-v1-6-9ca9184ca977%40mainlining.org
+patch subject: [PATCH 06/25] rtc: Add driver for RDA Micro SoC
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250919/202509192152.OXdK6bpd-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250919/202509192152.OXdK6bpd-lkp@intel.com/reproduce)
 
-In that case, if I fully remove 'interrupt-map' in the dtsi, dtbs_check
-will not be happy. Indeed, a required property is missing.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509192152.OXdK6bpd-lkp@intel.com/
 
-Also, having the full table containing the 8 items with the correct GIC
-interrupt number and the correct order could help a user to route the
-GPIO line to one of those 8 items.
+All errors (new ones prefixed by >>):
 
-The '0' field use as interrupt source matches the registers reset value
-of the irq-mux controller.
+   drivers/rtc/rtc-rda.c: In function 'rda_rtc_settime':
+>> drivers/rtc/rtc-rda.c:67:15: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      67 |         low = FIELD_PREP(RDA_SEC_MASK, tm->tm_sec) |
+         |               ^~~~~~~~~~
+   drivers/rtc/rtc-rda.c: In function 'rda_rtc_readtime':
+>> drivers/rtc/rtc-rda.c:128:22: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+     128 |         tm->tm_sec = FIELD_GET(RDA_SEC_MASK, low);
+         |                      ^~~~~~~~~
 
-With that in mind, do you still think that I should reduce this table?
 
-Best regards,
-Hervé
+vim +/FIELD_PREP +67 drivers/rtc/rtc-rda.c
+
+    50	
+    51	static int rda_rtc_settime(struct device *dev, struct rtc_time *tm)
+    52	{
+    53		struct rda_rtc *rtc = dev_get_drvdata(dev);
+    54		u32 high, low;
+    55		int ret;
+    56	
+    57		ret = rtc_valid_tm(tm);
+    58		if (ret < 0)
+    59			return ret;
+    60	
+    61		/*
+    62		 * The number of years since 1900 in kernel,
+    63		 * but it is defined since 2000 by HW.
+    64		 * The number of mons' range is from 0 to 11 in kernel,
+    65		 * but it is defined from 1 to 12 by HW.
+    66		 */
+  > 67		low = FIELD_PREP(RDA_SEC_MASK, tm->tm_sec) |
+    68			FIELD_PREP(RDA_MIN_MASK, tm->tm_min) |
+    69			FIELD_PREP(RDA_HRS_MASK, tm->tm_hour);
+    70	
+    71		high = FIELD_PREP(RDA_MDAY_MASK, tm->tm_mday) |
+    72			FIELD_PREP(RDA_MON_MASK, tm->tm_mon + 1) |
+    73			FIELD_PREP(RDA_YEAR_MASK, tm->tm_year - 100) |
+    74			FIELD_PREP(RDA_WDAY_MASK, tm->tm_wday);
+    75	
+    76		ret = regmap_write(rtc->regmap, RDA_RTC_CAL_LOAD_LOW_REG, low);
+    77		if (ret < 0) {
+    78			dev_err(dev, "Failed to update RTC low register: %d\n", ret);
+    79			return ret;
+    80		}
+    81	
+    82		ret = regmap_write(rtc->regmap, RDA_RTC_CAL_LOAD_HIGH_REG, high);
+    83		if (ret < 0) {
+    84			dev_err(dev, "Failed to update RTC low register: %d\n", ret);
+    85			return ret;
+    86		}
+    87	
+    88		ret = regmap_update_bits(rtc->regmap, RDA_RTC_CMD_REG, RDA_RTC_CMD_CAL_LOAD, 1);
+    89		if (ret < 0) {
+    90			dev_err(dev, "Failed to update RTC cal load register: %d\n", ret);
+    91			return ret;
+    92		}
+    93	
+    94		return 0;
+    95	}
+    96	
+    97	static int rda_rtc_readtime(struct device *dev, struct rtc_time *tm)
+    98	{
+    99		struct rda_rtc *rtc = dev_get_drvdata(dev);
+   100		unsigned int high, low;
+   101		int ret;
+   102	
+   103		/*
+   104		 * Check if RTC data is valid.
+   105		 *
+   106		 * When this bit is set, it means the data in the RTC is invalid
+   107		 * or not configured.
+   108		 */
+   109		ret = regmap_test_bits(rtc->regmap, RDA_RTC_STA_REG, RDA_RTC_STA_NOT_PROG);
+   110		if (ret < 0) {
+   111			dev_err(dev, "Failed to read RTC status: %d\n", ret);
+   112			return ret;
+   113		} else if (ret > 0)
+   114			return -EINVAL;
+   115	
+   116		ret = regmap_read(rtc->regmap, RDA_RTC_CUR_LOAD_HIGH_REG, &high);
+   117		if (ret) {
+   118			dev_err(dev, "Failed to read RTC high reg: %d\n", ret);
+   119			return ret;
+   120		}
+   121	
+   122		ret = regmap_read(rtc->regmap, RDA_RTC_CUR_LOAD_LOW_REG, &low);
+   123		if (ret) {
+   124			dev_err(dev, "Failed to read RTC low reg: %d\n", ret);
+   125			return ret;
+   126		}
+   127	
+ > 128		tm->tm_sec = FIELD_GET(RDA_SEC_MASK, low);
+   129		tm->tm_min = FIELD_GET(RDA_MIN_MASK, low);
+   130		tm->tm_hour = FIELD_GET(RDA_HRS_MASK, low);
+   131		tm->tm_mday = FIELD_GET(RDA_MDAY_MASK, high);
+   132		tm->tm_mon = FIELD_GET(RDA_MON_MASK, high);
+   133		tm->tm_year = FIELD_GET(RDA_YEAR_MASK, high);
+   134		tm->tm_wday = FIELD_GET(RDA_WDAY_MASK, high);
+   135	
+   136		/*
+   137		 * The number of years since 1900 in kernel,
+   138		 * but it is defined since 2000 by HW.
+   139		 */
+   140		tm->tm_year += 100;
+   141		/*
+   142		 * The number of mons' range is from 0 to 11 in kernel,
+   143		 * but it is defined from 1 to 12 by HW.
+   144		 */
+   145		tm->tm_mon -= 1;
+   146	
+   147		return 0;
+   148	}
+   149	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
