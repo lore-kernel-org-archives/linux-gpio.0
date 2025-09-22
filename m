@@ -1,90 +1,104 @@
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B90776026
-	for <linux-gpio@vger.kernel.org>; Mon, 22 Sep 2025 11:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C4823E32D;
+	Mon, 22 Sep 2025 12:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541473; cv=none; b=ZPcHS514jBJCCcDEwHrCpo3B2slZg6Yy5M93XH9M7zPRjwGVCV0XJ+PCEhfyRkP4QMvnn+okCy5TNYGQYIR7LNj4kyxAfOcqulY9Wcam4yoM2bVI/8J6eEVhyKJk43ODJe+dP1KY0XZOlYK+tS15ZtdygboRAM6XNaVYryARMvw=
+	t=1758542801; cv=none; b=dszvybseCf10BeD+rZJFoJ0+b/UBtooKOglJNL3EpeTR7B1ry+EM2yrp72a6Lzak2zSWCft7htqhANbYWYM65DWhAmEO62CXCbyCCAXVfjb6d/+CjmLtitSPk+CB5UbxhO/++vMZpUOZnGpqBzyC04A85kMRKWPZkFJq9EJB/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541473; c=relaxed/simple;
-	bh=mEWclQOnLh8wG0OpIAmPeQffuxDxP77/P84ROBKBguc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ruxde/4fkNRFkruFG3FvHP7GPoR24UGUP5FPHSWSB/XT+EJr0yvgypxJZYsUiZMlUEsItOncLagKjA/K7lF6OfMjaE4cLSrVMrE2n3xijP+6i7UZ0GeJChhidiQ0wgcbG9iEKSJwZYH/XbRFJlrXXNWnJfejzE7gSgX5c1YxYHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso616105137.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Sep 2025 04:44:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758541471; x=1759146271;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OI2Mb5YSlGneegkZfRI1AezQr0Bceg+Ogs08hlYWuUQ=;
-        b=DIsOhRJ6zbzSPQYKkvkkWUCFjAD8yr3+kXYKsZ5Ib6DsJzEoN3Lj3XA54/N7rChQ6J
-         LxEUPqFTzVwSLSy8HUN3EDxFkz9idt1lXDd6ZmYfm+7h4D46tnHJfPqOHzfQqdn4/NOt
-         JhH2AjbDLfRKjj5Qz+11jN43MjBPKlKqgb4RYc4DbjUr4Q2idZMnh2v1erHh3Ntn9tqW
-         qzpPY5qbPngJQd6EKe9ZX8RKh9s9LOxoK4pygiaI5kNFtgMBDYnX0vjzzDPp/NnO2+AY
-         PHyY5bCcxsxYgPNet7TUw6XZ8AVne8aWMocegdcDEplEKiQggFhy0Pbr6Ofaml+Vgfoe
-         M9mw==
-X-Gm-Message-State: AOJu0YyZuu5wEhtx3nkKzVSl+g9r3/aHlPn6oCYk5N91qPw33GJ00QeP
-	qpYpSI8XWnCHjwhPIdHCmsdhlnukLOK46RIJG3n0DJ49DoszwkyOu+P01rpByWiS
-X-Gm-Gg: ASbGncuFCD4ejz8qqIMmICbM6W3mpmkJZOtHpa0gXT18lVAEEkHF3LetzEs9BPpTk3m
-	Mattf+0Y1+tt87ckRT7iyCNnnNm7zdFC2M/U3VfFEm/oDIHR92QAdBMnEUaDtwWGdWsMpGvqc/6
-	NQogNPSnwAQnOgNhOpwwF6fInR4CBh/vBjrhplBIIVWidGBD0W5S9Lb4nFvfFEMcBBVonNoAwdy
-	FT89r7T1qYxtqiF6bmryYh8rLUDYs7We/5LCZCXGsSW6cdVB4IHDOijxAmIN9GEPA4NVgabykDr
-	sblX0iiObtIsobJ02jRWIk1T7KeSs3iB3U39V97NaPlOBT3UWPutaKBF7DXQDD8IggRDrPX/gBJ
-	yufCWCEjaIcOREmsxEyXp5CqnAzpH575byud8M7C7jk04o09h7ml5IeLskb8S/aI6k2fu958=
-X-Google-Smtp-Source: AGHT+IGWQviZagPtU4V3EeuVjDfTeyezLY9SyxuNG51T99FykmuWs1LbOZ6/2lwSWmI+nq/L9XXwOQ==
-X-Received: by 2002:a05:6102:560b:b0:553:542d:d96b with SMTP id ada2fe7eead31-588f139116amr3247703137.35.1758541470931;
-        Mon, 22 Sep 2025 04:44:30 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-57a1b3d226csm3255450137.16.2025.09.22.04.44.30
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 04:44:30 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso616094137.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Sep 2025 04:44:30 -0700 (PDT)
-X-Received: by 2002:a05:6102:c0b:b0:57d:9305:63db with SMTP id
- ada2fe7eead31-588dada3a4fmr3176649137.15.1758541470493; Mon, 22 Sep 2025
- 04:44:30 -0700 (PDT)
+	s=arc-20240116; t=1758542801; c=relaxed/simple;
+	bh=Q3oUiXEjXlddWlunbToYrjeVXr+xskvH+ciSB2ZkJtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jR4nljfgZsaZQU9xj4DP/AIVPCEIziN5NzyQdbriS+I7QAACZCpW3vKN+mM/m8vKdvnlV7T2H07YDuHPtwNPON+rcUuU6yCJ3inODkboTstfXf+GCHAL/gRM6SnksfcW1sDoArLm9RzjvYFbh5IiuPj2EIOQNZL14aaj57H5Ki4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caa3iYx+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caa3iYx+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758542799; x=1790078799;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Q3oUiXEjXlddWlunbToYrjeVXr+xskvH+ciSB2ZkJtY=;
+  b=caa3iYx+q5puRpa1TywEFCRtFTBou8Yx3mBYgLPRU8eecgHVdoGajiWz
+   IPYq9ofkNPd7jc9+NcOzzxOOFIfoxBHXJ9nvDoj9Av40Ph9larF/THYoP
+   8pY2PIVFIiC0I6JgSmbYqicuIuTGUE/49PmEKNDAWl4hIjFpdJzBw5oRp
+   j7bTgEFbfF6fLIeVuUVYbW+BUUZMBQANT2P5L2uUSJLJCnZjwtdvmyJsR
+   eTy68nE7Uly1F+05XXXkVP/OCWkO13/IWx2l1b4C0Cj2/NFQxYqrNGCf/
+   nR8BXxDCtg9d9hsj/Y72DpaSDFx7W/mTllRUt+0LxV5VUSws7ygaQSPUu
+   g==;
+X-CSE-ConnectionGUID: KX15+ghVS52OKphDjWDQkA==
+X-CSE-MsgGUID: nYwjXjP6S7Cu7gB7gRo41A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="63431622"
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="63431622"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 05:06:38 -0700
+X-CSE-ConnectionGUID: QgomdRsyT5WbvDWWQI053A==
+X-CSE-MsgGUID: p+NL8KKBTV+tpYordBi4YA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="176842510"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 05:06:35 -0700
+Received: from punajuuri.localdomain (unknown [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id F3498121EEF;
+	Mon, 22 Sep 2025 15:06:32 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1v0fJQ-000000002jE-47AW;
+	Mon, 22 Sep 2025 15:06:32 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lixu Zhang <lixu.zhang@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH 4/5] spi: ljca: Remove Wentong's e-mail address
+Date: Mon, 22 Sep 2025 15:06:31 +0300
+Message-ID: <20250922120632.10460-4-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250922120632.10460-1-sakari.ailus@linux.intel.com>
+References: <20250922120632.10460-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918200409.37284-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20250918200409.37284-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Sep 2025 13:44:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUiz1=TzOUgSwxTOP__rJEHsADDwzQmkvFYq7T8WzR5og@mail.gmail.com>
-X-Gm-Features: AS18NWBa53IKi-WhxYHxbxmTIi82Kncl83cZ6WOELioWigxIPDxeDI4bC4T4Zk0
-Message-ID: <CAMuHMdUiz1=TzOUgSwxTOP__rJEHsADDwzQmkvFYq7T8WzR5og@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: Drop duplicate newlines
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Sept 2025 at 22:04, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Remove duplicate newlines. No functional change.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Wentong's e-mail address no longer works, remove it.
 
-Yeah, why not?
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.19.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+ drivers/spi/spi-ljca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/spi/spi-ljca.c b/drivers/spi/spi-ljca.c
+index 2cab79ad2b98..3f412cf8f1cd 100644
+--- a/drivers/spi/spi-ljca.c
++++ b/drivers/spi/spi-ljca.c
+@@ -289,7 +289,7 @@ static struct auxiliary_driver ljca_spi_driver = {
+ };
+ module_auxiliary_driver(ljca_spi_driver);
+ 
+-MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
++MODULE_AUTHOR("Wentong Wu");
+ MODULE_AUTHOR("Zhifeng Wang <zhifeng.wang@intel.com>");
+ MODULE_AUTHOR("Lixu Zhang <lixu.zhang@intel.com>");
+ MODULE_DESCRIPTION("Intel La Jolla Cove Adapter USB-SPI driver");
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.3
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
