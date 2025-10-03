@@ -1,263 +1,99 @@
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE045242D80;
-	Fri,  3 Oct 2025 19:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6715C22A807
+	for <linux-gpio@vger.kernel.org>; Fri,  3 Oct 2025 20:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759521062; cv=none; b=F0qo7BQZjUDt18tOrECqWtHN/3v+5kyF8XxDbaTkFTrOGv3RJ0gLyQ27JKOGHNG+NF+3t+o58yfhbWkxBZwol1rQkD0IoLqtXRl1I4ZtEHKMN2rxqEcQ//kd+CmwL38SvDrBoX4weU73T3+m3d2x2q8/sjfcJcSoX6yvP07ApyY=
+	t=1759523377; cv=none; b=Y+WmV6YkAxp5TlT2lptHgmvWfdMzBslb9sf0f4XZiTA+92i3w0kbbvRDICFLU4q6Rh/l3Zv45aYFrCXWSzFHK4ZEnkcMWqFCq4adFydA54FgoMbTF3CdTub3wXTE/PCfkFGbm5AZ8SZdck+NEenwiINNz0l+WfWAmukdIG9pguU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759521062; c=relaxed/simple;
-	bh=COl7OlCM3knwtFd2u1lRtK6/6wOjU5PGf+/hmhe/Vfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YVZE9ac16mzX61vBzftjm04oNqyDNvclxQtMq/okD7cdtaP0mZJ/uHt2i0q154pcoX3mIGAgHaZoz4qb61IWc2iX/9xhMCCqB8oRShYJE8aWwxPApU2GY/WchUngowLHNqvr87d1ZbCHfmxTIqyUoQTnU04uNM0qshhWt4Cr9rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=JkQYArrl; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+	s=arc-20240116; t=1759523377; c=relaxed/simple;
+	bh=SuOGf6ig6UThy/Cts9AqHIbtylVDtns8fl8RhAUSMZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOBBdA2CSXny/+JuARuaDD0CkECnTxAAaDBC9R2JGuxK49YG+kig8pyiOCSMfSbpdccAN8NLIix/lB2N4h2GwHi45R2PAr5/VLyu0RNtLBHk3HESUBCHf/R6VRhqmEDUHvBPao/LUBG+lN8OFLvadX23yZVM3oqH1nQRA2jCpdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YG0Tytop; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="JkQYArrl"
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 779C145735E9;
-	Fri,  3 Oct 2025 15:50:54 -0400 (EDT)
-Authentication-Results: mail.csh.rit.edu (amavisd-new);
- dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
- header.d=csh.rit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mail; t=1759521049; x=1761335450; bh=COl7O
-	lCM3knwtFd2u1lRtK6/6wOjU5PGf+/hmhe/Vfg=; b=JkQYArrlJP8Ht2QnlUkT7
-	hHyiohK0zhE3i8iJrn9qfpmSCzJrOTy+REyfY6/Fnfe4hTHuAkJ4NeTTssnPqPNJ
-	KdjpZqVP+r60hc4savNkzTR0hUue/fru8RBip5wiGAv2x0XURCcMphctE4XKTUuT
-	BJ64vzzHcnHYlqNfIp6FUU=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id taeATg7WmYrl; Fri,  3 Oct 2025 15:50:49 -0400 (EDT)
-Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 497624133841;
-	Fri,  3 Oct 2025 15:50:44 -0400 (EDT)
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: linux-kernel@vger.kernel.org
-Cc: tzungbi@kernel.org,
-	dan.carpenter@linaro.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org,
-	Mary Strodl <mstrodl@csh.rit.edu>
-Subject: [PATCH v4 2/4] gpio: mpsse: ensure worker is torn down
-Date: Fri,  3 Oct 2025 15:50:34 -0400
-Message-ID: <20251003195036.3935245-3-mstrodl@csh.rit.edu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20251003195036.3935245-1-mstrodl@csh.rit.edu>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YG0Tytop"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso1988456f8f.3
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Oct 2025 13:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759523374; x=1760128174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
+        b=YG0TytopFtukvAc6AOCqkN3jFCZjSQbVbonbkUdFZoSdPfPsu2jM7D/2gWDcsdqMHZ
+         nX85yigXidryzzuJG6j3KTheUMo/SFYQJ8sQdIvlrVexaQzcPAMQxPJiOHao+O4eQJMj
+         V1sHz7egbxAZ+8rfcNLNuy+A6j3aDgPaX4ohfkI8+7pIAOQVmgVpAApaC/iU+wOQkpFF
+         UWOlQVE2L8mN0BmeqTPao9HQ5BfbYbZmYoCKCjpUI8irZyMPPtmOwLlN7Vpqubzvto6F
+         qVEo/L9Qe+Rks8M8ev/aEPEpB0XIJD216xqncq8iJgUpzzKe6fsf6EYgOX/PlUd20zJR
+         Qx5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759523374; x=1760128174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8BGUE0v7XRga+qkgvLP86a6O/SLAuOYc4ngsK7oGTUk=;
+        b=Yf1ToB3EP3mf405poQQ7X1ijeyZBVGRe/lOOhGg3199OsSBgtBZb7EdL2njqmsox6J
+         At5fZc3jVqecNKrSkvGkuOIXAHFW/N8X+40AQkS9JoMPf6sCI3jXiirzl5JVM3ga7r0n
+         HXIY+iimpw3Pyq1Z+Dyr13HLPnta/oht/AFVnSMcEO2El71XRuX6wWTi36o/qQC4qpEt
+         45ohplVsA0MNlre4AncaS17H3CASQHI43DZk1SoVX9c66QO3z7BD4Xy6aHOGI4ZoQBb5
+         iUeX5JByS7on1SAaY3v2WZkM167IbRVzrqvrCViiLog2i85IWVxgyqQWH2zbOVj30+0+
+         GXLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkE5Bd0b/zvRqdTFnOrKJ93p37QD3etbw4ty6ll1IlOGcY6KC1N9U7CN5tKLOb7aLIUz8aDv2HqLP+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoAIgxSvPbVdWzfRdNGzRawaDbn58nFLvJ0PZps+9zCu275mNO
+	Jptev8N4/KBqEMNbVRh6/0ZVAWf79FJqNDZIRJJBQyvjafXAt+IRuGtZ5SMclL9b+UY=
+X-Gm-Gg: ASbGncvy9XeutuVrV5hiLYqTq+uyJqESob3BvpH4yaPv3pjyEVAsElC+6h/2YOhoqCU
+	QqHayiF47RVlhDWxI0zWfVpuBlDlEHRjnpO7H0HdtPEnsn9TfFgk0E9e/q+SfXiHD/KE39HaDIi
+	agseTf5BsUlYp890o77TvyfaI/2JoEDQIYC6vofL3bt2y+y1VPsef3HKb2obvtV5j9KRbS9LsL4
+	zqiOEAeAYmEox3ecJzQbJyxi2+ydLO9fg4fOGGurZ+Sl4W+MZrqmWc/rKML1rQcf32QCwJIAnDl
+	Jx4Va4cj9wp+hJiEHJ6wm8t49Y8JsxuN5OMJQ/0NmQ1DGSTIaK6Ijvu45xEft25Icmw5P2HAC5u
+	NFK8kQTqttJKBHv9DZrYM0hiNvo7/pK4ZTbczApzKSqezWPVqHzdu8DLFEiHdgoIsuwg=
+X-Google-Smtp-Source: AGHT+IH/bgx1fSGeKfmK7NrfWKs/RA99sx3ypoK059B/EoGdkmTKRCEZWYZj6hui2YkbxqO7xxGCRw==
+X-Received: by 2002:a5d:588e:0:b0:3cf:74e0:55b9 with SMTP id ffacd0b85a97d-425671c71bbmr2893944f8f.63.1759523373488;
+        Fri, 03 Oct 2025 13:29:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e9890sm9409932f8f.32.2025.10.03.13.29.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 13:29:32 -0700 (PDT)
+Date: Fri, 3 Oct 2025 23:29:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, tzungbi@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] gpio: mpsse: add quirk support
+Message-ID: <aOAyKI7hv36oLJkD@stanley.mountain>
 References: <20251003195036.3935245-1-mstrodl@csh.rit.edu>
+ <20251003195036.3935245-4-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003195036.3935245-4-mstrodl@csh.rit.edu>
 
-When an IRQ worker is running, unplugging the device would cause a
-crash. The sealevel hardware this driver was written for was not
-hotpluggable, so I never realized it.
+On Fri, Oct 03, 2025 at 03:50:35PM -0400, Mary Strodl wrote:
+> Builds out a facility for specifying compatible lines directions and
+> labels for MPSSE-based devices.
+> 
+> * dir_in/out are bitmask of lines that can go in/out. 1 means
+>   compatible, 0 means incompatible.
+> * names is an array of line names which will be exposed to userspace.
+> 
+> Also changes the chip label format to include some more useful
+> information about the device to help identify it from userspace.
+> 
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
+> ---
 
-This change uses a spinlock to protect a list of workers, which
-it tears down on disconnect.
+Thanks!
 
-Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
----
- drivers/gpio/gpio-mpsse.c | 106 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 99 insertions(+), 7 deletions(-)
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index c508d9e33054..6ec940f6b371 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -10,6 +10,7 @@
- #include <linux/cleanup.h>
- #include <linux/gpio/driver.h>
- #include <linux/mutex.h>
-+#include <linux/spinlock.h>
- #include <linux/usb.h>
-=20
- struct mpsse_priv {
-@@ -17,8 +18,10 @@ struct mpsse_priv {
- 	struct usb_device *udev;     /* USB device encompassing all MPSSEs */
- 	struct usb_interface *intf;  /* USB interface for this MPSSE */
- 	u8 intf_id;                  /* USB interface number for this MPSSE */
--	struct work_struct irq_work; /* polling work thread */
-+	struct list_head workers;    /* polling work threads */
- 	struct mutex irq_mutex;	     /* lock over irq_data */
-+	struct mutex irq_race;	     /* race for polling worker teardown */
-+	raw_spinlock_t irq_spin;     /* protects worker list */
- 	atomic_t irq_type[16];	     /* pin -> edge detection type */
- 	atomic_t irq_enabled;
- 	int id;
-@@ -34,6 +37,14 @@ struct mpsse_priv {
- 	struct mutex io_mutex;	    /* sync I/O with disconnect */
- };
-=20
-+struct mpsse_worker {
-+	struct mpsse_priv  *priv;
-+	struct work_struct  work;
-+	atomic_t       cancelled;
-+	struct list_head    list;   /* linked list */
-+	struct list_head destroy;   /* teardown linked list */
-+};
-+
- struct bulk_desc {
- 	bool tx;	            /* direction of bulk transfer */
- 	u8 *data;                   /* input (tx) or output (rx) */
-@@ -283,18 +294,62 @@ static int gpio_mpsse_get_direction(struct gpio_chi=
-p *chip,
- 	return ret;
- }
-=20
--static void gpio_mpsse_poll(struct work_struct *work)
-+/*
-+ * Stops all workers except `my_worker`.
-+ * Safe to call only when `irq_race` is held.
-+ */
-+static void gpio_mpsse_stop_all_except(struct mpsse_priv *priv,
-+				       struct mpsse_worker *my_worker)
-+{
-+	struct mpsse_worker *worker, *worker_tmp;
-+	struct list_head destructors =3D LIST_HEAD_INIT(destructors);
-+
-+	scoped_guard(raw_spinlock_irqsave, &priv->irq_spin) {
-+		list_for_each_entry_safe(worker, worker_tmp,
-+					 &priv->workers, list) {
-+			/* Don't stop ourselves */
-+			if (worker =3D=3D my_worker)
-+				continue;
-+
-+			list_del(&worker->list);
-+
-+			/* Give worker a chance to terminate itself */
-+			atomic_set(&worker->cancelled, 1);
-+			/* Keep track of stuff to cancel */
-+			INIT_LIST_HEAD(&worker->destroy);
-+			list_add(&worker->destroy, &destructors);
-+		}
-+	}
-+
-+	list_for_each_entry_safe(worker, worker_tmp,
-+				 &destructors, destroy) {
-+		list_del(&worker->destroy);
-+		cancel_work_sync(&worker->work);
-+		kfree(worker);
-+	}
-+}
-+
-+static void gpio_mpsse_poll(struct work_struct *my_work)
- {
- 	unsigned long pin_mask, pin_states, flags;
- 	int irq_enabled, offset, err, value, fire_irq,
- 		irq, old_value[16], irq_type[16];
--	struct mpsse_priv *priv =3D container_of(work, struct mpsse_priv,
--					       irq_work);
-+	struct mpsse_worker *my_worker =3D container_of(my_work, struct mpsse_w=
-orker, work);
-+	struct mpsse_priv *priv =3D my_worker->priv;
-=20
- 	for (offset =3D 0; offset < priv->gpio.ngpio; ++offset)
- 		old_value[offset] =3D -1;
-=20
--	while ((irq_enabled =3D atomic_read(&priv->irq_enabled))) {
-+	/*
-+	 * We only want one worker. Workers race to acquire irq_race and tear
-+	 * down all other workers. This is a cond guard so that we don't deadlo=
-ck
-+	 * trying to cancel a worker.
-+	 */
-+	scoped_cond_guard(mutex_try, return, &priv->irq_race)
-+		gpio_mpsse_stop_all_except(priv, my_worker);
-+
-+	while ((irq_enabled =3D atomic_read(&priv->irq_enabled)) &&
-+	       !atomic_read(&my_worker->cancelled)) {
- 		usleep_range(MPSSE_POLL_INTERVAL, MPSSE_POLL_INTERVAL + 1000);
- 		/* Cleanup will trigger at the end of the loop */
- 		guard(mutex)(&priv->irq_mutex);
-@@ -369,21 +424,45 @@ static int gpio_mpsse_set_irq_type(struct irq_data =
-*irqd, unsigned int type)
-=20
- static void gpio_mpsse_irq_disable(struct irq_data *irqd)
- {
-+	struct mpsse_worker *worker;
- 	struct mpsse_priv *priv =3D irq_data_get_irq_chip_data(irqd);
-=20
- 	atomic_and(~BIT(irqd->hwirq), &priv->irq_enabled);
- 	gpiochip_disable_irq(&priv->gpio, irqd->hwirq);
-+
-+	/*
-+	 * Can't actually do teardown in IRQ context (it blocks).
-+	 * As a result, these workers will stick around until irq is reenabled
-+	 * or device gets disconnected
-+	 */
-+	scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+		list_for_each_entry(worker, &priv->workers, list)
-+			atomic_set(&worker->cancelled, 1);
- }
-=20
- static void gpio_mpsse_irq_enable(struct irq_data *irqd)
- {
-+	struct mpsse_worker *worker;
- 	struct mpsse_priv *priv =3D irq_data_get_irq_chip_data(irqd);
-=20
- 	gpiochip_enable_irq(&priv->gpio, irqd->hwirq);
- 	/* If no-one else was using the IRQ, enable it */
- 	if (!atomic_fetch_or(BIT(irqd->hwirq), &priv->irq_enabled)) {
--		INIT_WORK(&priv->irq_work, gpio_mpsse_poll);
--		schedule_work(&priv->irq_work);
-+		/*
-+		 * Can't be devm because it uses a non-raw spinlock (illegal in
-+		 * this context, where a raw spinlock is held by our caller)
-+		 */
-+		worker =3D kzalloc(sizeof(*worker), GFP_NOWAIT);
-+		if (!worker)
-+			return;
-+
-+		worker->priv =3D priv;
-+		INIT_LIST_HEAD(&worker->list);
-+		INIT_WORK(&worker->work, gpio_mpsse_poll);
-+		schedule_work(&worker->work);
-+
-+		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+			list_add(&worker->list, &priv->workers);
- 	}
- }
-=20
-@@ -435,6 +514,12 @@ static int gpio_mpsse_probe(struct usb_interface *in=
-terface,
- 	if (err)
- 		return err;
-=20
-+	err =3D devm_mutex_init(dev, &priv->irq_race);
-+	if (err)
-+		return err;
-+
-+	raw_spin_lock_init(&priv->irq_spin);
-+
- 	priv->gpio.label =3D devm_kasprintf(dev, GFP_KERNEL,
- 					  "gpio-mpsse.%d.%d",
- 					  priv->id, priv->intf_id);
-@@ -505,6 +590,13 @@ static void gpio_mpsse_disconnect(struct usb_interfa=
-ce *intf)
- {
- 	struct mpsse_priv *priv =3D usb_get_intfdata(intf);
-=20
-+	/*
-+	 * Lock prevents double-free of worker from here and the teardown
-+	 * step at the beginning of gpio_mpsse_poll
-+	 */
-+	scoped_guard(mutex, &priv->irq_race)
-+		gpio_mpsse_stop_all_except(priv, NULL);
-+
- 	priv->intf =3D NULL;
- 	usb_set_intfdata(intf, NULL);
- 	usb_put_dev(priv->udev);
---=20
-2.47.0
+regards,
+dan carpenter
 
