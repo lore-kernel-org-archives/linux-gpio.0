@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482D22ECD26;
-	Thu,  9 Oct 2025 15:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B032FB614;
+	Thu,  9 Oct 2025 16:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025490; cv=none; b=WssNLgrH3DO+VIA3umeRtOOxq2BfxucwNtcSQ47K5LW9maHc8im/u15jtnAeU9x5a18zKoy21AUa1ZvnynM3N738Ex+wJuRU6CwslZrOsixddxBAvX4ZKHS8GAsSTFmndrfLtqWmF/BVc2azAkPR5+UNFVx7Me4icAoytY5LgMU=
+	t=1760025647; cv=none; b=I+d4CmvoTSVO3y3WyBreiIti7uJZZ6+gMmnoJaWgImpvc0VsocIb8Y8/3uFhYlLRkb20z3xiUrhKUu2i4WzdXhEh2k4t4gVrx7BSYhOHeqWnpFcLlgCUwyibNAkNdvkSVu3ptv0fDxF2jIahgCZ9bqsgkc5zUxMmQXD5uD6H8T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025490; c=relaxed/simple;
-	bh=tSSV244K44gGhYWNTV5sFSwu4KHHSRoMFaHQVd5v9Xc=;
+	s=arc-20240116; t=1760025647; c=relaxed/simple;
+	bh=I3XVcHHeXBgmKSqbpjjMJBCBfyKHzLlJJavBhAHaEYU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CifFEZXINyg9ZgrII1llN4y7IHAIYvRX5pull7eWUFW+rU2u9zsGO49g3Z7nw878lE9UPLiWp4xScx9gytcrMmv8ntZkMk5/qyfHGWWIYnlptaBjW0ToV0UsB3/jnCdkwVDS7IctjGKE7PsSpJZAFNNYA1npEuqumJAIQtxm1tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTS2NcsO; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=U8G0Bs39Pjbw7qGzpBxwQy7z80EgEmLuyb4H4Mpi61AnpfawMuf9k0obitveCkYhZ6M7EEES0SfeV7dlChbwbFaN/PDBBbu4f5DTHp6K+TZFeqLtCjRJByKAmFt8O5KKc+sezYasnlrU1QLhkLQm1jSg3Hay6M4gVEaIAzWQcfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SpnBGlXC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTS2NcsO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DF7C4CEF7;
-	Thu,  9 Oct 2025 15:58:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SpnBGlXC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37849C4CEFE;
+	Thu,  9 Oct 2025 16:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025490;
-	bh=tSSV244K44gGhYWNTV5sFSwu4KHHSRoMFaHQVd5v9Xc=;
+	s=k20201202; t=1760025647;
+	bh=I3XVcHHeXBgmKSqbpjjMJBCBfyKHzLlJJavBhAHaEYU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LTS2NcsO1WnVmo4yijgvLuZuKCJCv03G4JhnK/ZJebi74hv56Q9JVXrb46iLTz11w
-	 MpuVDkCbuyyRdOI8Zykg5Yod/j+pSsisaqheRcC4D/wCjBBORi0m9eNi8YaJep+cAm
-	 ux3ktnH2F1TFg7m8yqndjhlnUZFhcEa+1/hmdKhFU9Y9BXKoPdVU9taxuJjt24kbB6
-	 CbdPe7bVgKhxPFlK9bkZIlBV0y8pWwuLwWSWL7J1J37/CQqOmtWIhHMBTQW9xEGt3Y
-	 vY7MEeYb4vVfODaMLgc0chJsBhgZwVufssOnty7lsG/9SSWsqBbPECvEPs3qKUtmwI
-	 N7LyYUvlWOlTA==
+	b=SpnBGlXCalV3sAmXITt6Uo1NhSuTqmNB4wLtOiuZU2v4ngvOJ6HsE/yxiClQ6cU6V
+	 JPI05PejyYWSk+tXbuwxIP6v8fSXx0vwMqSSwGXKyIqqS47Tsyh5AZFMfujcnYyJlm
+	 jQuOckfdfHUQhJYn/jmfLavPkyC4MQQD209OMvjy+vvaE0WjLUzJkCx4oDNkPALlIK
+	 tDGvlRP9T0zT0hMiWLfKnsurmrsaphlFnDQDA5Erzs+WwR1UC4Ohyaoh+I+rUCZLXB
+	 WPgk5gc1uAPHBI5Zo/dNRb6QVl4x7+oaoUqYNHNBGv6QA8b1GqMn6ud8wNOt1CfSCS
+	 gHYNA9FOUfDUA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Chi Zhang <chizhang@asrmicro.com>,
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	tony@atomide.com,
-	haojian.zhuang@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-5.10] pinctrl: single: fix bias pull up/down handling in pin_config_set
-Date: Thu,  9 Oct 2025 11:54:38 -0400
-Message-ID: <20251009155752.773732-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.17-6.6] pinctrl: keembay: release allocated memory in detach path
+Date: Thu,  9 Oct 2025 11:55:59 -0400
+Message-ID: <20251009155752.773732-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -52,206 +49,89 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.17.1
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chi Zhang <chizhang@asrmicro.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-[ Upstream commit 236152dd9b1675a35eee912e79e6c57ca6b6732f ]
+[ Upstream commit aae7a2876c3b39d07aa7655ea082af8e7862f3a5 ]
 
-In the pin_config_set function, when handling PIN_CONFIG_BIAS_PULL_DOWN or
-PIN_CONFIG_BIAS_PULL_UP, the function calls pcs_pinconf_clear_bias()
-which writes the register. However, the subsequent operations continue
-using the stale 'data' value from before the register write, effectively
-causing the bias clear operation to be overwritten and not take effect.
+Unlike all the other allocations in this driver, the memory for storing
+the pin function descriptions allocated with kcalloc() and later resized
+with krealloc() is never freed. Use devres like elsewhere to handle
+that. While at it - replace krealloc() with more suitable
+devm_krealloc_array().
 
-Fix this by reading the 'data' value from the register after calling
-pcs_pinconf_clear_bias().
+Note: the logic in this module is pretty convoluted and could probably
+use some revisiting, we should probably be able to calculate the exact
+amount of memory needed in advance or even skip the allocation
+altogether and just add each function to the radix tree separately.
 
-This bug seems to have existed when this code was first merged in commit
-9dddb4df90d1 ("pinctrl: single: support generic pinconf").
-
-Signed-off-by: Chi Zhang <chizhang@asrmicro.com>
-Link: https://lore.kernel.org/20250807062038.13610-1-chizhang@asrmicro.com
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## **Backport Status: YES**
+YES
+- `keembay_build_functions()` currently grabs `kcalloc()`ed storage for
+  the temporary `struct function_desc` array and then drops the pointer
+  once `keembay_add_functions()` runs, so nothing ever frees that memory
+  on driver unload (`drivers/pinctrl/pinctrl-keembay.c:1609`). The
+  original driver commit (`ffd4e739358be`) introduced this leak, so all
+  released kernels inherit it.
+- The patch converts that allocation to `devm_kcalloc()` and the resize
+  step to `devm_krealloc_array()` (`drivers/pinctrl/pinctrl-
+  keembay.c:1609` and `drivers/pinctrl/pinctrl-keembay.c:1640`), letting
+  devres reclaim the buffer automatically on probe failure or device
+  detach instead of leaking `npins * 8 * sizeof(struct function_desc)`
+  bytes each cycle. The explicit `kfree()` in the error path is removed
+  because devm now owns the buffer (`drivers/pinctrl/pinctrl-
+  keembay.c:1642`).
+- The driver already relies on devres for all other dynamic allocations
+  (see the existing `devm_kcalloc()` for function group names at
+  `drivers/pinctrl/pinctrl-keembay.c:1569`), so this aligns the
+  remaining allocation with the established pattern. No behavioural or
+  ABI changes accompany the fix, and `devm_krealloc_array()` is
+  available in current stable code.
+- The bug affects real users whenever the pinctrl device is unbound
+  (module reloads, hotplugged firmware, suspend failures, etc.),
+  steadily leaking kernel memory. The fix is self-contained, low risk,
+  and directly targets that leak without touching shared pinctrl
+  infrastructure.
 
-This commit is an **excellent candidate for backporting** to stable
-kernel trees.
+Given the tangible bugfix, limited scope, and minimal regression risk,
+this is a solid candidate for stable backporting.
 
----
+ drivers/pinctrl/pinctrl-keembay.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-### **DETAILED ANALYSIS**
-
-#### **1. Bug Description and Code Analysis**
-
-The bug is in `drivers/pinctrl/pinctrl-single.c` at **lines 590-594**
-(before the fix):
-
-```c
-case PIN_CONFIG_BIAS_PULL_DOWN:
-case PIN_CONFIG_BIAS_PULL_UP:
-    if (arg)
-        pcs_pinconf_clear_bias(pctldev, pin);  // <-- Writes to register
-    fallthrough;
-case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-    data &= ~func->conf[i].mask;               // <-- Uses stale 'data'
-value!
-    if (arg)
-        data |= func->conf[i].enable;
-    else
-        data |= func->conf[i].disable;
-    break;
-```
-
-**The critical issue:** At line 576, `data = pcs->read(pcs->base +
-offset)` reads the register value. When `pcs_pinconf_clear_bias()` is
-called (line 593), it **writes to the same register** by recursively
-calling `pcs_pinconf_set()`. However, after returning, the code
-continues using the **stale `data` variable** from line 576, effectively
-**overwriting the bias clear operation** when it writes at line 605.
-
-**The fix** (lines 592-595 after patch):
-```c
-if (arg) {
-    pcs_pinconf_clear_bias(pctldev, pin);
-    data = pcs->read(pcs->base + offset);  // <-- Re-read register!
-}
-```
-
-This ensures the subsequent operations use the **updated register
-value** after the bias clear.
-
----
-
-#### **2. Bug History and Scope**
-
-- **Introduced:** commit 9dddb4df90d1 ("pinctrl: single: support generic
-  pinconf") - **February 17, 2013**
-- **First appeared in:** Linux **v3.10** (released June 2013)
-- **Duration:** **12+ years** of existence across all kernel versions
-- **Scope:** Affects **all stable kernels** from v3.10 onwards
-
----
-
-#### **3. Real-World Impact**
-
-**Widely-used driver:**
-- Found **3,261 references** in device tree files across the kernel
-- Used on multiple major platforms:
-  - **TI OMAP/AM335x** (BeagleBone, PocketBeagle)
-  - **HiSilicon** (HiKey, HiKey960, HiKey970, Poplar)
-  - **Intel/Marvell PXA** platforms
-  - **Broadcom Stingray**
-  - **Altera/Intel SoCFPGA Stratix10**
-  - **Mobileye EyeQ6H**
-
-**Documented, supported feature:**
-The bias pull up/down functionality is **explicitly documented** in
-`Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml` (lines
-125-141) with `pinctrl-single,bias-pullup` and `pinctrl-single,bias-
-pulldown` properties.
-
-**Confirmed real-world usage:**
-- `arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts`: Multiple
-  instances of bias pull configurations
-- `arch/arm64/boot/dts/hisilicon/*.dtsi`: HiKey boards using bias
-  configurations
-- `arch/arm/boot/dts/intel/pxa/*.dts`: PXA platforms using bias
-  configurations
-
-**User-facing symptoms:**
-When users configure pull-up or pull-down resistors on pins, the
-configuration **silently fails** - the register is written but
-immediately overwritten with incorrect values. This can cause:
-- Floating inputs leading to unstable signal readings
-- Incorrect electrical characteristics on I/O pins
-- Boot failures or device malfunction if critical pins are misconfigured
-
----
-
-#### **4. Backport Suitability Assessment**
-
-✅ **Fixes important bug:** Yes - bias pull configurations completely
-broken
-✅ **Small and contained:** Yes - only **3 lines changed** (2 additions +
-braces)
-✅ **Minimal regression risk:** Extremely low - just re-reads a register
-value
-✅ **No architectural changes:** None
-✅ **No new features:** Pure bug fix
-✅ **Confined to subsystem:** Yes - only affects `pinctrl-single` driver
-✅ **Clear side effects:** No side effects - fix is obvious and correct
-
-**Related fixes in same area:**
-- commit b5fe46efc1475 (March 2024): Fixed PIN_CONFIG_BIAS_DISABLE
-  handling in the same function, demonstrating active maintenance and
-  that bias configuration bugs are being addressed
-
----
-
-#### **5. Stable Tree Criteria Compliance**
-
-According to stable kernel rules, this commit:
-- ✅ Fixes a **real bug** affecting users
-- ✅ Is **obviously correct** - the logic error is clear
-- ✅ Has **minimal risk** - just reading what was just written
-- ✅ Can be **easily backported** - clean apply expected
-- ✅ Is **important** - affects documented, supported functionality on
-  multiple platforms
-
----
-
-#### **6. Notable Observations**
-
-1. **No Fixes: tag:** The original commit lacks a `Fixes:` tag pointing
-   to 9dddb4df90d1, but the commit message explicitly states the origin
-2. **No Cc: stable tag:** Not marked for stable, but clearly suitable
-3. **Already being backported:** Evidence shows commit 4062b166ae281 is
-   a backport to stable trees (includes "Signed-off-by: Sasha Levin")
-4. **Mailing list discussion:** The patch at
-   https://lore.kernel.org/20250807062038.13610-1-chizhang@asrmicro.com
-   had no objections
-
----
-
-### **CONCLUSION**
-
-**This commit MUST be backported to all applicable stable kernel trees**
-(v3.10 onwards where the bug exists). It fixes a **12-year-old bug** in
-a **widely-used, documented feature** with an **obvious, minimal-risk
-fix**. The bug affects **real hardware platforms** in production use,
-and users relying on bias pull configurations will experience **silent
-failures** without this fix.
-
-**Recommended stable versions for backport:** All active stable kernels
-(currently maintained LTS versions: 6.6.x, 6.1.x, 5.15.x, 5.10.x, 5.4.x,
-4.19.x).
-
- drivers/pinctrl/pinctrl-single.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 5cda6201b60f5..8aedee2720bcb 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -589,8 +589,10 @@ static int pcs_pinconf_set(struct pinctrl_dev *pctldev,
- 			/* 4 parameters */
- 			case PIN_CONFIG_BIAS_PULL_DOWN:
- 			case PIN_CONFIG_BIAS_PULL_UP:
--				if (arg)
-+				if (arg) {
- 					pcs_pinconf_clear_bias(pctldev, pin);
-+					data = pcs->read(pcs->base + offset);
-+				}
- 				fallthrough;
- 			case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
- 				data &= ~func->conf[i].mask;
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 60cf017498b32..6aefcbc313099 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -1603,7 +1603,8 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
+ 	 * being part of 8 (hw maximum) globally unique muxes.
+ 	 */
+ 	kpc->nfuncs = 0;
+-	keembay_funcs = kcalloc(kpc->npins * 8, sizeof(*keembay_funcs), GFP_KERNEL);
++	keembay_funcs = devm_kcalloc(kpc->dev, kpc->npins * 8,
++				     sizeof(*keembay_funcs), GFP_KERNEL);
+ 	if (!keembay_funcs)
+ 		return -ENOMEM;
+ 
+@@ -1634,7 +1635,9 @@ static int keembay_build_functions(struct keembay_pinctrl *kpc)
+ 	}
+ 
+ 	/* Reallocate memory based on actual number of functions */
+-	new_funcs = krealloc(keembay_funcs, kpc->nfuncs * sizeof(*new_funcs), GFP_KERNEL);
++	new_funcs = devm_krealloc_array(kpc->dev, keembay_funcs,
++					kpc->nfuncs, sizeof(*new_funcs),
++					GFP_KERNEL);
+ 	if (!new_funcs) {
+ 		kfree(keembay_funcs);
+ 		return -ENOMEM;
 -- 
 2.51.0
 
