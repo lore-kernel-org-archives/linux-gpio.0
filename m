@@ -1,184 +1,174 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F39A2E88A2
-	for <linux-gpio@vger.kernel.org>; Thu,  9 Oct 2025 13:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913E521B9FD;
+	Thu,  9 Oct 2025 15:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016586; cv=none; b=C7RTAIa5T1o0YFdcSL9eIRrEJ8z+BIcqlXsqggl/dn4YHIKP6rPIQ25SV9VwvpSZm9aMgQBFiL6funSoEc47kl62eBF7HcImDHCM39QuTLsNyiptlFJnuDICKrARx3L349S7MbOV3o9IIswezvq2WZzzulZIuJPiC+AVCHSEhFY=
+	t=1760025354; cv=none; b=Kek+WYrFR4BJc+py1FrfyIFhpjYd89rMLijkHox4XOXimmuLEMXTFgBiCcmGUHHMAOmrrW1aBBJyVgyCnr+SksY28mWEVXt3aHTHaRu2SLlOvyBwTD1Up+m+saV1zpT7zbRLF/y50XfLWGVw3vIBW3N2wA4Sc7GB42Eta9QHit0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016586; c=relaxed/simple;
-	bh=E1h2IymeZxzN8DEA2ATr3BDwi+1E2Uj1VWWEwU62eVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NL1+10soSQq8eanb7XTN1iXVu+GhMsaEYXL8N8GsIUcfYc2xVHkR6hGjiEA1B5rI/XC17AMdZ9wWnpxb1pyyi41VcL3Tr0L5I2yC9Xy53fRhKixA8REeM8q+/cnjKI8YcB+6komaJ57Goa5cAI9qVMn4v0IdIkggzzyx2tIhpm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbrsIOey; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760025354; c=relaxed/simple;
+	bh=8oGoJvRM1vOW7gFqrA/ZFkjHDSFZPvrM0HA4eNqKkW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFjV5++jVFznGzhlDnrDIKqJVcGbiiLCwpA+HaKe3uHLYYnQKittWp8brpCMR0Q2ZnKHRJy3NuqEPL7F7ohYINvjh1AXJzvd4BznbWsFdh4vbFTvxbYDefGi+Flt8mcY8W3DIKaTL5Qmd45bSFKJClOPTHi8AwetzyQD0TfgSjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFCYBu9f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbrsIOey"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so1170268e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Oct 2025 06:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760016582; x=1760621382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QoD3OyvkVVLE8lgWVUBgOO0PRXTO7rnUz/rDybwGWOw=;
-        b=hbrsIOeyE7lstuSc4qq2WI8N3OXwfrDdCDfz660iAd69eGF4Yw/NTBl2RmFXXt3JUA
-         K5NI9xZhIxaOgh4sc/jkC4a3xElxpSCa5/jLHWO6DfOtQ+saYhzjSXakH50R/yRh7kZm
-         /iFqPt6BfDKc3FflhS/yPzAL3oZ5TC3xQ+3bx59jP40jiwwHrXYns1lbDyBentOhkLyw
-         incDVtmXw8dOQ4gaZYLC6kNuRb0p5LAjEpz1j/xOxvd+VnNKBd6aLAKbroYvfwCnvCR4
-         P0UptJ5G8fmvvsZIN+n51DYlVQuboTnZq1D/EKjbG9vqT0eCGW7pA43+reXSx1H2j375
-         vknw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016582; x=1760621382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QoD3OyvkVVLE8lgWVUBgOO0PRXTO7rnUz/rDybwGWOw=;
-        b=AJEHNnjHkvy9XMAcpE/rdzN3uOUJ7zFksCbObZvBVW3RIAtbfFNvz2xD9zBLSOx5lA
-         ScDuKQzto6bdfCcAakDpIUgWGrZvRWj9CakQq+4H925CPizJf4x70IKwCMV0YorZIGzo
-         4sYhIuhc1Z8fFSZX3LizAjzr37vc05M8wwMCoUeMNl8AxHhMDuyEo1Q1S+0u9mEM/1xQ
-         swEVddMbHSIFB06+WezyOtE1kQLKJqvmoLuSwWeAKfTVD4L1DeMlR8NW3q0Puix3PgN5
-         8tgimh2DJlwE8yToe2xPLlgqA09JDul1lgGe4/W3XbKGeJMHYalfoQS8NML7cRFKV7k8
-         9L/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVB/afOnoz1Q6o799PM281MX6x8kXMQCaIIPQtKOpcd8SAkUj51dLhpYgDUArAHlB2eCe5Uks5ti7o4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz70gLCOS0//s2P203ZYc6wnh65SluFIYozcE9RabLZKiP1vJIu
-	axpAQ3tIvqwSfMriF/dSPlU+IbtG0mbOmdYbx6Ve+8Wb0Te1BDRZ/avn
-X-Gm-Gg: ASbGncthdp16+usYZlnIEH0tj8JIE1XikVM6mPuAUit10Uc2vPMcZcHwOKlZyUAb0HL
-	dACx9rRxkbdCxgrqK0UPZtXI6QuRMKx4KYyhiR9eGx3SittqjupKel7RrEAufLBplj8/GbYNt8T
-	QwyDczAogmYCj/snoOyNoyeqzxygDddUR8EcCbV0rekd7hx/CHxW+mlZ8IG1K41ZK3yXGzDk19g
-	nXwQBERXZA6uK2jyWkbcG/UOyGgvi5auAlcf6fAkGcfcPMjHxKNEa4bNc13UyJWQP9+IObdhLJf
-	YfmNsKJFvp8zxiZT6t3uq+y+0x2rFJUzcGWJ002mwX8+WVZ2JwqZ/MhjrMYVP/kbZm06NYnMvuJ
-	hMkAAE6d/iPT2QSb8djnrPH22XVsEFpqjxrElVRl6XqE4/ZmW94Hj2QRRWXeqAoUihTUqk7XX+g
-	==
-X-Google-Smtp-Source: AGHT+IH1VIKsG88C3aAeaqwYTWYVqCA6XHMJZDpaPDWK1Emc97Vc5AG1FPkm5MMZ+Hs0OjrfL5bbFw==
-X-Received: by 2002:a05:6512:12d1:b0:58b:2b8:f8d0 with SMTP id 2adb3069b0e04-5906de90442mr1868002e87.55.1760016581986;
-        Thu, 09 Oct 2025 06:29:41 -0700 (PDT)
-Received: from wpc.lan (host-95-152-52-178.dsl.sura.ru. [95.152.52.178])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adb28a9sm1042587e87.98.2025.10.09.06.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 06:29:41 -0700 (PDT)
-From: bigunclemax@gmail.com
-To: 
-Cc: bigunclemax@gmail.com,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: mcp23s08: delete regmap reg_defaults to avoid cache sync issues
-Date: Thu,  9 Oct 2025 16:26:47 +0300
-Message-ID: <20251009132651.649099-2-bigunclemax@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFCYBu9f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD550C4CEF8;
+	Thu,  9 Oct 2025 15:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760025354;
+	bh=8oGoJvRM1vOW7gFqrA/ZFkjHDSFZPvrM0HA4eNqKkW0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qFCYBu9fkjyPBqf8+azk1K4LFI9vzjBAcqwf4NMS2fNYv4J+GSSEBwIvYp3ruw+bB
+	 3C3YM6TPrPdT8GG36rO8opzM08ePOHF0vybVQDxEFQSiBxfqdCWU9dillIPNwW7QvS
+	 OLfdysdvtn1bEa99sT/n214ktr2+cSHfhMLIh6TMboZKT6QuFYgBe1LFzJv7czJm6W
+	 QGlNWtlvXt3RDH27dlug6b/34ZsLrjSV28ycbyuixe3fbZhusDDlWtZOTeV4mpVzCV
+	 1a1jnKbO8uEEW62HlodZvfK55lm9EG1XkIV9Es7lZFj+/kydz+E69AFPt31XWrQ3lk
+	 ksfgY12P4YMIQ==
+Date: Thu, 9 Oct 2025 16:55:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC 0/5] microchip mpfs/pic64gx pinctrl questions
+Message-ID: <20251009-amendable-trimming-da31551d730b@spud>
+References: <20250926-manpower-glacial-e9756c82b427@spud>
+ <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
+ <20251001-unfreeze-ludicrous-9d744548bf65@spud>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XWleV0ai0b1XSICZ"
+Content-Disposition: inline
+In-Reply-To: <20251001-unfreeze-ludicrous-9d744548bf65@spud>
 
-From: Maksim Kiselev <bigunclemax@gmail.com>
 
-The probe function does not guarantee that chip registers are in their
-default state. Thus using reg_defaults for regmap is incorrect.
+--XWleV0ai0b1XSICZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For example, the chip may have already been configured by the bootloader
-before the Linux driver loads, or the mcp might not have a reset at all
-and not reset a state between reboots.
+On Wed, Oct 01, 2025 at 05:15:07PM +0100, Conor Dooley wrote:
+> On Wed, Oct 01, 2025 at 01:29:01PM +0200, Linus Walleij wrote:
+> > Hi Conor,
+> >=20
+> > thanks for your patches!
+> >=20
+> > looking at the drivers it appears to be trying extensively to make use
+> > of the pinmux =3D <>; property to mux entire groups of pins.
+> >=20
+> > pinmux =3D <nn>; is supposed to mux *one* pin per group, not entire
+> > groups of pins from one property. See
+> > Documentation/devicetree/bindings/pinctrl/pinmux-node.yaml:
+> >=20
+> >   The pinmux property accepts an array of pinmux groups, each of them d=
+escribing
+> >   a single pin multiplexing configuration.
+> >=20
+> >   pincontroller {
+> >     state_0_node_a {
+> >       pinmux =3D <PINMUX_GROUP>, <PINMUX_GROUP>, ...;
+> >     };
+> >   };
+> >=20
+> > So e.g. when you do this:
+> >=20
+> >        spi0_mssio: spi0-mssio-pins {
+> >          pinmux =3D <MPFS_PINFUNC(0, 0)>;
+> >        };
+> >=20
+> > We all know SPI uses more than one pin so this is clearly abusing
+> > the pinmux property.
+> >=20
+> > It is unfortunate that so many drivers now use this "mux one pin
+> > individually" concept that we cannot see the diversity of pin
+> > controllers.
+> >=20
+> > I cannot recommend using the pinmux property for this SoC.
+> >=20
+> > What you need to do is to define the actual pins and groups
+> > that you have.
+> >=20
+> > Look for example at
+> > Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+> > drivers/pinctrl/pinctrl-gemini.c
+> > arch/arm/boot/dts/gemini/gemini.dtsi
+> >=20
+> > This is another SoC that muxes pins in groups, not in single per-pin
+> > settings.
+>=20
+> This looks like something that the "gpio2" stuff could definitely go to,
+> since it covers multiple functions trying to access the same pin. Do you
+> have an "approved" example for a more demultiplexer case, where the
+> contention is about which of multiple possible pins (or pin analogues)
+> an IO from a particular block must be routed to?
+>=20
+> > Notice that the driver in this case enumerates and registers all 323
+> > pins on the package! This is done because some of the groups
+> > are mutually exclusive and this way the pin control framework
+> > will do its job to detect collisions between pin groups and disallow
+> > this, and that is what pin control is supposed to be doing.
+>=20
+> In that case, the mutual exclusion would be that a function can only be
+> routed to one "pin", but there's no concern about multiple functions
+> being routed to any given "pin".
 
-In such cases, using reg_defaults leads to the cache values diverging
-from the actual registers values in the chip.
+So, what I ended up doing is moving the "gpio2" stuff to use
+functions/groups as your gemini stuff does, so each function contains
+one group containing all the pins it needs - except for the gpio
+function which contains analogues for each of the function's groups.
+I'll send a patchset next week when the merge window is closed, but for
+now that driver is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Dpinctrl&id=3D8c0fdf0c76fe99549d293894121d64300dc4057f
+Unlike "gpio2", where each pin supports two mutually exclusive
+functions and so fits nicely into the pins/groups/functions hierarchy,
+for iomux0 each function has two mutually exclusive routings but there's
+no contention over the "pins", the corresponding function is either
+routed there or it is entirely unused. I implemented this by co-opting
+the pin structure to really contain functions, with each appearing in
+two groups, one per routing. Each function then contains those two
+groups - I think that then takes advantage of the framework's collision
+detection like you requested? It's here in case you care enough to take
+a look before I send a proper patchset next week:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Dpinctrl&id=3D5aec232c11bd45262fb2cfaf7994e3030fd6d947
 
-Previous attempts to fix consequences of this issue were made in
-'commit 3ede3f8b4b4b ("pinctrl: mcp23s08: Reset all pins to input at
-probe")', but this is insufficient. The OLAT register reset is also
-required. And there's still potential for new issues arising due to cache
-desynchronization of other registers.
+Cheers,
+Conor.
 
-Therefore, remove reg_defaults entirely to eliminate the root cause
-of these problems.
+>=20
+> >=20
+> > I.e. do not orient your design around which registers and settings
+> > you have, and do not model your driver around that, instead
+> > model the driver around which actual pins exist on the physical
+> > component, how these are sorted into groups, how the groups
+> > are related to function (such as the group of SPI pins being
+> > related to the spi function) and define these pins, groups
+> > and functions in your driver.
+> >=20
+> > Yours,
+> > Linus Walleij
 
-Also remove the force reset all pins to input at probe as it is no longer
-required.
 
-Link: https://lore.kernel.org/all/20251006074934.27180-1-bigunclemax@gmail.com/
-Suggested-by: Mike Looijmans <mike.looijmans@topic.nl>
-Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 34 ------------------------------
- 1 file changed, 34 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 78ff7930649d2..0b329661b5978 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -44,17 +44,6 @@
- #define MCP_GPIO	0x09
- #define MCP_OLAT	0x0a
- 
--static const struct reg_default mcp23x08_defaults[] = {
--	{.reg = MCP_IODIR,		.def = 0xff},
--	{.reg = MCP_IPOL,		.def = 0x00},
--	{.reg = MCP_GPINTEN,		.def = 0x00},
--	{.reg = MCP_DEFVAL,		.def = 0x00},
--	{.reg = MCP_INTCON,		.def = 0x00},
--	{.reg = MCP_IOCON,		.def = 0x00},
--	{.reg = MCP_GPPU,		.def = 0x00},
--	{.reg = MCP_OLAT,		.def = 0x00},
--};
--
- static const struct regmap_range mcp23x08_volatile_range = {
- 	.range_min = MCP_INTF,
- 	.range_max = MCP_GPIO,
-@@ -82,25 +71,12 @@ const struct regmap_config mcp23x08_regmap = {
- 	.reg_stride = 1,
- 	.volatile_table = &mcp23x08_volatile_table,
- 	.precious_table = &mcp23x08_precious_table,
--	.reg_defaults = mcp23x08_defaults,
--	.num_reg_defaults = ARRAY_SIZE(mcp23x08_defaults),
- 	.cache_type = REGCACHE_FLAT,
- 	.max_register = MCP_OLAT,
- 	.disable_locking = true, /* mcp->lock protects the regmap */
- };
- EXPORT_SYMBOL_GPL(mcp23x08_regmap);
- 
--static const struct reg_default mcp23x17_defaults[] = {
--	{.reg = MCP_IODIR << 1,		.def = 0xffff},
--	{.reg = MCP_IPOL << 1,		.def = 0x0000},
--	{.reg = MCP_GPINTEN << 1,	.def = 0x0000},
--	{.reg = MCP_DEFVAL << 1,	.def = 0x0000},
--	{.reg = MCP_INTCON << 1,	.def = 0x0000},
--	{.reg = MCP_IOCON << 1,		.def = 0x0000},
--	{.reg = MCP_GPPU << 1,		.def = 0x0000},
--	{.reg = MCP_OLAT << 1,		.def = 0x0000},
--};
--
- static const struct regmap_range mcp23x17_volatile_range = {
- 	.range_min = MCP_INTF << 1,
- 	.range_max = MCP_GPIO << 1,
-@@ -129,8 +105,6 @@ const struct regmap_config mcp23x17_regmap = {
- 	.max_register = MCP_OLAT << 1,
- 	.volatile_table = &mcp23x17_volatile_table,
- 	.precious_table = &mcp23x17_precious_table,
--	.reg_defaults = mcp23x17_defaults,
--	.num_reg_defaults = ARRAY_SIZE(mcp23x17_defaults),
- 	.cache_type = REGCACHE_FLAT,
- 	.val_format_endian = REGMAP_ENDIAN_LITTLE,
- 	.disable_locking = true, /* mcp->lock protects the regmap */
-@@ -614,14 +588,6 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 
- 	mcp->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
- 
--	/*
--	 * Reset the chip - we don't really know what state it's in, so reset
--	 * all pins to input first to prevent surprises.
--	 */
--	ret = mcp_write(mcp, MCP_IODIR, mcp->chip.ngpio == 16 ? 0xFFFF : 0xFF);
--	if (ret < 0)
--		return ret;
--
- 	/* verify MCP_IOCON.SEQOP = 0, so sequential reads work,
- 	 * and MCP_IOCON.HAEN = 1, so we work with all chips.
- 	 */
--- 
-2.48.1
+--XWleV0ai0b1XSICZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfbBgAKCRB4tDGHoIJi
+0qGBAQD1y9nLqbyvpJ79jdRkUjyOPlYwSUZuTTPekLu1YL+RpAD/dmBaD4Y+Zp82
+f3lMbxgQuJEfmV4WstAiVyYguQNIUAE=
+=Yrun
+-----END PGP SIGNATURE-----
+
+--XWleV0ai0b1XSICZ--
