@@ -1,114 +1,83 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1F62F25FD
-	for <linux-gpio@vger.kernel.org>; Fri, 10 Oct 2025 13:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEC636124;
+	Fri, 10 Oct 2025 13:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760102347; cv=none; b=JBf2EyUz34CVroXhjXEKGaxtZIyXrJPxV/AvrgCT3bdmt7+SkWmJF8rfxRmfHq1w/skUCuicw567Arw1eBdVvnJIxDgfJxYYihNwiHSU05XuHRQSgFUcss8ArCFSeozU7GdQ9L6Ugm55+W4/7Y92S03S534o4BT/NOp14hPsBbs=
+	t=1760103145; cv=none; b=Sf+tXGarHrp7W/qZ0pY6mhs1M5z9KKHxAl8gY4NyDg+tqjwGVTTaaaQqRKzMDF6BnhcOGu44hjf6aegk4yL94+DnAA6PUTE6Hxj1gcPuJFLAggqMFJaqC77xMnpkflq664bLW40Z2c/FK3AW58H4iSF+XCXJGLHn/R3HJOvLGEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760102347; c=relaxed/simple;
-	bh=3vxa0bIhWKzpLUrAlTprZcKO9BcLIggp1N4gz1sNzPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MG37fESrpSmjxXPhtRhzfEjdfBgvFQj9Lf5zK8KTXC2IxCdxj7ci9XXwFJpw4wKg1Unl67oZtM/wvgRWwwdWnLwoasyD8dI1DyLE+NoTjbCn/FO5p/xS2e54rd60m3of3DswVCOPTJsxwaXzgGzmdFthUE6vKJ2NCjlfRJVzSxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mc5AE4zw; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1760103145; c=relaxed/simple;
+	bh=L1mxjc3vEMzvfhqtIRO/TZU1fKDHV/7hfClukOwAZlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BHVNafdfBDQx0bKKZekS0Z7OyatzvAe2LcZhRZALGcnaprF/bcR83pkJThNSdSZbDCySVkeKrEj9/7ATzzZYQizpHnHUBzMcTClDKYZ6wgSS3+CpIBfDtFC4601RqIr7vy2cQslGwZN8pmns8Lz6yEEks2nZm1i0wjF/clauzaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=0MKOFklB; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mc5AE4zw"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso1255426f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Oct 2025 06:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760102344; x=1760707144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eESySdgcY9v9ra8tdnwU8gzCn2jOOBOg4UBQNbKN7Mw=;
-        b=mc5AE4zw9Wmf8kTnMET+cFB400XOkmtDA1x7XJ7sMWyc95I25Uw6P8bq3JcXSk9KKn
-         ERR52FlKImmmAOgB+Uz+vtgw/TvnRYvl8xHJ/1Ls8WIcWTXPLogl53kUAK9rXVfZWKVO
-         4hCNGWwY1wdCbAneRsQNHw7sLedDFuk5PEoco+iUu0IbtUvPf6aWtpkCapLFnK+Fk5mf
-         MDivV+On1jhkRKywZBrKWr4u/pTawJ3LlgAo573lv5bDgGICnfaxPcpQYnSlmjvgD+hT
-         H8LUOM4+dRN/MV+YHZTvYy9X09wfVCylSic/kKsuSRtZxU4EaTUZ4731p9ud6fG+8qIl
-         SgVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760102344; x=1760707144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eESySdgcY9v9ra8tdnwU8gzCn2jOOBOg4UBQNbKN7Mw=;
-        b=MizYzoZ69cwZrxGXp4lxoLEakjM8PhTdcqc658cXi+7CZ5pejuWQVRo6Y8ixk8bekp
-         lPvtId4vQBT3jzk29+QEpntwYTNw4j9rKbDSPYpZuFHrak5czOmBrpZZ4is+xt+K8UG+
-         1gNIFHTBb+i9h+0AFoGmkVZZ/qhRBU9GbH4U0OxAJmYTC9ota6RYmc9+y7y5tHds5wJ/
-         0l17ptbEE/n3gnjHt4g1fTwHHMY2e4FleKGqz5j2QTpfWiWUSHYpTjv2VrjFzVHtF0v8
-         MAnBLoDsbcPmnDXtYBDrAS22RS8QAh/DVTKpRxNzBy7oY2Y5eQqI6YMtc7wyH+ozNkba
-         yC9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGtwrIuKB+Xx3co2BGqdjlekWqhP+edM68SjuxZR6HWjEW32Qgf7WH7mlKf72IaI15o9deMaqamCL3@vger.kernel.org
-X-Gm-Message-State: AOJu0YypsNgon4SpeNkF3XQxYGZxNoymPYF0r6CuGhmmt69F8ZdtOHYq
-	HCcYmVh9id3zC92vW8cX98gUN8MPAsKGCHWCRouQmqPKwYXAWIMvUdFCaitzNVS8Gak=
-X-Gm-Gg: ASbGncttWw9dEFFKadDJkEyksLxTWvEzgKwUgPz1m14nSlgYKHHZ4vP6HncJQsb02ai
-	CVDq7Ta3Nna7Pg5q2NRpVdUgQl5DzXInz7Uc9cepzXFekocj49AfcYAIHuDu7K92JH79QuQaAMd
-	+SrsQqcFYHnj1Gs7a/vHGYnWPg2tq4sEEizuLZgOejGmEvubsw05JwRwo4kC6MUKzfNl7fnxvst
-	65aH9YISERRflG74dC3brD+994hPA5z1yajiuERnyadkHq/yiNPEKSipF7e51efoow07G0PTFNO
-	dgQsYWvCFLGQn7oaG3XrJ9Mf2YUyB7gKgJdiNNPB2UgyD6ZHeeais8GSbXKgNu6e3u2GX7oPzSB
-	vLXQDvetfP2j8EuIwnjZF4q/gJ88aQgn3POKpd+Cw
-X-Google-Smtp-Source: AGHT+IFH5I37Yiesi8opgO7PE2x/yg0YnPIPS/K45ngR4nLlSYEBIuRjzlOfGz2UlUetHqtnqjPzSA==
-X-Received: by 2002:a5d:5848:0:b0:3fa:2316:c32 with SMTP id ffacd0b85a97d-4266e8e44c9mr7182247f8f.57.1760102343168;
-        Fri, 10 Oct 2025 06:19:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:d1c1:43d4:ab99:c8a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e8309sm4144798f8f.50.2025.10.10.06.19.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 06:19:02 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.18-rc1
-Date: Fri, 10 Oct 2025 15:18:57 +0200
-Message-ID: <20251010131857.26204-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="0MKOFklB"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=3KMQtPTOJlK5A++4JQLg5NdQVOVsWRcGypuzvqgltuo=; b=0MKOFklBtsJ/K9bOi9B/H1SJ4L
+	f5Qbm58Ui4astvMBmyVMZ+s5+l6ZsNb06Y5bwM+fPRXzcS/yO3TjjKs9acQwuYeHd3PAd32+QLGVd
+	aOFjx5cC1NqB7jKZeEaHVpBfK2pPozN578PfIjO9yt/VYP4RMLW3gHnZR/QgL0z56+q9xJEQTt0Rb
+	IvIOB7uf7lH0NcOv5QJqEPOhFySYaQM0FJ+8twRV8ehzLArz0fjO+xo50vpMSdYMPJPlduPUciXgA
+	9ZETzZNOsLkWDdzUYLt1yKcdJSGh2M7RAsYZxlpfRuosH8D8DHkrDZGABG5GkZBsOUSslODnXjZ9I
+	TSYUWu7g==;
+Date: Fri, 10 Oct 2025 15:03:17 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Pavel Machek <pavel@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [RFC PATCH 06/13] mfd: bd71828: Support ROHM BD72720
+Message-ID: <20251010150317.07bfdbe8@kemnade.info>
+In-Reply-To: <8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
+References: <cover.1759824376.git.mazziesaccount@gmail.com>
+	<93142a80d90a0ac80b27090d0c83914675aad94d.1759824376.git.mazziesaccount@gmail.com>
+	<20251009161847.GE2890766@google.com>
+	<8ea507eb-f78c-4a16-882b-112e277fa1b6@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, 10 Oct 2025 15:09:07 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Linus,
+> >> +static int bd72720_get_secondary_regmap(struct i2c_client *i2c,  
+> > 
+> > Does this 'secondary' have a specific purpose or a better name?  
+> 
+> I am not entirely sure. When I asked this from the designers they just 
+> told me that they needed more than 255 registers so they added another 
+> slave address... (I'm not sure what would have been wrong with using a 
+> page register). So, I assume they just placed stuff that didn't fit in 
+> first 255 register there. But yeah, it looks like most of the registers 
+> there are related to the charger. So, perhaps it isn't completely 
+> misleading to use "charger regmap"? The data-sheet seems to be just 
+> using "Register map 1" and "Register map 2" in the tables listing these 
+> registers. I kind of like using something which maps easily to the 
+> data-sheet, but I really have no strong opinion on this.
 
-Please pull the following GPIO driver fixes for the upcoming RC.
+just another idea: What about one regmap with custom functions covering
+both these adresses? Maybe that could even be added to the regmap
+functionality, maybe with a 0x100 offset for the second range.
+That way the rest of the code only needs to real with one regmap
+and properly defined registers.
 
-Thanks,
-Bartosz
-
-The following changes since commit ec714e371f22f716a04e6ecb2a24988c92b26911:
-
-  Merge tag 'perf-tools-for-v6.18-1-2025-10-08' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools (2025-10-08 19:24:24 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.18-rc1
-
-for you to fetch changes up to b5f8aa8d4bde0cf3e4595af5a536da337e5f1c78:
-
-  gpio: wcd934x: mark the GPIO controller as sleeping (2025-10-10 09:37:19 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v6.18-rc1
-
-- add a missing ACPI ID for MTL-CVF devices in gpio-usbio
-- mark the gpio-wcd934x controller as "sleeping" as it uses a mutex for
-  locking internally
-
-----------------------------------------------------------------
-Bartosz Golaszewski (1):
-      gpio: wcd934x: mark the GPIO controller as sleeping
-
-Hans de Goede (1):
-      gpio: usbio: Add ACPI device-id for MTL-CVF devices
-
- drivers/gpio/gpio-usbio.c   | 1 +
- drivers/gpio/gpio-wcd934x.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Regards,
+Andreas
