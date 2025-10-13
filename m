@@ -1,194 +1,123 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B86D1547D2;
-	Mon, 13 Oct 2025 13:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C8325487C
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Oct 2025 13:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361638; cv=none; b=VyiMYuhY2bm5dMPcpaX8Xc+UlIPFOLcycQQ3rN2+uHpTnxMYxYtkF8ul85Zr3T1XpQm3WHVQJWDuhYZckyC/T+EQPc3WJF+nA2rR5A8zKfo/PAkBU6TB8pvxgNVTpVNRhbHGuwdYYgtG9i36K0ZyyYap+21WQDoFKjzkkHi18ws=
+	t=1760361754; cv=none; b=WlJNTlUc/ylpPh2rbX80Btyrvt2iqTFPSzMsrQUQmlmV0j2Jc5cH3I5A0hkmhaGSCNM6ycM5+3euVCPHqdl7yxfZ3rWYHNkzwX/qi+TR1DQLTIwIHaXQfFqI76OTkhLyhTIjBeJF4xJ7FKMfUoOJWm1fHCzlEbTR2zdcKrQ6YQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361638; c=relaxed/simple;
-	bh=08P6/S9TSCs7VItMP+DAa4ys+h3oQiIBbFRrGwsYaiY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rm3cwUaiUisAgdam45k1UGgyspLoHP0lMGP5OKAb9Mx/pOS0wDRT7KVX91EYZwcMSNSHnpae/EbIxn1cAqGGJogwRa2e9b7RWD4yCy4W9MP1t/hYjXPwW77wWwCP/yTyGLOQxUw78cvqEc5LDR6AIdQ/bre+lcQuTjh7zXjK3yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cld112tJkz9sSv;
-	Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id O5E7p9M28w-y; Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cld1122pDz9sSs;
-	Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 328DF8B768;
-	Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 7EZ7Ik3eZcv6; Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 02E3C8B763;
-	Mon, 13 Oct 2025 15:07:17 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH 1/2] gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h header from GPIO driver
-Date: Mon, 13 Oct 2025 15:07:14 +0200
-Message-ID: <c7415e2870b3bd9109f95bab3784d48e708e30e6.1760360638.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1760361754; c=relaxed/simple;
+	bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCjci82cCApb4+obGZa6Z17gVXYEdxBVx63aOaIKlTMai+B7y7IFP9FlBlBdaowqOC5tI8oHFUgoeaVXTFakrlItmgeL9K6V9VQaoDe9u7n/nWZ8GoVDUeMMasgsOivHWXdb9yhc6lht0KM/CS1K9HqTVUX0j/VEtxsNujs1uGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlWNxiPs; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlWNxiPs"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-37634d352dfso29137741fa.3
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Oct 2025 06:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760361751; x=1760966551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
+        b=MlWNxiPsjoo0T5LCyUP28n37DcOLAOTwWD+DpAzc/pTf5m45ZZ3AZ+Buo+GB8bIglc
+         Lgp1k2WnYYKkQg0OUYXBeLtf0rlQnQa/c6kqICN0/Mg+62isn5k1eH0C5V42RNo8uU/2
+         O89YIu9wvAAKaDjCQQJNow//HTUopI7KCxkDecV+++eQlWZBjgH9mvfFON/bs/djnRjw
+         m5qJzRJDkcrlOw83nb1kBM7KZe8soPgcJAyJPooExhtnXEdJ4beRh3tnwrLrx2ffZ6Kd
+         04fvOXjhohsZtsSaXsVNpdE5zD3blxtpUIzgN1pkPK3g9JvciggUbR3G/n/FjrgHEjXl
+         0LMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760361751; x=1760966551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
+        b=muraZJRe4Z6MT0+ulcwgkOW2I5YSK3oTWx96TD6YQjx7uu+lKMMfDby1W7sqSJgHKE
+         A1Ybh9x0XQfLaUFnjPJThersRK6yYVmWJvEtuN+zY2b81Ebi6odQAHDR1hVa7PGlE2Pp
+         LWN+oVenrS82ex+B3/FcTd61X8VqN7HN30lo4vnnN7QZOR5A5QKmYh02KKwi0oZ+CXwF
+         0Qw9IM162U9RTopcKFBk2x1Hx4I28zDVSJ6SswJEoIi2kl57u6mvGYWsgcgNCksuzPeL
+         zrUK4TxxRhp6uGeoXKJpx5m6GrYX116sYFnSk+ZQfFM/YbTFm1ihnrRd0AJwy0Xq39tX
+         y6DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvqTBorRvDfwZMtQZN/ubSR11Rq0TLj7CpGPnFDuyCv3V2GsVG10cpnOAfYwm6+PCFNrUP/wN2XTOz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxot25g3cN0FifXgjXi7UChp9a8SNzHuKyVzwDPSi+RfQlT0VjF
+	2hC4+lFta2ixqJmu9m6GMOHvwYcT2vN0dj8trO37y0ZNtxWsK1lFdFcFObkQCAugUoQS0Rtn8qE
+	DTgOOr00LoXb/6NCsJ0l9PTsUi5TBOCMJVtj0PI3aLg==
+X-Gm-Gg: ASbGnctYYnhBJ6l+V/GjKkW+J4KyB2kUqRlkkhupUEmHBDhboX8LzKnkC5y5qQ7EWNL
+	u+lpdda8dpnCc3VTas30ifeKhIWw6PYvxZR71WnUqkUJyEQrJ4XYWZGMFxvedIUNxedC6ud5n15
+	7jeTp0XpnmVta9dAhL4InE/fMIYdFOv2yQ73f/F3o5QTvbi35XaxExX6mYV2RfRpTCBANJBQPVY
+	kZ8bH7bA/csSw8t/tRyTqxdVyPYm7KzbhbrNzZJ
+X-Google-Smtp-Source: AGHT+IFD3AIgRgN4jBUJbpK34gX4OpQi2/Ld3YOLcJ6oyzzxV171xkOqcylCUzBUtIlA/UWCtsK+8RrigJBOPn6Q18s=
+X-Received: by 2002:a05:651c:990:b0:371:fb14:39bb with SMTP id
+ 38308e7fff4ca-37609d72cc1mr56226121fa.16.1760361750851; Mon, 13 Oct 2025
+ 06:22:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760360834; l=4682; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=08P6/S9TSCs7VItMP+DAa4ys+h3oQiIBbFRrGwsYaiY=; b=Qh7mMJyAZpFgoDIS7x52mAKA0zkU5FMUYQszSuDw8b8vGHyjs02lC8B+QfO9P7yWCBIOpVZhR eed+vVRL6BNDw2CCSpqA+w1EiOScuPSdTCiTmGNDf1gDQpBLOQIpcA3
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <20251009132651.649099-2-bigunclemax@gmail.com>
+In-Reply-To: <20251009132651.649099-2-bigunclemax@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Oct 2025 15:22:19 +0200
+X-Gm-Features: AS18NWBjzabyAo7Iwc_ab_T7t7lGvRr7MIu3O5SMdfRGHuDa0E6rCvILh5I1Oh4
+Message-ID: <CACRpkdb4HDhN6G9JSe093jeBe4__jCFz_+r1grUbHwEr4Gt1hQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: mcp23s08: delete regmap reg_defaults to avoid
+ cache sync issues
+To: bigunclemax@gmail.com, Dmitry Mastykin <mastichi@gmail.com>, 
+	Evgenii Shatokhin <e.shatokhin@yadro.com>, Arturas Moskvinas <arturas.moskvinas@gmail.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andreas Kaessens <akaessens@gmail.com>, 
+	Zou Wei <zou_wei@huawei.com>, Radim Pavlik <radim.pavlik@tbs-biometrics.com>
+Cc: Mike Looijmans <mike.looijmans@topic.nl>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-file provides an OF API that's deprecated. There is no agnostic
-alternatives to it and we have to open code the logic which was
-hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-drivers are using their own labeling schemas and resource retrieval
-that only a few may gain of the code deduplication, so whenever
-alternative is appear we can move drivers again to use that one.
+Hi Maksim,
 
-[Text copied from commit 34064c8267a6 ("powerpc/8xx: Drop
-legacy-of-mm-gpiochip.h header")]
+thanks for your patch!
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/gpio/Kconfig          |  1 -
- drivers/gpio/gpio-mm-lantiq.c | 47 +++++++++++++++++++----------------
- 2 files changed, 25 insertions(+), 23 deletions(-)
+On Thu, Oct 9, 2025 at 3:29=E2=80=AFPM <bigunclemax@gmail.com> wrote:
+>
+> From: Maksim Kiselev <bigunclemax@gmail.com>
+>
+> The probe function does not guarantee that chip registers are in their
+> default state. Thus using reg_defaults for regmap is incorrect.
+>
+> For example, the chip may have already been configured by the bootloader
+> before the Linux driver loads, or the mcp might not have a reset at all
+> and not reset a state between reboots.
+>
+> In such cases, using reg_defaults leads to the cache values diverging
+> from the actual registers values in the chip.
+>
+> Previous attempts to fix consequences of this issue were made in
+> 'commit 3ede3f8b4b4b ("pinctrl: mcp23s08: Reset all pins to input at
+> probe")', but this is insufficient. The OLAT register reset is also
+> required. And there's still potential for new issues arising due to cache
+> desynchronization of other registers.
+>
+> Therefore, remove reg_defaults entirely to eliminate the root cause
+> of these problems.
+>
+> Also remove the force reset all pins to input at probe as it is no longer
+> required.
+>
+> Link: https://lore.kernel.org/all/20251006074934.27180-1-bigunclemax@gmai=
+l.com/
+> Suggested-by: Mike Looijmans <mike.looijmans@topic.nl>
+> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 7ee3afbc2b05d..8fde6730a02dd 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -476,7 +476,6 @@ config GPIO_MENZ127
- config GPIO_MM_LANTIQ
- 	bool "Lantiq Memory mapped GPIOs"
- 	depends on LANTIQ && SOC_XWAY
--	select OF_GPIO_MM_GPIOCHIP
- 	help
- 	  This enables support for memory mapped GPIOs on the External Bus Unit
- 	  (EBU) found on Lantiq SoCs. The GPIOs are output only as they are
-diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
-index 8f1405733d98b..3d2e24d614751 100644
---- a/drivers/gpio/gpio-mm-lantiq.c
-+++ b/drivers/gpio/gpio-mm-lantiq.c
-@@ -10,7 +10,6 @@
- #include <linux/platform_device.h>
- #include <linux/mutex.h>
- #include <linux/gpio/driver.h>
--#include <linux/gpio/legacy-of-mm-gpiochip.h>
- #include <linux/of.h>
- #include <linux/io.h>
- #include <linux/slab.h>
-@@ -27,7 +26,8 @@
- #define LTQ_EBU_WP	0x80000000	/* write protect bit */
- 
- struct ltq_mm {
--	struct of_mm_gpio_chip mmchip;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	u16 shadow;	/* shadow the latches state */
- };
- 
-@@ -44,7 +44,7 @@ static void ltq_mm_apply(struct ltq_mm *chip)
- 
- 	spin_lock_irqsave(&ebu_lock, flags);
- 	ltq_ebu_w32(LTQ_EBU_BUSCON, LTQ_EBU_BUSCON1);
--	__raw_writew(chip->shadow, chip->mmchip.regs);
-+	__raw_writew(chip->shadow, chip->regs);
- 	ltq_ebu_w32(LTQ_EBU_BUSCON | LTQ_EBU_WP, LTQ_EBU_BUSCON1);
- 	spin_unlock_irqrestore(&ebu_lock, flags);
- }
-@@ -87,19 +87,19 @@ static int ltq_mm_dir_out(struct gpio_chip *gc, unsigned offset, int value)
-  * ltq_mm_save_regs() - Set initial values of GPIO pins
-  * @mm_gc: pointer to memory mapped GPIO chip structure
-  */
--static void ltq_mm_save_regs(struct of_mm_gpio_chip *mm_gc)
-+static void ltq_mm_save_regs(struct ltq_mm *chip)
- {
--	struct ltq_mm *chip =
--		container_of(mm_gc, struct ltq_mm, mmchip);
--
- 	/* tell the ebu controller which memory address we will be using */
--	ltq_ebu_w32(CPHYSADDR(chip->mmchip.regs) | 0x1, LTQ_EBU_ADDRSEL1);
-+	ltq_ebu_w32(CPHYSADDR((__force void *)chip->regs) | 0x1, LTQ_EBU_ADDRSEL1);
- 
- 	ltq_mm_apply(chip);
- }
- 
- static int ltq_mm_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct gpio_chip *gc;
- 	struct ltq_mm *chip;
- 	u32 shadow;
- 
-@@ -107,25 +107,29 @@ static int ltq_mm_probe(struct platform_device *pdev)
- 	if (!chip)
- 		return -ENOMEM;
- 
--	platform_set_drvdata(pdev, chip);
-+	gc = &chip->gc;
-+
-+	gc->base = -1;
-+	gc->ngpio = 16;
-+	gc->direction_output = ltq_mm_dir_out;
-+	gc->set = ltq_mm_set;
-+	gc->parent = dev;
-+	gc->owner = THIS_MODULE;
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	chip->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(chip->regs))
-+		return PTR_ERR(chip->regs);
- 
--	chip->mmchip.gc.ngpio = 16;
--	chip->mmchip.gc.direction_output = ltq_mm_dir_out;
--	chip->mmchip.gc.set = ltq_mm_set;
--	chip->mmchip.save_regs = ltq_mm_save_regs;
-+	ltq_mm_save_regs(chip);
- 
- 	/* store the shadow value if one was passed by the devicetree */
- 	if (!of_property_read_u32(pdev->dev.of_node, "lantiq,shadow", &shadow))
- 		chip->shadow = shadow;
- 
--	return of_mm_gpiochip_add_data(pdev->dev.of_node, &chip->mmchip, chip);
--}
--
--static void ltq_mm_remove(struct platform_device *pdev)
--{
--	struct ltq_mm *chip = platform_get_drvdata(pdev);
--
--	of_mm_gpiochip_remove(&chip->mmchip);
-+	return devm_gpiochip_add_data(dev, gc, chip);
- }
- 
- static const struct of_device_id ltq_mm_match[] = {
-@@ -136,7 +140,6 @@ MODULE_DEVICE_TABLE(of, ltq_mm_match);
- 
- static struct platform_driver ltq_mm_driver = {
- 	.probe = ltq_mm_probe,
--	.remove = ltq_mm_remove,
- 	.driver = {
- 		.name = "gpio-mm-ltq",
- 		.of_match_table = ltq_mm_match,
--- 
-2.49.0
+I would surely like to see some Tested-by on this patch because
+this driver has *many* users.
 
+I added some people to the To: line who recently made changes to this
+driver, maybe they can test.
+
+Yours,
+Linus Walleij
