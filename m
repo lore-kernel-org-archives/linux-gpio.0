@@ -1,41 +1,41 @@
 Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AAC749C;
-	Tue, 14 Oct 2025 13:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0344B18A6B0;
+	Tue, 14 Oct 2025 13:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760449272; cv=none; b=LrHHSY5GqcASGRbavvXCiVkfkcINjyr74Iz3QdUNj1zLvGsB3kk+3CSQ9CWgCidmSUHKn9m+1WRKosxL6yD1dgEF0HWvBd9F2r/RIZcOtRICswJK/ylT9mkDxIxDOP39b5rk0jMngR3JrQSN88LaO11Vk0OMYdnno5RQNV0DP7U=
+	t=1760449699; cv=none; b=QMV7bgyR4Rb8SrgC5JOrY2BCVD7mZ3WaBWcElWn/yH/7SeYq3Ns2xz6jRqhJ9CARwoBg2fW4XW3+d7UJQPn2hTDCOvsHnEHJ/e8nTFv/I28O+XMCUTUWcS2MC3N5zvEGTtfI6q5wJPv3DA3ny2izX+o/+Cm/LuY/Z/NUnxr7b/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760449272; c=relaxed/simple;
-	bh=RKzict8waBLTidtkzwt9MIuHYg8U67gJCXBuul0kygs=;
+	s=arc-20240116; t=1760449699; c=relaxed/simple;
+	bh=SpMMSwOSex0dqDx2UmRfbG8cJGm4f5VRNazEV3Jf8u8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T/SssJ+WdUM5SALczzmZKAoUVtTk9cFUtwgzLK7MXprb4LNTdnGgV4pWdiwmOPVQO+0f9oM7tJTcBclKFtpyNExxVFp7gqljb7zKqfujffK6aFncTcLdVt2iCnt7Q+GqJ5aQ0NzKPV5s2c2Iz8Kys4bVBS0hAd2ushomgjAZnuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=EVHtD9mH; arc=none smtp.client-ip=129.21.49.170
+	 MIME-Version; b=Q6xEYcPH/EIbCYdxX3ZuHtxrL+ifyEJ+4+VQkmSq0tIsxv3ib8eOZ+MvqdxHWrmOER+hI9sMxfyFCkvQDWlsHQY+hxVTpwdB21YcBtGnAtQnCv5Z4oERRKj09LESEgvWVN0W4koSHrOf0Q81Be3g7HPurGp8AOr2zaMTZ1XNl8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=sqETeMjW; arc=none smtp.client-ip=129.21.49.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="EVHtD9mH"
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="sqETeMjW"
 Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 9B3EB4010E02;
-	Tue, 14 Oct 2025 09:41:09 -0400 (EDT)
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id E36D84049798;
+	Tue, 14 Oct 2025 09:41:00 -0400 (EDT)
 Authentication-Results: mail.csh.rit.edu (amavisd-new);
  dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
  header.d=csh.rit.edu
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mail; t=1760449265; x=1762263666; bh=RKzic
-	t8waBLTidtkzwt9MIuHYg8U67gJCXBuul0kygs=; b=EVHtD9mHcHZbE0PEzzhrY
-	VwTmNQwcdD7Pwp4KyVh33+kDgwNLuun+xJQoN6Cu18yi2GBSsEanIlFILDxoGUje
-	4xjwYe/zpxE/TfSyNlbW3R+WK7TLKf9s4SfudaPIin8u7lEIqVzIt45ioXKKJWzX
-	QB6gOP2p6J7DEagZQd56oU=
+	:received:received; s=mail; t=1760449256; x=1762263657; bh=SpMMS
+	wOSex0dqDx2UmRfbG8cJGm4f5VRNazEV3Jf8u8=; b=sqETeMjWb/FQWLcnTliED
+	+mCzgMLxgQo4DolTDnySuNfLHgsy81WuWhnXDHqVXu7e9mWJ6uTnoktGbxXKrNwO
+	4qyitCJpXfOvWXBrdvUxb/p8cBQ/eR3mwlmbrAjl1zi2bdVjc+hMKhcgb45xbk8w
+	WER6LHM+qZstf7Qfck0w68=
 X-Virus-Scanned: amavisd-new at csh.rit.edu
 Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
  by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id BOt6ZNSTzJ3F; Tue, 14 Oct 2025 09:41:05 -0400 (EDT)
+ with ESMTP id TqBWjd4LeQo9; Tue, 14 Oct 2025 09:40:56 -0400 (EDT)
 Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id EFC084054F4B;
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 67121457383A;
 	Tue, 14 Oct 2025 09:40:56 -0400 (EDT)
 From: Mary Strodl <mstrodl@csh.rit.edu>
 To: linux-kernel@vger.kernel.org
@@ -45,9 +45,9 @@ Cc: tzungbi@kernel.org,
 	brgl@bgdev.pl,
 	linux-gpio@vger.kernel.org,
 	Mary Strodl <mstrodl@csh.rit.edu>
-Subject: [PATCH v5 4/4] gpio: mpsse: support bryx radio interface kit
-Date: Tue, 14 Oct 2025 09:35:30 -0400
-Message-ID: <20251014133530.3592716-5-mstrodl@csh.rit.edu>
+Subject: [PATCH v5 1/4] gpio: mpsse: propagate error from direction_input
+Date: Tue, 14 Oct 2025 09:35:27 -0400
+Message-ID: <20251014133530.3592716-2-mstrodl@csh.rit.edu>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20251014133530.3592716-1-mstrodl@csh.rit.edu>
 References: <20251014133530.3592716-1-mstrodl@csh.rit.edu>
@@ -59,53 +59,31 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-This device is powered by an FT232H, which is very similar to the
-FT2232H this driver was written for. The key difference is it has only
-one MPSSE instead of two. As a result, it presents only one USB
-interface to the system, which conveniently "just works" out of the box
-with this driver.
-
-The brik exposes only two GPIO lines which are hardware limited to only
-be useful in one direction. As a result, I've restricted things on the
-driver side to refuse to configure any other lines.
-
-This device, unlike the sealevel device I wrote this driver for
-originally, is hotpluggable, which makes for all sorts of weird
-edgecases. I've tried my best to stress-test the parts that could go
-wrong, but given the new usecase, more heads taking a critical look at
-the teardown and synchronization bits on the driver as a whole would be
-appreciated.
+Not sure how I missed this, but errors encountered when setting the
+direction to input weren't being propagated to the caller.
 
 Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mpsse.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpio/gpio-mpsse.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index 5ca00dd51a63..ace652ba4df1 100644
+index 9f42bb30b4ec..c508d9e33054 100644
 --- a/drivers/gpio/gpio-mpsse.c
 +++ b/drivers/gpio/gpio-mpsse.c
-@@ -65,8 +65,19 @@ struct mpsse_quirk {
- 	unsigned long dir_out;            /* Bitmask of valid output pins */
- };
+@@ -261,9 +261,8 @@ static int gpio_mpsse_direction_input(struct gpio_chi=
+p *chip,
 =20
-+static struct mpsse_quirk bryx_brik_quirk =3D {
-+	.names =3D {
-+		[3] =3D "Push to Talk",
-+		[5] =3D "Channel Activity",
-+	},
-+	.dir_out =3D BIT(3),	/* Push to Talk     */
-+	.dir_in  =3D BIT(5),	/* Channel Activity */
-+};
-+
- static const struct usb_device_id gpio_mpsse_table[] =3D {
- 	{ USB_DEVICE(0x0c52, 0xa064) },   /* SeaLevel Systems, Inc. */
-+	{ USB_DEVICE(0x0403, 0x6988),     /* FTDI, assigned to Bryx */
-+	  .driver_info =3D (kernel_ulong_t)&bryx_brik_quirk},
- 	{ }                               /* Terminating entry */
- };
+ 	guard(mutex)(&priv->io_mutex);
+ 	priv->gpio_dir[bank] &=3D ~BIT(bank_offset);
+-	gpio_mpsse_set_bank(priv, bank);
 =20
+-	return 0;
++	return gpio_mpsse_set_bank(priv, bank);
+ }
+=20
+ static int gpio_mpsse_get_direction(struct gpio_chip *chip,
 --=20
 2.47.0
 
