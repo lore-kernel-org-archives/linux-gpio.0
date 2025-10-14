@@ -1,95 +1,51 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC352BDC13;
-	Tue, 14 Oct 2025 15:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760454567; cv=fail; b=iAnq4nfv1IwVGFok/BNe9sNCtCLpRGQ48Fm3Xo6WqrLPhQhL9RbGZgsj0uLui7HwnfsEv3hDVasS6nXQqhzCqT9I7ZR1G8PVcyYYR7D9BkNByrd/1LXXO5K3M4r1r6+mrdpkjo5slCbdYY//2OW9pcsvO9v8P3kZfDafHZk8cpA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760454567; c=relaxed/simple;
-	bh=Y6ubsqFtWQoK092wq40h4LBLrr/NoAmU6++3VFy5c8E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pa+SjXuwy7C8aNff2LOhPU5zk/9uv9UcyqJbmTMe9GjhN66xmUmjU4qZaiWuXB664lxsvOSGi6Ou3KsZx4Jc+czQLDgL4uQI62NfmYwSxujkCjAO0mAAhTJesv+JhR2LWUJsVELOxmDKrhTXBA4Md7KFl4nz1a+XF/cYHNzDoHI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YhOBcLd8; arc=fail smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EECF3043A1;
+	Tue, 14 Oct 2025 15:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760455831; cv=none; b=h2rEvZUk4WMAfba2XaHYbEbGqeN4isvBmZreUXF6uBYJ4o49ZStTpE9pc2cld2NNqSHgFj02zfSalwTvWd/RYs8Ph00CFaOcsT4NZWSHs3YzsG3LeK3dqFCC8UPxFg+QtkSlAiXn6nryPeD/e6U2Igez/3I5I3V1A9HbDNirK4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760455831; c=relaxed/simple;
+	bh=gYreSIJKPAcaDJsCA2yQbOhVXdJsVxslbYve9maKclc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OQYRLEhVllklMAvKuV6DeSMYy12p/1/lMLEA5lf4XzzDFUWh/NTIDuUDVbW6XgjhT5xBfYm0jEPudM3iAZ4oZkCVyfY8iJGfyHmnEc9de8W+InwUpFrLIR8FqgA3n3it1uclnbe0lGw2kO/WF8KpgOdT32qLm88OvjWkQjcePgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxMOQN77; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YhOBcLd8"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EDKENJ016140;
-	Tue, 14 Oct 2025 16:05:01 +0200
-Received: from osppr02cu001.outbound.protection.outlook.com (mail-norwayeastazon11013058.outbound.protection.outlook.com [40.107.159.58])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 49qfe64nh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 16:05:00 +0200 (MEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=njFtLWwrq1S4Y7087YtkjcCNFOGZhrffvP3jfSjECgTyKdoupXKR0mOKcvlfr8KK9mtljA1aIjBzhIyMDwBCJW1uH9jr3Dzc93q6DPnBUAnRUWSZkXF0TK8vfSmf0/Xm+Gid8tcbB+oChez+KqSIlxsMQd/vd/6nguf64UdHs8uwHpKmdGVAI/fUuSHTax3iTIFp7Esa3re2xqfAgTZG3lXFBPfvJSpPumoiFoerij5enPfWBs8t/op67Ws8wxmWqujsB1y7N5sVLht8ZfuOuJAasPf39RJvFwMjnfmC1uUOF8BFwT01zBQgM47t+ToRqe5HN9CBeygpLrjYMW1Rfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=398Y5SDqwbUvV/z6j1yFd3Atar0VC/TtR3NNR6Zb8co=;
- b=w1dkx+KZVozgwouOr/USQcB49U4/mtWKnf0uCFEKzzbrDNC+YRk0H3tubImChF0kdvDcbqD5I5tjbozvR2q55aGjqq4lPuBEkC+bnUsWkpZ+ehAe1NRi2pE1ooZVpRfTHUggEKy2kngvGKBj61LFGBeMEvs31KIsVe2ywzaPUKIl+XyaZ9AF5hDMbAkZW0T722noqtIrcpP0ikwBmQralV7mfPsL1G91kviPgagYf95OOBWmXD8DS20F2xhblUQcV0tWserylXLLIfIzFNN8rCZbQyBChx0CItLM2+zxCggRCEvAEFuloiX+HXhO8F2kbhI44n179NoPvVcIoM7jaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.44) smtp.rcpttodomain=linaro.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=398Y5SDqwbUvV/z6j1yFd3Atar0VC/TtR3NNR6Zb8co=;
- b=YhOBcLd82ic15UoIOdPOVj7OYdqaV43SXjHgDL5k0SDYiLCjX3sYDtbSZQAu49QdWlQtZ9fC0LS+Q369T44Tw8FdxfJZdGzidJ7pKSgVl40QW4Ib/VgqmZFLI9HtCN5CSwmoeeVvlBsLKNlmQwBHr/6qQSRvNSsyDmrDRn9k9/+4fuwBvJEpL9r5lj4/HuxSo2Nq2n7I5H4X7Km8GxjAUImkQuEL0UlPIfIbGsyRnKmbmtfnqRhsUd3a7x96rJQO+iXsgBjcLRkSwmE5sf8qpB3iXzM3Cs5QxxXmElzPrMMNlpwHaLZbi/NuD+PIHr5ByJv+wr66jM+qq4l+WrBQdw==
-Received: from AS4P250CA0027.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:5e3::18)
- by AS4PR10MB5521.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4ff::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 14 Oct
- 2025 14:04:58 +0000
-Received: from AM4PEPF00027A67.eurprd04.prod.outlook.com
- (2603:10a6:20b:5e3:cafe::2a) by AS4P250CA0027.outlook.office365.com
- (2603:10a6:20b:5e3::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.10 via Frontend Transport; Tue,
- 14 Oct 2025 14:04:58 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.44)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.44 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.44; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.44) by
- AM4PEPF00027A67.mail.protection.outlook.com (10.167.16.84) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 14:04:58 +0000
-Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
- (10.250.44.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 14 Oct
- 2025 15:57:53 +0200
-Received: from localhost (10.48.86.11) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 14 Oct
- 2025 16:04:57 +0200
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Fabien Dessenne
-	<fabien.dessenne@foss.st.com>,
-        Valentin Caron <valentin.caron@foss.st.com>
-Subject: [PATCH v3 03/10] pinctrl: stm32: Rework stm32_pconf_parse_conf()
-Date: Tue, 14 Oct 2025 16:04:44 +0200
-Message-ID: <20251014140451.1009969-4-antonio.borneo@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
-References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxMOQN77"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD92C4CEE7;
+	Tue, 14 Oct 2025 15:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760455830;
+	bh=gYreSIJKPAcaDJsCA2yQbOhVXdJsVxslbYve9maKclc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nxMOQN775Q2jLe3U8V/ngxh+V+LgY3PDs+i4dEiay++OBTbow59X5MqaxQ0l/NKxB
+	 KErUe4y9bZmTlE1xvQLoEt6kGBfQlSWG1BAwmT27k3c7NKGGwYEhHDGfJG9L5fyyPh
+	 G43GhL+5sTUx6ZBz6hxsY0V2jHdwjtEMf3Qi8ylGlmEaR8R1qpG2X0V3A10c1ZuAAN
+	 sTaCtFuT+ZAn9iTgWZZTDO5LA9Y2ydFvLHxS1WSoW5lvx7jyHURlRW5G9g1IA+s5wD
+	 ALRV1p1EV57alLa0N9oSeTMaZpkwx5zuv0/B3JpdkNQtORXzhiaa865tedU/+lQevm
+	 y+xhD6bCHJ4Yw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: Convert Marvell CP110 System Controller to DT schema
+Date: Tue, 14 Oct 2025 10:30:19 -0500
+Message-ID: <20251014153021.3783485-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -97,145 +53,337 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A67:EE_|AS4PR10MB5521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 191f02e8-0ffc-4e05-4acb-08de0b2aa8f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2kJWEsNjt12zfU0d6W4X9hFEcv7zlcGoS/gW4KGQ1Iq+DZIET0AvywNErMvS?=
- =?us-ascii?Q?4Ql8ts9u5h1sfYu7eJM0J6KaYzzU0COngb4YEyghW9M6zDaQvDCXX4Nss5z9?=
- =?us-ascii?Q?bPA53JlyBGhBtljD+THWBAU5JX16Y2VJIXLMeFcnGYtMEJZqU9lkJFvFnvoM?=
- =?us-ascii?Q?lOqB7sQAWRh8cew56PohI3aKPatzsK9gl5737kuSYBr2CF18e3giSSWX9JCe?=
- =?us-ascii?Q?wmzXnYWfQuUkypN/VTMVu/GPGN+n73sUTiU29SlPFKkMGKFQQFRVgeREjioL?=
- =?us-ascii?Q?UtoSwGqxAbQofnVu66DRbs3a6bA1KDdryhRBHP783GMhkOLhmjJNhsz9oGdB?=
- =?us-ascii?Q?spDll85k0DMF82rz7XKf0/vNOraSLoVGAF4LRQpwma3jmkG+rQMZjldIBB13?=
- =?us-ascii?Q?0I7qK3PFEHViaeJ2wD2MXW9ARtMAdwdBpIJKbQkZ4vzfxQ5GG9vT3g15Na2o?=
- =?us-ascii?Q?wrgDH0aw3IvVBaIYE1L4704E4Tyiv+IigQ8Pa3FfKX/VUXbl6RwdkdoXSYWR?=
- =?us-ascii?Q?tUaz+a5PAqvtu1N6T+OC/togxhOWKgmciOjHwnoSYVL5i/vEKA6JQ02Uz0zF?=
- =?us-ascii?Q?cfZV7wNoisCUfj8gjpLU4t16ggNCrQINqDXS8wSqjtUkJDrRpzpTFu6OIrCj?=
- =?us-ascii?Q?43+MmsorJG+YScDc1zPZccvfiwQGoMNu7/qBV5v/57ht/Lxab3/gD26iltGP?=
- =?us-ascii?Q?VekZM9s7gqd15F8FoPKsKV9L8gyCseBAJuuop4bghTXiJb8OOWJ59E3yhTgv?=
- =?us-ascii?Q?MDYpBW81e3VrkdinfsO5bDVh5H2vU8ilXe53jI5E8/w8Q3U100rt+f+SMmaC?=
- =?us-ascii?Q?37s5dKUige76qHLcx2RpHCv9b4a4aNDvlTYS8IANQw4SWZpifw6FT9yuKaMz?=
- =?us-ascii?Q?KkW0+jyoiw56lJVMctWQ7SKdAxthLcGly0XO4NWFs7ceVRJe43foixBSRNfP?=
- =?us-ascii?Q?RTt4ogXGXruzjATolPZyUgxCrUvjPSMccZEn39/ZHrvapXFtkytl4AgdW51t?=
- =?us-ascii?Q?BQcydLNC/dC6/68OueDNSq66cgGfJ22qyrHPbmHdyAsU8OYNs89+NVv2xWO0?=
- =?us-ascii?Q?NSXhZ9izmbh4F26dTswyB1f6uSTdWhOqBoFVQpGcotEVRPhntB+NJDtYyyfS?=
- =?us-ascii?Q?G8ENVym0eXq/luoQVavY1w7o62YTq0x2Y+f+3TvetI3F2bsVGXmPPWKi3gDp?=
- =?us-ascii?Q?hK2OD4410Y1M+RBGOmIyGRGfeBpVzoc4UMojR8IjBNw5SHLvH6eYQ0oxtFSU?=
- =?us-ascii?Q?5kERLACJnO3PJhH9IZPyQehwcqqRpf+z3jyjDAWIGxiVc/PeyJc1+r3umgKa?=
- =?us-ascii?Q?OCxOgu9OLAEDTyZzaIIjc1yZRpn3tgqtBzazXmqRg96tKTELiBvrdX/oKYtT?=
- =?us-ascii?Q?tM43mi81Uc/u7cD+hZYGB/fMWdS1fo8Rkw4yNbKXOeTzrGRz0pm0O7YMxKHd?=
- =?us-ascii?Q?5ZVTevHFKi9zX3ecRDs2Favrlq/8jPm0q+eGMwuWH1AxL1eR9MQGhNfSO/Ww?=
- =?us-ascii?Q?Lw6NdWSL/PCwLXkQvN58Crdde4e4buh/o05ZLolUxKystxJ60LWbGfLOflzu?=
- =?us-ascii?Q?5u8fIqhcU3fVbVng4d+rIYaVdte2bsZlI/DOCV/k?=
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.44;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 14:04:58.2816
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 191f02e8-0ffc-4e05-4acb-08de0b2aa8f0
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.44];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A67.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5521
-X-Proofpoint-GUID: wRk4egke0ByK_OhYV03yiBUSTkeO7U3O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX8FhK+/5EO8PX
- jFbFktWeyqzBzInOmsVvry5gF4cyaDfLQkNFWiyFhpsMyji2XP2elSnMUnZxgqeuWv1tArbIfdK
- lprhYKX3jZxZctfeZdpKDkEMZH4hljkGQ5VvBXCIKlsaQHee+GughUsyQ0YlDuL3ZskmuGroYeH
- H03OdpZKv+WmwqpQ3Q8zaYzm+vBiOOa3aQuaq/IcQftxzKFlRdW3Ips+gmrYqn4P5hRCCP/2UGQ
- OBik40+JDCJLapIOVIMkO0Mg3bmLhEUtwwQhP3FKI5Jn023PkoQ1f8s7qIz14MGxioLuTg97D/I
- ss88eRqGuwk3Ai5OdtAKrfG6rFu2sCXzz1JbtrpbJVJaC3ifcn2CDejK1izu+4Rrj8PY2z2futD
- CM5TesOkdfxtt0cXiGHtXtM989KXQg==
-X-Authority-Analysis: v=2.4 cv=NfvrFmD4 c=1 sm=1 tr=0 ts=68ee588c cx=c_pps
- a=EPyYIxXEWdv0MJe+YDDwbA==:117 a=Tm9wYGWyy1fMlzdxM1lUeQ==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=y9YUpebZf6kA:10 a=x6icFKpwvdMA:10
- a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=8b9GpE9nAAAA:8 a=JfSwdrTX8Euj0BBcFicA:9 a=T3LWEMljR5ZiDmsYVIUa:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: wRk4egke0ByK_OhYV03yiBUSTkeO7U3O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 spamscore=0 phishscore=0 adultscore=0
- clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
 
-Reduce the number of parameters of the function by moving inside
-the decoding of the field 'config'.
+Convert the Marvell CP110 System Controller binding to DT schema
+format.
 
-While there:
-- change the type of 'param' to 'unsigned int' to handle the extra
-  values not in 'enum pin_config_param';
-- change the type of 'arg' to 'u32' to avoid additional conversions
-  and align to 'u32' the corresponding param of __stm32_gpio_set().
+There's not any specific compatible for the whole block which is a
+separate problem, so just the child nodes are documented. Only the
+pinctrl and clock child nodes need to be converted as the GPIO node
+already has a schema.
 
-Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/pinctrl/stm32/pinctrl-stm32.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ .../arm/marvell/cp110-system-controller.txt   | 191 ------------------
+ .../bindings/clock/marvell,cp110-clock.yaml   |  30 +++
+ .../pinctrl/marvell,armada-7k-pinctrl.yaml    |  73 +++++++
+ 3 files changed, 103 insertions(+), 191 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,cp110-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-7k-pinctrl.yaml
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 3ebb468de830d..6c5f9e015e8e1 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -287,7 +287,7 @@ static void stm32_gpio_rif_release_semaphore(struct stm32_gpio_bank *bank, unsig
- /* GPIO functions */
- 
- static inline void __stm32_gpio_set(struct stm32_gpio_bank *bank,
--	unsigned offset, int value)
-+	unsigned int offset, u32 value)
- {
- 	stm32_gpio_backup_value(bank, offset, value);
- 
-@@ -1195,10 +1195,11 @@ static bool stm32_pconf_get(struct stm32_gpio_bank *bank,
- }
- 
- static int stm32_pconf_parse_conf(struct pinctrl_dev *pctldev,
--		unsigned int pin, enum pin_config_param param,
--		enum pin_config_param arg)
-+		unsigned int pin, unsigned long config)
- {
- 	struct stm32_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	unsigned int param = pinconf_to_config_param(config);
-+	u32 arg = pinconf_to_config_argument(config);
- 	struct pinctrl_gpio_range *range;
- 	struct stm32_gpio_bank *bank;
- 	int offset, ret = 0;
-@@ -1267,9 +1268,7 @@ static int stm32_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
- 
- 	for (i = 0; i < num_configs; i++) {
- 		mutex_lock(&pctldev->mutex);
--		ret = stm32_pconf_parse_conf(pctldev, g->pin,
--			pinconf_to_config_param(configs[i]),
--			pinconf_to_config_argument(configs[i]));
-+		ret = stm32_pconf_parse_conf(pctldev, g->pin, configs[i]);
- 		mutex_unlock(&pctldev->mutex);
- 		if (ret < 0)
- 			return ret;
-@@ -1286,9 +1285,7 @@ static int stm32_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	int i, ret;
- 
- 	for (i = 0; i < num_configs; i++) {
--		ret = stm32_pconf_parse_conf(pctldev, pin,
--				pinconf_to_config_param(configs[i]),
--				pinconf_to_config_argument(configs[i]));
-+		ret = stm32_pconf_parse_conf(pctldev, pin, configs[i]);
- 		if (ret < 0)
- 			return ret;
- 	}
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+deleted file mode 100644
+index 54ff9f218328..000000000000
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
++++ /dev/null
+@@ -1,191 +0,0 @@
+-Marvell Armada CP110 System Controller
+-======================================
+-
+-The CP110 is one of the two core HW blocks of the Marvell Armada 7K/8K
+-SoCs. It contains system controllers, which provide several registers
+-giving access to numerous features: clocks, pin-muxing and many other
+-SoC configuration items. This DT binding allows to describe these
+-system controllers.
+-
+-For the top level node:
+- - compatible: must be: "syscon", "simple-mfd";
+- - reg: register area of the CP110 system controller
+-
+-SYSTEM CONTROLLER 0
+-===================
+-
+-Clocks:
+--------
+-
+-The Device Tree node representing this System Controller 0 provides a
+-number of clocks:
+-
+- - a set of core clocks
+- - a set of gateable clocks
+-
+-Those clocks can be referenced by other Device Tree nodes using two
+-cells:
+- - The first cell must be 0 or 1. 0 for the core clocks and 1 for the
+-   gateable clocks.
+- - The second cell identifies the particular core clock or gateable
+-   clocks.
+-
+-The following clocks are available:
+- - Core clocks
+-   - 0 0	APLL
+-   - 0 1	PPv2 core
+-   - 0 2	EIP
+-   - 0 3	Core
+-   - 0 4	NAND core
+-   - 0 5	SDIO core
+- - Gateable clocks
+-   - 1 0	Audio
+-   - 1 1	Comm Unit
+-   - 1 2	NAND
+-   - 1 3	PPv2
+-   - 1 4	SDIO
+-   - 1 5	MG Domain
+-   - 1 6	MG Core
+-   - 1 7	XOR1
+-   - 1 8	XOR0
+-   - 1 9	GOP DP
+-   - 1 11	PCIe x1 0
+-   - 1 12	PCIe x1 1
+-   - 1 13	PCIe x4
+-   - 1 14	PCIe / XOR
+-   - 1 15	SATA
+-   - 1 16	SATA USB
+-   - 1 17	Main
+-   - 1 18	SD/MMC/GOP
+-   - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
+-   - 1 22	USB3H0
+-   - 1 23	USB3H1
+-   - 1 24	USB3 Device
+-   - 1 25	EIP150
+-   - 1 26	EIP197
+-
+-Required properties:
+-
+- - compatible: must be:
+-     "marvell,cp110-clock"
+- - #clock-cells: must be set to 2
+-
+-Pinctrl:
+---------
+-
+-For common binding part and usage, refer to the file
+-Documentation/devicetree/bindings/pinctrl/marvell,mvebu-pinctrl.txt.
+-
+-Required properties:
+-
+-- compatible: "marvell,armada-7k-pinctrl", "marvell,armada-8k-cpm-pinctrl",
+-  "marvell,armada-8k-cps-pinctrl" or "marvell,cp115-standalone-pinctrl"
+-  depending on the specific variant of the SoC being used.
+-
+-Available mpp pins/groups and functions:
+-Note: brackets (x) are not part of the mpp name for marvell,function and given
+-only for more detailed description in this document.
+-
+-name	pins	functions
+-================================================================================
+-mpp0	0	gpio, dev(ale1), au(i2smclk), ge0(rxd3), tdm(pclk), ptp(pulse), mss_i2c(sda), uart0(rxd), sata0(present_act), ge(mdio)
+-mpp1	1	gpio, dev(ale0), au(i2sdo_spdifo), ge0(rxd2), tdm(drx), ptp(clk), mss_i2c(sck), uart0(txd), sata1(present_act), ge(mdc)
+-mpp2	2	gpio, dev(ad15), au(i2sextclk), ge0(rxd1), tdm(dtx), mss_uart(rxd), ptp(pclk_out), i2c1(sck), uart1(rxd), sata0(present_act), xg(mdc)
+-mpp3	3	gpio, dev(ad14), au(i2slrclk), ge0(rxd0), tdm(fsync), mss_uart(txd), pcie(rstoutn), i2c1(sda), uart1(txd), sata1(present_act), xg(mdio)
+-mpp4	4	gpio, dev(ad13), au(i2sbclk), ge0(rxctl), tdm(rstn), mss_uart(rxd), uart1(cts), pcie0(clkreq), uart3(rxd), ge(mdc)
+-mpp5	5	gpio, dev(ad12), au(i2sdi), ge0(rxclk), tdm(intn), mss_uart(txd), uart1(rts), pcie1(clkreq), uart3(txd), ge(mdio)
+-mpp6	6	gpio, dev(ad11), ge0(txd3), spi0(csn2), au(i2sextclk), sata1(present_act), pcie2(clkreq), uart0(rxd), ptp(pulse)
+-mpp7	7	gpio, dev(ad10), ge0(txd2), spi0(csn1), spi1(csn1), sata0(present_act), led(data), uart0(txd), ptp(clk)
+-mpp8	8	gpio, dev(ad9), ge0(txd1), spi0(csn0), spi1(csn0), uart0(cts), led(stb), uart2(rxd), ptp(pclk_out), synce1(clk)
+-mpp9	9	gpio, dev(ad8), ge0(txd0), spi0(mosi), spi1(mosi), pcie(rstoutn), synce2(clk)
+-mpp10	10	gpio, dev(readyn), ge0(txctl), spi0(miso), spi1(miso), uart0(cts), sata1(present_act)
+-mpp11	11	gpio, dev(wen1), ge0(txclkout), spi0(clk), spi1(clk), uart0(rts), led(clk), uart2(txd), sata0(present_act)
+-mpp12	12	gpio, dev(clk_out), nf(rbn1), spi1(csn1), ge0(rxclk)
+-mpp13	13	gpio, dev(burstn), nf(rbn0), spi1(miso), ge0(rxctl), mss_spi(miso)
+-mpp14	14	gpio, dev(bootcsn), dev(csn0), spi1(csn0), spi0(csn3), au(i2sextclk), spi0(miso), sata0(present_act), mss_spi(csn)
+-mpp15	15	gpio, dev(ad7), spi1(mosi), spi0(mosi), mss_spi(mosi), ptp(pulse_cp2cp)
+-mpp16	16	gpio, dev(ad6), spi1(clk), mss_spi(clk)
+-mpp17	17	gpio, dev(ad5), ge0(txd3)
+-mpp18	18	gpio, dev(ad4), ge0(txd2), ptp(clk_cp2cp)
+-mpp19	19	gpio, dev(ad3), ge0(txd1), wakeup(out_cp2cp)
+-mpp20	20	gpio, dev(ad2), ge0(txd0)
+-mpp21	21	gpio, dev(ad1), ge0(txctl), sei(in_cp2cp)
+-mpp22	22	gpio, dev(ad0), ge0(txclkout), wakeup(in_cp2cp)
+-mpp23	23	gpio, dev(a1), au(i2smclk), link(rd_in_cp2cp)
+-mpp24	24	gpio, dev(a0), au(i2slrclk)
+-mpp25	25	gpio, dev(oen), au(i2sdo_spdifo)
+-mpp26	26	gpio, dev(wen0), au(i2sbclk)
+-mpp27	27	gpio, dev(csn0), spi1(miso), mss_gpio4, ge0(rxd3), spi0(csn4), ge(mdio), sata0(present_act), uart0(rts), rei(in_cp2cp)
+-mpp28	28	gpio, dev(csn1), spi1(csn0), mss_gpio5, ge0(rxd2), spi0(csn5), pcie2(clkreq), ptp(pulse), ge(mdc), sata1(present_act), uart0(cts), led(data)
+-mpp29	29	gpio, dev(csn2), spi1(mosi), mss_gpio6, ge0(rxd1), spi0(csn6), pcie1(clkreq), ptp(clk), mss_i2c(sda), sata0(present_act), uart0(rxd), led(stb)
+-mpp30	30	gpio, dev(csn3), spi1(clk), mss_gpio7, ge0(rxd0), spi0(csn7), pcie0(clkreq), ptp(pclk_out), mss_i2c(sck), sata1(present_act), uart0(txd), led(clk)
+-mpp31	31	gpio, dev(a2), mss_gpio4, pcie(rstoutn), ge(mdc)
+-mpp32	32	gpio, mii(col), mii(txerr), mss_spi(miso), tdm(drx), au(i2sextclk), au(i2sdi), ge(mdio), sdio(v18_en), pcie1(clkreq), mss_gpio0
+-mpp33	33	gpio, mii(txclk), sdio(pwr10), mss_spi(csn), tdm(fsync), au(i2smclk), sdio(bus_pwr), xg(mdio), pcie2(clkreq), mss_gpio1
+-mpp34	34	gpio, mii(rxerr), sdio(pwr11), mss_spi(mosi), tdm(dtx), au(i2slrclk), sdio(wr_protect), ge(mdc), pcie0(clkreq), mss_gpio2
+-mpp35	35	gpio, sata1(present_act), i2c1(sda), mss_spi(clk), tdm(pclk), au(i2sdo_spdifo), sdio(card_detect), xg(mdio), ge(mdio), pcie(rstoutn), mss_gpio3
+-mpp36	36	gpio, synce2(clk), i2c1(sck), ptp(clk), synce1(clk), au(i2sbclk), sata0(present_act), xg(mdc), ge(mdc), pcie2(clkreq), mss_gpio5
+-mpp37	37	gpio, uart2(rxd), i2c0(sck), ptp(pclk_out), tdm(intn), mss_i2c(sck), sata1(present_act), ge(mdc), xg(mdc), pcie1(clkreq), mss_gpio6, link(rd_out_cp2cp)
+-mpp38	38	gpio, uart2(txd), i2c0(sda), ptp(pulse), tdm(rstn), mss_i2c(sda), sata0(present_act), ge(mdio), xg(mdio), au(i2sextclk), mss_gpio7, ptp(pulse_cp2cp)
+-mpp39	39	gpio, sdio(wr_protect), au(i2sbclk), ptp(clk), spi0(csn1), sata1(present_act), mss_gpio0
+-mpp40	40	gpio, sdio(pwr11), synce1(clk), mss_i2c(sda), au(i2sdo_spdifo), ptp(pclk_out), spi0(clk), uart1(txd), ge(mdio), sata0(present_act), mss_gpio1
+-mpp41	41	gpio, sdio(pwr10), sdio(bus_pwr), mss_i2c(sck), au(i2slrclk), ptp(pulse), spi0(mosi), uart1(rxd), ge(mdc), sata1(present_act), mss_gpio2, rei(out_cp2cp)
+-mpp42	42	gpio, sdio(v18_en), sdio(wr_protect), synce2(clk), au(i2smclk), mss_uart(txd), spi0(miso), uart1(cts), xg(mdc), sata0(present_act), mss_gpio4
+-mpp43	43	gpio, sdio(card_detect), synce1(clk), au(i2sextclk), mss_uart(rxd), spi0(csn0), uart1(rts), xg(mdio), sata1(present_act), mss_gpio5, wakeup(out_cp2cp)
+-mpp44	44	gpio, ge1(txd2), uart0(rts), ptp(clk_cp2cp)
+-mpp45	45	gpio, ge1(txd3), uart0(txd), pcie(rstoutn)
+-mpp46	46	gpio, ge1(txd1), uart1(rts)
+-mpp47	47	gpio, ge1(txd0), spi1(clk), uart1(txd), ge(mdc)
+-mpp48	48	gpio, ge1(txctl_txen), spi1(mosi), xg(mdc), wakeup(in_cp2cp)
+-mpp49	49	gpio, ge1(txclkout), mii(crs), spi1(miso), uart1(rxd), ge(mdio), pcie0(clkreq), sdio(v18_en), sei(out_cp2cp)
+-mpp50	50	gpio, ge1(rxclk), mss_i2c(sda), spi1(csn0), uart2(txd), uart0(rxd), xg(mdio), sdio(pwr11)
+-mpp51	51	gpio, ge1(rxd0), mss_i2c(sck), spi1(csn1), uart2(rxd), uart0(cts), sdio(pwr10)
+-mpp52	52	gpio, ge1(rxd1), synce1(clk), synce2(clk), spi1(csn2), uart1(cts), led(clk), pcie(rstoutn), pcie0(clkreq)
+-mpp53	53	gpio, ge1(rxd2), ptp(clk), spi1(csn3), uart1(rxd), led(stb), sdio(led)
+-mpp54	54	gpio, ge1(rxd3), synce2(clk), ptp(pclk_out), synce1(clk), led(data), sdio(hw_rst), sdio_wp(wr_protect)
+-mpp55	55	gpio, ge1(rxctl_rxdv), ptp(pulse), sdio(led), sdio_cd(card_detect)
+-mpp56	56	gpio, tdm(drx), au(i2sdo_spdifo), spi0(clk), uart1(rxd), sata1(present_act), sdio(clk)
+-mpp57	57	gpio, mss_i2c(sda), ptp(pclk_out), tdm(intn), au(i2sbclk), spi0(mosi), uart1(txd), sata0(present_act), sdio(cmd)
+-mpp58	58	gpio, mss_i2c(sck), ptp(clk), tdm(rstn), au(i2sdi), spi0(miso), uart1(cts), led(clk), sdio(d0)
+-mpp59	59	gpio, mss_gpio7, synce2(clk), tdm(fsync), au(i2slrclk), spi0(csn0), uart0(cts), led(stb), uart1(txd), sdio(d1)
+-mpp60	60	gpio, mss_gpio6, ptp(pulse), tdm(dtx), au(i2smclk), spi0(csn1), uart0(rts), led(data), uart1(rxd), sdio(d2)
+-mpp61	61	gpio, mss_gpio5, ptp(clk), tdm(pclk), au(i2sextclk), spi0(csn2), uart0(txd), uart2(txd), sata1(present_act), ge(mdio), sdio(d3)
+-mpp62	62	gpio, mss_gpio4, synce1(clk), ptp(pclk_out), sata1(present_act), spi0(csn3), uart0(rxd), uart2(rxd), sata0(present_act), ge(mdc)
+-
+-GPIO:
+------
+-
+-For common binding part and usage, refer to
+-Documentation/devicetree/bindings/gpio/gpio-mvebu.yaml.
+-
+-Required properties:
+-
+-- compatible: "marvell,armada-8k-gpio"
+-
+-- offset: offset address inside the syscon block
+-
+-Example:
+-
+-CP110_LABEL(syscon0): system-controller@440000 {
+-	compatible = "syscon", "simple-mfd";
+-	reg = <0x440000 0x1000>;
+-
+-	CP110_LABEL(clk): clock {
+-		compatible = "marvell,cp110-clock";
+-		#clock-cells = <2>;
+-	};
+-
+-	CP110_LABEL(pinctrl): pinctrl {
+-		compatible = "marvell,armada-8k-cpm-pinctrl";
+-	};
+-
+-	CP110_LABEL(gpio1): gpio@100 {
+-		compatible = "marvell,armada-8k-gpio";
+-		offset = <0x100>;
+-		ngpios = <32>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		gpio-ranges = <&CP110_LABEL(pinctrl) 0 0 32>;
+-	};
+-
+-};
+diff --git a/Documentation/devicetree/bindings/clock/marvell,cp110-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,cp110-clock.yaml
+new file mode 100644
+index 000000000000..8cc8d36061cb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,cp110-clock.yaml
+@@ -0,0 +1,30 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/marvell,cp110-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell Armada CP110 System Controller Clocks
++
++maintainers:
++  - Gregory Clement <gregory.clement@bootlin.com>
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++description: >
++  The CP110 is one of the two core HW blocks of the Marvell Armada 7K/8K/931x
++  SoCs. It contains system controllers, which provide several registers giving
++  access to numerous features: clocks, pin-muxing and many other SoC
++  configuration items.
++
++properties:
++  compatible:
++    const: marvell,cp110-clock
++
++  "#clock-cells":
++    const: 2
++
++required:
++  - compatible
++  - "#clock-cells"
++
++additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-7k-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,armada-7k-pinctrl.yaml
+new file mode 100644
+index 000000000000..482fee857f82
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-7k-pinctrl.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/marvell,armada-7k-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell Armada 7K/8K pin controller
++
++maintainers:
++  - Gregory Clement <gregory.clement@bootlin.com>
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++properties:
++  compatible:
++    enum:
++      - marvell,armada-7k-pinctrl
++      - marvell,armada-8k-cpm-pinctrl
++      - marvell,armada-8k-cps-pinctrl
++      - marvell,cp115-standalone-pinctrl
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-pins(-.+)?$':
++    type: object
++    additionalProperties: false
++
++    properties:
++      marvell,function:
++        $ref: /schemas/types.yaml#/definitions/string
++        description:
++          Indicates the function to select.
++        enum: [
++          au, dev, ge, ge0, ge1, gpio, i2c0, i2c1, io, led, link, mii,
++          mss_gpio0, mss_gpio1, mss_gpio2, mss_gpio3, mss_gpio4, mss_gpio5,
++          mss_gpio6, mss_gpio7, mss_i2c, mss_spi, mss_uart, nf, pcie, pcie0,
++          pcie1, pcie2, ptp, rei, sata0, sata1, sdio, sdio_cd, sdio_wp, sei,
++          spi0, spi1, synce1, synce2, tdm, uart0, uart1, uart2, uart3, wakeup,
++          xg
++        ]
++
++      marvell,pins:
++        $ref: /schemas/types.yaml#/definitions/string-array
++        description:
++          Array of MPP pins to be used for the given function.
++        minItems: 1
++        maxItems: 63
++        items:
++          pattern: '^mpp([1-5]?[0-9]|6[0-2])$'
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl {
++        compatible = "marvell,armada-7k-pinctrl";
++
++        nand_pins: nand-pins {
++            marvell,pins =
++                "mpp15", "mpp16", "mpp17", "mpp18",
++                "mpp19", "mpp20", "mpp21", "mpp22",
++                "mpp23", "mpp24", "mpp25", "mpp26",
++                "mpp27";
++            marvell,function = "dev";
++        };
++    };
 -- 
-2.34.1
+2.51.0
 
