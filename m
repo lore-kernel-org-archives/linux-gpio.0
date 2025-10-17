@@ -1,124 +1,238 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023143.outbound.protection.outlook.com [52.101.127.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A4F310783
-	for <linux-gpio@vger.kernel.org>; Fri, 17 Oct 2025 07:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760685151; cv=none; b=V45aKHGO8B2Q9Y4bOcVQYTEUe7ckkZLXoAxRK1Gq+49fiA/bXsiCIVJvzCUHM5/XPfDIvWSZ19NhE7g9ZnADo+v0JhdTsWNdiZZkXYoDm7HfcJXrSXZT10OORjbA6IO5WZh2uzsbOizyY2UlxdTD578oYbleNcIxVZyxDWnGlbI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760685151; c=relaxed/simple;
-	bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f0Uv4F8gHihHv0qUqKhSIZpJZbm2K8p/aX64Az4daeuHdUfcMJ4Y81S2cvPlYUf3fu/181h2lUI5PCtA/6aoGAaRPubeyv1OW2mgc6R7R098deHo3HG20n/66d9c/6n+knNwNf76tnwAi1QdvT5B/3WnBmbjvcA7K73vW7NHDHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FyWsD4Uw; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FyWsD4Uw"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-586883eb9fbso1957840e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Oct 2025 00:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760685148; x=1761289948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-        b=FyWsD4UwUsYXqKuj+6OHL8sM15xUnl/aRGH9KGC3WPoUXNxbmsrZ7Iqhq4UJhqkevj
-         GE2OUwBSaGqqmRen3P/7lAzvmQk1ujQS2MgKFSmW0LOTtrDNNy/mvfuz+l2BBe1tqjB8
-         Mk6weoPuxdW1lCUq1wDyzTAZtdaUWOS8cQscukLNPhnF5WVA0BUcgNGnJS8Mk6hSLvfb
-         QdPWmaOw9xa5INbayYaoIZtZBjhOlUiC9bEkGyL5s/fRAia5z3iVth4YjQ3o4lnlt69p
-         T2hIPhsvo6Q0jRU11R5LtSH8YpZoo80Lr9Wds5SFkmOITF0SLmjxWh+gczBxHHmEnhk2
-         wyJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760685148; x=1761289948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25YUziEhf9uU4zAhrMwI7Nzd6K8Li1d73QSpIFvWNy0=;
-        b=sYjkSUJ0lID+Qy1pCD0L1ot1JoefpgXYJDrBZCFKE6guWh05xgsmNKwIYBu9hYm8wa
-         LxSHw2MQm/HAcR6IzPPLJzlYRkyd4HLYfYmAoiBX0XtwQkVQvmtRM33iWxWuNtZMCVBo
-         J/VOPUEjsSHXI6vCv/5UZfvYLdGz8uRN+u3oBxmKtDctOaRR/9zn86zkaebU/f3Hh7Ot
-         VLDLjlPqFfSUNq/SGnjwqcuSJIYt4oLN4kYthjPY94nJtLS4BWvDM9DZqkcVE7iVnDOa
-         B2utMWMV8JGbF+eDD5/w5zveAo8gpqXGJ/BCfbkxFeZDj5u0dFlftXjAQir43wa4TvwF
-         Okfw==
-X-Gm-Message-State: AOJu0Yx/aqTAEGcfl0yectbz6XJvWqIbg4bkvOsypJ4J74PFkUbrJT8m
-	VXmiRh4/5b37qz0fCx2Q2fQXpbrnJmb8aP55TRVb9KHKmRCGMyDO7mjObiGQuLbglbberwJ02lL
-	Ai9nVFNWvQk+if2RL7gOrSHoIA50zSqdrrxdPzzuBXg==
-X-Gm-Gg: ASbGnctq+9le56yY7aCy3J6OA4Ngs1OTJuZjDzffLOz4gMXKAAd0bWP4AHPI60RoM2q
-	PH4NCl4jA3wlhd/HL+ZCDVFdtQ9M/GNpzIZQbDmlcorJStoZAq4+7WW6aTYJPrbVEClyhheRb7E
-	XU+pDwJxSzund7/67NPSEEgVS4uiHuh80asSNGUrQerM4dXz54ecIgn/o6oOD37gH51vGO8lUi1
-	jQyJEJsRS70tkspZL1wdSnuITYgscxZsZCnwsNyRokXeW16O8J86a+/i4WP3W00nxD6KG+pZkLj
-	06R6Q9wrE/Tn7hG774XBP90R3rOYrnP3PxJUgQ==
-X-Google-Smtp-Source: AGHT+IFxsGx5ftXqLpFiYlA84nFq8R9lxAW0hXzt0jnPlbVMKUOA3s65BQF+cV2LW4ytM3YBAr0RQpHCOIZdAc+N9t4=
-X-Received: by 2002:a05:6512:ea8:b0:591:c346:1106 with SMTP id
- 2adb3069b0e04-591d84cee43mr889809e87.9.1760685148094; Fri, 17 Oct 2025
- 00:12:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE01D54FA;
+	Fri, 17 Oct 2025 07:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.143
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760687214; cv=fail; b=iZcUC5qAkAbQICqENzonoZTJl2DGJQvtrB0y7a6pAH/Qd2krFFOAC+90+ZN1Bm/nz+2LWa5MqrwiJTeJHJAw7O4SUby4yZ9pqFWcfGfrio8j9azz1OFGCSXCIi+KX0EStZHgPttCCTq5GK4nPIYcUoVcUfcwADr1hvp6qQIQOYg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760687214; c=relaxed/simple;
+	bh=hhQLAPjAolupjJcmlALiY7JSMch7Dr+HDk07l7y2yf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XA7Ts+KfWxY/e2/AAavSKTgaA7pQXVC7ZoDEAH1INXwq7RWyH6gVf5KIlNawEPanTkgOys3vByat3Q0gAoXR9Ml3vYPv5RyOQ7aVtd1/pBeXzqnz915CLSGW+Y0sC54JmuUM/tycdXha0cifYAXB8a3238Eaoiafyh/edix6JMY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xlxzARgcHiLkZEgtp0Cvyq77KS/eKWhzGTk3RjWZLe5NsJUbIrmS+YK8IiANzS9ro1rwo6CfTSBWVO9SF+K7vr4t7zFwYUcMVbV8yDGmq728GFSCfOMu5ggMf6echQx20Mm6OHf21TaAFeqzOH9PodphbPMLHKsGKo934Dlt67GbmPf+a3RoHmM9/6zHJ/zYV5bA7f/FQHaPFcGYIftwLSd0hsznXmEKpUEzjuuB+5WJv5FPl6m7uosSG6WNk9drgzxY8uTN70WgsDRwOVqDveJLXlx9ZJX4J26627BQyMlmD66WInez9WqkrBADja770qstrZnFf61uuxELdj5Z1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KMw/BLc6WyU37noQ/Egq3GTvTz6IcvJz4RAiUujLg10=;
+ b=e81XaogpmBMkZ3v/2IkV6/ZsQskyfiOApLdX29iOiyzXYdio2ewRDpqbGEHHjQlSO6Inxalf2iguTpQVPMpIy672IRVgDCFrbp+Nj5/064biBS4tH7N8zgIbsncg9rPomhRjmWF9MDiEWT6yZ8OFKdkocx2jsngeaijLqhy+g2BQGEoH4W/6Pk+k0NJn0QK4WuJFWtTfuQBXsSq/lh4tsqOOX3aD7Za+oEbo/zlB5Tqrn43vE4QQyBxbK2darGPKwbx/cJEb/JW5FNz0HDEAEURKtUqsXGwJizfWZDzUnGpm85jRSiUaPgLZ6YDgzcVcoIo0pjQxtCv4VXeXJNdnsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI1PR02CA0029.apcprd02.prod.outlook.com (2603:1096:4:1f4::20)
+ by KL1PR06MB7011.apcprd06.prod.outlook.com (2603:1096:820:11b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
+ 2025 07:46:47 +0000
+Received: from SG2PEPF000B66CD.apcprd03.prod.outlook.com
+ (2603:1096:4:1f4:cafe::7c) by SI1PR02CA0029.outlook.office365.com
+ (2603:1096:4:1f4::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.13 via Frontend Transport; Fri,
+ 17 Oct 2025 07:46:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CD.mail.protection.outlook.com (10.167.240.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Fri, 17 Oct 2025 07:46:47 +0000
+Received: from localhost.localdomain (unknown [172.16.64.196])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 865FF40EEE9D;
+	Fri, 17 Oct 2025 15:46:46 +0800 (CST)
+From: Gary Yang <gary.yang@cixtech.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com,
+	Gary Yang <gary.yang@cixtech.com>
+Subject: [PATCH v4 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
+Date: Fri, 17 Oct 2025 15:46:44 +0800
+Message-ID: <20251017074646.3344924-2-gary.yang@cixtech.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251017074646.3344924-1-gary.yang@cixtech.com>
+References: <20251017074646.3344924-1-gary.yang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-In-Reply-To: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 17 Oct 2025 09:12:16 +0200
-X-Gm-Features: AS18NWDblNzpuLCnzeXon3yTi_RZXCYBcRhb_slg09UcNYGLrahNCin0h6f8tMA
-Message-ID: <CAMRc=Me=atAoPSGdTOn32rEHh3djTSVveYg0QYxYdb9yivy5YQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] reset: rework reset-gpios handling
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CD:EE_|KL1PR06MB7011:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 7289a4b8-ca2d-4832-8940-08de0d515331
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JZ0WNSs8uYNHlEzAJCk3TyaiOsqBwKr/kFZTDuaeFm69XG7QDwoF5XaPjuHy?=
+ =?us-ascii?Q?zQjerovRyWQ8JNwl6F/G+uog73LRnlyuXEvBPe6L3+T0OxJzSqcm27BkmfwM?=
+ =?us-ascii?Q?MTPawuxGOjCHqBpAL1BcFN5pmmp0zGBIOTdY9GmrATQ9xarYJIYmjkTZ1hSa?=
+ =?us-ascii?Q?exYva9Wpcpsk0sLHIfgXp941S6LMTe80g99elZfvEQEgxdICSHVxnYIP1VS+?=
+ =?us-ascii?Q?4do/Q/wurQnc1bvvBwF2F+vUjlROpIhq2IjfYL3Ybn5qp5cByBs3sr62kqVq?=
+ =?us-ascii?Q?QFKKLVZ9Ur2zxC1J6URAckbAQZo69zNfa0qr0YlFD5RgJ7PYJ5OuBm2thnAY?=
+ =?us-ascii?Q?BOFODGHlRtd5jYXESk9GvcjbskDYLATTtjy6ALI7TbFqa2ibCzysYJgm5QAl?=
+ =?us-ascii?Q?QUFHSgtrouormSOWWONLGWT4gri+MWBV3nfbk+F+u8SiUD5+kSNbJUuoArwE?=
+ =?us-ascii?Q?zgTDNv3VAh3vtMO4kRc7JoHy6sNfPEuVkR7G2+G8XJFoHvtW+s5RoJsZMWDz?=
+ =?us-ascii?Q?iisT5BqkEhpI6e8/HcRKDSIWzbEhq94Bsk58IQ5oXeld3pL8ZKuBvSs3hBDE?=
+ =?us-ascii?Q?dyutFtC+gGqkhKgRo47KnENWA7e9jl3r3Cqug/3aCMVZZLkGmf5tgp1c2gXH?=
+ =?us-ascii?Q?/TuRNKS7oJfsTa7MEbK1ExljSR4H9c7ltaFZEhZttBfJ7O4efrbNjr0Gk20P?=
+ =?us-ascii?Q?xqOXCC7+lhyBhwuqXTFI1L+72HURxH4/jY6FnvyDsFWeFM0Hkd7LK0ScB9fD?=
+ =?us-ascii?Q?33S+mIKgKTMlOfwosbPXnZ24AQx0M3uRcHHSQQw/gqEv0boe7zD88FxIM2ur?=
+ =?us-ascii?Q?5C2yqyLJOw+gAZjTcv/M305kx2nJNI5jO7u5YIGpNPFktet2eKSZnqzl4PnL?=
+ =?us-ascii?Q?JWIyrxXLrBIkkR3/G5N3ho0pCNtL34vSOAOF/Bts8nQhM+Zd58AHoF2u3bRi?=
+ =?us-ascii?Q?J0X0y7YLylKn2R6FTK6LsTD57Crvd8UdNiYvc4da9raOI7BSejjWGpwDioa+?=
+ =?us-ascii?Q?T5DQ5U36mhddaSpcdjh0XOi91XWME1Hi6eywEVSy5ascvTroXfcd6n4ptWxg?=
+ =?us-ascii?Q?2d9kZnHB9btqGUDKpSWmiEnU/prheBJplhfbVlFelPUzdLgYmwL3h5pJ/GkQ?=
+ =?us-ascii?Q?HVUBV1z+4wNYuYMLR7+22ium93qHIx+6tZZ7fyB18dSp6DVkEtf0fydBtqyS?=
+ =?us-ascii?Q?lQQSLKmUrV+xkvcTCdEutDLCixKQCeY25XdbOrVJmkUpdoUwCOqvsCZbBXch?=
+ =?us-ascii?Q?LhqlJuH1f1fbLPQYT+bvhqSlu0v25IGaY53996RIOg86Kg+DEA+IzcPMk8Db?=
+ =?us-ascii?Q?DDFNfvqJ6D5dcv5Xe+KMefNibnAKDECalYrRhQzKCD4v9VNLF7+etVTlNBiC?=
+ =?us-ascii?Q?5cex9NOThI0+JCOpH+78TSQ/DKgpnZ9vnV7GGVjPuyW7jRh94CtnDNKNldjv?=
+ =?us-ascii?Q?OqJNIUgPba9F8v1yPMq50XEELCN/nQZi3WdKByang4+ihtbjbcRtGKN2J44R?=
+ =?us-ascii?Q?KR8AxVu5x2VODedNsREIPGvzT8Wa2N1ZQJxV?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 07:46:47.0832
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7289a4b8-ca2d-4832-8940-08de0d515331
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66CD.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7011
 
-On Mon, Oct 6, 2025 at 3:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> Machine GPIO lookup is a nice, if a bit clunky, mechanism when we have
-> absolutely no idea what the GPIO provider is or when it will be created.
-> However in the case of reset-gpios, we not only know if the chip is
-> there - we also already hold a reference to its firmware node.
->
-> In this case using fwnode lookup makes more sense. However, since the
-> reset provider is created dynamically, it doesn't have a corresponding
-> firmware node (in this case: an OF-node). That leaves us with software
-> nodes which currently cannot reference other implementations of the
-> fwnode API, only other struct software_node objects. This is a needless
-> limitation as it's imaginable that a dynamic auxiliary device (with a
-> software node attached) would want to reference a real device with an OF
-> node.
->
-> This series does three things: extends the software node implementation,
-> allowing its properties to reference not only static software nodes but
-> also existing firmware nodes, updates the GPIO property interface to use
-> the reworked swnode macros and finally makes the reset-gpio code the
-> first user by converting the GPIO lookup from machine to swnode.
->
-> Another user of the software node changes in the future could become the
-> shared GPIO modules that's in the works in parallel[1].
->
-> Merging strategy: the series is logically split into three parts: driver
-> core, GPIO and reset respectively. However there are build-time
-> dependencies between all three parts so I suggest the reset tree as the
-> right one to take it upstream with an immutable branch provided to
-> driver core and GPIO.
->
-> [1] https://lore.kernel.org/all/20250924-gpio-shared-v1-0-775e7efeb1a3@li=
-naro.org/
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+The pin-controller is used to control the Soc pins.
+There are two pin-controllers on Cix Sky1 platform.
+One is used under S0 state, the other is used under
+S0 and S5 state.
 
-Are there any comments on the software node part before I respin it
-with Philipp's comments addressed?
+Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+---
+ .../bindings/pinctrl/cix,sky1-pinctrl.yaml    | 94 +++++++++++++++++++
+ 1 file changed, 94 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
 
-Bartosz
+diff --git a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+new file mode 100644
+index 000000000000..4ad160734353
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+@@ -0,0 +1,94 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/cix,sky1-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Cix Sky1 Soc Pin Controller
++
++maintainers:
++  - Gary Yang <gary.yang@cixtech.com>
++
++description:
++  The pin-controller is used to control Soc pins. There are two pin-controllers
++  on Cix Sky1 platform. one is used under S0 state, the other one is used under
++  S0 and S5 state.
++
++properties:
++  compatible:
++    enum:
++      - cix,sky1-iomuxc
++      - cix,sky1-iomuxc-s5
++
++  reg:
++    items:
++      - description: gpio base
++
++# Client device subnode's properties
++patternProperties:
++  '-cfg$':
++    type: object
++    additionalProperties: false
++
++    description:
++      A pinctrl node should contain at least one subnode representing the
++      pinctrl groups available on the machine.
++
++    patternProperties:
++      'pins$':
++        type: object
++        additionalProperties: false
++
++        description:
++          Each subnode will list the pins it needs, and how they should
++          be configured, with regard to muxer configuration, bias pull,
++          and drive strength.
++
++        allOf:
++          - $ref: pincfg-node.yaml#
++          - $ref: pinmux-node.yaml#
++
++        properties:
++          pinmux:
++            description:
++              Values are constructed from pin number and mux setting
++
++          bias-disable: true
++
++          bias-pull-up: true
++
++          bias-pull-down: true
++
++          drive-strength:
++            description:
++              typical current when output high level.
++            enum: [ 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 17, 18, 20, 21, 23,
++                    24 ]
++
++
++        required:
++          - pinmux
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Pinmux controller node
++  - |
++    #define CIX_PAD_GPIO012_FUNC_GPIO012 (11 << 8 | 0x0)
++    #define DS_LEVEL4 (8)
++    iomuxc: pinctrl@4170000 {
++        compatible = "cix,sky1-iomuxc";
++        reg = <0x4170000 0x1000>;
++
++        wifi_vbat_gpio: wifi-vbat-gpio-cfg {
++            pins {
++                pinmux = <CIX_PAD_GPIO012_FUNC_GPIO012>;
++                bias-pull-up;
++                drive-strength = <DS_LEVEL4>;
++           };
++        };
++    };
+-- 
+2.49.0
+
