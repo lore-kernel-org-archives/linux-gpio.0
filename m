@@ -1,105 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55E33B946;
-	Tue, 21 Oct 2025 14:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E172D6E67
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 14:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055731; cv=none; b=MZox9sSUU4FlMj86ujsCpCbhWSmydHwMMzlQooNagndfB1HccebzoBSZdlDyvPLBXnuDGA2J+JrXE+8HDYtXVFGTzfsETBsomHqnocQbKiex9h4aHvStGa7zxdK8V1nv6xh4XeZX20Xl7X/pjjpHvisQo2gt4ZQ0IeHpNPTZmQo=
+	t=1761056675; cv=none; b=DtVjaUzy8GPCA/ECdoXp5uByrcNm8J55jikQUpP0kKjnIu/gZg2kxDkkjSES3QtqW/zkQYioCuuRMORggRKNZYNtU0Cy06hvkcprMSyek7D9BSvhSuGT8v7Gfo2AqY+xkPdg6oHs9OPloQ2Cnju7NE+rHULuPSFpR1/cr/M5Ec4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055731; c=relaxed/simple;
-	bh=6wiuS401xDdRYtvpYyrKEXyzFHQauHIZFmJ3uP/Anok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHIZo5HfGM2jbfIFJIbeAwHnUMKqH1WUpSyTWwaC+z00BeXdV+cOWj/aviGAzG/9TQ1EMmlGD0CVaF5a+jOTXTTGSo+JKQUqTfgA1wI/yA+6OCPkOeWW/TpEKndweTPbXDSVkA2ztT2BzqDuFup6JdKImRdaiUB2BUD0CKRI2kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9EoWC/m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761056675; c=relaxed/simple;
+	bh=bpGpijdjZAR7OyV2uiqmTwCnTxW/nQi49zgcRxMPFb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W3gfC3wXWZg/ZiShT0gF/XuhyZod5/N9LDOlczuiH1iKwnQxHkjaI4vESMCk+V/PVNN3kyrJ3K1Fxg+jx8Q1fgZIi2bvbyFam5uZIMlx4GkDePKpv3qw/4Ao4ZUp1GbgVG2mC4ULUGlYk2a4olmYr4bIMMnKtNBKvm6K3X8kJJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=a6AU+z9R; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9EoWC/m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5FE2C4CEF1;
-	Tue, 21 Oct 2025 14:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761055730;
-	bh=6wiuS401xDdRYtvpYyrKEXyzFHQauHIZFmJ3uP/Anok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h9EoWC/mq7Q8GB3952OE3all4Y/oQD5FJazcpywTYBebX9RoedVedxpDNHS4PVCJB
-	 clvxh71HKix+go+cCL2UzMsHzRMMZ8ruBpQT5N9lcglWN/kJN7EEWIY1SawDc/vy3o
-	 VEaepM0CQ2LtsiW8Ij1TwZBblsp9XkcJQJ2+x5rfrSWun323p0OHBWApqr0f0X4D65
-	 nRVaaS9OnWqUfefZN1x3dgzkoRCJkh33bjuP8nnXxDN1utdIlbi21X8qf6xPys6ote
-	 HgFMOa390SZZ1ZUrb4qxdlFJIwD91zhb2ENSsirE6jUOlefx5ZFECqK9n6xSPOSLdy
-	 +Xmkzd4fZE6oA==
-Date: Tue, 21 Oct 2025 15:08:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Will Deacon <will@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="a6AU+z9R"
+Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 5CFF968A1CC;
+	Tue, 21 Oct 2025 16:24:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761056671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WeM3dHttDCgxcjOT7kFTiod27po3wdP3a4W2ChFB354=;
+	b=a6AU+z9REHJx9dYxBOXXb1Kp0OmUDm54fZ8We2+iBYlwJN9k7DdpNGrZRtWyzSVV9oI6DW
+	cT4AeLCr2aKs2RpybT0qNVeJiQ7KfUy74mUPrjFcoq9F8Ckb/RcfINJus4J2M65/W/6eel
+	GJPy8q3ZOkBXVgxbrhq3JRiXqjeR7tqRuRn4Ztu5gRgMFId1pOQFgd1ujN3ies5YVX1qOH
+	p2KSRRJBgM0CVYF6kljJ9gC9xPA8EKw9bAUYh55D0slcBwLJR783tPYUo2BxJpRJqtWOSO
+	tZfD+vfJpa+EXeNLHiBi01Ws/jM6iCk72CDTY/vraUIEMmr94AB/DxiD+9jiJA==
+From: Sander Vanheule <sander@svanheule.net>
+To: Michael Walle <mwalle@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-Message-ID: <0e1f3a1b-46ab-4eb5-ad05-70784f9b9103@sirena.org.uk>
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <CAMRc=Me4Fh5pDOF8Z2XY4MG_DYqPRN+UJh_BzKvmULL96wciYw@mail.gmail.com>
- <81bda56c-f18b-4bd9-abf9-9da7c2251f42@sirena.org.uk>
- <CAMRc=MdOCHJEyPxN+-g71ux68=Mt_Q5P9611QO7Q8J9e8UJv_A@mail.gmail.com>
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v6 1/8] gpio: regmap: Force writes for aliased data regs
+Date: Tue, 21 Oct 2025 16:23:56 +0200
+Message-ID: <20251021142407.307753-2-sander@svanheule.net>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251021142407.307753-1-sander@svanheule.net>
+References: <20251021142407.307753-1-sander@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="be2R75B6whIQ+eJQ"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdOCHJEyPxN+-g71ux68=Mt_Q5P9611QO7Q8J9e8UJv_A@mail.gmail.com>
-X-Cookie: Accordion, n.:
+Content-Transfer-Encoding: 8bit
 
+GPIO chips often have data input and output fields aliased to the same
+offset. Since gpio-regmap performs a value update before the direction
+update (to prevent glitches), a pin currently configured as input may
+cause regmap_update_bits() to not perform a write.
 
---be2R75B6whIQ+eJQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This may cause unexpected line states when the current input state
+equals the requested output state:
 
-On Mon, Oct 20, 2025 at 11:41:52AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Oct 17, 2025 at 7:32=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
+        OUT   IN      OUT
+    DIR ''''''\...|.../''''''
 
-> > It really should be the actual physical state change that triggers the
-> > event.
+    pin ....../'''|'''\......
+             (1) (2) (3)
 
-> I guess so, but this would require some non-trivial rework of the
-> regulator core. We'd need some list of deferred notifications stored
-> in memory for when the physical state actually changes.
+    1. Line was configurad as out-low, but is reconfigured to input.
+       External logic results in high value.
+    2. Set output value high. regmap_update_bits() sees the value is
+       already high and discards the register write.
+    3. Line is switched to output, maintaining the stale output config
+       (low) instead of the requested config (high).
 
-I'm not sure I see the need for deferred notifications?  We'd need to go
-round all the users whenever a physical change to the GPIO happens but
-it's not clear what we'd need to store beyond the list of users?
+By switching to regmap_write_bits(), a write of the requested output
+value can be forced, irrespective of the read state. Do this only for
+aliased registers, so the more efficient regmap_update_bits() can still
+be used for distinct registers.
 
---be2R75B6whIQ+eJQ
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+---
+ drivers/gpio/gpio-regmap.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index ab9e4077fa60..ba3c19206ccf 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -93,7 +93,7 @@ static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
+ {
+ 	struct gpio_regmap *gpio = gpiochip_get_data(chip);
+ 	unsigned int base = gpio_regmap_addr(gpio->reg_set_base);
+-	unsigned int reg, mask;
++	unsigned int reg, mask, mask_val;
+ 	int ret;
+ 
+ 	ret = gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+@@ -101,9 +101,15 @@ static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
+ 		return ret;
+ 
+ 	if (val)
+-		ret = regmap_update_bits(gpio->regmap, reg, mask, mask);
++		mask_val = mask;
+ 	else
+-		ret = regmap_update_bits(gpio->regmap, reg, mask, 0);
++		mask_val = 0;
++
++	/* ignore input values which shadow the old output value */
++	if (gpio->reg_dat_base == gpio->reg_set_base)
++		ret = regmap_write_bits(gpio->regmap, reg, mask, mask_val);
++	else
++		ret = regmap_update_bits(gpio->regmap, reg, mask, mask_val);
+ 
+ 	return ret;
+ }
+-- 
+2.51.0
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj3k+oACgkQJNaLcl1U
-h9BE1wf/fE5s96hdrurlAFqdd32+YZYJUqEYFJu5LZKnjuA1wTr1MHfqMigev/B6
-b/Jr686Hrm/k7WS6R4q0VG8c660FzZ1zdSt/M3AoQXiQ24DcYxb8MbAexAKFbc6g
-2UYm/hbZOIK49A5XX4XBSm+zUG7c6gII9SKcovXcNVb9N3mRnsiFmnOkyTkBnFJr
-97coLg4GMr7Hh1YQLC1dAXjdfkyttrF0R5/JiVabTqQfyD27tYYedFbfSjChRVA8
-Gw7oS3+X70V6zrG/w/9Pxq2R7ikYQSZoIt9BWSh7mGFcMVudZ/QlT1P1u9q0PpLP
-avLCRl+U9JHws84L5zHfZKX0vHlk7w==
-=8Lgz
------END PGP SIGNATURE-----
-
---be2R75B6whIQ+eJQ--
