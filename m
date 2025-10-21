@@ -1,40 +1,40 @@
 Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E172D6E67
-	for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 14:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD7D338900
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 14:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761056675; cv=none; b=DtVjaUzy8GPCA/ECdoXp5uByrcNm8J55jikQUpP0kKjnIu/gZg2kxDkkjSES3QtqW/zkQYioCuuRMORggRKNZYNtU0Cy06hvkcprMSyek7D9BSvhSuGT8v7Gfo2AqY+xkPdg6oHs9OPloQ2Cnju7NE+rHULuPSFpR1/cr/M5Ec4=
+	t=1761056676; cv=none; b=dQf+v29NiVRcSL9cSNK/nZDXkJwhlbNPCcZ1GQXWHJkF2GAzwn/a8foQ+YCkIa7659kmScq8xV7hKzJzolveTGfPXOEHffjHZUCz0ddYR+zgb86q3U3KWFxQXcdxLN3HD4r9Z6ejgnf6IoAGASwDPOGPoqkmsPJtB3ayd+tYTck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761056675; c=relaxed/simple;
-	bh=bpGpijdjZAR7OyV2uiqmTwCnTxW/nQi49zgcRxMPFb0=;
+	s=arc-20240116; t=1761056676; c=relaxed/simple;
+	bh=ucYzVCWE51NmFx2/BwEBPsUCDxyYgQuvoNjfPTOejAQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W3gfC3wXWZg/ZiShT0gF/XuhyZod5/N9LDOlczuiH1iKwnQxHkjaI4vESMCk+V/PVNN3kyrJ3K1Fxg+jx8Q1fgZIi2bvbyFam5uZIMlx4GkDePKpv3qw/4Ao4ZUp1GbgVG2mC4ULUGlYk2a4olmYr4bIMMnKtNBKvm6K3X8kJJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=a6AU+z9R; arc=none smtp.client-ip=84.16.241.116
+	 MIME-Version:Content-Type; b=H55zkdwpL24syDgo0LYpPOVLJEXLjqmWrhK5YbiEjzIV3NmcF38zvUnfjG3J+3zjemg7Pk6OpiBw6Bs2dSzT5UUecFF0hrHAk5hSIPYx1mtryTdEMqpEocok0TiDwTuJyl2sQ22V6vCXmTfOFmyU3KiBp6ySqi25qD3WYynnNsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=F+zhHnzn; arc=none smtp.client-ip=84.16.241.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="a6AU+z9R"
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="F+zhHnzn"
 Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 5CFF968A1CC;
-	Tue, 21 Oct 2025 16:24:31 +0200 (CEST)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 3A9C168A1CE;
+	Tue, 21 Oct 2025 16:24:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1761056671;
+	s=mail1707; t=1761056672;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WeM3dHttDCgxcjOT7kFTiod27po3wdP3a4W2ChFB354=;
-	b=a6AU+z9REHJx9dYxBOXXb1Kp0OmUDm54fZ8We2+iBYlwJN9k7DdpNGrZRtWyzSVV9oI6DW
-	cT4AeLCr2aKs2RpybT0qNVeJiQ7KfUy74mUPrjFcoq9F8Ckb/RcfINJus4J2M65/W/6eel
-	GJPy8q3ZOkBXVgxbrhq3JRiXqjeR7tqRuRn4Ztu5gRgMFId1pOQFgd1ujN3ies5YVX1qOH
-	p2KSRRJBgM0CVYF6kljJ9gC9xPA8EKw9bAUYh55D0slcBwLJR783tPYUo2BxJpRJqtWOSO
-	tZfD+vfJpa+EXeNLHiBi01Ws/jM6iCk72CDTY/vraUIEMmr94AB/DxiD+9jiJA==
+	bh=6urXFWKajG7kcvFel7TUKdKt+O2PPPG68C70YJSu5js=;
+	b=F+zhHnzncWlcMdVdICpMKjG7HOxTgcKwkRwP1k9bJTl5+mXURjl9b+wZ8kB6bBad+2x3gz
+	ydP7XyI3LiVSODo1BhgLzddF4Gj9ya7x6BXvL5mJTQRYxN+G1Fhf6iW6ko0ZHnytfTzrAk
+	aEruKRZK+o5hVZE7QPY2868adoGPFANpqp0gcpAuNKIRJnNs1Uk73vBoj1+UcnK8pQHJiC
+	1/RgmkBPntkfUCQ3ZzNV7B6OQh7hzUvemRkgwd7q6lTzVZ5LDwRvgl/eM/60UCNHZWicQi
+	fQzEyXgTAwsVjaqHQAwnuB4WSG+wItrFQFPybhgMvNO0KxPzmjk78bibsXGiIQ==
 From: Sander Vanheule <sander@svanheule.net>
 To: Michael Walle <mwalle@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
@@ -49,9 +49,9 @@ To: Michael Walle <mwalle@kernel.org>,
 	devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH v6 1/8] gpio: regmap: Force writes for aliased data regs
-Date: Tue, 21 Oct 2025 16:23:56 +0200
-Message-ID: <20251021142407.307753-2-sander@svanheule.net>
+Subject: [PATCH v6 3/8] dt-bindings: leds: Binding for RTL8231 scan matrix
+Date: Tue, 21 Oct 2025 16:23:58 +0200
+Message-ID: <20251021142407.307753-4-sander@svanheule.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251021142407.307753-1-sander@svanheule.net>
 References: <20251021142407.307753-1-sander@svanheule.net>
@@ -61,71 +61,191 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-GPIO chips often have data input and output fields aliased to the same
-offset. Since gpio-regmap performs a value update before the direction
-update (to prevent glitches), a pin currently configured as input may
-cause regmap_update_bits() to not perform a write.
-
-This may cause unexpected line states when the current input state
-equals the requested output state:
-
-        OUT   IN      OUT
-    DIR ''''''\...|.../''''''
-
-    pin ....../'''|'''\......
-             (1) (2) (3)
-
-    1. Line was configurad as out-low, but is reconfigured to input.
-       External logic results in high value.
-    2. Set output value high. regmap_update_bits() sees the value is
-       already high and discards the register write.
-    3. Line is switched to output, maintaining the stale output config
-       (low) instead of the requested config (high).
-
-By switching to regmap_write_bits(), a write of the requested output
-value can be forced, irrespective of the read state. Do this only for
-aliased registers, so the more efficient regmap_update_bits() can still
-be used for distinct registers.
+Add a binding description for the Realtek RTL8231's LED support, which
+consists of up to 88 LEDs arranged in a number of scanning matrices.
 
 Signed-off-by: Sander Vanheule <sander@svanheule.net>
-Reviewed-by: Michael Walle <mwalle@kernel.org>
 ---
- drivers/gpio/gpio-regmap.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ .../bindings/leds/realtek,rtl8231-leds.yaml   | 167 ++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index ab9e4077fa60..ba3c19206ccf 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -93,7 +93,7 @@ static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
- {
- 	struct gpio_regmap *gpio = gpiochip_get_data(chip);
- 	unsigned int base = gpio_regmap_addr(gpio->reg_set_base);
--	unsigned int reg, mask;
-+	unsigned int reg, mask, mask_val;
- 	int ret;
- 
- 	ret = gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
-@@ -101,9 +101,15 @@ static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
- 		return ret;
- 
- 	if (val)
--		ret = regmap_update_bits(gpio->regmap, reg, mask, mask);
-+		mask_val = mask;
- 	else
--		ret = regmap_update_bits(gpio->regmap, reg, mask, 0);
-+		mask_val = 0;
+diff --git a/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml b/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+new file mode 100644
+index 000000000000..54e8593f8c06
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+@@ -0,0 +1,167 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/realtek,rtl8231-leds.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	/* ignore input values which shadow the old output value */
-+	if (gpio->reg_dat_base == gpio->reg_set_base)
-+		ret = regmap_write_bits(gpio->regmap, reg, mask, mask_val);
-+	else
-+		ret = regmap_update_bits(gpio->regmap, reg, mask, mask_val);
- 
- 	return ret;
- }
++title: Realtek RTL8231 LED scan matrix.
++
++maintainers:
++  - Sander Vanheule <sander@svanheule.net>
++
++description: |
++  The RTL8231 has support for driving a number of LED matrices, by scanning
++  over the LEDs pins, alternatingly lighting different columns and/or rows.
++
++  This functionality is available on an RTL8231, when it is configured for use
++  as an MDIO device, or SMI device.
++
++  In single color scan mode, 88 LEDs are supported. These are grouped into
++  three output matrices:
++    - Group A of 6×6 single color LEDs. Rows and columns are driven by GPIO
++      pins 0-11.
++               L0[n]    L1[n]    L2[n]    L0[n+6]  L1[n+6]  L2[n+6]
++                |        |        |        |        |        |
++       P0/P6  --<--------<--------<--------<--------<--------< (3)
++                |        |        |        |        |        |
++       P1/P7  --<--------<--------<--------<--------<--------< (4)
++                |        |        |        |        |        |
++       P2/P8  --<--------<--------<--------<--------<--------< (5)
++                |        |        |        |        |        |
++       P3/P9  --<--------<--------<--------<--------<--------< (6)
++                |        |        |        |        |        |
++       P4/P10 --<--------<--------<--------<--------<--------< (7)
++                |        |        |        |        |        |
++       P5/P11 --<--------<--------<--------<--------<--------< (8)
++               (0)      (1)      (2)      (9)     (10)     (11)
++    - Group B of 6×6 single color LEDs. Rows and columns are driven by GPIO
++      pins 12-23.
++               L0[n]    L1[n]    L2[n]    L0[n+6]  L1[n+6]  L2[n+6]
++                |        |        |        |        |        |
++      P12/P18 --<--------<--------<--------<--------<--------< (15)
++                |        |        |        |        |        |
++      P13/P19 --<--------<--------<--------<--------<--------< (16)
++                |        |        |        |        |        |
++      P14/P20 --<--------<--------<--------<--------<--------< (17)
++                |        |        |        |        |        |
++      P15/P21 --<--------<--------<--------<--------<--------< (18)
++                |        |        |        |        |        |
++      P16/P22 --<--------<--------<--------<--------<--------< (19)
++                |        |        |        |        |        |
++      P17/P23 --<--------<--------<--------<--------<--------< (20)
++              (12)     (13)     (14)    (21)      (22)     (23)
++    - Group C of 8 pairs of anti-parallel (or bi-color) LEDs. LED selection is
++      provided by GPIO pins 24-27 and 29-32, polarity selection by GPIO 28.
++               P24     P25  ...  P30     P31
++                |       |         |       |
++      LED POL --X-------X---/\/---X-------X (28)
++              (24)    (25)  ... (31)    (32)
++
++  In bi-color scan mode, 72 LEDs are supported. These are grouped into four
++  output matrices:
++    - Group A of 12 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 0-11, polarity selection by GPIO 12.
++    - Group B of 6 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 23-28, polarity selection by GPIO 21.
++    - Group C of 6 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 29-34, polarity selection by GPIO 22.
++    - Group of 4×6 single color LEDs. Rows are driven by GPIO pins 15-20,
++      columns by GPIO pins 13-14 and 21-22 (shared with groups B and C).
++           L2[n]    L2[n+6]   L2[n+12]  L2[n+18]
++            |        |         |         |
++       +0 --<--------<---------<---------< (15)
++            |        |         |         |
++       +1 --<--------<---------<---------< (16)
++            |        |         |         |
++       +2 --<--------<---------<---------< (17)
++            |        |         |         |
++       +3 --<--------<---------<---------< (18)
++            |        |         |         |
++       +4 --<--------<---------<---------< (19)
++            |        |         |         |
++       +6 --<--------<---------<---------< (20)
++          (13)     (14)      (21)      (22)
++
++  This node must always be a child of a 'realtek,rtl8231' node.
++
++properties:
++  $nodename:
++    const: led-controller
++
++  compatible:
++    const: realtek,rtl8231-leds
++
++  "#address-cells":
++    const: 2
++
++  "#size-cells":
++    const: 0
++
++  realtek,led-scan-mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: |
++      Specify the scanning mode the chip should run in. See general description
++      for how the scanning matrices are wired up.
++    enum: [single-color, bi-color]
++
++patternProperties:
++  "^led@":
++    description: |
++      LEDs are addressed by their port index and led index. Ports 0-23 always
++      support three LEDs. Additionally, but only when used in single color scan
++      mode, ports 24-31 support two LEDs.
++    type: object
++
++    properties:
++      reg:
++        items:
++          - items:
++              - description: port index
++                maximum: 31
++              - description: led index
++                maximum: 2
++
++    allOf:
++      - $ref: ../leds/common.yaml#
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++  - realtek,led-scan-mode
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++    led-controller {
++        compatible = "realtek,rtl8231-leds";
++        #address-cells = <2>;
++        #size-cells = <0>;
++
++        realtek,led-scan-mode = "single-color";
++
++        led@0,0 {
++            reg = <0 0>;
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_LAN;
++            function-enumerator = <0>;
++        };
++
++        led@0,1 {
++            reg = <0 1>;
++            color = <LED_COLOR_ID_AMBER>;
++            function = LED_FUNCTION_LAN;
++            function-enumerator = <0>;
++        };
++
++        led@0,2 {
++            reg = <0 2>;
++            color = <LED_COLOR_ID_GREEN>;
++            function = LED_FUNCTION_STATUS;
++        };
++    };
 -- 
 2.51.0
 
