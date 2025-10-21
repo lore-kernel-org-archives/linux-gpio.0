@@ -1,110 +1,144 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AD832A3FE
-	for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 09:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78AF1DFE26
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 09:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761037314; cv=none; b=PdxXQpjjkOEa3OxC3V9fcqMItGVuLNF6chxO1SVbaFMqyXTflKm1odL/JYjpm38Oc3LHhIdY7tGGkdBBPt0CqStvBMsY5qxBIxVUnakD0bpW6j5ca86AfjHsrtkx1qxgBIaxRh1gdRLYxxuEjXrTFoernNmuRLrZp3ZT6WEx2EQ=
+	t=1761037601; cv=none; b=ILHqh7fGck0dzpxc+ETRKPOe8jlufFO+biHeM586V+c2hZotKmD5VWyp7vWCFvQBUgXaDYHItWWXAR0ddh6YZkkP3XvhtOWDk7XB/uNiCB1eT6lgqp1GuRA675UfynOaqMK1w6YhE6zG0TmBVjnDki0bJJQEYVXmnAOMGIJXM/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761037314; c=relaxed/simple;
-	bh=6FGMoBORg99KnBrarD8GoS8zAVIGXZsSV3BubyDkhDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cKe1S9akLISNAeHJ760uBNdQrmDEQ3/c2AMjPe9vkxHKVmwWpSVzAuwkNEYzAaEVOegC5MfaOm6jvxuHDtRVb2AUOp+OUSklXuBVq+YCE0uV1h4s+8IaIbIwf+SfSuN/ZkoqXCDbQMal+msHbosi1zEanliD6ALZvjOa1IyG2OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=N6cR1szu; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1761037601; c=relaxed/simple;
+	bh=Kw8PWnwgX+EVahNAArZWM7gjO7i4Jria4MYBSb58vsE=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bm0jA0/s0oAKMRg0+YA0XrIvPa8z1wkN03zUZ9RUoYak3sml72b9U1GQcDPZen7ce0zn2hYWCnngCJ5XNQMXL6fpG33c7Jhayj8pz2cY4gfJgf1LFPeb38qkpUGvOldqlW3HAcn165eiE+s9/rDFbLrG6iczKPEiM3vLT0QDpnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tfU4V0m0; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="N6cR1szu"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4710683a644so47129945e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 02:01:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tfU4V0m0"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-591ec7af7a1so480611e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Oct 2025 02:06:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761037310; x=1761642110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=49JxCosN6UMd+mu602+9mIL8zSuLvHdexepIGtQqYnU=;
-        b=N6cR1szumcd0F7oAFEndX5X4NRVVCSLcsZtmEF/eOwquswLMxVA7xmyrPpKTanEF70
-         GfUqEBdWOSqRRtzIQnzxi3rpyYWhGfvK3CClKDYvr/ylZzwX33bme7xCkM0L5KvYoqKr
-         QOd+I2G8cIONIYU8d3R1mpgSAvBx0cvhyzhX5fd2EntaPLG4QhGf1F/hw8mO+h4USD08
-         X3OvNnWaSMcS/S+kxglqaax73Rn7X0AVi9bFVasJpMHHcFlKiz0RJT5/32y0eqjyc6cS
-         nRJ62Tq/OinpxVTGa/inarf3ku2K8FpRVx5E2/QGPHZ6Cih2mxq4J+Idlzgz6HNv03b+
-         Iz9g==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761037598; x=1761642398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qPpFx6ykYRuQv3SA/HXCy/3dmgOcOpqVjX/aVsVTlzA=;
+        b=tfU4V0m0q57ZNx37L4RF0azZHlUDduWeeC9bYeHb9rdfOA1mum134AYF39DYXOiIYT
+         I+vn8/fKOQ3Ss5jnpxMfjeBiJZwPTYfWw1x9lkaDZe1m/NrbyWflzd7trjvmr1779Ray
+         9eEEMaR6jYRnSD+DofE1YJA1MdBqwlmNIGHyHXZd1tOaKo6SjNT05obwLiRhc17s4FMv
+         ZDwKw6yKfo43zpGAPgutaBmavQSgpkqo09ByL/tp6OUwwpAoNfIj72EPsVofw5KNKlsK
+         JpTM6dOj5kfVxvDAw0O81/YwmJDN3zMPEp4ff98oisA8xQkaEFiQnGQICDaEAZKJWSFZ
+         1tww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761037310; x=1761642110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=49JxCosN6UMd+mu602+9mIL8zSuLvHdexepIGtQqYnU=;
-        b=SB/uex+UHmrpoBpmuwV+LCa6nWyB6XeGVIomY3IFZSYbZ+0VDuqajlslQeA1NU0gZ8
-         o8bRltGw+BZAgNyRcjSDTWo8HxrlJvoudOmREnh26RAq7DP8ow+xbl2MO2F8zgz9Hi8b
-         /lamMbgJjCdVC1Z7cgp6ESRIcqb8EUm17v+vuCfzFTI3aN62REF7PjV2JMdfUYr4cPqb
-         oebZ8iut4IBjWB7nzvXdOBB5vxiwmobeIJepNFGPC978t1pM2wH3UxiA/p8EGXyEHQk2
-         7amfH1wtnUydlArTSAXFvHnzLD4tOMVFf0fPHW5y0Jd8oMo55ewl7Ci750e0ymB4uO0K
-         7RfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWx58Y2sTv4Zg5AKO5fg4UN9Omv4HSxd7SG81GaRvO5OH7xB/kfumi+vh3cat30+YesvWviv7TnhREB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2F0Nm0gydPYbLuEDrp6QcMduZGTcpNee+wk6+Z2honYJm3M1/
-	05pYgXNQ51v75+QUZGMvP7jT5NDVXsZ7IcGP8GiUeUcETYPmEHJYO09zuxqrM37q2Bk=
-X-Gm-Gg: ASbGnctF6iSQ19OTpkzTmYyE647S3kfguBYDg3YoiE0m1ZPBxiwPjX8EgZZSvYmVY17
-	++f1+nnPxHB5aZmlW8N8vFK3dAlUlTKKk4iMMHWPB2/ofAAZmbUj4SoFb9Ut+DUqeSE4cxx3l7t
-	fnbLSBXhDkEH7UvZc+PAsVo59UwaLweqUcWvTKJz9Y+cTeiKlvqRJRzfU70BmwJld58o3s+PUhv
-	pxnKFEPpyNlSknr7h9NdeC4+eWKkpW8cIe6hXJz2uXHb6J6kzIG70ALQb6kVuWGA0SQXT4ra+qO
-	6n/mia1mm8ORlBHirAZZMZKcQHx/vGXo+LhY3y8N/wLqFJBn3X5l7QycOmuw/VoLIqqxA3P5qgc
-	gdAtqRS5VilLpBAcnl7iRr953HacGYUuXRMXfroT3vOrC5+PuXGM7hJcagfM719/l2m/Y+UzTnJ
-	uYVQ==
-X-Google-Smtp-Source: AGHT+IF4+Jqg42h4vf4LdcJ3ZdiKv/gkignL2tLnHJsLuKCIADz3i+gKe0h9ZTIsqthfXRn+rzdJQA==
-X-Received: by 2002:a05:600c:4483:b0:46e:33ed:bca4 with SMTP id 5b1f17b1804b1-47109b58b72mr87717475e9.15.1761037310064;
-        Tue, 21 Oct 2025 02:01:50 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2979:9ff9:6677:97c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4715257d972sm191369065e9.1.2025.10.21.02.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 02:01:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761037598; x=1761642398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qPpFx6ykYRuQv3SA/HXCy/3dmgOcOpqVjX/aVsVTlzA=;
+        b=cpo6IRBHuYZ8karSe/fCYjqRFJNfKWbEPCT6S4AwmeSer1TGROLBnnhoX+YgwlUGZK
+         6I76glou75ca137vhBAEfWXisSPByR9NIlxPWnyqnCq3VEEyY7TctbYlJKLsgYQZl7a7
+         RmetGUWLEFouIv79dWBfm88w43UXuDHcaaHXurBNxBh7G/0S7Cq/EQdmokdSsZ1yc3Ag
+         nYFH6nuOpYjMfpsaa94N3wKoz5J9bz4F73OPA4MneQJUpfwfH0ILEuwX7F6fjb2qeCP4
+         Fu3ES5XEFJjhvnSG0UWD175DMSha+mZkIZqpoLaRu9qAiLtRTAZGbaA3B7x4wnhnaylT
+         EFQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTgA21LRFCmNjVAIDofMVq/PXsLx9I8hacqd5GKnLSTDu929eKuhzm8HyQymcOYnwR4VzdOEaNk/DK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcTNIZPbJbltxjaAksc116s/p5OoFMadVA3w7M3+74krGQJuA4
+	0yZeh9Bkxe1aD0FnOEf/LMMO6s+ATC/FqjsonGzveA02Rs8RADr38ADWbJGXqzQLQ69giFZ/3kk
+	CiwM/HqCVpzT265x0wA7QVtG+eKwl2pnKgM2eB3bxCQ==
+X-Gm-Gg: ASbGncvkJyhsfIWGNt0NUMh4QsViGbpl/jGml+U0AtsAv7OnCDx2K35Cj/yN/G3Mrwx
+	TRIRNBUpDofELYWcEngCIgsnLTP48yO/jdOt/951XMIaAB5xiGX32PVIh0bBfODy9Stex8m0yJD
+	adVNQ+jZp/Ss6WWS9HEkDkcU8OUUv5l4s2YeQsyXQ1uojzmNNv9GNXeopP6YOq4fRKDjsF9YKlL
+	DlPow/G2o6PIZ6uxqyLgpVenYiSpN8vplDoYPTZ2uQnb+dyzx9fNe5Gu4eFhP8hKU51IJ1osvyR
+	HXwzSL507yrYDTcspKJWVHUqWI4=
+X-Google-Smtp-Source: AGHT+IE3YtmLtzMdziyNQ1IevYP+jbdpiGOkpNCybV2U1useYtB1KfMzt3wyojS9vR+rFcn0fnnKKJYLP3lPJrg2WpI=
+X-Received: by 2002:a05:6512:68d:b0:57d:a8e6:6574 with SMTP id
+ 2adb3069b0e04-591d8506e95mr4737920e87.20.1761037597726; Tue, 21 Oct 2025
+ 02:06:37 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Oct 2025 02:06:36 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Oct 2025 02:06:36 -0700
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] gpio: qixis-fpga: add missing module description
-Date: Tue, 21 Oct 2025 11:01:44 +0200
-Message-ID: <176103730244.11215.5092820773554833275.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251020072028.21423-1-brgl@bgdev.pl>
-References: <20251020072028.21423-1-brgl@bgdev.pl>
+In-Reply-To: <aPcuHpYCM22NZ7S_@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org>
+ <20251006-reset-gpios-swnodes-v1-3-6d3325b9af42@linaro.org>
+ <aO1dBgPZfDJTsPfE@smile.fi.intel.com> <CAMRc=MfOoHn+mLRpQBEsC3g5sM=VZBgVffsm68CAXJBHffPxdA@mail.gmail.com>
+ <aPYJeqFY_9YV9AQn@ashevche-desk.local> <CAMRc=McBTgnQXkPoOUYC=PDDwFXuVqfMFuiwZTW7ODb6owJbeg@mail.gmail.com>
+ <aPcuHpYCM22NZ7S_@kekkonen.localdomain>
+Date: Tue, 21 Oct 2025 02:06:36 -0700
+X-Gm-Features: AS18NWBfQzQ4G0TaM5lf1nYCqc0Xona873xRGvt4LqOC2I4vW3KZIjQXa4Az2P0
+Message-ID: <CAMRc=Me0YyBK5DtyJO4ZZvfvnhdtJx92_ktQA_eVhqFEkh=Bqg@mail.gmail.com>
+Subject: Re: [PATCH 3/9] software node: allow referencing firmware nodes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, 21 Oct 2025 08:54:22 +0200, Sakari Ailus
+<sakari.ailus@linux.intel.com> said:
+> Hi Bartosz, Andy,
+>
+> On Mon, Oct 20, 2025 at 01:26:59PM +0200, Bartosz Golaszewski wrote:
+>> On Mon, Oct 20, 2025 at 12:05=E2=80=AFPM Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com> wrote:
+>> >
+>> > > >
+>> > > > Can't we always have an fwnode reference?
+>> > >
+>> > > Unfortunately no. A const struct software_node is not yet a full
+>> > > fwnode, it's just a template that becomes an actual firmware node wh=
+en
+>> > > it's registered with the swnode framework. However in order to allow
+>> > > creating a graph of software nodes before we register them, we need =
+a
+>> > > way to reference those templates and then look them up internally in
+>> > > swnode code.
+>> >
+>> > Strange that you need this way. The IPU3 bridge driver (that creates a=
+ graph of
+>> > fwnodes at run-time for being consumed by the respective parts of v4l2
+>> > framework) IIRC has no such issue. Why your case is different?
+>> >
+>>
+>> From what I can tell the ipu-bridge driver only references software
+>> nodes (as struct software_node) from other software nodes. I need to
+>> reference ANY implementation of firmware node from a software node.
+>
+> Yes, the IPU bridge only references software nodes.
+>
+> I might use two distinct pointers instead of an union and an integer fiel=
+d
+> that tells which type is the right one. I don't expect more such cases
+> here; it's either a software node or an fwnode handle (ACPI or OF node).
+>
 
+Like:
 
-On Mon, 20 Oct 2025 09:20:28 +0200, Bartosz Golaszewski wrote:
-> A kernel module must have a license and should have a description. Add
-> missing MODULE_LICENSE(), MODULE_DESCRIPTION() and throw in a
-> MODULE_AUTHOR() for good measure.
-> 
-> This fixes the following build issues:
-> 
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-qixis-fpga.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-qixis-fpga.o
-> 
-> [...]
+struct software_node_ref_args {
+	const struct software_node *swnode;
+	struct fwnode_handle *fwnode;
+	unsigned int nargs;
+	u64 args[NR_FWNODE_REFERENCE_ARGS];
+};
 
-Applied, thanks!
+And then if swnode is NULL then assume fwnode must not be?
 
-[1/1] gpio: qixis-fpga: add missing module description
-      https://git.kernel.org/brgl/linux/c/e0a6ec724e5b87a0b162912b5d30bb6f066677e2
+I'm not sure if it's necessarily better but I don't have a strong opinion o=
+n
+this either.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Bartosz
