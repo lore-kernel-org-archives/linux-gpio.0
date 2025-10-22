@@ -1,204 +1,110 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D97A2F28F2
-	for <linux-gpio@vger.kernel.org>; Wed, 22 Oct 2025 07:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBE5307ADA
+	for <linux-gpio@vger.kernel.org>; Wed, 22 Oct 2025 08:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761119882; cv=none; b=Z36oo7LupSU+WZZAt+iB2fqu6PHzGU0KJ95LBfGGBHRHEEgDUxnQ17UwdpNiiALAen4TXlKr5jLNUXisVpb3eqvVmcXtM0Ge2nBATcWQoF2SFoq/ORjvFT99mkgJEEIFe/u3ZxrKUEezQUQEWIGUD/n1FC33kJ+d+XrjZjf4yYw=
+	t=1761121451; cv=none; b=ShhOw+s3HD2VItOY5G023KCUBApYDtmy2X6tmXkO2OVZ8wS0VAkhWEEd95Pgwjcmwkz9b36OOXj7p9SYmwp6p6Wbd6k1ZvuXVq0AT1HOUbHx49QxORQxvk7xSyPxBaWz1WWwn5BVIpiYL84p6YqDoB7rybRgbWjaA6gk/5VgITQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761119882; c=relaxed/simple;
-	bh=VnNG+je4Lg3LmZw8AWVpXwp/KZFby0hE6gSZ6AqLHjc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=cGh3dnTLO19gl2CqO8HRPelfvjpu6d0Gjq2BD+Z+ub3Tpue31CsuvJ6HQeTQVkH/XOm0Un6/YYhfBRD+MLkO+dkMv3McFMwuRbIuHNl2kmhKnwDY3h3IVH7n1suBKJ8suUVMoOkcpvnUVTwYDwbsCB8k0vpwB1oGfoatlCb8P14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgXMP8oi; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761121451; c=relaxed/simple;
+	bh=cVLAI8TidoafTBGuNFYDV/STwV4in9pD95DRKnSWSMk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MX9aUdDrf8ZI9ada9BruvCI4NV8fn+zL8Fd2yfYwSCIsQHz1QuSVNqdbRR52TeOYRNNBiWMLnJRAbch7UR86aiW6tWdhucISY5+OxL3mNhdMx6NssmIC34JNf8FYg4BoHhcF01ZRxvELqVsLQ0/7VFZAKBaHhlZtHFRWXfQUcq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=ZW4uF3y5; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgXMP8oi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761119881; x=1792655881;
-  h=date:from:to:cc:subject:message-id;
-  bh=VnNG+je4Lg3LmZw8AWVpXwp/KZFby0hE6gSZ6AqLHjc=;
-  b=QgXMP8oih/cT4AGxZnxaw7tV/qPoNu4NZrwnStqa/oqnNacGMTwcKBgG
-   KkFaZRLsAoqs/DtMLscrq+W3JKLQIty9f83j7hEY1WEREDDkeKDxEInis
-   C3ZJuIJtCIYDcGjv6pxN60KJZZb5Si21nrdYLFaC2ZCtxpnmgFEWbWO9O
-   8IXCa23nn3Jbfz0XsYSVv9BTSsqBqbeqw8E67EdoltetgovzPJEFevLX5
-   10ehAtZKl1Q3dytzKhqNXJHvTJJwtNPALYency91GvsZsTrXHrS1iq5DG
-   pIXrCZ6h0aUM1uKmBUFTNDmRbKSIBAhrwvlH5U3mXimhcLWxzAVj71At0
-   Q==;
-X-CSE-ConnectionGUID: NRCZik6gRR2sqo8wcjmATw==
-X-CSE-MsgGUID: 354Iag1oST2E7w8lgEv89Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63355673"
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="63355673"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 00:58:00 -0700
-X-CSE-ConnectionGUID: bKNTcIMzSfyK47nD1GFMDw==
-X-CSE-MsgGUID: kZCv3OgJRECOFRFGUVgk/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,246,1754982000"; 
-   d="scan'208";a="183694482"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2025 00:57:59 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBTj0-000C7r-1h;
-	Wed, 22 Oct 2025 07:57:44 +0000
-Date: Wed, 22 Oct 2025 15:55:26 +0800
-From: kernel test robot <lkp@intel.com>
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="ZW4uF3y5"
+Received: from [172.28.172.2] (ptr-94-109-117-102.dyn.orange.be [94.109.117.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id D88AA68B189;
+	Wed, 22 Oct 2025 10:24:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761121447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cVLAI8TidoafTBGuNFYDV/STwV4in9pD95DRKnSWSMk=;
+	b=ZW4uF3y5R7fcDgf9PaMVfeZt4x0p/ZgPa0U+r6M87BR8FT7cpWGQ/EaZz1WWU3GokV37HE
+	cURMdW0WJniFNpUlbSgmAbhZPiJc6n1II7TPE3Kt1hCIAxYNLYSxYxboPmQPKi4UFPi7Kl
+	42oxNcoq0BQGaq2MNWu/X8bQZYC2wpc5Yjamjfp+ptfaSDucrIQTxE6tNvSIsb1ZUu/bBo
+	cK2l3HTFdODeNW1l4C6logie0WdX/J4GKYuu7cC3jhMtp+5x2j4u37D4XY/OU0lXkUL290
+	YjFlv751+dTC0Sii866FsiXjs/hHWEWMUQG+ZEtSLOzYucUKC07uN5Ciq2Wi4g==
+Message-ID: <e6d95d91b68a86b748008f69dcc495796b61843e.camel@svanheule.net>
+Subject: Re: [PATCH v6 6/8] pinctrl: Add RTL8231 pin control and GPIO support
+From: Sander Vanheule <sander@svanheule.net>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- ca575f89d70b11fab3d2997ab990179024497987
-Message-ID: <202510221520.alVGymcu-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+Cc: Michael Walle <mwalle@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek
+	 <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 22 Oct 2025 10:24:04 +0200
+In-Reply-To: <CACRpkdYde+=85f6Zfz40bMwOxSE-bszHzvBhQwC+G-E2CZr3Lg@mail.gmail.com>
+References: <20251021142407.307753-1-sander@svanheule.net>
+	 <20251021142407.307753-7-sander@svanheule.net>
+	 <CACRpkdYde+=85f6Zfz40bMwOxSE-bszHzvBhQwC+G-E2CZr3Lg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: ca575f89d70b11fab3d2997ab990179024497987  Merge branch 'devel' into for-next
+Hi Linus,
 
-elapsed time: 1459m
+On Wed, 2025-10-22 at 09:42 +0200, Linus Walleij wrote:
+> Hi Sander,
+>=20
+> thanks for your patch!
+>=20
+> Overall this driver looks very good and well designed, using the
+> right abstractions and everything.
 
-configs tested: 127
-configs skipped: 3
+Thanks!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> The build bots are complaining but I think you will have fixed that
+> in no time.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20251021    gcc-8.5.0
-arc                   randconfig-002-20251021    gcc-9.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20251021    clang-22
-arm                   randconfig-002-20251021    clang-22
-arm                   randconfig-003-20251021    clang-22
-arm                   randconfig-004-20251021    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251021    gcc-15.1.0
-arm64                 randconfig-002-20251021    clang-22
-arm64                 randconfig-003-20251021    gcc-12.5.0
-arm64                 randconfig-004-20251021    clang-18
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251021    gcc-15.1.0
-csky                  randconfig-002-20251021    gcc-11.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20251021    clang-22
-hexagon               randconfig-002-20251021    clang-17
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20251021    clang-20
-i386        buildonly-randconfig-002-20251021    clang-20
-i386        buildonly-randconfig-003-20251021    clang-20
-i386        buildonly-randconfig-004-20251021    gcc-14
-i386        buildonly-randconfig-005-20251021    gcc-14
-i386        buildonly-randconfig-006-20251021    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                 loongson3_defconfig    clang-22
-loongarch             randconfig-001-20251021    clang-22
-loongarch             randconfig-002-20251021    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                          atari_defconfig    gcc-15.1.0
-m68k                           sun3_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251021    gcc-10.5.0
-nios2                 randconfig-002-20251021    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251021    gcc-8.5.0
-parisc                randconfig-002-20251021    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                        fsp2_defconfig    gcc-15.1.0
-powerpc                 mpc836x_rdk_defconfig    clang-22
-powerpc               randconfig-001-20251021    clang-22
-powerpc               randconfig-002-20251021    clang-19
-powerpc               randconfig-003-20251021    clang-22
-powerpc                     redwood_defconfig    clang-22
-powerpc64             randconfig-001-20251021    clang-22
-powerpc64             randconfig-002-20251021    gcc-12.5.0
-powerpc64             randconfig-003-20251021    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251021    gcc-8.5.0
-riscv                 randconfig-002-20251021    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251021    clang-22
-s390                  randconfig-002-20251021    gcc-11.5.0
-s390                       zfcpdump_defconfig    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251021    gcc-9.5.0
-sh                    randconfig-002-20251021    gcc-10.5.0
-sh                      rts7751r2d1_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251021    gcc-8.5.0
-sparc                 randconfig-002-20251021    gcc-14.3.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251021    gcc-8.5.0
-sparc64               randconfig-002-20251021    gcc-10.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251021    gcc-14
-um                    randconfig-002-20251021    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251021    gcc-13
-x86_64      buildonly-randconfig-002-20251021    clang-20
-x86_64      buildonly-randconfig-003-20251021    clang-20
-x86_64      buildonly-randconfig-004-20251021    clang-20
-x86_64      buildonly-randconfig-005-20251021    gcc-14
-x86_64      buildonly-randconfig-006-20251021    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251021    gcc-8.5.0
-xtensa                randconfig-002-20251021    gcc-13.4.0
+Indeed, I reproduced it on a UM build and resolved it by changing the under=
+lying type for
+enum rtl8231_pin_function to uintptr_t.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Additionally, this showed that I was missing CONFIG_GPIOLIB, so PINCTRL_RTL=
+8231 now
+selects that as well.
+
+>=20
+> Just one minor comment:
+>=20
+> On Tue, Oct 21, 2025 at 4:24=E2=80=AFPM Sander Vanheule <sander@svanheule=
+.net> wrote:
+>=20
+> > This driver implements the GPIO and pin muxing features provided by the
+> > RTL8231. The device should be instantiated as an MFD child, where the
+> > parent device has already configured the regmap used for register
+> > access.
+>=20
+> This is Realtek, right?
+>=20
+> > =C2=A0drivers/pinctrl/pinctrl-rtl8231.c | 538 +++++++++++++++++++++++++=
++++++
+>=20
+> Should we put the driver in
+> drivers/pinctrl/realtek/*?
+
+Like you noticed, this is for an external chip, so I also decided to not mo=
+ve it to that
+directory.
+
+Best,
+Sander
