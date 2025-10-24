@@ -1,129 +1,113 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEFC2D0C83
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2025 07:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB44B2DEA71
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2025 07:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290259; cv=none; b=VoUJt3YQX0JH7QqcY8Gwu01txmxeceLQhHhCXrnWfikB4cM/D+1Ky3E3TiwCDBvKygvo3Z9PGf78cgKlmsFcqqjWgwtKLLwyZw4PCLwWLcfiqW35QJ/AITnso6xCH/hnMrEvZJvnZ6MjmdSY1PsPFF6dWa7Nc//QLTa3vK2TJP4=
+	t=1761290455; cv=none; b=fqdxSOeunmbn+Mblj3HDITAIHi+6el7t5a6wlcf/6TNnTo1bduCnSKXLGu9Ydh4DQMUmNFVqZjSO6wecA2de4hzRl3hK9CsZpj4Ejnu49OEU7gxB6m1OldkhEWgdT2nSD+TgAxA7JVWcct/lk/Zqxz/Lxre2WBOgLYdC1ACLgS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290259; c=relaxed/simple;
-	bh=h6tvnK0ig57jTEdAxnPvo8iEQOCIPVB7NO7ABROSJlE=;
+	s=arc-20240116; t=1761290455; c=relaxed/simple;
+	bh=CR+8roHK+/LDuQ73yW6ockKv+8Mv8IDa0Xrtz7eQhq0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SoclV+byKLCsEelUQoc+wniyiTR7Nl+dwDCpk2FXOtWL5rtO0WX4UErv2IAm2oGx4OIl2FtTZhXF63kErhPyjO/43h8rf1Z6hTsUsPkfKlG6JR9QJeL7sPCZOvdTnP5NoByAD766q2ad/2vyoMimC4FEjDtgOTNgNfg10uOMeAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Hh/LIHH9; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=lDlwFqbEc/wH89ns0gZ3zK7QOI1wBdkcj/RD5MOPQZeLYQ9PAYnRal1v5AGLIiGxfP2naM/lqCDFCWGdwFtbTTeE39+41/JSSbnyzA+scj818QaGSF1kdfIQpOKp2hdxxZayWGZCQr7bAwJELhGjHm4iQnI2+sYEQLDfSNDXNXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=do0n/H+0; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Hh/LIHH9"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso2203257e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2025 00:17:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="do0n/H+0"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57bb7ee3142so2028405e87.0
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Oct 2025 00:20:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761290256; x=1761895056; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761290451; x=1761895251; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=50RoFCtoYdtNhCcZXh1N26BbF9N2TRDC7n9nR8KK4ck=;
-        b=Hh/LIHH9EWP9SMo1Wz5KepCOsj7UOc1jBMW/MX6ohDd4KTQmQ17vieVR1zojgB00jV
-         leZ+sb2JWjQFdJJmM37l2QezEFlulxaqMmBR2GSYsSsp0p693NgdZDJXXm2ehejLOKye
-         b2bInW90ScSf4wTuC3I2s5/uUwW++tX3mHiiFo3oPdIfSMU0WxzkLxm43ynRWlPDxl+e
-         Fiz2NuoghtjzM9Z+X9p7mkDU6Z1ig0auZFNWMIjHHDmA2YlorVgaghfazAQfnkSd36dQ
-         F2tHDJsAeofrFad3Km5PEDWF1X+kDkTmxnSUySyupWSrMUOxBGRxwqGJUSdfiygmWBwr
-         de6w==
+        bh=CR+8roHK+/LDuQ73yW6ockKv+8Mv8IDa0Xrtz7eQhq0=;
+        b=do0n/H+0YBdSMkTq7sBSXWn2/iExuSH4K0sIPxL9iTSfguBIyMA23Lt0sQVhm0PSy0
+         0xOcYCLnv24GEMyEVQXR6ARjMO7Mu8VwfZzGGYTd2CkQ7DgrYJBnTyT8tXGIFBZcd+2z
+         /7Aupadl9J7Add8zraBmNJfaTmayqpTtIQYwASfQ+2z9NaRvc8O2BOMxiTcgGNNatDjn
+         aTy/UOiUjqg1hTXOt2qLk0r2MeMWkvJxIiPlV9sv20AD3ZIonIu05vFTjISc4bFpTg6o
+         fjK97f4HJYjgLkswp9aaoSnhY2zJs1fHeFRj/b/czuWD1FFNJTn+X9mHV6UEvyS/RjPm
+         4qIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761290256; x=1761895056;
+        d=1e100.net; s=20230601; t=1761290451; x=1761895251;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=50RoFCtoYdtNhCcZXh1N26BbF9N2TRDC7n9nR8KK4ck=;
-        b=wnmSGj5jTnX8cZWiGM3r49etSdVjRzOHlGeagMr1yWbk69kaka8TANl3TUIo8WPp8Q
-         jEk0hbNFPcWZWfX1TaFZA4fSWV0DvmQ5dCGixUDztJOCq66ELTUJIkA1M+RzuY6HkvAN
-         hhWSozRbpFI7e+kLeR7etO1haR6VLULcwV45j5NTPUHUosgpL4fsyvhaFdlUdBbWSDyi
-         JjZb5VF27iRCpELN9utSNh7dqkL1e+13RfByvA82T9zOye/3dBt9EoP6s9RCgKLVUTXK
-         vV2v6PLJTQM21mhCH+QHB2IJmArdwiBmqRkke5NPzm5Z9HxGQb2FdNKBrQHEUITSVmmK
-         tDKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMjtXfsD5r005PrHdovBJeSnpWgfymJUxgE9hGCmMCGyjOpeTD0wQr1rYwlsBTvvUzVhk27XtdqaKd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj/vfOdNAqVUrBCXc9ooQnXrNnE6mIjYpdPXEcpRrTISNGOZdU
-	RhcLUi4kHatWUSWH1ibTyZmpzKKs34KyXR4wV8MZmIgnZiitfJ7lJjnRxzs9IiEOb+bWGel3jYx
-	2LG8DMalB1jUWbjIeivJoVOaQmH62QxV9W+9rAy/NWg==
-X-Gm-Gg: ASbGncuaBW/JaTEf7Dcs3JP7omdMtTKXVadoRV0yofwYyiOYIb7sQdxRib1QzwIB7rf
-	i3/ff2QRfWKuoBwgr0fkmFzyMtQDAPEJXr1DTqh4/MwAKFdWd6ECmbDcfzIQTV+IdgAzrF5Dla5
-	WUljA3VAMSeHWIbfE1jwvT+TOUaZ+bJZDFhc/CNUHvy0wI84WbN9LCt8vN/8j7tTvkgHOdQe+xD
-	EzoFyKDCkpuqxOzDdcb6RzBHWb7B52wkliJ7pdAO3npsFXY0p9SKozwJCFpBrb/CwU+ByWPM0qs
-	VdLTKuR6PkSnkt4=
-X-Google-Smtp-Source: AGHT+IE8neVFu8ZIN5sSXL6tieYxgR9sJA/fT6BQfIeVNgFTWlxgxkEp21AyvSf43DhGoh14lH1c87nKZ36hn82BpM4=
-X-Received: by 2002:a05:6512:3c89:b0:592:f727:3209 with SMTP id
- 2adb3069b0e04-592f72732cbmr1678539e87.37.1761290256485; Fri, 24 Oct 2025
- 00:17:36 -0700 (PDT)
+        bh=CR+8roHK+/LDuQ73yW6ockKv+8Mv8IDa0Xrtz7eQhq0=;
+        b=QalR9QOYGOJAGwiddTpwk46mjUFhE4fw+VDpAAYu1EOpxMcf/PwefhW+o/eH6kAwkt
+         7NoqjZEucCeUu9wyAxm2kIKI50/mapirvLsa1M4Z0oSfpVccxCklevbS71BihtxFoYJu
+         7Eh0KI7zuo+He1sVfG5AqT6aHpskUHS/H623bAmAUkJOXg0B+Bz9a7H5xuzQc92Ysx+E
+         Tq3o+aAsA+fiEz5r/xYn3dgPSZskEf9WZXMJiCTqhZraOKC5dFutha5rf/KH4qLAjPQs
+         9urjrZVVDVsdfB3ncH4JY/htbdiapd9okCM4wwEhuselGBepUmusHdjL8MDu1AG2/L84
+         4bnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVASYxajQHtUENgRY6r1ZhU6mWjvzfzg9ugDZXYgx1jX2Yb8jgbCN7oVpS0/AwV9stGPNBOT1TcejrD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCGeH/wdqxak8VerSmsomBjifDZR0W4pwbTH6ALm3cOokZcs18
+	Q9neTKkvEWjt7UDq/LpoMjt3rqqvbRji+HXHReEXV6TTwVmLTUEWyUZH4/X9/bmoElYxpN5A92n
+	vhCN+9X77Zijl3/iENWi48rPy7vPeYxuRRSoswnvNqQ==
+X-Gm-Gg: ASbGnctxXYv0l+F4ZJ2DuGV2qc4fw1iu7rS0/5hs/5NJgaz2x5XxCaIKG3DqLzN5832
+	HS75WABum4cY/t3xR+kA0W2RR6MMS1m/8pj2io6L68HCT2SxtxR022B1Bn2TY4VRpA37rcsAeDl
+	pu6z4AIdot3Yxg7uTMK2UEMCvDNO2dlkYEt3TxehtbRTYriCo/U8smVo9Pr3D0/2d4+n7Qld1eR
+	77U1D0Ycx/j4eVB9b9fo0qmiGBT3soeWOmUtCGHe/DLD7NadiFAB39lkT/5dfD5APNDs2ifisbF
+	9ssRzhNfe3eqrnjgJyao9BbU3g==
+X-Google-Smtp-Source: AGHT+IH0zdKNAnAn0HY8zeCAL8aa1oecPklr3WTZJPyPQRrZZ9JAeaLToU97/5gWoSWPOCpiqMgKR7gX6TBItcaDYYE=
+X-Received: by 2002:a05:6512:220e:b0:592:f5f9:f5a9 with SMTP id
+ 2adb3069b0e04-592f5f9f709mr1849794e87.36.1761290451029; Fri, 24 Oct 2025
+ 00:20:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
- <20251022-reset-gpios-swnodes-v2-4-69088530291b@linaro.org> <aPkmDWJEKrjlMPnD@smile.fi.intel.com>
-In-Reply-To: <aPkmDWJEKrjlMPnD@smile.fi.intel.com>
+References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org> <db05003c-8ac5-49da-b0ce-e0b668f49caf@linux.intel.com>
+In-Reply-To: <db05003c-8ac5-49da-b0ce-e0b668f49caf@linux.intel.com>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 24 Oct 2025 09:17:25 +0200
-X-Gm-Features: AS18NWChfhu5HfalO-BdlmyskcwYb0ZO_M2N7vcsZ7y2nHqTFlEjipwk5PGstwk
-Message-ID: <CAMRc=MeNNGXy6aAanLnbWFYJiK65dvm_HyjCDS1=LZ4RiA4GAA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] gpio: swnode: don't use the swnode's name as the
- key for GPIO lookup
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
+Date: Fri, 24 Oct 2025 09:20:39 +0200
+X-Gm-Features: AS18NWBFHHtshqZfLTmGnpCECipG6SuC-vURJ7Hpik3InZgpuKVx4aYTO-AzQUA
+Message-ID: <CAMRc=MdWjyTyJh5zfE5qncO8ABn7QSuV1CUZXa+cSMjWoXUrNA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] gpio: improve support for shared GPIOs
+To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 8:44=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Oct 24, 2025 at 9:17=E2=80=AFAM P=C3=A9ter Ujfalusi
+<peter.ujfalusi@linux.intel.com> wrote:
 >
-> On Wed, Oct 22, 2025 at 03:41:03PM +0200, Bartosz Golaszewski wrote:
-> >
-> > Looking up a GPIO controller by label that is the name of the software
-> > node is wonky at best - the GPIO controller driver is free to set
-> > a different label than the name of its firmware node. We're already bei=
-ng
-> > passed a firmware node handle attached to the GPIO device to
-> > swnode_get_gpio_device() so use it instead for a more precise lookup.
 >
-> ...
 >
-> >  static struct gpio_device *swnode_get_gpio_device(struct fwnode_handle=
- *fwnode)
-> >  {
-> > +     struct gpio_device *gdev __free(gpio_device_put) =3D
-> > +                                     gpio_device_find_by_fwnode(fwnode=
-);
-> > +     if (!gdev)
-> > +             return ERR_PTR(-EPROBE_DEFER);
-> >
-> >       /*
-> >        * Check for a special node that identifies undefined GPIOs, this=
- is
-> >        * primarily used as a key for internal chip selects in SPI bindi=
-ngs.
-> >        */
-> >       if (IS_ENABLED(CONFIG_GPIO_SWNODE_UNDEFINED) &&
-> > +         !strcmp(fwnode_get_name(fwnode), GPIOLIB_SWNODE_UNDEFINED_NAM=
-E))
-> >               return ERR_PTR(-ENOENT);
+> On 22/10/2025 16:10, Bartosz Golaszewski wrote:
+> > Problem statement: GPIOs are implemented as a strictly exclusive
+> > resource in the kernel but there are lots of platforms on which single
+> > pin is shared by multiple devices which don't communicate so need some
+> > way of properly sharing access to a GPIO. What we have now is the
+> > GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
+> > doesn't do any locking or arbitration of access - it literally just han=
+d
+> > the same GPIO descriptor to all interested users.
 >
-> Now we might get EPROBE_DEREF for the cases when previously it was ENOENT=
-.
-> Why is this not a problem? (I haven't found the answer neither in the com=
-ment
-> above, nor in the commit message)
+> I had few stabs on this in the past, all got somehow derailed, one
+> example was:
+> https://lkml.org/lkml/2019/10/30/311
 >
 
-Yeah, maybe it should only change the last part from looking up by
-label to looking up by fwnode and leave the previous checks in place.
+The main issue I see with this approach is adding an actual device
+node for the shared GPIO which is now not accepted in DT bindings. We
+only create nodes for actual HW components. All the information is
+already in the device-tree, we just need to scan it which is what I'm
+trying to do here.
 
-Bart
+Bartosz
