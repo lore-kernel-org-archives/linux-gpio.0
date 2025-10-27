@@ -1,31 +1,31 @@
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEA42DC34E;
-	Mon, 27 Oct 2025 06:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1792D94BE;
+	Mon, 27 Oct 2025 06:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761546281; cv=none; b=H2Gfz4FmQlhAZqb8Be53tHPcdgo/RSWba5CQM3vEAUKCTP1rDOcCAkVxkX3J5YZVI1RgLH5Ij23ihRrB9owc1l7efZvRmgJZMX+qGwi7d3YvlXEDkcdg4anZE85RglF9rhS8ADJruKoUX06ikN1/zdSy4kL1XHJ9fznjT7+VKT0=
+	t=1761546418; cv=none; b=WQtscfkKcdXhh66msXqdh3pwpFseg7btgLPGhiaaM1dto2SR4pa3Ea44o8jr64KZ+TpZzESUZY5Vo+e4YSc7PUXS0F+bBs4hLWs4kTQg0PC3HiV+tDIi6hWgTZjzUnfKeVF/BOnU6MUgaDv5BiEqMN2qJWWtTiE4rGdOKpMjGSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761546281; c=relaxed/simple;
-	bh=Le7lV+2aLJjDa4ndhtGnPRvBaNUlnKPV78Y/kL6rP2o=;
+	s=arc-20240116; t=1761546418; c=relaxed/simple;
+	bh=HYWkmt3LCPdE9n17oEOvzOhX1Ae4vU8uAWLnveHqqC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IP3vELqDNKoGxed8SbwU5amgSzCuj791bDXmmaBYNxvEwjnciw4AXg3OVePvnKSBM27AcRm5LVyOLu5o/EQx9DVAD08R9xArv0PwCvTxl+bVO2T5NgCd64/Fm+6whzvEECckYS5Fl7ENi0pXD4w71PJJS4aK+V3YwdHRnHo2jX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=P+6kl3qB; arc=none smtp.client-ip=220.197.32.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTifZHKQEgklEDXpByBWAS2eHZgFk2M8l9Vu9HvAqCMNynqigUZeedy+uSkB0XRcFDOQ0GXJElD12iJdnXHissVtKTPCWeWzDN8Pbp4injzL0QBWonhpO3ewBRY3c50Rf8bdYbMeMeJhU1UMqDw3QTYBm5+UXRSe/sFOC4wFzgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TKTTrNlH; arc=none smtp.client-ip=1.95.21.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="P+6kl3qB"
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TKTTrNlH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=zYi8AtKFubJGhxQrf5AZVDxH9A2Ceq38/SIjZMGH2qU=;
-	b=P+6kl3qBgUHUdyf0SAIG/8oUUTG7VmcHKTKMPPiGFwrA0kHreKqRgJ4wYGfLC0
-	NDl/CbcluIRbMu7sAYENvFQXOgk3tL/DoRGJFBo9E1Nk8MXXvRYrkwmt8Ww1pO1a
-	ZE5mjM22WvjC/cex+ll2evc994KlKBtQLRlhYNPWjCU7g=
+	Content-Type; bh=CmB72yubslbZXj8R2X1Bdm4JAwibrDYd8xNkh45tUaU=;
+	b=TKTTrNlHNchd5mbbe/gEWwLHIFAfZ3MvCt9+y03jNixpkRH59d4/k33Ap/x358
+	7NssfSFTnDfcJv9qZ7NbukOgg7Se8Pz0yhWKKQeR1c5jOPlRHlcIvbGYKF/oNjPo
+	S0o9obahp/+lxg4MVVG7nqST4CpT+/as291aLds4FxENU=
 Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3n7P1D_9oxEO6AA--.51802S3;
-	Mon, 27 Oct 2025 14:23:51 +0800 (CST)
-Date: Mon, 27 Oct 2025 14:23:49 +0800
+	by gzsmtp3 (Coremail) with SMTP id M88vCgCHTyCMEP9oq0y6AA--.3282S3;
+	Mon, 27 Oct 2025 14:26:22 +0800 (CST)
+Date: Mon, 27 Oct 2025 14:26:19 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
 To: Ioana Ciornei <ioana.ciornei@nxp.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -34,13 +34,12 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
 	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v6 2/9] dt-bindings: fsl,fpga-qixis-i2c: add support for
- LX2160ARDB FPGA
-Message-ID: <aP8P9bUcVki_wIbG@dragon>
+	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v6 6/9] arm64: dts: lx2160a-rdb: describe the QIXIS FPGA
+ and two child GPIO controllers
+Message-ID: <aP8Qi6n2Tac_mQp2@dragon>
 References: <20251014155358.3885805-1-ioana.ciornei@nxp.com>
- <20251014155358.3885805-3-ioana.ciornei@nxp.com>
+ <20251014155358.3885805-7-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -49,39 +48,22 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014155358.3885805-3-ioana.ciornei@nxp.com>
-X-CM-TRANSID:M88vCgD3n7P1D_9oxEO6AA--.51802S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KFWUuryDCF48uw18uF4fAFb_yoW8Gr13pr
-	yYka98Zas8tr1UCrZYgry8ZF4rCa1kA3Z8Awn8Ar1xu3s0gFW0grWa9a4rZasrAw48Zayj
-	qFWjga1kJrWDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhNVgUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIRcbgGj-D-dpfgAA3V
+In-Reply-To: <20251014155358.3885805-7-ioana.ciornei@nxp.com>
+X-CM-TRANSID:M88vCgCHTyCMEP9oq0y6AA--.3282S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUO7KIDUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRTzZWj-BPkuXAAAsT
 
-On Tue, Oct 14, 2025 at 06:53:51PM +0300, Ioana Ciornei wrote:
-> Extend the list of supported compatible strings with fsl,lx2160ardb-fpga.
+On Tue, Oct 14, 2025 at 06:53:55PM +0300, Ioana Ciornei wrote:
+> Describe the FPGA present on the LX2160ARDB board as a simple-mfd I2C
+> device. The FPGA presents registers that deal with power-on-reset
+> timing, muxing, SFP cage monitoring and control etc.
 > 
-> Since the register map exposed by the LX2160ARDB's FPGA also contains
-> two GPIO controllers, accept the necessary GPIO pattern property.
-> At the same time, add the #address-cells and #size-cells properties as
-> valid ones so that the child nodes of the fsl,lx2160ardb-fpga node are
-> addressable.
-> 
-> This is necessary because when defining child devices such as the GPIO
-> controller described in the added example, the child device needs a the
-> reg property to properly identify its register location in the parent
-> I2C device address space.
-> 
-> Impose this restriction for the new compatible through an if-statement.
-> 
-> The feature set exposed by these QIXIS FPGA devices is highly dependent
-> on the board type, meaning that even though the FPGA found on the
-> LX2160AQDS board (fsl,lx2160aqds-fpga) works in the same way in terms of
-> access over I2C as the one found on the LX2160ARDB (fsl,lx2160ardb-fpga
-> added here), the register map inside the device space is different since
-> there are different on-board devices to be controlled.
+> Also add the two GPIO controllers responsible for monitoring and
+> controlling the SFP+ cages used for MAC5 and MAC6.
 > 
 > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
 Applied, thanks!
 
