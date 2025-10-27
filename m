@@ -1,36 +1,38 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F12A1CA
-	for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2025 12:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7056C19066D;
+	Mon, 27 Oct 2025 12:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568598; cv=none; b=DbU/idwccLsPcGTMBxZB8JAc+Q4iuWJW7vV/ToEKff9aBDKvpNtMgQq4wJmd4fq9PSC9u2JZ+CT1ci6XHofVMtdPFHTYcnNtJU9j2iutGfpUBGtvtIOhhjvtPZi2IyTc88UGLgdQ3fAjDiDPu0R+QiNc4v3OykRWCWkz42jcFXQ=
+	t=1761568599; cv=none; b=GITcSGdCsbGmZejjwr4Mg6WPIbn7zeidQwxFvg59N11dJz08sb9fd+jIE2aiQAI4RaX7RV6OtFEzVvbadMwEwMHyYpxnoDXDypZzXTfUZEVSbDBDzJ9uK6uD/C6Ekn6Hmy8XCGkDIvL5rhSp8LnQAqiNRmYabq2o2NBUMbZhp2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568598; c=relaxed/simple;
-	bh=DjSjySGl8gtkYz/83bByKwAq/ciahRTGHXSBHJPVRc0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p8FkpdCSNvpfLMkwmuo9u0dzRfcEsgnas2c6dLca2PeaQHEIW49P/iKbOoE7c/XJ90jhB1Vg6uMqQJj8Lez6t3mTVhZ2254NCKio8IBQ3yr5MNdhBdrfhdcsxNZHGLC6AmG3FqJ3OOoAiXC4A0fWJzpar7tq3cRnMS7wp4lBss8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zbD9JNIn; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1761568599; c=relaxed/simple;
+	bh=wKTOuqBfnalEmfN7yoZWb6HUSWjmCULlR5vNporkClE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iLHRQBACjhgJ/rNKyhLci+9eHoTmc7/+RlG/M+7XCuy/hlcoEzkHbCd6GAT22HtBy7sBZFDtDkQUlfqogFh9e25dlYdDmi96Z371acr3aNiUZ3Al73RL6jlrSZbLk324rr8MI+LH4sDSqp7yi3qrCCFCJUk9Dsn9If1AsdUfXNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HheIAT0l; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zbD9JNIn"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HheIAT0l"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C7D944E41365;
-	Mon, 27 Oct 2025 12:36:27 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id C330E4E4136C;
+	Mon, 27 Oct 2025 12:36:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 99FB06062C;
-	Mon, 27 Oct 2025 12:36:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 467A3102F24FE;
-	Mon, 27 Oct 2025 13:36:11 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9896B6062C;
+	Mon, 27 Oct 2025 12:36:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EA35F102F24FE;
+	Mon, 27 Oct 2025 13:36:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761568586; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=5ElA93l32upTadDYDoioEAUEE5MykclXhIDHopfVyBU=;
-	b=zbD9JNIn4/0lwa5XMcuxRrK89JLk3FAp8n8+uCcKDw4mbNGdZ3MfSqaqe8FddyfKh2E3+W
-	88yMkXwGGbF4mIcvzmqhgrCGfmSeyzgtMdpyYmccrrrDYYNKaJo2ee+PjiIg7M4SF90RQj
-	yoxl0KBxQ2pA3aqy1DCDMbpliLa6Rh00eeag0CveL+rMXfJyrMUWOqVYNZZjGnBlJFs6Js
-	jdQ2JvYyeQvdUOqd1kXrlJNWMkx+wyDM87X2ZnPYzycsOIHS/QafbfosnB4YvAph2lEwmb
-	Icz9fQ+VBdc9Lu2h2QDG2CjLpyhsCK48mtVCd4GIMgKi3iGq10njQTS6O43s8Q==
+	t=1761568594; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=QBlfnPJwGIXoUklEq6xYhFHnSO32edjs9JLjQGY9LrA=;
+	b=HheIAT0l06ge76lQekn1eY80uc3kKU70PRTsjCyPZJ9d9wzpA12wfiR6cJjlj0Nh1QNUXA
+	64sauNuPCzRn0M1nVhYXfhxncWFis6B6LFXfgy4pYCuIX717VuY5LX5mZHSGoiDUBtJojZ
+	dJE25HRHASxXoBmAMNjQem6pYVM9njad29XtqrBuoHBuhE6w63vPtqfoCHcZr4sshc8412
+	P3praZks1DtYdVmrWdF23olfMOgc+X3mq+i9CoKG96z6eKRrqUFgEaSBUsefwTLNwbAhDU
+	hE6rIkvxUxxPz/kNeygfhVEqwu/pFxWxD/7VVAi98T6hCuVIQjk3KeKYZMpDzQ==
 From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -53,229 +55,102 @@ Cc: Phil Edworthy <phil.edworthy@renesas.com>,
 	Pascal Eberhard <pascal.eberhard@se.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 0/8] gpio: renesas: Add support for GPIO and related interrupts in RZ/N1 SoC
-Date: Mon, 27 Oct 2025 13:35:52 +0100
-Message-ID: <20251027123601.77216-1-herve.codina@bootlin.com>
+Subject: [PATCH v6 3/8] irqchip/ls-extirq: Use for_each_of_imap_item iterator
+Date: Mon, 27 Oct 2025 13:35:55 +0100
+Message-ID: <20251027123601.77216-4-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251027123601.77216-1-herve.codina@bootlin.com>
+References: <20251027123601.77216-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+The ls-extirq driver parses the interrupt-map property. It does it using
+open code.
 
-This series adds support for GPIO and GPIO IRQ mux available in the
-RZ/N1 SoCs.
+Recently for_each_of_imap_item iterator has been introduce to help
+drivers in this parsing.
 
-The first patches in this series are related to a new helper introduced
-to parse an interrupt-map property.
-  - patch 1: Introduce the helper (for_each_of_imap_item)
-  - patch 2: Add a unittest for the new helper
-  - patch 3 and 4: convert existing drivers to use this new helper
+Convert the ls-extirq driver to use the for_each_of_imap_item
+iterator instead of open code.
 
-Patch 5 adds support for GPIO (device-tree description)
+Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+---
+ drivers/irqchip/irq-ls-extirq.c | 47 ++++++++++++---------------------
+ 1 file changed, 17 insertions(+), 30 deletions(-)
 
-The last patches (6, 7 and 8) of the series are related to GPIO
-interrupts and GPIO IRQ multiplexer.
-
-In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
-
-This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
-available to wire them to the GIC input lines.
-
-One upstreaming attempt have been done previously by Phil Edworthy [1]
-but the series has never been applied.
-
-Based on my understanding, I have fully reworked the driver proposed by
-Phil and removed the IRQ domain. Indeed, the device doesn't handle
-interrupts. It just routes signals.
-
-Also, as an interrupt-map property is used, the driver cannot be
-involved as an interrupt controller itself. It is a nexus node.
-
-With that in mind,
-  - Patch 6 is related to the irq-mux binding.
-
-  - Patch 7 introduces the irq-mux driver.
-    This driver uses the 'for_each_of_imap_item' helper introduced
-    previously. Indeed, the lines routing is defined by the
-    interrupt-map property and the driver needs to set registers to
-    apply this routing.
-
-  - Patch 8 is the RZ/N1 device-tree description update to have the
-    support for the GPIO interrupts.
-
-[1] https://lore.kernel.org/all/20190219155511.28507-1-phil.edworthy@renesas.com/
-
-Best regards,
-Hervé
-
-Changes v5 -> v6
-  v5: https://lore.kernel.org/lkml/20251020080648.13452-1-herve.codina@bootlin.com/
-
-  Patches 1 and 2:
-    Add 'Reviewed-by: Rob Herring'
-
-  Patches 3, and 5:
-    No changes
-
-  Patch 6:
-    Add 'Reviewed-by: Rob Herring'
-
-  Patch 7:
-    Remove an unneeded TAB in Makefile.
-    Use RZN1_IRQMUX_GIC_SPI_BASE and RZN1_IRQMUX_NUM_OUTPUTS to replace
-    the irq/output mapping table.
-    Use DECLARE_BITMAP().
-
-  Patch 8:
-    No changes
-
-Changes v4 -> v5
-  v4: https://lore.kernel.org/lkml/20250922152640.154092-1-herve.codina@bootlin.com/
-
-  Rebase on top of v6.18-rc1
-
-  Patches 1 to 3:
-    No changes
-
-  Patch 4:
-    Fix conflict.
-    Add 'Tested-by: Wolfram Sang'.
-
-  Patch 5:
-    Add 'Reviewed-by: Bartosz Golaszewski'.
-
-  Patch 6:
-    Add 'Reviewed-by: Wolfram Sang'.
-
-  Patch 7:
-    Add a missing 'const' qualifier.
-    Remove an unneeded dev_err_probe() call.
-    Add a check to avoid setting the same output line multiple times.
-
-  Patch 8:
-    Update comment
-    Add 'Reviewed-by: Bartosz Golaszewski'
-
-Changes v3 -> v4
-  v3: https://lore.kernel.org/lkml/20250918104009.94754-1-herve.codina@bootlin.com/
-
-  Patch 1:
-    - Add 'Tested-by: Wolfram Sang'
-
-  Patch 2..5:
-    - No changes
-
-  Patch 6:
-    - Add minItems and maxItems
-    - Update the 'interrup-map' description
-
-  Patch 7:
-    - Use rzn1_irqmux prefix instead of irqmux.
-    - Introduce rzn1_irqmux_output_lines[] to give the mapping between
-      the interrupt output line index and the GIC controller interrupt
-      number.
-    - Remove of_irq_count() call and related checks
-
-  Patch 8:
-    - Describe the irq mux node using a reduced (one item) interrupt-map
-      property.
-
-Changes v2 -> v3
-  v2: https://lore.kernel.org/lkml/20250909120041.154459-1-herve.codina@bootlin.com/
-
-  Reordered patches as suggested by Thomas Gleixner.
-
-  Patch 1: (3 in v2)
-    - Replace a wrong 'extern' by 'static inline' in of_irq.h  (detected
-      by test robots)
-
-  Patch 2: (4 in v2)
-  Patch 3: (5 in v2)
-  Patch 4: (6 in v2)
-    - No changes
-
-  Patch 5: (1 in v2)
-    - Add 'Reviewed-by: Wolfram Sang'
-    - Add 'Tested-by: Wolfram Sang'
-
-  Patch 6: (2 in v2)
-    - Add '#address-cells = <0>;' in the interrupt-controller node
-      present in the example.
-
-  Patch 7:
-  Patch 8:
-    - No changes
-
-Changes v1 -> v2
-  v1: https://lore.kernel.org/lkml/20250725152618.32886-1-herve.codina@bootlin.com/
-
-  Rebase on top of v6.17-rc5
-
-  Patch 1 in v1
-    - Removed in v2 (no need for RZ/N1 compatible strings).
-
-  Patch 1 (2 in v1)
-    - Fix node names (issue reported by Rob's bot)
-    - Fix compatible RZ/N1 compatible strings
-    - Removed undocumented and unused 'bank-name' properties
-
-  Patch 2 (3 in v1)
-   - Remove 'interrupts' property
-   - Update 'interrupt-map' description
-
-  Patch 3 (4 in v1)
-   - Rework of_irq_foreach_imap() to provide the for_each_of_imap_item
-     iterator (similar to for_each_of_range)
-
-  Patch 4 (new in v2)
-   - Add a unittest for for_each_of_imap_item
-
-  Patch 5 (new in v2)
-   - Convert irqchip/ls-extirq to use for_each_of_imap_item
-
-  Patch 6 (new in v2)
-   - Convert irqchip/renesas-rza1 to use for_each_of_imap_item
-
-  Patch 7 (5 in v1)
-   - Use for_each_of_imap_item
-   - Remove 'interrupts' property usage
-
-  Patch 8 (6 in v1)
-   - Remove 'interrupts' property
-
-Herve Codina (Schneider Electric) (8):
-  of/irq: Introduce for_each_of_imap_item
-  of: unittest: Add a test case for for_each_of_imap_item iterator
-  irqchip/ls-extirq: Use for_each_of_imap_item iterator
-  irqchip/renesas-rza1: Use for_each_of_imap_item iterator
-  ARM: dts: r9a06g032: Add GPIO controllers
-  dt-bindings: soc: renesas: Add the Renesas RZ/N1 GPIO Interrupt
-    Multiplexer
-  soc: renesas: Add support for Renesas RZ/N1 GPIO Interrupt Multiplexer
-  ARM: dts: r9a06g032: Add support for GPIO interrupts
-
- .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  |  87 ++++++++++
- arch/arm/boot/dts/renesas/r9a06g032.dtsi      | 162 ++++++++++++++++++
- drivers/irqchip/irq-ls-extirq.c               |  47 ++---
- drivers/irqchip/irq-renesas-rza1.c            |  43 ++---
- drivers/of/irq.c                              |  70 ++++++++
- .../of/unittest-data/tests-interrupts.dtsi    |   9 +
- drivers/of/unittest.c                         | 116 +++++++++++++
- drivers/soc/renesas/Kconfig                   |   4 +
- drivers/soc/renesas/Makefile                  |   1 +
- drivers/soc/renesas/rzn1_irqmux.c             | 133 ++++++++++++++
- include/linux/of_irq.h                        |  41 ++++-
- 11 files changed, 655 insertions(+), 58 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.yaml
- create mode 100644 drivers/soc/renesas/rzn1_irqmux.c
-
+diff --git a/drivers/irqchip/irq-ls-extirq.c b/drivers/irqchip/irq-ls-extirq.c
+index 50a7b38381b9..ed8755777349 100644
+--- a/drivers/irqchip/irq-ls-extirq.c
++++ b/drivers/irqchip/irq-ls-extirq.c
+@@ -125,45 +125,32 @@ static const struct irq_domain_ops extirq_domain_ops = {
+ static int
+ ls_extirq_parse_map(struct ls_extirq_data *priv, struct device_node *node)
+ {
+-	const __be32 *map;
+-	u32 mapsize;
++	struct of_imap_parser imap_parser;
++	struct of_imap_item imap_item;
+ 	int ret;
+ 
+-	map = of_get_property(node, "interrupt-map", &mapsize);
+-	if (!map)
+-		return -ENOENT;
+-	if (mapsize % sizeof(*map))
+-		return -EINVAL;
+-	mapsize /= sizeof(*map);
++	ret = of_imap_parser_init(&imap_parser, node, &imap_item);
++	if (ret)
++		return ret;
+ 
+-	while (mapsize) {
++	for_each_of_imap_item(&imap_parser, &imap_item) {
+ 		struct device_node *ipar;
+-		u32 hwirq, intsize, j;
++		u32 hwirq;
++		int i;
+ 
+-		if (mapsize < 3)
+-			return -EINVAL;
+-		hwirq = be32_to_cpup(map);
+-		if (hwirq >= MAXIRQ)
++		hwirq = imap_item.child_imap[0];
++		if (hwirq >= MAXIRQ) {
++			of_node_put(imap_item.parent_args.np);
+ 			return -EINVAL;
++		}
+ 		priv->nirq = max(priv->nirq, hwirq + 1);
+ 
+-		ipar = of_find_node_by_phandle(be32_to_cpup(map + 2));
+-		map += 3;
+-		mapsize -= 3;
+-		if (!ipar)
+-			return -EINVAL;
+-		priv->map[hwirq].fwnode = &ipar->fwnode;
+-		ret = of_property_read_u32(ipar, "#interrupt-cells", &intsize);
+-		if (ret)
+-			return ret;
+-
+-		if (intsize > mapsize)
+-			return -EINVAL;
++		ipar = of_node_get(imap_item.parent_args.np);
++		priv->map[hwirq].fwnode = of_fwnode_handle(ipar);
+ 
+-		priv->map[hwirq].param_count = intsize;
+-		for (j = 0; j < intsize; ++j)
+-			priv->map[hwirq].param[j] = be32_to_cpup(map++);
+-		mapsize -= intsize;
++		priv->map[hwirq].param_count = imap_item.parent_args.args_count;
++		for (i = 0; i < priv->map[hwirq].param_count; i++)
++			priv->map[hwirq].param[i] = imap_item.parent_args.args[i];
+ 	}
+ 	return 0;
+ }
 -- 
 2.51.0
 
