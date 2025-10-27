@@ -1,38 +1,38 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705D91991B6;
-	Mon, 27 Oct 2025 12:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8085E29A9F9
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Oct 2025 12:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761568599; cv=none; b=bKnrx3Xlcx5pbky/CQgnTyp0IBVSITpBgOKeVWTsSYlKascUx58RwOpxMi0qLyeAh/3kVL9zWJgDspSnm0iHRxg3S9WoTBOskDj/8fSdl9kPZJE8TLaelPlXV0t40KtHG34nQb5nqvM6pG6F9Rn6wI+dDWS59L2kf4v4uh2tPuw=
+	t=1761568601; cv=none; b=OzC63LfxwyQ7SBLDwsZ4gFcNqAMsNzGPiqp5du8o66A4WS34DbL1GswynVgzN5jt2uq4VVy9tz96tK4pUJKal7klgT/jb/lF/QBaYIETtcfRDnpwoZKUX93cb80oRhvFPpjw6/wHZx1u5gT3XBIaqO++T0DhjiicSojaCQ2fv0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761568599; c=relaxed/simple;
-	bh=kWTBO9iv5flSQArPR6Uly05WJ2rUoYXHRSpT4+4BwNs=;
+	s=arc-20240116; t=1761568601; c=relaxed/simple;
+	bh=W9m+J89nGWrUIyyZHLJwvhX+zZwaJTQAbU1Ln6pRJNw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n7kZJqARX+ydVKoVlbbrkZqskO92T2kwvRd+9UI0BRn1WIsjgHVTO0rCSOnOif1wZwRZgbDGZ79pNjOYSkkSlVHyjvswWp9GYAx9oYGKQL8+2yfwJonrXOtLefdYEasRK2VIbBxC11MrNY14yg0MItf61oAq5BNqXVlJwmG3Xoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eJ9GXQa2; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version; b=pIrEioNmsbrgXG+LZ5+LWnEhcUBkLEnkobHDtBfH1sGbiFobFCXk5kAoQha6D82Efb2n6BVNKIrdnbxY1Xos9DBZ0p11Jyacet4Lz/RVyZ3AoiQCXzGtNkY9XjarGfN4NSXjSDH3QykGHaKvCX05/hmDuJRWGSCFXpM3kbN4org=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OxGNVlRU; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eJ9GXQa2"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OxGNVlRU"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1C5DE4E41367;
-	Mon, 27 Oct 2025 12:36:30 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EB7CBC0B899;
+	Mon, 27 Oct 2025 12:36:17 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E6B006062C;
-	Mon, 27 Oct 2025 12:36:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0CCE0102F24F1;
-	Mon, 27 Oct 2025 13:36:26 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 245506062C;
+	Mon, 27 Oct 2025 12:36:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD0B4102F2502;
+	Mon, 27 Oct 2025 13:36:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761568588; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1761568597; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=+0CPeaUtC1rWE7IeaEm7zMzdR6dkj4e4oBvZPWzU0Xk=;
-	b=eJ9GXQa2PO1Bq3Ab7prt9teF+d9OvMg73jim1HBjno0mn3iHvYuE9/1wnfJ1Kugm53tYlO
-	Xs2QMvAWlbpSUFMDCwZJLlmWoyA++RtNyfCDtrrF2BqdFf+jY2QQlhmAPFH1TRFSvF4jpf
-	N+a4NIhF06hwridvyqJdQVlJCUsKjjXRhStarMEokAq9ohrjmKjZ7vrd+rcPdWf73KceU+
-	HUfNbPh+g8f4N0EK9DpxDKWVJGwV6oo6DSFMWY4BC/PxbCT89NWESsOfwOQAyfjt4qD/tS
-	pH3kUEJgZ9XQ1xFTie41GtnFmqwOrvji2D5LT4ldZs68UnzePLOrMqxaCTW2sg==
+	bh=f/4cj1bDsU6M4PV7CIM7bFFH41vdf6crKnVyzWu+hS0=;
+	b=OxGNVlRUizXHIoAoWcn/sCk6iZF3RNkxiiHQH5vBnNgEY0CZZ7VkPy3j0icwSZE+JjQYg0
+	vUMF0B6uW7sJJGzL0r3WvS9rlZMCXeHAWaXbRIu6FrUdl3wXtv19CdAcnDhz2wbsal2gfh
+	iiC16n3Vijh/F7hfp+GXNEtN9cSZBjsUDcKzxd7mVLPd0HUxq6z7Q1DkNza2W5a5DvEbO6
+	CQfSm0/6+vRimF0wYLRxvn9Zqg8VGppoH7zfJA13EjswHkvdRaOKBRsxwqc3u8cikRFyMZ
+	odwp0mPSthbDKS89KBzWro9me9fdZ6UJQXJez425bdaY9ojqODny5tZK+E+0Zg==
 From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -55,9 +55,9 @@ Cc: Phil Edworthy <phil.edworthy@renesas.com>,
 	Pascal Eberhard <pascal.eberhard@se.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 1/8] of/irq: Introduce for_each_of_imap_item
-Date: Mon, 27 Oct 2025 13:35:53 +0100
-Message-ID: <20251027123601.77216-2-herve.codina@bootlin.com>
+Subject: [PATCH v6 4/8] irqchip/renesas-rza1: Use for_each_of_imap_item iterator
+Date: Mon, 27 Oct 2025 13:35:56 +0100
+Message-ID: <20251027123601.77216-5-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251027123601.77216-1-herve.codina@bootlin.com>
 References: <20251027123601.77216-1-herve.codina@bootlin.com>
@@ -70,168 +70,89 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-for_each_of_imap_item is an iterator designed to help a driver to parse
-an interrupt-map property.
+The renesas-rza1 driver parses the interrupt-map property. It does it
+using open code.
 
-Indeed some drivers need to know details about the interrupt mapping
-described in the device-tree in order to set internal registers
-accordingly.
+Recently for_each_of_imap_item iterator has been introduce to help
+drivers in this parsing.
+
+Convert the renesas-rza1 driver to use the for_each_of_imap_item
+iterator instead of open code.
 
 Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/of/irq.c       | 70 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_irq.h | 41 ++++++++++++++++++++++++-
- 2 files changed, 110 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-renesas-rza1.c | 43 +++++++++++-------------------
+ 1 file changed, 16 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 65c3c23255b7..ca7d51d07047 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -157,6 +157,76 @@ const __be32 *of_irq_parse_imap_parent(const __be32 *imap, int len, struct of_ph
- 	return imap;
- }
+diff --git a/drivers/irqchip/irq-renesas-rza1.c b/drivers/irqchip/irq-renesas-rza1.c
+index 6047a524ac77..370d968b2398 100644
+--- a/drivers/irqchip/irq-renesas-rza1.c
++++ b/drivers/irqchip/irq-renesas-rza1.c
+@@ -142,47 +142,36 @@ static const struct irq_domain_ops rza1_irqc_domain_ops = {
+ static int rza1_irqc_parse_map(struct rza1_irqc_priv *priv,
+ 			       struct device_node *gic_node)
+ {
++	struct of_imap_parser imap_parser;
+ 	struct device *dev = priv->dev;
+-	unsigned int imaplen, i, j;
++	struct of_imap_item imap_item;
+ 	struct device_node *ipar;
+-	const __be32 *imap;
+-	u32 intsize;
++	unsigned int j;
++	u32 i = 0;
+ 	int ret;
  
-+int of_imap_parser_init(struct of_imap_parser *parser, struct device_node *node,
-+			struct of_imap_item *item)
-+{
-+	int imaplen;
-+	u32 tmp;
-+	int ret;
-+
-+	/*
-+	 * parent_offset is the offset where the parent part is starting.
-+	 * In other words, the offset where the parent interrupt controller
-+	 * phandle is present.
-+	 *
-+	 * Compute this offset (child #interrupt-cells + child #address-cells)
-+	 */
-+	parser->parent_offset = of_bus_n_addr_cells(node);
-+
-+	ret = of_property_read_u32(node, "#interrupt-cells", &tmp);
+-	imap = of_get_property(dev->of_node, "interrupt-map", &imaplen);
+-	if (!imap)
+-		return -EINVAL;
+-
+-	for (i = 0; i < IRQC_NUM_IRQ; i++) {
+-		if (imaplen < 3)
+-			return -EINVAL;
++	ret = of_imap_parser_init(&imap_parser, dev->of_node, &imap_item);
 +	if (ret)
 +		return ret;
-+
-+	parser->parent_offset += tmp;
-+
-+	if (WARN(parser->parent_offset > ARRAY_SIZE(item->child_imap),
-+		 "child part size = %u, cannot fit in array of %zu items",
-+		 parser->parent_offset, ARRAY_SIZE(item->child_imap)))
-+		return -EINVAL;
-+
-+	parser->imap = of_get_property(node, "interrupt-map", &imaplen);
-+	if (!parser->imap)
-+		return -ENOENT;
-+
-+	imaplen /= sizeof(*parser->imap);
-+	parser->imap_end = parser->imap + imaplen;
-+
-+	memset(item, 0, sizeof(*item));
-+	item->child_imap_count = parser->parent_offset;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_imap_parser_init);
-+
-+struct of_imap_item *of_imap_parser_one(struct of_imap_parser *parser,
-+					struct of_imap_item *item)
-+{
-+	const __be32 *imap_parent, *imap_next;
-+	int i;
-+
-+	/* Release previously get parent node */
-+	of_node_put(item->parent_args.np);
-+
-+	if (parser->imap + parser->parent_offset + 1 >= parser->imap_end)
-+		return NULL;
-+
-+	imap_parent = parser->imap + parser->parent_offset;
-+
-+	imap_next = of_irq_parse_imap_parent(imap_parent,
-+					     parser->imap_end - imap_parent,
-+					     &item->parent_args);
-+	if (!imap_next)
-+		return NULL;
-+
-+	for (i = 0; i < parser->parent_offset; i++)
-+		item->child_imap[i] = be32_to_cpu(*(parser->imap + i));
-+
-+	parser->imap = imap_next;
-+
-+	return item;
-+}
-+EXPORT_SYMBOL_GPL(of_imap_parser_one);
-+
- /**
-  * of_irq_parse_raw - Low level interrupt tree parsing
-  * @addr:	address specifier (start of "reg" property of the device) in be32 format
-diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
-index 1db8543dfc8a..7edb64edb0d6 100644
---- a/include/linux/of_irq.h
-+++ b/include/linux/of_irq.h
-@@ -11,6 +11,30 @@
  
- typedef int (*of_irq_init_cb_t)(struct device_node *, struct device_node *);
++	for_each_of_imap_item(&imap_parser, &imap_item) {
+ 		/* Check interrupt number, ignore sense */
+-		if (be32_to_cpup(imap) != i)
++		if (imap_item.child_imap[0] != i) {
++			of_node_put(imap_item.parent_args.np);
+ 			return -EINVAL;
++		}
  
-+struct of_imap_parser {
-+	struct device_node *node;
-+	const __be32 *imap;
-+	const __be32 *imap_end;
-+	u32 parent_offset;
-+};
-+
-+struct of_imap_item {
-+	struct of_phandle_args parent_args;
-+	u32 child_imap_count;
-+	u32 child_imap[16]; /* Arbitrary size.
-+			     * Should be #address-cells + #interrupt-cells but
-+			     * avoid using allocation and so, expect that 16
-+			     * should be enough
-+			     */
-+};
-+
-+/*
-+ * If the iterator is exited prematurely (break, goto, return) of_node_put() has
-+ * to be called on item.parent_args.np
-+ */
-+#define for_each_of_imap_item(parser, item) \
-+	for (; of_imap_parser_one(parser, item);)
-+
- /*
-  * Workarounds only applied to 32bit powermac machines
-  */
-@@ -47,6 +71,11 @@ extern int of_irq_get_byname(struct device_node *dev, const char *name);
- extern int of_irq_to_resource_table(struct device_node *dev,
- 		struct resource *res, int nr_irqs);
- extern struct device_node *of_irq_find_parent(struct device_node *child);
-+extern int of_imap_parser_init(struct of_imap_parser *parser,
-+			       struct device_node *node,
-+			       struct of_imap_item *item);
-+extern struct of_imap_item *of_imap_parser_one(struct of_imap_parser *parser,
-+					       struct of_imap_item *item);
- extern struct irq_domain *of_msi_get_domain(struct device *dev,
- 					    const struct device_node *np,
- 					    enum irq_domain_bus_token token);
-@@ -85,7 +114,17 @@ static inline void *of_irq_find_parent(struct device_node *child)
- {
- 	return NULL;
- }
+-		ipar = of_find_node_by_phandle(be32_to_cpup(imap + 2));
++		ipar  = imap_item.parent_args.np;
+ 		if (ipar != gic_node) {
+ 			of_node_put(ipar);
+ 			return -EINVAL;
+ 		}
+ 
+-		imap += 3;
+-		imaplen -= 3;
 -
-+static inline int of_imap_parser_init(struct of_imap_parser *parser,
-+				      struct device_node *node,
-+				      struct of_imap_item *item)
-+{
-+	return -ENOSYS;
-+}
-+static inline struct of_imap_item *of_imap_parser_one(struct of_imap_parser *parser,
-+						      struct of_imap_item *item)
-+{
-+	return NULL;
-+}
- static inline struct irq_domain *of_msi_get_domain(struct device *dev,
- 						   struct device_node *np,
- 						   enum irq_domain_bus_token token)
+-		ret = of_property_read_u32(ipar, "#interrupt-cells", &intsize);
+-		of_node_put(ipar);
+-		if (ret)
+-			return ret;
+-
+-		if (imaplen < intsize)
+-			return -EINVAL;
+-
+-		priv->map[i].args_count = intsize;
+-		for (j = 0; j < intsize; j++)
+-			priv->map[i].args[j] = be32_to_cpup(imap++);
++		priv->map[i].args_count = imap_item.parent_args.args_count;
++		for (j = 0; j < priv->map[i].args_count; j++)
++			priv->map[i].args[j] = imap_item.parent_args.args[j];
+ 
+-		imaplen -= intsize;
++		i++;
+ 	}
+ 
+ 	return 0;
 -- 
 2.51.0
 
