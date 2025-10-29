@@ -1,57 +1,57 @@
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905CA2BE7B8
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 14:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9260726C39F
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748242; cv=none; b=bBD9PNOc3AcH6BTKhurgRYrhkxqox8FVFq1HHrSXX/Nji3JqBXMjQboxvxETsc1PQzviM7eK7t/7ar/Gfnj+vQzVAYt/eWvJyV0lTvFY+vKEFQCmXz3uHKy7drOC3VFaNlVClS3CRQk49nEj+gbo5xR6FyWwZS52rEeNsLgzmXI=
+	t=1761748445; cv=none; b=aW7WdkEkouHC5k/iBXY0aS7+VfdXsM0ZD8c49LwgiGcosnaEuMVmhmgIkAZRo3qdUrNZ1bsVlNP7zMyf3wlzb504zU1TQn6kyKc+WW6myCuj45NcCnAVauc3dUx8U52wLsQmQeqJXoJLAsnOGPZ8TvJGzN7u+l282GQqbpjF0As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748242; c=relaxed/simple;
-	bh=RiCdWEkCDNsJiKATmU0RbHd3Kb5B/0yb//UgjVnVdPE=;
+	s=arc-20240116; t=1761748445; c=relaxed/simple;
+	bh=FbqavNtq8VJC+dwAXLJIaCG9l+pt4WVO7NOuPi3OYaE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sN8147F5P3NVcplrU4nTV6GuuhV4wumFCvAf32P3gMsQ7lYGV8oOP8Q5hT6KwvnaniyH3cHVEkdfxW1nuan/Jhqj7T5ixdfOx3gpK9LwzuZHc/bBITgW8E3dLFAPQ4E9gtc3y9VvuO+GaDVf7nMAZqVg+ytkBPZpkP4bjS4b1i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=fkw9p0JCnpYvo9sCi5cRsIZ0n9QS9S8B6EZRCwv8KxUXx0vnIfih6RHq5W5mA0Nt4xo1epwgomk0fyJLZdZuLLwjkSpedHy+ACsY3ft6qa5Pm3V4bAQ8lJzkHoR5D/ryH96xolTKTwZKC4I02m+eTyu0A23wQ62ETBgaJMpzqqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-934e4b14501so907380241.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 07:30:40 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso4342615137.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 07:34:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761748239; x=1762353039;
+        d=1e100.net; s=20230601; t=1761748442; x=1762353242;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UmTxX9Lp/E6iQMSfd9sSFodFiE1yd68ZDUJdx86zE5s=;
-        b=eIfkRd4mM3J2n+PpH2uJxoHWmtyOoog2u4d0qUvjGGglJ0ysZUPYY2h6R/MZrGvdER
-         /G890DTZuyUNRSd8gjZjF74gbvPKM0GJW4HYlhk9yIKSYrHTNLC4hG1x84zvSEUpNEY6
-         6jr7GST8NhTT63k1g5zdT2Elo7jAYAg5pv0xU00HTFyUL5hNLcliVB9zKaWhbtUlxa1t
-         NbyehcpYx8ROzadPSHDvIt5vAy1qQPQH3zrPImMNo2ip2pJOiaLzhtzAPniBO2pgVqT0
-         B3Ambjj/6kAh41wQYy1H/CcPk2wjWlw+ROd/bCJlWBGROm+evNOEm4p6w7cbpPeG+s6U
-         lz8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrM+Gpum5BlJgI3TqdrTuhwsyPQDEstn/FA4Qf44H+cNb0C9mbkwnwBU2WF28QPMgGdeYVhcuiwVaf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwQjZ8NIk2tmRcHTQSDr1lV9Acof4b3gnJjEZCJ0Z97PdU0aFH
-	EifgfMKtp3zkOAFu4z8E5n2Cszd5ER7joMoXvePeCbfA77jNyDZaViQk0obzT5AN
-X-Gm-Gg: ASbGncunQQ2sdXtrO4tvmMbIFzJ9Tu52r5WP2XDafTkALh4+4E753KcmxDXfg5nordp
-	rJADqghvxwtCSHOw4tp/AQZzfMOxU4dN69tGnjg8Tj0+VJciA8RqTtgTFFPhbn7rKPbgm3KXgxo
-	GemdQsRS1JlXluYxUBUqj2Q5nsKN4iQ/+s59tH05HObucP+LSBkyxNEh+nyEAID4pemjpM3RYTs
-	t100AGdNNA7glZPTLwcx6FmyNOSZbBTQqiBFC4MAdEcwXLaRdsRyyWFE5iBgvSIM7X0KUHuzogL
-	WG+DO4y/cXJAqi0aMIgx3K5DOHnu8SChY7bab2x9rgNXZZR98cDjNWDw4sk5CADTDWZ1v4Vpf8a
-	qjR2REhqTM5YKYgxMUqjwUu8hgsXFT9YakXzOfPaxohJoG6T7nnByNoiEzCeIx146tbQeZaghb3
-	yBl+9HRTqm2UtF1rWcRE8XUbWFO2w+6FmI3BRdf+rIFEUk0PNe65yw
-X-Google-Smtp-Source: AGHT+IExXPqr774LWSLGsnHWHuUlqeUeysbXR1vJA1Hf9jjVIPIscSRoSZ4YUS7vqBF8M+s9UidRTQ==
-X-Received: by 2002:a05:6102:6c8:b0:5d5:fefc:9fd0 with SMTP id ada2fe7eead31-5db9027acf2mr856174137.0.1761748239454;
-        Wed, 29 Oct 2025 07:30:39 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934c3ecfff5sm5261285241.3.2025.10.29.07.30.39
+        bh=kNDkhDDabcFgtYSzLRibzijDMaquJ035sDb5A+sIiAE=;
+        b=QAZQ1RqJTnZR9CKo5ktrBbvuqq3bEfOFy81U3tzRhagyRX4hwHg1qWoNWv7dC1flxQ
+         DAkAUAQ+TQjOtavfRSTL86kp2veDomCVGefGfFH2l+rofahS3X+nQMyzl/01Bk03IaHa
+         PkFjZbl1oiLTxQtCUQpnwSTFmcP6J9+txFzY7q33pP7qk5iY8tIvGDJbLzaGe/lPP2Xy
+         SDJ1wJ2Ipr4M3XX/H4rkdymsGJF2UPg0Jv9XCZ/MB7cCQoTq7sehpcE7aoNPODvrCQq1
+         MGG6Q3nFl0CmaE3V45iAA4pqNyl0F9BUJCglIAHJRpdg/LYVTYj2J3mJWEEl9AcZImOv
+         on7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWkG5IJ7j+4StxidcdtLH4jj4CEHLH/2HyuzFCLx9bsIt5+PvRSFbkt9Pcttv2RmNix03fENHNFZ4Ke@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoz398x3QyCLwUYVUtVTu1uOz6dGlhFClTG3ZVUtkAEvnk0ffT
+	iFPvImXY7hSeoYDX7U+abTWbw7e6KaN+/CMun0xDoeczVwVjuKEXOKf6X/NHJzQj
+X-Gm-Gg: ASbGncuKKL/icde5qEFpXPDbs+Lpz+yeS4+O4niQ4uZKxj+ewsKgT2mDNgAvnOQtp/C
+	/p3PXaVKFHQfTDBr+9jDqXtBLzSBaqgIgQ/NoudycofGXUxwYN8nsowYVgwptx32umiRJf1Hw2E
+	MwE+DHQR4qa/Lv80gMp9i5T0VNOi1o9Lrwq3msLF7T/iionW0fRoZVTEEcebwgwbdB4GLk2DSxX
+	GupUYfhP4E8i4KixtHiehmjiHB5jfaMNugsyLw3bNUINpEbf3htGFsyuc6Tb4t4HEYYPxSqLL0Q
+	q40gyZWIacqPXD9DzHNTpJG/+M+h24l/gt49MDlYTzERc77wpzZitpEEpbmApEhgRZpz8WVz6L2
+	i7zMwFRTYvVL9rOGl1IdA3p+eGy/CQzvx/MeO81wv5g6ifAH1Alt1X9uEN2gDZmQdQVJCa/aToN
+	7kg4ACRvFuQBkhmNfcbGUHqeax/f0qS7Ym+YGh+X6t7g==
+X-Google-Smtp-Source: AGHT+IGfa3ZSyXjqYr6qdaDdQuSqpUnZ3ADCqK9/dU+I9IMMzt9qCC2bhbKHkcwMJxxtM9L2TSIeQA==
+X-Received: by 2002:a05:6102:3f48:b0:4e5:9426:f9e6 with SMTP id ada2fe7eead31-5db90675edcmr999936137.23.1761748442177;
+        Wed, 29 Oct 2025 07:34:02 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db4e52198bsm5102753137.7.2025.10.29.07.34.00
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:30:39 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-932cb562289so2350995241.3
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 07:30:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdd4C0KUE8XECmwmiiEKnTGdqJm5erMIxC48vOWsT6iqdciIfySKXNpsc9GzIgS4LU1gc4myhFTPX1@vger.kernel.org
-X-Received: by 2002:a05:6102:3e95:b0:5db:38a1:213b with SMTP id
- ada2fe7eead31-5db90656011mr932905137.27.1761748238614; Wed, 29 Oct 2025
- 07:30:38 -0700 (PDT)
+        Wed, 29 Oct 2025 07:34:01 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-89018ea5625so3055553241.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Oct 2025 07:34:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXsw3PUckrg7YaYM4xA33kPw47Is32oMUHk9XmCPOeTpXEF1r02L5ImUGpMaLVs3ZGIK+pit1Og5vKK@vger.kernel.org
+X-Received: by 2002:a05:6102:26d3:b0:5d6:156f:fedb with SMTP id
+ ada2fe7eead31-5db90694687mr933346137.36.1761748440676; Wed, 29 Oct 2025
+ 07:34:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -59,25 +59,25 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <cover.1761588465.git.geert+renesas@glider.be> <03a492c8af84a41e47b33c9a974559805d070d8d.1761588465.git.geert+renesas@glider.be>
- <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com>
-In-Reply-To: <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com>
+ <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com> <aQIlB8KLhVuSqQvt@yury>
+In-Reply-To: <aQIlB8KLhVuSqQvt@yury>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:30:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
-X-Gm-Features: AWmQ_blleyKJMjc4oETFxToQhJJ0bdzSdD1fdMmRWAHt71coVgn8wIHcAFgDdM8
-Message-ID: <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
+Date: Wed, 29 Oct 2025 15:33:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUTR2VnQ++j_ccUN3-GzKmSzS3H3QNyYqZNacfOBXD50Q@mail.gmail.com>
+X-Gm-Features: AWmQ_blqiXGJheNiHtKi_cJSwq0gfFP8sAonrx_tsjN_f5pUMr0aiWqvAOsiPck
+Message-ID: <CAMuHMdUTR2VnQ++j_ccUN3-GzKmSzS3H3QNyYqZNacfOBXD50Q@mail.gmail.com>
 Subject: Re: [PATCH v5 07/23] pinctrl: ma35: #undef field_{get,prep}() before
  local definition
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
 	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
 	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
 	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
 	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
 	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
 	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
 	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
 	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
@@ -94,26 +94,41 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Yury,
 
-On Wed, 29 Oct 2025 at 15:20, Linus Walleij <linus.walleij@linaro.org> wrot=
-e:
-> On Mon, Oct 27, 2025 at 7:43=E2=80=AFPM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->
-> > Prepare for the advent of globally available common field_get() and
-> > field_prep() macros by undefining the symbols before defining local
-> > variants.  This prevents redefinition warnings from the C preprocessor
-> > when introducing the common macros later.
+On Wed, 29 Oct 2025 at 15:30, Yury Norov <yury.norov@gmail.com> wrote:
+> On Wed, Oct 29, 2025 at 03:19:45PM +0100, Linus Walleij wrote:
+> > On Mon, Oct 27, 2025 at 7:43=E2=80=AFPM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > Prepare for the advent of globally available common field_get() and
+> > > field_prep() macros by undefining the symbols before defining local
+> > > variants.  This prevents redefinition warnings from the C preprocesso=
+r
+> > > when introducing the common macros later.
+> > >
+> > > Suggested-by: Yury Norov <yury.norov@gmail.com>
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > >
-> > Suggested-by: Yury Norov <yury.norov@gmail.com>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Do you want me to just merge this patch to the pinctrl tree or do
+> > you have other plans?
 >
-> Do you want me to just merge this patch to the pinctrl tree or do
-> you have other plans?
+> There's a couple nits from Andy, and also a clang W=3D1 warning to
+> address. So I think, v6 is needed.
 
-My plan (cfr. cover letter) was to take it myself, as this is a hard
-dependency for 11/23.
+Indeed....
+
+> But overlall, the series is OK, and I'd like to take it in bitmaps
+> branch as it's more related to bits rather than a particular
+> subsystem.
+
+OK, fine for me (if I can still get an immutable branch ;-)
+
+Note that as of today there are two more to fix in next:
+commit d21b4338159ff7d7 ("mtd: rawnand: sunxi: introduce ecc_mode_mask
+in sunxi_nfc_caps") in next-20251029
+commit 6fc2619af1eb6f59 ("mtd: rawnand: sunxi: rework pattern found
+registers") in next-20251029
+
 Thanks!
 
 Gr{oetje,eeting}s,
