@@ -1,141 +1,127 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47332FD7B2
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2025 11:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F718348445;
+	Fri, 31 Oct 2025 11:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909403; cv=none; b=JrktDvin2WwnZSj6gHiedjKSPM2c1SRMEXH42ZNErBpUQjPbzZKVCJx+Nv8p2Ge60121hxpjC96+ERupTmA7TJ0puh9KcupD0Aq7o8mgGUFMT50uOlsTi6Fy4FSFR3FTka+/NKN1kTHOyuvKSE1pqLuwGmAvDOGa6c9dpWqvn5c=
+	t=1761911971; cv=none; b=q4UzlR6PLYFyigmGAlHQRuOJdGvDbxqFwyMOKwlMTM65qjBdK+R685gKaPHSdmE8ft8RyFUQV0RMUajOLvJ+bcf+uM6tJyCdcQOO7lH6ZCxa6PF4yxAxRZ/qhPk+nuOcNvb10O4BBYCGzYx8gs8p/YC4Va1Lq+jhD7WtRBRF1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909403; c=relaxed/simple;
-	bh=hvXhCt5hKzbIjsa/PT39QiXaG1nQxME6pJKHXGact5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hmC2ootYtYi8obTSP63eVMeajMWsQJK78BaKS4eS7z8lvBV4Mfpmppp+j4TZK8LZJYWRGrtCq+58NLZffJGO3sr1Fey6hpvJoKe+TrfQ/y/6Ex6FsLZOjCFDxcbOcFMyRPiMtluJwiqcKTWYUmxwxz0AVvIvuSu6gW1Tn+MESbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NRLEGJ3Q; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1761911971; c=relaxed/simple;
+	bh=5UoaEdpVLL2NdA+CQijxmw2u67i+mScHjsVkMhIYhCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=niMg8lAPxIDyZ/RY7+ho00WYLlZR0fcE85l/T+6ayZMlXm4zZEcokV/V9AHICKx5tGGEvBp+5zlPC26lWH1abrJaEUBD3TyQn3KA/0GpnaFY6XaXh5X8xQ3B5+6FPSWeRrdOmJGidgTtMD5IrB886vgSCUfVdEtkAHH9l0bh7Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TE3YZzT/; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NRLEGJ3Q"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4283be7df63so1073284f8f.1
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Oct 2025 04:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761909399; x=1762514199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mNGbBtT900FkF2tZtdZOn6bYz+5hMfk+AhQrFTegUGg=;
-        b=NRLEGJ3QUEVw+Hmm9MQOrqmQLQJW2ts86flMmqEaoF+CdEBg625SJGILsMXdCB3fA4
-         A7E+ykvfOt/Obis2NCH8rZvrNP4QHDk4s2iag0goiTEtesB3kFEGHpxi73glqgaKzpsl
-         2BLI9Bgc7JFbww2YGEr2qKaRIxRM+vOevxY09qBC9K7C8tB9OKj/78zPk1Y7EoCH3knY
-         gUSTmap96urOwlXkhLubxbXHyCLyiIFn8EJSr2UMbKBV30cN5Uk5PJepbbpVFbcS249V
-         Wu8A40Gr+WsR4us82ItSFNe0pyaWR/Fazlx9Ek0AZZZsZAc/Mszsn8hFYgnbQZ+BE59V
-         sJMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761909399; x=1762514199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mNGbBtT900FkF2tZtdZOn6bYz+5hMfk+AhQrFTegUGg=;
-        b=i9RHS7APGCKuUIgPW9Hu5dKDVCprqLY3PwVUXus3a0LXJbM1wm7LWxlEytmvCYJxmR
-         1gZPJC1asHmCO7BjxEcp7pYojB94uz0aT91F80KOAunxOVSLg6kSW499FCt6KP2KGIhD
-         r3b8Cj4sHQPlSbWBQClg8XW5HE3n4VT+/VEkAa5nMxmcKzzukfjPrZxsLzbrdv3wPJyd
-         3VncHsirVowqi6d4Jou75SKUvVyzUnydulaNenh41BTlOlfQgTdB30nYCVSvZio5pKcn
-         72bk16I8Zo0xTSmrxXeJ5Kj/r+J/L/nyMKeWfWblmJuNo745EwSp4YZ4/DVF6gufyp0M
-         ulpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN4+BaWAtL99I6c/LZHLBf8p4AfyWF7z4JtcYIoyIJzzAbVnu9qYNt8ZqWsgzHoJkewzVI0wQlgx+a@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHqLKVsuZIQrpkEYEw7zQQ8jjbNN6YS21+poG8NATwSjgK13+4
-	+lQgA06jq7dTuwCJCNdbK/E9tBY6tko8CMJUHmxMP27hBDTaTny5ZU9LWakW+tj6Jj8=
-X-Gm-Gg: ASbGncvddN9lfZdNzWo2kRbhGLWISoQUL9P72qZWR9f5bqjAQsfzaqIBlh+OXM/+JIB
-	hGucTJyMLj18pfsvKoSpZpLm/ymCvvnEOfwWElWKIv9hPfm9gZ7TbR14u1hCF8DmlpWyzV5C6ma
-	a8hq/m6hCtLuuxFX49Dwp7bAGNXJvbIBFLCobvKcmCPYKfWOkD5V0R0AR39M1D/DRZchjN1PLuE
-	ucZCsL4+blnIt+JJK121zbEU1aLI/Ps3k4muun4oOx0PzLcD0MGBYibNySixYcz1WeoxF2iboHC
-	oyFdPH39HoEpVkt5u4hkT/UqgEiRFuuj1YzU/PkWflG0uVlBFzxXReyBte0HqT96JFPwE2gZLCd
-	QSUr0p1w2hbtEtPn6KBM1oylh3wjIM5FKBY7n00o9CrW+VgnDT0qjRXOTBuISxWd8F45tiK3EaC
-	j5t7vIYhjSIsc9s4K8/y2lJY1H
-X-Google-Smtp-Source: AGHT+IETb1QusUUIdYAdoXN6g5wc6UGfEh4fZ+wlbN4HqWZwOTbEyATLIkgXIFhC+rbo0V7IXE8qbg==
-X-Received: by 2002:a05:6000:4382:b0:429:bd09:e7b6 with SMTP id ffacd0b85a97d-429bd67245dmr2775419f8f.10.1761909398902;
-        Fri, 31 Oct 2025 04:16:38 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47732ddd2d5sm27222865e9.7.2025.10.31.04.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:16:38 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH 0/1] replace uses of system_wq with system_percpu_wq
-Date: Fri, 31 Oct 2025 12:16:27 +0100
-Message-ID: <20251031111628.143924-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TE3YZzT/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761911970; x=1793447970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5UoaEdpVLL2NdA+CQijxmw2u67i+mScHjsVkMhIYhCg=;
+  b=TE3YZzT/CCwUFWt0np9TlRsLBwgSXdkejuoWH1GnWx1X0amP4rdwXLMr
+   PKA6t1Wh1kgGE2i8Whs2ZMGCDOavBqIAjUtyQcWVdYEIrTZTW+uPSUcnK
+   6xJGpRz5qCXQvHxdpyx9NAL+rXbZ+204WDkxsYmWSOob5ULvFaNZyYcXm
+   AgL38hHS557HvBLWIdyXCplyYq+EyjeNKvLEbNTEs+3ET+rbkRoXYOGJG
+   UAnMhD+l0rVXFaxp6lpO7ojxhyCxZLVnQUZUrdOcyI+Wsb2EEkYFOqXGR
+   2z8HUspEKF+/nkMpCL0fOfDTT+SLwrvjiQvtx6mrXN+EyO2AkPBQ7er1t
+   A==;
+X-CSE-ConnectionGUID: pp9hEsglQDWHRwCf3IBZ5Q==
+X-CSE-MsgGUID: NVM/QxTPRnCSbQYIkRD5Nw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64170104"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="64170104"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 04:59:29 -0700
+X-CSE-ConnectionGUID: I7fU5kdvSxu/0BY7bP+Iag==
+X-CSE-MsgGUID: DMmdcyxFQAeGVXU6xmQtlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="190302969"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 04:59:26 -0700
+Date: Fri, 31 Oct 2025 12:59:24 +0100
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] platform/x86/intel: Introduce Intel Elkhart Lake
+ PSE I/O
+Message-ID: <aQSknEvFB_HRjwd-@black.igk.intel.com>
+References: <20251029062050.4160517-1-raag.jadav@intel.com>
+ <20251029062050.4160517-2-raag.jadav@intel.com>
+ <aQHSA6TtCAVGDRNo@smile.fi.intel.com>
+ <aQSCpF8aR1lskaPy@black.igk.intel.com>
+ <aQSJJv7d2hllsObY@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQSJJv7d2hllsObY@smile.fi.intel.com>
 
-Hi,
+On Fri, Oct 31, 2025 at 12:02:14PM +0200, Andy Shevchenko wrote:
+> On Fri, Oct 31, 2025 at 10:34:28AM +0100, Raag Jadav wrote:
+> > On Wed, Oct 29, 2025 at 10:36:19AM +0200, Andy Shevchenko wrote:
+> > > On Wed, Oct 29, 2025 at 11:50:49AM +0530, Raag Jadav wrote:
+> 
+> ...
+> 
+> > > > +#define EHL_PSE_IO_DEV_OFFSET	SZ_4K
+> > > > +#define EHL_PSE_IO_DEV_SIZE	SZ_4K
+> > > 
+> > > Not sure if SZ_4K is a good idea for the _OFFSET, the _SIZE is fine. Also why
+> > > do we need two? If the devices are of the same size, we don't need to have a
+> > > separate offset.
+> > 
+> > Yes but they're semantically different, atleast as per DEFINE_RES_MEM().
+> > Either way works for me.
+> 
+> They are "slices" in the HW, see also my "if the devices..." passage.
+> 
+> If you want to use SZ_* in _OFFSET, I would write it as (1 * SZ_4K) to point
+> out that size constant here is the _unit_ and not the size semantically.
+> Currently the definitions have the same values semantically, but you pointed
+> out that they should not be.
 
-=== Current situation: problems ===
+Fair. Will consolidate.
 
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+> > > > +	io_dev = kzalloc(sizeof(*io_dev), GFP_KERNEL);
+> > > > +	if (!io_dev)
+> > > > +		return -ENOMEM;
+> > > 
+> > > Why devm_kzalloc() can't be used? I don't see if the device lifetime is anyhow
+> > > different to this object. Am I wrong?
+> > 
+> > Looks like it but I don't know the code well enough to tell if there're
+> > corner cases, so just following the documented rules. Your call.
+> 
+> Do you expect this to be called in non-probe() contexts? If no --> devm.
+> Otherwise some comments are needed.
 
-This leads to different scenarios if a work item is scheduled on an
-isolated CPU where "delay" value is 0 or greater then 0:
-        schedule_delayed_work(, 0);
+Sure.
 
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
+> > > > +	ret = __auxiliary_device_add(aux_dev, dev->driver->name);
+> > > 
+> > > Hmm... Is it okay to use double underscored variant? Only a single driver uses
+> > > this so far... Care to elaborate?
+> > 
+> > The regular variant uses KBUILD_MODNAME which comes with 'intel' prefix
+> > after commit df7f9acd8646, and with that we overshoot the max id string
+> > length for leaf drivers.
+> 
+> At bare minimum this needs a comment, but I think ideally we need to bump the
+> limit by factor of 2.
 
-        schedule_delayed_work(, 1);
+Which will probably require a wider discussion, so perhaps let's pursue it
+separately?
 
-Will move the timer on an housekeeping CPU, and schedule the work there.
-
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-
-This lack of consistency cannot be addressed without refactoring the API.
-
-=== Recent changes to the WQ API ===
-
-The following, address the recent changes in the Workqueue API:
-
-- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-The old workqueues will be removed in a future release cycle.
-
-=== Introduced Changes by this series ===
-
-1) [P 1]  Replace uses of system_wq and system_unbound_wq
-
-    system_wq is a per-CPU workqueue, but his name is not clear.
-    Because of that, system_wq has been replaced with system_percpu_wq,
-    the old wq will remain for a few release cycle.
-
-    The change keep the same old behavior.
-	
-
-Thanks!
-
-
-Marco Crivellari (1):
-  gpio: cdev: replace use of system_wq with system_percpu_wq
-
- drivers/gpio/gpiolib-cdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
--- 
-2.51.0
-
+Raag
