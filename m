@@ -1,50 +1,49 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AC972622;
-	Mon,  3 Nov 2025 20:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C0A21ABD7;
+	Mon,  3 Nov 2025 20:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762200161; cv=none; b=UD5Yn078Z5NDNw8qCXRmZpnfeu89FvTQir4q3jJAZGmDCWv8OKsTsLRo3i+yeiMLgDfKUcH07zPizmfInK+02AYotmJyuHZnHWkyWd7ljEyd8I6tyUiVkjbgl5kTUeaeLTQM6lnFi+uJZj3WvboNGQPJ2Dim22KSHCzIDUshhzU=
+	t=1762200162; cv=none; b=aHC/EylOhKgrZySPNaYnnfBF9N9LYfKz6hG+TANVMmY+KEPT/VtcmXSb57J2H2nu18xIyshGS1y9iTZMZqCK41rEqeD/lR3mhiO+x0RI97yEU7u8ODupCk51FIDuGXc3mb8jqMlLDkpl6yWW4jjY7Tn+A1wTFLLsixGqf9GrmKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762200161; c=relaxed/simple;
-	bh=L/5er9j1LDk/qN/2JzAmnS+Q+mkukV3MmntLxh1IBlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W/GSqrKR4BwFgwjO36c/bPUpCgLiYBEU5oEhaqCqqVL4S27S/g1SvrLZ3vk1RlxWkbPLwByneClAWQ64poJPLZ+WoMkcb4uArPB+gAtkG907aElU5Icdc5TRJg4UHdaxmkc3Wv5NRz33j9/Efxc+YK9c2Lb0JV0Yv2WJDb/Pn80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FJ0Pcvnt; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1762200162; c=relaxed/simple;
+	bh=rW2zpgobPRB1HcadBBqJ1TISCIW54rDyyK+HZiXM1Rg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fToP++AG0aw3fUr7EW+jqrihOmhjL+zPLMiN/dSaD9vniaEBJe9FubFWHu2Pe3hZeVnUA88/aJ16tmc/T3XaCJHOrgVdcY/RKdCu3FehHjqz1aHsmmpL1RTwzPPYvOZjx3QlrbDthLYkLOLCmc7AvirdrI/hz6VSoCYEfhp/4Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=POgsaddy; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FJ0Pcvnt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="POgsaddy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762200160; x=1793736160;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L/5er9j1LDk/qN/2JzAmnS+Q+mkukV3MmntLxh1IBlU=;
-  b=FJ0Pcvnt1y1J0jSmNmOvWsFDjTpMpwTU49aC3P3kHB5cUbZuUCMdardX
-   HEgrnglgTKVo3wZumuet0tDgU/YYdBFWavwdXgyH+QUprZ9M0uzo6C5N5
-   17shk6sUMoW2BM/GksNz4qB1YF82xVHtesWrCqgfNxEgNLsUNA8eNXEAK
-   J+1NLCjuGFFQZICuX0ll2z6QKpBSET13OnbH/itS5D3CyK3iqO7GQjmgD
-   EiNQrhWWHoaOraXf0I/jOxjvLkfYKPBnjHhN6153fG969aAPp1XPvxkco
-   Qii1XPB3n5DKW968s92Q8I6LWXElcmoSERegHWUzJkUfF5DNfkX7rd9Uj
-   w==;
-X-CSE-ConnectionGUID: vFJdfWOvSdmIeng8sukTAQ==
-X-CSE-MsgGUID: bszgsLtqQ3SyPDnDotXfhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51855288"
+  t=1762200161; x=1793736161;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rW2zpgobPRB1HcadBBqJ1TISCIW54rDyyK+HZiXM1Rg=;
+  b=POgsaddyD1/pyirvNkN7RlCnLmgj7aoGTY0MXCX4lFKKCPciACiV7aKd
+   uoG7eqjtQgLk7U/tUgypjvFE0tNJPRp8/+rzev9yWRs6CMfWWHYdU0mrZ
+   34+QBpkHUGbzMwqfFSYGTuEjptXH+D9v1KAOo/K+Fdm+Jg7/XX8fkUlUd
+   rwBq7iFDGi/K2yI30MOoUVT9NiFzKuQ93zV6L2oq7LkrFUKfa608bNRgS
+   l4VibF5lAsaAcJE5A89tLPggoE1UiHLRZX/B8kIiprQADv2bc728Za/FS
+   8dvj6rtdCUAUFe633wBsbwt+P1DMIFSdhUWsZmRHV3dBoeVd8HUWm6S76
+   A==;
+X-CSE-ConnectionGUID: P9FRaP8NQf+jEEY1Ng27WA==
+X-CSE-MsgGUID: DJwfSIuyQAiE0GcVH9Y17Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75735743"
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51855288"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 12:02:39 -0800
-X-CSE-ConnectionGUID: GLGpBzxbR4iZ4ZBaNciGxA==
-X-CSE-MsgGUID: p+oCWcYERHCfj92lw52RYg==
+   d="scan'208";a="75735743"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 12:02:40 -0800
+X-CSE-ConnectionGUID: W7YmQw8cTYSdsaTKOiw+eA==
+X-CSE-MsgGUID: LFvWZ/eqQZ6994x0V+ZRMw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="187271931"
+   d="scan'208";a="192052119"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa008.fm.intel.com with ESMTP; 03 Nov 2025 12:02:38 -0800
+  by fmviesa004.fm.intel.com with ESMTP; 03 Nov 2025 12:02:38 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 784EF97; Mon, 03 Nov 2025 21:02:37 +0100 (CET)
+	id 70B6B95; Mon, 03 Nov 2025 21:02:37 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -52,12 +51,10 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 2/4] pinctrl: cherryview: Unify messages with help of dev_err_probe()
-Date: Mon,  3 Nov 2025 20:58:29 +0100
-Message-ID: <20251103200235.712436-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/4] pinctrl: intel: Unify error messages
+Date: Mon,  3 Nov 2025 20:58:27 +0100
+Message-ID: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
-References: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -66,66 +63,23 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Unify error messages that might appear during probe phase by
-switching to use dev_err_probe().
+Unify error messages with help of dev_err_probe(). This brings
+a common pattern with error code printed as well. While at it,
+make the text message the same for the same reasons across
+the Intel pin control drivers.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Andy Shevchenko (4):
+  pinctrl: baytrail: Unify messages with help of dev_err_probe()
+  pinctrl: cherryview: Unify messages with help of dev_err_probe()
+  pinctrl: intel: Unify messages with help of dev_err_probe()
+  pinctrl: tangier: Unify messages with help of dev_err_probe()
+
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 20 ++++++++----------
  drivers/pinctrl/intel/pinctrl-cherryview.c | 24 ++++++++--------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c      | 24 ++++++++--------------
+ drivers/pinctrl/intel/pinctrl-tangier.c    |  3 +--
+ 4 files changed, 25 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 3106bf342197..9c89ccc3b59d 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1528,10 +1528,8 @@ static int chv_gpio_add_pin_ranges(struct gpio_chip *chip)
- 	for (i = 0; i < community->ngpps; i++) {
- 		gpp = &community->gpps[i];
- 		ret = gpiochip_add_pin_range(chip, dev_name(dev), gpp->base, gpp->base, gpp->size);
--		if (ret) {
--			dev_err(dev, "failed to add GPIO pin range\n");
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to add GPIO pin range\n");
- 	}
- 
- 	return 0;
-@@ -1567,17 +1565,13 @@ static int chv_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 		chip->irq.init_valid_mask = chv_init_irq_valid_mask;
- 	} else {
- 		irq_base = devm_irq_alloc_descs(dev, -1, 0, pctrl->soc->npins, NUMA_NO_NODE);
--		if (irq_base < 0) {
--			dev_err(dev, "Failed to allocate IRQ numbers\n");
--			return irq_base;
--		}
-+		if (irq_base < 0)
-+			return dev_err_probe(dev, irq_base, "failed to allocate IRQ numbers\n");
- 	}
- 
- 	ret = devm_gpiochip_add_data(dev, chip, pctrl);
--	if (ret) {
--		dev_err(dev, "Failed to register gpiochip\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register gpiochip\n");
- 
- 	if (!need_valid_mask) {
- 		for (i = 0; i < community->ngpps; i++) {
-@@ -1677,10 +1671,8 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- 	pctrl->pctldesc.npins = pctrl->soc->npins;
- 
- 	pctrl->pctldev = devm_pinctrl_register(dev, &pctrl->pctldesc, pctrl);
--	if (IS_ERR(pctrl->pctldev)) {
--		dev_err(dev, "failed to register pinctrl driver\n");
--		return PTR_ERR(pctrl->pctldev);
--	}
-+	if (IS_ERR(pctrl->pctldev))
-+		return dev_err_probe(dev, PTR_ERR(pctrl->pctldev), "failed to register pinctrl\n");
- 
- 	ret = chv_gpio_probe(pctrl, irq);
- 	if (ret)
 -- 
 2.50.1
 
