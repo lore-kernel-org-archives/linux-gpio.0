@@ -1,135 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05B22D9F7;
-	Mon,  3 Nov 2025 20:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8681DDC08;
+	Tue,  4 Nov 2025 00:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762200164; cv=none; b=eoPLv7Mp9SvJbBb80KAvhlPyq4O8o3OTJzBDfTpwp3QZl+0aSFpNMNtwNoYXJO1QJCPXN66QE6e42IHC3y4ID3cf5NL3hZrokZoOCv9bXMV7oQ41Ny/9jUeNGd26dpNkgfD1D1U9KUbgQje804zQAFF5LK1eJe3mzXrpioeGjnA=
+	t=1762216205; cv=none; b=MCcyM+yDBYXqU8eIMriWOgcOFc/ptbnEXmA430Dtu8zTXuDOvjsFc/iDSToonoUC7+FWoilbyFG71AASH+kx9Kk/NfL+E01Un80hOMIaBipPrXx+H3a4MBo1Y/dwtDytuPB4D1JP2llNCf1NO0wSOt0xAmEn5u/dusZQrn7tbC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762200164; c=relaxed/simple;
-	bh=gJQ7I89vGxLwBDto9z3kF7HhNLOsdvpVK5ilCIY+DyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BOoChYW3lAYnSu3CrDg5rM1zHkQfwTVviRImoyxCws0uvn4CyKTVPO/C7izMg9KIxFMfgXgF0TJcsj1gHbzFFoc5qK4L61SQ9Cc3Ag7nqUtLhI1KZFp8siQrY4XO8spzAfo95G3EgvG/IJ1L/8H/IqjYY8+A081XSvFUH6xScRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oc1GcE2c; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1762216205; c=relaxed/simple;
+	bh=iJMJNhNBLd6Bi9oD1RrYVw+Wsn/1D4yN1mvr6iSp99c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7y6xDEYfRC5n3w4i1nUWIHqvzshQj5skT5INmZBB0vSquXaIo6V2tBvJV5Vo1AxVH94Gb8hKiUtad8uS1/twFjXY5I4WynmRjnN6Ygi0FXp1bc0x2fP90Y/JruWSVwqwrarVt4+Z3b9LcI0QsZEtK9pVQ612oeY/3/WgTFsfxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udnemSmg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oc1GcE2c"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762200163; x=1793736163;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gJQ7I89vGxLwBDto9z3kF7HhNLOsdvpVK5ilCIY+DyA=;
-  b=Oc1GcE2c6ofJ5gTwKZDUvq/bRo3Q9axl8TogRfHZo3aSpcUSjsENR+DW
-   TkGsNp8Lmr7xj6qOsCvKaxTfYkfZ8mYdi4xxt+ocFzOPxDkqAaKqkswM7
-   Lj1qmMUrRs5GqegDTXDO5QVg2MjIfdJSZPOxMiwS6QXZQZnXGFwWnZNAW
-   3rFW0MsEFHXonn/qLEyZVfH3/fIrase8+lceEm4n0TCG62WY436wRbQyt
-   xarUhOaeUXf5kM0YmpNaa0+Msn172/4rFFjQBJ/5SknLSJIRdgT2CMchG
-   9yCFOnJG7jtBjGS7cPc3eO8pDH3talBHmQMtlGnAkgEIEUvTtHXQpuqTs
-   Q==;
-X-CSE-ConnectionGUID: H4ZUAxxOSHGvx3Vk/BYRKA==
-X-CSE-MsgGUID: JLQKag+9RwitGKC2P+wFGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75735747"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="75735747"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 12:02:41 -0800
-X-CSE-ConnectionGUID: dKlktcfvTvG/fPyleQ+rIA==
-X-CSE-MsgGUID: 1uMNJweMSp6crQ4eNbJwRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="224206715"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 03 Nov 2025 12:02:38 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 7CB0498; Mon, 03 Nov 2025 21:02:37 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 3/4] pinctrl: intel: Unify messages with help of dev_err_probe()
-Date: Mon,  3 Nov 2025 20:58:30 +0100
-Message-ID: <20251103200235.712436-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
-References: <20251103200235.712436-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udnemSmg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C071C4CEE7;
+	Tue,  4 Nov 2025 00:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762216205;
+	bh=iJMJNhNBLd6Bi9oD1RrYVw+Wsn/1D4yN1mvr6iSp99c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=udnemSmgJ5Twje+pwLqijw3+rrKwcnQZ4Bd7Sy0f9MMXUyr64RTyPxCGERy0A68mW
+	 enek+oOpibPe+UxPtcF3MYY9P2ce1rWku5vbWYJmItouzReyAMozdHPvua4sw0LZ53
+	 kQI0aasqvcbSWj39jVureDRztmi9ePp/AkfWXhzIrvtt4PxMD1C0yqAnLWjtDyFsZG
+	 r5rt1FTdc/ii1ciOKftR1FA4SjrPUdMADYMSZLleLKQJNnWQ/PZ1oj4JU0qWPtrm8W
+	 r9eQW1eFJdZqpc6CC0/QXClnxvCyeM6WXQWpBkFuLbVma5cqZkyawzz7Ncc6SGxIN+
+	 P58sG4qzvL8og==
+Date: Mon, 3 Nov 2025 19:30:04 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: patches@lists.linux.dev, stable@vger.kernel.org,
+	kernel test robot <lkp@intel.com>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mark Brown <broonie@kernel.org>,
+	srinivas.kandagatla@oss.qualcomm.com,
+	ChiYuan Huang <cy_huang@richtek.com>, wangweidong.a@awinic.com,
+	nick.li@foursemi.com, Richard Fitzgerald <rf@opensource.cirrus.com>,
+	alexey.klimov@linaro.org, niranjan.hy@ti.com, shenghao-ding@ti.com,
+	linux <linux@treblig.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 6.17-5.4] mfd: si476x: Add GPIOLIB_LEGACY
+ dependency
+Message-ID: <aQlJDP0rU8culpf8@laps>
+References: <20251009155752.773732-1-sashal@kernel.org>
+ <20251009155752.773732-102-sashal@kernel.org>
+ <a137ca66-710a-4b0c-91e4-c69c68a21089@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a137ca66-710a-4b0c-91e4-c69c68a21089@app.fastmail.com>
 
-Unify error messages that might appear during probe phase by
-switching to use dev_err_probe().
+On Thu, Oct 09, 2025 at 06:03:53PM +0200, Arnd Bergmann wrote:
+>On Thu, Oct 9, 2025, at 17:56, Sasha Levin wrote:
+>> - Why it’s needed in stable
+>>   - The GPIO subsystem recently made legacy interfaces optional/fenced
+>>     off, which exposed drivers still using global GPIO numbers. This
+>>     patch is part of that follow-up hardening: it gates the si476x core
+>>     on `GPIOLIB_LEGACY`, avoiding invalid build combinations. It is a
+>>     pure Kconfig fix with no runtime behavior change, directly
+>>     addressing a regression introduced by the gpiolib changes and thus a
+>>     textbook stable backport candidate for trees that have those gpiolib
+>>     changes.
+>
+>This is incorrect, the patch does not need to be backported because
+>at the moment CONFIG_GPIOLIB_LEGACY is enabled unconditionally, and
+>the coming patch to make it optional will not get backported.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+Dropped, thanks!
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index faa8ae8ef56a..8e067aaf3399 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1356,10 +1356,8 @@ static int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
- 		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
- 					     grp->gpio_base, grp->base,
- 					     grp->size);
--		if (ret) {
--			dev_err(pctrl->dev, "failed to add GPIO pin range\n");
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(pctrl->dev, ret, "failed to add GPIO pin range\n");
- 	}
- 
- 	return 0;
-@@ -1401,10 +1399,8 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	ret = devm_request_irq(pctrl->dev, irq, intel_gpio_irq,
- 			       IRQF_SHARED | IRQF_NO_THREAD,
- 			       dev_name(pctrl->dev), pctrl);
--	if (ret) {
--		dev_err(pctrl->dev, "failed to request interrupt\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "failed to request interrupt\n");
- 
- 	/* Setup IRQ chip */
- 	girq = &pctrl->chip.irq;
-@@ -1417,10 +1413,8 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	girq->init_hw = intel_gpio_irq_init_hw;
- 
- 	ret = devm_gpiochip_add_data(pctrl->dev, &pctrl->chip, pctrl);
--	if (ret) {
--		dev_err(pctrl->dev, "failed to register gpiochip\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "failed to register gpiochip\n");
- 
- 	return 0;
- }
-@@ -1676,10 +1670,8 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 	pctrl->pctldesc.npins = pctrl->soc->npins;
- 
- 	pctrl->pctldev = devm_pinctrl_register(dev, &pctrl->pctldesc, pctrl);
--	if (IS_ERR(pctrl->pctldev)) {
--		dev_err(dev, "failed to register pinctrl driver\n");
--		return PTR_ERR(pctrl->pctldev);
--	}
-+	if (IS_ERR(pctrl->pctldev))
-+		return dev_err_probe(dev, PTR_ERR(pctrl->pctldev), "failed to register pinctrl\n");
- 
- 	ret = intel_gpio_probe(pctrl, irq);
- 	if (ret)
 -- 
-2.50.1
-
+Thanks,
+Sasha
