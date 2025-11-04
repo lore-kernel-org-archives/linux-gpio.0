@@ -1,48 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F92332907;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9832E73A;
 	Tue,  4 Nov 2025 14:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762268304; cv=none; b=Jr+VHDZRqD6HBR1Z1mI8s/Q4Xk7P052yYIQ4B8qgIOot6umKCpIe6g3YwrA4vr56Y+OQUtKy58CVaOjXZtx5fM/1Y8ayunqA0acGHjMFqjSDcuVevqW/hLRZdyeywEqCTLINRKMvuyuKTfp7+JETFq65hJMWOB2TtzNl2k0qtNk=
+	t=1762268304; cv=none; b=dlIcLEA6EFLnC9a1R5ulAktNELEkQ08qoe9jzpoIn9uZBlJmePn8zJIzz/8JJ1XmbUBPWaiAqUWkKNZNYILuxzLo/VJ0VF1I1lKC2Ccg8/oiYoKIRp61XI3Lhnk5JTTkVJAUhDkXrk8yxyuwTdhRHZLavY1ZvpxoxLdJzj8GfXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762268304; c=relaxed/simple;
-	bh=ePyCxv9YyjGONhtM+37JCQ/VfrQw5o+yIIyjxtOjJB4=;
+	bh=V/a8BaAKJhCUGYuXolbLDKWldl6q6263ihLX4KvSAVc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IcRKj9sSM2tOijUs2G54UTwoV4qMXRqg24YN9w9b6+nCSDlAw/v81w25+Z9Iwy59JIAtLa3ONmB4Ky8YdpJiSr5e2rPpd3eOoeYZheLX1Fiy27kDgzwxBkSmkxo84H/wlVNQaQSXwa6nBzFidl0NpDKDoHtR8zSTNKLEfe79GG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nRVj5+LZ; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=SoFDxkTL0vHRmZyh6Pyh1lEiHrmyGUDTZ03Eh5z3YteqNOetRd58GL8CiWdz2t/43n88Ptp8Lw56iyYuLv9zigixvhweETgUtvnWrztySCicV3wrJKq7u+vvUHsYPagR4K3qb4Zyo0cAz3kj0P08XossmvpFq0Vc1dzhaq84M60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V6yxe5Mo; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nRVj5+LZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V6yxe5Mo"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1762268302; x=1793804302;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ePyCxv9YyjGONhtM+37JCQ/VfrQw5o+yIIyjxtOjJB4=;
-  b=nRVj5+LZYuGnl0T3WbuQt/r2a55B6iS9197DLprZgxJCmh9UC6wxEUwS
-   AHAYKTtMsi2OtXk/SK+4CzBrXPYwjNhA/LmsElE0GYi7ic0zw5jGP/UxZ
-   /2QNiMkCTgNlyOxGafKxUy7ZZ0Rcr0mIqkG0c2NMAtGC6NxWFnGZFyZ+P
-   xBvGcbFjM6gQaikdtl4oFUItffVPiMDmp2R96KMKMeZ38DM/+VP99Xoi5
-   ftW/bvwYgCmNBDZ5E999p0CYBwaZs7Lq3DFmYwEBWF6QTN+KoycMt4F0T
-   KjJcYO2egVKbkfL5d2DNgNKj6Ne7Xs4guQN5y7DOZYgg20kkpYSeiJyMd
-   Q==;
-X-CSE-ConnectionGUID: pSOauAeURqG4rjG8xClpng==
-X-CSE-MsgGUID: hyzCGasJTHq86NtDDTNTkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81770097"
+  bh=V/a8BaAKJhCUGYuXolbLDKWldl6q6263ihLX4KvSAVc=;
+  b=V6yxe5MoRyT9Lb8NVJAUQU9XqeetY7yw5//XM09XxxEkDaVOwNoUYFpm
+   CumpT13btq8tCnzN+z70Sv+zMeg+1J4j8OrVEv7Sypi6rXKH6SV/KC16/
+   SoMaRFhyLqSOelXvzxgI8jKoOW76+apSMLwAXGuYlfDAumgjxF/dRF+bz
+   pKSvxbFT76wh5UDmaUzblQi7UmhCBBGrlKiIb4cfQuX0+D04s6fDukRVm
+   CN74/ijPPk3ugZ+DV2zJvre3Qhu619zUkn6JoSfvQhM2CcPdRCtILXNYy
+   hE2pthNU9CqVkJrHg1r9cnIeigqKsW8m0ECJ0pdib+zzFSlETisbPbcbV
+   w==;
+X-CSE-ConnectionGUID: QfVscxYNTv6cpGGSe05kMA==
+X-CSE-MsgGUID: ApnEiU6YRxC74UUMxYSthw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51933794"
 X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
-   d="scan'208";a="81770097"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:58:21 -0800
-X-CSE-ConnectionGUID: RfANfWqWQCiv5vTgBTRw7A==
-X-CSE-MsgGUID: DJUbvA4DSWGhPQ+9NM9TVg==
+   d="scan'208";a="51933794"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2025 06:58:21 -0800
+X-CSE-ConnectionGUID: WtWlbygsRsST9xbkWLUrCw==
+X-CSE-MsgGUID: FZVGghYbR5ictR/OBIGfaQ==
 X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; 
+   d="scan'208";a="186863944"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Nov 2025 06:58:20 -0800
+  by orviesa009.jf.intel.com with ESMTP; 04 Nov 2025 06:58:20 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id DDFF79A; Tue, 04 Nov 2025 15:58:16 +0100 (CET)
+	id EB9189D; Tue, 04 Nov 2025 15:58:16 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -50,9 +52,9 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 05/10] pinctrl: jasperlake: Switch to INTEL_GPP() macro
-Date: Tue,  4 Nov 2025 15:56:39 +0100
-Message-ID: <20251104145814.1018867-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 08/10] pinctrl: meteorpoint: Switch to INTEL_GPP() macro
+Date: Tue,  4 Nov 2025 15:56:42 +0100
+Message-ID: <20251104145814.1018867-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
 References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
@@ -68,18 +70,18 @@ Replace custom macro with the recently defined INTEL_GPP().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-jasperlake.c | 34 +++++++++-------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
+ drivers/pinctrl/intel/pinctrl-meteorpoint.c | 46 +++++++++------------
+ 1 file changed, 19 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-jasperlake.c b/drivers/pinctrl/intel/pinctrl-jasperlake.c
-index aef0e7f92154..c6e1836c69a7 100644
---- a/drivers/pinctrl/intel/pinctrl-jasperlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-jasperlake.c
+diff --git a/drivers/pinctrl/intel/pinctrl-meteorpoint.c b/drivers/pinctrl/intel/pinctrl-meteorpoint.c
+index ab46ac5f3b15..b7858c2b2c5c 100644
+--- a/drivers/pinctrl/intel/pinctrl-meteorpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-meteorpoint.c
 @@ -21,14 +21,6 @@
- #define JSL_GPI_IS	0x100
- #define JSL_GPI_IE	0x120
+ #define MTP_GPI_IS	0x200
+ #define MTP_GPI_IE	0x220
  
--#define JSL_GPP(r, s, e, g)				\
+-#define MTP_GPP(r, s, e, g)				\
 -	{						\
 -		.reg_num = (r),				\
 -		.base = (s),				\
@@ -87,51 +89,66 @@ index aef0e7f92154..c6e1836c69a7 100644
 -		.gpio_base = (g),			\
 -	}
 -
- #define JSL_COMMUNITY(b, s, e, g)			\
- 	INTEL_COMMUNITY_GPPS(b, s, e, g, JSL)
+ #define MTP_COMMUNITY(b, s, e, g)			\
+ 	INTEL_COMMUNITY_GPPS(b, s, e, g, MTP)
  
-@@ -283,28 +275,28 @@ static const struct pinctrl_pin_desc jsl_pins[] = {
+@@ -395,37 +387,37 @@ static const struct pinctrl_pin_desc mtps_pins[] = {
  };
  
- static const struct intel_padgroup jsl_community0_gpps[] = {
--	JSL_GPP(0, 0, 19, 320),				/* GPP_F */
--	JSL_GPP(1, 20, 28, INTEL_GPIO_BASE_NOMAP),	/* SPI */
--	JSL_GPP(2, 29, 54, 32),				/* GPP_B */
--	JSL_GPP(3, 55, 75, 64),				/* GPP_A */
--	JSL_GPP(4, 76, 83, 96),				/* GPP_S */
--	JSL_GPP(5, 84, 91, 128),			/* GPP_R */
-+	INTEL_GPP(0, 0, 19, 320),			/* GPP_F */
-+	INTEL_GPP(1, 20, 28, INTEL_GPIO_BASE_NOMAP),	/* SPI */
-+	INTEL_GPP(2, 29, 54, 32),			/* GPP_B */
-+	INTEL_GPP(3, 55, 75, 64),			/* GPP_A */
-+	INTEL_GPP(4, 76, 83, 96),			/* GPP_S */
-+	INTEL_GPP(5, 84, 91, 128),			/* GPP_R */
+ static const struct intel_padgroup mtps_community0_gpps[] = {
+-	MTP_GPP(0, 0, 24, 0),		/* GPP_D */
+-	MTP_GPP(1, 25, 38, 32),		/* GPP_R */
+-	MTP_GPP(2, 39, 56, 64),		/* GPP_J */
+-	MTP_GPP(3, 57, 87, 96),		/* vGPIO */
++	INTEL_GPP(0, 0, 24, 0),		/* GPP_D */
++	INTEL_GPP(1, 25, 38, 32),	/* GPP_R */
++	INTEL_GPP(2, 39, 56, 64),	/* GPP_J */
++	INTEL_GPP(3, 57, 87, 96),	/* vGPIO */
  };
  
- static const struct intel_padgroup jsl_community1_gpps[] = {
--	JSL_GPP(0, 92, 115, 160),			/* GPP_H */
--	JSL_GPP(1, 116, 141, 192),			/* GPP_D */
--	JSL_GPP(2, 142, 170, 224),			/* vGPIO */
--	JSL_GPP(3, 171, 194, 256),			/* GPP_C */
-+	INTEL_GPP(0, 92, 115, 160),			/* GPP_H */
-+	INTEL_GPP(1, 116, 141, 192),			/* GPP_D */
-+	INTEL_GPP(2, 142, 170, 224),			/* vGPIO */
-+	INTEL_GPP(3, 171, 194, 256),			/* GPP_C */
+ static const struct intel_padgroup mtps_community1_gpps[] = {
+-	MTP_GPP(0, 88, 102, 128),	/* GPP_A */
+-	MTP_GPP(1, 103, 114, 160),	/* DIR_ESPI */
+-	MTP_GPP(2, 115, 136, 192),	/* GPP_B */
++	INTEL_GPP(0, 88, 102, 128),	/* GPP_A */
++	INTEL_GPP(1, 103, 114, 160),	/* DIR_ESPI */
++	INTEL_GPP(2, 115, 136, 192),	/* GPP_B */
  };
  
- static const struct intel_padgroup jsl_community4_gpps[] = {
--	JSL_GPP(0, 195, 200, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
--	JSL_GPP(1, 201, 224, 288),			/* GPP_E */
-+	INTEL_GPP(0, 195, 200, INTEL_GPIO_BASE_NOMAP),	/* HVCMOS */
-+	INTEL_GPP(1, 201, 224, 288),			/* GPP_E */
+ static const struct intel_padgroup mtps_community3_gpps[] = {
+-	MTP_GPP(0, 137, 145, 224),	/* SPI0 */
+-	MTP_GPP(1, 146, 169, 256),	/* GPP_C */
+-	MTP_GPP(2, 170, 189, 288),	/* GPP_H */
+-	MTP_GPP(3, 190, 193, 320),	/* vGPIO_3 */
+-	MTP_GPP(4, 194, 201, 352),	/* vGPIO_0 */
+-	MTP_GPP(5, 202, 232, 384),	/* vGPIO_4 */
++	INTEL_GPP(0, 137, 145, 224),	/* SPI0 */
++	INTEL_GPP(1, 146, 169, 256),	/* GPP_C */
++	INTEL_GPP(2, 170, 189, 288),	/* GPP_H */
++	INTEL_GPP(3, 190, 193, 320),	/* vGPIO_3 */
++	INTEL_GPP(4, 194, 201, 352),	/* vGPIO_0 */
++	INTEL_GPP(5, 202, 232, 384),	/* vGPIO_4 */
  };
  
- static const struct intel_padgroup jsl_community5_gpps[] = {
--	JSL_GPP(0, 225, 232, INTEL_GPIO_BASE_ZERO),	/* GPP_G */
-+	INTEL_GPP(0, 225, 232, INTEL_GPIO_BASE_ZERO),	/* GPP_G */
+ static const struct intel_padgroup mtps_community4_gpps[] = {
+-	MTP_GPP(0, 233, 240, 416),	/* GPP_S */
+-	MTP_GPP(1, 241, 263, 448),	/* GPP_E */
+-	MTP_GPP(2, 264, 277, 480),	/* GPP_K */
+-	MTP_GPP(3, 278, 301, 512),	/* GPP_F */
++	INTEL_GPP(0, 233, 240, 416),	/* GPP_S */
++	INTEL_GPP(1, 241, 263, 448),	/* GPP_E */
++	INTEL_GPP(2, 264, 277, 480),	/* GPP_K */
++	INTEL_GPP(3, 278, 301, 512),	/* GPP_F */
  };
  
- static const struct intel_community jsl_communities[] = {
+ static const struct intel_padgroup mtps_community5_gpps[] = {
+-	MTP_GPP(0, 302, 322, 544),	/* GPP_I */
+-	MTP_GPP(1, 323, 338, 576),	/* JTAG_CPU */
++	INTEL_GPP(0, 302, 322, 544),	/* GPP_I */
++	INTEL_GPP(1, 323, 338, 576),	/* JTAG_CPU */
+ };
+ 
+ static const struct intel_community mtps_communities[] = {
 -- 
 2.50.1
 
