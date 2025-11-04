@@ -1,80 +1,84 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FEA308F25;
-	Tue,  4 Nov 2025 21:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83DE308F1F;
+	Tue,  4 Nov 2025 21:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762292483; cv=none; b=W9+dpDSuJc0pEIH3lsZpvz2RKOpj9HYm7BGXsRtxl3zM87Q/+TNHvNAC8SEkQm7wMomnZKVeSnhAcC/CDi2DjcsXjOZmEik84qF48+5fmvXrMIPGNx1F36KvxB4uqsHTe8qKwZDqhIUoYCr7vbqZPDDIhVhz7/zy2lZ2+BikDY0=
+	t=1762292486; cv=none; b=o2ISkKoQ/FGvNEe4dS4RCRvhb9iaqpsSwsYBSVCWpUHxnTDQTOhYLRIuJRwlwW2whrEtq4zvmzRXkunZorcEYDue534oWRUNieCut9SiMl4lqqQjXKa5ER4nEDZSQywrvZcElx8RdVjf8Q1NQL6s0ohbmGEYB5SQHNt6+g5YLVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762292483; c=relaxed/simple;
-	bh=R+uXzZS7et8jtPMvIVza2OCwfCozinUmID4WDU8hp0Y=;
+	s=arc-20240116; t=1762292486; c=relaxed/simple;
+	bh=11gmXSqpLN3kGK5vTcUD8uyC2O/GOzIeyB28RcB2GLA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKTuB6SfBYfmNxTfYYeZio4ECIiowXNOQ80Yl4RTblHc3T5+Sl17Utrs4kmGDDFEdQcu5ciYYlr/tAeV94a52F0Mp3slYjO0OpKGFmuqWSbuQW2ElTSsmXgG2Tq+Cm+eDw8MwvMoJFEUBhMkhGeT4zeU+izjuk7hGaqhSoYz3vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UVf5Ug77; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=d6ee5Rp/; arc=none smtp.client-ip=80.241.56.151
+	 In-Reply-To:Content-Type; b=X0himLxDGT4HaB6QhBExxuq5KExnQLIF3E7PQ+qnVjBRwF9mrOGobA0UnXdr9Rz3uMsNc52OvW9Sd7QoqjOQn2v2wZUSeYTM3MG0NUNpGhdHARcTnDx83Pi73+uswUQGOJN1TXgnEdviJKO2rnCXHSVCABDcTJqcQHY7wpaT5WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=l7yYbptw; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=L9dn5kfr; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UVf5Ug77";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="d6ee5Rp/"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="l7yYbptw";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="L9dn5kfr"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d1MMs1gBcz9twj;
-	Tue,  4 Nov 2025 22:41:13 +0100 (CET)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d1MMv2CSJz9tpH;
+	Tue,  4 Nov 2025 22:41:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762292475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MmkBlEC0NAzEk1anfTl4bZTTwlok0JGZTqXgBlFPVzQ=;
+	b=l7yYbptwmjFaBvpfDcNmw4BmyQHz+bkstMK8J8ofYbNk5EVmD19oTyyTbYLZeS0AdUagRm
+	xUab+3m3VkoLeoipTFMrrLg2NTV0fDnbMfFFym2FPMqMG4i0Cn25//qjTA0JmM7i40Dnaa
+	CrQkR78gco2dGTm4o6JQfkhUAImij/QsclJeNYMHvQftJ4xJ6qWgB5Z60uwLKxhwa7gH88
+	Udkshup/YCiA0Q124Wlauz8CdU7bPEUPsxYt3ke6dTt4dIFVzVGgT3didJZBcLQW5b0mDj
+	cum+efrlP6BNv66JmGbWbGRxK/ihKsdTMcqEc77yCTaeEDYhYJw+umWOJg9xNA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=L9dn5kfr;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <97046d21-d594-4fda-943f-153c6b75e963@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
 	t=1762292473;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ga8pA6Z9Y8RsqRmUs7aEnRqbWo8RnG+Y/E84d6N1WU=;
-	b=UVf5Ug772hy4P602BqQMOVNtOJHwWZ5W4j3V/lE6h2tnbCSNKevLPhvFaF/KWMB3/5VE9z
-	i/Gx4HCVSQBmEZXw7+7ZiHOnZHdb+3DiJrHtP1LCKDb07E125ZfxH/MiAIOzEjvcj2g+qT
-	UwQBHxmq5ZAF0UyX8FR+bIriuyGSYo6P7qhDFZgSOL9mGaENfMXGvXfvcZPaXEvGD2GZV1
-	6a8egOE4Mi6VqokSKCv1FDcs3ReN3l/oHwpIUY7GMSPohiXQjX9J9QqqkcdFYToxSW8k5h
-	07p+kkyMR/wgujS3YXU97qS9gr0sY1AfigePBSD+PFQQb+6lfgl9E3QiHep5hQ==
-Message-ID: <c9646952-1789-42eb-b7d9-b12915f77f07@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762292471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3ga8pA6Z9Y8RsqRmUs7aEnRqbWo8RnG+Y/E84d6N1WU=;
-	b=d6ee5Rp/Dlq6aDqgb7F2BsMXFaj37I3Z6oGRxMw0cgtnAz9y69mqLJQheAoQ1HR4VZH9s/
-	H9U3LuB7yn1ha44mVMnI54ahL7xNe9l1NIY9H7mxLxfsFTqdc0YCa8Af6bg9qev9v3r2sv
-	I8CNj4E1Uur2E865wu5jpKpz5iZgcfGpBp2kKeGKMD3sSDJm52U+uJNEBMpiAkZm//Rf0x
-	wUEzKJQOPdLm65K3HCTEb8KGs5PBgLWRIhg5IIbomApzbCAj1aojswQKubMEVzYMOJzUbI
-	xAO+Vo1SRcaADzLXVGq1MuNgR3deK123AdqlnoSoKmAgOoD85UI/adsGyrV8xA==
-Date: Tue, 4 Nov 2025 22:27:47 +0100
+	bh=MmkBlEC0NAzEk1anfTl4bZTTwlok0JGZTqXgBlFPVzQ=;
+	b=L9dn5kfr/qBxU3lwhYtMV3jGF4EpglgT3Nm48DXcHv7Pwo2vinWuhx+2hobzsEkk39VcJK
+	BB9lxwJjy2uqEcvWA0x/Av05QlIHZm3jkp1cSrVUUo+XDOvKTExSD8bm5ATGBleQgkK7eu
+	aLklRRq6ZNLr6SMQOwxFpRx3dMoOJQ2mksbtyC8C7VL+CoB5TxTddVlNiRoI8cRI8PibmA
+	7QrNXNAo6MSkBjP5WqqoA9cR1wTkNO5czlUq9uRTLJGBlXDTBQfs50g1o0ZkEn+lyArO8y
+	ObMmgxH8XCG/jE64hF/u6Szq/IVP8C3SdkOXKAdC8wr5D4ZhkoNHYc0r1qFecA==
+Date: Tue, 4 Nov 2025 22:28:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/5] pinctrl: renesas: r8a779g0: Remove CC5_OSCOUT
+Subject: Re: [PATCH 4/5] pinctrl: renesas: r8a779h0: Remove CC5_OSCOUT
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
  Linus Walleij <linus.walleij@linaro.org>,
  Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
  huybui2 <huy.bui.wm@renesas.com>
 References: <cover.1762274384.git.geert+renesas@glider.be>
- <77f9efe5388f2801ace945b7793d4823618eeec8.1762274384.git.geert+renesas@glider.be>
+ <895bb560467309706931d14aeea0e063ad0e86eb.1762274384.git.geert+renesas@glider.be>
 Content-Language: en-US
 From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <77f9efe5388f2801ace945b7793d4823618eeec8.1762274384.git.geert+renesas@glider.be>
+In-Reply-To: <895bb560467309706931d14aeea0e063ad0e86eb.1762274384.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 75cdxuguoagtef9ipr9ahgr3i6498trq
-X-MBO-RS-ID: 6c0607277e073a5143f
+X-MBO-RS-ID: 4458c7d3fdb519d6b2e
+X-MBO-RS-META: ej9ry7o4axckpp9s5xykx67ys4jpzfyb
+X-Rspamd-Queue-Id: 4d1MMv2CSJz9tpH
 
 On 11/4/25 5:59 PM, Geert Uytterhoeven wrote:
 > From: huybui2 <huy.bui.wm@renesas.com>
 > 
-> Rev.1.30 of the R-Car V4H Series Hardware User’s Manual removed the
+> Rev.0.71 of the R-Car V4M Series Hardware User’s Manual removed the
 > "CC5_OSCOUT" signal from the pin control register tables.  As this is
 > further unused in the pin control driver, it can be removed safely.
 > 
