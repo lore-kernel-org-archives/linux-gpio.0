@@ -1,129 +1,742 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B3B3370E8;
-	Wed,  5 Nov 2025 17:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEDB28C871;
+	Wed,  5 Nov 2025 19:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762362723; cv=none; b=QrxtUDwAi7A3CZsvUd88UPjpOP7ff0vcFwbyU9qhhA0bryI1YGRlNRJlsQXxxAlMdPHWxVvhS8VeRPe4sPGOqAmLfKNrteJVCQuC5cpdOiMp+CPw0ywxuwMwyF1S9MAUqoP7mBYzVDxmIdkA6nFgRsCLuVbFdd99i8ATFLTkrXg=
+	t=1762372254; cv=none; b=oQ/1FGOvkZXUam/SEn8ZnfqCzyuDsRYCIdhvMlm5to/E48U4xmwtFGEOuqmvmqIxbG9+H6FSE05zfLykI0/NVB/NOHaJLuUzs6hXF1TGJUYtVumhULrWrA/fB4uPa9DLQLqaL5YYJ2+m9MphUD2DtHT6YFDePeTt0mY2PvELyio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762362723; c=relaxed/simple;
-	bh=5UhncEhe+SElroFsCLAJcFgCyjkD+L/rkI4vspaLTC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pU2RQat1H+OIrDsJ2JcPgGBJFrk/skFQQhFGWinXdPitFr7iFhZ3DyO/gOvUl1Ft0zpCbFW6Lz/Ui/NIBu4m1WpUcjVJdoO70/GPBn9Q9A6wcSIPUfrliM2CHoNghiSRG7Fh+h/WiDFSBaneqPesk7uH/q0b+gIDCyJUy8fSS6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fEjC20ZU; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1762372254; c=relaxed/simple;
+	bh=Eei/Fg44a1VAwWtgrFzmkgnsu8ar5EBy5bcRlU2z1fk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Zu51vBoDPgiZY7aWdxcQ/XenjNDhD8VlYEog0O/9wsr8ze1Yob4GgCSnNZb8o/hx38bwQxbrzm5cm5PUTP7/Si5o1c2NtVNxD+kTGLJ3yyt5/meoGEuPjIGnTmvi9jhy9teKQ4NemMuI3Glz6uLSA++SF1r/zqwdBMRXz80p4bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=jIHC/H4T; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fEjC20ZU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762362722; x=1793898722;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=5UhncEhe+SElroFsCLAJcFgCyjkD+L/rkI4vspaLTC8=;
-  b=fEjC20ZUDIIQ7sCPabzX9oZQcKG0x7+tvy749srNo3tEERlduBwwjQZ9
-   swfCYlgeuz77xymXN1uegOpSD+nwfre0MqFfRQxna4kWBwQG+WZHPylvB
-   IN5ihYXMuPeI8vOX0jpiFDE6Z3hPzBwe0mn9ORdaqFYK0/lTBCb6VRZ2T
-   +Q9JlJu3hzfFRO0CKF/9GJUcJjPllsmTYyYU4vSuceT/kYTpG7AeX0XLK
-   s20kOf8MQXx09oUsWjEtepIpTFASFWpEUW5gznyiJDhuH/iOO4yQVUdC5
-   v9+3ZRitB4fwhvngsv7kIPL2d8DNyL6foPjAOYscBspqihjGAwib/IA4Q
-   Q==;
-X-CSE-ConnectionGUID: ZqNN6CVWSk+YaQtik6Vwmw==
-X-CSE-MsgGUID: IEnyydhuR9y3Q7fTlK+nnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64399292"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="64399292"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 09:12:00 -0800
-X-CSE-ConnectionGUID: nyQeFKReQNOu79JNF6fDVw==
-X-CSE-MsgGUID: Jnj1WAMkQ5aEv/JGATjJEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; 
-   d="scan'208";a="191610143"
-Received: from ldmartin-desk2.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.135])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 09:11:58 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vGh33-00000005qkR-3ZWl;
-	Wed, 05 Nov 2025 19:11:53 +0200
-Date: Wed, 5 Nov 2025 19:11:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 02/10] pinctrl: alderlake: Switch to INTEL_GPP() macro
-Message-ID: <aQuFWBiky4mpbIoM@smile.fi.intel.com>
-References: <20251104145814.1018867-1-andriy.shevchenko@linux.intel.com>
- <20251104145814.1018867-3-andriy.shevchenko@linux.intel.com>
- <20251105103122.GL2912318@black.igk.intel.com>
- <aQs3ls1rKgMOufOn@smile.fi.intel.com>
- <20251105115041.GM2912318@black.igk.intel.com>
- <CAHp75VcLNs0EWLED_5Mmr0V3nVoiEdKNpdoqPypy5i5jJCSd1g@mail.gmail.com>
- <20251105115535.GN2912318@black.igk.intel.com>
- <aQts5fqrNaEhHQyp@smile.fi.intel.com>
- <20251105154106.GO2912318@black.igk.intel.com>
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="jIHC/H4T"
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout3.routing.net (Postfix) with ESMTP id 914E16060E;
+	Wed,  5 Nov 2025 19:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1762372246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aW9wKfFFNtTI5Gb776bIaUwjTcw0cEaYja0hla1rLQ0=;
+	b=jIHC/H4Tc2ouqaFcS8VtGCFHrJRpXlko7eF0CsyON+RgpgUbkf2sn0n/XkrZVD/NEPHz1y
+	BUkxB4A3HHjGY0/uXkrrigl/6Slocs8DgE3oxb70cfTcIJ41ggkfJx/wP5MtOOnSY9WI8i
+	5lUt76ll42fGcQgigKvCM5JVJaZyqMk=
+Received: from frank-u24.. (fttx-pool-194.15.81.38.bambit.de [194.15.81.38])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 4A40D122700;
+	Wed,  5 Nov 2025 19:50:46 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 3/5] arm64: dts: mediatek: mt7988: Add devicetree for BananaPi R4 Pro
+Date: Wed,  5 Nov 2025 20:50:03 +0100
+Message-ID: <20251105195007.199229-4-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251105195007.199229-1-linux@fw-web.de>
+References: <20251105195007.199229-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105154106.GO2912318@black.igk.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 05, 2025 at 04:41:06PM +0100, Mika Westerberg wrote:
-> On Wed, Nov 05, 2025 at 05:27:33PM +0200, Andy Shevchenko wrote:
-> > On Wed, Nov 05, 2025 at 12:55:35PM +0100, Mika Westerberg wrote:
-> > > On Wed, Nov 05, 2025 at 01:51:58PM +0200, Andy Shevchenko wrote:
-> > > > On Wed, Nov 5, 2025 at 1:50 PM Mika Westerberg
-> > > > <mika.westerberg@linux.intel.com> wrote:
-> > > > > On Wed, Nov 05, 2025 at 01:40:06PM +0200, Andy Shevchenko wrote:
-> > > > > > On Wed, Nov 05, 2025 at 11:31:22AM +0100, Mika Westerberg wrote:
-> > > > > > > On Tue, Nov 04, 2025 at 03:56:36PM +0100, Andy Shevchenko wrote:
+From: Frank Wunderlich <frank-w@public-files.de>
 
-...
+Add devicetree for Bpi-R4-Pro.
 
-> > > > > > > > -#define ADL_GPP(r, s, e, g)                              \
-> > > > > > > > - {                                               \
-> > > > > > > > -         .reg_num = (r),                         \
-> > > > > > > > -         .base = (s),                            \
-> > > > > > > > -         .size = ((e) - (s) + 1),                \
-> > > > > > > > -         .gpio_base = (g),                       \
-> > > > > > > > - }
-> > > > > > >
-> > > > > > > I wonder if simply doing this:
-> > > > > > >
-> > > > > > > #define ADL_GPP(r, s, e, g) INTEL_GPP(r, s, e, g)
-> > > > > >
-> > > > > > We can, but it will give a couple of lines in each driver still be left.
-> > > > > > Do you think it's better?
-> > > > >
-> > > > > I think that's better because it is less changed lines but I'm fine either
-> > > > > way.
-> > > > 
-> > > > Okay, I will try it and see how it looks like and then I'll either
-> > > > send a v2 or ask for a tag for this one. Sounds good?
-> > > 
-> > > Yes.
-> > 
-> > After more thinking I guess I want it as is (here in v1). In cases
-> > when we define some parameters differently it will make sense to have
-> > an intermediate definition, but here. Can you give your Ack, please?
-> 
-> Okay sure,
-> 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+BananaPi R4 Pro is a MT7988A based board which exists in 2 different
+hardware versions:
 
-Pushed to my review and testing queue, thanks!
+- 4E: 4 GB RAM and using internal 2.5G Phy for WAN-Combo
+- 8X: 8 GB RAM and 2x Aeonsemi AS21010P 10G phys
 
+common parts:
+
+- MediaTek MT7988A Quad-core Arm Corex-A73,1.8GHz processor
+- 8GB eMMC flash
+- 256MB SPI-NAND Flash
+- Micro SD card slot
+- 1x 10G SFP+ WAN
+- 1x 10G SFP+ LAN
+- 4x 2.5G RJ45 LAN (MxL86252C)
+- 1x 1G RJ45 LAN (MT7988 internal switch)
+- 2x miniPCIe slots with PCIe3.0 2lane interface for Wi-Fi NIC
+- 2x M.2 M-KEY slots with PCIe3.0 1lane interface for NVME SSD
+- 3x M.2 B-KEY slots with USB3.2 for 5G Module (PCIe shared with key-m)
+- 1x USB3.2 slot
+- 1x USB2.0 slot
+- 1x USB TypeC Debug Console
+- 2x13 PIN Header for expanding application
+
+https://docs.banana-pi.org/en/BPI-R4_Pro/BananaPi_BPI-R4_Pro
+
+The PCIe is per default in key-m state and can be changed to key-b with
+the pcie-overlays.
+
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+v2:
+- squashed "mt7988a: Add label for ssusb0"
+- drop bootargs
+- update based on angelos review
+- drop gpio-header table comment because header is not yet part of this dts
+- dropped delete-property for non-existent "mediatek,p0_speed_fixup"
+- fix voltage displayed for buck4/ldo based on schematic
+- reorder fan after eth node (alphanumeric)
+- reorder spi-tx after spi-rx (alphanumeric)
+- follow reg first, then others also for spi-nand partitions
+- drop 2pg5 phy disabling node (due to new patch disabling by default)
+- change order of pinctrl (first number than names)
+- fix commit prefix (mediatek was missing)
+---
+ arch/arm64/boot/dts/mediatek/Makefile         |   4 +
+ .../mt7988a-bananapi-bpi-r4-pro-4e.dts        |  16 +
+ .../mt7988a-bananapi-bpi-r4-pro-8x.dts        |  16 +
+ .../mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi | 534 ++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |   2 +-
+ 5 files changed, 571 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-4e.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-8x.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi
+
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index a4df4c21399e..8640e5f32d4b 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -24,6 +24,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-2g5.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-emmc.dtbo
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-4e.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-8x.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
+@@ -111,4 +113,6 @@ DTC_FLAGS_mt7986a-bananapi-bpi-r3 := -@
+ DTC_FLAGS_mt7986a-bananapi-bpi-r3-mini := -@
+ DTC_FLAGS_mt7988a-bananapi-bpi-r4 := -@
+ DTC_FLAGS_mt7988a-bananapi-bpi-r4-2g5 := -@
++DTC_FLAGS_mt7988a-bananapi-bpi-r4-pro-4e := -@
++DTC_FLAGS_mt7988a-bananapi-bpi-r4-pro-8x := -@
+ DTC_FLAGS_mt8395-radxa-nio-12l := -@
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-4e.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-4e.dts
+new file mode 100644
+index 000000000000..c7ea6e88c4f4
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-4e.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 MediaTek Inc.
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
++
++/dts-v1/;
++
++#include "mt7988a-bananapi-bpi-r4-pro.dtsi"
++
++/ {
++	model = "Bananapi BPI-R4";
++	compatible = "bananapi,bpi-r4-pro-4e",
++		     "bananapi,bpi-r4-pro",
++		     "mediatek,mt7988a";
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-8x.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-8x.dts
+new file mode 100644
+index 000000000000..c9a0e69e9dd5
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-8x.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 MediaTek Inc.
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
++
++/dts-v1/;
++
++#include "mt7988a-bananapi-bpi-r4-pro.dtsi"
++
++/ {
++	model = "Bananapi BPI-R4";
++	compatible = "bananapi,bpi-r4-pro-8x",
++		     "bananapi,bpi-r4-pro",
++		     "mediatek,mt7988a";
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi
+new file mode 100644
+index 000000000000..a48132f09411
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro.dtsi
+@@ -0,0 +1,534 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2025 MediaTek Inc.
++ * Author: Sam.Shih <sam.shih@mediatek.com>
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
++
++/dts-v1/;
++
++#include "mt7988a.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
++
++/ {
++	aliases {
++		ethernet0 = &gmac0;
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		/* PCA9548 (0-0070) provides 4 i2c channels */
++		i2c3 = &imux0;
++		i2c4 = &imux1_sfp1;
++		i2c5 = &imux2_sfp2;
++		i2c6 = &imux3_wifi;
++	};
++
++	chosen {
++		stdout-path = &serial0;
++	};
++
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		/* cooling level (0, 1, 2, 3) : (0% duty, 30% duty, 50% duty, 100% duty) */
++		cooling-levels = <0 80 128 255>;
++		pinctrl-0 = <&pwm0_pins>;
++		pinctrl-names = "default";
++		pwms = <&pwm 0 50000>;
++		#cooling-cells = <2>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		button-reset {
++			label = "reset";
++			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++
++		button-wps {
++			label = "WPS";
++			gpios = <&pio 14 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_WPS_BUTTON>;
++		};
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++
++		led_red: sys-led-red {
++			color = <LED_COLOR_ID_RED>;
++			gpios = <&pca9555 15 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++
++		led_blue: sys-led-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			gpios = <&pca9555 14 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
++
++	reg_1p8v: regulator-dvdd1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "DVDD1V8_SOC";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator-3v3vd {
++		compatible = "regulator-fixed";
++		regulator-name = "3V3VD";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	/* SFP1 cage (LAN) */
++	sfp1: sfp1 {
++		compatible = "sff,sfp";
++		i2c-bus = <&imux1_sfp1>;
++		los-gpios = <&pio 70 GPIO_ACTIVE_HIGH>;
++		mod-def0-gpios = <&pio 69 GPIO_ACTIVE_LOW>;
++		tx-disable-gpios = <&pio 21 GPIO_ACTIVE_HIGH>;
++		maximum-power-milliwatt = <3000>;
++	};
++
++	/* SFP2 cage (WAN) */
++	sfp2: sfp2 {
++		compatible = "sff,sfp";
++		i2c-bus = <&imux2_sfp2>;
++		los-gpios = <&pio 2 GPIO_ACTIVE_HIGH>;
++		mod-def0-gpios = <&pio 1 GPIO_ACTIVE_LOW>;
++		tx-disable-gpios = <&pio 0 GPIO_ACTIVE_HIGH>;
++		maximum-power-milliwatt = <3000>;
++	};
++};
++
++&cci {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu0 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu1 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu2 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu3 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu_thermal {
++	trips {
++		cpu_trip_hot: hot {
++			temperature = <120000>;
++			hysteresis = <2000>;
++			type = "hot";
++		};
++
++		cpu_trip_active_high: active-high {
++			temperature = <115000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		cpu_trip_active_med: active-med {
++			temperature = <85000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		cpu_trip_active_low: active-low {
++			temperature = <40000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		map-cpu-active-high {
++			/* active: set fan to cooling level 2 */
++			cooling-device = <&fan 3 3>;
++			trip = <&cpu_trip_active_high>;
++		};
++
++		map-cpu-active-med {
++			/* active: set fan to cooling level 1 */
++			cooling-device = <&fan 2 2>;
++			trip = <&cpu_trip_active_med>;
++		};
++
++		map-cpu-active-low {
++			/* active: set fan to cooling level 0 */
++			cooling-device = <&fan 1 1>;
++			trip = <&cpu_trip_active_low>;
++		};
++	};
++};
++
++&eth {
++	pinctrl-0 = <&mdio0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&fan {
++	pinctrl-0 = <&pwm0_pins>;
++	pinctrl-names = "default";
++	pwms = <&pwm 0 50000>;
++	status = "okay";
++};
++
++&gmac0 {
++	status = "okay";
++};
++
++&gsw_phy0 {
++	pinctrl-0 = <&gbe0_led0_pins>;
++	pinctrl-names = "gbe-led";
++};
++
++&gsw_phy0_led0 {
++	color = <LED_COLOR_ID_YELLOW>;
++	status = "okay";
++};
++
++&gsw_port0 {
++	label = "mgmt";
++};
++
++/* R4Pro has only port 0 connected, so disable the others */
++&gsw_phy1 {
++	status = "disabled";
++};
++
++&gsw_port1 {
++	status = "disabled";
++};
++
++&gsw_phy2 {
++	status = "disabled";
++};
++
++&gsw_port2 {
++	status = "disabled";
++};
++
++&gsw_phy3 {
++	status = "disabled";
++};
++
++&gsw_port3 {
++	status = "disabled";
++};
++
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	rt5190a_64: rt5190a@64 {
++		compatible = "richtek,rt5190a";
++		reg = <0x64>;
++		vin2-supply = <&rt5190_buck1>;
++		vin3-supply = <&rt5190_buck1>;
++		vin4-supply = <&rt5190_buck1>;
++
++		regulators {
++			rt5190_buck1: buck1 {
++				regulator-name = "rt5190a-buck1";
++				regulator-min-microvolt = <5090000>;
++				regulator-max-microvolt = <5090000>;
++				regulator-allowed-modes =
++				<RT5190A_OPMODE_AUTO RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck2 {
++				regulator-name = "vcore";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			rt5190_buck3: buck3 {
++				regulator-name = "vproc";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck4 {
++				regulator-name = "rt5190a-buck4";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-allowed-modes =
++				<RT5190A_OPMODE_AUTO RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo {
++				regulator-name = "rt5190a-ldo";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&i2c2 {
++	pinctrl-0 = <&i2c2_1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	pca9545: i2c-mux@70 {
++		compatible = "nxp,pca9545";
++		reg = <0x70>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		imux0: i2c@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			pca9555: i2c-gpio-expander@20 {
++				compatible = "nxp,pca9555";
++				reg = <0x20>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			rtc@51 {
++				compatible = "nxp,pcf8563";
++				reg = <0x51>;
++			};
++
++			eeprom@57 {
++				compatible = "atmel,24c02";
++				reg = <0x57>;
++				address-width = <8>;
++				pagesize = <8>;
++				size = <256>;
++			};
++		};
++
++		imux1_sfp1: i2c@1 {
++			reg = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		imux2_sfp2: i2c@2 {
++			reg = <2>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		imux3_wifi: i2c@3 {
++			reg = <3>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++	};
++};
++
++/* mPCIe SIM2 (11300000) */
++&pcie0 {
++	status = "okay";
++};
++
++/* mPCIe (11310000 near leds) SIM3 */
++&pcie1 {
++	status = "okay";
++};
++
++/* M.2 (11280000) 1L0 key-m SSD1 CN13 / key-b SIM1 CN15 */
++&pcie2 {
++	status = "okay";
++};
++
++/* M.2 (11290000) 1L1 key-m SSD2 CN14 / key-b SIM2 CN18 */
++&pcie3 {
++	status = "okay";
++};
++
++&pio {
++	gbe0_led0_pins: gbe0-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led0";
++		};
++	};
++
++	i2c0_pins: i2c0-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c0_1";
++		};
++	};
++
++	i2c1_pins: i2c1-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_0";
++		};
++	};
++
++	i2c2_1_pins: i2c2-g1-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_1";
++		};
++	};
++
++	mdio0_pins: mdio0-pins {
++		mux {
++			function = "eth";
++			groups = "mdc_mdio0";
++		};
++
++		conf {
++			pins = "SMI_0_MDC", "SMI_0_MDIO";
++			drive-strength = <8>;
++		};
++	};
++
++	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_51";
++		};
++	};
++
++	mmc0_pins_sdcard: mmc0-sdcard-pins {
++		mux {
++			function = "flash";
++			groups = "sdcard";
++		};
++	};
++
++	/* 1L0 0=key-b (CN15), 1=key-m (CN13) */
++	pcie-2-hog {
++		gpio-hog;
++		gpios = <79 GPIO_ACTIVE_HIGH>;
++		output-high;
++	};
++
++	/* 1L1 0=key-b (CN18), 1=key-m (CN14) */
++	pcie-3-hog {
++		gpio-hog;
++		gpios = <63 GPIO_ACTIVE_HIGH>;
++		output-high;
++	};
++
++	pwm0_pins: pwm0-pins {
++		mux {
++			groups = "pwm0";
++			function = "pwm";
++		};
++	};
++
++	spi0_flash_pins: spi0-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi0", "spi0_wp_hold";
++		};
++	};
++};
++
++&pwm {
++	status = "okay";
++};
++
++&serial0 {
++	status = "okay";
++};
++
++&spi0 {
++	pinctrl-0 = <&spi0_flash_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	spi_nand: nand@0 {
++		compatible = "spi-nand";
++		reg = <0>;
++		spi-max-frequency = <52000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <4>;
++	};
++};
++
++&spi_nand {
++	partitions {
++		compatible = "fixed-partitions";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			reg = <0x0 0x200000>;
++			label = "bl2";
++		};
++
++		partition@200000 {
++			compatible = "linux,ubi";
++			reg = <0x200000 0xfe00000>;
++			label = "ubi";
++		};
++	};
++};
++
++/* back USB */
++&ssusb0 {
++	/* Use U2P only instead of both U3P/U2P due to U3P serdes shared with pcie2 */
++	phys = <&xphyu2port0 PHY_TYPE_USB2>;
++	mediatek,u3p-dis-msk = <1>;
++	status = "okay";
++};
++
++/* front USB */
++&ssusb1 {
++	status = "okay";
++};
++
++&switch {
++	dsa,member = <1 0>;
++	status = "okay";
++};
++
++&tphy {
++	status = "okay";
++};
++
++&watchdog {
++	status = "okay";
++};
++
++&xsphy {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index ed4b592c9dd5..5a7a9b2f954e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -418,7 +418,7 @@ lvts: lvts@1100a000 {
+ 			nvmem-cell-names = "lvts-calib-data-1";
+ 		};
+ 
+-		usb@11190000 {
++		ssusb0: usb@11190000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11190000 0 0x2e00>,
+ 			      <0 0x11193e00 0 0x0100>;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
