@@ -1,37 +1,37 @@
 Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E946D343D9C;
-	Wed,  5 Nov 2025 19:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62860344040;
+	Wed,  5 Nov 2025 19:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372255; cv=none; b=Us5MgQVn8by/4upNwnd9u24V4Y4X1pbYTMrpB9KMOpR2rGHUP1LEPjkhMmd4RWhjtjjjvXqTxSLfg38cjD4rkJIrMQ0yl+PYsiFA5QwbVskzx/ols+y6bIS5MxVtrJXRfV8IvyMQSwC6MUXs8E3aZkqBK2u/zI8k9aCY2Jz+JXE=
+	t=1762372257; cv=none; b=l40fnozqklQceajIvF8T/c5ncfKlyQURT8dxbdJmEvaMR/67vF+KF5B197xWtv76T1Htg2aVDzku+PEpkLrGQjB0YvtKhGPE5q94tsPG0S6F613G1EoBZhC6d9A1m4RvhHST8UVHMLmnZOCyRL8FLafZc37HTJYbnzWpTEP/BWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372255; c=relaxed/simple;
-	bh=BApIC7WC/UGDPeLW7zSedilTChUVgLVE+Zp2wFmqjV0=;
+	s=arc-20240116; t=1762372257; c=relaxed/simple;
+	bh=WSWEPEVlnXW5j9fG2/KzHiue4plCV0w15ej7p1hwTQc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uUeBISU0+ZNd2SX5KBHBeqQtHF5HEXBmGcweJ9LgDN4RbhFnxI/ftEk4KMJyz8r1z9pOe4IUF8tBcKzTwiORFIHKUEhLAAqDg7Nm8ICoNO0L0agfFCgFkT4nXDAHiloMR90rqw1DIHZYTCPttu9XsXrZwo6N3b7e9O98wPtOogQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=PvthaO8x; arc=none smtp.client-ip=134.0.28.11
+	 MIME-Version; b=LF7DIqy5/9SQV6qtvgtvvVobqniTYpr/wVEUSDZbQkjTdT7Gk5tp/iP3+IRgbnMH4+wYT29QLKyI5WBQ0e76zoSmSfABOgi7Xdg61MTgudHBbYv0TVJnGh2jsc3BPGXgWRHN29lbSq0fsTdn5lPISGAJAd2qrNiTeFJWKDA+mNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=C5Av/8bT; arc=none smtp.client-ip=134.0.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="PvthaO8x"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="C5Av/8bT"
 Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout1.routing.net (Postfix) with ESMTP id 0F7CF3FE64;
-	Wed,  5 Nov 2025 19:50:46 +0000 (UTC)
+	by mxout1.routing.net (Postfix) with ESMTP id 0A716402AA;
+	Wed,  5 Nov 2025 19:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1762372246;
+	s=routing; t=1762372247;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sGHvmclXM9H1P2h0/NKYUnu6Tdto8R0Fejc6gXiCl9U=;
-	b=PvthaO8xcw9IhbK8S4BV8rxbncbqKRxoLxJdRfXb9z3+wIUopkR+ur8DFq+DsYWbBH6qRz
-	NtvSjzoCdXwmf+EPLsWhjUJdYleg/9xrBlBbJnB+7tr16OvZh1G42I7Rve6M/BqtAjjtUm
-	FBxCLbqJSI82mBA94c/lOC0fhWvghjg=
+	bh=VysT7Mn8NKFGdQhAHI7tG5Xcp6xnNIZ6sTmQJxUySJc=;
+	b=C5Av/8bTMuZnmpXeHeDhb7bh7BFAEyvDbnBvzqRgL7pLDuA2i0NlzJpOAghizqIVihdRrc
+	RXpinIa/SW9kY4IJ0ykUApxKhBYrRMbFpVLBPHodg7621tI7WR1/CXd1RdKFb17B7O+HWw
+	iA03QC8RKaGSOBkOUfmNF8oA1jSH46o=
 Received: from frank-u24.. (fttx-pool-194.15.81.38.bambit.de [194.15.81.38])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id C9147122700;
-	Wed,  5 Nov 2025 19:50:45 +0000 (UTC)
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id CCDB7122700;
+	Wed,  5 Nov 2025 19:50:46 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -46,12 +46,10 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	AngeloGioacchino Del Regno <angelogiocchino.delregno@collabora.com>
-Subject: [PATCH v2 1/5] dt-bindings: pinctrl: mt7988: allow gpio-hogs
-Date: Wed,  5 Nov 2025 20:50:01 +0100
-Message-ID: <20251105195007.199229-2-linux@fw-web.de>
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 5/5] arm64: dts: mediatek: mt7988a-bpi-r4pro: Add mmc overlays
+Date: Wed,  5 Nov 2025 20:50:05 +0100
+Message-ID: <20251105195007.199229-6-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251105195007.199229-1-linux@fw-web.de>
 References: <20251105195007.199229-1-linux@fw-web.de>
@@ -65,31 +63,106 @@ Content-Transfer-Encoding: 8bit
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Allow gpio-hogs in pinctrl node for switching pcie on Bananapi R4 Pro.
+Add MMC overlays for BPI-R4 Pro.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogiocchino.delregno@collabora.com>
 ---
- .../devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/mediatek/Makefile         |  2 ++
+ .../mt7988a-bananapi-bpi-r4-pro-emmc.dtso     | 33 +++++++++++++++++++
+ .../mt7988a-bananapi-bpi-r4-pro-sd.dtso       | 31 +++++++++++++++++
+ 3 files changed, 66 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-index 26dfe7e7735a..1f31b520cb43 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-@@ -61,6 +61,11 @@ required:
-   - "#gpio-cells"
- 
- patternProperties:
-+  "-hog(-[0-9]+)?$":
-+    type: object
-+    required:
-+      - gpio-hog
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 8e99f6e33b25..776b9274e8fa 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -28,6 +28,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-4e.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-8x.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-cn15.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-cn18.dtbo
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-emmc.dtbo
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-pro-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
+new file mode 100644
+index 000000000000..5ed2f0a6bd66
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-emmc.dtso
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2021 MediaTek Inc.
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
 +
-   '-pins$':
-     type: object
-     additionalProperties: false
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
++};
++
++&{/soc/mmc@11230000} {
++	pinctrl-names = "default", "state_uhs";
++	pinctrl-0 = <&mmc0_pins_emmc_51>;
++	pinctrl-1 = <&mmc0_pins_emmc_51>;
++	bus-width = <8>;
++	max-frequency = <200000000>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	hs400-ds-delay = <0x12814>;
++	vqmmc-supply = <&reg_1p8v>;
++	vmmc-supply = <&reg_3p3v>;
++	non-removable;
++	no-sd;
++	no-sdio;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++};
++
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
+new file mode 100644
+index 000000000000..1ec1a9fbd8ba
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-pro-sd.dtso
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2023 MediaTek Inc.
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	compatible = "bananapi,bpi-r4-pro", "mediatek,mt7988a";
++};
++
++&{/soc/mmc@11230000} {
++	pinctrl-names = "default", "state_uhs";
++	pinctrl-0 = <&mmc0_pins_sdcard>;
++	pinctrl-1 = <&mmc0_pins_sdcard>;
++	cd-gpios = <&pio 12 GPIO_ACTIVE_LOW>;
++	bus-width = <4>;
++	max-frequency = <48000000>;
++	cap-sd-highspeed;
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_3p3v>;
++	no-mmc;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++};
++
 -- 
 2.43.0
 
