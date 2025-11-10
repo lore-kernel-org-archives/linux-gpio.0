@@ -1,104 +1,134 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32006225762
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Nov 2025 10:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ED030AACE;
+	Mon, 10 Nov 2025 11:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770663; cv=none; b=bspSGUJa6qD+bWvAtJhQvnSeSP8WfjzhM0ZCNlB2Cv1lDhwOQXuUQipfzu5xK3Nm1QxmJjvhKff/+5mOE+EQ3jrnYoD6PmRsVIWePE9dTm+66Tu61rM731OZpQgeeQe6J2ODx1quds4XtSo3H+FU1Y1tZG7LICQwWzKHhN5AMwE=
+	t=1762773485; cv=none; b=oo4JdF2RlU6hnVBqWkLBcW0UdBGjh67udB0G5oaTSVC9Ddnc3D9hCmoG7XWgXTdLXPVtQ1ZdSjxzwBaGNRFDFESf2SMUdy/kSDiSruOknKLZ6irFJ4KBGeOta4niNxIVnW5kna6reTOCXbhKEMIcDZKid3rzLEa8/nrerIbu4ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770663; c=relaxed/simple;
-	bh=GISx0LVyM2/QgivELlFUbtboVFx5/0Ttdw8BgePqXok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SosQ0dMroXTaalNKnI/PL1gC/9SxvOQpkuCgaYrgr/4H/FdmXeNCL6tKjN/JEM/WJhjJdVBTgH6osMmDsEpZw+LMT9WFaYlJ98WcEFBLP1VYcbAHB8KikeElV4hnCm+kqTqoKGyM46vnLuoqDCqLTbCyBqzCKlV4GlVOWkp83K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wVT8DuZt; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762773485; c=relaxed/simple;
+	bh=yTNk15ujPUZN4tCu3ROJSJZtUjZoH00ykxCOtBE7gmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kA1oOCfHAXm4tgJ2uYkIKroUvOLRCaBsfIdVJCiCy+OgXunYH2XSWSeZE6S4l3SMIhAHmENSG0aYleSGnMCLME68PtxHehtdCv92pao8+S1TlF5ARGjXah86kWYzZ60ISz5qLgpJ58bv9ju7hL/ArKCxHlXvPzK8vY4y6V81e/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XVmxM9s2; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wVT8DuZt"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-594285c6509so3085987e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Nov 2025 02:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762770659; x=1763375459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QU08++yZFWV12YufiFjJiqJethik/+S6rZcQDhNnBws=;
-        b=wVT8DuZtYqJGoFHtBH+2Yw8BycLbNfKvuz7XIoCaZ2aYIEJABKzAS9INK3go7kiOXO
-         0x/EvkIXjfJxrIMvEmTROhOjkITQ136CY2l6r3qYLISernAVQeFJYpAF7bnJHI5wP4/A
-         zh1ayRfklvpvp7vxCd34uTLQoyg777PuNg6tRlcc5EynL2eQEmy1rFeXSK4zcxiYSLdL
-         BgMfSF0S/GS83DqGvO7YdqNkyLrMnYuJu4j8xteFM+Pseof4PvStY2PabnNFdtz5YHmK
-         4CNNILVl64/8gR6uTlGZk3B6oXytOaqv9ZuF259AqNf2yiy9x9P+hCPFm7IqpjpPH3xY
-         LYiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762770659; x=1763375459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QU08++yZFWV12YufiFjJiqJethik/+S6rZcQDhNnBws=;
-        b=I8LrCl09gfQM0J9Xop/LY+4SgphpoO/BH7zpLb8/T5jKdYRJ9nhC3f1blSOgXdGLNu
-         oY1+w2JyO3NzxmR67JQFLstOx6LI7VEJfNeT6FQyMD8Q9NPEEE0IoSgxjV4w9R0DmSgZ
-         15lUzOLCvndUg/ZjdikAbb0PsmFSs4fIYa7lt7fHy9RLSKBRNqzqlSAV29BRBU3IWinI
-         6hQHkuZg3N3WXigpaVz+BzETBiQpi6WpgrCKnJoE9iX1f/pqvc/QVJCsj6SMNswbAv/Q
-         v7GyXwetGuCL8kXNRT12czFtKx8nAWVgfXbFOOQ6dOcB8E+Ta3LIfuIMZS8kspx9RVot
-         KN2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXq47UhdcrRH7LGezVYoAkefj6P7ShwtQfU+MMp9g9/AOlnKo7Mcgnah/lhqC/mZ09Z4RxvEN0ZGJvu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA4XiFAotTCR9qBaOU6HR1CT8Bhe2+YqyBieQJJwp/z1E2NAtm
-	GVRobHDjC0VZ7QDChEemvodV4zLoOdDjb2CvaIHeg6D6VoRELVOivO8d8ivCPACYV1XUnjBdCPP
-	eJMGfm+jpqk8AO79lhaHAT+uHSjL2GHPtTOthgMTZGA==
-X-Gm-Gg: ASbGncv4GDmsg1ZTLbQ/mMWkq9IVwTd2xPclBGlUVY+WYAi+97joeqYSXmnwZxVcjKE
-	87C8nE1gkJMUg011Vt3TNDOUjCkh+1SXORLtCrF9TWZ1Gb+I7Tbj0tPieQgYIum1XA/8z2xbpct
-	zpYWhfQItK2fGXLiqHncSiCpupcMPmxFjYqFIbYA8hBZrLulyCPkeS7xaC3ErldXMgDucJO/5l4
-	qD5OHIw4t2ui92VNmVR0gK7eyMD8Xbzm7rTnjkw3eAdTSpoqwdr7lLqa+YCVCVvHU9R1QI=
-X-Google-Smtp-Source: AGHT+IGIXbIku+5fYyzKohAAT6RG/P8U2C7G8e9kXvVMEvCfF8edHPq84Zw+IaV6jNgp67Ypm1mnZzGXPUSxOGgBk6I=
-X-Received: by 2002:a05:6512:3d05:b0:57e:c1e6:ba8 with SMTP id
- 2adb3069b0e04-5945f146395mr2089860e87.12.1762770659287; Mon, 10 Nov 2025
- 02:30:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XVmxM9s2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762773483; x=1794309483;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yTNk15ujPUZN4tCu3ROJSJZtUjZoH00ykxCOtBE7gmA=;
+  b=XVmxM9s2WQMB7z5mVjFMqasvzgUn9b5YKATOKGmqgx2p3/W6zUK/074K
+   iy8oAEzzi7aC8w6uU7bCrV5JbztbZ4zfNeobuqdreUfSqo2Cy10ZDdcXt
+   7FSl444YPOK3qrevtf28mSJ/OUfZDBDOpv2b6sc5qX5tF6SVnERZKJTfA
+   1tjwOC96M7TjkkcpWuMKeQYjEZ/pwiz+AZFbXPaWKw+/tWc9ZP1g9544z
+   zl1nLbq+5rTe81ZlN5wQImBvjzJG3BI1I4QecLbwGKkRTpSx05QyIANCq
+   YyQGdHnnXCyL6vE0TC4a1pYyK9Ism+XjecaIx6M9T64l43pAeL+62VIrz
+   w==;
+X-CSE-ConnectionGUID: HLp32CkSS8qjbPpwlow59A==
+X-CSE-MsgGUID: bKSDZADwTOuffJ1BQy7qgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="82448422"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="82448422"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:18:03 -0800
+X-CSE-ConnectionGUID: wdIRu+1bT2e+/HoY4UdvvA==
+X-CSE-MsgGUID: NUr6m8N+Tr+XXURuyaZPTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="212045271"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:18:01 -0800
+Date: Mon, 10 Nov 2025 12:17:58 +0100
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] platform/x86/intel: Introduce Intel Elkhart Lake
+ PSE I/O
+Message-ID: <aRHJ5gnMaWeJmQzc@black.igk.intel.com>
+References: <20251110052728.383339-1-raag.jadav@intel.com>
+ <20251110052728.383339-2-raag.jadav@intel.com>
+ <aRGTVguXqO2oNCCW@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031160710.13343-1-antoniu.miclaus@analog.com> <20251031160710.13343-3-antoniu.miclaus@analog.com>
-In-Reply-To: <20251031160710.13343-3-antoniu.miclaus@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Nov 2025 11:30:33 +0100
-X-Gm-Features: AWmQ_bn6eI5FE_ScZi7BjkTK0y0_CSDlwCtPcUJZzvZroFx81ufpj8BGANUbJDU
-Message-ID: <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRGTVguXqO2oNCCW@smile.fi.intel.com>
 
-Hi Antoniu,
+On Mon, Nov 10, 2025 at 09:25:10AM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 10, 2025 at 10:56:40AM +0530, Raag Jadav wrote:
+> > Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
+> > devices that expose two different capabilities of GPIO and Timed I/O
+> > as a single PCI function through shared MMIO with below layout.
+> > 
+> > GPIO: 0x0000 - 0x1000
+> > TIO:  0x1000 - 0x2000
+> > 
+> > This driver enumerates the PCI parent device and creates auxiliary child
+> > devices for these capabilities. The actual functionalities are provided
+> > by their respective auxiliary drivers.
+> 
+> ...
+> 
+> > +static int ehl_pse_io_dev_add(struct pci_dev *pci, const char *name, int idx)
+> > +{
+> > +	struct auxiliary_device *aux_dev;
+> > +	struct device *dev = &pci->dev;
+> > +	struct ehl_pse_io_dev *io_dev;
+> > +	resource_size_t start, offset;
+> > +	int ret;
+> > +
+> > +	io_dev = devm_kzalloc(dev, sizeof(*io_dev), GFP_KERNEL);
+> > +	if (!io_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	start = pci_resource_start(pci, 0);
+> > +	offset = EHL_PSE_IO_DEV_SIZE * idx;
+> > +
+> > +	io_dev->irq = pci_irq_vector(pci, idx);
+> > +	io_dev->mem = DEFINE_RES_MEM(start + offset, EHL_PSE_IO_DEV_SIZE);
+> > +
+> > +	aux_dev = &io_dev->aux_dev;
+> > +	aux_dev->name = name;
+> > +	aux_dev->id = (pci_domain_nr(pci->bus) << 16) | pci_dev_id(pci);
+> > +	aux_dev->dev.parent = dev;
+> > +	aux_dev->dev.release = ehl_pse_io_dev_release;
+> > +
+> > +	ret = auxiliary_device_init(aux_dev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = auxiliary_device_add(aux_dev);
+> > +	if (ret) {
+> > +		auxiliary_device_uninit(aux_dev);
+> > +		return ret;
+> > +	}
+> 
+> Can it be now auxiliary_device_create() ?
 
-thanks for your patch!
+Could be. With that perhaps we won't even need the 'intel' prefix.
 
-On Fri, Oct 31, 2025 at 5:08=E2=80=AFPM Antoniu Miclaus
-<antoniu.miclaus@analog.com> wrote:
+> > +	return devm_add_action_or_reset(dev, ehl_pse_io_dev_destroy, aux_dev);
+> > +}
+> 
+> ...
+> 
+> > +#define auxiliary_dev_to_ehl_pse_io_dev(auxiliary_dev) \
+> > +	container_of(auxiliary_dev, struct ehl_pse_io_dev, aux_dev)
+> 
+> Wondering if we may use container_of_const()
 
-> Add driver support for the ADG1712, which contains four independent
-> single-pole/single-throw (SPST) switches and operates with a
-> low-voltage single supply range from +1.08V to +5.5V or a low-voltage
-> dual supply range from =C2=B11.08V to =C2=B12.75V.
->
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Or just use platdata instead? Let me send out a v3.
 
-So tying into the binding discussion:
-
-GPIO means "general purpose input/output".
-
-I am really confused as whether this is:
-
-- General purpose - seems to be for the purpose of switching
-  currents and nothing else.
-
-- Input/Output - It's switching something else and not inputting
-  or outputting anything and this makes the driver look strange.
-
-Yours,
-Linus Walleij
+Raag
