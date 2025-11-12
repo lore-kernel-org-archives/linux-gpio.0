@@ -1,159 +1,161 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8FC33D6C7
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2025 13:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24ED28A701;
+	Wed, 12 Nov 2025 14:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762955760; cv=none; b=iQIgdkKHy3mjJ3asgNMmL1gl8yt28I/QnKIDx0wk8CEsNToK5ewKFpazjl/t0iHmpbU6M/rm2BRnpuEWAoqNkgXYtj03Vin02DMh06ApJKfyHD1xwtmzXjeCQ1HmXMl1f+CIiUMsMVhO6uG+vCukn1VzCPermesrsJjQxLWp8fg=
+	t=1762957595; cv=none; b=YyeFQAhQmhtzqfxbtxW7R4RobDeZ3/Lt3aVVoasmI0hxj7pZE1aNpuldL73QA73bUU8RvBw5fm1hHtQyc0OTzYr9xwIngyjqNMAThd29G2grah7kUkSDYQR2PSUXTxuEw7NFeRHma4a6M8vYkpvkFSkS8aUgAeGiIq6YHhJXkn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762955760; c=relaxed/simple;
-	bh=Ws7WZR2jJQBsUjKHfWRA1LnGQPkf3K7KRf54zRBU9aU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cl+1fEV6O+lZAbvXC+060YODOCS7ORTmKdGHbQ9F9NcqLVOP+FGMrKnlQ3tr5QTrm7WsruCJT3QzRmY+C/Y4BTN3AEpFayV1NRxajQ6Xcku7izXPtT7kPOq+Rrhvh74vP7M4XJJ+5NLsYQ8l22XQpRvGZHDt3ssPnhgehPRdkRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vtD1s5Rd; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1762957595; c=relaxed/simple;
+	bh=bNLqGrg/bxt16UHYQqXWyzLbnJanuTnn/DSzlHMqam8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtqkH8KDJQJjkvIg1VxhtdsslmxVSp+JzGZ1eDETk9gLV+3LtC3LZ3UfqxclgnpUPBMBb8ad4aCUNoASSQGa2qV+3aNDjYGnnGss44naSBPz6mMissH6LIF12GL1+ggN/qHjUppwErkbg/iMjZ2pObPxB6Uq57GyoG6Vy5fG0Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4iXCp4z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vtD1s5Rd"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47728f914a4so5597585e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Nov 2025 05:55:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762955757; x=1763560557; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kp0FmiCJj71Jl4oZffl9a+Nd4P6twEmX35nVwvd5KFA=;
-        b=vtD1s5RdxaI/rWrQIEp0qKscCVOtMbZEGAhFkriFxjO6Ie5U7cgtLb+Y0BSKmHlQRu
-         5huKbwDTk5dyOIjdEohzuL6NVCFdOiwXuuYw1AehKo8Oc2noy/92GXW5/bZRrdwzVatj
-         tN4xFzYAFS+3fumCB5qR6FO4zTiTdjwBSjKU3QT9GzTyextCn/4AoDIMZJSn0ib3YMWI
-         wgUt9decgidFF8k2LuvQkBrcb7pHpkdiYiRwxBrSyf/VTMVeey2GYmo1JOG11odZUrW0
-         O++/QKmEqsytsCcdRLPW3K2uKEHZCqTK6+S3KalLanUeljLwCab7BbBaUk87y9z+QBbl
-         yxaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762955757; x=1763560557;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kp0FmiCJj71Jl4oZffl9a+Nd4P6twEmX35nVwvd5KFA=;
-        b=TOCcDjZHvQsrFJWFHbwY1cQgVg/d+4SjtUV+dTsEEmC0Q7kT9pmPDtZc3E+njPdu4n
-         J54qpKsK7o1BVoKWqNMBZN+CNhvaX8KPmwU4Lf1moxtTwPhdv4Vkkt50B033VgWAMZJY
-         6oTuhpaSerutM7gRizIuxc7/gmpyRCQT40H1qUJtnGXjxjTTTFw0LZzkANSwlLmZeJXE
-         0x99sS/cA/yeznHBTSQ2idhX3gi8pa+vMMFcO7jC9peujXA1sgoiUXy5LHXYFsH/ZUD0
-         Va8jJFvTc3gXj0Du5b4r8qE/0j/x3mzxFtV4+Z/QCNgRwPGmB4jA0tZ0wFBUljqpoI8e
-         KRpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkezsWGRPUze5eboR+t1siscHstHAc5iF8z1JN6llJqYf/0VZt6RipQRWdNWNPXDZtsTXYPvd8I2Kx@vger.kernel.org
-X-Gm-Message-State: AOJu0YySiuAj8vt5bo9G+pVJ1bRfvGvNP5lj+d7eAT0UBX8AImD0/gz+
-	65N6pWfgYQqiD+CPwE23h8zvQqRDCJyoFBoqieCkMD2jTm8tF4BAiFuIB26zC56h6bQ=
-X-Gm-Gg: ASbGnct/pED0835j8cU8uNYs/44ZdLIe+ROlpnxD8lFM41UV2Gkcs3XCIiP7zbLns5R
-	69uPsMX5DRSAZuzbSz14DZlS6UZ7xPpA3dOxnlpljRg8zheHe6gvUv1oC7k3Ponfq+lRrnATg6c
-	85Wdv3e7HEYOOOI2G4j3ZhPuQzMjDGcD7OcnA86wgxd94JfvDGysyjabS66PHjjXAD+eMOZ0xJH
-	yLMeJIFpPHCr2gPtnRhKd8blj2qf7MHfrANwDmETT3VUgbWG6+uYnjjlOsm+g82EMQ1AXlXV+TJ
-	IIBXj5zSpZ1KEB9701Ou4UwGp7OItcpEHKOuMBtKt6WLOuVqMfpUxTciNpLIL/2PfZO2cefquH9
-	cbgQRkUQ0hN/NplCKpgYPGedOu+j4oKRx3A8rMcZ3CW9sh0Bx5PPH9R+orrpR1vDU0ns=
-X-Google-Smtp-Source: AGHT+IG9voS48hdT+xBkoQt9DZv1hKYOn+kmcoFvvCmGnWxQyhCTGn6OKWMid0l6AgV8010JdBsVyg==
-X-Received: by 2002:a05:600c:1c0f:b0:46d:a04:50c6 with SMTP id 5b1f17b1804b1-477870c32a9mr35632365e9.30.1762955756833;
-        Wed, 12 Nov 2025 05:55:56 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2a6:e453:42d3:11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e2b835sm37711685e9.2.2025.11.12.05.55.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 05:55:55 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 12 Nov 2025 14:55:39 +0100
-Subject: [PATCH v4 10/10] regulator: make the subsystem aware of shared
- GPIOs
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4iXCp4z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02366C19422;
+	Wed, 12 Nov 2025 14:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762957594;
+	bh=bNLqGrg/bxt16UHYQqXWyzLbnJanuTnn/DSzlHMqam8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m4iXCp4znKZvCzYkjhXZu1JL4COAdGb7yAm9UmEyz0xmhqXKj2K9504lPVGuTy2Jw
+	 oIs3gFjFC88Pg6vs33x0Y9J4Rt1LUAOWf+RlfjFyxs91gx9kSFDB51FMvZyE5chPXE
+	 aGtArRih0bDKoqGUZ1CFOq9Z1gR5u0u7H+Ia54U4ZgBoOw6F7RHwsyZbtTo73P+YtI
+	 MlFexT96E5ZxLwczc2sajdvyTdAl2dfa5pilRItuDN9x8WGEYbXAh10Kg5gBAGhHeA
+	 FzJ4mZv2YeFA2oWEIhZbh7ljpXAZyuUSAV7u6Cyu3iLC+0hy5axy54UvXp2gQgfYvb
+	 AydcA8t3H0Huw==
+Date: Wed, 12 Nov 2025 08:26:32 -0600
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251112142632.GA1610836-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-6-herve.codina@bootlin.com>
+ <20251030141448.GA3853761-robh@kernel.org>
+ <20251031162004.180d5e3f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-gpio-shared-v4-10-b51f97b1abd8@linaro.org>
-References: <20251112-gpio-shared-v4-0-b51f97b1abd8@linaro.org>
-In-Reply-To: <20251112-gpio-shared-v4-0-b51f97b1abd8@linaro.org>
-To: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Alexey Klimov <alexey.klimov@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1453;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=cRJh4UNEG3HFtyWkN4hxt+/hsKQWJv1/Ds8BXH+v1q0=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBpFJHYk7DEi8vVcJ8C6Jm2yEHPJBGM9iGwZrEld
- QRXIbLOz+iJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaRSR2AAKCRAFnS7L/zaE
- w5z8D/0TLxRCfJwRygeJ86VvClZB7uM7J1J7NnDKtg4UUs56/PXpS0p9l9x6HrZCLCmXiKCXC6S
- rZimvHSWFvMB+C5AzBTweR/w8AU/dwfANLNHEFQo+iD3CLl9eCDO5S4D3mTH+GpDffO431DA2ra
- NV8XBbpp+4Bo/za49Zr9H2ob40gyv6LMnx0JdjauTBGDkdzOzFrNNOwnVCFn/teRwYxnFj/xFrN
- 4GP5pbDAURlG/xIMeu9nKdruuD3lEP3b6bQYe/eYqZeHosVGYr7NPr0onVW2wJHG/RzQefqOWOH
- ABURXDvkqFhKu+lb6wia8HbWw+RyjHT672anUmCEfXDZ9LM0nquoSFzeaiN7Jf6cK/jbKzPIlvC
- Ps2AYAZ1GqYqxYwpwn1rZnnBc0OrBt1a58lr5tBW0hKn/7yuvMJrkWbuXj0BttD3FNhif/16siA
- lttnkrbLgbYY0YjPKMPkbEjdJWESGR7zBrNDC2Va507fkTnxZ2Phqf/lxwNF2PfVO1PzwnBZoSc
- CmG3UEV6uBjSgz2CaPMSPEypNdH4WPIeC1t4kRTUWEWsGV4cHpnmh4BBtCS7l/clKFHd9kYjfhf
- ic0J3okXXIW6QgaD1f5jyr+g5oh5qRFfMovbUX6XdJOev5b4Rh8yx/EQPfOmlJUsw+FnPZDBf0p
- o27rB4fzdQATFGg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031162004.180d5e3f@bootlin.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, Oct 31, 2025 at 04:20:04PM +0100, Herve Codina wrote:
+> Hi Rob,
+> 
+> On Thu, 30 Oct 2025 09:14:48 -0500
+> Rob Herring <robh@kernel.org> wrote:
+> 
+> > On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> > > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > > driver to perform operations at bus level.
+> > > 
+> > > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > > instantiate devices connected to this bus.
+> > > 
+> > > Those devices are instantiated only by the Simple Platform Bus probe
+> > > function itself.  
+> > 
+> > Don't let Greg see this... :)
+> > 
+> > I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
+> > distinction here between the 2 compatibles is certainly a kernel thing.
+> > 
+> > I think this needs to be solved within the kernel.
+> 
+> I fully agree with that.
+> 
+> > 
+> > What I previously said is define a list of compatibles to not 
+> > instantiate the child devices. This would essentially be any case having 
+> > a specific compatible and having its own driver. So if someone has 
+> > 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
+> > they add a driver for "vendor,not-so-simple-bus", then they have to add 
+> > the compatible to the list in the simple-pm-bus driver. I wouldn't 
+> > expect this to be a large list. There's only a handful of cases where 
+> > "simple-bus" has a more specific compatible. And only a few of those 
+> > have a driver. A more general and complicated solution would be making 
+> > linux handle 2 (or more) drivers matching a node and picking the driver 
+> > with most specific match. That gets complicated with built-in vs. 
+> > modules. I'm not sure we really need to solve that problem.
+> 
+> Right. Let discard the "more general and complicated solution" and focus
+> on the list of compatible to avoid child devices instantiation.
+> 
+> Do you mean that, for "simple-bus" compatible we should:
+>  - Remove the recursive device instantiation from of_platform_populate().
 
-GPIOLIB is now aware of shared GPIOs and - for platforms where access to
-such pins is managed internally - we don't need to keep track of the
-enable count.
+That may be a problem I hadn't considered. While we've solved most probe 
+ordering issues, I think some may remain. Even when of_platform_populate() 
+is called affects this. For example, I tried removing various arm32 
+of_platform_.*populate() calls which run earlier than the default call, 
+but that broke some platforms. (Looking at the list of remaining ones, I 
+fixed the at91 pinctrl/gpio drivers, but never tried to remove the 
+calls again.)
 
-Once all users in the kernel switch to using the new mechanism, we'll be
-able to drop the internal counting of users from the regulator code.
+Maybe this can be restricted to cases which are not recursively created 
+from the root node. Not sure how we detect that. Perhaps no OF_POPULATED 
+flag on the parent node? Or we could just enable this for OF_DYNAMIC 
+nodes? That should be sufficient for your usecase.
 
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/regulator/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I would like to solve this more generally though. So we could try it in 
+kernelci and/or linux-next and see what happens.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 2eab56df042e6b05abf0989f425dc161c7b0e66d..53b2b2d3746f9f2419234912d49bd8b4f21a893d 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2742,6 +2742,13 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- 
- 	mutex_lock(&regulator_list_mutex);
- 
-+	if (gpiod_is_shared(gpiod))
-+		/*
-+		 * The sharing of this GPIO pin is managed internally by
-+		 * GPIOLIB. We don't need to keep track of its enable count.
-+		 */
-+		goto skip_compare;
-+
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (gpiod_is_equal(pin->gpiod, gpiod)) {
- 			rdev_dbg(rdev, "GPIO is already used\n");
-@@ -2754,6 +2761,7 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- 		return -ENOMEM;
- 	}
- 
-+skip_compare:
- 	pin = new_pin;
- 	new_pin = NULL;
- 
+>  - In simple-bus probe(), check the device we probe against the
+>    'no_instantiate_children' list
+>       - If it matches, do not instantiate chidren
+>       - If it doesn't match instantiate children
 
--- 
-2.51.0
+Right.
 
+Rob
