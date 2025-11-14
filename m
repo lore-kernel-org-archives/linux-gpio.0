@@ -1,177 +1,145 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2668B3090F1
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 09:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938C3306B2D
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 09:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763113539; cv=none; b=kdQR85X4GUnRGsMExNaqbQk6E3FnwuafHG8kkXEKmQxNQIdm3OWk6MVnrSstaDOAfKQiUlzVWMGZMUVSNUZ13qIq3NH8yo6XkH81yRlNrVY8IP37Nc2dVZPXCQMWw0JUn5Tgkxo38TrjmXytN4fqDbAAReGmEgbt9AlDGfNNltM=
+	t=1763113571; cv=none; b=jgzsMkuXZK011ikDaY+UZ7WpoDWh9Ycc+B59CnJdcOZNovLq71kMTvE0y9N3kw4jXDEkkoLpvPrVDy9fZmaI/cV5kLWLEm98bE8/ppbQQ4fBTC8L9M3hAbAC/O0PnSLfeN+3HpIWEy5pkaRN6vB9imk/dv1l2D7fHwykB1LZqPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763113539; c=relaxed/simple;
-	bh=wTzVYr5CLMbxZcELo4IOLIgxiHBUFwH2iRqyR1aLWAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1mUAnxoCBQTtBNkFBVX4Iw0EkGgDF/Cppc1YxZZ8f7q5XkmIFjH37DZ+Xv8JEFtjW0bhTDSPKx5QR07J4Izfani0ZO7O/NWdQI/zGujdjJYP9JvBgs1EnkREmV3iKXjlHh8bUXyFXNJ82U58XtFCYDpoZSn8syymohdne+eIpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1763113571; c=relaxed/simple;
+	bh=ajCREfT/hcJRDBbyJOi3jQMEdUT2txP4PezLHt7RVuM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mGkWhx0VsiZ8g3ds9p0jYvZ6RMrPFTFDpz/rPiClNmu9dknnQ77jmxZUVn8Rj1mhzc6qWKlr/qU4+Ibec3DAGTPm/TAVOaTc0EyrbGPRNChEdAypX00MdngqKGamJ/4V19MkLAUfCkefU5mOX4tMCDEdxG5gLao7+Ek1JrpQNz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBMmQAXq; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-55b0d4b560aso1103233e0c.0
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 01:45:38 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBMmQAXq"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477632d45c9so13315885e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 01:46:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763113566; x=1763718366; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5bwqEJshLQG2pK67j+3WEK74xje3ZFwPQhZbDPgILsA=;
+        b=SBMmQAXqf0ETquKTKF04tRQ9J6y+ojJjIWPMaVmSbGOZCcwYcsecP5l9OFpCC5XfvN
+         1CthhUrl3cBGTWRO8O9f4XVQV8JJ6066kwll+g9KbxZVo2rEkY3i8sQkRp40FTBOnDmK
+         0dotcj0zMntYWLGZQIwqAMrP54GVBFGEfqlKKNCnH6ldPsOFVuhKfQaDS/t+MJ5+XwbG
+         WxHbDOb0ieWnZyQXzaw9B0LKQHlOAcIXjhe4PFwyoaHcxxay40p/QhCod+kg58tjiSDl
+         Jp3IHufofQArrKPYnVEtAraT5Ajeeud9VhJw54HBJ4d2u18d1zkkASOHM5aoCCadPxm/
+         B9zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763113536; x=1763718336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dAUhmj06/ScrYHjhgghrsX3axL4gTCjs2QTqxYaasK8=;
-        b=MU0SpmiSCAwYUjm1Hj6bS2CC0tT/WctfIZb+SxcNioFKeI8jytBmTaUKZQeUBPt30j
-         WvPAyh/deBSlUplawrKalrW0+a06ld9d7qWB+eFYiwN7WTqulBZwd1+T9pmpvdLEGuLo
-         wdjUTA8ycFJC+t94JeTQYC6RuGRLgq/gfS842Voep00N5jtCHdxIPMalqTgLPvT/5bUz
-         wvCIlOcwdCTRezioJZxw6p3+iSCqcjGCCykKiVzS4zKGNRNvhl7x9sWrR12W0t+aYQh/
-         HgPu/HWKaoIM0VYz5UBo0+t2aYA8pLZ5Ggqmzwh3xlpQbfI7guzHVBSYC2C9OHUet69j
-         tw9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBB0ogEh0kf+rDHKVve4o6+LJwQ83b2ZSg6p9PwfeC1b2zHN0NJauKNY1zP1oBypL1WiOhSNzL8Cyf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK4uHQxBzlFQrnKUGzIk88g5MoK1uBV1PUGKdF6lZm8Dz45bs+
-	xVPOsUFkOpbE6mEFgu5OJ4QPp20jjpFlNbl9rGQJbdTo/XhPehMK8nuAuMmkYjmrR94=
-X-Gm-Gg: ASbGncsPA74nmtQVy/+tgSkMwr/mcviDNpKoBKNYdvhv+8NsSzIYvD/MyVlVJVpvHDg
-	TmCfFkCYNcDel8hXc9pGRENGaIrzJ3UuIZ2fdVRweJJtORkB0Imzq3Y6Q51I0CVMe5rlifvdwuA
-	WeW8O8nuN+4P6NKEoDxYLfRlLrj831VcyI4e5xda/9j/VMx4iwurwY31purU9Ldqm13uxLeBZiB
-	RCIp64VzzcHWfpws/A/WdSxyAOVEUHVhC9mp06n2W/Bb3SLi9w49Iozlqz64f15Ur8q2R/l5fC1
-	gH3kMgMgSQ/zqTo8H1DPVPRnq20Gh08uqsafLDSvKgTTGn/IvJICXH8vPRMhbHOVza5v39g4C13
-	Y87H94XIbkgP9WaHbYnT7u6Gplg2TX0qUhozdld68sOnH+kF000r+G+pOoj5mdWkyu4PqsqCzRB
-	3eE9SbYyB2lcbXJ2f0PtIwbODvZO+JwmD4Y33vmtUv7A==
-X-Google-Smtp-Source: AGHT+IE1bs32Cs6hj3pnybjme8Eykgq68bfoIH7GM5bjrUsbib+yqXDzYC1yJCEvd51sX1+g0NXsyw==
-X-Received: by 2002:ac5:ca1d:0:b0:54a:8deb:21a7 with SMTP id 71dfb90a1353d-55b0d108dc9mr1642675e0c.4.1763113536436;
-        Fri, 14 Nov 2025 01:45:36 -0800 (PST)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f44268fsm1504815e0c.15.2025.11.14.01.45.34
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Nov 2025 01:45:35 -0800 (PST)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-55b0d4b560aso1103206e0c.0
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 01:45:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXyVH3ubBpTB5UqcJplAzMM7AxgcgN3lLvthaFhbHUbHXTqLsAvtI6esaSdiPbJDsc53ddy8rl30tt0@vger.kernel.org
-X-Received: by 2002:a05:6102:800d:b0:5db:f897:59f0 with SMTP id
- ada2fe7eead31-5dfb41e268cmr2558400137.11.1763113071580; Fri, 14 Nov 2025
- 01:37:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763113566; x=1763718366;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5bwqEJshLQG2pK67j+3WEK74xje3ZFwPQhZbDPgILsA=;
+        b=sKFOO5j+s9Fv/3sk4O0mpMUn337j7waDm5EAw785bGz02qU9gANqRQHH4VC0an/jqt
+         AuZmw4nGg5mL7hMBjNln7wAfzCWevam37w0odUaNIXXZUs8+Nzg8r1lFiZKmqsmbgUN7
+         F9w9+z55uyBtXmr7mKV7abFS2jL6lWZwgq/tDpNfot3bb+9tN8YzA0LTXPyHWuu/v3zJ
+         MI9zhdfx5KKQT5nx4KiXzrd+kUZYuhhPKsFCe/lkVMxLYrxmd7EZbgNI/cKbTEq5E4cf
+         P4+ss6WtSS733fQ3jG0Dgm0ojHGkPNdCY2gCeutyfpdaoWzDZhe/1Jtt0VO6ENpJ3JZT
+         MI/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUC9ax+myC3HfB6k4NwF470pSy0B2imLbfmm6zC0rV/1ZBnblIR0Kq4UImH9mSUpy37ts+K12YFWuK+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz335IZRt8ojZQHqjTbSNmbR8IyCuGxo50PA3nQX3BmBXvjdLzC
+	zKcXb5Hb1UTXdOa7oChZYYFSRlo4GFXLL11/Ztikne4gY14BPxnWaMdS
+X-Gm-Gg: ASbGnctCSEGqU0XQ+TjLxdSL79mWaD23isAwIlMQS0UYJg+tLiehNfT9PQqLIsWRHnk
+	rqAdwmIbDYHNb/Ymi7PJeJoPOX9Hw7XHEqmyEQ9JwLPH8fpQUXKdTUKbxShMdj12fnvEQJe/U4w
+	bmBjCYoyJHHKpkstrDa/8XHFGQrEdYWjGH/SLIakbz3qKGjMkhSxwqLc8DWWujsoeOEIjzYJmVz
+	lZUp01JzI7NxIyGrQRiHi4g7Pojod2KCtSXxT9xdWZaOr4cCLUwVAsvU/xzZP1GilD/3kTkSCLk
+	O040IZ8+y33/V3eSufgkIhhfBFPOUKZxyvdZMc3EGCB2mORxYOj2KHyWg+8wYMRzp/tzdaYUO2O
+	reOtSD7JjFh4kCBLPpB2zABxX8CC53hayrSUdk9mzHMtJ/dMG/e5rSTcXPCaro6pQ36otgb1+f+
+	9K+fMlNCB3n+e3TAWCPPc=
+X-Google-Smtp-Source: AGHT+IH/jWTFHh9aKpcCWJvmgpXyHpzOKiaHuKZDq/cY0kpC+Nuc21cAjdAdX+5mcEWPkyyHNGr6Gw==
+X-Received: by 2002:a05:600c:474a:b0:46e:2801:84aa with SMTP id 5b1f17b1804b1-4778fe003ecmr21077485e9.0.1763113565466;
+        Fri, 14 Nov 2025 01:46:05 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e45677sm143331965e9.8.2025.11.14.01.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 01:46:05 -0800 (PST)
+Message-ID: <34af5576a5e779a279975dd9fb8be7c2b233f661.camel@gmail.com>
+Subject: Re: [PATCH] pwm: adp5585: correct mismatched pwm chip info
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, 
+	ziniu.wang_1@nxp.com
+Cc: laurent.pinchart@ideasonboard.com, nuno.sa@analog.com, lee@kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Date: Fri, 14 Nov 2025 09:46:43 +0000
+In-Reply-To: <jqsmjigr65kqhlk3buybrcurllqxlad6zkkuwo3tea5uqopqzl@ldwbjsndltpk>
+References: <20251114065308.2074893-1-ziniu.wang_1@nxp.com>
+	 <jqsmjigr65kqhlk3buybrcurllqxlad6zkkuwo3tea5uqopqzl@ldwbjsndltpk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027123601.77216-1-herve.codina@bootlin.com> <20251027123601.77216-9-herve.codina@bootlin.com>
-In-Reply-To: <20251027123601.77216-9-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Nov 2025 10:37:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdULa3Myv5M13mZnBfGRfpnCasRbDFSFsh-Yji+Gw3gycA@mail.gmail.com>
-X-Gm-Features: AWmQ_bllwARgosfbTXod6oIXQrjpImVz4Lng-lsiZr7z4SHhmighCo7rwlxoBpU
-Message-ID: <CAMuHMdULa3Myv5M13mZnBfGRfpnCasRbDFSFsh-Yji+Gw3gycA@mail.gmail.com>
-Subject: Re: [PATCH v6 8/8] ARM: dts: r9a06g032: Add support for GPIO interrupts
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Herv=C3=A9,
+On Fri, 2025-11-14 at 10:30 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>=20
+> On Fri, Nov 14, 2025 at 02:53:08PM +0800, ziniu.wang_1@nxp.com=C2=A0wrote=
+:
+> > From: Luke Wang <ziniu.wang_1@nxp.com>
+> >=20
+> > The register addresses of ADP5585 and ADP5589 are reversed.
+>=20
+> My German feeling for the English language suggests:
+> s/reversed/swapped/.
+>=20
+> > Fixes: 75024f97e82e ("pwm: adp5585: add support for adp5589")
+> >=20
+> > Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+> > ---
+> > =C2=A0drivers/pwm/pwm-adp5585.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> > index dc2860979e24..806f8d79b0d7 100644
+> > --- a/drivers/pwm/pwm-adp5585.c
+> > +++ b/drivers/pwm/pwm-adp5585.c
+> > @@ -190,13 +190,13 @@ static int adp5585_pwm_probe(struct platform_devi=
+ce *pdev)
+> > =C2=A0	return 0;
+> > =C2=A0}
+> > =C2=A0
+> > -static const struct adp5585_pwm_chip adp5589_pwm_chip_info =3D {
+> > +static const struct adp5585_pwm_chip adp5585_pwm_chip_info =3D {
+> > =C2=A0	.pwm_cfg =3D ADP5585_PWM_CFG,
+> > =C2=A0	.pwm_offt_low =3D ADP5585_PWM_OFFT_LOW,
+> > =C2=A0	.pwm_ont_low =3D ADP5585_PWM_ONT_LOW,
+> > =C2=A0};
+> > =C2=A0
+> > -static const struct adp5585_pwm_chip adp5585_pwm_chip_info =3D {
+> > +static const struct adp5585_pwm_chip adp5589_pwm_chip_info =3D {
+> > =C2=A0	.pwm_cfg =3D ADP5589_PWM_CFG,
+> > =C2=A0	.pwm_offt_low =3D ADP5589_PWM_OFFT_LOW,
+> > =C2=A0	.pwm_ont_low =3D ADP5589_PWM_ONT_LOW,
+>=20
+> I wonder how that didn't pop up during development of 75024f97e82e. I
+> would expect that the driver doesn't work correctly in a very obvious
+> way without this change?! I tend to want to send this to Linus before
+> 6.18, but the question makes me wonder if I'm correct with that
+> urgency. Any insights?
 
-On Mon, 27 Oct 2025 at 13:36, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> In the RZ/N1 SoC, the GPIO interrupts are multiplexed using the GPIO
-> Interrupt Multiplexer.
->
-> Add the multiplexer node and connect GPIO interrupt lines to the
-> multiplexer.
->
-> The interrupt-map available in the multiplexer node has to be updated in
-> dts files depending on the GPIO usage. Indeed, the usage of an interrupt
-> for a GPIO is board dependent.
->
-> Up to 8 GPIOs can be used as an interrupt line (one per multiplexer
-> output interrupt).
->
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Yeah, this one I kind of asked for Liu to test it (as I was not testing the=
+ PWM bits)
+and he did tested it [2]. But it was v2 and that series had some more itera=
+tions. So
+I suspect that I messed up along the way and the last version of the series=
+ was not
+tested (for the PWM bits).
 
-Thanks for your patch!
-
-> --- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-> @@ -534,6 +534,14 @@ gpio0a: gpio-port@0 {
->                                 #gpio-cells =3D <2>;
->                                 snps,nr-gpios =3D <32>;
->                                 reg =3D <0>;
-> +
-> +                               interrupt-controller;
-> +                               interrupt-parent =3D <&gpioirqmux>;
-> +                               interrupts =3D < 0  1  2  3  4  5  6  7
-> +                                              8  9 10 11 12 13 14 15
-> +                                             16 17 18 19 20 21 22 23
-> +                                             24 25 26 27 28 29 30 31 >;
-
-I would drop the spaces after/before the angle brackets.
-
-> +                               #interrupt-cells =3D <2>;
->                         };
->
->                         /* GPIO0b[0..1]   connected to pins GPIO1..2   */
-
-> @@ -620,6 +644,23 @@ gpio2b: gpio-port@1 {
->                         };
->                 };
->
-> +               gpioirqmux: interrupt-controller@51000480 {
-> +                       compatible =3D "renesas,r9a06g032-gpioirqmux", "r=
-enesas,rzn1-gpioirqmux";
-> +                       reg =3D <0x51000480 0x20>;
-> +                       #interrupt-cells =3D <1>;
-> +                       #address-cells =3D <0>;
-> +                       interrupt-map-mask =3D <0x7f>;
-> +
-> +                       /*
-> +                        * Example mapping entry. Board DTs need to overw=
-rite
-> +                        * 'interrupt-map' with their specific mapping. C=
-heck
-> +                        * the irqmux binding documentation for details.
-> +                        */
-> +                       interrupt-map =3D <0 &gic GIC_SPI 103 IRQ_TYPE_LE=
-VEL_HIGH>;
-> +
-> +                       status =3D "disabled";
-
-So this is disabled by default (despite the driver being enabled by
-default), because the board has to provide the proper real interrupt-map
-anyway.  Makes sense.
-
-> +               };
-> +
->                 can0: can@52104000 {
->                         compatible =3D "renesas,r9a06g032-sja1000", "rene=
-sas,rzn1-sja1000";
->                         reg =3D <0x52104000 0x800>;
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+[2]: https://lore.kernel.org/linux-gpio/3efb68e2-7091-47e1-81a2-39930da5a42=
+7@nxp.com/
+- Nuno S=C3=A1
+=20
+>=20
+> Best regards
+> Uwe
