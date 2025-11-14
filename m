@@ -1,123 +1,121 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B202E0902
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 08:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD20A2F8BD9
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 08:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763108492; cv=none; b=F9JdhZjopbYlyg5t5v4t9VwOJh8ubqFnK4aKq65gzjYo0RcFfoWHkNjH02YPDKHb25qbL6MF8mil+mBB47BpqeQQ76LLLjONeYusjH79k0hDvFSnFw2kx0G6rEikryShNvsOcyRtYV1LWDCaaOcOFZJpNCv1kHXQgYFaF391FnQ=
+	t=1763110178; cv=none; b=q9AZRHSR6rpbrdwQyq9HJfzsphWB5/vxHw4rkXeFTpGXjIezFO/48xhq/FlTuK0+/GgF844zBElYJpNb/z40BnwnlyPsaNC26g++F6AsOoDmHPDWRAZ16e95U6992CnPD5IRDfxJAtqdZAMCpnTg/fDKLZvmrAsgGDOEEtU8AU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763108492; c=relaxed/simple;
-	bh=RoaMhfLLVOuHjxOOpVv4CAMRbDMWNeflzHt/GEJb89I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JU71bhmlIGh7vd6Ju0LJAz70Mn9Y27pU3gLAMWT8o0AIGaJnEzbaeoUBO+tJGqgeZsezh1M472G8/3JOu0gDrvgbKB7spTOn4OYGD9xUSubGdOTWn6gJIC9nof9Gfcv51IuCqTU7iPUdmi4owJCiNaHJk7w2mHz009RZkG8rEEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HaboKwBA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1763110178; c=relaxed/simple;
+	bh=qhWrVdkJl/bh943Rpg/Moi+ra3osyEZ5mvlznsHPeR0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K8UCW8z3yes6iLkFnosOhc74CyywpFkN3aXgcx8Mo05wFHUhGexEhQkyupbxQr07cW+lf2yIEo8NTYc9prf5xlx+Oqzuk7L9hD/yCMOcrrPrk65rJrkDIFPUJQgJOnh0anKFtrpFxeME7V10XroCn+k49aobpBEBqvM5Yxex9cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hY8XsgSq; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HaboKwBA"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5957ac0efc2so1874781e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 00:21:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hY8XsgSq"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477632d45c9so12829755e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Nov 2025 00:49:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763108489; x=1763713289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RoaMhfLLVOuHjxOOpVv4CAMRbDMWNeflzHt/GEJb89I=;
-        b=HaboKwBAFBymz7EzW5wv/02tSDSWJluPjTIkvtQDEsYNSQKaR5gWstrid9vLCMMUeH
-         rzHw41fvOiM0/DWdnRanPPHzlvd6S59Owdu+k13djbkMlWg3vfWFdEW2fBJ7i+9jhB79
-         LsuSrNTvKJ0anT3vpkrx1B4jLEqfY2ypGVMJV9RKJCPJ1ohBfPU4/G6EMWZrIMUQkF3Y
-         5BbxR4jevXjd2V9A9unQ+p4Fh4FuKfD8TZeKee/0qoIOQeRj9wgDfafjUYTs8RnnTy33
-         SjXmXCDkS6QPHqS966yIBZMGmQOtF1Q9ct+XiItaYyW6R1G0qXwjRuvTlw9VMzSphry+
-         kBcA==
+        d=gmail.com; s=20230601; t=1763110175; x=1763714975; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YeYjS1oDyvjSvHSS5QjEowfSx3Ga9VJevXqRCYptZeQ=;
+        b=hY8XsgSqBR0Rp6d2MBEckJb3Ero2aZNqSBZemerRgFB1SL6m2WxoxlfKsUKf/XE2nm
+         2UTXi9AUxQQWbSOgVZdOuDKXyb418BCjpID2pgWp0w0ucDTIO0SaiUxoPKnlsSK6AOIY
+         /0QM5/gwL9bKwcE+MxLIO4gp5fwmwLcJuqLmkipV8spTzNRvujSWh9jm2cIWpoUQtu+m
+         zQM1InoHGjiCBtJE6nEnXYf4PZ6Cd0uDsXz3wtNGE6JWVxp79ycLtFekBMDJ/ql4AnCF
+         +SFex5vbAeRaec4HbOZo/S2gbddCrQEfAqhbotubEFrsLyTyTOFtL5oRh5gNdm0GMilE
+         xS9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763108489; x=1763713289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RoaMhfLLVOuHjxOOpVv4CAMRbDMWNeflzHt/GEJb89I=;
-        b=d46F/NnjXtytolCZgFQCrDpBvGMAOypSmZ2PodtzvKxTclHmyfSNwZRRx4mIN8l07q
-         sJEAZhjIabCbo26kQIONSkRYOMOBiX4luanCNOwY4pPN8BDq074AK4SDcvJuQMN5jnQX
-         AbuCYhG4NMZmnVgUluDZcX4MHqLnSqqd14tA7u6TD1RqlJIpdGiWlYxeG+1yxrJ5u8Up
-         8RPZviFnRXWjJnxr8VqgPZFrA45Yc1MId2yJ2KUJSJGKGlqqgwC8LP3KXs2D59HE3HTk
-         7wX8MOAzNjd7ihI9rooJq285OoWc+3aquTS5wJoARlVAE0taiSixwHRRFcruw6vkRQIC
-         hnhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWFZQKc01uJcmxdZRa+UyetRTDbOYgn64pil2IgTeV2FLIffQ0k0kVrHe7JpoFJhjtYGUySTJXhxnJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnu8CsGTKgnf3kkuAnowdJPU4kQ4W3tlis4Ai/XBuWIDUkQSDL
-	8k3Lb+zRXtfBeruJpTVhZRV+Xmuq22gaRMetKNb/McABYdXIrB7zzyY8VKlDXrB1mO6eiUTg0dT
-	3JsBFb3ItKP3PWZdqy/B+DjoWdSPAn0ZzAdlfxM4/tw==
-X-Gm-Gg: ASbGncumjo1Gm8up/cyhKOhoRh4bKfYDW5tS0RsNZz1Tkjb/v6VLUyxQhwaf0YMoa/B
-	9zRPOkSftaoAI5B12xX7m1F+wrD7J8Uc54Zvosyu5+T8xjKwUjB8sOYyU/5WU5jpVdxVbIYp35I
-	NViGwoiJn0bdBk29B1/9ZC3ouAv0X+xojoD+ULWjqLa795kiEBoh3q8fsSIu5iEtDb8YolabdbC
-	BOyXD3BZESoQpfL28lGmB/10MM20cuNExAyimgPgdcDAFcHP19R9xWYwI4n++pIOnYFmyO0WTrm
-	Szl8XJEe8JINQ3wEdACUeNlH+g1VG2myMe07nrTtTOZ4WHZa
-X-Google-Smtp-Source: AGHT+IF9LlTTJK0KWvU49K6w/pIWSV4KMl+jVPcAS0Bn57RWse7RUSp6Baoy/D0SVnwtg1MsVhw3r9G172s2cgsE6m8=
-X-Received: by 2002:a05:6512:b9d:b0:591:c3f1:474d with SMTP id
- 2adb3069b0e04-595841b541bmr818362e87.15.1763108488118; Fri, 14 Nov 2025
- 00:21:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763110175; x=1763714975;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeYjS1oDyvjSvHSS5QjEowfSx3Ga9VJevXqRCYptZeQ=;
+        b=fCZbbf8mFjvP+FbfuPXK9f762Kl6/38jWrrv1Vgm5h9Uz7LICivrTtcl3mGq0ULTDZ
+         Y879U5U3Q9+7GJsfdPl+h83FB89RowPOA3vaban1ZGMMeCJHakkCAL6mWXIYu5q6fkHh
+         zvswRs6watrZbAwCtza0CYqrr70b5Rx94PZvbZhiaEFLRPoF5rilpzRDA0Zfy0cUKQy6
+         Gm/xzoFf5CWuWzmbLOw6Aj9yk4zGbfHRP25ok0eNZrmzDyNMsQeQfFOnCtWs3Ur9l9tK
+         83LqvDeM1lp9/9iFy3sFy9+gtWd1XEWk98ywkcT4SaShdqeSGSQ+gdCGyGa2Ay+L8m3C
+         eS+A==
+X-Gm-Message-State: AOJu0Yy91IPMptK8y6mzOG1TdEp/5PIyfHgj6et0+2zjKXpZD+IZLjAO
+	zJvJPxu4Fj4clJs/zOl2ySeT0iUTr9tQUWwjao+oH3Cs2y/OLx1PkFQg
+X-Gm-Gg: ASbGnctozkih+KpzDn0XVtZBFdMQDTdKLJijM7TJc67LapoVlHDuQyR74pleWaigc66
+	wbEMZpIUhtq88BENmH/AFWSXo7XIa5F6//5lfR2J0hXc8+Bc9QyAV4KnvW/PjflpKt9Nn8Fs9on
+	zaefYwLC8uScyg3Hj2rqtA+Sl5a/kYZLhqTE/NnbhKiX1hgoiIMZDQ3VI27fbJDMIVnp7xU+gJz
+	SpHXKDRIPRr79VFjvYIcUSjHlCUj6yduAx7eIZqxmGnuDWUdFCwrTw8r55dPPABOnnfpqpxX1ex
+	D71p6Pl4mekEdl0VVhU4Zb6tH/CjgvLrdvkO6WBrtGaOvuEjGDughgaCuPUg7bSS+CsWoPWC+QH
+	gH7yorlV2FOMI6OuT24ySsYM3WN+79OXupF1zV/LGbhVBrPvjMlUOZBTZ8L5JGsMyovQC1Gs+2T
+	46abL3e7jW
+X-Google-Smtp-Source: AGHT+IEkod5fG6AAsH4ctHoDhGlcXc5CZv0N8Qu+3OArUyWUzrS5cYCQoO9x4HYN//zKqgCfS/g6sg==
+X-Received: by 2002:a05:600c:c4a1:b0:475:dd7f:f6cd with SMTP id 5b1f17b1804b1-4778fe96c46mr20560365e9.35.1763110174886;
+        Fri, 14 Nov 2025 00:49:34 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778bb454a6sm40623555e9.2.2025.11.14.00.49.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 00:49:34 -0800 (PST)
+Message-ID: <149fcf8e5df47fd94f9596498e9bfd7171cc7c5c.camel@gmail.com>
+Subject: Re: [PATCH] pwm: adp5585: correct mismatched pwm chip info
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: ziniu.wang_1@nxp.com, laurent.pinchart@ideasonboard.com, 
+	ukleinek@kernel.org, nuno.sa@analog.com, lee@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Date: Fri, 14 Nov 2025 08:50:12 +0000
+In-Reply-To: <20251114065308.2074893-1-ziniu.wang_1@nxp.com>
+References: <20251114065308.2074893-1-ziniu.wang_1@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
- <20241018-gpio-notify-in-kernel-events-v5-6-c79135e58a1c@linaro.org> <5d605f7fc99456804911403102a4fe999a14cc85.camel@siemens.com>
-In-Reply-To: <5d605f7fc99456804911403102a4fe999a14cc85.camel@siemens.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 14 Nov 2025 09:21:15 +0100
-X-Gm-Features: AWmQ_blZSG1drGJV3Qf_JTGtFaAN2cVhfUrbLgQmQo7XYQC6j21Oy8jrKqmmy6o
-Message-ID: <CAMRc=McswuxryKqh7-zSc+oKTubu-bKoV40mUMh1tUbTofHA5A@mail.gmail.com>
-Subject: Re: [PATCH v5 6/8] gpio: cdev: put emitting the line state events on
- a workqueue
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "warthog618@gmail.com" <warthog618@gmail.com>, 
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>, 
-	"bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 13, 2025 at 10:11=E2=80=AFPM Sverdlin, Alexander
-<alexander.sverdlin@siemens.com> wrote:
->
-> Hello Bartosz,
->
-> On Fri, 2024-10-18 at 11:10 +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > In order to allow line state notifications to be emitted from atomic
-> > context (for instance: from gpiod_direction_input/output()), we must
-> > stop calling any sleeping functions in lineinfo_changed_notify(). To
-> > that end let's use the new workqueue.
-> >
-> > Let's atomically allocate small structures containing the required data
-> > and fill it with information immediately upon being notified about the
-> > change except for the pinctrl state which will be retrieved later from
-> > process context. We can pretty reliably do this as pin functions are
-> > typically set once per boot.
-> >
-> > Let's make sure to bump the reference count of GPIO device and the GPIO
-> > character device file descriptor to keep both alive until the event was
-> > queued.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> starting from this patch up to the current linux-next (v6.18-rcX)
-> I see the following refcnt warnings + KASAN UAF reports on either reboot
-> (when gpio-manager is being stopped) or
-> `systemctl kill --signal=3DSIGKILL gpio-manager` (if some GPIOs are being
-> requested from (owned by) gpio-manager prior to kill):
->
+On Fri, 2025-11-14 at 14:53 +0800, ziniu.wang_1@nxp.com wrote:
+> From: Luke Wang <ziniu.wang_1@nxp.com>
+>=20
+> The register addresses of ADP5585 and ADP5589 are reversed.
+>=20
+> Fixes: 75024f97e82e ("pwm: adp5585: add support for adp5589")
+>=20
+> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+> ---
 
-Hi!
+Ouch!
 
-Thanks for the bug report. I confirm it's reproducible on my side too.
-It never occurred to me to try and SIGKILL gpio-manager. On normal
-exit, nothing bad happens. Let me look into it.
+Thanks for the fix!
 
-Do you also go by ccpalex on github? I want to give you credit for
-reporting the other bug in gpio-manager as well.
+Acked-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Bartosz
+>=20
+> =C2=A0drivers/pwm/pwm-adp5585.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
+> index dc2860979e24..806f8d79b0d7 100644
+> --- a/drivers/pwm/pwm-adp5585.c
+> +++ b/drivers/pwm/pwm-adp5585.c
+> @@ -190,13 +190,13 @@ static int adp5585_pwm_probe(struct platform_device=
+ *pdev)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -static const struct adp5585_pwm_chip adp5589_pwm_chip_info =3D {
+> +static const struct adp5585_pwm_chip adp5585_pwm_chip_info =3D {
+> =C2=A0	.pwm_cfg =3D ADP5585_PWM_CFG,
+> =C2=A0	.pwm_offt_low =3D ADP5585_PWM_OFFT_LOW,
+> =C2=A0	.pwm_ont_low =3D ADP5585_PWM_ONT_LOW,
+> =C2=A0};
+> =C2=A0
+> -static const struct adp5585_pwm_chip adp5585_pwm_chip_info =3D {
+> +static const struct adp5585_pwm_chip adp5589_pwm_chip_info =3D {
+> =C2=A0	.pwm_cfg =3D ADP5589_PWM_CFG,
+> =C2=A0	.pwm_offt_low =3D ADP5589_PWM_OFFT_LOW,
+> =C2=A0	.pwm_ont_low =3D ADP5589_PWM_ONT_LOW,
