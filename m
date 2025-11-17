@@ -1,113 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EDF31AF18;
-	Mon, 17 Nov 2025 07:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D7C8462
+	for <linux-gpio@vger.kernel.org>; Mon, 17 Nov 2025 08:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763366314; cv=none; b=KXwDPMUpOCplpaLfA6Yn4V0S7u+jBDpCjVmq/yxDl9Vla5VwjM0SooE4bhvhLba5sxBT6XmvYsLUGnUl5SiKNS6Ir2tZPJBgZ7gLSlJY250JAG2rUC0qBja+fYjOk6jS0ryruc2e0oowvF5LWhYFDkHVTPKWN9y6Fw0xQtWDDzI=
+	t=1763366994; cv=none; b=Gur1TYDpiGOpT+teOTGEhztdPpO+7A4lFpzq6fgOx20v3nB0a84lknvWL6HIhuma7kMJZLATSSDag59OoiBM0j4XdPw1HIAp9/E6hTj9LPt8df00NI9hzGSDtIRYOlVs6Qi41NwkJv0rtJMgnw9xV5wNX1PKMcsAqWMHV/SeS70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763366314; c=relaxed/simple;
-	bh=VHoIarHknJK93sKfYFmQqpvMt+ZpZ6iEiZKBFK+CdF0=;
+	s=arc-20240116; t=1763366994; c=relaxed/simple;
+	bh=ninqvxmEiWCjjF1lMMzf20rBX/OIGRaQe0tlAt3D77s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IyNw5xKWIqkDgzXJdho2tV7pBoacvsjL63h1WLqgJAJQduXkc9MeSaUmUPZbTSmVVCNDej7uDXxWAyKOtIai0t0vJbE9S7+1GLcF2bCJHXeCTnktQidNZqaX19Wf7JqgiNkiEufUM721dzpQTM2EcY+EsAZW3No5Ynlju9RHRCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O9z2DPJE; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 MIME-Version:Content-Type; b=D9szBLGzkoqPcVCzcPLGgLuzrnNPlKO/5WlaUsA1tMN17DFVfV7GEyMVvtrqQprGwZ5y7u0f5SVHgVl/p3D529+bl2ZIBO+rdTQ0kWTFS4o2ZwScoG9Fvre/JizJ4t351gWXdpVgBXf4La/BTzXakLmsnZf2Fn9BFMfbwItuOjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2aSiXgsY; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O9z2DPJE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763366312; x=1794902312;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VHoIarHknJK93sKfYFmQqpvMt+ZpZ6iEiZKBFK+CdF0=;
-  b=O9z2DPJEfMFeiGpvCV5DEitoAer5e/8jQqxAXy4SJZXEhQ85qot0dN24
-   KYeED5APPoOsfGqyTHfhfX8vi5IA7SU7vBdG7DG7+X1JqSFGgoZeo17Xn
-   zBv6vrfucAxYExIIR3wYeUuu5SQR1qZT/JpjOZQBofqqJH+WS2SqKe+nQ
-   mcV6XYaHbXozR4uyvfVFM1mRzv7N2ERCWy5kxNMhn0Or4cE6A21iliwnm
-   Nhq7WDxSZlmXVvoiKYxV2L9TaMXu5Xda1dK833lWU3qdNQgj/q/CIR5Jm
-   /g8lFinWamEHgj+u+6r3EtbrDEbiy0ZzLLuX63Retj67A2/6H2c7sQyeG
-   A==;
-X-CSE-ConnectionGUID: I9QYBFUlRuiNsBWrItAy6w==
-X-CSE-MsgGUID: 64Qld2DIQT+xbRBItPNk4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11615"; a="76039008"
-X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; 
-   d="scan'208";a="76039008"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2025 23:58:29 -0800
-X-CSE-ConnectionGUID: 965tbMgYT26SGUQL5y9QcA==
-X-CSE-MsgGUID: 0cQPzYtJTZeXK6RkxUBnNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; 
-   d="scan'208";a="194833611"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP; 16 Nov 2025 23:58:29 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 0410A99; Mon, 17 Nov 2025 08:58:27 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 2/3] pinctrl: intel: Export intel_gpio_add_pin_ranges()
-Date: Mon, 17 Nov 2025 08:57:00 +0100
-Message-ID: <20251117075826.3332299-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251117075826.3332299-1-andriy.shevchenko@linux.intel.com>
-References: <20251117075826.3332299-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2aSiXgsY"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b38de7940so2246700f8f.3
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Nov 2025 00:09:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763366989; x=1763971789; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vNxm1Zk4Zi5iMwgPXIHkY9mVE6bXlTiw5xwEVdHakhI=;
+        b=2aSiXgsYhm1tWXzTXKXHGBOb9q/NicPR7jH4k300Jtb/Oq3BE/aTmbwFVmbjoYdpIY
+         Wzq3vsDRCakzKBuJa/HvxQg8BlpoQjlQcF9P7/7K2cKakyjfemnzb48cKEBrL2iq1XcY
+         duMpf57WSMfwGjQdu/nPDg1bpou6k8BOQzy821rjrh5dmJsT1YU4MbUNx8fVWQmgTB2X
+         vMvOdjFe5UpwSNTLCkBXwFdaxeNp3gqGcvShnhNgDvkHDAG4vNVz9eOf/2nyRyfg8fb1
+         HFEu39NgMEmfjb8NSuFKNLU0dsNsZrGByuNTq/T/7qmoNEz9ibsnBwe35jkTNXRLsZ0v
+         n7rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763366989; x=1763971789;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vNxm1Zk4Zi5iMwgPXIHkY9mVE6bXlTiw5xwEVdHakhI=;
+        b=GRTT62C7gnBjsBKzhhJXMtc/XwNNpTILsTryltMWLPXXoPUO+MDUlciO5aE5elPwPA
+         H8pDGwR4Lytk2xVuBbOE/xUBYdkQ8kRUtw0Inz6UiTSIF/aKcRbw6QvDAQ7Vxtjgj3Oo
+         RNYStQmraJ4IZ/hj6QQF/J6dg05xklvSa4MB87itYclVx9IMdL6B2cyuBr7+1LWAz+eh
+         Zqt67WZKVo+uJG9M6etiQk1u5YCIMrPNZD/aM9hiq8QvcDiSCdhRi/+Jnct1WECp+sli
+         STzTzzRRqQ1/DZwKbXI6GpXNrm9JBiY3qbxttE78kJBQVoEQvdYVA7p7YmW9jRAJI7Lc
+         lffA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqY/xlvBUierJuc2+wrvPfDUBEl9RvjdzS+Xm81+6/dR06/vuD8Yd27oPlkg1xw3Nn0Zr/zSxNFKNh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkiIV1aFxTrwNWWFV8PE84IrA4VOoQuZiq3I7RvD1iImkcPTwt
+	16dK0dv39N81Gg05Xfii9u0raRiphcosKnpVB8MjkZ6lGmyO7rGWBkqQu6X+eQzCBHQ=
+X-Gm-Gg: ASbGnct3lNYrwcAAh2oLxEHiHpvZs/Z9V3bYzUz0E1oq3NkDLDgjuvtAojymW07nuVF
+	Oa2sJCa5BGzl8tdo9AHc7IuOATsfwny+9zYkgdZBdaQFmaCSwOu0Jrq8iAAtVsnh6sjLgkmNzKq
+	6RxFdFwv4Y/NHZ9KJQKsBBHLuE2fVPPDRc4YwEHCgI9Iiaj8JKJHf7PPX2sGSujjZC6fFajglRO
+	nJgFDOF56WX0h0dj2dRYY2lS/GiAGRxF22UF3xdk+Km2I3ShvAUeJaU/qu5rszelGw7IKWk84GK
+	px+oz1qDFxBOEezlHE7riQL5HnDQT/Cxf4dx0bct8vpKdquDdR6VC1jvtAxCHGCenpky3V/20FC
+	6RJCnJfQEnonn4zfY/1+f/TkMChQT6vYuJCsZPMOSjYzTFajV7EY98NgOaF5n07qmZI7KzFbuun
+	csTFL3boqlmxqP7eqm
+X-Google-Smtp-Source: AGHT+IGxB3eOeXVcNz6toX4eGLbYLDjbtRbx13QMOeHyz7PYx+RatpHMrUUuguAaj3lbY/sFXy2fFw==
+X-Received: by 2002:a05:6000:1842:b0:42b:55f3:6196 with SMTP id ffacd0b85a97d-42b5932342emr9693498f8f.4.1763366989274;
+        Mon, 17 Nov 2025 00:09:49 -0800 (PST)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:36dc:12ef:ca32:1a1c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e7b12asm25037608f8f.10.2025.11.17.00.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 00:09:48 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH libgpiod] dbus: manager: don't try to export the same chip twice
+Date: Mon, 17 Nov 2025 09:09:43 +0100
+Message-ID: <176336697449.19820.17623558208865688799.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251114132957.33750-1-brgl@bgdev.pl>
+References: <20251114132957.33750-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Export intel_gpio_add_pin_ranges() for reuse in other drivers.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 3 ++-
- drivers/pinctrl/intel/pinctrl-intel.h | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index a8b80a24e81f..2424b1bcc322 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1345,7 +1345,7 @@ static int intel_gpio_irq_init_hw(struct gpio_chip *gc)
- 	return 0;
- }
- 
--static int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
-+int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
- {
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	struct device *dev = pctrl->dev;
-@@ -1361,6 +1361,7 @@ static int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(intel_gpio_add_pin_ranges, "PINCTRL_INTEL");
- 
- static unsigned int intel_gpio_ngpio(const struct intel_pinctrl *pctrl)
- {
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index 654af5977603..545bed9fb96c 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -273,6 +273,8 @@ int intel_pinctrl_probe_by_uid(struct platform_device *pdev);
- 
- extern const struct dev_pm_ops intel_pinctrl_pm_ops;
- 
-+int intel_gpio_add_pin_ranges(struct gpio_chip *gc);
-+
- const struct intel_community *intel_get_community(const struct intel_pinctrl *pctrl,
- 						  unsigned int pin);
- 
+On Fri, 14 Nov 2025 14:29:57 +0100, Bartosz Golaszewski wrote:
+> It's possible to get a second bind event from udevd (for instance:
+> manually triggered with `udevadm trigger -c bind`) on the same GPIO
+> chip so it already existing in the hashmap may actually happen unlike
+> what the comment in daemon.c states. We must not try to export the same
+> chip twice as it will crash the gpio-manager on the subsequent
+> assertion.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] dbus: manager: don't try to export the same chip twice
+      https://git.kernel.org/brgl/libgpiod/c/859b3c7106589831458962cb0eb06a0c5e1b679d
+
+Best regards,
 -- 
-2.50.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
