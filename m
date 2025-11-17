@@ -1,49 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7103831A571;
-	Mon, 17 Nov 2025 07:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C5F3191DE;
+	Mon, 17 Nov 2025 07:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763366312; cv=none; b=gzSv6rLiyHC59ClghUBhC2IeUWunho35QMynhuF5BAa+dqaUw5dyHK6RJZMjDR1jzh0qI24KLYJzW0Md0KH+PaOZMQLMxuq7roURxjL/KxSXrqoY3BKPXn5r70qvJ6yAcxwwXEBGsG1ExD6H5xQzJlkjyehMTDL9xY0y3iyT3rc=
+	t=1763366314; cv=none; b=TZcd16nziqzkRqaJdIPhC4S+RaWCov/4WnRBnJD1JaCZjLIYhxQn0bba01uHF+m4n5/FzEGQGDlGq8YY1EiUwFTIr8dQZ/Q002Fcf5ctzH2/XoVUcisUL3nVO38LQfUkdAje7H4EzbhG8MvUuXcN13l8zls0i1r1e3ahOVs0zUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763366312; c=relaxed/simple;
-	bh=LGsaBV1WEUAkbzoemzky6Cd66TsgAFuGqFWo9MAiCEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q3YnCJvMMmXvVNbh3YHjEVSRyXPo/MVW9r64gKufWjBHHavO4KiQGfZqLibsLHxX1E94Q+42cWJXjD0aF5HkMP9F0mYv+RGmcrpV9BXLe10AgOhZy0ygLONDR2Hp+6iRNZkSlkQwBFXDlPc19fHMkgehIxvqn3UhPXTDFUqU+U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MpaXgtOx; arc=none smtp.client-ip=192.198.163.9
+	s=arc-20240116; t=1763366314; c=relaxed/simple;
+	bh=rftrJ2X86gEUzI36HaO4SUpjCvgCe3dPfNpIAFurNo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=djHXT2FpzFqpQTX4BXmz7dS/0y/J4ErHpxD/+1eRysCmUT/Oq/c6iX5dmGMyi2RTlLFYNTZ5vZG0meR/qnbG0QTgBp3HKbA9ZFCqUB3XvXXuX8dyYh1qWGXDMyjRE8kaZbLH94hIu5UXT3JYZtfXfRsOoSpOV1BUKd5H206ejvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hfl7nfpD; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MpaXgtOx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hfl7nfpD"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763366310; x=1794902310;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LGsaBV1WEUAkbzoemzky6Cd66TsgAFuGqFWo9MAiCEM=;
-  b=MpaXgtOxWkpXc7WaTg81Y+YVyGP4K2+WJKtDFv2eNgmadnWzKhmGZoYo
-   05tnkdosAXBbr0IjYAxr5aCxKNWYdgGIc4wRZBbu+j6aEsHpHwSVkl8WN
-   mO0aBYhhY0mYKYt37YqozKqxnukQ3PO/c27/wX8D3BardeO+L+3jcsbzy
-   m4REFqySiONBbCjiaHD1oBURG7KDPD7c0lQCpfV+GVaysiwFP+PBmAgq6
-   YDPHrTGLP2/61ZoQEIUVvgYZbGa3jzjvAnwefrmXAYMVwRkQoSBrlypc+
-   z5TBQZVexhxhSGRGQJB4IhCUCz6tN/jBf3wOPikqUj0Bk2kWiGjJ153V8
-   g==;
-X-CSE-ConnectionGUID: F3NVuG84TNS+HvG4ngAFpA==
-X-CSE-MsgGUID: zBpP6LM/Tv2RREWukB0lBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11615"; a="76039004"
+  t=1763366313; x=1794902313;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rftrJ2X86gEUzI36HaO4SUpjCvgCe3dPfNpIAFurNo0=;
+  b=hfl7nfpDihuMFATc3uxf1IiWUadBjyxu1s91lNWiuXd+8pZtW0aFMUEh
+   7jB024yjffgtaebgCE2NdrWRxMDiRc6bzSYAacy2C2vmaw6LfhVftRqmm
+   CBBliguwLv1+mVPzJwW5PjqenUpOM6YKVaL422YgmhImFY8wS8xaEHDVi
+   WslWjJGkp51CwdcVttThc9WB54xFLRwf3OWKNu55UHM6+SVhDLqmik6gU
+   uWUcQ8Jss7Cfs/MUVkcQ2a4NTjfPdsVQtNO1cuL8eztUmqMmDOhjvz6xE
+   PHhDqcCwAbdriFwlOL3WvlooUJ//TVXbEOkOM+N6fDoiHpHEMtKLv2Lh9
+   Q==;
+X-CSE-ConnectionGUID: uRWufIVsTqKQbvQjptjWpw==
+X-CSE-MsgGUID: Jo49P1/8Tw6R2zlteIqyPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11615"; a="65392689"
 X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; 
-   d="scan'208";a="76039004"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2025 23:58:29 -0800
-X-CSE-ConnectionGUID: Pd4lnF52SxmKaPQYwshdgA==
-X-CSE-MsgGUID: W/12kmJ/QMyHDG4RSUd5tw==
+   d="scan'208";a="65392689"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2025 23:58:30 -0800
+X-CSE-ConnectionGUID: XVHwo46cTgG51gOBdvSkkA==
+X-CSE-MsgGUID: igiB89QrQri9VyLEqnw+iw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,311,1754982000"; 
-   d="scan'208";a="194833609"
+   d="scan'208";a="190169887"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP; 16 Nov 2025 23:58:28 -0800
+  by orviesa009.jf.intel.com with ESMTP; 16 Nov 2025 23:58:28 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id F0D0E96; Mon, 17 Nov 2025 08:58:26 +0100 (CET)
+	id 08B509A; Mon, 17 Nov 2025 08:58:27 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
@@ -51,10 +52,12 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 0/3] pinctrl: intel: Export intel_gpio_add_pin_ranges() and use it
-Date: Mon, 17 Nov 2025 08:56:58 +0100
-Message-ID: <20251117075826.3332299-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] pinctrl: cherryview: Convert to use intel_gpio_add_pin_ranges()
+Date: Mon, 17 Nov 2025 08:57:01 +0100
+Message-ID: <20251117075826.3332299-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251117075826.3332299-1-andriy.shevchenko@linux.intel.com>
+References: <20251117075826.3332299-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,19 +66,52 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Deduplicate more code with help of being exported intel_gpio_add_pin_ranges().
+Driver is ready to use intel_gpio_add_pin_ranges() directly instead of
+custom approach. Convert it now.
 
-Andy Shevchenko (3):
-  pinctrl: intel: Refactor intel_gpio_add_pin_ranges() to make it
-    shorter
-  pinctrl: intel: Export intel_gpio_add_pin_ranges()
-  pinctrl: cherryview: Convert to use intel_gpio_add_pin_ranges()
-
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
  drivers/pinctrl/intel/pinctrl-cherryview.c | 20 +-------------------
- drivers/pinctrl/intel/pinctrl-intel.c      | 10 +++++-----
- drivers/pinctrl/intel/pinctrl-intel.h      |  2 ++
- 3 files changed, 8 insertions(+), 24 deletions(-)
+ 1 file changed, 1 insertion(+), 19 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 9c353e1ebe4a..d72e50486370 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1511,24 +1511,6 @@ static int chv_gpio_irq_init_hw(struct gpio_chip *chip)
+ 	return 0;
+ }
+ 
+-static int chv_gpio_add_pin_ranges(struct gpio_chip *chip)
+-{
+-	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+-	struct device *dev = pctrl->dev;
+-	const struct intel_community *community = &pctrl->communities[0];
+-	const struct intel_padgroup *gpp;
+-	int ret, i;
+-
+-	for (i = 0; i < community->ngpps; i++) {
+-		gpp = &community->gpps[i];
+-		ret = gpiochip_add_pin_range(chip, dev_name(dev), gpp->base, gpp->base, gpp->size);
+-		if (ret)
+-			return dev_err_probe(dev, ret, "failed to add GPIO pin range\n");
+-	}
+-
+-	return 0;
+-}
+-
+ static int chv_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ {
+ 	const struct intel_community *community = &pctrl->communities[0];
+@@ -1542,7 +1524,7 @@ static int chv_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 
+ 	chip->ngpio = pctrl->soc->pins[pctrl->soc->npins - 1].number + 1;
+ 	chip->label = dev_name(dev);
+-	chip->add_pin_ranges = chv_gpio_add_pin_ranges;
++	chip->add_pin_ranges = intel_gpio_add_pin_ranges;
+ 	chip->parent = dev;
+ 	chip->base = -1;
+ 
 -- 
 2.50.1
 
