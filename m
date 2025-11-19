@@ -1,90 +1,103 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC1434E749
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 14:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF03612C5;
+	Wed, 19 Nov 2025 14:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763562161; cv=none; b=hmM6h4mncwMjHfULfGHeXAiO7fxcsHxZAqJ6TUx9SRFpaRrwQ8lC4D70lR6fSRQwRxu5BGMg0vzVaSg86tSb8gm7Y72QDWWIAE2HRY6cOWIXqsjwrxDP3ibTUz5c1ROiEnzwA/CCcpGtAnF4DsqUmVF2Z15GxhzQfj5Su16DTBs=
+	t=1763562165; cv=none; b=MtRxZswib3G7C3uIdpbPCV3Bqu+lae5XK5LwuG9uYGGsKYyoQD9ml1XfubYfthast2HPa/Myz/CE2Vg/5kwmrJHkqzBH6+MJJLrsxer562V6VSiWaq/XgpcP5e9pls3oxSU2t6sntLjHhMWqL7MbXV2DMpxffr7XOc/GGMWpLSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763562161; c=relaxed/simple;
-	bh=MhrsZIbWzRhCkp8ZCo9BwzqVTC7yndSnE/Tw3//4s9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kg49hTYEsOX1GhI0BeymjZNfNBlT9ZZh99MECOTQiY6atiB8XQVeDLKIYNtTdCfaQ5HjcTIlTQivy9CzaHmLsK41XUm/MOQTjxq4fZSksTc2oo3pWT2+uc3EzD1xXcgJg67CEHmhQApueEP/z56AcALM2Bv7WdY3uX2OGKC/TJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SbJNpwjt; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763562165; c=relaxed/simple;
+	bh=Y9o/qBfpUr3TD8yDdRfXuJK9HtHcbYA4WdgqHPo4JCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ds5JUbvn+6k7CFTp3HILEvdPILYgYAH+TL2CwjAQUtpw6CGz0jHdOTyySMmwsmJwVafEp92+1KmkMZd0xP5darRJOZM7pOiyihI86UqF7aiRmI0TBgSl3bEgwl3MiMQz5zdja9eczq6jH/JRxyG5/J/2yjQS3/XbWehg3Tuxg1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpemjFIK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SbJNpwjt"
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-641e4744e59so5350106d50.2
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 06:22:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763562158; x=1764166958; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MhrsZIbWzRhCkp8ZCo9BwzqVTC7yndSnE/Tw3//4s9I=;
-        b=SbJNpwjthtm/8W8rajTN3TBOYNG0IZZOcGjIhztrWsBJAOARwr49/KvjH0bBND+vX5
-         q97U6xkYvMPOqHIcmJUsMjqU8iNdKrY0HoaM/cLoP+pWBuKyxnnNBsx0onVd3ZGg/jwt
-         hvBhe0c8po6aFWGjffuLncll0F/nLWLKtxyG7o4fVJ5mUmjH7epP2XH5veOt/+ikPwR9
-         H3l4MEPZyxrAEpZuDXdXPt+t0Z8d+ngLsNUbAC7m8MsCAxKdfNMiR13d06Y+z9p8KU9A
-         4sYugiEf94/DjGh/AM9HIRPvTRi6APVUJvoD65TL/QwKhcYC8UJSWGgeHH883E9voBDg
-         a1Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763562158; x=1764166958;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MhrsZIbWzRhCkp8ZCo9BwzqVTC7yndSnE/Tw3//4s9I=;
-        b=lDK7wWGps5a8TyZxg8sWMYSZvkLvtgFc2BwrzaC3OMW70aXNmMa47m1CDVDbo3TwgJ
-         39+z/ghossDoT7wKthgH/y1c9PWOW6LH1Ol7gwq4/Y6NL7AZhKmmhYoW+kCo5GYK+hbf
-         MH4h3zamrLykYmXEbZqe14I433MHnXuvus+pzHis3Rb4cCKhTEOTyDajpVOTFxv1yR7C
-         TF3GlfmlsouIQMTx6GYmgqsKUl9fz8K+y+gjOPksrLb0MHLRLwVohmDR4sy+GStjYWYD
-         Ue8vrQmAtlricaRR6yqcDMghHOGF7eOrKARrLg/w5yuMRh8DujfzCsEwKqZNAS+EEGGH
-         h1pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKDfMbRuFquysUEcz7QQWTBLraxR0hPZp+m2Nsq7Lqr3bAlwH2TcNiAETiwfPh41VhRJ+Gdqu3741n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi/btXgqcyJHu9zdMVj+6R9Ot1HfB6m+RyT+gfnDT774AYkblP
-	0MdKHcCyWSWR1KBl7JMAJOQJ8CreHf3kX2QthYdg7OLJ0J2/SJa0zIAJMSfTReOhpIUJVXvdYdM
-	1mIgXIX7rEEvsRqfS4GcW0N1/5sgtpo8qsDuvL+TdPQ==
-X-Gm-Gg: ASbGncsJzET9FBVD0JIbEySmShzR/dvhHgKXfT9/oRrLpRHdbVbPOyBrBtHaaHBdLjP
-	g0n1GJTXistJcW57C3akxoE0hFMepNXiYycw2SzVS8/jmNA8ti8dke9xYkCPxxBYyB0sBsrkAaI
-	WV2SmTQpoEaFeZfTEZ+ax6udkOA8pQ7OfijgLaTxikPlvBPp8xY9VCrZ1uurXMdD6wOdcsJPQQU
-	wvauCRA9YrI7zDh0w0G2bEt+4XWjzJz20ahb4dMNg3j84ZRVyPMtkE4tBstnwiQL/QfXKKCwW1+
-	3FApCw==
-X-Google-Smtp-Source: AGHT+IEK96oDDGhtSMOrFEinT1tokH4hnf8wTVBS3BSk/cku7ibmRWyEcIG9r+y6XUg52Cr/+RO7BwnZ8CPpg1m6izg=
-X-Received: by 2002:a53:d00b:0:b0:63f:a89c:46f9 with SMTP id
- 956f58d0204a3-641e76a391dmr13332400d50.40.1763562158314; Wed, 19 Nov 2025
- 06:22:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpemjFIK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 222B6C116C6;
+	Wed, 19 Nov 2025 14:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763562165;
+	bh=Y9o/qBfpUr3TD8yDdRfXuJK9HtHcbYA4WdgqHPo4JCg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BpemjFIKxc3GyXpTR5k8T+2Q+s6AhcWJMEzAmD+OF5aqTIlEGdj9KGQ6z8v5yyvkr
+	 YRnpP4OZKKksJTtF/2St/CJSfUXO9gv21aJgz4Nm8CR8mLfyNaHPp5DFV+kwOVv2/X
+	 6hhvPBkqO2dVVuj7KwwnYVmRlDT1ESZDNl2LRsxVmORa73l3eky8txyR85NMMwJpYq
+	 yj0NZnlSrZUESWZK4KUrQZ7samCifpWG7QvuNaimkLG3XEYw/7oh5pwuDc5smFp/Km
+	 8FafpD2kKvZ3d/LP9nqsE1W7wWzvPpEuu8H8HPpaNGVRrR/rA4ciX5ZTjng0YtGp73
+	 JzvG35cpRRkWQ==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] gpio: fxl6408: Add suspend/resume support
+Date: Wed, 19 Nov 2025 22:04:55 +0800
+Message-ID: <20251119140455.10096-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251118213428.36700-1-robh@kernel.org>
-In-Reply-To: <20251118213428.36700-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 19 Nov 2025 15:22:05 +0100
-X-Gm-Features: AWmQ_bkPvGHNxXPgik4goguOsOD08uL9PsXetzBiLxVbcWWbISsz0NGOhdm9JVY
-Message-ID: <CACRpkdZ3bz2_-vh-RwVwicLyBOyfROE5EGtBqCgPYcy7srKNSA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: xlnx,versal-pinctrl: Add missing
- unevaluatedProperties on '^conf' nodes
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Potthuri <sai.krishna.potthuri@amd.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 18, 2025 at 10:34=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
+Currently, during suspend, do nothing; during resume, just sync the
+regmap cache to hw regs.
 
-> Add the missing unevaluatedProperties to disallow extra properties on
-> the '^conf' nodes.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+---
+since v3:
+ - simplify the patch a lot by removing fxl6408_chip wrapper structure,
+   thank Bart for the suggestion.
 
-Patch applied for fixes.
+since v2:
+ - drop the reset pin support patch since no users now
 
-Yours,
-Linus Walleij
+since v1:
+ - fix W=1 build error on nios2 platform
+
+ drivers/gpio/gpio-fxl6408.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
+index 86ebc66b1104..afc1b8461dab 100644
+--- a/drivers/gpio/gpio-fxl6408.c
++++ b/drivers/gpio/gpio-fxl6408.c
+@@ -123,6 +123,8 @@ static int fxl6408_probe(struct i2c_client *client)
+ 	if (ret)
+ 		return ret;
+ 
++	i2c_set_clientdata(client, gpio_config.regmap);
++
+ 	/* Disable High-Z of outputs, so that our OUTPUT updates actually take effect. */
+ 	ret = regmap_write(gpio_config.regmap, FXL6408_REG_OUTPUT_HIGH_Z, 0);
+ 	if (ret)
+@@ -131,6 +133,16 @@ static int fxl6408_probe(struct i2c_client *client)
+ 	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
+ }
+ 
++static int fxl6408_resume(struct device *dev)
++{
++	struct regmap *regmap = dev_get_drvdata(dev);
++
++	regcache_mark_dirty(regmap);
++	return regcache_sync(regmap);
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(fxl6408_pm_ops, NULL, fxl6408_resume);
++
+ static const __maybe_unused struct of_device_id fxl6408_dt_ids[] = {
+ 	{ .compatible = "fcs,fxl6408" },
+ 	{ }
+@@ -146,6 +158,7 @@ MODULE_DEVICE_TABLE(i2c, fxl6408_id);
+ static struct i2c_driver fxl6408_driver = {
+ 	.driver = {
+ 		.name	= "fxl6408",
++		.pm	= pm_sleep_ptr(&fxl6408_pm_ops),
+ 		.of_match_table = fxl6408_dt_ids,
+ 	},
+ 	.probe		= fxl6408_probe,
+-- 
+2.51.0
+
