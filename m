@@ -1,134 +1,170 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D3C369201
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 14:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C1423ABBE
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763562600; cv=none; b=W4GudC0/KBkoJ5U2WF1xgrvoXvOS4o7pq2shNn1VwQfFVoiOcgEyc/aFI2t/lFnX+m8gDEHou9OPof1NS3FPEjkVwqLhI2aahs2DC4fK5xSA7Ha3AKqCsO5ve5ZHDYgdVppWBkEnwQPacUmTWISR/DdMNaGo1ZE4IAiSXKc09Tk=
+	t=1763563835; cv=none; b=nx8zrXl8dCHPxgFgjuhvYor/SOCxAbYx8m50I5k2o8B+fgpydbwoCpr46cMuid7N5zHRKHTzzrBOwy/ktEJ1PHYAj4qiV6K4YwfDJbTzvqy2nbEFWEL4yjqWcrUIBScdr54TcL6uRXyisSWrRxqlIcAeTKBqusx7Cd2+Wxq4KFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763562600; c=relaxed/simple;
-	bh=QYkJ+KAJptP8x+/Lo+OPyvZfeeVlUCQUdUVwwHK0tdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NdPxu9F4I9v8ab6Rj/SsOuY/t5DBC5FjuB1DN4qxak5OvX1NizRq0M1kSSTUAsjdUvp9j3YpGfHwh1wuzBPisJyOZpWh6bjKNPRFt/pPlPjgiZjlf9afdagKoFOcfbc6LAarDaYRiU5NsTvebwtVTGe/EvjyJtyf50RQt8Wakk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s18TSfPU; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1763563835; c=relaxed/simple;
+	bh=1Wruu9gggvjosYoKum2V+cZ9fCd6dFFd/5SKcpbFf7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R3KHJqCLqdgXKVav/Ysuve1i5fAOq0SZyfDGwy6BBUvbdXe26XXPwJ5iWPo33aFQQoCKa5EOiPzDJrSzGB6rbN1Q0T29HuU/g4H2MiNIGDHBAR/PGDvyRp3COvM7eZJeSZfFF1+pFHWMczF/BBh2GREz0kgQFJel2wYkAUGMUEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsmAN0H0; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s18TSfPU"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-594330147efso6768185e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 06:29:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsmAN0H0"
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-882360ca0e2so50020636d6.0
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 06:50:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763562595; x=1764167395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRrGjHpQFMPuOkiL8GvRDSi18sR5m2GVcnU67ItY1DU=;
-        b=s18TSfPUarVrfVD9Q289QlNx1XEDTfcU8bi5GXrz3W+DSMQoea3Lv3herjQOmTFxWf
-         RnCJCTg1nmGcgFlw4R2OxLtmInTDyHf5IZhwpwNhJxOsxEN/gjUh5N96v0rM4nXMsgHj
-         3/ZFfkBTBzj/4pRjkvMtZmZIbjctGR8/BGbLbGmewCcwCUrg36LgPbevDP2cNPjovcfk
-         eME/KNWlNnmFtlL4BNoV2wwmA8rwPnCeI0jJUXxeHWqN3rrElCznudkbcVbYx8FLHJ6+
-         gpqHIvcybbH5PGjn7hX4wZRttrc6/Bpj/4/qlsbYFUAQiDGbBGd2KwHR7vsxt5H1MEVi
-         RsEA==
+        d=gmail.com; s=20230601; t=1763563832; x=1764168632; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
+        b=SsmAN0H0dW4pniwEPfi7ntnomTvrnK0bOh98GRqlM66jfMIRrCCmEP2AvXC3HRRCmV
+         7g/qWz/7yxs1plOWoLSgEZFqXqMOfVAES46UCC3gAbXavKi2qNkqks9VPXfNYmkzGuFd
+         Q5I9V127jwdVG17TFwwx5snj3oIsqDAQ4U3ZDMIjFeJBPC1kDbDek9H08MwcYqowfH2y
+         OG+QJJFzNqeD0YdjzmGTC9LhWa1frGuIlT1/8whm+I2RPHXYOfLqG7/tExznEqIkOaLF
+         MVab0MlufwIXjF/3XH8b7kl/bcvgJoS2Kb6Zaia++StlKQIiiuC3nKR94iY+PKgXA6a8
+         5wbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763562595; x=1764167395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hRrGjHpQFMPuOkiL8GvRDSi18sR5m2GVcnU67ItY1DU=;
-        b=QBLob8M716H7cd/wD8ipqDTXfKInJrb2b5YMl+94Y8r2+90mCpfFh1XOiyy4xqRWHE
-         UtmNpeJE5XwaaEX3ULTciTc3DmHF/lB1HSt+X97QRR00C+mLZeLHGxsgxfPAhgKuYD1s
-         1mu5rwxXIWaf8MqcDmg/qpdodERdm/4RcbPpTMhu2ITILOktGGItL9mi2jdIkA9JUWuA
-         Oku9yww1a3Kym9Xi7HJXDVH/1o85fk2WevbUkzePDdhb8VUxahv/QRUsp+UTisICQwVc
-         DcSnCOlJuMOWpbze4ZQ58nJqEefWfOmyiFtna05SdCUg3pb0CIe6bnD/y3yNLqjJ9rUF
-         MU3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXypimUg75Bk9kaDvkj3H4hN+INczvE57OeLurQtDOwpfav2sHCgLSkatx5syqyOZVPrQJyPJFX1Bwa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYkZr+y3wKkWge+PdqFkoE8O5hgXoj48/bnprPo+cAgYhZzHFB
-	HU/OjsnvUstRTadUE78ibV4XQwEzwISG4q8eUtNHnq9KD8dCJVuU2qDz6bDV1C0d7jwMlpjjZ92
-	g/OYhT+I3MPyR+rACeA1nn8CHqEttktZAA/YgvhgrIQ==
-X-Gm-Gg: ASbGncv+XCmV/L7rDMTuC4kCUXSy3P9k7G8vhz+0VrzvE0fqip1kbGPgOK0pWwRg6/t
-	W1zSIdssFfaS/6cZIQmjsslMU7hR4NzgTP0sCrOVqo/CCFonlnrYBLrgAikZY2KXCS3PmAMrOTh
-	xR9Vdv9huz4D/slE3VKCUR+NfawewxO6u8z8ruK18ESTKiHyXLCNFF0jrX5iOGypVq4eg8sxTR0
-	M4xMSPJJUTenMBSAw3hh89izL+a/j+VNHqSsTYOi4mm3qgy1maNdfOQa6j3qh4Rb6Fx3rg=
-X-Google-Smtp-Source: AGHT+IGp7GKe1RKdp3EifTfSeaou18jsyywYSKyMxPvf6+wpNti41ngxOAgDWBsE8YIo1EJMFQbA1mHAun4y/oak87Q=
-X-Received: by 2002:a05:6512:138a:b0:57d:b8a1:832b with SMTP id
- 2adb3069b0e04-595841af20bmr6916107e87.24.1763562594938; Wed, 19 Nov 2025
- 06:29:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763563832; x=1764168632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
+        b=SIILl6N5448HVGXCLmk6zlQ7XfSW76hQdLucIjJ5tx4dDRXlflL/hNH7kdUU/3G10a
+         vo84S3LfcTHTKk4GsCNkiqQzhxkmujXfcMkbqDnsD2qqw+u7FjKl8Bdg5FHFPDevbfXJ
+         6R6Rou5GZBFRxlCJTrN82Y3Cw7ucpJG0PgS839kpcXc/i0F1rjKIug50aGLK5BWH7wLE
+         YoPrmb7NxeXJ5geP7A4wh/z5h9oNCLJFQcGazPTq8R28TIvzQS0Vdfms5MBkZyhWDwKZ
+         +H50g+NHVEWf0xyq2lw8WncAGmtajGfDMrFIO/6HZuMDUEdCMU1op+jSP2ygY1WLczT4
+         E//A==
+X-Forwarded-Encrypted: i=1; AJvYcCVp1zYvgYtqkL10nNIzJq0WYH/i0A5NiKqF8apMPzLTJUiF3MpgaLCuQoiRfMZuvdHgttdmyB6lnX8+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoA1K4MS6fu1KMZZwo8odEOPt/MQRPgq//J6EII+AKvpMx43e8
+	lj1vyDDId8GcKFpFQRR5VOfFbeOTYXuDq1hYM2HX5SVqUJ2UvudXEBcG
+X-Gm-Gg: ASbGncvFsdajDef0yUzaEKswEBa1pIAcyeTAOFXX6gkEx06rhHESwdPlSf/HGYGpGCC
+	HIbShwUFseGcQuhP0hq5svv9p5PWrQ6DICvsut9QoWhH7sdQomXRKyqnNaM0UFNOQnoTJXUfYr3
+	VyOqyDXinOvMzkr/5gldmdKDwlBw9ZO8W0clpod0If3ISsV9e6ESFAQEj4farZDeQGZqIIe+WQC
+	yJSpmSNp+pFaR2p/od/aQ4wkDx5gj26FuqeBfCPJPnasTGwlrKu/kCla0Xe9zW1S+zs3v/l5/bX
+	tZratjt463X6FWhEi7IlzlbIIOilCRJ1ukYiEaqBq+FvR5+RUWSt/AkuoWXXyxbKc1iRSUpJzxG
+	sntmX5YwtolRk1dcoiQZwqdVcqq5Fzw45rOGzZVKcpuKsUIfgfVVfaChYPeW/q4Q4xeOwAG0o1P
+	x+mI9NLTIMywic34NwSA==
+X-Google-Smtp-Source: AGHT+IEl27VY0Fzg06WvTYKsPnTaG3CI8XR1O4Jx2OOSNMzexShqbizbMp95FvmlDbVG54xJ6MBR9A==
+X-Received: by 2002:a05:6214:529d:b0:882:49f4:da25 with SMTP id 6a1803df08f44-8829269e07bmr301776726d6.39.1763563831679;
+        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882862d04e1sm135929226d6.7.2025.11.19.06.50.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
+Date: Wed, 19 Nov 2025 09:50:30 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/26] Non-const bitfield helpers
+Message-ID: <aR3ZNmSMmtSsUR23@yury>
+References: <cover.1762435376.git.geert+renesas@glider.be>
+ <aQzQjSMOSrUIgMCL@yury>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112-gpio-shared-v4-0-b51f97b1abd8@linaro.org>
- <CAMuHMdVR9Z70+M-SqHYrHiC6H_yw=VRuDOOg=YnXSNKjPnx3WQ@mail.gmail.com>
- <CACRpkdZioOu9AEBdaNWX1njsVvFYR8SP8yJrY8MFMbJtL6YLJA@mail.gmail.com> <CAMuHMdUe64MdRL1qPRX3q_OGj287nK=MQTb7HUta51iJ+vP9Hw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUe64MdRL1qPRX3q_OGj287nK=MQTb7HUta51iJ+vP9Hw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 19 Nov 2025 15:29:43 +0100
-X-Gm-Features: AWmQ_bmc-n1cuVY24_yDbxt_0pYfljkKCrIONDdezzzLDg_EEB1-VOCfHUUS2FA
-Message-ID: <CACRpkdZp3zKVCeJPXJP4UCAbXz-j=81zYfXntxuBp5BK5ettzw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] gpio: improve support for shared GPIOs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQzQjSMOSrUIgMCL@yury>
 
-On Wed, Nov 19, 2025 at 9:38=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+On Thu, Nov 06, 2025 at 11:45:02AM -0500, Yury Norov wrote:
+> On Thu, Nov 06, 2025 at 02:33:48PM +0100, Geert Uytterhoeven wrote:
+> > 	Hi all,
+> > 
+> > <linux/bitfield.h> contains various helpers for accessing bitfields, as
+> > typically used in hardware registers for memory-mapped I/O blocks.
+> > These helpers ensure type safety, and deduce automatically shift values
+> > from mask values, avoiding mistakes due to inconsistent shifts and
+> > masks, and leading to a reduction in source code size.
+> > 
+> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > constants.  However, it is very common to prepare or extract bitfield
+> > elements where the bitfield mask is not a compile-time constant (e.g. it
+> > comes from a table, or is created by shifting a compile-time constant).
+> > To avoid this limitation, the AT91 clock driver introduced its own
+> > field_{prep,get}() macros.  During the past four years, these have been
+> > copied to multiple drivers, and more copies are on their way[1], leading
+> > to the obvious review comment "please move this to <linux/bitfield.h>".
+> > 
+> > Hence this series
+> >   1. Takes preparatory steps in drivers definining local
+> >      field_{get,prep}() macros (patches 1-11),
+> >   2. Introduces __FIELD_{PREP,GET}() helpers to avoid clang W=1 warnings
+> >      (patch 12),
+> >   3. Makes field_{prep,get}() available for general use (patch 13),
+> >   4. Converts drivers with local variants to the common helpers (patches
+> >      14-24),
+> >   5. Converts a few Renesas drivers to the existing FIELD_{GET,PREP}()
+> >      and the new field_{get,prep}() helpers (patches 25-26).
+> > 
+> > Alternatives would be to use the typed {u*,be*,le*,...}_{get,encode}_bits()
+> > macros instead (which currently do not work with non-constant masks
+> > either, and the first attempt to change that generates much worse code),
+> > or to store the low bit and width of the mask instead (which would
+> > require changing all code that passes masks directly, and also generates
+> > worse code).
+> 
+> Everyone please send your tags. I'm going to merge it in
+> bitmap-for-next before Monday.
 
-> > For the input usecase the status of the LED is a byproduct and
-> > should not reflect in software I think. It surely should not be
-> > controllable and possible to set into output mode because
-> > that sounds like a recipe for HW damage if you drive it
-> > actively high and press the key at the same time.
->
-> Suitable resistors are present to prevent hardware damage.
+Fortunately I didn't specify the exact Monday. :)
 
-Aha, clever.
+Now it's in my tree for local testing:
 
-> > gpio_keys {
-> >     compatible =3D "gpio-keys";
-> >
-> >     button-ok {
-> >         gpios =3D <&gpio 0 GPIO_OPEN_DRAIN | GPIO_PULL_UP>;
-> >     };
-> > };
->
-> But only one of the gpio-keys and gpio-leds drivers can bind to the
-> GPIO, or am I missing something?
-> So I do think I need a new combined key-and-led driver, like Bartosz
-> suggested:
->   - When the user turns the LED on, the GPIO is switched to input mode,
->     and the switch works,
->   - When the user turns the LED off, the GPIO is switched to output
->     and driven low, and the switch does not work.
+https://github.com/norov/linux/tree/field-prep-for-6.19
 
-You will also have the byproduct that the LED being "on" in software
-does not necessarily reflect the actual LED status, someone
-may be pressing the key and then the LED is off even though
-in sysfs it is clearly "on".
+Will move in bitmap-for-next shortly.
 
-So the status in the LED classdevice also has to be forced to "off"
-(brightness 0) anytime the input subsystem detects that the switch
-is pressed.
-
-It's going to be a lot of work I think, but I guess it can be done,
-with a lot of special-casing and custom APIs.
-
-Yours,
-Linus Walleij
+Thanks,
+Yury
