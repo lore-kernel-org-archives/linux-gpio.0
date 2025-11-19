@@ -1,112 +1,110 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E702359F8F
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 13:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F7436654C;
+	Wed, 19 Nov 2025 13:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763557761; cv=none; b=KUlZS0+lyR9nqFMvEs/luDzVpYeh6WbnRHCkoPBAdSKHy7iCa9BGVNL7UvWQM1YTnFIKVMNUTkiC+YXH89PH47dWLL7Ldi69vrnswbP57/qzbDg+0NVHycPIrkUhg+ALaKe7/n0JneHzbqMNSfM+jZkdhXezWupBGgpGqhZhrjw=
+	t=1763558225; cv=none; b=LKS8hiU9vQGr/wVXJeoICcM4sQZJIHbpKZbPcQOEPU2PMB6tb0j0+jisnWj5yPAE8MLUd+lxj+P56m40ehQws2kN/TRp+Ly4Jv38EH/SaAIuxQt40olF7sMmJwLIcrCb1kMsF681iTT6QJ9sFy5uE68GtJPNm2G4qLNsspDm7K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763557761; c=relaxed/simple;
-	bh=7VFQUlIwTyQSeswC4e5704zf5JuB6NqZXcShNGskuRA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qtbd+Vjw0xQqi7fNC7I54rNCVveDu7gQDEHWlwzjIXDrX0gdL8WGITGT7U6f73Ji3FJbOA/HbAWEx323xnGH2A+FqAwu/e2ignFuAX3Z4xU6kgjFCpO3hlC575fSc0oxMDsyTRvhS/KpLc8d+Y7vxSKl6l1HpGcfqDbpnxXUWvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mgY9XwMJ; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1763558225; c=relaxed/simple;
+	bh=JXSrd7AS3plurZH18pOineLNFbtf/RNitoM8R5NVDc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqU5plD+wpGhyWHgs3saPraiMruxYWmL43qJnpeZfC4RDxz85MfhRJhYOHL1hEGRxzVLI6VzvvvNZcJxPLgovNzFLsXS5dBpJw2TtxQgkLp/vTRGXJE+4Nrf+470ZlNRWKkZtuRcZ2wIsReKpNgOrjihzMKVrrZPS2LdTF5Khjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0QAw68F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mgY9XwMJ"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429c8632fcbso4727376f8f.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 05:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1763557758; x=1764162558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HS2r8yGhFU+NVi0aUTb2MZUABBX5vRYn6yEsupiAxus=;
-        b=mgY9XwMJ3gLXD1qZ/VHmh4m/wA7s6zNWvwrHWHalk8xn9HS2Wvs5JXYUT+6ra76qNl
-         Y1xFBKhrmwCIIBP5cwtU/Ls0Wllcq81GgTkf2I+tbAY12eoHhpeZ04wb8SZnv2r48cXH
-         1v0gaJGQm7/tio8/GdONumtJOKo0u1KbnfCymIh5WQ9jtQW6eYPqZ+iV4xeliZvSFC88
-         r+of48Jo4bNjefW3s3FC74FmLelmHHN7LCDS0WOG8JXO7Xr1Lbi9YH1qVt9MchDajcVb
-         xQ5YshYX51KMW49VpHbBw+ZQOIgsBSc55h4v79twSqmzYwKd1LUxkc0FIHSvdP3SUCNC
-         Rs3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763557758; x=1764162558;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HS2r8yGhFU+NVi0aUTb2MZUABBX5vRYn6yEsupiAxus=;
-        b=QEvo+GD6MNHQJJzyUQRBzeVKmkvnQErGrHOag2TduhnTqMRKNgO0rA6u4HqdfkqMTl
-         GAsJLW7lPrTvIxHUzOb6NXMH6LL7oy9Qc8OdDW25F5zo+02DIQF/abtCyw6fuAzinqRq
-         BpmOfft2eTY6MRFYxF7xp/hNkFoTyWtPune8o+TDYu/GxkHtW31QHaCAJ6Gw9hSs9UmS
-         CmcDWeakm7IKl7e9wXZWYYwe+9tONitnV3n/fY7CMdDw8T9IyMXmUUGCOYbe7JGPD/TF
-         BSxXoeUXMT9JToVfRvQtgbr+T1IkVJWp+hacghZheQ1okjx1oR4kycIprgEdTWn3C1PZ
-         o4/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJzQl3qOSAxaw6O3OoJ56cdiy0Dj/KtKq7vaN2lMVwRzmwkCmEBk3OjQWX15G0zvldL0PhUIsa09qz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRK6j7aiufD1Si7YPFssya3Lz6+XxFeD3VnN4+9OyS0o9QJZHU
-	9Qwe50nObCa7aE4MVyX9LaKN1+OBwLJyJobOGGa+XIRfWabqXP0fm1/+2O+sP6Vtdig=
-X-Gm-Gg: ASbGnctMBUiSbwgWXVfH0KQoyDNnGDQFhNnao2t+heTslqWICyecyNSEfpQKWGmUjsS
-	KSH0HdmTmBiHgl9/+HyoMB1mQ22rgl8lDyPWDTiZamGUPDssE9/jhzPd9KrkWaryWD2h+QTI1JX
-	qinIo8PrSGTv632hYCPmXfk4JOTyXKg960xeCdZHWM4Ix3y2mgA3AHTHWo66JcDP2NYCTr/++A/
-	yqQHwrvP5IZjvezeCC9/WVxSMU9M8WuXDDrEEKeMHXhFTxXD8Kg6p1n3pgqmwdVE1a2R6wp1EIq
-	rfOjlPkH0yJGzM6SU3QzyRnWi5xi4ql9I93mKr0xo7n2iuP02NnB5JNNlZoaYOeb4rhljUY0FjF
-	BXTwQjxSIPBXPYi/nkUKcou8jrwwPU0CgCsga3v5OaDeM5Aow2czzw/9bd5lGiAFvOJhAJTVCui
-	UwIeBixdTDfjcwJMU=
-X-Google-Smtp-Source: AGHT+IEm4UQAc2Ruu6jE507gIFifpPunKGuizCP2sX+vg9eBBGciCwz1YHEecUUUv4XvKADEh1hOZw==
-X-Received: by 2002:a5d:5f47:0:b0:42b:39fb:e88f with SMTP id ffacd0b85a97d-42b59339016mr17941623f8f.23.1763557757779;
-        Wed, 19 Nov 2025 05:09:17 -0800 (PST)
-Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:c10a:203f:120a:d2f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42c97745f79sm23835123f8f.23.2025.11.19.05.09.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 05:09:17 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	Raag Jadav <raag.jadav@intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	platform-driver-x86@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Introduce Intel Elkhart Lake PSE I/O
-Date: Wed, 19 Nov 2025 14:09:15 +0100
-Message-ID: <176355775360.69344.220026529766026146.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251112034040.457801-1-raag.jadav@intel.com>
-References: <20251112034040.457801-1-raag.jadav@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0QAw68F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 893AEC2BC9E;
+	Wed, 19 Nov 2025 13:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763558225;
+	bh=JXSrd7AS3plurZH18pOineLNFbtf/RNitoM8R5NVDc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e0QAw68F5WILJt/cARL3GavnTHZwI0glHVNZ7rp0OlqIxcPmZzqszBZsgX4VaPALE
+	 v4N5gp5eAhQNn4JvdnhJX6YTYz6aEb1GUfwPQXkuMxQhM8knmcVb+EsRb3acoqD9F/
+	 uhhjdBnplRB3p1X2hGZu3flHmX6vsMFIE6DH8s8zOvKuzQW7iqMHNlBwzt7K0VAodF
+	 TXlvwSU9j9FT8IIqXPsC9Jg7qutVU+b5HWLrQ42GiPOFmmb7wKgepv56Z3i95+Qf3q
+	 HDamHxsUjCNJTakvfTJYRsnD0mCPVKi70bFRN9DZVIJQ9y1CxjGGXPID8nouNub5oC
+	 MhHRkJLARfIUQ==
+Date: Wed, 19 Nov 2025 20:59:05 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] gpio: dwapb: Use modern PM macros
+Message-ID: <aR2_GVi6E5gLeS47@xhacker>
+References: <20251118003229.26636-1-jszhang@kernel.org>
+ <20251118003229.26636-2-jszhang@kernel.org>
+ <CAHp75VeB1L5ZwQx=uKqaCMsij1ghFH+Kw3jsLa4qFxnWV1vTyw@mail.gmail.com>
+ <aR27HcbvUgvCEK2Z@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aR27HcbvUgvCEK2Z@xhacker>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Wed, 12 Nov 2025 09:10:09 +0530, Raag Jadav wrote:
-> This series adds Intel Elkhart Lake PSE I/O driver which enumerates the
-> PCI parent device and splits two child I/O devices (GPIO and Timed I/O
-> which are available as a single PCI function through shared MMIO) to their
-> respective I/O drivers.
+On Wed, Nov 19, 2025 at 08:42:05PM +0800, Jisheng Zhang wrote:
+> On Tue, Nov 18, 2025 at 12:15:35PM +0200, Andy Shevchenko wrote:
+> > On Tue, Nov 18, 2025 at 2:50 AM Jisheng Zhang <jszhang@kernel.org> wrote:
+> > >
+> > > Use the modern PM macros for the suspend and resume functions to be
+> > > automatically dropped by the compiler when CONFIG_PM or
+> > > CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
+> > >
+> > > This has the advantage of always compiling these functions in,
+> > > independently of any Kconfig option. Thanks to that, bugs and other
+> > > regressions are subsequently easier to catch.
+> > >
+> > > The dwapb_context structure is always embedded into struct
+> > > dwapb_gpio_port to simplify code. Sure this brings a tiny 36 bytes
+> > > data overhead for !CONFIG_PM_SLEP. After greping the arm/arm64/riscv
+> > 
+> > SLEEP
+> > grepping
+> > 
+> > > dts dir, the max port number is 6, the berlin2q soc families, so this
+> > > means current we have wasted 216 bytes memory which is trivial
+> > 
+> > currently
+> > 
+> > > compared to the system memory.
+> > 
+> > I still think the embedding is not related to this change and should
+> > be justified in a separate patch. W/o that part the rest looks fine.
 > 
-> In spirit, it is a continuation of PSE TIO series[1] which received
-> objection from Greg for abusing platform device and has now been reworked
-> to use auxiliary device instead.
-> 
-> [...]
+> I got your mind now: it looks like you prefer a seperate patch for the
+> embedding. Let me explain why I have the embedding within this patch:
+> the pm_ptr() or pm_sleep_ptr() just optimizes out the PM functions, but the
+> PM funtions are still compiled, so w/o the embedding, it's impossible
+> to clean up the code with the modern PM macros.
 
-Applied, thanks!
+For dwapb, I can still acchieve the clean up w/ only embedding the
+pointer. But I'm not sure whether embedding the struture deserve a seperate
+patch.
 
-[1/2] platform/x86/intel: Introduce Intel Elkhart Lake PSE I/O
-      https://git.kernel.org/brgl/linux/c/a0c83150eea5807dbedf786f55cd49b14af118a8
-[2/2] gpio: elkhartlake: Convert to auxiliary driver
-      https://git.kernel.org/brgl/linux/c/10c15296906952016a84e1e45d8dc361f35afbd8
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+BTW: as Michael mentioned during v1 review, the driver allocates the
+struct with kzalloc and stores a pointer to it, so considering the
+pointer itself and the kmalloc overhead/alignment etc, current gpio-dwapb
+have an overhead in the same order of magnitude when PM=y
