@@ -1,139 +1,130 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84D2BF013;
-	Wed, 19 Nov 2025 15:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C312FF154;
+	Wed, 19 Nov 2025 15:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763564600; cv=none; b=pqtGnMH+PlRSQ1CvshpJXzvZDpHS7EK+aRLlqDwj/IF5WsUzfgVxvEIIqstDi+RRwLajymZWzt+X9HwH5jSowsLHT75pmmXJXkpAu5tfreVQ1Y/DeVr9TA6mg6lTTitUWNQXLU5vhDWQn4EEmmK7KEXjZH3L4WabfJeNcw4J8v8=
+	t=1763565524; cv=none; b=sZsArymDR6FeILOFkThJot4hEf5hOxchosLlcsuwAi36ZKJF/2UxH61BLuHH/zfrNtC0fNx2nyei1gYpm+/5SA8bmT6NRGs8OCkWVVIPiprElYDyWZuTCZrrkpRLhz/cUyAFg731gmFw93+wgINdEt1QksIXVqoVhhMyVU8LVbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763564600; c=relaxed/simple;
-	bh=V41I1DdaKjoguYvIVU3vcsbbLpnEiJ795VwgA1QsjOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pqmx1xJpRY6aZKTqWCCAel+MCjg38QcMs/3fLUO+nFj2jVrJ/v17G12/otA9tdL7g4wRPKt42RjybcB8WJlxdICwm4okp8Yljnju2SqcdC5ejUPH9bVIIeXzTk6zJ0WxmgAUvWgBpd1aQMVvioHyIMg/vGFeNQAE/bXKsc1IGys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cItYrC/7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763565524; c=relaxed/simple;
+	bh=BV0+oJp55OaG73vSKM3QbI89e9sCDc8t5TtKjk1GcPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sPv/Kfc/LvgDwlVcyzS9slCPlyq9d02FD4rRHrRdabG/bUZH6hsIiTjcU2xn2irYI1yp/6j87h4bDuivcBUT01+fW0cFHtFy5S9ScZrIjJJeHgCfWOcoImgVy9Tca1/WAFh+dfkejslyAQSIzXxZSYoPUqjfxaKG98OjK9dz3+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5stpctk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cItYrC/7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307F3C16AAE;
-	Wed, 19 Nov 2025 15:03:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5stpctk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F39B3C16AAE;
+	Wed, 19 Nov 2025 15:18:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763564600;
-	bh=V41I1DdaKjoguYvIVU3vcsbbLpnEiJ795VwgA1QsjOI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cItYrC/7Gv/oF1ZuZmijwPyTgCtpcQjJvd2KcgR5JnuDtTxgP8bA/oAj9ZoNirK3L
-	 91GW/fdqyignkGUcxE9AsI0gAoCki+qIz0QE9d2oKemH7hl8tgSy5tvyJrPY19KahZ
-	 Jivm4LCJd3A7+qHtZKNj37tVGWVjuo5VQR9IQ4Hrd1aaheQtMrhYLgPaiRepz6qkQh
-	 2DxnxKfQvZTXz3enyhyLLzcaCgJ08+6JpEwL5phWRl8IzbW/Yg5IzVTp+bOw9lbuXf
-	 IZ6h66KwznJvN6mcZbuWb2fAZxHjjAXCHQi7dynKhEBGJ2Oq4+2f9ofOUf/CWCsJlh
-	 7J0gTDaTK6NHg==
+	s=k20201202; t=1763565524;
+	bh=BV0+oJp55OaG73vSKM3QbI89e9sCDc8t5TtKjk1GcPI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p5stpctk3TGwUVCqj/L3a9gC2sP1jL6cO4XkDOSZG35WGh9sTK746Hs/h8QdOzO1+
+	 g9m+xIyZBqv8Qz7zs1hgEd/2Joz1/5Cjrf5mBRZhrmUauMRgSrL84F2/ZI6L1YbAZc
+	 F9P+gll2FPh17XWn7i70yLTypV2pNGzlC04Ynrgg4xoopuwpL7VPFsi9Ph47TMV2L/
+	 57L1eero+Q9cM+zDREXRCTlEsXwPOHCxdFbz7DkbApqaALLh5KCmpetAjSRbV+g9ix
+	 QGlZ2BtnXyt+ypFzULbSr300eUZhMJ6BhQ+M574iHikH23EVM+8xOf3bWckzcaUlVW
+	 zK3Xabq3JGB+g==
 From: Jisheng Zhang <jszhang@kernel.org>
-To: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
+To: Hoan Tran <hoan@os.amperecomputing.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>
+	Andy Shevchenko <andy@kernel.org>
 Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v3 15/15] gpio: zynq: Use modern PM macros
-Date: Wed, 19 Nov 2025 22:43:27 +0800
-Message-ID: <20251119144327.13345-16-jszhang@kernel.org>
+	linux-riscv@lists.infradead.org,
+	=?UTF-8?q?Michael=20B=C3=BCsch?= <mb@bues.ch>
+Subject: [PATCH] gpio: dwapb: Fold dwapb_context into dwapb_gpio_port
+Date: Wed, 19 Nov 2025 23:00:49 +0800
+Message-ID: <20251119150049.13537-1-jszhang@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251119144327.13345-1-jszhang@kernel.org>
-References: <20251119144327.13345-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use the modern PM macros for the suspend and resume functions to be
-automatically dropped by the compiler when CONFIG_PM or
-CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused
+Fold dwapb_context into struct dwapb_gpio_port to further simplify
+the code. Sure this brings a tiny 36 bytes data overhead for
+!PM_SLEEP. After grepping the arm/arm64/riscv dts dir, the max dwapb
+gpio port number is 6(the berlin2q soc family), so this means we will
+waste 216 bytes memory in total which is trivial compared to the
+system memory.
+
+From another side, as Michael mentioned:
+"The driver currently allocates the struct with kzalloc and stores a
+pointer to it in case of PM=y.
+So this probably has an overhead in the same order of magnitude
+(pointer + malloc overhead/alignment/fragmentation) in case of PM=y
+now."
+
+So let's Fold dwapb_context into struct dwapb_gpio_port.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+CC: Michael Büsch <mb@bues.ch>
 ---
- drivers/gpio/gpio-zynq.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+NOTE: this patch is applied against the following series:
+[PATCH v3 00/15] gpio: Use modern PM macros
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 0ffd76e8951f..97780c57ab56 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -735,7 +735,7 @@ static void zynq_gpio_restore_context(struct zynq_gpio *gpio)
- 	}
- }
- 
--static int __maybe_unused zynq_gpio_suspend(struct device *dev)
-+static int zynq_gpio_suspend(struct device *dev)
- {
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
-@@ -756,7 +756,7 @@ static int __maybe_unused zynq_gpio_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused zynq_gpio_resume(struct device *dev)
-+static int zynq_gpio_resume(struct device *dev)
- {
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 	struct irq_data *data = irq_get_irq_data(gpio->irq);
-@@ -779,7 +779,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
-+static int zynq_gpio_runtime_suspend(struct device *dev)
- {
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 
-@@ -788,7 +788,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
-+static int zynq_gpio_runtime_resume(struct device *dev)
- {
- 	struct zynq_gpio *gpio = dev_get_drvdata(dev);
- 
-@@ -814,9 +814,8 @@ static void zynq_gpio_free(struct gpio_chip *chip, unsigned int offset)
- }
- 
- static const struct dev_pm_ops zynq_gpio_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(zynq_gpio_suspend, zynq_gpio_resume)
--	SET_RUNTIME_PM_OPS(zynq_gpio_runtime_suspend,
--			   zynq_gpio_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(zynq_gpio_suspend, zynq_gpio_resume)
-+	RUNTIME_PM_OPS(zynq_gpio_runtime_suspend, zynq_gpio_runtime_resume, NULL)
+ drivers/gpio/gpio-dwapb.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 4986c465c9a8..a431bea959ed 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -101,7 +101,7 @@ struct dwapb_gpio_port {
+ 	struct gpio_generic_chip chip;
+ 	struct dwapb_gpio_port_irqchip *pirq;
+ 	struct dwapb_gpio	*gpio;
+-	struct dwapb_context	*ctx;
++	struct dwapb_context	ctx;
+ 	unsigned int		idx;
  };
  
- static const struct zynq_platform_data versal_gpio_def = {
-@@ -1022,7 +1021,7 @@ static void zynq_gpio_remove(struct platform_device *pdev)
- static struct platform_driver zynq_gpio_driver = {
- 	.driver	= {
- 		.name = DRIVER_NAME,
--		.pm = &zynq_gpio_dev_pm_ops,
-+		.pm = pm_ptr(&zynq_gpio_dev_pm_ops),
- 		.of_match_table = zynq_gpio_of_match,
- 	},
- 	.probe = zynq_gpio_probe,
+@@ -363,7 +363,7 @@ static int dwapb_irq_set_wake(struct irq_data *d, unsigned int enable)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
+-	struct dwapb_context *ctx = gpio->ports[0].ctx;
++	struct dwapb_context *ctx = &gpio->ports[0].ctx;
+ 	irq_hw_number_t bit = irqd_to_hwirq(d);
+ 
+ 	if (enable)
+@@ -507,12 +507,6 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	port->gpio = gpio;
+ 	port->idx = pp->idx;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-	port->ctx = devm_kzalloc(gpio->dev, sizeof(*port->ctx), GFP_KERNEL);
+-	if (!port->ctx)
+-		return -ENOMEM;
+-#endif
+-
+ 	dat = gpio->regs + GPIO_EXT_PORTA + pp->idx * GPIO_EXT_PORT_STRIDE;
+ 	set = gpio->regs + GPIO_SWPORTA_DR + pp->idx * GPIO_SWPORT_DR_STRIDE;
+ 	dirout = gpio->regs + GPIO_SWPORTA_DDR + pp->idx * GPIO_SWPORT_DDR_STRIDE;
+@@ -761,7 +755,7 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 		for (i = 0; i < gpio->nr_ports; i++) {
+ 			unsigned int offset;
+ 			unsigned int idx = gpio->ports[i].idx;
+-			struct dwapb_context *ctx = gpio->ports[i].ctx;
++			struct dwapb_context *ctx = &gpio->ports[i].ctx;
+ 
+ 			offset = GPIO_SWPORTA_DDR + idx * GPIO_SWPORT_DDR_STRIDE;
+ 			ctx->dir = dwapb_read(gpio, offset);
+@@ -809,7 +803,7 @@ static int dwapb_gpio_resume(struct device *dev)
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		unsigned int offset;
+ 		unsigned int idx = gpio->ports[i].idx;
+-		struct dwapb_context *ctx = gpio->ports[i].ctx;
++		struct dwapb_context *ctx = &gpio->ports[i].ctx;
+ 
+ 		offset = GPIO_SWPORTA_DR + idx * GPIO_SWPORT_DR_STRIDE;
+ 		dwapb_write(gpio, offset, ctx->data);
 -- 
 2.51.0
 
