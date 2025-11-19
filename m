@@ -1,152 +1,133 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1924A301474
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 16:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84CD3009FE;
+	Wed, 19 Nov 2025 16:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763571038; cv=none; b=BVBJzRmAMQ4EWIQJw53a8xSt8pRWcbzWUW+9MKza0W/CvmT4rPj8mXvMXIzXsruZjycb5X/QZJ4KUWkWfDzZfBgjpQjLYBLIWoQYcZLCIekC+czxenzVw0wFwVSFPNun1uObhv/5qWMpzSBz8EIpNTri3/J7erAwnFsaquE0Zg4=
+	t=1763571081; cv=none; b=nYpO6I/QWFiN4nQ8lxXQ3eQPPJtgCr45RV2nZQVDyR8WWKAKcPVpsniYh/ClbFrLCfrA3CC4EVEurQ+YwBJn7g2aOa1ny7MQCjw7diZ449lDFZBvHhzazt3zR5OZ1VsWEu//wPG27QSkNGGNv8uLLW8OoZnxuQ2HNoHUYp3gxpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763571038; c=relaxed/simple;
-	bh=Tl8OPTyok/Pm/j1FsjZB55LPrRCZ+mLncJuKqJVgVGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T6iB8dz9mZF7WiHfpHrdhG6QMXClHtrCAs/uE6+1t6EEw4A76ziqt9ErFUffuRF6TxauiWsWsAdyfyMqzNFZLiGNHxEoV5Fgw1Mp3XRygmfTIJoJrMdq2egUp1gcPtuIgTVEjdKVrXu30jB1NhYUdDLuo/fBqoXBXrIU2gi9BSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cE7Oy2z+; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763571081; c=relaxed/simple;
+	bh=0z5blc1dd07XmocvlDywgo0sdBdKMV/nbSwKqdt7BFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PPdZ2y1na9BfvGnJqejyHXaF3TIf0sZ8Fr0Wds6MdjnKSREyCynXPrAmYdpbSMgLguZ3BY7m9wnnQe+nJUKMRtCx+8yMb7/9yzGfy7yLJzlV1NGJnfmFU7I4iWUPyhPfkAbV5CO/P+nI/v5w58xzaiqn8T8+f+uIai8FgcgKIwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD98aEJC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cE7Oy2z+"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b736ffc531fso946527066b.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 08:50:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763571034; x=1764175834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JrS6YwFtEaAnFlHMcuOwyXVJAy3PMUEJpVLwa5xC+HE=;
-        b=cE7Oy2z+d92JAs2tmRk2EnqxttLrEx8YySqGcxBoA9x+llXloMxoXEyByav9U6ZQvi
-         WqeE9Rw9Q0doGr9CoDOpCLGf22iRxTJ6IrAA5WzGxzyrOyuoViHI23Q0TVc5NldMzibR
-         8TpAs+Cj1Vjf6FEmYT7Jezfr4PY3S7OSnCVMwWORy7+4zmTNTy3HjZhrFifAbq0fB/Ve
-         jIG5G1EUZmvynZ4+YKZc1MpzPdlfrJSUcYPHcgzHyVijxMBDFhjO/RZO1O8QpGkSFN2M
-         6kVQjQqxKX63n9q0qXEmJH8fLgwATFWkIFbyPpWPjtEwkQ4OvBh0n12k2d2oIxYQScGh
-         uvLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763571034; x=1764175834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JrS6YwFtEaAnFlHMcuOwyXVJAy3PMUEJpVLwa5xC+HE=;
-        b=DTvgtYrjmmw5Rile6QriU32lt90kBKr9lpE7g8K03FHxnHriD25qtrWD9e+rFkRyBI
-         yYuHgl8uUbkINxA4Gf49AUioMSLqiWDtOA10Bt+EblVMOL1wuWvmLXDSe4jzxC/oIAy9
-         QymaCFIDqhi97r9zf2it+nYzwwY/pC3w94yiXJeSTMzWPADDMfUCFnhVKQ9HWP/wicm6
-         p9PtstzhmrPS4ZRgsaDojmTrtu8en72STHSMVENKXkXkoHkhPjchm6+Fcz5UU/IDLM2d
-         l5g/jCDdNw09l7kvfhZI0imyJwoE2pJbbKkSUukQqdJE3Ac8/j+IlQgTSwVyGNkTDNuA
-         6H7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOhHMIJbV+uKquUjmgYLR4WDhcrC0tcYZ9mHNZmePsdko8I01/A3AjDlqnY5BOPx6qrVBFKP7zUKVe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOu23qfPvdLPA9SbEzTU/OfzBk8hBK7ZJCzHHQ4ZVx7YSEQaP/
-	MmDGf9OcF5lob42f0vDmTaTa0vjK3yQ61u2mp1bOOuTx0zVYX6gTfzwb/enHllUxiRHCRIFL05t
-	NLxsYjBSnnxTgH6Txtb8cNGicMHp3rcI=
-X-Gm-Gg: ASbGncsa8fZPYo8zInbzNSkWdGU6BvVnm9kEcgj3rokVCUQIXMENk7Yb9NEgMYrgi27
-	klQx1raS9WKFAGNLWcM99aOq6UynIDQDqa3LCiYhYyeynO1HGpfRtqi+qJKYuFrg4sR3hVtohZI
-	4hG/AnrEgzOlH0pm3NfOHasu4qKQZzLiIT8X+JK1BVfpjsKJfEzZKeVXYTKZic9pgvCSXv7woTC
-	1Pv2Ecs2pG5Ng34PBqGoyWlv56RcgQUy8tya3BDlslKDTH9/se5wbTzOG3hPj2jCDOR8EXByYcN
-	h/uDdf5Z8+ZKzPCDLVDnmAFRLOhWFWW5OVaUxz8kbi5ln5KE8xkfuwHl8E58kGWdzlUrsUx3s0V
-	q8EeIEA==
-X-Google-Smtp-Source: AGHT+IEUOfXPbkU/1ewt0uL2QNoL/C3STrEVab6axmxwbxF72bZQp8bgZC9j/UZQTSicojhHo4SVb3v9GedELJ2OtFI=
-X-Received: by 2002:a17:906:794d:b0:b73:870f:fa2b with SMTP id
- a640c23a62f3a-b76378bb2a9mr377977566b.27.1763571033924; Wed, 19 Nov 2025
- 08:50:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD98aEJC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22644C4CEF5;
+	Wed, 19 Nov 2025 16:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763571081;
+	bh=0z5blc1dd07XmocvlDywgo0sdBdKMV/nbSwKqdt7BFU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OD98aEJCUvHftzsI8L6yY4uAIJK8Qy1OHWLWyKTx7GuV41kvYavvN66UuX9ERLoUk
+	 1Lu/rTJAmrIdDoi7HghhXM061bC1CcWTnczfXXtDobj8BRZxFYz1eBuSqTFHGYHaN9
+	 4U4RUP+GW1urGvWetLrKkBEcy51233o7npzQOZNMBdLu2v3+ZMT9LlPUAvz/IRjenH
+	 dQL9THDAl/6fKQTjQCA781bHcTINNLHCNkAxF6FhGQseBIABm1zbYNLn6CJmXhurnR
+	 TxWwpk0Lw7OOEVLWlIIj0E145KDSpre4ThetaH04krPF0InncnOqRZs+SYaIfVx5DY
+	 7L2kDmoVXZtlg==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: [PATCH v4 00/15] gpio: Use modern PM macros
+Date: Thu, 20 Nov 2025 00:33:12 +0800
+Message-ID: <20251119163327.16306-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251119164017.1115791-1-ckeepax@opensource.cirrus.com>
-In-Reply-To: <20251119164017.1115791-1-ckeepax@opensource.cirrus.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 19 Nov 2025 18:49:57 +0200
-X-Gm-Features: AWmQ_bnhhVijA8x4ESVqHxLHUlzkt2VxQD6y_AxAsPbe6CwMUUN-vIgBUh7xPes
-Message-ID: <CAHp75VcjhdBXps+VmPNNUucA4LQwiZnReDMbQVpxHROcVsMurw@mail.gmail.com>
-Subject: Re: [PATCH] spi: cs42l43: Use actual ACPI firmware node for chip selects
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: broonie@kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
-	andy@kernel.org, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, bartosz.golaszewski@linaro.org, 
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 19, 2025 at 6:40=E2=80=AFPM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
->
-> On some systems the cs42l43 has amplifiers attached to its SPI
-> controller that are not properly defined in ACPI. Currently software
-> nodes are added to support this case, however, the chip selects
-> for these devices are specified using a bit of a hack. A software
-> node is added with the same name as the pinctrl driver, as the look
-> up was name based this caused the GPIO looks to return the pinctrl
-> driver even though the swnode is not associated with the pinctrl
-> driver. This was necessary as the swnodes did not support directly
-> linking to real firmware nodes.
->
-> Since commit e5d527be7e69 ("gpio: swnode: don't use the
-> swnode's name as the key for GPIO lookup") changed the lookup to
-> be fwnode based this hack will no longer find the pinctrl driver,
-> resulting in the driver not probing. But other patches also add support
-> for linking a swnode to a real fwnode node [1]. As such switch over to
-> just passing the real fwnode for the pinctrl property to avoid any
-> issues.
+Use the modern PM macros for the suspend and resume functions to be
+automatically dropped by the compiler when CONFIG_PM or
+CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards or
+__maybe_unused.
 
-> [1] https://lore.kernel.org/linux-gpio/20251106-reset-gpios-swnodes-v6-0-=
-69aa852de9e4@linaro.org/
->
+This has the advantage of always compiling these functions in,
+independently of any Kconfig option. Thanks to that, bugs and other
+regressions are subsequently easier to catch.
 
-This can be
+Almost all drivers are converted, only gpio-tegra and gpio-mlxbf are
+left as is, because the memory for saving HW context is not trivial,
+if we convert them, then the two drivers' users may complain for
+!CONFIG_PM && !CONFIG_PM_SLEEP case. So I didn't touch them.
 
-Link: ... [1]
+patch to gpio-dwapb.c is tested on real HW, others are compile-tested only.
 
-actually.
+since v3:
+  - fix typos.
+  - fix the stray change in gpio-pxa driver.
 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->
-> Ok here is what I would propose to fix this one, IMPORTANT NOTE: this
-> does depend on the first four patches of the linked chain which I don't
-> think are merged yet. But I would argue if we are removing the name
-> based look up, we should add support for fwnodes at the same time.
+since v2:
+  - collect Acked-by, Reviewed-by tags.
+  - move the embeddng the structure for pm in gpio-dwapb out, will send
+    it as a separate patch.
 
-You mean it has functional dependency and not a compile-time one?
+since v1:
+  - rebase on the latest gpio/for-next branch.
+  - collect Acked-by, Reviewed-by tags.
+  - clarify the trival memory wasted numbers with CONFIG_PM=n in the
+    dwapb's patch commit message as suggested by Andy.
+  - drop patch to bt8xxx since the clean up is acchieved when switching
+    to generic PCI pm framework.
 
-...
 
->  static const struct software_node_ref_args cs42l43_cs_refs[] =3D {
-> -       SOFTWARE_NODE_REFERENCE(&cs42l43_gpiochip_swnode, 0, GPIO_ACTIVE_=
-LOW),
-> +       SOFTWARE_NODE_REFERENCE(NULL, 0, GPIO_ACTIVE_LOW),
->         SOFTWARE_NODE_REFERENCE(&swnode_gpio_undefined),
->  };
+Jisheng Zhang (15):
+  gpio: dwapb: Use modern PM macros
+  gpio: brcmstb: Use modern PM macros
+  gpio: htc-egpio: Use modern PM macros
+  gpio: pl061: Use modern PM macros
+  gpio: pxa: Use modern PM macros
+  gpio: ml-ioh: Use modern PM macros
+  gpio: mlxbf2: Use modern PM macros
+  gpio: msc313: Use modern PM macros
+  gpio: omap: Use modern PM macros
+  gpio: pch: Use modern PM macros
+  gpio: tqmx86: Use modern PM macros
+  gpio: uniphier: Use modern PM macros
+  gpio: xgene: Use modern PM macros
+  gpio: xilinx: Use modern PM macros
+  gpio: zynq: Use modern PM macros
 
-Since it's a placeholder, we don't need it at all. See below.
+ drivers/gpio/gpio-brcmstb.c   | 12 +++---------
+ drivers/gpio/gpio-dwapb.c     | 18 ++++--------------
+ drivers/gpio/gpio-htc-egpio.c | 21 ++++++++-------------
+ drivers/gpio/gpio-ml-ioh.c    | 12 ++++++------
+ drivers/gpio/gpio-mlxbf2.c    |  8 ++++----
+ drivers/gpio/gpio-msc313.c    |  8 ++++----
+ drivers/gpio/gpio-omap.c      | 15 +++++++--------
+ drivers/gpio/gpio-pch.c       | 12 ++++++------
+ drivers/gpio/gpio-pl061.c     | 17 ++---------------
+ drivers/gpio/gpio-pxa.c       | 11 ++---------
+ drivers/gpio/gpio-tqmx86.c    |  9 ++++-----
+ drivers/gpio/gpio-uniphier.c  |  9 ++++-----
+ drivers/gpio/gpio-xgene.c     |  8 ++++----
+ drivers/gpio/gpio-xilinx.c    | 15 +++++++--------
+ drivers/gpio/gpio-zynq.c      | 15 +++++++--------
+ 15 files changed, 72 insertions(+), 118 deletions(-)
 
-...
+-- 
+2.51.0
 
-> +               args =3D devm_kmemdup(priv->dev, cs42l43_cs_refs, sizeof(=
-cs42l43_cs_refs),
-> +                                   GFP_KERNEL);
-> +               if (!args)
-> +                       return -ENOMEM;
-> +
-
-> +               args[0].fwnode =3D fwnode;
-
-You can assign entries directly here as
-
-  args =3D devm_kmalloc_array(...);
-  ...
-  args[0] =3D SOFTWARE_NODE_REFERENCE(...);
-  args[1] =3D SOFTWARE_NODE_REFERENCE(&swnode_gpio_undefined),
-
---=20
-With Best Regards,
-Andy Shevchenko
