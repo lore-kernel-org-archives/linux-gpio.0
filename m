@@ -1,103 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF03612C5;
-	Wed, 19 Nov 2025 14:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D3C369201
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 14:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763562165; cv=none; b=MtRxZswib3G7C3uIdpbPCV3Bqu+lae5XK5LwuG9uYGGsKYyoQD9ml1XfubYfthast2HPa/Myz/CE2Vg/5kwmrJHkqzBH6+MJJLrsxer562V6VSiWaq/XgpcP5e9pls3oxSU2t6sntLjHhMWqL7MbXV2DMpxffr7XOc/GGMWpLSE=
+	t=1763562600; cv=none; b=W4GudC0/KBkoJ5U2WF1xgrvoXvOS4o7pq2shNn1VwQfFVoiOcgEyc/aFI2t/lFnX+m8gDEHou9OPof1NS3FPEjkVwqLhI2aahs2DC4fK5xSA7Ha3AKqCsO5ve5ZHDYgdVppWBkEnwQPacUmTWISR/DdMNaGo1ZE4IAiSXKc09Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763562165; c=relaxed/simple;
-	bh=Y9o/qBfpUr3TD8yDdRfXuJK9HtHcbYA4WdgqHPo4JCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ds5JUbvn+6k7CFTp3HILEvdPILYgYAH+TL2CwjAQUtpw6CGz0jHdOTyySMmwsmJwVafEp92+1KmkMZd0xP5darRJOZM7pOiyihI86UqF7aiRmI0TBgSl3bEgwl3MiMQz5zdja9eczq6jH/JRxyG5/J/2yjQS3/XbWehg3Tuxg1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpemjFIK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763562600; c=relaxed/simple;
+	bh=QYkJ+KAJptP8x+/Lo+OPyvZfeeVlUCQUdUVwwHK0tdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NdPxu9F4I9v8ab6Rj/SsOuY/t5DBC5FjuB1DN4qxak5OvX1NizRq0M1kSSTUAsjdUvp9j3YpGfHwh1wuzBPisJyOZpWh6bjKNPRFt/pPlPjgiZjlf9afdagKoFOcfbc6LAarDaYRiU5NsTvebwtVTGe/EvjyJtyf50RQt8Wakk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s18TSfPU; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpemjFIK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 222B6C116C6;
-	Wed, 19 Nov 2025 14:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763562165;
-	bh=Y9o/qBfpUr3TD8yDdRfXuJK9HtHcbYA4WdgqHPo4JCg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BpemjFIKxc3GyXpTR5k8T+2Q+s6AhcWJMEzAmD+OF5aqTIlEGdj9KGQ6z8v5yyvkr
-	 YRnpP4OZKKksJTtF/2St/CJSfUXO9gv21aJgz4Nm8CR8mLfyNaHPp5DFV+kwOVv2/X
-	 6hhvPBkqO2dVVuj7KwwnYVmRlDT1ESZDNl2LRsxVmORa73l3eky8txyR85NMMwJpYq
-	 yj0NZnlSrZUESWZK4KUrQZ7samCifpWG7QvuNaimkLG3XEYw/7oh5pwuDc5smFp/Km
-	 8FafpD2kKvZ3d/LP9nqsE1W7wWzvPpEuu8H8HPpaNGVRrR/rA4ciX5ZTjng0YtGp73
-	 JzvG35cpRRkWQ==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] gpio: fxl6408: Add suspend/resume support
-Date: Wed, 19 Nov 2025 22:04:55 +0800
-Message-ID: <20251119140455.10096-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s18TSfPU"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-594330147efso6768185e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 06:29:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763562595; x=1764167395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hRrGjHpQFMPuOkiL8GvRDSi18sR5m2GVcnU67ItY1DU=;
+        b=s18TSfPUarVrfVD9Q289QlNx1XEDTfcU8bi5GXrz3W+DSMQoea3Lv3herjQOmTFxWf
+         RnCJCTg1nmGcgFlw4R2OxLtmInTDyHf5IZhwpwNhJxOsxEN/gjUh5N96v0rM4nXMsgHj
+         3/ZFfkBTBzj/4pRjkvMtZmZIbjctGR8/BGbLbGmewCcwCUrg36LgPbevDP2cNPjovcfk
+         eME/KNWlNnmFtlL4BNoV2wwmA8rwPnCeI0jJUXxeHWqN3rrElCznudkbcVbYx8FLHJ6+
+         gpqHIvcybbH5PGjn7hX4wZRttrc6/Bpj/4/qlsbYFUAQiDGbBGd2KwHR7vsxt5H1MEVi
+         RsEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763562595; x=1764167395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hRrGjHpQFMPuOkiL8GvRDSi18sR5m2GVcnU67ItY1DU=;
+        b=QBLob8M716H7cd/wD8ipqDTXfKInJrb2b5YMl+94Y8r2+90mCpfFh1XOiyy4xqRWHE
+         UtmNpeJE5XwaaEX3ULTciTc3DmHF/lB1HSt+X97QRR00C+mLZeLHGxsgxfPAhgKuYD1s
+         1mu5rwxXIWaf8MqcDmg/qpdodERdm/4RcbPpTMhu2ITILOktGGItL9mi2jdIkA9JUWuA
+         Oku9yww1a3Kym9Xi7HJXDVH/1o85fk2WevbUkzePDdhb8VUxahv/QRUsp+UTisICQwVc
+         DcSnCOlJuMOWpbze4ZQ58nJqEefWfOmyiFtna05SdCUg3pb0CIe6bnD/y3yNLqjJ9rUF
+         MU3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXypimUg75Bk9kaDvkj3H4hN+INczvE57OeLurQtDOwpfav2sHCgLSkatx5syqyOZVPrQJyPJFX1Bwa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYkZr+y3wKkWge+PdqFkoE8O5hgXoj48/bnprPo+cAgYhZzHFB
+	HU/OjsnvUstRTadUE78ibV4XQwEzwISG4q8eUtNHnq9KD8dCJVuU2qDz6bDV1C0d7jwMlpjjZ92
+	g/OYhT+I3MPyR+rACeA1nn8CHqEttktZAA/YgvhgrIQ==
+X-Gm-Gg: ASbGncv+XCmV/L7rDMTuC4kCUXSy3P9k7G8vhz+0VrzvE0fqip1kbGPgOK0pWwRg6/t
+	W1zSIdssFfaS/6cZIQmjsslMU7hR4NzgTP0sCrOVqo/CCFonlnrYBLrgAikZY2KXCS3PmAMrOTh
+	xR9Vdv9huz4D/slE3VKCUR+NfawewxO6u8z8ruK18ESTKiHyXLCNFF0jrX5iOGypVq4eg8sxTR0
+	M4xMSPJJUTenMBSAw3hh89izL+a/j+VNHqSsTYOi4mm3qgy1maNdfOQa6j3qh4Rb6Fx3rg=
+X-Google-Smtp-Source: AGHT+IGp7GKe1RKdp3EifTfSeaou18jsyywYSKyMxPvf6+wpNti41ngxOAgDWBsE8YIo1EJMFQbA1mHAun4y/oak87Q=
+X-Received: by 2002:a05:6512:138a:b0:57d:b8a1:832b with SMTP id
+ 2adb3069b0e04-595841af20bmr6916107e87.24.1763562594938; Wed, 19 Nov 2025
+ 06:29:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251112-gpio-shared-v4-0-b51f97b1abd8@linaro.org>
+ <CAMuHMdVR9Z70+M-SqHYrHiC6H_yw=VRuDOOg=YnXSNKjPnx3WQ@mail.gmail.com>
+ <CACRpkdZioOu9AEBdaNWX1njsVvFYR8SP8yJrY8MFMbJtL6YLJA@mail.gmail.com> <CAMuHMdUe64MdRL1qPRX3q_OGj287nK=MQTb7HUta51iJ+vP9Hw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUe64MdRL1qPRX3q_OGj287nK=MQTb7HUta51iJ+vP9Hw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 19 Nov 2025 15:29:43 +0100
+X-Gm-Features: AWmQ_bmc-n1cuVY24_yDbxt_0pYfljkKCrIONDdezzzLDg_EEB1-VOCfHUUS2FA
+Message-ID: <CACRpkdZp3zKVCeJPXJP4UCAbXz-j=81zYfXntxuBp5BK5ettzw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] gpio: improve support for shared GPIOs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, during suspend, do nothing; during resume, just sync the
-regmap cache to hw regs.
+On Wed, Nov 19, 2025 at 9:38=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
-since v3:
- - simplify the patch a lot by removing fxl6408_chip wrapper structure,
-   thank Bart for the suggestion.
+> > For the input usecase the status of the LED is a byproduct and
+> > should not reflect in software I think. It surely should not be
+> > controllable and possible to set into output mode because
+> > that sounds like a recipe for HW damage if you drive it
+> > actively high and press the key at the same time.
+>
+> Suitable resistors are present to prevent hardware damage.
 
-since v2:
- - drop the reset pin support patch since no users now
+Aha, clever.
 
-since v1:
- - fix W=1 build error on nios2 platform
+> > gpio_keys {
+> >     compatible =3D "gpio-keys";
+> >
+> >     button-ok {
+> >         gpios =3D <&gpio 0 GPIO_OPEN_DRAIN | GPIO_PULL_UP>;
+> >     };
+> > };
+>
+> But only one of the gpio-keys and gpio-leds drivers can bind to the
+> GPIO, or am I missing something?
+> So I do think I need a new combined key-and-led driver, like Bartosz
+> suggested:
+>   - When the user turns the LED on, the GPIO is switched to input mode,
+>     and the switch works,
+>   - When the user turns the LED off, the GPIO is switched to output
+>     and driven low, and the switch does not work.
 
- drivers/gpio/gpio-fxl6408.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+You will also have the byproduct that the LED being "on" in software
+does not necessarily reflect the actual LED status, someone
+may be pressing the key and then the LED is off even though
+in sysfs it is clearly "on".
 
-diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
-index 86ebc66b1104..afc1b8461dab 100644
---- a/drivers/gpio/gpio-fxl6408.c
-+++ b/drivers/gpio/gpio-fxl6408.c
-@@ -123,6 +123,8 @@ static int fxl6408_probe(struct i2c_client *client)
- 	if (ret)
- 		return ret;
- 
-+	i2c_set_clientdata(client, gpio_config.regmap);
-+
- 	/* Disable High-Z of outputs, so that our OUTPUT updates actually take effect. */
- 	ret = regmap_write(gpio_config.regmap, FXL6408_REG_OUTPUT_HIGH_Z, 0);
- 	if (ret)
-@@ -131,6 +133,16 @@ static int fxl6408_probe(struct i2c_client *client)
- 	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
- }
- 
-+static int fxl6408_resume(struct device *dev)
-+{
-+	struct regmap *regmap = dev_get_drvdata(dev);
-+
-+	regcache_mark_dirty(regmap);
-+	return regcache_sync(regmap);
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(fxl6408_pm_ops, NULL, fxl6408_resume);
-+
- static const __maybe_unused struct of_device_id fxl6408_dt_ids[] = {
- 	{ .compatible = "fcs,fxl6408" },
- 	{ }
-@@ -146,6 +158,7 @@ MODULE_DEVICE_TABLE(i2c, fxl6408_id);
- static struct i2c_driver fxl6408_driver = {
- 	.driver = {
- 		.name	= "fxl6408",
-+		.pm	= pm_sleep_ptr(&fxl6408_pm_ops),
- 		.of_match_table = fxl6408_dt_ids,
- 	},
- 	.probe		= fxl6408_probe,
--- 
-2.51.0
+So the status in the LED classdevice also has to be forced to "off"
+(brightness 0) anytime the input subsystem detects that the switch
+is pressed.
 
+It's going to be a lot of work I think, but I guess it can be done,
+with a lot of special-casing and custom APIs.
+
+Yours,
+Linus Walleij
