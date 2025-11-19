@@ -1,119 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A55D301475;
-	Wed, 19 Nov 2025 16:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83F536C58C
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 16:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763571133; cv=none; b=exD/1eNR31795J3jckrZ4UqO8kRiKQdfZTbJvnJ98aRkwvGiffr3OaR9NKckma1sJPSxG6VoNCG7ub95gWXRIkMEvuLxGYLW+dX/V+8bxhhxupefvYJY0rejJXHwv9COaLiKMr54xJlTKP8NdB0p5H0pIItr9j2k+BkqmjyKuao=
+	t=1763571136; cv=none; b=UyJt91nKOvMVLv1HfUS9xP6MhHFw0hi9UY4EAfgDNMYU5eAsYgunHzg/7B/dBnO1v0pRS/zmhsmLUgnAGGgf3fx493wg+ngMLVXQcBG+6N8lgXIroWS6SPsjC7xD0+00w0d/3FGnVFNg8KHBZ9eDKbNp46DYvXa+jg7X95QE8Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763571133; c=relaxed/simple;
-	bh=Os+tBdcRNnMldaZHL0II0bLpAzonGthp4S2yNOuQoUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f+ZRpSDjhrBe2s/xa7ed2KL2jkUEQw5Y2UsZiBBHl3ZXq6ow5xDGBDzz5oZDu31M5L/iInxrM7wQpC+PjCHQFcXDWgxBce/7yc6/SQAAtBD96wfp4k2mfRUesPVvVXJRQwIuG14mzA4WrZotWj/MnbsrtSqPkmG+c6UXdPpnOL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cojMEqRS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763571136; c=relaxed/simple;
+	bh=vcjFWfWOR2yjv9sI5u/+MJAF+m7NirhgjHp5gOavo68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GRRzFxH4hDmOgN1Mq3GliKeN9uP+Yjsml84939xawY5FDrfiolBuB+F0GHevcFBpN7XWU1kGCJrhaED6IbvaR/3y3Nat9Y2d6/WArFxMxs6h0mQK1q9I15FGeLG7jTSgBAhFquSLYUT//wd9A/Pw9bmfe8nuQ47sMwGCb4YLYwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYC60abh; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cojMEqRS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC04AC4CEF5;
-	Wed, 19 Nov 2025 16:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763571132;
-	bh=Os+tBdcRNnMldaZHL0II0bLpAzonGthp4S2yNOuQoUg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cojMEqRSIAU7w+tNy6D9xFUwiPS1yYVrugtviu2Y5JDhLjMJnVkQWkdPKugNajVc+
-	 Jxw9rgOmpNNVL5ZsgbffP/RxHcQ1KY3DO+i57VImTyQixLk7Jz7QKarlKh6/+L/X2f
-	 6ek1N1gzIbbjgQ/7Q9kJXz6a1zpVuYsHG74m5VJkgow7FYnDe9ijlmJOq3M3mlBj7l
-	 nRkdSFDHMFfrHg8aMTAD/hX5OBlbNSC8AOpQeHErDhtLm2OAazIL1ynEybb2ciKZJ8
-	 iaZZmCPN86bGKsrmLxDE+791/Ulew30huDkqOvnXnbYq+33+gs5fpZYHrJMPsp1SUW
-	 WYE+HrUEKDiZQ==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v4 12/15] gpio: uniphier: Use modern PM macros
-Date: Thu, 20 Nov 2025 00:33:24 +0800
-Message-ID: <20251119163327.16306-13-jszhang@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251119163327.16306-1-jszhang@kernel.org>
-References: <20251119163327.16306-1-jszhang@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYC60abh"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b739b3fc2a0so518641066b.3
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Nov 2025 08:52:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763571133; x=1764175933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vcjFWfWOR2yjv9sI5u/+MJAF+m7NirhgjHp5gOavo68=;
+        b=DYC60abhm1f5UWLW4iaVs2unNLoBN4dhoRGoTW7GmcDwLAoaIP9dFBhODvzKcl4mhY
+         FQKzgk9xvUtNPUij6Lxdf+q7RrZIojuHnF0Pp85TxG4Txe5XOFe7syHQuryH87CVzxHT
+         E2BDFEgcZKIpzD2uiKzWYd6UXjtjIuDl3GxKdT/GC68i79/0oRL5ax9doOmYefQG8j7L
+         2nDVr6RacsvlAkT1tycgChWLkqW/TfK7yYeuFJaDaN7Wf9lmkr6DvcjKX86YwgHsxWZH
+         b52wIJ8s5rrmQI9Zy16CIsuEILytgE0vW2bD0apMxba+Isch9lQfuXajkIfMsu9ii8KH
+         A6oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763571133; x=1764175933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vcjFWfWOR2yjv9sI5u/+MJAF+m7NirhgjHp5gOavo68=;
+        b=ILjlQJy1x0ejTnSjhvQKTg/rRXldvI/K2etHSDM4zyrJ7L6mkEYbznLyUALP6178MZ
+         aLcTS9Qv1nb5oZUxVcNgi7Q3b+UAUGT5f+sTUT3HeSQcCYCJtXgsml2/zmw7Tiz0rz0U
+         4wH3TxbhtwYg/q5p2BRusAXo4Lv7aJlbdObdLQT12st8vwYYoglr7KGktkd1DwxAHqvA
+         big3F/H3cPJzxQkqlelLbUWKeGNHJsVnhmLDTioopjWt2OJIOmrzJAc4i1Nq5z3q01wI
+         8VNMoKNDdKfbQhpnA0ftgakw6IXyHoH4cXx4wSbUtT2IKWrSIlxv/RcWG0pm9Fha0I0e
+         IYiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSTj/iDWE64aB8qpHku9kXgAocXclYKroMDMKH1/UgFjgWFim1jeYbQ714sPzzNqOW7PX7kE3gESup@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnKCK+mZzG7eD5OAQqq/ZebKy0Ias4awC1993DGxyZ4smHmOC7
+	J047xORkpdaRx8SdzVv+a1szXHEXIdshuMafzLynm0nZJwIED1/yF7bFJGflW0qOGRx5jLUhlXt
+	juHld0rtM52CppgdVLIPFOtNTzygcL08=
+X-Gm-Gg: ASbGncsuKzK3PuZ6HvtsNquBY91G14NUifVFEbkV4NqAr6yLYCBIvE99rWuPjJ2cZ7a
+	71ZTX2me1erkfKadLdB8cYEl4jVts7R3LC9aNlks43mG46GfYDl0mbBQQYb2at46n1EcuNka2qx
+	vn7yeGjcmBwWQenrL5cB/gVitHlNHeSLk9lCd0GHa6fFP5tWRjfQM4HBy7/NEGouUBOIqPBXEP/
+	rQ/TwsG3zdLWcXqVGZLxCXAIsJkMnfdyE4ffL7Z3RnzAYftyxl3KcS2QOhoUKg7vUxlct2ZNNA4
+	+4nqI4dZdK24eyiGnjuswSueMbbhlqSBvrduLbEqJbLu06RzIPU56EvB98TQwVXxLpGc/R8=
+X-Google-Smtp-Source: AGHT+IG79/yoAniLg5m6pTLusTRypXvDIibAvx3mJng3rzludQe6A04i/KKfcn3WLMTF9und/v0GYqvS4b0sDflHd0g=
+X-Received: by 2002:a17:906:7309:b0:b45:60ad:daf9 with SMTP id
+ a640c23a62f3a-b73677ed721mr2190487066b.3.1763571132962; Wed, 19 Nov 2025
+ 08:52:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251119164017.1115791-1-ckeepax@opensource.cirrus.com> <aR30JbIbx3MIySjM@opensource.cirrus.com>
+In-Reply-To: <aR30JbIbx3MIySjM@opensource.cirrus.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 19 Nov 2025 18:51:35 +0200
+X-Gm-Features: AWmQ_bnRsmqZgCIFOlKbUCCwqqweHfcYam2Yo1Gl2z3a9M5AASJDSi9azoDaq0U
+Message-ID: <CAHp75VeQgq8AFSPAOvtq+U32KAWO+NOZ_=LXWA_r5vRzkD2TTQ@mail.gmail.com>
+Subject: Re: [PATCH] spi: cs42l43: Use actual ACPI firmware node for chip selects
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: broonie@kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org, 
+	andy@kernel.org, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, 
+	linux-spi@vger.kernel.org, bartosz.golaszewski@linaro.org, 
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the modern PM macros for the suspend and resume functions to be
-automatically dropped by the compiler when CONFIG_PM or
-CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused
+On Wed, Nov 19, 2025 at 6:45=E2=80=AFPM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Wed, Nov 19, 2025 at 04:40:17PM +0000, Charles Keepax wrote:
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-uniphier.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+...
 
-diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-index 197bb1d22b3c..0574dde5b5bb 100644
---- a/drivers/gpio/gpio-uniphier.c
-+++ b/drivers/gpio/gpio-uniphier.c
-@@ -426,7 +426,7 @@ static void uniphier_gpio_remove(struct platform_device *pdev)
- 	irq_domain_remove(priv->domain);
- }
- 
--static int __maybe_unused uniphier_gpio_suspend(struct device *dev)
-+static int uniphier_gpio_suspend(struct device *dev)
- {
- 	struct uniphier_gpio_priv *priv = dev_get_drvdata(dev);
- 	unsigned int nbanks = uniphier_gpio_get_nbanks(priv->chip.ngpio);
-@@ -448,7 +448,7 @@ static int __maybe_unused uniphier_gpio_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused uniphier_gpio_resume(struct device *dev)
-+static int uniphier_gpio_resume(struct device *dev)
- {
- 	struct uniphier_gpio_priv *priv = dev_get_drvdata(dev);
- 	unsigned int nbanks = uniphier_gpio_get_nbanks(priv->chip.ngpio);
-@@ -473,8 +473,7 @@ static int __maybe_unused uniphier_gpio_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops uniphier_gpio_pm_ops = {
--	SET_LATE_SYSTEM_SLEEP_PM_OPS(uniphier_gpio_suspend,
--				     uniphier_gpio_resume)
-+	LATE_SYSTEM_SLEEP_PM_OPS(uniphier_gpio_suspend, uniphier_gpio_resume)
- };
- 
- static const struct of_device_id uniphier_gpio_match[] = {
-@@ -489,7 +488,7 @@ static struct platform_driver uniphier_gpio_driver = {
- 	.driver = {
- 		.name = "uniphier-gpio",
- 		.of_match_table = uniphier_gpio_match,
--		.pm = &uniphier_gpio_pm_ops,
-+		.pm = pm_sleep_ptr(&uniphier_gpio_pm_ops),
- 	},
- };
- module_platform_driver(uniphier_gpio_driver);
--- 
-2.51.0
+> Apologies this probably should have a fixes tag, or two and I
+> probably should have marked it RFC. Lets have some discussion and
+> if people like the approach I will send a v2 with the tags
+> included.
 
+At least I don't see anything quite wrong with it. But I probably need
+to have a fresh look when you send a v2.
+
+--=20
+With Best Regards,
+Andy Shevchenko
