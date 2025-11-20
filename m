@@ -1,100 +1,116 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA733E7;
-	Thu, 20 Nov 2025 00:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929B16DEB1;
+	Thu, 20 Nov 2025 00:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763598503; cv=none; b=Q3JL4z4wXYOfP5asuxbtEIjIgcd3db/loi8hxnZUooSnLZcF5bfM6uI7hU0H6p0iZ6W72o6qWn4M/YVwDFD42Ind5MMyCqgFN05ZlLXcxhe/3qUGdpcvDKwsdX4cIT/S97i/6XzDcvzUVxgPQe7a5lD/PmZ9YbE44lKgCWP0MA4=
+	t=1763598675; cv=none; b=RQYVba5JvV3URZ0Iqq6TTh7i4zktX9DZItrBF7+lf5Y20mK9a+3i94AI0jp214Z4poZRQepVeskZZE+BXvyG0Onx7HyFkCiGEe7AFDfEzuTmFLvSYsRCcK1nyxL/kp6Cr/H75unehbL3xSwNXoJRjd8MWH2rUzZKT1/1O/Slxhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763598503; c=relaxed/simple;
-	bh=WE4dW3eUoC04Cv20exXr2znqJM0ssIf18VtMt9cY1Jw=;
+	s=arc-20240116; t=1763598675; c=relaxed/simple;
+	bh=vC5ZsmenMkhitGJQ0ThlsxoDZXm6NpZmMjC1M6Veq0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boohCwoK2nFZCTIvtX+Z2nRhE5Gp80B1HvwHgg02YojhjAKMyM58fiFCZzEVvN9NNNLAvzmMW4qmIhl66toPlC/fV6VLmmbquNAIhlcKHEKjpBd6GV4CjeAlvrkPnGjGAtOnYklpTfkAPfodyCLS1e+QSxm9m+IeUm+7rG+2eJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3fAf1fE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZVK9J4CbgEYjFiKKMqwC5otoj+sXTiNcklVNv6p69DJaNGozqTjSfAJt2LZ3QK6WTTqKVsuAVFaiQ5x44HQVMV9QndgQH/Nza7a7tyBqFCZC4kS+6vBIxayOZpT4gv0INQwFiIQqsCQQOl46YczYO7Ul9RT1f2yzxW5s0iiMhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6gkNEPZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3fAf1fE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D13EC4CEF5;
-	Thu, 20 Nov 2025 00:28:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6gkNEPZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59A33C4CEF5;
+	Thu, 20 Nov 2025 00:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763598501;
-	bh=WE4dW3eUoC04Cv20exXr2znqJM0ssIf18VtMt9cY1Jw=;
+	s=k20201202; t=1763598675;
+	bh=vC5ZsmenMkhitGJQ0ThlsxoDZXm6NpZmMjC1M6Veq0w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J3fAf1fEjlc6JfEMeWVU8D8PY8Mp0elxZly9c1vM+iApTrCF1jVRJQKuUuJ5SH3wQ
-	 M5e/rillypC8dVafplgA+XZNNgRSkQAJKJbP6hP/2vwkEF9AkxBzhlZ8UiecV2umP0
-	 G0vpANV4Px5paJ95EGxblaLnT7qX+bNHj2/YWH+cNGPbzaMYz6BcoF/Acw6/DvLw7X
-	 GTO/LzCcKRwUGVfNiaq3mOmk0tFnn33Fj/Ij6mD9GVFwFPIzCfJCpPrlsbA+th9/PA
-	 6siC08YuAQf8xsMtS2jSOk82gaEUjvZqyLoYK9Ft9xP9Q/EGWNm6H883T7Pccjp+LL
-	 0M2Foj/imHjuA==
-Date: Thu, 20 Nov 2025 08:10:28 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Doug Berger <opendmb@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH v4 11/15] gpio: tqmx86: Use modern PM macros
-Message-ID: <aR5cdOOKl1Anji1h@xhacker>
-References: <20251119163327.16306-1-jszhang@kernel.org>
- <20251119163327.16306-12-jszhang@kernel.org>
- <aR38PkERpLxXhNfD@smile.fi.intel.com>
+	b=Q6gkNEPZeY9FIh3hEo697fONF+OqlB9eauJ7vGvqWsMup/kNubmhEoe4U1kTL06Rr
+	 sDcbt/c4DZoLPKfW4eeakdb1Mjc84E+W6o0d3rq3nVjdySAs2YaSXp6z3tALtsLndU
+	 jqv2Uyr9oRrOLCoqJ95/NSWuohl76dvozBNXePAmgJxhc5Vi+tqH5z6RfHjQv2y7mw
+	 NjZBO+8c7eug8WXQ3t1L6ymmAdgFgg/S6A2jSUHEsx971+FPNAR8Ub8xM+hFZAXyzl
+	 c7m6ofHrzHxb9XKX277Qza9eI+ipBEkSAYTG1K30LHJEFJtlSy1agx0mi1Jenv4k/9
+	 FKqfrIaVTynaA==
+Date: Thu, 20 Nov 2025 00:31:11 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: switch: adg1712: add adg1712 support
+Message-ID: <20251120-evacuee-opulently-8e98840c4ba2@spud>
+References: <20251117091427.3624-1-antoniu.miclaus@analog.com>
+ <20251117091427.3624-2-antoniu.miclaus@analog.com>
+ <20251119-violation-enforcer-1362d3eecb69@spud>
+ <CACRpkdayt+upQxxT-GdQOENWjdF2zz3DLEjcvD7sdg9-oaLwoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8jFdXtNEoClBb2NM"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdayt+upQxxT-GdQOENWjdF2zz3DLEjcvD7sdg9-oaLwoA@mail.gmail.com>
+
+
+--8jFdXtNEoClBb2NM
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aR38PkERpLxXhNfD@smile.fi.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 19, 2025 at 07:19:58PM +0200, Andy Shevchenko wrote:
-> On Thu, Nov 20, 2025 at 12:33:23AM +0800, Jisheng Zhang wrote:
-> > Use the modern PM macros for the suspend and resume functions to be
-> > automatically dropped by the compiler when CONFIG_PM or
-> > CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused
-> 
-> ...
-> 
-> >  static const struct dev_pm_ops tqmx86_gpio_dev_pm_ops = {
-> > -	SET_RUNTIME_PM_OPS(tqmx86_gpio_runtime_suspend,
-> > -			   tqmx86_gpio_runtime_resume, NULL)
-> > +	RUNTIME_PM_OPS(tqmx86_gpio_runtime_suspend, tqmx86_gpio_runtime_resume, NULL)
-> >  };
-> 
-> ...
-> 
-> >  static struct platform_driver tqmx86_gpio_driver = {
-> >  	.driver = {
-> >  		.name = "tqmx86-gpio",
-> > -		.pm = &tqmx86_gpio_dev_pm_ops,
-> > +		.pm = pm_sleep_ptr(&tqmx86_gpio_dev_pm_ops),
-> 
-> For RPM this should be pm_ptr(), no?
+On Wed, Nov 19, 2025 at 10:22:02PM +0100, Linus Walleij wrote:
+> On Wed, Nov 19, 2025 at 6:56=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> > On Mon, Nov 17, 2025 at 09:13:22AM +0000, Antoniu Miclaus wrote:
+>=20
+> > > +  switch-gpios:
+> > > +    description: |
+> > > +      Array of GPIOs connected to the IN1-IN4 control pins.
+> > > +      Index 0 corresponds to IN1 (controls SW1),
+> > > +      Index 1 corresponds to IN2 (controls SW2),
+> > > +      Index 2 corresponds to IN3 (controls SW3),
+> > > +      Index 3 corresponds to IN4 (controls SW4).
+> >
+> > Did I miss a reply about my comment on this switch-gpios? I was asking
+> > if a binding like this, which doesn't permit any of these not being
+> > provided is a good idea.
+> >
+> > > +    minItems: 4
+> > > +    maxItems: 4
+>=20
+> Maybe we should make them named GPIOs after all, as the switch
+> has exactly 4 possible GPIOs. It was my request to have an
+> array I think, and now I feel a bit stupid about that :(
 
-Indeed, pm_ptr() is better. Thanks. Let me do it in next version, I will
-wait for one or two days as Bart kindly reminded ;)
+It might cause havoc dt-schema wise, but is having a switch-gpio-names
+a silly suggestion? Seems more usable than having 16 or 32 individual
+-gpios properties on a larger device.
 
-> 
-> >  	},
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+> > > +  switch-states:
+> > > +    description: |
+> > > +      Initial states for the four switches (SW1-SW4).
+> >
+> > Missing an adi prefix? Also, probably should say initial if it is
+> > initial states.
+>=20
+> It should probably be initial-switch-states.
+>=20
+> I vote for a generic binding as it is a new "subsystem" in DT,
+> and this can be exepected for any new switch.
+
+Cool, prefix-less is fine in the case - although Rob's usual requirement
+is two users for some common thing to make sure that it is actually
+suitable for being common.
+
+--8jFdXtNEoClBb2NM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaR5hTwAKCRB4tDGHoIJi
+0tSWAPoD82y5vmd53/Q234BBHyKoR+py3qoQbfuubqcOtaxgnwD+MHsw8Q5cmb+7
+EuQ16EGRwyUitBK6EIBAyYEzzG19uAc=
+=OFmZ
+-----END PGP SIGNATURE-----
+
+--8jFdXtNEoClBb2NM--
