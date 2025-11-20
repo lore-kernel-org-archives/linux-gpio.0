@@ -1,149 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB9F1D5CC6;
-	Thu, 20 Nov 2025 00:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA733E7;
+	Thu, 20 Nov 2025 00:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763598408; cv=none; b=ZGWajek4/eoMXj2isuOcdfUGmgea1uzZCpfj+cB1WkgiYnGd6LwxPunt8n3ru4r0WpiqJUGeC0tlOhZbx8MNfALXNN0fvMrkfqf4cJxIx29cpGvQFxQW7Y67aJuH7WAaLJsjG/EM/iQ6vz2ikpJza15GmCbf7oTxXSJa665TGao=
+	t=1763598503; cv=none; b=Q3JL4z4wXYOfP5asuxbtEIjIgcd3db/loi8hxnZUooSnLZcF5bfM6uI7hU0H6p0iZ6W72o6qWn4M/YVwDFD42Ind5MMyCqgFN05ZlLXcxhe/3qUGdpcvDKwsdX4cIT/S97i/6XzDcvzUVxgPQe7a5lD/PmZ9YbE44lKgCWP0MA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763598408; c=relaxed/simple;
-	bh=JHTxgS6i63wOUdISHaih1cPc2pNBu+ZVJ+UwzHPwjNA=;
+	s=arc-20240116; t=1763598503; c=relaxed/simple;
+	bh=WE4dW3eUoC04Cv20exXr2znqJM0ssIf18VtMt9cY1Jw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDRXVrRSQW+O6CiCaXUJIcKTM1JYi84YQ/PuEwcNS3zY8ykplUCebd8IAX7hobZs+KWpRycr75lK99USwwsZQuF5S/AHGaMmsL/v0B3YdZpG/BWb5nvPnGmHlPNX5ndj37osdM5W/+VtvgWzngNOh8nR6nDZ0cIQbahc3RW4jaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ryhel1iV; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=boohCwoK2nFZCTIvtX+Z2nRhE5Gp80B1HvwHgg02YojhjAKMyM58fiFCZzEVvN9NNNLAvzmMW4qmIhl66toPlC/fV6VLmmbquNAIhlcKHEKjpBd6GV4CjeAlvrkPnGjGAtOnYklpTfkAPfodyCLS1e+QSxm9m+IeUm+7rG+2eJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3fAf1fE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ryhel1iV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A646CC4CEF5;
-	Thu, 20 Nov 2025 00:26:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3fAf1fE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D13EC4CEF5;
+	Thu, 20 Nov 2025 00:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763598407;
-	bh=JHTxgS6i63wOUdISHaih1cPc2pNBu+ZVJ+UwzHPwjNA=;
+	s=k20201202; t=1763598501;
+	bh=WE4dW3eUoC04Cv20exXr2znqJM0ssIf18VtMt9cY1Jw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ryhel1iVVNiUZKZI2LzgvCgfhP/Aak3aQ6xdhBaehF9CRBZsbLXYnqqv/WeCKjGp+
-	 mHL+sFbcNYZJoC1UwtPbBNo77pTv70LoaklLj6nRi+3w6HVGTZY4scn1b+f0RNgu05
-	 kWX+EKlaWP0PbCeIv8kpuYmjDAt4UlMhu7GFq3D4EiazOKBd0Fz+kRTBGgatP4Wsjm
-	 BShoiTDAyE+D0yFclRv0+FwpLfucZDJB9olmL8Wuz34REV3S5yvjxnuQNPtQspvqcu
-	 AVi+WYbhrc+l9xt2SX+rzP9VMou4lqiJ5I0Sm9dcpwODd404w6rdSKhbjKOglnaJbd
-	 F6OdcbV2YLPSw==
-Date: Thu, 20 Nov 2025 00:26:43 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, Valentina.FernandezAlanis@microchip.com,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [RFC v1 2/4] pinctrl: add polarfire soc mssio pinctrl driver
-Message-ID: <20251120-silicon-oyster-5d973ff822d9@spud>
-References: <20251112-lantern-sappy-bea86ff2a7f4@spud>
- <20251112-improving-tassel-06c6301b3e23@spud>
- <CACRpkdYQ2PO0iysd4L7Qzu6UR1ysHhsUWK6HWeL8rJ_SRqkHYA@mail.gmail.com>
- <20251119-bacterium-banana-abcdf5c9fbc5@spud>
- <CACRpkda3Oz+K1t38QKgWipEseJxxneBSC11sFvzpB7ycnqsjBA@mail.gmail.com>
+	b=J3fAf1fEjlc6JfEMeWVU8D8PY8Mp0elxZly9c1vM+iApTrCF1jVRJQKuUuJ5SH3wQ
+	 M5e/rillypC8dVafplgA+XZNNgRSkQAJKJbP6hP/2vwkEF9AkxBzhlZ8UiecV2umP0
+	 G0vpANV4Px5paJ95EGxblaLnT7qX+bNHj2/YWH+cNGPbzaMYz6BcoF/Acw6/DvLw7X
+	 GTO/LzCcKRwUGVfNiaq3mOmk0tFnn33Fj/Ij6mD9GVFwFPIzCfJCpPrlsbA+th9/PA
+	 6siC08YuAQf8xsMtS2jSOk82gaEUjvZqyLoYK9Ft9xP9Q/EGWNm6H883T7Pccjp+LL
+	 0M2Foj/imHjuA==
+Date: Thu, 20 Nov 2025 08:10:28 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>, Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: Re: [PATCH v4 11/15] gpio: tqmx86: Use modern PM macros
+Message-ID: <aR5cdOOKl1Anji1h@xhacker>
+References: <20251119163327.16306-1-jszhang@kernel.org>
+ <20251119163327.16306-12-jszhang@kernel.org>
+ <aR38PkERpLxXhNfD@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zTWThl0QcBJpnw0J"
-Content-Disposition: inline
-In-Reply-To: <CACRpkda3Oz+K1t38QKgWipEseJxxneBSC11sFvzpB7ycnqsjBA@mail.gmail.com>
-
-
---zTWThl0QcBJpnw0J
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aR38PkERpLxXhNfD@smile.fi.intel.com>
 
-On Wed, Nov 19, 2025 at 10:48:07PM +0100, Linus Walleij wrote:
-> On Wed, Nov 19, 2025 at 7:23=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
-> > On Wed, Nov 19, 2025 at 01:08:26PM +0100, Linus Walleij wrote:
-> > > On Wed, Nov 12, 2025 at 3:33=E2=80=AFPM Conor Dooley <conor@kernel.or=
-g> wrote:
->=20
-> > > > +       //TODO @Linus, it correct to group these 3? There's no cont=
-rol over voltage.
-> > > > +       case PIN_CONFIG_INPUT_SCHMITT:
-> > > > +       case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> > > > +       case PIN_CONFIG_INPUT_SCHMITT_UV:
-> > >
-> > > Consider not supporting some like PIN_CONFIG_INPUT_SCHMITT_UV
-> > > in the bindings if they don't make any sense, and let it just return =
-error
-> > > if someone tries to do that.
-> > >
-> > > Isn't PIN_CONFIG_INPUT_SCHMITT_ENABLE the only one that
-> > > makes sense for this hardware?
-> >
-> > Yeah, I just didn't know if having the others was helpful, since they
-> > say things like:
-> >  * @PIN_CONFIG_INPUT_SCHMITT: this will configure an input pin to run in
-> >  *      schmitt-trigger mode. If the schmitt-trigger has adjustable hys=
-teresis,
-> >  *      the threshold value is given on a custom format as argument when
-> >  *      setting pins to this mode.
-> > which implies they should be implemented for systen not permitting
-> > hysteresis adjustment.
->=20
-> I see.
->=20
-> I looked at the bindings that look like this and are not 1:1 to the
-> in-kernel configs:
->=20
->   input-schmitt-enable:
->     type: boolean
->     description: enable schmitt-trigger mode
->=20
->   input-schmitt-disable:
->     type: boolean
->     description: disable schmitt-trigger mode
->=20
->   input-schmitt-microvolt:
->     description: threshold strength for schmitt-trigger
->=20
-> 1. input-schmitt is missing! But it is right there in
-> drivers/pinctrl/pinconf-generic.c ... All DTS files appear to be
-> using input-schmitt-enable/disable and -microvolt.
->=20
-> 2. input-schmitt-microvolt should probably be used separately
-> to set the voltage threshold and can be used in conjunction
-> with input-schmitt-enable in the same node. In your case
-> you probably don't want to use it at all and disallow it.
->=20
-> They are all treated individually in the parser.
->=20
-> Maybe we could patch the docs in pinconf-generic.h to make it clear that
-> they are all mutually exclusive.
->=20
-> The DT parser is a bit primitive for these.
-> For example right now it is fine with the schema
-> to set input-schmitt-enable and input-schmitt-disable at the same time, a=
-nd
-> the result will be enabled because of parse order :/
+On Wed, Nov 19, 2025 at 07:19:58PM +0200, Andy Shevchenko wrote:
+> On Thu, Nov 20, 2025 at 12:33:23AM +0800, Jisheng Zhang wrote:
+> > Use the modern PM macros for the suspend and resume functions to be
+> > automatically dropped by the compiler when CONFIG_PM or
+> > CONFIG_PM_SLEEP are disabled, without having to use __maybe_unused
+> 
+> ...
+> 
+> >  static const struct dev_pm_ops tqmx86_gpio_dev_pm_ops = {
+> > -	SET_RUNTIME_PM_OPS(tqmx86_gpio_runtime_suspend,
+> > -			   tqmx86_gpio_runtime_resume, NULL)
+> > +	RUNTIME_PM_OPS(tqmx86_gpio_runtime_suspend, tqmx86_gpio_runtime_resume, NULL)
+> >  };
+> 
+> ...
+> 
+> >  static struct platform_driver tqmx86_gpio_driver = {
+> >  	.driver = {
+> >  		.name = "tqmx86-gpio",
+> > -		.pm = &tqmx86_gpio_dev_pm_ops,
+> > +		.pm = pm_sleep_ptr(&tqmx86_gpio_dev_pm_ops),
+> 
+> For RPM this should be pm_ptr(), no?
 
-> The real trick would be to also make the
-> schema in Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> make them at least mutually exclusive and deprecate the
-> input-schmitt that noone is using, maybe that is simpler than I think?
+Indeed, pm_ptr() is better. Thanks. Let me do it in next version, I will
+wait for one or two days as Bart kindly reminded ;)
 
-I think that this is probably what to do. Mutual exclusion isn't
-difficult to set up there and if there's no property for "input-schmitt"
-then deprecating it sounds pretty reasonable?
-
---zTWThl0QcBJpnw0J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaR5gQwAKCRB4tDGHoIJi
-0ozGAQDueTTfu4Eqcv2GhlVmCt0VpLT0iLQVJ7HYX03eO52/2QEAoode4HwrlMo5
-GBVMx6tFH/HyXT7K0Nq7e3aTayk/aQ4=
-=zaAd
------END PGP SIGNATURE-----
-
---zTWThl0QcBJpnw0J--
+> 
+> >  	},
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
