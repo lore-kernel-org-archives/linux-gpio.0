@@ -1,105 +1,132 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D029118FDAF;
-	Thu, 20 Nov 2025 00:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9731D5CF2;
+	Thu, 20 Nov 2025 00:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763597857; cv=none; b=ENMa+YnakFF9Jo3atcovNhG9bAolqXLNJxUyS9tShTK/PQISeJpEctca5LgWNDpD6HHGBlqp6DIhqrVga6XhjjY/wtnxQ1Bp/fqvwDxgNN34c4DqjhEILaELb+8XTsfUfYwKabtzngNvhRtKP68u+/Mp5PBzB6+4uaCDlxPgHbw=
+	t=1763598350; cv=none; b=f/4aAiXsjGx3c4tkPzVZZWVGUHpV+E5i6uL/j7OghZvX05kkUzOoHJzr6kpIG5iZN/xRhsjfF+xb9wb9QvSUw3046fch23wRtcWmcftmQyDykvHWabYYLP55QLPUA8nzxN6IP+rCoLRVUVbzyGcyUm+q4YqD6nwqZpFhOzpgu+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763597857; c=relaxed/simple;
-	bh=1cc3DbrfxnW4bVEHX06DIBepzUwipjfMU4MlGRZWJG0=;
+	s=arc-20240116; t=1763598350; c=relaxed/simple;
+	bh=S2XOgunETdCSBuxFCo1EOKgt7OKv3vevGxDiojSL/jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MaWqCa8Z8cZ+TM/T5EpPvumHU/Cy/R2TSht+c8GMaOYifLwFh3bMfLqGfcNqU06xWDBRKZuu9QQEk4mLeY8vCPGizByqLFPHuLCE/XRPHwh6d8Bplmox6ZhyXOKgdR4dKKQW6s5QTcSmpP0qpYqm7CutOQP3tDQTJcm7h8qWQOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osBQ/xhI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbjrWRSQNgJBzyOq7pDtwMJIqfHh2f1ISKFsnf6SoWZmWVXChVsV8+WX8u7dM1g61WGPTBXGM/nBFjT7UHTj7fVvM7GhnSHkOttSwIBz0ZNbBeNANHSFGw5SMjCui/21jkvZfugvN9HgK9B18fa/dFevOoylfbY514Ozk6EO99c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMvzvpQh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osBQ/xhI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04C6C4CEF5;
-	Thu, 20 Nov 2025 00:17:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMvzvpQh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60901C4CEF5;
+	Thu, 20 Nov 2025 00:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763597857;
-	bh=1cc3DbrfxnW4bVEHX06DIBepzUwipjfMU4MlGRZWJG0=;
+	s=k20201202; t=1763598350;
+	bh=S2XOgunETdCSBuxFCo1EOKgt7OKv3vevGxDiojSL/jc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=osBQ/xhIbE0YvXOjxBfvLIcWf55uqJknH/xyCufQoAD5HqGHsoYR7xTkfpzM3WS93
-	 AnbE4xsplw+aIjfxBnScQIqBoD5tMYR20opCYNNwgDP9arPFLB5ny3OxoinXDGZWtj
-	 HrRRpuOliNNGJUrXvqZPyul92tpdl3PW1TjH8QpsuaeMRMNwHHh0SP3cS7jGWwK+Xl
-	 rbpXPmpDJzsc7/L+aoVc7dow4FhYhgaGq6z4FWKW5nXvuGSgP1ufjLbSLrI+AhxaLi
-	 wVxA6GspZDmXWq2SF+p7zB+DORkv8U8TA2THROjvL3goBeNfP1izbudphVHjek0A86
-	 +OGbWOAJueRHw==
-Date: Thu, 20 Nov 2025 07:59:47 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Michael =?utf-8?B?QsO8c2No?= <mb@bues.ch>
-Subject: Re: [PATCH] gpio: dwapb: Fold dwapb_context into dwapb_gpio_port
-Message-ID: <aR5Z8-haM4NwhdPg@xhacker>
-References: <20251119150049.13537-1-jszhang@kernel.org>
- <aR4EEJO_PeXMKF_h@smile.fi.intel.com>
+	b=KMvzvpQhJFLosDkES5vRlvcTISZHA9Yo/lyB9WDA6sC5XvacPlYH+jcOZ4V5S7bUB
+	 osZKpZB0QBb6dg8X8pKMqZFHFvgvn5htlqgn6iaYjl5SeuoqynzyRsqf2KMHLd0197
+	 ExYT87jzl+T9KT9TStPhKEzn0lpafAsuY30ED21aNDmm7Sltbnme9lxidRrt7hT3lN
+	 C8sDYS0aY5rK8jhC2O2GRD/vIL8oouwentr3GpObJjk1rcYOpmY9mSEkvrg/vc0Dye
+	 /yyP/yXDT3fdIRIhDSBS1Rxrq6Xdf07aw6Fan67rcypEcUKod062CzieVbCQgBW2Kb
+	 uO/SR3X59kVlQ==
+Date: Thu, 20 Nov 2025 00:25:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, Valentina.FernandezAlanis@microchip.com
+Subject: Re: [RFC v1 0/4] Microchip mpfs/pic64gx pinctrl part 2
+Message-ID: <20251120-unguarded-stony-a58ea2401605@spud>
+References: <20251112-lantern-sappy-bea86ff2a7f4@spud>
+ <CACRpkdZuopbAyHaZQpeGh0+V7v6Cg5uJwscmVPCfjHghNbPymg@mail.gmail.com>
+ <20251119-citadel-shrine-fabc3fb309ac@spud>
+ <CACRpkdZOak-+Aahj7fte9gk9m+76LOguEsO7bBbHTMTfLExWcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/rjLm8t14p4Vpzud"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZOak-+Aahj7fte9gk9m+76LOguEsO7bBbHTMTfLExWcA@mail.gmail.com>
+
+
+--/rjLm8t14p4Vpzud
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aR4EEJO_PeXMKF_h@smile.fi.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 19, 2025 at 07:53:20PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 19, 2025 at 11:00:49PM +0800, Jisheng Zhang wrote:
-> > Fold dwapb_context into struct dwapb_gpio_port to further simplify
-> > the code. Sure this brings a tiny 36 bytes data overhead for
-> > !PM_SLEEP. After grepping the arm/arm64/riscv dts dir, the max dwapb
-> > gpio port number is 6(the berlin2q soc family), so this means we will
-> 
-> GPIO
-> 
-> *and I believe this is limitation by Synopsys in HW, but I'm not going to check
-> the datasheet right now.
+On Wed, Nov 19, 2025 at 10:31:47PM +0100, Linus Walleij wrote:
+> On Wed, Nov 19, 2025 at 7:06=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> > On Wed, Nov 19, 2025 at 01:16:16PM +0100, Linus Walleij wrote:
+> > > On Wed, Nov 12, 2025 at 3:33=E2=80=AFPM Conor Dooley <conor@kernel.or=
+g> wrote:
+>=20
+> > > > and b) how the bank voltage
+> > > > interacts with the schmitt trigger setting.
+> > >
+> > > Please check if "bank voltage" is somewhat analogous to
+> > > this generic config:
+> > >
+> > > * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different p=
+ower
+> > >  *      supplies, the argument to this parameter (on a custom format)=
+ tells
+> > >  *      the driver which alternative power source to use.
+> >
+> > It's not pin based, the whole bank it is connected to has to be changed.
+>=20
+> So there *is* such a thing as a group pin config setting for a
+> whole group of pins. Groups are not just for functions...
+>=20
+> And I don't know what is meant by a bank here, but it seems
+> to be exactly a group of pins.
 
-snps doesn't limit this. The max dwapb gpio controller number is 6 as
-is grepped the arm/arm64/riscv etc. dts dir.
-> 
-> > waste 216 bytes memory in total which is trivial compared to the
-> > system memory.
-> > 
-> > From another side, as Michael mentioned:
-> > "The driver currently allocates the struct with kzalloc and stores a
-> > pointer to it in case of PM=y.
-> > So this probably has an overhead in the same order of magnitude
-> > (pointer + malloc overhead/alignment/fragmentation) in case of PM=y
-> > now."
-> > 
-> > So let's Fold dwapb_context into struct dwapb_gpio_port.
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> 
-> > CC: Michael Büsch <mb@bues.ch>
-> 
-> Please, use --cc or move Cc list below...
-> 
-> > ---
-> 
-> ...this cutter line. It will have the same effect on the emails, but it will
-> reduce the noise in the commit message.
-> 
-> > NOTE: this patch is applied against the following series:
-> > [PATCH v3 00/15] gpio: Use modern PM macros
-> 
-> It's better to just put a link to lore.kernel.org or at least message-id.
-> 
-> ...
-> 
-> I have a mixed feelings about this, but if maintainers go with it,
-> let it be then.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Yeah, it's a whole group of pins. There's two banks that the IOs this
+driver controls are split between, they don't really neatly correspond
+to a particular function (although the configurator doesn't permit a
+function belong to two banks, but it is technically possible for them
+to).
+>=20
+> From arch/arm/boot/dts/gemini/gemini-sq201.dts:
+>=20
+>  /* Set up drive strength on GMAC0 and GMAC1 to 16 mA */
+> conf9 {
+>     groups =3D "gmii_gmac0_grp", "gmii_gmac1_grp";
+>     drive-strength =3D <16>;
+> };
+>=20
+> If you look in driver/pinctrl/pinctrl-gemini.c you find:
+> gemini_pinconf_group_set()
+>=20
+> static const struct pinconf_ops gemini_pinconf_ops =3D {
+>         .pin_config_get =3D gemini_pinconf_get,
+>         .pin_config_set =3D gemini_pinconf_set,
+>         .pin_config_group_set =3D gemini_pinconf_group_set,
+>         .is_generic =3D true,
+> };
+>=20
+> OTOMH it's actually *fine* to *just* use groups for pin config like this
+> and *not* use it for muxing, i.e. have this group correspond to
+> a bank and not use that group for anything else than to set this
+> or any other per-bank property. But have a look!
+
+I could just put it in as a per-pin thing, even if the control isn't
+actually that granular. The bank lockdown has a per-pin bit, but is
+actually a bank wide toggle in the configurator, it wouldn't be too
+different.
+
+--/rjLm8t14p4Vpzud
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaR5gCgAKCRB4tDGHoIJi
+0htdAP9wFCGPx5famwNvCdfiLOLiEh+yaD0+FknUzUTj1jenNwD+IEbetMxWYCkV
+vMmxEi7yg7mm8P2qxRXuGtp5k1mmJgA=
+=aIi8
+-----END PGP SIGNATURE-----
+
+--/rjLm8t14p4Vpzud--
