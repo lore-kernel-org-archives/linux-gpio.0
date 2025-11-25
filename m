@@ -1,161 +1,144 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023105.outbound.protection.outlook.com [52.101.127.105])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5160E191484
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Nov 2025 01:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764033034; cv=fail; b=LyHUW6n/kkV6mlP+cI0oK8pBAXcv2bK8UgKT0i5IemL66LhTj5N/4O0lqKTSlf0SEI1sLiKFdRHnxRNN0N/J7XTvSUAH+xWihj1drkMXe5Kh4GcYJwGkLFvJReFa+W5hE8lXmmPSQTpeFLEFneH56/i1Zx1qD3kydPEfuy9hqC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764033034; c=relaxed/simple;
-	bh=CAubCabMjEBGbjdRQ+eHKnFpfU8SPsGZPrBxQGb3r4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdDtIfNg0uBGjxppwHLPNUJ8C9RGNctm1dqHoqrda5omqXpVToefZBk290PLGApB47fCKdJAu7PKTqaITmDVrWqPhT/qULOb6yMp15GnJLXI4M5lR3t7KQSh7dCLkX7EjMHFuC0b9vTjtgYr75fERmPgLrmXvOMRH4/yxhIv0x8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AfLqh3NJSb/jhZ2jY9yGgckgI0N+vc+VJnJ6mCW/omUNjMfTdTVjfWj5WBwgRAAGU8yYrJbJ0HWVf243xa3n9lyXAjP7gejOxrJwINubaG5gSx9EMI/o6vZl+qncldl1KOl+NvwjrVvarAVivLWRjqf8Ed4GgBKy7YSBKJ+WAhUzhuuls3G1c3vdaf+ThzUxVVhoHaSoE7BBr4WuGY4LEuuf8oh7D4SzqOBlFJSgHSDc0ZWPGU8/R4Iq1XT8E84NXOHdAEanXqB1tbyQGbFf2UoBFcEaLk+M7xX/eDLGrq7CAJ2sJRmizqq45mYox6KNZCcvfad1zCuwDii1sHPVjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tnn3aDwnSkWhUhscAG8c8qaq4wMHbsl6nmY1p/YznJs=;
- b=SCiQ7qkTzXWkszT2uJ90uJxKCGTnPj1jTbvXoS4u34LU8RRus7k6AUl23iFS3cFT/fKaMqZOID7djk0ZEI0FezMbxUwLX94AGmccUnZtNAYanbJB7fwTF+uDmXXFTHxNYgZfLF7U3BidCgR7FWoH6ma2rcb05R8zEgl7n9wrLZrYBZU24NbVJunDnXIbJdB7EnZ+T2bWLcJwClsvlfRItWrGkTJ+4b+RfqOdYOqb0euHoFAUoB3awpqQSbksOr/v/yZP3X7JCnnLG2WPIhwZJVStT38sgxTYDTm4HCL1dTzS0itG57LfH4ceDxH14aBV/cZ7ISkeyv0pt6M3JSzM6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR02CA0056.apcprd02.prod.outlook.com (2603:1096:4:54::20) by
- KL1PR06MB6257.apcprd06.prod.outlook.com (2603:1096:820:d1::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.16; Tue, 25 Nov 2025 01:10:27 +0000
-Received: from SG1PEPF000082E5.apcprd02.prod.outlook.com
- (2603:1096:4:54:cafe::f9) by SG2PR02CA0056.outlook.office365.com
- (2603:1096:4:54::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.18 via Frontend Transport; Tue,
- 25 Nov 2025 01:10:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E5.mail.protection.outlook.com (10.167.240.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9366.7 via Frontend Transport; Tue, 25 Nov 2025 01:10:26 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 43BC840A5BD7;
-	Tue, 25 Nov 2025 09:10:26 +0800 (CST)
-Date: Tue, 25 Nov 2025 09:10:20 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Fugang Duan <fugang.duan@cixtech.com>,
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
-	Gary Yang <gary.yang@cixtech.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: cix: Fix obscure dependency
-Message-ID: <aSUB_C5H2sXxVXXo@nchen-desktop>
-References: <20251124-cix-deps-v1-1-fe603dfe86ef@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1983FFD;
+	Tue, 25 Nov 2025 02:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764038213; cv=none; b=ZE2cRlvv21huGrWkYAawesAR9EWCe++eJ+rFXoFv/6PRgX9nWnXwfRU1RDuFJ2Qn7mU6hmpreDCYYb6RlHfDFGtyM9lJriVgZD7s20sVbVoGcFEhdZ53L9NWJNGFPM1RbsuyXVnkMSj+gg3nEY6xZumZqDEGAxpEhVik/zhGJZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764038213; c=relaxed/simple;
+	bh=xdxCIwzAWz8Gr8uPciPKO6ZJSpsc8BbfWZ29CLBUaoc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eWyh4tNNVQiBpRpqFgbNtPnlbFlHFK7Q3IS1QPqxYG6rBQ2/8OVIOWqwLWJfhyHAd99RM7fSAkU8IH73QpUJ22lnw4dxbDhF5pHz1NuUMOK+p/llsuRq6mq6zmZ9REs3fVXxyuW1ijF6YbKz5poV4vfV2ne6rSdPfOMBhjodRrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Idj4DGIC; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Idj4DGIC"
+X-UUID: 94d64244c9a711f0b33aeb1e7f16c2b6-20251125
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=1QrAB75z30ci678/1yo1b+2Tia6ycFw2hkK2QWG58Jw=;
+	b=Idj4DGICU629nj4a4U9EbN28jS9urOm2ovJ69p1+nrjw3yteJOwJglrpthpPk+V0wmVir5HhfHpl1nVsg/qEl3XpYolO6XG0M88g11T7OJRXaNOE4eOL88BtY1D0x2BPx4Sbp8UavYnJ0JQZR5vr2c9eWXK3YlGs1M4v6CtLv9I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:4e96d7a6-68fa-4ee3-bd3d-268e3c868a92,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:a5164258-17e4-43d2-bf73-55337eed999a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
+	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
+	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 94d64244c9a711f0b33aeb1e7f16c2b6-20251125
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <lei.xue@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 243830009; Tue, 25 Nov 2025 10:36:44 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 25 Nov 2025 10:36:42 +0800
+Received: from gcnsap21.gcn.mediatek.inc (10.17.81.22) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Tue, 25 Nov 2025 10:36:42 +0800
+From: Lei Xue <lei.xue@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<yong.mao@mediatek.com>, <lei.xue@mediatek.com>, <qingliang.li@mediatek.com>,
+	<Fred-WY.Chen@mediatek.com>, <ot_cathy.xu@mediatek.com>,
+	<ot_shunxi.zhang@mediatek.com>, <ot_yaoy.wang@mediatek.com>,
+	<ot_ye.wang@mediatek.com>
+Subject: [PATCH 1/3] pinctrl: mediatek: Add gpio-range record in pinctrl driver
+Date: Tue, 25 Nov 2025 10:36:34 +0800
+Message-ID: <20251125023639.2416546-2-lei.xue@mediatek.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251125023639.2416546-1-lei.xue@mediatek.com>
+References: <20251125023639.2416546-1-lei.xue@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251124-cix-deps-v1-1-fe603dfe86ef@linaro.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E5:EE_|KL1PR06MB6257:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d42cffc-f983-4ae5-b3e5-08de2bbf6b3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wRgMwyV3atKLUtks/G+xofFyrF6T03K4HsS+kHi4s6Pm+vp2y+456xdB2GMQ?=
- =?us-ascii?Q?vh2jHu4yf2doAzRlukYhaSl2fW6cJM56KFvxAFasxLvcBGymuIZGNadxC2CF?=
- =?us-ascii?Q?d4nTkqrfpqDQaobIedZ7iYqPl5Jr+/D1Uddo88lpxqqpdGZf1WNRKSu9BIVo?=
- =?us-ascii?Q?BWrgGA1LiHPfT0ASW9fc0UVMa/yWopgtaGuaKv+55+Q5youh6T1ct6cZUOy2?=
- =?us-ascii?Q?axEUwDqRjQ2umaLvN72c2IX8qZY8K8ToyMrnCp6KGVPpMZs3fU10OgPtS3gh?=
- =?us-ascii?Q?350PQ38TtGbouPmql17PzakVFpZButjSdZd9KYUxo0DTpN9ecJWJbkgRh4x5?=
- =?us-ascii?Q?Y0bOnRLLnxtlJNFhYRYOmerCZpMd2tV2e9MmVyyurV3eF9l2yjmUXbG0sA86?=
- =?us-ascii?Q?8LLEL0MH24hkoNNFAbHAYkQq8sTcLBfAAvle7KTbO0mBYfy1SnnmeZqW2Qub?=
- =?us-ascii?Q?TC2sbWOGsweXLARvUSCCcf2rKGgFeZ9VhscXOsfZ2rrqavFPdqGYKTNXL06f?=
- =?us-ascii?Q?oEeCeY9RzSJXhMyzQGTFm620zV9mN5aSldglYwTXgEWvVq0QO4KZ5H6GakMy?=
- =?us-ascii?Q?V0q9s8wykaS9CuwR9dQ5mpVEPIK5gvDF+9gViZI3sN6jSgDjAVceUZEoi/CR?=
- =?us-ascii?Q?jIHLpD7G0OaKzroJRbNwyp77jdt8Uw/8pvm6mAmwulWKWSZ37ZTSkrCZ1DTQ?=
- =?us-ascii?Q?gdXDIAmq6SY+qwmSan8/+0JCQz64jfcV4QPtlDlf/z+IKFBh6ZvP5VGaFJG/?=
- =?us-ascii?Q?InUhjEt26VPmpmNGBCozg8RIDVimUm1KSwNOah2xpCs29I8PTJBJKG/WddUa?=
- =?us-ascii?Q?1rghqBP3yXLLuKVQhzsGPoA2DMFN0D+nR8nrujKRCg87Yv3+M6vgWNFtlMwF?=
- =?us-ascii?Q?kWDLraH980OXy9Xi6IyRRG690JdHt6BuhWdueknYXoGUkOpGyj/wQ4h2CeVB?=
- =?us-ascii?Q?9wr0++PqWB3lgk7L/dblt7pJaq0E3Zu8uFd7TT2/iOZu9Dk0umQFMb1JFyjS?=
- =?us-ascii?Q?PQZ15FftMg6C21dydPK9Sv6XDf6sKRGgMlBeusCsE6hxgrC34DSZ0RqE9z9N?=
- =?us-ascii?Q?8XOhshDoMPSgEqd5td/u2iBPBk7qkZfydAWuxisr5qAuj1Q4SCKXB8zZSK/d?=
- =?us-ascii?Q?RXc1C3cT21ebz5E0N6+yU6e3zbJYzNGey5LcXIHfONNL6EorSHR5SI/QCP77?=
- =?us-ascii?Q?966GkBZmR0OJT7LhXAcnQwQNLKJ6FEtCTSDNuHtRLNXEhg+pDem1y8/k3tFh?=
- =?us-ascii?Q?q7ymyqGeMbJ3lcsU8HAPguYKzbPIDep6I3GwFJkHxPNWa6fnfLE1wzrvRNj2?=
- =?us-ascii?Q?hTybQYW/XEKT2nsru4X+vByTaWBC2ifYKC5BQl/rHgmTOyI9lKk3lsQzyLc2?=
- =?us-ascii?Q?gchMOrlpLMWvV7HYh8xdnswR+ImOQwiN6pvzecb7ialZNRgXA1Uv8Sj3bEhu?=
- =?us-ascii?Q?WfueGdAldGCdpTlibLKSjsgeJyjCM3BCvC51MAxG8GB4nRvN6xpDJGMD3c8M?=
- =?us-ascii?Q?a13frT7lxA4QDK+zRI3LNLrtGY4kOCUXMWpCrQYcN2rH8QUHA745qpJHIBfj?=
- =?us-ascii?Q?3aS9GuyV3lih1cS7GTw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2025 01:10:26.9560
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d42cffc-f983-4ae5-b3e5-08de2bbf6b3e
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E5.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6257
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 25-11-24 15:35:16, Linus Walleij wrote:
-> EXTERNAL EMAIL
-> 
-> When compile-testing for UM-Linux the build fails because
-> we don't have IOMEM.
-> 
-> Add an explicit dependency.
-> 
-> Fixes: 920500c5fe66 ("pinctrl: cix: Add pin-controller support for sky1")
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Kernel GPIO subsystem mapping hardware pin number to a different
+range of gpio number. Add gpio-range structure to hold
+the mapped gpio range in pinctrl driver. That enables the kernel
+to search a range of mapped gpio range against a pinctrl device.
 
-Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+Signed-off-by: Lei Xue <lei.xue@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  1 +
+ drivers/pinctrl/mediatek/pinctrl-paris.c         | 15 ++++++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-Peter
-> ---
->  drivers/pinctrl/cix/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pinctrl/cix/Kconfig b/drivers/pinctrl/cix/Kconfig
-> index 455120dd7318..1529b1af6388 100644
-> --- a/drivers/pinctrl/cix/Kconfig
-> +++ b/drivers/pinctrl/cix/Kconfig
-> @@ -9,6 +9,7 @@ config PINCTRL_SKY1_BASE
->  config PINCTRL_SKY1
->         tristate "Cix Sky1 pinctrl driver"
->         depends on ARCH_CIX || COMPILE_TEST
-> +       depends on HAS_IOMEM
->         select PINCTRL_SKY1_BASE
->         help
->           Say Y here to enable the sky1 pinctrl driver
-> 
-> ---
-> base-commit: da53dcd54cc35efa7a8236846bb39d40deeee034
-> change-id: 20251124-cix-deps-6f942ccd16e3
-> 
-> Best regards,
-> --
-> Linus Walleij <linus.walleij@linaro.org>
-> 
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+index fa7c0ed49346..df8dce14744f 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+@@ -302,6 +302,7 @@ struct mtk_pinctrl {
+ 	spinlock_t lock;
+ 	/* identify rsel setting by si unit or rsel define in dts node */
+ 	bool rsel_si_unit;
++	struct pinctrl_gpio_range	range;
+ };
+ 
+ void mtk_rmw(struct mtk_pinctrl *pctl, u8 i, u32 reg, u32 mask, u32 set);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 6bf37d8085fa..2cf61cfe809e 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -3,7 +3,7 @@
+  * MediaTek Pinctrl Paris Driver, which implement the vendor per-pin
+  * bindings for MediaTek SoC.
+  *
+- * Copyright (C) 2018 MediaTek Inc.
++ * Copyright (C) 2018-2025 MediaTek Inc.
+  * Author: Sean Wang <sean.wang@mediatek.com>
+  *	   Zhiyong Tao <zhiyong.tao@mediatek.com>
+  *	   Hongzhou.Yang <hongzhou.yang@mediatek.com>
+@@ -936,6 +936,15 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 	return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, debounce);
+ }
+ 
++static void mtk_pinctrl_gpio_range_init(struct mtk_pinctrl *hw, struct gpio_chip *chip)
++{
++	hw->range.name = "mtk_pinctrl_gpio_range";
++	hw->range.id = 0;
++	hw->range.pin_base = 0;
++	hw->range.base = chip->base;
++	hw->range.npins = hw->soc->npins;
++}
++
+ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ {
+ 	struct gpio_chip *chip = &hw->chip;
+@@ -959,6 +968,8 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	mtk_pinctrl_gpio_range_init(hw, chip);
++
+ 	return 0;
+ }
+ 
+@@ -1077,6 +1088,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return dev_err_probe(dev, err, "Failed to add gpio_chip\n");
+ 
++	pinctrl_add_gpio_range(hw->pctrl, &hw->range);
++
+ 	platform_set_drvdata(pdev, hw);
+ 
+ 	return 0;
 -- 
+2.45.2
 
-Best regards,
-Peter
