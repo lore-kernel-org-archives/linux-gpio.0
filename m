@@ -1,88 +1,145 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19B21EA7CC;
-	Wed, 26 Nov 2025 14:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA2C2FDC43;
+	Wed, 26 Nov 2025 14:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764167593; cv=none; b=iOVvWzVD/iQbPQa3Wid8BEj1S/gLnlaOmHpllobUooMJ4XbnFjlqtTvH7GYx/hbC45w6s/M6uMhxNPoP+FuyK+vLV0HiI9y/kY1xTY8/PoK6i+S8epaXDCNCHcfuP/Wj4jhk7E3fET7RA+6P1Jq40XdhYeFMXxFKxhNBOiOLWc8=
+	t=1764167704; cv=none; b=bNpeCsIt7mWPMyIMoo7esS8IAvrzkt49zbXpqmWZNF2iUVIYXP83s05IJs5N4KsLo9bsRau4lC1dJ62hIB2LmhltpYDveCbZeVwxj/9SJ97eqnMZKQVGwMfgWIoNV4aS6a2QdUuxcx6qGnR23HYjT4zZHk1UBMl283UYJ6w7K2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764167593; c=relaxed/simple;
-	bh=3kLYYlGyDPHSsE6wcJ2XsDDhl/NGDbPeXtDpM7DF2vo=;
+	s=arc-20240116; t=1764167704; c=relaxed/simple;
+	bh=RJcquqx5TPhtK36n5JrIEPjAh0q7mdDtf12rAVAa08s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qig0YYq8Hbl8jTCQQlB4spm/3R5ORHfcxzcW9cI/3nGVPih6bFBjNhEMUD1VetLiK0WnJr+ej6dHZ1X9zsfGMdWLyPRRlSsyYaP+MktjciUu7bntbgTe/wfvSjSaj2nqwrpAgcM27wm0i5nOwOitv+TLnRIX6qwkw2VXDxmrTfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXGQULyX; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBDpDKJXiRUhPzLMLCS8r24h4pRm9g8OTukZrChSEju7CPsvBhYofBuxdgkEzZ+CC8jr4ZayeonkjGFzQNQ7Px1NW0m9jtsh7OSDveeK8Nk+VP4HIzhZO1W8qkPa5CwcbdUaV//0cc/5GmOsQB+P9pM19L5sJypQgs4BDt8r8DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgLDZ5Mk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXGQULyX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF377C2BCFB;
-	Wed, 26 Nov 2025 14:33:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgLDZ5Mk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70599C4CEF7;
+	Wed, 26 Nov 2025 14:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764167592;
-	bh=3kLYYlGyDPHSsE6wcJ2XsDDhl/NGDbPeXtDpM7DF2vo=;
+	s=k20201202; t=1764167704;
+	bh=RJcquqx5TPhtK36n5JrIEPjAh0q7mdDtf12rAVAa08s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WXGQULyXc18uR2+ihgtWOAIxSzN1ZxFrYzI1MQF4ZyK+9LYwJtBz58sOKogc39hMS
-	 SskktgRiFDH2URe0f58AtzRB+0fp6P4T3GzOZkiUylSOWLPvvOp09GBmVG/Insmtq4
-	 lwhvG3GEE2qTp0kzvlGnLwKbbCzl7vgOJbc+90x2++7OIDPw6zzkXc+MVi8nbCkvJj
-	 xK0rriKdxfoMKMoYZbvCL82s2/zpyzfpRxB9dXQS7qMQ2lzCzWbufnyZR/OxzF+8E6
-	 1bETaOzF9d78Noi3lDfyule/rfRoddI0VQSdLb0OCkQ2FlyTd2GA34G3ieAsBRCcmA
-	 WOqfu5c35FWwQ==
-Date: Wed, 26 Nov 2025 14:33:04 +0000
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: [PATCH v5 07/16] mfd: rohm-bd71828: Use regmap_reg_range()
-Message-ID: <20251126143304.GE3070764@google.com>
-References: <cover.1763625920.git.mazziesaccount@gmail.com>
- <b0c6256deb1388f0774b3c855c0614d363aa003b.1763625920.git.mazziesaccount@gmail.com>
+	b=OgLDZ5MkDXLJOUofojAvxH6u1vKqfS60KgDL3p9sdko1BT1jxi+Ydoph3mdXtH8q1
+	 mSYRijK/A+4KZKugzD5aDygmEsGNubWUSkYZePsEHTlLrtm/GJuAmDYsBRd+wv0VS1
+	 k1XMiSSnRwShwjuVkA2I8y3h8SS4Hp70o40ON5M12xfU4DzmVw4D+9au+0Pqi1vSMg
+	 LxPEW5xpSR5tXO3NrIxm/MUagHSl2jpUtC+sYYVVJxat+RqRGoqeX9P82XEWA6Oni9
+	 SjI7yrTnyAVS8V5O/rVpZo3+Rv3pSY25gapDQ02Va7pix89G1QlRUMPqycIXJzU1Mv
+	 435PGlC7tuy6Q==
+Date: Wed, 26 Nov 2025 08:40:33 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	stable@vger.kernel.org, Val Packett <val@packett.cool>
+Subject: Re: [PATCH] pinctrl: qcom: lpass-lpi: mark the GPIO controller as
+ sleeping
+Message-ID: <gy6ycgcld2moccjjl7x7h72riwfm4ymhnkhlgau53fl4eu3e6q@qp5lrwx57jin>
+References: <20251126122219.25729-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0c6256deb1388f0774b3c855c0614d363aa003b.1763625920.git.mazziesaccount@gmail.com>
+In-Reply-To: <20251126122219.25729-1-brgl@bgdev.pl>
 
-On Thu, 20 Nov 2025, Matti Vaittinen wrote:
+On Wed, Nov 26, 2025 at 01:22:19PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The gpio_chip settings in this driver say the controller can't sleep
+> but it actually uses a mutex for synchronization. This triggers the
+> following BUG():
+> 
+> [    9.233659] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:281
+> [    9.233665] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 554, name: (udev-worker)
+> [    9.233669] preempt_count: 1, expected: 0
+> [    9.233673] RCU nest depth: 0, expected: 0
+> [    9.233688] Tainted: [W]=WARN
+> [    9.233690] Hardware name: Dell Inc. Latitude 7455/0FK7MX, BIOS 2.10.1 05/20/2025
+> [    9.233694] Call trace:
+> [    9.233696]  show_stack+0x24/0x38 (C)
+> [    9.233709]  dump_stack_lvl+0x40/0x88
+> [    9.233716]  dump_stack+0x18/0x24
+> [    9.233722]  __might_resched+0x148/0x160
+> [    9.233731]  __might_sleep+0x38/0x98
+> [    9.233736]  mutex_lock+0x30/0xd8
 
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
+As far as I can see, this mutex only protects mmio accesses.
+
+Is it preferable to mark the gpio chip can_sleep over replacing the
+mutex with a non-sleep lock?
+
+> [    9.233749]  lpi_config_set+0x2e8/0x3c8 [pinctrl_lpass_lpi]
+> [    9.233757]  lpi_gpio_direction_output+0x58/0x90 [pinctrl_lpass_lpi]
+> [    9.233761]  gpiod_direction_output_raw_commit+0x110/0x428
+> [    9.233772]  gpiod_direction_output_nonotify+0x234/0x358
+> [    9.233779]  gpiod_direction_output+0x38/0xd0
+> [    9.233786]  gpio_shared_proxy_direction_output+0xb8/0x2a8 [gpio_shared_proxy]
+> [    9.233792]  gpiod_direction_output_raw_commit+0x110/0x428
+> [    9.233799]  gpiod_direction_output_nonotify+0x234/0x358
+> [    9.233806]  gpiod_configure_flags+0x2c0/0x580
+> [    9.233812]  gpiod_find_and_request+0x358/0x4f8
+> [    9.233819]  gpiod_get_index+0x7c/0x98
+> [    9.233826]  devm_gpiod_get+0x34/0xb0
+> [    9.233829]  reset_gpio_probe+0x58/0x128 [reset_gpio]
+> [    9.233836]  auxiliary_bus_probe+0xb0/0xf0
+> [    9.233845]  really_probe+0x14c/0x450
+> [    9.233853]  __driver_probe_device+0xb0/0x188
+> [    9.233858]  driver_probe_device+0x4c/0x250
+> [    9.233863]  __driver_attach+0xf8/0x2a0
+> [    9.233868]  bus_for_each_dev+0xf8/0x158
+> [    9.233872]  driver_attach+0x30/0x48
+> [    9.233876]  bus_add_driver+0x158/0x2b8
+> [    9.233880]  driver_register+0x74/0x118
+> [    9.233886]  __auxiliary_driver_register+0x94/0xe8
+> [    9.233893]  init_module+0x34/0xfd0 [reset_gpio]
+> [    9.233898]  do_one_initcall+0xec/0x300
+> [    9.233903]  do_init_module+0x64/0x260
+> [    9.233910]  load_module+0x16c4/0x1900
+> [    9.233915]  __arm64_sys_finit_module+0x24c/0x378
+> [    9.233919]  invoke_syscall+0x4c/0xe8
+> [    9.233925]  el0_svc_common+0x8c/0xf0
+> [    9.233929]  do_el0_svc+0x28/0x40
+> [    9.233934]  el0_svc+0x38/0x100
+> [    9.233938]  el0t_64_sync_handler+0x84/0x130
+> [    9.233943]  el0t_64_sync+0x17c/0x180
 > 
-> The regmap range tables tend to be somewhat verbose. Using the
-> regmap_reg_range() can make the definitions slightly mode compact.
+> Mark the controller as sleeping.
 > 
-> Tidy the regmap range tables by using the regmap_reg_range().
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Fixes: 6e261d1090d6 ("pinctrl: qcom: Add sm8250 lpass lpi pinctrl driver")
+> Cc: stable@vger.kernel.org
+> Reported-by: Val Packett <val@packett.cool>
+> Closes: https://lore.kernel.org/all/98c0f185-b0e0-49ea-896c-f3972dd011ca@packett.cool/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+If we stick to the mutex, the patch LGTM 
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
 > ---
-> Revision history:
->  v2 => :
->  - no changes
->  RFCv1 => v2:
->  - New patch
-> ---
->  drivers/mfd/rohm-bd71828.c | 64 +++++++++++---------------------------
->  1 file changed, 18 insertions(+), 46 deletions(-)
-
-LGTM.
-
-Once everything is in order, I plan to merge the set through MFD.
-
--- 
-Lee Jones [李琼斯]
+>  drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> index 1c97ec44aa5ff..78212f9928430 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> @@ -498,7 +498,7 @@ int lpi_pinctrl_probe(struct platform_device *pdev)
+>  	pctrl->chip.base = -1;
+>  	pctrl->chip.ngpio = data->npins;
+>  	pctrl->chip.label = dev_name(dev);
+> -	pctrl->chip.can_sleep = false;
+> +	pctrl->chip.can_sleep = true;
+>  
+>  	mutex_init(&pctrl->lock);
+>  
+> -- 
+> 2.51.0
+> 
