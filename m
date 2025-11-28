@@ -1,299 +1,310 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ZR1P278CU001.outbound.protection.outlook.com (mail-switzerlandnorthazhn15012043.outbound.protection.outlook.com [52.102.183.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D887C1FF5E3
-	for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2025 10:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764325089; cv=none; b=bbJJkjHz2VD+J1U57ZYkzGmN1E1bD03lPDplgg8vZ/kxJ3H2+SrDdik5mpFBSlMJXmNRFQGd7tk7nJmQi+fQvxOlP3hqDNC1u0wljAaJjG/p1hhM/hYGozNv6oiXfiR7TiC1BXeIpGG5iVkfwBizo3JsUXZgGq2ZLx0ODQs/QIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764325089; c=relaxed/simple;
-	bh=TaRZM71/5VBjSq639Phe6Hwz5f1btLjNNYEyAwc/qwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sk4yuxvHFttBPpwkhliloasGRuyIvBumWAuEdsfBw83PaXcWAnz8E+XjAQAKlXWve6jAZS2T7n8ClcIuZZ3Fcq18Rx4VvGmTi8Xkq0qLRzJ+YFgbqMVeHZp+2KnbzUki2NweI/E8raZVgVCpmhe9x8MzOVLViOYc1a9/e1fX7mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdqEYyf4; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BE2AD2C;
+	Fri, 28 Nov 2025 10:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.183.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764326141; cv=fail; b=G5pkf2JWBAmyiSY+ZhKY3iZrdojqoA7sXWi5wFXg3ll65IrAxhJTC17HNAbOKHcPp/Mh5dbYplGVbUwhL7qW0hS5vBU/pL+90sDfeb7mwhbjn6YCydfJpfaVkJM/PaJ6NOfT3TLC1E3DcY/hukjfye09468Mb2T2MS4cyVtK6dY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764326141; c=relaxed/simple;
+	bh=TfmL1VSjsyTtUOyx9CKdn2DYGwknBQGEQanFSpg42Fw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=po1eUnnP4Kyw4nhw8/6WOCWWHLgyoj/5STxhFBy9fh2GPKhM5FnTnGlMQVqHQGX++9U6pXhNJrpMDGt8wBWXAdeWtPAj0SRD8xyQew7+hmzemVKVMSP32neCHh00t+DEk8CDbtb8xfpzlPRnK0P3kfXzyhtQIRiLCzTAM4hWM/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=duagon.com; spf=pass smtp.mailfrom=duagon.com; dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b=Q4K6B4ch; arc=fail smtp.client-ip=52.102.183.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=duagon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=duagon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdqEYyf4"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6418738efa0so2892497a12.1
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Nov 2025 02:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764325086; x=1764929886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2uX5AKFlE3KaTGTC6lsIDfjTJSY5MRYErJSJUEI7kZs=;
-        b=VdqEYyf4DGJhyCtWNraXIsipPekBN6/Vz0jqVstYd3fD7FM4r+FGh9ZOuFOejNKGeB
-         0p7o5NCBfS4934fFsjNBUW6gwZpfUgmu8pfvqqcD+xS1F7cvQQBESVuMklCEpDIg8Hpu
-         r5OTB5p6/Fl4DrjrQA1DT6R3JGKCF4I/eeoje3bjE03VKeY7rFKzq0vhe0QtOomNE7no
-         RBsoRod2jNdCfR7ynL0nS5OkR1+lQPxA9PuPyjHHdXdm/002fPgEMxNb9uT4idWKQqc/
-         WoX4kSiK1GP/uaGASmgXueXYPnnnYTX5cSEKGzBThHPLd5ymDaAlLPOSkSQPBKdu/z19
-         X0rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764325086; x=1764929886;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2uX5AKFlE3KaTGTC6lsIDfjTJSY5MRYErJSJUEI7kZs=;
-        b=bswbukjc9zAUBNclCuBte1ANOxjT/Ur9u/gCQJ6fgM0eyziaEw0puiyyX4/n6aJUL4
-         5T8R4Lk6vliYykDjgQ9vlj34IWcok7nFyVLHlSX/zRE+mqo1NQGplGovsXcluDvVoXfN
-         SVHc4NaM4vOxWo/k9lv2hsfs7VZWkCQ3srnhfg7H169Ip66279zkU4kkRfrLvuwK+e5l
-         CA9rFJNFoZQ7OJY48haFV0Bd981onnuv0RNRvMnXo/D39B+909oBrV8Ax1b1Z381vJCU
-         FIghMNu/79Ochn4bt3WBbddXMHkSV+itrPal7ByqTCp+v9bhU8EIdiaMLk5gdRWKtSQX
-         6wSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYPcA9gU0jfNnugr5s8ZigwyqNfXMy9auid+8GZArUBN8d69XbgKs2SYaOcWtamUtuyUtZzoooBQey@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYfK/itD3pw0AkCrC+81rKrUQTAmguuro5rTWocETInFgYR9SL
-	Vlvc5bWoWZMQnWR0VFokrfB+5vALlnPFBf8bl9sKdgAZHZSEEnBk0mEL
-X-Gm-Gg: ASbGnctpbAkswBGNobW9xAMFNRDmr9QWYxupxUvH8sbAZYp02DCfsXk4YmFllfCp0jK
-	R32qLCv5qL4jkDRJmCOMdEl7qbBBGmouLhYOPuLor494W+Z7XiZKA+wmjjbk0X7nTsJoGaa0yNy
-	LqjfAVpS1X1CwbsQcite2iB6mjn9Fj42IpxsTOqRnGXlmdR/mvcTXOZRh/NJTUaxll2602GZjX5
-	jxtAZ0eX6oiUtAJ3Rrc2KwUoBcukYhgKZlKJ456zh4V31DCJqKuWi0p56BTLMiLWVEWqYoKdBZK
-	JOM3E7VrF/sOWP2NvSc5N2aumVSGG22HrJX0STwOi+ClFjMLoOoNRUx6ugRSHhys4IRjKHXyljP
-	TKKvg25yD0UUkeDFBXduhNVCCMr+5NK2hDld35uhecy2FIqXE/Of6FnJXj4Hx9wGEbmHknks3s9
-	OBqOwIz/uTKPAfNE5eJmDmKYdTePoBiSLN4jMKD4D9y/Gv+uDENO6Wn6U4uUXq5aA=
-X-Google-Smtp-Source: AGHT+IEGkgK12Pivg49NR/ZOgpbdU3G5UdskYoGlRBNhkhTeK8ns6GTXdVkYN5ONzey9AOU/AvVmTQ==
-X-Received: by 2002:a05:6512:10cd:b0:595:80d2:cfdf with SMTP id 2adb3069b0e04-596a3e98385mr9843309e87.6.1764318899877;
-        Fri, 28 Nov 2025 00:34:59 -0800 (PST)
-Received: from ?IPV6:2001:14ba:437:c00::198? (2001-14ba-437-c00--198.rev.dnainternet.fi. [2001:14ba:437:c00::198])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-596bfa48aaasm1029238e87.71.2025.11.28.00.34.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Nov 2025 00:34:59 -0800 (PST)
-Message-ID: <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
-Date: Fri, 28 Nov 2025 10:34:57 +0200
+	dkim=pass (1024-bit key) header.d=duagon.com header.i=@duagon.com header.b="Q4K6B4ch"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dudG1eJBpEnWLMfEW40BZufw/u7BnA+f3FpqGYZ0yDl5XBP0iF38/IM/MlhYarv7NiVBU/WG8Q6aVm6BuVnWBE/o8L4BvW9XrkAHLxbs07IFkCk+piFWqUhPrvIoEtwh9d6YBb9N4glqdGLwxHJkNAXVoTRcQEgd4B2VaMnVmXLGHlaZsbPkoVvHsf0zZMa2fqN4702p88k+kmEWbHUyvkW73pAqKM16CTWHESOx6pSAwB6hoIKmCw6d/XpQNkK2v6kb0aFNwEhqXJCiEH4bvUoAfvwgm6Oy+ZMJbT1tNEfn1UUdSP42mtJeCs+MaetBP9cqayxP+u1Q2TZn5CNNvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SMcVOgBrmjzHP9TIIMM1YX//tO1SdDWCf5braCNUgUQ=;
+ b=Vv3LpfTJpNDaxE90fpxGD1h6q2I9fdeai99uJerTvAw6q4DuL37oPdfnicC9V5L6gyYUtgLajnGEUG512hVQEr7nwDuDlR9qygMvMT8vMxO8QuomqevNRlVXFr1LjcjYcVra1HMtZ3y6fVPREEiD5xQy7ISi/QqhTpZu3H5hTX2FhIXUSi9nZkds2UkR0WX/e0jOB7EkGpvcWdnNeB6yzWfHbRT4Jkuau/MYWiWxLb26ANBtERerysbVCb4AOt4P02KCXlzxCCRW61AAtiDyH6VDYjb/Ci6HHivg/kA+ImujcnxNcbZonQnyE9oewsS4jJ3+JHF1HsqmXE0EvR37eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 40.93.86.7) smtp.rcpttodomain=analog.com smtp.mailfrom=duagon.com; dmarc=pass
+ (p=reject sp=reject pct=100) action=none header.from=duagon.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=duagon.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SMcVOgBrmjzHP9TIIMM1YX//tO1SdDWCf5braCNUgUQ=;
+ b=Q4K6B4chhtykeMaer+BjVmIuGEY5U+wpjxW9cr1x9nRw5CPRaWCqJwLilH0psVW9k55dfdAc+6ZeoMrXcDTMh9TIWoLTDDC1pKU6aYHB1JEiZEr1f5ZDI2rbWso4k2FAFED2jBm0fVjWdHL1AWmN8pqUFjtOJHvyQT2aKiM98yw=
+Received: from AM8P191CA0021.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:21a::26)
+ by ZR3P278MB1586.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:9e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.16; Fri, 28 Nov
+ 2025 10:35:35 +0000
+Received: from AM3PEPF00009B9C.eurprd04.prod.outlook.com
+ (2603:10a6:20b:21a:cafe::91) by AM8P191CA0021.outlook.office365.com
+ (2603:10a6:20b:21a::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.16 via Frontend Transport; Fri,
+ 28 Nov 2025 10:35:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 40.93.86.7)
+ smtp.mailfrom=duagon.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=duagon.com;
+Received-SPF: Pass (protection.outlook.com: domain of duagon.com designates
+ 40.93.86.7 as permitted sender) receiver=protection.outlook.com;
+ client-ip=40.93.86.7; helo=GVAP278CU002.outbound.protection.outlook.com; pr=C
+Received: from hz-deliver02.de.seppmail.cloud (162.55.72.218) by
+ AM3PEPF00009B9C.mail.protection.outlook.com (10.167.16.21) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.7
+ via Frontend Transport; Fri, 28 Nov 2025 10:35:34 +0000
+Received: from hz-glue04.de.seppmail.cloud (unknown [10.11.0.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hz-deliver02.de.seppmail.cloud (Postfix) with ESMTPS id 4dHqSj5qGVz11C4;
+	Fri, 28 Nov 2025 11:35:33 +0100 (CET)
+Received: from hz-glue04.de.seppmail.cloud (unknown [172.18.0.4])
+	by hz-glue04.de.seppmail.cloud (Postfix) with SMTP id 4dHqSj5PCjz1xXq;
+	Fri, 28 Nov 2025 11:35:33 +0100 (CET)
+X-SEPP-Suspect: c7dc2019609e4e7eb47d3c93d5caf4ec
+Received: from hz-scan04.de.seppmail.cloud (unknown [10.11.0.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by hz-glue02.de.seppmail.cloud (Postfix) with ESMTPS id 4dHqSj4Z4Cz1vdc;
+	Fri, 28 Nov 2025 11:35:33 +0100 (CET)
+Received: from hz-scan04 (localhost [127.0.0.1])
+	by hz-scan04.de.seppmail.cloud (Postfix) with SMTP id 4dHqSj3Nr7z6q4d;
+	Fri, 28 Nov 2025 11:35:33 +0100 (CET)
+Received: from hz-m365gate04.de.seppmail.cloud (unknown [10.11.0.37])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hz-scan04.de.seppmail.cloud (Postfix) with ESMTPS;
+	Fri, 28 Nov 2025 11:35:29 +0100 (CET)
+Received: from GVAP278CU002.outbound.protection.outlook.com (mail-switzerlandwestazlp17010007.outbound.protection.outlook.com [40.93.86.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
+	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (not verified))
+	by hz-m365gate04.de.seppmail.cloud (Postfix) with ESMTPS id 4dHqSb111Jz1w9y;
+	Fri, 28 Nov 2025 11:35:26 +0100 (CET)
+Received: from AS4P191CA0047.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:657::22)
+ by GV0P278MB1078.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:4e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.16; Fri, 28 Nov
+ 2025 10:35:24 +0000
+Received: from AMS0EPF000001A8.eurprd05.prod.outlook.com
+ (2603:10a6:20b:657:cafe::f7) by AS4P191CA0047.outlook.office365.com
+ (2603:10a6:20b:657::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.16 via Frontend Transport; Fri,
+ 28 Nov 2025 10:35:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.79.220.33)
+ smtp.mailfrom=duagon.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=duagon.com;
+Received-SPF: Pass (protection.outlook.com: domain of duagon.com designates
+ 20.79.220.33 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.79.220.33; helo=de1-emailsignatures-cloud.codetwo.com; pr=C
+Received: from de1-emailsignatures-cloud.codetwo.com (20.79.220.33) by
+ AMS0EPF000001A8.mail.protection.outlook.com (10.167.16.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9366.7 via Frontend Transport; Fri, 28 Nov 2025 10:35:23 +0000
+Received: from GVAP278CU002.outbound.protection.outlook.com (40.93.86.7) by de1-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Fri, 28 Nov 2025 10:35:22 +0000
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=duagon.com;
+Received: from ZR0P278MB0523.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:34::6) by
+ ZR0P278MB1555.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:a5::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9366.16; Fri, 28 Nov 2025 10:35:19 +0000
+Received: from ZR0P278MB0523.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::39da:49d1:7c23:953e]) by ZR0P278MB0523.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::39da:49d1:7c23:953e%7]) with mapi id 15.20.9366.012; Fri, 28 Nov 2025
+ 10:35:19 +0000
+Date: Fri, 28 Nov 2025 11:35:09 +0100
+From: Jose Javier Rodriguez Barbarin <dev-josejavier.rodriguez@duagon.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linus.walleij@linaro.org, brgl@kernel.org, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	gregkh@linuxfoundation.org, morbidrsa@gmail.com, jth@kernel.org,
+	wim@linux-watchdog.org, linux@roeck-us.net, nathan@kernel.org,
+	nsc@kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Jorge Sanjuan Garcia <dev-jorge.sanjuangarcia@duagon.com>
+Subject: Re: [PATCH 1/2] mcb: Add missing modpost build support
+Message-ID: <aSl63fQ0HX2ywKIj@MNI-190>
+References: <20251127155452.42660-1-dev-josejavier.rodriguez@duagon.com>
+ <20251127155452.42660-2-dev-josejavier.rodriguez@duagon.com>
+ <CAHp75VeNtYJPmXtDfWEN3a184YXTKNems657UDeBKp4xpOGovQ@mail.gmail.com>
+ <e40e877a-130c-45f5-ad73-560704592815@kernel.org>
+ <aSllQThEANDoZPfN@smile.fi.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aSllQThEANDoZPfN@smile.fi.intel.com>
+X-ClientProxiedBy: MA3P292CA0002.ESPP292.PROD.OUTLOOK.COM
+ (2603:10a6:250:2c::17) To ZR0P278MB0523.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:34::6)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
- overlays"
-To: Rob Herring <robh@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
- Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>,
- Steen Hegelund <steen.hegelund@microchip.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-2-herve.codina@bootlin.com>
- <f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
- <CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
- <5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
- <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
- <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
- <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
-Content-Language: en-US
-From: Kalle Niemi <kaleposti@gmail.com>
-In-Reply-To: <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-TrafficTypeDiagnostic:
+	ZR0P278MB0523:EE_|ZR0P278MB1555:EE_|AMS0EPF000001A8:EE_|GV0P278MB1078:EE_|AM3PEPF00009B9C:EE_|ZR3P278MB1586:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cb8ba24-63d5-4b78-2cff-08de2e69dcbd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|52116014|7416014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?tQKeMOIa+AcwZQcdRVPOx8G21ktn6/mYnOfkINsO8phKRK5CLvQKEdVMcXkJ?=
+ =?us-ascii?Q?3FHGy3EFBcze2xvgCeFTt95ZJd92LXisD/0UNRGnWDi6MYJPJ8Y83ENg987l?=
+ =?us-ascii?Q?e1r9I+2B/fC93uvBhBcB0/C6hnq03h2VqndLilp7AH4Wbbbcu0hzbah9SHZs?=
+ =?us-ascii?Q?QpFYdGbjDLDcBP6U8z6PZPPk4s3543LZaoBi/Mg8PiKn4YOUv2Xhb67NOQtv?=
+ =?us-ascii?Q?MFX2Rvbp+dsMPf09iQZqgrjOT01nfTD8pUbMlZKZch4bvmrNFrkx1kfUFAXD?=
+ =?us-ascii?Q?AmzCiK/PqQdqUs72840VytW4o7dCnTU36DQXuvf5MXQ7YPb0hzdvvGiqN8RO?=
+ =?us-ascii?Q?Hgf1tvwh/ARI+M45mvskE7GgfI/TBGcmGd2pdRHZO7vcE3OanpQU3mHQqtU8?=
+ =?us-ascii?Q?ZicVDCu04FMyqUQbvzkPfOr8gTD0QCvBTUZHXzbUMmnWf3uQ3L92cUyZosQk?=
+ =?us-ascii?Q?nAbKMqx3AHb2rYmUZ2zaPZ5O2fLUHtRMU11BH2MV2uVHFgoQScvFydSpBXtl?=
+ =?us-ascii?Q?akSAK5Zfb8CGGlnIL4bezaPjuUuT/bjaKk0umabKLsW3455sB9XRpaiJ9FSV?=
+ =?us-ascii?Q?kAziOpBT138M2rFrtDQMEw2Z0BYk1tXJyoBsSMYHY4Y+yu3Wt7g6fnhiknLq?=
+ =?us-ascii?Q?lGb2xnO43sGleUsmblZIJTOZvpXl6c47wSQbXOAC29mw6Hk5l5pKdWhFLfBf?=
+ =?us-ascii?Q?ZL4ldHGlIhVbO0aStm21tcivFlhZtq2kCIVFDa3L7YWH6bon5J3jgRe/g3tk?=
+ =?us-ascii?Q?7hkgNbKPu4o0r/lAP4qUiwS5n+L5MLkXi5TR6lT2wtaIr9FDrY2W7z50wgV5?=
+ =?us-ascii?Q?yINxvJ0hEuLJw7+KcabXU1gI4WIA1PJ+BFuOwkjFQs58kHmamGSmwYhwvrmU?=
+ =?us-ascii?Q?DkVEp21Gh7SP16qXEzvlkmBOfjDnKppolXsJe/UhBujO2Pe7ak4WMFM95OZO?=
+ =?us-ascii?Q?poqZNZPukKRFpnG86AdsX1Noi1UaYXBsEa3kGV3pCGeygWPsyJsedIUqQPln?=
+ =?us-ascii?Q?53h/7gfqFHH7sM/E0u2mIsWZv45kIXOcJWQNK6jHIelU90ukvFdrmzhy96xc?=
+ =?us-ascii?Q?wHVj3cnHqCVPx8F9k14dwee0WxLxE/FWpXz9ypSq/mYrAooMlvBVsz3LQHlr?=
+ =?us-ascii?Q?efhUbuW4pUjCE9R0KEZ3LJKICcTpLNMvjR498oDfNoZbujv/B0fEs6pxT14z?=
+ =?us-ascii?Q?MChAoVIxIIt0mdHRvQx4ljRm4/uHnUKjKfehGlWJvoORgtZ3mM+mjrhbfeeY?=
+ =?us-ascii?Q?FZDfnEnP5NrRYylJuFrtUI8FKSMOnzsD2LnzoiGD71XJKHnNFcjiRyeRpxT/?=
+ =?us-ascii?Q?31Tes/23h2tdCkk9i0evlbNC7pU1k+xZYK6Qz9ofwUolG6QnYmDA6dn/zv/3?=
+ =?us-ascii?Q?G1+/PVjjrF4jr0qWxtW3824FGnkXjxIQNYJE6Tje/EAyrRvILIM/hJZ1gDbN?=
+ =?us-ascii?Q?u7x5UMz5jTV/DB0w6GlmXsxB4BN4wHiVn0pfhpvEN4HPbcDQc2WQeJ3sf3fK?=
+ =?us-ascii?Q?s+N60k5W4At0oEWaSQp3Ta4Vvjvi5quIaetz?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZR0P278MB0523.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR0P278MB1555
+X-CodeTwo-MessageID: 4bd12d86-748b-4da7-a249-be8948901b59.20251128103522@de1-emailsignatures-cloud.codetwo.com
+X-CodeTwoProcessed: true
+X-EOPAttributedMessage: 1
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001A8.eurprd05.prod.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+ ca9d51cf-5db4-4f3c-735d-08de2e69d3bf
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|7416014|36860700013|35042699022|1800799024|14060799003|82310400026;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?p05RTwWNg5AOMQ31GDzjgLWsMmO94G3uT+h5Q83K3c/sMnVH2tYlMmhXKmRR?=
+ =?us-ascii?Q?C+Y0cCHOWZqhtkLtpYwE4UIKH+xwORvbsh1BCFEM4XRPpFpLXnif6NnjAwTf?=
+ =?us-ascii?Q?cb+jQwpmpjVlj7AIn1X+724D44TqhKBT6a/PoGcecGyXRc4tiGiotmoK0+I7?=
+ =?us-ascii?Q?Drl3FATQ+42ZOn2iTImoqJ32A2M0LAVl3l6GxGK44YWXnakRv2a0zHeEdkUP?=
+ =?us-ascii?Q?+y+23xZW38dQCqWbq4oJ0/Plm4GcyhcpcPqqziS+Klya4zsqOeR85iORVTwD?=
+ =?us-ascii?Q?eesdI8XkI0UOX0ju1vBkGgvdUyhu5qusaa/sRURXY9QTE3pVPR5J7gYuIncN?=
+ =?us-ascii?Q?fyo+Ga+0AttoZLcxrFsjte1CK8xCjflQqItoaHVC57jN6psvvOQPQ3mv25/p?=
+ =?us-ascii?Q?2AHkXqt4wOfJVCYXyuT4tSEid3pQ817Ici0PqhbVwVSwscL9DsLqEnLloZx3?=
+ =?us-ascii?Q?quiCFXZs0gH6Qc084ueymQTW95ZkjhESwjlp3pLeie4Dvl+PA2mJz5AfHmdL?=
+ =?us-ascii?Q?HUg8N4Gj3iBEnupgJ4Qn0CBkHzNZwomHrd6StyaFawAaQ7Q+gIAHKJUnbs0y?=
+ =?us-ascii?Q?C/y6Cl/+55kGvqTwjQa0LactckR9pgkhoh+hmJ/QN8Xq1d8bhLBeq50tB5EI?=
+ =?us-ascii?Q?uqKzsluNGP1YMNhhdM4z2x6kRXbwBOeNQ6vvm3PA25SEQff6Syg/1SicXQ9a?=
+ =?us-ascii?Q?I/a+m6i60OLPatJdohLbdh9iXPD8NG7TkEj1KbD4vvgNPA348p07lxPzaZZV?=
+ =?us-ascii?Q?qV+hXBdRqo7/t0mnvVIbS4TjBHMso7V0ydelFYuY210VlSWHYfTtuumcpmiz?=
+ =?us-ascii?Q?GLO4wMN5ayV0Ok5HKHo8AXOxcuOV78iEq1Pf+9g+/zR3UnO1YpoIHArjsX4b?=
+ =?us-ascii?Q?S7Wt1X7EXh4fZpvfXLuO0tG4Eh/Y2GL6U8PeIGPXw/z2kmVYhOLgDqpZuP8n?=
+ =?us-ascii?Q?f0HcTkZA1tKyyc7pibaGYV4dRpVwBbh22ijAUcSdeZN+7H29DqPUe+hRj8Fn?=
+ =?us-ascii?Q?GOcTv0YCBktI5UQeZijz5YflckJtFKmck3MkWvr1i4PDji9gxkAKgkd/dycD?=
+ =?us-ascii?Q?j7SCmqG6yKb7r+b8qbCTzx7xy6ehzc9n30u1H8XxGTKPN+3KT/hrimcQvnAp?=
+ =?us-ascii?Q?m9+PS5Qb0ylLUy58aQJYeBdD5ESTcoBKNs1oRbc8V71nTwLfxIxOZJ/N9N+I?=
+ =?us-ascii?Q?vFzVE/VvQDca+uaweEFewTh7mvNh1xpI0qhwtvvmepzaURrmvtjVgy58TfvL?=
+ =?us-ascii?Q?alM8bdsKKKinXECXSVRNEpiOC1317liMrzhIdGZ2jmWFXGw7AdoATOyjpnHm?=
+ =?us-ascii?Q?qIkEpPI8TmJDKzhWxbxJ0D8PffoQHSp58ZVVuN1R/GefjEvEMXjHXSersDhp?=
+ =?us-ascii?Q?CMSV15i/5QBQOXkUO6/6bX4C1KzhWU+Ds3kqBrEywaIymZt2XC7YXDf06khS?=
+ =?us-ascii?Q?im/IpeeIM6ABcyXqU6AbpCq35i4CVPnozbt9szeukSfrqeutIIVJ6AJsaA8v?=
+ =?us-ascii?Q?blaSRsVEOS9DNP3+cZ0wUrvQa99UYSfoFrklystuPvVSexSShc0+KMVztFIh?=
+ =?us-ascii?Q?QaWx/uEXNaCEgLpeXZU=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:20.79.220.33;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:de1-emailsignatures-cloud.codetwo.com;PTR:de1-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(35042699022)(1800799024)(14060799003)(82310400026);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV0P278MB1078
+X-SEPP-CCCVersion: 2025-11-05T14:36:24+01:00 6c313bee
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[40.93.86.7];domain=GVAP278CU002.outbound.protection.outlook.com
+X-MS-Exchange-ExternalOriginalInternetSender:
+ ip=[40.93.86.7];domain=GVAP278CU002.outbound.protection.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM3PEPF00009B9C.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	c4a4b128-eec7-4165-cf11-08de2e69d66a
+X-SM-ruleversion: 2.1.0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|156008|34020700016|36860700013|376014|7416014|82310400026|35042699022|1800799024|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CpnOAB0ptDuNhxRQ1WmEABmAGNVhpwO2BaSnPw04RU2mUmG0sfx3ppl9WS5r?=
+ =?us-ascii?Q?5J0QX45h5dRc5Ijwu3s0siJy13RUY1GSXpbMbHRnG1GEtnktEbGj/lmPvfFQ?=
+ =?us-ascii?Q?9Nr7IwoY53qWrkcIdHm5FpuuVaCdKuN5Mh+i6Ew8RMUqxqzxSznoy+AXFGmx?=
+ =?us-ascii?Q?QT71h+14QUpPCey4z5m7bH17SitYkOxg7L/MaIa/Sas8esbUKphuAfMKODfM?=
+ =?us-ascii?Q?tX4i3c+ALzD9hT1F4YybndsxpWEH7g3nKVA1or7krEEeoiQUMtFR/4aZGDVO?=
+ =?us-ascii?Q?duqX6OeHWZo6jTK58IuQos++S8Nf80Fl4IwWgIDtljNB0UpB63iB+cpaUywM?=
+ =?us-ascii?Q?d8fVnwDqtI1E8XiWZ7Dz6bKRQyF7eoytPRRUueHyaIzYU4nqH/JTHQ8YmKBJ?=
+ =?us-ascii?Q?Sq51GSmr63UZ5rtN9d/JON47PBOr79v+0wGozNozbTsXbZp80L9xlgu2Jx/I?=
+ =?us-ascii?Q?AtaZfElpwbFc1oNUC9cOlhvPh3b9woYpfZt0C3ogVYAFaesI6gdMmBLdmZKW?=
+ =?us-ascii?Q?yIEOoTbwC9I2VooemgBTgwyYUfqgEe1mhwp4H01QwFGOKBvG4qxx05/8zjQl?=
+ =?us-ascii?Q?lifr8Cg0lHQUID92radWkR76VSLxeoRKu0e0vYvZyu12JG84JeuJn4ov2r1N?=
+ =?us-ascii?Q?2FMUi+eccHLK7KxSFdf2CTtAgOesD1jtEj+sLq91O7ginmd1tK1/TUQdA8qx?=
+ =?us-ascii?Q?Nd9mseroQGd28jcNTSPUAImSHRX21lY+3yKk06gem1YnjO72V0BWBrWLi8jL?=
+ =?us-ascii?Q?c9Pc/IuHc0RbcXjJfZjmMGcap/sSjUo6Bn4wRDTVMPZ3JS2Iq1geAtn9tSZh?=
+ =?us-ascii?Q?Ewszh+g4CGP0i/gXwO8v+f6cI+UN4SxFUc3KcULffriIj2cCQ8ANFmOutNK8?=
+ =?us-ascii?Q?wmHPiHeySrn1njFDiSEZY9L4YozQGvT1sncNetUx90dEombHPdzFzohkshFf?=
+ =?us-ascii?Q?KdxxzUv0FRZBhuBD1rBgmiQnPm8tQeoBoUHuL7gPPXn4NCszPI0xvAvysmyK?=
+ =?us-ascii?Q?pMwADBRhOv90rzGs0fCen4kBMNZNBDPjYFcQl5xi1mlw7Jokd5ArinYaxTj9?=
+ =?us-ascii?Q?1oBz917qI/j0o0VcEtSuhJDQstPXQOZcTzQPQ+LlwplX3CVhuD2BYNR5vKq2?=
+ =?us-ascii?Q?FvjEWB2CX4dd?=
+X-Forefront-Antispam-Report:
+	CIP:162.55.72.218;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVAP278CU002.outbound.protection.outlook.com;PTR:mail-switzerlandwestazlp17010007.outbound.protection.outlook.com;CAT:NONE;SFS:(13230040)(156008)(34020700016)(36860700013)(376014)(7416014)(82310400026)(35042699022)(1800799024)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: duagon.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2025 10:35:34.2004
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cb8ba24-63d5-4b78-2cff-08de2e69dcbd
+X-MS-Exchange-CrossTenant-Id: e5e7e96e-8a28-45d6-9093-a40dd5b51a57
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5e7e96e-8a28-45d6-9093-a40dd5b51a57;Ip=[162.55.72.218];Helo=[hz-deliver02.de.seppmail.cloud]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF00009B9C.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR3P278MB1586
 
+On Fri, Nov 28, 2025 at 11:02:57AM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 28, 2025 at 08:54:18AM +0100, Jiri Slaby wrote:
+> > On 27. 11. 25, 17:10, Andy Shevchenko wrote:
+> 
+> ...
+> 
+> > > >   static const struct devtable devtable[] = {
+> > > 
+> > > >          {"cpu", SIZE_cpu_feature, do_cpu_entry},
+> > > >          {"mei", SIZE_mei_cl_device_id, do_mei_entry},
+> > > >          {"rapidio", SIZE_rio_device_id, do_rio_entry},
+> > > > +       {"mcb", SIZE_mcb_device_id, do_mcb_entry},
+> > > 
+> > > Perhaps squeeze it to be more ordered (yes, I know that the table is
+> > > not so ordered, but given context suggests to put it after "mei").
 
-On 11/27/25 03:54, Rob Herring wrote:
-> On Tue, Nov 25, 2025 at 12:43 AM Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
->> On 24/11/2025 19:01, Rob Herring wrote:
->>> On Mon, Nov 24, 2025 at 10:44 AM Kalle Niemi <kaleposti@gmail.com> wrote:
->>>>
->>>> On 11/24/25 16:53, Rob Herring wrote:
->>>>> On Mon, Nov 24, 2025 at 8:48 AM Kalle Niemi <kaleposti@gmail.com> wrote:
->>>>>> On 10/15/25 10:13, Herve Codina wrote:
->>>>>>> From: Saravana Kannan <saravanak@google.com>
->>>>>>>
->>>>>>> This reverts commit 1a50d9403fb90cbe4dea0ec9fd0351d2ecbd8924.
->>>>>>>
->>>>>>> While the commit fixed fw_devlink overlay handling for one case, it
->>>>>>> broke it for another case. So revert it and redo the fix in a separate
->>>>>>> patch.
->>>>>>>
->>>>>>> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT overlays")
->>>>>>> Reported-by: Herve Codina <herve.codina@bootlin.com>
->>>>>>> Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=9F9rZ+-KzjOg@mail.gmail.com/
->>>>>>> Closes: https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com/
->>>>>>> Closes: https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.com/
->>>>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
->>>>>>> Link: https://lore.kernel.org/lkml/20240411235623.1260061-2-saravanak@google.com/
->>>>>>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->>>>>>> Acked-by: Mark Brown <broonie@kernel.org>
->>>>>>> ---
->>>>>>>      drivers/bus/imx-weim.c    | 6 ------
->>>>>>>      drivers/i2c/i2c-core-of.c | 5 -----
->>>>>>>      drivers/of/dynamic.c      | 1 -
->>>>>>>      drivers/of/platform.c     | 5 -----
->>>>>>>      drivers/spi/spi.c         | 5 -----
->>>>>>>      5 files changed, 22 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
->>>>>>> index 83d623d97f5f..87070155b057 100644
->>>>>>> --- a/drivers/bus/imx-weim.c
->>>>>>> +++ b/drivers/bus/imx-weim.c
->>>>>>> @@ -327,12 +327,6 @@ static int of_weim_notify(struct notifier_block *nb, unsigned long action,
->>>>>>>                                   "Failed to setup timing for '%pOF'\n", rd->dn);
->>>>>>>
->>>>>>>                  if (!of_node_check_flag(rd->dn, OF_POPULATED)) {
->>>>>>> -                     /*
->>>>>>> -                      * Clear the flag before adding the device so that
->>>>>>> -                      * fw_devlink doesn't skip adding consumers to this
->>>>>>> -                      * device.
->>>>>>> -                      */
->>>>>>> -                     rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>>>                          if (!of_platform_device_create(rd->dn, NULL, &pdev->dev)) {
->>>>>>>                                  dev_err(&pdev->dev,
->>>>>>>                                          "Failed to create child device '%pOF'\n",
->>>>>>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
->>>>>>> index eb7fb202355f..30b48a428c0b 100644
->>>>>>> --- a/drivers/i2c/i2c-core-of.c
->>>>>>> +++ b/drivers/i2c/i2c-core-of.c
->>>>>>> @@ -176,11 +176,6 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
->>>>>>>                          return NOTIFY_OK;
->>>>>>>                  }
->>>>>>>
->>>>>>> -             /*
->>>>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>>>> -              * doesn't skip adding consumers to this device.
->>>>>>> -              */
->>>>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>>>                  client = of_i2c_register_device(adap, rd->dn);
->>>>>>>                  if (IS_ERR(client)) {
->>>>>>>                          dev_err(&adap->dev, "failed to create client for '%pOF'\n",
->>>>>>> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->>>>>>> index 2eaaddcb0ec4..b5be7484fb36 100644
->>>>>>> --- a/drivers/of/dynamic.c
->>>>>>> +++ b/drivers/of/dynamic.c
->>>>>>> @@ -225,7 +225,6 @@ static void __of_attach_node(struct device_node *np)
->>>>>>>          np->sibling = np->parent->child;
->>>>>>>          np->parent->child = np;
->>>>>>>          of_node_clear_flag(np, OF_DETACHED);
->>>>>>> -     np->fwnode.flags |= FWNODE_FLAG_NOT_DEVICE;
->>>>>>>
->>>>>>>          raw_spin_unlock_irqrestore(&devtree_lock, flags);
->>>>>>>
->>>>>>> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
->>>>>>> index f77cb19973a5..ef9445ba168b 100644
->>>>>>> --- a/drivers/of/platform.c
->>>>>>> +++ b/drivers/of/platform.c
->>>>>>> @@ -739,11 +739,6 @@ static int of_platform_notify(struct notifier_block *nb,
->>>>>>>                  if (of_node_check_flag(rd->dn, OF_POPULATED))
->>>>>>>                          return NOTIFY_OK;
->>>>>>>
->>>>>>> -             /*
->>>>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>>>> -              * doesn't skip adding consumers to this device.
->>>>>>> -              */
->>>>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>>>                  /* pdev_parent may be NULL when no bus platform device */
->>>>>>>                  pdev_parent = of_find_device_by_node(parent);
->>>>>>>                  pdev = of_platform_device_create(rd->dn, NULL,
->>>>>>> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
->>>>>>> index 2e0647a06890..b22944a207c9 100644
->>>>>>> --- a/drivers/spi/spi.c
->>>>>>> +++ b/drivers/spi/spi.c
->>>>>>> @@ -4791,11 +4791,6 @@ static int of_spi_notify(struct notifier_block *nb, unsigned long action,
->>>>>>>                          return NOTIFY_OK;
->>>>>>>                  }
->>>>>>>
->>>>>>> -             /*
->>>>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>>>> -              * doesn't skip adding consumers to this device.
->>>>>>> -              */
->>>>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>>>                  spi = of_register_spi_device(ctlr, rd->dn);
->>>>>>>                  put_device(&ctlr->dev);
->>>>>>>
->>>>>> Sorry, some of you will receive this message now for second time. First
->>>>>> message was sent to older series of patches.
->>>>>> -
->>>>>>
->>>>>> Hello,
->>>>>>
->>>>>> Test system testing drivers for ROHM ICs bisected this commit to cause
->>>>>> BD71847 drivers probe to not be called.
->>>>> This driver (and overlay support) is in linux-next or something out of
->>>>> tree on top of linux-next?
->>>>>
->>>>> Rob
->>>> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7.c
->>> I don't see any support to apply overlays in that driver.
->> Ah. Sorry for the confusion peeps. I asked Kalle to report this without
->> proper consideration. 100% my bad.
->>
->> While the bd718x7 drive indeed is mainline (and tested), the actual
->> 'glue-code' doing the overlay is part of the downstream test
->> infrastructure. So yes, this is not a bug in upstream kernel - this
->> falls in the category of an upstream change causing downstream things to
->> break. So, feel free to say: "Go fix your code" :)
->>
->> Now that this is sorted, if someone is still interested in helping us to
->> get our upstream drivers tested - the downstream piece is just taking
->> the compiled device-tree overlay at runtime (via bin-attribute file),
->> and applying it using the of_overlay_fdt_apply(). The approach is
->> working for our testing purposes when the device is added to I2C/SPI
->> node which is already enabled. However, in case where we have the I2C
->> disabled, and enable it in the same overlay where we add the new device
->> - then the new device does not get probed.
->>
->> I would be really grateful if someone had a pointer for us.
-> Seems to be fw_devlink related. I suppose if you turn it off it works?
-> There's info about the dependencies in sysfs or maybe debugfs. I don't
-> remember the details, but that should help to tell you why things
-> aren't probing.
->
-> I've dropped the changes for 6.18 for now. No one really seems to be
-> in need of them yet AFAICT.
->
-> Rob
-Hello,
+Thanks your answers,
 
-Thank you for the help. We are going to look into sysfs / debugfs as 
-soon as we have time.
+I put it between "rapidio" and "ulpi" because mcb_device_id is defined in
+mod_devicetable.h between rio_device_id and ulpi_device_id so I though it
+could be nice to follow the same order on file2alias.c.
 
-I tried with this and result was the same, BD71847 was not probed:
-[    0.000000] Kernel command line: console=ttyO0,115200n8 root=/dev/nfs 
-rw nfsroot=192.168.255.126:/home/user01/nfs,nfsvers=3 
-ip=192.168.255.1:192.168.255.126::255.255.255.0:bbb1:eth0 nfsrootdebug  
-fw_devlink=no
+> > 
+> > s/after/before/ :)
+> 
+> Right, good catch!
+> 
 
+It is OK to me, I will put it before mei ;)
 
-With todays linux-next the BD71847 got probed; I assume the changes got 
-dropped for the moment.
-
-Kalle
-
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
