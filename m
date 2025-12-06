@@ -1,24 +1,24 @@
-Received: from mail-m15574.qiye.163.com (mail-m15574.qiye.163.com [101.71.155.74])
+Received: from mail-m49229.qiye.163.com (mail-m49229.qiye.163.com [45.254.49.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEB022D9ED;
-	Sat,  6 Dec 2025 05:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E4E22D4DC;
+	Sat,  6 Dec 2025 05:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764997742; cv=none; b=pN1BZSYCpsPhZU7XqsTHiK4Mwb9Yel/hbdLmzQS6q/EYZrQgdwd7zZfB3SV7mQkxgu2tqzkI28kltzio8N4GtZD984ZVqyV/kT0zUglsm3z3krJISqBf06uqs2VostbIiWQxYlW7yfikAhH45j4qa2/N2AAaoajxdSw6QVYLy24=
+	t=1764997749; cv=none; b=kr3DlkW6MwkXBxdwwHOspHMpVqtYNSqwsPUovolHfvlc8XPU5CqIvP6OCMKIC4GVhXhidtQqnGaYT/8Vv3TO+hJTEOCghSiyMi93Qw+op+jzHREG9036x5O3fW7xvMvqgAYjCp4heIKgYwYXtEchbEzW2UiCxyp8PTXOdxeIJmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764997742; c=relaxed/simple;
-	bh=VM4qK9hHgsGIsMvb0AelsdSMqjgiki/P53bECjcqn3I=;
+	s=arc-20240116; t=1764997749; c=relaxed/simple;
+	bh=hqOrvbSQtqVNrBdE/mE2ZulISQKABmz8cTxz8v0MsiA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nEB7hY5I4CS4Ajkm3jmMU1dlwbPoT4KGKQI9H0goOaLwU13DoYCLQIlVUAy1xmgfMULdbPdG+seALBiDrUNy8TFlGnZhxPT7rlYtGzLQMjtSq91U6SlqsWimiomyXh3uFaB6OxFJdWHQ+h05ptihdV6sBe+paMrHVd00OciXFAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bG+/oVHC; arc=none smtp.client-ip=101.71.155.74
+	 MIME-Version; b=PRbW/afD6WOGj9UNxigWk58RRlQxREId9wKfFJGIZeE05qiXduljJoLfaCH3nXS1pptaJSLx36U5PhrKVOzPBkE6O/xqAbZ095P9BdzSbLA246rHclwJCzpDEeVggKtPmKa94RUUTP7oZlkyC77Iqj+KxYGDSvwkdz3EJoS6G68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=j0DLJk/l; arc=none smtp.client-ip=45.254.49.229
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bG+/oVHC"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="j0DLJk/l"
 Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2c3493a61;
-	Sat, 6 Dec 2025 13:08:47 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2c3493a67;
+	Sat, 6 Dec 2025 13:08:50 +0800 (GMT+08:00)
 From: Ye Zhang <ye.zhang@rock-chips.com>
 To: Ye Zhang <ye.zhang@rock-chips.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
@@ -32,11 +32,10 @@ Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	tao.huang@rock-chips.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 1/8] dt-bindings: pinctrl: Add rk3506 pinctrl support
-Date: Sat,  6 Dec 2025 13:08:37 +0800
-Message-Id: <20251206050844.402958-2-ye.zhang@rock-chips.com>
+	tao.huang@rock-chips.com
+Subject: [PATCH v2 3/8] dt-bindings: pinctrl: Add rv1126b pinctrl support
+Date: Sat,  6 Dec 2025 13:08:39 +0800
+Message-Id: <20251206050844.402958-4-ye.zhang@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251206050844.402958-1-ye.zhang@rock-chips.com>
 References: <20251206050844.402958-1-ye.zhang@rock-chips.com>
@@ -47,38 +46,36 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9af21006a009d8kunmae94618c4ed3ae7
+X-HM-Tid: 0a9af2100fed09d8kunmae94618c4ed3c65
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRkdHVZJGBhDGU9MQk1IGE5WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRoaHlYaShgfSh8ZSk5OTx1WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=bG+/oVHC+FD2dNeKBHi7ZwwuxQRf9EpErKon41AD7ic+dUl+vm7z44dwS/EnRlYYtxLLGWyrErjWN0O2iH6pJ+20tb1tlfYNuJ+vVmIQRiQLQyYfZHHz3DK3JlhmWwr9ZleG1iyr1xA5+bDGNX0pRX5lXQurCrOCcBL+j292TRs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=0Db2q6dT/j6RKhINW0J1Xu2aTYUEmZfbY9ZOLYGcFW8=;
+	b=j0DLJk/ldHyUNN1Lze38fkhfQWx2G4XeWPjZ5OjSM0RYbHcXbX4h3Ij3/bceXUt8wxI41y2S0+XQM1sjkgk9ol1pH+noROEq8YtQ1h+S0BnBqRAtpFI2PB+9PAO3HDlDQzpZxLABrV2vYPFl/6FJnxYbU34cM+D5ou7UgzKWSBE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=peBVdRDCYMluVzoh6VCOVP/33y4SVuD35nSziJTXUi8=;
 	h=date:mime-version:subject:message-id:from;
 
-Add the compatible string for the rk3506 SoC.
+Add the compatible string for the rv1126b SoC.
 
 Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
-index 125af766b992..76e607281716 100644
+index 76e607281716..93bf8f352e48 100644
 --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
-@@ -44,6 +44,7 @@ properties:
-       - rockchip,rk3328-pinctrl
-       - rockchip,rk3368-pinctrl
-       - rockchip,rk3399-pinctrl
-+      - rockchip,rk3506-pinctrl
-       - rockchip,rk3528-pinctrl
-       - rockchip,rk3562-pinctrl
-       - rockchip,rk3568-pinctrl
+@@ -52,6 +52,7 @@ properties:
+       - rockchip,rk3588-pinctrl
+       - rockchip,rv1108-pinctrl
+       - rockchip,rv1126-pinctrl
++      - rockchip,rv1126b-pinctrl
+ 
+   rockchip,grf:
+     $ref: /schemas/types.yaml#/definitions/phandle
 -- 
 2.34.1
 
