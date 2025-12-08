@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C7331AA8D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC2631A7EF;
 	Mon,  8 Dec 2025 14:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765203197; cv=none; b=vA9YCpjfy5NE4vlUqOQAoLeNp491enfh6I8onORASnhZFn4J2EfI+nDVutnnt9HIJQN7iwOVDPD/CHhtFH1VjICaQL96ftQ7MtF7cK69VYbPmw0dQWPSFjIZMxwq5nOdtNFDST+dx30sUoWuVKRiU5ZO2kZhwIyAxSO+bGEihTs=
+	t=1765203197; cv=none; b=ZJQXecPGlcFTAuSG18LAfPHDSX5aVKrrGASpwZ0XivF0x7aKWLp41ZssyvQlCi0pBhm/1LNXn1b9sFiUZ8p7k7BDsvdAcX/+DnSkyqLFLtoV4to1N5fiRPJGuXuKJKWcbJzsZ1D56e1RLFld2DDpRCc2nBW2OOC4tXyRKNK80yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1765203197; c=relaxed/simple;
-	bh=UZu58m8XGcSJGkVg4fcmuSuWPz3gR74p7GjWOYOP+J4=;
+	bh=EjbdbDnD3IopXMcmkWrh9clCT/CeEiXpaDYGKdNLcUs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oLUdhjzFHQ0Ngmu3od4uNIVWRawUZPkONJf6U3agsiUZLfdVPhbyTFe39fCe99JW4aQJbQ87F8SBx+yFenVUUw6HYC13RVT58CZc5ecWzYXjBQnsngaQ8LGRKuOtPSQyc3FWNgLKpkW07OYpT2uOFrYbEGKKX6x6q5qgzmQBOqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4g1nCfs; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=MMSV/HNz9MbYEy4/w8jeXysamYWs9/vxko7OZSl69FQ7LLlL7CfVvTXoCCXervAC384f0J5CqaKeo5LebjLB8jpbN9zfSDuaMh0Wp3+Wgli1Bq9K9ncQavv81B05hfxS+Q/n81yOdQeg9G2AdpsZkJFx1RCAYaQ99d8e6KHTzYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvNoDuzJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4g1nCfs"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B418C2BC86;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvNoDuzJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7BFA6C2BCB8;
 	Mon,  8 Dec 2025 14:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1765203197;
-	bh=UZu58m8XGcSJGkVg4fcmuSuWPz3gR74p7GjWOYOP+J4=;
+	bh=EjbdbDnD3IopXMcmkWrh9clCT/CeEiXpaDYGKdNLcUs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=M4g1nCfs/PZhsvDkJlhTO9HpbvnsrMyupXUlf9197r0l4bBJ4r2eBhfZUpgMYfiaz
-	 GsHteRp44SXAeingAYopZXmtw+8FbSbqX8PbV8MigjKPL1/pfoGVWh+cRSzesMcfBJ
-	 fRszcRvfGoi/cTNiII2gad7usV9g2ECI4e8gJL/jBfTHz1t23gbd4GUB7G8tk2/U+j
-	 94k1tlBnFHt8JvdpbiBGusvvbC4eoJUZvGnHraxSz/SRS31emA07qZCh5Va5kjlne0
-	 zxHRhnohobFn4/WzUnJc9Z1XwMSNC6zsfgLksOjGWMtVQ/yuXgpxU2aQ4QfYiG1STe
-	 bkkyq/QHJWrxw==
+	b=JvNoDuzJebNHDHUAVKb+8qesPCo8GZE8j8NX+QPt8+rWxUo8MKnMWQHqU3+ZtVRXl
+	 1qrEWwA/i4t/cfE+Ifj6zaHF/LpZ3IjlORQLje8KGYIsBrWUIPHzDJFbcka45kRaYH
+	 z8G7BX61ipVqZSNKzSK/w6mQMvoOy3xiz4M1UjpYyPhYh5cknes7eEVeG2gvgA67+Y
+	 +zrsMZKmgyUw+lvkOT6xOI7YKQ5Sx4aqkPmDBkhXWD2a707H9WCf7vJYo8o5/Qqhbt
+	 LhZklbV+RhRUTn5JZPBBYmXDJTd8M0nJxCrYDtf0uzJO7U/KZRSomzgRJcpSTUZCK2
+	 h39gHyi3j7TaQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93479D3B7F3;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D015D3B7E2;
 	Mon,  8 Dec 2025 14:13:17 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 08 Dec 2025 16:13:12 +0200
-Subject: [PATCH RESEND v8 20/21] media: i2c: remove MAX96717 driver
+Date: Mon, 08 Dec 2025 16:13:10 +0200
+Subject: [PATCH RESEND v8 18/21] arm64: defconfig: disable deprecated
+ MAX96712 driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251208-gmsl2-3_serdes-v8-20-7b8d457e2e04@analog.com>
+Message-Id: <20251208-gmsl2-3_serdes-v8-18-7b8d457e2e04@analog.com>
 References: <20251208-gmsl2-3_serdes-v8-0-7b8d457e2e04@analog.com>
 In-Reply-To: <20251208-gmsl2-3_serdes-v8-0-7b8d457e2e04@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -56,11 +57,11 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
  mitrutzceclan@gmail.com, Cosmin Tanislav <demonsingur@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1765203192; l=2278;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1765203192; l=722;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=Uby6G6BvwgKOObBXcLlxO1bh2+JafLSgY3oYvgugXOs=;
- b=C7SsifaJN557+EViKCkav+E+c59VtDoptQYXCAvGND2AtQ190tO7bYnx6CfaxhBAcdmVX6Pzt
- biRWS6UP95tAuNT3uqDxNNqlz3UtdrZgDZD1V/cbXTKBJI96PXskAap
+ bh=VF4KSVJI1GCWF1vEPraFbtaDI8K1Hqm1ue911q30Ry4=;
+ b=1PI/X+8dtqcjrCDZiCpIp9D0uFO6nMnGCdvnnmKD7qx2fVhf+uUqKLfBFZi0DRseWNm2sDFlq
+ Yq/Kg14C9dmBdKoUw/ecK2yrLDBerajHaMeSn8zvyUjSzsjfsENxedz
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -70,68 +71,27 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-The previous MAX96717 driver has been removed and its functionality has
-been moved to a MAX96717 driver which makes use of the Maxim GMSL2/3
-serializer framework.
+The staging MAX96712 driver will be removed as its functionality has
+been moved to the MAX96724 driver which makes use of the Maxim
+GMSL2/3 deserializer framework.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 ---
- MAINTAINERS                |  1 -
- drivers/media/i2c/Kconfig  | 16 ----------------
- drivers/media/i2c/Makefile |  1 -
- 3 files changed, 18 deletions(-)
+ arch/arm64/configs/defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6a6a04ce2787..ad7e28897062 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15235,7 +15235,6 @@ M:	Julien Massot <julien.massot@collabora.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
--F:	drivers/media/i2c/max96717.c
- 
- MAX9860 MONO AUDIO VOICE CODEC DRIVER
- M:	Peter Rosin <peda@axentia.se>
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 37f86e6de969..4d3a861ee2f0 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -1701,22 +1701,6 @@ config VIDEO_MAX96714
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called max96714.
- 
--config VIDEO_MAX96717
--	tristate "Maxim MAX96717 GMSL2 Serializer support"
--	depends on I2C && VIDEO_DEV && COMMON_CLK
--	select I2C_MUX
--	select MEDIA_CONTROLLER
--	select GPIOLIB
--	select V4L2_CCI_I2C
--	select V4L2_FWNODE
--	select VIDEO_V4L2_SUBDEV_API
--	help
--	  Device driver for the Maxim MAX96717 GMSL2 Serializer.
--	  MAX96717 serializers convert video on a MIPI CSI-2
--	  input to a GMSL2 output.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called max96717.
- 
- source "drivers/media/i2c/maxim-serdes/Kconfig"
- 
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index be3200b23819..96bc49339341 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -70,7 +70,6 @@ obj-$(CONFIG_VIDEO_M52790) += m52790.o
- obj-$(CONFIG_VIDEO_MAX9271_LIB) += max9271.o
- obj-$(CONFIG_VIDEO_MAX9286) += max9286.o
- obj-$(CONFIG_VIDEO_MAX96714) += max96714.o
--obj-$(CONFIG_VIDEO_MAX96717) += max96717.o
- obj-$(CONFIG_VIDEO_MAXIM_SERDES) += maxim-serdes/
- obj-$(CONFIG_VIDEO_ML86V7667) += ml86v7667.o
- obj-$(CONFIG_VIDEO_MSP3400) += msp3400.o
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e3a2d37bd104..298cc76fe7b6 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1319,7 +1319,6 @@ CONFIG_GREYBUS=m
+ CONFIG_GREYBUS_BEAGLEPLAY=m
+ CONFIG_STAGING=y
+ CONFIG_STAGING_MEDIA=y
+-CONFIG_VIDEO_MAX96712=m
+ CONFIG_VIDEO_MESON_VDEC=m
+ CONFIG_SND_BCM2835=m
+ CONFIG_CHROME_PLATFORMS=y
 
 -- 
 2.43.0
