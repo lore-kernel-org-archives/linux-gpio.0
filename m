@@ -1,86 +1,83 @@
-Received: from out199-18.us.a.mail.aliyun.com (out199-18.us.a.mail.aliyun.com [47.90.199.18])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13F432C8B;
-	Thu, 11 Dec 2025 03:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F531E2606;
+	Thu, 11 Dec 2025 08:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765424932; cv=none; b=tdvGdRRWxDWRX47BQ33qWidy8YytAZG548iYGl2a6ew/GEAnoabdrzCJYZsFYcuu6jf0bhrecIuPIPZljyPaOnwu30bYPu6DgCMdRAWPtNNci3m+CRIja+fGAs/FNuyF5UXFBnbA3pHloWZSXO85rMryvOpzevbK49YcDatgSbw=
+	t=1765442803; cv=none; b=EABYQhJC4dcbIxMsJwqHTEjwc3IMF+pOx+d8dTyb9vz9ogbkIn19ZOUqfyWrqr0U2ATjl0swxIstErmegZrrHtsK7I3Q9F4Vxhy2vTxykSf3wdCLIh9l+l35ZTFQVKc/DX1JsPjYJCrzz1ZFhgTBD1Gvllmm2UTL8xZQbtZeNeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765424932; c=relaxed/simple;
-	bh=P/mRXhxojwzAaDBRdCIqSNqvcH8X9/vWjmUzYUbeX7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DwEBjEUWHonJ5eDnzMtDw5y2WX6Y7IYKK7EQNmU/GMSndSl0P0Or5eEnfDImARbuiwtQfPygUzpZAhU7m/+UKL1SN9o+NJjIL2asJQlPYEdmm+U/h6+XsKcyWYWyhC5uJ0/KQXbAAl0/OO06xOLAK3+AIr0WoVdzv4T0qNDLCU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CiKNCl6H; arc=none smtp.client-ip=47.90.199.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1765442803; c=relaxed/simple;
+	bh=JnkTmw4C1Jgs0//VWSnP0/eoZvp3SMN6HA2NVa3qSwE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hHVUEYXSuz6wpR6p4aVXAw4oDX1eu9nBguEdfIGUHE+5DL84p6TxWoBtck1wYyGzbjAKKQwdZUdjn0fYhXXLC/90lTFt2tsH1bpOYAdFtS/eWlDtcL3NU3JrKK6pTy7W1YDt1TOaRchc/Lwi7yNolMev4zqo4RzlQEpSDZH+cBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Mm0oV692; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CiKNCl6H"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1765424916; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=bwI27Qotcd/3gSdH3Q5W4KZfmIl1mrQxgI8NNrXL2tY=;
-	b=CiKNCl6HiNRiGMgs51XMeqmBivZe+juhguUdznN/5bqDPA2aXktK64SDqq+wz8Buy9BS5ypkfSyqNRygYb+ef6/k8wN6NZPCvOZebDtyIU5xF0tS0G40ACLviY0Ul5Uq649GpYyHFdPtmWLCJfpknk73h/PwTLSZZNSpmENsjcg=
-Received: from localhost(mailfrom:kanie@linux.alibaba.com fp:SMTPD_---0WuYnsDN_1765424911 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 11 Dec 2025 11:48:35 +0800
-From: Guixin Liu <kanie@linux.alibaba.com>
-To: Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH RESEND] selftests: gpio: correctly check the type of /dev/gpiochipX
-Date: Thu, 11 Dec 2025 11:48:31 +0800
-Message-ID: <20251211034831.62802-1-kanie@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Mm0oV692"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1765442796;
+	bh=OktlR9bq9mtEJ084n35uOYN2zYX8CCRfSb1l9l6A6kk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Mm0oV6927NtwXJE3mZ5NmG0zvn3PLYLkzuH2SuFBs0ZLXJGI6nAlarUCDa4g3xQnK
+	 kt3dxwj0rntoJLRQiItErW2OtnnEgXTXgbd8I9EwVeckhHKjStFY2OKQ72oa0603xf
+	 ysq6gJFwro2BzOitoUv/fcH77fmag4NGvMSMI4/2a3RdTPyWAmSp/MOgleNxfrstqN
+	 mNxmn93DegF3TrrLKt6hYW8isRz367469Xx5DYNwqZacGzZsgGwCDzcJSfy38wgFXH
+	 AF8EwEXPZJ4/XWy/VSfTbcp/Y6TdJg2ExjtCJCuMd5Eo17JeoMIwk6XG9zn79e0urP
+	 sltPCG4O5FxbQ==
+Received: from [127.0.1.1] (fs98a57d9c.tkyc007.ap.nuro.jp [152.165.125.156])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id C64A97D6B0;
+	Thu, 11 Dec 2025 16:46:31 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Date: Thu, 11 Dec 2025 17:45:44 +0900
+Subject: [PATCH RFC 02/16] pinctrl: aspeed: g5: Constrain LPC binding
+ revision workaround to AST2500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251211-dev-dt-warnings-all-v1-2-21b18b9ada77@codeconstruct.com.au>
+References: <20251211-dev-dt-warnings-all-v1-0-21b18b9ada77@codeconstruct.com.au>
+In-Reply-To: <20251211-dev-dt-warnings-all-v1-0-21b18b9ada77@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: Joel Stanley <joel@jms.id.au>, linux-hwmon@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+ linux-iio@vger.kernel.org, Andrew Jeffery <andrew@codeconstruct.com.au>
+X-Mailer: b4 0.14.3
 
-/dev/gpiochipX is a character device, not a directory, so we should
-use "test -c" instead of "test -d" to check for its existence;
-otherwise, the current check will not work correctly when
-/dev/gpiochipX is left over (e.g., as a stale device node).
+Discovering a phandle to an AST2400 or AST2600 LPC node indicates an
+error for the purpose of the AST2500 pinctrl driver.
 
-Signed-off-by: Guixin Liu <kanie@linux.alibaba.com>
+Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 ---
- tools/testing/selftests/gpio/gpio-aggregator.sh | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/gpio-aggregator.sh b/tools/testing/selftests/gpio/gpio-aggregator.sh
-index 9b6f80ad9f8a..13d8e1607571 100755
---- a/tools/testing/selftests/gpio/gpio-aggregator.sh
-+++ b/tools/testing/selftests/gpio/gpio-aggregator.sh
-@@ -351,7 +351,7 @@ test "$(agg_get_chip_num_lines _sysfs.0)" = "1" || fail "number of lines is not
- test "$(agg_get_line_name _sysfs.0 0)" = "" || fail "line name is unset"
- echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
- test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
--test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
-+test -c /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+index 792089628362..d4c364d19d64 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+@@ -2654,9 +2654,7 @@ static struct regmap *aspeed_g5_acquire_regmap(struct aspeed_pinmux_data *ctx,
+ 		np = of_parse_phandle(ctx->dev->of_node,
+ 					"aspeed,external-nodes", 1);
+ 		if (np) {
+-			if (!of_device_is_compatible(np->parent, "aspeed,ast2400-lpc-v2") &&
+-			    !of_device_is_compatible(np->parent, "aspeed,ast2500-lpc-v2") &&
+-			    !of_device_is_compatible(np->parent, "aspeed,ast2600-lpc-v2"))
++			if (!of_device_is_compatible(np->parent, "aspeed,ast2500-lpc-v2"))
+ 				return ERR_PTR(-ENODEV);
  
- echo "1.2.2. Complex creation/deletion"
- echo "chip0bank0_0 chip1_bank1 10-11" > "$SYSFS_AGG_DIR/new_device"
-@@ -365,7 +365,7 @@ test "$(agg_get_line_name _sysfs.0 1)" = "" || fail "line name is unset"
- test "$(agg_get_line_name _sysfs.0 2)" = "" || fail "line name is unset"
- echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
- test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
--test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
-+test -c /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
- 
- echo "1.2.3. Asynchronous creation with deferred probe"
- sim_disable_chip  chip0
-@@ -382,7 +382,7 @@ test "$(agg_get_chip_num_lines _sysfs.0)" = "1" || fail "number of lines is not
- test "$(agg_get_line_name _sysfs.0 0)" = "" || fail "line name unexpectedly set"
- echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
- test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
--test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
-+test -c /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
- 
- echo "1.2.4. Can't instantiate a chip with invalid configuration"
- echo "xyz 0" > "$SYSFS_AGG_DIR/new_device"
+ 			map = syscon_node_to_regmap(np->parent);
+
 -- 
-2.43.0
+2.47.3
 
