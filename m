@@ -1,178 +1,323 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49239.qiye.163.com (mail-m49239.qiye.163.com [45.254.49.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE053BE54B
-	for <linux-gpio@vger.kernel.org>; Tue, 16 Dec 2025 13:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5734EEFC;
+	Tue, 16 Dec 2025 14:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765891006; cv=none; b=OW5gF4OUodWNj6g4eDCDM/1jSs8x1gY01OMh1RC3KEklh+8oRZ0t7hB54+8Ig2sFH68mNwVK6JSySi9q0QL7ii7uNDsXStanzMvax6Jkg+DGdkBKFKrDyA7Pf/l6lDn1JcicZ4xM+85HuLGt1vghnE9FP00snNgscOeaKcoWIb0=
+	t=1765896624; cv=none; b=u0dlb0LQ45yv1YVOV55WM3nmrWj8qi608E3iDBwl1Ij3raJVo7uD/C2vfT2+UfDVr9i4BIryNiGLwC4zkhNp21vRYwYjq3xufGVk5JodeN56A7yaAXF2zibsqZl+R2xbYGqcOwLfIlMS2tIyx0XRnmLTIpcMW7WOWGDl2J/WMQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765891006; c=relaxed/simple;
-	bh=ie+AJbWUF5jtAMvd+Vk2sYgjyzBsY+yVmjQ8OwD7xm4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TgBVp0YEFcIXyylISseU6D3IXgyHjyhZxOrjbHRRNfT8P1MTcdpHsxmP8Jp9FFKCoqzJLqUGsHJViavtX70HhPxfS0ow29YyrDEBasQpaezeIc6L3xhDpCx+uA2VsSqc37e4JYMgjpATldvAGCH2HNQn60a2qjh5E8zYN1MYN4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQH7mhPy; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765896624; c=relaxed/simple;
+	bh=bbU46KCi04GsaMDU6LJPZUfiVi/OpeLYaBWOL2lkWqM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kCocFr0DN6TdGC3sMvAWsmY8/yunsbbw/b5t+qTqS/XddDC7MrqAaS7YWDiINhwNZp+jxtY/cEijSIuElIAfYwPs7HWVdaxFB51h7JDjznSGLANKRciPxDYyhradpbhDyVT7te4/cbCyopsnSIEN7gJfwddCPG/B81FFdb/efLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ULTOS+Rs; arc=none smtp.client-ip=45.254.49.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQH7mhPy"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4779aa4f928so56583905e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Dec 2025 05:16:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765890997; x=1766495797; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9wEQyxMelFUxIKkKjwpqNdvXFJKNGJ/TVkTqrb2W9yo=;
-        b=cQH7mhPyhODzTUmWb7AP/SnvcqSZ5JMfmdA4afCm/ROKeT3lGClRoS0+cl1yaZCpxx
-         CTyXx0njdamGeS1tnUawkfAYin1ifKRgRi+7OynH0fS3CJpqBfmxzT+zo7Het1J15BWX
-         ytsDp8nqbEU2UqE+iCN1wZvsgnYw+wlgircupK3NlZe1iBUmtmvgQu7dJAde8fXegKaP
-         CoBv+u5RrgAwbho+dEApk4Z9wDzEeP61FYKMzfKud38xmco0HqXfVWsycu5+wkqt3gzu
-         f2KLe+FPCjlU2ycNjJ47lWsDh95mrGJUgbqYKmKCQiCqV6JLP5HAv7Tm19TeH9dmUGw6
-         CcNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765890997; x=1766495797;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wEQyxMelFUxIKkKjwpqNdvXFJKNGJ/TVkTqrb2W9yo=;
-        b=wFHhfIsHuzxkVsDCw6FV12pWEF0YlDFRHtMzJDuRJ6y3VrJNsPTkZ0uWHZB8Jcy6RD
-         AkZxWNPmi0bc+IXOxQTyDIMm0JlnCCm6FSxzq5iM15NK3r4r0rS910Bs5GLaTrV8RXq3
-         R5vlxKFjN5zH4l+V0WpD27zWKKkc6h7c6xxYyV10sbsV8tfBG/FdCREdSOgMyzzXVZwE
-         RdXRK5l5/zri+aBzEfPED4JFkW8i9bHVxEfIqly3ftO/xvli/yPIWgonu70nwG8wIMV8
-         s/s5SdqZF8+XvYjOWqlRqnz2XAvYTWhaBHDQ8rxYOM9uimhAJiXQPfBTyYXmBC+GNhq+
-         bOIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnVid34px4TL4cxwuIv/i/AO3PwQWoHFZ3O4EYq8zwS+ZAlMUDAlefKnM9jZHxp/7oiFrJ5evG1cPQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa0ufRl6LcCYRxhLcWHcYN9/ZZ4Lvuv1o7RTBQL8V34lyAAGwK
-	TGmyGNL+8AcqhG3za6BSzllKf6IOfavuuyr8vtxcQ9oDRodnMlDr9oe8/Np1HA==
-X-Gm-Gg: AY/fxX7PLLioBA9N6Qz99I52kNqAQVzRMZFK1MoJHWwnh+ZuA0lIz37ZSe7sCqYmPzp
-	eHBhes0rvuS+P18aF3EW3oMNil1x5ftz2b/8i6QKBa+vvalNvJA++CZms2+C1Ok+aGHHvYqOr5a
-	O3mQINN4YRbwx6l3w4kx7cLRvIeGBfDA1Xo2ky3mGUck0LRjrneafK7Nw31NjsYmpy4qIKb8fK/
-	b0WdHmmPYqvLNoR7iqLWHOMx1SHfAil+y1Pn3OcE1fdI3vKZoObAdZRMEiV8ibwbXDlKSXkheZT
-	n03HiYsHis80eS+0skJh/BdLRVIXhZIQnSpBkFwzBxAwRzU85Thd/Od/Z4pZ6am3Faa8FYDKH9r
-	2ukS5o8TEXHJjDvQLytSaD8Cb2TI4ZCVUmHOzIkp8NzNLPAAX7kFoRNI6tlh3zKU4KxJ1c5WzKk
-	kLDV8BnmYWt6aLSIniaok=
-X-Google-Smtp-Source: AGHT+IFBWulMuxuU7oloQiW42dIOzblQOJkSMSYM3mkR4FEHTZuiqpMj0PdGHiwFPjZwBQ0pemM/Ww==
-X-Received: by 2002:a05:600c:4f4a:b0:477:28c1:26ce with SMTP id 5b1f17b1804b1-47a8f8a717dmr161923995e9.7.1765890996571;
-        Tue, 16 Dec 2025 05:16:36 -0800 (PST)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f6e5baasm257873965e9.13.2025.12.16.05.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 05:16:36 -0800 (PST)
-Message-ID: <50bea4bef338490cae92f61a8cc9a555db4529c2.camel@gmail.com>
-Subject: Re: [PATCH v4 2/3] hwmon: ltc4283: Add support for the LTC4283 Swap
- Controller
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>, nuno.sa@analog.com, 
-	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,  Jean Delvare <jdelvare@suse.com>, Jonathan Corbet
- <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>,  Bartosz
- Golaszewski	 <brgl@bgdev.pl>
-Date: Tue, 16 Dec 2025 13:17:17 +0000
-In-Reply-To: <ca659699-e5f8-436f-bfdb-d0d250d34fca@roeck-us.net>
-References: <20251204-ltc4283-support-v4-0-db0197fd7984@analog.com>
-	 <20251204-ltc4283-support-v4-2-db0197fd7984@analog.com>
-	 <c9cb3a2b-da6b-42a6-87b0-7a2b780f5ad8@roeck-us.net>
-	 <56a6c6a1b800090522a61eea5141aa8c986faea1.camel@gmail.com>
-	 <ca659699-e5f8-436f-bfdb-d0d250d34fca@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ULTOS+Rs"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2d6ee1fa0;
+	Tue, 16 Dec 2025 19:21:01 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tao.huang@rock-chips.com
+Subject: [PATCH v3 6/7] dt-bindings: pinctrl: rockchip: Add RMIO controller binding
+Date: Tue, 16 Dec 2025 19:20:52 +0800
+Message-Id: <20251216112053.1927852-7-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251216112053.1927852-1-ye.zhang@rock-chips.com>
+References: <20251216112053.1927852-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b26e4691409d8kunm7ab62e1d2a7b3bf
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkpLTlZKSkgfQklNTh1MSx9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=ULTOS+RsdtB/JaLyeX8BDv5ZWIBiA1Hp4yQl5a7ZSQaKB8imQVtmxx7Ry0jGp6rSXU8KOdBKCRGEXr5HOp2669uXa3czx0WTv1xiwls4l72xGef1mZBiY8QwKH+2X8o7E1gSba3dVWMjs26pWGI8yTQfDwcOJe6HtegA0IjIw78=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=9YZsNhFzzR6dDdU0HTPthyvmRQ2DTHuowAWIUZgM/GY=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, 2025-12-12 at 09:07 -0800, Guenter Roeck wrote:
-> On 12/12/25 08:50, Nuno S=C3=A1 wrote:
-> > On Thu, 2025-12-11 at 09:56 -0800, Guenter Roeck wrote:
-> > > On 12/4/25 08:15, Nuno S=C3=A1 via B4 Relay wrote:
-> > > > From: Nuno S=C3=A1 <nuno.sa@analog.com>
-> > > >=20
-> > > > Support the LTC4283 How Swap Controller. The device features progra=
-mmable
-> > > > current limit with foldback and independently adjustable inrush cur=
-rent to
-> > > > optimize the MOSFET safe operating area (SOA). The SOA timer limits=
- MOSFET
-> > > > temperature rise for reliable protection against overstresses.
-> > > >=20
-> > > > An I2C interface and onboard ADC allow monitoring of board current,
-> > > > voltage, power, energy, and fault status.
-> > > >=20
-> > > > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> > > > ---
-> > > ...
-> > > > diff --git a/drivers/hwmon/ltc4283.c b/drivers/hwmon/ltc4283.c
-> > > > new file mode 100644
-> > > > index 000000000000..d79432678b84
-> > > > --- /dev/null
-> > > > +++ b/drivers/hwmon/ltc4283.c
-> > > ...
-> > > > +
-> > > > +static int ltc4283_read_voltage_word(const struct ltc4283_hwmon *s=
-t,
-> > > > +				=C2=A0=C2=A0=C2=A0=C2=A0 u32 reg, u32 fs, long *val)
-> > > > +{
-> > > > +	__be16 in;
-> > > > +	int ret;
-> > > > +
-> > > > +	ret =3D regmap_bulk_read(st->map, reg, &in, sizeof(in));
-> > >=20
-> > > I had a look into the regmap code. In its current implementation,
-> > > that will work as long as
-> > > 1) regmap is configured to not cache anything
-> > > 2) the I2C controller supports I2C_FUNC_SMBUS_I2C_BLOCK
-> > >=20
-> >=20
-> > Possibly dumb question... what would be the issue about doing multiple
-> > regmap reads if we can't do the bulk?=C2=A0That would be my naive appro=
-ach in
-> > the driver if I'm not going to use the bulk API.
-> >=20
->=20
-> You mean on the same address ? I don't have the chip to check, but I am q=
-uite
-> sure that it would return the 1st byte again.
->=20
-> FWIW, in the lm92 driver I used a regmap_bus to solve pretty much the sam=
-e
-> problem.
->=20
->=20
+1. Add header file with constants for RMIO function IDs for the Rockchip
+RK3506 SoC.
+2. Add device tree binding for the RMIO (Rockchip Matrix I/O) controller
+which is a sub-device of the main pinctrl on some Rockchip SoCs.
 
-Ok, I know understand the issue. We do have real word registers (though the=
- energy
-spans 6 registers IIRC) in which case the regmap bulk fallback would fail. =
-So I do
-agree with you that relying on regmap implementation details is questionabl=
-e so
-I'll add my own bus.
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ .../bindings/pinctrl/rockchip,pinctrl.yaml    |   9 ++
+ .../bindings/pinctrl/rockchip,rmio.yaml       | 106 +++++++++++++++++
+ .../pinctrl/rockchip,rk3506-rmio.h            | 109 ++++++++++++++++++
+ 3 files changed, 224 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/rockchip,rmio.yaml
+ create mode 100644 include/dt-bindings/pinctrl/rockchip,rk3506-rmio.h
 
-But the above made me start thinking about how we should handle
-i2c_check_functionality()? For this device, I2C_FUNC_SMBUS_WORD_DATA and
-I2C_FUNC_SMBUS_BYTE_DATA (can we have word without byte??) are the minimum =
-the
-controller needs to support. So I could add the below:
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index 97960245676d..9a27eaf7942b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -82,6 +82,15 @@ required:
+   - rockchip,grf
+ 
+ patternProperties:
++  "rmio[0-9]*$":
++    type: object
++
++    $ref: "/schemas/pinctrl/rockchip,rmio.yaml#"
++
++    description:
++      The RMIO (Rockchip Matrix I/O) controller node which functions as a
++      sub-device of the main pinctrl to handle flexible function routing.
++
+   "gpio@[0-9a-f]+$":
+     type: object
+ 
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,rmio.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,rmio.yaml
+new file mode 100644
+index 000000000000..af0b34512fb9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,rmio.yaml
+@@ -0,0 +1,106 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/rockchip,rmio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: RMIO (Rockchip Matrix I/O) Controller
++
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
++
++description: |
++  The RMIO controller provides a flexible routing matrix that allows mapping
++  various internal peripheral functions (UART, SPI, PWM, etc.) to specific
++  physical pins. This block is typically a sub-block of the GRF
++  (General Register Files) or PMU (Power Management Unit).
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - rockchip,rk3506-rmio
++      - const: rockchip,rmio
++
++  rockchip,rmio-grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The phandle of the syscon node (GRF or PMU) containing the RMIO registers.
++      This property is required if the RMIO registers are located in a different
++      syscon than the parent pinctrl node.
++
++  rockchip,offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The offset of the RMIO configuration registers within the GRF.
++
++  rockchip,pins-num:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The number of physical pins supported by this RMIO instance.
++      Used for boundary checking and driver initialization.
++
++patternProperties:
++  "^[a-z0-9-]+$":
++    type: object
++    description:
++      Function node grouping multiple groups.
++
++    patternProperties:
++      "^[a-z0-9-]+$":
++        type: object
++        description:
++          Group node containing the pinmux configuration.
++
++        properties:
++          rockchip,rmio:
++            $ref: /schemas/types.yaml#/definitions/uint32-matrix
++            description:
++              A list of pin-function pairs. The format is <pin_id function_id>.
++            minItems: 1
++            items:
++              items:
++                - description: RMIO Pin ID (0 to pins-num - 1)
++                  minimum: 0
++                  maximum: 31
++                - description: Function ID
++                  minimum: 0
++                  maximum: 98
++
++        required:
++          - rockchip,rmio
++
++        additionalProperties: false
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - rockchip,rmio-grf
++  - rockchip,offset
++  - rockchip,pins-num
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/pinctrl/rockchip,rk3506-rmio.h>
++
++    pinctrl: pinctrl {
++        rmio: rmio {
++            compatible = "rockchip,rk3506-rmio", "rockchip,rmio";
++            rockchip,rmio-grf = <&grf_pmu>;
++            rockchip,offset = <0x80>;
++            rockchip,pins-num = <32>;
++
++            rmio-uart {
++                rmio_pin27_uart1_tx: rmio-pin27-uart1-tx {
++                    rockchip,rmio = <27 RMIO_UART1_TX>;
++                };
++
++                rmio_pin28_uart1_rx: rmio-pin28-uart1-rx {
++                    rockchip,rmio = <28 RMIO_UART1_RX>;
++                };
++            };
++        };
++    };
+diff --git a/include/dt-bindings/pinctrl/rockchip,rk3506-rmio.h b/include/dt-bindings/pinctrl/rockchip,rk3506-rmio.h
+new file mode 100644
+index 000000000000..b129e9a8c287
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/rockchip,rk3506-rmio.h
+@@ -0,0 +1,109 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++/*
++ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
++ */
++
++#ifndef __DT_BINDINGS_PINCTRL_ROCKCHIP_RK3506_RMIO_H
++#define __DT_BINDINGS_PINCTRL_ROCKCHIP_RK3506_RMIO_H
++
++/* RMIO function definition */
++#define RMIO_UART1_TX			1
++#define RMIO_UART1_RX			2
++#define RMIO_UART2_TX			3
++#define RMIO_UART2_RX			4
++#define RMIO_UART3_TX			5
++#define RMIO_UART3_RX			6
++#define RMIO_UART3_CTSN			7
++#define RMIO_UART3_RTSN			8
++#define RMIO_UART4_TX			9
++#define RMIO_UART4_RX			10
++#define RMIO_UART4_CTSN			11
++#define RMIO_UART4_RTSN			12
++#define RMIO_MIPITE			13
++#define RMIO_CLK_32K			14
++#define RMIO_I2C0_SCL			15
++#define RMIO_I2C0_SDA			16
++#define RMIO_I2C1_SCL			17
++#define RMIO_I2C1_SDA			18
++#define RMIO_I2C2_SCL			19
++#define RMIO_I2C2_SDA			20
++#define RMIO_PDM_CLK0			21
++#define RMIO_PDM_SDI0			22
++#define RMIO_PDM_SDI1			23
++#define RMIO_PDM_SDI2			24
++#define RMIO_PDM_SDI3			25
++#define RMIO_CAN1_TX			26
++#define RMIO_CAN1_RX			27
++#define RMIO_CAN0_TX			28
++#define RMIO_CAN0_RX			29
++#define RMIO_PWM0_CH0			30
++#define RMIO_PWM0_CH1			31
++#define RMIO_PWM0_CH2			32
++#define RMIO_PWM0_CH3			33
++#define RMIO_PWM1_CH0			34
++#define RMIO_PWM1_CH1			35
++#define RMIO_PWM1_CH2			36
++#define RMIO_PWM1_CH3			37
++#define RMIO_PWM1_CH4			38
++#define RMIO_PWM1_CH5			39
++#define RMIO_PWM1_CH6			40
++#define RMIO_PWM1_CH7			41
++#define RMIO_TOUCH_KEY_DRIVE		42
++#define RMIO_TOUCH_KEY_IN0		43
++#define RMIO_TOUCH_KEY_IN1		44
++#define RMIO_TOUCH_KEY_IN2		45
++#define RMIO_TOUCH_KEY_IN3		46
++#define RMIO_TOUCH_KEY_IN4		47
++#define RMIO_TOUCH_KEY_IN5		48
++#define RMIO_TOUCH_KEY_IN6		49
++#define RMIO_TOUCH_KEY_IN7		50
++#define RMIO_SAI0_MCLK			51
++#define RMIO_SAI0_SCLK			52
++#define RMIO_SAI0_LRCK			53
++#define RMIO_SAI0_SDI0			54
++#define RMIO_SAI0_SDI1			55
++#define RMIO_SAI0_SDI2			56
++#define RMIO_SAI0_SDI3			57
++#define RMIO_SAI0_SDO			58
++#define RMIO_SAI1_MCLK			59
++#define RMIO_SAI1_SCLK			60
++#define RMIO_SAI1_LRCK			61
++#define RMIO_SAI1_SDI			62
++#define RMIO_SAI1_SDO0			63
++#define RMIO_SAI1_SDO1			64
++#define RMIO_SAI1_SDO2			65
++#define RMIO_SAI1_SDO3			66
++#define RMIO_SPI0_CLK			67
++#define RMIO_SPI0_MOSI			68
++#define RMIO_SPI0_MISO			69
++#define RMIO_SPI0_CSN0			70
++#define RMIO_SPI0_CSN1			71
++#define RMIO_SPI1_CLK			72
++#define RMIO_SPI1_MOSI			73
++#define RMIO_SPI1_MISO			74
++#define RMIO_SPI1_CSN0			75
++#define RMIO_SPI1_CSN1			76
++#define RMIO_WDT_TSADC_SHUT		77
++#define RMIO_PMU_SLEEP			78
++#define RMIO_CORE_POWER_OFF		79
++#define RMIO_SPDIF_TX			80
++#define RMIO_SPDIF_RX			81
++#define RMIO_PWM1_BIP_CNTR_A0		82
++#define RMIO_PWM1_BIP_CNTR_A1		83
++#define RMIO_PWM1_BIP_CNTR_A2		84
++#define RMIO_PWM1_BIP_CNTR_A3		85
++#define RMIO_PWM1_BIP_CNTR_A4		86
++#define RMIO_PWM1_BIP_CNTR_A5		87
++#define RMIO_PWM1_BIP_CNTR_B0		88
++#define RMIO_PWM1_BIP_CNTR_B1		89
++#define RMIO_PWM1_BIP_CNTR_B2		90
++#define RMIO_PWM1_BIP_CNTR_B3		91
++#define RMIO_PWM1_BIP_CNTR_B4		92
++#define RMIO_PWM1_BIP_CNTR_B5		93
++#define RMIO_PDM_CLK1			94
++#define RMIO_ETH_RMII0_PPSCLK		95
++#define RMIO_ETH_RMII0_PPSTRIG		96
++#define RMIO_ETH_RMII1_PPSCLK		97
++#define RMIO_ETH_RMII1_PPSTRIG		98
++
++#endif /* __DT_BINDINGS_PINCTRL_ROCKCHIP_RK3506_RMIO_H */
+-- 
+2.34.1
 
-if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA
-				    | I2C_FUNC_SMBUS_WORD_DATA))
-		return -ENODEV;
-
-But can't we have I2C_FUNC_I2C (or even I2C_FUNC_SMBUS_I2C_BLOCK) without
-supporting SMBUS?
-
-I mean, I can so something similar to what's being done in regmap-i2c but m=
-aybe
-that's too much? I'm leaning in that direction though...
-
-
-This made me wonder, again, about ltc4282 but in there word registers are i=
-n
-fact reg and reg + 1.
-
-- Nuno S=C3=A1
