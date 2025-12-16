@@ -1,209 +1,323 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023072.outbound.protection.outlook.com [52.101.83.72])
+Received: from mail-m1973198.qiye.163.com (mail-m1973198.qiye.163.com [220.197.31.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DD91DDC33;
-	Tue, 16 Dec 2025 07:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765870841; cv=fail; b=DzdtfDTaX0QcT+ohthu8e44pLIWayu1Z+2r9TzulWySXGTGnqNx2I4I1kDSGh5/szSMCGAY9HaCgJquBZ7e4bxGwa3FenNt8Ck/UU+EXL/e6WfhfMo24SfIB7LBFaqeCLsOvNvI7pFeGIBS8Pj55f5bZzeZmS8wPSs+aXW+detk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765870841; c=relaxed/simple;
-	bh=dpv/bDSax0c0B86GdLRpFpHsBS5zS4r3RE+yILawXM0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=f1yjdsBh54/ILfk8dHGfv0RwkNZv7yp0lT0SfHThul3/G5yhFpr3wrGMmtulLq5nsIopNY+BgJzP0oh5NyhUvY/VP+66InJZqhsaXXUJUCmB0oeiknnoLJufXDrGyCZrhrIpVrW6mLBbV7Rdc9Prlor3EGnYhUNw8MkTtJaMTZQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=fIwR3DP0; arc=fail smtp.client-ip=52.101.83.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE9833DEE1;
+	Tue, 16 Dec 2025 11:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765884071; cv=none; b=fpQq/y8pCcy9Cjl+8DrxW8W2jAouW5jBBrNoaDCpcpr4VSU3LhwqEVuEyV6NzxhZ/4gh6FMB/X9D5Ydiv4P4WmnXLt9zym6fO3Apgqi6UBidMOCu5GB8BQ7RG5s7CML1EYGT9ycLAVof8DqGyVWbbRojE5tWz2o7njblkN2wENU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765884071; c=relaxed/simple;
+	bh=Afl4+DpjlnJLjISs5DirEutfNhPrxCPl5dKQVqWTRD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fetuxXt4l3JwJ9leWf95G26zioD02CCj6CGItoAWepOmsV3BItV4mY0nE5aH/W+agHRUlv5rN+s85uFabl6GLZZ9Q5+SxB9DFGqr8keFh2RuGE0qxQC7+776CXf1VKamjCd1JZA3blJqCau6mqTaenA2kGzGMY0cqJknqTMLlSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bX2+5KII; arc=none smtp.client-ip=220.197.31.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="fIwR3DP0"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uAAFaLnfaoms4uaHR7iOoIjqMY2wsuUPXqbEVq4MYRdf6TgOQNi0hyHbikuh67ex53lsFe5ebX+0sdQ5pgUGxEJ/WGIT8+xO0Pu1+lXVEvLCA5xK3GNlauAn+QhnKLz4/GDRkotGx+11gLLw9+Vc1z12mHYHoXZxWj6zNoQ+9vHieDkz9BiYGSHmU+nvdNwCXjqpUuGxVebkuS988R1AvpvuS/n7pUci2FwGP/3FB3dnnFJ7iPLZB3ynAnKGkBGak5lTvoxD+RYR52ZLRm9FlG3S9KVCt52ksrXjBVCTALWJpVFkrU3qCxcDKWle82ZUmGQtGThN9hkaagPNspRJCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AINkJf2s08O2FpIdaqOK6YljkOE8ZozmTnApmE8eDmA=;
- b=xaeMHSViJcCmhbFo/PhrnlWBG9NOaiOpNq33O9DUp6olxeNJG0sXlrAZmibpJB7whSvHCf9PC+gg1IE0VfHULVOnn4FAdoWtEzgUVMy6lzCflaLOc16pv0sjfg65ICg15RR140bjeM1FxUh9AC8ccqbuza4cHdIg17YBUFGLPVspA9EbV3q1aTJkYROeVPOGiau697kt/RM7a7XpNsEDAcMXCsPi/Z4W8KRUq1NXnvdx8Na2lfej6lXLRJDFQwvapCp2LRxAORR/5jsu8wr29KRFlljeIWQu/r9GLbbeX11L0lAIUN3KDBNsF/Jhr3C67vh+hpzQCeRr4PwJsvPdsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 91.26.50.189) smtp.rcpttodomain=eilabs.com smtp.mailfrom=phytec.de;
- dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=phytec.de; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AINkJf2s08O2FpIdaqOK6YljkOE8ZozmTnApmE8eDmA=;
- b=fIwR3DP0kSSbIXBTM3Z2xiZbAEloJEYKT/L8CM4n1sGWdgY3m9srZvgGXyF3VF8pxvbnqS9oa6vVbzOufjL8z8YAMVaFwOthbBpUdjeKerOcZYONDl+H4KZ+LPdwEDn9r2+VUTg8D7B3xOH4ui8xFFav6BPJoLo+mT9zyB+yrMgfHiuE0OFlJy3U5ohwbdelhINjrYJISG/0UKIls8x/+uu8Zj47EfnzsFvnJBDX3/bm2gYmlyMabFFq+lSSHIkgMSwsS0WiRuIfdLIN2KHfmnQs/hVt8ryUh4C4+VbgA7+ZXvBpC3fJgP/w0IfS+JZeYRkonONYKNhP4saxmQC8Lw==
-Received: from DU7P251CA0027.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:551::25)
- by AS4P195MB1936.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:580::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Tue, 16 Dec
- 2025 07:39:52 +0000
-Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:551:cafe::a9) by DU7P251CA0027.outlook.office365.com
- (2603:10a6:10:551::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9412.13 via Frontend Transport; Tue,
- 16 Dec 2025 07:39:48 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
- smtp.mailfrom=phytec.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- phytec.de discourages use of 91.26.50.189 as permitted sender)
-Received: from Postix.phytec.de (91.26.50.189) by
- DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9412.4 via Frontend Transport; Tue, 16 Dec 2025 07:39:51 +0000
-Received: from llp-jremmet.phytec.de (172.25.39.81) by Postix.phytec.de
- (172.25.0.11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 16 Dec
- 2025 08:39:50 +0100
-From: Jan Remmet <j.remmet@phytec.de>
-Date: Tue, 16 Dec 2025 08:39:33 +0100
-Subject: [PATCH v2 1/3] Documentation: gpio: add TCAL6408 and TCAL6416
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bX2+5KII"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2d6ee1f97;
+	Tue, 16 Dec 2025 19:20:57 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tao.huang@rock-chips.com
+Subject: [PATCH v3 3/7] pinctrl: rockchip: Add rv1126b pinctrl support
+Date: Tue, 16 Dec 2025 19:20:49 +0800
+Message-Id: <20251216112053.1927852-4-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251216112053.1927852-1-ye.zhang@rock-chips.com>
+References: <20251216112053.1927852-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251216-wip-jremmet-tcal6416rtw-v2-1-6516d98a9836@phytec.de>
-References: <20251216-wip-jremmet-tcal6416rtw-v2-0-6516d98a9836@phytec.de>
-In-Reply-To: <20251216-wip-jremmet-tcal6416rtw-v2-0-6516d98a9836@phytec.de>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?q?Levente_R=C3=A9v=C3=A9sz?= <levente.revesz@eilabs.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-	<devicetree@vger.kernel.org>, <upstream@lists.phytec.de>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: Postix.phytec.de (172.25.0.11) To Postix.phytec.de
- (172.25.0.11)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|AS4P195MB1936:EE_
-X-MS-Office365-Filtering-Correlation-Id: d66f2901-481c-4079-9994-08de3c764c66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cTc0S1VLeWFsU0tKc0lkenhaYWtySUhVNWgxYWozUWdoWmZWRmsyMEE4V1dB?=
- =?utf-8?B?MlRNVjhmMmV1SE9Mc3ZSMHAzOHZIOTBkUFBqRkJCYmdibCtlaW8wdXdDREpx?=
- =?utf-8?B?d2NxZEtxWDVGeWFHSDBJMjV6UE1Wa0QzN0xDSDFxd2lzSzBWbGw4azdOMzZz?=
- =?utf-8?B?bUp5K3lveDhQRk5PZmdpQ3BDQWY0SUEwa2lMWHJ0czdSejRhYWZhWlludHUw?=
- =?utf-8?B?TVJMbUQybVlCWFhnTUVmSTNRSXF5VEVGQ3hqK0NaUFVzYWw5Sjg4TUpsTjNv?=
- =?utf-8?B?TlNsWHEvV2FjUmQrTDgzNWxpOXRrVWpyeFJ3TnpsQlBKa00vN28xQ0tlWVZX?=
- =?utf-8?B?MjBGeVdubnVka2pwaU5zaVJYVEVZTkNUakNxTzRkcTlPaUxta0dJUExWY0g3?=
- =?utf-8?B?WlZoOVBINit3djhkSkpaQ1NObWR3RUFiMlZua2I3ZkU2WEN6VFY0TE5wZWR5?=
- =?utf-8?B?Wk8vT0Z2aXlTUzA0aXlmVG5HOGw0L3JwbGY1dGltODQrTC9zWkNrUjNNcW5B?=
- =?utf-8?B?aGtyM3lDa0pSblBoQ3B0bG82Z29yOUFXSm5jY1VKd1FZSjZTWWFQdng1NVFH?=
- =?utf-8?B?RzIzYzBQRlE3SXFLd3g2R1ZMdVNXUjQxMnB2MlU5TitBRmEzV29wRjRNMnlN?=
- =?utf-8?B?aEJVOG1wVi9aM3NSSWlsLzRFa2RWcG1vcWlCNlFyRjMyWTdqdnQzNE1QN2ky?=
- =?utf-8?B?YWJITDB1ejRRNSsxOXo3ZURpYStqZEw0bGxWYktraXY4U29vUmt2RDVjUFla?=
- =?utf-8?B?dXVGTGpIZWpYR21tQnhKTW5IdjFtNnJ0Z2E0eHJzUEVvNU5WZlA4NkRtbjhs?=
- =?utf-8?B?V2xTT1QyTTBleElrYW5RMFI1SGZDcko4MkhaSDR1ZlJ0dFVpWkk2QzYzVy9k?=
- =?utf-8?B?R0ZMbnBqTnFyQkM2bW9HYlZSYlhjQUhUTkFzanE0VVRBWmpIY0ZWcEJONGJP?=
- =?utf-8?B?RFEzbjlyclhqV3BQam9PN2tJaXJMNEF0bUdiK3pUcFRjMzNMaXMzOXlnLy91?=
- =?utf-8?B?WEVVVTVpNUhBV0w3YkZMdjl1dVRBU3dlK3ZjN0pOY3d6aUlES29xWlptUlBZ?=
- =?utf-8?B?L2d1TFFkVmhyMzlZS1UwSThPWWlDRFBGV0lvUFc1Zm4yTWE1T2ppZUlNRUY5?=
- =?utf-8?B?TUYwL1QvWFlTdFRsS3hDN1dpYW0zYThPZ0hOdS95TkdNQUpOUnlDN2U0Z3RW?=
- =?utf-8?B?T0MzbEdHVzcxNDUyUGpRYS8waFdjMU9GWXpRLzliZWpCcUNvTHAzMjBVWGUy?=
- =?utf-8?B?Y0hRUC9kS0Q0Qi8rYjAwU0tiYkVURDhqbVNEU3EwckxZUlVISkJhV2FVZEpw?=
- =?utf-8?B?QVdMVHFJekZ6QjZwekt6TEY1NjhnL2plRmp5QkV3TG1maFdiQUx0KzFVZXJQ?=
- =?utf-8?B?aDZJVkZlWUlHOFVhRDlXRHZHenRHQ002NkVGODBIaktFQjhoMXkwMTJZYU1Y?=
- =?utf-8?B?cEtxUm5UaHJMVER4RUJPd1doTGhOaFRwS09wWlRZYk5EcklReUlSWE1acjly?=
- =?utf-8?B?Zy81d2IrRDZJV1pFVDRlNWNlTTV6YzZWSEJiMlN3OS9ycERWcXNwZkJLOVJF?=
- =?utf-8?B?RlJ6NVcwdlE4TXlUMnRaNlVvRnQ2bTlxTTlUckgxVm9Jb0xCNWprTTEvai91?=
- =?utf-8?B?WnhDMGpKb2xsQkQwang1aVRXKzZIdm4wZHFKS2hWbTR4dHl4eU5oUDZLdVJK?=
- =?utf-8?B?UUFXRCtwZ0hqOHFxZW9nWVVXc0tqcE9KcU4vRUN4MVc2U1lUK0hNVGVuVU9u?=
- =?utf-8?B?TlNGbm9rRy9kZFN1bXRDdEZHdlBSbUpUY1dIeVZXQ1FSbFpVNm1XNWZNU0dr?=
- =?utf-8?B?SExMc0Q2UUFQN0o2R0lRQXZmMkRacDNSUVVKVG0xSjluSjV0UkRMY1FhdWww?=
- =?utf-8?B?dGdHTEF3T0h4ZjFMdGIzbkVCakFBRUdKWFpQTDVOZFdOREROR1lRd09rcWNt?=
- =?utf-8?B?cDU5WkJFcnRtT0VURVZnOHF1UzNoWmgvQ0JzYTFpUC9QQmZxd3hHcVZ4ZWtR?=
- =?utf-8?B?TzIwdlBpZzhoNi8ybG0xMlF4S3UzeUtqMnRQS05wbmlnenZsS2ZzWnVJSVBP?=
- =?utf-8?B?VnltZysrVm1GSjdFSVVweVI0OWdqUEUrUUlyTHJKZ1B2NEZYWWR2b3BvUHVH?=
- =?utf-8?Q?GMJU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Postix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: phytec.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2025 07:39:51.8090
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d66f2901-481c-4079-9994-08de3c764c66
-X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Postix.phytec.de]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61F.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4P195MB1936
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b26e4593009d8kunm7ab62e1d2a7b26b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk0YH1ZCSRlCSUlNGkpPThhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=bX2+5KIIz9+yqvMTanixYEdU7m16vkrtEL86+ULuHO/hma9zJq8GuoU/PVJIJyY+8jgGcnCAJNJ4UThXN9W0Qick+XgIZunvUeHKhCk+Ax6n1mLnIT1PvZ/zoYdijxVRTBrug9nk2eN/DK4Rkykj5L9XhYO3l9BfdMTudq4lzKo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=53wx/l9Bicx82HEIi48rhqopVN+cJfr8QQsKHaeSvYs=;
+	h=date:mime-version:subject:message-id:from;
 
-Checked datasheets, the offsets are identical to pcal6408 and pcal6416.
+Add gpio and pinctrl support for the 8 GPIO banks on RV1126B.
 
-Signed-off-by: Jan Remmet <j.remmet@phytec.de>
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 ---
- Documentation/driver-api/gpio/pca953x.rst | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/pinctrl/pinctrl-rockchip.c | 181 ++++++++++++++++++++++++++++-
+ drivers/pinctrl/pinctrl-rockchip.h |   1 +
+ 2 files changed, 181 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/driver-api/gpio/pca953x.rst b/Documentation/driver-api/gpio/pca953x.rst
-index 4bd7cf1120cbaccfaefc346195d87d927c3afcdf..53f25fa03072d95d47443e30c89720a98f8c5561 100644
---- a/Documentation/driver-api/gpio/pca953x.rst
-+++ b/Documentation/driver-api/gpio/pca953x.rst
-@@ -178,6 +178,8 @@ pcal9554b      8       yes    00     01     02        03
- pcal6416      16       yes    00     02     04        06
- pcal9535      16       yes    00     02     04        06
- pcal9555a     16       yes    00     02     04        06
-+tcal6408       8       yes    00     01     02        03
-+tcal6416      16       yes    00     02     04        06
- ========== ===== ========= ===== ====== ====== =========
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index e44ef262beec..dc7ef12dfcb0 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -307,6 +307,20 @@
+ #define RK3588_PIN_BANK_FLAGS(ID, PIN, LABEL, M, P)			\
+ 	PIN_BANK_IOMUX_FLAGS_PULL_FLAGS(ID, PIN, LABEL, M, M, M, M, P, P, P, P)
  
- These chips have several additional features:
-@@ -196,6 +198,8 @@ pcal9554b            40       42      43       44       45         46       4F
- pcal6416             40       44      46       48       4A         4C       4F
- pcal9535             40       44      46       48       4A         4C       4F
- pcal9555a            40       44      46       48       4A         4C       4F
-+tcal6408             40       42      43       44       45         46       4F
-+tcal6416             40       44      46       48       4A         4C       4F
- ========== ============ ======== ======= ======== ======== ========== ========
++#define PIN_BANK_IOMUX_4_OFFSET_DRV_8(id, pins, label, offset0,		\
++				      offset1, offset2, offset3)	\
++	PIN_BANK_IOMUX_FLAGS_OFFSET_DRV_FLAGS(id, pins, label,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      offset0, offset1,		\
++					      offset2, offset3,		\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT)
++
+ static struct regmap_config rockchip_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+@@ -1701,6 +1715,136 @@ static int rv1126_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	return 0;
+ }
  
- Currently the driver has support for the input latch, pull-up/pull-down
-@@ -332,6 +336,8 @@ Layouts:
-         - pcal9554b
-         - pcal9555a
-         - pcal6524
-+        - tcal6408
-+        - tcal6416
++#define RV1126B_DRV_BITS_PER_PIN		8
++#define RV1126B_DRV_PINS_PER_REG		2
++#define RV1126B_DRV_GPIO0_A_OFFSET		0x100
++#define RV1126B_DRV_GPIO0_C_OFFSET		0x8120
++#define RV1126B_DRV_GPIO_OFFSET(GPION)		(0x8100 + GPION * 0x8040)
++
++static int rv1126b_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
++				       int pin_num, struct regmap **regmap,
++				       int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_DRV_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_DRV_GPIO0_C_OFFSET - 0x20;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_DRV_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_DRV_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_DRV_PINS_PER_REG;
++	*bit *= RV1126B_DRV_BITS_PER_PIN;
++
++	return 0;
++}
++
++#define RV1126B_PULL_BITS_PER_PIN		2
++#define RV1126B_PULL_PINS_PER_REG		8
++#define RV1126B_PULL_GPIO0_A_OFFSET		0x300
++#define RV1126B_PULL_GPIO0_C_OFFSET		0x8308
++#define RV1126B_PULL_GPIO_OFFSET(GPION)		(0x8300 + GPION * 0x8010)
++
++static int rv1126b_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
++					int pin_num, struct regmap **regmap,
++					int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_PULL_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_PULL_GPIO0_C_OFFSET - 0x8;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_PULL_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_PULL_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_PULL_PINS_PER_REG;
++	*bit *= RV1126B_PULL_BITS_PER_PIN;
++
++	return 0;
++}
++
++#define RV1126B_SMT_BITS_PER_PIN		1
++#define RV1126B_SMT_PINS_PER_REG		8
++#define RV1126B_SMT_GPIO0_A_OFFSET		0x500
++#define RV1126B_SMT_GPIO0_C_OFFSET		0x8508
++#define RV1126B_SMT_GPIO_OFFSET(GPION)		(0x8500 + GPION * 0x8010)
++
++static int rv1126b_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
++					   int pin_num,
++					   struct regmap **regmap,
++					   int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_SMT_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_SMT_GPIO0_C_OFFSET - 0x8;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_SMT_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_SMT_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_SMT_PINS_PER_REG;
++	*bit *= RV1126B_SMT_BITS_PER_PIN;
++
++	return 0;
++}
++
+ #define RK3308_SCHMITT_PINS_PER_REG		8
+ #define RK3308_SCHMITT_BANK_STRIDE		16
+ #define RK3308_SCHMITT_GRF_OFFSET		0x1a0
+@@ -3071,7 +3215,8 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
+ 		rmask_bits = RK3588_DRV_BITS_PER_PIN;
+ 		ret = strength;
+ 		goto config;
+-	} else if (ctrl->type == RK3506 ||
++	} else if (ctrl->type == RV1126B ||
++		   ctrl->type == RK3506 ||
+ 		   ctrl->type == RK3528 ||
+ 		   ctrl->type == RK3562 ||
+ 		   ctrl->type == RK3568) {
+@@ -3237,6 +3382,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 				: PIN_CONFIG_BIAS_DISABLE;
+ 	case PX30:
+ 	case RV1108:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -3299,6 +3445,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 	case PX30:
+ 	case RV1108:
+ 	case RV1126:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -3582,6 +3729,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
+ 	case PX30:
+ 	case RV1108:
+ 	case RV1126:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -4386,6 +4534,35 @@ static struct rockchip_pin_ctrl rv1126_pin_ctrl = {
+ 	.schmitt_calc_reg	= rv1126_calc_schmitt_reg_and_bit,
+ };
  
-     2. base offset 0x30, bank 5 and 6, closely packed banks
-         - pcal6534
-@@ -390,6 +396,8 @@ enabled.
-         - pcal9554b
-         - pcal9555a
-         - pcal6524
-+        - tcal6408
-+        - tcal6416
- 
-     2. base offset 0x30, bank 2, closely packed banks
-         - pcal6534
-@@ -462,6 +470,8 @@ Layout:
-         - pcal9535
-         - pcal9554b
-         - pcal9555a
-+        - tcal6408
-+        - tcal6416
- 
- `PCAL chips with extended interrupt and output configuration functions`_
- can set this for each line individually. They have the same per-port out_conf
-@@ -505,6 +515,8 @@ bits drive strength
-         - pcal9554b
-         - pcal9555a
-         - pcal6524
-+        - tcal6408
-+        - tcal6416
- 
-     2. base offset 0x30, bank 0 and 1, closely packed banks
-         - pcal6534
-
++static struct rockchip_pin_bank rv1126b_pin_banks[] = {
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(0, 32, "gpio0",
++				      0x0, 0x8, 0x8010, 0x8018),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(1, 32, "gpio1",
++				      0x10020, 0x10028, 0x10030, 0x10038),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(2, 32, "gpio2",
++				      0x18040, 0x18048, 0x18050, 0x18058),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(3, 32, "gpio3",
++				      0x20060, 0x20068, 0x20070, 0x20078),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(4, 32, "gpio4",
++				      0x28080, 0x28088, 0x28090, 0x28098),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(5, 32, "gpio5",
++				      0x300a0, 0x300a8, 0x300b0, 0x300b8),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(6, 32, "gpio6",
++				      0x380c0, 0x380c8, 0x380d0, 0x380d8),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(7, 32, "gpio7",
++				      0x400e0, 0x400e8, 0x400f0, 0x400f8),
++};
++
++static struct rockchip_pin_ctrl rv1126b_pin_ctrl __maybe_unused = {
++	.pin_banks		= rv1126b_pin_banks,
++	.nr_banks		= ARRAY_SIZE(rv1126b_pin_banks),
++	.label			= "RV1126B-GPIO",
++	.type			= RV1126B,
++	.pull_calc_reg		= rv1126b_calc_pull_reg_and_bit,
++	.drv_calc_reg		= rv1126b_calc_drv_reg_and_bit,
++	.schmitt_calc_reg	= rv1126b_calc_schmitt_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk2928_pin_banks[] = {
+ 	PIN_BANK(0, 32, "gpio0"),
+ 	PIN_BANK(1, 32, "gpio1"),
+@@ -4960,6 +5137,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 		.data = &rv1108_pin_ctrl },
+ 	{ .compatible = "rockchip,rv1126-pinctrl",
+ 		.data = &rv1126_pin_ctrl },
++	{ .compatible = "rockchip,rv1126b-pinctrl",
++		.data = &rv1126b_pin_ctrl },
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = &rk2928_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3036-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
+index 4f4aff42a80a..fe18b62ed994 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.h
++++ b/drivers/pinctrl/pinctrl-rockchip.h
+@@ -187,6 +187,7 @@ enum rockchip_pinctrl_type {
+ 	PX30,
+ 	RV1108,
+ 	RV1126,
++	RV1126B,
+ 	RK2928,
+ 	RK3066B,
+ 	RK3128,
 -- 
-2.43.0
+2.34.1
 
