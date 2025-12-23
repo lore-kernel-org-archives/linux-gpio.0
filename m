@@ -1,41 +1,41 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8326D32B9BB;
-	Tue, 23 Dec 2025 10:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43768329391;
+	Tue, 23 Dec 2025 10:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766484163; cv=none; b=ZkihJ4V3v+RwxYSJeuUeW5uWoItDrwTBT3juNXEIrHutW+fegArlLqEudf25RI5BmtH/NpDpR/inaRG0X6wWW1/LbWi/PjyPt88X67iGIfBLgcmcvnSwqCAOknEN9gsSYy5ttdX6JB9pcpzNYvtaDKSNMPTIBwVkA0tFmX5243Q=
+	t=1766484163; cv=none; b=qudpjH1rjzOKFMsHnzRNSW7+0uWKQ+2QVaycceEAhXxdHhB+84U0EWLUrPzlvVfXzaNfdc9vf0nyzZ6YYpxeKRd00c/KSAeGNdHHBOXYw4b38zlZGu5AS53PeWtvC9fM5rHjMqXrkExf5EMM5AEgYVFCE86yXFA8ZHGv3Xxa700=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1766484163; c=relaxed/simple;
-	bh=tkdKoWscDd8jGm/ZjEHdtkDrTV4KwMpdcupmfcQa1Cs=;
+	bh=H3w2FgxOSJvqVuj+SXiEHLgoCWFljus4cGldBzKIl24=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VlNTjeMs/EReYhiEdIMkjf7rtoJVnTWCi+wVbsNfXEnAKWP64GnXZFfMudCeIiD8JTPCRJlg3bFOv9xhbY5OL8t0MXNzMbsQ4zwFqQmCN2heDIkGvoc35dkJxIlZgH0A3vlHG1ZVIE3MBSWhtBPksSXYq4NImnwroii448raIhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AI40zhbJ; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=Z4RtG9c2cJzJPtiaQrq75BHQLlRE2CD4+/oR6U6IRtUfKO49wiGx23NLY8V/j+ixvR85jXIDESr9CMfHs2YmJaNFqj8Jbk8EjXH6binpKRD4keXba6rOSVZ65Blgkrevxy/iJ8K8gp7/B95Nr0e7YWJ4V5FAVM86RnbE4ldJLAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DaMMBtMZ; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AI40zhbJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DaMMBtMZ"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 2EE221A23A0;
-	Tue, 23 Dec 2025 10:02:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id A775AC1AE20;
+	Tue, 23 Dec 2025 10:02:08 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0528960716;
-	Tue, 23 Dec 2025 10:02:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BC62F10AB09BB;
-	Tue, 23 Dec 2025 11:02:36 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B8CE960716;
+	Tue, 23 Dec 2025 10:02:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 68EB310AB09B8;
+	Tue, 23 Dec 2025 11:02:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1766484158; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1766484152; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RW1X9fngQUHieAgoSatY4oZPeAqxZ6NHLxpQr5c2zx4=;
-	b=AI40zhbJuRLI3xOzYpAuBodWs0gGBwuXKj0gXSHnQDBtN8do9huiW7+wzBqQyT6+w2eDH4
-	y1fV2+AlFbQcFBopCNbODGYvTRWXnhYvio6OExu1/iW2ukIRVzon/41eMJ8LpkeGgMgfu5
-	FtyXTXHPtVmoEOxflIDlLK0g6e9AP0JP6bZh/C7wQ/5Kh6gnGEHw4EvCQvq502FwkTgwpL
-	aVBQdQ5lIV6MwQU4btduXDwMJ9rCizUToW9cx/daOdlI1EXtPf0GDPM+AdX0yReH2oUtdl
-	jGZBQvkns9eya1mJ+rR4dPifXX8m3AmMn+8aWKUrGkT2YEhOb9dAHcu7JhVUCg==
+	bh=8Zfsq2Q0KKHFsJh7C/6RUmQNJurLVBsixLOXVYzrljE=;
+	b=DaMMBtMZOq1VXdZpP2Fep0Fzf2JTO+qgHfkdz2TnPJIwRRYUbfCdMkv982SUUY6UlIqYcw
+	klLIarVn/Lf/tQ30sUTLc/PQfJpQxsaqWgXCdeuP99KM+vWfmb5zajq3n3aNDpJ2vxn+B6
+	CHXcJ/7N01cu+D66tUUkT5N2iIGHKhQ0SctWHrPgcyPKMSHzIuorraxbWTRFwUus8DNccj
+	us5RkMlsOLsk/4/igRVCm1Ejbal8MZbRd8SiZCSzegQ5lkbHVKlITGBYn7lj4vmuFc3Mya
+	ludidOv2V2SIL0B52y67OAWybbHXsPv8LQQX7uMdSsJBEqH1vcqBp5NYZD+SjQ==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Tue, 23 Dec 2025 11:02:21 +0100
-Subject: [PATCH v2 06/13] pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
+Date: Tue, 23 Dec 2025 11:02:18 +0100
+Subject: [PATCH v2 03/13] MIPS: Add Mobileye EyeQ6Lplus support
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251223-eyeq6lplus-v2-6-cd1fd21d182c@bootlin.com>
+Message-Id: <20251223-eyeq6lplus-v2-3-cd1fd21d182c@bootlin.com>
 References: <20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com>
 In-Reply-To: <20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -64,147 +64,41 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add the match data for the pinctrl found in the EyeQ6Lplus OLB. The pin
-control is identical in function to the one present in the EyeQ5 but
-has a single bank of 32 pins.
+Add the EyeQ6Lplus to the group of choices for Mobileye SoC
+and set the kernel load address specific to this SoC.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/pinctrl/Kconfig         |  4 +-
- drivers/pinctrl/pinctrl-eyeq5.c | 95 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 2 deletions(-)
+ arch/mips/mobileye/Kconfig  | 3 +++
+ arch/mips/mobileye/Platform | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index bc7f37afc48b..c81568d835e6 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -248,11 +248,11 @@ config PINCTRL_EQUILIBRIUM
- config PINCTRL_EYEQ5
- 	bool "Mobileye EyeQ5 pinctrl driver"
- 	depends on OF
--	depends on MACH_EYEQ5 || COMPILE_TEST
-+	depends on MACH_EYEQ5 || MACH_EYEQ6LPLUS || COMPILE_TEST
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select AUXILIARY_BUS
--	default MACH_EYEQ5
-+	default MACH_EYEQ5 || MACH_EYEQ6LPLUS
- 	help
- 	  Pin controller driver for the Mobileye EyeQ5 platform. It does both
- 	  pin config & pin muxing. It does not handle GPIO.
-diff --git a/drivers/pinctrl/pinctrl-eyeq5.c b/drivers/pinctrl/pinctrl-eyeq5.c
-index ff27d15e3d5b..d59d5049b13b 100644
---- a/drivers/pinctrl/pinctrl-eyeq5.c
-+++ b/drivers/pinctrl/pinctrl-eyeq5.c
-@@ -229,6 +229,100 @@ static const struct eq5p_match_data eq5p_eyeq5_data = {
- 	.banks = eq5p_eyeq5_banks,
- };
+diff --git a/arch/mips/mobileye/Kconfig b/arch/mips/mobileye/Kconfig
+index f9abb2d6e178..8a4868d2e28f 100644
+--- a/arch/mips/mobileye/Kconfig
++++ b/arch/mips/mobileye/Kconfig
+@@ -12,6 +12,9 @@ choice
  
-+static const struct pinctrl_pin_desc eq5p_eyeq6lplus_pins[] = {
-+	PINCTRL_PIN(0,  "PA0"),  /* GPIO_A0_TIMER0_CK0 */
-+	PINCTRL_PIN(1,  "PA1"),  /* GPIO_A1_TIMER0_EOC */
-+	PINCTRL_PIN(2,  "PA2"),  /* GPIO_A2_TIMER1_CK */
-+	PINCTRL_PIN(3,  "PA3"),  /* GPIO_A3_TIMER1_EOC1 */
-+	PINCTRL_PIN(4,  "PA4"),  /* GPIO_A4_SSI_UART_RX */
-+	PINCTRL_PIN(5,  "PA5"),  /* GPIO_A5_SSI_UART_TX */
-+	PINCTRL_PIN(6,  "PA6"),  /* GPIO_A6_SPI_0_CS */
-+	PINCTRL_PIN(7,  "PA7"),  /* GPIO_A7_SPI_0_DI */
-+	PINCTRL_PIN(8,  "PA8"),  /* GPIO_A8_SPI_0_CK */
-+	PINCTRL_PIN(9,  "PA9"),  /* GPIO_A9_SPI_0_DO */
-+	PINCTRL_PIN(10, "PA10"), /* GPIO_A10_SPI_0_CS1 */
-+	PINCTRL_PIN(11, "PA11"), /* GPIO_A11_UART_0_RX */
-+	PINCTRL_PIN(12, "PA12"), /* GPIO_A12_UART_0_TX */
-+	PINCTRL_PIN(13, "PA13"), /* GPIO_A13_TIMER2_CK */
-+	PINCTRL_PIN(14, "PA14"), /* GPIO_A14_TIMER2_EOC */
-+	PINCTRL_PIN(15, "PA15"), /* GPIO_A15_TIMER3_CK */
-+	PINCTRL_PIN(16, "PA16"), /* GPIO_A16_TIMER_EOC */
-+	PINCTRL_PIN(17, "PA17"), /* GPIO_A17_TIMER_EXT0_INCA P1 */
-+	PINCTRL_PIN(18, "PA18"), /* GPIO_A18_TIMER_EXT0_INCA P2 */
-+	PINCTRL_PIN(19, "PA19"), /* GPIO_A19_TIMER_EXT0_OUT CMP1 */
-+	PINCTRL_PIN(20, "PA20"), /* GPIO_A20_TIMER_EXT0_OUT CMP2 */
-+	PINCTRL_PIN(21, "PA21"), /* GPIO_A21_SPI_1_CS0 */
-+	PINCTRL_PIN(22, "PA22"), /* GPIO_A22_SPI_1_DI */
-+	PINCTRL_PIN(23, "PA23"), /* GPIO_A23_SPI_1_CK */
-+	PINCTRL_PIN(24, "PA24"), /* GPIO_A24_SPI_1_DO */
-+	PINCTRL_PIN(25, "PA25"), /* GPIO_A25_SPI_1_CS1 */
-+	PINCTRL_PIN(26, "PA26"), /* GPIO_A26_TIMER_EXT1_INCA P1 */
-+	PINCTRL_PIN(27, "PA27"), /* GPIO_A27_TIMER_EXT1_INCA P2 */
-+	PINCTRL_PIN(28, "PA28"), /* GPIO_A28_TIMER_EXT1_OUTC MP1 */
-+	PINCTRL_PIN(29, "PA29"), /* GPIO_A29_TIMER_EXT1_OUTC MP2 */
-+	PINCTRL_PIN(30, "PA30"), /* GPIO_A30_EXT_CLK */
-+	PINCTRL_PIN(31, "PA31"), /* GPIO_A31_VDI_MCLK */
-+};
+ 	config MACH_EYEQ6H
+ 		bool "Mobileye EyeQ6H SoC"
 +
-+static const char * const eq5p_eyeq6lplus_gpio_groups[] = {
-+	/* Bank A */
-+	"PA0",  "PA1",  "PA2",  "PA3",  "PA4",  "PA5",  "PA6",  "PA7",
-+	"PA8",  "PA9",  "PA10", "PA11", "PA12", "PA13", "PA14", "PA15",
-+	"PA16", "PA17", "PA18", "PA19", "PA20", "PA21", "PA22", "PA23",
-+	"PA24", "PA25", "PA26", "PA27", "PA28", "PA29", "PA30", "PA31",
-+};
-+
-+/* Groups of functions on bank A */
-+static const char * const eq5p_eyeq6lplus_timer0_groups[] = { "PA0", "PA1" };
-+static const char * const eq5p_eyeq6lplus_timer1_groups[] = { "PA2", "PA3" };
-+static const char * const eq5p_eyeq6lplus_uart_ssi_groups[] = { "PA4", "PA5" };
-+static const char * const eq5p_eyeq6lplus_spi0_groups[] = { "PA6", "PA7", "PA8", "PA9", "PA10" };
-+static const char * const eq5p_eyeq6lplus_uart0_groups[] = { "PA11", "PA12" };
-+static const char * const eq5p_eyeq6lplus_timer2_groups[] = { "PA13", "PA14" };
-+static const char * const eq5p_eyeq6lplus_timer3_groups[] = { "PA15", "PA16" };
-+static const char * const eq5p_eyeq6lplus_timer_ext0_groups[] = { "PA17", "PA18", "PA19", "PA20" };
-+static const char * const eq5p_eyeq6lplus_spi1_groups[] = {
-+	"PA21", "PA22", "PA23", "PA24", "PA25"
-+};
-+static const char * const eq5p_eyeq6lplus_timer_ext1_groups[] = { "PA26", "PA27", "PA28", "PA29" };
-+static const char * const eq5p_eyeq6lplus_ext_ref_clk_groups[] = { "PA30" };
-+static const char * const eq5p_eyeq6lplus_mipi_ref_clk_groups[] = { "PA31" };
-+
-+static const struct pinfunction eq5p_eyeq6lplus_functions[] = {
-+	/* gpios function */
-+	EQ5P_PINFUNCTION("gpio", eq5p_eyeq6lplus_gpio_groups),
-+
-+	/* Bank A alternate functions */
-+	EQ5P_PINFUNCTION("timer0", eq5p_eyeq6lplus_timer0_groups),
-+	EQ5P_PINFUNCTION("timer1", eq5p_eyeq6lplus_timer1_groups),
-+	EQ5P_PINFUNCTION("uart_ssi", eq5p_eyeq6lplus_uart_ssi_groups),
-+	EQ5P_PINFUNCTION("spi0", eq5p_eyeq6lplus_spi0_groups),
-+	EQ5P_PINFUNCTION("uart0", eq5p_eyeq6lplus_uart0_groups),
-+	EQ5P_PINFUNCTION("timer2", eq5p_eyeq6lplus_timer2_groups),
-+	EQ5P_PINFUNCTION("timer3", eq5p_eyeq6lplus_timer3_groups),
-+	EQ5P_PINFUNCTION("timer_ext0", eq5p_eyeq6lplus_timer_ext0_groups),
-+	EQ5P_PINFUNCTION("spi1", eq5p_eyeq6lplus_spi1_groups),
-+	EQ5P_PINFUNCTION("timer_ext1", eq5p_eyeq6lplus_timer_ext1_groups),
-+	EQ5P_PINFUNCTION("ext_ref_clk", eq5p_eyeq6lplus_ext_ref_clk_groups),
-+	EQ5P_PINFUNCTION("mipi_ref_clk", eq5p_eyeq6lplus_mipi_ref_clk_groups),
-+};
-+
-+static const struct eq5p_bank eq5p_eyeq6lplus_banks[] = {
-+	{
-+		.npins = ARRAY_SIZE(eq5p_eyeq6lplus_pins),
-+		.regs = {0x0C0, 0x0C4, 0x0D0, 0x0D4, 0x0B0},
-+	},
-+};
-+
-+static const struct eq5p_match_data eq5p_eyeq6lplus_data = {
-+	.npins = ARRAY_SIZE(eq5p_eyeq6lplus_pins),
-+	.nfunctions = ARRAY_SIZE(eq5p_eyeq6lplus_functions),
-+	.nbanks = ARRAY_SIZE(eq5p_eyeq6lplus_banks),
-+	.pins = eq5p_eyeq6lplus_pins,
-+	.functions = eq5p_eyeq6lplus_functions,
-+	.banks = eq5p_eyeq6lplus_banks,
-+};
-+
- static void eq5p_update_bits(const struct eq5p_pinctrl *pctrl,
- 			     const struct eq5p_bank *bank,
- 			     enum eq5p_regs reg, u32 mask, u32 val)
-@@ -667,6 +761,7 @@ static int eq5p_probe(struct auxiliary_device *adev,
++	config MACH_EYEQ6LPLUS
++		bool "Mobileye EyeQ6Lplus SoC"
+ endchoice
  
- static const struct of_device_id eq5p_match_table[] = {
- 	{ .compatible = "mobileye,eyeq5-olb", .data = &eq5p_eyeq5_data },
-+	{ .compatible = "mobileye,eyeq6lplus-olb", .data = &eq5p_eyeq6lplus_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, eq5p_match_table);
+ config FIT_IMAGE_FDT_EPM5
+diff --git a/arch/mips/mobileye/Platform b/arch/mips/mobileye/Platform
+index 69f775bbbb1e..93b533492b58 100644
+--- a/arch/mips/mobileye/Platform
++++ b/arch/mips/mobileye/Platform
+@@ -10,6 +10,7 @@
+ 
+ load-$(CONFIG_MACH_EYEQ5)	= 0xa800000808000000
+ load-$(CONFIG_MACH_EYEQ6H)	= 0xa800000100800000
++load-$(CONFIG_MACH_EYEQ6LPLUS)	= 0xa800000108800000
+ all-$(CONFIG_MACH_EYEQ5)	+= vmlinux.gz.itb
+ 
+ its-y					:= vmlinux.its.S
 
 -- 
 2.52.0
