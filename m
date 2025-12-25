@@ -1,138 +1,153 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0946350D4B
-	for <linux-gpio@vger.kernel.org>; Wed, 24 Dec 2025 14:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61444227E83;
+	Thu, 25 Dec 2025 07:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766584887; cv=none; b=ffEhjQbPN+LuLnHaugu2KFix4e0ShPljmXA5YBZ3iIkQQE2JHIi1AKd4SVc18XjfXBSrQWEe6dMahsSu5m25GZUp+LxvbnmZt0DXdsRrgtGvHlDV16fEjLsQdsxFvoezKoqftTeF43Fg9dgg8OqVdl3rakCKjy4xPEAjUsKp6jQ=
+	t=1766646522; cv=none; b=tsb6ENYTiDCDrn/KIlwlm8vJWJrocZn6/VQyejn/QRaSdpux46VuGn39Hxqgphy9s2wHSITls+AzeLQ5X4mjX8kX04zZyYGHB9chelZDTYBOWaHM2fp3GbUVIYimRhjNSRlzOe8qroyeC9zhFdM9S5RaMD2J0OjKhJdXnx+Xf48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766584887; c=relaxed/simple;
-	bh=I7+JGBFRKWqyrnVXzLUaDYsKdcEDRxDNeUF16RxUnpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mtkjzUwSF8qpcpAuEn20s2TMziiI93uo8UEVNpUF7CDJ4y/PsewAWHeTg539Ac4Kxqk3QhqXaot+RfnC4WBdk5cRA1rowYxAvIHK16S+09iOtEw7CTCPalq4IoHhgls19woom3ByMfRWYtMX1jm0fGSGqkbiRQqwxr5n5498JZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=OwOktS97; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1766646522; c=relaxed/simple;
+	bh=rARb//J5MswjJxfIZ7FZMT+BzHZT91PlHJg2rGx6s9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0xe85AxRldLnz0r2qFSG7K8TZlSjxL4Cc0AKJcKOH2A6B7o0pQJhOpfpPcRJ6qT9vESR10k1BqbM36ghznnkQirf587J5cQQP5bQEu1sUtC3LjTxv8pyCwG41IGNg0sRV28MklYIOZlTJMBOxLvczhEW8Za4AoFc1C+AKql+dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=W41aODLG; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="OwOktS97"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b728a43e410so1098351066b.1
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Dec 2025 06:01:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1766584884; x=1767189684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I7+JGBFRKWqyrnVXzLUaDYsKdcEDRxDNeUF16RxUnpo=;
-        b=OwOktS970iZyjTToJrv3vpFIp+TVfoApn5xuvs/UTEwPPJRn+MEeHzVu/i5cdpLGVT
-         c0Qd3a6PUuoevDp7TY7TY2CybeAVSC7N8/jEA5T/5hFTwdqieiluHy54dP4zknESaAGB
-         bNizDukwvsJqgYnyjKPfBCH5tc6upXcXTkq41BQxwzaYcJAi6GMbJAHalK3kUHPjUC6H
-         RPJtAND8ymrvcy8Nq2bqkNF6MRBftJGGzwdXE15I5yysfQ8A66e79CCa10L9imyAbH/P
-         V4ZeStIKcTcR1gknTPgWu9Lclta6kc8pRDXW8YZMteJrXRcw5mrBiaS3bHY8ZvKq8k3r
-         7TAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766584884; x=1767189684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=I7+JGBFRKWqyrnVXzLUaDYsKdcEDRxDNeUF16RxUnpo=;
-        b=oRO+U4NQVpdfRKHKeXc7hFLURNjcK8VMgbZPOe0OkO5LVE91em6c+TsV6lcopWTBmj
-         d7DQPrNdkITyzEb7SmahvNp0S6a7WMw60nzDJOrpCuE7R9VgfnJDHzjFjsp9InW5z1xO
-         cUASLalvLyj5/5puRKofxHfu8te8jUhgVKnMaxH+NDFSSaRbR9vDHT0/nFIEQzxaxpZX
-         q+0GvFJ3f7Id/A/2YP6YfDJjl5O9ox7kukG+HDvwIfSmCVT1PGfosZ+o8pVS8OQUSO7a
-         AaSVcQDmLUQiGg16QrwQ4ZzAXhy5Ws8rubnR68ykc9ZCzlnNUMeR8rv4oskkaWGjwVPu
-         71Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwQIlYkMsbbEwB0ni0DPljri4vZ+duOK5tmkEu+Div5k0Zt0T9XhnTW51nWYwNLLJnJ6wajjWVwQJz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyede53iF7l44anMlGhql49PYXMLEKoeDT+Wzw1weYfVkohevqO
-	v4e4KKNuM1Y93XjLepkEr16FtY3UGrF+CTzKsrR7JmipWLvFwkAui9mYxwLo4Q+4a7FLxByBRpS
-	f6zK+eGZ3Wqui85EJwMM9lKEbDRn1aGCr5E6Vmme9XQ==
-X-Gm-Gg: AY/fxX4pZ3CBO6SX953Q8cM/pAYDlVDeLuwYnEdgqZ3CO/jQJFI5qi2YeE18mEunqQc
-	h36hb+/dmXeIBfXKq2Cjhe++Zk5tjDgocPzyyugzTtGrQibz7CyZM7Ypt8N1sPf/J3Qx1WxECQd
-	+4pVQm3fkAt2JdqgLZhZ+c007lK6UQ9pz27GOITB1AVUa7PXdVrJ7s3nKdzFpVxYeHY2mk7A9UZ
-	gsVNldvx6L++WaXoxgWt/pxG+crVRnczR9tGVH6t75pmicBcGpcYJcTjBj78bZ/r9YnGKPhLrms
-	n+gH8urW1uRMnQMpCr6sce+u2uTW3CNYvv/TZH55zMUIkYi82g==
-X-Google-Smtp-Source: AGHT+IHCXMeYFxQVcU8rJRtC/cDnDm53nQPvIw0Xbx77plqQqDjE4I50qoqJy3GeuDjgR14U8tTAxFKyl0h6HDv3chw=
-X-Received: by 2002:a17:907:6e91:b0:b73:8639:334a with SMTP id
- a640c23a62f3a-b8036ebd999mr1821689366b.13.1766584883876; Wed, 24 Dec 2025
- 06:01:23 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="W41aODLG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1766646462;
+	bh=WQahqT1T14f9AEri4m6AgEL6eE2ksV0PYPoD24EWkJY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=W41aODLGr/RM1n97KVI7K6GKXS4XHjvFojO61kU/V0FKFcXDfZQUsZuak4G+mEpsg
+	 Ks/vuv81bGt2LYhfxmiJqAfFr7lE0mxa4t2OO2Xpu233c8wqcCtOddCMtDKuQhMjKB
+	 7IKVOLmVyJ7QqAEImCYMEqiGv5ermj/x8HR+ZBcw=
+X-QQ-mid: esmtpsz20t1766646456tda004313
+X-QQ-Originating-IP: 4hfJ50aJrTyB36UCUQrb27WLy3tNtjF32BK8e7hmUz8=
+Received: from = ( [120.239.196.19])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 25 Dec 2025 15:07:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1149935882015170328
+EX-QQ-RecipientCnt: 17
+Date: Thu, 25 Dec 2025 15:07:33 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Yao Zi <me@ziyao.cc>, Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Inochi Amaoto <inochiama@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Linus Walleij <linusw@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: spacemit: support I/O power domain
+ configuration
+Message-ID: <47781E30EC71C60F+aUzitZG78aGBxHOG@kernel.org>
+References: <20251223-kx-pinctrl-aib-io-pwr-domain-v1-0-5f1090a487c7@linux.spacemit.com>
+ <20251223-kx-pinctrl-aib-io-pwr-domain-v1-2-5f1090a487c7@linux.spacemit.com>
+ <aUpirQFWf3w-5PQ2@inochi.infowork>
+ <B479B24A35F8D731+aUpl0JdKOziIH14S@kernel.org>
+ <aUqTH_fis1-g42SU@pie>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223201921.1332786-1-robert.marko@sartura.hr>
- <20251223201921.1332786-2-robert.marko@sartura.hr> <20251224-berserk-mackerel-of-snow-4cae54@quoll>
- <CA+HBbNGym6Q9b166n-P=h_JssOHm0yfyL73JZ+G9P81muK=g4A@mail.gmail.com> <78bf252c-fd5e-4a36-b1a3-ca8ed26fde7a@kernel.org>
-In-Reply-To: <78bf252c-fd5e-4a36-b1a3-ca8ed26fde7a@kernel.org>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Wed, 24 Dec 2025 15:01:13 +0100
-X-Gm-Features: AQt7F2owdEGYn8vQgdJCyQRcW10NeJzDUOJWapd16DEqGEP6zPqPRLNSqy5Q0Bc
-Message-ID: <CA+HBbNG+ZVD6grGDp32Ninx7H1AyEbGvP0nwc0zUv94tOV8hYg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/15] include: dt-bindings: add LAN969x clock bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	vkoul@kernel.org, andi.shyti@kernel.org, lee@kernel.org, 
-	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linusw@kernel.org, Steen.Hegelund@microchip.com, 
-	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, olivia@selenic.com, 
-	radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, lars.povlsen@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, luka.perkov@sartura.hr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUqTH_fis1-g42SU@pie>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NPR7uEA6bBhoIN2duqPMQGd/RUtsedVkMTFHhnewZ6ZeZkV+AVO3mvA6
+	us8SrD6simzAQvZb075yfrdTA8kwlMg891rOtJf6omJLT8RqAxU3NBvY2KIqH841McIFnsC
+	3UZMThkQrfwHuMgBO1CdtdyxxhkfRAra75Oyy4JFH6rYW24bh13VvA8ktAsw2GPCpcr2PjO
+	HBN+1eSvvTpD4MRgCNi/j2IBuWlOrv4D217qCZIhyeqa7+OSZSLgJwWj+8JweycsCeM1BY8
+	wA/lmtCbJnNgF88Fje06Ji1kpCCDNNc4E+Z5jinZHFkv6Z98V9Q9+E5CNJpdje+UBPFhH/J
+	eXwVGZoVoSjHYaZENkUcXH2WYtLMV8NPasBPUBlKvGviidrqNrqOE/XlrxV65qutpRvciUl
+	QnBZkbop0QrSVZYLkeIiNFZlJKzN3fpj8z91z7CY/bsejvoYOabkbMhgXWna3ju1FVq5WSj
+	TG2ofR2BEBpgpIGaY0Pm3Z2M+MWtX52zk4ZgoFnHdrk5U3fEkbzJEiamIbnx2ppWzLql6TJ
+	gcEA4AYwPpiM5ryhjBmNUsbKLCi6xHS6KmuCJ6KXGW6rocNNr4P8XQv6fgnM/JYC2+F1bPk
+	8KmSPlYUR1v9rUysoeTHqxEAq5PgNYRK2P1ShAa+qVhd6IzcGLECdMO/FFMcnwkngZx1wnw
+	rHXQHrTJbcOMDnGiktLftAv/5QczG+AdqvEKdjC1lloPR3NC1fukvqT/r6E3DSsXqlBx6mD
+	1GA7FjV1okKwAfGhXzIqBVCX7ukb2ulZCNkdROrT8DxMH6supwKdaIfXaWkANgD/+8X0OM0
+	RAPOy2siyYAbOZ82zHYMKL/iYkPERuuvaRaFr4Q648yNo7eWZuLPTak5zLR3qAHjgsu0+oz
+	BC2kFQDz0R1jUfoVL7hRzRzoEQ9hjvLHAv+vAWzkVhuIAqqfUcPiGEvYgBFmeMqcDH1OG/U
+	SOnjsalKIh8r05DHtdd2PavF/rcBOCNbYhcJkR7mrCfWKBuX8UvcSCy1X3zLWEduaybcK7a
+	jnKknNzUGf/W1uqwjZ4pXsG1SMUHsWlIFdtO2XNHyPsf+xGcCe
+X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-RECHKSPAM: 0
 
-On Wed, Dec 24, 2025 at 2:05=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 24/12/2025 11:30, Robert Marko wrote:
-> > On Wed, Dec 24, 2025 at 11:21=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>
-> >> On Tue, Dec 23, 2025 at 09:16:12PM +0100, Robert Marko wrote:
-> >>> Add the required LAN969x clock bindings.
-> >>
-> >> I do not see clock bindings actually here. Where is the actual binding=
-?
-> >> Commit msg does not help me at all to understand why you are doing thi=
-s
-> >> without actual required bindings.
-> >
-> > I guess it is a bit confusing, there is no schema here, these are the
-> > clock indexes that
-> > reside in dt-bindings and are used by the SoC DTSI.
->
-> I understand as not used by drivers? Then no ABI and there is no point
-> in putting them into bindings.
+On Tue, Dec 23, 2025 at 01:03:27PM +0000, Yao Zi wrote:
+> On Tue, Dec 23, 2025 at 05:50:08PM +0800, Troy Mitchell wrote:
+> > On Tue, Dec 23, 2025 at 05:42:26PM +0800, Inochi Amaoto wrote:
+> > > On Tue, Dec 23, 2025 at 05:11:12PM +0800, Troy Mitchell wrote:
+> > > > IO domain power control registers are used to configure the operating
+> > > > voltage of dual-voltage GPIO banks. By default, these registers are
+> > > > configured for 3.3V operation. As a result, even when a GPIO bank is
+> > > > externally supplied with 1.8V, the internal logic continues to
+> > > > operate in the 3.3V domain, which may lead to functional failures.
+> > > > 
+> > > > This patch adds support for programming the IO domain power control
+> > > > registers, allowing dual-voltage GPIO banks to be explicitly configured
+> > > > for 1.8V operation when required.
+> > > > 
+> > > > Care must be taken when configuring these registers. If a GPIO bank is
+> > > > externally supplied with 3.3V while the corresponding IO power domain
+> > > > is configured for 1.8V, external current injection (back-powering)
+> > > > may occur, potentially causing damage to the GPIO pin.
+> > > > 
+> > > > Due to these hardware constraints and safety considerations, the IO
+> > > > domain power control registers are implemented as secure registers.
+> > > > Access to these registers requires unlocking via the AIB Secure Access
+> > > > Register (ASAR) in the APBC block before a single read or write
+> > > > operation can be performed.
+> > > > 
+> > > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > > ---
+> > > >  arch/riscv/boot/dts/spacemit/k1.dtsi  |   4 +-
+> > > >  drivers/pinctrl/spacemit/pinctrl-k1.c | 131 +++++++++++++++++++++++++++++++++-
+> > > >  2 files changed, 131 insertions(+), 4 deletions(-)
+> > > > 
+> > > 
+> > > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > index 7818ca4979b6a7755722919a5958512aa11950ab..23ecb19624f227f3c39de35bf3078379f7a2490e 100644
+> > > > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > > > @@ -565,10 +565,12 @@ i2c8: i2c@d401d800 {
+> > > >  
+> > > >  		pinctrl: pinctrl@d401e000 {
+> > > >  			compatible = "spacemit,k1-pinctrl";
+> > > > -			reg = <0x0 0xd401e000 0x0 0x400>;
+> > > > +			reg = <0x0 0xd401e000 0x0 0x400>,
+> > > > +			      <0x0 0xd401e800 0x0 0x34>;
+> > > >  			clocks = <&syscon_apbc CLK_AIB>,
+> > > >  				 <&syscon_apbc CLK_AIB_BUS>;
+> > > >  			clock-names = "func", "bus";
+> > > > +			spacemit,apbc = <&syscon_apbc 0x50>;
+> > > >  		};
+> > > 
+> > > If you insist on a new reg field, you should change the binding as well.
+> > Yes, I forgot to modify the binding.
+> 
+> This will also break ABI compatibility with older devicetrees, I
+> strongly suggest against a new item in reg property.
+> 
+> Furthermore, it's unreasonable to describe d401_e000 - d401_e400 and
+> d401_e800 - d401_e834 as separate memory regions. TRM claims the region
+> starting from 0xd401_e000 with length 0xc00 is "Pad Configuration". So I
+> think this separation neither simplifies anything nor matches the
+> hardware.
+> 
+> > > This change breaks binding, can we use something like <0x0 0xd401e000 0x0 0x1000>?
+> 
+> If the TRM is correct, we probably can and should.
+I have double checked. Inochi is correct.
+I'll fix it in the next version.
+Thanks!
 
-It is not included by the driver directly, but it requires these exact
-indexes to be passed
-so its effectively ABI.
-LAN966x does the same, but they differ in number of clocks and their indexe=
-s.
-
-Regards,
-Robert
-
->
-> Best regards,
-> Krzysztof
-
-
-
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+                              - Troy
