@@ -1,112 +1,323 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m49204.qiye.163.com (mail-m49204.qiye.163.com [45.254.49.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CC92853E9;
-	Sat, 27 Dec 2025 11:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DFD28371;
+	Sat, 27 Dec 2025 11:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766834242; cv=none; b=uhe4DrJrk75m79+0UDM0BwCiS6ANvW8eGqYX61HQFEfOkNRvX2TeCyB52HECIZmkz9gpit9gLJBJZPpNBOm9V3HX24+XspYGkYfS8WhsqYG1ki22Y153sU81Fz3neAv+zZJS1aer2zUhlDQRjfymETOPyL6SLa1BDrPQ8tuDHWE=
+	t=1766836214; cv=none; b=I4L21h8VP9AOMNYOREV7rnCMYXnNpC7EVJgKB3OLnCW64LgQ54xAHj2BNq+XvwXjAjaPqWj1gPvIsfuBU9ls28sDmUXRIMFiDtLwwhTayVEbKA/V/sKMwdaCIXbavcSoz4DE1U9BmVhkitJwXD95cjq0faIb6uDgoKcsAmlkCRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766834242; c=relaxed/simple;
-	bh=mkTJBdGWaaGFXpk4ABan/EOXP8frmcAGWpzfe9DTQsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHdvuj2XjjAJUdzKsASVVjPnTmzXKv0m8dNl+CQdZxXSe1HLlFDbCXsKPV9eUur4dK/dm3kgTtrZHXIVqPBY4YsorIRmVKlu4yv2Nh+vm21pp69jPbjnRQ5XWJmIQCxnoGdp3RNTprAbmc/9KYc2Fx9On5/StfvYvCH++XGaa0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp7Vf87Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766836214; c=relaxed/simple;
+	bh=Afl4+DpjlnJLjISs5DirEutfNhPrxCPl5dKQVqWTRD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O7AEoBdhL8lJFwMk3sdZkvA2Pvx/aQ0fw91JtqbXCt4RvecGP6n9tm96EZTobq9Hmatux+r99JQ1IKWQArsUBUY8fG5P2XDY/VMcz6/59dbivT7Hdol6whuYxB4sbHIQGUXEFEIjguQPgVI8i/kDr4vepVjz2jaJR9igxjaZ0T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=RCJgeWAt; arc=none smtp.client-ip=45.254.49.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp7Vf87Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9FCC4CEF1;
-	Sat, 27 Dec 2025 11:17:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766834241;
-	bh=mkTJBdGWaaGFXpk4ABan/EOXP8frmcAGWpzfe9DTQsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mp7Vf87QB6NclKUBLSZgG25HwjCXi0w1BFQg/Xi32LC2n/3/VELl6cCodVL+Uaohv
-	 knt2f4OAFECmBI2yR6QaJKc4Fu3a0RgdjeQelMCbEngpVtwWKTYTsHw2W1Iz+bxEWv
-	 0zWs04mKwiyvgUvPwIasj1QjjKsDJq89hdt7OjelzvGxzL+3ihvEu5fdHBabQtgXr8
-	 DllSXXTp5/+fVCOegZ18LBeyKqUAgJDvKyYQhRds9kFnFYu05Qmf5FSqSpvj2eGiJS
-	 UXpqSihw//fBPaMJNj+nca6ZTcB88RkYwMxJpkTmCUhvWbKSEP90A++xF9C0FO43Cv
-	 F68a/aRlgpAVQ==
-Date: Sat, 27 Dec 2025 12:17:18 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Robert Marko <robert.marko@sartura.hr>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com, 
-	claudiu.beznea@tuxon.dev, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	vkoul@kernel.org, andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, linusw@kernel.org, 
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
-	olivia@selenic.com, radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, lars.povlsen@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, luka.perkov@sartura.hr
-Subject: Re: [PATCH v3 01/15] include: dt-bindings: add LAN969x clock bindings
-Message-ID: <20251227-splendid-striped-starfish-ece074@quoll>
-References: <20251223201921.1332786-1-robert.marko@sartura.hr>
- <20251223201921.1332786-2-robert.marko@sartura.hr>
- <20251224-berserk-mackerel-of-snow-4cae54@quoll>
- <CA+HBbNGym6Q9b166n-P=h_JssOHm0yfyL73JZ+G9P81muK=g4A@mail.gmail.com>
- <78bf252c-fd5e-4a36-b1a3-ca8ed26fde7a@kernel.org>
- <CA+HBbNG+ZVD6grGDp32Ninx7H1AyEbGvP0nwc0zUv94tOV8hYg@mail.gmail.com>
- <d210552f-c8bf-4084-9317-b743075d9946@kernel.org>
- <2025122516245554f59e2e@mail.local>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="RCJgeWAt"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2ebf64dfd;
+	Sat, 27 Dec 2025 19:50:01 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tao.huang@rock-chips.com
+Subject: [PATCH v4 2/7] pinctrl: rockchip: Add rv1126b pinctrl support
+Date: Sat, 27 Dec 2025 19:49:52 +0800
+Message-Id: <20251227114957.3287944-3-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
+References: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2025122516245554f59e2e@mail.local>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b5fa4e98e09d8kunm85cc97d2e30931
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0JMTlZNTUoZSktNTEwaTkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=RCJgeWAt7POpx8Weu55Yu2P1nMiwKTGMPATkZZ9D+2c9leuyNi5xZBw7faqr2385tC27jwBUBDfcriqRxI+ZVlJmTTprhdpmLFJuh6wdeXQwf7SNr1/5s+U8fItuhAmUPRwrU+CVL8D+YuJyKQnohTKZC8ECNl1lklh4C6CejZQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=53wx/l9Bicx82HEIi48rhqopVN+cJfr8QQsKHaeSvYs=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Dec 25, 2025 at 05:24:55PM +0100, Alexandre Belloni wrote:
-> On 25/12/2025 09:47:34+0100, Krzysztof Kozlowski wrote:
-> > On 24/12/2025 15:01, Robert Marko wrote:
-> > > On Wed, Dec 24, 2025 at 2:05=E2=80=AFPM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> > >>
-> > >> On 24/12/2025 11:30, Robert Marko wrote:
-> > >>> On Wed, Dec 24, 2025 at 11:21=E2=80=AFAM Krzysztof Kozlowski <krzk@=
-kernel.org> wrote:
-> > >>>>
-> > >>>> On Tue, Dec 23, 2025 at 09:16:12PM +0100, Robert Marko wrote:
-> > >>>>> Add the required LAN969x clock bindings.
-> > >>>>
-> > >>>> I do not see clock bindings actually here. Where is the actual bin=
-ding?
-> > >>>> Commit msg does not help me at all to understand why you are doing=
- this
-> > >>>> without actual required bindings.
-> > >>>
-> > >>> I guess it is a bit confusing, there is no schema here, these are t=
-he
-> > >>> clock indexes that
-> > >>> reside in dt-bindings and are used by the SoC DTSI.
-> > >>
-> > >> I understand as not used by drivers? Then no ABI and there is no poi=
-nt
-> > >> in putting them into bindings.
-> > >=20
-> > > It is not included by the driver directly, but it requires these exact
-> > > indexes to be passed
-> > > so its effectively ABI.
-> >=20
-> > How it requires the exact index? In what way? I do not see anything in
-> > the gck driver using/relying on these values. Nothing. Please point me
-> > to the line which directly uses these values.... or how many times I
-> > will need to write this is not ABI?
-> >=20
->=20
-> The index here is the exact id that needs to be set in the PMC_PCR
-> register and so it is dictated by the hardware.
+Add gpio and pinctrl support for the 8 GPIO banks on RV1126B.
 
-So not a binding between Linux and DTS.
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 181 ++++++++++++++++++++++++++++-
+ drivers/pinctrl/pinctrl-rockchip.h |   1 +
+ 2 files changed, 181 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index e44ef262beec..dc7ef12dfcb0 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -307,6 +307,20 @@
+ #define RK3588_PIN_BANK_FLAGS(ID, PIN, LABEL, M, P)			\
+ 	PIN_BANK_IOMUX_FLAGS_PULL_FLAGS(ID, PIN, LABEL, M, M, M, M, P, P, P, P)
+ 
++#define PIN_BANK_IOMUX_4_OFFSET_DRV_8(id, pins, label, offset0,		\
++				      offset1, offset2, offset3)	\
++	PIN_BANK_IOMUX_FLAGS_OFFSET_DRV_FLAGS(id, pins, label,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      IOMUX_WIDTH_4BIT,		\
++					      offset0, offset1,		\
++					      offset2, offset3,		\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT,	\
++					      DRV_TYPE_IO_LEVEL_8_BIT)
++
+ static struct regmap_config rockchip_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+@@ -1701,6 +1715,136 @@ static int rv1126_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	return 0;
+ }
+ 
++#define RV1126B_DRV_BITS_PER_PIN		8
++#define RV1126B_DRV_PINS_PER_REG		2
++#define RV1126B_DRV_GPIO0_A_OFFSET		0x100
++#define RV1126B_DRV_GPIO0_C_OFFSET		0x8120
++#define RV1126B_DRV_GPIO_OFFSET(GPION)		(0x8100 + GPION * 0x8040)
++
++static int rv1126b_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
++				       int pin_num, struct regmap **regmap,
++				       int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_DRV_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_DRV_GPIO0_C_OFFSET - 0x20;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_DRV_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_DRV_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_DRV_PINS_PER_REG;
++	*bit *= RV1126B_DRV_BITS_PER_PIN;
++
++	return 0;
++}
++
++#define RV1126B_PULL_BITS_PER_PIN		2
++#define RV1126B_PULL_PINS_PER_REG		8
++#define RV1126B_PULL_GPIO0_A_OFFSET		0x300
++#define RV1126B_PULL_GPIO0_C_OFFSET		0x8308
++#define RV1126B_PULL_GPIO_OFFSET(GPION)		(0x8300 + GPION * 0x8010)
++
++static int rv1126b_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
++					int pin_num, struct regmap **regmap,
++					int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_PULL_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_PULL_GPIO0_C_OFFSET - 0x8;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_PULL_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_PULL_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_PULL_PINS_PER_REG;
++	*bit *= RV1126B_PULL_BITS_PER_PIN;
++
++	return 0;
++}
++
++#define RV1126B_SMT_BITS_PER_PIN		1
++#define RV1126B_SMT_PINS_PER_REG		8
++#define RV1126B_SMT_GPIO0_A_OFFSET		0x500
++#define RV1126B_SMT_GPIO0_C_OFFSET		0x8508
++#define RV1126B_SMT_GPIO_OFFSET(GPION)		(0x8500 + GPION * 0x8010)
++
++static int rv1126b_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
++					   int pin_num,
++					   struct regmap **regmap,
++					   int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	switch (bank->bank_num) {
++	case 0:
++		if (pin_num < 16)
++			*reg = RV1126B_SMT_GPIO0_A_OFFSET;
++		else
++			*reg = RV1126B_SMT_GPIO0_C_OFFSET - 0x8;
++		break;
++
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++	case 5:
++	case 6:
++	case 7:
++		*reg = RV1126B_SMT_GPIO_OFFSET(bank->bank_num);
++		break;
++
++	default:
++		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
++		break;
++	}
++
++	*reg += ((pin_num / RV1126B_SMT_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1126B_SMT_PINS_PER_REG;
++	*bit *= RV1126B_SMT_BITS_PER_PIN;
++
++	return 0;
++}
++
+ #define RK3308_SCHMITT_PINS_PER_REG		8
+ #define RK3308_SCHMITT_BANK_STRIDE		16
+ #define RK3308_SCHMITT_GRF_OFFSET		0x1a0
+@@ -3071,7 +3215,8 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
+ 		rmask_bits = RK3588_DRV_BITS_PER_PIN;
+ 		ret = strength;
+ 		goto config;
+-	} else if (ctrl->type == RK3506 ||
++	} else if (ctrl->type == RV1126B ||
++		   ctrl->type == RK3506 ||
+ 		   ctrl->type == RK3528 ||
+ 		   ctrl->type == RK3562 ||
+ 		   ctrl->type == RK3568) {
+@@ -3237,6 +3382,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 				: PIN_CONFIG_BIAS_DISABLE;
+ 	case PX30:
+ 	case RV1108:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -3299,6 +3445,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 	case PX30:
+ 	case RV1108:
+ 	case RV1126:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -3582,6 +3729,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
+ 	case PX30:
+ 	case RV1108:
+ 	case RV1126:
++	case RV1126B:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3308:
+@@ -4386,6 +4534,35 @@ static struct rockchip_pin_ctrl rv1126_pin_ctrl = {
+ 	.schmitt_calc_reg	= rv1126_calc_schmitt_reg_and_bit,
+ };
+ 
++static struct rockchip_pin_bank rv1126b_pin_banks[] = {
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(0, 32, "gpio0",
++				      0x0, 0x8, 0x8010, 0x8018),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(1, 32, "gpio1",
++				      0x10020, 0x10028, 0x10030, 0x10038),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(2, 32, "gpio2",
++				      0x18040, 0x18048, 0x18050, 0x18058),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(3, 32, "gpio3",
++				      0x20060, 0x20068, 0x20070, 0x20078),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(4, 32, "gpio4",
++				      0x28080, 0x28088, 0x28090, 0x28098),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(5, 32, "gpio5",
++				      0x300a0, 0x300a8, 0x300b0, 0x300b8),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(6, 32, "gpio6",
++				      0x380c0, 0x380c8, 0x380d0, 0x380d8),
++	PIN_BANK_IOMUX_4_OFFSET_DRV_8(7, 32, "gpio7",
++				      0x400e0, 0x400e8, 0x400f0, 0x400f8),
++};
++
++static struct rockchip_pin_ctrl rv1126b_pin_ctrl __maybe_unused = {
++	.pin_banks		= rv1126b_pin_banks,
++	.nr_banks		= ARRAY_SIZE(rv1126b_pin_banks),
++	.label			= "RV1126B-GPIO",
++	.type			= RV1126B,
++	.pull_calc_reg		= rv1126b_calc_pull_reg_and_bit,
++	.drv_calc_reg		= rv1126b_calc_drv_reg_and_bit,
++	.schmitt_calc_reg	= rv1126b_calc_schmitt_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk2928_pin_banks[] = {
+ 	PIN_BANK(0, 32, "gpio0"),
+ 	PIN_BANK(1, 32, "gpio1"),
+@@ -4960,6 +5137,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 		.data = &rv1108_pin_ctrl },
+ 	{ .compatible = "rockchip,rv1126-pinctrl",
+ 		.data = &rv1126_pin_ctrl },
++	{ .compatible = "rockchip,rv1126b-pinctrl",
++		.data = &rv1126b_pin_ctrl },
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = &rk2928_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3036-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
+index 4f4aff42a80a..fe18b62ed994 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.h
++++ b/drivers/pinctrl/pinctrl-rockchip.h
+@@ -187,6 +187,7 @@ enum rockchip_pinctrl_type {
+ 	PX30,
+ 	RV1108,
+ 	RV1126,
++	RV1126B,
+ 	RK2928,
+ 	RK3066B,
+ 	RK3128,
+-- 
+2.34.1
 
