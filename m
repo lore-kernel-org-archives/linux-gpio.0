@@ -1,118 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m1973192.qiye.163.com (mail-m1973192.qiye.163.com [220.197.31.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF3617B506;
-	Sat, 27 Dec 2025 13:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D895C3128CD;
+	Sat, 27 Dec 2025 13:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766840424; cv=none; b=Wl2Q4HmHop8mVG5Qs2Rd5YNem20cxjPgHuksnu0zMx30/EYG04RLmgPLUkXi021/i088cbHFsrlzP/VXkVRsMLFIRyESFrORNa3DijFzE3lrGPiHv9/oLqqjLFHXx9RZUu9BgqUYN7Wrp7CEf/wQM2Fd86eX+PxvmRFfY6qhHo4=
+	t=1766840755; cv=none; b=p99jWJesJ87RQhBCf6wjfC5acHKV8BGbNhH95iElsf/Bfr1eUoXzyv7XMsXHHOCbkihv14/nxewA2ybBvcuCLRFHYaz/aTWulrrV2enFwVUJhamfNlATNsBKvvPTvJ2Cu4VYA63HPsuIsZ+9394PST9ELXpNZhgnkQiZNqEPu0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766840424; c=relaxed/simple;
-	bh=Gh6gqoS5hMGDmiIF264QlqRD2aJHzbjUVlGUqxG43cU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GxAW1oMCcjHNgYvnn4NwX0j+JpMLjbwlGZo9JUYat1BnQ12Ulfrcm7hhDYBoQ9fvN0PlmVk6KQoM8epvMjxdLKacxkOLYZat0LJRaqrRgTt7JkZvlOtcpJS9LELadHNQvZ5AFaSzeEzIi1ZLwm7cWAeRsJ6Z0tR8sLqsFv3j4y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRgVXU5Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766840755; c=relaxed/simple;
+	bh=mai/qavLD7A2q7N+r8XyBKi8RI97KnH6yhf+yvobCew=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jXH2c35eSRt/IK8g6YrjLV1zqgpYbFsBDxj4QnADfad8QYdGGL4zROnqcVm2jH5EXkP1xlhLY5oGaPJMiKB6Em+KJqaje7cQO4KhzRGj5u93rHSG87TeCffTbrUUfsY2+scMFHKWRPM20JNKO1P4802K1LnaZmtTWHiuTpQy9pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bC6exZdb; arc=none smtp.client-ip=220.197.31.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRgVXU5Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFFEC4CEF1;
-	Sat, 27 Dec 2025 13:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766840424;
-	bh=Gh6gqoS5hMGDmiIF264QlqRD2aJHzbjUVlGUqxG43cU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XRgVXU5YOBBADhBt7fo0NPjp5x67v/ZS3Kkc5iQtFeEVf9ojbZuhzwTJ5EX9g7Ad4
-	 Lk0DgezSXYiM6gm73K6CvbfUzrNTQyGM9xqP5VsiST3jUsq6RurBWB7vSkD9AZUi5y
-	 dnZwfCO+feez9AMKLXMr0Pp+CMNDtjEsrtPFASUClKbh3y45B7xosdX5beSLGhomyB
-	 OXYrD+9RkAllOvCBSE68bylE4SRO3Mir03EEsrFlreW54K3SrPGWHBy4dEvOYmtT8M
-	 jBMDuj7Yco6Se8vEQL3Mxq4O4CNs9/D1bdra63n3jLNC4qNqRq0CoUhtiybmOfIZAJ
-	 uyeqLV/Z6rbqQ==
-Date: Sat, 27 Dec 2025 14:00:21 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Linus Walleij <linusw@kernel.org>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/2] pinctrl: spacemit: support I/O power domain
- configuration
-Message-ID: <20251227-pastel-certain-orca-4b53cf@quoll>
-References: <20251223-kx-pinctrl-aib-io-pwr-domain-v1-0-5f1090a487c7@linux.spacemit.com>
- <20251223-kx-pinctrl-aib-io-pwr-domain-v1-2-5f1090a487c7@linux.spacemit.com>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bC6exZdb"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2ebf64e06;
+	Sat, 27 Dec 2025 19:50:04 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tao.huang@rock-chips.com,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [PATCH v4 4/7] gpio: rockchip: support new version GPIO
+Date: Sat, 27 Dec 2025 19:49:54 +0800
+Message-Id: <20251227114957.3287944-5-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
+References: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251223-kx-pinctrl-aib-io-pwr-domain-v1-2-5f1090a487c7@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b5fa4f3d609d8kunm85cc97d2e30a05
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlIQlYYSR1CHRodT09DGBpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=bC6exZdbJV5uWp0lB/ND7hHaFfXL7bv3RJwjGwFqc6ybX7WUaJJmHHTJiUrHZwdgiK8PXyc7jzwz+YYoLsnvuBusdD/WVfNpxSB9rl3Dg5Qnmqhq6EPInqMSP9uycCwYjQ2EZE+hy9p50IukpjR1Fphfn8hqGZ9PJQPoxIgvM8s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=2RsNzulXAZLkL2QafonCahbYbZr1u/QuXtoWJZpywhQ=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Dec 23, 2025 at 05:11:12PM +0800, Troy Mitchell wrote:
-> IO domain power control registers are used to configure the operating
-> voltage of dual-voltage GPIO banks. By default, these registers are
-> configured for 3.3V operation. As a result, even when a GPIO bank is
-> externally supplied with 1.8V, the internal logic continues to
-> operate in the 3.3V domain, which may lead to functional failures.
-> 
-> This patch adds support for programming the IO domain power control
+Support the next version GPIO controller on SoCs like rv1126b.
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+ drivers/gpio/gpio-rockchip.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> registers, allowing dual-voltage GPIO banks to be explicitly configured
-> for 1.8V operation when required.
-> 
-> Care must be taken when configuring these registers. If a GPIO bank is
-> externally supplied with 3.3V while the corresponding IO power domain
-> is configured for 1.8V, external current injection (back-powering)
-> may occur, potentially causing damage to the GPIO pin.
-> 
-> Due to these hardware constraints and safety considerations, the IO
-> domain power control registers are implemented as secure registers.
-> Access to these registers requires unlocking via the AIB Secure Access
-> Register (ASAR) in the APBC block before a single read or write
-> operation can be performed.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  arch/riscv/boot/dts/spacemit/k1.dtsi  |   4 +-
-
-No, this never, never comes together with driver code. You cannot fix
-non-bisectability and ABI break that way.
-
-Read carefully maintainers soc profile and submitting patches in DT dir.
-
-...
-
-
->  static int spacemit_pinctrl_probe(struct platform_device *pdev)
->  {
-> +	struct device_node *np = pdev->dev.of_node;
->  	struct device *dev = &pdev->dev;
->  	struct spacemit_pinctrl *pctrl;
->  	struct clk *func_clk, *bus_clk;
-> @@ -816,6 +927,18 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
->  	if (IS_ERR(pctrl->regs))
->  		return PTR_ERR(pctrl->regs);
->  
-> +	pctrl->io_pd_reg = devm_platform_ioremap_resource(pdev, 1);
-> +	if (IS_ERR(pctrl->io_pd_reg))
-> +		return PTR_ERR(pctrl->io_pd_reg);
-> +
-> +	pctrl->regmap_apbc =
-> +		syscon_regmap_lookup_by_phandle_args(np, "spacemit,apbc", 1,
-> +						     &pctrl->regmap_apbc_offset);
-> +
-> +	if (IS_ERR(pctrl->regmap_apbc))
-> +		return dev_err_probe(dev, PTR_ERR(pctrl->regmap_apbc),
-> +				     "failed to get syscon\n");
-
-Actual ABI break.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 47174eb3ba76..c3e831c6bcf1 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -36,6 +36,7 @@
+ #define GPIO_TYPE_V2		(0x01000C2B)
+ #define GPIO_TYPE_V2_1		(0x0101157C)
+ #define GPIO_TYPE_V2_2		(0x010219C8)
++#define GPIO_TYPE_V2_6          (0x01063F6E)
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
+@@ -674,6 +675,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 	case GPIO_TYPE_V2:
+ 	case GPIO_TYPE_V2_1:
+ 	case GPIO_TYPE_V2_2:
++	case GPIO_TYPE_V2_6:
+ 		bank->gpio_regs = &gpio_regs_v2;
+ 		bank->gpio_type = GPIO_TYPE_V2;
+ 		bank->db_clk = of_clk_get(bank->of_node, 1);
+-- 
+2.34.1
 
