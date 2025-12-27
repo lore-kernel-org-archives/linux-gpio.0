@@ -1,91 +1,75 @@
-Received: from mail-m1973192.qiye.163.com (mail-m1973192.qiye.163.com [220.197.31.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D895C3128CD;
-	Sat, 27 Dec 2025 13:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130B822652D;
+	Sat, 27 Dec 2025 16:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766840755; cv=none; b=p99jWJesJ87RQhBCf6wjfC5acHKV8BGbNhH95iElsf/Bfr1eUoXzyv7XMsXHHOCbkihv14/nxewA2ybBvcuCLRFHYaz/aTWulrrV2enFwVUJhamfNlATNsBKvvPTvJ2Cu4VYA63HPsuIsZ+9394PST9ELXpNZhgnkQiZNqEPu0k=
+	t=1766853318; cv=none; b=JRTDdxhCPaJ+yVOymZHOuJ7kUVT+XPQdhfzLj8GajpS83DfXUvjw1VcvIjy2UJzBD5eTya1LXHU1sJgcZr6arVyfaQqdg6iGFFJstFhlnSgt7sGmsaMCwT44G9Gkmf1hBqrmTO8Z3LGNoyn+iMlLzyfIFzdmSJwxsIvU9StkQnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766840755; c=relaxed/simple;
-	bh=mai/qavLD7A2q7N+r8XyBKi8RI97KnH6yhf+yvobCew=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jXH2c35eSRt/IK8g6YrjLV1zqgpYbFsBDxj4QnADfad8QYdGGL4zROnqcVm2jH5EXkP1xlhLY5oGaPJMiKB6Em+KJqaje7cQO4KhzRGj5u93rHSG87TeCffTbrUUfsY2+scMFHKWRPM20JNKO1P4802K1LnaZmtTWHiuTpQy9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bC6exZdb; arc=none smtp.client-ip=220.197.31.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1766853318; c=relaxed/simple;
+	bh=hICSu6Vxrj2xniWAka5RE0nDT7nVND62Yrkq1RNJuCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q/MEa6+MBRjL4DFGHt1rYq3UZHHRWjBYWmUmbo7eQrUSLMffCiYw3il1Ui4WXqAN6tulbmXaTzZTjsAPiHwpfY40jpiY4GYehuc829WPlkD+lRkc4GE9q/MZf4r2CBeHYkkyDEQyES3xqc6njlnIvepDjj41Gsu2pyq7XZLIPvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1xyhjSB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bC6exZdb"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2ebf64e06;
-	Sat, 27 Dec 2025 19:50:04 +0800 (GMT+08:00)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	tao.huang@rock-chips.com,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v4 4/7] gpio: rockchip: support new version GPIO
-Date: Sat, 27 Dec 2025 19:49:54 +0800
-Message-Id: <20251227114957.3287944-5-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
-References: <20251227114957.3287944-1-ye.zhang@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1xyhjSB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2949DC4CEF1;
+	Sat, 27 Dec 2025 16:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766853317;
+	bh=hICSu6Vxrj2xniWAka5RE0nDT7nVND62Yrkq1RNJuCc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k1xyhjSBtGy8Fk7eM7dfl7B33FD8UlrlJJwAdGxf/lyQUVQCB3f1YPQXHNZ7ap2d2
+	 YBFTsQntiWNvdnXbSwHKrc8TtJUF2Ah3TvqmbUhSfpumYWqnd8MzLU+glKiSQjGrWP
+	 mGt5ayrxU6vp8C0byzuNeofh9cmIribWZNiR8QVUnKTkJORi+dgypZcptvZR0XDtQg
+	 JDdsFBaSsndF1zLxb2kDAurp+WERnYkbH4NHJklljJoUNOnFaBxoq2m1qpRr5ez8Rh
+	 /u0ruAxQbi0vF8b7a9PxqkSjasJiaF3TaxIMFwvWa3TIyyOdrBDl6wLuFyDeFT6ezA
+	 Bb5ajQOt3HAwA==
+Date: Sat, 27 Dec 2025 16:35:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jorge Marques <jorge.marques@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH v4 0/9] Add support for AD4062 device family
+Message-ID: <20251227163506.2fb90815@jic23-huawei>
+In-Reply-To: <20251217-staging-ad4062-v4-0-7890a2951a8f@analog.com>
+References: <20251217-staging-ad4062-v4-0-7890a2951a8f@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9b5fa4f3d609d8kunm85cc97d2e30a05
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlIQlYYSR1CHRodT09DGBpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=bC6exZdbJV5uWp0lB/ND7hHaFfXL7bv3RJwjGwFqc6ybX7WUaJJmHHTJiUrHZwdgiK8PXyc7jzwz+YYoLsnvuBusdD/WVfNpxSB9rl3Dg5Qnmqhq6EPInqMSP9uycCwYjQ2EZE+hy9p50IukpjR1Fphfn8hqGZ9PJQPoxIgvM8s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=2RsNzulXAZLkL2QafonCahbYbZr1u/QuXtoWJZpywhQ=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Support the next version GPIO controller on SoCs like rv1126b.
+On Wed, 17 Dec 2025 13:13:23 +0100
+Jorge Marques <jorge.marques@analog.com> wrote:
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
----
- drivers/gpio/gpio-rockchip.c | 2 ++
- 1 file changed, 2 insertions(+)
+> The AD4060/AD4062 are versatile, 16-bit/12-bit, successive approximation
+> register (SAR) analog-to-digital converter (ADC).
+> 
+> The device uses a 2-wire I3C interface. The device simplifies acquisition
+> by providing 4-bytes in the register map, signal-extending the sample
+> reading accordingly.
+> 
+> The device has autonomous monitoring capabilities, that are exposed as
+> IIO events. Since register access requires leaving the monitoring state
+> and returning, any device access exits monitoring mode, disabling the
+> IIO event.
+> 
+Applied to the togreg branch of iio.git, though initially only pushed out as
+testing to give 0-day a first opportunity to poke at it.
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 47174eb3ba76..c3e831c6bcf1 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -36,6 +36,7 @@
- #define GPIO_TYPE_V2		(0x01000C2B)
- #define GPIO_TYPE_V2_1		(0x0101157C)
- #define GPIO_TYPE_V2_2		(0x010219C8)
-+#define GPIO_TYPE_V2_6          (0x01063F6E)
- 
- static const struct rockchip_gpio_regs gpio_regs_v1 = {
- 	.port_dr = 0x00,
-@@ -674,6 +675,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 	case GPIO_TYPE_V2:
- 	case GPIO_TYPE_V2_1:
- 	case GPIO_TYPE_V2_2:
-+	case GPIO_TYPE_V2_6:
- 		bank->gpio_regs = &gpio_regs_v2;
- 		bank->gpio_type = GPIO_TYPE_V2;
- 		bank->db_clk = of_clk_get(bank->of_node, 1);
--- 
-2.34.1
+Thanks,
 
+Jonathan
