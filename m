@@ -1,76 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f193.google.com (mail-vk1-f193.google.com [209.85.221.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C7532FA2E
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEAF223DE9
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767795780; cv=none; b=g/iuzVPHytYQZPJvd6arGQk2By1DDI9Vh4aBfJh8GM89VD5xpH3/IL+CyhMDI5l9wo6XjhxnkKvDvK9j1rT1xoh2Ya91qob6nn9YOdKH8oOI/gFObKsNO47VY2EJEnZcj9ypPsnAn+sEBFiM/cau9Mx/LLP5c1ANnZnTVp6N9Bg=
+	t=1767796561; cv=none; b=nnkQ2sT0xGaR8N1/D0pxx2DQqhCQUPNn5YBUxFoNoacgYsGgf9F5BZLGifxpHOrUh+2Zki9JhYpOUfuU6Ds3m7k3JOfVQXsiiOTnCwnFGbL7LGM++fs8zHA+cLTM3y5Q52D38hGbP7m98Zr4Rv/+aldOHu5LCfzd1idMcBxrXWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767795780; c=relaxed/simple;
-	bh=AiZmICtjiihMrOUOI4r4hzESsVzAjpUbdk8bNNC/LAU=;
+	s=arc-20240116; t=1767796561; c=relaxed/simple;
+	bh=6lxm2yCRzymiJ3PB8Ax4dTtiSd5+d+ADW+gyDpHpCqk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y6ZWA/1TilY055jSU8jRMiSsHuUwaIeACevm/gm07xai37rZP92c9AUGHGEYaXW7o71Bin3CuYqLtIpLhtxV/WcHRPjkDDJINphOXOWiBetiju/L14bswdcqbVW8kH4r5c6C6giS0n9SUElqEA+db2C01kyb0ZBiL+tjfexnwLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSN4QXhf; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSN4QXhf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B007CC19424
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:22:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767795779;
-	bh=AiZmICtjiihMrOUOI4r4hzESsVzAjpUbdk8bNNC/LAU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bSN4QXhf5ZB3OgyaDaQJl4Z3yWfEIqQ+5DggOZFgBfnmQGb1TtTMDo60UfnAmioH9
-	 xeCAMW6t5uRK/nAUlGO+OGYmHIOy4Cv0ZPQCI6MG0n4UprKV0nRzBGiyzoLj2dnwjt
-	 OitxK8M9gSMiynP0e0iklPSnCmWEKyyiOZ91/OQSYLM9HV5GVpGuySi0kFk/eo6wht
-	 YKIJs8ck2M3LRW3dzxIJ3fXqYTq0pPpPXHgjvTb6NFxio//t9O9A44pxhLpNcdsK1B
-	 yRBI/irZQ4Q6LpqWTpqWzS7Sc6E2yEzB0aXVoDYD2R7LY9nzPtr9zWZLtSmgIxCF0U
-	 hajKrfxR6LHgw==
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-644795bf5feso2278145d50.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2026 06:22:59 -0800 (PST)
-X-Gm-Message-State: AOJu0Ywj0rtlT4q9xLZ2ZGJNBbuavLp51r5aRrU194vOaj3qPzFvcKrb
-	/gdGeD4hf0AI8ml3mKEPG4Ey/Hc+JTz9r49R8Q315bnBuC0JGDha8hIlE+3Ebi2Vd/vOld528G9
-	HtD80S0Wuz2czJfTmSkgQHfL/gJXmyIU=
-X-Google-Smtp-Source: AGHT+IHCipfXMssxG4xTli26hFbEQ8q7gEC83UFwO/CMNHBXDuYmrQ8xb0y7nL4VgL6p3CmeKxBpEZSZSOq0TepOOyo=
-X-Received: by 2002:a05:690e:b87:b0:644:45a9:c0d0 with SMTP id
- 956f58d0204a3-64716b35f17mr2044997d50.2.1767795779097; Wed, 07 Jan 2026
- 06:22:59 -0800 (PST)
+	 To:Cc:Content-Type; b=ITlog6JHv59j/SPHPI4jyusb6+j/qK4Dw3x3+z9ff7ztC5HlxC2jw0LrzRMyiVPV/RiQeRnScZvZ9dRM0D8pQcpDh+Qz77VJGHl4sWGozmYGFwdQkxLRfHUrY3SI/3VeTlQrJQEuyw8pXtZuIjzOt8QDGg10zL11W1aSLnaxNDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f193.google.com with SMTP id 71dfb90a1353d-55b24eedd37so1502827e0c.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2026 06:35:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767796559; x=1768401359;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GCG+VCgfKP1d5FB1FIYpGKsmNdPDYa7lbTJ3VDOVxBg=;
+        b=USZkiAlasMMIjbJ/RaktiZPT8fYwWiitaRqHqbcAa7ccdv5AL6696YSVoOIq0UN4PQ
+         BDfuxN9N5ZR9QG6Rvr+7lTyPyCDwSOVoToulFS3NfRlRdBxxYXwojHlCMX7f3CtNmAFD
+         lRWfuLa2H+eos8BR1cGAMsa7TMTXjMZooTiBLbD29mw8Npy3GiLkHh3yJzLri6Ebvg/V
+         /ty8EXBOp5KhkPVUPnvu0f29IuLE6iMK3tvxYELpIWNlZRGRBdMbRku79bfx+mQQErU7
+         wsdeTkyFLuK1swR39VuJSTIzhzIZJcQVhQhYHPtNH97YxYw+ApQdCUuK2G8bmtBL+4hm
+         5KZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZA/zzb4NWlD1SrKRyKnH3nPla+eNWGAmcDq9afE8xk7KZAt9vte03eO9Ttqsl/P5esgar8AP91w6e@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh5mFf13bAwf0OYQdezVNErSVWRByPcNd7XlWmFqzGrEzHTRZR
+	dod3rvi7PvIzoVgwQT8u1oZBNtFIGByA9zpddMQLwlOqUeoISbE4WO220PJfoPYS
+X-Gm-Gg: AY/fxX7867vQjzrltHUUc51aEVdrAeswLzmS0ifF48euK2Sdln+sUGxYXjKUxeRQMVy
+	k3aPRW2RjpMLuT5+Y2adqczNRDydR7pRflyF4UBgtZgmih+Rly96SFQcj2C9YK29niC8c4QExLl
+	yWccXZUj06btR1mR5uuFuDvmBHV8UvN+o0irw+9IDWxQJNM4WA/9PxpBcdVRB8n/dSoFWdW/Mb9
+	ehW5lJjBaWbU4LHpZ36okLncVZvEsZ/NCRNdfajkQFYLbyaqPc68speff0hsd68PzcMN4GliM8y
+	V0JwsvzSLCvz1RoJvoRuRNAHOB/6gwkZXwwtv0Fa313ewBLU2YdnrQip57gMaxCkgm4b5eKO6jH
+	6/XSdyQ1CsgVIa2rc6YJRxr/W8ETpFmpbxfF5wPQNjEnooLO0Z6j8JtDVRmcTR8xHXilz1jcpYJ
+	vxd10DntxbqcJa4nHh4Hb6g2ZpM3zat69yyZpRHFveYGqfIBZv
+X-Google-Smtp-Source: AGHT+IE+B5lwy6spASnzocNFwxED4NwpeQCls9JQLGCFTaTFdNE2a1r+Fn3qhI0BQIK40deUsZbPXw==
+X-Received: by 2002:a05:6122:31a5:b0:55b:7494:177b with SMTP id 71dfb90a1353d-56347fcaa6cmr851476e0c.10.1767796558627;
+        Wed, 07 Jan 2026 06:35:58 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56345043f83sm2320161e0c.19.2026.01.07.06.35.58
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jan 2026 06:35:58 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-940c539de8fso1257441241.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2026 06:35:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVsfNPtI3Zcj3Fuqwdhw0kqjIJjHwtP7WJN24tBrHt/RoernX1Qi2hR4kTfhqgxChVcwlTe/onZxUrC@vger.kernel.org
+X-Received: by 2002:a05:6102:5695:b0:5df:bddd:b590 with SMTP id
+ ada2fe7eead31-5ecb6905a3emr1117507137.34.1767796557085; Wed, 07 Jan 2026
+ 06:35:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105095956.19615-1-nicolas.ferre@microchip.com>
-In-Reply-To: <20260105095956.19615-1-nicolas.ferre@microchip.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 7 Jan 2026 15:22:47 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnXYh+kBumTo8pjQWQyxUs2p+9V+EYhS8X0EG8fuBbq-g@mail.gmail.com>
-X-Gm-Features: AQt7F2pu33uByNbNu__Wc6oIa91TQ5TXX2lidmXsMkS5x5BSX-XEjSbTod4CtWo
-Message-ID: <CAD++jLnXYh+kBumTo8pjQWQyxUs2p+9V+EYhS8X0EG8fuBbq-g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: at91-pio4: Add sama7d65 pio4 support
-To: nicolas.ferre@microchip.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
-	Ryan Wanner <Ryan.Wanner@microchip.com>
+References: <20251217080843.70621-1-shorne@gmail.com> <20251217080843.70621-2-shorne@gmail.com>
+In-Reply-To: <20251217080843.70621-2-shorne@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Jan 2026 15:35:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUaO_PwWygW8qss47W_ErB4pm1Z2HQ+edvw1-x7ce7oKw@mail.gmail.com>
+X-Gm-Features: AQt7F2qBJgoY9l-u0hf_v_IupX5oD1Vi4qcbhjbPDLtZk-LVqqhekrQVxBOS6ug
+Message-ID: <CAMuHMdUaO_PwWygW8qss47W_ErB4pm1Z2HQ+edvw1-x7ce7oKw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: Add compatible string opencores,gpio
+ to gpio-mmio
+To: Stafford Horne <shorne@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux OpenRISC <linux-openrisc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 5, 2026 at 11:00=E2=80=AFAM <nicolas.ferre@microchip.com> wrote=
-:
+Hi Stafford,
 
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Wed, 17 Dec 2025 at 09:15, Stafford Horne <shorne@gmail.com> wrote:
+> In FPGA Development boards with GPIOs we use the opencores gpio verilog
+> rtl.  This is compatible with the gpio-mmio.  Add the compatible string
+> to allow as below.
 >
-> Add sama7d65 compatibility string.
+> Example:
 >
-> Sama7d65 does not have a full last bank of PIO lines similar to the
-> Sama7g54 SoC. Sama7d65 only has 14 lines on the last PIO bank not the
-> full 32; adjusting the SoC attributes accordingly.
+>         gpio0: gpio@91000000 {
+>                 compatible = "opencores,gpio", "brcm,bcm6345-gpio";
+>                 reg = <0x91000000 0x1>, <0x91000001 0x1>;
+>                 reg-names = "dat", "dirout";
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>                 status = "okay";
+>         };
 >
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Link: https://opencores.org/projects/gpio
+> Signed-off-by: Stafford Horne <shorne@gmail.com>
 
-Patch applied for Linux v7.0!
+Thanks for your patch, which is now commit f48b5e8bc2e1344f
+("dt-bindings: gpio-mmio: Add compatible string for opencores,gpio")
+in gpio/gpio/for-next.
 
-Yours,
-Linus Walleij
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+> @@ -18,11 +18,16 @@ description:
+>
+>  properties:
+>    compatible:
+> -    enum:
+> -      - brcm,bcm6345-gpio
+> -      - ni,169445-nand-gpio
+> -      - wd,mbl-gpio # Western Digital MyBook Live memory-mapped GPIO controller
+> -      - intel,ixp4xx-expansion-bus-mmio-gpio
+> +    oneOf:
+> +      - enum:
+> +          - brcm,bcm6345-gpio
+> +          - ni,169445-nand-gpio
+> +          - wd,mbl-gpio # Western Digital MyBook Live memory-mapped GPIO controller
+> +          - intel,ixp4xx-expansion-bus-mmio-gpio
+> +      - items:
+> +          - enum:
+> +              - opencores,gpio
+> +          - const: brcm,bcm6345-gpio
+
+What is the rationale behind using brcm,bcm6345-gpio?
+Given brcm,bcm6345-gpio has 32-bit registers, while opencores,gpio
+has 8-bit registers, I doubt the latter is compatible with the former...
+
+>
+>    big-endian: true
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
