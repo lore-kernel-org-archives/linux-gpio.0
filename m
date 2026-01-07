@@ -1,84 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3048339856
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360832EC08C
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767795212; cv=none; b=kQBUAKS6j0bdU9THU7SDH7Ms+lTpCeZJwP7UzCiPo7aUKDAeijDcxh9wwEAGL9ZB4Opn9Q177PSMTCpItBbElA6nejPDZJX/d3dHc2ls7c4APYL4ypvnckHRCVvT8plqfA5zl3YP7Uso6NoWJR4oUhEzGfbJE9zIquPr6jAUEJ4=
+	t=1767795379; cv=none; b=fTdbzRXZ9LC80KmFdAnmifcvu5+A9MwSk8nYHaEcuVLAfJYYiFYVNIPMH3D+9rCNvX6lGBemNH4c0bBhzi0ex5AYCWcviHyg4cAw3hIfTXsF4OM8c7B5wSRIKOdlJUQvgwZHUxLHeWfs5TW4vBHC9WRP6gKrT7PkvPvdJWcRiCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767795212; c=relaxed/simple;
-	bh=vPUhQO/bJfTutZapkC7lSFc2q9gKbGxYafUo+Xs/Plc=;
+	s=arc-20240116; t=1767795379; c=relaxed/simple;
+	bh=ZmdGc8RmqCWZSrmEh+UMwLfS0doFBmXM9vWAXEyLvms=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzA5C2/q1jJrX3QLcFd3fz8QwHG2YQ53Fq2qryGQNOOUCUKV20ep4UliRsbY3CGBx/eeq1NA4FigChBWSreKHVLnbPt9uK+G2l8EOzWQdsaUMl0S3QF4AcQJRpxj4k2t/F08e9jwBb8ZjNemuoWNKOlSvHK7faxFf5QVW3rD2Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LxpUqBSC; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=e0v/ujvCAsQ739GYdDIgW6nTXRVyJYoXa6yZY9eblFzCP5AaFBV8Z2vPTf5OV4c9XPtf0TljXnQ9G4WWnzXLYSMpCDLZ3wwsKHggXHyWaqtUMQlxdpYj0x38R2UCW39apQhRjNhVr9uLqczXaC+aWC2VRwMXgAnpuQTvbXKACdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b0ddnArR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxpUqBSC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADC9C2BCAF
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:13:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0ddnArR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0794C2BC86
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Jan 2026 14:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767795211;
-	bh=vPUhQO/bJfTutZapkC7lSFc2q9gKbGxYafUo+Xs/Plc=;
+	s=k20201202; t=1767795378;
+	bh=ZmdGc8RmqCWZSrmEh+UMwLfS0doFBmXM9vWAXEyLvms=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LxpUqBSCaEAFNHV6ZR13Wn3sVba/mylY/cSyRWIVNUjJyQ/RoL2O7Frk4XVnmTaI6
-	 vpd/fm7mnx9aKY8DUWFStsaVx96N3/iN7XssR5fP01+onZCKHcsqc59yZblqX9pgV4
-	 Xex8vwgsTKZ3+SE9L71+KngoiVZDI22HXt12ahm2rPXifUB8KukHkK5H2stkGnlQQz
-	 +FyfSWpuD9PRg78RPTSKUxL8KPaFOEICqu1pGmm7sYCQbyJ/EfmiLFvmft1A4YMDzM
-	 nO4jM4arQQtOSNxk9ykJ3we4r3oSkwD95uoSJNoq8dXTHJb+akI9ZpTQyCGGtUdjrF
-	 7D7vZG0+yHHTQ==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78fd0cd23faso22240407b3.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2026 06:13:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVE2n50N9DEl0BM0yXTkdHToDKz34qCl0p++v1O+D5WF+AEcm5TbdO+sJ+gdlPDEjXGKg68PIYDHTHg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBb2x1XSzZaDLde699bTcp4glnisg8p38bvQ2lgB+r0PdVNjOm
-	7qyEgrc21CSHYNIImGSUpPbvfq1IA4RNd06hiDUMRkoK9wfgrgF5ScPU2IhOnhZAEoZ/OzRJ75+
-	c8zMDaULEuOqy3dgCDXydiiLH/Msfq4M=
-X-Google-Smtp-Source: AGHT+IFpGRYBSvGge8PYFsRHSqJMEhcXggZW3h16GPs6+Lt8GMfLw75OX8+1p8hq0kvPo80jSxwj1LTh08lAgBDlaLw=
-X-Received: by 2002:a05:690e:1248:b0:645:581a:df8c with SMTP id
- 956f58d0204a3-64716c4dfb6mr2253264d50.91.1767795210728; Wed, 07 Jan 2026
- 06:13:30 -0800 (PST)
+	b=b0ddnArRLffghGDl9H67g9looF/o7iEk6VfWuNHhEw9p1mkK2qEuKd+TbVJzMEzuQ
+	 ZWJgT0buOiaB38fRrktWid8LBGswC5XsJVTwcSCXfQztIP+nwOEe2QspYPGQ/FUsl/
+	 6of8LkIvO3zHtEjliTYSSkHCmwzlySuNmH8HWnIBcbUwTEtcDPJ5e5o/UwkqkdNDrS
+	 75Pmvj97Gm0CO4MbmcUNZcw3J9H+AqhfyYYLxldAn9DO/4M6yf7MtXNHdp3OMeSB4h
+	 G1akDAskW40Gh7Bj5k1lBlw+/GjwR5B9jKBlETiFCKByaGSSijE8LJqVn4H+ud/dzs
+	 HR4yihWji0AiA==
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-78fdb90b670so20321237b3.2
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Jan 2026 06:16:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV7CvsWoiV7FMTj6ABhxacHWsp+TbIcKdQJe+sX1UlLFgUL6wHy4PJ95VLL+A7cMZ7KNPwWy/292wrc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcFZ3I0PYX3CcR6PeI3I4qSqvhWcinyFscJIK/TIg1fzjHi3i/
+	IpagC4NunaI9XGx7gDWe+Pb9usBjl34DUjf361fJbqBf6yDsFYwx9Vji7WkJe1LYVn4ZgCZH9Ct
+	1PvVu9ttNDJ42ByXu3PUCC1ooDAb/Gm8=
+X-Google-Smtp-Source: AGHT+IFxG+Miu6GVJ6Vzdd/NVjY5a4LS9F0nizqhKCukNOAT0QGmncWBX5ttR8rNDEh4eEbH8NRqqqLm0PLu+hAnXf8=
+X-Received: by 2002:a53:c706:0:b0:646:a1ba:7168 with SMTP id
+ 956f58d0204a3-64716c3c83emr1880656d50.67.1767795378130; Wed, 07 Jan 2026
+ 06:16:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251225103616.3203473-1-wens@kernel.org> <20251225103616.3203473-3-wens@kernel.org>
-In-Reply-To: <20251225103616.3203473-3-wens@kernel.org>
+References: <20251217-imx952-pin-v1-0-2747f09144dd@nxp.com>
+In-Reply-To: <20251217-imx952-pin-v1-0-2747f09144dd@nxp.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 7 Jan 2026 15:13:19 +0100
-X-Gmail-Original-Message-ID: <CAD++jLku5_fyDXw+uJ8Gj_1nQxjq8egOh60X1ARGC5dmFAcV+g@mail.gmail.com>
-X-Gm-Features: AQt7F2rAHH3lL_5LalTawPfcgjclmbR9cTZKvz98Rqt4039YJlca5QQ3lCXU-dQ
-Message-ID: <CAD++jLku5_fyDXw+uJ8Gj_1nQxjq8egOh60X1ARGC5dmFAcV+g@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: pinctrl: sunxi: Allow pinmux sub-pattern
- with leading numbers
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, devicetree@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Date: Wed, 7 Jan 2026 15:16:07 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkvYffZ_QRyk6VwuM4bMQVpfxdS8s6DhupXxB1eVU9Mfg@mail.gmail.com>
+X-Gm-Features: AQt7F2o1liqmjroptcTd4AFvMzhvkZhes7jvwtRZbA4ijFlbrYVTv9IpNfFQgCo
+Message-ID: <CAD++jLkvYffZ_QRyk6VwuM4bMQVpfxdS8s6DhupXxB1eVU9Mfg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: imx: Support i.MX952 and update for i.MX94
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 25, 2025 at 11:36=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org> wro=
-te:
+On Wed, Dec 17, 2025 at 3:41=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 
-> The pattern for pinmux node names is typically the peripheral name and
-> instance number, followed by pingroup name if there are multiple options.
+> Patch 1:
+> For the changes to i.MX94, some pins' mux options are not controlled by
+> IOMUXC, they are controlled in WAKUPMIX BLK CTRL. SM extends the pinctrl
+> protocol, by adding a new cfg option.
 >
-> Normally the instance number is directly appended to the peripheral
-> name, like "mmc0" or "i2c2". But if the peripheral name ends with a
-> number, then it becomes confusing.
+> Patch 2:
+> Similar as i.MX95 and i.MX94, i.MX952 IOMUXC is also managed by System
+> Manager(SM) and exposed to Linux through SCMI pinctrl protocol.
 >
-> On the A20, the PS2 interface controller has two instances. This
-> produces pinmux node names like "ps2-0-pins". Make the sub-pattern
-> "[0-9]-" valid to fit this pattern. Avoid having to confusing "ps20-pins"
-> name.
+> i.MX952's select input register offset is different, so need to update
+> driver to include it.
 >
-> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-This patch 2/4 applied to the pin control tree.
+Patches applied for Linux v7.0!
 
 Yours,
 Linus Walleij
