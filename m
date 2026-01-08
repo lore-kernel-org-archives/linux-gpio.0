@@ -1,78 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C2D3815F8;
-	Thu,  8 Jan 2026 08:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217FD33A718
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 09:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767862754; cv=none; b=Wlg7ZrX6VhwT2/DNkPkSSLk9D9zt93NSn4bdThwVaVhwa+80M3QejTHm5QbYJEVGxnluGOvhogm+OeCdwPaUUPacjW1bpIQl601J1SrZvzPgE82mj9Rof3Itftu4QdmaoxMKvsEgFBF+fX294BB2fJJ+8oO3sVWS1rHgnuIWjkQ=
+	t=1767863056; cv=none; b=o540gS30qc8nvQNXzwXkp7LdvXMEMxKE9v/9OF9wALNcr6MP3h359XV0xs8RtmBU9UONAJkW/oQmj+16D0FOkrSpMHA1S91jeBxnVQj0DmughrvMEN8L77SAVMr49zlujGhlSHMkkaSHxXYVMcnbBb3QLydGy+8bV6ChNReKCpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767862754; c=relaxed/simple;
-	bh=gBfi7dSIZ8ZiN8dKK2LAmLnRIxw52URBuFs7ifEZ1Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMEYHwCshyTqGfieyFWHf/dY2C0i3iwGpE9ZSUtoFWcBwjwyUX9oursowvvQawxzK7malCIpF2/gStfeQrnyxszb2/rvDSyRHBKdeXbPx56URSeYreuGaCDC3kTUqZ4KRpAO1H5ZeR37rmImft9XDOEJM4TFc/nQewlOOD0/cMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/NT5vT+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767863056; c=relaxed/simple;
+	bh=CXye4V4yCGuXX+Yh6zLBGTO942MwnYAXfPhzjwIN0Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qXEZWAs+yipZntbB42adm+BUo+fxV/UkR8QHtW0YyhFmJc+x+2kQyq4PZqrxf0HHr3K9h48QQhjjzk/mYacEQRMKj3chrLJuxOC9KuSlrkBCIbVSd2UYa0TI8psIx7qpn0i5jKzBouVG0ynyhN6DjooST8tgVTp31PVzMdUeAME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVIooYzz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/NT5vT+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC6BC116D0;
-	Thu,  8 Jan 2026 08:59:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVIooYzz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DB5C4AF09
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 09:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767862753;
-	bh=gBfi7dSIZ8ZiN8dKK2LAmLnRIxw52URBuFs7ifEZ1Ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e/NT5vT+ttmEKNsA+F5mVfpAzduM5N7jS8XXxN9WrGGMvujCNlCTtYL3IBJAkeWcW
-	 gVZKHMUbASLg1J9Efic08SgHJ4kjR1aE0TnZQh3yJ+uNuMlb4AC+AFxq2xR6Ln5lxE
-	 Kbyrw1Q9OAYGnbVAYo6ZfSWOwqetPAMLNe1JUszNGOTs6jg9kUZVi0eGFFSQUAFKfk
-	 GrYrwzpR6h2KDnLhXwUaycMSimNNo9uP0GItN7OzqG15uAPDN1v46ElxeZSZDa8sJQ
-	 jFYMRsnTjIzwPwpKte2Jb2A8IFYlrw3YwicaH4uhkH0NY+xJ4QNS8YZPjbrOm/MrJg
-	 aEIDK5pY3aQVw==
-Date: Thu, 8 Jan 2026 09:59:11 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl:
- qcom,sa8775p-lpass-lpi-pinctrl: Add SA8775P LPASS pinctrl
-Message-ID: <20260108-outstanding-transparent-weasel-ca531b@quoll>
-References: <20260107192007.500995-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20260107192007.500995-2-mohammad.rafi.shaik@oss.qualcomm.com>
+	s=k20201202; t=1767863054;
+	bh=CXye4V4yCGuXX+Yh6zLBGTO942MwnYAXfPhzjwIN0Bk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hVIooYzzAoNf0azJyBrEXD/fTwfn4nyFIUCLwdA6R5Dbx9kMjbSVUF4a7H9MTBRDr
+	 LfoPiA3M9AazFBgsm0wytFj3JYMdgsUYtFtsQmKQBOcPg64LE7HVGoVXbhwiHxcw9+
+	 4FMX1qv3ETPOiuBLrv3576vVEX+Y5kuFHGHOfCYpihYfXtllnKtMCrKfYjDHdRbF7+
+	 OeTAjwD4CvHJu3xGjVl7xGC3QNZswUYe6xt6lWeX0J1Wf6KPaZ//C99wq7tCoWo4fJ
+	 1kllXhzaPTtvSfH+ACs+uCZZCtvzdt0vEEkKGy4CV+4nggA33tZZFEqAH5qlkbJ/DJ
+	 75b4dNxKo9eXA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-59b79451206so222752e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 01:04:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVVtHWCcSyV6HOQdMaxarOMBkuVN72wYsEqyTmVZAkPhxSWJzd2a7mFUKldDS/FLVoI/4vBvG/nUf9S@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoq+hl0SjWXdomEt7HGWIYEVda6IGQd43D3ZXqVd63uOpmFrwp
+	td37wD3d1rkccm995gkuPPedNuwTQExR8KLwXxbS4qi9iil5/+pTqU25/eyiRhHnRLPd8pvC4wX
+	BfJV+U0OPvLh1rrKoi0NurJAwv8A1hq7FOxoRhTN1jQ==
+X-Google-Smtp-Source: AGHT+IFAK4kx2dU3M4f28nexLkW1J2UeJSomd8IyDXF0S2v0SmmwMwzxwKKUE+aMvKeHrebINV1vP8b+/PRBPdyefYI=
+X-Received: by 2002:a05:6512:3b21:b0:59b:7346:2612 with SMTP id
+ 2adb3069b0e04-59b7346287emr1567053e87.52.1767863053429; Thu, 08 Jan 2026
+ 01:04:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260107192007.500995-2-mohammad.rafi.shaik@oss.qualcomm.com>
+References: <20260108034217.2615017-1-rdunlap@infradead.org>
+In-Reply-To: <20260108034217.2615017-1-rdunlap@infradead.org>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Thu, 8 Jan 2026 10:04:00 +0100
+X-Gmail-Original-Message-ID: <CAMRc=Mcows9Mq9UC+307HzdV06zqRLgB9Bz=7igamT8k0mTCEA@mail.gmail.com>
+X-Gm-Features: AQt7F2pYI05C9wmkCCi8YslLk2dddsuCcDPvlYJVa9ryrfYkAlzfG53xJhKQ4e0
+Message-ID: <CAMRc=Mcows9Mq9UC+307HzdV06zqRLgB9Bz=7igamT8k0mTCEA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: drop Kconfig dependencies from symbol GPIO_TN48M_CPLD
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Robert Marko <robert.marko@sartura.hr>, 
+	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 08, 2026 at 12:50:06AM +0530, Mohammad Rafi Shaik wrote:
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
-> +
-> +    lpass_tlmm: pinctrl@3440000 {
-> +        compatible = "qcom,sa8775p-lpass-lpi-pinctrl";
-> +        reg = <0x03440000 0x20000>,
-> +              <0x034D0000 0x10000>;
+On Thu, Jan 8, 2026 at 4:42=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
+>
+> MFD_TN48M_CPLD is an undefined Kconfig symbol, so remove its use
+> in drivers/gpio/Kconfig.
+> Drop COMPILE_TEST so that the driver can be built at any time.
+>
+> Fixes: b3dcb5de6209 ("gpio: Add Delta TN48M CPLD GPIO driver")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> Cc: Robert Marko <robert.marko@sartura.hr>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+>  drivers/gpio/Kconfig |    1 -
+>  1 file changed, 1 deletion(-)
+>
+> --- linux-next-20260105.orig/drivers/gpio/Kconfig
+> +++ linux-next-20260105/drivers/gpio/Kconfig
+> @@ -1621,7 +1621,6 @@ config GPIO_TIMBERDALE
+>
+>  config GPIO_TN48M_CPLD
+>         tristate "Delta Networks TN48M switch CPLD GPIO driver"
+> -       depends on MFD_TN48M_CPLD || COMPILE_TEST
+>         select GPIO_REGMAP
+>         help
+>           This enables support for the GPIOs found on the Delta
 
-Lowercase hex. Just look at other files, e.g. sm8450.
+I see the core MFD part of this driver was reverted by commit
+540e6a8114d0 ("Revert "mfd: simple-mfd-i2c: Add Delta TN48M CPLD
+support"") years ago. Should this driver even be in the kernel? It
+seems to be useless without the parent driver that supplies the
+regmap?
 
-With this fixed:
+I'm asking, because with your change, it will pop up in people's make
+config and I've been yelled at before for displaying useless options
+so I'm hesitant to make it visible for everyone.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
-
+Bart
