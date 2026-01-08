@@ -1,195 +1,148 @@
-Received: from mail-vk1-f196.google.com (mail-vk1-f196.google.com [209.85.221.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB22346AD5
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 08:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354573ACF0A
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 08:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767861723; cv=none; b=mijBqj5Z0rgPkQO0s6hmK4XIMPp0/pKiKrwD0jO2L9ZUfinMlWlId7W+4GqCbia+MUQssuNu5mxOwI27v5+lajCeWKKs/FrDlb4OLTBGoFJDgMJhliQFvBlz7PEF5f7K4e+viqtNbOUlTBBfCWCYcsNdlLpag4KJoMlxTUPihTk=
+	t=1767861961; cv=none; b=gyFFWEG7hkQJNli6/8gFF54HQYNyyjlOqQtB2T1Mior0YE6cMmryUhQ1ODy220RYZcSPtUjFCLuew9A+3Rfw2+1g0dBk3DSicB/PuAdEdKO0QYEbihg2dhSwf8oPk6aVMo04Z3CUsfh1YxOLTNjQuVXj3Q3KEc+3VHG5VADWcKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767861723; c=relaxed/simple;
-	bh=9X/r2vj38C7ckuEFNFkLLoQCe9ZxM5qmA8RkRgtPHu4=;
+	s=arc-20240116; t=1767861961; c=relaxed/simple;
+	bh=BqgkMcZUubmtSOlPILAa3d89zvk0yBYNI6hQRzVoKdE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/cOimprQsoCwCV7lPAQ+a+D0jbMIEZQmDQ+hwiOiJbgArjxmE8kIZj2649xPF5Bs9t/A+SScZOAAocv3rbR2Wb+lvrOiBQxINHW6Uusbg9Gn2cjBE6+jT+D5XDewb81nG9Ihb1bj6PkNo/pGinM9yzaibsXRH7MWtvUz1SE+4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f196.google.com with SMTP id 71dfb90a1353d-55ad466ad1eso1010048e0c.3
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 00:41:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767861710; x=1768466510;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xns/JPqML0qCztDyyCuldpapQdflbeNCjFZrnYmJiTY=;
-        b=mNqGWYf5j2Y3dWBYQhTvZRhnFzAwIgrBkN4PCgTyjb33yyRNX7J6nvlSamXnqLVcDN
-         EW3woQG/4d4GB4foz6JpwbDc0N/XznO5JicnZoUxM7w+HV5HT8VWil1sNoHbnU4CiMJy
-         wUOK8/BD1G2zwY4LjGoR4auduQVDGkreGjfh804NUfofS3hUyk5GSw+RNSQGu19kfz4X
-         InG8Djt+yn9ohDcZ9dUev4/zbb9Aij0WMWwtLelkrTPHkcAUt0Q86+fj2iKgDhd3TLNj
-         Am3nC8AxlN6T97OSfWiPuRemmh473M9D0g4i8JEjcS3JDFOv1StjfhrkOY3T5Wf249hg
-         akrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8V/4O3HrPwe7FKobSWRSQSUkBXvAqdm5fpTkTAkueaDtjUOKTKLyskzz+ExRdeAJ/r9l2E4gviCWA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRVLK+NMe54DIVGC72/KnuYujGFWXMvGvie2hl/fcuuA8Zqrl7
-	IvN9TzJkHuxOcX1CLh9r7BuhAT/C0HiXtbFvp/L7Himn3O2BoF9DzMRFTvW7R2Cd
-X-Gm-Gg: AY/fxX6Bqj4SeH34c8TDnCHWnVHi1O1m5aw+Ughqao5Ijv9lFgrwFrOLeXJ9uP1RKAq
-	GZJ571VTwAZ2XtLQWx/cOw+yy5hxQ29fh/5wKxkE4ePmFvN1X+UjFIn4mEp7J4v3T4kaCFf89jv
-	9TQTPLi7lqsMqfH53yGeSa8BiCepkx2kiKWAMJQNR/0HtYLh3MR7qBJgABsuMZCuqmOe3fiAu80
-	xn/Ua7S6tPPitczz42OEhbg0KwT1qXG9kOrD4sZHaJi9LPops+xQiNWkkSZQJ3MdMVslpB2H5QQ
-	ilgj0zQ+bDiPgHSVL9/faxY5sQ6R7RgM9MklAgwNh5XG3+4wuQIYxuw+IjAKw/uuZUmFNKqF4U9
-	gc3dEh030FBvTM4zJD5jOPFTuBfmANzKpguTi5T1a89E+krkQyAhRk6jGDAqMa3joyxxsJZ8OZV
-	Dvv+9+F/iMcbJlLHV1lBuY0mB4k3YC8l6ufY92Q/q0J9d7myAp
-X-Google-Smtp-Source: AGHT+IFdXbwvkASmdyo563mYZG2IxTwi+m5IfOHccT1WORxoBxemywvMvTcDMxvJi8NXNfN0HbQEqw==
-X-Received: by 2002:a05:6122:f86:b0:559:eef7:3a1 with SMTP id 71dfb90a1353d-5634735d9f4mr1601384e0c.0.1767861709649;
-        Thu, 08 Jan 2026 00:41:49 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5633a3f78d8sm5549467e0c.10.2026.01.08.00.41.49
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 00:41:49 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5ec84929ddcso466104137.3
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 00:41:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUsRLq68QJGZ7QjLF2GEAo7MB8lXez85/R+7eggbgn+optv7GksjJJbXANzgHI7SRn6PbtE/LBWsUl7@vger.kernel.org
-X-Received: by 2002:a05:6102:cc8:b0:5df:ac57:b0ea with SMTP id
- ada2fe7eead31-5ecb68565afmr1696181137.10.1767861708843; Thu, 08 Jan 2026
- 00:41:48 -0800 (PST)
+	 To:Cc:Content-Type; b=ca1T3oYvNdIWzUTS3yvxqfAIkyyGBJHz0e0AlYBba6HYxUv/aPXuLZZ94MP1ruW8+DHKc/wo9hb23LWPt77J1T1qWfqy72smvFAWTmn3k7btmMMd78zKTnn1yhuNOLQ6d4wEeGlwI85LzLGeWDfx5oEl6RO3dZ4ZlCgs8lxNIbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQZUh7Wq; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQZUh7Wq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33B2C19424
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 08:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767861960;
+	bh=BqgkMcZUubmtSOlPILAa3d89zvk0yBYNI6hQRzVoKdE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KQZUh7Wqptoit5QJV/2lRzFvP7CBZ+A42aeKEVy115cinAx+kc0v6bx39CRwSE2/u
+	 qSNDECW0gVqplVCeCmWlgKOs2MGFju6NYPzdTsXFRUn/afxPHGqJOv/h7hT2//Hli6
+	 NVVB1iH6atyCnlP+Ie3URFafw3uQ6e/LGhnKw0vBa2xUhKoodEwSOEJFNPUZTnv8VL
+	 6Ughb2dd9EowkGs2xsHQWtPZgCVXZO2fQ6ZyRKqLRvP3pip5fR5kvxLqlxseoCr8G0
+	 zZImU5yPy1yaMI1fp5JAy9wA7hVSqtRJx6K6QAzyqjddkdGweCePAgyDVmqlRfyugs
+	 1Pz3VLLXKqmag==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-382f087e6c9so12311831fa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 00:46:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV+5mCBawhUS2jqnZEfvmiircqmRkJfaZi7koEe55Q6a4Yf9khfXaxYCQ8IJ97wJ42lwW0M7zWIITXN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvXhyuObQPmxzFYpDG40DV4S2fzagwLsVcA4mG+31mLrb6CxWg
+	JQP7i8Zkq6rjbBJ5dJnNxyCBa7RdXcoPl3a0Qy+Ys03csZO7mSBib0r0Bs56pGE0RVuwEnIWrT0
+	V6eXXWZnstb8ShPOKMmjlOvcIYKNHskOrymAouupClw==
+X-Google-Smtp-Source: AGHT+IEMMSJCU7SYOOgMQ0Ss3CVoU2DzXo5zjwxrQtFkFUfV8zoKG1Pqwbvf3SQfMIiVN3cd6uxpbxyjJv7SsIRhXa8=
+X-Received: by 2002:a05:651c:1448:b0:37f:cc09:31af with SMTP id
+ 38308e7fff4ca-382ff851d94mr12840421fa.44.1767861959439; Thu, 08 Jan 2026
+ 00:45:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251217080843.70621-1-shorne@gmail.com> <20251217080843.70621-2-shorne@gmail.com>
- <CAMuHMdUaO_PwWygW8qss47W_ErB4pm1Z2HQ+edvw1-x7ce7oKw@mail.gmail.com> <aV9o1LL0Ahip0O3-@antec>
-In-Reply-To: <aV9o1LL0Ahip0O3-@antec>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Jan 2026 09:41:37 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXYCNR0ANn152ghFExpWY_yZ5+kyFGGRwA+X-EFUvxZXw@mail.gmail.com>
-X-Gm-Features: AQt7F2qP9J__FZqrZLV9_WL7FjGfkbxAjWs5PQwA8dHfLG4zYdATwoLKEBlozis
-Message-ID: <CAMuHMdXYCNR0ANn152ghFExpWY_yZ5+kyFGGRwA+X-EFUvxZXw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: Add compatible string opencores,gpio
- to gpio-mmio
-To: Stafford Horne <shorne@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+References: <20251112-gpio-shared-v4-0-b51f97b1abd8@linaro.org>
+ <20251112-gpio-shared-v4-7-b51f97b1abd8@linaro.org> <66eaf003-c397-4920-b3b7-93ac8a5adfda@oss.qualcomm.com>
+ <CAMRc=McXFTLjE=2-xsx4sodHgd83h822iEBHT7bxcNOQm6OJ3A@mail.gmail.com> <98d69fb9-d3bc-4439-88b4-60f3cdea3422@oss.qualcomm.com>
+In-Reply-To: <98d69fb9-d3bc-4439-88b4-60f3cdea3422@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Thu, 8 Jan 2026 09:45:47 +0100
+X-Gmail-Original-Message-ID: <CAMRc=McmvaM9=K=0NLRcLLmo5ck=m8Fqekh7tBMz6quO9K4opQ@mail.gmail.com>
+X-Gm-Features: AQt7F2rVVRGjZ6d0_s5L8WPZ1MJdF76nkEPcTHk9mWt9XktJ2GZ81wKlRj-yauk
+Message-ID: <CAMRc=McmvaM9=K=0NLRcLLmo5ck=m8Fqekh7tBMz6quO9K4opQ@mail.gmail.com>
+Subject: Re: [PATCH v4 07/10] arm64: select HAVE_SHARED_GPIOS for ARCH_QCOM
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>
+	Will Deacon <will@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stafford,
-
-(reviving linusw)
-
-On Thu, 8 Jan 2026 at 09:20, Stafford Horne <shorne@gmail.com> wrote:
-> On Wed, Jan 07, 2026 at 03:35:45PM +0100, Geert Uytterhoeven wrote:
-> > On Wed, 17 Dec 2025 at 09:15, Stafford Horne <shorne@gmail.com> wrote:
-> > > In FPGA Development boards with GPIOs we use the opencores gpio verilog
-> > > rtl.  This is compatible with the gpio-mmio.  Add the compatible string
-> > > to allow as below.
-> > >
-> > > Example:
-> > >
-> > >         gpio0: gpio@91000000 {
-> > >                 compatible = "opencores,gpio", "brcm,bcm6345-gpio";
-> > >                 reg = <0x91000000 0x1>, <0x91000001 0x1>;
-> > >                 reg-names = "dat", "dirout";
-> > >                 gpio-controller;
-> > >                 #gpio-cells = <2>;
-> > >                 status = "okay";
-> > >         };
-> > >
-> > > Link: https://opencores.org/projects/gpio
-> > > Signed-off-by: Stafford Horne <shorne@gmail.com>
+On Thu, Jan 8, 2026 at 7:49=E2=80=AFAM Pankaj Patil
+<pankaj.patil@oss.qualcomm.com> wrote:
+>
+> On 1/7/2026 6:08 PM, Bartosz Golaszewski wrote:
+> > On Wed, Jan 7, 2026 at 12:07=E2=80=AFPM Pankaj Patil
+> > <pankaj.patil@oss.qualcomm.com> wrote:
+> >>
+> >> On 11/12/2025 7:25 PM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>
+> >>> Some qualcomm platforms use shared GPIOs. Enable support for them by
+> >>> selecting the Kconfig switch provided by GPIOLIB.
+> >>>
+> >>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>> ---
+> >>>  arch/arm64/Kconfig.platforms | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platfo=
+rms
+> >>> index 13173795c43d4f28e2d47acc700f80a165d44671..3dbff0261f0add0516d8c=
+b3fd0f29e277af94f20 100644
+> >>> --- a/arch/arm64/Kconfig.platforms
+> >>> +++ b/arch/arm64/Kconfig.platforms
+> >>> @@ -316,6 +316,7 @@ config ARCH_QCOM
+> >>>       select GPIOLIB
+> >>>       select PINCTRL
+> >>>       select HAVE_PWRCTRL if PCI
+> >>> +     select HAVE_SHARED_GPIOS
+> >>>       help
+> >>>         This enables support for the ARMv8 based Qualcomm chipsets.
+> >>>
+> >>>
+> >> Enabling shared gpios is breaking hamoa and glymur boot on next-202601=
+06
+> >> For hamoa - reg_fixed_voltage_probe which calls gpio api is breaking
+> >> Please find the log here - https://lava-oss.qualcomm.com/scheduler/job=
+/24722#L3514
+> >>
+> >> For Glymur - qcom_pcie_parse_perst calls the gpio api <4>[    2.910982=
+] WARNING: drivers/gpio/gpiolib-shared.c:493 at gpio_shared_add_proxy_looku=
+p+0x160/0x24c, CPU#1: kworker/u75:0/109 <4>[    2.911027] Call trace: <4>[ =
+   2.911028]  gpio_shared_add_proxy_lookup+0x160/0x24c (P) <4>[    2.911030=
+]  gpiod_find_and_request+0x1c0/0x504 <4>[    2.911032]  devm_fwnode_gpiod_=
+get_index+0x1c/0x6c <4>[    2.911034]  qcom_pcie_parse_perst+0x70/0x150 <4>=
+[    2.911037]  qcom_pcie_probe+0x414/0x804 <4>[    2.911039]  platform_pro=
+be+0x5c/0x98 <4>[    2.911042] qcom-eusb2-repeater c448000.spmi:pmic@9:phy@=
+fd00: supply vdd18 not found, using dummy regulator <4>[    2.911043]  real=
+ly_probe+0xbc/0x298 <4>[    2.911045]  __driver_probe_device+0x78/0x12c <4>=
+[    2.911047]  driver_probe_device+0x3c/0x15c <4>[    2.911049]  __device_=
+attach_driver+0xb8/0x134 <4>[    2.911050]  bus_for_each_drv+0x84/0xe0 <4>[=
+    2.911052]  __device_attach_async_helper+0xac/0xd0 <4>[    2.911053]  as=
+ync_run_entry_fn+0x34/0xe0
+> >> <4>[    2.911055]  process_one_work+0x14c/0x28c <4>[    2.911058]  wor=
+ker_thread+0x188/0x304 <4>[    2.911059]  kthread+0x11c/0x128 <4>[    2.911=
+060] qcom-eusb2-repeater c448000.spmi:pmic@9:phy@fd00: supply vdd3 not foun=
+d, using dummy regulator <4>[    2.911061]  ret_from_fork+0x10/0x20 <4>[   =
+ 2.911063] ---[ end trace 0000000000000000 ]--- <3>[    2.911065] qcom-pcie=
+ 1b40000.pci: error -ENOENT: Failed to parse Root Port: -2 <3>[    2.911069=
+] qcom-pcie 1b40000.pci: probe with driver qcom-pcie failed with error -2
+> >> Reverting this commit fixes the boot on both platforms
+> >>
 > >
-> > Thanks for your patch, which is now commit f48b5e8bc2e1344f
-> > ("dt-bindings: gpio-mmio: Add compatible string for opencores,gpio")
-> > in gpio/gpio/for-next.
+> > Hi!
 > >
-> > > --- a/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
-> > > @@ -18,11 +18,16 @@ description:
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    enum:
-> > > -      - brcm,bcm6345-gpio
-> > > -      - ni,169445-nand-gpio
-> > > -      - wd,mbl-gpio # Western Digital MyBook Live memory-mapped GPIO controller
-> > > -      - intel,ixp4xx-expansion-bus-mmio-gpio
-> > > +    oneOf:
-> > > +      - enum:
-> > > +          - brcm,bcm6345-gpio
-> > > +          - ni,169445-nand-gpio
-> > > +          - wd,mbl-gpio # Western Digital MyBook Live memory-mapped GPIO controller
-> > > +          - intel,ixp4xx-expansion-bus-mmio-gpio
-> > > +      - items:
-> > > +          - enum:
-> > > +              - opencores,gpio
-> > > +          - const: brcm,bcm6345-gpio
+> > This is not really the offending commit, it's a recent one in the
+> > implementation. The issue should be fixed by the following series[1]
+> > that will be in the next next tag. Can you give it a try?
 > >
-> > What is the rationale behind using brcm,bcm6345-gpio?
-> > Given brcm,bcm6345-gpio has 32-bit registers, while opencores,gpio
-> > has 8-bit registers, I doubt the latter is compatible with the former...
-
-> I was following what we did for uart, where we have
-> "opencores,uart16550-rtlsvn105", "ns16550a".
-
-I assume the former is a 100% compatible plug-in for the latter.
-
-> I am using brcm,bcm6345-gpio to match the drivers/gpio/gpio-mmio.c driver.
-> The opencores,gpio is compatible with the same driver as brcm,bcm6345-gpio but
-> not 100% the same as the brcm,bcm6345-gpio.  Since the device tree allows
-> configuring the gpio-mmio driver to make it compatible with opencore,gpio I
-> thought this would be OK.
+> > Bart
+> >
+> > [1] https://lore.kernel.org/all/20260106-gpio-shared-fixes-v2-0-c7091d2=
+f7581@oss.qualcomm.com/
 >
-> I switch the size from 32-bit to 8-bit using the reg = <* 0x1>, <* 0x1> setting.
-> Also the reg addresses of "dat" and "dirout" are different for the real
-> brcm,bcm6345-gpio.
+> With the linked patchset applied I still see the same issue
 >
-> brcm,bcm6345-gpio. Example:
+> Pankaj
 >
->        /* GPIOs 192 .. 223 */
->        gpio6: gpio@518 {
->                compatible = "brcm,bcm6345-gpio";
->                reg = <0x518 0x04>, <0x538 0x04>;
->                reg-names = "dirout", "dat";
->                gpio-controller;
->                #gpio-cells = <2>;
->        };
->
-> vs opencores,gpio Example:
->
->        gpio0: gpio@91000000 {
->                compatible = "opencores,gpio", "brcm,bcm6345-gpio";
->                reg = <0x91000000 0x1>, <0x91000001 0x1>;
->                reg-names = "dat", "dirout";
->                gpio-controller;
->                #gpio-cells = <2>;
->        };
 
-Exactly, the register space and register widths are different
+Is the gpio-shared-proxy module available? If not, can you change the
+config to make it built-in like CONFIG_GPIO_SHARED_PROXY=3Dy?
 
-> The opencores,gpio setup does work.
->
-> Now that I think about it, would it have been better to just add opencores,gpio
-> to gpio-mmio.c compatible list?
-
-I think that would be better.
-
-> If so I will can revise this patch and add patch to gpio-mmio.c.
-
-DT maintainers: Given gpio-mmio is that generic/simple, is there a
-specific reason there is no generic "gpio-mmio" compatible value that
-can be used as a fallback, avoiding the need to keep on adding new
-entries to gpio_mmio_of_match[]?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bartosz
