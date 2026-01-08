@@ -1,280 +1,157 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60844C6376
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 12:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A84F471497
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 12:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767874934; cv=none; b=hVKXHeN5k8gv3BwvUY4m6Ni9gTqge9b1jdy71atVguvcMD/q6v4bvGuUtkTkrGkhN/Huo6QEXdYrOZYQZQ8zqOH5FdxYEjg85PH3i9l8uUD9r5nKD4JCTN898fi9omc3UWRgR1k+W40brNuXm6e7qUD9m2TbnWQbF784e/g0PO0=
+	t=1767876732; cv=none; b=VwHSSZWfYMvXSXdfWfUHEqmvh+N3csvlaNGhrPwWYv/lSOKAfoWGFj6A8Q7hFnJFKHk4yKIdDPxMRkvnELYNExQhrFBM8FNHRTZWJvqJiga0mugBWGGJc1CeJWHxmB158U8DzH9oUcjVtapaQyPgP0IljwV0HfIMVofvldpvSuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767874934; c=relaxed/simple;
-	bh=BoosxtqdzaXov+zrXrQIbKWEk2jE1IMNvOZTKJSPkmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=E3RFNRgBt3GLG2rH1paxXF/HvGBcmFv9rHrlO0mNO7LVaueq5xilfS8lTuuW3f5JfIeeS6QTDK4RZtN74kMGJjnBepfHV2exDguXd0AgbfqQSR8qQQGXTXkW+DzoVJWekTfppelWI0UggIqpeq4I+JcdrpWCejSWG8vztuCO5dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Wz6/OM7R; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1767876732; c=relaxed/simple;
+	bh=QOFVeDUoq+RkKbWZq/pMK6/NwJiOTJMnMsw+4xmARgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VhM0MvU227PZu9g6HIxjyXGWPZuY7csmjEIqbZmbeyisGNdd+EmQbszTlgIz/3s+Rax4lXChIgg5a/cumNchQl7Mppqfga9WGMeUBvc4BgiBjKfhpD8EXzJJlUgKvtNKCoSyg84Y9TgQz0pWye+KxSshWr7xL4MQdP0Z7UjEX3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dsPMqdAC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fkNW00/V; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wz6/OM7R"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260108122208euoutp01535efd537efa2c107f7258de98557252~IwOGeFbZn2214122141euoutp018
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Jan 2026 12:22:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260108122208euoutp01535efd537efa2c107f7258de98557252~IwOGeFbZn2214122141euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1767874929;
-	bh=7l6ApAcP3o6+Pl6HSE5Nu0t3rJZfRA+S87IipLwj71g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Wz6/OM7RCl7JU9pD1qporHI/B+NVMPeA/ZLETOXKe8x3evPJdyclrY3kyM7yr75Z8
-	 L3ZI7smEI/DtmiClUaGR3MVI/2oA1S9qIi17Mwm551R3f8yf61u9uVOrVApI+rrsp5
-	 vzPDkFHh/GNeKeI227KHKg+efrqaVNXvk04F377Y=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260108122208eucas1p1fb777b45149d3818e5cd9b0023e0411d~IwOGWAg7x2101521015eucas1p18;
-	Thu,  8 Jan 2026 12:22:08 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260108122208eusmtip119279c4d0db859b492b7c7796f08d4dc~IwOFpYgmq3197631976eusmtip1e;
-	Thu,  8 Jan 2026 12:22:08 +0000 (GMT)
-Message-ID: <0e4edccb-33de-4fd6-bf75-cbd92bc2e7ef@samsung.com>
-Date: Thu, 8 Jan 2026 13:22:07 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dsPMqdAC";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fkNW00/V"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6089JXwG125951
+	for <linux-gpio@vger.kernel.org>; Thu, 8 Jan 2026 12:52:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SSZq0W/AuZXDHLOoNS/P9czI9HRnbDZBm6oN0SdJro0=; b=dsPMqdACt2Xh921z
+	pRkDa8qe5suH+5GhB6H7n9IAh3Qy7G1LuN85nUII5FMXJpXNj9+kK0UMg7M1l201
+	LOWIGdY+dSbghFFh+hxtyUABxBUqVM8XdcjwoFpX/BMUtjjPfWx46iZgU/RDWYt7
+	vCurZWjy7vIbL3UnUlpvnUoE+b0y3Vqu20qXqNfpo3Z2EszkjScEBXM0N9PWBePb
+	ZzuXegM0TdDSCU2Hm0+yALRVRh4pKQWHJJbd1BFyZihZq1DUvpVzAzmFzsY14+0k
+	oIs/rzV/2q+j3d5ahZ8S/sFgTv/5UAeRsAUg+TMdBTFe6uf0MHlO/Lg1aMFHxkh8
+	5IxtjQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bj3d69une-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 12:52:08 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b2ea2b51cfso72312685a.0
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Jan 2026 04:52:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767876728; x=1768481528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SSZq0W/AuZXDHLOoNS/P9czI9HRnbDZBm6oN0SdJro0=;
+        b=fkNW00/VQAyq8xsMPjygWHJu4wIkmz3lGV2Aac6AaNhNFOBzk5RAqQ8tgjTivbvasa
+         Sj/znN4fIuRiEgOe2eWJDCmrPZNvI2/Ap47CVb6i035Uap+BJSi2y52pfkIDNz5+ffni
+         2gSFgQHi3QisVWnOTlK+YGMV2J1j5cXELZrAGHo5PIMj6NdEPjWoP93PtRUJAkj4QvM9
+         lUcNNdF4QIF4YiCzpZoNKO7+ndPhffAlVZnXzljTa1fhYxyQ4Uuc69lDphvHVFv2gAfJ
+         0iMN1ALtyaqrKbLXme1VI/cAFBf+Ng7zenhew1qHSQJvWaJKgc70w6IYlZbUKqziYKqq
+         y/WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767876728; x=1768481528;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SSZq0W/AuZXDHLOoNS/P9czI9HRnbDZBm6oN0SdJro0=;
+        b=nehRQhmAclp0iC6WbidcMCp3im0zpJx1qSc0N6Fude3MKwcWJoiIKKyANZTgFffk0t
+         +hSNEESQ/QkCi+NrWaUrUNdV05gaYxT+7xfDt5T2LWYtQA4MlanKbEZ/m7VkTY21dwGC
+         xSusF4/VJHiBtf61Dir/F9nO2jdnJhONxeYXga/mJfJEzs0FlDAE8WJUpRGvXD05GYYz
+         ODr6Fz1prc2YkCYfTx6mn61xvsLnBvBY6DLm4uNuA9p/nCpDbyNpZbGNBlbEap87aNeq
+         V7KkNk5rl6dmx87ZSyjoG9kBGZSLzqXHTHRhcM+SrbiydxZiBwNaVF63dOpKnS7gOpvi
+         lU7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRaj6nNDxwSfHnOYvSdyGHGCz1UZJIUg9sBl0H/zWJjrUlCr5sVmVs3LcMFOm0UD2Xz3Z/6PG84cTS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNZCSWDL2tzY1yxoOYVF8PVmxvWyV0hy5bX3RRRrNUBzj9/mL2
+	VlTwh9KK4fd9ZVdMrNYW/X1K59EHKxgx3CubG7luce8Cepi08jQ6B5dqvqvRSPNg1+9+r5lv19n
+	LPBp+6KxGXpuzBdxsTPfjIERRqamoQN+LNwYEKGMzOimNsOHBU/PFsSAmnMGaiwMD
+X-Gm-Gg: AY/fxX4Qlqx8KmUqoALGfGjPpdVJl7Z2o/HU6tiMpXbYVHWy2OOu2F0lxq8bAtUA2Ax
+	tS4efptfpGcztwJupZHtjunP7fQA/c5dVSNHCQDALuTtwRZgX+cYPL8m74sT51fHaaIjis9dtI5
+	Cd8bOm7fU2VaLxj332wcUczjkYX+Wd/SFopwMAsHmFMoDnIoiad2DEzxaHSvQk+ELNykaKx1GRy
+	yWKlfgtZjbmAH8TSUpZJDy/JVeJoyMBXM4JC91c60e2SnJqejncgmWdTUA1GykxBKuaDBffMiJS
+	KF8ZOuKgiQuH2mTBFV4aTznYoBOuk2vXOWVHDA6wbOEf6tjlw2P8hOGnRDPvpjYI8xeU/EUjAAm
+	Mj3f1eg9JsqUdjiVzoiiFsyrI/LxySTgCh0jgYGhC+3FhA+DXlUZQm+e2ASe6Uam30OQ=
+X-Received: by 2002:a05:620a:1794:b0:89f:63e7:b085 with SMTP id af79cd13be357-8c389410364mr545961285a.10.1767876727865;
+        Thu, 08 Jan 2026 04:52:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHo45yMO7U4oaudAIbE+xfU6IFOYt/20jPnNbq86GzeDWfKgToo4vFxzHEx+lvnvjGdNyAZaQ==
+X-Received: by 2002:a05:620a:1794:b0:89f:63e7:b085 with SMTP id af79cd13be357-8c389410364mr545958885a.10.1767876727439;
+        Thu, 08 Jan 2026 04:52:07 -0800 (PST)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a230db0sm811852566b.2.2026.01.08.04.52.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jan 2026 04:52:06 -0800 (PST)
+Message-ID: <dff0c32f-b471-410b-8a70-9c20e436a3b7@oss.qualcomm.com>
+Date: Thu, 8 Jan 2026 13:52:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v2 0/3] gpio: shared: another set of small fixes
-To: Cosmin Tanislav <demonsingur@gmail.com>, Bartosz Golaszewski
-	<bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: qcom: sm8350-lpass-lpi: Merge with SC7280 to fix
+ I2S2 and SWR TX pins
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20260108100721.43777-2-krzysztof.kozlowski@oss.qualcomm.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <2889f386-65d3-4f89-ac11-aa51e4384ed9@gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260108122208eucas1p1fb777b45149d3818e5cd9b0023e0411d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260108121401eucas1p1a542104162a3103bf18914bea7525c1b
-X-EPHeader: CA
-X-CMS-RootMailID: 20260108121401eucas1p1a542104162a3103bf18914bea7525c1b
-References: <20260106-gpio-shared-fixes-v2-0-c7091d2f7581@oss.qualcomm.com>
-	<CGME20260108121401eucas1p1a542104162a3103bf18914bea7525c1b@eucas1p1.samsung.com>
-	<2889f386-65d3-4f89-ac11-aa51e4384ed9@gmail.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260108100721.43777-2-krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: O4nBXdAJvrUl4x_u7c7qFspUV1P4lJuE
+X-Authority-Analysis: v=2.4 cv=APfYzRIR c=1 sm=1 tr=0 ts=695fa878 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=7bMfskS0MixV3btvheMA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA4MDA5MSBTYWx0ZWRfX0l6gHIVeDnr9
+ mxHoBzf2vwq3L3kNrToP3AyVXRvWHqThZcypvR2ZaOTcv1iEYZ3f7UT50zWkq/mY+CY0Fd4SDz+
+ pqkWJDp7QESdb2AW+GMUFTsQHR2GP/iZJErF2FZXyd7Zung1l4svQ2f9v4QHnVEJHK1TXpsu+VW
+ lmBHdUejecvnz3zXtje5jaY7ULiAGwe85vcUDrx3kL133PWELNTmCafDwAKWFJQUwo7EkwVHzFX
+ KefzwpiMBMg/om9ttgTOKSJCYj1mit2F5Dgy4Y6AznG+sbejS7P9qC17yrVJDB1cahuRf/gx6Wd
+ vkcmewXMZmml3vgHbWeSDNYGiw685+nU1SVJkfHCuLTm1gmvWii/Uk1XDF39Sory9rOXEFiMAxp
+ i/ZGVPhkqXhup9WKdWZ5k6YwQKDUbIrrLqrAS+Ri37yR1xa0pCZx1ixLqoD3TeySISytxEHNReG
+ egODdhQ/sVSL/pFMh8A==
+X-Proofpoint-ORIG-GUID: O4nBXdAJvrUl4x_u7c7qFspUV1P4lJuE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-08_02,2026-01-07_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601080091
 
-On 08.01.2026 13:13, Cosmin Tanislav wrote:
-> On 1/6/26 11:34 AM, Bartosz Golaszewski wrote:
->> Here are three more patches fixing issues reported with shared GPIO
->> management.
->>
->
-> I'm still getting some intermittent failures on today's next (which
-> contains this series).
+On 1/8/26 11:07 AM, Krzysztof Kozlowski wrote:
+> Qualcomm SC7280 and SM8350 SoCs have slightly different LPASS audio
+> blocks (v9.4.5 and v9.2), however the LPASS LPI pin controllers are
+> exactly the same.  The driver for SM8350 has two issues, which can be
+> fixed by simply moving over to SC7280 driver which has them correct:
+> 
+> 1. "i2s2_data_groups" listed twice GPIO12, but should have both GPIO12
+>    and GPIO13,
+> 
+> 2. "swr_tx_data_groups" contained GPIO5 for "swr_tx_data2" function, but
+>    that function is also available on GPIO14, thus listing it twice is
+>    not necessary.  OTOH, GPIO5 has also "swr_rx_data1", so selecting
+>    swr_rx_data function should not block  the TX one.
 
-Please check this fix:
+This is a little difficult to read, but tldr the correct functions are:
 
-https://lore.kernel.org/all/20260108102314.18816-1-bartosz.golaszewski@oss.qualcomm.com/
+5 -> swr_rx_data1
+14 -> swr_tx_data2
 
-Looks exactly like the issue I've observed and finally debugged 
-yesterday on TM2e board.
+which is what this patch does
 
+so:
 
->
-> This does not seem to happen on every boot, so it might be some race.
->
-> [    2.169655] Mem abort info:
-> [    2.169663]   ESR = 0x0000000096000004
-> [    2.169670]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    2.176773] ehci-platform 92040100.usb: irq 64, io mem 0x92040100
-> [    2.186626]   SET = 0, FnV = 0
-> [    2.204264] renesas_sdhi_internal_dmac 92090000.mmc: mmc1 base at 
-> 0x0000000092090000, max clock rate 200 MHz
-> [    2.204308] ehci-platform 92040100.usb: USB 2.0 started, EHCI 1.10
-> [    2.208714] hub 2-0:1.0: USB hub found
-> [    2.214345]   EA = 0, S1PTW = 0
-> [    2.222949] hub 2-0:1.0: 1 port detected
-> [    2.231502]   FSC = 0x04: level 0 translation fault
-> [    2.239779] hub 1-0:1.0: USB hub found
-> [    2.248022] Data abort info:
-> [    2.256579] hub 1-0:1.0: 1 port detected
-> [    2.264724]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [    2.487291]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    2.493148]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    2.499300] [0000000000000000] user address but active_mm is swapper
-> [    2.506556] Internal error: Oops: 0000000096000004 [#1]  SMP
-> [    2.513092] Modules linked in:
-> [    2.516610] CPU: 3 UID: 0 PID: 48 Comm: kworker/u16:2 Not tainted 
-> 6.19.0-rc4-next-20260108+ #246 PREEMPT
-> [    2.527564] Hardware name: Renesas RZ/T2H EVK Board based on 
-> r9a09g077m44 (DT)
-> [    2.535903] Workqueue: async async_run_entry_fn
-> [    2.541141] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS 
-> BTYPE=--)
-> [    2.549076] pc : gpiod_direction_input_nonotify+0x18/0x22c
-> [    2.555408] lr : gpiod_configure_flags+0x1c4/0x380
-> [    2.560835] sp : ffff8000830e38c0
-> [    2.564530] x29: ffff8000830e38c0 x28: ffff80008243894f x27: 
-> ffff0001808f6410
-> [    2.572773] x26: ffff800081e77160 x25: 0000000000000000 x24: 
-> 0000000000000000
-> [    2.580914] x23: 0000000000000000 x22: ffff800081e77160 x21: 
-> ffff80008243892f
-> [    2.589054] x20: 0000000000000000 x19: 0000000000000000 x18: 
-> 000000000000000a
-> [    2.597101] x17: ffff80007fffffff x16: ffff000180054480 x15: 
-> 0000000000000000
-> [    2.605345] x14: 0000000000000000 x13: ffff800080ed7600 x12: 
-> 0000000000000000
-> [    2.613485] x11: 0000000000000000 x10: 00007fff01adbb48 x9 : 
-> 0000000000000005
-> [    2.621626] x8 : 0101010101010101 x7 : fffffdffc6009b00 x6 : 
-> 051573657480ffff
-> [    2.629869] x5 : 0000000000000138 x4 : 0000000000000000 x3 : 
-> 0000000000000001
-> [    2.638113] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 
-> 0000000000000000
-> [    2.646254] Call trace:
-> [    2.648968]  gpiod_direction_input_nonotify+0x18/0x22c (P)
-> [    2.655299]  gpiod_configure_flags+0x1c4/0x380
-> [    2.660428]  gpiod_find_and_request+0x14c/0x524
-> [    2.665650]  gpiod_get_index+0x58/0x7c
-> [    2.669874]  devm_gpiod_get_index+0x20/0x90
-> [    2.674695]  mmc_gpiod_request_ro+0x30/0xb0
-> [    2.679525]  mmc_of_parse+0x100/0x688
-> [    2.683749]  tmio_mmc_host_alloc+0x80/0x110
-> [    2.688571]  renesas_sdhi_probe+0x150/0x760
-> [    2.693392]  renesas_sdhi_internal_dmac_probe+0x64/0x80
-> [    2.699357]  platform_probe+0x5c/0xa4
-> [    2.703581]  really_probe+0xbc/0x2ac
-> [    2.707703]  __driver_probe_device+0x78/0x118
-> [    2.712728]  driver_probe_device+0x3c/0x178
-> [    2.717550]  __device_attach_driver+0xb8/0x140
-> [    2.722678]  bus_for_each_drv+0x88/0xe8
-> [    2.727099]  __device_attach_async_helper+0xb0/0xd4
-> [    2.732526]  async_run_entry_fn+0x34/0xe0
-> [    2.737048]  process_one_work+0x150/0x290
-> [    2.741673]  worker_thread+0x18c/0x300
-> [    2.745915]  kthread+0x118/0x124
-> [    2.749635]  ret_from_fork+0x10/0x20
-> [    2.753762] Code: 910003fd a90153f3 aa0003f4 a9025bf5 (f9400013)
-> [    2.760790] ---[ end trace 0000000000000000 ]---
->
-> After running ./scripts/decode_stacktrace.sh
->
-> [    2.169655] Mem abort info:
-> [    2.169663]   ESR = 0x0000000096000004
-> [    2.169670]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    2.176773] ehci-platform 92040100.usb: irq 64, io mem 0x92040100
-> [    2.186626]   SET = 0, FnV = 0
-> [    2.204264] renesas_sdhi_internal_dmac 92090000.mmc: mmc1 base at 
-> 0x0000000092090000, max clock rate 200 MHz
-> [    2.204308] ehci-platform 92040100.usb: USB 2.0 started, EHCI 1.10
-> [    2.208714] hub 2-0:1.0: USB hub found
-> [    2.214345]   EA = 0, S1PTW = 0
-> [    2.222949] hub 2-0:1.0: 1 port detected
-> [    2.231502]   FSC = 0x04: level 0 translation fault
-> [    2.239779] hub 1-0:1.0: USB hub found
-> [    2.248022] Data abort info:
-> [    2.256579] hub 1-0:1.0: 1 port detected
-> [    2.264724]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [    2.487291]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    2.493148]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    2.499300] [0000000000000000] user address but active_mm is swapper
-> [    2.506556] Internal error: Oops: 0000000096000004 [#1]  SMP
-> [    2.513092] Modules linked in:
-> [    2.527564] Hardware name: Renesas RZ/T2H EVK Board based on 
-> r9a09g077m44 (DT)
-> [    2.535903] Workqueue: async async_run_entry_fn
-> [    2.541141] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS 
-> BTYPE=--)
-> [    2.549076] pc : gpiod_direction_input_nonotify 
-> (drivers/gpio/gpiolib.h:231 (discriminator 1) 
-> drivers/gpio/gpiolib.c:2863 (discriminator 1))
-> [    2.555408] lr : gpiod_configure_flags (drivers/gpio/gpiolib.c:4956)
-> [    2.560835] sp : ffff8000830e38c0
-> [    2.564530] x29: ffff8000830e38c0 x28: ffff80008243894f x27: 
-> ffff0001808f6410
-> [    2.572773] x26: ffff800081e77160 x25: 0000000000000000 x24: 
-> 0000000000000000
-> [    2.580914] x23: 0000000000000000 x22: ffff800081e77160 x21: 
-> ffff80008243892f
-> [    2.589054] x20: 0000000000000000 x19: 0000000000000000 x18: 
-> 000000000000000a
-> [    2.597101] x17: ffff80007fffffff x16: ffff000180054480 x15: 
-> 0000000000000000
-> [    2.605345] x14: 0000000000000000 x13: ffff800080ed7600 x12: 
-> 0000000000000000
-> [    2.613485] x11: 0000000000000000 x10: 00007fff01adbb48 x9 : 
-> 0000000000000005
-> [    2.621626] x8 : 0101010101010101 x7 : fffffdffc6009b00 x6 : 
-> 051573657480ffff
-> [    2.629869] x5 : 0000000000000138 x4 : 0000000000000000 x3 : 
-> 0000000000000001
-> [    2.638113] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 
-> 0000000000000000
-> [    2.646254] Call trace:
-> [    2.648968]  gpiod_direction_input_nonotify 
-> (drivers/gpio/gpiolib.h:231 (discriminator 1) 
-> drivers/gpio/gpiolib.c:2863 (discriminator 1)) (P)
-> [    2.655299]  gpiod_configure_flags (drivers/gpio/gpiolib.c:4956)
-> [    2.660428]  gpiod_find_and_request (drivers/gpio/gpiolib.c:4774)
-> [    2.665650]  gpiod_get_index (drivers/gpio/gpiolib.c:4986)
-> [    2.669874]  devm_gpiod_get_index (drivers/gpio/gpiolib-devres.c:102)
-> [    2.674695]  mmc_gpiod_request_ro (drivers/mmc/core/slot-gpio.c:255)
-> [    2.679525]  mmc_of_parse (drivers/mmc/core/host.c:348)
-> [    2.683749]  tmio_mmc_host_alloc 
-> (drivers/mmc/host/tmio_mmc_core.c:1149)
-> [    2.688571]  renesas_sdhi_probe 
-> (drivers/mmc/host/renesas_sdhi_core.c:1119)
-> [    2.693392]  renesas_sdhi_internal_dmac_probe 
-> (drivers/mmc/host/renesas_sdhi_internal_dmac.c:599)
-> [    2.699357]  platform_probe (drivers/base/platform.c:1449 
-> (discriminator 1))
-> [    2.703581]  really_probe (drivers/base/dd.c:581 
-> drivers/base/dd.c:659)
-> [    2.707703]  __driver_probe_device (drivers/base/dd.c:801)
-> [    2.712728]  driver_probe_device (drivers/base/dd.c:831)
-> [    2.717550]  __device_attach_driver (drivers/base/dd.c:960)
-> [    2.722678]  bus_for_each_drv (drivers/base/bus.c:500)
-> [    2.727099]  __device_attach_async_helper 
-> (include/linux/pm_runtime.h:447 drivers/base/dd.c:991)
-> [    2.732526]  async_run_entry_fn (kernel/async.c:136 (discriminator 3))
-> [    2.737048]  process_one_work (kernel/workqueue.c:3290 
-> (discriminator 1))
-> [    2.741673]  worker_thread (kernel/workqueue.c:3356 (discriminator 
-> 2) kernel/workqueue.c:3443 (discriminator 2))
-> [    2.745915]  kthread (kernel/kthread.c:467)
-> [    2.749635]  ret_from_fork (arch/arm64/kernel/entry.S:861)
-> [    2.753762] Code: 910003fd a90153f3 aa0003f4 a9025bf5 (f9400013)
->
->> Signed-off-by: Bartosz Golaszewski 
->> <bartosz.golaszewski@oss.qualcomm.com>
->> ---
->> Changes in v2:
->> - Fix mutex deadlock
->> - Fix lockdep false-positives
->> - Add a patch reducing the number of memory allocations
->> - Link to v1: 
->> https://lore.kernel.org/r/20260105-gpio-shared-fixes-v1-0-76d6ff0afcd8@oss.qualcomm.com
->>
->> ---
->> Bartosz Golaszewski (3):
->>        gpio: shared: assign the correct firmware node for reset-gpio 
->> use-case
->>        gpio: shared: fix a race condition
->>        gpio: shared: don't allocate the lookup table until we really 
->> need it
->>
->>   drivers/gpio/gpiolib-shared.c | 34 ++++++++++++++++------------------
->>   1 file changed, 16 insertions(+), 18 deletions(-)
->> ---
->> base-commit: 19fb766a1e5ed5943a62fc671c09d45352a81b1d
->> change-id: 20260105-gpio-shared-fixes-40a8ec3b6b25
->>
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
