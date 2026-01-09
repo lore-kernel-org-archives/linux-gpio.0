@@ -1,96 +1,60 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11020091.outbound.protection.outlook.com [40.93.198.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD453557E2
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Jan 2026 08:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767949116; cv=none; b=k2gDcCtrOLOovaIcxK8dOn23Bo7WjcXaS7WUiizFoUrBBT7hM0dhdJcQacaqN7oNhfs6lZ0zl8ao83ouQg57N2zSLrMeyoHCDGHpjOMKbQ9tyAB7k99dFRL1FtpckX1xYGifUbLyxzoPSwvRzRPOprxTdx7hN0MJHAr3XWPT6Xo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767949116; c=relaxed/simple;
-	bh=g4PpAKKypOXotiaBqot/5S8YLMPLMTL7fWB1YbyQ3QM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GKDExqDyrz1mpeKXljH3y3ovtQlbmdmg51wxEDXLxSREmsvJ9T4gqaYWxCDlhDCJxMjD+fs5eVPw8CpN9qJsTCGktmT54lKglrc7egm4oHVRcXyCTt7irdGGM+g+E9fW3lt5bIiHfmzc3+lnktg+2zGHb0IRmP3slrFEKDugqhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NP6Er/Kn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DFRgjZQY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBDA3590D2;
+	Fri,  9 Jan 2026 09:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.91
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767950794; cv=fail; b=qfu/xxWG/ewqmd0ViVk+zz0DJ9uG8OUUoNPJrlMRLDxZbvgyHdpfysXR52rBUuJKJ4WGxDmzsQ1RoIvBQSooVx37scviWmvsFuH1aarT/s2JBUcYkiFJqTYPuP9kbvBxVfzQNzLCtRVz13SDjh8nqCeOF/MUfwv4kkVAXQp3jzA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767950794; c=relaxed/simple;
+	bh=Qxt8PM669PWwDzuEanA7cNhfH/NqFUDiK5Mdhg9SIFc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=EjmGrlF7PSjhzS2NyvMntpNBMoj8W7GeYaiK7vBrJEUnh4TcLGgPqO8bTux1BU4HGp79dVQnGjsUV1UAwAr6p0GxYcNH0ZpAJQ7CBArNiX+9SiZuwbKZ4PUV9OQh5pAeCXJkJK66u1XlPATXAslRGI8WmiVmfl9obtQ8k8g6YMc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=h1HWZEZU; arc=fail smtp.client-ip=40.93.198.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NP6Er/Kn";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DFRgjZQY"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 609614EY3142604
-	for <linux-gpio@vger.kernel.org>; Fri, 9 Jan 2026 08:58:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Kl8Av41wljPMDxmDqkWWKoay0fVGFDEo/Z91UyCu7JI=; b=NP6Er/KnjgoODpeb
-	1o+a/Mj+Snd4DxBlVETXaK2v7sEtVmX7FhV3cSIPhD9VGly3eVK4+KoZtxn1YOMP
-	duv3x5++DapRG5Nkd44SqpcgP9DNtBRvOBZrCc31iXQId6QterZoASknK4zAXjH8
-	j7UjVraa3IkL7jOBOViOfFmJL1krwU2uW8K9zRzxkT35abF5sWEJ1g9fwskUTipu
-	4Lh2o2xAQH/7O7e7lRZpRzKk9ppwQtEQsKP4yJiec2zhhocoKB+SsAK1vGHTHN1g
-	QyXjQy14Lywq0636cP9cuR9YAqe4NjNLLUp/NwyO1U3j8T2yqbgHQdbOw3d+JuTj
-	LZLDLA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bjj8j20uh-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 08:58:26 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8bb0ae16a63so470580185a.3
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 00:58:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767949106; x=1768553906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kl8Av41wljPMDxmDqkWWKoay0fVGFDEo/Z91UyCu7JI=;
-        b=DFRgjZQYzUSe4i4AJcb8QKIGni7nOl7dvqr3X6ivr+rCO4jO7OpWgnYpUxFpHi1aFl
-         YoNP715ChJZp8CWlin9EXDOG1v638mwwt8iW26BxDjxpf6+kwgyX6DRZDgK7/2wzA1F5
-         hQ3xrJUzJJ10uTi5wvyRojDUH8/vGUY2hES6GA+xkiZR8nCsBP85jcVJ8Y8tuEVAafzj
-         iSaqOrXmj1PwsmRmekI6Za+7VTJElcasIPK/xQTGly39usbPutfy5VOD3TGCclo39mzh
-         BNsWoPRTeSEme5ghrlAbKyP+9sHMWVKQ0G8voqfYkiefkmHz7LGOvLfjkv5aPLP3TybJ
-         pK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767949106; x=1768553906;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Kl8Av41wljPMDxmDqkWWKoay0fVGFDEo/Z91UyCu7JI=;
-        b=MLjGf7ljtdUJk5ODNJ0rvL/4SJWp3BQWMvS4dxzKpZX14pb9zGKLj6TnP4PG622AS8
-         wuHR2j2oS4igJBYBHFGBGAKLpx2x9UDFF4g0k4nbFNfroEIgX0O9M5gGT3fLYBEeIjRy
-         oeKTkwYM2DzLQauVkjt8BNi7J7ts5iR4jtfirR8SUaFex8YnEyWB+yrYD1RYByT4a4bb
-         yXWOCzuijUjcmIH50BXrTnXZoRO9+zsYtId/a2s+QqGQHPtl8m+qzNE20f5wZgLtmG3S
-         Vj5cpXsdRv/QClovNXJ1SKUI/SAUBO4CIXaxZkhanEw6PX5lQWAWfDBSB9igJFOFoRwH
-         n6wQ==
-X-Gm-Message-State: AOJu0YxQQNKUoSQd2K2eAYjkJ7idvybs47BJ8pcR8bzMRJtGuHXY8Y6D
-	xJ2i2hRhYCU+sx7/3TnEzQTmY+bL2Vj0vEJR0FTMl0AH2Fma0aMu1RyKRkkcvrRXWVI33taAqu0
-	s2i/nEBo31jjrIlThuW3QTOFmreM+EBed5SHlmR+Iol4Q3IasA6qGFa3HVZ6N3ReIzA7yjQsc
-X-Gm-Gg: AY/fxX6QSXqIBSzFzeJeAMAXlPcsg1kdBikTrE8/gIDrykmOOuxY/1uNSGijGwJD7jJ
-	FQvVJaWhiL/kaH599nWzl/xw1oYwp0ySKkViKPQsUSgOsqvpK7zL3nWIhnvpo8kMfouQapW2UbR
-	OEadlntpSAxAT1g4YvkeUcc8LF4fX9M1tiT4snxu4mTSG2gCC6vSLX3Bo1JZFYUKH6Bl29V1O0S
-	e994QLU5dCk7xoEoVEoKxRZ2wqTynm8DcPOd4W/N8CD7P8ukJDf8W5E9qBaNRPJnm6qDCB6ntHI
-	0+glPnRdWSWLM9cCO4D6HKyxgxhYIYJXFBu0QyNUEepgZlGPXRDctg3nXHayyC0lIgTl5hjNqpi
-	r2v+0DA9BPWXE+0rQ9UB24Ye6QKONs9iEAvGOHLk=
-X-Received: by 2002:a05:620a:4402:b0:8ad:5014:53e3 with SMTP id af79cd13be357-8c3893fbe16mr1173510285a.80.1767949106218;
-        Fri, 09 Jan 2026 00:58:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFGhabIItqj1HzT116pneGpy8aKhe/2mck3gBEaOCNvKLI0FxGoWVDDj5VsakDPetJGTfXmSg==
-X-Received: by 2002:a05:620a:4402:b0:8ad:5014:53e3 with SMTP id af79cd13be357-8c3893fbe16mr1173508485a.80.1767949105789;
-        Fri, 09 Jan 2026 00:58:25 -0800 (PST)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:968f:1fff:f626:2f33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee24esm21286189f8f.33.2026.01.09.00.58.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 00:58:25 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>, Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Thomas Richard <thomas.richard@bootlin.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] gpio: line-mux: remove bits already handled by GPIO core
-Date: Fri,  9 Jan 2026 09:58:24 +0100
-Message-ID: <176794910167.13325.15708221411277997837.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260107085833.17338-1-bartosz.golaszewski@oss.qualcomm.com>
-References: <20260107085833.17338-1-bartosz.golaszewski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="h1HWZEZU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KZBVvZlZYmxYahl0BM/ykbjXviaSvvzN945QRRBA1K7j1b0j5fyzCMDPg+EvD88KNz+SFC5gxzwWhN+IvgjskqlkwRNTYZt3IcTeIxsFuRqFjnW+zxqvfs0z95VU2BxUTKA3bWzuDrcP++/+YEjL5Yaw1Zbeeq5OEYgG0bDXiCfjymaYhBNfrxmQ+4+B1N8QPtgXxRqkKRz27HflgHY9AR05stoLwfsl0Fx2juZ49w9q5K8J7toDF28MY0rfDpw4HlZLekLYftlXjmJ1BOlVP3YYOMwkhsaFR7p42vT5cAKp6w3AAxKCQvnkaDw2kcSf3vUoh7MxFo7wg3Lo3EuLpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1HoqERvZW8a8NoNLSPo5/D08UJEa/N6i38uf+4p8Avo=;
+ b=enLtP/xVU/UPm5HrWIfmAIe9+RmvdLFFM6CSZlEWXClp4kha110FvFeMwApaUh2TAdpqHEBs+v4EBaUi0I7lAhOWgfBP0A6VJyti8yrO+MjQ9rwKMT0gwDm3GSB6UdgyqjTImvaypBPe1ybmpqIds7VrHIQnRoewDWGoHvTG6yGTIPfmtm9NK2X31S1RNNlxkvGfzVE8aZypBptL2XmPCSPzO6IruRrIAtmJaB/SZ1VhV3MCUwEGk+Z/4Exx9IlwsGw9cyUvhSbqUa8Oqg5s2mk4fHayRDgINJ3xC8U21P3NHWaJkyiHDKigk6HbguAmOeosrQoLUhhOdMER0wj/dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 4.227.125.105) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1HoqERvZW8a8NoNLSPo5/D08UJEa/N6i38uf+4p8Avo=;
+ b=h1HWZEZUCgC7EQ3F7uOrYKQ+IhnzBB2gade5Z3OMQwRHmycqg27IGgsjsOzBqZzvFGQdxvVLCjUErBDAGr0aMJSsldu/70kCxEYUM6VWkQqWfHYlnWhSrepSJULHHQ3axxqkytd9Ye6IFaOrM0QaFMUHKvlT/A8H79+DPmJPHO/hHYVB/jMyxR3z8UZ0KvFcqD4tHzoD056jCWzPk0e41nCblA0Jpgz9EO5wEzkbdQG43NbtB5E4c0yiYJUvADv/SEnxt0AfKabVxfL94Tr6Vi9ILFf8UqyGEnZuLS7pivaSj9x0rlm3UCibNIB3u0C7ZuXaQn9tV6PN5iJNqsFt4g==
+Received: from CH0PR03CA0392.namprd03.prod.outlook.com (2603:10b6:610:11b::31)
+ by PH7PR18MB5305.namprd18.prod.outlook.com (2603:10b6:510:248::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.3; Fri, 9 Jan
+ 2026 09:26:29 +0000
+Received: from DS3PEPF0000C380.namprd04.prod.outlook.com
+ (2603:10b6:610:11b:cafe::a7) by CH0PR03CA0392.outlook.office365.com
+ (2603:10b6:610:11b::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.4 via Frontend Transport; Fri, 9
+ Jan 2026 09:26:20 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 4.227.125.105)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 4.227.125.105 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.227.125.105; helo=[127.0.0.1];
+Received: from [127.0.0.1] (4.227.125.105) by
+ DS3PEPF0000C380.mail.protection.outlook.com (10.167.23.10) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.1
+ via Frontend Transport; Fri, 9 Jan 2026 09:26:28 +0000
+From: Swark Yang <syang@axiado.com>
+Date: Fri, 09 Jan 2026 01:26:06 -0800
+Subject: [PATCH v2 1/2] gpio: cadence: Add quirk for Axiado AX3000 platform
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -98,48 +62,215 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA5MDA2MyBTYWx0ZWRfX0f3MXGpFjH2A
- N7J6v5bJksyf0CLQgn/vwetY9fYGQ+qMISBJ8r+VoljzxJ7jwAilehGSJMg+ASvwR5faoC8q4rF
- 9aDrRp7j/2kKU2gd1s8YKWms/aTahMHkHf6ue6a8WdFDeTJOYvqNb2R+xEwZlBVBpiacxCAKESE
- YqLWSo5JW/wMf6aN2bU4BtFiqpIQWot6Y2UYBd/zYsyvqMKbljV6BJ2VPqLmmxyfhTOHaEomvRd
- QL//30cosTJVvdo+0+tNwgp3fHDYFIG1iENoYUxhKV8Cx7ipE9hNirFP5GB9otkV8tYDCNlJDzm
- BLWgOCqaeM5q4XdYfCh8kzfJaR+s3kACXHZdjBsZzzgVU+XuO67nT+l5ZT6zujJOdFY7BFFrvLd
- me9bVhhdrymTVQh90RBlhsgyGV78iYNixoyWQhjhPZm5eqR4uLav6uRntM2deY+rLJIM/5HHvp8
- G6TIcFB+hFZ53m2GuwQ==
-X-Authority-Analysis: v=2.4 cv=JIs2csKb c=1 sm=1 tr=0 ts=6960c332 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=rRmdOOBq4RcqKiZGhBAA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: VwAfYODwwGpC7xv9tQ6LVetzQuxBDfXK
-X-Proofpoint-ORIG-GUID: VwAfYODwwGpC7xv9tQ6LVetzQuxBDfXK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-09_02,2026-01-08_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601090063
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260109-axiado-ax3000-cadence-gpio-support-v2-1-fc1e28edf68a@axiado.com>
+References: <20260109-axiado-ax3000-cadence-gpio-support-v2-0-fc1e28edf68a@axiado.com>
+In-Reply-To: <20260109-axiado-ax3000-cadence-gpio-support-v2-0-fc1e28edf68a@axiado.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, Swark Yang <syang@axiado.com>, 
+ Tzu-Hao Wei <twei@axiado.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4054; i=syang@axiado.com;
+ h=from:subject:message-id; bh=Qxt8PM669PWwDzuEanA7cNhfH/NqFUDiK5Mdhg9SIFc=;
+ b=owGbwMvMwCHWlWK8+EozbyzjabUkhsyEkwddUmYuLNszX3ufzKUoxYwtL2Zc+Ld56tfIPBf2E
+ CEJ41tdHaUsDGIcDLJiiixfdb7ln8zVvte5d2UpzBxWJpAhDFycAjAR1acMf0X4Fzg9PvrBLPnG
+ +x3Jop2f8nSPKNc+Xyozs73CzW+uVwIjw/3M4MP920QX82W0zei+aH5ppt91z4gNzKsy68zvHMu
+ byQUA
+X-Developer-Key: i=syang@axiado.com; a=openpgp;
+ fpr=F52CF66FC96D2BDE89BDA9758A6433A3D4830D5D
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C380:EE_|PH7PR18MB5305:EE_
+X-MS-Office365-Filtering-Correlation-Id: e755f167-f783-491f-8be4-08de4f612b11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?elNmYUd6Y1dQWlJMazVDNmMyS2dFZWZUdnFZT3VmRmdZVlMyTTJFWnhXOFNw?=
+ =?utf-8?B?eEZMb2QweE0veit0bjk3ZFI2VEw0SFBTSmd2TDUwUnNmbENFOHpKdDd6bWdK?=
+ =?utf-8?B?azk0U1RleHJnNmJDNUVBa2tHZUxLYXZ2YlBZcHIraG1XamNLRVJjYVVLeUE2?=
+ =?utf-8?B?QW9ORTdXOFdURk9lT3gwekZ0TmRkUXplTFV5a2hCeEk1Rm1laEVTdFVZWTVF?=
+ =?utf-8?B?Kyt3YkRjcWtIUDRkRndFMUc3ZDBrVGI4T3d0ZStEKzhvZTN6NXB6amYxcW9J?=
+ =?utf-8?B?MWNUdXBzdTdaMzhXOXRYdnVJSitpdXhVRnFKdis2TWVPRzBFVlBYZDN1dHRT?=
+ =?utf-8?B?UHpJaHdvN2gwR01WL0xaQWZxbk9qZjI3MmczRU5NSm04b2xnNHhUaEQrUmZS?=
+ =?utf-8?B?NDZSOUJwWE14eVJON2xjQTdzSlNmMVlsaE5pNFZJbXFNU0R3VWczaDN4WnRm?=
+ =?utf-8?B?b3g4Zk1rVDBoZ2RVQkoxWStLOUFKUW5vclFhWk40bHFyeXdNbmlyaTdUSGk4?=
+ =?utf-8?B?NXFabDNYUHd5Y0RwS3ljK3hvK1pVaUFCKzVCM3hGVmd4cGFRcS82NTdydU4r?=
+ =?utf-8?B?bUhWRk40bkx1SVpYZ0lucTR0Y2FURHFXRkV1WUlIZ2hFWlFlRXp6S2dvdEcw?=
+ =?utf-8?B?QXZpc1lKbEliN1cyV3orT3A5SitWSytEemhldnFqZXkyMG5mRXA0L1JIQXpU?=
+ =?utf-8?B?Y1hlTG9ZcHNHUWxLeHpNNjhHaU9nRDFFTVluMXdPMStZRGMwS3czT0ZZYkVF?=
+ =?utf-8?B?Q0RsYmVlN1lGQ3N6ZWtSbWpENnMvUzJKc0NUckpWK2ppRXAwYkpnM1lSTHNH?=
+ =?utf-8?B?SjBLQ0lMRTh2eGxsSjErRUFiaGJWeWRMNWZUUVBnbnpLUVdTTnNtMDJwWjlO?=
+ =?utf-8?B?MU12YlovbFBxb0pnYW4yVEN3MzBaWWdQVDlUZU9lUUU2UTZlbG54NlBXdnRH?=
+ =?utf-8?B?T09kZDhhbVJqS1hZRkdKR1hpdkZjRW9sdm0yd2J3bzFzTWFCVVJFbTJ4VHEw?=
+ =?utf-8?B?M3NOMVNtMDEwTS9HQktla1JKRDd2blZvZkhkWjBrUHNIb2Fidnh3YU1KZkV4?=
+ =?utf-8?B?MWxKWC9vRGhjdDFCSGQ3MGNkSUFZMWJjTzZSUDJUVk1VSUFIQnhvYzZVbEVK?=
+ =?utf-8?B?QUtWbXFlekZRSE00RTk2SFNQQkEzazBvLzNmNUplYjdEQVl4ZCthcGdJOTIw?=
+ =?utf-8?B?R3UycUljVlY5V243cTVsNHgwd1ZyeWFQck9hNnNLNnVEbFFRTkFjcTNFOGM4?=
+ =?utf-8?B?OHpRWmwxR2dMSFNvaEU0UGpjZWxDNG8wbXhIUGZVUElGYXh2dFZsOEpvMEJh?=
+ =?utf-8?B?VnFGb2hpR3VDMVRRenVRdVY2SGp0OUNOYnNlTEhNdVpKSEU1VmR5VXV2YzR2?=
+ =?utf-8?B?WUFzMjY0NzY1RjVXd2tIeHhUL1A2eFovNXNyOXNtMkZaaFNnOU0vL1RKZW9J?=
+ =?utf-8?B?S1lCWk9MQnhrZ2xqOXNmRDg3Q1RjWUkzakVtTXgwWi9UQ25tbGtUU3EwZjcr?=
+ =?utf-8?B?aEwyUy9taXlwZEJkbmQ5RGFnRVFtekNRYlNCYUFJRnJ0Vm9qRW90VHdzbkQv?=
+ =?utf-8?B?bEZmM3lkTGZld3ZVSTJZaEwyRC90WmVDb3BxbWRiV3hZT29CWHBjcGJ2WmlE?=
+ =?utf-8?B?d1kzdElRWjR1dytvR1V0QmVhZFVSeFB0MTMvd3pQdngyVm5JZ3NuVkZMc0o2?=
+ =?utf-8?B?blVBbXpyalVJS2FLL2JtUk5yMmx6eGNwSS9RQXJtQWJ3QjRDU1YvblNZT3Jr?=
+ =?utf-8?B?ditoZlJ4NTBNbnVjdFFkYldUTFdMT3kvZ3B0elM4N2YwNW9ZdFFudUNwZU14?=
+ =?utf-8?B?VjRpMlJXMlg1Q2IvOW0xR2wyMGpmWUtqajhjUWJldmdJbGpwOFN3MlJwNCtn?=
+ =?utf-8?B?T0ExVFZXS1dIVEdFK2MzK2dXVTNVL3BCMENKQWhDTTM2ZXlzQmg5QlIxUnNR?=
+ =?utf-8?B?bFV5UFBEcEVVUnhrdldhVmhzYlNjYjROVHhTRDVuUTNFTGVhb3NabHZ5cmw5?=
+ =?utf-8?B?UEhUN0FFM2lNVGRja0R1TElhVFZ5RExEbUtybm1rTHBKYm9icjFMWHJCeS85?=
+ =?utf-8?B?eTJiM3RTckJ1ZmUvM1Y4L2JEQjU1eHJNMTQxYWZLeFY0OUwvTm05Nk44cUZD?=
+ =?utf-8?Q?xQDw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.227.125.105;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:[127.0.0.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 09:26:28.0829
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e755f167-f783-491f-8be4-08de4f612b11
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[4.227.125.105];Helo=[[127.0.0.1]]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C380.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5305
 
+On the Axiado AX3000 platform, pinmux and pin configuration (such as
+direction and output enable) are configured by the hardware/firmware
+at boot time before Linux boots.
 
-On Wed, 07 Jan 2026 09:58:33 +0100, Bartosz Golaszewski wrote:
-> GPIO core already handles checking the offset against the number of
-> GPIOs as well as missing any of the GPIO chip callbacks. Remove the
-> unnecessary bits.
-> 
-> Also, the offset check was off-by-one as reported by Dan.
-> 
-> 
-> [...]
+To prevent conflicts, introduce a platform-specific quirk triggered by
+the "axiado,ax3000-gpio" compatible string.
 
-Applied, thanks!
+When this quirk is active, the driver will skip its default
+initialization of pinmux configuration and direction settings during
+probe.
 
-[1/1] gpio: line-mux: remove bits already handled by GPIO core
-      commit: e034e058897a12bc856f8b22d1796964c742f732
+Co-developed-by: Tzu-Hao Wei <twei@axiado.com>
+Signed-off-by: Tzu-Hao Wei <twei@axiado.com>
+Signed-off-by: Swark Yang <syang@axiado.com>
+---
+ drivers/gpio/gpio-cadence.c | 56 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 11 deletions(-)
 
-Best regards,
+diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
+index b75734ca22dd..85aef54d0aec 100644
+--- a/drivers/gpio/gpio-cadence.c
++++ b/drivers/gpio/gpio-cadence.c
+@@ -2,6 +2,7 @@
+ 
+ /*
+  * Copyright 2017-2018 Cadence
++ * Copyright (C) 2025 Axiado Corporation.
+  *
+  * Authors:
+  *  Jan Kotas <jank@cadence.com>
+@@ -31,10 +32,23 @@
+ #define CDNS_GPIO_IRQ_VALUE		0x28
+ #define CDNS_GPIO_IRQ_ANY_EDGE		0x2c
+ 
++struct cdns_gpio_quirks {
++	bool skip_init;
++};
++
+ struct cdns_gpio_chip {
+ 	struct gpio_generic_chip gen_gc;
+ 	void __iomem *regs;
+ 	u32 bypass_orig;
++	const struct cdns_gpio_quirks *quirks;
++};
++
++static const struct cdns_gpio_quirks cdns_default_quirks = {
++	.skip_init = false,
++};
++
++static const struct cdns_gpio_quirks ax3000_gpio_quirks = {
++	.skip_init = true,
+ };
+ 
+ static int cdns_gpio_request(struct gpio_chip *chip, unsigned int offset)
+@@ -141,6 +155,19 @@ static const struct irq_chip cdns_gpio_irqchip = {
+ 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+ };
+ 
++static const struct of_device_id cdns_of_ids[] = {
++	{
++		.compatible = "axiado,ax3000-gpio",
++		.data = &ax3000_gpio_quirks
++	},
++	{
++		.compatible = "cdns,gpio-r1p02",
++		.data = &cdns_default_quirks
++	},
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, cdns_of_ids);
++
+ static int cdns_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_generic_chip_config config = { };
+@@ -165,6 +192,10 @@ static int cdns_gpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	cgpio->quirks = device_get_match_data(&pdev->dev);
++	if (!cgpio->quirks)
++		cgpio->quirks = &cdns_default_quirks;
++
+ 	/*
+ 	 * Set all pins as inputs by default, otherwise:
+ 	 * gpiochip_lock_as_irq:
+@@ -173,8 +204,15 @@ static int cdns_gpio_probe(struct platform_device *pdev)
+ 	 * so it needs to be changed before gpio_generic_chip_init() is called.
+ 	 */
+ 	dir_prev = ioread32(cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
+-	iowrite32(GENMASK(num_gpios - 1, 0),
+-		  cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
++
++	/*
++	 * The AX3000 platform performs the required configuration at boot time
++	 * before Linux boots, so this quirk disables pinmux initialization.
++	 */
++	if (!cgpio->quirks->skip_init) {
++		iowrite32(GENMASK(num_gpios - 1, 0),
++			cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
++	}
+ 
+ 	config.dev = &pdev->dev;
+ 	config.sz = 4;
+@@ -240,9 +278,11 @@ static int cdns_gpio_probe(struct platform_device *pdev)
+ 	/*
+ 	 * Enable gpio outputs, ignored for input direction
+ 	 */
+-	iowrite32(GENMASK(num_gpios - 1, 0),
+-		  cgpio->regs + CDNS_GPIO_OUTPUT_EN);
+-	iowrite32(0, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++	if (!cgpio->quirks->skip_init) {
++		iowrite32(GENMASK(num_gpios - 1, 0),
++			cgpio->regs + CDNS_GPIO_OUTPUT_EN);
++		iowrite32(0, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++	}
+ 
+ 	platform_set_drvdata(pdev, cgpio);
+ 	return 0;
+@@ -260,12 +300,6 @@ static void cdns_gpio_remove(struct platform_device *pdev)
+ 	iowrite32(cgpio->bypass_orig, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
+ }
+ 
+-static const struct of_device_id cdns_of_ids[] = {
+-	{ .compatible = "cdns,gpio-r1p02" },
+-	{ /* sentinel */ },
+-};
+-MODULE_DEVICE_TABLE(of, cdns_of_ids);
+-
+ static struct platform_driver cdns_gpio_driver = {
+ 	.driver = {
+ 		.name = "cdns-gpio",
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.34.1
+
