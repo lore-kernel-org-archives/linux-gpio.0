@@ -1,177 +1,146 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B60B3358DF
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Jan 2026 10:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A218328B7B
+	for <linux-gpio@vger.kernel.org>; Fri,  9 Jan 2026 10:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767953974; cv=none; b=CFTsx5Oz2JAQQUKVHA+2z/rE9+yn1HlLt+PnLketNl9VMp+g+26YT+Ar/sBk9i5zz9ehEr1vRMM+AJQKb1c//0PerFsel3gL/SNUtrZR6LaPhYbCkqrheRnNFIgDZaxhbdZ4QKZAbuzs3OWX95sWAZseimXl4BL4RvmQP1T7rD8=
+	t=1767956163; cv=none; b=c7fPOMA3AGOtWB+z5NJlgKwZhYVcGWmtgIvm+37J/ObigoKjAmDIz+e6ou2H89ZZGB0z9fLH3hJux3mmPD3hQmC0C35XOvqMEjhgTp+gDuopOkHASfsHK1541frExIX4+JYqortP7VaSXdL+ICNIbkjXt9wJg1/x2qE3bOOcROY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767953974; c=relaxed/simple;
-	bh=iBgJn4Oei4MSF7wX/YOhYnpZ1nzYzLulaCt82baVuLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IY8DLGxznr0hl20QRLi/WbzfLHFixd9hrDJzipd7V3Jd7JpB3GDrTUrWw6u9roIhqu2vGWE5yz9evfC6MiF0yrnJZlG5XMfHCsBxHCJrWpByHB79iAM9suEUQzXIHOgUgWCU/+Ok1xKBE5y3haVkwWLv7Hbv+CQDz/j4fGNjrx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5636274b338so685958e0c.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 02:19:32 -0800 (PST)
+	s=arc-20240116; t=1767956163; c=relaxed/simple;
+	bh=pUNQ4yKbuQi+rnEdBpvCZxkVWVPxJUSAqxvcLO+D94M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=texviqIMPxM3s98F5DT3nLVkZ06dUdSLa3qg/wY61rIsH9RQ2c95K5mgObC6i/NGIVY6Y2uaro0E5h+TLjJsyJL8fF9GfTsSAINw4Z1E63DTdohcaA+1P9TnJBKuf93zxHCKktI3L/5qqdEt0zuyDtV4Q99Zme9HjPJk+ociHd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lFJODdu5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=D81hq07R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lFJODdu5";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="D81hq07R"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6098M35M3727466
+	for <linux-gpio@vger.kernel.org>; Fri, 9 Jan 2026 10:56:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=x3hvM0pQwYpTkNdxivaou3G2IyHbIV9X09z
+	rP1OOdEU=; b=lFJODdu5BWoBIdbwJ3z7335OCLDWpEtK9OUYbyJyFRTojUO6tSj
+	F1hSeHz6Orf6raEKZWIq9DWPk1Qf+QVnEUy6g1OJ6zQ7F9tYWJx0dMg1jBM0gciU
+	F6WHR6pfj6Bdg1KKkjNlE/pzkhAJNnzObq1gJWAAlvnz1ssnSHyG4WlN21i9+MOr
+	VHjQwTqyEIah/uhQvc3GloQGLlgM1Y7IEredvHCSHPpdnqLW2riVCNFFY7+SrO4B
+	utpm3I1IkJyk/VO9Hrt2ssizYoQNaJlE5tIJcXmN1wUVJ+zJisZj7AIgyApfRA4a
+	G9h28J9Zbisrpqzv9IPtA3rzzw7usqNvmYg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bjpmkhrap-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 10:56:01 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b234bae2a7so1083095985a.3
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 02:56:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767956161; x=1768560961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3hvM0pQwYpTkNdxivaou3G2IyHbIV9X09zrP1OOdEU=;
+        b=D81hq07R0Llsg2X37wcFT9AUAKvL86D9bcVycKx03qxTjOoYpLWyalqaEac121rigL
+         rIAxfQBvVI0yzsSj6gFestZFQtRlpNEZVLpJ11e8NrNzdAEpoMDRzxkqDqXl/e568ldx
+         tZ5YvyF95UJCrn+h7VpA3ZLNedubhoLLEo3sQrLkidF6+p0jkMtluwZRWxj7404rW9w4
+         BVzLPs4AfB15MpKisJ6TZe2ITKxjiMXp1a/tNOm+I7hOm5NhSbL4fCc9/YqFJtH7ZV1F
+         vg3KHNiLUSBkmeruirqJMxVuYrIsFde8LofhLNlBuKd6kjCWr4kQ1IEgb9O5N4CMEnQl
+         GHjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767953971; x=1768558771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=68fD+2d6dtiuvezPQdm8X6562nqf1sN2gN86wHzPt+o=;
-        b=MaOxZAXcxjiRN1jEgkkMJMsdPnAUnnn9b8u5MZVS7OBoPsdHFlb6io+LzyQEn4DFqq
-         z4g5TbAcnr41Xv+69aLt/jocDVayJ8FHH95SbolvGc/DZ7hWpdXpjQ8cz7DL/lOM+NOb
-         ucAF0bROa7w8yfObLS6DnUD9tza/HTzRS8Bj4zVK+lav0bPOzWN0GQqceFXXR50RfCfB
-         kmjgUzVbnuzOMapPPfKlpInsX/L28U0EGpClVOmq+VR60c39BvXlTQ2SwFIN/IuGhRzJ
-         8Pja7AyW1ewfAETMwPpRPWNdbMMk9PiyRNkD9VuIqR66VJgMUIlr28fHrtrnMGfL8Fp1
-         UlWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4DcdwcX9j373WdO1XrnGh+s9HId2Vr15J+VI5vQnBkAXQhZKpaQKXrnD+LY4uVyg2ZS9+1jN0zTyt@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBalZFAl4/1TCsbeZgbWB1CXlDKdZXXdPpmHzAQhXXw3koWgll
-	ncZW+s4LBY45EJvjBKD801w+BBEGD4Eet6mVhm/qMju8gjLcwvxFTxHKI1IMKb7N
-X-Gm-Gg: AY/fxX5a8fyTn4B+e2d+/bspBUmjpkic1Bwurm6jENgkSTPiFUxrBGssQsswC+Eps0m
-	Cvq3Or2od6PdJndDgr2lJPzJ4saZJKjob61rzYvoNy6sXcOais8J/Zxgl9GHSBys3mAVjrVsS9I
-	A0MJ5tTq6cER3QTg7nxjcpDUPxxDvvEQuUJDMfinHpIWZCT1+EjL34UQ33VpsQaAF9ccnP1fNIc
-	DiYkFY1l2KYYaKrTQCtbqr+BwNaGBfWJuHxRnhgt+7aslMfO+0HWah8SEbpHY+Ho6pFigquvv04
-	oTxsLdviHHJ6wsVarIo6iRuISQndicAO+e73rCuvFPib4wuRLyb9E4T9FTa5L/bC1eQhm8UakjQ
-	OeiH7t5wmdMGd6Z4Sh9UMHVdV2IpjR+rIxXlPCm43GoHwIDEGL3/NLimceBPmLo9kV3BtVsSdjn
-	UV38Rs5wnJZDTfhUcNYd5FJQRdIHZsw6slE6NtjjImOD5VfcbK
-X-Google-Smtp-Source: AGHT+IE/xm8wi5hII4TMuf4OTgfSC+tnAOgYbLVXzYoKjWSfR+mF+l0KKj2pB4AerP1ZhiRpdX/kDA==
-X-Received: by 2002:a05:6122:660c:b0:557:c734:ee5 with SMTP id 71dfb90a1353d-563463a0c22mr3822969e0c.8.1767953971545;
-        Fri, 09 Jan 2026 02:19:31 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5636c753392sm308239e0c.6.2026.01.09.02.19.30
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jan 2026 02:19:30 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5ecddf73062so1938193137.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jan 2026 02:19:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW49NHLIr5rHL1MucwK3zKUYshSHuROKXDMy3OmGOaQJ98ts9D5TKFzVhz43sTkTFzuKT04h4Dj6N0L@vger.kernel.org
-X-Received: by 2002:a05:6102:5490:b0:584:7aa3:a329 with SMTP id
- ada2fe7eead31-5ec7556654emr5715287137.4.1767953970208; Fri, 09 Jan 2026
- 02:19:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767956161; x=1768560961;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x3hvM0pQwYpTkNdxivaou3G2IyHbIV9X09zrP1OOdEU=;
+        b=g52muAlxnKcnC4v+PwIMrrB3iCopYxppNjC+o1Bw4nHADUUdj3QsAWTic8cDq1r/eC
+         dryOu1tQHD8plA5hA+1ng+7T3urUeEL1IdBTuVXmIhVz4ukKIqmQnw8BBm28qrq45NPV
+         btnBzGRMfXOlypB4yH2LmJ2xvXxdGQqLu9aOtJMn+MLc1BcGuS/835LAqVZtx1X62gRn
+         oMLuYCX4lIQp9IZZFagY9h+YWHNPoZVQ3GBszSfV1sF/6u6g04h6VUc8B15b8w8bpWoX
+         bQpkabeqZity58gC9xg7hQ4f/t9ho+u2jcRCUcd0Ct6bXW0i5Dbp7QB6NPKt1WoZ9EWJ
+         71IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvYDFNLahZLA9MKSVsQ1fu/zDjyBN7HfKoKo9DxAcR2rAz+XuGonSMS38w2kUCePzmv31phB24Ufrm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSRkgW1TVKTpZGlcmHDyZp9Ow3/kPN3V9McZji0XWKNBr21z8m
+	CKC1jRI1KSrS0cV14R6xRyauuaGWAUYjxXPhywf3mExF4Nv7ML3mKAh93jVADoGvEoLSNc+idRt
+	1drOVNgBfNsiesW3+/JdK9LV8djOkICC6p4I7gVji2u4xXQNjE2c+EGZ3ZfZFKY9OiZmPxWJM
+X-Gm-Gg: AY/fxX5ctHMi4XYAP0trnUCFJ3Ct+kx4g6wZaNtIVNd6ksMSqPSb2Bf4fO+BBwP93k/
+	z0RuDu34TTvrk/UPFIR1Ag4Oce3MXeuiXnd67CewxmX1Ruh67VZHCh92Yrra6GhHBH0g1kxfc49
+	lEAZLEX1LZgcCN0fQ45/lI8gaLFzjl4fKjLWu8t5ZUnprYdQjuZkX00zZaxzJg9dLmhxr91QGXu
+	X5EPhSZaquged5RuK66JFH/FuHse1bky2UQFNRCMhew2bD0h24ftuGCNmdZeyMkM+etbD1MnbZx
+	McuIzibDRt1pPYZ6XgUtLaCKBe8LRKiUTSt48aeB6+JyIdgyxkAjL7hDFlFpWFZ4Bb+vUJXQFAR
+	eENl8muJl7PXga85kuCizyt3jzFw+yc0rX1OaUw==
+X-Received: by 2002:a05:620a:7101:b0:8b2:eea5:3324 with SMTP id af79cd13be357-8c389392555mr1272844885a.27.1767956160771;
+        Fri, 09 Jan 2026 02:56:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGETBlW0rXG+obctkdor0XxgffcWzuQHjfo4r27SFgGxgsvTHt8XNBEM6bHhvHK1AAuXK01Fg==
+X-Received: by 2002:a05:620a:7101:b0:8b2:eea5:3324 with SMTP id af79cd13be357-8c389392555mr1272842385a.27.1767956160311;
+        Fri, 09 Jan 2026 02:56:00 -0800 (PST)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:5b0:5859:6099:b45c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee893sm21445709f8f.37.2026.01.09.02.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jan 2026 02:55:59 -0800 (PST)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Michael Walle <mwalle@kernel.org>
+Subject: [PATCH] gpiolib: remove redundant callback check
+Date: Fri,  9 Jan 2026 11:55:56 +0100
+Message-ID: <20260109105557.20024-1-bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251217080843.70621-1-shorne@gmail.com> <20251217080843.70621-2-shorne@gmail.com>
- <CAMuHMdUaO_PwWygW8qss47W_ErB4pm1Z2HQ+edvw1-x7ce7oKw@mail.gmail.com>
- <aV9o1LL0Ahip0O3-@antec> <CAMuHMdXYCNR0ANn152ghFExpWY_yZ5+kyFGGRwA+X-EFUvxZXw@mail.gmail.com>
- <CAD++jLm1u9ChqsftwvbOptiG3Qo2KWxPjqN2snOVuZDYuVST5Q@mail.gmail.com>
-In-Reply-To: <CAD++jLm1u9ChqsftwvbOptiG3Qo2KWxPjqN2snOVuZDYuVST5Q@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Jan 2026 11:19:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW_DUyo=uarCpceKcEq9Hx+q+DHgfHW-m2DOjgAQ5R79Q@mail.gmail.com>
-X-Gm-Features: AZwV_QjdcUI-7Z-N_pZ99To6fYeZb0GuLnE25cbH9PblaUhBL8UbvvWFR6RVNjc
-Message-ID: <CAMuHMdW_DUyo=uarCpceKcEq9Hx+q+DHgfHW-m2DOjgAQ5R79Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: Add compatible string opencores,gpio
- to gpio-mmio
-To: Linus Walleij <linusw@kernel.org>
-Cc: Stafford Horne <shorne@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=YNiSCBGx c=1 sm=1 tr=0 ts=6960dec1 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=UaC_jXYBCyrhuv0RKjMA:9 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: wuzvlDDNXSmryY-kZ2xBe04Ghkk2Givp
+X-Proofpoint-ORIG-GUID: wuzvlDDNXSmryY-kZ2xBe04Ghkk2Givp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA5MDA4MCBTYWx0ZWRfXyYBPpTr6WmN/
+ gVPHNmKHM6a8D+I8ml7oC6ey5gVZz6PKrTWNqs3WHY+TrEjJU0LIf9pP6Z05gFc874DRsgRlQue
+ xxOUqHSCRS+zdcqb0Fl76w6MOywYSnpTyjA7NozT+BqOJybHpJtllOJNWg4S0esLBwNokv3VmAX
+ 4TuamFEYq8H6ish5oXrv6F/d+u75D5hxQPBy+iYaH5TfQ2eE9ymhN+ZgK7WRiTbLqUhlCIoOJ2P
+ BvOnInlJlvb4Y47USF/To484huAM6NvFYKKl2TOFfKSAzYE+w2BDEnH8DWCLKb7VnBb0ZkSdMQp
+ kn8w7H7beNZdfqF+r0qrI5ngcZZNjz1DxrmcJ6VctHMMo2T9DElVPirKjTPiQ9jQ2UgQxvyGGOr
+ fbSeiWUF4THref+M5GFa8wjAOnFqq+9nljX1oooC6s4+C6wygPm+FV0hYlb+Xo4BhYgDN5BLXWt
+ Ner3gHgtGfljSXRfDpA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-09_03,2026-01-08_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 suspectscore=0 impostorscore=0 adultscore=0
+ spamscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601090080
 
-Hi Linus,
+The presence of the .get_direction() callback is already checked in
+gpiochip_get_direction(). Remove the duplicated check which also returns
+the wrong error code to user-space.
 
-On Fri, 9 Jan 2026 at 11:07, Linus Walleij <linusw@kernel.org> wrote:
-> On Thu, Jan 8, 2026 at 9:41=E2=80=AFAM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > > > What is the rationale behind using brcm,bcm6345-gpio?
-> > > > Given brcm,bcm6345-gpio has 32-bit registers, while opencores,gpio
-> > > > has 8-bit registers, I doubt the latter is compatible with the form=
-er...
->
-> Yeah this needs to be fixed/reverted pronto :/
->
-> > > I switch the size from 32-bit to 8-bit using the reg =3D <* 0x1>, <* =
-0x1> setting.
-> > > Also the reg addresses of "dat" and "dirout" are different for the re=
-al
-> > > brcm,bcm6345-gpio.
-> > >
-> > > brcm,bcm6345-gpio. Example:
-> > >
-> > >        /* GPIOs 192 .. 223 */
-> > >        gpio6: gpio@518 {
-> > >                compatible =3D "brcm,bcm6345-gpio";
-> > >                reg =3D <0x518 0x04>, <0x538 0x04>;
-> > >                reg-names =3D "dirout", "dat";
-> > >                gpio-controller;
-> > >                #gpio-cells =3D <2>;
-> > >        };
-> > >
-> > > vs opencores,gpio Example:
-> > >
-> > >        gpio0: gpio@91000000 {
-> > >                compatible =3D "opencores,gpio", "brcm,bcm6345-gpio";
-> > >                reg =3D <0x91000000 0x1>, <0x91000001 0x1>;
-> > >                reg-names =3D "dat", "dirout";
-> > >                gpio-controller;
-> > >                #gpio-cells =3D <2>;
-> > >        };
-> >
-> > Exactly, the register space and register widths are different
->
-> ...as proved here.
->
-> Stafford can you send a fixup or revert patch?
-> (Only need to revert if you can't make a fix quick enough, which I
-> think you can.)
->
-> > > The opencores,gpio setup does work.
-> > >
-> > > Now that I think about it, would it have been better to just add open=
-cores,gpio
-> > > to gpio-mmio.c compatible list?
-> >
-> > I think that would be better.
->
-> Yes this is better.
->
-> I should have seen this, I guess I was sloppy :(
->
-> > > If so I will can revise this patch and add patch to gpio-mmio.c.
-> >
-> > DT maintainers: Given gpio-mmio is that generic/simple, is there a
-> > specific reason there is no generic "gpio-mmio" compatible value that
-> > can be used as a fallback, avoiding the need to keep on adding new
-> > entries to gpio_mmio_of_match[]?
->
-> I think "gpio-mmio" combined with compulsory property of
-> bus-width =3D <nn> (as used by multiple bindings) would be
-> generic enough. So a schema that accepts "gpio-mmio" if and
-> only if bus-width =3D 8|16|32|64 would be acceptable.
+Fixes: e623c4303ed1 ("gpiolib: sanitize the return value of gpio_chip::get_direction()")
+Reported-by: Michael Walle <mwalle@kernel.org>
+Closes: https://lore.kernel.org/all/DFJAFK3DTBOZ.3G2P3A5IH34GF@kernel.org/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+ drivers/gpio/gpiolib.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Each register is described individually, and the width is derived
-from the register's size, so no bus-width is needed"
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 0a14085f3871..5eb918da7ea2 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -468,9 +468,6 @@ int gpiod_get_direction(struct gpio_desc *desc)
+ 	    test_bit(GPIOD_FLAG_IS_OUT, &flags))
+ 		return 0;
+ 
+-	if (!guard.gc->get_direction)
+-		return -ENOTSUPP;
+-
+ 	ret = gpiochip_get_direction(guard.gc, offset);
+ 	if (ret < 0)
+ 		return ret;
+-- 
+2.47.3
 
-  reg:
-    minItems: 1
-    description:
-      A list of registers in the controller. The width of each register is
-      determined by its size. All registers must have the same width. The n=
-umber
-      of GPIOs is set by the width, with bit 0 corresponding to GPIO 0, unl=
-ess
-      the ngpios property further restricts the number of used lines.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
