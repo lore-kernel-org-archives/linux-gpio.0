@@ -1,146 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D9234167B
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 08:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5456B30BF60
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 09:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768207279; cv=none; b=HrtISlD6721+AElPqJkHC+Vs93grPN8tCXOCnwq9yFSym3DFiErsy2a4MQFYnBr//3xYgCcgVSU60mZJ25WLDMDD2uArsw8FrFabW/+m1nwnEPZlf9uqYh4WwQuSo8g6jAr7k5AwSqvpGzR0D2EOddIE4AM5hnIp/TMKRTm9OWU=
+	t=1768208919; cv=none; b=IZ5RIoOVBUMHF4haCVCoDEjoPfHIjF+xaKaADs6TV2I75oKaqSdPnle4lut4+GgRsqTSMrokMxRreahEgGt5RTnVtPrJ/KiiasTgIl1y7FOrd8YyPik8kf8hq/3ccMHwJ+h0SoRT2cGwL4tEE0ziprCpKd7MZoM9gi9Fq/hcgHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768207279; c=relaxed/simple;
-	bh=7aBQj/jMhzGawSGKf678xXkuEdrj2P3ky73p+WQTuBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AkJvMnQfsHUGPzXadJ+L/7s9Cjj6yyNw5RC2+yYA95mcL9pvIYKSKdNi17zpJc1glKealEVhXstELd3UpgrLTnlQm0tZ9N6YEZpaNbdmhSgke5RTy8bu9p3U8QWAZzWtqAD/gEQjglJinyi+t+VxUChSi5Ky8f823hlEti/ZlXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eYON1Rwq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=c0mUs1Ys; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1768208919; c=relaxed/simple;
+	bh=aNusfbvcvvIrZ1GK6+N/BWnHjCznHNoKX1GEoskKxrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g+jMHYZvUxkpHJreXXTXKsaCFZwZa7FPmy87Y70Vz9ROWz5fsZTy362YlsomBnWaE0ywuXbKUJ/FO+rGGAY7BvFGfXJ7nSdhIEXD2tvza4FL5X6oAUFK0fmq0RBY7/69qB0tG1HIkewMiPZfZOXGf8MMEVYLMU0oFHLCMi2y+fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdBWZ5Kp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eYON1Rwq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="c0mUs1Ys"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60C82Wx93734260
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 08:41:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VJ4FFFSRm1s91oC7oRkhzKomImhGecqctsmg7PvYMc4=; b=eYON1RwqDZoioIGV
-	uF589rBc8KMgX7V69wfXJaozs7Wecg81qAq0wTt7DgJGoPDGNTttuLCHc33gFkXR
-	T+iVYtqCmL4VIFVNzg5a2f6iNikdBQQuKOQR+2wb6dwQ9hiM6hZE18dxdLPfJ2GC
-	j98j/RGAOqGDoagInGdKyUZf3pFGy6qOEVu8NH7C7VZm48WYIEI4W5IRASj5WAr0
-	i4q3O/7l/PKZFVOZRkIGpn2gRvzOfbbVqDuhjqAY1SeGaD2pRheyBSp180mmVl44
-	4ETuOWGUkub2VX8Abp4KJCykCeDL2tuZ739qWnOUKe9MmLjwB4rNUH5gQ4BnAieR
-	FEGZoQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bkeusm87r-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 08:41:15 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b2dbd36752so1609310485a.0
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 00:41:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768207275; x=1768812075; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJ4FFFSRm1s91oC7oRkhzKomImhGecqctsmg7PvYMc4=;
-        b=c0mUs1YsDCjo1yZM3U7PnAMUnU7cZq14KfeXwpI00L89zB6GYGm8WeoIoxlstml4h4
-         hjCBva76T5mREyB1EN1k8Eyi1cXJTKFb65yWgKE2yvCVVUa0NamAmx8DSOe744tDU5rP
-         LLEIgwmnMTGNHcbl6rCr5bkFwZx5yi2EtX8qYJ9Z3CJ34l0FxXhsgOeFIIliZjSkwV4V
-         +6MqpXmBOONYuBaJINYKHHfMyrdm1RFDM7al/V4SNpw4rs/eneMW2qkvMkb0pwiY12n8
-         ko34stwzuYLa2g2i7NLfZof5l2lj3ZxEHl+VUNNBi6g+h2P+wJYbHfJeBJ14xL/rxRIU
-         ubXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768207275; x=1768812075;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VJ4FFFSRm1s91oC7oRkhzKomImhGecqctsmg7PvYMc4=;
-        b=ogO9bOnoBtpn/o1pTsGzA0cDoQJOOPbrU48+11yCnBWy8LrxUhOjSXwGN1G0THpO9l
-         B02WV+sPRAVR7JN7CQot6SmQJEl2/KBB1mWMT6QfKfVyutWqZoj2y6pLmtIlT+XAqrCQ
-         e1Y1ftSd2giwMwXEHUsLmRZ+Mw7xyLAwxFNe2blE38ixET6/p/p0nTW7y+T2raBSu0lK
-         QZFRX467YOFHs5PQwFUjmAa4pDiOR0cixcXq8LjHFKjubi8wty9vUWJubGAgUUPmka21
-         9q02cW1GXfOdJzyBb7LA3MwFy0EjKb16M/JmQmd02HZPknlKdB+8oBJwqYgKO0EnBMNY
-         h6Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Dz+zWJC8aJVYcej/h7TUHsa+4Uzy4hNF+pwyM2q0M7ak3VgigNzHKKyY2ihB9YE74REsJYMegz+l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwwEJxhJ/PpVgSo5QQZZqV9lgJAYfFnpM+QXzQOQoCrwetjrw1
-	wi0Km7PxPXYXbBLcCz/TQXO7720FeQ4oD9HolNx/mdQYpOA77/7oGVrIemQ9+q3xGNjvo+pN5IZ
-	t9gyFMo40/I1RX57DrbgPb8WymH+LNFBtOMmqkoJHXmhV6yXDnL5+HXFgOvR5HEjA
-X-Gm-Gg: AY/fxX4OQhqAR7r/agMSX8cO3R6kukUkOPEhNqLquzF/u42C9R4HFVxu9yyf2zrP0A8
-	uPfGqqIi6L07W98eIWfqmMfG3NCve6ipWzn2hUXJMjfLENgxLiYp+apTTgZKJpSoCScB+5Aj5Ap
-	oQrz74efFHJe0qlRrMuish3xdAEPPlTveLjAZm4eyaWTcjOQvM6lFWgBFZ6tepmCCgrpTmSJf32
-	fSwJob1zHGIWHIvAdy13qWE47JXmmLiYnrSUcek00INZ061FR/haGHdkcODwPhcx1Kl+bxq/uDA
-	bdoPByoer28rgYn992U2eIPwRJY4rxp1RXBajUXbe2NaadsYsutllgI73lt2LVT+Vea+3+HwKhi
-	vMN4TkqG51gtqyciBQPtXCZh/iBoCtYC6ZIJCfkc=
-X-Received: by 2002:a05:620a:25d0:b0:862:f354:ec3b with SMTP id af79cd13be357-8c3893ff9aamr2221026385a.61.1768207274889;
-        Mon, 12 Jan 2026 00:41:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEpIB0Nu6G9tcXP0kK5MqKdpL6VsoQakC6bMnD5gG5TpOAu3nC4jNl92D/xV2Xe5dWjcUAyJw==
-X-Received: by 2002:a05:620a:25d0:b0:862:f354:ec3b with SMTP id af79cd13be357-8c3893ff9aamr2221025285a.61.1768207274466;
-        Mon, 12 Jan 2026 00:41:14 -0800 (PST)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:a056:e497:8fff:6413])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0dacc5sm37279608f8f.5.2026.01.12.00.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 00:41:14 -0800 (PST)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Michael Walle <mwalle@kernel.org>
-Subject: Re: [PATCH v2] gpio: davinci: implement .get_direction()
-Date: Mon, 12 Jan 2026 09:41:09 +0100
-Message-ID: <176820726230.8044.12485983822915028914.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260109130832.27326-1-bartosz.golaszewski@oss.qualcomm.com>
-References: <20260109130832.27326-1-bartosz.golaszewski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdBWZ5Kp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19314C2BCB0
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 09:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768208919;
+	bh=aNusfbvcvvIrZ1GK6+N/BWnHjCznHNoKX1GEoskKxrw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rdBWZ5KpxcbS00ewOLmz6VAc+OOKmUqd4MYWGLtm00Io/3Yei+jlv+kNP9Q0vdsOb
+	 edfSASkvbc/gWY8nmaY2Jj0OjaSNAlRYniK/ApsqCWGIoSm1rSwQNomse/Y8kK9PwY
+	 9fK1LpyqJng2uyWvtJoHtzXpxMoPWdWryEAxO+Drt6FRu+LeNlD4omI+l+jga+Y98t
+	 gSNiUppaEZd8ROLEV1T8mUS3jQ2JcldlKpm941SCK3wzEcc+AiTU+s4dybHV9IxsSb
+	 av8ri27WpDQhLEcGNkVC6sL707k1MmpdjObys2j7sl7neUqYOKqqqs4wn637/vDV15
+	 tBfj/lw8836yw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-59b7882e605so5185132e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Jan 2026 01:08:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUJwQGMCV15cq5vDpEbC2Ke/MLNVnKn1VVXMTDsZK9NmpolDKF5Y+oveCz7mE2AgULEl3ejuNYywFkl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2W1UNcustlohccl0LqZNvnMdv3C3DUvRhyxfdSl+XiXt4Y1FY
+	hPneX9u8WTKGGOkqp7QP9AQzP7agPWTqICqNq32eaxwRdl52RWx8XFXMoCSVnbLx8HZyK739UO6
+	dGtP81bHicnNJTfeC1bxut3NXN9bExVXXfBnIE8x7zg==
+X-Google-Smtp-Source: AGHT+IGTR9k5RSHNIpBJL834Ww0X8J1ZdzRZ6Hp2uk9hnACvGJbrlxz/VASX4yp2KTPlt556o88PPVY7jr7CQVZ9CaA=
+X-Received: by 2002:a2e:a590:0:b0:383:213c:fc61 with SMTP id
+ 38308e7fff4ca-383213cff5cmr24069241fa.31.1768208917628; Mon, 12 Jan 2026
+ 01:08:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 6N-eBqii6sp01xVJuS56FLl_n905s8Wg
-X-Authority-Analysis: v=2.4 cv=GNMF0+NK c=1 sm=1 tr=0 ts=6964b3ab cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=IARmVmzn1eo3tEFrmJgA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: 6N-eBqii6sp01xVJuS56FLl_n905s8Wg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTEyMDA2NyBTYWx0ZWRfX9K38QmKgBFl2
- cmRvaKZ//ei2rHdBjDXg9KUEWiekZGNIpXT+FwDG1XBiCk56ztkRJdNbTbjzoVnWY0LYvPhyxXc
- A5jp5k/rOs0jrLLMD5CSZPUv15rd1I3QnglNLiS0tfP+1AlgUF2hCw79T3Hah99jZlYrOTC6q+H
- SXZlEeSmrUDtMYKvmctNVjB1h66O45ME8XHu+JrWYO6WJyQyplzaRhsbGo7VKhZV3VGjV/Fo3ad
- MWwv2iOHFoaXDtklusCfmwxNg5R4GOYfxXLI1XpIX8MBNwg84KF1YpyDUtyQ21r4JECYseJz37b
- U+LqYFO9bBzFbEAp6EoJetlKrH5JwoQHK4H4fwolVWiofOTmEpaXrWQkPWr/uOrlEnt/JMvtRcF
- 3aOSPyvO8MSmwV89/P322jVgOox0cXAEdz/NYtkSBLkTIoKMjcR+ZUz/Va+zzWsV471swHgdHy8
- HxE5WRbKF9LpSWZBekA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-12_02,2026-01-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 bulkscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601120067
+References: <20260106090011.21603-1-bartosz.golaszewski@oss.qualcomm.com> <aWGSQYCXP4R08koQ@venus>
+In-Reply-To: <aWGSQYCXP4R08koQ@venus>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Mon, 12 Jan 2026 10:08:25 +0100
+X-Gmail-Original-Message-ID: <CAMRc=Mf0tRxRrh7tn5OaDn3a47N_qvUcjO=zqbTi-GhY-Y9hOg@mail.gmail.com>
+X-Gm-Features: AZwV_QhDDYd3G5smy1ZRDQbejdmCu0WGBNa60Ja3hID1ca2J3AnWia5Ug7Yy3bU
+Message-ID: <CAMRc=Mf0tRxRrh7tn5OaDn3a47N_qvUcjO=zqbTi-GhY-Y9hOg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rockchip: mark the GPIO controller as sleeping
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jan 10, 2026 at 12:55=E2=80=AFAM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Hi,
+>
+> On Tue, Jan 06, 2026 at 10:00:11AM +0100, Bartosz Golaszewski wrote:
+> > The GPIO controller is configured as non-sleeping but it uses generic
+> > pinctrl helpers which use a mutex for synchronization.
+> >
+> > This can cause the following lockdep splat with shared GPIOs enabled on
+> > boards which have multiple devices using the same GPIO:
+> >
 
-On Fri, 09 Jan 2026 14:08:32 +0100, Bartosz Golaszewski wrote:
-> It's strongly recommended for GPIO drivers to always implement the
-> .get_direction() callback - even for fixed-direction controllers.
-> 
-> GPIO core will even emit a warning if the callback is missing, when
-> users try to read the direction of a pin.
-> 
-> Implement .get_direction() for gpio-davinci.
-> 
-> [...]
+[snip]
 
-Applied, thanks!
+> >
+> > Fixes: 936ee2675eee ("gpio/rockchip: add driver for rockchip gpio")
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Closes: https://lore.kernel.org/all/d035fc29-3b03-4cd6-b8ec-001f93540bc=
+6@samsung.com/
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
+m>
+> > ---
+> >  drivers/gpio/gpio-rockchip.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.=
+c
+> > index 47174eb3ba76..bae2061f15fc 100644
+> > --- a/drivers/gpio/gpio-rockchip.c
+> > +++ b/drivers/gpio/gpio-rockchip.c
+> > @@ -593,6 +593,7 @@ static int rockchip_gpiolib_register(struct rockchi=
+p_pin_bank *bank)
+> >       gc->ngpio =3D bank->nr_pins;
+> >       gc->label =3D bank->name;
+> >       gc->parent =3D bank->dev;
+> > +     gc->can_sleep =3D true;
+>
+> This means all operations are marked as can_sleep, even though
+> pinctrl operations are only used for the direction setting.
+> I.e. the common get/set operations always worked in atomic mode,
+> but now complain. See for example:
+>
+> https://lore.kernel.org/all/20260108-media-synopsys-hdmirx-fix-gpio-cansl=
+eep-v1-1-3570518d8bab@kernel.org/
+>
+> It's not a big issue for the hdmirx driver specifically, but I wonder
+> how many more (less often tested) rockchip drivers use GPIOs from their
+> IRQ handler.
+>
+> Considering setting or getting the GPIO from atomic context is much
+> more common than changing the direction - is there some way to
+> describe the sleep behavior in a more specific way in the GPIO
+> controller?
+>
 
-[1/1] gpio: davinci: implement .get_direction()
-      commit: c18790018799155e58d5a11c6697f9c398bf8b60
+No, there's no such switch at the moment. This is because there are
+paths that we can take, where we *do* end up setting direction from
+gpiod_set_value(). For instance:
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+gpiod_set_value()
+  gpiod_set_value_nocheck()
+    gpio_set_open_drain_value_commit()
+      gpiochip_direction_output()
+
+I'm afraid, for correctness, it has to be either sleeping, or not. I
+would love - at some point - to make pinctrl mostly lockless with
+SRCU, like we did with GPIO. That would solve this issue correctly.
+But until then, I'm afraid we need to keep a chip-global switch for
+sleeping.
+
+Bartosz
