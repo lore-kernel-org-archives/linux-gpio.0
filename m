@@ -1,59 +1,59 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C271F33F8C5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18D6343D7B;
 	Tue, 13 Jan 2026 10:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768298966; cv=none; b=WsB2tRP0UUttSG4SRv4ZSq/oKMDZzJ2HcXtAQNCcmtYZ+EPlRAkaBJ24GqCtIInN1rgtawzqdd4FNlwVHl8B/6YhfI6YYoaeJTZQoxfyhhFHEqnM5WRURTs+SP3nAL+p1fxpwo/fTX2zyGpQEYvzMA1XJmd6COP9If6YbulTmVM=
+	t=1768298966; cv=none; b=rLpAMgeJzUh0SobkOFQrjcCU5Bk0pglN0p6gGa/qMjxdvDt1STZliaFtkyakEk1huGASliCV0XasmRI7dbj/S6oHiFwzDeKnKZjDZh7suT9M7X2RW0LlZlxGBbbYKBY+5SNTY3QSg6tu2QTxq9+m+TvAfLEK3XPGJeRW31lBrTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768298966; c=relaxed/simple;
-	bh=gOVO/+YtO6oW71b+N3o8srvhA4NfR3lVf1MPG+pnCDk=;
+	bh=SmJ23mB/4yuvurJ6cS92alljA17FrHV5dyLpp9Mvizc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vl3aTP01v2Bsjtq3x6nAydpPQiO31STG29VV/LLTr98k+fi8c/CMSKkmPCxUNepb+Z+pwsAhlcbvM/tvuMLbIHvhzEfcAA7u+Iv2PEAKE3UM0Cmi2fTnEYnl0ofB4z6IeVmDTib2KiaZmlXAtROykfh1VBaeZeX0jCSBKcqN0ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktrJlZ9J; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=PiZF1VWX7sD6lormbfUMY2ByEf7N2PhewP0xjc9Jnuo6l9r3F5ttl+mCG8U6MWXflxP/R9Ugjrt9lJ5kzxgCDBGvyV9CFPiO6eq8g1Luzs9E4mpAK22ju2VAMTeD4LYNvoWeEDDiQ8p0EUXWMypWw4UGjwqrvXl7xHh1ELc+7/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nh8wtQPT; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktrJlZ9J"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nh8wtQPT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1768298965; x=1799834965;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gOVO/+YtO6oW71b+N3o8srvhA4NfR3lVf1MPG+pnCDk=;
-  b=ktrJlZ9J5+4RzGnRPb7UA9EIqAannJgC520Fp4r9/PZeKwbWdPuEeZFY
-   qyK1OvUQWmlKnYHUNMp151Zk/cXKCm7v/8A9dQs/tDGf85YW9U70mqY8t
-   aEOCSTQhhwyEUZPtt+59ite4+SeFYKxdLoXtDMdNH5xw5Y47SOTk+xNo+
-   JOlz/UT4r4fQQ8EJimqWsXheTqK3mJo6PhbKP2Y4aD9TrxUBQbXYaNrLK
-   UGdSVt0qWgx6mQyk2UpqPNLQ0OIW4IPw1YdP0WMsEI+6VJeRqmKojMq/B
-   pgDTt3U8Q38ZGKTDuHvOOoFRGdrENktShgMypU5xrJ1F6sOTfmaIHTSOm
-   g==;
-X-CSE-ConnectionGUID: f70ISQsfQN6tNKdBTwRoMg==
-X-CSE-MsgGUID: V5cAJqjoSwafpx2YQ8WLMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="69637701"
+  bh=SmJ23mB/4yuvurJ6cS92alljA17FrHV5dyLpp9Mvizc=;
+  b=Nh8wtQPTwGxaa41grjp6iVCW33KBj4GF5dFhnXmqJNli8e4pQxKqGGhG
+   57I2kDFQv6wOy3h9UfuzhWTDZWZCzXIsbRO+Wvsj1YIBd7oJKPze8uzBF
+   EedmRKdTCclqGn1Gl98mYCgKCS2UaIE6ThIbVroeRm3b2AeNP9KPYoQO4
+   GxVOiczUQp01T+bvzpD00K2iddTRHA0hDrAZJcHNJ7JDBYCFPREC8FjHU
+   Hd8aqV8kJoMSTl1f60UzIS2qtO6pq4/HnM7KHNRhVuyhY1keWw01dRFog
+   T4Wz58XeOUe8lihY4pFcHf/84/2XkBfVv4zBFI83CsvdFRizPl0IlNVhx
+   w==;
+X-CSE-ConnectionGUID: X9/HHThbRq+FQa0ecgV8xQ==
+X-CSE-MsgGUID: lhLeDYZFQWalurOWpC6BNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="69637703"
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="69637701"
+   d="scan'208";a="69637703"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
   by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 02:09:19 -0800
-X-CSE-ConnectionGUID: NGYg8ULSST+xL5NPqTUVdg==
-X-CSE-MsgGUID: 1dR9L7+aRMS7L2Z98jFGag==
+X-CSE-ConnectionGUID: eAw7u4JAR0anW9Sdtu0JiQ==
+X-CSE-MsgGUID: 2EcZedcCTnus3SWcZBBo5A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="203555916"
+   d="scan'208";a="203555915"
 Received: from black.igk.intel.com ([10.91.253.5])
   by orviesa010.jf.intel.com with ESMTP; 13 Jan 2026 02:09:17 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 3282B99; Tue, 13 Jan 2026 11:09:16 +0100 (CET)
+	id 3B16D9D; Tue, 13 Jan 2026 11:09:16 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
-Subject: [PATCH v1 1/3] gpio: pca9570: Use devm_mutex_init() for mutex initialization
-Date: Tue, 13 Jan 2026 11:08:04 +0100
-Message-ID: <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] gpio: pca9570: use lock guards
+Date: Tue, 13 Jan 2026 11:08:06 +0100
+Message-ID: <20260113100913.136777-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com>
 References: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com>
@@ -65,39 +65,51 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace mutex_init() with the devm_mutex_init(), to ensure proper mutex
-cleanup during probe failure and driver removal.
+Shrink the code by a couple lines and improve lock management by using
+lock guards from cleanup.h.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca9570.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-pca9570.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
-index c5a1287079a0..eae35135c71e 100644
+index a41837f1201b..4a368803fb03 100644
 --- a/drivers/gpio/gpio-pca9570.c
 +++ b/drivers/gpio/gpio-pca9570.c
-@@ -115,7 +115,9 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
+@@ -10,6 +10,7 @@
+  */
  
- static int pca9570_probe(struct i2c_client *client)
- {
-+	struct device *dev = &client->dev;
- 	struct pca9570 *gpio;
-+	int ret;
+ #include <linux/bits.h>
++#include <linux/cleanup.h>
+ #include <linux/device/devres.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
+@@ -98,7 +99,7 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 	u8 buffer;
+ 	int ret;
  
- 	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
- 	if (!gpio)
-@@ -132,7 +134,9 @@ static int pca9570_probe(struct i2c_client *client)
- 	gpio->chip.ngpio = gpio->chip_data->ngpio;
- 	gpio->chip.can_sleep = true;
+-	mutex_lock(&gpio->lock);
++	guard(mutex)(&gpio->lock);
  
--	mutex_init(&gpio->lock);
-+	ret = devm_mutex_init(dev, &gpio->lock);
-+	if (ret)
+ 	buffer = gpio->out;
+ 	if (value)
+@@ -108,13 +109,11 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 
+ 	ret = pca9570_write(gpio, buffer);
+ 	if (ret)
+-		goto out;
 +		return ret;
  
- 	/* Read the current output level */
- 	pca9570_read(gpio, &gpio->out);
+ 	gpio->out = buffer;
+ 
+-out:
+-	mutex_unlock(&gpio->lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int pca9570_probe(struct i2c_client *client)
 -- 
 2.50.1
 
