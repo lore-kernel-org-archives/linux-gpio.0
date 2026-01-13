@@ -1,59 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B387F3815E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0913806B8;
 	Tue, 13 Jan 2026 11:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768302722; cv=none; b=qoKFtMd+7FluVQb1lmxWCTGGElDbMg42T4SVhcvByAA3/bRaoJ2rVlr1dKsRrZne335BG7YaYO9538OX669v7sTfFTjhgZW3ZxBRbtPbD4EiLmtGS14V+kvhJXXgGh8m4Iuo31fAdIL7KS4TDQIyxrAqjWTUq16dq0yI5q7/OR8=
+	t=1768302722; cv=none; b=jh3fQFcn2KynBUht92Qn32sKFvCKU9XkiIwZd+ACQo9iD+YdIHWVl2Lbn//NgdSbkNDX6vJG7dn3tXapxPWicav1MXZE/tyhGID5Loi2cLIUyQB3lPlen35Gh5M71wm2TwpXsPjt6LHn0S8dtEQ8ELEblgMrSgEAfyfxqszbsoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768302722; c=relaxed/simple;
-	bh=uYNUANscJVovmvcNvkxRxfD+1UaN1bScHH+xIH19yk0=;
+	bh=9KR8a8EWwtSCrpChYsxZtwYb01R33dBd4BXP88bOzis=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SlRSWjsj9k+A5EQx0JY0gnwkun2dbWmKXMWmSvT+RKDjEqt9kMD2PujuqjejPcDu8nB81xJGIAQZp15LGHVy/TM0fGR4Xp0YOjqWjvOj1naXSAnkZ+3JT5iZ2rcuHw27FNQrYU+UdfNv318PedW8Fy9khd0Ct8X9shjFb7ONNGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZkwnRQq; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=utv9ZdcqOlm6z8AsXIC5zUa3EL5PHSTFUgcSLgyEDve2LsEDgruFOY7aEx5SRQwidec90M7wKxrKTRXB0iElMG+AymFN1R/h9cLCGu+NY7XOE6w1+iqdIbpEI/ovdnEfMpE09bUW7jfJ4vzZlsAJ7pf2Zby2aGud6ZfVqevXU00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VunshZmN; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZkwnRQq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VunshZmN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1768302721; x=1799838721;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=uYNUANscJVovmvcNvkxRxfD+1UaN1bScHH+xIH19yk0=;
-  b=fZkwnRQqkJdCv6xUGiLwFLKmrNlM4j6mkGMyTacAzmASH6TIKFTfoZPt
-   KohSxxJlY48PbfJcR8PJ5kB2rymlpD+ItFi5W/dFP4+aVItqPMYouzXqF
-   UWBHcEu3aJoltuglCMrBV+/jOFN4wegG7v8JaootkEO0A0Sp48TwF1WIR
-   PrmzIuWCxf1xWxPQX93cvNR4GIxaSrn0Gqy3lalAaoThyEuiDXY2E07UL
-   uGJOfNk0eDTyCWyQCDwDNvOgRTCW6SRG8RCzXWmbdoJbOvY5MKYC1BTZW
-   cvmoCZgXy6fdd10wmZd1OK1R/guqqZQPGKg2SydrAPfoA6DhR+Wk8mL+c
-   g==;
-X-CSE-ConnectionGUID: DhaDMddkTDuXY13XH/ye1A==
-X-CSE-MsgGUID: VBwt7T8URber3r+THkpdVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="72166541"
+  bh=9KR8a8EWwtSCrpChYsxZtwYb01R33dBd4BXP88bOzis=;
+  b=VunshZmNsbsXh40nrPx1MKGqjuEnLqunrzkrnNOzwlujNmhBLm76+Tsb
+   hRK53AY1zSGgqRIxd4U7E7y/FsFyChseYxN6/sT4lz2vKTUR6ULqa++JX
+   zvvVGiv2qlvqPbvld8CQAoIPS5VzaLlOqd8EXGpiBlmS42vyTVXqQLaui
+   dk8xuIn3mE7vGIFeUuyRPCFMkzge3O+7MZqniPcq47p+9ivanXXiEk1em
+   1XN4SwBrwwT8zJO0D58H2HlzVz9gCUPE5gAq2lOj66BYIdmVwjA0VPBgT
+   wefxUOfOwAmgisBg43VRC5B8DCx+q8PtxsIu9OaUHk4GtPH+bH1xlCy3q
+   Q==;
+X-CSE-ConnectionGUID: 1ddqgCfoQ16njq4scfkacg==
+X-CSE-MsgGUID: jnyQEDn7S7aQ03FqkzpIjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="69317382"
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="72166541"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:00 -0800
-X-CSE-ConnectionGUID: N8WsbxyhTWSRv8tGvee7/g==
-X-CSE-MsgGUID: 8R8mXT0mS2icVlczi4zpuQ==
+   d="scan'208";a="69317382"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:01 -0800
+X-CSE-ConnectionGUID: aTxu/0rETcufZbP23+1SEw==
+X-CSE-MsgGUID: x2SzvLkqSZG0/BxZMAyKMA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="209414889"
+   d="scan'208";a="204965218"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 13 Jan 2026 03:11:59 -0800
+  by fmviesa010.fm.intel.com with ESMTP; 13 Jan 2026 03:11:59 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 4260C9D; Tue, 13 Jan 2026 12:11:57 +0100 (CET)
+	id 3A2E299; Tue, 13 Jan 2026 12:11:57 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
-Subject: [PATCH v2 3/3] gpio: pca9570: use lock guards
-Date: Tue, 13 Jan 2026 12:10:54 +0100
-Message-ID: <20260113111156.188051-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/3] gpio: pca9570: Use devm_mutex_init() for mutex initialization
+Date: Tue, 13 Jan 2026 12:10:52 +0100
+Message-ID: <20260113111156.188051-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260113111156.188051-1-andriy.shevchenko@linux.intel.com>
 References: <20260113111156.188051-1-andriy.shevchenko@linux.intel.com>
@@ -65,52 +65,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Shrink the code by a couple lines and improve lock management by using
-lock guards from cleanup.h.
+Use devm_mutex_init() since it brings some benefits when
+CONFIG_DEBUG_MUTEXES is enabled.
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca9570.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pca9570.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
-index a41837f1201b..4a368803fb03 100644
+index c5a1287079a0..eae35135c71e 100644
 --- a/drivers/gpio/gpio-pca9570.c
 +++ b/drivers/gpio/gpio-pca9570.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/bits.h>
-+#include <linux/cleanup.h>
- #include <linux/device/devres.h>
- #include <linux/errno.h>
- #include <linux/gpio/driver.h>
-@@ -98,7 +99,7 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
- 	u8 buffer;
- 	int ret;
- 
--	mutex_lock(&gpio->lock);
-+	guard(mutex)(&gpio->lock);
- 
- 	buffer = gpio->out;
- 	if (value)
-@@ -108,13 +109,11 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
- 
- 	ret = pca9570_write(gpio, buffer);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	gpio->out = buffer;
- 
--out:
--	mutex_unlock(&gpio->lock);
--	return ret;
-+	return 0;
- }
+@@ -115,7 +115,9 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
  
  static int pca9570_probe(struct i2c_client *client)
+ {
++	struct device *dev = &client->dev;
+ 	struct pca9570 *gpio;
++	int ret;
+ 
+ 	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
+ 	if (!gpio)
+@@ -132,7 +134,9 @@ static int pca9570_probe(struct i2c_client *client)
+ 	gpio->chip.ngpio = gpio->chip_data->ngpio;
+ 	gpio->chip.can_sleep = true;
+ 
+-	mutex_init(&gpio->lock);
++	ret = devm_mutex_init(dev, &gpio->lock);
++	if (ret)
++		return ret;
+ 
+ 	/* Read the current output level */
+ 	pca9570_read(gpio, &gpio->out);
 -- 
 2.50.1
 
