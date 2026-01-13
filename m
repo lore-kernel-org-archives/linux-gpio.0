@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A358D33F39A
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 10:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5610C38A735
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 10:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768299396; cv=none; b=UFArcv7TSFNxp+P+YoEr63GtmZsBBgHaRW1L7bepgDOKf7R8wOwdzLLlCZZ68zy7rUZMfAR0C2idy5/iaLRj79UYqobjCZKW9eXXZMLLeiURMPCbXPGfAmduKP2gbRNGF8+V9fUO9Zci8laGGhsxviU5GcYtUn6GUcxrWM/jmdQ=
+	t=1768299436; cv=none; b=TQcEE6fBx7YqDRfcu2PudSkjui72rGdVYNvIINJzoXzmgteC/XPA+Ruc9uuc4g+EJZrAYjaty796cltQv5kNyOrNC9zoLs3bsaR1mB4k2CKHQTGfcp63YreM+UlIaUSdl5q5FCN5IZeLdle++I3VIMxZQTnVx1AB3Wthpqnorjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768299396; c=relaxed/simple;
-	bh=esJopZltAYLgnCkMFpcVoEU+Symng30ZWIG9S/09MMw=;
+	s=arc-20240116; t=1768299436; c=relaxed/simple;
+	bh=bwhZZQmXnabGqrdZjcHRlc7ZAq93Q3ixLgelXAu6j3Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWImytueR7QcTDnW5j1/ALd68ffaCWm8xKUjtP+LjJiIWtFuhQzynDjd3aw90Oj1CXKbD7XRRvZ6HHats+TqdYkAMfdf2EwhhT0/hvgxJHxF0STQQDj5t5xhLnwkyP2HdU+unoIdb43jnpKqsoiA+gJnGO94+M9oDykqt7OmmnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsXfXaSX; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=TyGwiziUxNEGJBdiT2W5UKYsRqOCw8uLbwHy5cEfbdL13HtBREApxb/WmPcrn7XDAfKZd113dKhH5ShQUYbAzx+Xj6m161ksvdGcvxyLqNrnnNdsP9H+Kn5EB4/c49sm7v1T2Mk6VSo2jpEuYhXz0H1CdsOzSjr8K4Civp2y3Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBVUq+kd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsXfXaSX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CF1C19425
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 10:16:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBVUq+kd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025B7C16AAE
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 10:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768299396;
-	bh=esJopZltAYLgnCkMFpcVoEU+Symng30ZWIG9S/09MMw=;
+	s=k20201202; t=1768299436;
+	bh=bwhZZQmXnabGqrdZjcHRlc7ZAq93Q3ixLgelXAu6j3Y=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PsXfXaSXiYCIrhfrhsGko6AbyWMwYnErOulAKg/POyVM2UoEicr0Pa6IlU1BRQ3CQ
-	 FVf4b7d4LluePaGPr91wRFk51bB1GNZPDGEZ1Dkd07T3m3sz5wv5iULVxI7y2RJLR4
-	 C1CnLbO/YvtvwY2AbmvB46pYF3p38Fx6fJjUFZbwOX+gwuK9ueP00Ph97GYj3FNbQY
-	 u0fwJb2PxMAENWpOIOZDjIJFzUjW4vtKav2SSKY0YSklvCilHV2Q27YjI5tbZ8M7UU
-	 MIT2LODliPT+QpUr7DSG4emL13V07953yX08A0WgRBLI3ciiaAXgtAvmq96YDGRlkM
-	 08XMPWdnLi9Tw==
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6455a60c11fso6090266d50.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 02:16:36 -0800 (PST)
-X-Gm-Message-State: AOJu0Yx0QWvrqez/zQzAdSwl1Bji3QL8s7D+QQKgm83dxBYmH7vpqX1U
-	kVPrwCVnkxyxQzDgW/aHO0wNBOp4GbaskO4Uug5fHn9pDBk8LWEWNoM4G8nGdBEf5Twri+0ZZiB
-	s6yjlMBqao00+WTgXe6n2YLWgNZ4V5ik=
-X-Google-Smtp-Source: AGHT+IHLWvZFPf8gpkvECRT5kxigrgOU/zHWyL4XbgAJPtbwN+X0sn698hc93DNyjCALyHhm11rGO5LOG65vOxDKNDI=
-X-Received: by 2002:a05:690e:1347:b0:648:ff21:94c3 with SMTP id
- 956f58d0204a3-648ff21952dmr109375d50.23.1768299395810; Tue, 13 Jan 2026
- 02:16:35 -0800 (PST)
+	b=mBVUq+kdOfhySWL/wRxN5TCt6YrMAZchs+4JTkINNuqpNrfiR1CtBQnkXOEvzo63x
+	 6JKN5wsjzyi1VDyrKG1XqxP/123jkhF0GwAXDGQ4+QvjkUDBNupf6q8QPj+O3XONEW
+	 eL0+0KLSBf25f7/zrnQWKQT+Rhvy4wyCt6D8bx58SyhFVr1fJ5bDiSrsIjd93Mlt+L
+	 3FOfSo3JB0OsCRz1Y2os80sT6Gj4JUs7hBRuEDyGQjBg491qJHn9fWxBX4R/PIgEpA
+	 If561Pd6tMrih7lZ55quZmx6LR1NI/gB2eZehl1TDzZqUdABD/R1y/mLaj87Z2rqQk
+	 2eEG68uUV09Tg==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-78fb5764382so77620077b3.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 02:17:15 -0800 (PST)
+X-Gm-Message-State: AOJu0YycXpNaB1yieSa7IKZ1meURy5itea/27ZtbNdyocqoPjXvvIqAS
+	q+Au5oEHbIz5D+QGtPiy/V94lOQxGjKW2ybhhrDM5l8Vgc/rVDGypQVXs8aeHJRf7mgO3dK6XRY
+	d0yse73g3Yj6sAz2KMoyv8PdBlBbzF5Y=
+X-Google-Smtp-Source: AGHT+IHNd/w/xd71dJxJ3SseZKPu8xxoGoymgbHup4tpyxhapfDWWbOVyUapnY8z90Tt845Vky3x5oBTtN6f0mV9WGk=
+X-Received: by 2002:a05:690e:1481:b0:645:556b:62a4 with SMTP id
+ 956f58d0204a3-64716b5fd1cmr17853663d50.7.1768299435400; Tue, 13 Jan 2026
+ 02:17:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com> <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
+References: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com> <20260113100913.136777-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260113100913.136777-3-andriy.shevchenko@linux.intel.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 13 Jan 2026 11:16:24 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmvNcLa41kaBcNTrm-e1GsBGF3ASkxLVFZhCz4A-bt__g@mail.gmail.com>
-X-Gm-Features: AZwV_QiLa5ZzXE0uC8Ol6kIL4q5ZCh6S5hzcDzOPP2MdblUDCebOSx5WnAff9u0
-Message-ID: <CAD++jLmvNcLa41kaBcNTrm-e1GsBGF3ASkxLVFZhCz4A-bt__g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: pca9570: Use devm_mutex_init() for mutex initialization
+Date: Tue, 13 Jan 2026 11:17:03 +0100
+X-Gmail-Original-Message-ID: <CAD++jLn_Nbx7YMhe=N-uop49hvCLsBm7jt6wmgQhctMDw+VRQw@mail.gmail.com>
+X-Gm-Features: AZwV_QgdyhLBbQ8BMgOdyWTqaM9PjiQol09mDLzfJ_nbWYePnwXKDctcyBuazvw
+Message-ID: <CAD++jLn_Nbx7YMhe=N-uop49hvCLsBm7jt6wmgQhctMDw+VRQw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] gpio: pca9570: Don't use "proxy" headers
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -58,8 +58,11 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Jan 13, 2026 at 11:09=E2=80=AFAM Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 
-> Replace mutex_init() with the devm_mutex_init(), to ensure proper mutex
-> cleanup during probe failure and driver removal.
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+>
+> Note that kernel.h is discouraged to be included as it's written
+> at the top of that file.
 >
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
