@@ -1,85 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A283816E0;
-	Tue, 13 Jan 2026 11:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD97C25C6EE;
+	Tue, 13 Jan 2026 11:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768302723; cv=none; b=rI3XQIcPLOzvKqlTeZf2GnSwZiv0KTO9lTWg6XeSuPCdmQm8/qP0OvkPIAvuEXQzuw9hK5x5uSST8j4dGgKSpSq7KB8Ttk2UTuGFxt/OgdbFa9ekiKxzGVVYJTZIXEkOtWKi72GMdu+dO7o+BBmeSU4EaPfA7A2PWG3jaoo+u38=
+	t=1768302743; cv=none; b=Xhr+8ORMw5WOIZ84gSDe14M3APEL21jORS6X4NWu4o1hSZBZx660wx5tSEDxfSEYpRoVOlDgHwT+/ooRQigyHaGIG4+E6m0fkF5BDkmvtChncRwMk94vqwm9+tvdRzEUrNPpIm+iPu/up5QQoSwVxtjEksLQHp5KNstjKlSuX9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768302723; c=relaxed/simple;
-	bh=esecILdediTjV6LVLUeaL/Wx8ptBFHfkEDgHjG7bkCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ECJkOygQlcupb70Preiar2NhVo2BpphDw43m4gQ4iYhS2qIeO8bFME1hPVahxj8WJabxT0g1UcD3DaTbS0RwZkjmpV0CoFSv2TlA2QJXokDOZYhgaw//cHzWeKN5IADhYKga9C6Gauh7lab8rwYBqMHD4ceQEHaVfv90CJmUJ5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qe2Kkl/s; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1768302743; c=relaxed/simple;
+	bh=MxswM+sfcPKom8rtIi+1Ux4vIfG0U20qrh1tK5c04dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QELT6qRG/PHl8k4WWkKy3JUbyWWfe9fbq/DYFfFCqCxeluEpTuSepN1Ja6rr7oKnqcYg2XKDM8G6kZi7R2T1hSpfrPqjJkNgF25hbVWGAT6AECopLYekDuTodj2EjlciLdTu4CFn5OPTznC7TTAUnu80E/HK/4ceFWh/zwR6310=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V4TFQdhN; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qe2Kkl/s"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V4TFQdhN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768302722; x=1799838722;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=esecILdediTjV6LVLUeaL/Wx8ptBFHfkEDgHjG7bkCI=;
-  b=Qe2Kkl/srz37tntmv8eeMVgCKXc/C/67WVEtpt7zNuCBPnUomtA9Ln7g
-   RUk/vxsQxVu59leHU22LJyDjEIqF3GoRms9bcNmKf9bGPkMO6LXy58KmS
-   pYmCGXT8FZ3GTwpKFi7BWD4t0geBmay3P7tx9cnj9MyXxwOR48/tE3LRf
-   uqwYkLNkBkBL9K1uY/WGHfucYqPFZDrtLRwkNjKwpvCvL4eNCJQGhFi5/
-   XLz6g0jVXRbq7m/cdIOlM5t5knHg1/uI9MGX33seqla0W3pZQv/bp8WQk
-   hpcM8fpol4qmxTYN5MSEAljr9OCcfhjnkPZ1s3px33B1rurjkrWVI8lG+
-   A==;
-X-CSE-ConnectionGUID: pYjO3eTsS6mv17JZMiubBg==
-X-CSE-MsgGUID: 3m0y56E9T26rjMKQP5bK1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="72166543"
+  t=1768302742; x=1799838742;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=MxswM+sfcPKom8rtIi+1Ux4vIfG0U20qrh1tK5c04dQ=;
+  b=V4TFQdhNsEBLS3yKv+9UAUBHaR4SpzF2Tl1hUSx4vXdZvhg6SWMBE9hv
+   2xzfvRxsmbCnn9Aee+WDyRF5sVPuUZMx1UlN3wly2O2aqccqG8wBTLOOK
+   A388ayjfc9uuQYPP2NfeeVRCdJvJvZgBkyaWeQ6hU26UZTV4JXl2PcMQm
+   a9DO/BvqLF1cHrvOqOuwfTzJRIYr+GoEe2hDta8haXu4O9LkIUvpXQNrW
+   3lf4UUrYPEJlHLZ1h+x6bPnAHuB8Ojpv0TKNdWkzmlYv0GJxwOfL1P+xu
+   VqCoJaUqHfVqdJB9zr+qPAolpY8AD7xDHQKw2gxQQ8oXJQNB9QXhwQKZM
+   w==;
+X-CSE-ConnectionGUID: 67mJzyj5R4GYiSYavyETPA==
+X-CSE-MsgGUID: pvlBTxIUScmJFQe+HGR2cg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="69664895"
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="72166543"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:00 -0800
-X-CSE-ConnectionGUID: G1orZSZmTuGCVtiEw6x1ow==
-X-CSE-MsgGUID: hGn7CqouQquWiQHWXUUQ9w==
+   d="scan'208";a="69664895"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:22 -0800
+X-CSE-ConnectionGUID: 8UAaOiWmTOWCxpLLWHWKvg==
+X-CSE-MsgGUID: QVtrmH0iQo6bckipW/RiTg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
-   d="scan'208";a="209414888"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 13 Jan 2026 03:11:59 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 379AF98; Tue, 13 Jan 2026 12:11:57 +0100 (CET)
+   d="scan'208";a="209192914"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.245.177])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:21 -0800
+Date: Tue, 13 Jan 2026 13:12:18 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Subject: [PATCH v2 0/3] gpio: pca9570: Ad-hoc cleanups
-Date: Tue, 13 Jan 2026 12:10:51 +0100
-Message-ID: <20260113111156.188051-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH v1 1/3] gpio: pca9570: Use devm_mutex_init() for mutex
+ initialization
+Message-ID: <aWYokvE-HsUysloR@smile.fi.intel.com>
+References: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com>
+ <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MdngvVWs8KZb+bOkS=qEcMp7FTPQArAvsAHxbei8RJq=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdngvVWs8KZb+bOkS=qEcMp7FTPQArAvsAHxbei8RJq=Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Tue, Jan 13, 2026 at 12:01:40PM +0100, Bartosz Golaszewski wrote:
+> On Tue, Jan 13, 2026 at 11:09 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > Replace mutex_init() with the devm_mutex_init(), to ensure proper mutex
+> > cleanup during probe failure and driver removal.
+> 
+> Well, I can almost hear Johan Hovold yelling at you that this is not
+> about mutex cleanup but merely a useless debugging feature.
+> 
+> Though personally, I'm fine with it. Just reword the commit message
+> because there's no actual cleanup happening other than freeing the
+> memory allocated for the devres entry. :)
 
-Looking at this driver for something else I took the opportunity
-to clean it up. Hence this mini-series.
-
-Changelog v2:
-- rephrased commit message in patch 1 (Bart)
-- collected tags (Linus)
-
-v1: 20260113100913.136777-1-andriy.shevchenko@linux.intel.com
-
-Andy Shevchenko (3):
-  gpio: pca9570: Use devm_mutex_init() for mutex initialization
-  gpio: pca9570: Don't use "proxy" headers
-  gpio: pca9570: use lock guards
-
- drivers/gpio/gpio-pca9570.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+v2 is sent, thanks for review!
 
 -- 
-2.50.1
+With Best Regards,
+Andy Shevchenko
+
 
