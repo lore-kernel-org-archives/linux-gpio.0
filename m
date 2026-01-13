@@ -1,72 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748E3876DD
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 11:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B387F3815E1;
+	Tue, 13 Jan 2026 11:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768302116; cv=none; b=Du18MV4A4v+Kf84KdCfrAZc3O+EuUy/DpBvislNJz1uBKgZIKxxkVcQvStuslhCGIs/zdXKJlzafaPKizeEWHjp/7EjNuUZWBHJUHh9a4RqeiTtpfEGRlS9qmlyANQEBRKdm3JpYehPAqhdvhQecC0PXooeL4NwsNt/pyN5wOU0=
+	t=1768302722; cv=none; b=qoKFtMd+7FluVQb1lmxWCTGGElDbMg42T4SVhcvByAA3/bRaoJ2rVlr1dKsRrZne335BG7YaYO9538OX669v7sTfFTjhgZW3ZxBRbtPbD4EiLmtGS14V+kvhJXXgGh8m4Iuo31fAdIL7KS4TDQIyxrAqjWTUq16dq0yI5q7/OR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768302116; c=relaxed/simple;
-	bh=GVsMnEOzYYxyK/Bmw9/LZKFKCUQEOopSUtCeSRaoT6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cc4WvWBDVmBJ7jhwIs1eGHqopAGFkmoEnEjeCN+boyakbizRDYIZRmGqs5icv7ST/h5oIlMU61b2ebSkNLHz9JHcgEuGUE7B8jjAppmcvAgi31U6TOvMATj9Un7OnmMS76sRoFBVYClWkSwFdlxb99lG5wD3UlkjhcuELYm1JQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjd4hw/0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768302722; c=relaxed/simple;
+	bh=uYNUANscJVovmvcNvkxRxfD+1UaN1bScHH+xIH19yk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SlRSWjsj9k+A5EQx0JY0gnwkun2dbWmKXMWmSvT+RKDjEqt9kMD2PujuqjejPcDu8nB81xJGIAQZp15LGHVy/TM0fGR4Xp0YOjqWjvOj1naXSAnkZ+3JT5iZ2rcuHw27FNQrYU+UdfNv318PedW8Fy9khd0Ct8X9shjFb7ONNGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZkwnRQq; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjd4hw/0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFC2C19425
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 11:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768302116;
-	bh=GVsMnEOzYYxyK/Bmw9/LZKFKCUQEOopSUtCeSRaoT6c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jjd4hw/0pC30x/u8dVKcM2KbdYRkstOeHKJmo+F0W7nvG+r+vCZ3ZCKZXh1xNdXBL
-	 bCd+FLiySCw2UPXU9nCSjxAUEdf3kgqpR+Lkc7sXAYiTDiJIkCPNjyw6K1bazFxHIE
-	 yRsv7flHekl5cuDipYwjWn2qB7hpwgwCN205/hpu1OzLRwYJyBZQ2+d0AQEqN6zlgV
-	 KObATxUaMcdQ3ynqPuwQTkvGCIJLwiL/acKguttme/59S5f6Zq7nUMolG0E30KTb5b
-	 KX6cVmTJ4tB4LjlzK+KNcTfkkom/oCsIeZaA8hnTQ6wB7DBOfPmS/L5ItOyPh6wkKn
-	 tB1I9AqgFkuiw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-382f9211cbfso70157021fa.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jan 2026 03:01:56 -0800 (PST)
-X-Gm-Message-State: AOJu0YxXv4oBYYdHedS6onsA9UuLzzRIAeDazJDtP7wZhG7qDAq51ajA
-	rpvPDZ2GNBGp0Y+rfgJb4XcOmZ3kZfa9DhzF+ScNXGV9ZWJ2P7FMEgYXDHhyXE2AjLaWAvfO2el
-	BbpCOVTDjSjKzNmz2ca86eGp9qi/dXaYegnomgPzwOg==
-X-Google-Smtp-Source: AGHT+IFurjH7k9cqa4uWzzLoIyTEsWY6lnpn4xSc7CZZePSapzvOVsL5+vBkMhjsmjMX5ijBrvkw/q80RTe/5Sc1Uak=
-X-Received: by 2002:a05:651c:30c9:b0:383:18aa:50db with SMTP id
- 38308e7fff4ca-38318aa5227mr44458781fa.42.1768302115346; Tue, 13 Jan 2026
- 03:01:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZkwnRQq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768302721; x=1799838721;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=uYNUANscJVovmvcNvkxRxfD+1UaN1bScHH+xIH19yk0=;
+  b=fZkwnRQqkJdCv6xUGiLwFLKmrNlM4j6mkGMyTacAzmASH6TIKFTfoZPt
+   KohSxxJlY48PbfJcR8PJ5kB2rymlpD+ItFi5W/dFP4+aVItqPMYouzXqF
+   UWBHcEu3aJoltuglCMrBV+/jOFN4wegG7v8JaootkEO0A0Sp48TwF1WIR
+   PrmzIuWCxf1xWxPQX93cvNR4GIxaSrn0Gqy3lalAaoThyEuiDXY2E07UL
+   uGJOfNk0eDTyCWyQCDwDNvOgRTCW6SRG8RCzXWmbdoJbOvY5MKYC1BTZW
+   cvmoCZgXy6fdd10wmZd1OK1R/guqqZQPGKg2SydrAPfoA6DhR+Wk8mL+c
+   g==;
+X-CSE-ConnectionGUID: DhaDMddkTDuXY13XH/ye1A==
+X-CSE-MsgGUID: VBwt7T8URber3r+THkpdVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="72166541"
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
+   d="scan'208";a="72166541"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 03:12:00 -0800
+X-CSE-ConnectionGUID: N8WsbxyhTWSRv8tGvee7/g==
+X-CSE-MsgGUID: 8R8mXT0mS2icVlczi4zpuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,222,1763452800"; 
+   d="scan'208";a="209414889"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa005.jf.intel.com with ESMTP; 13 Jan 2026 03:11:59 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 4260C9D; Tue, 13 Jan 2026 12:11:57 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Subject: [PATCH v2 3/3] gpio: pca9570: use lock guards
+Date: Tue, 13 Jan 2026 12:10:54 +0100
+Message-ID: <20260113111156.188051-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260113111156.188051-1-andriy.shevchenko@linux.intel.com>
+References: <20260113111156.188051-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260113100913.136777-1-andriy.shevchenko@linux.intel.com> <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260113100913.136777-2-andriy.shevchenko@linux.intel.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Tue, 13 Jan 2026 12:01:40 +0100
-X-Gmail-Original-Message-ID: <CAMRc=MdngvVWs8KZb+bOkS=qEcMp7FTPQArAvsAHxbei8RJq=Q@mail.gmail.com>
-X-Gm-Features: AZwV_QjERMXo_vxN5jKzoITOu06aHMP6JIXFz9jobDrgyBubWmNtoZWaBcD0s8I
-Message-ID: <CAMRc=MdngvVWs8KZb+bOkS=qEcMp7FTPQArAvsAHxbei8RJq=Q@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: pca9570: Use devm_mutex_init() for mutex initialization
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 13, 2026 at 11:09=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Replace mutex_init() with the devm_mutex_init(), to ensure proper mutex
-> cleanup during probe failure and driver removal.
->
+Shrink the code by a couple lines and improve lock management by using
+lock guards from cleanup.h.
 
-Well, I can almost hear Johan Hovold yelling at you that this is not
-about mutex cleanup but merely a useless debugging feature.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca9570.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Though personally, I'm fine with it. Just reword the commit message
-because there's no actual cleanup happening other than freeing the
-memory allocated for the devres entry. :)
+diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
+index a41837f1201b..4a368803fb03 100644
+--- a/drivers/gpio/gpio-pca9570.c
++++ b/drivers/gpio/gpio-pca9570.c
+@@ -10,6 +10,7 @@
+  */
+ 
+ #include <linux/bits.h>
++#include <linux/cleanup.h>
+ #include <linux/device/devres.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
+@@ -98,7 +99,7 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 	u8 buffer;
+ 	int ret;
+ 
+-	mutex_lock(&gpio->lock);
++	guard(mutex)(&gpio->lock);
+ 
+ 	buffer = gpio->out;
+ 	if (value)
+@@ -108,13 +109,11 @@ static int pca9570_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 
+ 	ret = pca9570_write(gpio, buffer);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 
+ 	gpio->out = buffer;
+ 
+-out:
+-	mutex_unlock(&gpio->lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int pca9570_probe(struct i2c_client *client)
+-- 
+2.50.1
 
-Bartosz
