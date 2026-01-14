@@ -1,254 +1,267 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013045.outbound.protection.outlook.com [40.107.201.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B6F38A9C2;
-	Wed, 14 Jan 2026 10:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABA239340A;
+	Wed, 14 Jan 2026 10:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768386805; cv=fail; b=ujk9meiWHLVslqACZy8kqYADbRBEubVgWMGwueEQYlJl0L0qf+pL6zhLmbC1vRKWukhP5LUejWXJW4/KRtRV+PfP5+lVsY05461ECxoxSSBe7xdy/Zao56VskVvhKIa5iqdLMRxpP3BHpW1dejeDngg4gwB//mY+Pwg49Knw7nk=
+	t=1768387164; cv=fail; b=mwmWzvqgFQOkpkcJYL8DQPHoXaM2FjSAmfvryC9p0nGecYffEvJcReHoXvkFduOGhF8zMLtfxmNibLRwT+xa/wnG2LmOhoQdzdmHkshvS7m9WJUI3mMHVJ2f85QiJqgiYeVm6Khl9jfBEA5yaphF6qiQAqnStcYxNmlg6xcNc2Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768386805; c=relaxed/simple;
-	bh=RexvO5DkCQ92It1JC++XDhWogf8nt1bXdmLF2reP5+g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=O0XJBy03IRlspGxggX6Z9D3u7BZb3EfDR+LwLGwOWvadL2mEvelIl1fbqB0ldoPA0yy+6OeoLs5OYpnFsE7ALBhNDLuj+OGgDFAua6VPDlmUk4DYzNZtUbuCETYCigISejdFNgNqlog7zTb2UFPxepuLGHbRMWFvKXwg2sW6wBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NPGnHG0I; arc=fail smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1768387164; c=relaxed/simple;
+	bh=nWtzEsZ3wY1YMMcGSJryr0aDOU3qqv2OSVcPfgWKluk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KlJQNgPUVXZcffpfYi5BaRCbCvd8G04oXSweHN0ZrqR7pyDJfynU9terkkiIlxpPMGQI9FeR3YLDibMX7qHOwd1B2/PJGIse2sGSMjO434XCMyFdzvKJDcWWXle0ChZRNzMvHJvBRHRF/O2SUCUmIeAj8eVioQPEdTqhMRfV3Vs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B8xKtRS/; arc=fail smtp.client-ip=40.107.201.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NPGnHG0I"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60EARq5O797940;
-	Wed, 14 Jan 2026 11:32:46 +0100
-Received: from am0pr02cu008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4bntaftydq-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 14 Jan 2026 11:32:46 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B8xKtRS/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fBKDhm3xaygwSOxlRQIkBmZQuRIpb3VNAXQf0eyh+ldCbSJtD9lS9HGTS+MVQt4wOGDzYabKBydZvx0G3nxEvV8+n8nbzLRC5sRBTx+pAwOYdiE7pciq+PIFOQJsBPSDh88tHv60UWLv6r8Lgfknvrot9n+QFWYMR7iChXasdTAKeaDEm6azS5LHUsUV+qgs+tWGm1bLzunkXlWVO4+d5k2OHKu0fbx6+v8Qp8RuXA+hA7/4Rb98jFhDxiXK3LLpdWf680Qi2n7y4isuSF8Z4wItQzoKRfGl5xmrgfF1IisEY7bGsB7ybJHq6qLOL7dYQECHglgwwg7wEFbGRZ4rZA==
+ b=QEqShmND8iW/WIKWh9DGG2wZgK2KClYe7JpIV944dvqQptnZiF2GO0mUGviT1QUS3Nrir4/uKiWWPCR1eOvWoJvTsqNxq7zuQNjxJZzITkytNXnG2M6e7FgGd8uxYTzBPywPOVoHx11mdkqKaDahZ0xggoTKOhk6uD0IKbC3TqJl22+4wUjFfvNbinjwWXxoZCPzQ80mJvJoTsBOLxm5COHg3oCmPrW/zn9BTYuFuefoFRVAA98xHZr6XHGp5VdfXWzpcKaFG1C+p7lYI/0x/oVVGmmC1P+KDzNcMsIr4YzZqpYpRN+klBOFZ4d2tV2ke0+lJzXx//jg3IlSYPm2Bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p9l9OD5UtJ51yyhOAdrv6McKpN/7vVd0EQ1KH39HGq0=;
- b=OOdLE+S9dvmVkaelnYpWbahAlBHewfKcPTQ3TRgpzRo9jbnmln9+3QbAQUitF6f0d2a+2d2VDth1wZVu6pMIGYozs7q/upElSlrVNWFc8Phzaeadeftno3iHwTvfLkwMTtJC1J6yU+Bj7tO5GLqlHRmdWhDPDoy92sse7DEYCsnnpzxZG/aOtJxGZQw/gk8k3jYfSJNoqzISXMxI3uW7SsdwwrCsQy7Ud/TPYYAD+KFxXkDe3IgFk5XPdnfnxk+poeHFBTdKzPHep6zmhPVyaQfi5r/0YhsAHspbXYAPO6y+NaUMeIkL9Zh8s+UdRbPWX7vfI95pqmYm+kmEvTqTLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=linaro.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ bh=EwSOdxwTyuZxmmnTw+5GKPg6Ks4BJUVwIeY4G3c8xhc=;
+ b=plSNlHBa/h2twDZXwOHd3leIiwt1z1csow30R52m18fRjUJyZA5izmiDYkwVpsi9Se54vtzt9kFYFRltwwoLqiyjb4HuSz3mSVWGsOH7a0dZjpqmksVIdLfd9DAL1vfxsspXE6MI+iQOC8DPJbbt2JbYvvqgZagGbfvHthzujAfDxiaK89n8RIBlCy61YE7pACEyYYpYkBQ7piULqcf/O3hFayBZmN1pHddbt3J8s7KDjBUNCfGA/ZsR+E9amHbiOANhvnO1tF2QpnRX3yCaXOT+1POKMlBEi8wMkg4WI/jhpxfcNLGHQ4ujw/g987nxUxjXHmYbvmliGYuzHxhBvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p9l9OD5UtJ51yyhOAdrv6McKpN/7vVd0EQ1KH39HGq0=;
- b=NPGnHG0I2azRKybcjDKfqd03C5IOJlxbr9ei+6vltMmB6/t3oVYNtmTDd3+kQwBxaRBcNv1gZ2oqrPkCSW8WNG5XiSdGUYYjm9+5CD2pIF+kWWh+xrB/rKlzaCLUoYQXKRhPif6TpGQESgHIr4woSZpgRhE58LTf1noCwgkxkFz5SKa8lrfEAW8Oayed00K/diHwvZm7plzSfPkRoyRq+TUS364G9Ic0VGYhHhpJtVpeNzs/jInJVkiknmgVZpJwnhv+HS9UCJBD5YW8t2kPOXrH27YpJCBhaZaCvuN4XD/R8f+yBrrGLDKtyEB47Ndqf5vNOrJyQKImmlHqVQ7ycw==
-Received: from AS9PR06CA0039.eurprd06.prod.outlook.com (2603:10a6:20b:463::31)
- by AM7PR10MB3858.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:17d::22) with
+ bh=EwSOdxwTyuZxmmnTw+5GKPg6Ks4BJUVwIeY4G3c8xhc=;
+ b=B8xKtRS/hfA06Udwyj2zfb+Zz1R08UYdGGWOinA0IQPuCRn32Xk/9VBZngJ+q/LPY6DCb+DKMMQEIULe8Ll6m6xehc9ouZquBnzjbcKc+QKMZBINlVHXYz3g0lY7wjUigi7jpNsaObhYIiYYxvZKmEP50JI7NOzisznjoMTMnX3NCIvbch26fuFxmHTit1IkdTW9+YWx583+fKJgSN3c2grlCvDxY4PLvu8kzV3ebti29u5/boz/g0hLJSSIggpeQKEMcP5MSSfvbYTQNUNPgH+Brz3gIoR6SSus9YFY3npWWZWD+ZNsV5s5lrmbqEnUi/BLuYG8u/YWsrYGzhLI1g==
+Received: from BN0PR04CA0128.namprd04.prod.outlook.com (2603:10b6:408:ed::13)
+ by MW4PR12MB5601.namprd12.prod.outlook.com (2603:10b6:303:168::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.5; Wed, 14 Jan
- 2026 10:31:20 +0000
-Received: from AMS1EPF00000047.eurprd04.prod.outlook.com
- (2603:10a6:20b:463:cafe::53) by AS9PR06CA0039.outlook.office365.com
- (2603:10a6:20b:463::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.5 via Frontend Transport; Wed,
- 14 Jan 2026 10:31:18 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- AMS1EPF00000047.mail.protection.outlook.com (10.167.16.135) with Microsoft
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Wed, 14 Jan
+ 2026 10:39:13 +0000
+Received: from BN1PEPF00004682.namprd03.prod.outlook.com
+ (2603:10b6:408:ed:cafe::24) by BN0PR04CA0128.outlook.office365.com
+ (2603:10b6:408:ed::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.6 via Frontend Transport; Wed,
+ 14 Jan 2026 10:39:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9520.1 via Frontend Transport; Wed, 14 Jan 2026 10:31:20 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 14 Jan
- 2026 11:32:45 +0100
-Received: from localhost (10.48.86.212) by STKDAG1NODE2.st.com (10.75.128.133)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 14 Jan
- 2026 11:31:19 +0100
-From: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Date: Wed, 14 Jan 2026 11:29:23 +0100
-Subject: [PATCH v2 09/11] arm: dts: stm32: enable CoreSight on the
- stm32mp157c-ev1 board
+ 15.20.9520.1 via Frontend Transport; Wed, 14 Jan 2026 10:39:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 14 Jan
+ 2026 02:38:56 -0800
+Received: from localhost (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 14 Jan
+ 2026 02:38:56 -0800
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<robh@kernel.org>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <pshete@nvidia.com>
+Subject: [PATCH 1/3] dt-bindings: gpio: Add Tegra264 support
+Date: Wed, 14 Jan 2026 10:38:44 +0000
+Message-ID: <20260114103846.687338-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20260114-debug_bus-v2-9-5475c7841569@foss.st.com>
-References: <20260114-debug_bus-v2-0-5475c7841569@foss.st.com>
-In-Reply-To: <20260114-debug_bus-v2-0-5475c7841569@foss.st.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan
-	<leo.yan@linux.dev>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<legoffic.clement@gmail.com>,
-        Linus Walleij <linusw@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        <jens.wiklander@linaro.org>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Gatien Chevallier <gatien.chevallier@foss.st.com>
-X-Mailer: b4 0.14.3
-X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
- (10.75.128.133)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF00000047:EE_|AM7PR10MB3858:EE_
-X-MS-Office365-Filtering-Correlation-Id: db443216-2144-41f1-1c8f-08de53580eb9
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|MW4PR12MB5601:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6094c355-b0af-48e8-23c6-08de53592879
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|7416014|1800799024|376014|921020;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OGJYYnJIWG1tU2hNeWIwRWROYjNXeW96SSsyb3ZYZzU4eHIveUlNdmFpVmJH?=
- =?utf-8?B?TkZ5OVlXRS9wdy9CeWVwdG5qbGhCallOSC8yVnlzN1FRSE9Vc05hbXh6ZDIr?=
- =?utf-8?B?TS9pTWtkZkVwWVQ1WDdWVjRteXRGV0lOUDJGRVgydHVrSGFTWTQxZ0VIZExR?=
- =?utf-8?B?bDBCNTU1WGE4Ulp6ZEcrZS8rMExTeUdlY1pSclBtWXVBVWU5dGFMWEk0WUt0?=
- =?utf-8?B?NjZsQ01PZWdqZSt0bDdNZzhVajNCNFh2WHNGVXVIN0E0UzNsN0NrY1pGZFpa?=
- =?utf-8?B?OHJGYUNBVVVNQS8rVUVFZjdXa1NVcVZzMHFIRGtjZjVSb0wrWHRQSW5LcVdR?=
- =?utf-8?B?MnhPOGtQd1REY2pqVXl3K2I2eDdCQVJFNkU2c2hTME41NlBUU0JBemZqRUVY?=
- =?utf-8?B?emZkOUVDdXkvUU9JcmhCOGNhR0tleGpIcGUwVU9BbHQzMWltYmlRV3djZCty?=
- =?utf-8?B?L2V5Ums1WUdhVlp2TTdMTDdRVGVvNDlaSHJydUcvaENESmR3bTBKcGovRzNV?=
- =?utf-8?B?NkNmdG8vZmdoWnM1Q083NHNLN3Y4NjdyUFRkYldNY09tY3NCbEw3TnRCYnpQ?=
- =?utf-8?B?U3VmVFZERG54c1creTRocFNKY0NEYkRHN0hsa0FuVEdDRXhaRS9LLzFNcmY1?=
- =?utf-8?B?clNWc1NRam9kejRxYW0valJSeE9xMmVoT1lpM3o1WVRoemRBVFR5dWFwQ1N3?=
- =?utf-8?B?ZkRQN0RpSGFkUG9Tamh4d1U2cFZraU03Rnc3L3pVYmRETzRZQXBxWGYzaEUx?=
- =?utf-8?B?dm9oMEFMU1RhbHVoRkcvWS9PbW5aNWNEdEJZQWZjN0lTUUpUYjVOTExJeThC?=
- =?utf-8?B?VnFxVHV3cnBEd25Qdzk0UGRvREtJQS9OZnVvREpUT0R4TGhBWUNpcGh4a2wz?=
- =?utf-8?B?RU12c2FRVVEwa1JaV0ZqMXF2aXExQVNYUnI3T3NxNW1jdHFWbFJmalQzWllV?=
- =?utf-8?B?OTBnamJFSUM0RFJlM3ZxSk1vejRjSklzMXVrc3pMZktIeVZ0M2VDbHZBbVFG?=
- =?utf-8?B?YmZKZDBCckhYZmhBUmc5N0xuN2hhNElkOTB6S0M4Ky9SMENSRjIrYyt2OGdN?=
- =?utf-8?B?YzNYeHRSQXBnZGNJakk5RWd1Q2FIWFVpVEtDUDBvdzdsc2JzUFpGamVma1Iv?=
- =?utf-8?B?MXpmdG9vNXpJWDN1eVJTYXRjTlYyZnRTTHZOejdxcC9WcU8rZWg3OVhHcC9Y?=
- =?utf-8?B?T0w0Q1lJZm95cTJMdnhLQkJnazFTZGJtQVlRMElCV09JOERSZW05ekxvWjNq?=
- =?utf-8?B?dENRM0VZOWZnaFFhaDMvVERSenVGU3JaSXdvRzRhUU1jWlJuUDhRa2s2VkhR?=
- =?utf-8?B?MnJma242SXdSeG1YRUFPbHl1bE5icjJqZzhCdXlzTjZTQkhMRVlJa0M5TTRp?=
- =?utf-8?B?disvZkV1b0U3YkQ3TnArd3IyMzNvQXdaN0lKeEJpRzVJbjNWMEdtRndnTjU5?=
- =?utf-8?B?emRrY2NqSml5bUg4TU11V2hCRlZBMjdGYW9Gdm5FOTVjTjVlbC96Q3luc2M4?=
- =?utf-8?B?SHhEdDN4cm5wdmJRV1FTaFVQdFljeFNPemtoMEFhVTZtMGxHYjcwQ1F1Ym83?=
- =?utf-8?B?OExiZHJUdC84Z0dJWmRIRUpNRHVLdFZKVjY2VnpqWGZ2eDAraGtLeGxXVG1W?=
- =?utf-8?B?dzRVaWNtNll1eC9TaVRLakhRVmVvUTRBK21pRFFsdFRDbDRDTVF1SnVFSjNi?=
- =?utf-8?B?OENhNkRsUFZ6Zlovd2szSkZQQU02QVRsb0lhRkxVRy9IZldaVnl4Y0xhUC9W?=
- =?utf-8?B?TG10ekc3UWt6Y2VkZDNMOS9ieElBazZKa2QwWnZsK0VHS2NHckM4Y1lsbnpC?=
- =?utf-8?B?aGtJdno5U2lFSDNVVG1CbFYwZk5CL1AxWlFTOVN5YTBweGJQUDFSY3Y5K0U3?=
- =?utf-8?B?UGtlYVZ2c1doazRsMUlZUk1Hd1UyUVZjUmNkaGxRTkpid3ZrbXRqb0xTdVJt?=
- =?utf-8?B?SkNnaDNQZ3dOL1Jya0ZNSWEvY3M0ZjZmKysxVFNJc3czbmNmVUtxa1FqNGJ5?=
- =?utf-8?B?b1VjNDFqeDhTcFFEdi95SHBzMkU2SGxwWUtMTGhmUGZmS0xKS0QzSEtlUVRw?=
- =?utf-8?B?bEk4VE82VU1WaDFRYkxQOUZEbnErZmZvU0I2R0E1cHp5MGdzME5MS3cvOFNN?=
- =?utf-8?B?L1Njd282eEl2bWNYdUVQK0R0NFJEK1Y2aWgwdldyYkZUWjgyOVZLMVVtV3N0?=
- =?utf-8?B?MjhVeDBtbDcyMEJVRnQwR0F6cytOS25ma3R1N2x1UC9RNTUrMmtIeUpNWnEw?=
- =?utf-8?Q?vsthGQYVlsJmQjEa6gIqdMnb1qOxJkJ9CmWdvC1xfA=3D?=
+	=?us-ascii?Q?cv5pA6rbHX+u6jk5BQ0d0GW9TxfFYKqtUsvosomRAoYO6+D9LMWch06i1J8u?=
+ =?us-ascii?Q?JI/W0tERimEDrNh48bgYOLp+8Y1JFAp033/xmk3syL0fTdgTtyxfQjVMxzmt?=
+ =?us-ascii?Q?GpkUjdD6Tydcm5ZDW5s8L+L6H1n+R72jnxHasRYcd8Jk9aoB2DTXvYAj8Kny?=
+ =?us-ascii?Q?K8iKLUtp2xnF/GJLll1EnT2Bm85e3aflh1R0lWGSYUkrBvQ9uO+++d9HaZhR?=
+ =?us-ascii?Q?q2i0MnoyL3A5aXAj9gWgCNxCd68Goh5BGVPjpVvNAgD/OUY2HylLPiMsa8RZ?=
+ =?us-ascii?Q?JkMaIHo6nSTZPknKaeF4SekGNhQuxaGKmxznYi9T2geQw3co06fMIuUN89PJ?=
+ =?us-ascii?Q?gIgkMeXmeqUkxq5i0s8bKJzC7wUJzW3N4PrDTwlaMiidA+e3TkhAouY8HwzY?=
+ =?us-ascii?Q?2QGcs0wNKPOv7E4ZxPt8OEyffDdjxOkJ2mLaQhtYxhFxWlEQsVRlz3upr8RI?=
+ =?us-ascii?Q?b2f1DbOT8KR6zkWDo6UUtlsFrnwNTApYzzBKy4ZkzPLDOGL6OTBe+fVukW7l?=
+ =?us-ascii?Q?hpjZvAZ2bWyFeOpIqGnvPaiu+MPkDCflSavOkgUg8IsKkPosHMsCXUa19QOW?=
+ =?us-ascii?Q?bTcqu2EwyfGoVseYY1lRqijg0IVEjK+qlbcnPPnRZcFVmz2HMyvg6vEgpnHY?=
+ =?us-ascii?Q?7NgEpdIiTnaMTi7NFhUZ3YitFxZFdCbUGXM150rvAcVXGPss12/Yo+PunlZO?=
+ =?us-ascii?Q?mhk8fkHpoI8iK093F+GMEbaloCw5VRIoaZ/TBuSsyiXTEpRSxbsj32MgJtBq?=
+ =?us-ascii?Q?fYQakRlBROosuLt8EeMU+uuevnU7w4WZcnmjI+LJ+owQ10l8/BiyUWcrVsL4?=
+ =?us-ascii?Q?mbpSRzFHozy/9vP4f2LuOVJkkGykLDZMl4t4I0+OvtCfRmiTSNaSYJF0NE2c?=
+ =?us-ascii?Q?jd+KZMvZaPNXMg21F3Mo+ojIjY3DqLNqYUnVI+K90AomQZ5Cg8UZKEuAVpjj?=
+ =?us-ascii?Q?5p3MqAaHtNhwSzT0qI9U66e/1wxYIrTR9VzIm6GKCIqRB83eterL3L4FOmwI?=
+ =?us-ascii?Q?7bnoTXB2NvDVr2CVz5yBoQ2RxJ+nWifls1OGKGG7pFSVJKQka1cnmTHC7jEj?=
+ =?us-ascii?Q?YUscKQCNrRO7ThMVNysw7AtzkL5NsM7298zIdDfRqQwXmb5lcgKTaaq9NWCN?=
+ =?us-ascii?Q?zR+Ma7K9ElBQSyo54ldeSqUODwVPHZ8Fj7AAa1lND5w7K4G/dYwpx0q0Tdgj?=
+ =?us-ascii?Q?+TDMUqVCb4vFBCIrIv2Kw9HzIKAKCyf9L2IUN8BvMP3uQUvKuCpxX1i9j/bM?=
+ =?us-ascii?Q?4+VZMZvp849+IjgF/C3tdwXrdFcmB8ABbE/0imwKWeWJnRkUYFY0s48KCCTc?=
+ =?us-ascii?Q?i/bxZ7XOeZS3nGuMoEb27LmWOqpxxgZsidUPMl7TWbm+hWxzGJrlS09lxB5S?=
+ =?us-ascii?Q?4P5WMMtdaciw5Ba+PvrnZTODzqTaAx0D7NjK0Y2W5pam+VZWqvytERjHcZBU?=
+ =?us-ascii?Q?2qmtgMKQy2Uh8e7+2mZQXMOjS/nrKl5eRy1ADzYgfuJpCi+s7Gz21R33eACS?=
+ =?us-ascii?Q?kAU4P7Z/VfTAQj+GhiK2Pkj5mlxtUnJ+udTG701UE3U7dYoGMVKCYA2uG07v?=
+ =?us-ascii?Q?7aBHJSiAtYPQuaPvZZ8++Pa5z2I26N6+g0Kv0KN37QNmGdfXV5bVHItXC83z?=
+ =?us-ascii?Q?dXM135F0hDoOXpA96Yi2nB9HXKpXWye5MPR25Xo9QRwASVPa9UkEnwK0jY/4?=
+ =?us-ascii?Q?D3SqArAW4XXMRhgOB5IKCWOIQZM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2026 10:31:20.1564
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2026 10:39:12.7597
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db443216-2144-41f1-1c8f-08de53580eb9
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6094c355-b0af-48e8-23c6-08de53592879
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF00000047.eurprd04.prod.outlook.com
+	BN1PEPF00004682.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3858
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE0MDA4NiBTYWx0ZWRfX9BfEhC8Z12cr
- 0sOuWZDJ/0uHnWmf0eOAkz57Ldkc/SCVAT5aWO3BcDTnSgMMC9cUzEcBK1bN3fzmeTj7FSlOY5I
- Y10YvJYTFO52u4zmKpoChysBS6C2Pk5EiqKqFn43Bl+9iebfy5KkZ2zDBE4u999jkH+ykM6twxo
- Oyqm064Z28bSaEsVmGkWM0b+GJCrIzsYWl1zwjZwXzetHdhdFVAmJoOUtXkiJ7YnbiMyKBs+MC5
- Hvmxz42YwhyIOJvMTXv3tHr640MYIWzMjvMr0VuH9bmZ/nNlpPIZwmb0lMB5AkELszcgDeeetl0
- apF7BElQ6f9R5b+6LGND3JRfYcA7SWbNDh7ph1eToRPtCS6Rb948wrf/ANi+XHZOpEnG7b+Niqu
- KF+GxelNjQaz4QZJawT8PjTm2IokltpNeYz/Lgr5eSPfFOfChgKf2pWWfE0NALIxNWO4zMzSm8y
- Ir2cGBEr0zU2uA9jJYg==
-X-Proofpoint-ORIG-GUID: azHh0iSsw3U3ex4ydrW5aC4mqDcm0uUe
-X-Proofpoint-GUID: azHh0iSsw3U3ex4ydrW5aC4mqDcm0uUe
-X-Authority-Analysis: v=2.4 cv=W9U1lBWk c=1 sm=1 tr=0 ts=696770ce cx=c_pps
- a=9HxWjEJdKu+ocmqtrLsiYA==:117 a=d6reE3nDawwanmLcZTMRXA==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=rg8MelPR9j8A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=WyXvt1svF0yAhq5Ft7oA:9
- a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-14_03,2026-01-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0 impostorscore=0
- phishscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601140086
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5601
 
-Enable CoreSight peripherals on the stm32mp157c-ev1 board.
+Extend the existing Tegra186 GPIO controller device tree bindings with
+support for the GPIO controller found on Tegra264. The number of pins
+is slightly different, but the programming model remains the same.
 
-Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Add a new header, include/dt-bindings/gpio/tegra264-gpio.h,
+that defines port IDs as well as the TEGRA264_MAIN_GPIO() helper,
+both of which are used in conjunction to create a unique specifier
+for each pin.
+
+Document nvidia,pmc property referencing the PMC node providing the
+parent interrupt domain. GPIO driver uses this to select the correct
+PMC,falling back to compatible-based lookup only if the phandle is
+absent.
+
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 ---
- arch/arm/boot/dts/st/stm32mp157c-ev1.dts | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   | 10 +++
+ include/dt-bindings/gpio/tegra264-gpio.h      | 61 +++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/tegra264-gpio.h
 
-diff --git a/arch/arm/boot/dts/st/stm32mp157c-ev1.dts b/arch/arm/boot/dts/st/stm32mp157c-ev1.dts
-index e69c8e282c8b..913c20e31196 100644
---- a/arch/arm/boot/dts/st/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/st/stm32mp157c-ev1.dts
-@@ -81,6 +81,42 @@ &cec {
- 	status = "okay";
- };
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 2bd620a1099b..93150504c03c 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -86,6 +86,9 @@ properties:
+       - nvidia,tegra234-gpio
+       - nvidia,tegra234-gpio-aon
+       - nvidia,tegra256-gpio
++      - nvidia,tegra264-gpio
++      - nvidia,tegra264-gpio-uphy
++      - nvidia,tegra264-gpio-aon
  
-+&cs_cti_trace {
-+	status = "okay";
-+};
+   reg-names:
+     items:
+@@ -110,6 +113,10 @@ properties:
+       ports, in the order the HW manual describes them. The number of entries
+       required varies depending on compatible value.
+ 
++  nvidia,pmc:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Phandle to the PMC node providing the parent interrupt domain.
 +
-+&cs_cti_cpu0 {
-+	status = "okay";
-+};
+   gpio-controller: true
+ 
+   gpio-ranges:
+@@ -157,6 +164,8 @@ allOf:
+               - nvidia,tegra194-gpio
+               - nvidia,tegra234-gpio
+               - nvidia,tegra256-gpio
++              - nvidia,tegra264-gpio
++              - nvidia,tegra264-gpio-uphy
+     then:
+       properties:
+         interrupts:
+@@ -171,6 +180,7 @@ allOf:
+               - nvidia,tegra186-gpio-aon
+               - nvidia,tegra194-gpio-aon
+               - nvidia,tegra234-gpio-aon
++              - nvidia,tegra264-gpio-aon
+     then:
+       properties:
+         interrupts:
+diff --git a/include/dt-bindings/gpio/tegra264-gpio.h b/include/dt-bindings/gpio/tegra264-gpio.h
+new file mode 100644
+index 000000000000..d7baceace474
+--- /dev/null
++++ b/include/dt-bindings/gpio/tegra264-gpio.h
+@@ -0,0 +1,61 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright (c) 2026, NVIDIA CORPORATION. All rights reserved. */
 +
-+&cs_cti_cpu1 {
-+	status = "okay";
-+};
++/*
++ * This header provides constants for binding nvidia,tegra264-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
 +
-+&cs_etf {
-+	status = "okay";
-+};
++#ifndef _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA264_GPIO_H
 +
-+&cs_etm0 {
-+	status = "okay";
-+};
++#include <dt-bindings/gpio/gpio.h>
 +
-+&cs_etm1 {
-+	status = "okay";
-+};
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA264_MAIN_GPIO_PORT_T  0
++#define TEGRA264_MAIN_GPIO_PORT_U  1
++#define TEGRA264_MAIN_GPIO_PORT_V  2
++#define TEGRA264_MAIN_GPIO_PORT_W  3
++#define TEGRA264_MAIN_GPIO_PORT_AL 4
++#define TEGRA264_MAIN_GPIO_PORT_Y  5
++#define TEGRA264_MAIN_GPIO_PORT_Z  6
++#define TEGRA264_MAIN_GPIO_PORT_X  7
++#define TEGRA264_MAIN_GPIO_PORT_H  8
++#define TEGRA264_MAIN_GPIO_PORT_J  9
++#define TEGRA264_MAIN_GPIO_PORT_K  10
++#define TEGRA264_MAIN_GPIO_PORT_L  11
++#define TEGRA264_MAIN_GPIO_PORT_M  12
++#define TEGRA264_MAIN_GPIO_PORT_P  13
++#define TEGRA264_MAIN_GPIO_PORT_Q  14
++#define TEGRA264_MAIN_GPIO_PORT_R  15
++#define TEGRA264_MAIN_GPIO_PORT_S  16
++#define TEGRA264_MAIN_GPIO_PORT_F  17
++#define TEGRA264_MAIN_GPIO_PORT_G  18
 +
-+&cs_funnel {
-+	status = "okay";
-+};
++#define TEGRA264_MAIN_GPIO(port, offset) \
++	((TEGRA264_MAIN_GPIO_PORT_##port * 8) + (offset))
 +
-+&cs_stm {
-+	status = "okay";
-+};
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA264_AON_GPIO_PORT_AA  0
++#define TEGRA264_AON_GPIO_PORT_BB  1
++#define TEGRA264_AON_GPIO_PORT_CC  2
++#define TEGRA264_AON_GPIO_PORT_DD  3
++#define TEGRA264_AON_GPIO_PORT_EE  4
 +
-+&cs_tpiu {
-+	status = "okay";
-+};
++#define TEGRA264_AON_GPIO(port, offset) \
++	((TEGRA264_AON_GPIO_PORT_##port * 8) + (offset))
 +
- &dbg_bus {
- 	status = "okay";
- };
-
++#define TEGRA264_UPHY_GPIO_PORT_A  0
++#define TEGRA264_UPHY_GPIO_PORT_B  1
++#define TEGRA264_UPHY_GPIO_PORT_C  2
++#define TEGRA264_UPHY_GPIO_PORT_D  3
++#define TEGRA264_UPHY_GPIO_PORT_E  4
++
++#define TEGRA264_UPHY_GPIO(port, offset) \
++	((TEGRA264_UPHY_GPIO_PORT_##port * 8) + (offset))
++
++#endif
 -- 
-2.43.0
+2.25.1
 
