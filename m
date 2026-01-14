@@ -1,86 +1,86 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8789A39E165
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC2B3195F0
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768404641; cv=none; b=bbC5mn6RlAHsjvhSm59z85PybjYfHKfw3yjvd80xZZH/4eeUZaqJRK0tkIPd4JrFeVElBV29bo6w52zbn8SHzi9wawMsQA68+8IPm2Q3iatXyfFGTxDP1S8AKV2oOyQV7Usrl2HqzrsLXfPtBoNu+00iR2MZsGgiH3RsrezLDKs=
+	t=1768404643; cv=none; b=QcnPUH5nAeMphhWMaHGxb6W0yNm3x8xhsojd5IYPr+vQygn16IcwnDnZUE9GoP5LPfKHGXyIkGiclXGiHr10KwY9zM3u7dsoh5U0/0w89PoRYNtaIA6fqdzHHlRSKRzWnWMozIE5WhaeWj/kjuXY8FHmllQpILmSyPT5jW9XgXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768404641; c=relaxed/simple;
-	bh=Hz6iLmKEfxDKfrrjH8upUbRNGTU/avM3tmt35o0Wjvc=;
+	s=arc-20240116; t=1768404643; c=relaxed/simple;
+	bh=Y+FQmd4rABqYPyTPKLcnkK9CTadziXSgsQ+69hWhimA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lBHz0M34qwRFRDyuZU3mhkicVSjgep2U1VyYsffU44qLLh5QGCIOs4PBZeJ77QCv54bzYVKYXNRcjAMKE8rIESSVYnE1gLRuMAnZ7A8K9pLwByFtdyJ35IkecZSomUqzQr39T/TGUkK++14dfqAJjI1NP6Z6JzIoQEklIC5c9pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oI7iubuJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UT+hN3h0; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=hrasE/Uq9rDZmYJ2agHITDlw7cJ3xOo2N4qMfp1lQ547BhV1loAuLzDyVpwb78X0KYPBySSQZZxUWnRH/HvDvmwgOesuZZZMD2OlY4bunzC7hrYID+dt/FdqeDDvcMIQoDcv91Nu9ax5I6K4ctJhffnvAxyR1vcO6X9GDfrsde4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L1bLn2gb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=USRXZ/5v; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oI7iubuJ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UT+hN3h0"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60EChVoM3925436
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:39 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L1bLn2gb";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="USRXZ/5v"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60EE5p1J2497478
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	taXBNyuQJxmj4iOFqIUfDmb0YEDOzZ29KLE4Dq+0LV4=; b=oI7iubuJrJC0fgMI
-	lUkAMQMVAzmfEMIfufrp9rsjWsXcH2o+6+++OU+t1AgtWvYToBTqLzfCTJ5hbWWc
-	zsOmvaBPgp/FPEP8JHQwucbS/WuYShGxyW+lgPoVyVgGAfV3FaYqJ4LDeQjsxxWb
-	Hp+0cgOkI35fRxgRp+kIaZ0O0Kq0Jd8CNCAK9GvKzPufghCvcwz0vq6alk+/IZLN
-	+Yvdv6h3DUvdafI+5Fb+qaCxdCVOlggJXoBSasoUUjTrHxP+nU8ZL9/9fuBl7ZXb
-	GOHzOvBGPL3LIchFN7uT6MG6DvhW9TaYkkitzZ1yRJ71Tmhn3kONflVTlxvRYGfg
-	EW4g6A==
+	LXncEA4jW+AgdDM8Dn/nTshgL+Kv2q2dFOJVpt182v4=; b=L1bLn2gbhX1VQr5S
+	DBrqZ854pXa6x0jHP6ADw0uJYdtEFgDvE4gD9u6gpzd62HMPmU14Zz2Yz+ffZGY8
+	VY/nvssh6dZj5GnrLthMKJcVupO8HTQMojR7ZkiDkKR0XFxxqvBJUeKWNMxYJry8
+	NwvqTbbKWLT75tdRH/42GO0jHIG6tsYxJZYxIt3+vwRt9jLFxqCKxsZvqH+nzhSP
+	P37BGhyoY19MnsR0mwirGBB8vtCkN84A5wrbld369kXozOtYajjOcHWpNhrbOtSR
+	u9dn/SmYXI+2ecIuTkyBKquonCEcC6bun8mA6WiUKZcz7VQzS0X7Qy1Zb+WncMs5
+	/6FpjQ==
 Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bpbdbrh9w-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bp16x2xv0-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:39 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b9fa6f808cso2634236485a.1
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 07:30:39 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 15:30:31 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b2dbd36752so2200291585a.0
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 07:30:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768404638; x=1769009438; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1768404630; x=1769009430; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=taXBNyuQJxmj4iOFqIUfDmb0YEDOzZ29KLE4Dq+0LV4=;
-        b=UT+hN3h04eYUzyRpvc4prXX1UR+mocev5REzAu1FUxZm4J6hn0IkintnooACOiskE7
-         Jz94jDhvdL7QTLB3kcVSIdKXVG9QAfbINX0ECuP4YbBuSktinbIk4rOe2artVlf+yEzn
-         0rNUAKkOTGpAi4Bb+AHVZucFRrmUyH5cQCp4BOR+KTJsh85C0IdN2bVCJ5i0la7MeIkX
-         8FNW7Q5OR3SsN/TboCH2etzV/ECn8pLSdf8VpfIfdK147gnf103kiJ3+QzJtA9CXXQs5
-         E2nnEtEcY20w9VE00o0S74dLlYgk4HCCdQxycFuPqmF2ZrLGnWuihaUTqmE8gJeLUNh0
-         920w==
+        bh=LXncEA4jW+AgdDM8Dn/nTshgL+Kv2q2dFOJVpt182v4=;
+        b=USRXZ/5vyyc03G4RmQx0GeAdbEjVic2Sn4FXzEtVVrYnETjHx1Q8Xq395cVV8fXE0N
+         jrJ7mUt76ESQJxrjumop1bJgYYUGzNPqstGSXjm8+Svjx1iiFCKnUeKsHBQMtwlH5XK7
+         w4xfH7uQxn+RiGx8IeShtU1zVnptbPGcFHKQtHQAzU3m86w6VIW0H4oWtxHnUN28Koim
+         D2RFyZbzURLZR/QgI0zHUf/RPOHmN/X6QByMzH5JIQ+j3zG+Dz9TRsGv21di1M/KLa6C
+         j7zNtH258w5+mOKsSKBZCgKtAt73UqvC7lpD5o7pgZyu4ZZx85+qsFubYPONNUmnyuHH
+         8MKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768404638; x=1769009438;
+        d=1e100.net; s=20230601; t=1768404630; x=1769009430;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=taXBNyuQJxmj4iOFqIUfDmb0YEDOzZ29KLE4Dq+0LV4=;
-        b=OUAQTAZEqs2llRq0GzFvh++rHo9M+BuNvk1AnJ74GdNTT6SfhdhQIuX6zHhBNtp36B
-         9ut9BLtvmWrjHNzc/+kT20WId8Eir1Wgk6PG5BWexjqOfWU5lxdwtHLhTfBanx6wl/r6
-         sxt+8HTemF63xR0wXjgl/4StNYRxBVfX549GXqpXJWJYzjmY2hPBPSW2OH49k5V/0wXX
-         6EClDyWXXI8cH+zNJxV+aMnoqk5Wuzcqwo4sGsA5fpOlJ7wom1w6UzK5IqJbK2YYfNy8
-         NGUu3pg7REJTbxfVo+7/1WiyqmSWfGDYuZWuhAz7QAb43QlWb4YGGiQngs+TXo8ck1aw
-         1fXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2hGUiEVZjashBRoqcjIHsKyN0LUJfXBFss85MNTzZSls3/LuN0JS5cyVQ2yvYaMiNbhbc3c62oK4O@vger.kernel.org
-X-Gm-Message-State: AOJu0YybZZAHbOounhAwut4vJHFaMDV6Tb5p8UeoeNsOwWeq5aGQ/rOM
-	jbAVu7/o0iTJZkb7qJoyXRDZ3h0aLPaKswsrlmYSW43RKs0vzV5PYPjeeGzk18vHhJrCs6c5m2E
-	vHbekfWTC0s30cVGYw49hHK00CEUnEyHgu+OZh4Rhu0LvhQkbbvo5ISh9zpdJd6IW
-X-Gm-Gg: AY/fxX4UznMeI1sAY5pMAbABxSjkY2b3COZk//Rye9Th33wbH1/quiJRR0UuI6ZSvih
-	GQzYFfzF+tQhjYT3hlX76JhtP74fwO0iOQtGtyVn2orK6aMMpOVOR8k+ycwm0KoSKVTwO14CVpK
-	0hsHNOtwXPtvS6dyD2uqIEKofNffo0ZgsTFLufdvss+ei0ab9tKrYO45H+b1WN+sQooNY6bveP7
-	RpiSCAoLoNdcO9anVQhrPsWLNE8hdT7kDXgtR0PCNUDXfjls/iw7WOUcKWr+bNUtykU85GbSBu8
-	QPRXdTVNn3A56N0E5wTcoRatWCJhNNlR3n29E2VyLvQnWabBXcZ6qHiw6o91+wc68PKfHQ49vFo
-	fi4XMs59ygmvaLe4mI7suJ1rUob5TWQpdfQ==
-X-Received: by 2002:a05:620a:6ccd:b0:89f:5a59:bf30 with SMTP id af79cd13be357-8c52fbffa64mr413617285a.78.1768404638355;
-        Wed, 14 Jan 2026 07:30:38 -0800 (PST)
-X-Received: by 2002:a05:620a:6ccd:b0:89f:5a59:bf30 with SMTP id af79cd13be357-8c52fbffa64mr413605785a.78.1768404637689;
-        Wed, 14 Jan 2026 07:30:37 -0800 (PST)
+        bh=LXncEA4jW+AgdDM8Dn/nTshgL+Kv2q2dFOJVpt182v4=;
+        b=kVikmSYE5ad/eiewwAr1Ko5Qk3SwzLgtpMUNenEeKt08r+KvGntft9MKF/COgLKERJ
+         d2IyiKRLQf6wTllRbAQF0M1/Pr3MRdJp5VZ+lri6fe+FNHmgmgEZxbWx+pX0vZr1nnyc
+         4Wl9ilemMTSz65wlVq7YEMQyUCmGWoiCHcDu0JfR7G8IFe7gllVkdSc3yTf1F1JORlCg
+         M2aeXOHwpZ5itlrViKjL6ogKzU6GAmRZbVj8gJAYZU/Zs6dUMRJ8jIC2rT02cTC8nkBD
+         AvcMLmd7dx+3EwaTpc/ol/NJPsayM0W2NXl6bzLwPX8z+HpRkC7XvjZKEAGR9WDQa/n+
+         Nlqw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Gh9tBFXs9pk0zXf7aOn24+bR8/srKRZL8icpLxS5c0HPyRtOpxgFWV49pk/3RJKIiIFHkDPimES2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPd8YisUaLwCjaMfU0Ek9r6lWUhzTa155KkbERNBAhOwXt4Mdi
+	HQGhX7XQmzJVzdSoEOdR9wCRnpEiKkwH0FI53MAolL6HWuHeacsE5pi2E8uujX9gRnuJx7hzJOA
+	VApBOZhGz+ajqDdhsWwia3wWoH8BwfIIP1lGsY+SAtL8ZJING4nvVE/ybc59tTtZo
+X-Gm-Gg: AY/fxX4Ud1tQs6JJZr2bYeuAilxGJviCzVx+OP0y4OxByT5XOvveLpPmG8Enf2ByGlj
+	MrHEtA5qHFXt7kRyHoj865WmlxIk37H3bLg53C3K7TEqaqFrD1sYlpT2fqy2WNTkMvRE3IogIFL
+	4Br1e0ZZ6+WV7NEhg7SCHoH/pkkWyrcV6gImjoF3VD91N8EkLFZbcXwVKUnUO41m4aOxKdTxces
+	lG77QB3Cg30S1yVlxB8YZpflYWYzuLVX69JuSbgg+lmbrvF9yKFu0HFxxSeMoZ5YScnLWSd/iOW
+	ZJ1OHZUo0JjYUm5skTcr0KvaGKF/ctTSaCe0IZidX/dvvWgGuEtz8tg60/zj4o7K24zeh8To4ZN
+	7XYLF/8UhgLrt1A4yYg0KR/LqXyXWwPxbQA==
+X-Received: by 2002:a05:620a:4804:b0:8c5:1fb5:1631 with SMTP id af79cd13be357-8c52fbcf18fmr431954385a.76.1768404630166;
+        Wed, 14 Jan 2026 07:30:30 -0800 (PST)
+X-Received: by 2002:a05:620a:4804:b0:8c5:1fb5:1631 with SMTP id af79cd13be357-8c52fbcf18fmr431947685a.76.1768404629608;
+        Wed, 14 Jan 2026 07:30:29 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.229])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf667fcsm22812989a12.29.2026.01.14.07.30.35
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf667fcsm22812989a12.29.2026.01.14.07.30.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 07:30:37 -0800 (PST)
+        Wed, 14 Jan 2026 07:30:29 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Wed, 14 Jan 2026 16:30:10 +0100
-Subject: [PATCH 09/11] pinctrl: tegra-xusb: Simplify locking with guard()
+Date: Wed, 14 Jan 2026 16:30:06 +0100
+Subject: [PATCH 05/11] pinctrl: aw9523: Simplify locking with guard()
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -89,7 +89,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260114-pinctrl-cleanup-guard-v1-9-a14572685cd3@oss.qualcomm.com>
+Message-Id: <20260114-pinctrl-cleanup-guard-v1-5-a14572685cd3@oss.qualcomm.com>
 References: <20260114-pinctrl-cleanup-guard-v1-0-a14572685cd3@oss.qualcomm.com>
 In-Reply-To: <20260114-pinctrl-cleanup-guard-v1-0-a14572685cd3@oss.qualcomm.com>
 To: Andrew Jeffery <andrew@codeconstruct.com.au>,
@@ -114,107 +114,213 @@ Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
         linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1933;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4481;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=Hz6iLmKEfxDKfrrjH8upUbRNGTU/avM3tmt35o0Wjvc=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpZ7aHavwX9VGYJNPXqlYS557XrI51pw+HBiAgS
- ksF1auZQ8aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaWe2hwAKCRDBN2bmhouD
- 14N6D/4u0Ishpad2NsggJaHhekQq6iqnAlDq+P4aUzZ2je0asU428AUXHgBNvCHiiaRNuJ7peKn
- kZaXFhOLRJL4lxXomi8DHl1w9D1wmI2dmJY6uuG7+xE0WxinMpd5kVfeW2Xtb54zER0cJh1D5bI
- sVk4n6tZOECbNOeSCkDuz9iEmckynK/jzlrOtYLy0nBFnaMx4id35WfzzlMbiT2y/C/eloosWov
- Hmaa4SZ3MfGPYTu36FG2d+rvHNNb9+WSIuzkjv+VTj3cK17PThBorYGBp/w0aJ8TZSzhi06ZV9p
- muZ8lj8SdZ97AguyfiMxk+Bn7pnrY1uffQ50Y+89Q0MUkED8IzjqPDYMxxlEPSUsTi4rcPT/Nwf
- YjxycS6wVR7jaqPzsW9sPjVnOGg4m4RSiiD1UI2kij+foiDbWUDEcdzMktasIlpA2SELsmvfpKe
- NkKfC/MRbCi7phtLl2BQz7sIegR3+lh5wHlWf5Bp+vdP/TwV+uSXTTrwiRsQhuSaTR+J7imqz7v
- rKwBAo7jL18AC5SjN42i/KN+kBPDr1ukX+5zCgQGI6rTDSkYOwuTeWTgHMyLQmymCwjNAz4SbuG
- wHlm83t3XUAC1jznj2naoOonPyr+Xpa9qqPg4IfTnnixh13WCTfgidggeW++iXeRSKLA/Q1o09+
- FxL7I1nczulzGhg==
+ bh=Y+FQmd4rABqYPyTPKLcnkK9CTadziXSgsQ+69hWhimA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpZ7aELAglkIA71S9aDHg8tY0ki5ruKpcTIipIp
+ 9RdX4NrwWOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaWe2hAAKCRDBN2bmhouD
+ 1/igD/9PwYlGol1XFHKqtfTdSYI+oQLSjl0z2sqJC/KrK4RW/0UQiErzillTKszLs1fzun100dI
+ EhV3/cNFb7EkGAiUv0DOTJm2rLXXXAEKq4sfHj2AvOo4AOdm1Vhzaxohnqhz8lbieU5tgItO8kM
+ CikX6JY0DNIPuK8tFa3jeDEczOXlluE7E41BjdvQjxbKKo8CAfks/3wwtIsxd1meu0Uh7pDT24v
+ aYd+vgDxKOiXkiRG+CUevINMLknU969di7fKX4meZYuzU3R9984ZwT3wKVcWI1thioeP3d0iKIZ
+ BLsydRVePUf0VtejFOq22/8mIaGexs7h91zpasohVsgWexuKGuKJNsUuVOnAKfAxsGZjauTVDrL
+ 18hpyd0FGakefMHY330a0Z2lqwnCW9k43rDquioM3Bdk17JEYl8zl6Ke/SDgqPsWJjHmhjt99ld
+ hGunGrieUUrlWbMED9RW+3E0q0mHN8hMeN8k3fFjaBxIE0ScSmF/3Ln/vbtAuQF19W3wAWGZaJY
+ GtZjFlirhF09jNZdVRAU8jaxTE4Y1Xh+h4BXysH0im9u+xRCGpdGx49RemYsLFWX5SsXtSUWzJE
+ 4DUYUyd6Czhj6ON/2GFFww6B8ToMmkk78qjK6kFM6DwCDfpPDItQEKm0PHRqNap0/QZwJwiIuvB
+ W8opp7AXG42HEmA==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Authority-Analysis: v=2.4 cv=NvncssdJ c=1 sm=1 tr=0 ts=6967b69f cx=c_pps
+X-Proofpoint-GUID: 1NMKyu7VV9pkeXOuhtGlyIxm_EaeT9lX
+X-Proofpoint-ORIG-GUID: 1NMKyu7VV9pkeXOuhtGlyIxm_EaeT9lX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE0MDEyOSBTYWx0ZWRfXz8p26o4YU4U7
+ RYU4Ffm0UvD0vFqiJmrYEgJU0Na7pw6nXoPX+EgyuaoPcv8Bs92mIwcSlFFTOuF39BBeorusdm0
+ 1v5Wptl4IG+DXY3yGCSisD7UoZ3AlVVXvQG1zK6W5zxIXbBvisyHm9/FWJhxMCQ4NzrbbS3rKdN
+ mXErJyitzVW0TBiOCS6zjS24+hAY8ni4Q2Fh7hd3oZClRohfMXfTAsaOCSkd0MgjKfi/ilz6+wF
+ u3VAn/cEOmec8yHX8oE0oiPA02/MXnJSfb6feNnzHf1POlKqnOzPU/2PpEz3t2mJ3QaPuLJ+/t1
+ FVgBXomQyKVrZJDKeXrN+6PI581A+QEMtqW9M7QJwJfI+Twh7Svl3p4kNzLrXVRK0lCfpo79jS8
+ rA+6bgiFrxokfufJY7/fVvnvg95oSSgSbdkIMWJ+LVjwOFfcFx8k5dHx2Z8RC1LL30ZgfA0Ynw7
+ hRBT69PGmf8POVBxEyw==
+X-Authority-Analysis: v=2.4 cv=JvT8bc4C c=1 sm=1 tr=0 ts=6967b697 cx=c_pps
  a=50t2pK5VMbmlHzFWWp8p/g==:117 a=Eb9f15NH/cHKzfGOmZSO4Q==:17
  a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=aRO1tsgHJH1V1zxVpf4A:9
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=sJPWbbE6un6nfY-uGV8A:9
  a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: --gSmMPpXapYU2l3RNmop-1uCQOLc3lF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE0MDEzMCBTYWx0ZWRfXyCl/s55d70gS
- +G5KlAO0VWoYJUGYP6KS2lVGforsfNqqH+7VtrCH8FvIyvyfjd/b7WZPJTnlqkbMRO66f1ju3Ls
- OoS+Kv3mC2zH1VSDLBMIfm4Bdzg2OegaUM640Dyxh8qS3Kq9TZDJ3kbwxotZh7FUY8NoD4HAjUN
- Dx8gw18HqvjSME7pu8Z/gFb0jXiws2ELlXKy+w54fFp08whQBlSn2Ovr2olRlqfZTGs0EuvBbhP
- /IE/dA+ebPQn/4R4ZrfR/u6S+AYPhFghxuEwuOntbqYj1jt9/xHNFJV6IQSiUwrBKZdR/9p51BL
- VaHF0EpT5UApMEeXqog+SIAiyleHB1b1jxcJjXoQ8GL4++tZoFqbTfhG3MBloAT6NoOb7rcXxLf
- DyhxkkV2P7DXNGTyG5LhqHAKsZIuYhu/3i5Blm4wZl0oZHcU7D81vDov8O2KRh3OvEWtvMPM+CR
- c7cwPN31NGNZnzMdlHw==
-X-Proofpoint-GUID: --gSmMPpXapYU2l3RNmop-1uCQOLc3lF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2026-01-14_04,2026-01-14_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 suspectscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601140130
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 malwarescore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601140129
 
-Simplify error handling (less gotos) over locks with guard().
+Simplify error handling (less gotos) over locks with guard() which also
+removes possibility (at least by reading the code) of returning
+uninitialized rc/ret value in aw9523_pconf_set() and
+aw9523_gpio_get_multiple() functions.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-aw9523.c | 53 +++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index 34a373f7e04d..855f708ce510 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -478,10 +478,10 @@ static void tegra_xusb_padctl_enable(struct tegra_xusb_padctl *padctl)
- {
- 	u32 value;
+diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
+index 479553a79216..02a24ac87ea4 100644
+--- a/drivers/pinctrl/pinctrl-aw9523.c
++++ b/drivers/pinctrl/pinctrl-aw9523.c
+@@ -291,14 +291,14 @@ static int aw9523_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	unsigned int mask, val;
+ 	int i, rc;
  
--	mutex_lock(&padctl->lock);
-+	guard(mutex)(&padctl->lock);
+-	mutex_lock(&awi->i2c_lock);
++	guard(mutex)(&awi->i2c_lock);
+ 	for (i = 0; i < num_configs; i++) {
+ 		param = pinconf_to_config_param(configs[i]);
+ 		arg = pinconf_to_config_argument(configs[i]);
  
- 	if (padctl->enable++ > 0)
--		goto out;
-+		return;
+ 		rc = aw9523_pcfg_param_to_reg(param, pin, &reg);
+ 		if (rc)
+-			goto end;
++			return rc;
  
- 	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
- 	value &= ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
-@@ -499,7 +499,6 @@ static void tegra_xusb_padctl_enable(struct tegra_xusb_padctl *padctl)
- 	value &= ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
- 	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
+ 		switch (param) {
+ 		case PIN_CONFIG_LEVEL:
+@@ -307,7 +307,7 @@ static int aw9523_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 						AW9523_REG_CONF_STATE(pin),
+ 						BIT(regbit), 0);
+ 			if (rc)
+-				goto end;
++				return rc;
  
--out:
- 	mutex_unlock(&padctl->lock);
+ 			/* Then, fall through to config output level */
+ 			fallthrough;
+@@ -323,10 +323,9 @@ static int aw9523_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			break;
+ 		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+ 			/* Open-Drain is supported only on port 0 */
+-			if (pin >= AW9523_PINS_PER_PORT) {
+-				rc = -ENOTSUPP;
+-				goto end;
+-			}
++			if (pin >= AW9523_PINS_PER_PORT)
++				return -ENOTSUPP;
++
+ 			mask = AW9523_GCR_GPOMD_MASK;
+ 			val = 0;
+ 			break;
+@@ -341,17 +340,15 @@ static int aw9523_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			val = AW9523_GCR_GPOMD_MASK;
+ 			break;
+ 		default:
+-			rc = -ENOTSUPP;
+-			goto end;
++			return -ENOTSUPP;
+ 		}
+ 
+ 		rc = regmap_update_bits(awi->regmap, reg, mask, val);
+ 		if (rc)
+-			goto end;
++			return rc;
+ 	}
+-end:
+-	mutex_unlock(&awi->i2c_lock);
+-	return rc;
++
++	return 0;
  }
  
-@@ -507,13 +506,13 @@ static void tegra_xusb_padctl_disable(struct tegra_xusb_padctl *padctl)
- {
- 	u32 value;
+ static const struct pinconf_ops aw9523_pinconf_ops = {
+@@ -599,14 +596,14 @@ static int aw9523_gpio_get_multiple(struct gpio_chip *chip,
+ 	u8 m, state = 0;
+ 	int ret;
  
--	mutex_lock(&padctl->lock);
-+	guard(mutex)(&padctl->lock);
+-	mutex_lock(&awi->i2c_lock);
++	guard(mutex)(&awi->i2c_lock);
  
- 	if (WARN_ON(padctl->enable == 0))
--		goto out;
-+		return;
+ 	/* Port 0 (gpio 0-7) */
+ 	m = *mask;
+ 	if (m) {
+ 		ret = _aw9523_gpio_get_multiple(awi, 0, &state, m);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 	}
+ 	*bits = state;
  
- 	if (--padctl->enable > 0)
--		goto out;
-+		return;
+@@ -616,13 +613,12 @@ static int aw9523_gpio_get_multiple(struct gpio_chip *chip,
+ 		ret = _aw9523_gpio_get_multiple(awi, AW9523_PINS_PER_PORT,
+ 						&state, m);
+ 		if (ret)
+-			goto out;
++			return ret;
  
- 	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
- 	value |= XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
-@@ -530,9 +529,6 @@ static void tegra_xusb_padctl_disable(struct tegra_xusb_padctl *padctl)
- 	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
- 	value |= XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
- 	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
--
+ 		*bits |= (state << 8);
+ 	}
 -out:
--	mutex_unlock(&padctl->lock);
+-	mutex_unlock(&awi->i2c_lock);
+-	return ret;
++
++	return 0;
  }
  
- static int tegra_xusb_phy_init(struct phy *phy)
+ static int aw9523_gpio_set_multiple(struct gpio_chip *chip,
+@@ -632,30 +628,28 @@ static int aw9523_gpio_set_multiple(struct gpio_chip *chip,
+ 	struct aw9523 *awi = gpiochip_get_data(chip);
+ 	u8 mask_lo, mask_hi, bits_lo, bits_hi;
+ 	unsigned int reg;
+-	int ret = 0;
++	int ret;
+ 
+ 	mask_lo = *mask;
+ 	mask_hi = *mask >> 8;
+ 	bits_lo = *bits;
+ 	bits_hi = *bits >> 8;
+ 
+-	mutex_lock(&awi->i2c_lock);
++	guard(mutex)(&awi->i2c_lock);
+ 	if (mask_hi) {
+ 		reg = AW9523_REG_OUT_STATE(AW9523_PINS_PER_PORT);
+ 		ret = regmap_write_bits(awi->regmap, reg, mask_hi, bits_hi);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 	}
+ 	if (mask_lo) {
+ 		reg = AW9523_REG_OUT_STATE(0);
+ 		ret = regmap_write_bits(awi->regmap, reg, mask_lo, bits_lo);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 	}
+ 
+-out:
+-	mutex_unlock(&awi->i2c_lock);
+-	return ret;
++	return 0;
+ }
+ 
+ static int aw9523_gpio_set(struct gpio_chip *chip, unsigned int offset,
+@@ -695,16 +689,15 @@ static int aw9523_direction_output(struct gpio_chip *chip,
+ 	u8 regbit = offset % AW9523_PINS_PER_PORT;
+ 	int ret;
+ 
+-	mutex_lock(&awi->i2c_lock);
++	guard(mutex)(&awi->i2c_lock);
+ 	ret = regmap_update_bits(awi->regmap, AW9523_REG_OUT_STATE(offset),
+ 				 BIT(regbit), value ? BIT(regbit) : 0);
+ 	if (ret)
+-		goto end;
++		return ret;
+ 
+ 	ret = regmap_update_bits(awi->regmap, AW9523_REG_CONF_STATE(offset),
+ 				 BIT(regbit), 0);
+-end:
+-	mutex_unlock(&awi->i2c_lock);
++
+ 	return ret;
+ }
+ 
 
 -- 
 2.51.0
