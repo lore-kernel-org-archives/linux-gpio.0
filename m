@@ -1,112 +1,110 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB56038B983
-	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 10:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC2387590
+	for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 11:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768387714; cv=none; b=tyakhaPkbOQNWooNXHP3NptSk886+EPqyzHNv/YZkaHZxHs48PECSxf9CI9GZs0n2N721HU6R10cuN1XvP8m523+Bh89wb8pAaH1Rz5lCGtBRu5iV34RWOU3L8h4ItuU0JF31TTGglcbuatY+J4cHr0K+FfnO7s/32xc8e32R0Y=
+	t=1768388821; cv=none; b=QvA0NKa5n9+OUyH299ztpr76v0zr1yl6O9UHXBAn3x14hsgdOJWTrFF8M4NAxqIgpSJwI0vzyGSoTVR3Sg2+6s/l6qFd9P/JFPzvGGIQu6rN1vH6okt1bBDMUKcBmzbEjjkNCp5KdhzbEd2SYeWoEcZHXiDHfgSj+CDuwf3DABA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768387714; c=relaxed/simple;
-	bh=E0LywgZ6Y5OBOHF1U8Vz1IKUxUwFm8uKutML5xWZ8GI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kYgMYYmLfAnBn+qWVb1duDuZzLjIAyT9KN2lMT5Bw5A+tjX6++dQOibuXWX8w9FuG4wlvVCMUXAHb4RwyqPaJlOryBdDicrje3nFhUNzhfSiEBNi42Qd5mIUYe15Wwdd8dzYHMlJsf2+QfCn3Ty5IzfJC6HhWhdOfTTvDMyREVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8c52c67f64cso130936085a.0
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 02:48:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768387697; x=1768992497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H1Uaum6XUOb9s+vI8xOa+5r0BhzYwNGBohqUTsxTR+M=;
-        b=nAEjDjOSapWWoQ5uBk7QwOFIH4DvsC1DPjktCtznENC6y6k8gvBsb/c/rgP725Lq12
-         2TC8Ew5N4BxktOb0DjnIJk7KNfVYy25cx3q3znojf/o5SjDTZ1BcWlZa4vVhFdcIGFL0
-         /WFjOf2Kh08LYN7YlqZN+Z2AzFPEyblJ7DDqTvQZrLNg6FVusXW8HQmM3j7qkKqm8q6Z
-         V0X+oFlW/Sl4e5CtnKKDpOI9ughvqiJgfY1DgJ/tZx6LkbFRbgyvOqPGgEOD79QpexsQ
-         A2IGsIhHyjSgH+5UYGnm7LGXRUFWGpMljOgasfEYR+yKR5hRGvbT0gNZ6O+ebcvX7sZX
-         gcng==
-X-Forwarded-Encrypted: i=1; AJvYcCUzfTGxSq9bqSUE8/4U3VJw9pxIf3hKtIhTWdZgfdbWP3AmBkUHA+QinZonjDj62XuzuCnEeoNzZqN2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH0RvZXHVin9NIyuT7+R9hdpLnCKGrqjDAG5NTn91m7133LEjG
-	NdsPzuYupb38zzDGsVrJUR3hnXuyCS2BP1UZBvq3Xtegle876y5F+GvnOC3sMvF/
-X-Gm-Gg: AY/fxX7rBQkIrzjqjDZaGaVawsFNtdGOEZmou9G5XuEHjXz9G9lol8EEjkO5uiAroUl
-	kzM2BrK/9YYFQPzIaJ/Imao5w8NjKAAZRsnevYdXgW+Uxu5tLBr12Qw9utHe/Z1oVPEmpWCP2a2
-	K4gRhrBqmQo56xBvv3i2yOZPZSF5TXV9yQE4dZkoqsJ/No1JafrqRNMtNSum/JAXrbvgM9gJeKq
-	QSLG30Uc0Ixp9O4whG2mFHuPVOBQ2itAIAoTb8rCaXti6mMY/qA5HPftoGbQRskOzlJ1qHPWk7F
-	YTlABBxVP7+KUNOHB7ma0Y0qhQBn4ToejSN4iSoI17uCANRcU9DOCOG+d5qK/RULfS0Pz/JXFzo
-	APzOx2/ypPwY3NpcrKlt1vjV8UvQdcWJzxnm900lWajiDJFyYHyZIU/T2YhqorvTuWco+YTGvy0
-	JagU8l1yATvU/xC7gZWh6gZ6hG9ULre7Hj92hPH0gW2y7eV+I/
-X-Received: by 2002:a05:620a:1726:b0:8c3:7e05:db01 with SMTP id af79cd13be357-8c52fb2f6aemr263931285a.2.1768387696609;
-        Wed, 14 Jan 2026 02:48:16 -0800 (PST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com. [209.85.219.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c530bc0723sm138034185a.46.2026.01.14.02.48.16
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 02:48:16 -0800 (PST)
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-88a2d21427dso83290546d6.3
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Jan 2026 02:48:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX9ZInrCZHweMVdBxpPc4+GggNDWsXr+aI8oCSIiqD7JC0EHKYcXM0ZRmjsuPgNKXrJlvBRvqWdl45B@vger.kernel.org
-X-Received: by 2002:a05:6122:628b:b0:559:58a5:f6cc with SMTP id
- 71dfb90a1353d-563a093a463mr686310e0c.4.1768387348943; Wed, 14 Jan 2026
- 02:42:28 -0800 (PST)
+	s=arc-20240116; t=1768388821; c=relaxed/simple;
+	bh=lZNQT/lVvB3aRMXapPy5xduNiS/QYtu/j2dRCMggPtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va7hwTlyy4YNxRFPtEZXYtSi21IgGCgo3xwFgcvRlTcEeXg8uY3/oBHuxRoJKNBxz30nVNPdK3yvNWHGRjlQWXdDG73ZYU6KPCwtckRDwgHK044DCJaX80ItwjhU5mEZT9zRztyKQ2WnJqvMnEwod2xd8OYBBdDWcBe6LzwZJC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J18n4ggm; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J18n4ggm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=lZNQ
+	T/lVvB3aRMXapPy5xduNiS/QYtu/j2dRCMggPtk=; b=J18n4ggmxqEwAd771RRC
+	jDpl64Haa2Yut/ObJwU0FDpvi2X9JinBEKOGEXkBKNRJcCBL/CZMcocx0hMbrnhk
+	Z7uHLFpXjZN9GjkFrHRGsjPmhMAJiGSBPX8iIJhbWu6eCfENkAg3DNiI1yCKui4d
+	yTaoQ5XvnnpJmtcSGrvk2IHrEOpVyLQLfI2zMNeFDQN3ve2YMmhOZ432uT/tq7m7
+	zA33zcUaj+TIHghjOiN9GkuMOspLnl5wqJeH/KHKf2be96A+pMGxAsXPT4lebNKh
+	ebReGpnq+6PUcbYRKWjSknFpxJXui2jUrbfFl+Bt1LT4+nft1c6sEoimTtqccLRi
+	1w==
+Received: (qmail 2092519 invoked from network); 14 Jan 2026 12:06:50 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Jan 2026 12:06:50 +0100
+X-UD-Smtp-Session: l3s3148p1@51PZGldIDNkujnsM
+Date: Wed, 14 Jan 2026 12:06:49 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v8 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <aWd4yZA6GXey8Q_S@ninjato>
+References: <20260114093938.1089936-1-herve.codina@bootlin.com>
+ <aWdp_jMVUBN04is3@ninjato>
+ <CAMuHMdWkGevDsBuUs1k=r5yeKJZHvs93b2SDfPwKoF4fFr-3Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114093938.1089936-1-herve.codina@bootlin.com> <20260114093938.1089936-9-herve.codina@bootlin.com>
-In-Reply-To: <20260114093938.1089936-9-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Jan 2026 11:42:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUPJrqem_pKkQKU7qjkA6-6OEYW0Av3EvDr5hAO1U5ZQw@mail.gmail.com>
-X-Gm-Features: AZwV_QhQn91-1OqqAw-EDfsNXlhnKQ09Nmhqb35fWgFytnsII83O23rtSSh3XAo
-Message-ID: <CAMuHMdUPJrqem_pKkQKU7qjkA6-6OEYW0Av3EvDr5hAO1U5ZQw@mail.gmail.com>
-Subject: Re: [PATCH v8 8/8] ARM: dts: r9a06g032: Add support for GPIO interrupts
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZxrGIdy71iEIqHwl"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWkGevDsBuUs1k=r5yeKJZHvs93b2SDfPwKoF4fFr-3Ow@mail.gmail.com>
 
-On Wed, 14 Jan 2026 at 10:41, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> In the RZ/N1 SoC, the GPIO interrupts are multiplexed using the GPIO
-> Interrupt Multiplexer.
->
-> Add the multiplexer node and connect GPIO interrupt lines to the
-> multiplexer.
->
-> The interrupt-map available in the multiplexer node has to be updated in
-> dts files depending on the GPIO usage. Indeed, the usage of an interrupt
-> for a GPIO is board dependent.
->
-> Up to 8 GPIOs can be used as an interrupt line (one per multiplexer
-> output interrupt).
->
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.20.
+--ZxrGIdy71iEIqHwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> The irq and SoC stuff depend on the of stuff, so doing so would
+> delay the former by one cycle.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I know, but it is still better than nothing happening ;)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> On IRC, Rob sort of agreed to option A from my proposal (see v7 cover
+> letter):
+
+Cool, didn't know this.
+
+> Unfortunately that part hasn't happened yet...
+
+IRC to the rescue again? I'd think it will be easier for Thomas if he
+gets a PR from Rob. Maybe Rob should take the first 4 patches even, then
+Thomas only needs to review the PR.
+
+Thanks!
+
+
+--ZxrGIdy71iEIqHwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmlneMUACgkQFA3kzBSg
+Kba3Qg//ZNBhfcFimNZVrYxvCimeSv+NJdUPbyUFaGZIIg/EPKrqrqfLgk1grdhN
+fUOL9CdUCGn0jd8UsLfq4PhpZb85MhbFnuiC/WmIxWdiJyYmTLaoYX/d3MKQRaDj
+aK19RiPoP24C7UfkuXb+BHTF3FkNdC9fCN0ldcWwiiBO8596sUiDS2TCSG0zJgha
+qYnMnCem0suW7orbWHIkUtMqlBJnsWePZkm2WKNqvLDjbpdeu+lMoIwQRWVvHCw5
+UM6ODFxR2W5MgvF/JOmpiaIs74GhFPSz44F7ZCrURCkjwpmqKlZoSgcZcVxdfl7z
+307ZGTyEw35vX6Y3YQ6atAD+lmr3oyw83VwJvoHc+1q8a5P7Nuc5d7JFeu2PQILs
+oolEE/k9px0maFsDFDaG3aCj5kaztlsG6d/CRT1XfnllI2yX0VATv5Ayb/9FkGJX
+Ncz9hQq5HtGYXVsE2af5dzsLy784s3ftYcV2OOZdc9a85Mf7166ei4nP5FrodlgJ
+FrBEql3NUjyivf51hxk81EgRumlu9lx+B0armCoWadjraRiTm5RVmYNioFFUqNc6
+Xy8w3rVFim0J/1U1RevTDFM0dO7r5QWolqDypr5sH2eZn09eWCb/Z65L9Gl0u81I
+mCBAzr/P7k4Njb3u0JzMKZqQmsaqI63K3cQqDQWWRipuQ7vxKIw=
+=46i1
+-----END PGP SIGNATURE-----
+
+--ZxrGIdy71iEIqHwl--
