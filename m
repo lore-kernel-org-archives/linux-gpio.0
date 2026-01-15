@@ -1,156 +1,118 @@
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DE437E2EB
-	for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2026 11:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921B839C633
+	for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2026 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768477332; cv=none; b=cbKnq1V2mx5HJBW1HWPNBZj+caUq91iAnbS3SWpj+YnClPuHvV5D0VPpYFX59g19nvtTCnT1gugzl95lc71DAHWTeM+AxI4zS5yHWwX0QCO2nFJEYRZi8S3Ypq4+90BBXgOKwsOBkFJJHQ+bSJ4m+zU0JpzhhJoyuDya4Ft6BKU=
+	t=1768482102; cv=none; b=Bhech3H0tkDtIwogIaSO1BnhtJVMDcN10A6AJJ8gievSnH3TkTZA0Cn/jpYyrr4kWsGXbNiqEet5rZ91yRQ/KHBIRPb4GUAe7hqsdF3MFEP4hMF822EedReif3DR1i3gx7CIs4tNOZnYtf8LkH6lWMcN4Qczn5wYyUV2OGxpWcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768477332; c=relaxed/simple;
-	bh=mkQUI++SFEZY6715sy/bRzpJpUAliolL1r9lnHRs51k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aLFU8HV8VTUzaPIg7Zztam7QWenPNTO/PtM2QZ4ft656YbUhmTTsdUSePcvb0SmYPm440aHBtD7vtXlD2n8tITEIaPmGiOU/+Z23qXyfknGmKHo3Uxt5DV6ONYyVXGPIk4t/oFqQUawOWFY7QS3fZfPTpJjYl9qEjRdvHsMRj0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=l53qBHHO; arc=none smtp.client-ip=74.125.82.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1768482102; c=relaxed/simple;
+	bh=XQfiUl+R4sEcDxYQBvWIeW+Jcqgh9dobQu4zy3hKmuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0TirUDuhfBEWkzcXBQ40/G7VLhke4YlciaRLuOoJlyVjICri0KpqlDcrK/5ujueRajM054xp0BCtk8c8QiONMXL3/RssjHKAQ7ExxgzX+DxvTgwxcPhsek+lo5nBPaFXZKDFhzhLrBExhEecuYyJ6IR1LriATy8uWRtR9qDNOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=inBmfrH6; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="l53qBHHO"
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-12331482b8fso2545536c88.1
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jan 2026 03:41:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1768477318; x=1769082118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zmhD7xqaP3tJ0Ge3gQd2f9t6bDUERo+PNGIof7/k4qE=;
-        b=l53qBHHOC3NN4gnjGmjzOZAahtk/NF+6fvAt9wqb9Im8E7JMc1M/45s2CqXUlB4W0a
-         uuZHwx4eFrwNmU2bh3yp7Eoqb2WQitklVmlOsuVApYFjbE5nlv2cINFaj7P3hSAHunTe
-         pxT/zsrKT3jXCVb542lNbKos3OrWTtwoQdJiYrKU1WflD0OQ1m8m/renMuVafFd28Gqr
-         rFCo2UZhdRHYm+CMV1XgbKCZ7bJhNoY4ZNLDTqzC7wzp28ixZ0q/WqsPxCq8rlwFUG0k
-         0Z/Wl4MKmwhFIkRPobQHpEa7OLi5f2q0uVYnp7z22N78r0M+hg8tJi9X5eKpxq2Z64yw
-         mk9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768477318; x=1769082118;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zmhD7xqaP3tJ0Ge3gQd2f9t6bDUERo+PNGIof7/k4qE=;
-        b=oc5mfWbIRQJ4PVVQeOfhgsj+R6wMsgF+dTPw14NOES98h/X2excDJkl/sBcl7lt6nK
-         bm4fq6V1/dk1c/tLCsV29NI4G66R/5/YC8AWB/V3C/jdID4uUTak9bX7fDWuJTO/Hxcv
-         gTlVqpQIcRsoFeHB8PqkiaxY02Ym8TN6UGR2wMLuPSbiEid1bitOtcnelNGhhd4sfmyZ
-         wNoFFhIvdKvidSGpbv8sY5Jurl0Bvk/Va5j9RrntvJc4Y7ylFcXQ3FMJ79dgwnli/4jb
-         OJpw1pQbTt48gtHo4HvUtHCIXcKH3IvkrN7qkyhkfSWkfO6hxyoPOlVhSS8vpI0bqu+5
-         IE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCMFzJ8t4DScSrtw4Hi/SwXLVQq141B31KcOwlWx9xnd+8AxOC6ebbeNluKo/KdQb/8fOc7x3QfuUT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6Zr3VFqU7YabtO6KhQrO4yVv7/+Er//iRV+7eWdvSVRInTqHh
-	B2x0p7lU3WWhvJ7VeHftW2UJfzBitaC7aNcPvg+BHeirnb5m1aYIKo8FH9JSmtBBKCc=
-X-Gm-Gg: AY/fxX6CV2DQL62uT/ZSpiBGfZWW/oMsU1psw71hYOFqYV+dVlLP/PmFztAWapySVsw
-	KOJD+WN/zbSK2ikxfvNb+ShPLdeRXirLsG5ry9kIsjAfbzj3KYFIDD/823OjEWyUR0joMIIw77q
-	Szrfp9QYB1IhyxQj2q6qMODlKMK9egpXHnL0xHKS39EL8AdD6X2WwTj+wS3owBk0zaP1mGs4Ntr
-	1nPIhCbH376A/hIITi+xlT1GYiudJXDsZw77vZyAp+B2yIt9YYHDyaF0flNTG/cPlWYLFfePUX/
-	uK3pq6FsklMRpDENOXsZn/qhx6azYrdTvlKz9g8RPjlWy4s+nQknJ/SOTVGg3C4EblEBxNjlfue
-	f6loXbgAeJILguyMobCoNYRpfk78fQBxF8Y20tgJpGrciTgZfgJDciVG5W3HJiZJzEfw/4shMAa
-	XTNq1UfguGsYYcL/+c7a5rS/VB/JQBIpSYRIT/nMKaUprPf3+rLin73XhFauCkF9a9PyrqXJayC
-	Fd3l/sN
-X-Received: by 2002:a05:7022:6184:b0:11d:e2a3:2070 with SMTP id a92af1059eb24-1233778b5f3mr6944456c88.44.1768477317748;
-        Thu, 15 Jan 2026 03:41:57 -0800 (PST)
-Received: from fedora (dh207-14-52.xnet.hr. [88.207.14.52])
-        by smtp.googlemail.com with ESMTPSA id a92af1059eb24-123370a051esm4875347c88.15.2026.01.15.03.41.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 03:41:57 -0800 (PST)
-From: Robert Marko <robert.marko@sartura.hr>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	lee@kernel.org,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	Steen.Hegelund@microchip.com,
-	daniel.machon@microchip.com,
-	UNGLinuxDriver@microchip.com,
-	linusw@kernel.org,
-	olivia@selenic.com,
-	richard.genoud@bootlin.com,
-	radu_nicolae.pirea@upb.ro,
-	gregkh@linuxfoundation.org,
-	richardcochran@gmail.com,
-	horatiu.vultur@microchip.com,
-	Ryan.Wanner@microchip.com,
-	tudor.ambarus@linaro.org,
-	kavyasree.kotagiri@microchip.com,
-	lars.povlsen@microchip.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v5 10/11] dt-bindings: net: sparx5: do not require phys when RGMII is used
-Date: Thu, 15 Jan 2026 12:37:35 +0100
-Message-ID: <20260115114021.111324-11-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260115114021.111324-1-robert.marko@sartura.hr>
-References: <20260115114021.111324-1-robert.marko@sartura.hr>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="inBmfrH6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768482102; x=1800018102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XQfiUl+R4sEcDxYQBvWIeW+Jcqgh9dobQu4zy3hKmuY=;
+  b=inBmfrH65iVz2Z+K6UBimA70ReBH20CAOvYW4VclK+KV8ihW9fJlQVYB
+   koe8pfexDNR10qe2xum3xv2sdiwu+6uSuFYjDRZX4SYt4PmyML/t/HXEp
+   IyoFPfkdCNZ6x4eaLzkfQmSxiboK6jI9FwLFBHc5YlndmlSESp5tdqjet
+   jWoMOYhocVBmeDwidBo5wRjmRO54p2jHn+7llD0IS8ZYcCExCEM6pup9k
+   E4gtlCeM90cEBI380sV1WbOaLtG4QvTtLzjGVz9fjPfsIJ+ZaDfWBtgUM
+   UJDFEwTalCPStFRz4j+xhJzU1ucVvwgJDwCRJVEocSCgNPrCrEWDvO35n
+   Q==;
+X-CSE-ConnectionGUID: h/st1DxgR3yaT3RMgdVd4Q==
+X-CSE-MsgGUID: 91Sx0VQKSI+AOlNta+H+iw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11671"; a="80897948"
+X-IronPort-AV: E=Sophos;i="6.21,228,1763452800"; 
+   d="scan'208";a="80897948"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 05:01:29 -0800
+X-CSE-ConnectionGUID: RAJUOfBDT2awqVEuw+N7SA==
+X-CSE-MsgGUID: zIq4D9IuT6CerNe48gE3VQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,228,1763452800"; 
+   d="scan'208";a="210008951"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.244.216])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 05:01:28 -0800
+Date: Thu, 15 Jan 2026 15:01:25 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Linux pin control <linux-gpio@vger.kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Subject: Re: GPIO direction problems in gpio-shared-proxy.c
+Message-ID: <aWjlJTnrI8r0iIMR@smile.fi.intel.com>
+References: <CAD++jLkJfyhmpepkanMyvLc_C0v_XZeoEKj8XJ3bw5fJAqJYyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD++jLkJfyhmpepkanMyvLc_C0v_XZeoEKj8XJ3bw5fJAqJYyQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-LAN969x has 2 dedicated RGMII ports, so regular SERDES lanes are not used
-for RGMII.
+On Thu, Jan 15, 2026 at 10:41:11AM +0100, Linus Walleij wrote:
+> Hi Bartosz, Andy,
+> 
+> Andy is good with problems like this, so I explicitly address you!
+> 
+> A review of the I2C core brought this problem to my attention:
 
-So, lets not require phys to be defined when any of the rgmii phy-modes are
-set.
+(and seems it's spreading:
+ drivers/tty/serial/mxs-auart.c:1522)
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
----
- .../bindings/net/microchip,sparx5-switch.yaml     | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> we have the following confusion in gpio-shared-proxy.c:
+> 
+> dir = gpiod_get_direction(desc);
+> (...)
+> 
+> This function from <linux/gpio/consumer.h>
+> 
+> if (dir == GPIO_LINE_DIRECTION_OUT) {
+> 
+> This define is from <linux/gpio/driver.h>
+> 
+> So we need to move the GPIO_LINE_DIRECTION_[IN|OUT] to
+> consumer.h if you want to use it like that.
+> 
+> But we don't want to include consumer.h into driver.h or explicitly
+> into every driver.
+> 
+> The I2C core and any external direction user looks like this:
+> 
+> /* FIXME: add proper flag instead of '0' once available */
+> if (gpiod_get_direction(bri->sda_gpiod) == 0)
+> 
+> So this needs a proper define too and it isn't a driver.
+> 
+> Shall we create <linux/gpio/directions.h>
+> with just these defines and include that into consumer.h and driver.h?
 
-diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-index 5491d0775ede..75c7c8d1f411 100644
---- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-+++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-@@ -151,10 +151,23 @@ properties:
- 
-         required:
-           - reg
--          - phys
-           - phy-mode
-           - microchip,bandwidth
- 
-+        if:
-+          not:
-+            properties:
-+              phy-mode:
-+                contains:
-+                  enum:
-+                    - rgmii
-+                    - rgmii-id
-+                    - rgmii-rxid
-+                    - rgmii-txid
-+        then:
-+          required:
-+            - phys
-+
-         oneOf:
-           - required:
-               - phy-handle
+If we talking about header level of splitting, I would do it as gpio/types.h
+(gpio/defs.h) as others usually do.
+
+As for the particular problem, and I think Bart has better view on it,
+I think the use cases should be revisit first to understand "whu?" do
+we even need that in the code. Since we have two so far (or more?) we
+can try to address each of them in a better way.
+
+OTOH if we have _get_direction() in consumer.h, why don't we have defined
+possible answers in the same header?
+
 -- 
-2.52.0
+With Best Regards,
+Andy Shevchenko
+
 
