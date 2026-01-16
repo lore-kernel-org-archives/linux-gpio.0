@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE062F6193;
-	Fri, 16 Jan 2026 08:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6412F3630;
+	Fri, 16 Jan 2026 08:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768551092; cv=none; b=MtXhn8H/GApKeWJVBL4ARw6fop/Sm/cRtDxe6rJJigOUkTv1DLZlZiYI1I4xJ3KH3aJ60tA9NUM1fRlZ+XgDkq35XTExe+aV67yxb9eucWLfs4cSP8udB+eliTDk+uNoh20Id/hhxxvePAA+X/WcCfKAjYZ/2zJNQQXM3jvYGFA=
+	t=1768551099; cv=none; b=BK7SINU0JNVTw0XVvgn6WCc/UWMbPkxxjOVkYRJ6ehNGOJ8HC7HqYTBOoEodikMWC+U0m40bSFxsEGZX9kaS0PpX+IPVHVB4pbZYF6KXmdcVW6fEiC6MFz0/TsQNCGIPZRScmXCjedDMosk8FTnw2C393taSsO3IqChotJAY6+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768551092; c=relaxed/simple;
-	bh=jLCvexvUVWTffqACdCAMqylaGOnO42aUQc431dwkOaQ=;
+	s=arc-20240116; t=1768551099; c=relaxed/simple;
+	bh=OPIRJf1YwrkVeZCDiw5cYD1avfQuQ+qkgKtDS5RbR3I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CGUG/4zaLRKq0IsZZhej2Ijj/oPoA744EeQamYkPXhy39soo+IcG7y2NDkwoJiCcVnbyJukhIlnIE38xbQpaqUHg94H/7cd9YaE02whXOz9UetCfXo8sQ3cV8kFDrpN413J8i1M7EeymI8js/E8C/x2sP2SYzHzSv6qXhd51euU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeWNkbYA; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=oAF/m7Gb5KWQd3OgqzDiY4bal4mRFYzvBfPuVQpbju+8RMynuxkZEtpz5zUiQwMJdgF+nVb/UR5AvYUmnl8iN8EF4g2Uf96kjSjcpLpLrdRqamJaiu6BSx5hhDmTYsJr1kX3QWTaj/x7xuDNtweEkMgkLBWUZoSKC+hceON5Ju4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgDps4aM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeWNkbYA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD60C19421;
-	Fri, 16 Jan 2026 08:11:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgDps4aM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37DDFC19425;
+	Fri, 16 Jan 2026 08:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768551091;
-	bh=jLCvexvUVWTffqACdCAMqylaGOnO42aUQc431dwkOaQ=;
+	s=k20201202; t=1768551097;
+	bh=OPIRJf1YwrkVeZCDiw5cYD1avfQuQ+qkgKtDS5RbR3I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CeWNkbYAKQ5Pd6W8QPxVNX1zuCl2t7Ekik3S0XyD3xs7pNVe+enDalea4SLiUJMU5
-	 SFlaGCZy6r0qBH3VW7S5GHiS7jQ+NNnlOD48KsmM1N/oh26y2AKC4jLjBjX1nxGfDu
-	 /VRpvBw/EcbphiWecX6FlutOrbLty0oZRF/FyhY4wsakGdmZKdfycGbPd7JfsEsBQ0
-	 U4knvb5IHvB5wHMFTUCoGLRQVe4OBwOP6wVOUx7Ps680V4vqT4VkY5QXRja3AWp5HN
-	 bkibQfTVv35QnmTJ9kR1RSGMR4c+KgFyKIOFSSnvc9Vk05TBPYhXlm8Xd8R5Sdqhf3
-	 bRtUvEOk7qlVw==
+	b=QgDps4aMSBg1y6OQuez/d1/5NkxjAtfgjwwk0qQrrHjaxTkcFqI+7fwKxJBL2OiP/
+	 +t41W14zTKi4GUBmcmOEDZGtNoRBu+o+6wBSVUuQi3weaKdy+cjEOknP7qgayAQ0bY
+	 0i9BUrINFFfKiwDYKIbqo0ebESqXCp+DlsA6XPMU43u6rwPWJFynUJheVgDYm1Z88T
+	 bfsz25wN+wdyrJBDjuMmYvT7o4BE5xBTaYoCjBw7psBehD2XP+SNmba571MkpjmsZg
+	 i8g1ttd48cqRoaW2muuUnwxkvU4ZcV8cKk91Qh/ck8MDOTZXUd2cxVdiGX2LRObUQg
+	 FuJNA0ohJDl0Q==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Benson Leung <bleung@chromium.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Jason Gunthorpe <jgg@nvidia.com>,
 	linux-gpio@vger.kernel.org
-Subject: [PATCH 08/23] gpiolib: sysfs: Remove redundant check for struct gpio_chip
-Date: Fri, 16 Jan 2026 08:10:21 +0000
-Message-ID: <20260116081036.352286-9-tzungbi@kernel.org>
+Subject: [PATCH 10/23] gpiolib: cdev: Don't check struct gpio_chip in gpio_chrdev_open()
+Date: Fri, 16 Jan 2026 08:10:23 +0000
+Message-ID: <20260116081036.352286-11-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.52.0.457.g6b5491de43-goog
 In-Reply-To: <20260116081036.352286-1-tzungbi@kernel.org>
 References: <20260116081036.352286-1-tzungbi@kernel.org>
@@ -60,85 +60,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-gpiochip_sysfs_unregister() is only called by gpiochip_remove() where
-the struct gpio_chip is ensured.
+It's harmless even if: chrdev_open() and cdev_device_del() run at the
+same time, and gpio_chrdev_open() gets called after the underlying GPIO
+chip has gone.  The subsequent file operations check the availability
+of struct gpio_chip anyway.
 
-Remove the redundant check.
+Don't check struct gpio_chip in gpio_chrdev_open().
 
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 9 +--------
- drivers/gpio/gpiolib-sysfs.h | 6 ++++--
- drivers/gpio/gpiolib.c       | 2 +-
- 3 files changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpio/gpiolib-cdev.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index cd553acf3055..8e6b09d8b559 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -1048,11 +1048,10 @@ int gpiochip_sysfs_register(struct gpio_device *gdev)
- 	return 0;
- }
- 
--void gpiochip_sysfs_unregister(struct gpio_device *gdev)
-+void gpiochip_sysfs_unregister(struct gpio_device *gdev, struct gpio_chip *chip)
- {
- 	struct gpiodev_data *data;
- 	struct gpio_desc *desc;
--	struct gpio_chip *chip;
- 
- 	scoped_guard(mutex, &sysfs_lock) {
- 		data = gdev_get_data(gdev);
-@@ -1066,12 +1065,6 @@ void gpiochip_sysfs_unregister(struct gpio_device *gdev)
- 		kfree(data);
- 	}
- 
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 24449bbe38c9..e42cfdb47885 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -2689,13 +2689,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 	struct gpio_device *gdev = container_of(inode->i_cdev,
+ 						struct gpio_device, chrdev);
+ 	struct gpio_chardev_data *cdev;
+-	int ret = -ENOMEM;
+-
 -	guard(srcu)(&gdev->srcu);
 -
--	chip = srcu_dereference(gdev->chip, &gdev->srcu);
--	if (!chip)
--		return;
--
- 	/* unregister gpiod class devices owned by sysfs */
- 	for_each_gpio_desc_with_flag(chip, desc, GPIOD_FLAG_SYSFS) {
- 		gpiod_unexport(desc);
-diff --git a/drivers/gpio/gpiolib-sysfs.h b/drivers/gpio/gpiolib-sysfs.h
-index b794b396d6a5..93debe8e118c 100644
---- a/drivers/gpio/gpiolib-sysfs.h
-+++ b/drivers/gpio/gpiolib-sysfs.h
-@@ -8,7 +8,8 @@ struct gpio_device;
- #ifdef CONFIG_GPIO_SYSFS
+-	/* Fail on open if the backing gpiochip is gone */
+-	if (!rcu_access_pointer(gdev->chip))
+-		return -ENODEV;
++	int ret;
  
- int gpiochip_sysfs_register(struct gpio_device *gdev);
--void gpiochip_sysfs_unregister(struct gpio_device *gdev);
-+void gpiochip_sysfs_unregister(struct gpio_device *gdev,
-+			       struct gpio_chip *chip);
- 
- #else
- 
-@@ -17,7 +18,8 @@ static inline int gpiochip_sysfs_register(struct gpio_device *gdev)
- 	return 0;
- }
- 
--static inline void gpiochip_sysfs_unregister(struct gpio_device *gdev)
-+static inline void gpiochip_sysfs_unregister(struct gpio_device *gdev,
-+					     struct gpio_chip *chip)
- {
- }
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 42da3bbc5ab8..c3e1465042c4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1286,7 +1286,7 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	struct gpio_device *gdev = gc->gpiodev;
- 
- 	/* FIXME: should the legacy sysfs handling be moved to gpio_device? */
--	gpiochip_sysfs_unregister(gdev);
-+	gpiochip_sysfs_unregister(gdev, gc);
- 	gpiochip_free_hogs(gc);
- 	gpiochip_free_remaining_irqs(gc);
- 
+ 	cdev = kzalloc(sizeof(*cdev), GFP_KERNEL);
+ 	if (!cdev)
 -- 
 2.52.0.457.g6b5491de43-goog
 
