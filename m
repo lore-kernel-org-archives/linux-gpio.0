@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC3281520;
-	Fri, 16 Jan 2026 08:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81412F1FFE;
+	Fri, 16 Jan 2026 08:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768551073; cv=none; b=bfVliZExOcveAA7SYeevDR5QKDoAv158ski9c73vruZZeDhOJlEqGXBuVSwH2fVzdvNRYhusnmdapW8T1WerokTTSElBW94zSUcjO+eovOkVm6PoRYtAXvzeziNz1BfPfh3lXIIWFt71QpOpvZN/P7YHrQpneRmjFF5XmVcWeXw=
+	t=1768551080; cv=none; b=QPfnGJgiLtiw0d5pmPx+31iH1nrcdp95H1Regc1Gpkq4EoE5DZ/NmraCM9vKAo+KevJLzPkfBSoW65HgdsPZId23rRFkMQi+5fBtIcWurTcp6yT5DDjR/6I2+nbBcypJlr2oa++UsglbGwduIcdJDN17OgtTa3wDYL4StAaHR70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768551073; c=relaxed/simple;
-	bh=69pG6w4Xdr2sPbaRa1R8SZLmAPZBUmeVdfDx/U98QV4=;
+	s=arc-20240116; t=1768551080; c=relaxed/simple;
+	bh=+pdsJdnw0e6CgNzg4q3pECB1UCPt4pkMgJeLtx5zHPM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aw2OtTvy+x5mSkGdrA23nzm5e2fRjcj/lzFFjcZ0R0oTHvErv4gVtcqBQyNkc5kk/Wa1yFREJ3CXAc6YbHPgAvJZT3LaPUfCgsza7ByQtO76z5Ci43Ro4a63NFwh7hSFtA7W6XBfeGM7wvI+m+tL/mHVzrflUyGuc5ktvP6bK+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDarakeb; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Cl0ZkKNIcppmVLJzgS/W4fuEXZ8semiiqCPUTxLVQDV/PplVLdem4UK5hjNjHp4OjfpjcWmMbZYwlugUegnDFZjjQinw7lPb0kOJ8YOSYxhLn35FXzB3167L6cNBxxxH+UyDMvPbN/BKe3PX/p8WL8WcUd+9Mx7VGac0FNVGnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3XUOT9x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDarakeb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7585C19423;
-	Fri, 16 Jan 2026 08:11:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3XUOT9x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB24C116C6;
+	Fri, 16 Jan 2026 08:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768551073;
-	bh=69pG6w4Xdr2sPbaRa1R8SZLmAPZBUmeVdfDx/U98QV4=;
+	s=k20201202; t=1768551079;
+	bh=+pdsJdnw0e6CgNzg4q3pECB1UCPt4pkMgJeLtx5zHPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NDarakebh7JLgCgBuxTphef3UWbCWlNQzQ677JzLKyz4LFH4dJIeFUUxIU+Tl/+Su
-	 +RVn/BFp31fO9p7/cvdAH6bO4FCfhTlPcxY0tPk3EZHpnxgssN7vdum2XuKdKFHRmU
-	 HTEE60r/KPCpXVPNkUsc5orEtDRPeMngqSJd3+lVZjTutTANy7TbJLoSgFiqLmSLmI
-	 pWJd+XvFyMBKgVf63S+1jqjs13YhF8O3zACCQe24nBYz7YLXG3b71h9mVidc/rKfa1
-	 oGvtpJ68xqsEvnTKJc1FaPyh/9jekXbOlHOt5NBKSS2WC5wsHBKwnjnxGB0+lF9sFe
-	 Wj4nhlBOoGCgQ==
+	b=D3XUOT9xkwKqkmdAffSWXldXJj0/+eo4FlbnGu9FSNVe23hh4Yci+1vufQ1v7M2Qf
+	 yMBri8mq3HgNjuPUkmu7CEeyx/28lMXjbzAOUspPGN2oo0yeXdcxPOJKessZWrIVdO
+	 RASo0ccdkF/obM744J79YH6y3oqKxwOB1CvMgdqf4mEo5ZhbqT8NRjj3CcNS6xnq9X
+	 h/2lsQsbbrLQytmCMTle/47vpetVTJDItPOA2d+BUYuS2VeJYlO7UA1oE0QKSHpZAR
+	 gmcMdlaYwnY/DgNJSaRJq31wKKrHF+/ovN2xZ23DBp9qtbxe0vgaJJY8ge6gmdZSdF
+	 BOsNZ2a7SB8yg==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Benson Leung <bleung@chromium.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,9 +47,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	Jason Gunthorpe <jgg@nvidia.com>,
 	linux-gpio@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH 02/23] gpiolib: cdev: Fix resource leaks on errors in gpiolib_cdev_register()
-Date: Fri, 16 Jan 2026 08:10:15 +0000
-Message-ID: <20260116081036.352286-3-tzungbi@kernel.org>
+Subject: [PATCH 04/23] gpiolib: Fix resource leaks on errors in lineinfo_changed_notify()
+Date: Fri, 16 Jan 2026 08:10:17 +0000
+Message-ID: <20260116081036.352286-5-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.52.0.457.g6b5491de43-goog
 In-Reply-To: <20260116081036.352286-1-tzungbi@kernel.org>
 References: <20260116081036.352286-1-tzungbi@kernel.org>
@@ -61,48 +61,39 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On error handling paths, gpiolib_cdev_register() doesn't free the
+On error handling paths, lineinfo_changed_notify() doesn't free the
 allocated resources which results leaks.  Fix it.
 
 Cc: stable@vger.kernel.org
-Fixes: 7b9b77a8bba9 ("gpiolib: add a per-gpio_device line state notification workqueue")
-Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
+Fixes: d4cd0902c156 ("gpio: cdev: make sure the cdev fd is still active before emitting events")
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-cdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 3735c9fe1502..ba1eae15852d 100644
+index ba1eae15852d..6196aab5ed74 100644
 --- a/drivers/gpio/gpiolib-cdev.c
 +++ b/drivers/gpio/gpiolib-cdev.c
-@@ -2797,16 +2797,23 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
+@@ -2549,7 +2549,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+ 	ctx = kzalloc(sizeof(*ctx), GFP_ATOMIC);
+ 	if (!ctx) {
+ 		pr_err("Failed to allocate memory for line info notification\n");
+-		return NOTIFY_DONE;
++		goto err_put_fp;
+ 	}
  
- 	ret = cdev_device_add(&gdev->chrdev, &gdev->dev);
- 	if (ret)
--		return ret;
-+		goto err_free_workqueue;
+ 	ctx->chg.event_type = action;
+@@ -2563,6 +2563,9 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+ 	queue_work(ctx->gdev->line_state_wq, &ctx->work);
  
- 	guard(srcu)(&gdev->srcu);
- 	gc = srcu_dereference(gdev->chip, &gdev->srcu);
--	if (!gc)
--		return -ENODEV;
-+	if (!gc) {
-+		ret = -ENODEV;
-+		goto err_free_cdev;
-+	}
- 
- 	gpiochip_dbg(gc, "added GPIO chardev (%d:%d)\n", MAJOR(devt), gdev->id);
- 
- 	return 0;
-+err_free_cdev:
-+	cdev_device_del(&gdev->chrdev, &gdev->dev);
-+err_free_workqueue:
-+	destroy_workqueue(gdev->line_state_wq);
-+	return ret;
+ 	return NOTIFY_OK;
++err_put_fp:
++	fput(fp);
++	return NOTIFY_DONE;
  }
  
- void gpiolib_cdev_unregister(struct gpio_device *gdev)
+ static int gpio_device_unregistered_notify(struct notifier_block *nb,
 -- 
 2.52.0.457.g6b5491de43-goog
 
