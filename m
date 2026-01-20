@@ -1,91 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAF53ECBE0
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2026 12:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0293D3CF4;
+	Tue, 20 Jan 2026 12:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768910937; cv=none; b=aZkERpr2xTMDsbL+j5emNptiCeLUuLId6KiKkKQc+9mFg2RpiAvB1t7frMHXSld6I86vwjqoWNIDGBOFPML2+8Gmue80iEA8UO8uceRb0LT5Y+3MP7ZdiIobk6X7eZ5ntDPgXR62XKN6TnKjHgdR64UFeWcoYL5Kr1jfu+9sVv4=
+	t=1768911184; cv=none; b=nzN6vQWlIKt+QeK/FS33TVnaFaN7iQpxHQXVxJiiGWUzabRHayoHPlo3vd3yUbahB7B7vLMJNlbaZht8LrPMR/yJX4iuwPUVHteQMLQfgk/sXoJvWLQaA3/f6J3wW//QdkPFvO9cG4/Map9O3qUlwj8DjErIjNe4B29OBzD5yZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768910937; c=relaxed/simple;
-	bh=wWduyM9RlO+S4Fnf/tbYPskuyvgMrxmnLzQbsy0Fsm4=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SO9rz7t6RawQixOVxGcXgwNHyZTv062enCIUXj+4Wlb7h4bZ0ID3Ihn37On/UWnhH2krUG+8Zq8fr5ziXCovsPaRypOGaH6X2naqSl8R6msH9UgZBK7WZntiTviRIIH5dhzaTgioZBnUqrhb4hXshkuRc+RppR3HJusAGAYG6ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCswIA6y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768911184; c=relaxed/simple;
+	bh=cQavtXRfI3u4KztW86vPo3O2a8HplyqLeGiawtgz3xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyb7d/ytf4MXT7sTEEOoGebnS+qMTkffTzMh4XhpNMpXzco9U1atmTBNgSALwgDELCn2IUXl32C5JlI3+nPSugyGxBTK4qeHx66y7Rxr8rlt4uN4tWF4MiCoiNB3DWLnvRtWIc7CJzDQM3ekhzaU10bT6auDUlJDs4zlvpO/lw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGZdCx7N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCswIA6y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C39C16AAE
-	for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2026 12:08:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGZdCx7N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3230C16AAE;
+	Tue, 20 Jan 2026 12:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768910937;
-	bh=wWduyM9RlO+S4Fnf/tbYPskuyvgMrxmnLzQbsy0Fsm4=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=DCswIA6yG5bSVLokevhtRKzOiDjk5PmG+p/kcPu68Rgj2ZJ+Uus1Aod6ukvmY5VyB
-	 VUWDFQrfNra2zlmB/N89m03P0Xr688h7w60rmcU1dTYpfCSO3yeEJyyWc/c6CMX9db
-	 T6EKXnU3IYBTh0JYdRYi7pD+9JIWGilHKotlI5d2DbVZV6xWaE6YKZXms9igmLbiGJ
-	 OWqU7Mq6UHNHpesG/J+TJDacagdK74huWY3b+1AcsSgC79VWlyp2wVnJjo7mV6xGzE
-	 i4TPA5avHk7XmHYIlCEroDCZV2Z/HkYSKr+3PZCVhq0a//Uvc/PhKaHxrZebzfcf2w
-	 F+cDN5zEB6qbA==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-383153e06d6so43584051fa.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jan 2026 04:08:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX9KRuhPDj2p9xPnfyhUGBcn1FLXK1YDSXxS884ngm6W1Ne2pbxvGi5oRLnwdRHkRGDnEdtzxnmISe/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEELsnOcMHN++0OMIrmG4fYj9bZOvTc1QKU9n0NoP1PiGmOdGT
-	Tur/+Xe+Nvepecztef8k1ImyBtr2nAKbwmCVj2Ob4ZfiF5WW2APw0zoXv5gQQOaPfy2JqLPEua7
-	yryqyjqYwUFSvfPagLtkKEBPGOVOTGVhXAEdmizBgCg==
-X-Received: by 2002:a05:6512:2526:b0:59b:6853:f085 with SMTP id
- 2adb3069b0e04-59dc8f2348fmr701250e87.16.1768910935983; Tue, 20 Jan 2026
- 04:08:55 -0800 (PST)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Jan 2026 07:08:54 -0500
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 20 Jan 2026 07:08:54 -0500
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260120115923.3463866-7-khristineandreea.barbulescu@oss.nxp.com>
+	s=k20201202; t=1768911184;
+	bh=cQavtXRfI3u4KztW86vPo3O2a8HplyqLeGiawtgz3xs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IGZdCx7N6W3P6BdiheOz8GnY8jt6HJSaxh0falyH99QYGzA61M4PlGpMxT2ZiUfwD
+	 jB0Oc/Xd2M0bEkD0SGna7iE7qFSjvhqr8A3z9Bvn76h19bIA+C8L18+ENT7+b2c+Wy
+	 ScRYuQRkYlETHyt9jQ4FvwURGJ7BFio3zwcFypdr+nAkIeLPrg/C19Wefc39feodP6
+	 Rvsv/cHZrtFdpV7jfs4HQBZxnWmuMRwW76DgtzPo0EMDQcVhFVyXuSiCkgsK57+JxJ
+	 yPguRHbRN3DUa994puFNEBEc4qNgrYnDfVqDaCaY7Gn9hTAr+3RzeUNij4seaFi9qP
+	 5yuwSUAzJedIg==
+Message-ID: <85579870-370a-4bbf-94d5-6e70d3bdc944@kernel.org>
+Date: Tue, 20 Jan 2026 13:12:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120115923.3463866-1-khristineandreea.barbulescu@oss.nxp.com> <20260120115923.3463866-7-khristineandreea.barbulescu@oss.nxp.com>
-Date: Tue, 20 Jan 2026 07:08:54 -0500
-X-Gmail-Original-Message-ID: <CAMRc=McfjhfLwDR-wK=-WrC0yMZ3nt1YjAJ5RyQfsrgk1o6raA@mail.gmail.com>
-X-Gm-Features: AZwV_QisPQ-QjOl5tcjlAYHwC875PPGQpfp236P6QoGB-8mZ48tjgJMnK8XIV-Y
-Message-ID: <CAMRc=McfjhfLwDR-wK=-WrC0yMZ3nt1YjAJ5RyQfsrgk1o6raA@mail.gmail.com>
-Subject: Re: [PATCH v8 06/10] pinctrl: s32g2: change the driver to also be
- probed as an MFD cell
-To: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
-Cc: Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>, devicetree@vger.kernel.org, 
-	Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	"Vincent Guittot devicetree @ vger . kernel . org" <vincent.guittot@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>, 
-	Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] Add compatible strings for AST2700 pinctrl to the
+ SCU binding.
+To: Billy Tsai <billy_tsai@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, bmc-sw@aspeedtech.com
+References: <20260120-upstream_pinctrl-v3-0-868fbf8413b5@aspeedtech.com>
+ <20260120-upstream_pinctrl-v3-1-868fbf8413b5@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260120-upstream_pinctrl-v3-1-868fbf8413b5@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Jan 2026 12:59:18 +0100, Khristine Andreea Barbulescu
-<khristineandreea.barbulescu@oss.nxp.com> said:
-> From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
->
-> The old pinctrl bindings for SIUL2 are deprecated by a previous commit.
-> The new bindings for the SIUL2 represent it as an MFD device:
-> - one cell for combined pinctrl&GPIO
-> - two cella acting as syscon providers for SoC registers access
->
-> This commit allows the existing driver to also be probed as an MFD cell.
-> The changes only impact the way the driver initializes the regmaps for
-> accessing MSCR and IMCR registers.
->
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> Signed-off-by: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
-> ---
+On 20/01/2026 12:43, Billy Tsai wrote:
+> AST2700 consists of two interconnected SoC instances. Each SoC has
+> its own pinctrl register block, which needs to be described
+> independently in the device tree.
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+You lost subject.
+
+
+
+Best regards,
+Krzysztof
