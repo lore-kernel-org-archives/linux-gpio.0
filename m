@@ -1,47 +1,47 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011045.outbound.protection.outlook.com [40.107.130.45])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013071.outbound.protection.outlook.com [40.107.159.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDFB427A15;
-	Tue, 20 Jan 2026 11:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E0428829;
+	Tue, 20 Jan 2026 11:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768910388; cv=fail; b=hjai43ICrWPJDLvD7pavZGZBotKQ5Fha549hFXcT9bxtZNNQSviU+QZT8bIFG+CtNesvCzfDXa4fDH1TDN7CjAQL0UYqPvni2DRIO4LIvWF32RkcD1xFhzpg2MAoMXnZh0B9OSTd2rl6l5zd5yf/hr5Vbpq8O9y0MGTNzXismPc=
+	t=1768910393; cv=fail; b=RhSMt+dWHAgOu7IQQb5baYuPVYU5VL4N7fgm6h9tsBxlCjOfeO3qiJDwRt4pvw59XBTOM/yVNZ/4mLc/1+kh+u893FfNGA4ytJmZrpY5APri/H3dLbXhjVSAp98ErKhl0GbME6I6DsonVdudB7cBoG67hERd/J4xL4krrER64n4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768910388; c=relaxed/simple;
-	bh=D+gs2KKKg9KqFLGTh/Jvke3pnSJaMoMamZhoxZZnlA4=;
+	s=arc-20240116; t=1768910393; c=relaxed/simple;
+	bh=2mM6Fc/Hsi887yj4xpSIgU5oeqgNdEwJmaALTkai1Ng=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AF6V0G34nvklAVcHcN56Y50pZG6jrZHxXQrkfAZGkW7Qyp1dgDmjUocumQXJ2FAvqond9TteJAnoXI6AmMlbkFpDOtbvVoV1gHp1XfpPK4+0S5RrUZ8k5/eMlEZBTuIvCY6xh2bu680nuEHfKYZahcIdTpL60ACTjECBTAhDfVQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=WQuSVlIf; arc=fail smtp.client-ip=40.107.130.45
+	 Content-Type:MIME-Version; b=mg5Q3iDmRpOv8YQ7hPdXKtVXjZVYmEaqYgWWTF+pg4ji5byCTBqpXNJXPYW0xknQi9L4Rv6HHJXD/TM5PUJmeqXHhUr1DqDsp4eO3/fwER9HRwjFCiKMFmYH2+PxbEOXc83hfOn04l/M2/0QDrrzPIk6jXvEnQbF5kAzBXxKM6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=IM0AiF5n; arc=fail smtp.client-ip=40.107.159.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="WQuSVlIf"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="IM0AiF5n"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wqXGp/lqI21gh/wfdnkVMJyZ6rnBzNtKoOgEM5PmremCuZa0dG0rjJPjUbVGBWeep5G10dR52Ov8uxzwIMwJd5S5hkmOMSaDP0rLTzTDthYg3/7Ia9s830j5usukJwmBywwbtLGcbdBXgyB4+05oZgWioOUBGjE0/o30Bfzv5sk/JYHB4gkfWZ7FcxKyyeaPXZ8+jArB4xSIyDTdiuiBwvKE4ne7MdeEaQw7CHoR525mn2EkcYFRXD+ij3JccIsGzggK+RLpG1ejXE3KA1E6DQpDRBB4tmq6XCIXyziZVE1SZm2rWG/Q4PZcuzI928d+1rFgMWq0M3Pb9xEdkJkFaQ==
+ b=Qvnin8VLDXmD3p19mIr9uhSpbzuhyUX2cw60+doC9TEW4iQMSVIo65fIqxWX2XU0XMPIeI6EAn+ETF99PPKlr/IlwT7TCvdrXAmwGGPWl3Vehc9MLgh/wZEb6JCM5J6m/mbCxm2bedl/FPvE8GJRQix7736ga7EDExVBiEBPgkWbwU1Hb0PEYQh6I1L4aBfZ6I9N+S7Jo4xp3vH9sRfRgHV1UEZ/XGUHes87+9s/D5Wmeg0Jg9XWKHyWlk/LMVPD7zF1VYA1lF60A6hsHP+3QoqXY0CrtrWVs9aM+zg6lVBWwaQCfrLoWQL5UJ4Q7wSou8O6Hr8bzEj5Wc1bOUmweQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QkHBKpjEpKe85aGE/TqLRkuRrpIcPOt2InecexWcYos=;
- b=ZK5W2mYbhhmqrlyZN7AzlOm3yN+dxnWydBofBAlrAcUZBNsGSdSS07s/VbuEyv8eB0Pf0EPlbUlPSJHlrohfkwsjrvoBzyXCHj6ZNxksPAAiTMEAP28fxQizqd+h6/vFu/s6GQNTN2aF7dTg+MGt0NNGHCQYFxrD7S4eoslnpm/avvJECruYty+GHTq2NCmw157uOy8dAKtSh3qEYI5RZcalywM78EzjBldDFxcrzboRfi9/6U5fJ8Lw1x6oin7dR7r4uMy2FOLanEw/5GThvoHSlnu0WqTn8i7nZcKpxXrPoxq+eS94Pc8bk8yyFG46hYv7aA3dGxEgq7omshe+nQ==
+ bh=RurEiCE0tuQxYHZNGrVLWSEbKMMd88cSzOXX6V3NHDQ=;
+ b=jHuoM+n5u3jVffAXZpApD5W9AhTRnlkAybSL0q9ivT5NL6e+gyP5yEFwkkZNYEWuYBjarLyTRE1cSzwMj5H9E5UXz2XFjHVaeLZ+Fmqma5pHSaUoUrW+CuvNBE28ytpF815Qc83Tw5cr6cPxRfevVxIFumNCW82QFTcGeGAxNFCkVYd6Ge5PEzeeHOhoFtd1JqKbZirsY3Wzle+HvPxkSHMoFaAYulFuKg7GMAfo81Dx/lQ0tdJVjM0ZT/VHYk8rYZCRcLOu36f7/r5QzRhh9NdVE6Mu11RkQgqHQdjOAxmaWqf0vLQDDhdj609voh6Kvt7Q4G30uAfJtZugpWZkyA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QkHBKpjEpKe85aGE/TqLRkuRrpIcPOt2InecexWcYos=;
- b=WQuSVlIfwhe1YHRZarMK5/T3HSIl6skvBtxTc/68krHsTv3XVcintqoEASefC0lGUVn1nI4L1EiHeTyY8NzKF0trgd+NJiDwkUGGrP3P/zrvnQgLXAhZ355Wji7vEz3DYIYLUqW/MYauVnuqjv2tFAPCQ73CxA05/cW3LundWEEag5uU5unA/KMmuCeTeljzuxH/tWlg74NCbXzq4tT4uXR1UrX0K3qWapYiv0Mvx94gq3mTx1wes/t/p0oo+YHw1rCJf/76oNaO60qwq9oVilx2IbW3C61jCUpm6wliwfVVp2P9BWQee++ScqQmXll0Y1qGA2xSdocGfw+pBHQflA==
+ bh=RurEiCE0tuQxYHZNGrVLWSEbKMMd88cSzOXX6V3NHDQ=;
+ b=IM0AiF5nbfSm/0rSeHeB5GBN646MmPm0HR5f8gcLCGk3Aksin/wWg/A7VDE8a2iGN2+JIPKLVOxit9oQZMdaTPY16JGltKVHRaBKzkdEs//G/fwT+qNUuyDKCJCYueZuZ6dAhC5FKeXTpqwzS1p95IUKWirO0vF9l6dlMfj6ai9xVsg1G6lGVqAVrC6GiIqa2ZvN6vulVxabfV1PE7deWA4e6hkWm+GiS43KvVaqMNrb8B5RRPWfcIxijR34Hy29I6M4w4LiqLKU2a2JO8BphMKB/MHkG/i1UDD10xE2FX/I8g79kyubRGViag0BtaETKDETR9nAdWhm0a8C5vtdhw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from PAXPR04MB8190.eurprd04.prod.outlook.com (2603:10a6:102:1bf::23)
- by PA1PR04MB10769.eurprd04.prod.outlook.com (2603:10a6:102:488::20) with
+ by PAWPR04MB9717.eurprd04.prod.outlook.com (2603:10a6:102:380::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
- 2026 11:59:41 +0000
+ 2026 11:59:45 +0000
 Received: from PAXPR04MB8190.eurprd04.prod.outlook.com
  ([fe80::6720:8c00:7732:fc42]) by PAXPR04MB8190.eurprd04.prod.outlook.com
  ([fe80::6720:8c00:7732:fc42%7]) with mapi id 15.20.9520.011; Tue, 20 Jan 2026
- 11:59:41 +0000
+ 11:59:45 +0000
 From: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -72,16 +72,16 @@ Cc: Alberto Ruiz <aruizrui@redhat.com>,
 	NXP S32 Linux Team <s32@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	"Vincent Guittot devicetree @ vger . kernel . org" <vincent.guittot@linaro.org>
-Subject: [PATCH v8 06/10] pinctrl: s32g2: change the driver to also be probed as an MFD cell
-Date: Tue, 20 Jan 2026 13:59:18 +0200
-Message-ID: <20260120115923.3463866-7-khristineandreea.barbulescu@oss.nxp.com>
+Subject: [PATCH v8 08/10] pinctrl: s32cc: implement GPIO functionality
+Date: Tue, 20 Jan 2026 13:59:20 +0200
+Message-ID: <20260120115923.3463866-9-khristineandreea.barbulescu@oss.nxp.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260120115923.3463866-1-khristineandreea.barbulescu@oss.nxp.com>
 References: <20260120115923.3463866-1-khristineandreea.barbulescu@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0449.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c6::9) To PAXPR04MB8190.eurprd04.prod.outlook.com
+X-ClientProxiedBy: AM9P250CA0025.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21c::30) To PAXPR04MB8190.eurprd04.prod.outlook.com
  (2603:10a6:102:1bf::23)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -91,416 +91,591 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8190:EE_|PA1PR04MB10769:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a5a4a7f-a046-4a5b-52ce-08de581b64a4
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8190:EE_|PAWPR04MB9717:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a5bdaa4-4edb-4d60-5023-08de581b6750
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|376014|1800799024|366016|921020;
+	BCL:0;ARA:13230040|19092799006|7416014|1800799024|376014|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NsdK+kpD+WeWo9N+KxTuAsjVQDeQseauoUqxMs17bNw7WC3Xbd2E6G+vpQPf?=
- =?us-ascii?Q?7M8cliTKig5DsfTATT3PP9OifWKlZFoeWys/9f491b/PGX7MrWJtxVvBXwhM?=
- =?us-ascii?Q?zgGQCUWnASdX4zVoNR7dekS6v937pI4Ri4Rn1VKxk3JZcnzDvY8kOp2+vGwq?=
- =?us-ascii?Q?SM9eM/2MzZYlRIXOjZnGVXp8qGMT5VqkUFFejTtXkSuzm1T4gQuaZLMJ+Hkz?=
- =?us-ascii?Q?xiNGjkzINkGQFXspLDaekSiy1Nk50YGTa+5o8veFrUO+nwC2Gr+hizYNRj9n?=
- =?us-ascii?Q?F4wwuyEzOGnuJShFCnpqVDa2kHO5cVEVA00hBDEpns4gkWRvB/ORFj7CXsPB?=
- =?us-ascii?Q?LiyfubY2fBBD4PThIDJmZmKGHFThxKqPsKc3PMhdGfnacdlBIve2tNuSghbg?=
- =?us-ascii?Q?qWn23vXHvE3Ct5WbqpLJJQlVd1RBmBegs6pyfkaFsrGh35KTSZWkKvaTHR0L?=
- =?us-ascii?Q?z8E/Rop/l0CCZKNpM5PYNc2s2w6TCccVUKCp/amzu6G0Kv6rbvhX6nZEYE4W?=
- =?us-ascii?Q?m9LveWw/oIf21o5RsA2p3/uU+Tz8QuOEcutvDilAhvVyl87i00IFhfOS+h5E?=
- =?us-ascii?Q?qwPAAXPaNpNbChaxjQr6HblTCxwtKD6oTkGtMgb8WCnoy4UgkX3/C+qPfgUn?=
- =?us-ascii?Q?XNdlS0fCeUytnVRfge85asqI244EMAfLMjiGHuGWoZTuN6GfGmHwDrlD1d/H?=
- =?us-ascii?Q?qCuGSuxrGss8dyROGoW94a1K0bV8FF07WFODfbSs5SGjampVIj1R2k1ET3jc?=
- =?us-ascii?Q?1/4G0yjuvYn4872h0mi/HTLeh1/UpMQDh8pF5JhHD6HhloN6UlqmqP5UD0pE?=
- =?us-ascii?Q?loAw7jWeqED0qbAslQgNJIC4bNHZo1ar/dZk69WhZAY8zPKxvUNrJx1P9DzR?=
- =?us-ascii?Q?3VYY3N2smqAEDzWJhSYa57uuy5DgniYlujR0Ueu7z0igAU59r1efDWKx836H?=
- =?us-ascii?Q?uAF/x4njT8kPbYnaXiUIVdvOU8Wn9w+bE2gMfn/2+XlSngE5wyE38wf6LKHl?=
- =?us-ascii?Q?VFAvjX/t5MUQxDlX6v0pYIAUzpphHRDdWUNszBiOLqMfqaLeVGer17QOpVM+?=
- =?us-ascii?Q?uOJYwyoo1qEq3bzjJBP7HnqUzMBpa4qdC2U2smnCIvcZWyLa01U5a1dhNHsQ?=
- =?us-ascii?Q?NXn3PTrguhEXPELoW1OA0SglmHJ9npYgRRORJ30RYo9db1SUb5V//IHG+Yds?=
- =?us-ascii?Q?n81Ids76Gu4h1BDTRiTq+57LnTxwVF3IhkMDmhxMjqMwcEM+rDzVQpWxZYkN?=
- =?us-ascii?Q?HoKIBt8xKkwfILiQQjgE3v8XB1vYbH9FS2BFv+JUIQNqVVMaCHOUjWZNnLBw?=
- =?us-ascii?Q?BrvBql7+3WAsogUtVH+FEunIs9OF8cavkV2qyRznp5VlATMb60eCXQVgMmRg?=
- =?us-ascii?Q?7znFvZDf9M8LPsPEn2pOSSttnwWwAssTxyN6vRDq0S9K+Lzqyv2mi9FSF3uh?=
- =?us-ascii?Q?BKScSyVRsEyrIIHW3bXx6vmNp1BQdxMLLbYzvqcVU52LqM5CAKnR1LslDpgD?=
- =?us-ascii?Q?CdbiRFHzn3QI9FrgkMLRbILEwPm2BdMuUTSD5zxPPeKcUGDaEbBrnpiMvGD1?=
- =?us-ascii?Q?dG9d0WRPvydsD2jkCF0IPTT3Oht0sQE1404IuTI9kIP2XWitgrsd5QINcLxe?=
- =?us-ascii?Q?QA=3D=3D?=
+	=?utf-8?B?TGhFQktQOXRBMmxpUzVNVC9wQzdtUFVpNFBDUkdpNW1zajUwY3htaWZreWlu?=
+ =?utf-8?B?b21lR0s4d0NOcnlhWFRTVGJoTGJ4QTROWGNsc0QwNHVKK3pYV1hMYUlMNjlO?=
+ =?utf-8?B?N2RyT0tudHhNNFpaWEJiSVVHZnBuWTRNTlpldkhzMUVnL2pHMGpSUzF0Kzls?=
+ =?utf-8?B?S2l5Q1dNYkdXeGFLUTNWZk9uSTdnYzFwMXl3T3FXRWd4S0Fjc0REU3hjRWMz?=
+ =?utf-8?B?ZjdUeU1TU0RIVUdZTEV0YU5MUmFtQUdaN1R4d3NZZFJxZ2xBc0lDVGRnY1BT?=
+ =?utf-8?B?cEZPcHhuOTd3QjRYdWluKzl0dWlQdHArRnR2Nks3ekVSaDN1cCt5V1dVUFJt?=
+ =?utf-8?B?ZlZnb1BjcEgrYzF3cm9RNmlzYTdtQVdIQkovTzRzSkVCYXVRMUg5b2FOSmVn?=
+ =?utf-8?B?cDBGZ2t2RW1YTDlLalpvUnkyVzB5WXRrWHR5Q0tLRnVnRFB6RW1pQ25EVkZs?=
+ =?utf-8?B?a3IwdzZkYnRXT3dUSzNrdm5FalNVTVZ4Yjh5bnRCNkJ6T21LckRld2o0UGRl?=
+ =?utf-8?B?dDFlTXJicitJZkRSTGVMWjl3T1E0Unl4WWZZdHRaNW9zM3EzYVFYc1FzdGtI?=
+ =?utf-8?B?Nm1xYWVqZEV3STh3RWtOU3ArVVBFcXp1ZVk1aEJ4VlNOeFloYm4vNW84L1dH?=
+ =?utf-8?B?N0l5NzJINDZWZEx6d2F5ZytMWkkwWklwVm5xWHRmSjNabWdxZzJjeTV5aTNN?=
+ =?utf-8?B?ZTZ2WFJEa3ZLOWVHS3JJa1RuU1EvM2h5QmpUUmxWS2NMT1B4VldVekorTzhs?=
+ =?utf-8?B?NGFlaDJPRXM3Q0l4SmJJREFlMTZ5bmNCR1c4azdsdVJrbms2MTUwV2RnSUJp?=
+ =?utf-8?B?VGdjblZNbnlWdkE4YkFJMHVXR1BEOEtSc2w2elZTejNxTUl4MzYzWmhzMlhX?=
+ =?utf-8?B?WTV2QnptcFgwNVM5VThxclg5MmRFNWtaeWN4VGdubVVHRWpNUXZrblBGM2RJ?=
+ =?utf-8?B?L0o2V1FrV25kalMraGhSSUZhRVJxKzVOWkJ3c2xCUEJuNk54RTFQUDllYUNk?=
+ =?utf-8?B?eVdRdG1WMWsxZzB3bm5qY1pUVVYwaFlkUFpHYUNySVJzbkRzY2JTVk9YQ1RW?=
+ =?utf-8?B?THlNYTV5b24rcVRNWnpsdXB0bk15MDFNMThrcElSWEdQcmNOenBVclJnYUdL?=
+ =?utf-8?B?QjZlWTAxSE03ZElkUC9VWTVFUEgvVGJoUEQzZmFUS1N0TVhBVURXbVNDcys5?=
+ =?utf-8?B?b2VmS1d2c3paOVl3ZmNKYzhlYnBRMm04RTFFSGZTVWdUV3lnUzdVQmc0RTdC?=
+ =?utf-8?B?Q2E4ZzVRSGZVM1VURVREYzEzT095OEVORjhKUDNmem1lNWMxVFVOR3pmd3lW?=
+ =?utf-8?B?YjZNZXp4VDQyenhjQ05CR1R6d3FKV2xCb3krMnZHK3pLaEZlSVNGdFNjT1FW?=
+ =?utf-8?B?cVNONTRLQ2txS01vem9VZ1N0WUlXek5iRmpGYlh0S3A2bmg3ejJOUG5DNW5F?=
+ =?utf-8?B?Y1N1MkRDUmJwMXhPUHA5S091OHEyYm43ZFZUcjJ1ZTdMRGhMOGtNVzhwWnFP?=
+ =?utf-8?B?NGxpZVRPZHYyUTd5QytFbUZzbGtOZDNmT0YzQno0RE9YQXdRZmN1Smw5Rlc0?=
+ =?utf-8?B?cWR2bHpPUDdQODZ2WW4yNXRLeUpucW1WZDhVYjByRGhOc1RRQ2grTGZNRGpK?=
+ =?utf-8?B?M3RTc3lRbk92TUtXZ3dqc2p4U0g2NktScEJFdW9ZMFFtR01vbGg0Q2JDaTBB?=
+ =?utf-8?B?WWlBZ1FkbFJCVm81cWNnTFh1allsZ1FJVmhEbUcvT3d3SDVwK0Zyb0JhcUI2?=
+ =?utf-8?B?OTFwcVg2elBtVDhUQkxNbUZldXNnbTQwQ05ZYlp1WGlYUkhwYW5GVnRNclNY?=
+ =?utf-8?B?Rm5pV0JhdnhXNWlhbWdidkIwK1dEU0diU0ZZQnVuTTZ2QmJrZWI2VE1DT2ly?=
+ =?utf-8?B?Y0R5YzFJNG5WWGdNL3c0cW10Z0E3WHZmNUV6SVVaTzl1OGpCYXFodFNIK09i?=
+ =?utf-8?B?K2Z1VFhYQzNDc2M1WklPQk5tOFVBWG1Oc2NNeFcvQ1hGNlBuUEk3T3NFN215?=
+ =?utf-8?B?OGV1b1hWOFZFVk9FOHdTK0c1MmxNWlI1N2t0clp6QlhlbzQ1akFPT3UrMjNB?=
+ =?utf-8?B?TmdlY09QRkdpTmtJTTJuYW5KSVhtMXVheEtDQVZkZlZxaWRRbXBSbGRvRXZS?=
+ =?utf-8?B?VW0yc0NKb25LdmdiSlVjK2k4bXJ5aUFUVU12ZWFORjNQcWhXNzFOK2o5ZFNV?=
+ =?utf-8?B?Smc9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8190.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8190.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JEUpfvA7Gn4P3Uz1izKW2eWP3AZXgcItZXCXcQ/Xs1ZX5/II/Xrq8x15xJcC?=
- =?us-ascii?Q?YPl6kRo3DUs+/SsViHUixmK0c3stb9ma/0R1VaJCFfGdTU7aqLCSJeBuFvGY?=
- =?us-ascii?Q?P3SwQqLjxSMXR9FO6au93tF6/VzVdYbHOCIa9U2Whme2UqR8E1Vmffsu1uT7?=
- =?us-ascii?Q?TXFf7ys2zrB3q09AOnqAAnwGBVUaIgOMvgvkMtsVc7RapO5+5KeQdXvoJBvI?=
- =?us-ascii?Q?lGhFfOqa8twvIIyqapQS7xM0yBiFjJfose7a6HdQJ68i1UFoSKoWHwIm7H3D?=
- =?us-ascii?Q?ibvI1x0ZRaJ5uSxDBqI4Np0ufeJBp4EcZSsQBevCq8Qp6Wasxt15j0adxQ11?=
- =?us-ascii?Q?Axa5VNzicgjMGaOmpWzCM1LxcLOKc6SyIPf4BJqA0eLuCCjoqX7l3tVM+s95?=
- =?us-ascii?Q?U6cCAW6Hk60EXCu4FPYgwIsSEMXbDAVD1qWcvrg+HpxNdspLhp7foxab4ILH?=
- =?us-ascii?Q?zOUmMcx4PmBPYR6WnyAA6QZydxby9qxXSfiXWJrh5y9oLu2LPbpSMiS2I82X?=
- =?us-ascii?Q?5orbFpBh/Vj26J9ZJ3Yewyqhrf8ko8Jic7lt4aNgBTiXFx6uhkge3RZ7bGER?=
- =?us-ascii?Q?StbaTY6uBTZRnJf2m6s/OuXWNJosJIdwfDjj1280oInIJMI8VP6LRY5NvPRe?=
- =?us-ascii?Q?PH+CRHyguBWWC+dHRntbk+iWI23evwl8e7anlDqosqs2SIHHWS88fL+zqCvl?=
- =?us-ascii?Q?hzOTg7XhjjIZFIxvub/0EWS37T8P5a6yACtjHvdkMVIXUjUkLOT8YsqvUezF?=
- =?us-ascii?Q?OGefCTz6C3P+5RxUW4N+1zqao52fNpTyvkGFnFewwEgDg12Bfqwx6SsYAHdO?=
- =?us-ascii?Q?9YTzV7O1nIbuwoVwYFudM4v4JEbbdofpAZllsgHSdBMAOgFS7DWV6Xu7801x?=
- =?us-ascii?Q?2lvem94ed0Pjt9mno8g/fK/ohTaLr1qhYVhFDGt7v4peYcjNovmiKxyInzqe?=
- =?us-ascii?Q?4SX2qom1hLFfy47Lk/lzbALRw2O8VZ6dc6LOW1hAJfO7hCPrWySY00LyYhVe?=
- =?us-ascii?Q?C0+ZVxD+5VJphYJliDTkDuzjI1qzaXAogPA50OgUMR5b3TGqZpe8NMN8kqdx?=
- =?us-ascii?Q?Eww9cqeQKlIYhbCAkAnoNQDhoH7wdOARiwpj6R+ZmI0M1GVb7GU+3WNdBEmJ?=
- =?us-ascii?Q?ChyPXBw1Ka0HM99FkqHuokWaa1OvsOIAwBfpdgzUjw25OkDnjPQrxCIwS/ha?=
- =?us-ascii?Q?X1YMKxpmMZa2ycDt1oKoTiZ13SIGHhfYkun3rx7mPBq70jxWZME5Jt1dLTvE?=
- =?us-ascii?Q?upe0U1eFgVuCSuHR9JQQRs0udtgvsGY0HZ//VUrfI8ZVI74Ilz11zR+/arR4?=
- =?us-ascii?Q?oPHUaRQMLFZ9N0Zv+VE437t5k7cSZLCWtc76Kf7iHkQvhIMWWoeuxI04+zSM?=
- =?us-ascii?Q?6sEDe998Dygsu6YbHH0ZbqvATd0+Rk0R/WQejMMVOdJCPp6QG3aeqlD5ip49?=
- =?us-ascii?Q?OjLeXOHNpd23elIN/7E3+rscFSeuagqhDiP2LvSiskYqs64QR8c0wXokvEpp?=
- =?us-ascii?Q?6YvHMpDeJzhrJQPR2YmE8BqYpiKfUU1//87e57J7fY9XzG4G0bmbkFd7MDRs?=
- =?us-ascii?Q?Lbg03lY3BL3BMG9n5XVN63W/YQgd4Z9fyCGGHQAIW2QAdgKCNyTCB52BZZzd?=
- =?us-ascii?Q?yxgGrMddiTVRv+EV0ndYXnx+JrP7dHwos9Q4+BSKQjlgMMA+5lkVUKCyHlJc?=
- =?us-ascii?Q?UhlrTqcGdprr8JTv186mkyaaOCiUBuzQZBSL680c6AVUdMFlHqnubm/C+75A?=
- =?us-ascii?Q?Cw6HJD2/OyzDxpvUtlV1wXkEoF0FY0dXLr/YyvO41GBWX7k0dQ+t?=
+	=?utf-8?B?Y0JUR1hiQ21PdWh6T1NsbUlXV2FVb3JXTkdmZHJnM1JmaVFIN0JhUGlaZzFT?=
+ =?utf-8?B?bHV6SDdzWFltMWlKUG5PUEZpT0NIalpTbGNVa2kxQm81Zi9sNTFsa0prczZU?=
+ =?utf-8?B?S3FLK2NEYldkODJhaUUzTnlrR05jNmQ5aDBwYldJaW1FQlk4VkZBM3hXWjBU?=
+ =?utf-8?B?ZFhmTGhRYW9WbGxTR2NVWHdiQTFOOEVHeTVjTi94ZzVtNXJzT0JrcEF0QmVC?=
+ =?utf-8?B?UVJZZm1pZ3ZIckFRNVFEUDFkNFdBODVKOGVWbkVBczJnNGdTeDFmOGRNbEpJ?=
+ =?utf-8?B?T3lqODBRYTkwVEt2UkZDVDRselJDQ3hpc0lIWGNZUmdTVmdyZjZSb20rV0ds?=
+ =?utf-8?B?TzZMVVFWZ3VCV09OMDVvTCtqV3oxTkk1UjNnck12Qm8wMXlSbHk5ajBGRGJC?=
+ =?utf-8?B?UkFTcXRubzFicmVTWk8za2ozSUxKcXYxRU9vSXJWcEEzbytxekhWenVUclBM?=
+ =?utf-8?B?c0dUcnVaeHpoN1FBKzZTKzNQUHNUVlQ3bEVmTlVGQUVLYjhzb3RweS93MjBi?=
+ =?utf-8?B?eFBySmV5cGVhaGMxcWYwcEFxK1ZoTXFVb2V6eEd1M3RsclEyekpzcGtvV25n?=
+ =?utf-8?B?bE0xRHpZY0ZGemJsU3c5MGRTaUJZT0duZ0N0a0prbWRRSm9KV3BiZldVSHdo?=
+ =?utf-8?B?ZmJrd0pHckNJNVVOeFRONExDRENZRmpWNmxxVWk3Q0xoS0dtMTE2QTJYajFE?=
+ =?utf-8?B?Qm9YcXgzZFdKZTlUV3FXV3hHVmYrRTFaakR2RWd5QVZNVnZta1RyQ2FtRFBC?=
+ =?utf-8?B?cFJmUEhiZk9FMTFDaVlhT25jaXYzUmloakZLQmZaNXRoVDkxVE1TaTJiRk9u?=
+ =?utf-8?B?RFlMNlVONnFTaGN5eG5uclNzS0lpWE9EYVVnWC8rckdzMGdNUjFWUCtzZi82?=
+ =?utf-8?B?dml3RTJNUnh6UkphenM4bVlVQ2FoQmN4MklyZVo5anNhZUdSTkZLMnRReTNu?=
+ =?utf-8?B?MkJOTlYrUVA5UkZVWUVJV1Z6cGErRzltVnBXNXNiL0t6NVI0L3BYQnhxNnRh?=
+ =?utf-8?B?dzA3cytjQ2lHcVNCU0dWWldGU2o5UGlmMTZoU2hRLy9UQzRIQ1FlVjc2U3o0?=
+ =?utf-8?B?cDB6NWdSSnZZcUtIMEh0VjVoalMyMnFDMjZBeVlNZ0hyNlVqQ1lDTURMbHpM?=
+ =?utf-8?B?aVU3OWJGVWVFVmNHNkZjTTFJUDdqbzVheXFxcjJjM0JOS1hRU0FjZEtlN0Mx?=
+ =?utf-8?B?aFFDS2VUTW9sQXhMdFRQKzZVNVdvMGJndnhGc3J2dlVLVENTQXg4WkV4TnNx?=
+ =?utf-8?B?RGk4djEzQjdldTQ4NjhITVpySk1QZ3R0dFp5L3BJSVpVbUNQY1QweFpwTkNF?=
+ =?utf-8?B?MjF2SUhoYTc0NEYxemY3SGhiajhoYnNnb0IxNHhvVzV1SDJVc0lVYWZqY2Js?=
+ =?utf-8?B?cVV6Z01OaW51ei9GUG5vUENxK0I1YzhJU0ViQ3YzMlNNYXd1QTI4RWFsMkcx?=
+ =?utf-8?B?czJxQ2NNM2o4dUdmY0ZRa1pLUk5HcHp6RzdvR2ZBaFdScy83aGlydHhSMFpx?=
+ =?utf-8?B?bHRDMGRsYURwVVRRT01lMVpYUzdxaU9nWnZNa0ZLZDA1KzVsZ0FFWUs4U1pZ?=
+ =?utf-8?B?UVZMRGgrQnYvSlNIVDNBdEhTY01QRmNNS3dZbGJyYm5uMFByWXFXSFp6V0N2?=
+ =?utf-8?B?anhJaEJ3NnRYVnp5TS80TlR1bXhKOEZHZjh4VGVOR1hrQnZKTDBKZWVVRFZ2?=
+ =?utf-8?B?MkcwZ3pLQU5mRmgyaGMzcmpiVTJKSlhpdzJnV0Q1SktSSE1qVzk2OWY0Q3dH?=
+ =?utf-8?B?TmxtZCtLcVQwdlpXZXY2ck5DSHIxUmFVdldjSTdqcWs2OHo5MjBFVWhzU3M1?=
+ =?utf-8?B?c1E5bDRtLzZaS0dNa1dZcVJkcnF0QXI0RHR2cWFmemtXT1NuSlVQMnEwTFVz?=
+ =?utf-8?B?N3BtdEhhSWpEb0lWaDZWa3JwaEQxOUpwc3A5dmIxaVZuMldZdThCc1JDZS9Z?=
+ =?utf-8?B?WUhDMXVGU3VYa3NGNTJKd0pmenZoWE9OcEZEdCtvTi9ydnkyMFlOUVdSUmhl?=
+ =?utf-8?B?MDdxMlZhdkpsTVM5OTZHbmRzSnpUQmlTamZPWGxSaXhtS3JJRnlrZ3NaSFJR?=
+ =?utf-8?B?bXE0SU0wZ3QvSDBiVS9kdDd2d0RuZmxWd1Fka3FtOUI3b3lYaUxxUys4a3Jn?=
+ =?utf-8?B?REN5eWRVNUNXUkZERFp3VkhXRlQxcEpaUGR4eHNWMnJmb2hkUHM0MHMxNTc4?=
+ =?utf-8?B?R1d0YlR6RDlWT0tqeXR2cTViYVVXL0ZnUk5wK0hHdEowaWRxM1lLMXQ2bzdt?=
+ =?utf-8?B?a3IyNTBWM01mOVNyZE44bnp3THdXTEVrNkNBU2gvazEzcytMQnorZlErQVdR?=
+ =?utf-8?B?R04rMXNMMWx3Rk9Kc1VPNnk2enBuSVRPc1E3NlN3QkJCenUzcHl6am1ibkVn?=
+ =?utf-8?Q?kO9RlBLMakpQPraH73Je+CArMI/100okmDE8x?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a5a4a7f-a046-4a5b-52ce-08de581b64a4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a5bdaa4-4edb-4d60-5023-08de581b6750
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8190.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 11:59:41.1405
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 11:59:45.5636
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RK81okZAHjvyrZrcnTTlXU7+tZCOkx57iI7sQb3pv8SRt2NNIOmhMQ8TLABTn/mICvJIsM6CVaGO45ALfKKKuilb4dQwmICC+DLRFS0M0xAeCP0FH0SAqWV840/mcWLo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10769
+X-MS-Exchange-CrossTenant-UserPrincipalName: h4t2H3oyBjbcolBLZ7Ha1BN5JQmfNtLwBY0ckWO3Up+YPlVlMqaZq9rODCg7JSXXs3SXy7ACUMb+4/3FlxS3fPepFlrMPbS+NCsqb6vWGfIcu98bjWJquNMv5gQ3U/mM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9717
 
 From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
 
-The old pinctrl bindings for SIUL2 are deprecated by a previous commit.
-The new bindings for the SIUL2 represent it as an MFD device:
-- one cell for combined pinctrl&GPIO
-- two cella acting as syscon providers for SoC registers access
+Add basic GPIO functionality (request, free, get, set) for the existing
+pinctrl SIUL2 driver since the hardware for pinctrl&GPIO is tightly
+coupled.
 
-This commit allows the existing driver to also be probed as an MFD cell.
-The changes only impact the way the driver initializes the regmaps for
-accessing MSCR and IMCR registers.
+Also, remove pinmux_ops which are no longer needed.
 
 Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Signed-off-by: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
 ---
- drivers/pinctrl/nxp/pinctrl-s32.h   |   4 +-
- drivers/pinctrl/nxp/pinctrl-s32cc.c | 114 ++++++++++++++++++++++------
- drivers/pinctrl/nxp/pinctrl-s32g2.c |  32 ++++++--
- 3 files changed, 118 insertions(+), 32 deletions(-)
+ drivers/pinctrl/nxp/pinctrl-s32cc.c | 413 +++++++++++++++++++++++-----
+ 1 file changed, 350 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/pinctrl/nxp/pinctrl-s32.h b/drivers/pinctrl/nxp/pinctrl-s32.h
-index add3c77ddfed..6ce7981208c7 100644
---- a/drivers/pinctrl/nxp/pinctrl-s32.h
-+++ b/drivers/pinctrl/nxp/pinctrl-s32.h
-@@ -2,7 +2,7 @@
-  *
-  * S32 pinmux core definitions
-  *
-- * Copyright 2016-2020, 2022 NXP
-+ * Copyright 2016-2020, 2022, 2025 NXP
-  * Copyright (C) 2022 SUSE LLC
-  * Copyright 2015-2016 Freescale Semiconductor, Inc.
-  * Copyright (C) 2012 Linaro Ltd.
-@@ -28,6 +28,7 @@ struct s32_pin_group {
-  * struct s32_pin_range - pin ID range for each memory region.
-  * @start: start pin ID
-  * @end: end pin ID
-+ * @legacy: legacy standalone pinctrl driver or MFD cell
-  */
- struct s32_pin_range {
- 	unsigned int start;
-@@ -39,6 +40,7 @@ struct s32_pinctrl_soc_data {
- 	unsigned int npins;
- 	const struct s32_pin_range *mem_pin_ranges;
- 	unsigned int mem_regions;
-+	bool legacy;
- };
- 
- struct s32_pinctrl_soc_info {
 diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-index 4767916dbcab..cdd3a1cd4fe5 100644
+index 50d5a01107eb..3e0c48068f08 100644
 --- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
 +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-@@ -12,6 +12,7 @@
- #include <linux/gpio/driver.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/mfd/nxp-siul2.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -101,6 +102,8 @@ struct s32_pinctrl_context {
+@@ -40,6 +40,14 @@
+ #define S32_MSCR_ODE		BIT(20)
+ #define S32_MSCR_OBE		BIT(21)
+ 
++/* PGPDOs are 16bit registers that come in big endian
++ * order if they are grouped in pairs of two.
++ *
++ * For example, the order is PGPDO1, PGPDO0, PGPDO3, PGPDO2...
++ */
++#define S32_PGPD(N)		(((N) ^ 1) * 2)
++#define S32_PGPD_SIZE		16
++
+ enum s32_write_type {
+ 	S32_PINCONF_UPDATE_ONLY,
+ 	S32_PINCONF_OVERWRITE,
+@@ -97,6 +105,7 @@ struct s32_pinctrl_context {
+  * struct s32_pinctrl - private driver data
+  * @dev: a pointer back to containing device
+  * @pctl: a pointer to the pinctrl device structure
++ * @gc: a pointer to the gpio_chip
+  * @regions: reserved memory regions with start/end pin
+  * @info: structure containing information about the pin
   * @gpio_configs: saved configurations for GPIO pins
-  * @gpio_configs_lock: lock for the `gpio_configs` list
-  * @saved_context: configuration saved over system sleep
-+ * @legacy: true if the old pinctrl bindings are in use
-+ *	    instead of the newer MFD based ones
-  */
+@@ -108,6 +117,7 @@ struct s32_pinctrl_context {
  struct s32_pinctrl {
  	struct device *dev;
-@@ -112,6 +115,7 @@ struct s32_pinctrl {
- #ifdef CONFIG_PM_SLEEP
- 	struct s32_pinctrl_context saved_context;
- #endif
-+	bool legacy;
- };
- 
- static struct s32_pinctrl_mem_region *
-@@ -131,6 +135,19 @@ s32_get_region(struct pinctrl_dev *pctldev, unsigned int pin)
- 	return NULL;
- }
- 
-+static struct device *s32_get_dev(struct s32_pinctrl *ipctl)
-+{
-+	if (ipctl->legacy)
-+		return ipctl->dev;
-+
-+	return ipctl->dev->parent;
-+}
-+
-+static struct device_node *s32_get_np(struct s32_pinctrl *ipctl)
-+{
-+	return s32_get_dev(ipctl)->of_node;
-+}
-+
- static int s32_check_pin(struct pinctrl_dev *pctldev,
- 			 unsigned int pin)
- {
-@@ -231,7 +248,7 @@ static int s32_dt_group_node_to_map(struct pinctrl_dev *pctldev,
- 				    const char *func_name)
- {
- 	struct s32_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
--	struct device *dev = ipctl->dev;
-+	struct device *dev = s32_get_dev(ipctl);
- 	unsigned long *cfgs = NULL;
- 	unsigned int n_cfgs, reserve = 1;
- 	int n_pins, ret;
-@@ -804,8 +821,8 @@ static int s32_pinctrl_parse_groups(struct device_node *np,
- }
- 
- static int s32_pinctrl_parse_functions(struct device_node *np,
--					struct s32_pinctrl_soc_info *info,
--					u32 index)
-+				       struct s32_pinctrl_soc_info *info,
-+				       u32 index)
- {
- 	struct pinfunction *func;
- 	struct s32_pin_group *grp;
-@@ -843,31 +860,21 @@ static int s32_pinctrl_parse_functions(struct device_node *np,
+ 	struct pinctrl_dev *pctl;
++	struct gpio_chip gc;
+ 	struct s32_pinctrl_mem_region *regions;
+ 	struct s32_pinctrl_soc_info *info;
+ 	struct list_head gpio_configs;
+@@ -396,67 +406,6 @@ static int s32_pmx_get_groups(struct pinctrl_dev *pctldev,
  	return 0;
  }
  
--static int s32_pinctrl_probe_dt(struct platform_device *pdev,
--				struct s32_pinctrl *ipctl)
-+static int legacy_s32_pinctrl_regmap_init(struct platform_device *pdev,
-+					  struct s32_pinctrl *ipctl)
- {
- 	struct s32_pinctrl_soc_info *info = ipctl->info;
--	struct device_node *np = pdev->dev.of_node;
-+	unsigned int mem_regions;
- 	struct resource *res;
- 	struct regmap *map;
- 	void __iomem *base;
--	unsigned int mem_regions = info->soc_data->mem_regions;
+-static int s32_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+-				       struct pinctrl_gpio_range *range,
+-				       unsigned int offset)
+-{
+-	struct s32_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+-	struct gpio_pin_config *gpio_pin;
+-	unsigned int config;
+-	unsigned long flags;
 -	int ret;
--	u32 nfuncs = 0;
- 	u32 i = 0;
- 
--	if (!np)
--		return -ENODEV;
 -
--	if (mem_regions == 0 || mem_regions >= 10000) {
--		dev_err(&pdev->dev, "mem_regions is invalid: %u\n", mem_regions);
--		return -EINVAL;
+-	ret = s32_regmap_read(pctldev, offset, &config);
+-	if (ret)
+-		return ret;
+-
+-	/* Save current configuration */
+-	gpio_pin = kmalloc(sizeof(*gpio_pin), GFP_KERNEL);
+-	if (!gpio_pin)
+-		return -ENOMEM;
+-
+-	gpio_pin->pin_id = offset;
+-	gpio_pin->config = config;
+-	INIT_LIST_HEAD(&gpio_pin->list);
+-
+-	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
+-	list_add(&gpio_pin->list, &ipctl->gpio_configs);
+-	spin_unlock_irqrestore(&ipctl->gpio_configs_lock, flags);
+-
+-	/* GPIO pin means SSS = 0 */
+-	config &= ~S32_MSCR_SSS_MASK;
+-
+-	return s32_regmap_write(pctldev, offset, config);
+-}
+-
+-static void s32_pmx_gpio_disable_free(struct pinctrl_dev *pctldev,
+-				      struct pinctrl_gpio_range *range,
+-				      unsigned int offset)
+-{
+-	struct s32_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+-	struct gpio_pin_config *gpio_pin, *tmp;
+-	unsigned long flags;
+-	int ret;
+-
+-	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
+-
+-	list_for_each_entry_safe(gpio_pin, tmp, &ipctl->gpio_configs, list) {
+-		if (gpio_pin->pin_id == offset) {
+-			ret = s32_regmap_write(pctldev, gpio_pin->pin_id,
+-						 gpio_pin->config);
+-			if (ret != 0)
+-				goto unlock;
+-
+-			list_del(&gpio_pin->list);
+-			kfree(gpio_pin);
+-			break;
+-		}
 -	}
 -
--	ipctl->regions = devm_kcalloc(&pdev->dev, mem_regions,
--				      sizeof(*ipctl->regions), GFP_KERNEL);
--	if (!ipctl->regions)
--		return -ENOMEM;
-+	mem_regions = info->soc_data->mem_regions;
-+	if (mem_regions == 0 || mem_regions >= 10000)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "mem_regions is invalid: %u\n",
-+				     mem_regions);
+-unlock:
+-	spin_unlock_irqrestore(&ipctl->gpio_configs_lock, flags);
+-}
+-
+ static int s32_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 				      struct pinctrl_gpio_range *range,
+ 				      unsigned int offset,
+@@ -480,8 +429,6 @@ static const struct pinmux_ops s32_pmx_ops = {
+ 	.get_function_name = s32_pmx_get_func_name,
+ 	.get_function_groups = s32_pmx_get_groups,
+ 	.set_mux = s32_pmx_set,
+-	.gpio_request_enable = s32_pmx_gpio_request_enable,
+-	.gpio_disable_free = s32_pmx_gpio_disable_free,
+ 	.gpio_set_direction = s32_pmx_gpio_set_direction,
+ };
  
- 	for (i = 0; i < mem_regions; i++) {
- 		base = devm_platform_get_and_ioremap_resource(pdev, i, &res);
-@@ -882,7 +889,7 @@ static int s32_pinctrl_probe_dt(struct platform_device *pdev,
- 						 s32_regmap_config.reg_stride;
+@@ -700,6 +647,307 @@ static const struct pinconf_ops s32_pinconf_ops = {
+ 	.pin_config_group_dbg_show = s32_pinconf_group_dbg_show,
+ };
  
- 		map = devm_regmap_init_mmio(&pdev->dev, base,
--						&s32_regmap_config);
-+					    &s32_regmap_config);
- 		if (IS_ERR(map)) {
- 			dev_err(&pdev->dev, "Failed to init regmap[%u]\n", i);
- 			return PTR_ERR(map);
-@@ -892,7 +899,49 @@ static int s32_pinctrl_probe_dt(struct platform_device *pdev,
- 		ipctl->regions[i].pin_range = &info->soc_data->mem_pin_ranges[i];
- 	}
- 
--	nfuncs = of_get_child_count(np);
++static struct s32_pinctrl *to_s32_pinctrl(struct gpio_chip *chip)
++{
++	return container_of(chip, struct s32_pinctrl, gc);
++}
++
++static struct regmap *s32_gpio_get_pgpd_regmap(struct gpio_chip *chip,
++					       unsigned int pin,
++					       bool output)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++	struct nxp_siul2_mfd *mfd;
++	u32 base, num;
++	int i;
++
++	mfd = dev_get_drvdata(ipctl->dev->parent);
++
++	for (i = 0; i < mfd->num_siul2; i++) {
++		base = mfd->siul2[i].gpio_base;
++		num = mfd->siul2[i].gpio_num;
++
++		if (pin >= base && pin < base + num)
++			return output ? mfd->siul2[i].regmaps[SIUL2_PGPDO] :
++					mfd->siul2[i].regmaps[SIUL2_PGPDI];
++	}
++
++	return NULL;
++}
++
++static int s32_gpio_request(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(gc);
++	struct pinctrl_dev *pctldev = ipctl->pctl;
++	struct gpio_pin_config *gpio_pin;
++	unsigned int config;
++	int ret;
++
++	ret = s32_regmap_read(pctldev, gpio, &config);
++	if (ret)
++		return ret;
++
++	/* Save current configuration */
++	gpio_pin = kmalloc(sizeof(*gpio_pin), GFP_KERNEL);
++	if (!gpio_pin)
++		return -ENOMEM;
++
++	gpio_pin->pin_id = gpio;
++	gpio_pin->config = config;
++
++	scoped_guard(spinlock_irqsave, &ipctl->gpio_configs_lock)
++		list_add(&gpio_pin->list, &ipctl->gpio_configs);
++
++	/* GPIO pin means SSS = 0 */
++	config &= ~S32_MSCR_SSS_MASK;
++
++	return s32_regmap_write(pctldev, gpio, config);
++}
++
++static void s32_gpio_free(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(gc);
++	struct pinctrl_dev *pctldev = ipctl->pctl;
++	struct gpio_pin_config *gpio_pin, *tmp;
++	int ret;
++
++	guard(spinlock_irqsave)(&ipctl->gpio_configs_lock);
++
++	list_for_each_entry_safe(gpio_pin, tmp, &ipctl->gpio_configs, list) {
++		if (gpio_pin->pin_id == gpio) {
++			ret = s32_regmap_write(pctldev, gpio_pin->pin_id,
++					       gpio_pin->config);
++			if (ret != 0)
++				return;
++
++			list_del(&gpio_pin->list);
++			kfree(gpio_pin);
++			return;
++		}
++	}
++}
++
++static int s32_gpio_get_dir(struct gpio_chip *chip, unsigned int gpio)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++	unsigned int reg_value;
++	int ret;
++
++	ret = s32_regmap_read(ipctl->pctl, gpio, &reg_value);
++	if (ret)
++		return ret;
++
++	if (!(reg_value & S32_MSCR_IBE))
++		return -EINVAL;
++
++	return reg_value & S32_MSCR_OBE ? GPIO_LINE_DIRECTION_OUT :
++					  GPIO_LINE_DIRECTION_IN;
++}
++
++static unsigned int s32_pin2pad(unsigned int pin)
++{
++	return pin / S32_PGPD_SIZE;
++}
++
++static u16 s32_pin2mask(unsigned int pin)
++{
++	/**
++	 * From Reference manual :
++	 * PGPDOx[PPDOy] = GPDO(x × 16) + (15 - y)[PDO_(x × 16) + (15 - y)]
++	 */
++	return BIT(S32_PGPD_SIZE - 1 - pin % S32_PGPD_SIZE);
++}
++
++static struct regmap *s32_gpio_get_regmap_offset_mask(struct gpio_chip *chip,
++						      unsigned int gpio,
++						      unsigned int *reg_offset,
++						      u16 *mask,
++						      bool output)
++{
++	struct regmap *regmap;
++	unsigned int pad;
++
++	regmap = s32_gpio_get_pgpd_regmap(chip, gpio, output);
++	if (!regmap)
++		return NULL;
++
++	*mask = s32_pin2mask(gpio);
++	pad = s32_pin2pad(gpio);
++
++	*reg_offset = S32_PGPD(pad);
++
++	return regmap;
++}
++
++static int s32_gpio_set_val(struct gpio_chip *chip, unsigned int gpio,
++			     int value)
++{
++	unsigned int reg_offset;
++	struct regmap *regmap;
++	u16 mask;
++	int ret;
++
++	regmap = s32_gpio_get_regmap_offset_mask(chip, gpio, &reg_offset,
++						 &mask, true);
++	if (!regmap)
++		return -ENODEV;
++
++	value = value ? mask : 0;
++
++	ret = regmap_update_bits(regmap, reg_offset, mask, value);
++	if (ret)
++		return ret;
++
 +	return 0;
 +}
 +
-+static int s32_pinctrl_mfd_regmap_init(struct platform_device *pdev,
-+				       struct s32_pinctrl *ipctl)
-+
++static int s32_gpio_set(struct gpio_chip *chip, unsigned int gpio,
++			 int value)
 +{
-+	struct nxp_siul2_mfd *mfd = dev_get_drvdata(pdev->dev.parent);
-+	struct s32_pinctrl_soc_info *info = ipctl->info;
-+	unsigned int mem_regions;
-+	u8 regmap_type;
-+	u32 i = 0, j;
++	if (s32_gpio_get_dir(chip, gpio) != GPIO_LINE_DIRECTION_OUT)
++		return -EPERM;
 +
-+	/* One MSCR and one IMCR region per SIUL2 module. */
-+	mem_regions = info->soc_data->mem_regions;
-+	if (mem_regions != mfd->num_siul2 * 2)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "mem_regions is invalid: %u\n",
-+				     mem_regions);
++	return s32_gpio_set_val(chip, gpio, value);
++}
 +
-+	for (i = 0; i < mem_regions; i++) {
-+		regmap_type = i < mem_regions / 2 ? SIUL2_MSCR : SIUL2_IMCR;
-+		j = i % mfd->num_siul2;
-+		ipctl->regions[i].map = mfd->siul2[j].regmaps[regmap_type];
-+		ipctl->regions[i].pin_range = &info->soc_data->mem_pin_ranges[i];
++static int s32_gpio_get(struct gpio_chip *chip, unsigned int gpio)
++{
++	unsigned int reg_offset, value;
++	struct regmap *regmap;
++	u16 mask;
++	int ret;
++
++	if (s32_gpio_get_dir(chip, gpio) != GPIO_LINE_DIRECTION_IN)
++		return -EINVAL;
++
++	regmap = s32_gpio_get_regmap_offset_mask(chip, gpio, &reg_offset,
++						 &mask, false);
++	if (!regmap)
++		return -EINVAL;
++
++	ret = regmap_read(regmap, reg_offset, &value);
++	if (ret)
++		return ret;
++
++	return !!(value & mask);
++}
++
++static int s32_gpio_dir_out(struct gpio_chip *chip, unsigned int gpio,
++			    int val)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++
++	s32_gpio_set_val(chip, gpio, val);
++
++	return s32_pmx_gpio_set_direction(ipctl->pctl, NULL, gpio, false);
++}
++
++static int s32_gpio_dir_in(struct gpio_chip *chip, unsigned int gpio)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++
++	return s32_pmx_gpio_set_direction(ipctl->pctl, NULL, gpio, true);
++}
++
++static bool s32_gpio_is_valid(struct gpio_chip *chip, unsigned int gpio)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++	const struct s32_pinctrl_soc_data *soc_data;
++	const struct pinctrl_pin_desc *pins;
++	int i;
++
++	soc_data = ipctl->info->soc_data;
++	pins = ipctl->info->soc_data->pins;
++	for (i = 0; i < soc_data->npins && pins[i].number <= gpio; i++)
++		if (pins[i].number == gpio)
++			return true;
++
++	return false;
++}
++
++static int s32_init_valid_mask(struct gpio_chip *chip, unsigned long *mask,
++			       unsigned int ngpios)
++{
++	struct s32_pinctrl *ipctl = to_s32_pinctrl(chip);
++	const struct s32_pinctrl_soc_data *soc_data;
++	const struct pinctrl_pin_desc *pins;
++	int i;
++
++	bitmap_zero(mask, ngpios);
++
++	soc_data = ipctl->info->soc_data;
++	pins = soc_data->pins;
++	for (i = 0; i < soc_data->npins && pins[i].number < ngpios; i++)
++		bitmap_set(mask, pins[i].number, 1);
++
++	return 0;
++}
++
++static int s32_gpio_gen_names(struct device *dev, struct gpio_chip *gc,
++			      unsigned int cnt, char **names, char *ch_index,
++			      unsigned int *num_index)
++{
++	unsigned int i;
++
++	for (i = 0; i < cnt; i++) {
++		if (i != 0 && !(*num_index % 16))
++			(*ch_index)++;
++
++		if (!s32_gpio_is_valid(gc, *num_index))
++			continue;
++
++		names[i] = devm_kasprintf(dev, GFP_KERNEL, "P%c_%02d",
++					  *ch_index, 0xFU & (*num_index)++);
++		if (!names[i])
++			return -ENOMEM;
 +	}
 +
 +	return 0;
 +}
 +
-+static int s32_pinctrl_probe_dt(struct platform_device *pdev,
-+				struct s32_pinctrl *ipctl)
++static int s32_gpio_populate_names(struct device *dev,
++				   struct s32_pinctrl *ipctl)
 +{
-+	struct s32_pinctrl_soc_info *info = ipctl->info;
-+	struct device_node *np = s32_get_np(ipctl);
-+	u32 nfuncs = 0, i = 0;
-+	int ret;
++	struct nxp_siul2_mfd *mfd = dev_get_drvdata(ipctl->dev->parent);
++	unsigned int num_index = 0;
++	char ch_index = 'A';
++	char **names;
++	int i, ret;
 +
-+	if (!np)
-+		return -ENODEV;
-+
-+	for_each_child_of_node_scoped(np, child)
-+		++nfuncs;
- 	if (nfuncs <= 0)
- 		return dev_err_probe(&pdev->dev, -EINVAL,
- 				     "No functions defined\n");
-@@ -912,7 +961,6 @@ static int s32_pinctrl_probe_dt(struct platform_device *pdev,
- 	if (!info->groups)
- 		return -ENOMEM;
- 
--	i = 0;
- 	for_each_child_of_node_scoped(np, child) {
- 		ret = s32_pinctrl_parse_functions(child, info, i++);
- 		if (ret)
-@@ -969,12 +1017,28 @@ int s32_pinctrl_probe(struct platform_device *pdev,
- 	s32_pinctrl_desc->confops = &s32_pinconf_ops;
- 	s32_pinctrl_desc->owner = THIS_MODULE;
- 
-+	ipctl->regions = devm_kcalloc(&pdev->dev, soc_data->mem_regions,
-+				      sizeof(*ipctl->regions), GFP_KERNEL);
-+	if (!ipctl->regions)
++	names = devm_kcalloc(dev, ipctl->gc.ngpio, sizeof(*names),
++			     GFP_KERNEL);
++	if (!names)
 +		return -ENOMEM;
 +
-+	ipctl->legacy = soc_data->legacy;
-+	if (soc_data->legacy)
-+		ret = legacy_s32_pinctrl_regmap_init(pdev, ipctl);
-+	else
-+		ret = s32_pinctrl_mfd_regmap_init(pdev, ipctl);
++	for (i = 0; i < mfd->num_siul2; i++) {
++		/*
++		 * Pin names' have the following naming: P${letter}_${index},
++		 * where:
++		 * - letters are from: {A, B, C, ...}
++		 * - indexes from {0, 1, 2, ... 15}
++		 *
++		 * If the pin is a multiple of 16, its index needs to be 0.
++		 */
++		if (mfd->siul2[i].gpio_base % 16 == 0)
++			num_index = 0;
 +
++		ret = s32_gpio_gen_names(dev, &ipctl->gc,
++					 mfd->siul2[i].gpio_num,
++					 names + mfd->siul2[i].gpio_base,
++					 &ch_index, &num_index);
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "Error setting SIUL2_%d names\n",
++					     i);
++
++		ch_index++;
++	}
++
++	ipctl->gc.names = (const char *const *)names;
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static bool s32_pinctrl_should_save(struct s32_pinctrl *ipctl,
+ 				    unsigned int pin)
+@@ -986,6 +1234,8 @@ int s32_pinctrl_probe(struct platform_device *pdev,
+ 	struct pinctrl_desc *s32_pinctrl_desc;
+ 	struct s32_pinctrl_soc_info *info;
+ 	struct s32_pinctrl *ipctl;
++	struct nxp_siul2_mfd *mfd;
++	struct gpio_chip *gc;
+ 	int ret;
+ 
+ 	if (!soc_data || !soc_data->pins || !soc_data->npins)
+@@ -1068,5 +1318,42 @@ int s32_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	dev_info(&pdev->dev, "Initialized S32 pinctrl driver\n");
+ 
++
++	/* Legacy bindings only cover pinctrl functionality. */
++	if (soc_data->legacy)
++		return 0;
++
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd)
++		return dev_err_probe(&pdev->dev, -EINVAL, "Invalid parent!\n");
++
++	gc = &ipctl->gc;
++	gc->parent = &pdev->dev;
++	gc->label = dev_name(&pdev->dev);
++	gc->base = -1;
++	/* In some cases, there is a gap between the SIUL GPIOs. */
++	gc->ngpio = mfd->siul2[mfd->num_siul2 - 1].gpio_base +
++		    mfd->siul2[mfd->num_siul2 - 1].gpio_num;
++	ret = s32_gpio_populate_names(&pdev->dev, ipctl);
++	if (ret)
++		return ret;
++
++	gc->set = s32_gpio_set;
++	gc->get = s32_gpio_get;
++	gc->set_config = gpiochip_generic_config;
++	gc->request = s32_gpio_request;
++	gc->free = s32_gpio_free;
++	gc->direction_output = s32_gpio_dir_out;
++	gc->direction_input = s32_gpio_dir_in;
++	gc->get_direction = s32_gpio_get_dir;
++	gc->init_valid_mask = s32_init_valid_mask;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, gc, ipctl);
 +	if (ret)
 +		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to init driver regmap!\n");
++				     "Unable to add gpiochip\n");
 +
- 	ret = s32_pinctrl_probe_dt(pdev, ipctl);
- 	if (ret)
- 		return dev_err_probe(&pdev->dev, ret,
- 				     "Fail to probe dt properties\n");
- 
--	ret = devm_pinctrl_register_and_init(&pdev->dev, s32_pinctrl_desc,
-+	ret = devm_pinctrl_register_and_init(s32_get_dev(ipctl),
-+					     s32_pinctrl_desc,
- 					     ipctl, &ipctl->pctl);
- 	if (ret)
- 		return dev_err_probe(&pdev->dev, ret,
-diff --git a/drivers/pinctrl/nxp/pinctrl-s32g2.c b/drivers/pinctrl/nxp/pinctrl-s32g2.c
-index c49d28793b69..2d56ffb1a109 100644
---- a/drivers/pinctrl/nxp/pinctrl-s32g2.c
-+++ b/drivers/pinctrl/nxp/pinctrl-s32g2.c
-@@ -3,7 +3,7 @@
-  * NXP S32G pinctrl driver
-  *
-  * Copyright 2015-2016 Freescale Semiconductor, Inc.
-- * Copyright 2017-2018, 2020-2022 NXP
-+ * Copyright 2017-2018, 2020-2022, 2024-2025 NXP
-  * Copyright (C) 2022 SUSE LLC
-  */
- 
-@@ -762,7 +762,7 @@ static const struct pinctrl_pin_desc s32_pinctrl_pads_siul2[] = {
- 	S32_PINCTRL_PIN(S32G_IMCR_SIUL_EIRQ31),
- };
- 
--static const struct s32_pin_range s32_pin_ranges_siul2[] = {
-+static const struct s32_pin_range legacy_s32_pin_ranges_siul2[] = {
- 	/* MSCR pin ID ranges */
- 	S32_PIN_RANGE(0, 101),
- 	S32_PIN_RANGE(112, 122),
-@@ -773,27 +773,47 @@ static const struct s32_pin_range s32_pin_ranges_siul2[] = {
- 	S32_PIN_RANGE(942, 1007),
- };
- 
--static const struct s32_pinctrl_soc_data s32_pinctrl_data = {
-+static const struct s32_pinctrl_soc_data legacy_s32_pinctrl_data = {
- 	.pins = s32_pinctrl_pads_siul2,
- 	.npins = ARRAY_SIZE(s32_pinctrl_pads_siul2),
--	.mem_pin_ranges = s32_pin_ranges_siul2,
--	.mem_regions = ARRAY_SIZE(s32_pin_ranges_siul2),
-+	.mem_pin_ranges = legacy_s32_pin_ranges_siul2,
-+	.mem_regions = ARRAY_SIZE(legacy_s32_pin_ranges_siul2),
-+	.legacy = true,
- };
- 
- static const struct of_device_id s32_pinctrl_of_match[] = {
- 	{
- 		.compatible = "nxp,s32g2-siul2-pinctrl",
--		.data = &s32_pinctrl_data,
-+		.data = &legacy_s32_pinctrl_data,
- 	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, s32_pinctrl_of_match);
- 
-+static const struct s32_pin_range s32_pin_ranges_siul2[] = {
-+	/* MSCR pin ID ranges */
-+	S32_PIN_RANGE(0, 101),
-+	S32_PIN_RANGE(112, 190),
-+	/* IMCR pin ID ranges */
-+	S32_PIN_RANGE(512, 595),
-+	S32_PIN_RANGE(631, 1007),
-+};
++	dev_info(&pdev->dev, "Initialized s32 GPIO functionality\n");
 +
-+static const struct s32_pinctrl_soc_data s32_pinctrl_data = {
-+	.pins = s32_pinctrl_pads_siul2,
-+	.npins = ARRAY_SIZE(s32_pinctrl_pads_siul2),
-+	.mem_pin_ranges = s32_pin_ranges_siul2,
-+	.mem_regions = ARRAY_SIZE(s32_pin_ranges_siul2),
-+	.legacy = false,
-+};
-+
- static int s32g_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct s32_pinctrl_soc_data *soc_data;
- 
- 	soc_data = of_device_get_match_data(&pdev->dev);
-+	if (!soc_data)
-+		soc_data = &s32_pinctrl_data;
- 
- 	return s32_pinctrl_probe(pdev, soc_data);
+ 	return 0;
  }
 -- 
 2.50.1
