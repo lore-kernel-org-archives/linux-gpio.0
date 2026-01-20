@@ -1,88 +1,301 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E529142B748;
-	Tue, 20 Jan 2026 13:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768916890; cv=none; b=Ayh0fAox7H/4+Oe0ABQ/Su81V46PrvHBOG1I/Vt16mW2SeQ6juNROOk2QwNeSei5W9/ha9o9nRguyJGeNz3wczul0O9W5u/CjY2JCAXMAClPPBr2H5w4oGEivnKxKEYva6INifmeIIipWB7TrZAAtL/rOu6a9ykKWHr0AUnEgaw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768916890; c=relaxed/simple;
-	bh=a8/Rp5xs6Z5wuwvztzn6bvFo/wLCNqkubH9OYQ0J7L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYqQbP6TSkeiKx6KHyjz/1wAFyMPJj3+D33PEEXsyCacvUt3WXwSRMeJtDT7g3MX2kNd7A8wLD1T91uEXKmjEBkQd/L1AsBuyeBkZb5Rbbjl5rI1sVGvku6SjPCw3APCk3ym2NtNPWJVq9yHaf+HPNdX5CpwV4xysvSe0p/LIEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aYTE3rIj; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CCD44B693;
+	Tue, 20 Jan 2026 14:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768918065; cv=fail; b=dfatWrZC04WrxAxmC+RX1SMlkNWIAk4MLnJaTE89alJVvqhELDyCuKriXqStCdII7p7VJ+c/IuMksCuY3XokuazHQXzmSjscz0w03cyhdPnwb0IdPUk5EuAqdbGJn0N0xa5kJQFGAKHTu8qvk09fHDqpUrefbhJrBzLsv+5H/rw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768918065; c=relaxed/simple;
+	bh=Ue/MmTrgPcnk+jE7ATUy6zSjWznxtEuPXbsQWaInzIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X5HpYBAa5LBK0lLch+J6eqfp5TKvOkKMzpZDtyyu20Rprb72AGgohggYNHQ9YVqDdT1NJWTdIaVDxqQXNOVmCnK1W4QoWNWWbR/pW1LF3VuarRsfkVuidI/lk3yg2ke+bOahcupGf/GgTivwWZ2eTgBa8joVXvh4BMqCfh/mtXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OqcmWN9G; arc=fail smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aYTE3rIj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768916889; x=1800452889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a8/Rp5xs6Z5wuwvztzn6bvFo/wLCNqkubH9OYQ0J7L8=;
-  b=aYTE3rIjK+YMMEq/IyeDKYPvAq1YlqGgJonUfXFvCflXhC0uRt+8YRaY
-   RXZ3hI9IaSA3PUsLY4mNq/cStZvBeojgC7Od4ROJxfJ5IPhC1O2CzXgZq
-   /uIs2CaazId1FwBmaxIDOgMPtO/yIrzs3jYrBqXTJbQgJ81t/EbGGa9vo
-   RR6Mp1X+xj3eVG3S1ntswj5Xk6ESNk5/TDS0xNfoktz7q8Z/xZai4tdEJ
-   +PQk+Ukc5W6HntmHfs6GXmPLUK0RIZGQt3kzpMQf2JivQcvtHxGNJUQIn
-   j8prLEZGpaEg4IaxcLOM4JvFokUgYawtvXZM9FbX64hW1cs3KxL9SebSv
-   Q==;
-X-CSE-ConnectionGUID: Scc4nJF9S/GKnK1uHTZttg==
-X-CSE-MsgGUID: enPgc4rvRZ2xQc3rpfyPig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11676"; a="70027970"
-X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
-   d="scan'208";a="70027970"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 05:48:08 -0800
-X-CSE-ConnectionGUID: zDdCs6T5QmWK/h0JODriCA==
-X-CSE-MsgGUID: zYWVGsq4SGmj/3v0CfQ/kw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
-   d="scan'208";a="205745921"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.244.240])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 05:48:06 -0800
-Date: Tue, 20 Jan 2026 15:48:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Guido Trentalancia <guido@trentalancia.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, mika.westerberg@linux.intel.com,
-	linusw@kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: tigerlake: Add Alder Lake-P documentation
-Message-ID: <aW-HlIXTv6W6fye_@smile.fi.intel.com>
-References: <20260120110042.1021199-1-raag.jadav@intel.com>
- <1768913556.5518.15.camel@trentalancia.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OqcmWN9G"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60KE4cfL3801853;
+	Tue, 20 Jan 2026 15:05:32 +0100
+Received: from duzpr83cu001.outbound.protection.outlook.com (mail-northeuropeazon11012014.outbound.protection.outlook.com [52.101.66.14])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4br0e99u2j-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 20 Jan 2026 15:05:32 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kz/JLsM2dy+eFECq3SQgPThhUc0acb6sUEVEl/3v52AW/Yij+hoqdsL1YZ2hMk9rXsCf5ZWvYzTeMBNF/1DLXxeZysJpzc+e+IZ8nSShMwu02Btnk0E0sgBZBDlUROAH3X8q+rl+GW4HJmFuG3GZdeSATZoszgm2PDkFhG0xEWlVXB16CPnHejH+FrWYLVE+Uy8jONUjdbRSEGFynTcWnT64ir2xDNv4MGMrwyhixR5NRvUnwRnWpPwQ/pVVA+Gqmqot1dqr7hEAbRy7S1swryweHGqoRKhCccLReAveJ29M4W+932X9REYgapN1jUjLXYLQtKlIU0loSd/JaaEa3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uK1rkJgbz9vrKgHFg7PMymhJ7f4ARW3zGyiDqMDQpmk=;
+ b=zDIf/kSb2mbV2gf8nQjyhE2tdImBhRDChoN/LvAKmxEGEbLZ5F2KmSUJaZoKl25sIZlb9C+eATRCAZQpt62+cIC8oRfK2F/eLZjU5c8WTHZ31xTgKHDZoAg0KJRuj7OQR9Sc0i0p/d3eSEkc8byXTpBipsVTNvFdTdEwKw77tRf5oEiE+Ai5rpQ0oZUn8XjRDvkb00Dqxe4yvcmYJ0QTo5l1qiciAPKMz2uOE7FdUHsFO+qpJsGN1eLrw2l48N46mls9zR2V3fCZqHmEmaV5+/pH4+yr9ifxZd85Xapz18MSH91+S6Bd+T2CpvTyEL+Hqa5ctELlCko93I8U5WJUgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uK1rkJgbz9vrKgHFg7PMymhJ7f4ARW3zGyiDqMDQpmk=;
+ b=OqcmWN9GLDwNoXfeDgZOvNRJ6T8dHw3W/MfBJc6hNVFw0qB3dUMARUSpTjQ25XctYu/8V8T1t23bYbemxRncz+7rlud6FTTPayH2B26mhLqld6jnhkDV1KysX2u4233UmmLTBPEK57W0DIZoMyC71SCzz964OyjO7A/E+n1tCi7a2cY7GJRPqtNv1zr1TB9/tkMTb/9rAs1nnn0qO9wKLAQQhNR4YE30JSkLmJ6tey+21kswOlBWrWa2IBpZQgF+7c9B8oWrfoEjGjTJ/K6TgjkgZiXTrfGn6jXeZPo9s9bZntBkdr7ct8oaBM8OSmFJKSxlRgZjEFqaSoJhZ9jvUA==
+Received: from AS4P189CA0016.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5db::8)
+ by DB8PR10MB3925.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:149::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.9; Tue, 20 Jan
+ 2026 14:05:29 +0000
+Received: from AMS0EPF000001A4.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5db:cafe::13) by AS4P189CA0016.outlook.office365.com
+ (2603:10a6:20b:5db::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9520.13 via Frontend Transport; Tue,
+ 20 Jan 2026 14:05:22 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ AMS0EPF000001A4.mail.protection.outlook.com (10.167.16.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9542.4 via Frontend Transport; Tue, 20 Jan 2026 14:05:28 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 20 Jan
+ 2026 15:06:57 +0100
+Received: from [10.48.86.212] (10.48.86.212) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 20 Jan
+ 2026 15:05:27 +0100
+Message-ID: <310ab5ef-bd29-44a6-927a-f82239499e60@foss.st.com>
+Date: Tue, 20 Jan 2026 15:05:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1768913556.5518.15.camel@trentalancia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/11] pinctrl: stm32: add firewall checks before
+ probing the HDP driver
+To: Linus Walleij <linusw@kernel.org>
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan
+	<leo.yan@linux.dev>,
+        =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?=
+	<legoffic.clement@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <jens.wiklander@linaro.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20260114-debug_bus-v2-0-5475c7841569@foss.st.com>
+ <20260114-debug_bus-v2-11-5475c7841569@foss.st.com>
+ <CAD++jLmW5_xDnA9UtKynaSzdM8aC439sB_n6suFmLY1TJ0cYbg@mail.gmail.com>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <CAD++jLmW5_xDnA9UtKynaSzdM8aC439sB_n6suFmLY1TJ0cYbg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A4:EE_|DB8PR10MB3925:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cdbe002-c766-4de1-84ba-08de582cf799
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVB5NTFsTitiMVpEWXhpTU9GRTJ0WEpib0E5bURHZ0laTzBPaXlGQVA0Vy9w?=
+ =?utf-8?B?Z3FPNkhuV0Nnam9VWG13NElMNDJxdld6bVFjQTliVUVkeXZiS3gxWkxDZFFk?=
+ =?utf-8?B?aGF5azBQelN4R0RmaFhIRmRiK1JyQ21ocUVhS2VnY3pOdFRPQzdURHgvUlh2?=
+ =?utf-8?B?cnR4ZFJObXh0TllSUHZoQjRTVmVrcFhXMWhDMDBvWFBWZG9VK1ZPVHVzc1NB?=
+ =?utf-8?B?MFZTcG5kd2Vsa21FTW1nRlgxN3Z5RS8xZVRHZ3BmeXRPNVR0cXNHL2h1dWpK?=
+ =?utf-8?B?ZWdCa0VLVlZCaFlQUDRrQ0ZVZDRxY1QwQlZWdU5nazcrL3pYZWNLRUVkR1V4?=
+ =?utf-8?B?N0NZMTQ2S1Urc0toSmhKMHBSM2U5RTJQeFBXVFdLeWZEWjFVWm9ib2Z6WnBQ?=
+ =?utf-8?B?VUdiTXFqc2ZaNm1lekZQaXAwUjRMTUtHYjFhRUNaUHFpSmFNNzhGSGN6OUhJ?=
+ =?utf-8?B?ekhzMDRNNUlnWG5NRTFBbDZ4aWlkTStUNnJnZlliZ3V0akY1YlljcXV2YjRF?=
+ =?utf-8?B?c2NmanU2VVZiNExQL21qUjFkTDJtWU4vSUVkNWZERGw5YlYrOGJ0WmRjZ3ZT?=
+ =?utf-8?B?ZS9BazZTSGNVZWNOdnB1MUsxTkMxVGd3d21Cb0VDWnl3Qndxdm5ZQnh4cjUz?=
+ =?utf-8?B?N2JKalhsUGJHWElhN1RhS2xGTFkzbkplQ0lsUUEvMEo2NHNvTks4Q2JDM1Rx?=
+ =?utf-8?B?SFBhSkNTMkxldWk5VlptVUplUDlZY0F3c0xQZTY4Wkk5dmdDcGtwcHZIa3NI?=
+ =?utf-8?B?ak10UmxtQjR1YmYyTThFNkNsUDNEcnhQVUU2L0ZMMFhKaHlRSVljZnZxOGFz?=
+ =?utf-8?B?YUN2bU9tOFVRMVR3VkhTZ1pWL0V2RDFEQUZHZ0VnVFFkdHlyUFF1Ky9YNDlz?=
+ =?utf-8?B?NHM1aTR4SVFCTW5qTE5wTE9qd3pDVDNrNXBtdDlrM25vSzBRcVFzTGN6WUhx?=
+ =?utf-8?B?aTRXT0Y0VFVzL2x2OWhEcWNwY09ab2lIbE1zRHRnY0c2bHBuQmFBU3ZZdWhM?=
+ =?utf-8?B?TDBUYTF0K3ZiNlRqbnFUR2pUUXNmTWJBaEtmVTdLVWZuOW1DWHBrVGNTVWpJ?=
+ =?utf-8?B?QU5SUW9sRTBRaXZyRURESlgrQVRuUzdCa3JqeUtOS0YwVXU4RzZ4cUJKcHY1?=
+ =?utf-8?B?aDJEMlBUTlZqQWd2SU43RDBxbEZmMUE0dGh6dCt1WEFOa0oza1J1c0liMFBw?=
+ =?utf-8?B?WDVRRkh4dUlRQzdIRnlwRDJZRytUSEJFeDBvYTU1c0pvcTAxai9xMm1QcTVF?=
+ =?utf-8?B?UEgvRnlBcVoybS9MdUdnN3hMQXVlbllGRThXdjN1TUg5YnlYVnR4ejI2N3F6?=
+ =?utf-8?B?cFllKzQvUHdvZlZSaU9DWnpXNkk5bnR0bHYvV2Y4RTZoNXNQekFXT1M5NlZT?=
+ =?utf-8?B?K2h4Q3ZJeXNGMk1MbXl5V3dySHoyY3RMbjRKeWRUcElMMFJpb2ZkQjhORDhm?=
+ =?utf-8?B?WnBPT2Z5bHBKSXFRRi9kdEQvMVlQWDRpR0p4Zkgram5MR2lRQm9TcW1jckwz?=
+ =?utf-8?B?TUdvQW5uSk1Ra0NDYlBNTWZuNEkvdnFxSkV0MWxnUnpmKzFvNE03UTBqZDJp?=
+ =?utf-8?B?RkEzZkVWVHFHTVZpOU9ySFR1ak4yZ25DMFBlczFqV0NTZTdmenpDYzdjM2JO?=
+ =?utf-8?B?L2Frck1kYlFWaVVTeWh5alZJcTJ6bG9yazJDL29tdHZmcEROUmJnNk40Rm5i?=
+ =?utf-8?B?emNIdXd3N3RpUHVzVXFMejZVNzZPeTI2NkloamJQMU9mTTJVVEpkbVF3Z1dC?=
+ =?utf-8?B?dVB1Q0Y5SGpwSXAxT1NHM29FMllLOTMzSG5kVnh1ZXNXNkozektlOTQvR0FC?=
+ =?utf-8?B?VUJqMjdXbXM5QTRhTDE4dTdUb1JQUk04K2FIU3VUSUJOMG95ZlQxME9qc3Bt?=
+ =?utf-8?B?aUZqQnB1SGlVV0tGOFVKQnlwQmdoR2ZnRUNLQVNnbWNUM2ZsRnAzb1dSKzZD?=
+ =?utf-8?B?K3RWNm1QUHYyMjVqTDY4d0VBVU9ZeGsxYjlsMWxWK21pQ1V6UFJOYTY0dWpq?=
+ =?utf-8?B?QzcrU0JHTHJRVmErMGpBVFR3N0I1RG9ZNXdTUUV4aFVFTjg1OFFxM3VuREZh?=
+ =?utf-8?B?VE40ODd5aDlUZWs2V3dEN1lFT3NCUE9DSm5DanE0OEd3dGlmejZXUUNyMjZN?=
+ =?utf-8?B?Y3ZKQXZJM3pxZWhkV1NmTjRHUGNWNitWS01oS05STldYcWw3Rnk1ZlJKdWZu?=
+ =?utf-8?B?bVJ2dHVjVHFDSG9PL1VsRnhNWGc4MjJLNHNFVkYxL3BzaFN6WUZSRkFTL1Vt?=
+ =?utf-8?B?MW5tQ1VLVml4bEtJdnU1S2c0aTNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 14:05:28.8151
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cdbe002-c766-4de1-84ba-08de582cf799
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001A4.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3925
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIwMDExNiBTYWx0ZWRfXxm+6pC7CxBVP
+ OYk8lW8t/HHboamN9aOICkBvQ7rEpl95w3P8lzt5NzYIzfyGOO5s5DiAbYIbHXv0+ryzZ9w24Dy
+ Ld4J1grBA5jtIFmmWC+5zQUSyRZ7K5/50TZHxawOnc7MVLphieZCz/xVLUHpLEwz2JSp+2OccIA
+ VxZaXJY40VhT75sdQhb1rXmSGuV4iq9kA5AX9lUlCTNSRQofHag1XZstg4BKk/OlBrQDtkQ5pBU
+ H2/my5YLYbG15JEQnzSVh2b4ItoFxT1GpETGgUp/IlC96l8Ye/HSngfenujqS7rVtFRU5/lpw3J
+ qZlJpV8FA/1OqJDDjLQWc7GwPRYcSyzbbJr/dGin2YKhhDxSRDn1gqch7svt3McDbdSL1TT7Rrd
+ CovEor1lHYZfRnfuAzpDpKYbUeq5dtLqX7lGLWpg2GaUrbG+0oXao55iN9b2sd5shkVj3/5duZC
+ u5j1K/ZxXzB2BWTrx7g==
+X-Authority-Analysis: v=2.4 cv=ZOPaWH7b c=1 sm=1 tr=0 ts=696f8bac cx=c_pps
+ a=eFpRzQyoWvhnAo4uHDxzFA==:117 a=d6reE3nDawwanmLcZTMRXA==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=rg8MelPR9j8A:10 a=IkcTkHD0fZMA:10
+ a=vUbySO9Y5rIA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=3jc1UR8r757g_BjvJPwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
+X-Proofpoint-ORIG-GUID: U9eIyakqq-U99iqUUeShNabjPYAAcFY_
+X-Proofpoint-GUID: U9eIyakqq-U99iqUUeShNabjPYAAcFY_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-20_03,2026-01-20_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0 impostorscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601200116
 
-On Tue, Jan 20, 2026 at 01:52:36PM +0100, Guido Trentalancia wrote:
-> Someone erroneously marked the bug as CLOSED INVALID, while only the
-> proposed resolution was INVALID and not the bug itself.
+
+
+On 1/18/26 23:19, Linus Walleij wrote:
+> Hi Gatien,
 > 
-> This patch solves the issue because it informs the user on the correct
-> driver to choose for Alder Lake-P.
+> thanks for your patch!
+> 
+> On Wed, Jan 14, 2026 at 11:31 AM Gatien Chevallier
+> <gatien.chevallier@foss.st.com> wrote:
+> 
+>> Because the HDP peripheral both depends on debug and firewall
+>> configuration, when CONFIG_STM32_FIREWALL is present, use the
+>> stm32 firewall framework to be able to check these configuration against
+>> the relevant controllers.
+>>
+>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+> (...)
+>> +#include <linux/bus/stm32_firewall_device.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/gpio/driver.h>
+>>   #include <linux/gpio/generic.h>
+>> @@ -605,10 +606,50 @@ MODULE_DEVICE_TABLE(of, stm32_hdp_of_match);
+>>   static int stm32_hdp_probe(struct platform_device *pdev)
+>>   {
+>>          struct gpio_generic_chip_config config;
+>> +       struct stm32_firewall *firewall = NULL;
+>>          struct device *dev = &pdev->dev;
+>>          struct stm32_hdp *hdp;
+>> +       int nb_firewall;
+>>          u8 version;
+>>          int err;
+>> +       int i;
+>> +
+>> +       nb_firewall = of_count_phandle_with_args(pdev->dev.of_node, "access-controllers",
+>> +                                                "#access-controller-cells");
+>> +       if (IS_ENABLED(CONFIG_STM32_FIREWALL) && nb_firewall != -ENOENT) {
+>> +               if (nb_firewall <= 0)
+>> +                       return -EINVAL;
+>> +
+>> +               firewall = devm_kcalloc(dev, nb_firewall, sizeof(*firewall), GFP_KERNEL);
+>> +               if (!firewall)
+>> +                       return -ENOMEM;
+>> +
+>> +               /* Get stm32 firewall information */
+>> +               err = stm32_firewall_get_firewall(dev->of_node, firewall, nb_firewall);
+>> +               if (err)
+>> +                       return dev_err_probe(dev, err, "Failed to get firewall controller\n");
+>> +
+>> +               for (i = 0; i < nb_firewall; i++) {
+>> +                       err = stm32_firewall_grant_access_by_id(firewall + i,
+>> +                                                               firewall[i].firewall_id);
+>> +                       if (err) {
+>> +                               while (i) {
+>> +                                       u32 id;
+>> +
+>> +                                       i--;
+>> +                                       id = firewall[i].firewall_id;
+>> +                                       stm32_firewall_release_access_by_id(firewall + i, id);
+>> +                               }
+>> +                               if (err == -EACCES) {
+>> +                                       dev_info(dev, "No firewall access\n");
+>> +                                       return -ENODEV;
+>> +                               }
+>> +
+>> +                               return dev_err_probe(dev, err, "Error checking firewall access\n");
+>> +                       }
+>> +               }
+>> +       }
+> 
+> Doesn't this whole piece of code look very generic?
+> 
+> Point out to me if something is pin control-specific about it?
+> 
+> Can't we just add a helper function such as
+> 
+> stm32_firewall_of_check_access(struct device *dev)
+> {
+>      struct stm32_firewall *firewall = NULL;
+>      int nb_firewall;
+> 
+>      nb_firewall = of_count_phandle_with_args(pdev->dev.of_node,
+> "access-controllers",
+>                                          "#access-controller-cells");
+> (...)
+> }
+> 
+> Then place the prototype for this in <linux/bus/stm32_firewall_device.h>.
+> 
+> I think this will be helpful for the next driver that needs to check
+> firewall access
+> before continuing.
+> 
+> Yours,
+> Linus Walleij
 
-Yes, I was that person and I asked Raag to help with it.
-Thanks, Raag!
+Hello Linus,
 
-Now we can close it again with PATCH_AVAILABLE.
+Thanks for your feedback. There is already a function to check the
+firewall access that is stm32_firewall_grant_access().
 
-> Acked-by: Guido Trentalancia <guido@trentalancia.com>
+However, a helper could clearly implemented to wrap it with the
+get when all elements should be assessed, as you're suggesting.
+I'll submit V3 with a proposition, let's see.
 
-Thanks for confirming!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Gatien
