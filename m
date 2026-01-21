@@ -1,73 +1,89 @@
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5053DA7DE;
-	Wed, 21 Jan 2026 13:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEB83AA1B8;
+	Wed, 21 Jan 2026 14:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769001158; cv=none; b=VSIb+BwHM3Gt2rJlegXQa83XbxEqpU41Bvxvc9dcC1GJudDYyzbSF1flkqBqQRYXE+NBcnofLtYI00MwrhzabC7BguSGu9QuNA2YkTLjixFZyE9RFCoRhTMZGEw+dQoTp8/Swub7HY9ArnG9mGlrTQDtZD+sKeDudoDPlo4r9Vc=
+	t=1769004295; cv=none; b=YUnrUuD8eqSIddzFKnGI8t6RXrSrM4pntBbaxVPgo5U0hGC8iN9fg5NmIGvjxJWBYnmbWD3jNFHQ7iTc73cOROwmuZ0Kk7AjhQFt1KZ01UArYXJsP0V4gUjO24yI/cCWYY4VhkvnXj3KVck8GUwnP3PKmhZ1m6UlFO0GVtxWxRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769001158; c=relaxed/simple;
-	bh=qRRYPuxowEMqW4/BUa2kTNfeVgO5eaFWsOgIxiR7aqY=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Jvg5pUvBVW+FWcTVvPAqV9/kXpX32W4W29IWYYuIOHty6b2wQDAuA+093Ui6/NJMZez53qC9+ZjabNA0mev5TceVrIIXy+RBbeJuHc/a7tHCGs8mTx/YoiJuY9E4MqY79SwSc0WrHvpqWUaiCCq9ed3yJ0DS3krDom7GbWsNWsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
- (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.61; Wed, 21 Jan
- 2026 13:57:22 +0100
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
- 15.01.2507.061; Wed, 21 Jan 2026 13:57:22 +0100
-From: Martin Larsson <martin.larsson@actia.se>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Martin Larsson
-	<martin.larsson@actia.se>
-Subject: [PATCH] gpio: pca953x: mask interrupts in irq shutdown
-Thread-Topic: [PATCH] gpio: pca953x: mask interrupts in irq shutdown
-Thread-Index: AQHcitV7YE7WVJJT/0amc1WwBjPAYw==
-Date: Wed, 21 Jan 2026 12:57:22 +0000
-Message-ID: <20260121125631.2758346-1-martin.larsson@actia.se>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: git-send-email 2.51.0
-x-esetresult: clean, is OK
-x-esetid: 37303A2956B1445E647262
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1769004295; c=relaxed/simple;
+	bh=0D8wOvMSVmiUTG+Bjko3y2R8OC1TwqlDlfRVjyQgpL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6zgnIOk2j0ESf9tYR6HrFU0isAmclAjtqUnIuVwKOt4ibVUu160lFcYcUAzveLBcJGr8Q9oGkFABnkG4xuh3tjGfWPpgx90c8AQeY0PhcnX8PRcwkAJ6kiX47X3C3qYsEpUswHmStluy04l2Gn7cMkPutH3pDghAa7XodENJag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SXaS/ymS; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SXaS/ymS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769004292; x=1800540292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0D8wOvMSVmiUTG+Bjko3y2R8OC1TwqlDlfRVjyQgpL0=;
+  b=SXaS/ymSHAsG1HDNzZot24Fqh6CB5xr0OhZz6dKVGJe0qV0hQ/zn/Tb6
+   o62cKRJXj8qkGAwijRFVaG8xxpeQrhH9AzsBiPGCT2MN18iUFDh5ku52S
+   nZKZKSjg2C7i9ru5E+8XIVo331uqgpNzoFMy1A2jCwWJT1rlBkaiV5E9J
+   yH12MjdLwFoIOovCABGEcg/u/gR9sCFO9IGu2jDfgR3Kw/Gt/ibnqqNW8
+   UuPGi2FhGuoe2tLwYQBQ2Nb94s5mo7XNJyE+xwdhdaGD98phmdAhg1kJd
+   J/jJLxStNpsUDYIrQ3LY279BgAjkzKPy7+K4oyPiOwEwOsAndrY+6sRHL
+   A==;
+X-CSE-ConnectionGUID: mJAnOrZmTjCl1AyR6iSKUA==
+X-CSE-MsgGUID: ShT61bpjSqO6ZD+F4h7WXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11678"; a="74082570"
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
+   d="scan'208";a="74082570"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2026 06:04:51 -0800
+X-CSE-ConnectionGUID: dN0JmBO1QNur58MRDoKl/w==
+X-CSE-MsgGUID: wDaR26q6SUq+lPahsv/kZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
+   d="scan'208";a="206514650"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa007.jf.intel.com with ESMTP; 21 Jan 2026 06:04:51 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id B29E799; Wed, 21 Jan 2026 15:04:49 +0100 (CET)
+Date: Wed, 21 Jan 2026 15:04:49 +0100
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Koichiro Den <koichiro.den@canonical.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] gpio: aggregator: fix "_sysfs" prefix check in
+ gpio_aggregator_make_group()
+Message-ID: <aXDdARDpyzF_jC4l@black.igk.intel.com>
+References: <cover.1744452787.git.dan.carpenter@linaro.org>
+ <30210ed77b40b4b6629de659cb56b9ec7832c447.1744452787.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30210ed77b40b4b6629de659cb56b9ec7832c447.1744452787.git.dan.carpenter@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-In the existing implementation irq_shutdown does not mask the interrupts
-in hardware. This can cause spurious interrupts from the IO expander.
-Add masking to irq_shutdown to prevent spurious interrupts.
+On Sat, Apr 12, 2025 at 01:15:00PM +0300, Dan Carpenter wrote:
+> This code is intended to reject strings that start with "_sysfs" but the
+> strcmp() limit is wrong so checks the whole string instead of the prefix.
 
-Signed-off-by: Martin Larsson <martin.larsson@actia.se>
----
- drivers/gpio/gpio-pca953x.c | 2 ++
- 1 file changed, 2 insertions(+)
+...
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 8727ae54bc57..f93a3dbb2daa 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -914,6 +914,8 @@ static void pca953x_irq_shutdown(struct irq_data *d)
- 	clear_bit(hwirq, chip->irq_trig_fall);
- 	clear_bit(hwirq, chip->irq_trig_level_low);
- 	clear_bit(hwirq, chip->irq_trig_level_high);
-+
-+	pca953x_irq_mask(d);
- }
-=20
- static void pca953x_irq_print_chip(struct irq_data *data, struct seq_file =
-*p)
---=20
-2.51.0
+>  	if (strncmp(name, AGGREGATOR_LEGACY_PREFIX,
+> -		    sizeof(AGGREGATOR_LEGACY_PREFIX)) == 0)
+> +		    sizeof(AGGREGATOR_LEGACY_PREFIX) - 1) == 0)
+>  		return ERR_PTR(-EINVAL);
+
+Wouldn't be better to use strstarts() / str_has_prefix()?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
