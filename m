@@ -1,139 +1,165 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535924A13B5
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 15:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27B147CC96;
+	Wed, 21 Jan 2026 15:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769008799; cv=none; b=no5i1i1yFDKBL5GlV3SH2QCOzeIojwHeP8SFBF+SO/716tlafFFKIYzWH5Wh9u9WNHDz4GGl49QldY103nMIiTX/gU6/cDHq7GcCPGX+QWRyd8y4t6ZItn35YlptdZZ6RtiR9KQCF92ixMD9KlgKWnDZyA49Z3hw1PaybMX/Xlk=
+	t=1769008886; cv=none; b=uaAS1EEl/Srq87jzjs71kopQwD0WJ3wg1tY05gJ8nCykvo9MPgmkiA/+wyCj4P1+c8w9zA2nBP1XKAbzFKqypbAkMviekWumXGf+F7t26+Wy3lm2I9oVniGzT9njN2qvWPCV/77Fr8JmSKuA0kEezr3VmcEhNoBJpipV5kaP0Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769008799; c=relaxed/simple;
-	bh=ZXr9VlNJbLNIw7WZW4pYI5IacLcq1+h9ykJJmC2085M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DFhJ6lY/FUTTYwPPuV12URwfZsTHyZp6pWiZU6yls/vpJ8AELAvObr+0Tm3d5/TVXi3sES9dh8uiijBdPpVFiUixz9t6nADcNYDGdg6hYpmkIT5xgFlCJNS41MRxfIns+B4omKsKGGppCHMxufLcDxscx8fZXGTV55txmIOFCH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1viZzq-00022J-Cx; Wed, 21 Jan 2026 16:19:50 +0100
-Message-ID: <f002f394-0887-403b-a705-58bbffe362d4@pengutronix.de>
-Date: Wed, 21 Jan 2026 16:19:49 +0100
+	s=arc-20240116; t=1769008886; c=relaxed/simple;
+	bh=L9QnTSalVdaocEzIxFlwNpJxuLWUieZvADC7B/XVsmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=stunDuuvOG3ViGcE2YM5IX9/txz8IDZEZIO+594arwSo+Sc/KVzdwrDo+93xioS1txpeLUOvJ+n+C5PKAB4zviL2BneoSyDQplL/CJ+nE0NxNK/DMrROHq3QBjR3YTiucyawg1To2TO9fJmxhMiJ6fS182/7+HxDQiuTcYgzYCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlPOVgmA; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlPOVgmA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C50F2C4CEF1;
+	Wed, 21 Jan 2026 15:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769008885;
+	bh=L9QnTSalVdaocEzIxFlwNpJxuLWUieZvADC7B/XVsmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dlPOVgmAQL1Y8YIv7RMBVbBMLYq3hBniGba1bc2IbnBR/Hk7L/Jcn0hDwLB2RDcFK
+	 7jU/KKFJvhfMSEFh+qPuG2hTytqVt8IN4OMovEGVS7wD6Om/EiK09GFW3xvuZfFXAs
+	 ruLkpeMhVP8wCNQM1Wx4f/7ylOYluz8sqDWNKLLLdBln7gvJqY3WkNC5L3wisN2SPh
+	 rf6g/yrraiPiKEgtDOsWgajeENFKWg/B4BcP9bjHzqf2JWmEL9oim61rUFtfGMYX3V
+	 ILiqiQ2KqoWkm7XyRq+hXm8wu6NpjDN6RB5AuUw+vx0eOTi2a17VaditwevoGqSoqv
+	 pThQymOXNrnFg==
+Date: Wed, 21 Jan 2026 09:21:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <legoffic.clement@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	jens.wiklander@linaro.org, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 03/12] dt-bindings: bus: document the stm32 debug bus
+Message-ID: <20260121152124.GA3179930-robh@kernel.org>
+References: <20260121-debug_bus-v3-0-4d32451180d0@foss.st.com>
+ <20260121-debug_bus-v3-3-4d32451180d0@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Replace Shawn with Frank as i.MX platform
- maintainer
-To: Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: imx@lists.linux.dev, Sascha Hauer <s.hauer@pengutronix.de>,
- linux-gpio@vger.kernel.org, kernel@pengutronix.de,
- Fabio Estevam <festevam@gmail.com>, Linus Walleij <linusw@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20260121142047.10887-1-shawnguo@kernel.org>
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Content-Language: en-US, de-DE, de-BE
-In-Reply-To: <20260121142047.10887-1-shawnguo@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260121-debug_bus-v3-3-4d32451180d0@foss.st.com>
 
-Hello,
-
-On 1/21/26 3:20 PM, Shawn Guo wrote:
-> Shawn is no longer interested in maintaining i.MX platform, and would like
-> to step down.  On the other hand, Frank seems to be the best successor
-> for this role.
+On Wed, Jan 21, 2026 at 01:34:37PM +0100, Gatien Chevallier wrote:
+> Document the stm32 debug bus. The debug bus is responsible for
+> checking the debug sub-system accessibility before probing any related
+> drivers.
 > 
->  - He has been one of the most outstanding contributors to i.MX platform
->    in the recent years.
-> 
->  - He has been actively working as a co-maintainer reviewing i.MX
->    patches and keep the platform support in good shape.
-> 
->  - He works for NXP and could be the bridge and coordinator between
->    NXP internal developers and community contributors.
-> 
-> Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-
-Thanks Shawn for your tremendous work over the years and much success to
-Frank in his new maintainership!
-
-Cheers,
-Ahmad
-
+> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 > ---
->  MAINTAINERS | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  .../bindings/bus/st,stm32mp131-dbg-bus.yaml        | 79 ++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5b11839cba9d..a294b4e952a9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2745,14 +2745,14 @@ F:	arch/arm/include/asm/hardware/dec21285.h
->  F:	arch/arm/mach-footbridge/
->  
->  ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
-> -M:	Shawn Guo <shawnguo@kernel.org>
-> +M:	Frank Li <Frank.Li@nxp.com>
->  M:	Sascha Hauer <s.hauer@pengutronix.de>
->  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->  R:	Fabio Estevam <festevam@gmail.com>
->  L:	imx@lists.linux.dev
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
->  F:	Documentation/devicetree/bindings/firmware/fsl*
->  F:	Documentation/devicetree/bindings/firmware/nxp*
->  F:	arch/arm/boot/dts/nxp/imx/
-> @@ -2767,22 +2767,22 @@ N:	mxs
->  N:	\bmxc[^\d]
->  
->  ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE
-> -M:	Shawn Guo <shawnguo@kernel.org>
-> +M:	Frank Li <Frank.Li@nxp.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
->  F:	arch/arm/boot/dts/nxp/ls/
->  F:	arch/arm64/boot/dts/freescale/fsl-*
->  F:	arch/arm64/boot/dts/freescale/qoriq-*
->  
->  ARM/FREESCALE VYBRID ARM ARCHITECTURE
-> -M:	Shawn Guo <shawnguo@kernel.org>
-> +M:	Frank Li <Frank.Li@nxp.com>
->  M:	Sascha Hauer <s.hauer@pengutronix.de>
->  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->  R:	Stefan Agner <stefan@agner.ch>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
->  F:	arch/arm/boot/dts/nxp/vf/
->  F:	arch/arm/mach-imx/*vf610*
->  
-> @@ -20562,7 +20562,7 @@ F:	drivers/pinctrl/pinctrl-amd.c
->  PIN CONTROLLER - FREESCALE
->  M:	Dong Aisheng <aisheng.dong@nxp.com>
->  M:	Fabio Estevam <festevam@gmail.com>
-> -M:	Shawn Guo <shawnguo@kernel.org>
-> +M:	Frank Li <Frank.Li@nxp.com>
->  M:	Jacky Bai <ping.bai@nxp.com>
->  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->  R:	NXP S32 Linux Team <s32@nxp.com>
+> diff --git a/Documentation/devicetree/bindings/bus/st,stm32mp131-dbg-bus.yaml b/Documentation/devicetree/bindings/bus/st,stm32mp131-dbg-bus.yaml
+> new file mode 100644
+> index 000000000000..2db35e41e76c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/st,stm32mp131-dbg-bus.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bus/st,stm32mp131-dbg-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32 Coresight bus
+> +
+> +maintainers:
+> +  - Gatien Chevallier <gatien.chevallier@foss.st.com>
+> +
+> +description:
+> +  The STM32 debug bus is in charge of checking the debug configuration
+> +  of the platform before probing the peripheral drivers that rely on the debug
+> +  domain.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - st,stm32mp131-dbg-bus
+> +          - st,stm32mp151-dbg-bus
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#access-controller-cells":
+> +    const: 1
+> +    description:
+> +      Contains the debug profile necessary to access the peripheral.
+> +
+> +patternProperties:
+> +  "^.*@[0-9a-f]+$":
+> +    description: Debug related peripherals
+> +    type: object
+> +
+> +    additionalProperties: true
+> +
+> +    required:
+> +      - access-controllers
+> +
+> +required:
+> +  - "#access-controller-cells"
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - compatible
+> +  - ranges
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +
+> +    dbg_bus: bus@50080000 {
+> +      compatible = "st,stm32mp131-dbg-bus";
+> +      reg = <0x50080000 0x3f80000>;
 
--- 
-Pengutronix e.K.                  |                             |
-Steuerwalder Str. 21              | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
+That's a lot of registers... Yet the bus driver doesn't access any. 
+Looks to me like this belongs in ranges instead if there aren't any bus 
+registers. Or its size should be just the registers and then the whole 
+region size goes in ranges.
 
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      #access-controller-cells = <1>;
+> +      ranges;
+> +
+> +      cs_cti_trace: cti@50094000 {
+> +        compatible = "arm,coresight-cti", "arm,primecell";
+> +        reg = <0x50094000 0x1000>;
+> +        clocks = <&rcc CK_DBG>;
+> +        clock-names = "apb_pclk";
+> +        access-controllers = <&dbg_bus 0>;
+> +      };
+> +    };
+> 
+> -- 
+> 2.43.0
+> 
