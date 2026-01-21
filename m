@@ -1,258 +1,228 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011058.outbound.protection.outlook.com [40.107.130.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D83F23DE
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 14:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769007466; cv=fail; b=H9vtRsWNrWjyOa7Bk7QRIAtM42wElh9wr3E7IHDM2uJSOa32FjzhJJqBuG4FmEPNmr8Xg77AWYHeVEBf/NpeWSlUQlNpgr5j9w772LV/EN18BT2af7LUeFi84KCtpow5R57luau+7gkKQ8Lq0gHeJHYm4Z3AwmjQClmu1YMyqCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769007466; c=relaxed/simple;
-	bh=scJNLglwcJyk/qHI3/n830nStth+EpaDAmYi3G3pvg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rLwT4bAj2Lrtjms25JDNCiwnhYhBLBRLwYWiflkppoegNvDy9YlFBtVwbM3OA9WmKrRsIQ1gLg1bAMIiHEQRH/eBE4TJ5lLuZ4RAuW6SFuv51y82VlcGQw2OsimXHhCSdrk2toyXxP16HizsPpdzuz2PG668Qyd3c88/J9i6Ys0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BHz9PwEY; arc=fail smtp.client-ip=40.107.130.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BHz9PwEY"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=whWoMPlAnYWJXka/rhJFSqmNCzozkDnv9vBRl+hsZ/MQmCWiO5vxjoD85qS6WH5J+xgXocJJY3bb8Rf/UfHm2I/IQiEanYKpOPxRv3iwUavasiioSGSvqJJW7q3OycAkjC82YJj63RbLiOgzIMU3Y9lpY1/BhBlIqVuTQqJVxum4NyNaA7Xfu7jo7uGV1Wh05xr8J1Tcz8LV/6+Xzg8VgGE5ne2GHq9ajoGVMUo4XbjYAy8SeKJdBkCuWLZxOzhQCPHVDxdOzKE0e6tMbHyQQmOWJKIOgyW+8uvVPhuncLv2L1JHCV4sRNz0iOQNzK/gDmhDbJqXX/aaE87frskS/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5lZHxNsyKGa355cZo8zF72cbfZ/W9qTW1QU/xhajsQs=;
- b=brOLFec75CkLR4hjkGSlqz65+WeO4fChIzHIpWk8KhfkdjAPyeQFcD4UY/cpOrUS2Qi08fAdlBgxgX5TyHJzNqzM6ye4DDQMaDXupe29ayP39NrUB8Ah0DG4sbIUUvKsYWMHX2kra9yyBHqOILkNqJXe4MvmxNZeYJ2bFZKLy+5Z5tD+QuSctvGBqDH3dsGxPfzyz6Mvr0noApAtQ+hgneED1wC5QEgOw5qinak/DBNSwWW4AkfODHy8fJPpWjCbgnlyP+2Y3RPiBKl6gehf65uoIB7kzEWWoXUPsUZja0Xr7fy/gg75WB17/iTGW22FXXnth/xsNcoFHmYZXa/azQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5lZHxNsyKGa355cZo8zF72cbfZ/W9qTW1QU/xhajsQs=;
- b=BHz9PwEYDKjdyqx/4Rg4jBW60DU2T1W5x0v3lBI0M/Y46otpxh4IbWBiqiXOoOfxn45nbzy8w+o0DEQatoB6cZwSeeJcnaIN6c09qf32lJCB58HKFjKVGqohMmzLeRMA41ZV82Ev0JTBD7/pqa3PKo5VFOOzG6Sm3WIw5/grWQQ5kXQE9jjsjEL17xZWHCc9O3LWmbYfh42wKzK4AoejrSMpY6ySLfFisCjhkv+oXWlI8M6TgE3mWIsXOtodldMfLWnsLwfS7Po/HTKyRvDqif2HO2gI5bMG9LaA6m920yV+/o47OVBS9Y44/uqhy5ClaNixuQ8MfpDpwhbp5N4TaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8951.eurprd04.prod.outlook.com (2603:10a6:10:2e2::22)
- by GVXPR04MB12090.eurprd04.prod.outlook.com (2603:10a6:150:2be::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Wed, 21 Jan
- 2026 14:57:41 +0000
-Received: from DU2PR04MB8951.eurprd04.prod.outlook.com
- ([fe80::753c:468d:266:196]) by DU2PR04MB8951.eurprd04.prod.outlook.com
- ([fe80::753c:468d:266:196%4]) with mapi id 15.20.9520.011; Wed, 21 Jan 2026
- 14:57:41 +0000
-Date: Wed, 21 Jan 2026 09:57:35 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linusw@kernel.org>, kernel@pengutronix.de,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Replace Shawn with Frank as i.MX platform
- maintainer
-Message-ID: <aXDpX+Wm3HU8FYTA@lizhi-Precision-Tower-5810>
-References: <20260121142047.10887-1-shawnguo@kernel.org>
- <aXDh1tc3x4aCZG0z@dragon>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aXDh1tc3x4aCZG0z@dragon>
-X-ClientProxiedBy: PH0PR07CA0024.namprd07.prod.outlook.com
- (2603:10b6:510:5::29) To DU2PR04MB8951.eurprd04.prod.outlook.com
- (2603:10a6:10:2e2::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EB74C042E
+	for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 15:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769007947; cv=none; b=FD2zT+GOwFXofOeeE0gc/spBOISOU6PUKTif+KrXWcUJSSKZ7Fb/0YmkRxYNNC/EUUeRpCbG58jmKYfbfaHwigqkh4LILGHePmjjI6Ctp2F/PS6a3Ms94ousmKXqM7HzWjf1lQiT7s+t7glw5jcC70+faYrBQWofkB5+0Xntkys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769007947; c=relaxed/simple;
+	bh=VpzSOPPipZ7Wk3DVhXqnmZFKnblqi6knYh6FEjxvsEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIRcrrEhZGKItjrSF+rXPiGGJAtBijUkBI0hqO/RT5I2g7JsTXb8oQJepAyRXpKdlah8E25H2EaroF5zES3g+FeT0cF82ZV4VRSRmNZ0Y4QnHRdKP6pCSFxLvmZfdLgoMe0JnvO/q1gTdjcb84LHsP4bwmRaRNzEoKBu4hFZzQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-502acd495feso53916351cf.2
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 07:05:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769007945; x=1769612745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AF6Iy9dgsc5sPND1gabv+P1umCdITLLVFz5zc76lNNw=;
+        b=j7zZ8yUFa+ssdoUo7NDZ6AXZ7Cr2y43/x2BREq4+USJoOCC2OzdGULsZJslO8CM4N/
+         OOS3h5TwWnwKC17z23WA9DIup1JSbuB3hKiRfL0xsiy4KQO6KGKduc2l/+WkvCND+zeC
+         5LgZlfV+NbIkuzFiwg0bkWDxoO8aGHOnEAWiSFOmY4vT7IlNW+0KAu9m1ODfzWVNsbiS
+         8pjBrQX2PDs6b3GuvxPtdvbWV5JQGXpDrVeKDrfiVQgahmtG7epcyiYKwFSgTYMzsGdb
+         dmxyjbqgAUBNXZG6u9HFNvw6Dzjralh2UKbQ1GLSq60s4RLYi0gKyNjLgyn8srzD5wAu
+         vLbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbJUO4Aou2ZQ4/w2fkOHLUbkecLtZUwJbeSzwvPDla1T4fRWJKxknAklprecTOjRVRf2Bgw3JJ11uE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzt0K7C0pob2nF2Ld9B6hhLRyzdo9rqEqmChYLcL1nnhcA3QGs
+	lAl8XjPY2mXeVTLTGZuH6x3Sz1gbnvhTzBvB/aMuVKuvhNP8/bp5mxVENLkafIRY
+X-Gm-Gg: AZuq6aJRsZ62aUFXtLQw/nzLjk9OS4mxKgol8WB93wiGx8k4ySdHb3dk3HuCDrDXVdv
+	Z7/DEViAYQGLUDpb91nv5zfWxPuTWkCX3fa3iLknUQRNKiIClsY/XacB6r89pEhlsoNvZcI/sY6
+	GhsbnGQcG0NFOiuGmItN+PrAJKPVF9l+IS9gXKkUrsEwY/BExC4Ids92bjX4C6VAXaAkROokhEz
+	LTQaJd0aIQihbZyF1VQmHqpAh8kGnSsuvgp7RfJvuPb/cpI38ENfe+YauAXPxvSRYDezHJweoxE
+	alH2NN3hJTj/e/JQ1JjyuIovd1lj8suq5Ms1i6p/lBh0wZ2i+q46AdHvMLpvP7CgOZIxdAanlHC
+	wundq7IifQpA1RYYzdUaaZQiXgcWFKjZzs4t8R3oYhfi48s+lYCkmrKqjxinA0lb5uXcur4zfd0
+	L3tpGqwoEKz02BX2yuM2QXr2PeqssboPOsVCC2jdkHA5qB0Q/u
+X-Received: by 2002:a05:690e:e8b:b0:647:fea:2955 with SMTP id 956f58d0204a3-649176d52bcmr13923278d50.25.1769000745396;
+        Wed, 21 Jan 2026 05:05:45 -0800 (PST)
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com. [74.125.224.48])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-649170d35dfsm7758682d50.23.2026.01.21.05.05.45
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Jan 2026 05:05:45 -0800 (PST)
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6467ac59e16so4778134d50.1
+        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 05:05:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3qBe9NO2cxvOBqEPyVBz5WmI/p3AfG9NDt7eJR58A0szRqae1vYFYvYNmSPmKVMUU3aQkRQ7BcEy0@vger.kernel.org
+X-Received: by 2002:a05:6102:3053:b0:5e5:66c6:d23e with SMTP id
+ ada2fe7eead31-5f1a6fd7b8amr5292858137.1.1769000378213; Wed, 21 Jan 2026
+ 04:59:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8951:EE_|GVXPR04MB12090:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbbc8ef3-6bdc-4fce-df24-08de58fd6d14
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|19092799006|1800799024|376014|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RWxZZno3ZVRNTkhacG1mM1N1Sk40aTBKaHlmM1FNYTB2SW4yTWVkbHpLU2pW?=
- =?utf-8?B?YzNWbEcxeHRHYjU1MndHemVJQXNyVmhFZVNRcEVmQTNxMk44ZUhaNWw3alJQ?=
- =?utf-8?B?eG4zTk5tUWx4TncvN3g0K3NTdlFGM1VDWFM1VWkzRmorSHY0YkFlbnR2V24y?=
- =?utf-8?B?cUtlWThtTElkSnpvRWRFaFRpd0xKdHJ3U3NwWjZXV0RPSjlqM1NETzFXcVZN?=
- =?utf-8?B?Z3AvSG5uVnBBRlpabytTRUgyZHFBZzlLYTdoeDBRZmhTaVFaekdNK0hoMnJO?=
- =?utf-8?B?SGlEUjZMaFFyVXlxMUpFNGpsd3RCalRBNisrNGUwNkVCTndqaG9BSUdPQmp6?=
- =?utf-8?B?c056dFZJWG1jYVJjSmRFWkorK0txNnQ2T1NsMjExeTFzOXpORWUrSkltZ2VY?=
- =?utf-8?B?MGsrd1ZINWJzdmVrZDEzZG9ZSFRrMWZ1cTRnMnVRTlJUcGpIMVRZekRJek1R?=
- =?utf-8?B?eFIxVTF3T1VXbWROVkZRbmFIMDZ0aUw0UWpic3VmOElDc0hvcVBYaUgyMlJv?=
- =?utf-8?B?Zzl5bUNLTnYzdzVpTHNnMGF5S2xLbEt6bU9WWHJMdS9VUGprRTJyQzNZODBU?=
- =?utf-8?B?YXBPR2VVdGlKemJrZjFsZ2twN2g5QWZYMzBMU094bEw1UGE0aE5kY1c4a0Jv?=
- =?utf-8?B?WHdQM1JTMElFZGtNQzBTNlZhNUNjNm5tWUVYSjN3WkpieFUzdFA0RWw1Szdu?=
- =?utf-8?B?MU42ZkpyL0V5RU04THBpQmtFbnlLN1FXdGFYaHBiNGxUaGdGcUhkdFZrSm5p?=
- =?utf-8?B?c1JIYitBREt5eE85WUNBb2ZaK3YxOWhZYjIvWTB4NlJlUnJFamZ2WUc5MVda?=
- =?utf-8?B?K1B2b21KeklTTk9pSWM5bVZlamRzZjdvQWUxaE9qSnJXcjFaaXQxQ25WUzFH?=
- =?utf-8?B?MitVWnY4Q1ZSUGxlVVRMc1BtS2xvWG5VeVpHVzUyeW5zejUvemp4SDRWN0Vs?=
- =?utf-8?B?eVVlZ2tkUithZXgrYVd5Znd2dU5TbStnZTJod1EwMVZMaTdaSTNzZERkNEp2?=
- =?utf-8?B?aUZKeXF0TnRxRTVDWFdqZjZRVmd4cTdMK0dNUG1HK0dxbmJQdVRURnRtMCtY?=
- =?utf-8?B?RldnRXlHOW9IRkR3dVdMSHdHcFZtN1pISlFLVmNXdkp4OTM1L1czdW04ckxi?=
- =?utf-8?B?UkVYdWRNN0w3d1l6QkFQMkRIb3lxU1lrSjM0RUxYcHRpVzRhRXVQMHYyNXpQ?=
- =?utf-8?B?bUJKTmFMN1JuM3lsaHk4SGhXWmVkWnZmY0VuQXRQcXBmSUZ6SW1MSU5yWEZr?=
- =?utf-8?B?cEljUmVhR3dYbHl4VEl3T2EySDFsUFlsU1NoemlPYjAwMGxYUzZSeDFvOEJK?=
- =?utf-8?B?Y2VvUmhVakIwWUJ2aEQ1R2FVZnFMMFQzRndSUFFxcnhPTFBFOUhBV056ZEp1?=
- =?utf-8?B?V0dTYVhYSnU1WStBVUZrTjRvWkZpV28xQ0RHMFU5RzVjN28xaG9xQWluTDFy?=
- =?utf-8?B?KzFHeUhLdDZYbWh0KzlhbDdIL1d1TzlUVzBCVDBVa1I2aS9yNnFkSlFCYlVS?=
- =?utf-8?B?bUJyTnV4ZHdXblljQ0hLVElLSytGSVV2MWhZRlpnVnhaUHIyeDNSanZSQ1pN?=
- =?utf-8?B?S094cGdCT3VJT1h0OWxoT2FvZWJkQlg3WVJQdWdtQVArejFuY3BjenNtQm83?=
- =?utf-8?B?TXpuNDFYZ0w4RE83eTBxYTAvUm4rdU01LzM1bkpHT1MvN2NPZWFkRi9mb20r?=
- =?utf-8?B?azh6Z3h4amtMdm4yaTRwVU1pRXJsTFdxYmhTZnl2UFl4Q2NzQjdZTTJYRzRE?=
- =?utf-8?B?OERkQUJvVUNzNWVudHpRWkdSMGVZRG54RTg5Y2RxbThzeVVQak92Y3MvdUhu?=
- =?utf-8?B?Wmc1eEc3S0J6TTNxUmg3dWlNcG1kSzlIQSsyZzBjNFBLelZGYjdmaS9PYXMv?=
- =?utf-8?B?NEFjVDllQ1ZMbEt0RmdNNFZsMU52OENpU2U0U1NGTGFieW1wcFkyYmp2aWI2?=
- =?utf-8?B?YkFJUUs4eGo2cGhVT0hsNWRFMXk3SytKc29DYlBReG82d210bEF0dm1rNW9m?=
- =?utf-8?B?b3I1Ry9jRHBxbHliQ2MyS0dmRko5MXhYUmJzKzhMRFU0a1A5Q0lzckYrcDVX?=
- =?utf-8?B?VjU1cVd4dGZSeWtnNk11NTdjd0xxWmpMajRVU1pkTVdwQXVJMGtXY1FoeHJL?=
- =?utf-8?B?TkFaVklGN2N2TllXVHoxcXlLL3gzN3grTHh3dTEvS1VRZUcva2VBbm15V3ln?=
- =?utf-8?Q?+eGi28Uquc+3Ok+bb4N4H8c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8951.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(19092799006)(1800799024)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MlVPTFowSEh5UjhyeHM2ZTlxNjNsSTJyMXdhS2hia01MaWxYa0dodXA1Si93?=
- =?utf-8?B?S1p2elZidUx4Y2tFaGZ0WWgrelMwNTFNbU9sTUMrOTZVT1dHaDA5NnlJbUVR?=
- =?utf-8?B?dFlZaUFpaHRvYTJMU3liZkg4WjlvYUN3THFUQzh5eER0V2FBVkxOa2xvZytr?=
- =?utf-8?B?eFRoeDErS2ovNFVBRnljdHRacGVMcU9kUTRkdVFwZG4yUDNXZ25rWFkvL1Q2?=
- =?utf-8?B?QTFYQlltY2xIMlh0UmZVcFNJelptY1FVVVNSRUhodi8zNEdINUMvbTFjbERi?=
- =?utf-8?B?OGo2YStYYmw0bkMxbXloa0xXZjVaT0l6Q0ZxSjRjYWUxTFduTzcyWCtFNHdE?=
- =?utf-8?B?L3FnK3JVaUJvOHVBWVlZMnpmQmc4ckNwTmdWamllMG9kNXRZclVOQm9lUFU4?=
- =?utf-8?B?SllOc2xUeE12eEJxVkhzYk9sMDdMVlYrbHpyOHlqdDIybllBRDlCRlFkejFl?=
- =?utf-8?B?UzR3V0RHaVJhc045ZitwbUNMN3M4bTBJUEo4ZUtsT2pzYmdOK2dJdkF1ejF3?=
- =?utf-8?B?RkF0WVgrdUw5U3oyRHpYeVpURUNkdzdsTzF6MHJjK29rMyt3U25lNStudGpW?=
- =?utf-8?B?WE4vU0o5ZVNrblhSUVNkVE1LTHFMN2h4WUR4NFAzdDZPNlphSlM1bG9KcmVq?=
- =?utf-8?B?RExtWFlNalpLR01GMUFQT1oyYUQzU2ZPTHUyYXA4R0wzakNINWZralJVaU9M?=
- =?utf-8?B?VXI0VG1NMDk3Vmh6M3V5SGlUZ2YyWFRRckxyNzhLRkp0YjBtWXRQVHhEaVF3?=
- =?utf-8?B?ek5ocWFtaFBzQ3VVMktuMUMvYmtuSkdOWlVKNW5WTldWYnZoM25Lc3BaL0NX?=
- =?utf-8?B?dXZzOWtTb1BoK1ZacjlTSWRmcno2QTlpdXdsdERtZGVHb2ZxcERFTGRHMmRP?=
- =?utf-8?B?QWRTUXdqVmtTbFBFMC9xWmNRSEZpYzE2ZEFqL1VaemdYNkt4MVNLMWlrcjF5?=
- =?utf-8?B?T2JpMnpEU1hIWUt2dmFiNkwrMkI0NzRoNExzUnN0UC80cWl1Q0pJZHIwVGlE?=
- =?utf-8?B?ak1oS2M2blVNMm9VSzRKSU90YlhJajNQOHVPaDJnY2NabG1wVUt2ck1NYUFO?=
- =?utf-8?B?akZSRGRoOGIyMlp3eHBVeE9ySzQ2czBZelI0MnJab3JWdjFzWWhOSjlwcWVa?=
- =?utf-8?B?MVl0dUJ6U0pROHdIRHVWWVNKdkltK0h0ejg0cjJDdFlZTXA5MUk2TlVTK3VO?=
- =?utf-8?B?WkhBVG1ld3h0b1FqTFlQeDBJNENMWDZheGxEV3IrK0hSMTA3ZTA0TDFyVjcr?=
- =?utf-8?B?Z050eC9Uelo3c01PSllxc2RUWGk3U0trcGlzcFVkQjdqMTl2bjJ3RHJqMity?=
- =?utf-8?B?cVM3VHRweDBwdCtYcS9XMVZqVWtTZHJtNFROLzN3SzRzamc3bHNmdTVZdm9O?=
- =?utf-8?B?VUxyelMzYW5TSVljdVl1aVRnRDRyZVU0d3V1WnpSS3UxSVpxaHhBNk1RUWx4?=
- =?utf-8?B?aHk4KzR5NEFHcWVoRXdpS0pXNXFqeWZkSjFWdExrcHkzVWFHc0ViZnBzUkMx?=
- =?utf-8?B?M0loYWwwdFd3YlNNaXR3N0tVTEJiOHdaRHIzMmVVODlDZnh3OHRZTHMzZU15?=
- =?utf-8?B?OElKeGM2NFk3eVA1TUJqYnlFalBJQk85aTJVMnlhM3lkSTZ6MXUzMUIxWmNO?=
- =?utf-8?B?bzJYQllVNTM1MVZzQ3l2Y1Q0V2pZRFBJV2hXSURZUzRmV0kyb2xtWGdSMEZ6?=
- =?utf-8?B?VmhKTTRJVCsySGNiSlJmZEp5RWlXNEQ0dFh5dDBMSWhKbXZwbkJUcnU4Nndy?=
- =?utf-8?B?SjFieXJlRGFQd0NXcXErZEhZcm00dm9QVXQ5aHVYTXFPNUpGWTZlaVNVcElO?=
- =?utf-8?B?VnU4MEFvY3ljVXlIc1FGcFFBcWRTYmE3aFNIR0xmeGtMRGt2TDFPMkIraElX?=
- =?utf-8?B?eXlabTd1Nk9mUC9kOEw2KzJQRTd0M2NKTk9Oc3hnaHIwNDFOMCtJSXVPSW55?=
- =?utf-8?B?Z2lpSmtOUFc1cE1zQkdSdm03QTBaU1M2NnRsRjl2aVZSYU9ZVHpPWENVYVFh?=
- =?utf-8?B?bmw5ME5XeWQyVm1UYm1EcEdvb0UxeHN2WmtMQjU5Nlg1dWJlU09xYzQwb3A4?=
- =?utf-8?B?THQ2c0pPUEFOTm1pOVc3Nnh3aEpRZlZ4S2k1Wk9kUFVFODZZeFMxOEhYOGRX?=
- =?utf-8?B?TUhqQktQZFVZd2taK2RObDJaRkJwQ0pqNHl4eHErRnB2K3NINS9KUG5NcXov?=
- =?utf-8?B?Mzk0dGNVTUpWNVV0VEd2QU9rTi9VblVPVDhKUHh2WUNzZTlPcHZOU3ErY2RB?=
- =?utf-8?B?NGRraTltQzVEc29VdnN0Wi9ia3JUV2grRHlsSU5PNmd5V0JxMno3dDhRc09l?=
- =?utf-8?Q?OnG2hx8MB2jeA88Vh8?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbbc8ef3-6bdc-4fce-df24-08de58fd6d14
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8951.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2026 14:57:41.4714
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JBCcn6SUyhHG/aNQ/GTaN1k4g24E0C5vO3Ounr49tg9WKr1Lp16tX0a7ExVDjUv0K0Ow7JFHNutznpUT+pRn/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB12090
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com> <CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
+ <5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com> <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+ <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com> <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+ <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com> <20251202102619.5cd971cc@bootlin.com>
+ <088af3ff-bd04-4bc9-b304-85f6ed555f2a@gmail.com> <20251202175836.747593c0@bootlin.com>
+ <dc813fc2-28d2-4f2c-a2a3-08e33eec8ec7@gmail.com> <20251204083839.4fb8a4b1@bootlin.com>
+ <CAMuHMdXdwf7La1EYBWTJadsTAJG3nKQVW6wtBn-bUqshA=XHRw@mail.gmail.com>
+ <20251210132140.32dbc3d7@bootlin.com> <c50c40cc-69f6-436c-a94e-94a3a10f6727@gmail.com>
+ <20251211132044.10f5b1ea@bootlin.com> <1b9fa77b-d74a-4fa7-b2e7-8b389d59a5a0@gmail.com>
+ <20251211161902.11ef4248@bootlin.com>
+In-Reply-To: <20251211161902.11ef4248@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Jan 2026 13:59:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWGk5ig3v9tGy1cMOg1LmKu3KrxQq2HO1vcQeZPuRxWBQ@mail.gmail.com>
+X-Gm-Features: AZwV_QgoZry7Ux_LWaq66D8-Sle9_xFUD1BP9eHkYs41xWjINnCZsHwmSX1GiNQ
+Message-ID: <CAMuHMdWGk5ig3v9tGy1cMOg1LmKu3KrxQq2HO1vcQeZPuRxWBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT overlays"
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Rob Herring <robh@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Kalle Niemi <kaleposti@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Saravana Kannan <saravanak@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 21, 2026 at 10:25:26PM +0800, Shawn Guo wrote:
-> Cc Frank
+Hi Herv=C3=A9,
+
+Revisiting his old thread (sorry for the delay)...
+
+On Thu, 11 Dec 2025 at 16:19, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> On Thu, 11 Dec 2025 15:52:28 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> > On 11/12/2025 14:20, Herve Codina wrote:
+> > > On Thu, 11 Dec 2025 10:34:46 +0200
+> > > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> > > Do you see the same trace with:
+> > > - "pinctrl-0 =3D <&i2c1_pins>;" in your overlay
+> > > - fragment0 removed from the overlay (i2c1_pins definition removed fr=
+om
+> > >    the overlay.
+> > > - i2c1_pins node defined in your base DT.
+> >
+> > Just tested. The i2c1 appears and the test-overlay probe gets called,
+> > when the i2c1_pins is in the base-dt and not in the overlay.
 >
-> On Wed, Jan 21, 2026 at 10:20:47PM +0800, Shawn Guo wrote:
-> > Shawn is no longer interested in maintaining i.MX platform, and would like
-> > to step down.  On the other hand, Frank seems to be the best successor
-> > for this role.
-> >
-> >  - He has been one of the most outstanding contributors to i.MX platform
-> >    in the recent years.
-> >
-> >  - He has been actively working as a co-maintainer reviewing i.MX
-> >    patches and keep the platform support in good shape.
-> >
-> >  - He works for NXP and could be the bridge and coordinator between
-> >    NXP internal developers and community contributors.
-> >
-> > Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-> > ---
+> Geert, do you expirement same results?
 
-Thanks, Shawn, for your great work maintaining i.MX platform support. I’ve
-learned a lot from you, and I’m happy to continue maintaining the i.MX
-platform.
+Yes, after moving the pin control subnode from the overlay[1] to the
+base DTS, the SPI bus and FLASH work after loading the overlay for
+the first time.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > In other word, is the issues related to adding a pinctrl sub-node (pi=
+nctrl
+> > > pins definition) in the overlay or is it something else?
+> >
+> > Seems to be related to the pinctrl.
+>
+> I don't think that the issue is related to pinctrl itself.
+>
+> IMHO, I think the issue is related to overlays and fw_devlink.
+> The distinction between "a new node is going to lead to a device" vs "a n=
+ew
+> node is just data and will never been attached to a new device" when an
+> overlay is applied is broken.
+>
+> This is broken with the upstream "treewide: Fix probing of devices in DT
+> overlays" commit I've tried to revert. Indeed, on the LAN966x PCI device
+> use case devlinks created are not correct with this commit applied.
+>
+> I am not sure also that devlinks created with a more complex overlay will=
+ be
+> correct. For instance, Matti, with your overlay not sure that a phandle f=
+rom
+> the oscillator node referencing the pmic node will lead to a correct
+> provider/consumer devlink between the pmic device and the oscillator devi=
+ce.
+>
+> On the other hand, this is broken with "of: dynamic: Fix overlayed device=
+s
+> not probing because of fw_devlink" works for the LAN966x PCI device use c=
+ase
+> an lead to correct devlinks but breaks your use cases.
 
-> >  MAINTAINERS | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 5b11839cba9d..a294b4e952a9 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -2745,14 +2745,14 @@ F:	arch/arm/include/asm/hardware/dec21285.h
-> >  F:	arch/arm/mach-footbridge/
-> >
-> >  ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
-> > -M:	Shawn Guo <shawnguo@kernel.org>
-> > +M:	Frank Li <Frank.Li@nxp.com>
-> >  M:	Sascha Hauer <s.hauer@pengutronix.de>
-> >  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
-> >  R:	Fabio Estevam <festevam@gmail.com>
-> >  L:	imx@lists.linux.dev
-> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> >  S:	Maintained
-> > -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
-> >  F:	Documentation/devicetree/bindings/firmware/fsl*
-> >  F:	Documentation/devicetree/bindings/firmware/nxp*
-> >  F:	arch/arm/boot/dts/nxp/imx/
-> > @@ -2767,22 +2767,22 @@ N:	mxs
-> >  N:	\bmxc[^\d]
-> >
-> >  ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE
-> > -M:	Shawn Guo <shawnguo@kernel.org>
-> > +M:	Frank Li <Frank.Li@nxp.com>
-> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> >  S:	Maintained
-> > -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
-> >  F:	arch/arm/boot/dts/nxp/ls/
-> >  F:	arch/arm64/boot/dts/freescale/fsl-*
-> >  F:	arch/arm64/boot/dts/freescale/qoriq-*
-> >
-> >  ARM/FREESCALE VYBRID ARM ARCHITECTURE
-> > -M:	Shawn Guo <shawnguo@kernel.org>
-> > +M:	Frank Li <Frank.Li@nxp.com>
-> >  M:	Sascha Hauer <s.hauer@pengutronix.de>
-> >  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
-> >  R:	Stefan Agner <stefan@agner.ch>
-> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> >  S:	Maintained
-> > -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git
-> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/frank.li/linux.git
-> >  F:	arch/arm/boot/dts/nxp/vf/
-> >  F:	arch/arm/mach-imx/*vf610*
-> >
-> > @@ -20562,7 +20562,7 @@ F:	drivers/pinctrl/pinctrl-amd.c
-> >  PIN CONTROLLER - FREESCALE
-> >  M:	Dong Aisheng <aisheng.dong@nxp.com>
-> >  M:	Fabio Estevam <festevam@gmail.com>
-> > -M:	Shawn Guo <shawnguo@kernel.org>
-> > +M:	Frank Li <Frank.Li@nxp.com>
-> >  M:	Jacky Bai <ping.bai@nxp.com>
-> >  R:	Pengutronix Kernel Team <kernel@pengutronix.de>
-> >  R:	NXP S32 Linux Team <s32@nxp.com>
-> > --
-> > 2.43.0
-> >
+Loading my overlay[1] causes the following changes under
+/sys/class/devlink/:
+
+    + genpd_provider:ca53-cpu0--platform:e6e90000.spi ->
+../../devices/virtual/devlink/genpd_provider:ca53-cpu0--platform:e6e90000.s=
+pi
+    + platform:e6055000.gpio--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6055000.gpio--platform:e6e90000.spi
+    + platform:e6060000.pinctrl--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6060000.pinctrl--platform:e6e90000.=
+spi
+    - platform:e6060000.pinctrl--platform:keys ->
+../../devices/virtual/devlink/platform:e6060000.pinctrl--platform:keys
+    + platform:e6150000.clock-controller--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6150000.clock-controller--platform:=
+e6e90000.spi
+    + platform:soc--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:soc--platform:e6e90000.spi
+
+Note that these changes are exactly the same in the working and the
+non-working case.
+
+Removing the overlay again removes all added links, but does not
+restore the keys link:
+
+    - genpd_provider:ca53-cpu0--platform:e6e90000.spi ->
+../../devices/virtual/devlink/genpd_provider:ca53-cpu0--platform:e6e90000.s=
+pi
+    - platform:e6055000.gpio--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6055000.gpio--platform:e6e90000.spi
+    - platform:e6060000.pinctrl--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6060000.pinctrl--platform:e6e90000.=
+spi
+    - platform:e6150000.clock-controller--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:e6150000.clock-controller--platform:=
+e6e90000.spi
+    - platform:soc--platform:e6e90000.spi ->
+../../devices/virtual/devlink/platform:soc--platform:e6e90000.spi
+
+Loading the overlay again causes no changes in the links, but the SPI
+bus and FLASH always work.
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drive=
+rs.git/commit/?h=3Dtopic/renesas-overlays&id=3D383285b905a20d6734bfcbf7bcf7=
+15c1c2b45395
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
