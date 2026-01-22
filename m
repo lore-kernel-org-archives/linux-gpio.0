@@ -1,127 +1,265 @@
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A3F427A10
-	for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 17:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26FD32C302;
+	Thu, 22 Jan 2026 01:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769016483; cv=none; b=hNzL32TNNC2b1usLDyhpJEIZPtY2tSdVr1LzlrYmehWti28D1mfFaYVyCn8S4aflzzc6gS3oiFKOC/AGtwAKrUeG2Ky1d4RJBYde+L68KcGa50SqsBsmwtSjbXXtEH/9L751RYWiss1dPWde0zcNXVar/sdoSPBoqkAIKl+Im8Y=
+	t=1769043988; cv=none; b=NiJA7EZiH1+htE0kukxp+ysGuAqkW21GQH2RzcbTSU9lkEkQ/c8yaGKkPSCylLyINg4heeg/IHsJ8Aw4knWsO5CqBbj1bkSSTKiQ4U1/L2aYL2WPCGwClKG0Jhf/5okr7b3vD1jayUd8Ugqnz7TOQ97wke4///uPbwRPODTw67k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769016483; c=relaxed/simple;
-	bh=m5FI3xNAl3TkzNTKrHI4D59YqGJiqS+5075l9UsrcqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdUfXiWgIwEKTjg01rnqr/q5t6p3UZ1pucLWPHf0vosZZCQr/FHRJWgejTcgFU84zdoJCFqFA0+MnwLNGnvl0FPP3cvsv5Rr/Dx53TE9/o3GNwpkojk4ZrLTep61BJtUshRO2cgzfWJNzjaK+/E3PlJYrD0W8ljPXJ7TWOHPdW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkJvs9cw; arc=none smtp.client-ip=74.125.82.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769043988; c=relaxed/simple;
+	bh=HTZKPLow78Th6RRkvDqBVuE806ZcvXA/zQTkQQHIk2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TM88fcRl0CoyUq62rpwg9LHpnSYWnVI/lmd+0QB+RNvtBV6pzmpGpovafebec1CPwAGznDktxp5Ff6eo13zLueLiYBoDPmpM7/sjK5YcVIu4ybb12+5boMoZ5JqnyqwGllvCMd8djEmp5kRbm7R2bQpJIcS4yA7uwIxN9YsytjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gmMY0l8e; arc=none smtp.client-ip=192.19.166.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkJvs9cw"
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-2b6f85470b6so69963eec.1
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Jan 2026 09:28:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769016480; x=1769621280; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ODmaEKD4YMc3t8iZSxwisxxhGoFljo8Y2PJTisCWGWc=;
-        b=AkJvs9cw/nGdJx6MZgd1w2JMH42K2y/5SikPPxq0BP0UhZeAAqXT+CAGcEpjX/1top
-         H4yKflgKcTo86GRxQslhDiu4xjQQY/zBMWLGMe4uv7R8aatcjDZW+smb4fS3sMMeWSOh
-         snID/Kemy81qRl0IO6kJUBcmTDV0snHv62LDZ7vTLZZmCUHp323hNMOK6TkhzvIIo9tM
-         K28bA0rDOW/CaJLagtqslK3MsgwWicK3od82ATnRn7ECfcGf6GHZmwmP5RLoy9Lxo340
-         jtgdWUKO35DsVQbmUTl0IcHEd2jbYBt/+NBXYH95dM7qny5KxOToTFoj2dlg2A70rP/r
-         eHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769016480; x=1769621280;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODmaEKD4YMc3t8iZSxwisxxhGoFljo8Y2PJTisCWGWc=;
-        b=aUW4BT2WjXS45+25k4lzm5yLIIjCvAVso30+t+TFHPM/Xlvc+6h3VqqQD16QAOz38F
-         2QqfoZYNlF8IcCFZYlfuR4u1/9gbWdENG9n6/fA9jbrKKy5GkLYuPC50tit4rjCl52Zw
-         vKVWv/QYw56gswdBy7TZlM+DxPkLoOQTU1LSAx/HCWqSYx7R+x75Ezyu19riL94qEyAJ
-         ButfuhYhmyNKsWrMD0tee8cuInFn+KDyI9vtt5ZYGg5XWrcjFYBa+2+fieormUwMAqA4
-         aEgOFj4sileiFSeid7BQSco0WK6bR1yY6f3o+vXEcXhsiXkqiI1Fwucs61wyxYQ55U6I
-         DLJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLjsNkePbM2lml7exNS9dcQ8xwMyAG9CrpycCniX89UXhKE2JCSIN9cc+4XzqjsuWcfyuNI47s7XMi@vger.kernel.org
-X-Gm-Message-State: AOJu0YytbfNKhC47LKG9UX1T1hjXbWz3f+T6qYjYDw1TSJzsPkAIJGur
-	WSpzvyh00Y10iqstykkzG1upBuNubLeyj6q/xA5sVCwxurUjM//Q0/Xo
-X-Gm-Gg: AZuq6aI7gCoa+2IP/LshHwoOGm48HT9Dfggc2EYFiuceRJiCYgveS2MkoqHrQjXLv6w
-	eUl6Krs1qBlKNFTb0+QEQKE0yGF8qVlHXQeFJW4USmIbYGf7X6ga+IOqTht+rrppqtlvPKUlGIi
-	Hsye4sgPDK4ja9610yeATXe8A767GLXXpdcasLHJG0V7f9YcNmeHiAjO3W9xl0PCHe9tXRyetIe
-	0iyDgT9cRwDwZwy7yM3iKe42CX5tfQW7KAsbzKHH/qQ+ZykgE/FKd7hnwHkHErHeOtaSSwcgbdZ
-	UIXDKUz8VgvGWPoAXNUryAivAaBQiS1AEw82UvPryOhZs8xmlTGhyCOZpKfimw802M+m6UyzhZE
-	8MwAT23x2lNXcIR+w3toWEVtqgJIxrCzPHHM23A3hB0AlJstBCUGGR3lkdes8+x8ZjdsoBXngsH
-	bGKzimDkGqrAkJNitPQLVz3qbt/BW+byeq3NiGgqMMux5OF32BMAH5UNMdB0hkkoU=
-X-Received: by 2002:a05:7300:1892:b0:2ae:5b54:523e with SMTP id 5a478bee46e88-2b6fddb1837mr3771158eec.40.1769016480404;
-        Wed, 21 Jan 2026 09:28:00 -0800 (PST)
-Received: from google.com ([2a00:79e0:2ebe:8:abb8:3a31:328a:3594])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b70a036d02sm5292666eec.14.2026.01.21.09.27.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Jan 2026 09:27:59 -0800 (PST)
-Date: Wed, 21 Jan 2026 09:27:56 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: 756271518@qq.com, brgl@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] Add common hall sensor drivers
-Message-ID: <wv75wb5bif67u3yzbgbmrfg75zseamfvehewwyl4xnm3ecmqrj@5yqkwsrdlfzg>
-References: <tencent_3AC818B2FE367BA7DD8940E08827CB146806@qq.com>
- <CAD++jLnSXPhqnTie9U03B7mn2x9ogUpABBLFwbt9dgtzdb3yNQ@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gmMY0l8e"
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 0CC25C00B2E2;
+	Wed, 21 Jan 2026 17:06:26 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 0CC25C00B2E2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1769043986;
+	bh=HTZKPLow78Th6RRkvDqBVuE806ZcvXA/zQTkQQHIk2I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gmMY0l8eZRUBPfKUNuLFCixbguSAwv1N7r8i4gBc7Fb3YwCSWLsGJmgsUXuxfgs7B
+	 osOm79v4Y/hqyKus4Y7q7RZur9sqizxNr2KAIf4yWF+SEAxPLCeuzfcTg3Nyl7CWPo
+	 qz2nyFGSfl0THdC7xoEhQW/XHj2/2+EiS6zX/KtU=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id E31DD19CD8;
+	Wed, 21 Jan 2026 17:06:25 -0800 (PST)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Christophe Leroy <chleroy@kernel.org>,
+	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
+Subject: [PATCH 3/3] gpio: brcmstb: allow parent_irq to wake
+Date: Wed, 21 Jan 2026 17:05:16 -0800
+Message-ID: <20260122010516.1200630-4-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260122010516.1200630-1-florian.fainelli@broadcom.com>
+References: <20260122010516.1200630-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jLnSXPhqnTie9U03B7mn2x9ogUpABBLFwbt9dgtzdb3yNQ@mail.gmail.com>
 
-On Wed, Jan 21, 2026 at 12:43:01PM +0100, Linus Walleij wrote:
-> Hi Xuchen,
-> 
-> thanks for your patch!
-> 
-> On Wed, Jan 21, 2026 at 9:59 AM <756271518@qq.com> wrote:
-> 
-> > From: xuchen <756271518@qq.com>
-> >
-> > This patch adds support for common hall sensor ICs used in Qualcomm
-> > reference designs. The driver handles both rising and falling edges
-> > to detect magnetic field changes.
-> >
-> > Signed-off-by: xuchen <756271518@qq.com>
-> 
-> Why are you going to such lengths to create this driver?
-> 
-> What people do is usually just create a GPIO "key" input
-> for the hall sensor, for example:
-> 
->         gpio_keys {
->                 compatible = "gpio-keys";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 vdd-supply = <&ab8500_ldo_aux1_reg>;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&hall_tvk_mode>;
-> 
->                 button@145 {
->                         /* Hall sensor */
->                         gpios = <&gpio4 17 GPIO_ACTIVE_HIGH>;
->                         linux,code = <0>; /* SW_LID */
->                         label = "HED54XXU11 Hall Effect Sensor";
->                 };
->         };
-> 
-> This turns the GPIO line into a "lid switch" which is what you want,
-> and already supports regulators and pin control out of the box if
-> you need them too. (The VDD and pin control properties are optional.)
+From: Doug Berger <opendmb@gmail.com>
 
-Right, we do not need a custom driver for that (especially one using
-legacy APIs and custom event codes and defining special classes).
+The classic parent_wake_irq can only occur after the system has
+been placed into a hardware managed power management state. This
+prevents its use for waking from software managed suspend states
+like s2idle.
 
-Thanks.
+By allowing the parent_irq to be enabled for wake enabled GPIO
+during suspend, these GPIO can now be used to wake from these
+states. The 'suspended' boolean is introduced to support wake
+event accounting.
 
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+[florian: port changes after generic gpio chip conversion]
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 90 +++++++++++++++++++++++++------------
+ 1 file changed, 62 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 5fb6612c2aa5..cecc7cf93796 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -54,6 +54,7 @@ struct brcmstb_gpio_priv {
+ 	int parent_irq;
+ 	int num_gpios;
+ 	int parent_wake_irq;
++	bool suspended;
+ };
+ 
+ #define MAX_GPIO_PER_BANK       32
+@@ -231,6 +232,9 @@ static int brcmstb_gpio_priv_set_wake(struct brcmstb_gpio_priv *priv,
+ {
+ 	int ret = 0;
+ 
++	if (priv->parent_wake_irq == priv->parent_irq)
++		return ret;
++
+ 	if (enable)
+ 		ret = enable_irq_wake(priv->parent_wake_irq);
+ 	else
+@@ -281,6 +285,11 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+ 	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+ 		unsigned int offset;
+ 
++		if (priv->suspended && bank->wake_active & (u32)status) {
++			priv->suspended = false;
++			pm_wakeup_event(&priv->pdev->dev, 0);
++		}
++
+ 		for_each_set_bit(offset, &status, 32) {
+ 			if (offset >= bank->width)
+ 				dev_warn(&priv->pdev->dev,
+@@ -454,18 +463,18 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 	}
+ 
+ 	if (of_property_read_bool(np, "wakeup-source")) {
++		/*
++		 * Set wakeup capability so we can process boot-time
++		 * "wakeups" (e.g., from S5 cold boot)
++		 */
++		device_set_wakeup_capable(dev, true);
++		device_wakeup_enable(dev);
+ 		priv->parent_wake_irq = platform_get_irq(pdev, 1);
+ 		if (priv->parent_wake_irq < 0) {
+-			priv->parent_wake_irq = 0;
++			priv->parent_wake_irq = priv->parent_irq;
+ 			dev_warn(dev,
+ 				"Couldn't get wake IRQ - GPIOs will not be able to wake from sleep");
+ 		} else {
+-			/*
+-			 * Set wakeup capability so we can process boot-time
+-			 * "wakeups" (e.g., from S5 cold boot)
+-			 */
+-			device_set_wakeup_capable(dev, true);
+-			device_wakeup_enable(dev);
+ 			err = devm_request_irq(dev, priv->parent_wake_irq,
+ 					       brcmstb_gpio_wake_irq_handler,
+ 					       IRQF_SHARED,
+@@ -476,6 +485,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 				goto out_free_domain;
+ 			}
+ 		}
++		priv->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+ 	}
+ 
+ 	priv->irq_chip.name = dev_name(dev);
+@@ -486,9 +496,6 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 	priv->irq_chip.irq_ack = brcmstb_gpio_irq_ack;
+ 	priv->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
+ 
+-	if (priv->parent_wake_irq)
+-		priv->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+-
+ 	irq_set_chained_handler_and_data(priv->parent_irq,
+ 					 brcmstb_gpio_irq_handler, priv);
+ 	irq_set_status_flags(priv->parent_irq, IRQ_DISABLE_UNLAZY);
+@@ -511,16 +518,11 @@ static void brcmstb_gpio_bank_save(struct brcmstb_gpio_priv *priv,
+ 					priv->reg_base + GIO_BANK_OFF(bank->id, i));
+ }
+ 
+-static void brcmstb_gpio_quiesce(struct device *dev, bool save)
++static void brcmstb_gpio_quiesce(struct brcmstb_gpio_priv *priv, bool save)
+ {
+-	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
+ 	struct brcmstb_gpio_bank *bank;
+ 	u32 imask;
+ 
+-	/* disable non-wake interrupt */
+-	if (priv->parent_irq >= 0)
+-		disable_irq(priv->parent_irq);
+-
+ 	list_for_each_entry(bank, &priv->bank_list, node) {
+ 		if (save)
+ 			brcmstb_gpio_bank_save(priv, bank);
+@@ -538,8 +540,14 @@ static void brcmstb_gpio_quiesce(struct device *dev, bool save)
+ 
+ static void brcmstb_gpio_shutdown(struct platform_device *pdev)
+ {
++	struct brcmstb_gpio_priv *priv = dev_get_drvdata(&pdev->dev);
++
++	/* disable interrupts */
++	if (priv->parent_irq > 0)
++		disable_irq(priv->parent_irq);
++
+ 	/* Enable GPIO for S5 cold boot */
+-	brcmstb_gpio_quiesce(&pdev->dev, false);
++	brcmstb_gpio_quiesce(priv, false);
+ }
+ 
+ static void brcmstb_gpio_bank_restore(struct brcmstb_gpio_priv *priv,
+@@ -555,7 +563,32 @@ static void brcmstb_gpio_bank_restore(struct brcmstb_gpio_priv *priv,
+ 
+ static int brcmstb_gpio_suspend(struct device *dev)
+ {
+-	brcmstb_gpio_quiesce(dev, true);
++	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
++
++	if (priv->parent_irq > 0)
++		priv->suspended = true;
++
++	return 0;
++}
++
++static int brcmstb_gpio_suspend_noirq(struct device *dev)
++{
++	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
++
++	/* Catch any wakeup sources occurring between suspend and noirq */
++	if (!priv->suspended)
++		return -EBUSY;
++
++	/* disable interrupts while we save the masks */
++	if (priv->parent_irq > 0)
++		disable_irq(priv->parent_irq);
++
++	brcmstb_gpio_quiesce(priv, true);
++
++	/* Now that the masks have been saved re-enable interrupts */
++	if (priv->parent_wake_irq)
++		enable_irq(priv->parent_irq);
++
+ 	return 0;
+ }
+ 
+@@ -563,25 +596,26 @@ static int brcmstb_gpio_resume(struct device *dev)
+ {
+ 	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
+ 	struct brcmstb_gpio_bank *bank;
+-	bool need_wakeup_event = false;
+ 
+-	list_for_each_entry(bank, &priv->bank_list, node) {
+-		need_wakeup_event |= !!__brcmstb_gpio_get_active_irqs(bank);
+-		brcmstb_gpio_bank_restore(priv, bank);
+-	}
++	/* disable interrupts while we restore the masks */
++	if (priv->parent_wake_irq)
++		disable_irq(priv->parent_irq);
+ 
+-	if (priv->parent_wake_irq && need_wakeup_event)
+-		pm_wakeup_event(dev, 0);
++	priv->suspended = false;
++
++	list_for_each_entry(bank, &priv->bank_list, node)
++		brcmstb_gpio_bank_restore(priv, bank);
+ 
+-	/* enable non-wake interrupt */
+-	if (priv->parent_irq >= 0)
++	/* re-enable interrupts */
++	if (priv->parent_irq > 0)
+ 		enable_irq(priv->parent_irq);
+ 
+ 	return 0;
+ }
+ 
+ static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
+-	.suspend_noirq = pm_sleep_ptr(brcmstb_gpio_suspend),
++	.suspend = pm_sleep_ptr(brcmstb_gpio_suspend),
++	.suspend_noirq = pm_sleep_ptr(brcmstb_gpio_suspend_noirq),
+ 	.resume_noirq = pm_sleep_ptr(brcmstb_gpio_resume),
+ };
+ 
 -- 
-Dmitry
+2.43.0
+
