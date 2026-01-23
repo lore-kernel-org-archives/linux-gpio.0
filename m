@@ -1,63 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702872A1BA;
-	Fri, 23 Jan 2026 20:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84174256C70;
+	Fri, 23 Jan 2026 20:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769201217; cv=none; b=ooQXaEK16jVrBqmqkPkGGXCdE3dYlfy8ICUIpI1EUVFN0QO5CErQJ5ApiALj76Ma5splE3CcABdug3K00ynml+wZ7ypE+kOxIR/l6WMX+6gqS4LEAQCo372fp6bVvJHmgeR+TfPEIYqqRD19S/gm7fSXYXVGDXleIsa0AIyevlc=
+	t=1769201878; cv=none; b=tsltzvagpAUqhM6MNEJngYhp9ID3vxPTDgH3IvGWMaUV0uFQNTdMExtzJMVEXJwX6oEYzPuoK/4UXSu2UDXUHV2j0g/3SUwr30JMQurSfjishEFUiFLHv86w9C86Xoy1AchFAr+617grn/rDGEAyB/KTxl2qi16fCw9XEMVBTt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769201217; c=relaxed/simple;
-	bh=6pBfnXJzCIlP7kgVXbUtwAHRN6UYY/qWNFcvT9U6+p0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=df3eKos6/xmC8t/uj8te3gtLPTblC5+uOkmG4FY1ABN3gDKWYw7ggb6CJoTAU25qOYxqy41WWHrNEbxDHQ/wKWIQ5GKuRrIfBauL7OQ5s34qR6bn4V0SiknsiuQjBq5q17aRuOodv69GRiyJfUlZXjNH4FX2kzTMeOQ542oW2XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSREFZhm; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSREFZhm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEFDC4CEF1;
-	Fri, 23 Jan 2026 20:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769201217;
-	bh=6pBfnXJzCIlP7kgVXbUtwAHRN6UYY/qWNFcvT9U6+p0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qSREFZhmY1h51+VeDaXsUZ71KeiHVaQOrS7soLPc6IQG5+tPS/GgNI8MwvfuXlJk6
-	 fi7u0iUQVHlMICx9bzBUdiy7kRyJ59FOjWhbma1/vFflOp7vWE1ibTIlspwM/ymk4u
-	 37tuLcc0GEDzRS4vQ/vGrCgJuEiwIKuraKSnazwHgne4B8D016ekD3CGW5FxxssdBq
-	 l8STOUx+MXEAsc76pOW8U1pFNimUTUe3ZKu6a8UUo7+MFC+8G4P5WU3TiYXDINbZe9
-	 5pyL8GBmB/vqEgkafFph6RE96BlhjOzsHycaiGU1Gh1MXsL29iP2E/mT2lndqRXzQT
-	 yv1TeWI3HdP5w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 119DA3808200;
-	Fri, 23 Jan 2026 20:46:54 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio fixes for v6.19-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260123095122.13589-1-bartosz.golaszewski@oss.qualcomm.com>
-References: <20260123095122.13589-1-bartosz.golaszewski@oss.qualcomm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260123095122.13589-1-bartosz.golaszewski@oss.qualcomm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.19-rc7
-X-PR-Tracked-Commit-Id: 4918cc05137cb347686462923ab3fd249ef7899d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1f664bbd5f2fc16c6bef29912d610ca67e12a2c1
-Message-Id: <176920121269.2710575.14169407405483999956.pr-tracker-bot@kernel.org>
-Date: Fri, 23 Jan 2026 20:46:52 +0000
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+	s=arc-20240116; t=1769201878; c=relaxed/simple;
+	bh=oTLfKQMhMf/G1/ZFs0kiRU3UcXziZ1w9OCfVwFS5rIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiHN4Wrdlt+rUD8BYieYWRGqV5HL7uncInu2vsCv2XWRmK6smo4d9GT6j0OsZOABmNtDjXji8cGrdBnfe/0NLT67qIecr8K5J3y61363zRT4O4bibTNs6AzyDYi1TNaxuNQf9O3sFsrRL5wTvugOEbN+fMFzneqZgxTT48sPC+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 122ED1476;
+	Fri, 23 Jan 2026 12:57:48 -0800 (PST)
+Received: from [10.57.51.35] (unknown [10.57.51.35])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2A1B3F632;
+	Fri, 23 Jan 2026 12:57:52 -0800 (PST)
+Message-ID: <e9fd0005-bfbb-4052-8c2a-9200eb0b60ac@arm.com>
+Date: Fri, 23 Jan 2026 20:57:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: rockchip: mark the GPIO controller as sleeping
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Linus Walleij <linusw@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20260106090011.21603-1-bartosz.golaszewski@oss.qualcomm.com>
+ <aWGSQYCXP4R08koQ@venus>
+ <CAMRc=Mf0tRxRrh7tn5OaDn3a47N_qvUcjO=zqbTi-GhY-Y9hOg@mail.gmail.com>
+ <447e8d5a-916b-4d58-b39c-3467c152379c@arm.com>
+ <CAMRc=Md0h5b=N9CqV-9L9sOtCNbiL1-y6RE0x4+w9HYXE8=pEQ@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CAMRc=Md0h5b=N9CqV-9L9sOtCNbiL1-y6RE0x4+w9HYXE8=pEQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 23 Jan 2026 10:51:22 +0100:
+On 2026-01-23 7:27 pm, Bartosz Golaszewski wrote:
+> On Fri, Jan 23, 2026 at 2:27 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>>
+>>>>
+>>>> It's not a big issue for the hdmirx driver specifically, but I wonder
+>>>> how many more (less often tested) rockchip drivers use GPIOs from their
+>>>> IRQ handler.
+>>
+>> Yeah, seems this finally reached my distro kernel and now the kernel log
+>> on one of my boards is totally flooded from gpio_ir_recv_irq()
+>> (legitimately) calling gpio_get_value()... that's not really OK :/
+>>
+> 
+> This has always been a sleeping driver. The driver does not know the
+> firmware configuration it'll be passed and - as I explained above -
+> depending on the lookup flags, we may call .direction_output() and
+> descend into pinctrl which uses mutexes. Ideally, we'd make
+> GPIO-facing pinctrl operations not sleeping but this is a long-time
+> project and quite complex. Telling the GPIO core that it cannot sleep
+> is simply incorrect - even if it worked for this particular use-case -
+> and has an impact on paths we're choosing.
+> 
+> Can the GPIO reading in the gpio-ir-recv driver be done from a
+> high-priority workqueue by any chance? Or can we make it a threaded
+> interrupt?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.19-rc7
+rockchip_gpio_get() is essentially nothing but a readl(), please explain 
+how that could sleep? Saying that countless in-tree and out-of-tree 
+arbitrary GPIO consumer drivers should pointlessly refactor just to 
+avoid the GPIO core spewing spurious WARN()s is not reasonable.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1f664bbd5f2fc16c6bef29912d610ca67e12a2c1
+I appreciate there are cases where the warning most definitely *is* 
+relevant, which is why I picked up this discussion rather than proposing 
+a revert, even though the documentation says:
 
-Thank you!
+  * @can_sleep: flag must be set iff get()/set() methods sleep, as they
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+where since neither rockchip_gpio_get() nor rockchip_gpio_set() 
+themselves sleep, apparently this flag must *not* be set. It's 
+irrelevant that a higher-level gpiod_set_value() invocation might end up 
+calling .set_direction before it gets as far as calling .set - that's 
+not the gpio_chip's fault, and gpiolib knows exactly what it's doing.
+
+What I'm getting at is that getting, and even (directly) setting a 
+GPIO's value can reasonably be expected to be more common and applicable 
+in a wider range of circumstances than changing its configuration, so 
+the former should not be unfairly penalised because of the latter. This 
+case is clearly distinct from external GPIO expanders on buses that 
+fundamentally can't guarantee fast memory-mapped access at all, so 
+trying to conflate it under the same flag doesn't fit, and that needs 
+fixing ASAP, before the reverts *do* start piling in. Maybe that just 
+means some new dir_can_sleep or more abstract dir_needs_pinctrl flag 
+might suffice, maybe it's something more involved; I don't really know, 
+and I don't have the bandwidth to take this on myself.
+
+Thanks,
+Robin.
