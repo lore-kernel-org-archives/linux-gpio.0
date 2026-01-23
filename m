@@ -1,76 +1,75 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E07B27FD40;
-	Fri, 23 Jan 2026 10:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADED352F86;
+	Fri, 23 Jan 2026 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769164865; cv=fail; b=W8fiOeOd4uawZxlRW5GBigsQ8ayi9ID0FfNWuxKfzBQpt+7P3OSoVVQBgYr39swgD/9mAfMbv+wspZLf7vVDCbmi8LXhUCGtzysFNjYOiesbidxifrVYuavJZJQVVhKDIumO+W/fHBKW+3Zkxw/g8Y25VrdUNR2dB0q9mhEe58Y=
+	t=1769164874; cv=fail; b=sMg96soTBBdRzHZoaNgEihOhsg1/dbdvZwjx5Jw+/S9lvczlq97FWjo4LP70vjfg1mefr4FDj6Fq5x+ghTf7V6irkH0S4wgff5H6CccVZ7/Duf0ZO2mpu6FQ39K/eVBscgix2YiWg8FYUQduNqEXV/IZ/rcAcQrDDLL8a20qbpg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769164865; c=relaxed/simple;
-	bh=jAoxM1iw2pToaOi3nzCRGpgKQjvIJYYTF60fF8R6ZkA=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=oiJ3AMhmBIroZDMQYjQNP6E6h+iZ6JjX1EREzGJn7KGALNdbdcaP0tQMOK/BJI4EAGmOcWBySiKtXKJXaDnxb9RJGY2JDi7a47kGPFNL0FOow7pq660O427VNDpySjv2EkZ+c651BZATKTAWcFj0m+4Iy3of42WzR8IvzRXjbBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Di6xokwE; arc=fail smtp.client-ip=91.207.212.93
+	s=arc-20240116; t=1769164874; c=relaxed/simple;
+	bh=YwuY3eV77TPcKFSrVhZROmKvyyKkyyvGJoV68rm43H8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=q7/xXKQUx+pdTAsJVRw46yEbQCLiUAf3iHm24Rl4ABzwkp85G2dWVE7Tc1s2XnvBStvaYX5q1vgXZMLyjYZxgZnUKVYvLM+KbM/G5enPc5yV2XierTpTv0fAA/isqawmoW83V1bvVlkAeyTmqYrvlGxNOqL8uIj/wOQfbnHUhUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=m31D1rxU; arc=fail smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Di6xokwE"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60NAZhat2293480;
-	Fri, 23 Jan 2026 11:39:51 +0100
-Received: from as8pr04cu009.outbound.protection.outlook.com (mail-westeuropeazon11011055.outbound.protection.outlook.com [52.101.70.55])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4but7btcyp-1
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="m31D1rxU"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60NAUgbO3445534;
+	Fri, 23 Jan 2026 11:40:58 +0100
+Received: from gvxpr05cu001.outbound.protection.outlook.com (mail-swedencentralazon11013064.outbound.protection.outlook.com [52.101.83.64])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4buh90vuda-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 23 Jan 2026 11:39:50 +0100 (CET)
+	Fri, 23 Jan 2026 11:40:57 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Eg5+ZlyAjUG5VGt3FlH0+5e3P9VBqTL7kg4N76RCQlrDs7XWlJj7XOG4zqJ6IBL4bfNdfsctx+nEVk0yZ5dvFvzaS0fO4pJfuBmfU6Sxoo5FdLoFS8wGsyRa6FXIQJ0MoiJHRb6mRplx/+W0EFrJysH/1GZVjmdI9EWgG8RQXlo1f0q4QGkkRwnf+E63yZ3uDnlWALG5aOvcR0XspJqikPa2OTfj9pUAru+AOvvilIgyM7sOCYJk+mPML94fPAgjD8SUzAdUt9gb26UUNa9FNRlHljimieRbr2azh0YkWqLcKoCcudAxHgSQehZ53q7wCTHKmvZufnT2/wZyN0ghbA==
+ b=u/17GU8Ii82EmN8vnxCm8nBcDiRZNkqzTjrUQt6wpRhHTR1PbT0Se1gEwvoLKN4ABQPFUBWjpYl3pBbEBBSqerK/9FfsUPRwsiHBN1NPyGvDnb+oM6ed+cE9P23FGrt3msMjHhjGUnSNFYJL9G+fI6sKDj3y+gaIF2bpb8+xSDro1hFBgtQvM/OLFYj4ivZuSpzjSsZWiGqWZUaSDvLRwjV5vGfSFUm/ZkccpyZjzOqLwOZELSnuuO0xwOPC+Te1d8yMWIompW65/FRv6SIuJATjaRNL3bHNONMKkfHm0wKms58ohY9qB/svYNHOxiSCEcsf2bhKVsNNYOrTdEMtTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E/x3KifGI7PXF56PNHTnVFHLRy1307u7M2zDU7VFqNs=;
- b=pvFO82G38hHT3XFEntIEO3y81VUEpR3Z62UrjJ6LW1Xq/s3hKeaJlHqCB4Bb/tTJ0j17ggznVIxWf14dnPCc+G/vBd+qqHPCAZ+Z24S18EuFA2UAyYcRR1YsCFXA0o/4hsEF5syrHmn7FtPiBCnqPQfUiiw6MG0/yDCUlPBW81jhPB1IpMycdblZYO4AmJMyrBEbXkV4yt62CO38Z72urCHm1xEnYf7H1MZA6qljWtuD8Ay8wWza/jg/HW2aw9VD0xap0TfWILPpNxY7JMVOIvouwNGOd+pLMLbPdAlwjQeYKhNO+OzWM9vf6Gy3LUvQBYRPu6DrMXGk0e/2+FM2DQ==
+ bh=q/jJ3nT9dPqpx2WOyU8sSZGS5YZ6LQrAiKlXrEYWtbc=;
+ b=VRTyQnq/7s6XI2XipI6mltJ1WTtABENRzom2x7G33CKQCdmue41HaiwxWLKCp6ax3P4Y1VUH9yefbT3wy7XPcZ2JPm4yddhYf/wYn+oBkV+aUl6vsyzAoyW5OoD/N05Izc9PgrAP+8Ps4Mv9/04eHSCruPcRkZRg+lDjH3NlfOzWGjrdKqwujNAakLfqLJJFPdedgiAvW99vKI33d/A1PSkZsZvYwv6Y9F3Vv8h9os9lHwGm2YPAaxA6Akw/KDhrZLvhXfQt4+cWkAphLOeBfWTTP4A4uNhLyzCKqOc5XZdMXCu5FUNXhQz1/YaHE9lMXT48GXuptF+lGsDerMVX3Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
  dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E/x3KifGI7PXF56PNHTnVFHLRy1307u7M2zDU7VFqNs=;
- b=Di6xokwEiWhLnHPhL/TxKPxt61uWQ9J209wxK5LCFqA/BmyyoKiRk5/dQeRm4w/e/0zbxuPk6ihWkZILtqDTTzwIxyg4KrAzvCTBkEK3KfyOmNKDhh3B6/AKfQyAvGSOYI3x1cEQ1ge+VcxWTNIwzC5l9OxSpjNUd8H1gknb2malLouLZ40gyI4kvn57djevwTbeAkKU/GHG4LW2RYXTLsFFrpWPs29w1mr29GHLHSotp330juOi9qErDZYeRco+vxOWc/WXGkdVxzJcR4arXrHeA7z+VOWGq4uVc63hKeKxZUlBwMzW00iuBpmQ5Inr1OTzTl7Zv+blFkcpiwzVxg==
-Received: from DU7P195CA0015.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::33)
- by GVXPR10MB8525.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1dc::5) with
+ bh=q/jJ3nT9dPqpx2WOyU8sSZGS5YZ6LQrAiKlXrEYWtbc=;
+ b=m31D1rxU04ZtBtf0LLclIVwZbeeNHJYk4hS9cE6f0WdlIjomqZNKE4e0LkxCmTPP4MMOj9My/oDQaQS8XXfcSDRSx5JxbXPJdyHiEhHnLaEa657al6T2OjN2L2x9E6nei4AbVvosaiTrdzCb+TDav3XzTd2vNoTqEc9w+SMzfZyAioO04n6wz9eQpPiBmXncI3eizBvTmZElfYirNiimhnT+QV7WnoevojIBvzPpebM/ff/hTbLYPAPy1bSZOWI7ytJSQDHrijNu5HO/KwwkFG1lZRX7RMx4pbJOM06gm8Ah3g+8Dpy2l4iIaG3m+caqJm3JMEaTrD/3LcFoQpAnQA==
+Received: from DU2PR04CA0202.eurprd04.prod.outlook.com (2603:10a6:10:28d::27)
+ by DU0PR10MB6873.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47e::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.11; Fri, 23 Jan
- 2026 10:39:46 +0000
-Received: from DB5PEPF00014B8C.eurprd02.prod.outlook.com
- (2603:10a6:10:54d:cafe::ec) by DU7P195CA0015.outlook.office365.com
- (2603:10a6:10:54d::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.11 via Frontend Transport; Fri,
- 23 Jan 2026 10:39:44 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ 2026 10:40:50 +0000
+Received: from DB1PEPF00050A01.eurprd03.prod.outlook.com
+ (2603:10a6:10:28d:cafe::1c) by DU2PR04CA0202.outlook.office365.com
+ (2603:10a6:10:28d::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.10 via Frontend Transport; Fri,
+ 23 Jan 2026 10:40:42 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
  smtp.mailfrom=foss.st.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=foss.st.com;
 Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- DB5PEPF00014B8C.mail.protection.outlook.com (10.167.8.200) with Microsoft
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ DB1PEPF00050A01.mail.protection.outlook.com (10.167.242.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.3 via Frontend Transport; Fri, 23 Jan 2026 10:39:46 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9542.4 via Frontend Transport; Fri, 23 Jan 2026 10:40:50 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 23 Jan
- 2026 11:41:17 +0100
+ 2026 11:42:11 +0100
 Received: from localhost (10.48.86.212) by STKDAG1NODE2.st.com (10.75.128.133)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 23 Jan
- 2026 11:39:45 +0100
+ 2026 11:40:49 +0100
 From: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Subject: [PATCH v5 00/12] bus: add stm32 debug bus and coresight support
- for stm32mp1x platforms
-Date: Fri, 23 Jan 2026 11:38:57 +0100
-Message-ID: <20260123-debug_bus-v5-0-90b670844241@foss.st.com>
+Date: Fri, 23 Jan 2026 11:39:03 +0100
+Subject: [PATCH v5 06/12] drivers: bus: add the stm32 debug bus driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -79,11 +78,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMJPc2kC/2XMTQ7CIBCG4asY1mKY4afUlfcwxlAKlYXWgBJN0
- 7tLTUwwXX6Ted6JJBeDS2S/mUh0OaQw3sqQ2w2xF3MbHA192QQZKgZM0951z+HcPRPlLSqlbGO
- 4MaT836Pz4fVtHU9lX0J6jPH9TWdYrr9KW1UyUEa1RxDYSdNwffBjSrv02NnxSpZOxsqCqC0WK
- 0UjbaMFSNWuLa8sQm15saLnKCSAZj1bW1FbrK0oFrVnHg1Kj/bfzvP8ATrJAUdYAQAA
-X-Change-ID: 20260108-debug_bus-392666c7a3aa
+Message-ID: <20260123-debug_bus-v5-6-90b670844241@foss.st.com>
+References: <20260123-debug_bus-v5-0-90b670844241@foss.st.com>
+In-Reply-To: <20260123-debug_bus-v5-0-90b670844241@foss.st.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
         Mike Leach
 	<mike.leach@linaro.org>,
@@ -107,189 +104,398 @@ CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
-        Gatien Chevallier <gatien.chevallier@foss.st.com>,
-        Antonio Borneo
-	<antonio.borneo@foss.st.com>
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
 X-Mailer: b4 0.14.3
 X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
  (10.75.128.133)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B8C:EE_|GVXPR10MB8525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f9617ae-5f08-4553-1672-08de5a6bb9fc
+X-MS-TrafficTypeDiagnostic: DB1PEPF00050A01:EE_|DU0PR10MB6873:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f83eec5-4c04-4ade-a2c4-08de5a6be081
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|13003099007|921020;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NmlxQ2pqNVg2cXZSL0hpOUJWamtYSUVrR1hWS1pBb0JOTnhXc0p0YS9aU2dM?=
- =?utf-8?B?Ri9xOXRtYmZoS0UydHFSN3pRQlZCN0d1Q0ZyN2pQOW9jNTZrbGYyOTAxc0RI?=
- =?utf-8?B?M1F1SFRBZVJzTW9lRUVYL1RuRXVNSmJ4NEVFcDJzVUxlSCtxenhjeDlhYUhx?=
- =?utf-8?B?ZVg2N0h1a0s2QkFsTVBvcFhQUi9FSGFORDN3TVJHMTltMm44L3B2cjNNQVlu?=
- =?utf-8?B?OVNiRkhDdTNvZU5MSDUyWG5XM2VDZzU1RU52RmVRZ0I1UlhEcEtwdkVYbjVV?=
- =?utf-8?B?SUNxekJML2tqZHcxSEZlVXZWdWl5SUMyNE9wZTVFNU9zTFBBM2FOUVJPSUw1?=
- =?utf-8?B?Ym0zUDNyaG1oRXd1ejN1ZzdXcUlsVTIxT3hVRFJzRzZxVlI4SVgrWUhTU2JR?=
- =?utf-8?B?blVFbWtSYkREOUNQOE53Zk1WU0orelhZV1VSbXlrbWx6bEVYeUlZWE54czFU?=
- =?utf-8?B?WXFMa0tmb1cwb3NCaHhxRGhocUkvamI0TWhxYXM3V3VpYjhaLzRDOG05c3py?=
- =?utf-8?B?TkNVQWYzekY3cHhXQXF1KzJ3SGw4MmZvWkc1NzZNY0taVW5NUDh0cVBVQ2kw?=
- =?utf-8?B?SG4vZlB6ODhzdkJVZ3VXRkhvdVpNWTVqRHZaMlBPbkhDaXhIVFdSMFRMcXpG?=
- =?utf-8?B?NG96QU9kQ0hoOGZRVlRKc1BzYWJocFRTajhEY3p5WEZaWE82dmRsUldiY3pC?=
- =?utf-8?B?Z2RScE1JM1FCd3N5UExHNlE5ZEMxNUhXZWtTbVJFdzlQZXdtYzc1ZC9jWHJv?=
- =?utf-8?B?cldKdlVyVzJCUVY3cjVodVBXWTRCSWIzQ3J0SzZnTm1lbWFhdGhoK2Q3eXRU?=
- =?utf-8?B?eFAzWEpYbWNha0REWXJDakx2UE50cE5XL0FhUmZBOFBqSTNzRVcrQWVlUHk0?=
- =?utf-8?B?M1U5S0cwaGRuRmpVKzlGV0hGZWtjZUhmeTl0Ny9nNTFsTkhXcUhwWW1BbkVU?=
- =?utf-8?B?dmJwQ3dSQVNPb3NiUGpUcVRWQVRtZlZkUTB4WkxBdmJMSTFPeFQ4Ukl6bXpE?=
- =?utf-8?B?OHN5VnAxY3dLb2hhblZkb1FFN0RSeis2N2lXUUhzeXFLMUI3TFcxRU5MYytN?=
- =?utf-8?B?RWMzSEFJWi9mamxSS1A0OUZmVlkrNi9FNVZKeW5BbGNxektvVFUyK3NNL3Rr?=
- =?utf-8?B?ZTFQV3BzWnVFRDR3V1BZYjIyVWpVdVAxdVJhRi9mY0hmMUgxUHBKOEw5UTFX?=
- =?utf-8?B?Q1N4ajNYZGxxRFlKVnZQVWNwWEI2bFp1NXdLQTBHd1krcEtoVUVteE0yQW9l?=
- =?utf-8?B?VjI3ZWVpU1RZQkVGTTVzUWxWTzlXMUwxQVczazhScTlKWUZvUC9yY2NEb21L?=
- =?utf-8?B?eVM5bjFvMDNkOUhGYW1GWlA5NFl0dTUrQ2lXY3d6S1RDUzZ1SWpkcUxYQWNL?=
- =?utf-8?B?WWE5QTJiZGl5Yko2Z054aWdndDlCTTM0aE1hclVWT1V3dDFrL0ZOeEgwSXk5?=
- =?utf-8?B?RWxCR3p4RXRTZzRJOHJkZ3dldlFlSXBoL0JEdzN6MUxnbEszR1crbXFXMmhh?=
- =?utf-8?B?VGJnREhNdnBBc2NyUXJ5TTdzcXU1TlFzQlZhOFpaTTZodllQdG9FczdLeExG?=
- =?utf-8?B?Zm54UWNURWtoTENVekoyaE5vSi9MV21FSWtmWE03YVFmaWM5c29NaEdTVkZ5?=
- =?utf-8?B?bTU3WkpXR3UvL3hudGUwMk1yMDE3T2dxSGMyWDZuNXZYVlUwVjNqdk9SOUZk?=
- =?utf-8?B?S2dlMFdPVlRxNkNmemlDVUt2ZEdvdWhjZHplWjVUZ1pjamxMblNIcUI2b210?=
- =?utf-8?B?d2wxYkZXbkpYMGFwQmtMMDU2Rm1RMmY2T08yMVR6M1lULzN5OUlxRVFMY3RD?=
- =?utf-8?B?WlhXdnEyNkhRemFOem50UG12WTN5dFo3RVBYZGxmYlk5ZWp0b1lLQTlDalUx?=
- =?utf-8?B?bkdySXhCcnlCdnBoemxGUEdGcXI4cGNRZ09RSTlmTWgyd3B3N0cyeFgwUWlv?=
- =?utf-8?B?azVTRHJUdW9DcUk2WUdtRktEUC8vUk1RRFZVaEh2cm5TTGV2VUcrMXkxZXY3?=
- =?utf-8?B?cVFWNVpZUm5HaHlRQVpTUjFCMi8zY0ZmUm1ydlJ2aVg0N0pycG1xZUV5ZXE2?=
- =?utf-8?B?aEJaN0wyQW9KT3ltR04xY3NiUGExRkN1eXBoOWpOczI4Q0pIYURjYkxKR2x3?=
- =?utf-8?B?M1hDMys0VzF5NGZKTmpVd0t5bTdUK3NYQktPeE1kejA1ZFhxVUhMK3ZZaUw5?=
- =?utf-8?B?L1dITkppYlVQL3FRMXBjMTVXYmRiWndaOGR2TXVKS0c2UDVlMW1idDZMMytT?=
- =?utf-8?B?VjJYVlV2alNYb3F0dnhxUkF0bEVNQ2ZMZVpUTVBuS3FUalI1NTlDb05IK3Bs?=
- =?utf-8?Q?iVRnW9uzw8/yn6C+c2?=
+	=?utf-8?B?REg1b1Nzd3lESEwxQnBWYzM5SlVDbE1ISmZLbDJxOEFwbmtVNzFVSHpkVE9G?=
+ =?utf-8?B?ZVlDS0dFYW45Qnh5NERXOXNQay9LZVgzODdmTVZmMDFDcElZMWM1dTJ0Mi9z?=
+ =?utf-8?B?YTZFamdleEg0R0RLZm1DMlBCUjRDaTZ4WlpVZ0NQVDJueTdZNWdxMGJheE8w?=
+ =?utf-8?B?dmFjbDlrMmtLb2pZZ2xQRHg0aW5BbFdoZ3EweVhhUllORncrdCtuYXlLZ1VT?=
+ =?utf-8?B?c2ZQL3FJcU9SQkJUNWZIcUFlNGtFdU13eTZWdEt0dDZjMTBSQjRBSEMzY3Rp?=
+ =?utf-8?B?K0RXZzc3WEVOY1hKTzc4c1h6b2ZidnRUZG9zN3Y0VVc4SmxEbWlHWjBnelZG?=
+ =?utf-8?B?MjN4RXE5MHlEeDdVQkM4aXREdHg1aGVyMXZ2aGZxdWNCTTEwV2k2WllQdU8y?=
+ =?utf-8?B?T1dKRXoxZVdPYnlGYjBNWER1bzYxY2M3TGxMdnZXRUFEZStRb00rRXk1WU1V?=
+ =?utf-8?B?SExYcXdlR1RaSmVRZEJ2M1I1OVhLOXliWS9UTmxvckc3ZEZHRHB1THZQQVNx?=
+ =?utf-8?B?Q0dycGx0akg5eXNBM1hDWG9BRnpsVGdJODNRWVBNcnAyY2xvb3JnZ2k0ZGRH?=
+ =?utf-8?B?SXVIblVQdHhvSWZTSEllMnNJRm1TTm05WDdnZmhGcnY0SGR1bG9JOUVTYVNG?=
+ =?utf-8?B?elM5TG4vUUc3bkZJeTFBc29LZUFaL1ZDUDN0SGJNMnh3Z01NQU5ET0dxNVFR?=
+ =?utf-8?B?Z2k3ZmFOL1h1alBrc1lCWHBKVzlQc2NnbUVnV0lKam02QlRhdnFxUkZFZGd1?=
+ =?utf-8?B?dnJZenR3bjB6R2N5SDFxSzZxVG85MERQK3g4WFhDLzM4V0N3ZlZMNndYUVpa?=
+ =?utf-8?B?d0JQdnBhaFEzTk1uUmt0NGVwaTRhVkNaeGwxMkpKc1BCbmxmTk01OTdpSFhS?=
+ =?utf-8?B?NXZKUmxaenZZK0IzY1FCdnZNVm5ab2lib3ZVck9SdnZYU3BPVHRpVHJxN216?=
+ =?utf-8?B?RlVMTjRtWkRCMG5SQUlCZ0hnRlJRL2w4ZzIzNVp0YUtWYmhYSnhyQ0h2QVQ4?=
+ =?utf-8?B?NXhNQk5Wb3VOZDEzdDhQc29vZENyZ2Q3cXBFZ1FlTjdNSFFXc0hDaWpaYXIy?=
+ =?utf-8?B?ZFYvL1dWOFdSaVdXRUtUTURSbndaTFYxb05rV0RYdVdBRDJCakNPbXl3RDZU?=
+ =?utf-8?B?emk5OXBHVEFYN0dwRVZIbHF3ekEwWGZOWVphZTRvODkvNnZTMGNkeGJ5YjRh?=
+ =?utf-8?B?Ti9SMnRCU2ZCTS9yUFpFbGRQdEd4dFVZd0JCTXJnNEdGaVhySTlUY0wyUWp4?=
+ =?utf-8?B?d1FndlJwVm1GelRyazNxQzUxQlc3RFBKcDNURWdtU3M5dm5qOFdqNVpES0Fn?=
+ =?utf-8?B?WmVwMXB4eEhRY0tRN1NESURaa2dyZVlTTjNTTnM5ZlZjVDg5TWwxbjhPa1ZI?=
+ =?utf-8?B?M2RtNEIvQnlMMUx6dVhUSXV1d05GN1JYM0VMWTlZS0FaTUhQbldaaVJMK2Jy?=
+ =?utf-8?B?KzIzVDFmTkZXbnBxaHNybC9sQ0tUS29WMDV2YTRFYXkyeU1mbmpNTUlJR09t?=
+ =?utf-8?B?WERCZk9HbEdRRlR0UXZHR0tMQkxlVDRoS2piZ0lmY09tbUVYOVB6bE9wdU42?=
+ =?utf-8?B?aVlhV0Nkc1RqZ3RlTlc5blg5YU94cG1NQU1WcWVOS3lxQVlYeTd6MzFsemdZ?=
+ =?utf-8?B?TzU2OG9ZRXVBZ2JTNVF3UFFxMGFWSExBdjk0cFRnUmt0ZFp5THVQSHEvd2Nx?=
+ =?utf-8?B?d3ZZQlNMRDVUY3E0b0tYMWVSQko5TG1NU0VYRkd4NlRzQWZCYmYwS0xPVnpS?=
+ =?utf-8?B?WmxSeHBMTHVLYlZraEJHQ0ZTMlB5N1djSXBvRzg5bElYZ0FVbmFxQURldWFS?=
+ =?utf-8?B?TjVhZlVrbHBxUmRLOTRtVVlIZmpNY1ZYcnNmQWFQZGppNGRwS1hZZm1TSm1z?=
+ =?utf-8?B?TytDejFkeEc5WlFRcGw2d0xyVDhIem1rTE50eGdneDBxZVVvamVCSnREcVl5?=
+ =?utf-8?B?NXIvb1F5YUNhbU5tNUtwZHhJcjIvTGFPS2lBdEY1blJtNk5RdEh4M0U4OWJu?=
+ =?utf-8?B?ZzVkU0N5YzhUa1FrUlUvd0pJblBUeDNsejFMT2w2eE4wK2Jvb0xCTjZXZTh2?=
+ =?utf-8?B?eWpMWE5GVml4NFBZK29SUWpXU3A0ZVVldW9nQkJPdTNiSkdkMHBRd292Ti9G?=
+ =?utf-8?B?Ymk3TjE2bDFYOTQvZzFYNEhQaHZBM1FKazAvTTdTM1lwN2ErbS9RMUhKVHFF?=
+ =?utf-8?B?VjdpS2YwaTVJT3hhTHQwYm5GTTVFZVlreWFoOTB6VzVCNkRlK1ZSd1dFK3c2?=
+ =?utf-8?Q?d5BSPULgcShbY4VPT0D9kpJJcW5R60WM1ad8ApZvx0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(13003099007)(921020);DIR:OUT;SFP:1101;
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2026 10:39:46.0366
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2026 10:40:50.6601
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f9617ae-5f08-4553-1672-08de5a6bb9fc
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f83eec5-4c04-4ade-a2c4-08de5a6be081
 X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B8C.eurprd02.prod.outlook.com
+	DB1PEPF00050A01.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8525
-X-Proofpoint-GUID: E9tzUrTtBezJjL1aydaCBGu7vqflx0mN
-X-Authority-Analysis: v=2.4 cv=Fas6BZ+6 c=1 sm=1 tr=0 ts=69734ff6 cx=c_pps
- a=ABl0Bi0us4p/gv29jCzjpA==:117 a=d6reE3nDawwanmLcZTMRXA==:17
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6873
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIzMDA4NSBTYWx0ZWRfX6pQe6nTL2Fbz
+ hTynTpJYt8vebkPuVQwXA0M5JKaLs7JJCNVYP7yr7NoxNtrk8e5xfoOO7H5/RHxr2Flxgb0JHtr
+ gPvP7N5gAnpBhb7KlcUvmACQ+5xAT7cIBz2riYujPprMET/uGPgFmR4zbAKgONeUPQoxKn31V9e
+ Q1UF301/eLxVAJTzmKjrNA2c9DpCFeJw+PrsyJc1nHbqLH2dtCSdm4neXq265RZM2P/SmpMpmly
+ rVIwZ/zDPvkNcLyUeZ9+KwNZpVuYg6qBx1JcTqJ1/pZkLUD/t9SG2d9vYs4v3ca4miLl0Hme2/A
+ tiun69WKXmFfDlE9iF+kr8wn6YiJ4WFT/iwoD2llX6Ry6VIlL31hCnEfnxq5F+S5htqwJks9WZO
+ i8Bp+Qae7FCvZSTx0MXH5ZREoT0I3XCV2eklS5GwE+n0fRKSMdkKM1Yvxpod2Csj5zFfEp2+Vi0
+ zYpqbFxiE2hwwD8SMqA==
+X-Proofpoint-ORIG-GUID: MpeVASLjBrfCS8rTcb5PS3q9cc0WuVCL
+X-Authority-Analysis: v=2.4 cv=GbEaXAXL c=1 sm=1 tr=0 ts=69735039 cx=c_pps
+ a=RSP5wjQe9cmB1/5ZhXI0tA==:117 a=uCuRqK4WZKO1kjFMGfU4lQ==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=rg8MelPR9j8A:10 a=IkcTkHD0fZMA:10
  a=vUbySO9Y5rIA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=8b9GpE9nAAAA:8
- a=Ca_RQAvUjDkQCxdtJiUA:9 a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
-X-Proofpoint-ORIG-GUID: E9tzUrTtBezJjL1aydaCBGu7vqflx0mN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIzMDA4NSBTYWx0ZWRfX2w615/Sd+IXs
- POlzws0a7hUd76SO2KjNSaLs2c4frSQ/Khuq/XKhaMrqljF6EohoXIYUnuv7s7/f2WFt1KTKyfL
- oqFzSn9GqsMl2ea6Owl6kGFVU7vc5n7wAyoPeD7Kb3vLRFQtMwpMd8H0TUs4ScdQ7Sj+6jn7b5m
- JnmVy/8qRz20lY7DVX/KzL4siMKAjRiFZGCDpQsi8tXW497KAMUyYpFTZXSdIs9f8nUJlpnOpaS
- vES5fTJRJgM3SqZ+93a7TFc7Mu+Rmh3cTXwoowsnBOJ323gWqwTRiCI3ER23Tm7pQH35+YHYC1y
- 4iOPgS2eEu5Jv5BFUOKjj9JmHldReNtLYHhg9yX2gOEjE9dqqUIIl1Bg8XoCqjc/RcMsrO4IUwP
- 7/DiFa3ZcL9T4UFqaLBeod0snMrkdEyEFjvsG30+ipQo5uAL7aQQfvUr6VEuZmet8K+lq32nYie
- MoEsokZ7uTD54G6fffg==
+ a=VkNPw1HP01LnGYTKEx00:22 a=8b9GpE9nAAAA:8 a=3L3Zm1D9LUX1ZMezbK0A:9
+ a=QEXdDO2ut3YA:10 a=T3LWEMljR5ZiDmsYVIUa:22
+X-Proofpoint-GUID: MpeVASLjBrfCS8rTcb5PS3q9cc0WuVCL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
  definitions=2026-01-23_01,2026-01-22_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 phishscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601230085
 
-Stm32 SoCs embed debug peripherals such as Coresight. These peripherals
-can monitor the activity of the cores. Because of that, they can be
-used only if some features in the debug configuration are enabled.
-Else, errors or firewall exceptions can be observed. Similarly to
-the ETZPC(on stm32mp1x platforms) or the RIFSC(on stm32mp2x platforms),
-debug-related peripherals access can be assessed at bus level to
-prevent these issues from happening.
+Add the stm32 debug bus driver that is responsible of checking the
+debug subsystem accessibility before probing the related peripheral
+drivers.
 
-The debug configuration can only be accessed by the secure world.
-That means that a service must be implemented in the secure world for
-the kernel to check the firewall configuration. On OpenSTLinux, it is
-done through a Debug access PTA in OP-TEE [1].
-To represent the debug peripherals present on a dedicated debug bus,
-create a debug bus node in the device tree and the associated driver
-that will interact with this PTA.
-
-[1]: https://github.com/OP-TEE/optee_os/pull/7673
+This driver is OP-TEE dependent and relies on the STM32 debug access
+PTA.
 
 Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 ---
-Changes in v5:
-- Take into account Rob's comments for the debug bus documentation
-- Link to v4: https://lore.kernel.org/r/20260122-debug_bus-v4-0-28f0f2a25f2c@foss.st.com
+ MAINTAINERS                 |   1 +
+ drivers/bus/Kconfig         |  10 ++
+ drivers/bus/Makefile        |   1 +
+ drivers/bus/stm32_dbg_bus.c | 236 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 248 insertions(+)
 
-Changes in v4:
-- Remove reg property from the debug bus and use ranges.
-- Link to v3: https://lore.kernel.org/r/20260121-debug_bus-v3-0-4d32451180d0@foss.st.com
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5b11839cba9d..fd8390e02070 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24698,6 +24698,7 @@ F:	drivers/power/supply/stc3117_fuel_gauge.c
+ ST STM32 FIREWALL
+ M:	Gatien Chevallier <gatien.chevallier@foss.st.com>
+ S:	Maintained
++F:	drivers/bus/stm32_dbg_bus.c
+ F:	drivers/bus/stm32_etzpc.c
+ F:	drivers/bus/stm32_firewall.c
+ F:	drivers/bus/stm32_rifsc.c
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index fe7600283e70..c9be21d5dfda 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -169,6 +169,16 @@ config QCOM_SSC_BLOCK_BUS
+ 	  i2c/spi/uart controllers, a hexagon core, and a clock controller
+ 	  which provides clocks for the above.
+ 
++config STM32_DBG_BUS
++	tristate "OP-TEE based debug access bus"
++	depends on OPTEE && STM32_FIREWALL
++	depends on ARCH_STM32 || COMPILE_TEST
++	help
++	  Select this to get the support for the OP-TEE based STM32 debug bus
++	  driver that is used to handle debug-related peripherals on STM32
++	  platforms when the debug configuration is not accessible by the
++	  normal world.
++
+ config STM32_FIREWALL
+ 	bool "STM32 Firewall framework"
+ 	depends on (ARCH_STM32 || COMPILE_TEST) && OF
+diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+index 8e693fe8a03a..799724cfc2df 100644
+--- a/drivers/bus/Makefile
++++ b/drivers/bus/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_OMAP_INTERCONNECT)	+= omap_l3_smx.o omap_l3_noc.o
+ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
+ obj-$(CONFIG_QCOM_EBI2)		+= qcom-ebi2.o
+ obj-$(CONFIG_QCOM_SSC_BLOCK_BUS)	+= qcom-ssc-block-bus.o
++obj-$(CONFIG_STM32_DBG_BUS)	+= stm32_dbg_bus.o
+ obj-$(CONFIG_STM32_FIREWALL)	+= stm32_firewall.o stm32_rifsc.o stm32_etzpc.o
+ obj-$(CONFIG_SUN50I_DE2_BUS)	+= sun50i-de2.o
+ obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
+diff --git a/drivers/bus/stm32_dbg_bus.c b/drivers/bus/stm32_dbg_bus.c
+new file mode 100644
+index 000000000000..9427d4da0da7
+--- /dev/null
++++ b/drivers/bus/stm32_dbg_bus.c
+@@ -0,0 +1,236 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
++ */
++
++#include <linux/bus/stm32_firewall_device.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/tee_drv.h>
++#include <linux/types.h>
++
++#include "stm32_firewall.h"
++
++enum stm32_dbg_profile {
++	PERIPHERAL_DBG_PROFILE	= 0,
++	HDP_DBG_PROFILE		= 1,
++};
++
++enum stm32_dbg_pta_command {
++	/*
++	 * PTA_CMD_GRANT_DBG_ACCESS - Verify the debug configuration against the given debug profile
++	 * and grant access or not
++	 *
++	 * [in]     value[0].a  Debug profile to grant access to.
++	 */
++	PTA_CMD_GRANT_DBG_ACCESS,
++};
++
++/**
++ * struct stm32_dbg_bus - OP-TEE based STM32 debug bus private data
++ * @dev: STM32 debug bus device.
++ * @ctx: OP-TEE context handler.
++ */
++struct stm32_dbg_bus {
++	struct device *dev;
++	struct tee_context *ctx;
++};
++
++/* Expect at most 1 instance of this driver */
++static struct stm32_dbg_bus *stm32_dbg_bus_priv;
++
++static int stm32_dbg_pta_open_session(u32 *id)
++{
++	struct tee_client_device *dbg_bus_dev = to_tee_client_device(stm32_dbg_bus_priv->dev);
++	struct tee_ioctl_open_session_arg sess_arg;
++	int ret;
++
++	memset(&sess_arg, 0, sizeof(sess_arg));
++	export_uuid(sess_arg.uuid, &dbg_bus_dev->id.uuid);
++	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
++
++	ret = tee_client_open_session(stm32_dbg_bus_priv->ctx, &sess_arg, NULL);
++	if (ret < 0 || sess_arg.ret) {
++		dev_err(stm32_dbg_bus_priv->dev, "Failed opening tee session, err: %#x\n",
++			sess_arg.ret);
++		return -EOPNOTSUPP;
++	}
++
++	*id = sess_arg.session;
++
++	return 0;
++}
++
++static void stm32_dbg_pta_close_session(u32 id)
++{
++	tee_client_close_session(stm32_dbg_bus_priv->ctx, id);
++}
++
++static int stm32_dbg_bus_grant_access(struct stm32_firewall_controller *ctrl, u32 dbg_profile)
++{
++	struct tee_ioctl_invoke_arg inv_arg = {0};
++	struct tee_param param[1] = {0};
++	u32 session_id;
++	int ret;
++
++	if (dbg_profile != PERIPHERAL_DBG_PROFILE && dbg_profile != HDP_DBG_PROFILE)
++		return -EOPNOTSUPP;
++
++	ret = stm32_dbg_pta_open_session(&session_id);
++	if (ret)
++		return ret;
++
++	inv_arg.func = PTA_CMD_GRANT_DBG_ACCESS;
++	inv_arg.session = session_id;
++	inv_arg.num_params = 1;
++	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
++	param[0].u.value.a = dbg_profile;
++
++	ret = tee_client_invoke_func(stm32_dbg_bus_priv->ctx, &inv_arg, param);
++	if (ret < 0 || inv_arg.ret != 0) {
++		dev_dbg(stm32_dbg_bus_priv->dev,
++			"When invoking function, err %x, TEE returns: %x\n", ret, inv_arg.ret);
++		if (!ret)
++			ret = -EACCES;
++	}
++
++	stm32_dbg_pta_close_session(session_id);
++
++	return ret;
++}
++
++/* Implement mandatory release_access ops even if it does nothing*/
++static void stm32_dbg_bus_release_access(struct stm32_firewall_controller *ctrl, u32 dbg_profile)
++{
++}
++
++static int stm32_dbg_bus_plat_probe(struct platform_device *pdev)
++{
++	struct stm32_firewall_controller *dbg_controller;
++	int ret;
++
++	if (!stm32_dbg_bus_priv)
++		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
++				     "OP-TEE debug services not yet available\n");
++
++	dbg_controller = devm_kzalloc(&pdev->dev, sizeof(*dbg_controller), GFP_KERNEL);
++	if (!dbg_controller)
++		return dev_err_probe(&pdev->dev, -ENOMEM, "Couldn't allocate debug controller\n");
++
++	dbg_controller->dev = &pdev->dev;
++	dbg_controller->mmio = NULL;
++	dbg_controller->name = dev_driver_string(dbg_controller->dev);
++	dbg_controller->type = STM32_PERIPHERAL_FIREWALL;
++	dbg_controller->grant_access = stm32_dbg_bus_grant_access;
++	dbg_controller->release_access = stm32_dbg_bus_release_access;
++
++	ret = stm32_firewall_controller_register(dbg_controller);
++	if (ret) {
++		dev_err(dbg_controller->dev, "Couldn't register as a firewall controller: %d", ret);
++		return ret;
++	}
++
++	ret = stm32_firewall_populate_bus(dbg_controller);
++	if (ret) {
++		dev_err(dbg_controller->dev, "Couldn't populate debug bus: %d", ret);
++		stm32_firewall_controller_unregister(dbg_controller);
++		return ret;
++	}
++
++	pm_runtime_enable(&pdev->dev);
++
++	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
++	if (ret) {
++		dev_err(dbg_controller->dev, "Couldn't populate the node: %d", ret);
++		stm32_firewall_controller_unregister(dbg_controller);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id stm32_dbg_bus_of_match[] = {
++	{ .compatible = "st,stm32mp131-dbg-bus", },
++	{ .compatible = "st,stm32mp151-dbg-bus", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, stm32_dbg_bus_of_match);
++
++static struct platform_driver stm32_dbg_bus_driver = {
++	.probe = stm32_dbg_bus_plat_probe,
++	.driver = {
++		.name = "stm32-dbg-bus",
++		.of_match_table = stm32_dbg_bus_of_match,
++	},
++};
++
++static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
++{
++	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
++}
++
++static void stm32_dbg_bus_remove(struct tee_client_device *tee_dev)
++{
++	tee_client_close_context(stm32_dbg_bus_priv->ctx);
++	stm32_dbg_bus_priv = NULL;
++
++	of_platform_depopulate(&tee_dev->dev);
++}
++
++static int stm32_dbg_bus_probe(struct tee_client_device *tee_dev)
++{
++	struct device *dev = &tee_dev->dev;
++	struct stm32_dbg_bus *priv;
++	int ret = 0;
++
++	if (stm32_dbg_bus_priv)
++		return dev_err_probe(dev, -EBUSY,
++				     "A STM32 debug bus device is already initialized\n");
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	/* Open context with TEE driver */
++	priv->ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
++	if (IS_ERR_OR_NULL(priv->ctx))
++		return dev_err_probe(dev, PTR_ERR_OR_ZERO(priv->ctx), "Cannot open TEE context\n");
++
++	stm32_dbg_bus_priv = priv;
++	stm32_dbg_bus_priv->dev = dev;
++
++	ret = platform_driver_register(&stm32_dbg_bus_driver);
++	if (ret) {
++		stm32_dbg_bus_remove(tee_dev);
++		return ret;
++	}
++
++	return ret;
++}
++
++static const struct tee_client_device_id optee_dbg_bus_id_table[] = {
++	{UUID_INIT(0xdd05bc8b, 0x9f3b, 0x49f0,
++		   0xb6, 0x49, 0x01, 0xaa, 0x10, 0xc1, 0xc2, 0x10)},
++	{}
++};
++
++static struct tee_client_driver stm32_optee_dbg_bus_driver = {
++	.id_table = optee_dbg_bus_id_table,
++	.probe = stm32_dbg_bus_probe,
++	.remove = stm32_dbg_bus_remove,
++	.driver = {
++		.name = "optee_dbg_bus",
++	},
++};
++
++module_tee_client_driver(stm32_optee_dbg_bus_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Gatien Chevallier <gatien.chevallier@foss.st.com>");
++MODULE_DESCRIPTION("OP-TEE based STM32 debug access bus driver");
 
-Changes in v3:
-- Collect Rob's review tags
-- Add stm32_firewall_get_grant_all_access() API and use it in the HDP
-  driver.
-- Link to v2: https://lore.kernel.org/r/20260114-debug_bus-v2-0-5475c7841569@foss.st.com
-
-Changes in v2:
-- Fix kernel robot error by documenting the access-controllers property
-  in the missing coresight peripheral binding files.
-- List the access controller items for HDP
-- Various minor fixes in the debug bus binding file.
-- Remove clock documentation and its presence in the DT node and driver.
-  Bus clock will be handled by the child nodes' drivers.
-- stm32 debug bus driver:
-	- Depopulate the bus when .remove() is called
-	- Remove trace when error on devm_kzalloc() as the trace
-	function does nothing in case of ENOMEM.
-	- Remove use of of_match_ptr()
-	- Use tee bus callbacks
-- Link to v1: https://lore.kernel.org/r/20260109-debug_bus-v1-0-8f2142b5a738@foss.st.com
-
----
-Gatien Chevallier (12):
-      dt-bindings: document access-controllers property for coresight peripherals
-      dt-bindings: pinctrl: document access-controllers property for stm32 HDP
-      dt-bindings: bus: document the stm32 debug bus
-      bus: stm32_firewall: allow check on different firewall controllers
-      bus: stm32_firewall: add stm32_firewall_get_grant_all_access() API
-      drivers: bus: add the stm32 debug bus driver
-      arm: dts: stm32: introduce the debug bus for stm32mp1x platforms
-      arm: dts: stm32: enable the debug bus on stm32mp1x boards
-      arm: dts: stm32: enable CoreSight on stm32mp15xx-dkx boards
-      arm: dts: stm32: enable CoreSight on the stm32mp157c-ev1 board
-      arm: dts: stm32: enable CoreSight on the stm32mp135f-dk board
-      pinctrl: stm32: add firewall checks before probing the HDP driver
-
- .../devicetree/bindings/arm/arm,coresight-cti.yaml |   3 +
- .../bindings/arm/arm,coresight-dynamic-funnel.yaml |   3 +
- .../devicetree/bindings/arm/arm,coresight-etm.yaml |   3 +
- .../devicetree/bindings/arm/arm,coresight-stm.yaml |   3 +
- .../devicetree/bindings/arm/arm,coresight-tmc.yaml |   3 +
- .../bindings/arm/arm,coresight-tpiu.yaml           |   3 +
- .../bindings/bus/st,stm32mp131-dbg-bus.yaml        |  76 +++++++
- .../devicetree/bindings/pinctrl/st,stm32-hdp.yaml  |   6 +
- MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/st/stm32mp131.dtsi               | 117 ++++++++++
- arch/arm/boot/dts/st/stm32mp135f-dk.dts            |  24 +++
- arch/arm/boot/dts/st/stm32mp151.dtsi               | 172 +++++++++++++++
- arch/arm/boot/dts/st/stm32mp153.dtsi               |  68 ++++++
- arch/arm/boot/dts/st/stm32mp157c-ev1.dts           |  40 ++++
- arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi          |  40 ++++
- drivers/bus/Kconfig                                |  10 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/stm32_dbg_bus.c                        | 236 +++++++++++++++++++++
- drivers/bus/stm32_firewall.c                       |  44 +++-
- drivers/pinctrl/stm32/pinctrl-stm32-hdp.c          |  14 ++
- include/linux/bus/stm32_firewall_device.h          |  26 +++
- 21 files changed, 892 insertions(+), 1 deletion(-)
----
-base-commit: e82d0477fd80707221c3d110f56d05506de2698c
-change-id: 20260108-debug_bus-392666c7a3aa
-
-Best regards,
 -- 
-Gatien Chevallier <gatien.chevallier@foss.st.com>
+2.43.0
 
