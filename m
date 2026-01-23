@@ -1,16 +1,16 @@
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6BC34DB5F;
-	Fri, 23 Jan 2026 09:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD57236075B;
+	Fri, 23 Jan 2026 09:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769160425; cv=none; b=Pxq4XqkjVEBlbcshHLtxTp/GsL7E/P96PM69i2vr7MFqadgNv307iiRWocj1K8n5a8+AedOA5VwZ1i2VIzUwySIHL4fwbCQVI1C1CRR05I/PHPg6I6uzaCQ3UZTkUmslOLxuaLWJihR1ztdLbI3e6nDaPXIEEs63/N/fujtrcDM=
+	t=1769160432; cv=none; b=pn7xE/+tmFNTGYV98zeye1wjZvDszigsiih7oHBgiq+nwV2roDuFnklIf3sgbODBOWgELpM++fNaLllVb1np/QPJjo5c1i2NUGaaxVvQNQjjEBYYZPAQl1FyPX2WC0CANHsEBW221r0LJ6NWjSS54etaH6VumQuUtWmA+K/krGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769160425; c=relaxed/simple;
-	bh=Hl9LdLVmaEDP86aDOaXmV5qwrfCQGY8Vf57r/K2vfGo=;
+	s=arc-20240116; t=1769160432; c=relaxed/simple;
+	bh=OYQyaNUanZ/szVOiycqY145Jb/KVGUWm/mc3+XgZG6w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=VEtwXMPKjnMu4sIV4U37E48jC7holUojeQavNd9lfuMg2bEYqW4MR3ANuuN+Qqw+yrOSZPPSb3jy/1DDfNT/lMnt8QntU3lR6gHczZzIc7WefBYnZzBIOg3Y+5lhAIyapeUDh7l5KsWUVJt1UpVNS38nMtv3hWMdtUnkUD0CSUo=
+	 In-Reply-To:To:CC; b=tXnEM3rDJTb6ghx0eAhH2LbR+hjMluWvVpNZDiCh/PD0kzb6IpCj5+//pD0NmTc9EUWjvf3V7s58Uk748YG0FY2/BDuzFyGl3F0YyZiwsFwQUkPm3t3X4lTldZrqYULq+0oAeFAnIkvg18/y6SzHQMUarNLYHSG4mJ7oi/la0Mc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -22,9 +22,8 @@ Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
  (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
  Transport; Fri, 23 Jan 2026 17:26:27 +0800
 From: Billy Tsai <billy_tsai@aspeedtech.com>
-Date: Fri, 23 Jan 2026 17:26:29 +0800
-Subject: [PATCH v2 4/6] gpio: aspeed-sgpio: Convert IRQ functions to use
- llops callbacks
+Date: Fri, 23 Jan 2026 17:26:30 +0800
+Subject: [PATCH v2 5/6] dt-bindings: gpio: aspeed,sgpio: Support ast2700
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -33,7 +32,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260123-upstream_sgpio-v2-4-69cfd1631400@aspeedtech.com>
+Message-ID: <20260123-upstream_sgpio-v2-5-69cfd1631400@aspeedtech.com>
 References: <20260123-upstream_sgpio-v2-0-69cfd1631400@aspeedtech.com>
 In-Reply-To: <20260123-upstream_sgpio-v2-0-69cfd1631400@aspeedtech.com>
 To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
@@ -43,93 +42,49 @@ To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
 CC: <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, "Andrew
  Jeffery" <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-	<bmc-sw@aspeedtech.com>, Billy Tsai <billy_tsai@aspeedtech.com>
+	<bmc-sw@aspeedtech.com>, Billy Tsai <billy_tsai@aspeedtech.com>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769160386; l=3203;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769160386; l=1452;
  i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
- bh=Hl9LdLVmaEDP86aDOaXmV5qwrfCQGY8Vf57r/K2vfGo=;
- b=K5o16m1x6dewUe7aGBZCQd8VhK7H5qvqCsuX/OtBs3wmUEm1li/l9HmMHp3sC1i6NAm2bdliC
- pd+fJU5ZViyAfNRcAtJ7kLlypsitiC5xTGENG39S2WcBt/1oECAdTz9
+ bh=OYQyaNUanZ/szVOiycqY145Jb/KVGUWm/mc3+XgZG6w=;
+ b=VR/6NrxX2u5NjM3K8c6vXsi9KCB2tRBkKiyvhKw5FtnZxjYkpWWICR6Q7XiO80MXlaG/NgSGU
+ lNfThdxLSPjAhGQCLHzTpsLj2b2Q7iHdkVl6VaZUEW8DsGoLzKIKlyn
 X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
  pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
 
-Update aspeed_sgpio_irq_handler() and aspeed_sgpio_setup_irqs() to use
-the llops callbacks for register access instead of direct iowrite32().
-This creates a unified hardware access layer, which is essential for
-supporting SoCs with different register layouts like the AST2700.
+The AST2700 is the 7th generation SoC from Aspeed, featuring two SGPIO
+master controllers: both with 256 serial inputs and outputs.
 
-Additionally, change the loop bounds to use ngpio instead of the static
-ARRAY_SIZE(aspeed_sgpio_banks). This allows the driver to adapt to the
-actual number of supported pins on the running SoC.
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 ---
- drivers/gpio/gpio-aspeed-sgpio.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
-index 33a830ea7d28..b5270e11b153 100644
---- a/drivers/gpio/gpio-aspeed-sgpio.c
-+++ b/drivers/gpio/gpio-aspeed-sgpio.c
-@@ -319,12 +319,13 @@ static void aspeed_sgpio_irq_handler(struct irq_desc *desc)
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
- 	struct irq_chip *ic = irq_desc_get_chip(desc);
- 	struct aspeed_sgpio *data = gpiochip_get_data(gc);
--	unsigned int i, p;
-+	unsigned int i, p, banks;
- 	unsigned long reg;
+diff --git a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+index 1046f0331c09..974185e3478f 100644
+--- a/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/aspeed,sgpio.yaml
+@@ -10,7 +10,8 @@ maintainers:
+   - Andrew Jeffery <andrew@aj.id.au>
  
- 	chained_irq_enter(ic, desc);
+ description:
+-  This SGPIO controller is for ASPEED AST2400, AST2500 and AST2600 SoC,
++  This SGPIO controller is for ASPEED AST2400, AST2500, AST2600 and AST2700 SoC,
++  AST2700 have two sgpio master both with 256 pins,
+   AST2600 have two sgpio master one with 128 pins another one with 80 pins,
+   AST2500/AST2400 have one sgpio master with 80 pins. Each of the Serial
+   GPIO pins can be programmed to support the following options
+@@ -27,6 +28,7 @@ properties:
+       - aspeed,ast2400-sgpio
+       - aspeed,ast2500-sgpio
+       - aspeed,ast2600-sgpiom
++      - aspeed,ast2700-sgpiom
  
--	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
-+	banks = DIV_ROUND_UP(gc->ngpio, 64);
-+	for (i = 0; i < banks; i++) {
- 		reg = data->pdata->llops->reg_bank_get(data, i << 6, reg_irq_status);
- 
- 		for_each_set_bit(p, &reg, 32)
-@@ -355,7 +356,6 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
- 				   struct platform_device *pdev)
- {
- 	int rc, i;
--	const struct aspeed_sgpio_bank *bank;
- 	struct gpio_irq_chip *irq;
- 
- 	rc = platform_get_irq(pdev, 0);
-@@ -365,12 +365,11 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
- 	gpio->irq = rc;
- 
- 	/* Disable IRQ and clear Interrupt status registers for all SGPIO Pins. */
--	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
--		bank =  &aspeed_sgpio_banks[i];
-+	for (i = 0; i < gpio->chip.ngpio; i += 2) {
- 		/* disable irq enable bits */
--		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_enable));
-+		gpio->pdata->llops->reg_bit_set(gpio, i, reg_irq_enable, 0);
- 		/* clear status bits */
--		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_status));
-+		gpio->pdata->llops->reg_bit_set(gpio, i, reg_irq_status, 1);
- 	}
- 
- 	irq = &gpio->chip.irq;
-@@ -384,14 +383,13 @@ static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
- 	irq->num_parents = 1;
- 
- 	/* Apply default IRQ settings */
--	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
--		bank =  &aspeed_sgpio_banks[i];
-+	for (i = 0; i < gpio->chip.ngpio; i += 2) {
- 		/* set falling or level-low irq */
--		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type0));
-+		gpio->pdata->llops->reg_bit_set(gpio, i, reg_irq_type0, 0);
- 		/* trigger type is edge */
--		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type1));
-+		gpio->pdata->llops->reg_bit_set(gpio, i, reg_irq_type1, 0);
- 		/* single edge trigger */
--		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type2));
-+		gpio->pdata->llops->reg_bit_set(gpio, i, reg_irq_type2, 0);
- 	}
- 
- 	return 0;
+   reg:
+     maxItems: 1
 
 -- 
 2.34.1
