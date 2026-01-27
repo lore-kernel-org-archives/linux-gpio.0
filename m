@@ -1,80 +1,73 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63624221FCF
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 08:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E407C3321A3
+	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 09:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769504315; cv=none; b=nXQCIvZplUphYEPQfPiI8oItn6me9vAqQWwC2q4phj6GgxF9ixGiCikq5thhgI+dcKMpYfokS8gXB/X3EuKknKRsN3yITnKU1GptbGaB5XO0qgX/7i23uXs/xDET9Bo2bGGoeYKjzz3Y7AyXy2LU3ziH7XqZy0MpuhY/2ltRg2w=
+	t=1769504594; cv=none; b=u1Rrvi0BTEGicSfJzXKH8NPhuq4mpvqpgYk6sc2BqPJaJ/yA3zdMFd7sRYz//EwGscDpK6ZZkE8oP12YUGQtBuqgFIJebzDpYS6sZ6YNot6w42b+6BEzduUXf+QmL9/MAOfqE/wHFnBBxzAFjJqtA2mQ0Xicer0aF2T91D+qEvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769504315; c=relaxed/simple;
-	bh=Uo4R2z4XTl0OK8Jdytxjfvxk4CZHIpoo/8s0RobGIbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CS1MQ6nBexsiD+JMeSkL7rdOKbcsK2HZd0el7hvJnPqOBjsi72ukEz79n9+KV5Qf34yAa1etc23HUE0DKrDEee46F1z0BC4ia6NGlEjjd9zC+TmWxty7ljpPlqHpn+OLeZvR0s1A0Hc84VLVNCNV4Rpg4PFCekfPEmNj/zvTvVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNXsgE/P; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1769504594; c=relaxed/simple;
+	bh=MeqVQloYBUgHFacGrCxsF/LQzrrfHdlNQ+KOGNUpnDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pyXqWBGA9hc5/CrPuGjZkZ1pCzeoVyZE5Lq8pyFdSXqo01dmp2IQA8H8faErqdT725sEAX0Yb3ypXdubcUMmdyzH0E0z5qSI2N3uemzZKdaATx2hdzOL+nQNRFCZb3aSr+7sYU5lho0o+fvKCbqj4a7nKe4KmxlqSLsqq394efU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPV4DL7m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNXsgE/P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769504314; x=1801040314;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Uo4R2z4XTl0OK8Jdytxjfvxk4CZHIpoo/8s0RobGIbo=;
-  b=VNXsgE/PEwGIrZYD79lZ0Sr/pHVhgfmFkPq+T6QLRI/+VPYoKqY4IR3/
-   xvX/b+fKGomvZGvCjCasj5QOv7inWWAmqqOGciJlecyyXERwum5YzZzot
-   r6RRRorqlDObgaslo1eefsLiQvoZDT0gD0yiLNroyHku2xE6Ki1h4150G
-   DVOy8nS2LixHnXAOCCl2DlHjbs77ZsTU4stnEaHmhpKGoy3vIpKA7y3cW
-   xV3gaQhH7L1fo3ZGhKqJcX2ffCuw1YFTMh+bO59Eg5+5NV0NIb5e9xD0y
-   JfheHsYNmL1gJhEcQx+QkFAk18N+EEoQswWNw7QNVOxf/wZkFkJPlD5a0
-   w==;
-X-CSE-ConnectionGUID: iGpOVUH5RzSdrlMBCnjSbQ==
-X-CSE-MsgGUID: zgaoribzQias2DXFrEFlXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11683"; a="73279452"
-X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
-   d="scan'208";a="73279452"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 00:58:33 -0800
-X-CSE-ConnectionGUID: T4oAxrXqSRebaEFq+tZCXA==
-X-CSE-MsgGUID: G0H4QTbdTE6zxH0JHGA63Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
-   d="scan'208";a="208354864"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.245.248])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 00:58:32 -0800
-Date: Tue, 27 Jan 2026 10:58:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linux pin control <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [GIT PULL] intel-pinctrl for 6.20-1
-Message-ID: <aXh-Ngz97DG4KneT@smile.fi.intel.com>
-References: <aXeCgo5w1YOHUKiK@black.igk.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPV4DL7m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8A7C2BC86
+	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 09:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769504593;
+	bh=MeqVQloYBUgHFacGrCxsF/LQzrrfHdlNQ+KOGNUpnDY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pPV4DL7m/gJvEHlaiCbGnx+4lsWCYgMcLWzvj+ZC6g2LZ8/ujtsYjQZwM8+zNeHr+
+	 lbl0L29BFzybBu0YzW/P8gDh1fhHNrahKL0lP0C8pUEl8A/ud0jLY8XTPG34BV/YCX
+	 fHaC1vSf7nRAEdZB+Rg6Fzuu+NGqNjpv/e7le0Hk7ElHPjkArc7MnW04pKzkxEYSds
+	 8XBwpoyMTZog+4Y9LHtO9ATOcA1rVBOh4xADhxtlP+mpKgR23jsWPnxO8ywxGK5TTX
+	 aGQovehOrhQZm6Rv9M6L7IqWMWq02SoJ7UG1EAhciLIgsWYG9lnDxayANpZ1P2nzcT
+	 WRhDrQFDoDtcw==
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-649389b1cc5so4860631d50.1
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 01:03:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXwnm46lclgGr0Mk2Qxr2ZaDtBnf4fbjuZaFBW6zofE9ybVAjTifqjSRgUxUNL0m+u0MoBwqJwe5hrA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6HKg13DeUOi0lqC8ge5/WE0BMSJdYUQ8T95sJckXWVEr2C6Oc
+	Z2fguzmsGdmT/KWa6SpBl9FFwIuqSN9bCNcQIdSYMHTJmj5jus8rZq+PXIcPAe01gLJzX1mG6lV
+	EDJhKJPPaK5issuW/1dgQw5gi190pNPs=
+X-Received: by 2002:a05:690e:b4d:b0:649:6581:a68f with SMTP id
+ 956f58d0204a3-6498fc15729mr549082d50.19.1769504592911; Tue, 27 Jan 2026
+ 01:03:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXeCgo5w1YOHUKiK@black.igk.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <OS7PR01MB13834D5838A90C138C62CD817BC8AA@OS7PR01MB13834.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS7PR01MB13834D5838A90C138C62CD817BC8AA@OS7PR01MB13834.jpnprd01.prod.outlook.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 27 Jan 2026 10:03:02 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmx_kdVF9HuOt35EEtFVBYnaRrDYBkTfU4AyaaKeBPdVA@mail.gmail.com>
+X-Gm-Features: AZwV_QhrL_MsPD_jNlzFPukjH1u2v412Vs0zwRaVna-VU9spr3ixByrU9UpuLWU
+Message-ID: <CAD++jLmx_kdVF9HuOt35EEtFVBYnaRrDYBkTfU4AyaaKeBPdVA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: enable ies_present flag for MT798x
+To: Shiji Yang <yangshiji66@outlook.com>
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sam Shih <sam.shih@mediatek.com>, 
+	Daniel Golle <daniel@makrotopia.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 26, 2026 at 04:04:34PM +0100, Andy Shevchenko wrote:
-> Hi Linux pin control  maintainers,
-> 
-> A small but important update to Intel pin control drivers. The main thing is
-> documentation fix by Raag to make users less confused about list of supported
-> HW. Everything was floating in Linux Next for at least a few days.
+On Sat, Jan 17, 2026 at 4:05=E2=80=AFAM Shiji Yang <yangshiji66@outlook.com=
+> wrote:
 
-This went to a wrong Linus' address. I will send a new PR (within a couple of days)
-as we got more patches there.
+> The MT798x series SoCs have IES regiter definitions. I think we
+> must enable the ies_present flag to correctly configure the pin
+> input mode.
+>
+> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+No one said anything so patch applied!
 
-
+Yours,
+Linus Walleij
