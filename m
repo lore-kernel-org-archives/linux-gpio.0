@@ -1,150 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7A22135D7
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 20:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDCC32BF43;
+	Tue, 27 Jan 2026 21:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769545992; cv=none; b=afT2GMlxksJiTyQpvjIAecEl64HcVJsXUwdq1aSzCK7qaJc7T47estPOePgkCNc+FVthZiUp5fkJNQHYLcTVnQBYpqdaapTvF4mgDIEdJqF1Ize3s5Ip0eQRNgpLkBNnlH0tRIkfxjBP3vk6/KJgk5DWjpKdxRCK/l5+oNELqa4=
+	t=1769550427; cv=none; b=obPZqTOZXwGuP/lNmwLCLH9gz75mbTOMWJ2adXMsvqOdrfQPhVg7EGjf441d/Qu6CmNxbxM8uUEk6HL1rglXbmhn7l9SZ/IyyJ8vKVpws+g4e6IvIKU8Obfoyammjfa5MLHJgwadbFUvgshyvYIBRERABolQkHPs6Nmy3in8Yx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769545992; c=relaxed/simple;
-	bh=xRBVbS79QYoJBWjyLZhkqZ+QeffyspKgfvBxjH45YH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pUAf31wbG197UzKTj11+VRTMhy/79Uf5DafQIFW5q4FuEGS/cN9GAunrarR2+/C/bsElZwXc+IbQZzOtXlK6d6MwYF1jk23xQnRTQORXI02bZfclCPcaeBq5WxBN9sIowLhsck8q7krZM8VwSiq231gLhju3r0Ch0ggpM/NT8Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UenXtg0H; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769550427; c=relaxed/simple;
+	bh=HTp+Do+BE5EGcVI/v3yRKJyoUKPYpIeDXAWsrGMIs+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z+ZKHJK6eVqyDYbqA7nfYDLp3oGteBZeMwdgrmfuz77Vn5aVICkJ7FStLP7o6ruRwbSz5RtN2uXdOyqSSswo5fMVGs7/mXkfbqZuvYp4x4T5QItMPmM11MnnuI2GHlIGfbvDu3SQhMFeptG9+g+tbYoEmduUjDt80amdxXIDJhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JL/m4LRo; arc=none smtp.client-ip=192.19.166.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UenXtg0H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD53FC116C6
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 20:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769545991;
-	bh=xRBVbS79QYoJBWjyLZhkqZ+QeffyspKgfvBxjH45YH4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UenXtg0H34aAl8tmmcKIFrZILglkeGYXV6+i530uPqcnDxOX0mFVXHsJoiVcWxWp1
-	 oEMVhN9Y62njCDhzyf/M14kDN39dfHO9bEaytJhCIFyBdj+g54z7QUuuUdxPm+TgP1
-	 uIcZ7M/VcAiE3/G8gb9DFbCO8uYKnanceF+bqfH0UBc/TodzlzcWPaTUI+jgkFhjfM
-	 1JAtbjTh3AxZF9pK7VatXwLfwxZPsDDURRjqY21S1ArbbE+rMSS14Hgx0o5ZoUaWOB
-	 SL4xK2DpiCxU0BZZQ1vhw4zxAdNyDZRhbbsx7zkv47SobMC3nH2LnmEq4nTTUL/5KM
-	 RL+t5lMy0qgGg==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6610b05b37dso4883625eaf.2
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 12:33:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVAJunygTH1lFqkqf2kb2c/T0KcQHnm1FwEyjt1v/Ds/1HszTrq7VPEtYs2PXB4azmBY4/3kn1mr4Ea@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY7G0jOu/JNl/bjyRDK1fRX81P46RUVRDSd1p1a2oR7ABTdULh
-	P6KlptKwnciFYgQuO4o0X24qsTCMd4Zpb4qU+GJYdTacA1ED7PLCRa7/TcnuZevXGd5ePKRW9F7
-	7eS7hFDha4t9fY9CWP3X+S+/0ORQ6l1I=
-X-Received: by 2002:a05:6820:4b85:b0:65f:54c7:3c5f with SMTP id
- 006d021491bc7-662f203b51emr2100743eaf.24.1769545990855; Tue, 27 Jan 2026
- 12:33:10 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JL/m4LRo"
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 863FDC0010F7;
+	Tue, 27 Jan 2026 13:46:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 863FDC0010F7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1769550419;
+	bh=HTp+Do+BE5EGcVI/v3yRKJyoUKPYpIeDXAWsrGMIs+E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JL/m4LRoHff4Yo/FCjV4dCOBQYkMHaUEBiHdlEVKXOc5CBzgp0ZanD+0jig0AY8IX
+	 8sz4TfM5lQsSvYPkg0AZbD66m9AmmaKDuo3CVwowxMdroPAYY3du8W/xtCCcnjuu3g
+	 Xvh78SO3TFvIh6oa2zwcj7MnbraxNJWYKSQF1bGM=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 6743D199D1;
+	Tue, 27 Jan 2026 13:46:59 -0800 (PST)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Christophe Leroy <chleroy@kernel.org>,
+	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
+Subject: [PATCH v2 1/3] gpio: brcmstb: correct hwirq to bank map
+Date: Tue, 27 Jan 2026 13:46:54 -0800
+Message-ID: <20260127214656.447333-2-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260127214656.447333-1-florian.fainelli@broadcom.com>
+References: <20260127214656.447333-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260127201725.35883-1-dakr@kernel.org>
-In-Reply-To: <20260127201725.35883-1-dakr@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Jan 2026 21:32:59 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hwJB_tYd=sgT2jPm94ypXdEhj0wuGtdOg+TZDRCocVJw@mail.gmail.com>
-X-Gm-Features: AZwV_Qj9YAA_prmGKyJDi3TuK9JQuFTSH_BVTfMHVlFVfJ39PRvLmioDDYdThFg
-Message-ID: <CAJZ5v0hwJB_tYd=sgT2jPm94ypXdEhj0wuGtdOg+TZDRCocVJw@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: omap: do not register driver in probe()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, broonie@kernel.org, 
-	will@kernel.org, grygorii.strashko@ti.com, ssantosh@kernel.org, 
-	khilman@kernel.org, linusw@kernel.org, brgl@kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 27, 2026 at 9:17=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Commit 11a78b794496 ("ARM: OMAP: MPUIO wake updates") registers the
-> omap_mpuio_driver from omap_mpuio_init(), which is called from
-> omap_gpio_probe().
->
-> However, it neither makes sense to register drivers from probe()
-> callbacks of other drivers, nor does the driver core allow registering
-> drivers with a device lock already being held.
->
-> The latter was revealed by commit dc23806a7c47 ("driver core: enforce
-> device_lock for driver_match_device()") leading to a potential deadlock
-> condition described in [1].
->
-> Additionally, the omap_mpuio_driver is never unregistered from the
-> driver core, even if the module is unloaded.
->
-> Hence, register the omap_mpuio_driver from the module initcall and
-> unregister it in module_exit().
->
-> Link: https://lore.kernel.org/lkml/DFU7CEPUSG9A.1KKGVW4HIPMSH@kernel.org/=
- [1]
-> Fixes: dc23806a7c47 ("driver core: enforce device_lock for driver_match_d=
-evice()")
-> Fixes: 11a78b794496 ("ARM: OMAP: MPUIO wake updates")
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+From: Doug Berger <opendmb@gmail.com>
 
-Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+The brcmstb_gpio_hwirq_to_bank() function was designed to
+accommodate the downward numbering of dynamic GPIOs by
+traversing the bank list in the reverse order. However, the
+dynamic numbering has changed to increment upward which can
+produce an incorrect mapping.
 
-> ---
->  drivers/gpio/gpio-omap.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index e136e81794df..e39723b5901b 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -799,10 +799,13 @@ static struct platform_device omap_mpuio_device =3D=
+The function is modified to no longer assume an ordering of
+the list to accommodate either option.
+
+Fixes: 7b61212f2a07 ("gpiolib: Get rid of ARCH_NR_GPIOS")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index af9287ff5dc4..2352d099709c 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -301,12 +301,10 @@ static struct brcmstb_gpio_bank *brcmstb_gpio_hwirq_to_bank(
+ 		struct brcmstb_gpio_priv *priv, irq_hw_number_t hwirq)
  {
->
->  static inline void omap_mpuio_init(struct gpio_bank *bank)
->  {
-> -       platform_set_drvdata(&omap_mpuio_device, bank);
-> +       static bool registered;
->
-> -       if (platform_driver_register(&omap_mpuio_driver) =3D=3D 0)
-> -               (void) platform_device_register(&omap_mpuio_device);
-> +       platform_set_drvdata(&omap_mpuio_device, bank);
-> +       if (!registered) {
-> +               (void)platform_device_register(&omap_mpuio_device);
-> +               registered =3D true;
-> +       }
->  }
->
->  /*---------------------------------------------------------------------*=
-/
-> @@ -1575,13 +1578,24 @@ static struct platform_driver omap_gpio_driver =
-=3D {
->   */
->  static int __init omap_gpio_drv_reg(void)
->  {
-> -       return platform_driver_register(&omap_gpio_driver);
-> +       int ret;
-> +
-> +       ret =3D platform_driver_register(&omap_mpuio_driver);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D platform_driver_register(&omap_gpio_driver);
-> +       if (ret)
-> +               platform_driver_unregister(&omap_mpuio_driver);
-> +
-> +       return ret;
->  }
->  postcore_initcall(omap_gpio_drv_reg);
->
->  static void __exit omap_gpio_exit(void)
->  {
->         platform_driver_unregister(&omap_gpio_driver);
-> +       platform_driver_unregister(&omap_mpuio_driver);
->  }
->  module_exit(omap_gpio_exit);
->
->
-> base-commit: 63804fed149a6750ffd28610c5c1c98cce6bd377
-> --
-> 2.52.0
->
+ 	struct brcmstb_gpio_bank *bank;
+-	int i = 0;
+ 
+-	/* banks are in descending order */
+-	list_for_each_entry_reverse(bank, &priv->bank_list, node) {
+-		i += bank->chip.gc.ngpio;
+-		if (hwirq < i)
++	list_for_each_entry(bank, &priv->bank_list, node) {
++		if (hwirq >= bank->chip.gc.offset &&
++		    hwirq < (bank->chip.gc.offset + bank->chip.gc.ngpio))
+ 			return bank;
+ 	}
+ 	return NULL;
+-- 
+2.43.0
+
