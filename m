@@ -1,97 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415FF274B48
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 10:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E6C2F361F
+	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 10:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769508058; cv=none; b=GiUo3tCqybXYCqCraJRjca96GAH9uO0xWeQmN/2mmIYQDC8irOMS6feOpd5LLkAEXiGCeoaj6DI/Z84FEO6WjW7NwEXeOA/w2dO+P3sTqU0jNzUfzKNpvVUhV7DOmG+ME9m5Z2mvqHDmtyRf74H875KB8sOGPOcXGluOJY3WAKg=
+	t=1769508744; cv=none; b=GMdlkgiIVw0GiwZ2T7MJRBraVzfSJn1u8FWem1MZ6dikr22j/EgDfo2UTn4NsSPAfXflPCK+VLuYObxhXiJAtEuTlWSCUxYONbUztwxKiKOBYAF9OS/y4ey7GK1d2CkGc9tQvp0vTUKOsrAioOwREydA5PKnd/3kOulbxaaW93E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769508058; c=relaxed/simple;
-	bh=60f8Q6hm2bOtEWad3lE65lnTlI/fT6nozEWfs0V1vWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkY2x73Rfr7mGOK1DCQhtJo98psWs/KWJN0VrM2P5Cxuy8G1X1i3g1uvAxMUZJy73wrjJsvTeYP0hPVw4hr0G0xvzgir4nDpc2K+JFCvKXxQZrD23G4GVMKGZM2KzllzVa48Ka2att5uDlzzFDswIkrA0uAv3wp3V15VnfW/x34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCJWOChF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769508744; c=relaxed/simple;
+	bh=KWIUJCZiC4IID2T/kbuoBltgs9FJy4f4V5b6xvbuVtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfmL/u2WtNsPxHqU2K5GAwoMOjJAeIUuyyn9aWflnHKawSRbb2POuYOcEMRAr4oIT5zLNGmD9vGQDayjeC7IVhh62qvXhNjftL6UBlXds6xYjrLIyajcKyYwSMup/vsSF7o0T1hTeACTNBFa5Ia6nWbR/sdaiuFgyX265vLquMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KaGzwO4q; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCJWOChF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5AACC19425
-	for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 10:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769508057;
-	bh=60f8Q6hm2bOtEWad3lE65lnTlI/fT6nozEWfs0V1vWc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mCJWOChF9mdeXXM4bLVAnaHNJk85/0YmzljlxbEUftUowD64R9gPmonHLmyv+dkpD
-	 r2YSya9PMbR92ka9hNjsbZYSQwSmvACJ0bGIT7Mw2401BbjBWAFAb+VVtg6aovdBaY
-	 /pp5t/rY/gnVEXWpvu/cP5ModZdUp9ifJOyGGDDPP3X7amlhT9Yal2I9ZLVN/a9+eX
-	 LJqvJWSmrkgCJ9eKOA7fYU+SjLNhRJ0iEwugRvWx1IR6HcBiMjN4qalz6KB2iGMRrb
-	 8Zt9kG9mt8pCxQkjdy4CFTixQ9Yfp+v0WbQD/L4LrPOQJ8729s7grphO4D3APTAkER
-	 LyTX6ZKMBhTpQ==
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-64970870c0dso2112806d50.0
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Jan 2026 02:00:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXk0skHAbak3w7OOSXFey9KcsAy9YuyCdMrEowbuj0RpOEdGiJUkpUFW+MJnLYSi8jvWz0IGaY6nO0L@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV42w8bbRtYg4NV9v/0Vt/NJo6vIJgipI+dMN9F7U/aISXpd76
-	jQHCrgQdi1whouYde4nCs5CRd6q55n/k/5A21qePhridOy/cHwn1cKhR/9ZCu/EXuVRbdIZJRd0
-	lPq8L6ZH6gtMVJXzZ+4XIzjQ1A4AfEj0=
-X-Received: by 2002:a05:690e:134f:b0:63c:f01e:f8a with SMTP id
- 956f58d0204a3-6498fc46aa4mr569506d50.46.1769508057244; Tue, 27 Jan 2026
- 02:00:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KaGzwO4q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769508743; x=1801044743;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=KWIUJCZiC4IID2T/kbuoBltgs9FJy4f4V5b6xvbuVtA=;
+  b=KaGzwO4qs5ahGI8IL6mJbKela0TUgqpViTCJkNGowNlA0/q99VB42fo1
+   JO/yVcTZz8SOiADENeWamWcrLI5prLLpe/qGDQN+5lTslJiw+axJ3ESXr
+   7iI7Dla3Fy9Ks1cdViZ29eU40fQv6+zO+NyblSa8BzNb9b6HzA50Mb4tI
+   4oD4sCy2cojIACk9LrvbkDEWHrHdbAgnU/+9pf92AlQ4zbbVlCqh0qoBw
+   6+QJqkjgWhXmfBr4F4WJbgbZ3B6D8ZVW4Y4NcClZiYlpDg1gTzlaocJO9
+   2PXln8kE7sdMRgDYmBPuhdjdXH73nyXPRGFupnvZFEuaV0wOUcTnGUsgv
+   g==;
+X-CSE-ConnectionGUID: 7lBzHTLvRBG2x7wjxCsTpg==
+X-CSE-MsgGUID: DicBEYVmTrOfi2UIBlx7dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11683"; a="81333583"
+X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
+   d="scan'208";a="81333583"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 02:12:22 -0800
+X-CSE-ConnectionGUID: StdxrrwETAKdDS6LgusuNg==
+X-CSE-MsgGUID: ovuUjwG1RKCcpnylAg4jKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
+   d="scan'208";a="212915643"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.245.248])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 02:12:21 -0800
+Date: Tue, 27 Jan 2026 12:12:18 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Linux pin control <linux-gpio@vger.kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [GIT PULL] intel-pinctrl for 6.20-1
+Message-ID: <aXiPgsr9_FmFV9gJ@smile.fi.intel.com>
+References: <aXeCgo5w1YOHUKiK@black.igk.intel.com>
+ <aXh-Ngz97DG4KneT@smile.fi.intel.com>
+ <CAD++jLmdQnKM39JOXPo6iQ8X=T5zDoAHS8wBrfj9e83dinCKhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bddc0469f25843ca5ae0cf578ab3671435ae98a7.1769429546.git.robin.murphy@arm.com>
- <CAMRc=MfQCrhgv7DcWrr3TWe8DtpZSRrkxb5KDHsGq1jPjUAHww@mail.gmail.com>
-In-Reply-To: <CAMRc=MfQCrhgv7DcWrr3TWe8DtpZSRrkxb5KDHsGq1jPjUAHww@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 27 Jan 2026 11:00:46 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk_ATHWwt_e+KN1+2sLYxqB4n-mdrbdxUHpHvnryeF+fg@mail.gmail.com>
-X-Gm-Features: AZwV_Qio_o-Mq2iM8scY0YLmPrOEH2sBCtjt6jzEPfeEfBoz7oFz9Fw0tU17ghY
-Message-ID: <CAD++jLk_ATHWwt_e+KN1+2sLYxqB4n-mdrbdxUHpHvnryeF+fg@mail.gmail.com>
-Subject: Re: [PATCH] gpio/rockchip: Stop calling pinctrl for set_direction
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>, heiko@sntech.de, sebastian.reichel@collabora.com, 
-	m.szyprowski@samsung.com, linux-rockchip@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jLmdQnKM39JOXPo6iQ8X=T5zDoAHS8wBrfj9e83dinCKhA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Jan 26, 2026 at 2:48=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.or=
-g> wrote:
-> On Mon, Jan 26, 2026 at 1:12=E2=80=AFPM Robin Murphy <robin.murphy@arm.co=
-m> wrote:
+On Tue, Jan 27, 2026 at 10:55:13AM +0100, Linus Walleij wrote:
+> On Tue, Jan 27, 2026 at 9:58 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Jan 26, 2026 at 04:04:34PM +0100, Andy Shevchenko wrote:
+> > > Hi Linux pin control  maintainers,
+> > >
+> > > A small but important update to Intel pin control drivers. The main thing is
+> > > documentation fix by Raag to make users less confused about list of supported
+> > > HW. Everything was floating in Linux Next for at least a few days.
 > >
-> > Marking the whole controller as sleeping due to the pinctrl calls in th=
-e
-> > .direction_{input,output} callbacks has the unfortunate side effect tha=
-t
-> > legitimate invocations of .get and .set, which cannot themselves sleep,
-> > in atomic context now spew WARN()s from gpiolib.
-> >
-> > However, as Heiko points out, the driver doing this is a bit silly to
-> > begin with, as the pinctrl .gpio_set_direction hook doesn't even care
-> > about the direction, the hook is only used to claim the mux. And sure
-> > enough, the .gpio_request_enable hook exists to serve this very purpose=
-,
-> > so switch to that and remove the problematic business entirely.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 20cf2aed89ac ("gpio: rockchip: mark the GPIO controller as sleep=
-ing")
-> > Suggested-by: Heiko Stuebner <heiko@sntech.de>
-> > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > ---
->
-> Linus,
->
-> With your Ack I can queue this for v6.19-rc8.
+> > This went to a wrong Linus' address. I will send a new PR (within a couple of days)
+> > as we got more patches there.
+> 
+> I actually see it because I'm using some clever lei and korgalore hacks to
+> read lists now.
+> 
+> Send more pull requests if needed! :)
 
-Late to the show :)
+Sure, this tag is immutable, any new PR will be based on this.
 
-Heiko's ACK is more than enough for this driver, he knows
-Rockchip way better than me.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yours,
-Linus Walleij
+
