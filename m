@@ -1,131 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC66285050;
-	Tue, 27 Jan 2026 08:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4081329B233;
+	Tue, 27 Jan 2026 08:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769501500; cv=none; b=T+Xu+Hnc1bFCEtCFGcY1xDf7sReftpniu+a/MCHZYopIqjDLRWDSWJMf6fn6K+P+RbR+qFBrl3U9LbPwQvad+m4V2wdIWNfWx/MECqG/8bRxulcOMwJKkoBdQrKdeX7X1capQl2O/dkUhCAhUM0v5BWg9On8LQfJM8xuR0eijvk=
+	t=1769503160; cv=none; b=GogFR6thecjRxe8zpUI5i/cd2aKBMTA5ewVx5+9cpabo1xPgyW5OjthoWlgVniFgKldvr12ahG65sfr1iQpECQaPD/kaYBecAzw2ZG17Fspq/DeDGAns9njSsRoGJO2+F8sPqurf1/PrAvK641LYN20UVBg0RkjSLiCOUjJj290=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769501500; c=relaxed/simple;
-	bh=QUwNGB/s8nKRM9QYdJgfqZJNE8ZZwRUQW45GfXq4nuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hU1OEuGi0OiQJCM3/ZL7fiHaGzSZ8MG5UE9S4YIvB4WkIOHL8tS78aNsq5eByDf5sSXPSsoO67/1yO+Y6YgqGQi5N41WkmW3u6KX+iA3h+HMBIauROPfB71Z5Z0xg3klUg+yAaoNbvj0e2F60z7JmnOL0GESQWvgUsq68GfWosI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cx9rbg0K; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1769503160; c=relaxed/simple;
+	bh=QVd/DKyZRzs/A0NzPB9q2aJ9P6IS677HzngQavLkSts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JtEYtEAhGHrTZHJkv/KKIajZcA60rgHaM7vwoBIyBc5zsfPYiqbCrNohum/UE8ie00Lzk4Xu26K0LfHsCrguL8xnvUXqee/TOu10um9hX942NoIEp0eyXaJ2J+UUHB7EmwNEoQm4nfudcp+ycI46CQKPNf/XqsWO1iMexaKWjJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FFQAWE5x; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cx9rbg0K"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FFQAWE5x"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769501499; x=1801037499;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QUwNGB/s8nKRM9QYdJgfqZJNE8ZZwRUQW45GfXq4nuI=;
-  b=cx9rbg0K8o3t2YfUq2/JWDzY/IXmVrjgEdX415FAOQfBIqLNhuE++voO
-   a/sgbaOtx+oGe/9fO9Xcwkusp96B7YPTfAAt1iaxhU88wc7TXoDWVyMpB
-   B1yP5poeSBD9QZoNnx2Im0CZlVzsde1pZwVWk+yWi0Jf6WiMOIabUOQ93
-   U0eIGsFe2zED0zy/JDPYCWNFrOwLwrGzFBW3ijsdf21JA5ukHGH8VjAi5
-   D/6iVUYnXHw6nm2fxDjWYMfUPkvBfWOnDZ2Iz5U8EJXo/cWJFC4Rl1bqN
-   K5yqs7kkQJH2VBI616KKL60Xi1bJ1P6rgdPsxUQZsCEyW00dwbHuG+nCM
-   Q==;
-X-CSE-ConnectionGUID: G3SOChk/RWWctAGuUwdT3w==
-X-CSE-MsgGUID: BBZ6+qK/SNGUvvCL6saeoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11683"; a="70778702"
+  t=1769503158; x=1801039158;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QVd/DKyZRzs/A0NzPB9q2aJ9P6IS677HzngQavLkSts=;
+  b=FFQAWE5xt/SiPQ5yf1NVFXte5SYQiVrQxGPNljM+8MpAgJIZUT+g2ovF
+   Pa5ymfrxufoOHxGp9Zj1NyNXJ6jkApI31oKYzAfeN3JANoEHo6LEsHeSZ
+   Lf0kvUs3+zsOIeMzFsvasHdRZIkEeKnw43KwrREiLSuahyoFHYOaGphdr
+   rMhafH1VwtZC8fa1gE8k0rFFnIKkIcJRWU+cmTscvNn7rnTN0BjWDyNPe
+   CWdqoqyKnMdfGU06xcwqeq8K9oE5fmjFshA4OWq+AcNt6dEzu7dutYT7W
+   uhVtornSmqcMiCO/kqfSQA0mRF8ynm4zoLx5AHT29cupm584+dAhuzSpu
+   g==;
+X-CSE-ConnectionGUID: BMVnOBVFQJyOUQXa9U36Qw==
+X-CSE-MsgGUID: 7cDIpRvMT7GMhR0rRG/HDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11683"; a="88107412"
 X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
-   d="scan'208";a="70778702"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 00:11:39 -0800
-X-CSE-ConnectionGUID: f2Ta+NZiQSWxMysBOoo2hg==
-X-CSE-MsgGUID: 8WWFQRv2TKCNEnjh+5DXIg==
+   d="scan'208";a="88107412"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2026 00:38:50 -0800
+X-CSE-ConnectionGUID: EXY1dUkQTlakiKqIc4IJ/w==
+X-CSE-MsgGUID: A8Xsw4xUQrKZjaShAxDQCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,256,1763452800"; 
-   d="scan'208";a="207799738"
+   d="scan'208";a="207974764"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Jan 2026 00:11:37 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 6844798; Tue, 27 Jan 2026 09:11:36 +0100 (CET)
-Date: Tue, 27 Jan 2026 09:11:36 +0100
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Subject: Re: [PATCH v1 1/1] gpiolib: acpi: Fix potential out-of-boundary left
- shift
-Message-ID: <20260127081136.GZ2275908@black.igk.intel.com>
-References: <20260126134226.3617924-1-andriy.shevchenko@linux.intel.com>
+  by orviesa007.jf.intel.com with ESMTP; 27 Jan 2026 00:38:47 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 89FC598; Tue, 27 Jan 2026 09:38:46 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linusw@kernel.org>
+Subject: [PATCH v1 1/1] pinctrl: tangier: Join tng_pinctrl_probe() in its wrapper
+Date: Tue, 27 Jan 2026 09:38:45 +0100
+Message-ID: <20260127083845.3681331-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260126134226.3617924-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 26, 2026 at 02:42:26PM +0100, Andy Shevchenko wrote:
-> GPIO Address Space handler gets a pointer to the in or out value.
-> This value is supposed to be at least 64-bit, but it's not limited
-> to be exactly 64-bit. When ACPI tables are being parsed, for
-> the bigger Connection():s ACPICA creates a Buffer instead of regular
-> Integer object. The Buffer exists as long as Namespace holds
-> the certain Connection(). Hence we can access the necessary bits
-> without worrying. On the other hand, the left shift used in the
-> code is limited by 31 (on 32-bit platforms) and otherwise considered
-> to be Undefined Behaviour. Also the code uses only the first 64-bit
-> address for the value, and anything bigger than	63 will be also
-                                                 ^^^^^^^
-There is some extra whitespace above.
+There is no clear sign why we have tng_pinctrl_probe() in the first
+place when it has already been using managed calls. Join the function
+to its devm_tng_pinctrl_probe() wrapper.
 
-> subject to UB. Fix all this by modifying the code to correctly set or
-> clear the respective bit in the bitmap constructed of 64-bit values.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/gpio/gpiolib-acpi-core.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi-core.c b/drivers/gpio/gpiolib-acpi-core.c
-> index 83dd227dbbec..da0ab749b4dc 100644
-> --- a/drivers/gpio/gpiolib-acpi-core.c
-> +++ b/drivers/gpio/gpiolib-acpi-core.c
-> @@ -1104,6 +1104,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
->  		unsigned int pin = agpio->pin_table[i];
->  		struct acpi_gpio_connection *conn;
->  		struct gpio_desc *desc;
-> +		u16 vala, valo;
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-tangier.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-Perhaps bit more descriptive names.
+diff --git a/drivers/pinctrl/intel/pinctrl-tangier.c b/drivers/pinctrl/intel/pinctrl-tangier.c
+index 5f0b7334a489..44b333d6c7cb 100644
+--- a/drivers/pinctrl/intel/pinctrl-tangier.c
++++ b/drivers/pinctrl/intel/pinctrl-tangier.c
+@@ -518,15 +518,19 @@ static const struct pinctrl_desc tng_pinctrl_desc = {
+ 	.owner = THIS_MODULE,
+ };
+ 
+-static int tng_pinctrl_probe(struct platform_device *pdev,
+-			     const struct tng_pinctrl *data)
++int devm_tng_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	const struct tng_pinctrl *data;
+ 	struct tng_family *families;
+ 	struct tng_pinctrl *tp;
+ 	void __iomem *regs;
+ 	unsigned int i;
+ 
++	data = device_get_match_data(dev);
++	if (!data)
++		return -ENODATA;
++
+ 	tp = devm_kmemdup(dev, data, sizeof(*data), GFP_KERNEL);
+ 	if (!tp)
+ 		return -ENOMEM;
+@@ -566,17 +570,6 @@ static int tng_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	return 0;
+ }
+-
+-int devm_tng_pinctrl_probe(struct platform_device *pdev)
+-{
+-	const struct tng_pinctrl *data;
+-
+-	data = device_get_match_data(&pdev->dev);
+-	if (!data)
+-		return -ENODATA;
+-
+-	return tng_pinctrl_probe(pdev, data);
+-}
+ EXPORT_SYMBOL_NS_GPL(devm_tng_pinctrl_probe, "PINCTRL_TANGIER");
+ 
+ MODULE_AUTHOR("Andy Shevchenko <andriy.shevchenko@linux.intel.com>");
+-- 
+2.50.1
 
-And while at it, add comment why this is needed.
-
->  		bool found;
->  
->  		mutex_lock(&achip->conn_lock);
-> @@ -1158,10 +1159,17 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
->  
->  		mutex_unlock(&achip->conn_lock);
->  
-> -		if (function == ACPI_WRITE)
-> -			gpiod_set_raw_value_cansleep(desc, !!(*value & BIT(i)));
-> -		else
-> -			*value |= (u64)gpiod_get_raw_value_cansleep(desc) << i;
-> +		vala = i / 64;
-> +		valo = i % 64;
-> +
-> +		if (function == ACPI_WRITE) {
-> +			gpiod_set_raw_value_cansleep(desc, value[vala] & BIT_ULL(valo));
-> +		} else {
-> +			if (gpiod_get_raw_value_cansleep(desc))
-> +				value[vala] |= BIT_ULL(valo);
-> +			else
-> +				value[vala] &= ~BIT_ULL(valo);
-> +		}
->  	}
->  
->  out:
-> -- 
-> 2.50.1
