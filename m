@@ -1,82 +1,102 @@
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3888B32D45C;
-	Tue, 27 Jan 2026 21:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9ED346AD9;
+	Tue, 27 Jan 2026 22:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769550739; cv=none; b=p11fnbFUZsi6fQj1NIbvBD0DbTgNzIZHxTWRwszKKg/C2miVmlP7v1ZCVhQpb87AICSeB/HqPYfXhunE7lfSFVS0ZS89N+mj4vHhLQ3R4O4P/s0t7gDVRRlrHyKo/odiZoRvFnYAYn1vI4Ms6c0d4aOCUpCqY35jUoUZol2fccQ=
+	t=1769552014; cv=none; b=o8Gqetz9qMBRlA3DyTiaiCjzMhIcAyA5tEHpC5zKLPSVgLbJbDsM6DOONN2Qq46h/ttiX8Ifxzoqpt+6iJxXYR9x+ukMmyzL6N6bCJ+03958QviTf00SKCWeZb0+A2aYPGOivwwz5kk0bn+w3tN/nwdPDQA4RaJ/bSRlVYZpSVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769550739; c=relaxed/simple;
-	bh=JnfNS34/V851rQP+oN95QQoE9EKEKbvWuHol2CHK5QQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3ppSsjJRtmtcqlTyZG0foQsI+7kIqDkaXdF+7J09e5Vo/860efLpg5/IwxC0Scn3ltqGhHvJeEG3Z6cg9rLfLsEkBGURXxJepmUFuJNfYLKVrcQynRNiDxSlNJKRDsgT4okrk8wnGqsPECrltloWKKdQEeJFjPL9ihebpkzsY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PvnxrkrX; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1769552014; c=relaxed/simple;
+	bh=tatN23tenWNRFoQgcpLR1AWmBd5uDsA2y3KuOTtwtIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXOg1EbNwsIkDLmVL1pJ9T0Pxu72m/WS6zls4lGVH5fLls0gWf7lSKpeBajW2JH9c8hPXtO41QCpZAy0SnuIVyHE6v3UA9zi6Az+pzBMqJRTu3Sgk57R7hocYXAfd06n8hv5+YlOvlBWD7tc199y0TzoNgX3QgD37lpuy7quY+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKYwogTj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PvnxrkrX"
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id C2E70C002FC7;
-	Tue, 27 Jan 2026 13:46:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com C2E70C002FC7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1769550419;
-	bh=JnfNS34/V851rQP+oN95QQoE9EKEKbvWuHol2CHK5QQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PvnxrkrXTfhtRNNjZxyv9ajKEDuUA82o4HcNwdrd/GPpyQF57e4dVhho+UU5udApU
-	 QZdT4/nnu13MdhBn+P8xX9QEe2JLmXCKa9xzfWSE2aS1NkB6W2wo4V/wmRxxm2b3rW
-	 e1DCARpJPaU7HCbgMgW6Kn+9fLGCiI75zW7Mm5p4=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 3401B199D0;
-	Tue, 27 Jan 2026 13:46:59 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Christophe Leroy <chleroy@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
-Subject: [PATCH v2 0/3] gpio: brcmstb: Bug fixes and wake-up interrupt improvements
-Date: Tue, 27 Jan 2026 13:46:53 -0800
-Message-ID: <20260127214656.447333-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKYwogTj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45942C116C6;
+	Tue, 27 Jan 2026 22:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769552014;
+	bh=tatN23tenWNRFoQgcpLR1AWmBd5uDsA2y3KuOTtwtIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hKYwogTjYu6oyUyl1CUIvmebJj66jUtzn96qocehm8PKIXFa0VXKpPuw8eA+xma5a
+	 JgsgLlxTH/DYrsQWCyN69MfoZYDp3GpURB3Rx3QdYIyMtJrNaw+8Daz3IRLuR5Hq1v
+	 HgeeO5CudJfsfcBB6A3X/bsx9n34Jns7KGGs2NSx9WSrzLjxMIs7apPQ0WlTKCcwPI
+	 Vmdk3Z2HR+qHeTrYNBjYaxFYwtHGENFGbpeU8CuBO/v1sKbamjDx7VUcpL+JB1wcvF
+	 oxPjaqkRGqDxISZMcDEYRi2xig9zWYRz0nV7lOYyTKGyC05M15QbrReS3DHtJ0aFFd
+	 /En2qwfWshz4Q==
+Date: Tue, 27 Jan 2026 22:13:31 +0000
+From: Conor Dooley <conor@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>
+Subject: Re: [linusw-pinctrl:devel 39/46] kismet: WARNING: unmet direct
+ dependencies detected for GENERIC_PINCTRL when selected by
+ PINCTRL_POLARFIRE_SOC
+Message-ID: <20260127-habitual-suggest-c3f429569fb6@spud>
+References: <202601271725.gqlQ8Jl7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sB/B79g2sJNTti0u"
+Content-Disposition: inline
+In-Reply-To: <202601271725.gqlQ8Jl7-lkp@intel.com>
 
-This patch series corrects the HW interrupt to the bank mapping logic to
-be more robust and do not assume any particular order.
 
-The last two patches improve the handling of early wake-up conditions
-and makes it more robust so we can use those during "s2idle".
+--sB/B79g2sJNTti0u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
+On Tue, Jan 27, 2026 at 05:24:53PM +0100, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinc=
+trl.git devel
+> head:   ebd2f48dff6ae15bc1cbc7c7ae3c5fe10ad08087
+> commit: 488d704ed7b7e7afeef24ee846c8223b607357b7 [39/46] pinctrl: add pol=
+arfire soc mssio pinctrl driver
+> config: i386-kismet-CONFIG_GENERIC_PINCTRL-CONFIG_PINCTRL_POLARFIRE_SOC-0=
+-0 (https://download.01.org/0day-ci/archive/20260127/202601271725.gqlQ8Jl7-=
+lkp@intel.com/config)
+> reproduce: (https://download.01.org/0day-ci/archive/20260127/202601271725=
+=2EgqlQ8Jl7-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202601271725.gqlQ8Jl7-lkp=
+@intel.com/
+>=20
+> kismet warnings: (new ones prefixed by >>)
+> >> kismet: WARNING: unmet direct dependencies detected for GENERIC_PINCTR=
+L when selected by PINCTRL_POLARFIRE_SOC
+>    WARNING: unmet direct dependencies detected for GENERIC_PINCTRL
+>      Depends on [n]: PINCTRL [=3Dy] && GENERIC_PINCONF [=3Dy] && GENERIC_=
+PINCTRL_GROUPS [=3Dn] && GENERIC_PINMUX_FUNCTIONS [=3Dy]
+>      Selected by [y]:
+>      - PINCTRL_POLARFIRE_SOC [=3Dy] && PINCTRL [=3Dy] && (ARCH_MICROCHIP =
+|| COMPILE_TEST [=3Dy]) && OF [=3Dy]
 
-- corrected the patch implementing irq_mask_ack to write properly to the
-  STAT register, this was not the case
-- create a separate helper to write to the IMASK register to make the
-  code more readable
-- remove unnecessary cast of unsigned long to u32
+I guess I'll send a patch restoring the selects to the driver option
+Linus?
 
-Doug Berger (3):
-  gpio: brcmstb: correct hwirq to bank map
-  gpio: brcmstb: implement irq_mask_ack
-  gpio: brcmstb: allow parent_irq to wake
+--sB/B79g2sJNTti0u
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/gpio/gpio-brcmstb.c | 127 +++++++++++++++++++++++++-----------
- 1 file changed, 89 insertions(+), 38 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.43.0
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaXk4igAKCRB4tDGHoIJi
+0lIHAQDmQpu2bWDDiR4Lvi3OltPVc5SpMAJNba5B64YqKncwyAD+LQDaGbWWjin5
+DeyRU24BPivXYPpfWfPbbsJAZO7DKg8=
+=aV/B
+-----END PGP SIGNATURE-----
 
+--sB/B79g2sJNTti0u--
