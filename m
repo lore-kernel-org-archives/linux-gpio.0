@@ -1,102 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E40133EB09
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Jan 2026 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653AF33F375;
+	Wed, 28 Jan 2026 09:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769591428; cv=none; b=GVikZIZzPSlxrunYG1ueCkmsrWRrfMTxNqSwDnm/JIMLZ4hwdFhpDg4QRU5u2JZV/TuWAqUSlENDD2cE/LGG4h+wqG57J6GS1xErMIuRTiRWWmQZEU6F7bMa7za5tbohjeGdqqswC+JXQf5SwEJjGJm3tcSl6IeiPmey7TxiVI0=
+	t=1769591452; cv=none; b=OJBpenrtHeC1p7FyKAnHPSzaRKeQipnUtZfoTgzkxTTDrZmxPlNq+trlWHsdloAPt/M6btoEluNkZrrhZzB8rtpImRkl//S3lZa6qF4jLd0GNLSdNI3xRnaYHWgqfxjC/K0YkQ2vEIbcGqBbBSIW9m0xTfPx82vnVtFR9WJQo18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769591428; c=relaxed/simple;
-	bh=f8WyNmRVlw3H/8V0zjmzSohVz5OJZvS4EvUll/vUhDI=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pcLRHCwHOMEf4EMC5szt5Vj8j9f57SX4E7jIwSaDOCZiOfCnwcy8DlOBwpT+7Rl9HPJJZcqmM3IkLGKdPy2zR7HihzJdHVshv+rTJ4xjt4Z6I3T9ZjHrTn7Rwbw/W1jSCYP3Vrl8nsh5jjrOA8AGsO/OCEvl9juZoaXDQZF6/pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzfplOpR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769591452; c=relaxed/simple;
+	bh=ZjvafvHGrsoREp76sQmuFuxDf9DKKzuVLt4vSY5tlkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjzhDBv1U4IvBmSLHU1pG2Od8Smy0Yv1Tle/vLuop1IJ135DJrLzkxKTofPv4KvEUAiSmezMitHhXaYmql4OZXTmGpCVJO/vtWwfRLrBft1ISWwcIspTk6o4zhmjF+Se41tEA0KhTvkWi6HKumhEbXDRP8AnJYyBkPJ0uQsYqB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jr4POA5p; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzfplOpR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A906C4AF0B
-	for <linux-gpio@vger.kernel.org>; Wed, 28 Jan 2026 09:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769591428;
-	bh=f8WyNmRVlw3H/8V0zjmzSohVz5OJZvS4EvUll/vUhDI=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=kzfplOpRVoJS6qmlhQcU0jc3pgg5j8KtSU0MGP2deIi/NCAccrjGLGgsJwb8IWyhl
-	 RoQyhSHcqwXt7a/HSRYYdBM39kDEBlCIKVf5uPZZPbJMdfHWgg71qs/29c41wz9iQ0
-	 4EXCSYIeSC0MoXAoQLHh8+cPElh0q1KlhaTAdaYYmMjKrIdxbrUjVIa42GU4sJ4Y1h
-	 25ZuCIjEbREL913gC1GlsyrF4WMkcGSyFk8lvT+TOjgxlofqASYhVd6ypaHqH4ggTb
-	 zrQ5P95F187Ok498ntIxxZBbATIMtxMWOy8yMyN96UuDmwsv6B5CtKwDhDjNoUfbju
-	 tlJZ/aSyflbFw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-59dd3e979ceso7445490e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Jan 2026 01:10:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVEokOpL84qg5THnLHbLTfZAdCLJ2/BGXrVai2hP8TnZkLtrpMrx8yzUdR9G75mmV3lN5M+m5k8+8yY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxET/PfBw8aHkx321nkmtRVSdv1bQzTFfrE47HF99GAK8c0zr2Z
-	DZahgV3H5pGwWiFvALtWFK/Uz9AbD6XPHZZJXzTKa9Zf+XnB8h29rz2xbdhs3WIUaOvDMHLeQ3j
-	/Chghzd/S2v/tk8rYeSvYyTlv0JsURLUr5I7b4pHYvA==
-X-Received: by 2002:a05:6512:2307:b0:59e:340:e557 with SMTP id
- 2adb3069b0e04-59e040185d0mr1857162e87.19.1769591426871; Wed, 28 Jan 2026
- 01:10:26 -0800 (PST)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Jan 2026 01:10:24 -0800
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Jan 2026 01:10:24 -0800
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <aXkTsMqZ4iZyVM0J@black.igk.intel.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jr4POA5p"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1769591451; x=1801127451;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZjvafvHGrsoREp76sQmuFuxDf9DKKzuVLt4vSY5tlkc=;
+  b=Jr4POA5p9RnRe2+zSGu4XVNajxOEegsQW++XLjbTV3vjLBw/J9HP8455
+   4Sbscmu+0Tu+pJ2327BeBoJIbS/Gw5kWzfFPPfC0FDaoB91Nh7lnUlxQS
+   S4soe0eyGWo1G+2zMVmAATfjkGBxrRzX60bcdG0OVmXqUuJAYw5PXFqLs
+   DesoW+OE9D3ubMNjg1AbzKYeEVuEVwyQ9BQdehGdwfhsN2PDzrbjSY3x+
+   xzndcw1JYwBm689rY8mDeN84Jm25Pf2xX+r2OmV5Irpcw62eIwRMe+MnV
+   Xt9SJePdl9ot3iuan+3bb4yAzz0MqYUn6ASvgstOmJ2kICiQ2jWMWI1Dl
+   A==;
+X-CSE-ConnectionGUID: /AB8brDeR0miqa8/AE198A==
+X-CSE-MsgGUID: PSdHjLZ7Qi+YFGn1FoC+BQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="69814711"
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="69814711"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 01:10:51 -0800
+X-CSE-ConnectionGUID: KqjXb3D5QdSDwI/Y/lNCuQ==
+X-CSE-MsgGUID: f4TtDGrLSYeOAK99HauECA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
+   d="scan'208";a="239470188"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.196])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 01:10:49 -0800
+Date: Wed, 28 Jan 2026 11:10:47 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Mika Westerberg <westeri@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] gpiolib: acpi: Fix potential out-of-boundary left
+ shift
+Message-ID: <aXnSl20A2RD4RsfV@smile.fi.intel.com>
+References: <20260127110824.4020130-1-andriy.shevchenko@linux.intel.com>
+ <20260127134300.GK2275908@black.igk.intel.com>
+ <aXjCfwnnASFZ1Ghh@smile.fi.intel.com>
+ <CAMRc=Me=TFk6XZtLJ9XGBdYtQRb=-tLqXy+x7mteBe8ANvqEKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126094209.9855-1-xuewen.yan@unisoc.com> <20260126095024.ZEEwNmlk@linutronix.de>
- <CAMRc=Md+ptvRvknV7C4g2W_vpkfQmLkanKUqXzM8eYSe5ns1dQ@mail.gmail.com> <aXkTsMqZ4iZyVM0J@black.igk.intel.com>
-Date: Wed, 28 Jan 2026 01:10:24 -0800
-X-Gmail-Original-Message-ID: <CAMRc=MfKLhD40X7Xc-U=tFjt=ipsDk43=cieb6AU5K7wLzVA=w@mail.gmail.com>
-X-Gm-Features: AZwV_Qjg7S1wP3kgQ8eQUETsp7fF7VKxj1PP5qXsIOgTyYd7zqfDzDaAFt0DClQ
-Message-ID: <CAMRc=MfKLhD40X7Xc-U=tFjt=ipsDk43=cieb6AU5K7wLzVA=w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sprd: Change sprd_gpio lock to raw_spin_lock
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Xuewen Yan <xuewen.yan@unisoc.com>, linusw@kernel.org, 
-	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com, 
-	clrkwllms@kernel.org, rostedt@goodmis.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	ke.wang@unisoc.com, wenhua.lin@unisoc.com, xuewen.yan94@gmail.com, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Me=TFk6XZtLJ9XGBdYtQRb=-tLqXy+x7mteBe8ANvqEKA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, 27 Jan 2026 20:36:16 +0100, Andy Shevchenko
-<andriy.shevchenko@intel.com> said:
-> On Tue, Jan 27, 2026 at 10:07:01AM +0100, Bartosz Golaszewski wrote:
->> On Mon, Jan 26, 2026 at 10:50=E2=80=AFAM Sebastian Andrzej Siewior
->> <bigeasy@linutronix.de> wrote:
->> > On 2026-01-26 17:42:09 [+0800], Xuewen Yan wrote:
->
-> ...
->
->> > > There was a lockdep warning in sprd_gpio:
->
->> > > [    6.258411][T329@C6]  el0t_64_sync+0x1c4/0x1c8
->> >
->> > This could be reduced to "BUG: Invalid wait context". The other bits
->> > provide to added value.
->> >
->> > > This is because the spin_lock would change to rt_mutex in PREEMPT_RT=
-,
->> > > however the sprd_gpio->lock would use in hard-irq, this is unsafe.
->> > >
->> > > So change the spin_lock to raw_spin_lock to use the spinlock
->> >
->> > spinlock_t to raw_spinlock_t
->>
->> I fixed this in git.
->
-> Not sure if you noticed the above comment by Sebastian and it's actually
-> documented in Submitting Patches that backtraces should only carry the
-> necessary information, so usually ~3-5 lines is enough and not two full p=
-ages
-> like in the commit as I see in the repository.
->
+On Wed, Jan 28, 2026 at 01:02:11AM -0800, Bartosz Golaszewski wrote:
+> On Tue, 27 Jan 2026 14:49:51 +0100, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Tue, Jan 27, 2026 at 02:43:00PM +0100, Mika Westerberg wrote:
+> >> On Tue, Jan 27, 2026 at 12:06:30PM +0100, Andy Shevchenko wrote:
+> >> > GPIO Address Space handler gets a pointer to the in or out value.
+> >> > This value is supposed to be at least 64-bit, but it's not limited
+> >> > to be exactly 64-bit. When ACPI tables are being parsed, for
+> >> > the bigger Connection():s ACPICA creates a Buffer instead of regular
+> >> > Integer object. The Buffer exists as long as Namespace holds
+> >> > the certain Connection(). Hence we can access the necessary bits
+> >> > without worrying. On the other hand, the left shift, used in
+> >> > the code, is limited by 31 (on 32-bit platforms) and otherwise
+> >> > considered to be Undefined Behaviour. Also the code uses only
+> >> > the first 64-bit word for the value, and anything bigger than 63
+> >> > will be also subject to UB. Fix all this by modifying the code
+> >> > to correctly set or clear the respective bit in the bitmap constructed
+> >> > of 64-bit words.
+> >> >
+> >> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >>
+> >> Perfect, thanks!
+> >
+> >> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >
+> > Thank you!
+> >
+> > Bart, since you picked up the patch in the same lines of code, feel free to
+> > take this one on top (I think it's your gpio/for-current branch).
+> 
+> Don't you want a Fixes: and Cc: stable tags?
 
-Noted for the future, thanks.
+Okay, I will add them in v3, thanks!
 
-Bartosz
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
