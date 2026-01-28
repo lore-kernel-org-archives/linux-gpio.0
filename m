@@ -1,60 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255042F0C45;
-	Wed, 28 Jan 2026 13:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7878274FFD;
+	Wed, 28 Jan 2026 13:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769606567; cv=none; b=ZMOyp+KKpVO6TONolvC54FoNT9esPq4mr3+tD0RmVVoQFDyJ+sE/F/CYtP1aS1cqyhQ6aiDw4usSCeb/+nYEGfffz/A3zDYFykx2fxVo8Bjr37edP3hefqYVXBtqFzzPX7UY2tQxOSJPd/5Fj4FODzcLi6O7wRFbjlzcrbOxfgc=
+	t=1769606598; cv=none; b=Bxig7iKKrCQUIF5swafGGP6btliaIJWNtQ5Han8sfcZFbB5x64nXnv3qNSo7/0PpoVDpnYlSQr83sMi0diO+g+es0fBn+Z1Q3mp0Sr34NhHxUrkwxI6BtBIEXrIYVv8TBKIzgfgEvmvGSb3UqS08+SuaCjIrXWU+yCuYjXpOTys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769606567; c=relaxed/simple;
-	bh=Wz79oYG7pUL4HdToVJs/MANATGOHX4p9SVmxVs/IaYc=;
+	s=arc-20240116; t=1769606598; c=relaxed/simple;
+	bh=IeIgHCnoKrrwDLa4ZG0p7SNUSOu5AnshFpJoJd+Ug8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksyzhm+xJrjOuJKEuii8fKpIUcOBVnw8S3AThy33Bvy3k+LcF3ddgCglPOYpA9k0UArJHYJrBYHpeqOJKgDKhmlh3eXpEuVt4iSYrDtKk9e9joGR3M/KsYSlak2FqBgewPIwcccHayzr2EL0aMKEYmqWqhj3K54LWcpBTEWHSCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDNeUpoN; arc=none smtp.client-ip=198.175.65.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpzKLsxsQD/w1QCPBaHvqKNNYBnKjTbm2hiOBnDPfBBzqDlRO7MNlgTjkFbLR1K3S5A4umekvEZWNMcm1XtRF7bLD6ElWsVxtJsW4HZfR6B3RvYXqbozCbJ+nV8kk8JLmekpqBQ1IBiewRPPLdKLdDWBhqpGo4UHkXf5ej9IJ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PeQIO3U2; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDNeUpoN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PeQIO3U2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769606566; x=1801142566;
+  t=1769606597; x=1801142597;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Wz79oYG7pUL4HdToVJs/MANATGOHX4p9SVmxVs/IaYc=;
-  b=NDNeUpoNWiPWxGxT1mIXdwMJQBMFXKwXzfpbyzH0825vWqn7kCDCJrBd
-   saYg5qkX93QU+RiEUGJF6ScIs4RhsH+0sM4g/6MxTBXFLpPS0Hbn5opx2
-   eMIlcMTylBAFrDlTJgB74tr+0eJn7Angh1NCj7QXr6SLZzI0OljtZqYAp
-   0DVpWYom7aD5967i3Z7CQH70ZlojBo014+zka8JPnDguIe7HFjawoy20J
-   nEMt9YG7hJeZ6k5Gg87P0Kj/1n9QfB5SntaBMOvatJHxZeZjKNJP1KuMZ
-   32l20WNpea7o41+H7tznLyvWsbmAxQx5IpZiU6DSTZvTT1eIBZTlxb8tk
-   Q==;
-X-CSE-ConnectionGUID: Er9NAp8vTVWqOYgO6cROAA==
-X-CSE-MsgGUID: 1O81W+NVS8uNjeV7h5emOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="81925210"
+  bh=IeIgHCnoKrrwDLa4ZG0p7SNUSOu5AnshFpJoJd+Ug8w=;
+  b=PeQIO3U2fzcSwSzYYZnjmPRejqCymaRJ0wqt2CzSD5eQxeLncu+LHidy
+   UEn9lCvUKIXxxxuPON2r6Gq8ZMlaS90keez5ClVpCDAD3gyWJnNDKnnVz
+   fRDfEsGCmn/Apy3wOHxSKWAJff+OE29HzJj+yFHQLHz1WGep8CspZEPA4
+   1DWeEc9Bz8a6FkDMJs8nB38y+iEA+DxqOkcMYtJup6dmD4eiAW9z0ga1p
+   fIlg8G2OQk7afe2BjiXeSsX5uH/+KmTpGtcB5uqLbJg8iDZqwbmFu3jHC
+   wd+ONNFuigLeyjmPbYOdk234Hvjr63NDhSHsnSoXst+U1oZbpDBF7AdZI
+   A==;
+X-CSE-ConnectionGUID: KCPWH60/SPOrqZ3Yl4Dnlg==
+X-CSE-MsgGUID: kXdKjingTaWaZ6JGNhZTww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11684"; a="70788988"
 X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
-   d="scan'208";a="81925210"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 05:22:46 -0800
-X-CSE-ConnectionGUID: 0wd288A7QDa5lqjucxcgcA==
-X-CSE-MsgGUID: 3Xk/fEZCS7Sj129SSmgcjA==
+   d="scan'208";a="70788988"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2026 05:23:17 -0800
+X-CSE-ConnectionGUID: q0hJTQ9kSAi2p8OVGs2M5g==
+X-CSE-MsgGUID: MUI5cSzuTqqafDugQr1gbg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,258,1763452800"; 
-   d="scan'208";a="207889140"
+   d="scan'208";a="208706855"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Jan 2026 05:22:44 -0800
+  by fmviesa009.fm.intel.com with ESMTP; 28 Jan 2026 05:23:15 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 4202B98; Wed, 28 Jan 2026 14:22:43 +0100 (CET)
-Date: Wed, 28 Jan 2026 14:22:43 +0100
+	id 56FB698; Wed, 28 Jan 2026 14:23:14 +0100 (CET)
+Date: Wed, 28 Jan 2026 14:23:14 +0100
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: cherryview: Remove duplicate error
- messages
-Message-ID: <20260128132243.GQ2275908@black.igk.intel.com>
-References: <20260128125343.52497-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Remove duplicate error messages
+Message-ID: <20260128132314.GR2275908@black.igk.intel.com>
+References: <20260128130925.123823-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,9 +62,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260128125343.52497-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260128130925.123823-1-andriy.shevchenko@linux.intel.com>
 
-On Wed, Jan 28, 2026 at 01:53:43PM +0100, Andy Shevchenko wrote:
+On Wed, Jan 28, 2026 at 02:09:25PM +0100, Andy Shevchenko wrote:
 > The pin control core is covered to report any error via message.
 > Since that it's not needed in the callers.
 > 
