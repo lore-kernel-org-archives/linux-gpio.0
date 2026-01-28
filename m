@@ -1,147 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F362DA769;
-	Wed, 28 Jan 2026 10:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B033451B5
+	for <linux-gpio@vger.kernel.org>; Wed, 28 Jan 2026 11:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769597395; cv=none; b=EoBI4TBOYLHZgrd/y2iAoexnyKcbuMwapWpafGXLvUasZp6+pwk53dxnbfScP0UpbxGLAhPAV8qPFi9UQaaf34aHLtpbUr12hGxcGu7jcYWBw2ndvg2x0exhDTdSPUVqoWtxy8EhAnMbYdvxwcrhs4Pwj3I8Eoiyi46I2p1rAJs=
+	t=1769599358; cv=none; b=MI+zMWjxqg9I8fIOLG0jUa7O9ku+qDiFfhFvztFF0jfkrYMIN7cT+feEuWbHBcMrivvBYq23o+McNHEjTeS7QR8cGaFeQ63riY7kx5xZe61xv72icR7zHs7/kvnGSh3jNb0oQxXule0jVoJ5mzdeHtheIPinwAK71VWu/JFutsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769597395; c=relaxed/simple;
-	bh=ZlAZ/M706u5WyXvMWttbiROmjmttRHJjGnF8vXABLss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqREl8zBxzpHbMgOzW7VaqrQrHa4NiS+faFxLnuEjAnW1kTbAN5vw9Xo3b7W9rqB4hITkC3LK6YPWSOocTF2BQU75cIzwPZDB1DJnvyZdu9zcl4sT44UkO214xspKOs5x8gKsCKsyGiV6yy2VBPjMaeVIfYS1Okbwc/8r7Oxcpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK7tWumR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769599358; c=relaxed/simple;
+	bh=q977yKz7zQ/PFR5OpD0DFq5KMw+GCR2Fas1jk3OALOg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ReFzxOcXzBisPvrh9nAjM7evjJ8F7Eh6k9D3/KmuDTTbIDrwxELTBTAr8rpLm9bdyeIyVePJU/BuiJLprA77N1ILl/r1gIHzIn88+UivNJxQgstRvQp6J4K7vFK8Ov2BN/cbEBmpKD9A6EWWTt82cWspWijtnGgSy0F2LITLHkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=tExHgi1j; arc=none smtp.client-ip=209.85.208.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK7tWumR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D0FC4CEF1;
-	Wed, 28 Jan 2026 10:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769597394;
-	bh=ZlAZ/M706u5WyXvMWttbiROmjmttRHJjGnF8vXABLss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CK7tWumRbdFVNPAioN73u89MmjH0voae1VWHBfVarE+1pXqByC8OW7Keckx4FDD2p
-	 GeLkmEWDdv+hdIbb/5divyTtSXeyOcdbCfDXvXHevaCoTD3WDQWEfoP1/2EId2Xwf0
-	 vkx6RtvrEYysp2zzD6mDxGbBamtprecPt3KURandvUJRxJgwTXciaV6EFucM7pYF5/
-	 LylIJD7jDrOuRrRZew8NY+oJzfOPVu7h4Eev5J5S6twSsr03sVnbucgTUbpLdGZz32
-	 xl+LAnaGWy7K7AMxIBxNNXfpG+s69k2comQrf8Sq/IkEsLwNFRwQkSEHNHpP5A5aqw
-	 TpGySY1Ch+yTg==
-Date: Wed, 28 Jan 2026 10:49:51 +0000
-From: Conor Dooley <conor@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>
-Subject: Re: [linusw-pinctrl:devel 39/46] kismet: WARNING: unmet direct
- dependencies detected for GENERIC_PINCTRL when selected by
- PINCTRL_POLARFIRE_SOC
-Message-ID: <20260128-magenta-unsealed-f7586f14eed3@spud>
-References: <202601271725.gqlQ8Jl7-lkp@intel.com>
- <20260127-habitual-suggest-c3f429569fb6@spud>
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="tExHgi1j"
+Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-382f0732612so42158361fa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Jan 2026 03:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1769599355; x=1770204155; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=202w4WqqYho9WJKneX2iwEgQBvnIKInbtC7YMNyp//c=;
+        b=tExHgi1jzCM47oOLrs4mE+YuJ2LXMVSd6TFTE45ChnVqqdaVZpTjSiUPd1jMqTVP7B
+         2t3tNkGDS0Y1c+B+sutu73+ZpM4IkTj27ygUNz9JDWg6p6jgNGq/LpJYaDqiAyfGDnlW
+         wFJzhcImVJ8opPMHL2fiuBu2iSk4m90vwfw2N2u8orhfvrUSOtc/JBY/+xJgtU+xaR9x
+         2dHogxZG8qooCyqGS8cF6U2Yl8iXlVEgo+mHDyY3o4HZOGeyQt7Z9YWWoOrZOvg5gqks
+         mghP07Oe2Gk/y+qpThn/qbQwQ3USI9nA+gCmoG46O6pMRR7sPS6+uyCzp0Ffu5bw5YjD
+         kYZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769599355; x=1770204155;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=202w4WqqYho9WJKneX2iwEgQBvnIKInbtC7YMNyp//c=;
+        b=Mhdv+5XrOlhPwz1Bk9Ahg3hyKOURLSLpHOAOcT96rtoz4ETLtv9couwx/t50cNuFvB
+         BhYetkjX4qx0SJRgP4WO1xfZLYnCAHgj7LG9YAPADJC+2OQwPBf/ecZ2+C3q/s1Biei4
+         piZk9/BzJPXd71SqKY5Fydl5TZRE++rjYPc93W00Puk9ZHFYmVwb6KXf7O2XiqJV2F+6
+         9yjCKkO5DiFS5nKEI3s53pAiXyxeT9bQnx3aQeCUDDPeKbQf5p4sjzZ02pyWqI8NjFd9
+         O6OxrGO+Jf0sViEdrlVbVR2iF7FmpKO3CpoDBUo5TbN6AOxp0rE+U3j3vcbkYv8b9hVt
+         ozgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFIlSqhmSYkuruH8+hEhAEIEw4zUnU5+DyalpIokJ9yamslN2QV5xM6Cspi7XQIvyozYED3n7Q6dCU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzQZZDT/xBag6Rc2I8IDGV+YDFj/XUuV7DY8xrI97D+wwb77sY
+	ugGWHfocWZToAolOgWJFpwGjTcD8Bv0P3dCeM5xNgqg2/iQB0wbzPg6U+4nUdJ1RyVw=
+X-Gm-Gg: AZuq6aKWlpLxrrfAVRNfwG+HFgv9ijex1M/SP6p2IJz+Ze0CFm8GVq+jSFkYBBjS0P5
+	EYjFJOrriK6lA5fJFcAXdT6Uxu0DJ6yTdb2ok4JLmFdvsFt5k9n1sx2pSf7xi1/BpMqfiBQg8tv
+	17V5VuCNryJYWWnM2supKP37c7T16Ffmn5mjOKY2YzEuLzZH4yOByQikwPPzHDQyXUrnqqyg6Sz
+	H3wlSfa47DZ1MzWZkSpwfgK7HbHNElt45CjX80UIFia4iW9s3nF2Q2oYoYJ4pLxFipO5pVJjyQA
+	kAW0/FGB0r2HXdU3eug2cbwWGkVLOFHWdCOtquQtqRDU4vGnhbdPy4z06T9y1Jz8RnaYw/43PwB
+	2MzqYJ2029IkHmqOY7FzPE+WEFVu2vyhF0itJvcJ7mY5vXBztuhI8m9K6mNGXngIRozczpE+Zi5
+	FTnJNRMXJ87seCZaDU8uXzYHDEnbrv543XsjZ7hctSxO1pujmFo2KEu9zKmqvRqQ7B5A==
+X-Received: by 2002:a05:651c:198e:b0:37a:2d7c:3ce3 with SMTP id 38308e7fff4ca-3861c8645e2mr18910031fa.14.1769599354907;
+        Wed, 28 Jan 2026 03:22:34 -0800 (PST)
+Received: from [172.16.220.101] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38627876ab6sm3035611fa.49.2026.01.28.03.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jan 2026 03:22:32 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Wed, 28 Jan 2026 12:22:28 +0100
+Subject: [PATCH] pinctrl: qcom: sm8250-lpass-lpi: Fix i2s2_data_groups
+ definition
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bproHWhnrolimAuD"
-Content-Disposition: inline
-In-Reply-To: <20260127-habitual-suggest-c3f429569fb6@spud>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260128-sm8250-lpass-lpi-fix-v1-1-8e68f47dfeb4@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDQyML3eJcCyNTA92cgsTiYiCZqZuWWaFrnJRsaGiUbGRpaZKoBNRaUJQ
+ KFAYbGx1bWwsAEYfJvGYAAAA=
+X-Change-ID: 20260128-sm8250-lpass-lpi-fix-3bc112c2994a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linusw@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769599352; l=1316;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=q977yKz7zQ/PFR5OpD0DFq5KMw+GCR2Fas1jk3OALOg=;
+ b=vZmguXgmSeyKMY7oO9jg4WybdJYBewOX24i0DxXIPG15y0dDTH2ULOm4clo6sC/Mskzw7voWO
+ jvGqemt5B50Aymb8YzFBSGLsqCgwl3TcIajjPuEYdLAqI1a2nDXOUNJ
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
+The i2s2_data function is available on both gpio12 and gpio13. Fix the
+groups definition.
 
---bproHWhnrolimAuD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 27, 2026 at 10:13:31PM +0000, Conor Dooley wrote:
-> On Tue, Jan 27, 2026 at 05:24:53PM +0100, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pi=
-nctrl.git devel
-> > head:   ebd2f48dff6ae15bc1cbc7c7ae3c5fe10ad08087
-> > commit: 488d704ed7b7e7afeef24ee846c8223b607357b7 [39/46] pinctrl: add p=
-olarfire soc mssio pinctrl driver
-> > config: i386-kismet-CONFIG_GENERIC_PINCTRL-CONFIG_PINCTRL_POLARFIRE_SOC=
--0-0 (https://download.01.org/0day-ci/archive/20260127/202601271725.gqlQ8Jl=
-7-lkp@intel.com/config)
-> > reproduce: (https://download.01.org/0day-ci/archive/20260127/2026012717=
-25.gqlQ8Jl7-lkp@intel.com/reproduce)
-> >=20
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202601271725.gqlQ8Jl7-l=
-kp@intel.com/
-> >=20
-> > kismet warnings: (new ones prefixed by >>)
-> > >> kismet: WARNING: unmet direct dependencies detected for GENERIC_PINC=
-TRL when selected by PINCTRL_POLARFIRE_SOC
-> >    WARNING: unmet direct dependencies detected for GENERIC_PINCTRL
-> >      Depends on [n]: PINCTRL [=3Dy] && GENERIC_PINCONF [=3Dy] && GENERI=
-C_PINCTRL_GROUPS [=3Dn] && GENERIC_PINMUX_FUNCTIONS [=3Dy]
-> >      Selected by [y]:
-> >      - PINCTRL_POLARFIRE_SOC [=3Dy] && PINCTRL [=3Dy] && (ARCH_MICROCHI=
-P || COMPILE_TEST [=3Dy]) && OF [=3Dy]
->=20
-> I guess I'll send a patch restoring the selects to the driver option
-> Linus?
-
-No, I don't think that's correct. It's the below, right?
-
--- >8 --
-=46rom 9612e8daf992bc0f012745a6d36679b3511a88a3 Mon Sep 17 00:00:00 2001
-=46rom: Conor Dooley <conor.dooley@microchip.com>
-Date: Wed, 28 Jan 2026 10:46:49 +0000
-Subject: [PATCH] pinctrl: fix kismet issues with GENERIC_PINCTRL
-
-lkp reported that GENERIC_PINCTRL can be select when its dependencies
-are not. Swap the "depends on" out for "select", as is used in other
-parts of the pinctrl core that are expected to be selected by drivers.
-
-Fixes: 43722575e5cd ("pinctrl: add generic functions + pins mapper")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202601271725.gqlQ8Jl7-lkp@int=
-el.com/
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Fixes: 6e261d1090d6 ("pinctrl: qcom: Add sm8250 lpass lpi pinctrl driver")
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- drivers/pinctrl/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 6cc5e214f4f3..afecd9407f53 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -27,9 +27,9 @@ config GENERIC_PINCONF
-=20
- config GENERIC_PINCTRL
- 	bool
--	depends on GENERIC_PINCONF
--	depends on GENERIC_PINCTRL_GROUPS
--	depends on GENERIC_PINMUX_FUNCTIONS
-+	select GENERIC_PINCONF
-+	select GENERIC_PINCTRL_GROUPS
-+	select GENERIC_PINMUX_FUNCTIONS
-=20
- config DEBUG_PINCTRL
- 	bool "Debug PINCTRL calls"
---=20
-2.51.0
+diff --git a/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
+index 64494a86490e..c27452eece3e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-sm8250-lpass-lpi.c
+@@ -73,7 +73,7 @@ static const char * const i2s1_ws_groups[] = { "gpio7" };
+ static const char * const i2s1_data_groups[] = { "gpio8", "gpio9" };
+ static const char * const wsa_swr_clk_groups[] = { "gpio10" };
+ static const char * const wsa_swr_data_groups[] = { "gpio11" };
+-static const char * const i2s2_data_groups[] = { "gpio12", "gpio12" };
++static const char * const i2s2_data_groups[] = { "gpio12", "gpio13" };
+ 
+ static const struct lpi_pingroup sm8250_groups[] = {
+ 	LPI_PINGROUP(0, 0, swr_tx_clk, qua_mi2s_sclk, _, _),
 
+---
+base-commit: 4f938c7d3b25d87b356af4106c2682caf8c835a2
+change-id: 20260128-sm8250-lpass-lpi-fix-3bc112c2994a
 
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
---bproHWhnrolimAuD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaXnpzwAKCRB4tDGHoIJi
-0tbKAPsECTEk+5aQisXwZ9gkArj7fozl9u50zBnF/KPSRujhogD/ai23lWqS5iCy
-1SveefUW6oJZJquGMDyLwF0q0I3fJQM=
-=Ro3L
------END PGP SIGNATURE-----
-
---bproHWhnrolimAuD--
