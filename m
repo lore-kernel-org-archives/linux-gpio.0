@@ -1,63 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDBF33F399
-	for <linux-gpio@vger.kernel.org>; Thu, 29 Jan 2026 10:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836E8331212
+	for <linux-gpio@vger.kernel.org>; Thu, 29 Jan 2026 10:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769681821; cv=none; b=dWiMBL7lfZJWcYRIurp3aa3BdTW7smuMdB4ofudxp3rCsiLphHLwZKYoWggvAHCXVcQ2d92v86wqRC0+TlBAm74uc1xb4q2nwXMqhRp6eYmeHE5cSg+CFQVCWApwrod1lS0ZWRgHKJpBoLDtjbIId+ZhJIXIpeHIUgSsfewOvBo=
+	t=1769681822; cv=none; b=uuCekbZQ8VxEzpWhW7VSdTwI8EY1OZJksLCcfwu2HJhH8+zacwjV690x1IdLJZfqe625/+he2v6qbX8eEKTES+kkluWC37w5zWS0UgDKsqNAk5dJ2gw7leNsCqNfywqjgJdlJVEkLe9L+JOVQiNTUuGGRdvsDYo2RenPqJfmmkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769681821; c=relaxed/simple;
-	bh=v6FdTaM3/9S+cgZOR/jP9oZ2cYA4WGpZsxblMxIWwD4=;
+	s=arc-20240116; t=1769681822; c=relaxed/simple;
+	bh=pqS0iTnZy+TD7iR+ETY3i6A5U7dU6kE1UlBEw/91Vl8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GKFv39lNV9Jh2FwD+Cdq7DxDzlpgoFtvy2KxFKMZw78ut7pnub00avNTd9uZyTm1Jrr/hHsFUQUe9hCaOCapOfstuAOb26N3Ap9fRsdQuZBPx1/ydgSSPlTtmZQhUouBpAf+9Vve3kymjALYAwimtDwT+1geUmJNaY/OzOqWk8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4OwQLz6; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=pO8HnIvVM1C4l4RIYMCsTqua/rVwZxOXkZBh3IafpWvpJn0B+5jVlRX3qe8SyybkPogiETaSx7mBslYU9V6EzXb+mHRB9KDc7KZC1v9OvlOjQj/gFTCkQd794YiogAALiJrYO3n7/nGPGITAwzN924GsNzvrnChOUjO3nz9zBcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFpFXrpS; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4OwQLz6"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47edd6111b4so7998545e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jan 2026 02:16:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFpFXrpS"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4807068eacbso6440645e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jan 2026 02:16:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769681815; x=1770286615; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769681817; x=1770286617; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yxb+xzLrz5vUgOO6D/hBhQgk8cWp111oMhH2v5GHUEo=;
-        b=E4OwQLz6pVC+lt8Km7jfqv4sY5gYqqp4NjT/S3YpYZSCa9irLmoW2q5UeZ/NEeQwGg
-         mYryTs0i54Q4kBxSt/quLpMYQ5K0nOhIfZq1zPD/7ZFoR3peeSceT9OodiPNBHUE27Sc
-         L967OHZG2ru3E/qzk2Hx1J3nwT8IR6rmSRhgzymxroRTSIOtbfQJ5KIc+gCUFpYehtP4
-         0gUov2XvhgVgQuG2C5oyG1K+o+aIZ0SdiSfLaingRu49mu/SEjZzYkcAnkKVu1WUjzDp
-         M0ez2/D9qRxJZEAg4YklR6wgSx8wGfoC8XQZV1TCUK6SkNzBzXj7iMGlcUx9oD17ekqe
-         S5sQ==
+        bh=Y9LVqcaf1ijJnoQzqgdsz1n58Lr+Jp/HnhYJrE/7aVo=;
+        b=iFpFXrpSa8KAf2guM8KgUqlm1ytElYjCvdI37uQ7u8sZs7K+yEt9uZwPVtLrXZVfox
+         T7bta40U5Ksxk10svj3Q5d2wNyZIqyOBjXzuq7pVSaJO9aHJKiOYZ54tbZAI5GtNSh7Q
+         c4XS6tSPj7D2XDcZV3sdjSuuDRA7b+DCx4H3aGMMxK+xs6eUBe8CCKYohpI4Lc3bdtVM
+         7bNmkZn3I1Q0btDen6BVg4k4ATeA7TQceUGYHFyQ1yiDNMSWOydv8C5mGxeIKZ8BjEgE
+         iBah2XQuuv1R1/Czhi2keTzwHuYZIgPSM1IeRv98pjx4xnJMoyQtTpaz6Dkkbjd3dBSL
+         8zIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769681815; x=1770286615;
+        d=1e100.net; s=20230601; t=1769681817; x=1770286617;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yxb+xzLrz5vUgOO6D/hBhQgk8cWp111oMhH2v5GHUEo=;
-        b=O7CYd6YJYX3SbBzzWzJYqBkd3hayME1o3CgqeAhaQJfmP+vqGdpr01+ZcEiCTDy6xv
-         gni3iVURtT2UOhDwaHvLiq9tnC4asU57NLVP//YZvdHrg9T9e2u4WBknfya3JnYMOErR
-         X2x3yfO3Pp56BzMtFkgFKv/0+NmMACEgzzDKyPnYiK4V/6iE/21mA6XWhdMdaAHpjwEg
-         lEvm7qUavvg4L63XNk1+f7Hqu3BuUhEJPdSV2NQ+hmfiZF8QKU6TEK6RqY0+yZWitut5
-         5gNX50R9RUU+d5jLw4fwWJUjwhC1IvTEkzhqa7xnuC0Zgi2hRISSD5TIkWeDMWllFEUJ
-         Ms7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3+7Hh0ZhjAhS06Vm1N5nPRLbILMrx2aHbX9MjgwMwyBxvXT+1oBBl6VMyg67fBRuhHRSwq0XicLzB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4RA+NjP/NHCJK8N+rmt8ZfqNfOltF2x6/ijuc/R/O6VJgOLBX
-	WcM5+36F0zvuq80NuAI1/zwbKra0e9lWmCj67lmfS/0JTJubO+gK+kP6
-X-Gm-Gg: AZuq6aKDE7SMu0Ogg8x2SXRSumqlvxpZQDJMCZoXx836QJ9bUsPj5Hr+jR+b4l5tOS9
-	yHOW6iBmjt+Swsm9klK43lBWRsPhjcPyJDscaUFo0RtozaBW3tTdWQLGQvoIof9ErgR48dFbHSI
-	Klf70WFRf8HhoWIs7ghhkYo88R/czf/nxIYHDkAtyv+f8hBxzRgtQK/9/6KRW2fYQg2v1j+oglM
-	RqYedXGUi7CmUEacTuRIsNOcpgCie+xoMpdDY4xhltc/KFqdiqCLlUNqRaNY1p1VVQaqebXY9Ky
-	2iHrcHFC423hSlR6d/gk20TZxPNLj6V/HzEyKyXsnSpCeXblK3tPkuYIpOjQVfSWJ2DQAbW8axj
-	+Nbn5ozxSKpE3AFueEge8CzbSC+y3CBtrTJk17t6obWoZiEHT11H31ZVb4VQOx6tSf9ufmpIEPW
-	kzU2PIOaJAqLUwNPFE
-X-Received: by 2002:a05:600c:8211:b0:480:4c45:aff5 with SMTP id 5b1f17b1804b1-48069c755e6mr91237235e9.34.1769681815107;
-        Thu, 29 Jan 2026 02:16:55 -0800 (PST)
+        bh=Y9LVqcaf1ijJnoQzqgdsz1n58Lr+Jp/HnhYJrE/7aVo=;
+        b=uCiDgYYX5sdZHZbQvvz+nka3X8yivQ06R2OJfgtYgwhIFkBCMMSO+98j3yKdgD80RD
+         DLYPQz2WUmRN9/lsaE1LlCKPDeQElxPsOzlk1HweoNm11weIDNX4M94o++dzGS/8QDCK
+         7+0e6qeK/7ajoAyLIsvm6H/Uqq1qa5s39YV8CxKphJLt31AEbb1XzYt2WePsMFPNbSE5
+         8iTK/DRmSdAMmpMG2znKUjKPpxzQbszPb1HGbc5Q2IlKtLticQknQhgBjZ1lJQFGea8d
+         LHX4BOvomhdP4ZbnJ1RUmXhu1R3Fvg55A1p8y8ouXnja0uTXKSpagr+7w4Q9CrpdZXBA
+         1Qsg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1SU5CYbLoMJskNehDYnoAeHP3icAMzgKwH1rUvviWzEHysMH1tpfuvBt+2OSVrPwa2V9McjO55yRK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwW9KozxmLWOfu5G6+PcGL1eljxTuwlNS4pkUI+QqduJSYc7Dp
+	tJ/YcxthJOElLWqjvJGFeVhn2/8BZDs+QbO09x46v5CK5sfOcWkBJZly
+X-Gm-Gg: AZuq6aIJou/yC40Ow3LMk6/JlRIx5HJqBAK3rYlxO8GEOPeRuYcV9VwX/QUeFBPFXMU
+	Fxz9QzkN/zt+6T619hT15NcP8hwaE6+0CXndrtqX8bZZ6lbfb7zWLv5uGsnZvh6J46RxYGdq/UC
+	inaJww4XAx0eOtByHDjv7mD4JoaC66vTrdA/pPKBencqtjXSxNGaV5PvyDv17ovKvTSeduN4W6W
+	I0XIUPdEFP9CzPt6vykSLe9j9ZYASN5SJKa7X5dBSOwczwIjCHY1T2zqFlOI5rNorCAR6kTO7cn
+	lNj9psi6LiVgsET3FgImu+FQbeW3rkNKuKCtHVFq5z65xR2OnVBH8395posT9M1yqDap5rqYFXE
+	nd3rZeF1CEx6ydj24mCdH+4P+3YhvWWaTc+SvpP+blQBpl0C6CeZDWr6iCVmkKcGBAEEnBUYHZI
+	9DydQJTNvF6n5om18x
+X-Received: by 2002:a05:600c:35cb:b0:471:700:f281 with SMTP id 5b1f17b1804b1-48069c7c492mr112018935e9.25.1769681816653;
+        Thu, 29 Jan 2026 02:16:56 -0800 (PST)
 Received: from biju.lan ([2a00:23c4:a758:8a01:5792:2065:403:a80b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066be77b5sm178642065e9.2.2026.01.29.02.16.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066be77b5sm178642065e9.2.2026.01.29.02.16.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jan 2026 02:16:54 -0800 (PST)
+        Thu, 29 Jan 2026 02:16:56 -0800 (PST)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: biju.das.au@gmail.com
@@ -76,9 +76,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH RESEND 7/9] arm64: dts: renesas: r9a08g046: Add pincontrol node
-Date: Thu, 29 Jan 2026 10:16:42 +0000
-Message-ID: <286fcc0754de31969e0d856a075b9de97b28ed86.1769681553.git.biju.das.jz@bp.renesas.com>
+Subject: [PATCH RESEND 9/9] arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
+Date: Thu, 29 Jan 2026 10:16:44 +0000
+Message-ID: <0d5ca20911357441cac914819da98b2a753f4f31.1769681553.git.biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1769681553.git.biju.das.jz@bp.renesas.com>
 References: <cover.1769681553.git.biju.das.jz@bp.renesas.com>
@@ -92,37 +92,148 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add pincontrol node to RZ/G3L ("R9A08G046") SoC DTSI.
+Enable the Gigabit Ethernet Interface (GBETH1) populated on the RZ/G3L
+SMARC EVK. Also add pincontrol definitions for GBETH{0,1}.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  1 +
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 92 +++++++++++++++++++
+ 2 files changed, 93 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-index 231b118ecc62..c6b042ac9c36 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g046.dtsi
-@@ -181,9 +181,19 @@ sysc: system-controller@11020000 {
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+index 2f918830b8f1..58733016b66b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+@@ -14,6 +14,7 @@
  
- 		pinctrl: pinctrl@11030000 {
-+			compatible = "renesas,r9a08g046-pinctrl";
- 			reg = <0 0x11030000 0 0x10000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 0 232>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			clocks = <&cpg CPG_MOD R9A08G046_GPIO_HCLK>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G046_GPIO_RSTN>,
-+				 <&cpg R9A08G046_GPIO_PORT_RESETN>,
-+				 <&cpg R9A08G046_GPIO_SPARE_RESETN>;
-+			reset-names = "rstn", "port", "spare";
- 		};
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h>
+ #include "r9a08g046l48.dtsi"
+ #include "rzg3l-smarc-som.dtsi"
+ #include "renesas-smarc2.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+index f52af01a7eff..0b9bb073c282 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+@@ -10,6 +10,7 @@ / {
  
- 		dmac: dma-controller@11820000 {
+ 	aliases {
+ 		ethernet0 = &eth0;
++		ethernet1 = &eth1;
+ 	};
+ 
+ 	memory@48000000 {
+@@ -23,6 +24,8 @@ &eth0 {
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-id";
+ 
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
+ };
+ 
+@@ -30,6 +33,19 @@ &eth0_rxc_rx_clk {
+ 	clock-frequency = <125000000>;
+ };
+ 
++&eth1 {
++	phy-handle = <&phy1>;
++	phy-mode = "rgmii-id";
++
++	pinctrl-0 = <&eth1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&eth1_rxc_rx_clk {
++	clock-frequency = <125000000>;
++};
++
+ &extal_clk {
+ 	clock-frequency = <24000000>;
+ };
+@@ -53,3 +69,79 @@ phy0: ethernet-phy@7 {
+ 		txd3-skew-psec = <0>;
+ 	};
+ };
++
++&mdio1 {
++	phy1: ethernet-phy@7 {
++		compatible = "ethernet-phy-id0022.1640",
++			     "ethernet-phy-ieee802.3-c22";
++		reg = <7>;
++		rxc-skew-psec = <1400>;
++		txc-skew-psec = <1400>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++
++&pinctrl {
++	eth0_pins: eth0 {
++		txc {
++			pinmux = <RZG3L_PORT_PINMUX(B, 1, 1)>;  /* ETH0_TXC_REF_CLK */
++			power-source = <1800>;
++			output-enable;
++			drive-strength-microamp = <5200>;
++		};
++
++		ctrl {
++			pinmux = <RZG3L_PORT_PINMUX(A, 1, 1)>, /* MDC */
++				 <RZG3L_PORT_PINMUX(A, 0, 1)>, /* MDIO */
++				 <RZG3L_PORT_PINMUX(C, 2, 1)>, /* PHY_INTR */
++				 <RZG3L_PORT_PINMUX(C, 1, 1)>, /* RXD3 */
++				 <RZG3L_PORT_PINMUX(C, 0, 1)>, /* RXD2 */
++				 <RZG3L_PORT_PINMUX(B, 7, 1)>, /* RXD1 */
++				 <RZG3L_PORT_PINMUX(B, 6, 1)>, /* RXD0 */
++				 <RZG3L_PORT_PINMUX(B, 0, 1)>, /* RXC */
++				 <RZG3L_PORT_PINMUX(A, 2, 1)>, /* RX_CTL */
++				 <RZG3L_PORT_PINMUX(B, 5, 1)>, /* TXD3 */
++				 <RZG3L_PORT_PINMUX(B, 4, 1)>, /* TXD2 */
++				 <RZG3L_PORT_PINMUX(B, 3, 1)>, /* TXD1 */
++				 <RZG3L_PORT_PINMUX(B, 2, 1)>, /* TXD0 */
++				 <RZG3L_PORT_PINMUX(A, 3, 1)>; /* TX_CTL */
++				 power-source = <1800>;
++		};
++	};
++
++	eth1_pins: eth1 {
++		txc {
++			pinmux = <RZG3L_PORT_PINMUX(E, 1, 1)>;  /* ETH1_TXC_REF_CLK */
++			power-source = <1800>;
++			output-enable;
++			drive-strength-microamp = <5200>;
++		};
++
++		ctrl {
++			pinmux = <RZG3L_PORT_PINMUX(D, 1, 1)>, /* MDC */
++				 <RZG3L_PORT_PINMUX(D, 0, 1)>, /* MDIO */
++				 <RZG3L_PORT_PINMUX(F, 2, 1)>, /* PHY_INTR */
++				 <RZG3L_PORT_PINMUX(F, 1, 1)>, /* RXD3 */
++				 <RZG3L_PORT_PINMUX(F, 0, 1)>, /* RXD2 */
++				 <RZG3L_PORT_PINMUX(E, 7, 1)>, /* RXD1 */
++				 <RZG3L_PORT_PINMUX(E, 6, 1)>, /* RXD0 */
++				 <RZG3L_PORT_PINMUX(E, 0, 1)>, /* RXC */
++				 <RZG3L_PORT_PINMUX(D, 2, 1)>, /* RX_CTL */
++				 <RZG3L_PORT_PINMUX(E, 5, 1)>, /* TXD3 */
++				 <RZG3L_PORT_PINMUX(E, 4, 1)>, /* TXD2 */
++				 <RZG3L_PORT_PINMUX(E, 3, 1)>, /* TXD1 */
++				 <RZG3L_PORT_PINMUX(E, 2, 1)>, /* TXD0 */
++				 <RZG3L_PORT_PINMUX(D, 3, 1)>; /* TX_CTL */
++				 power-source = <1800>;
++		};
++	};
++};
 -- 
 2.43.0
 
