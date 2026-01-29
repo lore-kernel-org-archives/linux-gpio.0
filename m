@@ -1,154 +1,78 @@
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505E8218ADD;
-	Thu, 29 Jan 2026 20:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB3E2C3256;
+	Thu, 29 Jan 2026 22:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769717950; cv=none; b=LjAXCfjyEVpkZ/6uiD43cEKE/ghXpvodoAVhV9zB6Hu32pk5YK7++tALtodzLkSeS9jV0N8eZwkvDf2Hh5KKbXuDRnTTiW188OmsHNB56kdvFFgxMBpIdJpBufp+kN7EsRi1kuBZdPvSiQCHQHxpjWSUqZEiXJQqKoWrLho3gEk=
+	t=1769725891; cv=none; b=eLC4pqOnR0f3C+s4PmhZoMNzBb26z4OgCHPeNVUsjAutFlylHtuc5kAhudgqXLhGzonG8EqrhsRj2aip0q1I4z2KSCSC8YZpkdJcmDjpK+VHpWGUkfnrtKSNvCo/u9Sxjcgy58qYPZ9VGj/33tgYiVtaxRt5KU8rwvOAV7sJhEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769717950; c=relaxed/simple;
-	bh=sDLV7ZaYeoCrAA0cj0igot4DYCmk8A6bGrAyu23DW1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P7FsyRwD8XhuIlzjPp2S9XEdHrBmXhRBbQlRGAvO5RKOQxRxHuPcFdQtQ58Ci3XRo3pJT+eDZciwdE7kvcVeWoEL7FwrxuEWUQs5CO8AjP3T8gODINGF3KyjuXY4yi2D4IUiEyZrWgWw4R7YAAFvLcTG96CNEVfQJ4Bm1foxBPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TdnaCe6J; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1769725891; c=relaxed/simple;
+	bh=XeDMpJ65mp+98QISIa6zGzqYGRyHyE/0c63dQ1J//No=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C6Xt06ye0+IDjsRH17jr2xSaEr3rN4gMzhUt28HFc0jvMyY2bhO68SJUgA1mqhEGvA1w4OzHdlmJwa/6tRi6XBgCM67xyUUeqbZvB4gCRgWYAY04HE1QwAdmppXQ4nn4P+pVfpgMt+9viYcw1JK5fYS0xbbY6j1aZn7RwgIQ/2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=maXuXDBD; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TdnaCe6J"
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 67E97C0005FB;
-	Thu, 29 Jan 2026 12:13:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 67E97C0005FB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1769717594;
-	bh=sDLV7ZaYeoCrAA0cj0igot4DYCmk8A6bGrAyu23DW1c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TdnaCe6J4fWNc8yNOOIu+Qdck2QHodqrHP4vovbpzuOROz8Es/7oTLVu6WELVxDeF
-	 P4WupUkL1oV2zdMBzD2c2IgxkzT4K3/Sy0wlPdOOa6T02yb8uQ3sCWOlNApZfotdxY
-	 lzCNj6uggHfcKIpl2BgPBE/fn+BcInM16v+EZUs4=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 0F50D22D77;
-	Thu, 29 Jan 2026 12:13:14 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Doug Berger <opendmb@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Christophe Leroy <chleroy@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
-Subject: [PATCH v3 1/2] gpio: brcmstb: implement irq_mask_ack
-Date: Thu, 29 Jan 2026 12:13:11 -0800
-Message-ID: <20260129201312.634819-2-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260129201312.634819-1-florian.fainelli@broadcom.com>
-References: <20260129201312.634819-1-florian.fainelli@broadcom.com>
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="maXuXDBD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1769725886;
+	bh=XeDMpJ65mp+98QISIa6zGzqYGRyHyE/0c63dQ1J//No=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=maXuXDBDY5E82w+PEupDgyz4HMJpbKuw1UzO+dIkS5jxTm1C/okzqrlbeKVwP5/2u
+	 Qmlwe1QlE+tToivLA+Co71fnsoyIwW+7Ac7wb/oLse0BIQHmHL1b4kESpKUryAJSH5
+	 zz1AYVHdKrtJxdw68fXAgjGC3zdLRRl+DqEIzH7+zSxuwZgFryX4FpjGLfaHjLSBnh
+	 N4LG5nd9/2dhd4+30p/dIoCMLGZn24TWDGPOKEniU5PKzNcg2d1CNTXMLAUg1Az/hM
+	 20YqxQthcjTdbkupxPsQgS4k/x+Blm/TSTl02Q1sKw5XjzbabaZ9c7kQExTjo8WmXj
+	 K0yNxc7jhe70g==
+Received: from [192.168.68.117] (unknown [180.150.112.60])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 679D860035;
+	Fri, 30 Jan 2026 06:31:25 +0800 (AWST)
+Message-ID: <547396d9f2aaea032fa62e7adcafb423a9467446.camel@codeconstruct.com.au>
+Subject: Re: [PATCH RFC 05/16] ARM: dts: aspeed: Remove unspecified LPC host
+ controller node
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,  Linus Walleij <linusw@kernel.org>, Joel Stanley
+ <joel@jms.id.au>, linux-hwmon@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, 	openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-iio@vger.kernel.org
+Date: Fri, 30 Jan 2026 09:01:20 +1030
+In-Reply-To: <CAL_JsqJxfVaLqzTwm7iEvc4maBzVvpc-i5uD6CZRtiv+V+7+1Q@mail.gmail.com>
+References: 
+	<20251211-dev-dt-warnings-all-v1-0-21b18b9ada77@codeconstruct.com.au>
+	 <20251211-dev-dt-warnings-all-v1-5-21b18b9ada77@codeconstruct.com.au>
+	 <CAL_JsqJxfVaLqzTwm7iEvc4maBzVvpc-i5uD6CZRtiv+V+7+1Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Doug Berger <opendmb@gmail.com>
+On Thu, 2026-01-29 at 09:16 -0600, Rob Herring wrote:
+> On Thu, Dec 11, 2025 at 2:46=E2=80=AFAM Andrew Jeffery
+> <andrew@codeconstruct.com.au> wrote:
+> >=20
+> > For the AST2500 the node was used for pinctrl purposes, and while
+> > the
+> > hardware capability is also present in the AST2400 and AST2600, the
+> > their pinctrl no relationship to it. Further, there's no
+> > corresponding
+> > binding, remove the node for now to
+> > eliminate the warnings.
+>=20
+> Odd line break.
 
-The irq_mask_ack operation is slightly more efficient than doing
-irq_mask and irq_ack separately.
+Ha. The preceding sentence is also a mess. Not sure what happened
+there. I've extracted the pinctrl-related patches to their own series
+locally, I'll send that out when I have a moment.
 
-More importantly for this driver it bypasses the check of
-irqd_irq_masked ensuring a previously masked but still active
-interrupt gets remasked if unmasked at the hardware level. This
-allows the driver to more efficiently unmask the wake capable
-interrupts when quiescing without needing to enable the irqs
-individually to clear the irqd_irq_masked state.
-
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Co-developed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/gpio/gpio-brcmstb.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index af9287ff5dc4..42588196ce65 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--// Copyright (C) 2015-2017 Broadcom
-+// Copyright (C) 2015-2017, 2026 Broadcom
- 
- #include <linux/bitops.h>
- #include <linux/gpio/driver.h>
-@@ -95,15 +95,13 @@ static int brcmstb_gpio_hwirq_to_offset(irq_hw_number_t hwirq,
- 	return hwirq - bank->chip.gc.offset;
- }
- 
--static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
--		unsigned int hwirq, bool enable)
-+static void __brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
-+				    unsigned int hwirq, bool enable)
- {
- 	struct brcmstb_gpio_priv *priv = bank->parent_priv;
- 	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(hwirq, bank));
- 	u32 imask;
- 
--	guard(gpio_generic_lock_irqsave)(&bank->chip);
--
- 	imask = gpio_generic_read_reg(&bank->chip,
- 				      priv->reg_base + GIO_MASK(bank->id));
- 	if (enable)
-@@ -114,6 +112,13 @@ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
- 			       priv->reg_base + GIO_MASK(bank->id), imask);
- }
- 
-+static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
-+		unsigned int hwirq, bool enable)
-+{
-+	guard(gpio_generic_lock_irqsave)(&bank->chip);
-+	__brcmstb_gpio_set_imask(bank, hwirq, enable);
-+}
-+
- static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- {
- 	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
-@@ -135,6 +140,19 @@ static void brcmstb_gpio_irq_mask(struct irq_data *d)
- 	brcmstb_gpio_set_imask(bank, d->hwirq, false);
- }
- 
-+static void brcmstb_gpio_irq_mask_ack(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct brcmstb_gpio_bank *bank = gpiochip_get_data(gc);
-+	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-+	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(d->hwirq, bank));
-+
-+	guard(gpio_generic_lock_irqsave)(&bank->chip);
-+	__brcmstb_gpio_set_imask(bank, d->hwirq, false);
-+	gpio_generic_write_reg(&bank->chip,
-+			       priv->reg_base + GIO_STAT(bank->id), mask);
-+}
-+
- static void brcmstb_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -473,6 +491,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	priv->irq_chip.name = dev_name(dev);
- 	priv->irq_chip.irq_disable = brcmstb_gpio_irq_mask;
- 	priv->irq_chip.irq_mask = brcmstb_gpio_irq_mask;
-+	priv->irq_chip.irq_mask_ack = brcmstb_gpio_irq_mask_ack;
- 	priv->irq_chip.irq_unmask = brcmstb_gpio_irq_unmask;
- 	priv->irq_chip.irq_ack = brcmstb_gpio_irq_ack;
- 	priv->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
--- 
-2.43.0
-
+Andrew
