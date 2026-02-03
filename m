@@ -1,96 +1,165 @@
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E75340DB0
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 14:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E47344D86
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 14:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770127409; cv=none; b=tbkXls5o1Y0RIfzjdToFc0fRYktgcOccLEDzelNqky5rXL1LRVWUHNrQY89hUCug56H3+AFX/3IPZKv8Ml1ywZcvGLzBMFR2D9onWrDmHVVllq8ddq3SHhEfB3HfmkciQcICSgpX0ICHkaLfKTptnxETF8yvmK9rPZsL/Ip7fag=
+	t=1770130606; cv=none; b=m/XHvRBox6oDE376n7soPOn5t6v2E1xbC1kJYSNKQ0fbtzPLgCFYOAc7m/SmtjrknovdaBHfJZNIymQRysTB/b/jUOaq2B7TD5wFJZMhj2LfKcgf1e4chz/zoZt9ykxgnVt6rj53kjcE9UJMCTB15pRQRGxvuOsM1gByu8Le0A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770127409; c=relaxed/simple;
-	bh=eqlA3EqmxLfxE7QaoNTcC3oTDfV63ivVGxnH0rWO/AA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=i6znYzrJlTib9p2tdEDhZm1RkpVuRhFEnDGTQMj6dwjlIDTK8Sdx27b7drp6bSkTcXVOZ/Eqemiy9RLbuiX7ft58fkjGCYskuZjV/P6GIwCB/K/5JPACuMTixv4Pc3UmIcFaiua8lRRV5i6r7UKy5iIb/9fNHwBK7PlLTpSQFfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l2MemYRl; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1770130606; c=relaxed/simple;
+	bh=dVx/NTBKTBYer1sAELG6RU2I0c4yRgXuu2CweMfhYDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LXyEsHjV4NV5C6c0x4pm/BQzg7HH9Q4SZC1g5F3gwQuxuiKA13XmeiVSbhbzhfM13IaJV1hjC9MWQnSO/sa+Sn/sjfaDSQvmyNGO3RfHJWlAiIAwvSXvcttc0l1yNGC/x99zpJO3cEPZ2rJ3Ot9vuejtVSeAXylI+Qrnpn1tACM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsbSQprP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l2MemYRl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsbSQprP"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48068ed1eccso52993205e9.2
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 06:56:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770130600; x=1770735400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
+        b=XsbSQprPIHRifAz4IOQddjFyqQtS2fZaIy4E6acjgjByIE0owpcJHj8Rvp93ZsgAkb
+         kBsEBOdT2cW60Jkp6WxTj4pK5vgkVsOUg8Hnk8q8M1A/HD2Sl4TMaV0tJWYmSE3p+DYf
+         jxZH7TMpNkXfRpSFtw9AcqEq36hhDruOEp3mdFE4XzVqSx1DGPGcmJaAJxV9iyiJ5/Kf
+         9Bz+Zd36UazoZjFUy3VwydpRpW1JkUFxlfTTrhiIxaFpI0iIcFP2FRQ35bSnSfVl3Ja4
+         25b9zGkU7yaBOqCGfEDkoRxUFs2erT+2c9Zza+PDtD40GozHHBeXGpgHA3OgOgGL2B0l
+         wL1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770130600; x=1770735400;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
+        b=p1daquwmg/7cMr6uzEkRrGSMFbwEmm5ws8PiaFlCVUtUQ9wFfFlCZpxiZdUqohToZ+
+         JBen0NDjTBp6YH1oMqubC7SI2syfdo+pKcrHnd7U2yI91j3LsPMItcl1UL744WhgvnGp
+         1FJk4WfOucd9hCc/oxp+3l8yKmr29hv+3VBFfRu+rFNdkN5KtYFvZXbpfzheZ6+xB3H4
+         uSYWXmYJ/9oR3GTu2fB9gL5gNKD5iOh1oPlhRLAG6ocd4Osuu98IomKJx5+bhSKYkpob
+         kc7GmcapDr/zjJagZL2pkQlB/YmPKo9fYTheaDwV9ymYbem82YGT/taAA7TrSEd2cjdA
+         r1RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsXhQgK8izjjYY9VUDrF1KbuzpsEir2f6aPKXz3uKbAuXMbCvI4DaxXTuY6J3VnMM8uMyXpNKJ2yiS@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeaeOsvQiajZ1lK8ycLnZoI+yh++UVy1oYiyLqHyiCUjGfTGYu
+	1WhiuN0W0kWSuhPRbLzJa/41gNIxAosPL3yqVso2HULc2B7v8Y8FYD4yukzhxQ0t
+X-Gm-Gg: AZuq6aLc/W01x8lGpWGyp9d/qudmKuyMT3gVh7br/3uG2Q5+Jz5w5zlD/XYSA/cpdGu
+	qLxZxxIvfxVFOEA6suGS88f6YktXcAd7ZMhGpFgM00TGx1ZO+lbFJXXBdPTqGfIZEKEthn1waN2
+	zqmqkjDM4OsZvy/p4+ym1IEDfJzpSa5RVbJUah8r0QY270UaU4FV+CLx4RsiMw32dAmKQwVRgsC
+	ZnaaiOM9k2QNBarmJcFDyF/rXuslYJyKiRyrkDvta0UhIacqsbnbJWq6BcNkvHvRNxH8FFUhecx
+	dS4gv7MAOj0aRnr6yBeH64kT/bqm5JVqgvQL0JsXXx8CtyV/ihA8/m9UywZSFi5WOi0fzA+CTFu
+	ZHvUA0Xvoy9lqn3RAoYLPHKLo/Zg39KSQu8JE0Lew0yTozcEghNFJ9YwShehsdjxJK3GnsAJiQv
+	PSJyKvvMau5bniHjmpRA==
+X-Received: by 2002:a05:600c:4e12:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-482db481b62mr184164265e9.19.1770124252099;
+        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 05:10:51 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 00/10] Add Renesas RZ/G3L PINCONTROL support
+Date: Tue,  3 Feb 2026 13:10:23 +0000
+Message-ID: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1770127396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRrkh3Ad3sEIOvwMJAakZ3eaeEUS2YBl+bQjyr22hDM=;
-	b=l2MemYRlC4Fr1R/MCS5VKCnOQj4gfgs+xBP7IzHZ3qhkVcuCqfMOX7aLlr4kjOeMcf2CUk
-	lG9KwbO2RqNqgHGI3YmFcYLIrhi5LydtItW9ZaAfMWJwu++dRnJZAYdMt0FOs72oKJOhjQ
-	stjaVuYPuJd7HQJpE4xHrGDuQ77AwUo=
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 03 Feb 2026 22:02:33 +0800
-Message-Id: <DG5DRZU7IUOE.38JEHK3H9ICCV@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Ze Huang" <huang.ze@linux.dev>
-To: "Linus Walleij" <linusw@kernel.org>, "Jiayu Du"
- <jiayu.riscv@isrc.iscas.ac.cn>
-Cc: <pjw@kernel.org>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
- <alex@ghiti.fr>, <linux-gpio@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <gaohan@iscas.ac.cn>, <me@ziyao.cc>
-Subject: Re: [PATCH v2] pinctrl: canaan: k230: Fix NULL pointer dereference
- when parsing devicetree
-References: <20251228154947.194684-1-jiayu.riscv@isrc.iscas.ac.cn>
- <CAD++jL=Up=y_pX4Xy50in08cT978ANaoiD_98nn99frb8=5vOA@mail.gmail.com>
-In-Reply-To: <CAD++jL=Up=y_pX4Xy50in08cT978ANaoiD_98nn99frb8=5vOA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue Feb 3, 2026 at 8:32 AM CST, Linus Walleij wrote:
-> On Sun, Dec 28, 2025 at 4:53=E2=80=AFPM Jiayu Du <jiayu.riscv@isrc.iscas.=
-ac.cn> wrote:
->
->> When probing the k230 pinctrl driver, the kernel triggers a NULL pointer
->> dereference. The crash trace showed:
->> [    0.732084] Unable to handle kernel NULL pointer dereference at virtu=
-al address 0000000000000068
->> [    0.740737] ...
->> [    0.776296] epc : k230_pinctrl_probe+0x1be/0x4fc
->>
->> In k230_pinctrl_parse_functions(), we attempt to retrieve the device
->> pointer via info->pctl_dev->dev, but info->pctl_dev is only initialized
->> after k230_pinctrl_parse_dt() completes.
->>
->> At the time of DT parsing, info->pctl_dev is still NULL, leading to
->> the invalid dereference of info->pctl_dev->dev.
->>
->> Use the already available device pointer from platform_device
->> instead of accessing through uninitialized pctl_dev.
->>
->> Fixes: d94a32ac688f ("pinctrl: canaan: k230: Fix order of DT parse and p=
-inctrl register")
->> Signed-off-by: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
->
-> Patch applied!
->
-> Sorry for missing this, I was waiting for maintainer feedback
-> but it never arrived.
->
-> Yours,
-> Linus Walleij
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi Linus, Jiayu,
+Hi All,
 
-Apologies for the delay.
+This patch series aims to add basic pincontrol support for RZ/G3L SoC. The
+RZ/G3L pinctrl has OTHER_POC register compared to other SoCs for setting
+IO domain volage for AWO, ISO and WDT.
 
-I tested this on k230; it fixes the NULL pointer dereference during pinctrl
-probing. The approach is correct.
+Document the reset-names as all SOCs has multiple resets.
 
-Thanks to you both!
+Document the bindings for RZ/G3L SOC and add pinctrl definitions in
+driver.
 
-Best regards, Ze Huang
+Add pincontrol device node and add pincontrol support for SCIF0 and GBETH
+nodes.
+
+Note:
+Some IPs needs to set the register IPCONT_SEL_CLONECH in SYSC to control
+the clone channel of the IP. Plan to add clone channel control support
+later. The IP's involing clone channel needs to do the setup as per the
+below flow
+
+(1) Set SYS_IPCONT_SEL_CLONECH register as necessary
+(2) Set the PWPR register to allow writing to the PFC_m register.
+    After setting the PWPR.B0WI bit to “0” (initial value = 1), 
+    set the PWPR.PFCWE bit to “1” (initial value = 0).
+    Select the required function from Functions 0-15.
+    (Hereafter, Function1 setting example)
+(3) Set PFC_m = 0001b and switch to Function1.
+(4) Set the PMC_m register to “1” (initial value = 0).
+(5) Set the PFC_m register to write-protected. After setting
+    the PWPR.PFCWE bit to “0”, set the PWPR.B0WI bit to “1”.
+
+The clock patches depend upon [1]
+The dtsi/dts patches depend upon [2]
+[1] https://lore.kernel.org/all/20260203110220.265748-1-biju.das.jz@bp.renesas.com/
+[2] https://lore.kernel.org/all/20260203123503.314755-1-biju.das.jz@bp.renesas.com/
+
+v1->v2:
+ * Split DTSI patches from bindings
+ * Fix typo maxItems->minItems in bindings
+ * Collected the tag
+
+Biju Das (10):
+  dt-bindings: pinctrl: renesas: Document reset-names
+  dt-bindings: pinctrl: renesas: Document RZ/G3L SoC
+  clk: renesas: r9a08g046: Add GPIO clocks/resets
+  pinctrl: renesas: rzg2l: Add support for selecting power source for
+    {WDT,AWO,ISO}
+  pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
+  pinctrl: renesas: rzg2l: Add support for RZ/G3L SoC
+  arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
+  arm64: dts: renesas: r9a08g046: Add pincontrol node
+  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
+  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
+
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  16 +
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  10 +
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   1 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   1 +
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  92 ++++++
+ drivers/clk/renesas/r9a08g046-cpg.c           |   6 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 285 +++++++++++++++++-
+ .../pinctrl/renesas,r9a08g046-pinctrl.h       |  39 +++
+ 14 files changed, 465 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h
+
+-- 
+2.43.0
+
