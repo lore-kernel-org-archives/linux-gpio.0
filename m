@@ -1,165 +1,146 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E47344D86
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 14:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770130606; cv=none; b=m/XHvRBox6oDE376n7soPOn5t6v2E1xbC1kJYSNKQ0fbtzPLgCFYOAc7m/SmtjrknovdaBHfJZNIymQRysTB/b/jUOaq2B7TD5wFJZMhj2LfKcgf1e4chz/zoZt9ykxgnVt6rj53kjcE9UJMCTB15pRQRGxvuOsM1gByu8Le0A8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770130606; c=relaxed/simple;
-	bh=dVx/NTBKTBYer1sAELG6RU2I0c4yRgXuu2CweMfhYDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LXyEsHjV4NV5C6c0x4pm/BQzg7HH9Q4SZC1g5F3gwQuxuiKA13XmeiVSbhbzhfM13IaJV1hjC9MWQnSO/sa+Sn/sjfaDSQvmyNGO3RfHJWlAiIAwvSXvcttc0l1yNGC/x99zpJO3cEPZ2rJ3Ot9vuejtVSeAXylI+Qrnpn1tACM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsbSQprP; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7229E3B8D4D
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 15:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770132577; cv=pass; b=P/8iYAjn54x/CMFUE8m1Pyw8iMImc4Kh4gs8YMSGlIG+Yygb4cqZc6gyUKug5spLpTBnweVhvfPZW7vI9Dq1vBVTPASHpLFnj3C0q+idCXWJWkLmqoKgKm1EqfEeOioWCxNhcXQBZ0UCcQbsCBHkdAcOpYnsG8/psKazVxrR5cA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770132577; c=relaxed/simple;
+	bh=z+K080tifr6dHRZeEB69mjdwz1gvd9Z1BcZ55srLuhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j9QBobGLtMrVceFVJQIFGTRJiLsMBMUl2RpEdS0CWNszcOryoGBPg05VYbr2PYL1T3wVt1sZk+5lw0MVA6U39wnkX5xoHtpv65Miy4XAly99P9GvafyLJcT4qWrcL9d0SluGjd7jJUJTmgrQl/AFBYHUeGnGTvTo0DMKh/hiy9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLliCHWW; arc=pass smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsbSQprP"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48068ed1eccso52993205e9.2
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 06:56:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLliCHWW"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b88455e6663so842136666b.1
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 07:29:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770132574; cv=none;
+        d=google.com; s=arc-20240605;
+        b=F07gQAaU3+JCX1PSvvfFnHnmzmS32y+zaLedXy75oGNmYVp1zNVyY6W+o5ER11EYXA
+         aqw1XgCVMQVIM1Fi9NdTJ+jB70rdz6l3kmYsAVarI89tF+5+7X5+aR4AjWjJOCVHia4m
+         wh1j9tbI99P7pf1mkuO+Q9K/GGC6cgSkWdMOwB8Bwn2kELseMAwjVgoLMp3dX4IIeDvr
+         Gd8hUqYaFECUUsUlf4v6sdcl3LD9UaQdk2RnpR3kKwcFQs4U9c2IaXRylzIvL6u/akfJ
+         IhMvflO7NC9IHL0KpMHKXNZkIpdIcV6DETET93x3RioZJaOFdeS08XwLxEsngptPhyvS
+         kTlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/Go8Y8gX1E62+o8zanhiH4g4wNTHN1UiOP35WNGMfiQ=;
+        fh=yenG/2ZwcLPKT5/HeA2ncsTQVZrQLWnCgsKHrhVw8B0=;
+        b=LwgZ4A1foXUOq4h4goRsTahFUmfbZV7WQtJ01N9gpu1EuvZNLJlsQoJIhPBQ8KkrbP
+         xEiJtmBPRXv9xm1JuS0edacX19KFM/GOOPa2SXXXXgIbhal0iNQsyUJvCvNDrhvP7Gx6
+         AdFBFq/sQsQzKvUib4xs4uxWQUl/NoRjbA+iXzk6QQPju6ff8wCcl8gj76MhFjwxmX9K
+         Pazm8SQZribhxzHihw9GE2UerpTwUhpl3Xp6nXq4SCEuVOdxudq/tmv6YU+/MVwUBROV
+         SxN1C4nVdIuBSRAYH04aREHXVLmtX6iTOMXmjXbGtu4SyyeLpylaoirEmgwQ5IqsiOrv
+         JVdQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770130600; x=1770735400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=XsbSQprPIHRifAz4IOQddjFyqQtS2fZaIy4E6acjgjByIE0owpcJHj8Rvp93ZsgAkb
-         kBsEBOdT2cW60Jkp6WxTj4pK5vgkVsOUg8Hnk8q8M1A/HD2Sl4TMaV0tJWYmSE3p+DYf
-         jxZH7TMpNkXfRpSFtw9AcqEq36hhDruOEp3mdFE4XzVqSx1DGPGcmJaAJxV9iyiJ5/Kf
-         9Bz+Zd36UazoZjFUy3VwydpRpW1JkUFxlfTTrhiIxaFpI0iIcFP2FRQ35bSnSfVl3Ja4
-         25b9zGkU7yaBOqCGfEDkoRxUFs2erT+2c9Zza+PDtD40GozHHBeXGpgHA3OgOgGL2B0l
-         wL1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770130600; x=1770735400;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770132574; x=1770737374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=p1daquwmg/7cMr6uzEkRrGSMFbwEmm5ws8PiaFlCVUtUQ9wFfFlCZpxiZdUqohToZ+
-         JBen0NDjTBp6YH1oMqubC7SI2syfdo+pKcrHnd7U2yI91j3LsPMItcl1UL744WhgvnGp
-         1FJk4WfOucd9hCc/oxp+3l8yKmr29hv+3VBFfRu+rFNdkN5KtYFvZXbpfzheZ6+xB3H4
-         uSYWXmYJ/9oR3GTu2fB9gL5gNKD5iOh1oPlhRLAG6ocd4Osuu98IomKJx5+bhSKYkpob
-         kc7GmcapDr/zjJagZL2pkQlB/YmPKo9fYTheaDwV9ymYbem82YGT/taAA7TrSEd2cjdA
-         r1RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsXhQgK8izjjYY9VUDrF1KbuzpsEir2f6aPKXz3uKbAuXMbCvI4DaxXTuY6J3VnMM8uMyXpNKJ2yiS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeaeOsvQiajZ1lK8ycLnZoI+yh++UVy1oYiyLqHyiCUjGfTGYu
-	1WhiuN0W0kWSuhPRbLzJa/41gNIxAosPL3yqVso2HULc2B7v8Y8FYD4yukzhxQ0t
-X-Gm-Gg: AZuq6aLc/W01x8lGpWGyp9d/qudmKuyMT3gVh7br/3uG2Q5+Jz5w5zlD/XYSA/cpdGu
-	qLxZxxIvfxVFOEA6suGS88f6YktXcAd7ZMhGpFgM00TGx1ZO+lbFJXXBdPTqGfIZEKEthn1waN2
-	zqmqkjDM4OsZvy/p4+ym1IEDfJzpSa5RVbJUah8r0QY270UaU4FV+CLx4RsiMw32dAmKQwVRgsC
-	ZnaaiOM9k2QNBarmJcFDyF/rXuslYJyKiRyrkDvta0UhIacqsbnbJWq6BcNkvHvRNxH8FFUhecx
-	dS4gv7MAOj0aRnr6yBeH64kT/bqm5JVqgvQL0JsXXx8CtyV/ihA8/m9UywZSFi5WOi0fzA+CTFu
-	ZHvUA0Xvoy9lqn3RAoYLPHKLo/Zg39KSQu8JE0Lew0yTozcEghNFJ9YwShehsdjxJK3GnsAJiQv
-	PSJyKvvMau5bniHjmpRA==
-X-Received: by 2002:a05:600c:4e12:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-482db481b62mr184164265e9.19.1770124252099;
-        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
-Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 05:10:51 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 00/10] Add Renesas RZ/G3L PINCONTROL support
-Date: Tue,  3 Feb 2026 13:10:23 +0000
-Message-ID: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        bh=/Go8Y8gX1E62+o8zanhiH4g4wNTHN1UiOP35WNGMfiQ=;
+        b=iLliCHWWDhetEvW3suHjtO4CKF1bwkyhXZ220vwWKYfq/2cUidepsO3VhWmGnHWbVG
+         twU1Ab4bh4RHNzvcV9Zl5SEmPwsXY4Ef3vrfTh2T84P/lkKHVQ5Ws09X1l1kXt1WhrX9
+         Mg5hEcV8c4xMabvP/wdkqySbIM1Ft55AACPtlP+3hk8wTSVSHrRWF6SmQghKMT7+DgIj
+         52bNvbce/dlogUQ11tKTyUHahhdbw0elpbJui+4i/ufm8qujraldRMWqwXczEOc4167F
+         AhHskDU3LkECGlg2rkLU2x7cTtpw65P/twrDCR254jikX+iDtV/gFjLLndO/Oiph6Anv
+         QM7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770132574; x=1770737374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/Go8Y8gX1E62+o8zanhiH4g4wNTHN1UiOP35WNGMfiQ=;
+        b=szAibVQ3FxU6TwkoVnhDfNzfthJ/X8i6BZ9y94vWT6TdGhQY7ZEKuQBrILvuy3CgZH
+         JUWTrJiaTte5mpVLIM2dD/zpy1aUDHp2K520U0DejNr/tCaZSLs3hGiKnClMCbCG8twS
+         LSeOg2smDBMfndWzX4jTcJpEGAnJ7wDJqhGj2LoT/nSnfYnTCgdo7LHQ35g35eMPwvhK
+         UMLhlKDQqjtjAghtKEo2x8pELRR1IuwoF9y7wParjjiJeI3OZNN52+kURUCYUHGWQGvL
+         ec8896ErxF9FIU3Te82p0FYqn+qPVoeKFfNF7TXyagJ1oz1bqQHs05HmtLu03uMmBOV9
+         TXUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDI9kDft7Mx0kBNFP2gvnY0ejhwljqLpMqftQhBNt875RuRaSEfT7aYFuE+fgY0m2xKmYiWgO4062m@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsvcYQK6aAhnajHErFiGPTvHabxRSdbqbKw8BAcXOD5D6lGSyk
+	FVZqS48F7b/yevOutLVMvh/L8nM1JXVXpDJWd++/ByMIXYIo9Fpt3a3MiSWoF8Sl3RpU7tcncLl
+	TQC0RQlzr9DRKPOXfo1VTvSj9RTN20WI=
+X-Gm-Gg: AZuq6aK4DOP2FCh8Ln5Hj14a1SJqBhzHUSA6edB5192au8MUpovw0myPvoLVDNXtFjx
+	KO5VZsis1QiTdPUCas/PKz+MPVkmyLYT+3TBw/8aqg6Yy03LWQ7Dzfqf90ug0EAUyjmSfrW/SnV
+	GpJGhVl/5L4IgwTRsKps59+yOJ49lc7ty13P7o1CyZmWTSP5tseYrWIPEydHW2k5f07ttNeQUBN
+	WXiy8zO4YBYtv5EevhCMQPqjphMQlmdde+51zDgaC7PwOQUX54BkFR+Mw2nHzlaxNVqDYbUx/GN
+	bsSPdiiwajRxoyjyRLbZD3QIh7HPsDjQNRmCwNFet6oNpwG87J2ld7k4KcU9phL9/dPHMA==
+X-Received: by 2002:a17:907:1b07:b0:b86:ef1f:6d19 with SMTP id
+ a640c23a62f3a-b8dff7ad57dmr990029766b.59.1770132573415; Tue, 03 Feb 2026
+ 07:29:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260129201312.634819-1-florian.fainelli@broadcom.com> <20260129201312.634819-2-florian.fainelli@broadcom.com>
+In-Reply-To: <20260129201312.634819-2-florian.fainelli@broadcom.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 3 Feb 2026 17:28:57 +0200
+X-Gm-Features: AZwV_QigMJ4s7JE_KbPeSeyx-VsNtPBsrWImvTutmo18i_o_7klRldj22USRrsg
+Message-ID: <CAHp75VdnmPGr3WSiyjCrzbgJwOFE92gr7yUMb2QqS3+GGRtAiA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] gpio: brcmstb: implement irq_mask_ack
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>, 
+	Linus Walleij <linusw@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Christophe Leroy <chleroy@kernel.org>, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, Jan 29, 2026 at 10:13=E2=80=AFPM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+>
+> From: Doug Berger <opendmb@gmail.com>
+>
+> The irq_mask_ack operation is slightly more efficient than doing
 
-Hi All,
+.irq_mask_ack()
 
-This patch series aims to add basic pincontrol support for RZ/G3L SoC. The
-RZ/G3L pinctrl has OTHER_POC register compared to other SoCs for setting
-IO domain volage for AWO, ISO and WDT.
+> irq_mask and irq_ack separately.
 
-Document the reset-names as all SOCs has multiple resets.
+.irq_mask()
+.irq_ack()
 
-Document the bindings for RZ/G3L SOC and add pinctrl definitions in
-driver.
+> More importantly for this driver it bypasses the check of
+> irqd_irq_masked ensuring a previously masked but still active
+> interrupt gets remasked if unmasked at the hardware level. This
+> allows the driver to more efficiently unmask the wake capable
+> interrupts when quiescing without needing to enable the irqs
+> individually to clear the irqd_irq_masked state.
 
-Add pincontrol device node and add pincontrol support for SCIF0 and GBETH
-nodes.
+...
 
-Note:
-Some IPs needs to set the register IPCONT_SEL_CLONECH in SYSC to control
-the clone channel of the IP. Plan to add clone channel control support
-later. The IP's involing clone channel needs to do the setup as per the
-below flow
+> +static void brcmstb_gpio_irq_mask_ack(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> +       struct brcmstb_gpio_bank *bank =3D gpiochip_get_data(gc);
+> +       struct brcmstb_gpio_priv *priv =3D bank->parent_priv;
 
-(1) Set SYS_IPCONT_SEL_CLONECH register as necessary
-(2) Set the PWPR register to allow writing to the PFC_m register.
-    After setting the PWPR.B0WI bit to “0” (initial value = 1), 
-    set the PWPR.PFCWE bit to “1” (initial value = 0).
-    Select the required function from Functions 0-15.
-    (Hereafter, Function1 setting example)
-(3) Set PFC_m = 0001b and switch to Function1.
-(4) Set the PMC_m register to “1” (initial value = 0).
-(5) Set the PFC_m register to write-protected. After setting
-    the PWPR.PFCWE bit to “0”, set the PWPR.B0WI bit to “1”.
+> +       u32 mask =3D BIT(brcmstb_gpio_hwirq_to_offset(d->hwirq, bank));
 
-The clock patches depend upon [1]
-The dtsi/dts patches depend upon [2]
-[1] https://lore.kernel.org/all/20260203110220.265748-1-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260203123503.314755-1-biju.das.jz@bp.renesas.com/
+Use API to get HW IRQ from irq_data. This is documented in the GPIO
+documentation.
 
-v1->v2:
- * Split DTSI patches from bindings
- * Fix typo maxItems->minItems in bindings
- * Collected the tag
+> +
+> +       guard(gpio_generic_lock_irqsave)(&bank->chip);
+> +       __brcmstb_gpio_set_imask(bank, d->hwirq, false);
+> +       gpio_generic_write_reg(&bank->chip,
+> +                              priv->reg_base + GIO_STAT(bank->id), mask)=
+;
+> +}
 
-Biju Das (10):
-  dt-bindings: pinctrl: renesas: Document reset-names
-  dt-bindings: pinctrl: renesas: Document RZ/G3L SoC
-  clk: renesas: r9a08g046: Add GPIO clocks/resets
-  pinctrl: renesas: rzg2l: Add support for selecting power source for
-    {WDT,AWO,ISO}
-  pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
-  pinctrl: renesas: rzg2l: Add support for RZ/G3L SoC
-  arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
-  arm64: dts: renesas: r9a08g046: Add pincontrol node
-  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
-  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
 
- .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  16 +
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  10 +
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   1 +
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  92 ++++++
- drivers/clk/renesas/r9a08g046-cpg.c           |   6 +
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 285 +++++++++++++++++-
- .../pinctrl/renesas,r9a08g046-pinctrl.h       |  39 +++
- 14 files changed, 465 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h
-
--- 
-2.43.0
-
+--=20
+With Best Regards,
+Andy Shevchenko
