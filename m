@@ -1,90 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F3A8834
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 00:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D22A224F3
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 00:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770078764; cv=none; b=USu4ThuwbO/LJiLLXo416ecor0rSr2qkDKoX+v79Amt36j3rOWsrzsZb43EOMJIroh7IMk0OQjA4HMtcOQA9txAOT7f0yyeB0AeHWOghvc3p+m5qwGzQ/atb2eRRPDJLwJi0OpAquqOmf2pP0+UIT23HPmhh3Ja/HXpLzrRSli0=
+	t=1770078867; cv=none; b=q3rrplp0MBMiDCj1wSzISEDuZkvWiVUk48ASr3B4kxe+j+6UnaqmzImKrEBkSQy9tjHD3IJFohEIJcRjdwAxT9ewYIiXtL02IJ+AgElRlaETVFEZrxqtv83UjIZckP+stgwES0R8OsMCiA+TYdnC+DdCyXIgvQffKwIbNZxflUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770078764; c=relaxed/simple;
-	bh=5b1YNgB+WSCy3gJc7w5bfdM+RGfw7hfgWgwTAQaFtvc=;
+	s=arc-20240116; t=1770078867; c=relaxed/simple;
+	bh=X1g2xNOw4+l2Wcjy0vjXUWHCrsoKQsB5w4m7w88tpuI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IW/VG/PIRRNGguDQeLfCMsRCKaxwxR3g+Uqo/LUlYAl2SeuMOYDW1pYgDkeCLbexor0eSPKbEk0iZzrMRCDs6d4aS4e56/sDQk8aOL1EguaGZdl5j7zgIBdbS8qt1JMIlOtuVc3nUcJPqhDxyaqWKdOGvIpR7A0MxKySJjDBcaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8OVDdrH; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=a5cV8fTMJx1SVUS/HK8sSsgVVcG3fSaqXTXPmRGMSWIBCuscBRM424/yapIh2fnGCsH4Hubo+w03Ggx3AZW23gnJ4ZNBxS/ytRVCDbRKkDu5ywV7aKoDcggon0e2s6OGQtmzU2kWNjZQVBD5NtJ6jveN0Jp9eThU2y4i3b6nQFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9KyoB7a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8OVDdrH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C189C2BC9E
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 00:32:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9KyoB7a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B1DC4AF0B
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 00:34:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770078764;
-	bh=5b1YNgB+WSCy3gJc7w5bfdM+RGfw7hfgWgwTAQaFtvc=;
+	s=k20201202; t=1770078867;
+	bh=X1g2xNOw4+l2Wcjy0vjXUWHCrsoKQsB5w4m7w88tpuI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a8OVDdrHbwy9MxbepcgQSm3ydVa5B6saKW0MQzpcK7Oy3Tx8P/SKX9BoWJKZ+ts9y
-	 pohTWk5IMih/KWNfOMLZwFHCCFnlMekCWPXALEgizwJmZrN+raE6iufYt1dXC9Yksd
-	 WKI+Z3v7FenP9A4YkBHYTKR01hxfAZDz9M+Fzxg8BSGYck3/EFReEC7MxPoUZVJjVP
-	 2npA9FRWukWz82sXOZV4oxPT9NCYtAt5Kox2BrQ2XH9pdQWetwbTX7BOKlhgk/TMkp
-	 9TUnn/EGH+e6TENfMKFv9qY8OKZbYOiKD9s24iXu9VW6EITyp6UfzGEKpfC9sYtqtT
-	 kmFhveWnCJX1A==
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-64965ee303dso4839941d50.0
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Feb 2026 16:32:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXpb+opsQfzU761ke9fM9bf+RRT6eQgoUjaVNizzB4jyjL+u8Y5qvZhvMc7wzbAQQvkM0OrxEvxse32@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpW4JD8+GxvTkioIXikx4NTMhYAvMLsP/nsStGcQpjb40rITcc
-	4PB0IynA828zhpoFpfud918GeIailN9E88V8qAdUxsQ1KrW6scm1yTCmB4E+78+20WWfQFy6LTq
-	Tz+1bMgJDCZgHvND26Ed3mmoEfyXm7C0=
-X-Received: by 2002:a05:690e:4183:b0:649:4640:f8ea with SMTP id
- 956f58d0204a3-649a8393901mr9595658d50.4.1770078763406; Mon, 02 Feb 2026
- 16:32:43 -0800 (PST)
+	b=t9KyoB7aGi3Bg9Y7m7XIMWZqYRoUAc33/o9GDaWOz5fckkJ1cKt8217x79Yznbpbq
+	 EzcKLw4UTEct0N37ZZFlRiKIbbGg3Z9P+SX5eo4lJuMpWoBg68pHBs7isvxuFDPOYy
+	 OT4ZMg8prvQog4m130qft9YcyQVkq59pZA901lmiN++BVN+85yaJhpw6/ZBXK3E9w0
+	 fT6VkKTM2uo3Hc3OxHTQHsVLviV94BX6S27CQuX5GE8YjTX2DjPvIjyKLuIumWKmoX
+	 +cYOiFAIRABrawyjhPgupHs5usGBsYqvwuvZOphE+REwjiqr0P+vITV3CZ9/DVaqxT
+	 uAxIAwxmeyL/g==
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-649605d3664so5704034d50.3
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Feb 2026 16:34:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXyzY9ntIfxEY1bPd5alOvLpuYhjFJ+N+z8B3A5P6qnKaLjbbRk3DkvxGMrmuHSeHU+bnsSSO/Xhl47@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXlMsW/mAiO5LGKjtPgvKM/i/qh6dlfiO1Ykr8zzkyLr04BJB+
+	qcpi2citAHAdqN1NAv8nAC3Q5GbZdd1vcs9b1peM9OCAuTKdKdodMQ4pxtDuAGWnoI2KnWFysCo
+	N4U/noxfltrV/jUKWgGPc0a2FP7U4XhE=
+X-Received: by 2002:a05:690e:b47:b0:649:b536:d72 with SMTP id
+ 956f58d0204a3-649b5360f7cmr6593212d50.18.1770078866634; Mon, 02 Feb 2026
+ 16:34:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251228154947.194684-1-jiayu.riscv@isrc.iscas.ac.cn>
-In-Reply-To: <20251228154947.194684-1-jiayu.riscv@isrc.iscas.ac.cn>
+References: <20260111053025.251983-1-akkun11.open@gmail.com>
+In-Reply-To: <20260111053025.251983-1-akkun11.open@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 3 Feb 2026 01:32:32 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=Up=y_pX4Xy50in08cT978ANaoiD_98nn99frb8=5vOA@mail.gmail.com>
-X-Gm-Features: AZwV_QhzATDF1xPyRh23xfkH5H_s0IyRTbaRsiEHxW24bbhKveJdGG3YYXSQugM
-Message-ID: <CAD++jL=Up=y_pX4Xy50in08cT978ANaoiD_98nn99frb8=5vOA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: canaan: k230: Fix NULL pointer dereference
- when parsing devicetree
-To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
-Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
-	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, gaohan@iscas.ac.cn, me@ziyao.cc
+Date: Tue, 3 Feb 2026 01:34:14 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnG-GGxmGMmojYwSE4T3F1NjCDY-f0+CFC_Fi5gMA9v6A@mail.gmail.com>
+X-Gm-Features: AZwV_QjBhI9SswsxYmA3G0Zv5gva_FUHaiIkC2CnoLZUa8plV9-V8Hry7RO3aMA
+Message-ID: <CAD++jLnG-GGxmGMmojYwSE4T3F1NjCDY-f0+CFC_Fi5gMA9v6A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: remove unused drv_offset field
+To: Akari Tsuyukusa <akkun11.open@gmail.com>
+Cc: sean.wang@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 28, 2025 at 4:53=E2=80=AFPM Jiayu Du <jiayu.riscv@isrc.iscas.ac=
-.cn> wrote:
+On Sun, Jan 11, 2026 at 6:30=E2=80=AFAM Akari Tsuyukusa <akkun11.open@gmail=
+.com> wrote:
 
-> When probing the k230 pinctrl driver, the kernel triggers a NULL pointer
-> dereference. The crash trace showed:
-> [    0.732084] Unable to handle kernel NULL pointer dereference at virtua=
-l address 0000000000000068
-> [    0.740737] ...
-> [    0.776296] epc : k230_pinctrl_probe+0x1be/0x4fc
+> The 'drv_offset' member in 'struct mtk_pinctrl_devdata' has been unused
+> since the driver's inception. Drive strength control for MediaTek
+> pinctrl drivers is actually configured via 'pin_drv_grp',
+> making this specific offset field redundant.
 >
-> In k230_pinctrl_parse_functions(), we attempt to retrieve the device
-> pointer via info->pctl_dev->dev, but info->pctl_dev is only initialized
-> after k230_pinctrl_parse_dt() completes.
+> Remove the unused field from the common 'mtk_pinctrl_devdata' structure
+> and its corresponding initialization in the mt8365 driver to clean up
+> the code and avoid confusion.
 >
-> At the time of DT parsing, info->pctl_dev is still NULL, leading to
-> the invalid dereference of info->pctl_dev->dev.
->
-> Use the already available device pointer from platform_device
-> instead of accessing through uninitialized pctl_dev.
->
-> Fixes: d94a32ac688f ("pinctrl: canaan: k230: Fix order of DT parse and pi=
-nctrl register")
-> Signed-off-by: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+> Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
 
-Patch applied!
-
-Sorry for missing this, I was waiting for maintainer feedback
-but it never arrived.
+No word from maintainers so patch applied.
 
 Yours,
 Linus Walleij
