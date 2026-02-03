@@ -1,180 +1,152 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE06233D6CD
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 12:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5E534EF0B
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Feb 2026 13:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770120562; cv=none; b=N+oYGMZruUbC+ACU8Rjzk/MSG2KRjbmfjqmbxxweSeHaSU6qPCbw/m5IvePqjp6du7neKt2MWD3lnRAEa6GR3sSFCDui/JMyio89quWU38AP5O7vl39MhU026Tl8bPBlFn9yy31orfPwW7A8Ax6tsty6DQ5aGdQGjZI7TVbLB7Y=
+	t=1770124256; cv=none; b=JSO+yA9EjvISK6oyc91kMrYJPX4GwU4dIqy1dOeK5A1HcUN8SH7KQVWj+rFkubQr8r0rTcDGjqbm4f50hg7vYIQIHxtU/mpx3VvHyOrV10KRts0mMnVZKQNRMybDAYFZN7YlLRpldHT7iFleQ5TW0QU/ChzIfGG30r72+kBhDhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770120562; c=relaxed/simple;
-	bh=LhX4W4966WbA5RsY6vvGNAKLc5ZklFBLRf+iIcs0fLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MZgL8QDA46Uf1lenLjUXojcrYium91r/c2/7uJb7wlUKuoF07Pa+Yycu6DlUVvl4NRteVpp0I9c3D2XrLHT8UJGpYoTSK8zYTElJ1UwBLbJ7YJHTjrTAn15CfHriUoMOm+Lh2xZxSd8vU/0PgwpwxpWaz752BAxrJtGdItSmDY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UVMwo7JK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YL6/xAEa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1770124256; c=relaxed/simple;
+	bh=MfO+O2YIqgFjV0xMOvjI6RbABmQ4PgBS+Zzi7LOgdkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=n/nrehJ9ygIfZQSET6KxC8DuIcbF0OXUB/d+mQL0niUsm6KYEp9zPqQMf/IyHfQ4aZg20xLt6nyP184sZs52rQ4erw3y/pygzTxzbAOTu0nB1WJTLadUvfiwMtXn9xThqlziIlwGH8yhEca6yR42nLA8xDI5wvixHN6qhBbEk0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrQTZfqW; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UVMwo7JK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YL6/xAEa"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6137PHdq1319475
-	for <linux-gpio@vger.kernel.org>; Tue, 3 Feb 2026 12:09:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GPoB5vfU+XGoctzE9w6IbSeTVRMHd7Q6eL3ax+WmBsM=; b=UVMwo7JKrp0aSnNN
-	MzC2V3Hmrn578A+I4RYHamWF/NMEGQ/mq+YgWorxlsvVa4nyNC34yODoazIpGE/D
-	l/uScc8h0Z+z03Jb8FfyWWHYXoX0iHbUMjJRBksxjeKqLkzoMHHmpnEUoxD/jBJr
-	cpTYWe48Ax5Xfz+FkvNxaAtBg/UrCEsJNJSA3die0nfn01Ve5TLbD9uKhLTfy3UT
-	KKHSFYa8Dkomk+vWB6WzdFI4jUsxRYXHGaRwGMWZ8LhycRdfwal/ebDJ37WddCgq
-	Jl9bur7MaXtwQmfzqKahXvqqI4uksSam3v9bpGfPan610lrDDQoq8C7iAZV9o9OQ
-	ElB+4g==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c3cm70un0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 12:09:19 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c536c9d2f7so160449885a.1
-        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 04:09:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrQTZfqW"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-4806e0f6b69so41167355e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 03 Feb 2026 05:10:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1770120559; x=1770725359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GPoB5vfU+XGoctzE9w6IbSeTVRMHd7Q6eL3ax+WmBsM=;
-        b=YL6/xAEahDazUv6MUYDt9id15vAv0h9hkg2jpyDMdsFaI/mOBC+JM6f/DLDAnqBkX+
-         CJcLVzHueWPOJfUZVK0WG9E2Cz0M4926hgoAryK9UuvgiTKQsJFosztpnYT59+eGxMgm
-         4Oc9UfNOt+2vO4b/ed8Vyp07MtNo80Ao2ltgnpALrQigmmkdVwKcN5r47WvHq6ov2M/i
-         ze6TVRGhNOyjc95m6V3HtvaTZ2/TynPv5OtB4kqPsjkvYHVQ+ut1zXf2IQIL1piyc5LM
-         krtuqVpqHW/aZT7DcT7xCXvR26QPEUmwjX5Y2n9HeNtQMBANKT9dBJYMG59PcCj+SZAa
-         likA==
+        d=gmail.com; s=20230601; t=1770124253; x=1770729053; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghdEIhwuuFTCq/342nL9qPsHPejvBlYx6BjaZbJT+n4=;
+        b=jrQTZfqWLuok6MK1jHkOVhBUPzDys3r2FvUurxxfNFufuPG/YkHNhPQdfsINFcBCzT
+         m4GM8oUL0oS9SR4gtAkD2XYFdF8Gy3j3QPNzRcw3EpvrSizMVdUTPTKjLr8FSEnzCrw7
+         DIy/uAoEX+j2ZAu2KbuHwaKNliQwDD8A7uhTLzLy1J9sPi+YdyZQnC6wq7I6+vQD5ETE
+         NT4V6I+cly/6NRIQy8aIrG/0fj+NmBEzCZDEMFfWz0sKb+Q/rscmgpAgtFlY1Dzj1+cm
+         88prTDyQZYGYYiRYBt3R8ZcW3tkbeSIRN25f3BouFSCLyzBB1YAvm7+gNVx2ZmSwTCqI
+         0NsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770120559; x=1770725359;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GPoB5vfU+XGoctzE9w6IbSeTVRMHd7Q6eL3ax+WmBsM=;
-        b=XBTb4T87hMyEp7BRXOOcFE/o331jW8u3KK/nEM8Av3lA6aVuz1amdep+royCe7tgPH
-         AWvaFz1DOp1lgl+W/FMFOF1JIjWdnTkAg46En2pmh4XDrRlBFt4tus88KjM0Fd7nYvbZ
-         zH9yBU1oI8xLEh+2e2aciMNs/WXomBcxVAbbzjzOU7rmktlB8gal/Yvy8OTnZ63ibtBX
-         uTx7EcPOk6Lw0hEGxNMuNISkqs+0MXwJjv6CmuRNxOBmqBZhro9F/5DagKQ5lOPzs8+c
-         jQaLEwWVA7ZG2hfjhBuuEYaUyuyYCCE/i37fUE5sYenUO71UH48/0UIt1J7cADp3stmx
-         YlkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ74dHyytQPrQ3G1mfBiRDmWyMm9rPfEywa5fJYS3QvPcjDrxWL1OHM2H2bHy0vN2/wDtXQEeXglfs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb/M0e4yyLd84DfHUmDoHz8LsUSXo7EopWVPWx7TGZJv7zAz1N
-	cyw9wwGYR8M+8ULSO+Hrm5W2gQBCjVuTCypwRgigmHGQlpQ8UemmBrV9jcuCbcpHL6Z9g5T7aIl
-	5A/hyS8IhbSGSwgwg8BnQVYcyFgmrgfDHLG20lBKR/HVy/7DhkD4d8NenZ4D9CUR2
-X-Gm-Gg: AZuq6aKpRFJLgAoEv2JcKpmQWPSdhVH6Bfrj8wrb2OgtndYiN2O4hRWf0e2YaP4dH+Z
-	9KSxfrwc62rG18ewV9y6voCEag96jkFdJT+RS5+IoC98npjgfKvVpq+InGtK9Pl1O0VGGzlW1OF
-	Wn9vrZvOaIw10kmofn6hCfjqV5rnLtsOHsUs02jviv8zLu94bJsiLVxAZInNMC5O73BVosHvD2w
-	yCr3cIqI4Ohn5ywZ4cQEPeYzp2BsxILsqVx6dBnfzV6yGzkLHy8URUhaDcZ2G4Jc4rMqT2ZMzS8
-	MSPOiTXYVVBXNM/Bmse9UkJsfxZuS+/aaMSGpQFCQF6XjKVet6eBXicjwTFvPsuDceTh3O03lEj
-	6T9BC66I/1/PUAqCthRxEK+2WeoQLqjJ5Tpti34RBEeEkPYEkq3vcuR/3i+k3xW70cEY=
-X-Received: by 2002:a05:620a:bd6:b0:8c0:cec5:148c with SMTP id af79cd13be357-8c9eb34ff20mr1529517885a.11.1770120559095;
-        Tue, 03 Feb 2026 04:09:19 -0800 (PST)
-X-Received: by 2002:a05:620a:bd6:b0:8c0:cec5:148c with SMTP id af79cd13be357-8c9eb34ff20mr1529515085a.11.1770120558684;
-        Tue, 03 Feb 2026 04:09:18 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-659390c08ddsm751708a12.11.2026.02.03.04.09.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Feb 2026 04:09:18 -0800 (PST)
-Message-ID: <006f6c19-d923-47c8-9890-c7431c8c1e77@oss.qualcomm.com>
-Date: Tue, 3 Feb 2026 13:09:13 +0100
+        d=1e100.net; s=20230601; t=1770124253; x=1770729053;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ghdEIhwuuFTCq/342nL9qPsHPejvBlYx6BjaZbJT+n4=;
+        b=tluWSvzVehc3qcveAZGsqN2qUoeAPWke6KU2Ghs5kVwCXPirrKh30oh9jVt8FNx6ux
+         s0WpG2QIEDhJsgwWK/Dbg1MhcoWZhMjJdgSRsp+WsDb+hstnLpjWXpYxyPpxNjDo0c5X
+         70dHUeRtzUjeKkqPi07zVcT+piGSyGH//s2f2FJfb+E+Y1Qh4KuX9gnWfQVJcp98VFvu
+         gAlAyOe7MRdzoiAmcHvVb/MlYtVyfSTkdlqpjZu21Q3h3FBB9aEJpgfQkBQDLt74lVC0
+         00ZO+Q9l00NSyBEiFaUwzNvsXSZ9XMEAM3KmkxP+Wh08WFRrvQqKIJkeZqz7K7YVwRAh
+         0TOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi8CRhEcZGB9D/ctwchfemhghTqWLdUzJYtjl8lepgPnW5sBC03QFsbu0qbUhWcBREUKsdr9AbyTwc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVjDFBoy1QRm8JvyesdSxSxjeAieuEQNRetmh31bABKnaRI/M0
+	nPtuRsnho60QzDtlJrfwNodLx2llWAp/rTZwFeQi4abcjdwIvpCVTohy
+X-Gm-Gg: AZuq6aKPDQ/59kjEX4gmrjkSxiiqzYsdYjGZ+BNW23D8C93rNteNoZn91JxgnaZhi/k
+	c4P5OlxQVrNdbjPHnryURJGF4elwgrdOKw8haPGW4F1iJPBZ4LvbHOeC42mmQfdrc75k+Q0znTN
+	KvVxKnyFibpMLEV9JuoW2taS9q+rlwpp3NcldpsErMn4CeLxUtCA8iKPZt44oCky7s7YGW/wngz
+	EZWSn0UBJd+yk0ndN9UP5JnA2HpDpc/yEit4LbtvXZ4FnSQk0kVCrhLADlll4fUm9wV0kNwqSv1
+	quPvDwUndtB1949frHJF0UkhRhIB2e0mdn816JDptS9EkmXdFP0mggL+kvtLMSEmNC6Cxc799xm
+	OyscJAlJXR5j4NYt/I7SXRtbY5dxXRJyLPotNfNfRy+QON9zz83thsClz5H2Lis3DGJU+2BXenD
+	RnUvyOEytC9NC8bDgyaA==
+X-Received: by 2002:a05:600c:a087:b0:479:35e7:a0e3 with SMTP id 5b1f17b1804b1-482db48f2ccmr214592465e9.30.1770124252683;
+        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
+Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 01/10] dt-bindings: pinctrl: renesas: Document reset-names
+Date: Tue,  3 Feb 2026 13:10:24 +0000
+Message-ID: <20260203131048.421708-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
+References: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/8] Fix TCSR representation on SM8750
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Taniya Das
- <quic_tdas@quicinc.com>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, stable+noautosel@kernel.org
-References: <20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com>
- <20260202181917.imo5lk3smwott2ue@hu-mojha-hyd.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260202181917.imo5lk3smwott2ue@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAzMDA5NiBTYWx0ZWRfX94NieitGAdN7
- nQ3rqv+nqZueV3MkdXG9vE1cVHcOWFvSqENG1Sx8Euz5+eCz50ujj2yei41JlxzxDmGp7FQgLEi
- BpRWxInhqarD9Wb5QvQ49v6Te9aXPAIf6I3wGFq8vZGt8My+cI4B2t7El4MTGkrw2RsxPn9uE0k
- G9CfyDOe/gn2LwjgexrijnHd1C9v7i5lEbDnomEE94HOTmouGCkJ+zaqGfiFFlPsiozBBqWZydH
- Flv6trvdnZk06EFlKCL9z1++MherIPILGjYDKV4snFx3kGWR9j1vwx2RtZzMNPRGc5bPAE27V+r
- SA0ePbFr+XVVDY/fWfrCjAUQVjStfFQY1y7fP0uhLConKYfP8XfAAaEvxsWuK5MAwQuk7vMO6nD
- 3N6Jm/CCFOMmGF25pOyAmRkwWG/qEY/5xpMdIIBmnP0G2UQsiV43o1MsQuqHG9ccG4UcPRneTLN
- 5/UxmLDUCN5PZXp8osw==
-X-Proofpoint-ORIG-GUID: GTpKC8A7n8cDuzsWmUo8EBKyQ2VW_BCP
-X-Authority-Analysis: v=2.4 cv=L4sQguT8 c=1 sm=1 tr=0 ts=6981e56f cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=mv6jPIj4YeSnJgRhVR4A:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: GTpKC8A7n8cDuzsWmUo8EBKyQ2VW_BCP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-03_03,2026-02-02_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 malwarescore=0 spamscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 suspectscore=0 lowpriorityscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2602030096
+Content-Transfer-Encoding: 8bit
 
-On 2/2/26 7:19 PM, Mukesh Ojha wrote:
-> On Mon, Feb 02, 2026 at 03:57:32PM +0100, Konrad Dybcio wrote:
->> As sparked by this thread:
->> <20260112151725.2308971-1-mukesh.ojha@oss.qualcomm.com>
->>
->> The current representation of TCSR is wrong.
->>
->> On platforms post and including SM8550, the TCSR had a sub-block in it,
->> containing gate clocks used for distributing the XO output to various
->> consumers. This is what we refer to as TCSR_CC upstream.
->>
->> SM8750 however, is notably different. That same set of tunables had
->> been moved to the TLMM register space. This is made worse, as the
->> sm8750-tcsrcc driver consumes the qcom,sm8750-tcsr compatible.
->>
->> This hardware change had been undone with the generation following
->> 8750.
->>
->> This series attempts to unwind that. It's difficult to merge, both for
->> bindings and functional reasons..
->>
->> I think it goes without saying this breaks backwards compatibility, but
->> it has to be done to represent TCSR at all. The patches are ordered in
->> a least-destructive order..
->>
->> I gave this a quick spin on (remote) hw, the UFS (one of the consumers)
->> still works, but more testing would be greatly appreciated.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Thanks Konrad for taking this forward, while I was also working on your
-> suggestion to make tlmm a clock provider.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-I was under the impression you abandoned that patch, but indeed I
-should have asked first. My intention wasn't to beat you to it, but
-to unblock it. Please accept my apologies.
+All SoCs has multiple resets. Document reset-names property.
 
-Konrad
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+v1-.v2:
+ * Split DTSI patches from bindings
+ * Fix typo maxItems->minItems
+ * Collected tag
+---
+ .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml   | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+index 00c05243b9a4..1a94e396b1b0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+@@ -78,6 +78,16 @@ properties:
+           - description: PFC main reset
+           - description: Reset for the control register related to WDTUDFCA and WDTUDFFCM pins
+ 
++  reset-names:
++    oneOf:
++      - items:
++          - const: rstn
++          - const: port
++          - const: spare
++      - items:
++          - const: main
++          - const: error
++
+ additionalProperties:
+   anyOf:
+     - type: object
+@@ -152,10 +162,14 @@ allOf:
+       properties:
+         resets:
+           maxItems: 2
++        reset-names:
++          maxItems: 2
+     else:
+       properties:
+         resets:
+           minItems: 3
++        reset-names:
++          minItems: 3
+ 
+ required:
+   - compatible
+@@ -187,6 +201,7 @@ examples:
+             resets = <&cpg R9A07G044_GPIO_RSTN>,
+                      <&cpg R9A07G044_GPIO_PORT_RESETN>,
+                      <&cpg R9A07G044_GPIO_SPARE_RESETN>;
++            reset-names = "rstn", "port", "spare";
+             power-domains = <&cpg>;
+ 
+             scif0_pins: serial0 {
+-- 
+2.43.0
+
