@@ -1,78 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0882230F934
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Feb 2026 10:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5103C3E8C47;
+	Wed,  4 Feb 2026 10:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770201365; cv=none; b=lwDeMObSXNshQfTAiL9RJBBhstQqqlIm9gI5mOG7Brm7WPztzB/qcL+etZxMEmTmN9TxMJPGBtRIj2tT8NNGSMXug07PrXRWytNaJ1vMN9TfTdcsu6I1WiPQBf1RhG4sTndX7aRiwNNzpTnN7ZSwjUYhLGEuBOoT8im6GPH/Je0=
+	t=1770201729; cv=none; b=Ea5KtytLg4eDosJCrDZoloRDYgn7NUvFuwTZ6uqsr64Ad5acitHmNwkaaKCjE84tWybmES7XwCqsariPkKYlNEc97Rjd3NWWPGfjZb4D7pjM2/cB4ufUjgzTGrRyHBswJXHC7s7cJLJHvRfcK2QAChHyJBdKK+Imvp79Y+2UTEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770201365; c=relaxed/simple;
-	bh=ptoiRVAlZGzIJyLYt+jTEV9MYD0gUd7D7nxLeNRCiIg=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GA7xdkexb4zz2v5Uit0at3ozonArhETfQPWiRGApISVytI3sB14/vk0pqbdYpJsdA+xyTkAnkazQUUMqwQOH+lw2sq4OYi76PXHsTebmYWFihyiZv6GJjUlKMhaULSEChJVWGwOBHtzcUSARY8QvFaa67V+LgwKPWkFqcNAnkCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqWKQBFc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770201729; c=relaxed/simple;
+	bh=Ds2qJl/hvxPMbtTbj38gU6EH8pS8yF0G1IA1uU0CHaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYAygUAz6oUrrJIsSqzvYlqvJc8PelxGP+bvEenRfw/E9mIAumWaHxwxwOHyx+hUKQwtoY41a50DI+1K/zvFrtUUs2TBfe6Awwt/EBHHz67tFEsXHQGIO9Pby+++pAy83gU59kOnJxYhc61+IiO8wPml8D/HrbowE7IOmOR+lJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZlrCu1Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqWKQBFc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06DCC2BC9E
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Feb 2026 10:36:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZlrCu1Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661B4C4CEF7;
+	Wed,  4 Feb 2026 10:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770201364;
-	bh=ptoiRVAlZGzIJyLYt+jTEV9MYD0gUd7D7nxLeNRCiIg=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=oqWKQBFcDJcd9f1QJy9XjVcA2AhXIvgR3hr3U79caPl44alCys5qm2+XEX3tgyW4l
-	 V+/BErkKPFstKGNeY39aDWJyx7dJi/qgGt+mXizf87eKJmtjjJfT4YnIvmlX/8j3Rn
-	 SdMaQYw/TrdP30BEfT3TjivfQXCLQQmxwQdFFgku8cjEzjqAJzwJFUEAqQ7kKIVdKX
-	 /N0MkioTnzlqoDvPMK2w+bsxSgdDdfM1RzIPxdvKG+kH1MQ7w1RkDHZb0eeRvUuS7G
-	 uqGOckrxqoHj2ACuXx6czvL6LAatrcNr0qsDVrNkNsnr+We6kmxk6lyyJ9cbHs7mmB
-	 ELFLsYKx7VqyQ==
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-124a1b4dd40so2198917c88.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Feb 2026 02:36:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVITCCR5egRkLduVK5OgotZaTzMShl4l8Qkx+/8ubcdWaZtzOT8UfFVcp4eKNLsGlaN9GQcm216mW+K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5BV4ooPoQulbH6B983zT1TtCaMIuf07bbeawt9gQFvu5LChMT
-	WjRPpxHOL9OPifaz7R8WPIgoFHfhSMF70XcEc0B7nq4BJg3BR63AcY3oOm8CIdYwWE5+pmq5lA+
-	yit2kLOSoxO5moLXSsn1NzH7ONmXZlgcAv108qp+XuA==
-X-Received: by 2002:a05:7022:1a85:b0:123:2c98:f6ac with SMTP id
- a92af1059eb24-126f477cf3fmr1038188c88.12.1770201364221; Wed, 04 Feb 2026
- 02:36:04 -0800 (PST)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 4 Feb 2026 04:36:00 -0600
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 4 Feb 2026 04:36:00 -0600
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260203061059.975605-5-tzungbi@kernel.org>
+	s=k20201202; t=1770201728;
+	bh=Ds2qJl/hvxPMbtTbj38gU6EH8pS8yF0G1IA1uU0CHaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eZlrCu1Zp+rQ5zdqT+OLsEBh/PzCRez196cW1vkE2EErYIzO50M9WUJp7tiNyCi73
+	 HXKRVHLoYJ70QbnhUDVGchn4Ca+KMw1Gbdl3naQuzSF60FYL7j36URjEClLe1XtasR
+	 zFe3ZMD8lVS7hFMCsOKU8UPmsi9ekPldZsMxY4SQC6CsnWmRBLGnxn6fYFTkWXmDpx
+	 WGKBxjaoWKBQ+EPVsHP2SOLue9G1PKRpPHCcEnvhtWkkt29YflcBQPOesHnmn8npB0
+	 8w74ArPDS1m/PTqDV3Y5Ol/15VNP2eOOC+OYcIcbkWQYjj05jb/wTT9OtuXCla0EtF
+	 fX6NDwph88Uvw==
+Date: Wed, 4 Feb 2026 10:42:01 +0000
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [GIT PULL] Immutable branch for Regulator and Firmware containing
+ MFD and RTC due for the v6.20 merge window 
+Message-ID: <20260204104201.GB911837@google.com>
+References: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260203061059.975605-1-tzungbi@kernel.org> <20260203061059.975605-5-tzungbi@kernel.org>
-Date: Wed, 4 Feb 2026 04:36:00 -0600
-X-Gmail-Original-Message-ID: <CAMRc=McJjJNsrG7ZfWYQTBb2-8CgV4OVqZKhSFJDw=cTB0r=dA@mail.gmail.com>
-X-Gm-Features: AZwV_QjU2SVHMmU9hsEFQVuFDP83BW1jovz7xlKNYthT1RHWjVgH8VnPNfzupmc
-Message-ID: <CAMRc=McJjJNsrG7ZfWYQTBb2-8CgV4OVqZKhSFJDw=cTB0r=dA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/11] gpio: Ensure struct gpio_chip for gpiochip_setup_dev()
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Jason Gunthorpe <jgg@nvidia.com>, 
-	Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	Dan Williams <dan.j.williams@intel.com>, linux-gpio@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linusw@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
 
-On Tue, 3 Feb 2026 07:10:51 +0100, Tzung-Bi Shih <tzungbi@kernel.org> said:
-> Ensure struct gpio_chip for gpiochip_setup_dev().  This eliminates a few
-> checks for struct gpio_chip.
->
-> Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+Enjoy!
 
-Same comment as patch 3. I don't like seeing both gpio_chip and gpio_device
-being passed to the same function. If you already dereferenced gpio_chip, pass
-it on its own and get the address of the associated devices from its member
-pointer.
+Appreciate that it's close to the merge-window now.  Your call to pull.
 
-Bartosz
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
+
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-for-regulator-firmware-v6.20
+
+for you to fetch changes up to 3a17ba6557e28d5d99b7e3cad31f22ad28a36cc2:
+
+  mfd: sec: Add support for S2MPG11 PMIC via ACPM (2026-02-04 10:37:29 +0000)
+
+----------------------------------------------------------------
+Immutable branch for Regulator and Firmware containing MFD and RTC due for the v6.20 merge window
+
+----------------------------------------------------------------
+André Draszik (8):
+      mfd: sec: Add rtc alarm IRQ as platform device resource
+      rtc: s5m: query platform device IRQ resource for alarm IRQ
+      mfd: sec: Drop now unused struct sec_pmic_dev::irq_data
+      dt-bindings: mfd: samsung,s2mps11: Split s2mpg10-pmic into separate file
+      dt-bindings: mfd: samsung,s2mpg10-pmic: Link to its regulators
+      dt-bindings: mfd: Add samsung,s2mpg11-pmic
+      mfd: sec: s2mpg10: Reorder regulators for better probe performance
+      mfd: sec: Add support for S2MPG11 PMIC via ACPM
+
+ .../bindings/mfd/samsung,s2mpg10-pmic.yaml         | 120 ++++++
+ .../bindings/mfd/samsung,s2mpg11-pmic.yaml         |  88 +++++
+ .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  29 +-
+ drivers/mfd/sec-acpm.c                             | 171 +++++++-
+ drivers/mfd/sec-common.c                           |  62 ++-
+ drivers/mfd/sec-core.h                             |   2 +-
+ drivers/mfd/sec-irq.c                              | 150 +++++--
+ drivers/rtc/rtc-s5m.c                              |  21 +-
+ include/linux/mfd/samsung/core.h                   |   2 +-
+ include/linux/mfd/samsung/irq.h                    | 105 +++++
+ include/linux/mfd/samsung/s2mpg10.h                |  20 +-
+ include/linux/mfd/samsung/s2mpg11.h                | 434 +++++++++++++++++++++
+ 12 files changed, 1098 insertions(+), 106 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s2mpg10-pmic.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s2mpg11-pmic.yaml
+ create mode 100644 include/linux/mfd/samsung/s2mpg11.h
+
+-- 
+Lee Jones [李琼斯]
