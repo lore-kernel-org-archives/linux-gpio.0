@@ -1,157 +1,93 @@
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C80322749;
-	Wed,  4 Feb 2026 16:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B0F346A1E;
+	Wed,  4 Feb 2026 17:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770223416; cv=none; b=OgrQZu5EJE1DvaqlBUATLsW1rXX0GH5xnXbrDQ1kdvFTSaQ4bUPu3C5iLhdVaHoeJXW0CMpLK+2A32MTstyXbeplnGDYF0h8RB/XDGhlEObrdYQgmFxH+Pqa2OLqT2PNMUDYt7FZhvNkcK3lKdNWAV09pqz/UIt0dlij6ohJoGk=
+	t=1770224922; cv=none; b=a11KdJVGDB3OeDOmXpy/OG1AI2aS348jo3WNd9QkeXyemFgGEsyyx5R5tZjlAtr7eW9Hs/iV3/r+27Zql3ajRbM1xy5kTa/m5hGSlLf+fFgy0LMWcGmrHayQk20fytnovQzaP46NUMkZawJP31C9Q3WlSXSIO6fxNslZikroz9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770223416; c=relaxed/simple;
-	bh=gYOW6vEGs06Iu9JZzL4qv7FFmeDRsdCgxQ42GqTb6xs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JX+VRgcroWFJuE4ia8AqxHUhqFTvnPdgT9poI0t4LDYkJCVpPR7HCdoRD0MNoGCwvYyxiIhsKjF1newF9240KAc80Ow5DWtP6dz/GCt3JHECnOeOJQU3ATFj9yDCtG8Dsz9yEvRXsYfhdrSHrWdBxeS093jmZxTMgivnJDh77tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Zu2bSoAM; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1770224922; c=relaxed/simple;
+	bh=D3EyukiCSM+h7n8SYlN3muS0qp32YNJ6NPicl4K9wfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8QURSu5Y/MbYrj+A0IDbEYcovTeijhxm53WWGrgKczMCQWmwveBdfVabTYnOrh3L5YVuCuqBa2HlH0GJ5L4Q8Gcj0AtnkdSuu+Z4+2lRivBB+thXqV4K/6Qv7WSDSTF0B/sSCxYXf1ZdSfv4DEwVNE0AmbFSMkEl3TMJbBj1u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvPpYvUh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Zu2bSoAM"
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 23C1AC002A3C;
-	Wed,  4 Feb 2026 08:43:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 23C1AC002A3C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1770223415;
-	bh=gYOW6vEGs06Iu9JZzL4qv7FFmeDRsdCgxQ42GqTb6xs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zu2bSoAMfZzmNlbc6DBTRjw0KY6juL+AgJbXQOMAkFmAg82cfLTG/maHLb4PD9LL4
-	 v8QPa4O7EEdIYTHJ9VzRW8J693T1R6DWDYnA3GTCjY4IVUh8fjtLihbUrv6ze1PSar
-	 arNDUumTxMSPDhIxfpeUVQXzLRA+ZotEtwKSr5mg=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id C15A31B85C;
-	Wed,  4 Feb 2026 08:43:34 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Doug Berger <opendmb@gmail.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Christophe Leroy <chleroy@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
-Subject: [PATCH v5 2/3] gpio: brcmstb: implement .irq_mask_ack()
-Date: Wed,  4 Feb 2026 08:43:32 -0800
-Message-ID: <20260204164333.1146039-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260204164333.1146039-1-florian.fainelli@broadcom.com>
-References: <20260204164333.1146039-1-florian.fainelli@broadcom.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvPpYvUh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FD3C4CEF7;
+	Wed,  4 Feb 2026 17:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770224922;
+	bh=D3EyukiCSM+h7n8SYlN3muS0qp32YNJ6NPicl4K9wfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YvPpYvUhbMXqrXVDizdhytqcStlYc/UFe2mnGVdczZvS4vNk6mcG7CTV4WDCkEyiS
+	 cOOBGoH+o5v01y+cIqz2JLiTYMsTITxk1j0zUBXqF+y1lvzYW/NA+KkqMx/6jFSwKg
+	 UKpTV1m5JW7gynZaTucoYep6sxMVdFmaktOTUJ4FuC7Wsa5QX4dBBHyL+ZSsxzKuka
+	 Aq6QAH/xxUaZFlaLSmoWxb3rx+wxmrTVDujkS48ElUEgm4SRZJW8CRYzOhX+529gMJ
+	 py40PR5JQH44Bb62fHGbR6YguZF4oesqc14eBl3FGKQ6LprFRNFurU+ZfdiBj7+HA+
+	 t97CYK7FTIi1Q==
+Date: Wed, 4 Feb 2026 17:08:37 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] pinctrl: pinconf-generic: move ..dt_node_to_map_pinmux()
+ to amlogic-am4 driver
+Message-ID: <20260204-claim-chemist-5dbaeabf8b8e@spud>
+References: <20260203-craftsman-battered-3491ff68f462@spud>
+ <CAD++jLn8WOobPaoSrMLitFgFZc_6CH9BQbRy_Gdqq3BLhDXWQg@mail.gmail.com>
+ <aYL9zgEyCarrluvP@black.igk.intel.com>
+ <20260204-crawlers-nacho-d7c9021cdb6f@spud>
+ <aYNWMndBWxxoPABG@smile.fi.intel.com>
+ <aYNXFdxZiO2TMwSy@smile.fi.intel.com>
+ <20260204-credit-precinct-5424c122a79f@spud>
+ <aYNw-k1q_vuP-4DZ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5/IQz1J+r/WX5zO5"
+Content-Disposition: inline
+In-Reply-To: <aYNw-k1q_vuP-4DZ@smile.fi.intel.com>
 
-From: Doug Berger <opendmb@gmail.com>
 
-The .irq_mask_ack() operation is slightly more efficient than doing
-.irq_mask() and .irq_ack() separately.
+--5/IQz1J+r/WX5zO5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-More importantly for this driver it bypasses the check of
-irqd_irq_masked ensuring a previously masked but still active
-interrupt gets remasked if unmasked at the hardware level. This
-allows the driver to more efficiently unmask the wake capable
-interrupts when quiescing without needing to enable the irqs
-individually to clear the irqd_irq_masked state.
+On Wed, Feb 04, 2026 at 06:16:58PM +0200, Andy Shevchenko wrote:
+>=20
+> TL;DR: My point that double dots is confusing and non-standard way to ref=
+er to
+> something which is cut. If not full, ideally it can use triple dots follo=
+wed by
+> underscore
+>=20
+>   pinconf-generic: move ..._dt_node_to_map_pinmux() to amlogic-am4 driver
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Co-developed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/gpio/gpio-brcmstb.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+This looks good to me. Linus, want a resend or will you adapt it
+yourself?
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 4c35ed664f65..7ebf1217f383 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--// Copyright (C) 2015-2017 Broadcom
-+// Copyright (C) 2015-2017, 2026 Broadcom
- 
- #include <linux/bitops.h>
- #include <linux/gpio/driver.h>
-@@ -95,15 +95,13 @@ static int brcmstb_gpio_hwirq_to_offset(irq_hw_number_t hwirq,
- 	return hwirq - bank->chip.gc.offset;
- }
- 
--static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
--				   irq_hw_number_t hwirq, bool enable)
-+static void __brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
-+				     irq_hw_number_t hwirq, bool enable)
- {
- 	struct brcmstb_gpio_priv *priv = bank->parent_priv;
- 	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(hwirq, bank));
- 	u32 imask;
- 
--	guard(gpio_generic_lock_irqsave)(&bank->chip);
--
- 	imask = gpio_generic_read_reg(&bank->chip,
- 				      priv->reg_base + GIO_MASK(bank->id));
- 	if (enable)
-@@ -114,6 +112,13 @@ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
- 			       priv->reg_base + GIO_MASK(bank->id), imask);
- }
- 
-+static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
-+				   irq_hw_number_t hwirq, bool enable)
-+{
-+	guard(gpio_generic_lock_irqsave)(&bank->chip);
-+	__brcmstb_gpio_set_imask(bank, hwirq, enable);
-+}
-+
- static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- {
- 	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
-@@ -135,6 +140,20 @@ static void brcmstb_gpio_irq_mask(struct irq_data *d)
- 	brcmstb_gpio_set_imask(bank, irqd_to_hwirq(d), false);
- }
- 
-+static void brcmstb_gpio_irq_mask_ack(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct brcmstb_gpio_bank *bank = gpiochip_get_data(gc);
-+	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(hwirq, bank));
-+
-+	guard(gpio_generic_lock_irqsave)(&bank->chip);
-+	__brcmstb_gpio_set_imask(bank, hwirq, false);
-+	gpio_generic_write_reg(&bank->chip,
-+			       priv->reg_base + GIO_STAT(bank->id), mask);
-+}
-+
- static void brcmstb_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -471,6 +490,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	priv->irq_chip.name = dev_name(dev);
- 	priv->irq_chip.irq_disable = brcmstb_gpio_irq_mask;
- 	priv->irq_chip.irq_mask = brcmstb_gpio_irq_mask;
-+	priv->irq_chip.irq_mask_ack = brcmstb_gpio_irq_mask_ack;
- 	priv->irq_chip.irq_unmask = brcmstb_gpio_irq_unmask;
- 	priv->irq_chip.irq_ack = brcmstb_gpio_irq_ack;
- 	priv->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
--- 
-2.43.0
+--5/IQz1J+r/WX5zO5
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaYN9FQAKCRB4tDGHoIJi
+0jCDAP9ghQGLq3UEtyqJ3Uy4dfQsMrMGDgMLmeR42TdMuGWY+gD/UQQXM3MG48NG
+YCNfSE4PhthTFEv2fQTF6PByzZmD0Ac=
+=IB54
+-----END PGP SIGNATURE-----
+
+--5/IQz1J+r/WX5zO5--
