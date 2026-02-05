@@ -1,148 +1,144 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6956D3D410E;
-	Thu,  5 Feb 2026 12:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7BF4C97;
+	Thu,  5 Feb 2026 13:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770295603; cv=none; b=f7pZ/F/qWR7bnQ5fgBlhM1O9WRpaebF8YUZtDA2eqsuX85ummFTL4/QpbbXfzcSr3KW07Qf2jP9cZi60jtw9iWgyMs5F2LJOxw3aMDEeTxZ5T3oSMzz9q3/VK/7rFlCFsopI9GL74u88VxiYXOuZ/PjqJDjCmB3b+xv5i0+Blpg=
+	t=1770297123; cv=none; b=amSUqgJGPveXyFz2idFa0uN8t8bjNiuQ1iOT/yYx5h3SSclorsN6J10lC/Z0AKAcvZSCVpNYxKr6tzs1cuRDyaqk8TdDgEPInqiKkYyIOl3FSx7eagMZRuZgF2P284D2/4T+rP70mLOB0+YeJRtx8mpoPxHTiLLTlCDsR1BR5iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770295603; c=relaxed/simple;
-	bh=J3gWYG5AAEMiEsvZWXvK5m0fvYugnByulA0kgmuoMMQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WaCqqkE2iMyDFnjhbHCrLpki/PExEL6cncfmO2KNGvpYNEDg3CoqQp1zl5DjkY3Q4+balOiiK6THDbTiQZw6AcTVB8yXZlWHoPoUpLNHpCjpdTnSJcy9PCcgZWK0gzQx6tvhsQ/8vNbG+VEN78hBRdMscn2w++9X6zjNM2m2BoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MpPfZjQe; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1770297123; c=relaxed/simple;
+	bh=qCXf7nKbLScwQy4osBXfLc9iP6E1Wr1KRNIyHXzudxE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:Cc; b=YjqLlxaVb2vPv92OWcH0n/J+cOhjmf/D7fJmrC8TAPpNFBfxnpSlnESL+h4ADFFvQXwSN4hh8gKMkGwtMuXNOpCXUWcq3emHqNmmCGfvhykj1hrZBi1bGqUQZe8npgEN9r4MSIreDkuNbRToAgEbgfTM9Y4bpYtxJfgdK3bPjMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=npgLFoAW; arc=none smtp.client-ip=194.37.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MpPfZjQe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1770295582; x=1770900382; i=markus.elfring@web.de;
-	bh=oQzgxnp1cEg3TKDwj7p1dkNYW6ReA8OUQ2Xx24EzpKs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MpPfZjQerY6xujD4H7jqEm2yrrrcDVkHtx0bWl8EqHbftwMfFBJ7lnaF3Tdd4WPJ
-	 I2CWlZmeDYsT4j/QCjYLPJ1KLABolmF+vimnAhoFdOAFenTnw0Y9nrNVQtG4vz1ek
-	 m6AcfSFKGasixCdw+iEU6cjpJZK48KYkP1hoSv8YkIGt4EB6r5JVxT4U7BzqQ6pUR
-	 Ju+fUU1Lr2PUHBgMd05HDbovPpWft5HYb8JmomG7J1BTm1MwibiuY+E2AdEt4Czlr
-	 AsZbWK9Jlo2TLEMv2T6Dn3uCZphdYghTT1lN0kV+M1erWeesl7BWK0/UmoII/whNu
-	 9rCxscGHbdot9L856g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.222]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mpl0p-1vTFOF1FIj-00e6X7; Thu, 05
- Feb 2026 13:46:22 +0100
-Message-ID: <e762b191-903a-439f-aa9c-177557f8391c@web.de>
-Date: Thu, 5 Feb 2026 13:46:19 +0100
+	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="npgLFoAW"
+Received: from [194.37.255.9] (helo=mxout.expurgate.net)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=451014665c=fe@dev.tdt.de>)
+	id 1vnytn-007WtQ-KX; Thu, 05 Feb 2026 13:55:55 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <fe@dev.tdt.de>)
+	id 1vnytn-000WoS-2x; Thu, 05 Feb 2026 13:55:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
+	s=z1-selector1; t=1770296154;
+	bh=alup1cXmxDxE54p3dkBAW3FxBmWlZ8yuytC6oXz/m/I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=npgLFoAWpTAVB+mYRvgpOmMhpm6rCrrbZD9tJyGR6FNjy9In5leEuJgX+JSGo5aaH
+	 a4v4kRib4g/d1DwjJrIUvMbmXAr9SaD4EMJvY5rhapY6+sHjw2ysfsJOY2nfjBgfX+
+	 ZLtVXbkjKzEMJQNPOoTsd4ggcwrCbwfWtTRT8aEetLspaj8OaE2dIa/iUA+Vj7SIio
+	 irte/YTTUgsxIn2XDJrCLU6n8qAfdn0CuCmjEo600TmO1KqjUADSpkB1YuF1D5dXKm
+	 pyfjtVj4Gi5emQIfZAyvKHNdeV37MwME0Ej7ZPnRmvp2Vjr7hDADnPie7GzMrU1cOp
+	 /wK3zlVeZMzaQ==
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id A89BB240042;
+	Thu,  5 Feb 2026 13:55:54 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id A2B77240041;
+	Thu,  5 Feb 2026 13:55:54 +0100 (CET)
+Received: from [10.2.3.40] (unknown [10.2.3.40])
+	by mail.dev.tdt.de (Postfix) with ESMTPSA id 8373022826;
+	Thu,  5 Feb 2026 13:55:54 +0100 (CET)
+From: Florian Eckert <fe@dev.tdt.de>
+Date: Thu, 05 Feb 2026 13:55:46 +0100
+Subject: [PATCH 2/2] pinctrl: equilibrium: fix warning trace on load
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chen Ni <nichen@iscas.ac.cn>, linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <brgl@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Yao Zi <ziyao@disroot.org>,
- Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20260205072649.3271158-1-nichen@iscas.ac.cn>
-Subject: Re: [PATCH] gpio: loongson-64bit: Fix NULL check after devm_kcalloc()
- in loongson_gpio_init_irqchip()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260205072649.3271158-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O/FJhaVPGtWCY3y1Is5GdRCHejYVqUkwtuM4d9ARVjszv//MmL6
- KlTJq1x0jTczWTewvNAtg8MK6WPYmwjZGeZs1Y0kmC0vdOsAqPyY7BiQwxthW5Hrx6DaYVo
- 0xLVUFx20ows58ukaVQ2ucf5XYp7wYVAV231zlF0X1kRw2uvgOLzZFHVcBk9ikty1cBKU+X
- JfUlZZeSddZ6GnmPohMvg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:czOEq1LyZJQ=;XOjLxvhGVtwz+4hkUWBxg3eypyT
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260205-pinctrl-equilibrium-v1-2-66909a3b0acb@dev.tdt.de>
+References: <20260205-pinctrl-equilibrium-v1-0-66909a3b0acb@dev.tdt.de>
+In-Reply-To: <20260205-pinctrl-equilibrium-v1-0-66909a3b0acb@dev.tdt.de>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Florian Eckert <Eckert.Florian@gmail.com>,
+	Florian Eckert <fe@dev.tdt.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1770296154; l=3266;
+ i=fe@dev.tdt.de; s=20260205; h=from:subject:message-id;
+ bh=qCXf7nKbLScwQy4osBXfLc9iP6E1Wr1KRNIyHXzudxE=;
+ b=FeqJ5Gtx96tgmNSu5H0o+AjDDtXXGdtlN/NkBG+F1ms0riN8cdqT1bFXVhsmc11rfOkaMlaSu
+ w/+h/umafMfC6bmTCzZ1eVY1ShBLVaf73+4DhfLtpPyzA40QeoYxZOr
+X-Developer-Key: i=fe@dev.tdt.de; a=ed25519;
+ pk=q7Pvv3Au2sAVRhBz5UF7ZqUPNxUwXQ78Jdqu8E6Negk=
+X-purgate: clean
+X-purgate-ID: 151534::1770296155-53DF9330-5582222A/0/0
+X-purgate-type: clean
 
-> Fix incorrect NULL check in loongson_gpio_init_irqchip().
-=E2=80=A6
+The callback functions 'eqbr_irq_mask()' and 'eqbr_irq_ack()' are also
+called in the callback function 'eqbr_irq_mask_ack()'. This is done to
+avoid source code duplication. The problem, is that in the function
+'eqbr_irq_mask()' also calles the gpiolib function 'gpiochip_disable_irq()'
 
-* Were any source code analysis tools involved here?
+This generates the following warning trace in the log for every gpio on
+load.
 
-* See also once more:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/stable-kernel-rules.rst?h=3Dv6.19-rc8#n34
+[    6.088111] ------------[ cut here ]------------
+[    6.092440] WARNING: CPU: 3 PID: 1 at drivers/gpio/gpiolib.c:3810 gpiochip_disable_irq+0x39/0x50
+[    6.097847] Modules linked in:
+[    6.097847] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.59+ #0
+[    6.097847] Tainted: [W]=WARN
+[    6.097847] RIP: 0010:gpiochip_disable_irq+0x39/0x50
+[    6.097847] Code: 39 c6 48 19 c0 21 c6 48 c1 e6 05 48 03 b2 38 03 00 00 48 81 fe 00 f0 ff ff 77 11 48 8b 46 08 f6 c4 02 74 06 f0 80 66 09 fb c3 <0f> 0b 90 0f 1f 40 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
+[    6.097847] RSP: 0000:ffffc9000000b830 EFLAGS: 00010046
+[    6.097847] RAX: 0000000000000045 RBX: ffff888001be02a0 RCX: 0000000000000008
+[    6.097847] RDX: ffff888001be9000 RSI: ffff888001b2dd00 RDI: ffff888001be02a0
+[    6.097847] RBP: ffffc9000000b860 R08: 0000000000000000 R09: 0000000000000000
+[    6.097847] R10: 0000000000000001 R11: ffff888001b2a154 R12: ffff888001be0514
+[    6.097847] R13: ffff888001be02a0 R14: 0000000000000008 R15: 0000000000000000
+[    6.097847] FS:  0000000000000000(0000) GS:ffff888041d80000(0000) knlGS:0000000000000000
+[    6.097847] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    6.097847] CR2: 0000000000000000 CR3: 0000000003030000 CR4: 00000000001026b0
+[    6.097847] Call Trace:
+[    6.097847]  <TASK>
+[    6.097847]  ? eqbr_irq_mask+0x63/0x70
+[    6.097847]  ? no_action+0x10/0x10
+[    6.097847]  eqbr_irq_mask_ack+0x11/0x60
 
+In an other driver (drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c) the
+interrupt is not disabled here.
 
-Regards,
-Markus
+To fix this, do not call the 'eqbr_irq_mask()' and 'eqbr_irq_ack()'
+function. Implement instead this directly without disabling the interrupts.
+
+Fixes: 52066a53bd11 ("pinctrl: equilibrium: Convert to immutable irq_chip")
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/pinctrl/pinctrl-equilibrium.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+index 99596236f4d2b1c0ea280a2bd2cf4be247bc5042..64a55913acf08ed5ce5b27a4d5bb17bf848a8122 100644
+--- a/drivers/pinctrl/pinctrl-equilibrium.c
++++ b/drivers/pinctrl/pinctrl-equilibrium.c
+@@ -64,8 +64,15 @@ static void eqbr_irq_ack(struct irq_data *d)
+ 
+ static void eqbr_irq_mask_ack(struct irq_data *d)
+ {
+-	eqbr_irq_mask(d);
+-	eqbr_irq_ack(d);
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct eqbr_gpio_ctrl *gctrl = gpiochip_get_data(gc);
++	unsigned int offset = irqd_to_hwirq(d);
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&gctrl->lock, flags);
++	writel(BIT(offset), gctrl->membase + GPIO_IRNENCLR);
++	writel(BIT(offset), gctrl->membase + GPIO_IRNCR);
++	raw_spin_unlock_irqrestore(&gctrl->lock, flags);
+ }
+ 
+ static inline void eqbr_cfg_bit(void __iomem *addr,
+
+-- 
+2.47.3
+
