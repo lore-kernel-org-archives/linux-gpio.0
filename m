@@ -1,56 +1,79 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F870632;
-	Tue, 10 Feb 2026 17:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F162C32E68F
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 19:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770745710; cv=none; b=NTbE9VClDi5yTUi1RYVvlfOpMrzW4pc84aBkP78GES22OIwDX0X70ApqQ6KmFRUnj/5C4FTBZqTJjf84XITgV43qTtk874pbFmieNkDA0FlIrDCd16OLabOPKaMxt6vXV8+8uMtLBry2Rz2EtBJq4eV50/P7bb7sM871tbLlQL8=
+	t=1770750654; cv=none; b=uhjRSwOYb0U4kw0GHujdZudL9fxdQorCleByyNUmwrr2tBj8dhFZrar8vIbp35JyJwSnH6HlOGqvvMo7UGAlUcFEehTFnV16Sy7odNaR96E+j/Sj7DrEVjIpUUwv6T+klJ1gHE+Mj35WvlLqPLVffbN9joV3WlBlOyMuMQYKJo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770745710; c=relaxed/simple;
-	bh=lUjwjU7r/37mGB1+K3bxHipqn9HWgCfuZbF3Cr+c9Oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRzcVvTYsk3fMsFBwjpy2IINQixcg9jeV9J1CATfEGOXsIEs2Mrd/xMv4rEj9cssnlJU1jzbbys7eQgJkeKlBpMcu51Eyv4ZT96X6q+YX4kyU5VLz/oT+txhbkoWB91qRDl04TXNscV3rHOFTGFVcT2QOcbnoRC5XS7HSXo3gbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qNlPD0ot; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1770750654; c=relaxed/simple;
+	bh=2bvZWE7twF61uCF0RbEpKOmJhwGSwwSIQdWQwtDsiU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hfTazbul0Fq4y212+7K39pWk1jjbDgJgXDJBN1u/YUh3aM1byrEJ1ivPWwh+EZB99TcLLoiLFCH7ynnr3ZPXXRWPU+itCBGmEzlBcMgHyyIjwr3ITkhVT7nGJh+Wn60AtTBLCo+XIb2iWwBGcpUBrYT2hyMKq+ARQF2Jo6BhLE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g80eRIjv; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qNlPD0ot"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xeAOkTtRwcO+e2SaV7ZKu57U0Jz6k1k1CcRryqfUgcg=; b=qNlPD0otkehOoYaEKrGge/jrak
-	QhJ1Myw82gCtw3rwilHqO7HwFPMgrDuVbaMpqGraieid4jHrDHaUeF2i/7O9IGC+6t5AL9dVshJwH
-	4V7CqdUWghEvACsybzINdoBvcaJ54Nsfh+fDk9ahh2do62/DUDTdHqQDpf/e8xAeMRTQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vprqS-006ruL-NJ; Tue, 10 Feb 2026 18:48:16 +0100
-Date: Tue, 10 Feb 2026 18:48:16 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g80eRIjv"
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-4359a16a400so1143011f8f.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 11:10:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770750651; x=1771355451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LHqbu9P1+Pumy4rK+s102NKjK+R22eZanNFM4YUrXEc=;
+        b=g80eRIjvvWop8WSUIk47kVLCzgsCGz6WQypaQe8O0RVScChidgrgLm+k/H/51YiKem
+         xkEPimJDIR1nvbaauO7HCIQQJUl1OxaUG5sVUeN/NdftC/p15t5ckpiLL8g63bG5L7LN
+         H8cE1YwK4p7c6oazqgqfKExQW0irm4HBFMYaeAQRqpogYuJ6Sy8kHJqkDJywfrNexd0r
+         ZjUbavKzcEGk3Rs4zp11FjaAs4eogI/0WlwHe/L8ZrMatCkLRUmw1qxKChbmK35NwFTQ
+         KIQl4VGXqh7prJsK6Eb7MyGy/lwsJzXoE243qAoJPy+0Gr0L9FWVykGGcbym9rCPEfAF
+         /mAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770750651; x=1771355451;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LHqbu9P1+Pumy4rK+s102NKjK+R22eZanNFM4YUrXEc=;
+        b=KB2S/J5feKZ4u0W7fIypsa8dSPHcZoJtpcHxQvOFgqIUmcuRlaO6iq0x3ppXgjJ36+
+         J3exwpuavoCNYd7OxF2z/GmnZQcX9YmDd6oVRbWbjUq6wa1CKxwD5CXQGUuMAPoSNFtP
+         0hPET92FuGiIr6uroIBuz4bRuxp5iU1awofDR3hFq+XIABCDj04/nWaAVoUtXU1+SXsw
+         g9RtVPldU6ArWyfYygroOGj25eW8mtwNCn2UsRvmDVOCCVVCsf3kQZm1jn5VmWT14c/T
+         kAy/JY0xeTzpGtnU9bfG+WR9gJs82SlQv1LWfYDy1K/QxDufJo0mNmwgi4gmvjE5jgV2
+         CcIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4+9Y7m18QOmc28Pjv2hUnPszpVNVUhaWYispDZv8hZSuGzJP/YN9pwZndBSQ9NdPR9WWvdLY8/khJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPQ5MhNaPI/YtWtlQppRb9V6ttJmSWDU9TW9ncv7WvmLGuXIOs
+	CF6HULyQ5I4O0x+sSDL2WN4KCHAL6FU1WHxaKcGoqIUsD2N62KwkZcH47dbUa42FlKs=
+X-Gm-Gg: AZuq6aJUDvW6QBHgN0tLUzSUPz3OsUhsn3PGhHsH5qoLDbEF5gldAm/OfNnuhIRPqf0
+	vZZsPYqn/Usm64mSwOeCsOM5qfHJTYNryb4kPFoMlArzuunrp7202EDvwvajTgMI+Xu034e0SEy
+	ekEzag+J+pCTw+PEFTcpIYTjc7QMrLhXf0jV6/RtN4hAsuSkBDr/oF6M56G40A0an15lW/za81x
+	m8RZADAm1JcP8EcqTEN2ttslfW26z5+geoXgxN4KIGdjcdUhkRDF0EDeHCzaKZNxJhXz0KwSW4l
+	E9hTUzD40OmL9y9NZiSvktOEd1leG1Klh0lc/5AqG17YHdBDFsoi55kMwYLEkAAfVdjftGU6B+d
+	iZeCiy29C7FfPos4r4GC7MYVvH1KU02cHExJUmxMqJom5EkBSIo5q1CpPVn2fj1NEqkv8dhks8n
+	ly82vxyYUkZWDc57+osMxC4sLKDfPi
+X-Received: by 2002:a05:6000:288b:b0:435:e493:25f with SMTP id ffacd0b85a97d-436293818d5mr22821986f8f.34.1770750651166;
+        Tue, 10 Feb 2026 11:10:51 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436309ed238sm35212929f8f.19.2026.02.10.11.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 11:10:50 -0800 (PST)
+Date: Tue, 10 Feb 2026 22:10:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-imx@nxp.com,
-	arnaud.pouliquen@foss.st.com, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v7 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <5158fda4-6bf6-45b8-bbe0-8b469066d0ef@lunn.ch>
-References: <20260210170814.406883-1-shenwei.wang@nxp.com>
- <20260210170814.406883-4-shenwei.wang@nxp.com>
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Arnd Bergmann <arnd@kernel.org>, Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] gpio: swnode: restore the swnode-name-against-chip-label
+ matching
+Message-ID: <202602110128.BInRI9un-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -59,118 +82,81 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260210170814.406883-4-shenwei.wang@nxp.com>
+In-Reply-To: <20260210094806.38146-1-bartosz.golaszewski@oss.qualcomm.com>
 
-> +#define GPIOS_PER_PORT		32
+Hi Bartosz,
 
-Maybe this should be from DT, using "ngpios". The Documentation says:
+kernel test robot noticed the following build warnings:
 
-  Optionally, a GPIO controller may have a "ngpios" property. This
-  property indicates the number of in-use slots of available slots for
-  GPIOs. The typical example is something like this: the hardware
-  register is 32 bits wide, but only 18 of the bits have a physical
-  counterpart. The driver is generally written so that all 32 bits can
-  be used, but the IP block is reused in a lot of designs, some using
-  all 32 bits, some using 18 and some using 12. In this case, setting
-  "ngpios = <18>;" informs the driver that only the first 18 GPIOs, at
-  local offset 0 .. 17, are in use.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Just because your hardware has 32 does not mean every vendor does.
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpio-swnode-restore-the-swnode-name-against-chip-label-matching/20260210-175012
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20260210094806.38146-1-bartosz.golaszewski%40oss.qualcomm.com
+patch subject: [PATCH] gpio: swnode: restore the swnode-name-against-chip-label matching
+config: nios2-randconfig-r071-20260210 (https://download.01.org/0day-ci/archive/20260211/202602110128.BInRI9un-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 8.5.0
+smatch version: v0.5.0-8994-gd50c5a4c
 
-> +struct gpio_rpmsg_head {
-> +	u8 id;		/* Message ID Code */
-> +	u8 vendor;	/* Vendor ID number */
-> +	u8 version;	/* Vendor-specific version number */
-> +	u8 type;	/* Message type */
-> +	u8 cmd;		/* Command code */
-> +	u8 reserved[5];
-> +} __packed;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202602110128.BInRI9un-lkp@intel.com/
 
-I still think this should be a clean design from scratch, and you
-modify your firmware.
+smatch warnings:
+drivers/gpio/gpiolib-swnode.c:62 swnode_get_gpio_device() error: we previously assumed 'gdev_node' could be null (see line 32)
 
-This data structure is 10 bytes. Are these all needed for a generic
-GPIO controller? version, type, command and one reserved byte seems
-like enough, and it is then 4 bytes, so there is no need for __packed.
+vim +/gdev_node +62 drivers/gpio/gpiolib-swnode.c
 
-> +struct gpio_rpmsg_packet {
-> +	struct gpio_rpmsg_head header;
-> +	u8 pin_idx;
-> +	u8 port_idx;
-> +	union {
-> +		u8 event;
-> +		u8 retcode;
-> +		u8 value;
-> +	} out;
-> +	union {
-> +		u8 wakeup;
-> +		u8 value;
-> +	} in;
-> +} __packed __aligned(8);
+b7b56e64a345e7 Bartosz Golaszewski 2023-09-27  26  static struct gpio_device *swnode_get_gpio_device(struct fwnode_handle *fwnode)
+e7f9ff5dc90c38 Dmitry Torokhov     2022-11-11  27  {
+b7b56e64a345e7 Bartosz Golaszewski 2023-09-27  28  	const struct software_node *gdev_node;
+b7b56e64a345e7 Bartosz Golaszewski 2023-09-27  29  	struct gpio_device *gdev;
+e7f9ff5dc90c38 Dmitry Torokhov     2022-11-11  30  
+b7b56e64a345e7 Bartosz Golaszewski 2023-09-27  31  	gdev_node = to_software_node(fwnode);
+6774a66d0e103d Bartosz Golaszewski 2025-12-15 @32  	if (!gdev_node)
+216c1204757190 Bartosz Golaszewski 2025-11-20  33  		goto fwnode_lookup;
 
-This then becomes 8 bytes, so there is no need for __packed or
-__aligned(8).
+gdev_node is NULL
 
-I don't want to force this, it is something i think which should be
-discussed. Do we adopt your design, which is not so nice, but at least
-has one working implementation, or do we do a clean design?
+e7f9ff5dc90c38 Dmitry Torokhov     2022-11-11  34  
+9d50f95bc0d5df Charles Keepax      2024-04-16  35  	/*
+9d50f95bc0d5df Charles Keepax      2024-04-16  36  	 * Check for a special node that identifies undefined GPIOs, this is
+9d50f95bc0d5df Charles Keepax      2024-04-16  37  	 * primarily used as a key for internal chip selects in SPI bindings.
+9d50f95bc0d5df Charles Keepax      2024-04-16  38  	 */
+9d50f95bc0d5df Charles Keepax      2024-04-16  39  	if (IS_ENABLED(CONFIG_GPIO_SWNODE_UNDEFINED) &&
+6774a66d0e103d Bartosz Golaszewski 2025-12-15  40  	    gdev_node == &swnode_gpio_undefined)
+9d50f95bc0d5df Charles Keepax      2024-04-16  41  		return ERR_PTR(-ENOENT);
+9d50f95bc0d5df Charles Keepax      2024-04-16  42  
+216c1204757190 Bartosz Golaszewski 2025-11-20  43  fwnode_lookup:
+e5d527be7e6984 Bartosz Golaszewski 2025-11-03  44  	gdev = gpio_device_find_by_fwnode(fwnode);
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  45  	if (!gdev)
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  46  		/*
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  47  		 * FIXME: We shouldn't need to compare the GPIO controller's
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  48  		 * label against the software node that is supposedly attached
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  49  		 * to it. However there are currently GPIO users that - knowing
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  50  		 * the expected label of the GPIO chip whose pins they want to
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  51  		 * control - set up dummy software nodes named after those GPIO
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  52  		 * controllers, which aren't actually attached to them. In this
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  53  		 * case gpio_device_find_by_fwnode() will fail as no device on
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  54  		 * the GPIO bus is actually associated with the fwnode we're
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  55  		 * looking for.
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  56  		 *
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  57  		 * As a fallback: continue checking the label if we have no
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  58  		 * match. However, the situation described above is an abuse
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  59  		 * of the software node API and should be phased out and the
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  60  		 * following line - eventually removed.
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  61  		 */
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10 @62  		gdev = gpio_device_find_by_label(gdev_node->name);
+                                                                                                 ^^^^^^^^^^^^^^^
+Unchecked dereference
 
-> +static int gpio_send_message(struct rpmsg_gpio_port *port,
-> +			     struct gpio_rpmsg_packet *msg,
-> +			     bool sync)
-> +{
-> +	struct gpio_rpmsg_info *info = &port->info;
-> +	int err;
-> +
-> +	reinit_completion(&info->cmd_complete);
-> +	err = rpmsg_send(info->rpdev->ept, msg, sizeof(struct gpio_rpmsg_packet));
-> +	if (err) {
-> +		dev_err(&info->rpdev->dev, "rpmsg_send failed: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	if (sync) {
-> +		err = wait_for_completion_timeout(&info->cmd_complete,
-> +						  msecs_to_jiffies(RPMSG_TIMEOUT));
-> +		if (!err) {
-> +			dev_err(&info->rpdev->dev, "rpmsg_send timeout!\n");
-> +			return -ETIMEDOUT;
-> +		}
+4a61b0b6de0480 Bartosz Golaszewski 2026-02-10  63  
+b7b56e64a345e7 Bartosz Golaszewski 2023-09-27  64  	return gdev ?: ERR_PTR(-EPROBE_DEFER);
+e7f9ff5dc90c38 Dmitry Torokhov     2022-11-11  65  }
 
-I _think_ you need to handle negative values of err. It looks like
-do_wait_for_common() can return -ERESTARTSYS;
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-> +static struct gpio_rpmsg_packet *gpio_setup_msg_header(struct rpmsg_gpio_port *port,
-> +						       unsigned int offset,
-> +						       u8 cmd)
-> +{
-> +	struct gpio_rpmsg_packet *msg = &port->gpio_pins[offset].msg;
-> +
-> +	memset(msg, 0, sizeof(struct gpio_rpmsg_packet));
-> +	msg->header.id = RPMSG_GPIO_ID;
-> +	msg->header.vendor = RPMSG_VENDOR;
-> +	msg->header.version = RPMSG_VERSION;
-> +	msg->header.type = GPIO_RPMSG_SETUP;
-> +	msg->header.cmd = cmd;
-> +	msg->pin_idx = offset;
-> +	msg->port_idx = port->idx;
-
-Why is a function called gpio_setup_msg_header() setting things
-outside of the header?
-
-> +static int rpmsg_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-> +{
-> +	struct rpmsg_gpio_port *port = gpiochip_get_data(gc);
-> +	struct gpio_rpmsg_packet *msg;
-> +	int ret;
-> +
-> +	guard(mutex)(&port->info.lock);
-> +
-> +	msg = gpio_setup_msg_header(port, gpio, GPIO_RPMSG_INPUT_GET);
-> +
-> +	ret = gpio_send_message(port, msg, true);
-
-If gpio_setup_msg_header() does what it sounds like it should do, what
-is setting up the message body before you send the message?
-
-	Andrew
