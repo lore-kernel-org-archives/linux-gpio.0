@@ -1,77 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7787F15624B
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 16:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75579389E1A
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 16:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770739352; cv=none; b=Bk6C29p0AfTRkaTLLKHtgorjUOyb7KfCLp8/HAY4S0A/vvnd6cwrGftqZeTxWOAPkoNCx9eKIFpB2k+qCgerLuFDAPKCWa69MGgO/c3qwYWTf81pIfhJ97cyuzuY/ahxHDujFEpcg8X1Nf2bzlwh0pfqSRCPzHy+fs3Xj1ApQv0=
+	t=1770740696; cv=none; b=g24UJFyjCZpusxuJux+0DqMRI/5rhWIas7TCSwZe6anb8WEeNs1MrL4KH8N+7UqWH4CvjLNr8yb7Gu4Y1FrIzNYZFPcGJXppcl750Dsiv6nODUvZnQWBeQAcByVZOFmxoxVc0lSSM4eSpg51u2pGXpslgh8ilI2jTbKaEBSgrvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770739352; c=relaxed/simple;
-	bh=fec3McZNvmJ47b77yyWd0YxDuShcKCVYivhxRV31paQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tu4TvvNupX+FyTugzYdfkFjw/hg3Ecd+IT/VZsiv16SxyV2ThKhz2RYhbGzteAamX9DAiESQWrBW4nctQ5DaaZEh7Dq+a6cKQ0Q8SEjhS/ZCFuromflgvB0NoLyi/2h3a8glOHeaeQ63QlgxQCIiDdSnKIhpRe3Rvp6KsIg5mmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVOIEg6+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770740696; c=relaxed/simple;
+	bh=/Mh5W1nog8AvncmOU8xAQYxpIsKMJy89rOS8qySjzl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kEpWN3pfYGnYPmgRa/ww+WiqyPZd904g8NFkOYskqm3+4JGgpMdInySIdInp5+Gxz+c4fC5+c/KYdvXISQJ+SZF/odBOoa3vZvcNmELamPDIKGXTTLf4Hg4x+KJGNkPeE56Rf/CW7e9BTuySne4XonqrkCigDFvmLoZkyzam4m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVhgTGdM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVOIEg6+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D2ADC116C6;
-	Tue, 10 Feb 2026 16:02:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVhgTGdM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB9AC19425
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 16:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770739352;
-	bh=fec3McZNvmJ47b77yyWd0YxDuShcKCVYivhxRV31paQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=QVOIEg6+gMBzSIyTk2vLkdFeRAPNwNP4l9bm/Wvri9CaCcPQ8PdiOkPmwRuimHB7L
-	 7t8MnXdd25EqATAIGhxrdxwXzOcY7vjxw+UQlcc+rKXew1CuVJO1CoAfkDlEmqspGE
-	 bH/2ujiXDQbSrU4zcrIChc472FBVLmhlBe7TewYTKeX5qgS6r8jbE8ZJFoP3y2ZH0w
-	 o56BSm5ygRXq2F5udW76SuaB0hxsz8PU1hxW3ZX7oyyhfHltwN+tcGCQ4lLAfq8ogV
-	 Iw8W90LiOQhZXGWDvEsLTtcX84Oow5Vw2X7fGC3PnMdIJORM6Ybyglfhii/pF6qtTi
-	 VXFbr5KPWGn3w==
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Feb 2026 17:02:29 +0100
-Subject: [PATCH] pinctrl: Fix spelling problem
+	s=k20201202; t=1770740696;
+	bh=/Mh5W1nog8AvncmOU8xAQYxpIsKMJy89rOS8qySjzl0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UVhgTGdMS1MFnJfWUdSaTW5/+6vNPykqvoomFFFex36uqS8ZzI/jWOIQNT4T3hBo1
+	 8SJFMyuikn9JUZXv5H89QM+D9pSVsm/vNtxUgNHVJlbTkYZbemB5CJxObxOtRDj658
+	 x4xFWRzxyT5k/TS4g7TTEpH1jogHqLh9TQ1v0IHhkU2kiZW/sXQb7uTXnn0ouse5WD
+	 T30LjV7gg93mQLE4CYP0t1Vcmg40Z52xIbC/TMSeRI/XJMlv+Zd7KZcU9SIKosrCjb
+	 Skj29aDBGrEcsCgYobISFg8ZhaGNbul4peP9LatX2mJmZ6E8Tck6lkhDaxP1A/5Ny3
+	 adFcOUNvoBW0A==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-59dcdf60427so1085162e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 08:24:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXBeHSgsKDOCxPCzDPVw/C0AWZvlStLr0og0TnVPlH/6bI3IXHLpJezD0t+mPrrz98v8nrMrujbydlB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLs1FBTUuIJIoi8b3p0guZ969eVk94iu8xZDnsyqkUpxKkhiGb
+	N0Q/0JzYkDATTKI0Gm+22o/PnYjZmylYtBEe+pngr2rHCvTY3XqJE801lhIZkhZpAKlQRzQZnfh
+	emjye1lTw8W7aD9Ueka9FEFeKYwffEs4IrGj6qG65pg==
+X-Received: by 2002:a05:6512:39d2:b0:59d:dea0:34f5 with SMTP id
+ 2adb3069b0e04-59e45161caamr4762458e87.36.1770740694696; Tue, 10 Feb 2026
+ 08:24:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260210-speling-fix-v1-1-c980b9bf873c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MQQqAIBAAvyJ7bkEtgvpKdDDdbCFMXIhA+nvSc
- QZmKggVJoFZVSh0s/CVGphOgT9cioQcGoPVdtTWaJRMJ6eIOz+4ucl7E4bg+wCtyIWa/m/L+r4
- fDYQSk10AAAA=
-X-Change-ID: 20260210-speling-fix-ba9cc1d4dc3d
-To: lijiazi <jqqlijiazi@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-X-Mailer: b4 0.14.3
+References: <20260210-speling-fix-v1-1-c980b9bf873c@kernel.org>
+In-Reply-To: <20260210-speling-fix-v1-1-c980b9bf873c@kernel.org>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Tue, 10 Feb 2026 17:24:42 +0100
+X-Gmail-Original-Message-ID: <CAMRc=Mc=GgJNzYaGtSyY+fUpDXUAe49Kn9Te_x36i2srMTVN5A@mail.gmail.com>
+X-Gm-Features: AZwV_QjmLYUf9qAPrp-DMPXtXL2auzKUUyl6skGwmaLTNv1hBJ8Et6gWMmWjAb0
+Message-ID: <CAMRc=Mc=GgJNzYaGtSyY+fUpDXUAe49Kn9Te_x36i2srMTVN5A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Fix spelling problem
+To: Linus Walleij <linusw@kernel.org>
+Cc: lijiazi <jqqlijiazi@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The grammar is off. This fixes it.
+On Tue, Feb 10, 2026 at 5:02=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
+rote:
+>
+> The grammar is off. This fixes it.
+>
+> Fixes: 6e4f3db8dfcf ("pinctrl: just return if no valid maps")
+> Signed-off-by: Linus Walleij <linusw@kernel.org>
+> ---
 
-Fixes: 6e4f3db8dfcf ("pinctrl: just return if no valid maps")
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
- drivers/pinctrl/devicetree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 0b7f74beb6a6..5b3904d39e3b 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -175,7 +175,7 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 		 * return.
- 		 */
- 		dev_info(p->dev,
--			 "there is not valid maps for state %s\n", statename);
-+			 "there are no valid maps for state %s\n", statename);
- 		return 0;
- 	}
- 
-
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20260210-speling-fix-ba9cc1d4dc3d
-
-Best regards,
--- 
-Linus Walleij <linusw@kernel.org>
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
