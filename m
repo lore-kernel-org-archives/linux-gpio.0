@@ -1,143 +1,152 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EDE17ADE0
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2026 03:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E412134F255
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2026 03:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770780971; cv=none; b=g1ic/6onsG/o99FrNdcNlXKz+lqVFKICx/ZSnTttqUxHTakhNDiu9qElALiB8G9b4gnmkNOwiE8lDQ6bGJn8uDpDgyaFDpl2jvdiioQ9sBZFVXCWxtpcxMWuChW6XFgDg1jvBnS+5GiKWIzv+SHArWLgTAgYf7t5j3rPh6UBUfg=
+	t=1770781791; cv=none; b=FU5GLon9yBsHf/Dk2at0uGcMUfKr0Omh3VT6hZ/MeoNUpUJZ2MVswNi6eL4M461iEt682dbc4mxY+01jB/PKU8SSUTVpwu7Wk0gftg4+bMbW6c42ZWS+z2kviaGFx0eOkCky+zFqBBFS0ESEWp2xB+YUwunGm5r6wzEwoc7oJXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770780971; c=relaxed/simple;
-	bh=Vwf6MwPNxwf5qH9YPjWuQA3HO9ZAlpcmhn5ASXwPvWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQv+SNn9Tteh+31oWVFi/69Bc4Lb/QhVlIoIOjhbAlll4Z2LdyAcpKM6L4pElCtwOg6Oj1NtQvvqlL5LrUzt+PN0KpWcd12pHgUVRY9RDvPs105Qb5yFF4B/h/QUdUJrQIfj+ppMTxfN3phkmq5cVtHLF9/mawbPa7nhu+/oZn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qsgs8ycv; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770781791; c=relaxed/simple;
+	bh=Jy0ltPXhz9tRco4ib1CKhZ6LDLJXYw+nypbUadGqQTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JwgOg5MBAqxai4zpfQD1dyTKiWpRnealAPrIKgagG+3qadqcdrRV1dQZFN6mjeSPDTAv2nezJrktP3DuuNgADFXsrUjCQCEwuwEXtg1nHY35yYbcxi4Go5plGnRGEGDf80bKLQ/zGn2UVOqplWyn7FEwtb7nMdVokHyeLEpmFTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGYRrDWD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qsgs8ycv"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-35621da1a7dso1029696a91.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 19:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770780969; x=1771385769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6LkflCyXtk3W49ffamwBiKJAxUhYydXMVu3kci/fYZA=;
-        b=Qsgs8ycvPs4AhxPj4kir1Y7rima4YTmku0N1sICZTTZfRkPZqGrBl9iEd21PvsBIu5
-         mnxpxSUwzSmBfOkgweMB9AX4QE2MjhIG+ptomuV/kegEjyYKXTgimiKlDGsX3lS4vvdk
-         o+PQNy/eVl63biTmI1XMlzAKKQAzsY4bUkB/b4noLRUlEx/mIrDHntHGUM8nffQAC/Xy
-         sJGdPquULXW73CQuPxt4luXy/HzmwpQNsp6stfw3XrVQ5jHUmURAlIMNOTKZSCxKMBid
-         EygXpKgEqz5VXzojck+SvkgwAvKgbruHnGmXv8tjYBEdo5NJMLygzBNWQFlvEwcKnCv9
-         K7bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770780969; x=1771385769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6LkflCyXtk3W49ffamwBiKJAxUhYydXMVu3kci/fYZA=;
-        b=deQioehcu10gYs+mLBlKUlfjfpPZJ7VidSo3zNgcLMRpzCLin7MIQHq47npe+BI2kg
-         nLTF3XOGHhN90l8xj0jju2WCDV22Pb9cVCD6yRaE/GGTipB9yU9SwpkF+eA4c5nxHzXM
-         JiQiIWvNgGRxIziCNh8AB/lyA5mIQRJXStpGg9X69kewhaiAsdJvhvJZGRR1K2gJoJ1U
-         gh/U5dHAERH7+2DfADbqBkg/P9H7LjMIgI4txdCiZScP+u0zfCITrY4PHIvki21PdI13
-         q+RgPVCI3Ew8Vfz8cV+lHr+3B9rhSxOCojRHrFrs0fwus5ATN53WNdDLi3jxOb/PEQUQ
-         bU3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaBdpHmmiiM3Yp64u8oLcmZzenODbG4feQFqYKIJRoxcM487De0qvXshA9aPaR14Mdk/u67LTSFRVw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL52T5WgwoHbiWmX8xov5JQsuySWkyc0AtKXGG5mdphqhfTr2i
-	RrrwpgftRvARDt95WJLP9EkItI9u2uOUg/lfSo+0YE0yK4Yw8FYyjN0x4Btl1Q==
-X-Gm-Gg: AZuq6aL5fwEKdZq6B60C9BzprAWSsikKjLvmzNWaHy5qFLr0A2QQrG2KaqVB+3//rqx
-	lw8aMemOHeLGRlY3ponRY0BuxgCM9QkGzLJPIaWK2kofREVviVN+xjQZ2ATw3lPnyEftBceRRHt
-	T4OFZ8q+oapUMdAm+PHu2gRDbO0HhyOWjkENi98VBC/UCBq3DR4h7czjmIu/S6RCxfQkmpFK/m5
-	csDIF5/rEDZtr3EnWBCjYXOeF/KHsXl/cNK4KTCCQrGN9XjNufbR5GSSb5gww7KEB54Yq6S+nqd
-	j3MZqal+Q/+uxWqesZV2bDiRW870XjJPsrR1Fj3YhblYhD3Qcd8OBl1/U5sxHUjQHgwM4DXJJDg
-	w843Fpke/QDGa4SKpBVRcL5fdSFz/nBIxEmuUio7KjXtjp0wU2Q4+7GkuTfplNre4q84P9rwjyd
-	ias3HqK8jKxrOEIFKEvOb8wOHJjWaT7RT4icpWyBNAp+bYNxktlqYpuD1URvkYstFS03U5remsf
-	V3uPyk8d0Bha0Y=
-X-Received: by 2002:a05:620a:28d6:b0:8c6:ca30:fbe9 with SMTP id af79cd13be357-8caeeb510dcmr2216238785a.15.1770775325833;
-        Tue, 10 Feb 2026 18:02:05 -0800 (PST)
-Received: from localhost (bras-base-toroon21-grc-75-184-144-58-243.dsl.bell.ca. [184.144.58.243])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b0bc2d5sm11981085a.10.2026.02.10.18.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 18:02:05 -0800 (PST)
-Date: Tue, 10 Feb 2026 21:02:42 -0500
-From: Richard Acayan <mailingradian@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: qcom: Add SDM670 LPI pinctrl
-Message-ID: <aYvjQjnBk9B5usOk@rdacayan>
-References: <20260210021109.11906-1-mailingradian@gmail.com>
- <20260210021109.11906-2-mailingradian@gmail.com>
- <4f89cc2a-6e30-4ee3-bb95-f2df25b5b88f@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGYRrDWD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC522C2BC86
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2026 03:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770781790;
+	bh=Jy0ltPXhz9tRco4ib1CKhZ6LDLJXYw+nypbUadGqQTs=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HGYRrDWD6/LORoYvdtWxpamKunatE1qHTT8fQbZLwnwzZ+rob6DQ4VvfrF06BRfS2
+	 23Pd+DftXcWs/kqdEHIXw5zmTJK53t3DKqFfI0uVLPoy5cbIGBmXVVYFpDQpLzQ/ch
+	 INjAQ+FGVRYR4Y1vZegFG8r71QE7xIiNJHBddHXeb2uN9CGGf7ZmWM9LvPAEo98lWi
+	 fVVIfh7S0jdTJclgGjmFk8B3l2PSE3z4mIleDh8Ixy3fP5lxSIa4P1uRrrG2fLfNog
+	 8PNiqoaRBX3HQzMIo9vPTvmFzrvmVBRQGZHuVq7ReDEnGyopxM8zGaMSX/g6iXQEzJ
+	 ASadz2OhBwvCg==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59e5c540b9cso559069e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 19:49:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV+aFD8OfawGmmelfpi2OEr3KCBQrUjmGtH3v5PVgajnRsNOi2EacHPgtF8DUZoyjIBX8NOI+rJavkV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Ahtj7rcJu7GH6kmcdHbzm4eyfPLH//vEEHigCC3B2MKgVetn
+	ABuYsEdQz9TRqC8Bff2dE1FXIyX57acIC/CqlCmyBhAgBfIIyu6HQJbyiGVi+uzwNsXQNyXJYRs
+	iKQu9HFcPsunnd5qmdVS0ZhaK47hd+JU=
+X-Received: by 2002:a05:6512:3ba4:b0:59e:38c7:b372 with SMTP id
+ 2adb3069b0e04-59e450437afmr4669513e87.6.1770781789020; Tue, 10 Feb 2026
+ 19:49:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f89cc2a-6e30-4ee3-bb95-f2df25b5b88f@kernel.org>
+References: <20260211033249.2770281-1-james.hilliard1@gmail.com>
+In-Reply-To: <20260211033249.2770281-1-james.hilliard1@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 11 Feb 2026 11:49:36 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64TYWbvs7mmpa87X28WWQpTi7O+VZSz-x8GmGhyadBegQ@mail.gmail.com>
+X-Gm-Features: AZwV_QhPOLTZNzx5G_KENa0ppJq8t642Pn8F0o2YJqb-P0Bn-8LQi4bIpuV6-jg
+Message-ID: <CAGb2v64TYWbvs7mmpa87X28WWQpTi7O+VZSz-x8GmGhyadBegQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] pinctrl: sunxi: add GPIO get_direction callback
+To: James Hilliard <james.hilliard1@gmail.com>
+Cc: linux-sunxi@lists.linux.dev, linux-gpio@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 10, 2026 at 08:41:32AM +0100, Krzysztof Kozlowski wrote:
-> On 10/02/2026 03:11, Richard Acayan wrote:
-> > Add the pin controller for the audio Low-Power Island (LPI) on SDM670.
-> 
-> Subject: Missing "LPASS" before LPI. I really thought you just add TLMM...
+On Wed, Feb 11, 2026 at 11:33=E2=80=AFAM James Hilliard
+<james.hilliard1@gmail.com> wrote:
 
-Added, but does this extend to the other patches as well?
+Ah, you beat me to it.
 
-> > 
-> > Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-> > ---
-> >  .../qcom,sdm670-lpass-lpi-pinctrl.yaml        | 81 +++++++++++++++++++
-> >  1 file changed, 81 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm670-lpass-lpi-pinctrl.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-lpass-lpi-pinctrl.yaml
-> > new file mode 100644
-> > index 000000000000..125f365d11fa
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-lpass-lpi-pinctrl.yaml
-> > @@ -0,0 +1,81 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/qcom,sdm670-lpass-lpi-pinctrl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm SDM670 SoC LPASS LPI TLMM
-> > +
-> > +maintainers:
-> > +  - Richard Acayan <mailingradian@gmail.com>
-> > +
-> > +description:
-> > +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
-> > +  (LPASS) Low Power Island (LPI) of Qualcomm SDM670 SoC.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qcom,sdm670-lpass-lpi-pinctrl
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: LPASS LPI TLMM Control and Status registers
-> > +
-> 
-> Hm, no clocks? In most designs there has to be HW macro or HW codec
-> vote. I see SDM660 does not have it either, but I think this might be
-> exactly the same mistake.
+> Implement sunxi_pinctrl_gpio_get_direction() and wire it into
+> the sunxi gpio_chip setup.
 
-No clocks for the pin controller, unless the ADSP enables them on its own.
+Can you also mention that without this, calls to gpiochip_get_direction()
+cause a big warning?
 
-I see other clocks required for full sound support (including some
-board-specific codecs), which are unrelated:
-- INT_MCLK_0
-- PRI_TDM_IBIT
-- SEC_TDM_IBIT
-- INT0_MI2S_IBIT
-- INT3_MI2S_IBIT
+> The new callback reads the pin mux register and compares the mux
+> value against the pin descriptor gpio_in and gpio_out functions
+> to report GPIO_LINE_DIRECTION_IN or GPIO_LINE_DIRECTION_OUT.
+> If the pin is muxed to irq, report it as input.
+>
+> Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 32 +++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
+i/pinctrl-sunxi.c
+> index 0fb057a07dcc..424f23be27b2 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -995,6 +995,37 @@ static int sunxi_pinctrl_gpio_direction_output(struc=
+t gpio_chip *chip,
+>                                             chip->base + offset, false);
+>  }
+>
+> +static int sunxi_pinctrl_gpio_get_direction(struct gpio_chip *chip,
+> +                                           unsigned int offset)
+> +{
+> +       struct sunxi_pinctrl *pctl =3D gpiochip_get_data(chip);
+> +       struct sunxi_desc_function *in, *out, *irq;
+> +       u32 reg, shift, mask, val;
+> +       u16 pin =3D chip->base + offset;
+> +
+> +       in =3D sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "gpio_i=
+n");
+> +       out =3D sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "gpio_=
+out");
+> +       if (!in || !out)
+> +               return -EINVAL;
+> +
+> +       irq =3D sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "irq")=
+;
+
+This is less efficient, as you end up (linearly) searching the whole pin
+array three times.
+
+What I did in my version was implement a search based on pin and muxval.
+I can send that out if it's OK with you.
+
+
+ChenYu
+
+> +
+> +       sunxi_mux_reg(pctl, offset, &reg, &shift, &mask);
+> +       val =3D (readl(pctl->membase + reg) & mask) >> shift;
+> +
+> +       if (val =3D=3D in->muxval)
+> +               return GPIO_LINE_DIRECTION_IN;
+> +
+> +       if (val =3D=3D out->muxval)
+> +               return GPIO_LINE_DIRECTION_OUT;
+> +
+> +       /* IRQ function is effectively input. */
+> +       if (irq && val =3D=3D irq->muxval)
+> +               return GPIO_LINE_DIRECTION_IN;
+> +
+> +       return -EINVAL;
+> +}
+> +
+>  static int sunxi_pinctrl_gpio_of_xlate(struct gpio_chip *gc,
+>                                 const struct of_phandle_args *gpiospec,
+>                                 u32 *flags)
+> @@ -1603,6 +1634,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_d=
+evice *pdev,
+>         pctl->chip->set_config =3D gpiochip_generic_config;
+>         pctl->chip->direction_input =3D sunxi_pinctrl_gpio_direction_inpu=
+t;
+>         pctl->chip->direction_output =3D sunxi_pinctrl_gpio_direction_out=
+put;
+> +       pctl->chip->get_direction =3D sunxi_pinctrl_gpio_get_direction;
+>         pctl->chip->get =3D sunxi_pinctrl_gpio_get;
+>         pctl->chip->set =3D sunxi_pinctrl_gpio_set;
+>         pctl->chip->of_xlate =3D sunxi_pinctrl_gpio_of_xlate;
+> --
+> 2.43.0
+>
