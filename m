@@ -1,148 +1,148 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE71DF748;
-	Wed, 11 Feb 2026 01:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F1C34B190
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Feb 2026 03:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770774540; cv=none; b=GmC+sls6a25RuvjWX930uDuIknV0l/C8zMRoMup9vpGlm29/kjtdXGqzc6eUwFp6hnCLpGUT+Bv4phpeUG+1dJnb2upm+zekiNvyMBHDVeAObPOGEnqlBAv7XD5zVfHfCmWNn3p3DAehG5DaBjCHcCeUnwH/3Gyb+xDcAOEQEMQ=
+	t=1770780787; cv=none; b=YwSydMW4os/rLb3DkB/9r2yms1xcf3SauI1s2TlbWy1G9z7D+1sLP+Jh8IYJVdDvJzTFXjoJCEGsAbbwcRXdnU9E0TauPpDBugiuIgzR/t3hI8y0Y0Y87j/d0dmJbBMwK30U74F2egSXYmOWQVIJQjaJRaYdnkv0Xv4ZFMmotrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770774540; c=relaxed/simple;
-	bh=EakT1hLowwtmKPzAINUoQ/hf7LzQVPrsfk76ZwhNbgw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hKQVhaIAFOiISNmTBf2H7xPwbT+aBvPsCFv+04dgtOK+OO+BQtzN2QJHHMhuKPdMljpjYyWrT2W+ZciLolpWn2e+Dvds0w8xTHnZ5V59JMMVz46tkSiEDAGd7F0DYrYt8ngtagXJVRxP74BwsamOm1rZxE6/bnwVU+j8viPpj9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=j2aso4Ro; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1770780787; c=relaxed/simple;
+	bh=3xxyAdFQ4zfemGIKkRYTysU+0s05CvAtJ9iA4ZUnhvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ecZB8epy4wyysg5s95/GYKPKb3FEweMHy5nFxbIPqqJ7sTBLbej8HKSec9+sMNqZ+u4RqLyG4SendyC18ulkz6GFtriYBX5yikkcJ/rmV5F91kuRj85F9ya8pVuPm5kasvsNwo8HD4T6cTkvD4AEPnbqfVzET4vsBvNu5Ja2RR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxPDrieO; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="j2aso4Ro"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxPDrieO"
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7d18dd2adf7so3793011a34.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Feb 2026 19:33:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1770774535;
-	bh=EakT1hLowwtmKPzAINUoQ/hf7LzQVPrsfk76ZwhNbgw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=j2aso4RoraIWSto2koPfLCJtWXbahxGOS4F92RyaOGH+78Q8Q9iIZ/eUuvTp27cwz
-	 SXvrqpP9nSmfrOmTGeATd/1wAYIwQvsIZFajhF7jfm0Kgh4M0HCrBs0ndy+GINfUCx
-	 xRPl4KwOJ0Zm7YQZOn34RsRkKdxWo4QH3BxhM2nvpfOg8bvm9QHprtvgy1serdTxng
-	 +aXDiqbUrJfbEz9rqIpQ8lqGgBruyDHeFYJn68/nSjvvg/OV4jzL3dyO45qrSM58yu
-	 J2l8WGLBGkO349u/X+M8/a62r6cVK2mPWHQfGYyN/SPJ6l3W1g0IySz4rpDjqVH4f4
-	 bbWnqCOBWwlcg==
-Received: from [192.168.68.117] (unknown [180.150.112.60])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7CA69603B4;
-	Wed, 11 Feb 2026 09:48:53 +0800 (AWST)
-Message-ID: <15b7c7cd97cc974605ffd79125d641ba159587f5.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 0/3] pinctrl: single: bit-per-mux DT flexibility,
- probe robustness, and consistent pinconf offsets
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, Tony Lindgren
- <tony@atomide.com>,  Linus Walleij <linusw@kernel.org>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, 
- "linux-arm-kernel@lists.infradead.org"
-	 <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org"
-	 <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	 <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Date: Wed, 11 Feb 2026 12:18:53 +1030
-In-Reply-To: <OSQPR06MB72526DA818EACDE2931BA0168B62A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-References: 
-	<20260123-upstream_pinctrl_single-v2-0-40f8063cc5a2@aspeedtech.com>
-	 <CAD++jL=OXJdJZpjbo0_C03vcgPe5btum-J0uifvSJkMaUWG-=w@mail.gmail.com>
-	 <OSQPR06MB725257E71F0B7F7F1013263D8B98A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-	 <20260206042215.GA5376@atomide.com>
-	 <OSQPR06MB7252ADEF2CB075BC40AD7DB68B66A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-	 <CAD++jLm2a1-G7QQBb+u68DH_RT6kc4=vpqZWQcirvWrcRjw+5Q@mail.gmail.com>
-	 <OSQPR06MB7252D5BCD40BDF2A91FF41438B66A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-	 <CAD++jLkqpRrcgQ2JvbHJY3NQ=KHi8T91aOg2KvAmkVAXAEzH-A@mail.gmail.com>
-	 <OSQPR06MB72520084144325D548E36AD78B65A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-	 <CAD++jLkB26XNAosUdD2BigLw+=Hd6+VBsmv0fHawQ25e8rQhrQ@mail.gmail.com>
-	 <20260209144250.GC5376@atomide.com>
-	 <OSQPR06MB72526DA818EACDE2931BA0168B62A@OSQPR06MB7252.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+        d=gmail.com; s=20230601; t=1770780785; x=1771385585; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lqL9RDMHFR3WoHQnRB4Y8oAV8tGCe4j0xxAYm/MQPvM=;
+        b=PxPDrieOvaGPN7tUwX9VBpfMIMSmqqLGzYpi5XPnEcKkauc6ZOJAJZe5N98w0puL8Y
+         FIMrOl/NOWlxm6ZJzE0fNqxhvYEloUfe57/r4ZdqZPNTNJhcoyxOYJ1miQM2+uEHicmJ
+         A/FR+dv8AfKNuk0bazz4DOmlEDKa9bAG3BHjlZpGRLYsF9BqY6H8xShnAjE3jDMXgI7R
+         fBqpAqpACDwrmaGvSUidI8BqycJRfAyOc+skXlcU2NjUB8pgnX6e91VWzmLIwQwZTbt/
+         REIcyMT+RZpvLYgf61dHqXtKhSa8de95/TxX7b7yboRDrVx/Xq4KwROzrjc3Uv1bWBy7
+         2z8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770780785; x=1771385585;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lqL9RDMHFR3WoHQnRB4Y8oAV8tGCe4j0xxAYm/MQPvM=;
+        b=StpdQ5cDCEqNyO79li+EdvSWZyDCFlUlcRL5ZCEEXUVLM4CjZnB8nCM5v8zr73r6ns
+         euF1TqYSBXit8ESC0RHBGIugTxyuHZIsvWvI6rryQC9AM3RQP6rvZ+RvIlTYtH7YoskO
+         jRPlbXjx/K87JRB4ByGlFd9p6ct92dsLFvgw2LZd+9QMt9jA25c2zMp8LoJ22ZHDhqyo
+         6WfqK/1l8PNEmnyq6J12orlsVSFFBJg+TYDJWN3CfrIrx/foCwMoN6cUdO1fxYHwr758
+         2KJbqf2jYmHQkHFZW+6Cqcfgap7YvZj+fvGkuTLCJQ8pF0H1wOaA0tb3ODd0nvvEYjU2
+         0qTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXal3Ksjy58Hj03OP3uppZ9ayDmqHRJEbSsuZZNzeyEMSgNdvmnWjQsdEg6U9vHqiIqw+MYm4K4kvXp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2PAGAQKbVsOGBnwLKRTiv58FOIDiEBFU+aSSF45XH96Tktrql
+	mbcEw+pD8VYtaTEwuRGOFqvvJS4FH1tc8d6/TFfGAIikUISN3+bXzwDk
+X-Gm-Gg: AZuq6aLUxDhAFyTtMOmIzezkRluXqqgA2PtBvKTb+rP1GzieDD53NwmOZCqMR2lndYT
+	4yXgP8cD9WPrJZsJupPyiDEhcwMW+m6Nd7hwZSXLlTkkPpuo2N5Yf7JnsCpIQ/a5PFGordRqN2W
+	7ZoT9E7ugv7aKN0tIyMdSyMkN+VYEeaWl4mtlYpZdOl+YAFC+F1CUFYhLM6L83ZkBAJtZtsDQY/
+	2WtJZE9T2Gs2HEqc+Ss8FnZbR2eZictUFbH37TIZxgesfv85+x3NFbr8hKanvyMIa5IOkEZQGqM
+	gL2PxGO65nZ2ku9A/IHU8fpY2rakGNbkkKrvJ+h7DwscCjBEeWkS9Gd0qF26/vIHr0RIj6C5gar
+	U/9NXOzEEKltjlmQ47T45wADkiJ7JZfPq6i4aC3VXLdlJaaumQoXwrVMqXnXPl9fHnqK9Ifp916
+	9Lyx1zRWxYsexk4RTRfZOzj9XRbCwbqSiDgay7qmTs5eTFjq6q2ZiIK8565NrU8tZ5a2tZmSnaV
+	zIWtkZG8rL3eFlE/BSva+DCgNPGc36DNwO6nuW/88M7P1e+cjNRYvTEN/kPFa0=
+X-Received: by 2002:a05:6830:4494:b0:7d1:586a:32a2 with SMTP id 46e09a7af769-7d4a73cc7c1mr381970a34.0.1770780785557;
+        Tue, 10 Feb 2026 19:33:05 -0800 (PST)
+Received: from james-x399.localdomain (71-218-105-26.hlrn.qwest.net. [71.218.105.26])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d4a75309a6sm438236a34.3.2026.02.10.19.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 19:33:05 -0800 (PST)
+From: James Hilliard <james.hilliard1@gmail.com>
+To: linux-sunxi@lists.linux.dev,
+	linux-gpio@vger.kernel.org
+Cc: James Hilliard <james.hilliard1@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] pinctrl: sunxi: add GPIO get_direction callback
+Date: Tue, 10 Feb 2026 20:32:48 -0700
+Message-ID: <20260211033249.2770281-1-james.hilliard1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Billy,
+Implement sunxi_pinctrl_gpio_get_direction() and wire it into
+the sunxi gpio_chip setup.
 
-On Tue, 2026-02-10 at 06:28 +0000, Billy Tsai wrote:
-> > * Linus Walleij <linusw@kernel.org> [260209 09:51]:
-> > > On Mon, Feb 9, 2026 at 3:25=E2=80=AFAM Billy Tsai <billy_tsai@aspeedt=
-ech.com> wrote:
-> > >=20
-> > > > To make sure I align with your expectations:
-> > > > 1) Would you prefer the new driver to be fully standalone (using th=
-e
-> > > > =C2=A0=C2=A0 GENERIC_PIN* helpers + syscon/regmap-mmio), rather tha=
-n trying to
-> > > > =C2=A0=C2=A0 refactor/export helpers from pinctrl-single?
-> > >=20
-> > > Yes. Conor improved these helpers so now it should be possible
-> > > to use these to do a very simple and slim driver for what you
-> > > want to do.
-> > >=20
-> > > > =C2=A0=C2=A0 Action item: Introduce a new pinctrl-single-bit.c driv=
-er and DT
-> > > > =C2=A0=C2=A0 binding, which can also cover the existing bit-per-mux=
- logic currently
-> > > > =C2=A0=C2=A0 in pinctrl-single.c.
-> > >=20
-> > > Sounds about right.
-> > >=20
-> > > > 2) For the syscon/regmap hookup, is it acceptable to add a syscon p=
-handle
-> > > > =C2=A0=C2=A0 property in DT (e.g. "syscon =3D <&scu>;") for the new=
- driver to obtain
-> > > > =C2=A0=C2=A0 the regmap, or do you prefer a different binding/prope=
-rty name?
-> > >=20
-> > > This works for me.
->=20
-> > Great, sounds good to me too!
->=20
-> Hi Tony & Linus,
->=20
-> Thanks again for the earlier guidance =E2=80=94 that was very helpful.
->=20
-> I wanted to double-check one remaining detail around the syscon/regmap
-> hookup. As discussed before, using an explicit syscon phandle on the
-> pinctrl node (e.g. syscon =3D <&scu>) is fine from my side, and I
-> understand that approach is acceptable.
->=20
-> Andrew also pointed out that, for AST2700/SoC0, the SCU is moving towards
-> an auxiliary-bus based model, where subfunctions such as pinctrl are
-> instantiated as auxiliary devices by the SCU driver itself, with the
-> pinctrl node appearing as a subnode of the SCU binding. In that setup,
-> the pinctrl driver would obtain the regmap from its parent device rather
-> than via an explicit DT phandle, similar to what is discussed here:
-> =C2=A0 https://lore.kernel.org/all/459f84c56a5010910ecbf8b445c092674f0606=
-91.camel@codeconstruct.com.au/
->=20
-> Before proceeding, I wanted to confirm whether this auxbus-based approach
-> for the new pinctrl-single-bit driver would also be acceptable from your
-> perspective, given that it avoids introducing a generalized DT-based
-> syscon hookup up front and aligns with the SoC0 direction.
+The new callback reads the pin mux register and compares the mux
+value against the pin descriptor gpio_in and gpio_out functions
+to report GPIO_LINE_DIRECTION_IN or GPIO_LINE_DIRECTION_OUT.
+If the pin is muxed to irq, report it as input.
 
-While how we describe the hardware in the devicetree is important, the
-impact on the driver is ultimately some glue code. I think the thing to
-prioritise right now is the design, implementation and testing of the
-bit-per-mux functionality, less so how we get the driver bound to the
-device and retrieve the syscon.
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 32 +++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-The proposal I made in the message you linked is a bit speculative at
-the moment. It needs buy-in from the DT maintainers as it proposes some
-rework of what's already in-place. That needs thought, but perhaps it
-can come a bit later. For now you could write a proof-of-concept
-implementation of the glue code for testing purposes (which we may
-replace once we resolve the binding discussion).
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 0fb057a07dcc..424f23be27b2 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -995,6 +995,37 @@ static int sunxi_pinctrl_gpio_direction_output(struct gpio_chip *chip,
+ 					    chip->base + offset, false);
+ }
+ 
++static int sunxi_pinctrl_gpio_get_direction(struct gpio_chip *chip,
++					    unsigned int offset)
++{
++	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
++	struct sunxi_desc_function *in, *out, *irq;
++	u32 reg, shift, mask, val;
++	u16 pin = chip->base + offset;
++
++	in = sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "gpio_in");
++	out = sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "gpio_out");
++	if (!in || !out)
++		return -EINVAL;
++
++	irq = sunxi_pinctrl_desc_find_function_by_pin(pctl, pin, "irq");
++
++	sunxi_mux_reg(pctl, offset, &reg, &shift, &mask);
++	val = (readl(pctl->membase + reg) & mask) >> shift;
++
++	if (val == in->muxval)
++		return GPIO_LINE_DIRECTION_IN;
++
++	if (val == out->muxval)
++		return GPIO_LINE_DIRECTION_OUT;
++
++	/* IRQ function is effectively input. */
++	if (irq && val == irq->muxval)
++		return GPIO_LINE_DIRECTION_IN;
++
++	return -EINVAL;
++}
++
+ static int sunxi_pinctrl_gpio_of_xlate(struct gpio_chip *gc,
+ 				const struct of_phandle_args *gpiospec,
+ 				u32 *flags)
+@@ -1603,6 +1634,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_device *pdev,
+ 	pctl->chip->set_config = gpiochip_generic_config;
+ 	pctl->chip->direction_input = sunxi_pinctrl_gpio_direction_input;
+ 	pctl->chip->direction_output = sunxi_pinctrl_gpio_direction_output;
++	pctl->chip->get_direction = sunxi_pinctrl_gpio_get_direction;
+ 	pctl->chip->get = sunxi_pinctrl_gpio_get;
+ 	pctl->chip->set = sunxi_pinctrl_gpio_set;
+ 	pctl->chip->of_xlate = sunxi_pinctrl_gpio_of_xlate;
+-- 
+2.43.0
 
-Andrew
-
-PS: However, regarding the syscon property itself, it's probably worth
-paying attention to the "=E2=80=9Csyscon=E2=80=9D is not a generic property=
-" note in
-https://docs.kernel.org/devicetree/bindings/writing-bindings.html#typical-c=
-ases-and-caveats
