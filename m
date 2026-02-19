@@ -1,96 +1,117 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E3C86277;
-	Thu, 19 Feb 2026 13:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4449E207A38;
+	Thu, 19 Feb 2026 13:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771508554; cv=none; b=N8tlKRwYrVZTT0zMaU4JaZRQH5rGp4ZixioCMdIbiFJUpNoFqZ3+MqGX75RlFwaGrcPm26pfcFoLdYVu55c+KQLf9ufaSxuh8Z8JHy84QDVQuUNmA2wB0cNC/XtJp4iBdGp11s6k38wXZEZ0eD1frjwWEbPr9WnQ9QBW+/DnXUk=
+	t=1771508813; cv=none; b=FCrxjNvqZ540qNF8yLKDWjGno5Qdk5Au6acJHMZJzDVL7Cr0UMcajMQrs18P/Ty2dr3DqrCsdWahwlzkeTTUo0pIVRzj6W6/nWLVQD1nKHg9CMGCell8sfl142NmmCHSQQ1+9ff7TrdEQ8S+4aAImwqogoJEdtpfgEftyWn67/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771508554; c=relaxed/simple;
-	bh=MPW4DEn5P3My4mx8HNR2D1Qa3+cpIreLCA5+A4gMwYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/O/w+EGVJYjk6XLcd5AenzkznropJB2LA0D2lMU+cF8qzDdoE9IqjkR1tsnWOTJFUO91dGPR5JdK5IKw8cgoazbLc/F/BiPbSc+8SPVvmrwmnD4xyb3pMEzjxNi5GHAID0QMFDLL38MTHXRlEXsXSL+ZJYX4qTEZukFZhPNZg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZQ+CO1Cu; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1771508813; c=relaxed/simple;
+	bh=QLF2Ygncs5ZoYH/o+PKirXnMQzTafnq6MLQr7T0zqEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3BRQw2vSVl2b338lTzB5XRcyYknNesUMnMZtaTCo0AuceL/YY+95Tw+CnsodOEFrBDUT0cidfhWim1gSCTqxqGyZNX8w0czBDDOPI/H86sYZttonJPucUE10NQAm8LtExHYeAAspUWBROdealEsFni3sWC0i+kAC6aaIJ4THds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GboPOWYa; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZQ+CO1Cu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=m71zW88H7K19uDqB/mJVa6SLvXopmaXhdyjRMA5F7Ug=; b=ZQ+CO1CuHmS7qG0gJgND/e2zBA
-	/ubCjr4WIUdnz0YjIla8GiDmOEPHMbPXJFH2bv/HTmr4xfkGKBqUFqcA4c3jySyxFZM4s03A0s2GQ
-	9g8b2lZ2UOhZudKslVqwCiLVlV81XNuoZ5oZ6RPNggjSHFkeqIASVLsOy26sY9Zax3Ec=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vt4IR-007v3K-BB; Thu, 19 Feb 2026 14:42:23 +0100
-Date: Thu, 19 Feb 2026 14:42:23 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <13f9d767-61d6-4e29-b36e-6dcc860ccb11@lunn.ch>
-References: <20260212213656.662437-1-shenwei.wang@nxp.com>
- <20260212213656.662437-4-shenwei.wang@nxp.com>
- <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GboPOWYa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1771508811; x=1803044811;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QLF2Ygncs5ZoYH/o+PKirXnMQzTafnq6MLQr7T0zqEE=;
+  b=GboPOWYaroLvfDPWIJxMJYuOenpopla3e7a9dqbk5mvqGoGNFJ8A3EX+
+   2+hBbuyHvfIXa2FSxtfRUMuQFzqsvQbePAdurs11aetjcsVQbZVR6Wn1a
+   HTWkmD0p7xGNgBZ7Yg5Sdf/CJG1w2q4aAln7e5C0ecYd6zaDmNvtI+JGv
+   VSx734PgtXrmO4QbkmoyroQ5F5k8gB2XT7hy89MewRrpet9rVQau/4Yec
+   nAR+ocq9HFHe41dMoN8MOUg6/ZbbOzzo2izdF2E2a1JKNuQumi7aFwnUM
+   S1TauJyqt6QWd7V7iRZmRW+2SDkuDdGN3MPhmtKvYLqjJGhry0iST++zF
+   A==;
+X-CSE-ConnectionGUID: 0k3/2TRDQCK7GOimp6/jKw==
+X-CSE-MsgGUID: 1mRSJLRORNydHoZjJOp0SQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="95210642"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; 
+   d="scan'208";a="95210642"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2026 05:46:50 -0800
+X-CSE-ConnectionGUID: eQcl1MzrRKKACrrA0acgag==
+X-CSE-MsgGUID: W5NmJKoHRZilYmFPnqsMtA==
+X-ExtLoop1: 1
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa003.fm.intel.com with ESMTP; 19 Feb 2026 05:46:49 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 2407195; Thu, 19 Feb 2026 14:46:48 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: ts4800: Remove duplicate code to handle 'ngpios' property
+Date: Thu, 19 Feb 2026 14:46:47 +0100
+Message-ID: <20260219134647.2258593-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-> > +	u8 id;		/* Message ID Code */
-> > +	u8 vendor;	/* Vendor ID number */
-> 
-> Does this fields above are mandatory, seems that it is just some constant
-> values that are useless.
-> 
-> > +	u8 version;	/* Vendor-specific version number */
-> 
-> Why it is vendor specific? the version should represent the rpmsg-tty
-> protocol version.
-> 
-> > +	u8 type;	/* Message type */
-> > +	u8 cmd;		/* Command code */
-> > +	u8 reserved[5];
-> 
-> What is the purpose of this reserved field?
+The gpio_generic_chip_init() handles the 'ngpios' property and
+assigns the respective field in struct gpio_chip either with
+the value of it, or, if not found, with the default based on
+the register size. There is no need to repeat this in the driver.
 
-They have an implementation of the other end running on there systems,
-and it sounds like it is widely deployed, and they are trying to keep
-backwards compatibility. The protocol also implements more than
-GPIO. There is also I2C, maybe watchdog, i don't remember, but early
-versions of this patchset had a list. Some of these fields are used
-for some of these other devices.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-ts4800.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-I've been arguing it should be a clean design, with the protocol
-focusing on GPIO. And that the rpmsg channel makes it clear this is a
-GPIO device, the protocol itself does not need to include fields to
-differentiate between GPIO, I2C etc.
+diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+index 992ee231db9f..0207c2b813f4 100644
+--- a/drivers/gpio/gpio-ts4800.c
++++ b/drivers/gpio/gpio-ts4800.c
+@@ -11,7 +11,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ 
+-#define DEFAULT_PIN_NUMBER      16
+ #define INPUT_REG_OFFSET        0x00
+ #define OUTPUT_REG_OFFSET       0x02
+ #define DIRECTION_REG_OFFSET    0x04
+@@ -23,7 +22,6 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ 	struct gpio_generic_chip *chip;
+ 	void __iomem *base_addr;
+ 	int retval;
+-	u32 ngpios;
+ 
+ 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+@@ -33,12 +31,6 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base_addr))
+ 		return PTR_ERR(base_addr);
+ 
+-	retval = device_property_read_u32(dev, "ngpios", &ngpios);
+-	if (retval == -EINVAL)
+-		ngpios = DEFAULT_PIN_NUMBER;
+-	else if (retval)
+-		return retval;
+-
+ 	config = (struct gpio_generic_chip_config) {
+ 		.dev = dev,
+ 		.sz = 2,
+@@ -52,8 +44,6 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, retval,
+ 				     "failed to initialize the generic GPIO chip\n");
+ 
+-	chip->gc.ngpio = ngpios;
+-
+ 	return devm_gpiochip_add_data(dev, &chip->gc, NULL);
+ }
+ 
+-- 
+2.50.1
 
-When they start submitting I2C over rpmsg, i expect the same sort of
-discussion will start again, so the likelihood of keeping backwards
-compatible with there firmware seems low to me.
-
-	   Andrew
