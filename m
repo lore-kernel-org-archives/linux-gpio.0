@@ -1,77 +1,114 @@
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E022153D8
-	for <linux-gpio@vger.kernel.org>; Sun, 22 Feb 2026 17:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446CE34F498;
+	Sun, 22 Feb 2026 19:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771779850; cv=none; b=fWWVfyXUz9pF4ue1FjZOi5V8kfsO2evX2MzSIy0umLnCl7UTy7Sy42iaZdGbxS4c5UUUduYKTtinpfNqEYQ8Q+XTYY5G3Kuww+qm3pOapQBN8t5RySmeoupgZSlxEvZp5unjP1mS/UWNEiFeSDODDTukkK/qcuUJYPMkzkOsjy4=
+	t=1771787545; cv=none; b=gmleYexmTjUNpnz4JQR8kqFqNb/9BOmxN5pypJwUfEzYjFmRkelCx4cGCS9wzH/iqzQ5mcTfWLs/XNLQ7rnI4gT0efoYr2WYNwsR+z2fm495eNV1cvpaW4YAUk4sDd0lsq5zewK2MNniVjKBRCMW8m4Vp8YyKpd7uciEjuP04qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771779850; c=relaxed/simple;
-	bh=SZgju69i87xbF4RhbhcfGtmQGiTnQGdScjWUYDlcKMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fKWvlozYuYjYJHbR31saMo8GTlH8Xc6jBMGWUz38x7IkDB9ve6H64TFymPvkDsXaehGHWMhlYEk8S1+UxOItRFBJjpr5G9H09G4Kf0gECmpfggslQ0OfvpWpBfsjJ0lYOY4Fsuo93c68IMF/6Pt9L7+Vt28KPQYzINqa4X9raxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j5jaS0wC; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1771787545; c=relaxed/simple;
+	bh=oBO4M9vSigHp2cMcVMsbdryITkk7+TuQZxjvoHiAfT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GakHgR+F2xTk7I/6f1dJJhgxZVcANPYeBwudP7XRfuN9IRKyezSQTU/wAjYEUVz6qzbO7UEw6Tm90Chgf96riPD7X91GZyDm75HzVxzRKqGBQJzd4v/PmDCtAoSxeG9xNs3gTRKYqhkTrEip1tuzIOHThC3+bry1eSRq4vVvwcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+k0EH+6; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j5jaS0wC"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1771779836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a+jpSTFU4zQAmg50THb4DMTZKCUO/u6TXWQmfS3x0/U=;
-	b=j5jaS0wCutBkxpCqwwufZmddahejy9tP0Z7FAW6FJd1FvCHGA4HJLROSyblLse6d3uXoSC
-	sIOXfmgD23ZSTIss2rcC6gMGEpC2PgVlu/amkpuEMCx4MbZa/VuDXfX9BHLEWP4Y1XEivV
-	sUJSJPWWnSpJZY7Lr162ugXRWPW8J0Y=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: replace snprintf("%s") with strscpy
-Date: Sun, 22 Feb 2026 18:03:27 +0100
-Message-ID: <20260222170327.281576-2-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+k0EH+6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1771787543; x=1803323543;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oBO4M9vSigHp2cMcVMsbdryITkk7+TuQZxjvoHiAfT4=;
+  b=n+k0EH+6qARiivhri4KPHHdCitIvtFa7JuIhhv4S07owHD1MlWveIMfQ
+   yHXMaulcp01vGU2+lceUYXFig8lmzh77MFGIkFfov2Z41AiFfmYSuhyAx
+   /kzqN65h/bHaON5XJNuUZF5b8elu/dhi2VXrAxnKAv0ZpcJGPrmjjY+v4
+   sH98/5RRrpNumlim4KZRN5hVhnOyU67jA/j7hTZzhY0+ai2/TEh8tLC8i
+   sIbJ/cJEL3KXuWe6ABNm9CauJ+qSDgECjZNVYS+OLXflWNJ+w1escKTOd
+   H6zJ5ktBo8SJaoA0MrAEvB5+Tfep0LFhhhTNl3TfZjA4lxc+/auM5kpZe
+   A==;
+X-CSE-ConnectionGUID: bqZb7ucjQHmxEebivHxkLg==
+X-CSE-MsgGUID: kp8CT1L9SV6+9NtWrFVwSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11709"; a="60366408"
+X-IronPort-AV: E=Sophos;i="6.21,305,1763452800"; 
+   d="scan'208";a="60366408"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2026 11:12:23 -0800
+X-CSE-ConnectionGUID: ma16+aahQFiGBDi4OeZOaA==
+X-CSE-MsgGUID: bnlfcrF0RkeuAz3ai5s8Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,305,1763452800"; 
+   d="scan'208";a="214593616"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.245.171])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2026 11:12:20 -0800
+Date: Sun, 22 Feb 2026 21:12:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] iio: adc: ti-ads7950: complete conversion to
+ using managed resources
+Message-ID: <aZtVEdFoGUMx4olM@smile.fi.intel.com>
+References: <20260219022929.3558081-1-dmitry.torokhov@gmail.com>
+ <20260219022929.3558081-5-dmitry.torokhov@gmail.com>
+ <aZbC51ezuaT5Nwq7@smile.fi.intel.com>
+ <aZj3deh1Em1rz3au@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aZj3deh1Em1rz3au@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Replace snprintf("%s", ...) with strscpy() for direct string copying.
+On Fri, Feb 20, 2026 at 04:09:47PM -0800, Dmitry Torokhov wrote:
+> On Thu, Feb 19, 2026 at 09:59:35AM +0200, Andy Shevchenko wrote:
+> > On Wed, Feb 18, 2026 at 06:29:28PM -0800, Dmitry Torokhov wrote:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/gpio/gpiolib.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+...
 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 3abb90385829..8d1a762f9d11 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/notifier.h>
- #include <linux/spinlock.h>
-+#include <linux/string.h>
- #include <linux/srcu.h>
- #include <linux/workqueue.h>
- 
-@@ -107,7 +108,7 @@ extern const char *const gpio_suffixes[];
- 		if (con_id)								\
- 			snprintf(propname, sizeof(propname), "%s-%s", con_id, __gs);	\
- 		else									\
--			snprintf(propname, sizeof(propname), "%s", __gs);		\
-+			strscpy(propname, __gs);					\
- 		1;									\
- 	     });									\
- 	     __suffixes++)
+> > > +	if (error) {
+> > >  		dev_err(&spi->dev, "Error in spi setup\n");
+> > > -		return ret;
+> > > +		return error;
+> > >  	}
+> > 
+> > And since there is already dev_err_probe() in use, I would expect this
+> > also be converted.
+> 
+> But that would be unrelated change ;)
+
+I never told that this should be done here.
+
+...
+
+> > Would be also nice to use
+> > 
+> > 	struct device *dev = &spi->dev;
+> > 
+> > to make less LoCs and/or make them shorter.
+> 
+> I actually dislike introducing such temporaries in majority of the
+> cases. It makes it hard to follow what device we are dealing with and
+> does not make the code significantly shorter.
+
+May be, but my experience is telling me different story.
+So we have a disagreement here, I leave it to Jonathan
+to mediate.
+
 -- 
-Thorsten Blum <thorsten.blum@linux.dev>
-GPG: 1D60 735E 8AEF 3BE4 73B6  9D84 7336 78FD 8DFE EAD4
+With Best Regards,
+Andy Shevchenko
+
 
