@@ -1,137 +1,82 @@
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D60319860
-	for <linux-gpio@vger.kernel.org>; Sat, 21 Feb 2026 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFB21B808;
+	Sun, 22 Feb 2026 14:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771695826; cv=none; b=eehz2A+zFuzBHEMce/P3Fh1TmfWOZe88I/m7Vnt0bDMoRAA5OKrNo2OfA7ruVlJXOqUqPCsLA1OTX2RGY329VQ3UBnDggkqAn++rYQL6cuOBI6KD7R8bsiNmWB3u8aIubdSwnmiOl2VjzZ9z6VFmArkEWGjGYf2mV2vi3nBWtwI=
+	t=1771769005; cv=none; b=WOxj0Q8OROK3ye0gVBOV1t3Ft1sqrATBmOth3dk6aDq3iYgiZN2seIY1tPhqlx+SL6OWa7ZNqVfhCnDkTnsgvXU7e4R0emdBlByo1xv09d584Lo4632gEEymrGg+HlqT4AZLSS9zM3wROuH5YsmZBxfRsEHyA8pZaByTNXp/fK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771695826; c=relaxed/simple;
-	bh=nJumRRbqfdNmn2IGqF/Uly0EsPFk2xrL0YCTdj2iRqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uxKG6Qo/uOSCl8M7LazqGcIOZGp+VHsr1buKXwik5hrHCLKBcrzCQKrDMQQzDMYQQeraWK2TCLeCtcJzUQcoLsAx69wNk9F2b3oqYFN6iEJzL4EhGOZhUjRMT3FAqJEX9k6p2agNTf0IhZsumJ15jwwD2ljYUwtZstBKrKlLGXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BlDw8brg; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1771769005; c=relaxed/simple;
+	bh=Api/KXx3CyA+l/V9RndsWfXqZ3HkT3hfiByk6SG7laI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JGA7jaT8QE+F/LjEfN572Kx0YskwLPF3H2ZxUyysEn3kt6ulZoM/GD3SJ4x6qMdOm72QwRDatTIc4i8GrqjdQtoupHE5m+9zI9jEsN+oor1osYRNpa3wAvtHe913U52pd0v29h0CRLA3lOA2XOI2x1LPmOWq1mCV9k3XCOMuFHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsK5ZbJ5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BlDw8brg"
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7d1890f5cafso1042311a34.1
-        for <linux-gpio@vger.kernel.org>; Sat, 21 Feb 2026 09:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771695823; x=1772300623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GRCibtW3MIRfvX6LQTp5cSh9t1XPZOYyYIJvnHLTP3Q=;
-        b=BlDw8brgA/MjL/hXyXQVFhFkE1qmzpcfsdzIy7gjfhED4VIgU5Dq+2RdGPO99F4EN1
-         eK5HIePFQpHagF2txYZpdfEZAn8X0vJWA/TnqFuhP+PRC8P91SHvix67gTkoTDi4pwGa
-         6ojwBsL/FhyUHNAK8C5zcr/L5iHAWcYueNR9I9IzFGjh505EGpI8//SVAVBxU9ZWbekY
-         m0DxWaMm5KXIThPjkuA9vWfmn56WLB0LwbKcrj5e+zCLGxOA/MEZLoK13YTmI/EWaAFE
-         O939ixrEUAwUx5U9Np68SCK8o/Cs1e7IL/9/oCnbZDLohBhKNcJX4Nv1y885kFuuuP12
-         pIMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771695823; x=1772300623;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GRCibtW3MIRfvX6LQTp5cSh9t1XPZOYyYIJvnHLTP3Q=;
-        b=iwyaOy0CP2mmRf77HZeOQFnDYsj0EFJN1LM1e82dnvVUJf/snqjw+IFCCWRUVMu49b
-         0bUQ57XIUAcgtWnbUPbqaLW+NrYH1SpKvC3W/+Vt810zNK3qPmCkcGdN4XoUmJrXiiPN
-         XvSElB9H29vIstbRZakSgBLYsfONWcUtBLOIOAUbhEwlN90zMV2Je14nLHcj1g9OLVxc
-         4RLKgaMaknAnHBl9rE14qmzzBEDHgGShQBysSaadmn2c4RC0ga5d+3epBOGp13T6WGqF
-         4LTiYdBZpcr4D/mvVeT4huL2hm6eHjfXE+YJI/RqICbQTbvcCo/D2+0OZCkrfZPyJEZY
-         sH+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvnR/lx4M6XiuTdesm5+EEszf/jUt3vtuo7wCzd6Y1QbekcmFABp8fz+vmxHhxBVXUc1V4MQShVCAO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+pDRPSNNjXJZOqPT1SYQs0femcJ9Dmt1M8iULO577I3gD8/ow
-	HdDTB74dsd7Q/7axD8pl0Xio2Q35TQCmMDm+b9QziNl/V9GbOlLYBJhjst+s3tbGENo=
-X-Gm-Gg: AZuq6aIKvTgPM+IYvwZR6naJ7wfwzBnauySX/igSNEmQwKugNMTm+fxAawscGLwaVI4
-	yDZhDVox8xlolJQndiHVf/GLsyQt1pFhpRxRVu+w/pW2w3kDAnejyCzhsMSPMpWlmtlLEXZUTwV
-	ipSR9HS8QZ2NJEtjefhUs1HP6Mul58Z9tvW1Ns066O11w6fOFwl4AImxiIqyq3witkLX2ZoFiB0
-	Y3UIF/8RAqO4ehjJo64fo55PN8HlbWHVBsQ0IUSUVFQkylFSjpuo7Kg5QZ3Ojf8L7l9VvvOELN1
-	VhUugd7WOX4ofIjxC8LPcw1sDzHGFcmIiSnWR4nAFu/xufCkMJkunTcul/n+RKDFVuWsQqkJq+A
-	2kE5mN0LfBMxluEEEhLw4Xy+/x28jylbekdWXrJjpnRUMafsKvLvidosscKK4f9/979T+EXW5qW
-	wCBsbCV4J64JRM/5Iq9xTBPI5Ss5yx+UnrBoat/H8RcjjLrxoXUsQ0hKqS94KwvaumYK3OCQ==
-X-Received: by 2002:a05:6830:660e:b0:7cf:c613:d301 with SMTP id 46e09a7af769-7d52bf530fdmr2120582a34.23.1771695823282;
-        Sat, 21 Feb 2026 09:43:43 -0800 (PST)
-Received: from ?IPV6:2600:8803:e7e4:500:611:96af:f385:64bf? ([2600:8803:e7e4:500:611:96af:f385:64bf])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4157d2d7922sm3143078fac.12.2026.02.21.09.43.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Feb 2026 09:43:41 -0800 (PST)
-Message-ID: <a8267ee4-783a-4f04-a94c-d05d4c689658@baylibre.com>
-Date: Sat, 21 Feb 2026 11:43:40 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsK5ZbJ5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EEDBC116D0;
+	Sun, 22 Feb 2026 14:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771769004;
+	bh=Api/KXx3CyA+l/V9RndsWfXqZ3HkT3hfiByk6SG7laI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WsK5ZbJ5yuNUns3FvgD0OGA2XWT7V6BxwCn6JUMEBsx4N0U0tVQn8gVXD4trgog2W
+	 7p/AkEA6H6joA0WjfiLQs0AjpqM8q6hkVwf4kZppBVwvAhgwCt8b0Fw7XxNhC3jcJc
+	 mHCLZKu++Kuvn6Dv4jOFgzhSHXQJoGUDE3HLAx+QKspQiWwIWjm8kNg6txHDcoSxCe
+	 YyB0fSG6pwfau1bCcv9rh0SC1kT3ODGq2IDUVsk0aV2ova2m2C2DiYLyDKecqYBNi6
+	 iNMvqEw2B7MNT8sQk8UiGPPwhnyiGZAHgr8TXVvhpe5h9lC/X/n4YuSIqwWDae61S0
+	 ObEnQGxmllQBQ==
+Date: Sun, 22 Feb 2026 14:03:15 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] iio: adc: ti-ads7950: normalize return value of
+ gpio_get
+Message-ID: <20260222140315.33e5e97c@jic23-huawei>
+In-Reply-To: <20260219022929.3558081-2-dmitry.torokhov@gmail.com>
+References: <20260219022929.3558081-1-dmitry.torokhov@gmail.com>
+	<20260219022929.3558081-2-dmitry.torokhov@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iio: adc: ti-ads7950: complete conversion to using
- managed resources
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20260219022929.3558081-1-dmitry.torokhov@gmail.com>
- <20260219022929.3558081-5-dmitry.torokhov@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20260219022929.3558081-5-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2/18/26 8:29 PM, Dmitry Torokhov wrote:
-> All resources that the driver needs have managed API now. Switch to
-> using them to make code clearer and drop ti_ads7950_remove().
+On Wed, 18 Feb 2026 18:29:25 -0800
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+
+> The GPIO get callback is expected to return 0 or 1 (or a negative error
+> code). Ensure that the value returned by ti_ads7950_get() for output
+> pins is normalized to the [0, 1] range.
+Fixes?  I'm not quite sure with something that says 'expected'
+
+Jonathan
+
 > 
 > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
->  drivers/iio/adc/ti-ads7950.c | 98 +++++++++++++++---------------------
->  1 file changed, 40 insertions(+), 58 deletions(-)
+>  drivers/iio/adc/ti-ads7950.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
-> index d31397f37ec4..1c53e000bdcc 100644
+> index bbe1ce577789..b8cc39fc39fb 100644
 > --- a/drivers/iio/adc/ti-ads7950.c
 > +++ b/drivers/iio/adc/ti-ads7950.c
-> @@ -528,19 +528,26 @@ static int ti_ads7950_init_hw(struct ti_ads7950_state *st)
->  	return 0;
->  }
+> @@ -433,7 +433,7 @@ static int ti_ads7950_get(struct gpio_chip *chip, unsigned int offset)
 >  
-> +static void ti_ads7950_power_off(void *data)
-> +{
-> +	struct ti_ads7950_state *st = data;
-> +
-> +	regulator_disable(st->reg);
-> +}
-> +
-
-For the regulator part, we can simplify this even more.
-
-The part where we call regulator_get_voltage(st->reg); in
-ti_ads7950_get_range() doesn't actually need to be done there.
-It was something that I just naively copied from another driver.
-(This was my first IIO driver after all!)
-
-Instead, we can use devm_regulator_get_enable_read_voltage()
-in the probe function and just store the voltage in
-struct ti_ads7950_state.
-
-I would do this in a separate patch first, then the rest of of
-the devm stuff after that.
-
-
->  static int ti_ads7950_probe(struct spi_device *spi)
->  {
->  	struct ti_ads7950_state *st;
->  	struct iio_dev *indio_dev;
->  	const struct ti_ads7950_chip_info *info;
-> -	int ret;
-> +	int error;
-
-As in the other patches, please do not rename ret. It is adding noise
-in the diff. (And I like ret better anyway.)
+>  	/* If set as output, return the output */
+>  	if (st->gpio_cmd_settings_bitmask & BIT(offset)) {
+> -		ret = st->cmd_settings_bitmask & BIT(offset);
+> +		ret = (st->cmd_settings_bitmask & BIT(offset)) ? 1 : 0;
+>  		goto out;
+>  	}
+>  
 
