@@ -1,65 +1,75 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446CE34F498;
-	Sun, 22 Feb 2026 19:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D357123BF83
+	for <linux-gpio@vger.kernel.org>; Sun, 22 Feb 2026 21:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771787545; cv=none; b=gmleYexmTjUNpnz4JQR8kqFqNb/9BOmxN5pypJwUfEzYjFmRkelCx4cGCS9wzH/iqzQ5mcTfWLs/XNLQ7rnI4gT0efoYr2WYNwsR+z2fm495eNV1cvpaW4YAUk4sDd0lsq5zewK2MNniVjKBRCMW8m4Vp8YyKpd7uciEjuP04qU=
+	t=1771795382; cv=none; b=UtSUA8MxIsRT8AJt7vRJn3UeEKb5Vn+bc17+1R+Qgj3dlzoS7Wu9W6QSNuuZH5b8wpNzffyZxdTKnm5ayvweDjfOtmyVwMzwy/WizClSaOWBHnERVAFdJX8jAFrZWxpsjLAO8RpLG04lBCANWeejtADLrKgXKHfdaETwLUQrXU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771787545; c=relaxed/simple;
-	bh=oBO4M9vSigHp2cMcVMsbdryITkk7+TuQZxjvoHiAfT4=;
+	s=arc-20240116; t=1771795382; c=relaxed/simple;
+	bh=WCdEEysCfFHilfIMREfv0nttIGQIFkVVAYeoZz7ZyS4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GakHgR+F2xTk7I/6f1dJJhgxZVcANPYeBwudP7XRfuN9IRKyezSQTU/wAjYEUVz6qzbO7UEw6Tm90Chgf96riPD7X91GZyDm75HzVxzRKqGBQJzd4v/PmDCtAoSxeG9xNs3gTRKYqhkTrEip1tuzIOHThC3+bry1eSRq4vVvwcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+k0EH+6; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOYRFPi3xZKeZ4KFVS2ZZCIx1oanc0KwAhhDr0xFP9LPdIF1Zpp2kfw32U5pkYIK6Y/FszQ8iAKmHd3ub11WqLrhJOJ6Ps5fCPiCNPbn/vq2+KDFfTprmCoauhK3HPfNcOioocSCuvbPTvP0zCK3PrUEg36mDjmsI3J4WPLWaJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5tF5D/k; arc=none smtp.client-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+k0EH+6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771787543; x=1803323543;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oBO4M9vSigHp2cMcVMsbdryITkk7+TuQZxjvoHiAfT4=;
-  b=n+k0EH+6qARiivhri4KPHHdCitIvtFa7JuIhhv4S07owHD1MlWveIMfQ
-   yHXMaulcp01vGU2+lceUYXFig8lmzh77MFGIkFfov2Z41AiFfmYSuhyAx
-   /kzqN65h/bHaON5XJNuUZF5b8elu/dhi2VXrAxnKAv0ZpcJGPrmjjY+v4
-   sH98/5RRrpNumlim4KZRN5hVhnOyU67jA/j7hTZzhY0+ai2/TEh8tLC8i
-   sIbJ/cJEL3KXuWe6ABNm9CauJ+qSDgECjZNVYS+OLXflWNJ+w1escKTOd
-   H6zJ5ktBo8SJaoA0MrAEvB5+Tfep0LFhhhTNl3TfZjA4lxc+/auM5kpZe
-   A==;
-X-CSE-ConnectionGUID: bqZb7ucjQHmxEebivHxkLg==
-X-CSE-MsgGUID: kp8CT1L9SV6+9NtWrFVwSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11709"; a="60366408"
-X-IronPort-AV: E=Sophos;i="6.21,305,1763452800"; 
-   d="scan'208";a="60366408"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2026 11:12:23 -0800
-X-CSE-ConnectionGUID: ma16+aahQFiGBDi4OeZOaA==
-X-CSE-MsgGUID: bnlfcrF0RkeuAz3ai5s8Kw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,305,1763452800"; 
-   d="scan'208";a="214593616"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.245.171])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2026 11:12:20 -0800
-Date: Sun, 22 Feb 2026 21:12:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5tF5D/k"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2ba94dbf739so3927706eec.1
+        for <linux-gpio@vger.kernel.org>; Sun, 22 Feb 2026 13:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771795381; x=1772400181; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ldEryRDzDm8Q81a/Tw1YqMlSWTl4WRirEf7oJhSEzuY=;
+        b=A5tF5D/knlBfb1INnzDUt4+CluwwHjucP+EC72xFpPDlIMyxfTrjIcYtiULjEI9aCJ
+         F0MGouxBlk6CTr9SyxqsGPh6UJquwr5x4WuZp1pRKU2/IaU/b8mU89uBmbxeTbs1V47i
+         5V/32AmERS64cYiLlH4UKBxbS82QyCl/TMC2bEBWaKhcNQJZPMOtOalGlKThQQUYiMk/
+         PDPSxPXTlZK3Zn7s8Qm8jTgmtXwHBhaAwaJD5Zm4Q4htbYM/MQ/mqxHFov9nKWT0yRSE
+         WF9wBjOwFq0mT8JM2gWQnGz6A8JwrFk18cVVbbsMVSD70DkIivvgBR4zKxfhcJEW1pMo
+         t7kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771795381; x=1772400181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ldEryRDzDm8Q81a/Tw1YqMlSWTl4WRirEf7oJhSEzuY=;
+        b=JrGuf/1Oafo27v2BWxTM2z4LRiwSZi66Su+mqifptXyVTS5y5TU7TJ33J8s4EFHxlQ
+         qy1CuXVkgPiqIX6XlPhtznJcBD6hXgbKpJ+kAcQdyrDyKfr7O8/29IFUKxrCLd2ueElS
+         wNwP4RaHbcvEYWx8lEAvAMsTASLuxo+oOfQSLSf6uzJhanBLj7s/5c+MOQoGYKN6PdEp
+         iSdA/mVi8FpqQq0rHDsFFpsRLYBp1QDUARQrwgJuyIna1Hqt5PGY0eKP9kzPLBVNEeGP
+         EVaP7mYRK+Ix61BP0n1TW3VrHvF6YjACUVkITBtOTndK8gKWqWMPqvBp5AcwdaCmwyBj
+         naqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwXL6on+sAGVOyRFL4tYBFK3stGZ30TprvdbokLW5Ha5UcPFDxTN+nJ81N+5ldb2Tf5X9HweMdP2qd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJpB/nwB7GZFzEgfRI5cpIJniAXpl554zqhXm6/uCUynCfgPws
+	WnUjTCqn0YNVMQUxtJZEwzGGmlioqK1YlPGMEM3Rm13by7KeiOS+1AqZ
+X-Gm-Gg: AZuq6aLUX7gWxZ0KyIONEnZGIIkvxU0R4+db0sCHAbNLzRu1zkGqBLKCdpnvTzhrxKI
+	nLLAs9WIJqxrFUDH+0LqoBfUeNNAFNhsgvOkYvqPKuEK57TKxF+hR3furdn5KLOMezUyu4JnY0s
+	AI9ehRH/Bemd2NUm/AYPzNXP64th6XTHv/hyTXPdKOLuZMxdB++A33LgyOiSMEyEbvKhP3mpu0H
+	kMrc1C6B0Is224kxU98ayuDLIeBWlQr9oBdvkHHWTqMAb4oYzlBiiA/1L600ZZGrY5d/RCdqGdS
+	KUsRdxzDRzzMv3APIT6yp2h65tqFw1AMeX0DqqjyJmk6oSxxTHPyFq0faFYekYYKa03YPGPbtsF
+	Sv3sooyxiV3ru+t8hQJZ+emvNhw9BQ0JXGcLqNAiIHRljC0gU1mtLzlvpyquPSjbn9GCHn5nLtE
+	RzYygrO5bdqToTvEFKio+TSrgtF2KUEK2pXIw2c9ZWmpyzGcOOULpIab2cttJSRKA=
+X-Received: by 2002:a05:7300:6144:b0:2ba:8961:e1a1 with SMTP id 5a478bee46e88-2bd7bd0470amr3213309eec.22.1771795380867;
+        Sun, 22 Feb 2026 13:23:00 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:c6c:6cca:170e:c77b])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bd7dc16203sm3727038eec.27.2026.02.22.13.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Feb 2026 13:23:00 -0800 (PST)
+Date: Sun, 22 Feb 2026 13:22:57 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] iio: adc: ti-ads7950: complete conversion to
- using managed resources
-Message-ID: <aZtVEdFoGUMx4olM@smile.fi.intel.com>
+Subject: Re: [PATCH v2 1/4] iio: adc: ti-ads7950: normalize return value of
+ gpio_get
+Message-ID: <aZtznp8ZuALzC9N2@google.com>
 References: <20260219022929.3558081-1-dmitry.torokhov@gmail.com>
- <20260219022929.3558081-5-dmitry.torokhov@gmail.com>
- <aZbC51ezuaT5Nwq7@smile.fi.intel.com>
- <aZj3deh1Em1rz3au@google.com>
+ <20260219022929.3558081-2-dmitry.torokhov@gmail.com>
+ <20260222140315.33e5e97c@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,47 +78,20 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aZj3deh1Em1rz3au@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260222140315.33e5e97c@jic23-huawei>
 
-On Fri, Feb 20, 2026 at 04:09:47PM -0800, Dmitry Torokhov wrote:
-> On Thu, Feb 19, 2026 at 09:59:35AM +0200, Andy Shevchenko wrote:
-> > On Wed, Feb 18, 2026 at 06:29:28PM -0800, Dmitry Torokhov wrote:
-
-...
-
-> > > +	if (error) {
-> > >  		dev_err(&spi->dev, "Error in spi setup\n");
-> > > -		return ret;
-> > > +		return error;
-> > >  	}
-> > 
-> > And since there is already dev_err_probe() in use, I would expect this
-> > also be converted.
+On Sun, Feb 22, 2026 at 02:03:15PM +0000, Jonathan Cameron wrote:
+> On Wed, 18 Feb 2026 18:29:25 -0800
+> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 > 
-> But that would be unrelated change ;)
+> > The GPIO get callback is expected to return 0 or 1 (or a negative error
+> > code). Ensure that the value returned by ti_ads7950_get() for output
+> > pins is normalized to the [0, 1] range.
+> Fixes?  I'm not quite sure with something that says 'expected'
 
-I never told that this should be done here.
+Will add a tag.
 
-...
-
-> > Would be also nice to use
-> > 
-> > 	struct device *dev = &spi->dev;
-> > 
-> > to make less LoCs and/or make them shorter.
-> 
-> I actually dislike introducing such temporaries in majority of the
-> cases. It makes it hard to follow what device we are dealing with and
-> does not make the code significantly shorter.
-
-May be, but my experience is telling me different story.
-So we have a disagreement here, I leave it to Jonathan
-to mediate.
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Dmitry
