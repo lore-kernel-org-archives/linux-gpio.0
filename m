@@ -1,101 +1,220 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m2489.xmail.ntesmail.com (mail-m2489.xmail.ntesmail.com [45.195.24.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228642BEFF6;
-	Mon, 23 Feb 2026 20:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A52F4F1;
+	Mon, 23 Feb 2026 21:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771879985; cv=none; b=DIy49EMxoX8O4oPM+MqLqQrRVGsx7vggoMvBrn3ZUSFrO59AGQrvLgA1fkeydmElPATiX7wT8llADYvozfmshqbQ9MbJxqaRUnB+3d1OtPJChaefT8VUBU9enQuFrDCpiaoKKAfqqJsof4LkONzZux5qmuZ6GoTNUQYH/TTR7oI=
+	t=1771881338; cv=none; b=XIzvgnF5YHIvLQ5rvQ2Fp6GSRNSTOuJl0gWB9tA80rI7ELoF7VP5JGCNCpwHs3mZXu/mZ5VeXVDovRe0X7fpK6fwEAQD6p1xoZigHWiFviMeXVkTtpj5AhsZB6eGNv8oV032o//jIPER2lrAMgzIyThwyzLr7uEXs9TmPcIJdag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771879985; c=relaxed/simple;
-	bh=9ZwCRUkSygSWXdebgAt63Ndk3TSqeMDqho4QjUTbPeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aPpsPvWl2LO3a22SNzDeB2hj4j2zqFSITlYUFYxdOQw7HgcXuAwXaYESqyiQ678cqmCX6S3P1eqYka3JP91hje1rj37LILcF2tImr5LCO/vCJ6LZW3HpILl+nrjG0N0LiSZsnCsa1fpNGKAxawlYgRF//fkA7FT7L6437mgK1g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFbomPaX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771881338; c=relaxed/simple;
+	bh=Zq2IirUyfEPFzMu6m9iwUulfmXx1dT5LTcM+Mxmn32U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=dsFWsyABv064nHcTNUQ6KXGD+JLy6v2oGHDMVluIPYUfcq/t0OvUwiuRNhF1P+d0ysqUlxao3g9emPtNMdyj65954rNAVQQb1THqCzAnbj1w0z/wOqLoBeGofYeorsnkWCp1Qcx3ikE9PRCQS9tFncv66UvJ+5Ed1ikQdGcNv9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hesEBWpu; arc=none smtp.client-ip=45.195.24.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFbomPaX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C30E3C19421;
-	Mon, 23 Feb 2026 20:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771879984;
-	bh=9ZwCRUkSygSWXdebgAt63Ndk3TSqeMDqho4QjUTbPeg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dFbomPaXdm1lhsiCRGW4tHCyrO1zxgCcTPi/MDxnyMPCkNf3RBffybbw/qXjqk+CP
-	 xpth8RfSTShWo/87AJ7NTbvLjgO0oNvvB6o8Ujv9pgZYqMH6gZPTQ36szCplmgoMRw
-	 VsBcIZrsnIHZdZFBakvl6EOARXQszb/lyVMbMKkWBuZIoRh9xS0hv51VDmD6H/WwAe
-	 JWhjCMiph2crYJceBDyWSnlB3jmJEnFJue7aUqZXucHI5imdJ7NB1oB2I+zONFeoBg
-	 hhZnIPQJh1g2vEMDfXtnEQBlAHnHTJXjxl4A1WJ4nMKeODuQKyCnng8iPr9fy93EbR
-	 qkqkN/33uj18w==
-Date: Mon, 23 Feb 2026 20:52:54 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] iio: adc: ti-ads7950: complete conversion to
- using managed resources
-Message-ID: <20260223205254.472ee2b1@jic23-huawei>
-In-Reply-To: <aZtVEdFoGUMx4olM@smile.fi.intel.com>
-References: <20260219022929.3558081-1-dmitry.torokhov@gmail.com>
-	<20260219022929.3558081-5-dmitry.torokhov@gmail.com>
-	<aZbC51ezuaT5Nwq7@smile.fi.intel.com>
-	<aZj3deh1Em1rz3au@google.com>
-	<aZtVEdFoGUMx4olM@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hesEBWpu"
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 34b37f77f;
+	Mon, 23 Feb 2026 23:31:55 +0800 (GMT+08:00)
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	"Vaibhaav Ram T . L" <vaibhaavram.tl@microchip.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Even Xu <even.xu@intel.com>,
+	Xinpeng Sun <xinpeng.sun@intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Jian Shen <shenjian15@huawei.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+	Karol Wachowski <karol.wachowski@linux.intel.com>,
+	Min Ma <mamin506@gmail.com>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Will Deacon <will@kernel.org>,
+	Xinliang Liu <xinliang.liu@linaro.org>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Srujana Challa <schalla@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org,
+	linux-i3c@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>,
+	netdev@vger.kernel.org,
+	nic_swsd@realtek.com,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-usb@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-cxl@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	mhi@lists.linux.dev,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	linux-i2c@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	linux-spi@vger.kernel.org,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 01/37] PCI/MSI: Add Devres managed IRQ vectors allocation
+Date: Mon, 23 Feb 2026 23:29:40 +0800
+Message-Id: <1771860581-82092-2-git-send-email-shawn.lin@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1771860581-82092-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1771860581-82092-1-git-send-email-shawn.lin@rock-chips.com>
+X-HM-Tid: 0a9c8b20e63209cckunm6946b3c7986369
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5JGFYdQhpNQ0tOHx8aQhpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=hesEBWpuUfkngcgz1f2Ig1nlGmmzRwW4WQwqVSHNJo/8mDrQHyi2jBXfpRejbQ5213Bi/x3y5ZKsO4yPdU29saCaBfjZuhiQPZrXuFi/nfbjzR0kpb+gL5Eft5gNlVXtMsgoBjIOykghNIgFG4xZvqITu8wqjNed5lf17v/+SjU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=j3H95hgVRLs6dldnhhXVuqSGrPI2yynu10KTCXrGKLk=;
+	h=date:mime-version:subject:message-id:from;
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sun, 22 Feb 2026 21:12:17 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+pcim_alloc_irq_vectors() and pcim_alloc_irq_vectors_affinity() are created for
+pci device drivers which rely on the devres machinery to help cleanup the IRQ
+vectors.
 
-> On Fri, Feb 20, 2026 at 04:09:47PM -0800, Dmitry Torokhov wrote:
-> > On Thu, Feb 19, 2026 at 09:59:35AM +0200, Andy Shevchenko wrote:  
-> > > On Wed, Feb 18, 2026 at 06:29:28PM -0800, Dmitry Torokhov wrote:  
-> 
-> ...
-> 
-> > > > +	if (error) {
-> > > >  		dev_err(&spi->dev, "Error in spi setup\n");
-> > > > -		return ret;
-> > > > +		return error;
-> > > >  	}  
-> > > 
-> > > And since there is already dev_err_probe() in use, I would expect this
-> > > also be converted.  
-> > 
-> > But that would be unrelated change ;)  
-> 
-> I never told that this should be done here.
-> 
-> ...
-> 
-> > > Would be also nice to use
-> > > 
-> > > 	struct device *dev = &spi->dev;
-> > > 
-> > > to make less LoCs and/or make them shorter.  
-> > 
-> > I actually dislike introducing such temporaries in majority of the
-> > cases. It makes it hard to follow what device we are dealing with and
-> > does not make the code significantly shorter.  
-> 
-> May be, but my experience is telling me different story.
-> So we have a disagreement here, I leave it to Jonathan
-> to mediate.
-> 
-When there are multiple struct device isntances that we access
-in the driver I fully agree with Dmitry that it is helpful to
-fully enumerate them.  However, for IIO drivers we keep the
-one buried in struct iio_dev fairly well hidden so the confusion
-"opportunity" doesn't tend to occur.  As such I tend to come down just
-on the "have a local variable" side of things.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-Jonathan
+ drivers/pci/msi/api.c | 26 ++++++++++++++++++++++++++
+ include/linux/pci.h   | 22 ++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
+
+diff --git a/drivers/pci/msi/api.c b/drivers/pci/msi/api.c
+index c18559b..2362fca 100644
+--- a/drivers/pci/msi/api.c
++++ b/drivers/pci/msi/api.c
+@@ -297,6 +297,32 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
+ EXPORT_SYMBOL(pci_alloc_irq_vectors_affinity);
+ 
+ /**
++ * pcim_alloc_irq_vectors() - devres managed pci_alloc_irq_vectors()
++ * Interrupt vectors are automatically freed by the devres machinery
++ */
++int pcim_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
++			   unsigned int max_vecs, unsigned int flags)
++{
++	return pcim_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs,
++					       flags, NULL);
++}
++EXPORT_SYMBOL(pcim_alloc_irq_vectors);
++
++/**
++ * pcim_alloc_irq_vectors_affinity() - devres managed pci_alloc_irq_vectors_affinity()
++ * Interrupt vectors are automatically freed by the devres machinery
++ */
++int pcim_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
++				   unsigned int max_vecs, unsigned int flags,
++				   struct irq_affinity *affd)
++{
++	dev->is_msi_managed = true;
++	return pci_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs,
++					      flags, affd);
++}
++EXPORT_SYMBOL(pcim_alloc_irq_vectors_affinity);
++
++/**
+  * pci_irq_vector() - Get Linux IRQ number of a device interrupt vector
+  * @dev: the PCI device to operate on
+  * @nr:  device-relative interrupt vector index (0-based); has different
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index d5ec0f8..ae58f70 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1764,6 +1764,12 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
+ 				   unsigned int max_vecs, unsigned int flags,
+ 				   struct irq_affinity *affd);
+ 
++int pcim_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
++			  unsigned int max_vecs, unsigned int flags);
++int pcim_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
++				   unsigned int max_vecs, unsigned int flags,
++				   struct irq_affinity *affd);
++
+ bool pci_msix_can_alloc_dyn(struct pci_dev *dev);
+ struct msi_map pci_msix_alloc_irq_at(struct pci_dev *dev, unsigned int index,
+ 				     const struct irq_affinity_desc *affdesc);
+@@ -1806,6 +1812,22 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
+ 					      flags, NULL);
+ }
+ 
++static inline int
++pcim_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
++			       unsigned int max_vecs, unsigned int flags,
++			       struct irq_affinity *aff_desc)
++{
++	return pci_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs,
++					      flags, aff_desc);
++}
++static inline int
++pcim_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
++		      unsigned int max_vecs, unsigned int flags)
++{
++	return pcim_alloc_irq_vectors_affinity(dev, min_vecs, max_vecs,
++					      flags, NULL);
++}
++
+ static inline bool pci_msix_can_alloc_dyn(struct pci_dev *dev)
+ { return false; }
+ static inline struct msi_map pci_msix_alloc_irq_at(struct pci_dev *dev, unsigned int index,
+-- 
+2.7.4
+
