@@ -1,59 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BE633BBB9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7A433B97B;
 	Mon, 23 Feb 2026 18:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771870146; cv=none; b=CeFYYZxm/f5fzIEO3P4h7rfkTyi60ZA8UT+t/Of6dDF3qNydp2rhQa76GLdSWM745g7vb1qyF9Dkyho9dOPDByITkMti6Yl9rDjzGRQcuPbHQvFF/jH8uPYK1ptDP7lRoE55Ex6Zd8ucrcFcjZvjHDPFCHQhGKUTjxueY1clMq4=
+	t=1771870146; cv=none; b=Ovqk0tssvpC8zg5G/Zv1ndshcVNqlGbo40X/3bUzG5042C/ePa7latjlJDlw/lFH8QJa5a+63hgoZgvHusu87jBTG6mrvX8QPzzHH6X0dEYS12k4Ai8iTNzdnzjPCNQsjKV/GGasSBJk2y7QTqHdM3l4RpF11EwtwGiqk9vu1J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1771870146; c=relaxed/simple;
-	bh=kOB+dAnEOO05y6UZt1KP3bLWhO3E4YCvQWjyKGXAT4k=;
+	bh=TMzcyH63F4RpXRFGqOO7y7ywEJpoeK8pxIU27Pemdzs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lzA+FA9iwIUdtGcc0WqFOlFoYetkhQ9wuNPW9tpiCg8sXqbs8AX+K9Fcffr+QL3CT1SOdf9Rq/pJkE81l+jFKvEea1oQHam1JrrXWsLPoQSNDeAa7unMEqNrb39iJCcvgOs2Y27LSEaG8autC7XEy3AwynXbSElkWJr1akOlgDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEVXFN+7; arc=none smtp.client-ip=192.198.163.18
+	 MIME-Version; b=VfrUBGp4M7Bmmaptw8r1WR+yMcdam1adF7Ggee3rAnQav06E9wqtCNMG2lbvBJWzzOsKcPmdE9zqR2dMwTdjULhjyXZLf44fd1lH7yDLGBr/YN+WIQZFUvtG0WB8E9GZ5sOslumycEHll8Dg5BUUU2ctNzmIXg3rgyucPHbuplE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O95Jhf5N; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEVXFN+7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O95Jhf5N"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1771870145; x=1803406145;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=kOB+dAnEOO05y6UZt1KP3bLWhO3E4YCvQWjyKGXAT4k=;
-  b=HEVXFN+7YOsceE4+9KEsb6V/1EXeKIHdKbB3s0DWWI1bU+l1i8M9qwQS
-   OjLt0y5CCRsI7+v6JkvqZLaWOZSR30c69f+kpCH9XpUj/AAsuNQi955FI
-   4Vh3sIzomckiWGhiLa3zA0Mq+R9i8xnNNXK0hJnby5v7G8KUEwKhWbjl1
-   TjiLn2NhRvQDDI2jLPJ3P7xP7YM0JC03hPwrfdEvRJU84Br4FQt+jWi+V
-   Wu1EC6bV+IkUZldkoAfQK/64qLMwwcNhcRLfYN+JoFqQfAWy36AjfFd9d
-   7J8CZwys0ShNIH2D+4AbHJFyzy0rvtpxXdIEXIB/FaGbktqZ81n4pl7C8
-   g==;
-X-CSE-ConnectionGUID: kqGeYHH+S66YDJ3XohiJDg==
-X-CSE-MsgGUID: zsx3Ql/rTB+ogbHTEKYBKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72082657"
+  bh=TMzcyH63F4RpXRFGqOO7y7ywEJpoeK8pxIU27Pemdzs=;
+  b=O95Jhf5N9uKdJAYBFmklYif2gjScUPzNF0pg1TEZpFbPrfYvZ9jR7MO7
+   3qiAN5UF8UXjnqz7q0hqK3fY7eWHBN6HQ1fyBmA/f6NfZL3F8wc0+qsyZ
+   pa+xaOAnCJVPXTsnuk+pWfRCYUNjeqdxfGXcawsP/EiMMz8cgVrtM29iO
+   +sdeAtjX55+2uhsiznVW4CmkuTRp2kPaeeRHorcNDVMUBP/JFkuv2tkuQ
+   Rz/NbI42lGtIv5rcnAi3XEcyY7Tcrx/jztbdvERHOwjJZkOUmSimkW7en
+   YeqBABK7BCTcJU4txVl/IuXdOEhGK8AmKB0m7p2noMd+tOoT/UorLcvbP
+   A==;
+X-CSE-ConnectionGUID: Tkal2eaES0i8BQJJM2NpwQ==
+X-CSE-MsgGUID: VuKpVX/qQVCnpUwt0RVKrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="76737696"
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="72082657"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:05 -0800
-X-CSE-ConnectionGUID: Sy9SHbzGRAm6jLh2rURfwQ==
-X-CSE-MsgGUID: 2yUI6CCqTLK8H61+Ix3/Hw==
+   d="scan'208";a="76737696"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:03 -0800
+X-CSE-ConnectionGUID: DuGprlqQRBeElKbELRortQ==
+X-CSE-MsgGUID: fP0/W1qgSDCMx5qgi6Hc6w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="238599658"
+   d="scan'208";a="253369508"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Feb 2026 10:09:04 -0800
+  by orviesa001.jf.intel.com with ESMTP; 23 Feb 2026 10:09:02 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 435E7A5; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
+	id 2ECA39D; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 8/8] pinctrl: cy8c95x0: Gather ID tables in one place
-Date: Mon, 23 Feb 2026 19:06:58 +0100
-Message-ID: <20260223180859.2845261-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/8] pinctrl: cy8c95x0: remove duplicate error message
+Date: Mon, 23 Feb 2026 19:06:53 +0100
+Message-ID: <20260223180859.2845261-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
 References: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
@@ -65,72 +65,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We have three ID tables spread over the driver code. Move all of them
-closer to the end of the file where the first user appears to be. With
-that done, drop unneeded trailing commas.
+The pin control core is covered to report any error via message.
+The devm_request_threaded_irq() already prints an error message.
+Remove the duplicates.
+
+While at it, drop the info message as the same information about
+an IRQ in use can be retrieved differently.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 38 +++++++++++++++---------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 1d3e0617b235..0d295ebc33d1 100644
+index 0647c7f94162..165ccbda035f 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -72,24 +72,6 @@
- #define CY8C95X0_MUX_REGMAP_TO_OFFSET(x, p) \
- 	(CY8C95X0_VIRTUAL + (x) - CY8C95X0_PORTSEL + (p) * MUXED_STRIDE)
+@@ -1310,6 +1310,7 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+ {
+ 	struct gpio_irq_chip *girq = &chip->gpio_chip.irq;
+ 	DECLARE_BITMAP(pending_irqs, MAX_LINE);
++	struct device *dev = chip->dev;
+ 	int ret;
  
--static const struct i2c_device_id cy8c95x0_id[] = {
--	{ "cy8c9520", 20, },
--	{ "cy8c9540", 40, },
--	{ "cy8c9560", 60, },
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, cy8c95x0_id);
--
--#define OF_CY8C95X(__nrgpio) ((void *)(__nrgpio))
--
--static const struct of_device_id cy8c95x0_dt_ids[] = {
--	{ .compatible = "cypress,cy8c9520", .data = OF_CY8C95X(20), },
--	{ .compatible = "cypress,cy8c9540", .data = OF_CY8C95X(40), },
--	{ .compatible = "cypress,cy8c9560", .data = OF_CY8C95X(60), },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, cy8c95x0_dt_ids);
--
- static const struct acpi_gpio_params cy8c95x0_irq_gpios = { 0, 0, true };
+ 	ret = devm_mutex_init(chip->dev, &chip->irq_lock);
+@@ -1338,17 +1339,9 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+ 	girq->handler = handle_simple_irq;
+ 	girq->threaded = true;
  
- static const struct acpi_gpio_mapping cy8c95x0_acpi_irq_gpios[] = {
-@@ -1478,8 +1460,26 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 	return cy8c95x0_setup_gpiochip(chip);
+-	ret = devm_request_threaded_irq(chip->dev, irq,
+-					NULL, cy8c95x0_irq_handler,
+-					IRQF_ONESHOT | IRQF_SHARED,
+-					dev_name(chip->dev), chip);
+-	if (ret) {
+-		dev_err(chip->dev, "failed to request irq %d\n", irq);
+-		return ret;
+-	}
+-	dev_info(chip->dev, "Registered threaded IRQ\n");
+-
+-	return 0;
++	return devm_request_threaded_irq(dev, irq, NULL, cy8c95x0_irq_handler,
++					 IRQF_ONESHOT | IRQF_SHARED,
++					 dev_name(chip->dev), chip);
  }
  
-+static const struct i2c_device_id cy8c95x0_id[] = {
-+	{ "cy8c9520", 20 },
-+	{ "cy8c9540", 40 },
-+	{ "cy8c9560", 60 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, cy8c95x0_id);
-+
-+#define OF_CY8C95X(__nrgpio) ((void *)(__nrgpio))
-+
-+static const struct of_device_id cy8c95x0_dt_ids[] = {
-+	{ .compatible = "cypress,cy8c9520", .data = OF_CY8C95X(20) },
-+	{ .compatible = "cypress,cy8c9540", .data = OF_CY8C95X(40) },
-+	{ .compatible = "cypress,cy8c9560", .data = OF_CY8C95X(60) },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, cy8c95x0_dt_ids);
-+
- static const struct acpi_device_id cy8c95x0_acpi_ids[] = {
--	{ "INT3490", 40, },
-+	{ "INT3490", 40 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, cy8c95x0_acpi_ids);
+ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
+@@ -1364,11 +1357,7 @@ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
+ 	pd->owner = THIS_MODULE;
+ 
+ 	chip->pctldev = devm_pinctrl_register(chip->dev, pd, chip);
+-	if (IS_ERR(chip->pctldev))
+-		return dev_err_probe(chip->dev, PTR_ERR(chip->pctldev),
+-			"can't register controller\n");
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(chip->pctldev);
+ }
+ 
+ static int cy8c95x0_detect(struct i2c_client *client,
 -- 
 2.50.1
 
