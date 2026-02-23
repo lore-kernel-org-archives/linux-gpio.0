@@ -1,104 +1,85 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AB033B955;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1044133B95D;
 	Mon, 23 Feb 2026 18:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771870145; cv=none; b=NvrhV2h0xx+kGChQNS24gVPC1EFCdvA7SOaRoKyO+0wwOuv6D3hYEP3YjuMKuNq8A5n2WHaFiassW78GIwaS0GMNTGeRV8nak2c50WLa4ue4I3c7By0r8nNJCM4j6cTdlKhsne63VxKN2G4OVP488rTB3tzk7CvYa7S1Q89cptg=
+	t=1771870145; cv=none; b=EnpB4SP0qRtu16iXgN2ggfpj/nULC85lfHj/z/lwADF04amHky3hmmBawpHHEiCpBkWG7bc2d74Q2wkp+E7CxqtTlwyuI/pDD79iLz0EnY6dDE2087aiEdJOKMcsP7ciKG41unD6zgZm3V9v3GyeLqmNKqN+4eQbnR18uPPZjkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1771870145; c=relaxed/simple;
-	bh=NjEkuQeRNEe9/XFUfAKHJHpzCenTaA4ThY2KU/aWb5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K0jem/BB7orM3YZu3XI/xiVpQhb2vSwIOQuJd+7RsnQ+eymnn2pJ/af9Bwyv7X+ePO81msb1USOqK22hOYTrqctMgRMAvuN3cZmVvAN6Js1itEv/agy9SfiLbRtniNtAhZPHhUiUtU29AQVsw5kodDcnmReUyBdKodeQFFRE/VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VifzeqoF; arc=none smtp.client-ip=192.198.163.18
+	bh=+C/z0Joop50N9OnTbsKTZLcnpOMhlCHMkiHnoAvdL0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hx2c93Q1Ccu1bvscqk1P3Kbt8qDOSeHzhNRdzACxu8JAVVy2APBILwuVq4euF0DLCiBPmk1MM6LgEx/Uaryo37DGyS3+KkDwh1UIyT5C/hIL2no1PnIHx0LI8TDL3o7N/4d56PlC3egTGOEhKCP2WXaVSORYscLfoyctsRQ+p+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Au2m3xom; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VifzeqoF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Au2m3xom"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1771870144; x=1803406144;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NjEkuQeRNEe9/XFUfAKHJHpzCenTaA4ThY2KU/aWb5Q=;
-  b=VifzeqoFY4pT6ioVaw9D4MdfTpQr8XFVwfsizvD7qbH4RPSHPDWB8dSd
-   kJfzGbRMV6XC0jAeajmgVTLLdLDFt2lLVo7ZrDCB9MqBRgxfAKHWnBN3g
-   yZVSp0vsog11peXsijRjTuBeY25aM05WtuZDCBWVYCST6QC1xgdrj5rTq
-   i6KcZLP7pH1/rTqElxC7Ioh6IyRNH0JdOAaC4Y4//9lS9ucZbEC7aHA0c
-   DKEq+mkJwduv43+pqEQ4nh/pjEMlIY8zyo6nKg62N1Uf5pl612jJ5zEzD
-   mDHXvSaZK8R0Z0b8d2Yphrf0gZhZRswUJdA6aFVN5E6A9Sai27mksxk7D
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+C/z0Joop50N9OnTbsKTZLcnpOMhlCHMkiHnoAvdL0s=;
+  b=Au2m3xomy7iPbh+x9uChx1W8FRWUn/aRYm5d3k0RN1dVlgqal13ZD0Ed
+   dFcydNKlk9aI4fC76y3gfAhnWnfIgbaK4bS5uQfmOWTXFtO/KpQgvtw5p
+   jmxigfhA2sLhK8ecNFhBC7+Q1zWP7Mmg0K8j/DwU8lh47XF+9J8Bb11fo
+   Z5F1jJb55zNQUt+5TwPXy0vW386TnvHHE+jCQDT7vEsQ6M0XpyWKyk1Ib
+   FSXx9bQf4HXp3vNGJuVGCKv9P8+1ySQBToZui3feYMe8Dp3lW5CajwhR7
+   kosoWkH7cMzD59j3DZkdW5EbcDAyTnBKz+0wuIj4HKpJATf4qM9LPyCkB
    g==;
-X-CSE-ConnectionGUID: yWQo5RidSXWaxRck48BTwQ==
-X-CSE-MsgGUID: ZnsoXfDDSdC+6+bNgK3bOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72082653"
+X-CSE-ConnectionGUID: 7d0cojfGSpGkI8U6yjXmlA==
+X-CSE-MsgGUID: 8zBIRxYvQm+ouTbrRgbmSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="76737692"
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="72082653"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:03 -0800
-X-CSE-ConnectionGUID: nX58BouuRqOmskmcz64fCg==
-X-CSE-MsgGUID: ymW+8RisSAeyFcb5qcNsfA==
+   d="scan'208";a="76737692"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:03 -0800
+X-CSE-ConnectionGUID: l3aODQlARxmlypL+H4YReA==
+X-CSE-MsgGUID: dDL29c91QLufWQ5oSrveTQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="238599650"
+   d="scan'208";a="253369507"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Feb 2026 10:09:02 -0800
+  by orviesa001.jf.intel.com with ESMTP; 23 Feb 2026 10:09:02 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 2A8D29B; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
+	id 23B0295; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 2/8] pinctrl: cy8c95x0: Use devm_mutex_init() for mutex initialization
-Date: Mon, 23 Feb 2026 19:06:52 +0100
-Message-ID: <20260223180859.2845261-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/8] pinctrl: cy8c95x0: Yet another cleanup series and a fix
+Date: Mon, 23 Feb 2026 19:06:50 +0100
+Message-ID: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
-References: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use devm_mutex_init() since it brings some benefits when
-CONFIG_DEBUG_MUTEXES is enabled.
+While playing on with Intel Galileo board again, I found that I messed up a bit
+with the driver. Here is a fix followed by a set of ad-hoc cleanups. Obviously
+tested on the above mentioned board.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Andy Shevchenko (8):
+  pinctrl: cy8c95x0: Don't miss reading the last bank registers
+  pinctrl: cy8c95x0: Use devm_mutex_init() for mutex initialization
+  pinctrl: cy8c95x0: remove duplicate error message
+  pinctrl: cy8c95x0: Unify messages with help of dev_err_probe()
+  pinctrl: cy8c95x0: Move driver data to the local variable in ->probe()
+  pinctrl: cy8c95x0: Drop unused 'name' in struct cy8c95x0_pinctrl
+  pinctrl: cy8c95x0: Eliminate fragile use of I²C ID table
+  pinctrl: cy8c95x0: Gather ID tables in one place
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 5c055d344ac9..0647c7f94162 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1312,7 +1312,9 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
- 	DECLARE_BITMAP(pending_irqs, MAX_LINE);
- 	int ret;
- 
--	mutex_init(&chip->irq_lock);
-+	ret = devm_mutex_init(chip->dev, &chip->irq_lock);
-+	if (ret)
-+		return ret;
- 
- 	bitmap_zero(pending_irqs, MAX_LINE);
- 
-@@ -1474,7 +1476,9 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 	bitmap_fill(chip->map, MAX_LINE);
- 	bitmap_clear(chip->map, 20, 4);
- 
--	mutex_init(&chip->i2c_lock);
-+	ret = devm_mutex_init(dev, &chip->i2c_lock);
-+	if (ret)
-+		return ret;
- 
- 	if (dmi_first_match(cy8c95x0_dmi_acpi_irq_info)) {
- 		ret = cy8c95x0_acpi_get_irq(&client->dev);
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 97 ++++++++++++------------------
+ 1 file changed, 40 insertions(+), 57 deletions(-)
+
 -- 
 2.50.1
 
