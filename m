@@ -1,59 +1,60 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF6D33C522;
-	Mon, 23 Feb 2026 18:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF08533CEB0;
+	Mon, 23 Feb 2026 18:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771870147; cv=none; b=cJl2+JBdutkkAg/KUX+owBNrzrDz+pGdFJpL8Qc0V4fyBNpkxQaew9+Ysbl8F1ORer3+b7EUePfWB6oqY34jmckoY3Yq3H8byUPHW5ImGFWiyj6SidqQcgiePwzd5TII8JE3yW02Nr0Hi0SwPr9UYJgPnNybzIvBsTSGUeUv9G4=
+	t=1771870148; cv=none; b=T1NQZpasG4BSf0uqh3HJCX1ubC6p3ISpGOLrNf0/aoJM6qzqbUKpPaiW5DdUu4Vy1/Txy0rpW5Nfbm42efiIL0SNc6+k6oQavwzxLIGNzHK5S8t4ce2RuwSC65opHQku+aJ+Tv3SVhiya/XMWuZ9zN+nvF9WO8heu5e7Ubyv04E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771870147; c=relaxed/simple;
-	bh=jkuthO0ot5cp48bSHyF5g6iI2H7DlYmMluLOs4PFE2A=;
+	s=arc-20240116; t=1771870148; c=relaxed/simple;
+	bh=mB4UJPu7ft7xeAi6JUJEU3taIkBlM1htlTm1Pte0Vxg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FNJTDE5JcL9hI/O/rJCN0ADVPfouBsH7zuinujaLjsT22a3hZEwpsqwn1fbsos2gSCOoyqum6ueQ8jaOMBqaTn8/F5X0mN/W1eykYUnitTN/ndWR041zEbX9sMmQHic0v05aqQ3R1ousV4FxKsPpXfBUW5s3p/5wloBBRq2+hnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UllrOkEF; arc=none smtp.client-ip=192.198.163.12
+	 MIME-Version; b=tGThpHZ+n7yk4rlrxzfA+tcO1uh4fRC8uaYjDCz9xHBheekaCplfDwtgvf76GQYQ0lmp1IxssTuZ71s2etC6rg5Y7JNqV1xg1JOa8yB4c4HlFNt9VbmTBs52eHS6Ro8HIeHJv0VwtCeZMGcFxUA7X/o+OdfghlPcYtCNRYlRX7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TR9tI9J7; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UllrOkEF"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TR9tI9J7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771870146; x=1803406146;
+  t=1771870147; x=1803406147;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jkuthO0ot5cp48bSHyF5g6iI2H7DlYmMluLOs4PFE2A=;
-  b=UllrOkEFuxKbum15i/WQ0+Byq6HMh7KM6t9oZnY9m1viIY2sfHLqsI3Q
-   draNbIhoi45vhcqPNLdZqspJS61aWkcgB7FgG2WeVrghVu+SYbONyC6dc
-   +TdWAQViiqAmlrvw+hGHZcoK+isz49TrWm3IhtHa0RFwTK3yYLzCracEK
-   swEMzI0gZC6RB2jG2CotWuAJmbBngSboib0a0vAQpLxtrXezTqQaE2Crq
-   k8+HHR0jH2q4rL5lYyqmrS8myXorVGqrY5Z4Jl5c64FN+w+b/REZG4wz5
-   9Xx0Snbjc/9cDHF8P36tZZEjDk3FrG/s9hP4bwUy24YToJwrtZhlZk4U4
-   w==;
-X-CSE-ConnectionGUID: fUAYk7uDRSO5t9/5XVUMcw==
-X-CSE-MsgGUID: fKGz0gpOS3+80kYx4IAGDQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="76737699"
+  bh=mB4UJPu7ft7xeAi6JUJEU3taIkBlM1htlTm1Pte0Vxg=;
+  b=TR9tI9J7gLIGb8Iomc206pXuNjabeZMtd1iBTY4uQ67JjxIrEegOOaY1
+   wDrTqtc409urDjkhPPW63Ry9SwoYcFfLvKVu8G2aIkwnwrFXh34U0m5bj
+   zv9VMBaRBA5yimg899QHy4pk36PWNODK1VlxPV1LHcTUQbjGW794/grma
+   wYZ9BnEOo2pqxd1ZlDkCZq/4Y39XDcQvAxoGR1KVtlaAwaQe0fuoMP1Qd
+   m43AL0QUbWfjez9iJTDYP9bTJdiyT5oLLfvz37gWdwkXwGa1IVSRdrbxm
+   mlVDyiCzXJwDXkIe8zVoWOWwXbuPyjoKFfRunkwOq1cVvvF4QD5+x9dYA
+   Q==;
+X-CSE-ConnectionGUID: QZu8s1SOSpGUJDOr7eSfgw==
+X-CSE-MsgGUID: U5e9eEydROKdKO0EbYVxDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="76737702"
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="76737699"
+   d="scan'208";a="76737702"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:03 -0800
-X-CSE-ConnectionGUID: LZsFadAQRQeZchHMf6FDdQ==
-X-CSE-MsgGUID: l7t8hejoQC2KDpd2ZKYgfw==
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:04 -0800
+X-CSE-ConnectionGUID: OVa1yvTwQLitLtSc3ps9gg==
+X-CSE-MsgGUID: 76mljHycSjCqLzYVqOTh+A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="253369511"
+   d="scan'208";a="253369509"
 Received: from black.igk.intel.com ([10.91.253.5])
   by orviesa001.jf.intel.com with ESMTP; 23 Feb 2026 10:09:02 -0800
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 3317A9E; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
+	id 266B899; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 4/8] pinctrl: cy8c95x0: Unify messages with help of dev_err_probe()
-Date: Mon, 23 Feb 2026 19:06:54 +0100
-Message-ID: <20260223180859.2845261-5-andriy.shevchenko@linux.intel.com>
+	Linus Walleij <linusw@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v1 1/8] pinctrl: cy8c95x0: Don't miss reading the last bank registers
+Date: Mon, 23 Feb 2026 19:06:51 +0100
+Message-ID: <20260223180859.2845261-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
 References: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
@@ -65,31 +66,42 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Unify error messages that might appear during probe phase by
-switching to use dev_err_probe().
+When code had been changed to use for_each_set_clump8(), it mistakenly
+switched from chip->nport to chip->tpin since the cy8c9540 and cy8c9560
+have a 4-pin gap. This, in particular, led to the missed read of
+the last bank interrupt status register and hence missing interrupts
+on those pins. Restore the upper limit in for_each_set_clump8() to take
+into consideration that gap.
 
+Fixes: 83e29a7a1fdf ("pinctrl: cy8c95x0; Switch to use for_each_set_clump8()")
+Cc: stable@vger.kernel.org
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 165ccbda035f..94a599486638 100644
+index a4b04bf6d081..5c055d344ac9 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1321,10 +1321,8 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+@@ -627,7 +627,7 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ 	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
+ 	bitmap_scatter(tval, val, chip->map, MAX_LINE);
  
- 	/* Read IRQ status register to clear all pending interrupts */
- 	ret = cy8c95x0_irq_pending(chip, pending_irqs);
--	if (ret) {
--		dev_err(chip->dev, "failed to clear irq status register\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to clear irq status register\n");
+-	for_each_set_clump8(offset, bits, tmask, chip->tpin) {
++	for_each_set_clump8(offset, bits, tmask, chip->nport * BANK_SZ) {
+ 		unsigned int i = offset / 8;
  
- 	/* Mask all interrupts */
- 	bitmap_fill(chip->irq_mask, MAX_LINE);
+ 		write_val = bitmap_get_value8(tval, offset);
+@@ -655,7 +655,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
+ 	bitmap_scatter(tmask, mask, chip->map, MAX_LINE);
+ 	bitmap_scatter(tval, val, chip->map, MAX_LINE);
+ 
+-	for_each_set_clump8(offset, bits, tmask, chip->tpin) {
++	for_each_set_clump8(offset, bits, tmask, chip->nport * BANK_SZ) {
+ 		unsigned int i = offset / 8;
+ 
+ 		ret = cy8c95x0_regmap_read_bits(chip, reg, i, bits, &read_val);
 -- 
 2.50.1
 
