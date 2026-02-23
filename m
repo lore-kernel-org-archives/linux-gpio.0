@@ -1,149 +1,187 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from mail-m93191.xmail.ntesmail.com (mail-m93191.xmail.ntesmail.com [103.126.93.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8788637A49D;
-	Mon, 23 Feb 2026 22:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD183EBF10;
+	Mon, 23 Feb 2026 22:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.126.93.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771884443; cv=none; b=nCZ2jXllruYz4V7Z1oQxRIMy5ZtU+QWkXG4JvIBhn7lT4AMb/sSBGkP5BdzgFZmAtKW1hMN9kiDdJctPbWSlf04P7c9i3k4xulY50AQCEs/fA4ArMybNlSYRl332bV76TGmRiLTB/NccYYq6nYkRSYgPqd+35XCpDHyCC3McGGs=
+	t=1771885366; cv=none; b=ndeyUiXWPVUaCxED0IuZOUAMnThCbYaIqRZTfBf+wgUeOlJ33vlYrJCtH6KWnkuQhm3Iksaxe+bRe4INalNmT/6yXNqypst6s0yj76xa5o+eTML8uA3AFRNPCZ2z16dNen/50OMwJo2FZ4fuR8N7VCFFgKHrTyUtZ5q4Wz++5jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771884443; c=relaxed/simple;
-	bh=QLRt1ihCEGutlnY3VQn0B0BPbTeJrNzIfTdx0Vhb06U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+dbVggXOQVDin9eg/8B/16YV6r7JdJlA9DCZmDCK7pbGfSaImlyXXDkC65prsyo0J4JnEwChRAvo/94y8l6y4JAuyY3MHR8VDVSBpsV/OON5ssQtrQOGagjDPREoidK2jn8Br+qacddnoolWcuEJfzqD8fdwz+7GUSu5SHpBag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mWWJKB7B; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1771885366; c=relaxed/simple;
+	bh=pEHlMOLcrVLHxBcPS3mtO3QtuhosaoNFXUoSgyCErug=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=JGx7pqFucmfttBbDUpLUj6WUCmA/rAwj7UHXRxbaN9kDcY/qlcb/l02+OfGTe8yay9kM/av+KedM53QB7/w38IigeLzGcQTAk04zDHUz4/xUIVgQ2feW3kyIu9xYggnqIb9El2m5xRyfNG4VBduMRmk0qPc70gtADCqaK1ZzAks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=J1HZWCee; arc=none smtp.client-ip=103.126.93.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mWWJKB7B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771884442; x=1803420442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QLRt1ihCEGutlnY3VQn0B0BPbTeJrNzIfTdx0Vhb06U=;
-  b=mWWJKB7B44VU5zsW5268qiqZb7zFp8W+Z2pUPr8uLP6EFlnx9sFG/i2c
-   UrjLH48mPweXH40o7DGemf/RBq2VwcUVAsuPfL3bkKzVWfXvL3Z/2wEmz
-   nGN6WW3pZzFUjQmNI0f2w4kd7cwRhwZcxEFicTq+pF1uBN7D1nEQCdR8n
-   BsajphCXe2Pq3Ct6K6VvjX1JGXTUdX+M6PZD1NFH7uLso4250S6Ye8cHk
-   rAll12u2d0pLlufYPxea+n9nZ4CfVBXv2qgjPaPW34DY7P+66eHiTm5rT
-   3qO3c2FmoGJRB4IHQEAVNaQ7bP5sK1AIQJZpDn+gj2jH+YWw3bA3u/Eag
-   Q==;
-X-CSE-ConnectionGUID: CaWx/QkdQgGWBzyVJ0iIpw==
-X-CSE-MsgGUID: wgUoQ/QTQHiFGDmNJFUjkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="75498110"
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="75498110"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 14:07:16 -0800
-X-CSE-ConnectionGUID: bZBxDYz7QnO7HwaONAAgpw==
-X-CSE-MsgGUID: 2d7dg5weRAWji89mBhuZzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="215849310"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 14:07:12 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id C8D9C11FC4C;
-	Tue, 24 Feb 2026 00:07:37 +0200 (EET)
-Date: Tue, 24 Feb 2026 00:07:37 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="J1HZWCee"
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 34b37f78d;
+	Mon, 23 Feb 2026 23:32:12 +0800 (GMT+08:00)
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	"Vaibhaav Ram T . L" <vaibhaavram.tl@microchip.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Even Xu <even.xu@intel.com>,
+	Xinpeng Sun <xinpeng.sun@intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Zhou Wang <wangzhou1@hisilicon.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Jian Shen <shenjian15@huawei.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+	Karol Wachowski <karol.wachowski@linux.intel.com>,
+	Min Ma <mamin506@gmail.com>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Will Deacon <will@kernel.org>,
+	Xinliang Liu <xinliang.liu@linaro.org>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Srujana Challa <schalla@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Hans de Goede <hansg@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Len Brown <lenb@kernel.org>, driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] gpiolib: match secondary fwnode too in
- gpio_device_find_by_fwnode()
-Message-ID: <aZzPqbXH79Q6GvEn@kekkonen.localdomain>
-References: <20260223-device-match-secondary-fwnode-v2-0-966c00c9eeeb@oss.qualcomm.com>
- <20260223-device-match-secondary-fwnode-v2-2-966c00c9eeeb@oss.qualcomm.com>
- <aZyNErXB_acR3yYq@kekkonen.localdomain>
- <CAJZ5v0ibXKiUNf5Fvj=q=f9JbHT=w3j3h=33ri_awzEHm_dBng@mail.gmail.com>
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org,
+	linux-i3c@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>,
+	netdev@vger.kernel.org,
+	nic_swsd@realtek.com,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-usb@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-cxl@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	mhi@lists.linux.dev,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	linux-i2c@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	linux-spi@vger.kernel.org,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 37/37] PCI/MSI: Only check is_msi_managed in pcim_setup_msi_release()
+Date: Mon, 23 Feb 2026 23:29:41 +0800
+Message-Id: <1771860581-82092-3-git-send-email-shawn.lin@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1771860581-82092-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1771860581-82092-1-git-send-email-shawn.lin@rock-chips.com>
+X-HM-Tid: 0a9c8b212c0009cckunm6946b3c79863ba
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhgZH1ZOH09CTx0eHktKTkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=J1HZWCeeOmW/gPw++byO+If0KMsTHKVVYVc+2zdeVL1H5nIla64EyAzpDmlGGJ/eIDuENwuD2fBNa7HfxIU6b+XJAPDHnUDppaUZRyCFQ58kMzK1cryURHmQKr6oTWiT4pmL+kQoThKmImm/C2O+XaXoGL4RlgFyNJGe+/RTrvE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=RhsG8KOx2Km4SCjZjnMyUXQspsA9GMfP8flaFf9OQp4=;
+	h=date:mime-version:subject:message-id:from;
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0ibXKiUNf5Fvj=q=f9JbHT=w3j3h=33ri_awzEHm_dBng@mail.gmail.com>
 
-Hi Rafael,
+The function pcim_enable_device() sets the is_managed flag, which
+causes the device's IRQ vectors to be automatically managed and released
+by the devres framework. If a driver subsequently calls
+pci_free_irq_vectors() manually, it can lead to a double-free of the
+interrupt resources.
 
-On Mon, Feb 23, 2026 at 06:46:38PM +0100, Rafael J. Wysocki wrote:
-> On Mon, Feb 23, 2026 at 6:23 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Bartosz,
-> >
-> > Thanks for the patch.
-> >
-> > On Mon, Feb 23, 2026 at 04:40:53PM +0100, Bartosz Golaszewski wrote:
-> > > In GPIOLIB, during fwnode lookup, after having resolved the consumer's
-> > > reference to a specific fwnode, we only match it against the primary
-> > > node of the controllers. Let's extend that to also the secondary node by
-> > > reworking gpio_chip_match_by_fwnode()
-> > >
-> > > Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> > > ---
-> > >  drivers/gpio/gpiolib.c | 12 +++++++++++-
-> > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > index c52200eaaaff82b12f22dd1ee8459bdd8ec10d81..7fe1d9ab1281d6c5022b9bdd8909fef2cb74122e 100644
-> > > --- a/drivers/gpio/gpiolib.c
-> > > +++ b/drivers/gpio/gpiolib.c
-> > > @@ -11,6 +11,7 @@
-> > >  #include <linux/errno.h>
-> > >  #include <linux/file.h>
-> > >  #include <linux/fs.h>
-> > > +#include <linux/fwnode.h>
-> > >  #include <linux/idr.h>
-> > >  #include <linux/interrupt.h>
-> > >  #include <linux/irq.h>
-> > > @@ -1395,7 +1396,16 @@ EXPORT_SYMBOL_GPL(gpio_device_find_by_label);
-> > >
-> > >  static int gpio_chip_match_by_fwnode(struct gpio_chip *gc, const void *fwnode)
-> > >  {
-> > > -     return device_match_fwnode(&gc->gpiodev->dev, fwnode);
-> > > +     struct device *dev = &gc->gpiodev->dev;
-> > > +     struct fwnode_handle *node = dev_fwnode(dev);
-> > > +
-> > > +     if (IS_ERR(fwnode))
-> > > +             return 0;
-> > > +
-> > > +     if (device_match_fwnode(dev, fwnode))
-> >
-> > Could device_match_fwnode() match secondary fwnode as well?
-> 
-> In the previous discussion on this, Andy was against doing that due to
-> the concern that it might introduce subtle bugs, which I agree with.
+Analysis reveals most PCI drivers call pci_free_irq_vectors()
+while also using pcim_enable_device(), making them susceptible to this
+double-free issue. In contrast, 35 drivers follow the pattern of
+relying on devres to handle the cleanup.
 
-Could you elaborate or provide an example?
+To address this inconsistency and enforce explicit, driver-managed
+control of IRQ vectors, this patch removes the pci_is_managed() check
+from pcim_setup_msi_release() and let devres help cleanup if is_msi_managed
+is true. This change ensures that interrupt vectors are not automatically
+freed by the devres machinery when pcim_enable_device() is used, placing
+the responsibility for their release squarely on the driver logic via
+pci_free_irq_vectors(). If the driver need devres to help cleanup, newly added
+pcim_alloc_irq_vectors() and pcim_alloc_irq_vectors_affinity() helpers could be used.
 
-The function has some 27 users although few are individual drivers.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-My understanding is that we only have the secondary fwnode for being able
-to attach objects from different backend to the same node. The fwnode API
-in the meantime generally tries to hide the existence of the secondary
-fwnode; a rewrite (which ideally would have happened perhaps a few years
-ago?) would probably make the fwnode a linked list instead so we'd lose
-that secondary pointer in the process.
+---
 
+ drivers/pci/msi/msi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index 81d24a2..0727a0a 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -70,7 +70,6 @@ static void pcim_msi_release(void *pcidev)
+ {
+ 	struct pci_dev *dev = pcidev;
+ 
+-	dev->is_msi_managed = false;
+ 	pci_free_irq_vectors(dev);
+ }
+ 
+@@ -92,14 +91,13 @@ static int pcim_setup_msi_release(struct pci_dev *dev)
+ {
+ 	int ret;
+ 
+-	if (!pci_is_managed(dev) || dev->is_msi_managed)
++	if (!dev->is_msi_managed)
+ 		return 0;
+ 
+ 	ret = devm_add_action(&dev->dev, pcim_msi_release, dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	dev->is_msi_managed = true;
+ 	return 0;
+ }
+ 
 -- 
-Kind regards,
+2.7.4
 
-Sakari Ailus
