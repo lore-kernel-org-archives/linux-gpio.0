@@ -1,103 +1,96 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE2B33F371;
-	Mon, 23 Feb 2026 18:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA915340A49
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 18:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771870149; cv=none; b=j9jdCUGMvELeWmgUQmzjIZnwh965Iqh/ECkXXeCuHb+3C37mfk9CKZpRPL13DBt2r0ktWbf8IjDG5GKMc1ggoy2b8JBJOUMrgfDiGziagWUmukOQEwq0XBNVW9b/+ruOD449SJqClCX9x2cyYcr63ljGTpS/w/MNMC7yReuU/Fo=
+	t=1771871343; cv=none; b=hlKhhp1rhGAAfzDtMBcR4BtO5cONEPVeAlZOBi15U1ENfyWPmPq0ILH0zjMxBAYo2boEabn6zjtdkNuY4fF4SnFQiDevE+v9rQpesi2OEhTg+vvCt7evepDphHJLfbFdrE3CzFIUFbB62s83ElzEvuERgG5pgJrestKviAuI14I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771870149; c=relaxed/simple;
-	bh=GnCEAgfXe/6YcH+5eY7mUfjQLT+Zjz/ERVUf0MC9iBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LnYbn6fwd+fyJqHr+p6G1xuQlZwwKkQnpkmvheQLYnHIzQmWjDF2D7Up4GP3Ur/oL/jzfRbu+m08NfXlZIb/ONDO1W0zU7pkBTL60OibH37lJJOzxX1JWXVSmb6iTW6vA0mXWGos7otZ/ZZS5wqWugScTemnAdUp359Jjj+pTBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZxFdR7E; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1771871343; c=relaxed/simple;
+	bh=mzfCjS37q2cu7V2ENDhFi7Xh2Xke6aNT6a5HvYIrLb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ujc9+EHabDIZBTrTCOHOo5FO9GdviBdWaV5/f1kxNLMb3IAydSnQWLFVgzGmElwJ+ckbikEpBn6B+0nXj+rjupcvPo6/nKvwhQUhp6Kz/+hG+nirVY8uUOjopUGGkilX4H3sxfwQSFVInYnY4szFxC4hJoUcSJM5Fegt6r55cws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTELZAyA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZxFdR7E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1771870148; x=1803406148;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GnCEAgfXe/6YcH+5eY7mUfjQLT+Zjz/ERVUf0MC9iBI=;
-  b=KZxFdR7Evb4SAgJgywrywGRXiFTwsHMPfqynsjt+Z5ezosl7650e2Q1n
-   s7oky3o5/i+41zV/Whr9ThY/q8B+JJ+n+b5zft3K1UJt0x3TQk8m5OKXx
-   WT14neiCXJPDfaZaNVBgp47pUF1iWfEZRWYd1z2UmaHF7CsTrnSrjebrt
-   LB39mGjeEDYOcSuu0GFn4tS3poOV4O5aW+EXThhNs6BBNja0y/Z66VGyj
-   PIclEu05HVSZJwLW5YqpvCEUT/I9qguk/1qNJf7M1wLVimjLHMSYKDFGv
-   qa7FaP1JJDkKIhzJcyRyxMzpb7RTwjx48frf1UPTBVxSqtA9FOaC2oU5M
-   A==;
-X-CSE-ConnectionGUID: S9OWSNzKQxW4/5VvVH4SnQ==
-X-CSE-MsgGUID: 0W4Uj9icSG2/hysn/asQVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="76737710"
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="76737710"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2026 10:09:05 -0800
-X-CSE-ConnectionGUID: SCTE6zLYTLKMLSSMCHA7pA==
-X-CSE-MsgGUID: PNJwIFP9QeehAicR2hWw5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,307,1763452800"; 
-   d="scan'208";a="253369517"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 23 Feb 2026 10:09:04 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 3F503A4; Mon, 23 Feb 2026 19:09:01 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 7/8] =?UTF-8?q?pinctrl:=20cy8c95x0:=20Eliminate=20fragi?= =?UTF-8?q?le=20use=20of=20I=C2=B2C=20ID=20table?=
-Date: Mon, 23 Feb 2026 19:06:57 +0100
-Message-ID: <20260223180859.2845261-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
-References: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTELZAyA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDBDC2BCB3
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 18:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771871343;
+	bh=mzfCjS37q2cu7V2ENDhFi7Xh2Xke6aNT6a5HvYIrLb0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iTELZAyAPi5Fd2XI7t2BCcnfsxRr4r9ZzHNDzvDQzhU2dLMnYmLW2yBKndZDpCWli
+	 8Rdg1mtPSQKglFR2dx3YvugdxT3Dyg9f63oFI0SYJGIs//KFtxZEXnIh4IYIvT0StR
+	 1QfbEl6rCJk6BykHtJD7Pk4kIQ0Owmp/U1n9EEwzbh5EzARZLit9tUO1Oo0oWqaSzj
+	 M7bYSDXTC04eRu5xV2OsjJo2Xz5/d1nTJg6fhetLo6A8/AJSoqrs/PG9s1czDwSxK7
+	 6slN6qeaYTDN6z85IHeAAIb3c46aDhZxTAmwKfkt092l7TQ0YFA66Vs9ZQVqMb6Qph
+	 q27kyvsaJA7XA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-385c23b88e8so38590521fa.3
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 10:29:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZJBBQ9aSMp3aZq7FydTmPEODKL35BvHaJ0x1aEE++1HozxVkJBSnKeElDKk2hXqfDImlbUlpv8dX1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE4WH6NtkKxHj1PIxHrPDTclquEVN3c56dJq/Qc7n/H3BBTKgh
+	wuL7wRcztmQ3VBZY6MUSSy9vtiFW7Ak9USQnJDPgy4dYONkkGqfUJmAiD5/wgZ1nudXWu2RucAy
+	pUJ0g/naKoN3dLGy2uKzq+rRS6pfBnjKuZlvoHefBYw==
+X-Received: by 2002:a05:651c:198c:b0:385:dd91:a6ce with SMTP id
+ 38308e7fff4ca-389a5c4c7a0mr35763781fa.38.1771871342013; Mon, 23 Feb 2026
+ 10:29:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260223-device-match-secondary-fwnode-v2-0-966c00c9eeeb@oss.qualcomm.com>
+ <20260223-device-match-secondary-fwnode-v2-1-966c00c9eeeb@oss.qualcomm.com> <aZyUY3ZsmrwHw4X_@smile.fi.intel.com>
+In-Reply-To: <aZyUY3ZsmrwHw4X_@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Mon, 23 Feb 2026 19:28:48 +0100
+X-Gmail-Original-Message-ID: <CAMRc=MfpzgOPf4pkHd_tNQ4wBNMhfUBOh=ptajhhZwDpFUPGBQ@mail.gmail.com>
+X-Gm-Features: AaiRm537I4oIfjLvMIcGhYYnIzZ2C1QZQmqaYwSbwb8V6Bm_JwM3OvKhUk5BeoY
+Message-ID: <CAMRc=MfpzgOPf4pkHd_tNQ4wBNMhfUBOh=ptajhhZwDpFUPGBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] driver core: make fwnode_is_primary() public
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The I²C ID table is a subject to new entries that may potentially
-break the order of the existing ones. Avoid this by using string
-literals for the chip naming. Note, linker will deduplicate same
-string literals and use only a single copy, hence it won't be the
-change in size in data section.
+On Mon, Feb 23, 2026 at 6:54=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Feb 23, 2026 at 04:40:52PM +0100, Bartosz Golaszewski wrote:
+> > Export fwnode_is_primary() in fwnode.h for use in driver code.
+>
+> ...
+>
+> > --- a/include/linux/fwnode.h
+> > +++ b/include/linux/fwnode.h
+> > @@ -230,4 +230,9 @@ void fwnode_links_purge(struct fwnode_handle *fwnod=
+e);
+> >  void fw_devlink_purge_absent_suppliers(struct fwnode_handle *fwnode);
+> >  bool fw_devlink_is_strict(void);
+> >
+> > +static inline bool fwnode_is_primary(struct fwnode_handle *fwnode)
+> > +{
+> > +     return fwnode && !IS_ERR(fwnode->secondary);
+> > +}
+>
+> This is inconsistent. Please, split out fwnode stuff from device.h to
+> device/fwnode.h and share it there.
+>
+> This reminds me to look what I have locally in development...
+>
+>
+> (With your patch it will be in device.h and fwnode.h and in the latter
+>  it's even not properly grouped with other non-fwdevlink related stuff.)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Please rephrase the entire email because I have no idea what you mean. :(
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 0bcc9ac19696..1d3e0617b235 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1369,13 +1369,13 @@ static int cy8c95x0_detect(struct i2c_client *client,
- 		return ret;
- 	switch (ret & GENMASK(7, 4)) {
- 	case 0x20:
--		name = cy8c95x0_id[0].name;
-+		name = "cy8c9520";
- 		break;
- 	case 0x40:
--		name = cy8c95x0_id[1].name;
-+		name = "cy8c9540";
- 		break;
- 	case 0x60:
--		name = cy8c95x0_id[2].name;
-+		name = "cy8c9560";
- 		break;
- 	default:
- 		return -ENODEV;
--- 
-2.50.1
-
+Bart
