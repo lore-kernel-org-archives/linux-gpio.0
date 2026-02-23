@@ -1,103 +1,61 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.auroraos.dev (unknown [95.181.193.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213036605D;
-	Mon, 23 Feb 2026 20:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17230361641
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 20:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.181.193.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771876835; cv=none; b=OVmCU3wSBxvT/xaDTUpOxSdo8VaNt598an17QMZwPbcl1sN4RfCUmUExi7Q0sugbUgGvSwNcQHWB/uX8fAUBlDX+xmlCWWF+BkDdoQXFkV3CiZnb+MjGHqayPd2OpNFYdI8K/Ejh6u2jqtRFAhE2t9cBlePyh/JxVyi81COSglY=
+	t=1771877020; cv=none; b=DzTA/jt5WyqkzUaBBuNzbMxthpqJdqr5AbVO1UJBsqvVK2tqyamtNbyn0o/QhChcabAHvIo32Ptk9kZ128P6KzowUafnbEDOiXq2U6mCEtSabHe+HJfAyFsSUI7wgv46yN6iWptfbhktUsg70MNtgJ5JgzE5EIMUrMaZqNYhu7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771876835; c=relaxed/simple;
-	bh=5I+GUkEiWucwoPTreVClRorAtsCzEOPlEM1kwCm2jLw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=QxvRr4YLgwxZSbZHwigXbFc0Y1gkvjVlOzNcpknDLTcrfw/d/C0XZ9GylRSUj709ASGL/uB/iv0dAMPf5bm0jo7UyXlydMxGf25/Kuvhq1t0murbjqAGpFkPf6OXwL2vNVeHuipgTe5W4WuhAba/NKdLBfiqWveZug0YFHTBeBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uH/sdQKe; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uH/sdQKe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F598C116C6;
-	Mon, 23 Feb 2026 20:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771876834;
-	bh=5I+GUkEiWucwoPTreVClRorAtsCzEOPlEM1kwCm2jLw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=uH/sdQKe4Ol6tA8XmSVURWXAoPeJ5zmZPoZJL5tWUbjqTqOQJZ//4Rm3h8SIYP4TY
-	 A+x6YDmT8/ex2pq1J0YVyTPF/hlRpozhaVirjRJ5lPEr1zM6+VABa8nK3NILqiZ9Hg
-	 nr79AlusDDcIcWsDekrEjTEPtIRSGRGtCGiyF8Uf/rrNAZ9VBNvld/Mzg+9VUjhb7u
-	 jSAyt0LrjbhLcHXr19Y2GYVscjO+fUJgSeBqXS9bZFgWKhgZvzhdZEZPn0Vqtz1XEs
-	 C5J1KMGI6qEVoECvVLkGeyA8ddRxqg9yL6H6kbhSUjlONjR/EayI629sT4T+0fpikX
-	 poSrrVUiB5g5Q==
+	s=arc-20240116; t=1771877020; c=relaxed/simple;
+	bh=9tUfQSfq5mhX10Vym2VxXL5rNzfiDPP+jXksmUVL7jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z9fYujjsYl//2JATSPcC5qD2VetqtxWXP0UK1DYw1+ustBCBzNY3PUpUS/HPgh+1tA9tqbVtVzEmNnEaRmrUgwtZZTfH9twd9nq6oA22F2nFBDhnycf6p7fLji8dPZ7SCnKP+N4vmuSokgFnPokQ5wGoR24oSoZc0NrfD1eW5Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auroraos.dev; spf=pass smtp.mailfrom=auroraos.dev; arc=none smtp.client-ip=95.181.193.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auroraos.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auroraos.dev
+Received: from [192.168.2.104] (213.87.162.218) by exch16.corp.auroraos.dev
+ (10.189.209.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Mon, 23 Feb
+ 2026 23:03:33 +0300
+Message-ID: <ecf6e7c5-31a7-4e43-8ec9-c6afb0122e03@auroraos.dev>
+Date: Mon, 23 Feb 2026 23:03:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 23 Feb 2026 21:00:30 +0100
-Message-Id: <DGMLWYUO9Z48.1769AL2OS2YMK@kernel.org>
-Subject: Re: [PATCH v2 2/2] gpiolib: match secondary fwnode too in
- gpio_device_find_by_fwnode()
-Cc: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Walleij"
- <linusw@kernel.org>, "Bartosz Golaszewski" <brgl@kernel.org>, "Dmitry
- Torokhov" <dmitry.torokhov@gmail.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Sakari Ailus"
- <sakari.ailus@linux.intel.com>, "Len Brown" <lenb@kernel.org>,
- <driver-core@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20260223-device-match-secondary-fwnode-v2-0-966c00c9eeeb@oss.qualcomm.com> <20260223-device-match-secondary-fwnode-v2-2-966c00c9eeeb@oss.qualcomm.com> <DGMLL6SYIK5C.DJ8U368VN9CG@kernel.org> <CAJZ5v0jr_i9k3d+np8c+ANhewMhT-TL9exLzZKUJOVarBGnHfw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jr_i9k3d+np8c+ANhewMhT-TL9exLzZKUJOVarBGnHfw@mail.gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: rockchip: use *enum* properly in
+ rockchip_pinconf_pull_valid()
+To: Linus Walleij <linusw@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	<linux-gpio@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+References: <20260223194424.19251-1-s.shtylyov@auroraos.dev>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@auroraos.dev>
+In-Reply-To: <20260223194424.19251-1-s.shtylyov@auroraos.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: exch16.corp.auroraos.dev (10.189.209.38) To
+ exch16.corp.auroraos.dev (10.189.209.38)
 
-On Mon Feb 23, 2026 at 8:55 PM CET, Rafael J. Wysocki wrote:
-> On Mon, Feb 23, 2026 at 8:45=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
-> wrote:
->>
->> On Mon Feb 23, 2026 at 4:40 PM CET, Bartosz Golaszewski wrote:
->> >  static int gpio_chip_match_by_fwnode(struct gpio_chip *gc, const void=
- *fwnode)
->> >  {
->> > -     return device_match_fwnode(&gc->gpiodev->dev, fwnode);
->> > +     struct device *dev =3D &gc->gpiodev->dev;
->> > +     struct fwnode_handle *node =3D dev_fwnode(dev);
->> > +
->> > +     if (IS_ERR(fwnode))
->> > +             return 0;
->> > +
->> > +     if (device_match_fwnode(dev, fwnode))
->> > +             return 1;
->> > +
->> > +     return fwnode_is_primary(node) && node->secondary =3D=3D fwnode;
->> >  }
->>
->> Rafael, I understand [1] as you agree with my point, but object to intro=
-duce
->> device_match_fwnode_ext() (or whatever name we would pick eventually :)
->> regardless because only the GPIO code would need it as by now.
->
-> This is a preference, not a strong objection, but yes.
->
->> IIUC, I wonder if exposing fwnode_is_primary() instead is a good trade.
->
-> Well, there is the secondary pointer in struct fwnode_handle, so it is
-> kind of exported anyway and it could be documented as "a secondary
-> fwnode_handle supplying additional properties or an error pointer", so
-> exposing this static inline doesn't change much IMV.
->
-> What's your specific concern about exposing it?
+On 2/23/26 10:44 PM, Sergey Shtylyov wrote:
 
-No concern with either approach from my side, I was just curious. :)
+> In rockchip_pinconf_pull_valid(), the pull parameter has *enum* type that
+> is not isomorphic with boolean type but it's used as a boolean expression
+> in the ?: operator.  Compare pull with PIN_CONFIG_BIAS_BUS_HOLD instead,
+> dropping the unnecessary ?: operator as well...
+> 
+> Found by Linux Verification Center (linuxtesting.org) with the Svace static
+> analysis tool.
+> 
+> Signed-off-by: Sergey Shtylyov <s.shtylyov@auroraos.dev>
+[...]
 
-Maybe it makes sense to add a comment to gpio_chip_match_by_fwnode() hintin=
-g to
-move this into common code once there's another occurance of this pattern.
+   Forgot to add that the patch wass against the for-next branch of Linus W.'s
+linux-pinctrl.git repo.
 
-But either way, this is
+MBR, Sergey
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-
->> [1] https://lore.kernel.org/driver-core/CAJZ5v0jUCtKTW-g-C0pKu0DQqOkyfSz=
-=3DupXwbtYeV_=3DrMBUMyg@mail.gmail.com/
