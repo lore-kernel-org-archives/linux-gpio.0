@@ -1,78 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86450248F6F;
-	Mon, 23 Feb 2026 06:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011021C84A2
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 09:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771827682; cv=none; b=da6K/4h1xcOCsqUzCsvg15ZA72XM1FeWM1OIQBCYgB3Zvy6b/8z1pYWmSAcRzf6A60sIf+nD/ZERAjT9NTESO93GTz3Q+3tNvcMStAZtk8T87gVYRva/WGi82RD7g20uVkgH2DAY4AgEhIClSjG43BiU0SrOTte7XG8Ar0RK0Rc=
+	t=1771838959; cv=none; b=ELZbA8BjQSxu8Xa9/suN7JCIm+1KNWz3YDJPZzi6aBYvSLd4pBHatF1z1+voe2CwkngCjKYZah3H5IH5NWtfpB7AZ+dKJkZng9aoSTuT3c7pmBVp4WLCIbG4OH/Es5qRUjjQe0gvoz8iT8E5BvJSgId6QigOCqwEEH/DYLAImUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771827682; c=relaxed/simple;
-	bh=OrNVuu96RmVQDMEp/SliaNIu93b625pIszPp6BQGKow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1QufVBvbBiBup38jL+VEeo41iljMhD8bELn+YbQxdd/N7fgmsfJKSsJCU4Jovg5+I4//f1j5KD/miAuLaB2229Oz8pFJ5Z3HzXcUs+f7urYCtVS0Jc+nzu2Z+PsEryy6Zr9DaBcIyCq2WPPbcwB+O0SF9047wnYZ+Vr9El2r4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE6V06Wn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771838959; c=relaxed/simple;
+	bh=5srMJb3zht/X9YtE3v/FnkvrFNPHIet4G9W4E53K1y0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jO1N/3q39nl5ep9V/QxHrFo9IVnduyGLprPRylkacQ59Tq1UesvIJW81r702ZnXshbscO2FnOJKFufAlloMFni5R7IQMUj5NEyx5Uv4I7rQzx4THuhq3ixyqq9EqWKq14G4P017Oog++6gja27X8PxdstlnCpfALED5z3GQr/Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2QnR/OJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE6V06Wn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28EE4C116C6;
-	Mon, 23 Feb 2026 06:21:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2QnR/OJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69AEC19421
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 09:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771827682;
-	bh=OrNVuu96RmVQDMEp/SliaNIu93b625pIszPp6BQGKow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kE6V06Wnt34xg/OQhDrNjEHA05oz8v9a0TMe2hYWlhr8f3OaYTTqGzF/QPWMSdl9+
-	 VZFPmYjfXm0OhA8KrkH9h/WRETAtlvXGK9GoWqPfgEa565RdkRy4sC9k/2H7ZSIbas
-	 AW429byAN8yfZpAvXVL5gHLkvm6629ZdaQEzB0vuSEFMUzJOY2KShZfQxBMElOrBJo
-	 t4awIqix+f2H4FWeM9AWA7E0OSjOAKAyKWUdYbROm97KjidR5Y8Rm94G/qmIrBCItQ
-	 Rel5TpOM7qh6q9WsFmRaH3clRE/5Wu4JENn76p7Y3NJEuFRT3ktTbBXlXYVItPiQRC
-	 JeNqNlY2iJQ/w==
-Date: Mon, 23 Feb 2026 14:21:16 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, Johan Hovold <johan@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/11] gpio: Adopt revocable mechanism for UAF
- prevention
-Message-ID: <aZvx3HlLReX-n5td@tzungbi-laptop>
-References: <20260213092958.864411-1-tzungbi@kernel.org>
- <CAMRc=MfQumD1ULx7yU4W2sx=35wyQf7-v4tSf44OqEu3JDBUAg@mail.gmail.com>
+	s=k20201202; t=1771838958;
+	bh=5srMJb3zht/X9YtE3v/FnkvrFNPHIet4G9W4E53K1y0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=o2QnR/OJsIcWGjHMHe9aXlTyf9SnjhcXC0gyyYzNR98kbbLBdU8uvgrNuL9Fo+j5V
+	 Ta8ciX2OQSstaSxmHrTvp8Q5IemHBp9USKMiEVYgTeD2O9BlvlJkcGOAlcdsWkbqRD
+	 rde9bDgOmq/zyNTUCh4A7ynxfsYawtv+jB9P+ILZyJOlkW/WvTXfF5SkeKMQpnVRNU
+	 Ug+WCJZjeMrqdhxEaYwCmN14jJ4rOT9NE10Yojyd0t30dVE1pGzLNtLUzl+tKIHReN
+	 LYiTvuE+zRK2lH7eb4O5mhvvz3wjVEU59EbwqrKlJyKjXt3tsd+v6Zv6CWaGm8vSw6
+	 IhYoomHoCbSAg==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-797d509a2f5so42285557b3.2
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Feb 2026 01:29:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXmQMWH7/7LkB2XQ3ZEIGeXQZywOnFUGSDmDGygSHIP7jdHgMqcPhpX0upTSQGIAYJ3B4X2QYGFFABX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA3Lrsz50ClBaSr1i7kyV3/hwDe1TnXgRAa9hMOChzOXJL8Oq0
+	g4BZlnHmxN0iO2gR5xHWjDGodwVVGiv18KO3y/xIFqS2SGRNbPSQxbkA9WC18Py9nqPFoJwojyD
+	StSWTD1aQDUuv3Z0gUVystVnorJD1peE=
+X-Received: by 2002:a05:690c:e:b0:796:6df5:4840 with SMTP id
+ 00721157ae682-79829173617mr78587807b3.59.1771838958063; Mon, 23 Feb 2026
+ 01:29:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfQumD1ULx7yU4W2sx=35wyQf7-v4tSf44OqEu3JDBUAg@mail.gmail.com>
+References: <20260205-pinctrl-equilibrium-v1-0-66909a3b0acb@dev.tdt.de>
+In-Reply-To: <20260205-pinctrl-equilibrium-v1-0-66909a3b0acb@dev.tdt.de>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 23 Feb 2026 10:29:07 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkCdpoZBME1x_Jwz90q2Xj8uMf+tiWJJVH3yzxj3_W03g@mail.gmail.com>
+X-Gm-Features: AaiRm52Xk69uQeyiojuGhwTHedX7R7s4vwUyH106vEyromc3MEmaS2eJ6je0hY0
+Message-ID: <CAD++jLkCdpoZBME1x_Jwz90q2Xj8uMf+tiWJJVH3yzxj3_W03g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: equilibrium: fix warning trace on load
+To: Florian Eckert <fe@dev.tdt.de>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Florian Eckert <Eckert.Florian@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 18, 2026 at 11:26:00AM +0100, Bartosz Golaszewski wrote:
-> On Fri, Feb 13, 2026 at 10:31 AM Tzung-Bi Shih <tzungbi@kernel.org> wrote:
-> >
-> > This series transitions the UAF prevention logic within the GPIO core
-> > (gpiolib) to use the 'revocable' mechanism.
-> >
-> > The existing code aims to prevent UAF issues when the underlying GPIO
-> > chip is removed.  This series replaces that custom logic with the
-> > generic 'revocable' API, which is designed to handle such lifecycle
-> > dependencies.  There should be no changes in behavior.
-> >
-> 
-> Patches 1-6 look good to me, I think they should go into linux-next
-> after v7.0-rc1 is tagged to lessen the burden on the subsequent
-> revocable work.
+On Thu, Feb 5, 2026 at 1:56=E2=80=AFPM Florian Eckert <fe@dev.tdt.de> wrote=
+:
 
-Separated, rebased to v7.0-rc1, and addressed comments for the first 6
-patches:
-https://lore.kernel.org/all/20260223061726.82161-1-tzungbi@kernel.org
+> The following series of patches fixes a warning message for each GPIO
+> during driver loading. The core problem is that the names of the function=
+s
+> in the driver implementation do not match those of the callbacks. Therefo=
+re,
+> the functions were used incorrectly.
+>
+> For this reason, the first patch renames the callbacks and adapts them
+> to the usual pattern used by other drivers in this subsystem. In the seco=
+nd
+> patch of this serie, the actual problem is then fixed after it becomes
+> clearer that the functions have been used incorrectly.
+>
+> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+
+Patches applied!
+
+Yours,
+Linus Walleij
