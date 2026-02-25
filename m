@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C4E3ECBC5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544AF3ECBC7
 	for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2026 17:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772039773; cv=none; b=IYyd7Ahgyzooz//fUGRZQui7auPxniF3BSXkBAHEVTAMDV/asN4qTw2it9F0qq7PlSDTZtH/yzYK+VIPmUpUt0M1iE1Be6wyaXbblkMn4JicnpyHhqrsuXFtabAMGR7jCjZ8V1vqmBHDenD+zWwWR2OQq2QrWb1JK8yLOea8MvA=
+	t=1772039774; cv=none; b=btTWnKKbFwRNEZSiq+y8QttMaXumYmtMRILOWOmHH/4VlFBD6X+f6Md8A/3lCRKK5BSpOCCtt13xxzT3z3p5PKXjvxFslflgBnGmia524XfyAg09leGm/pD8w/kPC/1lzdvDptDjfjpOaLtf8EpykKJaia2SpFbRog7FaUc1uTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772039773; c=relaxed/simple;
-	bh=QAPDDrkGu+gBYm1VJtxlKarRL2Bu+IkX6q4u8fGCoX0=;
+	s=arc-20240116; t=1772039774; c=relaxed/simple;
+	bh=egCfM0YGhfPlTldjlvHVKlmkGukF+YBwAMQxbKCiMKk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UVcLs6RyblCASffVMbAa97YUSZY/1KQYnUQ7UH4MAd3ISdwUh4JfR/Z4KfM5GLwsxD5KDkiCAFzvj/SJLDLPVbfumumGzhBBRrXzMLciXMANW4sHj2fpjA1S+eEeeUuCVK8k/Rieo5G5tOhZhdWSopPPYzlPU6rO/AGmPDpxWmU=
+	 MIME-Version; b=FgvHppkWwjg+oYfL1wmiG6Ow5LpYvg1CaapEzh9szBn8d34vaSiVhoQ6HQqFwvHwtz7eR8X7vYEJpBASvsZHFR1OcwLMHRymVqbZMrQ7wYJGvm9bS3q2bQy1l01v/iA+xa7ZAdOWY0qSxXNqnKdMrFJAAJNVXirJWe/HBsoOQlc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,17 +18,17 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUF-0003C6-S1; Wed, 25 Feb 2026 18:15:47 +0100
+	id 1vvIUF-0003C9-S1; Wed, 25 Feb 2026 18:15:47 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac] helo=dude04)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUD-002b7v-28;
+	id 1vvIUD-002b81-2S;
 	Wed, 25 Feb 2026 18:15:47 +0100
 Received: from ore by dude04 with local (Exim 4.98.2)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUE-00000008JDa-3ulC;
-	Wed, 25 Feb 2026 18:15:46 +0100
+	id 1vvIUF-00000008JEE-07vB;
+	Wed, 25 Feb 2026 18:15:47 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Guenter Roeck <linux@roeck-us.net>,
 	Rob Herring <robh@kernel.org>,
@@ -44,9 +44,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	linux-hwmon@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	David Jander <david@protonic.nl>
-Subject: [PATCH v1 1/8] dt-bindings: mfd: add NXP MC33978/MC34978 MSDI
-Date: Wed, 25 Feb 2026 18:15:34 +0100
-Message-ID: <20260225171545.1980385-2-o.rempel@pengutronix.de>
+Subject: [PATCH v1 5/8] dt-bindings: hwmon: add NXP MC33978/MC34978 hwmon
+Date: Wed, 25 Feb 2026 18:15:38 +0100
+Message-ID: <20260225171545.1980385-6-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260225171545.1980385-1-o.rempel@pengutronix.de>
 References: <20260225171545.1980385-1-o.rempel@pengutronix.de>
@@ -62,120 +62,83 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Add device tree binding documentation for the NXP MC33978 and MC34978
-Multiple Switch Detection Interface (MSDI) devices.
-
-These ICs monitor up to 22 mechanical switch contacts in automotive and
-industrial environments. They provide configurable wetting currents to
-break through contact oxidation and feature extensive hardware protection
-against thermal overload and voltage transients (load dumps/brown-outs).
-
-The device interfaces via SPI and is modeled as an MFD due to its discrete
-internal functional blocks:
-- pinctrl: Manages the 22 switch inputs (SG/SP pins).
-- hwmon: Exposes critical hardware faults (OT, OV, UV) and static
-  voltage/temperature thresholds.
-- mux: Controls the 24-to-1 analog multiplexer to route pin voltages,
-  internal temperature, or battery voltage to an external SoC ADC.
+Add device tree binding documentation for the hardware monitoring block
+of the NXP MC33978/MC34978 Multiple Switch Detection Interface (MSDI).
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- .../devicetree/bindings/mfd/nxp,mc33978.yaml  | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+ .../bindings/hwmon/nxp,mc33978-hwmon.yaml     | 34 +++++++++++++++++++
+ .../devicetree/bindings/mfd/nxp,mc33978.yaml  | 10 ++++++
+ 2 files changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/nxp,mc33978-hwmon.yaml
 
-diff --git a/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+diff --git a/Documentation/devicetree/bindings/hwmon/nxp,mc33978-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/nxp,mc33978-hwmon.yaml
 new file mode 100644
-index 000000000000..85720f389509
+index 000000000000..b7e2aaa51a33
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
-@@ -0,0 +1,86 @@
++++ b/Documentation/devicetree/bindings/hwmon/nxp,mc33978-hwmon.yaml
+@@ -0,0 +1,34 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mfd/nxp,mc33978.yaml#
++$id: http://devicetree.org/schemas/hwmon/nxp,mc33978-hwmon.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: NXP MC33978/MC34978 Multiple Switch Detection Interface
++title: NXP MC33978/MC34978 Hardware Monitor
 +
 +maintainers:
 +  - David Jander <david@protonic.nl>
 +  - Oleksij Rempel <o.rempel@pengutronix.de>
 +
 +description: |
-+  The MC33978 and MC34978 are Multiple Switch Detection Interface (MSDI)
-+  devices with 22 switch inputs, integrated fault detection, and analog
-+  multiplexer (AMUX) for voltage/temperature monitoring.
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++  Hardware monitoring driver for the MC33978/MC34978 MSDI device.
++  Provides fault detection and monitoring for:
++  - Battery voltage (VBATP) faults: undervoltage, overvoltage
++  - Temperature faults: over-temperature, warning threshold
 +
 +properties:
 +  compatible:
 +    enum:
-+      - nxp,mc33978
-+      - nxp,mc34978
-+
-+  reg:
-+    maxItems: 1
-+    description: SPI chip select number
-+
-+  spi-max-frequency:
-+    maximum: 8000000
-+    description: Maximum SPI clock frequency (up to 8 MHz)
-+
-+  interrupts:
-+    maxItems: 1
-+    description: |
-+      INT_B pin interrupt. Active-low, indicates pin state changes or
-+      fault conditions.
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+    description: |
-+      First cell is the IRQ number (0-21 for pins, 22 for faults).
-+      Second cell is the trigger type (IRQ_TYPE_* from interrupt-controller.h).
-+
-+  vddq-supply:
-+    description: Digital supply voltage
-+
-+  vbatp-supply:
-+    description: Battery/power supply
++      - nxp,mc33978-hwmon
++      - nxp,mc34978-hwmon
 +
 +required:
 +  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
 +
-+unevaluatedProperties: false
++additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        msdi: mc33978@0 {
-+            compatible = "nxp,mc33978";
-+            reg = <0>;
-+            spi-max-frequency = <4000000>;
-+
-+            interrupt-parent = <&gpiog>;
-+            interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+
-+            vddq-supply = <&reg_3v3>;
-+            vbatp-supply = <&reg_12v>;
-+        };
++    hwmon {
++        compatible = "nxp,mc33978-hwmon";
 +    };
+diff --git a/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+index 5e8ab2cff685..58fcfe24d415 100644
+--- a/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
++++ b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+@@ -58,6 +58,12 @@ properties:
+     description: |
+       Pinctrl and GPIO controller child node for the 22 switch inputs.
+ 
++  hwmon:
++    type: object
++    $ref: /schemas/hwmon/nxp,mc33978-hwmon.yaml#
++    description: |
++      Hardware monitoring child node for fault detection.
++
+ required:
+   - compatible
+   - reg
+@@ -94,5 +100,9 @@ examples:
+                 gpio-controller;
+                 #gpio-cells = <2>;
+             };
++
++            hwmon {
++                compatible = "nxp,mc33978-hwmon";
++            };
+         };
+     };
 -- 
 2.47.3
 
