@@ -1,990 +1,247 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012026.outbound.protection.outlook.com [52.101.66.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411D3E9F8F
-	for <linux-gpio@vger.kernel.org>; Wed, 25 Feb 2026 17:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772039790; cv=none; b=cw4nnteCHOqRBPWwNPYjQRfDuNpD/sdJCs/QPZw+bm9KFuqe1uhJ9MrRZfgCq+/L3m+Jh0k9BSBGD+9RVoAZNSRih3TvtEOojOI+afRSx+MYLVr4GaFVYoXX8C0fpHSmWEpgpTojFS5XBqvCrhBb7dDl7jtOzS7iH/2I+tzB4HU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772039790; c=relaxed/simple;
-	bh=6p7JbQVpEROt1SuD4gaKx2OLdQcB0+umA35F82mCX2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ArfpRa+E33YL2h/fFgbBJv7KW609phUyaSyN+pVzaSBLxI6gdoIM74cJ0kiw7hbelUzPXSitboUlQwFW31iAPpClpQ57WZQWnxeYh2jsMQd9pbKOd8OUZKff35t5eCX+HNg6S+TnwuU4B9czaY6TZDLPCKXkPTP4QZcH+qcX618=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUF-0003C7-S2; Wed, 25 Feb 2026 18:15:47 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac] helo=dude04)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUD-002b7w-2E;
-	Wed, 25 Feb 2026 18:15:47 +0100
-Received: from ore by dude04 with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vvIUE-00000008JDk-42Eb;
-	Wed, 25 Feb 2026 18:15:46 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Peter Rosin <peda@axentia.se>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	David Jander <david@protonic.nl>
-Subject: [PATCH v1 2/8] mfd: add NXP MC33978/MC34978 core driver
-Date: Wed, 25 Feb 2026 18:15:35 +0100
-Message-ID: <20260225171545.1980385-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260225171545.1980385-1-o.rempel@pengutronix.de>
-References: <20260225171545.1980385-1-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F80126ED59;
+	Wed, 25 Feb 2026 17:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772042048; cv=fail; b=OYMXnKsDMLn5GeBXXZQY6sjwoheFQnd73/BxSVZoZN2RiTQtEcJKCHP9n/OU08z/4k3cqWZmzatsOZukdFctZbdWWiA71cEHl9s1Ov7S0StSere14BPGoTG/Oe2WKHi7HiqmH+UqzC/GD5D5Ee5kfkSn+qSy8E/beCkUrt788M4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772042048; c=relaxed/simple;
+	bh=AV35Ti8nrGpbfO/+ioRREscgkRFu+y/TWa4hOfidllk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jMSdaNhULz5L0JLczQCD9Y+RSnXGDF/khi4bM93hf9/cdMvfqU0clXXXZY/9x2kdSgepZeaS3e5qpTi+WPt9W+T62BRBcFskk5oWPsPqWGtJ23rgvf3je+VWZr5rko04gSvIICmWmbAin5bxYuhG3ygX/MhtQ/Os18vQZKjKkxU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=K3SPTGNd; arc=fail smtp.client-ip=52.101.66.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="K3SPTGNd"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GEb9POyIF51cCGIAy5BWUQybD1w8DsUoR3swvbA1G2URUh0iQe70lFVU/dC7pDBdfbqa17xIHHcUwNrvJq31ygJGFtQYeouZGuYjXw3d3LrGOOAF1DquKEAomZ3rFfCTrpmXSXZ+ajN8E6LVViziIUSjElRMSuJnVaIa/5Cotlrawm04/TP+2EVXAdrJt5G2oOVFpD2sAlVIyaBCkt3QW4XuWWunewprDnzi0bh8i43G2oVWHZgARSEcV6YayxjBbG7TP5KYXyPN+5qc0c3QKBv7/XTrSaNLcOAsdM7IsNntv9sj2dmSOtB0LJjRCy8JP7E+VHTbQYVKcuuYbjt+hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AV35Ti8nrGpbfO/+ioRREscgkRFu+y/TWa4hOfidllk=;
+ b=UN8518fsKG2OX7Ayx/6euDVNeWZn0mnoWgd6w5lFPdqW3/lTDKRc2VHxnmVk1TXYtDIzOVSLQ7JFKn9+/guGsYPjbCCDl8HVZrjgoURBlThWl6U5Sr8D74Co60gktAQ2JIcFWoZcvKzADXtU/ZLgkzT1exGLEsvzf7ScL9exG7VLc4V4DCk0/AzDpvBSdQQ6mgF2GOme4rxNvycSLf59+H2UYGxpYrbWo9o/xa6GDhRtUSuzTUu5qSbTxbck/SSVC+yolvj9BDDbgJp3lK0OawiHccELDmSrYyms5LvVqiBS9/BYH6K2RA1AHrArE7L6DAPrcmCeVD1lsghktwyV4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AV35Ti8nrGpbfO/+ioRREscgkRFu+y/TWa4hOfidllk=;
+ b=K3SPTGNde1CyHnuUy/SBRUjusKYCeT4oXMNcsiqb8L6swo3yG0kwSEZ/6eV5HMLxZLRVJogqUZngwlrHHK+LdBWO0NXQoOC6a31I1cfCdRxxwHIvFoWtA3P/Z02xkwMM1CWHupGMzWtZEWF0AfsQEuREcU7Mz99UfHmMbzUcGK3at0Dn+/6FRG/XHNk1Ks+GXjx3FJpVadT27rKp+gm59zydq2yQxnWd8DcNMH3th8jXQmUdbwK66FLBEhNrP9y8pub1j0hmpVWazasBZ/lHsEBlsMbe3Uzuno3sp+Aj7TywTMBcQcSuebg3Rr4eR+mmoCMLouBVlsiUrH3AL3lnbw==
+Received: from AS8PR04MB9176.eurprd04.prod.outlook.com (2603:10a6:20b:44b::7)
+ by VI0PR04MB10164.eurprd04.prod.outlook.com (2603:10a6:800:243::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.23; Wed, 25 Feb
+ 2026 17:54:01 +0000
+Received: from AS8PR04MB9176.eurprd04.prod.outlook.com
+ ([fe80::ba87:1cd1:53d9:fcd7]) by AS8PR04MB9176.eurprd04.prod.outlook.com
+ ([fe80::ba87:1cd1:53d9:fcd7%6]) with mapi id 15.20.9632.017; Wed, 25 Feb 2026
+ 17:54:00 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Andrew Lunn <andrew@lunn.ch>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Arnaud POULIQUEN
+	<arnaud.pouliquen@foss.st.com>, Linus Walleij <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng
+ Fan <peng.fan@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Topic: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Index: AQHcpn+4JcX/ljIUHEqcgkqHkfnngQ==
+Date: Wed, 25 Feb 2026 17:54:00 +0000
+Message-ID:
+ <AS8PR04MB917652D63DB090D22129D3D78975A@AS8PR04MB9176.eurprd04.prod.outlook.com>
+References:
+ <CAD++jLkUVFckLTq=SoivNFoFymhJo4KM=qGmajFcv9T9+7tPmg@mail.gmail.com>
+ <b4c422ce-3538-40aa-8bfa-b70f02774b5d@foss.st.com>
+ <nbzdtngifwrx2kyu4tsiwwua5v4i5cjtaotemq5hubaets3bcn@fk25twf5rv6x>
+ <PAXPR04MB9185588C1DB71B1FEFA1DEE38974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <CANLsYkxAwgG1WkMRr8EJZuSUnN_jKVnsWhWTakVqhvtMBO365A@mail.gmail.com>
+ <PAXPR04MB91851D3DA6A92669CB5926A18974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <CANLsYkw-8ERXy3v8Sv55Cpq=+41Toez3EjLMbENAkavvr8STeQ@mail.gmail.com>
+ <PAXPR04MB9185B68BC640D940534E44098974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <d4c8f7dd-c0a8-4721-9750-47429637d8c1@lunn.ch>
+ <PAXPR04MB9185BB6443B9E1E407F409D68974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <ndozoc6qdrpv3xuktumsah56im5rbtg6iwerq3xi2xkcuyewpx@szswqvojleg3>
+In-Reply-To: <ndozoc6qdrpv3xuktumsah56im5rbtg6iwerq3xi2xkcuyewpx@szswqvojleg3>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB9176:EE_|VI0PR04MB10164:EE_
+x-ms-office365-filtering-correlation-id: a7a1bddf-c4f0-4c96-0eca-08de7496db6d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|19092799006|38070700021;
+x-microsoft-antispam-message-info:
+ f4JLDKIVrxBJOc8LKUAxlb8gn53F2xSxT/nZvON++hIWSwBKpc8DaVriFhnoHYFdKbq9vufWtZPzWJvdwG9CW4gx6tK262S2V5Gu85GrzZLZENU9TzWIbup5rbywRRdLyVkikWIRWGFrhYuo9zon3RFTaaHq+wLJcwfZl4Kr/OWpC3vpt82/t3KMXZeGYeiBALMbTXmHpphj7QPG2PT4egrVD/dY3+T/nLthj/ts9NWDtTFX0blMbGd+CmaZiGWSEJ3TpvKaO86jjUwxQO6QHaPCAaMiT6DuUPRKLo987lXSUY8jcl5Nkokyo5yRtLsNA8FePxMr1obPQBBYrOV3jbCeWjkzvjW+ERBM1p1eyL+oSImwqoC2rP+kWAimmsii8SfYTY8RpAwNKdiGSXkqVSQQl+Xy2XJuGKmc2QFTJ85iS4XptWxbtzWVcAW5r7fpp0ya0dIjl8eh2zfrxDfhh80MtSSopJaRtPEghClrdEqFWSWoqNLFRVeSQgm5VR5zDE3gO7V3gL2XtbWxCllvvjjKPDNgQFhWe38RG5S0Icf4v8F+GpB208UF2thFOjYEAh5BalvewbTePrImh1D98VUFPGN+onB7KkPbzA68v8T95OM1sAKeHdfir8qgw8CRUF4WBd4k3BtEsjuAP5xPr/EhG804Hc9sZjUlRR8FlYBggpf0SLQn3iEwWLyhZ2UAFrm7+mEqW7k2Kb46DxTIul6siZY0faxKilIBfLxygADfQ+ERTBzDQz5KhlY+Wcaq6oN9ToBeKfzILvmsU7UPf0eesgYcgjufqdMLFx/X/pU=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9176.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(19092799006)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ekxmKzR4Z0gzQTRpdVdjSUo3c1Y4dkphQlRmZXl4cUU3KzVUSFRGTnMxa1pC?=
+ =?utf-8?B?YkFoeGNMMUJSV2xyNzN5MFZFZjVZVlQ2SFkvVS9hdmhlcU8xSWhwaEJ0T3dK?=
+ =?utf-8?B?NmpEbExhS3libmkyVXZ5ckJuMWlidTd3eGRZZG1iU1JzZ0ZIUzRteTBzNjBL?=
+ =?utf-8?B?dnhzOXRWVEkrZEkwSnFURE1OR1loSDlReWtpWE04dlEvK1hLRnA3OXhEZ1RQ?=
+ =?utf-8?B?eWdpaUxJU3ZmUXl1S3BoRVBIb0hYU1R0RmJQc2h3VmRRVlpGSHI5WmxGeUE3?=
+ =?utf-8?B?T1h4a3ptS1o5K2VSblRRTTEva1phT0RNbUxidlVTU3YxWjRhWEFkb3dMSDBt?=
+ =?utf-8?B?S09LS0NHUEMzRDZOUEtFVFdxcGRQQ2QzaTJyVHJTM3ZzRXR2QjVVbi9Jb1Mr?=
+ =?utf-8?B?cCs5Wlg5U3k3d1p6YTMyVG9vdSttR05ia2c1QXhHTHR6ZGxZMktUMmp1bVRi?=
+ =?utf-8?B?M1JpNlY2UjVQWFE0YlUxbWFPM2VrbXpWUkZJYmtKOUwyTWJPR2hFTDdRMis3?=
+ =?utf-8?B?SGhQMlMyVndZRnFOeDk0MnhmbDYvbCtpcXFBQlpnM2pSZTV0OUtmQUVwUTFl?=
+ =?utf-8?B?cWQrNmszRmR1SU9RUDA3MWtDME1oeWtlUEVjQ1kvQk5FMTh5U2hLUVpINkU3?=
+ =?utf-8?B?ZnhvWjVkcEx5SThFNkV6YlNNWitaWXRqZ09kR0pPSnQrRVZSZllzeStkaTdE?=
+ =?utf-8?B?SytGd0dOSk5xTkJBVGQxN1lyZVlTTUFWSGdPUy9adDNiTkdnWVJJY3o0TEp5?=
+ =?utf-8?B?Q2ZXTVI5OWRkWWhDRThta25NMEovU1RoaElnTXdOQnd1ZXhCc3lmZytwbWdW?=
+ =?utf-8?B?RnB3a3FoSlFLbStVSEVlSWdmVENkTkt3Ulp5UGY2NklwMkNMeUNvUUlMMXcw?=
+ =?utf-8?B?M012WnRFbEp6TVNCV2cwNW9jbGdPZzMvTGVvdmVJVUlCd1JWb21NVE9DR3dq?=
+ =?utf-8?B?SVRrQURHUjdESEp1U0NHZ1FoZXEyRDQ3d2JNV3oyKy9sZm1YcGRSSXpuSDFX?=
+ =?utf-8?B?a0VRdEpUT3RjVm16ODBiRnBhM2RQSVZIcmtjTjNPbmEzWGdVVi9mcEF1OTV5?=
+ =?utf-8?B?NGxPa1EvN3B0UjE3TG14ZzdQMm5SUHhSdTZ5Mk5reXlwM1dFYU1Va0ZGSHdF?=
+ =?utf-8?B?dGpmUFZPM3lhSGZ1L1lDOWdHajFtSjhPZEthNkljWU9VZnRZWndQN0Z4ZU9H?=
+ =?utf-8?B?dTFRaXo4eE9QT0RYN3lCeUZSQ3FlbWZVeVFuWi9ySG10RDhFeUtjYmZNRkU2?=
+ =?utf-8?B?UGM2S3ZNNFZnd0htYks4YVpWa0FxRjltTnpGY01yYVJIRVFvVVk1TlVvM3NW?=
+ =?utf-8?B?RTM0VHlMa3UrdktGalowd3NCOVF4QVNZM3RGUjBad0FrN3FqbjhBK3UyY1dY?=
+ =?utf-8?B?cFM1L2VKNWIyWVE4SlZqWm5ENE53NlMxUk5FdFpLOFBYT1Fia092QjhiR3NY?=
+ =?utf-8?B?UVY3dmJoKzZRV3hvZUtzRSt3cUQ4cFFUc2xzT0pRYytBcEdoUUd1V25tL2ZO?=
+ =?utf-8?B?RThGU1NqQ3YzT0tSVkMwcnNjbFduTERIMWMzb3lobDRvTTB6UVRVZkdpNFh4?=
+ =?utf-8?B?OU5hVjN6dU1JNlArdnpGV3N3N2xpSkdUU0szYSswOVltRXJ1V250bUJrZWNU?=
+ =?utf-8?B?Z1R4RENlZ0JPMTBNRWxOeHd0OUJTTHZrdE5mV1dwVkJVWUJ2Z3pldEJ3RlJ2?=
+ =?utf-8?B?aEsyTUkrbklQdk1KaG9xeFVndklVZVQySTRGYW80cHY5NXpMYVhabWZjQnNa?=
+ =?utf-8?B?VVZveG9QODFEck9vRnFsbkNKRCtHQXBvTFZIZlg4UFM5TUI4UG1SOTBXRG1J?=
+ =?utf-8?B?Y2Nra2NVN1pRajY4NUJOSklEVmZjM0d0MTBUeUttT2dwdlF1UVY5c0FWMFNP?=
+ =?utf-8?B?Vm5Va1BFL2d1VEUwZU84eGgzMWhBR2g2QXFaT01MTis4YTFiQkdMWVhoQXJH?=
+ =?utf-8?B?Z1JMbnMrNjArNy8xUG9VUCtKMDRVSS9kZVFoaFBrelBqWFNoUHhkT3hudWor?=
+ =?utf-8?B?WG53VlhBWkNhb29lNFZlQVpZNkFpWFB5cjZHdUJ1VlVmUjlUSlJ0eDhBd0Zq?=
+ =?utf-8?B?Y21mTFBpUjA3ZU43aTJqVDlqQkN2TCtZK2ZvRkdHUWZkZ1oxSEI3czE4ZVNv?=
+ =?utf-8?B?S05GdjRyRDNUMVlQOVVBbFI2bmhQSFJFNFVHNEJLbTB1NTdkM28vUy81NE1Y?=
+ =?utf-8?B?YWx1MjhoRjM5UFNyKzZVbXpUYzJLdEpqdFpOUDIzeHhHLzFWMDQwKzBXVDRX?=
+ =?utf-8?B?M1VPbG5oTGd5UDhSNmNXalB5Z1V6RWdDVGNmOWlwUDBURWlPSTBYSkN2bGt3?=
+ =?utf-8?Q?LnhK3R8acwCjoLhfOJ?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9176.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7a1bddf-c4f0-4c96-0eca-08de7496db6d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2026 17:54:00.7869
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gUg92/VIRLwyWQH1y/hAte9MuEHzAGJOoq7qY0Lo9HgzN+KobJWe8Pk98em3Qfem7M7/4PoV9QgogMkASBchZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10164
 
-Add core Multi-Function Device (MFD) driver for the NXP MC33978 and
-MC34978 Multiple Switch Detection Interfaces (MSDI).
-
-The MC33978/MC34978 devices provide 22 switch detection inputs, analog
-multiplexing (AMUX), and comprehensive hardware fault detection.
-
-This core driver handles:
-- SPI communications via a custom regmap bus to support the device's
-  pipelined two-frame MISO response requirement.
-- Power sequencing for the VDDQ (logic) and VBATP (battery) regulators.
-- Interrupt demultiplexing, utilizing an irq_domain to provide 22 virtual
-  IRQs for switch state changes and 1 virtual IRQ for hardware faults.
-- Inline status harvesting from the SPI MSB to detect and trigger events
-  without requiring dedicated status register polling.
-
-Child devices (pinctrl, hwmon, mux) are populated automatically via
-the device tree.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/mfd/Kconfig         |  13 +
- drivers/mfd/Makefile        |   2 +
- drivers/mfd/mc33978.c       | 749 ++++++++++++++++++++++++++++++++++++
- include/linux/mfd/mc33978.h |  97 +++++
- 4 files changed, 861 insertions(+)
- create mode 100644 drivers/mfd/mc33978.c
- create mode 100644 include/linux/mfd/mc33978.h
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 7192c9d1d268..689922772e97 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -2566,6 +2566,19 @@ config MFD_UPBOARD_FPGA
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called upboard-fpga.
- 
-+config MFD_MC33978
-+	tristate "NXP MC33978/MC34978 industrial input controller core"
-+	depends on SPI
-+	select MFD_CORE
-+	select REGMAP_SPI
-+	help
-+	  Support for the NXP MC33978/MC34978 industrial input controllers
-+	  using the SPI interface.
-+
-+	  This driver provides common support for accessing the device.
-+	  Additional drivers must be enabled in order to use the functionality
-+	  of the device.
-+
- config MFD_MAX7360
- 	tristate "Maxim MAX7360 I2C IO Expander"
- 	depends on I2C
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index e75e8045c28a..dcd99315f683 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -122,6 +122,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
- obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
- obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
- 
-+obj-$(CONFIG_MFD_MC33978)	+= mc33978.o
-+
- obj-$(CONFIG_MFD_PF1550)	+= pf1550.o
- 
- obj-$(CONFIG_MFD_NCT6694)	+= nct6694.o
-diff --git a/drivers/mfd/mc33978.c b/drivers/mfd/mc33978.c
-new file mode 100644
-index 000000000000..2f6fe90d5c98
---- /dev/null
-+++ b/drivers/mfd/mc33978.c
-@@ -0,0 +1,749 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * MC33978/MC34978 Multiple Switch Detection Interface - MFD Core Driver
-+ *
-+ * Copyright (C) 2024 David Jander <david@protonic.nl>, Protonic Holland
-+ * Copyright (C) 2026 Oleksij Rempel <kernel@pengutronix.de>, Pengutronix
-+ *
-+ * Hardware Overview:
-+ * - 22 switch detection inputs: 14 SG (Switch-to-Ground), 8 SP (programmable)
-+ * - 24-to-1 analog multiplexer (AMUX) for reading inputs as analog voltage
-+ * - Temperature and battery voltage monitoring via AMUX
-+ * - Interrupt output (INT_B) on switch state changes
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/atomic.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/device.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+#include <linux/string.h>
-+
-+#include <linux/mfd/mc33978.h>
-+
-+#define MC33978_DRV_NAME		"mc33978"
-+
-+/* Device identification signature returned by CHECK register */
-+#define MC33978_CHECK_SIGNATURE		0x123456
-+
-+/*
-+ * Pipelined two-frame SPI transfer:
-+ * [REQ]  - Transmits command/write-data, receives dummy/previous response
-+ * [PIPE] - Transmits dummy CHECK, receives actual response to current command
-+ */
-+enum mc33978_frame_index {
-+	MC33978_FRAME_REQ = 0,
-+	MC33978_FRAME_PIPE,
-+	MC33978_FRAME_COUNT
-+};
-+
-+/* SPI frame byte offsets (transmitted MSB first) */
-+enum mc33978_frame_offset {
-+	MC33978_FRAME_CMD = 0,
-+	MC33978_FRAME_DATA_HI,
-+	MC33978_FRAME_DATA_MID,
-+	MC33978_FRAME_DATA_LO
-+};
-+#define MC33978_FRAME_LEN		4
-+
-+/* Regmap internal value buffer offsets */
-+enum mc33978_payload_offset {
-+	MC33978_PAYLOAD_HI = 0,
-+	MC33978_PAYLOAD_MID,
-+	MC33978_PAYLOAD_LO
-+};
-+#define MC33978_PAYLOAD_LEN		3
-+
-+/*
-+ * SPI Command Byte (FRAME_CMD).
-+ * Maps to frame bit [24] in the datasheet.
-+ */
-+#define MC33978_CMD_BYTE_WRITE		BIT(0)
-+
-+/* High Payload Byte Masks (FRAME_DATA_HI / PAYLOAD_HI). */
-+#define MC33978_HI_BYTE_STAT_FAULT     BIT(7) /* Maps to frame bit [23] */
-+#define MC33978_HI_BYTE_STAT_INT       BIT(6) /* Maps to frame bit [22] */
-+
-+#define MC33978_HI_BYTE_STATUS_MASK    (MC33978_HI_BYTE_STAT_FAULT | \
-+					MC33978_HI_BYTE_STAT_INT)
-+
-+/* Maps to frame bits [21:16] */
-+#define MC33978_HI_BYTE_DATA_MASK	GENMASK(5, 0)
-+
-+#define MC33978_CACHE_SG_PIN_MASK	GENMASK(13, 0)
-+#define MC33978_CACHE_SP_PIN_MASK	GENMASK(21, 14)
-+
-+#define MC33978_SG_PIN_MASK		GENMASK(13, 0)
-+#define MC33978_SP_PIN_MASK		GENMASK(7, 0)
-+
-+struct mc33978_mfd_priv {
-+	struct spi_device *spi;
-+	struct regmap *map;
-+
-+	struct regulator *vddq;
-+	struct regulator *vbatp;
-+
-+	struct mutex event_lock;
-+	struct work_struct event_work;
-+	atomic_t is_handling;
-+	atomic_t harvested_flags;
-+	u32 cached_pin_state;
-+	u32 cached_pin_mask;
-+	u32 irq_rise;
-+	u32 irq_fall;
-+
-+	struct mutex irq_lock;
-+	struct irq_domain *domain;
-+
-+	/* Pre-built SPI messages */
-+	struct spi_message msg_read;
-+	struct spi_message msg_write;
-+	struct spi_transfer xfer_read[MC33978_FRAME_COUNT];
-+	struct spi_transfer xfer_write;
-+
-+	/* DMA buffers at the end */
-+	u8 tx_frame[MC33978_FRAME_COUNT][MC33978_FRAME_LEN] ____cacheline_aligned;
-+	u8 rx_frame[MC33978_FRAME_COUNT][MC33978_FRAME_LEN];
-+};
-+
-+static void mc33978_irq_mask(struct irq_data *data)
-+{
-+	struct mc33978_mfd_priv *mc = irq_data_get_irq_chip_data(data);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(data);
-+
-+	mc->cached_pin_mask &= ~BIT(hwirq);
-+}
-+
-+static void mc33978_irq_unmask(struct irq_data *data)
-+{
-+	struct mc33978_mfd_priv *mc = irq_data_get_irq_chip_data(data);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(data);
-+
-+	mc->cached_pin_mask |= BIT(hwirq);
-+}
-+
-+static void mc33978_irq_bus_lock(struct irq_data *data)
-+{
-+	struct mc33978_mfd_priv *mc = irq_data_get_irq_chip_data(data);
-+
-+	mutex_lock(&mc->irq_lock);
-+}
-+
-+/**
-+ * mc33978_irq_bus_sync_unlock() - Sync cached IRQ mask to hardware and unlock
-+ * @data: IRQ data
-+ *
-+ * Writes the cached interrupt mask to the hardware IE_SG and IE_SP registers,
-+ * then releases the IRQ lock. This is where the actual hardware update occurs
-+ * after mask/unmask operations.
-+ */
-+static void mc33978_irq_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct mc33978_mfd_priv *mc = irq_data_get_irq_chip_data(data);
-+	u32 sg_mask, sp_mask;
-+	int ret;
-+
-+	/*
-+	 * Split the cached 22-bit pin mask into hardware register format:
-+	 * - SG pins: bits [13:0] (14 pins, mask 0x3FFF)
-+	 * - SP pins: bits [21:14] (8 pins, mask 0xFF)
-+	 */
-+	sg_mask = FIELD_GET(MC33978_CACHE_SG_PIN_MASK, mc->cached_pin_mask);
-+	sp_mask = FIELD_GET(MC33978_CACHE_SP_PIN_MASK, mc->cached_pin_mask);
-+
-+	ret = regmap_update_bits(mc->map, MC33978_REG_IE_SG,
-+				 MC33978_SG_PIN_MASK, sg_mask);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = regmap_update_bits(mc->map, MC33978_REG_IE_SP,
-+				 MC33978_SP_PIN_MASK, sp_mask);
-+unlock:
-+	if (ret)
-+		dev_err(&mc->spi->dev, "Failed to sync IRQ mask to hardware: %d\n",
-+			ret);
-+
-+	mutex_unlock(&mc->irq_lock);
-+}
-+
-+static int mc33978_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct mc33978_mfd_priv *mc = irq_data_get_irq_chip_data(data);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(data);
-+	u32 mask = BIT(hwirq);
-+
-+	if (hwirq == MC33978_HWIRQ_FAULT)
-+		return 0;
-+
-+	if (type & IRQ_TYPE_EDGE_RISING)
-+		mc->irq_rise |= mask;
-+	else
-+		mc->irq_rise &= ~mask;
-+
-+	if (type & IRQ_TYPE_EDGE_FALLING)
-+		mc->irq_fall |= mask;
-+	else
-+		mc->irq_fall &= ~mask;
-+
-+	return 0;
-+}
-+
-+static struct irq_chip mc33978_irq_chip = {
-+	.name			= MC33978_DRV_NAME,
-+	.irq_mask		= mc33978_irq_mask,
-+	.irq_unmask		= mc33978_irq_unmask,
-+	.irq_bus_lock		= mc33978_irq_bus_lock,
-+	.irq_bus_sync_unlock	= mc33978_irq_bus_sync_unlock,
-+	.irq_set_type		= mc33978_irq_set_type,
-+};
-+
-+static int mc33978_irq_map(struct irq_domain *d, unsigned int virq,
-+			   irq_hw_number_t hw)
-+{
-+	struct mc33978_mfd_priv *mc = d->host_data;
-+
-+	irq_set_chip_data(virq, mc);
-+	irq_set_chip_and_handler(virq, &mc33978_irq_chip, handle_simple_irq);
-+
-+	irq_set_nested_thread(virq, 1);
-+	irq_clear_status_flags(virq, IRQ_NOREQUEST | IRQ_NOPROBE);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops mc33978_irq_domain_ops = {
-+	.map	= mc33978_irq_map,
-+	.xlate	= irq_domain_xlate_twocell,
-+};
-+
-+static void mc33978_irq_domain_remove(void *data)
-+{
-+	struct irq_domain *domain = data;
-+
-+	irq_domain_remove(domain);
-+}
-+
-+static bool mc33978_handle_pin_changes(struct mc33978_mfd_priv *mc,
-+				       unsigned int pin_state)
-+{
-+	u32 fired_pins = 0;
-+	u32 changed_pins;
-+	int i;
-+
-+	changed_pins = pin_state ^ mc->cached_pin_state;
-+	if (!changed_pins)
-+		return false;
-+
-+	mc->cached_pin_state = pin_state;
-+	changed_pins &= mc->cached_pin_mask;
-+
-+	if (!changed_pins)
-+		return false;
-+
-+	fired_pins |= (changed_pins & pin_state) & mc->irq_rise;
-+	fired_pins |= (changed_pins & ~pin_state) & mc->irq_fall;
-+
-+	for_each_set_bit(i, (unsigned long *)&fired_pins, MC33978_NUM_PINS) {
-+		int virq = irq_find_mapping(mc->domain, i);
-+
-+		handle_nested_irq(virq);
-+	}
-+
-+	return true;
-+}
-+
-+static bool mc33978_handle_fault_condition(struct mc33978_mfd_priv *mc)
-+{
-+	int virq;
-+
-+	virq = irq_find_mapping(mc->domain, MC33978_HWIRQ_FAULT);
-+	if (virq > 0)
-+		handle_nested_irq(virq);
-+
-+	return true;
-+}
-+
-+static bool mc33978_process_single_event(struct mc33978_mfd_priv *mc)
-+{
-+	unsigned int pin_state;
-+	bool handled = false;
-+	u8 hw_flags;
-+	int ret;
-+
-+	ret = regmap_read(mc->map, MC33978_REG_READ_IN, &pin_state);
-+	if (ret)
-+		return false;
-+
-+	/*
-+	 * harvested_flags will be set by regmap_read() above if the FAULT_STAT
-+	 * or INT_flg bits were detected in the response
-+	 */
-+	hw_flags = atomic_xchg(&mc->harvested_flags, 0);
-+
-+	if (mc33978_handle_pin_changes(mc, pin_state))
-+		handled = true;
-+
-+	if (hw_flags & MC33978_HI_BYTE_STAT_FAULT &&
-+	    mc33978_handle_fault_condition(mc))
-+		handled = true;
-+
-+	if (hw_flags & MC33978_HI_BYTE_STAT_INT)
-+		handled = true;
-+
-+	return handled;
-+}
-+
-+static bool mc33978_handle_events(struct mc33978_mfd_priv *mc)
-+{
-+	bool handled = false;
-+
-+	mutex_lock(&mc->event_lock);
-+
-+	do {
-+		atomic_set(&mc->is_handling, 1);
-+
-+		if (mc33978_process_single_event(mc))
-+			handled = true;
-+
-+		atomic_set(&mc->is_handling, 0);
-+
-+	} while (atomic_read(&mc->harvested_flags) != 0);
-+
-+	mutex_unlock(&mc->event_lock);
-+
-+	return handled;
-+}
-+
-+static irqreturn_t mc33978_irq_thread(int irq, void *data)
-+{
-+	return mc33978_handle_events(data) ? IRQ_HANDLED : IRQ_NONE;
-+}
-+
-+static int mc33978_irq_init(struct mc33978_mfd_priv *mc)
-+{
-+	struct device *dev = &mc->spi->dev;
-+	int ret;
-+
-+	mutex_init(&mc->irq_lock);
-+
-+	/*
-+	 * Create IRQ domain with 23 interrupts:
-+	 * - hwirq 0-21: Pin change interrupts (22 pins)
-+	 * - hwirq 22: Fault interrupt (for hwmon driver)
-+	 */
-+	mc->domain = irq_domain_add_linear(dev->of_node, MC33978_NUM_PINS + 1,
-+					   &mc33978_irq_domain_ops, mc);
-+	if (!mc->domain)
-+		return dev_err_probe(dev, -ENOMEM, "Failed to create IRQ domain\n");
-+
-+	ret = devm_add_action_or_reset(dev, mc33978_irq_domain_remove,
-+				       mc->domain);
-+	if (ret)
-+		return ret;
-+
-+	if (mc->spi->irq <= 0)
-+		return dev_err_probe(dev, -EINVAL, "No valid IRQ provided for INT_B pin\n");
-+
-+	ret = devm_request_threaded_irq(dev, mc->spi->irq, NULL,
-+					mc33978_irq_thread,
-+					IRQF_ONESHOT | IRQF_SHARED,
-+					dev_name(dev), mc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to request IRQ\n");
-+
-+
-+	return 0;
-+}
-+
-+static void mc33978_event_work(struct work_struct *work)
-+{
-+	struct mc33978_mfd_priv *mc =
-+		container_of(work, struct mc33978_mfd_priv, event_work);
-+
-+	mc33978_handle_events(mc);
-+}
-+
-+/**
-+ * mc33978_harvest_status() - Collect status flags from SPI responses
-+ * @mc: Device private data
-+ * @status: Status bits (FAULT_STAT and INT_flg) from MISO frame
-+ *
-+ * Accumulates status flags harvested from SPI responses and schedules
-+ * event processing if not already in progress. Called by the SPI
-+ * read/write functions when status bits are detected in responses.
-+ */
-+static void mc33978_harvest_status(struct mc33978_mfd_priv *mc, u8 status)
-+{
-+	if (!status)
-+		return;
-+
-+	atomic_or(status, &mc->harvested_flags);
-+
-+	if (!atomic_read(&mc->is_handling))
-+		schedule_work(&mc->event_work);
-+}
-+
-+/**
-+ * mc33978_prepare_messages() - Initialize the persistent SPI messages
-+ * @mc: Device private data
-+ *
-+ * Hardware pipelining constraints:
-+ * - Write (1 Frame): The device executes write commands immediately upon
-+ * CS de-assertion. No fetch frame is required.
-+ * - Read (2 Frames): The MISO response logically lags by one frame.
-+ * Frame 1 transmits the read request and toggles CS to latch it.
-+ * Frame 2 transmits a dummy CHECK command to fetch the actual payload.
-+ */
-+static void mc33978_prepare_messages(struct mc33978_mfd_priv *mc)
-+{
-+	/* --- Prepare Write Message (1 Frame) --- */
-+	spi_message_init(&mc->msg_write);
-+
-+	mc->xfer_write.tx_buf = mc->tx_frame[MC33978_FRAME_REQ];
-+	mc->xfer_write.rx_buf = mc->rx_frame[MC33978_FRAME_REQ];
-+	mc->xfer_write.len = MC33978_FRAME_LEN;
-+
-+	spi_message_add_tail(&mc->xfer_write, &mc->msg_write);
-+
-+	/* --- Prepare Read Message (2 Frames) --- */
-+	spi_message_init(&mc->msg_read);
-+
-+	/* Frame 1: Request */
-+	mc->xfer_read[MC33978_FRAME_REQ].tx_buf =
-+		mc->tx_frame[MC33978_FRAME_REQ];
-+	mc->xfer_read[MC33978_FRAME_REQ].rx_buf =
-+		mc->rx_frame[MC33978_FRAME_REQ];
-+	mc->xfer_read[MC33978_FRAME_REQ].len = MC33978_FRAME_LEN;
-+	mc->xfer_read[MC33978_FRAME_REQ].cs_change = 1; /* Latch command */
-+
-+	/* Frame 2: Fetch (Dummy CHECK) */
-+	mc->xfer_read[MC33978_FRAME_PIPE].tx_buf =
-+		mc->tx_frame[MC33978_FRAME_PIPE];
-+	mc->xfer_read[MC33978_FRAME_PIPE].rx_buf =
-+		mc->rx_frame[MC33978_FRAME_PIPE];
-+	mc->xfer_read[MC33978_FRAME_PIPE].len = MC33978_FRAME_LEN;
-+
-+	/* Preload the dummy CHECK command statically */
-+	mc->tx_frame[MC33978_FRAME_PIPE][MC33978_FRAME_CMD] = MC33978_REG_CHECK;
-+
-+	spi_message_add_tail(&mc->xfer_read[MC33978_FRAME_REQ], &mc->msg_read);
-+	spi_message_add_tail(&mc->xfer_read[MC33978_FRAME_PIPE], &mc->msg_read);
-+}
-+
-+/**
-+ * mc33978_rx_decode() - Decode MISO response frame and extract status
-+ * @rx_frame: Received SPI frame buffer (4 bytes)
-+ * @val_buf: Output buffer for regmap (exactly 3 bytes, optional)
-+ *
-+ * Translates the 4-byte SPI response into a 3-byte regmap payload.
-+ * Harvests the volatile INTflg and FAULT_STAT bits from the MSB.
-+ *
-+ * Return: Status bits if present, 0 otherwise.
-+ */
-+static u8 mc33978_rx_decode(const u8 *rx_frame, u8 *val_buf)
-+{
-+	u8 cmd = rx_frame[MC33978_FRAME_CMD] & ~MC33978_CMD_BYTE_WRITE;
-+	bool has_status;
-+	u8 status = 0;
-+
-+	switch (cmd) {
-+	case MC33978_REG_CHECK:
-+	case MC33978_REG_WET_SP:
-+	case MC33978_REG_WET_SG0:
-+		has_status = false;
-+		break;
-+	default:
-+		has_status = true;
-+		break;
-+	}
-+
-+	if (has_status)
-+		status = rx_frame[MC33978_FRAME_DATA_HI] &
-+						MC33978_HI_BYTE_STATUS_MASK;
-+
-+	if (!val_buf)
-+		return status;
-+
-+	memcpy(val_buf, &rx_frame[MC33978_FRAME_DATA_HI], MC33978_PAYLOAD_LEN);
-+
-+	if (has_status)
-+		val_buf[MC33978_PAYLOAD_HI] &= MC33978_HI_BYTE_DATA_MASK;
-+
-+	return status;
-+}
-+
-+static int mc33978_spi_write(void *ctx, const void *data, size_t count)
-+{
-+	struct mc33978_mfd_priv *mc = ctx;
-+	u8 status;
-+	int ret;
-+
-+	if (count != MC33978_FRAME_LEN)
-+		return -EINVAL;
-+
-+	memcpy(mc->tx_frame[MC33978_FRAME_REQ], data, MC33978_FRAME_LEN);
-+
-+	ret = spi_sync(mc->spi, &mc->msg_write);
-+	if (ret)
-+		return ret;
-+
-+	status = mc33978_rx_decode(mc->rx_frame[MC33978_FRAME_REQ], NULL);
-+	mc33978_harvest_status(mc, status);
-+
-+	return 0;
-+}
-+
-+static int mc33978_spi_read(void *ctx, const void *reg_buf, size_t reg_size,
-+			    void *val_buf, size_t val_size)
-+{
-+	struct mc33978_mfd_priv *mc = ctx;
-+	u8 status_req, status_pipe;
-+	int ret;
-+
-+	if (reg_size != 1 || val_size != MC33978_PAYLOAD_LEN)
-+		return -EINVAL;
-+
-+	memset(&mc->tx_frame[MC33978_FRAME_REQ][MC33978_FRAME_DATA_HI], 0,
-+	       MC33978_PAYLOAD_LEN);
-+	mc->tx_frame[MC33978_FRAME_REQ][MC33978_FRAME_CMD] =
-+		((const u8 *)reg_buf)[0];
-+
-+	ret = spi_sync(mc->spi, &mc->msg_read);
-+	if (ret)
-+		return ret;
-+
-+	status_req = mc33978_rx_decode(mc->rx_frame[MC33978_FRAME_REQ], NULL);
-+	status_pipe = mc33978_rx_decode(mc->rx_frame[MC33978_FRAME_PIPE],
-+					val_buf);
-+
-+	mc33978_harvest_status(mc, status_req | status_pipe);
-+
-+	return 0;
-+}
-+
-+static const struct regmap_bus mc33978_regmap_bus = {
-+	.read = mc33978_spi_read,
-+	.write = mc33978_spi_write,
-+};
-+
-+static const struct regmap_range mc33978_volatile_range[] = {
-+	regmap_reg_range(MC33978_REG_READ_IN, MC33978_REG_RESET),
-+};
-+
-+static const struct regmap_access_table mc33978_volatile_table = {
-+	.yes_ranges = mc33978_volatile_range,
-+	.n_yes_ranges = ARRAY_SIZE(mc33978_volatile_range),
-+};
-+
-+static const struct regmap_range mc33978_precious_range[] = {
-+	regmap_reg_range(MC33978_REG_READ_IN, MC33978_REG_RESET),
-+};
-+
-+static const struct regmap_access_table mc33978_precious_table = {
-+	.yes_ranges = mc33978_precious_range,
-+	.n_yes_ranges = ARRAY_SIZE(mc33978_precious_range),
-+};
-+
-+/*
-+ * NOTE: Need to fake REG_IRQ and REG_RESET as readable, so that regcache
-+ * will NOT write to them on a cache sync. Sounds counterintuitive, but marking
-+ * a reg as "precious" or "volatile" is the only way to avoid this, and that
-+ * works only with readable regs.
-+ */
-+static const struct regmap_range mc33978_readable_range[] = {
-+	regmap_reg_range(MC33978_REG_CHECK, MC33978_REG_WET_SG1),
-+	regmap_reg_range(MC33978_REG_CWET_SP, MC33978_REG_WDEB_SG),
-+	regmap_reg_range(MC33978_REG_AMUX_CTRL, MC33978_REG_RESET),
-+};
-+
-+static const struct regmap_access_table mc33978_readable_table = {
-+	.yes_ranges = mc33978_readable_range,
-+	.n_yes_ranges = ARRAY_SIZE(mc33978_readable_range),
-+};
-+
-+static const struct regmap_range mc33978_writable_range[] = {
-+	regmap_reg_range(MC33978_REG_CONFIG, MC33978_REG_WET_SG1),
-+	regmap_reg_range(MC33978_REG_CWET_SP, MC33978_REG_AMUX_CTRL),
-+	regmap_reg_range(MC33978_REG_IRQ, MC33978_REG_RESET),
-+};
-+
-+static const struct regmap_access_table mc33978_writable_table = {
-+	.yes_ranges = mc33978_writable_range,
-+	.n_yes_ranges = ARRAY_SIZE(mc33978_writable_range),
-+};
-+
-+static const struct regmap_config mc33978_regmap_config = {
-+	.name = MC33978_DRV_NAME,
-+	.reg_bits = 8,
-+	.val_bits = 24,
-+	.reg_stride = 2,
-+	.write_flag_mask = MC33978_CMD_BYTE_WRITE,
-+	.reg_format_endian = REGMAP_ENDIAN_BIG,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+	.use_single_read = true,
-+	.use_single_write = true,
-+	.volatile_table = &mc33978_volatile_table,
-+	.precious_table = &mc33978_precious_table,
-+	.rd_table = &mc33978_readable_table,
-+	.wr_table = &mc33978_writable_table,
-+	.cache_type = REGCACHE_MAPLE,
-+	.max_register = MC33978_REG_RESET,
-+};
-+
-+static int mc33978_power_on(struct mc33978_mfd_priv *mc)
-+{
-+	struct device *dev = &mc->spi->dev;
-+	int ret;
-+
-+	ret = regulator_enable(mc->vddq);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable VDDQ supply\n");
-+
-+	ret = regulator_enable(mc->vbatp);
-+	if (ret) {
-+		regulator_disable(mc->vddq);
-+		return dev_err_probe(dev, ret, "Failed to enable VBATP supply\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void mc33978_power_off(void *data)
-+{
-+	struct mc33978_mfd_priv *mc = data;
-+
-+	regulator_disable(mc->vbatp);
-+	regulator_disable(mc->vddq);
-+}
-+
-+/**
-+ * mc33978_check_device() - Verify SPI communication with device
-+ * @mc: Device context
-+ *
-+ * Reads the CHECK register which should return a fixed signature (0x123456).
-+ * This verifies that SPI communication is working correctly.
-+ *
-+ * Return: 0 on success, -ENODEV if signature doesn't match
-+ */
-+static int mc33978_check_device(struct mc33978_mfd_priv *mc)
-+{
-+	struct device *dev = &mc->spi->dev;
-+	unsigned int check;
-+	int ret;
-+
-+	ret = regmap_read(mc->map, MC33978_REG_CHECK, &check);
-+	if (ret)
-+		return ret;
-+
-+	if (check != MC33978_CHECK_SIGNATURE)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "SPI check failed. Expected: 0x%06x, got: 0x%06x\n",
-+				     MC33978_CHECK_SIGNATURE, check);
-+
-+	return 0;
-+}
-+
-+static int mc33978_probe(struct spi_device *spi)
-+{
-+	struct device *dev = &spi->dev;
-+	struct mc33978_mfd_priv *mc;
-+	int ret;
-+
-+	mc = devm_kzalloc(dev, sizeof(*mc), GFP_KERNEL);
-+	if (!mc)
-+		return -ENOMEM;
-+
-+	mc->spi = spi;
-+	spi_set_drvdata(spi, mc);
-+
-+	mc->vddq = devm_regulator_get(dev, "vddq");
-+	if (IS_ERR(mc->vddq))
-+		return dev_err_probe(dev, PTR_ERR(mc->vddq),
-+				     "Failed to get VDDQ regulator\n");
-+
-+	mc->vbatp = devm_regulator_get(dev, "vbatp");
-+	if (IS_ERR(mc->vbatp))
-+		return dev_err_probe(dev, PTR_ERR(mc->vbatp),
-+				     "Failed to get VBATP regulator\n");
-+
-+	ret = mc33978_power_on(mc);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, mc33978_power_off, mc);
-+	if (ret)
-+		return ret;
-+
-+	mutex_init(&mc->event_lock);
-+	INIT_WORK(&mc->event_work, mc33978_event_work);
-+
-+	atomic_set(&mc->harvested_flags, 0);
-+	atomic_set(&mc->is_handling, 0);
-+
-+	mc33978_prepare_messages(mc);
-+
-+	mc->map = devm_regmap_init(dev, &mc33978_regmap_bus, mc,
-+				   &mc33978_regmap_config);
-+	if (IS_ERR(mc->map))
-+		return dev_err_probe(dev, PTR_ERR(mc->map), "can't init regmap\n");
-+
-+	ret = mc33978_check_device(mc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Can't use SPI bus\n");
-+
-+	ret = regmap_write(mc->map, MC33978_REG_IE_SP, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(mc->map, MC33978_REG_IE_SG, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = mc33978_irq_init(mc);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to populate child devices\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mc33978_of_match[] = {
-+	{ .compatible = "nxp,mc33978" },
-+	{ .compatible = "nxp,mc34978" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mc33978_of_match);
-+
-+static const struct spi_device_id mc33978_spi_id[] = {
-+	{ "mc33978" },
-+	{ "mc34978" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, mc33978_spi_id);
-+
-+static struct spi_driver mc33978_driver = {
-+	.driver = {
-+		.name = MC33978_DRV_NAME,
-+		.of_match_table = mc33978_of_match,
-+	},
-+	.probe = mc33978_probe,
-+	.id_table = mc33978_spi_id,
-+};
-+module_spi_driver(mc33978_driver);
-+
-+MODULE_AUTHOR("David Jander <david@protonic.nl>");
-+MODULE_DESCRIPTION("NXP MC33978/MC34978 MFD core driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/mc33978.h b/include/linux/mfd/mc33978.h
-new file mode 100644
-index 000000000000..70af5e1e945b
---- /dev/null
-+++ b/include/linux/mfd/mc33978.h
-@@ -0,0 +1,97 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * MC34978/MC33978 Multiple Switch Detection Interface - Shared Definitions
-+ *
-+ * Hardware Configuration:
-+ * =======================
-+ * - 22 switch inputs: 14 SG (Switch-to-Ground), 8 SP (programmable SG or SB)
-+ * - Input voltage tolerance: -1.0V to 36V (no level translation needed)
-+ * - Wetting current selection: 2, 6, 8, 10, 12, 14, 16, 20 mA (3-bit field)
-+ * - 24-to-1 AMUX (future IIO driver will use AMUX_CTRL register)
-+ *
-+ * Register Addressing:
-+ * ====================
-+ * Addresses are command bytes with R/W bit = 0 (read mode).
-+ * For write operations, set bit 0 (command_byte | 0x01).
-+ * This is why reg_stride = 2 in regmap_config.
-+ *
-+ * Copyright 2024 Protonic Holland
-+ */
-+#ifndef _LINUX_MFD_MC34978_H
-+#define _LINUX_MFD_MC34978_H
-+
-+#include <linux/bits.h>
-+
-+/* Register Map - All addresses are base command bytes (R/W bit = 0) */
-+#define MC33978_REG_CHECK	0x00	/* SPI communication check */
-+#define MC33978_REG_CONFIG	0x02	/* Device configuration */
-+#define MC33978_REG_TRI_SP	0x04	/* Tri-state enable SP */
-+#define MC33978_REG_TRI_SG	0x06	/* Tri-state enable SG */
-+#define MC33978_REG_WET_SP	0x08	/* Wetting current level SP */
-+#define MC33978_REG_WET_SG0	0x0a	/* Wetting current level SG0 (SG7-SG0) */
-+#define MC33978_REG_WET_SG1	0x0c	/* Wetting current level SG1 (SG13-SG8) */
-+#define MC33978_REG_CWET_SP	0x16	/* Continuous wetting current SP */
-+#define MC33978_REG_CWET_SG	0x18	/* Continuous wetting current SG */
-+#define MC33978_REG_IE_SP	0x1a	/* Interrupt enable SP */
-+#define MC33978_REG_IE_SG	0x1c	/* Interrupt enable SG */
-+#define MC33978_REG_LPM_CONFIG	0x1e	/* Low-power mode configuration */
-+#define MC33978_REG_WAKE_SP	0x20	/* Wake-up enable SP */
-+#define MC33978_REG_WAKE_SG	0x22	/* Wake-up enable SG */
-+#define MC33978_REG_COMP_SP	0x24	/* Comparator only mode SP */
-+#define MC33978_REG_COMP_SG	0x26	/* Comparator only mode SG */
-+#define MC33978_REG_LPM_VT_SP	0x28	/* LPM voltage threshold SP */
-+#define MC33978_REG_LPM_VT_SG	0x2a	/* LPM voltage threshold SG */
-+#define MC33978_REG_IP_SP	0x2c	/* Polling current SP */
-+#define MC33978_REG_IP_SG	0x2e	/* Polling current SG */
-+#define MC33978_REG_SPOLL_SP	0x30	/* Slow polling SP */
-+#define MC33978_REG_SPOLL_SG	0x32	/* Slow polling SG */
-+#define MC33978_REG_WDEB_SP	0x34	/* Wake-up debounce SP */
-+#define MC33978_REG_WDEB_SG	0x36	/* Wake-up debounce SG */
-+#define MC33978_REG_ENTER_LPM	0x38	/* Enter low-power mode (write-only) */
-+#define MC33978_REG_AMUX_CTRL	0x3a	/* AMUX control */
-+#define MC33978_REG_READ_IN	0x3e	/* Read switch status (READ_SW in datasheet) */
-+#define MC33978_REG_FAULT	0x42	/* Fault status register */
-+#define MC33978_REG_IRQ		0x46	/* Interrupt request (write-only) */
-+#define MC33978_REG_RESET	0x48	/* Reset (write-only) */
-+
-+/*
-+ * FAULT Register (0x42) bit definitions
-+ * Reading this register clears most fault flags except persistent conditions
-+ */
-+#define MC33978_FAULT_SPI_ERROR	BIT(10)	/* SPI communication error */
-+#define MC33978_FAULT_HASH	BIT(9)	/* SPI register hash mismatch */
-+#define MC33978_FAULT_UV	BIT(7)	/* VBATP undervoltage */
-+#define MC33978_FAULT_OV	BIT(6)	/* VBATP overvoltage */
-+#define MC33978_FAULT_TEMP_WARN	BIT(5)	/* Temperature warning threshold */
-+#define MC33978_FAULT_OT	BIT(4)	/* Over-temperature */
-+#define MC33978_FAULT_INTB_WAKE	BIT(3)	/* Woken by INT_B pin */
-+#define MC33978_FAULT_WAKEB_WAKE BIT(2)	/* Woken by WAKE_B pin */
-+#define MC33978_FAULT_SPI_WAKE	BIT(1)	/* Woken by SPI message */
-+#define MC33978_FAULT_POR	BIT(0)	/* Power-on reset occurred */
-+
-+/* Critical faults that need immediate attention */
-+#define MC33978_FAULT_CRITICAL	(MC33978_FAULT_UV | \
-+				 MC33978_FAULT_OV | \
-+				 MC33978_FAULT_OT)
-+
-+#define MC33978_NUM_PINS	22
-+
-+/*
-+ * Virtual IRQ number for fault handling.
-+ * Using hwirq 22 (beyond the 22 pin IRQs 0-21).
-+ */
-+#define MC33978_HWIRQ_FAULT	22
-+
-+/*
-+ * AMUX channel definitions
-+ * The AMUX can route one of 24 signals to the external AMUX pin
-+ */
-+#define MC33978_AMUX_CH_SG0	0	/* Switch-to-Ground inputs 0-13 */
-+#define MC33978_AMUX_CH_SG13	13
-+#define MC33978_AMUX_CH_SP0	14	/* Programmable switch inputs 0-7 */
-+#define MC33978_AMUX_CH_SP7	21
-+#define MC33978_AMUX_CH_TEMP	22	/* Internal temperature diode */
-+#define MC33978_AMUX_CH_VBATP	23	/* Battery voltage sense */
-+#define MC33978_NUM_AMUX_CH	24	/* Total number of AMUX channels */
-+
-+#endif /* _LINUX_MFD_MC34978_H */
--- 
-2.47.3
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmpvcm4gQW5kZXJzc29u
+IDxhbmRlcnNzb25Aa2VybmVsLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5LCBGZWJydWFyeSAyNSwg
+MjAyNiA5OjUzIEFNDQo+IFRvOiBTaGVud2VpIFdhbmcgPHNoZW53ZWkud2FuZ0BueHAuY29tPg0K
+PiBDYzogQW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPjsgTWF0aGlldSBQb2lyaWVyDQo+IDxt
+YXRoaWV1LnBvaXJpZXJAbGluYXJvLm9yZz47IEFybmF1ZCBQT1VMSVFVRU4NCj4gPGFybmF1ZC5w
+b3VsaXF1ZW5AZm9zcy5zdC5jb20+OyBMaW51cyBXYWxsZWlqIDxsaW51c3dAa2VybmVsLm9yZz47
+IEJhcnRvc3oNCj4gR29sYXN6ZXdza2kgPGJyZ2xAa2VybmVsLm9yZz47IEpvbmF0aGFuIENvcmJl
+dCA8Y29yYmV0QGx3bi5uZXQ+OyBSb2IgSGVycmluZw0KPiA8cm9iaEBrZXJuZWwub3JnPjsgS3J6
+eXN6dG9mIEtvemxvd3NraSA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5DQo+IDxj
+b25vcitkdEBrZXJuZWwub3JnPjsgRnJhbmsgTGkgPGZyYW5rLmxpQG54cC5jb20+OyBTYXNjaGEg
+SGF1ZXINCj4gPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+OyBTaHVhaCBLaGFuIDxza2hhbkBsaW51
+eGZvdW5kYXRpb24ub3JnPjsgbGludXgtDQo+IGdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC1k
+b2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBQZW5n
+dXRyb25peCBLZXJuZWwgVGVhbSA8a2VybmVsQHBlbmd1dHJvbml4LmRlPjsgRmFiaW8gRXN0ZXZh
+bQ0KPiA8ZmVzdGV2YW1AZ21haWwuY29tPjsgUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+Ow0K
+PiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtcmVtb3RlcHJvY0B2Z2VyLmtlcm5l
+bC5vcmc7DQo+IGlteEBsaXN0cy5saW51eC5kZXY7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZzsgZGwtbGludXgtaW14IDxsaW51eC0NCj4gaW14QG54cC5jb20+OyBCYXJ0b3N6
+IEdvbGFzemV3c2tpIDxicmdsQGJnZGV2LnBsPg0KPiBTdWJqZWN0OiBbRVhUXSBSZTogW1BBVENI
+IHY4IDMvNF0gZ3BpbzogcnBtc2c6IGFkZCBnZW5lcmljIHJwbXNnIEdQSU8gZHJpdmVyDQo+IE9u
+IFR1ZSwgRmViIDI0LCAyMDI2IGF0IDEwOjQzOjA2UE0gKzAwMDAsIFNoZW53ZWkgV2FuZyB3cm90
+ZToNCj4gPg0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJv
+bTogQW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPg0KPiA+ID4gU2VudDogVHVlc2RheSwgRmVi
+cnVhcnkgMjQsIDIwMjYgNDoxNSBQTQ0KPiA+ID4gVG86IFNoZW53ZWkgV2FuZyA8c2hlbndlaS53
+YW5nQG54cC5jb20+DQo+ID4gPiBDYzogTWF0aGlldSBQb2lyaWVyIDxtYXRoaWV1LnBvaXJpZXJA
+bGluYXJvLm9yZz47IEJqb3JuIEFuZGVyc3Nvbg0KPiA+ID4gPGFuZGVyc3NvbkBrZXJuZWwub3Jn
+PjsgQXJuYXVkIFBPVUxJUVVFTg0KPiA+ID4gPGFybmF1ZC5wb3VsaXF1ZW5AZm9zcy5zdC5jb20+
+OyBMaW51cyBXYWxsZWlqIDxsaW51c3dAa2VybmVsLm9yZz47DQo+ID4gPiBCYXJ0b3N6IEdvbGFz
+emV3c2tpIDxicmdsQGtlcm5lbC5vcmc+OyBKb25hdGhhbiBDb3JiZXQNCj4gPiA+IDxjb3JiZXRA
+bHduLm5ldD47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+OyBLcnp5c3p0b2YgS296bG93
+c2tpDQo+ID4gPiA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5IDxjb25vcitkdEBr
+ZXJuZWwub3JnPjsgRnJhbmsgTGkNCj4gPiA+IDxmcmFuay5saUBueHAuY29tPjsgU2FzY2hhIEhh
+dWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPjsgU2h1YWgNCj4gPiA+IEtoYW4gPHNraGFuQGxp
+bnV4Zm91bmRhdGlvbi5vcmc+OyBsaW51eC0gZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBs
+aW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBQ
+ZW5ndXRyb25peA0KPiA+ID4gS2VybmVsIFRlYW0gPGtlcm5lbEBwZW5ndXRyb25peC5kZT47IEZh
+YmlvIEVzdGV2YW0NCj4gPiA+IDxmZXN0ZXZhbUBnbWFpbC5jb20+OyBQZW5nIEZhbiA8cGVuZy5m
+YW5AbnhwLmNvbT47DQo+ID4gPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtcmVt
+b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBpbXhAbGlzdHMubGludXguZGV2OyBsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4gPiBkbC1saW51eC1pbXggPGxp
+bnV4LSBpbXhAbnhwLmNvbT47IEJhcnRvc3ogR29sYXN6ZXdza2kNCj4gPiA+IDxicmdsQGJnZGV2
+LnBsPg0KPiA+ID4gU3ViamVjdDogW0VYVF0gUmU6IFtQQVRDSCB2OCAzLzRdIGdwaW86IHJwbXNn
+OiBhZGQgZ2VuZXJpYyBycG1zZw0KPiA+ID4gR1BJTyBkcml2ZXINCj4gPiA+ID4gUGxlYXNlIGV4
+cGxhaW4gaG93IHlvdSB3b3VsZCBkZXNpZ24geW91ciBnZW5lcmljIHJwbXNnLWdwaW8gZHJpdmVy
+DQo+ID4gPiA+IHdoaWNoIGlzIGRlcml2ZWQgRnJvbSBncGlvLXZpcnRpbz8NCj4gPiA+DQo+ID4g
+PiBXZSBoYXZlIGFscmVhZHkgc2VlbiB0aGUgdmlydGlvIGNvbW1hbmRzIGFyZSBwcmV0dHkgbXVj
+aCBpZGVudGljYWwNCj4gPiA+IHRvIHdoYXQgaSBzdWdnZXN0ZWQuDQo+ID4gPg0KPiA+ID4gWW91
+IGNvdWxkIGp1c3QgcmVwbGFjZSB2aXJ0cXVldWVfYWRkX3NncygpIHdpdGggcnBtc2dfc2VuZHRv
+KCkgYW5kDQo+ID4gPiByZWltcGxlbWVudA0KPiA+ID4gdmlydGlvX2dwaW9fcmVxdWVzdF92cSgp
+IHRvIGJlIHRoZSBjYWxsYmFjayByZWdpc3RlcmVkIHdpdGgNCj4gcnBtc2dfY3JlYXRlX2VwdCgp
+Lg0KPiA+ID4gVGhlIHJlc3Qgb2YgYmFzaWMgR1BJTyBoYW5kbGluZyBzaG91bGQgbm90IG5lZWQg
+YW55IGNoYW5nZXMgYXQgYWxsLg0KPiA+ID4NCj4gPg0KPiA+IENyZWF0aW5nIGVuZHBvaW50cyBh
+bmQgY2FsbGluZyBycG1zZ19zZW5kdG8oKSBpcyBvbmx5IGEgc21hbGwgcGFydCBvZg0KPiA+IHRo
+ZSBwaWN0dXJlLiBZb3UgYWxzbyBuZWVkIHRvIG1hbmFnZSB0aGUgc2VydmljZSBhbm5vdW5jZW1l
+bnQgZnJvbSB0aGUNCj4gPiByZW1vdGUgc2lkZSBhbmQgaGFuZGxlIGFzeW5jaHJvbm91cyBub3Rp
+ZmljYXRpb24gbWVzc2FnZXMuIFRoYXQgZW50aXJlDQo+ID4gZmxvdyBpcyBhbHJlYWR5IGltcGxl
+bWVudGVkIGluIHRoZSBleGlzdGluZyB2aXJ0aW9fcnBtc2dfYnVzIGRyaXZlci4NCj4gPiBSZeKA
+kWltcGxlbWVudGluZyB0aG9zZSBwaWVjZXMganVzdCB0byBtaW1pYyBncGlv4oCRdmlydGlvIG92
+ZXIgUlBNU0cgd291bGQNCj4gZXNzZW50aWFsbHkgbWVhbiByZWludmVudGluZyB0aGUgd2hlZWwg
+d2l0aG91dCBhbnkgcmVhbCBiZW5lZml0Lg0KPiA+DQo+IA0KPiBJIGNhbiBhYnNvbHV0ZWx5IHNl
+ZSBhIGJlbmVmaXQgdG8gdGhpcywgdGhlcmUgYXJlIG11bHRpcGxlIGRpZmZlcmVudCBycG1zZyBi
+YWNrZW5kcw0KPiBzdXBwb3J0ZWQgaW4gTGludXgsIHNvIGEgZ3Bpby1ycG1zZyBkcml2ZXIgY291
+bGQgYmUgdXNlZCBieSBhbnkgb25lIG9mIHRoZW0uDQo+IA0KPiBJIGRvbid0IHNlZSB0aGlzIHRv
+IGJlIGEgY2FzZSBvZiAicmVpbnZlbnRpbmcgdGhlIHdoZWVsIi4gSW5zdGVhZCB3ZSBjb3B5IHdo
+YXQNCj4gbG9va3MgdG8gYmUgYSB2ZXJ5IGZ1bmN0aW9uYWwgd2hlZWwgYW5kIG1ha2UgaXQgZml0
+IHJwbXNnLg0KPiBUaGlzIHdpbGwgcmVzdWx0IGluIHNvbWUgImR1cGxpY2F0aW9uIiwgYnV0IHJw
+bXNnIGFscmVhZHkgcHJvdmlkZSB0aGUgbGlmZSBjeWNsZQ0KPiBtYW5hZ2VtZW50IGFuZCBoYXMg
+YSBjbGVhbiBzZW5kL2NhbGxiYWNrIGludGVyZmFjZSwgc28gdGhlcmUgc2hvdWxkbid0IGJlIGFu
+eQ0KPiBpbnZlbnRpbmcuLi4NCj4gDQoNCkludGVyZXN0aW5nIOKAlCBjb3VsZCB5b3Ugd2FsayBt
+ZSB0aHJvdWdoIGhvdyB5b3XigJlkIHN0cnVjdHVyZSB0aGUgZHJpdmVyIHdpdGggdGhlIG5ldyAN
+CnByb3Bvc2FsPyBJ4oCZZCBsaWtlIHRvIHNlZSBob3cgeW91IHdvdWxkIGxheWVyIGl0IGNvbmNl
+cHR1YWxseS4NCg0KVGhlIGN1cnJlbnQgUlBNU0cgc29sdXRpb246DQoNCiAgICAgT24gUmVtb3Rl
+cHJjICAgICAgICAgICAgICAgICAgICAgIE9uIExpbnV4DQpHUElPcyAtPiBSUE1TRyAtPiBWSVJU
+SU8gPT0gVklSVElPIC0+IFJQTVNHIC0+IEdQSU8tUlBNU0cgZHJpdmVycw0KDQpUaGUgVklSVElP
+IHNvbHV0aW9uOg0KDQogICAgIE9uIFJlbW90ZXByYyAgICAgICAgICAgICAgICAgICAgIE9uIExp
+bnV4DQogICAgICAgICAgR1BJTyAtPiBWSVJUSU8gPT0gVklSVElPIC0+IEdQSU8tVklSVElPIGRy
+aXZlcg0KDQpZb3VyIHByb3Bvc2FsOg0KDQogICAgIE9uIFJlbW90ZXByYyAgICAgICAgICAgICAg
+ICAgICAgIE9uIExpbnV4DQpHUElPcyAtPiBSUE1TRyAtPiBWSVJUSU8gPT0gVklSVElPIC0+ID8/
+Pw0KDQpUaGFua3MsDQpTaGVud2VpDQoNCj4gU2ltaWxhcmx5LCBJJ20gZ3Vlc3NpbmcgdGhhdCB0
+aGVyZSdzIGEgZmlybXdhcmUtc2lkZSBpbXBsZW1lbnRhdGlvbiBvZiB2aXJ0aW8tZ3Bpbw0KPiBp
+biBaZXBoeXIsIGl0IHNob3VsZCBiZSBzdHJhaWdodGZvcndhcmQgdG8gdHJhbnNwbGFudCB0aGlz
+IHRvIHRoZSBycG1zZyBpbnRlcmZhY2UuDQo+IA0KPiBSZWdhcmRzLA0KPiBCam9ybg0KPiANCj4g
+PiBUaGFua3MsDQo+ID4gU2hlbndlaQ0KPiA+DQo+ID4gPiBJbnRlcnJ1cHQgc3VwcG9ydCBkb2Vz
+IGhvd2V2ZXIgbmVlZCBzb21lIGNoYW5nZXMuIFRoZQ0KPiA+ID4gdmlydGlvX2dwaW9fcmVxdWVz
+dF92cSgpIHJlcGxhY2VtZW50IHdvdWxkIG5lZWQgdG8gc2VlIGlmIHRoZQ0KPiA+ID4gcmVjZWl2
+ZWQgbWVzc2FnZSBpbmRpY2F0ZXMgYW4gaW50ZXJydXB0IGFuZCBjYWxsIHRoZSBlcXVpdmFsZW50
+IG9mDQo+ID4gPiB2aXJ0aW9fZ3Bpb19ldmVudF92cSgpLCBzaW5jZSBycG1zZyBkb2VzIG5vdCBo
+YXZlIGEgc2VwYXJhdGUgbWVjaGFuaXNtIHRvDQo+IGRlbGl2ZXIgaW50ZXJydXB0cywgdW5saWtl
+IHJwbXNnLg0KPiA+ID4NCj4gPiA+IEF0IGEgZ3Vlc3MsIDkwJSBvZiB0aGUgY29kZSB3b3VsZCBz
+dGF5IHRoZSBzYW1lPw0KPiA+ID4NCj4gPiA+ICAgIEFuZHJldw0K
