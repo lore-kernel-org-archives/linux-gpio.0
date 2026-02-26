@@ -1,41 +1,41 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED78536D4FF;
-	Thu, 26 Feb 2026 13:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4117A36E488;
+	Thu, 26 Feb 2026 13:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772112877; cv=none; b=KIFOUaIynyUVKpAq7TXA1AvAVu4y9PmE0oZRhyAI/APq/edYrSzqNuJO04ZWNuWI3aoJiBH6VzAR7ESx3hc5W2ApyfHrCgHaHjoKmsRe6RPZH77Qdxrhzm/c8fKUmJSBwqLj8NiE9Ua9RX4wUhru2Qe0F3AEfDyYG0P45ErmSWU=
+	t=1772112879; cv=none; b=U6Or79jGx1WNgSxxfdSVYnpw90FpNxESMiN1ADcePbp1vbWp4ITKKPedLgKTvCbtxG2pRXhDHEuOCKPNWehUuUZ97d2aaSKgpmAc1ioviI08FYnA6oL1XertQaFDgscLnw7mCRLK/sZAKPyF/qMnfrAJiWDmlbghjiPMu3IWTrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772112877; c=relaxed/simple;
-	bh=xVUnPUPdxovx34Wd6eMgfbvMHvEP7/paunAnVQVxbrY=;
+	s=arc-20240116; t=1772112879; c=relaxed/simple;
+	bh=RhC9nQTjuM1c6KM2njaLTbGCv79R48+DtMxYZo0IQ8c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ryb8R2vf2UNpC/lvF9bmPY1FzvVg84RZvR9o+VIhc6fxkeeMoZLhZfeijKeqeAKt7//PiVGGboydQmPrCQlw/2PbqVGupAQ1GLcIJrvJB1pTJOGt0O+YCwHMSqUId1YBy4akuDAqOLiJSkdZc3Qt44+y1zz2wMxk76D/AMfxwyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rqMkkvj9; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=GMw7oUhpQUq2AuOyIQ8iqovh1bK5ESieIU+QH/4Aq0YQTjCn31zSjolZf7VztV0nl+bRU+3PBJASr0IfQlXLUlWHIJmOr8xmu3ROaojg/16UwL/rGF0RO6y5MCBuScDtU51wLJnlo8TLDFcIABNtC0ohR8Q3+U4GuxjGWSFoGY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UhVFa0nj; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rqMkkvj9"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UhVFa0nj"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 969BCC40696;
-	Thu, 26 Feb 2026 13:34:42 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 6538AC40697;
+	Thu, 26 Feb 2026 13:34:46 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2C2C35FDEB;
-	Thu, 26 Feb 2026 13:34:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BE1481036938F;
-	Thu, 26 Feb 2026 14:34:24 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id ED9A45FDEB;
+	Thu, 26 Feb 2026 13:34:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 858ED10369391;
+	Thu, 26 Feb 2026 14:34:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772112866; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1772112870; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=dfiuaLc8bx94tgxUemYFMGzOoB2nYnzT6eWglqGNczQ=;
-	b=rqMkkvj9sNQpzpVDEIbTd2B1xdfoHpo4pxvUFPa+9mn0cWPpujBJz37L9rEYW6FGRUW+y/
-	4+kRX5TsGEVqPfFM2Yp+bV47hvJePNLE3/ZLbIf6UoyJmERWK88UZmgm4peT1I37jhm5EH
-	5CWL/2SzY7Z8ZWvoL+F9/VOVLmpxbAZ9rfcleMhLooyoeN/J+i8Tn/s6POxu9GVKsGhRHp
-	1bO+COeg6RJGtezF9sNbRsT2La5ZNIjI7GLPkG0gWdcPSMTDv5DzxcMqGXQ+MbBzfw+Ii2
-	bzERlCQSlCVJQGFr/TfdtJbQBu/gAE5vtoqtki4jwgX1LIG1VjBCema5rrUxJQ==
+	bh=DMNcbL6zBp+PTc5h/KNHwWosR3kMnkkAB0mP2EbbEFc=;
+	b=UhVFa0nj6izVWhO/kFf1F90FW2CK8/OLjZ78Uu28/MdTcYDPjVrHt3r5Zj07pnibAYaAL1
+	qe/5fW2Sc9+XRNb8j+btnoAVZXfORD74Tp/zBGqU8rVtNV/z/zai73u6HLUyco5ULslK2a
+	lVQhAFed09OMJjROel76XzT9mdUP57aZzdMOSKxFoKBJ6aDBJPY0VdXvXWdpIS4+Ra6cjv
+	3YkhEkrOPjK0PfayR9FGriMvZmPW8guGbHsSs++knxZJQEneiDvrwyh7zhls17KKBJgw6/
+	RhoNnUpkqAMqmNy5ummrMbA/dpQvfnMLRV5HtJAXVAybQ6eH9pTSXm+5r83zcw==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Thu, 26 Feb 2026 14:33:54 +0100
-Subject: [PATCH v3 10/13] MIPS: Add Mobileye EyeQ6Lplus SoC dtsi
+Date: Thu, 26 Feb 2026 14:33:56 +0100
+Subject: [PATCH v3 12/13] MIPS: config: add eyeq6lplus_defconfig
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260226-eyeq6lplus-v3-10-9cbeb59268b0@bootlin.com>
+Message-Id: <20260226-eyeq6lplus-v3-12-9cbeb59268b0@bootlin.com>
 References: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
 In-Reply-To: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -64,290 +64,136 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add the device tree include files for the EyeQ6Lplus system on chip
-from Mobileye.
-
-Those files provide the initial support of the SoC:
-* The I6500 CPU and GIC interrupt controller.
-* The OLB ("Other Logic Block") providing clocks, resets and pin controls.
-* One UART.
-* One GPIO controller.
-* Two SPI controllers, one in host mode and one in target mode.
-* One octoSPI flash controller.
-* Two I2C controllers.
+Add a default configuration for Mobileye EyeQ6Lplus evaluation board.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi |  84 +++++++++++
- arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi      | 170 +++++++++++++++++++++++
- 2 files changed, 254 insertions(+)
+ arch/mips/configs/eyeq6lplus_defconfig | 117 +++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi b/arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi
+diff --git a/arch/mips/configs/eyeq6lplus_defconfig b/arch/mips/configs/eyeq6lplus_defconfig
 new file mode 100644
-index 000000000000..5cb0660f46c6
+index 000000000000..39430ebf8e60
 --- /dev/null
-+++ b/arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+&olb {
-+	timer0_pins: timer0-pins {
-+		function = "timer0";
-+		pins = "PA0", "PA1";
-+	};
-+	timer1_pins: timer1-pins {
-+		function = "timer1";
-+		pins = "PA2", "PA3";
-+	};
-+	uart_ssi_pins: uart-ssi-pins {
-+		function = "uart_ssi";
-+		pins = "PA4", "PA5";
-+	};
-+	spi0_pins: spi0-pins {
-+		function = "spi0";
-+		pins = "PA6", "PA7", "PA8", "PA9";
-+	};
-+	uart0_pins: uart0-pins {
-+		function = "uart0";
-+		pins = "PA11", "PA12";
-+	};
-+	timer2_pins: timer2-pins {
-+		function = "timer2";
-+		pins = "PA13", "PA14";
-+	};
-+	timer3_pins: timer3-pins {
-+		function = "timer3";
-+		pins = "PA15", "PA16";
-+	};
-+	timer_ext0_pins: timer-ext0-pins {
-+		function = "timer_ext0";
-+		pins = "PA17", "PA18", "PA19", "PA20";
-+	};
-+	timer_ext0_input_a_pins: timer-ext0-input-a-pins {
-+		function = "timer_ext0";
-+		pins = "PA17";
-+	};
-+	pps0_pins: pps0-pins {
-+		function = "timer_ext0";
-+		pins = "PA17";
-+	};
-+	timer_ext0_input_b_pins: timer-ext0-input-b-pins {
-+		function = "timer_ext0";
-+		pins = "PA18";
-+	};
-+	timer_ext0_output_pins: timer-ext0-output-pins {
-+		function = "timer_ext0";
-+		pins = "PA19", "PA20";
-+	};
-+	spi1_pins: spi1-pins {
-+		function = "spi1";
-+		pins = "PA21", "PA22", "PA23", "PA24";
-+	};
-+	spi1_reduced_pins: spi1-reduced-pins {
-+		function = "spi1";
-+		pins = "PA21", "PA22", "PA23";
-+	};
-+	timer_ext1_pins: timer-ext1-pins {
-+		function = "timer_ext1";
-+		pins = "PA26", "PA27", "PA28", "PA29";
-+	};
-+	timer_ext1_input_a_pins: timer-ext1-input-a-pins {
-+		function = "timer_ext1";
-+		pins = "PA26";
-+	};
-+	timer_ext1_input_b_pins: timer-ext1-input-b-pins {
-+		function = "timer_ext1";
-+		pins = "PA27";
-+	};
-+	timer_ext1_output_pins: timer-ext1-output-pins {
-+		function = "timer_ext1";
-+		pins = "PA28", "PA29";
-+	};
-+	ext_ref_clk_pins: ext-ref-clk-pins {
-+		function = "ext_ref_clk";
-+		pins = "PA30";
-+	};
-+	mipi_ref_clk_pins: mipi-ref-clk-pins {
-+		function = "mipi_ref_clk";
-+		pins = "PA31";
-+	};
-+};
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi b/arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi
-new file mode 100644
-index 000000000000..4c72da917a95
---- /dev/null
-+++ b/arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi
-@@ -0,0 +1,170 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+/*
-+ * Copyright 2025 Mobileye Vision Technologies Ltd.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/mips-gic.h>
-+
-+#include <dt-bindings/clock/mobileye,eyeq6lplus-clk.h>
-+
-+/ {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "img,i6500";
-+			reg = <0>;
-+			clocks = <&olb EQ6LPC_CPU_OCC>;
-+		};
-+	};
-+
-+	cpu_intc: interrupt-controller {
-+		compatible = "mti,cpu-interrupt-controller";
-+		interrupt-controller;
-+		#address-cells = <0>;
-+		#interrupt-cells = <1>;
-+	};
-+
-+	coherency-manager {
-+		compatible = "mobileye,eyeq6-cm";
-+	};
-+
-+	xtal: clock-30000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <30000000>;
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		olb: system-controller@e8400000 {
-+			compatible = "mobileye,eyeq6lplus-olb", "syscon";
-+			reg = <0 0xe8400000 0x0 0x80000>;
-+			#reset-cells = <2>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>;
-+			clock-names = "ref";
-+		};
-+
-+		ospi: spi@e8800000 {
-+			compatible = "mobileye,eyeq5-ospi", "cdns,qspi-nor";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe8800000 0x0 0x100000>,
-+			      <0 0xb0000000 0x0 0x30000000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 10 IRQ_TYPE_LEVEL_HIGH>;
-+			cdns,fifo-depth = <128>;
-+			cdns,fifo-width = <4>;
-+			cdns,trigger-address = <0x00000000>;
-+			clocks  = <&olb EQ6LPC_PER_OSPI>;
-+			status = "disabled";
-+		};
-+
-+		spi0: spi@eac0d000 {
-+			compatible = "snps,dw-apb-ssi";
-+			reg = <0 0xeac0d000 0x0 0x1000>;
-+			clocks = <&olb EQ6LPC_PER_SPI>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 11 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&olb 0 0>;
-+			reset-names = "spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@eac0e000 {
-+			compatible = "snps,dw-apb-ssi";
-+			reg = <0 0xeac0e000 0x0 0x1000>;
-+			spi-slave;
-+			clocks = <&olb EQ6LPC_PER_SPI>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 12 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&olb 0 1>;
-+			reset-names = "spi";
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		uart0: serial@eac10000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&olb EQ6LPC_PER_UART>;
-+			clock-frequency = <15625000>;
-+			reg = <0 0xeac10000 0x0 0x1000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 8 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&olb 0 2>;
-+			status = "disabled";
-+		};
-+
-+		i2c0: i2c@eac11000 {
-+			compatible = "mobileye,eyeq6lplus-i2c", "snps,designware-i2c";
-+			reg = <0 0xeac11000 0x0 0x1000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <400000>;
-+			clocks = <&olb EQ6LPC_PER_I2C_SER>;
-+			resets = <&olb 0 3>;
-+			i2c-sda-hold-time-ns = <50>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@eac12000 {
-+			compatible = "mobileye,eyeq6lplus-i2c", "snps,designware-i2c";
-+			reg = <0 0xeac12000 0x0 0x1000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SHARED 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <400000>;
-+			clocks = <&olb EQ6LPC_PER_I2C_SER>;
-+			resets = <&olb 0 4>;
-+			i2c-sda-hold-time-ns = <50>;
-+			status = "disabled";
-+		};
-+
-+		gpio: gpio@eac14000 {
-+			compatible = "snps,dw-apb-gpio";
-+			reg = <0x0 0xeac14000 0x0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&olb 0 13>;
-+			porta: gpio-port@0 {
-+				compatible = "snps,dw-apb-gpio-port";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				snps,nr-gpios = <32>;
-+				gpio-ranges = <&olb 0 0 32>;
-+				reg = <0>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SHARED 13 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
-+		gic: interrupt-controller@f0920000 {
-+			compatible = "mti,gic";
-+			reg = <0x0 0xf0920000 0x0 0x20000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&cpu_intc>;
-+			timer {
-+				compatible = "mti,gic-timer";
-+				interrupts = <GIC_LOCAL 1 IRQ_TYPE_NONE>;
-+				clocks = <&olb EQ6LPC_CPU_OCC>;
-+			};
-+		};
-+	};
-+};
-+
-+#include "eyeq6lplus-pins.dtsi"
++++ b/arch/mips/configs/eyeq6lplus_defconfig
+@@ -0,0 +1,117 @@
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BPF_SYSCALL=y
++CONFIG_TASKSTATS=y
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
++CONFIG_MEMCG=y
++CONFIG_BLK_CGROUP=y
++CONFIG_CFS_BANDWIDTH=y
++CONFIG_RT_GROUP_SCHED=y
++CONFIG_CGROUP_PIDS=y
++CONFIG_CGROUP_FREEZER=y
++CONFIG_CPUSETS=y
++CONFIG_CGROUP_DEVICE=y
++CONFIG_CGROUP_CPUACCT=y
++CONFIG_NAMESPACES=y
++CONFIG_USER_NS=y
++CONFIG_SCHED_AUTOGROUP=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_EXPERT=y
++CONFIG_EYEQ=y
++CONFIG_MACH_EYEQ6LPLUS=y
++CONFIG_MIPS_CPS=y
++CONFIG_CPU_HAS_MSA=y
++CONFIG_NR_CPUS=16
++CONFIG_MIPS_RAW_APPENDED_DTB=y
++CONFIG_JUMP_LABEL=y
++CONFIG_PAGE_SIZE_16KB=y
++CONFIG_COMPAT_32BIT_TIME=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_TRIM_UNUSED_KSYMS=y
++# CONFIG_COMPAT_BRK is not set
++CONFIG_USERFAULTFD=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_NETFILTER=y
++CONFIG_CAN=y
++CONFIG_PCI=y
++CONFIG_PCI_MSI=y
++CONFIG_PCI_DEBUG=y
++CONFIG_PCI_ENDPOINT=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_CONNECTOR=y
++CONFIG_MTD=y
++CONFIG_MTD_SPI_NAND=y
++CONFIG_MTD_UBI=y
++CONFIG_MTD_UBI_BLOCK=y
++CONFIG_SCSI=y
++CONFIG_NETDEVICES=y
++CONFIG_MACVLAN=y
++CONFIG_IPVLAN=y
++CONFIG_MACB=y
++CONFIG_MARVELL_PHY=y
++CONFIG_MICREL_PHY=y
++CONFIG_CAN_M_CAN=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_DW=y
++CONFIG_HW_RANDOM=y
++CONFIG_I2C=y
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_DESIGNWARE_CORE=y
++CONFIG_SPI=y
++CONFIG_SPI_CADENCE_QUADSPI=y
++CONFIG_SPI_DESIGNWARE=y
++CONFIG_SPI_DW_MMIO=y
++CONFIG_SPI_SPIDEV=y
++CONFIG_SPI_SLAVE=y
++# CONFIG_PTP_1588_CLOCK is not set
++CONFIG_PINCTRL=y
++CONFIG_GPIOLIB=y
++CONFIG_GPIO_DWAPB=y
++CONFIG_MFD_SYSCON=y
++CONFIG_HID_A4TECH=y
++CONFIG_HID_BELKIN=y
++CONFIG_HID_CHERRY=y
++CONFIG_HID_CYPRESS=y
++CONFIG_HID_EZKEY=y
++CONFIG_HID_ITE=y
++CONFIG_HID_KENSINGTON=y
++CONFIG_HID_REDRAGON=y
++CONFIG_HID_MICROSOFT=y
++CONFIG_HID_MONTEREY=y
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_SDHCI_CADENCE=y
++# CONFIG_IOMMU_SUPPORT is not set
++CONFIG_RESET_CONTROLLER=y
++# CONFIG_NVMEM is not set
++CONFIG_EXT4_FS=y
++CONFIG_EXT4_FS_POSIX_ACL=y
++CONFIG_EXT4_FS_SECURITY=y
++CONFIG_FS_ENCRYPTION=y
++CONFIG_FUSE_FS=y
++CONFIG_CUSE=y
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_UBIFS_FS=y
++CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
++CONFIG_NFS_V4=y
++CONFIG_NFS_V4_2=y
++CONFIG_ROOT_NFS=y
++CONFIG_FRAME_WARN=1024
++CONFIG_DEBUG_FS=y
++# CONFIG_RCU_TRACE is not set
++# CONFIG_FTRACE is not set
 
 -- 
 2.53.0
