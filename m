@@ -1,83 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB0D2236F0
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 22:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5813A0EA1
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 22:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772145825; cv=none; b=PivieTKFDYfC+127DJJcmpFmP5ZwaporihVzzjq5IEr4xnZTKLDVrtLt8f6yMe9dAEUJp1G/J+UN9sWiGK4Y2XQrqewJcjjfNmFa/sga6/jxMr5qOojYzAXhg8rG7e1FLdhrAHT44C4KsXgVxclAF6NKfAiLrCwShsFeM2x8pKA=
+	t=1772146065; cv=none; b=i+TEhG36Gy+uugJRDQ6SNXURAwZLbBwUSikl/TCnUeHJuvwNiu1M8Uyl6OBNa8BriBDjcXn19NeIwqzKpJyGa3mBankvoCK5POOwUY7l3mM72whyN6/X2rq+k2WAGtphrwsblpafc9TD6hkcfmurfzHqG1d285kKDntOEHN4Ec0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772145825; c=relaxed/simple;
-	bh=FZH0ikxL28q8cXgkSYSFB0jqKJEa6OIchRU8MvHNFWQ=;
+	s=arc-20240116; t=1772146065; c=relaxed/simple;
+	bh=APviAckhtzsGqbkWRx3zBDJ8cA44GDRByy6wgZmyjLw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MB2ntS+HMLRg0BrkIFg6MqYxgFbdvYKwhKd4IXmjx96J0UJ4kKERJKLxxOvmccdu9gy+7zbY4VXw2F8oUkamkLDT906ZS6ACZKv66vFgO5RzZ0t0+R4OArLkGhtui4mPbTPkJqdyXaJa/NmUSC7wwwsoc2paPd5b+Z9jKhypBHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fo82+lXb; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=OYnLCiEg4no5xiK9hgGXb3nK1gd2ldEtIzL380Q23qNKIu8mSkbnt8VsJF73UqlT+qjN2wWFiDvzTJ2pdUICN7760grCTBfXV262Dj2RkeTED7IHGNY+rBuASt0Geh55nCwrf0ABdV10rBmRH0Z5rD0DOuXNR5Bix++G4aho31k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9jj9L4W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fo82+lXb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5D1C116C6
-	for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 22:43:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9jj9L4W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2202C19423
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 22:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772145825;
-	bh=FZH0ikxL28q8cXgkSYSFB0jqKJEa6OIchRU8MvHNFWQ=;
+	s=k20201202; t=1772146064;
+	bh=APviAckhtzsGqbkWRx3zBDJ8cA44GDRByy6wgZmyjLw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Fo82+lXb7wIFuvk0rhI/bK0PHXMXI5LNYlMzOirAyzn7EUHFDyEDb9YfAy2vxVJTw
-	 q36kAzu3COXKmbYIbQsbQiQjKfpG8koV0uHC3p7vBKnkXL4ZneK/+kHlitTAIWsoJh
-	 iVvII8sccFxVHtN5EkCijoxVy/Mkyj8awD7aOFr9HlAc1Jv7juXDlQniEsyvnVqAZg
-	 9GNVymLRsWmOib6fCG7uo0NA/Yexm74BBRRvsIJ5Nv4uaghpiSwlgZTNPxKRnf3zZK
-	 qDI+cWCjzBv+PfSu7jD+MLrDQEZZxPo2Ifn3jlno35KWxsbKRmsLdOlcArDS+aqgoJ
-	 naaPICpAY/hQg==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7986c7b8076so14074127b3.2
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 14:43:45 -0800 (PST)
-X-Gm-Message-State: AOJu0YynJ5HQADHtrOAf58ZmqKrEjaNbtYYP/tc+qs7bunN+OkmNfxWM
-	TOgL1FxHSJoANP6birS3S51jkiO4dNXv4cJhyXJndM0lMtHJ0bmsl3Jnpx+Px4OX5K99G41ViAA
-	8aR8c3kVFwBcbC33gsYDYRQpqaDV8cKI=
-X-Received: by 2002:a05:690c:102:b0:78f:bcc1:88e0 with SMTP id
- 00721157ae682-79885470d4emr9097907b3.1.1772145824523; Thu, 26 Feb 2026
- 14:43:44 -0800 (PST)
+	b=l9jj9L4WxRTkuqb1p9CA8axtAWgNH+10W7KZi6fsr0qmiCrqItJesci/oDzMMJDOO
+	 FbGWLfaQHMYXXU1uEuihA1QebIOSqNlAKUooujoMOrSKg1uLTTuEXR9zZsYT1lW5Ti
+	 rtsZ51R/2Xn3/splCeK+tgACllBmMJzPVjgaCVJvxmD+Eztqcc7x2Ml9IKrKaNzwky
+	 f8nmRcFf1apO0xhfILO2aTMsVq0bhZ86c9Z1tujPPsBSiLeyrK1nR0SQniqzoagoKJ
+	 CqbSvDSW3ZCeeQEybb8FRjAve9++0x0m0RZ/s7D+KQImDS1P5cJtP/G40lPb4Xr2LW
+	 lHr2QBk2fplOQ==
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-79868eae536so14116837b3.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 14:47:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWTcqqJFoF13f9gkK5/EevVg7sgbRzLRrycDRgy/B0C9Q5y47weG5mFRRMVY5cgZGybfetxtQehVfak@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjS2zyW9Hxfp/EBhD3+ZshmlDqfKW7zG5L/CWCa1jvY0fF8Pw5
+	hrKKQmShwmX9e7DV76sGJlJZn36BdFRynGOvErT62F+qWVQNtssuMxCpIFKuo2Y9KiV8CJyAqse
+	vKkwQjNa+xc3S8CuGkstlJUr7CtOr3Ds=
+X-Received: by 2002:a05:690c:c4ca:b0:798:6d23:17fb with SMTP id
+ 00721157ae682-798856036b5mr9743137b3.63.1772146064031; Thu, 26 Feb 2026
+ 14:47:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260223180859.2845261-1-andriy.shevchenko@linux.intel.com>
+References: <20260224-stimulate-fraying-29ac76f6c55e@wendy>
+In-Reply-To: <20260224-stimulate-fraying-29ac76f6c55e@wendy>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 26 Feb 2026 23:43:32 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkFBo6O7L2KpQPF=dzUFprPw4CS7h=oP0ccY0_k_UtW5A@mail.gmail.com>
-X-Gm-Features: AaiRm52PLk2j1gRRnPs0dLTV5w_PyBnVemDSQQWwkxzWwMCgb9z-y5uCN6Q4VqI
-Message-ID: <CAD++jLkFBo6O7L2KpQPF=dzUFprPw4CS7h=oP0ccY0_k_UtW5A@mail.gmail.com>
-Subject: Re: [PATCH v1 0/8] pinctrl: cy8c95x0: Yet another cleanup series and
- a fix
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Patrick Rudolph <patrick.rudolph@9elements.com>
+Date: Thu, 26 Feb 2026 23:47:33 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnNPudpxYd8-rNTAudqX2-apM6uZLyBRYxagwtT+LqeaA@mail.gmail.com>
+X-Gm-Features: AaiRm53hBIqaR9Y0t56WzlpNeyG3WpNnXjDcRAEXl0GxKf3ATmgzHkurDlKjTjw
+Message-ID: <CAD++jLnNPudpxYd8-rNTAudqX2-apM6uZLyBRYxagwtT+LqeaA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 0/2] pinctrl property checks
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 23, 2026 at 7:09=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Feb 24, 2026 at 2:39=E2=80=AFPM Conor Dooley <conor.dooley@microchi=
+p.com> wrote:
 
-> While playing on with Intel Galileo board again, I found that I messed up=
- a bit
-> with the driver. Here is a fix followed by a set of ad-hoc cleanups. Obvi=
-ously
-> tested on the above mentioned board.
+> Here's a !rfc version of these property checks. Nothing has changed here
+> outside of a rebase on v7.0-rc1.
 >
-> Andy Shevchenko (8):
->   pinctrl: cy8c95x0: Don't miss reading the last bank registers
+> Resending because I managed to lose the CC list on all but the cover.
 
-This patch applied for fixes!
+I applied these for next because why not! People have ample
+time to test them now.
 
-> pinctrl: cy8c95x0: Use devm_mutex_init() for mutex initialization
-> pinctrl: cy8c95x0: remove duplicate error message
-> pinctrl: cy8c95x0: Unify messages with help of dev_err_probe()
-> pinctrl: cy8c95x0: Move driver data to the local variable in ->probe()
-> pinctrl: cy8c95x0: Drop unused 'name' in struct cy8c95x0_pinctrl
-> pinctrl: cy8c95x0: Eliminate fragile use of I=C2=B2C ID table
-> pinctrl: cy8c95x0: Gather ID tables in one place
-
-The rest 7 for next.
+(Dropped an extraneous newline in the first patch.)
 
 Yours,
 Linus Walleij
