@@ -1,42 +1,41 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B0A36E46F;
-	Thu, 26 Feb 2026 13:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F9D36EAA4
+	for <linux-gpio@vger.kernel.org>; Thu, 26 Feb 2026 13:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772112880; cv=none; b=S9DEgh4fOcFoTLYnn6n21eMR6y71BbpGma7FlsCNuT6X70HGs5sQXA8ahyt9PEUPeWSlZ5l/mqQWOr1e3GZyvD+eefqdztUhCgdMpi7CwDpvlwNFTmc4D4DAeADJIaEg5lIYWhBVWGn2nGVEpbV2AfyftUuq9iHVbCheJauzFk0=
+	t=1772112881; cv=none; b=X7ipGC1PP2OwlVHEwMqQ9kkqYXRlmBbLKV9JX8ryYV80cOF8HHR4XS/Xsp6yttA/RC0Gnjvztnim5qS6OUWVTHWk6iS1aPiHEV4i+RGVauMEpl9oZZ0h+pqAou3CsWq5RJGx1N2JUzQUwps+Z/2o/1jSVmrZZtISO5x2H5k14r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772112880; c=relaxed/simple;
-	bh=qu1qfic7KBLY7EWIiL3AaAuZ07Rjx+XJtSK4llNtxTc=;
+	s=arc-20240116; t=1772112881; c=relaxed/simple;
+	bh=HiF5B4Bc73eHsZAl9unZvix8uUjE2fsep39CeE6Z6ok=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MA1NYd5es3/OcmeWU/Yjcrkas21dQl9hRZKq9Er3I8fPxyHDPgE5Gdrn0Q00tHv1KewzJTf3Q95O7y96H0oFkRBtHvxDc6gQkBkx+s/sg0XANlCrJdb9TU4XzHQCNxE8R9o0R4jkaGGu2MYv33wsuRg2xAS2T8bh0A8aDdGj890=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CskZ7vXn; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=alPYUtvf+8T3WTxIoAYHpDtsS+4+10rdrn8udAJy/so3H5QM3Bk/JxIkSdqZLvZUHekDAfF/Z+CY+Skq4P9nER2EiDxueRGXmnepdgojd8fldsA4rXbfpggTPDaKzhuQr/pLQ+tWcA9pc1tagMj6KZuvoTGOwwZC2lfNqdGloKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AH1l4KLL; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CskZ7vXn"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AH1l4KLL"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 710B31A13C0;
-	Thu, 26 Feb 2026 13:34:29 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id C1F391A1537;
+	Thu, 26 Feb 2026 13:34:32 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 40A095FDEB;
-	Thu, 26 Feb 2026 13:34:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 76E2B10369390;
-	Thu, 26 Feb 2026 14:34:26 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 958ED5FDEB;
+	Thu, 26 Feb 2026 13:34:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4FF6410369392;
+	Thu, 26 Feb 2026 14:34:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772112867; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1772112871; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RynMD57QmlInHCRSqrRnZ8BdOyZAlob/tJmmv4olNGM=;
-	b=CskZ7vXnLE33dWuT3LSrlTxifzA+zkzcL2EeYZ4JQVhjc3fuIyWAhjhJ5L+MQAiJ9+NLGY
-	eAOgLswVSCJp1t6EnMU8FEIPLSlenwlQ4Bq4GSNBciuiuXRAQfSjZJgsSAIVD/oh3kX3Ou
-	UCyrK6JmzMJjGKviM2uxmsNwJsggYDjcOsVLnWsy9nuF4oyEoxIVJttk1C9pzGiMSPti8y
-	9CvokvyqSbj0UInYporTFWBFgLdlFxAX4pAd5CgRcKS6aBWvl/0zYDQprebkLL81xS7xZF
-	4soXndwzC5OK0s3JD1B4bCr2kkXwjSDzAyrbXNCtMCAaUf6SibEUsiPYL96hPg==
+	bh=t13fTL38ybBnjcJkpfx+K3cUGVZwn08bqofOvp3rY/E=;
+	b=AH1l4KLLPMyktOFWZ+2Z6SPEKJBn6p/HlIp7zSpNTfFZn+eh+Pt++DX3IdwN9Wn5EaNnXw
+	4MahGo6lCSqWQ3Zv47u7h5NgFKeStmbKZuZX9ZVJnoC+p/FT5lAwGSncTVq61+zozrGV+U
+	X2llSZdMjYiisEBU4Yy8DitwSbTI7q7UNPrPiRYfFsQqzIK5G3RIjyjgKoeq9sR4Jk9jXb
+	0pIVEZDrHq6pdouRtmGeHK65EW6TYak8UFEQUnWawTXFzn+GP8MolGdfi7yDzkBFPWIoc1
+	XSOysRW7hwJl4cuPYiqjXEDw7RRNROWzH8IxNsvB/iG4pgep2Z+iTws1JkMk6g==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Thu, 26 Feb 2026 14:33:55 +0100
-Subject: [PATCH v3 11/13] MIPS: Add Mobileye EyeQ6Lplus evaluation board
- dts
+Date: Thu, 26 Feb 2026 14:33:57 +0100
+Subject: [PATCH v3 13/13] MAINTAINERS: Mobileye: Add EyeQ6Lplus files
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260226-eyeq6lplus-v3-11-9cbeb59268b0@bootlin.com>
+Message-Id: <20260226-eyeq6lplus-v3-13-9cbeb59268b0@bootlin.com>
 References: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
 In-Reply-To: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -65,135 +64,44 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add the device tree of the evaluation board of the EyeQ6Lplus SoC.
+Use wildcard to match all EyeQ defconfigs under arch/mips. This covers
+the newly added defconfig, and the EyeQ5 and EyeQ6H ones. Add an entry
+for the dt-bindings header of the EyeQ6Lplus clocks.
 
-The board comes with 2GB of RAM and an SPI NAND connected to the octoSPI
-controller The UART of the SoC is used as the serial console.
+While at it, add myself to the maintainers of Mobileye MIPS SoCs.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- arch/mips/boot/dts/mobileye/Makefile            |   1 +
- arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts | 103 ++++++++++++++++++++++++
- 2 files changed, 104 insertions(+)
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/boot/dts/mobileye/Makefile b/arch/mips/boot/dts/mobileye/Makefile
-index 7cc89968aaac..9305dd01f4c8 100644
---- a/arch/mips/boot/dts/mobileye/Makefile
-+++ b/arch/mips/boot/dts/mobileye/Makefile
-@@ -3,3 +3,4 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 55af015174a5..63048d5ede7d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17802,6 +17802,7 @@ F:	drivers/media/dvb-frontends/mn88473*
  
- dtb-$(CONFIG_MACH_EYEQ5)		+= eyeq5-epm5.dtb
- dtb-$(CONFIG_MACH_EYEQ6H)		+= eyeq6h-epm6.dtb
-+dtb-$(CONFIG_MACH_EYEQ6LPLUS)		+= eyeq6lplus-epm6.dtb
-diff --git a/arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts b/arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts
-new file mode 100644
-index 000000000000..404d0ff09f5a
---- /dev/null
-+++ b/arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Copyright 2025 Mobileye Vision Technologies Ltd.
-+ */
-+
-+/dts-v1/;
-+
-+#include "eyeq6lplus.dtsi"
-+
-+/ {
-+	compatible = "mobileye,eyeq6lplus-epm6", "mobileye,eyeq6lplus";
-+	model = "Mobileye EyeQ6Lplus Evaluation board";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:921600n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x1 0x00000000 0x0 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* These reserved memory regions are also defined in bootmanager
-+		 * for configuring inbound translation for BARS, don't change
-+		 * these without syncing with bootmanager
-+		 */
-+		mhm_reserved_0: the-mhm-reserved-0 {
-+			reg = <0x1 0x00000000 0x0 0x0000800>;
-+		};
-+		bm_logs_reserved: bm-logs-reserved {
-+			reg = <0x1 0x0000800 0x0 0x000f800>;
-+		};
-+		shmem0_reserved: shmem@804000000 {
-+			reg = <0x1 0x04000000 0x0 0x1000000>;
-+		};
-+		shmem1_reserved: shmem@805000000 {
-+			reg = <0x1 0x05000000 0x0 0x1000000>;
-+		};
-+		mini_coredump0_reserved: mini-coredump0@806200000 {
-+			reg = <0x1 0x06200000 0x0 0x100000>;
-+		};
-+		mailbox_reserved: mailbox-reserved {
-+			reg = <0x1 0x06300000 0x0 0x000300>;
-+		};
-+		sys_logs_reserved: sys-logs-reserved {
-+			reg = <0x1 0x10000000 0x0 0x800000>;
-+		};
-+		csl_policy_logs_reserved: csl-policy-logs-reserved {
-+			reg = <0x1 0x10800000 0x0 0x10000>;
-+		};
-+	};
-+};
-+
-+&ospi {
-+	status = "okay";
-+	flash@0 {
-+		compatible = "spi-nand";
-+		reg = <0>;
-+		spi-max-frequency = <40000000>;
-+		cdns,read-delay = <0>;
-+		cdns,tshsl-ns = <400>;
-+		cdns,tsd2d-ns = <120>;
-+		cdns,tchsh-ns = <40>;
-+		cdns,tslch-ns = <20>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <8>;
-+	};
-+};
-+
-+&spi0 {
-+	pinctrl-0 = <&spi0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	pinctrl-0 = <&spi1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+};
+ MOBILEYE MIPS SOCS
+ M:	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
++M:	Benoît Monin <benoit.monin@bootlin.com>
+ M:	Gregory CLEMENT <gregory.clement@bootlin.com>
+ M:	Théo Lebrun <theo.lebrun@bootlin.com>
+ L:	linux-mips@vger.kernel.org
+@@ -17809,12 +17810,13 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
+ F:	Documentation/devicetree/bindings/soc/mobileye/
+ F:	arch/mips/boot/dts/mobileye/
+-F:	arch/mips/configs/eyeq5_defconfig
++F:	arch/mips/configs/eyeq*_defconfig
+ F:	arch/mips/mobileye/board-epm5.its.S
+ F:	drivers/clk/clk-eyeq.c
+ F:	drivers/pinctrl/pinctrl-eyeq5.c
+ F:	drivers/reset/reset-eyeq.c
+ F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
++F:	include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h
+ 
+ MODULE SUPPORT
+ M:	Luis Chamberlain <mcgrof@kernel.org>
 
 -- 
 2.53.0
