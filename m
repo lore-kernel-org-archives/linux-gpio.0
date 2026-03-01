@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBC776026;
-	Sun,  1 Mar 2026 01:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B32259C80;
+	Sun,  1 Mar 2026 02:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772329923; cv=none; b=E0j6WqNJnTVVDQ8F3CZniBBJwk83qLUZq3ot5qnSH9Vb2B5D6qAfzyD7g0zW4USrKh3c18Y2b5ZNvS6nwW8SdRZ7LT+/YuH+UH+L5jlOuirB9aJSgO8TshMocsOkOXxGpf5cJjwQWyPMB50kaULnCwKnI6eABIhrh/AQrN1U3ko=
+	t=1772330523; cv=none; b=TPT7pgVRqSdPxP9PzhiGu+rawfnZO18IHJI8wziy4OtkLpOPIt773f02ymJ/fumhM2cN9AnyOeKTP9ivMJaGD14EdqB+5QhpOeZqOD130ZIvM42qg/mhwANpFQQRXPGOS+VKGY6XyEvvW1qRdb15GXEExLuwApRVoA0JHCCrkCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772329923; c=relaxed/simple;
-	bh=Az8LLLGv7p4NyyEga/O67fntIWNIPrpfEX+5iLQtwew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jj1qQ5FLhuT+E5BZlZkQhUTUdqynwKMKYt5jKk83QMktEfo0YeEiggY0OEDhTaCItbf5jNpueDPwwQUKyUOzfbR/b2TJOCcdrAZ0JwRBEbunvyGlziUyhFRZlGjd7rOqC0/oAUN7B95NI0Y4vEZwdBsvo2Lpzxw61Po2UnzJk/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPoyxD5s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772330523; c=relaxed/simple;
+	bh=OaARiU2V97zcxx5wDw3VqcFr9rDXhNBAk19csGgqDLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CkF6TdGXL1uRaaVAxoAlIG6EogHFt4VbhLv53864Q0cGDhQARZjvxt/yf/GHpBQUKrvkAdAvLF+F/Q7syhGTnvO22rKhDUBYyJlKHDw2m9VJlzk7LQk3KVAxxir8WL92+yZOa0ctRxISZ1YEfKc58QqUNeEYCj7mqRqavKACYM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8GYwGIm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPoyxD5s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC5AC19421;
-	Sun,  1 Mar 2026 01:52:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8GYwGIm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA37C19421;
+	Sun,  1 Mar 2026 02:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772329922;
-	bh=Az8LLLGv7p4NyyEga/O67fntIWNIPrpfEX+5iLQtwew=;
+	s=k20201202; t=1772330522;
+	bh=OaARiU2V97zcxx5wDw3VqcFr9rDXhNBAk19csGgqDLU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=CPoyxD5siAnETgnWjuZm77kAXJ7I9IoKjEHvDcKG+bk/+D02BG+rQoFSKWzRzJdbF
-	 RPX4NItLpr1RznSSR7xRlUubxvhUD1nz2iHmVmVzo8H7ueIePCmY0SIeje/ZZXO9XO
-	 P1MLZcWrxU6cFAsu047UUbbZFtWgWqcD4BOMO0sBLhhrnGwJh303qceLA4t6/e0BuB
-	 HepwqZ9+wllQnkTfi+RFceAAtonNkJ8F0eNP5TAnmTTjojpqcgVfoO0M4jEcKjYBrv
-	 d4CI8sYS1KLivOe5qrI7ubxv//lLADkLE+EbquBBzM1M/WaT0b98jBP3jTb2nrEi3D
-	 i7+ng2Ks40Hdw==
+	b=N8GYwGImNiCKin0lB1Cq3ceQg5zL59wVR06jdIg9XshyURuEkhd5+Z6gUPSeGziiG
+	 o32Zz+xi9iaWyK6aDdvFBbXaYzvmVJ5XsHdnP9QKVwY9k7Jtfc0QWaBs93KYCvUUDX
+	 MoavXTHBzbkeqzle/QfqiDFdIRhqVRgegGZRie+xnoWE6OsacnjR3KV6KB6LzLmpzZ
+	 uONG1B2iz8f27PLKKsliooVht7xbkoAunJhjZ/Q0FZyQI9+zhgA+uoeyMCBWWyDTk7
+	 seCLDkNRvP6A6zgHMrvfS/0f4cGvmsx+OaNf3rGXshqMSN9t4qs+h6LIZWupa47ajP
+	 3qL5T0zZUF2YQ==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	raag.jadav@intel.com
@@ -32,9 +32,9 @@ Cc: Guido Trentalancia <guido@trentalancia.com>,
 	Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org
-Subject: FAILED: Patch "pinctrl: intel: Add code name documentation" failed to apply to 5.15-stable tree
-Date: Sat, 28 Feb 2026 20:52:00 -0500
-Message-ID: <20260301015201.1718433-1-sashal@kernel.org>
+Subject: FAILED: Patch "pinctrl: intel: Add code name documentation" failed to apply to 5.10-stable tree
+Date: Sat, 28 Feb 2026 21:02:00 -0500
+Message-ID: <20260301020200.1729403-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -46,7 +46,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 5.15-stable tree.
+The patch below does not apply to the 5.10-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
