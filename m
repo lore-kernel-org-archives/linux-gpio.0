@@ -1,49 +1,48 @@
 Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BB938F64C;
-	Mon,  2 Mar 2026 09:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010A438F65B;
+	Mon,  2 Mar 2026 09:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772445124; cv=none; b=UNeYc/AM3V5JfsT8gwf4gaE+M/catbCeKXSByDCwrN+GvvaO29I7CIQaUaPLgGN+ngPpLN7f6l0Fuano0KY7NPhzmlf9tbQ/BVR1/zkH5Lp4+++8GXvqWyOcMALolnknpQUW4EJLpcOwd86M7yV5ZhLiWweFUl3rRErCTBIMmCc=
+	t=1772445126; cv=none; b=ghzb8kxeACZvr6cJwOJ2ve0zoKMKzu8doAnhDzCB2ib2FsuCMeHukqD96Xpkg97hjJiiMJnRf2uopMxpJmYGOXQ2Ccz7YRLd0kry6ItsDVz7xTv1WaK73DR86lnGP0PUfI8k92y+Wgw/VN/oqlY8eDgz6nZsSrQdTKo0so9TtAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772445124; c=relaxed/simple;
-	bh=54CKlhaOPNyQV4l1L+/FS8dCZ2hcFRQOOLmoyaR1aos=;
+	s=arc-20240116; t=1772445126; c=relaxed/simple;
+	bh=lKoF/wcHDIjNaYmYBLQBoVUwBC9gPMzuq7kD/juQ81s=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=HMNLOF3dYlO0dr3niowiM7GYJflYg6FaOLqbI+Nh3lnuCrGOR0RhdT7QfcOqpXh/RfQX7hs+C14xWSROhrEGyo3/CzuofzfoqgzNJ1jsDLG0R8nIs571glmWfRGTXVXGW7CtJzz3BSfiP+FB4pl87KyK8DjfMPzclKII2Itta/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XiZh7izZ; arc=none smtp.client-ip=162.62.57.210
+	 MIME-Version; b=uN3AZaRrEaUv4+4n9Rs+0owhZwdbnKXUJU2VDYFcLPotTElh8Uf6C7+tmB2aAbnQ1JvNlxwq9QJROpYEvjcqkJuomGCFBkHdfeWzU5pRqwV8yubLp2vR4mCBB4RuDFXDGbQ0Zx+sT4L7+meZ2JSIF+MfMukDPPiKS+iNjqRKSpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cCaz4vQa; arc=none smtp.client-ip=162.62.57.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XiZh7izZ"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cCaz4vQa"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1772445111; bh=NuKkS34/BEUrewmcH4JWOJIvDqT8yKVer2O9MIQKHpA=;
+	t=1772445114; bh=DudSbMsg3N5XTgGas95Iv9I8hs1PbVkuMzNhI+MXRZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XiZh7izZdVacMEAhDxMRYaCkuzOpt3CMBk1v/DnoUMG9dykVR8DS95MrN9yyADJi/
-	 drnPKeuf7HU4YiMBuAZW4cuI3bmWRLwia+0ALYeOu7QN3jYftAI1I5uRrQ0/Mex3I1
-	 sS9IsWnruIohFguO7v2o+/EV3k+hGbD9jCXwNECk=
+	b=cCaz4vQaj0/EeJIHwIv3PLtjolHKngAnFVWpQRtjU7hb0JOdiSBX+WKeAj1S1doqZ
+	 SIvqfSQv49Pr6U9xd3NXt6We7zB9HVReT5fLwfipQU+8s9Cc5YGQHtJ05OazwWIHxz
+	 0Q4wVA7fuDAoOLFpJ/hGl/ze1Mi5HO5ci7+12GcE=
 Received: from WIN-B62RPRBL2BM.localdomain ([218.76.62.144])
 	by newxmesmtplogicsvrsza63-0.qq.com (NewEsmtp) with SMTP
 	id CEF2F43C; Mon, 02 Mar 2026 17:51:47 +0800
-X-QQ-mid: xmsmtpt1772445109t9ekbm482
-Message-ID: <tencent_0BC92A632DD26F0A684E608D427244637905@qq.com>
-X-QQ-XMAILINFO: NbQQcgWGJXDNNA701IJMmyjMcV1emRT5aWfrC+Dn9I7PQ8FohLHp5/S7B2R8VS
-	 p9u45b7eEXDo8c6LUwR/IHk+FNDWscHirOU21554xfQ3TrPEoG90eQkpNBof6lfdUa69vBmuvF+y
-	 obLgMp1eJSV5ZMuabyZTkATVuHwO9Ml2pHzfex4oZUOnDvMyIHEFkC6z1AQGcZk3wxpLPc7of7/Q
-	 p7/++yih/bTk8doKASLBDqauIOU9xaygVFKrYuesJ5ufygDdl2izES+CW69tkWE8mEyqNq32DSeK
-	 7r6idMQXwJZEIwRxVYNJFPbsz2vneeCAsdiTWZJ1cF213uMCFyAWJNRNvniDxy3aBO83eNA4dReT
-	 2uvE7qLNYWugeCAjlnoBMfdGt4GGAfu/TnGgoE8FAKpvGAlG2Y5lbqVf53mfklfKQDNEpczZOq4V
-	 16ofil0s+tBV6FtaEcnh70JPqKXEQCt5dbRxTH1jEGyffj1JNHjxMH1VLTW40H54zD1gObTktiTB
-	 bCIU5FB1xggeP3hF5lfw0D6gACqbbgNmZ7OC34d0IobfFE3b1w+XT9TfROSpoTRQbYt8aJn+djay
-	 62jDPirb0raARQqX3nxdQb2T9qfjyv3i62SgYuZofwMqAMfI3Vea4g2gvh6OHCT8LF4Sc8L4NUAx
-	 LLLvXEVoGGh386KMqE8AgvYxGPExcD8UhM/WdQ5yU2ugXkK65Ra1zsvPupCaiF1plD81Te12fV9T
-	 0NHDN6XQThQZEJt+n+Kpsj2se+MaWaUORSBV6PfgW+Bu2JUo2lHDXDRMLzrUYH+j3g5E8s9t2LZ+
-	 Y1Fha9nHN7M31kAX0BFMn5GrzrcbVxFLEBKfw2AcUIgy2f92k9c5D8UFkmQvqyXIYmBLqramtII4
-	 kjpwglmE06AVqx20F75r59KCDBUuhRU2cwyrtOKc645iAFKnVZ7cpeHolc3lJ+i1YHL179I5uEeD
-	 tDQ7HjbtdbLi4H5VdSYMqwDh3zOoUvbkAE04/A88E5WfaWd61acCiw8JI5v5A0SB2yssI03bVzKt
-	 hye/QJjcUg9OUC5Ma/GRB3Uuqka6NxXMKu56te77kRVkgcmROc03WYFcIDMhXlLAvmK11nAzqBWz
-	 EkAFHbiyFYxU8R6x2CMvvFosm49w==
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-mid: xmsmtpt1772445112tgixxzezd
+Message-ID: <tencent_C5AC554BD66AA42D2165B044CA4EF1CC8D0A@qq.com>
+X-QQ-XMAILINFO: OUycJhUUya+/hFky0sKC0DCZA0tbHo3qSAT01aWYYL/ACvFrY4a8DUevvSsvnK
+	 b6vTrgNHbUa71N5HXeTYvkTmcHhfYRGcj1HLAP7XJ92aHiUbS1fBMgcJY1szjAp06j5qz4tDZcqv
+	 OcuqyTjGJDZEPY5cxxg8Q9S+oimYbBGC6yuwr41oXU+aWDW1R14HrQeA4Tvm5ISwHJgUQ9B1YhIb
+	 Tt0w52DBZYTsauNHFxg2xTC11OTSMOk7B8ro9oMNPPRDaDMbSepyxitWnHO/b0fRpzSlvqfElMzm
+	 QmEhp5jw9/SpCSAbdPQAGBmzmFmLlhapWdyaXzjCnMHnZI/dxeOA9NDzK/5RZ4rU9mEX5xKrtJ/4
+	 Eup+foITnNInC6m09ZUi26nwJbGAjJ4//1i5wYl4BNTiT/68NXIL8W17W+pAHXFAC/VRUJy1frnp
+	 MqKbQf76PjQrY3Qu6qHgtJjHU4ElYK9VvmJyJfIRkmPcla9AEz1wvvqL3CFM7gM3HmauQOi9GWdG
+	 FtHnPC1ds48ALW+j2CGspJU4lfF2XQTxNHt6KkMlOWhFk0//pXaCcxBdU2OrGVCATcUNt5yrxgxA
+	 OtX9s50z9848FE+1UjllhInwJwbUlYIhRkCWV/st89LVBbkwcHx2WFM6m3bozME11PMtmJfbdLD4
+	 JUy0GjPG5cPlofkpe4ZQrID5P+2z7/CnxU1VBl5VWyoTJLZd+KXahR9m9HFZERcVRAnXaOI1wvRW
+	 sQYIEVR6w4/5MolZAgivwW0R0RvFKgiV5XJFy9d/oDhcAyjvfXactMpUqIShbOqT4qQ0wt4WkD3q
+	 1Y29neQYwtUo23OjntrNDR7pKjPLuFud4+a10F7deEd5EEXI66/jp5U2cPWoKvQjZWnPqRDVC98s
+	 jvUpv6m4N0RM+YwKDhWWCq+ZxG+MWGYWnV6niiO7I+/fOzG2rFASQ2cRTkurLMhCJ2rRiEToenzv
+	 CKWV5oDy1F+tC90ifmxYOdgD1pCrtK6tqvuOV09ns1RUDV0tkpVFovSs34Q+ftyQbbKDPS9vJy6U
+	 YSpcol2GcZXTAQ7VpWoGDrdwHoN+i18Zh2XMzltg==
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
 From: Zhu Ling <1536943441@qq.com>
 To: linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org
@@ -56,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	conor+dt@kernel.org,
 	chenbaozi@phytium.com.cn,
 	Zhu Ling <1536943441@qq.com>
-Subject: [PATCH v1 1/3] dt-bindings: gpio: add Phytium GPIO controller
-Date: Mon,  2 Mar 2026 17:51:45 +0800
-X-OQ-MSGID: <20260302095147.2483-2-1536943441@qq.com>
+Subject: [PATCH v1 3/3] MAINTAINERS: add entry for Phytium platform GPIO driver
+Date: Mon,  2 Mar 2026 17:51:47 +0800
+X-OQ-MSGID: <20260302095147.2483-4-1536943441@qq.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260302095147.2483-1-1536943441@qq.com>
 References: <20260302095147.2483-1-1536943441@qq.com>
@@ -70,174 +69,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the devicetree binding schema for the Phytium platform GPIO
-controller.
-
-Register the "phytium" vendor prefix used by the compatible string.
-
-Use ngpios as the preferred child-node property and keep nr-gpios as
-deprecated for compatibility with existing firmware descriptions.
+Add maintainer contacts and file patterns for the Phytium platform
+GPIO binding and driver files.
 
 Signed-off-by: Zhu Ling <1536943441@qq.com>
 ---
- .../bindings/gpio/phytium,gpio.yaml           | 134 ++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- 2 files changed, 136 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml b/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
-new file mode 100644
-index 000000000..1b9200c57
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
-@@ -0,0 +1,134 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/phytium,gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 61bf550fd..164553f86 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10963,6 +10963,16 @@ K:	(devm_)?gpio_(request|free|direction|get|set)
+ K:	GPIOD_FLAGS_BIT_NONEXCLUSIVE
+ K:	devm_gpiod_unhinge
+ 
++PHYTIUM GPIO DRIVERS
++M:	Zhu Ling <1536943441@qq.com>
++M:	Chen Baozi <chenbaozi@phytium.com.cn>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
++F:	drivers/gpio/gpio-phytium-core.c
++F:	drivers/gpio/gpio-phytium-core.h
++F:	drivers/gpio/gpio-phytium-platform.c
 +
-+title: Phytium GPIO controller
-+
-+description: |
-+  Phytium GPIO controllers expose one GPIO/interrupt controller and up to
-+  two configurable ports. Child nodes describe per-port configuration.
-+
-+maintainers:
-+  - Chen Baozi <chenbaozi@phytium.com.cn>
-+
-+properties:
-+  $nodename:
-+    pattern: "^gpio@[0-9a-f]+$"
-+
-+  compatible:
-+    const: phytium,gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  interrupts:
-+    description: |
-+      The interrupts to the parent controller raised when GPIOs generate
-+      the interrupts. If the controller provides one combined interrupt
-+      for all GPIOs, specify a single interrupt. If the controller provides
-+      one interrupt for each GPIO, provide a list of interrupts that
-+      correspond to each of the GPIO pins.
-+    minItems: 1
-+    maxItems: 32
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+
-+patternProperties:
-+  "^gpio-port@[0-9a-f]+$":
-+    type: object
-+    properties:
-+      compatible:
-+        const: phytium,gpio-port
-+
-+      reg:
-+        maxItems: 1
-+
-+      gpio-controller: true
-+
-+      '#gpio-cells':
-+        const: 2
-+
-+      ngpios:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: The number of GPIO pins exported by the port.
-+        default: 32
-+        minimum: 1
-+        maximum: 32
-+
-+      nr-gpios:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: The number of GPIO pins exported by the port.
-+        deprecated: true
-+        default: 32
-+        minimum: 1
-+        maximum: 32
-+
-+    required:
-+      - compatible
-+      - reg
-+      - gpio-controller
-+      - '#gpio-cells'
-+
-+    additionalProperties: false
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - interrupts
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    gpio: gpio@28004000 {
-+      compatible = "phytium,gpio";
-+      reg = <0x28004000 0x1000>;
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+      interrupt-controller;
-+      #interrupt-cells = <2>;
-+
-+      porta: gpio-port@0 {
-+        compatible = "phytium,gpio-port";
-+        reg = <0>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        ngpios = <8>;
-+      };
-+
-+      portb: gpio-port@1 {
-+        compatible = "phytium,gpio-port";
-+        reg = <1>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        ngpios = <8>;
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index ee7fd3cfe..2c3f9777d 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1265,6 +1265,8 @@ patternProperties:
-     description: PHICOMM Co., Ltd.
-   "^phontech,.*":
-     description: Phontech
-+  "^phytium,.*":
-+    description: Phytium Technology Co., Ltd.
-   "^phytec,.*":
-     description: PHYTEC Messtechnik GmbH
-   "^picochip,.*":
+ GPIO UAPI
+ M:	Bartosz Golaszewski <brgl@kernel.org>
+ R:	Kent Gibson <warthog618@gmail.com>
 -- 
 2.34.1
 
