@@ -1,119 +1,113 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from tika.stderr.nl (tika.stderr.nl [94.142.244.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060C9330D43
-	for <linux-gpio@vger.kernel.org>; Mon,  2 Mar 2026 18:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F592FE044;
+	Mon,  2 Mar 2026 20:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.142.244.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772475204; cv=none; b=G+fZn3AzYtua+3mHMzAIcd2Q8qiafXHdqG3ESDS2u93md/7SOZtWVpI8NPXC1sEl5/+QWak4dUg7oRfk9BhG8hwDB6o0qRnKKXd7zAe0XAHNhcq/98FIXp8Ah88ZsV9rf8K0t3NaOe2jk6JkrHqGhN+tUJzUNC5mmAaVCeyrG3M=
+	t=1772482929; cv=none; b=Cbb6G4v1wuzxi7erxeg+3mBHEd0AQDE2C3zXdIuyx3w0aUJaNdwVacL55NZqD20fH1TQDEgOQKy4sCUvBZ6RuRzaWEcu9Y/nyLUPNz0wAbwR4AbkzPc9XBf6WzCagwOykFdNLmbEdFyEsd4CdRAy3YJHFjodXHnFaz3D61rEUos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772475204; c=relaxed/simple;
-	bh=X9pFxZzMqkOXOXtjPC/JVKM4MxUqs2nrYJdjE2X9+yA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cv+Pg/evblo/PwwlSQwQBm2ZfvhsJvxv0UIogsP2ZThsFHSDDq07mpvtOFvlf0D0xiw2RJ6aVm9TIDI/bdgXDr1MLrlISK6trTQTMw+8oKqfzZZnTNxNYP61557DxsY04MuG60ShMccsfz11Lj/jOBfU/eokjruJt1KWecetK7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLAiSYRS; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772482929; c=relaxed/simple;
+	bh=/P+MkVP/ZEooxSE585O6UmyCThqJpWuKVQH3Tp3byk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rrr1Qm7Fzw6z7NBohz/amaBDHZvJg3vyPIi6bC2zkFsTm+G+l0imJP74uA4BOIk286B2S297VboFP19RK11B0hO0w2uVwRN1RpCwh9iUiUl5sLX56Sm1T4Wcy0Jpno59ebvwA3zvbTg0ayqkaqP2bqMjh99q6W0QCz0Mw1UZRcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl; spf=none smtp.mailfrom=tika.stderr.nl; dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b=wOnXC1G/; arc=none smtp.client-ip=94.142.244.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=tika.stderr.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLAiSYRS"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3590042fa8eso2775739a91.1
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Mar 2026 10:13:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772475202; x=1773080002; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hnWhypid25+2v4/CmwVulpRAOWew3H3syajXEsdh0sA=;
-        b=ZLAiSYRSNd4car2FpLXzc8AKt4jIsO36jFPAdRCBC/ghNSqWNlt1vGaSAumgkz2nrJ
-         xbIDvrQXKzL5h/eWmka6yF0F/zFRY3SuiUsHwrpSBYLDpkFK36eMQ2Z2b7lf77f5Dg/P
-         Wh7tAbp6W7KULfCyIZmz28eV7WQunmLADkBYm7oeQ7L2R9Izi51s+tR4lUDtGCkUIAgf
-         1grMClDn7wSlS5Shw3iqrodI4Z9huH7GR+zrZUnlik1+uHHjFUB7B3CY0IxABdYnzviW
-         UEWE7qxwXragc87MPogGU41EoYokjBqlCX7K6fW8GQ2CEKIDuEdNISVhKergxKzG1ycg
-         jIYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772475202; x=1773080002;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnWhypid25+2v4/CmwVulpRAOWew3H3syajXEsdh0sA=;
-        b=iad/2kOK+/3SI2LF7STuVg4+qNUvwQ6XWoJuIgu2/qXgaQVO45wTkiFFnKLGcaaE+l
-         DHyymfg25D66wIjs1yUzjZ+83hoTDQtBqDlL+ssfyw/szKWPF5mnExT4o70bGYqn7E2g
-         /kPEevkSg6/sF7Q2tmeS4SDEqHzyvKcrqN8mt/Xw3I1gtGlAla84g5A8RpJwmbjvyS4D
-         BozQAa1xTccUtcFIT0a5gmwf+91syeFAxwn1tKzlL5XWLoNG8YYxpgDmuLHnxuZACxEI
-         n4nRMgsfP4XgAiDFYpfa1QsQifYEtthETcRzbCDx5jJYfbmfUgT6Lmwr4pnPXcaoIbSm
-         /xzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXX4YoIUChCsR14FSvvXhNdtT+JdJbu8lkB7AGylyKj3FQaDATpqvZ4LjrG5NL03j9LeXwsJ1j/aWcX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVAmICCur5Cys9Z5tFiBiqq3xCN7QNyaspxwLIOmmhhSoxKPSQ
-	pMHo2e3PFAXBIrGD6o58rIZjFKqLj2REDRPzaBIgHd3pM1enHWLTgxeJ
-X-Gm-Gg: ATEYQzxYwFl6rLuS7mQR1f1a13khyFZmllvt+PQsWGd1+2R9AkE7U0/YJbnjlmrc1nB
-	7rTfU/acYIfUIuSksjkzdhe1YCzpx5SG4tyBYFLwVoHqj5Uzuh3zLgBj8J0fLRMVVgn0NjWYT62
-	rq6IaRAdE8J/IyEluhmk6gkW+EYQOlWZaHabsoSg82+9dzuNfiupm4X/Hk4p13HJVMbG03p5iG+
-	MCaz/z/K9DknaAIzZoFS1C3YON4nstdnHpuJSlYUlzk3xhAfLyxDFb0fjKoSY6mGEQiqiW9LeCp
-	3HLDD8Tyh2jQ6bVKaFzmim76gU5wVB59omJ0wrh88fX0Z3EzKbcSHKOfjWKbMsR3HhVhpEt/Jw9
-	SQgbExK5Cp1omO8d4jARB/weRVrqaG4Gux8TTehii7S4iAzLXj8684DfF3QVI/zUT7FEyXwiWyu
-	dIN7d9eEQjLZu//PFJ1i0Uh7+qdYJYszfZ6nm5
-X-Received: by 2002:a17:90b:3b8b:b0:359:8632:5e39 with SMTP id 98e67ed59e1d1-35986325f9dmr4652923a91.5.1772475202326;
-        Mon, 02 Mar 2026 10:13:22 -0800 (PST)
-Received: from junjungu-PC.localdomain ([2408:820c:9009:3f2:4c92:fc5c:54e5:712e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35901883a0bsm24608201a91.6.2026.03.02.10.13.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2026 10:13:22 -0800 (PST)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Tue, 03 Mar 2026 02:13:17 +0800
-Subject: [PATCH] pinctrl: microchip-mssio: Fix missing return in probe
+	dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b="wOnXC1G/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.tikatika.nl; s=201709.tika; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=NaQco9z9Nma2E2mabZxblSYYNbReqO+JGj82aIQuKH0=; b=wOnXC1G/Vt7gdctTcUfcM3RVK8
+	OoBRunMK2CcwRG2miNLn2nPYzMiTzDmGBzi8i0MdlosJXUttAMIVY7c6MSzMvzXoXKkcLjdly/8or
+	Cg6COCiehVfyyXsMwEyTPyFJPJBEwIbrPgE0iHY9cHbfmcmCltXjAoMCuBtxGAxkYxLQ=;
+X-Preliminary-Spam-Score: -4.2 (----)
+Received: from [45.142.19.84] (helo=zozo)
+	by tika.stderr.nl with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <matthijs@tika.stderr.nl>)
+	id 1vx9m9-00HGhC-1D;
+	Mon, 02 Mar 2026 21:22:00 +0100
+Received: (nullmailer pid 198612 invoked by uid 1000);
+	Mon, 02 Mar 2026 20:21:57 -0000
+From: Matthijs Kooijman <matthijs@stdin.nl>
+To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: matthijs@stdin.nl, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges properties
+Date: Mon,  2 Mar 2026 21:17:14 +0100
+Message-ID: <20260302202121.197288-3-matthijs@stdin.nl>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20260302202121.197288-1-matthijs@stdin.nl>
+References: <20260302202121.197288-1-matthijs@stdin.nl>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260303-mssio-v1-1-ea0fdf3bf202@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADzTpWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDYwNj3dxioBJdc2MTYxNL00RDC5M0JaDagqLUtMwKsDnRsbW1AIvNzr1
- XAAAA
-X-Change-ID: 20260303-mssio-7343495a184f
-To: Conor Dooley <conor.dooley@microchip.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772475199; l=1266;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=X9pFxZzMqkOXOXtjPC/JVKM4MxUqs2nrYJdjE2X9+yA=;
- b=cYspcSg2cni4FEWF1uboSvnd1CiyndInwPoVrAX1RlAaSyS6iRlllrsyLXTvMue2o2G90tCPd
- KJL+YEOurDvDBdY9wf4whkeVrXurUzX0DUKbv3pxtCMd+5h/49rpwA/
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+Content-Transfer-Encoding: 8bit
 
-In mpfs_pinctrl_probe(), when pctrl->regmap fails, it just print out an
-error message without return, which could lead serious errors.
+This makes the mapping between gpio and pinctrl explicit.
 
-Fixes: 488d704ed7b7 ("pinctrl: add polarfire soc mssio pinctrl driver")
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+This does not immediately change functionality, because the
+gpio-rockchip.c driver has a workaround that defines ranges when they
+are not present in DT, but that relies on global gpio numbering (so
+AFAICS only works when the rockchip gpio banks are initialized first and
+in-order).
+
+Signed-off-by: Matthijs Kooijman <matthijs@stdin.nl>
 ---
- drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c b/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-index 3d5ffd6cb14b..15d73ea1028c 100644
---- a/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-+++ b/drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c
-@@ -686,7 +686,7 @@ static int mpfs_pinctrl_probe(struct platform_device *pdev)
- 
- 	pctrl->regmap = device_node_to_regmap(pdev->dev.parent->of_node);
- 	if (IS_ERR(pctrl->regmap))
--		dev_err_probe(dev, PTR_ERR(pctrl->regmap), "Failed to find syscon regmap\n");
-+		return dev_err_probe(dev, PTR_ERR(pctrl->regmap), "Failed to find syscon regmap\n");
- 
- 	pctrl->sysreg_regmap = syscon_regmap_lookup_by_compatible("microchip,mpfs-sysreg-scb");
- 	if (IS_ERR(pctrl->sysreg_regmap))
-
----
-base-commit: 3fa5e5702a82d259897bd7e209469bc06368bf31
-change-id: 20260303-mssio-7343495a184f
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+index 31c25de2d689c..681d2429d541d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+@@ -889,6 +889,7 @@ gpio0: gpio@ff220000 {
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cru PCLK_GPIO0>;
+ 			gpio-controller;
++			gpio-ranges = <&pinctrl 0 0 32>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+@@ -900,6 +901,7 @@ gpio1: gpio@ff230000 {
+ 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cru PCLK_GPIO1>;
+ 			gpio-controller;
++			gpio-ranges = <&pinctrl 0 32 32>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+@@ -911,6 +913,7 @@ gpio2: gpio@ff240000 {
+ 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cru PCLK_GPIO2>;
+ 			gpio-controller;
++			gpio-ranges = <&pinctrl 0 64 32>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+@@ -922,6 +925,7 @@ gpio3: gpio@ff250000 {
+ 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cru PCLK_GPIO3>;
+ 			gpio-controller;
++			gpio-ranges = <&pinctrl 0 96 32>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+@@ -933,6 +937,7 @@ gpio4: gpio@ff260000 {
+ 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cru PCLK_GPIO4>;
+ 			gpio-controller;
++			gpio-ranges = <&pinctrl 0 128 32>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
 -- 
-Felix Gu <ustc.gu@gmail.com>
+2.48.1
 
