@@ -1,121 +1,190 @@
-Received: from s106b.cyber-folks.pl (s106b.cyber-folks.pl [195.78.66.88])
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145EA1F1932;
-	Sun,  1 Mar 2026 16:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.78.66.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99FD1391;
+	Mon,  2 Mar 2026 01:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772383616; cv=none; b=DM4fVKFPTRk/B5K7IxAPD/ds7+PGWNH12cbetU7vuttn7KIvly9MySE3QWQZQuRcWNmDyZYLvnL0RVqr00JewQla3OynxY3GsIaV7wlKUpyq/6ugpF3pcruMNWRxG98YrMjx2uGXh9QHOTaWGoqQhRDqjWQWgzRb86Dkpem0zGA=
+	t=1772416103; cv=none; b=hIrdjs8NL9eCsXccWg8GTe4k8ILYL/alvxrjGWVr1CfcRpoJD05h/+xt81aEOuyLqO3Y/zuLppAWoFYzfYILri31xn34TUPGExGU9Vnn7IzCuSyHZfvHZMPEb5CTVet75xBIVcXjDd7MXbDVOZGtWi0PyqlmMK8/MzfxmKviAZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772383616; c=relaxed/simple;
-	bh=qsbCEDLgAC513AjtmknCrNPOfk9MWTiWgh9/aIl5RD0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gJRm/mpIpG7JUzRwrvmdZzGU5q4GmfkNXLIA+o1qG9nckBH3mvZphPe4faSbRwnq0cPuQ4hNPBwm/0o4A87uGIU7wfaHEGxd7FfBIsQxCSkAd9SRxkkypxbDCcoTucj/CtxMfSa3r2KclxLMAuHghxQWwwzpBmQomqa6T27gt4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl; spf=pass smtp.mailfrom=mmpsystems.pl; dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b=nTXqggsk; arc=none smtp.client-ip=195.78.66.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mmpsystems.pl
+	s=arc-20240116; t=1772416103; c=relaxed/simple;
+	bh=8n1KLYzMWDgQnQ59sUmJHkopKbmf+8D0g17hCFzoISI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Look82O2r3p/cN7qeK3BT4nCcCNQ0vcEMbTTMEGTTOi4dE5nzX1MJi/wp3rKHlpfO5L3PkhiSSLvs0joQ05Zn7cGApTPrUWQ6vPuged+SxxHdrg7xC/gVTxKwWbm1e1zlVAH17E9oZetebcrtlWMfiATO2EegrV6qk1BD69Ktcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HvAnMDl7; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b="nTXqggsk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mmpsystems.pl; s=x; h=Cc:To:Message-Id:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dFpyuUi08ipfETxMTzbuKYKiIg5L8MRQA8qtmO2cGZY=; b=nTXqggskY2lifr4KMh/ededtc3
-	pPOpyjDWtJL2Cy4yUczza7GQxN2PB/DyXg8sLnDgdPp8txZRwn8fPsZSAMTNJ2aIx7XnwW8/YOdv5
-	AbhsnocIBKvEsuk5QXJ48uhookKdPTdWOdqYx1xgXs8V/dbKqHNLXUvCw5r9aKrWNrlNZMIoK5wy0
-	Te3kXifN+kjHndNdAXPMN4KL7szFpQBzav944XZ9r1plUCa761yyO9vHpzL42Wai01CVB8vg8Wdvz
-	v/ywHuLGl9X7uDG82a1ly3L/l53/WrnIlpJT2Vsj8LIYWALnuBN48U/jjLZrcDEgDJ3t1zTU2e8Ux
-	xTI5/k5g==;
-Received: from user-5-173-212-70.play-internet.pl ([5.173.212.70] helo=localhost)
-	by s106.cyber-folks.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <michal.piekos@mmpsystems.pl>)
-	id 1vwjwR-00000005Jvn-2gmF;
-	Sun, 01 Mar 2026 17:46:51 +0100
-From: Michal Piekos <michal.piekos@mmpsystems.pl>
-Date: Sun, 01 Mar 2026 17:46:31 +0100
-Subject: [PATCH] pinctrl: core: use dev_err_probe() when applying state
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HvAnMDl7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1772416097; bh=eUYvgMab6tEvGgbnkSDjcxjMG9cFaRQqLJKTw+UypQc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=HvAnMDl7ajV23q324ahv7xJ7IeysHgTQQbjQC4u+ZDO6R1TVoJAEzjFPCbUXhNlhv
+	 sORNBCGvpD5u/TZCJLl0uwSZ7ttjdPj2Fm5lX9HCJJJoUUXUfzbiVAeJPQKPhaAse2
+	 NBkJKRUZdQnYpTryGdERsTH7DFKbzregDezcRLUY=
+Received: from WIN-B62RPRBL2BM.localdomain ([218.76.62.144])
+	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
+	id C0CB9282; Mon, 02 Mar 2026 09:48:12 +0800
+X-QQ-mid: xmsmtpt1772416096tgh0o04z6
+Message-ID: <tencent_362437351497DC32EC226DA7A4E722D6E609@qq.com>
+X-QQ-XMAILINFO: MBHEkxMsYPCYJZ3IpdthRC4qBwnVI0LOk/aH6yyI3kVGRgTgXLJJ2mK81/HH/h
+	 XwktK1pikORtgnA8mRy50bDkrm9Hec2dND6fw6gVY7kbM7GtQDMNX6YuhZf8yBEinyZm27otiqrH
+	 UOf+4a6pGTyhldU1Fv+rNp/kgDKsSNgp0vffFrT+I6WNXmc+7Bs5xsWgB7pYpt3yxTsRW9iVLC42
+	 9aZtQ+EDb1CiDnThz3qikQwXWi/6wWz9ZHOfmSMXVWgQrd3yN1cdvDeRNtTUxKxYkVhsH6gG63sX
+	 Uo5BRn+ZpxGogCKqS7noVImEhsRgUk5X5BmY+Ea6uLVaiQXzYga7JzXXQoPyp2bsaYGehq2zAL8y
+	 E5cv841A+dmEr60KQMWoPxQHDHyg1YzfTRjM8xYHCrIvOJ4xY2by1d0IwbJ5GgbPPBE16Jp0nZtk
+	 HEWJaL6TJ2sRjlu2R31sDBUEt0jxozRoM9nJm/NF48kxvlkfopboMCxDHudsgTTSDlrgLPbQrL7M
+	 OxZI5WO/30RDX5n7Ij3CRFy3TKEJrl0N0s7ft6fKVx4yxWT+K83pquV/bcqRuGIdYJKkWY+Mj419
+	 hB/Gye2tNarZfILF6LtshJyrtOQ/gCiqOMaYYevXNHTHAEJSIHROrlJJQVttmOSVoKezLwkWwz5Y
+	 84UAbes0RQ/D4L2nihJotjmkBEruqz+iCnsEaNIBGox7m9oj0w3aM5SEFRlHBl5Icb1gb/A/msRT
+	 RFBwksbFOsP9vmkoPjv1WlEmE0dQDNJm5i2jlz5MgNuCpenj8fOF6NQgaGV4UD0RUTIZ6nkUrAfZ
+	 VMH1H6DXl27gMFQA8SBkeEIxzYs2m2sYXnHwbZ36TBPhWqrtxcIY9fldsKdUwIQObEeuNGS11G8n
+	 SoN5hpWu3Kc8TZmG8dmeI7pMl1z3GiMMMLUUhDuKvKO9a8w+Ser6ms0TxrdBWjJtI+0cYv2MqHix
+	 QUoJI3Sr/eUHtyn/3YY3k3CHfYC/YQggyJAUAUE8FJhsl59E5wikJIxMT0jvGVHC+kw4YAE8Hq8o
+	 7DXZmkJPwCRV8JeYZ2
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+From: Zhu Ling <1536943441@qq.com>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	chenbaozi@phytium.com.cn,
+	Zhu Ling <1536943441@qq.com>
+Subject: [PATCH v1 3/4] gpio: phytium: switch PCI driver to immutable irq_chip
+Date: Mon,  2 Mar 2026 09:48:11 +0800
+X-OQ-MSGID: <20260302014812.9649-4-1536943441@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260302014812.9649-1-1536943441@qq.com>
+References: <20260302014812.9649-1-1536943441@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260301-pinctrl-dev-err-probe-v1-1-94a0a2cecc6c@mmpsystems.pl>
-X-B4-Tracking: v=1; b=H4sIAGZtpGkC/x2MQQqAMAzAviI9W+gUZPgV8TC3TgsyRyciiH93e
- AwkeaCwChcYmweULylypAqmbcBvLq2MEipDR91APRnMkvypOwa+kFUx67EwEgVL0VbLDVDbrBz
- l/r/T/L4fXTXN1mcAAAA=
-X-Change-ID: 20260301-pinctrl-dev-err-probe-00d80f8202a6
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michal Piekos <michal.piekos@mmpsystems.pl>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772383594; l=1805;
- i=michal.piekos@mmpsystems.pl; s=20260301; h=from:subject:message-id;
- bh=qsbCEDLgAC513AjtmknCrNPOfk9MWTiWgh9/aIl5RD0=;
- b=TSuK0fm8kSJHEw1pjbYWDzdRDqPBTVnfAJcx3mVOLUOnqVpM9P4AbxrUs2p0Ewmy3e+92RWw5
- 0pE20kfOD8jCNYkxG7/RrqW4IAXt2XOg88sfglN8fr2+QUIy/SUoJgb
-X-Developer-Key: i=michal.piekos@mmpsystems.pl; a=ed25519;
- pk=Aixyx03If7ZDamiKKN0lsa+0mtA+WjIuIf2ZQVYNBqg=
-X-Authenticated-Id: michal.piekos@mmpsystems.pl
+Content-Transfer-Encoding: 8bit
 
-When applying a pinctrl state, -EPROBE_DEFER may be returned if
-dependencies are not ready and the consumer will retry probing.
+Use a static immutable irq_chip and gpio_irq_chip_set_chip() in the
+PCI frontend and align interrupt init/restore flow with the core and
+platform driver paths.
 
-This is normal probe ordering behaviour and not a real error.
-However, pinctrl core currently logs:
-
-  "Error applying setting, reverse things back"
-
-even when the return value is -EPROBE_DEFER, resulting in noisy
-boot-time error messages.
-
-Replace dev_err() with dev_err_probe() to handle -EPROBE_DEFER
-consistently and suppress error logging for deferred probes.
-
-No functional change intended.
-
-Signed-off-by: Michal Piekos <michal.piekos@mmpsystems.pl>
+Signed-off-by: Zhu Ling <1536943441@qq.com>
 ---
-This series contains a single patch to suppress spurious
-boot-time error messages when applying pinctrl states during
-normal probe deferral.
+ drivers/gpio/gpio-phytium-pci.c | 43 ++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
 
-Currently, pinctrl core logs an error even when
--EPROBE_DEFER is returned, which is expected probe-ordering
-behaviour.
-
-Switch to dev_err_probe() so deferred probes do not emit
-misleading error logs.
-
-No functional change intended.
----
- drivers/pinctrl/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index b5e97689589f..2edc9bdad183 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1350,7 +1350,8 @@ static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
- 	goto restore_old_state;
+diff --git a/drivers/gpio/gpio-phytium-pci.c b/drivers/gpio/gpio-phytium-pci.c
+index a760ad793..73f90c495 100644
+--- a/drivers/gpio/gpio-phytium-pci.c
++++ b/drivers/gpio/gpio-phytium-pci.c
+@@ -13,6 +13,20 @@
  
- unapply_new_state:
--	dev_err(p->dev, "Error applying setting, reverse things back\n");
-+	dev_err_probe(p->dev, ret,
-+		      "Error applying setting, reverse things back\n");
+ #include "gpio-phytium-core.h"
  
- 	/*
- 	 * All we can do here is pinmux_disable_setting.
-
----
-base-commit: eb71ab2bf72260054677e348498ba995a057c463
-change-id: 20260301-pinctrl-dev-err-probe-00d80f8202a6
-
-Best regards,
++static const struct irq_chip phytium_gpio_irq_chip = {
++	.irq_ack		= phytium_gpio_irq_ack,
++	.irq_mask		= phytium_gpio_irq_mask,
++	.irq_unmask		= phytium_gpio_irq_unmask,
++	.irq_set_type		= phytium_gpio_irq_set_type,
++	.irq_print_chip		= phytium_gpio_irq_print_chip,
++	.irq_enable		= phytium_gpio_irq_enable,
++	.irq_disable		= phytium_gpio_irq_disable,
++	.irq_set_wake		= phytium_gpio_irq_set_wake,
++	.irq_set_affinity       = phytium_gpio_irq_set_affinity,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static int phytium_gpio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -50,23 +64,18 @@ static int phytium_gpio_pci_probe(struct pci_dev *pdev, const struct pci_device_
+ 	pci_set_master(pdev);
+ 
+ 	gpio->irq[0] = pdev->irq;
+-	if (gpio->irq < 0)
++	if (gpio->irq[0] < 0)
+ 		dev_warn(dev, "no irq is found.\n");
+ 
+ 	/* There is only one group of Pins at the moment. */
+ 	gpio->ngpio[0] = NGPIO_MAX;
+ 
+ 	/* irq_chip support */
+-	gpio->irq_chip.name = dev_name(dev);
+-	gpio->irq_chip.irq_ack = phytium_gpio_irq_ack;
+-	gpio->irq_chip.irq_mask = phytium_gpio_irq_mask;
+-	gpio->irq_chip.irq_unmask = phytium_gpio_irq_unmask;
+-	gpio->irq_chip.irq_set_type = phytium_gpio_irq_set_type;
+-	gpio->irq_chip.irq_enable = phytium_gpio_irq_enable;
+-	gpio->irq_chip.irq_disable = phytium_gpio_irq_disable;
+-
+ 	raw_spin_lock_init(&gpio->lock);
+ 
++	writel(0, gpio->regs + GPIO_INTEN);
++	writel(GPIO_CLEAR_IRQ, gpio->regs + GPIO_PORTA_EOI);
++
+ 	gpio->gc.base = -1;
+ 	gpio->gc.get_direction = phytium_gpio_get_direction;
+ 	gpio->gc.direction_input = phytium_gpio_direction_input;
+@@ -90,14 +99,14 @@ static int phytium_gpio_pci_probe(struct pci_dev *pdev, const struct pci_device_
+ 	girq->parents[0] = gpio->irq[0];
+ 	girq->parent_handler = phytium_gpio_irq_handler;
+ 
+-	girq->chip = &gpio->irq_chip;
++	gpio_irq_chip_set_chip(girq, &phytium_gpio_irq_chip);
+ 
+ 	err = devm_gpiochip_add_data(dev, &gpio->gc, gpio);
+ 	if (err)
+ 		goto out;
+ 
+ 	dev_info(dev, "Phytium PCI GPIO controller @%pa registered\n",
+-		&gpio->regs);
++		 &pdev->resource[0].start);
+ 
+ 	pci_set_drvdata(pdev, gpio);
+ 
+@@ -128,11 +137,14 @@ static int phytium_gpio_pci_suspend(struct device *dev)
+ 	gpio->ctx.ext_portb = readl(gpio->regs + GPIO_EXT_PORTB);
+ 
+ 	gpio->ctx.inten = readl(gpio->regs + GPIO_INTEN);
++	gpio->is_resuming = 1;
+ 	gpio->ctx.intmask = readl(gpio->regs + GPIO_INTMASK);
+ 	gpio->ctx.inttype_level = readl(gpio->regs + GPIO_INTTYPE_LEVEL);
+ 	gpio->ctx.int_polarity = readl(gpio->regs + GPIO_INT_POLARITY);
+ 	gpio->ctx.debounce = readl(gpio->regs + GPIO_DEBOUNCE);
+ 
++	writel(~gpio->ctx.wake_en, gpio->regs + GPIO_INTMASK);
++	writel(gpio->ctx.wake_en, gpio->regs + GPIO_INTEN);
+ 	raw_spin_unlock_irqrestore(&gpio->lock, flags);
+ 
+ 	return 0;
+@@ -153,13 +165,15 @@ static int phytium_gpio_pci_resume(struct device *dev)
+ 	writel(gpio->ctx.swportb_ddr, gpio->regs + GPIO_SWPORTB_DDR);
+ 	writel(gpio->ctx.ext_portb, gpio->regs + GPIO_EXT_PORTB);
+ 
+-	writel(gpio->ctx.inten, gpio->regs + GPIO_INTEN);
+ 	writel(gpio->ctx.intmask, gpio->regs + GPIO_INTMASK);
+ 	writel(gpio->ctx.inttype_level, gpio->regs + GPIO_INTTYPE_LEVEL);
+ 	writel(gpio->ctx.int_polarity, gpio->regs + GPIO_INT_POLARITY);
+ 	writel(gpio->ctx.debounce, gpio->regs + GPIO_DEBOUNCE);
+ 
+-	writel(0xffffffff, gpio->regs + GPIO_PORTA_EOI);
++	writel(GPIO_CLEAR_IRQ, gpio->regs + GPIO_PORTA_EOI);
++
++	writel(gpio->ctx.inten, gpio->regs + GPIO_INTEN);
++	gpio->is_resuming = 0;
+ 
+ 	raw_spin_unlock_irqrestore(&gpio->lock, flags);
+ 
+@@ -182,6 +196,7 @@ static struct pci_driver phytium_gpio_pci_driver = {
+ 
+ module_pci_driver(phytium_gpio_pci_driver);
+ 
+-MODULE_LICENSE("GPL v2");
++MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Cheng Quan <chengquan@phytium.com.cn>");
+ MODULE_DESCRIPTION("Phytium GPIO PCI Driver");
++MODULE_VERSION(PHYTIUM_GPIO_DRIVER_VERSION);
 -- 
-Michal Piekos <michal.piekos@mmpsystems.pl>
+2.34.1
 
