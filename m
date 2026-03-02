@@ -1,78 +1,76 @@
-Received: from tika.stderr.nl (tika.stderr.nl [94.142.244.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D85147DFB8;
-	Mon,  2 Mar 2026 20:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.142.244.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0CD282F16;
+	Mon,  2 Mar 2026 22:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483108; cv=none; b=uKI1EpuHwfneFq3Pj0XBKizTZ9mjuq2jYa85XuDVd41M/Ui7Xax+LykuVggHZCCcBClHX3qYgcKZ8ZoiYNXNW1JPTTM4iNuevddXogc/CVytbrq7ppv9j4eowhfBORsvH4nM68RoN1AcK9O9sBIy/65DLjyLTOLBoOGxUGbEZKQ=
+	t=1772489328; cv=none; b=DSMx9iby6xIljZ2tuYXuxWdff4v7V4Fmu3cMwoda6dEpTWhlbzg2eiB1WRgqnbV2BEeSymh+SDqpyuiRdzcyA316zpLBIeo+WQMA5AQOALQc27D0lHUpzwT849BW6zX37LyMCGxwYNInJ3N8wq4Bw0Ibjy27zb9u5O6o6W/n3x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483108; c=relaxed/simple;
-	bh=Odw8qkydcdNF0JVOnHyMy9rrHQVoIN8FWe5q008qLtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ifhpx4IArKrXBFd/+LNUEWCN4+Al1h1B2A5+IQRUkiRrxnN2+c3KPrlLBeZOB5omvmeCpi0Vf87d78VG4xOb5C3n/phP2Z4sJ0SPqZ/fxLnWL+6nHjgSuBdD+Zfq3TgkduBPiOzrayksf6Ap9R3XROPdBFinYiRNQPN2KC8dego=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl; spf=none smtp.mailfrom=tika.stderr.nl; dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b=Zr+rutCe; arc=none smtp.client-ip=94.142.244.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=tika.stderr.nl
+	s=arc-20240116; t=1772489328; c=relaxed/simple;
+	bh=MWeiRHOZVMp8f8oX8Z0AIictRy9pyjV/mPA9ZtkT2AQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6P+vs0Mt/bOROIyFcs5kU49pniJjytvW4ctsrf1/zZ7wFsnzPh/QRWi7V27HbQ+e/W8wUvX98aKqZiecLr/lH3cAnS8PiW1WzYkTxj/FSes0ziJyFyEx6FYCMy0SjPh+KAH3+C19QRg3D+Nvy0RWXdsC7JOr1O975D+G5SA6sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTfh1LSL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b="Zr+rutCe"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.tikatika.nl; s=201709.tika; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Odw8qkydcdNF0JVOnHyMy9rrHQVoIN8FWe5q008qLtI=; b=Zr+rutCeoUTf+JGh7kHhJpB6Hm
-	4NETxmCx1BbMqh59mLNTXmTgKkApSlVGMvz0WsS+LjGwAJEUtBPXM8CFmPxSGml64My1puOXuuuPw
-	MVexNMJhAUyGZiDgQ1a2FEJfDUKrOP1vpE4bCfWmHUHq4KTv1lMqpfjeiqNDQwpWlknU=;
-X-Preliminary-Spam-Score: -4.2 (----)
-Received: from [45.142.19.84] (helo=zozo)
-	by tika.stderr.nl with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <matthijs@tika.stderr.nl>)
-	id 1vx9ls-00HGgr-16;
-	Mon, 02 Mar 2026 21:21:42 +0100
-Received: (nullmailer pid 198545 invoked by uid 1000);
-	Mon, 02 Mar 2026 20:21:39 -0000
-From: Matthijs Kooijman <matthijs@stdin.nl>
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: matthijs@stdin.nl, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [PATCH RESEND] rockchip: Make gpiod pin control work and add gpio-ranges
-Date: Mon,  2 Mar 2026 21:17:12 +0100
-Message-ID: <20260302202121.197288-1-matthijs@stdin.nl>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTfh1LSL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94699C19423;
+	Mon,  2 Mar 2026 22:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772489328;
+	bh=MWeiRHOZVMp8f8oX8Z0AIictRy9pyjV/mPA9ZtkT2AQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mTfh1LSL3ln5ZRLjHnCQOQE2MGQjVfSGFu6Y+lcOa36J6O6p0e52/K4tId/GbXuGP
+	 0eR8ggeMIFIuDSwHINvXBV+wUPHYOgb89fRnVXxuqRW1JoSvaWudstKXG91Lk8s3uZ
+	 62S6r0Z2TsBMPaMaRTI4Gv1iuZIKe2mocQ1pNcpQ3ZdrsGvbGYyeV9E1kF/0+WjhLM
+	 fyQ8cyRlkW4hybha8goZCuWpTZrJpThuP5W0YUESgQ5SGFcoN518y28h24wmvxUI0e
+	 umK6cv52O5R7AKdTUVJdQUrY+k+tQJwRPOfnaibb3dyMOM8FK9N0/E+4Lo79DMLyzm
+	 N2Ec5s2Zdl4jg==
+Date: Mon, 2 Mar 2026 22:08:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Felix Gu <ustc.gu@gmail.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linusw@kernel.org>, linux-riscv@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: microchip-mssio: Fix missing return in probe
+Message-ID: <20260302-mayflower-filing-e111fbcc7d30@spud>
+References: <20260303-mssio-v1-1-ea0fdf3bf202@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b9dU3SrgV6WWXKXq"
+Content-Disposition: inline
+In-Reply-To: <20260303-mssio-v1-1-ea0fdf3bf202@gmail.com>
 
-Hi folks,
 
-This is a resend of a two patches I submitted last december. Lacking any
-replies, I'm resending it (and also explicitly sending it to the GPIO
-subsystem maintainers Linus and Bartosz this time - I'm still a bit
-unsure whom to address exactly).
+--b9dU3SrgV6WWXKXq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The first patch fixes pin config (e.g. bias) done by userspace via the
-gpiod interface, which was not implemented for all rockchip boards.
+On Tue, Mar 03, 2026 at 02:13:17AM +0800, Felix Gu wrote:
+> In mpfs_pinctrl_probe(), when pctrl->regmap fails, it just print out an
+> error message without return, which could lead serious errors.
+>=20
+> Fixes: 488d704ed7b7 ("pinctrl: add polarfire soc mssio pinctrl driver")
+> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
 
-The second patch is just because I was messing with this code already
-and had a test setup ready. It makes gpio-ranges explicit for the rk3308
-instead of relying on the (possibly fragile) legacy workaround in
-gpio-rockchip to add them automatically. I tested this be removing the
-legacy workaround from the code during my testing.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-I think the first patch might be a good candidate to backport to the
-stable releases, since it makes a userspace interface functional that
-currently silently fails. However, it is not a clear bugfix and I am not
-super familiar with the rules for -stable, so I left out any stable Cc
-tags. Feel free to add them if this seems appropriate.
+--b9dU3SrgV6WWXKXq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Both patches were tested on a rock pi s with a rk3308.
+-----BEGIN PGP SIGNATURE-----
 
-Gr.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaaYKbAAKCRB4tDGHoIJi
+0uf8AQCDlTaYPVh8zUpVkl/UC7RIvNq8xGN1yjVKohZC8GIqZAD/cKb+4dvv6/0O
+8KAgzRWqTAcSvrgFQNI9NTsj6p+h7gM=
+=75b+
+-----END PGP SIGNATURE-----
 
-Matthijs
-
+--b9dU3SrgV6WWXKXq--
