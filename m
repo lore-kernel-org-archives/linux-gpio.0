@@ -1,47 +1,46 @@
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F0F219EB;
-	Mon,  2 Mar 2026 01:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC6F1EEA3C;
+	Mon,  2 Mar 2026 01:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772416106; cv=none; b=dxwCGlsSRzt1+MgrbP5lyC97RzC+wN3xcncHroh7rfRAslZCqNeS9gPMz1OVaELgNk0eEcZy9JSMRP3XB3pBdXquYYJdYkG6spcj+JEnHkGKa6zR7OSi58Pkemj/ONdlX2lCACSKM/GTIoez/K22vg/2yqZu0vDK7l+Lgo9QurU=
+	t=1772416106; cv=none; b=pl/Kaak08RfbHTHuJRoXL/Xhxv3c35p8ywM1xZ4rHEwBPmkHIYqDMuk6WuoH2LOi+Wy5AeIU0PcGM/D4HMwJ/XfZw7r/ZkmfdgdocTajjQpjv/fSThRr+VCJHcPjENGvi8L/Al23RcdalHvhDR5WoLXhMS9ffx6WxlLiMW9oZDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772416106; c=relaxed/simple;
-	bh=SziAkpSHWbeImyFl0/CBZIksakQBxY9UYw+jp3aYujc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=PRxQPMOae3w/kYqCw1UvSX25thinsvOB/49rEJ+sKOYwYbwqawTuzpvtSymsjjKjJutit/hW0KAnI+bp1dosGrujTC/2JGiUkJdW+Kl9lOSMDFgo57CKxDzyxkwlh6b5Br5q/IMRzcEDCldzvxni/LiT7vHPqZF/FLZn5NelLv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DzS5rec2; arc=none smtp.client-ip=162.62.57.210
+	bh=QZhF+qgQ4Pl3QoZ34rhwgRDMWPaVbM4WW2N6h02fTN0=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=YhoesYf8fLABQEsWVUJOYeWy6x4JAbT/gRKXLLbEqkHxja/VOSKI9B8tcbyywlEVWQQiBV2V12bOLZ8g28TbTMTr6Y2rdzvX44GKRuXQHdv/cGnTFksZ14h8hyc/ZQ2EpDE4AZQMFnA5TK76Pfmkw/CBSaYOMbRdJhWU+2qajKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OAuBQPZT; arc=none smtp.client-ip=203.205.221.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DzS5rec2"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OAuBQPZT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1772416099; bh=KaS9w6Dn8fE+paenJpbtlBUta8kyhmLeaPAvI2MbR60=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DzS5rec2J5PtTaS/tdRyVWU5v8deOFFjq7r6dMt71R+f8ZI4RMOzhYzPqEGtnCYd+
-	 551dsJ8PVbghlgmd07H/1pKnpVigX12eFqZA2IHYxCSZ/ekBGC4dHv4rGNeRxhXvzL
-	 WWKxqPkh98fXyW9epR20W5Ft6ARbw7xk7Hj0LquA=
+	t=1772416095; bh=0F/TALQeGdQvO7Ni2Nm1Db1m0TwKWhjswTikRaNXVwM=;
+	h=From:To:Cc:Subject:Date;
+	b=OAuBQPZTYrMGvVnXyp+DK4wDB1eSkWcMg7zFfTlG1On7Lt6UeKTMDtnR04IQ6i++P
+	 XwfHf7YbllXiMB63zJBxBHz7ZHuzkQoYi+v4QoHi777SN4NWNe6veipoPOXv/NGS2D
+	 ZncdackyQEQA920kJEAmpVJAuiGhAkmzounJnMQA=
 Received: from WIN-B62RPRBL2BM.localdomain ([218.76.62.144])
 	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
 	id C0CB9282; Mon, 02 Mar 2026 09:48:12 +0800
-X-QQ-mid: xmsmtpt1772416097tw9h9uv8f
-Message-ID: <tencent_F52148BE69542DF964B847D64D3DCF19AC0A@qq.com>
-X-QQ-XMAILINFO: MUg1CRXVDcdjdLl5Q35RWfRnXr2WctloZqbEWvdtn82dP904jjqASu48lOJgiO
-	 eZceZNztl84CCReBCccq0U/ggl9dgqYT7GnRUMjsi82Pys+Whf9nQd7Y/M8RyhaDxyyJMpP3NenH
-	 orwHZ1rFY4nR2q8trgWEEcjeq+bTi6M2FPBd/rsBex8aXPg+xNkhtw+yoMdjfBBINdZQHRkq/Edm
-	 osBsx79IVENlmmZz5EZ0Sj0x1HLC4lYvK7CTWLbJEiZgNpWnN28b563nyZggRlMaDwhQWFzY805g
-	 E2/lwIx3pgENvP1ShAPF++bqp/Zjhno5uJ/Bf0B3OhnbIWP00liu5ahbt0oj1isJJiaGZZKYcERR
-	 Ce2kDi2vnymUDDWnym5kBoBFIWvsoCUYMqYQgY6OSMac0NfUIM/LPRsn5KNzSglcmCtnYtXwlZBq
-	 oO3m/CDgsp/irpypsWieomIVrahzOlRMCF2TUOY1uYF5CYmzEWl22Gqpg2VRyUr/iqCTdBHOvkgH
-	 ODTJW0UXCx+zqACjwj1hfk7BLAg38TGHYwacuUbGDxbcKGLd3JMi17hK/tpjLIT3LoF3FIqWeosP
-	 SN4EMXEFVq0blXLrjmOJxoMUFEXWNpHbTFu7fKnraD32BnOytXkch5UnxabeOzxBP2NuMTx6Nrg8
-	 7sr1B/cusvWXtVA5GSumgv5wa38kD5HZbmkgQ9iZKPUCjmG+HeCt1ZnP8ex3g+PtUSE+s6qQiLJE
-	 yaGhTEaL5kv2ZdYweXtHf2U5GfpZgjBkgOTOx3J0Qa2xIKUO3tTfnrSeZr7d3cs/rVU/d9JW1Tfy
-	 uTzL+/5iRuJGX0H1NIPkGYOgGLFgSqG8RgTM5sl8FMipremCBK6GkiufU0pJthBrb41xy0gV4osE
-	 /Q/JPwGutCg1Y1uTjZNBCG+jTz5cx40ws7BDo1G+WCR9sJCQToONTosPwOXD6Mksk9a1E4yzn7+H
-	 E/tP70Ue+og1euIipkvL/W5B4XbO7JK0i7QN8GpLp0vjuNL8k+EMmeL51I/HfHehcwkCqjArNhMA
-	 EoLNs0npy6eDtQO9f5wSifHswnK9D+R8Y3qooRyQU4sN8yna+f
+X-QQ-mid: xmsmtpt1772416092t210ubnfp
+Message-ID: <tencent_3649448DE1A5A80CABC8A0A9C23982B51107@qq.com>
+X-QQ-XMAILINFO: OKOirRU4nj6h1dRInmKP8hogqARKPUn8QIggM+Mp21ZByprKvIMHleXZEyvAAs
+	 3XSqeYcJy1abw6WnPXI1qFA6jpgWi4+Hf/8ZdP0F69mkDsKzEHhoVpc/nOZbGDxPUI/Jy05TOSDL
+	 1TWrVDouwHWbkUlMKfCU/x+FjrRhwn76vzL/LJZkK9lWPOMO4EplJON8XDpwJEyS17Ay64GVPSb1
+	 K/V3OMjE8+KDy216cyCIuOvGrM8iZuiswYjyXN0/2O9CmtCdu/IsuQ7ngaN59lDtlHFn4KlxIEn+
+	 dBH2f1suxB3zuJf94bmPwSrKvFPszo8F62RCM83XN37EO2kFJIbnEHjPbKP36C1mmO32EwhXbTXq
+	 /9iRIMTUmweDnj2sgPE53T93AX65oPCLFiuwrBCIwZA8rsRqls6HsiPuDMDcVlMUOO2ajMSgghXt
+	 DFLfR9Bsv7o3Polko9qprXUBWxN7V2m06VMqLDEW8yNLWcsdwQ7ZKYvyGy8fGQXrykvUSfZYzrIF
+	 lI77lya06Xfrvzi7CbgxMjqPc4H5g22vIxgi7DJeFqvFMgQ16cAYrCCRnTEQINAtv7zRarRflCM/
+	 iBincgS8dwSuIEWbKLonE39BAMf3q6VpA/6GZ0YD0WBpXeoOOjihtiwSE0NfYdAs+0RIclJf8GXV
+	 g53FcW8O52ZQXbws0+ZYDUfj4pE2VX7LU3QLAv0aJ4e0GtEgyRkti3yizc7LJtiKQ2qou4VgdmX5
+	 5TGA3/N7bWQtr7fvy0I9e02OeKf5QqoquvUAHft+lzgro/OLUTdkQMncQ1s1d6DDZKeohvRAD6Xi
+	 Cf07CZQt+bsq1Cc90hOYD0QmrI6DutKL/hRfic+bBOLz1+IkmCo2yHZ7pL1bzDSg29BumNArsPei
+	 oKaDA/+Gqaml6NzZniaPxw6y0HbX1yVCUkbnT2Qd3Vz3YPBfKczhPysdos+qwBytCPwyXqbQ9bs/
+	 k91KruioDQbzS7Q76bzvopEGch3Y2XbW5f794Mk29aV5uP4FWXKfY265Yf0SrDIcAElg3yIkHwVK
+	 ZQGK71iuUiVU7E4iTd
 X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 From: Zhu Ling <1536943441@qq.com>
 To: linux-gpio@vger.kernel.org,
@@ -50,12 +49,10 @@ Cc: linus.walleij@linaro.org,
 	brgl@bgdev.pl,
 	chenbaozi@phytium.com.cn,
 	Zhu Ling <1536943441@qq.com>
-Subject: [PATCH v1 4/4] gpio: phytium: add ACPI support for SGPIO
-Date: Mon,  2 Mar 2026 09:48:12 +0800
-X-OQ-MSGID: <20260302014812.9649-5-1536943441@qq.com>
+Subject: [PATCH v1 0/4] gpio: phytium: improve IRQ integration and add SGPIO ACPI support
+Date: Mon,  2 Mar 2026 09:48:08 +0800
+X-OQ-MSGID: <20260302014812.9649-1-1536943441@qq.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260302014812.9649-1-1536943441@qq.com>
-References: <20260302014812.9649-1-1536943441@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,120 +61,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add ACPI match support for the Phytium SGPIO controller and allow
-fetching the APB clock frequency from firmware properties when running
-under ACPI.
+This series updates Phytium GPIO drivers with irq_chip integration and
+power-management flow cleanup across common, platform, and PCI paths, and
+adds ACPI support for the SGPIO frontend.
 
-Keep the device-tree clock path intact for non-ACPI systems.
+The first three patches switch to immutable irq_chip usage and tighten IRQ
+routing/wake handling. The last patch adds SGPIO ACPI matching and ACPI clock
+property handling while keeping DT clock handling unchanged.
 
-Signed-off-by: Zhu Ling <1536943441@qq.com>
----
- drivers/gpio/gpio-phytium-sgpio.c | 44 +++++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 11 deletions(-)
+checkpatch --strict:
+  0 errors, 0 warnings
 
-diff --git a/drivers/gpio/gpio-phytium-sgpio.c b/drivers/gpio/gpio-phytium-sgpio.c
-index 397244bbf..b52531f3c 100644
---- a/drivers/gpio/gpio-phytium-sgpio.c
-+++ b/drivers/gpio/gpio-phytium-sgpio.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/string.h>
-+#include <linux/acpi.h>
- 
- #define SGPIO_CTL0_REG			0x00
- #define  SGPIO_CTL0_REG_ENABLE		BIT(0)
-@@ -42,17 +43,21 @@
- #define SGPIO_RDATA_REG(x)		(SGPIO_RDATA0_REG + (x) * 4)
- 
- #define DEFAULT_L3_L0 0
-+#define DEFAULT_CLK 50000000
- 
- #define GPIO_GROUP(x)	((x) >> 6)
- #define GPIO_OFFSET(x)	((x) & GENMASK(5, 0))
- #define GPIO_BIT(x)	BIT(GPIO_OFFSET(x) >> 1)
- 
-+#define GPIO_SGPIO_DRIVER_VERSION "1.1.0"
-+
- struct phytium_sgpio {
- 	struct gpio_chip gc;
- 	void __iomem *regs;
- 	unsigned int ngpios;
- 	struct clk *pclk;
- 
-+	/* Serialize value access with IRQ completion flow. */
- 	struct mutex lock;
- 	struct completion completion;
- };
-@@ -154,7 +159,7 @@ static int phytium_sgpio_get(struct gpio_chip *gc, unsigned int offset)
- 	rc = !!(val & GPIO_BIT(offset));
- 
- err:
--	/* Disalbe Rx to hold the value */
-+	/* Disable Rx to hold the value */
- 	writel(ctl0 | SGPIO_CTL0_REG_RX_DISABLE, gpio->regs + SGPIO_CTL0_REG);
- 	mutex_unlock(&gpio->lock);
- 
-@@ -229,17 +234,26 @@ static int phytium_sgpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	gpio->pclk = devm_clk_get(dev, NULL);
--	if (IS_ERR(gpio->pclk)) {
--		dev_err(dev, "Could not get the APB clock property\n");
--		return PTR_ERR(gpio->pclk);
--	}
--	rc = clk_prepare_enable(gpio->pclk);
--	if (rc) {
--		dev_err(dev, "failed to enable pclk: %d\n", rc);
--		return rc;
-+	if (has_acpi_companion(dev)) {
-+		device_property_read_u32(dev, "pclk_freq", &pclk_freq);
-+		if (!pclk_freq || pclk_freq != 50000000) {
-+			dev_err(dev, "Could not get APB clock property from acpi, use default clk!\n");
-+			pclk_freq = DEFAULT_CLK;
-+		}
-+
-+	} else {
-+		gpio->pclk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(gpio->pclk)) {
-+			dev_err(dev, "Could not get the APB clock property\n");
-+			return PTR_ERR(gpio->pclk);
-+		}
-+		rc = clk_prepare_enable(gpio->pclk);
-+		if (rc) {
-+			dev_err(dev, "failed to enable pclk: %d\n", rc);
-+			return rc;
-+		}
-+		pclk_freq = clk_get_rate(gpio->pclk);
- 	}
--	pclk_freq = clk_get_rate(gpio->pclk);
- 
- 	/*
- 	 * From the datasheet:
-@@ -287,10 +301,17 @@ static const struct of_device_id phytium_sgpio_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, phytium_sgpio_of_match);
- 
-+static const struct acpi_device_id phytium_sgpio_acpi_match[] = {
-+	{ "PHYT0031", 0},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, phytium_sgpio_acpi_match);
-+
- static struct platform_driver phytium_sgpio_driver = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.of_match_table = of_match_ptr(phytium_sgpio_of_match),
-+		.acpi_match_table = ACPI_PTR(phytium_sgpio_acpi_match),
- 	},
- 	.probe = phytium_sgpio_probe,
- };
-@@ -299,3 +320,4 @@ module_platform_driver(phytium_sgpio_driver);
- MODULE_AUTHOR("Chen Baozi <chenbaozi@phytium.com.cn>");
- MODULE_DESCRIPTION("Phytium SGPIO driver");
- MODULE_LICENSE("GPL");
-+MODULE_VERSION(GPIO_SGPIO_DRIVER_VERSION);
+Zhu Ling (4):
+  gpio: phytium: improve core IRQ and wake handling
+  gpio: phytium: switch platform driver to immutable irq_chip
+  gpio: phytium: switch PCI driver to immutable irq_chip
+  gpio: phytium: add ACPI support for SGPIO
+
+ drivers/gpio/gpio-phytium-core.c     | 114 ++++++++++++++++++++++-----
+ drivers/gpio/gpio-phytium-core.h     |   8 +-
+ drivers/gpio/gpio-phytium-pci.c      |  43 ++++++----
+ drivers/gpio/gpio-phytium-platform.c |  55 ++++++++-----
+ drivers/gpio/gpio-phytium-sgpio.c    |  44 ++++++++---
+ 5 files changed, 199 insertions(+), 65 deletions(-)
+
 -- 
 2.34.1
 
