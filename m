@@ -1,132 +1,162 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B76F25F994
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Mar 2026 01:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678F118EB0
+	for <linux-gpio@vger.kernel.org>; Tue,  3 Mar 2026 05:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772502278; cv=none; b=cLCyz12qzlhw0B0Mfz4Y4EzHl6kHFDwSuo5R0wHAL6waX57Tz2BIVk21YdC2zT1hO8ARHnTdvzYHzgtpz2kNKgrBz9jeQDlBHTkjJ5Y6zZRqVFC2HBMtU1hGKhR433lfAumEq5RnkKoSmUuLIXJwrBhy51ucAVG/tJ72ZRwPrBE=
+	t=1772515099; cv=none; b=mOGzm35gOxO70fVbaZ6UZJhjOxxkfId+SqEo4U+cnHwgDsPoeImOBfRjGy3AYDbrwjMlAB5cQUcEtmvE4nZ0PKBlrGcC3Fzb5HtfWU1jLcQt4WzimZVDZK89httR0Pmxljc2uYqzHX3BeSXB+ZqfTVk8FqMtC+0UwMIJsY4QbCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772502278; c=relaxed/simple;
-	bh=0xzDdtivaCG7q89sL+7LJjhdwcX9viAV9ymPZ9vIWGU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Dd9ReBujIhog/MUvNDn8apEmriSkvGp2tPLoGo/tNyI69o6cIAHj7rQD7ZozFHb8DzgGw8QLk8N94ctCmCp/BwtLBlG+9tZsu9bE6r8HTCnnTKjYLuBvFeAmc3MN4ClHQHrsy5V8uPYc6KgbxD7WeWJq4ah47eXe6u95Zkhq/yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfbHi1Yr; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1772515099; c=relaxed/simple;
+	bh=6IhGO9NuDFgVigx9/UqAOGVhRR3YeAtsrKcYCrRl7Ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NBBr/EyKBvWEfG8ni4Glqdy2GAnDOxMa3HC170LQWX38zvAW5Ap2d9Wn6KFGqFEfDge9MKOd7eHCIiqYnd5csBx2oZ19MCAKr45e+c3WANnYNApRpFJSF/dBK82WuVDfceMa/G/lrfgyVWPt2nrPJH9GWuddDrV8/zNb0twQ1nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Cl4Vuwna; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfbHi1Yr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772502276; x=1804038276;
-  h=date:from:to:cc:subject:message-id;
-  bh=0xzDdtivaCG7q89sL+7LJjhdwcX9viAV9ymPZ9vIWGU=;
-  b=nfbHi1YrjCeD9yMRquSLr3GGXnn7HLKT//lyelus1AEFlrFu6QzEewaO
-   hgNb8AEzJ/nBOFnkJrWVYKLLHCNjeZ2GODbUq3Sc0A6taS3bJpAveINNd
-   xrMmy/mDLAc0YcxtwIdDZyvydrNFRTilUBksyaRTuN8F8KiTlOZzRMbBm
-   fMZzh3PmynmHRExijc4iCII94bzLS09c7bblZAsaEU/m3Yh/w2374+P7q
-   0Xr1dG4OC6q0EqAfwSQenq1oDlhHwgZFZpEyEIx6AordAkmtUadP2rxRH
-   yMIa/WiG3UnG62mqtiqqjBY2zLz3cvOthksc9tLLTtSYJKDpN/zXqZhlJ
-   A==;
-X-CSE-ConnectionGUID: h1FWcSZmRKq/E21n1P+jhw==
-X-CSE-MsgGUID: L773A9+sS1yXTV4mOOSKFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11717"; a="73567726"
-X-IronPort-AV: E=Sophos;i="6.21,321,1763452800"; 
-   d="scan'208";a="73567726"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2026 17:44:35 -0800
-X-CSE-ConnectionGUID: mlK7INUMR1e3RlfDi6JiDw==
-X-CSE-MsgGUID: oYCCFbTzTnGzTtizfpfWNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,321,1763452800"; 
-   d="scan'208";a="222822708"
-Received: from lkp-server01.sh.intel.com (HELO f27a57aa7a36) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 02 Mar 2026 17:44:34 -0800
-Received: from kbuild by f27a57aa7a36 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vxEoJ-000000001cL-0tZE;
-	Tue, 03 Mar 2026 01:44:31 +0000
-Date: Tue, 03 Mar 2026 09:44:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- f08061d267d2061f64d514c1ecbe441a063a6fad
-Message-ID: <202603030909.VbGjDp08-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Cl4Vuwna"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1772515095;
+ bh=OP9ybk+orz8SA4kEyEh+9E7911j3DQb5yf+d6l5ndHI=;
+ b=Cl4VuwnarFmSKcQ6PZmgioBaBQUIBxjDD2ttDWCrnrK4kFPHnNYKzHhna33kV7IWzBJSh21UQ
+ hSU2TqCCZ25QH7PaVtvcPtNPhxyRUE/fZS2B4clic+Bd818txXssbwfsALyrpylQQ+y2sH8ykeX
+ 4q7xbBOPhDIhdRnIbuGc3XJ6x1HyLSqcBeV6UU3iMUwAIX/uV3scFtXZdckftW4hdN2x1C+47Mo
+ kPV9Z/MDVMIiK6neCpPJG8oeL2VMLumCXP2ysbLF9CoGh1ORvh3LLfoL+8Ev0R1r/xGdIBJ1q/D
+ 3wy8C0gJWtIXH8B4h8sIMuburWg6XCr2/GDPQglSUbtA==
+X-Forward-Email-ID: 69a607a900eccc184c5c9cd8
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 2.6.37
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
+Date: Mon, 2 Mar 2026 22:56:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges
+ properties
+To: Matthijs Kooijman <matthijs@stdin.nl>
+Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
+References: <20260302202121.197288-1-matthijs@stdin.nl>
+ <20260302202121.197288-3-matthijs@stdin.nl>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20260302202121.197288-3-matthijs@stdin.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: f08061d267d2061f64d514c1ecbe441a063a6fad  pinctrl: pinctrl-pic32: Use devres version of gpiochip_add_data()
+Hi Matthijs,
 
-elapsed time: 918m
+On 3/2/2026 9:17 PM, Matthijs Kooijman wrote:
+> This makes the mapping between gpio and pinctrl explicit.
+> 
+> This does not immediately change functionality, because the
+> gpio-rockchip.c driver has a workaround that defines ranges when they
+> are not present in DT, but that relies on global gpio numbering (so
+> AFAICS only works when the rockchip gpio banks are initialized first and
+> in-order).
 
-configs tested: 55
-configs skipped: 0
+This is strictly not correct, the driver use the gpioX alias id as
+defined in the device tree and does not depend on the initialization
+order.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+This file explicitly define the aliases matching the hardware:
 
-tested configs:
-alpha         allnoconfig    gcc-15.2.0
-alpha        allyesconfig    gcc-15.2.0
-arc          allmodconfig    gcc-15.2.0
-arc           allnoconfig    gcc-15.2.0
-arc          allyesconfig    gcc-15.2.0
-arm           allnoconfig    clang-23
-arm          allyesconfig    gcc-15.2.0
-arm64        allmodconfig    clang-19
-arm64         allnoconfig    gcc-15.2.0
-csky         allmodconfig    gcc-15.2.0
-csky          allnoconfig    gcc-15.2.0
-hexagon      allmodconfig    clang-17
-hexagon       allnoconfig    clang-23
-i386         allmodconfig    gcc-14
-i386          allnoconfig    gcc-14
-i386         allyesconfig    gcc-14
-loongarch    allmodconfig    clang-19
-loongarch     allnoconfig    clang-23
-m68k         allmodconfig    gcc-15.2.0
-m68k          allnoconfig    gcc-15.2.0
-m68k         allyesconfig    gcc-15.2.0
-microblaze    allnoconfig    gcc-15.2.0
-microblaze   allyesconfig    gcc-15.2.0
-mips         allmodconfig    gcc-15.2.0
-mips          allnoconfig    gcc-15.2.0
-mips         allyesconfig    gcc-15.2.0
-nios2        allmodconfig    gcc-11.5.0
-nios2         allnoconfig    gcc-11.5.0
-openrisc     allmodconfig    gcc-15.2.0
-openrisc      allnoconfig    gcc-15.2.0
-parisc       allmodconfig    gcc-15.2.0
-parisc        allnoconfig    gcc-15.2.0
-parisc       allyesconfig    gcc-15.2.0
-powerpc      allmodconfig    gcc-15.2.0
-powerpc       allnoconfig    gcc-15.2.0
-riscv        allmodconfig    clang-23
-riscv         allnoconfig    gcc-15.2.0
-riscv        allyesconfig    clang-16
-s390         allmodconfig    clang-18
-s390          allnoconfig    clang-23
-s390         allyesconfig    gcc-15.2.0
-sh           allmodconfig    gcc-15.2.0
-sh            allnoconfig    gcc-15.2.0
-sh           allyesconfig    gcc-15.2.0
-sparc         allnoconfig    gcc-15.2.0
-sparc64      allmodconfig    clang-23
-um           allmodconfig    clang-19
-um            allnoconfig    clang-23
-um           allyesconfig    gcc-14
-x86_64       allmodconfig    clang-20
-x86_64        allnoconfig    clang-20
-x86_64       allyesconfig    clang-20
-x86_64      rhel-9.4-rust    clang-20
-xtensa        allnoconfig    gcc-15.2.0
-xtensa       allyesconfig    gcc-15.2.0
+	aliases {
+		gpio0 = &gpio0;
+		gpio1 = &gpio1;
+		gpio2 = &gpio2;
+		gpio3 = &gpio3;
+		gpio4 = &gpio4;
+		[...]
+	};
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Signed-off-by: Matthijs Kooijman <matthijs@stdin.nl>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> index 31c25de2d689c..681d2429d541d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> @@ -889,6 +889,7 @@ gpio0: gpio@ff220000 {
+>  			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cru PCLK_GPIO0>;
+>  			gpio-controller;
+> +			gpio-ranges = <&pinctrl 0 0 32>;
+
+This matches the driver, but not the hardware according to datasheet, it
+only lists gpio0 A0-C5 used, and not all 32 pins supported by the gpio0
+controller.
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -900,6 +901,7 @@ gpio1: gpio@ff230000 {
+>  			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cru PCLK_GPIO1>;
+>  			gpio-controller;
+> +			gpio-ranges = <&pinctrl 0 32 32>;
+
+Same here, the datasheet only lists gpio1 A0-D1 used, and not all 32
+pins supported by the gpio1 controller.
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -911,6 +913,7 @@ gpio2: gpio@ff240000 {
+>  			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cru PCLK_GPIO2>;
+>  			gpio-controller;
+> +			gpio-ranges = <&pinctrl 0 64 32>;
+
+Same here, the datasheet only lists gpio1 A0-C0 used, and not all 32
+pins supported by the gpio2 controller.
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -922,6 +925,7 @@ gpio3: gpio@ff250000 {
+>  			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cru PCLK_GPIO3>;
+>  			gpio-controller;
+> +			gpio-ranges = <&pinctrl 0 96 32>;
+
+Same here, the datasheet only lists gpio1 A0-B5 used, and not all 32
+pins supported by the gpio3 controller.
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -933,6 +937,7 @@ gpio4: gpio@ff260000 {
+>  			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cru PCLK_GPIO4>;
+>  			gpio-controller;
+> +			gpio-ranges = <&pinctrl 0 128 32>;
+
+Same here, the datasheet only lists gpio1 A0-C1 and D0-D7 used, and not
+all 32 pins supported by the gpio4 controller.
+
+Regards,
+Jonas
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+
