@@ -1,162 +1,262 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678F118EB0
-	for <linux-gpio@vger.kernel.org>; Tue,  3 Mar 2026 05:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D680C38D;
+	Tue,  3 Mar 2026 06:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772515099; cv=none; b=mOGzm35gOxO70fVbaZ6UZJhjOxxkfId+SqEo4U+cnHwgDsPoeImOBfRjGy3AYDbrwjMlAB5cQUcEtmvE4nZ0PKBlrGcC3Fzb5HtfWU1jLcQt4WzimZVDZK89httR0Pmxljc2uYqzHX3BeSXB+ZqfTVk8FqMtC+0UwMIJsY4QbCg=
+	t=1772520552; cv=none; b=fI+zygRkyitOjskR2YOXDihNnmLFljgkBl+SC+9hwmSSRYWMV08gmK4XqDuRjxTd47wdIJoI66IxyS+pzybGxTw9UxXuNQv+LWvyjjKZQEn9K6CN0hjkIL8mYsdo+3rkwECZwCvg7befEF4/OIGKlqWF7VGATLaZxjnAn9BXVZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772515099; c=relaxed/simple;
-	bh=6IhGO9NuDFgVigx9/UqAOGVhRR3YeAtsrKcYCrRl7Ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBBr/EyKBvWEfG8ni4Glqdy2GAnDOxMa3HC170LQWX38zvAW5Ap2d9Wn6KFGqFEfDge9MKOd7eHCIiqYnd5csBx2oZ19MCAKr45e+c3WANnYNApRpFJSF/dBK82WuVDfceMa/G/lrfgyVWPt2nrPJH9GWuddDrV8/zNb0twQ1nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Cl4Vuwna; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+	s=arc-20240116; t=1772520552; c=relaxed/simple;
+	bh=iwVy5g4bzG4pXkbhYjkENjYmwo6a5YAySJbmeH8yvOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjkGviQ/YdEhl/OD8OW7qusU4KiAQiZCZoGPtY2nfL3q2vbTXpbedjhMOBji8bOkKG7NDENtzI2aYWYjFy+HXr2Yc7dZFNveYIn2OZH2LBRovAIKfGfTF4irlVi5zKzht52qR93rBXF6jsTveK6oroMd9HwAN1NWgqmHxhrILSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+LWKQXK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Cl4Vuwna"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1772515095;
- bh=OP9ybk+orz8SA4kEyEh+9E7911j3DQb5yf+d6l5ndHI=;
- b=Cl4VuwnarFmSKcQ6PZmgioBaBQUIBxjDD2ttDWCrnrK4kFPHnNYKzHhna33kV7IWzBJSh21UQ
- hSU2TqCCZ25QH7PaVtvcPtNPhxyRUE/fZS2B4clic+Bd818txXssbwfsALyrpylQQ+y2sH8ykeX
- 4q7xbBOPhDIhdRnIbuGc3XJ6x1HyLSqcBeV6UU3iMUwAIX/uV3scFtXZdckftW4hdN2x1C+47Mo
- kPV9Z/MDVMIiK6neCpPJG8oeL2VMLumCXP2ysbLF9CoGh1ORvh3LLfoL+8Ev0R1r/xGdIBJ1q/D
- 3wy8C0gJWtIXH8B4h8sIMuburWg6XCr2/GDPQglSUbtA==
-X-Forward-Email-ID: 69a607a900eccc184c5c9cd8
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 2.6.37
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
-Date: Mon, 2 Mar 2026 22:56:53 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+LWKQXK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089DEC116C6;
+	Tue,  3 Mar 2026 06:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772520552;
+	bh=iwVy5g4bzG4pXkbhYjkENjYmwo6a5YAySJbmeH8yvOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f+LWKQXKI5ZK8EgGMHbJ5NCvyCNomA+MyA+6/6BRkwIGWkY7tUdPCxfXuPRp7XM0V
+	 v5/qupq6Uxrha3Buzkui1uIfMMieFWxtgynd+H1n+0aCqnifILiBwwvA894VsZsUqj
+	 yxVcOsbYke+o3mtbxd4bkNAQwBlvR8PcKjw4/+p7aXJN7RO+MF3lMwwXb+vC7ZqI5v
+	 Fbu5mkfDKh1/VcwvGVpy+0/Kirscr3/9fgGVxZfg8hofiLbOhLkttfGTMiDD3sWws2
+	 oxOaALc0oFeHVWDbf3hzHt9vBJ/xd8+Pz8ieF1pdITNq1pFaV4r/Qf3A5JabA1xGiv
+	 QbdA4IbUU9HaQ==
+Date: Tue, 3 Mar 2026 07:49:10 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Zhu Ling <1536943441@qq.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	chenbaozi@phytium.com.cn
+Subject: Re: [PATCH v1 1/3] dt-bindings: gpio: add Phytium GPIO controller
+Message-ID: <20260303-dashing-cricket-of-lightning-1dba54@quoll>
+References: <20260302095147.2483-1-1536943441@qq.com>
+ <tencent_0BC92A632DD26F0A684E608D427244637905@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges
- properties
-To: Matthijs Kooijman <matthijs@stdin.nl>
-Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
-References: <20260302202121.197288-1-matthijs@stdin.nl>
- <20260302202121.197288-3-matthijs@stdin.nl>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20260302202121.197288-3-matthijs@stdin.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_0BC92A632DD26F0A684E608D427244637905@qq.com>
 
-Hi Matthijs,
+On Mon, Mar 02, 2026 at 05:51:45PM +0800, Zhu Ling wrote:
+> Add the devicetree binding schema for the Phytium platform GPIO
+> controller.
 
-On 3/2/2026 9:17 PM, Matthijs Kooijman wrote:
-> This makes the mapping between gpio and pinctrl explicit.
-> 
-> This does not immediately change functionality, because the
-> gpio-rockchip.c driver has a workaround that defines ranges when they
-> are not present in DT, but that relies on global gpio numbering (so
-> AFAICS only works when the rockchip gpio banks are initialized first and
-> in-order).
-
-This is strictly not correct, the driver use the gpioX alias id as
-defined in the device tree and does not depend on the initialization
-order.
-
-This file explicitly define the aliases matching the hardware:
-
-	aliases {
-		gpio0 = &gpio0;
-		gpio1 = &gpio1;
-		gpio2 = &gpio2;
-		gpio3 = &gpio3;
-		gpio4 = &gpio4;
-		[...]
-	};
+What is Phytium platform?
 
 > 
-> Signed-off-by: Matthijs Kooijman <matthijs@stdin.nl>
+> Register the "phytium" vendor prefix used by the compatible string.
+> 
+> Use ngpios as the preferred child-node property and keep nr-gpios as
+> deprecated for compatibility with existing firmware descriptions.
+
+NAK, you cannot add new deprecated properties. "existing firmware" does
+not matter, because this is the first posting, thus the firmware starts
+existing from now.
+
+> 
+> Signed-off-by: Zhu Ling <1536943441@qq.com>
 > ---
->  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+>  .../bindings/gpio/phytium,gpio.yaml           | 134 ++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>  2 files changed, 136 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> index 31c25de2d689c..681d2429d541d 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> @@ -889,6 +889,7 @@ gpio0: gpio@ff220000 {
->  			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cru PCLK_GPIO0>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinctrl 0 0 32>;
+> diff --git a/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml b/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
+> new file mode 100644
+> index 000000000..1b9200c57
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/phytium,gpio.yaml
+> @@ -0,0 +1,134 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/phytium,gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Phytium GPIO controller
+> +
+> +description: |
 
-This matches the driver, but not the hardware according to datasheet, it
-only lists gpio0 A0-C5 used, and not all 32 pins supported by the gpio0
-controller.
+Do not need '|' unless you need to preserve formatting.
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -900,6 +901,7 @@ gpio1: gpio@ff230000 {
->  			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cru PCLK_GPIO1>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinctrl 0 32 32>;
+> +  Phytium GPIO controllers expose one GPIO/interrupt controller and up to
+> +  two configurable ports. Child nodes describe per-port configuration.
+> +
+> +maintainers:
+> +  - Chen Baozi <chenbaozi@phytium.com.cn>
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^gpio@[0-9a-f]+$"
 
-Same here, the datasheet only lists gpio1 A0-D1 used, and not all 32
-pins supported by the gpio1 controller.
+Drop
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -911,6 +913,7 @@ gpio2: gpio@ff240000 {
->  			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cru PCLK_GPIO2>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinctrl 0 64 32>;
+> +
+> +  compatible:
+> +    const: phytium,gpio
 
-Same here, the datasheet only lists gpio1 A0-C0 used, and not all 32
-pins supported by the gpio2 controller.
+This is way too generic. Phytium made or will ever make only one controller?
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -922,6 +925,7 @@ gpio3: gpio@ff250000 {
->  			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cru PCLK_GPIO3>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinctrl 0 96 32>;
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  gpio-controller: true
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  '#gpio-cells':
+> +    const: 2
 
-Same here, the datasheet only lists gpio1 A0-B5 used, and not all 32
-pins supported by the gpio3 controller.
+Why do you need cells here and in the children?
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -933,6 +937,7 @@ gpio4: gpio@ff260000 {
->  			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cru PCLK_GPIO4>;
->  			gpio-controller;
-> +			gpio-ranges = <&pinctrl 0 128 32>;
+> +
+> +  interrupts:
+> +    description: |
+> +      The interrupts to the parent controller raised when GPIOs generate
+> +      the interrupts. If the controller provides one combined interrupt
+> +      for all GPIOs, specify a single interrupt. If the controller provides
+> +      one interrupt for each GPIO, provide a list of interrupts that
+> +      correspond to each of the GPIO pins.
+> +    minItems: 1
+> +    maxItems: 32
 
-Same here, the datasheet only lists gpio1 A0-C1 and D0-D7 used, and not
-all 32 pins supported by the gpio4 controller.
+Why is this flexible? You have one fixed device, no?
 
-Regards,
-Jonas
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +patternProperties:
+> +  "^gpio-port@[0-9a-f]+$":
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: phytium,gpio-port
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
+Drop compatible
 
+> +
+> +      reg:
+> +        maxItems: 1
+> +
+> +      gpio-controller: true
+
+So what is the controller exactly?
+
+> +
+> +      '#gpio-cells':
+> +        const: 2
+> +
+> +      ngpios:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: The number of GPIO pins exported by the port.
+> +        default: 32
+> +        minimum: 1
+> +        maximum: 32
+> +
+> +      nr-gpios:
+
+Drop, why do you create duplicated properties for everything?
+
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: The number of GPIO pins exported by the port.
+> +        deprecated: true
+> +        default: 32
+> +        minimum: 1
+> +        maximum: 32
+> +
+> +    required:
+> +      - compatible
+> +      - reg
+> +      - gpio-controller
+> +      - '#gpio-cells'
+> +
+> +    additionalProperties: false
+> +
+> +additionalProperties: false
+
+This goes after required: block
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - interrupts
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    gpio: gpio@28004000 {
+
+Drop unused label
+
+> +      compatible = "phytium,gpio";
+> +      reg = <0x28004000 0x1000>;
+> +      gpio-controller;
+> +      #gpio-cells = <2>;
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +      interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+> +      interrupt-controller;
+> +      #interrupt-cells = <2>;
+> +
+> +      porta: gpio-port@0 {
+> +        compatible = "phytium,gpio-port";
+> +        reg = <0>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        ngpios = <8>;
+> +      };
+> +
+> +      portb: gpio-port@1 {
+> +        compatible = "phytium,gpio-port";
+> +        reg = <1>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        ngpios = <8>;
+> +      };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index ee7fd3cfe..2c3f9777d 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -1265,6 +1265,8 @@ patternProperties:
+>      description: PHICOMM Co., Ltd.
+>    "^phontech,.*":
+>      description: Phontech
+> +  "^phytium,.*":
+
+Keep proper sorting.
+
+> +    description: Phytium Technology Co., Ltd.
+>    "^phytec,.*":
+>      description: PHYTEC Messtechnik GmbH
+>    "^picochip,.*":
+> -- 
+> 2.34.1
+> 
