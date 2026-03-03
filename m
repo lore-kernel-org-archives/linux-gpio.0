@@ -1,123 +1,119 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4974423A9A;
-	Tue,  3 Mar 2026 14:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0170439012;
+	Tue,  3 Mar 2026 14:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772548119; cv=none; b=RzaWcsj1PdVbieU0a9J8GpKYItwHLRV7VKHZbzctTS761j/jwWNN4CtGL+S2iUfjE2zPPAzzD0s3OnOKPRERR4zFhSJ+twwmGvIwLTU/GsAtRCC1Wx82kU1qc9cr3lrpde71lg8wDD/xT/lzkjAYVYxMgKsgXIojtF7AE8kMPNI=
+	t=1772548856; cv=none; b=RPOFyGR2p6X8K+LOfs4ixmJedKpvGh+ZVR4lzDI3+SzNQIJt2HeWyd2G2IAjvZz59LDwpxwvkVFHPzpxJZOuzWztYcI5uqZTfX+makm/Yj13ITCsTYQxcSZE1R0AqlHzJGkNCN4BHTZsxbM5pF0DXJwYC9sKC1FNtQ1yuF2EepM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772548119; c=relaxed/simple;
-	bh=sFdspMKJumEMO4fDQc2+117471ZtpGFHB8cFzHcqV9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O8n8KdcANGeo5HgRhp7ATof0t1m3PSlrlvObMxNog3FLmh4gnm3KfYUejjZ27p1Y1F/lB9gi/D1MrzkeqCAC4bqrdUsKMmzBPHU8QKX7NF0mwW4DGqwh4wQvbPfRIX1W8WAZu2L6HKKwkuq54fmm/cu2pdv+TrItM7KtuC0j05o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d/O+JXo5; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1772548856; c=relaxed/simple;
+	bh=+Pr9CEDrZX6PYZmvlsYDBhSFokHFEKrUhQ1+t5IfA6A=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Hu7FMsmATPFZ45AYz7kaA/CSDSXwi1xY28M3lJaW84QLvWp6/YYJXF6hGRgDnPiU3GTuq717rpH7c+JvBLqemXws96Ksc7u3gY/Js25cQFcciWLAw06h60A8AZL6NRQ+UHU3zkoWbm1YGDzBVQEyjuMG6dw1WLl1zcAZax9tcsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JF/a2Udt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d/O+JXo5"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 6C05D1A2357;
-	Tue,  3 Mar 2026 14:28:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3AFBB5FF87;
-	Tue,  3 Mar 2026 14:28:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2BC881036864C;
-	Tue,  3 Mar 2026 15:28:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772548112; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GWUy5XUp50lxxjU1GZxGSJIelBHwpc1HiL3azJ0BLV4=;
-	b=d/O+JXo543vedMVvGLT5gKQytZfFXK8awsVgYA6R2ojxBslqYDSqG0VaRPH7bRUxFJlQN8
-	1vkegNiRGY41CrTbPRA1NgXIqSpHHXeFNACKcalOr4bzHngc7EbH0CSSUuvUxXHy5MVFSy
-	vEESymOX/4StaUul4BCuzjnEikImvMMtImKAjJiVJGCmUvbpNeHT+w2j0OOFIPwqXLeYpl
-	cStsMnmcoZTIpyS3EgJxQykjVvH8H5XHlQadKad7TsG6qk3H2sE9QULsdlhxCLsvdS6N3P
-	Oejd8rD6YiajdGxXjpbhWcTxEQM/3Nco4XUAiT9M4D/MHRwg24QTsSLti/Lp2w==
-Date: Tue, 3 Mar 2026 15:28:12 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>,
- Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Andi Shyti" <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, "Arnd
- Bergmann" <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, "Linus
- Walleij" <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Mark
- Brown" <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- "Shawn Guo" <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>,
- <linux-kernel@vger.kernel.org>, <driver-core@lists.linux.dev>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, <patches@opensource.cirrus.com>,
- <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
- <linux-cxl@vger.kernel.org>, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 11/28] cxl/test: Use fw_devlink_set_device()
-Message-ID: <20260303152812.5d699701@bootlin.com>
-In-Reply-To: <20260302122449.00006c77@huawei.com>
-References: <20260227135428.783983-1-herve.codina@bootlin.com>
-	<20260227135428.783983-12-herve.codina@bootlin.com>
-	<20260302122449.00006c77@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JF/a2Udt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0028C116C6;
+	Tue,  3 Mar 2026 14:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772548856;
+	bh=+Pr9CEDrZX6PYZmvlsYDBhSFokHFEKrUhQ1+t5IfA6A=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=JF/a2Udt8z09Y22wRejAGIy6oeH/a8MP2ow7vQQ0yuTqbUFsy9Dj1limX9PP7MC/R
+	 ic9vyMgajzsvTWHIkbyV23SdTBQicoiRTJyi2O8Wgntt8tkNzslC9NuSnlWd0WEUkW
+	 kMEU6+QWnqWid6mwsyacty/iQyFRRnZ2LT1Z4noeY7ZGht18B0oRHuJ74iP1Vr3m9D
+	 PFKDt2iOONPAzH5qp3YQXwqAzGR9UP4eyzSg/go9yKUe/8TfuFNWz5dQzND7V/wD3I
+	 O9Mfd/A4i6Z3chCt2rMtlZuSGsIGFMoXOltgVDiay4qBA7z84/pzedlz9zaFuZzzvt
+	 2Ek+cBjoAwbVg==
+Date: Tue, 03 Mar 2026 08:40:55 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>, 
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, David Jander <david@protonic.nl>, 
+ Lee Jones <lee@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+ Linus Walleij <linusw@kernel.org>, linux-hwmon@vger.kernel.org
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+In-Reply-To: <20260303133947.1123575-2-o.rempel@pengutronix.de>
+References: <20260303133947.1123575-1-o.rempel@pengutronix.de>
+ <20260303133947.1123575-2-o.rempel@pengutronix.de>
+Message-Id: <177254885509.3251575.14819823286886805862.robh@kernel.org>
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: add NXP MC33978/MC34978 MSDI
 
-Hi Jonathan,
 
-On Mon, 2 Mar 2026 12:24:49 +0000
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
-
-> On Fri, 27 Feb 2026 14:54:08 +0100
-> Herve Codina <herve.codina@bootlin.com> wrote:
+On Tue, 03 Mar 2026 14:39:41 +0100, Oleksij Rempel wrote:
+> Add device tree binding documentation for the NXP MC33978 and MC34978
+> Multiple Switch Detection Interface (MSDI) devices.
 > 
-> > The code set directly fwnode.dev field.
-> > 
-> > Use the dedicated fw_devlink_set_device() helper to perform this
-> > operation.
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > Reviewed-by: Dave Jiang <dave.jiang@intel.com>  
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> These ICs monitor up to 22 mechanical switch contacts in automotive and
+> industrial environments. They provide configurable wetting currents to
+> break through contact oxidation and feature extensive hardware
+> protection against thermal overload and voltage transients (load
+> dumps/brown-outs).
 > 
-> From practical point of view, what path do you expect this to take?
-> Is there urgency to make the change, or does it make more sense to
-> add the helper this cycle and cleanup up the various places it can be
-> used next?
+> The device interfaces via SPI and provides multiple functions. To
+> accurately represent the hardware without unnecessary DT overhead, the
+> binding is structured as follows:
+> - pinctrl: A dedicated child node managing the 22 switch inputs (SG/SP
+>   pins) and their GPIO configurations.
+> - hwmon: Integrated into the parent node, exposing critical hardware
+>   faults (OT, OV, UV) and static voltage/temperature thresholds.
+> - mux: Integrated into the parent node, controlling the 24-to-1 analog
+>   multiplexer to route pin voltages, internal temperature, or battery
+>   voltage to an external SoC ADC.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v2:
+> - Squashed MFD, pinctrl, hwmon, and mux bindings into a single patch
+> - Removed the empty hwmon child node
+> - Folded the mux-controller node into the parent MFD node
+> - Added vbatp-supply and vddq-supply to the required properties block
+> - Changed the example node name from mc33978@0 to gpio@0
+> - Removed unnecessary literal block scalars (|) from descriptions
+> - Documented SG, SP, and SB pin acronyms in the pinctrl description
+> - Added consumer polarity guidance (GPIO_ACTIVE_LOW/HIGH) for SG/SB
+>   inputs, with a note on output circuit dependency
+> - Updated commit message
+> ---
+>  .../devicetree/bindings/mfd/nxp,mc33978.yaml  | 114 ++++++++++++++++++
+>  .../bindings/pinctrl/nxp,mc33978-pinctrl.yaml |  82 +++++++++++++
+>  2 files changed, 196 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml
+> 
 
-I hoped to have patches 7 to 12 applied by one maintainer on his/her trees.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-As it is related to fw_devlink, I expect to have them applied by a driver
-core maintainer.
+yamllint warnings/errors:
 
-Any other plan can work as well.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/nxp,mc33978.example.dtb: gpio@0 (nxp,mc33978): $nodename:0: 'gpio@0' does not match '^mux-controller(@.*|-([0-9]|[1-9][0-9]+))?$'
+	from schema $id: http://devicetree.org/schemas/mux/mux-controller.yaml
 
-Best regards,
-Hervé
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260303133947.1123575-2-o.rempel@pengutronix.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
