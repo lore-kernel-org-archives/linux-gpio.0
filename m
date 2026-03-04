@@ -1,116 +1,178 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDEE396593
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Mar 2026 09:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63639EF1A;
+	Wed,  4 Mar 2026 09:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772617441; cv=none; b=BsAyyKJ1+xRbIPI+EmKyxV9jSOBXcypWxyAgPCeuzAHt5BNTdo9BxEWk6AhX/ZkAA/+H5SgKvEot8e90hXwgtedkH4AXDDqNDH6crS6o7LlJI4PYqRXy35cdkcztLVyn2uQnMSdzj/wzGIulpE2OH+0Mugq0u/IQ1iylbnxsO20=
+	t=1772617751; cv=none; b=SeVI/mHv7dOt6q/do4kvv7AGd+GrB1syltGVHZ41DrjdlBs2GLCvjCX+9zBInVqPTFPcFvVvIexGY5F4cdBy+9rWBo9UQyfK4K49HnAdA8X4luPBoZm6XcM41wRoopvOqlBvvpqE8z2FnoA2ORquqbX28gIFq2nux3glCueacSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772617441; c=relaxed/simple;
-	bh=8+rSrSJcs/fP61bPdboLaJ6pJ7+GkOXQuVKywbc0GCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ctaOemt0Q/lz6gDK3wWUOPtYkzlFazMDl+47X3x43jasVvd7pRIRanMxKe9LmXbtCiSXECSpJtFoNFdUg16FIhVb++O5ZiKHzycTazFv3XCokjimm7Hl9hGuQ5D7u4evI9G6aNsqcy1toJKZs4GSszgqgQhh3ciglRNxV1YEFIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcfiT+Cb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772617751; c=relaxed/simple;
+	bh=oLThTf7bYoQDLx0hiK0AbFOM/522lPn6Nc/qW89O7BI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5Vl5PRVWow3Y9H6d9wbxuX4y14t4Vw39HMXw4950/3Xd9jBVNdtFN229pJgUx31T7tPRt+8FCaPBe8xFNxtlypoCiPtdzVP0Vovcfay2wLJLSxoPJaqRe4BOkfKbfIrFvrQdrcXBVsanGsnbYVAKQXhfgSemH9gGpqheGZR0ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOMqdRMw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcfiT+Cb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7339C2BCB0
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Mar 2026 09:44:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOMqdRMw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B089BC19423;
+	Wed,  4 Mar 2026 09:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772617440;
-	bh=8+rSrSJcs/fP61bPdboLaJ6pJ7+GkOXQuVKywbc0GCk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RcfiT+CbhA5N32spmPfxrEhljqGZBQ60fAlClkBvvhst/61qltnhlydaOXRe56LAC
-	 Fep900wxE57RKIQ/G4UB18SmNywGMgpqEaHtbEfTdTZ+fU+MKsOnGvM7eLWJ07qCOr
-	 cUwHXvrodPLmsufV/2VNR7tELRFonlmGhgrnfO/kb/PYTy2GKfU8rsiFigieE/3bVs
-	 2Xvmd4uU5AsZ0QVkAEz9TeJoK3rPtQVIJscvJ8R5pS5Gzrzg8N2BcC2hq0lqG/GQzH
-	 MWU/JLfXQ1bWzeZaZT1dlO40zEqrydOa/PP0F/7HK9HR8DIuXqL9ZRvYaX06rJ0lWv
-	 +pv2gvJYCD1CQ==
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-64acd19e1dfso5745344d50.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 01:44:00 -0800 (PST)
-X-Gm-Message-State: AOJu0YxcTZpwuJH3J4NNq2rF6hqbhdv1O9pGQaB3M5NWWkrmMBv2gJHX
-	mYF2xumENOvAjjzp1EcVIt81GiyfJ4smdoj3CicPYHlFVZJ5q7Di4VrN3F/tsd+Qsk+s63EhZal
-	Bqiy0/nUlSAVyw6AYklARfl1U/32hjyY=
-X-Received: by 2002:a05:690e:e26:b0:64c:a5f9:9b2d with SMTP id
- 956f58d0204a3-64cf9b4dfaamr883263d50.21.1772617440138; Wed, 04 Mar 2026
- 01:44:00 -0800 (PST)
+	s=k20201202; t=1772617750;
+	bh=oLThTf7bYoQDLx0hiK0AbFOM/522lPn6Nc/qW89O7BI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LOMqdRMwEj0KRmM7VUNI3JOdenubt0F2JlIbEjq4j3U94UtiH2i/r/MpdRr5Ec7FT
+	 mhqbO1St5Jxn46Ew138PrB2nuHS/cA05qYGRdsLYhpLg/tXXUC8dDlRQulgpurHvGf
+	 IcNXqo9tO0Z1cCtXWmmySvFcd1Bt84MS0qxW+D60KGaYdXhPgB9swifeplFB7dVq54
+	 1FPiAkDhWezrjACHQhdY37oabwTsA5ydN0I1T9rr5EOBW9aLTr9cBthzHQ0yUpV1/o
+	 y94ZpQuU2azGfMeKkqI5ty0JPFHMYTo2VsNnWyJfCJX2utFE2YZNjZw5NTQsn0hWLi
+	 TMOkf2lnGF8gQ==
+Message-ID: <4d4c6ebc-698b-44c2-9a91-607381d6ece1@kernel.org>
+Date: Wed, 4 Mar 2026 10:49:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260304084808.440955-1-xujialu@vimux.org> <7D8A09EB5A988115+20260304084808.440955-2-xujialu@vimux.org>
-In-Reply-To: <7D8A09EB5A988115+20260304084808.440955-2-xujialu@vimux.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 4 Mar 2026 10:43:48 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=FCRvj_mz_E-JVnyUBV3SOidQQ7zp=ogcRqirjvphpTg@mail.gmail.com>
-X-Gm-Features: AaiRm522NQIq2xqWFZ06jce3apy8wKQbz7KFc_V7_Vt72Ls_gfhCHo5PLgJpfYk
-Message-ID: <CAD++jL=FCRvj_mz_E-JVnyUBV3SOidQQ7zp=ogcRqirjvphpTg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] nfc: s3fwrn5: convert to gpio descriptors
-To: Jialu Xu <xujialu@vimux.org>
-Cc: linux-gpio@vger.kernel.org, netdev@vger.kernel.org, brgl@kernel.org, 
-	krzk@kernel.org, kees@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: mfd: add NXP MC33978/MC34978 MSDI
+To: David Jander <david@protonic.nl>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "Rob Herring (Arm)" <robh@kernel.org>, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ Linus Walleij <linusw@kernel.org>, linux-hwmon@vger.kernel.org
+References: <20260303133947.1123575-1-o.rempel@pengutronix.de>
+ <20260303133947.1123575-2-o.rempel@pengutronix.de>
+ <177254885509.3251575.14819823286886805862.robh@kernel.org>
+ <aacH7NmkOzZued0Y@pengutronix.de>
+ <20260304-graceful-sweet-bittern-98efdb@quoll>
+ <20260304100642.44d00b99@erd003.prtnl>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260304100642.44d00b99@erd003.prtnl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jialu,
+On 04/03/2026 10:06, David Jander wrote:
+> 
+> Hi Krzysztof,
+> 
+> On Wed, 4 Mar 2026 09:05:11 +0100
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>> On Tue, Mar 03, 2026 at 05:10:20PM +0100, Oleksij Rempel wrote:
+>>> Hi Krzysztof and Rob,
+>>>
+>>> On Tue, Mar 03, 2026 at 08:40:55AM -0600, Rob Herring (Arm) wrote:  
+>>>>>  .../devicetree/bindings/mfd/nxp,mc33978.yaml  | 114 ++++++++++++++++++
+>>>>>  .../bindings/pinctrl/nxp,mc33978-pinctrl.yaml |  82 +++++++++++++
+>>>>>  2 files changed, 196 insertions(+)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+>>>>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml
+>>>>>   
+>>>>
+>>>> My bot found errors running 'make dt_binding_check' on your patch:
+>>>>
+>>>> yamllint warnings/errors:
+>>>>
+>>>> dtschema/dtc warnings/errors:
+>>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/nxp,mc33978.example.dtb: gpio@0 (nxp,mc33978): $nodename:0: 'gpio@0' does not match '^mux-controller(@.*|-([0-9]|[1-9][0-9]+))?$'
+>>>> 	from schema $id: http://devicetree.org/schemas/mux/mux-controller.yaml
+>>>>   
+>>>
+>>> Folding the mux node into the parent as suggested [1] causes this error.
+>>> Because the parent now has #mux-control-cells, the generic
+>>> mux-controller.yaml forces the node name to be mux-controller. Since
+>>> this chip is primarily a switch/GPIO controller, naming the parent SPI
+>>> node mux-controller@0 is misleading.
+>>>
+>>> What is the preferred way to go here?  
+>>
+>> https://www.nxp.com/products/interfaces/multi-switch-detection-interface/22-i-o-msdi-programmable-current-analog-mux:MC33978
+>>
+>> Name of the mc33978 device is "programmable analog mux" and further
+>> description says "analog multiplexer for reading analog inputs ", so I
+>> don't find "mux-controller" a confusing name. It is EXACTLY a
+>> mux, so mux-controller.
+> 
+> Sorry to chime in here. I'm afraid the NXP description on that link you posted
+> is a typo. It is not correct. This chip is primarily a "Switch Detection
+> Interface", or in other wordt a switch input interface. Wee here for the same
+> page for the MC34978, which is the exact same chip:
+> 
+> https://www.nxp.com/products/interfaces/multi-switch-detection-interface/switch-detection-interface-22-i-os-programmable-wetting-current-temp-sensor-3-3-v-5-0-v-spi:MC34978
 
-thanks for your patch!
+That's MC34978 and I commented on MC33978.
 
-It's *very* appreciated that you are driving this work forward!
+What is the primary function of MC33978 being described here as the base?
 
-On Wed, Mar 4, 2026 at 9:48=E2=80=AFAM Jialu Xu <xujialu@vimux.org> wrote:
+> 
+> It has an additional function that can be used as an analog MUX, but it is an
+> extra feature and definitely NOT its primary function.
+> 
+> Not sure if this is relevant, but I fear there might be some confusion.
+> 
+> Best regards,
+> 
+>> Anyway if you want gpio, then please add a patch extending the pattern
+>> in mux-controller.yaml to allow "gpio".
+>>
+>> Alternative, because it is rather a mux than a controller of a mux,
+>> would be to call it just "mux" or "io-mux" (maybe the latter, since we
+>> have "i2c-mux" in the spec) and allow that pattern to be in
+>> mux-controller.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
 
-> Use <linux/gpio/consumer.h> instead of <linux/of_gpio.h>.
->
-> Signed-off-by: Jialu Xu <xujialu@vimux.org>
-(...)
 
-> -       phy->common.gpio_en =3D of_get_named_gpio(np, "en-gpios", 0);
-> -       if (!gpio_is_valid(phy->common.gpio_en)) {
-> -               /* Support also deprecated property */
-> -               phy->common.gpio_en =3D of_get_named_gpio(np,
-> -                                                       "s3fwrn5,en-gpios=
-",
-(...)
-
-> -       phy->common.gpio_fw_wake =3D of_get_named_gpio(np, "wake-gpios", =
-0);
-> -       if (!gpio_is_valid(phy->common.gpio_fw_wake)) {
-> -               /* Support also deprecated property */
-> -               phy->common.gpio_fw_wake =3D of_get_named_gpio(np,
-> -                                                            "s3fwrn5,fw-=
-gpios",
-(...)
-
-old code supports the deprecated property too...
-
-> -       ret =3D devm_gpio_request_one(&phy->i2c_dev->dev, phy->common.gpi=
-o_en,
-> -                                   GPIOF_OUT_INIT_HIGH, "s3fwrn5_en");
-> -       if (ret < 0)
-> -               return ret;
-> +       phy->common.gpio_en =3D devm_gpiod_get(&client->dev, "en", GPIOD_=
-OUT_HIGH);
-> +       if (IS_ERR(phy->common.gpio_en))
-> +               return PTR_ERR(phy->common.gpio_en);
-
-Maybe make a second try with
-devm_gpiod_get(&client->dev, "s3fwrn5,en", GPIOD_OUT_HIGH);
-so we don't change the semantics?
-
-> +       phy->common.gpio_fw_wake =3D devm_gpiod_get(&client->dev, "wake",
-> +                                                  GPIOD_OUT_LOW);
-> +       if (IS_ERR(phy->common.gpio_fw_wake))
-> +               return PTR_ERR(phy->common.gpio_fw_wake);
-
-Dito.
-
-Other than that it looks pretty straight-forward and correct!
-
-So +/- the fallback properties:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
