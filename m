@@ -1,27 +1,27 @@
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937A2386C36;
-	Wed,  4 Mar 2026 10:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A47D317169;
+	Wed,  4 Mar 2026 10:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772620334; cv=none; b=ijDFPAhqwS93kugrkubvMO7wTRf+dxAj/PyWwZqpxEnQNPqSwhcAmIhRkpKF2G/wOXPY+jQojVpScxa8dAGifRmMW1dyQWQnZF8d44OMj8WATnwjkxddxfgU4xkN5yCxYl9/SYAXauD0eD1obiuRJ4mwoxpG7/+vHoxZXu7vw5M=
+	t=1772620912; cv=none; b=OzrYSjbYZh5327N11IyZHU1dqgRJH2FMZKDJ/Umh5q8cD7wXbL9DCkzq887Gc4lddsweVIUI2705J/UrvvrXtjGgiIEl0CdcFr7YPAe5tVzwq5JpbPbzBHQ5VuW1KSalIedbZoJor3eQkpYHHqAPvNgMNlOI9eOHANKxnIvQusg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772620334; c=relaxed/simple;
-	bh=ApS699SwuVsjgZhmflKmCvPXwrp9pk096BMvaFpM65s=;
+	s=arc-20240116; t=1772620912; c=relaxed/simple;
+	bh=vBzpkkTVbLKqzEH4qdFsf+sbCUXlAQ9XgD2FcdA+1qs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ilQT3YjF2gE0nLiIkZuCKAIv+lgv+9KHpl15nqqiXZoQ/ovMt2jxJbylelXkGFyUXzEJeYbQrzeU4V8ucrtA58ctn+vYwBELqtdL7QgARtvmadQgl5R/V3+M/QTMc15gqcG8uPnquB2BX2gAHhZW6qim2myfuPfpr9AWiWC4Dsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org; spf=none smtp.mailfrom=vimux.org; arc=none smtp.client-ip=52.59.177.22
+	 MIME-Version; b=dD6NBpLvfA00x2RHkCd2oYqreNwdDyZJH+fr0GTA8envfg5LRY/HaIDeLnsne6jpUQx0nLHaab/YkqnBFgpJpd8gJXN+g+eU1lF6h0JKzyoO/ipJ3zklFVgtEF5fklYjcp3XoCx3NW+A4SM0x22+hw0mX9QjS4WEjVwxCLmSgs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org; spf=none smtp.mailfrom=vimux.org; arc=none smtp.client-ip=54.206.16.166
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=vimux.org
-X-QQ-mid: esmtpgz10t1772620308t2f6c94b0
-X-QQ-Originating-IP: 4GpzGVlb8kYgocIForgl8MRQKjILJcl3D6A1Zy270hk=
-Received: from localhost.localdomain ( [119.167.27.218])
+X-QQ-mid: zesmtpsz4t1772620898teb1f7222
+X-QQ-Originating-IP: H5fycD9ZnGNZKs9XZlO/zEXviELiZsMYot81Q8K4xxo=
+Received: from localhost.localdomain ( [113.120.117.28])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 04 Mar 2026 18:31:45 +0800 (CST)
+	id ; Wed, 04 Mar 2026 18:41:36 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6474584774209314028
+X-BIZMAIL-ID: 108753647102746725
 EX-QQ-RecipientCnt: 8
 From: Jialu Xu <xujialu@vimux.org>
 To: linusw@kernel.org
@@ -32,61 +32,57 @@ Cc: brgl@kernel.org,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	xujialu@vimux.org
-Subject: Re: [PATCH 1/3] nfc: s3fwrn5: convert to gpio descriptors
-Date: Wed,  4 Mar 2026 18:29:50 +0800
-Message-ID: <56D7C16189347663+20260304103140.519252-1-xujialu@vimux.org>
+Subject: Re: [PATCH 2/3] nfc: nfcmrvl: convert to gpio descriptors
+Date: Wed,  4 Mar 2026 18:34:41 +0800
+Message-ID: <A8F8872018D582C3+20260304104125.523019-1-xujialu@vimux.org>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAD++jL=FCRvj_mz_E-JVnyUBV3SOidQQ7zp=ogcRqirjvphpTg@mail.gmail.com>
-References: <CAD++jL=FCRvj_mz_E-JVnyUBV3SOidQQ7zp=ogcRqirjvphpTg@mail.gmail.com>
+In-Reply-To: <CAD++jLmWt0Z=Bb1z0BSwMY-1KDzF=HXR6zudWCzouWDQqdotVw@mail.gmail.com>
+References: <CAD++jLmWt0Z=Bb1z0BSwMY-1KDzF=HXR6zudWCzouWDQqdotVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:vimux.org:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MObEYWafgTHoZx474OiLtkTLcU3DE+Jzz2hkDkhw/HLgCJQO/N5IBOf9
-	iyG70lIIZuaYOBhrEE9JnjqYNYlVNrptJjsym3I6iYOTrcg48X9CWZxt0qyH7T6XrM9IUi8
-	qhTTmf+v6EidyDHaErkBXpny2l4oqRI3PdkEQRvQYpS5BJz+ZqeOzWqsd9iV63aZnD9LUlU
-	FlCbLJqvGDVxZ1p6xQCbWeWV4Y1tjtbtZqEeKRPsRACOLtXtRBeyOtxaZfEoZhxtXRIiQ4q
-	NML97GB8qBkt5oFfeb3ZVG84f8ip0kWjXnbggFKZRgOya40UnmjVrl5iATvJrYgIIGlxJxa
-	S5goEUdieGg99UNmFgrgE3wCrMnc00BrF8QVq4QIP1QPlOEc/smMRN7KJiSHbwwPKoNHASx
-	1RYlQfOjZ08WRgMeL/T9lApQa+486XpYDOAFkzDjFjZDRew4oiYx+n34SdpE3EglN0QhL0e
-	PCd8jgPm1vDa576n6RXl63LJMddTsyz6zwdb+4HM/o+3ywd986McFgJZYfZiSk97zMJEhfQ
-	JFLykErH0+YFPWO4gwcXeezY/A+6UAXWPPAGzxWdTHltbvXHOwADgBouyH010TWMSQ1a7oN
-	hN/AHKzn+pVmFaKw+gv6qR6k7NEN+J0HK61aomlAItFDgPZhE7ESw9nu2EPbSBP/SKEpO3x
-	rCp5MVZptLrupQg5SctXLqdSFbNiUmM4wwO5l+M2dLIROwOvyfC0gh6s8eof35SNn7e+lPO
-	12H2vfHCLhhaji/Bj4TOe3qCDRquwgXnsXKN3fc1sEY/ejk3hYCA4O59U3s5Bg8c+kfGH4B
-	/Z+Nm2rI8sNEt3dVi6CDykK8aCRLNvuuW0UVNlnBlxm6b4nN0yaGtZhGJlyhuniBMI+zJXE
-	NtNSr94ORo1ka63yl6v3+9N/+vPaihJZr/HNchVfnNl3xMntKSP7i9lyX0k1GsNTFpNgRc8
-	N8v7nrpIAnFkCsnI7HZLSVrDQAMHVRSAg5hxmMXDiTiwG8ynWJYeAPTIhyBjeIP7Hmw+hXH
-	Ly1pkZfA==
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+Feedback-ID: zesmtpsz:vimux.org:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: N83uKqxezP3+Bg7nmhgVB2W3HsqAY6GkEg17159Dax7XnE1tNW8OF5Lv
+	w0teitNXZeW+ZJvft9SyYsHAAVXHrTqaKzwI6f+xWF1mgplOf5+t5dfVnvxMlbQqSJjpc0K
+	J2EQS6IkyNr0Y+DMZm1aUFFHw7ZWNNI3iESx4nLpy6cI+yLYDKW7vP3wk7SWGnQePOvIIif
+	d7sJS9myBAuY0QdUKv3g39ND6lKI1EnjJ4TG9K5KU08Zl3pzBZwizVZqBynuixb0rcsHKqQ
+	a1bFEMjy+DpQxV8zjMFQ9iI+X9LgCb6kXv2BNw1MtLiSVvXo5nuorayEQfjwA6gBa404yLB
+	wonjSJiSc0251CQXfoYktbORT7Eh563qQWDr8SRfc/cgrcRQO1iOoSfk8Wy8Ce7grnrJcZM
+	enttdCC5sIuby4l2GIstEnnsUu/ROjZMzPhS1K59Q1EGjW94c3MNQz0okrZ9W1TbnW5M0/M
+	H3Kpf9sTh0GfeFTTLmFjU4RDNjKblld2QvNVQNuY0HrBNLXIY3GsTRpCuNVD04Nnv1jJfMv
+	7JPNUZhZYdn6O6ALIrbS1AhzKJkLz6TG0CV5s7dbk1GW3PhlmAN8g2TqgB/yALEm/PRij+b
+	U1MMfXfmckCLLy1j4qqqt6XgWcFzwcZdPd2ZeOoZdkln4UtoTly39frHguQDM6LkVp+OB9E
+	xDyFDAdKAKvkHAceWS1dt+Ts3GPUW+QJAuf8grvmo3Xy+3mX0PXe/d2Os2P0Z9exx+JKX0F
+	GRm9bSDbofLq1cjH5GTUfSF4xKijtnWdniTRyihvpvrai0HmusQvQ6dD0xA9eiqIaJQ/A61
+	DmGEFtNcDgZ7j6m1xEjYksRji13BZ9l9O5/CpBbO9PdwbImEiL3laZRp+67Xw1Sb60TqOWA
+	dJQB641Lk5Lthp0lfG96KAZfZhsBkG46lRCvKb6f2ldGyzkEjzxH9lwYcDemi0WxHHy8Wzy
+	L8ul14c1XYzWeVL8cdAg+o22gf403P5FLx42tMPr842Fu9xsVWJOxh5kHpc5wn3/WoRE=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 
->> -       phy->common.gpio_en = of_get_named_gpio(np, "en-gpios", 0);
->> -       if (!gpio_is_valid(phy->common.gpio_en)) {
->> -               /* Support also deprecated property */
->> -               phy->common.gpio_en = of_get_named_gpio(np,
->> -                                                       "s3fwrn5,en-gpios",
+>> +               priv->config.reset_gpio =
+>> +                       devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
 >(...)
+>> -       reset_n_io = of_get_named_gpio(node, "reset-n-io", 0);
 >
->> -       phy->common.gpio_fw_wake = of_get_named_gpio(np, "wake-gpios", 0);
->> -       if (!gpio_is_valid(phy->common.gpio_fw_wake)) {
->> -               /* Support also deprecated property */
->> -               phy->common.gpio_fw_wake = of_get_named_gpio(np,
->> -                                                            "s3fwrn5,fw-gpios",
->(...)
+>This isn't gonna work, sadly. The property is named  "reset-n-io"
+>in the device tree, not "reset-gpios".
 >
->old code supports the deprecated property too...
+>To handle this, add code to drivers/gpio/gpiolib-of.c in the
+>of_find_gpio_rename() function to make it pretend this
+>custom property is handled as "reset-gpios".
 
-Thanks for the review!
+I see, thanks for pointing that out!
 
-I'm sorry for the oversight — I only checked the existing in-tree
-device trees and assumed that was sufficient. I'll add rename quirks
-in gpiolib-of.c to handle the deprecated properties. Will send v2
-with this fixed.
+Seem that, the rename quirk for "reset-n-io" -> "reset" is already
+present in gpiolib-of.c, added by commit 9c2cc7171e08 ("gpiolib:
+of: add a quirk for reset line for Marvell NFC controller").
+
+Best regards,
+Jialu Xu
 
