@@ -1,87 +1,86 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577653947B1
-	for <linux-gpio@vger.kernel.org>; Wed,  4 Mar 2026 09:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244B13976A1
+	for <linux-gpio@vger.kernel.org>; Wed,  4 Mar 2026 09:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772615009; cv=none; b=KwD9KzYnE0DLgNgM5kgQzxAh8kkYkX11u6lxoKeN4drT9y8r8NmMwCqddox5pyPNp7DQxGlPAnTqoDCPweK9eloPCz0XGzX63OB6EpWH8IMD9ar58FfXnBN4kih98Yc2yB3cP+z5D6gmaMx9q8N2ICMy7Y8oxULxFn7YzIoWCbg=
+	t=1772615011; cv=none; b=IAUq3WRCfvkMzoYlt6qR1s5alv4JPLlFwb33WZfAOMuBwg7ibveimbPclTmo8B4prFEWjwdPX7ALCa5I6ANkW5KlBgZ4+dSIUbZ2hcNJyTkLEPrSVA/zkLCKccgmkKKlYuqooAIV1eu+7RncC+pypr1zvxvUYN+v3y9clnrhV9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772615009; c=relaxed/simple;
-	bh=SNxn4ssJCq61+0YQndlULQe5RINmdH9u0N6CqwGb0P8=;
+	s=arc-20240116; t=1772615011; c=relaxed/simple;
+	bh=BZ0gBX6ApkbfQGAvIdrTK0HNC5TATefci/BtaAEAScU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bflHjfW7w9vMUmysduGqP9H4rBoGFGb/Uc2tcB8QpUirv+fopu6BMlZ1JSsKzk9yxLSMYugsBPxK1vphtvriwLNexHr3kNSGwoJr2MnhywE+Jc538Ow8fqFZXY3dhJXKEsOXaZMdKsQ3F+f0feLkJt5jkxi4rJhySNVtrZLam68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O8hmrAag; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OgUprl7Q; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=oyjNcQ9izjNv1qMfZIZdh+o/q4ggdh2Dujtuvdv5PbjGSCwlDQCk1+mIILLtvGEHrMTIUpzGAui5f1f1O36g41jZOt5qGdXqKblpgQlg1Xy/x7TK37WjoC2SRP7+ZfywHu0ZT+JNZFgTzc2gs2xkks8YXj3zhKgNm1iVEIfOtwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O8DhNi6i; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=D99vRzAs; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O8hmrAag";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OgUprl7Q"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6246D6ho1203222
-	for <linux-gpio@vger.kernel.org>; Wed, 4 Mar 2026 09:03:26 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O8DhNi6i";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="D99vRzAs"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6245SOrA956993
+	for <linux-gpio@vger.kernel.org>; Wed, 4 Mar 2026 09:03:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5Uu8Rc5MUkLbcfU9/lpDj1Gzj2w1uJa7a9HrTNNL9qg=; b=O8hmrAag09fqLr3q
-	PrQi2quDvT98RuvxEuB1INubex8lFDUvQV6PW6VyT/IOoEWzsMg236hTDPPz36EZ
-	oEt0n+qzIOmDr5S/0w55w2tdjibkqrtHd86R2y7ns9opQjaa1FvC3AZoMFoyHnyj
-	35m33cs6aTBaSZT4Z3nGKvSYN2W/uO3arTryKVmdJvZ+9Q726sp3k8RpSAjzR/Yo
-	qOeaASs+FQymTU7agJd6vuaynSuxh+fEc52MjMHVku3DfJlk8tOUAxKOD4YjcGbP
-	+3nVFCkaehAzbFX2PfnTQJ6ynl8S2dgA5aqlw3FZSA/atl3PYOeLuJuWaV/EHIBn
-	8tAhng==
+	XxApZrj5x0d+xFAjK72RyeZ+8kWAT47gmD209wuddiM=; b=O8DhNi6iiQ0wr6Qm
+	XLgu0rlhFSuVWEQJkPbXZmZ9JD0AwZqTH8m46nANsRAK5ZixwpLI4VIEw8Za8BCw
+	d4WiUqgPneaIhP+Ubju+TIK3gQ2rtr/xMZVAsMGU44w6cZ+kxjd4e/FlWaQiPO1H
+	BR2NcuGvK08bm6aCDi8fbg9vt4ty/wRRgG3R3lMHBoVhwBQLmvzkLaw1B5gLozE9
+	l58MB+oJBlSMflR1Uzzsa7vjJiRM7ipJrU/Bd9Wa0PWEfNFOuppvZiDZQZ43xps8
+	qIS/mrDUT0yrBclJLPfzLA3bR++4OOCwfWGHZ+RjwPOufd0zashYK1qlwHOJ3UqD
+	3ux1Vg==
 Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cpf9c0ju1-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cp6qga733-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 09:03:22 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c71156fe09so4094817885a.0
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 01:03:22 -0800 (PST)
+	for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 09:03:28 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c71500f274so682553585a.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 01:03:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772615001; x=1773219801; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1772615008; x=1773219808; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5Uu8Rc5MUkLbcfU9/lpDj1Gzj2w1uJa7a9HrTNNL9qg=;
-        b=OgUprl7QvPmWJRTzcDaPWDt6I809944cZwRZUkvkDs22d8QG4VrhA7JuT61/ttoNST
-         XGw8DRyy5vof6LbJQGcArqbQV/9N7iYPVRUf+uulE9wZkv0s/T/vEPriOH4o9aKz5s7c
-         eBBgDyZns+leeQ3x6VpjPnHApWN9ecbg9kt5uSpM2TOwF2qVn420z1hCoX3DPwieA/wE
-         3n/1VJMk/SXiIYm0t08cf4RmIZiQWAlUljicbtkDLu9N/vaiakfSthwP5EnHYZVo7T0C
-         H2lQrP8g0cRWYkv2OMNyxAvJtnIFuU6TPHBVYhXwOcrmO8vOES45XuBzz7ZGuvOwpsw8
-         JaYQ==
+        bh=XxApZrj5x0d+xFAjK72RyeZ+8kWAT47gmD209wuddiM=;
+        b=D99vRzAs4NLH4y70bMmcoZIkK75BYKAn+h3wmrHGAxCGUkfbiN04qqzjsHpONdz71m
+         dAxMp8DbbcwvZ7ukJvWRjpeQk9F92b5CvrrDF8+82SKW7mMDOd+v5gXPdkWhJFp90Xv6
+         uaY8PTEMo629T19RSw8aeCnXE3JOtLZCjRpD1rfCvlcUpmNkZn85vNAAN7YtubRTusiI
+         GWiVCxpEeQRGL0GPobsvCkHYhxzQmhu780DYwDEgb/6Y13emWHrpuhaaO+1bfVgfBI4I
+         x++zE98pWjXfXICPNgOTyubYaFuwMi41f0HOiXqj27SjWImhZaNnQjo+VpTQfKF6El82
+         /LIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772615001; x=1773219801;
+        d=1e100.net; s=20230601; t=1772615008; x=1773219808;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=5Uu8Rc5MUkLbcfU9/lpDj1Gzj2w1uJa7a9HrTNNL9qg=;
-        b=Q0CNWUHjODGqn+hRwgC7fiDGT1nb+0keLpU16MIMcN3l0j4vNBdHr09d6yHJBkZrwR
-         lFVK+dXsuJCsF1Z6b7xfrFOzr8Hn6ODU2yfmGzuVlIFstYGufsHsP33q9yYTgKvcv/dH
-         rT2I4DlphkVW/kwsPXrVJkbLYBi7/qHaachd+DyWnJdiPWP2+yNBdtxYvoGrOqX/xNZR
-         sF/HcfRUYQ4TZ9tYGV1jbaDqvwdVaPM6/snA6PbR96ezbj5Nkog7rMQGsOAwDoMA52V0
-         hZmMBvIvBTZ1VSjMHPEGkiccALBLDoFiYDdumvxEnv9MBRuYn5mk9QUOH7UmUhcRzi4U
-         CMMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGkQvc+uONJIzDFvKnRE5Ia08VTSI6Agt960bnjGnjiSJ6InLw76TXQ+3bnias7l8q8gFym6Iw1GV7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3U1iYFXdSR/3Z3X9SgUvctHtbApLJJK+63w7/ne7fvvoL0fXP
-	8NMxhBoTKunI5PZIKtUnpYzlutzZYKZYsRxg3jnTrnfnECbQMs/XpvXHvlfgkLx5Er5FZIyPVms
-	+8tYWxP5JuQUIZAu93Zu90XkS1yeoLnM8dTPF+wVkk85c/vuykXfoK9C3IwV69Ojs
-X-Gm-Gg: ATEYQzxSfjcKN2k02DcNzN5iXFwamrIfDWBiIjNxy/DAcQXg7kmX9qmgOz86fUULza0
-	Gn6oQME8KseneBKUdJvQ41sfTC9+iRGkUKk0LfcXoSxMq1Iwu3an4Esh+TYcB/eWEwVLnMJOP1A
-	dGiBCId1l0LY3Da0Tw+JExQsNEbuzhojuDGii/SxwwxybO1+feLyTWK7ACJnJfRCdk9CR+10uuk
-	dRAdS5uCpfQzqW2SfkRc+zQM0LqVekSEA2g35eTnHmH/P2V8dqdo5GXg+FX0+kdD7eGU4MPOrBA
-	lcoC1wZKAvQ3r0zSR2/nDl2xHofXKMjbApgg4t07JAWbAqWoyVITAvSN7DTPLDb0cj/MfRg9/jB
-	4o/A2AF3XVIjJ8SmTatQ0b8bv0EMwG1kc6aWQvvUWpFraRt0A+7aG
-X-Received: by 2002:a05:620a:290d:b0:8cb:4cce:e644 with SMTP id af79cd13be357-8cd5af0bcc9mr150439485a.31.1772615001132;
-        Wed, 04 Mar 2026 01:03:21 -0800 (PST)
-X-Received: by 2002:a05:620a:290d:b0:8cb:4cce:e644 with SMTP id af79cd13be357-8cd5af0bcc9mr150432985a.31.1772615000567;
-        Wed, 04 Mar 2026 01:03:20 -0800 (PST)
+        bh=XxApZrj5x0d+xFAjK72RyeZ+8kWAT47gmD209wuddiM=;
+        b=A2+afaCCeRKtnZsYv0drVOFsAjv5dyZUaDgCsVM3K2+o7M39y+4qL885NwX5tQN3cu
+         9b8WVgrwE2hkV/h6fE3i2/hqKpFqt6ETGhnjT5RPP9gfS+k17NRgQ+rJNHd8vuLan7+s
+         CbxZXjwcidkC8tv0NTVzPRyr/wWLrnSlZRvWVXlFRg4hol0WoA7YEAVwZwrCFvq34C/r
+         DaPPvrOF/E0TOaSXiL9ygPkwsZoq8nyzCu/GdgIUNfbord7IAeQrmCzIJ19zq+BbrU7M
+         xdwsVgBUt3LxP1il1kB5om6eoKKZFkrAIiCUktoOJce8JpEdsp65ug+762KtCPqDRuyy
+         EYrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQLwx3CkAHeJA1NzF48uchgKtCP8GdaIQw+bRlrMwxJc2dvKNlvnjj1qDlc4IaTarNf9rzUrO2F5Ey@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6pCB04qo2z8f1k2uclJKIWXPKj5nTF4b00knVwDW/f6xhYpRH
+	eubH4baK3VjbgYIzgq23D+kmmlNbu4Qf1ZmalgVwqZUCJhk8a1TP/PXl/rpd89OJw29waKg1jwg
+	yC+yibXeV4poFFAp3tN0c7a0vXg9McuaNaOSgFhhkwS/gF6CEKSA1meF9YsAJYEz1
+X-Gm-Gg: ATEYQzy+tPA4i62JQUNxk9MLkXYyc1GpdgBIQDz8aO0lOMe68oLXhITa6NxKkbn+Q++
+	sgMffCw36krobwuYAebzWjPzuK/Xw1i65uJJHXCVq55XC9aU6gOnc9OC2tIFPxtO3yL1KdjovIi
+	cR4h1+aLfLqPK13BfZVFdJKVMg6H0XZUcmNvwjRZ4ojr8TR/F8g9tWMw+2zcTxDg7EliuqmJj7l
+	2XQ1tYocNSQ2PbQ87JmibWpcuPfjbmM+Y5saq7g7kJ00ayDWcOTNG0Ixt8yA679O7FVNy5U4qXH
+	BOlV1ajaIwjmN8rk+LDW/Q+r/ez/7ni8YLNJ1yRqfnL5JjsPIJ4lBDd988KkbLM3y+1IMUGbke3
+	44bVGfBjwxgAzD8yFPhniWs2SPvIXI/qDPv8jb3QYqnj2WZlEfGij
+X-Received: by 2002:a05:620a:1714:b0:8b2:9fab:d7d4 with SMTP id af79cd13be357-8cd5af843f8mr148864385a.38.1772615008139;
+        Wed, 04 Mar 2026 01:03:28 -0800 (PST)
+X-Received: by 2002:a05:620a:1714:b0:8b2:9fab:d7d4 with SMTP id af79cd13be357-8cd5af843f8mr148858285a.38.1772615007620;
+        Wed, 04 Mar 2026 01:03:27 -0800 (PST)
 Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:edb0:af14:f4c7:c6ac])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4851ad02ffcsm3644895e9.20.2026.03.04.01.03.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4851ad02ffcsm3644895e9.20.2026.03.04.01.03.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 01:03:19 -0800 (PST)
+        Wed, 04 Mar 2026 01:03:26 -0800 (PST)
 From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Wed, 04 Mar 2026 10:02:28 +0100
-Subject: [PATCH 07/14] pinctrl: Kconfig: drop unneeded dependencies on
- OF_GPIO
+Date: Wed, 04 Mar 2026 10:02:30 +0100
+Subject: [PATCH 09/14] hwmon: drop unneeded dependency on OF_GPIO
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -90,7 +89,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
+Message-Id: <20260304-gpio-of-kconfig-v1-9-d597916e79e7@oss.qualcomm.com>
 References: <20260304-gpio-of-kconfig-v1-0-d597916e79e7@oss.qualcomm.com>
 In-Reply-To: <20260304-gpio-of-kconfig-v1-0-d597916e79e7@oss.qualcomm.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
@@ -127,45 +126,44 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, brgl@kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5460;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=724;
  i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=SNxn4ssJCq61+0YQndlULQe5RINmdH9u0N6CqwGb0P8=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBpp/UxSO5nc8kZcTUF9RyXKUJmf6Of1AYtIHV0U
- 6UACVndydKJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaaf1MQAKCRAFnS7L/zaE
- w5i9EACQjyTPxi/a1QXOxfGfBGhdjzZUrgi7jiJL4MvvK8VXQiRQvaR2vGldWmrji0tQeSFZVH3
- Zz51abeGu/KvkaZdo4U/rXM4ZC+Km0Lds2jX1QQ8qCFhWgQ1iebcXeJiHNQWCh0wNnY2/meApzJ
- rvzFAhGZcvzdB8OUYP2lZ8dDAMSX8tKOCXynkJ6egYF7XKdJ/l5I6olmeYb6tcEndTOuE03j8tJ
- QbJLbwucLEN5fE3mu757a9l+JrDgLZA77UbCQXFgeRNsa3CxuBJXg5KLeKBXxI5b8W9dqtDWs+4
- CUvvivch/oaClYS87HV6xVwbsGtHD/qE4Dyg+LcqEDKG+dEa7HC9J7LeZNTVqkJUncN3ZAURtrX
- DcQ1t0Ny2sl8WGcfVA5d9DXSr+yjwdgdKdTyiWQrgS2SGU4SKApVGMT19N+juW/HuIYNN0lMJLe
- 6GXfm4DUPPjdB7Z46C5uxrTzxEXdGy36eUclO3LQD5Dj67INf7uSR4VFicumGPkf2TRxY6hZ63v
- HCBjI+tS8cdFiPdkuPoT6+AeScisOZ+nTHhHbx4VHfRRNr23JTlWhlUR1uBeR0mQJwAhXqhUVnH
- I+9SsKxtSrdhRA4F5iojV2RWJCwI/ocUowc3fHpCopIkvmKDYE+51TQ3J7ICqF+6zRQFlRKUiV7
- NWCE+XrDTIp9bxw==
+ bh=BZ0gBX6ApkbfQGAvIdrTK0HNC5TATefci/BtaAEAScU=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBpp/Uz6yqxw+9I2xsnrbiXWkb1Q6qa6KwlYI8TK
+ d9JejBIMTWJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaaf1MwAKCRAFnS7L/zaE
+ w/3aEACwVZCfqTwZVPWkHYhO8Qy3o0ruCZnb285a+Ylf7yiCsvgYQn0a+sJ2Arc7KxxU/aPIXGv
+ 0aCZMBstfCGSxehuCnwhBer6o8ip4bb7kyIIkx0dm62T4QqKQ5L5QA5G4ciTBJ8EuvjtnSMeGuJ
+ 95epXjl8sR026uh4KZEYZYxbOgIWvV2Ug4vquTWPnO7T7/frpn7ujJB7EUgTMG+EHBSM2FIE+0v
+ HWjaX7Q/qKobdkdnrFIva7tNsWe8WCAiSmYSvQGlWmDU15f/4yihAn90zQLK14jwUIIvbqKCRxW
+ bhf7+1haXr3TsZRioTZ5+sP9XAFSH7Urm6a1oEoHKB06fJnOPAEawTfp9MNx1DfqPO3gvgmONrV
+ yrSwl3IpJ3ld2yUQuOFT9i2nmkedupRNvQtalNFEPOpJtbP0bakZqh+KnXuyhvNKScPwT4MVgHu
+ Lr4cvrNkmt//CI9a0nV0Wx85nantYCCTBfgiWEr5WrWOVDtQIL0JTuP/KYxN6KWjgf2fXehFdib
+ dWGeFHTIp/lY4HrTk+4tQ6oetpUDkdppOiusjNeG9zYX5WjnV48wsSXaXvsw9gkjpeLyJAf1lNV
+ 3dZw5ihRTGrkMUJYU/0S567LpMEIQZfQetG+3NuIzQOs4p3djYvv1xGRysT8SVHkZVcA3vjwKfu
+ YphKNug3FwuWLkQ==
 X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA0MDA2NyBTYWx0ZWRfX8tntNRRo/dpJ
- 6KM8y2o8wWffIV2qGdflrXgGJ3D122CEUfct5wi0xe/UySw+TB9/CS3JhpqCSpTmvsBjrT20TSM
- tDe4/ZFEsGVZrRii5wIgq++9VQsZJJvpRie89A4kBWyFCk7YVEIUc3Bxzd4uS6Fz7ZFGsdgiDhk
- rvcobGrh+OIVsz84ywg+csBXtx26YAmqRQoKK2lSAj/R6f6HisqsRdDkwl7qJ/7h6dPPbMhrYiv
- T6GFfRAVX2jQaTsIcdAvXkys5x058BUow1JnHV7vdqt+qP+R2RlmCLJzTdbn0vCnU5F7lpVpvLg
- FRsL4GtXwDn9Pyctvz/d4v7hBCAUm8OHKdpsXuzS9hMZ+Ju28Tvq7qFLzAU9sQPXS+veSOMdhFx
- lelXTTnYwYzVmmwv3bHC5U02I5tTpwOATehL3/qw4d02g6Omlj6sSKrrEIGqQujXhuC7MZgcSc+
- RmTxJHm99LOO5XCXuiw==
-X-Proofpoint-GUID: w2PKDF6QS9JKzbRx7RrxgAzzMXfa9_jo
-X-Authority-Analysis: v=2.4 cv=S4LUAYsP c=1 sm=1 tr=0 ts=69a7f55a cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA0MDA2NyBTYWx0ZWRfX03qSAXdvgcDu
+ N0oagXwn5rhi9EAjdRIq+qKv7NNDu8avmQoWzNSu3zcKDvokCXDKh0nTDDRhywqa7whd3epL7mK
+ ZJY1IxD9hFswDw4+D9mDRKB8+Y6MU6MfhxF6LkeVa2OQzrzZGDZFvuzyIHgAiiUu+n/ODJmyQBb
+ ZTr2qqE9OgOZstmlc4Kgz1QUsKx20Zo/5/gyCO5f5puHkL/QzAH8D1TXTb+hFHwoMTSZfL3pi7J
+ NNJzCbEe8yeVW51AehwUO35DTelPA3GFnLL7w7oa7z04h6JAN8vewmoI+33DOwZQsQGLerDxb62
+ Yl/2ToUjCwrss5TC9YWW2O0YgZbp3EdhDxxgX21G0dNrTWOX5x6l0G6VA6Mh9KElz3QDFZQeL7x
+ dZ9QNi8gHKy+AOYiBVaCo5Xe54I674cCHlD24W0SG9Ts+ticFBzmNvHvwz9la0FNuHKdEDKuohI
+ tW3xIEWp5feAWjf5D6Q==
+X-Authority-Analysis: v=2.4 cv=UJ3Q3Sfy c=1 sm=1 tr=0 ts=69a7f560 cx=c_pps
  a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
- a=vlgKDOFDcSGwYYau-yIA:9 a=XcN_yYmeaqUB91j7:21 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: w2PKDF6QS9JKzbRx7RrxgAzzMXfa9_jo
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
+ a=DLk2I_icXWleI3Wn6BIA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: jyCuyIq_NcDK4hrrCRitHRzWekkem99U
+X-Proofpoint-GUID: jyCuyIq_NcDK4hrrCRitHRzWekkem99U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-04_04,2026-03-03_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 clxscore=1015 phishscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
+ adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603040067
 
@@ -175,155 +173,21 @@ explicitly.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
- drivers/pinctrl/Kconfig          | 9 ---------
- drivers/pinctrl/bcm/Kconfig      | 4 ++--
- drivers/pinctrl/meson/Kconfig    | 1 -
- drivers/pinctrl/starfive/Kconfig | 2 --
- drivers/pinctrl/sunplus/Kconfig  | 1 -
- 5 files changed, 2 insertions(+), 15 deletions(-)
+ drivers/hwmon/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 4bafe1dff1951c470fe5a4131d0c06b497a4b575..03f2e3ee065f4268dbd2f94a0ffecbbc4d89df20 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -77,7 +77,6 @@ config PINCTRL_APPLE_GPIO
- 	select GPIOLIB_IRQCHIP
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
--	select OF_GPIO
- 	help
- 	  This is the driver for the GPIO controller found on Apple ARM SoCs,
- 	  including M1.
-@@ -126,7 +125,6 @@ config PINCTRL_AT91PIO4
- 	select GENERIC_PINCONF
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 	help
- 	  Say Y here to enable the at91 pinctrl/gpio driver for Atmel PIO4
- 	  controller available on sama5d2 SoC.
-@@ -293,7 +291,6 @@ config PINCTRL_K210
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GENERIC_PINCONF
- 	select GPIOLIB
--	select OF_GPIO
- 	select REGMAP_MMIO
- 	default SOC_CANAAN_K210
- 	help
-@@ -419,7 +416,6 @@ config PINCTRL_MICROCHIP_SGPIO
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
--	select OF_GPIO
- 	help
- 	  Support for the serial GPIO interface used on Microsemi and
- 	  Microchip SoCs. By using a serial interface, the SIO
-@@ -441,7 +437,6 @@ config PINCTRL_OCELOT
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
--	select OF_GPIO
- 	select REGMAP_MMIO
- 	help
- 	  Support for the internal GPIO interfaces on Microsemi Ocelot and
-@@ -482,7 +477,6 @@ config PINCTRL_PIC32
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 	help
- 	  This is the pin controller and gpio driver for Microchip PIC32
- 	  microcontrollers. This option is selected automatically when specific
-@@ -499,7 +493,6 @@ config PINCTRL_PISTACHIO
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 	help
- 	  This support pinctrl and GPIO driver for IMG Pistachio SoC.
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 8f7ce66ae3a258ebd439ed97441bb087dc01c76c..fb77baeeba27b9ec51142040beccc953df0a1e3e 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -775,7 +775,6 @@ config SENSORS_G762
  
-@@ -521,7 +514,6 @@ config PINCTRL_ROCKCHIP
- 	select GENERIC_PINCONF
- 	select GENERIC_IRQ_CHIP
- 	select MFD_SYSCON
--	select OF_GPIO
- 	default ARCH_ROCKCHIP
- 	help
-           This support pinctrl and GPIO driver for Rockchip SoCs.
-@@ -557,7 +549,6 @@ config PINCTRL_ST
- config PINCTRL_STMFX
- 	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
- 	depends on I2C
+ config SENSORS_GPIO_FAN
+ 	tristate "GPIO fan"
 -	depends on OF_GPIO
- 	depends on HAS_IOMEM
- 	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
-diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
-index 096d0778427e274d6532ffa872c87dfc9d155727..206f3f1249cf50c662c44043e6d2d910a5687bf1 100644
---- a/drivers/pinctrl/bcm/Kconfig
-+++ b/drivers/pinctrl/bcm/Kconfig
-@@ -120,7 +120,7 @@ source "drivers/pinctrl/bcm/Kconfig.stb"
- 
- config PINCTRL_IPROC_GPIO
- 	bool "Broadcom iProc GPIO (with PINCONF) driver"
--	depends on OF_GPIO && (ARCH_BCM_IPROC || COMPILE_TEST)
-+	depends on ARCH_BCM_IPROC || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
- 	select PINCONF
- 	select GENERIC_PINCONF
-@@ -185,7 +185,7 @@ config PINCTRL_NS
- 
- config PINCTRL_NSP_GPIO
- 	bool "Broadcom NSP GPIO (with PINCONF) driver"
--	depends on OF_GPIO && (ARCH_BCM_NSP || COMPILE_TEST)
-+	depends on ARCH_BCM_NSP || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
- 	select PINCONF
- 	select GENERIC_PINCONF
-diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-index ce6aeec2fc791a067bbc33a0b518d8a15402f7a6..1af4fc320f42bb893ba9f42f4bb0b6d7e034e512 100644
---- a/drivers/pinctrl/meson/Kconfig
-+++ b/drivers/pinctrl/meson/Kconfig
-@@ -8,7 +8,6 @@ menuconfig PINCTRL_MESON
- 	select PINCONF
- 	select GENERIC_PINCONF
- 	select GPIOLIB
--	select OF_GPIO
- 	select REGMAP_MMIO
- 
- if PINCTRL_MESON
-diff --git a/drivers/pinctrl/starfive/Kconfig b/drivers/pinctrl/starfive/Kconfig
-index 8192ac2087fc363900b0018bf9e348c030d7b7da..a9a7cb101684451e5897406c52ff955157639faf 100644
---- a/drivers/pinctrl/starfive/Kconfig
-+++ b/drivers/pinctrl/starfive/Kconfig
-@@ -9,7 +9,6 @@ config PINCTRL_STARFIVE_JH7100
- 	select GENERIC_PINCONF
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 	default SOC_STARFIVE
+ 	depends on GPIOLIB || COMPILE_TEST
+ 	depends on THERMAL || THERMAL=n
  	help
- 	  Say yes here to support pin control on the StarFive JH7100 SoC.
-@@ -24,7 +23,6 @@ config PINCTRL_STARFIVE_JH7110
- 	select GENERIC_PINCONF
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 
- config PINCTRL_STARFIVE_JH7110_SYS
- 	tristate "System pinctrl and GPIO driver for the StarFive JH7110 SoC"
-diff --git a/drivers/pinctrl/sunplus/Kconfig b/drivers/pinctrl/sunplus/Kconfig
-index 4b5c47c193d970b2dc1e9517381936253610af28..69f82590f6d245ba42b773758c5a6955063ae606 100644
---- a/drivers/pinctrl/sunplus/Kconfig
-+++ b/drivers/pinctrl/sunplus/Kconfig
-@@ -13,7 +13,6 @@ config PINCTRL_SPPCTL
- 	select PINCONF
- 	select PINMUX
- 	select GPIOLIB
--	select OF_GPIO
- 	help
- 	  Say Y here to support Sunplus SP7021 pinmux controller.
- 	  This driver requires the pinctrl framework.
 
 -- 
 2.47.3
