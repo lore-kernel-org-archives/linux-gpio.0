@@ -1,168 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18A626FDBF;
-	Thu,  5 Mar 2026 17:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D08C2ED843
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Mar 2026 19:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772732771; cv=none; b=fmC3qhbxn88n8FLGfWC0gBSM+/fLgetGFNiBK20LvE4Cn8AAQ4NXACBeGHqUB1JyVEvx0IP4cWw4W01G/MauUWjml3mKQiMNqka3bJTjNiKJIm4g2vVyBIEZwUCuWP9d2VVIMcvOFesvDQJSu/3eZbxe5K4fYu+1p4Jb/t7X0a8=
+	t=1772737459; cv=none; b=qUgSj1yIpCNVgPtlnmSGGelhVG5xNUr8hSCCBonlHwXVLDzvKODUKBKMCIYeSb3xJFsXNIxyYOxSbglPC4/Y/aamNVQU9FKjymN4IOUFuTmfZfwg5suBGDl9s5uL/5n6aWBdzoVSpfFlX2PJ9f1DlC8OpX13h3bl+UxUWo2rh/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772732771; c=relaxed/simple;
-	bh=2HAVcfpUtCyECaW0rvig9lyxyuv7rVKUEqPEYkLuDeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MTWo81PXXlAktG4Om7bcgyGUY6VsemIEtgOJG45F+hKYuoLC1v+FY2E/jjHZYLj8jRZpV4scPphWIj95yEVfPDrmYkFZhKYJPIJaDwfgW/u+dFAEGDydWUwG8x37hr1UxiXKS/lFuFiBdgmxVjaQA6O6CSiO3Ji4yKrDCgnCuxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm/amFbO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772737459; c=relaxed/simple;
+	bh=0cMkxm7dpZ1xmN+oxuhZ+J5McF8TzcD3plfxWOZH13E=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BdGbiq+YdpqDqmycGiqFIR/jW+ymvZoJExlbw3xryGTWx8QfvdQOyGX8MAJWPDhD5ROi1pEKDjCnXIHMG9LdOjjn8Lwac0obCLj+9Ng6AjIfX7Sp6sviwNdO/oPfnpi4KXXJk2UoGsKx0puHAWoqZvTDCI/sLGH4oAjLQhYGryA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=7xp6uLN/; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm/amFbO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C0BC2BCB2;
-	Thu,  5 Mar 2026 17:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772732771;
-	bh=2HAVcfpUtCyECaW0rvig9lyxyuv7rVKUEqPEYkLuDeQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Dm/amFbOJ28V2MKhtPq1e11XjQ+YEsGi+ex48RrYXrHoNGSB21AxQ3UtXo3lVy7/z
-	 jOIM5/tcCzKOLyXvclKL/YL7NhopROcd5yC5LNtUQhGTq+QYBnSqIsXxqEvtbAteDK
-	 oxwqReiny+F82V7Rk3Iz9/17jArPdhPYsqW+ITwEYr5EaZma4VvFLuAWu4qpgsx9vT
-	 pcfajjM+w8EST9+SC8RY54mbMdl+etKmyJyRAK9yHU0R+YZg6zWczUUINW7pm0K0ec
-	 H1zicn1/1UjmIBY1h2xlz8oHUh0qy1S/M+MxoT/IPu89xOg3B728jPvMsMOK1cQNrx
-	 N7JZoLxFr+2Mg==
-Date: Thu, 5 Mar 2026 17:45:59 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Radu Sabau via B4 Relay <devnull+radu.sabau.analog.com@kernel.org>
-Cc: radu.sabau@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: add bindings for AD4691
- family
-Message-ID: <20260305174559.1ded5173@jic23-huawei>
-In-Reply-To: <20260305-ad4692-multichannel-sar-adc-driver-v1-1-336229a8dcc7@analog.com>
-References: <20260305-ad4692-multichannel-sar-adc-driver-v1-0-336229a8dcc7@analog.com>
-	<20260305-ad4692-multichannel-sar-adc-driver-v1-1-336229a8dcc7@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="7xp6uLN/"
+Received: from [IPv6:2a02:1812:162c:8f00:19d9:5e35:1cd7:5d5d] (2a02-1812-162c-8f00-19d9-5e35-1cd7-5d5d.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:19d9:5e35:1cd7:5d5d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 2DCB96F2F33;
+	Thu,  5 Mar 2026 20:04:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1772737455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t3JlO9jkrcoFYhcSoRZPlkrxeap+txhaWKtFXzrqp/A=;
+	b=7xp6uLN/2jgIUVF5DrHjwCUicbxEi0UEnH2lixV/dH25/QbVJvZXlfZbsp+3N+53JExDmR
+	A20VQypE3lHos49PcaVXLjGIIQDc+IvX0z5VQifjp86+pX2IPZfziBeaRh4Ec6n5CJuzDr
+	HKvy9VVdLHvjG7X4ZTEEaOCDfEuhPXSyQmLfSR/TFpVLcvcCcQZHiXUcFpOgdJrfIwtUUw
+	UcgGHC4FEUxgiZwZ3fXnaV5b68Mn0te3A49nsXV8ASBINHWt2PiXqdMSuS8aPL5JahbAff
+	vT22eHH2UZQcIHcrKvamcGAY3HaDJFlFVNzpC5gPmhsrfE4gxyi65jGqS7l9jA==
+Message-ID: <f92a2a8558ebff7a145ece97c2bc44f1f7aafd26.camel@svanheule.net>
+Subject: Re: [PATCH 2/2] gpio: realtek-otto: add rtl9607 support
+From: Sander Vanheule <sander@svanheule.net>
+To: Rustam Adilov <adilov@disroot.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski
+	 <brgl@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bert Vermeulen
+	 <bert@biot.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 05 Mar 2026 20:04:14 +0100
+In-Reply-To: <20260305161106.15999-3-adilov@disroot.org>
+References: <20260305161106.15999-1-adilov@disroot.org>
+	 <20260305161106.15999-3-adilov@disroot.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 05 Mar 2026 14:23:27 +0200
-Radu Sabau via B4 Relay <devnull+radu.sabau.analog.com@kernel.org> wrote:
+Hi,
 
-> From: Radu Sabau <radu.sabau@analog.com>
-> 
-> Add YAML bindings and dt-bindings header for the Analog Devices AD4691
-> family of multichannel SAR ADCs (AD4691, AD4692, AD4693, AD4694).
-> 
-> The binding describes five operating modes selectable via the
-> adi,spi-mode property, optional PWM/clock for CNV Clock and CNV Burst
-> modes, GPIO pins, voltage supplies and the trigger-source interface for
-> SPI Engine offload operation.
-> 
-> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+On Thu, 2026-03-05 at 21:11 +0500, Rustam Adilov wrote:
+> The RTL9607C SoC has support for 3 GPIO banks with 32 GPIOs each and
+> the port order is reversed just like in RTL930x.
+>=20
+> Signed-off-by: Rustam Adilov <adilov@disroot.org>
+> ---
+> =C2=A0drivers/gpio/gpio-realtek-otto.c | 4 ++++
+> =C2=A01 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek=
+-
+> otto.c
+> index 4cf91528f547..5e3152c2e51a 100644
+> --- a/drivers/gpio/gpio-realtek-otto.c
+> +++ b/drivers/gpio/gpio-realtek-otto.c
+> @@ -351,6 +351,10 @@ static const struct of_device_id realtek_gpio_of_mat=
+ch[]
+> =3D {
+> =C2=A0	{
+> =C2=A0		.compatible =3D "realtek,rtl9310-gpio",
+> =C2=A0	},
+> +	{
+> +		.compatible =3D "realtek,rtl9607-gpio",
+> +		.data =3D (void *)GPIO_PORTS_REVERSED,
+> +	},
+> =C2=A0	{}
+> =C2=A0};
+> =C2=A0MODULE_DEVICE_TABLE(of, realtek_gpio_of_match);
 
-Hi Radu, I'm going to focus on mode... Mostly because things called
-mode are usually a sign of mixing up different aspects of the board
-design...
+If I'm not mistaken, this SoC has a MIPS InterAptiv CPU like the RTL931x So=
+C
+series. Were you able to validate that the interrupts are functioning as
+expected?
 
-
-> +
-> +  adi,spi-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3, 4]
-> +    description: |
-> +      Selects the ADC operating mode:
-> +        0 - CNV Clock Mode: External PWM drives CNV pin, samples at PWM rate.
-> +        1 - CNV Burst Mode: PWM triggers burst cycles, internal oscillator
-> +            drives conversions within each burst.
-> +        2 - Autonomous Mode: Internal oscillator drives conversions, software
-> +            starts/stops via register write.
-> +        3 - SPI Burst Mode: Similar to Autonomous Mode but optimized for
-> +            SPI burst reads.
-> +        4 - Manual Mode: CNV is directly tied to SPI CS. Each SPI transfer
-> +            triggers a conversion and returns previous result (pipelined).
-Which of these are wiring related?
-
-0 and 1 need a PWM wired up.  So describe a PWM. If there is one we need
-to figure which we want so indication provided by userspace.
-
-2 and 3 don't need anything beyond bus.
-
-4 probably does need a binding but that's about whether that wire connection
-is there or not.
-
-> +
-> +  vio-supply:
-> +    description: I/O voltage supply (1.71V to 1.89V or VDD).
-> +
-> +  vref-supply:
-> +    description:
-> +      External reference voltage supply (2.4V to 5.25V). Mutually exclusive
-> +      with vrefin-supply.
-
-Enforce that via a rule as you do below. No need to document it here as well.
-
-> +
-> +  vrefin-supply:
-> +    description:
-> +      Internal reference buffer input supply. Mutually exclusive with
-> +      vref-supply.
-
-
-> +
-> +  # AD4694 (20-bit) does not support Manual Mode
-
-That's a driver thing. Not something we want in the binding.
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: adi,ad4694
-> +    then:
-> +      properties:
-> +        adi,spi-mode:
-> +          enum: [0, 1, 2, 3]
-> +
-> +  # CNV Clock Mode and CNV Burst Mode require PWM and clock
-> +  - if:
-> +      properties:
-> +        adi,spi-mode:
-> +          enum: [0, 1]
-
-This is backwards. Define these as optional properties and use that to
-limit what the driver can offer as ways it can run. Maybe they
-only make sense together in which case add that rule.
-
-
-> +    then:
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +        - pwms
-> +        - pwm-names
-> +
-> +  # Non-Manual modes (0-3) without SPI offload require a DRDY interrupt.
-> +  # Offload configurations expose '#trigger-source-cells' instead.
-> +  - if:
-> +      properties:
-> +        adi,spi-mode:
-> +          enum: [0, 1, 2, 3]
-> +      not:
-> +        required:
-> +          - '#trigger-source-cells'
-> +    then:
-> +      required:
-> +        - interrupts
-> +        - interrupt-names
-> +
->
+Best,
+Sander
