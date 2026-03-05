@@ -1,128 +1,140 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB30C3101B2;
-	Thu,  5 Mar 2026 07:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576EE3242B1
+	for <linux-gpio@vger.kernel.org>; Thu,  5 Mar 2026 07:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772694708; cv=none; b=s1IlQM8OApo1vatRxQuCkiBA6UCc0gXbOm/SwoPlUfb/r0GQc5YobgkJEGvebKpatzYH0+TqeReoPRHh7KxXW78ixVCkR4QC4kF2HoxQmnFZ0zjNpFoJ7yOwXnK8qh6cDfdRV4uvvrr4oUULEnmfcJpiuK2MkOTk2U4VO6TqZx8=
+	t=1772696880; cv=none; b=Cc4rysMVJzgBW9Z5dSUPWWcMw7mlo93v4hWGOqPQ9tOSQqb6i8RuK/EN8bBIQt1irjb6Fi7SLZIryC3OBYBHVGFGTsmMF/hwPn2gJLSdEC8nPg/N66qT9hDhApLWRXNB9Zfj7a1a5QWrP04dBdztmCMEnKpc9/9UuHF8JPeto3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772694708; c=relaxed/simple;
-	bh=mh7TqYGtwyz8BNhFD30DS+eTl5ENs1RwMsa8SpKQyfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUDYgFHmt8YkxTDbx4bXeyN6+lI2Tph772MBw48lW59GUROYQUtIpCdbbs6nzEoy+iqVOTpjkqkyMB7ypJWOUPkvGcZmbTHl+9JUFCPFQgx/ay3hpYL2JFvVLqVKGIFtc4+HfJ+3ulpQvYT3A9RR1zWaNLXsdu8dlFuvft9xIY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QjcfWv0L; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QjcfWv0L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772694707; x=1804230707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mh7TqYGtwyz8BNhFD30DS+eTl5ENs1RwMsa8SpKQyfA=;
-  b=QjcfWv0L8UzoMjC9zl2GmwGsLypqTWpedVkMe4DdWTWg4Qu5CqAQawAg
-   0Hew030BZEEDf5paPV7Bqc36JvDw8mRhXoxa6Fb0E6Uqhv6EAnHotmxNU
-   0FrbTcGY87qhTR7kxZKMlKSbQE8Fdg62QrUSynVyLP1h/7M1go0EwwRze
-   rp13Tsx40ouXHbrRe/reU4oasN4ddG9DBfwUHtXjBpG0b188428FxtbYz
-   uQaC18XBqFQ54RlWt1IUZOhlgMjFTLlKWTb9P7+9eJJgFJnF0FVe5qIfs
-   5qk2s+RMbSXVy6oWI+45yGstrzyqVM9tdZRmHBjs9hJdcEYj3uW1+vOxk
-   Q==;
-X-CSE-ConnectionGUID: tOyStoCbT0aS9ZOgm8iNkA==
-X-CSE-MsgGUID: TxLf4fUlSamGMeckgXYsiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11719"; a="73687281"
-X-IronPort-AV: E=Sophos;i="6.21,325,1763452800"; 
-   d="scan'208";a="73687281"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2026 23:11:47 -0800
-X-CSE-ConnectionGUID: 4I7EZlacT7CX44ivW2zzbA==
-X-CSE-MsgGUID: tDPbyxNBSTmeAN8d90KA2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,325,1763452800"; 
-   d="scan'208";a="241600936"
-Received: from igk-lkp-server01.igk.intel.com (HELO 9958d990ccf2) ([10.211.93.152])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Mar 2026 23:11:41 -0800
-Received: from kbuild by 9958d990ccf2 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vy2rz-000000001y1-2aM6;
-	Thu, 05 Mar 2026 07:11:39 +0000
-Date: Thu, 5 Mar 2026 08:11:29 +0100
-From: kernel test robot <lkp@intel.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	arnaud.pouliquen@foss.st.com
-Cc: oe-kbuild-all@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>,
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH v9 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Message-ID: <202603050819.478UbJ2l-lkp@intel.com>
-References: <20260304211808.1437846-2-shenwei.wang@nxp.com>
+	s=arc-20240116; t=1772696880; c=relaxed/simple;
+	bh=urVD1xPdaF3hV5GqXqVqTidMinFWi7P2lc2J0G3o7gY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fyo+iCjO71lyXJz5/ZOEQy0bA0J1XV+9U+cQL59PycHQ/8uA1kVSGkbT6sH+3IXGubYpJNyPN/VVBV5lwQnbTQuXiYgF1V8o2QcvXbCpCX39m8l/6xZUsk4f81a6wEQNsD3lnds2PCFtRB3bGkkwLcHDSqGDrlY7CNT64C85qwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5ffa0b23a60so858009137.0
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 23:47:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772696878; x=1773301678;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7xyHjzGnphi32H4Bte19x6wQV76UaiJqzbc3zMkJKs8=;
+        b=V4nVGE/L+zFePRitZ4IQ7mIhQqSuHIojsnEAh+f3cC87E8PunDxpBjT83t6b62OnUa
+         tMc27xo7yarhKsWDB1WBFFuU4pwj7WlHNxv05+PAAuii/JiVRmO6eJ8VUjnPM8KIBHJy
+         589iQWtcl5nR5jkbqLHQAlB1atX0QfLg+mxg9kfMB0k/ofUmW9M+BhgvqfYlJ8MWf9Od
+         NG9Y/6XQf869m1ODmUzGafwhhUokVDsYjackyroz9AqMi1WlpMXR7AEIxZVkBJDwBlix
+         mZUpphWcocwk3rvsp58SIQo/qHIiYgpYCMhwZJprhwsPUNihyba2Z5qVf7WP5LaVrHd3
+         AWNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAUh4suDiFJ7qfss6Aeo+UKaOd8fiZHhISIbykRHyWLi8JWcuZW0NM5BcOTLlE7Nb7buUavthIdcND@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrf2Ao5LiCTo/oNmSIGYN4MhJFXM5O/GJ+3xU5soELGWtd+eo5
+	3mEAOnyC0jbqUzWW8QrQ900wBnGtkz572BReNbj9Mdjb6AY2co1aum2LqLBBma/u
+X-Gm-Gg: ATEYQzyel6JJrIh3d6tuZ/+waz1+7e5CUE0yEs1os/dO1wCShBIuBmsRNsfCJpup0F6
+	p6GIf+x02ioWhruEObYvWZBwCF3+TSd34rzivW8k2MswFwRwrhp1NfsQyw5yhY7Guum1PtW6SF8
+	B0FpMTvlnxFOJiKz8l84YTbZ9ozEppz++x2u2mVFNAuPomvhB37z4tMQVEvKM3geOfHndmLSYRO
+	0YOwiE/dJOOSAZVGtckkTRXXCsR8XtWT4YWF+HA0A98orKXaAd60Irj/9rPFMb3RxXa/2OU3J+q
+	B07hkSEA7dnC401ANfis1zZwGZ+DuL8eW6EKBu0FWR6r1Xf4l9IG3TXMctXIq2A9BZ5PMFx4Wud
+	4dIejb0730/ad29opJ+Pg+LzMOnSqqydZRP4vxzd7ybmrk3LqslzT1ENqJW631dMzqSRdnvCEVo
+	mdSaFMbtpLeYNRR+KSsvzgOClOI/6JP7kJXoy223GAOuhwK7EG8gfy04uL6ExK
+X-Received: by 2002:a05:6102:26c9:b0:5f5:773f:b1e3 with SMTP id ada2fe7eead31-5ffaab12b9bmr1937946137.11.1772696878352;
+        Wed, 04 Mar 2026 23:47:58 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ffaa208aeesm4681556137.12.2026.03.04.23.47.58
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Mar 2026 23:47:58 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5ff18242343so2069554137.2
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Mar 2026 23:47:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVMQJ3HtFT3rTTOIO4kh6rDPnppKiAK349U9q9hNa+u1Ephxljzg6rqXSWWrd0BiSNpXbydmfhPfHDa@vger.kernel.org
+X-Received: by 2002:a05:6102:32c1:b0:5ff:a16b:93f9 with SMTP id
+ ada2fe7eead31-5ffaae2d5b0mr1883200137.21.1772696877960; Wed, 04 Mar 2026
+ 23:47:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260304211808.1437846-2-shenwei.wang@nxp.com>
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com> <20260304175735.2660419-14-vladimir.oltean@nxp.com>
+In-Reply-To: <20260304175735.2660419-14-vladimir.oltean@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Mar 2026 08:47:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUNtqsui3ek1RYCTyiuDLRajpSBMnrdzED6wu6i7-QcuA@mail.gmail.com>
+X-Gm-Features: AaiRm514iMGAdfTBAVsgfVfK-GGHy9jHY4ezK-Lp3w09-JWpnENLQ0I4lkIFgvE
+Message-ID: <CAMuHMdUNtqsui3ek1RYCTyiuDLRajpSBMnrdzED6wu6i7-QcuA@mail.gmail.com>
+Subject: Re: [PATCH phy-next 13/22] phy: introduce phy_get_max_link_rate()
+ helper for consumers
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, spacemit@lists.linux.dev, 
+	UNGLinuxDriver@microchip.com, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andy Yan <andy.yan@rock-chips.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Shenwei,
+Hi Vladimir,
 
-kernel test robot noticed the following build warnings:
+On Wed, 4 Mar 2026 at 19:00, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
+> Consumer drivers shouldn't dereference struct phy, not even to get to
+> its attributes.
+>
+> We have phy_get_bus_width() as a precedent for getting the bus_width
+> attribute, so let's add phy_get_max_link_rate() and use it in DRM and
+> CAN drivers.
+>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on remoteproc/rproc-next robh/for-next next-20260304]
-[cannot apply to linus/master v6.16-rc1]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks for your patch!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/docs-driver-api-gpio-rpmsg-gpio-driver-over-rpmsg-bus/20260305-052440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20260304211808.1437846-2-shenwei.wang%40nxp.com
-patch subject: [PATCH v9 1/5] docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-docutils: docutils (Docutils 0.21.2, Python 3.13.5, on linux)
-reproduce: (https://download.01.org/0day-ci/archive/20260305/202603050819.478UbJ2l-lkp@intel.com/reproduce)
+>  drivers/net/can/rcar/rcar_canfd.c                   | 2 +-
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603050819.478UbJ2l-lkp@intel.com/
+For the Renesas part:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-All warnings (new ones prefixed by >>):
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -640,6 +640,12 @@ void phy_set_bus_width(struct phy *phy, int bus_width)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_set_bus_width);
+>
+> +u32 phy_get_max_link_rate(struct phy *phy)
+> +{
+> +       return phy->attrs.max_link_rate;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_get_max_link_rate);
 
-   .. code-block:: none
-   +-----+-----+-----+-----+-----+----+
-   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-   | 1   | 2   |port |line | err | dir|
-   +-----+-----+-----+-----+-----+----+ [docutils]
->> Documentation/driver-api/gpio/gpio-rpmsg.rst:115: WARNING: Title underline too short.
+Any specific reason you are not making this a simple static inline
+function, like phy_get_bus_width()?
 
+> +
+>  /**
+>   * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+>   * @np: device_node for which to get the phy
 
-vim +115 Documentation/driver-api/gpio/gpio-rpmsg.rst
+Gr{oetje,eeting}s,
 
-   112	
-   113	
-   114	GET_VALUE (Cmd=4)
- > 115	~~~~~~~~~~~~~~~~
-   116	
+                        Geert
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
