@@ -1,147 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52EA39A806
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Mar 2026 13:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92143A0B05;
+	Thu,  5 Mar 2026 14:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772718090; cv=none; b=oA6Ue8o85/j7Gxr0QdIoExh1/QHVFC9N9uNmQ4CWWnhQKrQ7HMYarnK9QnhqufJi7tnTy2vZptqgY9YmIW1pJtdrokFw6ibt7MG62amsz6nNHJ2+Mk/JsJ/2+6K+rBWZ0p0L53fnGifdFnyTgbXCTHYwPYAx1aAyV2kqJ9DrSFQ=
+	t=1772720709; cv=none; b=pALOe9G6mNyA7OY9gfxjwZICJN5txFv+njW2cBBI4o0dQpbO/FojRFqOIJkDEBl1bEFiIdJ6p18+595O9o2fAe4yr59GOyFn62k7Qi2PXYuQEGzEcLmoZ+CgaaJLjRqpvYvAZHZL00w4HwVKoBMZVRQSvfIhNJmxWbO38rT5ewY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772718090; c=relaxed/simple;
-	bh=nQ0TL66BvmGTxU4P/K19cUkjZF7VrlRWe+4oIDFI9cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZgaR9MurjcCvr5alzK7SZtU7KbNfQmbtlb7H895sHjChLcvjr0W/Re1p0LQ/0aTQxEj5xdDqliUeZftnWeDJSGkz2jCVQLXql3zBXzqv34ATeGUaYo3Cf+5p1uH0djL8iFaCS5eyUj5Kk1DCbPzdRrLYedB7D/Y6GoMp1UjGanI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3gviU/h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772720709; c=relaxed/simple;
+	bh=UND8xvhahcE7q/80K7vvrBC8EEtbqKcSL68hzKgc8Lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aw/tX3k/fHAl0BfqGGGJF3pvUfNqrPnryzlBnTuesr96KKnGQE3Xv9mbbXkhwDuaPFXWGqo+CV7lkxDeChZzXq5qh2jV3PBWU4ySQhfnBK8QxQCAfpBb99J2GqjdDOkVSCTe7PAkCpNrPg9/uKlk8YNp/3dN0jz/L+ibvFmbmNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WcVX9lqP; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3gviU/h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C5CC4AF09
-	for <linux-gpio@vger.kernel.org>; Thu,  5 Mar 2026 13:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772718090;
-	bh=nQ0TL66BvmGTxU4P/K19cUkjZF7VrlRWe+4oIDFI9cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a3gviU/h6COsyvtnM03E/mUVslzF6/qF358oxk8ufPDD8eIn1by0819SrzlD192uA
-	 1Sma8UaYjGAwc8p57mNGa5jDK7+B2vUi1anibEXYGaSBlVVjfpsRG0yOsnDKb+AxIc
-	 uUu51jDzjlHY95yHlv1CuM2EdtOqhjD3EbhqFS+94XAvm/lf7hnbFySCiZKa8DTiGa
-	 rUWgZ+2zx6Fu0KN0mFsKJFQiKtsiihSNm9Io6TIcoe+gExhP9r1BZ3mSPYcSuIvDFU
-	 ljAiZg1u+eRBZ0tJJIU1Zrk5m1iUPRefNdEQipldflK9EPUL9ujoE0mps7Y03inzoS
-	 DkQJzRkUaR4jQ==
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-64cb577e79cso8423107d50.0
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Mar 2026 05:41:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+++V2KOpyGDgVhmV141WQOPXiYU2dNwYZvdkONC2X0lPK896VPMDO5gDMJyzafRUr9RB5O+vZ8WlP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmUQE0s8f+Cjxvmwtceb0998udOX1IxKqp+SPXIo05OKciorR1
-	ctW2NOVEJRgFgnl+/KOS2IzZByhSIwGmDjmVsieSzyHRsauQTzti2BxTVLA3pB1+9B1R9nNTa1C
-	79hVYky2+Em0S7N9tbI/8HnohneeILUM=
-X-Received: by 2002:a05:690e:e25:b0:64a:d539:1b50 with SMTP id
- 956f58d0204a3-64cf9b97783mr3920949d50.38.1772718089942; Thu, 05 Mar 2026
- 05:41:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WcVX9lqP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1772720707; x=1804256707;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UND8xvhahcE7q/80K7vvrBC8EEtbqKcSL68hzKgc8Lw=;
+  b=WcVX9lqPvGat+f7l/F/SnHSVbcasb/nn2NT3Hzq72m7NmUUzX5YrAvdD
+   xNqLS44b2VxNsA8RmAGwE6Faff9Navr9TZFRFQEk+9WjbeskyAPKZxvl6
+   itUh7IbBja8/1TB5PLyNIA4+2etaK0cimXgr4OmzAeFRk8jTqKmk6Euw/
+   D9sjhT6nDY6kUUhyShYlVLMxm/0g00Pr3p4XcuEydzfb9DXr6p2ulQv2d
+   H9wl3R2+0otgGyyXLQppLOrnPgKU/iQDptQDcS6gE3jbrM9q2TGDK6kxf
+   bfO/HtjAFHglRHL2Eq+DltAT3QV/eviAzAzL5tPtaPscKAjIvk/wj5L0F
+   w==;
+X-CSE-ConnectionGUID: XhTww3hNQjmnNUpoemuXUA==
+X-CSE-MsgGUID: xF7VZhfzT3Ok2HLJrptGUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11720"; a="72835923"
+X-IronPort-AV: E=Sophos;i="6.23,103,1770624000"; 
+   d="scan'208";a="72835923"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2026 06:25:06 -0800
+X-CSE-ConnectionGUID: F23Q4HAtQZOHCQj1Y+ZJiQ==
+X-CSE-MsgGUID: 8InoVMI7SAakhBhZj/4klQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,103,1770624000"; 
+   d="scan'208";a="217938311"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa010.jf.intel.com with ESMTP; 05 Mar 2026 06:25:02 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id B050B95; Thu, 05 Mar 2026 15:25:00 +0100 (CET)
+Date: Thu, 5 Mar 2026 15:25:00 +0100
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/6] gpio: move hogs into GPIO core
+Message-ID: <20260305142500.GB2275908@black.igk.intel.com>
+References: <20260305-gpio-hog-fwnode-v1-0-97d7df6bbd17@oss.qualcomm.com>
+ <20260305-gpio-hog-fwnode-v1-2-97d7df6bbd17@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260303133947.1123575-1-o.rempel@pengutronix.de> <20260303133947.1123575-5-o.rempel@pengutronix.de>
-In-Reply-To: <20260303133947.1123575-5-o.rempel@pengutronix.de>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 5 Mar 2026 14:41:17 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=ZYwZ4qCBCnaUPKXGFpNvBgTr3Cyg2ZtrE0ZqAhK1e=w@mail.gmail.com>
-X-Gm-Features: AaiRm52QfYDonYBknli9ovJN02qNn7gBdrQenWct8xubGHAgrt_G8nsy7xblEwo
-Message-ID: <CAD++jL=ZYwZ4qCBCnaUPKXGFpNvBgTr3Cyg2ZtrE0ZqAhK1e=w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] pinctrl: add NXP MC33978/MC34978 pinctrl driver
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Peter Rosin <peda@axentia.se>, David Jander <david@protonic.nl>, kernel@pengutronix.de, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260305-gpio-hog-fwnode-v1-2-97d7df6bbd17@oss.qualcomm.com>
 
-Hi Oleksij,
+On Thu, Mar 05, 2026 at 10:51:27AM +0100, Bartosz Golaszewski wrote:
+> Refactor line hogging code by moving the parts duplicated in
+> gpiolib-acpi-core.c and gpiolib-of.c into gpiolib.c, leaving just the
+> OF-specific bits in the latter.
+> 
+> This makes fwnode the primary API for setting up hogs and allows to use
+> software nodes in addition to ACPI and OF nodes.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-this is starting to look good!
-
-One thing bothers me:
-
-On Tue, Mar 3, 2026 at 2:40=E2=80=AFPM Oleksij Rempel <o.rempel@pengutronix=
-.de> wrote:
-
-> - Add a comment to mc33978_gpio_to_irq() explaining why it must act as a
->   proxy to the parent MFD's irq_domain (shared physical INT_B line with h=
-wmon).
-(...)
-
-> +static int mc33978_set(struct gpio_chip *chip, unsigned int offset, int =
-value)
-> +{
-> +       struct mc33978_pinctrl *mpc =3D gpiochip_get_data(chip);
-> +       int pull;
-> +       int ret;
-> +
-> +       /*
-> +        * We emulate open-drain/-source outputs by routing or isolating =
-the
-> +        * active wetting current sources.
-> +        * To drive the line, we apply the current source.
-> +        * To turn the line OFF (achieve High-Impedance), we MUST use the
-> +        * hardware TRI_SP / TRI_SG tri-state registers to physically iso=
-late
-> +        * it.
-> +        */
-> +       if (mc33978_is_sp(offset)) {
-> +               pull =3D value ? MC33978_PU : MC33978_PD;
-> +               value =3D 1;
-> +       } else {
-> +               pull =3D MC33978_PU;
-> +       }
-> +
-> +       mutex_lock(&mpc->lock);
-
-Have you considered using guards for this to avoid the goto:s?
-
-> +static int mc33978_gpio_to_irq(struct gpio_chip *chip, unsigned int offs=
-et)
-> +{
-> +       struct mc33978_pinctrl *mpc =3D gpiochip_get_data(chip);
-> +       int virq;
-> +
-> +       if (!mpc->domain)
-> +               return -ENXIO;
-> +
-> +       /*
-> +        * The hardware shares a single physical INT_B line for both GPIO=
- pin
-> +        * changes and internal hardware faults (hwmon). Therefore, the I=
-RQ
-> +        * domain and threaded handler are centrally managed by the MFD c=
-ore.
-> +        */
-> +       virq =3D irq_create_mapping(mpc->domain, offset);
-> +       if (!virq) {
-> +               dev_err(mpc->dev, "Failed to map hwirq %u to virq\n", off=
-set);
-> +               return -ENXIO;
-> +       }
-> +
-> +       return virq;
-> +}
-
-I don't know about this.
-
-If it is clear from internal registers which bits represents the hwmon
-IRQs and which bits are GPIO IRQs, the modern way to handle this
-is hierarchical irqchip. Have you looked into that?
-
-For a simple example c.f. drivers/gpio/gpio-ixp4xx.c how this
-is registered with a parent irqchip using
-girq->parent_domain =3D parent;
-girq->child_to_parent_hwirq =3D ixp4xx_gpio_child_to_parent_hwirq;
-and
-ixp4xx_gpio_child_to_parent_hwirq().
-
-This way a unique irqchip for GPIO can be created as a child
-of the MFD irqchip.
-
-Yours,
-Linus Walleij
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
