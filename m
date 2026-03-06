@@ -1,43 +1,46 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B1372ED9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E60374748;
 	Fri,  6 Mar 2026 07:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783731; cv=none; b=NOX9/PCOhbSoaWm4gDwKee9FdlPNLXSHwOPBhhneaNRQT7pZMZwfPJAp3rryM+sMCISwjAH+6XtpHy/g7RrYWpfZGk6NZgbKHou0o35DWm/yRgLQGHeCwHaBeD8oLUPXSQ9Bf/fOHwIglr/DtX88k+mXCXxQAqqK2jXKGjl65Kw=
+	t=1772783731; cv=none; b=nTlvF5Sf6fe4Pb09uIKbiqCiSz/ZXGD+qE8f8qY9jLzwYAaErIXwqnRqsuTtTG29GlNZZGWdGTwjih2vqIuK4OvgAweGCrr6drIvg9A/ubZ5amXtL5aDelSeAaRT92GetXzCaVYNdO+/9rMb2qauBlkrihESjmMTzmV3ZpEwKgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772783731; c=relaxed/simple;
-	bh=wO5EuuLeU3GihKgoqG+AMl6s5bGfVIbk/e57kPt25EY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UqJlmJa/8UTXazLGg4+VdH980dAHg/Bg9fdJ3Sg1uETim+czfX9H6getFMAmHO2JnREtNkXLSwbn4BcmlDlKfie1soJV9FO7qsNNTy5ds1ezwnqiyu1oOOtoN7d9RWrL51gV4zRMgvvAbHDTwra+lXj62mvzlY1Acl1VJBqjNKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=J2NYdWeg; arc=none smtp.client-ip=211.75.126.72
+	bh=zLU921ZFhF9f56oSiA8DEdFlhZLlCAc64EjM8o4e5RE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xgk/XZWHB/UCmS4cIC/2LuBE82cVOofjCQOJeeTwCZWKrYB7QCZyjqdkmIxjE2jYuNFcDWVftcoAxWoYA4aKDmMkxTdqmWcMJLaSS05kAzlCQs86XPxQRkAhryTPiNB9ikRkQDfIGVH81SgSflCfAP2Z1hpXC0Wwlq5VXJwbiAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=wh24hjK6; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="J2NYdWeg"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qlxK72977165, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="wh24hjK6"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qjPgB2977146, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783567; bh=+H9HXAgRVAYQcuJJWvYeHrQsZqCjZYlhl99Fp10e/NA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=J2NYdWeg+OJ+50WlEhG3TIaXkKgzWKwJLIqGeN7exrPg8RQNNO4ibe844CiuMb/U3
-	 Ue7fDCn9kXc5QwIMq6LQ7ahfBZSrOe52FOYQD5ow1acfS5DKZ0LN79pNEXIfN9hXbd
-	 nH6efKs5RFBVA249Ew9yYzxSfogyFobfBPFVGmAio/vlMRuL8bm6+1o5B5d7mt1XcY
-	 h9I/s5eECJicPFYRC1Aqd2ZEWWO72KB19RQZs7eDRlrH59GCJ5jZW9/Xe1QiwvA4EB
-	 HBKTIbuIGLqU//44uLP/S38xAcO16hE6Hzr6mcR4sKXyV5KqiD3dyctYLPZl43J/86
-	 FuquqB9i1gH2Q==
+	t=1772783565; bh=UvHj03h/I8V3RUfnYlEIf/a5TXOtj70U30QVaTzHzeU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=wh24hjK662OtagrS9+2N4beB0XgB1RyFamThbEqSxYgOu2OqJ8NoxH5RgfEcWy5kR
+	 A75lGQfbyHovj4lwSLh7e2ohjw3APkiK1F+Jg5YxjgWxZc9nMj51BAPneKaXnyRj8E
+	 OwFPYxNg1tFvIFw0Y2v/wGH06CQe7+2msM8DHko5o56X++nMKCzeYu+5RD2Tb2ZNdu
+	 HSFfBr6yO/jb2TFVgYhvkeWqsdIMq6UtNrecwq+eBL3WRZfQU2pNovKj6hlwZRwtgm
+	 AnxNipMGe4bhQR+KdSv1EBXDlX9sQYg/maNaYCBMV7Q/uXB2UYRnRPSsNz9H+AWqt5
+	 4EwHNY+I1IgPA==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qlxK72977165
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qjPgB2977146
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:47 +0800
+	Fri, 6 Mar 2026 15:52:45 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 6 Mar 2026 15:52:47 +0800
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:45 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:44 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:46 +0800
+ Transport; Fri, 6 Mar 2026 15:52:44 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,12 +51,10 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 08/14] pinctrl: pinconf-generic: Add properties 'input-voltage-microvolt'
-Date: Fri, 6 Mar 2026 15:52:38 +0800
-Message-ID: <20260306075244.1170399-9-eleanor.lin@realtek.com>
+Subject: [PATCH v2 00/14] pinctrl: realtek: Core improvements and RTD1625 support
+Date: Fri, 6 Mar 2026 15:52:30 +0800
+Message-ID: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
-References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,62 +64,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Tzuyi Chang <tychang@realtek.com>
+This series introduces pinctrl support for the Realtek RTD1625 SoC and adds device
+nodes for the platform.
 
-Add a new generic pin configuration parameter PIN_CONFIG_INPUT_VOLTAGE_UV.
-This parameter is used to specify the input voltage level of a pin in
-microvolts, which corresponds to the 'input-voltage-microvolt' property
-in Device Tree.
+In addition to the new SoC support, this series improves the common Realtek pinctrl
+library by:
 
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+1. Cleaning up license strings and correcting grammar error in error messages.
+2. Simplifying error handling in probe() and switching to devm functions.
+3. Adding support for slew rate, input voltage parameters, and system
+suspend/resume.
+4. Fixing return values for unsupported configurations to ensure proper interaction
+with gpiolib.
+5. Introducing the generic 'input-voltage-microvolt' property to pincfg and
+pinconf-generic.
+6. Refactoring existing properties (renaming 'realtek,duty-cycle') to improve
+clarity.
+
+Best regards,
+Yu-Chun Lin
 ---
- drivers/pinctrl/pinconf-generic.c       | 2 ++
- include/linux/pinctrl/pinconf-generic.h | 3 +++
- 2 files changed, 5 insertions(+)
+Changes in v2:
+- Add relevant mailing lists to CC.
+- Add a grammar fix in error messages.
+- Move the "support system suspend and resume" patch after the fix patches.
+- Introduce the generic 'input-voltage-microvolt' property.
+- Add patches for renaming property 'realtek,duty-cycle' to 'realtek,pulse-width-adjust'.
+- Improve realtek,rtd1625-pinctrl.yaml description and properties.
+- Add RTD1625 pinctrl device nodes to the DTS.
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 94b1d057197c..d131db29aad8 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -56,6 +56,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY, "skew delay", NULL, true),
- 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY_INPUT_PS, "input skew delay", "ps", true),
- 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY_OUTPUT_PS, "output skew delay", "ps", true),
-+	PCONFDUMP(PIN_CONFIG_INPUT_VOLTAGE_UV, "input voltage in microvolt", "uV", true),
- };
- 
- static void pinconf_generic_dump_one(struct pinctrl_dev *pctldev,
-@@ -202,6 +203,7 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "skew-delay", PIN_CONFIG_SKEW_DELAY, 0 },
- 	{ "skew-delay-input-ps", PIN_CONFIG_SKEW_DELAY_INPUT_PS, 0 },
- 	{ "skew-delay-output-ps", PIN_CONFIG_SKEW_DELAY_OUTPUT_PS, 0 },
-+	{ "input-voltage-microvolt", PIN_CONFIG_INPUT_VOLTAGE_UV, 0 },
- };
- 
- /**
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 89277808ea61..63c43b6a9fd0 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -83,6 +83,8 @@ struct pinctrl_map;
-  *      schmitt-trigger mode is disabled.
-  * @PIN_CONFIG_INPUT_SCHMITT_UV: this will configure an input pin to run in
-  *	schmitt-trigger mode. The argument is in uV.
-+ * @PIN_CONFIG_INPUT_VOLTAGE_UV: this will configure the input voltage level of
-+ * the pin. The argument is specified in microvolts.
-  * @PIN_CONFIG_MODE_LOW_POWER: this will configure the pin for low power
-  *	operation, if several modes of operation are supported these can be
-  *	passed in the argument on a custom form, else just use argument 1
-@@ -145,6 +147,7 @@ enum pin_config_param {
- 	PIN_CONFIG_INPUT_SCHMITT,
- 	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
- 	PIN_CONFIG_INPUT_SCHMITT_UV,
-+	PIN_CONFIG_INPUT_VOLTAGE_UV,
- 	PIN_CONFIG_MODE_LOW_POWER,
- 	PIN_CONFIG_MODE_PWM,
- 	PIN_CONFIG_LEVEL,
+Yu-Chun Lin (14):
+  pinctrl: realtek: cleanup license string
+  pinctrl: realtek: Fix return value and silence log for unsupported
+    configs
+  pinctrl: realtek: Switch to use devm functions
+  pinctrl: realtek: Simplify error handling with dev_err_probe()
+  pinctrl: realtek: Fix grammar in error messages
+  pinctrl: realtek: support system suspend and resume
+  dt-bindings: pincfg-node: Add input-voltage-microvolt property
+  pinctrl: pinconf-generic: Add properties 'input-voltage-microvolt'
+  dt-bindings: pinctrl: realtek: Rename 'realtek,duty-cycle' to
+    'realtek,pulse-width-adjust'
+  pinctrl: realtek: Rename 'realtek,duty-cycle' to
+    'realtek,pulse-width-adjust'
+  dt-bindings: pinctrl: realtek: add RTD1625 pinctrl binding
+  pinctrl: realtek: add support for slew rate, input voltage and high
+    VIL
+  pinctrl: realtek: add rtd1625 pinctrl driver
+  arm64: dts: realtek: Add pinctrl support for RTD1625
+
+ .../bindings/pinctrl/pincfg-node.yaml         |    4 +
+ .../pinctrl/realtek,rtd1315e-pinctrl.yaml     |    9 +-
+ .../pinctrl/realtek,rtd1319d-pinctrl.yaml     |    9 +-
+ .../pinctrl/realtek,rtd1619b-pinctrl.yaml     |    9 +-
+ .../pinctrl/realtek,rtd1625-pinctrl.yaml      |  260 ++
+ arch/arm64/boot/dts/realtek/kent.dtsi         |   39 +
+ drivers/pinctrl/pinconf-generic.c             |    2 +
+ drivers/pinctrl/realtek/Kconfig               |   14 +
+ drivers/pinctrl/realtek/Makefile              |    1 +
+ drivers/pinctrl/realtek/pinctrl-rtd.c         |  205 +-
+ drivers/pinctrl/realtek/pinctrl-rtd.h         |   50 +
+ drivers/pinctrl/realtek/pinctrl-rtd1625.c     | 3148 +++++++++++++++++
+ include/linux/pinctrl/pinconf-generic.h       |    3 +
+ 13 files changed, 3709 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/realtek,rtd1625-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/realtek/pinctrl-rtd1625.c
+
 -- 
 2.34.1
 
