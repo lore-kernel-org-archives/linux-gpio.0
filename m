@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2B4372ED1;
-	Fri,  6 Mar 2026 07:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90642378D8B;
+	Fri,  6 Mar 2026 07:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783732; cv=none; b=keq6fZhh+lUr9PdW4WfdHBlu6YTIYCR2kPeUUvUaMGOpCL3AHu+qzWODlOVf05xQjboj/7Ne58WhBB5uagjPFa6jdHtJsASAaiWkazATS1EnpPcv99vMJu0U5kV9dkOf/RcZr/0BpvHtQ8YfK1MW3rvWTujnCYx0jzU88XaIOOs=
+	t=1772783732; cv=none; b=u+SSbu28fjETLIN97LTC2SeiYahEXUsE6N79DBn8P3bc1bQOiuxs4JDsfBlxtG68Fq81ocKeLEv/aHl2caVCuB2r0Uy3FnpE25QmOJlPgLjGmu0JUE16Oe3t4+BhJ/CGyLKO0cWPCtGEd+T6EmrrTXJz8IBmk2rRXDXMEzL9JEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772783732; c=relaxed/simple;
-	bh=pCIc2Y3VcgeHgHk4E4OqIci4FaI25FGOJOjSs6WWWak=;
+	bh=fOJ5uzakIs3h+hUG4tt3tStOZoAYmn90iGrSafMTcXY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q/YTQGK3usZHXLqMURT2nQqu3Gr8KLupHaNqtO8FOdKKQ79EimL+yFRqPxsuwlhilC+zAo9WlEmVrPUh9wyCsyhiQDlSHsXeSYqsOGGDkkVhOqc3pg5d8eKq1NExjVmPxE4tqLeQ5CaIqwmx3xTT04D3pxoFZVuT/apnt0HZ7nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=eSTa0Wxx; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=Hqg/KSFPv474npIubR+gGXVYP+b5BKlwEv3spOMTH/mPLpZLgXECYu3Ped7DGsNdATfeiGUPs7uNhRA0Z+4fA9X1pMr62AdPUeq2+j4K7FMtf8XHa94RrM/K6JFCJvaINJwru9uQKT07AHaEyBtVm6X9Yn13QsNZmce0aibVLds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=VOqvE78s; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="eSTa0Wxx"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qkheF2977159, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="VOqvE78s"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qp3gB2977175, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783566; bh=kvsbkapSH1ZeXX8TYyMwoJWoLzro86VTxqRZYx/ykEo=;
+	t=1772783571; bh=UX38X/TMKiyHQPxwjnR2AzsYEQMHir2CvQcMkoM7b+4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=eSTa0Wxx/mLvAFgYErtdMBsdUcc4CixH3kzWu2jOr5TzVqF+1/hetmEECucLgQYnc
-	 URjfc+/HOByyiqGJWlHQ9C+lgI4utnD4XSm5yfbJKJ6BbbAh1uAu1FfE7edSM+sH0a
-	 DCPVQbpzyH1PvZj83rjjRgB+V4EYCyxUVasJCkwt81lqN6RJbjIZWqWpH0FZegGxCV
-	 4G4Yr7pAxd28/LjFWCjm8k04vKl0VINFLBv/RKVSeWQdvFoyguwnolBKF6Odn/2nXD
-	 fC/wFRTUEPuKoRZslEvv50M0l3YGlckmuMKHMbHJtmUtnm7/I7y5ee26y7GYf8FsIs
-	 k3EmSyiR1OLeA==
+	b=VOqvE78sgvIDcl7zxLGSTJIX48Sfbmv9hLVRu8krchdks9SdiFnwvZU7kin0pHQgp
+	 A1gzQYgoDw7QZSl4aiIGBOhzi5GAquC+09ePfLGbxGeT1FNvpQhGHkQn+C5uVHnsLj
+	 DtXV1kOFkkmx605opuxDTHlKRjcAda456htFfWsglH7RLP2EV19fwOD9zuln4YFiRa
+	 v3ovq7lSIkPtMUD/V/qSezVaOcfU0XNIrSBe9aruBZ9c25mFLNWWE8xPYegdSVnkEA
+	 nN/mjCKCQC7cw771soOwhHPkBzobAyDKqIHvInhldvRRGdTq9tV5ebejeKF21mM6EX
+	 owXrfpS84NTaw==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qkheF2977159
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qp3gB2977175
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:46 +0800
+	Fri, 6 Mar 2026 15:52:51 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 6 Mar 2026 15:52:46 +0800
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:50 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:46 +0800
+ Transport; Fri, 6 Mar 2026 15:52:50 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,9 +48,9 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 06/14] pinctrl: realtek: Support system suspend and resume
-Date: Fri, 6 Mar 2026 15:52:36 +0800
-Message-ID: <20260306075244.1170399-7-eleanor.lin@realtek.com>
+Subject: [PATCH v2 14/14] arm64: dts: realtek: Add pinctrl support for RTD1625
+Date: Fri, 6 Mar 2026 15:52:44 +0800
+Message-ID: <20260306075244.1170399-15-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
@@ -65,180 +65,46 @@ Content-Type: text/plain
 
 From: Tzuyi Chang <tychang@realtek.com>
 
-Add system suspend and resume capabilities to the common Realtek pinctrl
-library. This enables saving and restoring pin configurations during the
-noirq phase for SoCs that define register ranges.
+Add the pinctrl nodes for the Realtek RTD1625 SoC.
 
 Signed-off-by: Tzuyi Chang <tychang@realtek.com>
 Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
-Changes in v2:
-- Remove stray newlines.
-- Simplify rtd_pinctrl_init_pm() error handling: return -ENOMEM directly instead
-of using dev_err_probe().
+ arch/arm64/boot/dts/realtek/kent.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
- drivers/pinctrl/realtek/pinctrl-rtd.c | 98 +++++++++++++++++++++++++++
- drivers/pinctrl/realtek/pinctrl-rtd.h | 13 ++++
- 2 files changed, 111 insertions(+)
-
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index 5888a36babba..60dfb39bc986 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -30,6 +30,7 @@ struct rtd_pinctrl {
- 	struct pinctrl_desc desc;
- 	const struct rtd_pinctrl_desc *info;
- 	struct regmap *regmap_pinctrl;
-+	u32 **saved_regs;
- };
+diff --git a/arch/arm64/boot/dts/realtek/kent.dtsi b/arch/arm64/boot/dts/realtek/kent.dtsi
+index ae006ce24420..8d4293cd4c03 100644
+--- a/arch/arm64/boot/dts/realtek/kent.dtsi
++++ b/arch/arm64/boot/dts/realtek/kent.dtsi
+@@ -150,6 +150,26 @@ uart0: serial@7800 {
+ 				reg-shift = <2>;
+ 				status = "disabled";
+ 			};
++
++			iso_pinctrl: pinctrl@4e000 {
++				compatible = "realtek,rtd1625-iso-pinctrl";
++				reg = <0x4e000 0x1a4>;
++			};
++
++			main2_pinctrl: pinctrl@4f200 {
++				compatible = "realtek,rtd1625-main2-pinctrl";
++				reg = <0x4f200 0x50>;
++			};
++
++			isom_pinctrl: pinctrl@146200 {
++				compatible = "realtek,rtd1625-isom-pinctrl";
++				reg = <0x146200 0x34>;
++			};
++
++			ve4_pinctrl: pinctrl@14e000 {
++				compatible = "realtek,rtd1625-ve4-pinctrl";
++				reg = <0x14e000 0x84>;
++			};
+ 		};
  
- /* custom pinconf parameters */
-@@ -540,6 +541,30 @@ static const struct regmap_config rtd_pinctrl_regmap_config = {
- 	.use_relaxed_mmio = true,
- };
- 
-+static int rtd_pinctrl_init_pm(struct rtd_pinctrl *data)
-+{
-+	const struct rtd_pin_range *pin_range = data->info->pin_range;
-+	struct device *dev = data->pcdev->dev;
-+	const struct rtd_reg_range *range;
-+	size_t num_entries;
-+	int i;
-+
-+	data->saved_regs = devm_kcalloc(dev, pin_range->num_ranges, sizeof(u32 *), GFP_KERNEL);
-+	if (!data->saved_regs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pin_range->num_ranges; i++) {
-+		range = &pin_range->ranges[i];
-+		num_entries = range->len / 4;
-+
-+		data->saved_regs[i] = devm_kzalloc(dev, num_entries * sizeof(u32), GFP_KERNEL);
-+		if (!data->saved_regs[i])
-+			return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
- int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_desc *desc)
- {
- 	struct rtd_pinctrl *data;
-@@ -579,9 +604,82 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
- 
- 	dev_dbg(&pdev->dev, "probed\n");
- 
-+	if (data->info->pin_range) {
-+		if (rtd_pinctrl_init_pm(data))
-+			return -ENOMEM;
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL(rtd_pinctrl_probe);
- 
-+static int realtek_pinctrl_suspend(struct device *dev)
-+{
-+	struct rtd_pinctrl *data = dev_get_drvdata(dev);
-+	const struct rtd_pin_range *pin_range = data->info->pin_range;
-+	const struct rtd_reg_range *range;
-+	u32 *range_regs;
-+	int count;
-+	int i, j;
-+	int ret;
-+
-+	if (!data->saved_regs)
-+		return 0;
-+
-+	for (i = 0; i < pin_range->num_ranges; i++) {
-+		range = &pin_range->ranges[i];
-+		range_regs = data->saved_regs[i];
-+		count = range->len / 4;
-+
-+		for (j = 0; j < count; j++) {
-+			ret = regmap_read(data->regmap_pinctrl, range->offset + (j * 4),
-+					  &range_regs[j]);
-+			if (ret) {
-+				dev_err(dev, "failed to store register 0x%x: %d\n",
-+					range->offset + (j * 4), ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int realtek_pinctrl_resume(struct device *dev)
-+{
-+	struct rtd_pinctrl *data = dev_get_drvdata(dev);
-+	const struct rtd_pin_range *pin_range = data->info->pin_range;
-+	const struct rtd_reg_range *range;
-+	u32 *range_regs;
-+	int count;
-+	int i, j;
-+	int ret;
-+
-+	if (!data->saved_regs)
-+		return 0;
-+
-+	for (i = 0; i < pin_range->num_ranges; i++) {
-+		range = &pin_range->ranges[i];
-+		range_regs = data->saved_regs[i];
-+		count = range->len / 4;
-+
-+		for (j = 0; j < count; j++) {
-+			ret = regmap_write(data->regmap_pinctrl, range->offset + (j * 4),
-+					   range_regs[j]);
-+			if (ret) {
-+				dev_err(dev, "failed to restore register 0x%x: %d\n",
-+					range->offset + (j * 4), ret);
-+				return ret;
-+			}
-+		}
-+	}
-+	return 0;
-+}
-+
-+const struct dev_pm_ops realtek_pinctrl_pm_ops = {
-+	NOIRQ_SYSTEM_SLEEP_PM_OPS(realtek_pinctrl_suspend, realtek_pinctrl_resume)
-+};
-+EXPORT_SYMBOL_GPL(realtek_pinctrl_pm_ops);
-+
- MODULE_DESCRIPTION("Realtek DHC SoC pinctrl driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.h b/drivers/pinctrl/realtek/pinctrl-rtd.h
-index e15130896abc..7fb0955ce749 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.h
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.h
-@@ -47,6 +47,16 @@ struct rtd_pin_sconfig_desc {
- 	unsigned int pdrive_maskbits;
- };
- 
-+struct rtd_reg_range {
-+	unsigned int offset;
-+	size_t len;
-+};
-+
-+struct rtd_pin_range {
-+	const struct rtd_reg_range *ranges;
-+	const int num_ranges;
-+};
-+
- struct rtd_pin_desc {
- 	const char *name;
- 	unsigned int mux_offset;
-@@ -119,6 +129,9 @@ struct rtd_pinctrl_desc {
- 	unsigned int num_sconfigs;
- 	struct rtd_pin_reg_list *lists;
- 	unsigned int num_regs;
-+	const struct rtd_pin_range *pin_range;
- };
- 
- int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_desc *desc);
-+
-+extern const struct dev_pm_ops realtek_pinctrl_pm_ops;
+ 		gic: interrupt-controller@ff100000 {
 -- 
 2.34.1
 
