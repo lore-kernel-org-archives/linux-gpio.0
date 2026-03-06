@@ -1,43 +1,50 @@
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496CD2745C;
-	Fri,  6 Mar 2026 06:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD07BF4F1;
+	Fri,  6 Mar 2026 06:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772776859; cv=none; b=kay6O1D24+nAjJTTMpjBHET5naAivNXml15MyLJjo5DaC4mjSL5NETUxWIL3EYhqGceIeWd0V8FoZzWT9eOXMrGZwgkmq7iq2ZKGsetPqOi8S1PyPvVd6HGw7ma9xlRti1WPU8DZGPkMGuuhbuOo6Beb6DZ/ywnHq8sHBtkQPtM=
+	t=1772778857; cv=none; b=Rbrart8A1iT34FVmhA1taVFffUNTYx5pke3QI1WIfo3gd7JtGjSEbe+t6Q2b/1WCsQ6gxkfbU4o3Zb7CtNfw3LSWX0bf85C6/ioFxd1tRO84ugeycMo4PVORqBqdpqEtYC2XtxSUnIRLK/uPzD41K9ZK7xJ3TbaxC3WATDYzasg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772776859; c=relaxed/simple;
-	bh=0+swc4p7wLYScGWwqV+SY6jBSKkhCzAbYYROm7uIj3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o5FlS4huuHScJ3Rz0fxa04XxlUz21129z1lBu9UQ0DpE2sNQueSCiSFvA1Qdv/yHUK6SBTcNUEZp4FCo8/LQaOFIrb0qxgxbwJxwdMyKI/bYf5JjVq9JG2+Qa4EjQ3//wlOxaIC738/tiPAECYZVfcmKoNqCpGYdVKyaZ9/LdKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org; spf=none smtp.mailfrom=vimux.org; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=vimux.org
-X-QQ-mid: zesmtpgz3t1772776832t4ddd684c
-X-QQ-Originating-IP: JrYA07EQZGVQx8QN+R0mZapTj5ualYKFJ8w6x9knsUE=
-Received: from localhost.localdomain ( [219.147.0.82])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 06 Mar 2026 14:00:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1512765761835415507
-EX-QQ-RecipientCnt: 8
-From: Jialu Xu <xujialu@vimux.org>
-To: linusw@kernel.org
-Cc: brgl@kernel.org,
-	kees@kernel.org,
-	krzk@kernel.org,
+	s=arc-20240116; t=1772778857; c=relaxed/simple;
+	bh=a5MDdRQMdPD08Yx/j+cXRAe4kzKmmZ071KzUoqxNQ0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dhKMq9rn3wNU/VTJsNMo/cKCp0xbimv/NCvu9+CHWyDQX+StIkiGCjAiqC/l2inxiKlyublLMwr/SSw3+fdSx6FeB+PANFuAqMFWfDMU/BhfyQtDU9XFiSfBNfEPZ5yjShn4aVLNW9xZgTg/mVMErTL+VygPRZFi4BGUUoK2AHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kt6VwjYZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kt6VwjYZ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=6hZ4DwrgxKKMvXFnBoZ5aiQGEK0hIbg/1QhQgDrgppk=; b=Kt6VwjYZQzl5ZWoFB82+NYEb06
+	s+cCEp+Jv9WJJgPqGTSuVGTHGK0rBMs92zqOl8YDUDxbOjNuI9ltJPmIuA9MVF3A+kWNaOJRs86lf
+	Ca6PwmUrpnUfA6ikLZOIwLwOa18x4xyX/act7ObIHyUJZD+ks0qRgq8DjmmtCnRfPQBL2fAL7m/62
+	xvAkhvfpwweiPbBiTdce3BfcGF+Yau4eB0IGqo8OljG1Ct5O+4Q2vquqw4ap1ryxVeJ9R+0awU2Yg
+	Ng8Ae0TIpEhiprAmRlX4z2xWw5gxBGrRw5lwdMkuigPazvahY8YH2K4zsmW7csUvSKdqtpxIv41yF
+	0ZD2Cqnw==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vyOlI-000000035V4-0WVa;
+	Fri, 06 Mar 2026 06:34:12 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	xujialu@vimux.org
-Subject: Re: [PATCH v2 3/3] gpio: remove of_get_named_gpio() and <linux/of_gpio.h>
-Date: Fri,  6 Mar 2026 13:58:19 +0800
-Message-ID: <E598DEE5E810E290+20260306060017.2537739-1-xujialu@vimux.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAD++jLk3UzQKjseZz0QYFzkEtaaw9vBt8i4ggK6jNcPknVB=4A@mail.gmail.com>
-References: <CAD++jLk3UzQKjseZz0QYFzkEtaaw9vBt8i4ggK6jNcPknVB=4A@mail.gmail.com>
+	Linus Walleij <linusw@kernel.org>
+Subject: [PATCH RESEND] pinctrl: s32: correct kernel-doc bad line warning
+Date: Thu,  5 Mar 2026 22:34:11 -0800
+Message-ID: <20260306063411.2041232-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -45,34 +52,34 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:vimux.org:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: N07K9Tjq2IwD+RVquX0NNxGztWRRAdJeYOgFN5TRbYA2TGx/tkWg7iN1
-	FIW0oM6mVZk1EO+Iiz1C4prq42nH9ndDpj+sOAh4M295hOROzsl48WYGOaa57iTFUOTPxUe
-	XkrxNh6Gf/NZVB2soOBIrUtySDYyZeKcjaKTJC2GhQO1Qh/yt1BLL5NGql5//05uVawThhb
-	c2ZYIp/Zgdbk7qSsseCfkJF954yU96ltbSZkWnIoxAVduXtjaC0+KWJ/VxNqUM73/LUxLgH
-	1weHuRWdZQGO1YlwnussOIDi6GuG6XIr0sWTqh/4DHiom3fEBRoezv/s21b6fOtYk6UV3N9
-	g/qu+5yDPgbVzXn9vQf9ZmHrq+XC9bzHoHRE4q+z23XC03gVN4MfQIR3qXGMOfzjrByGfiU
-	fOZ1W3RvR0jU6T29NL8IF0wwVlhsJbVQUofJBdF0AXVLbWQfk/+CVdddn/wXOmdCvB7WkCK
-	8hxtUNRdgluosga4yTKPuSmkRCn5NAwwkAKPC8wFJCf3Jsj9ONqE6U3WJqD5HrXV8lsdDTa
-	zNtOFSjNgX7n4YyHLG2Ik/TTHVc/jnoQt3MS+bWo+rzphXX9kMgwlyw3dZi9M4AlMcKL/1i
-	GS/K9yR+ZlEE23l+kfwIZ0TtJYWZkPU7GCE/vSWgeTJRvKOlkO3HLPPDo2FjN7Y6vzgLBTj
-	l0JNw97xN/I5QNJI2vqz/VR8BKlv+gUi8Z18UqwWRsV1g4SfGmzyOY0KfpHkZ5FEmRkscta
-	ObmyrLCqaLqBIafkdKrnWvlwuedgtleZVTxo/VAxacIys2FsZanSAsN4B3tjy0S3aoT+jdl
-	qUui/01L413YOkUc4MZnR7cXqo1ALJ4THgQMRQ3TUElXrgUnMRVJzVh6+NcfH7HVgS5YSss
-	gpWcoUCkeLcx5CcUGwok55E2t1t2E9AhBASyaqeRXU75lUE5xgbFxnfy1qIqQlkO3YA3w9Y
-	JamA0QlwSUSwUeQaZggYopbvdX798cJSZtHxEa1KjnOYTb12/Wr024idI56F4MW/6i18=
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
-X-QQ-RECHKSPAM: 0
 
-> As mentioned, remove it from MAINTAINERS as well,
-> also add your Signed-off-by.
-> 
-> With those changes:
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
+Insert a "*" in the kernel-doc line to resolve a warning:
 
-Thanks for the review. All fixed in v3.
+Warning: drivers/pinctrl/nxp/pinctrl-s32.h:18 bad line: this group.
 
-Best regards,
-Jialu
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Jacky Bai <ping.bai@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: NXP S32 Linux Team <s32@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>
 
+ drivers/pinctrl/nxp/pinctrl-s32.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20260304.orig/drivers/pinctrl/nxp/pinctrl-s32.h
++++ linux-next-20260304/drivers/pinctrl/nxp/pinctrl-s32.h
+@@ -16,7 +16,7 @@ struct platform_device;
+ /**
+  * struct s32_pin_group - describes an S32 pin group
+  * @data: generic data describes group name, number of pins, and a pin array in
+-	this group.
++ *	this group.
+  * @pin_sss: an array of source signal select configs paired with pin array.
+  */
+ struct s32_pin_group {
