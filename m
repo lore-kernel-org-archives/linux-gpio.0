@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4414B378833;
-	Fri,  6 Mar 2026 07:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35AC378D71;
+	Fri,  6 Mar 2026 07:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783741; cv=none; b=QAV+Rw7ghyicE7p0AgWbD653C/0f/rk+bJgKqs8Qz4a9b/srP0RgmSM9O+F/hPICD4gUtmurKGTsP65tPFeXrgqec9CzINBtCk4eWNJ6dcFKIvHPv0f2GW5q0l/jxFu+eBMWWHhQJ7Uv9VbL75j80MrmZbmvWRwfS0Tl0il1zKw=
+	t=1772783741; cv=none; b=UtulPP5tdXw7bdUCOPYEw0YRx1DP/ELgDwXPpoSlXoWdg6HJ1KDtn3KwBRT6jxn5RuUR39+KyHdoprnlt9Yf6DNPwEBbOlhlQGyYw/fMBhbSOOy4H0nEAR7BeAlx+uJdwDuqmA7tjfoUDxgeB/zhaq+zCFGRj38j+sKrC08ZH7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772783741; c=relaxed/simple;
-	bh=V3wZ+MYuq1e685qmdvgAJk53iq7woSdGaKdaRCcr+a4=;
+	bh=pQYxHoI8rATXbQ6bN7Xuu1ElfXD2Vud0syGkJjISLrg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UL0kEpYhhScV66DWEDOv0UNjHbqwqwMXQ4Wfugk5jSUzwr/RaZ9lqyuMf84Xs9P0BErYO7QaRbwK22/CCT9CW+hN5y1yxkii7OZOrlh/0VnHxaD6FvDr/FpkTEFrqnbLD8xP5ZLdfUvGkJTpCKY2bT+tVrfi9AVcpOckjKFCFuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=qUokxQYA; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=mDswIoFzLhZG/nb4zGqAFz9QQMZu6CBFbLIh7C9OOioQc9mk8o4j8gWIZLoZVzoFBls2NGYNb+sq7ZHDwg29lRrK/HJ761cE5zY84AKRHRwSepv87g0PnWyEU8FGMAOjj5us2WKofVBFpLneqz5yqowOsky/gDOhs2RpTMwlhQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=gkNeZCYK; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="qUokxQYA"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qoYrB2977173, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="gkNeZCYK"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qkunF2977157, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783570; bh=hgh76Icjq5aZcxp8xesBqY6XMC0lsZ0EPMYpuiDqgnU=;
+	t=1772783566; bh=fqong6ONpLV7i4pGQx7rPiXI4yfULcIEHX9UrfhOolE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=qUokxQYA7yCqoHpx7zkUrFj3qEDl7dULVzFnFm1NIqEIIvavZCGkC5FFZPKi2gYuj
-	 H9TkxVnyZ6BVyxJd1G81sC17HTYKyhuLLTo13lutUnNcu3qnoilMcPOn26Moh3N4K2
-	 mIP3dyfUXcTHXt66tPwX8lCKZAq/9rWAlF8sFo8FfgghLJB0TzI5K0RwO/hNh6l8rU
-	 fGNWNyHMDerhWKUOxwTpOwZwgz6GY2bTmsFi8kbScYJbmgbqDjblOVaX0fVz1TeG1q
-	 FGF8qM6CrPcKArybEOHiu8dNiYEKmOMgAcq1M0jBdryoDzR0qTN/kE7KfAtTs+p9Dv
-	 lMzsOnFzq51sQ==
+	b=gkNeZCYKpgdHd0vqbMG7lRGCvKE8g34E5N8OPNrA7k4ttWahPbyGPMcszVf3ClWqm
+	 gjusY4q8pN1GlsPuDcIFglvuACMW/kkbppEVfpWHx8M4ZDExwSWpfoOoCpuzVOBdRg
+	 AbdQPO8h/ObMA+n+USgCkKsn98QeH1ZmDz++B6DmTB3noZCoiNkm3jV7Fal1fupEdZ
+	 HsJzShQQGdVLh6WtC/aGEQ2Xgs3Vl6MZh7dzFoe7BjfqLFQ5faZwLPEKCqf7HK8SuD
+	 AGlyEd7CjVkrU/vjOA7JeYf6rEw92bNC7l4/fl/EOFHc8f5HH7k/zoJbUYvo9K4Z+q
+	 JxjOUKJ1QUUVg==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qoYrB2977173
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qkunF2977157
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:50 +0800
+	Fri, 6 Mar 2026 15:52:46 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 6 Mar 2026 15:52:50 +0800
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:46 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:50 +0800
+ Transport; Fri, 6 Mar 2026 15:52:46 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,9 +48,9 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 12/14] pinctrl: realtek: Add support for slew rate, input voltage and high VIL
-Date: Fri, 6 Mar 2026 15:52:42 +0800
-Message-ID: <20260306075244.1170399-13-eleanor.lin@realtek.com>
+Subject: [PATCH v2 05/14] pinctrl: realtek: Fix grammar in error messages
+Date: Fri, 6 Mar 2026 15:52:35 +0800
+Message-ID: <20260306075244.1170399-6-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
@@ -63,118 +63,117 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Tzuyi Chang <tychang@realtek.com>
+Correct the grammar in dev_err() messages. Change "Not support <feature>..."
+to "<feature> unsupported..." to improve readability and comply with
+standard English usage.
 
-Add support for configuring slew rate, input voltage level and high VIL
-mode. This involves updating the pin configuration parsing logic to handle
-PIN_CONFIG_SLEW_RATE, PIN_CONFIG_INPUT_VOLTAGE_UV and the new custom property
-"realtek,high-vil".
-
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
-Changes in v2:
-- Adapt code to match the new binding properties
- - Switch to handling values instead of booleans for VIL.
- - Move property parsing logic to the appropriate location.
-
- drivers/pinctrl/realtek/pinctrl-rtd.c | 48 ++++++++++++++++++++++++++-
- drivers/pinctrl/realtek/pinctrl-rtd.h |  3 ++
- 2 files changed, 50 insertions(+), 1 deletion(-)
+ drivers/pinctrl/realtek/pinctrl-rtd.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index d9456f3d908b..51fbf02710e6 100644
+index 382bdae54bf3..5888a36babba 100644
 --- a/drivers/pinctrl/realtek/pinctrl-rtd.c
 +++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -37,11 +37,13 @@ struct rtd_pinctrl {
- #define RTD_DRIVE_STRENGH_P (PIN_CONFIG_END + 1)
- #define RTD_DRIVE_STRENGH_N (PIN_CONFIG_END + 2)
- #define RTD_PULSE_WIDTH_ADJUST (PIN_CONFIG_END + 3)
-+#define RTD_HIGH_VIL (PIN_CONFIG_END + 4)
+@@ -293,14 +293,14 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
  
- static const struct pinconf_generic_params rtd_custom_bindings[] = {
- 	{"realtek,drive-strength-p", RTD_DRIVE_STRENGH_P, 0},
- 	{"realtek,drive-strength-n", RTD_DRIVE_STRENGH_N, 0},
- 	{"realtek,pulse-width-adjust", RTD_PULSE_WIDTH_ADJUST, 0},
-+	{"realtek,high-vil-microvolt", RTD_HIGH_VIL, 1},
- };
+ 	config_desc = rtd_pinctrl_find_config(data, pinnr);
+ 	if (!config_desc) {
+-		dev_err(data->dev, "Not support pin config for pin: %s\n", name);
++		dev_err(data->dev, "Pin config unsupported for pin: %s\n", name);
+ 		return -ENOTSUPP;
+ 	}
+ 	switch ((u32)param) {
+ 	case PIN_CONFIG_INPUT_SCHMITT:
+ 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+ 		if (config_desc->smt_offset == NA) {
+-			dev_err(data->dev, "Not support input schmitt for pin: %s\n", name);
++			dev_err(data->dev, "Input schmitt unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		smt_off = config_desc->base_bit + config_desc->smt_offset;
+@@ -313,7 +313,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
  
- static int rtd_pinctrl_get_groups_count(struct pinctrl_dev *pcdev)
-@@ -288,7 +290,8 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
- 	u16 strength;
- 	u32 val;
- 	u32 mask;
--	u32 pulsel_off, pulen_off, smt_off, curr_off, pow_off, reg_off, p_off, n_off;
-+	u32 pulsel_off, pulen_off, smt_off, curr_off, pow_off, reg_off, p_off, n_off,
-+	    input_volt_off, sr_off, hvil_off;
- 	const char *name = data->info->pins[pinnr].name;
- 	int ret = 0;
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+ 		if (config_desc->pud_en_offset == NA) {
+-			dev_err(data->dev, "Not support push pull for pin: %s\n", name);
++			dev_err(data->dev, "Push pull unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		pulen_off = config_desc->base_bit + config_desc->pud_en_offset;
+@@ -325,7 +325,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
  
-@@ -409,6 +412,49 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
- 		val = set_val ? mask : 0;
- 		break;
+ 	case PIN_CONFIG_BIAS_DISABLE:
+ 		if (config_desc->pud_en_offset == NA) {
+-			dev_err(data->dev, "Not support bias disable for pin: %s\n", name);
++			dev_err(data->dev, "Bias disable unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		pulen_off = config_desc->base_bit + config_desc->pud_en_offset;
+@@ -337,7 +337,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
  
-+	case PIN_CONFIG_SLEW_RATE:
-+		if (config_desc->slew_rate_offset == NA) {
-+			dev_err(data->dev, "Slew rate setting unsupported for pin: %s\n", name);
-+			return -ENOTSUPP;
-+		}
-+		sr_off = config_desc->base_bit + config_desc->slew_rate_offset;
-+		reg_off = config_desc->reg_offset;
-+		mask = 0x3 << sr_off;
-+		val = arg << sr_off;
-+		break;
-+
-+	case PIN_CONFIG_INPUT_VOLTAGE_UV:
-+		if (config_desc->input_volt_offset == NA) {
-+			dev_err(data->dev, "Input voltage level setting unsupported for pin:%s\n",
-+				name);
-+			return -ENOTSUPP;
-+		}
-+
-+		if (arg == 3300000)
-+			set_val = 1;
-+		else if (arg == 1800000)
-+			set_val = 0;
-+		else
-+			return -EINVAL;
-+
-+		input_volt_off = config_desc->base_bit + config_desc->input_volt_offset;
-+		reg_off = config_desc->reg_offset;
-+
-+		mask = BIT(input_volt_off);
-+		val = set_val ? BIT(input_volt_off) : 0;
-+		break;
-+
-+	case RTD_HIGH_VIL:
-+		if (config_desc->hvil_offset == NA) {
-+			dev_err(data->dev, "High vil setting unsupported for pin:%s\n", name);
-+			return -ENOTSUPP;
-+		}
-+		hvil_off = config_desc->base_bit + config_desc->hvil_offset;
-+		reg_off = config_desc->reg_offset;
-+		mask = BIT(hvil_off);
-+		val = 1;
-+		break;
-+
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		if (config_desc->pud_en_offset == NA) {
+-			dev_err(data->dev, "Not support bias pull up for pin:%s\n", name);
++			dev_err(data->dev, "Bias pull up unsupported for pin:%s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		pulen_off = config_desc->base_bit + config_desc->pud_en_offset;
+@@ -350,7 +350,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+ 		if (config_desc->pud_en_offset == NA) {
+-			dev_err(data->dev, "Not support bias pull down for pin: %s\n", name);
++			dev_err(data->dev, "Bias pull down unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		pulen_off = config_desc->base_bit + config_desc->pud_en_offset;
+@@ -384,7 +384,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 				return -EINVAL;
+ 			break;
+ 		case NA:
+-			dev_err(data->dev, "Not support drive strength for pin: %s\n", name);
++			dev_err(data->dev, "Drive strength unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		default:
+ 			return -EINVAL;
+@@ -394,7 +394,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		if (config_desc->power_offset == NA) {
+-			dev_err(data->dev, "Not support power source for pin: %s\n", name);
++			dev_err(data->dev, "Power source unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		reg_off = config_desc->reg_offset;
+@@ -411,7 +411,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
  	case RTD_DRIVE_STRENGH_P:
  		sconfig_desc = rtd_pinctrl_find_sconfig(data, pinnr);
  		if (!sconfig_desc) {
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.h b/drivers/pinctrl/realtek/pinctrl-rtd.h
-index 7fb0955ce749..02e2d8d269b5 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.h
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.h
-@@ -34,6 +34,9 @@ struct rtd_pin_config_desc {
- 	unsigned int smt_offset;
- 	unsigned int power_offset;
- 	unsigned int curr_type;
-+	unsigned int input_volt_offset;
-+	unsigned int slew_rate_offset;
-+	unsigned int hvil_offset;
- };
- 
- struct rtd_pin_sconfig_desc {
+-			dev_err(data->dev, "Not support P driving for pin: %s\n", name);
++			dev_err(data->dev, "P driving unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		set_val = arg;
+@@ -428,7 +428,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 	case RTD_DRIVE_STRENGH_N:
+ 		sconfig_desc = rtd_pinctrl_find_sconfig(data, pinnr);
+ 		if (!sconfig_desc) {
+-			dev_err(data->dev, "Not support N driving for pin: %s\n", name);
++			dev_err(data->dev, "N driving unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		set_val = arg;
+@@ -445,7 +445,7 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 	case RTD_DUTY_CYCLE:
+ 		sconfig_desc = rtd_pinctrl_find_sconfig(data, pinnr);
+ 		if (!sconfig_desc || sconfig_desc->dcycle_offset == NA) {
+-			dev_err(data->dev, "Not support duty cycle for pin: %s\n", name);
++			dev_err(data->dev, "Duty cycle unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		set_val = arg;
 -- 
 2.34.1
 
