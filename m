@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A7F36E49D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D536B057;
 	Fri,  6 Mar 2026 07:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783729; cv=none; b=dzuTIpwJW7arr3KA9cwzimXjxyOxQRusVU0LGKtmqqXsmKfSNY457HmTPXrgMU8v/A5cesPk41Yxwa8I8Ft5FcU5z2FbWfTTgYd7Py4c/MPc/+WByx/HUMyXqfpoRpv6rMnsTECimHDOQdgv75HKI+XUcPRS2LAYzw2lIVAaCmA=
+	t=1772783730; cv=none; b=uvBE1mRvXsX8PDzkdRhb87Y7LD+Yt7dkUcTs748pI3yYSoNp/L8RnIxyE7pnFnon+ivKHgWHpK3VjIuvtQ2tqDDPKfM2ZKc+r++xTlXezr6SsST2qtqiWXUd2xdBfJO3a3nU4vp81HKhDKjKN+l4HqmqAZIfiDr08/U8WGPS8ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772783729; c=relaxed/simple;
-	bh=VOitZ11dCq1lRQMIA9epP70z6i2zd/U7/5OSAfBoVNs=;
+	s=arc-20240116; t=1772783730; c=relaxed/simple;
+	bh=+vfj/osRrDntWfNqQiz5DQGPCx0lCJmHSvVeCHrU3bo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sTgwIVhCzjlRK6ttk9qdj7QjOfCY9wQlhD7Iui753BKpp8zKbwyyK5vUOxqitR/wP01IRQyttg27pV+3BVHcC2l+NX7HeO9laATghM0m5akFU7uQUJ1AvH+ZDZoEJ6KqJXAHbhz152DcWPToESRoyCCgJSjwdbgiAqkrtsNPrzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=rcLAdTUn; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=hm6m4nqgFwg0FdLWsS99mD8Y1DS3fRcYgjPxde9R3B8jzgaZFj7ZUsya7vZaybI/dvXwz6cxUQ/igV16BtN62n59ui5EH4ocVRlftDzq2AqSzDrpLfoHYsmOvU5BKsefrWdaNqizIHbCl6UmR3iopvyWpbi20aqsUPazpWhoqeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=O0EtMG5u; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="rcLAdTUn"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qkcV72977163, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="O0EtMG5u"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qlW232977169, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783566; bh=nRlakgD6AzmyF11K9CQyZTDmXZeW3pFhz/xkf5/wjSo=;
+	t=1772783567; bh=Hk9cKusVEqnv1IRZnljnfT3bHzCERxVT6MhllyxHpHo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=rcLAdTUnrTxidAx0Xt4udHGJTP/mu+R9fM6UjARfUWXZg3yv3fMaHU2WITM1El4E8
-	 Ea5/OhFCTPn1+GrWlW7p/448rXa8PFxzRPmapMDUzagCTuYKNsggVjFBFA5oXhtdwS
-	 4cfc11XpLbB0FU/0e3ZbM5iM1uwN2d/iypr+4b/xFes9Fzx7JGdOWJA+B7JkR4aoqs
-	 3X7fgrjmQORZ28GgScnXHTA8ftOxBIXwhrebM+dtoIRae0fVp8PXbK9z+XmUikDMXn
-	 sTKuB2b+QsBK6MkzYO/qVyPJWAKcHWGcY16mEfoUzcaEO0b95Tm+KxXqhbvUHfjmTW
-	 iTXrufhSn2BbQ==
+	b=O0EtMG5uM2IcncGDA3v25nnUAskWNKzIE0yF1ViyeyO19k4SfUtB93bfmNga8zjsI
+	 DrNoouBz4y77snb3XeFa0IpY5i7kKu4LFZDnAxYp3D6JPY8QcAcGVdKVga6SNJjdGL
+	 cjU4JLQgx4T9qyMMKExjA2k7E/sN2a7qBFYkI7IKuwm35snbDMy51ixRp5gt/37lg9
+	 TEi7MZCKilrICUZXhVdtwRFAqTiaeegHJ153rFdgEpWQsmNqtkkAdqV2XwrE3iPu2s
+	 xYqJiH2akDLjWR1a4a2468rLwUzZb1PV1nWcAGSfKHZ+l+qTQoB0tXGiPOCNGMHTj0
+	 pbj1cs+l2VvzA==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qkcV72977163
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qlW232977169
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:46 +0800
+	Fri, 6 Mar 2026 15:52:47 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 6 Mar 2026 15:52:46 +0800
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:47 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:46 +0800
+ Transport; Fri, 6 Mar 2026 15:52:47 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,9 +48,9 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 07/14] dt-bindings: pincfg-node: Add input-voltage-microvolt property
-Date: Fri, 6 Mar 2026 15:52:37 +0800
-Message-ID: <20260306075244.1170399-8-eleanor.lin@realtek.com>
+Subject: [PATCH v2 10/14] pinctrl: realtek: Rename 'realtek,duty-cycle' to 'realtek,pulse-width-adjust'
+Date: Fri, 6 Mar 2026 15:52:40 +0800
+Message-ID: <20260306075244.1170399-11-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
@@ -63,33 +63,46 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Tzuyi Chang <tychang@realtek.com>
+Sync with the dt-bindings change to rename the custom property
+'realtek,duty-cycle' to 'realtek,pulse-width-adjust'.
 
-Add a generic pin configuration property "input-voltage-microvolt" to
-specify the input voltage level of a pin in microvolts.
-
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
- Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/realtek/pinctrl-rtd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-index a916d0fc79a9..da182c8a1d00 100644
---- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-@@ -162,6 +162,10 @@ properties:
-       this affects the expected delay in ps before latching a value to
-       an output pin.
+diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
+index 60dfb39bc986..d9456f3d908b 100644
+--- a/drivers/pinctrl/realtek/pinctrl-rtd.c
++++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
+@@ -36,12 +36,12 @@ struct rtd_pinctrl {
+ /* custom pinconf parameters */
+ #define RTD_DRIVE_STRENGH_P (PIN_CONFIG_END + 1)
+ #define RTD_DRIVE_STRENGH_N (PIN_CONFIG_END + 2)
+-#define RTD_DUTY_CYCLE (PIN_CONFIG_END + 3)
++#define RTD_PULSE_WIDTH_ADJUST (PIN_CONFIG_END + 3)
  
-+  input-voltage-microvolt:
-+    description: Specifies the input voltage level of the pin in microvolts.
-+      This defines the reference for VIH/VIL.
-+
- if:
-   required:
-     - skew-delay
+ static const struct pinconf_generic_params rtd_custom_bindings[] = {
+ 	{"realtek,drive-strength-p", RTD_DRIVE_STRENGH_P, 0},
+ 	{"realtek,drive-strength-n", RTD_DRIVE_STRENGH_N, 0},
+-	{"realtek,duty-cycle", RTD_DUTY_CYCLE, 0},
++	{"realtek,pulse-width-adjust", RTD_PULSE_WIDTH_ADJUST, 0},
+ };
+ 
+ static int rtd_pinctrl_get_groups_count(struct pinctrl_dev *pcdev)
+@@ -443,10 +443,10 @@ static int rtd_pconf_parse_conf(struct rtd_pinctrl *data,
+ 		val = set_val << n_off;
+ 		break;
+ 
+-	case RTD_DUTY_CYCLE:
++	case RTD_PULSE_WIDTH_ADJUST:
+ 		sconfig_desc = rtd_pinctrl_find_sconfig(data, pinnr);
+ 		if (!sconfig_desc || sconfig_desc->dcycle_offset == NA) {
+-			dev_err(data->dev, "Duty cycle unsupported for pin: %s\n", name);
++			dev_err(data->dev, "Output pulse width adjustment unsupported for pin: %s\n", name);
+ 			return -ENOTSUPP;
+ 		}
+ 		set_val = arg;
 -- 
 2.34.1
 
