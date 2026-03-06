@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195EE343D9E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C294836AB69;
 	Fri,  6 Mar 2026 07:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783729; cv=none; b=EBSl9q1kuopIf4CStpodGxZVllHzC0BPGqVpSD2NIWMavUJc5FuWrECNvAdtL4VYQ3xBhw1Ol49mw+DNGJR2uFDi/LSQVgOo1C/khseHc9sqmLG47wxWo6Gh32StMSndI1ZWt7p/joiWpNf0oKFSmOdxIHjym26Nd+xog1xJB9Y=
+	t=1772783729; cv=none; b=aqgsfxtBUmcmA+TbUHmsIgGiYuNW4UnCHLNMLIWlxApLf8rSMZ9JauiktYjYo2gCvQ3nr83R6Crgs03618SXvd3Zu3xexvnyQV1Fhvf47hI0oJC4q3MxxSHuWfhAko4rKTO8uo1lwNv5G4zwVLCt2sQR1dr+A9P0TZ0lB1vnJdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772783729; c=relaxed/simple;
-	bh=GMW5B6JMgI6j9/cDHFQ4K87UJU3ZWkxxvDTWvZBAAGo=;
+	bh=xuMAfiFWtEhfxdp0hyiCkET0FkdY5Fi59vhGhqXJUUM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TmBuNek8MDc1p2q0qbuuQ/TFeCmncpqcRlvDj6MfKJ+E0I/LTIzOGWcoQVhRO9Zj5o85A2pl0ASV+TXwOIqtb4l0QSckwgJgzgkc0H6Q+PGgKrC/FFTuevlQK3Zgy4A9PgxJUXVR7IRKwlP+iDqBMjV5UMJ2KbzPQZFYTM7MBCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=WLT1etob; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=W0ZjksTG949vRgVn15w6t9o5OSOg1vZaDiFqQhv88KoS2q8vu0YJu1zmjRmO2p/3RRBipT0U+pI2bQ8r/HJ71cUcLfxnpvI1C9uFAh0SuAyzUWbESV4dXLb4yexABlT1RLwIjb++w4Q3OdQTXdM/t1+LbHBkqsjGT0OMskgGXcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MfZdK7up; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="WLT1etob"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qkHU32977155, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MfZdK7up"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qjQgB2977148, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783566; bh=km0x8u84UprX6FKm0eCiSzTfi+chOgnkYlBpdfCRF1w=;
+	t=1772783565; bh=x4WWKecG/iTSsh2dycXEkAFiD9abnKWJV73l5Pt4Z3c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=WLT1etobrskNSLFgL4x45S6Ky1Cm9gNTB+vnKSIkod9CeqM9cOCCzKdrAEgHipxWr
-	 BdlOc9I2pTzQM3iK0lKibDnU0KNUWBa67kd8n8GNC/jwsOoct1MGAgsptQMaXEc/Hx
-	 yaiojwYtdIIjgcnts0x86B+HztlPNQqRqajMp9zTJbKm/T00OprrKM75piso7CdMfu
-	 DCRyTSs4uj1c2CxvnidR7Or8gDCsoWaOO8ZNHrBaNS3RbNceurLNXiXayExji2cMyj
-	 CoAzSzm5WOA/EujpgFVQOfFu08J0iuIkfUmJY2kzRLtSTLC+InM9mJ/1wVQwcoAclf
-	 Z5C4Pc9tK9MIA==
+	b=MfZdK7upk91YY3jTXxdhhBU2oS4uaTO5SzgQT+dLT/5rBEjEUyl3vYhlXoB4hBaXn
+	 dPiA93ajusIehwSJyxMkmgAi/smLJk4o6HT4FMat/ABG4TQECQ6EC72dx3GdyamsyW
+	 YfpfvCR0/dCZUxVhWRwhM6UhsI1HOHpGUZe/Gl0frAFr4jR258HyKoiumNvwwBBPEc
+	 VjvcYGnRBxEaLieC3cPP9xBdAOk8J0WPtRU6QkHOTO3D/yPTKoEBxNdf073mABHvCp
+	 xnyUJUFvbvWEEJWOb4JOGlu8wxDc+erotcSWKwcHjzAA+eEAyxVeIq413a86sH4q07
+	 qXpBlHyeiJP5A==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qkHU32977155
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qjQgB2977148
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:46 +0800
+	Fri, 6 Mar 2026 15:52:45 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1748.10; Fri, 6 Mar 2026 15:52:45 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:45 +0800
+ Transport; Fri, 6 Mar 2026 15:52:44 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,9 +48,9 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 04/14] pinctrl: realtek: Simplify error handling with dev_err_probe()
-Date: Fri, 6 Mar 2026 15:52:34 +0800
-Message-ID: <20260306075244.1170399-5-eleanor.lin@realtek.com>
+Subject: [PATCH v2 01/14] pinctrl: realtek: Cleanup license string
+Date: Fri, 6 Mar 2026 15:52:31 +0800
+Message-ID: <20260306075244.1170399-2-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
@@ -63,8 +63,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Convert the error handling code in probe() to use dev_err_probe() to
-enhance semantic meaning.
+Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db
+("module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
 
 Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
@@ -72,34 +72,19 @@ Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Changes in v2:
 - Add Bartosz's Reviewed-by tag.
 
- drivers/pinctrl/realtek/pinctrl-rtd.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/pinctrl/realtek/pinctrl-rtd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index 56fd3093c206..382bdae54bf3 100644
+index 244060486332..eafa0d7bb19d 100644
 --- a/drivers/pinctrl/realtek/pinctrl-rtd.c
 +++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -566,15 +566,14 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
- 	data->regmap_pinctrl = devm_regmap_init_mmio(data->dev, data->base,
- 						     &rtd_pinctrl_regmap_config);
+@@ -593,4 +593,4 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
+ EXPORT_SYMBOL(rtd_pinctrl_probe);
  
--	if (IS_ERR(data->regmap_pinctrl)) {
--		dev_err(data->dev, "failed to init regmap: %ld\n",
--			PTR_ERR(data->regmap_pinctrl));
--		return PTR_ERR(data->regmap_pinctrl);
--	}
-+	if (IS_ERR(data->regmap_pinctrl))
-+		return dev_err_probe(data->dev, PTR_ERR(data->regmap_pinctrl),
-+				     "Failed to init regmap\n");
- 
- 	data->pcdev = devm_pinctrl_register(&pdev->dev, &data->desc, data);
- 	if (IS_ERR(data->pcdev))
--		return PTR_ERR(data->pcdev);
-+		return dev_err_probe(data->dev, PTR_ERR(data->pcdev),
-+				     "Failed to register pinctrl\n");
- 
- 	platform_set_drvdata(pdev, data);
- 
+ MODULE_DESCRIPTION("Realtek DHC SoC pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
