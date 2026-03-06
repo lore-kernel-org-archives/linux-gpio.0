@@ -1,43 +1,43 @@
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72089314B8F;
-	Fri,  6 Mar 2026 01:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4202749C;
+	Fri,  6 Mar 2026 02:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772760073; cv=none; b=hqLa8G6+H4DFlvhYNhv3XSclekWUSPmTr8KdDdpq5hu/E+SLtsEBKQv1HcqMqnnxxgnYaSdNy6h4tOcDWrv3BrlYH46jmKPcI3j1DpicFfSl+cBeEjEqvAVjER0eS2unTrVO6T2fCfOC8cXBYJr5LfAA85dZI+L5HjkEGuFOslA=
+	t=1772762686; cv=none; b=err4dzdnWhVrIt3Ziz/OJ9+2uzLd4HOUmSWNCWTAM4eyinh5lDD3VTnn4uJ+jxOxMO8Ih2vOPrJVtygjm6LsfAxeIBlZXbbWbkSt5mY/Vy8pU2fMZCquClvwCZoCH1Q0FB04mM/ZSdaVwlMlpDSkBOxYb8dcTPZqm4f3akgcK40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772760073; c=relaxed/simple;
-	bh=GWOizdCxZW2fKfcx6eHSwN5tLnYnZ3QiRxQ5aiT1WKQ=;
+	s=arc-20240116; t=1772762686; c=relaxed/simple;
+	bh=lmBVwE8AshPgiyvn/kq6xEO5gknrmES1SJka/+ZEaKU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SLrmLRj6RwEDuawPvs5dksGyOyJKzQAzsN0rkDFmEUALhmKAwqBUkLGDTwYzyyIGL/jaJqGK9w6dTejNO7sZsDgG0ueXT2kdyHAvz+mvDnG+e/6hOQpcYBpbCJg1iwMBtHbgpFQ/flAW2mICIp36FkQlmhb8C/nP0rOHnVYrsnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org; spf=none smtp.mailfrom=vimux.org; arc=none smtp.client-ip=18.169.211.239
+	 MIME-Version; b=MEYK9jA5ZlzOoVaFmfS8ARTkHjHW45+WtE9vMvlOiINiYSEXzvO7EHdX0TIOjM3k0Tpynsnl8a6Vt7sGgFw2TcMDYaT9hwoKQJ5OekbaqfgfC+XHL1+kfGRux5RbWc27DF63LYTMjS3grXIe866HA/IlSa10Si/bUFTwZVpFW0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org; spf=none smtp.mailfrom=vimux.org; arc=none smtp.client-ip=18.194.254.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vimux.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=vimux.org
-X-QQ-mid: zesmtpsz2t1772760046t9db5bc17
-X-QQ-Originating-IP: pm5foq4wI0s8Yg8T5nGQpXqP6Nkc4LvL+rJqYIeiDZk=
-Received: from localhost.localdomain ( [119.167.27.18])
+X-QQ-mid: zesmtpgz9t1772762659t52ed2202
+X-QQ-Originating-IP: sJ4ltfzKRtkwAFRk4r7BGZhDj75YwxAkzUqL1YKmCP0=
+Received: from localhost.localdomain ( [119.167.27.218])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 06 Mar 2026 09:20:44 +0800 (CST)
+	id ; Fri, 06 Mar 2026 10:04:16 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13677970291522765697
+X-BIZMAIL-ID: 14452768770087705391
 EX-QQ-RecipientCnt: 8
 From: Jialu Xu <xujialu@vimux.org>
-To: brgl@kernel.org
-Cc: kees@kernel.org,
+To: xujialu@vimux.org
+Cc: brgl@kernel.org,
+	kees@kernel.org,
 	krzk@kernel.org,
 	linusw@kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	xujialu@vimux.org
-Subject: Re: [PATCH v2 0/3] Remove <linux/of_gpio.h>
-Date: Fri,  6 Mar 2026 09:16:14 +0800
-Message-ID: <64F9F751CE011929+20260306012002.2320584-2-xujialu@vimux.org>
+	netdev@vger.kernel.org
+Subject: [PATCH v3 0/3] Remove <linux/of_gpio.h>
+Date: Fri,  6 Mar 2026 10:00:31 +0800
+Message-ID: <9664C03EC3061D3E+20260306020359.2356587-1-xujialu@vimux.org>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAMRc=MfBqPP3W0nCvyM9hqmgZbX8SVSZ0DGrJwLdKoAK7gqgvA@mail.gmail.com>
-References: <CAMRc=MfBqPP3W0nCvyM9hqmgZbX8SVSZ0DGrJwLdKoAK7gqgvA@mail.gmail.com>
+In-Reply-To: <7187C401290C256B+20260304084808.440955-1-xujialu@vimux.org>
+References: <7187C401290C256B+20260304084808.440955-1-xujialu@vimux.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -46,27 +46,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:vimux.org:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: Mdy4c2f802JI9hVt7a20YERk3SaxT4+c1XlzEnok1h7RjGzWYzZK+rDV
-	g9kW9PC7YhhP9SP2EjznPOZmSJ+nxd5EBVJSwKqlU0mDOD//ZaTZLeZgx78gpg9EgDo2Ip7
-	M0cZ7/ziFNiaLbnY41bSh9LTA33eHJBqAo+nD+FrpPvQCoIYbn8GsXAHse/huBmRCZj6DGU
-	5kop8h4CL17IuPuLXSXxLzd9z1IBRmNbrzCDM+/MvVywN3xJo3sRKhMxf90BGLSmeKChL2j
-	qgvy4W3E+RIzoRasJULpsIWlRSpMdyMwTjYfHxB3n91CsMPqvZGcqzgsGVKycGdbbF1/S+q
-	75Nwhj0+XMZbsAs5/DcabVqSGjkOcNi7ZPdNTuuCWyI4iRIP6XdOqhC/zxTP97q/SI84rjg
-	q6ktbApiWDPE/6mq6cZhCe+0QSq8BpZ+/HzXE1P5o0QDZ1DwW6Pe2O6EJrITjM7X3OrAzdu
-	JBYfvRpsKnZhgnqm9YcRIrvDjHc1Kui0xpzcR7Hlnl8PYzyaOR268pHPYMj/W74mIiUJI9C
-	SN1q+2dPrd7wbeRd50jOywUJS26t5lY01MoReEwhXgmQeClx6FZ9k13+T9Ku8IqLM2Gg9xk
-	YfusrJ+lVjYlkqjOrzxfR9ud9mzY4qKvUHwjSBBGUCuTxarOa3aD1eDtzOeC/m2oOsvBlYa
-	+ICZZuYX881oJS5Ymh36EzCe8tfQq88ZxU+m7I+7Zkcyh/hhicPe03DnCcpkahmWfVdrQOz
-	fb7y1GK+X/Zx0Ud1MANqOc0c0lbsb8KedK0JvBgEVowwI3iVjVGzWbunf/4weNFcFxqd0mK
-	jgl3smjVPja1mRJ+VCAn7Hi2EBK34TKe433CAFZiStQ7tcufQne4jTFpkEXTC2oHY+UC2Uy
-	26gRzpPW44s+QtsgkHDefVOPejXFEOIMXvpbDW7xlpFjsQdImBldl1GsV/Sadfx8CeyXp0Q
-	YKbATyRxvJZYPEmQMYzu8Cmuc
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+Feedback-ID: zesmtpgz:vimux.org:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: OTcpUPEtz2BjS6oa8cYvW38Jt0ay0SK2xY3ro5mVhWJKCIBOLHWkvYEq
+	gpD53lYhANa2uwaJdMBqYe4aSgghidxgAh8kVrHzwDb8U25Ei7Wm/e3abZU1NR68QyWnTaV
+	hRYleD3/qNyxhTdZEvUwmrPbFGVQMO8IAIIdj91zuv8MNoqxLRE++1IXv1cIs8sk6iTPV45
+	24a63tfJRxrRyhsiOnsTos31s0jviEWdpUiAl7oUf200KOHzzWsrtFW66+6Yr5Ft41TftXB
+	K/+U8DbTbsklftazuQSROiQhs0VGm5dbviyqO5O9wuNrUHV+a0guEd/wqEN3ucbW1bSqLAE
+	1XhF6xj8xyX9AS2p3YalvrsYmxe/6y9nwqnvTd3lZxXILpY/2lehqac973BhyPyaE+3tmC8
+	6U5weZGVzhAodHK6coNQgGDctKth5U5WcqeGsCGX+aYHaenPoHiTl3Fi/QWWmgAsqn9925d
+	FyrEqAy6h3qDSYyslWnRVyBrUCUX5tTFgaDCqLVMCQONJOvle8E76QWNX6lErHR2o1Zy/70
+	TsRrMdpFZujn8nRfnx/gXYjueN/I3+Jpa5rdapYI1KpVXGG3DzXPoXMLphf98O8hAd6oDi1
+	/vYAsLYQ1WURE0Q04wcWeg6V53Vhn2Ygiwqk+wDk3tEQLkBLImF/DQfZsTLo9qEIDbE9dkP
+	L1JiL5JHRbTxReeHdvQ8Bo6KIxryKUG3ipeHE85DvKZYEns5PqIJTayBa4SO/dg3rYjrgbI
+	zSninFO1Em89XBkbN26s+5YrC+7rntLcpg5jhAdQfLrETX31KinPqM55DIZro9F7N01GVZF
+	P3hqO+0GEOGdwD8W3IlRIp8sFaomtMCeRe8ov+SImyDzLF2FeoM4RlWKIvAjJuE5VBU/5WN
+	GlLHOoEDrxCR4V70wgKdi1eMvRWKAphn1IbOg+BBGQh/SoCKEpNh+u/aB23czNNykv4m2nJ
+	GN9jm1Ns5DJENd7GRw4lodXsbuaLAroZKF1/Dgvm5AlLD6LgNIKlcJZ7/
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 
-Sorry, I intended to use format-patch but forgot to add the v2 version
-tag and signoff.
+[PATCH v3 1/3] nfc: s3fwrn5: convert to gpio descriptors
+[PATCH v3 2/3] nfc: nfcmrvl: convert to gpio descriptors
+[PATCH v3 3/3] gpio: remove of_get_named_gpio() and <linux/of_gpio.h>
 
-Jialu
+ MAINTAINERS                      |  1 -
+ drivers/gpio/TODO                | 28 ----------------------------
+ drivers/gpio/gpiolib-of.c        | 31 ++++---------------------------
+ drivers/nfc/nfcmrvl/main.c       | 46 +++++++++++++++-------------------------------
+ drivers/nfc/nfcmrvl/nfcmrvl.h    |  4 +++-
+ drivers/nfc/nfcmrvl/uart.c       | 23 ++++++++++++++++-------
+ drivers/nfc/nfcmrvl/usb.c        |  2 +-
+ drivers/nfc/s3fwrn5/i2c.c        | 55 ++++++++-----------------------------------------------
+ drivers/nfc/s3fwrn5/phy_common.c | 11 +++++------
+ drivers/nfc/s3fwrn5/phy_common.h |  5 +++--
+ drivers/nfc/s3fwrn5/uart.c       | 45 ++++++++++++---------------------------------
+ include/linux/of_gpio.h          | 38 --------------------------------------
+ 12 files changed, 67 insertions(+), 222 deletions(-)
 
