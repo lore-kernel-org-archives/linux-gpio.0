@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C294836AB69;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A7F36E49D;
 	Fri,  6 Mar 2026 07:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772783729; cv=none; b=aqgsfxtBUmcmA+TbUHmsIgGiYuNW4UnCHLNMLIWlxApLf8rSMZ9JauiktYjYo2gCvQ3nr83R6Crgs03618SXvd3Zu3xexvnyQV1Fhvf47hI0oJC4q3MxxSHuWfhAko4rKTO8uo1lwNv5G4zwVLCt2sQR1dr+A9P0TZ0lB1vnJdk=
+	t=1772783729; cv=none; b=dzuTIpwJW7arr3KA9cwzimXjxyOxQRusVU0LGKtmqqXsmKfSNY457HmTPXrgMU8v/A5cesPk41Yxwa8I8Ft5FcU5z2FbWfTTgYd7Py4c/MPc/+WByx/HUMyXqfpoRpv6rMnsTECimHDOQdgv75HKI+XUcPRS2LAYzw2lIVAaCmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772783729; c=relaxed/simple;
-	bh=xuMAfiFWtEhfxdp0hyiCkET0FkdY5Fi59vhGhqXJUUM=;
+	bh=VOitZ11dCq1lRQMIA9epP70z6i2zd/U7/5OSAfBoVNs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W0ZjksTG949vRgVn15w6t9o5OSOg1vZaDiFqQhv88KoS2q8vu0YJu1zmjRmO2p/3RRBipT0U+pI2bQ8r/HJ71cUcLfxnpvI1C9uFAh0SuAyzUWbESV4dXLb4yexABlT1RLwIjb++w4Q3OdQTXdM/t1+LbHBkqsjGT0OMskgGXcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MfZdK7up; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=sTgwIVhCzjlRK6ttk9qdj7QjOfCY9wQlhD7Iui753BKpp8zKbwyyK5vUOxqitR/wP01IRQyttg27pV+3BVHcC2l+NX7HeO9laATghM0m5akFU7uQUJ1AvH+ZDZoEJ6KqJXAHbhz152DcWPToESRoyCCgJSjwdbgiAqkrtsNPrzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=rcLAdTUn; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MfZdK7up"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qjQgB2977148, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="rcLAdTUn"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6267qkcV72977163, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1772783565; bh=x4WWKecG/iTSsh2dycXEkAFiD9abnKWJV73l5Pt4Z3c=;
+	t=1772783566; bh=nRlakgD6AzmyF11K9CQyZTDmXZeW3pFhz/xkf5/wjSo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=MfZdK7upk91YY3jTXxdhhBU2oS4uaTO5SzgQT+dLT/5rBEjEUyl3vYhlXoB4hBaXn
-	 dPiA93ajusIehwSJyxMkmgAi/smLJk4o6HT4FMat/ABG4TQECQ6EC72dx3GdyamsyW
-	 YfpfvCR0/dCZUxVhWRwhM6UhsI1HOHpGUZe/Gl0frAFr4jR258HyKoiumNvwwBBPEc
-	 VjvcYGnRBxEaLieC3cPP9xBdAOk8J0WPtRU6QkHOTO3D/yPTKoEBxNdf073mABHvCp
-	 xnyUJUFvbvWEEJWOb4JOGlu8wxDc+erotcSWKwcHjzAA+eEAyxVeIq413a86sH4q07
-	 qXpBlHyeiJP5A==
+	b=rcLAdTUnrTxidAx0Xt4udHGJTP/mu+R9fM6UjARfUWXZg3yv3fMaHU2WITM1El4E8
+	 Ea5/OhFCTPn1+GrWlW7p/448rXa8PFxzRPmapMDUzagCTuYKNsggVjFBFA5oXhtdwS
+	 4cfc11XpLbB0FU/0e3ZbM5iM1uwN2d/iypr+4b/xFes9Fzx7JGdOWJA+B7JkR4aoqs
+	 3X7fgrjmQORZ28GgScnXHTA8ftOxBIXwhrebM+dtoIRae0fVp8PXbK9z+XmUikDMXn
+	 sTKuB2b+QsBK6MkzYO/qVyPJWAKcHWGcY16mEfoUzcaEO0b95Tm+KxXqhbvUHfjmTW
+	 iTXrufhSn2BbQ==
 Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qjQgB2977148
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6267qkcV72977163
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Mar 2026 15:52:45 +0800
+	Fri, 6 Mar 2026 15:52:46 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 6 Mar 2026 15:52:45 +0800
+ 15.2.1748.10; Fri, 6 Mar 2026 15:52:46 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 6 Mar 2026 15:52:44 +0800
+ Transport; Fri, 6 Mar 2026 15:52:46 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <bartosz.golaszewski@oss.qualcomm.com>,
@@ -48,9 +48,9 @@ CC: <james.tai@realtek.com>, <cy.huang@realtek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v2 01/14] pinctrl: realtek: Cleanup license string
-Date: Fri, 6 Mar 2026 15:52:31 +0800
-Message-ID: <20260306075244.1170399-2-eleanor.lin@realtek.com>
+Subject: [PATCH v2 07/14] dt-bindings: pincfg-node: Add input-voltage-microvolt property
+Date: Fri, 6 Mar 2026 15:52:37 +0800
+Message-ID: <20260306075244.1170399-8-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260306075244.1170399-1-eleanor.lin@realtek.com>
 References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
@@ -63,28 +63,33 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db
-("module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+From: Tzuyi Chang <tychang@realtek.com>
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Add a generic pin configuration property "input-voltage-microvolt" to
+specify the input voltage level of a pin in microvolts.
+
+Signed-off-by: Tzuyi Chang <tychang@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
-Changes in v2:
-- Add Bartosz's Reviewed-by tag.
+ Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/pinctrl/realtek/pinctrl-rtd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index 244060486332..eafa0d7bb19d 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -593,4 +593,4 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
- EXPORT_SYMBOL(rtd_pinctrl_probe);
+diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+index a916d0fc79a9..da182c8a1d00 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+@@ -162,6 +162,10 @@ properties:
+       this affects the expected delay in ps before latching a value to
+       an output pin.
  
- MODULE_DESCRIPTION("Realtek DHC SoC pinctrl driver");
--MODULE_LICENSE("GPL v2");
-+MODULE_LICENSE("GPL");
++  input-voltage-microvolt:
++    description: Specifies the input voltage level of the pin in microvolts.
++      This defines the reference for VIH/VIL.
++
+ if:
+   required:
+     - skew-delay
 -- 
 2.34.1
 
