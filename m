@@ -1,76 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B930F35B650
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701891A9B46
+	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773013253; cv=none; b=Km6mJIbEy2M77zXpdzZGb6sENICr6hxQYBSL5YUnLhpiCu4kMbMTWBosXwUVO0+CasfMzrwo6b0Q5Yzx47R+EQo+1YY+ay7yR74o9NtFeBDpH6z/4MF9zfNJ1gen2BGY3KF7BKg25MPzq9CV/u1ISDbapo3h+nGeMcQ2h8l5UV4=
+	t=1773013767; cv=none; b=bes1xXLfHCP5uoIV532RT+Fmja7L8ijdFpYS9tXJlRBAhqpMZIxUlDtq0D/MseL3RpwG2j3rDTTwGm6BnnN2jWjUq3A6AXo8u13hj6Cpsz9rMFuIVDs6PKRWiWdvOVo7uqZdITKfRziMntNJJ4TE39sPX1SDPGEkMI5gXEkcY9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773013253; c=relaxed/simple;
-	bh=886yOsmgMr03UfDw77dZfLDvbC5Q93qvbfwF3WDyRFE=;
+	s=arc-20240116; t=1773013767; c=relaxed/simple;
+	bh=s/L3to3kG0f/uxJHIuUQNKS0TutAor3MzlG+ldsVbWY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hslG8q3J9fbyrs8D1YB5162lV2KNsKs8HK9F9Yex3eHAnF/wn4AnTLDn6zwX3oEYwKykWUoUuwkhjnpicTIebKtmuCU9IGxbOSQHxz3q4KIM6GjbPxFack7qV4LK6rlKtKTa7g3YQtgz+PTWqmofT8WQdlK4Z5neIBq0Ro151ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJG7p9s2; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=LzWAHdKnlgjodSQXC7AoV0+KGKJEEHfjCFyj/eao/kkKx+9GWgm/plQHNrhXTMretlSh4yfkz8QP4Jfkwu5A5PCA/WgpN8uTxZ25EqEWnC8P40Fy+sxm+ha833RE/eq5u3blDvBgm2PWk8gJFcwh68LVpWoGqan+fEKsyPE8/qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSaYAqWz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJG7p9s2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A401C116C6
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:40:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSaYAqWz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537A3C2BCB8
+	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773013253;
-	bh=886yOsmgMr03UfDw77dZfLDvbC5Q93qvbfwF3WDyRFE=;
+	s=k20201202; t=1773013767;
+	bh=s/L3to3kG0f/uxJHIuUQNKS0TutAor3MzlG+ldsVbWY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KJG7p9s2e95DG65rsuy3fpE59sjy0m4Nli6U54WKx1+uAR7Pw6RE6UupWm+5VKEUQ
-	 JRmErT+F5PR77oJyHiRgLAxSErT7RsZodfuQFTuuJ674j+i5HgaGQ8zoekcClUZRMv
-	 Tt/2h7cqulZjBVQUe6OpNC+CxNz85ivcC9DC/kczvB4r1Vd0BT6rmflTG715+JCLx3
-	 DATgREW3YQHoot6X/A7mo0YHtT/VuxPL3vQKheNZHLEudu8kTnf8u1vC6i3Sj8WWhB
-	 +y+Ao4YaYMW+b+AkPo1ZjVZ3cPF7O1Hqlgn4iRzftSmjZJZ03e0m6HAFyDg8hr9zPh
-	 5x+xp9UkNhP2g==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-798527f822cso108680477b3.3
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2026 16:40:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWpW0RZbblpPgEIC/nHA0zhFjwXQb92mtZLFCtQPCgkB1QZa+u9FYtZIVDfCgimMC/jo9c1zwHzVPSM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MpE0fBhE97+ppeBDKtzabUy5IOkOPu9sYX0QjFfjkEFM6zfZ
-	BGY8hZDYBclmoelEQ8ZZLF383e/+td3QPhhXicUIGDdQPz3DA8H5i3Xnnw0atq73xVgAMR+AhTb
-	H+EKunulMu4musBlov515FxT6xSvQCuQ=
-X-Received: by 2002:a05:690c:ed6:b0:798:78cc:3e59 with SMTP id
- 00721157ae682-798dd6444f1mr97812207b3.11.1773013252777; Sun, 08 Mar 2026
- 16:40:52 -0700 (PDT)
+	b=XSaYAqWzQp3fZE8+EsfBXHsSdukgD1O91AJ9WQW9g6p1vb1lciyfkvidyl1g64Kno
+	 o6WXMJbjEtLPXMeAk++lTl7N66JIBLIgyCRxkfvhS2gvCj/bckOO45Pu/sNPC8wbSw
+	 WTXrSx1BI7ygY/8DiU8/hTfMz+pcsBCKmdUGulIkX3lFE5jZw7bGW236QjqBf0j9YG
+	 tuFc9uPwisGV1l+/R+9JPbRVsq1J2jVkgnQr7vLkqMu/S0XvzESO1OcxQXJqZPkM7T
+	 gSTvrXLFkVEDs/prZr4+GUFeuspclhP6Q/mGozGv/+8146AfVZk1GtSBoqMPh8HyJf
+	 RnHC3w035H2Gg==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-793fdbb8d3aso133006817b3.3
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2026 16:49:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGI1/n+eEntqoAMCSRVACD1zBbEPlDRIaY1Ag/YbWpSMsJtSYonO149DTn9DUPgvb9gLbPsAZA7UKa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5HM+w9YEs1mmBE+OmRfKXLNhk9psgU90pvSKTh6Erxpmkmh6R
+	0IabyJ+EQ31lvw2+hhz6AfDrPruxG6ckEP/Rt+xm7zzvZsnNWy5eBCt9QnnPdtsFFnJz9n8ht16
+	X56l32ubecwEntTttJMsVXXfOpuziYDc=
+X-Received: by 2002:a05:690c:6891:b0:798:3051:2f25 with SMTP id
+ 00721157ae682-798dd7bee25mr101650097b3.59.1773013766532; Sun, 08 Mar 2026
+ 16:49:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260305124945.10781-1-johan@kernel.org>
-In-Reply-To: <20260305124945.10781-1-johan@kernel.org>
+References: <20260225-pinctrl-mux-v2-0-1436a25fa454@nxp.com>
+ <20260225-pinctrl-mux-v2-4-1436a25fa454@nxp.com> <CAD++jLkT83xz+PSzZZv_Mv+Mqx_+W30d_xk68EDG-sdmFF3x3A@mail.gmail.com>
+ <aaG2xQDnMVGGAOJE@lizhi-Precision-Tower-5810> <CAD++jLm=6pTh7N5UAXFaaYWCs5DhfQdb+8TnM5XLcYC886=kLw@mail.gmail.com>
+ <aam_cZhlCSxu5WHS@lizhi-Precision-Tower-5810>
+In-Reply-To: <aam_cZhlCSxu5WHS@lizhi-Precision-Tower-5810>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 9 Mar 2026 00:40:41 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk0QCZRbA4NWJ+sBDD8WsBk1zN5MD_iVUCFzcj9xQQucw@mail.gmail.com>
-X-Gm-Features: AaiRm50c9N_rKWeiHHuIfIadQCWrCsBx7jtt--5v3RNL_54PJOZNzCIJCUhp8SA
-Message-ID: <CAD++jLk0QCZRbA4NWJ+sBDD8WsBk1zN5MD_iVUCFzcj9xQQucw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mpsse: drop redundant device reference
-To: Johan Hovold <johan@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 9 Mar 2026 00:49:15 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkKsTfFUUD42TKorHLWUAt8=w-kW7Q9bxbU1bgaaig77Q@mail.gmail.com>
+X-Gm-Features: AaiRm53eOVEff0Ia4ZtRk5C2doZUsMB119btrlySbICQI0ZMg3eVD5n5sc91D_k
+Message-ID: <CAD++jLkKsTfFUUD42TKorHLWUAt8=w-kW7Q9bxbU1bgaaig77Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] pinctrl: add generic board-level pinctrl driver
+ using mux framework
+To: Frank Li <Frank.li@nxp.com>, Fan Wu <fwu@marvell.com>
+Cc: Peter Rosin <peda@axentia.se>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Haibo Chen <haibo.chen@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 5, 2026 at 1:49=E2=80=AFPM Johan Hovold <johan@kernel.org> wrot=
-e:
+On Thu, Mar 5, 2026 at 6:38=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
 
-> Driver core holds a reference to the USB interface and its parent USB
-> device while the interface is bound to a driver and there is no need to
-> take additional references unless the structures are needed after
-> disconnect.
+> init state is before probe if exist, which not fit this case because:
+> - on board mux need be enabled before probe, some device need communicate
+> with periphal at probe, such as SD card. SD data/cmd line must be ready
+> to scan SD, similar case for all mtd devices.
 >
-> Drop the redundant device reference to reduce cargo culting, make it
-> easier to spot drivers where an extra reference is needed, and reduce
-> the risk of memory leaks when drivers fail to release it.
+> if add new state "release",  when the pinctrl may switch between default,
+> sleep, ... , "release" have to switch between switch state, such as defau=
+lt
+>  -> sleep have to change to default->release->sleep.
 >
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> mux device also have idle state, which map to pinctrl's "init" or "sleep"
+> state.
+>
+> The key difference should be
+> - pinctrl can uncondtional switch state.
+> - mux frame have to use pair mux_control_(de)select() to switch state.
+>
+> So, I think just need a hook in pinctrl system to call mux_control_desele=
+ct()
+> when switch state and release resource.
 
-Looks right to me.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+The problem is that this becomes essentially a revert of:
+commit 2243a87d90b42eb38bc281957df3e57c712b5e56
+"pinctrl: avoid duplicated calling enable_pinmux_setting for a pin"
+from 2014.
+
+.set_mux() used to be called .enable() and when .disable() was
+deleted in this commit, only .enable() remained and that was later
+renamed to .set_mux().
+
+By essentially adding back the .disable() callback under a new
+name, you risk to re-introduce the problem solved by this
+committ.
+
+So you need to analyse that committ log a bit, reference it
+and explain why you are *not* re-introducing this problem by
+adding back the callback.
 
 Yours,
 Linus Walleij
