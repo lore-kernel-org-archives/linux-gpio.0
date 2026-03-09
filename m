@@ -1,71 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256241D5ABA
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9C420DE3
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 00:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773013821; cv=none; b=fDls+bbraFpoEEB8fwnGI2wzpaTeH0GeGzum7yxN4Qy7UuneQm2znTmaRkgKQ/ZWSNUlH0gVaLnjjY3VEvDc/yThEfHjWtn5hDknpc/a10BE6XyL7yn3eAHZssFiNPefGdqIKcaE9Z6gGpaDxCtcVkJYVMrq4SUshEYVPuMPIpc=
+	t=1773014776; cv=none; b=OvdolM7VOBE62/kmPvvOXSnZ50GpJSF0GegCl9IdFkV123iDKjsFV5u3xMV9/RnbSAdc7B2aqYUugy8XJi1eHWofIwq1/Zxh6eeVYUipTFjqYQDNuaM5IzhNpugShB9j1ph8rA80JciHl9BOWT5TXkwnonTSZ9dl4Oqr4Hsew68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773013821; c=relaxed/simple;
-	bh=qCHWW+J04WzDSskZohgYm0BWlc3pQpDHzTycUtRO0cw=;
+	s=arc-20240116; t=1773014776; c=relaxed/simple;
+	bh=7VfkDWCT25IPiML+OuV1VYi27QKD7JmygfyqI7YGyJI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uvc0IUeMq+Ia+3zDgqfHsNXjcZ8NTQgsdg8tEIX3lWVO9NnrLgC4Mjs5G7HACK1VkU9Ue9oSbdaNOwjY9V2rRotF/2ACZ5Lq3P2Ehj/x2mAzMvs9tFskUkjohrryP4bpt42MKoSjQWrta1xS36QVV6q3GV1P5Pem/z6wiY06yVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eN3JCU5O; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=m6QVKh3jGb6wIRCSkD0Yz7w1LVNtCUHMfhZVsnl/N6lBERBVRndWTR7GG9GDP2FrqMh2WVt8P5PlB8EWYuMGC+cakpfOXCTesn5LPlKgEei40IHVGVEEZRFCKtJXKc6sxfsBcUIQsPTTyYvwFC0f9WalhPsVKt0RcfMgYScpjrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJblPt5j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eN3JCU5O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D364CC2BC87
-	for <linux-gpio@vger.kernel.org>; Sun,  8 Mar 2026 23:50:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJblPt5j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFBFC2BC87
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 00:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773013820;
-	bh=qCHWW+J04WzDSskZohgYm0BWlc3pQpDHzTycUtRO0cw=;
+	s=k20201202; t=1773014776;
+	bh=7VfkDWCT25IPiML+OuV1VYi27QKD7JmygfyqI7YGyJI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eN3JCU5OcDinOhE7mDR+oPLNEa0hEuXA1Pc9NqqqtNnKwuv8hBcdXJ0PoJ8dP0h5g
-	 VSgdyM69yr2XREfkWYOTgcPkhiz9p72uIKu/ABPikZFgq2dWorA+K//urYFaA+PsBH
-	 npPboAa7Bt8vZ422cmtsMvomFt0NxY6crWFjePgNhy7i4jI9y7zjtPjQhaPx5Eordf
-	 AXM9T0iUAhq2NbqMc3VF+SuhsOINws8W5i/D+ab7XbBYXfxwTDx6CJ1raskso1+8FX
-	 ug+qJBwmzdKu6w2ks8OrPdqN7e18gq0GW/smpUx++ex0JJ1dnRvX9Z9pmVXFR/GLQo
-	 EuSyluAD6Lk8g==
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-64ca9ec3ee7so10697178d50.3
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2026 16:50:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0mETmjpYQOzoqV/C9607KNUtEOQE2edgpgvGoFpqrBVT9vEfHMq4vBxVzAT1lVhlmJJuuX+gCKlNR@vger.kernel.org
-X-Gm-Message-State: AOJu0YycSCSNZZhgppOphHb4eU2SRLSibvLAue2Kr5HD6QmshicZ4SIX
-	mJPI1HvOgFatLrP7PDOm1SAWZalUI6BEEBTjzoc1bmr1iEgr7bjaZy16BM03EpNPEfgXfNC0f6X
-	gMDaQS/06PLSKD9R9bG4utGkanolMBDk=
-X-Received: by 2002:a05:690e:1401:b0:64a:d6a2:c6a with SMTP id
- 956f58d0204a3-64d14390708mr8908299d50.88.1773013820274; Sun, 08 Mar 2026
- 16:50:20 -0700 (PDT)
+	b=FJblPt5jpv/3qqX8qI8PbjgpkMG9LbfWYZPE3/oM05ArvhT3IO8unTa7K3/ZPwKJa
+	 JUDVkyySyf9/39minIvepp61mc7TV4xkWXevvEITxaNv1WrrfqT9A0dwcqnuSCVFEx
+	 AV3TPM/dO2SJyE0bGIp9BgtY8CTQeUfVKlIUf8Iy0TqLh1faCzoS0utycxfVwOGo8m
+	 IPx56nFuVFlSCDpfaylVo2A+9YJzLJ+KgYJyF4D2AnDFarZvnmUINb2dAKk90nTnPh
+	 aw7gusA6NIpzj01Y2EvGGd8ltrt1eguA2IzlP4VNwlgdbm8T7MlryKT7A9wYsWuNdP
+	 68B9ZD/TtIYzg==
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7986e0553bdso105322887b3.2
+        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2026 17:06:16 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzKpVqy9uf1/1pX9NjFkQLhhZqS6oyKVBrFF8h86hCSzWIx8pet
+	wyexRwfUaQf5ho9nnCs1BhbTIZ9hKdVx4zOwVisrPi7gUubckTbk90nswLWrHBwfrQY0EnUsKI3
+	JQJLFFbiObwTLGQquJfqT+y9P2tbM13k=
+X-Received: by 2002:a05:690c:4d86:b0:796:3c99:1833 with SMTP id
+ 00721157ae682-798dd7aa7ccmr92587587b3.60.1773014775703; Sun, 08 Mar 2026
+ 17:06:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260305161106.15999-1-adilov@disroot.org> <20260305161106.15999-2-adilov@disroot.org>
-In-Reply-To: <20260305161106.15999-2-adilov@disroot.org>
+References: <20260308021535.48098-1-rosenp@gmail.com>
+In-Reply-To: <20260308021535.48098-1-rosenp@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 9 Mar 2026 00:50:09 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmumdyqna_1mRiTXpJLsoa20wPYLY2sV-XPhK+Z+sZhEQ@mail.gmail.com>
-X-Gm-Features: AaiRm523cSlK0v_xh7JD3MiOK__9v4myPC7sE1h1Fq3Zw57SdQrNWywaWkXbhGQ
-Message-ID: <CAD++jLmumdyqna_1mRiTXpJLsoa20wPYLY2sV-XPhK+Z+sZhEQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: realtek-otto: add rtl9607 compatible
-To: Rustam Adilov <adilov@disroot.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sander Vanheule <sander@svanheule.net>, Bert Vermeulen <bert@biot.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 9 Mar 2026 01:06:04 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
+X-Gm-Features: AaiRm50BkNsacwf3vNv8Po8_uyxzkaR51BCh7HDgMk0GF4BnX_1Cwh-_3Tsm4-Y
+Message-ID: <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: msc313: remove kcalloc
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Daniel Palmer <daniel@thingy.jp>, 
+	linux-hardening@vger.kernel.org, gustavoars@kernel.org, 
+	Romain Perier <romain.perier@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	"moderated list:ARM/MStar/Sigmastar Armv7 SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 5, 2026 at 5:11=E2=80=AFPM Rustam Adilov <adilov@disroot.org> w=
-rote:
+On Sun, Mar 8, 2026 at 3:15=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrote=
+:
 
-> Add the "realtek,rtl9607-gpio" compatible for GPIO nodes
-> on the RTL9607C SoC series.
+> Use a flexible array member to combine kzalloc and kcalloc.
 >
-> Signed-off-by: Rustam Adilov <adilov@disroot.org>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+(...)
+>  struct msc313_gpio {
+>         void __iomem *base;
+>         const struct msc313_gpio_data *gpio_data;
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Do you wanna add:
+
+const unsigned int saved_size;
+
+> -       u8 *saved;
+> +       u8 saved[];
+
+u8 saved[] __counted_by(saved_size);
+
+>  static int msc313_gpio_set(struct gpio_chip *chip, unsigned int offset, =
+int value)
+> @@ -631,16 +631,12 @@ static int msc313_gpio_probe(struct platform_device=
+ *pdev)
+>         if (!parent_domain)
+>                 return -ENODEV;
+>
+> -       gpio =3D devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
+> +       gpio =3D devm_kzalloc(dev, struct_size(gpio, saved, match_data->n=
+um), GFP_KERNEL);
+>         if (!gpio)
+>                 return -ENOMEM;
+
+gpio->saved_size =3D match_data->num;
+
+I know it takes some bytes more but it feels way safer.
 
 Yours,
 Linus Walleij
