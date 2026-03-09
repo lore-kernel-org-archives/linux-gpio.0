@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFD03D331A
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 13:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AFE3D3492
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773064190; cv=none; b=mf84yRrchUyxQ0F9MXNbdHTnqz+DIiB93n/Isn2VWe6XMO/9mTkglnE59geWMIx/SSvCThv7J54fjoepNKPsdWiaIylr58BtVBpFxq9B5xO+ElSW1hvFDj0RvKK35NYft1yQxmOMp2oAOrgWKYWKLKM3cs/X44znVikNbG8GcXg=
+	t=1773064194; cv=none; b=HBkMpQDgdQ6UQXdZRJkegRzAhUXcgCHyBUxr/EeF8w5tZSYxn82xIPV+XR6/kGCwDOY2A4bsu54zwC9z8YN1aM8/JGkeSlafXWDbW0NjpOo0kZugk1gbGLGUeuek+yauIZT1NTYyRAsuKBZPHDv/uXqHNxwz/SjHYfXTF/3O77I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773064190; c=relaxed/simple;
-	bh=gy8l2lL+Z5L6+L3bCnUiyEnUG2dums5CMBTKcXWUsz4=;
+	s=arc-20240116; t=1773064194; c=relaxed/simple;
+	bh=9d3h03P42Cdvda2XkFTeus4f1oyw8dBft79tJ70bjRQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B2wmSh3MLe48SCkGYL1UT9W05baNoOY0zaSj4qO08Vzm2/8ltPXiFy678JQbVLChhsfKtEF01Htv3Lu4+1WBJRXLIgxtdDy4EF7PHLKmWrLPCAlJpzmy4ZmLNirdlojSf3MO+goTdsZO986K8Yd35KHxVTl+mojcHTczuZba06o=
+	 MIME-Version; b=iXAvF4iPeYk0frvP2LJy86RRUqQKwrmmsiv8TYCnQE1GcC45GqXZPQ6JkWQqQGHm3QM8KIFjy+77dhV/oo+QcFkb37uADQAO5nEdF3GVd9W8X3wMtXk2aRoBtOqK5odSd/daUcfTtCfg5xxLLdolKTBx9k4lGTbzKrO2GxZSjZA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,16 +18,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vzaz5-0006fh-Ed; Mon, 09 Mar 2026 14:49:23 +0100
+	id 1vzaz5-0006ff-Ed; Mon, 09 Mar 2026 14:49:23 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac] helo=dude04)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vzaz2-004XYe-1i;
+	id 1vzaz2-004XYc-1Y;
 	Mon, 09 Mar 2026 14:49:21 +0100
 Received: from ore by dude04 with local (Exim 4.98.2)
 	(envelope-from <ore@pengutronix.de>)
-	id 1vzaz3-00000008340-3ODJ;
+	id 1vzaz3-0000000833g-3AFj;
 	Mon, 09 Mar 2026 14:49:21 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Guenter Roeck <linux@roeck-us.net>,
@@ -44,9 +44,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	linux-hwmon@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	David Jander <david@protonic.nl>
-Subject: [PATCH v3 3/7] pinctrl: core: Make pin group callbacks optional
-Date: Mon,  9 Mar 2026 14:49:14 +0100
-Message-ID: <20260309134920.1918294-4-o.rempel@pengutronix.de>
+Subject: [PATCH v3 1/7] dt-bindings: mfd: add NXP MC33978/MC34978 MSDI
+Date: Mon,  9 Mar 2026 14:49:12 +0100
+Message-ID: <20260309134920.1918294-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260309134920.1918294-1-o.rempel@pengutronix.de>
 References: <20260309134920.1918294-1-o.rempel@pengutronix.de>
@@ -62,125 +62,259 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Currently, the pinctrl core strictly requires all drivers to implement
-.get_groups_count and .get_group_name callbacks in their pinctrl_ops.
+Add device tree binding documentation for the NXP MC33978 and MC34978
+Multiple Switch Detection Interface (MSDI) devices.
 
-However, for simple pinctrl drivers that act purely as GPIO controllers
-and pin-specific configuration proxies (without any concept of muxing or
-pin groups), this strict requirement forces the implementation of dummy
-callbacks just to satisfy pinctrl_check_ops().
+These ICs monitor up to 22 mechanical switch contacts in automotive and
+industrial environments. They provide configurable wetting currents to
+break through contact oxidation and feature extensive hardware
+protection against thermal overload and voltage transients (load
+dumps/brown-outs).
 
-Relax this requirement by making the group callbacks optional. Update
-the core and debugfs (pinconf) functions to check for the existence of
-these callbacks before invoking them, allowing simple drivers to omit
-group boilerplate entirely.
+The device interfaces via SPI and provides multiple functions. To
+accurately represent the hardware without unnecessary DT overhead, the
+binding is structured as follows:
+- pinctrl: A dedicated child node managing the 22 switch inputs (SG/SP
+  pins) and their GPIO configurations.
+- hwmon: Integrated into the parent node, exposing critical hardware
+  faults (OT, OV, UV) and static voltage/temperature thresholds.
+- mux: Integrated into the parent node, controlling the 24-to-1 analog
+  multiplexer to route pin voltages, internal temperature, or battery
+  voltage to an external SoC ADC.
 
-Suggested-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
 changes v3:
-- no changes
+- Drop regular expression pattern from pinctrl child node and define
+  it as a standard property
+- Reorder required properties list in MFD binding
+- Remove stray blank line from the MFD binding devicetree example
+- Replace unevaluatedProperties with additionalProperties in the pinctrl
+  binding
+changes v2:
+- Squashed MFD, pinctrl, hwmon, and mux bindings into a single patch
+- Removed the empty hwmon child node
+- Folded the mux-controller node into the parent MFD node
+- Added vbatp-supply and vddq-supply to the required properties block
+- Changed the example node name from mc33978@0 to gpio@0
+- Removed unnecessary literal block scalars (|) from descriptions
+- Documented SG, SP, and SB pin acronyms in the pinctrl description
+- Added consumer polarity guidance (GPIO_ACTIVE_LOW/HIGH) for SG/SB
+  inputs, with a note on output circuit dependency
+- Updated commit message
 ---
- drivers/pinctrl/core.c    | 25 ++++++++++++++++++++-----
- drivers/pinctrl/pinconf.c | 18 +++++++++++++-----
- 2 files changed, 33 insertions(+), 10 deletions(-)
+ .../devicetree/bindings/mfd/nxp,mc33978.yaml  | 112 ++++++++++++++++++
+ .../bindings/pinctrl/nxp,mc33978-pinctrl.yaml |  82 +++++++++++++
+ 2 files changed, 194 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index b5e97689589f..920e025622d6 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -621,8 +621,13 @@ static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
- 						  const char *function)
- {
- 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
--	int ngroups = ops->get_groups_count(pctldev);
- 	int selector = 0;
-+	int ngroups;
+diff --git a/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+new file mode 100644
+index 000000000000..23520315d484
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/nxp,mc33978.yaml
+@@ -0,0 +1,112 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/nxp,mc33978.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (!ops->get_groups_count || !ops->get_group_name)
-+		return -EINVAL;
++title: NXP MC33978/MC34978 Multiple Switch Detection Interface
 +
-+	ngroups = ops->get_groups_count(pctldev);
- 
- 	/* See if this pctldev has this group */
- 	while (selector < ngroups) {
-@@ -737,8 +742,15 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
- 			       const char *pin_group)
- {
- 	const struct pinctrl_ops *pctlops = pctldev->desc->pctlops;
--	unsigned int ngroups = pctlops->get_groups_count(pctldev);
- 	unsigned int group_selector = 0;
-+	unsigned int ngroups;
++maintainers:
++  - David Jander <david@protonic.nl>
++  - Oleksij Rempel <o.rempel@pengutronix.de>
 +
-+	if (!pctlops->get_groups_count || !pctlops->get_group_name) {
-+		dev_err(pctldev->dev, "does not support pin groups\n");
-+		return -EINVAL;
-+	}
++description:
++  The MC33978 and MC34978 are Multiple Switch Detection Interface (MSDI)
++  devices with 22 switch inputs, integrated fault detection, and analog
++  multiplexer (AMUX) for voltage/temperature monitoring.
 +
-+	ngroups = pctlops->get_groups_count(pctldev);
- 
- 	while (group_selector < ngroups) {
- 		const char *gname = pctlops->get_group_name(pctldev,
-@@ -1769,6 +1781,11 @@ static int pinctrl_groups_show(struct seq_file *s, void *what)
- 
- 	mutex_lock(&pctldev->mutex);
- 
-+	if (!ops->get_groups_count || !ops->get_group_name) {
-+		mutex_unlock(&pctldev->mutex);
-+		return 0;
-+	}
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 +
- 	ngroups = ops->get_groups_count(pctldev);
- 
- 	seq_puts(s, "registered pin groups:\n");
-@@ -2050,9 +2067,7 @@ static int pinctrl_check_ops(struct pinctrl_dev *pctldev)
- {
- 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
- 
--	if (!ops ||
--	    !ops->get_groups_count ||
--	    !ops->get_group_name)
-+	if (!ops)
- 		return -EINVAL;
- 
- 	return 0;
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index dca963633b5d..feab87e8530d 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -273,10 +273,13 @@ void pinconf_show_setting(struct seq_file *s,
- 			   setting->data.configs.group_or_pin);
- 		break;
- 	case PIN_MAP_TYPE_CONFIGS_GROUP:
--		seq_printf(s, "group %s (%d)",
--			   pctlops->get_group_name(pctldev,
--					setting->data.configs.group_or_pin),
--			   setting->data.configs.group_or_pin);
-+		if (pctlops->get_group_name)
-+			seq_printf(s, "group %s (%d)",
-+				   pctlops->get_group_name(pctldev,
-+						setting->data.configs.group_or_pin),
-+				   setting->data.configs.group_or_pin);
-+		else
-+			seq_printf(s, "group (%d)", setting->data.configs.group_or_pin);
- 		break;
- 	default:
- 		break;
-@@ -348,8 +351,13 @@ static int pinconf_groups_show(struct seq_file *s, void *what)
- {
- 	struct pinctrl_dev *pctldev = s->private;
- 	const struct pinctrl_ops *pctlops = pctldev->desc->pctlops;
--	unsigned int ngroups = pctlops->get_groups_count(pctldev);
- 	unsigned int selector = 0;
-+	unsigned int ngroups;
++properties:
++  $nodename:
++    pattern: "^gpio(@.*)?$"
 +
-+	if (!pctlops->get_groups_count || !pctlops->get_group_name)
-+		return 0;
++  compatible:
++    enum:
++      - nxp,mc33978
++      - nxp,mc34978
 +
-+	ngroups = pctlops->get_groups_count(pctldev);
- 
- 	seq_puts(s, "Pin config settings per pin group\n");
- 	seq_puts(s, "Format: group (name): configs\n");
++  reg:
++    maxItems: 1
++    description: SPI chip select number
++
++  spi-max-frequency:
++    maximum: 8000000
++    description: Maximum SPI clock frequency (up to 8 MHz)
++
++  interrupts:
++    maxItems: 1
++    description:
++      INT_B pin interrupt. Active-low, indicates pin state changes or
++      fault conditions.
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++    description:
++      First cell is the IRQ number (0-21 for pins, 22 for faults).
++      Second cell is the trigger type (IRQ_TYPE_* from interrupt-controller.h).
++
++  '#mux-control-cells':
++    const: 0
++    description:
++      Present if the device AMUX selector is used as a mux provider.
++      Consumers (e.g. io-channel-mux) must provide settle-time-us for the
++      external ADC sampling path.
++
++  vddq-supply:
++    description: Digital supply voltage
++
++  vbatp-supply:
++    description: Battery/power supply
++
++  pinctrl:
++    type: object
++    $ref: /schemas/pinctrl/nxp,mc33978-pinctrl.yaml#
++    description:
++      Pinctrl and GPIO controller child node for the 22 switch inputs.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - vddq-supply
++  - vbatp-supply
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        msdi: gpio@0 {
++            compatible = "nxp,mc33978";
++            reg = <0>;
++            spi-max-frequency = <4000000>;
++
++            interrupt-parent = <&gpiog>;
++            interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            vddq-supply = <&reg_3v3>;
++            vbatp-supply = <&reg_12v>;
++
++            #mux-control-cells = <0>;
++
++            pinctrl {
++                compatible = "nxp,mc33978-pinctrl";
++                gpio-controller;
++                #gpio-cells = <2>;
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml
+new file mode 100644
+index 000000000000..ba946906557c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nxp,mc33978-pinctrl.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/nxp,mc33978-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP MC33978/MC34978 Pinctrl/GPIO Driver
++
++maintainers:
++  - David Jander <david@protonic.nl>
++  - Oleksij Rempel <o.rempel@pengutronix.de>
++
++description: |
++  Pin control and GPIO driver for the MC33978/MC34978 MSDI device.
++
++  Pin numbering:
++  - Pins 0-13: SG0-SG13 (Switch-to-Ground inputs). These pins monitor
++    contacts closed to ground and typically require GPIO_ACTIVE_LOW
++    flags when used as digital inputs.
++  - Pins 14-21: SP0-SP7 (Programmable inputs). These can be configured
++    as SG (Switch-to-Ground) or SB (Switch-to-Battery) inputs. SB
++    inputs monitor contacts closed to the battery voltage and typically
++    require GPIO_ACTIVE_HIGH flags when used as digital inputs.
++
++  Output Emulation:
++  The hardware lacks standard push-pull output drivers. Outputs are emulated
++  by toggling the programmable wetting current sources (acting as pull-ups or
++  pull-downs) and the hardware tri-state registers. Because of this physical
++  constraint:
++  - Consumers using pins as outputs MUST flag them with GPIO_OPEN_DRAIN or
++    GPIO_OPEN_SOURCE in the device tree.
++  - Push-pull configurations are physically unsupported.
++  - The active polarity depends entirely on the external circuit (e.g., how an
++    LED is wired) and must be flagged accordingly by the consumer.
++
++properties:
++  compatible:
++    enum:
++      - nxp,mc33978-pinctrl
++      - nxp,mc34978-pinctrl
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  ngpios:
++    const: 22
++
++patternProperties:
++  "^.*-grp$":
++    type: object
++    $ref: pincfg-node.yaml#
++    additionalProperties: false
++    description:
++      Pin configuration subnodes.
++    properties:
++      pins: true
++      bias-pull-up: true
++      bias-pull-down: true
++      bias-high-impedance: true
++
++required:
++  - compatible
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl {
++        compatible = "nxp,mc33978-pinctrl";
++        gpio-controller;
++        #gpio-cells = <2>;
++        ngpios = <22>;
++
++        door-grp {
++            pins = "sg0";
++            bias-high-impedance;
++        };
++    };
 -- 
 2.47.3
 
