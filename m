@@ -1,148 +1,167 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from s106b.cyber-folks.pl (s106b.cyber-folks.pl [195.78.66.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5602221A434
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 01:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773019656; cv=pass; b=lfB8Y/nB0S6v5AftTLPHovgYTDjmi2Ps70T4CEY84N/9f6m5VbQpqQnhHP6nmeyPmAhdnO3mxjMEDSjvrN6cy4lbTEInhN2vJ4nryfmONHKmXonmsyI4ikMZ63sXXZLfDiDGEedk7aKCJDpG1SA6qMDeP72pQsNxBDi7Bku29bI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773019656; c=relaxed/simple;
-	bh=J5WOQGgsBgN0mzbAGAd4BjE3fxkas2mV2HC7lbTpC0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s4gSP6kLFV0XhlWcTOOtVOAiaoV4YXATKhcXRxEDVupdynw8Ik5rDlEyFe4xQ5LDoQUxjjhk/CNNdZVU6lVEaWHK3tWPwIbEb2R9d2ICHwfDhVsl0ROjjwapEqmts1UJIvru1dC5NhikeZ+mUq33FvMWhnvO9yIZ6yx9WoRarPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExDbpSyx; arc=pass smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64B230594F;
+	Mon,  9 Mar 2026 05:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.78.66.88
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773034221; cv=none; b=leaG4oDs17pKzYv6rKH+Kc/+rTtHH73pGv9vvuGZ40mftZw6jibFWReVZldMeIHEaWtB/RnpAm/4qE2ci2ZY1hY1Kqgc/aZ/XNx8yr9uOLGfD5tOLym6lkVa8ndjjG8VOG/Kb0z8/sHoKNnTcxUPshmTirPcIi9s9TsAW8Y32ks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773034221; c=relaxed/simple;
+	bh=Q+Nwq0h7TopR9fYpyp/EIJoXFyGHQQf1i093ZvQvGBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=udk5PYeGnh7EpBC8XggDdrsR0HLm/soWiixg29SAmvCs3GKdRKwsYPii5vGNeeZAOeaODlQi2MeiyjkbkoLhF1USpSYWrWLnkFebSahrIMw2IeHfZ31CRnOyRZrwXZINzJD5PBGYiPlCpDV/YQN/q0VXQuXq+IThBOnTepBEHV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl; spf=pass smtp.mailfrom=mmpsystems.pl; dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b=f0eOdXQy; arc=none smtp.client-ip=195.78.66.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mmpsystems.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExDbpSyx"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-661568ce781so5522721a12.0
-        for <linux-gpio@vger.kernel.org>; Sun, 08 Mar 2026 18:27:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773019653; cv=none;
-        d=google.com; s=arc-20240605;
-        b=j2ZAm8yQJi/2yPZdQOOmPYrw5zB8XBTd3IeXuI7DKMh48dOfF18LS04UZNWERGkri0
-         1VcHBBaA0gIu8tDjNJp/7C69Ki4evaEJ/FU6+m5FM3UQjzgyYuBdWMgkJsHoUFASnoHI
-         YLjN0go5ArnaBC3w52rgYKJxw9twFUXz3i2GLLBvvH444HmRIkgukAGarRNawP0eTuiY
-         MPtNBNVjdFEqSF0QeXeWaaNfBz0VYJ6SYp0Kki9iAG+iERzplKpYBGun9aCTZF5FKmrS
-         ATVLXK6J7xgAndAUQapyacvNcmF7uO+wcKvTGm9xUCzJs7e5poqIGYFpc7wpSxRMeTLB
-         PlGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=AmrXqlRa6XqcxgRZeLfPo4HT+SM6fCIjFFPpzWuCXEI=;
-        fh=RgvFxTtT8g/x3NjBI+0FVZZ1AJrf7N7mi/I0y/xpXgg=;
-        b=iEcTimjqbBeEvEQ6yWEZbF7++R8fFHXA/Q+tQSglCkMQnk70wUjmoyZ4NiYCV0deL0
-         zseaYCZ3gOPE7LLcRmJD09+u2osOkyRVe1fm+0TATHXlhslz9MqE/YSj2wn6elHJmrsf
-         A1Nw4P9V+sMgQiIsRDn7bE49V053MLecsNB3d/mEigS9hTf4cEtjWBXIHQRNTdxn3osw
-         t9D9OrJr3ZSnp7w6kMTIECQa4Gp+/10JUa3hhU1bAyKWhOjaF+ZFl+EF6nUNKfi5zUvJ
-         9FIJUwUqOfrFRBrWzWbPYH2TgJgQltoDyXjjoevnFPGeI0iBWlBeINoPGn1emtwQxHsS
-         apXQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773019653; x=1773624453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AmrXqlRa6XqcxgRZeLfPo4HT+SM6fCIjFFPpzWuCXEI=;
-        b=ExDbpSyxPuV+FqE+rIosW5MEfnry+p/87P7V4Mfv4FJh95wUHRKzkG6pHdTFplNTLG
-         pRmO9rCTizoGZ4EpRPeUKKDo0WlbIN521fDyERWbmaKjH3Njh0S4cBy71iqQlf6WtG0d
-         5A4BvRSqflZYNRWR0d/b+vXmPo9CCQpTKezPOT2A/xjH6h7SsIhcXuLqa7fF+oqNYP9p
-         xfYTIyZgCJ/EaH579/Y6WxUTERLat+uzBTZHGD15VAxLsIJPoKE42ebuoCpyqf1UJjOm
-         JKCm620iLESDvQJ3xBmKQKzKvH4iMPO5VIZXtRWzWfwPcBQ7NqlTfZylsnk2cfWnA8Jp
-         zRPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773019653; x=1773624453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AmrXqlRa6XqcxgRZeLfPo4HT+SM6fCIjFFPpzWuCXEI=;
-        b=jSJv60fqe+HH30DPkuUAGiKJ1sKOaE/OvyIFWUtIM7KLL4veBq25oAZf+buRVkqARL
-         P+DMiihHjAH71DRtOIc0aHCJEc+TNs1kDLtF8JHPV0LDQibJn+LhDVSeA7YxPFEObjz0
-         O/2uGg3TbcHJM4oVCfYg7hCWMzb7ku/KKJz+jYU8XVram1Hu2BBlDq4zPioPHHrjWJm6
-         8WasGLCSv3QLkedSgikW4y+Yu9rWawaY2QHNoyT8IIZsM96ETtPKBsQGMw3S4KrALHd9
-         f0M9Zu8VCYuBVjOjHcTijw6GIGasUUD2yjHXKvY982WDW7pybwOfXXBLrOC8dIv4aA/K
-         lbtw==
-X-Gm-Message-State: AOJu0YxhZ7QHT6J6k1+RKSz0A24QoiNvJJc4K2enag2jP87UZQrjT8Vy
-	T1X3wSrdPUnswq37giHQO+p9XKTlkGCDq/92jaWMBlq9si7ysie8mXrPvaSRf2g9jX+/4LBcbdU
-	T8oC+1kEiApYbBkWHNHjy1yRxPNJJnZQ=
-X-Gm-Gg: ATEYQzz8q0/YCxzbWq3G+YdpJTHYmR9oiXcdvAVfIzkQR76IV2ycu2Xlphd+vkCbY3b
-	H68bUB1+E34NepXg5VdgtaPLmA4zbV9bPx8tYTWsRjEa6w4Ri/oZtqDGlPaC4Dq7kQFCV16EOV/
-	mcG6K7iywLxHesTdH3cX+4ERP9fxUOjqaMmUk0cmP54QtpopRh48EY6KdigwdefaHqdrBHCfY23
-	soPye9KVz+LadlRZgWnNtmHmWPYAhL6OVFHxqrNSMkYij1HlX2PC63+xLZhgHu+aDAQWI0oIn+1
-	8akOUG8t8o2O/J4Y4nOXwQFBkA8UL5F5BnLI08j8LZ3KJ0Ax6L88YyQoNf6y4ysRBw+wqly/m7r
-	IrSvT4+DC4QpMdu5n
-X-Received: by 2002:a17:907:a03:b0:b88:5bbc:3658 with SMTP id
- a640c23a62f3a-b942e02cf9dmr525408666b.52.1773019652375; Sun, 08 Mar 2026
- 18:27:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b="f0eOdXQy"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mmpsystems.pl; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PNeD+GDRfvfC163fk97XXvGbw+Jo2OUnbtzurN4RsaA=; b=f0eOdXQyFKMkguvkn34E3Xua0g
+	Bb1HoHUvOp6/i0mokX4C1D2tti8SZSeNi/F8NVTGZtj9uQBnydmZ2mVd4TbKXdCnZTCbngSj3tBAX
+	DhnRXbNsdmi1RzlCSshHcHo3OhkrcddJLsyxmP+WUKGB7n6o4zIukG9CaUT+tRCeC6OQYh2lursuZ
+	gqcXU43yidC6ZrXTQ/dXtXtJS2bdoWNKqEZyTLOUCpvlC5tUBIPcPcPk5JuJkIedMrs6zUm++tlB0
+	hYfPxgsDLaQiY+QOIF5w8UZFuHrK8qgE6iVezAUE9LlBbFdmPLc78lAUq0Hk5IitGGu66gVdY1wY0
+	EM8EpBrA==;
+Received: from user-5-173-16-20.play-internet.pl ([5.173.16.20] helo=localhost)
+	by s106.cyber-folks.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <michal.piekos@mmpsystems.pl>)
+	id 1vzTC4-00000009tKp-24g7;
+	Mon, 09 Mar 2026 06:30:16 +0100
+Date: Mon, 9 Mar 2026 06:29:38 +0100
+From: Michal Piekos <michal.piekos@mmpsystems.pl>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Subject: Re: [PATCH v2] pinctrl: sunxi: fix gpiochip_lock_as_irq() failure
+ when pinmux is unknown
+Message-ID: <jbxovdxkqgg7jnbryzvtrk2df4cgtzee3f6deqxu47nruotaau@254vefkw2gxk>
+References: <20260308-rc2-boot-hang-v2-1-516fdb820953@mmpsystems.pl>
+ <CAGb2v67FO1bt3yee2SXn1LTt7O10z1EHHw7F0xQ0bKbpUqch4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260308021535.48098-1-rosenp@gmail.com> <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
-In-Reply-To: <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Sun, 8 Mar 2026 18:27:21 -0700
-X-Gm-Features: AaiRm51DHUN2l4LTGqNpI9x37mFL5UP6Qa3rL8znqPALUSc2sV8jWzO7K995iBA
-Message-ID: <CAKxU2N9JbAzEYfmLpbw5b9Y6MsYUZ1FfLirfy8Hg8MCOUY6PAg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: msc313: remove kcalloc
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Daniel Palmer <daniel@thingy.jp>, 
-	linux-hardening@vger.kernel.org, gustavoars@kernel.org, 
-	Romain Perier <romain.perier@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	"moderated list:ARM/MStar/Sigmastar Armv7 SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v67FO1bt3yee2SXn1LTt7O10z1EHHw7F0xQ0bKbpUqch4w@mail.gmail.com>
+X-Authenticated-Id: michal.piekos@mmpsystems.pl
 
-On Sun, Mar 8, 2026 at 5:06=E2=80=AFPM Linus Walleij <linusw@kernel.org> wr=
-ote:
->
-> On Sun, Mar 8, 2026 at 3:15=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wro=
-te:
->
-> > Use a flexible array member to combine kzalloc and kcalloc.
+On Sun, Mar 08, 2026 at 10:06:42PM +0800, Chen-Yu Tsai wrote:
+> On Sun, Mar 8, 2026 at 9:42 PM Michal Piekos
+> <michal.piekos@mmpsystems.pl> wrote:
 > >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> (...)
-> >  struct msc313_gpio {
-> >         void __iomem *base;
-> >         const struct msc313_gpio_data *gpio_data;
->
-> Do you wanna add:
->
-> const unsigned int saved_size;
-So in the code there's
-
-for (i =3D 0; i < gpio->gpio_data->num; i++)
-
-which is equivalent to match->num.
-
-__counted_by doesn't support pointers AFAIK.
->
-> > -       u8 *saved;
-> > +       u8 saved[];
->
-> u8 saved[] __counted_by(saved_size);
->
-> >  static int msc313_gpio_set(struct gpio_chip *chip, unsigned int offset=
-, int value)
-> > @@ -631,16 +631,12 @@ static int msc313_gpio_probe(struct platform_devi=
-ce *pdev)
-> >         if (!parent_domain)
-> >                 return -ENODEV;
+> > Fixes kernel hang during boot due to inability to set up IRQ on AXP313a.
 > >
-> > -       gpio =3D devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
-> > +       gpio =3D devm_kzalloc(dev, struct_size(gpio, saved, match_data-=
->num), GFP_KERNEL);
-> >         if (!gpio)
-> >                 return -ENOMEM;
->
-> gpio->saved_size =3D match_data->num;
->
-> I know it takes some bytes more but it feels way safer.
->
-> Yours,
-> Linus Walleij
+> > The issue is caused by gpiochip::get_direction() which was returning
+> > -ENODEV when gpio is in unitialized state.
+> >
+> > Instead of failing when the current muxval is at default value, report
+> > the line as input.
+> 
+> I don't really like this "fix". It's really lying.
+> 
+> Also, this problem only occurs if the interrupt is taken directly using
+> the DT "interrupts" property, as that mostly bypasses the GPIO subsystem,
+> especially the gpio request part.
+> 
+> If the consumer does gpiod_request() followed by gpiod_to_irq(), then
+> the pin is already muxed to either one of the GPIO functions and this
+> won't error out.
+> 
+> I also found that if the interrupt is taken directly through the device
+> tree, the pin itself is not locked out (like for GPIOs, on sunxi we also
+> don't do pinctrl settings for pins used for interrupts).
+> 
+> I think the proper fix would be to somehow be able to request the pin
+> as GPIO if it hasn't been requested already. And then either
+> sunxi_pinctrl_irq_request_resources() can use that to request the pin
+> and mux the pin before calling gpiochip_lock_as_irq().
+> 
+> Hope Linus and Bartosz have some suggestions.
+> 
+> 
+> Thanks
+> ChenYu
+> 
+
+I will prepare new version with your suggestion.
+
+Michal
+
+> 
+> > Tested on Orange Pi Zero 3.
+> >
+> > Signed-off-by: Michal Piekos <michal.piekos@mmpsystems.pl>
+> > Suggested-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> > ---
+> > This fixes a kernel hang during boot on the Orange Pi Zero 3 caused by
+> > inability to set up interrupt for the AXP313A PMIC.
+> >
+> > The issue is caused by gpiochip::get_direction() which was returning
+> > -ENODEV when gpio is in unitialized state and its muxval is at default
+> > value.
+> >
+> > Instead of failing, report the line as input.
+> >
+> > To: Rob Herring <robh@kernel.org>
+> > To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > To: Conor Dooley <conor+dt@kernel.org>
+> > To: Chen-Yu Tsai <wens@kernel.org>
+> > To: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > To: Samuel Holland <samuel@sholland.org>
+> > To: Andre Przywara <andre.przywara@arm.com>
+> > To: Linus Walleij <linusw@kernel.org>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-sunxi@lists.linux.dev
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-gpio@vger.kernel.org
+> >
+> > Changes in v2:
+> > - Dropped the previous faulty solution which was forcing the axp313 to
+> >   use r_pio as interrupt controller as pointed out by Jernej Škrabec.
+> > - Implemented suggestion from Andrey Skvortsov to return default
+> >   direction as input
+> > - Link to v1: https://lore.kernel.org/r/20260308-rc2-boot-hang-v1-0-d792d1a78dfd@mmpsystems.pl
+> > ---
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > index c990b6118172..e438cf35ff28 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > @@ -971,7 +971,7 @@ static int sunxi_pinctrl_gpio_get_direction(struct gpio_chip *chip,
+> >
+> >         func = sunxi_pinctrl_desc_find_function_by_pin_and_mux(pctl, pin, muxval);
+> >         if (!func)
+> > -               return -ENODEV;
+> > +               return GPIO_LINE_DIRECTION_IN;
+> >
+> >         if (!strcmp(func->name, "gpio_out"))
+> >                 return GPIO_LINE_DIRECTION_OUT;
+> >
+> > ---
+> > base-commit: 4ae12d8bd9a830799db335ee661d6cbc6597f838
+> > change-id: 20260308-rc2-boot-hang-269e8546635b
+> >
+> > Best regards,
+> > --
+> > Michal Piekos <michal.piekos@mmpsystems.pl>
+> >
+> >
