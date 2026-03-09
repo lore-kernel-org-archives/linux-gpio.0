@@ -1,66 +1,52 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5AA3CE49E
-	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 14:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916452D8387
+	for <linux-gpio@vger.kernel.org>; Mon,  9 Mar 2026 18:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773066899; cv=none; b=jnew/csNAzBdVpTrAabh0dYT/O97dVtt3LQmnsXzlEYpe/YwiZaKCDlcoSLnZy+59TjUdEvbj0Jwy8PvMxbP8IWVYO60JmRWipxiZvHAxmrFp0eP0++UJL3oiKUua0UvvQXm0hjjwsw3O5/c+WuZUqExcjF32UPI+bcv8KtBJgc=
+	t=1773080329; cv=none; b=Fq3kLfOJnSDYfSaZogEeRv1MkabUp25Idr2f0u+k+vlorbMjxhaikMu12RAqaYftRn3eMO3mUQHsmS4ods8wIPkKNDfYR2eVzqxkxhDMhUqt/YkBDB++e5++Ril4VkWYlBM5F0NMlZCS/9deEJ+R7EExOQV5+rkaEXpnOyeMufk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773066899; c=relaxed/simple;
-	bh=dNwjQS4Ze5AVUXxTNwwtAMEcTV30AgWPK58E9Q8lvj8=;
+	s=arc-20240116; t=1773080329; c=relaxed/simple;
+	bh=2aMBWjpKHG4l6a39ZgwdL0cute2JFyOjPolxG7XWERc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QtaAmHjuRlfRIX+XwaXTBU+7L/BQIpDvyfRKqnNueMCSSUf+e5ubc+826tV2WlsLLt++dOyNj6TVyLnlVghlOhYWW34FBFNcpCImwn7ieD1kLWZCsxAgd0+g3JUZ1twBNHWwDKNZ6lIsfeQVIyfx4b/zIaXDF4NL2+TlFe/lEu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GEXiLin1; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 In-Reply-To:Content-Type; b=iAGxcjwSJXOkbwCTVXYJaN+2qOnnmnEBLdZHQVpzn8zFS8x6oHmnmUlyEyDJLDFmFJM7e0C+e2HY+N/WKn/DVkvOQL+LzprAb9xCH5r4T9QMeaYWOQgCxGh4VkOfgx+8sO2HIyavHZDoMhzGKNdew8VsCadgC/iTJV1gwVhgpFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=O6MIOhTO; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GEXiLin1"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-4042fe53946so2691867fac.3
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2026 07:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773066896; x=1773671696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B/2nZ3AXN7tfnpTcvPfto5djcQ417TUS0Z4ffFdUirY=;
-        b=GEXiLin1J3e1ijArnxDfLr/g0ciKQbmfyg6/Hx21Jq+d0zHsSMrywyK4IrniHzFKMl
-         HrMxakK6BqyUtmSCAGTiLCcqixpocqZPiu8vAyzcjU2r1NcnCCcq9uA5sVwKbaT4Col1
-         S7ZSZMPMv8M2+QTla/MR/LwFt6Lqi3U0Dh0L77vmX7KrsORbt5Lt8K6JVfZCrnhnx/EN
-         g5KTjoMsHJHQzK4Kik87ILDrU7YKxJ4apuiZ1mX+KK0gc3MvdwDg2TDdrGP8jC7dzkDg
-         7nVSnxVJf4bOdYk5oskF8pOZYTnlTv7C+UAyZwEsqF49YMjRAzWwZQgrkz3Tqu4mGnGH
-         eYYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773066896; x=1773671696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B/2nZ3AXN7tfnpTcvPfto5djcQ417TUS0Z4ffFdUirY=;
-        b=jq98txFW5xORZPBPyiW/IsRY1dDH2Yvdlb8BVP68P0O9PVdTeICsdAvmQzzmZiQZ0c
-         l8iRCUQPhwgYEm4E4niSzpCpPgnXQJyafb4CPVzZZLoTjO28MC2aCX6L702V22AaHu82
-         K3y0kkx45KnDcJ/86InpRq58WgWJurG4qUEfmzYq2uAC7T5Rt1hT98EW1+f/KX9Rqvog
-         JcAN/JemVK8HjFhiMMtBOtvSfpNyJBBXfrGPX+ZBFhXeFxLY4TWwHuuhDP8rA7upXTaK
-         a+uoa8ED37nk80psElm27MlezhZWOlUIWTERv0mcWKDyy2vEnkoXhsGM54pnizkodHBN
-         wG2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVCj5IV6PFavndZoWAYOV47ZS1inhxCX07KQ0kTu/DQwDV7W/JV4PEkIFO4f0UtPy6v+JRwcWM+0dW6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFJDmqtPffZxqSA/v1J34zTclLJyDsH+unJMrcpNmlUZVLs6DT
-	GV18RNfNkUt+HI8B7aeN9y/K4Bup4PPkV0Wzc5otB0IsRIzTy31mWliRrMF4WO3qFIw=
-X-Gm-Gg: ATEYQzx0WBT8sEyn3Ly1lE9hKlj2knDN9TNtrYtPDw5utRJEFr/gQHrE57wb1uRKsQm
-	Rb3KPWoiLgIWo7R/IbmSLE21nLmIh7Wk+KbopaqJd8mWlytI5OZER1gXavBAairwoDV5WNTuosR
-	2xQYU+YaRvfhmXodFZvsCaQhNdh+CFwgThVXk7lvM6mwDCrSkB8HMeev8IGfNSzLU3wL68A/trI
-	9VyToAb12DgqIf6GhR6eYsn7bDPYmDRb8jo2M40kQ0tq264SjW995kiH2V0FXOITotjhyxYOuqp
-	9aHlxZvOU6cy/GlXkkgat3PDfZzGSuDpCw/sXRaSOklanG++pgVgQH7DAXPDH566VxoTADEE1Wk
-	3+/W1XUe/cl8xGsfrcKkijCVQtxyELgxINKqH+WZN9djhHwaG9Nj3tcsXEIuy0vtItCN/So8ziw
-	CGEyh4EdbFgVE1dhUlvXbojj48zzG+5b1J2LhShG3M1sv987h/E6JvbfdEoyUg4CteVwXt
-X-Received: by 2002:a05:6870:8a21:b0:404:263b:9da1 with SMTP id 586e51a60fabf-416e3e84a31mr6480974fac.5.1773066896060;
-        Mon, 09 Mar 2026 07:34:56 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:77:c35f:9c1b:c75f? ([2600:8803:e7e4:500:77:c35f:9c1b:c75f])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-416e6836886sm8715938fac.16.2026.03.09.07.34.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2026 07:34:55 -0700 (PDT)
-Message-ID: <b4aec378-879e-4a8b-960d-051cd8b94615@baylibre.com>
-Date: Mon, 9 Mar 2026 09:34:53 -0500
+	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="O6MIOhTO"
+Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
+	by cmsmtp with ESMTPS
+	id zd3dvxAoDVCBNzfBgvZpV6; Mon, 09 Mar 2026 18:18:41 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id zfBHvKpSMOs9RzfBIv8qhj; Mon, 09 Mar 2026 18:18:16 +0000
+X-Authority-Analysis: v=2.4 cv=HPPDFptv c=1 sm=1 tr=0 ts=69af0f00
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=k5Y5iPg+dmTXVWgYE/XtfQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=V5vwHjfW8xl6N5DwPO4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=2aFnImwKRvkU0tJ3nQRT:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZqoQ9lkNkezuo7Panmj7PEOH/0BqG4BNzGHgiJvpZQg=; b=O6MIOhTOtWuHpbIUV7Upkm4xg4
+	IxSawP73Ba3uRUo/hucIWnKb1m7V19GKWOv/RjsHxCDewtYancmIVQ3GInTbhJhcoYGJZdRTE7nCT
+	AYYcN4wEn+YsDj1XXWoipZMFAYrBZUKn+J61SQvr8HVrPK+TD2ha2E5yVpr5oeqbGpLAVy9LD1Ncs
+	KSaFWfG7yn7h7jmb93WoQph4UqTNO/ZCW41v4LGXc/uYAfYrxC3VUK3QbMq72QYV30aCjkEuIRAEb
+	Errd3DS9OKG5o+hNdB6X3lSMw/y31OqCIS/3606QouEpSIUw0qZ6B+TrP/e0PI+J/FATulK/BOovE
+	DgVSmxlw==;
+Received: from [177.238.16.13] (port=39494 helo=[192.168.0.104])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.99.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1vzfBG-00000001N0A-4Add;
+	Mon, 09 Mar 2026 13:18:15 -0500
+Message-ID: <7dac0a99-0883-4ec1-9bfd-49b659bd38e6@embeddedor.com>
+Date: Mon, 9 Mar 2026 12:17:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,68 +54,71 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: add bindings for AD4691 family
-To: "Sabau, Radu bogdan" <Radu.Sabau@analog.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Radu Sabau via B4 Relay <devnull+radu.sabau.analog.com@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- "Sa, Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
+Subject: Re: [PATCH] gpio: msc313: remove kcalloc
+To: Rosen Penev <rosenp@gmail.com>, Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Daniel Palmer <daniel@thingy.jp>,
+ linux-hardening@vger.kernel.org, gustavoars@kernel.org,
+ Romain Perier <romain.perier@gmail.com>,
  Bartosz Golaszewski <brgl@kernel.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <20260305-ad4692-multichannel-sar-adc-driver-v1-0-336229a8dcc7@analog.com>
- <20260305-ad4692-multichannel-sar-adc-driver-v1-1-336229a8dcc7@analog.com>
- <20260305174559.1ded5173@jic23-huawei>
- <LV9PR03MB84149F32D4CABA4D2827D85BF77AA@LV9PR03MB8414.namprd03.prod.outlook.com>
- <08717cd6-a732-4f06-a6f1-8cbdaa755b78@baylibre.com>
- <20260308182839.19587743@jic23-huawei>
- <SA5PR03MB842501D7A27A10BC203E5433F779A@SA5PR03MB8425.namprd03.prod.outlook.com>
+ "moderated list:ARM/MStar/Sigmastar Armv7 SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260308021535.48098-1-rosenp@gmail.com>
+ <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
+ <CAKxU2N9JbAzEYfmLpbw5b9Y6MsYUZ1FfLirfy8Hg8MCOUY6PAg@mail.gmail.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <SA5PR03MB842501D7A27A10BC203E5433F779A@SA5PR03MB8425.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <CAKxU2N9JbAzEYfmLpbw5b9Y6MsYUZ1FfLirfy8Hg8MCOUY6PAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.16.13
+X-Source-L: No
+X-Exim-ID: 1vzfBG-00000001N0A-4Add
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.104]) [177.238.16.13]:39494
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPb0AFhKHRwSqADAucOtu/3kbn3IYi8hePP9lAc56PYLHXt2FjEtNdVTwaYiJPuc4sj3xNTYntyX+Dx+eZoxNKQ/n4/a6IT4kGAwQC4W3YvivOitMTgR
+ G1jzUKplQB4zUEWNVFQ74+spr1AehJe79NO9OBgJv4lZB9WCNKsrxNjhbcvfcUIOe2mD6dbN8KpXFtNnFMFSF9pjKDii2xGOM4WfwBKWjBH589px/8zyDRGP
 
-On 3/9/26 3:57 AM, Sabau, Radu bogdan wrote:
-> 
 
-...
 
->>>> Regarding 'mode', I agree that it should be something that could be modified
->>>> at run-time, especially since all register modes (CNV_CLOCK, CNV_BURST,
->>>> AUTONOMOUS and SPI_BURST) rely on the same principles of reading the
->>>> ADC result from the registers, the main difference being that PWM on the
->>>> CNV pin is required for CNV_CLOCK and CNV_BURST, but the board design
->>>> stays the same. Perhaps this PWM can be initialized at start-time and only
->>>> be used when CNV modes are being used. This would mean mode can
->>>> become an IIO attribute that could be set by the user at run-time.
+On 3/9/26 10:27, Rosen Penev wrote:
+> On Sun, Mar 8, 2026 at 5:06 PM Linus Walleij <linusw@kernel.org> wrote:
+>>
+>> On Sun, Mar 8, 2026 at 3:15 AM Rosen Penev <rosenp@gmail.com> wrote:
+>>
+>>> Use a flexible array member to combine kzalloc and kcalloc.
 >>>
->>> More likely, it would be two different ways of doing a buffered read,
->>> so maybe two different buffers? Or just pick the "best" one and only
->>> implement that mode.
+>>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>> (...)
+>>>   struct msc313_gpio {
+>>>          void __iomem *base;
+>>>          const struct msc313_gpio_data *gpio_data;
 >>
->> I 'think' burst mode is really an oversampling thing as you read back from
->> either the output of an averaging filter or an accumulator.
->> I doubt there is reason to support both the oversampled and raw
->> readings at the same time.
+>> Do you wanna add:
 >>
+>> const unsigned int saved_size;
+> So in the code there's
 > 
-> I agree with that, perhaps burst modes (CNV_BURST and SPI_BURST) could
-> be dropped. Also, AUTONOMOUS mode could be used for read_raw since
-> its compatible with both CNV_CLOCK and MANUAL hardware setups.
-> So, then if the 'pwm' is present in the device tree, CNV_CLOCK
-> will be used for buffered readings and if not, MANUAL will.
-> This will indeed not only simplify the driver, but also keep two important
-> modes up for choice for the user.
+> for (i = 0; i < gpio->gpio_data->num; i++)
 > 
-> Please let me know your thoughts on this approach.
+> which is equivalent to match->num.
 > 
-Sounds sensible to me.
+> __counted_by doesn't support pointers AFAIK.
+
+We actually have __counted_by_ptr().
+
+-Gustavo
+
