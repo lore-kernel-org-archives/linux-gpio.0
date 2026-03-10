@@ -1,156 +1,99 @@
-Received: from tika.stderr.nl (tika.stderr.nl [94.142.244.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B662C0F6D;
-	Tue, 10 Mar 2026 09:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.142.244.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE2143D502
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773134709; cv=none; b=lp6A7IxCkWdC4JQpbIHVnI4EhVV20ITsV24h9UHd4wkQTCqHrUhztZLnz8LV8oxUgx5e/wQgdZx/c5JcFzHlsMjNcWTZlBovDTVvzeJf2F4LeHra6wQdy/RBltwWFARz8OH3vxiak3TKyrukiwotGQuqJ78ST3jfafQr3PE+5JQ=
+	t=1773134937; cv=none; b=LdKujIB7+/pLbiKMEOsrP+cAkrF1C2+bEa61POrDDfYB0p/LJsD/bRHXiWSrWYdSGFSsLyntikZ/4cZCDrSJrgaQnYlXZyyi2BgRn9Q5UDfE042hwLL9ajcXchfSbdYAeAlavso5meJKRil1ivQIzDySitK8/UaV2gn12jgFBNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773134709; c=relaxed/simple;
-	bh=ZYPZP303acQimntExRwnf0OKXbz/OJ7MyaDMh8CkayU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0/SMB3Vc2nVEaDCwdKm8O+j9ZdPtoXyTWLzW8fjbAHyEkDaFBQQbDh0JrPYH38pNXR9ry1JBUdHS6m1tO0peoxqfP0cf2g5+TPYCRR/WDnieeR+3P8dfRvQNZPUCK/kKFW8ixkV24BZ8yVBNqNHZIhrBuAACQ/YDf3p0MXaCWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl; spf=pass smtp.mailfrom=stdin.nl; dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b=RLL5cx9M; arc=none smtp.client-ip=94.142.244.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stdin.nl
+	s=arc-20240116; t=1773134937; c=relaxed/simple;
+	bh=sZaxe7E+Iri0Yj4ZeX/Y23Uobn7iJJUUZV9GAydph+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pv+EI9yVpnYAwOWFFixMmjub4mKu51rcu/Rmoyj/C7C/x6UjWuni5ExyztYjjjAemc/or1fEA3PQsvXYsAhuHtGRAYKVKeCzuM5f8/J1mR8JazMksS23bnG+z42WIavRPl4VlRkM/21Kbin7mwycp8dj9c9RCIGLuDP8UqoL5zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuAdMO0T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b="RLL5cx9M"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.tikatika.nl; s=201709.tika; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Jurke3t2EyAB5+kik9FcOqNaKymdC6aoDQcLoDZKbXc=; b=RLL5cx9MD2m8r+X9gRVzVpVqZs
-	RWsU1OHvsr6fp+kbOZjI/bIzss324l6KeKJJJjUdmkUWLz585TZR5otE81+7jCvOv3OD+3/PWAXZx
-	2G4mvfUSS7uyy2+r8v8M6c1B10ZJ7iZ45+kw3/c/mJkeAotgH2hCq5OmzMrESIJEwRJU=;
-X-Preliminary-Spam-Score: -4.4 (----)
-Received: from [10.42.0.16] (helo=login.tika.stderr.nl)
-	by tika.stderr.nl with smtp (Exim 4.96)
-	(envelope-from <matthijs@stdin.nl>)
-	id 1vzsqH-0002Jb-2J;
-	Tue, 10 Mar 2026 09:53:32 +0100
-Received: (nullmailer pid 2675120 invoked by uid 2001);
-	Tue, 10 Mar 2026 08:53:29 -0000
-Date: Tue, 10 Mar 2026 09:53:29 +0100
-From: Matthijs Kooijman <matthijs@stdin.nl>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges
- properties
-Message-ID: <aa_cCCc7FqdSv8eX@login.tika.stderr.nl>
-Mail-Followup-To: Matthijs Kooijman <matthijs@stdin.nl>,
-	Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
-References: <20260302202121.197288-1-matthijs@stdin.nl>
- <20260302202121.197288-3-matthijs@stdin.nl>
- <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuAdMO0T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4170AC4AF0F
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773134937;
+	bh=sZaxe7E+Iri0Yj4ZeX/Y23Uobn7iJJUUZV9GAydph+U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CuAdMO0TU2BREyIbTlTvzg12VlLDCz9aJVBV4hiOzhEr6oyGITm0UAXhO6ZwJQDM2
+	 CUg7uUBNZ2MRGFJrTybiu73YNd46mkm8VYsEMXEvs5u6XWMkE6Y4KOT0fMvdw2xfc3
+	 HbXsPbLrhCEQhMQBeyLs53m0XnDsRFUH1mw8VZCRaWlg7dJa8ch0sGyGdzQkBkxG1D
+	 iN3pIW1O/et8eji8F2wQaQP7pTANcOOa4MXmxVWzIDWemUeEHopTOL5o7RLE/xPd0e
+	 xoxUq0uBhn1Bi2uHco4A2szqDuQdF6ZLTLt5tEhjfrDUCL7mschCdLaO3CGeygg7Rn
+	 ZD3DDD77mdf8A==
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-64c97997b0fso8922813d50.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 02:28:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdaV2/FPLjHx2NGqExEArJhr35oG7Xp1CLD3ZnxG/rLSCrEPux9wi2CJdxYJziJgETS+wvT7qdPMhn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLJWcp5O8p7AWY/TbVTYjOrAzPwKiTtzlGmV6sQLwKdbwR6YmM
+	6pEOBxH2P5hpuCmclKuAO5GAS7J9ECoQQVvZMDak/aP+ACU736ZKjdk4wiLr7tL1SL2bFy6tZ8B
+	OxTCjv9+O51hS4URjkghQSr1JPgFd11U=
+X-Received: by 2002:a05:690e:c44:b0:649:ca5c:5990 with SMTP id
+ 956f58d0204a3-64d14316d3dmr13079461d50.66.1773134936582; Tue, 10 Mar 2026
+ 02:28:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Y0Af1s2EGjNyxXmK"
-Content-Disposition: inline
-In-Reply-To: <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
-X-PGP-Fingerprint: E7D0 C6A7 5BEE 6D84 D638  F60A 3798 AF15 A156 5658
-X-PGP-Key: http://www.stderr.nl/static/files/gpg_pubkey.asc
-
-
---Y0Af1s2EGjNyxXmK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260306075244.1170399-1-eleanor.lin@realtek.com>
+ <20260306075244.1170399-10-eleanor.lin@realtek.com> <20260307-purring-kind-binturong-1fcb37@quoll>
+ <1baf65a11c26482cae4f7b54df1521c5@realtek.com> <af8aa42e-8ef6-43c0-9a46-173420ffe49c@kernel.org>
+ <0ed4a4e5e25e47ca8f040ff4632ae0c1@realtek.com>
+In-Reply-To: <0ed4a4e5e25e47ca8f040ff4632ae0c1@realtek.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 10 Mar 2026 10:28:44 +0100
+X-Gmail-Original-Message-ID: <CAD++jLn81uWf=3QchYHgfAqof9Wq_t8PEiKEJqezbYT0vCuEaA@mail.gmail.com>
+X-Gm-Features: AaiRm53ys6zPtcAwL71zHshpZVqBa6i3gejjSIKMd2ptpnfhLQmIJqyYSNvWc2g
+Message-ID: <CAD++jLn81uWf=3QchYHgfAqof9Wq_t8PEiKEJqezbYT0vCuEaA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/14] dt-bindings: pinctrl: realtek: Rename
+ 'realtek,duty-cycle' to 'realtek,pulse-width-adjust'
+To: =?UTF-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"bartosz.golaszewski@oss.qualcomm.com" <bartosz.golaszewski@oss.qualcomm.com>, 
+	"afaerber@suse.com" <afaerber@suse.com>, =?UTF-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>, 
+	=?UTF-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>, 
+	=?UTF-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>, 
+	=?UTF-8?B?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?= <tychang@realtek.com>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jonas,
+On Mon, Mar 9, 2026 at 12:00=E2=80=AFPM Yu-Chun Lin [=E6=9E=97=E7=A5=90=E5=
+=90=9B]
+<eleanor.lin@realtek.com> wrote:
 
-Thanks for your review.
+> > > Therefore, changing this property name will not break any existing
+> > > device support in the mainline tree.
+> >
+> > Yeah, but will break all other users.
+> >
+> > Best regards,
+> > Krzysztof
+>
+> I understand your concern. I will drop the property rename and keep
+> realtek,duty-cycle, but I will update its description in v3 to make it cl=
+earer.
+>
+> Hi Linus,
+> Although you agreed with the rename to realtek,pulse-width-adjust in v1, =
+I
+> will revert to the original name realtek,duty-cycle to strictly respect t=
+he
+> DT backward compatibility rules. I hope this is fine with you.
 
-> > This does not immediately change functionality, because the
-> > gpio-rockchip.c driver has a workaround that defines ranges when they
-> > are not present in DT, but that relies on global gpio numbering (so
-> > AFAICS only works when the rockchip gpio banks are initialized first and
-> > in-order).
->=20
-> This is strictly not correct, the driver use the gpioX alias id as
-> defined in the device tree and does not depend on the initialization
-> order.
+Sure, it would also be possible to support both, but that is maybe
+a bit messy. Let's go with the old.
 
-Ah, I had not realized these aliases existed. However, it seems they are
-not actually relevant in this case. My assumption was that gpio
-numbering was based on initalizating order, but I see in the code that
-GPIO drivers decide themselves (by setting gc->base statically or maybe
-based on DT). For the gpio-rockchip driver, these base numbers are
-hardcoded to start from 0 in rockchip_pinctrl_get_soc_data(). Dynamic
-initialization-order based numbering is also done for drivers that do
-not set gc->base, but that starts at GPIO number 512 to prevent
-conflicts.
-
-In any case, I will update my commit message to better reflect what is
-happening.
-
-
-> > --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> > @@ -889,6 +889,7 @@ gpio0: gpio@ff220000 {
-> >  			interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-> >  			clocks =3D <&cru PCLK_GPIO0>;
-> >  			gpio-controller;
-> > +			gpio-ranges =3D <&pinctrl 0 0 32>;
->=20
-> This matches the driver, but not the hardware according to datasheet, it
-> only lists gpio0 A0-C5 used, and not all 32 pins supported by the gpio0
-> controller.
-
-Indeed, this seems to be the case, but I wonder if this is a problem?
-
-Isee other rockchip devicetree definitions (rk3528, rk3562, rk356x,
-rk3576, rk3588) do not care about this and just map all 32 pins. See
-
-	git grep -C 20 rockchip,gpio-bank | grep gpio-ranges
-
-I also think there is no other provision for these missing GPIOs
-anywhere - both pinctrl and gpiod seem to expose all 32 pins, even the
-one that do not exist.
-
-Limiting the gpio-ranges definitions would prevent writing to reserved
-pinctrl registers via the userspace gpio API, which might be useful, but
-you would still be able to write to them via a custom devicetree (that
-uses non-existing pinctrl pins) and you would still be able to write to
-non-existent gpio registers via the userspace API.
-
-Given the above, do you still think it would be good to limit the
-gpio-ranges to the existing GPIOs only (I have no strong opinion)?
-
-Gr.
-
-Matthijs
-
---Y0Af1s2EGjNyxXmK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEMyF3AetYrDfGJ9el6ZMxy91tJYwFAmmv3AUACgkQ6ZMxy91t
-JYyNZA//VogIWO55rSmcEXGC0p9rrWm93PtZhjLMawss6RQXPtmAwnQUSDF7xCoy
-jsoOT8xFlARRDQC0v0ONBNhmOOYzH14emEqudzdjV6auGr8GW0vBdMF04xjWigEC
-nL1Jiqp+yoC1Rgk8C19H3fOiyx5VpEIkw5IHKrSQQH49gRkHjvHkTMDPLqeH32eY
-iH68S6mCp705yDVUXrRWCL4uRSfu5EaHpfRyfmqEf4gAz46Yxi4grxV9US7fjjZO
-x3PSE3XtNCleshCP/97xKPt8yAzir3NCRiXWFqTX58lwbK81s/ygVQSY914lJ88L
-gzNWmCMuhy01+4CF7GGnDE6C7jWSavixnrUhXRggIPq393OOs93sN5sXs2JnHP43
-qSAdwbPMf8ob4/JYyr9AdL90DKWXuqaN2PisAMn3p0+4Emr16LkQ5J4H20b5T1eW
-S8rg4jxHJdGd35IJzo0DC50kXp/s7T4EAdNmwKlcruubWMrCelyJ60kETqqI2noF
-Ov7vD3BV8XZUngJC0qeo8Cx62d13KZr4o1xKYvxA4Tmgi7ptx4XR6DDdZ2Utl9R9
-vlkTkR6tuEaOAOoJrniRQ9eOZYOgd2+JRyqJ9wNvfyvEK1YWZEfbaMy3/BWYrTlq
-YqjZkeflsS7QFjnSHLvkGMFe6OOTGlZMCVUjCKr8Mo6Kcv15bAc=
-=tkhC
------END PGP SIGNATURE-----
-
---Y0Af1s2EGjNyxXmK--
+Yours,
+Linus Walleij
