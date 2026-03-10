@@ -1,82 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A013ECBD5
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB43A4F2E
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773134549; cv=none; b=j7CbQhvx0CkQWiveogyXYvyHdNH3t67okvKeXyqHBwS3SEHxSnGonFsmB6AXZ+T/KiIFlFoRrjIbzkhEJ2Lb+F1aRvrCiSjZVKNqnqtN1VdD4LpmOhs+139xq0LnXlyATajsvbsg9xusHh3WX1/jf6kJIVuwXXTIOIFHai7yGE0=
+	t=1773134619; cv=none; b=VpPXJIPRPhZ3vnYV9uFvcEiJvrXdcjPfjCqWJrz9MhzfXuakzv2O8knUOXmfEZFtgHFj/cT8goyjlU77EVwj2aJFb4C1VQh9Vmhp9VMtca5ScS2CGYB07ZI16gmPFvDhqKW2WuprtdFIHh3jEaCICwPIjEvATvKbUTA9vIHZTUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773134549; c=relaxed/simple;
-	bh=biE8oWfu0fs6KVWBTvua8scss3toCvxCGRphCbtCVo0=;
+	s=arc-20240116; t=1773134619; c=relaxed/simple;
+	bh=1VhdsvctOPPInwjU04C8i7FrYJ3pYmp/oUZ4sm6hWN0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qxlcf5Ouc6nzQTcEyfWQZffY2UHoOPM7dFnbRm+FSvv1fupYzNOEZdWAWPdAUgiTK6B9AcPRAVyvB9oMTu3XWWnUHuySjYDgEof+3fMfgSsGcBE5SkUosMGumVJPbEHGMJfg6TKTRuM+0bcs+BL9q+YrUqkarE7oxTM3otE15dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDFAvvpJ; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=thEzm37MplPjd7puILJDvBUtY5ebsIq3iRJrtbnrr1s8uPpKvF1nimBD1IdcuDnFHUsUwbDn2gB1ZsFynsf614l5RS1wPw2/dctCOkJCkjvl37FS8tew7wMNdMx7VxDfL9/5UXkyt/svqNguLZcQJv2WaoG0t/pDXFTlewpE+9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsYBKMyq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDFAvvpJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984BFC2BCB2
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:22:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsYBKMyq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C10C2BCB2
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773134548;
-	bh=biE8oWfu0fs6KVWBTvua8scss3toCvxCGRphCbtCVo0=;
+	s=k20201202; t=1773134618;
+	bh=1VhdsvctOPPInwjU04C8i7FrYJ3pYmp/oUZ4sm6hWN0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lDFAvvpJeusBcJObvL9etBD5GiQAGa4oubMqXifq9iiQ/xZrCGcU22+K7R+oIFls2
-	 ILCDvhRLJ/q3Tk3GsCTYKBgBnHz1lw8nLGa5hc08h0QwWusHgzXZ8oF5YwBFuUbBGN
-	 3FGr7KGttE8wmgtnndwSsAPVHtgkgcBYvzF1FzmDHF54KGiwAv8oRpEebA7/HB5ioJ
-	 GD+1RQW0qDtEb64Z3wjBO+DA0EbQzpRJ40aqz194zaaeJmH7sOqK5v9wpQWG39SlBy
-	 Sh06LeA6w6pU2tf9JlBhdSgofXHEcu1xk9RrNK2UAe0VhyKS7RgVa23S1A4k9hehgy
-	 wLTo1Z3z4TEuw==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7986d231b3cso157579277b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 02:22:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/syCkwMX7gc/86bVA5fcVRanjAbc1okOakodxU2EoimCe/YBE9xreTaF3ZfEqTVmaA/wxj64kij+h@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyLZLmqJ6NE+nnH88QgGVH4GsU2+FtAfEiiJTcNcLqTjvAx/5N
-	/ENirIlduIeb+TIB4eQSOmegpT37Jo/cd+RyFhEqLG+DQiulsSlHBZEpA5o0lS148AEixXjHOid
-	VHDi0dye06byLlRQt3taTE7XufxF1YMw=
-X-Received: by 2002:a05:690c:19:b0:797:bc42:9e35 with SMTP id
- 00721157ae682-7990a8726b6mr27082737b3.23.1773134547882; Tue, 10 Mar 2026
- 02:22:27 -0700 (PDT)
+	b=tsYBKMyqewnDvu3QnwOXJpTozeaW1Cq2NAPg8EhFJmB4tCuJIdapTdEhLjO4cLWPZ
+	 knpJacCfmAm1wQ1p7hgmcxncaQfbWZjiCov+9sEV/sOyTDhPvdOvkVSYyejK76nG8s
+	 OncqWBk6Jcq42QU12EjGreRzzY73Jub3byNj20PPwwDtCufPpqvU6oiBaVvJjFy8Et
+	 5897+Bbu2YUVip7IrFOUs78qvSjOY/Mqxn0tZd9V+XQ5UVYXrJh7K5YSbVl4A+mqNu
+	 IUv2IPIGdphCq3emrbViDdggTWU74Nsjt26tc6WzsxQd2MbOeiW4Djc/fRpYBOP838
+	 yb4qFKuYYNGYw==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7986d231b3cso157592077b3.1
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 02:23:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVACC9Fpp27Oj8RMEUBSQA7p+4nbbRet26tHraddNMcOMJz9gtybh9+pzk/J5U4bztlm+0i9p6wojjz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemZQemewDfT+0RYDyAc4xd0KByArJVudp1xCoYyz999fqtfz9
+	LAnWOTNUloekkOoZFC6SQg0zwwqYyjP3B9tW1SrlimIXw7a44Br1Pz2XxIzMBSSfbST5ZQ1Kcjg
+	NfFHV024YdT3fEpFD6TCby33yoF/EC+s=
+X-Received: by 2002:a05:690c:338d:b0:798:55f2:de33 with SMTP id
+ 00721157ae682-7990a67eabamr26807187b3.7.1773134618046; Tue, 10 Mar 2026
+ 02:23:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260304-topic-sm8x50-spmi-gpio-get-direction-v1-1-a25612161fba@linaro.org>
-In-Reply-To: <20260304-topic-sm8x50-spmi-gpio-get-direction-v1-1-a25612161fba@linaro.org>
+References: <20260306063411.2041232-1-rdunlap@infradead.org>
+In-Reply-To: <20260306063411.2041232-1-rdunlap@infradead.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Mar 2026 10:22:16 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmoiq5prrmeDojbh4kvUW3NMMUvqmqHgEcK8U87zYCYRg@mail.gmail.com>
-X-Gm-Features: AaiRm52GRyNcten0FsoXmg_gOCZfXr5I9nWzYXzwWa5V4YOiW98ibmcOLiSyho4
-Message-ID: <CAD++jLmoiq5prrmeDojbh4kvUW3NMMUvqmqHgEcK8U87zYCYRg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: implement .get_direction()
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	"Ivan T. Ivanov" <iivanov@mm-sol.com>, Rob Herring <robh@kernel.org>, 
-	Fenglin Wu <quic_fenglinw@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 10 Mar 2026 10:23:27 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmDfPRvD4EfHpLjbF5rvcZrBWM4A-+BmRwXEYEcWJ4QpA@mail.gmail.com>
+X-Gm-Features: AaiRm51Mv6PjvWvJQZCUmGPcNRXEtPZ2mMosgtjimcuxjz3z5nZjwgEkkU8MbrE
+Message-ID: <CAD++jLmDfPRvD4EfHpLjbF5rvcZrBWM4A-+BmRwXEYEcWJ4QpA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] pinctrl: s32: correct kernel-doc bad line warning
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 4, 2026 at 6:41=E2=80=AFPM Neil Armstrong <neil.armstrong@linar=
-o.org> wrote:
+On Fri, Mar 6, 2026 at 7:34=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
 
-> GPIO controller driver should typically implement the .get_direction()
-> callback as GPIOLIB internals may try to use it to determine the state
-> of a pin. Since introduction of shared proxy, it prints a warning splat
-> when using a shared spmi gpio.
+> Insert a "*" in the kernel-doc line to resolve a warning:
 >
-> The implementation is not easy because the controller supports enabling
-> the input and output logic at the same time, so we aligns on the
-> behaviour of the .get() operation and return -EINVAL in other
-> situations.
+> Warning: drivers/pinctrl/nxp/pinctrl-s32.h:18 bad line: this group.
 >
-> Fixes: eadff3024472 ("pinctrl: Qualcomm SPMI PMIC GPIO pin controller dri=
-ver")
-> Fixes: d7b5f5cc5eb4 ("pinctrl: qcom: spmi-gpio: Add support for GPIO LV/M=
-V subtype")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
