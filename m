@@ -1,48 +1,48 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D403B47FF;
-	Tue, 10 Mar 2026 12:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034333E314F;
+	Tue, 10 Mar 2026 12:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773146712; cv=none; b=gxUBzMqlWEJnumHu1WvMnP7E1vznbGEe2o9rdVQKwN91NsQnAZYW7mAgJkstzBE1hijwrFnWDr80HyhtkAKKkyB1jfPya+xj1Q5FrNXCi1sZz6EOYYYB+fbRSX3Bbbg/Kilh8ooVqjL33whoDTON3l/UxfMm2egCuieKFq9QrXg=
+	t=1773146718; cv=none; b=El7J7uXeA1zA9acJiMvvHAcB/uy5q2ybJy5Ml/bHxpKmynbrCZigYk2a6W1/HIey98Fb3FIzHaEm70INt19mQpLnbI2pQk+rt5hNstUDRaCrciYhKXej9ah1gaqmdK3RIUZhumtFiP3kSRTM95HEBINVdGWK++4EaPZXy8AanrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773146712; c=relaxed/simple;
-	bh=1rn86nhgBECvZOeO619kSGbXp+mZw09nRb53WGmwnUM=;
+	s=arc-20240116; t=1773146718; c=relaxed/simple;
+	bh=b7v4/4OAx2WNxqk0TKlPa4hNxFa/e/M/YBXjcSP7gTQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WfFgF/IwtLXT1c+eQRWQuYkxJ6PFwWj5G0by+GFx3r7O1BApDtoqp+uzBMnIPtIf2i+sHRM7E1kG0kUdJsM1FDC5rzG9qwF27H6eiZh8ihoq9YYPCvoGpYFISGJgXyehNLqsW1zy8cEVooiSbsnRxqlHpCh5tAY+vf/W7WM5znM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iM/o/ptV; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=HKtz9/B4EQS6rIq8rUx0WaS1rh3FYeLq51oCYdVH1UETyFjNHtSU+I8dfyVbKJoJ2GuB8gYxEa1pt64/0Ew47vZkyIoUBk3FMZifivWY2Cn1pmUMk6TCmOaqPU+rhS+XFsPq8VRTJqh8tAC4I1YBUcMzV/GYePS7/QOr2xAMF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l23bakWS; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iM/o/ptV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l23bakWS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773146711; x=1804682711;
+  t=1773146717; x=1804682717;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1rn86nhgBECvZOeO619kSGbXp+mZw09nRb53WGmwnUM=;
-  b=iM/o/ptVDZjr7HtImb9uXHSsc6Bn9Y1eBeGI6TZPhCixw4TIEQQMMIYn
-   Qe01LyhoUda1EuaiYbF0ufWfIzABbLkr0t7Jcg9RnEmKp74tKY8cy/tuR
-   /7rl2EvDSvAPxuQ7AupEUjjhw2sVThwJCLRcu3uB89vGSooCFoOg+1DSa
-   okaJ0FGhXoMgJsYvkseIdQ0o/JwnhRdBqiuhNFBDPkKjn/h1p0vQygETM
-   lJywEpXTfyqA+fIeNipW2wAdup1kZsyCqIwGG7yuwBkTq2yeBcsC7XtZw
-   M2S15Um+iYurcfmKrXYlikjgpSBnreVibi3ugwpdTTuNurKFOvN+j8LHx
-   A==;
-X-CSE-ConnectionGUID: Ec2qmTfJTxOeP6ebA9mOfw==
-X-CSE-MsgGUID: zXjZonyHQQWRsyja/EHo8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268922"
+  bh=b7v4/4OAx2WNxqk0TKlPa4hNxFa/e/M/YBXjcSP7gTQ=;
+  b=l23bakWSnahkG0LO0BGWNpeIzuTwYcDlJuMHd3d15EGN0H4YHmcwEkro
+   JyTrt3UNzM+DmyBta9xI15/P2aVP74Y0lXnqXPDXjliqHf4J4SdhVQa5k
+   Oit3tiDKIrRHPMV0sfc709zlLfWTk7jBcgyWIJU6EKJPRJijnttEebmOg
+   isNwsZvBavEOP/DGToUatTGS8RXVAWvR8e9zDfeSZuNAeDfmKxCIdPTeS
+   Rru9Tw4PGZlbB6TtG1dBB0NXA1vRKoxhgnSa0wboKIR7dPtDCy2sOQTo8
+   M0jg0IEvrDjd5+QTcm3wZaSxZUKC4hZdeJdYcrR+FIgaSjZT8hPqSX01m
+   g==;
+X-CSE-ConnectionGUID: F5lVDaI8TA6979RMtvNRMQ==
+X-CSE-MsgGUID: LmmOsOkTQFCxUoLyHBCjyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268930"
 X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
-   d="scan'208";a="74268922"
+   d="scan'208";a="74268930"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:11 -0700
-X-CSE-ConnectionGUID: h4kBjhnPRYOrIw6SkbvxBw==
-X-CSE-MsgGUID: XPnHU+I9TLqlqZ1g+tswNA==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:17 -0700
+X-CSE-ConnectionGUID: WbrudWFxS5avYnIudslaug==
+X-CSE-MsgGUID: //ZeLKUSRTCUfGiKQpnEpQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
-   d="scan'208";a="225040211"
+   d="scan'208";a="225040229"
 Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:05 -0700
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:11 -0700
 From: Antti Laakso <antti.laakso@linux.intel.com>
 To: linux-media@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc: linux-gpio@vger.kernel.org,
 	miguel.vadillo@intel.com,
 	kees@kernel.org,
 	ribalda@chromium.org
-Subject: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
-Date: Tue, 10 Mar 2026 14:44:23 +0200
-Message-ID: <20260310124427.693625-2-antti.laakso@linux.intel.com>
+Subject: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
+Date: Tue, 10 Mar 2026 14:44:24 +0200
+Message-ID: <20260310124427.693625-3-antti.laakso@linux.intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
 References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
@@ -76,48 +76,27 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Defer probe if endpoint is not yet available. And do it before acquiring
-clock, gpio and regulators.
+The Omnivision ov5675 is found from MSI prestige
+14 AI EVO laptop, for example.
 
 Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
 ---
- drivers/media/i2c/ov5675.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/media/pci/intel/ipu-bridge.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-index ea26df328189..81916fa8c117 100644
---- a/drivers/media/i2c/ov5675.c
-+++ b/drivers/media/i2c/ov5675.c
-@@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
- 	if (!fwnode)
- 		return -ENXIO;
- 
-+	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
-+					     FWNODE_GRAPH_ENDPOINT_NEXT);
-+	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
-+	fwnode_handle_put(ep);
-+	if (ret)
-+		return ret;
-+
- 	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
- 	if (IS_ERR(ov5675->xvclk))
- 		return dev_err_probe(dev, PTR_ERR(ov5675->xvclk),
-@@ -1210,15 +1217,6 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
- 	if (ret)
- 		return ret;
- 
--	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
--	if (!ep)
--		return -ENXIO;
--
--	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
--	fwnode_handle_put(ep);
--	if (ret)
--		return ret;
--
- 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV5675_DATA_LANES) {
- 		dev_err(dev, "number of CSI2 data lanes %d is not supported",
- 			bus_cfg.bus.mipi_csi2.num_data_lanes);
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index c895584e25a0..ee070d44d5f1 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+ 	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
+ 	/* Omnivision OV2680 */
+ 	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
++	/* Omnivision OV5675 */
++	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
+ 	/* Omnivision OV8856 */
+ 	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+ 	/* Sony IMX471 */
 -- 
 2.53.0
 
