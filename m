@@ -1,127 +1,111 @@
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570D64C0401;
-	Tue, 10 Mar 2026 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A704E410D15
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 12:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773143765; cv=none; b=WNdDxONumdlKT+o1LcUGbOoKq69jHrF2gcKW1JanVYhwZvpLc/6qpTN7CLZjVFfK5n4CNnQPs4tO+u3UqR62/WKacoaBoo6DKHs+UFgZL2sLlBo+6DANojbRxd1Q0o5KNanZANyDdXeBVur14kHXxJ0KyQf9wBBhjvEpnpDdvIA=
+	t=1773144235; cv=none; b=HPAGLmYcevsPmX8HXjmpBUV6QFtjsbIiMSI5LXX1pFZKYrf6+5/KaNFiIw9/OPrwvlVsaFSd/l2JZHgKKi/2HFPMvQlScOF8I2jsD338KDAPWiU4hWnhuIsipAQUPRc4RjSlOmwgEiKcM8oVbDwmhYJ3AjIyL5I+5a45pUTfUjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773143765; c=relaxed/simple;
-	bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KtzkYuWkXBGkbBH70ZIVNeM1m/vatmw0W2LbUQNeEqp1yWctVF+dGc8P9gSuwtIgoGgtnIJkNZGTgHfmUlyk9GGaucGHkc+SOQT75uoQZSG8TP9al7Kd9am/LTQ2e5tcmM9t4XnZHiLaUAst7WlWgeWcD30mxv4SDxqUMz3is9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=ex53I4YG; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+	s=arc-20240116; t=1773144235; c=relaxed/simple;
+	bh=ejvKQJ0BUEIYO8YyNFJZK6EePkf04xdfkGOlJrEYICI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Km6mPrjCGyXB9Huc7+K//XV1+kgw5HNb4RfopJmc9gIAnPU+kBjmuKqsJVy3PJCS7ColBVCSqCc5hkwKdyO/pjwZ/PlxWb7DS7nKsfNjJYzRc1B49qAuPuN5AOa9DONxEh1F4kLCZBTShMJZ0T9mc9m2hDwRRV7m1gN/qU8NdNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pnn/vg+W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="ex53I4YG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1773143728; bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ex53I4YG0KjBerNqRD5wRIiox3FXFKTSd0JtZvKuo0ROgMoNdRRAPThrM/Qsevv02
-	 e8XWjmKIuppAES/QSOjqmEyPMBZJml1FZ+UNb0gDdtCYyQjh8crsZ0vtK8+gKHBfLt
-	 MJw5NhjMOgoL79FPNU9K+5wpre1mwH1utAmpyJeE=
-Received: from [2001:bf0:244:244::71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.55.2)
-	(envelope-from <phahn-oss@avm.de>)
-	id 69b006af-b734-7f0000032729-7f0000019c7a-1
-	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:27 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 10 Mar 2026 12:55:27 +0100 (CET)
-From: Philipp Hahn <phahn-oss@avm.de>
-Date: Tue, 10 Mar 2026 12:49:21 +0100
-Subject: [PATCH 55/61] interconnect: Prefer IS_ERR_OR_NULL over manual NULL
- check
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pnn/vg+W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6101EC2BCB4
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 12:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773144235;
+	bh=ejvKQJ0BUEIYO8YyNFJZK6EePkf04xdfkGOlJrEYICI=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=Pnn/vg+WltwVVTkjJiM19hHcrRXtoPtor7C23uNtus7c+cIENikuD5uQXzzOrKwAe
+	 Mepx7a0s9FmnahpgfvnIi2YoN1TDpeNh9T1d8gWWRw03kRr5JaZxm57G4YENIPOQZe
+	 5wx0XL96edi28WWewbAbGHF9U31NfzmSCzig+7x5ltEGOTy72udE8QNzEC+tJD9vqf
+	 W6JSH/fT28hmdOn79e7H5T5W0oc0K+M1HZPLJW2oZES2Tbt94JkEPzdeEnQKc2cttc
+	 o1ObXW9bSnBqUu2uFdmd3yTKy+7X1715NyfX1J7QV3sUSDnOn2tUCJe5wEl5KscpId
+	 bK8J93Z5BEB1A==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-38a38ccc217so38994281fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 05:03:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAC6n2T0clJoSmS9kO6xtp/800zIPnMpQRZ9TMLFizfoMFWDUS+olciuPOMvyhWCbGW/WvFrAIp8SR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2RfwLRyfsxeSYnhM9CZ8hGXuNmc7EzaIKUaQc/uuW6dOwdYoF
+	KlyajaFO0z12ZQvA74UhwKln+tfXIk2AARQ3j5cAwapO4juiwcsRKjqJhssLX2n1GiIofXKLoVR
+	5BrmJ1buLPvJtJWGBvt7tpdurWvqNkFY=
+X-Received: by 2002:a2e:a546:0:b0:38a:5402:a9e9 with SMTP id
+ 38308e7fff4ca-38a5402af62mr27099711fa.5.1773144233600; Tue, 10 Mar 2026
+ 05:03:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-b4-is_err_or_null-v1-55-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
- bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-mm@kvack.org, 
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org, 
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, 
- Philipp Hahn <phahn-oss@avm.de>
-Cc: Georgi Djakov <djakov@kernel.org>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=974; i=phahn-oss@avm.de;
- h=from:subject:message-id; bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
- b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAaR6ZpvsAoRDFUpNu6G6elsfY3kgc27+uFRK
- ZLVDKnVLraJATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGkQAKCRA0LQZT0ays
- 28XJCACYmRByi8P7LIl1oc/g3aO1owAe5Q8Or8oVGhiLH2LhqHs6nfDqZLIqz1sL3qrQVyF7YGk
- kX0mFSo3Tm/dtN68cM8AHWfCx75PDZnJ1klwJaD/a5osoRSf4X3Ik4ZQj/cB7O+Zq1qUVCpMYTg
- XaFUKyzlehYbqEs1YGNkcYOQXSo6Ofkc0rCWX7WPlFeXlek3wVqFGPJYbk8vXFwaghiu8bk1jxs
- 5OWlABLNOMeICixwYBtsJBbBssbgobIHjFZNKGQbzYy6+2+uPNUf9NBHl8iaEQQnS3RZflKIJzs
- X0gv7zaxzUqJp37JtExDbIsVdOxpFm9EpGTYIR5B4gcmwoes
-X-Developer-Key: i=phahn-oss@avm.de; a=openpgp;
- fpr=58AF7C2E007CDBE62C59E078F50EFDCF8AD04B1A
-X-purgate-ID: 149429::1773143727-E55C3A3D-7BA9F82C/0/0
-X-purgate-type: clean
-X-purgate-size: 976
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+References: <20260224092419.1275016-1-wens@kernel.org> <CAD++jLnKxDi1GCp94zAUKhwBvQwVAdT8bgNyw5XM2+PTOhxq1Q@mail.gmail.com>
+ <3x55nsighrqdo7al2n5imlov5yoti6z7jxrj7yieeghyqkllvb@akbuob4n37pq> <CAD++jLkEKprZ_qraCSMq2Zcz7ueiJaOEX6iQnMk9=Su-LbO6xA@mail.gmail.com>
+In-Reply-To: <CAD++jLkEKprZ_qraCSMq2Zcz7ueiJaOEX6iQnMk9=Su-LbO6xA@mail.gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 10 Mar 2026 20:03:37 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65QfrYuv3mLnHneiv7hJX00zXhrRQ5ffLv0qDYiSf0E5w@mail.gmail.com>
+X-Gm-Features: AaiRm51dUfCJeT2mVGemMIzLa1HTaQCPrrr1QohizDFvRW1zlr0AxQq85bAXp8g
+Message-ID: <CAGb2v65QfrYuv3mLnHneiv7hJX00zXhrRQ5ffLv0qDYiSf0E5w@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sunxi: Implement gpiochip::get_direction()
+To: Linus Walleij <linusw@kernel.org>
+Cc: Michal Piekos <michal.piekos@mmpsystems.pl>, Jernej Skrabec <jernej@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, James Hilliard <james.hilliard1@gmail.com>, aprizel@wens.tw, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-check.
+On Tue, Mar 10, 2026 at 7:46=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
+rote:
+>
+> On Sun, Mar 8, 2026 at 10:34=E2=80=AFAM Michal Piekos
+> <michal.piekos@mmpsystems.pl> wrote:
+> > On Tue, Feb 24, 2026 at 10:52:23AM +0100, Linus Walleij wrote:
+> > > On Tue, Feb 24, 2026 at 10:24=E2=80=AFAM Chen-Yu Tsai <wens@kernel.or=
+g> wrote:
+> > >
+> > > > After commit 471e998c0e31 ("gpiolib: remove redundant callback chec=
+k"),
+> > > > a warning will be printed if the gpio driver does not implement thi=
+s
+> > > > callback. The warning was added in commit e623c4303ed1 ("gpiolib:
+> > > > sanitize the return value of gpio_chip::get_direction()"), but was
+> > > > masked by the "redundant" check.
+> > > >
+> > > > The warning can be triggered by any action that calls the callback,
+> > > > such as dumping the GPIO state from /sys/kernel/debug/gpio.
+> > > >
+> > > > Implement it for the sunxi driver. This is simply a matter of readi=
+ng
+> > > > out the mux value from the registers, then checking if it is one of
+> > > > the GPIO functions and which direction it is.
+> > > >
+> > > > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> > > > Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > > > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.=
+com>
+> > >
+> > > Pulled out v1 of my tree and put in this one instead!
+> > >
+> >
+> > Please do not merge the correction yet. As I was pointed out by Jernej
+> > Skrabec the solution is faulty and just cover the issue. I will provide
+> > proper solution as soon as I find it.
+>
+> Too late, this is already upstream and I think that is how it was detecte=
+d.
+> Shall I queue a revert?
 
-Semantich change: Previously the code only printed the warning on error,
-but not when the pointer was NULL. Now the warning is printed in both
-cases!
+Michal sent a v2 fix [1]. It's more of a workaround though. See my reply [2=
+].
 
-Change found with coccinelle.
-
-To: Georgi Djakov <djakov@kernel.org>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
----
- drivers/interconnect/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 8569b78a18517b33abeafac091978b25cbc1acc7..22e92b30f73853d5bd2e05b4f52cb5aa22556468 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -790,7 +790,7 @@ void icc_put(struct icc_path *path)
- 	size_t i;
- 	int ret;
- 
--	if (!path || WARN_ON(IS_ERR(path)))
-+	if (WARN_ON(IS_ERR_OR_NULL(path)))
- 		return;
- 
- 	ret = icc_set_bw(path, 0, 0);
-
--- 
-2.43.0
-
+[1] https://lore.kernel.org/linux-sunxi/20260308-rc2-boot-hang-v2-1-516fdb8=
+20953@mmpsystems.pl/
+[2] https://lore.kernel.org/linux-sunxi/CAGb2v67FO1bt3yee2SXn1LTt7O10z1EHHw=
+7F0xQ0bKbpUqch4w@mail.gmail.com/
