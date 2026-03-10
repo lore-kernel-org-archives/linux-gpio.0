@@ -1,83 +1,117 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E574F39DBE1;
-	Tue, 10 Mar 2026 13:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FA029B78D;
+	Tue, 10 Mar 2026 13:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773149704; cv=none; b=qabgjgD3oLsFqWkMJWb2R79l9VjiS/KB4X2psM1eEq4ELJyfGRA+rzlCZAlaz+Y+u4C8NHPq0Y6CCqOv6xyL+AJYn3H87y9MRXxdBRD/S0CP/Gxzu7anFsPkrM5kwNeOwgho2p086MtsP/laJSibTJs7Nd1LF8QKiCmzP0EaIfw=
+	t=1773150338; cv=none; b=p/AMbRR71gTFzmuPbm7wiofwKTPWuJcjhXkdESF7JaJPil8FGCdzDGw/jt/QfYWuwf/Cvr8haCwtox/tB3waz0sGv+MMT71h0Q43eiPxVFgmNBvYZlUqGpfJoL4Z+Kaz8wrLQ4EcTdGpQIjuXZOoW/2YY1JNnoSBBICiDtG53FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773149704; c=relaxed/simple;
-	bh=pKqOkKX7CRXooHok80H4ZPwmfTHqEJgEysyE6k/X15M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hv2osxnS2cHKd+8/sFFA3/+tLFuhsrSgLsVHwzsT0lj2Y13x71LTsQEz9/RDIDSOkpb0JeclbOYB0yGUs94w/2N3KqcECnBA8NpL+Ha1OJCqXYpt0PtY4t/V77CTwCtuDpYF7TyrN5H2gAkSln2idJKVN0KmH5s7jGboJV/htEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FJOkBcAn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1773150338; c=relaxed/simple;
+	bh=BpET1FSzK/QYA+eM7BKpT/a7409mmPZXJHCSp+mv7MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PLeoOcFKUsvR/7RIO06n9v9Iopf36W9nIyhBrNvzyzi0zHZo+zmYfVeWvDKVfYr5AIX3xmbyJ5vI1sWa5XgrjM1tpH4flr3Qj0/dNyyq5iBD3bAQ19MCwIs/nGj7alGlaZakOqYDflDEPKQv52GjU57Dcn4VI2hiJSdiZhNwrCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=BSv+5VTS; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FJOkBcAn"
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 31D30594;
-	Tue, 10 Mar 2026 14:24:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1773149063;
-	bh=pKqOkKX7CRXooHok80H4ZPwmfTHqEJgEysyE6k/X15M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FJOkBcAnFkYe4vPe4YH9cnkLWKl6ov27QakdWzdeus+itKJqMNGhBMwF+PtqlDg1D
-	 RY5AlL0Oh/lV4Ifhn52mK/6NDuAsAhHs/DKPW2fRO+zOGpvovl3WStW4tk0lWfunNg
-	 eN2CFS8bgHJ2e3gkwBWoCH/Nhxs7deBB3uioHFXo=
-Message-ID: <e41212f3-5a55-4c14-85fb-91cdaa5e6786@ideasonboard.com>
-Date: Tue, 10 Mar 2026 13:25:26 +0000
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="BSv+5VTS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=tqNoaL94Dj4pObM+6pGSr4RMsIJmELh6Cj7p3cxJGxE=; b=BSv+5VTSyPyrhpKWnMZVCjZEvG
+	yrk6LWxlGwnUUZjquKMol+ljVUIUp9jBraubgLqBi4cKz4hniKCf9rIQTsThme1FexxEN+zxKvsgC
+	uvMYbDhkYi+shFX+PLCD/IMwmjSpYMDJbZGsateoQvss1ByMiB7n5CokueqpdePTp7697ajozqLcL
+	QNNNvSzTIj5kMR2wUJSupi5THJtiu7VhPmFy8ePRrdnRpYFSOebiyO3IlTbeTGO/MmRM5PEIBBHLD
+	zejwvm6ItsldfqTIXTc6O0Z/soDk0el6lSZ+MrXBoszSWB5pdQE71J71rNLjrXAAIRkB6hWfEOV6d
+	5s2EICAGfy5rFvZnPzPqZQFNMJmMF1OtxV9pY8V9U1rZXYRb0+cWjl6X1xLcFCZOiZcoHLob301cc
+	kRokX7oWqU/2ExVyAy+qxf6eKje0uvqaOqv9hMGZ5ryaSKPC2aKAIJfnAVSBvJS/v1i4KIjPZc3rm
+	OWRlN9QVYisM4o3VWUWhQE9QLOSHJzH7XsIe7kcAxjAHPZYtil03PpuGESYai0z/ycOzdMPXNnK8s
+	RUYQ5R4xdnnK/uIBRJ5tLN+fwlf+9zGkqtXzZ7Db2ibQTV2JC6OBFoQ9ds8aqQ/KGsNN9Qx1u7AAn
+	wqTFHtO0j/nTwkXDvMBIt3or3MQXIgQCujiNGxQ00=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
+ bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
+ dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
+ intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
+ sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
+ tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev,
+ Philipp Hahn <phahn-oss@avm.de>, Philipp Hahn <phahn-oss@avm.de>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Subject: Re: [PATCH 06/61] 9p: Prefer IS_ERR_OR_NULL over manual NULL check
+Date: Tue, 10 Mar 2026 14:45:07 +0100
+Message-ID: <2401874.ElGaqSPkdT@weasel>
+In-Reply-To: <20260310-b4-is_err_or_null-v1-6-bd63b656022d@avm.de>
+References:
+ <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+ <20260310-b4-is_err_or_null-v1-6-bd63b656022d@avm.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
-To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
- mchehab@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
- hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
- jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
- kees@kernel.org, ribalda@chromium.org
-References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
- <20260310124427.693625-3-antti.laakso@linux.intel.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <20260310124427.693625-3-antti.laakso@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi Antti, thanks for the patches
-
-On 10/03/2026 12:44, Antti Laakso wrote:
-> The Omnivision ov5675 is found from MSI prestige
-> 14 AI EVO laptop, for example.
+On Tuesday, 10 March 2026 12:48:32 CET Philipp Hahn wrote:
+> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
+> check.
 > 
-> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> Change generated with coccinelle.
+> 
+> To: Eric Van Hensbergen <ericvh@kernel.org>
+> To: Latchesar Ionkov <lucho@ionkov.net>
+> To: Dominique Martinet <asmadeus@codewreck.org>
+> To: Christian Schoenebeck <linux_oss@crudebyte.com>
+> Cc: v9fs@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
 > ---
+>  fs/9p/fid.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks ok to me:
+"fs/9p" in the subject on this one, please, not just "9p".
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+Except of that:
 
->   drivers/media/pci/intel/ipu-bridge.c | 2 ++
->   1 file changed, 2 insertions(+)
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+
+> diff --git a/fs/9p/fid.h b/fs/9p/fid.h
+> index
+> 0d6138bee2a3d1ab565ab2d210c0a3f3bf97e4e3..3bb7ef4380e972a2d9ab67eb4aab6cc5b
+> fe2eea7 100644 --- a/fs/9p/fid.h
+> +++ b/fs/9p/fid.h
+> @@ -27,7 +27,7 @@ static inline struct p9_fid *v9fs_fid_clone(struct dentry
+> *dentry) struct p9_fid *fid, *nfid;
 > 
-> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-> index c895584e25a0..ee070d44d5f1 100644
-> --- a/drivers/media/pci/intel/ipu-bridge.c
-> +++ b/drivers/media/pci/intel/ipu-bridge.c
-> @@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
->   	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
->   	/* Omnivision OV2680 */
->   	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
-> +	/* Omnivision OV5675 */
-> +	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
->   	/* Omnivision OV8856 */
->   	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
->   	/* Sony IMX471 */
+>  	fid = v9fs_fid_lookup(dentry);
+> -	if (!fid || IS_ERR(fid))
+> +	if (IS_ERR_OR_NULL(fid))
+>  		return fid;
+> 
+>  	nfid = clone_fid(fid);
+
 
