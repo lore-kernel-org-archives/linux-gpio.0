@@ -1,71 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647453876A7
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2379384236
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773142763; cv=none; b=k3gsvIYSSVGUYu4AKJ04Q5HcE/38IixOaTKC9LNNj4q8CQ3VNR4u7yccbamnNirG7Kl5bOCK2n1qkUuqg7lCQJsdECQniMPHD2gJaVR6eeaJW98m+izRYlLO3/4PvTX2kUYHAxYRN8lMGU2B7fDhCIx6rwjrziXmV3oBITn4hpw=
+	t=1773143207; cv=none; b=oJKXA8aUYho1t6AoHfLw+6pnTuh7Hrwphtt0ZR8OZff+3bxNw6jYH644fRZGLalEIsfm9yrRA3Ro/lcMwIf+nV7Gr3Nyn0+E6euKd+0lNgZeB9RgD6FiTVm3GvyaiBes0LcM3jEMeBUrYZabcUYf4OE1oiW2zVEWCzoGoEf3Cwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773142763; c=relaxed/simple;
-	bh=DRNBwsU1mx/Kbp+9Cuu0UYWjGkVZd+niIXr4tR9zHcE=;
+	s=arc-20240116; t=1773143207; c=relaxed/simple;
+	bh=hNYfW2PmdXWP40ndx3jBB9FDPr1eZeihvEAEqFyjWdk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ItUWEbRX8nxl9KDMiH1wd2Ekh5Nd1SBMpZ61nQlXb8iQME8YgvnWLiDlhYMPFxPFqVHer68seR4v4mPTuT7umaFPKU85WrtZ37vgnC2hJrZ/Lo1+FdYgWLtw/21ceBA4DxZKih/ITFyBGuFqYbwVp1ysHxzlYFmmDhZkKSN6Ii0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMa9eaGT; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=cmDwaw4VjQZ/iPgSpUaZyleYu3xO866Kz1yrey2F+FC5xUxK5gTbIc0PRsAIgGRHKI3AsdDPK/x9GAl+CqPHSyzVEuK/5eJ0r8OBAb7t7gsXDbC5Z/sQYBTZJzr9qJkTIeNynSerxdTZBYrW47v8grYbz92Hq6CLMIFsXoI/o78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le/WcXeI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMa9eaGT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46937C2BCAF
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:39:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le/WcXeI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C065C2BCB6
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773142763;
-	bh=DRNBwsU1mx/Kbp+9Cuu0UYWjGkVZd+niIXr4tR9zHcE=;
+	s=k20201202; t=1773143207;
+	bh=hNYfW2PmdXWP40ndx3jBB9FDPr1eZeihvEAEqFyjWdk=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BMa9eaGTJBsfrWj4oryzCPHzYoZcefyuPUyTsvTW0NvmrUsqjdI1LiAI4Vfmbfg01
-	 /P17cJkehHayalib/hrqJImPTM+e+zl20a9A2YBKXvGlK5++9TM55UIc/Fn5hw6U6/
-	 5o7Fk9RtIfg4o9u8C/WecKnSUJGjxK1QyeUDqJiB0KvPVbbDj5aZGPd6pKfs78HCjr
-	 AHgsNiuxvstAaK5CP6V6XbcgN9GvPg+irk/SzDmz+rd+6t5HIWChYvE4nlrCrsrHFC
-	 6qUwPzTnNTFwB5pFZ8pqSOaIR3MOB5XrKlbKolmP7UQClg6HIXumw0TC6L1aIQhq1d
-	 SuT16vKqH+gew==
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-64ae2ce2fe1so11838210d50.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 04:39:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2Op1ZNGvWWbsPTiXGsLEZzwBFwKwV09S5lMAv9BYE341o5QhzD4S87ah3c8uUl9iwSttyczPQF44g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA1X/cwbxi/J+OIdBqaKHe0LKQAYWcLkqkP4kLWsWoBi7hFD0N
-	eFFdeqoiQ/wqsCQOQrnkVsnTZeR/xyRz03WSxk927Iq5KRgJypvh0/keBm+9GVDbO0UeH3u5EKC
-	TsWbGOfkMR7UpDmLd54QjD6FfomiubQg=
-X-Received: by 2002:a05:690e:1a52:b0:64a:dfe6:c387 with SMTP id
- 956f58d0204a3-64d14304e0dmr9912213d50.66.1773142762680; Tue, 10 Mar 2026
- 04:39:22 -0700 (PDT)
+	b=Le/WcXeIEJ5/I5c5MTCxMQCRiHxZB5GNrnMcout58eVVdk18EdUYjzwPWJnVuXBki
+	 SagzozLxO+wcE192t1+AktymvzDcdUoDHooOp4B9FImKmAhrwgcU/olf3kIV5e7MkC
+	 Sbx+lsh95q7wmjhWNNmgmRSUFKTfFl3pxxKglpfkSosvPP+15QLmEBYPEQODi1FD5D
+	 S616RpE9b4efrcpVUHRg2IJUZ+A98WZye5sBwPInCATJCFCj4NqPZjHW6m47ow0hzW
+	 u0ScO3rxonqrCSFoEGGnCRPog9N0b9I9S4eerye/NQhRv6Ley8P9jQuW4QdcnR7J+Y
+	 SHjVrpzuxQ7wQ==
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7986fb839f5so111962917b3.0
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 04:46:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8qoWF3fQpp9euYZqElwV7L+CWtFMiA2hacg006bMS8azsoFBOh7Rnj/utI8t9trGJjNzRAQ5PD1hn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPmKeGNmsuh9RfnAKM4dhwD7q8D5Z+pANMufjT1Do4CMQTHADW
+	ZE5I7dVpahrLJTcIz6Dfi7WYWAueyqwth0+GOEp4BalgLF7Uhh5tVyA6u6X8wHzZBnkUqei/949
+	a0wrFfe/F+3k4HL3ctT4B1OVtybBLupg=
+X-Received: by 2002:a05:690c:62ca:b0:798:5951:f42b with SMTP id
+ 00721157ae682-798dd74191bmr132448727b3.42.1773143206603; Tue, 10 Mar 2026
+ 04:46:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <D5F95320CE72E20A+20260306035539.2443355-2-xujialu@vimux.org>
- <7131965EF4C8E8BD+20260307030255.3490715-1-xujialu@vimux.org>
- <177313382930.5248.1395703981822013627.b4-ty@oss.qualcomm.com> <CAD++jLmixL6hPx6F7ZMTay-9vwJEgqrNE2nfBskK-Qosg7eTDA@mail.gmail.com>
-In-Reply-To: <CAD++jLmixL6hPx6F7ZMTay-9vwJEgqrNE2nfBskK-Qosg7eTDA@mail.gmail.com>
+References: <20260224092419.1275016-1-wens@kernel.org> <CAD++jLnKxDi1GCp94zAUKhwBvQwVAdT8bgNyw5XM2+PTOhxq1Q@mail.gmail.com>
+ <3x55nsighrqdo7al2n5imlov5yoti6z7jxrj7yieeghyqkllvb@akbuob4n37pq>
+In-Reply-To: <3x55nsighrqdo7al2n5imlov5yoti6z7jxrj7yieeghyqkllvb@akbuob4n37pq>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Mar 2026 12:39:11 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnvXovoby__FzdP-efQYs5o_5NEBsfHyG62dwNeA1ZnXg@mail.gmail.com>
-X-Gm-Features: AaiRm51UIYqa_7rPm5Rn9t3vntTBLwBJlmfs7ub2XYrqe_Ols4FR1WrvJyzsLcI
-Message-ID: <CAD++jLnvXovoby__FzdP-efQYs5o_5NEBsfHyG62dwNeA1ZnXg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] Remove <linux/of_gpio.h>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Jialu Xu <xujialu@vimux.org>, brgl@kernel.org, kees@kernel.org, krzk@kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
+Date: Tue, 10 Mar 2026 12:46:35 +0100
+X-Gmail-Original-Message-ID: <CAD++jLkEKprZ_qraCSMq2Zcz7ueiJaOEX6iQnMk9=Su-LbO6xA@mail.gmail.com>
+X-Gm-Features: AaiRm51B2JF0wnKHHzU4Y05R5Ms0mzx95C_lYOY2b_o2pvVtQFzJDnrhtWE5e6E
+Message-ID: <CAD++jLkEKprZ_qraCSMq2Zcz7ueiJaOEX6iQnMk9=Su-LbO6xA@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sunxi: Implement gpiochip::get_direction()
+To: Michal Piekos <michal.piekos@mmpsystems.pl>
+Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, James Hilliard <james.hilliard1@gmail.com>, aprizel@wens.tw, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2026 at 12:38=E2=80=AFPM Linus Walleij <linusw@kernel.org> =
-wrote:
+On Sun, Mar 8, 2026 at 10:34=E2=80=AFAM Michal Piekos
+<michal.piekos@mmpsystems.pl> wrote:
+> On Tue, Feb 24, 2026 at 10:52:23AM +0100, Linus Walleij wrote:
+> > On Tue, Feb 24, 2026 at 10:24=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org>=
+ wrote:
+> >
+> > > After commit 471e998c0e31 ("gpiolib: remove redundant callback check"=
+),
+> > > a warning will be printed if the gpio driver does not implement this
+> > > callback. The warning was added in commit e623c4303ed1 ("gpiolib:
+> > > sanitize the return value of gpio_chip::get_direction()"), but was
+> > > masked by the "redundant" check.
+> > >
+> > > The warning can be triggered by any action that calls the callback,
+> > > such as dumping the GPIO state from /sys/kernel/debug/gpio.
+> > >
+> > > Implement it for the sunxi driver. This is simply a matter of reading
+> > > out the mux value from the registers, then checking if it is one of
+> > > the GPIO functions and which direction it is.
+> > >
+> > > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> > > Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
+m>
+> >
+> > Pulled out v1 of my tree and put in this one instead!
+> >
+>
+> Please do not merge the correction yet. As I was pointed out by Jernej
+> Skrabec the solution is faulty and just cover the issue. I will provide
+> proper solution as soon as I find it.
 
-> Did you put that on an immutable branch based on v7.0-rc1 so that
-> Jakub can pull it in?
-
-Ah there is a separate mail about that, thanks.
-Sorry for my ignorance.
+Too late, this is already upstream and I think that is how it was detected.
+Shall I queue a revert?
 
 Yours,
 Linus Walleij
