@@ -1,107 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E711439009
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 08:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03594301C2
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 08:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773132707; cv=none; b=C2GOauCP6BujW1X/604Cfu4L68clPnPAMAMnrdAbdAqFTFHtm0YHx9XDRxTdybosewiFEoCG1wV1B0eUPYkhXoDY1GE9oDfvlpZzZqtYzLwp8HU+Gp9NWx+8K1oNSqxUF+70FO/xQ+JaAMJByvDiaVE/fZshCyvlfZpiVd8ZAeM=
+	t=1773133155; cv=none; b=JEKmlNxUUpfeRd3miFSV5L/m1w24YloNMaPSuLSWdYRZBaX6GuQ9+Q1KGq1AIoMoYTKuSkyuWT5Kz/qffR2f3OSuRfyneQXFD1kX+Rbh72IkaoAGaBt5R+2Uzx+dRkiWuRcome+GgRrbzla+OptFPy3HIlJY6K0WFw8G5oJmYMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773132707; c=relaxed/simple;
-	bh=vVoj3FLi83VXmJyuCRq2Dd+bxXjKaU+NntpFAWe/BT4=;
+	s=arc-20240116; t=1773133155; c=relaxed/simple;
+	bh=aNoRrpmsMc+cYEvSe6invRTy+zqTopZWXaN7o7akQrU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gZBDmKOZvzBQ6fyPEOVXUaD3+LlJBF0sCkGeITrtwqLVAVexJv7LwIDlHZBJdcj/dZYmiEOe+kL9irfq9wSywRuGUBre90Ga7BwnIbt4K5HmpSXt4eUgu+I42Pd4NM1zSH9tSwpGRZqK9pI6kgmz+FONUIMdvXDqyvFuAmdgdnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zct30tSL; arc=none smtp.client-ip=10.30.226.201
+	 To:Content-Type; b=ieawFjB52HAnotZD32+c5860XyuyHCXAti36Q/jmNdMQcLPyyX3avNvZSDlIOgfSX4UWqAT4+j/b3PXtF6xLPkX3dzEmMUQdsJS+8BzcpYycjCXZPYMrihf8CzakFgzxIUUneMVsprNXFubgXdwEdBGnO7oiKQ9J2rBD2s/2+FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K09gTLDo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zct30tSL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B17B3C2BCAF
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 08:51:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K09gTLDo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D250C19423
+	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 08:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773132706;
-	bh=vVoj3FLi83VXmJyuCRq2Dd+bxXjKaU+NntpFAWe/BT4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zct30tSL3h4O0vrlc0FGEfY06o2E9w0S4RpZ3oU4xghwLQTLssYmSSmsIOaAXXJed
-	 GKp04zVWjV/rboXJu0znMzuHIhNcjAAHCPTqfjdOHx5SJOogCMDfFiXwQaeV6zNlj8
-	 DZyLtTSXYgnjg+zrA9J5y5CyI2Tucq5+RKbfV0zVr7P7ZZHdlQKSI3dR4wndWrXYh8
-	 4W4NSylgs6Xj1JcmztWDqzx7kskIHyPe4fUKskMhME8+fhxxKMlUrWlrpJ01IelZQ8
-	 G0RZjP94IHthM+0mqwwd46gxPz/r4ZLGHNMhvCgMMgoFvulyrcuC3K43Rc2UQmbtts
-	 hLwezImpohRfA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59dcdf60427so7509368e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 01:51:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsIJVebCA9GOqgMT19q196ndFK9yOP7cl4M7FnngRXdtctw2Hld5ZKh9wK8WwkODiKwvze+Nz3x6s9@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc0pZTpHchrxijUFDApnF/DH9viGZE+GpXn77u9THDTYvz3hSB
-	c9T7taMilaaEwUu9KUAnNFAbBrt8MqYStXUdsNBUmk6nR5jdlTsl/Ubj+WARgcqjyVYKNPfcnMZ
-	Gg00YONBCVuegBigNsEvkiwTEEIFzwqnGz9eanS8Q1w==
-X-Received: by 2002:a05:6512:304f:b0:5a1:3e8d:aa27 with SMTP id
- 2adb3069b0e04-5a13e8dad62mr4744483e87.36.1773132705315; Tue, 10 Mar 2026
- 01:51:45 -0700 (PDT)
+	s=k20201202; t=1773133155;
+	bh=aNoRrpmsMc+cYEvSe6invRTy+zqTopZWXaN7o7akQrU=;
+	h=References:In-Reply-To:From:Date:Subject:To:From;
+	b=K09gTLDoKjSyE99nhOkMcw7DA+Qr0qRBXUiYz2l3EQB3P3s51zoCHWvI6LKbQOIkd
+	 J16LNZMyyYTJ4CnV+fu+9cvW91621tuyKadK28ti7qi5xGXVo7LhxG5qESjMJI2Acv
+	 Mvv2ntgEUmSy3fTRqYEprmg0MX3y/hQfv8YMVT6ihEleUzEClJ/oCWH4l5TrvehQMI
+	 U5zJdV7vq7XOaAQlLtL/nhRMCIzdWHG0rR3teMK9Ne6zdvW8+9SQUmiFc1JSVVqu5m
+	 BwHt86RY0AsaJTXoMDrNfDbUtLE98aWI2+/mEhbWw9kVNi0ju5H69ftaRDEmQQ3JVh
+	 Pxrrq20HBbwuw==
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-64ad46a44easo11285515d50.0
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 01:59:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVV+x5ddwjEKaAdNGrxI18vSCYTysoaSdGCiqR2hXOB58eS9S74aNHglmh2ZaKAqnY0w5pmvkB+Nypu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzje9XEzlg3/Tmzx/4E5irKqrCcYUEE3rNbccD6t9kVMPtBwHoU
+	oe+DRLxrLDRZlXxEZV95x/vNxrnqGsMe7TmNfet1JcYyt8YUK3T6B8NApk+rdbhaLYlt/UzHrr5
+	48lHwm+X/eLvKf4m+URo0bmF4kgBSg5A=
+X-Received: by 2002:a05:690e:4486:b0:649:c7dd:d2ea with SMTP id
+ 956f58d0204a3-64d141a0203mr9886891d50.39.1773133154629; Tue, 10 Mar 2026
+ 01:59:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260308021535.48098-1-rosenp@gmail.com> <CAD++jLkLj235Q=U_9E-hSneW5E42JjU=dRBJxKJNnqwgBLCm=w@mail.gmail.com>
- <CAKxU2N9JbAzEYfmLpbw5b9Y6MsYUZ1FfLirfy8Hg8MCOUY6PAg@mail.gmail.com>
- <CAMRc=Me+oUX5xbNY7PX43cTH0e5ouu=Ex3TqhvWvoefmR7jYYQ@mail.gmail.com> <CAKxU2N8_V7U11X18Ja+=tdYPWT6jnmM7bYt+5GHgeXAXOJ5cng@mail.gmail.com>
-In-Reply-To: <CAKxU2N8_V7U11X18Ja+=tdYPWT6jnmM7bYt+5GHgeXAXOJ5cng@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Tue, 10 Mar 2026 09:51:33 +0100
-X-Gmail-Original-Message-ID: <CAMRc=Md3uAPzndudyvpFiLki8fkYHgAtumtaauXMkXwU4vANBA@mail.gmail.com>
-X-Gm-Features: AaiRm52QyqGRA5XZTuwTzrHYnzWWeX8i1qdpXgK_Fun3PV5g-eaSB6k0RbEVzRo
-Message-ID: <CAMRc=Md3uAPzndudyvpFiLki8fkYHgAtumtaauXMkXwU4vANBA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: msc313: remove kcalloc
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, 
-	Daniel Palmer <daniel@thingy.jp>, linux-hardening@vger.kernel.org, gustavoars@kernel.org, 
-	Romain Perier <romain.perier@gmail.com>, 
-	"moderated list:ARM/MStar/Sigmastar Armv7 SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20260302202121.197288-1-matthijs@stdin.nl> <20260302202121.197288-3-matthijs@stdin.nl>
+ <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se> <aa_cCCc7FqdSv8eX@login.tika.stderr.nl>
+In-Reply-To: <aa_cCCc7FqdSv8eX@login.tika.stderr.nl>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 10 Mar 2026 09:59:03 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmFt6N=v4RsxWqWKcsOonxbyoe7F__j+xNr4c8LWdgR7g@mail.gmail.com>
+X-Gm-Features: AaiRm502_1rkdLm1iaYa81yroOSRyRAo1lhawNhKOWuv7m5FNhD4eOYbJtZ1CkU
+Message-ID: <CAD++jLmFt6N=v4RsxWqWKcsOonxbyoe7F__j+xNr4c8LWdgR7g@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges properties
+To: Matthijs Kooijman <matthijs@stdin.nl>, Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 9, 2026 at 11:00=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
->
-> On Mon, Mar 9, 2026 at 2:03=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
-> >
-> > On Mon, Mar 9, 2026 at 2:27=E2=80=AFAM Rosen Penev <rosenp@gmail.com> w=
-rote:
-> > >
-> > > On Sun, Mar 8, 2026 at 5:06=E2=80=AFPM Linus Walleij <linusw@kernel.o=
-rg> wrote:
-> > > >
-> > > > On Sun, Mar 8, 2026 at 3:15=E2=80=AFAM Rosen Penev <rosenp@gmail.co=
-m> wrote:
-> > > >
-> > > > > Use a flexible array member to combine kzalloc and kcalloc.
-> > > > >
-> > > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > > > (...)
-> > > > >  struct msc313_gpio {
-> > > > >         void __iomem *base;
-> > > > >         const struct msc313_gpio_data *gpio_data;
-> > > >
-> > > > Do you wanna add:
-> > > >
-> > > > const unsigned int saved_size;
-> > > So in the code there's
-> > >
-> > > for (i =3D 0; i < gpio->gpio_data->num; i++)
-> > >
-> > > which is equivalent to match->num.
-> > >
-> > > __counted_by doesn't support pointers AFAIK.
-> > > >
-> >
-> > This is a regular flexible array of u8. It should work fine with
-> > __counted_by and I too am in favor of using it as it has become
-> > standard for flexible arrays.
-> That requires adding an extra variable in the struct.
+On Tue, Mar 10, 2026 at 9:53=E2=80=AFAM Matthijs Kooijman <matthijs@stdin.n=
+l> wrote:
 
-That's ok, it's negligible and provides tangible advantages.
+> Ah, I had not realized these aliases existed. However, it seems they are
+> not actually relevant in this case. My assumption was that gpio
+> numbering was based on initalizating order,
 
-Please do the same for your other patches.
+It usually is.
 
-Bart
+We do not like it when people depend on the global GPIO numbering.
+
+> but I see in the code that
+> GPIO drivers decide themselves (by setting gc->base statically or maybe
+> based on DT).
+
+They *can* but they really shouldn't. This mechanism exists for
+legacy reasons.
+
+Neither kernel drivers nor userspace should depend on the
+global GPIO number.
+
+We even replaced the sysfs with a mechanism that avoids using
+the global GPIO number in favour of chip-local offsets to drive
+home the point.
+
+The reasoning behind this is clear: it is impossible to maintain
+the global numberspace in any system with enough hot-pluggable
+GPIO expanders such as on USB and to some extent other
+slow buses. Do we know how many will be plugged in? No.
+So we can't have any reliable numberspace.
+
+It's only embedded developers who has never seen a USB
+GPIO expander who thinks the global numberspace can work.
+
+Yours,
+Linus Walleij
