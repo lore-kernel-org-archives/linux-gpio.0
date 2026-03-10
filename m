@@ -1,75 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275B2314D13
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8342188A;
+	Tue, 10 Mar 2026 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773143561; cv=none; b=iVB+2khYK7xeE27CXnvpKG1Te+Cssi4yfGV++fCkLzWezngmFqqJcd1MqLBt012lOLHH0a1OBVXjFKRS6VH3IxjNkbpMqyvTCR80iLRRs4Tm3zJZxHS2sMsgEM1x9UT0AA8keRUF/UlKaswj19ATxkNlAuaXx31d1uvZVxdD6UY=
+	t=1773143736; cv=none; b=JyjpjDNBamRX/d/0cBxhn8krCQOjexJ2vrQdxL9etQTgsSveWfmqAXU9Utungvjhf1ymk2tyTygW3eFbj9ceo2rBjCRHZq3BBsZECgAl7/pH+x9OcO6hwaUjZ7EqkgDRsUFouXu1RhYhXogSD8c1uEUyZLhZ0zSpr9skyUkgM2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773143561; c=relaxed/simple;
-	bh=6LFCZqvL3posu43TLCQlBHu1tQWOrRwNMdOPAUK1Hsw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jbA/p5aMIgu9zh8ISQt93qTWnjRforI4LEakGz+S+ye1W8YUmNfe2WLpUwYnEneunTorOcQL5e9LvYxwX0iMruBoy97QwCIZryLomgFjEOpaUCo+/dB+bUMenFSgDyVRS6pve5qZ4hYKArg3gIcKUfoBddZyxqtZ/TFu5AsOygA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBKvcVRa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773143736; c=relaxed/simple;
+	bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Y14YQFuhCN3Kna4n1bwdJLy6NiH7PsoBM7Us66PzPbSe668DAzp4tTo4cuQaqKhLnGId48d7VcOl3YdYa4gX896kymcYC+OJsptk56QFk5wYX8Gajg4MTVHJ9JF9m3oSlGutdRSt3+thWos4pR/PlY2QtSRm5Z/QKNjYzOak55w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=E8nt1Igf; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBKvcVRa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D50C7C2BC9E
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 11:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773143560;
-	bh=6LFCZqvL3posu43TLCQlBHu1tQWOrRwNMdOPAUK1Hsw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cBKvcVRaBVvVqwYxjm82tMvt+e/sck5zuD98LGFTHA4TVh60TbbpIuXQq/eaRtxuK
-	 H7EIfRF6MbiQSmFewaxaIolZIRG9ajLgQCX7cQb7VKJ77wDP6LKZyKpwVW4MUKrvvV
-	 DNcYD/5YCT7/FbcAE0oXeT1ZK1/161sqiEWjebst1RD12Ttq5S0AIod0IGeoskjmM4
-	 zC5Cn6BYsdG4LVvPUR2H2pmwLmAGNaeV6/fkX1q9N5+bX/75iqf/kfrL1drC9G1m7q
-	 UYTIFYNl1pojubFcY06EvyAcnWz2BTRNiio622ESheoQOB/YdkIjgcWM/vLdE8qJNW
-	 SRTBDDcrdA34A==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7982c3b7dfcso129768837b3.0
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 04:52:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiVtbAKOWhA9Jxd2B7JRQCJqckrxIosIEuNeZrRapTebgxZJRNM5NLLjNUbvDHvyvT1D12U4yFUWwD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZGMMQs6SUfQYuEmLrwTKv/C3M1y0/MfyrFDwp2DsMMRlK+xF0
-	jFzdc27oxecYPnONNC1hEXsMz6i9zF77t+BycxnOhi3UENNRxz0wP5ekDWk9qY3Takli7m8Chxo
-	Q6FIPMhs/FG4Rx5K2+o10bCkMM6jGevc=
-X-Received: by 2002:a05:690c:4c02:b0:798:99ae:765 with SMTP id
- 00721157ae682-798dd788971mr134205317b3.46.1773143560187; Tue, 10 Mar 2026
- 04:52:40 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="E8nt1Igf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1773143723; bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=E8nt1Igfikzg1UTgOGISAzAMiKswf2ND49bi7Kfi9UIZL/Ebzc+UJJz79rFMcVayH
+	 w+/EzW9fK7u4Bg5GlsqH3X/nHnzFmDjyW7AnMKYXmhb+RvNdMihtj8ZP/p/a51PpAe
+	 gPrdgwP6uGn176nZZmhXnabbuO0mAOF/przWQZhQ=
+Received: from [212.42.244.71] (helo=mail.avm.de)
+	by mail.avm.de with ESMTP (eXpurgate 4.55.2)
+	(envelope-from <phahn-oss@avm.de>)
+	id 69b006ab-b734-7f0000032729-7f000001bfd2-1
+	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:23 +0100
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue, 10 Mar 2026 12:55:23 +0100 (CET)
+From: Philipp Hahn <phahn-oss@avm.de>
+Date: Tue, 10 Mar 2026 12:48:39 +0100
+Subject: [PATCH 13/61] squashfs: Prefer IS_ERR_OR_NULL over manual NULL
+ check
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260308021201.47820-1-rosenp@gmail.com> <CAMRc=MfGkVpk9rBLvwxndjveXemY6t7nWOBX9wqZxc+Qe7aOCg@mail.gmail.com>
- <CAKxU2N8Zm6Hg-pr14RS9SCsOWGu2kF3gy4RVuQThMvM1CfLEtQ@mail.gmail.com>
-In-Reply-To: <CAKxU2N8Zm6Hg-pr14RS9SCsOWGu2kF3gy4RVuQThMvM1CfLEtQ@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Mar 2026 12:52:28 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnD2Rgre+JD6VmtihW+JQ89hB-K4bd1dANWFmnCX8C2qg@mail.gmail.com>
-X-Gm-Features: AaiRm51FtdF84mkYV7pgCl2oDehSOxKmBTbBBGjzPZ_i8P-wOpN6m_HDfDiO0ic
-Message-ID: <CAD++jLnD2Rgre+JD6VmtihW+JQ89hB-K4bd1dANWFmnCX8C2qg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: ljca: reduce struct allocation
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	Lixu Zhang <lixu.zhang@intel.com>, linux-hardening@vger.kernel.org, 
-	gustavoars@kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260310-b4-is_err_or_null-v1-13-bd63b656022d@avm.de>
+References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
+ bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
+ dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+ gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
+ intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+ linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+ linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+ ntfs3@lists.linux.dev, samba-technical@lists.samba.org, 
+ sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
+ tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, 
+ Philipp Hahn <phahn-oss@avm.de>
+Cc: Phillip Lougher <phillip@squashfs.org.uk>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=775; i=phahn-oss@avm.de;
+ h=from:subject:message-id; bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
+ b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAYCOfXcw6nKYZXjZ+DBieT/hiu2NsAfQUre0
+ jlVRw6aXW2JATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGAgAKCRA0LQZT0ays
+ 213oB/sHjZoOpAMz20yPf5W58oaVS3VDOW1zZjyOZfXyKihmnOb8lV99cBPQClALjvBUcqLXemg
+ tpELfmCMWmmS2DLDh38s8m7H4SkSFm3iB+qUl+u8a8NGrDjTz2g0nlLXJ2i4mzmAqWbDldfEhAp
+ ePslhLAf6MqAOAwxF9goTetOQ472ZWbOa7vI5fCqcvwcF/q5QIEUmGs+z5b0yUklyrSflqQlQo4
+ adffOC5kl3ETGEGqBgVXEIg3h8JiDkJe6MaBbDmB/JG3IQRjeJ8YfJc6t+cVg+eXVpCRQOreMFS
+ jG7NgF/eCJBIlcELmHlOCy2pst+P0hiPrthj4RBlPC3hRS93
+X-Developer-Key: i=phahn-oss@avm.de; a=openpgp;
+ fpr=58AF7C2E007CDBE62C59E078F50EFDCF8AD04B1A
+X-purgate-ID: 149429::1773143723-265C1A3D-EB4B679C/0/0
+X-purgate-type: clean
+X-purgate-size: 777
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
 
-On Mon, Mar 9, 2026 at 10:48=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
+Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
+check.
 
-> > > +       u8 connect_mode[];
-> >
-> > Please use __counted_by().
-> Counted by what?
->
-> __counted_by(gpio_info->num); does not work.
+Change generated with coccinelle.
 
-As with the other patch (IIRC) just add a new member to the struct
-to hold the count.
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
+---
+ fs/squashfs/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/squashfs/cache.c b/fs/squashfs/cache.c
+index 67abd4dff222235e75d8c2b10d5e9b811d6e38d8..8888cc02966e2e33210c872c733205d4c581ecc9 100644
+--- a/fs/squashfs/cache.c
++++ b/fs/squashfs/cache.c
+@@ -198,7 +198,7 @@ void squashfs_cache_delete(struct squashfs_cache *cache)
+ {
+ 	int i, j;
+ 
+-	if (IS_ERR(cache) || cache == NULL)
++	if (IS_ERR_OR_NULL(cache))
+ 		return;
+ 
+ 	for (i = 0; i < cache->entries; i++) {
+
+-- 
+2.43.0
+
