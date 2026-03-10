@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA5D3B27DE;
-	Tue, 10 Mar 2026 13:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7DE3A16B0;
+	Tue, 10 Mar 2026 13:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773147815; cv=none; b=hfqKWP+1BdmRJrqqChjS1TnTjYVF2SnnwjGGqX8lg9EdGTL0+2t/84eFmBhxsHpYB8pDAXIzpDziytlvyxpK0QzGZW3u6X9WzOYay9eldflX7xkcoPP32lAxBQENvdcTARNYaLm6rkbPkexwdmu0RaoHVQVTPD+2H8PqgXy1Hb8=
+	t=1773147980; cv=none; b=Q3g6+O+7Cucxt9j5TQQYfpcA28Cyuoue5jSOXl8Wu71+PAKY8r50XFAAnhCjz+U4HRblSd/ukz30qUEP5x01ovuxTn9UuEa5W9u889BqcX7OubmCJGMyV1KSVMXBu3lZm1XuQpYkbso4xJGl+33B6Lb5zYXlnDN21WjXP8HmKm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773147815; c=relaxed/simple;
-	bh=MfEXy1ctseopp63FSBOa0UQ1m/J7vCPfW+SR5dSkFkU=;
+	s=arc-20240116; t=1773147980; c=relaxed/simple;
+	bh=NCYv3ScJeZIYKDGxml+7ADHwSUlm9Yy8y11GpVGfHFA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwDeD9bWlJnySMqzO2inI1CeZ5zcv5BDvjaLB6dV6fB+X0xygYXQBPH7jT0CspYfSd8rgyWiLtpZ+wPztZ58avZpdv/DD6BkeJ77kT3cLOh2ta7Bixs44ldblWCGLFHoT0VKXwc7rzVfyyurXdEMUq5ANadmiMj4rYddTb/Up3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln1xstyJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=VU13pkvgiMdUnwYfxPOKfy4WHAjDIpja70uRjICvkWZ0O4zl7bf+HYWX6Ypio37N1zXLIn6QHf9PjNTGKCPH0EJ9f0vauS9uQoRx9MfupWlyK+fbreyNmi4qoOqgXODMp57IAWJpHvB2cW70l49LSPG5x7fvN6nlgMcxWJVYGaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5c3Pn7+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln1xstyJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F28BC2BCB1;
-	Tue, 10 Mar 2026 13:03:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5c3Pn7+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C362C19423;
+	Tue, 10 Mar 2026 13:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773147815;
-	bh=MfEXy1ctseopp63FSBOa0UQ1m/J7vCPfW+SR5dSkFkU=;
+	s=k20201202; t=1773147979;
+	bh=NCYv3ScJeZIYKDGxml+7ADHwSUlm9Yy8y11GpVGfHFA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ln1xstyJp0BoYpFoSFJnSctWSbgDDiJ7aiAs5vss36QOCCOhspsj2Qv0a8Q3PhdTe
-	 bO4PisEawqrnMt3l21W/NfkFxjsx++INMM9ohMS64akIcobdMkUYpzIsOqboD4lNkg
-	 WpXvAdiN+7wlDiCIyBTc19BiyE30eEoD84Cr3+bGgIkP620QaiTR/nRSr45/TV38N8
-	 KlG/ZOFE/TLKACO3XPepuyv4z03JLf1Uq0KsKGir6bajteaqjo4l3VJm7rFvcsE5Gj
-	 HC1Fjr8XiVcWKAhbYd0ok58jqDVweCBhb4fzOylpxo7IMHhIeceOodHOSYfv35pbHe
-	 44mLuSEDyPpPA==
-Message-ID: <14af1139-cb61-4519-a769-23796ecca3e2@kernel.org>
-Date: Tue, 10 Mar 2026 14:03:30 +0100
+	b=d5c3Pn7+UTTTF4bW+a2+KDmhfMGoH3jJqEbF6gSEYw+eTQjXZnOumVLcbyiGS8i5c
+	 guOTM1rhQQeBDNJjmnhfeG/2wUOlAtUZXNqnN8un4q1ZksaKhf/1hoWKlbsM/d8cRm
+	 sI7EnD6/5R+kK5EwiRL6meJxVAhF7hLRIPJgeydiLrqHVOHEso3MlDD7M8FJAjKBGI
+	 0xgRUzsiDPbAjMy027WhaUP/jQvdVrtvMHZwkJqPnNZ0AeI7iDQ43LWjRygFUufcXU
+	 GMrmotuFgcrL3l92nlynbs4ezDYBSkPsf1X/OPY5jN8Brp62afYXBdYlyOoUFE/k7T
+	 WoSRhKdSFPlzA==
+Message-ID: <13f615e9-f543-4630-8dc9-dd9c954ea921@kernel.org>
+Date: Tue, 10 Mar 2026 14:06:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
+Subject: Re: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
 To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
  linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
@@ -44,64 +44,24 @@ Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
  hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
  miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
 References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
- <20260310124427.693625-2-antti.laakso@linux.intel.com>
+ <20260310124427.693625-3-antti.laakso@linux.intel.com>
 From: Hans de Goede <hansg@kernel.org>
 Content-Language: en-US, nl
-In-Reply-To: <20260310124427.693625-2-antti.laakso@linux.intel.com>
+In-Reply-To: <20260310124427.693625-3-antti.laakso@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-Thank you for your patches for this, cool to see someone working
-on supporting this!
-
 On 10-Mar-26 13:44, Antti Laakso wrote:
-> Defer probe if endpoint is not yet available. And do it before acquiring
-> clock, gpio and regulators.
+> The Omnivision ov5675 is found from MSI prestige
+> 14 AI EVO laptop, for example.
 > 
 > Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
-> ---
->  drivers/media/i2c/ov5675.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-> index ea26df328189..81916fa8c117 100644
-> --- a/drivers/media/i2c/ov5675.c
-> +++ b/drivers/media/i2c/ov5675.c
-> @@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
->  	if (!fwnode)
->  		return -ENXIO;
->  
-> +	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
-> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
-> +	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
-> +	fwnode_handle_put(ep);
-> +	if (ret)
-> +		return ret;
 
-This should be:
+Thanks, patch looks good to me:
 
-		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
-
-
-> +
->  	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
->  	if (IS_ERR(ov5675->xvclk))
-
-and here and in all other error-exit paths you now need to do:
-
-	if (IS_ERR(ov5675->xvclk)) {
-		ret = dev_err_probe(dev, PTR_ERR(ov5675->xvclk), "failed to get xvclk\n");
-		goto check_hwcfg_error;
-	}
-
-So that the v4l2_fwnode_endpoint_free(&bus_cfg); get called.
-Note in this case I also dropped the %pe print because dev_err_probe()
-already prints the errno value from its second argument.
-
-You will need to add a similar ret = ...; goto check_hwcfg_error;
-to all other error-exits below this point.
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
 
 Regards,
 
@@ -110,22 +70,21 @@ Hans
 
 
 
->  		return dev_err_probe(dev, PTR_ERR(ov5675->xvclk),
-
-> @@ -1210,15 +1217,6 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
->  	if (ret)
->  		return ret;
->  
-> -	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
-> -	if (!ep)
-> -		return -ENXIO;
-> -
-> -	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
-> -	fwnode_handle_put(ep);
-> -	if (ret)
-> -		return ret;
-> -
->  	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV5675_DATA_LANES) {
->  		dev_err(dev, "number of CSI2 data lanes %d is not supported",
->  			bus_cfg.bus.mipi_csi2.num_data_lanes);
+> ---
+>  drivers/media/pci/intel/ipu-bridge.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> index c895584e25a0..ee070d44d5f1 100644
+> --- a/drivers/media/pci/intel/ipu-bridge.c
+> +++ b/drivers/media/pci/intel/ipu-bridge.c
+> @@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+>  	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
+>  	/* Omnivision OV2680 */
+>  	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
+> +	/* Omnivision OV5675 */
+> +	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
+>  	/* Omnivision OV8856 */
+>  	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+>  	/* Sony IMX471 */
 
