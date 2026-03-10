@@ -1,72 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from tika.stderr.nl (tika.stderr.nl [94.142.244.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB43A4F2E
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B662C0F6D;
+	Tue, 10 Mar 2026 09:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.142.244.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773134619; cv=none; b=VpPXJIPRPhZ3vnYV9uFvcEiJvrXdcjPfjCqWJrz9MhzfXuakzv2O8knUOXmfEZFtgHFj/cT8goyjlU77EVwj2aJFb4C1VQh9Vmhp9VMtca5ScS2CGYB07ZI16gmPFvDhqKW2WuprtdFIHh3jEaCICwPIjEvATvKbUTA9vIHZTUo=
+	t=1773134709; cv=none; b=lp6A7IxCkWdC4JQpbIHVnI4EhVV20ITsV24h9UHd4wkQTCqHrUhztZLnz8LV8oxUgx5e/wQgdZx/c5JcFzHlsMjNcWTZlBovDTVvzeJf2F4LeHra6wQdy/RBltwWFARz8OH3vxiak3TKyrukiwotGQuqJ78ST3jfafQr3PE+5JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773134619; c=relaxed/simple;
-	bh=1VhdsvctOPPInwjU04C8i7FrYJ3pYmp/oUZ4sm6hWN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=thEzm37MplPjd7puILJDvBUtY5ebsIq3iRJrtbnrr1s8uPpKvF1nimBD1IdcuDnFHUsUwbDn2gB1ZsFynsf614l5RS1wPw2/dctCOkJCkjvl37FS8tew7wMNdMx7VxDfL9/5UXkyt/svqNguLZcQJv2WaoG0t/pDXFTlewpE+9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsYBKMyq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773134709; c=relaxed/simple;
+	bh=ZYPZP303acQimntExRwnf0OKXbz/OJ7MyaDMh8CkayU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0/SMB3Vc2nVEaDCwdKm8O+j9ZdPtoXyTWLzW8fjbAHyEkDaFBQQbDh0JrPYH38pNXR9ry1JBUdHS6m1tO0peoxqfP0cf2g5+TPYCRR/WDnieeR+3P8dfRvQNZPUCK/kKFW8ixkV24BZ8yVBNqNHZIhrBuAACQ/YDf3p0MXaCWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl; spf=pass smtp.mailfrom=stdin.nl; dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b=RLL5cx9M; arc=none smtp.client-ip=94.142.244.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stdin.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stdin.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsYBKMyq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C10C2BCB2
-	for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 09:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773134618;
-	bh=1VhdsvctOPPInwjU04C8i7FrYJ3pYmp/oUZ4sm6hWN0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tsYBKMyqewnDvu3QnwOXJpTozeaW1Cq2NAPg8EhFJmB4tCuJIdapTdEhLjO4cLWPZ
-	 knpJacCfmAm1wQ1p7hgmcxncaQfbWZjiCov+9sEV/sOyTDhPvdOvkVSYyejK76nG8s
-	 OncqWBk6Jcq42QU12EjGreRzzY73Jub3byNj20PPwwDtCufPpqvU6oiBaVvJjFy8Et
-	 5897+Bbu2YUVip7IrFOUs78qvSjOY/Mqxn0tZd9V+XQ5UVYXrJh7K5YSbVl4A+mqNu
-	 IUv2IPIGdphCq3emrbViDdggTWU74Nsjt26tc6WzsxQd2MbOeiW4Djc/fRpYBOP838
-	 yb4qFKuYYNGYw==
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7986d231b3cso157592077b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2026 02:23:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVACC9Fpp27Oj8RMEUBSQA7p+4nbbRet26tHraddNMcOMJz9gtybh9+pzk/J5U4bztlm+0i9p6wojjz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyemZQemewDfT+0RYDyAc4xd0KByArJVudp1xCoYyz999fqtfz9
-	LAnWOTNUloekkOoZFC6SQg0zwwqYyjP3B9tW1SrlimIXw7a44Br1Pz2XxIzMBSSfbST5ZQ1Kcjg
-	NfFHV024YdT3fEpFD6TCby33yoF/EC+s=
-X-Received: by 2002:a05:690c:338d:b0:798:55f2:de33 with SMTP id
- 00721157ae682-7990a67eabamr26807187b3.7.1773134618046; Tue, 10 Mar 2026
- 02:23:38 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=mail.tikatika.nl header.i=@mail.tikatika.nl header.b="RLL5cx9M"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.tikatika.nl; s=201709.tika; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Jurke3t2EyAB5+kik9FcOqNaKymdC6aoDQcLoDZKbXc=; b=RLL5cx9MD2m8r+X9gRVzVpVqZs
+	RWsU1OHvsr6fp+kbOZjI/bIzss324l6KeKJJJjUdmkUWLz585TZR5otE81+7jCvOv3OD+3/PWAXZx
+	2G4mvfUSS7uyy2+r8v8M6c1B10ZJ7iZ45+kw3/c/mJkeAotgH2hCq5OmzMrESIJEwRJU=;
+X-Preliminary-Spam-Score: -4.4 (----)
+Received: from [10.42.0.16] (helo=login.tika.stderr.nl)
+	by tika.stderr.nl with smtp (Exim 4.96)
+	(envelope-from <matthijs@stdin.nl>)
+	id 1vzsqH-0002Jb-2J;
+	Tue, 10 Mar 2026 09:53:32 +0100
+Received: (nullmailer pid 2675120 invoked by uid 2001);
+	Tue, 10 Mar 2026 08:53:29 -0000
+Date: Tue, 10 Mar 2026 09:53:29 +0100
+From: Matthijs Kooijman <matthijs@stdin.nl>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH RESEND 1/2] arm64: dts: rockchip: rk3308: Add gpio-ranges
+ properties
+Message-ID: <aa_cCCc7FqdSv8eX@login.tika.stderr.nl>
+Mail-Followup-To: Matthijs Kooijman <matthijs@stdin.nl>,
+	Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
+References: <20260302202121.197288-1-matthijs@stdin.nl>
+ <20260302202121.197288-3-matthijs@stdin.nl>
+ <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306063411.2041232-1-rdunlap@infradead.org>
-In-Reply-To: <20260306063411.2041232-1-rdunlap@infradead.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Mar 2026 10:23:27 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmDfPRvD4EfHpLjbF5rvcZrBWM4A-+BmRwXEYEcWJ4QpA@mail.gmail.com>
-X-Gm-Features: AaiRm51Mv6PjvWvJQZCUmGPcNRXEtPZ2mMosgtjimcuxjz3z5nZjwgEkkU8MbrE
-Message-ID: <CAD++jLmDfPRvD4EfHpLjbF5rvcZrBWM4A-+BmRwXEYEcWJ4QpA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] pinctrl: s32: correct kernel-doc bad line warning
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Y0Af1s2EGjNyxXmK"
+Content-Disposition: inline
+In-Reply-To: <e439f2f7-0b25-41a5-951a-d8d3bc9f2bf2@kwiboo.se>
+X-PGP-Fingerprint: E7D0 C6A7 5BEE 6D84 D638  F60A 3798 AF15 A156 5658
+X-PGP-Key: http://www.stderr.nl/static/files/gpg_pubkey.asc
+
+
+--Y0Af1s2EGjNyxXmK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 6, 2026 at 7:34=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org>=
- wrote:
+Hi Jonas,
 
-> Insert a "*" in the kernel-doc line to resolve a warning:
->
-> Warning: drivers/pinctrl/nxp/pinctrl-s32.h:18 bad line: this group.
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks for your review.
 
-Patch applied.
+> > This does not immediately change functionality, because the
+> > gpio-rockchip.c driver has a workaround that defines ranges when they
+> > are not present in DT, but that relies on global gpio numbering (so
+> > AFAICS only works when the rockchip gpio banks are initialized first and
+> > in-order).
+>=20
+> This is strictly not correct, the driver use the gpioX alias id as
+> defined in the device tree and does not depend on the initialization
+> order.
 
-Yours,
-Linus Walleij
+Ah, I had not realized these aliases existed. However, it seems they are
+not actually relevant in this case. My assumption was that gpio
+numbering was based on initalizating order, but I see in the code that
+GPIO drivers decide themselves (by setting gc->base statically or maybe
+based on DT). For the gpio-rockchip driver, these base numbers are
+hardcoded to start from 0 in rockchip_pinctrl_get_soc_data(). Dynamic
+initialization-order based numbering is also done for drivers that do
+not set gc->base, but that starts at GPIO number 512 to prevent
+conflicts.
+
+In any case, I will update my commit message to better reflect what is
+happening.
+
+
+> > --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> > @@ -889,6 +889,7 @@ gpio0: gpio@ff220000 {
+> >  			interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+> >  			clocks =3D <&cru PCLK_GPIO0>;
+> >  			gpio-controller;
+> > +			gpio-ranges =3D <&pinctrl 0 0 32>;
+>=20
+> This matches the driver, but not the hardware according to datasheet, it
+> only lists gpio0 A0-C5 used, and not all 32 pins supported by the gpio0
+> controller.
+
+Indeed, this seems to be the case, but I wonder if this is a problem?
+
+Isee other rockchip devicetree definitions (rk3528, rk3562, rk356x,
+rk3576, rk3588) do not care about this and just map all 32 pins. See
+
+	git grep -C 20 rockchip,gpio-bank | grep gpio-ranges
+
+I also think there is no other provision for these missing GPIOs
+anywhere - both pinctrl and gpiod seem to expose all 32 pins, even the
+one that do not exist.
+
+Limiting the gpio-ranges definitions would prevent writing to reserved
+pinctrl registers via the userspace gpio API, which might be useful, but
+you would still be able to write to them via a custom devicetree (that
+uses non-existing pinctrl pins) and you would still be able to write to
+non-existent gpio registers via the userspace API.
+
+Given the above, do you still think it would be good to limit the
+gpio-ranges to the existing GPIOs only (I have no strong opinion)?
+
+Gr.
+
+Matthijs
+
+--Y0Af1s2EGjNyxXmK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMyF3AetYrDfGJ9el6ZMxy91tJYwFAmmv3AUACgkQ6ZMxy91t
+JYyNZA//VogIWO55rSmcEXGC0p9rrWm93PtZhjLMawss6RQXPtmAwnQUSDF7xCoy
+jsoOT8xFlARRDQC0v0ONBNhmOOYzH14emEqudzdjV6auGr8GW0vBdMF04xjWigEC
+nL1Jiqp+yoC1Rgk8C19H3fOiyx5VpEIkw5IHKrSQQH49gRkHjvHkTMDPLqeH32eY
+iH68S6mCp705yDVUXrRWCL4uRSfu5EaHpfRyfmqEf4gAz46Yxi4grxV9US7fjjZO
+x3PSE3XtNCleshCP/97xKPt8yAzir3NCRiXWFqTX58lwbK81s/ygVQSY914lJ88L
+gzNWmCMuhy01+4CF7GGnDE6C7jWSavixnrUhXRggIPq393OOs93sN5sXs2JnHP43
+qSAdwbPMf8ob4/JYyr9AdL90DKWXuqaN2PisAMn3p0+4Emr16LkQ5J4H20b5T1eW
+S8rg4jxHJdGd35IJzo0DC50kXp/s7T4EAdNmwKlcruubWMrCelyJ60kETqqI2noF
+Ov7vD3BV8XZUngJC0qeo8Cx62d13KZr4o1xKYvxA4Tmgi7ptx4XR6DDdZ2Utl9R9
+vlkTkR6tuEaOAOoJrniRQ9eOZYOgd2+JRyqJ9wNvfyvEK1YWZEfbaMy3/BWYrTlq
+YqjZkeflsS7QFjnSHLvkGMFe6OOTGlZMCVUjCKr8Mo6Kcv15bAc=
+=tkhC
+-----END PGP SIGNATURE-----
+
+--Y0Af1s2EGjNyxXmK--
