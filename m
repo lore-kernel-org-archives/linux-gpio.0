@@ -1,154 +1,75 @@
-Received: from smtpfb1-g21.free.fr (smtpfb1-g21.free.fr [212.27.42.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976B3B3C07;
-	Wed, 11 Mar 2026 14:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.9
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07383B0ACA
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773239893; cv=none; b=BomT3PMQtaOS77O+x9lfxMrxQqGYRbUjEvttskW/vj9Gf5sxfRkwPRz+JAV6lD4yFrD4U3dI5VcwMeKfEuJfxAqqXyImKjmySCBgdSlWEz/+dJwK1Qey30yQy47MSWxkTdb9uvRLIuTqDVXqU+tJhjzE3DCZLQIQyoBrV23F5V0=
+	t=1773240178; cv=none; b=l12LxNrWXrmyJHvz0+xMIhx/xld2JdE4nFkrPaNc5wTQgXnHlU0wklgrcUltb1QgKJWnzEJh6JPCfbiN/uZCyuDKTjWFXCNk9is7ACW/Oz1ZhXs+LMUuXEtmIGNAaxSRIhzjM8PRo0IUaCUXmCYI1woWV/9WIEOe99QThC/bfQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773239893; c=relaxed/simple;
-	bh=eqbx4mwZTaA0wRRinohHZ5IqBH8K0UTIbag01Jsx3mY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pmyWQ8ldFzQoALaxOfvR1/iGcySyH1C1CAcXdcjG39/C/k0Cg61OvYo15ktJachPPyIBZ1/p/THkiNZgPF2sT/ox9xotgqOSA2o+yn+xsMUbyVwQhWpsCvVepElGPM9UR6A0DlGd91kuo4BRPFnVAu9Y2n1cjldZbH/EM4+yswU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
-	by smtpfb1-g21.free.fr (Postfix) with ESMTP id 098B8DF922A;
-	Wed, 11 Mar 2026 15:31:47 +0100 (CET)
-Received: from albans-vm.. (unknown [213.61.141.186])
-	(Authenticated sender: albeu@free.fr)
-	by smtp2-g21.free.fr (Postfix) with ESMTPSA id E866C2003FC;
-	Wed, 11 Mar 2026 15:31:31 +0100 (CET)
-From: Alban Bedel <alban.bedel@lht.dlh.de>
-To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Alban Bedel <alban.bedel@lht.dlh.de>
-Subject: [PATCH 1/4] gpio: kempld: Simplify the bit level register accesses
-Date: Wed, 11 Mar 2026 15:31:17 +0100
-Message-Id: <20260311143120.2179347-2-alban.bedel@lht.dlh.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20260311143120.2179347-1-alban.bedel@lht.dlh.de>
-References: <20260311143120.2179347-1-alban.bedel@lht.dlh.de>
+	s=arc-20240116; t=1773240178; c=relaxed/simple;
+	bh=4KhY2g0Uq9X4AzAqENY/qOKp9uWbBLjCKnpGY5gM8Cw=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cXOPXCICpoJ3jMuas56Bd6PcSHK0B5rn2aSVf++SQQRk2eESDUnMtftPffnSbO810yNuQZsAM415Lw7/GBQT5W95OnAxBnJMa5T9HqSaT6JZ1UNMnI8m7AgKN4cPQCT/rnS67t7NxZsJI7K3ZmMPj5Bl+TX8+Gu8hXBdtU4Mmi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvvWx1Px; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvvWx1Px"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9E9C2BCB5
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773240178;
+	bh=4KhY2g0Uq9X4AzAqENY/qOKp9uWbBLjCKnpGY5gM8Cw=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=QvvWx1Px+/Ji5z9+9syHhWg6rQ6hYV+1d3WKdbWWFd/i/hooXCbgY/luvFdkNke+j
+	 v0HckijTxH+1MQs/LdHLzw52jER3OCmJ2U4fYwY9lav3nxzT5GeFSBTAr5ZFo0W2sX
+	 wL9VVMdtMOPGx0V4P+8XqYdfLHTyiweZsV8Q7pNvAKfxzVNmjODwNVoB5MKNK2FRSo
+	 Wa6jAbeHpLLEKgDszAUUg7By4k00M1x4gVnCfcjYlk0ahBJiUsB5VSCkC23fkc41Kr
+	 txCRJykPPQQz32r2Mowf1XN8hJM5pQDpQi6RFK7aAZWgF2hO4nF3iRdXwU8sZ9yvUe
+	 UekAx6Ar+P/1g==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-38a42a0d7f7so7920231fa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 07:42:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWKYXrBMHvtX8kgg8FdF5t+Aem8JWGMTZAbj4Y/0vbcE7Fg614PSgVPqJ4D6aMWFenzIUVWFyRBQXC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyeqfBTDqXuXlMOmEvYxB2VG9BMPUpgVWPrnBtlKBKPafjJ9g5
+	OQJ/PaGrOsS3cWGXyyYvzqhaZn3YGU31gTZ9A9z6pXfbFMQZ19Y3QyQcKT76luuUVdkxQwybj1x
+	OOwgq6mWvwvgnwk2mSoHANuuGs6r2iSDV3Qu/hWbcdQ==
+X-Received: by 2002:a2e:a887:0:b0:38a:2db9:eb72 with SMTP id
+ 38308e7fff4ca-38a67fe6ad2mr10189401fa.16.1773240177053; Wed, 11 Mar 2026
+ 07:42:57 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Mar 2026 07:42:56 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Mar 2026 07:42:55 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260311131910.835513-5-antti.laakso@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260311131910.835513-1-antti.laakso@linux.intel.com> <20260311131910.835513-5-antti.laakso@linux.intel.com>
+Date: Wed, 11 Mar 2026 07:42:55 -0700
+X-Gmail-Original-Message-ID: <CAMRc=McZNPaPD_1v13B1BWQYLKSb8zKiiKS2H9-ysfAyEDHTig@mail.gmail.com>
+X-Gm-Features: AaiRm50eTy3He4v3FQM336edOHk8BCPzxs0CElg7RLW36lwupFwdvJs0mI-g6C4
+Message-ID: <CAMRc=McZNPaPD_1v13B1BWQYLKSb8zKiiKS2H9-ysfAyEDHTig@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] gpio: tps68470: Add i2c daisy chain support
+To: Antti Laakso <antti.laakso@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linusw@kernel.org, brgl@kernel.org, 
+	sakari.ailus@linux.intel.com, mchehab@kernel.org, dan.scally@ideasonboard.com, 
+	hansg@kernel.org, ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, 
+	sre@kernel.org, hao.yao@intel.com, jimmy.su@intel.com, 
+	miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 
-The hardware uses 8 bit registers but supports configurations with up
-to 16 GPIO, so all GPIO registers come in pairs. Most accesses to
-single bits is done using the kempld_gpio_bitop() and
-kempld_gpio_get_bit() functions, which take a register index and bit
-offset as parameter. These functions apply a modulo on the bit offset
-but leave the register index as is, so callers have to use an
-additional macro to fix the register index before the call.
+On Wed, 11 Mar 2026 14:19:09 +0100, Antti Laakso
+<antti.laakso@linux.intel.com> said:
+> The tps68470 daisy chain make use of gpio 1 and 2. When in use, these
+> gpios must be configured as inputs without pull-up.
+>
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> ---
 
-Simplify things by also handling the register index offsetting in the
-bitop functions.
-
-Signed-off-by: Alban Bedel <alban.bedel@lht.dlh.de>
----
- drivers/gpio/gpio-kempld.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
-index 923aad3ab4d45..532e4000879ab 100644
---- a/drivers/gpio/gpio-kempld.c
-+++ b/drivers/gpio/gpio-kempld.c
-@@ -17,8 +17,8 @@
- 
- #define KEMPLD_GPIO_MAX_NUM		16
- #define KEMPLD_GPIO_MASK(x)		(BIT((x) % 8))
--#define KEMPLD_GPIO_DIR_NUM(x)		(0x40 + (x) / 8)
--#define KEMPLD_GPIO_LVL_NUM(x)		(0x42 + (x) / 8)
-+#define KEMPLD_GPIO_DIR			0x40
-+#define KEMPLD_GPIO_LVL			0x42
- #define KEMPLD_GPIO_EVT_LVL_EDGE	0x46
- #define KEMPLD_GPIO_IEN			0x4A
- 
-@@ -32,24 +32,25 @@ struct kempld_gpio_data {
-  * kempld_get_mutex must be called prior to calling this function.
-  */
- static void kempld_gpio_bitop(struct kempld_device_data *pld,
--			      u8 reg, u8 bit, u8 val)
-+			      u8 reg, unsigned int bit, bool val)
- {
- 	u8 status;
- 
--	status = kempld_read8(pld, reg);
-+	status = kempld_read8(pld, reg + (bit / 8));
- 	if (val)
- 		status |= KEMPLD_GPIO_MASK(bit);
- 	else
- 		status &= ~KEMPLD_GPIO_MASK(bit);
--	kempld_write8(pld, reg, status);
-+	kempld_write8(pld, reg + (bit / 8), status);
- }
- 
--static int kempld_gpio_get_bit(struct kempld_device_data *pld, u8 reg, u8 bit)
-+static int kempld_gpio_get_bit(struct kempld_device_data *pld,
-+			       u8 reg, unsigned int bit)
- {
- 	u8 status;
- 
- 	kempld_get_mutex(pld);
--	status = kempld_read8(pld, reg);
-+	status = kempld_read8(pld, reg + (bit / 8));
- 	kempld_release_mutex(pld);
- 
- 	return !!(status & KEMPLD_GPIO_MASK(bit));
-@@ -60,7 +61,7 @@ static int kempld_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	struct kempld_gpio_data *gpio = gpiochip_get_data(chip);
- 	struct kempld_device_data *pld = gpio->pld;
- 
--	return !!kempld_gpio_get_bit(pld, KEMPLD_GPIO_LVL_NUM(offset), offset);
-+	return !!kempld_gpio_get_bit(pld, KEMPLD_GPIO_LVL, offset);
- }
- 
- static int kempld_gpio_set(struct gpio_chip *chip, unsigned int offset,
-@@ -70,7 +71,7 @@ static int kempld_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	struct kempld_device_data *pld = gpio->pld;
- 
- 	kempld_get_mutex(pld);
--	kempld_gpio_bitop(pld, KEMPLD_GPIO_LVL_NUM(offset), offset, value);
-+	kempld_gpio_bitop(pld, KEMPLD_GPIO_LVL, offset, value);
- 	kempld_release_mutex(pld);
- 
- 	return 0;
-@@ -82,7 +83,7 @@ static int kempld_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	struct kempld_device_data *pld = gpio->pld;
- 
- 	kempld_get_mutex(pld);
--	kempld_gpio_bitop(pld, KEMPLD_GPIO_DIR_NUM(offset), offset, 0);
-+	kempld_gpio_bitop(pld, KEMPLD_GPIO_DIR, offset, 0);
- 	kempld_release_mutex(pld);
- 
- 	return 0;
-@@ -95,8 +96,8 @@ static int kempld_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 	struct kempld_device_data *pld = gpio->pld;
- 
- 	kempld_get_mutex(pld);
--	kempld_gpio_bitop(pld, KEMPLD_GPIO_LVL_NUM(offset), offset, value);
--	kempld_gpio_bitop(pld, KEMPLD_GPIO_DIR_NUM(offset), offset, 1);
-+	kempld_gpio_bitop(pld, KEMPLD_GPIO_LVL, offset, value);
-+	kempld_gpio_bitop(pld, KEMPLD_GPIO_DIR, offset, 1);
- 	kempld_release_mutex(pld);
- 
- 	return 0;
-@@ -107,7 +108,7 @@ static int kempld_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	struct kempld_gpio_data *gpio = gpiochip_get_data(chip);
- 	struct kempld_device_data *pld = gpio->pld;
- 
--	if (kempld_gpio_get_bit(pld, KEMPLD_GPIO_DIR_NUM(offset), offset))
-+	if (kempld_gpio_get_bit(pld, KEMPLD_GPIO_DIR, offset))
- 		return GPIO_LINE_DIRECTION_OUT;
- 
- 	return GPIO_LINE_DIRECTION_IN;
--- 
-2.39.5
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
