@@ -1,72 +1,60 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABA02836BE;
-	Wed, 11 Mar 2026 16:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121253B2FCF;
+	Wed, 11 Mar 2026 16:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773245503; cv=none; b=bfWs0iqUvvzJilOrCEOMV/2ob4W9L74l1rYbmkyE2s59UWaG595PY0wuIG0hL1yJ9noDMYzNCRieRxumTWqxLcjHRKE/VxHjK0xte6eoGrywm+HFCKhyl7O1EwH0iatACEmb0UXFoadyaaJHtijPLTz2JSYy2yL3b9J/9Lfzsi0=
+	t=1773247279; cv=none; b=uHJ5p1vAWUDsADsAIElqn8tjehnza8Hrt2vajrTZMeQTXX5Osp2Ti7tNTux0te1BxnMMJHbIqP9rOSptKMSbrRk42TGG32USYREDcR7XmFgrQEiUVz5NCgSe0I3L/HxZEOJhZHQgISxMR24cEZIMvS0Zynk2LIuTv6yduQUk7QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773245503; c=relaxed/simple;
-	bh=evV2rhrIzHx6r4Vr4HBP0eaZLjm3eQdiuatu/5CQVUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hh1fHrHBNedv7Le501HlBz7NozAXsCyX5CC+IVcdSDWrtCZ9+CIcTJeXS8+TGm+sbiCDVbV4PCjg6jY8nvG7Ug5TPLc6rbBf1Pw2DRUh8QM3aa1Qth3NSceeeuzcalBKq2ESRgc6kaSTYCmFzdAhjE5KEygKkQeklH0rb2tLRio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZJZW7xpW; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1773247279; c=relaxed/simple;
+	bh=QGO6BKUP9pDJhAPyG3zMK+3Mt1ryUaCYnq9txTiAz88=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=ie/sbVTIaOgIaE+DEzXevpfj/r7bPMJqlIKOG+sG7fScEn+iz9E7HRdX6l0Jc7Faimku5tNdcCooXY4mYXDWRbWNIJGqxTcVNL+XTK/unYUaYSbGULYLnq0dtdPycJ30F/mIZC6yFWCJC3W90Wnal3vUvVHCKhXnW3E8A4Pa12E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBuZYhsB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZJZW7xpW"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 980B94E4261D;
-	Wed, 11 Mar 2026 16:11:40 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6C1B260004;
-	Wed, 11 Mar 2026 16:11:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72C84103691F8;
-	Wed, 11 Mar 2026 17:11:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773245499; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=h4UXzCKBp/AtRlL9HwQ21GZlqc5cwCvVv8lhtud2N4c=;
-	b=ZJZW7xpWv7UWurgWYUo9/EK3dvUe54bVyyWqTUG4Qe9nSxyBccLHHEBqkzoFADwePBMNrb
-	pVu77BHK1ZbermPxkrhmUJIurCC4i8oZs2/gyCNrsTt46EwGau1YlyAcPgD+0o84BpjRsw
-	C+oiOP1TyNdHsez0ca9+rGG7LlNPXVU74EuWW+LAzJ1BjltcslbTi3AfOoeDCQz0hCBrmm
-	RjWSlkLkJN3XZc1owWqHy7xaN0yrOcjZpoOpX+nk/eT0zcmY0KcfK09bkW1617VAA4nySL
-	xJfvIaqKSyAnCjbUUSCBxgXsM8WeecG613XHwdutmMs0zmDghF7V5GacOrpG7g==
-Date: Wed, 11 Mar 2026 17:11:29 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
- Thomas Gleixner <tglx@linutronix.de>, Daire McNamara
- <daire.mcnamara@microchip.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
- Ghiti <alex@ghiti.fr>, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 3/4] soc: microchip: add mpfs gpio interrupt mux
- driver
-Message-ID: <20260311171129.2c382b91@bootlin.com>
-In-Reply-To: <20260311-vigorous-steadfast-04afdcc9e524@spud>
-References: <20260311-tasting-friend-eae39148fb96@spud>
-	<20260311-vigorous-steadfast-04afdcc9e524@spud>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBuZYhsB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DC7C19421;
+	Wed, 11 Mar 2026 16:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773247278;
+	bh=QGO6BKUP9pDJhAPyG3zMK+3Mt1ryUaCYnq9txTiAz88=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=qBuZYhsBBsVfeLWUk4dPXkznjTVawAHeoidar7vOXWbXyplHqm3lcWsgiy6j58Bvu
+	 61jRRYIhXc2szdqohF4n5VdavlWj5vlRYZ4qZ2+WSPS6T40DUQK+WSBTjJ1O1vxcpS
+	 +bQZiMeY/vj292ZYAHdHtMnNLoc7Sj8IhOvQg1pHW4Q/OdbQLNCsnWbbcr0+P10Fx4
+	 GlWbDclFRBvSSvVXTsPNbP+vL4360GtDV9HFVA4bQjqNo0ZzMU/PNqcIioz+CMKr7m
+	 qUVyaSn7ECW1f+4ougu1NoWpOre0ww+fP4UrtkJkLvqYtAcphnuxk0Gds5gkFs3U8H
+	 HOji2hwYaqmjw==
+Date: Wed, 11 Mar 2026 11:41:17 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+ Alexandre Ghiti <alex@ghiti.fr>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Herve Codina <herve.codina@bootlin.com>, linux-gpio@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>
+In-Reply-To: <20260311-collar-smokiness-5313aa648a6f@spud>
+References: <20260311-tasting-friend-eae39148fb96@spud>
+ <20260311-collar-smokiness-5313aa648a6f@spud>
+Message-Id: <177324727784.4047403.339169143402607624.robh@kernel.org>
+Subject: Re: [PATCH v12 2/4] dt-bindings: soc: microchip: document
+ PolarFire SoC's gpio interrupt mux
 
-Hi Conor,
 
-On Wed, 11 Mar 2026 15:17:40 +0000
-Conor Dooley <conor@kernel.org> wrote:
-
+On Wed, 11 Mar 2026 15:17:39 +0000, Conor Dooley wrote:
 > From: Conor Dooley <conor.dooley@microchip.com>
 > 
 > On PolarFire SoC there are more GPIO interrupts than there are interrupt
@@ -74,23 +62,47 @@ Conor Dooley <conor@kernel.org> wrote:
 > decide which interrupts are assigned direct connections to the PLIC &
 > which are relegated to sharing a line.
 > 
-> Add a driver so that Linux can set the mux based on the interrupt
-> mapping in the devicetree.
-> 
+> Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  MAINTAINERS                         |   2 +-
->  drivers/soc/microchip/Kconfig       |  11 ++
->  drivers/soc/microchip/Makefile      |   1 +
->  drivers/soc/microchip/mpfs-irqmux.c | 181 ++++++++++++++++++++++++++++
->  4 files changed, 194 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/soc/microchip/mpfs-irqmux.c
+>  .../soc/microchip/microchip,mpfs-irqmux.yaml  | 77 +++++++++++++++++++
+>  .../microchip,mpfs-mss-top-sysreg.yaml        |  4 +
+>  2 files changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.yaml
 > 
 
-Looks good.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+yamllint warnings/errors:
 
-Best regards,
-Hervé
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dts:18.33-24.11: Warning (interrupt_provider): /example-0/interrupt-controller@54: '#interrupt-cells' found, but node is not an interrupt provider
+Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dtb: interrupt-controller@54 (microchip,mpfs-irqmux): interrupt-map-mask:0: 127 was expected
+	from schema $id: http://devicetree.org/schemas/soc/microchip/microchip,mpfs-irqmux.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dtb: interrupt-controller@54 (microchip,mpfs-irqmux): 'interrupt-map' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/microchip/microchip,mpfs-irqmux.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dtb: interrupt-controller@54 (microchip,mpfs-irqmux): 'interrupt-map' is a dependency of 'interrupt-map-mask'
+	from schema $id: http://devicetree.org/schemas/interrupt-controller.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-irqmux.example.dtb: interrupt-controller@54 (microchip,mpfs-irqmux): 'anyOf' conditional failed, one must be fixed:
+	'interrupt-controller' is a required property
+	'interrupt-map' is a required property
+	from schema $id: http://devicetree.org/schemas/interrupt-controller.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260311-collar-smokiness-5313aa648a6f@spud
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
