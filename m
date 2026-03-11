@@ -1,122 +1,103 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B39A2D9EED
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 13:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD91284896;
+	Wed, 11 Mar 2026 13:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773234970; cv=none; b=i6heds0u4thmARMZ4yPIlohC7nHgdZF3JZYzjufPjuwWqodt/+NyV5DhNj5dhRrvpwrCZZ1le23wNcZV8tdvi0dl5mJcde9F8xFVzwhPu2DLiX36fwbe0WhKjMowSxqibnQYnjG0MZWkLtMJ5DSwAVclK9ObtTgysd6C1umIQHQ=
+	t=1773235186; cv=none; b=ujoIE2ShLw4HYbonQODeMVNB5pCX7RcQ2UVLqZyCc0BYbjov/4p0Pv49U7cvmD/TS7/ioEI7RUgksenb742xemqAT93IrCbgyvZ46i2DIVSjHUUDNHbiLdBqX2S7KWNagZ/KIMVBqSlczErnZul8YmTg7QLWh2W6CdSK24LEzbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773234970; c=relaxed/simple;
-	bh=bQRlE5OR+3/41N9B/xBGXfMeOTv3hgeQ2WrY6jcTpBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T3GqgHlVDsOI44E0xyJcc+Vb68QWR9+I3wYlFBEqyzhegUkLdRdHudPBcHfyfiOgiagfLrp7qHqgseRQEI9HMuUWfRQoyzlUB7IzZSIYCWKkrumLPs90RzxfsuOlUPSYpot0ruAJgbMGP8AhNS2DwJGjnb6J91wXG0PCeVRe/uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56ae58f3fc6so6631471e0c.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 06:16:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773234968; x=1773839768;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=34DR94e/1PAvLLEaib58vFA4GW0m5SGe6jvxchEhMek=;
-        b=F0botOraoYj0yaOZB45stjS92mvxq5VWC3LnuTFP9udG/y5KjtXvw795jo8i/X2qLR
-         Xk38CR1M5UvBUl24Q+hdJO0+BRQeyAUfaRpoKuFH2iKLM3cKTiux6ynuKSFrT5BxCdA8
-         he0b5w2m8yVI9lih2+RMBX6q2tl4Kf2T5hYcCVKdQUmeEOmyOfelq0fp8xkkdfqiJCJz
-         TPQ0svhhCLBPnASTm86gvFtDBH2LjeXqYwxii/dbQIIZs88qWbtT356Czg7oJVcGzJGj
-         2mPdvv1Xcah1h8fjkzobL2ZMPJkYW8kPywWiYcDzcCnCsmTx43BL7pvjA3kjnqytRy57
-         KU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAF/JEotLUC3x0L3Qi7OWXVj7crs42mybVN9g+p3cQ5C3b6KwkcrD8yoCBAahSDcd3HyAe7eggqXo1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4bwumeOYHsJT9GNKuv8AGIjimbb8pzeq6X3yGEcy5ger75T3g
-	lvRlvip1Tb0OxfF5DlUWRNE/iOziNz2t2b0iJ60RZNu9qR/JP6eBuJ6vpHEhXQDKvNE=
-X-Gm-Gg: ATEYQzzNF3vCINSrVbxXOmnUsW8MTuFP8B1Pj+Vqrjn4d9t1F0Kf0CZjM04TUeGGKaD
-	xkBAmmYJa3zQtvwsACwtRJ8i1s8W6kV6cQdRTTgd8i1A/3LA9AffdAtIZwzzu7pjh7P5w4y2aDr
-	0aLKS6bb0tz8IgwkU/nflE2OOoY8vDuavUOJsOwJidprkImGQ9SczPQHP26y/OuWyqUeXj4MhmU
-	prLGOmQhsJ6vKKq44YalxeU+uo4g/HExYJ4+emKXH5hurIppy5duFx6NaP80KCet6CxlbfxuzKQ
-	yvZTBcTGCB2iiwrfGSyWQDXScK293R7ljBqEmuIF85UjfI6BPLceVJj29lmF2ODAKWyIONh3TzG
-	37JIGWCasC7dRe+NuEmJIlAtAw8/hEO9RMjeAMj4UhxbZLwKkr8u93HXNgehI1avfBH/nAnjWI4
-	o/J4mu+KV4M7jDynzR9tFPAPz1SCgj57qI0Z+qZaT9tdl8dbEQwOBi2VfzrkGSfNQ+/JkLz/AoY
-	sQ=
-X-Received: by 2002:a05:6122:8c17:b0:567:5ccc:1367 with SMTP id 71dfb90a1353d-56b4752d741mr856606e0c.11.1773234968584;
-        Wed, 11 Mar 2026 06:16:08 -0700 (PDT)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56b4645d11csm894860e0c.12.2026.03.11.06.16.07
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 06:16:07 -0700 (PDT)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-56b18f05f49so2419022e0c.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 06:16:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVP6FInLEmP9aArhszi5k8aGbBro7vsDLttmxO78DOn6ESFtwATsMubkP1yAzKPYE4Z1Jg3CQLynWG1@vger.kernel.org
-X-Received: by 2002:a05:6122:1d05:b0:55b:7494:177b with SMTP id
- 71dfb90a1353d-56b4752d806mr922396e0c.10.1773234967338; Wed, 11 Mar 2026
- 06:16:07 -0700 (PDT)
+	s=arc-20240116; t=1773235186; c=relaxed/simple;
+	bh=ok2ruo2GCwVrf9XIrhRhncW6ucKl+R+H4UeEBH2E8gM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S633PfXYm/CnG86sFAMcPQnmP8oOBD7fc/JOUCvuxTZu0o6J71vwB969EL5n8U10y5G1xAiGDiYYKO9JbOUCEQSlhxmsYiQ7BwpOpuT/N2i/K+PvD2qmSqXwl+7zvu38/xA3fKu6qRjp3+wYvOSbbW7NHwVwNmrJoY6hxN1PNaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hDKKaHFp; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDKKaHFp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773235185; x=1804771185;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ok2ruo2GCwVrf9XIrhRhncW6ucKl+R+H4UeEBH2E8gM=;
+  b=hDKKaHFpgDD+7r2/9l/HLgv5VhNlsv069srSsUIpe/ZxGMF8R1aMuIwE
+   M0jHlVoo/SpThCBraQ5GWlzZj4YR70zTEw6kwBWuLSB0xgfEJ50nUaYm2
+   u3gYF8s13Lz1TI9EgaRi/KJb1aeoYltUf8zd/Mmb1e7ikYcO9W//7wf4O
+   nVDJ5EVeP1IbriTldTlCc69rU0kbU1wXVkO/eUbXrEiRzF8ZmLZLo99Gb
+   JllMYRK5ECBr8AtoxAfZhrzLvf9hp4zh0y/NrCAV1E9+UYwxB/+VIf+mV
+   gKwLy4CDUjguGBqDse1n4h5xCsc44T2rw27IcWZZVYyIQ4l/ldecDzaRx
+   A==;
+X-CSE-ConnectionGUID: kPiIH66PQAOS4O1QKauIPA==
+X-CSE-MsgGUID: /elWNJH0T2WsmyXElBbh9Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="74211552"
+X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
+   d="scan'208";a="74211552"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 06:19:44 -0700
+X-CSE-ConnectionGUID: Koz1K3+iQISBzmOVaiy0cg==
+X-CSE-MsgGUID: 89r7qE//SOeOQX/8856Alg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
+   d="scan'208";a="217131226"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO alaakso-DESK.intel.com) ([10.245.246.81])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 06:19:40 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH v2 0/5] platform: int3472: Add MSI prestige 14 AI EVO data
+Date: Wed, 11 Mar 2026 15:19:05 +0200
+Message-ID: <20260311131910.835513-1-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de> <20260310-b4-is_err_or_null-v1-36-bd63b656022d@avm.de>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-36-bd63b656022d@avm.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Mar 2026 14:15:56 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXQ8Q4jvkgFRJYhghz2BZRDC-9Mk6DbXxuaOc6C9DFHZQ@mail.gmail.com>
-X-Gm-Features: AaiRm52J84H77ROK64ZWWtJfaiCpnFeKyoSRmPbi-NC8CN6Ju1TJEFxJU9gZQQ8
-Message-ID: <CAMuHMdXQ8Q4jvkgFRJYhghz2BZRDC-9Mk6DbXxuaOc6C9DFHZQ@mail.gmail.com>
-Subject: Re: [PATCH 36/61] arch/sh: Prefer IS_ERR_OR_NULL over manual NULL check
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, 
-	samba-technical@lists.samba.org, sched-ext@lists.linux.dev, 
-	target-devel@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
-	v9fs@lists.linux.dev, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Mar 2026 at 12:56, Philipp Hahn <phahn-oss@avm.de> wrote:
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
->
-> Change generated with coccinelle.
->
-> To: Yoshinori Sato <ysato@users.sourceforge.jp>
-> To: Rich Felker <dalias@libc.org>
-> To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Cc: linux-sh@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
+This adds camera support for the MSI Prestige 14 AI EVO laptop, which uses
+a TPS68470 PMIC to power an OV5675 sensor.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If ok, including a GPIO patch to this series. The GPIO patch enables the
+TPS68470's I2C daisy chain functionality.
 
-Gr{oetje,eeting}s,
+v2:
+- Add lookup only for ov5675 reset GPIO and use GPIO_LOOKUP macro.
+- Use software node for i2c daisy chain info instead of platform data.
+- ov5675: fix error path in ov5675_get_hwcfg().
 
-                        Geert
+Antti Laakso (5):
+  media: i2c: ov5675: Wait for endpoint
+  media: ipu-bridge: Add ov5675 sensor
+  platform: int3472: Add gpio software node
+  gpio: tps68470: Add i2c daisy chain support
+  platform: int3472: Add MSI prestige board data
+
+ drivers/gpio/gpio-tps68470.c                  |  21 +++-
+ drivers/media/i2c/ov5675.c                    |  32 +++---
+ drivers/media/pci/intel/ipu-bridge.c          |   2 +
+ drivers/platform/x86/intel/int3472/tps68470.c |   1 +
+ drivers/platform/x86/intel/int3472/tps68470.h |   1 +
+ .../x86/intel/int3472/tps68470_board_data.c   | 101 ++++++++++++++++++
+ 6 files changed, 141 insertions(+), 17 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
