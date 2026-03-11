@@ -1,78 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E28126F3B
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 21:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D36D29B200
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 21:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773265600; cv=none; b=DyMe/76XhX4A0FUXlnVPYvIPLcsH740pW9YJMPljoFDVj/L+XbftIM0+Dw+Didv2AzTrMLfd6lt7h985hx2AwrB9/KY20QTB6AhsWsG1GdelJVyXSNyRu9ZK586GS0K83bjMOoc48bDB1cN/TnpJSVmo6LtIjXhxz98GWqWoL1E=
+	t=1773265673; cv=none; b=avwFPV4S5irVbqnjYdMc/mFJqrVPYVj1D6TWQIQofCMalcs6SBus4TfpWD/E1qQZKciMn72kLnPL2KPrN1qalIkaQqTTkcNczoYA7URlO+xevkf5kbWby0bMPF10LPQJATyKA32p0Blhdu1DG/PBKUZDUICcxJtR1+3jIdJEVZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773265600; c=relaxed/simple;
-	bh=E4WB8CGEUiLarR3T9osq/Oaqjj54PygMKczEGvbpNs0=;
+	s=arc-20240116; t=1773265673; c=relaxed/simple;
+	bh=xZoGpIkJ+CcJdN7MjIqbK82BEmTEKEPE9Fao8R4QUkM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PreZiPEzlJC4usS+o+1p929n1f3IejgaBhohe9l0IrzawlCy/I24/8m5CzqydJJoLdAiTCLV1f9eqsyA/C1FeFv/bXQzPYOTXv9iwFfDGLr6NmKLEuSeYEI/B1l//a5uRPSfbZ/b/OPnEhvB4a8h6u9vYEp7mdCxGXbfArdiFhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqiQp5xs; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=pYCGumeNK89d6dsBnJQkDXT/EhVlaOiEq7T78gyvv+enAXZn0EFP9qQtVyo9uVmXL2/YWc+NY30BaTxXAIgo55UXC+q28Q/PtU784cnIG9Q2CrhPHrU/1v1MGe4lilKIx6RWIOQRuLnQFryMGh3FF8WmaaOIokvt7QgRapQ3esI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ja8lRA5t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqiQp5xs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DC3C2BCB4
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 21:46:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ja8lRA5t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C97C19425
+	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 21:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773265600;
-	bh=E4WB8CGEUiLarR3T9osq/Oaqjj54PygMKczEGvbpNs0=;
+	s=k20201202; t=1773265673;
+	bh=xZoGpIkJ+CcJdN7MjIqbK82BEmTEKEPE9Fao8R4QUkM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WqiQp5xsWQBhyQXGiOlqSuNomn0ZVsfEUfEk8SIZVgxgT0IX+ncQksj264uXyCnQS
-	 WrPcYmxXDzPct3JUTHVrMcteFzg0xsS2kKOxyZtOGQlQ0Gf2WzRRZsDr5oMTd2nFyD
-	 yOBlgvVcoCoNaupdApRFFNrLOs72K2Ze9DT5IBN8zOnA0dWELH0b2eTE9lpBE1Ok0Z
-	 F1Pn6eORCrPQJCDoUlMbeD5ms5UyticxfWcfRx+Vu2gZruiX5q2HI+aiVAjdBfUtIQ
-	 J9hwteJCT89l6vdlGSP6FC7qjdR2oB+jzVIcAD/K0TTQI9FCxBl7m/IfF4a3EK8ptm
-	 4OUf7Wc9xg7bg==
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-79885f4a8ffso3514007b3.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:46:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPPNAHV6YUXMxx+1ggU4An0i82ES869m6Kz/+gppTUm5X/DgNmkRDB8/DjazU307a86RJCTq+5eWEG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsN2xbMrW3gIrW6CdIupiz/qfNBmINcPxEYQjw5xyt5A49n3YZ
-	HrEx9zYSWH4TwR8w0ZOsi64xLu4zANGc5ZZq5s1ZCMWCG9F7fsGGd1Cp4U4CTSN0l+cRx5/f0hG
-	Y9bGah4xzKDfIidLObpFfN6oLARmRn6M=
-X-Received: by 2002:a05:690c:64c9:b0:797:4722:f8a7 with SMTP id
- 00721157ae682-79917ffd343mr37941397b3.61.1773265599658; Wed, 11 Mar 2026
- 14:46:39 -0700 (PDT)
+	b=Ja8lRA5taDgFBazbbM6nBSNNpL5WonKAIKQ2Ba24fGYgoSgEx95iFkFMfjB8ShIRU
+	 xe+G6VDBtnc9PVA+I4TIsyEVzV9f46FTaERU6pq5FK+YpRiIDa/eYWXgxOIpEsT/wj
+	 Dv1Zm84XD5boN46065TC5N2tkotTRzviT30GZ4dKuH4YpcoDktMZo8zrDGLTdvfkom
+	 iXRzQyIfLc3inEJAYJmU+a9bth/Dy5tBsdGjDnAKZjZeIs2rK3pfye8cfYLX2Ilwo7
+	 rZnTLMCGwZ45Gt9g31pa9muv8FBsefz6Nt8utmt3ErhrDHj5qcozqSs4iueAsknnPs
+	 oKme5Ed7oFoIw==
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-64caaacb9bcso455042d50.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:47:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVuRPJPBKys7xyeep8vhZCILFXTOewfgnCr0TXSGvPC+nKyeKgUNR7yk9C07ONSBJmZLvUpXLERcxff@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMnIfEwi56/MoB7l06oMUPRj/caunA22yqFbfsNPLRxOj9BiPQ
+	4tc25fMf54DCgSXjn8Oe7mep4xUwcrNazHI013RdNpzcUXQD+9lfCztwdD9f2X1DE29kVFMeJbo
+	ugctNrQns5mH+SxaG4GllqmcEgH7p1Go=
+X-Received: by 2002:a53:c048:0:20b0:64c:b395:17a6 with SMTP id
+ 956f58d0204a3-64d656a8906mr3058219d50.9.1773265672362; Wed, 11 Mar 2026
+ 14:47:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1773150895.git.dan.carpenter@linaro.org> <ce2b6b8f5b5432ac551720bad5776ef2ce490b68.1773150895.git.dan.carpenter@linaro.org>
-In-Reply-To: <ce2b6b8f5b5432ac551720bad5776ef2ce490b68.1773150895.git.dan.carpenter@linaro.org>
+References: <cover.1773150895.git.dan.carpenter@linaro.org> <350d922ad791ac72756caa91e1551e16d7f511eb.1773150895.git.dan.carpenter@linaro.org>
+In-Reply-To: <350d922ad791ac72756caa91e1551e16d7f511eb.1773150895.git.dan.carpenter@linaro.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 11 Mar 2026 22:46:28 +0100
-X-Gmail-Original-Message-ID: <CAD++jLk8P2MxVXPQH7xBcb4+EvchNiU=9gsU4dabwhLfNzXaMg@mail.gmail.com>
-X-Gm-Features: AaiRm52h-eY9dTa0n1sMqKmJTwOkVtk8E54CVD2Z9mkZZ7WCE7689aWdILDRW6E
-Message-ID: <CAD++jLk8P2MxVXPQH7xBcb4+EvchNiU=9gsU4dabwhLfNzXaMg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] pinctrl: scmi: Add SCMI_PIN_INPUT_VALUE
+Date: Wed, 11 Mar 2026 22:47:41 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnJmB9=i7rpJ9Dbazcb+gLjANT1aPk9aM9ywf2-tBTcOw@mail.gmail.com>
+X-Gm-Features: AaiRm51I4iQ9iGQm2TITNqmoVbJ_9Vce4ddrm3EdaBTGh0HX-WqDMG8Ms1nqqKU
+Message-ID: <CAD++jLnJmB9=i7rpJ9Dbazcb+gLjANT1aPk9aM9ywf2-tBTcOw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] pinctrl: introduce pinctrl_gpio_get_config()
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, AKASHI Takahiro <akashi.tkhro@gmail.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+Cc: AKASHI Takahiro <akashi.tkhro@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, arm-scmi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, Mar 11, 2026 at 8:38=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
 .org> wrote:
 
-> The PIN_CONFIG_LEVEL parameter represents the value of the pin, whether
-> reading or writing to the pin.  In SCMI, the parameter is represented by
-> two different values SCMI_PIN_OUTPUT_VALUE for writing to a pin and
-> SCMI_PIN_INPUT_VALUE for reading.  The current code translates
-> PIN_CONFIG_LEVEL as SCMI_PIN_OUTPUT_VALUE (writing).
+> From: AKASHI Takahiro <takahiro.akashi@linaro.org>
 >
-> Add a function to translate it to either INPUT or OUTPUT depending on
-> whether it is called from a _get or _set() operation.
+> This is a counterpart of pinctrl_gpio_set_config(), which will be used
+> to implement the ->get() interface in a GPIO driver for SCMI.
 >
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I think you nailed it :)
+If you fix the kerneldoc as pointed out by Andy:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
