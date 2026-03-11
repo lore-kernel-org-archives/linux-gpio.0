@@ -1,138 +1,56 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9210F3B95F7
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from smtpfb1-g21.free.fr (smtpfb1-g21.free.fr [212.27.42.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696D831F9A9;
+	Wed, 11 Mar 2026 14:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773239816; cv=none; b=gJZGN0HQ9vFgDRRG+PDd9kBzCbovNkW76C9GSDwX2vP25bTnnl0OOaRltd2+uioGy+vNRoXlJmKue1aQTGsIXJdWOPn75D+n5MRtAN/G4QlGOHX06cN31Wnznq3aayuigiialKHHp3hUWIuBP1mTqu946MDDkpiH8VWosxattTw=
+	t=1773239893; cv=none; b=bS56Ph4YDWqdnmGbV17cvy4husWnLDPU7g7N9ptckQdSnH2BGkbh3sSB1+A1Pixkgsc4Z2OsfoXwCK1O2CrbW9Snn5JAGq+tRwoiFACXX4qxS9TJzyilcik0OmZTwHGGYIoRzfQAyqKehC0jCYQREO7yR7b8IYQGhrenvxjAYDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773239816; c=relaxed/simple;
-	bh=MBr5BunAn3ZXoYBSlqDMj1jR3jbP1rLEfxBdY12hfcA=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdMU3K5iQPS6mbYlqwU2W6JpNqSRiIdmcZBntaeARZPcGtiYKxWZ9LYzkHXfqJc0n2a2nlVyrxPyp0tBga6IKBrz8s9eVwMejuOxx5z8GVY0jNLWZgYJNCg3MTODxRWHfcrlwhkzwK+9QgLnpE/WQ4aNElMx53qbRq6FYXiXjvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rviWlpiO; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rviWlpiO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2E2C2BCB5
-	for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 14:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773239816;
-	bh=MBr5BunAn3ZXoYBSlqDMj1jR3jbP1rLEfxBdY12hfcA=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=rviWlpiOlDE78EpxkqeUZ3wSn5TkoY57yetFtZLs0Ix1iE9L1z2BfIn17BD8UIWtm
-	 dtTzJh4IQz0LWDMlkwJbyvSD2+bvNoHVrGGMRfcIxwZyOR7FHNoY/V/F8sMaeY6RUI
-	 ptxq5yJAXjoUoHwwrVYDWYgiCAhsZOGCf/jYVGZJgepMA1HW/WZUe2POCBKjZ2XJNU
-	 ar5tGL5PzdiNLVZs89d0UJS3KBP8CFMuH9aQXWcAwUn7+gyyUFL3KpIbE6OMPM+rFi
-	 17noxuU/FGeeVBGgkcQwqye5aUgunXtMWsLcKjPbP1pfnQHUaDHniBYtXl8VagvyGo
-	 sxeSxyua6xg9w==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-38a38ccc217so1611fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2026 07:36:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQ+QoZ2OH54lweFUjX/0Nu2cln7fgqZeBf1fb11KN3wdbnw5XzsN2mOilxP7oE4PdZhMYF3/zaQUeZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUcPFoW84iSA/oN1+A1nnarOkR0anOin4ChflIvENulfmHsWV+
-	lwqYGCp0P8JTjAKu08yx/umCRRLoTknWXoJZ65D9KpCd33Grp3cU2P8mgrBDDkY1Z+hK0wdpW/D
-	ZhbVwpFnZGpp1BR7JL3eBjX1/hBpGQHsBFCahRRRPXg==
-X-Received: by 2002:a2e:bf02:0:b0:38a:3feb:d2ee with SMTP id
- 38308e7fff4ca-38a67e68170mr10068421fa.32.1773239814928; Wed, 11 Mar 2026
- 07:36:54 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 11 Mar 2026 07:36:51 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 11 Mar 2026 07:36:51 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <CAMuHMdU0Xb=Moca5LUex+VxyHQa2-uYJgYf4hzHiSEjDCQQT=Q@mail.gmail.com>
+	s=arc-20240116; t=1773239893; c=relaxed/simple;
+	bh=sF4w8VwjlNPcVjdAIoEuag3HF+WY4mwy+hibhNG3SWM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nSwnv1gbZxQ2vL3veFV5V2dLh+CRAVN8JmKKqf+5YhDmGZIwI+eVXrop2zP8CsuycpfDc20hLYwLlIwPYUe765ckk89cKfgBuVVYzFOEn9uXTETyi0O8n+5xz9rUOqRGSo2EeRXETU2bf+3GZJaVgY0b7TEHSAS5Xba2LBhTMfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	by smtpfb1-g21.free.fr (Postfix) with ESMTP id 1381EDF9223;
+	Wed, 11 Mar 2026 15:31:40 +0100 (CET)
+Received: from albans-vm.. (unknown [213.61.141.186])
+	(Authenticated sender: albeu@free.fr)
+	by smtp2-g21.free.fr (Postfix) with ESMTPSA id E8DF82003DC;
+	Wed, 11 Mar 2026 15:31:25 +0100 (CET)
+From: Alban Bedel <alban.bedel@lht.dlh.de>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Alban Bedel <alban.bedel@lht.dlh.de>
+Subject: [PATCH 0/4] gpio: kempld: Support get/set multiple and interrupts
+Date: Wed, 11 Mar 2026 15:31:16 +0100
+Message-Id: <20260311143120.2179347-1-alban.bedel@lht.dlh.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223061726.82161-1-tzungbi@kernel.org> <20260223061726.82161-2-tzungbi@kernel.org>
- <CAMuHMdU0Xb=Moca5LUex+VxyHQa2-uYJgYf4hzHiSEjDCQQT=Q@mail.gmail.com>
-Date: Wed, 11 Mar 2026 07:36:51 -0700
-X-Gmail-Original-Message-ID: <CAMRc=McmrJLWGoXjKaqGuCWpLZU4mmcrgs9ESAaL8kG=_R89cw@mail.gmail.com>
-X-Gm-Features: AaiRm506EOHf7dy_hA4ZaTp1VM_fbnHazOEtdGepT2lucGBsuxm6_fe44b4oDCs
-Message-ID: <CAMRc=McmrJLWGoXjKaqGuCWpLZU4mmcrgs9ESAaL8kG=_R89cw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] gpio: Access `gpio_bus_type` in gpiochip_setup_dev()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Mar 2026 12:44:31 +0100, Geert Uytterhoeven
-<geert@linux-m68k.org> said:
-> Hi Tzung-Bi,
->
-> On Mon, 23 Feb 2026 at 07:17, Tzung-Bi Shih <tzungbi@kernel.org> wrote:
->> To make the intent clear, access `gpio_bus_type` only when it's ready in
->> gpiochip_setup_dev().
->>
->> Reviewed-by: Linus Walleij <linusw@kernel.org>
->> Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
->
-> Thanks for your patch, which is now commit cc11f4ef666fbca0 ("gpio:
-> Access `gpio_bus_type` in gpiochip_setup_dev()") in gpio/gpio/for-next.
->
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -901,6 +901,8 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
->>         struct fwnode_handle *fwnode = dev_fwnode(&gdev->dev);
->>         int ret;
->>
->> +       gdev->dev.bus = &gpio_bus_type;
->> +
->>         /*
->>          * If fwnode doesn't belong to another device, it's safe to clear its
->>          * initialized flag.
->> @@ -1082,7 +1084,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->>          * then make sure they get free():ed there.
->>          */
->>         gdev->dev.type = &gpio_dev_type;
->> -       gdev->dev.bus = &gpio_bus_type;
->>         gdev->dev.parent = gc->parent;
->>         device_set_node(&gdev->dev, gpiochip_choose_fwnode(gc));
->>
->
-> Postponing this assignment does have an impact on early
-> messages. E.g. on RBTX4927:
->
->     -gpio gpiochip0: Static allocation of GPIO base is deprecated, use
-> dynamic allocation.
->     + gpiochip0: Static allocation of GPIO base is deprecated, use
-> dynamic allocation.
->
-> Or with CONFIG_DEBUG_GPIO=y, e.g. on BeagleBone black:
->
->     -gpio gpiochip0: (gpio-0-31): created GPIO range 0->7 ==>
-> 44e10800.pinmux PIN 0->7
->     -gpio gpiochip0: (gpio-0-31): created GPIO range 8->11 ==>
-> 44e10800.pinmux PIN 90->93
->     -gpio gpiochip0: (gpio-0-31): created GPIO range 12->27 ==>
-> 44e10800.pinmux PIN 12->27
->     -gpio gpiochip0: (gpio-0-31): created GPIO range 28->31 ==>
-> 44e10800.pinmux PIN 30->33
->     + gpiochip0: (gpio-0-31): created GPIO range 0->7 ==>
-> 44e10800.pinmux PIN 0->7
->     + gpiochip0: (gpio-0-31): created GPIO range 8->11 ==>
-> 44e10800.pinmux PIN 90->93
->     + gpiochip0: (gpio-0-31): created GPIO range 12->27 ==>
-> 44e10800.pinmux PIN 12->27
->     + gpiochip0: (gpio-0-31): created GPIO range 28->31 ==>
-> 44e10800.pinmux PIN 30->33
->      [...]
->
-> Note the spaces at the beginning of the printed lines.
-> Reverting the commit re-adds the "gpio" prefix.
->
+This series update the kempld driver to support current versions of the PLD,
+add the get/set multiple ops and implement the interrupt controller.
 
-As per the comment in gpiochip_add_data_with_key(): we may end up with
-a functional chip before gpiochip_setup_dev() is called and so before we
-assign the bus type.
+Alban Bedel (4):
+  gpio: kempld: Simplify the bit level register accesses
+  gpio: kempld: Add support for PLD version >= 2.8
+  gpio: kempld: Add support for get/set multiple
+  gpio: kempld: Implement the interrupt controller
 
-dev_printk() helpers only read the name field of the bus type so it should
-be safe, I don't see anyone else accessing it before we register it.
+ drivers/gpio/Kconfig       |   1 +
+ drivers/gpio/gpio-kempld.c | 289 +++++++++++++++++++++++++++++++++++--
+ include/linux/mfd/kempld.h |   1 +
+ 3 files changed, 278 insertions(+), 13 deletions(-)
 
-I think it makes sense to revert this commit. Tzung-Bi: what do you think?
+-- 
+2.39.5
 
-Bart
