@@ -1,42 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182931A5B9E;
-	Thu, 12 Mar 2026 08:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C62F9D98;
+	Thu, 12 Mar 2026 08:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773303490; cv=none; b=bpyb4k0DGJk50OT6CoO0A0YzPZV1F73SB+y7hlTHahpghYG1Tcz0JXTTKG/Fc4ANuq917uw4gtxwn877jRBumZgc5JnjD7dzaIFqa0QDmGjYDlvboVt0j1WhiYVFeiHCKNA3eGczovuFp8SpVlCeaaatz50ysaoPIUL+xiAys0w=
+	t=1773303523; cv=none; b=GPcLDOlGRNF/1iI2JagIcA4iBnSW0fZtOvB9ng9ChOmsTJcnLjVaZMTduj7vOxMuyhcUe7o+LNk8RKYZSklzkmD39rHhoXBwsHKPSQCVBqsj4IIRD/x+x7Xll0cwGVvxpvqbrKAFmURo59Ppfg2WGXT7MgMFMF9UArCAMBMiUes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773303490; c=relaxed/simple;
-	bh=O3Fh3S67E/vPFHLA+on14WMadPVsMRifIoX7seogsM4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bDsDUiFDtiRayfj2Zq4Qf4M4alnJlKOUshnuNwHPcBfNP116y/ei8YvvkNhQBxEElw+yngj2IWSO3WkJn31oQdtQP//6K7OjzR4VmTH0KAzZ/qf9qDG/fLZ6lgyVvKAFnsH9QtRArE5SHeALSxW2rF0TEWqhSO15glk6qVwXPIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzWKz0Yd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773303523; c=relaxed/simple;
+	bh=zaiw6ohbC9zCzTRpwnLAe3c7LEjMMvMfCa83XflODHk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MmBdgKRLo7E/eQzXJKgO3Urh5r6U7MJiWH/Pgg27xv3GYNgFWZbVGv6yHq0BaqA8PIZcK5yBEv7Hf02nQnWRrmJQ8fNRJRLwCjLq3yYkk79tmdlM9xJATkCm+wfSIwGhGnwHB7leMM8M1vfgbp2gZQoOhfbDRSo9qnpOaPaDlqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv18C9rG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzWKz0Yd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21461C4CEF7;
-	Thu, 12 Mar 2026 08:18:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv18C9rG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504CCC4CEF7;
+	Thu, 12 Mar 2026 08:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773303489;
-	bh=O3Fh3S67E/vPFHLA+on14WMadPVsMRifIoX7seogsM4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jzWKz0YdtZiW8INeOnsuZAaxEfWKsVBxthoPjqpHKJVja2sb4U8xxrKT01cg+4c83
-	 pPBJLuw1IT4eKZG7VgPQh/cvJfs8Imco9cTqDGsYt/6iSP04gPWcb4bJsVxrOobf+v
-	 Fun6JMEMZNO8dz68GNygAMoZrJRvfgAdxMfwBkNlOeN4SZz3jcUHt0kjXmZJUZ849q
-	 wgWs6GrVNBo0U4w61JSD2y45k4MBD+4EfNOPYqmc1JxlTvPVWRVcUSLZGfZ5snx420
-	 XkMA39x1Kq73ePpdKry+UTJfwJNYy/zL5WK+uWJTxC7XAoxsPJqjdlwtUxw4o0Tzda
-	 GZV3v9z3lQc7g==
+	s=k20201202; t=1773303523;
+	bh=zaiw6ohbC9zCzTRpwnLAe3c7LEjMMvMfCa83XflODHk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Xv18C9rGMeCRDNgcgnuV6dLDJo5QaRsfDSyclftrain5i3x72szmFg1DLzuYLZshB
+	 8+yTqt8d1MTdzNnKoNrB9RFZ9PwgnWSUvrSQcEoiRSYUxzpjgRn54SRZzbIPYHAam6
+	 X9DZegf2Mj2T/qFHxe5OK0YX7JWM9i6rqdDTIlON1iCZ/cEJWRU++W0o5IUPQ4bSZn
+	 HHJrmv3Clmq2+MIST8R2dPFQloQTosCAdTQD4vWjzuAeRjz5oDp57W+RsOr8KTmlRd
+	 FVQfiu5bmj86rCBAFfqZdNmclWFS5PJs7twUGqA4aR7wEIBrzaKZwZjzwCIj3jBuSY
+	 FDPgXr5tZENMw==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: 
 Cc: Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linusw@kernel.org>,
 	Conor Dooley <conor.dooley@microchip.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] pinctrl: stmfx: fix mfd dependency
-Date: Thu, 12 Mar 2026 09:17:44 +0100
-Message-Id: <20260312081805.3020612-1-arnd@kernel.org>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] ARM: defconfig: enable CONFIG_MFD_STMFX instead of PINCTRL_STMFX
+Date: Thu, 12 Mar 2026 09:17:45 +0100
+Message-Id: <20260312081805.3020612-2-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20260312081805.3020612-1-arnd@kernel.org>
+References: <20260312081805.3020612-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -47,42 +52,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The PINCTRL_STMFX driver attempts to force-enable its MFD parent
-driver, which is really the wrong way around compared to general
-conventions. After the OF_GPIO dependency got dropped, this leads
-to a harmless but annoying build warning:
+PINCTRL_STMFX now depends on MFD_STMFX instead of selecting it, so
+adapt the defconfig to pick the right one again.
 
-WARNING: unmet direct dependencies detected for MFD_STMFX
-  Depends on [n]: HAS_IOMEM [=y] && I2C [=y] && OF [=n]
-  Selected by [m]:
-  - PINCTRL_STMFX [=m] && PINCTRL [=y] && I2C [=y] && HAS_IOMEM [=y]
-
-Change the 'select' into a dependency instead. As this changes the
-defconfig behavior, also change the generic arm defconfig file to enable
-the other symbol instead.
-
-Fixes: e785c990adcc ("pinctrl: Kconfig: drop unneeded dependencies on OF_GPIO")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pinctrl/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 03f2e3ee065f..51a2ddad2a48 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -550,9 +550,10 @@ config PINCTRL_STMFX
- 	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
- 	depends on I2C
- 	depends on HAS_IOMEM
-+	depends on MFD_STMFX
-+	default MFD_STMFX
- 	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
--	select MFD_STMFX
- 	help
- 	  Driver for STMicroelectronics Multi-Function eXpander (STMFX)
- 	  GPIO expander.
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index c102c4acdd8f..728b36ad3a08 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -481,7 +481,6 @@ CONFIG_PINCTRL_MCP23S08=m
+ CONFIG_PINCTRL_MICROCHIP_SGPIO=y
+ CONFIG_PINCTRL_OCELOT=y
+ CONFIG_PINCTRL_PALMAS=y
+-CONFIG_PINCTRL_STMFX=y
+ CONFIG_PINCTRL_OWL=y
+ CONFIG_PINCTRL_S500=y
+ CONFIG_PINCTRL_MSM=y
+@@ -627,6 +626,7 @@ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_RK8XX_I2C=y
+ CONFIG_MFD_RN5T618=y
+ CONFIG_MFD_SEC_I2C=y
++CONFIG_MFD_STMFX=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
 -- 
 2.39.5
 
