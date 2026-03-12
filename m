@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054D3939D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A067E399341;
 	Thu, 12 Mar 2026 11:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773315218; cv=none; b=TylN/jdv+FXSe+WBoFi4S7q29uKKiSgx23qVPxgzRJ+DXu60G9WZTnSrC/5nk+SNIY111XRE256DQd7dDP3xOa7yQiugBcKxqgiyRahdG3Bf8maqZH0Id5/WqksV9chsf/bMkR1PlWE7MOI0De3w5HEPjRK00EQ6eEe9G3/Fpuo=
+	t=1773315218; cv=none; b=Cgz9aVieFxtpwvXIRaN42yrqDw4+KcGsT6ijs+5ItrXj0sTboWps9xsJVnD+9UQx6vAQ8HAp9Nc+vZ5SO1Nj+QmcjnElXTFjupsQ8KUTylcCG+jnyc2F9qjpUF0mQhxkClUK58j0ITsyg978GbXv9mKS0AKuFpxJ60USfaBzbU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773315218; c=relaxed/simple;
-	bh=a+WHMjiTNRDIjVuQ9+Q0qVRVa1tCplNh22auIHPRdaE=;
+	bh=Lq5F5VBC2Za2D82PHIvlT9JQlI/cYr9M1sh5RyEbENY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eIaE9nh3iVCypCf8+eJLnJyqg64cY1coo9BiJVHYvWezO2BwYh2yuGLuiVsueKrQtqqGcRR2TVC5gPBzUiDGglT7JudLtw0jNYmzRMaLvzLpTT1GGHXynueuVpM/i22b84+4ffwuz8vlsiVeVKvzjTHbRW5j6lB5x1A5c6OaAGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=VSzbmUkm; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=T8FX16WndE3aKXCdvdxTvbLW5zDvr/zEAYAkLD5oZ/+n36tVjKKNdDUDxuZjbzpny+CHeWfIVmfuIunGfc1JTOnfX0/F+7QtV6eMarKBHEjGvxHDkwUuySBZPW5m578cCv/mITRFV/onLAS5wJE/rzFXTGfhPNqhHGfguDqIgkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZzCWWUza; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="VSzbmUkm"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62CBUevxE2456770, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZzCWWUza"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62CBUfGvA2456775, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1773315041; bh=J7IFS+Nq88jf8GKKNBe7mAAapyjw4fDD+dL+TVSwaL0=;
+	t=1773315041; bh=KRKwlNptv66mBAar+PaEyJl/1lwLb25U/oESD7/00jc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=VSzbmUkm0aF8/l06bUGmL+bA5BzD1OzXoo+8necBJrjxEVvMYJdDgDeOn1x/tc1Oy
-	 +H4PGxCa/fjz43KEPkOHsX8IxDllYPrm478hPoWf8l9rs9WO/RF2OeNzeJJeDPz7y4
-	 sYKvqEAmyBCtIcrAihNc8DwNBTCtyoF53mSF6G1VnS6RFeNtxqg3IJGaKoIwbwWC/v
-	 pArqJFHrFuRs7iFBMyXJmxpYgbi1RRG3a1nv4Brnu/jmI0obCs5S5pMv2gcH7KjCOl
-	 AeVA0M9g6vzlnaePtDMI5I4vuRh5woA8HNVePSCfj+x99MaZoxnJ3JrP0F1SAOMjDh
-	 FIvwS3EumkORA==
+	b=ZzCWWUzaat8+qCWpQYlggnzePtw/1QRuJvQqglXvbmM0Y3KTAP1LJWPtxiQfnykJ8
+	 CMDso3rp27Gunl8FG/ZeC7a3CVc0YkhFaIODTKF1G71J14RNdGCCbwCA20nyNlUFfE
+	 Oyotk5Vcl6p2bSG4/8Gt3hJwm50bbGhZwRdbiyak8EMg+cpH/It0P5wsgN9imw6MYk
+	 Gg/8ndAR3/XiuiOkfuEaOXLzyn4wxYcs2KIGdKc3leLxNNwlMsa8OhfOwbTfrhpBvf
+	 tDf34H9WcPbJ9mIKQzc1kTi0zk3L20v02Sdw2VbUbxbA0911tXacvT+M38HGAPkyMb
+	 K7rxwXP3miTKQ==
 Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62CBUevxE2456770
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62CBUfGvA2456775
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Mar 2026 19:30:40 +0800
+	Thu, 12 Mar 2026 19:30:41 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 12 Mar 2026 19:30:40 +0800
+ 15.2.1748.10; Thu, 12 Mar 2026 19:30:41 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 12 Mar 2026 19:30:40 +0800
+ Transport; Thu, 12 Mar 2026 19:30:41 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <afaerber@suse.com>
@@ -47,9 +47,9 @@ CC: <bartosz.golaszewski@oss.qualcomm.com>, <james.tai@realtek.com>,
         <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v3 1/7] dt-bindings: pincfg-node: Add input-voltage-microvolt property
-Date: Thu, 12 Mar 2026 19:30:34 +0800
-Message-ID: <20260312113040.68189-2-eleanor.lin@realtek.com>
+Subject: [PATCH v3 3/7] dt-bindings: pinctrl: realtek: Improve 'realtek,duty-cycle' description
+Date: Thu, 12 Mar 2026 19:30:36 +0800
+Message-ID: <20260312113040.68189-4-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260312113040.68189-1-eleanor.lin@realtek.com>
 References: <20260312113040.68189-1-eleanor.lin@realtek.com>
@@ -62,48 +62,80 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Tzuyi Chang <tychang@realtek.com>
+The previous description was misleading because this hardware block is not
+a PWM generator. It does not generate a signal with a specific frequency
+and duty ratio.
 
-Add a generic pin configuration property "input-voltage-microvolt" to
-support hardware designs where the input logic threshold is decoupled
-from the power supply voltage.
+Instead, it provides a fixed nanosecond-level adjustment to the rising/
+falling edges of an existing signal.
 
-This property allows the pinctrl driver to configure the correct internal
-reference voltage for pins that need to accept input signals at a different
-voltage level than their power supply. For example, a pin powered by 3.3V
-may need to accept 1.8V logic signals.
+The property name is kept as 'realtek,duty-cycle' rather than being
+renamed to strictly preserve Device Tree ABI backward compatibility.
 
-This defines the reference for VIH (Input High Voltage) and VIL (Input Low
-Voltage) thresholds, enabling proper signal detection across different
-voltage domains.
-
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v3:
-- Rebased onto the devel branch of the pinctrl tree.
-- Improved commit message and description.
+- Reverted property name change.
 ---
- Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml         | 7 +++++--
+ .../bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml         | 7 +++++--
+ .../bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml         | 7 +++++--
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-index fe936ab09104..fd49a0d53bf0 100644
---- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-@@ -162,6 +162,11 @@ properties:
-       this affects the expected delay in ps before latching a value to
-       an output pin.
+diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
+index 90bd49d87d2e..2a640e495cc7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
+@@ -135,8 +135,11 @@ patternProperties:
  
-+  input-voltage-microvolt:
-+    description: Specifies the input voltage level of the pin in microvolts.
-+      This defines the reference for  VIH (Input High Voltage) and VIL
-+      (Input Low Voltage) thresholds for proper signal detection.
-+
- allOf:
-   - if:
-       required:
+       realtek,duty-cycle:
+         description: |
+-          An integer describing the level to adjust output duty cycle, controlling
+-          the proportion of positive and negative waveforms in nanoseconds.
++          An integer describing the level to adjust the output pulse width, it
++          provides a fixed nanosecond-level adjustment to the rising/falling
++          edges of an existing signal. It is used for Signal Integrity tuning
++          (adding/subtracting delay to fine-tune the high/low duration), rather
++          than generating a specific PWM frequency.
+           Valid arguments are described as below:
+           0: 0ns
+           2: + 0.25ns
+diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
+index b6211c8544ca..2136546adec8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
+@@ -134,8 +134,11 @@ patternProperties:
+ 
+       realtek,duty-cycle:
+         description: |
+-          An integer describing the level to adjust output duty cycle, controlling
+-          the proportion of positive and negative waveforms in nanoseconds.
++          An integer describing the level to adjust the output pulse width, it
++          provides a fixed nanosecond-level adjustment to the rising/falling
++          edges of an existing signal. It is used for Signal Integrity tuning
++          (adding/subtracting delay to fine-tune the high/low duration), rather
++          than generating a specific PWM frequency.
+           Valid arguments are described as below:
+           0: 0ns
+           2: + 0.25ns
+diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
+index e88bc649cc73..e8ea1362b16d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
+@@ -133,8 +133,11 @@ patternProperties:
+ 
+       realtek,duty-cycle:
+         description: |
+-          An integer describing the level to adjust output duty cycle, controlling
+-          the proportion of positive and negative waveforms in nanoseconds.
++          An integer describing the level to adjust the output pulse width, it
++          provides a fixed nanosecond-level adjustment to the rising/falling
++          edges of an existing signal. It is used for Signal Integrity tuning
++          (adding/subtracting delay to fine-tune the high/low duration), rather
++          than generating a specific PWM frequency.
+           Valid arguments are described as below:
+           0: 0ns
+           2: + 0.25ns
 -- 
 2.34.1
 
