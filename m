@@ -1,91 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6867139D6EC;
-	Thu, 12 Mar 2026 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A054D3939D0;
+	Thu, 12 Mar 2026 11:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773314512; cv=none; b=s/t98abGcRdSIDjF/cj2yEK+jYwlpntQzd+QukMR7GbpUIoXd1S1XGqnZqVSNec9jR2iUMXwfpbqadNrVhX5sKwB7Ekdas/XtyMgGNy370z1ULC5Nu9VuJLXNeUVM3oDHNqnNfmL1qh41zFcYP5GiFXJIblHJsKOi7ZoUhgBnt8=
+	t=1773315218; cv=none; b=TylN/jdv+FXSe+WBoFi4S7q29uKKiSgx23qVPxgzRJ+DXu60G9WZTnSrC/5nk+SNIY111XRE256DQd7dDP3xOa7yQiugBcKxqgiyRahdG3Bf8maqZH0Id5/WqksV9chsf/bMkR1PlWE7MOI0De3w5HEPjRK00EQ6eEe9G3/Fpuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773314512; c=relaxed/simple;
-	bh=ka1+40NCf1V8bKWsuV29BMn3rQttD0Wiz0TTE+RnufY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skXj6jDlh1RbdDwmM3zT9V0to3J53XCgAWJ7piKqfzanl4mgkfvM1hfxjr108F0VBoRiN9QR2PMBd8YYaNJXN7nSYHZ9DFM1sd6mKMJHBNBS8RJ14BUfQpsNd8u7TThZ00TYZKZeqHftxdtcnoztjjtw2wGSDzuQBfGLw0gHQpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tiQdmWnW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773315218; c=relaxed/simple;
+	bh=a+WHMjiTNRDIjVuQ9+Q0qVRVa1tCplNh22auIHPRdaE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eIaE9nh3iVCypCf8+eJLnJyqg64cY1coo9BiJVHYvWezO2BwYh2yuGLuiVsueKrQtqqGcRR2TVC5gPBzUiDGglT7JudLtw0jNYmzRMaLvzLpTT1GGHXynueuVpM/i22b84+4ffwuz8vlsiVeVKvzjTHbRW5j6lB5x1A5c6OaAGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=VSzbmUkm; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tiQdmWnW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C24C4CEF7;
-	Thu, 12 Mar 2026 11:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773314512;
-	bh=ka1+40NCf1V8bKWsuV29BMn3rQttD0Wiz0TTE+RnufY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tiQdmWnWhE5sHW3j9Rurh0Srzd7t3zPDVmlikV8bdHLF76o/B6SHwD5wMnpnIrbKm
-	 XbrgqSscDiCC22hLhXR1EHpF0JBC1MTpa+Ql2kNOxO7FGCCAYM0IgPCOaTEMaaATFA
-	 eJb1cyO8ny6vmvYe+nEcnQalde1FvD2Hp6Ijz+jOR1rk/lDXG5ac7jv3DMq1z26eW0
-	 JO1oSccXjF1Ssr5ulQVc+Q0Mz1ngfOgbOqv1yE/c7vw/5zJlenNWI4IYq04rN77Zml
-	 aedgEwlDi4+jHqEQXo02g4am9nr3Bijy/ZHxEQJ/QqDJqGp2Jmw4gE6jorH+kwqI/w
-	 qOHzvuJ4no4Ww==
-Date: Thu, 12 Mar 2026 19:21:49 +0800
-From: Yixun Lan <dlan@kernel.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] gpio/pinctrl: spacemit: Add GPIO pin configuration
- support for K1
-Message-ID: <20260312112149-GKG302167@kernel.org>
-References: <20260312-k1-gpio-set-config-v1-0-8c3541da16b1@pigmoral.tech>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="VSzbmUkm"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62CBUevxE2456770, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1773315041; bh=J7IFS+Nq88jf8GKKNBe7mAAapyjw4fDD+dL+TVSwaL0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=VSzbmUkm0aF8/l06bUGmL+bA5BzD1OzXoo+8necBJrjxEVvMYJdDgDeOn1x/tc1Oy
+	 +H4PGxCa/fjz43KEPkOHsX8IxDllYPrm478hPoWf8l9rs9WO/RF2OeNzeJJeDPz7y4
+	 sYKvqEAmyBCtIcrAihNc8DwNBTCtyoF53mSF6G1VnS6RFeNtxqg3IJGaKoIwbwWC/v
+	 pArqJFHrFuRs7iFBMyXJmxpYgbi1RRG3a1nv4Brnu/jmI0obCs5S5pMv2gcH7KjCOl
+	 AeVA0M9g6vzlnaePtDMI5I4vuRh5woA8HNVePSCfj+x99MaZoxnJ3JrP0F1SAOMjDh
+	 FIvwS3EumkORA==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62CBUevxE2456770
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Mar 2026 19:30:40 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 12 Mar 2026 19:30:40 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
+ (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 12 Mar 2026 19:30:40 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <afaerber@suse.com>
+CC: <bartosz.golaszewski@oss.qualcomm.com>, <james.tai@realtek.com>,
+        <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+        <eleanor.lin@realtek.com>, <tychang@realtek.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-realtek-soc@lists.infradead.org>
+Subject: [PATCH v3 1/7] dt-bindings: pincfg-node: Add input-voltage-microvolt property
+Date: Thu, 12 Mar 2026 19:30:34 +0800
+Message-ID: <20260312113040.68189-2-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260312113040.68189-1-eleanor.lin@realtek.com>
+References: <20260312113040.68189-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260312-k1-gpio-set-config-v1-0-8c3541da16b1@pigmoral.tech>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Junhui, 
+From: Tzuyi Chang <tychang@realtek.com>
 
-On 16:42 Thu 12 Mar     , Junhui Liu wrote:
-> This add GPIO pin configuration support for the Spacemit K1 SoC. Some
-> use cases require configuring pin attributes like pull-up/down when using
-> GPIO lines.
-> 
-> A practical example is the SD card detection pin on the Banana Pi BPI-F3
-> board. Since it lacks an external pull-up circuit, the pin must be
-> configured with an internal pull-up to function correctly. Such
-> configurations can be specified directly in the devicetree:
-> 
->     cd-gpios = <&gpio K1_GPIO(80) (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-> 
-> To address this, add the set_config() callback to the gpio-spacemit-k1
-> driver to enable pin configuration through pinctrl, and modify the
-> pinctrl driver to return -ENOTSUPP instead of -EINVAL for unsupported
-> parameters, allowing the GPIO subsystem to gracefully handle them.
-> 
-Thanks for working on this, for the series
+Add a generic pin configuration property "input-voltage-microvolt" to
+support hardware designs where the input logic threshold is decoupled
+from the power supply voltage.
 
-Reviewed-by: Yixun Lan <dlan@kernel.org>
+This property allows the pinctrl driver to configure the correct internal
+reference voltage for pins that need to accept input signals at a different
+voltage level than their power supply. For example, a pin powered by 3.3V
+may need to accept 1.8V logic signals.
 
-> ---
-> Junhui Liu (2):
->       pinctrl: spacemit: return -ENOTSUPP for unsupported pin configurations
->       gpio: spacemit-k1: Add set_config callback support
-> 
->  drivers/gpio/gpio-spacemit-k1.c       |  1 +
->  drivers/pinctrl/spacemit/pinctrl-k1.c | 21 ++++++++++++---------
->  2 files changed, 13 insertions(+), 9 deletions(-)
-> ---
-> base-commit: b29fb8829bff243512bb8c8908fd39406f9fd4c3
-> change-id: 20260312-k1-gpio-set-config-f0873e92ebac
-> 
-> Best regards,
-> -- 
-> Junhui Liu <junhui.liu@pigmoral.tech>
-> 
+This defines the reference for VIH (Input High Voltage) and VIL (Input Low
+Voltage) thresholds, enabling proper signal detection across different
+voltage domains.
 
+Signed-off-by: Tzuyi Chang <tychang@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+---
+Changes in v3:
+- Rebased onto the devel branch of the pinctrl tree.
+- Improved commit message and description.
+---
+ Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+index fe936ab09104..fd49a0d53bf0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+@@ -162,6 +162,11 @@ properties:
+       this affects the expected delay in ps before latching a value to
+       an output pin.
+ 
++  input-voltage-microvolt:
++    description: Specifies the input voltage level of the pin in microvolts.
++      This defines the reference for  VIH (Input High Voltage) and VIL
++      (Input Low Voltage) thresholds for proper signal detection.
++
+ allOf:
+   - if:
+       required:
 -- 
-Yixun Lan (dlan)
+2.34.1
+
