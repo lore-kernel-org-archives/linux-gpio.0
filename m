@@ -1,43 +1,47 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A067E399341;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1943439934B;
 	Thu, 12 Mar 2026 11:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773315218; cv=none; b=Cgz9aVieFxtpwvXIRaN42yrqDw4+KcGsT6ijs+5ItrXj0sTboWps9xsJVnD+9UQx6vAQ8HAp9Nc+vZ5SO1Nj+QmcjnElXTFjupsQ8KUTylcCG+jnyc2F9qjpUF0mQhxkClUK58j0ITsyg978GbXv9mKS0AKuFpxJ60USfaBzbU0=
+	t=1773315218; cv=none; b=JskY+Wt2AwIg6NT4SNeh/5lQaJ1AY+2/N8u8ymqP3h85B5J145c/ldH/EQUu5Qz1NjjTJKe0PelZTy2etTqiAC4XRCXjuUXlncCiK993Gb6jjUhYK0zY+wURNEjTnjmMb7QKGSL1pfyzyov7QBsVhx0ad2WjHBZ2eEACbFwS3kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773315218; c=relaxed/simple;
-	bh=Lq5F5VBC2Za2D82PHIvlT9JQlI/cYr9M1sh5RyEbENY=;
+	bh=YYeCHOHaJrtDhO1n/UUvGVU+TWGtyT62OKXz3Q8Qt2g=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8FX16WndE3aKXCdvdxTvbLW5zDvr/zEAYAkLD5oZ/+n36tVjKKNdDUDxuZjbzpny+CHeWfIVmfuIunGfc1JTOnfX0/F+7QtV6eMarKBHEjGvxHDkwUuySBZPW5m578cCv/mITRFV/onLAS5wJE/rzFXTGfhPNqhHGfguDqIgkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZzCWWUza; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=gFdoUdFBASuD/lcnZkGM0DhGdD3iUrKblpPxFYSopYAe0cq3gDgzHpbADI/kImfByfNmF3Q/uOIkUql/N1ddmtsbcFC3LUmwl44qxosXBLAu/4BoidKn5A3/9D6ap26K+KEfUAywlR4Bls7meo/k4gIK1yYTIbBUqUFytlD85Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=an022eCt; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZzCWWUza"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62CBUfGvA2456775, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="an022eCt"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62CBUgb362456781, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1773315041; bh=KRKwlNptv66mBAar+PaEyJl/1lwLb25U/oESD7/00jc=;
+	t=1773315042; bh=tzX8YDmQgMk4YmUKgMYExLBoR9xk6S3Rj7doaXnGfoE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=ZzCWWUzaat8+qCWpQYlggnzePtw/1QRuJvQqglXvbmM0Y3KTAP1LJWPtxiQfnykJ8
-	 CMDso3rp27Gunl8FG/ZeC7a3CVc0YkhFaIODTKF1G71J14RNdGCCbwCA20nyNlUFfE
-	 Oyotk5Vcl6p2bSG4/8Gt3hJwm50bbGhZwRdbiyak8EMg+cpH/It0P5wsgN9imw6MYk
-	 Gg/8ndAR3/XiuiOkfuEaOXLzyn4wxYcs2KIGdKc3leLxNNwlMsa8OhfOwbTfrhpBvf
-	 tDf34H9WcPbJ9mIKQzc1kTi0zk3L20v02Sdw2VbUbxbA0911tXacvT+M38HGAPkyMb
-	 K7rxwXP3miTKQ==
+	b=an022eCtPSMYcJMXVsoorB8AEH99gKhkPpLZHXNKrKjB3O9O34lXMiCfkVLcrFjoe
+	 PGrOI+dzgHiYcR+KexU3t/zJV/0kyb30hvnRsdTBTcD8QL2iD7hUEWxlnzAPh0Af8M
+	 7tkJ6ArN+VfGNojRdYZF0Dh/sXbKfIQxVQaOLEMg2Rf4UiKUTCGlTdcWWQDnjOKiB0
+	 ktF245Y+Z9JNb+VGRK6LVHwN+u3BQ68w6vFJ5/OHvd2xJ1jNxMGV+p4acGFOt86D53
+	 H7gw+40DyJguH6UrH/In7tc4ROsID9qr7tQURxpkuRhxienzvswG9y9cygUz/hBgb8
+	 YbP6yZwCq3+2Q==
 Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62CBUfGvA2456775
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62CBUgb362456781
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Mar 2026 19:30:41 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+	Thu, 12 Mar 2026 19:30:42 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
  RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 12 Mar 2026 19:30:41 +0800
+ 15.2.1748.10; Thu, 12 Mar 2026 19:30:42 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 12 Mar 2026 19:30:42 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 12 Mar 2026 19:30:41 +0800
+ Transport; Thu, 12 Mar 2026 19:30:42 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <afaerber@suse.com>
@@ -47,9 +51,9 @@ CC: <bartosz.golaszewski@oss.qualcomm.com>, <james.tai@realtek.com>,
         <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v3 3/7] dt-bindings: pinctrl: realtek: Improve 'realtek,duty-cycle' description
-Date: Thu, 12 Mar 2026 19:30:36 +0800
-Message-ID: <20260312113040.68189-4-eleanor.lin@realtek.com>
+Subject: [PATCH v3 3/3] arm64: dts: realtek: Add pinctrl support for RTD1625
+Date: Thu, 12 Mar 2026 19:30:40 +0800
+Message-ID: <20260312113040.68189-8-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260312113040.68189-1-eleanor.lin@realtek.com>
 References: <20260312113040.68189-1-eleanor.lin@realtek.com>
@@ -62,80 +66,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-The previous description was misleading because this hardware block is not
-a PWM generator. It does not generate a signal with a specific frequency
-and duty ratio.
-
-Instead, it provides a fixed nanosecond-level adjustment to the rising/
-falling edges of an existing signal.
-
-The property name is kept as 'realtek,duty-cycle' rather than being
-renamed to strictly preserve Device Tree ABI backward compatibility.
+Add the pinctrl nodes for the Realtek RTD1625 SoC.
 
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v3:
-- Reverted property name change.
+- None
 ---
- .../bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml         | 7 +++++--
- .../bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml         | 7 +++++--
- .../bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml         | 7 +++++--
- 3 files changed, 15 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/realtek/kent.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
-index 90bd49d87d2e..2a640e495cc7 100644
---- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1315e-pinctrl.yaml
-@@ -135,8 +135,11 @@ patternProperties:
+diff --git a/arch/arm64/boot/dts/realtek/kent.dtsi b/arch/arm64/boot/dts/realtek/kent.dtsi
+index ae006ce24420..8d4293cd4c03 100644
+--- a/arch/arm64/boot/dts/realtek/kent.dtsi
++++ b/arch/arm64/boot/dts/realtek/kent.dtsi
+@@ -150,6 +150,26 @@ uart0: serial@7800 {
+ 				reg-shift = <2>;
+ 				status = "disabled";
+ 			};
++
++			iso_pinctrl: pinctrl@4e000 {
++				compatible = "realtek,rtd1625-iso-pinctrl";
++				reg = <0x4e000 0x1a4>;
++			};
++
++			main2_pinctrl: pinctrl@4f200 {
++				compatible = "realtek,rtd1625-main2-pinctrl";
++				reg = <0x4f200 0x50>;
++			};
++
++			isom_pinctrl: pinctrl@146200 {
++				compatible = "realtek,rtd1625-isom-pinctrl";
++				reg = <0x146200 0x34>;
++			};
++
++			ve4_pinctrl: pinctrl@14e000 {
++				compatible = "realtek,rtd1625-ve4-pinctrl";
++				reg = <0x14e000 0x84>;
++			};
+ 		};
  
-       realtek,duty-cycle:
-         description: |
--          An integer describing the level to adjust output duty cycle, controlling
--          the proportion of positive and negative waveforms in nanoseconds.
-+          An integer describing the level to adjust the output pulse width, it
-+          provides a fixed nanosecond-level adjustment to the rising/falling
-+          edges of an existing signal. It is used for Signal Integrity tuning
-+          (adding/subtracting delay to fine-tune the high/low duration), rather
-+          than generating a specific PWM frequency.
-           Valid arguments are described as below:
-           0: 0ns
-           2: + 0.25ns
-diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
-index b6211c8544ca..2136546adec8 100644
---- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1319d-pinctrl.yaml
-@@ -134,8 +134,11 @@ patternProperties:
- 
-       realtek,duty-cycle:
-         description: |
--          An integer describing the level to adjust output duty cycle, controlling
--          the proportion of positive and negative waveforms in nanoseconds.
-+          An integer describing the level to adjust the output pulse width, it
-+          provides a fixed nanosecond-level adjustment to the rising/falling
-+          edges of an existing signal. It is used for Signal Integrity tuning
-+          (adding/subtracting delay to fine-tune the high/low duration), rather
-+          than generating a specific PWM frequency.
-           Valid arguments are described as below:
-           0: 0ns
-           2: + 0.25ns
-diff --git a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
-index e88bc649cc73..e8ea1362b16d 100644
---- a/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/realtek,rtd1619b-pinctrl.yaml
-@@ -133,8 +133,11 @@ patternProperties:
- 
-       realtek,duty-cycle:
-         description: |
--          An integer describing the level to adjust output duty cycle, controlling
--          the proportion of positive and negative waveforms in nanoseconds.
-+          An integer describing the level to adjust the output pulse width, it
-+          provides a fixed nanosecond-level adjustment to the rising/falling
-+          edges of an existing signal. It is used for Signal Integrity tuning
-+          (adding/subtracting delay to fine-tune the high/low duration), rather
-+          than generating a specific PWM frequency.
-           Valid arguments are described as below:
-           0: 0ns
-           2: + 0.25ns
+ 		gic: interrupt-controller@ff100000 {
 -- 
 2.34.1
 
