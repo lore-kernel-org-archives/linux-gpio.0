@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6293374E57
-	for <linux-gpio@vger.kernel.org>; Fri, 13 Mar 2026 22:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48552374E57
+	for <linux-gpio@vger.kernel.org>; Fri, 13 Mar 2026 22:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773442180; cv=none; b=Sq5qjN5vZZnC5ifOMYsltUalhtx4KgtsJiZkkvmvL/NqjV12zkwPx5we1mgvjg2wwyqe4NbGQdgZZoHZSHR9m7H6Y4RrPrIfqz2M09Ll2l7Xk6VcJQ4c4lHj+70HFXIhSmbYaq05oUtpFNSMsLubOGARshN84+Nna+r4jWL4s1o=
+	t=1773442182; cv=none; b=pYmBjo6P1hSO2GJ1XrsB25JHzOJ+53cWGpb1wpzEDtyn0b+TJfdvNTUDUzG1w0V6v1V5eQF40y7wc8ed8n1+dQeKCqO0knyCYXc6mkcCDIHUNCbJUT0uDdvdLFBUvWK/HLwdlgCrqTHLdJfJardPBSWCcWRNcCvi84ydKW/604A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773442180; c=relaxed/simple;
-	bh=P/e1Lt/oqhLJkK5i2pGB/iYsuRFFybOb9u/EkmER6yk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P0+9BG8ga3FN7ELrEq5GlukR7N9TgLQBHaJpVcuHKzbg/gxVOb1EHKqY4b2bMvdbmO0uYh9axRKwq7n4qy+yG8cfcJGSuynOJuJT92jUIX2bxDmpEbK9X0w5A9hR69cyVgBVeWGv1fMLFxlchxHxkfvmwCRLOGf+bnx8Qqf9pmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YndtjnTC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773442182; c=relaxed/simple;
+	bh=JmgVPOpUe5VtNzS0/AnEaP9Xy7tKDMpf2a5YlJtRX0I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nS6uk7sXNliaMBwN+B5Dvk0AvECV+hjnCCF89kU6mTh0ATFyFIwXolKm2pY+2iQQz3/8GOc8VQBdtsZLHIwSyAhHontaE9RR9RHRIRhiwx/VOSSP7OxnzBj1KruOh53AvBg4a+eUNJoXSjPDWDjNvl4kgX8pA+CB4dptYD438Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3repjIg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YndtjnTC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA68EC19421;
-	Fri, 13 Mar 2026 22:49:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3repjIg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21363C19421;
+	Fri, 13 Mar 2026 22:49:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773442180;
-	bh=P/e1Lt/oqhLJkK5i2pGB/iYsuRFFybOb9u/EkmER6yk=;
-	h=From:Subject:Date:To:Cc:From;
-	b=YndtjnTChSlIZi0NecXr+6/xhxE7GtyA7zHYwB5xQF2cQxo5cU3VmDN4HbjODIHnI
-	 FGM83V6EWFfM9I3twJPqKKI4RpRdyp0vUUcbIrEL0LH2GxyuRpSehUtdwi+eVve3zb
-	 6CLyHP56mvf2ac1djNTaW/wS7Z59e+LjJMO71NaKAa4qYdgE9IF/vcJSwFmDf/jZzv
-	 Dnyx4wZ9p6e0fq8ht24iYSWrA1KdPU9Lxu6iKxGMlmB4W9W35rwmJoHjRtUZyjyoWM
-	 Lqb9QDhhZSQ6CwnkphKOFMa7hf5PMZGs7C2oNmQ8JsgmU97Ak22drD0DVv8bY6PY3c
-	 IQZxZnCXPVKLg==
+	s=k20201202; t=1773442181;
+	bh=JmgVPOpUe5VtNzS0/AnEaP9Xy7tKDMpf2a5YlJtRX0I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=D3repjIg/wFst3TRfC9e6qAm3l2hoRD7iUp0xLM95q+pivBngiSaGw8PBp8i070yF
+	 26XrAFVOQzI0RRNqIo7b/JcIOYp78ukjcVaM+NK18V8IbuUD7J3Bj5JXSYwdVZXNcz
+	 BEXTZnUWMbdfhoh5howhkq23ZLmhiBJX9EYvlAPNABeHPCQLzzUS2e0kz8PSh7X82d
+	 sKV0X8h9SOUON671EjlU4CAeXPrulAk6rHmLLsssmaNR6FaVvdjlZ5Dq8/JssKiY6Q
+	 7A6oEwB2NtUGUTte0Llb9zXfBq3fCpDczpCbA5p/bU+t9fVLTf3dRm3bbY5uSUPcHB
+	 7z5bKVt6v6nCw==
 From: Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v2 0/3] gpio: Use generic MMIO GPIO some more
-Date: Fri, 13 Mar 2026 23:49:36 +0100
-Message-Id: <20260313-gpio-mmio-more-v2-0-0f777b63105a@kernel.org>
+Date: Fri, 13 Mar 2026 23:49:37 +0100
+Subject: [PATCH v2 1/3] gpio: devres: Use devres parent if undefined
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -37,44 +37,45 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WMQQ6CMBBFr0Jmbc1Qioor72FYFDuWSaQlU0M0p
- He3sHfzk/eT91ZIJEwJrtUKQgsnjqGAPlTwGG3wpNgVBo26Ra3Pys8c1TRtE4VU1yEN6E4X1w5
- QpFnoyZ89eO8Lj5zeUb57f6m3929qqRUqJGusM41r0NxeHKzEYxQPfc75B+Zgb+utAAAA
-X-Change-ID: 20250227-gpio-mmio-more-990eb0d68d5b
+Message-Id: <20260313-gpio-mmio-more-v2-1-0f777b63105a@kernel.org>
+References: <20260313-gpio-mmio-more-v2-0-0f777b63105a@kernel.org>
+In-Reply-To: <20260313-gpio-mmio-more-v2-0-0f777b63105a@kernel.org>
 To: Bartosz Golaszewski <brgl@bgdev.pl>, 
  Mun Yew Tham <mun.yew.tham@intel.com>
 Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>
 X-Mailer: b4 0.14.3
 
-I found that the Altera driver is easy to convert to
-use GPIO MMIO.
+If the user did not pass a parent in the struct gpio_chip
+then use the device used for devres as parent.
 
-Only compile tested, I do not have this device.
+This is quite intuitive and can help avoiding having to
+assign parent explicitly in every driver using devres
+to add the gpiochip.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes in v2:
-- Rebased on v7.0-rc1
-- Rewrote to use the new generic GPIO config struct.
-- No reaction from maintainer for 13 months... Maybe we should
-  just apply it?
-- Link to v1: https://lore.kernel.org/r/20250227-gpio-mmio-more-v1-0-0ea4ad43d304@linaro.org
+ drivers/gpio/gpiolib-devres.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
----
-Linus Walleij (3):
-      gpio: devres: Use devres parent if undefined
-      gpio: altera: User gc helper variable
-      gpio: altera: Use generic MMIO GPIO
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index 72422c5db364..2ec825ffab7d 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -353,6 +353,13 @@ int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip *gc, vo
+ {
+ 	int ret;
+ 
++	/*
++	 * We are passing the devres device here so if the user did not pass
++	 * another parent, it's this one.
++	 */
++	if (!gc->parent)
++		gc->parent = dev;
++
+ 	ret = gpiochip_add_data_with_key(gc, data, lock_key, request_key);
+ 	if (ret < 0)
+ 		return ret;
 
- drivers/gpio/Kconfig          |   1 +
- drivers/gpio/gpio-altera.c    | 124 ++++++++++++------------------------------
- drivers/gpio/gpiolib-devres.c |   7 +++
- 3 files changed, 44 insertions(+), 88 deletions(-)
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20250227-gpio-mmio-more-990eb0d68d5b
-
-Best regards,
 -- 
-Linus Walleij <linusw@kernel.org>
+2.53.0
 
