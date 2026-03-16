@@ -1,54 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3FA2874FF
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 13:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F734351C13
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 13:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773668948; cv=none; b=bPkaOqrHijC5rPwuwjxFLQWNYij/QY1o+TCVx75QrUllMRTWxf6B929J6sSQ8HHWKfo0Ow2bWFaQf0v6uIVPdrbfoMyYG0FrdJOZHiaxFaYnnfL00wOzectfVA8AfM0mrLiMDyAu/qs+C2hr9hJGRVqjHZ592p3ieMwN9z9OugU=
+	t=1773668985; cv=none; b=LBecD2KtMssgqgJCSlHvWtlRFKRq/0qqxxkatQ3KZrN4VO6QHofNkFh15+LXGANEejoufJr1KJJCEOFPZJegmMWkVLEFPZnvGoAf02LvPtN3mxqG4A5G28tMtj+fqbcXfGqjOCn5/3OAEm7Y4AIteAykttP4oKcyfldUzVsmzbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773668948; c=relaxed/simple;
-	bh=4cvdXFvlQulifAsDCud34sW/nfnMYNnh593LHQBbdnc=;
+	s=arc-20240116; t=1773668985; c=relaxed/simple;
+	bh=A2q9pnOophLnn6caR9j1SFOoQuXMepZD8MjFyVMsVzA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNilyIwQMtck9RB8wRSzTo7ntRf6yww1SB+phaiszGHfkoL1pl8Y3uwnA17y7rXi4bKJEyuUUPlqVe6eHEd/7rnTMDpqHrXMFfjD5toeYEM3+S75Ec+FCt6Im6LJwY0CodLnNStCi2MsuX5yrCVY2lu6kdPkpB6sz2jfWi/vpCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBU3WEMA; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=NlrkKwCnh7VHs+HKidcjfLmvixLav7o4Ukp+eNiXZ11bSM6QWLwlkRYYmbgOr9oo3ZTo71LWghKmeowBWHsegFDFig6hmmS8qDlzctLMFv8jJsJM9jQb9+PdfVsR+3bhHuNRXuGl8s68mZHN/DdB/uc9P1lVPUf+FJ3LUjLACBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUX09udD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBU3WEMA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3A4C2BCB5
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 13:49:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUX09udD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268C3C4AF0C
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 13:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773668948;
-	bh=4cvdXFvlQulifAsDCud34sW/nfnMYNnh593LHQBbdnc=;
+	s=k20201202; t=1773668985;
+	bh=A2q9pnOophLnn6caR9j1SFOoQuXMepZD8MjFyVMsVzA=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sBU3WEMARYeFtfEE+AlhwSnUkJ5EJRMbtuSCokihQMPFtL4fOF1DQjLFBV7tLaFeb
-	 T+g8TOMDoyDOnotauBZotffVGvqew2uOC+8j0NVmfJBG3aonXu8u7ekMQVmMVW6JMf
-	 Q7TQZ9EomgF9UjZy4MeCmn66upcwMUAFgbNtvwsJRC/ixvV7dPy6bT/rykRI0npXbP
-	 DUyqzqj1/YZy+iGiYKlY96c+zFx8dKyxU+sXUSpSbzKgEaUIu6Ef+Dye8qbYw9eLVV
-	 ZId0lXrNkj/ideXPMXdj0oeU5bswNtuIIqXFRJYE37njzQsMp4WLNW/i76DlVt94ZD
-	 AUec0a/UFF5sQ==
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-79853c0f5b9so33967097b3.0
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 06:49:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhCo911UEY47ZkQvCvxaWvIDQr6u3UJZGIygdHlTL5bUVENuyuUCEolH/gi9dHR/hQC4h+3VH41iHM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkV27+PmsYgkjA53ntoP1CZ92mBvZjFPiYz6F8pWMM1H457naU
-	xW04a4W9KxOnWQX14DG+ti5v1pY441rzInvDb10Gv8m9Y3PEz7USfH+Z15mx82ZRnyfjw+U7cvc
-	CsA/wWfgVi5dCGzjPauuApiI4+rhjRWY=
-X-Received: by 2002:a05:690c:7084:b0:795:294c:fd31 with SMTP id
- 00721157ae682-79a1c1a7751mr128404507b3.38.1773668947880; Mon, 16 Mar 2026
- 06:49:07 -0700 (PDT)
+	b=MUX09udDrhOlLsC8/Q3l+9f7i6j0nw52cG2VBuQE28c0gsMbj/8yPFpkQlm+6qxO7
+	 2nwinoqGoDsFAJs6AwnP/BJBlnmpHp0JbD+DDuq3iIulxhKK+Odb/+aKge9jNKDBhh
+	 dHuXK87osW9hgYDFcPob13pEGM8QCPS+L8mw4AyRar4BUMhKg1qfF2pNQjd2nyKoN+
+	 dDETEbyC+jOHoLgXeCG9I6IKpGPo/YHNaCd+pftyQqQFeKOMf/3SItoyecyJjbrpCZ
+	 9xRKsijTcDS430vNPwngFADTRe7LPlJxz67BLKrDf2INqrfy6Aiy3CFrfWPwViujsL
+	 2U+USy9pozMzQ==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-79a3ba1653fso10502577b3.3
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 06:49:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXkE2K406MZw+6RO7fmTe+ckVjpJ/aHash0hGeL5rFK6PrscbmcoYN7kHbXXtdv+h2GWob4O5l2f5Ah@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb6jaPP2tc4jCD96nAVFnGVQ6JSuhXJSkwGUdmnU3yaznQgUZW
+	5SHlbgWyvS5Q5Twof552ap+uqJ13z+uuNvrPxMang6hW/RwLEwv5RPawk8m5TfU1qpPMFUqjezP
+	MApN4VLSq8ihEeYe+AB6zGeHYP84TKsU=
+X-Received: by 2002:a05:690c:9a03:b0:798:58be:324d with SMTP id
+ 00721157ae682-79a1c1ddd1cmr128701907b3.55.1773668984415; Mon, 16 Mar 2026
+ 06:49:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260312113040.68189-1-eleanor.lin@realtek.com> <20260312113040.68189-5-eleanor.lin@realtek.com>
-In-Reply-To: <20260312113040.68189-5-eleanor.lin@realtek.com>
+References: <20260312113040.68189-1-eleanor.lin@realtek.com> <20260312113040.68189-6-eleanor.lin@realtek.com>
+In-Reply-To: <20260312113040.68189-6-eleanor.lin@realtek.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 16 Mar 2026 14:48:57 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkGGSh=9GJ--=6VqMmKxDD+VRepHh2+yYD0hx7o4WJu5g@mail.gmail.com>
-X-Gm-Features: AaiRm53uWyqF9u3u5P6iIbQiRhn7ExWcjXBra8ph9HHpONePx6dshNEP9l450Ks
-Message-ID: <CAD++jLkGGSh=9GJ--=6VqMmKxDD+VRepHh2+yYD0hx7o4WJu5g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] dt-bindings: pinctrl: realtek: Add RTD1625 pinctrl binding
+Date: Mon, 16 Mar 2026 14:49:33 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=9J8p7sjfaFN1W_AoDuvJ+6FMXk=Mz6TMFN54VAPtTUQ@mail.gmail.com>
+X-Gm-Features: AaiRm53YgIbgRT6duHd0On12WaicPrmfX8KKe4MLPMA8yK6MYMjttB2TeXiF5i8
+Message-ID: <CAD++jL=9J8p7sjfaFN1W_AoDuvJ+6FMXk=Mz6TMFN54VAPtTUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] pinctrl: realtek: add support for slew rate, input
+ voltage and high VIL
 To: Yu-Chun Lin <eleanor.lin@realtek.com>
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
 	afaerber@suse.com, bartosz.golaszewski@oss.qualcomm.com, 
@@ -64,16 +65,15 @@ om> wrote:
 
 > From: Tzuyi Chang <tychang@realtek.com>
 >
-> Add device tree bindings for RTD1625.
+> Add support for configuring slew rate, input voltage level and high VIL
+> mode. This involves updating the pin configuration parsing logic to handl=
+e
+> PIN_CONFIG_SLEW_RATE, PIN_CONFIG_INPUT_VOLTAGE_UV and the new custom
+> property "realtek,high-vil-microvolt".
 >
 > Signed-off-by: Tzuyi Chang <tychang@realtek.com>
 > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> ---
-> Changes in v3:
-> - Changed slew-rate to use valid numbers.
-> - Revert realtek,pulse-width-adjust to realtek,duty-cycle.
-> - Fixed example values from hexadecimal to decimal format.
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
