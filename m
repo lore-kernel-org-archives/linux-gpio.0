@@ -1,117 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0E63BED73;
-	Mon, 16 Mar 2026 17:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14F5347512;
+	Mon, 16 Mar 2026 18:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773681536; cv=none; b=ji1/KmuGQRID4aRMVGvuGXWRSSWVIP92LO/VOsMbC0eo4Z2Z4D0yX/vywaHqTglQdWPNF92dIu4r7LjfvcRazCsNuQybad11HgV33oFU3LhYlfJzpg7nmyk/sTtH0U6p0S4iNgN+ufTfGfFsebFzl3PwQ6rgreXey89ysQGI2ro=
+	t=1773684921; cv=none; b=BvDxGkHF80n8hLGz/RdNkqgGTaxn/wSkcPP9AaIxGqBOQveWz12/rspQwSt41efrGsn/ADJHNrbVoN7SA2cjgAwht86UhRrF3n9tLI/4PIagiiDGM6Xq0H87zaLETGx5V2efQp7P/OACytfT7hNY8Fnu6lCiANxTB7wxgYMBWFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773681536; c=relaxed/simple;
-	bh=9cK3KLb4HrCqUUxkMKGn6O5T8UEF2tr+A46rGmJElf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9tbUrbeDZLq+SdPEP9K2aT4zhTWG9pS1qxSicFB5G1a4Cqn+PYgZVe2ErIHBOOpVubQn2/93P/Otg2cFbc1xPrCRAlRvAeMkTJ8iVBCl56K6sgpQjuwdOq0HG3KxG3+KX1TbPme6YNQ76DTPNMh/dZ+ZA7P2kmOBXZpAlPuNV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilL5GFQK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773684921; c=relaxed/simple;
+	bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kPUAN3xJ7vPDrOkncr+eKKQItUcjXxch1b22c2eMN7fNZ0taYSjiUC9Pvx2uyjMKo1CklH1c+YdFZONyB5fnyRQvaTA8KSY+f5lAzPlcTFUQHFdcLzFF1HEVRTdMninhjeiKtb5qOCLhIjh4UYyaYe6N6nWAtYDLevgIM/d8Liw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzKGWr8Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilL5GFQK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB50C2BC87;
-	Mon, 16 Mar 2026 17:18:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzKGWr8Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11B9C19421;
+	Mon, 16 Mar 2026 18:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773681535;
-	bh=9cK3KLb4HrCqUUxkMKGn6O5T8UEF2tr+A46rGmJElf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ilL5GFQK2OtuJkzGrrwtNW7qPiZYpzofHMyOgZ5SRG5ULZ6m/g20WUP3gjknafSFT
-	 B6r/8IJdFIg42TeP0H+2zVhRWQxImRJD3T1xo7uq2CXynFcrDgCMNB3fyYjbwH4DxK
-	 6gIVQYmL50QCS2RNBy2rPq/RIvXTsi2AC1b9MOKicEODI1yZY7Nwpz5ddWUftLr9nd
-	 jPuJSKcOk932r2foN3UxdB+xpCcjmzrHq3EKthGR2vw2R9uEMP/F/EuVXg08GCnOWg
-	 4R5ANtdtfGdqTogV7zD2oZVcHhCSLTkS/Zplrd1icxGPC1wCjZhUcPJC2JrC92sTaq
-	 RPJRWEaSq0wAw==
-Date: Mon, 16 Mar 2026 12:18:54 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	David Jander <david@protonic.nl>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel@pengutronix.de,
-	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] dt-bindings: pinctrl: add NXP MC33978/MC34978 MSDI
-Message-ID: <177368153336.2253380.3145314125714011470.robh@kernel.org>
-References: <20260316140514.1406588-1-o.rempel@pengutronix.de>
- <20260316140514.1406588-2-o.rempel@pengutronix.de>
+	s=k20201202; t=1773684921;
+	bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=IzKGWr8Y8bdgCgHypXlfL7L9UV40MqCWXpx5ZSbdhR5Q5tWfPFkU9dSlXVdQYIXQb
+	 1wYDtUv+a972HzgsVtl7FAa+e+txxzuYmtlbfCfvVx3YlgXYvcocfs6UIeyEGZ/XiA
+	 nhF2mPRTC8FBQ8xjydvB9cZu6uXzm1uAMS2632VGrAbSErdVy4OibypDG+7fPfkS2o
+	 mN6e9PQANA2VjNx+QI/G1uoEkMFx22+odi0zRIDPVv6KWwfD3veWnT6aoLdlzmhlel
+	 C/o6UHeSN7PJpcmzlBUXFbYK8u3BOh4yWMiu2IL+HhoOgiSYzjwGF335J0h118bLSp
+	 o1z9toqrSkDgg==
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+ Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+References: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+Subject: Re: [PATCH] ASoC: codec: arizona: Convert to use GPIO descriptors
+Message-Id: <177366676762.65215.4887426822529961456.b4-ty@kernel.org>
+Date: Mon, 16 Mar 2026 13:12:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260316140514.1406588-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c239c
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1125; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpuEi15VIkFVpfbMENWG7miE5Gedb2iYkZYDVb1
+ KFLtDV0u0+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCabhItQAKCRAk1otyXVSH
+ 0IgrB/92YGzRsgyzung8/Uf95Fkw5+Sp6uPvpKX9cgrxQQRVvUxp2sn8CyRWH4rZAmWcDWzWwm8
+ Gh189w3kcUSHzn5m/UsBkhTxjY6q28jCKIoz4pHCCQHVfjcIl5QePpXPieDQqyAIlDQXJrOHD2/
+ b7z6c5xXHinWj95Bppag4PO849BbIzLNqCbvPWrx9QWtIYN2fkpJ/FmK4vL+KY6ZiSHwjyDrCuq
+ 47tKIGArH6xApc5sAjvYQe4t2EHsyCQ28rIilRiEt8CyhoJkWpYz+jNWAsIet107yCp5s44WrwA
+ ddPZ5/n2jfWSGnnOAbgEvbtQbYigf0+quY/T4uOU5Kw8W8NA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+On Sat, 14 Mar 2026 23:56:49 +0100, Linus Walleij wrote:
+> ASoC: codec: arizona: Convert to use GPIO descriptors
 
-On Mon, 16 Mar 2026 15:05:06 +0100, Oleksij Rempel wrote:
-> Add device tree binding documentation for the NXP MC33978 and MC34978
-> Multiple Switch Detection Interface (MSDI) devices.
-> 
-> The MC33978 and MC34978 differ primarily in their operating temperature
-> ranges. While not software-detectable, providing specific compatible
-> strings allows the hwmon subsystem to correctly interpret thermal
-> thresholds and hardware faults.
-> 
-> These ICs monitor up to 22 mechanical switch contacts in automotive and
-> industrial environments. They provide configurable wetting currents to
-> break through contact oxidation and feature extensive hardware
-> protection against thermal overload and voltage transients (load
-> dumps/brown-outs).
-> 
-> The device interfaces via SPI. While it provides multiple functions, its
-> primary hardware purpose is pin/switch control. To accurately represent
-> the hardware as a single physical integrated circuit without unnecessary
-> DT overhead, all functions are flattened into a single pinctrl node:
-> - pinctrl: Exposing the 22 switch inputs (SG/SP pins) as a GPIO controller
->   and managing their pin configurations.
-> - hwmon: Exposing critical hardware faults (OT, OV, UV) and static
->   voltage/temperature thresholds.
-> - mux: Controlling the 24-to-1 analog multiplexer to route pin voltages,
->   internal temperature, or battery voltage to an external SoC ADC.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v5:
-> - Commit Message: Added justification for distinct compatible strings
->   based on temperature ranges.
-> - Restricted pins property to an explicit enum of valid hardware pins
-> changes v4:
-> - Drop the standalone mfd/nxp,mc33978.yaml schema entirely.
-> - Move the unified device binding to bindings/pinctrl/nxp,mc33978.yaml,
-> - Remove the dedicated child node compatible strings (nxp,mc33978-pinctrl).
-> - Flatten the pinctrl/gpio properties directly into the main SPI device
->   node.
-> changes v3:
-> - Drop regular expression pattern from pinctrl child node and define
->   it as a standard property
-> - Reorder required properties list in MFD binding
-> - Remove stray blank line from the MFD binding devicetree example
-> - Replace unevaluatedProperties with additionalProperties in the pinctrl
->   binding
-> changes v2:
-> - Squashed MFD, pinctrl, hwmon, and mux bindings into a single patch
-> - Removed the empty hwmon child node
-> - Folded the mux-controller node into the parent MFD node
-> - Added vbatp-supply and vddq-supply to the required properties block
-> - Changed the example node name from mc33978@0 to gpio@0
-> - Removed unnecessary literal block scalars (|) from descriptions
-> - Documented SG, SP, and SB pin acronyms in the pinctrl description
-> - Added consumer polarity guidance (GPIO_ACTIVE_LOW/HIGH) for SG/SB
->   inputs, with a note on output circuit dependency
-> - Updated commit message
-> ---
->  .../bindings/pinctrl/nxp,mc33978.yaml         | 153 ++++++++++++++++++
->  1 file changed, 153 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,mc33978.yaml
-> 
+Applied to
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.1
+
+Thanks!
+
+[1/1] ASoC: codec: arizona: Convert to use GPIO descriptors
+      https://git.kernel.org/broonie/sound/c/cb15d8e6cbe8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
