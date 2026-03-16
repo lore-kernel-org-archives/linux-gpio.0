@@ -1,141 +1,300 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F940382362
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 08:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08940382F13
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 09:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773651595; cv=none; b=WC+Bce65psre747SRsu9WiOSUDmyorMUsluXSrn+8dyOvdT8bhH4By3pCd1QWElF5rFDI2e5LqguB9nwmCrYOL4WRxsp2bV/lVqvnZLNIS0bM3M+1CMO+QTqxnTQAiNdDbJE4cXmSRmmH2UyJeQem0OMu8T+HKm3cri0+vP6a3I=
+	t=1773651833; cv=none; b=E673f6XB6+MIOQV6YeAMXpUDSH8ANrBI3XsN9H1O3OI/w66OJIA5uqGbbjWtLlfZKKtMYtush808z6kEu2x0RbL6fH+u/i7ZT5owiyWbCmkm2QzvO0hsC27jC/vPbn2ADPU76CdZQ3xHPoNZNA/kdrcYT5TAujN34GjVwzZuKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773651595; c=relaxed/simple;
-	bh=XGYPbAKoOAYk8j1GmSPwvsVkBF2sd4JzgK3hjvlcvfk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RtNY60WQlORSXtlktEs5qxtstNwCVRGjKYDAm5wBBQLEmwk6qt9V0Y6oFpjXVoFKzpDZDrag9IWFRFXlFg58Vxvh+TIRrAjvnbrN4kGeu76hT18jq5o2ZHmSVyPFCo8VVtpTUGIYmZFVWbNWfsvwNt64Tut2gH1D6Zece5/M8pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc5XQgJB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773651833; c=relaxed/simple;
+	bh=NTcvsuGdFFCNDl1LmYf5IJqXK3/yowkel0MRzCFjEA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rit3vwBUwbpLgB7634sxMv7yo9tePLU8YhaAqYfWs7hXourIPHMufA42mahsC8ViKRqQqRCugkorZHXL3nslHdS+3YMpyDEPOWyw27G0yGQXvpe2xCib6Vvj060yRfy6OSN/l/hT0AcUSx4/NkwNA9fx7ycQ5UW1vlhBDI9vOeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XzN5Wves; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bWoeMhsa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc5XQgJB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8CB2C4AF09
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 08:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773651594;
-	bh=XGYPbAKoOAYk8j1GmSPwvsVkBF2sd4JzgK3hjvlcvfk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Fc5XQgJBT+a69JFbjmBZwFWModrymKlT281DpVYTSLWmus2ZpSMhIFfGQBqAd29aA
-	 83HDxYS9hPo1RepcCmIK0oWTlhQyNfky1evUcvBsNu21tBCtSvOEB9IyuaudxZ4qZL
-	 658aErTMbUZFaADvaM0RnKscpeqM/xw3XM6xw7GIG8Sq6svxHN7eHhAUxL1zUboD/2
-	 tfRjRcMi4XByBdaVZly0tEKEjhePc4DygmjvrYGXpYHfb2OjlZzpYb7MjIo17PHjwt
-	 8Xa9syAhmMdP0L5fmOwhUTjngIFPSckxzyzrvzHtWygXEg28nwNMpYc4Mvt5KgPLGe
-	 Jv8CMAnLG6rew==
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7927261a3acso33778777b3.0
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 01:59:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrRwmS6E4LkCqZDBuOpy7nFx05dsPHwE6Uur+19cTnMzGA+4nRByyjjMuLviWIJcz/HqdYGyhhmlS+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFa+TaUEbQwQUN8aDuRxCt4a+lQwjatxd69CcpVdx6PFKTWW83
-	JxB5RvDro+NLCAoe6yC0+0Eo1Kkvk3T8k7ZSyE3Oeu5JLru3Go3p2xhnsmJAWG992tvl37n4Ujv
-	GLNClbRfKoqpGLZULf4wV/aAYyqxjKpM=
-X-Received: by 2002:a05:690c:c50d:b0:79a:56bc:245e with SMTP id
- 00721157ae682-79a56bc2985mr8612647b3.47.1773651594351; Mon, 16 Mar 2026
- 01:59:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XzN5Wves";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bWoeMhsa"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62G64kDq744179
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 09:03:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uxIt5bFyOn21UFobDspTNyIJUK1VFpOCpDcq0kigCmw=; b=XzN5WvesKeTofC7H
+	71emGR6akr7BAIw18eRTDtKaDaPpG4SL6Ck8aNqNq7Y2ZflWiNhCemEsvK1w51iL
+	Xa9Ku6lFxoPG/NnY5uwxJ9Md7InPysX4iR9VriRB3qy71IdwNN0GC9EDurBQJrVe
+	lYNSmNpk0PpxQoaUoyqba0fkh98NeAAaN2Z+WqSFu1FpYHNldZTIZDBagaUSA/ez
+	sP9OgmnPTocO8fAHA+fIz4AT4Ec/vvXzDtoFgcvwnLH5Wl015FYC6DNHBKNbKBl3
+	DygEddJowzNJj6wGGGO7sYZI84rsvmX3PYMfDcMOZ2B1kOGInE59FU2eFCTqvI/s
+	4hLFzw==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cw00bd0ys-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 09:03:50 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-c6e7f45e2ddso23136869a12.1
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 02:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773651830; x=1774256630; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uxIt5bFyOn21UFobDspTNyIJUK1VFpOCpDcq0kigCmw=;
+        b=bWoeMhsa9riDiUmH8NWPJRvIEorscO8cwUAocO9VGmZJnwNT6t/tvt50HImUP0ov80
+         IH7IoYvspWlHJOgqLEy6oYEsvy36NTyY0kKewzVawkNT2lRmsBNhRd96XTg68BfuATUG
+         k/VNfRHaaDFF4HsAEJwCUF5geqkZr5oky32d03o4Oa5Ncg275XgfWKFVI9fYjtUaVR43
+         dmVONu2zDl9GO/U4AGeOs86b99Npp2jF2TWKuYxm1NTKuBuLnfe+SzRODFniz6vSqxmG
+         WoPc48nJ2efba7hwF4oeAvZpCQkNEtpPYmMqCto3bXLNW3DSUiw3MXmFMY7w59VMIPpN
+         oDPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773651830; x=1774256630;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uxIt5bFyOn21UFobDspTNyIJUK1VFpOCpDcq0kigCmw=;
+        b=ZCe6r0uIAIYNT6QT5InbwVGzC4Y07I8+Wo3va0lyN++Cwe43x61Em6R13Z+R9TDBDh
+         AdcvrS/KG0c12bnLA9PM6mFTt6PAti4FaoqCXLk8gXxROUjNYr+2+aPj56d2aSsnzK3i
+         rDiYpOSALt4uUPCwQhqpSu5/77aKHmO80QDc/PI3ru7HgBSwGglA7ln3DaPejxEhTWck
+         4BlhEzUe+b4nuPj9UQ4FJ1KaWjaRsI+zPoP5438g+YeBTlycIxxugoHrI9Umc4t91pTq
+         XRY14jBsNmcHXURO8rry66l3Cf7gXSNslqFjrkUv00xwe1n3chfYoLRj7XWYHGtpuAwV
+         Z+kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPTh7Pgsd4SQ6TeeyFWjhskyAlGstzeCpQZOr7QiuZskfiAMWE6bCsBXpW6Y7T/P53W1reBrbidpy+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHGBuw/k7OBYxalCeivscHlE17nIUgMTSOyNbQE1tWQWh1qnbT
+	tQ8mwaeJHksnmTh3tKJCLfd6mj0SQOKWdNuzEmThtq+5CECgKsY853MivL/WYS6KxM1tr3gt2Rc
+	z+ZmffB/7Ngw58TinDVqnedqwb9sfzUlo/A25nk+WW6YvPBgOYVkVY88HB0cyQyLu
+X-Gm-Gg: ATEYQzwf2Ab/CV4/nXKOJTW52ZtSozxVhIGBC8hZtI9eTzsk06rpBXDhWShoyk9LybF
+	c0os+eQ6h/zEKrLgNuHKMkV8mHSq0QeKFWIpxqLXLtsAkqinWvybc/5UJAfE16SVZgaFyvibbVL
+	ZJ5XoHzciQMrhtp8F8+mISvBUgX8b7KzGD8qlTiZdKmXnoSABfkO7B0P7RAAie9EGwDXN6wziEk
+	4EEYfUUfaWu64J4AiHOtqNuAFaFfKUr05f5wiy6N+nboFryxuKucpVhbAA/8dFzltpuyzY3LWzd
+	nEL5ccw4ltw3CcpwVVB8Kx2Xva1B7RG91d6JwsvgHJEBFy5vu2nKn3swie9pV/58OTqnh8SsyOX
+	pW5mgzv7LMoScHJHkHIJSstFELnZsg62WJWxhxR/nEUY6KHXtI+hvH5Rl/KM+sjzZ0g==
+X-Received: by 2002:a05:6a00:761b:b0:829:8e63:fca1 with SMTP id d2e1a72fcca58-82a198d4ccamr8653984b3a.33.1773651829982;
+        Mon, 16 Mar 2026 02:03:49 -0700 (PDT)
+X-Received: by 2002:a05:6a00:761b:b0:829:8e63:fca1 with SMTP id d2e1a72fcca58-82a198d4ccamr8653948b3a.33.1773651829361;
+        Mon, 16 Mar 2026 02:03:49 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a07244071sm13207421b3a.6.2026.03.16.02.03.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Mar 2026 02:03:48 -0700 (PDT)
+Message-ID: <84f1407d-62c6-4ec2-8976-eabe66c74728@oss.qualcomm.com>
+Date: Mon, 16 Mar 2026 14:33:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260313000652.11470-1-andre.przywara@arm.com>
-In-Reply-To: <20260313000652.11470-1-andre.przywara@arm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 16 Mar 2026 09:59:43 +0100
-X-Gmail-Original-Message-ID: <CAD++jLn4ajnpayksmACb4FnVk3w0wWjAM9v1-38t=u7CO_635g@mail.gmail.com>
-X-Gm-Features: AaiRm53PU0xHt5zB-ZEU9Kf0xC08hXJHn1dpSbPL24Ikh8j0snhsU4LhqVRGjAY
-Message-ID: <CAD++jLn4ajnpayksmACb4FnVk3w0wWjAM9v1-38t=u7CO_635g@mail.gmail.com>
-Subject: Re: [RFC PATCH] pinctrl: sunxi: convert to GPIO_GENERIC
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] arm64: dts: qcom: add IPQ5210 SoC and rdp504 board
+ support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linusw@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <linux@gurudas.dev>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org
+References: <20260311-ipq5210_boot_to_shell-v1-0-fe857d68d698@oss.qualcomm.com>
+ <20260311-ipq5210_boot_to_shell-v1-8-fe857d68d698@oss.qualcomm.com>
+ <6e33daf1-bb90-47d8-955c-12ccdd30ebce@oss.qualcomm.com>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <6e33daf1-bb90-47d8-955c-12ccdd30ebce@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=IsATsb/g c=1 sm=1 tr=0 ts=69b7c777 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=dbLGCUDwb5mCwCoKLG4A:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDA2OCBTYWx0ZWRfX9d6yKc4URUNm
+ WN38AnXx0ylqXG70ZIzDFbVZ9VNXLwmO4nqzOECqj6Nc5iT95w/da6QjrXJftQ1C6rLDm3QqzwY
+ LPhs/PnysZTepYVrS848fbb2Ic1kzgfDIvektcRG9JctylTzUbZx1Zf86xKuXTTPvv2besL80ma
+ prJloUuLMeFB0+VKzFeA4LeCWPWy/50zIYxLuZveS25lwk4TnjCq8t4tvzo8sKIwEBakmdJowFX
+ AaTh/NjAD+ALNej9Xq7J9a0oFfgRKRvEXlqVG1z+7+4KwH+Gt647rt4t60YEZ8K1+I3tGMvZNi0
+ jfb8K90Jwsl37mq5Zh7xyJL9pR63pBV94iEbbeA3SU2BE31vxYqjXr9K66D/a7Xw5IiwkDSIfTt
+ EaCO9BtkdkSaTLUF3kQ0ObxftM8pJZ3VVOXYCooVqQmmgKG6lve+8H9Eyj3aH1izxJQu9BgbTfv
+ Hx83lfkuJyLeR8xPucg==
+X-Proofpoint-GUID: wnEmCxIwfxQQ1TOHFKJKagpkvwEhHuF1
+X-Proofpoint-ORIG-GUID: wnEmCxIwfxQQ1TOHFKJKagpkvwEhHuF1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-16_03,2026-03-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603160068
 
-On Fri, Mar 13, 2026 at 1:08=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
-com> wrote:
 
-> Allwinner SoCs combine pinmuxing and GPIO control in one device/MMIO
-> register frame. So far we were instantiating one GPIO chip per pinctrl
-> device, which covers multiple banks of up to 32 GPIO pins per bank. The
-> GPIO numbers were set to match the absolute pin numbers, even across the
-> typically two instances of the pinctrl device.
+On 3/13/2026 6:18 PM, Konrad Dybcio wrote:
+> On 3/11/26 10:45 AM, Kathiravan Thirumoorthy wrote:
+>> Add initial device tree support for the Qualcomm IPQ5210 SoC and
+>> rdp504 board.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile           |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts |  93 +++++++++
+>>   arch/arm64/boot/dts/qcom/ipq5210.dtsi       | 304 ++++++++++++++++++++++++++++
+>>   3 files changed, 398 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 02921a495b2cbabcbacc74fbbb99eafe1f6478ac..e7748af640cccffa5c83ec82c37aa441444c2b13 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -22,6 +22,7 @@ hamoa-iot-evk-el2-dtbs	:= hamoa-iot-evk.dtb x1-el2.dtbo
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= hamoa-iot-evk-el2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-tplink-archer-ax55-v1.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5210-rdp504.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp442.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp468.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts b/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..3d95939785bc5bd4f510e2f992f0a1e80848c8de
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5210-rdp504.dts
+>> @@ -0,0 +1,93 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "ipq5210.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. IPQ5210 RDP504";
+>> +	compatible = "qcom,ipq5210-rdp504", "qcom,ipq5210";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart1;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0";
+>> +	};
+>> +
+>> +	soc@0 {
+>> +		qupv3: geniqup@1ac0000 {
+>> +			status = "okay";
+>> +
+>> +			uart1: serial@1a84000 {
+> Please define this in the SoC DTSI and enable it via a &uart1 {} reference
+> from the board DT
+
+Ack.
+
 >
-> Convert the GPIO part of the sunxi pinctrl over to use the gpio_generic
-> framework. This alone allows to remove some sunxi specific code, which
-> is replaced with the existing generic code. This will become even more
-> useful with the upcoming A733 support, which adds set and clear
-> registers for the output.
-> As a side effect this also changes the GPIO device and number
-> allocation: Each bank is now represented by its own gpio_chip, with only
-> as many pins as there are actually implemented. The numbering is left up
-> to the kernel (.base =3D -1).
+> [...]
 >
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> +		xo: xo {
+> "xo_board" is the convention in other DTs
 
-You could add that this makes the driver benefit of the
-.get/set_multiple() accelerated implementations of the generic
-GPIO MMIO driver as well.
+Ack.
 
-> +static int sunxi_gpio_add_bank(struct sunxi_pinctrl *pctl, int index)
-> +{
-> +       char bank_name =3D 'A' + index + pctl->desc->pin_base / PINS_PER_=
-BANK;
-> +       struct sunxi_gpio_bank *bank =3D &pctl->banks[index];
-> +       struct gpio_generic_chip_config config;
-> +       struct gpio_chip *gc =3D &bank->chip.gc;
-> +       int ngpio, ret;
-> +
-> +       ngpio =3D sunxi_num_pins_of_bank(pctl, index);
-> +       bank->pctl =3D pctl;
-> +       bank->base =3D pctl->membase + index * pctl->bank_mem_size;
-> +       if (!ngpio) {
-> +               gc->owner =3D THIS_MODULE;
-> +               gc->ngpio =3D 0;
-> +               gc->base =3D -1;
-> +               gc->of_gpio_n_cells =3D 3;
-> +
-> +               return 0;
-> +       }
+>
+> [...]
+>
+>> +		L2_0: l2-cache {
+> labels must apparently be lowercase nowadays
 
-Add some comment about what is going on here, I suspect you
-are flagging the gpio_chip as unused, you could just not assign
-anything I think?
+Ack.
 
-> +       config =3D (struct gpio_generic_chip_config) {
-> +               .dev =3D pctl->dev,
-> +               .sz =3D 4,
-> +               .dat =3D bank->base + DATA_REGS_OFFSET,
-> +               .set =3D bank->base + DATA_REGS_OFFSET,
-> +               .clr =3D NULL,
-> +               .flags =3D GPIO_GENERIC_READ_OUTPUT_REG_SET |
-> +                        GPIO_GENERIC_PINCTRL_BACKEND,
-> +       };
-> +
-> +       ret =3D gpio_generic_chip_init(&bank->chip, &config);
-> +       if (ret)
-> +               return dev_err_probe(pctl->dev, ret,
-> +                                    "failed to init generic gpio chip\n"=
-);
-> +
-> +       gc->owner               =3D THIS_MODULE;
-> +       gc->label               =3D devm_kasprintf(pctl->dev, GFP_KERNEL,
-> +                                                "%s-P%c", gc->label,
-> +                                                bank_name);
-> +       gc->ngpio               =3D ngpio;
-> +       gc->base                =3D -1;
-> +       gc->of_gpio_n_cells     =3D 3;
+>
+>> +			compatible = "cache";
+>> +			cache-level = <0x2>;
+> = <2>
 
-Nice use of the three-cell GPIO OF parser!
+Ack.
 
-Overall this is a nice change and makes the kernel a
-better place. I would apply a non-RFC version as soon
-as we can agree on the path forward.
+>
+>
+>> +			cache-unified;
+>> +		};
+>> +	};
+>> +
+>> +	firmware {
+>> +		optee {
+>> +			compatible = "linaro,optee-tz";
+>> +			method = "smc";
+>> +		};
+>> +
+>> +		scm {
+>> +			compatible = "qcom,scm-ipq5210", "qcom,scm";
+>> +		};
+> OP-TEE *and* SCM? What does the former do?
 
-Yours,
-Linus Walleij
+For OP-TEE, we have use cases like getting the random numbers, 
+remoteproc PAS and few others.
+
+For SCM, setting the download mode is one typical example where OP-TEE 
+doesn't come into picture.
+
+Please let me know if this helps.
+
+>
+> [...]
+>
+>> +	soc@0 {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges = <0 0 0 0 0x10 0>;
+> should dma-ranges also be 36-bit?
+
+Ack.
+
+>
+> [...]
+>
+>> +		qupv3: geniqup@1ac0000 {
+>> +			compatible = "qcom,geni-se-qup";
+>> +			reg = <0x0 0x01ac0000 0x0 0x2000>;
+>> +			clocks = <&gcc GCC_QUPV3_AHB_MST_CLK>,
+>> +				 <&gcc GCC_QUPV3_AHB_SLV_CLK>;
+>> +			clock-names = "m-ahb", "s-ahb";
+>> +			ranges;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +
+>> +			status = "disabled";
+> I see there's only a single QUP wrapper - therefore I'm going to assume
+> there will never be a SoC where this needs to be disabled
+
+Ack.
+
+>
+> [...]
+>
+>> +
+>> +			uart1: serial@1a84000 {
+>> +				compatible = "qcom,geni-debug-uart";
+>> +				reg = <0x0 0x01a84000 0x0 0x4000>;
+>> +				clocks = <&gcc GCC_QUPV3_WRAP_SE1_CLK>;
+>> +				clock-names = "se";
+>> +				interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
+>> +				status = "disabled";
+> Please uniformly keep a \n before status, file-wide
+
+Ack.
+
+>
+> Konrad
