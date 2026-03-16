@@ -1,88 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6690363093
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 21:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D632A3644A4;
+	Mon, 16 Mar 2026 21:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773695311; cv=none; b=gMEifNAOM25bUOf58/ih2FmsZhZrBYcctLSEegnSYWLVDHTWHdnZt2NMcTHF+SR4zk6jSC7xs8caE+pCyCC0+W6fJ1yLN+mOeyMwJiFgTexP6Zw95Wk9ckfIgZNyq48HTh8iapASdOP4OO0Kwa0csd6bcAcLN9DiXy/r8/v7pug=
+	t=1773695781; cv=none; b=ahLHJJzeX0WuT52/QNdBqfi3IObtON5Hr3te6Ylp9+YkZxCqyoBgdBcRVJu+h8oxJeQ2y87xe8yRkN78iswap99QcAVddxoX3IPofv7ufa2GHWlQUhTHmtg/MENbUKcRqY7qO+0f6tVN4O/umFAAtpRyvrS3fHngks/eIiL/Lu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773695311; c=relaxed/simple;
-	bh=Htz9WcWSJ7v3g96Z/bPQenu2XMHNZj09d6bGTN/cGZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRkNXK7Fg6nqOb2fxylUagwGt3K+8TDvN75RN43zq3SqcKK6tsXtv2F68/aUs8YQVuwRQi6O4oxe/zXarHKxBZmNr2HtcorvtBvN53AWfnmsrhiDvEjciSS322mNpRIuCJqGrvMYqD5wCKE0almXH1KRR7mHc3NSWOAbk3kIM40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmim/3D4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773695781; c=relaxed/simple;
+	bh=uz/WuIarVuPLlQG0seITAkjd/xrGWUpddk+RDcfcv9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=taKs9pznB99vGYM79i3xLTRxqtdXuirw5tahEJfOpBfREMtjXz+MewUPEFhSpDBYysiB+9FWyt3rmk4neHmawbZsF87jSlYQDsZd29FZF83KU1pBG6uiuCizdIaXbiQAeUu3bm/O3cL+nhYBLQaQ4t9b7uFUgNIFWLbHsxHtorA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AhASWapF; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmim/3D4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD2CC19421
-	for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 21:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773695311;
-	bh=Htz9WcWSJ7v3g96Z/bPQenu2XMHNZj09d6bGTN/cGZ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kmim/3D4ZHfgjj6IYPnMcNLYG9sv8XqCiBZ5KfllJzJHh5C9C/u7IfTZyZInLH8k9
-	 t3l38jmoApes15LRH5RkCGzAtZOJEBH1jtmgR43737lsBI2LX+nUFDjpJlq6FoNVV9
-	 6IPIBLQkxAGN0vhDi1Oy5LeYo2GJOwstnWD3X+HIMHZauaOmZSQI3sNAFkPJNzOarY
-	 k4aDGrE0Vl4xXfgh8P/mu9IBioJxzkOFw3b5ZkiIC8oigmgTceZQl18kdOT9zl3zZ6
-	 fThuLLhUlxVxrQbtKQ9GQrcnjU13O8Pryk0eY/oPA9RgESlJqrxEzC54pz8F1ly9eL
-	 HJeQmBJz4DMlQ==
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-79885f4a8ffso42055397b3.3
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Mar 2026 14:08:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCNA7EQqq8Xm3UIK+IsPkdIiVFzYxQzJSsHoKPkAAl6EIaFQnOaSkj2gVGhkObpB1uhSuHuzouPLK8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJjWTONj83TbTnQD8/9n2Iil8JegbTUJsHCx+bUSmESm0iQo0M
-	OPJWm3jhL04ArG69eKiDHVbmi9qUzoGOKFpx6vu4e6qb4hByQ5opkO8aC9ctOsflgWIrORQ6snn
-	vy3i/N6PQICW+4kln6mDnH7x4WhH1k0Q=
-X-Received: by 2002:a05:690c:6504:b0:799:182:17d1 with SMTP id
- 00721157ae682-79a1c200ad0mr140633457b3.45.1773695310833; Mon, 16 Mar 2026
- 14:08:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AhASWapF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773695780; x=1805231780;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uz/WuIarVuPLlQG0seITAkjd/xrGWUpddk+RDcfcv9w=;
+  b=AhASWapFGLOQXYMInDiKOOwAlaBkrj3NX+8b5Hso3N0EFyiWlWWNgrqA
+   9sCSQtQC/KPZYrxwcfggRaXopwYX8/kQXyjVQoJ4TGPpV003UyTAIU0vy
+   flMr/UQuqdHgcHe0dU3Awxx58pOE9N7cKYUkxPqGJPKnIBiCXQfBlD3gy
+   sCnoA/Zx6sX+2V4axh4NiPWmx4Y15Pm5hw76aEwFrS8/W5sLEgiTin8+j
+   JsOsSr9NOTpRYGol6d9GinCfH/z3Q5DMyBv+JI3bKB11jOXfAj46qT68y
+   oHrTi5ArXpEF7wvO0443SLxoUdsQi8da5L6FWWBzX2Bf2h+TEeWw6WaKh
+   Q==;
+X-CSE-ConnectionGUID: oj2UrdCuQwyNJCKjAbzq7A==
+X-CSE-MsgGUID: QMCjmT7HTY2lOcUDvxAi6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="74612565"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; 
+   d="scan'208";a="74612565"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2026 14:16:19 -0700
+X-CSE-ConnectionGUID: pWzisw66TbOA05pHK7LkNA==
+X-CSE-MsgGUID: Ef7sjWTYRiOx707LIDZsIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; 
+   d="scan'208";a="221077803"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.244.237])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2026 14:16:16 -0700
+Date: Mon, 16 Mar 2026 23:16:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alban Bedel <albeu@free.fr>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
+	=?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+	linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v5] wifi: ath9k: Obtain system GPIOS from descriptors
+Message-ID: <abhzHdy5hByLnPFu@ashevche-desk.local>
+References: <20260316-descriptors-wireless-v5-1-3f791c6b0cba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1773150895.git.dan.carpenter@linaro.org>
- <93920f541564bc4e6aaf0f2b6df2f5aca721d452.1773150895.git.dan.carpenter@linaro.org>
- <abHR2nnC9jJWK2eW@ashevche-desk.local> <CAD++jLnTJidg20wUYXf+cH4hTsVhAsPwi+CcCdRL5n12kwaTmA@mail.gmail.com>
- <abKYXJCXPpVIEVlQ@ashevche-desk.local>
-In-Reply-To: <abKYXJCXPpVIEVlQ@ashevche-desk.local>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 16 Mar 2026 22:08:19 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=RoYb-V-kOMoXjnbH24c-YrejqyEEUNeu6hX+HipTwiA@mail.gmail.com>
-X-Gm-Features: AaiRm51seapTHcba7LjSTTCnu2qGnW1tbdfEo_CD20pLihSJy4bap4bCjdDblIA
-Message-ID: <CAD++jL=RoYb-V-kOMoXjnbH24c-YrejqyEEUNeu6hX+HipTwiA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] gpio: add pinctrl based generic gpio driver
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, AKASHI Takahiro <akashi.tkhro@gmail.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, arm-scmi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260316-descriptors-wireless-v5-1-3f791c6b0cba@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Mar 12, 2026 at 11:41=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
-> On Wed, Mar 11, 2026 at 11:00:02PM +0100, Linus Walleij wrote:
+On Mon, Mar 16, 2026 at 09:56:58PM +0100, Linus Walleij wrote:
+> The ath9k has an odd use of system-wide GPIOs: if the chip
+> does not have internal GPIO capability, it will try to obtain a
+> GPIO line from the system GPIO controller:
+> 
+>   if (BIT(gpio) & ah->caps.gpio_mask)
+>         ath9k_hw_gpio_cfg_wmac(...);
+>   else if (AR_SREV_SOC(ah))
+>         ath9k_hw_gpio_cfg_soc(ah, gpio, out, label);
+> 
+> Where ath9k_hw_gpio_cfg_soc() will attempt to issue
+> gpio_request_one() passing the local GPIO number of the controller
+> (0..31) to gpio_request_one().
+> 
+> This is somewhat peculiar and possibly even dangerous: there is
+> nowadays no guarantee of the numbering of these system-wide
+> GPIOs, and assuming that GPIO 0..31 as used by ath9k would
+> correspond to GPIOs 0..31 on the system as a whole seems a bit
+> wild.
+> 
+> Register all 32 GPIOs at index 0..31 directly in the ATH79K
+> GPIO driver and associate with the NULL device (making them
+> widely available) if and only if we are probing ATH79K wifi
+> from the AHB bus (used for SoCs). We obtain these offsets from
+> the NULL device if necessary.
+> 
+> These GPIOs should ideally be defined in the device tree
+> instead, but we have no control over that for the legacy
+> code path.
+> 
+> Testcompiled with the ath79 defconfig.
 
-> > What this does is essentially take the gpio-ranges, find the
-> > backing pins on the pin controller, and creates a GPIOchip
-> > from them.
->
-> Thanks for elaboration! But why is it done this way? It doesn't sound
-> like a usual (generic) problem to solve.
+...
 
-The experts can confirm, but I think this was done to simplify
-the SCMI firmware, both the specification and the implementation.
+> Changes in v5:
+> - Collect Bartosz ACK
+> - Switch Kalle->Jeff as maintainer.
+> - Link to v4: https://lore.kernel.org/r/20260313-descriptors-wireless-v4-1-07ab47c89a98@kernel.org
 
-It was identified that it was necessary to have a pin control
-SCMI specification and implementation, but no separate GPIO
-specification and implementation was defined, leading to just
-one spec, and one single firmware service to
-implement that will support both pin control and GPIO.
+Seems you forgot to address the LKP report.
 
-These days, if we were re-specifying ACPI we could do the
-same there, but alas it already has legacy GPIO-only interfaces.
-SCMI has the upside of being able to start from scratch
-and upend a few traditions.
+> +static int ath79_gpio_register_wifi_descriptors(struct device *dev,
+> +						const char *label)
+> +{
 
-Yours,
-Linus Walleij
+Should be return SOMETHING; here.
+
+> +}
+> +#endif
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
