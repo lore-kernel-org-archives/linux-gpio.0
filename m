@@ -1,34 +1,34 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F28A3B585A;
-	Tue, 17 Mar 2026 11:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D653B585F;
+	Tue, 17 Mar 2026 11:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773748620; cv=none; b=ccpKDpdjQy9JhP7Rp+Tpr+PuxC9ji6mowGjqyea12INkpWHjmidkuS/JLNKiFedIoevgIKIK4yjVtFsfEpo/VQ6+BL4vYBZSj+dB0ctExKV3PoAUurqkyGd6WeuHkqF/dzfq4ubt0Wg6NO84b/Ts0WbZ3z4VAHk3k8flYpKGUAY=
+	t=1773748620; cv=none; b=YeAfoXil+mWS+hfskQ+VTCzucApOsn1Jm4PYbK5NujN3yVVY5PfBadtyR0gQzrB5A4QCP2eyUv12Mhn4FCE6IkkJnctw4yDxc/rI2hSc6grVHoyKqWkahXHaEnOf3sWCk//xE4yFs3FSf46e3FajcK9UyyxblVOVCJALLtV2fmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773748620; c=relaxed/simple;
-	bh=1uYKM8Xjmf8R1K71udNiEN3Dw5jzNBloQ1uPLbeou8E=;
+	bh=sRH6L4sI3dN0ECxA9AZuIzEgQvxniNZ74wkuUQGkF+A=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eVbxOmdpWqW4/682ENhOfbWVdQjmIsiwnEju6HIatWtZ38N87LBL6iT4YIMTkZxsdYxzYp2HgnZ+RLpZjNIt4PvzJr7pyAgp/NX/GorJ+5DU1VS1Zn1wPPzvJC9T63E6p06pcUa8XP2bx34d6XsxBFEtnSUD6uA+r4/wmLN3fKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MrwL+E5B; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=iS+0on5VzJKcZ6GDNpXUZf35k6iRpl69t3aE0JfdaTOsAIc48XsQkHo1fVWSRwhCo+lfVh2MekhsRo8ZrRF/Bdek6S1P/45NB7ecNSyYVtEaVhmvS9Lqikqil9iZVpultDKRT08HxciUOUAkSGwD+DhxvB9Ic44b2OWTO9Hksyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=X67PPYW5; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MrwL+E5B"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62HBsBJ813851624, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="X67PPYW5"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62HBsBYp93851626, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1773748451; bh=XzDSib8jEoc1vfE4lmbk5v2Wrp3FeCGOBPB/DyAjANY=;
+	t=1773748451; bh=2aitv+diaBDKY5MPp0jsIKdqBX3LlsT0qETl3P1pWDM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=MrwL+E5BUBM0leX5F83sh/VYfnQPesuJzh9ZSLW2/lpZH2o2+xFvYqv1tY74PtyuS
-	 VthqCm7YhWU7bMreMzEuhgMhqXFSLd3557NvbmcqDE0bTpog8yem9X8fmuci7oop20
-	 QQxFFbzibx2xW6eBlTRAe8R9JRPRd6lc8LY6LV8/ElS7GT98cnGFc9ZtBjA/+EN3I3
-	 chTlA8vwsZf3un0Dwi0ea/+3BylqkSUypwUPo/WuWhEC9hvc9zqh6eO6Q2NukYN4+B
-	 c1Fl+ND2KCmKKfxuyb3AdGTQDX3FPNB2mUSsLFC0Hp/7niRQFYma4RPd5xBd9OoDrk
-	 B/5iUTZjhzgKw==
+	b=X67PPYW5xhiV90p6+gPMHWokUWmw1THu94rxslK6Q7Yr4EAfVUbrQfMlKtIF2WsN8
+	 YNpWNqtMh7xTLoWNe6B30SMXNIsK53wVi2dCwYrGnDvRASU+T2wZUCSPiJVktNxHx4
+	 Bbgc+p5DLC/uIZSNwj0HjVRkF0QxDdYhR+h2zLidjir7x5W13m8KUykjvWKs27oIMb
+	 WT8l5HGWPX7WtsgBQAIIZ/IU1BjuzNxdxqqzjegu6FiVSSk97dnN9rSHFB4Fup8loU
+	 k+pQqZaPDq+7vFyuZJr04/IliTQTZoyQMrGJSLx1GlZQzzo+Z99JMyscP3JB0c+plx
+	 RfobtWC3kXwqQ==
 Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62HBsBJ813851624
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62HBsBYp93851626
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 17 Mar 2026 19:54:11 +0800
 Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
@@ -47,9 +47,9 @@ CC: <bartosz.golaszewski@oss.qualcomm.com>, <james.tai@realtek.com>,
         <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-realtek-soc@lists.infradead.org>
-Subject: [PATCH v4 2/8] dt-bindings: pincfg-node: Add input-threshold-voltage-microvolt property
-Date: Tue, 17 Mar 2026 19:54:04 +0800
-Message-ID: <20260317115411.2154365-3-eleanor.lin@realtek.com>
+Subject: [PATCH v4 3/8] pinctrl: pinconf-generic: Add properties 'input-threshold-voltage-microvolt'
+Date: Tue, 17 Mar 2026 19:54:05 +0800
+Message-ID: <20260317115411.2154365-4-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260317115411.2154365-1-eleanor.lin@realtek.com>
 References: <20260317115411.2154365-1-eleanor.lin@realtek.com>
@@ -64,54 +64,65 @@ Content-Type: text/plain
 
 From: Tzuyi Chang <tychang@realtek.com>
 
-Add a generic pin configuration property
-"input-threshold-voltage-microvolt" to support hardware designs where the
-input logic threshold is decoupled from the power supply voltage.
+Add a new generic pin configuration parameter PIN_CONFIG_INPUT_VOLTAGE_UV.
+This parameter is used to specify the input voltage level of a pin in
+microvolts, which corresponds to the 'input-voltage-microvolt' property
+in Device Tree.
 
-This property allows the pinctrl driver to configure the correct internal
-reference voltage for pins that need to accept input signals at a different
-voltage level than their power supply. For example, a pin powered by 3.3V
-may need to accept 1.8V logic signals.
-
-This defines the reference for VIH (Input High Voltage) and VIL (Input Low
-Voltage) thresholds, enabling proper signal detection across different
-voltage domains.
-
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Tzuyi Chang <tychang@realtek.com>
 Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v4:
-- Rename the property to input-threshold-voltage-microvolt.
-- Add the restriction.
+- Add Reviewed-by tag from Linus.
+- Sync pinconf-generic with the property name change.
 ---
- Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pinctrl/pinconf-generic.c       | 2 ++
+ include/linux/pinctrl/pinconf-generic.h | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-index fe936ab09104..ecddb415c06f 100644
---- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-@@ -162,6 +162,11 @@ properties:
-       this affects the expected delay in ps before latching a value to
-       an output pin.
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index 855ca973a1c8..e14371cfa57f 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -57,6 +57,7 @@ static const struct pin_config_item conf_items[] = {
+ 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY, "skew delay", NULL, true),
+ 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY_INPUT_PS, "input skew delay", "ps", true),
+ 	PCONFDUMP(PIN_CONFIG_SKEW_DELAY_OUTPUT_PS, "output skew delay", "ps", true),
++	PCONFDUMP(PIN_CONFIG_INPUT_VOLTAGE_UV, "input voltage in microvolt", "uV", true),
+ };
  
-+  input-threshold-voltage-microvolt:
-+    description: Specifies the input voltage level of the pin in microvolts.
-+      This defines the reference for  VIH (Input High Voltage) and VIL
-+      (Input Low Voltage) thresholds for proper signal detection.
-+
- allOf:
-   - if:
-       required:
-@@ -177,6 +182,7 @@ allOf:
-     then:
-       properties:
-         input-enable: false
-+        input-threshold-voltage-microvolt: false
+ static void pinconf_generic_dump_one(struct pinctrl_dev *pctldev,
+@@ -203,6 +204,7 @@ static const struct pinconf_generic_params dt_params[] = {
+ 	{ "skew-delay", PIN_CONFIG_SKEW_DELAY, 0 },
+ 	{ "skew-delay-input-ps", PIN_CONFIG_SKEW_DELAY_INPUT_PS, 0 },
+ 	{ "skew-delay-output-ps", PIN_CONFIG_SKEW_DELAY_OUTPUT_PS, 0 },
++	{ "input-threshold-voltage-microvolt", PIN_CONFIG_INPUT_VOLTAGE_UV, 0 },
+ };
  
-   - if:
-       required:
+ /**
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 531dc3e9b3f7..a5d4b2d8633a 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -83,6 +83,8 @@ struct pinctrl_map;
+  *      schmitt-trigger mode is disabled.
+  * @PIN_CONFIG_INPUT_SCHMITT_UV: this will configure an input pin to run in
+  *	schmitt-trigger mode. The argument is in uV.
++ * @PIN_CONFIG_INPUT_VOLTAGE_UV: this will configure the input voltage level of
++ * the pin. The argument is specified in microvolts.
+  * @PIN_CONFIG_MODE_LOW_POWER: this will configure the pin for low power
+  *	operation, if several modes of operation are supported these can be
+  *	passed in the argument on a custom form, else just use argument 1
+@@ -145,6 +147,7 @@ enum pin_config_param {
+ 	PIN_CONFIG_INPUT_SCHMITT,
+ 	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
+ 	PIN_CONFIG_INPUT_SCHMITT_UV,
++	PIN_CONFIG_INPUT_VOLTAGE_UV,
+ 	PIN_CONFIG_MODE_LOW_POWER,
+ 	PIN_CONFIG_MODE_PWM,
+ 	PIN_CONFIG_LEVEL,
 -- 
 2.34.1
 
