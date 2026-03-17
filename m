@@ -1,61 +1,75 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6223A6F1D;
-	Tue, 17 Mar 2026 10:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99FB3A5442
+	for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2026 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773743904; cv=none; b=Q1oEN7QiB6RcsF8I3srWF+sTr2EVbqcdjQJsKdS0h7iuz2Ozl0DbIq+UvQEPVYD5fuDPkVKQFY5zRNmDj7mZ4MYqr0enQwq6XMxJaTBXUKkvPTxegIlSJNKZgwZkHHWZZazYL3bD+EgHJwznpQPEAYKGF2HQfvu2HYJXJaEPnWk=
+	t=1773745389; cv=none; b=FaETt+C+z89NQvdy0JvD0genHJa6+I80394/MLABgFoIm59+56lCD//kMrc+WajAwirVxiYLJMnvGuHpO6MZl0yhD7fPNLkuvk6lfqrLC8OHwbCIvXPhIY1FSyuY7FoNdCWiEylYOKK6Yps2EHeS3GsNT1odWrhcZIean775csE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773743904; c=relaxed/simple;
-	bh=T0SRPM6/sTrNxUml9I3UmGm3cDD5/1UB3PFQKW7oWh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b3xJ2aOVnhHYMujolrEt4pRabtOG30kjU2TVArcncR+q6HuYC72YQ64Gu0LOLXou+N72RJ8WTVy1TKX2TtW2evxUyxM5vKWcwptuniQhroHwh/SeB+g09HK4V0f3CpUGbEPyVlTPfORvFf65tb055XDEfqzhkvF5JD08H+/xhf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QD2FTsD1; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1773745389; c=relaxed/simple;
+	bh=u7OttRNb8G9zNYvRXM9DSiND1sHbvu/OmnaG+jxXlvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GQfoImh2rzeMErWPNReFeavVNfHK4I+i2oQEZCYuvphLaVZaDEDn6QVgOyAaZExkSSj0mORCsTHskgoVVN72ZrpE1ea9Gjs6scZBnFgiA24OQVZe3Cp+fI92N3zwXab5yKReaf3cvp21y/Dm4ZUZTO4CLakfPJpp14iM+Mva89I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1XCPTUf; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QD2FTsD1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773743903; x=1805279903;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=T0SRPM6/sTrNxUml9I3UmGm3cDD5/1UB3PFQKW7oWh4=;
-  b=QD2FTsD1G2zln3aTVYHjQ7Br4pKTHr2BkQuWnHv9H7bEddPpVP7sS2yS
-   8lD4hevdgpeii7TuliuB4z14XbneELAnh4fsyMDKvAUMXIJaL1aI2VlIO
-   17N9AKrClEi6L/D9wy6JwZv1k6F3T1B8UYvJZ5M4KZWFU3rw5xuaHL5R7
-   ss7LxkEM+VZda4B6JEFnppVu1TN9nLX5lWbuFgrYhARMYghJiqXCLMsXR
-   vQZ5VCmWoRPQpH+8Qrm9lMH3W3E9rtN5xBjsnac4wwqgZhdEVnkT4BkUb
-   A/usC6bJcbNcZ0i2imxE67lk97sBK/rZnZFV+fusgQDtSKixxv/AYUJ7c
-   w==;
-X-CSE-ConnectionGUID: CZP8kqFASsq0xnfLcRO6qw==
-X-CSE-MsgGUID: Fb8FMCShTyy7zttvxQr5sA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="74889861"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; 
-   d="scan'208";a="74889861"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2026 03:38:20 -0700
-X-CSE-ConnectionGUID: elcTDcIBTxWjQEVRPH+hfQ==
-X-CSE-MsgGUID: vC+o2wEnTaGgtLYHaFhNSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; 
-   d="scan'208";a="245243179"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 17 Mar 2026 03:38:19 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 3E53C9B; Tue, 17 Mar 2026 11:38:18 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1XCPTUf"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48539cbb7b1so33259725e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2026 04:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773745386; x=1774350186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Df0BkW3+WFtbc+05LpOma2mHXyroUqsKpSt0hTLJrY=;
+        b=M1XCPTUfIhfiTB+b7YN8N2+urEE9d0t63no5uj76BOlYiiOXX5BHsLAjI5OicAQlUx
+         yzNYsZEQdgUqj19eCyY+COat1XwRWLoER6geHCb4NytqF2DCD79A2zD4BKU+7sacZioK
+         RXWtp99VYYXny+Iy4tbK5PwxXN1tkKF/QPSsz/iGJfOO433x7wxa9oT+LLkrAQjTQMch
+         DCEsIGghyTSrEYh9YfR9XgGakDvmPDh1WXqlRDSdXOynKCBUZIArfrAh10DHt2RjW+ei
+         5Q0GY44wDtPbVIfQaMTQaGAwFSwJKswCuwP+DhoOlZGnDbmPEvWTs6I/+OSeDrzl1mpB
+         foZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773745386; x=1774350186;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Df0BkW3+WFtbc+05LpOma2mHXyroUqsKpSt0hTLJrY=;
+        b=Si08U7X36QzEPGHJNVDmlPEtgz8nBNWq0maaLZ7M9mQfKhsCSLPgnajcXMUGcSgO95
+         PWfdfSotQObXRVai6V5NvXW9/TycFIvIHeeubItawLgmF4kHu7k2P8BHEaw6GIarExBZ
+         Lvyk55zY+dx0REzSkvMsyny6ZiRa7lo8BcNIep1ozsAqEfLbijsGD5JZKnjNgz+8eesy
+         NA3P/xZ4JczTjJ0SXd1Ic6JoHrnFf84azU2i9Sd4QlLvzm4B70MIOrN6BKaQGQLHYu3y
+         gbs1xerPWfeSdIXwuY20F2/kF8mSwuOyHahTJBJs0kKfPPqQgygvlDE8ZMhCxH8oCqr5
+         ECFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVClP0DHjxtDm3WkziT55quelEAAM/kP4JVkzaotqDcjp2nNARDpYnBmrASyA1Q036LEJieKH+a83g6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQd4XUMcUD7wIXSIY/5wxmg56OACKEmC3YuYXBAsfE+degAyM6
+	SGk3OgGVML0gTjWMQrgGVEEnklyTvPQsg+7BIiTq3jXKxUcCMVOMqt47
+X-Gm-Gg: ATEYQzz7e2XPivgrlvwGtRXrmYQnYpyimQs16537waNuJ6t+ZijFkfWJleyxeW1VAt0
+	QbosQqnSl+tAef3ze6iwfNL5OoBpLHq60kCdrLOCs8gt5Tz1zUQ4D4OtP5sjD8TpLmloSTHZn0l
+	xFGFUiexNaons+vvG9GlciVC/cReo7RITKhuMaWdQIcNSdYPdwKQngOP6i5TdqMbE7i8HysOLO9
+	XuFQOAdZ1w8gio7UjPiSHtpBfAZuqZXKUPbvgmlmT7dOMkWHoZiozn/kMBASxavXlIUJcBsdS28
+	k4i/g1ypOdQH99o38XewzrNrRwQyf82VD0djC8/+YaQy4tl9Y65zfHgqGfmWVgzXTtVJgJCRP8b
+	mNUXv/MRfld0KfkNkOQt5jueldw+AQq1K2gKJdTdeFe7gl32MpGW6YNbkasGxPrPfM9UwZMVVk8
+	+BK10io9eSMO8JLC7d2So=
+X-Received: by 2002:a05:600c:46d2:b0:485:3c66:e230 with SMTP id 5b1f17b1804b1-48556728c71mr279412485e9.29.1773745385947;
+        Tue, 17 Mar 2026 04:03:05 -0700 (PDT)
+Received: from luca-vm.lan ([154.61.61.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856e850634sm106157845e9.0.2026.03.17.04.03.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2026 04:03:05 -0700 (PDT)
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+To: linux-mediatek@lists.infradead.org
+Cc: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/3] pinctrl: pinconf-generic: Validate fwnode instead of device node
-Date: Tue, 17 Mar 2026 11:36:12 +0100
-Message-ID: <20260317103817.1982584-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260317103817.1982584-1-andriy.shevchenko@linux.intel.com>
-References: <20260317103817.1982584-1-andriy.shevchenko@linux.intel.com>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] pinctrl: mediatek: common: Fix probe failure for devices without EINT
+Date: Tue, 17 Mar 2026 11:02:06 +0000
+Message-ID: <20260317110249.391552-1-l.scorcia@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,36 +78,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently we convert device node to fwnode in the
-pinconf_generic_parse_dt_config() and then validate the device node.
-This is confusing order. Instead, assign fwnode and validate it.
+Some pinctrl devices like mt6397 or mt6392 don't support EINT at all, but
+the mtk_eint_init function is always called and returns -ENODEV, which
+then bubbles up and causes probe failure.
 
-Fixes: e002d162654b ("pinctrl: pinconf-generic: Use only fwnode API in parse_dt_cfg()")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To address this only call mtk_eint_init if EINT pins are present.
+
+Tested on Xiaomi Mi Smart Clock x04g (mt6392).
+
+Fixes: e46df235b4e6 ("pinctrl: mediatek: refactor EINT related code for all MediaTek pinctrl can fit")
+Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 ---
- drivers/pinctrl/pinconf-generic.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index d0b825ff52db..0ed57720ae61 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -377,12 +377,13 @@ int pinconf_generic_parse_dt_config(struct device_node *np,
- 				    unsigned long **configs,
- 				    unsigned int *nconfigs)
- {
--	struct fwnode_handle *fwnode = of_fwnode_handle(np);
- 	unsigned long *cfg;
- 	unsigned int max_cfg, ncfg = 0;
-+	struct fwnode_handle *fwnode;
- 	int ret;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index d6a46fe0cda8..3f518dce6d23 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1135,9 +1135,12 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 		goto chip_error;
+ 	}
  
--	if (!np)
-+	fwnode = of_fwnode_handle(np);
-+	if (!fwnode)
- 		return -EINVAL;
+-	ret = mtk_eint_init(pctl, pdev);
+-	if (ret)
+-		goto chip_error;
++	/* Only initialize EINT if we have EINT pins */
++	if (data->eint_hw.ap_num > 0) {
++		ret = mtk_eint_init(pctl, pdev);
++		if (ret)
++			goto chip_error;
++	}
  
- 	/* allocate a temporary array big enough to hold one of each option */
+ 	return 0;
+ 
 -- 
-2.50.1
+2.43.0
 
