@@ -1,50 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F53E6DEF;
-	Wed, 18 Mar 2026 15:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135C3E7155;
+	Wed, 18 Mar 2026 15:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773846788; cv=none; b=FjjArnK+OalU3OUYbQ8xezMT3LgyMuKapCWuD0zVol1MJFAhuDFBVliO2vNE11EjkAY/vWILcUnYviOxTWswdDAe1X3pCoD0HrybvW7he5HEujyfx3KfN/OCO4+kaoWCKL60JhWvar9RR59VD/hvhXpFSZ2m77sIjWifSymeKnI=
+	t=1773846789; cv=none; b=hq6BpYdsQRg+U/dYbiFNiC7y6Xynsuz975lffnQkPz7DyVa0LWvLChkB8PspcbR8XnVRlQsUAmBoRKb6pbGpwYOGjD0DgpPO1qxdAiCJ6Zp0xdFbLMU8RrOvuifkNZy4Zi11RKvsCs8wE9fuke6+xX1a8lnfaDQBDSlDDAen8R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773846788; c=relaxed/simple;
-	bh=A2HPRLU22tLaQPROKcuT+EewNl+vqKrAxH13T8m/A6Q=;
+	s=arc-20240116; t=1773846789; c=relaxed/simple;
+	bh=wF4iUZV76f7W3PXuwWxNV/7Gg0YYVO8Px9yNm4Hmdq0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P88hgtCywn0VOCq7VEecx/+XpVw9JCpr1nDrwNnU1AH5Co+cGOB92Z1yqcvr6Gd2EgCUo+qA4CvKIOm1RDe9UnPQtv2HD5mno+lxrw2prSblRZNruStAol7S+u6pbFPEC1pgTb4z2LcIuagRp6kdYetKWzog9sLSfGLVv306aVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+2bQMXz; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=sJP/TGG1AnhqtQ56he6WUMLnzQdBIf4OIfQuNQ5FR+4Oc4xOWBqx82et/lLy5IIFVWoJ6OoRY3IfZHyDnwBLfRUk9yQxOOD68XPGvLuUlW9oaSOMSeEbjWmsxBaI/5i6qkX4SwzHnmtf+yWUPtTxtR/KuMIoU5QbEkS/tG+yQzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h4qPid2+; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+2bQMXz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h4qPid2+"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773846786; x=1805382786;
+  t=1773846787; x=1805382787;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=A2HPRLU22tLaQPROKcuT+EewNl+vqKrAxH13T8m/A6Q=;
-  b=Q+2bQMXzPez1zWI6Dm7gpWa6y6n8pO+8W+M2V9VUD4jM7Um9Fkt6CJN3
-   RPxCPi2cahZv2bcwefcd5j2Fdguud9Lr3iEHUjW9/kDAp7GdnyfiE0I2I
-   YCpyAEdk4/dP+cBIAE9xUAFz7BuWMXEX3sZ52uf3MQ6lxOOCsH1o086TN
-   ASt8zYdGjjRCGCE7hg9KkWz+3VdlIYao0UFrl7XnXMHefuj4T8gb4L/4R
-   9AHVEiA4kuMp0Bg7WT61owUMmDnsmz1WF0p9gcjIr+5VoOTejHiO33tsA
-   x83FvoryVB3JNS1zqn3eW4YDxhZ5mm9qoYU05/ItcZs2iOK7IG8KIol86
-   w==;
-X-CSE-ConnectionGUID: CZbIpzhXS3WdAJonZcsLmQ==
-X-CSE-MsgGUID: rQsnxEUXRJ6M++3H8upC9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084544"
+  bh=wF4iUZV76f7W3PXuwWxNV/7Gg0YYVO8Px9yNm4Hmdq0=;
+  b=h4qPid2+F/Qt8b6LLFS0xWK5cwHS4j8KW2LJs/IJZjEixEwVWhNIMuot
+   kTrjsmrx/2rRcCUKojRHyeQ09yxT6Gj1jQ2M2aNEw33VVFre48JOMNVwx
+   65Sqc2tBRbInp2QwkQVKCdHh3Tg9iDFQkBNLPzJo5vWpPPZ3IPeaE8jcW
+   /eelZw0Y5+/3QzKBcRS19bZHKcJhGPnpQd+uMDtpMqzR1pBxKbLybZ1UM
+   skkONboYMnJFlOESmvgM9AFkg7T0595CR3BcIeSVM2KOGUe6myIq+4aSm
+   6A2bDuEfBzabs6lmK4KAUlPbMd8FpCq5lQVSo4HlC1B2GWZtJkQkToiXE
+   g==;
+X-CSE-ConnectionGUID: VviiMuL0QV2WshtWPXKb7g==
+X-CSE-MsgGUID: ruKh1qALRsq85MMW022Efg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084547"
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="75084544"
+   d="scan'208";a="75084547"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:02 -0700
-X-CSE-ConnectionGUID: 2j/rT7HTTxKkpDDexNPmqQ==
-X-CSE-MsgGUID: K0fmXP2uSQqVvqzpQrwwpg==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:03 -0700
+X-CSE-ConnectionGUID: l+khbGIXTJyimFpL2g8fCQ==
+X-CSE-MsgGUID: eBhFSEgOTQyilBQdH4U1qQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="247122454"
+   d="scan'208";a="247122458"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2026 08:12:59 -0700
+  by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2026 08:13:01 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 10A2C9B; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
+	id 219E7A2; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -52,9 +52,9 @@ To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 1/5] pinctrl: intel: Improve capability support
-Date: Wed, 18 Mar 2026 16:10:15 +0100
-Message-ID: <20260318151256.2590375-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 5/5] pinctrl: intel: define iterator variables inside for-loop
+Date: Wed, 18 Mar 2026 16:10:19 +0100
+Message-ID: <20260318151256.2590375-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
 References: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
@@ -66,89 +66,200 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The register space of a certain capability starts at the offset just after
-the respective node in the capability list. It means that there are no fixed
-offsets for them from SoC to SoC generation and they have to be calculated
-at run-time. Improve capability support by adding the respective calculation
-algorithm and in the result enable PWM on more platforms that currently may
-use the wrong register.
+Reduce the scope of the iterator variables by defining them inside
+the respective for-loops. This makes code more robust against reuse
+of the same variable in the future, which might lead to some mistakes.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 44 ++++++++++++---------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 9d32bb8bc13a..adaa37a42754 100644
+index 7311b787dfc6..c506f9f343c3 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -53,8 +53,6 @@
- #define PADOWN_MASK(p)			(GENMASK(3, 0) << PADOWN_SHIFT(p))
- #define PADOWN_GPP(p)			((p) / 8)
- 
--#define PWMC				0x204
--
- /* Offset from pad_regs */
- #define PADCFG0				0x000
- #define PADCFG0_RXEVCFG_MASK		GENMASK(26, 25)
-@@ -1549,8 +1547,10 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- }
- 
- static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
--				   struct intel_community *community)
-+				   struct intel_community *community,
-+				   unsigned short capability_offset)
+@@ -431,7 +431,6 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev,
  {
-+	void __iomem *base = community->regs + capability_offset + 4;
- 	static const struct pwm_lpss_boardinfo info = {
- 		.clk_rate = 19200000,
- 		.npwm = 1,
-@@ -1564,7 +1564,7 @@ static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
- 	if (!IS_REACHABLE(CONFIG_PWM_LPSS))
- 		return 0;
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct intel_pingroup *grp = &pctrl->soc->groups[group];
+-	int i;
  
--	chip = devm_pwm_lpss_probe(pctrl->dev, community->regs + PWMC, &info);
-+	chip = devm_pwm_lpss_probe(pctrl->dev, base, &info);
- 	return PTR_ERR_OR_ZERO(chip);
- }
+ 	guard(raw_spinlock_irqsave)(&pctrl->lock);
  
-@@ -1595,6 +1595,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 
- 	for (i = 0; i < pctrl->ncommunities; i++) {
- 		struct intel_community *community = &pctrl->communities[i];
-+		unsigned short capability_offset[6];
- 		void __iomem *regs;
- 		u32 offset;
- 		u32 value;
-@@ -1622,15 +1623,19 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 			switch ((value & CAPLIST_ID_MASK) >> CAPLIST_ID_SHIFT) {
- 			case CAPLIST_ID_GPIO_HW_INFO:
- 				community->features |= PINCTRL_FEATURE_GPIO_HW_INFO;
-+				capability_offset[CAPLIST_ID_GPIO_HW_INFO] = offset;
- 				break;
- 			case CAPLIST_ID_PWM:
- 				community->features |= PINCTRL_FEATURE_PWM;
-+				capability_offset[CAPLIST_ID_PWM] = offset;
- 				break;
- 			case CAPLIST_ID_BLINK:
- 				community->features |= PINCTRL_FEATURE_BLINK;
-+				capability_offset[CAPLIST_ID_BLINK] = offset;
- 				break;
- 			case CAPLIST_ID_EXP:
- 				community->features |= PINCTRL_FEATURE_EXP;
-+				capability_offset[CAPLIST_ID_EXP] = offset;
- 				break;
- 			default:
- 				break;
-@@ -1653,7 +1658,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 		if (ret)
- 			return ret;
- 
--		ret = intel_pinctrl_probe_pwm(pctrl, community);
-+		ret = intel_pinctrl_probe_pwm(pctrl, community, capability_offset[CAPLIST_ID_PWM]);
- 		if (ret)
- 			return ret;
+@@ -439,13 +438,13 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 	 * All pins in the groups needs to be accessible and writable
+ 	 * before we can enable the mux for this group.
+ 	 */
+-	for (i = 0; i < grp->grp.npins; i++) {
++	for (unsigned int i = 0; i < grp->grp.npins; i++) {
+ 		if (!intel_pad_usable(pctrl, grp->grp.pins[i]))
+ 			return -EBUSY;
  	}
+ 
+ 	/* Now enable the mux setting for each pin in the group */
+-	for (i = 0; i < grp->grp.npins; i++) {
++	for (unsigned int i = 0; i < grp->grp.npins; i++) {
+ 		void __iomem *padcfg0;
+ 		u32 value, pmode;
+ 
+@@ -909,12 +908,12 @@ static int intel_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			  unsigned long *configs, unsigned int nconfigs)
+ {
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+-	int i, ret;
++	int ret;
+ 
+ 	if (!intel_pad_usable(pctrl, pin))
+ 		return -ENOTSUPP;
+ 
+-	for (i = 0; i < nconfigs; i++) {
++	for (unsigned int i = 0; i < nconfigs; i++) {
+ 		switch (pinconf_to_config_param(configs[i])) {
+ 		case PIN_CONFIG_BIAS_DISABLE:
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+@@ -1323,9 +1322,8 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ 
+ 	for_each_intel_pin_community(pctrl, community) {
+ 		void __iomem *reg, *is;
+-		unsigned int gpp;
+ 
+-		for (gpp = 0; gpp < community->ngpps; gpp++) {
++		for (unsigned int gpp = 0; gpp < community->ngpps; gpp++) {
+ 			reg = community->regs + community->ie_offset + gpp * 4;
+ 			is = community->regs + community->is_offset + gpp * 4;
+ 
+@@ -1436,14 +1434,14 @@ static int intel_pinctrl_add_padgroups_by_gpps(struct intel_pinctrl *pctrl,
+ 					       struct intel_community *community)
+ {
+ 	struct intel_padgroup *gpps;
++	unsigned int ngpps = community->ngpps;
+ 	unsigned int padown_num = 0;
+-	size_t i, ngpps = community->ngpps;
+ 
+ 	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
+ 	if (!gpps)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < ngpps; i++) {
++	for (unsigned int i = 0; i < ngpps; i++) {
+ 		gpps[i] = community->gpps[i];
+ 
+ 		if (gpps[i].size > INTEL_PINCTRL_MAX_GPP_SIZE)
+@@ -1476,18 +1474,18 @@ static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
+ 					       struct intel_community *community)
+ {
+ 	struct intel_padgroup *gpps;
+-	unsigned int npins = community->npins;
++	unsigned int npins = community->npins, ngpps;
+ 	unsigned int padown_num = 0;
+-	size_t i, ngpps = DIV_ROUND_UP(npins, community->gpp_size);
+ 
+ 	if (community->gpp_size > INTEL_PINCTRL_MAX_GPP_SIZE)
+ 		return -EINVAL;
+ 
++	ngpps = DIV_ROUND_UP(npins, community->gpp_size);
+ 	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
+ 	if (!gpps)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < ngpps; i++) {
++	for (unsigned int i = 0; i < ngpps; i++) {
+ 		unsigned int gpp_size = community->gpp_size;
+ 
+ 		gpps[i].reg_num = i;
+@@ -1513,7 +1511,6 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
+ 	const struct intel_pinctrl_soc_data *soc = pctrl->soc;
+ 	struct intel_community_context *communities;
+ 	struct intel_pad_context *pads;
+-	int i;
+ 
+ 	pads = devm_kcalloc(pctrl->dev, soc->npins, sizeof(*pads), GFP_KERNEL);
+ 	if (!pads)
+@@ -1525,7 +1522,7 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
+ 		return -ENOMEM;
+ 
+ 
+-	for (i = 0; i < pctrl->ncommunities; i++) {
++	for (unsigned int i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		u32 *intmask, *hostown;
+ 
+@@ -1578,7 +1575,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct intel_pinctrl *pctrl;
+-	int i, ret, irq;
++	int ret, irq;
+ 
+ 	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
+ 	if (!pctrl)
+@@ -1598,7 +1595,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 	if (!pctrl->communities)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < pctrl->ncommunities; i++) {
++	for (unsigned int i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		unsigned short capability_offset[6];
+ 		void __iomem *regs;
+@@ -1806,10 +1803,9 @@ static int intel_pinctrl_suspend_noirq(struct device *dev)
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	struct intel_community_context *communities;
+ 	struct intel_pad_context *pads;
+-	int i;
+ 
+ 	pads = pctrl->context.pads;
+-	for (i = 0; i < pctrl->soc->npins; i++) {
++	for (unsigned int i = 0; i < pctrl->soc->npins; i++) {
+ 		const struct pinctrl_pin_desc *desc = &pctrl->soc->pins[i];
+ 		void __iomem *padcfg;
+ 		u32 val;
+@@ -1828,7 +1824,7 @@ static int intel_pinctrl_suspend_noirq(struct device *dev)
+ 	}
+ 
+ 	communities = pctrl->context.communities;
+-	for (i = 0; i < pctrl->ncommunities; i++) {
++	for (unsigned int i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		void __iomem *base;
+ 		unsigned int gpp;
+@@ -1915,13 +1911,12 @@ static int intel_pinctrl_resume_noirq(struct device *dev)
+ 	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	const struct intel_community_context *communities;
+ 	const struct intel_pad_context *pads;
+-	int i;
+ 
+ 	/* Mask all interrupts */
+ 	intel_gpio_irq_init(pctrl);
+ 
+ 	pads = pctrl->context.pads;
+-	for (i = 0; i < pctrl->soc->npins; i++) {
++	for (unsigned int i = 0; i < pctrl->soc->npins; i++) {
+ 		const struct pinctrl_pin_desc *desc = &pctrl->soc->pins[i];
+ 
+ 		if (!(intel_pinctrl_should_save(pctrl, desc->number) ||
+@@ -1938,17 +1933,16 @@ static int intel_pinctrl_resume_noirq(struct device *dev)
+ 	}
+ 
+ 	communities = pctrl->context.communities;
+-	for (i = 0; i < pctrl->ncommunities; i++) {
++	for (unsigned int i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		void __iomem *base;
+-		unsigned int gpp;
+ 
+ 		base = community->regs + community->ie_offset;
+-		for (gpp = 0; gpp < community->ngpps; gpp++)
++		for (unsigned int gpp = 0; gpp < community->ngpps; gpp++)
+ 			intel_restore_intmask(pctrl, i, base, gpp, communities[i].intmask[gpp]);
+ 
+ 		base = community->regs + community->hostown_offset;
+-		for (gpp = 0; gpp < community->ngpps; gpp++)
++		for (unsigned int gpp = 0; gpp < community->ngpps; gpp++)
+ 			intel_restore_hostown(pctrl, i, base, gpp, communities[i].hostown[gpp]);
+ 	}
+ 
 -- 
 2.50.1
 
