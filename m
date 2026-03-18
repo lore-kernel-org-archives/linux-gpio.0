@@ -1,172 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9DF18DF9D;
-	Wed, 18 Mar 2026 07:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A671369988
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 07:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773818078; cv=none; b=obJvXi8D/LO/b4R73eVBzzMLenNhNl+/GBV7gZfyyHAZ5HQTtJo7pX1H68liK+DdFCD2cJNF0+pnN72xGs6Zhy3DTLQynxjqa0GeHJI3C6m+TfVsJPrfsSW11GhWXwI/HCeS12v56gz0Mn8Jn8syBgtlpyywKgpolHQBXf3UD7o=
+	t=1773818080; cv=none; b=T3wxUfUXPnsDWgzC8CCfSSApJP/lfxnRENAo9BdsvdIqTo2tRuVhK8AmTFXMB+Oi6O/U2pZwNVAFOO/a6QU5wFl4zqaFLC3uCVkKokl0rCHLhilFY67bhPbTPlwquxNsYg+seyVCORiUZO/ymt4UQ3b0lh34211KuG7VnxIg4W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773818078; c=relaxed/simple;
-	bh=UUsNg0176Pj9NWFxrWArSHKtbO6bwxNXY6VX89i/DUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4Dxo7zNoTn9itRnS/ybYb6dvxghyB+ivZNJNZ8ND/Oad+XLdthWiFkyJ393thCLREV2m+yrMl88QYb3ERDKDXZeR5EBNdt4iYLM6eR+1MPFTXwbKp/JSt8GfFtcDJ455lyHY6QbPKDAPbfqiAs2+RrrkSNsbK0sM631uvVf9+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1rwr8A4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773818080; c=relaxed/simple;
+	bh=/sEl/7vWyc59W7NsH7dnJ+QHe0uCU49M0vqsEXr3P9g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W66hYBwi4TcJQsiLU/OSqqX1nDaAVL56Z7Oz8rD90V/dAQVnZYWbZu1Ke9W+fNT900fn/AvhpPgLQyimMNsLql+mqGqFiFGhuPJR3cBaH1NpSztymlizrxXmDX1hkjtl1nlUKNOJQmvAJFpbopzXTgorissk/9PDBCVV9cqI3Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d9EiNtSs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JWvr9Heo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1rwr8A4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF9BC19421;
-	Wed, 18 Mar 2026 07:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773818077;
-	bh=UUsNg0176Pj9NWFxrWArSHKtbO6bwxNXY6VX89i/DUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f1rwr8A4ICV+zJrB7tUWcGQ8d7o13whgr6QzZRK/7Q9X/8Emnbe0oHkcOZ3CD5kb9
-	 BauqUdXGWifpG+t8S13MBTrzPOtxGF7ya68OLmcnc4KsTeOr5lhFv2CFLwfoByNPBz
-	 HbMKLKmMuFFXGMDWhaQorzhx32cMhGvJwUo4KLnjrMCcTmg1HdwQFLk48saOGLuF19
-	 ebBCLsNIqAnJAYnJTPRpxnqCO0GoXrkNBXttv/74X3PFikXE1fSa71bGjI0WvAlsqD
-	 IyKrCkD+i8MMVREd7gGqPgyuVFxnKl4PE4T5I2bP9KmTq+MsP8Mj6dh4HkUgz2jzzR
-	 sPWQlLjFqYkaA==
-Date: Wed, 18 Mar 2026 08:14:34 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	AKASHI Takahiro <akashi.tkhro@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Dan Carpenter <dan.carpenter@linaro.og>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	arm-scmi@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Khaled Ali Ahmed <Khaled.AliAhmed@arm.com>, Michal Simek <michal.simek@amd.com>
-Subject: Re: [PATCH v4 6/7] dt-bindings: gpio: Add bindings for pinctrl based
- generic gpio driver
-Message-ID: <20260318-tuscan-agouti-of-unity-b564fe@quoll>
-References: <cover.1773757772.git.dan.carpenter@linaro.org>
- <caf4b7265bb631964d384c1b68100ef90208dda6.1773757772.git.dan.carpenter@linaro.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d9EiNtSs";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JWvr9Heo"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62I2AVZk3281113
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 07:14:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=T4xBNHP02lwoVag6zYe/Ke
+	vtJOqcf8IpqE4F+k66rl0=; b=d9EiNtSsxZgmCN3KGqSSl19c6kzj85O04DTyf0
+	KmpS7aZV2TwHtEB5YOGzuVVVbJuM1CYHy0TFlQLGviUzQwAxsCG5ZywD/1L9XfsW
+	+pzJotOyK/1eRpH6YPq7M+4t7iGm3eubj39wYidTfSXGkB0hdEFL0E4e/7FZ8wSo
+	Ttd38Yew+GGcIlcCdEmFQCIsFCvnigmjsKrHspiA0UQQFw3MDTm1JMi095pZNd9R
+	XbNF4djXo0igiO9SG0bDndx+7wXgcWEYPEq62k8mVgRa8sjiGl/3tO6UcUr0fNLA
+	n74+hsIvTtEq5GFvFCZ+zD4AcnfotqB8BzX2TY0JK/yPwgGw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cya62u648-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 07:14:38 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b630753cc38so36591897a12.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 00:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773818077; x=1774422877; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T4xBNHP02lwoVag6zYe/KevtJOqcf8IpqE4F+k66rl0=;
+        b=JWvr9HeoEgPmQTbwqJZbAV2r7kBdqzrOiDIxF6XkQppLpJo0Sg4/leOfrefe7E1hcy
+         vu4Mw04+6mFZxm+3TVAO/bFQZt8gIasm2vxukPB/P2/Vnta+76I9jhOqLgRxHMkeF/RF
+         u7glb6EfwqiWJTvO1lAhI4vzfm8mIx9yPaDesw7WpnlFMk7uBqQ2EJYAYbfHQtiywKw5
+         SRs4LZy5327pgH1vcLrOtRnfruSNWYHU2L/IMt+Nbtq5YDmi4AFXF1WlkFiM2wQY/tUz
+         gaA31ejTbaYw82uV69e0fxYEzb6ezlBYVPpo0TJmA5myrlA677rn+CqQj3xtTJvsOya6
+         duRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773818077; x=1774422877;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T4xBNHP02lwoVag6zYe/KevtJOqcf8IpqE4F+k66rl0=;
+        b=mj3Gjsx11c/0+tr5BnCZTj+60zNt4RVPomDwqmzyIsNq4vGz9/nIIItrXMSBfCEPv0
+         ElFGxYpwIdzr0uUzf9rQrBYEquar6QqkPSOH8UKSGRPrR/9N3vXNv9ovNP4cl9HZMqYr
+         KOoKl68wIS/LM1cRr8p0RgWbTpbuYjJ810rMQZDG4pvhRFJ4HylwI1xH694rGoKmVUfX
+         f0Niq7w4Erfbrp0LJ+G8B8BY2pvisk/8nTrrINDi7ZZCw9jNqSV5RLmnmwJAUXEOiOZ/
+         qFeVwDb/FC2ZqDglmcKYTTMaWk1XFmjvqmMg5yTnUjrlTBYNpTU3KTHSp9Fiq8Rq2wRe
+         IG6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUXawDNK+rNoFtlTrmDTnHZjRJNLFR0e8IPCY+qtytTphAeY4My3GyGUtwsTLF/ypttF7Q53kXPiFOm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNImisEH0/5oHNv/v63ZcIl5wtPC2/ly24Y7KK5M12dC9WtW+L
+	MW8yP6FxM4em4RMuf6bqm35HEkxpQmXyCdDnQ3tpZB+GER2hpmfxmat+W2P+87VS4/2cLS4Sme/
+	YiZPiJX4A5OfBtKsoqvMfTCPpKT+84qrh6OE3M9IjU5J9vqQqsOjCNF76CdsiplYP
+X-Gm-Gg: ATEYQzz3sG0DiOWdirMSVgf8/xSWQQIhKD0vFADgpo7RvoHxadfFqXElBzv+VC3OK35
+	7jFIaIUN9JOCsDdTIJZ0CQtC57bAOjBfuyUB5lw4YPCN5VoZtBz9h5H9seyE8b3Xig5rC5MRjoL
+	ILl/Oh+d6AWoNM+iu6sMLV5z1ngdmIk/0Z8wd8Aj2+Kb8NcA5Iw9KQIO8SL9XLvea9X/jAgEeu6
+	wcar7Shj1LKRop0Vn2yffUHimdKs1bAVUUfA0ak5bKGmDQn5mDvSZgx2ru2uI+yrNdMseY9kFRa
+	BeRhfsfK+DuBuuCF68hTE5qO9PQ+tNlNtIRgav66/BInUitOl9sNao3g10eHVXqF33f+A+c1OTu
+	E6EkttBBKleJycfug4C0zBkMzxGtFpwbTj5KyyIsWiiCfMDiwN7LlVad7ysvuArQ/6VJOPmaDzM
+	KQzW7MMxfhnBvR1E5WjgqOn6opTfqMHUqjEda6P8hZZAxcxMnTLYX226FI
+X-Received: by 2002:a05:6a00:9a8:b0:82a:8aa:cbb0 with SMTP id d2e1a72fcca58-82a6ae5306emr2273753b3a.29.1773818077218;
+        Wed, 18 Mar 2026 00:14:37 -0700 (PDT)
+X-Received: by 2002:a05:6a00:9a8:b0:82a:8aa:cbb0 with SMTP id d2e1a72fcca58-82a6ae5306emr2273729b3a.29.1773818076769;
+        Wed, 18 Mar 2026 00:14:36 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a6bbe801csm1575768b3a.46.2026.03.18.00.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 00:14:36 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] Introduce TLMM driver for Qualcomm IPQ5210 SoC
+Date: Wed, 18 Mar 2026 12:44:29 +0530
+Message-Id: <20260318-ipq5210_tlmm-v2-0-182d47b3d540@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <caf4b7265bb631964d384c1b68100ef90208dda6.1773757772.git.dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANVQumkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIzMDY0Nz3cyCQlMjQ4P4kpzcXN2UNCMjw6RUQwPTJFMloJaCotS0zAqwcdG
+ xtbUAWjRSzV4AAAA=
+X-Change-ID: 20260317-ipq5210_tlmm-df221be105b5
+To: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773818072; l=1127;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=/sEl/7vWyc59W7NsH7dnJ+QHe0uCU49M0vqsEXr3P9g=;
+ b=bHUpDZlxHJ1OKeVV+GiSbVvJ2TxfBzFC3McaETWFdOvD91SCMqE6hPvugprAW8xDKM1i8ZVk1
+ zx9ioRmiVAnCeCZ/jTiWPFbCo+ZqlTBWolJUtWK91rpQIiTxEu/x6LB
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Authority-Analysis: v=2.4 cv=Ns3cssdJ c=1 sm=1 tr=0 ts=69ba50de cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=v7fG6qyLzT-gi-QuDAwA:9 a=QEXdDO2ut3YA:10
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: 4LSkuQCe5GZQvko_0bm_Wuxnz0u55i6r
+X-Proofpoint-GUID: 4LSkuQCe5GZQvko_0bm_Wuxnz0u55i6r
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE4MDA1OSBTYWx0ZWRfX2C6XKKkfBiff
+ p5zZSZIsydEieE/WLFWPhUALvPvGb3I+Gh+tJ+a9yc0AikZcNoZe1xVmmcynwunFDZuPVUi52TT
+ YdRDPb5Y05EgsXXPbYKTuTyIY9LL1eyx7Mtj4bqPnSi7KKBAwjREOmCs3BIwLNbTBKn4ZZ2K+Kl
+ Tp5A+GHUeh0XXJgZVdQIPorInEQ4RsP0YbiQ4FT42E3VGjUCjR+t2ItQALQhRsp9iDTbSHxOqz3
+ oA8yu9jPV28V7hXxO62B6OtWhSRdCvdkA8OQI/ThnruthQJBOnT2klGhNi7F2144NCJ3RX6gsG1
+ GI+Ft9ZOUFIYZNjoUNUgAUtVsGIXvnBXn5LeoBW13mu6S0wSh3F4xyk5n0AuHe4JgtrJHb+1ggR
+ /UNvZdl3KzQqdE3TIi8X3JvpmIM5N0E/MpgBTg79/26BQO5Y1xF7MIoJPQE+W4+Eez1rIK4Giad
+ YyJfCSb9wlDA2dm6dSQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-17_05,2026-03-17_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603180059
 
-On Tue, Mar 17, 2026 at 05:40:57PM +0300, Dan Carpenter wrote:
-> From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> 
-> Add a dt binding for the gpio-by-pinctrl driver.  The driver is used
+The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points.
+Add the pinctrl support for the same.
 
-Drop all references to the driver. Describe the
-device/hardware/firmware/interface, not driver. Same for subject.
+Changes in V2:
+- Split the TLMM changes into separate series
+- Picked up the R-b tags
+- Grouped the led and pwm pins for better readability and usability
+- Link to v1:
+  https://lore.kernel.org/linux-arm-msm/20260311-ipq5210_boot_to_shell-v1-0-fe857d68d698@oss.qualcomm.com/
 
-> for doing GPIO over the SCMI pinctrl protocol.  There are a few
-> mandatory properties such as gpio-ranges and ngpios, but it's not
-> mandatory to specify the pin-mux.
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+---
+Kathiravan Thirumoorthy (2):
+      dt-bindings: pinctrl: qcom: add IPQ5210 pinctrl
+      pinctrl: qcom: Introduce IPQ5210 TLMM driver
 
-There is no such thing there as pin-mux, so I don't understand above
-sentence.
-
-Describe the hardware/firmware/interface, not the patch, because we
-easily see which properties are mandatory. Schema tells that.
-
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-> ---
-> v4: Changed additionalProperties: true to false.
-> 
->     My concern here was that there might be a lot of gpio properties
->     which I wasn't familiar with.  To check I did:
->         grep :$ Documentation/devicetree/bindings/gpio/* | \
->           cut -d : -f 2- | perl -ne 's/[\       ]*//g; print "$_\n"' | \
->           sort | uniq -c
->     The only property that I decided to add was gpio-line-names.
-> 
->     Deleted the extra bonus example.
-> 
->  .../bindings/gpio/pin-control-gpio.yaml       | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/pin-control-gpio.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/pin-control-gpio.yaml b/Documentation/devicetree/bindings/gpio/pin-control-gpio.yaml
-> new file mode 100644
-> index 000000000000..ebc3fdd039fd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/pin-control-gpio.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/pin-control-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Pin control based generic GPIO controller
-> +
-> +description:
-> +  The pin control-based GPIO will facilitate a pin controller's ability
-> +  to drive electric lines high/low and other generic properties of a
-> +  pin controller to perform general-purpose one-bit binary I/O.
-> +
-> +maintainers:
-> +  - Dan Carpenter <dan.carpenter@linaro.og>
-> +
-> +properties:
-> +  compatible:
-> +    const: scmi-pinctrl-gpio
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-line-names: true
-> +
-> +  gpio-ranges: true
-> +
-> +  ngpios: true
-> +
-> +patternProperties:
-> +  "^.+-hog(-[0-9]+)?$":
-> +    type: object
-> +
-> +    required:
-> +      - gpio-hog
-> +
-> +required:
-> +  - compatible
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - gpio-ranges
-> +  - ngpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    gpio {
-> +        compatible = "scmi-pinctrl-gpio";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        ngpios = <3>;
-
-Three pins here
-
-> +        gpio-line-names = "gpio_5_17", "gpio_5_20", "gpio_5_22", "gpio_2_1";
-
-... four here
-
-> +        gpio-ranges = <&scmi_pinctrl 0 30 4>;
-
-... and four here, so it feels inconsistent. I guess ngpios = 4?
+ .../bindings/pinctrl/qcom,ipq5210-tlmm.yaml        |  137 +++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    8 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5210.c             | 1049 ++++++++++++++++++++
+ 4 files changed, 1195 insertions(+)
+---
+base-commit: 8e5a478b6d6a5bb0a3d52147862b15e4d826af19
+change-id: 20260317-ipq5210_tlmm-df221be105b5
 
 Best regards,
-Krzysztof
+-- 
+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 
