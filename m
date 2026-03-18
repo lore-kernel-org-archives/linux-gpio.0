@@ -1,108 +1,82 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9DE33D51A
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 07:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7945936920E;
+	Wed, 18 Mar 2026 07:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773818350; cv=none; b=FE4GymlMPTcujnRqtvLKh9qcxNc8YOx8wfUW/X2vX5rA2xCxW/zh8xVz+n35wlmgVEuMMwxqKjcPO7ilWZs4L1/eYPpGhg691RcKdHDIWtuv582bmwU71yLXFqFJWNAzxqrZUZxUjeMuz6W/AyPlRMPROKPFZ/6qVzVC1kxczyY=
+	t=1773819454; cv=none; b=SKNUp3cluYoMmnCgfi8ODy+RWy8tRUY0beBrWVGYtPy8/I5NA/bA49VGIlI8zpoirQMz205ZKiEmJXIkGAtDP2W25W2XNrAKtp6OBIO1glfBc+3mfCNLjv3fyLJ2AyfOVuDI1OjpxCxrCjoumZCHGYHegqJCcAQ3N9WsX2ECyRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773818350; c=relaxed/simple;
-	bh=ol8Ym5CKcekMlFDOEvyJrm6wbK1e1Xmsg6jJtPQ6+IM=;
+	s=arc-20240116; t=1773819454; c=relaxed/simple;
+	bh=M/ax/mRFFdqluuuB9V9vnJDmziqeSHzHaAaRfTp2XXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CERb1EcK/zsjyfID7XYq3ETVh7MZgH3K8w/jwdqH7llsaF0SYivo/jjHh8f0CyIYzZkT6gPvXwkG1o8RVsjwkYNIDfz/UckDePks7s4HXV8KQPD281iEJyOOqyeYxWXfhzSo//EdqIAyM0K1uSXOALkATQeeImigroELuckOqbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lw1Sj6ov; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=XtVONS+j0B7A0y+Gqg5+ScpncWXDMNZXZsN7heM6oGPFrMEHWG7L+rdefbCa1KnTnxdEH0F1ISqEbPzUZ7V+x2AN//scs3yW/DgMHnfsIZiqLP8PexkOCuh5b2HTzSH3dVY55ZUDQHs77RDUPlcinJ59aTZQYWCOBIFqXv3vsxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1ha0wVP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lw1Sj6ov"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48538c5956bso5109835e9.0
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 00:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773818348; x=1774423148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RrTjxBzkA8E/8TnT5udli/s694DpyD1FsJpsEGO43Ls=;
-        b=Lw1Sj6ovj9EIZhyKaLbnabAY1o1VzAT/nfq+ZEVdU6YNAujwH/cghfTUdxErYUhFVP
-         fTlLKvyQVQk0JmBb0aeTYrlOylaCcwsSokyMvC4/4C4CTlQyGntCd8uK3UtdXldP4d0L
-         IeVuqrnsYKkVLgtnuKajimE+mDQvyjuFhNiZKMNaudfeWNoNa9iWlGTxmhNXzOFXKJhg
-         E9WsSdVC7xhcSaaw7f+IKKVQXIzce9f7A8+1ziVoQ7zNmjS4aIdNuZb20q7E/w1uopWd
-         aVz+1QDBPflkKycQSQZbuvUfh8HFE9TFTf58+1aMK8qwBcr4QCjRCyRifUez+aQrC4A0
-         cjWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773818348; x=1774423148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RrTjxBzkA8E/8TnT5udli/s694DpyD1FsJpsEGO43Ls=;
-        b=YeRIafBtQ2Wtlx5E+KP/U+dqdxWOW7P8lEonCivPVFoKlnytGDqrXm9TeCvAeqYG7n
-         cFCcYuttbO+uzY8GEXnwgrThkIM3paAszKYdXz5bPSzZ4/sS3Dnd/cPW+bs8dFEnZmGX
-         VIRnCKmsWZf3Cni0qTtsedFpTFGCPyyfwe6U6H4hCevUGOJnpy0RW5k65I0+X1TWXz3o
-         46rUqcp+I1X28Xfwbq2H6Mrq4xXW4bVBUQVtu6AK98rxy4JixfEdvNJqs6F1oyZvmqJs
-         IkLs2nhWfXYWy05DLm7QjSzNT7mlFP68lGov/0OonZs8JvW+MvbY58fB5RF1VCz6EWCi
-         ZpFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXw3nqj0pM82jRhRk7hf2r80mD5GdffHqdN/6beAcGZDu4Ed4XGQFA4bsmCXsvV7VKknWOdO8OMyfpH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJhi5k1eveF1znemiupWU/jVIcACqXNd5+TI4Ctx1tWoV2vEgz
-	GLaoun0oV5UtQ8HySHTDUiBHJdotHwpshl9LnKAVFlggE7fBNFvylGX7rp8fVD1VXZ0=
-X-Gm-Gg: ATEYQzzg2t8TLveutz96lA22m5NOeoq+Q8odLkxPFBIIkeV2nR+kKKh341kb8ip74ZY
-	hQyavawcCl/iv1j5pnd5jicrgx9fXol9ugT1WFYtLs969H22/sk42db86zNJUZjQoeNsUISmC7d
-	sxarSvhYXAgRkmQlGy1jnCzdccx9GDyBzwaytx1TAX6+bC3QeqD9Lvxhfv0Z9Xw70nYnca0nHes
-	C5HUr2daojlGxIPjh0rihKYzBkwakKtOkqogCeFmgKVtMHVRlLQtBeWFeJmOxBTNj3PullmiAaE
-	Cq12PyjlLfnLDIg9RywjPPKnfVEj0Fan0jO2Ix3Q3z6VkQt3xt29SuXNY9YUWLU3H5YIk1ddv/i
-	McoExalkDa9SzFIM5jcsXme4rjofg4RG9cCUJ/VEqIwsibHeJQQT5A9oVBO3282G0bvQp+kYfeT
-	EUVoV8NNVpfl+gCOxrTAM9uHM/Jnyy
-X-Received: by 2002:a05:600c:c4a4:b0:485:3c11:de84 with SMTP id 5b1f17b1804b1-486f40c9015mr31500395e9.14.1773818347740;
-        Wed, 18 Mar 2026 00:19:07 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f4bbcd78sm12200225e9.26.2026.03.18.00.19.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 00:19:07 -0700 (PDT)
-Date: Wed, 18 Mar 2026 10:19:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	AKASHI Takahiro <akashi.tkhro@gmail.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Linus Walleij <linusw@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Khaled Ali Ahmed <Khaled.AliAhmed@arm.com>,
-	Michal Simek <michal.simek@amd.com>
-Subject: Re: [PATCH v4 2/7] pinctrl: scmi: Add SCMI_PIN_INPUT_VALUE
-Message-ID: <abpR6N6_4JgQTB4M@stanley.mountain>
-References: <cover.1773757772.git.dan.carpenter@linaro.org>
- <940ff48bd53e35e19a4cda081170d9198c20675e.1773757772.git.dan.carpenter@linaro.org>
- <abl1fPQEDE38KZQN@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1ha0wVP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89147C19421;
+	Wed, 18 Mar 2026 07:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773819454;
+	bh=M/ax/mRFFdqluuuB9V9vnJDmziqeSHzHaAaRfTp2XXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q1ha0wVP40dk/s/pC5SIP+ELHAbdpt8isWlkxwmQuY/4Iq9H6La50kbuaqwtkE1rb
+	 SucfJdeh7N+N92Xm0s4B9btRhxZPV/3fk4YU0LMoeEqKu9D1O4GnxEmCiG5rbHwS7Z
+	 tuf9+s8l9aKfXL9jbCqj9dSfmFvP4SPYQZq7azh9yb/RFo/8vhuzyPB2KQseVk5lob
+	 X5AyCZI3tcPJGS5TeTxzfMQTgzS353u3wCl1qjimrO/9TpmVbJ4eZgSzslMkTHr8+t
+	 PayG+mKLNtSkfyOsHKu66sKT/jXPdPNtaxE2xS8Z424qu8c5B08HmoVTbfK189k4ae
+	 cwX05FkOnJ4gQ==
+Date: Wed, 18 Mar 2026 08:37:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, Fabien Parent <parent.f@gmail.com>, 
+	Val Packett <val@packett.cool>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
+	Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Linus Walleij <linusw@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Gary Bisson <bisson.gary@gmail.com>, Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+	Julien Massot <julien.massot@collabora.com>, Chen Zhong <chen.zhong@mediatek.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] dt-bindings: mfd: mt6397: Add bindings for MT6392
+ PMIC
+Message-ID: <20260318-heavy-bear-of-art-4bc2a8@quoll>
+References: <20260317184507.523060-1-l.scorcia@gmail.com>
+ <20260317184507.523060-2-l.scorcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <abl1fPQEDE38KZQN@ashevche-desk.local>
+In-Reply-To: <20260317184507.523060-2-l.scorcia@gmail.com>
 
-On Tue, Mar 17, 2026 at 05:38:36PM +0200, Andy Shevchenko wrote:
-> On Tue, Mar 17, 2026 at 05:40:27PM +0300, Dan Carpenter wrote:
-> > The PIN_CONFIG_LEVEL parameter represents the value of the pin, whether
-> > reading or writing to the pin.  In SCMI, the parameter is represented by
-> > two different values SCMI_PIN_OUTPUT_VALUE for writing to a pin and
-> > SCMI_PIN_INPUT_VALUE for reading.  The current code translates
-> > PIN_CONFIG_LEVEL as SCMI_PIN_OUTPUT_VALUE (writing).
-> > 
-> > Add a function to translate it to either INPUT or OUTPUT depending on
-> > whether it is called from a _get or _set() operation.
+On Tue, Mar 17, 2026 at 06:43:04PM +0000, Luca Leonardo Scorcia wrote:
+> From: Fabien Parent <parent.f@gmail.com>
 > 
-> In three consecutive patches against the same file you have three (!) different
-> prefixes. Please, align with what is being used most in the driver and/or subsystem
-> (the driver seems has no consensus with itself, so subsystem then, something like
->  "pinctrl: scmi: ").
+> Add the currently supported bindings for the MT6392 PMIC.
+> 
+> Signed-off-by: Fabien Parent <parent.f@gmail.com>
+> Signed-off-by: Val Packett <val@packett.cool>
+> Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 
-Oops.  Crud.  You're right.
+If there is going to be new version, then please fix all the subjects:
+A nit, subject: drop second/last, redundant "bindings for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-regards,
-dan carpenter
+> ---
+>  .../devicetree/bindings/mfd/mediatek,mt6397.yaml         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+Best regards,
+Krzysztof
 
