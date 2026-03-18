@@ -1,50 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875DB3E63BD;
-	Wed, 18 Mar 2026 15:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F53E6DEF;
+	Wed, 18 Mar 2026 15:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773846787; cv=none; b=gDjQyCY+PBSETpplXuSxdlc1mLpEcJGG38iFgQ5iBUhnpz221Y96duE/dmJsw61gv94x9MyLAhk0oFyCaPprVkeiO0bjKUPru4OqJnyYuBV3OFv18aZj60n6XC+lHLKK3CgoQm9PtJ2jUDHQ5k3e4mZGd7H+0YQiwYLnRR0TNu8=
+	t=1773846788; cv=none; b=FjjArnK+OalU3OUYbQ8xezMT3LgyMuKapCWuD0zVol1MJFAhuDFBVliO2vNE11EjkAY/vWILcUnYviOxTWswdDAe1X3pCoD0HrybvW7he5HEujyfx3KfN/OCO4+kaoWCKL60JhWvar9RR59VD/hvhXpFSZ2m77sIjWifSymeKnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773846787; c=relaxed/simple;
-	bh=7mKQR6uTf2Wsf//NUwbsAaj+ayneo7o3k7ijJkC7Gqg=;
+	s=arc-20240116; t=1773846788; c=relaxed/simple;
+	bh=A2HPRLU22tLaQPROKcuT+EewNl+vqKrAxH13T8m/A6Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aW/rdSJ9hYcSPF2H61i/ieIcYNESCXjoIoxICzKbaNyHldlHnGa49qkQhdI/AIRjNco9GtF2YVHDDmmWGZyF2Qy4n78XoFk07yaDn4JHt+Fj6aeuJ8zBjSMpMpL0dnrxT96nPUlghA88vq8wCYG7wHK8UV5fkKnWzVnQK9TRAoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T8B1/GOa; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=P88hgtCywn0VOCq7VEecx/+XpVw9JCpr1nDrwNnU1AH5Co+cGOB92Z1yqcvr6Gd2EgCUo+qA4CvKIOm1RDe9UnPQtv2HD5mno+lxrw2prSblRZNruStAol7S+u6pbFPEC1pgTb4z2LcIuagRp6kdYetKWzog9sLSfGLVv306aVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+2bQMXz; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T8B1/GOa"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+2bQMXz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773846785; x=1805382785;
+  t=1773846786; x=1805382786;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7mKQR6uTf2Wsf//NUwbsAaj+ayneo7o3k7ijJkC7Gqg=;
-  b=T8B1/GOa1rP8YrMgJaka5wgxyhUZ9StNopJ+CvPn6qZ+P6KSMB+mMCQ1
-   MoiI/9KyMvYuTf5sDyrjohI8bI4AEEE0qrPpFTvzI4k6nwPl57gfHAdAw
-   wgFskzRK7vwCQyKnA1hyemQExLNX3W5M6BFoMbWNK4mOsPPNEaNRg73WK
-   t4WToOa+KYG69MkklY+AbUgiXWX5dbkqO46En1EIekFPxBbM2KaJmNaTv
-   qHS6FnFKNf1MnTCWI/Cat2N9I/BDv9vTIeHOIMQZONbXJGbRMI9owehsF
-   WfAlGgTIB46FX2l3hwt63GMohLBNbolQO3xiAbnYOhunD7PWxC9hH1MBH
+  bh=A2HPRLU22tLaQPROKcuT+EewNl+vqKrAxH13T8m/A6Q=;
+  b=Q+2bQMXzPez1zWI6Dm7gpWa6y6n8pO+8W+M2V9VUD4jM7Um9Fkt6CJN3
+   RPxCPi2cahZv2bcwefcd5j2Fdguud9Lr3iEHUjW9/kDAp7GdnyfiE0I2I
+   YCpyAEdk4/dP+cBIAE9xUAFz7BuWMXEX3sZ52uf3MQ6lxOOCsH1o086TN
+   ASt8zYdGjjRCGCE7hg9KkWz+3VdlIYao0UFrl7XnXMHefuj4T8gb4L/4R
+   9AHVEiA4kuMp0Bg7WT61owUMmDnsmz1WF0p9gcjIr+5VoOTejHiO33tsA
+   x83FvoryVB3JNS1zqn3eW4YDxhZ5mm9qoYU05/ItcZs2iOK7IG8KIol86
    w==;
-X-CSE-ConnectionGUID: bKzhH/+vQHmSjo0pN0JwtQ==
-X-CSE-MsgGUID: Xr+4GNUSSfiQgeVs6bjfvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084542"
+X-CSE-ConnectionGUID: CZbIpzhXS3WdAJonZcsLmQ==
+X-CSE-MsgGUID: rQsnxEUXRJ6M++3H8upC9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084544"
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="75084542"
+   d="scan'208";a="75084544"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:02 -0700
-X-CSE-ConnectionGUID: AUdx3uOuRc63fPqVlBQQuQ==
-X-CSE-MsgGUID: kXsgylgVS++3PGq6F02fCg==
+X-CSE-ConnectionGUID: 2j/rT7HTTxKkpDDexNPmqQ==
+X-CSE-MsgGUID: K0fmXP2uSQqVvqzpQrwwpg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="247122452"
+   d="scan'208";a="247122454"
 Received: from black.igk.intel.com ([10.91.253.5])
   by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2026 08:12:59 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 18AFD9E; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
+	id 10A2C9B; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -52,9 +52,9 @@ To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 3/5] pinctrl: intel: Enable 3-bit PAD_OWN feature
-Date: Wed, 18 Mar 2026 16:10:17 +0100
-Message-ID: <20260318151256.2590375-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/5] pinctrl: intel: Improve capability support
+Date: Wed, 18 Mar 2026 16:10:15 +0100
+Message-ID: <20260318151256.2590375-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
 References: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
@@ -66,86 +66,89 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Starting from revision 1.1 of the Chassis specification the PAD_OWN
-is represented by 3 bits instead of 2 bits in the previous revisions.
-Update the driver to support this feature.
+The register space of a certain capability starts at the offset just after
+the respective node in the capability list. It means that there are no fixed
+offsets for them from SoC to SoC generation and they have to be calculated
+at run-time. Improve capability support by adding the respective calculation
+algorithm and in the result enable PWM on more platforms that currently may
+use the wrong register.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 21 ++++++++++++++++-----
- drivers/pinctrl/intel/pinctrl-intel.h |  1 +
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index a5a264ba6fbb..97bf5ec78db4 100644
+index 9d32bb8bc13a..adaa37a42754 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -203,19 +203,25 @@ static bool intel_pad_owned_by_host(const struct intel_pinctrl *pctrl, unsigned
- 	community = intel_get_community(pctrl, pin);
- 	if (!community)
- 		return false;
--	if (!community->padown_offset)
-+
-+	/* If padown_offset is not provided, assume host ownership */
-+	padown = community->regs + community->padown_offset;
-+	if (padown == community->regs)
- 		return true;
+@@ -53,8 +53,6 @@
+ #define PADOWN_MASK(p)			(GENMASK(3, 0) << PADOWN_SHIFT(p))
+ #define PADOWN_GPP(p)			((p) / 8)
  
-+	/* New HW generations have extended PAD_OWN registers */
-+	if (community->features & PINCTRL_FEATURE_3BIT_PAD_OWN)
-+		return !(readl(padown + pin_to_padno(community, pin) * 4) & 7);
-+
- 	padgrp = intel_community_get_padgroup(community, pin);
- 	if (!padgrp)
- 		return false;
- 
- 	gpp_offset = padgroup_offset(padgrp, pin);
- 	gpp = PADOWN_GPP(gpp_offset);
--	offset = community->padown_offset + padgrp->padown_num * 4 + gpp * 4;
--	padown = community->regs + offset;
-+	offset = padgrp->padown_num * 4 + gpp * 4;
- 
--	return !(readl(padown) & PADOWN_MASK(gpp_offset));
-+	return !(readl(padown + offset) & PADOWN_MASK(gpp_offset));
+-#define PWMC				0x204
+-
+ /* Offset from pad_regs */
+ #define PADCFG0				0x000
+ #define PADCFG0_RXEVCFG_MASK		GENMASK(26, 25)
+@@ -1549,8 +1547,10 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
  }
  
- static bool intel_pad_acpi_mode(const struct intel_pinctrl *pctrl, unsigned int pin)
-@@ -1597,6 +1603,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
+-				   struct intel_community *community)
++				   struct intel_community *community,
++				   unsigned short capability_offset)
+ {
++	void __iomem *base = community->regs + capability_offset + 4;
+ 	static const struct pwm_lpss_boardinfo info = {
+ 		.clk_rate = 19200000,
+ 		.npwm = 1,
+@@ -1564,7 +1564,7 @@ static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
+ 	if (!IS_REACHABLE(CONFIG_PWM_LPSS))
+ 		return 0;
+ 
+-	chip = devm_pwm_lpss_probe(pctrl->dev, community->regs + PWMC, &info);
++	chip = devm_pwm_lpss_probe(pctrl->dev, base, &info);
+ 	return PTR_ERR_OR_ZERO(chip);
+ }
+ 
+@@ -1595,6 +1595,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctrl->ncommunities; i++) {
  		struct intel_community *community = &pctrl->communities[i];
- 		unsigned short capability_offset[6];
++		unsigned short capability_offset[6];
  		void __iomem *regs;
-+		u32 revision;
  		u32 offset;
  		u32 value;
+@@ -1622,15 +1623,19 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 			switch ((value & CAPLIST_ID_MASK) >> CAPLIST_ID_SHIFT) {
+ 			case CAPLIST_ID_GPIO_HW_INFO:
+ 				community->features |= PINCTRL_FEATURE_GPIO_HW_INFO;
++				capability_offset[CAPLIST_ID_GPIO_HW_INFO] = offset;
+ 				break;
+ 			case CAPLIST_ID_PWM:
+ 				community->features |= PINCTRL_FEATURE_PWM;
++				capability_offset[CAPLIST_ID_PWM] = offset;
+ 				break;
+ 			case CAPLIST_ID_BLINK:
+ 				community->features |= PINCTRL_FEATURE_BLINK;
++				capability_offset[CAPLIST_ID_BLINK] = offset;
+ 				break;
+ 			case CAPLIST_ID_EXP:
+ 				community->features |= PINCTRL_FEATURE_EXP;
++				capability_offset[CAPLIST_ID_EXP] = offset;
+ 				break;
+ 			default:
+ 				break;
+@@ -1653,7 +1658,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 		if (ret)
+ 			return ret;
  
-@@ -1611,10 +1618,14 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 		value = readl(regs + REVID);
- 		if (value == ~0u)
- 			return -ENODEV;
--		if (((value & REVID_MASK) >> REVID_SHIFT) >= 0x92) {
-+
-+		revision = (value & REVID_MASK) >> REVID_SHIFT;
-+		if (revision >= 0x092) {
- 			community->features |= PINCTRL_FEATURE_DEBOUNCE;
- 			community->features |= PINCTRL_FEATURE_1K_PD;
- 		}
-+		if (revision >= 0x110)
-+			community->features |= PINCTRL_FEATURE_3BIT_PAD_OWN;
- 
- 		/* Determine community features based on the capabilities */
- 		offset = CAPLIST;
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index 2f37109d5860..b5476b9de0db 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -150,6 +150,7 @@ struct intel_community {
- #define PINCTRL_FEATURE_PWM		BIT(3)
- #define PINCTRL_FEATURE_BLINK		BIT(4)
- #define PINCTRL_FEATURE_EXP		BIT(5)
-+#define PINCTRL_FEATURE_3BIT_PAD_OWN	BIT(6)
- 
- #define __INTEL_COMMUNITY(b, s, e, g, n, gs, gn, soc)		\
- 	{							\
+-		ret = intel_pinctrl_probe_pwm(pctrl, community);
++		ret = intel_pinctrl_probe_pwm(pctrl, community, capability_offset[CAPLIST_ID_PWM]);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
 2.50.1
 
