@@ -1,142 +1,107 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2F53DBD46
-	for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 14:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2543E3D84;
+	Wed, 18 Mar 2026 15:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773844625; cv=none; b=hVbhkbGTewY6e6Nm5JaNashm97WEN9FSkCQI85NSAuLR7LGsHP4Zh0KoIntVZ0tGCaT/91Lax0cTL9Bu6UzFnlInZnOS1/LxobxIUGVQ/qLD3i/vZm35PpOqesQC7ATBtLiwoYapGTme2rvVqabFuqCh3lYEOgh3otlOIVfRydQ=
+	t=1773846784; cv=none; b=lBTFavYEyI8HqohQsSoxajNzrBuufTGL4+8VJLJLG1pOtR7G1oPBvlHMKzFHdJz2j3rrrWI33TXTUCWktJfm0zxdNUIba4mthYeWNPZso3ZPIpoKe+UkQ8WCopYbrEYGAYvy6JgfcN+IvI/wF/NKy4Tl8q7CZ+/XZPhyIJ4NdrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773844625; c=relaxed/simple;
-	bh=nzM5rsog/BPN55jXu8KqFKLiphFyEv9EsonRFYnRiOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnIxVzcqzZPoY6pJAkEyzR5ZogTiJ0bCiiwDoHQwUr5f7ZvV3uQGgKl0aHS8cb4lDhu6GHEOnod/7Izz3MhwwLl3ei3jMsOfjoyOF/FfEXgwefXDFGMDvdR0fSFxe5vKYyrDqgNodkTHT/E50VUzjwUM8I0xfpSAtdtHumpFEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hl4uH0rv; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1773846784; c=relaxed/simple;
+	bh=51fda7QAM30p08uZhu0wEnvSa6RBIXMTfne4HtjqSOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qzouxbj56fr6AUnqqwD9OD31gNh2qnhmzy3AXNYUiuCUU+F7x8gZWqeK8fKGdOirleAr4kplHb+PkvgfTsDkqNuP7WifsIU4AutWi02w6BQQ9Aiq6pbZPJ8SkXCvrlnH+d/ise8zp56CvD9WVyNyfKE7IsgP4P9hXn5wufvV3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aomogoQb; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hl4uH0rv"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aomogoQb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773844624; x=1805380624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nzM5rsog/BPN55jXu8KqFKLiphFyEv9EsonRFYnRiOA=;
-  b=Hl4uH0rvNhSNcOqfaKLoMC5jn7eDzIvon8ktkuhOF3HjPqgPdDlZMovg
-   9+plL4ENpwAFIp8cgg+ZOA2kf2697o4ZVApKVXFxDnUS1h7fONzT3GEWc
-   Kdl4U4ZHq40KBbdzaH4+KU0+mOlh2Y5HIfZnExpLO3+WLZeEZ4zGIco2R
-   tcL0cXtZK9UBnbg71CpUALtI6e7BxiI/leBoz8bkRMydetPa+j2344rQk
-   PnGmnQlDF/gg5zDi/kchlwCNxwcOtGsAE7sHzJlDOZoF0uZ2D2ICBkgDz
-   cJf9Ka0VGATtOHNa3Xux0YfGIAXf2xJqxq60vUOdEhnPIWiNNVO1l2a47
-   g==;
-X-CSE-ConnectionGUID: 0HlYqcBoQnuewM0xFjbRlA==
-X-CSE-MsgGUID: dhmnzNC5Q8yTXXvgMzKiNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="74930729"
+  t=1773846782; x=1805382782;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=51fda7QAM30p08uZhu0wEnvSa6RBIXMTfne4HtjqSOU=;
+  b=aomogoQbWVCHdR3BNDNrOu2dB+i1XLRKYef1spdUGjAsLGJcdos646LW
+   dGhMZZIQIriEUJccm7NlGdHr3CaUle8vc+5PKHNXjhqxCMUalurUnhkHo
+   Ceizj0L+622W7kAwp/evIQESZ9NLw4Nl97dBVhKb6P8KiFRZSRYfdc4Cp
+   p6ldti5II3yznG5vxf9zCGeEVY8l4kazZnW1KLvU7dwWPTBFsvdeQdxlk
+   eF48XsqnfLQZ8ZHIdw+UZhXsgXSSILAGsjhU3rbvhGGOfrs4ZdlMtKQ7s
+   CI5ii87eNMEo1+y1C7jGZRz09Lq0y64TG7zsWTv1d6sR++mV8INYccSSP
+   A==;
+X-CSE-ConnectionGUID: DfMjp/nKTJGh+fwlZcWyWw==
+X-CSE-MsgGUID: wjzCImMhSwaEWHGGekHTsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084536"
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="74930729"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 07:37:03 -0700
-X-CSE-ConnectionGUID: 7sHXO73sRRO0grbPodVW7Q==
-X-CSE-MsgGUID: lp7c8KT+TJKK0cSCNT3hqA==
+   d="scan'208";a="75084536"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:01 -0700
+X-CSE-ConnectionGUID: yyRuOcozQ3+CuIjP1kL/cQ==
+X-CSE-MsgGUID: IVSCc0f8SGGvDumF8RF6tw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="260548428"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.240])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 07:37:02 -0700
-Date: Wed, 18 Mar 2026 16:36:59 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linusw@kernel.org, brgl@kernel.org,
-	mika.westerberg@linux.intel.com
-Subject: Re: [PATCH] gpio: Add Intel Nova Lake ACPI GPIO events driver
-Message-ID: <abq4i4Kt0azQcYtq@ashevche-desk.local>
-References: <20260318142418.48574-1-alan.borzeszkowski@linux.intel.com>
+   d="scan'208";a="247122451"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2026 08:12:59 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 1D1BFA1; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Subject: [PATCH v1 4/5] pinctrl: intel: Refactor intel_gpio_add_pin_ranges() to make it shorter
+Date: Wed, 18 Mar 2026 16:10:18 +0100
+Message-ID: <20260318151256.2590375-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
+References: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260318142418.48574-1-alan.borzeszkowski@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 18, 2026 at 03:24:18PM +0100, Alan Borzeszkowski wrote:
-> This driver provides support for new way of handling platform events,
-> through the use of GPIO-signaled ACPI events. This mechanism is used on
-> Intel client platforms released in 2026 and later, starting with Intel
-> Nova Lake.
+Refactor intel_gpio_add_pin_ranges() to make it shorter in binary
+and source formats.
 
-...
+Function                                     old     new   delta
+intel_gpio_add_pin_ranges                    219     215      -4
+Total: Before=15522, After=15518, chg -0.03%
 
-> +static void nvl_gpio_irq_mask_unmask(struct gpio_chip *gc, unsigned long hwirq,
-> +				     bool mask)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> +	addr = nvl_gpio_get_byte_addr(priv, GPE_EN_REG_OFFSET(priv->blk_size),
-> +				      byte_idx);
-
-These are only two cases where we go a bit further than 80, so I would just
-make them a single line each.
-
-
-...
-
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +	raw_spin_lock_init(&priv->lock);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> +	if (!res)
-> +		return -ENXIO;
-> +	/*
-> +	 * GPE block length should be non-negative multiple of two and allow up
-> +	 * to 128 pins. ACPI v6.6 section 5.2.9 and 5.6.4.
-> +	 */
-> +	ioresource_size = resource_size(res);
-> +	if (!ioresource_size || ioresource_size % 2 || ioresource_size > 0x20)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "invalid GPE block length, resource: %pR\n",
-> +				     res);
-
-There is no point to even allocate memory if the resource is not available or
-invalid.
-
-	..._get_resource()
-	...validate...
-	...map, as we still have local variable for that...
-
-	priv = devm_kzalloc(...);
-	...
-	_init_lock(...);
-
-
-> +	regs = devm_ioport_map(dev, res->start, ioresource_size);
-> +	if (!regs)
-> +		return -ENOMEM;
-> +	priv->reg_base = regs;
-> +	priv->blk_size = ioresource_size;
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	ret = devm_request_irq(dev, irq, nvl_gpio_irq, IRQF_SHARED,
-> +			       dev_name(dev), priv);
-
-I would also go with a single line here:
-
-	ret = devm_request_irq(dev, irq, nvl_gpio_irq, IRQF_SHARED, dev_name(dev), priv);
-
-One Q though, is it indeed shared? Or can it be shared?
-
-> +	if (ret)
-> +		return ret;
-
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 97bf5ec78db4..7311b787dfc6 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1361,16 +1361,15 @@ static int intel_gpio_irq_init_hw(struct gpio_chip *gc)
+ int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
+ {
+ 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
++	const struct device *dev = pctrl->dev;
+ 	const struct intel_community *community;
+ 	const struct intel_padgroup *grp;
+ 	int ret;
+ 
+ 	for_each_intel_gpio_group(pctrl, community, grp) {
+-		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
+-					     grp->gpio_base, grp->base,
+-					     grp->size);
++		ret = gpiochip_add_pin_range(gc, dev_name(dev), grp->gpio_base, grp->base, grp->size);
+ 		if (ret)
+-			return dev_err_probe(pctrl->dev, ret, "failed to add GPIO pin range\n");
++			return dev_err_probe(dev, ret, "failed to add GPIO pin range\n");
+ 	}
+ 
+ 	return 0;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.50.1
 
