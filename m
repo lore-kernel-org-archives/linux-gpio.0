@@ -1,50 +1,49 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372883E2777;
-	Wed, 18 Mar 2026 15:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3115C3E51D7;
+	Wed, 18 Mar 2026 15:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773846785; cv=none; b=R4u5ud30GhqKxVDjNqKzNjaUrlf7fSwYdwmaSRl/7iv9Nf1k4KSggdA8WUfydTQtJiY6CbZcyBy3UuurORytoD7JGjqTHEF4HpT9gZL0gatJtQPbvSlQOVXHmUgUFi+Utpr6lU4ppXRXNGQjNsY5XHscTK8lybfp/W8FDQoU+5s=
+	t=1773846786; cv=none; b=omO3LYDPLUO6U18ZBjOSpjtWA9DE77McjJwFnE4yGaeXtYR8Uf291Dv9tmaziL+7QFgjzh38rtrVUpU42UgX5U5/uTBL/h4PF8aw+XEWSNtKLY2aQuXBSsS84XZ9xzGHwCv1Z4NuhUNtcmFJYGfVBnegPluHPCj9rV+6qhlekvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773846785; c=relaxed/simple;
-	bh=t2zkJMaFiVftfV+jr15+HFYL57C7m5hjGcWZzCLYMPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hv0VCTBueHQckvz5+R4xsjRScygoRs/EbH3ujHTqz8FhSosSIL15NZ43F8O1GJGfTdy6D3EV8+J1Dq82IreL0n8g1QqvWBKBgeVDdASkA5pe5fRF5GIZCg9MkxjXF4yJTKgXxDUCmbrTqSYYxy926Nxb59qwV9oKpF5GhCQe+Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ffbWl6O5; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1773846786; c=relaxed/simple;
+	bh=N4E9MofA7yHn7hf0WsvFavhtlFkPDtGVMHDY61cFV4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VE9STwpNcxpqoSMnZi0aiTm+w+etzQOOoVdOXIwzqvzZQD0cuzfTiF87D99zFp8+zpqHAno/6R08SO2AWsTg60JSrUUI0PurnZS6rQUE60GsxHi0vzAJeBinOM0QoudVCHqvsgeDKAVabu5xCZ/zwLSqkA9/iGMTpq0wMhPue0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nuoTLm11; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ffbWl6O5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nuoTLm11"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773846784; x=1805382784;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=t2zkJMaFiVftfV+jr15+HFYL57C7m5hjGcWZzCLYMPw=;
-  b=ffbWl6O5C98KtSe4OACBnSk7KLKWQOmRaQCeaEi+/5+2kVycaxHQhBne
-   jr6Hdco1fOXQQaHta6MKcqv048D9evClPzhlL5HVJP/WuijVALI3TxEYK
-   EdMQpW0ljy6zQFxnWg2aUsQ5WnEVbULGeu/hjOZlGGYltB0Za1lN1ldVO
-   Btq/Mj/QQu0kQ7xqbKS3sWZD8q7I319/NPv1diQAgrRsGzH3wUb+jMEYB
-   OIfRIcwxEvYcvKWPB2vtVphKyaEcR3rbGI0742j0llGSjd9mhYuDwji7g
-   /ydBsfEVPs+6ywFJfbsuuHs4hj6tliEQAcDaSVFprBhhONHxtJ8+PBBA7
-   w==;
-X-CSE-ConnectionGUID: zlwhqC4OSPiL3yBMBT5Jng==
-X-CSE-MsgGUID: nxtrdLcNTO60v6vWP1qqkQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084538"
+  t=1773846785; x=1805382785;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=N4E9MofA7yHn7hf0WsvFavhtlFkPDtGVMHDY61cFV4A=;
+  b=nuoTLm11mpaU8r+BrgIT6kaKfA9Kh4qAUhq0Yr24aNA4sTb9G5u8vjRe
+   7/uDIhvj3acR9JyBfEmlUcLfW0P46fXjUfVGn5H3z3DLZPcA+o+zteKsx
+   JSLUOMDu3iiWws9gUWDUDaiaNEYJ5+Nmd2srnn64XfTg7y4OVYdWLO3k7
+   tNKpRmwioxqAT4SvRqG4g8ogQ/buXPkAnjcJp3bXRC1QuQNT6CVEFDtcx
+   xmRzDqPB5zsw8Sm2ie+T/7kfc2D5nrfhQS0AZtjY3xuTK8+EpMoQI7iKp
+   KZu21p2AUzpjD71rCBX/IdNwdiv8kdEABIu690hUcHF1sp9oVi/Joa6QH
+   A==;
+X-CSE-ConnectionGUID: W8c04fC2T0al+OoF7CXCXA==
+X-CSE-MsgGUID: MVr7a5ThSSWpHLJCEm4feQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="75084540"
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="75084538"
+   d="scan'208";a="75084540"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:01 -0700
-X-CSE-ConnectionGUID: FGM7mnJbRUedmRnbxiqWFg==
-X-CSE-MsgGUID: vjJzXHC9QmKUWgwYqVX1DQ==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 08:13:02 -0700
+X-CSE-ConnectionGUID: B3q75GKjR0WJSOVxfrm83w==
+X-CSE-MsgGUID: C7QpDV2rRF2CW0sPT3CQ6A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,127,1770624000"; 
-   d="scan'208";a="247122453"
+   d="scan'208";a="247122455"
 Received: from black.igk.intel.com ([10.91.253.5])
   by fmviesa001.fm.intel.com with ESMTP; 18 Mar 2026 08:12:59 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 147009D; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
+	id 0D8F399; Wed, 18 Mar 2026 16:12:58 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -52,12 +51,10 @@ To: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Andy Shevchenko <andy@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
-Subject: [PATCH v1 2/5] pinctrl: intel: Fix the revision for new features (1kOhm PD, HW debouncer)
-Date: Wed, 18 Mar 2026 16:10:16 +0100
-Message-ID: <20260318151256.2590375-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/5] pinctrl: intel: capability handling rework
+Date: Wed, 18 Mar 2026 16:10:14 +0100
+Message-ID: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
-References: <20260318151256.2590375-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -66,27 +63,25 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 1kOhm pull down and hardware debouncer are features of the revision 0.92
-of the Chassis specification. Fix that in the code accordingly.
+During testing a new feature (see patch 3). I discovered that the
+handling of capabilities is currently limited and in some cases may
+even lead to not-working but announced feature (PWM). Hence there
+2 fixes for the existing support, 1 enabling of a new feature, and
+a couple of cleanup changes.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Andy Shevchenko (5):
+  pinctrl: intel: Improve capability support
+  pinctrl: intel: Fix the revision for new features (1kOhm PD, HW
+    debouncer)
+  pinctrl: intel: Enable 3-bit PAD_OWN feature
+  pinctrl: intel: Refactor intel_gpio_add_pin_ranges() to make it
+    shorter
+  pinctrl: intel: define iterator variables inside for-loop
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index adaa37a42754..a5a264ba6fbb 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1611,7 +1611,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 		value = readl(regs + REVID);
- 		if (value == ~0u)
- 			return -ENODEV;
--		if (((value & REVID_MASK) >> REVID_SHIFT) >= 0x94) {
-+		if (((value & REVID_MASK) >> REVID_SHIFT) >= 0x92) {
- 			community->features |= PINCTRL_FEATURE_DEBOUNCE;
- 			community->features |= PINCTRL_FEATURE_1K_PD;
- 		}
+ drivers/pinctrl/intel/pinctrl-intel.c | 87 +++++++++++++++------------
+ drivers/pinctrl/intel/pinctrl-intel.h |  1 +
+ 2 files changed, 49 insertions(+), 39 deletions(-)
+
 -- 
 2.50.1
 
