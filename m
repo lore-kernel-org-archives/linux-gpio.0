@@ -1,55 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B0331A5E;
-	Thu, 19 Mar 2026 02:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BE034F255
+	for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 02:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773888425; cv=none; b=pTHLV0BGRTIQMdiezoWOzLMl4a3XLfMnDNWTtJrz//xZai4T/Sf0S3k9HGZrsps5Ep6XtW9AAq56jSFpaFA3x7CcbVrTQ6NX7mv1FUELh4xtNlVNEASlfb3kQ5vEInBt1vnoZZHcOtfck1bkYBWbd2Hh6VVOgtfzeowip/vtwvg=
+	t=1773888987; cv=none; b=ZWRU+sIysSS/Ro52ndJDvi4z1vLAJJlW1BJZ+l9mhwt4URJsEYDoNjV02H1nOKFuNKQdy4vaqYs6E2slRFwmROCZoNYxJAxBz4XDIvKQFJXoKHzlPmhthAIXk53Qkx6VnlQWXZ+BcQzi6JcJiPYZ3CrktEEUMwnUgwMVeCJZRv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773888425; c=relaxed/simple;
-	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T1INA+j+o7V7rk6DVvO9LykBhf1P0CkHkMx+xqh1m9usV07x5z+Is/yf6NSt7toDYcFOz9+tE0azrlCSDpsJb7zG1X/Ud4Mf7vHmnb3hKVCR7phOjzPtWvDFZ3eRAAtSqBQVur05oiyZO6J8Rb+yvtUIXz8/Gh7E31OtbE5+1XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sc98aoPL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773888987; c=relaxed/simple;
+	bh=KMrCVoD5LrnOn5zkEXVr2yMChkZ1B/BYXUxvNYVU10c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dQ/zRHYZTIhdHm1Dp/fDWTjBYKfoxY3KXcvaXtrHGMU2hAJiswfQ2aKVfG7SDuRqB7lMRE+rwBOqCLaqPpuymDyPrJohkz1LZbkdU5gAMNQjMKOWvtlOFvGudECoJhPpix30HbkpXRvn5Wo6tP1pvJ/J0vMlX0eMc/vBye+Hnd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BnlquoWI; arc=none smtp.client-ip=74.125.82.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sc98aoPL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8CCC2BCB0;
-	Thu, 19 Mar 2026 02:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773888422;
-	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sc98aoPLz0ZUg8bPFhnN4bYCxwK4Bily9tsMhmoW+618PFuFUlf6jIHySfmICbnAC
-	 mFwZb5p1bMi0J3YCfcWej70BQV4HhOe1N1XcIhXEFYTBO5K4lZM7HvidpwRbczAkKG
-	 OPRJ/9LlcmKESHpUOBuV61Q5wbKCjhxjJFB9MN+CWmf9z/Ot2c1A+eBXQPiVfV7XL1
-	 JogOYKsLTJ+xjZ6j9MKNmZoHATJ55XfqjauCJQQhuIZhTmvCtl35jfla5kEOL/Xmmj
-	 Ob6gjZbWZ4E95cWlDGFe9FMcJ/WsphUmvj0llRLIdPPy9pPBWQiJNSAxDV9xM7d8C8
-	 PvZ5TW8K/Vn5Q==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Guru Das Srinagesh <linux@gurudas.dev>,
-	Linus Walleij <linusw@kernel.org>,
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/6] Add minimal boot support for Qualcomm IPQ5210
-Date: Wed, 18 Mar 2026 21:46:44 -0500
-Message-ID: <177388840384.11529.3706646310858140952.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
-References: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnlquoWI"
+Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-1271195d2a7so271548c88.0
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2026 19:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773888985; x=1774493785; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fFQ/cIHAPkT6GWASuSfr6W9xPQcgCwF/USNF67U5DTE=;
+        b=BnlquoWI/JyjHwadJP8YghI+9KTROZM0bpW+DMxlNKbL4od9nACbySrq49YcF/VH8x
+         wsS3XUM8BX0uCITrMbh+34hLg7L4DpUdDXregSJevaEKF2QV0Bwsz6NX08WhsbiqFP5e
+         zWEl6tJNBT82deGI0BJfT3HSbhmk6nD7dG60mEOYQiFsTe+mVsyXLNhgh70mqtjRZTr8
+         6iLfBW5LWNYlRkaPzIP/WbUOdUA360oeOMeeMUxpYsTTL3x+99VeHbxvGsc9OPEiZGXb
+         sdVUR04XK76I4SkmEeHSu9wItqpilosdO0Id72Dbe3w5WNj0lUYrxy6FrK6FgRDLNQY/
+         cRig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773888985; x=1774493785;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFQ/cIHAPkT6GWASuSfr6W9xPQcgCwF/USNF67U5DTE=;
+        b=gsUoxFsyEsz4qud1rGJUrEXfHsX3n1tJQZud7Sq0B4kWG4VPfsGpuizJ+Y95v32TUh
+         lyZcu1mzrcbjIEtoWrlCoYP+nru9bt8jzgZ8P+OOY+97UXQjSK+e9uEO+FZIMPlsThFH
+         uiwXW5reE5pJKxNr0ApEkn9JhSpdsbRRFCzOPoDlp7eodnvaOIKeFqEGzfzjeqrwyj22
+         zcf92OJCrepcU9ki8/DtCYQVyGGsHsu7ar1ouqgWXbAwcA/AVt8HYeF5w04HUqTh9N4V
+         IVlNPPhvM1NqqMTSRPGtCs/WCItmBH/q6FGNfeVaqaFfNxgmiCflFtl33YX+ck3Wv+5n
+         eg7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURflsmaWzRdCw0gTv+iMFTHoihyzMdCDdR0LSFXnyTkQ1pT9GnCww5cQ0H3pDKGmH6gbYYr56mOBSs@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywviy1sxWTDqwcY8TUdHXd029lceQZgvVwWP8x3Ceht4v0QlHpl
+	uuxkGPCA7c0D8Awm1f21/ZT6PcMC1zDws3eUdW63q0Sw3Qhyx7CyhiM9
+X-Gm-Gg: ATEYQzyXZ1CWjGb9pEBqjLpVwEDZ2XY9G0xncxm6a0iaOyHYPh3yVQoAvj3QXIa9wUN
+	ixqFPx+Z4093DdchegFZ2nbROAQrZ1X+KtWFJF0cfxGA7WPoGgyVq+/IOcgbGu++jZGD2z4Q/XX
+	3m9VOqXvaey9uyCCocAeqExKOBGqpeE5lzudGXt52D/vsvsy1skcEEr6DZXvD8SoQfzWFo/CHir
+	/fpnVMMIE7IdwgDPpfjd5Pc7jmZUXQsFsCw5RVOb1HlZ0uXMpXm/KUeFj2RoRiNtqWRI95T7Cn2
+	b/N1xxy0ekNrZsUoyrZKbL0ODQi8eWj17HJh/qj9GDkmbmo5Nx5D7svKRXgvUrFV9F9YRjWRuqK
+	nqX4KIW7c+smdDU3z1YVBQhsrjDOt9ZYbFni74e9BRg+ZnS5uVSBQaY/WcbCT/Et5XQSPamqvun
+	kn8TH1nES1xuB+Z6NQMO6j6rH1HFv8UgY4UCoUl8w8hH7imZtTde4ppdCizVfG/gmMJD1R2JQOl
+	7G8/go9qu3xfA==
+X-Received: by 2002:a05:7022:226:b0:119:e569:f277 with SMTP id a92af1059eb24-129a718fa4bmr2987156c88.32.1773888985184;
+        Wed, 18 Mar 2026 19:56:25 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:5966:2bd9:1ed:e7c4])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2c0e55a53fcsm8250983eec.24.2026.03.18.19.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 19:56:24 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v2 0/2] barco-p50-gpio: normalize return value of "get" and
+ convert to guard()
+Date: Wed, 18 Mar 2026 19:56:16 -0700
+Message-Id: <20260318-barco-p50-gpio-set-v2-0-c0a4a6416163@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -57,25 +69,42 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANBlu2kC/x3MTQqDMBBA4avIrDslVSKlq1K66Q36Q5FpHGOkZ
+ kIiRRDv3uDyW7y3QOLoOMGpWCDyzyUnPqPcFWB68pbRtdlQqrJW1eGIH4pGMGiFNjjBxBMaXau
+ WmHRVMeQwRO7cvE1f7+wuyohTH5m2FT0fvpmv8+Xum9vA49mK2C/vjYywrn+Y4BpWkgAAAA==
+X-Change-ID: 20260318-barco-p50-gpio-set-c560daea533e
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Santosh Kumar Yadav <santoshkumar.yadav@barco.com>
+Cc: Peter Korsgaard <peter.korsgaard@barco.com>, 
+ Hans de Goede <hansg@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, platform-driver-x86@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+X-Mailer: b4 0.15-dev-a6826
 
+These 2 patches fixes a regression in the driver arising from gpiolib
+tightening its API, and converts it to guard() notation when taking a
+mutex to simplify the code flow.
 
-On Wed, 18 Mar 2026 14:09:42 +0530, Kathiravan Thirumoorthy wrote:
-> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points. This
-> series adds minimal board boot support for ipq5210-rdp504 board.
-> 
-> SoCs based on IPQ5210 is shipped under 2 different marketing names such as
-> Qualcomm Dragonwing F8 and Qualcomm Dragonwing N8. The difference being is
-> F8 parts has the Passive Optical Network(PON) interface which acts as the
-> backhaul where as in N8 parts it is ethernet backhaul.
-> 
-> [...]
+v2:
 
-Applied, thanks!
+- added reviiewed-by and fixes trailers
+- added new patch using guard()
 
-[4/6] dt-bindings: firmware: qcom,scm: Document ipq5210 SCM
-      commit: e3f45d32664edd2b25746e22add3a20c088edbec
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+Dmitry Torokhov (2):
+      platform/x86: barco-p50-gpio: normalize return value of gpio_get
+      platform/x86: barco-p50-gpio: convert to guard() notation
 
-Best regards,
+ drivers/platform/x86/barco-p50-gpio.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+---
+base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
+change-id: 20260318-barco-p50-gpio-set-c560daea533e
+
+Thanks.
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Dmitry
+
