@@ -1,80 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from s106b.cyber-folks.pl (s106b.cyber-folks.pl [195.78.66.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7582D5C71
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 17:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794E43F165F;
+	Thu, 19 Mar 2026 18:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.78.66.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773942228; cv=none; b=VFORhN9rni7/XPlwcGWyvgnmRxQrjhBhmC97CJ6vVq/BDz5Vn639tQ3DKqbcNI+8SMLc02ybDy+evu2K0i63jLwbUFR/EwzDiAyhWQ9iWOPepxbs4yUGI3kH6mo73EYkDGEBIzDPMeO2U3oiXyIBh8XMAnb3FhAcRQbJyyGvLqE=
+	t=1773943993; cv=none; b=bv5MK2c3WC1+LnmgSBcp8VOA5WpD8cwbk55IFOX4rdJOBIXPeGT/ZKXTXCdGdjwrTsZwK7qs7TfYVAJT3LmBZuiZ8V8KWcJrpOLDMPJFMbKhz9X/WXEVxzcgE6cQnslyKhYBHgEg1XwdtfmS7uNd/50z8kH582dFCHZD7QtFees=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773942228; c=relaxed/simple;
-	bh=lUs1LFiocDSLJFYRCglr5yRLcWXadIjMCj6syvM+x6Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eds0lcJwvXxDtEyApCT8TThSFyNMJFIIBLmK1WcNQAIeJuqmXg6ke6Mer3qDSpZUdxDujhDeTaK1BgELSInDq1a20SUZmWPcDItNb5GVZS3xHX5pi+729fzSDdKcgM0zCQIiCKEDqENxJ9AfyFrwBXqbtENQFdosKYAew7rikbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVX6estH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773943993; c=relaxed/simple;
+	bh=p1gJtCRxZ9dXjqxx5qzyEuLAl88qY4JpM4JvZb+dSJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fM8pjHF7rUlg+umo46CYdtp0NxElSo+ftbwm7HMvyyb8I/WsAq1Ka+mVuKA7r4wDDz/HSKSpONyFWnjEue8vXJsyB2Xa6orTa2OM3GNOobYHucxgJaRAP4bOzWODHLCqUqY97twwTV4Lol+F8sB5ZrLhOkMZ1FWhi+tFXAIaXxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl; spf=pass smtp.mailfrom=mmpsystems.pl; dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b=dBZo24Kq; arc=none smtp.client-ip=195.78.66.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mmpsystems.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVX6estH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6DCC19425
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 17:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773942228;
-	bh=lUs1LFiocDSLJFYRCglr5yRLcWXadIjMCj6syvM+x6Y=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=dVX6estHJo9qPEoIG21q8FfHANwYkL1J7akZ4LRkOXESQ18e3UD5wT6Wfbjy26kGT
-	 2eXRjI3il2ZuPBAjJuFiV8/ImRqXO5TLF8hjfgP5k/It9hJdMJthKJfYtmZJsJ1CXa
-	 feawkEs0x5DyrSizEecKYFMF36E/H0+QLDqywt15cmAggWXvIyasrE8yesptcCuOem
-	 8quWgY97Jl7SCEeM9i8RZ65I1b0f8A+HT2733Ve/w/Zv7LARKyT107ytlN0qUAE34Q
-	 rfiOP1dJZf1VDnnGFU8ZrmWLtDQ7n5hbuLvFeimMzX0l5bVo+csnECGqsWMSJJB8qI
-	 U5+61m89iluSw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-38a01c80c34so7697341fa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 10:43:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWxqzEKAGDky3JYsL7B+dQWA6n8g2m9d9haiRQuF+Mis8DUL0i3AzKZseSyH7HRIjMJmagojElXGuTd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJEsBzECsH55rg1Pq9DLge2+CLd/5NHx2hpYkwG0jEofe8p60C
-	wDVQ317rDeHw22Lt3x0RpumCAE+mC/z3wKkA23s0c+lMTVo628qP0D9MKwq0XJywoTJ4haVooa/
-	RDwqKYP3zTyRyfYcHKLIlBkFhWv40BJY=
-X-Received: by 2002:a2e:878d:0:b0:38a:a77a:b0b2 with SMTP id
- 38308e7fff4ca-38bf9736bf0mr900671fa.30.1773942226753; Thu, 19 Mar 2026
- 10:43:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b="dBZo24Kq"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mmpsystems.pl; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=M1WNWhIO3YiBXIdvt4jOGaT6noglgn3Bsi2PS9Y4M5g=; b=dBZo24Kqd4fO2wKVlBncyVhcwq
+	JCABMSHnPWjcMfSW5UU/9SsoyEkjOdxiFyTO00AB4TLM3O3SK1fqkBUWvH+aE2u8cS933Pr+SPseC
+	u5B4eMdnIN/VIpyHT/O97dqW4fxxCaAKD7j5+m2UQLjIyv+PIbB9dyuQGDoMcxBOocVlMchEa2pAa
+	TgPD5yowf/CHyL8/URPwKmLm7JGHw3z1FVIBFYEB+i8gaLCl/ckqX074lmXBumsPqZGGsXld6eHO+
+	QiYnIfSVMS6jG+mcRq80HuYKnzPzxayqE7kEMW/pfAbzafFPnQiQSUFDXyUXwxxGYVpgMvOSyC1mi
+	B9A2/gug==;
+Received: from user-5-173-16-20.play-internet.pl ([5.173.16.20] helo=localhost)
+	by s106.cyber-folks.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <michal.piekos@mmpsystems.pl>)
+	id 1w3Hrn-000000018rt-3cwE;
+	Thu, 19 Mar 2026 19:13:07 +0100
+Date: Thu, 19 Mar 2026 19:13:06 +0100
+From: Michal Piekos <michal.piekos@mmpsystems.pl>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH v5 1/2] pinctrl: sunxi: pass down flags to pinctrl
+ routines
+Message-ID: <ofzcfuc2ueuxpt2bvknqui4jirvsfo4u53hkt7eqptdrl2uo6r@uv4ldiyzxljr>
+References: <20260319-rc2-boot-hang-v5-0-092834a882b1@mmpsystems.pl>
+ <20260319-rc2-boot-hang-v5-1-092834a882b1@mmpsystems.pl>
+ <CAGb2v64BTnUO-iR9G4b1PsX6TB4+Q_a0Tm+sj1dhFJ6a06iJkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319-rc2-boot-hang-v5-0-092834a882b1@mmpsystems.pl> <20260319-rc2-boot-hang-v5-2-092834a882b1@mmpsystems.pl>
-In-Reply-To: <20260319-rc2-boot-hang-v5-2-092834a882b1@mmpsystems.pl>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 20 Mar 2026 01:43:34 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65E0ySMbRadvDLFk4rDT0=GVzZxSbxj9dxsu2m+TBwbdA@mail.gmail.com>
-X-Gm-Features: AaiRm51XS9DJV3maNeIBiCDDt1obC7vcOgUI0Asztz0Dh1s9NssQ_vC8bOgjeY8
-Message-ID: <CAGb2v65E0ySMbRadvDLFk4rDT0=GVzZxSbxj9dxsu2m+TBwbdA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] pinctrl: sunxi: fix gpiochip_lock_as_irq() failure
- when pinmux is unknown
-To: Michal Piekos <michal.piekos@mmpsystems.pl>
-Cc: Linus Walleij <linusw@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v64BTnUO-iR9G4b1PsX6TB4+Q_a0Tm+sj1dhFJ6a06iJkw@mail.gmail.com>
+X-Authenticated-Id: michal.piekos@mmpsystems.pl
 
-On Fri, Mar 20, 2026 at 1:19=E2=80=AFAM Michal Piekos
-<michal.piekos@mmpsystems.pl> wrote:
->
-> Fixes kernel hang during boot due to inability to set up IRQ on AXP313a.
->
-> The issue is caused by gpiochip_lock_as_irq() which is failing when gpio
-> is in uninitialized state.
->
-> Solution is to set pinmux to GPIO INPUT in
-> sunxi_pinctrl_irq_request_resources() if it wasn't initialized
-> earlier.
->
-> Tested on Orange Pi Zero 3.
->
-> Fixes: 01e10d0272b9 ("pinctrl: sunxi: Implement gpiochip::get_direction()=
-")
-> Signed-off-by: Michal Piekos <michal.piekos@mmpsystems.pl>
+On Fri, Mar 20, 2026 at 01:42:18AM +0800, Chen-Yu Tsai wrote:
+> On Fri, Mar 20, 2026 at 1:19 AM <michal.piekos@mmpsystems.pl> wrote:
+> >
+> > From: Andre Przywara <andre.przywara@arm.com>
+> >
+> > Recent changes in the Allwinner pinctrl/GPIO IP made us add some quirks,
+> > which the new SoCs (A523 family) need to use. We now have a comfortable
+> > "flags" field on the per-SoC setup side, to tag those quirks we need, but
+> > were translating those flag bits into specific fields for runtime use, in
+> > the init routine.
+> > Now the newest Allwinner GPIO IP adds even more quirks and exceptions,
+> > some of a boolean nature.
+> > To avoid inventing various new boolean flags for the runtime struct
+> > sunxi_pinctrl, let's just directly pass on the flags variable used by the
+> > setup code, so runtime can check for those various quirk bits directly.
+> >
+> > Rename the "variant" member to "flags", and directly copy the value from
+> > the setup code into there. Move the variant masking from the init
+> > routine to the functions which actually use the "variant" value.
+> >
+> > This mostly paves the way for the new A733 IP generation, which needs
+> > more quirks to be checked at runtime.
+> >
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > Signed-off-by: Michal Piekos <michal.piekos@mmpsystems.pl>
+> 
+> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+> 
+> Please carry tags forward if the patch is unchanged.
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+Will do. Sorry for ommision and thank you for quick review rounds.
+
+Michal
