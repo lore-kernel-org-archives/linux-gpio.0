@@ -1,143 +1,104 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A0E33A70F
-	for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 14:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE343033E0;
+	Thu, 19 Mar 2026 14:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773929726; cv=none; b=hObgZ/1JvoHrFLuk1QcEDrJ12sZm7i3QkC7BVsT5m9V36JuMtvJ29yOW8XJKfWDw/jPGahwYBAr82A2HToC4cvLlePmLzXG8NYoCBagkBBJmrSRRnWUm2MxuD/1KOXGICDT257QEgKTHcl/Mbzg3XD6Ssb9ccrKKyzHg7kErjl8=
+	t=1773929801; cv=none; b=V44F2eh7WKLVmpG/Jk6iGmD0b8D+8nzk19LL+mQI68XUk8o46aHvk56WTM9K9bkwWNwvceSyA1/8X1ifCC8GcWslm132qe+uRI35o7iOvODB2GDTO7MRRHHIgscqp1GkEpGeWNQKEO/X3zabp8y/lwOx2hghNS7lboo9+CagblM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773929726; c=relaxed/simple;
-	bh=AVqKV2koLL7ZlkRc62jikhi1UX4IiI5DvZw1l2ipQw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aT7S4vAEJRqy56BXBUt6K4uu+fVXC2a/SI9iSM9/PE7HwGKwEh6vp6EN6kl+zrT2WMAisn8BsYZTVpCWHJY13jHc9SBbUyTdZqZ3/6GLJU+nEIanWGenC8pX0C/1O/GCSFy8l4XDSGEc4fLqHHUqKEHAH4a4LPqk9vVkF6FMsRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1E2Poh0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1E2Poh0"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43b4d734678so989575f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2026 07:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773929719; x=1774534519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dVOwtxYwKf7F+id86vByPrLslX0VOCCmqpIA6XP6qiw=;
-        b=Q1E2Poh0Sgop4j0ZeuULYvsTCnM9vWucHJdYqXYr4Vd63rxYm/g5HsODEZkqMtRNdN
-         1W91gwJYsY267BOY79c7XvY/i/5awpakgTaaWZgsQFw/HfB2BA7rVnGnRWsHCQeeLhhz
-         Q/3u8Jd+v/YGR3qDKuJkJN6CDyA8/o7Ym1hXLCm/wOI4qX6Cx1tBEsebzWcPZlX/LHC3
-         8pz3pvd1m+bH73g3Fy9R7XAcfbk/ycLzsq4ye72kNMbH5L+Un0zpYqyzG5JMl5LYCDxN
-         1OtVOGjXaMyQ8GlR15mRFQybd0oV7Hr0CmiqfznjD3uPXJ6KJw/WvyciDQE0Ru0EzSNf
-         2pNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773929719; x=1774534519;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dVOwtxYwKf7F+id86vByPrLslX0VOCCmqpIA6XP6qiw=;
-        b=qtm99CMrQWbfbx5L/5nZHtiY+sJl/+Us1SnugdPHZZkSRClbEVdTJO8qSG1clWVnxR
-         DT54u1ZBjMdgHT/oF1miMOubCCf8ExyLSKnXzqY9TCJd6seJiVugrzKS/1SNBx8BzEj7
-         oUMdXzMxwc7ep4VE4PsP00m8rwbAy3N0mSNPszfadm4NMc+4J+yNp3+vfZQN4Ks49vW0
-         zHikJruyOTQ0Ecrht8E2xFwgKtcmQ2qpPncZQSXwGPrydH73DK449DnQv3qeWYIzp8K0
-         xSWMWFciC17uIedV+wgt6wkdpMCP3C1pKTO+BA6dUhEslpDb2sB6uaGMW1Loow8HpuOM
-         ZIlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXWmCQ+mrS2cHsNQCZkqB8FWIf5RarNkjqEtZEyssZSyeTAENLgvJ9+ESnSO1V6tL+0LQAGIfQu+7m@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD0vny1cNbmpUvFBu+aAZx3G0XN4CYzWkFRNeaKE674U1Vdl80
-	qR+LQZwne2ShY0xrJ7XRSkKoL8IRgjtEcstmsXeIOTNbScn9FLsK03Es
-X-Gm-Gg: ATEYQzw9MFJGNgd4aoQGvDP4YETrJUsqlwp3vqnPTGA5lOZh3mBNc81t+VHdBKB5AXJ
-	FadaeYpkrwmX13kN9zc5O5rZbZCXsjn3YCIeEW8nKLdw4xszN+7dPyNxKzbmem5w0AvyWHLt0dk
-	ob0w1Lsp2RoEw8fQAKs+25fmDlUdkuS/u+p+mTHOLBwfAi9CrJ1mw/N10m6rc4UwmGuhqD/2MVJ
-	r6z6w/p0m3VnaSLitAaxPVqPuO4cbT+h0itKYYPqcCibubAUUIAVCvSjoTmJd0h/jHqQbpih5Rh
-	Ll1EgBrhfpxbArT+2uKd9mfc9pDXL5OCzBYmImgQyj57EKsMsPvezQsM/0S+wKyajLoOGnlvB2O
-	csI12gS6142rtM5lk0UJtBEYYebvZ7SNEVahtLpzq3Ie9bl3WtxB7QpdjLlLa9XqyFJdiFKmOQr
-	rFY/xbi060M/3XI7cnziPN+hmEMOxFyzaAsuINuuf1dFh4fCqIHeUSWhJVJbE48kTDrlsJQdtYv
-	WokzZPezMd4B4zfSKDaq8QZEfaFEx7nIDBg96uwqozApyU=
-X-Received: by 2002:a05:6000:2501:b0:439:c42f:10c4 with SMTP id ffacd0b85a97d-43b527a97b3mr13343032f8f.15.1773929718875;
-        Thu, 19 Mar 2026 07:15:18 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:f7c0:c444:6359:4c21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b5184957bsm17824618f8f.5.2026.03.19.07.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 07:15:18 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document pin configuration properties
-Date: Thu, 19 Mar 2026 14:15:14 +0000
-Message-ID: <20260319141515.2053556-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260319141515.2053556-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260319141515.2053556-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1773929801; c=relaxed/simple;
+	bh=dh4tiSZ0JU9s0rUFKCuq6abboXS2Xjn4z2r2vKp7M/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CMp0BoGEcJfxW+gqlv8FPXDNH8etkrl6DRquDoE8I7LQm3f5AAH1a6xLs8KeusEQGMxJT6AfRtydSBA+BlQ1M0hCLN0yGm8LVhbtz4gi5TpI72vR2pIG1KTriwwSq76mQrvEMHcBOM464L0vutqJWoKPBqUzflr6ZimdEd8oaIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD07E1A25;
+	Thu, 19 Mar 2026 07:16:31 -0700 (PDT)
+Received: from [192.168.178.23] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A5133F7BD;
+	Thu, 19 Mar 2026 07:16:35 -0700 (PDT)
+Message-ID: <dd275884-665b-46ca-a72a-c32aa189fc25@arm.com>
+Date: Thu, 19 Mar 2026 15:16:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] pinctrl: sunxi: fix gpiochip_lock_as_irq() failure
+ when pinmux is unknown
+To: wens@kernel.org, Linus Walleij <linusw@kernel.org>,
+ Michal Piekos <michal.piekos@mmpsystems.pl>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20260314-rc2-boot-hang-v3-1-0b48221181a9@mmpsystems.pl>
+ <CAD++jLnVNT=_rrykAx82RE8SeBsBBdN6gFMcDUYwYj0KOpF0Ug@mail.gmail.com>
+ <CAGb2v64mBzT0_4a5qfDFVzSgZQkmkyi0TLz9qLWVtUnsG47TwA@mail.gmail.com>
+Content-Language: en-US
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <CAGb2v64mBzT0_4a5qfDFVzSgZQkmkyi0TLz9qLWVtUnsG47TwA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-Document the pin configuration properties supported by the RZ/T2H
-pinctrl driver.
+On 3/19/26 15:06, Chen-Yu Tsai wrote:
+> On Thu, Mar 19, 2026 at 9:46 PM Linus Walleij <linusw@kernel.org> wrote:
+>>
+>> On Sat, Mar 14, 2026 at 9:10 AM Michal Piekos
+>> <michal.piekos@mmpsystems.pl> wrote:
+>>
+>>> Fixes kernel hang during boot due to inability to set up IRQ on AXP313a.
+>>>
+>>> The issue is caused by gpiochip_lock_as_irq() which is failing when gpio
+>>> is in unitialized state.
+>>>
+>>> Solution is to set pinmux to GPIO INPUT in
+>>> sunxi_pinctrl_irq_request_resources() if it wasn't initialized
+>>> earlier.
+>>>
+>>> Tested on Orange Pi Zero 3.
+>>>
+>>> Signed-off-by: Michal Piekos <michal.piekos@mmpsystems.pl>
+>>> Suggested-by: Chen-Yu Tsai <wens@kernel.org>
+>>
+>> Should this have a Fixes: tag and should it be applied as an urgent fix?
+> 
+> Fixes: 01e10d0272b9 ("pinctrl: sunxi: Implement gpiochip::get_direction()")
+> 
+>> Tag for stable?
+> 
+> The original patch wasn't tagged for stable. And it doesn't seem like it
+> was auto picked.
+> 
+>> Also: is there consensus with Andre that this is the way to proceed?
+> 
+> As Andre mentioned, the mux value for "disabled" is different between
+> generations. So we likely need to make the value part of
+> |struct sunxi_pinctrl_desc|.
 
-The RZ/T2H SoC allows configuring several electrical characteristics
-through the DRCTLm (I/O Buffer Function Switching) registers. These
-registers control drive strength, bias configuration, Schmitt trigger
-input, and output slew rate.
+There is already the SUNXI_PINCTRL_NEW_REG_LAYOUT flag, which describes 
+exactly that: the new layout increased the bit field to 4 bits, moving 
+the HiZ value to 0xf.
+But it's just a flag passed to sunxi_pinctrl_init_with_flags(), not 
+stored in desc, and not available during runtime. Which is what I tried 
+to fix for my A733 series:
+https://lore.kernel.org/linux-arm-kernel/20250821004232.8134-3-andre.przywara@arm.com/
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
-- Updated commit description
-- Switched to using the standard drive-strength-microamp property
-  name instead of a custom one
-- Added a description for slew-rate property
----
- .../pinctrl/renesas,r9a09g077-pinctrl.yaml      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+So maybe we can cherry-pick just this patch, then check for that flag?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-index f049013a4e0c..63993b20524f 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
-@@ -83,6 +83,23 @@ definitions:
-       input: true
-       input-enable: true
-       output-enable: true
-+      bias-disable: true
-+      bias-pull-down: true
-+      bias-pull-up: true
-+      input-schmitt-enable: true
-+      input-schmitt-disable: true
-+      slew-rate:
-+        description: 0 is slow slew rate, 1 is fast slew rate
-+        enum: [0, 1]
-+      drive-strength-microamp:
-+        description: |
-+          Four discrete levels are supported (via registers DRCTLm), corresponding
-+          to the following nominal values:
-+          - 2500  (Low strength)
-+          - 5000  (Middle strength)
-+          - 9000  (High strength)
-+          - 11800 (Ultra High strength)
-+        enum: [2500, 5000, 9000, 11800]
-     oneOf:
-       - required: [pinmux]
-       - required: [pins]
--- 
-2.53.0
+Cheers,
+Andre
+
+> 
+> Michal, can you respin a version so that we can get this fixed in the
+> same release?
+> 
+> 
+> ChenYu
+> 
 
