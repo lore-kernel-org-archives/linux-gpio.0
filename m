@@ -1,54 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ED8286881
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 13:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F8B27F01E
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774013752; cv=none; b=ijgDCrXVoQbUfS3fr5bFgMpBsZHRks7kvrPzcDjV85XkRXiXAuqtCpg1r5CTjDW52URTooE5PWNuKNrv5BVSEtynJNb+Cm7F17aJSqPud9IqJbRZt+zX/vIV3r11TKRXghp1Gk4yqtd6Cl07YZuW6uGdkM6koYAwHpn5hYQCySg=
+	t=1774013801; cv=none; b=swIt7HzxRDgJkqEyEv7Z7C/EsiRBRaKknUir76WgaCkjmEn8cCx7+xynid634Bn1IaJmyFtV0I3c34p7Yu3KErMNSaZrHtnROq8R9RCnaM8NDVYpss+80kmOtHWdFraMNVbs3+2xBWrS1ewL2lzikXDSvPWhaNv5iGo8RYgt5pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774013752; c=relaxed/simple;
-	bh=x+Q+mpwKpWdfkCJjdjeyoSi32p/Cj9EkuzDU7dEgYwY=;
+	s=arc-20240116; t=1774013801; c=relaxed/simple;
+	bh=FIBI8PY5yYFqZrUwTkEODr86axeBjhoPnLU0TQWsWKA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sf7LJJdKmFtZ4MdY7EvLqvPCkY0zkX+Ea03KvSTz/eZPt/LARVtOvD4hGqGiiqIIksleBMuGkpsWx2J4mgCuGIIK2+x7LxW1hr6WgYKE1bKeNtnaLb9vj9GmShJrWIBxzsX+HNawAAfgMLjoy+VsoIJrsJgkrrZ4kAwcIT6ZB4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2DM6v6L; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=j7PfH32CLXRTo3w+yBUYHvYj/EDAg8vuqcg1DuK7YGPQyqOchj2FsMyPDS+ej4eKJnjWWqNIwt2HDI/sc/nUirhhPEkbH/92A6WpAh6c0+NDs3adP8hiWe1k2MdlFHBKMMK7x/eESg0/Ycxc2PqVXT5QkvIWvOG/fylw63a92zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SsCrO90W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2DM6v6L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6E1C2BCC4
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 13:35:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsCrO90W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2362C2BCB4
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 13:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774013752;
-	bh=x+Q+mpwKpWdfkCJjdjeyoSi32p/Cj9EkuzDU7dEgYwY=;
+	s=k20201202; t=1774013800;
+	bh=FIBI8PY5yYFqZrUwTkEODr86axeBjhoPnLU0TQWsWKA=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=N2DM6v6LQAGOwaxB/tWrgoPPj4Vt5j9wHVhto2/PrIBxYnksi6O5jeSWw5Q5cOlpu
-	 1/nEOk7uY4TZ0NoIVRa5Wp1gAyGfP7go6uhVPrHo4rjBgGdVinqw808/0blFBZ2CRk
-	 8XzrEVuoSS0sVXhOsQNJxlqaM7y+SHjdvgrq962c/a9AGw4fiCTyXbl4Eb2qS1sGSt
-	 AV8mMvwjJUGgwT0P6QDI9gY4B5dikgqWb+lqLy1AnLSFfY+5KKb2fwn9eDAAuW4ChI
-	 B3wMv8L+5g+ksGxHGuvW9me2EQlmOIeLWNNlNTxeg/6nRuk4HxGs4dynEoCYr4ImYi
-	 PHMKquc88ztzg==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7986e0553bdso20459937b3.2
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 06:35:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQJttpLn7eDD0EDtFbHOVzryeq+9Fp+HobqegxG1bAr+UcEv1MrcA5bKr23ZnleZOKTpgy944svXRG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQOfWm/Jlgp7iTl3EvRfvVtjLJo8Yd2MPfSjkA/wFWj6OKJcmu
-	4YjTg7L4ibqDOK7WlWGvvJR5Wru12zug9OHMdirdLNA7/S+a097cSCsqEzS74Fr59KtwxsVy2la
-	LbP6qdafe+Hew1hCQTx5jGQcYyqW3jhw=
-X-Received: by 2002:a05:690c:6d81:b0:794:6fa2:a037 with SMTP id
- 00721157ae682-79a90a92a96mr28577437b3.8.1774013751143; Fri, 20 Mar 2026
- 06:35:51 -0700 (PDT)
+	b=SsCrO90WaSDTZ4trSKqMon1aYsVeOParDmkk5H1AvhN/gP5vACsKDKAMNB3jG8CoO
+	 b5uJmA91+adoPQP59VHuhnWjz3THVuqWxkVrdG2aR3GybqisEr9g8zte080oTMi8aL
+	 tqEmA6HXe0IAteoBxGy/vLSUzbIsgcXd9ZOyOCOvvjDpcdW3ZZIEJHSsLrFRclDOaz
+	 R6vhdJVsigeYKXOoalMN3dvLg6J3AGvxjPGWoSWuRmy0NiXZEC5pkd5c9c9tShkmdq
+	 +Ct87If8N2D5MwhW2kDqLRM8b/sFtSNEmrevVXqu5H0+JWhpQJVqgy7SG9rUq3xihH
+	 i16LDSK/1Tj5w==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-79a5ad7cc52so21686537b3.2
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 06:36:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXsM+M8BLAM83EeSWLaJzdF/bfDSs/+Kc2ibFvEsFIaLexp7wEBoMp10PqjWtSDZJIFwGQ900GMjoOg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8P5FSY1xqkGt0/jt9aLh5MVNxh3c6QcWBzx7anpzcsNeiJb95
+	pF8YHJwfZFtf6pPCTovGsUgm5xTsKjguqT70jnFoD/TIE9r7/i9yf7sjHVPJaNWyYR1rISKRF3z
+	2AXN4og0OGrur6hvXjoOJXJACUTY1/cw=
+X-Received: by 2002:a05:690c:22c5:b0:797:afeb:de93 with SMTP id
+ 00721157ae682-79a90ac353emr32341657b3.12.1774013800019; Fri, 20 Mar 2026
+ 06:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319141515.2053556-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260319141515.2053556-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260319141515.2053556-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260319141515.2053556-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260319141515.2053556-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260319141515.2053556-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 20 Mar 2026 14:35:40 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=5HyZ-Z18iJPzrQY70dYq==z-nofx+O=wfTxYrfynZWQ@mail.gmail.com>
-X-Gm-Features: AaiRm51wCIQ4YFUApl9fDukQ-YQ0efzADwWtEvQ8dtpStZjJJL077i4VFyJ5keU
-Message-ID: <CAD++jL=5HyZ-Z18iJPzrQY70dYq==z-nofx+O=wfTxYrfynZWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: renesas: rzt2h: Add pin configuration support
+Date: Fri, 20 Mar 2026 14:36:29 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmt+J3Lj=NuYAYmCks2=gkrc5PVbsj+ER8=Rs4u-_3Y7w@mail.gmail.com>
+X-Gm-Features: AaiRm51N-cLrG692swxMqBzAQuKlCnVnf0ehYtOBP_oA9f1qkrzSaMaqyrmsE9A
+Message-ID: <CAD++jLmt+J3Lj=NuYAYmCks2=gkrc5PVbsj+ER8=Rs4u-_3Y7w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document
+ pin configuration properties
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -65,19 +66,17 @@ om> wrote:
 
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Add pin configuration support for the Renesas RZ/T2H SoC. The RZ/T2H SoC
-> allows configuring several electrical characteristics through the DRCTLm
-> (I/O Buffer Function Switching) registers. These registers control bias
-> configuration, Schmitt trigger input, output slew rate, and drive
-> strength.
+> Document the pin configuration properties supported by the RZ/T2H
+> pinctrl driver.
 >
-> Implement pinconf_ops to allow reading and updating these properties
-> through the generic pin configuration framework. The implementation
-> supports bias-disable, bias-pull-up, bias-pull-down,
-> input-schmitt-enable, slew-rate, and drive-strength-microamp.
+> The RZ/T2H SoC allows configuring several electrical characteristics
+> through the DRCTLm (I/O Buffer Function Switching) registers. These
+> registers control drive strength, bias configuration, Schmitt trigger
+> input, and output slew rate.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Yeah exactly like this :)
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
