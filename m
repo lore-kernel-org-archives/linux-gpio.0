@@ -1,122 +1,124 @@
-Received: from s106b.cyber-folks.pl (s106b.cyber-folks.pl [195.78.66.88])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217E5282F0B;
-	Fri, 20 Mar 2026 17:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.78.66.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE813E025E;
+	Fri, 20 Mar 2026 18:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774029204; cv=none; b=H+kZfAjgpj8lAA15NNOxQomdvrjUJb+1PutXapDmNeZDL5z/9x63s/lgSkx+cQmncvhGXv/lURrTk+ysvAJg6LiiCmSjlYBxVzd3YvmJPjg9lA3DSviZNhMbbYAE9R0ajVT874bz1Vh9MYymjy7c1+hWC3aHJVCrQmt8vtL/qBs=
+	t=1774030228; cv=none; b=achwPfO7Gr5VRRmb7GgyZN2ZWWK6qixfYIMXozY2pAcvzcgSUO9URI0/WCfVNQc4waIB/HabQwgc8IXH2hrc1MJWkp2bX2bG5CMTlM/PGeJPi9/ju0VPqVzKBnQKM/5SJHDqFrYTZOg2uShaz9vk/g0qYb/EDShJeY0O68Z5mBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774029204; c=relaxed/simple;
-	bh=k9F41jJZIQUEKOrkxHW0L9DgDw5GS92zrvfM2OhHIN0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MKGNk1Wr6/53Ch6kOIqP0NvcyAzscYcXBHUiB7MJPtv6NqAMyxYt5jn+bMUClEPzl/q6lLxo+1Draki96I2XIapWqLzwUeSQEgjuqxIP1NYnKzK8q8Tt1xBquKWq94DZIJKttUemBwpz0YaRFnUQzJ4ZC303hYq2gqZ/49nOPcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl; spf=pass smtp.mailfrom=mmpsystems.pl; dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b=y0o0LBel; arc=none smtp.client-ip=195.78.66.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mmpsystems.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mmpsystems.pl
+	s=arc-20240116; t=1774030228; c=relaxed/simple;
+	bh=HN2gQ76vWA+8OUenZIyxhbvtYrHC960mitHXCMLfomY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdZYqXTA9nycLqFX2B+sjdI9jI3wRi6BPk5gmRspkaMUFpxygguc4qYx6nGpHryz7IsGbsXGeSrkYQbPDq/kGA2WvuHpXIx4NX9weoB0g+hfsS9ioZP+m23Vff1GkoR5JDMzH3AZFReXN6vs833O5ptkkej8USmN+VrI/SK03I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPNoQnH1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mmpsystems.pl header.i=@mmpsystems.pl header.b="y0o0LBel"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mmpsystems.pl; s=x; h=Cc:To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hu8cSIJgaA5j8PHqbuRYeZhxADCzKx/MGE68F0ebP60=; b=y0o0LBeliT117qWt21Q751gxBX
-	86ki38Za8pOAyjhtvNRhEpL7OU4chKDBzMUW9B8rZ5/rZ/Fk+vy6lBoPHRJ1Ht9tSUcJkOtdpnYTm
-	yQWys42E+pwoynI67fWGnQsdkqWzST9BnJT1rMDkM7WTYtRckiPRyzsgNjaRP2LrPR7rwvpM/FaWL
-	hy6WZcDOuZkhwFk4VDV5X0rvl195kQG5MOQsMbYIxEDoRL9fAjcgNgb0yIyYrsofgkEwnG5BHe6ba
-	xs2IfNJ+Ajn9vptF7GFZH0xfssYxixO/8iBTQDyrTXMzpmJ5o9ZJZziJbhldo5UtGhlZ+cVCW1HKV
-	QZd7eAUw==;
-Received: from user-5-173-16-20.play-internet.pl ([5.173.16.20] helo=localhost)
-	by s106.cyber-folks.pl with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <michal.piekos@mmpsystems.pl>)
-	id 1w3e28-00000005NVC-2Qsn;
-	Fri, 20 Mar 2026 18:53:16 +0100
-From: michal.piekos@mmpsystems.pl
-Subject: [PATCH v6 0/2] fix gpiochip_lock_as_irq() failure when pinmux is
- unknown
-Date: Fri, 20 Mar 2026 18:52:29 +0100
-Message-Id: <20260320-rc2-boot-hang-v6-0-74dca70dd60e@mmpsystems.pl>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPNoQnH1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E812C4CEF7;
+	Fri, 20 Mar 2026 18:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774030228;
+	bh=HN2gQ76vWA+8OUenZIyxhbvtYrHC960mitHXCMLfomY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fPNoQnH14L8TgU6gye7bDyZialqKlvmDHGeAn0nITLS4Jd30vw8e9OUAXJaFosmdN
+	 LnTgqVQJ7mPwpbHHhlMBaU/cZCkUeNGFnaMB2JxtLkTsap7evvIGc9rI9Te62WgcyD
+	 HY4hWBPVIIom6ph1hXnFUckx3WxrcXyPvTmUpXrlz3FoDXKFPxf+KD/HxrwdpswqS+
+	 jGfFfEoSRDKtvGvmsutH5E6Z896BG+cwgX9KObglSHzf2eSQ6wTfS49xf49B2ebaM0
+	 QRynUr7epqgyH0+XFeLegThBBCeLsLLL+C3qStqqWO0LQ0AdpJLGk/RZFnZjhJOFaz
+	 d6Ia6sk8sCrpw==
+Date: Fri, 20 Mar 2026 11:10:27 -0700
+From: Kees Cook <kees@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH] gpio: mockup: allocate lines with main struct
+Message-ID: <202603201104.8D7B8A1@keescook>
+References: <20260319000558.22108-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAF2JvWkC/33PzWrDMAzA8VcpPk/Dkj8i97T3GDvEsbMalibYI
- ayUvPucnkrIevxL6Ae6ixJzikWcT3eR45JKGq817NtJdJf2+h0hhdqCJFmpJEPuCPw4zrBtgay
- LbLS1ynhRb6Yc+/T78D6/al9Smcd8e/ALbtP/pAVBQmgcBWwbDn34GIap3Moch/I+/YhNW+ilQ
- IBg0PbBM0ln1JGgngTUe0FVQXrNRIiMrTsS9LPg9oKuX2jVUK+bzlvPR4J5KZgqSEesdMtMHvf
- Cuq5/3II5XLYBAAA=
-To: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Andre Przywara <andre.przywara@arm.com>, 
- Michal Piekos <michal.piekos@mmpsystems.pl>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774029161; l=1993;
- i=michal.piekos@mmpsystems.pl; s=20260301; h=from:subject:message-id;
- bh=k9F41jJZIQUEKOrkxHW0L9DgDw5GS92zrvfM2OhHIN0=;
- b=tP6LpwnW+/Y3yGU0EM7yOx+g/1YMdIZJHyqH/1QfipXfP3mO/GmJtyUD8AnqiqPR+reOxocjt
- PVJRPtmjro3DtbYMtx4+9BZk72GIkp/NaJH4TWuiBPFwteA7cZmDMWC
-X-Developer-Key: i=michal.piekos@mmpsystems.pl; a=ed25519;
- pk=Aixyx03If7ZDamiKKN0lsa+0mtA+WjIuIf2ZQVYNBqg=
-X-Authenticated-Id: michal.piekos@mmpsystems.pl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260319000558.22108-1-rosenp@gmail.com>
 
-Changes in v6:
-- Fixed w/s
-- Grouped variables in reverse christmas tree
-- Link to v5: https://lore.kernel.org/r/20260319-rc2-boot-hang-v5-0-092834a882b1@mmpsystems.pl
+On Wed, Mar 18, 2026 at 05:05:58PM -0700, Rosen Penev wrote:
+> Remove no longer needed kcalloc to simplify allocation.
+> 
+> Added __counted_by along with a counting variable to get extra runtime
+> analysis.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/gpio/gpio-mockup.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index a7d69f3835c1..a907ce28cbbb 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -52,10 +52,11 @@ struct gpio_mockup_line_status {
+>  
+>  struct gpio_mockup_chip {
+>  	struct gpio_chip gc;
+> -	struct gpio_mockup_line_status *lines;
+>  	struct irq_domain *irq_sim_domain;
+>  	struct dentry *dbg_dir;
+>  	struct mutex lock;
+> +	int nr_lines;
+> +	struct gpio_mockup_line_status lines[] __counted_by(nr_lines);
+>  };
 
-Changes in v5:
-- Simplified logic checking pinmux layout
-- Remove unneded curly braces
-- Replace subtraction with one variable
-- Fix typo in commit message
-- Link to v4: https://lore.kernel.org/r/20260319-rc2-boot-hang-v4-0-4372f47cb6b8@mmpsystems.pl
+In the cases where a new counter variable is being added to the struct,
+I think it might be better to have those be unsigned.
 
-Changes in v4:
-- Fixed check for pinmux disabled value based on pinctrl layout
-- Cherry picked
-  https://lore.kernel.org/linux-arm-kernel/20250821004232.8134-3-andre.przywara@arm.com/
-  to have flags for pinctrl layout recognition
-- Link to v3: https://lore.kernel.org/r/20260314-rc2-boot-hang-v3-1-0b48221181a9@mmpsystems.pl
+>  
+>  struct gpio_mockup_dbgfs_private {
+> @@ -436,15 +437,18 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+>  	if (rv)
+>  		name = dev_name(dev);
+>  
+> -	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> +	chip = devm_kzalloc(dev, struct_size(chip, lines, ngpio), GFP_KERNEL);
+>  	if (!chip)
+>  		return -ENOMEM;
+>  
+> -	mutex_init(&chip->lock);
+> +	chip->nr_lines = ngpio;
 
-Changes in v3:
-- Drop v2 solution which was returning input instead of error when pin
-  is not initialized.
-- Add checking pinmux configuration in
-  sunxi_pinctrl_irq_request_resources() and set pin to input if
-  uninitialized
-- Link to v2: https://lore.kernel.org/r/20260308-rc2-boot-hang-v2-1-516fdb820953@mmpsystems.pl
+Besides the new variable being meaningless for negative values, there's
+a strong hint about its type even from the counter used to perform the
+calculation (u16):
 
-Changes in v2:
-- Dropped the previous faulty solution which was forcing the axp313 to
-  use r_pio as interrupt controller as pointed out by Jernej Škrabec.
-- Implemented suggestion from Andrey Skvortsov to return default
-  direction as input
-- Link to v1: https://lore.kernel.org/r/20260308-rc2-boot-hang-v1-0-d792d1a78dfd@mmpsystems.pl
+static int gpio_mockup_probe(struct platform_device *pdev)
+{
+	...
+        u16 ngpio;
+	...
+        rv = device_property_read_u16(dev, "nr-gpios", &ngpio);
+	...
+        gc->ngpio = ngpio;
+	...
+        chip->lines = devm_kcalloc(dev, gc->ngpio,
+                                   sizeof(*chip->lines), GFP_KERNEL);
 
----
-Andre Przywara (1):
-      pinctrl: sunxi: pass down flags to pinctrl routines
+But this begs the question: why add nr_lines when ngpio is already part
+of the struct:
 
-Michal Piekos (1):
-      pinctrl: sunxi: fix gpiochip_lock_as_irq() failure when pinmux is unknown
+struct gpio_chip {
+	...
+        u16                     ngpio;
 
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 43 ++++++++++++++++++++++++++---------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h |  4 +++-
- 2 files changed, 35 insertions(+), 12 deletions(-)
----
-base-commit: 8a30aeb0d1b4e4aaf7f7bae72f20f2ae75385ccb
-change-id: 20260308-rc2-boot-hang-269e8546635b
 
-Best regards,
+?
+
+-Kees
+
 -- 
-Michal Piekos <michal.piekos@mmpsystems.pl>
-
+Kees Cook
