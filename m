@@ -1,123 +1,111 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422D28A3F2
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 14:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F733C73E4
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774018604; cv=none; b=kE3LjU37Ozj1D+Sf8YxlE1wA40Wj7B0/meJTqrA0Aw0misbeGZGd5OJ9Q0wccZJtUJwgCvoVICb+3Mrt5RJs0hOuTuDrnJ1ffNYmXnM5HDeO6pUMwloUffJH7ZJ8YKfjw9yItSTCSOEpQeNUpqmpdy9kC21Yj5zwCDYRQDG9DoE=
+	t=1774019746; cv=none; b=CA2hLfcnGXTLI/2gFA6cQoFYKyPh2ncm+ndsFUjvw0LbhpTDJoYSIDCOpZbqQ0nmrIbYQqJjma7uCaAwc96PUpMOgnT03qFd7iJPnlruOKdlf0AMq8JFbPMrKUpPcUDv4cggq+Nr7nNLASCzXeTodKrb1KqlaCgPaMfsM63Yh1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774018604; c=relaxed/simple;
-	bh=dTEF6bdzJt2V7+xYx3YhBkPgCvZNNJYAeLwsU1oWSB8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P1C1v9HgIgf/jvYg6GHfK/lyQckiNypu2xIemN3BRZ3lWxnRyT2B3WlOTyj/FLLKcQ6nJuQOSbha4ahVy76p4yIF0plM+KpAatd9nodpETUHIGX4aCkzCFS+v1m5eEVnSwtHg5p5J+dzsuICQKvXJqg1PFMlyeZQzirlRCrv6lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkTjX55j; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1774019746; c=relaxed/simple;
+	bh=wqnjcjNaie6UDTzmbysnfxNuiFNQP0Thq71AYiTlERg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HnUi/5HFrF1bevf9o/qofdzWI9cWF2S4kKNzDhvPIVyDo58xhT53K8DzBrLuy+1UbjSDhOGgu9GMu/gTXGjanV/bZP1D4PoMSNbRchw+w1G4emYQC2r2XUFC/GFsPPTMXtG+8zDufcge6RUA6qs8Fu/72nH8gHsgsWB8gDhoEGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXOlQhDc; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkTjX55j"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2b07069e2efso11255915ad.3
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 07:56:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXOlQhDc"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-35a1cc6e478so1434414a91.0
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 08:15:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774018602; x=1774623402; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wFetc6x2soh6YI39fkTNs8ZpWw8wHx4vhOBrBQajGIw=;
-        b=fkTjX55j/fO7t4zMkgv6Hamw/Vzoov8IqIFi/GrBEGG8sF0HhT7Oto4o8s9psKUTr9
-         g1NfBx9jnuWJOCG4VXowgn69lhwLCAkGS8zz5eH6ftyJCGgA+/Edt51D/JYOCFPRwByV
-         tbf0N5V7pdaxBK/L/NZH7IBjgp94AxAAn8XMIMpb3hN8kKUrU9R2dxmpef/P8ypoVMyA
-         7ufy+TuTsmJufSBEM4cxDrmdDrCGHmbwH+++lpRkFkj7fkzD3NT5x2OLSP6SYxZYH+td
-         LObjY9NaKRswE1ObZemQOjD5drIMaiRRKFXY+XLI2ce7xoGuRC9j9vXbWHfKUToEnIIv
-         ZqXQ==
+        d=gmail.com; s=20230601; t=1774019745; x=1774624545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZOHGPk5doVf5PlHGyevPKUA2fqHQSdmXOjKYw+Hc8ik=;
+        b=hXOlQhDcZZMDujEe72nGIxlJqbe70/SlX+HdrRp4I+/of1YtJsor+j6GfaQoaKrWug
+         wiieToHGl+AGNJ6kdFhGQusDfmHpqwmBipm98iZbSV2C+zHddOQRYKv8bTJs+Y60eb3s
+         QL8GxKnF0JKQ0qllCFpam2WNiY2Qj8RvloLhT9fQYFIgfntbXQVaBIqSb6Q70irBE2l5
+         gXU80aYc88So5QhRaSzg0k/hMOkcdY7Bkk4Fz3+aVgdRu9CbhLgCehuJylXAi1rciOqQ
+         5GkCeZ1R9rOghw85ddwPiOTZseG1Z0x/jUNxeZudwvU9wjNrH+F+utox1jwQkG5uUlCz
+         nUnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774018602; x=1774623402;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1774019745; x=1774624545;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wFetc6x2soh6YI39fkTNs8ZpWw8wHx4vhOBrBQajGIw=;
-        b=Sp5OmEocwUvUoFUCdK1lqC5RlK/ftgJocphYaCWA4emcUbNRlj79FOrlSiUo8mBty3
-         2d+U3XEXRgvjFkVtVdIzc0V0H1vZYr8hgDgCD0zXuvEg1+8nJTCkOAiSYEWmDAT3ywh/
-         tYEibtOPfmhw0tSsTTMI+lpgN511GElLCJlsD3nkRK4VvPtvhwjAzn2vGjepYdNq3Kyn
-         qbU2okeaXNhej6Zk6hx2EZ3jhiJMTsb6BvXhq+5IdqmgwDNsmDXYbqU08AqPgDtPrK9i
-         y7rJbFOg6jBBb+/hu6/lSm6Zwed2I3v9bUbvGZ84YytTU0+4nMWLWCPkSAu0zg1XF6ad
-         lBMQ==
-X-Gm-Message-State: AOJu0YxblYxvM0+X1BwsAZWlj8Sn7zKUy8FhnJbYqfxkyBmTxU8alFvy
-	kh93ZMeZATw0W/OnlONCYqzUKlMjpy3/x9DM3k14NeW1GSx69Jac9FjQ
-X-Gm-Gg: ATEYQzx1dU+5qZbxduQ2BzfRRoLRUkfXYzXBYlBEk0T4Qc8cXq3OvJbqMVhCjC3aawY
-	beeAFbfvFPGs0+wVinqzqnp+wqTFlSDDbLc6YYYcUfjdky5ipLsoHnZOdkdb/nupSemvsf6uFaI
-	9nd+gQGC2aY63l4ynj5WC0geuLAm5DGptFUSTr3R+eSXwUu7B7W622wayBFRyGr7oVpv9SpfdMt
-	F7hS31fj8xGOWms9r+0bpiEJgzObGno2Wn1Kb90IAOWWYmcAZce1YGJSe2rxorwInntuiMq5fo+
-	GAF/hT1mm8yIZUgcAkOt581Xoho0CDGNOYnZMgu8hr1uCAtzs3f++O0Vfp0KFOBleqb/39yh890
-	GhPuXKLc1J4fe7AnRbTdn9oPOxTL1EYsx2WI8iDtF8iv98k16CE8gEiVHXjE+m7niIeHGtTr/H1
-	r+0w4x+uvxQmJYbIsAyE4fhRO3DkOuPYW3PRSd
-X-Received: by 2002:a17:903:2449:b0:2ae:59d3:27f8 with SMTP id d9443c01a7336-2b082724e99mr29516015ad.19.1774018602048;
-        Fri, 20 Mar 2026 07:56:42 -0700 (PDT)
-Received: from junjungu-PC.localdomain ([223.167.147.240])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b08354bce3sm32099775ad.32.2026.03.20.07.56.39
+        bh=ZOHGPk5doVf5PlHGyevPKUA2fqHQSdmXOjKYw+Hc8ik=;
+        b=Sbmw7fEm/mfLy2cPnG65KBOTXO+vs4LqZDdNYH+G6wIzGktBhlEJNIJ9vsGlCoreD0
+         PEDZFreoGTLPBucX0tVIehwVfLHHe67kOndYRHLkpnPL4VjIx5LKOPSkZMAovU7fvdXW
+         j5L4A9aTln/+1kQu6CflIVsZf8Qkdwh8+l79PF478wpqi19Hmksjg5zO+yxWiykXwvrJ
+         ozjau2pdssGH+bPOwpWIiWyPJeICgxCOJIkzHrAUQ+mfQD+CBYDOL0/TxrXEa4KUn8UG
+         W1y2wR7/dD+UzzoMoCznLwNcfoAyC7GYPi2Ey49e5/OrBMWxo05zHARDcmRdkTZbf2H6
+         64Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWulwvBzj/PwVl0AV2iPIZZXbkyLQ5J8EIp7x7ohv/2scZIypaTeTzsZGz96RRi9Y3u+AP8bZ8S4iqU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqqxziU9WX4fOkbkHCDsEMsGUtDk8b30eg6fvDk56WZ01pERX/
+	v0hTrOCOeDnwV7jYbIoaeCzynuWtwSBdZfmVH0c+2+yGGS3E73L7TC3c
+X-Gm-Gg: ATEYQzztaRRXjc4+CPWObtC5288m6TyjCPYdBepO93TIlSQ35Fj9o+PvHX5BjEeOPjp
+	JWWSJei/izch6tZ4cuiQsOpZCbd11IOXWjX56xEMgr8YH+7EPQfXNA9o0Ll3+GPE32N9gWbHXbc
+	VU49Z4DVEsIkYIaO+Lpmv5AV3JgooYb//h+9HjBwXqikfprq61gx/1ew+C9BC9FpK0Vf9fsNzxJ
+	Syl2ShjwNAfwxrPOPxvv+mE8S87LYEeaBwYF9DrGJPXB7YVqO8g444P85JvxJZCw7VnjJU0lJOI
+	lorH+w5fQ3Qc80MWeK2D5g3pBpehbIeur4ks4bTGuxXZ4FlyLMVdxGEAosmMQc4AGcuUxrjy3Py
+	IUoCFn5CTzPGxXlghJxMnXpkAWS68Bf+7OddrdlaW3GB3fw497yv9Ur7KDQPlPWSC1GusIUsIyH
+	tUzwhxalicb718XYtoox9k66Jgew==
+X-Received: by 2002:a17:90b:5603:b0:359:2d1c:9206 with SMTP id 98e67ed59e1d1-35bd2d35149mr2773896a91.33.1774019744963;
+        Fri, 20 Mar 2026 08:15:44 -0700 (PDT)
+Received: from Vivobook.. ([2401:e180:88b2:f091:d2bd:d651:8e5e:9b62])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35bd3eb4bf5sm2284699a91.4.2026.03.20.08.15.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 07:56:41 -0700 (PDT)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Fri, 20 Mar 2026 22:56:38 +0800
-Subject: [PATCH] gpio: qixis-fpga: Fix error handling for
- devm_regmap_init_mmio()
+        Fri, 20 Mar 2026 08:15:44 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: linusw@kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	matt.porter@linaro.org,
+	syin@broadcom.com,
+	csd@broadcom.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: [PATCH v2] pinctrl: abx500: Fix type of 'argument' variable
+Date: Fri, 20 Mar 2026 23:15:06 +0800
+Message-Id: <20260320151506.10679-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260320-qixis-v1-1-a8efc22e8945@gmail.com>
-X-B4-Tracking: v=1; b=H4sIACVgvWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDYyMD3cLMisxiXbPEpCQj05TUREszSyWg2oKi1LTMCrA50bG1tQCdT0f
- OVwAAAA==
-X-Change-ID: 20260320-qixis-6abb25dea969
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Frank Li <Frank.Li@nxp.com>, Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774018600; l=1201;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=dTEF6bdzJt2V7+xYx3YhBkPgCvZNNJYAeLwsU1oWSB8=;
- b=FpMb8FisNCCxEePHeBXcUNiYu+dd27SRy9R57Lwaz2+LMCO63yAW/Qa7xNSKte6fBfvsocbe8
- zHVLgQAQoGaBYMRwaEnV+hf/Dt/a17aoMNTeTFMzJ6wfMoZTPfSarEh
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+Content-Transfer-Encoding: 8bit
 
-devm_regmap_init_mmio() returns an ERR_PTR() on failure, not NULL.
-The original code checked for NULL which would never trigger on error,
-potentially leading to an invalid pointer dereference.
-Use IS_ERR() and PTR_ERR() to properly handle the error case.
+The argument variable is assigned the return value of
+pinconf_to_config_argument(), which returns a u32. Change its type from
+enum pin_config_param to unsigned int to correctly store the configuration
+argument.
 
-Fixes: e88500247dc3 ("gpio: add QIXIS FPGA GPIO controller")
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+Fixes: 03b054e9696c ("pinctrl: Pass all configs to driver on pin_config_set()")
+Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
 ---
- drivers/gpio/gpio-qixis-fpga.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
-index 6e67f43ac0bd..3ced47db1521 100644
---- a/drivers/gpio/gpio-qixis-fpga.c
-+++ b/drivers/gpio/gpio-qixis-fpga.c
-@@ -60,8 +60,8 @@ static int qixis_cpld_gpio_probe(struct platform_device *pdev)
- 			return PTR_ERR(reg);
- 
- 		regmap = devm_regmap_init_mmio(&pdev->dev, reg, &regmap_config_8r_8v);
--		if (!regmap)
--			return -ENODEV;
-+		if (IS_ERR(regmap))
-+			return PTR_ERR(regmap);
- 
- 		/* In this case, the offset of our register is 0 inside the
- 		 * regmap area that we just created.
-
+Changes in v2:
+- Rebased on the latest mainline to fix the recipient list.
+- Updated the variable type to match the commit message.
 ---
-base-commit: b5d083a3ed1e2798396d5e491432e887da8d4a06
-change-id: 20260320-qixis-6abb25dea969
+ drivers/pinctrl/nomadik/pinctrl-abx500.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index fc7ebeda8440..858fbaebcf8e 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -852,7 +852,7 @@ static int abx500_pin_config_set(struct pinctrl_dev *pctldev,
+ 	int ret = -EINVAL;
+ 	int i;
+ 	enum pin_config_param param;
+-	enum pin_config_param argument;
++	unsigned int argument;
+ 
+ 	for (i = 0; i < num_configs; i++) {
+ 		param = pinconf_to_config_param(configs[i]);
 -- 
-Felix Gu <ustc.gu@gmail.com>
+2.34.1
 
