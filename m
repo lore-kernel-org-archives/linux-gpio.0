@@ -1,124 +1,123 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8789A317176
-	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 16:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670E12641CA
+	for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 16:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774023991; cv=none; b=YE0eDBnSZVQJL1+yIRNQY2AtWgFLnvUP2TPp79HRFYllQ3YeeUyIeCUhnfM0RBiRpiXclwHmxb/haJkhrDEBuZLxaUHf4YBT7Kb6ReGIzxD2XW1rzHWr3/zxtyYJwNRctF1YvUfAvodgc+gx5MFf6EXODGcPVPnJBHexXm1Nroc=
+	t=1774024422; cv=none; b=Gx8lRLcu8WvZlmy+GUt+RQbHmH0FrZN3gwuu2KGT5L7HcNOppPYDhtpWu3iD1iVQtYD34e3p4hI/qm+2Z3JLpp+1ouDDGlguPFo5j7voZBtmP9AaBF2LMovfRyb53qp/K9uY9HaD8nveYOoo6k78sQbfrHs5xVQc1pQoZZJGSwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774023991; c=relaxed/simple;
-	bh=fMyFSszCJXOXIv+DX7+R6wPDH9WSrMIYlywm/2fLRog=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=PTFOpU2FN6yFxt5m/YJdyzgAHXza1xWIIZDJUXEsxVigNOR6ThCq4CriPGqWRx4NScZvgow6pKYQzmkHZ0FJmtL0upxDtl8jBsaO3U5/WvqjBfF2f8mqkad0Y4mDiKj3yYiLf8LdnggooOCJc/JGSMrg9V3N/6NM5qUWI516yZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com; dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b=Zg09Km6p; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com
+	s=arc-20240116; t=1774024422; c=relaxed/simple;
+	bh=aR+lmIyxdCmSGPLX8RZVLT5kQykRNGcPaMNJlitc93M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dJ/HatrwZ8DZYjTly3cQPzG87XqCvGmHvSL9DcjpGQCGVhzs6vTsTzOSTJogNE9u92VxK/tH7MjwiVUkfyLL2Wa8ZEL4OC58nS4BjB6OYvwbcUmNZPWtCtMq6w/1Z0+QFle5uDKIVJ5SxOCmpPvb5eztj9P/XdkaTH7iUcLTDGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRBE1D62; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b="Zg09Km6p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
- h=In-Reply-To: References: Subject: Cc: To: From: Message-Id: Date:
- Content-Type: Content-Transfer-Encoding: Mime-Version; q=dns/txt;
- s=fe-953a8a3ca9; t=1774023984;
- bh=ft21UeP4z579XSbja1g9AqWPvCF44UV/oZHoOxBnDIs=;
- b=Zg09Km6pEig2W317wXE9AYFNDA89c1OBbbfj7LLBzsbpSXFvKMQBHHE34vj+XByDasn1zGdoV
- qUDuj8FqfoW5qsZ47I2LOPg8wV2kZpuveForvYBwbk7Mh5gmeWw4Zhw98Gbdr44gWD+boZwyOfx
- caYLWjS/lrLwMifPIKkuOI5BXtAeCsk5AAhzo6xhZXDhywjKu1h4zisP9CPXbswwjGLIrTdp0+y
- MbOSN3J7DCNJmYWiFeQqX7+bA8M6KMGfFaT1NXSVMxm6uHxDJekUaUeGZtlNqM4joP1G7H0e+P/
- vKi6ZrinodYt0mMMIAKvkm5pS8kt39ftQ+fc8jl0mERw==
-X-Forward-Email-ID: 69bd60d63c81f5afefaa2dca
-X-Forward-Email-Sender: rfc822; jpeisach@ubuntu.com, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 2.6.53
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRBE1D62"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2aae4816912so5362415ad.2
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2026 09:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1774024421; x=1774629221; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfmjJ6c8eGMhzWErFCRUQJ0ZlgQhdVdCn3Ze9qpx/ww=;
+        b=DRBE1D62ykdoBPcTU0Hsmbf464lu8XGAeMttghjy9P0F4RTNyFFbCYueVPLHH/9jzJ
+         cdlvC7kAdsUs8yHe/SNIk4Nzhi6t1RPyySDJi/9q3l/3ID/KlrY51jxu8pdCLbyNHd93
+         IBu7uN3r9Pwa4CeClGRY+MbOj3WRnEE+ihH5DcoFZp66VXueoSU+SvbrU70w/Bd5mvYu
+         JlijYHvs54kKRPnAsvvanf3tyT7+CrxV+MYJrly7QewzRXShvWwJO4utZKI+DdBQWv6Y
+         kkrpb2OeN5OsTk5lZ+EpjwkD4SBU2GBEVvFjjCpkwuW6L5AmvB140oWJdznG4DBdwH49
+         p7nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774024421; x=1774629221;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dfmjJ6c8eGMhzWErFCRUQJ0ZlgQhdVdCn3Ze9qpx/ww=;
+        b=IwY2B/s8HtEY/C/ok3hcNDNFgkJB10bjV0C/3wPDXfKFBBwtQeYIYUpkn3bMqz3jVZ
+         Kotgwgzu3dctQJ1teYICRk0hAMV6VeYfFAvFyS1+IlhqS3Mn5MjNUwltydSzQ/mnIXHz
+         QdhFndOBvZR0drIUQSJEJ3VR9ZM7wAZT9E5kAQc09l21mKOmY3xhq97JNSzFkRX5pVEY
+         ie8SjGOveI9E6UGp30TZGTRQXS0B9fAmii3vVqMI2H6nQa3HLBIMZ6HD+eLFAdbG0ykQ
+         M+7F357oYrVaDSHMHmCY5YtBUPnYaiPN8p1iUaZBydvfbjKBSZUx/6prKIjW1ZhpIJFu
+         LdtQ==
+X-Gm-Message-State: AOJu0YyHqSHNwBfHS+gJ++tWlwH5OZCidnSEI2lTtjv2YjpkItp1MIzE
+	wRyRiqJU4RB3hO5Bd/8mi23Q5QTUAGMmjw0jKPHEmKgx0x93DhB3N0Yk
+X-Gm-Gg: ATEYQzwP1MXw5VTBjdsxxiEWEerw/b/Lt8MLaZNNmkg6Xg08FmojFCmF+VLmoyqFcAu
+	olr7Xkacs64zICCC3rTSWJo+kQeA/doLCU6xyqnjyriZnil0ncCOVzpd925xwOE5Pm0XXZXwXWY
+	8w+ZzIxbwTrRtPWNG2l8X3b2JcXzSopQlBesdyQLQSTSsd18OU8FRqZ/BV5XYRKVNWiZMtfpe60
+	Ph9xv63dlw05WIUCDN7JLO/lUiAk8m+sGI+NaTnKYQm5hSPQCpS3h8/sXxlvinmpwna6/+O0WFX
+	TCXLvVFKrYoe6/NmoTPA65Zhl0ujCCczPBC1/P1RCh18xtBX9CkDiejUVF9AfwymHab11DyGo/w
+	UkpTdYSa9nQALeT7/GPXtoxx+denWl3ylJmFHbGqs2O0ZHhEPasfiLBHhd6EYqbcVa3uOeNx0KU
+	tuQ9j7o1LQKZreUCCPzfci1ynnyWjhFT+wslNk
+X-Received: by 2002:a17:903:3890:b0:2b0:6638:b357 with SMTP id d9443c01a7336-2b0826c751dmr38677055ad.11.1774024420634;
+        Fri, 20 Mar 2026 09:33:40 -0700 (PDT)
+Received: from junjungu-PC.localdomain ([223.167.147.240])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b083655718sm27803345ad.39.2026.03.20.09.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2026 09:33:40 -0700 (PDT)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Sat, 21 Mar 2026 00:33:38 +0800
+Subject: [PATCH] pinctrl: rtd: Fix error handling for
+ devm_platform_ioremap_resource()
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8; format=Flowed
-Date: Fri, 20 Mar 2026 10:59:32 -0400
-Message-Id: <DH7P658BN6Y6.2NN4PAO1KAEEQ@ubuntu.com>
-From: "Joshua Peisach" <jpeisach@ubuntu.com>
-To: "Janne Grunau" <j@jannau.net>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Lorenzo Pieralisi" <lpieralisi@kernel.org>, "Sven
- Peter" <sven@kernel.org>, "Neal Gompa" <neal@gompa.dev>, "Wim Van Sebroeck"
- <wim@linux-watchdog.org>, "Guenter Roeck" <linux@roeck-us.net>, "Linus
- Walleij" <linusw@kernel.org>, "Mark Kettenis" <kettenis@openbsd.org>, "Andi
- Shyti" <andi.shyti@kernel.org>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Sasha Finkelstein" <fnkl.kernel@gmail.com>
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-watchdog@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <linux-pwm@vger.kernel.org>, "Michael Reeves"
- <michael.reeves077@gmail.com>
-Subject: Re: [PATCH 0/9] Initial Apple silicon M3 device trees and
- dt-bindings
-X-Mailer: aerc 0.20.0
-References: <20260320-apple-m3-initial-devicetrees-v1-0-5842e1e393a8@jannau.net>
-In-Reply-To: <20260320-apple-m3-initial-devicetrees-v1-0-5842e1e393a8@jannau.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260321-rtd-v1-1-9c2022f73826@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOF2vWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDYyND3aKSFN3UNMukNMs0y+TURHMloMqCotS0zAqwKdGxtbUAyyHzO1U
+ AAAA=
+X-Change-ID: 20260321-rtd-ef9bf9f9cea7
+To: Linus Walleij <linusw@kernel.org>, 
+ Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774024420; l=1164;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=aR+lmIyxdCmSGPLX8RZVLT5kQykRNGcPaMNJlitc93M=;
+ b=it7pbsbghx0plHCQLPBz8e00h2FZ5zS35ZXSw+qkKY8sbh+QNUlSzGixvhqpQGMYm4sKDjcBx
+ 9+cez223GNqAySw3nxidxk4+ksCJbaj4+dA7vosVPWKJ9baR9MyOZy0
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-On Fri Mar 20, 2026 at 8:23 AM EDT, Janne Grunau wrote:
-> Hej,
->
-> This series adds initial device trees for M3 Apple silicon devices. The
-> device trees contain only a minimal set of hardware not going much
-> beyond the minimum required for booting kernel and initramfs and
-> verify via serial console that the hardware and drivers work.
-> The hardware with the exception of the interrupt controller is
-> compatible with the M1 and M2 SoCs and the existing drivers.
-> Changes for the interrupt controller were sent separately in [1] and are
-> picked up and in linux-next. The device trees pass make dtbs_check with
-> the apple,aic2 dt-bindings change from that series.
->
-> Link: https://lore.kernel.org/asahi/20260223-irq-apple-aic3-v3-0-2b732807=
-6b8d@jannau.net/ [1]
->
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
-> Janne Grunau (9):
->       dt-bindings: arm: cpus: Add Apple M3 CPU core compatibles
->       dt-bindings: arm: apple: apple,pmgr: Add t8122 compatible
->       dt-bindings: power: apple,pmgr-pwrstate: Add t8122 compatible
->       dt-bindings: watchdog: apple,wdt: Add t8122 compatible
->       dt-bindings: pinctrl: apple,pinctrl: Add t8122 compatible
->       dt-bindings: i2c: apple,i2c: Add t8122 compatible
->       dt-bindings: pwm: apple,s5l-fpwm: Add t8122 compatible
->       dt-bindings: arm: apple: Add M3 based devices
->       arm64: dts: apple: Initial t8122 (M3) device trees
->
->  Documentation/devicetree/bindings/arm/apple.yaml   |   18 +
->  .../devicetree/bindings/arm/apple/apple,pmgr.yaml  |    4 +-
->  Documentation/devicetree/bindings/arm/cpus.yaml    |    2 +
->  .../devicetree/bindings/i2c/apple,i2c.yaml         |    4 +-
->  .../devicetree/bindings/pinctrl/apple,pinctrl.yaml |    4 +-
->  .../bindings/power/apple,pmgr-pwrstate.yaml        |    4 +-
->  .../devicetree/bindings/pwm/apple,s5l-fpwm.yaml    |    1 +
->  .../devicetree/bindings/watchdog/apple,wdt.yaml    |    4 +-
->  arch/arm64/boot/dts/apple/Makefile                 |    5 +
->  arch/arm64/boot/dts/apple/t8122-j433.dts           |   19 +
->  arch/arm64/boot/dts/apple/t8122-j434.dts           |   19 +
->  arch/arm64/boot/dts/apple/t8122-j504.dts           |   37 +
->  arch/arm64/boot/dts/apple/t8122-j613.dts           |   35 +
->  arch/arm64/boot/dts/apple/t8122-j615.dts           |   35 +
->  arch/arm64/boot/dts/apple/t8122-jxxx.dtsi          |   48 +
->  arch/arm64/boot/dts/apple/t8122-pmgr.dtsi          | 1149 ++++++++++++++=
-++++++
->  arch/arm64/boot/dts/apple/t8122-usbpd-i2c.dtsi     |   32 +
->  arch/arm64/boot/dts/apple/t8122.dtsi               |  444 ++++++++
->  18 files changed, 1859 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-> change-id: 20260319-apple-m3-initial-devicetrees-5c546ad977a2
->
-> Best regards,
+devm_platform_ioremap_resource() returns ERR_PTR() on failure,
+not NULL. The incorrect NULL check would fail to detect actual
+errors from the ioremap operation.
 
-Seems fine, well done!
+Fix by using IS_ERR() and PTR_ERR() as documented for this API.
 
-Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
+Fixes: b7f698b22b8b ("pinctrl: realtek: Switch to use devm functions")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+ drivers/pinctrl/realtek/pinctrl-rtd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
+index 60dfb39bc986..429c94b79c49 100644
+--- a/drivers/pinctrl/realtek/pinctrl-rtd.c
++++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
+@@ -574,8 +574,8 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
+ 		return -ENOMEM;
+ 
+ 	data->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (!data->base)
+-		return -ENOMEM;
++	if (IS_ERR(data->base))
++		return PTR_ERR(data->base);
+ 
+ 	data->dev = &pdev->dev;
+ 	data->info = desc;
+
+---
+base-commit: b5d083a3ed1e2798396d5e491432e887da8d4a06
+change-id: 20260321-rtd-ef9bf9f9cea7
+
+Best regards,
+-- 
+Felix Gu <ustc.gu@gmail.com>
+
