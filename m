@@ -1,89 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CED38839E
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F5927B327
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 10:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774259916; cv=none; b=LHu3CPwNdYYj9tEntcwUMhQy9dutLXC0sIi9hBn8Ckir2zXgwOftzztlidK4cCPxId5E02BoGvYr0aBxF3ip1q8PNWvazccsZ62lNDloATh/u/IDaploONzhKGncLhIx41ff04GqGePCcgy6Z907wZq9fozlB82ONLC6ix9h5TY=
+	t=1774260026; cv=none; b=tTCktX9Je834Juuwl+WR+sD8FEtafFfBgRoNzd0JU3S/hKba0tsUvVM8KG8XR7Hi2Q0aOTQaWYS9MC4eU0HVVHtJC0VVlCu41Yj3cqqwvJKrgPbvkA2hIkS0ynPTLOD3twJvLCnGre8gdMHlbwKsXPpMsaO8zN2k/NXiJCnf+zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774259916; c=relaxed/simple;
-	bh=gp5lHYOOO+4yiL81Ex+mUjPO6eOH6Qpek1Pg4LH9pn0=;
+	s=arc-20240116; t=1774260026; c=relaxed/simple;
+	bh=2ZEySTGjzvEYD0+oL2rPnTK8VnmzmCs5n7mzP302FTw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QaC91hIGs57E9NlwGM3+kgPDxEzmb+sjXWtM+iEPVzbxUqFOciwCZlafOAuzMpmIaNQJ7q6uMDcEnEdjfpyVZJ97pEY4wXfFkJzIFW6r6FQDq5q05sUV1vjgfDmYDaGVwom2x2sZ7yZOidvVw4LAdtFxvxbY+VHOzOkfRKgKA2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWW3SvkU; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=lRDcC2ZDpHh6GhHARwDdybDIhqmdyHZllTFm++pQYsK1+ZzX+Mt87r54hAd3UIBrDCHCCxodqFjYFiRT/ZCmuNiG4a9/cMnbfyMMJ7l96fJtGhSSlySL91AR/+YEtXH7OL9Ms3fU119PwczGj74/v1Reqodla707hlvlPoM247k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVs1kieT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWW3SvkU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DFB1C2BCC6
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:58:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVs1kieT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F038C4CEF7
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 10:00:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774259916;
-	bh=gp5lHYOOO+4yiL81Ex+mUjPO6eOH6Qpek1Pg4LH9pn0=;
+	s=k20201202; t=1774260026;
+	bh=2ZEySTGjzvEYD0+oL2rPnTK8VnmzmCs5n7mzP302FTw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VWW3SvkUU/yv0MRfe4JmE2kDnaToOtuQIqVsqIHLlw1gxOEQZnC41Qs9VN1Fc1oJ9
-	 gZDJ5sfIfYKcJTLJ5JeqReZiBl3bIiXD38ViE8+3a4gohu7VXq1D7sBk7a8lgnAUfQ
-	 L9yKrN/IVtB8JHgkJE9cqEmGLNngzQwHR2FHSPPM3Df2xlt7L9Zxv5ACpcNAUKgJu2
-	 wDiGl2zqDMenBTlCZwUjgw8cr16ywBiUI87mWmMTDnrZMBzvkphzDMhR8OxYxVWG0C
-	 LhGAx21DF/nen2mwblfGCCt6EEq4CHO5fPYCAVUwtdQnPcl0WTEU/HWxW1mKGry3Ng
-	 LYCPB3T/IreCQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-38a3066b68bso30257851fa.3
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 02:58:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+AvdrME+pA8By+4zbAygDC3S8S7gQT122+Y6YvaXJcSjO60cJrHKzAhOK8qg3FiN7nZpmi3ImtJ8k@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx6C764wdn6ckkrNck2/X+B/4VKwwehDn9OEdzwwWxZ4nSB+81
-	9JWmyApdl3CXWjpCO/tc05TJGAHYfGVEzJzqpXKU0qtLECDtVY8wwvbBX30x+TOABymh7RdyPo3
-	nkMFcMly+l/Y0Y5dJmGSJyvo3T0geM7faCDqfBDutLg==
-X-Received: by 2002:a2e:9586:0:b0:38a:1a50:d843 with SMTP id
- 38308e7fff4ca-38bf9747572mr29235411fa.36.1774259915139; Mon, 23 Mar 2026
- 02:58:35 -0700 (PDT)
+	b=fVs1kieTp+H2uNPE3jgouhn5jFQgWlGCX26q7wIEgeiTaL9OHZaCoyHE+qpeOS9Of
+	 9uYovcmiQYm3rJrq25vDW+iQCt6S33PUD9Qx7gpY9us7tD4HVe01ArhV4yhedyEIGM
+	 +QIKpIIfjWItERM3onp/AMkvTBtw8/qDVzSNt5ZVS8TevgnZzys56gEwfs+NL4DrsO
+	 Nt1ZdhFF4wQwgWxPMCpfTsAsdJbIZ3C8ZLn7kup7M2Gf7e5+CoKHAQRziFgaWzpaVf
+	 OUMVS6u02vXMzMBDfedetqVcqimmb62leG5Iktic2XhcPpUOA6poY6uwIv0oo/65uf
+	 LMENj03xX1Acg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a1443780c4so4103149e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 03:00:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcDMrpt3Fi5utXpqaS46L7MObMMIxTPKvkCNibxkIG/k0Gs8brQI0ZGKXWe4dD4LNdTT3ckLXhuxZk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcDbsowHIC3gerRh4rpGvNhoDjmFRXF5uXb65X3LxY8Heazo6Q
+	fwCL/hwvRazTkyTvATFkXFxF9QtIp+ORcntJgZavNpaMMxISsMxdgoMC/lmv2h627ArcVdWLXdk
+	7eHJPGuuPnrMy+YlJtPMztyXuB0vwhYrDri2YFOq47w==
+X-Received: by 2002:a05:6512:1388:b0:5a1:3273:37af with SMTP id
+ 2adb3069b0e04-5a27dde27a7mr4720127e87.5.1774260022227; Mon, 23 Mar 2026
+ 03:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1774087290.git.dan.carpenter@linaro.org>
-In-Reply-To: <cover.1774087290.git.dan.carpenter@linaro.org>
+References: <20260319000558.22108-1-rosenp@gmail.com> <202603201104.8D7B8A1@keescook>
+ <CAKxU2N8ZZp5fcCWfMaqZ9VKwNQ3a06fsQPXpBQa-d1N07zPGng@mail.gmail.com>
+In-Reply-To: <CAKxU2N8ZZp5fcCWfMaqZ9VKwNQ3a06fsQPXpBQa-d1N07zPGng@mail.gmail.com>
 From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Mon, 23 Mar 2026 10:58:23 +0100
-X-Gmail-Original-Message-ID: <CAMRc=McyeeEaagvkoU3MDAof_N_e+f-sVwCDak5Y7F5cQZd-7w@mail.gmail.com>
-X-Gm-Features: AaiRm52YzNP-I9uAP5hlyzM8oeYE45CPVBux1vZ_-ak3oMBioBxm2gy2IoiTfBM
-Message-ID: <CAMRc=McyeeEaagvkoU3MDAof_N_e+f-sVwCDak5Y7F5cQZd-7w@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] gpio: introduce a gpio driver for SCMI
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linusw@kernel.org>, AKASHI Takahiro <akashi.tkhro@gmail.com>, arm-scmi@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Dan Carpenter <dan.carpenter@linaro.og>, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Khaled Ali Ahmed <Khaled.AliAhmed@arm.com>, 
-	Michal Simek <michal.simek@amd.com>
+Date: Mon, 23 Mar 2026 11:00:10 +0100
+X-Gmail-Original-Message-ID: <CAMRc=MctGTeqBHQ8zaQ7_2YAoWoTUxOK4_hs+-EHEQEPnz+A-g@mail.gmail.com>
+X-Gm-Features: AaiRm52TiXiM-9nvry-2dIKOcPo7jhE_iD_zrDEUXC_8gLkLh4_1u8Idt1ki1O8
+Message-ID: <CAMRc=MctGTeqBHQ8zaQ7_2YAoWoTUxOK4_hs+-EHEQEPnz+A-g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mockup: allocate lines with main struct
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, linux-gpio@vger.kernel.org, 
+	Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 21, 2026 at 11:13=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
+On Sat, Mar 21, 2026 at 12:00=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wro=
+te:
 >
-> This basically abandons my earlier attempts and goes back to Takahiro
-> Akashi's driver.  Here is the link to Takahiro's patchset:
->
-> https://lore.kernel.org/all/20231005025843.508689-1-takahiro.akashi@linar=
-o.org/
->
-> v5: Addresses Andy's cleanups to the driver.
->     Adrresses Krzysztof's comments about the dt spec file.
->     And almost all the subsystem prefixes were wrong.
->
-> v4: Addressed Andy's comments about kernel-doc
->     Addressed Rob's comments on the spec file
->
-> v3: Forward ported Takahiro's patches and added some fixes ups to make
->     it work on current kernels.
->
+> >
+> > static int gpio_mockup_probe(struct platform_device *pdev)
+> > {
+> >         ...
+> >         u16 ngpio;
+> >         ...
+> >         rv =3D device_property_read_u16(dev, "nr-gpios", &ngpio);
+> >         ...
+> >         gc->ngpio =3D ngpio;
+> >         ...
+> >         chip->lines =3D devm_kcalloc(dev, gc->ngpio,
+> >                                    sizeof(*chip->lines), GFP_KERNEL);
+> >
+> > But this begs the question: why add nr_lines when ngpio is already part
+> > of the struct:
+> Maintainers for some inexplicable reason want an extra variable for
+> __counted_by works.
 
-Once ready, how should this go in? Immutable branch in pinctrl and
-final two patches through GPIO tree?
+I believe what Kees means here is: you can use ngpio for __counted_by() lik=
+e so:
+
+  __counted_by(gc.ngpio)
+
+I didn't think about it and I do prefer it of course over an extra field.
 
 Bart
