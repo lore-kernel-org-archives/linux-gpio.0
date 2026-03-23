@@ -1,23 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA68E3976A2;
-	Mon, 23 Mar 2026 11:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CFE3932D1;
+	Mon, 23 Mar 2026 11:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774263730; cv=none; b=NkQ1yovAn/jBS9iWOgmOslhRIpUnPoi6BYPZSLir1nOiyHXW5g6K+Axt1yTSYbA0Va8XBlxvDppraYGEhxOS9CJTuPaddDL52kvtzirznNzUEnEmxR3TjQSupRPemF8ygFqEoYcEGH6NaUtyZDq2DdphD9/DOb6xnUQUnrp+g6U=
+	t=1774263733; cv=none; b=Rix5osQhw/cnvodD+KKVfPn2wcGkgZ6pIDl/4oSHUZ/+i8WWyM6gfz3cfmB6AV5Gd6NmLoikMq4bAoNzRLY1jC0L8uf+tVFaAGeJY09ngFnMpa23M4W1lau6I2Nj6nQZ+ZHqGHXJbYCsibKG+8cmMHFwnynci+wwl14b9REVc/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774263730; c=relaxed/simple;
-	bh=g52Al9YWCGtwUmdi2nk9qV8gQKZV5m7STqJ7l17xicE=;
+	s=arc-20240116; t=1774263733; c=relaxed/simple;
+	bh=lWhME2tkbRcxfTvqm6yLaBA+b8VpP5Ehcr7ZN2IZKfA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CHhpU7hv8XmWP7ihZ0m2ZChjFUjw4E1WkqNzPkL7cbHHjM6AzamFCT6Fy+/+PU/IuisDAc1RRVInXh7Tp9wQpfDkN4m8HXeGH1gwKSTujDGw2erqPtLY3Mgcss+IT9K5mNmWJzqoU3jZMPgPbfpy/F8WE+jQBLvlUiJfsVUuAFw=
+	 MIME-Version; b=GeQdSIN5iQEfaC6a9NG0bCBlXClSOK7eRZIQayEX/x+jrf27L9LHj+ixe4c8h12PFd7t5t/37enMh3MJ6CAwXhRHmtnG1P86G2Ljh9BnVugjHTWRlagW/a7XyNUjJG3cxsFVdQAXBNDKS7qgBgv3T/H00jB/3VdDL3XivplSuB8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 665FF1692;
-	Mon, 23 Mar 2026 04:02:02 -0700 (PDT)
-Received: from e142021.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C37453F73B;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68F04169C;
 	Mon, 23 Mar 2026 04:02:05 -0700 (PDT)
+Received: from e142021.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF1E93F73B;
+	Mon, 23 Mar 2026 04:02:08 -0700 (PDT)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -32,9 +32,9 @@ Cc: Michal Piekos <michal.piekos@mmpsystems.pl>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] dt-bindings: pinctrl: sun55i-a523: increase IRQ bank number
-Date: Mon, 23 Mar 2026 12:01:49 +0100
-Message-ID: <20260323110151.2352832-4-andre.przywara@arm.com>
+Subject: [PATCH 4/5] arm64: dts: allwinner: a523: Add missing GPIO interrupt
+Date: Mon, 23 Mar 2026 12:01:50 +0100
+Message-ID: <20260323110151.2352832-5-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260323110151.2352832-1-andre.przywara@arm.com>
 References: <20260323110151.2352832-1-andre.przywara@arm.com>
@@ -46,54 +46,35 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Allwinner A523 SoC implements 10 GPIO banks in the first pinctrl
-instance, but it skips the first bank (PortA), so their index goes from
-1 to 10. The same is actually true for the IRQ banks: there are registers
-for 11 banks, though the first bank is not implemented (RAZ/WI).
-In contrast to previous SoCs, the count of the IRQ banks starts with this
-first unimplemented bank, so we need to provide an interrupt for it.
-And indeed the A523 user manual lists an interrupt number for PortA, so we
-need to increase the maximum number of interrupts per pin controller to 11,
-to be able to assign the correct interrupt number for each bank.
+Even though the Allwinner A523 SoC implements 10 GPIO banks, it has
+actually registers for 11 IRQ banks, and even an interrupt assigned to
+the first, non-implemented IRQ bank.
+Add that first interrupt to the list of GPIO interrupts, to correct the
+association between IRQs and GPIO banks.
+
+This fixes GPIO IRQ operation on boards with A523 SoCs, as seen by
+broken SD card detect functionality, for instance.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Fixes: 35ac96f79664 ("arm64: dts: allwinner: Add Allwinner A523 .dtsi file")
 ---
- .../bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml   | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-index 154e03da8ce9..f87b8274cc37 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-@@ -34,7 +34,7 @@ properties:
- 
-   interrupts:
-     minItems: 2
--    maxItems: 10
-+    maxItems: 11
-     description:
-       One interrupt per external interrupt bank supported on the
-       controller, sorted by bank number ascending order.
-@@ -61,7 +61,7 @@ properties:
-       bank found in the controller
-     $ref: /schemas/types.yaml#/definitions/uint32-array
-     minItems: 2
--    maxItems: 10
-+    maxItems: 11
- 
- patternProperties:
-   # It's pretty scary, but the basic idea is that:
-@@ -130,8 +130,8 @@ allOf:
-     then:
-       properties:
-         interrupts:
--          minItems: 10
--          maxItems: 10
-+          minItems: 11
-+          maxItems: 11
- 
-   - if:
-       properties:
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index 9335977751e2..cea5b166c00f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -128,7 +128,8 @@ gpu: gpu@1800000 {
+ 		pio: pinctrl@2000000 {
+ 			compatible = "allwinner,sun55i-a523-pinctrl";
+ 			reg = <0x2000000 0x800>;
+-			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.43.0
 
