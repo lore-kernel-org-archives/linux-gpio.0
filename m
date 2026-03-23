@@ -1,70 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DBC38228F
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6B3859F9
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774256557; cv=none; b=moaOSE/ybGY6fQ82U2+SNOmRj2m8JmQF4vHybpzmRpUKAex7Zi9h6NPL2sE8KD04LHe0hD04rdbxp88YuZZFDQbYflGcRUSEEBY+OZKRsFR8J7h/WeGZ0wIQXU+2yT67JQ55gRyoG9gae38MX2ITD87A2A9mTRMluvGS9nM6O2E=
+	t=1774256635; cv=none; b=angHMUb8S0ZDwMn7vc1sHQ/hXBIOY3Ue0Kk8TvDASKdgS9OB89i8CiYEFA+QkwRLnCw6dDSZlDamNTwyfD5/7RVVzfAqVhQwqd76atHgeRYahA+FqAkGbv/8LSWU3b/67Jt7iCoQWAfzEgzyeZO8nnDNtsSxQB+yjnjKYzjkwgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774256557; c=relaxed/simple;
-	bh=sNHUd0dgYZHbeTJ4zF/IZbJ7G4j074Qy84sj+eAWSFM=;
+	s=arc-20240116; t=1774256635; c=relaxed/simple;
+	bh=Y6Ln7apokh/wc0AOi/toxBUgq+c7baqtMbdqFe1JR+s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFztlx5UAXmSu0PsyfvdpeG6CtB0RZRBe3LUvrqRsRO82Gz8ATuSOxrN4mCNj/qBmIkM7yCDEWxiU+EFauaAFSdDKYr34eW0a6xxWoXJkrPpdNv4bGv1QeE2EAgYxsR9BPP5WGXb6R3ReQcsrVJuGC7+VbG4fAN+lvZY00Y9AOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oo3H8yPT; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=VQ+8XwV9C72IsfK/GjC1DEyxuPrnGVZNeHHsEqEVMPxSteiXYPprMM2HoO22hnvwVbFDCfRaYM4q4QEu7yl+WDJ7tM8wioYO2V5TSWnVN7fl7jAjYTHmicOceWJsb4PU5tcLN4WyxSU1Yt/lIKdW9ncT1BZyXgeP9jKHjuty6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8z6WKCi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oo3H8yPT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B36C4AF0C
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:02:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8z6WKCi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A538EC4AF09
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 09:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774256557;
-	bh=sNHUd0dgYZHbeTJ4zF/IZbJ7G4j074Qy84sj+eAWSFM=;
+	s=k20201202; t=1774256634;
+	bh=Y6Ln7apokh/wc0AOi/toxBUgq+c7baqtMbdqFe1JR+s=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Oo3H8yPTy0NuSyqL3st9CCsvedMPGdft50GdIp8JT4klEkj6o66DihGIRdSLvBM8T
-	 H/BPM4AshQ/UbVPrfKhQNvsgtV0JrmOFE4OCvwttNeYn4ENvwBHaVbvleKx8YzIHA/
-	 lewWnz7G/k4yMNJ7s/BfQBTphChWpqEs85XMDwClCtHfSgbWU5uVJxu+g0WE5IJcuo
-	 qbTTwzi1ZWTLMUkMowkOU0HBU1fb56J6utZs8e96+zlM90zowvQ4x0nJZpr290f+7q
-	 jnlBxeuQ4g2xgkfxXD7OhFbOTcHHegBJcXa0xnpY4falaeMU/bnOV/h80NVNVk4zqi
-	 pxGgoOkSXBhyA==
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-64e9f79cae8so2931235d50.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 02:02:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWh9Mz/RMVVABt0EdtlFiLOpXyHNjcFFwWs9PKFna09gXEE2mNgvY4ek0NLaoRaD1KGNVuRHGxW2Ln5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdbomvvSLJOwI4wPc3Yk6Sd+Q7IPGjDn2fErv6k9ym+vTYf9P4
-	mryVN32CvhMBgBhzSqFlRErScP1fC0XMhXeXfe/G7kcFMCkuqbPi6UQcqgDLI+gDOAcC0/CXAeJ
-	Uc94qObRbvJsxppDmYxPtGj8TanABYwE=
-X-Received: by 2002:a53:e1a4:0:b0:649:f002:582b with SMTP id
- 956f58d0204a3-64eaa683c99mr8644694d50.7.1774256556643; Mon, 23 Mar 2026
- 02:02:36 -0700 (PDT)
+	b=V8z6WKCi5Zsoe+uxCF5locHBMfndoMqJUIb3dbz8gIFPVW0vzOoTHca+9gaYnHiQQ
+	 hrRXi/zQwDPRMkSc5/sSxhCktqWAiUpuM9GC9WC3870hjvxhKVV+C2AOQVxTl8h3Gz
+	 VM5AZvnrQ/j5baJa2Xcgi/n5bbyvai8OKkDwKd2RPtfyV2bHzTs+7xP3G7sC2kvRua
+	 pzXTiQsuj9qx8E5+dKS33jZczro/rs4AqaT0nzMjnLlbhHSSUoqq2pL3AcCCg8fQIl
+	 d4T58fNpVcEr9WJJh1fVY70yaIRYgShJ15l/92CG/+ggpJPhAlGDW5N8v8NbtcTu2v
+	 BWPfF+5+Mhprw==
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-79a40fb9890so23061997b3.1
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 02:03:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+WTRCtFSZILfc8ZwIBXa6VhnBFcr0VjQ3adrAcBXkSpz+gETLMW2SneQ6zuLuiCxdt4XZ3Q28qzXH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy78Oe/Z9E1aKTcH1pUiYr3oxmN3IExCxaG5azzYC5s4ML9TVjO
+	gcMReZN8xYj1o8lkcRkV2YVdg2DgShmpP4yE4W02K8FeBFUZqN5IziL5FYDnVhbLqyJIBa0dFsG
+	BOK7mzarYBCd3Wc0nIytQWtXsm+65gnU=
+X-Received: by 2002:a05:690c:c513:b0:79a:b77f:3fe0 with SMTP id
+ 00721157ae682-79ab77f4a4emr19423007b3.5.1774256634011; Mon, 23 Mar 2026
+ 02:03:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260317115411.2154365-1-eleanor.lin@realtek.com> <20260317115411.2154365-9-eleanor.lin@realtek.com>
-In-Reply-To: <20260317115411.2154365-9-eleanor.lin@realtek.com>
+References: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com> <20260316-eyeq6lplus-v4-2-bf44dfc7a261@bootlin.com>
+In-Reply-To: <20260316-eyeq6lplus-v4-2-bf44dfc7a261@bootlin.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 23 Mar 2026 10:02:25 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkC2h+VWRLh=Rv03PbG8Lca1DuuAAs7Bish=OV7KZmiWg@mail.gmail.com>
-X-Gm-Features: AQROBzBCpGWcw3Ira5gAjDFEnKBy5l--tJzRHpH9Xs-JDfdozczVjqRXrnvq1ZE
-Message-ID: <CAD++jLkC2h+VWRLh=Rv03PbG8Lca1DuuAAs7Bish=OV7KZmiWg@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] arm64: dts: realtek: Add pinctrl support for RTD1625
-To: Yu-Chun Lin <eleanor.lin@realtek.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	afaerber@suse.com, bartosz.golaszewski@oss.qualcomm.com, 
-	james.tai@realtek.com, cy.huang@realtek.com, stanley_chang@realtek.com, 
-	tychang@realtek.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-realtek-soc@lists.infradead.org
+Date: Mon, 23 Mar 2026 10:03:43 +0100
+X-Gmail-Original-Message-ID: <CAD++jLn+z13_oZO0XLm9Q_sqwDq09-qYKN5PQiZCOZ96+9LkHw@mail.gmail.com>
+X-Gm-Features: AQROBzAs6grpZb_qsDNBkL3kogXuOOZDTkjOH99AKL5DVmwWAn4NYFh7gNmvQi4
+Message-ID: <CAD++jLn+z13_oZO0XLm9Q_sqwDq09-qYKN5PQiZCOZ96+9LkHw@mail.gmail.com>
+Subject: Re: [PATCH v4 02/13] dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 17, 2026 at 12:54=E2=80=AFPM Yu-Chun Lin <eleanor.lin@realtek.c=
-om> wrote:
+On Mon, Mar 16, 2026 at 4:25=E2=80=AFPM Beno=C3=AEt Monin <benoit.monin@boo=
+tlin.com> wrote:
 
-> Add the pinctrl nodes for the Realtek RTD1625 SoC.
+> The "Other Logic Block" found in the EyeQ6Lplus from Mobileye provides
+> various functions for the controllers present in the SoC.
 >
-> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> The OLB produces 22 clocks derived from its input, which is connected
+> to the main oscillator of the SoC.
+>
+> It provides reset signals via two reset domains.
+>
+> It also controls 32 pins to be either a GPIO or an alternate function.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
