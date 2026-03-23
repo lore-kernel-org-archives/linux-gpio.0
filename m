@@ -1,71 +1,56 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5163C5539
-	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 17:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572193CFF40
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 17:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774285848; cv=none; b=eCglHbOxKtIZeAUtHA+GjZzE8FzAh9kKy8XgzOzrMk+z2w9PGy8MHGJkQlM/2IO4RWi7V2zmAHnSdhW6r3s2xfpSfLZOYxuy1xX1kW132osyPX96UuQSDFBKGxo09vaLJYbcLuK1plF5fNuH+5dgdLm364qRoyeh2Y2QWZvMG08=
+	t=1774287681; cv=none; b=sJIouCdUE0pG7OyVoIvVkSX26nuqqHL6OwQxagqziXuKaTNpTb/bWq5gGYg3FJrHXEMM+stBK/URHnH0kJMLvxiArZes7NCq0rSsCjYAiiTtEuKfwqLoh64NoB+6ZSgJylayJbm6g/Z3gRUtGRCphCkeutg42TsXZ/7xEkxjSWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774285848; c=relaxed/simple;
-	bh=5wdgibwLF96dQBbZ/WtNrCZzbZ9lrlLtoVcZ8BLt69M=;
+	s=arc-20240116; t=1774287681; c=relaxed/simple;
+	bh=US9GCCid6v4HyHFoqm7MLXZb7skaUYoLT9/2dzLkQRo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jwGmQVEn2ES87SH6RMuVXLHodNBETiMFlXReRaWHF0kAlq6M8T/4wUtY3GUKRfrJdL+N6IPWipyxTaLJMYz/wXIULEXNuIPm5nrfKPisvfPWHl32WNAtzkSbWw6eGLgLqhChp2EqmykhCWIYDe+Jqj/z+1FBbpZkYbTj8Gl4gb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5a277379151so2100405e87.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 10:10:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774285842; x=1774890642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5wdgibwLF96dQBbZ/WtNrCZzbZ9lrlLtoVcZ8BLt69M=;
-        b=BRVXaS+vLSPNK0CB1dU3kzZJEKScYFmgqhB/fZbSrq8UbYeM8lK32zVGgdaJD+jtT3
-         3oDpu/hFsTR/G5Qox88WXEVQVf/qESA2+r5B4NZv3OCL7xbUNmrdz/ZAlKqT+8DmYM13
-         KsmvqmXbZyP2pKlnHDBJsaj5aOte5p/9yenJDf8KxRXx3tejEC52eD8Q3Pj3jkAn6dbz
-         yDkj6HNGPFUdePtEMKGWEx6ftpOmnBYJ7WekezJ4lpJ23JiV0rMIhUEuEh3lglu/QoS6
-         di7eq+EzwKmYk9NcMXKVa58TzrUooeZxOcP2Z2ThYNkh9IzD/iHmFtVfD2b78fX5fVzM
-         IrXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVF2WLWY20cGijx3QT0ZNMSd779J3WEOCwmHv4zEngTXYLRKCJfM+0OCeXxutGYhT5mv5jO23KySpi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrmcrJLeYKMInOZNJeBJBOGInZMztveKBh1iGZ8+wCvlJM++PX
-	u5tWPcULnsm9R/9ZNto98Vsptgt1fG13RBdSZecWEU6qY1jdtYaBvooeWymKEXM+
-X-Gm-Gg: ATEYQzwr04bMlZcE15pvmTwP76EgacyrXZnJCogr/kgcKkQ54P9O2CmXJ4F3c1U+14l
-	6O0pbeYenR7EoCQdKvaRUDmPyiTqjBHTq/YmD6nTo1iLk1CnN+gUIdjZPBQ1utb+zUenxVBwl4W
-	FUr+WwB4vVtpNm3G1vXJbQXnWanYzYjgIY7WyS44dBODN69fHPX/xjqcXFJMtqRHGGpStaf1OCJ
-	LPP4qxjBg87Zb3Jl3jXCJozcYhVMhsyCbJeV6Icd6QghxKhR8OjW3P1YSED0c/jGEZAChk3gsco
-	aewmhjFtyzuUi90Erx2y7S9/O0heb1Bvt7CJYlDYQjhoyTGq2OhKEyw2faPabvt5bZdpNVmEZx3
-	nodI+iT4Tcz55VDMqNyiqYjzhvAUZJxbt6tR6Iq6b4LQLWWgaIJ9FOjjxgml6uTzGc1jLSxDnvl
-	+qW9B+yvhDfXqypSXJBsyVt46IFzfcIiqI74f6H+BKz95xWD3ApE+KGg4=
-X-Received: by 2002:a05:6512:3049:b0:5a1:3fe7:44c9 with SMTP id 2adb3069b0e04-5a285b54244mr3529502e87.22.1774285842020;
-        Mon, 23 Mar 2026 10:10:42 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a285303c28sm2637007e87.55.2026.03.23.10.10.40
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2026 10:10:40 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-38ad4677830so28606421fa.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 10:10:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEmoILL+akoh6ynyzgWRCsuerTUIPEDyaTs/K+drMUWa8HgxUQYiSwNMiuueILXywS6jLYknPKuSKc@vger.kernel.org
-X-Received: by 2002:a2e:ae0a:0:10b0:38b:f110:aff2 with SMTP id
- 38308e7fff4ca-38bf962a085mr30981391fa.14.1774285840106; Mon, 23 Mar 2026
- 10:10:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=hOLxlO9LnizbYtScAn1EiOZmdhK9QCROyt7Rel0eNwHLBzn/6WY1AmLdJg00jwjgjc8ftN0NWJ2s7v+UiadbHoJZegsvQcS2+6YWolsmmQsSXPsnzCZOvV0KvtxnnZl4/R9xQt9IkUZTH2QjFRrkbgDdhgsOp1dwtgRMre4qjTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDSLPzY0; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDSLPzY0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 101E6C2BCB5
+	for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 17:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774287681;
+	bh=US9GCCid6v4HyHFoqm7MLXZb7skaUYoLT9/2dzLkQRo=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=hDSLPzY0DC6l8WFdmVCPTHtrEhKtxUPN1Rv5keg02z/JXG7r0c2G70yu+iYPUh81m
+	 mKOh4NV9eFxKPnIzEsUeYkVydCVE+2bCThQYBes8JGxjnHbB++XZkMuTJIgNP9qP5c
+	 mQZ/JajVtmK/U2+6ZCfm5+MeOJ9EZFp6HoUA9wvsgJker/Cogl7DXLT8UvaIh86SkO
+	 uIel90J8nsTld2Y4Pvv1tb3IH2bN2Ug5r/c3G3kGseFaMFG4HnPOQjdHO41Cd4dXEe
+	 SxC+S6BSQL827BnuUl8uaFMUzCMFg0kIf8NyA1VxXf0XojNs8G1QYq7URqy8Sp3t3o
+	 OKd7KWUr6XSFA==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-38bcda08c76so28607321fa.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2026 10:41:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9rMPzTNThcJEkuFDcKR4gsAiCzgbtSahMUgzY+wuvrSUpruvltZJmswhBNCMA5Vh+TC+MRpEatEG9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRawmjQDLc9VGrJIw4EvMumEgywSfN7D6rbGNpm+zPDCZhem2G
+	mBBwTh9OJ4kRgAYHD5LfUqmpjyMbvSL5+m0Wcw779lbY7TjZOUxORFUYZz2amU/DngOu6MbZsFu
+	imS+9rKNCoHiSWCygylCdFVjB4Jv/j1A=
+X-Received: by 2002:a2e:8a96:0:b0:37c:cf34:536c with SMTP id
+ 38308e7fff4ca-38bf95e8ad2mr42901711fa.3.1774287679365; Mon, 23 Mar 2026
+ 10:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260323110151.2352832-1-andre.przywara@arm.com> <20260323110151.2352832-4-andre.przywara@arm.com>
-In-Reply-To: <20260323110151.2352832-4-andre.przywara@arm.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 24 Mar 2026 01:10:28 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66j9vNEZ1_srapB9T2ASiTt5ERPfS24LE=aOKAMPt_-Ow@mail.gmail.com>
-X-Gm-Features: AQROBzDk1tGxLjoHwtXmw1tvFQAdkXahJu6ZBHXleJQXSQSs109gwXgcaBwuezI
-Message-ID: <CAGb2v66j9vNEZ1_srapB9T2ASiTt5ERPfS24LE=aOKAMPt_-Ow@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: sun55i-a523: increase IRQ bank number
+References: <20260323110151.2352832-1-andre.przywara@arm.com> <20260323110151.2352832-6-andre.przywara@arm.com>
+In-Reply-To: <20260323110151.2352832-6-andre.przywara@arm.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 24 Mar 2026 01:41:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v648WLXK9KjXcCRKy_mQGMkn8mhxKHSukh-WC4i=sXZGbg@mail.gmail.com>
+X-Gm-Features: AQROBzCqD4rc3G7BUhX053yGDoWgA9I1BieDaebJcNf25nsrRp_pPWGt7aUxUjc
+Message-ID: <CAGb2v648WLXK9KjXcCRKy_mQGMkn8mhxKHSukh-WC4i=sXZGbg@mail.gmail.com>
+Subject: Re: [PATCH 5/5] pinctrl: sunxi: a523: add missing IRQ bank (plus old
+ DT workaround)
 To: Andre Przywara <andre.przywara@arm.com>
 Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -79,18 +64,158 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, Mar 23, 2026 at 7:02=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
 com> wrote:
 >
-> The Allwinner A523 SoC implements 10 GPIO banks in the first pinctrl
-> instance, but it skips the first bank (PortA), so their index goes from
-> 1 to 10. The same is actually true for the IRQ banks: there are registers
-> for 11 banks, though the first bank is not implemented (RAZ/WI).
-> In contrast to previous SoCs, the count of the IRQ banks starts with this
-> first unimplemented bank, so we need to provide an interrupt for it.
-> And indeed the A523 user manual lists an interrupt number for PortA, so w=
-e
-> need to increase the maximum number of interrupts per pin controller to 1=
-1,
-> to be able to assign the correct interrupt number for each bank.
+> The Allwinner A532 SoC implements 10 GPIO banks, each of which is
+> interrupt capable. However the first bank (PortA) is skipped, so the
+> indicies of those banks range from 1 to 10, not 0 to 9.
+> We described the skipped bank correctly, but missed that for the IRQ
+> banks, where we rely on the IRQ bank index to be aligned with the MMIO
+> register offset, starting at 0x200.
+>
+> Correct that by increasing the number of IRQ banks to 11, to cover both
+> the first skipped one, but also the last one (PortK). This fixes a bug
+> where the interrupt numbers would be off-by-one, due to that
+> mis-enumeration.
+> The big caveat is that now old DTs break the kernel, since they only
+> provide 10 interrupts, and the driver bails out entirely due to the last
+> missing one. So add a workaround for this particular case, where we
+> detect the requirement for 11 banks, but only 10 interrupts provided,
+> and continue with 10 IRQs, albeit emitting a warning about a DT update.
+> This would still be broken in terms of interrupt assignment, but it was
+> broken the whole time before, so it's not a regression.
 >
 > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c |  2 +-
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c       | 22 +++++++++++++--------
+>  2 files changed, 15 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c b/drivers/pinctr=
+l/sunxi/pinctrl-sun55i-a523.c
+> index b6f78f1f30ac..a1d157de53d2 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
+> @@ -17,7 +17,7 @@ static const u8 a523_nr_bank_pins[SUNXI_PINCTRL_MAX_BAN=
+KS] =3D
+>  /*       PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
+>         {  0, 15, 17, 24, 16,  7, 15, 20, 17, 28, 24 };
+>
+> -static const unsigned int a523_irq_bank_map[] =3D { 0, 1, 2, 3, 4, 5, 6,=
+ 7, 8, 9 };
+> +static const unsigned int a523_irq_bank_map[] =3D { 0, 1, 2, 3, 4, 5, 6,=
+ 7, 8, 9, 10 };
+
+Actually you don't even need this, since this is a linear mapping.
+
+From sunxi_irq_hw_bank_num():
+
+    if (!desc->irq_bank_map)
+            return bank;
+    else
+            return desc->irq_bank_map[bank];
+
+>  static const u8 a523_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =3D
+>  /*       PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
+i/pinctrl-sunxi.c
+> index 6a86b7989b25..ffee79397590 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/of.h>
+>  #include <linux/of_clk.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+> @@ -1582,6 +1583,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_d=
+evice *pdev,
+>         struct sunxi_pinctrl *pctl;
+>         struct pinmux_ops *pmxops;
+>         int i, ret, last_pin, pin_idx;
+> +       int num_irq_banks;
+>         struct clk *clk;
+>
+>         pctl =3D devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
+> @@ -1715,16 +1717,20 @@ int sunxi_pinctrl_init_with_flags(struct platform=
+_device *pdev,
+>                 goto gpiochip_error;
+>         }
+>
+> -       pctl->irq =3D devm_kcalloc(&pdev->dev,
+> -                                pctl->desc->irq_banks,
+> -                                sizeof(*pctl->irq),
+> -                                GFP_KERNEL);
+> +       num_irq_banks =3D pctl->desc->irq_banks;
+> +       /* Workaround for old A523 DT, exposing one less interrupt. */
+> +       if (num_irq_banks =3D=3D 11 && of_irq_count(node) < 11) {
+> +               num_irq_banks =3D 10;
+> +               pr_warn("Not enough PIO interrupts, please update your DT=
+!\n");
+> +       }
+
+I would probably make the check universal, and also use dev_warn().
+
+    num_irq_banks =3D of_irq_count(node);
+    if (num_irq_banks !=3D pctrl->desc->irq_banks) {
+        dev_warn(&pdev->dev, "Incorrect number of PIO interrupts,
+please update your DT!\n");
+        num_irq_banks =3D min(num_irq_banks, pctrl->desc->irq_banks);
+    }
+
+Otherwise,
 
 Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+
+
+> +       pctl->irq =3D devm_kcalloc(&pdev->dev, num_irq_banks,
+> +                                sizeof(*pctl->irq), GFP_KERNEL);
+>         if (!pctl->irq) {
+>                 ret =3D -ENOMEM;
+>                 goto gpiochip_error;
+>         }
+>
+> -       for (i =3D 0; i < pctl->desc->irq_banks; i++) {
+> +       for (i =3D 0; i < num_irq_banks; i++) {
+>                 pctl->irq[i] =3D platform_get_irq(pdev, i);
+>                 if (pctl->irq[i] < 0) {
+>                         ret =3D pctl->irq[i];
+> @@ -1733,7 +1739,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_d=
+evice *pdev,
+>         }
+>
+>         pctl->domain =3D irq_domain_create_linear(dev_fwnode(&pdev->dev),
+> -                                               pctl->desc->irq_banks * I=
+RQ_PER_BANK,
+> +                                               num_irq_banks * IRQ_PER_B=
+ANK,
+>                                                 &sunxi_pinctrl_irq_domain=
+_ops, pctl);
+>         if (!pctl->domain) {
+>                 dev_err(&pdev->dev, "Couldn't register IRQ domain\n");
+> @@ -1741,7 +1747,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_d=
+evice *pdev,
+>                 goto gpiochip_error;
+>         }
+>
+> -       for (i =3D 0; i < (pctl->desc->irq_banks * IRQ_PER_BANK); i++) {
+> +       for (i =3D 0; i < (num_irq_banks * IRQ_PER_BANK); i++) {
+>                 int irqno =3D irq_create_mapping(pctl->domain, i);
+>
+>                 irq_set_lockdep_class(irqno, &sunxi_pinctrl_irq_lock_clas=
+s,
+> @@ -1751,7 +1757,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_d=
+evice *pdev,
+>                 irq_set_chip_data(irqno, pctl);
+>         }
+>
+> -       for (i =3D 0; i < pctl->desc->irq_banks; i++) {
+> +       for (i =3D 0; i < num_irq_banks; i++) {
+>                 /* Mask and clear all IRQs before registering a handler *=
+/
+>                 writel(0, pctl->membase +
+>                           sunxi_irq_ctrl_reg_from_bank(pctl->desc, i));
+> --
+> 2.43.0
+>
+>
