@@ -1,130 +1,203 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208573FE661
-	for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2026 15:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774364841; cv=none; b=WmnyfgSX9tlNHbYS8yKGuzmrIebRcuAV93WX/zUvIfFqpQ88kPHLujJebtjk7HUMQ7hC1IQG3VKJ4A6HXSWoUUOxO9FcvoAuOAdhSNL/aXcNhKjlKNiUeGzdtJN59z3934DglCiB/LMsoZFY9kouWuOxelzMG6gWaPnFPndN0dU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774364841; c=relaxed/simple;
-	bh=Q04xTA47YRKeBfrjPIYFQ1qHCYl+rBBRZENWaoTJKQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aU6aWtge5m8Ylmhccn4ec28e+o8+3LEAr2sWrz/9Fgk1MUdJxQq8C7P8g4drQrxO8GaBdQdcY7B0zB3o7tmY6EVoYum6OoGtniayn45ZdrORtDiIzC09RbtoLyLVRZMfKmof2c195ORKRQhyob//0qc10tdeB9JLSE+hHxGkd54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WPYgVs1v; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D713630BB
+	for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2026 15:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774367531; cv=pass; b=K5ynQ96ACI4+CjxRWPQdcGVqk4x00MKAZN4kiKO30anGBg53SHnaRjsdNyAR5JrRbnWRhgO6j7yiDsW/e1M4su32u3K3Qgaop4FZUaaVD7IZT8rUOipZvepSWNb3S4grdC7bVTEmsUwrAblNp/d1+cWCP9qYEKuJL0OSmZqJPVw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774367531; c=relaxed/simple;
+	bh=MeB5P/o+6ukbkA61NR67lkTMMytZ8ZhzDzkbS6f7sZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M5qSPWaQJqxeNfHjaPPMSAOH2mEVBCRg9cgE5saFPFRWaEKH8/coOOaFdEk/WGnGqhMcs4yVNydO+yNdtkxh6HBLouU/6MCBRtN9SkxpCEK+P6tFKSRIlK8U9j9qp0w8+v127LTJ9IR4uoGH/YLO+Jh9wvbTfXDMDHJijYXpNIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=tKuDR9LJ; arc=pass smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPYgVs1v"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43b41b545d9so1410838f8f.2
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2026 08:07:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tKuDR9LJ"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b9825ba7f9dso3196466b.0
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2026 08:52:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774367528; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WJxoLTTbMLNroF1TiX5qJf7T9kwbWaXM7vmW0nAZThtzpmUXuxU+5hAamtqN+eesWn
+         sYxtgI1UxPWUtCR8FrD02B/579SZiGE0qLrS20LS06PEhpyTQKA3agPcyq+XBUgF1PRy
+         w3o8Vy1Bd+936j7Y0dXoyt9P7YYE3eAg2OtT4WRuuPDvYcDPO+4lzabh3uRZg41jD+7X
+         NMRerJ65vkpJ0yhx3yZDZif/qBa5dohnZzYGMbXt3Yg5XDN925HzqAAQYdHlrOZZkija
+         /xLbMQxwJRMK0fu9VIRP+MIRHeDnjgi0tp5/0xUsDOZKrFtidDRcwMyyKZm/ktxu3JDk
+         NChA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lD7l9bDtZUKA/Q1Nlb2bt3XnckUYIqjo8i1RjZDuiQU=;
+        fh=io43wJQ4nmgNkVHEzPrwdpW+5DvsiUM3ODwg2l3+IFI=;
+        b=dfDIQRQC3qdxAZxBV9NLGAJJC0zKXaqzOaoBdVfXJIfgwhRzdEarNFMPt4GIovvl2z
+         rzzmcOY7PUBTlpxxO7QsuadKInKJsExQkgC5NNTpLogFzAi7fTd4keMcft6vhDZfUHOX
+         9TohHpOgvsMslKLRO7gXciTnWZqzR0qXUYS4AvcmP3KnkM/sAG6BpH1AKV9CG/LZFwqb
+         Th1TLBE3pblvidh7qYIQssqvRsBpbkxksnIRtWZKnIWBgny2uWAP+JltA1Lx7ZS43/GN
+         MjAvPDoHUSrzmzyts/uiA5Dsa16HJ8J/myGE+DvZcHmC31SOjf1+ykAZu1XgDHJMZ1GZ
+         oIww==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774364838; x=1774969638; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=P5ZdFYh1bLXmKv/xLtFTZBUW421AXSY/+eTav2poOSM=;
-        b=WPYgVs1vvlJxrW66Dv7qlUt66UywnTrZCBQSndwjltVBxvl5tShGCI9OFgTwCSH3gt
-         X2IsrfLQ4aT6Lg2Y671cSJQnKKIy/h2OYhtJrqxj+j+z+wDJvbWBxiUU+JgkkbkcVpVs
-         XtcfaMSIEjogdtVFD+BSwIqo+4ykm61hctBuqKWOosihwRd0A0TYbyx7tRs7UUx8iA+m
-         B/abbvqNiGcpJvWFHqbLXoM5S6oDEpF6ATVu1u4rQXDvj7yJUcuwIcVw/mbElTQ5RPLJ
-         N+sW9jy+BLtVrNDmLQPa3PoCJfZxE+Qzy4ecoEEo/QK6RoisU3fsbslcyuaET9UKMwGl
-         7AJA==
+        d=gmail.com; s=20251104; t=1774367528; x=1774972328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lD7l9bDtZUKA/Q1Nlb2bt3XnckUYIqjo8i1RjZDuiQU=;
+        b=tKuDR9LJvdkt8/vPynnMgaP4vLMCFbdoG1nlhonK97Jq5LZDwph8mGbKcs0Thii4Oj
+         h1on/ZNLx8vK4jdkFP5KXP3OiNdIavPfyvPB7a1fvdu5sgfi72VrnV2GiMI5N3GV7BtB
+         mDun79UU/fTByv1Q9w64/XrunbddSSA/u6tN0irJFjb5MptDQLh2QxLKmEdDteoWrU8p
+         spyBlcN9IN7o3vC5OOH5jcQiXDSrbTRiLoAxQap89LHTFVUtV9Npyizrq2NHdx83OhsR
+         DaWPw1+JA0RFGqjorbK9D79SN0SfoyZrfcZ6RgJezX5TQX0gen17lkwZwuj6P8tV5z5W
+         1McA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774364838; x=1774969638;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5ZdFYh1bLXmKv/xLtFTZBUW421AXSY/+eTav2poOSM=;
-        b=eHtI5YfkT5hUnPcuBQuOTApfVEYqkK5PQG+QCxheP/tPEow7fMJlB7FHci5N7eBWOI
-         /vvkVKdySFUDrwhwNrNHX+cFatXXXe1KxfvGDoR5yKejJQjkxV458J/4IgVeU3o60Xb/
-         UMxu73FQM2sJBVbTVWECaKwYKsnmlS730cWdU43FBShrab1yvSXlp/qQWv0eHSBgRB0e
-         /61AH6WT62gudgW2TPRYbO8fqA+dWT19HtRm99pVepmf72mGzkBdQVyA1J271roVJQnQ
-         7eVzb7zNfp6NEuuHbfe+cIdIvvXUVJjFIA3o6AfBbOTTJtbjClDVJXaeHzUW3vckqIex
-         p50g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9f80JwdS3fVmX5bBl5Ko7pWV2Kew21B0yq/qZVYW9zhUpLdNQ8Ty/GTBhF9DdePmR2vdg5HcInBVp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCaV3eQGjkYfViHkbiyM18/1K4xYWhW/UOaFUOHduFbgl/C7UA
-	zuz5QjtZGHs9oSneIWGXSct1D2fso64xqoA3raUkrCXokaVqXh6X9+AITGcX/BFaGHY=
-X-Gm-Gg: ATEYQzxRnEZWVtM/rbdeSUZx4u24+hgr40avsQwQpIlUOCzoKIXpF0gZwgKBdxs/apm
-	x3d79GQqeP2aj9NoMcmU3Oh+ifhYO0SC/DKjT0/9d+hUjskQy3duByjHYPsjBPr4tbZJ7huBbtL
-	u+ql/AQG6qbbonRAIrQDn5MOaPk9otvqVMNh9L6pfFwvhU4FMHz16yuQm7RyXkKmy1ktBto95ej
-	RORz0bfISOqanmhOriBLal8BNCBsyzlq0Pavhgparwhg1msvEgy6jaNY6uQYuFY1iSj7t3G9h66
-	P8vpO7l+pcYYlAwI/o9Kc46aCNAhDZJwlrxvM1Gre10PCSxLyJOIFLaH9B5hsD8goChWLiv09ue
-	wOfT5Edw10HT0bVrR0/1J7trapxcPXPjRH8A2Uxtsqv7243Bcyc906skyCJ46oLqfSUeVPIZJnD
-	pQs/ucGX9hkTu2cX526EhanjKlWAR9
-X-Received: by 2002:a5d:64c6:0:b0:439:b4dc:1e1e with SMTP id ffacd0b85a97d-43b6426493fmr24948925f8f.29.1774364838270;
-        Tue, 24 Mar 2026 08:07:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6470393fsm39839147f8f.17.2026.03.24.08.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 08:07:17 -0700 (PDT)
-Date: Tue, 24 Mar 2026 18:07:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Tom Rini <trini@konsulko.com>, AKASHI Takahiro <akashi.tkhro@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>, Alice Guo <alice.guo@nxp.com>,
-	Marek Vasut <marex@denx.de>, Greg Malysa <malysagreg@gmail.com>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Yao Zi <me@ziyao.cc>,
-	Arturs Artamonovs <arturs.artamonovs@analog.com>,
-	Anis Chali <chalianis1@gmail.com>,
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Utsav Agarwal <utsav.agarwal@analog.com>, Ye Li <ye.li@nxp.com>,
-	Valentin Caron <valentin.caron@foss.st.com>,
-	Vinh Nguyen <vinh.nguyen.xz@renesas.com>, u-boot@lists.denx.de,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	arm-scmi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Khaled Ali Ahmed <Khaled.AliAhmed@arm.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: Re: [PATCH v2 3/4] scmi: pinctrl: add pinctrl driver for SCMI
-Message-ID: <acKooSHo_FB45nYH@stanley.mountain>
-References: <cover.1773256350.git.dan.carpenter@linaro.org>
- <1048331f5d3c8e0cdbe1542bcb65bbf942a4275b.1773256350.git.dan.carpenter@linaro.org>
- <CAD++jLmfRVGGHH1EqMAeSVHVCr1-s2JPyuY_w=2h35_mKUXj2Q@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1774367528; x=1774972328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lD7l9bDtZUKA/Q1Nlb2bt3XnckUYIqjo8i1RjZDuiQU=;
+        b=I/UbF0qVl/3SYP7MWn1iKPoPE5CvmkzR8irwagc1q/XfXN8Hf+RsWp8UUyqnUFCbrK
+         GGx6H4tj59aIoy8ycHLeYgsceFpBxnjBwdKP8LOE7d37GXwdCKxhbRZFyor7nM4dpBh4
+         7WZSkMAp78ndOcfBMcWVPX9V4dIJ1jZ3/hhFiDiBPS39OiXUNrueJMP59DJECkcX6wNG
+         qUoaerCeLReTStCUOmp7UTfYUld0AXAMEonsRh6U9GonDdyh6xpO/D8gr5sonj11BD7R
+         WQLYhUtbtjtUG5DnHe3RXtBlCnMOce6nC8sB3P/lfBfpbN52pimg23j5i9uM+UBfqZ+n
+         DFCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWICCTzJ2zYUUjGmXpoBuntpCZHlcjfZox/2L8sHfyVEZfny/0qSssLw3ITJhK0APsCEYyzq26nr1HY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ9/MvQy8molUkzYTZFjpOzOWc7ETIqyqAHK+gdCfV3zup25fi
+	CtTyI/JKWKsuzer8FfsAd09ShneQCKJ8+WmH3DX7bY+0/Idh/pHz+nwtqlj57WtpS5xzrCA1uis
+	jfGmKCh+mSHx5De2mklWDheCK62BGm8A=
+X-Gm-Gg: ATEYQzwVM5f8pi7UgjCl7hyPbzoF/QQJ+UGe9K12aXmIZhck6jW9+h5WjrJ1PFU3vsT
+	CkGnu/rGEbwuhbLZ5naSu6SJlaAsz0euA7+k18s/TAoFhbCw7eLmP/kmOQJRyQ5LhuBpVRmwcao
+	JxUSlSXTH0s/mBPkoG3p9oVd3zB6e/aLoZ2ob7vFviOHlxzG4eTqw8Ex7vjjCaPSNlMx1oWA5Ox
+	9/1QDt1I8ga1n4PwVYXFQpvGOqWzOWCvvgqIZo8B7VzZYMyia3EU0cDRZK1KAwtpadsp6JN+Jnn
+	lklVHXr46G5YXzP3jaqlag2AUP9jP3+eenKIewkqMIwidZntuUjxkgrLUeVWiz92DSSg3/WkRjN
+	oYTAY5w==
+X-Received: by 2002:a17:907:7b87:b0:b88:5b72:ec39 with SMTP id
+ a640c23a62f3a-b988630badcmr241190966b.5.1774367527875; Tue, 24 Mar 2026
+ 08:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jLmfRVGGHH1EqMAeSVHVCr1-s2JPyuY_w=2h35_mKUXj2Q@mail.gmail.com>
+References: <20260319000558.22108-1-rosenp@gmail.com> <202603201104.8D7B8A1@keescook>
+ <CAKxU2N8ZZp5fcCWfMaqZ9VKwNQ3a06fsQPXpBQa-d1N07zPGng@mail.gmail.com>
+ <CAMRc=MctGTeqBHQ8zaQ7_2YAoWoTUxOK4_hs+-EHEQEPnz+A-g@mail.gmail.com>
+ <CAKxU2N9KdziPen9-_gfe0UZjyuMTOsbb583aeF3=kqm22rGieA@mail.gmail.com> <CAMRc=Me2RLj-vvCVNho9CPYVwsQHypC_KvKHJWkLyj=rMkfx2w@mail.gmail.com>
+In-Reply-To: <CAMRc=Me2RLj-vvCVNho9CPYVwsQHypC_KvKHJWkLyj=rMkfx2w@mail.gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 24 Mar 2026 08:51:56 -0700
+X-Gm-Features: AQROBzA3I7YQY7GsShXPNk_xQ1egepYa_RDQXlRXjm_maNSW7HaU5ezLIW7I0hk
+Message-ID: <CAKxU2N8gudRXR-bLMoyDVDuv3vWuzqrbyVsHL=Gu3mDZWMvs6w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mockup: allocate lines with main struct
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, linux-gpio@vger.kernel.org, 
+	Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 24, 2026 at 02:19:34PM +0100, Linus Walleij wrote:
-> On Wed, Mar 11, 2026 at 8:41 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> >         scmi_pinctrl: protocol@19 {
-> >                 reg = <0x19>;
-> >                 pinmux1: pinmux_test {
-> >                         pinmux = <0 1 0xFFFFFFFF 18 1
-> >                                   0 2 0xFFFFFFFF 18 1
-> >                                   0 3 0xFFFFFFFF 18 1>;
-> >                         function = "f_gpio1";
-> >                         groups = "grp_1", "grp_3";
-> >                 };
-> >         };
+On Tue, Mar 24, 2026 at 2:16=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.or=
+g> wrote:
+>
+> On Mon, 23 Mar 2026 17:43:00 +0100, Rosen Penev <rosenp@gmail.com> said:
+> > On Mon, Mar 23, 2026 at 3:00=E2=80=AFAM Bartosz Golaszewski <brgl@kerne=
+l.org> wrote:
+> >>
+> >> On Sat, Mar 21, 2026 at 12:00=E2=80=AFAM Rosen Penev <rosenp@gmail.com=
+> wrote:
+> >> >
+> >> > >
+> >> > > static int gpio_mockup_probe(struct platform_device *pdev)
+> >> > > {
+> >> > >         ...
+> >> > >         u16 ngpio;
+> >> > >         ...
+> >> > >         rv =3D device_property_read_u16(dev, "nr-gpios", &ngpio);
+> >> > >         ...
+> >> > >         gc->ngpio =3D ngpio;
+> >> > >         ...
+> >> > >         chip->lines =3D devm_kcalloc(dev, gc->ngpio,
+> >> > >                                    sizeof(*chip->lines), GFP_KERNE=
+L);
+> >> > >
+> >> > > But this begs the question: why add nr_lines when ngpio is already=
+ part
+> >> > > of the struct:
+> >> > Maintainers for some inexplicable reason want an extra variable for
+> >> > __counted_by works.
+> >>
+> >> I believe what Kees means here is: you can use ngpio for __counted_by(=
+) like so:
+> >>
+> >>   __counted_by(gc.ngpio)
+> > __counted_by doesn't support nested variables like that.
 > >
-> > Under linux the pinctrl subsystem will parse the function and group
-> > properties and use that to handle muxing.  However, under u-boot the
-> > pin muxing is done using the "pinmux" property, which feeds raw SCMI
-> > pinctrl PINCTRL_SETTINGS_CONFIGURE commands to the server.  The
-> > numbers are: selector, identifier, function_id, config_type, and
-> > config_value.  In the example above, it sets pins 1, 2, and 3 to 1.
-> > The linux-kernel ignores this pinmux property.
-> 
-> This whole thing is a bit of a hack and shortcut to make hard things
-> simple isn't it?
+> > drivers/gpio/gpio-mockup.c:59:61: error: =E2=80=98gc=E2=80=99 undeclare=
+d here (not in
+> > a function)
+> >    59 |         struct gpio_mockup_line_status lines[] __counted_by(gc.=
+ngpio);
+>
+> The following spin on your patch builds fine for me:
+>
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index a7d69f3835c1e..9427ab8c45f73 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -52,10 +52,10 @@ struct gpio_mockup_line_status {
+>
+>  struct gpio_mockup_chip {
+>         struct gpio_chip gc;
+> -       struct gpio_mockup_line_status *lines;
+>         struct irq_domain *irq_sim_domain;
+>         struct dentry *dbg_dir;
+>         struct mutex lock;
+> +       struct gpio_mockup_line_status lines[] __counted_by(gc.ngpio);
+You're using an older compiler. This does not work at all.
 
-I'm not disagreeing with you at all, but handling the default pinmux
-property is the only mandatory part of a pin controller driver in
-u-boot.
-
-regards,
-dan carpenter
-
+ * Optional: only supported since gcc >=3D 15
+ * Optional: only supported since clang >=3D 18
+>  };
+>
+>  struct gpio_mockup_dbgfs_private {
+> @@ -436,15 +436,16 @@ static int gpio_mockup_probe(struct platform_device=
+ *pdev)
+>         if (rv)
+>                 name =3D dev_name(dev);
+>
+> -       chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> +       chip =3D devm_kzalloc(dev, struct_size(chip, lines, ngpio), GFP_K=
+ERNEL);
+>         if (!chip)
+>                 return -ENOMEM;
+>
+> -       mutex_init(&chip->lock);
+> -
+>         gc =3D &chip->gc;
+> -       gc->base =3D base;
+>         gc->ngpio =3D ngpio;
+> +       gc->base =3D base;
+> +
+> +       mutex_init(&chip->lock);
+> +
+>         gc->label =3D name;
+>         gc->owner =3D THIS_MODULE;
+>         gc->parent =3D dev;
+> @@ -460,11 +461,6 @@ static int gpio_mockup_probe(struct platform_device =
+*pdev)
+>         gc->request =3D gpio_mockup_request;
+>         gc->free =3D gpio_mockup_free;
+>
+> -       chip->lines =3D devm_kcalloc(dev, gc->ngpio,
+> -                                  sizeof(*chip->lines), GFP_KERNEL);
+> -       if (!chip->lines)
+> -               return -ENOMEM;
+> -
+>         for (i =3D 0; i < gc->ngpio; i++)
+>                 chip->lines[i].dir =3D GPIO_LINE_DIRECTION_IN;
+>
+> Bart
