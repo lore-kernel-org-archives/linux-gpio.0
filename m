@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A31526ED45;
-	Tue, 24 Mar 2026 00:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B551531C8;
+	Tue, 24 Mar 2026 00:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774312232; cv=none; b=nnsQk0Ftwz9vKTQWALB3mZpD1rZXhGA0ws2EKfAYZH0GMX094p5ce5Iti//u4ky5PMEpfTCcPLi8HVd3PdPoaFoZCY27x8i4L/xCN3bRQNMm/lxNZp4TXes/mf3VUbNBOoqjXGEKXV16rZ2p6WFFzooIaTGKqSfxpxf/IbIF+5I=
+	t=1774312238; cv=none; b=S2fX3N72ooAYxfrI6bpfwO0jc6Ii4gnpX1Fng5qO3Viw+3gA01QKA08aHKCh186zkflqVWwfpYFWeW9xpl+U2WoTCwvG7neEZ0Kpnz4WNBoMcvZ1i/nLtiGjSXzHvOH0cMNmv7st2IiJk8haoKLI6jCPJcPyt7VG4cIxvVqYPI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774312232; c=relaxed/simple;
-	bh=xyq7M5WH+tUvUH9Nfp5zstwN2Q2LJRghZaYduv/xBI0=;
+	s=arc-20240116; t=1774312238; c=relaxed/simple;
+	bh=X1i/VZEKkmSxaUnc9VvTEnbQWg76BcLl9EkryKFkjIY=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=fNCGGEBiPwop+rc4AVaPbhJz4FrrP+mJbL6GNXNMGBQRxyZdKviZdHAW9SU8xNTQanobP3U9jZbJGLF1c/x407gMuzud992o5Mb5jVMhHS1yFWGAMMh106DggVdR4SVsL/zIjg3l2NkMtziNp1iLfVvLbVhqI3KXP6RWNuno288=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkHRugh6; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=Vo1LTMbGuD90J7GsgsIJ5nixGKTPvLpv7iP8zHSDi+xvtWIo5JJl+43WB1tS0zl03a4wTdrsVuHQQSywBNmniufLZbHAgFGQwxkRxIZsSqBCzfPwoRGoiORwXgOsRObA5KHEZ/ic29w/a7qLXjKlxDVCYaThZA22MD3LT3CvQ9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsEKtsmj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkHRugh6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEBEC4CEF7;
-	Tue, 24 Mar 2026 00:30:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsEKtsmj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619F0C4CEF7;
+	Tue, 24 Mar 2026 00:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774312232;
-	bh=xyq7M5WH+tUvUH9Nfp5zstwN2Q2LJRghZaYduv/xBI0=;
+	s=k20201202; t=1774312238;
+	bh=X1i/VZEKkmSxaUnc9VvTEnbQWg76BcLl9EkryKFkjIY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GkHRugh6RNVLyiGOQxMpXtCDaMm96ebWsshbJVeMGbiGdbV4V32BG2s/s+sefW73L
-	 +gy/w20hPl7Djdoa5uZ+ilc71d9O8JJ7NTQ1dumtcRkmiU0KMn91fkgOoLQxF8wla3
-	 a4f54qg6hMhVR3TooqGd6wLJqDC69ijxqz9bqv6469gVY6Vi+OKCRKG6sBnNzqB0wd
-	 0SsS0ihFYCJ0iA8a52DkgrF+1IPja2xECB37hFPKNFL06rrphgAWNy7WxYwQ7bIEq+
-	 SSx08Z4aLpVu+jM+OH8K612tcM7qKX9q+nscqPGCQlCfjOZIsZc2pIQ3EGQwyTz5p2
-	 LtNVNIN/5boxg==
+	b=LsEKtsmjUk0DQM1PejAQBVeWwXavbHWrGBewfAbu+OfjWVDphOek7R9oI332iHpJM
+	 PQmyNSIN5/tAxnb0oW/weQpvYmpZxCstf/dkS1b0bisEIUqOn5CJ1GvpDNmRe7bzDn
+	 X8HjpJ0d0kFqE/VGZuUDbqJ/XTYgFp4f8opCSE+TEFoJAVq74LZTm/cZbIO+i6mvv/
+	 xnelwWMngd6cMIyXoFLpckAvcb/O0oZZWYuis6bbLq5FmYUYYX8q03GO+ihOeOu+JA
+	 1c/WYPEGLiTY+MvHxsP8+PN+zCe2DieSbl4hKnzSTM7AEATTeeBIsP9NiR0gfEwT5I
+	 S7CNa+tJdVqLQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -34,20 +34,25 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260316-eyeq6lplus-v4-8-bf44dfc7a261@bootlin.com>
-References: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com> <20260316-eyeq6lplus-v4-8-bf44dfc7a261@bootlin.com>
-Subject: Re: [PATCH v4 08/13] clk: eyeq: Adjust PLL accuracy computation
+In-Reply-To: <20260316-eyeq6lplus-v4-9-bf44dfc7a261@bootlin.com>
+References: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com> <20260316-eyeq6lplus-v4-9-bf44dfc7a261@bootlin.com>
+Subject: Re: [PATCH v4 09/13] clk: eyeq: Add Mobileye EyeQ6Lplus OLB
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
 To: =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Date: Mon, 23 Mar 2026 17:30:30 -0700
-Message-ID: <177431223029.5403.13883616523797608645@lazor>
+Date: Mon, 23 Mar 2026 17:30:36 -0700
+Message-ID: <177431223645.5403.16653850109546680332@lazor>
 User-Agent: alot/0.12
 
-Quoting Beno=C3=AEt Monin (2026-03-16 08:25:45)
-> The spread spectrum of the PLL found in eyeQ OLB is in 1/1024 parts of the
-> frequency, not in 1/1000, so adjust the computation of the accuracy. Also
-> correct the downspreading to match.
+Quoting Beno=C3=AEt Monin (2026-03-16 08:25:46)
+> Declare the PLLs and fixed factors found in the EyeQ6Lplus OLB as part
+> of the match data for the "mobileye,eyeq6lplus-olb" compatible.
+>=20
+> The PLL and fixed factor of the CPU are registered in early init as they
+> are required during the boot by the GIC timer.
+>=20
+> Also select clk-eyeq for all EYEQ SoCs instead of listing each one
+> individually, as it is needed by all Mobileye EyeQ SoC.
 >=20
 > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
 > ---
