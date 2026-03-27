@@ -1,115 +1,76 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E188381AF4
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 11:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9892732F770
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 13:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774611833; cv=none; b=PYaU9vH1vsG2k2SJYbuHxgwgZTDyDfif0KtG0qQX0cPfCXywFA/cY367bkU/3fppJwF1KPkJ7uTdgUZxLnrdXOR+qYMqIE0gkdDKHcXvKRFtDkMYYbsQCJNIl3gR2LUZ0IapGNOoYOy7KFvSjaMpokXm+4ync686U4p8glc4R6M=
+	t=1774616636; cv=none; b=oz46AdQN8hpHz0yVP5e2HDLNEP7KYiTnT26GurLoYLEw8qKn6BjsyvtyTSJbVAUfMfbHyOg/04lbwv/+BA04YC9RUmiLGOeI54iFBgIqhsPpZWO/7Bchh4nlNCL6T5KDPO6ZtGxsciz6JoiCn20yDPDKJZ+ZHEUs+1yMN4oszX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774611833; c=relaxed/simple;
-	bh=FEc9lT0BW2KeKXQ3ChIovGLpCHr9pq972Nq5Th8ooKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G+mjqZBfthfCg2YNcSi/Or/HYM47GmxgFIkA0CqmNB/nNcA3Vbsmwj51tvXEDHHlq3wkmsy55EyGoaAQmWVOio59Xw8ibLEOPZChFHyS1/bYhY0SLgdLHLOtgIVxV2lyvsQPGv22xdBdq93nNi/Q59sIn4Z6UNvM4827pcCrfNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BabSZsKn; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774616636; c=relaxed/simple;
+	bh=Q631Oqw0ZISbaZruj/xtEA3A6Iah1CZkcKaX/jg5vjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q9Tf4OK4OiQr2c7YAjjGcMbvFgFSTjUnrQNxiJmqgIUFVzre/R/cpdAKgBToxbCbH4zd1aF71gIa//GfefddIE/GgonByf1P9+pWKVHBojhk/ghXrJ2x0aL38PXiIxr1aI6YC9rp4z3ibYDapqNHUxH03TBFkX3b9DyltdqKZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOpYot00; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BabSZsKn"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-486fd27754bso18819115e9.3
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 04:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774611830; x=1775216630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FEc9lT0BW2KeKXQ3ChIovGLpCHr9pq972Nq5Th8ooKA=;
-        b=BabSZsKnOO99HHWQQXFoIzpAxk3giCxlB76Y+7KLcZeZmxpVZgmiW+YW9jCAXCgAiX
-         AE3eDs+oS6YqW3cb/fXeIZPUlCUlxXrTk53O7vi0DzfloC+3IQpRzEDG/VbEq9DVfAtf
-         SzWCrtjghdEXC/fe4cEjIPGvx4IxNX4TECqyKauorHzyxNiydYY83F6PbuSDbF1Pnk7t
-         F/DR3Bilwdey/aBj5hi3h7LKMZ4967TXtn8ZG6+cbdl/ZaC8j8R9CYuvy+/wuBDxKUwm
-         2ly+4iLa9+ZzKlUkMKkh8/gLYbdzKtJse9e43Dk7+j84OiwRzjFuiMjIujgnCwXYt6oZ
-         EQyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774611830; x=1775216630;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FEc9lT0BW2KeKXQ3ChIovGLpCHr9pq972Nq5Th8ooKA=;
-        b=YQ6ExkoXr8SrcGqXOCA7QZDNvwFXziiJBsrmAyZBbp5jyCSff2xQnS3uVhUBtaJwnP
-         8FdQUTmjLJPcTx8pXDlkgvfNRQzjDezb2AR/ylx/4RK8sT3EIUZH69rCViBnSDuMWZGS
-         AFvbBMN1qYZV4fZX/FzhlUEiKRr05xeQ7AAj/f9tGMGJugNbdjD3RdxfNAyz2DXSx48D
-         c0OAgmRyHumk1QbPhFw5gjfTh+J15B5+1bf+uDMV2Km/4cUc53E9D/BHLKHewFq6JxJd
-         SRqNt3Z8rjNOccQeEVPZdXXGFLE49ez46nK3XnHvAh4p4VoTzapi1EQrOq2oglkKMyJJ
-         fzFQ==
-X-Gm-Message-State: AOJu0YwjB1EcSWVWU+ATsKfOegmKbnYdiq1MaG5Xy3N5exAecXTp15ZZ
-	7yHuc2C59+SHS5O6aJQ7CQo8Wc7N3yuGtXTMuv11FUDsIda5UxKXu5vr7JZfRZaeY/I=
-X-Gm-Gg: ATEYQzxkgZW+Lo21tcl7soWC6q1/CrTyoF+tdXHuWJrXoFvS3YGG3y1yVOgcDYiiF+S
-	ndF9G9CfPn16yLOsuy//5AYLCYdOT0uGYZB99AcZ1zuwkmyECHfyJsHvAyFeTKMBk9xISWQlbVc
-	uMJfQEUL+NsLVYL6Vo3MipmivipzaX8HfLxZArsLpNLIqNXts8Ct5F1GDQPQPyNJu2a+AomTqPB
-	SVwA8uRZXe2+l5NEZpHUPxQHVhU7DAgc5EIJiqpsErMFb/Ev39npPU5cJiKWwPWjWx5UapEKFVU
-	Xx5jQ+PGLce5bJI9wq7jn8Kp20jc3f46zA0p7UFAVnCFyFeiIdOZq9jKRF++3gPwJu18w8INNqj
-	3E5ulMECxZEXjanD2tzVP6Jxhpy2GN1Y7seWZMzcG71sXWzyJqlqMMKmqdiyYrkNikXUtLByOm/
-	uH2mSC5XszVurz2KOcv3O9TmOkN/qglLPKMh9Mi6toc45kH+XRV4LVIn9rPiJWz1vjd0+JEcsea
-	cX82mQsVcYMa6ugqA==
-X-Received: by 2002:a05:600c:a06:b0:487:1108:48af with SMTP id 5b1f17b1804b1-48727d59ce3mr37657225e9.4.1774611829936;
-        Fri, 27 Mar 2026 04:43:49 -0700 (PDT)
-Received: from jernej-laptop.localnet (118.red-213-98-130.staticip.rima-tde.net. [213.98.130.118])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919df903sm14813099f8f.30.2026.03.27.04.43.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2026 04:43:49 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Samuel Holland <samuel@sholland.org>, Andre Przywara <andre.przywara@arm.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 1/3] pinctrl: sunxi: a523: Remove unneeded IRQ remuxing flag
-Date: Fri, 27 Mar 2026 12:39:42 +0100
-Message-ID: <2822911.mvXUDI8C0e@jernej-laptop>
-In-Reply-To: <20260327113006.3135663-2-andre.przywara@arm.com>
-References:
- <20260327113006.3135663-1-andre.przywara@arm.com>
- <20260327113006.3135663-2-andre.przywara@arm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOpYot00"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658EDC2BCB3
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 13:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774616636;
+	bh=Q631Oqw0ZISbaZruj/xtEA3A6Iah1CZkcKaX/jg5vjE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aOpYot003uoG26Sc46oGD5+zx/X9KKz9khWSftKsNimSqbpu55ouaYhau4lL6rN7S
+	 /mzn6ZjMS6UxtieeM0H0fwh3tq2fNbI0vV9kr00NtMrXlvqrgE+9Mu6lqfHePNJtIM
+	 QErdGzHpyL5coiTzbWR3h1W4aSHgPEOmEjk+FQH9H4pFBSd6Wh7xxMQzWFOY5z723L
+	 HR2j1TwyxKZJBGIGcMuSCNKFZZcWP9rUqCubHYxiAsTGi5faF7bCMvD3UhoK//8O49
+	 2qxriCQUQgBEkHGzxykQqNLKTmmSnuK/OfMO8gZdPKO9ErkEzNBcCg5c11SHVWFSyA
+	 ibGgwo51dCGnA==
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6500040ef83so219490d50.2
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 06:03:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW//Y2l5Swwb/kUdWDt/Rmv6Gt1QH9CEsIwCNOoBcwYiXQlLuSWF+JTDtIJY6dSU8zCb/4VuDTHL9K4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+PsFzQPwDHtQuNW2CifVDN+tYQfXroJy6LSt8y5RrAhvqMra2
+	kPL1Qj5j0ZcjxK7lSy6BDa4H9xfsdfM0wiLIkR83kXFRbPtipyK2LZxnWypWrcgohi7NHcU8hLd
+	Xt0AwUiiOIsIjJM+CIB7nK6y3RidGiC4=
+X-Received: by 2002:a05:690e:4005:b0:64e:a408:4326 with SMTP id
+ 956f58d0204a3-64ff74428a7mr2104976d50.70.1774616635573; Fri, 27 Mar 2026
+ 06:03:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260327-gpio-kill-dev-sync-probe-v1-0-efac254f1a1d@oss.qualcomm.com>
+In-Reply-To: <20260327-gpio-kill-dev-sync-probe-v1-0-efac254f1a1d@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 27 Mar 2026 14:03:44 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnyVZqntVThzVo-nTCQGAckR-_+MDy7_5D_mfoy5DRAZA@mail.gmail.com>
+X-Gm-Features: AQROBzAT1fbdVY9U2Jk7XBs4SqGVLjy-lFIY6t7k7psMt75QOA1H-2KBpEGjAdA
+Message-ID: <CAD++jLnyVZqntVThzVo-nTCQGAckR-_+MDy7_5D_mfoy5DRAZA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] gpio: kill dev-sync-probe
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Koichiro Den <koichiro.den@canonical.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne petek, 27. marec 2026 ob 12:30:04 Srednjeevropski standardni =C4=8Das j=
-e Andre Przywara napisal(a):
-> The Allwinner A10 and H3 SoCs cannot read the state of a GPIO line when
-> that line is muxed for IRQ triggering (muxval 6), but only if it's
-> explicitly muxed for GPIO input (muxval 0). Other SoCs do not show this
-> behaviour, so we added a optional workaround, triggered by a quirk bit,
-> which triggers remuxing the pin when it's configured for IRQ, while we
-> need to read its value.
->=20
-> For some reasons this quirk flag was copied over to newer SoCs, even
-> though they don't show this behaviour, and the GPIO data register
-> reflects the true GPIO state even with a pin muxed to IRQ trigger.
->=20
-> Remove the unneeded quirk from the A523 family, where it's definitely
-> not needed (confirmed by experiments), and where it actually breaks,
-> because the workaround is not compatible with the newer generation
-> pinctrl IP used in that chip.
->=20
-> Together with a DT change this fixes GPIO IRQ operation on the A523
-> family of SoCs, as for instance used for the SD card detection.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Fixes: b8a51e95b376 ("pinctrl: sunxi: Add support for the secondary A523 =
-GPIO ports")
+On Fri, Mar 27, 2026 at 11:31=E2=80=AFAM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> I came up with this elaborate mechanism to synchronously wait for the
+> platform devices activated over configs to probe, involving notifiers
+> and completions (which was later factored out into what is today the
+> dev-sync-probe module) because I didn't know any better. It turns out
+> there's an idiomatic way of achieving the same goal with much less LOC.
+> Port the three drivers to using a combination of wait_for_probe() and
+> device_is_bound() and remove the dev-sync-probe module.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Best regards,
-Jernej
+That looks way better!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-
+Yours,
+Linus Walleij
