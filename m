@@ -1,157 +1,189 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C95378828
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 17:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9534107A;
+	Fri, 27 Mar 2026 17:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774631582; cv=none; b=gi5T5v667DidPTmRgM5crCyP0E8ihGwIIzqkiHeb52mkoy87xGc4OS8Bx42IxHtE+eBrxdHe0czN+hRsapOkTti6EXo1minkg0OgnKjXPTi9/A8CwUcGw6fvKUr7I1RQT76OHCWE6WH5NKBB+1YH+xoUmhFu1k7mw3ohNtVr+eo=
+	t=1774631691; cv=none; b=Ie6KxvzyTvt6kw4mbW7WC4Zk6oAJxHuS/EVOFG0ivCIBb7kljNxFZO3L9xcdbUA2rWXSLjSgRczSFq+kfwaa0qeKtOmpmeNO9/+zfpdGCPPwufpIV+mnMEXtDpx9r2Vb8cNzZEtunR8T8fivJfLg6WaoXvr5+tpAwcbq5UaQ2Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774631582; c=relaxed/simple;
-	bh=/88q1mBjtIUH3ikMUjzzgHW29LsNAOlut+Hvt3btdUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=utNqQXEiGvznrm6OlZwcRHTpOTkc65uyDPj6qQlHpi6+Fv57UKHuPaARsGPIl3GTS3arjv1p0KtJ2Wnly21BnFxooqnavE/lcLrg3S7CuYZU/27rmVibwnHpjnxRYEbF1BcNpKCAw4hYKYvhogcVy/m7q5gRwrQjcEAPsKkcr9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ebSdERS9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EfpnsUL9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774631691; c=relaxed/simple;
+	bh=K/gLTO9BZCY9CeZMqLSveaXc5Cq+EEiHtsmhIau0ADg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPSZ+IF1kzsCPUW3/hGUwvjQHjudZuVhjLEqdDSdK9v26d7rgFNcYrOnmkGCQ8bF1P9od3H4N2sYs+NzlLrFNBF2/zfvDaztrSx7P9gLnEF4Bf3sBv6cSamWqmmDQii0IVMmm8+omAEfU8SVjzyoGsf4Bcao4crkOPL6e48WaKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCuOyAx6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ebSdERS9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EfpnsUL9"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62RDhDxf3084541
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 17:13:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=5zMoHjLJU3cM1Hpjqd/5HAsL+E4+G1/iC0T
-	UDeYx3Yw=; b=ebSdERS9w8kS+m1wOE7PgtzgJ1NqC5xoC6JeufhDbRWIcoVzVWQ
-	ZhY3xYMiXmZG4rI+ETnxPE3lmSVX2pk2V0Qet1CNzpqQTgw/g6HYdalyjRxWSSML
-	Vm75MS9QGlPY1jBj6GTiPlMgOKxTBDR3c+XwYp7xVd+kMxNBSuo/jGnRYBSJZoGF
-	GX6OA9WwJYyEpOi43jzI/QPVO5P/QYCyZE6NIp5sVrMZD0qt1MQ8QSYUkErEvYQO
-	eJMwSd2+9jQ6s5tCYFob5zqwUUBOSWdmUUZ+WrjnBzEreFVpgXM/5JTY2OhOXx0h
-	ViLmvjTBaPJj5oo+gKnidVAP6jvDdJr0BAg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d5mn129aq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 17:12:59 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c741f038f7cso1618127a12.2
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 10:12:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774631579; x=1775236379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5zMoHjLJU3cM1Hpjqd/5HAsL+E4+G1/iC0TUDeYx3Yw=;
-        b=EfpnsUL9ETzeJ+yaD6bFVP1CegfbBqDQBBM57bMKXpqUj+MPo099xMjIXaxxDo9R9F
-         sH7XXVKiwIR5thgAjqElDluo8aFMBfmmvqgT1KXL1MjfyucEsQmmiQgSWjyqysRVPbEk
-         UZElRQv0EmLJRKqFtdjDpyHfxVrYitUm+t8J3BsKYR+qcmAyJaQINbBgwDBhbOuq/Ykz
-         Fn/WCmS0/xRCexS72Au74+ARnw4Qpu7y+9a4vMljbWANjJlb70op8nblvPOau50XiPdU
-         twYdJ2nt9m/jlQlW7rLiQ9o5GWrknV8F++KDC0ZBHqlAV10FM+Cy6EHQ0NhMe1jwGsok
-         Bm3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774631579; x=1775236379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5zMoHjLJU3cM1Hpjqd/5HAsL+E4+G1/iC0TUDeYx3Yw=;
-        b=oDNihjHEfhxh4icP0x3pqEGenG4dGgsNI9afonGDKmAqKjcVPSIbNDkPWFaSaFoNZ8
-         6E0uYBcXQQaUoWqLNcm1JPbnSoS3osIf7ckCJtHjj+7shVavl5sz8FsudP9Ts+rXMn6W
-         /M7tKqLOJp4xKQf3HiYSTE6qWIXGMXhLqqdlPdlDhL1gUia7Q6MpMbyCge4xgwzpi4Xb
-         GgEMfZI9bRnNcW0MlmUbDUb97ITPyOey+6Y4/C5fWotRjOs0cCHc+fzTjXnmcllls4xf
-         0AQ8LbnMHa4SsPYWZyzs5yNFHjMTXZi7ivA2G4j06Z8fR1ld6lAuyJDeBbskLCa2eIO+
-         ejKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqkrRVS5ElycpyDIBaTyLWHgiPxJ7ROvpn3yPISoCnZpRmMdFvdpLeyOMdtxtTnHmbmauGi4Qw75ct@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEOmZ3OAf6/JG4pO3lkO7sp6eHc9aHb/DhayDxPyUBdzny8L3W
-	BSVfSSPaA63JB3r7ObIGvlRk3bAWL+bCRvdCCG/BDc/VQngGZUMC63pRVPg4vm9qkmMIkb49cbF
-	WHcKLP6x5ANN4UCaJfsaqr5XBReT4gENjDOnVxeIRyWxT00yPEJrD5UhcH/qa7qxA
-X-Gm-Gg: ATEYQzyiUtCdBMZETVgcbLq0Xrt42WGpVd9STT/4S4un1elDM5iRmJKLG+zgXYZEAKn
-	xu1lxygqtbL/h38Hb+wV+7yHoV9gwor/OuvjbZdqbiT/lr44H7/uvbyBDdW3pe8QkJqxl9N+bSG
-	8G1X76gcKO5Jbrdm6FX4KKSOkDrcb/7fhxVZ8lYE09dJ1X2NoDqurgK4DouyZiY5qsAFtRX2iHZ
-	XHJGQuPApjRhWS7I7p3JlIcfSc3wb99J3WgLFdoLR+6ta3buU74bMY+6jJyVqeYziByTkOX+fRC
-	H4/SMeoocDueLKTvusoXZUgjtxDmIuDrLUzQu/aE1kS4rhjrQQEc7Ls4XBZkAluldezEb634wSy
-	fTAwFilNVc/bAWiUnam0IMrd0RcUNn8aOlBjZ4lLcYV6IlzWp
-X-Received: by 2002:a05:6a00:438a:b0:82c:7f08:8826 with SMTP id d2e1a72fcca58-82c95e915fdmr3259551b3a.17.1774631578719;
-        Fri, 27 Mar 2026 10:12:58 -0700 (PDT)
-X-Received: by 2002:a05:6a00:438a:b0:82c:7f08:8826 with SMTP id d2e1a72fcca58-82c95e915fdmr3259515b3a.17.1774631578130;
-        Fri, 27 Mar 2026 10:12:58 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82c964f9e9bsm2531517b3a.49.2026.03.27.10.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2026 10:12:57 -0700 (PDT)
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, stable@vger.kernel.org
-Subject: [PATCH 1/2] pinctrl: qcom: eliza: Fix interrupt target bit
-Date: Fri, 27 Mar 2026 22:42:39 +0530
-Message-ID: <20260327171240.3222755-1-mukesh.ojha@oss.qualcomm.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCuOyAx6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39C6CC19423;
+	Fri, 27 Mar 2026 17:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774631690;
+	bh=K/gLTO9BZCY9CeZMqLSveaXc5Cq+EEiHtsmhIau0ADg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rCuOyAx6bXbHXajLcXofBRMQm35IYQDU9GeYsBogWpYwfCnUYTJGXt6+v35nSrrFU
+	 HDjf1ex5dYyzsq2AwhQ/rczEJKB1+MiuHBuuwFyobz+Qrigx5CBetrKN5GmM+8cK80
+	 AMAxXa5dOY9UyC+k5KAyq51evGL4yEBKw18x4jizpmhP+HVUAucCbE+gmlR22q3Bg5
+	 B3/p5bZ5Iuevgf14+hn3YzMtB/AHWZ3kjQ36VzlujXJ1GI8kATRd5+qFqAAj9w2dmE
+	 7Z4fXodO3VRjXOm37LKcvTfCqx2wVeuLpDgNjb9FqNDFln/3CV+uJJPC6wWhPwT8iT
+	 6cbQo9gfPsAww==
+Date: Fri, 27 Mar 2026 17:14:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Peter Rosin <peda@axentia.se>, Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Haibo Chen <haibo.chen@nxp.com>
+Subject: Re: [PATCH v4 3/7] pinctrl: extract pinctrl_generic_to_map() from
+ pinctrl_generic_pins_function_dt_node_to_map()
+Message-ID: <20260327-cymbal-reliant-30f1e7e0cfcb@spud>
+References: <20260325-pinctrl-mux-v4-0-043c2c82e623@nxp.com>
+ <20260325-pinctrl-mux-v4-3-043c2c82e623@nxp.com>
+ <20260327-overdrawn-stretch-2311ec39aa58@spud>
+ <aca2UquiW9lFikhR@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI3MDExOSBTYWx0ZWRfXyAyVDZQCWs/h
- 5OtswVVrz+IuR9Y9pON9jFI1qcK2Al5LM23e/z1lROkdsqsdxeyIxaW1BEho2GElmU9aAgQFPht
- lKaVRFYwowPGoG8Ir2gZdqhTuoqOSgRMS6Jv8JSZaNlTvgvyv6YmCef/bDmNiJCFGmhes3qm1H8
- ipUzA/KdtNGEzzCSw/AfiBm4bbgQyhFUyR7yPEHcblzHeexdSm5GLQzsiOY1D165u6XpsoXVIlq
- 5n3CZXKqp3Nh47wQ7k9d2B72HfSGOD+nscr5UEJvInE7y+G4O+uHxajGb0QY5Fgs680ZOi1h/xV
- dvXsz8ielKg2sfBua26H1yvUkZaOFSOnssdQ0yTKdZ1H9XFaSJ8fMBTaE43KBYnSwZ2hzPmKBVp
- 5EDz6WkxMWodCW8byB6D3W7sL7E7uuhnwnmT3yiMwBiOOzLzZlTi8oLP5zV+1A5xsoUnct1GKHn
- 9DwZGLkp55S2xhfPsvQ==
-X-Authority-Analysis: v=2.4 cv=CcwFJbrl c=1 sm=1 tr=0 ts=69c6ba9c cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=_UdXETfmjGnjTIlQpucA:9 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: hBXefB8GhgyOMHq3dM2d01BLPKhlRdJM
-X-Proofpoint-GUID: hBXefB8GhgyOMHq3dM2d01BLPKhlRdJM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-27_01,2026-03-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603270119
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pAa+sME3mtw+rhIt"
+Content-Disposition: inline
+In-Reply-To: <aca2UquiW9lFikhR@lizhi-Precision-Tower-5810>
 
-The intr_target_bit for Eliza was incorrectly set to 5, which is the
-value used by older Qualcomm SoCs (e.g. SM8250, MSM8996, X1E80100).
-Newer SoCs such as SM8650, SM8750, Milos, and Kaanapali all use
-bit 8 for the interrupt target field in the TLMM interrupt configuration
-register.
 
-Eliza belongs to the newer generation and should use bit 8 to correctly
-route interrupts to the KPSS (Applications Processor). Using the wrong
-bit position means the interrupt target routing is silently misconfigured,
-which can result in GPIO interrupts not being delivered to the expected
-processor.
+--pAa+sME3mtw+rhIt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by aligning Eliza with the correct value used by its peer SoCs.
+On Fri, Mar 27, 2026 at 12:54:42PM -0400, Frank Li wrote:
+> On Fri, Mar 27, 2026 at 12:09:32AM +0000, Conor Dooley wrote:
+> > On Wed, Mar 25, 2026 at 07:04:12PM -0400, Frank Li wrote:
+> > > Refactor pinctrl_generic_pins_function_dt_subnode_to_map() by separat=
+ing DT
+> > > parsing logic from map creation. Introduce a new helper
+> > > pinctrl_generic_to_map() to handle mapping to kernel data structures,=
+ while
+> > > keeping DT property parsing in the subnode function.
+> > >
+> > > Improve code structure and enables easier reuse for platforms using
+> > > different DT properties (e.g. pinmux) without modifying the
+> > > dt_node_to_map-style callback API. Avoid unnecessary coupling to
+> > > pinctrl_generic_pins_function_dt_node_to_map(), which provides
+> > > functionality not needed when the phandle target is unambiguous.
+> > >
+> > > Maximize code reuse and provide a cleaner extension point for future
+> > > pinctrl drivers.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > change in v4
+> > > - new patch
+> > > ---
+> > >  drivers/pinctrl/pinconf.h         | 18 ++++++++
+> > >  drivers/pinctrl/pinctrl-generic.c | 91 ++++++++++++++++++++++++-----=
+----------
+> > >  2 files changed, 74 insertions(+), 35 deletions(-)
+> > >
+> > > diff --git a/drivers/pinctrl/pinconf.h b/drivers/pinctrl/pinconf.h
+> > > index 2880adef476e68950ffdd540ea42cdee6a16ec27..ffdabddb9660324ed8886=
+a2e8dcacff7e1c6c529 100644
+> > > --- a/drivers/pinctrl/pinconf.h
+> > > +++ b/drivers/pinctrl/pinconf.h
+> > > @@ -166,6 +166,13 @@ int pinctrl_generic_pins_function_dt_node_to_map=
+(struct pinctrl_dev *pctldev,
+> > >  						 struct device_node *np,
+> > >  						 struct pinctrl_map **maps,
+> > >  						 unsigned int *num_maps);
+> > > +
+> > > +int
+> > > +pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_no=
+de *parent,
+> > > +		       struct device_node *np, struct pinctrl_map **maps,
+> > > +		       unsigned int *num_maps, unsigned int *num_reserved_maps,
+> > > +		       const char **group_name, unsigned int ngroups,
+> > > +		       const char **functions, unsigned int *pins);
+> > >  #else
+> > >  static inline int
+> > >  pinctrl_generic_pins_function_dt_node_to_map(struct pinctrl_dev *pct=
+ldev,
+> > > @@ -175,4 +182,15 @@ pinctrl_generic_pins_function_dt_node_to_map(str=
+uct pinctrl_dev *pctldev,
+> > >  {
+> > >  	return -ENOTSUPP;
+> > >  }
+> > > +
+> > > +static inline int
+> > > +pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_no=
+de *parent,
+> > > +		       struct device_node *np, struct pinctrl_map **maps,
+> > > +		       unsigned int *num_maps, unsigned int *num_reserved_maps,
+> > > +		       const char **group_name, unsigned int ngroups,
+> > > +		       const char **functions, unsigned int *pins,
+> > > +		       void *function_data)
+> > > +{
+> > > +	return -ENOTSUPP;
+> > > +}
+> > >  #endif
+> > > diff --git a/drivers/pinctrl/pinctrl-generic.c b/drivers/pinctrl/pinc=
+trl-generic.c
+> > > index efb39c6a670331775855efdc8566102b5c6202ef..20a216ae63e91b69985ea=
+4cfcd0b57103c6ca950 100644
+> > > --- a/drivers/pinctrl/pinctrl-generic.c
+> > > +++ b/drivers/pinctrl/pinctrl-generic.c
+> > > @@ -17,29 +17,18 @@
+> > >  #include "pinctrl-utils.h"
+> > >  #include "pinmux.h"
+> > >
+> > > -static int pinctrl_generic_pins_function_dt_subnode_to_map(struct pi=
+nctrl_dev *pctldev,
+> > > -							   struct device_node *parent,
+> > > -							   struct device_node *np,
+> > > -							   struct pinctrl_map **maps,
+> > > -							   unsigned int *num_maps,
+> > > -							   unsigned int *num_reserved_maps,
+> > > -							   const char **group_names,
+> > > -							   unsigned int ngroups)
+> > > +int
+> > > +pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_no=
+de *parent,
+> > > +		       struct device_node *np, struct pinctrl_map **maps,
+> > > +		       unsigned int *num_maps, unsigned int *num_reserved_maps,
+> > > +		       const char **group_names, unsigned int ngroups,
+> > > +		       const char **functions, unsigned int *pins)
+> >
+> > npins needs to be an argument to this function also, otherwise
+> > pinctrl_generic_add_group() uses it uninitialised...
+>=20
+> Is this one the root cause of then broken?
 
-Fixes: 6f26989e15fb ("pinctrl: qcom: Add Eliza pinctrl driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
----
- drivers/pinctrl/qcom/pinctrl-eliza.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No, this is not the cause of the breakage. I can't believe I still have
+to say that. Go read the code and you'll see why that allocation thing
+is problematic.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-eliza.c b/drivers/pinctrl/qcom/pinctrl-eliza.c
-index 1a2e6461a69b..19c706137f81 100644
---- a/drivers/pinctrl/qcom/pinctrl-eliza.c
-+++ b/drivers/pinctrl/qcom/pinctrl-eliza.c
-@@ -47,7 +47,7 @@
- 		.intr_status_bit = 0,		\
- 		.intr_wakeup_present_bit = 6,	\
- 		.intr_wakeup_enable_bit = 7,	\
--		.intr_target_bit = 5,		\
-+		.intr_target_bit = 8,		\
- 		.intr_target_kpss_val = 3,	\
- 		.intr_raw_status_bit = 4,	\
- 		.intr_polarity_bit = 1,		\
--- 
-2.53.0
+> I am not sure why compiler have not report waring for it.
 
+It did, that's how I found it. Used uninitialised warnings are normally
+=66rom clang, so your toolchain might not have seen it. clangd integration
+with my editor is how I saw it.
+
+--pAa+sME3mtw+rhIt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaca7AQAKCRB4tDGHoIJi
+0tJOAP47mkwupF69iSRR/PJaWWFW6GDxmNFaLiYahpyjU+NVeQEAnZdw+Qj9g9Ik
+qNJvKTLF5rcBtj5CBnTu6h/gxd9oXQk=
+=B990
+-----END PGP SIGNATURE-----
+
+--pAa+sME3mtw+rhIt--
