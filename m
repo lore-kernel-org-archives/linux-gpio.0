@@ -1,67 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727F03EF65B;
-	Fri, 27 Mar 2026 14:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820C02459E1;
+	Fri, 27 Mar 2026 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774620907; cv=none; b=FjSw5YY7ANruIRZhNF7yCybhsQHfyC9RfedrCsnvYAjpZ+7kl8K8Lo0Znh2grOJEr84bD+Qm9uFQgxvi7KEeA4DsZmssjyoC1Rq/g/lv5VYwaN5pjnFqHVJ7EDGUwk1pnt0M9+QcguyeZvQ52R5hx2BwOs1L4YEkVU4wPhhLqhU=
+	t=1774623034; cv=none; b=bKzudrPtHGJZvFS4gvDxDRgYJoEwDKk8n5BV21i4o+qsyCr7hzMh0DYyduxjBpf1LVpy8b0UdFZJD8HVtcoyM/Inp6PX/wuIHZ6MlytvhHOxkFVEQ6Yd2aGlW27RB0UdmJBAcXQKfMwJJiWsRs9h0TCu8u6sGx31hk/uf/ptUKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774620907; c=relaxed/simple;
-	bh=mDiN3CwDrGxYxvIHxSISwYWQtGmSr6sfXYIrXdbxyiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1uFsRmG3yKK3F2waB4pMHOXyZE/+5fHwAlN0SS7bzCyvscknet8KI9zp7XGo5tPqcSWyG8/6U0lfoIzWyXDLLu//eDzfAW2Cpr+zG9rTNYZmAbPzXMosca0HOJaICYv6H31w5eLFyGT1czq0Mm+s2ngqLXOswc7jORjpD0EwnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTf8wCOK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774623034; c=relaxed/simple;
+	bh=zscjXi9MVK0FT3fVQJwSvaIPjyt14k6440PyKgBymwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o208hb7HTeV9LxNLHrWSVYKg9TJ5PYygD/Zn7Y4Ay+JYxo7G2aPrxmYCo2lRpfK1MmWGWOIogi9whfohVkWqKnO5P777kC+SMAAbe2tw5sVj6IB++hxlRsLKR6dH9jjDlCgZ/UUn4DE4o57kp6lc7sapmLSGpP7ga+xBpoTpnf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tbZMekGk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTf8wCOK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1671BC2BC87;
-	Fri, 27 Mar 2026 14:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774620907;
-	bh=mDiN3CwDrGxYxvIHxSISwYWQtGmSr6sfXYIrXdbxyiE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UTf8wCOK6X4yKAzSc2f24WMygbSUxlO57UzYhNphUBfRxXyppdBQZPlCUkxVBdrOH
-	 Uz7Fy6/0e/piqICij9fRz59LwPCoxO2IYxFt44MX1kOvlyXOAyWVSIgVYoaEjuqxvB
-	 YzBs49DByqBIFT7nak/Z27n61HyH242rT17TM6XQT9J9wKU4KIqZ1aTnNwf6CG0Qix
-	 pFPU+3LblCGigprhujlOD6nTqkJNOauA70GNtaJ/yMa65pqG0tlyxT0zRi7ohsCnli
-	 SIBsi0U3OQMzFx1cCKCEA6wKSgDde+8q71TS+q4Wb6NZXBw6V126ULtEalLyTs2lFc
-	 PJhb2lAF9csyQ==
-Date: Fri, 27 Mar 2026 15:15:02 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Linus Walleij <linusw@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 6/9] dt-bindings: i2c: apple,i2c: Add t8122 compatible
-Message-ID: <acaQ0tDphJH1OPH8@zenone.zhora.eu>
-References: <20260320-apple-m3-initial-devicetrees-v1-0-5842e1e393a8@jannau.net>
- <20260320-apple-m3-initial-devicetrees-v1-6-5842e1e393a8@jannau.net>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tbZMekGk"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A84091E31;
+	Fri, 27 Mar 2026 15:49:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1774622951;
+	bh=zscjXi9MVK0FT3fVQJwSvaIPjyt14k6440PyKgBymwE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tbZMekGko73w71JNSZuMM/9A+ve1pKguqY+bQOlLyqJ1LjSeEV6vSrs9agrVmVNGc
+	 WAfxWFZTOu6uCBjG/CUNJoFuvUx/OmU8yu9OYfdeQvpF+3FZcdSYDzHwlBV8CxVOEo
+	 owys2tZJWWWxBWPZ9rDknF74I4V4aQ/bog/TlnWQ=
+Message-ID: <732143c6-3cca-4b47-8e7f-7f8d1499d901@ideasonboard.com>
+Date: Fri, 27 Mar 2026 14:50:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260320-apple-m3-initial-devicetrees-v1-6-5842e1e393a8@jannau.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform: int3472: Drop redundant initialisation to 0
+ and NULL
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
+Cc: Antti Laakso <antti.laakso@linux.intel.com>, linux-gpio@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linusw@kernel.org, brgl@kernel.org,
+ mchehab@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
+ ribalda@chromium.org
+References: <20260317131040.215119-1-sakari.ailus@linux.intel.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20260317131040.215119-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Janne,
+Hi Sakari
 
-On Fri, Mar 20, 2026 at 01:23:24PM +0100, Janne Grunau wrote:
-> The i2c block on the Apple silicon t8122 (M3) SoC is compatible with the
-> existing driver. Add "apple,t8122-i2c" as SoC specific compatible under
-> "apple,t8103-i2c" used by the deriver.
+On 17/03/2026 13:10, Sakari Ailus wrote:
+> A few fields in structs containing regulator initialisation data for Dell
+> laptops are initialised to 0 and NULL. Drop the explicit initialisation as
+> redundant.
 > 
-> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
 
-Thanks,
-Andi
+>   drivers/platform/x86/intel/int3472/tps68470_board_data.c | 8 --------
+>   1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> index 6bec5a910396..c1ddbf9a82c0 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> @@ -151,8 +151,6 @@ static const struct regulator_init_data dell_7212_tps68470_core_reg_init_data =
+>   		.apply_uV = 1,
+>   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>   	},
+> -	.num_consumer_supplies = 0,
+> -	.consumer_supplies = NULL,
+>   };
+>   
+>   static const struct regulator_init_data dell_7212_tps68470_ana_reg_init_data = {
+> @@ -162,8 +160,6 @@ static const struct regulator_init_data dell_7212_tps68470_ana_reg_init_data = {
+>   		.apply_uV = 1,
+>   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>   	},
+> -	.num_consumer_supplies = 0,
+> -	.consumer_supplies = NULL,
+>   };
+>   
+>   static const struct regulator_init_data dell_7212_tps68470_vcm_reg_init_data = {
+> @@ -173,8 +169,6 @@ static const struct regulator_init_data dell_7212_tps68470_vcm_reg_init_data = {
+>   		.apply_uV = 1,
+>   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>   	},
+> -	.num_consumer_supplies = 0,
+> -	.consumer_supplies = NULL,
+>   };
+>   
+>   static const struct regulator_init_data dell_7212_tps68470_vio_reg_init_data = {
+> @@ -184,8 +178,6 @@ static const struct regulator_init_data dell_7212_tps68470_vio_reg_init_data = {
+>   		.apply_uV = 1,
+>   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>   	},
+> -	.num_consumer_supplies = 0,
+> -	.consumer_supplies = NULL,
+>   };
+>   
+>   static const struct regulator_init_data dell_7212_tps68470_vsio_reg_init_data = {
+
