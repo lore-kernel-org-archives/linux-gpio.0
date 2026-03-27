@@ -1,109 +1,221 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820C02459E1;
-	Fri, 27 Mar 2026 14:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396ED2EB87B
+	for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2026 16:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774623034; cv=none; b=bKzudrPtHGJZvFS4gvDxDRgYJoEwDKk8n5BV21i4o+qsyCr7hzMh0DYyduxjBpf1LVpy8b0UdFZJD8HVtcoyM/Inp6PX/wuIHZ6MlytvhHOxkFVEQ6Yd2aGlW27RB0UdmJBAcXQKfMwJJiWsRs9h0TCu8u6sGx31hk/uf/ptUKo=
+	t=1774629321; cv=none; b=p1gsBxSaiUxexaohwZHZEcTJFP5dGopESackQ8ixtTzwasb97/8qDrUMXSHd7qIdW1jDZX7N99+mZ7AqH/PwaLUZUHibvH7zYTlB6l0QEIfBjG7Mqu9VWBGLk26queFaV3pYQNI0sUmV8L+p8unuhotunWaMM5JGpuP1wMlPIsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774623034; c=relaxed/simple;
-	bh=zscjXi9MVK0FT3fVQJwSvaIPjyt14k6440PyKgBymwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o208hb7HTeV9LxNLHrWSVYKg9TJ5PYygD/Zn7Y4Ay+JYxo7G2aPrxmYCo2lRpfK1MmWGWOIogi9whfohVkWqKnO5P777kC+SMAAbe2tw5sVj6IB++hxlRsLKR6dH9jjDlCgZ/UUn4DE4o57kp6lc7sapmLSGpP7ga+xBpoTpnf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tbZMekGk; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tbZMekGk"
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A84091E31;
-	Fri, 27 Mar 2026 15:49:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1774622951;
-	bh=zscjXi9MVK0FT3fVQJwSvaIPjyt14k6440PyKgBymwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tbZMekGko73w71JNSZuMM/9A+ve1pKguqY+bQOlLyqJ1LjSeEV6vSrs9agrVmVNGc
-	 WAfxWFZTOu6uCBjG/CUNJoFuvUx/OmU8yu9OYfdeQvpF+3FZcdSYDzHwlBV8CxVOEo
-	 owys2tZJWWWxBWPZ9rDknF74I4V4aQ/bog/TlnWQ=
-Message-ID: <732143c6-3cca-4b47-8e7f-7f8d1499d901@ideasonboard.com>
-Date: Fri, 27 Mar 2026 14:50:27 +0000
+	s=arc-20240116; t=1774629321; c=relaxed/simple;
+	bh=8xtnfyOCPoMAjd/pmwd2+flY4k9ekfKU3fDWMuAiUOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Vx0qHXHs8OlqXgBe2HwgZe/xf4bVcb14g5tzDKDdUAhMsrHjzOnQFrmXq2YN+v/4rqmhhHJJPbdxEerWSRlXfufA3rU2k5mahphGRmlTc9yg4vDOeimGMWtFTnAJrqkz59BtrcqKAAgtx0tlbKOKjq7mos5IsllG6Z7rkvwoadk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1w6A9G-00066b-6m; Fri, 27 Mar 2026 17:35:02 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac] helo=dude04)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1w6A9F-002PtO-0y;
+	Fri, 27 Mar 2026 17:35:01 +0100
+Received: from ore by dude04 with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1w6A9F-0000000DnDN-0vkm;
+	Fri, 27 Mar 2026 17:35:01 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	David Jander <david@protonic.nl>
+Subject: [PATCH v7 3/6] pinctrl: core: Make pin group callbacks optional for pin-only drivers
+Date: Fri, 27 Mar 2026 17:34:47 +0100
+Message-ID: <20260327163450.3287313-4-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260327163450.3287313-1-o.rempel@pengutronix.de>
+References: <20260327163450.3287313-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform: int3472: Drop redundant initialisation to 0
- and NULL
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org
-Cc: Antti Laakso <antti.laakso@linux.intel.com>, linux-gpio@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linusw@kernel.org, brgl@kernel.org,
- mchehab@kernel.org, ilpo.jarvinen@linux.intel.com,
- hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
- jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
- ribalda@chromium.org
-References: <20260317131040.215119-1-sakari.ailus@linux.intel.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-In-Reply-To: <20260317131040.215119-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-Hi Sakari
+Currently, the pinctrl core strictly requires all drivers to implement
+.get_groups_count and .get_group_name callbacks in their pinctrl_ops.
 
-On 17/03/2026 13:10, Sakari Ailus wrote:
-> A few fields in structs containing regulator initialisation data for Dell
-> laptops are initialised to 0 and NULL. Drop the explicit initialisation as
-> redundant.
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
+However, for simple pinctrl drivers that act purely as GPIO controllers
+and pin-specific configuration proxies, without any concept of muxing or
+pin groups, this strict requirement forces the implementation of dummy
+callbacks just to satisfy pinctrl_check_ops().
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+Relax this requirement for pin-only drivers by making the group callbacks
+optional when no muxing or group pin configuration support is provided.
+Update the core and debugfs helpers to check for the existence of these
+callbacks before invoking them.
 
->   drivers/platform/x86/intel/int3472/tps68470_board_data.c | 8 --------
->   1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
-> index 6bec5a910396..c1ddbf9a82c0 100644
-> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
-> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
-> @@ -151,8 +151,6 @@ static const struct regulator_init_data dell_7212_tps68470_core_reg_init_data =
->   		.apply_uV = 1,
->   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
->   	},
-> -	.num_consumer_supplies = 0,
-> -	.consumer_supplies = NULL,
->   };
->   
->   static const struct regulator_init_data dell_7212_tps68470_ana_reg_init_data = {
-> @@ -162,8 +160,6 @@ static const struct regulator_init_data dell_7212_tps68470_ana_reg_init_data = {
->   		.apply_uV = 1,
->   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
->   	},
-> -	.num_consumer_supplies = 0,
-> -	.consumer_supplies = NULL,
->   };
->   
->   static const struct regulator_init_data dell_7212_tps68470_vcm_reg_init_data = {
-> @@ -173,8 +169,6 @@ static const struct regulator_init_data dell_7212_tps68470_vcm_reg_init_data = {
->   		.apply_uV = 1,
->   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
->   	},
-> -	.num_consumer_supplies = 0,
-> -	.consumer_supplies = NULL,
->   };
->   
->   static const struct regulator_init_data dell_7212_tps68470_vio_reg_init_data = {
-> @@ -184,8 +178,6 @@ static const struct regulator_init_data dell_7212_tps68470_vio_reg_init_data = {
->   		.apply_uV = 1,
->   		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
->   	},
-> -	.num_consumer_supplies = 0,
-> -	.consumer_supplies = NULL,
->   };
->   
->   static const struct regulator_init_data dell_7212_tps68470_vsio_reg_init_data = {
+Drivers that provide muxing or group pin configuration operations still
+must implement group enumeration and naming callbacks, and are rejected
+at registration time if they do not.
+
+Suggested-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+---
+changes v7:
+- no changes
+changes v6:
+- Reject drivers in pinctrl_check_ops() that use pmxops or group confops
+  without providing group callbacks.
+- Add <linux/pinctrl/pinconf.h> to core.c.
+- Revert the unnecessary NULL check in pinconf_show_setting(), since
+  group settings are now strictly gated.
+- Keep debugfs group listings tolerant of drivers without group callbacks.
+changes v5:
+- no changes
+changes v4:
+- add Reviewed-by: Linus Walleij ...
+changes v3:
+- no changes
+---
+ drivers/pinctrl/core.c    | 41 ++++++++++++++++++++++++++++++++++-----
+ drivers/pinctrl/pinconf.c |  9 +++++++--
+ 2 files changed, 43 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index b5e97689589f..19a9a370d7b9 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -30,6 +30,7 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pinctrl/devinfo.h>
+ #include <linux/pinctrl/machine.h>
++#include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinctrl.h>
+ 
+ #include "core.h"
+@@ -621,8 +622,13 @@ static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
+ 						  const char *function)
+ {
+ 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
+-	int ngroups = ops->get_groups_count(pctldev);
+ 	int selector = 0;
++	int ngroups;
++
++	if (!ops->get_groups_count || !ops->get_group_name)
++		return -EINVAL;
++
++	ngroups = ops->get_groups_count(pctldev);
+ 
+ 	/* See if this pctldev has this group */
+ 	while (selector < ngroups) {
+@@ -737,8 +743,15 @@ int pinctrl_get_group_selector(struct pinctrl_dev *pctldev,
+ 			       const char *pin_group)
+ {
+ 	const struct pinctrl_ops *pctlops = pctldev->desc->pctlops;
+-	unsigned int ngroups = pctlops->get_groups_count(pctldev);
+ 	unsigned int group_selector = 0;
++	unsigned int ngroups;
++
++	if (!pctlops->get_groups_count || !pctlops->get_group_name) {
++		dev_err(pctldev->dev, "does not support pin groups\n");
++		return -EINVAL;
++	}
++
++	ngroups = pctlops->get_groups_count(pctldev);
+ 
+ 	while (group_selector < ngroups) {
+ 		const char *gname = pctlops->get_group_name(pctldev,
+@@ -1769,6 +1782,11 @@ static int pinctrl_groups_show(struct seq_file *s, void *what)
+ 
+ 	mutex_lock(&pctldev->mutex);
+ 
++	if (!ops->get_groups_count || !ops->get_group_name) {
++		mutex_unlock(&pctldev->mutex);
++		return 0;
++	}
++
+ 	ngroups = ops->get_groups_count(pctldev);
+ 
+ 	seq_puts(s, "registered pin groups:\n");
+@@ -2049,12 +2067,25 @@ static void pinctrl_remove_device_debugfs(struct pinctrl_dev *pctldev)
+ static int pinctrl_check_ops(struct pinctrl_dev *pctldev)
+ {
+ 	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
++	const struct pinconf_ops *confops = pctldev->desc->confops;
++	bool needs_groups = false;
+ 
+-	if (!ops ||
+-	    !ops->get_groups_count ||
+-	    !ops->get_group_name)
++	if (!ops)
+ 		return -EINVAL;
+ 
++	if (pctldev->desc->pmxops)
++		needs_groups = true;
++
++	if (confops && (confops->pin_config_group_get ||
++			confops->pin_config_group_set))
++		needs_groups = true;
++
++	if (needs_groups && (!ops->get_groups_count || !ops->get_group_name)) {
++		dev_err(pctldev->dev,
++			"driver needs group callbacks for mux or group config\n");
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index dca963633b5d..81686844dfa5 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -275,7 +275,7 @@ void pinconf_show_setting(struct seq_file *s,
+ 	case PIN_MAP_TYPE_CONFIGS_GROUP:
+ 		seq_printf(s, "group %s (%d)",
+ 			   pctlops->get_group_name(pctldev,
+-					setting->data.configs.group_or_pin),
++						   setting->data.configs.group_or_pin),
+ 			   setting->data.configs.group_or_pin);
+ 		break;
+ 	default:
+@@ -348,8 +348,13 @@ static int pinconf_groups_show(struct seq_file *s, void *what)
+ {
+ 	struct pinctrl_dev *pctldev = s->private;
+ 	const struct pinctrl_ops *pctlops = pctldev->desc->pctlops;
+-	unsigned int ngroups = pctlops->get_groups_count(pctldev);
+ 	unsigned int selector = 0;
++	unsigned int ngroups;
++
++	if (!pctlops->get_groups_count || !pctlops->get_group_name)
++		return 0;
++
++	ngroups = pctlops->get_groups_count(pctldev);
+ 
+ 	seq_puts(s, "Pin config settings per pin group\n");
+ 	seq_puts(s, "Format: group (name): configs\n");
+-- 
+2.47.3
 
