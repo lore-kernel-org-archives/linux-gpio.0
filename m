@@ -1,312 +1,254 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103783AEF24
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 08:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECA43B27F4
+	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 08:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774859780; cv=none; b=jGBLBgfCEWB2sw8uUyw2VW+9h0k2R8/SNE+MiBVsdri4gjbgsrtZGy5moLbUO2R3uhQgrgcJoSE4wzv3fl+umGcXRb5KlO1mdtBs4gCn0y6WiU5W/MUvicZz4tavdsFyVQmsteTIw/NiNUdus3g7ysveavvLpSOUXJWfDzfYLfw=
+	t=1774859785; cv=none; b=Vq1zeXF+Y4GkCFc3IhUNZotxzrQPW9x5Q23XxYJsgKGh31BQ3fo0Ae79nMOOYSDxX5XE426ZD54KntE39DtNED1GQ89iC5jYijr7KbM6j+SdxcrNyCokCCaNndbofWM8reuL7o8HqVID05I6CofeoDgH4agBax9Uu07U0TUCjLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774859780; c=relaxed/simple;
-	bh=anCW4E0ZIGfXhJLFTLzLNgLyYjg6VA1+mUORsy7w8AY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fCnoevIIlld1g4OJMeaBYyNTzyJOYlG2PNVLAwzpt6MrLa/1+cJYPfE3L0WVGR1TDMS7E3hZI9afIOht8K2kExejsGw77Kq0cQN8kbYpNKMeoyPpzJ+5d/YYk1QUgA1QrW7vCEgRGVYDqMIfB9k3sdrpk+CMR52dzE0NbHCdqmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h8VVM2xq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JFwEm9Gz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774859785; c=relaxed/simple;
+	bh=qTaF7TRiZkTD1hP7KOH8ckvyLCF0n7wFHby0gHb6G+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L5Seakkhcr5Dv/Hk94bpinrhyD5HKwnsisHGwR/otyRqbZDde/3xnIC9zahsmU5oW79Vy9UDDhR+hYZBhrGoDK9X0Z7+u/bsVpcu3jfzZv6I6XBsx+AFLq4PaL1KSp077Wk0KA4pz+Qt/FlJpcSuCER8ffmGQKu9bwZC39Y9QkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4SzSiYK; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h8VVM2xq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JFwEm9Gz"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62U7Cf6w1534831
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 08:36:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=WiitO0Rwk/4O9hM9vTx4GO
-	7pPaNREZlLqZTvSluTHQM=; b=h8VVM2xqAetF9KqOCTl9h4nR3tT9UqQdxe5pre
-	YCb8OL81JokRlvqldUQyMctN0UzjYTbc6R+uw2lGNY5+Ev3eZy37cuI9euNc/bcD
-	vKz3Ym+8gCawEuQkhXIRsDGM6bqBcANiFqYjNncCOlz6aDyg7lrImQmrmKZBQbHL
-	FaKWzXL3J8S5iYqc7BahG0wcuhimnIJ11KedPvqkGwtEaVLHSFEKZR64hR9fzyN6
-	obWc80SxdWTeYSL0MsTby/jRWfOrU1bl+69NB4EIujU4G7gc80ADBatek/Kb4LRE
-	5Zeoyhl8jhBVPvlyPyFU57INlVeOIp2JmCXDLvc/Q1EvR0fA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d66jwnage-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 08:36:15 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5094ba09affso125010401cf.2
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 01:36:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4SzSiYK"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43cf73bbfbdso731699f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 01:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774859775; x=1775464575; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiitO0Rwk/4O9hM9vTx4GO7pPaNREZlLqZTvSluTHQM=;
-        b=JFwEm9Gz/dupmCIBV7fTltYz0kdRj8Mih4uta5vFKVw9ahsFBj7GVkeXeobiXVcYc5
-         VHtHWZPrYdAvHxtdRcyTADoA88R8stoFXr3ZZewl4fFhp5WuBUbQPkUvrnj4p6GdjEsV
-         uGP2z7NpretgZiSsAbpT6cRsnIA1mVFz2sIZyXBSQxziLPggbFyzqCL+pMEOUAu68uZZ
-         HCA38oblyEDbEglN7JV7dPr+mPWvi/9ZI1flcKd8hpzJgQpJfVU0jCqIEMazm45s4KXU
-         +wsh/vim4Oe8DDjMGZyS+qQBYemRRns3cyva61l2n30yLFdo+1WI+licyIQDji3UsLJA
-         LGOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774859775; x=1775464575;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1774859782; x=1775464582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WiitO0Rwk/4O9hM9vTx4GO7pPaNREZlLqZTvSluTHQM=;
-        b=K7gtdgyju0p9Uv5g20TFao6AxqZbhKKZh6TgwwuRP/s+E/f8C8wqU/Citr2kiGdC4d
-         QcsttxlnW2BTMuDhxv6WTEgbaCUe4F0BjKt5cJQ/ICijrB2YJ2d+ZBqOJKxbHxIwha7H
-         I5R4JNN7ibXk2vO4k+MwJ4n/7JN6lxEngTHk2rIpXMYE7HkhhmxbOnQAEgUHSFs1iDdz
-         TPECKei6sPUcoNY7UB7LSKEhR7zA5G0jc2NBhKaURK2tJZ8MmXcXQLCPkBNr9hnHSi6P
-         YHwzuhIkhnZ6c5Wz8P75xzFuzbz5mREpBvJtcYrugxJowe36XZbZvurRxLgUBXzzofZe
-         braw==
-X-Gm-Message-State: AOJu0Yx7gRsqswsdxx1HIc0CRwxW+oyITCx5/bZ44t3KcZ23VF0fl4bw
-	Ko/FxP7d6mIEOESPTVxNNsFvY5Zj2akg9rvoeYpXFJ1i1XhTVlBLrnwKRXfIpBtxWm00jOTDkBT
-	4PyswRDlcaXgXW5yEzKJRuDwlw2G/qEqWTnJPWRbSRvnNfPef/Y3MsyzZkw4QivwFIeWRsRmJ
-X-Gm-Gg: ATEYQzyv0SBs/xTBVLsTYUgfIMPPeK4f/2KWBlsZy07dIf69h4dhOa0Efir3JZ8MsMX
-	ORdpWA4nlGUmWDLf8XrlI2CEoOFm2EfxnJZjNw5rpDeMYuXBI+CWX81NM2Xo61Z0USY6FOOVqds
-	sskh0OO7O32wG44JVPxF2Bjo1vBdZz50QxaiZxf56MiYdxAKv7s8fRLI+QBaS5W2xSP//IKLz8H
-	xlABlQvyrmvfapJrISaM6GzPMBk8J/LHUCpIkDrm+AihTitJ63xQxTZ/bMr6gQ2Z9zUxACBQBLU
-	3h9R57FqDyITgmsZi/Pmq7qJ95Slt5rX9qj4g6RJO7dg+Yy87TNdwH6J54dyqHAJ38soJZtgueD
-	EAeqmVuTZxKsIrZxqCMqJATox9rffXFG+6SaDJmjGFPW9NgyWBuGl
-X-Received: by 2002:a05:622a:1ba0:b0:509:34b8:a373 with SMTP id d75a77b69052e-50ba38c25e3mr160915261cf.32.1774859775241;
-        Mon, 30 Mar 2026 01:36:15 -0700 (PDT)
-X-Received: by 2002:a05:622a:1ba0:b0:509:34b8:a373 with SMTP id d75a77b69052e-50ba38c25e3mr160915061cf.32.1774859774779;
-        Mon, 30 Mar 2026 01:36:14 -0700 (PDT)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:1143:869f:e06c:4587])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf245f8a3sm18652219f8f.24.2026.03.30.01.36.13
+        bh=nG1MlD4PN9leIlB74vSBgHn1juhdOfLFrGDifVzjZsw=;
+        b=J4SzSiYK5kI2aibt4kdXyUfvlKYalYT/v3/KZ5l6P6kEg06z6Rc0mq4zff9OuaJnJs
+         J5ifDQV8LY6nc1NyZV6S1zc+YC7bp4WhrkXVC8f94RMEYhmIQVR/aAv2IWAkID7E632r
+         fsDSpm2By/PYY0NcYpcH313CSQnrd33q8RSJ+h//OTTRhDzuLAqsNF1wLfjbbFvNGgIc
+         4ywKbuGIh98BVhsVWsQvPSC4tGzjrTS+Nopb6SAiBk1WZLIdgbT0h9VaZiUpNUaHRY0u
+         P2wstD08J5E4E8ozelcavhWCjrs6YWJ4CH6zaeqBoETFhTBxDAWAXjLSejOsZ+hd/Rfz
+         phaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774859782; x=1775464582;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nG1MlD4PN9leIlB74vSBgHn1juhdOfLFrGDifVzjZsw=;
+        b=ka6PnfKu2W4odey2X0eCwv+xrjCX4yEyneNpO/9j3GekcaWkUw0tbiFw6S2pogH+Pb
+         QCiGIYSkOCs40XzCPZTgUCFRuT1+pstgpoxTnr+rOnKipTkQgWA6dGQcEC1pvcAoXjg0
+         TwRJJnpxhtWoGJQB++5ZRcfFc9nzm9dewiqbrsigSukzpOR9a/Bt7mIbAtdGEqFR8EXa
+         tlT2SOEPmmQxGZFrKu33/lY7ONVM+9WdwWunW6HbzNCvt0dWyLm9XipGiNjJiUqyh625
+         WtqiPB6YOvJZGV0nYLXEboKDjgsafQj1ICawua1Ih/G8FgyAF6mh1X0ysawouhv/d+hW
+         eciQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcuqnPqKhI1AcHFw5NQX+BEYFZ/o7G9DxNWgJsNl+bLjbav/y8K2UMqdI9K4q210EhkeFlk9qDPaWN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQrCwv024eab1uH69hkdl1wPHbJwmDgFHSQ6JERqtdbkoi3Jp6
+	H6vBxIuYlcvl1UVPmFHHnp83VXqymyH6SY2678NOCUJWjqgdEfZauR4w
+X-Gm-Gg: ATEYQzxlnKZjva/XNOfl93N93ZD75hu34TmvHl2o0hmqxT0jqZFkAKG/3Hz5HjqEcHw
+	tVWN4e8GVFr9pcpkjd1+dTjc3joAKGBDY3aH+DDwgGPHo77mC3Fcl6zSy7SMf3Fevso0wDUoo8g
+	bED86zH0/eN8yICpctUz4KexwL82Ss2qdWj8GsENLn35gtIIX8pxG4RntySCyIhx5UFIT9G5k83
+	KlylPlcAIeFLCxsv6XOLeAdPr06OP+F19tU5p0eZf6HjSoiWTQl6LYFagppgAkXkcrzpQgqlLXV
+	zQ3TV6S/xr3LY/FEx3QRi3uflh+FmJHJm+eAvSLyemu9XncW697BzaJIfPg1iGmx8iFdwkazhiy
+	20Rh9lljeu1of9+D+mrjIEYWH9i8qkkugqqBDHlTVBkvo6IxSf9Zi3KUamqilzFfiL75lcPZvps
+	v7DgPY9K3Iq6CMUE8fVxc=
+X-Received: by 2002:a05:600c:c081:b0:487:e2d:f649 with SMTP id 5b1f17b1804b1-48728082001mr141204555e9.26.1774859781497;
+        Mon, 30 Mar 2026 01:36:21 -0700 (PDT)
+Received: from luca-vm.lan ([154.61.61.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48722c6b495sm508329995e9.2.2026.03.30.01.36.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 01:36:13 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Mon, 30 Mar 2026 10:36:03 +0200
-Subject: [PATCH v3] gpiolib: fix hogs with multiple lines
+        Mon, 30 Mar 2026 01:36:21 -0700 (PDT)
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+To: linux-mediatek@lists.infradead.org
+Cc: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Lee Jones <lee@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	Val Packett <val@packett.cool>,
+	Julien Massot <julien.massot@collabora.com>,
+	Gary Bisson <bisson.gary@gmail.com>,
+	Fabien Parent <parent.f@gmail.com>,
+	Chen Zhong <chen.zhong@mediatek.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v4 8/9] pinctrl: mediatek: mt6397: Add MediaTek MT6392
+Date: Mon, 30 Mar 2026 09:29:42 +0100
+Message-ID: <20260330083429.359819-9-l.scorcia@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260330083429.359819-1-l.scorcia@gmail.com>
+References: <20260330083429.359819-1-l.scorcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260330-gpio-hogs-multiple-v3-1-175c3839ad9f@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAPI1ymkC/33NSwqDMBCA4atI1o3koYl01XuULmyc6IAam2hoE
- e/e6KoL6WbgH5hvVhLAIwRyzVbiIWJAN6aQl4yYrh5boNikJoIJxaQoaTuho51rAx2WfsapB8o
- 1rxpZGW7LJ0mHkweL7wO9P1J3GGbnP8ePyPftXy5yyqkGWWtZaMsadXMh5K+l7o0bhjwNsqtR/
- ErqVBK7ZGTFZaEYFPZE2rbtC+0WtBoFAQAA
-X-Change-ID: 20260325-gpio-hogs-multiple-1718d38c1f5b
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5349;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=anCW4E0ZIGfXhJLFTLzLNgLyYjg6VA1+mUORsy7w8AY=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBpyjXzh89dCum1hpwJ7f0nmCEc24p187AIo2Ig1
- M16Y+fblV2JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaco18wAKCRAFnS7L/zaE
- w9IBD/9suGgwYLvz/LLQjUPtm435iWTwE9NX/kurJLjoo0RvMRPEtC6MN+HQJR1gZhyBpY6Iqvt
- Xn4SJE/MkUtPnVcmRGBelBpGvOE4E3SKvK9+o8MY+8SWbV7YWaSDlSzamFRDuoS0C4QrQSn/3vW
- Hhkbl//oLuvJJCF+tR7vcZtOu5VHJ5imsQysEbWalsU5XbLkn/Hzehzlen0CD6dz3U0DXEYXh2o
- TDb3NT4aoANY939bLUOt/ZMhYeriix8lFGd8ngYsBWuiomB3ZBMbr3rFGTVnypTYosYmzz9pOI5
- 8Asikiv8YwrBXqgWA/PWv9GSR/IAWm+FEQ8FVaKlkTA3Av23+gd4xTjWmzhVyVz4Ce3BEEi+EJj
- rKrdciVVThhNIYim0HMIe5kBB+R5LWHE/r4x2JE+I4r6qyzQbj6Q1hSARDLeqZfiRFGWKwntRwI
- 8SVTX9Q+gXkSoTC57lPtzO1Zl4Q5Vme1uGjiyu8zFJOxruRhdOjJ4FEwM4XqelsnfpNbAR0X7N3
- yKoVAK84rhEhdkFf6MKJ+BHKjZXdxH+4o0pOP49mbNw3A1zksRoalqsIPohuriH0pENCX8KgfAL
- mFrNBJ/tcG0Jq/XcCBOvjdmkzgsRUaoHWsha8apn1qq+n4Tum2F8+a5XzAspn76F7ZhKh9ONtDQ
- aTAPEhl8n59UN/g==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Authority-Analysis: v=2.4 cv=I8dohdgg c=1 sm=1 tr=0 ts=69ca3600 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=bC-a23v3AAAA:8 a=EUspDBNiAAAA:8 a=tBb2bbeoAAAA:8
- a=1mqqY-Va1JI0pYqkum4A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=FO4_E8m0qiDe52t0p3_H:22 a=Oj-tNtZlA1e06AYgeCfH:22
-X-Proofpoint-GUID: kHVH8LomLMfQQaSLop9OhXeQ2VcAiXK_
-X-Proofpoint-ORIG-GUID: kHVH8LomLMfQQaSLop9OhXeQ2VcAiXK_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMwMDA2NyBTYWx0ZWRfX/R8mKZNfS9xH
- ryZoVNfV/yCZcjLcLz9/C3fQMsX5QBfkIeyUHAHjSC6Ump92oFqDKlMh4zbux37cyTCLABt1cVO
- qgiHCGbEtdrGBB/ECOKOGVa2SQLRbHpfmZ0H0cGRzKDKZ4tN/ZHvH5degHZrjSXw92umjNRf+4l
- bbf47ZfppKunqIUY0PqL8ZqCZ/NNZAaUmRk+fDIlPEBnFypAOIJyUdYo4t5pGpTHPYbzoIMFM4N
- 70DmxqmTy11LNMJEIJp3JZKi/6GH5g+pEklzXYrwVY+5XSRjObMrS5fI9/r47rkTVORIH7/WvG7
- YptLYOb9lzxsEJshe0rweGG8ueLN7d3AOnWW5VSIk6bY+xMdTLCMYpb9+ayp01xp2Mao7+0fSrc
- M/3R0a0/kiaGSWI4UbSvn87NGxzFi3k2w3mEu8AzH7ahZH6WQi2D7uRBIoW0e+CRgtLvzFgwKGD
- krYad9E1k0K8bBB6NtQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-29_05,2026-03-28_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603300067
+Content-Transfer-Encoding: 8bit
 
-After moving GPIO hog handling into GPIOLIB core, we accidentally stopped
-supporting devicetree hog definitions with multiple lines like so:
+Add support for the MT6392 pinctrl device, which is very similar to
+MT6397 with a handful of different property values and its own pins
+definition.
 
-	hog {
-		gpio-hog;
-		gpios = <3 0>, <4 GPIO_ACTIVE_LOW>;
-		output-high;
-		line-name = "foo";
-	};
+Update the MT6397 driver to retrieve device data from the match table and
+use it for driver init.
 
-Restore this functionality to fix reported regressions.
-
-Fixes: d1d564ec4992 ("gpio: move hogs into GPIO core")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Closes: https://lore.kernel.org/all/CAMuHMdX6RuZXAozrF5m625ZepJTVVr4pcyKczSk12MedWvoejw@mail.gmail.com/
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-Changes in v3:
-- Fix types for some variables
-- Make the return value check for "#gpio-cells" property stricter
-- Link to v2: https://patch.msgid.link/20260326-gpio-hogs-multiple-v2-1-7c3813460e4f@oss.qualcomm.com
+ drivers/pinctrl/mediatek/pinctrl-mt6397.c     | 37 ++++++++++-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6392.h | 64 +++++++++++++++++++
+ 2 files changed, 99 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6392.h
 
-Changes in v2:
-- Use a default value of 2 for the number of GPIO cells
-- Use kzalloc_objs() instead of kcalloc()
-- Propagate the error number from fwnode_property_read_u32()
-- Remove special cases forced by the lack of default cells value
-- Link to v1: https://patch.msgid.link/20260325-gpio-hogs-multiple-v1-1-7e3a7347f0d6@oss.qualcomm.com
----
- drivers/gpio/gpiolib.c | 92 +++++++++++++++++++++++++++++---------------------
- 1 file changed, 54 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7ee45ccdf1265e94b68fe8fa0d10dbc6adccd93a..96c776ff2669ed2404048360297cf706bfe38251 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -938,12 +938,18 @@ int gpiochip_add_hog(struct gpio_chip *gc, struct fwnode_handle *fwnode)
- 	struct fwnode_handle *gc_node = dev_fwnode(&gc->gpiodev->dev);
- 	struct fwnode_reference_args gpiospec;
- 	enum gpiod_flags dflags;
-+	const char *name = NULL;
- 	struct gpio_desc *desc;
-+	unsigned int num_hogs;
- 	unsigned long lflags;
--	const char *name;
- 	int ret, argc;
--	u32 gpios[3]; /* We support up to three-cell bindings. */
--	u32 cells;
-+	/*
-+	 * For devicetree-based systems, this needs to be defined in bindings
-+	 * and there's no real default value. For other firmware descriptions
-+	 * it makes the most sense to use 2 cells for the GPIO offset and
-+	 * request flags.
-+	 */
-+	u32 cells = 2;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+index 03d0f65d7bcc..8ba02e70595c 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+@@ -12,10 +12,32 @@
+ #include <linux/mfd/mt6397/core.h>
  
- 	lflags = GPIO_LOOKUP_FLAGS_DEFAULT;
- 	dflags = GPIOD_ASIS;
-@@ -952,42 +958,22 @@ int gpiochip_add_hog(struct gpio_chip *gc, struct fwnode_handle *fwnode)
- 	argc = fwnode_property_count_u32(fwnode, "gpios");
- 	if (argc < 0)
- 		return argc;
--	if (argc > 3)
--		return -EINVAL;
+ #include "pinctrl-mtk-common.h"
++#include "pinctrl-mtk-mt6392.h"
+ #include "pinctrl-mtk-mt6397.h"
  
--	ret = fwnode_property_read_u32_array(fwnode, "gpios", gpios, argc);
--	if (ret < 0)
-+	ret = fwnode_property_read_u32(gc_node, "#gpio-cells", &cells);
-+	if (ret && is_of_node(fwnode))
- 		return ret;
-+	if (argc % cells)
-+		return -EINVAL;
+ #define MT6397_PIN_REG_BASE  0xc000
  
--	if (is_of_node(fwnode)) {
--		/*
--		 * OF-nodes need some additional special handling for
--		 * translating of devicetree flags.
--		 */
--		ret = fwnode_property_read_u32(gc_node, "#gpio-cells", &cells);
--		if (ret)
--			return ret;
--		if (!ret && argc != cells)
--			return -EINVAL;
--
--		memset(&gpiospec, 0, sizeof(gpiospec));
--		gpiospec.fwnode = fwnode;
--		gpiospec.nargs = argc;
-+	num_hogs = argc / cells;
- 
--		for (int i = 0; i < argc; i++)
--			gpiospec.args[i] = gpios[i];
-+	u32 *gpios __free(kfree) = kzalloc_objs(*gpios, argc);
-+	if (!gpios)
-+		return -ENOMEM;
- 
--		ret = of_gpiochip_get_lflags(gc, &gpiospec, &lflags);
--		if (ret)
--			return ret;
--	} else {
--		/*
--		 * GPIO_ACTIVE_LOW is currently the only lookup flag
--		 * supported for non-OF firmware nodes.
--		 */
--		if (gpios[1])
--			lflags |= GPIO_ACTIVE_LOW;
--	}
-+	ret = fwnode_property_read_u32_array(fwnode, "gpios", gpios, argc);
-+	if (ret < 0)
-+		return ret;
- 
- 	if (fwnode_property_present(fwnode, "input"))
- 		dflags |= GPIOD_IN;
-@@ -1000,11 +986,41 @@ int gpiochip_add_hog(struct gpio_chip *gc, struct fwnode_handle *fwnode)
- 
- 	fwnode_property_read_string(fwnode, "line-name", &name);
- 
--	desc = gpiochip_get_desc(gc, gpios[0]);
--	if (IS_ERR(desc))
--		return PTR_ERR(desc);
-+	for (unsigned int i = 0; i < num_hogs; i++) {
-+		if (is_of_node(fwnode)) {
-+			/*
-+			 * OF-nodes need some additional special handling for
-+			 * translating of devicetree flags.
-+			 */
-+			memset(&gpiospec, 0, sizeof(gpiospec));
-+			gpiospec.fwnode = fwnode;
-+			gpiospec.nargs = cells;
++static const struct mtk_pinctrl_devdata mt6392_pinctrl_data = {
++	.pins = mtk_pins_mt6392,
++	.npins = ARRAY_SIZE(mtk_pins_mt6392),
++	.dir_offset = (MT6397_PIN_REG_BASE + 0x000),
++	.ies_offset = MTK_PINCTRL_NOT_SUPPORT,
++	.smt_offset = MTK_PINCTRL_NOT_SUPPORT,
++	.pullen_offset = (MT6397_PIN_REG_BASE + 0x020),
++	.pullsel_offset = (MT6397_PIN_REG_BASE + 0x040),
++	.dout_offset = (MT6397_PIN_REG_BASE + 0x080),
++	.din_offset = (MT6397_PIN_REG_BASE + 0x0a0),
++	.pinmux_offset = (MT6397_PIN_REG_BASE + 0x0c0),
++	.type1_start = 7,
++	.type1_end = 7,
++	.port_shf = 3,
++	.port_mask = 0x3,
++	.port_align = 2,
++	.mode_mask = 0xf,
++	.mode_per_reg = 5,
++	.mode_shf = 4,
++};
 +
-+			for (unsigned int j = 0; j < cells; j++)
-+				gpiospec.args[j] = gpios[i * cells + j];
+ static const struct mtk_pinctrl_devdata mt6397_pinctrl_data = {
+ 	.pins = mtk_pins_mt6397,
+ 	.npins = ARRAY_SIZE(mtk_pins_mt6397),
+@@ -40,13 +62,24 @@ static const struct mtk_pinctrl_devdata mt6397_pinctrl_data = {
+ static int mt6397_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct mt6397_chip *mt6397;
++	const struct mtk_pinctrl_devdata *data;
 +
-+			ret = of_gpiochip_get_lflags(gc, &gpiospec, &lflags);
-+			if (ret)
-+				return ret;
-+		} else {
-+			/*
-+			 * GPIO_ACTIVE_LOW is currently the only lookup flag
-+			 * supported for non-OF firmware nodes.
-+			 */
-+			if (gpios[i * cells + 1])
-+				lflags |= GPIO_ACTIVE_LOW;
-+		}
-+
-+		desc = gpiochip_get_desc(gc, gpios[i * cells]);
-+		if (IS_ERR(desc))
-+			return PTR_ERR(desc);
++	data = device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENOENT;
  
--	return gpiod_hog(desc, name, lflags, dflags);
-+		ret = gpiod_hog(desc, name, lflags, dflags);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
+ 	mt6397 = dev_get_drvdata(pdev->dev.parent);
+-	return mtk_pctrl_init(pdev, &mt6397_pinctrl_data, mt6397->regmap);
++	return mtk_pctrl_init(pdev, data, mt6397->regmap);
  }
  
- static int gpiochip_hog_lines(struct gpio_chip *gc)
-
----
-base-commit: b99f90909bdc937914fd6017d67b66d445273650
-change-id: 20260325-gpio-hogs-multiple-1718d38c1f5b
-
-Best regards,
+ static const struct of_device_id mt6397_pctrl_match[] = {
+-	{ .compatible = "mediatek,mt6397-pinctrl", },
++	{
++		.compatible = "mediatek,mt6392-pinctrl",
++		.data = &mt6392_pinctrl_data
++	}, {
++		.compatible = "mediatek,mt6397-pinctrl",
++		.data = &mt6397_pinctrl_data
++	},
+ 	{ }
+ };
+ 
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt6392.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6392.h
+new file mode 100644
+index 000000000000..e7241af28fdb
+--- /dev/null
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6392.h
+@@ -0,0 +1,64 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PINCTRL_MTK_MT6392_H
++#define __PINCTRL_MTK_MT6392_H
++
++#include <linux/pinctrl/pinctrl.h>
++#include "pinctrl-mtk-common.h"
++
++static const struct mtk_desc_pin mtk_pins_mt6392[] = {
++	MTK_PIN(PINCTRL_PIN(0, "INT"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO0"),
++		MTK_FUNCTION(1, "INT"),
++		MTK_FUNCTION(5, "TEST_CK2"),
++		MTK_FUNCTION(6, "TEST_IN1"),
++		MTK_FUNCTION(7, "TEST_OUT1")
++	),
++	MTK_PIN(PINCTRL_PIN(1, "SRCLKEN"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO1"),
++		MTK_FUNCTION(1, "SRCLKEN"),
++		MTK_FUNCTION(5, "TEST_CK0"),
++		MTK_FUNCTION(6, "TEST_IN2"),
++		MTK_FUNCTION(7, "TEST_OUT2")
++	),
++	MTK_PIN(PINCTRL_PIN(2, "RTC_32K1V8"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO2"),
++		MTK_FUNCTION(1, "RTC_32K1V8"),
++		MTK_FUNCTION(5, "TEST_CK1"),
++		MTK_FUNCTION(6, "TEST_IN3"),
++		MTK_FUNCTION(7, "TEST_OUT3")
++	),
++	MTK_PIN(PINCTRL_PIN(3, "SPI_CLK"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO3"),
++		MTK_FUNCTION(1, "SPI_CLK")
++	),
++	MTK_PIN(PINCTRL_PIN(4, "SPI_CSN"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO4"),
++		MTK_FUNCTION(1, "SPI_CSN")
++	),
++	MTK_PIN(PINCTRL_PIN(5, "SPI_MOSI"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO5"),
++		MTK_FUNCTION(1, "SPI_MOSI")
++	),
++	MTK_PIN(PINCTRL_PIN(6, "SPI_MISO"),
++		NULL, "mt6392",
++		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
++		MTK_FUNCTION(0, "GPIO6"),
++		MTK_FUNCTION(1, "SPI_MISO"),
++		MTK_FUNCTION(6, "TEST_IN4"),
++		MTK_FUNCTION(7, "TEST_OUT4")
++	),
++};
++
++#endif /* __PINCTRL_MTK_MT6392_H */
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.43.0
 
