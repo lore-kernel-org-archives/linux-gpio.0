@@ -1,224 +1,217 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A59C3B2FE8
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 09:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774862897; cv=none; b=lpmMYlfb6wDc5Oz1nQWPeWN7nkQEjR/PzHJ794RwsCslFirah21B1u67UMP0QO2+AgltyQPZVAuXVEDLnSxOlfjSy3kXmvnUCO9pzfyERikoCBCHluOF/4zibIDfAhUaGL8/DieIy+LljPiBgac/c1/yaLnhVKzBzfpiLeVPVZ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774862897; c=relaxed/simple;
-	bh=A0pfCojUiGgrrf0Ej5R1kBaQcEv947GaCDZ90NppBa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iooAM7c/v5vfOGqkfCeJQG5NJQsKmm/Goc9PwgdSBfxYazUCQ1NAeLNed+Eb5qC44148f4ma4vO0R19PZCXhMbBCnDyupiVfVf5hI+Xazb/8AADUngmlPjSTe9J24iQC+wUmcz3MjP4/nxjTaRQdfV1HxJWTFd0NEqRz+gmM6Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqYuHeQ2; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B89D3B4EA0;
+	Mon, 30 Mar 2026 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774863324; cv=fail; b=Tuvka4g1nfb7K1I1dAR+zYGIHI4vQbTvht9hIOBu5TQN6SwLD8ke9Z5T9xd9CzY421VOqUrRQ/n5Q/nan+SRnguTS6DW36T5XkFDQIDk504CRSOpsn4j+DZQPViVPONS0jy/5Ls9qf1XpkUH3GxIdwV1oKIGrdGEUDqhojxAW2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774863324; c=relaxed/simple;
+	bh=HUWgwk3IAtS1Ist0ogGzp6gWGKRnTa4lMlMjHOWRDFg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YFl8+NkKbmQagJJIBmOQRNZLK8U/dJFn+Pln6DfwY5RjbQtPMw7rGV7j+HGX7XT5LJpCrGwmeaD5uen8jTheZ1YHfYH6LzCShVpI1EORTsltxrhDQHUWKjMKTu5kzhnuXmJWBHT1imb59l7rF0uwbheMdSfr5IymBF2ZxwqJv8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=PXdLMXnb; arc=fail smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqYuHeQ2"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso35986615e9.3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 02:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774862895; x=1775467695; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3zDHIQyb3IezUESO9F09MAim9FoAsOYTRYDFkmxzVFg=;
-        b=RqYuHeQ2zIlSNVIp8Y01sDKtexz5NJFxXDwwOWBCgszHinnN4Z6/AMcNkBLcWbigFn
-         OXY8/eVUs/bkVcNDvMJlHzG5ZHfIIux8kCXkFXJv6CNVckuazEgO6KLX2qe3IYUHsX4c
-         t8gjAvpYHbbyt2MWTK7717BHmVI9u8WhTcMDvNtN7gwhCHKEzoSpvPKa5Ra79xGJWsDg
-         sPAaMwlVl6IaItM3tynUcu6m4jdFSTaWDJ9X+VW4N73b6pp2fo6oEOkdY8utKBA0gM+w
-         x9wWINUCYasrsN1eyIyuy/pxjHHeZz6ACik8eHIMcNsVRucUQO1fAoHUWGSjMi5yDzAX
-         BbFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774862895; x=1775467695;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zDHIQyb3IezUESO9F09MAim9FoAsOYTRYDFkmxzVFg=;
-        b=UvQfCP/eKQ4H9Yb2DmivmKPjL685/3BqlDLna5N+IMcEdycJshQU5Ic7hcvVzNOl+g
-         NEquy9RdWJTp/qw/WGC7DaoULkm011hY/pycw9pIHZGY+D17wiO31kem7pDIwZXZowL3
-         i/AilRDMaj3RkEYRJl6Jkb0HUWPA/Myqz9Ru3bF43YojUFdg43YgUp3LWfc6B1wG0E9k
-         cxWiUqQbnK2h5SWdPMEHoatrGSmEXY0oAnCGbq3Guv3b/9MZqBJbCkgifX96QIUqGRdt
-         dtldo/Dvr8VOGiOunOzEZu2gNyYNVzk15eh3fLO1wSYA9CHcArKfcNLuQg4IiK74wy11
-         G55w==
-X-Gm-Message-State: AOJu0Ywn3xEb87E06J0+cutagMrL/FsFOSHMIzzNbZ9vheoDA9Bkt2+X
-	v7eOQ0Txr05TOHEBjZl4moWxaRRcvyBAn0z3ZL/+ZvJ/nqaMeM3Zje0J
-X-Gm-Gg: ATEYQzx7dwzT4Xjp2IfhBZFU9aGokt8wgqFGi7M7xFB5ekH/lI2EHxyvMD2IKHwvrti
-	5yzFSI64L7jwtKwz69R+F+YH0IaPz2ZSZdssSaSWoiRRwYTkSOlEOcqi2WyKMq7egb8DwC3NjKm
-	U65DAl90ghX9ZTqgmz3QYnVwqoVNh6R9Ctdf16mBKwGYtte1q9+9ZsIfrhVcELtnELkEvOXEKgT
-	ZFVJuLTDJBI16HQChIJM2gr4oOmtqPnRdYMjwcp+aBuSn1tuY3MXpGhy5PmY+2kVN3uQjcPJpUn
-	b41DOEmerfy2WocHtIi/tsVVsM0wSU5CRGoPuX1ECOK5P72dhFeUeJBWb8s0JSN0GY13TCSuNM/
-	WCHWSJG884l1g8CZm295P5k8OTqNfvClpecZiCR1VSyBrqvIxPv1dQcbqgzTRDse6+PQpEy6qWt
-	2pJgLRil1ggCH/
-X-Received: by 2002:a05:600c:83c5:b0:477:7af8:c8ad with SMTP id 5b1f17b1804b1-487280a25c4mr210099595e9.31.1774862894489;
-        Mon, 30 Mar 2026 02:28:14 -0700 (PDT)
-Received: from nsa ([45.94.208.97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4873ab203e9sm74265215e9.0.2026.03.30.02.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 02:28:14 -0700 (PDT)
-Date: Mon, 30 Mar 2026 10:28:59 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Cc: linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Subject: Re: [PATCH v8 2/3] hwmon: ltc4283: Add support for the LTC4283 Swap
- Controller
-Message-ID: <aco5L_6SZIB2DdpF@nsa>
-References: <20260327-ltc4283-support-v8-0-471de255d728@analog.com>
- <20260327-ltc4283-support-v8-2-471de255d728@analog.com>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="PXdLMXnb"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62U3oXOt1544752;
+	Mon, 30 Mar 2026 05:01:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=HUWgw
+	k3IAtS1Ist0ogGzp6gWGKRnTa4lMlMjHOWRDFg=; b=PXdLMXnbCggdFGsLT+ZK2
+	yzpwfkinpvFpxuCPwhaFh8WQxQOdJDTk+TYUCFIfwrBlp7CUov35ni6iFAmt140J
+	YJ3ZI8qYVu1yFil2TDx0ljaSMP+pLdQX3j40CxGQrNFdeXGSzVNz2jy+SU4w0xlK
+	XNo4DGH+VV+R2lx2OKu2p1trOh0wMgMj7SGgw16DzR12STmEjgMzsRFfFYFbd0kf
+	K0DN+LqnS7DIDJkqjbxhdTpdr5p6LbGrRc6zX47mX9RofMy9SoXQjwtRe8fHGpO4
+	yR+kW1J6VCkb7RzsbVfHE0YU7Z+SCtrQj4kqSvYxj+ajHbY7HI9W6dA+Gm5Uu8v2
+	Q==
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010053.outbound.protection.outlook.com [52.101.61.53])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4d6bw0xayk-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 30 Mar 2026 05:01:42 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kM90zVKyiCjdtz3n9hva0Env/dp155fmP8lZtz7Lpmvm+5lrYlHd3c/UhtPEvT9pMZ3ZY0iEv8ERi6d/jRlMHKTvlb0d0+Ts7D2bNb12XJ+HcotNqGotneYabB6LVWda1ol4wSOT0DrbWOte2WUlZjBeMgRNectYlz57Z6K1kwver//wFV1XDLEALp51aE+3u5PENec5fSTA4P9kHOkqF8IC/eJiCOLGZhcGnwSKWhLNA5A3SDXe7HxiKNL8lXcRnuI7/gwlYCjK5fyP/WYJshutX68NqJn92VcN4YSyiP0p/RSfmFd+qfylCjClA095Gb/zCaNM2GFn45I9Aqe39g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HUWgwk3IAtS1Ist0ogGzp6gWGKRnTa4lMlMjHOWRDFg=;
+ b=GkKOq08F/ljHETPfYQH2vFGGSKlVVVqXbHnIQ2ZHkjUchUvSJ6JDkJmupUqjjBUQbDeXB3v1mU/8jlQAPWSlJwE/6iU77c+ZG3qu6UjHpM2BBGnLL5zSF9TI7zkYXV20eH36lkuMH1gHc9bpYiT+CjuP3vtMBlw459IIwyXVFD71syU4kf/FqNcVVt7U/PMK57RLhNNuZfrG9xOo2DTUESQLLZVeYChrucWu3oAKRhXWIfZcAQaxJYdMch7DN91dZy7bx17McJ5rvxTZlQuVdlYSyi4L2+l6Kog5xNWDVWjtL1erQBWSvU9P97tPSl5GU0iePMJ4gpW6iWuKSuNjEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from LV9PR03MB8414.namprd03.prod.outlook.com (2603:10b6:408:367::23)
+ by SA6PR03MB7901.namprd03.prod.outlook.com (2603:10b6:806:42b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.28; Mon, 30 Mar
+ 2026 09:01:33 +0000
+Received: from LV9PR03MB8414.namprd03.prod.outlook.com
+ ([fe80::d661:7c16:d052:cc81]) by LV9PR03MB8414.namprd03.prod.outlook.com
+ ([fe80::d661:7c16:d052:cc81%6]) with mapi id 15.20.9745.027; Mon, 30 Mar 2026
+ 09:01:33 +0000
+From: "Sabau, Radu bogdan" <Radu.Sabau@analog.com>
+To: =?utf-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        David Lechner <dlechner@baylibre.com>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+        Andy Shevchenko <andy@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?=
+	<ukleinek@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski
+	<brgl@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet
+	<corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>
+CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v5 3/4] iio: adc: ad4691: add triggered buffer support
+Thread-Topic: [PATCH v5 3/4] iio: adc: ad4691: add triggered buffer support
+Thread-Index: AQHcvdoCYYx7SyG/j0GTkPebZECJoLXDsxoAgAMW4fA=
+Date: Mon, 30 Mar 2026 09:01:33 +0000
+Message-ID:
+ <LV9PR03MB84140648A5AE86E6A118941CF752A@LV9PR03MB8414.namprd03.prod.outlook.com>
+References:
+ <20260327-ad4692-multichannel-sar-adc-driver-v5-0-11f789de47b8@analog.com>
+	 <20260327-ad4692-multichannel-sar-adc-driver-v5-3-11f789de47b8@analog.com>
+ <324e16aba4029ec4679f7b141c5f58e8929a0da3.camel@gmail.com>
+In-Reply-To: <324e16aba4029ec4679f7b141c5f58e8929a0da3.camel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV9PR03MB8414:EE_|SA6PR03MB7901:EE_
+x-ms-office365-filtering-correlation-id: 4de13af3-e467-4023-8600-08de8e3af0ea
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|22082099003|18002099003|56012099003|38070700021|921020;
+x-microsoft-antispam-message-info:
+ Z91iQMQKEbT7NmpUM9miItujeT2aAcR9wsksGLpkW9188VVx9swR2Uf9puFs8mr0pGTar1BohDGMylzJyu+OKHIMxb5lgEPwP+dMrmGxTLJZ2KZbsxYbep4R1LW2Z5ZihMoVIuC/UyApdtp7uHHWsFOW+/Bd3kQmDiscVjnS1TuNg3BPUe7NNIdalIpSkajyMJRkfb0AB8aUzepkPenuDqCh02a7XeNl+eofw0p1IqsWyEEwGjsc4BxeM2E4ETqbF1ABnrjG73SiVCjzouRgH/6O2mDK8QtbnUdatA1lVF/iV41WG7BoLbWFKcoFS/374IT4WHew5oGwjCwTpc5IYHTRyRaXEAof7rEznofz0lfSPn0NmmxD7yYu1i79WMtYBqmC2u3qGjoTFGjpBTogQNDnhLMfM3k30nGtvgUFQoFzHYIp/OcEVtL8AghDGODyJK35StZLevAOIslsxryGaUSHEn0k8GUDngQNb7dssVyH1kcKHD6IwKxatiZzs7fjIojFv1Bg8ZzH87j3NLBnS8k8FZTLDHcwSUXZ27NRuBy98J92HT/Ha+0LVNEwZyX/4/IuemyV0RSz01RHAjXp2I+PbFTzXZlVfom+VF0SkbCXsCh7QqX6jsSMEZTxF5+97oTPjsJBkw+ZRHfw1CwDBAJWAZSHQ4NKatwlqAFq3a9O+PJlJG/Kx3eH+91o8dOBCerNOxACb3aSGJ7EvYHL65Ksmws9CZVhhbuvTh8A0vuM5P/wwLreEc+/EvCbfPvdSGGVFBfJDhCEdF3nsJUjuZ8mCFLx5zYzMlFomE1putysoRTNJn+q6RGV21D4Tn8X
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV9PR03MB8414.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(22082099003)(18002099003)(56012099003)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NmlKcktMT29xQTJzU2tuVURHWE9BcU5EcTFEQXJScjhweUJ2TDdjNGRnSU1K?=
+ =?utf-8?B?dkMxMUdnY0JqdUo2a3Y0T2FScFNPV0p3ZnZuMGdEWE9DK1M5SzVOVVVKNGZY?=
+ =?utf-8?B?QjdZb0NsOFpKalhSWVJKeGNTUDh5L0MvRFdmWit1NmNZTWlGSGJzbXpVMUd5?=
+ =?utf-8?B?M3NqUEl6SFM0RUROTFVwR1U1VmhuS1VmcERON0ZzZUFlMDhVbmM0NHh6ZHNZ?=
+ =?utf-8?B?bEJ1U04zTU43Q2RLVU1SeFF2MDBnSzV6cGpqNnkwSDhDa3BJRUJvSzZZZEdP?=
+ =?utf-8?B?WG9TZ0RYNDE1SGovZWV5bk1YbERtTmtobVJYeEpvRFlPWWgyeVlTWWpxV1RC?=
+ =?utf-8?B?OVQ2UXlnVzJzMThLYkZPa3F0dHp3WWxncCtTWVovOXJyRDl4NzhXUDk3Z0VD?=
+ =?utf-8?B?ZGhaZmVMU2RGeDg4azRZWU1veFI5NmJUSGRZYnd1VG1SY3E2NTJJOURLMXgz?=
+ =?utf-8?B?Mk55L2hDTThvRWIrSzYwdGdwd2VMN2laWCtza2ZpbkFTcTlialNZUW5UMG40?=
+ =?utf-8?B?bG45ZTdCVzlyVXQ1d3hlOCtaemtNYWc5SXh1TkxPTjhLTXV4bDBZa3QrTkpL?=
+ =?utf-8?B?akhlMnRpM05jWlBkZktxYndFYjVhUEFWMk43cHM1RHpjbU15bjllMjdNZ3pV?=
+ =?utf-8?B?Z3lHdHEzTTVHVlhVTzlNbTB3aVl5SVdXQ3p1bTdlUU81S2lhdTdtejJPdThI?=
+ =?utf-8?B?VG9DZUxpc2hLVnBpd3hPRnRuejVscTJCdHBTYkZwTnBTUFZrT1k0bEFUNHhk?=
+ =?utf-8?B?Mzc5dGN0WEh3VUV2aEl0V0FQeWhFakpzb1dzMkRyNnhkMCs2SExDckxGSjFw?=
+ =?utf-8?B?enRiZzJpNG9UZWpBQlFkSlUzaTl4ditlaStoOUFRbkRSVitpV3hyalJBVkpt?=
+ =?utf-8?B?OTVRSGFTcmc4NytUVkllZFdYa1ZJUkFaMmMzK0ZKcy9aTDA0ZXVCbzVlbWVk?=
+ =?utf-8?B?bGJhUGJsOUtPTnNSdmdIU0kzNnNhc0tOc3E5OS83S055MHdiQXU3U3lVWllm?=
+ =?utf-8?B?dStFM2dvWElDcThFcFFueFN4T3RrSFRkcU9pWDZLWHRIeEZqbFRRY014SE9n?=
+ =?utf-8?B?cjJXaVh0ZUV0b0tyRnNhZmUxcWZVSnRld2FIeXo4eEg4aWxVU2t0c0ljbkRO?=
+ =?utf-8?B?bkxMWWl2dEVzT1pCK0VsL040U2tqdFdoQXk4UmhIQXJKUVBUWE10c01paVhw?=
+ =?utf-8?B?L1FTUDBNNzJIUzBkKzFLM253K21VR0VMMmkxV0hqOXgrNkp4Y1gzdlZNRWpx?=
+ =?utf-8?B?S1pnajRsaEFodVNUcnJoZmZVM3ZNaUZ5cXVMcXJVaDZ0MzZjb3RXTjVLS2s4?=
+ =?utf-8?B?NGRHWml4YSsrcDJ3cEhPaHBXbG8vcWt5Q01uWTErMUE0L2ppRmhkc1ZQQ0Ey?=
+ =?utf-8?B?b21wVzIzY0krWEJYZENVcnJhblhoNENMb2dsUGU0MWVkNE4wb005N1M0VjAw?=
+ =?utf-8?B?a1FpVnhjNmVPc1lEV29lak84djAzMmJkR0xwWjdZOWFEdVlyZkNMSDNmdUlq?=
+ =?utf-8?B?TGttL05LSWNZL1AvZU9iWExpTXZIYWFzM1N4OWZvZ1dLNXREb1RLOWtpVnVZ?=
+ =?utf-8?B?OVRXQ1ZybHQ1MW1CNkJVL2ZtdE9MRTRXVzFudjF0SVZUU2RGQWJ5OWI1bEZs?=
+ =?utf-8?B?WTVUR05Ha1dSY2hML3FkMmk0WjdWTHNaMnBUdXFxMThpdm5aUC93Rm5HVGIr?=
+ =?utf-8?B?WGM5eFEyTzR3MGU5UnlOVjVSZi91L0FHdFZiaExnVjRGWXZHRFpGeW1EL3Bq?=
+ =?utf-8?B?WHgwdmZDRjl4V2ZETlBWbFcyOW84aitHcDFETmpKNWhiSHhGYjExb0RCY3BJ?=
+ =?utf-8?B?cHp6TlhqeENMbjhIQUVBOXZ1Zkx4b2VLb2ZnL3VYTHVKUEJCdVp3UkVOMVZN?=
+ =?utf-8?B?OHRUR2VEdkhiMy9pR3FweVRZYnFmclRORk5zbGNwREFxMnhMSFE1ZW8xeWo5?=
+ =?utf-8?B?ckdzNFNPYXZVVnJHWUJOLzhXaXRJcjZmRDYvVTd3ZDVlamxNbkEyRzUyOVlj?=
+ =?utf-8?B?cENMUVV2UlZZMzZHWnNqMnMvT2NNVVo1VnVQeFVSNkxZWU1KRXRrRWluRHU4?=
+ =?utf-8?B?bDRKd3RDV1JFVXlGVndiRlMrWmE5ZUJOUVJPSml0aWZCK09WRTI1QUFXQ3ZY?=
+ =?utf-8?B?MFpvdmRrN1dTZVlsN3hUZGxUVlRNTDdZeHFXZjVNaVZiek0zeDFSektkdjhC?=
+ =?utf-8?B?dmdRY3BzbmVvMUl1a1R0RnV4dk11M01qdkpUVWZpZ1FKcE9PQzVyWUpwTHI2?=
+ =?utf-8?B?dTVvWmlNWldFMnNZc3dYYUFLZHJMaHhYeWIvNSttcElyQ0tJTm5Wb2dxQklI?=
+ =?utf-8?Q?Ve2ryWdZ7L1/ypYp2v?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260327-ltc4283-support-v8-2-471de255d728@analog.com>
+X-Exchange-RoutingPolicyChecked:
+	aeJ8LjaLwnQxQK9cOW2xPrp6HrnBKQlcN5CXC0pUiN4zmHDBAqiDlw/cOiRrEFYfDeGf0lOSvbZyDEoh0EBWx79Fc1D/01eQ95yQVf++89t8j1EP0Wl4esdgzyZwjuI8YEAzCsrsk/MLO7Vc1shCSjgyDSdW2SgY/hkQuDO9jXzTX6XmADbOBD+U3U1qnhPDPJbmty+4sUjmToJtDy3Jw0vYIGnRrIGPJ+N58dcGhbEWutppuwMbVW6k16HmnDSXiVhX2UNQ0mecEu3XtMr3LQLAOiC1mE99OjQoFZ4OXy7Koi2MCwF/2HNH52X7WO/7VYVYfZUYnK7J45ubkcvvkg==
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV9PR03MB8414.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4de13af3-e467-4023-8600-08de8e3af0ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2026 09:01:33.4240
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tMaWWg+ERQggZAnViR1t+Xl658krNQ987OYVmnlAeX6BpMf2ec9Twuu2SsTqg/k1GeKDq5DQGpIuW6urCVylZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR03MB7901
+X-Proofpoint-GUID: aDyje9zMw1whqh5qtmliiezeEH19xpsd
+X-Authority-Analysis: v=2.4 cv=BqyQAIX5 c=1 sm=1 tr=0 ts=69ca3bf6 cx=c_pps
+ a=ynjcjXHaqbEn4NYQb+mZsg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=0sLvza09kfJOxVLZPwjg:22
+ a=Z0pTeXoby7EwIRygza74:22 a=pGLkceISAAAA:8 a=gAnH3GRIAAAA:8
+ a=eQJ37b5lo8ebUaBu7agA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: aDyje9zMw1whqh5qtmliiezeEH19xpsd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMwMDA2OSBTYWx0ZWRfX7LeOqndLr/jV
+ 5lAM+ofklzx4njeBugj/ArlYWhPWPifIOkbWjlTEPjAYOKocrXuI4NSvEeYCRHkd73wOnhrEeOX
+ e+l8f42rsnue2UhTMSE/IMdSnysdnFlNdfegA6wwg0XEfTtuaF53GNNAQW6xOiV1E/i79UbWMPM
+ xYh3TfUxCfQT3IublIdq94ZwHWufy4REjZOc0nPCf+8beaxrhQLhlBTRFMcMoyapvuJK85KnGzt
+ kPJJ10xdtYHXfa7g0HQ7muq0TkekY+BgH1zkHv0gv33aK2Vv5y4bmuluVzk0P9nVUIKPSwXGYRC
+ WnafwYXYN8V2JwzAosTkLlsLqjP2Kg25h9qg1XSe7I8JEhvrmauq//68Y7bua1hUeTrwJ4nrWhW
+ XSEPszlsnbc+lAuGD65fO43z649c8kmFhF75qgVZStvxeeEqP8AuEupq3NavrcMryRtfm4qfTm/
+ bnwoEIuyoOhOjs/agDg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-29_05,2026-03-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603300069
 
-Hi Guenter, Regarding AI review, I think most of the points were
-discussed in previous revisions, but there are two valid.
-
-On Fri, Mar 27, 2026 at 05:26:15PM +0000, Nuno Sá wrote:
-> Support the LTC4283 Hot Swap Controller. The device features programmable
-> current limit with foldback and independently adjustable inrush current to
-> optimize the MOSFET safe operating area (SOA). The SOA timer limits MOSFET
-> temperature rise for reliable protection against overstresses.
-> 
-> An I2C interface and onboard ADC allow monitoring of board current,
-> voltage, power, energy, and fault status.
-> 
-> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> ---
->  Documentation/hwmon/index.rst   |    1 +
->  Documentation/hwmon/ltc4283.rst |  266 ++++++
->  MAINTAINERS                     |    1 +
->  drivers/hwmon/Kconfig           |   12 +
->  drivers/hwmon/Makefile          |    1 +
->  drivers/hwmon/ltc4283.c         | 1796 +++++++++++++++++++++++++++++++++++++++
->  6 files changed, 2077 insertions(+)
->
-
-...
-
-> +static int ltc4283_read_in_alarm(struct ltc4283_hwmon *st, u32 channel,
-> +				 bool max_alm, long *val)
-> +{
-> +	if (channel == LTC4283_VPWR)
-> +		return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_1,
-> +					  BIT(2 + max_alm), val);
-> +
-> +	if (channel >= LTC4283_CHAN_ADI_1 && channel <= LTC4283_CHAN_ADI_4) {
-> +		u32 bit = (channel - LTC4283_CHAN_ADI_1) * 2;
-> +		/*
-> +		 * Lower channels go to higher bits. We also want to go +1 down
-> +		 * in the min_alarm case.
-> +		 */
-> +		return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_2,
-> +					  BIT(7 - bit - !max_alm), val);
-> +	}
-> +
-> +	if (channel >= LTC4283_CHAN_ADIO_1 && channel <= LTC4283_CHAN_ADIO_4) {
-> +		u32 bit = (channel - LTC4283_CHAN_ADIO_1) * 2;
-> +
-> +		return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_3,
-> +					  BIT(7 - bit - !max_alm), val);
-> +	}
-> +
-> +	if (channel >= LTC4283_CHAN_ADIN12 && channel <= LTC4283_CHAN_ADIN34) {
-> +		u32 bit = (channel - LTC4283_CHAN_ADIN12) * 2;
-> +
-> +		return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_5,
-> +					  BIT(7 - bit - !max_alm), val);
-> +	}
-
-"Will this condition handle the ADIO12 and ADIO34 differential channels?
-It looks like channels 14 and 15 fall through to the default return intended
-for the DRAIN channel. Since reading the alarm implicitly clears the register
-bits, could reading these ADIO alarms unintentionally clear actual DRAIN
-alarms? Should the upper bound be LTC4283_CHAN_ADIO34?"
-
-Good catch and should be:
-
--       if (channel >= LTC4283_CHAN_ADIN12 && channel <= LTC4283_CHAN_ADIN34) {
-+       if (channel >= LTC4283_CHAN_ADIN12 && channel <= LTC4283_CHAN_ADIO34) {
-
-> +
-> +	if (channel == LTC4283_CHAN_DRNS)
-> +		return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_4,
-> +					  BIT(6 + max_alm), val);
-> +
-> +	return ltc4283_read_alarm(st, LTC4283_ADC_ALM_LOG_4, BIT(4 + max_alm),
-> +				  val);
-> +}
-
-...
-
-> +
-> +static int ltc4283_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev, *hwmon;
-> +	struct auxiliary_device *adev;
-> +	struct ltc4283_hwmon *st;
-> +	int ret;
-> +
-> +	st = devm_kzalloc(dev, sizeof(*st), GFP_KERNEL);
-> +	if (!st)
-> +		return -ENOMEM;
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +				     I2C_FUNC_SMBUS_BYTE_DATA |
-> +				     I2C_FUNC_SMBUS_WORD_DATA |
-> +				     I2C_FUNC_SMBUS_READ_I2C_BLOCK))
-> +		return -EOPNOTSUPP;
-> +
-> +	st->client = client;
-> +	st->map = devm_regmap_init(dev, &ltc4283_regmap_bus, client,
-> +				   &ltc4283_regmap_config);
-> +	if (IS_ERR(st->map))
-> +		return dev_err_probe(dev, PTR_ERR(st->map),
-> +				     "Failed to create regmap\n");
-> +
-> +	ret = ltc4283_setup(st, dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	hwmon = devm_hwmon_device_register_with_info(dev, "ltc4283", st,
-> +						     &ltc4283_chip_info, NULL);
-> +
-> +	if (IS_ERR(hwmon))
-> +		return PTR_ERR(hwmon);
-> +
-> +	ltc4283_debugfs_init(st, client);
-> +
-> +	if (!st->gpio_mask)
-> +		return 0;
-> +
-> +	adev = devm_auxiliary_device_create(dev, "gpio", &st->gpio_mask);
-> +	if (!adev)
-> +		return dev_err_probe(dev, -ENODEV, "Failed to add GPIO device\n");
-
-"Does this allow multiple LTC4283 chips to probe successfully?
-Without allocating a unique ID per I2C instance, it seems the first probed
-chip takes the generic name. If a second chip is present, it might attempt
-to register with the exact same name, resulting in a failure in device_add()
-and aborting the probe."
-
-Also looks valid and I suspect is one of those that a quick look will
-find more "offenders". I would purpose:
-
--       adev = devm_auxiliary_device_create(dev, "gpio", &st->gpio_mask);
-+       adev = __devm_auxiliary_device_create(dev, KBUILD_MODNAME, "gpio",
-+                                             &st->gpio_mask, client->addr);
-
-If there's nothing else and you agree with the above, is this something
-you can tweak while applying or should I spin a new version?
-
-Thanks!
-- Nuno Sá
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTnVubyBTw6EgPG5vbmFt
+ZS5udW5vQGdtYWlsLmNvbT4NCj4gU2VudDogU2F0dXJkYXksIE1hcmNoIDI4LCAyMDI2IDExOjQ0
+IEFNDQo+IFRvOiBTYWJhdSwgUmFkdSBib2dkYW4gPFJhZHUuU2FiYXVAYW5hbG9nLmNvbT47IExh
+cnMtUGV0ZXIgQ2xhdXNlbg0KDQouLi4NCg0KKTsNCj4gPg0KPiA+IC0JcmV0dXJuIDA7DQo+ID4g
+KwlpZiAoc3QtPm1hbnVhbF9tb2RlKQ0KPiA+ICsJCXJldHVybiAwOw0KPiA+ICsNCj4gPiArCWZv
+ciAoZ3BfbnVtID0gMDsgZ3BfbnVtIDwgQVJSQVlfU0laRShhZDQ2OTFfZ3BfbmFtZXMpOw0KPiBn
+cF9udW0rKykgew0KPiA+ICsJCWlmIChmd25vZGVfaXJxX2dldF9ieW5hbWUoZGV2X2Z3bm9kZShk
+ZXYpLA0KPiA+ICsJCQkJCcKgIGFkNDY5MV9ncF9uYW1lc1tncF9udW1dKSA+IDApDQo+IA0KPiBE
+b24ndCBsb3ZlIHRoaXMgbGluZSBicmVhay4gSSdtIGFsc28gYSBiaXQgcHV6emxlZC4gSG93IGRv
+ZXMgdGhlIGFib3ZlIGRpZmZlcnMNCj4gZnJvbQ0KPiB0aGUgdHJpZ2dlciBjb2RlPyBJIGd1ZXNz
+IHRoaXMgc2hvdWxkIGJlIHRoZSBzYW1lIEdQIHBpbj8NCj4gDQo+DQoNCkhpIE51bm8sDQoNCllv
+dSBhcmUgcmlnaHQgLSBib3RoIGxvb3BzIHNjYW4gYWQ0NjkxX2dwX25hbWVzW10gaW5kZXBlbmRl
+bnRseSBhbmQgbXVzdA0KYWdyZWUgYnkgY29uc3RydWN0aW9uLCB3aGljaCBpcyBmcmFnaWxlLiBX
+aGlsZSBncGlvX3NldHVwKCkgbmVlZHMgdG8gaGFwcGVuLA0KdGhlcmUgaXMgbm8gcmVhc29uIGZv
+ciBpdCB0byBsaXZlIG9uIGFkNDY5MV9jb25maWcoKSwgc2luY2Ugc2V0dXBfdHJpZ2dlcmVkX2J1
+ZmZlcg0KaXMgb25seSBjYWxsZWQgZm9yIHRoZSBub24tb2ZmbG9hZCBwYXRoIGFuZCBhbHJlYWR5
+IGl0ZXJhdGVzIGdwX25hbWVzW10gdG8gZmluZA0KdGhlIElSUS4gU28gd2UgY2FuIGNhbGwgZ3Bp
+b19zZXR1cCByaWdodCB0aGVyZSBhbmQgZnJvcCB0aGUgbG9va3VwIGZyb20NCmFkNDY5MV9jb25m
+aWcoKSBlbnRpcmVseSwgYW5kIG5vIG5lZWQgZm9yIHRob3NlIGVhcmx5IHJldHVybnMgZWl0aGVy
+Lg0KDQpUaGFua3MsDQpSYWR1DQo=
