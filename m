@@ -1,79 +1,99 @@
-Received: from mail-m3269.qiye.163.com (mail-m3269.qiye.163.com [220.197.32.69])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF13E3B8BB1
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 10:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB633B8BC7;
+	Mon, 30 Mar 2026 10:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774865335; cv=none; b=nybo1OqBdMKBXQpOFxcyiGv0J/6Ua0oGMgrnzCObbmr/VNjd3rFPTrioPuI1DTbIjhJo149MUS2Yp8lZyqToGViqDX9GijsY6Shd1s2U3n1+kJfJg6EJq7/+K2cvisN8mdECkM0btbQ4gOhWQ31PGjpE5MKVCI7bS78ZGlXmDzk=
+	t=1774865746; cv=none; b=DxAMKf5F2mCpWPRCCuvoZUUinWD06U+ySeSe0Yvi9rBvDTNq0GEtUH8dU4JUbgRI3fWu1QtCqEGWvI4vdvimjrOfSVSGINjt7gYDoBKYBQ214t/wbFV5rEclVqz+qCWogxUUu8dguxsVylYrb+9oVCNruoiOy9wxj+xk5i01kK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774865335; c=relaxed/simple;
-	bh=EnGv9fwAu+qOd2TBv7rbXm8NPbXre/r07erLTstlZ/I=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=JVdCOWtJ6nah93qxP2ihrq3E3Kq/8GWZctpG9yoDPQBXenFJbVXG1VSgd9hOVLXAnRgbuW5fl69RWSrohyRJ4ou8CTHnr5MWv2WX41eGGHljnMdPrciXACB2cd1AjpdE7HK4y4OKKhw2xIxMLNWryeYW8HR0Uy5Q1J84oGDsDkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BrFMQqF5; arc=none smtp.client-ip=220.197.32.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1774865746; c=relaxed/simple;
+	bh=sfhn4cSxiKkelwlQLVL11Z9nSo1QQjNVXGIpertChNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UR3rnjuA5hPHNZxFqwx19dLDSaP8gzVm6R+e+5Q4qtNSL7PsAT2vqYNp7iAdD9GtziZtWFB0nl+bq/KXIEOyRYONvYCqh692mg+pB4uZgrrIdJy3KXg9/sPfiB2AtkqGJHbh4anHVQ301CjrXJpOAsYHRLcwbGeGdked5c4lzTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aR7ee6/V; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BrFMQqF5"
-Received: from localhost.localdomain (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 38d16663a;
-	Mon, 30 Mar 2026 17:53:24 +0800 (GMT+08:00)
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	ye.zhang@rock-chips.com,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] gpio: rockchip: convert to dynamic GPIO base allocation
-Date: Mon, 30 Mar 2026 17:53:21 +0800
-Message-Id: <1774864401-177149-1-git-send-email-shawn.lin@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-X-HM-Tid: 0a9d3e298fef09cckunm3d006f22e5d629
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk4YHVZJHx0YSU5CT0xMTxpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=BrFMQqF5bRKjh0JmY4iB/LDDmGcn6MJoWAHKs5H1YMW0F8vRIpWmTsD4IXVZN2Hg3Gm2YbsZNWhiFfwFziOJfdy4ttNQ43f4cSXvHjVfA74mvgfImveYUoTss44vUUSu17psdCPFs1CS7VvKlhUHEqhpRZUTKGQhZ1JcCANw0/4=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=zBgjeDrg+peaeJ/KCAvRmYyV+lBFW34M3AWXK7qHhu0=;
-	h=date:mime-version:subject:message-id:from;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aR7ee6/V"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774865745; x=1806401745;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sfhn4cSxiKkelwlQLVL11Z9nSo1QQjNVXGIpertChNk=;
+  b=aR7ee6/Ve1q0cwakD8tOcn7pCBt00ASaHtNpgX7rReeSfz5hKwgWJf41
+   pjMFJOLqMfNW59JclZwbvzCcIOa+PB+XNYOLLlmzHt8Ecd8DLPtOa17AM
+   4vnRsIcNp4u5AH/oPxkTwId8tp42BgbgXlPKlzrTrGazxW1M3YeOC2wQk
+   uMZepmfBaxHZsBhaUhfdST5eDUplV7x7bYQFY+7WQTuW7mGgd8313Vq6d
+   uYfDtJxkA651815PT+9ergmWZJfyYUP8FcVFiT3QMcFCNyZ8znRQKJt3Z
+   KAjxZHSUmoIW7HeNDMo/0tGIFIJ6CBVoN7+V8YWZye3iysTUx7cNjUNOw
+   A==;
+X-CSE-ConnectionGUID: s+K48RFGRt+/+UjhUsyTmg==
+X-CSE-MsgGUID: j595iVcoSZ2iR4YN75lLrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="86471333"
+X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
+   d="scan'208";a="86471333"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2026 03:15:44 -0700
+X-CSE-ConnectionGUID: gyw3Q+zISGiy843vURx7cQ==
+X-CSE-MsgGUID: CeghpYmxQQyEdDw7Lc56uA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
+   d="scan'208";a="225190476"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.100])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2026 03:15:41 -0700
+Date: Mon, 30 Mar 2026 13:15:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v4 4/4] iio: adc: ti-ads7950: complete conversion to
+ using managed resources
+Message-ID: <acpNSoreNmtH74F_@ashevche-desk.local>
+References: <20260329-ti-ads7950-facelift-v4-0-c568c508c49a@gmail.com>
+ <20260329-ti-ads7950-facelift-v4-4-c568c508c49a@gmail.com>
+ <CAMRc=MdP-fvm4WWgFdHabCnVbc=rV943YhwrCHaCH9VCo_ZJJg@mail.gmail.com>
+ <671889B9-1D36-4F00-B044-0173A13F7403@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <671889B9-1D36-4F00-B044-0173A13F7403@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-This driver is used on device tree based platform. Use dynamic
-GPIO numberspace base to suppress the warning:
+On Mon, Mar 30, 2026 at 02:24:52AM -0700, Dmitry Torokhov wrote:
+> On March 30, 2026 2:20:33 AM PDT, Bartosz Golaszewski <brgl@kernel.org> wrote:
+> >On Mon, 30 Mar 2026 00:47:09 +0200, Dmitry Torokhov
+> ><dmitry.torokhov@gmail.com> said:
 
-gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
-gpio gpiochip1: Static allocation of GPIO base is deprecated, use dynamic allocation.
-gpio gpiochip2: Static allocation of GPIO base is deprecated, use dynamic allocation.
-gpio gpiochip3: Static allocation of GPIO base is deprecated, use dynamic allocation.
-gpio gpiochip4: Static allocation of GPIO base is deprecated, use dynamic allocation.
+...
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+> >> -	mutex_destroy(&st->slock);
+> >
+> >That's a functional change, there's no corresponding conversion to using
+> >devm_mutex_init().
+> 
+> devm_mutex_init() makes absolutely no sense, as well as having
+> mutex_destroy() in remove(). The memory containing the mutex will be released
+> right after. 
 
- drivers/gpio/gpio-rockchip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For somebody who debugs mutexes it might make sense. So, I agree with Bart here,
+this needs to be addressed (and this is a used patter in IIO).
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index ac1b939..08ea644 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -582,7 +582,7 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
- 	bank->gpio_chip = rockchip_gpiolib_chip;
- 
- 	gc = &bank->gpio_chip;
--	gc->base = bank->pin_base;
-+	gc->base = -1;
- 	gc->ngpio = bank->nr_pins;
- 	gc->label = bank->name;
- 	gc->parent = bank->dev;
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
+
 
