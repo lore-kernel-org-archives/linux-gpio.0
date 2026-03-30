@@ -1,144 +1,191 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E48E3A7F4C
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FF239E184
+	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 08:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774857097; cv=none; b=QyfQcSnIC6XTIQZbRNdHJZo9YzLF7btVYVb2lzBU1wGHli6QBV0ZHZmLWwGqCQ2btzeLUDmZOu+smPTTRMwl/4pNX5ku27dX8ehOG/zVVAIAHJrPq64Z2B3kT7OnQVBB7uvVgH4CMD5MaXA6Vx6wMF1vSukA9L51ghrm2lBgV+Q=
+	t=1774857807; cv=none; b=UNxjtQ8N9aXwhsTSQIRmoOQXIgWOGXZ9eDlioDmlhaKIbqWwrgScZnEjJ/K4KhM8yvCeBRVBcjFtd+QEjvG8juXH3G7evRbwhQg/rc1yoWRTnziujBJLJllNka/NgVfMhRwrITiKCm9MMzo+NJwrA15enZ0u6ZP4V0wWwGwwQ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774857097; c=relaxed/simple;
-	bh=Wtwyx+rHoNn/JRfhHP9pjHO4uK9/lBUP/VYjCAIasLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0CS+E6YLojWA8GCfM7+2hV8k8wO7JJLoFyAUs61dkHzzn+QkpE8aox+AXx+3UATMwxeR+JKlTYe769BGiOjzhCGuBPHyhkwVJA7P3rUhUgglA+H84xXaj0PPi4hFYesUk6YodGpMAYAgfCuZ0JRh3DT8OcxjIyqnm9lz2TccZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f/X3cQoJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aTJJgPJb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774857807; c=relaxed/simple;
+	bh=IAOyoOy+EjFLK/X3zhzuRtb8iwoi7ayaBAr+goBfAB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eB6/H0Ht1bXnvJdUgx6U8kZscrxgmYHt1L0uoEy0ARFvu/Kj+LYm9eGfzZ+faHZV4TYE2mCxw3HKgb0sbyOJRy2ThNiY1dhaXkoZT1fZGgNTdcykg2TUGZkXCmBMrFblWDuvJtEiKHIXIt9czi1kVTFyVoieLQRSYm6Whcb9yJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIVthQ1l; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f/X3cQoJ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aTJJgPJb"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62U7BI3e2224414
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 07:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yqoFzHrqxv2RFgrza41YChO6hXH6iktD/zgGiClPpPI=; b=f/X3cQoJzfSxaNNJ
-	SslrptOyEa6kU/3sYL37JXfPf4H5sWE2gUK5ZdQmU66p8CP3ejEqYsAudbVz529Z
-	OMMSvYzPf3GfpaYDprJSd+T7w5E8caRtrXX8Dg49H3k9VmDjer9OI/5ZLVZPtwk8
-	GqCVoStoethN1LcFwZShhFD0xHpSyhn+erawUAUBGUekzI/9Sg0F2ARJyNjGHZ8M
-	uRCN7l6oVg98EUhQa0EWG1XlotJqKP5HNxoeW9xfZhzKui0pMSKG3a6KKKMxJcoT
-	mifY0nmRti5xNYebm2qXbUVEIx8nzBQlJG2pCKn2jGleXPl7Qd97lC7388mAMFmO
-	SoJoFw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d685hcyp2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 07:51:35 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50b52a2d70cso125586581cf.3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 00:51:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIVthQ1l"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-35d94f4ee36so862228a91.3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2026 01:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774857094; x=1775461894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yqoFzHrqxv2RFgrza41YChO6hXH6iktD/zgGiClPpPI=;
-        b=aTJJgPJb2J7GAiDSkgufneruy8iM6oglLDBQjDBOKvIF5lWbVN4DfPd8UmUA0sSqIW
-         5lzXnExwUfsuE9LSGDkHOgyRsqs/eH4a9SA9B7hQ2p7Cwzsi6pcSbx+eoOXS2wwuSu66
-         +tF6kqKjux13Z/0TePl1bfp75EoFD555syK44oawM57aiWmyl6P7wG/znGFJU/ZAG7z/
-         ogRYPPDTq8VzvLYVJHkWNLOMDQ3Pjh0G2d4dsIpSxV7i4HVBaLYefmWRAm6wovb6LzPH
-         OxLBVQVOkbk8ZfQTJTh4+LGvRHEcVk+fMr5P7wQVj7lWA6ITHJH80s2YzoOA9muyfIGR
-         9/DQ==
+        d=gmail.com; s=20251104; t=1774857805; x=1775462605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNbEamoVFrWEy3eDEJ2YhwcNGTuf+SgX6uLT44AchCY=;
+        b=iIVthQ1lLCK4iI588FPVWzdsjyGn6EeQqwrpPZAaM60gp8zJFN91h51wiAfTQeq5DO
+         cDC9CGgUFBPrceAQtwnJZWBxAg49eQrQ2a5BB3uLHHdbz2CGMrYfjD3mGlUJjwvjbnEL
+         nwCHkzyjhe0idwVe82pR/O6cMkii+fVrUxcMlYAsa4tu3xkdelSiFXCF604sc/4r99Kc
+         teF0LAIkMMEn3GJPyJkH090K6T+yo/XudNi4jGBXbV7RKimdC/2ARlOyfruhx5p9Dqf0
+         BQUgN5f+a/f767XYq8gHossABFOPSLYqHjtPc3BV5BCTcw4Y4Ci9YKtTRAIKCiu8lzrW
+         UhZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774857094; x=1775461894;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yqoFzHrqxv2RFgrza41YChO6hXH6iktD/zgGiClPpPI=;
-        b=WPaqoI++v1LIHy6cK5CbIGSWJdJ/WAYFdFhIcr5wNoOb2RVl9PTpyhrfK56D07zeEs
-         yg1jjAGH0we1WsbWX3LQcHhW2NDzeADOayqByTeU00su1aAJFi9JJzdFScEfc1cB3GnE
-         JAzM1Uj6C1jK58/Z+M93xUz/eE5QqDaLcLyloc+FdZMXSH9cxNQahAvTzAJXhsRy9ScH
-         397ATZZtEJgAxGc3jU3CTdNNrWLpQm2EzuQrdT10JVQy2fxV2oEWflA2Qcsa4mjKNFU2
-         /rpb3IaPZ2LuC+mqQ78mh+qtpxwckDwEFI30MRm45Kt02sHOVvhxiBtNUFFx9G5MWahT
-         sk0g==
-X-Gm-Message-State: AOJu0YyXnAp9pr92iuoD8QYM9VPdvS624+pe4V77inpacEZmmyj+SxgO
-	Mxpl2HMs+UGP6cFlFvlyoK0Qiz7a2fGD1laXze+f5ms6ojudDQdXFsaOTpfiYE+oLGhaaUGDQHV
-	i/G56fY1SLTkgn1jiBOizSQvUlaypaInv6WYDZpTQdjztGBXD8oF56L/ojIIlPWY8
-X-Gm-Gg: ATEYQzwxfa0KgeinhjUw2cM2yB+2ITdZqO1ApFaV3YkCnDStviy2Mx7qOUDOI+7EI7N
-	dmm4TSzdWFp307dqE7oMTQoMmAxMWqD64bHewRCMeIfzyOFKgtrU/u4WpXOkAkUrUZdGqRNN3KN
-	S+++7P5OthfvqQhJr8pHXeUde7yh4OR9u6eX0rsAsePaxlwRRMRuLVUQsKO+x0KHdI6rBCvV/ee
-	9gyxbYB3/iEoel1MFjhsBj9wfjZPoC7llxbIJjDhfuDRD9u1ehxo9Sz7zjPGiQD8duIf9if9I2H
-	KAX+2b4q9TNQdcGig9MjdXIR+e9q/2ll5sz7yrx4SDOaI2WPRNxsOyszA+pEN5YahHkfe+hx21O
-	tm9yK5CuXIyimX5+56QUb+8NnQyyqIfgbX/Yj8Wmow+iB9fTNq1M=
-X-Received: by 2002:ac8:7d8f:0:b0:509:1ee2:69e4 with SMTP id d75a77b69052e-50ba380a5e9mr165178601cf.11.1774857093972;
-        Mon, 30 Mar 2026 00:51:33 -0700 (PDT)
-X-Received: by 2002:ac8:7d8f:0:b0:509:1ee2:69e4 with SMTP id d75a77b69052e-50ba380a5e9mr165178441cf.11.1774857093552;
-        Mon, 30 Mar 2026 00:51:33 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:1143:869f:e06c:4587])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf247472csm14706938f8f.28.2026.03.30.00.51.32
+        d=1e100.net; s=20251104; t=1774857805; x=1775462605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aNbEamoVFrWEy3eDEJ2YhwcNGTuf+SgX6uLT44AchCY=;
+        b=sZxCY2s+/uxl32UYeWOLlQpcRLtI+wblY8xCvAjESbrt0jU3+qZ3fg2mX8MvxxaJvC
+         wluovB6VLgZTPbWLyH9IrDNpdAyM2K8K8EQ6qlUs5G7nWj4t8RbT7Hu00JOWEl6RMXJn
+         8YeXJUMEBCxJVGYk8bIwh0FKaM5jzGCz5HZxzvw+N0vZjUnCrmct9dg+LGhW5Xt+b6Di
+         4Xnvvuh4I+LkzHxKqCBEhkRMnlt/39X98XxlCiRePr7lEkK0M6NZudwu3xCCjoGUnJg2
+         GbVV3pN4NeIkB4xHV0p2GrKoOyyfD3eVgIi+aCtMvW8BjvinU1f4SPZS6Pi4Xw41NDNw
+         juFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6H9a6Yn8kcOikpQJC1yBbnKocO7QSv2stXa1VX7oXLAww3j9kk4AIrTXtiomafiTWMxO/s2/1VGwL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVdcYfRZdJG1/b8Ca61JcZa7hmC1aqFgEdT9xuN72gB7gJ8G1e
+	YqEBkE9XuQ4uDSuQB+Jo0e08pddXsOW/Qyek7CBJjuYuGLM9kLdiL+Ib7qaDy+C/
+X-Gm-Gg: ATEYQzyVl2NHV7IFU0GIb0zlsPYC2xOChmnwctMhZ9o5H+lqJhs0Gl9OVXvlQ78TY+3
+	OipLxEhtBVtNm3GnT36hdoGIXCXpGPOIHQ2OmNh+2vjZdBNJ50NmtYcAiYcZi3JSBX1hTJWX2ak
+	ttZ07Jlk/JwKFsJFgwOEnOsus7FpZiH6N5xgoLq6EDU9T0Y7R8OW/MmtFfrzCFRH9bgV8tFojyF
+	ofyPufvcXtr0XS724P9/JldMPfuuhh4uyD8ZmwVoBAH2A2emjRoFzA/FW8xrTVRXBWNYQf2S2M7
+	VrWku6m9RkSfI1tQNruW0+9sXMc7IdUH3FMnCy5N6vcDRAKrnSyv+0xwazgjVDO2TLKpYk5plI0
+	tf61iNJIwVSnZasvaVcKlId5KSh9viV+U3CxG+GMpeQfcbvo8qr96OWItfgYl5KnNkktvV3th1E
+	4suRZz0q/bcsOXbTTkvtU=
+X-Received: by 2002:a17:90b:3c10:b0:359:8d0d:5905 with SMTP id 98e67ed59e1d1-35c2fff1fa6mr10657290a91.9.1774857805193;
+        Mon, 30 Mar 2026 01:03:25 -0700 (PDT)
+Received: from fedora ([122.173.26.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35d950b5583sm6204597a91.14.2026.03.30.01.03.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 00:51:32 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH] gpio: shared: shorten the critical section in gpiochip_setup_shared()
-Date: Mon, 30 Mar 2026 09:51:31 +0200
-Message-ID: <177485708802.5892.11250894850372032857.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260325-gpio-shared-deadlock-v1-1-e4e7a5319e95@oss.qualcomm.com>
-References: <20260325-gpio-shared-deadlock-v1-1-e4e7a5319e95@oss.qualcomm.com>
+        Mon, 30 Mar 2026 01:03:24 -0700 (PDT)
+From: Shi Hao <i.shihao.999@gmail.com>
+To: linusw@kernel.org
+Cc: brgl@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	rric@kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	i.shihao.999@gmail.com
+Subject: [PATCH v2] dt-bindings: gpio: cavium,thunder-8890: Convert to DT schema
+Date: Mon, 30 Mar 2026 13:31:08 +0530
+Message-ID: <20260330080108.24294-1-i.shihao.999@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=csKWUl4i c=1 sm=1 tr=0 ts=69ca2b87 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=rx2hHsDi30GigQfg1aAA:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMwMDA2MCBTYWx0ZWRfX7EPeaImYaBAK
- HUjoWxevmYf3IoXPqix2csiHdQTtsFUji2LzK5KUNdApw4rvkI0P4y3ysATQTyGyJxbNUISSe9x
- jQ/m/ej8KFUZNGcZ0JwDJAMNk7jADUGCwXUJU+3ELJUOj1WQlY+LxCsON5AMcwk4/Rs7ZT0V+t1
- sLsatZHuoPHnmkGZWOemIJGAkeKhhTUfm3rRggQtHpmjXZU9QCJf3Dq/3mAvRuHeIHCjqJq9Yoz
- OU/FF7NJh4MlxJtDK4uH8J9SDKgFAaAXE9A2NZecJ/Iq5kWbLrLnIYoKkEGyunNt0LooHlgNo4d
- pYy7cWfFQwfW36pF0zvSNSxMM4ZEaFLW+dtcgYWkdDixjnG8YxnRtJPU7F+gENyL88omZAyuQl1
- WB6l/sy/FIJdAHgQaMZr8aHLevl6TT9fH2nDA95oEn33QJcXZCLVwCR4Tin+kKfWgOZmR+YJCbF
- SKqIWIjXJsDnMMOwLJA==
-X-Proofpoint-ORIG-GUID: nGusgWZaoeRSXquemrOry6K1-Uf-Y3uc
-X-Proofpoint-GUID: nGusgWZaoeRSXquemrOry6K1-Uf-Y3uc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-29_05,2026-03-28_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 clxscore=1015 adultscore=0 impostorscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603300060
 
+Convert Cavium ThunderX GPIO bindings to DT schema.
 
-On Wed, 25 Mar 2026 12:06:38 +0100, Bartosz Golaszewski wrote:
-> Commit 710abda58055 ("gpio: shared: call gpio_chip::of_xlate() if set")
-> introduced a critical section around the adjustmenet of entry->offset.
-> However this may cause a deadlock if we create the auxiliary shared
-> proxy devices with this lock taken. We only need to protect
-> entry->offset while it's read/written so shorten the critical section
-> and release the lock before creating the proxy device as the field in
-> question is no longer accessed at this point.
-> 
-> [...]
+Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
+---
 
-Applied, thanks!
+v2:
+ - Rename schema file based on compatible string
+ - Wrap commit message body as per kernel patch guidelines
+ - Use appropriate maintainer name and email address in DT schema.
+ - Change commit subject as per guidelines
+ - Fix $id path
+ - Rebased on linux-next
 
-[1/1] gpio: shared: shorten the critical section in gpiochip_setup_shared()
-      https://git.kernel.org/brgl/c/310a4a9cbb17037668ea440f6a3964d00705b400
+ Note:
+* This patch is part of the GSoC2026 application process for device tree bindings conversions
+* https://github.com/LinuxFoundationGSoC/ProjectIdeas/wiki/GSoC-2026-Device-Tree-Bindings
+---
+ .../gpio/cavium,thunder-8890-gpio.yaml        | 45 +++++++++++++++++++
+ .../bindings/gpio/gpio-thunderx.txt           | 27 -----------
+ 2 files changed, 45 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/cavium,thunder-8890-gpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/gpio/cavium,thunder-8890-gpio.yaml b/Documentation/devicetree/bindings/gpio/cavium,thunder-8890-gpio.yaml
+new file mode 100644
+index 000000000000..0d42ddaeb23a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/cavium,thunder-8890-gpio.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/cavium,thunder-8890-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Cavium ThunderX/OCTEON-TX GPIO Controller
++
++maintainers:
++  - Robert Richter <rric@kernel.org>
++
++properties:
++  compatible:
++    const: cavium,thunder-8890-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++required:
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio_6_0: gpio@6,0 {
++      compatible = "cavium,thunder-8890-gpio";
++      reg = <0x3000 0x100>; /*  DEVFN = 0x30 (6:0) */
++      gpio-controller;
++      #gpio-cells = <2>;
++      interrupt-controller;
++      #interrupt-cells = <2>;
++    };
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+deleted file mode 100644
+index 3f883ae29d11..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-Cavium ThunderX/OCTEON-TX GPIO controller bindings
+-
+-Required Properties:
+-- reg: The controller bus address.
+-- gpio-controller: Marks the device node as a GPIO controller.
+-- #gpio-cells: Must be 2.
+-  - First cell is the GPIO pin number relative to the controller.
+-  - Second cell is a standard generic flag bitfield as described in gpio.txt.
+-
+-Optional Properties:
+-- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding is used.
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells: Must be present and have value of 2 if
+-                    "interrupt-controller" is present.
+-  - First cell is the GPIO pin number relative to the controller.
+-  - Second cell is triggering flags as defined in interrupts.txt.
+-
+-Example:
+-
+-gpio_6_0: gpio@6,0 {
+-	compatible = "cavium,thunder-8890-gpio";
+-	reg = <0x3000 0 0 0 0>; /*  DEVFN = 0x30 (6:0) */
+-	gpio-controller;
+-	#gpio-cells = <2>;
+-	interrupt-controller;
+-	#interrupt-cells = <2>;
+-};
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.53.0
+
