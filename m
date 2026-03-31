@@ -1,97 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A175228150F;
-	Tue, 31 Mar 2026 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2CD21E091;
+	Tue, 31 Mar 2026 15:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774967774; cv=none; b=uTHG/3QcGvHMEqlVy6wPm9xjIIH7T3/o6kBhfxRQSpgNAZUKGJGaBUqKtgDFQ0+wYPSjT9Vd6tCqJENygvPhBixpHg5onRi9RPgsVs9ne+1zMJlneDqpxDBVHXss3lRznr2Hx0pqf7mCyTYqZNxVM20oGAN2H1aurTLLc2ML17M=
+	t=1774969988; cv=none; b=mscOuyA6TH+Bh1gFhln28UeKMGrHUGMJj5T3/4GxNE6z7RvLDx7C5pJ2oPtcfj5dSj7VqKH9dX7Ax9j717bfG8SGpyTcqZkEzq970UWk3pNM8UMqZAijL2+yOFJeUCEaSctTf0NIYLMyrpx5pJPC5tL/TZ06Vyh5n5AKGPVy6MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774967774; c=relaxed/simple;
-	bh=WuipAWbd8LzKDAYhXLX11litf3pJQChGrJT8VlXp5go=;
+	s=arc-20240116; t=1774969988; c=relaxed/simple;
+	bh=ZpDZtBSDgtUGrlNSHGwf/tgBtVz86+YC4LivAnSFw4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BS2tLgxD3CLYBf2U9Syy9wbKKlz8QAdvyWWAGD1Z9hueb0mwLPCcFTkDw6iekxfnF8GXltox8J5SH2d7phAADxwKB2tLmkIye1bVSOcllo/mi+j6gy5msKu6Xulc9ALe2NiStEW+AZOgG8eTZcTG7eQsaWzEATXhT7p4RXT/R+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOFTTnnQ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6VFCS/dK38YKqqujeKd+d1fLpHIKRoI6siJ7+NbKS//664DiVcvOqqsCzJ9PVIG2mpNRPiSKlkKeNr2dlOWFY2i7P6zB1RDcvtLM8XIW+zQdYxubkWkVkV4CBON4Yc8WOyxXnTgnHSnRWn8NNHLEUK6iSiy1Zb8z4PoNSDj/AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMWY71RA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOFTTnnQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9841EC19423;
-	Tue, 31 Mar 2026 14:36:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMWY71RA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7EF7C19423;
+	Tue, 31 Mar 2026 15:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774967774;
-	bh=WuipAWbd8LzKDAYhXLX11litf3pJQChGrJT8VlXp5go=;
+	s=k20201202; t=1774969988;
+	bh=ZpDZtBSDgtUGrlNSHGwf/tgBtVz86+YC4LivAnSFw4c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jOFTTnnQcZ81Gs+max/xpNqAqNQstVbm1orhVfZe8UVkYx6MSX7c6BhQOcD38wMJd
-	 Db9i1oawG5fhLlHd7CDM0ESTD9DTQxTZuARuiFHmV8VqwSEHgWwsW6fU7Rp0VzPG73
-	 FzMggP501Tly4BD4YhTrdbXUeKqrGL7UN+ApV3U6m0DGba/KtPhqAmi/jIQ+mA0VlY
-	 EYMP1gbgFdOJbOEpDJ8lnwnmZBjoaIt9uzZ7kh9d/DtfMaWuhw/Fn1X3gYU3OVa9ks
-	 tYa2PsD45bwHqvl4m17JR0ocl3jHpOgBhqFzclE2JSmE+0oteu9FY1c/EyQhIqv/3k
-	 KesxtMTfCxm8w==
-Date: Tue, 31 Mar 2026 15:36:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH] ASoC: uda1380: Modernize the driver
-Message-ID: <73689388-a323-4ef3-929c-8f8f15455116@sirena.org.uk>
-References: <20260327-asoc-uda1380-v1-1-f6f91be9b7f8@kernel.org>
- <CAMRc=MeJ4eVx9HEWP6_4Yd-a=jb4SOyoWW=KgY_=od=ft1=7eA@mail.gmail.com>
- <CAD++jLniBA_9NzG3BwNpTpT8fC3QRF0yiM_=Wq4u409_fqWVcQ@mail.gmail.com>
+	b=qMWY71RA3zXNIfMP7aKST+0DX2cnAj72G6kNbSgCMQbie83KyWhO8i23shN5E+uAL
+	 Ubn/STrTVj79ovm++nHfSYOur8xnqbjFbVG3kDP6ELtTLX9YZEnyQQrvm412ySvrHo
+	 PV6Ht+ZGpWg7uJhXy7s8e9HADU55lDOrD0p3mFJIFRee2N/VMeY+kzCpLG4uqnNNhv
+	 QypR3nOuz9ogiwsdpkvlKfB1oC5Uci5EzmN381boQqay6V/sJBRhNhaO7i1RND0gwS
+	 /Xe1OrQtTX2PRiYg4e/TEp406Tm85nYrRRV16V5nzxrvkOSl8M/Qd3rn+Ew7q15hSq
+	 fuGMqVKY/O+WA==
+Date: Tue, 31 Mar 2026 10:13:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Peter Rosin <peda@axentia.se>, Linus Walleij <linusw@kernel.org>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-gpio@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH v8 0/6] mfd: Add support for NXP MC33978/MC34978 MSDI
+Message-ID: <20260331151305.GA1211848-robh@kernel.org>
+References: <20260329090601.532477-1-o.rempel@pengutronix.de>
+ <8291919d-c5ea-42ab-b2e5-2dfa16c23698@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U+SAKaxgJwZ5jaYv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD++jLniBA_9NzG3BwNpTpT8fC3QRF0yiM_=Wq4u409_fqWVcQ@mail.gmail.com>
-X-Cookie: I just had a NOSE JOB!!
+In-Reply-To: <8291919d-c5ea-42ab-b2e5-2dfa16c23698@roeck-us.net>
 
+On Sun, Mar 29, 2026 at 08:34:31AM -0700, Guenter Roeck wrote:
+> Hi Oleksij,
+> 
+> On 3/29/26 02:05, Oleksij Rempel wrote:
+> > changes v7:
+> > - drop gpiolib irq fix and make pinctrl more robust against NULL point
+> >    dereference.
+> > 
+> > This series adds support for the NXP MC33978/MC34978 Multiple Switch Detection
+> > Interface (MSDI) via the MFD framework.
+> > 
+> > Architecture overview:
+> > * mfd: Core driver handling 2-frame pipelined SPI, regulator sequencing, and
+> >    linear irq_domain. Harvests status bits from SPI MISO MSB.
+> > * pinctrl: Exposes 22 physical switch inputs as standard GPIOs. Proxies IRQs to
+> >    the MFD domain.
+> > * hwmon: Exposes thermal limits, VBATP/VDDQ voltage boundaries, and dynamic
+> >    fault alarms.
+> > * mux: Controls the 24-to-1 AMUX routing analog signals (switch voltages,
+> >    temperature, VBATP) to an external ADC.
+> > 
+> > Initial pinctrl implementation by David Jander, reworked into this MFD
+> > architecture.
+> > 
+> 
+> I Acked the hwmon driver, but Sashiko is still not happy with several of the other
+> patches in the series:
+> 
+> https://sashiko.dev/#/patchset/20260329090601.532477-1-o.rempel%40pengutronix.de
+> 
+> If the remaining issues are false positives, please let Roman and/or me know.
 
---U+SAKaxgJwZ5jaYv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The binding issue is valid. However, it's an issue with many GPIO 
+controller bindings that's been on my todo to address. Generally, there 
+is only a reference to the provider schema when there's child nodes. 
+Originally, there wheren't child nodes for GPIO, but then we added hog 
+nodes. Changing things probably entails changes to gpio.yaml, so there's 
+really nothing to do on this binding yet.
 
-On Mon, Mar 30, 2026 at 10:56:53AM +0200, Linus Walleij wrote:
-> On Mon, Mar 30, 2026 at 10:45=E2=80=AFAM Bartosz Golaszewski <brgl@kernel=
-=2Eorg> wrote:
+I really hope this sashiko stuff gains support soon in a form I can 
+review first and email out rather than dropping links into threads. It 
+is not a great workflow as-is.
 
-> > $ git grep nxp,uda1380
-> > arch/arm/boot/dts/nxp/lpc/lpc3250-ea3250.dts:           compatible =3D
-> > "nxp,uda1380";
-> > arch/arm/boot/dts/nxp/lpc/lpc3250-phy3250.dts:          compatible =3D
-> > "nxp,uda1380";
-
-> > I think these count as in-tree users of the driver, right? The compatib=
-le is
-> > not described in bindings but I think this still looks as ABI.
-
-> Oh I didn't see *those*!
-
-> Well we could just delete the platform data handling instead but fixing
-> this properly is probably more fun and helpful.
-
-Note that at least the ea3250 is trying to use wspll as the sysclk,
-though the DT parsing code doesn't appear to actually exist so I'm not
-expecting it to work currently.
-
---U+SAKaxgJwZ5jaYv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnL29gACgkQJNaLcl1U
-h9DxDgf9HDXNyXEYBzmW+RFsdhkkN+xTocyRP0/NaU9hbVgy/zCfEumP3ERWSew0
-BonhF2Q92DFu9ASDqiB6CQqiHmaajKI8B8sCdfCW/jGQxL/b7b2l3u1pmcQ2MotI
-Oq/S1rA1yx26DdDRnvU9K5/cxnlVFbTws8tbabH8b/Vh2PctVCw9pAK0Rzf0TXlp
-z4YIh2v2+aTHj/VZz4ZBX1ekfzmf8bg/w1/QiOIL+/+P+m1E4QXyzCm+KAaXl4B1
-jZwkwjMQ5CPlWqgqRgLuDd5k+fY5vcWKkRHjxfcLq5wAl01oiYivpHs81S4xifDT
-sUBGidNoMgXvdisA7bUClV6Joj5ECg==
-=TtZW
------END PGP SIGNATURE-----
-
---U+SAKaxgJwZ5jaYv--
+Rob
