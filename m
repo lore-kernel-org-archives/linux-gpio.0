@@ -1,77 +1,75 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A545F30F548
-	for <linux-gpio@vger.kernel.org>; Sun,  5 Apr 2026 09:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53F1EF09B
+	for <linux-gpio@vger.kernel.org>; Sun,  5 Apr 2026 14:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775381253; cv=none; b=JZT5VIxXfAl1Wik1LcGNJpk/3sIOGvMfH1pLuJHP6ixah3cu7zugsGcHEl+pKwjAvEi+OAYlipEaCk4aC0Qerb2y515Wupnet3pOsqa4/XJws6SNIJI3PhyZYRV7v4wJxF2VZhepy1QsZCPwv9B5yoe42Kxr1t2o9p1SeBI64tU=
+	t=1775400519; cv=none; b=MnL2GTuNOgFwa59i+hnqEka9DsKVO6iJO7+91tP+lF8XBzgvfKQQa3i2y5iotsFJK0jQDSO9TE7DHBuQCO7Cembclq6K8JDcrgFWRU2WOb0eBop41Pdbnd4GrlIQKwdqI0uBhkWGrlRFrkOpsUAQbRE8ACgjQ9PTdNCTStAsEcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775381253; c=relaxed/simple;
-	bh=R4JHJOpcZ3k5Uofec7kARlSA2Tji4pJsIxwT1H/DBII=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hxFH6rW5syxW/YPfHMDjoJbYK8eKbhjflqhObjgOUsUdhX/xiNgQ3jby7O8+UPQQ1R48tpPQdF2rCBSY4aH2qIKI4oX9Ur5lyTbfzXZiAHlAn2PHJOLC7zEjccw6IFZUbNx3V18ZNzCe+I9IVmRJbLPJTf41U1z1Hj3SwCKRkKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJmb2weU; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775400519; c=relaxed/simple;
+	bh=gwtzXr5sONBgqnAqNu4+/3CIMhQ+AeMVTmHchIT/SBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NLAzuoJvL1avneNHRsn9Wucfma20YUyHi9I7tPefVOPpvvR1X+9+FQ+HfYspc5zFnUPxWtBIjUngHXaNsZ3O4RziOs/a0bCSodNkGfuO9lvOsTcx0L1z+V8eRZ48i6mE0c/pZo9jwQy4A2hFfdcKiRnhdDdMpS5NdFAKR1K+Qd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gapp.nthu.edu.tw; spf=pass smtp.mailfrom=gapp.nthu.edu.tw; dkim=pass (2048-bit key) header.d=gapp-nthu-edu-tw.20251104.gappssmtp.com header.i=@gapp-nthu-edu-tw.20251104.gappssmtp.com header.b=JtJrgzF0; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gapp.nthu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gapp.nthu.edu.tw
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJmb2weU"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-82c68339cf0so2264198b3a.0
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Apr 2026 02:27:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gapp-nthu-edu-tw.20251104.gappssmtp.com header.i=@gapp-nthu-edu-tw.20251104.gappssmtp.com header.b="JtJrgzF0"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-35dac556bb2so2089143a91.1
+        for <linux-gpio@vger.kernel.org>; Sun, 05 Apr 2026 07:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775381252; x=1775986052; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R4JHJOpcZ3k5Uofec7kARlSA2Tji4pJsIxwT1H/DBII=;
-        b=cJmb2weUoFWB/fI+GRJd1GzXTCaJ+9wjbvTr5TULpNt55Zssd3mWQ+0gk52IqVHmlj
-         2EMnl3JHvePTnLV+h7V3Ez8XYdvMgqTmMQ1vkWs1/fdJfXLsKOzaCUphidaIgeyrqXTw
-         PiHMaSAazJg6yDbi+NF6XdMwdRcLYGILKLPyESpKYlGePkrVaOAzDcuHZgb6cqQY8eOx
-         PNYx4Z6HijLpXQ9nFQo1ocykVOhaJPk2xo8dsUHnhSTN0m4m0OZY7EH3ZN8LM8XecNCy
-         JypsMt2n4PEev69oM2g9QeUCthL3ckzn97G0hKcmtvILoO3yMCdoIInzi3mRdrnwN7pw
-         0xpw==
+        d=gapp-nthu-edu-tw.20251104.gappssmtp.com; s=20251104; t=1775400515; x=1776005315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YWxgN07OZVOqO1Bvp7LxV7r6cRwAlkUDH9yP+maR0zM=;
+        b=JtJrgzF0YBMSIGdMzCe4MgVTrtG1dfHp0vxMVfgn/CGGk8oxtJQasffsgN3t2j6oep
+         6kFpHMzwFLShJhqqV5AU0aOMJudLYTdYgbqjOuXhTeRdNE+9mCBDQEUsgxJD7wvApOXn
+         X3lLHrqUrOGYToe50l1Q/DIcA9K6l8b+7aR7LVlilSjuAAUVUDcuCb00BkYuJM/Vzcgs
+         NDaUhUmYqwOFvXvL/Nm+zDpMKnwCiZ7SDdXNWm+GEZYCLw9Logrql3259cQUHHg3rrhM
+         ITvRqjyk7MbH4HnybTn5D+nO9Wv8egCzqfdYmWJwj7fxeZMm205tJcZ/RBljoIgrUJAy
+         nbUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775381252; x=1775986052;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=R4JHJOpcZ3k5Uofec7kARlSA2Tji4pJsIxwT1H/DBII=;
-        b=K25Yj6Bns+gp7QNSSUaCqbBp1tKP6sbExRDPp7mrum0Cgh+xGSPVlUOOGybB6tqsKa
-         ThOem3NRrAbtpg/Ukv0EBsSr/6Q50e0rZg/ynZkZ0kCaJjxnKHzLUfo9C+hRtW562M0q
-         bE754s2GkzKqJKDzLFb4VmuEken2658G5xNtmrHpwxOfDhPTUnUQeiLI2ow1+yRunizC
-         iTa9wmlZKPIeosEG9gwf5uugj819Hx5jY8Y7VOW1P53meAyt2YOUsiM1JeXwUrZEt6U5
-         MEgWdj0AxqQErmMPC2JXDc8B66z4r9Jpn5AGRjCcaf6e3HI6H1FC9gb/JJ6yvrh8EnTR
-         sf4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCfgfLOxx1D2i+eOlWzvphgomf9E944ubHtHVcXtDRH39Fu7xrgkxDI2WWZfKDI46bkMJMbxkjLPFz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI/0NPTmnEx2ibs2GJZNUOj9sDIz0JyLdqSiHRJe1iVSR+BMVK
-	B9YPBCjGiF97jGxn2CDEyg5a0bqNdNpx6LA95UD6QHASZg6FzKihxOxp
-X-Gm-Gg: AeBDievituAhVVBGaEUzPLLpPC2Rga+2jNBueOna+ntIqe8pp7r8Lq9Hs/nPbFz+Btt
-	ij2+3MKy5ISqgBrqO2qyDrxAQqlJRPHAb1Pvi4edYiv+hlSQErn/F9e9ftUE0XP9z32+CAZMFut
-	0/ICy1kejy+nV28ZMheBB49H4XRZZQcWzMnO3iUVUkkJysUqk15pRS/06Nd71UH9JaVvFiXtbYb
-	eticE4LYNfgU3v7897CwDstrCfxhSHLJota7X13mLyj+ZM1y93mVctMgiIrlA+6SLQHp9/Dpz5C
-	s1QIOCES2zjDbd+iAAsVGbZ9ysZfkh8HOWwhFJtywe4NDlK5kBW9DyuwVqh/5yvwxULS8TbJK2+
-	ZKy8RTRQGt6jR37L/VMvjgS95EVnRSWUVEqRtupgeaA3NHyuRbKsmtKHmUI1KdjhjeY0OaL7N9q
-	0DXHmRpwPGuVjzs/ClvpU4htI=
-X-Received: by 2002:a05:6a00:4005:b0:827:2c6b:897f with SMTP id d2e1a72fcca58-82d00235695mr10083046b3a.9.1775381252045;
-        Sun, 05 Apr 2026 02:27:32 -0700 (PDT)
-Received: from dell.. ([2406:7400:98:ade4:d639:9368:51aa:bf9c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82cf9ca14b3sm12324396b3a.54.2026.04.05.02.27.29
+        d=1e100.net; s=20251104; t=1775400515; x=1776005315;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YWxgN07OZVOqO1Bvp7LxV7r6cRwAlkUDH9yP+maR0zM=;
+        b=QW7V5ta69w0DUc4+w1JJSUaAZZn5gapTimWBquN9a4A6njJJ75W6CRNHKm3pJnVUP1
+         jzhgpDjkKPYmZ99f6J9GDYulF1W/n+xTrWhM5GlGThkt/lerjU8B8c889tBiNA3F+6Op
+         c6HTJ7uNqvYy9JqcgSpyY04G0SaW6FnkaLcVrJOqVWjEv3B9OUZoD+9sQY3gbZnzjD2E
+         AkN3eb40M7edXE62vwCxqfVIj3wp2Qyi7sw25+U3rX1OlvphFTd0W3fpjs9qh7KagBzI
+         74jezP105LEgn4IsUoYyKomV35HS/tvQyASdfyJjoMKomhM6Fmta7tAXeAGUBziIIFTu
+         rB9A==
+X-Gm-Message-State: AOJu0YwF1SNdDAN4HpPskFRDXyOcXLJflCyN9t8YS5EOdfqyUMZe1teo
+	mlP2CDiakpup6NMO7oebNdxSI3F2113aj0acJgNYSwSnWaL3GSC9V7V9TuC9wBufOZ0=
+X-Gm-Gg: AeBDieu0Qcj2jNBWqQa0MeSLNzXls7yZEdivr1xuA7XMhEb7lp730Gj/NnHc4c0QYfo
+	JhFZ3AiOZBpHidQ/4bQ2i3YT3kWGlnQsvTVIrLT73dyBGGhSA7sVIdrc/6bxg/R63LgkDkUe3XX
+	DZGCxuqeyTmI6m6Ojf+iPdCySvub/0m/gwfjfzlXHxKkQ2KvPtyXnedFXrGZ8JEDvBSfpajOGdz
+	DohzPXYxZCcxWGOkHIKxDiFJlELW2a9GXx88CFXn1DVQSIuAomsffGVi2M3oVRKHodXh8TLiR0m
+	KUuElcE8vFJeGL01cD3ikTNl6YKXt1ALZkAUEbjD0C5qQZu42dy3rKfpyjAAXqUHj2InKaTs2VG
+	r/YSKC66KxovUwq2MDAixwbaYNDp+yzJa0tKHShJNlvLZhQBc9eGaJ17jffW1OiE7cfewyZ5nc1
+	UJuIri1PcYFp3u7A79BN4UT3/PXvjjr2qftn/RgGW7Mm2eX0ERabjXeWpX3yvRmc5t4hZVz9R/6
+	8M1JsC0pfzzRlL2wXi6s8nDQyh82JkdF0QchCQFcLIqeCKdCQ==
+X-Received: by 2002:a17:90b:3c0c:b0:35d:ac4d:3cb6 with SMTP id 98e67ed59e1d1-35de68417eamr8177597a91.5.1775400515423;
+        Sun, 05 Apr 2026 07:48:35 -0700 (PDT)
+Received: from tomato-cultivator-HP-ZBook-15-G6.. (2001-b400-e3d8-86cb-6841-8517-e166-bc96.emome-ip6.hinet.net. [2001:b400:e3d8:86cb:6841:8517:e166:bc96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35dbe9709b8sm15357742a91.16.2026.04.05.07.48.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Apr 2026 02:27:31 -0700 (PDT)
-From: Vasu <vasuhansalia05@gmail.com>
-To: andriy.shevchenko@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
+        Sun, 05 Apr 2026 07:48:35 -0700 (PDT)
+From: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+To: linusw@kernel.org,
+	brgl@kernel.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	djrscally@gmail.com,
-	mika.westerberg@linux.intel.com,
-	Vasu Hansalia <vasuhansalia05@gmail.com>
-Subject: Re: [PATCH 2/2] platform/x86: int3472: Handle GPIO types 0x02 and 0x12 for Lunar Lake
-Date: Sun,  5 Apr 2026 14:57:14 +0530
-Message-ID: <20260405092714.6203-1-vasuhansalia05@gmail.com>
+	Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+Subject: [PATCH] gpio: aspeed: fix unsigned long int declaration
+Date: Sun,  5 Apr 2026 22:48:03 +0800
+Message-ID: <20260405144803.31358-1-ku.loong@gapp.nthu.edu.tw>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <adIk5GhZ9ZXj1kt9@ashevche-desk.local>
-References: <adIk5GhZ9ZXj1kt9@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,17 +78,28 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Vasu Hansalia <vasuhansalia05@gmail.com>
+Replace "unsigned long int" with "unsigned long"
+to follow Linux kernel coding style.
+No functional change intended.
 
-After checking the mainline kernel source, I found that
-INT3472_GPIO_TYPE_HANDSHAKE (0x12) is already defined and fully
-handled in mainline. So no v2 patch is needed for mainline.
+Signed-off-by: Chen Jung Ku <ku.loong@gapp.nthu.edu.tw>
+---
+ drivers/gpio/gpio-aspeed.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The fix just needs to be backported to the Ubuntu OEM kernels
-(6.11-oem, 6.17-oem) where affected users are running Ubuntu 24.04.
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index 9115e56a1626..e6af7f3fba5e 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -655,7 +655,7 @@ static void aspeed_init_irq_valid_mask(struct gpio_chip *gc,
+ 
+ 	while (!is_bank_props_sentinel(props)) {
+ 		unsigned int offset;
+-		const unsigned long int input = props->input;
++		const unsigned long input = props->input;
+ 
+ 		/* Pretty crummy approach, but similar to GPIO core */
+ 		for_each_clear_bit(offset, &input, 32) {
+-- 
+2.43.0
 
-Should I send a backport request to the Ubuntu kernel team, or is
-there another process you would recommend?
-
-Regards,
-Vasu Hansalia
