@@ -1,60 +1,62 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9E9370D73
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Apr 2026 07:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F074C366DC0
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Apr 2026 07:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775461890; cv=none; b=FPvPYPJjZoJRB6DAKwo5jFS8UogSD6fLAdmbuO3idIollOmqPoGwrRaiEomxorRqNvjkPqPWIg27jOg4JfMZw0vH+scAUvkgHIrrNMkFT2gXKgMBaAkIVPY/pLk9AS8tDWYmdJ+0jfvXDTZf5SIpdWGS28ap8nOAHu6Q4RUrYPs=
+	t=1775461892; cv=none; b=sbSBNm9skME2OqkOt/qkj6DUr6cHvlua1Ieg7xjkNcqm68gxG/fYxbkG1dci+w/41LkUdOGgtkf89sV8qo5tQWL2tETc9NjN86DY0Ks8A0f+RDffYyoqbVlz692n6YWr6f3gcG3XVXbkxnzXSqBI58mHDXilbTWWu9/s2+NnZS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775461890; c=relaxed/simple;
-	bh=SEmsAqHjWzSjMRRIk9zZE76RG8HXzQCV9AOLnG25kjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jwe/63o5vcH+wCLMJ4KmMRRaVIyy2UoWM3gfql99MuCIaPFphb7I9ysKEETvyFHcQ9JhmfIasAq87XHFYytXxosMiAe9hRgBvgiThQYN95duu+iAcOcNJSjRSMnEETKE9A2SIAAjRCqpbuKQdKWV3qtFLpT/rKCLBn2UBMu2GwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZwINUzzN; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1775461892; c=relaxed/simple;
+	bh=6QiwAReXTpBojlHHp4n5juTw3CiqRhW6QKlsg4KCdoc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cDBiP+5MhADK98PJ+xpmacQ3bvtwKsrOK67amQQlMTJDl+iCA7zIqLyEwrPCM7ls1Vn8uJdFOdXMTSgZjOyIWvqYKFuAPI7BaarxKuZ5PStZkh42vX43V3MoZCZv/LGca5CH2oOhxXKrZaVnh51h9proWSKDfs4P9O0bsQickko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6EZuyg2; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwINUzzN"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488b8efed61so151825e9.1
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 00:51:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6EZuyg2"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488b00ed86fso7284755e9.3
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 00:51:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775461887; x=1776066687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6rsA0Hj8nsuRsqpJ4sAx6KrXhjtnw96EIBhafsErWLc=;
-        b=ZwINUzzNNI8BbGWL6v3rkB+wPTIdXxQejjVYahnNib1osa1x/NQYZwEYxxynCMqJP9
-         s6KQT/m5J4daGTGUSxZBTkwigjXpTc0wwak2L9fBQf4oCcw7kkxAocDzqO1zjNSApv+3
-         2X+vvWn0hjkyMB+i743QD94T0E3zS+YUiUaNa+ND3JlawJqo80ViM7JPyoA8oR+nuZ7E
-         ULzAmR3ZW7oPzHo4x6UlT8CZ7fgTAzLbqP69rmw/tO0Wvi3Yu9FeG1Q63dG7t95iwG4A
-         ark/uhhpZh41s7E/1BfcYcDQhGzMjGw+16Ar1FKDf5nGq+OKzwsxC/hbWLL0iNHw3Gw0
-         cTig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775461887; x=1776066687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1775461889; x=1776066689; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6rsA0Hj8nsuRsqpJ4sAx6KrXhjtnw96EIBhafsErWLc=;
-        b=lM5sQAvVbJmN6TmJytFFUrkINnVvPF5wK5KJgsiVUQvdOnZdqKVY9RPl0f19LYPxSR
-         CU5QhxiCesHZ7GvK5O9tWolOns6+oKszZaS2bdFPNVoE2JwcewKyMqzdQvXiaGhRCBIZ
-         udjuced8rx6T045DoMjsAZLo40DO0kJyUPXQl/AuEhnrNBJ6ZK03eIeYuW6UzWLmBIT+
-         lcJEbd5LZZX0BrBtsei1etjrU8IuJ+aKshKV2sqP8/CnuMunWr94P33YXkUgQQ0fgd1c
-         vi8wMDUSgVSMDHtFzy7NwvEZPGnXqJLteg8M9fUm1UAtukPoNJ2uHYyC4Htv23Sq3KFM
-         y8Sg==
-X-Gm-Message-State: AOJu0YyjRa2LTLEclDiDSOehv3naPlRY3/HCkHKfnb+/O/GRPX5lXuOH
-	kU5+PIVzVXiy3c3LFVuaJ5TrDQPiGkdVPIRPR50+IoFXbWFRV2AAmukuXN2aGy0J
-X-Gm-Gg: AeBDietNhuWYZjBsGsKAlL+2vAYS5IZqSNs8N88fRFNenrH5ch6r3AiBgE4CctET8i1
-	a0DmIy8qqelNP1s8+JfpujYPpaIsAWVw2AhD7lVyI1sQvlpUrD4HWDLLGRNLp0JtebbGYyqMlF+
-	+LuuoZdTkJ/hejcQsGVrDd5X3Uo/b/rR9UqkyyTkRes7LOdmRRYuha3DzvvFwm6HgMgpy5p4QbS
-	m5DieIkFnK3+ltZttA+j6WqSoi6bfPpxhg08W67yc+8qJjmGL33pnQ+6dvGNIJYzrpXqi1ID912
-	XqI4LaJ3YCmE4KVv45y65rASBMV9RZRhq50MXfGpOul/QinNwBx8MbJYYFJuo7bMpbwA8Vyi/pX
-	P8qlVmDQedgiNq0n4NchNxxA98W6fRt3lD2j20cwdINaCOHQZkfusAz7qtWLi75LKoP4riK+W02
-	l/FO4maTCWLy6W
-X-Received: by 2002:a05:600c:c0cf:b0:485:3c2e:60d5 with SMTP id 5b1f17b1804b1-4889945f8e8mr108708845e9.2.1775461886934;
-        Mon, 06 Apr 2026 00:51:26 -0700 (PDT)
+        bh=H1yRoOrwamurkh8iKC4rWIAOsL7TI+/4XONPPGFJ1VM=;
+        b=d6EZuyg2H7GTsIHA+AbH5zFB9tZ/peLTW4aUKZXbem23j6Xoa+/k6DUCZfS1APvvHN
+         5MODVOZV8Iqz7nsFX9n/XM5xig8uL2gks3eKEd7Qb7VAmD5NtkenlvlOd9UoM3eYeYIH
+         xsSjSE2F668w0u0P/K1+1oDzpdLTjRpPr3yPRZhBNevAF213233DfgYUr1Z/r1/W0I62
+         jdxHiCOyhSMjRvm1Gt2WmP72Q5Gl8scYngrLbvj7iRNVaHpFHwlKr2sjABA5btMDP136
+         31qWlu57Eqm9A5Z8NOD0C79BGRY2ZkLnM4CESHk07HCHWAoGkv+NPln8o19wRsVye5bU
+         jgpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775461889; x=1776066689;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=H1yRoOrwamurkh8iKC4rWIAOsL7TI+/4XONPPGFJ1VM=;
+        b=XT9tmxzRLjkj8j76Tjm/g44uUBgc3heOWl8+0I2fKTCDbKJG4cOxwn/l0C35VBJJcG
+         1ShCgL2HT3apOOXu+435qYdzTrXKayiwJr78ciXllGfUqZpBdjO7TYWqZTy94dnBwySi
+         kbS5jSoWyZsd4H4+2rC9Xc8wxZSd6gLUERuMu6w1aQA/5t1ice+hzkhI0gx9ZzN4DWDc
+         Pv+749ftA7IdzxJVIEbGCoh/SekaZL/kk0p/QaNtOwVTiqUe2YaBRrfKSc4PH+mtdbTu
+         ntT3MpAz0MUuIYKAvDois+KtqQK0Ec/OxEVIk34WrotOKt7cM6F+aAl3OM24kAUvDZnc
+         Ag3w==
+X-Gm-Message-State: AOJu0YzoGdMWN+wM3Wz6Qusn8tg7beTLd66+aTErin2WrpUiqtBM3N3n
+	vdiHV/VBo7NDWQ9LhnYSKFr3pttRCWCrEy4LDa6jknPXqeydWIdPZmFk
+X-Gm-Gg: AeBDievmxN6hq55bHeQAz4zTUl58uaAGvq+9DmukiQoxObR5mUKV7rkEKndi3deL7ud
+	7D7zLKhyqcK+PCa1ONzRgPVUXDkJ8bY8WnORN0DpjXjauI51n5Z+5qD+mNIAXtWMLt/qKDwAAqv
+	slP1haE3+j877FoPbSDgHlHUN7u151sNfB0G63RXLKzHtY6r/aCKTOtKxbpOc85KJhD7ftOxpWW
+	eDMRzWUT5763jWwXo1G1ZwEJ79hFVtEAzQr49H41+DWeVC6ln8eBjnrp25smo/dCuoNQr0pHIzw
+	rpCckxWzNgsTJhEuEF2IEhkHOiCQpa79cvFUUDHCB0dNbssL8XAzFLwQ36mRG3ApjN/vNiXIQdv
+	I4Cy4VmCPxYGmnANu2isPS6uHIoFXDMgiBKaa39JnZJVuLKkLyWwOi0AkW+wQcaLXxfznYYJ9tV
+	dfAoYNLmmomORX
+X-Received: by 2002:a05:600c:3048:b0:488:9bf8:7f17 with SMTP id 5b1f17b1804b1-4889bf8821fmr94252615e9.14.1775461889025;
+        Mon, 06 Apr 2026 00:51:29 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488b739e00bsm20393525e9.10.2026.04.06.00.51.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488b739e00bsm20393525e9.10.2026.04.06.00.51.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2026 00:51:26 -0700 (PDT)
+        Mon, 06 Apr 2026 00:51:28 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -66,10 +68,12 @@ To: Linus Walleij <linusw@kernel.org>,
 Cc: linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/2] rtc: max77686: convert to i2c_new_ancillary_device
-Date: Mon,  6 Apr 2026 10:51:12 +0300
-Message-ID: <20260406075114.25672-1-clamor95@gmail.com>
+Subject: [PATCH v5 2/2] dt-bindings: pinctrl: pinctrl-max77620: convert to DT schema
+Date: Mon,  6 Apr 2026 10:51:14 +0300
+Message-ID: <20260406075114.25672-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260406075114.25672-1-clamor95@gmail.com>
+References: <20260406075114.25672-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -78,55 +82,255 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert RTC I2C device creation from devm_i2c_new_dummy_device() to
-i2c_new_ancillary_device() to enable the use of a device tree-specified
-RTC address instead of a hardcoded value. If the device tree does not
-provide an address, use hardcoded values as a fallback.
+Convert pinctrl-max77620 devicetree bindings for the MAX77620 PMIC from
+TXT to YAML format. This patch does not change any functionality; the
+bindings remain the same.
 
-This addresses an issue with the MAX77663 PMIC, which can have the RTC at
-different I2C positions (either 0x48, like the MAX77714, or 0x68, like
-the MAX77620). The MAX77620 value is used as the default. The I2C position
-of the MAX77663 is factory-set and cannot be detected from the chip
-itself.
-
-I have tested this patch on LG Optimus Vu P895 with max77663 PMIC and
-non-default RTC position. RTC is registered correctly.
-
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v5
-- fixed pincontrol schema
-- dropped applied patches
-
-Changes in v4
-- adjusted pinconfig node naming
-- changed interrupt in the example
-- fixed indentation in the example
-- corrected pinconfig node name in the example
-- commit "dt-bindings: gpio: trivial-gpio: remove max77620 compatible"
-  squashed with the converting patch for this compatible
-
-Changes in v3
-- max77620 files converted to DT schema.
-
-Changes in v2
-- dropped patch that changes max77686 and adjusted max77620 where max77663
-  is described.
----
-
-Svyatoslav Ryhel (2):
-  regulator: dt-bindings: regulator-max77620: convert to DT schema
-  dt-bindings: pinctrl: pinctrl-max77620: convert to DT schema
-
- .../pinctrl/maxim,max77620-pinctrl.yaml       |  98 ++++++++
- .../bindings/pinctrl/pinctrl-max77620.txt     | 127 ----------
- .../regulator/maxim,max77620-regulator.yaml   |  99 ++++++++
- .../bindings/regulator/regulator-max77620.txt | 222 ------------------
- 4 files changed, 197 insertions(+), 349 deletions(-)
+ .../pinctrl/maxim,max77620-pinctrl.yaml       |  98 ++++++++++++++
+ .../bindings/pinctrl/pinctrl-max77620.txt     | 127 ------------------
+ 2 files changed, 98 insertions(+), 127 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/pinctrl/maxim,max77620-pinctrl.yaml
  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77620-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/maxim,max77620-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/maxim,max77620-pinctrl.yaml
+new file mode 100644
+index 000000000000..b3ea36474317
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/maxim,max77620-pinctrl.yaml
+@@ -0,0 +1,98 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/maxim,max77620-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Pinmux controller function for Maxim MAX77620 Power management IC
++
++maintainers:
++  - Svyatoslav Ryhel <clamor95@gmail.com>
++
++description:
++  Device has 8 GPIO pins which can be configured as GPIO as well as the
++  special IO functions.
++
++allOf:
++  - $ref: /schemas/pinctrl/pincfg-node.yaml
++  - $ref: /schemas/pinctrl/pinmux-node.yaml
++
++patternProperties:
++  "^(pin|gpio).":
++    type: object
++    additionalProperties: false
++
++    properties:
++      pins:
++        items:
++          enum: [ gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7 ]
++
++      function:
++        items:
++          enum: [ gpio, lpm-control-in, fps-out, 32k-out1, sd0-dvs-in, sd1-dvs-in,
++                  reference-out ]
++
++      drive-push-pull: true
++      drive-open-drain: true
++      bias-pull-up: true
++      bias-pull-down: true
++
++      maxim,active-fps-source:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: |
++          FPS source for the GPIOs to get enabled/disabled when system is in
++          active state. Valid values are:
++          - MAX77620_FPS_SRC_0: FPS source is FPS0.
++          - MAX77620_FPS_SRC_1: FPS source is FPS1
++          - MAX77620_FPS_SRC_2: FPS source is FPS2
++          - MAX77620_FPS_SRC_NONE: GPIO is not controlled by FPS events and
++                                   it gets enabled/disabled by register access.
++          Absence of this property will leave the FPS configuration register
++          for that GPIO to default configuration.
++
++      maxim,active-fps-power-up-slot:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Sequencing event slot number on which the GPIO get enabled when
++          master FPS input event set to HIGH. This is applicable if FPS source
++          is selected as FPS0, FPS1 or FPS2.
++        enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
++      maxim,active-fps-power-down-slot:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Sequencing event slot number on which the GPIO get disabled when
++          master FPS input event set to LOW. This is applicable if FPS source
++          is selected as FPS0, FPS1 or FPS2.
++        enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
++      maxim,suspend-fps-source:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          This is same as property "maxim,active-fps-source" but value get
++          configured when system enters in to suspend state.
++
++      maxim,suspend-fps-power-up-slot:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          This is same as property "maxim,active-fps-power-up-slot" but this
++          value get configured into FPS configuration register when system
++          enters into suspend. This is applicable if suspend state FPS source
++          is selected as FPS0, FPS1 or FPS2.
++        enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
++      maxim,suspend-fps-power-down-slot:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          This is same as property "maxim,active-fps-power-down-slot" but this
++          value get configured into FPS configuration register when system
++          enters into suspend. This is applicable if suspend state FPS source
++          is selected as FPS0, FPS1 or FPS2.
++        enum: [0, 1, 2, 3, 4, 5, 6, 7]
++
++    required:
++      - pins
++
++additionalProperties: false
++
++# see maxim,max77620.yaml for an example
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
+deleted file mode 100644
+index 28fbca180068..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
++++ /dev/null
+@@ -1,127 +0,0 @@
+-Pincontrol driver for MAX77620 Power management IC from Maxim Semiconductor.
+-
+-Device has 8 GPIO pins which can be configured as GPIO as well as the
+-special IO functions.
+-
+-Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
+-for details of the common pinctrl bindings used by client devices,
+-including the meaning of the phrase "pin configuration node".
+-
+-Optional Pinmux properties:
+---------------------------
+-Following properties are required if default setting of pins are required
+-at boot.
+-- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
+-- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
+-		<pinctrl-bindings.txt>.
+-
+-The pin configurations are defined as child of the pinctrl states node. Each
+-sub-node have following properties:
+-
+-Required properties:
+-------------------
+-- pins: List of pins. Valid values of pins properties are:
+-		      gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7.
+-
+-Optional properties:
+--------------------
+-Following are optional properties defined as pinmux DT binding document
+-<pinctrl-bindings.txt>. Absence of properties will leave the configuration
+-on default.
+-	function,
+-	drive-push-pull,
+-	drive-open-drain,
+-	bias-pull-up,
+-	bias-pull-down.
+-
+-Valid values for function properties are:
+-	gpio, lpm-control-in, fps-out, 32k-out, sd0-dvs-in, sd1-dvs-in,
+-	reference-out
+-
+-There are also customised properties for the GPIO1, GPIO2 and GPIO3. These
+-customised properties are required to configure FPS configuration parameters
+-of these GPIOs. Please refer <devicetree/bindings/mfd/max77620.txt> for more
+-detail of Flexible Power Sequence (FPS).
+-
+-- maxim,active-fps-source:		FPS source for the GPIOs to get
+-					enabled/disabled when system is in
+-					active state.  Valid values are:
+-					- MAX77620_FPS_SRC_0,
+-						FPS source is FPS0.
+-					- MAX77620_FPS_SRC_1,
+-						FPS source is FPS1
+-					- MAX77620_FPS_SRC_2 and
+-						FPS source is FPS2
+-					- MAX77620_FPS_SRC_NONE.
+-						GPIO is not controlled
+-						by FPS events and it gets
+-						enabled/disabled by register
+-						access.
+-					Absence of this property will leave
+-					the FPS configuration register for that
+-					GPIO to default configuration.
+-
+-- maxim,active-fps-power-up-slot:	Sequencing event slot number on which
+-					the GPIO get enabled when
+-					master FPS input event set to HIGH.
+-					Valid values are 0 to 7.
+-					This is applicable if FPS source is
+-					selected as FPS0, FPS1 or FPS2.
+-
+-- maxim,active-fps-power-down-slot:	Sequencing event slot number on which
+-					the GPIO get disabled when master
+-					FPS input event set to LOW.
+-					Valid values are 0 to 7.
+-					This is applicable if FPS source is
+-					selected as FPS0, FPS1 or FPS2.
+-
+-- maxim,suspend-fps-source:		This is same as property
+-					"maxim,active-fps-source" but value
+-					get configured when system enters in
+-					to suspend state.
+-
+-- maxim,suspend-fps-power-up-slot:	This is same as property
+-					"maxim,active-fps-power-up-slot" but
+-					this value get configured into FPS
+-					configuration register when system
+-					enters into suspend.
+-					This is applicable if suspend state
+-					FPS source is selected as FPS0, FPS1 or
+-
+-- maxim,suspend-fps-power-down-slot:	This is same as property
+-					"maxim,active-fps-power-down-slot" but
+-					this value get configured into FPS
+-					configuration register when system
+-					enters into suspend.
+-					This is applicable if suspend state
+-					FPS source is selected as FPS0, FPS1 or
+-					FPS2.
+-
+-Example:
+---------
+-#include <dt-bindings/mfd/max77620.h>
+-...
+-max77620@3c {
+-
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&spmic_default>;
+-
+-	spmic_default: pinmux@0 {
+-		pin_gpio0 {
+-			pins = "gpio0";
+-			function = "gpio";
+-		};
+-
+-		pin_gpio1 {
+-			pins = "gpio1";
+-			function = "fps-out";
+-			maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+-		};
+-
+-		pin_gpio2 {
+-			pins = "gpio2";
+-			function = "fps-out";
+-			maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+-		};
+-	};
+-};
 -- 
 2.51.0
 
