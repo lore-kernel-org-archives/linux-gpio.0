@@ -1,100 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560B9386541;
-	Mon,  6 Apr 2026 15:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775489009; cv=none; b=gSUEwohUOGO0kuydDXdJ/ijZYdjErqqpJy0tdG1ZJru6/ZBq25c1+5g2Yi9GjvbMDwwqAHMn7SyrzeEWhQFKqEpCNZLWBoi3px5yz2WSykqihp6La0mxx3MoiI9ChuNqthlhZPORAbDfrpF4kyO2fkbiJO7aC4Bti+/QS8/Tc3Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775489009; c=relaxed/simple;
-	bh=8sz7HhWogtz4bAQCE5wYiwQaMtdydphZtxifA1hPwuk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=X2gi97dcttK9mLdSxQDZPw/h1FzcdfQdf9zpfWrudIWGUfCmLpqsGlXRXJGwE2R9Zb94mNa/QxiNSbd2Er05jNkWfip2j210zeCRyGHRu284PZFHoqFs0htg9///X7qTuL31gGXPTfJlylBp93GNtRIbK8Bpz/0aK/y0XzB8WzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxGowwph; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A178396D0D
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Apr 2026 19:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775503804; cv=pass; b=MRv64Yl7ZejW0WwsqqZBTnkWvtwjp9diGSzpeba9pY9IIC/Y3bRJSi3Cb/pZTEQNCXbzOJWrgOt49EQTJxv0882GRygTyU0ipNqyfXoP+p7C1igsdVY8P8L45P43vvyNoB1MKT5zpkJFELin2y1x6k50wZNSek4aAeAArCtISG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775503804; c=relaxed/simple;
+	bh=E91vaeMNwDF/pEjv7G2aprNsjDohPpm/gfEXupHR2kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=obOxRoLgo/7J++g/nIgMu1UPAoAVSe6aMyNKWM4rKGwm/9f/e7YzCJSXQFYh6tFcs8+W7V+TViSHY8EkAJq0QPr8o+Yg8tTeghVzS++5ROe3mJNXCxYibKrNt6za4PxsGjtUOLjSppHNy43NCh248tMJRj6yVpxw8YR/KZ5umXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpYt8ULx; arc=pass smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxGowwph"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 606E9C4CEF7;
-	Mon,  6 Apr 2026 15:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775489009;
-	bh=8sz7HhWogtz4bAQCE5wYiwQaMtdydphZtxifA1hPwuk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JxGowwphFFyvSXJXYQQo/kmBovF+wt19ELu2SwJ/5hMdelbW+QDZqzX81YaZ6JccB
-	 WPz5PIQ3J+5+EFdrNp4ELcmOrvmQnZ/U0Efbrn6RrXVrSm+wk/D4yRXLGsbIms6bTa
-	 OA7xqN6eYU7PHEtplBa7vBskI0DjGcEPcjiuQEH7Vy7iEdinhDc3o1RGMEubRSysxh
-	 GDNFB1zPyAs5gPByvCxBmiZ+oaQ1LSHyhBxFbQVDjeCDDLNHifOzgHyAjYKjSOn2VN
-	 JKCD1ngIAbg4Ez5/hl0Qz0mltJ2BHwb4t6OBwu9FqaEybPBEjKde6jbWztElrAmfb/
-	 BKtyH6LZ+UDVw==
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260406075114.25672-1-clamor95@gmail.com>
-References: <20260406075114.25672-1-clamor95@gmail.com>
-Subject: Re: (subset) [PATCH v5 0/2] rtc: max77686: convert to
- i2c_new_ancillary_device
-Message-Id: <177548097517.46304.8142229926923155566.b4-ty@b4>
-Date: Mon, 06 Apr 2026 14:09:35 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpYt8ULx"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-66e8cf72a93so2463045a12.0
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 12:30:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775503801; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Z5B1jYuKiCDkM6sjbusD97ic9kCNnaWhkLAPzGuRuyEocXVgZjS7fX+lXbndDQnvhd
+         2xJqLyvtSaWON/0IevLeJvj2XMoDlpjxWuoJeQZOQDgOiMBkTuQ2zng5MyLw8J4qJ0sX
+         8FZ5baJ1gJN1+L9EnN/CR5bGpsyoTEfGNEQcWZQ++rYKSCw52NtVk3ixtCUlc1rlDsTE
+         TVucDDzv2V36V0/enzMF1fUbnNXdkDNTB9Z5KqS96IfTGDvawcaeenv1o9Ys/d+kyAbx
+         boD4JrhUNUJK2nXaQo8VPWj64uVZlW6eq97yBEz/2nlHCBGlQQO4vyH+wHmRrFqzKkP3
+         2j0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=6oqpjiW2BP+Tsq4RmXpwQJ34Z4G51X+Eu8RZMOYwNBA=;
+        fh=9cE0lbZs6InQy42N/8iTfci3jIyEA4UqEQsqEEbbNMg=;
+        b=FKxb0eL1+xqH1DhX8HjpbREMDZm5mUDA4Xi9kq5de0yot8Y6RLSwdSBC55yjSthaX4
+         uHAk3nObGCv7hCA7t18V8Mld4J9kHAM20M4Z3gv0Vwa0JYKeqZ6WotshcMR3hrtePUKm
+         k45yGtpDC1UfDyTFAUG18f/EtZQ/8ZGhkRivUzk8KvL8BsxBbUymk8fvyzs0dKYPOY6B
+         Dyh1cebVI+zNfy/hyMQ/C3oLheD7OKa/84VZTYgR84eo7sjtweSkeXlm/l/vMUiGn+Hf
+         l8n8paxMSK6d4VgwssYih2F/t/xKeuQJSl8y2wZzD5MhYqV0ik+NhZcGretZLnDt5Vxx
+         LM2g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775503801; x=1776108601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6oqpjiW2BP+Tsq4RmXpwQJ34Z4G51X+Eu8RZMOYwNBA=;
+        b=fpYt8ULxqnw2GUbo8PxtOmsJkkZtVysEaDZlyc4h2P68GO+cYulde84SIJ0uydhpZx
+         jXNxQ9O2Gp2cuhIi61UgF3kYmIp0wsH6hphdOhhfWsv/rcIlbgPOzmweaqa3IgtwuzP9
+         PGx5z6ohMvudLwSjIw93Q7vdhkwWj/QFO55A7+teVpb6rtuH474NgoX05nB2PuJumkIA
+         SbfOZSaseyOcdue3nC51ekx29sYKiCI528A3gJM6P3mDHj/Bib7xmsx64QruetIGRfSe
+         g7O7sqUO8j7eozf+iBdwIQCQgVMAopcZ4hX5BfHAeP7lWhUUHW9DOwoC0Z0o7v18+9wK
+         9bBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775503801; x=1776108601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6oqpjiW2BP+Tsq4RmXpwQJ34Z4G51X+Eu8RZMOYwNBA=;
+        b=l/7LO/ScWMOvgNNaqFVy61Yr7Rv2LvHhDajB98YaLnOGk5eDlVKxU/oACrxCxfgaH+
+         m/7DCFQomGG8Zv3EhSkkJNmoXjPNZJgNZ2vHgoeLCflVaQ1F4tjMG1xWEOS4UjloD9bp
+         6ZmKFRTzsrBm1HIEf3F6D/0vVCQOAPTzprFQE/EAqVtrfppJHBIXioYxLlHDKAP1wg9H
+         Kbd7XcxVHMsbzDMwtx30I1QexBTR24taxpmJoxG1eOmnGJsAn7KJiMYQawR6lJCZWkuR
+         2Cs8j0DkbjSyIU7r1mVvgCg+j/uLpAWWeSz5tbntBO1bECTpfFYyJxQVHqeFW83Z73Pi
+         9XRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPnvhIrzAtx7J1LZhWC1Ss2N1ZwC0JXgbTVh12CUTW+fQPZQEXMEk4AuQATqIPJ+jgcYo/p1vEYT0h@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqV38HpZsyaYkZm+Wq4nbS22J64OptLU8zeq5i9dFksedlr8N+
+	W927Drx4CX/GZxZJSdpgK157TJZ8YoHrx3o9TkdeTiAtLkbv4XwFFwI64LTYrPXF60dsVLVwsPn
+	0nGL9CCBgdLfMRy7XiHc2RrIgUX4u7jE=
+X-Gm-Gg: AeBDieuDNYaUcMeJMxxhrjZFAWaGxDp6kaj5g1ttcejF4z02swAaBkrs+HKjvmwy9W2
+	5Bl8LjYUEB2Z1CUg3wIl25j7ZvzpijNk3rRIpKjv6slHmYc7hk4OQUamPjvRqm6ho+3dZcnOlPm
+	cXTcGuIa/GZBX3CcWqZAGlWA+GIkKlp6jhyGrf/oNvQ7oi/tdRuCmBXsaXxbVSUuGymNX6seIpE
+	6indWSt4lAYtv3EgOhbEXO2lU4TUYxw2Ot153fb5SI80ZD+hNXyZ4g8OOP+UIwkqYuGbQNnHU17
+	lB4WxWd9PVAp7TYAfDyKumw5+csTwgc5HbypGF8W4/4rCpyQS5bw12Wtv4fOjOwATwphUh8U4Xp
+	Qtv2sFUjpHjUOrPHvDQ==
+X-Received: by 2002:a17:907:d87:b0:b9c:b069:8ac3 with SMTP id
+ a640c23a62f3a-b9cb069bac2mr337550766b.3.1775503801341; Mon, 06 Apr 2026
+ 12:30:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev-67696
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1439; i=broonie@kernel.org;
- h=from:subject:message-id; bh=8sz7HhWogtz4bAQCE5wYiwQaMtdydphZtxifA1hPwuk=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp08/uU1CTT3KzlibXts1Z+4QpiWB+gZDbBH1Gf
- 0VS4JHW22OJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCadPP7gAKCRAk1otyXVSH
- 0CrWB/wKShVledqP+QvT73mmRrRJOPaCli+wTDZaMbA1jrXuDYaYP0fkyzNOEmqIWRsf9lNnLtC
- +k9PvlQvBI50/i+SiC7vjfQ4cchL66zGQnNR3HufeyIGHvHdKlMe/RfeFVLqL3SBcXVmNX2kzkc
- drIU5oBzZbV1d/FRPMziKZzM0kDZwspd6vdxBTu7JjBkU51TaNsqHhxQ4OtGbDLrLQ+o1O/g9r8
- f6RAX0EFxTWKGNNNKBTyepCWj1+xGvb5oIjYQYsUeIqXbMHhW56ccX/AeUnrwZGUBgua2Yyqnin
- w6xWvnfOKE1iMSsdK4vct2mPv0bDujkxeTELdZEgs2jdgr0B
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20260403-swnode-unreg-retcode-v3-0-7886092b28b4@oss.qualcomm.com> <20260403-swnode-unreg-retcode-v3-2-7886092b28b4@oss.qualcomm.com>
+In-Reply-To: <20260403-swnode-unreg-retcode-v3-2-7886092b28b4@oss.qualcomm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 6 Apr 2026 22:29:24 +0300
+X-Gm-Features: AQROBzA8JV6OQ6clUVeDdQ8y2N7R8Nc6EH_ZR0i5RXUt9ZfYunTBiDn_zltZ3Uw
+Message-ID: <CAHp75Vca5R82wEV1hAyu1=zkuQOw3htXT787XhGH+LVN+EHQHg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpio: swnode: defer probe on references to
+ unregistered software nodes
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	brgl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 06 Apr 2026 10:51:12 +0300, Svyatoslav Ryhel wrote:
-> rtc: max77686: convert to i2c_new_ancillary_device
-> 
-> Convert RTC I2C device creation from devm_i2c_new_dummy_device() to
-> i2c_new_ancillary_device() to enable the use of a device tree-specified
-> RTC address instead of a hardcoded value. If the device tree does not
-> provide an address, use hardcoded values as a fallback.
-> 
-> [...]
+On Fri, Apr 3, 2026 at 4:52=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
+>
+> fwnode_property_get_reference_args() now returns -ENOTCONN when called
+> on a software node referencing another software node which has not yet
+> been registered as a firmware node. It makes sense to defer probe in this
+> situation as the node will most likely be registered later on and we'll
+> be able to resolve the reference eventually. Change the behavior of
+> swnode_find_gpio() to return -EPROBE_DEFER if the software node reference
+> resolution returns -ENOTCONN.
 
-Applied to
+...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-7.1
+>         for_each_gpio_property_name(propname, con_id) {
+>                 ret =3D swnode_gpio_get_reference(fwnode, propname, idx, =
+&args);
+> -               if (ret =3D=3D 0)
+> +               if (ret =3D=3D 0 || ret =3D=3D -ENOTCONN)
+>                         break;
 
-Thanks!
+If I understood the logic correctly this may be just extended as
 
-[1/2] regulator: dt-bindings: regulator-max77620: convert to DT schema
-      https://git.kernel.org/broonie/regulator/c/881dd6b2ff82
+  if (ret =3D=3D 0)
+    break;
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+  if (ret =3D=3D -ENOTCONN)
+    /* ... */
+    return -EPROBE_DEFER;
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>         }
+>         if (ret) {
+> +               if (ret =3D=3D -ENOTCONN)
+> +                       /*
+> +                        * -ENOTCONN for a software node reference lookup=
+ means
+> +                        *  that a remote struct software_node exists but=
+ has
+> +                        *  not yet been registered as a firmware node. D=
+efer
+> +                        *  until this happens.
+> +                        */
+> +                       return ERR_PTR(-EPROBE_DEFER);
+> +
+>                 pr_debug("%s: can't parse '%s' property of node '%pfwP[%d=
+]'\n",
+>                         __func__, propname, fwnode, idx);
+>                 return ERR_PTR(ret);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--=20
+With Best Regards,
+Andy Shevchenko
