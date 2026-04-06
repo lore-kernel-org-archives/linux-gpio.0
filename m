@@ -1,434 +1,149 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2E35E923
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Apr 2026 07:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CA83128C6
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Apr 2026 09:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775461893; cv=none; b=XxEOcX9LxHHzsOuMmCTC9vch2jQPd9Q8uTan+jlENLN9yP0Ko8N3q5LVWHYYrBOpxyj2TOIno+zVB7jTKTUwfj8BZ2hAJPMuErdyn55Blz3tlZjyMbg6MnNFnxBSt4K7RCT7mtQcgKTsUo8q7QoFiU6+thZnqNvC6PlcPJuD0gs=
+	t=1775466307; cv=none; b=GT16lxSeoJmQoJotbx4czaYniNVPoRyLJHiWX1TwlCT+/oAZD1K9rpFQJR55wqI4EogppglkWilzdxuR/wiaP5P5ZM4PNlZm0ZgblfXS3W+2sveI4xJzEnatrsQts9wB6Fz/MRyNqZ1q5YM8HTNCCvJ0OWQYO++Dy3GW7kTS6dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775461893; c=relaxed/simple;
-	bh=LbDcwJqJ3hApWhOjg/1ArXaMfQa98m0EF2RkLmBRHCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GKmBVBmN1Ot6QCO9pRjhLt+NYfWSZXWhBvFVIvXp2dYWOz6jRWPUmbp3n+xbMmN7Nge74/NRhU8L80O4icH54UA00kDJL6cRSx1NG4JUsthJ2t2LIxiyASxxp9RSglZHLkewKc20KYayTQqRKX4LM3J8tCkE59uU8mRDeV9dI9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/7oukeh; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775466307; c=relaxed/simple;
+	bh=JCFwUhX8n6J6cLvZHBT/nylt0d34jPjdOhcY0lO5Akg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pVYEEu7R3V0872+8VP1n2ID2ktRfU6nlm5Kctv1nmOpoCqjn8ZzTQfTL+ZCq6t0dQH7m9TVewG4x5CzQ2aUWn6b28wbT2Bb9PV2F9FKIw97uIlkUicb6Dw3lDnZUJvzNFhxdOO078bczudPt/pQPijBiMbIlSuc5t2oyY9HIvu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WokG1jV8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MV6ZjB6R; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/7oukeh"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43cf8d550bdso3328681f8f.0
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 00:51:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WokG1jV8";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MV6ZjB6R"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6364nboZ2394711
+	for <linux-gpio@vger.kernel.org>; Mon, 6 Apr 2026 09:05:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wY4ckWtfpN2pfgEpvz3rl8Jz7KSBQO2pSps0bfWI4Pw=; b=WokG1jV8TTdAeLH0
+	WsES62KZhpnmUicCUJBlMBRKguACz/XLQ9xgrlE1bA8MbMFu1mO10oPDsWTHtHfW
+	Fy35bNo0seziStC/yDhZGPbiVtsRKOhab/MIKKwr+Flfend6sAYd/T++zDJARBYr
+	S0WBm28qk7J6eEGmnXtpyE/M80BjyvCpW2fHuzCY9cHWrtU/3krYOxmFeZanpBtk
+	qsMHQaxcyYvkB9z9QRxbOSGwxoHTQ2JzMZC5+NYZrpxSYJIxpZ5KBsECTLjnXLU5
+	aypwI1kSsBTzSCFY/8RwMy/ko9V9VGd5QPRMFVx7zZehfh92bz/tZuXG8+MNf/v2
+	TVr+wA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4datqsmhwx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 09:05:04 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2b241be0126so106167625ad.3
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Apr 2026 02:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775461888; x=1776066688; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IvnYBColS2NJ2nRJ9xcjChL7NS5bCiTG1wTopgEGQoA=;
-        b=l/7oukehDTJtGLXljrZiNgSlZyBrjyu75VEhbW1BJcLG1XdFVicsKyQY0HIJFS/yfg
-         TZItH8Cwv8XaeaoqtMmgL7f7BR/qFqVSXep0vG1G2Er7eYIdgsTOQqQsLwP02EbwzN30
-         ZZX+FatXxmsmTRuOnkv+l0e3D2sCeRDJ7GWTmEM7KPVVE9xUdoKvqMAhm6Hf0Q3z5vig
-         EkYMlGyOqZwSFQc7Edt85q1SQRsznjLtZHe2MpXQenfHPOeLjmZCqlPlZN5s4Wznmq0a
-         vHLgxD6KxBVWoJDPVsleblN+9hxnrozKMJEi9H2aHgusTDExCFFWU2W/rqtmFbzq9Ivz
-         mtSw==
+        d=oss.qualcomm.com; s=google; t=1775466304; x=1776071104; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wY4ckWtfpN2pfgEpvz3rl8Jz7KSBQO2pSps0bfWI4Pw=;
+        b=MV6ZjB6RamvVIkf6ebMgGxst+yCuc92A8F06Y+ZZSOGQSayiY/h4+nNmh3MzhKIZ2/
+         DPcjNjgvzf2vj6+4G3CSqozTHTj7llI6Ktj0eIiIi/2mL/9tbebO64iv2ltCvyPgkdH7
+         t6CMLug9ZL3V07iM2FG0BlRFUVApyd7ktUyl8V9t+bjddUFdc7kn1zRPP52HFOrBMwd5
+         ACLm36ZLIZCvzTfOFVKzxh/Xk8P/rjbfTLWILMCaY80j8Sz8JbbVSO6pwfaWRzH+NjKq
+         HXAhO6+w2bDSmOF8/5JiRygbRjJEfDa8pdl0Tv4loxnHEato5Noizwd+07z9VKBRDPX9
+         4qfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775461888; x=1776066688;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IvnYBColS2NJ2nRJ9xcjChL7NS5bCiTG1wTopgEGQoA=;
-        b=a4q79yelRqMiG7YCI1mz4GcH6uDWfIlaRs5gWsh5r4jqBasiGElXWMmiRqETcUiyYM
-         1EmsHlZRuKG+EipmdRvnCINWuZYMyPil2R0JNLSmtPy2xNm7vSJDaSk9wPtxTmdSIX+D
-         a28912syHCIFgV5j2WLgXO+Ve7ZlS/wO1MIz6ozOFrnRGLuV9XpOmdIlSBm9v8STTemO
-         Utd11E5RFN85fWGi+qqWSE8r8NEI63dKqEPsJPgT+xWnaKzt68CpsJCyTX02vjhTQh0S
-         Er27yoGW7LLhk37EVe+FuGOdIp4QH1vDn5f1oBXJOOzaJv+EvMDuzO4QWIvsozXrsoFb
-         YesA==
-X-Gm-Message-State: AOJu0YxPYFEBbMa+FEm+8pj1cw0TyrUkgk45zBn0ugWjP8s+LjLaZ0pp
-	BkqA0K3HgfhyqZp4UUHsu4PG9lIfoeZNu/bvVF0mdpL0IqP86OMZ5ARZ
-X-Gm-Gg: AeBDietWBeS9QlsNi2iw6gAZJsVa81h65zkyKJsk3oJ+8VQvLg3YxArXSOBN2YQMMKi
-	YD/WduQFXysiQJMoBYcEtSqc0jJzT5enwOx2b0GMheJq6tXcBLl1PQTz4mix8t1vicqGPXyy6Ja
-	xJAFJShfc7YRg53LpwQO4ZEUNMZyI4X0oPEO5NebesVv69K89dwWIS7LzlEdpfNJdJ5Ma5Mj26Z
-	GiWqx75KEySHup3ktOwuNAJgoBKpWZhn4oV3yKGeCXjNNP0ZambYoIuJaUgftkmyPE+wqL0Nfyo
-	hJVOmZRkv6zRVDHw67ksl0nX6DJfDbvZ84MqMpmx7PWFoOx88/BWH9vVrvBxL5JKRqPHa2MfTQH
-	RmtOZ9m8r4NfSLbAq0lg6UlruNMFk/DpxXxnrFYb3zlMIKaO061pWK/zGP1R2gyJ/xSLO1OIWkf
-	WR1Cvyynx3dfON
-X-Received: by 2002:a05:600c:a414:b0:488:b2bd:bd5d with SMTP id 5b1f17b1804b1-488b2bdc0c5mr20479025e9.6.1775461887943;
-        Mon, 06 Apr 2026 00:51:27 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488b739e00bsm20393525e9.10.2026.04.06.00.51.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2026 00:51:27 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/2] regulator: dt-bindings: regulator-max77620: convert to DT schema
-Date: Mon,  6 Apr 2026 10:51:13 +0300
-Message-ID: <20260406075114.25672-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260406075114.25672-1-clamor95@gmail.com>
-References: <20260406075114.25672-1-clamor95@gmail.com>
+        d=1e100.net; s=20251104; t=1775466304; x=1776071104;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wY4ckWtfpN2pfgEpvz3rl8Jz7KSBQO2pSps0bfWI4Pw=;
+        b=TauKFZ/wjYtDLQ3cMOnoilSnBdvBvT1GEdBUA5huBgMQAKtldo6Oun4+d6KlH+R8VB
+         2brDVr2yxGb3neg8rc6CRQP0wsTtGKdTinta2z0oWqvSZ5ZK+UvNPwQIyY/rk56DPOUr
+         424AtbxCVfsr2fMqhP3MxWEFZr9boFaW+Y2J9xRGqfeTtMb8EQpb5xvsLbJXRYENATxz
+         y1YOZ6xjX4XMkbsZ5pfTXnLbArXtkUFgEkKR/nbZm5XXuYE2MiQLNEdR9kPUwxjK1MZ6
+         ztUfjLgiQkPE74N//tV7WwpFxjgPsKgnlUQbW/1H1Rjw19bLJ2pbzCWaCvttLH2nmxDc
+         jGYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoV9RskLu44xdptf6lZm8f8trWY8bwc/1PKCFndwdvSk0P0o9fCBgQFOnNhzQe5Si0Vy/px8qUV9H5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxib/lH22HXhLAmGti1gmjRDIs8wFBvNKz9UvYhj8ZqR6UyFTjM
+	DT80GLe4oV73Zl+LXWzYX1axEvwRzmUafRL/Vi/52I7Y9RPVolyzm/2iVjTGULks/pGeNhgIF02
+	HNhn9tyqOVDceqQFnw0GNJqfSnSvPKtG+gK8dZebXc1eoLZ1c+JIvzQAKdOzIZsGp
+X-Gm-Gg: AeBDietTiLGZ3jNenC6w/28AdkW0r8Ve6acx/U9wrzuCXhgmJ6tGZ3IJAAnEymvwOpp
+	PI/6hLj0W6hg2sUO4W8mch1DpozR6opPFlJPOqH2TE9WadmdtCBPmCdJNN6iJkbKqh8oNgtXLyP
+	WuDIGoJomVlw6O9V2ODQipnkHhuSP1o9IxyemVFf87evw4bjKRvX0WYISuYU+FHbx1hIMFkEFFl
+	TikSQ7gfNuzlToGh1XfQficGN41RXLJ1CxNEFb/7jz5n4XbNtSUCN1j0SR/atxjn8VPDCm1tpSj
+	97Voe53333lgL1MyW0e7PqBSwxZzCh99yhja7Y1ZruB4robEQpLDYXgWkfsPdKHXIDx3bIkqPWo
+	BEWs0U0HKm0RVy/mejDjcVNzBhgSlIIydIa+KuxFCtzGEh5X7+2uyBHVzyJotgT4mxg==
+X-Received: by 2002:a17:903:3586:b0:2b0:b325:748a with SMTP id d9443c01a7336-2b281705e9fmr125987535ad.22.1775466303876;
+        Mon, 06 Apr 2026 02:05:03 -0700 (PDT)
+X-Received: by 2002:a17:903:3586:b0:2b0:b325:748a with SMTP id d9443c01a7336-2b281705e9fmr125987295ad.22.1775466303395;
+        Mon, 06 Apr 2026 02:05:03 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b27497af19sm129633005ad.50.2026.04.06.02.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Apr 2026 02:05:02 -0700 (PDT)
+Message-ID: <5c0a53c5-3750-4b80-b3b0-0bc7595454d9@oss.qualcomm.com>
+Date: Mon, 6 Apr 2026 14:34:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Introduce TLMM driver for Qualcomm IPQ5210 SoC
+To: Linus Walleij <linusw@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20260330-ipq5210_tlmm-v4-0-b7c40c5429e5@oss.qualcomm.com>
+ <CAD++jLkwGT2SxQrax5FFF2x6CznQF_03N_FC6-2n7OAiNH3Xng@mail.gmail.com>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <CAD++jLkwGT2SxQrax5FFF2x6CznQF_03N_FC6-2n7OAiNH3Xng@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=ari/yCZV c=1 sm=1 tr=0 ts=69d37740 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=rkh08bgVQrwZcmFFEZkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=zZCYzV9kfG8A:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: TMllHd0-OA31pQVind5GF9TIhJEVKtO6
+X-Proofpoint-GUID: TMllHd0-OA31pQVind5GF9TIhJEVKtO6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA2MDA4NiBTYWx0ZWRfXwVbvOGJ07kiw
+ tOFskyW4rJ1T0CRKL7Zp0InhE9vCAvnRzCE4Aq+FtxCKrxMU7kOG9qdloqUnqtMTzhnCTK4It4J
+ oFohRDbXmfP5B6dcf8h0fgh+Vii+EJGVx82m1Th9fyKZzXiNg18dnOKymqmJCtCcqY2Axh0OiUR
+ AgoGIM7Xb7QbDjgY8jltcE7Tq/GY2bPxOMqT09pEe9GthNCzg/9laimO03LowuwA2l/1rMWmrO+
+ YdzyKhAY2Ne1ktGql8pFcBdtpNhTuM9wXNkmverdEEwaVqNy3aJJ8HpVCGC02JgArY/7xlrQBvC
+ bN5mdV52CWN2tkfWRlKNlI7nDDKIQvmLH9tkzHs51KhZte6aElB6cNPFGC1/TF53iKWNNd8BvqM
+ BkUoh777c1RgmZx2mLscGGd2sx3O+iZeQre0EyrbKGZLVPgGAUjFR8sxlsWhf5trrCpDSENAfnV
+ CpsLRX7vS+cVwWTGFCA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-06_02,2026-04-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 clxscore=1015 malwarescore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604060086
 
-Convert regulator-max77620 devicetree bindings for the MAX77620 PMIC from
-TXT to YAML format. This patch does not change any functionality; the
-bindings remain the same.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../regulator/maxim,max77620-regulator.yaml   |  99 ++++++++
- .../bindings/regulator/regulator-max77620.txt | 222 ------------------
- 2 files changed, 99 insertions(+), 222 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77620-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+On 3/30/2026 2:11 PM, Linus Walleij wrote:
+> On Mon, Mar 30, 2026 at 6:51 AM Kathiravan Thirumoorthy
+> <kathiravan.thirumoorthy@oss.qualcomm.com> wrote:
+>
+>> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points.
+>> Add the pinctrl support for the same.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> Patches applied!
 
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77620-regulator.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77620-regulator.yaml
-new file mode 100644
-index 000000000000..7118c34961ba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77620-regulator.yaml
-@@ -0,0 +1,99 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/maxim,max77620-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Regulator for MAX77620 Power management IC from Maxim Semiconductor.
-+
-+maintainers:
-+  - Svyatoslav Ryhel <clamor95@gmail.com>
-+
-+description:
-+  Device has multiple DCDC(sd[0-3]) and LDOs(ldo[0-8]). The input supply
-+  of these regulators are defined under parent device node. Details of
-+  regulator properties are defined as child node under sub-node "regulators"
-+  which is child node of device node.
-+
-+patternProperties:
-+  "^in-(sd[0-3]|ldo(0-1|2|3-5|4-6|7-8))-supply$":
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Input supply for DCDC or LDO
-+
-+  "^(sd[0-3]|ldo[0-8])$":
-+    type: object
-+    $ref: /schemas/regulator/regulator.yaml#
-+    unevaluatedProperties: false
-+
-+    properties:
-+      maxim,active-fps-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          FPS source for the GPIOs to get enabled/disabled when system is in
-+          active state. Valid values are:
-+          - MAX77620_FPS_SRC_0: FPS source is FPS0.
-+          - MAX77620_FPS_SRC_1: FPS source is FPS1
-+          - MAX77620_FPS_SRC_2: FPS source is FPS2
-+          - MAX77620_FPS_SRC_NONE: GPIO is not controlled by FPS events and
-+                                   it gets enabled/disabled by register access.
-+          Absence of this property will leave the FPS configuration register
-+          for that GPIO to default configuration.
-+
-+      maxim,active-fps-power-up-slot:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          Sequencing event slot number on which the GPIO get enabled when
-+          master FPS input event set to HIGH. This is applicable if FPS source
-+          is selected as FPS0, FPS1 or FPS2.
-+        enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-+      maxim,active-fps-power-down-slot:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          Sequencing event slot number on which the GPIO get disabled when
-+          master FPS input event set to LOW. This is applicable if FPS source
-+          is selected as FPS0, FPS1 or FPS2.
-+        enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-+      maxim,suspend-fps-source:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          This is same as property "maxim,active-fps-source" but value get
-+          configured when system enters in to suspend state.
-+
-+      maxim,suspend-fps-power-up-slot:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          This is same as property "maxim,active-fps-power-up-slot" but this
-+          value get configured into FPS configuration register when system
-+          enters into suspend. This is applicable if suspend state FPS source
-+          is selected as FPS0, FPS1 or FPS2.
-+        enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-+      maxim,suspend-fps-power-down-slot:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          This is same as property "maxim,active-fps-power-down-slot" but this
-+          value get configured into FPS configuration register when system
-+          enters into suspend. This is applicable if suspend state FPS source
-+          is selected as FPS0, FPS1 or FPS2.
-+        enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-+      maxim,ramp-rate-setting:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: |
-+          Ramp rate(uV/us) setting to be configured to the device. The platform
-+          may have different ramp rate than advertised ramp rate if it has design
-+          variation from Maxim's recommended. On this case, platform specific
-+          ramp rate is used for ramp time calculation and this property is used
-+          for device register configurations. The measured ramp rate of platform
-+          is provided by the regulator-ramp-delay.
-+
-+          Maxim Max77620 supports following ramp delay:
-+            SD: 13.75mV/us, 27.5mV/us, 55mV/us
-+            LDOs: 5mV/us, 100mV/us
-+        enum: [5000, 13750, 27500, 55000, 100000]
-+
-+additionalProperties: false
-+
-+# see maxim,max77620.yaml for an example
-diff --git a/Documentation/devicetree/bindings/regulator/regulator-max77620.txt b/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
-deleted file mode 100644
-index bcf788897e44..000000000000
---- a/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
-+++ /dev/null
-@@ -1,222 +0,0 @@
--Regulator DT binding for MAX77620 Power management IC from Maxim Semiconductor.
--
--Device has multiple DCDC(sd[0-3] and LDOs(ldo[0-8]). The input supply
--of these regulators are defined under parent device node.
--Details of regulator properties are defined as child node under
--sub-node "regulators" which is child node of device node.
--
--Please refer file <Documentation/devicetree/bindings/regulator/regulator.txt>
--for common regulator bindings used by client.
--
--Following are properties of parent node related to regulators.
--
--Optional properties:
---------------------
--The input supply of regulators are the optional properties on the
--parent device node. The input supply of these regulators are provided
--through following properties:
--in-sd0-supply:		Input supply for SD0, INA-SD0 or INB-SD0 pins.
--in-sd1-supply:		Input supply for SD1.
--in-sd2-supply:		Input supply for SD2.
--in-sd3-supply:		Input supply for SD3.
--in-ldo0-1-supply:	Input supply for LDO0 and LDO1.
--in-ldo2-supply:		Input supply for LDO2.
--in-ldo3-5-supply:	Input supply for LDO3 and LDO5
--in-ldo4-6-supply:	Input supply for LDO4 and LDO6.
--in-ldo7-8-supply:	Input supply for LDO7 and LDO8.
--
--Optional sub nodes for regulators under "regulators" subnode:
--------------------------------------------------------------
--The subnodes name is the name of regulator and it must be one of:
--	sd[0-3], ldo[0-8]
--
--Each sub-node should contain the constraints and initialization
--information for that regulator. The definition for each of these
--nodes is defined using the standard binding for regulators found at
--<Documentation/devicetree/bindings/regulator/regulator.txt>.
--
--There are also additional properties for SD/LDOs. These additional properties
--are required to configure FPS configuration parameters for SDs and LDOs.
--Please refer <devicetree/bindings/mfd/max77620.txt> for more detail of Flexible
--Power Sequence (FPS).
--Following are additional properties:
--
--- maxim,active-fps-source:		FPS source for the regulators to get
--					enabled/disabled when system is in
--					active state.  Valid values are:
--					- MAX77620_FPS_SRC_0,
--						FPS source is FPS0.
--					- MAX77620_FPS_SRC_1,
--						FPS source is FPS1
--					- MAX77620_FPS_SRC_2 and
--						FPS source is FPS2
--					- MAX77620_FPS_SRC_NONE.
--						Regulator is not controlled
--						by FPS events and it gets
--						enabled/disabled by register
--						access.
--					Absence of this property will leave
--					the FPS configuration register for that
--					regulator to default configuration.
--
--- maxim,active-fps-power-up-slot:	Sequencing event slot number on which
--					the regulator get enabled when
--					master FPS input event set to HIGH.
--					Valid values are 0 to 7.
--					This is applicable if FPS source is
--					selected as FPS0, FPS1 or FPS2.
--			
--- maxim,active-fps-power-down-slot:	Sequencing event slot number on which
--					the regulator get disabled when master
--					FPS input event set to LOW.
--					Valid values are 0 to 7.
--					This is applicable if FPS source is
--					selected as FPS0, FPS1 or FPS2.
--			
--- maxim,suspend-fps-source:		This is same as property
--					"maxim,active-fps-source" but value
--					get configured when system enters in
--					to suspend state.
--
--- maxim,suspend-fps-power-up-slot:	This is same as property
--					"maxim,active-fps-power-up-slot" but
--					this value get configured into FPS
--					configuration register when system
--					enters into suspend.
--					This is applicable if suspend state
--					FPS source is selected as FPS0, FPS1 or
--
--- maxim,suspend-fps-power-down-slot:	This is same as property
--					"maxim,active-fps-power-down-slot" but
--					this value get configured into FPS
--					configuration register when system
--					enters into suspend.
--					This is applicable if suspend state
--					FPS source is selected as FPS0, FPS1 or
--					FPS2.
--- maxim,ramp-rate-setting:		integer, ramp rate(uV/us) setting to be
--					configured to the device.
--					The platform may have different ramp
--					rate than advertised ramp rate if it has
--					design variation from Maxim's
--					recommended. On this case, platform
--					specific ramp rate is used for ramp time
--					calculation and this property is used
--					for device register configurations.
--					The measured ramp rate of platform is
--					provided by the regulator-ramp-delay
--					as described in <devicetree/bindings/
--					regulator/regulator.txt>.
--					Maxim Max77620 supports following ramp
--					delay:
--					  SD: 13.75mV/us, 27.5mV/us, 55mV/us
--					  LDOs: 5mV/us, 100mV/us
--
--Note: If the measured ramp delay is same as advertised ramp delay then it is not
--required to provide the ramp delay with property "maxim,ramp-rate-setting". The
--ramp rate can be provided by the regulator-ramp-delay which will be used for
--ramp time calculation for voltage change as well as for device configuration.
--
--Example:
----------
--#include <dt-bindings/mfd/max77620.h>
--...
--max77620@3c {
--	in-ldo0-1-supply = <&max77620_sd2>;
--	in-ldo7-8-supply = <&max77620_sd2>;
--	regulators {
--		sd0 {
--			regulator-name = "vdd-core";
--			regulator-min-microvolt = <600000>;
--			regulator-max-microvolt = <1400000>;
--			regulator-boot-on;
--			regulator-always-on;
--			maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
--		};
--
--		sd1 {
--			regulator-name = "vddio-ddr";
--			regulator-min-microvolt = <1200000>;
--			regulator-max-microvolt = <1200000>;
--			regulator-always-on;
--			regulator-boot-on;
--			maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
--		};
--
--		sd2 {
--			regulator-name = "vdd-pre-reg";
--			regulator-min-microvolt = <1350000>;
--			regulator-max-microvolt = <1350000>;
--		};
--
--		sd3 {
--			regulator-name = "vdd-1v8";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--
--		ldo0 {
--			regulator-name = "avdd-sys";
--			regulator-min-microvolt = <1200000>;
--			regulator-max-microvolt = <1200000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--
--		ldo1 {
--			regulator-name = "vdd-pex";
--			regulator-min-microvolt = <1050000>;
--			regulator-max-microvolt = <1050000>;
--		};
--
--		ldo2 {
--			regulator-name = "vddio-sdmmc3";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <3300000>;
--		};
--
--		ldo3 {
--			regulator-name = "vdd-cam-hv";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--		};
--
--		ldo4 {
--			regulator-name = "vdd-rtc";
--			regulator-min-microvolt = <1250000>;
--			regulator-max-microvolt = <1250000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--
--		ldo5 {
--			regulator-name = "avdd-ts-hv";
--			regulator-min-microvolt = <3000000>;
--			regulator-max-microvolt = <3000000>;
--		};
--
--		ldo6 {
--			regulator-name = "vdd-ts";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--
--		ldo7 {
--			regulator-name = "vdd-gen-pll-edp";
--			regulator-min-microvolt = <1050000>;
--			regulator-max-microvolt = <1050000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--
--		ldo8 {
--			regulator-name = "vdd-hdmi-dp";
--			regulator-min-microvolt = <1050000>;
--			regulator-max-microvolt = <1050000>;
--		};
--	};
--};
--- 
-2.51.0
+Linus, I don't see these patches in linux-next or in linux-pinctrl tree. 
+Do I miss something here?
 
+>
+> Yours,
+> Linus Walleij
