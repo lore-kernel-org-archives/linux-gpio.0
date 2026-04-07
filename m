@@ -1,84 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5A2C2FF
-	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 07:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9F393DDF
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 07:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775546073; cv=none; b=uZ6JXLI26RU9kotAlWs/id8hSOtU387e+G0bg4lNY/Ugr5Vd7QoJCSY490sY00MjlS6pXQ4KIyy2Gz9vdEKWOZfZG/YMG2AjsDugzmecxo1cEgkamJqIUZ6HFLF2ODh0b6+Zbsq7mXgkbpEKl/7kZIBb0KIhj0gbPexBpuqG6dY=
+	t=1775546852; cv=none; b=J4WEgCaoc9OuqnabCte/vtPEqykyuPmqk8UgKXOM5QmrSQI970LxCZiO4eaQ2KSq7tdrWotX1+VyEMVXTxAvSJBu7DEg1+zZtsEl8JSsK6MUbRwV8tBJUqifghgW4DVA6Lh5mS46EPRvztaY8Xo2bHrQgwR8LngKvVDJs7ePyaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775546073; c=relaxed/simple;
-	bh=eDYNJnr4ETlKa/GKXVghhxv0mku2PXdivqbDDAcFYYs=;
+	s=arc-20240116; t=1775546852; c=relaxed/simple;
+	bh=xXRf7ZlIE67Mq9vvA+FZdAN/BVyuhN+/8xAIWrMcwSM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NIXlmMRXO23ERG8DgpzuAO9x4Z3J6IzjlCE1mWxDOMirD0i9thGawwkuNrh/K8mbEbukQKJXhUW/Clmr+rfrmWibYig4XIt/c1TVL3HNmwkDlOiplTtqMKrt23t57uRuhbN70EkWsHEpbyhdvispFCk/FmJ5nrSeEEsmFQpbmJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6RHv0Yu; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=ghc8ZDIvX+ZXb/rOSpzWYIkEoJUZ0lkknz/8r7t1PjcPp74LixZspuet4dJ+Xw1gjlZbRwCTTwugELmiGG1jtY90lGfurUdCR+FNX+oiIWzjHTwPkH7l4Pp1S+JwCEKNL95I56FNyosPBq4cpdIMocVJRGs0PID/WpXoNwERpxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oS6QxhYN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6RHv0Yu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF25C2BC9E
-	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 07:14:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oS6QxhYN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747CDC2BCB8
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 07:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775546073;
-	bh=eDYNJnr4ETlKa/GKXVghhxv0mku2PXdivqbDDAcFYYs=;
+	s=k20201202; t=1775546852;
+	bh=xXRf7ZlIE67Mq9vvA+FZdAN/BVyuhN+/8xAIWrMcwSM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e6RHv0Yu9urVko13Ln68xAueF738ZXzS7tdsaS/46PUUOPlP5CuLpl91YXHvKXBgk
-	 PDw1oakAOBB/J13Ko+DJMWeaTOv/oUniEwsd5v7ULt2Dst3BuuY8GARf99TUM1rHx9
-	 NpCDf867TsKWmxmsIhCZdqhcJwNxWczRo109DvsvawKWBJtf7FUoNsDmTg/nGNLbT6
-	 /kZyEheo9OQs7hBmcqiWaIUvO9hvVdd0tFdqRxvEoHIw2RkY12FRzMaf+VBucAFrAz
-	 b2H7LLkAMITli4l3763xxC3gAX5dOUj2AgzMCUN5vvem3rFZrC4EGFeZljhu+oBlFx
-	 XS6pkfloyDCMA==
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6501e465a8eso5180630d50.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2026 00:14:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVulC5DlRI9D3C/RxSPTs0ylDnY2YP8R/f7I2uVvOo+fRyH/uAY4NDq4YnEpBNqHgKuPRkiTN028VFc@vger.kernel.org
-X-Gm-Message-State: AOJu0YymtPsH3qDgxZKKFngW4YryOB5h8aWpP6UmqKDT3Olsbl+vhSQJ
-	4PLbbfmExXNQbevbspdw3WzCtcajWuTXP3i66sitA5O9Hiwa98OlgMzDJ1em3OGtzZP985UwvqO
-	Nx5ajqOfM2qEntO7gKBbdm/srSUBjLGM=
-X-Received: by 2002:a05:690e:d07:b0:650:7b78:2bf6 with SMTP id
- 956f58d0204a3-6507b782cc8mr1364136d50.21.1775546072903; Tue, 07 Apr 2026
- 00:14:32 -0700 (PDT)
+	b=oS6QxhYNQ21JeuqakAB3IUKPuahJDqes1AYLqkOWKWsMAymK10UDgdMDXUNnQuLu+
+	 cLCugYDaSK9DrHdBi2oIeLNZzx5h9nSNS4Ed9gFhmfxyb/l/0YZVJWiNVPL2L6XAZe
+	 CK70WsMN8Xv47/72t47sIAswB4HSwMGU5AOe3oiWp33s2i6V+YAt0ATAdl0DzSNy+r
+	 DdfD7M8IGk8/AkMfA5StV1/yWgw+FsEtpzYpIlQs4YKr2alagUJKo0dcHH3J1t61Jz
+	 g6hbYF3fkzVvaNhz+h1/XCEf4qsQ7YTff+SZzZ0b+coEhygQZK4madQmKHidDAFHQN
+	 ydMbgIPn2tgrA==
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-79a535e7c00so47761147b3.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2026 00:27:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUN+31WMztR8tIo2/Jts1WoIG1h39pRpW/o4RECai+AkLCVhVO19D4DL8PjuuTSHxM7qqfmf2ELNfyr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLXpncdL3ggxPXCVyqi8XWZX52GXDWGWOq0OQWVcWwq+ixmge+
+	9M8t4tg5YVHetml3K4Iwtitq88mG9/PyVG3M/fGbIy2XDOdgyb7nbBYjcuaANolNFth7rKPLi3n
+	QC+mTyT8NSGZEw/4TYwQUCOSPmBS5i9s=
+X-Received: by 2002:a05:690c:6891:b0:79b:82a1:645d with SMTP id
+ 00721157ae682-7a4d84c2b0cmr153542237b3.29.1775546851789; Tue, 07 Apr 2026
+ 00:27:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260331-pxa-gpio-swnodes-v1-0-f66d86d10d8d@oss.qualcomm.com>
-In-Reply-To: <20260331-pxa-gpio-swnodes-v1-0-f66d86d10d8d@oss.qualcomm.com>
+References: <20260331113835.3510341-1-eleanor.lin@realtek.com> <20260331113835.3510341-4-eleanor.lin@realtek.com>
+In-Reply-To: <20260331113835.3510341-4-eleanor.lin@realtek.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 7 Apr 2026 09:14:22 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmEstHo0CYq=ifqm367UXqFcMgs7669s-1P1Y96rKcTwg@mail.gmail.com>
-X-Gm-Features: AQROBzD3uIlbGSM9X7dypNf0x3ZZt8RrcOHCg4-dWSS6NmwEI15IRO13jTknXdg
-Message-ID: <CAD++jLmEstHo0CYq=ifqm367UXqFcMgs7669s-1P1Y96rKcTwg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ARM: pxa: attach software nodes to the GPIO controllers
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arnd Bergmann <arnd@kernel.org>, brgl@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 7 Apr 2026 09:27:20 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=Gr5szR9bNeLHGJh_Hku6FrW7f=sBtWi9nzui=VS3Y-Q@mail.gmail.com>
+X-Gm-Features: AQROBzBwC96A2d44hZWfYRwmq8cn7_WR5JY1hKsgDt4xM1OBYyZOdqZz2qQC398
+Message-ID: <CAD++jL=Gr5szR9bNeLHGJh_Hku6FrW7f=sBtWi9nzui=VS3Y-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: brgl@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	afaerber@suse.com, tychang@realtek.com, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, 
+	cy.huang@realtek.com, stanley_chang@realtek.com, james.tai@realtek.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 31, 2026 at 11:11=E2=80=AFAM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
+On Tue, Mar 31, 2026 at 1:38=E2=80=AFPM Yu-Chun Lin <eleanor.lin@realtek.co=
+m> wrote:
 
-> I was looking for a use-case where automatic secondary fwnode assignment
-> would make sense for a DT platform. With the paz00 issue having been
-> addressed by Dmitry, PXA looked like the last one that could match the
-> idea but it turned out that we can just easily attach the software nodes
-> to their controllers enabling fwnode lookup of GPIOs.
+> From: Tzuyi Chang <tychang@realtek.com>
 >
-> After that the only GPIO consumers that still use label lookup with
-> dangling software nodes are ACPI platform devices and a single PCI
-> use-case. In that case, I won't be doing anything OF-related and will
-> limit the x86 tablets series to an ACPI-centric solution.
+> Add support for the GPIO controller found on Realtek DHC RTD1625 SoCs.
 >
-> With that being said: here's a series attaching software nodes to GPIO
-> controllers on the PXA platform. Since everything happens in a
-> bord-file, it's quite straightforward.
+> Unlike the existing Realtek GPIO driver (drivers/gpio/gpio-rtd.c),
+> which manages pins via shared bank registers, the RTD1625 introduces
+> a per-pin register architecture. Each GPIO line now has its own
+> dedicated 32-bit control register to manage configuration independently,
+> including direction, output value, input value, interrupt enable, and
+> debounce. Therefore, this distinct hardware design requires a separate
+> driver.
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Signed-off-by: Tzuyi Chang <tychang@realtek.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 
-This makes things better, thanks!
+With Bartosz comment addressed:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
