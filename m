@@ -1,137 +1,71 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF0930EF7B
-	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 10:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD33A9D8F
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775557315; cv=none; b=h8QEtF8x1z6o9N6cM3bW3iKVHLJkaPZosbpAjPFeifzwC6tW38qrzNvk6nNrdZU+z6RKqZY+ZGFuUuDfzn6uHeaNTqq0QzHAAZ1uIomZWKCIIADN/OiIGJRl1gQ0QJcKMSdA8E5PTvyw0QLP6koYRFfhi576mNYlj7Fbd9GaAuU=
+	t=1775558594; cv=none; b=tD5ouzhEBkGbW4qfsB705p5wz2/6aE7XACl2qlYBrhdaBAauoHaAyhsNOV3VEqKweAzfYwhUdBwo41+X5+EUmT7VfaS2IokP+HOK9lhKQgzMhnO3DKY9qLhBhYLRpxG4wEQ28Cs1P/LVd/a7XjhCs0wgHDjgzG4nrCTgC+YSBTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775557315; c=relaxed/simple;
-	bh=tktu9XsoG2RfvvZNNs1LDTN6klQpEatUvU8LT9mGrbo=;
+	s=arc-20240116; t=1775558594; c=relaxed/simple;
+	bh=OGCTSec1F4wOyMIHYzrUkhMcXjE9nQRXccS/tQ1wa90=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mCLjUrwTGpchWa51mKmhsdg8wxc1E+YYcoQxXC2nuqjxYiFnZcdbvPCPoYjGorh9bZ/CimlhtgdbbsIAw87qCKaBfs+e+LvwWm+TNy3Nl83RzKWaqiq0DPTR+9YqR7OjC2/M2owvHbkrZODFiyAsNmFTQC4FYKqTUqDk1lf8+GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-953a2634777so1340519241.3
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2026 03:21:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775557313; x=1776162113;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gMnqiwkd26gjhp+7IbyHb9ESCX/5jdc78bBmqANU+lE=;
-        b=ppQ/mCp6aBBJ343AlOgBbn/mg5y7pVDoyrpzGCwoXuZEfxEc/2XZ+c7gGkoraSX7Fc
-         UR5fPAXoBRTM9BYGQjRMG2fH9Y09N0pkCg1PBMbatz2v4o+xyBVdCw06B8m3CzqtmUHT
-         UDpGPcGlmoTakh3bBZH/R3ea6pdtP/UxUeWrCqgLSdQ7Ie33ECLrWxeoCBpany3u5XQc
-         mXUGHt1sTyD0VOIClX/E6/zLgHyr4D3T7SKp7N9sfR5GR7oisUtK96DMmBpeQ9CWZWug
-         jcTZj/9SwYLfhE3hDw/SoTFgw//CI1t98dmUBBo9GbhF3q3/xjZFQ3A267Su8yGiba07
-         bm3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZdvq5Gg7H1FRhPKJAm16fauaHZz1vLLpRzVcoxRD0pP7jGeeWSrsYa1GjhuGDAfqbfGZ5xUluaX2r@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqcIemUp+o0zLvcpeY+EMDETLiaK51I/xlPQlMihmHroiVHNsZ
-	l5tOiVz3H3eiEGAp1C4kUJnwo1GV5fp2Rbn+TVn8hwmt3/xqJqADbqr6AYWlmBN5
-X-Gm-Gg: AeBDietE0O3L3l8xRSh6sNib03YWcldRBv4Wzre29ICQ99dT1wm8auH4iU1vBW7EUiU
-	VjUX1qid3qhFX7jcbVSknU1cUkY/ATMFT7rf+7C0EVxZEVl7cWdcpjkuvqNPyFgqiH9eLsRuxlm
-	QaT3/RcgHmkCUSFDDl+PQxlABgCTPCjLYNohqyhvUOaxDAPnNBYXTNTCMsIw2iXiqnPoG3a2+I1
-	DAu7l7bY5+GXbXB4nJ/8BF3xizho5bTkhLmZkzazme4/78GGabvlPkhCgPZ6Fg3ssQgRiL0K+tj
-	htfLjq+iLlWK9vUPKWZgx04Edk3/An/8zmP20v3RSArgG2s6jz71Udm9lxihzkfM6N5TufW4SPs
-	60oKxNcBWTPDDAQKi2v4bgNSsi5Um+9O1KcLcezsKh9KAtm24wNWzMYEYlHp083t2r18DouUk2G
-	qFRjVpCQ0ugh5H8PzW7n0UazP1WqpLJQ5v0zzf1sdZ2BESgxFq8hI9oKOwMcVg
-X-Received: by 2002:a05:6102:42:b0:607:9443:b2ee with SMTP id ada2fe7eead31-6079443c3d8mr17039137.15.1775557312906;
-        Tue, 07 Apr 2026 03:21:52 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-60583093d14sm18631132137.11.2026.04.07.03.21.52
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Apr 2026 03:21:52 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-953a2634777so1340516241.3
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2026 03:21:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXk7i5FllZ/pTHnO8Pf3W4KKd0jK1dRBEVYalyaN4dhabcZYYCYT7elHNeYFxUm+c+XB65q9UfmVpOW@vger.kernel.org
-X-Received: by 2002:a05:6102:f13:b0:604:e063:4fa8 with SMTP id
- ada2fe7eead31-605a510033bmr4709992137.26.1775557312414; Tue, 07 Apr 2026
- 03:21:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=BUXdEErt+CzZqvBAP5azxC63M8Xom9DoK5Q46ny+ArR+Srx6qi1JsDCXOjTEe9di8wnx4z/4DcL4fZxYPxPP00EK3avP8b7mc/NLeukf/ZZLzhvlAp5L9ImSRUtGZh8m/adXE10yhPC3Jb5U43Hv8EMjkm8YkEBxUk1X7EBwjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InrJtFPK; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InrJtFPK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9D6C2BCAF
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Apr 2026 10:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775558594;
+	bh=OGCTSec1F4wOyMIHYzrUkhMcXjE9nQRXccS/tQ1wa90=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=InrJtFPKZRalAISWGcUdoQ6kCiwg+6OkTBPumuC7EMtTGRT15uWlCDzjlW3CIu5l0
+	 LNGoMkGTPZrwx2Ly3pmTKQ1sDNk5Bbw1U8/52La3yxuhZfiDCM/w0NpzpUFsM+LhSR
+	 JY0jPShPWPwuz4vjPvwDLgdm5bzk4D9ZfvD2W/g3JuPmC6tae9uDGn23G7WEp/9z+w
+	 iR9Ocz8c8sYVWpCxXD5y04bBhy2zljl0/REWNqexvLyzkHEQzFd2sGQkj8xz6w2k1v
+	 14VNn+T45ESjZAMo84RKALDtxxjyxdFEJuzvjrHWWwT/ZVZkzTzdYFEPsWNQsorWCM
+	 JAP79h9Unqffg==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-38ccde812ecso47385201fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2026 03:43:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVeVG/Oi/l6hxKcpBnwy8gJXV+O4i72RvTOEeddQqnujNXB4oblu8Go9mUBHz6DbUf9Ts1TrZvdYAw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUOfR2s+vjxFvezJ/yH8CNY/d4rbXgg0P+oMr56Cdu7dZHU/xv
+	MtJ5YieRWk3OQw/Xcx3lHJt8EY5I9OyXb5eBVYPWAtqjqPe6DrEHVv/lwJTyRhQtcRLG6Fjxjy9
+	30ZykxkA3+QJRzw/LytIEnSpuFF+PB40AJ99qV88BLw==
+X-Received: by 2002:a2e:3207:0:b0:38c:13:77a2 with SMTP id 38308e7fff4ca-38cd6a7a15cmr49104791fa.5.1775558592729;
+ Tue, 07 Apr 2026 03:43:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1774283146.git.dan.carpenter@linaro.org> <edd789f8fc87f294211adf84b09c2af9f4aa6a6f.1774283146.git.dan.carpenter@linaro.org>
-In-Reply-To: <edd789f8fc87f294211adf84b09c2af9f4aa6a6f.1774283146.git.dan.carpenter@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Apr 2026 12:21:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWRgkAE-eSzRif6DSqRgOySiN48vcogESN1s2gs2k7bJQ@mail.gmail.com>
-X-Gm-Features: AQROBzAIjWX-ymyQ91Ydg4QhzkmLosdw5bqMGDf5_aVfbRMiqgAMy27BrJESM2U
-Message-ID: <CAMuHMdWRgkAE-eSzRif6DSqRgOySiN48vcogESN1s2gs2k7bJQ@mail.gmail.com>
-Subject: Re: [PATCH v6 7/7] gpio: gpio-by-pinctrl: add pinctrl based generic
- GPIO driver
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linusw@kernel.org>, AKASHI Takahiro <akashi.tkhro@gmail.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, arm-scmi@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Khaled Ali Ahmed <Khaled.AliAhmed@arm.com>, 
-	Michal Simek <michal.simek@amd.com>
+References: <20260405-ti-ads7950-facelift-v5-0-1f980ed3cf9e@gmail.com> <20260405-ti-ads7950-facelift-v5-4-1f980ed3cf9e@gmail.com>
+In-Reply-To: <20260405-ti-ads7950-facelift-v5-4-1f980ed3cf9e@gmail.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Tue, 7 Apr 2026 12:43:00 +0200
+X-Gmail-Original-Message-ID: <CAMRc=Md=XyjK=EaVNxJX4bD7hvgDSL7J4eSiigOfk38E5CKAjw@mail.gmail.com>
+X-Gm-Features: AQROBzAdZd8mVdscgAxhpK3At80nhKQrpbZ00LW_oc3m6McHYMTEVJ7X_m28-wQ
+Message-ID: <CAMRc=Md=XyjK=EaVNxJX4bD7hvgDSL7J4eSiigOfk38E5CKAjw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] iio: adc: ti-ads7950: complete conversion to using
+ managed resources
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
-
-On Mon, 23 Mar 2026 at 20:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+On Mon, Apr 6, 2026 at 6:39=E2=80=AFAM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 >
-> The ARM SCMI pinctrl protocol allows GPIO access.  Instead of creating
-> a new SCMI GPIO driver, this driver is a generic GPIO driver that uses
-> standard pinctrl interfaces.
+> All resources that the driver needs have managed API now. Switch to
+> using them to make code clearer and drop ti_ads7950_remove().
 >
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-Thanks for your patch, which is now commit 7671f4949a6c9111
-("gpio: gpio-by-pinctrl: add pinctrl based generic GPIO driver")
-in gpio/for-next.
-
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -246,6 +246,19 @@ config GPIO_BRCMSTB
->         help
->           Say yes here to enable GPIO support for Broadcom STB (BCM7XXX) SoCs.
->
-> +config GPIO_BY_PINCTRL
-> +       tristate "GPIO support based on a pure pin control backend"
-> +       depends on GPIOLIB
-
-Should this depend on ARM_SCMI *|| COMPILE_TEST)?  The driver only
-matches against the "scmi-pinctrl-gpio" compatible value.
-Or do you envision a use case without SCMI?
-
-> +       help
-> +         Support for generic GPIO handling based on top of pin control.
-> +         Traditionally, firmware creates a GPIO interface or a pin
-> +         controller interface and we have a driver to support it.  But
-> +         in SCMI, the pin control interface is generic and we can
-> +         create a simple GPIO device based on the pin control interface
-> +         without doing anything custom.
-> +
-> +         This driver used to do GPIO over the ARM SCMI protocol.
-                        ^
-I have sent a patch to add the missing "is".
-https://lore.kernel.org/b1ecb31a37f8e35447122554a38985cb6240eb11.1775556619.git.geert+renesas@glider.be
-
-> +
->  config GPIO_CADENCE
->         tristate "Cadence GPIO support"
->         depends on OF_GPIO
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
