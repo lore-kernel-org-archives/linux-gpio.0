@@ -1,118 +1,74 @@
-Received: from sender-op-o11.zoho.eu (sender-op-o11.zoho.eu [136.143.169.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3189435837C;
-	Tue,  7 Apr 2026 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775574837; cv=pass; b=TuE2Kuh9cCWfFetnb/ThqtS6W47FEPctVtIlELvI5XVBMXMw8S0WvZl9P6EOKTDGZsPPaF1acT2Dz2EboaaoEz3md3PgF48D1lS+jzQnJmYayTflQTxXNb12901RxsOiQrfegTkhbGMjIvFZocZqsUojlqota3cU5XpmZhQYQ+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775574837; c=relaxed/simple;
-	bh=//JcOV5p++bvo8mEpEEaKaGB8OSx+1UJgdY3pC7NSVI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19603C5553;
+	Tue,  7 Apr 2026 16:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775578018; cv=none; b=cjTEpoPBCMNKedjfUZOLkNwbe6pbJvdw1Ft7Q8AP9bCgcVyIprEtmgvaYxKV1RgyJo0iyyJK9aKUkEhU8kdTkKxm/N3d/sItE0+06xhEw/rKA/3FpDhfKfKD/hV6bC0LsFVEpKOwnzq6G0TiELXFPp0Sut6JQLmsGvEGlZqqe20=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775578018; c=relaxed/simple;
+	bh=mvUZweDlyjvVe2JcQ7USWDAKAd3S21Moj2GrvsWKB38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iR48go26sN9fo1LxFb1QIJA5vVMRv9qzeqzCSYOLJDx2G9cI742GY3prfwjGFcnjf3jyOwv4VjB/IVh3V7QpsJTFt6SgQQHplvjOKa0ooqZd8rmEiHS1LT8HFYb5iKUBODQrOrackj9Uiqv8PgaucVfbGxXCO0svWEIaUy3xD/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kempniu.pl; spf=pass smtp.mailfrom=kempniu.pl; dkim=pass (1024-bit key) header.d=kempniu.pl header.i=kernel@kempniu.pl header.b=dFNOKzPd; arc=pass smtp.client-ip=136.143.169.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kempniu.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kempniu.pl
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzUF9PujvpZ23APqZ6s8HU/bE1251a4SPhX0ZzTAoJDgetUrGs1+z6XBQ6HPvltHdYv/iMfRnN7F8mf9c354wjLuhqw8FttxYYR9SWgo1Jbh9OsJU9YK+++6Bpm0IQ4lk6qyIIrCa3ujC2ZKDX5k8kze4eacWmZBZbWUm+dcgU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvODB8vM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kempniu.pl header.i=kernel@kempniu.pl header.b="dFNOKzPd"
-ARC-Seal: i=1; a=rsa-sha256; t=1775574801; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=kM+05SV0CmLYqKkgn/7OzyRyijeAAz9XNg9KzLczJwcA0XFAVXwxEfUa9s+Z6f/aY6OcS5UmBHae9RCK+ljDPSv9wWbAjFMUmtivhBzfmeAFZt+cyktm32sbyac/MNvuxu04B/Y7NSkEqfJp1SDWLS4YcLNKj1ktnVV8o3EOk2U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1775574801; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pM755TWVDXtvctLCMSHYr2HPrQ23PcJ/n2NnUxGMouw=; 
-	b=C2zzF8vXm6zy6D1OK1dCYISpCUM1N+o9efs2NDdHh0KHjTtb6R1BuPYyUoioehrCDNOa9qOeprrS/s7uieZXdSWDTjt9/ALR9A7T3qBgbSABuA5iVBnUo6L+J/iKYZP7VNokOXv47AzKisgSYsrTYiL5MMdptLU4Y8A1z8XcXy8=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=kempniu.pl;
-	spf=pass  smtp.mailfrom=kernel@kempniu.pl;
-	dmarc=pass header.from=<kernel@kempniu.pl>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1775574801;
-	s=zmail; d=kempniu.pl; i=kernel@kempniu.pl;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=pM755TWVDXtvctLCMSHYr2HPrQ23PcJ/n2NnUxGMouw=;
-	b=dFNOKzPdSO/DYJwujrCPP9NcxPw0hOqZxOMbCdeNZkCcWKY6Fvgf7O+YrJjTY8f2
-	+ipIyTwqdaiVv7byRvj47sdkOrAuDBnYe3i5Y36/3Zu3HqA4DE0F0xLGG3H/qH6pBw1
-	sn6s4RCN9vO6DMAMfa8vOTTM03Z9zX/j6EAY3K2Q=
-Received: by mx.zoho.eu with SMTPS id 177557479865717.399845662206303;
-	Tue, 7 Apr 2026 17:13:18 +0200 (CEST)
-Date: Tue, 7 Apr 2026 17:13:16 +0200
-From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alban Bedel <albeu@free.fr>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v6] wifi: ath9k: Obtain system GPIOS from descriptors
-Message-ID: <adUfDB4y-xt5QorX@larwa.hq.kempniu.pl>
-References: <20260317-descriptors-wireless-v6-1-b19ecff9cd2b@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvODB8vM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED684C116C6;
+	Tue,  7 Apr 2026 16:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775578017;
+	bh=mvUZweDlyjvVe2JcQ7USWDAKAd3S21Moj2GrvsWKB38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SvODB8vMZ5cfQpNdKcqYNH3puirStHN6PvyBPN88TgoVecbiRqavcSW1iqxI88Y+q
+	 SJ9h/lfh3KVXzK+LFyR8ty9DAkTf+9KMcxPrIKRfT/3awJ6TNbGUJ+DkqgpG76281s
+	 L36pFGImM7Gd3O3KXW1Zi63bnjzYArWhtv9B4jp3o5LoAhJWiQTC0OCTdktl8E4Tmi
+	 ORZSHVbKXqsixEWVJS+pP4G0Fa69jQzLD8O+Ujqt56v+TGswKHGdGg1FX7vgUe4SoH
+	 eQGDYart+SOYLEYKY+C2RyzvwJMRNM13OdSO+cMBIOZAM02hVvsCLrn7BcrVEORoMn
+	 hQ0dPeRNu3uoQ==
+Date: Tue, 7 Apr 2026 11:06:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: arm: cpus: Add Apple M3 CPU core
+ compatibles
+Message-ID: <20260407160655.GA2643629-robh@kernel.org>
+References: <20260320-apple-m3-initial-devicetrees-v1-0-5842e1e393a8@jannau.net>
+ <20260320-apple-m3-initial-devicetrees-v1-1-5842e1e393a8@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260317-descriptors-wireless-v6-1-b19ecff9cd2b@kernel.org>
-X-ZM-MESSAGEID: 1775570913823007700
-X-ZM-MESSAGEID: 1775571581406007700
-X-ZohoMail-Sender: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?=
-X-ZM-MESSAGEID: 1775574477695007600
-X-ZohoMailClient: External
+In-Reply-To: <20260320-apple-m3-initial-devicetrees-v1-1-5842e1e393a8@jannau.net>
 
-Linus,
-
-> The ath9k has an odd use of system-wide GPIOs: if the chip
-> does not have internal GPIO capability, it will try to obtain a
-> GPIO line from the system GPIO controller:
+On Fri, Mar 20, 2026 at 01:23:19PM +0100, Janne Grunau wrote:
+> Add "apple,everest" compatible for the M3 performance core and
+> "apple,sawtooth" for the M3 efficiency CPU core. These CPU cores are
+> found on Apple Silicon SoCs M3 and M3 Pro, Max and Ultra.
 > 
->   if (BIT(gpio) & ah->caps.gpio_mask)
->         ath9k_hw_gpio_cfg_wmac(...);
->   else if (AR_SREV_SOC(ah))
->         ath9k_hw_gpio_cfg_soc(ah, gpio, out, label);
-> 
-> Where ath9k_hw_gpio_cfg_soc() will attempt to issue
-> gpio_request_one() passing the local GPIO number of the controller
-> (0..31) to gpio_request_one().
-> 
-> This is somewhat peculiar and possibly even dangerous: there is
-> nowadays no guarantee of the numbering of these system-wide
-> GPIOs, and assuming that GPIO 0..31 as used by ath9k would
-> correspond to GPIOs 0..31 on the system as a whole seems a bit
-> wild.
-> 
-> Register all 32 GPIOs at index 0..31 directly in the ATH79K
-> GPIO driver and associate with the NULL device (making them
-> widely available) if and only if we are probing ATH79K wifi
-> from the AHB bus (used for SoCs). We obtain these offsets from
-> the NULL device if necessary.
-> 
-> These GPIOs should ideally be defined in the device tree
-> instead, but we have no control over that for the legacy
-> code path.
-> 
-> Testcompiled with the ath79 defconfig.
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-I could only test a 6.12 backport of v6 on real hardware as that is the
-kernel version that OpenWRT's current main branch uses for my router.
-That being said, the only conflict I had to resolve was the one caused
-by commit 551a097118391018ddc4079cbcec6fe4e7d64bc5 ("gpio: ath79: use
-new generic GPIO chip API") in ath79_gpio_probe(), i.e. no functional
-changes were necessary.
+Applied, thanks.
 
-After replacing the "tweaked" version of v2 with a 6.12 backport of v6
-in OpenWRT's source tree, the WiFi LED still works fine on my router.
-
-For the above:
-
-Tested-by: Michał Kępień <kernel@kempniu.pl>
-
--- 
-Best regards,
-Michał Kępień
+Rob
