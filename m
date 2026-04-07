@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA1039A7E5;
-	Tue,  7 Apr 2026 09:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB5939A7E5;
+	Tue,  7 Apr 2026 09:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775555419; cv=none; b=fjzPHUbXbkWTwch4ls68Eupy0yVZKvxKEaoqcC6SD8fGdBXwrkrJrfW/Ktp9xaCOdhua3D8cPybR4qaR4xzN9yf1XnFJ02Xcg596ho/X6XOYlJWHjKIa08k6siGUcV1esNZoBLSRarilLi2yukMLukWgE28V5WgFW8KlNzBx9Xg=
+	t=1775555427; cv=none; b=JiGwZw5nYh5Rg4hlNwWv6/KD8uhOCRlpH27oCbf4UuTy4JZAg4Dw+uTP87l6Z2uqBWtCe78IOv7CgNPeZMUdvhn6G78PIrOnKdLt0gFEvz78HfpVx89CJQwTdOasdH+1AhygUbSeI35NVS262d+O004BH8tUYAj0aN4FlOo8CYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775555419; c=relaxed/simple;
-	bh=piwacNlPnviF2p7z7QdXwwrwVrCQDT2X8uRCwatEFjc=;
+	s=arc-20240116; t=1775555427; c=relaxed/simple;
+	bh=Qese7w2uaYlXM0IDj/qmMPTUXpad+CLEP89BM0kbqtY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sl3UJku0Y0vx1foDYMoJpycc/fz70zQ+ren3bykEVYI6gNdH9vp0SptZrVkvrHnKoFSGOETXAS5qAthh4pl3SV9gg3RWHL8IrLqVj+qziqeWiW8hakpnWWi7QGBP/lxifYab9uGz2R1fDnXWsn29oRNY6MhsaFXs5H3vo9+HODY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yqfo+aPu; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KNjEaUUHqly65kOm38Cu9oKWAG50UPIsxNhxJT0gXq4MVH1ia3jBHURKqu9irUZHwFJ45zN4Vq0pjymD+9BYhfviFAdAph+kjBBeR4PawYOyjjj9V8ew5LSxPF1JKTf+ZkoOeKqjZEjHmu3usF5pubR9zJpWN9DFCZANqrPXUj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G64Xz+pV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yqfo+aPu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66DB3C2BCB0;
-	Tue,  7 Apr 2026 09:50:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G64Xz+pV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3018C2BCAF;
+	Tue,  7 Apr 2026 09:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775555419;
-	bh=piwacNlPnviF2p7z7QdXwwrwVrCQDT2X8uRCwatEFjc=;
+	s=k20201202; t=1775555427;
+	bh=Qese7w2uaYlXM0IDj/qmMPTUXpad+CLEP89BM0kbqtY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yqfo+aPuQy7MakwJvye20yfzuYf/671WZSbffCmgLpI/Fvgx8Yy0GEk5Sz4ixAUWl
-	 x/Ks8k63tGo1RE28tmuedz6fZcXc3N2MpItFQN4+DHSRnnPNQkLSCd6+Z5Ii1ptFWn
-	 PrgVCoEjVEUQ8x9MJ22u6Qjj/Ao2XFoDds5d5Y5zFzlwgE0q63Pr3qRcLsNTbPB7JX
-	 ypwC0jCa3LzpKueybTxUALhRhOV3znJhSg44KzfMDaMOnBwuBH0Xg952RCN12GgzFn
-	 0itfKvMuGYXBowvdYRM8ir+oQhOOgwEjnGHmvRfLUbsZRTnCTjnUg3dfJMq0pplr09
-	 Wv8RaEotFYT8g==
-Message-ID: <6b52fae8-ff95-4f2f-9754-af083644f8fd@kernel.org>
-Date: Tue, 7 Apr 2026 11:50:12 +0200
+	b=G64Xz+pVuVw84kM4b5xQR4G7FmtG/OHUZPCbs0S6aDitrGzqZI9D8KfpNcVgTuDLE
+	 AlDLqQ2FVcrlNfeWgvjnQJtLWlWO4uH0hlxwDB6pn3wahxQrt6HNLI84Z8C9h0xpsD
+	 nSrU479NhqkcEBl8FMUch+MpXF11ppefrGGUYkzk1JommmXg1Mpe2Z0jbesSovjMdX
+	 gPth1Lka3fRtGizo8sViAljOvluzcEvvLuF/OQNbvndebxQjuEEGt6N0YRoZNSpCUN
+	 BQ/nessaIT9s+Zj6OzYQsnZ1RtdaqJsU/vR+0eaLQ4MqLxdRo71GvlLR5C7FOKrA20
+	 iB23T3heOnhNA==
+Message-ID: <c6314ca9-5a0b-450f-a0a5-e155c334db34@kernel.org>
+Date: Tue, 7 Apr 2026 11:50:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/19] dt-bindings: display/panel: himax,hx83102: describe
+Subject: Re: [PATCH 02/19] dt-bindings: display/panel: himax,hx8394: describe
  Waveshare panel
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
  Neil Armstrong <neil.armstrong@linaro.org>,
@@ -53,7 +53,7 @@ To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 References: <20260401-waveshare-dsi-touch-v1-0-5e9119b5a014@oss.qualcomm.com>
- <20260401-waveshare-dsi-touch-v1-1-5e9119b5a014@oss.qualcomm.com>
+ <20260401-waveshare-dsi-touch-v1-2-5e9119b5a014@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,17 +99,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260401-waveshare-dsi-touch-v1-1-5e9119b5a014@oss.qualcomm.com>
+In-Reply-To: <20260401-waveshare-dsi-touch-v1-2-5e9119b5a014@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 01/04/2026 09:26, Dmitry Baryshkov wrote:
-> Describe Waveshare 12.3-DSI-TOUCH-A panel which allegedly uses HX83102
-> as a panel controller.
+> Describe Waveshare 5" and 5" DSI panels which use HX9365-E as a panel
+> controller.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml | 2 ++
+>  Documentation/devicetree/bindings/display/panel/himax,hx8394.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
