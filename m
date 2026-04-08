@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E86439C012
-	for <linux-gpio@vger.kernel.org>; Wed,  8 Apr 2026 08:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19935E948
+	for <linux-gpio@vger.kernel.org>; Wed,  8 Apr 2026 08:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775635863; cv=none; b=SWklkjQ5lDBB6ZGY3ROobvRohjp1Yeik2Pv3uRE0o9y8WZlDQntjtFqGqgIHIL0QOSNvN7+FJO5Ww8k/p0EurQ+b7JeX/tZ6dimK4BFRgj5GdSU/A0VnErpKwhnaExQxBkqzHkgJt/OhjLnetAqGGMPyjoKvEZcZ89xRO2/S9gA=
+	t=1775636127; cv=none; b=i3SviMhoEODwvgR6mg/pEMKIwyMeTtVG32j0PrAGP28uHrcxd6RJYnDmfOSLRTPgbJ6PuJwoEI874s4+vocsHekn74gAIMBW6NvLaBoetBEdi3kkzeOa7XX7TjoyY85oRnz4rbIozTFK2P3enhhBIIzvu36yjG3zHamuQkO2VkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775635863; c=relaxed/simple;
-	bh=sqdL8nTdSHEyk1Way49SKBiavpK4C4Nmipixbhq+G44=;
+	s=arc-20240116; t=1775636127; c=relaxed/simple;
+	bh=xZTSZRs0sbRDgY1K81wjxHHQ/9DUVcEHhVIDQRsGRhI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4domziAp+E5acoze4RAnwZPUIj4loA1BuSwp6AO//3NW36RqVUJ1IkuLGwChPhs2t9eIeTl6CSjT5UvlvfS5UAQAqCieyL2nidGmVu7/Mn90guIER4pVOtwDyPwUQKBc5j11n/Rq3PFw7s4vqGbSBg9EYDwNjP5naqJ77CIAtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCXoWZp0; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=lEtWZkKhGtp6bHtgWveewri3oW5m/EdF7d9BYC0xXlyf/C/01RnSRYjrAPrqOfw9PY3Hs8/8oRWsbGXwR8Ftqoqxzv5TOpzQ6csxgYCerKr9H+hRCpWv3dQmTHSvsP7+H1poCjR1G2o1WAAlv7y/utA7QJEJNQoObifC9O1lDp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdzAMEba; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCXoWZp0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38F3C4AF10
-	for <linux-gpio@vger.kernel.org>; Wed,  8 Apr 2026 08:11:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdzAMEba"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFC4C19425
+	for <linux-gpio@vger.kernel.org>; Wed,  8 Apr 2026 08:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775635862;
-	bh=sqdL8nTdSHEyk1Way49SKBiavpK4C4Nmipixbhq+G44=;
+	s=k20201202; t=1775636127;
+	bh=xZTSZRs0sbRDgY1K81wjxHHQ/9DUVcEHhVIDQRsGRhI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WCXoWZp01ja4gl5ebFzz9Qg4PArTyY+KnAPGimXdcSH3lU3D3ZNmpMX1SzEeS3dhw
-	 vW3kj/xcoQNtD5TZ03EXMu9N7y3eFdcDf8C2Dc4Qs8668N+YPIyLbuRwF/FvrPHxc2
-	 qvXm5k6cukVaPpwHpLOJR6DXxy9TB9HPC2JQuJf8YTUT8CBsEs+yyQQAV8hjY42VLl
-	 xvpfzq/Ukc8Ciy2ZgSAuRfu/EpTBYAFA9DOaIOd9NvOc58GA+ZaSgwMCG4VAbOd+Gk
-	 BpjFo4EkowOU7QiwD0gz/OqBglvXd94jeYskym7BU0w+FMoYvhtDNh4ze9jNRieldc
-	 m90DEhIkBip8A==
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-64ef161129bso4895352d50.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2026 01:11:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBxF4bL4T3nohfwQM+S75OOmEOyl87pT3CBdGGjGHz9kB/Yw7JvxDy2M89WTSJodX1mzIOzWF7cxd9@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOrVyG/LCjKDEjF1fPtNS8J77GPqu2Bc23ejJBn8YcoYnb2a09
-	fIQJEcHN1h6fb84jMuBD8xNCrz89Twt9O+A1iKqST3dJnZQWAbM5UShinEktI+DyxeCwJ8o2FhV
-	iwRAX/OiGIRDC0MtagS8jPgsfk8IBXZs=
-X-Received: by 2002:a05:690c:6e84:b0:79a:6cd1:ddf8 with SMTP id
- 00721157ae682-7a4d31e619dmr192017227b3.4.1775635862276; Wed, 08 Apr 2026
- 01:11:02 -0700 (PDT)
+	b=EdzAMEbaoAnwjaLYx0qzcbimv03/A8Yk6Fbq3r0R1iFfdf4Z6C7AG85cLOUpTbzB3
+	 0IMj4KLokxXA8A/AunIVVsYNUkMz1qGzZ9lSlZhKexHjmCZOsMsmso2fWhlzIdAxpk
+	 yDbFfRTCHmB6hMFHnmhldWEbWIT1Swb4JT3AEv4g6uaTTkzD3Zn3UiWCr3ku/SaHCa
+	 rbpiJZtAoSx6CdbB2ul9eI937QKOMmZgJnCJqOTCYl+kT1koFVUF7RXgGcQGSmhi6E
+	 Od45wUmL4X6+Ci5KINf5W4Mdl3Ri9XvnVFzaPrZrHCgrljyvGSw1DH360UFLKnpGlQ
+	 e14xIoWW85i4w==
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7982c3b7da9so53986207b3.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2026 01:15:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKw6VdyHY4U0ESzkvXPz4xD13qtLJnl8tAd7LAF+bwrB3ubtLQScfLzFku5QXZdr22D3N5FpKkdK6G@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0x6W/44dDFQbOSq1HEah06TjikQLXrPM3c/3pldlZCQv5fGrY
+	dPpcEPx7FrhcVB+6uZUA1Yf79+onWf8u2Ae+3yHQWR/+t7YNmKJJ04EBdX+8k1aj+hfqD+VJ8ao
+	LcZDa0kefW7onUjRpuI+XaMHb4uNsG+Q=
+X-Received: by 2002:a05:690c:6c13:b0:79b:e346:fcfb with SMTP id
+ 00721157ae682-7a4d536d25amr203296817b3.32.1775636126528; Wed, 08 Apr 2026
+ 01:15:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260401-waveshare-dsi-touch-v1-0-5e9119b5a014@oss.qualcomm.com> <20260401-waveshare-dsi-touch-v1-11-5e9119b5a014@oss.qualcomm.com>
-In-Reply-To: <20260401-waveshare-dsi-touch-v1-11-5e9119b5a014@oss.qualcomm.com>
+References: <20260401-waveshare-dsi-touch-v1-0-5e9119b5a014@oss.qualcomm.com> <20260401-waveshare-dsi-touch-v1-12-5e9119b5a014@oss.qualcomm.com>
+In-Reply-To: <20260401-waveshare-dsi-touch-v1-12-5e9119b5a014@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 8 Apr 2026 10:10:50 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkUPKpMhEeP0tY+t5E0Hc+iX_7RVpxK701NU523OB3zfg@mail.gmail.com>
-X-Gm-Features: AQROBzC0ZBvsFFgFL0sfxRCHkBDh3w5K4JhNTM28x_a4U-5EjcHBvdxh69DaTIg
-Message-ID: <CAD++jLkUPKpMhEeP0tY+t5E0Hc+iX_7RVpxK701NU523OB3zfg@mail.gmail.com>
-Subject: Re: [PATCH 11/19] drm/panel: jadard-jd9365da-h3: use drm_connector_helper_get_modes_fixed
+Date: Wed, 8 Apr 2026 10:15:13 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnAaUzHun-i7PBLzFQmsKCXXfRO+4hAgTFCZtLm_Bu6iw@mail.gmail.com>
+X-Gm-Features: AQROBzDPMsTo8Q-h8qP3H_WTkRwwClJVDSsQZesP_kI3xg0qbihfSen8BjVkm48
+Message-ID: <CAD++jLnAaUzHun-i7PBLzFQmsKCXXfRO+4hAgTFCZtLm_Bu6iw@mail.gmail.com>
+Subject: Re: [PATCH 12/19] drm/panel: jadard-jd9365da-h3: support variable DSI configuration
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -64,13 +64,34 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmai
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+Hi Dmitry,
+
+thanks for your patch!
+
 On Wed, Apr 1, 2026 at 9:27=E2=80=AFAM Dmitry Baryshkov
 <dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-> Use existing helper instead of manually coding it.
+> Several panels support attachment either using 4 DSI lanes or just 2. In
+> some cases, this requires a different panel mode to fulfill clock
+> requirements. Extend the driver to handle such cases by letting the
+> panel description to omit lanes specification and parsing number of
+> lanes from the DT.
 >
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+(...)
 
+> +       if (dsi_ctx->dsi->lanes =3D=3D 2)
+> +               mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x80, 0x01);
+> +       else
+> +               mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x80, 0x03);
+
+If lanes 2 we do unexplicable magic A else we do unexplicable magic B?
+
+Do we know more about what is actually going on here?
+
+Can you check the datasheet?
+
+The patch is nice anyway and no big deal so, so +/- that fixup:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
