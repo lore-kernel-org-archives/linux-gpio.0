@@ -1,96 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35DC3081BE;
-	Thu,  9 Apr 2026 07:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF7E386551
+	for <linux-gpio@vger.kernel.org>; Thu,  9 Apr 2026 07:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775720637; cv=none; b=c5kWS9bClbUFWuIflP0ug9EkLyYAtlN6vNGDrOeSTBMR/QwolE63YM5Ycefkq6pF7b9iGxQg7DIWcUMIz1wFYkteRx2S2/Rk7f899B8jhu2mq7ugeyAIWOWVxrPVf7c748e/bUaI4qMSjiHve4iMdeHtw62/wyhgKMLuwGZQodw=
+	t=1775721246; cv=none; b=Z76EV2jOepmwbatW8QIFuQF5oP6oJc2uMPlPNAZw4+t3DIHBT5R1bqRDLqfz2xapMhDhS9xQRBPNiQ6/vSQ9VCHQt0GhP+FnIvfP2Y+IIXhn9DxacIHO/SD0yorrFtXjaN6xJ2GVgRAcePew8b6QeCUUwdYU8fzu/BX00jvfwtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775720637; c=relaxed/simple;
-	bh=uq/R6PmosWxaig3fB+at0I2ppDM6xQzhVCUmWXfCLIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWutZHr1/EXXKSypSsMK9JLPX8pI9HGi2iyndpCiVQdYG4N64HfCmowHSAXKx2LoZLGUBRGQ5Kby52/VfHrqZX9ReKWV7498HRLQR+UiFExftNym1kZZgRmpkpdj0TLXJvGmWeJxb78fGQwETQg+tVMxjbVFydcteHKWFwaUyMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVllBZVK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775721246; c=relaxed/simple;
+	bh=LDxskAvYrLlYziQ4oEdOKyB1Dc3CMk6QXtnDVYQnjhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mtaYOxR7YPVx7eAxI3s7PXy03tGRC80epv8lgFUG7Vev//C9uZY0wsAximI1EZMan5zaqOZEikXimhHfu73cwjgRfAsaIRyTJm4E55bqVGyFenump3FacQWRS5pH2QNGPgX5t2ZfWpM1fLACXiQZfRE8AzpKELfDGf0hKD+7oBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cI32OPlg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVllBZVK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C1EC4CEF7;
-	Thu,  9 Apr 2026 07:43:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cI32OPlg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F49CC4CEF7
+	for <linux-gpio@vger.kernel.org>; Thu,  9 Apr 2026 07:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775720636;
-	bh=uq/R6PmosWxaig3fB+at0I2ppDM6xQzhVCUmWXfCLIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EVllBZVKxqZDb6GWFRf6NCvRGFukJ+3EsnP2wGG9WlFBKXTj1m8EIxNieXFokKcNC
-	 DY8z5BewLaM0clOfV8z+g1lmeigkmas2Ef6llkBYUOLKsmHrhs6frICytJD1gAsrKP
-	 ILgqkdcyErgC7vKK10MJFyN83omrsJUU66Wg5JXSURzCIb3ir1Ij3WrhC0G+47k5+2
-	 fOyhhnUVmELllc1kcdTZyR18jQlxhVRpMa5u74L1GuCocHwkhIB/mey17qCMktLJqH
-	 ipAjY8yoPibjVwitnUb53lOicQ19oNEt78twPkuxZBkzykgu0tVCNo/b3LtrTDEbtB
-	 v2GJLeLdgZMLA==
-Date: Thu, 9 Apr 2026 09:43:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>
-Cc: linusw@kernel.org, brgl@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, afaerber@suse.com, tychang@realtek.com, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, cy.huang@realtek.com, 
-	stanley_chang@realtek.com, james.tai@realtek.com
-Subject: Re: [PATCH v2 2/4] dt-bindings: gpio: realtek: Add
- realtek,rtd1625-gpio
-Message-ID: <20260409-heavy-colorful-monkey-e09d42@quoll>
-References: <20260408025243.1155482-1-eleanor.lin@realtek.com>
- <20260408025243.1155482-3-eleanor.lin@realtek.com>
+	s=k20201202; t=1775721246;
+	bh=LDxskAvYrLlYziQ4oEdOKyB1Dc3CMk6QXtnDVYQnjhc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cI32OPlgsfSr+M0gTmcA4n4yh8lcNLgtrKlIY1qvG8vL6ntbJrpxELZQbvijDQRgu
+	 ybQGMEow4G+KcDn4VO+ZLOBB7spEzGO16L438nc837E7RKuMQjYNAwziXw8L2RIYAE
+	 n9jaBLAFJSvi76gfEewiNAbJWvVqembfhU6NFFzuwdi1GRF3GL2kmoybm89coD8KZ5
+	 Hp8HYxBPfZPbFZ1IxthbuRxuCm/XqPvlT9NshmbAPFt7o+FmNk2TcmXfRST5UEfTNc
+	 1Wbw0IOmnawNK6gihNlP2Bo4moALR6JJ8AZqDERt9vRlpVAdZm3Ko6FeyxDNaWd4nS
+	 cNi/afteNq9+Q==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-794719afcd4so6505437b3.1
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Apr 2026 00:54:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGVtZ+frTZY8GGHe/qa/SrI4i1cGaQUrNt5QgngH2bdmMymuiv9nqIG5nw0yYbA9H/bto+KRU3kG4T@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv6ymIybvR4bCh8tg/mt4sd9CIIdg4rdtiIDDstwu4WFGd+dI7
+	FzOhVpBJbXtyILMsBCGLXlLOgACe9EzOUVipYfE+b5mflrSYEkDfz4zw5eDXw82Qg/nWtNAYd7u
+	XB6ycvk1ujYiFtvdq3CYZWbAPa7cCoOE=
+X-Received: by 2002:a05:690c:83:b0:79e:9cc1:edf7 with SMTP id
+ 00721157ae682-7a4d35d7d6fmr226490547b3.13.1775721245929; Thu, 09 Apr 2026
+ 00:54:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260408025243.1155482-3-eleanor.lin@realtek.com>
+References: <20260407184805.807328-1-dev-josejavier.rodriguez@duagon.com> <20260407184805.807328-2-dev-josejavier.rodriguez@duagon.com>
+In-Reply-To: <20260407184805.807328-2-dev-josejavier.rodriguez@duagon.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 9 Apr 2026 09:53:55 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnzitRAczNRiqiBBbytqVjccSVUAXre9YfQgqC=dzE-Yw@mail.gmail.com>
+X-Gm-Features: AQROBzBRjTq-qScoacgRL1SZl9sFJult8v_deA_uRg6K4Fdrkxvg3spSEcpI2v8
+Message-ID: <CAD++jLnzitRAczNRiqiBBbytqVjccSVUAXre9YfQgqC=dzE-Yw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] gpio: generic: add a generic register wrapper for
+ MMIO and PMIO
+To: Jose Javier Rodriguez Barbarin <dev-josejavier.rodriguez@duagon.com>
+Cc: brgl@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 08, 2026 at 10:52:41AM +0800, Yu-Chun Lin wrote:
-> +maintainers:
-> +  - Tzuyi Chang <tychang@realtek.com>
-> +
-> +description: |
-> +  GPIO controller for the Realtek RTD1625 SoC, featuring a per-pin register
-> +  architecture that differs significantly from earlier RTD series controllers.
-> +  Each GPIO has dedicated registers for configuration (direction, input/output
-> +  values, debounce), and interrupt control supporting edge and level detection
-> +  modes.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - realtek,rtd1625-iso-gpio
-> +      - realtek,rtd1625-isom-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      Memory region containing both interrupt control and GPIO
-> +      configuration registers in a contiguous address space.
-> +
-> +      For realtek,rtd1625-iso-gpio:
-> +        - Base + 0x0 ~ 0xff: Interrupt control registers
-> +        - Base + 0x100 ~ 0x397: GPIO configuration registers
-> +
-> +      For realtek,rtd1625-isom-gpio:
-> +        - Base + 0x0 ~ 0x1f: Interrupt control registers
-> +        - Base + 0x20 ~ 0x2f: GPIO configuration registers
+Hi Jose,
 
-Drop description, you are duplicating here DTS. Bindings do not need to
-serve as reference manual for the device.
+thanks for your patch!
 
-However when you state them like this and give them names, I have the
-same concerns as last time - please consult your datasheet whether this
-is really one address space.
+On Tue, Apr 7, 2026 at 8:49=E2=80=AFPM Jose Javier Rodriguez Barbarin
+<dev-josejavier.rodriguez@duagon.com> wrote:
 
-With description dropped:
+> For adding support to port-mapped devices within gpio_generic_chip, a new
+> data type is required for passing to read_reg() and write_reg()
+> callbacks as I/O port-mapped and memory-mapped registers use different
+> data types.
+>
+> Introduce a new struct gpio_chip_reg to encapsulate mmio addresses and
+> I/O port numbers.
+>
+> Signed-off-by: Jose Javier Rodriguez Barbarin <dev-josejavier.rodriguez@d=
+uagon.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Overall this is just fine, but I have one idea:
 
-Best regards,
-Krzysztof
+> +struct gpio_chip_reg {
+> +       void __iomem *mmio;
+> +       unsigned long port;
+> +};
 
+Since you're always using one or the other, can we use a union?
+
+union gpio_chip_reg {
+    void __iomem *mmio;
+    unsigned long port;
+};
+
+This way it will use the same amount of memory no matter which version is
+used.
+
+OK it's a micro-optimization but also elegant because it reflects the fact =
+that
+we just use one or the other.
+
+Yours,
+Linus Walleij
