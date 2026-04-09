@@ -1,82 +1,79 @@
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A698F40DFA4;
-	Thu,  9 Apr 2026 13:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1943AEF49;
+	Thu,  9 Apr 2026 13:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775741256; cv=none; b=QUQE0P7TsWRIb8MnE0SwLNM5d2Oj0QLLEZztuSdicU5jmZA+dR/SIjNgSbIIEDLh39uKUIzo4gW24JdksDBLzQ9NFgOZBgFJi3cQuvw5PKlY96ZAbFNypyoQlMoGCqdxWZH/8zy6P0I1EAmuGB/h0lS4rSnL3i71oOw3TicVnuc=
+	t=1775742306; cv=none; b=PKX9bNwXO6vee/YZlrgPC+I7+1t95kNEifleEtAZOTTiJa5fO3FqoicDw7WJL2fO/iv6ihEJokbC8CoPnPIgi9urGn0Uaif+yvoYJshA1SKuoKU8JwszuFW+DqrqE//1LbtIiu3XBTwZAkJNbn+1Ph45s6JHxoeRDR/A4bHTjQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775741256; c=relaxed/simple;
-	bh=QVGgy9FCZdktz5EZIp48pU14WW2kGSyI9jNxNO3iheo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=blS0S2xN3MuyUSUNire2qxdfED2rBCLXNe9AuKz2qev+x7xuZXUPGt4+Li3hOh10eFxfkIEKITAqQ3dtBajEleAtL28Ogzt29QdDV3eUWfMIAPBmWW9MGSHd9z7shLeutvn2QNcicn49pI0/Qvz02cYVDZXVcnDHNFKk9MchkiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=fGiKEsYI; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	s=arc-20240116; t=1775742306; c=relaxed/simple;
+	bh=6dRUAhC8/mvyKO38uwwRaE9X7jdo56Yb5n69llY3DWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7PR95uEzeyneyWQSV+TgtOff+wAp+BSlOrVPEC3sv/zvUquy9EdwdL9Q1KYYUdZqYz2jNvKeMw1GasRmmUXUxEPJN8gWaaQzg4jpqH0fJrqm4Tx+MbzahfNOckCxp33TZUALu5RVcFJdAbVwPBY5HOehrr3U/tVoBgE//coWFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3E8/C+1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="fGiKEsYI"
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout3.routing.net (Postfix) with ESMTP id 34589607C1;
-	Thu,  9 Apr 2026 13:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1775741253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=f1Sc1Zx4mgmF8p47InuqbAp8dKDMOOHe+MdMcqY/fZk=;
-	b=fGiKEsYIY7iS1f1r8LLt+RsiqVz0/3uTX38vU0Ylql6mfxpHwm6xVLfrAf74JpBrE/JgRg
-	b3PRMu6u1HjJORmQyZ4a2S7k1KfVpuYSNbqvKGOSfd2pY3BDcvkx87Mbo8bd8Z82J0/Y50
-	dd+otpo4WHYIcL/eAVomo7Ze4OMmNME=
-Received: from frank-u24.. (fttx-pool-217.61.155.21.bambit.de [217.61.155.21])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 117E71226C0;
-	Thu,  9 Apr 2026 13:27:33 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [PATCH v1] gpiolib: fix trace on missing gpiochip->get_direction callback
-Date: Thu,  9 Apr 2026 15:27:23 +0200
-Message-ID: <20260409132724.126258-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3E8/C+1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30611C4CEF7;
+	Thu,  9 Apr 2026 13:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775742305;
+	bh=6dRUAhC8/mvyKO38uwwRaE9X7jdo56Yb5n69llY3DWo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s3E8/C+1fWYfsTRfGWwnb/p94ZFizjX1LmC+s9KZZRQTgvw0iZ5VDRunoDpMVHHNR
+	 BL9EwSA8w9X4MObFa+lnkHPGgIOD1NOaYIVf0cFUShYxttgsd1O+mNLjkM1MasLey2
+	 7BtOUWW6kzy4sGjHcCKGIyYKNP9IKe4AsbKqHHS01kDNm3TJCJlabuv/EqFhWjU2T2
+	 t86BDTuXrEFb3PKa0ClkXSRey/OXIRuFhi8e8zOeCZq4QodwdXBTMRLnEHtBqTSXMZ
+	 AYVoD7KRF36RV15cb53y/kMs1PTIbnfcG0SFO6Xhj7y1xHYeYrqAz6Vozj3GyLywkV
+	 NgmVFyFvADYNg==
+Date: Thu, 9 Apr 2026 14:45:01 +0100
+From: Lee Jones <lee@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v3 1/4] mfd: timberdale: move GPIO_NR_PINS into
+ the driver
+Message-ID: <20260409134501.GE3290953@google.com>
+References: <20260327-gpio-timberdale-swnode-v3-1-9a1bc1b2b124@oss.qualcomm.com>
+ <177574072110.3341478.15028296329332074230.b4-ty@b4>
+ <20260409132041.GC3290953@google.com>
+ <CAMRc=McV_fsxVK8VBJOZSV0=Pw-WzZhqSVU00LfWUENqpKVP4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McV_fsxVK8VBJOZSV0=Pw-WzZhqSVU00LfWUENqpKVP4A@mail.gmail.com>
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Thu, 09 Apr 2026, Bartosz Golaszewski wrote:
 
-if gpio_chip.get_direction callback is not implemented (e.g. pinctrl-moore) there
-is a bunch of traces because of this.
+> On Thu, 9 Apr 2026 15:20:41 +0200, Lee Jones <lee@kernel.org> said:
+> > On Thu, 09 Apr 2026, Lee Jones wrote:
+> >
+> >> On Fri, 27 Mar 2026 11:49:07 +0100, Bartosz Golaszewski wrote:
+> >> > This symbol is only used inside the timberdale MFD driver. Move into
+> >> > the .c file as there's no need for it to be exposed in a header.
+> >>
+> >> Applied, thanks!
+> >>
+> >> [1/4] mfd: timberdale: move GPIO_NR_PINS into the driver
+> >>       commit: 13f5997f2bbaee976e1a4a6873d6bd40df9b2637
+> >
+> > Ignore this - I actually plan to take the whole set after -rc1.
+> >
+> > --
+> > Lee Jones [李琼斯]
+> >
+> 
+> Should I resend it rebased on top of v7.1-rc1 once it's out?
 
-Just remove the WARN_ON to avoid traces and restore previous behaviour but keep the
-sanitization active.
+If it doesn't apply cleanly, you will.
 
-Fixes: 471e998c0e31 ("gpiolib: remove redundant callback check")
-Fixes: e623c4303ed1 ("gpiolib: sanitize the return value of gpio_chip::get_direction()")
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 86a171e96b0e..302cbd7989f3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -420,7 +420,7 @@ static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
- 
- 	lockdep_assert_held(&gc->gpiodev->srcu);
- 
--	if (WARN_ON(!gc->get_direction))
-+	if (!gc->get_direction)
- 		return -EOPNOTSUPP;
- 
- 	ret = gc->get_direction(gc, offset);
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
