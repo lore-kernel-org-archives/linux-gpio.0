@@ -1,91 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F0623EA92;
-	Fri, 10 Apr 2026 16:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC30D3DEFFD;
+	Fri, 10 Apr 2026 16:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775838509; cv=none; b=lQqUOi3L/k5Gh2YPMmdMEgjsVnHC3SSPw2XZcgbznZ5/+4iImgAvOaAlEUOLTj/U/kaWjLM/wimhSCD1LTrOqYScaVvr2M3XRza+KBiUXWHpo7TE96a9NLDUsvaAyJy+mrkCgXs7/FNQTduWTTU1dei9tDBRN7w02+6LKs5IYQ8=
+	t=1775839568; cv=none; b=lwdkCrJ7qdFcdM3WbfSiBJFtIT+Pmr9BW2/tteI4GNOQbULUg4v5cOUg1M6AasrpOakJz0lGuYOPlVjKSzOwTuaL4aj4E10aKO0oYCr3ABjXbE3Ipxk2pzkfSIYCx/HdheuCDgV2xiUexQ8A6+rYq5QQOWv8NXkDeuu1lvA3gao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775838509; c=relaxed/simple;
-	bh=EpnNbR/nAY+kLzkBNfKS7Cb94i1OYlMvgNWWPVNUEHc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FVp0InlFZCGP5Z4PI4L6PWBD8DoC2CwqpQiQbGjI3hRcOYpgwZaMrHolnji8BRrO0bJyxMMzpj/QEpnAfgtO7c1jiaWNrDGY0tHa+EjqjOApBmGUSH1kiPLYU9c5jcUzDbmFaMnAo87m8/hXd/ku8F1fwjEvBgxRRTWfGLSQBQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=poLVcO41; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775839568; c=relaxed/simple;
+	bh=EoHz0nNktmxR8yvDqKEfWTPEAZKAHoJ/TrW6qPrIAKI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mQIEmLgfowgTN3vSL2ymmTjavke0ueVdhFJ784rm0uzxS4/odCr6ay1zJ8cx7J9YF/pcTt9Dst6QQgwxG3xsnOoDWSFms8RIXDeLKbdPEkmNhVnACzVED7J3AVk8OG2Qih1ruxMuPcexfkBcpOfUtuJX9OxobCP91ylJ5lrLSoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKqNZ+5t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="poLVcO41"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B386C19421;
-	Fri, 10 Apr 2026 16:28:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKqNZ+5t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A125FC19421;
+	Fri, 10 Apr 2026 16:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775838509;
-	bh=EpnNbR/nAY+kLzkBNfKS7Cb94i1OYlMvgNWWPVNUEHc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=poLVcO41o0YakKir25v4r37sYRi/2JayT/KpQTGadfRh2l3KEMbKflMy6SJI3LMrQ
-	 m5mgxOlf5mHy2+TITMon3vW7EXCdOal4eAN98cmja5KXvVuz53+VkxOEUmmVVdor2m
-	 M6lTYffpX3OX9VcSBFJkE6bPg5R4J+PKcoy5LW78IFgYdlNboJeElj04NEwRBLzT/+
-	 L+yRjTuFNeolge44uzV9Vq115VtNgjRZAJIB0dZHKpNn7FTzZJclAecC1MfucazAqL
-	 1NYw5xhKVD8oOKXoLq5mpFK6vtOtk28ZmgOlNoJynS0veguWjepq9O2VeAmElyvC+B
-	 lU3j+hE6srQYg==
-From: Mark Brown <broonie@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20260409-asoc-uda1380-v3-1-b3d5a53f31be@kernel.org>
-References: <20260409-asoc-uda1380-v3-1-b3d5a53f31be@kernel.org>
-Subject: Re: [PATCH v3] ASoC: uda1380: Modernize the driver
-Message-Id: <177581696991.1070744.13246183215946136465.b4-ty@b4>
-Date: Fri, 10 Apr 2026 11:29:29 +0100
+	s=k20201202; t=1775839567;
+	bh=EoHz0nNktmxR8yvDqKEfWTPEAZKAHoJ/TrW6qPrIAKI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=KKqNZ+5tS+XuIO+fg3bewUYy+DpkSwwJ7P4UYdPLPgsmZUzDyfBWHXxOFayUUtPxD
+	 +LHlrYZSi/mNHG3kNHXG7tWML1Kg7HJK1t/KaJRAoMtKOg4JnDSDtJW2Gjred5tAwO
+	 PJRRgtiiAfEOW2WQ8t0RlKBTS3gQLlff+DTZq5SsjLO+3yp/t4ciIuLxlGnUtjL4Xq
+	 OzuhKgerAPFhrhnvNDBldB8ahZIHyvfflW3LY785fXQopW8EDmrRBbitL51Tzt7yxJ
+	 2Xm/CVcnnhBW3kd5KrkYU7vAv1dGqbjpr6HGEcUbIVNO6niOK2Zien6JgCknYiAoyv
+	 zNnS66h7YaWOA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7CDDF3809A87;
+	Fri, 10 Apr 2026 16:45:43 +0000 (UTC)
+Subject: Re: [GIT PULL] pin control fixes for v7.0
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAD++jLnTaQMzLR32LFCx4u1Eft+S+fpaKuMdGqX9sBY5v-X+Yw@mail.gmail.com>
+References: <CAD++jLnTaQMzLR32LFCx4u1Eft+S+fpaKuMdGqX9sBY5v-X+Yw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAD++jLnTaQMzLR32LFCx4u1Eft+S+fpaKuMdGqX9sBY5v-X+Yw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v7.0-4
+X-PR-Tracked-Commit-Id: db5b8cecbdf479ad13156af750377e5b43853fab
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 77c3c619d2af2540b15e63dca768c0d86be746c9
+Message-Id: <177583954199.2559624.647901857448871213.pr-tracker-bot@kernel.org>
+Date: Fri, 10 Apr 2026 16:45:41 +0000
+To: Linus Walleij <linusw@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux pin control <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1089; i=broonie@kernel.org;
- h=from:subject:message-id; bh=EpnNbR/nAY+kLzkBNfKS7Cb94i1OYlMvgNWWPVNUEHc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp2SUqz4/fQJ0lMXsG8iyoC+ipcR7rhWJ09QvYM
- faCVWOVZyuJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCadklKgAKCRAk1otyXVSH
- 0NmFB/9t0RWsee00Ft9uTrRYEwtdWsgnngP33FHIj6pcsTBykIeAY8J7K3Fc5EiTg7/FhET0rxO
- D4dxHK4XgFaoCEtnIxuuPzTHb8QYzmW9v6JAqChWmmruj80vqMOI6OUS9SDeNUenJiymhyYa+YV
- 18okJCmt7Zqv5GmADInN2bcPjDxo4YPtjSpKnM3+/in4WCbI18uohHBHka3EMO8EAONLltjv1we
- lDpJBwzU+La6nT2t4mhKBmPG7I5X358yVucOqoa69OaO29lP2WUbjkCCRQtTvVEhZuxroCcnvLH
- NGtxDp1Yk/FjlpUFM73bgJXTjo6kOjyM48Obw2wN3Q/czlf9
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, 09 Apr 2026 23:39:31 +0200, Linus Walleij wrote:
-> ASoC: uda1380: Modernize the driver
+The pull request you sent on Fri, 10 Apr 2026 09:11:49 +0200:
 
-Applied to
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v7.0-4
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.1
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/77c3c619d2af2540b15e63dca768c0d86be746c9
 
-Thanks!
+Thank you!
 
-[1/1] ASoC: uda1380: Modernize the driver
-      https://git.kernel.org/broonie/sound/c/0cb7aa965ad0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
