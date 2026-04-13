@@ -1,74 +1,137 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7063CA485;
-	Mon, 13 Apr 2026 13:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9468F3469F4
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Apr 2026 13:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776087924; cv=none; b=d6476Xm7hhjIIYz9Tl+kM7fT8f4WGmtAzo/VuiBm6e1sd3nsJ2duo2RBZVH4fu1N/AxGeTyBSrCMxsWfO/ctQ4LkoQdh3lHBilaKqviIPsGk8/XmatxqKKp7mFPauqc3pRg3fhQhYksEaP2zexVdB1tFXJY1lUjFPjR+FU6D4h0=
+	t=1776088683; cv=none; b=OfAezA7KuiZpNXqHpLwhA2JuEXiOILKd6Ie+xyXHCkosO5K86Jnl++jgKmfXoWj/8muqQ1GoENBzKN+xRL/f31oZNy296irM9b2IOR0x8ER1YXpMqyfPS0OV6+tuU2pTtR2NrDNgaycinewcNI5gjJK9OU8qytZqAI2h9kFZ8+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776087924; c=relaxed/simple;
-	bh=Odv5zH1J4LxnKF5UkH74kWOp+Irz5AABX7a6T6Der+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HXpJr/Ggow+GTZfGd4SaydFs2g1O6G32W61MnYbN9r6/K1EnhduU/508tygRgkAdItTkIXSny+QxAW4q0JGntXiTxi09NMklmF6cp/x7vlVLkpK0qeMlJIVPsy/eOBP5RGzpy8+skpHD7eH3JXholfI+nrFdhgJ8n1YF77vatys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1wCHbE-0004aF-00; Mon, 13 Apr 2026 15:45:12 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 3E540C0256; Mon, 13 Apr 2026 15:43:01 +0200 (CEST)
-Date: Mon, 13 Apr 2026 15:43:01 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 0/2] MIPS RB532 GPIO descriptor conversion
-Message-ID: <adzy5WHWbZUZjQ8I@alpha.franken.de>
-References: <20260328-mips-input-rb532-button-v1-0-98e201621501@kernel.org>
+	s=arc-20240116; t=1776088683; c=relaxed/simple;
+	bh=NMQATW5vHvHegdbDDdeD0bCeKNot/Lqc9BFgmY5Zqyo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=atzHKxR2N+X53pWDYJb9mkxYLN719N2aXtfeYQ2SOjxpHT0qB4JSqQS5CMF8gIoeYbEk/0XR3LDtvjO8XahqYUbM9HpcBdcr6/zQ5qvtj4xgk+UwdxljSUj6SKQqNjly/NdejRoDUO0i9hX7eJzRoR77cSOlELCWluSQ2knPqa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzsDuAZv; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzsDuAZv"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2b458ca2296so8735325ad.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Apr 2026 06:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776088682; x=1776693482; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S1Jred93a8Ywwo0WVeyu+LfFpcjBGBo395/UHFn8LPw=;
+        b=kzsDuAZvBmGYTZsh9XqETqTsmP10UZePgPJ3ohzbv/QeMmLBVMSMcwYh/KEqHdYesU
+         lC7zdZlIZucLupvet44ExN2ld9a1qRjFDNMJuw7zR4TAtVhcvOYRBXuMkVhWRS7rVisL
+         U6aSbFDfvQIR9tCzUJGNvJWfNx2bhOJjB+oZyvPXF5lXoI+ch7Chm/i5OmH3JADMwdNs
+         0FD17TryPIuVl2jy3W6QW8YT6VyMRfCXsBrtekbzrDgYrejEt8iES2mfl6zMOjMmUvn/
+         de/ThoNY+YsPqxcE4BiOEN86Aq4djfuhblzmKVjmkatAyhOnA+u84Pwh9TVgpXqpFXNb
+         7cow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776088682; x=1776693482;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=S1Jred93a8Ywwo0WVeyu+LfFpcjBGBo395/UHFn8LPw=;
+        b=ZZ8KXFPRNnpIrA+aeWEhF6MIqNBscA3/au/8CS6WY87K4pgfZ0jid6Dchxc2LV2l97
+         wVbjMzCV/YY1VlMMiESTesRHT5Yxijj0wFrdBKsUWD9yoeTz0n9A7XQ9JPiAWfXu3Lpg
+         sB62E1JOdtZ9aNbJVdRGTfZEPfUBxLqvSY9YfV4L5RUEFHxnY2cefpJNE0KGdL4ozs3+
+         PGeO3eLXhHnSMbkApInrHKtEKjgkUBIbbAc1yAe7goQmT4Yy4uTw2VT20p6Q1bAJgTwS
+         5GlrTf48Uae7QPjZP5VEgSaiwy4+Jkeg9OJkOsE/K3BAbRqXSsOyGhCe99z8PjKjnms5
+         VIDQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8XsjfgSS1mNhF/wBKQFkepoNQEDuNYopubfUYl5LOn+lOoiVye24GXPHg7JyL8od43POqIBMC4E3yV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIBFkXBlHdsQIxSpoebMGJwyL99IZohQ0jqqz19dOh6gg4eAum
+	cPKDQiP4fGR7YdClgN8xPAKNzmWV8Wp5pM9P0ZawnEP50KmNbM83a5EH
+X-Gm-Gg: AeBDieva3f5gU1ijze1XzQJGpa/raOk7N2u2FpZJzbU/fIOfRdAn5VZhkQFa3MWH9LZ
+	W1AlU50ValSQOXe5wf2NCrDvwttgE16QiDzxV/xV3GftTxgWxEEJ4LjbPyou5I6LpcvLJFD484Q
+	2rJcpJHjYhBazPYufEo4vGpKKgipL0tnpRgfWPgybGtDbQ8TW2mRORMlZXufuAOVPkKBzjLEYgG
+	5UE7kgCgg35+5eXy7BYg/wexH9aFeZp6FZx4Jptv+u8TArCbmXwP9Pw6zWkEt49JsnI62jfl4wG
+	qfTvRIKvw5HX6hPci9ISCgKVRfG8IXhEyenH1MQ9LFRlSPfe4JMTevv4asDLz/yC0Bwq1WlBDEv
+	AttzJzn7IQoDBw2rNhxD5O3ciMypj5N+RGbb+oZJ/dXQF/aGxs5YgTp+/1r0C2QmYHTGYDUAAs3
+	kPOnUB0IO6Ma/6cvBoRmD4QBBrjutfWiUor+c4VFYrlvR6KiKuyS01ve3+KOZ0ODivFRbXWL8Zx
+	TfBFiyRU+cejw==
+X-Received: by 2002:a17:903:284:b0:2b2:5822:7a70 with SMTP id d9443c01a7336-2b2d5a63d4dmr133027285ad.38.1776088681795;
+        Mon, 13 Apr 2026 06:58:01 -0700 (PDT)
+Received: from localhost.localdomain (61-230-3-9.dynamic-ip.hinet.net. [61.230.3.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b2d4f36351sm113068545ad.69.2026.04.13.06.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2026 06:58:01 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: krzysztof.kozlowski@oss.qualcomm.com
+Cc: afaerber@suse.de,
+	andrew@codeconstruct.com.au,
+	eleanor.lin@realtek.com,
+	james.tai@realtek.com,
+	joel@jms.id.au,
+	linusw@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-realtek-soc@lists.infradead.org,
+	openbmc@lists.ozlabs.org
+Subject: Re: [PATCH 4/4] ARM: realtek: MAINTAINERS: Include pin controller drivers
+Date: Mon, 13 Apr 2026 21:57:56 +0800
+Message-Id: <20260413135756.8796-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <e483acb6-af9d-4bc4-9aa6-c4841ff0a8dc@oss.qualcomm.com>
+References: <e483acb6-af9d-4bc4-9aa6-c4841ff0a8dc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260328-mips-input-rb532-button-v1-0-98e201621501@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 28, 2026 at 04:55:46PM +0100, Linus Walleij wrote:
-> This moves the MIPS Mikrotik RouterBoard RB532 over to using
-> GPIO descriptors by augmenting the two remaining drivers using
-> GPIOs to use software nodes and device properties.
-> 
-> This is part of the pull to get rid of the legacy GPIO API
-> inside the kernel.
-> 
-> It would be nice if someone can test of this actually works,
-> I've only compile-tested it.
-> 
-> If we can agree on this method to move forward with this machine
-> it would be nice if the MIPS maintainer could merge the end
-> result with ACKs from the input and MTD maintainers.
-> 
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
-> ---
-> Linus Walleij (2):
->       MIPS/input: Move RB532 button to GPIO descriptors
->       MIPS/mtd: Handle READY GPIO in generic NAND platform data
-> 
->  arch/mips/rb532/devices.c         | 83 ++++++++++++++++++++++++++++-----------
->  drivers/input/misc/rb532_button.c | 35 ++++++++++++++---
->  drivers/mtd/nand/raw/plat_nand.c  | 24 ++++++++++-
->  3 files changed, 113 insertions(+), 29 deletions(-)
+> On 13/04/2026 11:23, Yu-Chun Lin [林祐君] wrote:
+>>> No dedicated maintainers are shown for Realtek SoC pin controllers, except
+>>> pinctrl subsystem maintainer, which means reduced review and impression of
+>>> abandoned drivers.  Pin controller drivers are essential part of an SoC, so in
+>>> case of lack of dedicated entry at least cover it by the SoC platform
+>>> maintainers.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>>>
+>>> ---
+>>>
+>>> This patch should go via Realtek SoC maintainers, not pinctrl.
+>>> ---
+>>>  MAINTAINERS | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 10d12b51b1f6..374ce55e4fb6 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -3373,6 +3373,7 @@ F:
+>>> Documentation/devicetree/bindings/arm/realtek.yaml
+>>>  F:     arch/arm/boot/dts/realtek/
+>>>  F:     arch/arm/mach-realtek/
+>>>  F:     arch/arm64/boot/dts/realtek/
+>>> +F:     drivers/pinctrl/realtek/
+>>>
+>>>  ARM/RISC-V/RENESAS ARCHITECTURE
+>>>  M:     Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>> --
+>>> 2.51.0
+>> 
+>> Acked-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+>
+> So James will pick it up?
+>
+> Best regards,
+> Krzysztof
 
-series applied to mips-next
+Sorry for the confusion. I'll pick up this patch and include it in a series
+along with the maintainer updates and other DTS changes. I plan to submit
+the series to soc@ during the v7.1-rc1 to v7.1-rc5 window.
 
-Thomas.
+Best regards,
+Yu-Chun
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
