@@ -1,147 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011054.outbound.protection.outlook.com [52.101.62.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC7338945C
-	for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2026 09:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776677220; cv=none; b=I0chRXu1ZSTMk5sBv4UPp125K4kYK8MXsX60/OiB2/V6T93BP5DuOABqZPZVdUsiP7pL1EaNvOC57QpXSbSytBoIB6Zxp2dr0pliNKxLO3XDc6ja0mnNRbU/xIC0aH+8onJflroRC8xL5uxEp4T5HNzRX2+kFNzobv25cfY50xQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776677220; c=relaxed/simple;
-	bh=WyyI5qiClm0Zcy0XJGbhBQfHxOIxoioFTl8Pb+GthJE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKWgw6CEbftLV/fENu3dO6AMvCfey43QVblki4K9Yg6g2Muwjirh7nHlYetJJgVngtMLGEjVEPkT8IaUFSxbH+ny6ye2vwrnN7ahG0dj/S+GMyL20lfHa9xRh4mcIKf5y3CLs6kzg1vaCFiGMiz7gXkrIH3vfx4S9aGnqK7jZl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcx+2Fc2; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D47E13D539;
+	Mon, 20 Apr 2026 10:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776679592; cv=fail; b=obeRxhLX5M/2vGo9UZtdm7WPSjIFO0oMrDfQg3+m/L0ZS/hP+jTec96jqF1z2gzMDZOWx5JWzH/KoB4GB54inVpzs0p1nf0D93vPwBoLE2QhlV+f+g6xK8DpwqbEAXK7OrZ7GBN5YAItH9YMG3NnDrK4EhAuRxGbYkFCF4MHv4U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776679592; c=relaxed/simple;
+	bh=uQKI3pf2pn8iGpKPyiTI9GexOfcIoP8+3eAk6fYEDaE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IH/g8UtK2uPA4fxAuoUE7YZN5gxoQcVW/9OQZkez1saYIqEnCksMe60aZQM1Yjp8OM9s4qmPvQhFEOSDnx5yYTxdnToihkK5LLziSxEhG43gj1Y264MwXh7YPdPK6+LTMK2evOtvkvWqkgzG2HWnVR5thcCmR8Hr/+G8ZWUNa1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IwfOaf9+; arc=fail smtp.client-ip=52.101.62.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcx+2Fc2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1F4C2BCB9
-	for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2026 09:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776677219;
-	bh=WyyI5qiClm0Zcy0XJGbhBQfHxOIxoioFTl8Pb+GthJE=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=lcx+2Fc2Pq1sy5Tzftr4gndpgsvvexJd5j03bOQGEO/mHbrZZjjOZgH4cpg7j8AvA
-	 Mng5qTeGSeIdbLBeL6d66Gzc9uPqJIAT9g10ANOrz4/tn+209vMdSUmnRPXP3SY+ga
-	 h5HrHG4BAGlC6Wn9osQ2MEoMIb5hEGzlHsFNjA17GjoRQ8nTNyNM+nbgZZ1N4M2XCC
-	 Iu+504VeMQD8xyKkxoj0ez9P+dHKiRymxkBAz1quEWecQPolwRnPyB5Oq4X1jwWlgb
-	 M/AxHYckGDAn8LjAh9piZYWgemLESBolAKCjlmNlels0uFhyBj0aVJusC6VXaVrtLD
-	 zqXbPKCULSGTA==
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12c8ccc7755so799266c88.0
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2026 02:26:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ//+6aZCDFZ7HMHwlf/HiyeMLW/oUt36YfYWZhUgMZGD8H4P5AOqPzbOfOoZvzhcXExDFQaCln4iMaz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAiv2OiapLRsaz4GGkfRvbDtvSNHERqQdmsRwAsXYIapO85gWd
-	bYyIesOnY0SYahAemME3eRfeYTrOdPEeCvVCu7Qy2DZvVkxdMmCgin2tbTVW429C7Be3ip4Vg6s
-	92Nz/WQRbos/6248juLafOYqcDMnCoSDsXUKiq21fRA==
-X-Received: by 2002:a05:7022:458d:b0:127:5c3d:bd95 with SMTP id
- a92af1059eb24-12c73fa2c95mr6030242c88.32.1776677219053; Mon, 20 Apr 2026
- 02:26:59 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 20 Apr 2026 05:26:55 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 20 Apr 2026 05:26:55 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260415-6-12-gpiolib-cve-2026-22986-v1-0-3a7a6de332eb@cherry.de>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IwfOaf9+"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xvQ5h+Fkx9AW2qjtHmHlV3E4FBpDelN00PrECt1JjPSzAhxGU/BTy6Uc8NEJBCuOXIk4NYYuG4u+R1vhW7KVR7+1uS+8vVrT4ANh8pVOcPjup0ADRSqwYRTWw+e4bjrsmhY0PJYsybiHpqwpXsQSZucthHzkx/yUoK/Wfh82DoYh04D2VM1e25x45xWv4JR1KztMig4B/lTGARWlmJML0agJAYx9B08i02BRvRGAp+NBQBUyVVk5Y9XUuWH69G/CHTszOitEp5VlhKt1T0/ehYZ12srosY42lKOZC89XbsDaQOxJNJNHJQg+hzODSI9hzqLbnMvxqGvMk7QvX/VmXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0gFx8VpLExsshYeXb/Bd+tffp3Bp62ZleLZOIRoW55c=;
+ b=alnVX81SJYYoXulFsv99y+yLnVzN3xC3kA+dPS8k8aDAEShY9EePyc6VLzvX7rfh5JzZv4TRTsx9ZK68vLqi9i8xOZJsrcohzrUb1kXUEyYuurSgTqXWBmfGY72BipC1Wh9c367i+wtKACJHOcuRG0ZCJACeiNKtKq+6qoDzyAlOy4RPOz/l7mjBKlDJH3PmpoBc7WML7HrAn25lCoeahO9WwRrtjqPmyoh2CPKkFdUs4lDxYM5WogeAZYc4z6Cs6otb38POPVbP59IXweKCi/E73SQNOTIVOth4rZKCPrl3ecfaIas6fVneskuH9H1zohgA9qNn2caMAfqHeWWOoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0gFx8VpLExsshYeXb/Bd+tffp3Bp62ZleLZOIRoW55c=;
+ b=IwfOaf9+2VWOsrJol2YzGX0K/vCHZE93/8txzAjx1ty854prEoRlITAtJvHJPE0BxWLIbWbZMUzvYs/2Hvc7lBzXcevZ0b6PHQ+yPL3Dcm6NhfrTInGqc1ynVXA9SjIPf5xpvuVXXg2GbgA/IprkSzlvFf91FsmMRLMy2bwsH+gd4nt+u+rbcYZfpwE4VJDGK8FJ3jbzex6/2ErIeICOtwVcHtMDAQuSKiwtmYYsQ84s5BDPE7MTHeJupf7wzOHjo9nEVqMnYm7fpfFkxw8XWbYJJtP/iyCJCLrKKEG7yJi+HPoKanL6qgw3ssVtGqiD/1/XCUZBIoPqiYxyIBKZ1w==
+Received: from MN0PR02CA0012.namprd02.prod.outlook.com (2603:10b6:208:530::9)
+ by DS0PR12MB8768.namprd12.prod.outlook.com (2603:10b6:8:14f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.14; Mon, 20 Apr
+ 2026 10:06:26 +0000
+Received: from BL6PEPF00022571.namprd02.prod.outlook.com
+ (2603:10b6:208:530:cafe::40) by MN0PR02CA0012.outlook.office365.com
+ (2603:10b6:208:530::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9791.48 via Frontend Transport; Mon,
+ 20 Apr 2026 10:06:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF00022571.mail.protection.outlook.com (10.167.249.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9791.48 via Frontend Transport; Mon, 20 Apr 2026 10:06:26 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 20 Apr
+ 2026 03:06:12 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 20 Apr
+ 2026 03:06:12 -0700
+Received: from build-pshete-noble-20260401.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Mon, 20 Apr 2026 03:06:08 -0700
+From: <pshete@nvidia.com>
+To: <linusw@kernel.org>, <thierry.reding@kernel.org>
+CC: <pshete@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <webgeek1234@gmail.com>,
+	<rosenp@gmail.com>, <linux-tegra@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/6] pinctrl: tegra: Export tegra_pinctrl_probe()
+Date: Mon, 20 Apr 2026 10:05:56 +0000
+Message-ID: <20260420100601.343707-2-pshete@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260420100601.343707-1-pshete@nvidia.com>
+References: <20260409131340.168556-1-pshete@nvidia.com>
+ <20260420100601.343707-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260415-6-12-gpiolib-cve-2026-22986-v1-0-3a7a6de332eb@cherry.de>
-Date: Mon, 20 Apr 2026 05:26:55 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MfJGJYQaQO4gv774NJmSo8pwFSO8puzCtpPB8okXF9dAw@mail.gmail.com>
-X-Gm-Features: AQROBzApwb9ajDjm_t5Hs0DJRySxg8Y3Y8B05MHQ5Ft3fFtAqSg468AhG_f6NBs
-Message-ID: <CAMRc=MfJGJYQaQO4gv774NJmSo8pwFSO8puzCtpPB8okXF9dAw@mail.gmail.com>
-Subject: Re: [PATCH 6.12.y 0/2] gpiolib: backport fa17f749ee5b and a7ac22d53d09
-To: Quentin Schulz <foss+kernel@0leil.net>
-Cc: Heiko Stuebner <heiko.stuebner@cherry.de>, stable@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Quentin Schulz <quentin.schulz@cherry.de>, 
-	Kent Gibson <warthog618@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Narewski?= <pawel.narewski@nokia.com>, 
-	Jakub Lewalski <jakub.lewalski@nokia.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022571:EE_|DS0PR12MB8768:EE_
+X-MS-Office365-Filtering-Correlation-Id: 085b6bc9-d3f7-4b76-3aa0-08de9ec47be8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|376014|7416014|82310400026|1800799024|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	SD9v3WzS/yqkm97IScpkj6+lX7kyhSkAYYKbsk+LUWEsPOgBHUAvEwAXsZur4Ir9xvL7+udgoDbveRIK8fheTmsTfj0rfo2DjXjw/o3Tx7KzCMYk639PzOqJhfwDJ/B0dKFqVXbJ8FkIJwGuH6PoBuuUSfTehKKK4BXMvaFjg5kSVLAR3b2vC08k2QCZ2ssqo/BlDNhE/Kc2DW/XODwXsVDe99Y8IjNcRmPWr50sCdUODr5UZCjXASkEwEZtsyb2u/YLwOJIIN58UGwYR+Fip4hjhCaAWPcKCBeDtxGoWjlBMFM9i9tuQ0tQM7zoPOQLhfhi7pWhyxa+IhJPhCIa74WdU2+e3c7UQuSqFDHr2rztY/VVb8/cpYJHCDwW1EsHjjAitRHZpmbCc9w0KaWntvvMiZQFezNBbBG4ok+8/EuqpGMoT6atIUHhjLoQo8Jk5qNBc22iyzvI0eAy7xGsk2AJMMcqV38xFuVxNid4lauOy65lCTV+oMOxZLP0rCGTyXS6D5qAWmdVVGK4+CNZAU+eTMcRjozoxWUkN8Ygo78rtKqCfpy178n27egTarNlqmSzh81/QV8Na6S61ExJ0b5FMgETBhzmeJa+FLg2Bfs8LKQauPhERNkkO8ef5KJVnHv2aN7sWfedNUu+nVeTyuOaR2AXHj6t2fUr0ru3nCXSX8jVA5jTfUxd8isTJoM611My7EzkhwiA1kyVMBzgyES2cGUEV3I13q6gGbo0Y1Ii4bbtW5K4hbQHPerGnXoRm8LA8XUpWywz4H/ACTrpTQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(376014)(7416014)(82310400026)(1800799024)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	j6o5YeSE6Sy0oJRwMatnXl5KFQQ8Prsfn5WvxGiGRB+MkO2zjiG6zI6efF99Oa7neSwsNiBqf/ldKRP/MF6L+wmzEUwXcJjJIIXAHqf0u+DTBKgvt3ZSIBKkqThMgoyo39Psp2fEeAT7hotNScwr7idB/DOlby9nK8wPs8LmWa1gZAaHrEZlznlIaWQpNutFINhPUK3HQZW0Y5r/FiJ/8eS5PkVqacmzpxdP8wnDLDTDmDSx56bh+E5aci9j6DjJKwyqLBhR63wwQ5gdN8pcwpyvm0TCbMjOo35SlWe1ebfy+T49CwQutkpLVlNANGfuf9AVSXkh5YGyMKxGhBurTRP8WpuFlSvWzXiWhw8AG522CgKO5ys1CDXKYWDhQn3HIygGuY48/nDhn9VzIVaHdPgNpR5vMB1tqomSywocem3Da/tnbRhMtSUdBwNWHCg6
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2026 10:06:26.0971
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 085b6bc9-d3f7-4b76-3aa0-08de9ec47be8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022571.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8768
 
-On Wed, 15 Apr 2026 13:15:39 +0200, Quentin Schulz <foss+kernel@0leil.net> =
-said:
-> Backport a7ac22d53d09 ("gpiolib: fix race condition for gdev->srcu") to
-> 6.12.y. To make the git context difference between commit a7ac22d53d09
-> and its backport in 6.12.y smaller, also backport fa17f749ee5b
-> ("gpiolib: unify two loops initializing GPIO descriptors").
->
-> a7ac22d53d09 fixes an issue reported as being present since 6.9. It's
-> been fixed in 6.19 and backported to 6.18.y in fb674c8f1a5d8.
->
-> The git context difference could be even smaller if we also backported
-> d4f335b410dd ("gpiolib: rename GPIO chip printk macros") but its
-> cherry-pick conflicts so I decided to not include it for now. It was
-> backported to 6.18.y though (because it applied cleanly and helped
-> a7ac22d53d09 being cleanly applied as well, see
-> https://lore.kernel.org/stable/2026011530-owl-savage-9b8e@gregkh/).
->
-> The changes between a7ac22d53d09 in v6.19 and the second patch of this
-> series is (according to git range-diff):
->
-> """
->       ## drivers/gpio/gpiolib.c ##
->      @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpi=
-o_chip *gc, void *data,
->         gdev->ngpio =3D gc->ngpio;
->         gdev->can_sleep =3D gc->can_sleep;
->
->     -+  rwlock_init(&gdev->line_state_lock);
->     -+  RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
->     ++  BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
->      +  BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
->      +
->      +  ret =3D init_srcu_struct(&gdev->srcu);
->     @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpio=
-_chip *gc, voi
->      @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpi=
-o_chip *gc, void *data,
->                 ret =3D gpiodev_add_to_list_unlocked(gdev);
->                 if (ret) {
->     -                   gpiochip_err(gc, "GPIO integer space overlap, can=
-not add chip\n");
->     +                   chip_err(gc, "GPIO integer space overlap, cannot =
-add chip\n");
->      -                  goto err_free_label;
->      +                  goto err_cleanup_desc_srcu;
->                 }
->         }
->
->     --  rwlock_init(&gdev->line_state_lock);
->     --  RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
->     +-  BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
->      -  BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
->      -
->      -  ret =3D init_srcu_struct(&gdev->srcu);
-> """
->
-> s/gpiochip_err/chip_err/ aside, the rest of the diff comes from feature
-> commits which do not fit the rules for backporting to stable.
->
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
-> Bartosz Golaszewski (1):
->       gpiolib: unify two loops initializing GPIO descriptors
->
-> Pawe=C5=82 Narewski (1):
->       gpiolib: fix race condition for gdev->srcu
->
->  drivers/gpio/gpiolib.c | 43 +++++++++++++++++++++----------------------
->  1 file changed, 21 insertions(+), 22 deletions(-)
-> ---
-> base-commit: e7a3953084a7050ca349010deb22546834c2e196
-> change-id: 20260415-6-12-gpiolib-cve-2026-22986-f0b4331c0aa1
->
-> Best regards,
-> --
-> Quentin Schulz <quentin.schulz@cherry.de>
->
->
+From: Prathamesh Shete <pshete@nvidia.com>
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Export tegra_pinctrl_probe() to allow SoC-specific Tegra pinctrl
+drivers built as modules to use the common probe path.
+
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+Changes in v2:
+  No Change
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index bac2adeb5c63..3f58f7db525f 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/seq_file.h>
+@@ -936,3 +937,4 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(tegra_pinctrl_probe);
+-- 
+2.43.0
+
