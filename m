@@ -1,137 +1,97 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F337BB8
-	for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2026 09:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CEE3AE6F3;
+	Tue, 21 Apr 2026 09:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776763950; cv=none; b=Vb+jEVdUwLiyGiWINCdR1l2NJqqNlsCkybkZzPeTDnaixhnxqBSktaC6BmojJBNf/hE172MIJAL6OML0SYrSNYKe+tRJbVVecvVNpW0Z/pd3nhy4vb3w59JR3tQBi5DZ8qOTmCRv6wnxvceuBaVDU1k0brciu193iCn9cVwRdIs=
+	t=1776764713; cv=none; b=CJfmO3mhbB820cOkTgsnX4/wsLHGcA1sSHtOxee0V0edxwL6z+dc9AA5vDmBFv9E/zD3ga7u68obH3ky6vk5iGoU62XQvLs6lDZ7aBvfeEOC5TbOYY7XsMyzNZfft0gin4W64sAbZxuCiSlBLbxOKBEN69QqYnuMHxAhaR3+cf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776763950; c=relaxed/simple;
-	bh=RIJ5ZndJvGd6ssreqo5at9CUOsJVsflPdB1Jiq4Nklw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXvccLPSChehxvsSJzaZ16wx36Ycqs+txUnniwdAEpXVUrN+dBExFXdGfWmnFK2nVzqV0Q9tdzsb9RuLJSyfuMM8GCjj5LwCayeCqdG3BbRVWm4IfdHFsyAavyVhpx2D9BI12xF1ubjjmt8bxsk3uKXzq+1ZVNY/RhjxEEljarI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lAt/U0rn; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776764713; c=relaxed/simple;
+	bh=mPipYwK9VLZR38znykoW7GBA2phEVD7eZlvFmnR+xfM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XPcFzT2L21bwFipPeFBghMQnlSh1zA6GZkyMCRISAx484I1bcaB0oVJ/9Wo0NHDRLO7lPYoB8All33xMeXb1k9pcwx8GFBQLMwjsh7bsT+tTudBhypL2RjhbfcTNzst9e3Bw5CiKjvn1NN7ZWC8qi0mRWsQu3DpE3vW4lRGqSgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD67QomR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAt/U0rn"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43d43e09de5so2203593f8f.1
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2026 02:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776763945; x=1777368745; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1BwtVt8bKFpbQGVlkdldux3RDIWFxamHAEC+xVHx6I=;
-        b=lAt/U0rnJgAbgnlRam/V9PG98qwM3f0UR/1t9YiViLWfmxjlFXO6JdqU3BHTRULD+k
-         PsvC9HOkoEZBUuGsI7kNqmjLqdm5eeho2m0aMZRSqZSIhVNCMWtSaZVm0b5zs9V2FBpW
-         V64h7aRtwjsEemRNNHE8sfBmTuee3ovD7gxSuDkfIB+vrkS5ufOuqWGUDxLBYweFiV61
-         hX6qxuVL2jprptBYNrS3QHIy52TjFbhWdh9VFR9AOM4rhGK2PsexyYJ5XWfDBkAk9+MB
-         8QEaGEYHEWDDeev0v7sra+FuCVQyeuKfrONL5ZsjcZVJWiPiZmcAdfVMJr18aUsEWEK8
-         2Ygw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776763945; x=1777368745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I1BwtVt8bKFpbQGVlkdldux3RDIWFxamHAEC+xVHx6I=;
-        b=ML6t/nX/ZtrnG6swT0FY6R9E4nrVEqL7o7FyvfDG05ZGboTJ6P5qdqUR6U1pwmmZmd
-         rGGPDgltxFTK3L2xDlzsLJH/mHmELS/UC2jmFZiHNq+7SyZYjg8mp3QHtBwG5uZhki5c
-         s/2M5ddpOgoHXlL9M9xyXKNCkcD/yZznpWHzpwcYM1VIfNnDnXvJc4UwtJ4M56XlpjVg
-         aIG9XV31WuSQOV4tz1teMlFGvn2t9iX4Aakgy9pHAniebTafNytR57/M2y4D0Q42Dn6M
-         jmKF/Mp7vr9auCtuGf927xzUVAy5sLJnbsmQztbM/N3XeY01xZU7gukLAPjMb+fN6FTK
-         47+A==
-X-Forwarded-Encrypted: i=1; AFNElJ+bHPNDeqe3cg5Ih78NJvLJ1wWy33iqOumetTBIKfqJdblygaleIMW7SwrqMZmJTHy/pc4wKs3lvjLk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrHrJDAklwameNhKsmO3n5rD8LUSoOsvvha1KtNtyrWTq0W0vI
-	qOSeUaCD/UK6oQcAN4LXNIydSqNSP/LNJpeLvoasYCPK9ok//X/H8yct
-X-Gm-Gg: AeBDieuqlcf1EFO0tlqi3Z+YVT2T+2ciJT8WQVW/VmUBAw/k3DugDOEyH5i/4IojLio
-	5gxrzmer3Cmg44bSfooF3ZCIeD2oRZ4NY04CR5jJQDej8e+RDEdKkiNYAGHuMp4yOweTXyTjx/a
-	Mx8rRSGing/1/WM3tVn7J5O5faJh+VBBLCjue7N7QHytoVtkToRat2oEWuisdt7tVVOwdPYCGgS
-	OfMEEoX5a2PhoDKiUHkH+mZM0kxpm2atPuV4cJRA7YdKcbToayBMj9yQyfCQ1GiBlX8/p2AWVhp
-	/RPBcwqv/VCv/tk1KdPvIp62Q7921hALO1vcTzSeev5S9o3clMXiWVvuIRDvEW55zUKGYtGlO6Q
-	zvOBKDRKYLOn2UGdC3Y7ku+jP8OGWdukBPJ2i/AtW8B8aYdfeFIX2Kwg/oz0PkCddlUUv4sg7ip
-	80SMHRlCmClWtQQtnJoEQOfDxq678zdmS0z6sxUQAPvu3YytjoUomyJiN1y1uAixh5XyA5jCb+b
-	9f7rARMC0Xgyg1HJjh3GTQG5fA6QZ8fWuQ=
-X-Received: by 2002:a05:6000:2303:b0:43d:73d4:b34 with SMTP id ffacd0b85a97d-43fe3dcb1e9mr27481040f8f.16.1776763945123;
-        Tue, 21 Apr 2026 02:32:25 -0700 (PDT)
-Received: from orome (p200300e41f131500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f13:1500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cb11b4sm36932206f8f.2.2026.04.21.02.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2026 02:32:22 -0700 (PDT)
-Date: Tue, 21 Apr 2026 11:32:20 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: pshete@nvidia.com, linusw@kernel.org, thierry.reding@kernel.org, 
-	jonathanh@nvidia.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	webgeek1234@gmail.com, rosenp@gmail.com, linux-tegra@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: pinctrl: Document Tegra238 pin
- controllers
-Message-ID: <aedDEkawf3cYxQm5@orome>
-References: <20260409131340.168556-1-pshete@nvidia.com>
- <20260420100601.343707-1-pshete@nvidia.com>
- <20260420100601.343707-3-pshete@nvidia.com>
- <20260421-spotted-trout-of-satiation-1dab00@quoll>
- <11de368c-960d-441f-a0e2-574de444fd1d@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD67QomR"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C687C2BCB0;
+	Tue, 21 Apr 2026 09:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776764713;
+	bh=mPipYwK9VLZR38znykoW7GBA2phEVD7eZlvFmnR+xfM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=iD67QomRbgziVgted+XFBTrXjQYu4bDvN8w3uG7bpBwzZotLAE8UkeUDF1t8dJfiO
+	 +H6dq68haeqTx5++HFMc9LXvc52S9JWGf1rtr8WZVWQjD4MTBUNBX6Mo3a2l8TiBET
+	 7Bv8/AxnOJbdxzlKPmMMhm66+BZv1EbWJq6E66vLq+5X6r2J5F3TjbdMmoGMjUHOLB
+	 d1RD0f3ZpuVgGfQ+f59N6fznw7c02ewItpjIgvki8TAuJQ2mkuzJF4FVGnHU+aWXkI
+	 ptpzhvfDf49eBhCXC0SzL9AewtFPl+Q1zmdKpb8TocHmoDuKhpZ7itCBwlmqugJgZA
+	 N7uAp2eupwCHQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04C7F327CF;
+	Tue, 21 Apr 2026 09:45:12 +0000 (UTC)
+From: Alexandre MINETTE via B4 Relay <devnull+contact.alex-min.fr@kernel.org>
+Date: Tue, 21 Apr 2026 11:45:07 +0200
+Subject: [PATCH 1/8] dt-bindings: arm: qcom: Add Samsung Galaxy S4
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j4sxaixc2gc3gnn6"
-Content-Disposition: inline
-In-Reply-To: <11de368c-960d-441f-a0e2-574de444fd1d@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260421-mainline-send-v1-sending-v1-1-bcb0857724de@alex-min.fr>
+References: <20260421-mainline-send-v1-sending-v1-0-bcb0857724de@alex-min.fr>
+In-Reply-To: <20260421-mainline-send-v1-sending-v1-0-bcb0857724de@alex-min.fr>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Guru Das Srinagesh <linux@gurudas.dev>, Linus Walleij <linusw@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ iommu@lists.linux.dev, Alexandre MINETTE <contact@alex-min.fr>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776764711; l=776;
+ i=contact@alex-min.fr; s=20260421; h=from:subject:message-id;
+ bh=Akgl3hzfClofydDGp4o3os1sJpq4Hx+LaZv5zck8bfU=;
+ b=+8CpDr4EzIFz+bunBXtMybY6nKObFYFwHNsn8kPnztW+RXdinyTWtxwdUvcKVVKiF4sqAFGWY
+ uiqJGGzqA0gCp/6wT/Z/7k/9dTi8ZAIh9ZbiqknebkATY+p+fp7BPCf
+X-Developer-Key: i=contact@alex-min.fr; a=ed25519;
+ pk=KOCaxY4v16ptaT0uk1FRkuaDF2n1JhmnYwLiqWD76M4=
+X-Endpoint-Received: by B4 Relay for contact@alex-min.fr/20260421 with
+ auth_id=743
+X-Original-From: Alexandre MINETTE <contact@alex-min.fr>
+Reply-To: contact@alex-min.fr
+
+From: Alexandre MINETTE <contact@alex-min.fr>
+
+Add the compatible for this Samsung smartphone, codenamed jflte.
+
+Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index b4943123d2e4..2ec9f8be9609 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -40,6 +40,7 @@ properties:
+               - asus,nexus7-flo
+               - lg,nexus4-mako
+               - sony,xperia-yuga
++              - samsung,jflte
+               - qcom,apq8064-cm-qs600
+               - qcom,apq8064-ifc6410
+           - const: qcom,apq8064
+
+-- 
+2.43.0
 
 
---j4sxaixc2gc3gnn6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/6] dt-bindings: pinctrl: Document Tegra238 pin
- controllers
-MIME-Version: 1.0
-
-On Tue, Apr 21, 2026 at 10:37:46AM +0200, Krzysztof Kozlowski wrote:
-> On 21/04/2026 10:31, Krzysztof Kozlowski wrote:
-> > On Mon, Apr 20, 2026 at 10:05:57AM +0000, pshete@nvidia.com wrote:
-> >> From: Prathamesh Shete <pshete@nvidia.com>
-> >>
-> >> Tegra238 contains two pin controllers. Document their
-> >> compatible strings and describe the list of pins and
-> >> functions that they provide.
-> >=20
-> > Please wrap code according to the preferred limit expressed in Kernel
-> > coding style (checkpatch is not a coding style description, but only a
-> > tool).  However don't wrap blindly (see Kernel coding style).
->=20
-> Heh,
-> wrong
-> template :(.
-
-No worries. We all make mistakes. =3DP
-
-Thierry
-
---j4sxaixc2gc3gnn6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnnRBUACgkQ3SOs138+
-s6FyFw//QdJRT9MF2TxHiVVlcS8hnaW+gsVzqB1O8v2vGMWbE8mYQqB9Z//Iq7bC
-K0ZZGbJvFaWBUKW89uZc5rb0NtOYkm2BXG8PGUUCS2mV7s4qZuwxcMrAshCjJxwa
-2zvkjg8lHWkPEvT11VqNOLZbvrP3DknG1yWVW4GIq8gaETMFIiuq6XCSUzCCjOBr
-FdUMRpLM432GU4qHsGOWSELCX0V/FaoNXDagvhlzrQW1ok/I2zvabuGLE57WDTyB
-QbovjvwijC0+OCfl0C2qAj1CtLNI+cWQ9Swi7BUTaTx6MNXHXpCQbD9o/8Qu2Ogj
-//hIp+0GPySfAPFNOZmU9mKpvY+HzUAvQvExd36z87EW7yR5CRrv2vwaS5W2hRus
-RGTkWn9AbkRlM7lnrOsXFqMmjqeOF16hXrOZJqYkHxVoGRHFAg1rA8hKEpe8dQO4
-zmVGojcuWj4nAoQGKr2ntQrQ67dXx68BCMG9ljz7pZXAXvghmbI7cxy+B0M5gGq3
-bQY7tNxgrjy0tOjxk5Dtkv6AoiWCSDdSUntgaw0Nvi+5Dss42vs2CBVXseCcOmCe
-TR5M6cj7J6S90kWPot1Xrfn2GWqq+7iCYaXWb+DGMUyCDzMEQ25yhS6rSCzmR8OB
-GzxxL62sHXOCYacjkupe9fzyUWHdUE8pRqGsR4byfJ7N4NJ4pok=
-=Psrd
------END PGP SIGNATURE-----
-
---j4sxaixc2gc3gnn6--
