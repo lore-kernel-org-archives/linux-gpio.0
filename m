@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D863AE6FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2273AE707;
 	Tue, 21 Apr 2026 09:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776764713; cv=none; b=kOr/XDdhRpDpukC16vTDMo7wHzoGPyCFtRruNNb67LGnF6/a/OA2rcq38wRQ5uXKYPqpslR0mMu+3WJ6ycaIopcPJPSso1g55mhP9+7GpHxPZMfGIfeUdshgD4LfKZl0qTTfE8pTaZ4e5seNVUvksnLaIg3elBgnM5U8NWwgjgA=
+	t=1776764713; cv=none; b=Mm3RQ5HqjB+qncH4vq34TkIYT1dWvo2chRnenXg9/pFmDpeCcYl5CXHYQhyw+95sY+qb8v4v06paLKMBLLL7ntYToLctoV1PNjCXb3HYVjfeUZAPZHYpjUmZ01Z3qREmvxe0Pl69U+cRJ4Odp0Z6IcWGWA0s4MoZwvsmsoBC1xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1776764713; c=relaxed/simple;
-	bh=CHhHEb5sgQt9z+DgNHdyFkJRxxQ8BX3aIo7SXeKph/w=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tSdRIYLzFlpvLL+8bREum9Z9CbNHtaAQ5VU3/sfkfExJNeWlQ9BfmyqHWR5hU1XA8Ft6HP8H3P+7Q5xtaVvHuywwFbGh7i8TveE+7edvTzWMZv/t8uRpVds+G7RWolUxsOBx2cmkNR+4vJ1PT0qT8Y00W0hyHNRAa7qBnpcqNco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY/JHEyu; arc=none smtp.client-ip=10.30.226.201
+	bh=hz1drQskerk3cBFOXbH0y4Nl0xBRIA0S1KUxNg70Qjg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZjD4FnZNUOrApt4KfjC4qe///loGqxxbyHwyvvf3jjg/11Ia16rg4PJ8iP9t7aoVLCng+CXjR/3bp1pjnbzbSqNcvC6b9qGVCxpiKnJO9/CsCJVYHSboo1YHrvRDhdDPt6YiDY5FO8inxqEd1UUrP5uZwwxQCCHi+HQZwr8xQno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F959cm3m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY/JHEyu"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F256CC2BCB5;
-	Tue, 21 Apr 2026 09:45:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F959cm3m"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F16BC2BCC6;
+	Tue, 21 Apr 2026 09:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1776764713;
-	bh=CHhHEb5sgQt9z+DgNHdyFkJRxxQ8BX3aIo7SXeKph/w=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=eY/JHEyu1Y0/NaBk5nBLOhd71CVVRGZl5J0kW0jqC4HdmTxv9I/SW15VQgRQmC7mM
-	 /FjjIjZk4qqs3ZM4hRSpscyka9yOtHeYnxZdbHWNi1WjPJOiKPErRD5xwHPcA1aVr/
-	 YLJ18GEGtCKaYwdneM4pYugayerJLODVC22cRZSed0GB6su98zqNTX4SoAuWM1AM0l
-	 yYtCc6wcbP8dimKOjFmtiIuSsa5Mt0xA5ih5IScRDyEMHzTRF7OKZu0TELhonlAD6t
-	 9rG9p0Zt5V6zAsC23B/DVXOMPHXewLi3KZckPmdo03QRXumfng49GsjM0N+Ceth/l4
-	 WDUEP1wA4nhPQ==
+	bh=hz1drQskerk3cBFOXbH0y4Nl0xBRIA0S1KUxNg70Qjg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=F959cm3mDSw8hR2b//HD/9+46qLfvPp2e/WrNOvly7mHl07A2kCN6hzoMsSzPyyAt
+	 rxE5iANrehqrx/teQrtVs1xoIKeEjOL/mGBasNCV29qP8YKJWXIF13QRK6boiFqOpW
+	 1lV5uu+8wcl2MEmKsl4vijwzPfvrsknhzDpvvWINZ+39eaZhfb1iB821bU8DsKP6hW
+	 wM5sfL1NQBV6Ay9J0cUUhAELaUFL1I8/mdLYuqrcz6AMx8QKQal5ZM3xcYyEtCY+c7
+	 u4suNKS9lcQAdIfspgdlA+830haBEdgFDrsnmAmBjzQMdmSM9nkZ5IizwfzWMLGCvq
+	 TwrzL5AjT+lig==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED9BF327CE;
-	Tue, 21 Apr 2026 09:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E39F327D3;
+	Tue, 21 Apr 2026 09:45:13 +0000 (UTC)
 From: Alexandre MINETTE via B4 Relay <devnull+contact.alex-min.fr@kernel.org>
-Subject: [PATCH 0/8] Add Samsung Galaxy S4 support
-Date: Tue, 21 Apr 2026 11:45:06 +0200
-Message-Id: <20260421-mainline-send-v1-sending-v1-0-bcb0857724de@alex-min.fr>
+Date: Tue, 21 Apr 2026 11:45:09 +0200
+Subject: [PATCH 3/8] pinctrl: qcom: Register functions before enabling
+ pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,9 +41,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACJH52kC/x2MwQqAIBAFfyX23EJKhPUr0SH0ZQu1hUIE0b8nn
- YY5zDyUkQSZhuqhhEuyHFrE1BX5ddYIllCcbGO7prWG91l0EwVnaODL/BSNbF0P3zt0wRsq+Zm
- wyP2vx+l9P3sOLCFqAAAA
+Message-Id: <20260421-mainline-send-v1-sending-v1-3-bcb0857724de@alex-min.fr>
+References: <20260421-mainline-send-v1-sending-v1-0-bcb0857724de@alex-min.fr>
+In-Reply-To: <20260421-mainline-send-v1-sending-v1-0-bcb0857724de@alex-min.fr>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -57,11 +58,11 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
  iommu@lists.linux.dev, Alexandre MINETTE <contact@alex-min.fr>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776764711; l=1782;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776764711; l=1630;
  i=contact@alex-min.fr; s=20260421; h=from:subject:message-id;
- bh=CHhHEb5sgQt9z+DgNHdyFkJRxxQ8BX3aIo7SXeKph/w=;
- b=iLRPlGSXT3LnuC/vB7tE1btiUBFHxZZnZ+LvfrLycTACCo+OS6a2vvYLdkKQsuG9cOyMxs5+b
- F6NC3gyqJaLCMRltTFLGAw+y/MvfM6X1fnMaIY3YEcAFP7MejT00bI2
+ bh=6ryJlJVCkxtW6xPWScWBZczAfUNMkDuF43NbAurnDYY=;
+ b=BWVeQKa6MDQcqITgM9e0FnseLN+FDNNSYIWclYMZbEKMC7Wm88EE2HvGZkTadjuyNj5VKvTSc
+ l+qgR85bblrC9HBFJElP8gomJKYL2kSdD+uh7P7e6/4YeP0epm+067y
 X-Developer-Key: i=contact@alex-min.fr; a=ed25519;
  pk=KOCaxY4v16ptaT0uk1FRkuaDF2n1JhmnYwLiqWD76M4=
 X-Endpoint-Received: by B4 Relay for contact@alex-min.fr/20260421 with
@@ -69,44 +70,54 @@ X-Endpoint-Received: by B4 Relay for contact@alex-min.fr/20260421 with
 X-Original-From: Alexandre MINETTE <contact@alex-min.fr>
 Reply-To: contact@alex-min.fr
 
-Add initial mainline support for the Samsung Galaxy S4, codenamed jflte.
+From: Alexandre MINETTE <contact@alex-min.fr>
 
-This series adds the devicetree binding and board DTS, together with the
-small driver and common DTS changes needed to boot the device with working
-USB peripheral mode.
+Register Qualcomm pinctrl with devm_pinctrl_register_and_init() so pin
+functions can be added before the pinctrl device is enabled.
 
-Tested on a Samsung Galaxy S4 GT-I9505. With this series the device boots
-and supports UART, USB peripheral mode with USB networking, the front
-notification LED and the physical buttons.
+This lets pinmux_generic_add_pinfunction() populate the function list
+before consumers request states during pinctrl_enable().
 
 Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
 ---
-Alexandre MINETTE (8):
-      dt-bindings: arm: qcom: Add Samsung Galaxy S4
-      dt-bindings: extcon: qcom,pm8941-misc: Add PM8921 compatible
-      pinctrl: qcom: Register functions before enabling pinctrl
-      iommu/msm: Look up masters per IOMMU instance
-      extcon: qcom-spmi-misc: Add PM8921 compatible
-      ARM: dts: qcom: apq8064: Fix USB controller clocks
-      ARM: dts: qcom: pm8921: Add USB ID extcon
-      ARM: dts: qcom: Add Samsung Galaxy S4
+ drivers/pinctrl/qcom/pinctrl-msm.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
- Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
- .../bindings/extcon/qcom,pm8941-misc.yaml          |  17 +-
- arch/arm/boot/dts/qcom/Makefile                    |   1 +
- arch/arm/boot/dts/qcom/pm8921.dtsi                 |   7 +
- .../boot/dts/qcom/qcom-apq8064-samsung-jflte.dts   | 484 +++++++++++++++++++++
- arch/arm/boot/dts/qcom/qcom-apq8064.dtsi           |  18 +-
- drivers/extcon/extcon-qcom-spmi-misc.c             |   1 +
- drivers/iommu/msm_iommu.c                          |  28 +-
- drivers/pinctrl/qcom/pinctrl-msm.c                 |  15 +-
- 9 files changed, 545 insertions(+), 27 deletions(-)
----
-base-commit: b4e07588e743c989499ca24d49e752c074924a9a
-change-id: 20260421-mainline-send-v1-sending-289ec98e6dc1
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 45b3a2763eb8..a2a1e0835735 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1593,11 +1593,11 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 	pctrl->desc.pins = pctrl->soc->pins;
+ 	pctrl->desc.npins = pctrl->soc->npins;
+ 
+-	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
+-	if (IS_ERR(pctrl->pctrl)) {
+-		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
+-		return PTR_ERR(pctrl->pctrl);
+-	}
++	ret = devm_pinctrl_register_and_init(&pdev->dev, &pctrl->desc,
++					     pctrl, &pctrl->pctrl);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Couldn't register pinctrl driver\n");
+ 
+ 	for (i = 0; i < soc_data->nfunctions; i++) {
+ 		func = &soc_data->functions[i];
+@@ -1607,6 +1607,11 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 			return ret;
+ 	}
+ 
++	ret = pinctrl_enable(pctrl->pctrl);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Couldn't enable pinctrl driver\n");
++
+ 	ret = msm_gpio_init(pctrl);
+ 	if (ret)
+ 		return ret;
 
-Best regards,
 -- 
-Alexandre MINETTE <contact@alex-min.fr>
+2.43.0
 
 
