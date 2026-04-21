@@ -1,60 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0B33115A2;
-	Tue, 21 Apr 2026 13:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CDD37B02A
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2026 16:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776779540; cv=none; b=HizwUOA1CjCgTGAX8wGbofKpNmJoqW6K0K+ukLmnCAr0tfMT4lSA1V8e1l1mTOxI4tJzjJY6QK+9wPQW/7cu75AVqI85Y9UajNXWW+0RQG1dQCe5U+SkU9p0e1yof3pAp5s7WyAtQ/EoXbZtxJTlIbgx2aA0Tk/J0hsvsblYzsw=
+	t=1776790260; cv=none; b=oVch0brybltyq1fX/BGDIvJVYi/pKd6afgizTG9A3dN4uZSoZUmGYjUNdcfF88of7Z9B/7O1NzvfqsuLhAVTM9y/DHUCCAGrjUbMcjXbyxzwJ692DIvATdhF7US4dVOMIgcHIFB1Uq9nQ62TPKQ8g0gnA9iQP4Ke5KmQuI52YNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776779540; c=relaxed/simple;
-	bh=hZjlH3OcxSPjJyeaxOnBm2U2CEPno6/ZUqa7aN4sdkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWdd+OxJH3ylVBuZ+0rnIw7bFjQRdanMZyrvojWP9RoGJZ2jhnFQK5SPj5mv356bFq2y1X2YiFlx5p62nzRzPwkM/gwuH/qm5ZiedzwgvMbpvjP5JkkbxlbUVJI1FxXUWlEq6zxnGPUUg/mlNL5vQES/anR4oovuKyA2maNZ6Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tchhhpyp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776790260; c=relaxed/simple;
+	bh=FbU2IvOTeNvy9bey8cf4nfDCn74akoWtK/nq07U1TxA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=szSGba1ZwFpKHUEOwu8j4gwcm8+Ir7qej0yAFwM0CU7FgrtXSbPVDRtKqFioR2iTzYGCfU88YUzI470ol3SMv70OitO57QsCi2czy9H1HfROaings0I2sau3R7vMJG3VKEo1lUv7JJsqTQaueZDNRm0ON7wiffdkGCuCfI3QGrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=FR32Ip3O; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tchhhpyp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CAEC2BCB7;
-	Tue, 21 Apr 2026 13:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776779540;
-	bh=hZjlH3OcxSPjJyeaxOnBm2U2CEPno6/ZUqa7aN4sdkk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tchhhpypLwxx64yAc3c+6hHvZEVcgsmzsJg+E6+THJj/kIcoOIfRxkvFQzLydi0E2
-	 7e5pEZT+DptSrd0qjtoQcSckh5Ni2XlW7iAryKABFO7UyOvEpaOaya43h57N1rQgfY
-	 XKRF3qOMtb/MB5lpboiyZABTGUe46E0GWhuTrnZijfC8ZLl5fRBgIgKURMjCcXDLYp
-	 2An750bSm899RzCr/udBqs+0GCk5BYtdnE2gobri6zR4zPqxlXENx7n+yJLI/i8yh6
-	 /zolYZUrPrYJdtB59gYH+Xd6hF6WNLQCfL+Gl/vboAeNdwGp+zzHBoqU3sJfMRjfQE
-	 8RtDUTwXduw4Q==
-Date: Tue, 21 Apr 2026 08:52:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: linux-kernel@vger.kernel.org, git@amd.com, shubhrajyoti.datta@gmail.com,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: gpio: zynq: Sort compatible strings
- alphabetically
-Message-ID: <20260421135218.GA1048828-robh@kernel.org>
-References: <20260421104358.2496125-1-shubhrajyoti.datta@amd.com>
- <20260421104358.2496125-2-shubhrajyoti.datta@amd.com>
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="FR32Ip3O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1776790251; x=1777049451;
+	bh=EdX3AvgX/aH6F/p+FwltMFglS9SHJ2o00uCI9YuBjn8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=FR32Ip3OL9/5Mevs56fAmnllDbd+7Iel25HEYYfFftzrY2UnRCoTNmniVMJUpKPIg
+	 SFE2rNsGmd1bMT6c9C11i33WbnJNyLC01tvzQ1wWuqlo6mPndur6b6WUKmbpifwio5
+	 FXBi3dCpcEoj4v6Qc47N1wFg/z9mCqQ5JwWO96F6fY1qbJwV9wH/65JTKr/mrh0leA
+	 5QFY/akXpoq96CSQGz19/2bACrWkYxHd/JNYqABidfb1j9BnXXmmvKW3F0byzd9+tc
+	 boJZCLC4KWMcwozj4ExpieM3kTfvCJMZW1bIEjRrvY2thrXADS6xSx9gqF3gyJq/1h
+	 tsp8W7mFtvTiw==
+Date: Tue, 21 Apr 2026 16:50:47 +0000
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+From: Alexander Koskovich <akoskovich@pm.me>
+Cc: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] pinctrl: qcom: eliza: Split up some QUP pin groups
+Message-ID: <Li2-2Zov5lvXZcLfb6l0_7mDAg2QB-ag10-aLD59ulR1pntDBHpNORrd0I5Gg_YGqo-rGdIgil2DmrVw1CoDhgN1S7QLsnId_k2mf4u5DYk=@pm.me>
+In-Reply-To: <cdaf1f7d-72d1-4481-aa3f-4b15990cf6a6@oss.qualcomm.com>
+References: <20260420-fix-eliza-pinctrl-v2-0-b68329fd6701@pm.me> <20260420-fix-eliza-pinctrl-v2-2-b68329fd6701@pm.me> <cdaf1f7d-72d1-4481-aa3f-4b15990cf6a6@oss.qualcomm.com>
+Feedback-ID: 37836894:user:proton
+X-Pm-Message-ID: b9430b1ac5c23f3d6d19d159fa48febd6d22a217
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260421104358.2496125-2-shubhrajyoti.datta@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 21, 2026 at 04:13:56PM +0530, Shubhrajyoti Datta wrote:
-> Sort the compatible string alphabetically.
+On Tuesday, April 21st, 2026 at 9:06 AM, Konrad Dybcio <konrad.dybcio@oss.q=
+ualcomm.com> wrote:
+
+> On 4/20/26 4:28 PM, Alexander Koskovich wrote:
+> > Multiple QUPs have lanes that can be routed to one of two GPIOs and
+> > collapsing them prevents devicetrees from requesting specific routing.
+> >
+> > For example, a board that wires an I2C SCL line to one of two GPIOs
+> > cannot request that specific pin with the groups collapsed.
+> >
+> > This change splits them up so devicetrees can request the configuration
+> > they need.
+>=20
+> Please massage the commit message so that it highlights that the issue
+> is that there are multiple functions defined for a given pin, sharing
+> the same name
+
+Will do in v3, also I was looking at how sm8550 handles this with qup2_se0,=
+ and
+noticed they don't split every lane in this case, they only split out the
+lanes that have two possible GPIOS:
+
+=09msm_mux_qup2_se0_l0_mira,
+=09msm_mux_qup2_se0_l0_mirb,
+=09msm_mux_qup2_se0_l1_mira,
+=09msm_mux_qup2_se0_l1_mirb,
+=09msm_mux_qup2_se0_l2_mira,
+=09msm_mux_qup2_se0_l2_mirb,
+=09msm_mux_qup2_se0_l3_mira,
+=09msm_mux_qup2_se0_l3_mirb,
+
+For Eliza I split them all out since I figured if I was already splitting s=
+ome
+out for mira/mirb I should just also split the rest, but should I mirror th=
+is?
+
+>=20
+> Konrad
+>=20
+
+Thanks,
+Alex
+
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-
-Missing Conor's ack.
