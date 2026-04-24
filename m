@@ -1,146 +1,108 @@
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7F92566E9
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 08:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD8221FCD
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 09:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777019484; cv=none; b=E3v//XqEfB0kw/7OTdVNL3mdDZu34VALpNcy6NRy+7mssNdNZLoV2hTNEexFN6KKf5coM95Ijt0y15kdg0DWSbukrxVpTHRIczMKmZa+gX2dZR/s55sosKIk3WL78oHTb5IhowTVF4JY42yhTmaYV8/WwJ8ngLO5C3L6en4M02M=
+	t=1777021424; cv=none; b=qCKWI3tpRkJ7Xr29IBCUyz4YmGjNt3mXHgk8thqJ2Fon5q+CEN3EW+st+/yHblRu2lS0dEh4F2evbt+qCvRiBFNNxT++JOW3qMcxuVzeh+2SIqnRfPWlqiVSLgogTqQOUQdRpddLOFi6oOKQrXk1vTF8DRrfkD2fsM1RXjD8DFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777019484; c=relaxed/simple;
-	bh=ILFx3eaUBJfF3eL9HOmoK0/QMkKUrULhH8Bb5QOooLE=;
+	s=arc-20240116; t=1777021424; c=relaxed/simple;
+	bh=SRLhJ45lNOSkSS/hkoMS/ycSVwjW6DkLgXgSFpXrb6E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aGmWqAlhXTEB3zwtBn/oj5oUsChKkBCyqnBae7XBZDVVqtKJlLYLAxhpS/rDvlcNGFrfXlOFmDrYk8EvxNMpnhHXcDVCnr8wOJnsSJkm8QRdSLZQEkH3Q3WxgmLx/XuBYXr5+JjlnpOmH3hZuSuAeAFwhAtlw5QsuTxr+CrUn0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-60579e72ff9so5167900137.1
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 01:31:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777019482; x=1777624282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aY5lS/bisA7h6KyUeoSyE2LUbPNw5scSAX1hdqhvzS0=;
-        b=STZsF3TfbySWoIb5+ARNHXo5LDCBci9MyEyrwwWCtToa7NC0aygbKitnDVNy/4Tz4X
-         4GiMpDb9ZLFsxJ/lH6Wm+oe+8AVAK8SXs1KfjJym12kZ+FnWgSa1zYnQGa63WFWkDjem
-         AubRC+I5EggC51c/ZkAfX5x+HqpA9c4oM+HfuvvPHbK627tMBr6l2qqAJu+C0K4uZ7C5
-         fe1eSKc6yArLNF9A/EUx24ywg3zMl17+Syuj3e3bWo4cZutCo2NseXEZ5iSEr0SwMUwo
-         Sve1BxyUc4sfbDtCVrxaYHCMOiZzKBADD9twN2Pkiks+ezl56bogXR6hmDfzJc6kYW5B
-         j/Ww==
-X-Forwarded-Encrypted: i=1; AFNElJ8iakhZwCiQsLz4c+SwVt7LjBzHka/w/8CbKKtPvbVqRTzcIzLYygS99jyZEcFGgt06iBlCnKujbeMp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD5XcIBYo+RmEc3zX9Wjdmd5nfOXNrpw7hQhyhUE6iwwTdKwKe
-	C3JokLeosslVR+liWhrU0A72FzQmd+hirK01HMGQ9dzuxKNOf2jZOoplfS1mTTgrLBs=
-X-Gm-Gg: AeBDievmAgZAi2FfujMmBgjpd67cnuECwFyEYenP6b8Ywk5YIDrxUyqjS+J01FdZcw7
-	OZAiWniAX4/SOtUhuDhpAjv8pKzlP5vN/5Jf5t/UhnXVFqYlw9fPi1bZSS3+DimhlZohUVKzQ9l
-	GIQv74uyVsHHbZhycLJrDddyeQn7rxFu5+14jnWltqoj13Syj61iycky+lsfVv9xNszCJHoEv6v
-	cf5BJflfoJRvaI55wHSMJlDMt5AQdd/Ny7OMw8sSWgaNfqn39X8MwQnIg2ZRC1Qzn31xWIy8cHo
-	JwBoiOU1PixUepZfhOrSYYBYUpb5EOD38Rf+wUavumtEgmr9EoXngY+dcXM/j1wE1dWtX0SdLdb
-	0ooRKnJxAiu4Rv2N9XWC0JZRHQ/FYP4d1Nx39BUaMl2lOjICF6OsgsEE+llI0isTY/Gl3oPDtrg
-	UQyO3GqYL2hdQdeELedkRPiGy7X/Cl8uZTZStSA+Iog75bN4euShjaPZLyL/Zkb2cq4wHeLsA=
-X-Received: by 2002:a05:6102:5f07:b0:600:3b3e:681a with SMTP id ada2fe7eead31-616fd91b18cmr11074692137.14.1777019481787;
-        Fri, 24 Apr 2026 01:31:21 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9589098226dsm10506114241.5.2026.04.24.01.31.21
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2026 01:31:21 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-6058a955e04so4811017137.0
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 01:31:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9AqrR1dWEa6eRx48U5ZlDu7qOmHF1/MQdlQAJ+ZpeUoSgvrCtWlJtUgUbPBdonZphHtuwm/b8MTUxY@vger.kernel.org
-X-Received: by 2002:a05:6102:5a93:b0:602:8742:1fa with SMTP id
- ada2fe7eead31-616fc3bb2f8mr11805656137.9.1777019481290; Fri, 24 Apr 2026
- 01:31:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=PrPdtTyG9UkNHFcip9IN7rllnO6l57q/zAcH15Wk5VTNnfRwT6jna2BNwsehmasnFbNSVw/EWLMhcSCQqsLwBX6KRc0mpyRAo5bTqbwAR5WbGv6t1d3UsYhuUfyJeQ/Tvaf2i/Qj6YLoQh1BD7OQDtgU+DmHW64pl5aVW79fNHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBTxwnBZ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBTxwnBZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F26FC2BCB4
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 09:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777021423;
+	bh=SRLhJ45lNOSkSS/hkoMS/ycSVwjW6DkLgXgSFpXrb6E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uBTxwnBZ0KGOUjEjLnAVwKKAqcnlabFor6qoMgBL7aeJb0kwdO4gpIdFFzwyKlRnD
+	 uROtQh8Ck8VxgY4mBSpntwdR9eGaL+tCKEYhlUP5VjV4hlvfhEL3y+1YeVGy60b2/u
+	 pK4iOx7rh+WsCJGVXTS//zPn9WKOCKppQWwmj5AwgupAIbzspbRw8AEB3JnVnxHprd
+	 HO1oBmedhY9jzwRzHkffX909Tp68qszodnhTjnPMOAfj/gMfKV9LrRo7suLTq/5xbl
+	 xI2pJIY959vAXpTJDWtMJWB5ur4668QZPcpwIvapX5M1/kU8sE8uFpmdaC4Wr0rLBE
+	 nlo/O1loT5QCg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-38eab6cf7d8so72888101fa.1
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 02:03:43 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yy+tvjol6NpRC1sKO4qF/i7XiUMeFY+9y0dgevs50MCaWMFu7mf
+	Fin+p0jyaQaZF106o/n3JzuHAdVNqrjXUUVbBOxMkAdEvMB9+uTR4kUwQlhHHi3NnQefugrEtS7
+	s4CQx73CpFyJyztxL+gnO0CzQXyRaePYkacUTZxJszg==
+X-Received: by 2002:a05:6512:64ca:b0:5a4:176c:99ab with SMTP id
+ 2adb3069b0e04-5a4176c99f7mr7885644e87.4.1777021422161; Fri, 24 Apr 2026
+ 02:03:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260413182456.811543-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260413182456.811543-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWJCyurtvXfUFw8NA7RONgtf9XqqWvrcg0iWjPBCutSEA@mail.gmail.com>
- <CA+V-a8vpkh_+Ka5mk-kewRXJc34oXFc5_4VgHUY=RU5YAFS8uw@mail.gmail.com> <CA+V-a8suj-QZ57uzUfDscZBbEGBbeJxeiC-ozLt0hBE_pLnG+w@mail.gmail.com>
-In-Reply-To: <CA+V-a8suj-QZ57uzUfDscZBbEGBbeJxeiC-ozLt0hBE_pLnG+w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Apr 2026 10:31:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU8VRNGytQQyDiocZvkLhYK7cOGt5eGP04qqiMV2a0ndw@mail.gmail.com>
-X-Gm-Features: AQROBzBvIrFvykv50Fa3U1oGeRUXnGgCDJVcNLsYOGukv2vKiFFFK0CtdeSv0b0
-Message-ID: <CAMuHMdU8VRNGytQQyDiocZvkLhYK7cOGt5eGP04qqiMV2a0ndw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] pinctrl: renesas: rzg2l: Handle RZ/V2H(P) IOLH
- configuration in PM cache
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260423222125.29097-1-vfazio@gmail.com> <20260423222125.29097-8-vfazio@gmail.com>
+In-Reply-To: <20260423222125.29097-8-vfazio@gmail.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Fri, 24 Apr 2026 11:03:28 +0200
+X-Gmail-Original-Message-ID: <CAMRc=MdrisR4_Wmd+1S3JGHMPkiZTvC1ucNpGq_j5N1pD0xdHQ@mail.gmail.com>
+X-Gm-Features: AQROBzAFw5CJpNlgdBj8jL1ZBpXTjo3D6fbTRQdxwobfXmpVCPcERGgBybBlJHY
+Message-ID: <CAMRc=MdrisR4_Wmd+1S3JGHMPkiZTvC1ucNpGq_j5N1pD0xdHQ@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH v2 7/8] bindings: python: tests: migrate the
+ system module to multi-phase init
+To: Vincent Fazio <vfazio@gmail.com>
+Cc: linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-On Fri, 24 Apr 2026 at 10:27, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+On Fri, Apr 24, 2026 at 12:21=E2=80=AFAM Vincent Fazio <vfazio@gmail.com> w=
 rote:
-> On Fri, Apr 24, 2026 at 9:22=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Wed, Apr 22, 2026 at 1:04=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Mon, 13 Apr 2026 at 20:25, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Include PIN_CFG_IOLH_RZV2H in the IOLH capability checks when savin=
-g
-> > > > and restoring pin configuration registers.
-> > > >
-> > > > On RZ/V2H(P), the IOLH configuration is defined by the
-> > > > PIN_CFG_IOLH_RZV2H capability. The previous implementation did not
-> > > > account for this, causing the IOLH registers to be skipped during P=
-M
-> > > > save/restore.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
+>
+> Single-phase initialization has been classified as legacy within CPython
+> documentation [0] with multi-phase being its successor [1].
+>
+> As such, switch to the new methodology.
+>
+> [0]: https://docs.python.org/3/c-api/extension-modules.html#legacy-single=
+-phase-initialization
+> [1]: https://docs.python.org/3/c-api/extension-modules.html#multi-phase-i=
+nitialization
+>
+> Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+> ---
+>  bindings/python/tests/system/ext.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/bindings/python/tests/system/ext.c b/bindings/python/tests/s=
+ystem/ext.c
+> index c982fa6..800648e 100644
+> --- a/bindings/python/tests/system/ext.c
+> +++ b/bindings/python/tests/system/ext.c
+> @@ -67,13 +67,18 @@ static PyMethodDef module_methods[] =3D {
+>         { }
+>  };
+>
+> +static struct PyModuleDef_Slot module_slots[] =3D {
+> +       {0, NULL},
+> +};
 
-> > > > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > > > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > > > @@ -3033,7 +3033,8 @@ static void rzg2l_pinctrl_pm_setup_regs(struc=
-t rzg2l_pinctrl *pctrl, bool suspen
-> > > >                 }
-> > > >
-> > > >                 caps =3D FIELD_GET(PIN_CFG_MASK, cfg);
-> > > > -               has_iolh =3D !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IO=
-LH_B | PIN_CFG_IOLH_C));
-> > > > +               has_iolh =3D !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IO=
-LH_B |
-> > > > +                                     PIN_CFG_IOLH_C | PIN_CFG_IOLH=
-_RZV2H));
-> > >
-> > > Unless I am missing something, PIN_CFG_IOLH_RZV2H is only ever set fo=
-r
-> > > dedicated pins on RZ/V2H and RZ/G3E, so this change does not have any
-> > > impact for now?
-> > >
-> > Agreed I will drop the changes from rzg2l_pinctrl_pm_setup_regs() and
-> > send a v3 for this patch only.
-> >
-> It looks like I need to resend the whole series because later patches
-> won't apply cleanly.
+Just an inconsistency I noticed while I was about to pick it up, why
+do we have a NULL sentinel in the gpiod extension but not here?
 
-No worries, I will handle it (I have just queued the other patches in
-the series, and saw no conflicts).
+Bart
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +
+>  static PyModuleDef module_def =3D {
+>         PyModuleDef_HEAD_INIT,
+>         .m_name =3D "system._ext",
+>         .m_methods =3D module_methods,
+> +       .m_slots =3D module_slots,
+>  };
+>
+>  PyMODINIT_FUNC PyInit__ext(void)
+>  {
+> -       return PyModule_Create(&module_def);
+> +       return PyModuleDef_Init(&module_def);
+>  }
+> --
+> 2.43.0
+>
