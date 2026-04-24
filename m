@@ -1,144 +1,71 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D231A6824
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 07:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB0917D6
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 07:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777017019; cv=none; b=lq7hF6paXGY/q+9dzUAMGofWv1BpWye0KI+SpGPwDhwZeddKEwwA5XrijzgLGbkD24jlO6QVvh3QXWup4p5yOTMXJMAfKO5mdFVwx+TWnHBe1zrKKWm+hFmklb5jDkOihQmw4T3oA4NM72vZaYrjGsiaPVx/dVpjaBI4UaomQPA=
+	t=1777017184; cv=none; b=Yj+7ryhQX/P5CuOo6tb8NIawn/MMl7OO7MGU7lCnO/VyAS2iW6RKdqDM3G154hR1Js6rFCLhyg5eWYYMUwadMxG7QAGygrlTag8lSwiHuczV9fY9RDY0gNsAGWj2O23IuqQFueYArWH3xpLgd5/YABKj+seYb2fWwrtn42MFtrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777017019; c=relaxed/simple;
-	bh=f+msBKQ/wpCfm8LM7KLBCLdErpAw2i4ZpFmFsXMNlyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LuVuml0e+VagX9Dx552ptr2CgyH3U88WoGGahJWyH0oXmP5rTCEjlAKBpQCNGe0bFQ2oMHLU+E9b1vRBVVclEVSaD9HUoywzk80W4hlOHnnfSGeUV9E1wzaDkofq/2ihD3lP3Dr/2lTRbgsSRf90sHcKS08rGJOvrt5SIy/7zU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ondEj51r; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=R3KoMduX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1777017184; c=relaxed/simple;
+	bh=K4lnZ6woT95ybB008fTG6ieOTJpqz2f99IST9cPfWh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ImSg9WrIZrnJ/Xbxo7NBbJZN1OvUtyPYTffZ8jCJ/PENeFOfTJ809sl36GiplTWX4wfE6ExSA8RbhwnnU4seGxF6hkhiVLvpuUOxyLT/ShMKkAQsjpbhfcTNaJ4u/ii2Im3NbRVpNh5nao66vPVAbeiylzh4Ld0SVE5G3vlK1Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bl0nCpOI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ondEj51r";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="R3KoMduX"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63O3GeUx518371
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 07:50:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2Irma5VZ3r17WvGDWJhFF9HSsI7jbHdVbY1YJy0bVFo=; b=ondEj51rEOUvX7bM
-	ydm48kX1iUap+qxEe9gWE62j5ttuq1w3gu/SJ3FoaFKely1PjUUz7GnFHnPJA9ty
-	AxjgCZDBBquNLZDN1Ml4D40GZe1F4N89NkILCGqP7PgsqbyxENRq4pWk/FoBg12Y
-	mlIJv+ckzVx5RACBxXAY5qHUxwCh7tXwnv9FxlUtwr4Gw4SO3XwoDNeVbSQ/YgrA
-	rtm2Mrcr4ap3z4flGbL4DVil1UPI8vjSO1NtySJ+IEDcMi7qV/yMcumHYikkKiB+
-	6GulWslwBAXXrVWgpuHCinaX/d+UbqJxMqBIMnAZjvNeCzIvY1enmBRk5R1gb+YM
-	q/u4jg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dr0fngvjs-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 07:50:17 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50e423a05c8so78559231cf.0
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 00:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1777017016; x=1777621816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Irma5VZ3r17WvGDWJhFF9HSsI7jbHdVbY1YJy0bVFo=;
-        b=R3KoMduX5NPmeQSbAovofYrEJR93KqZM22Ti+ZhZbcdqXcFFJWHFGTbR9og0VoT/wF
-         CiqCFbl1l4Z5mLbnXG6seM+C8+eFQGY1iSb1CBlF7EpWwdaNTFu5El4Erb10zTVdsZyI
-         1ZZOnWqOnFAqjVUWWxh4CL9gW6ebGrCD0+puOIOdidLxL/Qz6j8bas8Fi1Sy8Xio4YJc
-         ePJ3phAzIJdlwaNDYVWR/hWeYAi4BeNd+ZFlpKZifsABJi6/q4hp8Syyc6Es1Ymvqn8A
-         USls+xWUaNIBgddjrJq6wq6C1O/KpZYUmZWIlqAhJOTEZi8SuyUSBzv4uOVGMeHrwO+P
-         KThA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777017016; x=1777621816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2Irma5VZ3r17WvGDWJhFF9HSsI7jbHdVbY1YJy0bVFo=;
-        b=V8CfCZCgMH3aMSRM29JgQo28i3W9v8jxDRF2lA+YpLmdEMcbUYoILgU6LJEJRF7wvQ
-         5c3pqfG2N7ESyGxysfeJWqEdOKKBGTkq362RzCu0hO489S2hQS/aN+v6RoeKaRrR5V3L
-         EZPV7PolMYm7thJWblUWlLYhbRXGvYjFHQWHJnlQN/V4aJyvBBdGn1ouoTsxuzK73NVG
-         iFYkCPgJSDyChXcETeQsLsMc+1ZLvjJwPIEPmq+iCcLyMCadlQgJkUru2pHNOp2G68gH
-         dLF++p65Z2GwZ+ekL0nytytGAk0s72i6KHxijxnGUT9B/qd7ENI6xDTX4DZzws+Q+J62
-         dkvw==
-X-Forwarded-Encrypted: i=1; AFNElJ+3IJ1ral/q54RENPYBFEOUyX/92SCqt2B5UhIfustiR7sSW6MZ29MvwyXZGdqoC8ftswn8aktR/s/q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi/8XAZRnRuzJc7bGYxje9mrjI2B9GIvHjNOmLqtxowD1n2W4c
-	i7qppge3NQ/a8wdjWqADyLbp2B0aH6T0bJql39AbAPDbcUzUHHcTvJtWe9uHjS8she6Ap8dTGtQ
-	lDd2i7/uKoFutn1R94P1xnYXrozgCxxKcBsX1ULDnfXKsbRrIQdnFRw1TyVCkedjT
-X-Gm-Gg: AeBDies+/d8SiMPZg4K8RFCfhs3wwohkr9h/joOgMx3r3ypZGUx9vlUHDlrdZyllTcO
-	74R+VqyaYLxijPKvkJrlUlGD70cVOBKaY3aLbH/31aXP3crTjuCBGz0+I7pOYv/saphwSKyOVVB
-	Kj6oHJC5HHaK2MO/opH6+Idvy6vksOqVjXc/VVSE12j1THTrgZg+tK9LF1c/YoZCQomTsuwwH66
-	TuSWiAaHUdp2IOtKaWXuZodyvWPqUqx59XSEE8h15myMqHjJEdmK5S5uTuz/P54B3Ky2N6cbEKl
-	APpB5U70BIPk7S6RgfCQ13M2fPQ9ulWt3Rk/SA+cEJfBW3NfEgGXwc0kSuI+R+5POiaJRVxoDfK
-	4Fc/DKouROf39R4/A2BUura6rY62aY8HNPBEM7688B+4z35Obj/gRdkGLsWf2
-X-Received: by 2002:a05:622a:15d5:b0:50f:ba60:2dd4 with SMTP id d75a77b69052e-50fba60364cmr169042221cf.40.1777017016505;
-        Fri, 24 Apr 2026 00:50:16 -0700 (PDT)
-X-Received: by 2002:a05:622a:15d5:b0:50f:ba60:2dd4 with SMTP id d75a77b69052e-50fba60364cmr169041991cf.40.1777017016090;
-        Fri, 24 Apr 2026 00:50:16 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:35ca:88ed:3f2e:db28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a52d232afsm96029485e9.31.2026.04.24.00.50.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 00:50:15 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        =Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] gpio: qcom: Unify user-visible "Qualcomm" name
-Date: Fri, 24 Apr 2026 09:50:12 +0200
-Message-ID: <177701700896.5488.15804898915252044204.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260423173553.92364-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260423173553.92364-2-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bl0nCpOI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CAEC4AF0C
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 07:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777017184;
+	bh=K4lnZ6woT95ybB008fTG6ieOTJpqz2f99IST9cPfWh4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bl0nCpOIV9lOLOz7WCcI8TuSYcTAfbw0abyd2BhP+AST2gL6HF4h+IwEukoHGCcy/
+	 fTW/Qyyi2tmCUAn8ErycQ2PqE+eQkHmeAVoh368sWuRw1ZPM2vEIrfcnPMMRHTuOp2
+	 Isx8zg0Tke8YeRRA/b1AFL46kiXTm+TKppoSFnC6QHr1xMk77VedW2JVrGSXKILCAV
+	 uQ0LJl62z0qz4qKMpMq6mco7xreE61dhOI9QR6C0mB+KhnpWaxGfHJVVEvrX0JAlJ3
+	 aNIuLtNsDW//L9BzlY2Ryjqai2GSgZ1RexsO0/tTFEZWKfSSd/hvwiwyqcYOAEzRsN
+	 vFCkdiSs4/26A==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a2c500750dso8634468e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2026 00:53:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+tFuOVFVnk182VmZj2NIpcO82x5/tmcfE7qbQqnPLC4iG19KRAjI6Xzzmz4lal6SGXz646Ywf9TPMy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI9t5rouVmpRxt1y0pvnByj20IMvoMmz7sIHhq1fGQM44fTb4h
+	EwJ9KgT3n3bX98NHFcMgbJJLWY+ax625sL/TLHIx/6GKACYW1tuYCzIn4HBboGiTTtsXzFygEaX
+	zwZs78Ox+8KaVK2jU+fcK27Scmmp3X/A=
+X-Received: by 2002:a05:6512:39cd:b0:5a7:398b:d191 with SMTP id
+ 2adb3069b0e04-5a7398bd1cfmr577262e87.1.1777017182582; Fri, 24 Apr 2026
+ 00:53:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=LfYMLDfi c=1 sm=1 tr=0 ts=69eb20b9 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=PkszcvWzcGkvcTmTrJMA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI0MDA3MCBTYWx0ZWRfX1YttJ7W3kCle
- zAaNSu8ZLhy9k8EhTBfzZvOzkSt5nL4qObH8JfKYb2rrVI385K4962wmTf3SIxcHXtOAUav1hU7
- eQ6Tauom8RS5ycVPpXcLgKPiwUpuaWr0ZfTd/qfAwVPE3HmsGNvpFGME4RUcTkqu5uk3HefK3Mg
- SZIxrGnS43OAa4eT1Z6OjSm9NuUb0FSWr0ArBGr72sVP19rX6ABQChjPwCTDAy7I3mxo70YXaSM
- Pefjz+aeVQmX9d25rY2pKoNQz3Orwvj7dpW5skrKIo8kiQttmcfVM1E9y4zJ+VI5i/RrtlAmvVF
- Oza7SHdGeGKOOmUOi30D7NtJKb/xv0WDI2JZjifbyvWFlpJLRI6bXUTRjhOF8qJkkb2rANbFPAK
- l9vPg9UZPEVOFen33oM8G3xrN3p11O4WePqBwtSsCv4CaDj5QfTcmp5gZcaTLnmmRi9ag+8JuG7
- tHjcH0qgxTCiNWVl5bg==
-X-Proofpoint-ORIG-GUID: fOwrv8CBAMja5wagXV5dpaDmQGRroYiZ
-X-Proofpoint-GUID: fOwrv8CBAMja5wagXV5dpaDmQGRroYiZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-23_03,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 spamscore=0 impostorscore=0 bulkscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604240070
+References: <20260421104358.2496125-1-shubhrajyoti.datta@amd.com>
+In-Reply-To: <20260421104358.2496125-1-shubhrajyoti.datta@amd.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 24 Apr 2026 09:52:51 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnPA24oV-89hAhu4msQQTeoPAh09Xm_cR1PunGHW8EBtA@mail.gmail.com>
+X-Gm-Features: AQROBzDMenmqczGXy6g1jiZ75__AxsDh7gV6rtaDXDspLtZnQ9GdaBkuXdCUDO8
+Message-ID: <CAD++jLnPA24oV-89hAhu4msQQTeoPAh09Xm_cR1PunGHW8EBtA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] gpio: Add EIO GPIO support
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: linux-kernel@vger.kernel.org, git@amd.com, shubhrajyoti.datta@gmail.com, 
+	Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 21, 2026 at 12:44=E2=80=AFPM Shubhrajyoti Datta
+<shubhrajyoti.datta@amd.com> wrote:
 
-On Thu, 23 Apr 2026 19:35:54 +0200, Krzysztof Kozlowski wrote:
-> Various names for Qualcomm as a company are used in user-visible config
-> options: QCOM, Qualcomm and Qualcomm Technologies.  Switch to unified
-> "Qualcomm" so it will be easier for users to identify the options when
-> for example running menuconfig.
-> 
-> 
+> Add the EIO GPIO support.
+> Add the dt description and the compatible to the driver.
 
-Applied, thanks!
+The series:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-[1/1] gpio: qcom: Unify user-visible "Qualcomm" name
-      https://git.kernel.org/brgl/c/6d22fcf85e3f089e5096812e89b742dd726aa7e6
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Yours,
+Linus Walleij
