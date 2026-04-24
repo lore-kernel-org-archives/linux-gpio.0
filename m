@@ -1,26 +1,26 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2112.outbound.protection.partner.outlook.cn [139.219.17.112])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2110.outbound.protection.partner.outlook.cn [139.219.146.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ED13845DD;
-	Fri, 24 Apr 2026 11:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C933F3BF698;
+	Fri, 24 Apr 2026 11:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.110
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777031456; cv=fail; b=ZzwmhLeNnNIjwFVbjVcMugzgsNKr4HE3/pAH0c9KAmM13gRrBrAM9BU7zWqRW5bvtYlz/RRhxmVvaQ473lLBi5h4rSVUPXA8b0600df06e5Kq0KroK/9PasERgKZzpkAaWRf1cfTGr9nWkltUeOlFXFzcrTWk/3+Jj4SDE3AYJ8=
+	t=1777031534; cv=fail; b=R68UoavnAC2dIXTjwy7GHRs/XaY2ccUR2qmcuoW4Arha0IlgZNu3MWX69zDoQ1gosSmT7TRF9nnxCnB51YhDqm6N7qmTDm9IW3LjBSAhveZmwh9r/hCdrRQTxdnLbIVVjYz+7lTQLkOmpkwtbHKVeKc6CZu8Y9NZ7B9ciF4VJl8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777031456; c=relaxed/simple;
-	bh=4cKAeoK5P9DcTB5YEOiPhqGQa025OzUl2JBd8HWc7/Y=;
+	s=arc-20240116; t=1777031534; c=relaxed/simple;
+	bh=5bWWmlgTx/5kiqFsAaeJG2zlJ0OvJVwqhm1EORdgUVs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JXV+u7GdeduInarjMvN2VwWwGVs/szDarp9UVRsFbRI/6PfZYyYN0BKNmP1AAmi0xjZoAgE00TuF2RIn2Abk0vVBgNGMxogZLPdOwSK0kLUDNFVCb/ABr48Cdp4gG178F18xzWtAka0awVZo3CCgJ1rBLXKtXgjNaIhz2sh8QgQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.112
+	 Content-Type:MIME-Version; b=cTz0/5vwIVbWW0fQiWfWpP602TCmoFMwYxgYxpbn9kAxs01E9cpzY+KpaFXt2CffZMwfRb3pj0Xp5RfPm0ckEeesGxIOi+c+Y9lI6yTbs4xa1W1NNV6BHBeTiwklI4AiInNF3HuAmtlTLG1hcrDJHcJc0rgRXQjP03/yYomLyjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K7tWrVnTzzk6l5jsN/xrIVB6itMbH1HnpW0Sl0pDfQ6zHskLYOkveDCr5xOZ3hhydDyx30GWCCvHUONGasSEvuhPd4jXPS+/4ui8WsYnAwhxVm24U/DaAZLWTGL1pmLzNCyVypwf3LYQvyTA19t2MySKeYhSGObz0cuURzdl2l9gtB/svUY7WNivpZcLFzVZSYkxKHy0NxETOGJl59T27VLw+Ajiou9yXjZ3Vg2tZDq5eOX1kMssVE6pBWNiU9LrbGIzxMUrNL2ciOn5XBFboSQc5ExrxzdyoSND5iFXQxIiGwy4cNgAv30wle6lMnYkqcpOKIf4gUEoIJ0fmvuVyQ==
+ b=ajzTHzX9yJ2Mp6uK6L1vDRDHzDd1nTH8cEZmi/seUg2FJbV2tr2bM5CUEVAGVsM6XV7aTpEkl6cQaHI4D1ycT5vsk2apVDUBfaf8s+8CtBSrSDMr8pTRIYo8Uw0x6ja5Hz1lSCDox4/q9RggZeO0zzMCRM67SwKr89u7FiuNnf2A0/QgpbcQL9hKRNj+uWnAYsdKgsMKdvH68u1gdE04EdY8PEAA+eFID7yQfXh7lbPpSGXjK+Dz7YETf0C+bTlr46cBWHN9xtfFz2GKfDqKqhcBgoCBk5LvRm0lC+Km7AzVQxK6+peHvxo7IysGrX5LeV6Ao9Jv4jvXjxYD7h03MQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ARMDIOIsG5YVoRlmCy3Cm3NM4iFuF8khjRrUo4YyN1E=;
- b=TNVCTdBvSj0XbGUl7e+vuskJyMZrfLgopjsZYz8PX9uqgzuziTDvgYQdzuIPe7U7A4u5L+FtqIbf6iShyPUnNj5o9+aWB4Rru0Fhukvt0Q+0JQFiTHsiRaZ8htR+3cPr1Y9lWyMNnnXyI8pse9YOV1tb07RG0VgyHgjGKNA4LERdoQEjtvj8Pl7LAz7JqX4xHbWc8Gm8Smk/ZK7o99gSMtLs11TNgQCd3gP8JIHyJ3pRaGbFCKqXTnkHq/2fD8PylqNDk5evwRIMC4kaD7Oacj04QduID6+IM1szNuZwRF+362pDOPB8OEbkL+VIR7DISg9f4r40a2LR0xL2heoH4w==
+ bh=Px/rLpNH8L79+NAO3MwIMeegl10YL4ImrUoTOacLLqE=;
+ b=ZqJhy3MS/RlQjr7M8IYmOCotvElfI+lE1PB0Ru/fpYnCwv19W/oX/Fv9QGdFfe2OzKKtffZd+ktUmh3DWPJ8n28A9ZfDAyQg2RBB7QUyPS/1iKOfPKeoIlqkRRhAaEpBUU0WFP9ucpkLzccLIZeuocT6Ms4pZfBAouOw+YcvcX6WKsswgb+mjJY+jAK3+jsMD0sMS2ncKeg8pAu9Ngu3WAZcjcSEgf/aEc4Lh42ytX0F1V5ZgkXNpyOpkkdV3lV+I85DvAwC9BjBKydr4V5yHB+JMicg51LudkyozOO8JkOVops9km1ogoC0N5bUTaC4Y3YOufqCPNo+F2vAYj4Y0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=starfivetech.com; dmarc=pass action=none
  header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
@@ -30,11 +30,11 @@ Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
  (2406:e500:c550:17::6) by ZQ4PR01MB1156.CHNPR01.prod.partner.outlook.cn
  (2406:e500:c550:14::9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.22; Fri, 24 Apr
- 2026 11:14:01 +0000
+ 2026 11:14:04 +0000
 Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
  ([fe80::e7d4:256c:b066:850d]) by
  ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
- with mapi id 15.20.9846.021; Fri, 24 Apr 2026 11:14:01 +0000
+ with mapi id 15.20.9846.021; Fri, 24 Apr 2026 11:14:04 +0000
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -53,9 +53,9 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
 	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [PATCH v1 17/20] dt-bindings: pinctrl: Add starfive,jhb100-per3-pinctrl
-Date: Fri, 24 Apr 2026 04:13:27 -0700
-Message-Id: <20260424111330.702272-18-changhuang.liang@starfivetech.com>
+Subject: [PATCH v1 19/20] riscv: dts: starfive: Add StarFive JHB100 pin function definitions
+Date: Fri, 24 Apr 2026 04:13:29 -0700
+Message-Id: <20260424111330.702272-20-changhuang.liang@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260424111330.702272-1-changhuang.liang@starfivetech.com>
 References: <20260424111330.702272-1-changhuang.liang@starfivetech.com>
@@ -72,250 +72,717 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1156:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33bba334-af17-49da-3c11-08dea1f2967f
+X-MS-Office365-Filtering-Correlation-Id: 1a60dae7-0fbe-46d6-75da-08dea1f29822
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014|921020|56012099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	UwALSHsVz22I089mO4M4Wubn7TWclvQs1MwDtE2u5mOs0b4/pmlReeAWqm2nYkU+Z1eEzxuQ9yHK3yG+XVkOUD4Y+C8JILq+qM/J0FJoLe8i4pwxNGytdJI3LI2LlQvJ2mx/TTQFiff3CMcJqjZdkDwD1YbK7+iYEmEwgjEuOHBy2gjQpNHIPstIULc+kNhJK1sUSIk4/3o3RXj2bZyDnMWNggWE4tBIUbMMYmlfZFeOjiRLKUuGP4vO669ycHsm87TxIqsJjLzSA2TS5KIYxYyG+KZ1tebat6yxrD9T8lPeNvUnUcvzhoot5c7iiz/cCn9U37902BkM20Oerq4VxFk7Oe6MtNghskuVgPB0PUwTziXjBSGWF2Xf5i2ske/DCnmFVxBNL0YjHgSl5wa0cRhI74cwC+QNye7A8+3pwXc7SWnzGGge0w/CFb/b1KqSAlMFoqraVOK3Buoz6kAFsOvW9SVO6RV4rbB24iO+96ku/CHH4HFTd6ipwZlPLnG/ugcVnC5mDaX5CY2ZepHX9rwgZpUfr4PuDc1hyu0xHsejogQmEutq+H+DtkXmHFtl0+S4geK4tA0AAEREQzTswYWoy+J/FGSrJ2JSOgWGz8o=
+	wC2m8EonuEYpwTKhAvTz11Q6YC1Bt6E9ol4xpkCP+2BsxUusSw8QUsz1ZTKKPdIQreuAqjr5n5C7EA70pu1MzXfG8UBPgrQJnXi6O/CxQm5wg3SyBST8dAsFDohENXH7lxtbChjbwblUQm04IIjacblvXYZ/2XNnomhlQ3A3oOVc+3dnoASbZX4Vh5ULYnuq/Q0SQCToD5FvWeRg0RXMmF0eYDE/qUmyOCCkmunBCwPZqlsPHVe5vKA6ju04MkSVKEJURnpowkPFMLC4SCN5JOYPaDWeec+XAOqqYsQgVtt7PbNupxc6I5wx+GnExH6FJ9ciscmx95CzMFz1wXQsQW76h9YF0gCAx/2KVPrjnpGDOhzlatqFF++xT9R0GGuh+O4tjD7nkPZJ/Q2WcchGWoN5U9w3xi2+Pvdt/TMp4RGuOiEktbwdeXJpLqtXu7UmJ4urACHw2ydrEk5jB51v1DRWLqbxCe7RH1ixSP4sbDNchTGF8HNKqTdCKOMtt5SHLq632whaeqNOc8exGTTMD8aHoDiRcAu6B9WokupFIaUWTeqB9749i65G8j/hX992qq7DBmdiS+D+e4s0rGESb1vXGXKBxbAN4h6SBa2vfZI=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014)(921020)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?h5wdeuMZFmowckefSBD3HHb9mJ+ZP2HPf7LrQ6vft/qX9uLq+ZEK7oP4ZT7O?=
- =?us-ascii?Q?x792X9DCodEdn+Wv2hvZ5kh9GhgfnsIstFbHNodiHL7FSosRi2IHDW/pnjxo?=
- =?us-ascii?Q?m7agKiwYF/EpLkoGxrlmb0mfnko6ConITksx5QVlF+YmbrZqrm3CaMBU0pMg?=
- =?us-ascii?Q?1f5CmlEJLTLpUf915PNORHfWIRxIRDFuNTu/dLV8B0fVCWV+EoWz2ciNQko6?=
- =?us-ascii?Q?ElgYOt/8D/Jtj/lTHGmbW3eV0Ml6X3ut4TUVB1k9Uz3WjXfiEQKvhk7GNxKV?=
- =?us-ascii?Q?o3lEWxFghFm++Baj0+V2Qzc6KamLXLwIlUNZ9IqX9UQt19OKORI8g0uIxhel?=
- =?us-ascii?Q?N3czRIbjERK8tMYI/jSPMn41k5OM8dDT75TEn5eRcZI6bCZxKgBSYIKDhWxH?=
- =?us-ascii?Q?3aMJGYcF5JcU3I6KpS311rpok4u2dPbMnKkwSq0JghdsGd4BWUHqCWsESU6C?=
- =?us-ascii?Q?UiTmler5bh7t0cxib6/kkn6xND9EDNWzYoyi3MvtbKY1VsiIUxU07QJRJJdi?=
- =?us-ascii?Q?gxYIc1RGtY5t7ITBvEcilyRURjp4EaBPAKg1Qm0nSlkSKlH2SVqjEK3hOOs6?=
- =?us-ascii?Q?umRJtRimC3KZL2QaaQ6wYOCpchoMybgVQSRt2AYfBJ/mnMUfaZ86l9lO4MDS?=
- =?us-ascii?Q?y+j5nBgKyHzIBxa1+2tzPt+RraqKWfCY9TjFM4/u2ZQwMi++bO02+TqM3woO?=
- =?us-ascii?Q?Po8nBD+I+FihNPNFxaZBoT06Gb1Ifa5BUMkhaVHkpv6JbQPKEnGiyq4siBG2?=
- =?us-ascii?Q?vgtEYbmwddNkDBn/sBNB6EdhHUn/PuXAukFmWuxV8zBgegPi73DJnxa0D1pj?=
- =?us-ascii?Q?CVnH6PgCvXYAVOM+7XuGnFIm4DqxiPGqmLwRXdNlUVdBdMnH7I3X8LSZtvqI?=
- =?us-ascii?Q?gWa/eAoQyvOj58ESdXmEJXUrrZQLlY48yOQgdxJgDJflrJ0A5fBu8XFATYdZ?=
- =?us-ascii?Q?0M2wAZDGPLOEGpE5U6mcSkShbVBE9aqLcM88YDjmiDyReDAyYqs8XAXhKAqy?=
- =?us-ascii?Q?KVwZJOr6dDNpykozU4FwBFoBur6FhKSiTlyk8SeTqBRofk6pyAvvAWcT83oo?=
- =?us-ascii?Q?jjDSTdh2Lds80C6QW2sUk8w+i2n6PBZDXRjNSP1vES90CF8ZRU/xq9Ys61ZQ?=
- =?us-ascii?Q?nTNO+F6ZPMIwKdCf/f5SWrK2rRncEXvKQNH9JC+2ugd6ygBZar3P3UZMKlNh?=
- =?us-ascii?Q?792LmLXh5IeK//tQYJKg7Gu1/g2aRhy2mvWfOshSaM+3vsO4DAzZFEQ2K5MO?=
- =?us-ascii?Q?s4IATRkY7kw1BMjFqvq3+gIh7X/rsUjHMT7Hc6QLtKFQJzaWt5dUBjpx3unu?=
- =?us-ascii?Q?zP7OiR/CIY0lLtXgWqeBWiks4kbHobk/TTRQlE7LqM2sNSMCTVRYhCvKS/Lz?=
- =?us-ascii?Q?6jMJAsborpKhaJBdIropJP6hZugRl2aeyM5lPHdEix31BOsyJGBZsSans6U6?=
- =?us-ascii?Q?/U8otPDgTevgxzq0NSQ4aVMteS4hkx6jUnTm7a68saIB2MFnTa3PKSKGSBc3?=
- =?us-ascii?Q?ePOs+gkwIu5S+XqMWkdSkmM4Dho3i4KpIAeVKA/j48YpXJbqcYYndDhqKs6M?=
- =?us-ascii?Q?gw9dDVeODTbxkebGYowKuV5N3bFeLNJFyWb/5WLYYS08D5YMkfw8j21Yv3lE?=
- =?us-ascii?Q?eMMrYNrazGMwehE2Sy45VAQnfuPmiqe8l++p+gvZX4vq4OWmgDCo3O+QL650?=
- =?us-ascii?Q?xjXMHMOfvGfkOE1YqeC3XkRccxtyQBV8Z+01XZN4r4Xtk3R95+FMQvECl93k?=
- =?us-ascii?Q?ytnRv/hUe6focufb9ddCROx8BnzGK9MryVkaxQnj6ilh0giWzqvI?=
+	=?us-ascii?Q?B2tZs/o5ZO65OfiAq5PW0Le/NHjOh57YIi8t9URAPfdkevgP8YN8B66bJ0x5?=
+ =?us-ascii?Q?PtL7/uqKvl+GY0/p/Yj+5SILneNhRXSYvLY/y4PqAnqGJ37UFUHalm+F6GN5?=
+ =?us-ascii?Q?jVYP/sZwxDQpkBhOyNO1+VYG57JLe0MJET0gcVqWCNg/7OOV3igEHOWHLRy1?=
+ =?us-ascii?Q?ULGniZt7wC2l5KzB2da2odPXRT7ZK+Ra5D5zhhRO26krqknSlNiPSobz/TG/?=
+ =?us-ascii?Q?leW/XRUUGQbdOOnWOqAYqkI5Wr8brpgfAJ6VwrD8zL0dPHeo37NnjlpZ11R6?=
+ =?us-ascii?Q?AygbiBvheBISulxRwh2x2xnEM91bDPaNSnEjg7nMiu780W+B6Nc4HzycTdYJ?=
+ =?us-ascii?Q?7cLG1KT2Rbqo0sq14lUl9AfCDwKmJLPZiJAWc4OH+RctqHftPgsuaxmdo2Oa?=
+ =?us-ascii?Q?qTXFjZ5zfBWGrTx9o7WukvC+iOsXhO7RlF6CJCEe4hwt2znUGfCv8uhkqlgz?=
+ =?us-ascii?Q?LrYGEcE/d79kpdnUHYeujBRPqZ9CUKaAbqgDyMVpPQK8UvfDlvYWRdlofbpk?=
+ =?us-ascii?Q?BHmKNHajhEKKOzQ9T9vEMQ1tp1eiEnealBNdyN2LXA+mP+hgeIBUeCrESEJl?=
+ =?us-ascii?Q?vGGWtr0WErbMmnsZNiBGHlqqx4OlEiClYD1QZKMWOIq8yRcFpJQuHjzeP4ip?=
+ =?us-ascii?Q?tTa+7UOQuBB9ybOKmMD4YP/W7XBohjzxcNYRTDmDIStEgvh66cx09uiIeTs1?=
+ =?us-ascii?Q?ndi0ZWhMPMD/6lYrBxeqgh1ny0gbmQK5Dx8YpIdsxIuCnpQDBNFo9vuP6B24?=
+ =?us-ascii?Q?VgiUChVeSHeNmb7qRDBajN0jGYsR3ZKA/cYZuUZYTVY10HTGUQJJ2lG04Bbj?=
+ =?us-ascii?Q?9OR30VQ32p80fHVIJUcwf/IYRs9Llz8qa056HVXOd8QT6t78ff2SgEajZCgA?=
+ =?us-ascii?Q?AFpUgqE2wzKDNfLXIChaQjdpux/E1GRRYuxKpDUj0oTEeZxD/haMERdyR4Nd?=
+ =?us-ascii?Q?GTJiGRBt3kvcdl9HpnEprp9BzC4ZNkHesJcwD2ENFippr7EPC5P3RdLEAr9H?=
+ =?us-ascii?Q?6sR0gLYHHcRdTOJD0hIbCG1zodoA8a0ijZ9k3GCClfuRrm1EdjxeJa2uYGE7?=
+ =?us-ascii?Q?Y5p7AHfr8j/HcDWRfF6SBz00RBVPD6IkUjnNPCabGZDXj2GcwsgIO4sRHCuE?=
+ =?us-ascii?Q?2HTj0OCrRBpJvoecaBNZdl+ebGvg/4LC2/elTViy/8rgxg6F7m0pepmFTlrQ?=
+ =?us-ascii?Q?eEVFiIUlCbNLuHanS/MuKe6L/IFBO6MfOM7oqNAetRD5NynBiFEhWKoRZeig?=
+ =?us-ascii?Q?yGT8PJoqdyotw8rXh2q04OUiF+dUVO+fV7WBrru8Se+Lg0sXpHvgwima3QtW?=
+ =?us-ascii?Q?yL96LQQ79Whz2mA4rx0AKszHhSpl3iAWdGCX1tkNVJb4/IMeB8dpn/+rFojT?=
+ =?us-ascii?Q?qppHeGHbgpdKGKqNri4gvAenbGTuRTWWrFsa6wq++ca/iGNVsXuKNhDvAFZc?=
+ =?us-ascii?Q?x9BmTEWSurqFIwjh5kfQJxZ5QmLQqTdZ0mWB2GLJEij57ozjI/rz3A/N66pK?=
+ =?us-ascii?Q?iw9MkR0xI2Bsd2nn0MniiSwjh+U1YroEUwb9TKZHjzMlmLoqCC4YSAVgR/a1?=
+ =?us-ascii?Q?ve1wpXrksfSUUdkKRKcfhhUEliBmeWiztnYMmjb9APKnoCd6bqZRw4jbwYV3?=
+ =?us-ascii?Q?O5dURWApG66fdDbIq5BcySPJKvJ6/P2CB6z8wr/JwWxxYBWclE+WpD/hGq7B?=
+ =?us-ascii?Q?Jp7pZRjKDfqmsC4oqdOC2AFCVe+wBiZ8xdd2xV+CWOBYwIbufHCYgsG2LeMI?=
+ =?us-ascii?Q?8lPribqVtaszR/nas3MdZupu6BoZSfpuEaW+BBfhFewaJUuGJSEk?=
 X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33bba334-af17-49da-3c11-08dea1f2967f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a60dae7-0fbe-46d6-75da-08dea1f29822
 X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 11:14:01.3286
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 11:14:04.1057
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P7g2lea13EHSsXTBgnBhCqTofhcw/lgEvEkQ3I+qSv4uathHYB3xQnx9X25MrL0mxpa2ije1WB2J/iRY8tss+OcVtR1yla5w18piDN9CCIz4zk37HA9AiWBvQGAVNff3
+X-MS-Exchange-CrossTenant-UserPrincipalName: LHnpFHasDJ/Z/xU8N0RITNj1QW63Vm9WCtmcmSo34YF/JooSzUlI49LpIb7HLvet31LDuS+csS6NTpL0QHFMbqUSk3RXbtnn6pDxunXDY+mOo4XBYHA+xyMx6qTig8Fi
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1156
 
-Add pinctrl bindings for StarFive JHB100 SoC Peripheral-3(per3) pinctrl
-controller.
+From: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
 
+Add pin function definitions for StarFive JHB100 SoC.
+
+Signed-off-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
 Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 ---
- .../pinctrl/starfive,jhb100-per3-pinctrl.yaml | 177 ++++++++++++++++++
- 1 file changed, 177 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per3-pinctrl.yaml
+ arch/riscv/boot/dts/starfive/jhb100-pinfunc.h | 642 ++++++++++++++++++
+ 1 file changed, 642 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/starfive/jhb100-pinfunc.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per3-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per3-pinctrl.yaml
+diff --git a/arch/riscv/boot/dts/starfive/jhb100-pinfunc.h b/arch/riscv/boot/dts/starfive/jhb100-pinfunc.h
 new file mode 100644
-index 000000000000..263392a5774c
+index 000000000000..cddad07444b0
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per3-pinctrl.yaml
-@@ -0,0 +1,177 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/starfive,jhb100-per3-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/arch/riscv/boot/dts/starfive/jhb100-pinfunc.h
+@@ -0,0 +1,642 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/*
++ * Copyright (C) 2024 StarFive Technology Co., Ltd.
++ *
++ */
 +
-+title: StarFive JHB100 Peripheral-3 Pin Controller
++#ifndef __JHB100_PINFUNC_H__
++#define __JHB100_PINFUNC_H__
 +
-+description: |
-+  Pinctrl bindings for JHB100 RISC-V SoC from StarFive Technology Ltd.
++/*
++ * pinmux bits:
++ *  | 31 - 10  |  9 - 8   |  7 - 0  |
++ *  | reserved | function | gpio nr |
++ *
++ * func:     function value: 0, 1, or 2
++ * gpio nr:  gpio pad number, 0 through ngpios - 1
++ */
++#define PINMUX(n, func) ((((func) & 0x3) << 8) | ((n) & 0xff))
 +
-+  The JHB100 SoC has 13 pinctrl domains - sys0, sys0h, sys1, sys2, per0, per1,
-+  per2, per2pok, per3, adc0, adc1, emmc, and vga.
-+  This document provides an overview of the "per3" pinctrl domain.
++/* pinctrl_sys0 pad numbers */
++#define PADNUM_SYS0_GPIO_A0				0
++#define PADNUM_SYS0_GPIO_A1				1
++#define PADNUM_SYS0_GPIO_A2				2
++#define PADNUM_SYS0_GPIO_A3				3
 +
-+  The "per3" domain has a pin controller which provides
-+  - function selection for GPIO pads.
-+  - GPIO interrupt handling.
++/* pinctrl_sys0h pad numbers */
++#define PADNUM_SYS0H_GPIO_A4				0
++#define PADNUM_SYS0H_GPIO_A5				1
++#define PADNUM_SYS0H_GPIO_A6				2
++#define PADNUM_SYS0H_GPIO_A7				3
++#define PADNUM_SYS0H_GPIO_A8				4
++#define PADNUM_SYS0H_GPIO_A9				5
++#define PADNUM_SYS0H_GPIO_A10				6
++#define PADNUM_SYS0H_GPIO_A11				7
++#define PADNUM_SYS0H_GPIO_A12				8
++#define PADNUM_SYS0H_GPIO_A13				9
++#define PADNUM_SYS0H_GPIO_A14				10
++#define PADNUM_SYS0H_GPIO_A15				11
 +
-+  In the Peripheral-3 Pin Controller, there are 11 multi-function GPIO_PADs. Each of them
-+  can be multiplexed to several peripherals through function selection. Each iopad has a
-+  maximum of up to 2 functions - 0 and 1. Function 0 is the default function which is
-+  generally the GPIO function. Function 1 is the alternate function or peripheral signal
-+  that can be routed to an iopad. The function selection can be carried out by writing
-+  the function number to the iopad function select register.
-+  Each iopad is configurable with parameters such as input-enable, internal pull-up/pull-down
-+  bias, drive strength, schmitt trigger, slew rate, and debounce width.
++/* pinctrl_sys1 pad numbers */
++#define PADNUM_SYS1_GPIO_A16				0
++#define PADNUM_SYS1_GPIO_A17				1
++#define PADNUM_SYS1_GPIO_A18				2
++#define PADNUM_SYS1_GPIO_A19				3
++#define PADNUM_SYS1_GPIO_A20				4
++#define PADNUM_SYS1_GPIO_A21				5
++#define PADNUM_SYS1_GPIO_A22				6
++#define PADNUM_SYS1_GPIO_A23				7
 +
-+  This domain contains an IO group which support voltage levels 1.8V, 2.5V, and 3.3V
-+  1. gpios - comprises PAD_GPIO_E0 through PAD_GPIO_E10.
++/* pinctrl_sys2 pad numbers */
++#define PADNUM_SYS2_GPIO_A24				0
++#define PADNUM_SYS2_GPIO_A25				1
++#define PADNUM_SYS2_GPIO_A26				2
++#define PADNUM_SYS2_GPIO_A27				3
++#define PADNUM_SYS2_GPIO_A28				4
++#define PADNUM_SYS2_GPIO_A29				5
++#define PADNUM_SYS2_GPIO_A30				6
++#define PADNUM_SYS2_GPIO_A31				7
++#define PADNUM_SYS2_GPIO_A32				8
++#define PADNUM_SYS2_GPIO_A33				9
++#define PADNUM_SYS2_GPIO_A34				10
++#define PADNUM_SYS2_GPIO_A35				11
++#define PADNUM_SYS2_GPIO_A36				12
++#define PADNUM_SYS2_GPIO_A37				13
++#define PADNUM_SYS2_GPIO_A38				14
++#define PADNUM_SYS2_GPIO_A39				15
++#define PADNUM_SYS2_GPIO_A40				16
++#define PADNUM_SYS2_GPIO_A41				17
++#define PADNUM_SYS2_GPIO_A42				18
++#define PADNUM_SYS2_GPIO_A43				19
++#define PADNUM_SYS2_GPIO_A44				20
++#define PADNUM_SYS2_GPIO_A45				21
++#define PADNUM_SYS2_GPIO_A46				22
++#define PADNUM_SYS2_GPIO_A47				23
++#define PADNUM_SYS2_GPIO_A48				24
++#define PADNUM_SYS2_GPIO_A49				25
++#define PADNUM_SYS2_GPIO_A50				26
++#define PADNUM_SYS2_GPIO_A51				27
++#define PADNUM_SYS2_GPIO_A52				28
++#define PADNUM_SYS2_GPIO_A53				29
++#define PADNUM_SYS2_GPIO_A54				30
++#define PADNUM_SYS2_GPIO_A55				31
++#define PADNUM_SYS2_GPIO_A56				32
++#define PADNUM_SYS2_GPIO_A57				33
++#define PADNUM_SYS2_GPIO_A58				34
++#define PADNUM_SYS2_GPIO_A59				35
++#define PADNUM_SYS2_GPIO_A60				36
 +
-+  Each of the above IO groups must be configured with a voltage setting that matches the external
-+  voltage level provided to the IO group.
++/* pinctrl_per0 pad numbers */
++#define PADNUM_PER0_GPIO_B0				0
++#define PADNUM_PER0_GPIO_B1				1
++#define PADNUM_PER0_GPIO_B2				2
++#define PADNUM_PER0_GPIO_B3				3
++#define PADNUM_PER0_GPIO_B4				4
++#define PADNUM_PER0_GPIO_B5				5
++#define PADNUM_PER0_GPIO_B6				6
++#define PADNUM_PER0_GPIO_B7				7
++#define PADNUM_PER0_GPIO_B8				8
++#define PADNUM_PER0_GPIO_B9				9
++#define PADNUM_PER0_GPIO_B10				10
++#define PADNUM_PER0_GPIO_B11				11
++#define PADNUM_PER0_GPIO_B12				12
++#define PADNUM_PER0_GPIO_B13				13
++#define PADNUM_PER0_GPIO_B14				14
++#define PADNUM_PER0_GPIO_B15				15
++#define PADNUM_PER0_GPIO_B16				16
++#define PADNUM_PER0_GPIO_B17				17
++#define PADNUM_PER0_GPIO_B18				18
++#define PADNUM_PER0_GPIO_B19				19
++#define PADNUM_PER0_GPIO_B20				20
++#define PADNUM_PER0_GPIO_B21				21
++#define PADNUM_PER0_GPIO_B22				22
++#define PADNUM_PER0_GPIO_B23				23
++#define PADNUM_PER0_GPIO_B24				24
++#define PADNUM_PER0_GPIO_B25				25
++#define PADNUM_PER0_GPIO_B26				26
++#define PADNUM_PER0_GPIO_B27				27
++#define PADNUM_PER0_GPIO_B28				28
++#define PADNUM_PER0_GPIO_B29				29
++#define PADNUM_PER0_GPIO_B30				30
++#define PADNUM_PER0_GPIO_B31				31
++#define PADNUM_PER0_GPIO_B32				32
++#define PADNUM_PER0_GPIO_B33				33
++#define PADNUM_PER0_GPIO_B34				34
++#define PADNUM_PER0_GPIO_B35				35
++#define PADNUM_PER0_GPIO_B36				36
++#define PADNUM_PER0_GPIO_B37				37
++#define PADNUM_PER0_GPIO_B38				38
++#define PADNUM_PER0_GPIO_B39				39
++#define PADNUM_PER0_GPIO_B40				40
++#define PADNUM_PER0_GPIO_B41				41
++#define PADNUM_PER0_GPIO_B42				42
++#define PADNUM_PER0_GPIO_B43				43
++#define PADNUM_PER0_GPIO_B44				44
++#define PADNUM_PER0_GPIO_B45				45
++#define PADNUM_PER0_GPIO_B46				46
++#define PADNUM_PER0_GPIO_B47				47
++#define PADNUM_PER0_GPIO_B48				48
++#define PADNUM_PER0_GPIO_B49				49
++#define PADNUM_PER0_GPIO_B50				50
++#define PADNUM_PER0_GPIO_B51				51
++#define PADNUM_PER0_GPIO_B52				52
++#define PADNUM_PER0_GPIO_B53				53
++#define PADNUM_PER0_GPIO_B54				54
++#define PADNUM_PER0_GPIO_B55				55
++#define PADNUM_PER0_GPIO_B56				56
++#define PADNUM_PER0_GPIO_B57				57
++#define PADNUM_PER0_GPIO_B58				58
++#define PADNUM_PER0_GPIO_B59				59
 +
-+maintainers:
-+  - Alex Soo <yuklin.soo@starfivetech.com>
++/* pinctrl_per1 pad numbers */
++#define PADNUM_PER1_GPIO_C0				0
++#define PADNUM_PER1_GPIO_C1				1
++#define PADNUM_PER1_GPIO_C2				2
++#define PADNUM_PER1_GPIO_C3				3
++#define PADNUM_PER1_GPIO_C4				4
++#define PADNUM_PER1_GPIO_C5				5
++#define PADNUM_PER1_GPIO_C6				6
++#define PADNUM_PER1_GPIO_C7				7
++#define PADNUM_PER1_GPIO_C8				8
++#define PADNUM_PER1_GPIO_C9				9
++#define PADNUM_PER1_GPIO_C10				10
++#define PADNUM_PER1_GPIO_C11				11
++#define PADNUM_PER1_GPIO_C12				12
++#define PADNUM_PER1_GPIO_C13				13
++#define PADNUM_PER1_GPIO_C14				14
++#define PADNUM_PER1_GPIO_C15				15
++#define PADNUM_PER1_GPIO_C16				16
++#define PADNUM_PER1_GPIO_C17				17
++#define PADNUM_PER1_GPIO_C18				18
++#define PADNUM_PER1_GPIO_C19				19
++#define PADNUM_PER1_GPIO_C20				20
++#define PADNUM_PER1_GPIO_C21				21
++#define PADNUM_PER1_GPIO_C22				22
++#define PADNUM_PER1_GPIO_C23				23
++#define PADNUM_PER1_GPIO_C24				24
++#define PADNUM_PER1_GPIO_C25				25
++#define PADNUM_PER1_GPIO_C26				26
++#define PADNUM_PER1_GPIO_C27				27
++#define PADNUM_PER1_GPIO_C28				28
++#define PADNUM_PER1_GPIO_C29				29
++#define PADNUM_PER1_GPIO_C30				30
++#define PADNUM_PER1_GPIO_C31				31
++#define PADNUM_PER1_GPIO_C32				32
++#define PADNUM_PER1_GPIO_C33				33
++#define PADNUM_PER1_GPIO_C34				34
++#define PADNUM_PER1_GPIO_C35				35
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: starfive,jhb100-per3-pinctrl
++/* pinctrl_per0 pad numbers */
++#define PADNUM_PER2_GPIO_D0				0
++#define PADNUM_PER2_GPIO_D1				1
++#define PADNUM_PER2_GPIO_D2				2
++#define PADNUM_PER2_GPIO_D3				3
++#define PADNUM_PER2_GPIO_D4				4
++#define PADNUM_PER2_GPIO_D5				5
++#define PADNUM_PER2_GPIO_D6				6
++#define PADNUM_PER2_GPIO_D7				7
++#define PADNUM_PER2_GPIO_D8				8
++#define PADNUM_PER2_GPIO_D9				9
++#define PADNUM_PER2_GPIO_D10				10
++#define PADNUM_PER2_GPIO_D11				11
++#define PADNUM_PER2_GPIO_D12				12
++#define PADNUM_PER2_GPIO_D13				13
++#define PADNUM_PER2_GPIO_D14				14
++#define PADNUM_PER2_GPIO_D15				15
++#define PADNUM_PER2_GPIO_D16				16
++#define PADNUM_PER2_GPIO_D17				17
++#define PADNUM_PER2_GPIO_D18				18
++#define PADNUM_PER2_GPIO_D19				19
++#define PADNUM_PER2_GPIO_D20				20
++#define PADNUM_PER2_GPIO_D21				21
++#define PADNUM_PER2_GPIO_D22				22
++#define PADNUM_PER2_GPIO_D23				23
++#define PADNUM_PER2_GPIO_D24				24
++#define PADNUM_PER2_GPIO_D25				25
++#define PADNUM_PER2_GPIO_D26				26
++#define PADNUM_PER2_GPIO_D27				27
++#define PADNUM_PER2_GPIO_D28				28
++#define PADNUM_PER2_GPIO_D29				29
++#define PADNUM_PER2_GPIO_D30				30
 +
-+  reg:
-+    maxItems: 1
++/* pinctrl_per2pok pad numbers */
++#define PADNUM_PER2POK_GPIO_D31				0
++#define PADNUM_PER2POK_GPIO_D32				1
++#define PADNUM_PER2POK_GPIO_D33				2
++#define PADNUM_PER2POK_GPIO_D34				3
++#define PADNUM_PER2POK_GPIO_D35				4
++#define PADNUM_PER2POK_GPIO_D36				5
++#define PADNUM_PER2POK_GPIO_D37				6
++#define PADNUM_PER2POK_GPIO_D38				7
++#define PADNUM_PER2POK_GPIO_D39				8
++#define PADNUM_PER2POK_GPIO_D40				9
++#define PADNUM_PER2POK_GPIO_D41				10
++#define PADNUM_PER2POK_GPIO_D42				11
++#define PADNUM_PER2POK_GPIO_D43				12
++#define PADNUM_PER2POK_GPIO_D44				13
++#define PADNUM_PER2POK_GPIO_D45				14
++#define PADNUM_PER2POK_GPIO_D46				15
++#define PADNUM_PER2POK_GPIO_D47				16
++#define PADNUM_PER2POK_GPIO_D48				17
 +
-+  clocks:
-+    maxItems: 1
++/* pinctrl_per3 pad numbers */
++#define PADNUM_PER3_GPIO_E0				0
++#define PADNUM_PER3_GPIO_E1				1
++#define PADNUM_PER3_GPIO_E2				2
++#define PADNUM_PER3_GPIO_E3				3
++#define PADNUM_PER3_GPIO_E4				4
++#define PADNUM_PER3_GPIO_E5				5
++#define PADNUM_PER3_GPIO_E6				6
++#define PADNUM_PER3_GPIO_E7				7
++#define PADNUM_PER3_GPIO_E8				8
++#define PADNUM_PER3_GPIO_E9				9
++#define PADNUM_PER3_GPIO_E10				10
++#define PADNUM_PER3_GPIO_E11				11
 +
-+  resets:
-+    maxItems: 1
++/* Function Selection */
 +
-+  interrupts:
-+    maxItems: 1
++/* pinctrl_sys0 pad function selection */
++#define FUNC_SYS0_DOM_HOSTSS_AUXPWRGOOD0		1
++#define FUNC_SYS0_DOM_HOSTSS_AUXPWRGOOD1		1
++#define FUNC_SYS0_HBLED					1
++#define FUNC_SYS0_PE2RST_OUT				0
++#define FUNC_SYS0_GPIO3					1
 +
-+  interrupt-controller: true
++/* pinctrl_sys0h pad function selection */
++#define FUNC_SYS0H_ESPI0_DATA0				1
++#define FUNC_SYS0H_ESPI0_DATA1				1
++#define FUNC_SYS0H_ESPI0_DATA2				1
++#define FUNC_SYS0H_ESPI0_DATA3				1
++#define FUNC_SYS0H_ESPI0_CLK				1
++#define FUNC_SYS0H_ESPI0_CS				1
++#define FUNC_SYS0H_ESPI0_ALERT				1
++#define FUNC_SYS0H_ESPI0_RESET				0
++#define FUNC_SYS0H_GPIO7				1
++#define FUNC_SYS0H_ESPI0_VW0				1
++#define FUNC_SYS0H_ESPI0_VW1				1
++#define FUNC_SYS0H_ESPI0_VW2				1
++#define FUNC_SYS0H_ESPI0_VW3				1
++#define FUNC_SYS0H_ESPI1_VW0				2
++#define FUNC_SYS0H_ESPI1_VW1				2
++#define FUNC_SYS0H_ESPI1_VW2				2
++#define FUNC_SYS0H_ESPI1_VW3				2
++#define FUNC_SYS0H_SCAP_TRIG0_A				3
++#define FUNC_SYS0H_SCAP_TRIG1_A				3
 +
-+  '#interrupt-cells':
-+    const: 2
++/* pinctrl_sys1 pad numbers */
++#define FUNC_SYS1_ESPI1_DATA0				1
++#define FUNC_SYS1_ESPI1_DATA1				1
++#define FUNC_SYS1_ESPI1_DATA2				1
++#define FUNC_SYS1_ESPI1_DATA3				1
++#define FUNC_SYS1_ESPI1_CLK				1
++#define FUNC_SYS1_ESPI1_CS				1
++#define FUNC_SYS1_ESPI1_ALERT				1
++#define FUNC_SYS1_ESPI1_RESET				0
++#define FUNC_SYS1_GPIO7					1
 +
-+  gpio-controller: true
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT0		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT1		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT2		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT3		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT4		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT5		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT6		2
++#define FUNC_SYS1_HOST0_PORT80_DATA_OUT7		2
 +
-+  '#gpio-cells':
-+    const: 2
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT0		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT1		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT2		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT3		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT4		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT5		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT6		3
++#define FUNC_SYS1_HOST1_PORT80_DATA_OUT7		3
 +
-+  gpio-ranges:
-+    maxItems: 1
++/* pinctrl_sys2 pad function selection */
++#define FUNC_SYS2_UART_CTS				1
++#define FUNC_SYS2_UART_RTS				1
++#define FUNC_SYS2_UART_DCD				1
++#define FUNC_SYS2_UART_DSR				1
++#define FUNC_SYS2_UART_DTR				1
++#define FUNC_SYS2_UART_RI				1
++#define FUNC_SYS2_UART0_TX				1
++#define FUNC_SYS2_UART0_RX				1
++#define FUNC_SYS2_UART1_TX				1
++#define FUNC_SYS2_UART1_RX				1
++#define FUNC_SYS2_UART2_TX				1
++#define FUNC_SYS2_UART2_RX				1
++#define FUNC_SYS2_UART3_TX				1
++#define FUNC_SYS2_UART3_RX				1
++#define FUNC_SYS2_UART4_TX				1
++#define FUNC_SYS2_UART4_RX				1
++#define FUNC_SYS2_UART5_TX				1
++#define FUNC_SYS2_UART5_RX				1
++#define FUNC_SYS2_UART6_TX				1
++#define FUNC_SYS2_UART6_RX				1
++#define FUNC_SYS2_UART7_TX				1
++#define FUNC_SYS2_UART7_RX				1
++#define FUNC_SYS2_UART8_TX				1
++#define FUNC_SYS2_UART8_RX				1
++#define FUNC_SYS2_UART9_TX				1
++#define FUNC_SYS2_UART9_RX				1
++#define FUNC_SYS2_UART10_TX				1
++#define FUNC_SYS2_UART10_RX				1
++#define FUNC_SYS2_UART11_TX				1
++#define FUNC_SYS2_UART11_RX				1
++#define FUNC_SYS2_UART12_TX				1
++#define FUNC_SYS2_UART12_RX				1
++#define FUNC_SYS2_UART13_TX				1
++#define FUNC_SYS2_UART13_RX				1
++#define FUNC_SYS2_UART14_TX				1
++#define FUNC_SYS2_UART14_RX				1
 +
-+  gpio-line-names: true
++#define FUNC_SYS2_I2C8_SMBALERT				2
++#define FUNC_SYS2_I2C9_SMBALERT				2
++#define FUNC_SYS2_I2C10_SMBALERT			2
++#define FUNC_SYS2_I2C11_SMBALERT			2
++#define FUNC_SYS2_I2C12_SMBALERT			2
++#define FUNC_SYS2_I2C13_SMBALERT			2
++#define FUNC_SYS2_I2C14_SMBALERT			2
++#define FUNC_SYS2_I2C15_SMBALERT			2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT0		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT1		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT2		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT3		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT4		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT5		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT6		2
++#define FUNC_SYS2_HOST0_PORT80_DATA_OUT7		2
++#define FUNC_SYS2_JTAG_MST_TDI				2
++#define FUNC_SYS2_JTAG_MST_TRST_N			2
++#define FUNC_SYS2_JTAG_MST_TMS				2
++#define FUNC_SYS2_JTAG_MST_TCK				2
++#define FUNC_SYS2_JTAG_MST_TDO				2
 +
-+  gpios-vref:
-+    default: 0
-+    description: |
-+        Voltage reference value for the IO group "gpios"
-+        0: voltage reference value for 3.3V
-+        1: voltage reference value for 2.5V
-+        2: voltage reference value for 1.8V
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT0		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT1		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT2		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT3		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT4		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT5		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT6		3
++#define FUNC_SYS2_HOST1_PORT80_DATA_OUT7		3
 +
-+patternProperties:
-+  '-grp$':
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        description: |
-+          A pinctrl node should contain at least one subnode representing the
-+          pinctrl groups available in the domain. Each subnode will list the
-+          pins it needs, and how they should be configured, with regard to
-+          function selection, bias, input enable/disable, input schmitt
-+          trigger enable/disable, slew-rate and drive strength.
-+        allOf:
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml
-+        unevaluatedProperties: false
++/* pinctrl_per0 function numbers */
++#define FUNC_PER0_I2C0_CLK				1
++#define FUNC_PER0_I2C0_DATA				1
++#define FUNC_PER0_I2C1_CLK				1
++#define FUNC_PER0_I2C1_DATA				1
++#define FUNC_PER0_I2C2_CLK				1
++#define FUNC_PER0_I2C2_DATA				1
++#define FUNC_PER0_I2C3_CLK				1
++#define FUNC_PER0_I2C3_DATA				1
++#define FUNC_PER0_I2C4_CLK				1
++#define FUNC_PER0_I2C4_DATA				1
++#define FUNC_PER0_I2C5_CLK				1
++#define FUNC_PER0_I2C5_DATA				1
++#define FUNC_PER0_I2C6_CLK				1
++#define FUNC_PER0_I2C6_DATA				1
++#define FUNC_PER0_I2C7_CLK				1
++#define FUNC_PER0_I2C7_DATA				1
++#define FUNC_PER0_I2C8_CLK				1
++#define FUNC_PER0_I2C8_DATA				1
++#define FUNC_PER0_I2C9_CLK				1
++#define FUNC_PER0_I2C9_DATA				1
++#define FUNC_PER0_I2C10_CLK				1
++#define FUNC_PER0_I2C10_DATA				1
++#define FUNC_PER0_I2C11_CLK				1
++#define FUNC_PER0_I2C11_DATA				1
++#define FUNC_PER0_I2C12_CLK				1
++#define FUNC_PER0_I2C12_DATA				1
++#define FUNC_PER0_I2C13_CLK				1
++#define FUNC_PER0_I2C13_DATA				1
++#define FUNC_PER0_SMBUS0_SMBALERT			1
++#define FUNC_PER0_SMBUS1_SMBALERT			1
++#define FUNC_PER0_SMBUS2_SMBALERT			1
++#define FUNC_PER0_SMBUS3_SMBALERT			1
++#define FUNC_PER0_SMBUS4_SMBALERT			1
++#define FUNC_PER0_SMBUS5_SMBALERT			1
++#define FUNC_PER0_SMBUS6_SMBALERT			1
++#define FUNC_PER0_SMBUS7_SMBALERT			1
++#define FUNC_PER0_MIPI_I3C12_SCL0			1
++#define FUNC_PER0_MIPI_I3C12_SDA0			1
++#define FUNC_PER0_MIPI_I3C13_SCL0			1
++#define FUNC_PER0_MIPI_I3C13_SDA0			1
++#define FUNC_PER0_MIPI_I3C14_SCL0			1
++#define FUNC_PER0_MIPI_I3C14_SDA0			1
++#define FUNC_PER0_MIPI_I3C15_SCL0			1
++#define FUNC_PER0_MIPI_I3C15_SDA0			1
++#define FUNC_PER0_MIPI_I3C0_SCL0			1
++#define FUNC_PER0_MIPI_I3C0_SDA0			1
++#define FUNC_PER0_MIPI_I3C1_SCL0			1
++#define FUNC_PER0_MIPI_I3C1_SDA0			1
++#define FUNC_PER0_MIPI_I3C2_SCL0			1
++#define FUNC_PER0_MIPI_I3C2_SDA0			1
++#define FUNC_PER0_MIPI_I3C3_SCL0			1
++#define FUNC_PER0_MIPI_I3C3_SDA0			1
++#define FUNC_PER0_MIPI_I3C4_SCL1			1
++#define FUNC_PER0_MIPI_I3C4_SDA1			1
++#define FUNC_PER0_MIPI_I3C5_SCL1			1
++#define FUNC_PER0_MIPI_I3C5_SDA1			1
++#define FUNC_PER0_MIPI_I3C6_SCL1			1
++#define FUNC_PER0_MIPI_I3C6_SDA1			1
++#define FUNC_PER0_MIPI_I3C7_SCL1			1
++#define FUNC_PER0_MIPI_I3C7_SDA1			1
 +
-+        properties:
-+          pinmux:
-+            description: |
-+              The list of GPIOs and their function select.
-+              The PINMUX macros are used to configure the
-+              function selection.
++#define FUNC_PER0_MIPI_I3C4_SCL0			2
++#define FUNC_PER0_MIPI_I3C4_SDA0			2
++#define FUNC_PER0_MIPI_I3C5_SCL0			2
++#define FUNC_PER0_MIPI_I3C5_SDA0			2
++#define FUNC_PER0_MIPI_I3C6_SCL0			2
++#define FUNC_PER0_MIPI_I3C6_SDA0			2
++#define FUNC_PER0_MIPI_I3C7_SCL0			2
++#define FUNC_PER0_MIPI_I3C7_SDA0			2
++#define FUNC_PER0_MIPI_I3C8_SCL0			2
++#define FUNC_PER0_MIPI_I3C8_SDA0			2
++#define FUNC_PER0_MIPI_I3C9_SCL0			2
++#define FUNC_PER0_MIPI_I3C9_SDA0			2
++#define FUNC_PER0_MIPI_I3C10_SCL0			2
++#define FUNC_PER0_MIPI_I3C10_SDA0			2
++#define FUNC_PER0_MIPI_I3C11_SCL0			2
++#define FUNC_PER0_MIPI_I3C11_SDA0			2
++#define FUNC_PER0_GMAC2_MDC				2
++#define FUNC_PER0_GMAC2_MDIO				2
++#define FUNC_PER0_GMAC3_MDC				2
++#define FUNC_PER0_GMAC3_MDIO				2
++#define FUNC_PER0_GMAC1_MDC				2
++#define FUNC_PER0_GMAC1_MDIO				2
++#define FUNC_PER0_WDT0_3_OR_RESET_OUTPUT		2
++#define FUNC_PER0_WDT_SECRP_RESET_OUTPUT		2
++#define FUNC_PER0_WDT4_RESET_OUTPUT			2
++#define FUNC_PER0_WDT4_RESTART_INPUT			2
 +
-+          bias-disable: true
++/* pinctrl_per1 pad function selection */
++#define FUNC_PER1_SPI0_N_SS_OUT_0			1
++#define FUNC_PER1_SPI0_N_SS_OUT_1			1
++#define FUNC_PER1_SPI0_SCLK_OUT				1
++#define FUNC_PER1_SPI0_TX				1
++#define FUNC_PER1_SPI0_RX				1
++#define FUNC_PER1_SFC0_N_SS_OUT_0			1
++#define FUNC_PER1_SFC0_N_SS_OUT_1			1
++#define FUNC_PER1_SFC0_SCLK_OUT				1
++#define FUNC_PER1_SFC0_IO0				1
++#define FUNC_PER1_SFC0_IO1				1
++#define FUNC_PER1_SFC0_IO2				1
++#define FUNC_PER1_SFC0_IO3				1
++#define FUNC_PER1_SFC1_N_SS_OUT_0			1
++#define FUNC_PER1_SFC1_N_SS_OUT_1			1
++#define FUNC_PER1_SFC1_N_SS_OUT_2			1
++#define FUNC_PER1_SFC1_SCLK_OUT				1
++#define FUNC_PER1_SFC1_IO0				1
++#define FUNC_PER1_SFC1_IO1				1
++#define FUNC_PER1_SFC1_IO2				1
++#define FUNC_PER1_SFC1_IO3				1
++#define FUNC_PER1_SFC2_N_SS_OUT_0			1
++#define FUNC_PER1_SFC2_N_SS_OUT_1			1
++#define FUNC_PER1_SFC2_N_SS_OUT_2			1
++#define FUNC_PER1_SFC2_SCLK_OUT				1
++#define FUNC_PER1_SFC2_IO0				1
++#define FUNC_PER1_SFC2_IO1				1
++#define FUNC_PER1_SFC2_IO2				1
++#define FUNC_PER1_SFC2_IO3				1
++#define FUNC_PER1_SGPIO0_M_CLK				1
++#define FUNC_PER1_SGPIO0_M_LOAD				1
++#define FUNC_PER1_SGPIO0_M_DATA_OUT			1
++#define FUNC_PER1_SGPIO0_M_DATA_IN			1
++#define FUNC_PER1_I2C14_CLK				1
++#define FUNC_PER1_I2C14_DATA				1
++#define FUNC_PER1_I2C15_CLK				1
++#define FUNC_PER1_I2C15_DATA				1
 +
-+          bias-pull-up:
-+            type: boolean
++#define FUNC_PER1_SGPIO1_M_CLK				2
++#define FUNC_PER1_SGPIO1_M_LOAD				2
++#define FUNC_PER1_SGPIO1_M_DATA_OUT			2
++#define FUNC_PER1_SGPIO1_M_DATA_IN			2
 +
-+          bias-pull-down:
-+            type: boolean
++/* pinctrl_per2 function selection */
++#define FUNC_PER2_FAN0_TACH_I_0				1
++#define FUNC_PER2_FAN0_TACH_I_1				1
++#define FUNC_PER2_FAN0_TACH_I_2				1
++#define FUNC_PER2_FAN0_TACH_I_3				1
++#define FUNC_PER2_FAN0_TACH_I_4				1
++#define FUNC_PER2_FAN0_TACH_I_5				1
++#define FUNC_PER2_FAN0_TACH_I_6				1
++#define FUNC_PER2_FAN0_TACH_I_7				1
++#define FUNC_PER2_FAN0_TACH_I_8				1
++#define FUNC_PER2_FAN0_TACH_I_9				1
++#define FUNC_PER2_FAN0_TACH_I_10			1
++#define FUNC_PER2_FAN0_TACH_I_11			1
++#define FUNC_PER2_FAN0_TACH_I_12			1
++#define FUNC_PER2_FAN0_TACH_I_13			1
++#define FUNC_PER2_FAN0_TACH_I_14			1
++#define FUNC_PER2_FAN0_TACH_I_15			1
++#define FUNC_PER2_GMAC2_RGMII_RX_CLK			1
++#define FUNC_PER2_GMAC2_RGMII_RXCTL			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_RXD0			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_RXD1			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_RXD2			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_RXD3			1
++#define FUNC_PER2_GMAC2_RGMII_TX_CLK			1
++#define FUNC_PER2_GMAC2_RGMII_TXCTL			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_TX0			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_TX1			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_TX2			1
++#define FUNC_PER2_GMAC2_RGMII_PHY_TX3			1
 +
-+          drive-strength:
-+            enum: [ 2, 4, 8, 12 ]
++#define FUNC_PER2_GMAC2_RMII_RX_CLK			2
++#define FUNC_PER2_GMAC2_RMII_CRSDV			2
++#define FUNC_PER2_GMAC2_RMII_PHY_RXD0			2
++#define FUNC_PER2_GMAC2_RMII_PHY_RXD1			2
++#define FUNC_PER2_GMAC2_RMII_RX_CKO			2
++#define FUNC_PER2_GMAC2_RMII_TXEN			2
++#define FUNC_PER2_GMAC2_RMII_PHY_TXD0			2
++#define FUNC_PER2_GMAC2_RMII_PHY_TXD1			2
 +
-+          drive-strength-microamp:
-+            enum: [ 2000, 4000, 8000, 12000 ]
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT0		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT1		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT2		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT3		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT4		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT5		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT6		2
++#define FUNC_PER2_HOSTSS0_PORT80_DATA_OUT7		2
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT0		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT1		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT2		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT3		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT4		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT5		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT6		3
++#define FUNC_PER2_HOSTSS1_PORT80_DATA_OUT7		3
 +
-+          input-enable: true
++/* pinctrl_per2pok function selection */
++#define FUNC_PER2POK_PWM0_CHANNEL0			0
++#define FUNC_PER2POK_PWM0_CHANNEL1			0
++#define FUNC_PER2POK_PWM0_CHANNEL2			0
++#define FUNC_PER2POK_PWM0_CHANNEL3			0
++#define FUNC_PER2POK_PWM0_CHANNEL4			0
++#define FUNC_PER2POK_PWM0_CHANNEL5			0
++#define FUNC_PER2POK_PWM0_CHANNEL6			0
++#define FUNC_PER2POK_PWM0_CHANNEL7			0
 +
-+          input-disable: true
++#define FUNC_PER2POK_CAN0_TXD				1
++#define FUNC_PER2POK_CAN0_RXD				1
++#define FUNC_PER2POK_CAN0_STBY				1
++#define FUNC_PER2POK_CAN1_TXD				1
++#define FUNC_PER2POK_CAN1_RXD				1
++#define FUNC_PER2POK_CAN1_STBY				1
++#define FUNC_PER2POK_GPIO_PASSTHRU1_IN			1
++#define FUNC_PER2POK_GPIO_PASSTHRU1_OUT			1
++#define FUNC_PER2POK_GPIO_PASSTHRU2_IN			1
++#define FUNC_PER2POK_GPIO_PASSTHRU2_OUT			1
++#define FUNC_PER2POK_GPIO10				1
++#define FUNC_PER2POK_GPIO11				1
++#define FUNC_PER2POK_GPIO12				1
++#define FUNC_PER2POK_GPIO13				1
++#define FUNC_PER2POK_GPIO14				1
++#define FUNC_PER2POK_GPIO15				1
++#define FUNC_PER2POK_GPIO16				1
++#define FUNC_PER2POK_GPIO17				1
 +
-+          input-schmitt-enable: true
++#define FUNC_PER2POK_GPIO_PASSTHRU3_IN			2
++#define FUNC_PER2POK_GPIO_PASSTHRU3_OUT			2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT0		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT1		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT2		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT3		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT4		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT5		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT6		2
++#define FUNC_PER2POK_HOSTSS0_PORT80_DATA_OUT7		2
 +
-+          input-schmitt-disable: true
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT0		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT1		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT2		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT3		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT4		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT5		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT6		3
++#define FUNC_PER2POK_HOSTSS1_PORT80_DATA_OUT7		3
 +
-+          slew-rate:
-+            enum: [ 0, 1 ]
-+            default: 0
-+            description: |
-+                0: slow (half frequency)
-+                1: fast
++/* pinctrl_per3 function selection */
++#define FUNC_PER3_GMAC0_MDC				1
++#define FUNC_PER3_GMAC0_MDIO				1
++#define FUNC_PER3_GMAC0_RMII_RCLKI			1
++#define FUNC_PER3_GMAC0_RMII_RCLKO			1
++#define FUNC_PER3_GMAC0_RMII_CRSDV			1
++#define FUNC_PER3_GMAC0_RMII_PHY_RXD0			1
++#define FUNC_PER3_GMAC0_RMII_PHY_RXD1			1
++#define FUNC_PER3_GMAC0_RMII_TXEN			1
++#define FUNC_PER3_GMAC0_RMII_PHY_TXD0			1
++#define FUNC_PER3_GMAC0_RMII_PHY_TXD1			1
 +
-+          starfive,gmac-vsel:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            default: 0
-+            description:
-+              RGMII mode voltage select 0 = 1.8V/3.3V, 1 = 2.5V
-+            enum: [0, 1]
++/* gpio func sel value */
++#define FUNC_SEL0_GPIO					0
++#define FUNC_SEL1_GPIO					1
 +
-+          starfive,debounce-width:
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            default: 0
-+            description:
-+              Debounce width 0 = Disabled, Others = 80ns*N stages
++/* vref value */
++#define JHB100_PINVREF_3_3V				0
++#define JHB100_PINVREF_2_5V				1
++#define JHB100_PINVREF_1_8V				2
 +
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pinctrl_per3: pinctrl@11c42000 {
-+            compatible = "starfive,jhb100-per3-pinctrl";
-+            reg = <0x0 0x11c42000 0x0 0x1000>;
-+            resets = <&per3crg 6>;
-+            interrupts = <64>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-ranges = <&pinctrl_per3 0 0 11>;
-+        };
-+    };
++#endif
 -- 
 2.25.1
 
