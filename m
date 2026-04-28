@@ -1,80 +1,267 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from twmbx01.aspeedtech.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0CC3E0C7E
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 10:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA733E0C60;
+	Tue, 28 Apr 2026 10:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777370404; cv=none; b=kymUgKrj6G9zKZ4da5+i/YHgRAL1uU2sMoHqgaJ4W/LmN4KQm3+MDPTFG8ilY8xh+mgDRXWzu+t5TstX7zZPr5p87mEzwovNtoLxr1l2bPe67G13RkwzYk/W1tojNnfdPgia5UYhAmrqUJm9B3Yhh9NGvDweiOPLSaHrMRCVoqI=
+	t=1777370405; cv=none; b=PFfQmlCbtl3YJL7D3ca1z52j7387otPO6nY6kDiYeyKDWp/UlDOLEtemKEQvvDfKkzvN88IG6lNF9hTNpp6qYlPHlDZiASkJTEybEWZX7Pw2GXfQmjV2eawzOEMaqVkEkvYmzWKQhqP+kHwpHRxIaQCxwkvMO+VFPTL/NvbZjpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777370404; c=relaxed/simple;
-	bh=eV6M6yRhEJFUxwo0929BI7hUnlxhsoVowrgkd2fgIe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mq0gdNaremrU1UWk/3JJYhYkhYNzb6G7yHaptoqcMg8b/jrRcg1UzHnHZLnP5FIx0HVfEeTjCLt82Bsvyup6RtKB9BbEUMQ+8OJGGWuB/i1tqSpx/C/Nka3FHRhGAdp8I1ihWysiJ2ql+MAVIx9PCmwFjPOB495TW73cqHR6pZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDGF7Fvl; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDGF7Fvl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6C3C2BCF4
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 10:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777370403;
-	bh=eV6M6yRhEJFUxwo0929BI7hUnlxhsoVowrgkd2fgIe8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bDGF7FvlbVKCBCbhUsp+6wm2oCGt00AimQmt8qfz8S6BJ4rT8lPf3jg5Sm2zO50lV
-	 zgfmzO9RnealgCF7SvHT5T3HhJONZC64FjB8VTrED0xwzy8fXvLUOYs6VEKXeP0w/2
-	 tYVZNfxewsTijZuf2qp4dkJ+bKukHULnYVwF48Cq4PtVe9ugj90D7X1OdHLgarcizr
-	 Wdhb61vtJVulFvFsqyK3hIebIAY3hTaShjr23x+aRM2I3azzz8mbTrFQNfoJnaEBu1
-	 t8/eGy33jM6FGpZ1Vd2zLgDFU/xqp5DUAKHRJQJILOD1xj7cmSMHL4OMNowfVOipYP
-	 EiEkZjcPZs+dg==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-38e7b0903cdso100584961fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 03:00:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/tjcqAsTS3NKYBjx6RaDCKJGc1Dh9o2TJPKDj9WwiTmqIddzdeXLxLhOZ3/NynrUqO3lglU4WzvHfk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDy3QO0b7H+nJ1VoOh/1ZTLcJshQg9/4YNliXLrm2a+Gjjghku
-	oZN3LwK68IQX1L0NBOlGaVIN2LtKuiiOYl0mKXJRSaOmiSvvasv8gp81jlBccORJxPuIQ9OECTJ
-	2oJhfOAcN6ciX0cEWRTuZkKc7R35t2wk=
-X-Received: by 2002:a2e:b892:0:b0:37f:c5ca:a6d4 with SMTP id
- 38308e7fff4ca-39240cd04edmr8597211fa.6.1777370401719; Tue, 28 Apr 2026
- 03:00:01 -0700 (PDT)
+	s=arc-20240116; t=1777370405; c=relaxed/simple;
+	bh=nrVpImuF5VsXwpc/t17ssjmB+g611dGvOatKoycv6KU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=oyiGvfi4tgVkfUzM/Cz6vKGCSMA+ea1n06TUUHrUk1x37aehQSbB4P7y9NvzRrKsek08zrHvp2QiVBkrbyShfbl2lIvc8sxCShXGuWYnGwC4RWYv3OusAs/Z8CXqG9PcvYvFBkvlYcmEtJxPL4F9SVpdaRXnlCkJOQF43FMItY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 28 Apr
+ 2026 17:54:41 +0800
+Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 28 Apr 2026 17:54:41 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+Date: Tue, 28 Apr 2026 17:49:45 +0800
+Subject: [PATCH v8 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260423-sm8150_gpio-v1-1-e418613a1f48@oss.qualcomm.com>
-In-Reply-To: <20260423-sm8150_gpio-v1-1-e418613a1f48@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 28 Apr 2026 11:59:49 +0200
-X-Gmail-Original-Message-ID: <CAD++jLk+Gk2HEF9r0XkUa-GWJo=WvE2ZbY2f8_2W8fyUcMpSMg@mail.gmail.com>
-X-Gm-Features: AVHnY4IIxfi17FKTbzqSgC54vZ5B8x19uIQnFGz6qyDv-GPYNLeOgwYhM4y8ZDY
-Message-ID: <CAD++jLk+Gk2HEF9r0XkUa-GWJo=WvE2ZbY2f8_2W8fyUcMpSMg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Fix wakeirq map by removing disconnected
- irqs for sm8150
-To: Navya Malempati <navya.malempati@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Bhupesh Sharma <bhupesh.sharma@linaro.org>, 
-	Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260428-upstream_pinctrl-v8-1-eb8ef9ab0498@aspeedtech.com>
+References: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
+In-Reply-To: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Joel
+ Stanley" <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"Linus Walleij" <linusw@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>,
+	"Bartosz Golaszewski" <brgl@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
+CC: Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+	<linux-gpio@vger.kernel.org>, <linux-clk@vger.kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777370081; l=5360;
+ i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
+ bh=nrVpImuF5VsXwpc/t17ssjmB+g611dGvOatKoycv6KU=;
+ b=8bkOVn/Gk0dDpToBliPJp1TLizr+fFCgoWXTYNac6xImgyzFMrY7VbxMuNjHdn/fGk8CYOFW/
+ j715ODzDE6aCVa0enT/RgX1qRvYaPEMngeeXbxYl1A7rMXmylfuELoC
+X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
+ pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
 
-On Thu, Apr 23, 2026 at 1:51=E2=80=AFPM Navya Malempati
-<navya.malempati@oss.qualcomm.com> wrote:
+Add a device tree binding for the pin controller found in the
+ASPEED AST2700 SoC0.
 
-> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
->
-> PDC interrupts 122-125 were meant for ibi_i3c wakeup but sm8150 do not
-> support i3c. GPIOs 39,51,88 and 144 are also connected to different PDC
-> pin and already reflected in the wake irq map.
->
-> Remove the unsupported wakeup interrupts from the map.
->
-> Fixes: 90337380c809 ("pinctrl: qcom: sm8150: Specify PDC map")
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> Signed-off-by: Navya Malempati <navya.malempati@oss.qualcomm.com>
+The controller manages various peripheral functions such as eMMC, USB,
+VGA DDC, JTAG, and PCIe root complex signals.
 
-I see there is an ACK from Konrad but the patch needs to address
-Dmitry's comments first I think?
+Describe the AST2700 SoC0 pin controller using standard pin multiplexing
+and configuration properties.
 
-Yours,
-Linus Walleij
+Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+---
+ .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml       | 187 +++++++++++++++++++++
+ 1 file changed, 187 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+new file mode 100644
+index 000000000000..ef500209d81e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+@@ -0,0 +1,187 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ASPEED AST2700 SoC0 Pin Controller
++
++maintainers:
++  - Billy Tsai <billy_tsai@aspeedtech.com>
++
++description:
++  The AST2700 features a dual-SoC architecture with two interconnected SoCs,
++  each having its own System Control Unit (SCU) for independent pin control.
++  This pin controller manages the pin multiplexing for SoC0.
++
++  The SoC0 pin controller manages pin functions including eMMC, VGA DDC,
++  dual USB3/USB2 ports (A and B), JTAG, and PCIe root complex interfaces.
++
++properties:
++  compatible:
++    const: aspeed,ast2700-soc0-pinctrl
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-state$':
++    description: |
++      Pin control state.
++
++      If `function` is present, the node describes a pinmux state and must
++      specify `groups`.
++
++      For pin configuration, exactly one of `groups` or `pins` must be
++      specified in each state node. Group-level configuration applies to all
++      pins in the group. Pin-level configuration may be supplied in a
++      separate state node for individual pins; when both group-level and
++      pin-level configuration apply to the same pin, the pin-level
++      configuration takes precedence.
++
++    type: object
++    allOf:
++      - $ref: pinmux-node.yaml#
++      - $ref: pincfg-node.yaml#
++      - if:
++          required:
++            - function
++        then:
++          required:
++            - groups
++      - oneOf:
++          - required:
++              - groups
++          - required:
++              - pins
++
++    additionalProperties: false
++
++    properties:
++      function:
++        enum:
++          - EMMC
++          - JTAGDDR
++          - JTAGM0
++          - JTAGPCIEA
++          - JTAGPCIEB
++          - JTAGPSP
++          - JTAGSSP
++          - JTAGTSP
++          - JTAGUSB3A
++          - JTAGUSB3B
++          - PCIERC0PERST
++          - PCIERC1PERST
++          - TSPRSTN
++          - UFSCLKI
++          - USB2AD0
++          - USB2AD1
++          - USB2AH
++          - USB2AHP
++          - USB2AHPD0
++          - USB2AXH
++          - USB2AXH2B
++          - USB2AXHD1
++          - USB2AXHP
++          - USB2AXHP2B
++          - USB2AXHPD1
++          - USB2BD0
++          - USB2BD1
++          - USB2BH
++          - USB2BHP
++          - USB2BHPD0
++          - USB2BXH
++          - USB2BXH2A
++          - USB2BXHD1
++          - USB2BXHP
++          - USB2BXHP2A
++          - USB2BXHPD1
++          - USB3AXH
++          - USB3AXH2B
++          - USB3AXHD
++          - USB3AXHP
++          - USB3AXHP2B
++          - USB3AXHPD
++          - USB3BXH
++          - USB3BXH2A
++          - USB3BXHD
++          - USB3BXHP
++          - USB3BXHP2A
++          - USB3BXHPD
++          - VB
++          - VGADDC
++
++      groups:
++        enum:
++          - EMMCCDN
++          - EMMCG1
++          - EMMCG4
++          - EMMCG8
++          - EMMCWPN
++          - JTAG0
++          - PCIERC0PERST
++          - PCIERC1PERST
++          - TSPRSTN
++          - UFSCLKI
++          - USB2A
++          - USB2AAP
++          - USB2ABP
++          - USB2ADAP
++          - USB2AH
++          - USB2AHAP
++          - USB2B
++          - USB2BAP
++          - USB2BBP
++          - USB2BDBP
++          - USB2BH
++          - USB2BHBP
++          - USB3A
++          - USB3AAP
++          - USB3ABP
++          - USB3B
++          - USB3BAP
++          - USB3BBP
++          - VB0
++          - VB1
++          - VGADDC
++
++      pins:
++        enum:
++          - AB13
++          - AB14
++          - AC13
++          - AC14
++          - AD13
++          - AD14
++          - AE13
++          - AE14
++          - AE15
++          - AF13
++          - AF14
++          - AF15
++
++      drive-strength:
++        enum: [3, 6, 8, 11, 16, 18, 20, 23, 30, 32, 33, 35, 37, 38, 39, 41]
++
++      bias-disable: true
++      bias-pull-up: true
++      bias-pull-down: true
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl@400 {
++        compatible = "aspeed,ast2700-soc0-pinctrl";
++        reg = <0x400 0x318>;
++        emmc-state {
++            function = "EMMC";
++            groups = "EMMCG1";
++        };
++    };
+
+-- 
+2.34.1
+
