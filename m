@@ -1,181 +1,69 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA24E3396F4
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 06:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCD22E401;
+	Tue, 28 Apr 2026 06:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777357189; cv=none; b=RulULiKxMWdrDEcEFQRAFm9nmXuNpGVRVZxagL9YyBBnGtD/kog+V1I3uJ2jYE9sofpXntj13qxeqSMfEC16MFSvIBmNg0Pq2HygRRavSwrzOBOKh9Y2wa9J+mvOKyz5D0vBNkctZWxojG1rmXTga3AnEgSjUoWDhxF1dX6ezMs=
+	t=1777359166; cv=none; b=OmztismmfazTUC6pQaNDI+VPSSJylLGZlJOhiFffTOPs177lKaBOG/8NtxZ6GN6C5cJIWbIksdV+fazoT/TcNYTyLb7YXZEomj+ABshHjzT5d8xLTEWxnMwvUZyQxheQEPHeE9U5aeuODRtnQcqGo6Yryt0SD3Qh3kn5WpsAOvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777357189; c=relaxed/simple;
-	bh=aBEaJNgIofjO7cEcOODl1BmXBomk1cMT92Ssjw5evfc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNGE33g+CkCXWie+2XQUi1o2B3lMqomNINlTEI9wBHq5pe/blAE/pK31qccIgszhAhDoV/4RG4CbQ+bu7enlbHUGUpH6KhJ5Qfv1/gt7sm6EMQp5DzVEP3Z12ppysSqZffIpqIOCpOgFfU3rMvB217BHk0qDPQTEwQ0T8fOvYxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ej6wnQ+e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hSv5i7ZM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ej6wnQ+e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hSv5i7ZM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1777359166; c=relaxed/simple;
+	bh=Bucat0/ntK6EVfUjNUeSm7IPyEzTOE1ePpIcpjUt60k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFgFoV+pWg//Mdc+tYz3sNZpQD2iTAlLTXOW+cnOmHQutS+kr97MDzMcGP8ddia1ZGnbGqb0OBCxKP4rno0jRZuvWbxtn0DhTbreLoilaHlTTksUMzQ5NWRHx+QIsul+w5S3iAyowSeF5+7rHpm/Wp2+f65dXXUklV799bk/gUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Op+QLsMo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ej6wnQ+e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hSv5i7ZM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ej6wnQ+e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hSv5i7ZM"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B25C5BD33;
-	Tue, 28 Apr 2026 06:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777357185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpCFgolyZEt8PPtiDFYURWs4bwF8eaRQRN05WRQxlJs=;
-	b=Ej6wnQ+ej2iwOdtFK4EuC4OHBzzKq+ebYGOokHJSvSOmFKY9W6nJroq/sjgqUYb4PIOMpr
-	25N/+f/d6IIEABNLa/Bw/XK3NyVprr9TYCToYtlupG9ZKS9piBKv7zia34L4ndwqFs0qXs
-	4VoSFGtB6aia6M3MI110rCm1XYO68zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777357185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpCFgolyZEt8PPtiDFYURWs4bwF8eaRQRN05WRQxlJs=;
-	b=hSv5i7ZMsu1LrzJPK8SQv7iELPE8YrWE2m3un88HsQeFUC35M2xSU2+/yOF9oeb9+8Ir1h
-	87mv5kVnnKsyNNBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1777357185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpCFgolyZEt8PPtiDFYURWs4bwF8eaRQRN05WRQxlJs=;
-	b=Ej6wnQ+ej2iwOdtFK4EuC4OHBzzKq+ebYGOokHJSvSOmFKY9W6nJroq/sjgqUYb4PIOMpr
-	25N/+f/d6IIEABNLa/Bw/XK3NyVprr9TYCToYtlupG9ZKS9piBKv7zia34L4ndwqFs0qXs
-	4VoSFGtB6aia6M3MI110rCm1XYO68zg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1777357185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpCFgolyZEt8PPtiDFYURWs4bwF8eaRQRN05WRQxlJs=;
-	b=hSv5i7ZMsu1LrzJPK8SQv7iELPE8YrWE2m3un88HsQeFUC35M2xSU2+/yOF9oeb9+8Ir1h
-	87mv5kVnnKsyNNBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BAD9593B0;
-	Tue, 28 Apr 2026 06:19:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ymDrHoBR8GktNQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 28 Apr 2026 06:19:44 +0000
-Date: Tue, 28 Apr 2026 08:19:44 +0200
-Message-ID: <87y0i7ehdr.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] x86/olpc: select GPIOLIB_LEGACY
-In-Reply-To: <20260427144338.3436940-1-arnd@kernel.org>
-References: <20260427144338.3436940-1-arnd@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Op+QLsMo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64401C2BCAF;
+	Tue, 28 Apr 2026 06:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777359166;
+	bh=Bucat0/ntK6EVfUjNUeSm7IPyEzTOE1ePpIcpjUt60k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Op+QLsMocFB70u31t9hypd8k9ziwRsUoyvAkc9ASHq7J+FLTazK2ChFJ1d93IUB8W
+	 uqdT7nMV564C7vrgAQLSkRs2bMUuc7mJBD1HLFFtMu+WgNYkeXZ70wOVvnUR9MPaM1
+	 5a/bmWz2FGbny6grzmiHVYxMCb4u03UP2bamW7csYcfLQ7oeIXU76RelUwgOKFj/6x
+	 kFNdr1iR0RTATAmPZAYtzefHnepbcUrsyyMIPJ8c+KWzhrL9e0fu2AB4z6OERKcYFZ
+	 N1758iz3mdolXnEMO+LRS9/lPxaD6ZynVLhukpVdNsc5+drsIkR/J/eFleG0Y5sXr+
+	 pJH8+CwALS/Dw==
+Date: Tue, 28 Apr 2026 08:52:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexandre MINETTE <contact@alex-min.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, Linus Walleij <linusw@kernel.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] dt-bindings: extcon: qcom,pm8941-misc: Add PM8921
+ compatible
+Message-ID: <20260428-arboreal-happy-coua-da3eb2@quoll>
+References: <20260427-mainline-send-v1-sending-v2-0-dcaa9178007b@alex-min.fr>
+ <20260427-mainline-send-v1-sending-v2-2-dcaa9178007b@alex-min.fr>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[alien8.de:email,suse.de:mid,suse.de:email,arndb.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260427-mainline-send-v1-sending-v2-2-dcaa9178007b@alex-min.fr>
 
-On Mon, 27 Apr 2026 16:43:05 +0200,
-Arnd Bergmann wrote:
+On Mon, Apr 27, 2026 at 09:34:48PM +0200, Alexandre MINETTE wrote:
+> PM8921 provides USB ID detection through the USB_ID_IN interrupt, which
+> APQ8064 boards use for OTG role detection.
 > 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The OLPC GPIO controller sets up a fixed number space that is used
-> by at least two drivers:
-> 
-> arch/x86/platform/olpc/olpc-xo1-sci.c: In function 'setup_ec_sci':
-> arch/x86/platform/olpc/olpc-xo1-sci.c:358:13: error: implicit declaration of function 'gpio_request' [-Wimplicit-function-declaration]
->   358 |         r = gpio_request(OLPC_GPIO_ECSCI, "OLPC-ECSCI");
->       |             ^~~~~~~~~~~~
-> sound/pci/cs5535audio/cs5535audio_olpc.c: In function 'olpc_analog_input':
-> sound/pci/cs5535audio/cs5535audio_olpc.c:41:9: error: implicit declaration of function 'gpio_set_value'; did you mean 'gpiod_set_value'? [-Wimplicit-function-declaration]
->    41 |         gpio_set_value(OLPC_GPIO_MIC_AC, on);
-> 
-> Select CONFIG_GPIOLIB_LEGACY for this platform and make sure the
-> sound driver portion cannot be compiled without this.
-> 
-> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/x86/Kconfig  | 1 +
->  sound/pci/Kconfig | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index f3f7cb01d69d..5ada2c108f4a 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -3022,6 +3022,7 @@ config OLPC
->  	bool "One Laptop Per Child support"
->  	depends on !X86_PAE
->  	select GPIOLIB
-> +	select GPIOLIB_LEGACY
->  	select OF
->  	select OF_PROMTREE
->  	select IRQ_DOMAIN
-> diff --git a/sound/pci/Kconfig b/sound/pci/Kconfig
-> index e0996a9d90b0..6366f72b3667 100644
-> --- a/sound/pci/Kconfig
-> +++ b/sound/pci/Kconfig
-> @@ -300,6 +300,7 @@ config SND_CS5535AUDIO
->  	tristate "CS5535/CS5536 Audio"
->  	depends on X86_32 || MIPS || COMPILE_TEST
->  	depends on HAS_IOPORT
-> +	depends on GPIOLIB_LEGACY || !OLPC
->  	select SND_PCM
->  	select SND_AC97_CODEC
->  	help
+> The Qualcomm PMIC misc extcon binding only needs the interrupt
+> description for this use case. Allow qcom,pm8921-misc without requiring
 
-Acked-by: Takashi Iwai <tiwai@suse.de>
+Bindings do not describe use case, but hardware. What is the interface
+to PM8921? Is it on some bus or not?
 
+Best regards,
+Krzysztof
 
-thanks,
-
-Takashi
