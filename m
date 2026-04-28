@@ -1,74 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAC63D34BB
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 09:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F2938F62F
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 09:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777369722; cv=none; b=Kpm1NLEAO5u1RQe4twuVYLkozCHQpueodaBnQbfbEVG9R9quKlQtH5n1hMR4R/Z1TEiC3LyzRYpJ1v7eAJ0SGEDpvt8CLgt1zxfmYOh4LAwBryCc+KklYW7LMUMi4VZPBdU1dOoZCvnOoYRKe30IY3nZjfCisjrMPcrdDWQmvk0=
+	t=1777369856; cv=none; b=unLyjjLv6BAIlfAG4J/M8oDPS4qOUI4OdPU7xguAbouHl6LKNed1aY2CWfGfkghAyvoA0TtHPIqYDz3WIsrLniNDUZqhDhtyh2ctpIO8NniX9skYLAjVz2Gbp4fhhMeJcQ7EGxBq3q//x+EkTYRhUKv9MrG8mFcDCmYTdq49Zv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777369722; c=relaxed/simple;
-	bh=c0/YaPJmLEANHBlX4oah5v9Xx+iQTIZ8FJT+UHuF+B8=;
+	s=arc-20240116; t=1777369856; c=relaxed/simple;
+	bh=BC5O937iyiNhZiumC7m5YAaGDlwXTXa+qfnkEp1/d6s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N4L2mqLUNcjBjtNBvmn7YZseRrWl99SbZ6msCPLNmE50FnLh2sML4JHPMVTJ8Eq5DPjO+VZK5B8ZF3rMtrHrfLvG74r77DTdIZA9qTsq2pPSkYRH2Fz0VPXnmdT9QeFZn35Ar2m3e656IABsRm01DgXlHPPV2ns7wUlZ1N0qoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAvJ+9vB; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=VApwUgR/YbnjN5zIOJxalIiUUbzORSyT8vCU0Y+OrtNcNQEc+7PAxv6P09FWoPe+wnVnj0jFAw/SBJ1BguJTB2qI8XU84V1WjIgmCYCfT0xMbYGtT8LOx2n3a1GkpS3wjBwfCQEnywy4EVhdAQozslzVDMxinoPi/sliPnyrAwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQtxjLVg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAvJ+9vB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C79C2BCB6
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 09:48:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQtxjLVg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4E9C4AF09
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 09:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777369722;
-	bh=c0/YaPJmLEANHBlX4oah5v9Xx+iQTIZ8FJT+UHuF+B8=;
+	s=k20201202; t=1777369856;
+	bh=BC5O937iyiNhZiumC7m5YAaGDlwXTXa+qfnkEp1/d6s=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fAvJ+9vBI/DfhEnxTkFITMxxKGbjoDLAmJOEl5RbNoaZkiO0c0gRJ8KzdBcfthkDO
-	 XvEZUQABSyw6wkPVWnay4tP1+whp/togbrX9PPyzoPgvgrn/lPYpO6jOu9uk5NHHKa
-	 1xJvzzy9G4nL4Npp243pA55opjfCH1M6EyNTZPQnRafjr47xsZGd/VWV+K7h7RrwE7
-	 NaG6TG4EiDP8I3EQri2bCdGfNSxsGdN2x0gl593FgWKOBdM3o5BD50qIdj8NdGnktL
-	 4r/quR7UzcQt61YPAzv84mkttzy0Kvr48Ojupdr9vPEZUY5Avgr0Di8Kiw2Res8p9Y
-	 yEY2WjJzCjv5g==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a62a049c1fso8541749e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 02:48:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+l5VmE7s0YPPxAAcTUADdWoCVTyYKSpnBDfkEG3QTMIYSL/4tacifhv+3dXOC0Kxf+6vTUUCo4Y135@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRWvlQIbovsdff7NM6hXo2oRhjz4klKdMaZ98lSW/hz+ozGASB
-	rQGVKVTZvJTq1uvcfew29CETiAp3ZDr3VnGjwkA8ZbZO3csnAXMqsvsTXMEUtVCzwohfLHfvR+T
-	kvC/l745EZPNVNIS7D5DCkRCJRSofjYw=
-X-Received: by 2002:a05:6512:234b:b0:5a4:194f:5fff with SMTP id
- 2adb3069b0e04-5a74641609cmr990522e87.16.1777369721200; Tue, 28 Apr 2026
- 02:48:41 -0700 (PDT)
+	b=UQtxjLVg1H6w9ZPEXKijvwyGG6ju7AzehKsOQ6wPd0LdvjGrdaDkvh7muB/WuNrEj
+	 Owd3ylY8hw7DjW84ipQ0VtocZQFcnsWfSG71KBSzqjaX78OHTdxQTS9c/FVIlBTmlR
+	 yS1oagKHMkXQ62yIeEAEwgEyleo8hWIH5WVlPI0UwjC29YUoNcl3BSg3rJ366m/te3
+	 3aGRWkc6UWICb2ZoUwPMq2yFFFzTpGO5Go5kJf8PKMydfWnnRadIEq3MSN8JxzKU+g
+	 civbJHg8g6sdcuauwVXRPo3/efh/DcesNQJWT4nNJPPHSKqyE8PDImYcV6+ujdhYBb
+	 1U8k2rq3Pju7A==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-38e800deae4so96988271fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 02:50:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9obw5fAdFRgVQJBLsbK4a1B68PF89EP9Lbl+6ZQpw49vefFQtV0ljSWBH51TnMsNlBUHElmnuJctNw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV1TplDUPitSra3tlVD+X4gJXa5TOpu9vnfnIH/vpeGbnQGvkh
+	ZiqiAGUik8R60PQOSeGa+xFFF8kl+DtkktbFx7JggmuFsMaez24/9FNgLm+DYwg5XRlhtLOxRZz
+	AfichoZTOd0rd5oPwNnLie2rMRyF06f8=
+X-Received: by 2002:a2e:bd12:0:b0:38e:d78c:b16d with SMTP id
+ 38308e7fff4ca-392411ffeb9mr8148211fa.29.1777369854861; Tue, 28 Apr 2026
+ 02:50:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260422083345.84443-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260422083345.84443-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260422-fix-pinconf-v1-1-abb4d2e0da55@amlogic.com>
+In-Reply-To: <20260422-fix-pinconf-v1-1-abb4d2e0da55@amlogic.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 28 Apr 2026 11:48:29 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnr-M0fAjXRjNdvDveGEQe=iCK4a9wjzcbQZ+ucOtfrOg@mail.gmail.com>
-X-Gm-Features: AVHnY4J6lD9AUuGbhsok0dy_cMkoyrCYVoufVvHNaRD1_rjPUJ9Etr7muisBxtU
-Message-ID: <CAD++jLnr-M0fAjXRjNdvDveGEQe=iCK4a9wjzcbQZ+ucOtfrOg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Unify user-visible "Qualcomm" name
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>
+Date: Tue, 28 Apr 2026 11:50:41 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnKjhw7xhSwg-b0DNm+SF000wCFKVWsmt_5bN=CCpfP1w@mail.gmail.com>
+X-Gm-Features: AVHnY4KHYfTu3c9NjEh7-gGu4G_oPSv4ZkBHrghlIhCkbK9VzyhYmoslSQdRSM4
+Message-ID: <CAD++jLnKjhw7xhSwg-b0DNm+SF000wCFKVWsmt_5bN=CCpfP1w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: meson: amlogic-a4: fix deadlock issue
+To: xianwei.zhao@amlogic.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 22, 2026 at 10:33=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
+On Wed, Apr 22, 2026 at 1:44=E2=80=AFPM Xianwei Zhao via B4 Relay
+<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
 
-> Various names for Qualcomm as a company are used in user-visible config
-> options: QCOM, Qualcomm and Qualcomm Technologies.  Switch to unified
-> "Qualcomm" so it will be easier for users to identify the options when
-> for example running menuconfig.
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Accessing the pinconf-pins sysfs node may deadlock.
+>
+> pinconf_pins_show() holds pctldev->mutex, and the platform driver
+> calls pinctrl_find_gpio_range_from_pin(), which tries to acquire
+> the same mutex again, leading to a deadlock.
+>
+> Use pinctrl_find_gpio_range_from_pin_nolock() to fix this issue.
+>
+> Fixes: 6e9be3abb78c ("pinctrl: Add driver support for Amlogic SoCs")
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Patch applied, had to use some fuzz, then I also fixed up the
-just applied IPQ9650 so it is all tidy and clean. Check the result
-in -next please!
+Patch applied for fixes!
 
 Yours,
 Linus Walleij
