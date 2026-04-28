@@ -1,92 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC157404E;
-	Tue, 28 Apr 2026 03:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80972DB7B4;
+	Tue, 28 Apr 2026 03:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777347439; cv=none; b=cf2gnjxSmVXWlICkji+YmT0ZBTlzDfagnUIX/R8u4T5aR3KAGBbjZY6n6M01i9Ffs1CPmnUE10TNT3waYdo2WOe4wlT8hbHWei0XYovtbEyhko4g4mZSC0oqKMDTwmJtVBrTx37t950BYvCsza4wX06s9+SFASeCR+5sMRdyDpk=
+	t=1777347609; cv=none; b=XvbvClEauLFGfm+96vG5pmJKf1OnUQOUBCqAk2sHpRur6FTE+ArqZiTBWvrsL4lQC6UDdSF8OtPXTmbhsWX+MZCtKC46ywfIzGG0+LvlPRM/FA2GWqE+UySQIqWg7Nk45sOsFSe8NIRI8YIIZ0RSl6RYtqiNQ4unbWotekLpuNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777347439; c=relaxed/simple;
-	bh=2suceYxU88y6krrt22ZaO5KzYJZ3cUAIndOKkvU548A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=f7Ljrco/toEJoGYwfsWRiJuVOnSOfACiSCEIuqucWT0MEMtwUQp1UNfF7bewtaqLtQN/qkHxCFH/drE4zmtQK+r9nKzH8nNtoBHTpCogUGZZl47EhN9re7WvKrSvizpCqqNqpXE+5wbtiqR+wHvKpGCJTxXSHzQGngP2k8Jfw0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4s7WmaD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777347609; c=relaxed/simple;
+	bh=tciipBfN6vxEQA++yDaPsZs/cffL7BXyOIjkrkOatdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELnBJkDPVulb4c3S2mxoUhPvg/1pCFR41ptZkiTU8R3QyWOR8S5B9/AV7+ZqgI/rU7kGaUsL+nnTXUUZ6MKuTCoaKmkj51O6x6wlbixjX9nNuEXWkJSR+IkJ31zZNUqWzmkOinpdFWbqTsAt7cNVEBc2na+bCGznOdPUxbeh8a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PT8ZZz9u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4s7WmaD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA24FC2BCAF;
-	Tue, 28 Apr 2026 03:37:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PT8ZZz9u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB7AC2BCC4;
+	Tue, 28 Apr 2026 03:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777347439;
-	bh=2suceYxU88y6krrt22ZaO5KzYJZ3cUAIndOKkvU548A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=r4s7WmaDU2uexnPKho2g9q3exCEFSPLppH/VJZusCXM5NGPtYaZnOWWWRUhefwQOG
-	 QzsS/JqP52n0AfP8CoJDiM2rSd2+AlglEBPHDPIrZrwLOEcGFCoKDXf/IuNwPlBJKI
-	 hmF0K4hD0RrP59idXBMdc9vs5bXw6YGy+1qGJDYj1wZy3FJ6MfwirLM89IKBsM5QX0
-	 ZVtj9gAlx7MCxIQElBEzhX5BlhkPfxdPxEC2dleh+E5ugugjX4aet6XbxqRADiPSp2
-	 +1wNpb31E7uvLhlnwB36FmGthEq6M9sUCZsLpTUuFK8+x+0chuuGHXN7w7746Yj5Or
-	 3ho5VDKniS3pQ==
+	s=k20201202; t=1777347608;
+	bh=tciipBfN6vxEQA++yDaPsZs/cffL7BXyOIjkrkOatdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PT8ZZz9u58TmBScOUwl+aDVDYcfHPnDtU4fbPH0CvsxSic/gGROQ4Dua8gHDnub8j
+	 ZyQyn0IrCDw+DO8ofQ2uAEuCVs1Ga7FbgNLGouv3OBgf60vI3f2vC4Siv9e0L6dY5q
+	 FPXuyssUE1M6ZT9LxwLbAFg+jx96p16JsFqilLdr9R6qroqoGwuimKOZvSHCDdWGvu
+	 6hivtfaIuzoSZI8SfH9iXt8jskkM4MxGKFbEguKGwNRp5GgZ1fi7x3ycraRUpCr3sS
+	 CNyOBIIFdacjyE/m9MJQgd+PDe0TdpFqU4Jfh4SE32WTd5Y/UPfkBRcLF+Sy9H4x3P
+	 hp7He85FQqRkw==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id A55E51AC5840; Tue, 28 Apr 2026 04:40:05 +0100 (BST)
+Date: Tue, 28 Apr 2026 12:40:05 +0900
 From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>, 
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-In-Reply-To: <20260427-asoc-wsa881x-v2-1-9ef965f94624@kernel.org>
-References: <20260427-asoc-wsa881x-v2-1-9ef965f94624@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
 Subject: Re: [PATCH v2] ASoC: wsa881x: Move custom workaround to gpiolib-of
-Message-Id: <177732956023.324244.14124577102269598769.b4-ty@b4>
-Date: Tue, 28 Apr 2026 07:39:20 +0900
+Message-ID: <afAsFcydwlCEgWZf@sirena.co.uk>
+References: <20260427-asoc-wsa881x-v2-1-9ef965f94624@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1121; i=broonie@kernel.org;
- h=from:subject:message-id; bh=2suceYxU88y6krrt22ZaO5KzYJZ3cUAIndOKkvU548A=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp8CtsFp+P81aiwBajJQ/Avj0GJo+RwghkpGYtt
- GywrkATHQqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCafArbAAKCRAk1otyXVSH
- 0LxTB/0ST6p8ZIgydIX+XQ1oW9tF3BWzVHiOFLn7p2DK1ttXHW60O61LdpBqmXI8NLBOjGNdGm5
- 55AAelKg09NQavo1jc1rZ6QapfaDyVUvS9RdCO5mTjrHjLiTZwql8n+3DN5CdRChJuNKqubI1/N
- IR8udOR02P9y3f0moalUB5MX7ajCp7IIPLZunF2wSp9JivpQp07ocBxsepcweQ1vnEnA68RmFTc
- gboxKyeZtQwZ+yhsNtO4X0mUw5QuNNxw7yZSK5i21d09RbPiRQ2OAxrkrUSgRN6YiXrs4xRHsKc
- 0/Hk0fmL3WK+fBBWM0doQ+zxvcm43ogeA69w57+ZFdAqQeKn
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u/1OWsNPlQcuGK2l"
+Content-Disposition: inline
+In-Reply-To: <20260427-asoc-wsa881x-v2-1-9ef965f94624@kernel.org>
+X-Cookie: Victory uber allies!
 
-On Mon, 27 Apr 2026 10:43:21 +0200, Linus Walleij wrote:
-> ASoC: wsa881x: Move custom workaround to gpiolib-of
 
-Applied to
+--u/1OWsNPlQcuGK2l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
+On Mon, Apr 27, 2026 at 10:43:21AM +0200, Linus Walleij wrote:
+> The WSA881x codec driver has a local workaround for old device
+> trees that have the "powerdown" GPIO flagged as active high,
+> despite it is active low.
 
-Thanks!
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
-[1/1] ASoC: wsa881x: Move custom workaround to gpiolib-of
-      https://git.kernel.org/broonie/sound/c/bfa336cee332
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+are available in the Git repository at:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/asoc-wsa881x-gpiolib-of
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+for you to fetch changes up to bfa336cee3324f991e93e9e570e8b827273df97e:
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+  ASoC: wsa881x: Move custom workaround to gpiolib-of (2026-04-28 07:39:15 +0900)
 
-Thanks,
-Mark
+----------------------------------------------------------------
+ASoC: wsa881x: Move custom workaround to gpiolib-of
 
+Move a workaround for misdescribed GPIOs from the wsa881x to use a
+generic implementation in gpiolib-of.
+
+----------------------------------------------------------------
+Linus Walleij (1):
+      ASoC: wsa881x: Move custom workaround to gpiolib-of
+
+ drivers/gpio/gpiolib-of.c  |  8 ++++++++
+ sound/soc/codecs/wsa881x.c | 35 ++++-------------------------------
+ 2 files changed, 12 insertions(+), 31 deletions(-)
+
+--u/1OWsNPlQcuGK2l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnwLBQACgkQJNaLcl1U
+h9A8Fwf/RBYc3lgJ6uaIaetgHwkfNe97gFTvGfLt7aFB0Er09dp9xDlflChhSiVL
+q2+BA6a4Ea9NT4rpH6f6SrDn/IrmYX+doLtqUL3+jrivzV1J4HW00jLNrWJUn3CF
+2BFc1/hCOc/cdmVBc3iHresimI0LckOM+RvaBKBORZ32YZribLX2vLAq1nVj0GT6
+WK8QsNUBcndVRGOcE9xCas3b61qQJqkyEeBWRCBKtNDxnuOqEXmVR9JI76ZN7bWE
+O6JASY/cVzpK8mpU3p1umSao7jxX0EZi6xeInEu9C+9GzY4+poYk+YZoaZsXalj8
+53kpGKlqydYWv0Z0Dn9Mov3MWrKLKg==
+=wO9n
+-----END PGP SIGNATURE-----
+
+--u/1OWsNPlQcuGK2l--
