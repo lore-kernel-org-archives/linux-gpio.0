@@ -1,38 +1,38 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E7A3AD506;
-	Wed, 29 Apr 2026 07:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30313BED31;
+	Wed, 29 Apr 2026 07:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777448696; cv=none; b=HETWKZhMiaKAgqH/YVt2PL16kCFWyALVK/OLqAGHScOQwwIkYucWreyEcHKkLreZXrGd/wuLHXIohrAJdhmKfPf8IRF6wDb3SIqiV1BBuoTpjYGBxRBsXq0TF/WzxzpVn632LDGpaTTwnxCAlTK+vQqZKJ+zVzrMW5GPN1vKZv8=
+	t=1777448699; cv=none; b=NSB+WhYb7/nHMM/L/8cIcaX2zxI88WRy2G1qOQy5xNYwsBZUR2VI60cJ0R9xPr4DglRfJc0niVkz4m9UGPuyTF1CKwyPesJnu9xUYTo37+0CRRJ+DcOllvpGWook/eErZaDOxcfzzg3HfXIbTX45Go0yBesW/VpiEBryb4Afdwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777448696; c=relaxed/simple;
-	bh=juStJNcfV7KjmE/LU0kVIQ+8d1FBUV24oHAKybg13/o=;
+	s=arc-20240116; t=1777448699; c=relaxed/simple;
+	bh=op2dyqGMPf45Zp004/cYcTotxRMgO+sGnvJdpRf3ngA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rk/behE9LGkazdJiCQ/jDPt8N/xyvHI2FGxt1HFms12frwEI+LZqoKY+2j3AKz6GeUKmyQEH96cXO5PpoOPy8jzSbwPcFbvwiZsLY/bdyLsIZusHfZOxN02W91evqGF/9kA1Yx3bAm+36J08WYXHoUXXTeSa2RGIAMlMCV7zp7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0HmwpJwW; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version; b=C6s02KS3y0WMWsKsfciuR5ZxLXtptCFcXa3Cl2OB7qzPUlaa0GcFhMjhzJ6P43NIuAssYtnsMEbitby+GropJvP7dbyYmoqY7llrHDbb42K5QsAmyDwURp6GB3xXHbyML3IYEO3UkH5AkedNJKK5bk71xEYK9X9NM9K2R898j/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xsKLxOKV; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0HmwpJwW"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xsKLxOKV"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8A6624E42B68;
-	Wed, 29 Apr 2026 07:44:53 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 71D921A3478;
+	Wed, 29 Apr 2026 07:44:56 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5C116601DF;
-	Wed, 29 Apr 2026 07:44:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43CCB10729898;
-	Wed, 29 Apr 2026 09:44:50 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4211160537;
+	Wed, 29 Apr 2026 07:44:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E847B107298A5;
+	Wed, 29 Apr 2026 09:44:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1777448692; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1777448695; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=9QLwGF5jb+oga4BqW3y5KpwsRAOpzcDnt9w/lqu+R0Q=;
-	b=0HmwpJwWfbl0+K20zJpSighylQ/sm5p0ZyWqTVfBOp7q0DIoDWXbXPyvor+LcmE7JKCevK
-	vAiEKQZ40Nz4wNqouOdGTVvIW9rkmglHnEw6vs4p0yaut2hh4d7WeZF6K7ETeQm8tGyBVe
-	im7gk62n2063rjJjKxvJInkIPlidzUnhJaOtUWjHjtSp2dSN3NbckYZ0zn2mSNzoaqXcDt
-	iJYxjj2P0hMf8f5p4U2LGb3MWzSgWdu1gyg6Wd04LAL6YViah9f5P1rNEmLrp/JDZNqesK
-	6BPaADAL1dNTKl9lWzq6y9xwc3qwO1fI+gWf1CVKVo34YEkI1C/yBzb6+sDYCQ==
+	bh=BBUTlQzRbcWMTsEb0Kt5D7Leu3NTlQjVFL2I0uveIu0=;
+	b=xsKLxOKVcSg85hNBTKS1T7Eabf8uQw5GUSP1e7/cOxGcbansFbn49NMOE9HWf2S8XKMsLZ
+	al4bol33Z8sRtOexztmqLkba9zKm2qF5IPJCaz70MfJOSkmySh79WKLEM9yI6OwDExsn2p
+	9lCBFUFufyfmzefY1+FUE/vgvd+3dbQaVCqWpPSogx480/Oo3wAU9EDDG5+pNOyylMuQ+p
+	DCVZIlZkTHZASlNeD70z0UVmCF89UiHYvGk1TKqWeLCaV9mjdREdwM0/Jys6P0/okgVe0y
+	7c/vTRHlN8fRMZosrtFFUuTM4KGOSMEzERHq05Lcg/W91GVlHFceawl/5xB6HA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -51,9 +51,9 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 16/17] ASoC: simple-amplifier: Update author and copyright
-Date: Wed, 29 Apr 2026 09:43:52 +0200
-Message-ID: <20260429074356.118420-17-herve.codina@bootlin.com>
+Subject: [PATCH v2 17/17] MAINTAINERS: Add the ASoC gpio audio amplifier entry
+Date: Wed, 29 Apr 2026 09:43:53 +0200
+Message-ID: <20260429074356.118420-18-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260429074356.118420-1-herve.codina@bootlin.com>
 References: <20260429074356.118420-1-herve.codina@bootlin.com>
@@ -66,40 +66,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-After reworking the simple-amplifier driver and adding support for
-gpio-audio-amp in the driver, add myself as the author of the
-gpio-audio-amp part of the driver and add a related copyright.
+After contributing the component, add myself as the maintainer for the
+ASoC gpio audio amplifier component.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- sound/soc/codecs/simple-amplifier.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/codecs/simple-amplifier.c b/sound/soc/codecs/simple-amplifier.c
-index a7fbfcc4ec0d..e65ac29b4998 100644
---- a/sound/soc/codecs/simple-amplifier.c
-+++ b/sound/soc/codecs/simple-amplifier.c
-@@ -1,7 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2017 BayLibre, SAS.
-- * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ * Support for gpio amplifier
-+ *   Copyright 2026 CS GROUP France
-+ *   Author: Herve Codina <herve.codina@bootlin.com>
-+ *
-+ * Basic simple amplifier driver
-+ *   Copyright (c) 2017 BayLibre, SAS.
-+ *   Author: Jerome Brunet <jbrunet@baylibre.com>
-  */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2fb1c75afd16..4bd360f7aa80 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24985,6 +24985,13 @@ F:	include/sound/dmaengine_pcm.h
+ F:	sound/core/pcm_dmaengine.c
+ F:	sound/soc/soc-generic-dmaengine-pcm.c
  
- #include <linux/bitmap.h>
-@@ -956,4 +961,5 @@ module_platform_driver(simple_amp_driver);
- 
- MODULE_DESCRIPTION("ASoC Simple Audio Amplifier driver");
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_AUTHOR("Herve Codina <herve.codina@bootlin.com>");
- MODULE_LICENSE("GPL");
++SOUND - SOC LAYER / GPIO AUDIO AMPLIFIER
++M:	Herve Codina <herve.codina@bootlin.com>
++L:	linux-sound@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/sound/gpio-audio-amp.yaml
++F:	sound/soc/codecs/simple-amplifier.c
++
+ SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEMENT (ASoC)
+ M:	Liam Girdwood <lgirdwood@gmail.com>
+ M:	Mark Brown <broonie@kernel.org>
 -- 
 2.53.0
 
