@@ -1,112 +1,61 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422F2DC32A
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Apr 2026 03:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0DA3090D9;
+	Wed, 29 Apr 2026 03:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777432071; cv=none; b=ORkA4e1Qpo0nQJerxfqkg+iJKfoem31g56WMY3aHFBcAT6L7MF5nTHk945CnOoaJdfX0KutFj5GqUC9esg6rF+ZEKHrp8URgXyih+k3JHvmVXmbZQKV3Ls+M5MtJsVaGql4cxDfClA+TpdKtCs4wqSoiM5TlA7YHMGjAgeBuSmA=
+	t=1777434409; cv=none; b=MoAbO+pxG511Qt7PwG6cDiTu7WqbNqaSFGUft2r4sx+pBmLiHSn11BAqro5H/ds/h9fxd4ZWJ0awTCy1uQ6s77l/NUjnO9DoWqlSPq272VxaVY6C5WkMwb//uBgb4WR8hE/OUMuFdEGtCVTZng80Lb8FLOBYoD4j+n19+A71F6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777432071; c=relaxed/simple;
-	bh=eTuqcpRT28M1Kh8simf9Vs58Tet1tvIeFtM3QLaqPqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WetpTZSNy7Dn/S5fOHkbMJNy0hlEa9ftqTkDFrKW/aOYyZF9xNMvg/GhsF8pziWewEBwNLWvHzRZuS/uSmLGuw4pDSP/nXFK0VQmPiZZC5pLwtX4iH2F/w7SY8lr6AJMstj+DRGYpiEclI+bP6oAexMsrCHAviEqFomMvI5TrGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=laptop.org; spf=pass smtp.mailfrom=laptop.org; dkim=pass (1024-bit key) header.d=laptop.org header.i=@laptop.org header.b=qqyii7yK; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=laptop.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=laptop.org
+	s=arc-20240116; t=1777434409; c=relaxed/simple;
+	bh=9PlwOMJb59m0dV5l30jKmO5m42xoUBZhDmyraeHzGwo=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=K/bbjqyNl+hS/jkyuY2J+N0dzowRcu0iSmiIMLgzuYvKaqY+VwENhmBMOzIq05Jz4bx4sThGTN+JcfWMaybCD/+yGBq74vWI0K2bejQvuFfryB262j4acjyrIFjOyBcmO5pAAVfev5QXd8qHdhlmb4WmjUJwjCvsY7i6kiz+1Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAyb8qS/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=laptop.org header.i=@laptop.org header.b="qqyii7yK"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-82f8893bff3so5666706b3a.2
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Apr 2026 20:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=laptop.org; s=google; t=1777432069; x=1778036869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPtxRFuWaKXZFarT4M6cqYcLbh8ZqBRpSWemDoC/VHQ=;
-        b=qqyii7yK7Rxm6GUatIwXsrEzCwyVtjSQHJijAJ92s3tAFKPw+AIw3wZEHtj7PWcBpk
-         OLhKmD3tfAKcyuPay5/dQTP5hlNc/iFm2+6/YRTa/uemVhbQMomf5sFSVLkjL9n/kyv4
-         NngU5ds10cZl7W5DzuJ5zIe6zXj36eHWBf23g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777432069; x=1778036869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TPtxRFuWaKXZFarT4M6cqYcLbh8ZqBRpSWemDoC/VHQ=;
-        b=sLr0rgYdpiGTX8/zw19yHqvFVJW/gpsqRlHd1zrgGTAUrUzj/kMgxQVR5ySaSlshdv
-         mG2BzHI0z6vxXWpy3N+ks/4yh00MM+P0cXTAgs9yHUCVohn0umjfY3bQm/mLm2bsdo1Y
-         LJfrmOBJ0VzUPh2B85bb3QCgGzlSKdn7Q0wTv6mXEnteJJoKwDKYm15xC6I3PL4hNus4
-         H5C3AbPenCTEBd6Oy7sPQwOxEKjshaVoR8cfFrDyDaZP7TQz57EUMOmAwHDfprlxkPKO
-         A6Kjj/q0wZUGhhevVRE0ESORCi8kX10TNIlhNf++TcT+0W5ulAwyQSVygnT8v2jKUEGf
-         U8qQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9a0GBg7rY3Wy2jB3/7P576LviIvgFlKnYHxlln5hFoaFTIihR7XsmuYZ0t+XhOqaye6w9rjndFiEQ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDGCFIo2MRYV9ek11nGyewgY97mIhovm4EaZoQEHKSqZaOs4Rg
-	RlObMIj18s+gGXDINmgEoifa2UHki/8lnxIUAEPSYmDXUO2B5ay5jvIZ6UCYpZqs7g==
-X-Gm-Gg: AeBDiesZVjunt1OcxDmFS6QBmMT6EAlrkkx8iRzaRAVbwtyy0orVZvt/Bey88OpiCp9
-	/ORhoSaagLMeHpgh3G5MBnEbSgYNY1KEw2h8mxDoz8KKKWPu7VzVLwJfQHebNiHb1DQJEQtgQtm
-	Cx5mQ+ZSOk0grWlNUaNgAW5ULLjqNa0WmtrQLzHEcSBUym2pXXvMZPHthOlrLuZBeF/5gfdSfHx
-	STAGB/y98cfz2X482r43Qv2FzFRbDwd3cDvnuPoIpxEj9+PAznC1GZp2OUpXFrtbjJfvjXekpP0
-	YB7IQv1op9CC0MEswvyVc+Grdi/aVCy6fTgqBJcR/Bb/B8vJgKoRJ8hWwxNbbRjH6MFmfffyDTd
-	WzjC+A81Uxr/eRyT/dyDwG7flEVwS26+KpSBB2+au8y0ePFJC0j6J82EGS95DLqXJqbyk4SX8IM
-	0S6K2FzXGk9nP8G1tTfA==
-X-Received: by 2002:a05:6a20:3d19:b0:3a2:ecb8:56d7 with SMTP id adf61e73a8af0-3a39c2eac99mr6460712637.45.1777432068915;
-        Tue, 28 Apr 2026 20:07:48 -0700 (PDT)
-Received: from esk ([206.83.114.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-834ed59fd3fsm455067b3a.8.2026.04.28.20.07.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2026 20:07:48 -0700 (PDT)
-Received: from james by esk with local (Exim 4.97)
-	(envelope-from <quozl@laptop.org>)
-	id 1wHvH6-0000000BIo8-2iCH;
-	Wed, 29 Apr 2026 13:07:44 +1000
-Date: Wed, 29 Apr 2026 13:07:44 +1000
-From: James Cameron <quozl@laptop.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	linux-geode@lists.infradead.org,
-	Andres Salomon <dilinger@queued.net>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Subject: Re: [PATCH] x86/olpc: select GPIOLIB_LEGACY
-Message-ID: <afF2AEZ-iZibtbDT@laptop.org>
-References: <20260427144338.3436940-1-arnd@kernel.org>
- <CAD++jLm951WUzBVWa4QakOBuLQy+HQOD0SwQ7tHEuPkM=j3XGw@mail.gmail.com>
- <63e9542f-c170-4361-9b2e-7fde8fc16da4@app.fastmail.com>
- <CAD++jLmQRMs=Hwh9=Kzu_HEAqJea2jPJ=R9eBFQQVTYpXCZ+gw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAyb8qS/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5E8C2BCB4;
+	Wed, 29 Apr 2026 03:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777434409;
+	bh=9PlwOMJb59m0dV5l30jKmO5m42xoUBZhDmyraeHzGwo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=IAyb8qS/AcltzaJjzms3GU+9Sg2utIMY2EwiOYtHCTEIXAQKwGUo79vTkt006TVn+
+	 xibvJKT3Fk2XMDGPbjWqQWKkEw5UZ31XQyEb8ftkFblhIxTjSyLFJSg9SPPOQh/9uB
+	 JC/yB7IoH0GlspeA8j+aAMFjp1lU9aVjh9DzkhoDJmNPD+7z+eXanFJqdVKyRT/98m
+	 X0sbbneSAtQRidAbMZeMADH4v/dguO62KJkK7y1BPzaBczGdvgLfxJMCQtbYluspgD
+	 wp3gbDSyCay/fnx/CZ8RjHsWPHDWC5xDNq7Gw5VCEwUE6bAT1WkQF7DH6C8TR4Qdls
+	 QZmzq0mFTCq4g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD++jLmQRMs=Hwh9=Kzu_HEAqJea2jPJ=R9eBFQQVTYpXCZ+gw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
+References: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
+Subject: Re: [PATCH v8 0/3] pinctrl: aspeed: Add AST2700 SoC0 support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, Bartosz Golaszewski <brgl@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
+Date: Tue, 28 Apr 2026 18:56:20 -0700
+Message-ID: <177742778029.5403.7247019083523002317@localhost.localdomain>
+User-Agent: alot/0.12
 
-On Wed, Apr 29, 2026 at 12:34:53AM +0200, Linus Walleij wrote:
-> So if there is interest full upstream support should not be
-> hard to attain. But it requires some dedication, and I wonder
-> if such exist.
+Quoting Billy Tsai (2026-04-28 02:49:44)
+> AST2700 is composed of two interconnected SoC instances, each providing
+> its own pin control hardware. This series introduces bindings describing
+> the AST2700 pinctrl architecture and adds pinctrl driver support for the
+> SoC0 instance.
+>=20
+> The bindings document the AST2700 dual-SoC design and follow common
+> pinctrl conventions, while the SoC0 driver implementation builds upon
+> the existing ASPEED pinctrl infrastructure.
+>=20
+> ---
 
-I'm still here, keeping infrastructure running, still have hardware,
-still receive telemetry showing children using our Fedora 18 build
-(!), and still answering technical questions.
-
-But we don't have funding for this kind of work.  We now buy-in
-laptops.
-
-It would be wonderful if keeping dcon happens, but I have to be
-realistic; whoever does it will need to be very dedicated to acquire
-second-hand hardware and work through the various other things that
-stop the modern kernel from running on it.  I'll cheer you on if
-that's you, and may even help out by mail, but I've other funded work,
-so my time is limited.
-
-Good luck!
+Why is this being Cc'ed to linux-clk? I'm hoping it's a manual typo and
+not some sort of misconfiguration in ./scripts/get_maintainer.pl,
+please?
