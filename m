@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB70C19E839;
-	Thu, 30 Apr 2026 11:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913943AF67A;
+	Thu, 30 Apr 2026 11:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777548223; cv=none; b=DyvFlykRcYLfLUADL3y6DaMsdGIezes2NsOlvDj3Wc5/+d6wmCkumEdfuVa1csFr15GXc46ca3ifJCwYG5eJn043aXUDh/wxrGUZHzjnqxFWCrII/tcWPFNzbyDbR5/tLfL/d2O2PfaqSsIBLqWgdh0/vm+JFAGAW63bW2KEA8w=
+	t=1777548271; cv=none; b=jRRw6LI5RwC2vGzCBpFWOFtqE88AK33lYLAdyUS5n9TC3MEvI+jx8er/AEVhV6UQnDcKdKs//sYszJYs4jzWWg0w0IjzxK6J1jwnl1zfng1my7vWgSzvxlrb0C0RMdU6eM3jrR2tEYjk7j/LKwGy2kXT0bcogI6qbQU0NrpO2Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777548223; c=relaxed/simple;
-	bh=y0DV5zO2eVU82OJnZH8JCZffr1Ytd2kNwNVgaDihKA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qj+zOFWEdXnJRRHNE5JxoN8ceDKJL6b/yROXqDL4Qm9lDoWNEglLQTq6FdoxdOxxjQ8BNi/7rOTdPXAV6gqtum5s8835j90b3Lk9KLbtaRF3hLGjOR4ztGoShJrPKeYw8snBCZWAG+BtrT7TUmtP3qfOqhoFKZnhATvxemJBJjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAp10jUO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777548271; c=relaxed/simple;
+	bh=dsGnAliiTDQC0j0QOXt/Ci4gp/31DHhmKm7DB4q1qrs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lMY33IGwJE1BUWcGogY2dTIUaLrYCP2BTdjFhCIzN+JqdTP2Xuo+gzB0kQDGwKV+dA0Xkau42OAK9jgcnDI9WThCLmhlpGd8WsgK6ZxxRz3/SOieE3vfmGdsnxMe4n4qz5yUZKoaRqJWQ5+LM2T4puG2lzER0avEqe4mI9O+3fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhE7dn2x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAp10jUO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03496C2BCB3;
-	Thu, 30 Apr 2026 11:23:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhE7dn2x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8029C2BCB3;
+	Thu, 30 Apr 2026 11:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777548223;
-	bh=y0DV5zO2eVU82OJnZH8JCZffr1Ytd2kNwNVgaDihKA4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XAp10jUOjzOViGFVLYzXFsSpPcrh5x5F92QGm9mC/vmXDe676ueudgsaZYQ6KUm2j
-	 AvRRfHe1kxTQQGEOnBmUPT5N3ptYqfw1xewVZi4kpS2hpx+7ML6EperetjKxPmq6KA
-	 o6jIci19JHmpIhWybbuDHY127z+wXBhxGaBfbmKe/azGAIB/5GcoFH1DQD7Odw/ntE
-	 Qp3SKLkzJkIoChmUAfZ1Ac0li1h4UBkSOgj73+OHJ9bF3irhKOr0VS4NS6R9DWkx51
-	 7i3cwpLgRZ1DK5KphBhy+p6yiulIyOU1r1xbYqyHf0O7YRcl3ZWlW87W7D1BPNDqWG
-	 3gfY5wInoLxzA==
-Message-ID: <6ff75de9-6d5f-4d4a-bb19-1c06d0aa8d3a@kernel.org>
-Date: Thu, 30 Apr 2026 13:23:38 +0200
+	s=k20201202; t=1777548271;
+	bh=dsGnAliiTDQC0j0QOXt/Ci4gp/31DHhmKm7DB4q1qrs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=mhE7dn2xF64/1R/Z9eBpoAPfKVt2/xgy1fF6qd45Z3qCKLeild20yo0v2m0yBTlUm
+	 +xVwJ0YsRP9JtpcEl1fF8jVlOJ0oRl/vZPPgQNWKW+5u2FGXBKhkfpU/9Nnj4io9+X
+	 vo97UQFgvf7TkWnVmH/bbNe1azK2n4QWF8URihVXFLBpi6vOtigWQDEnZifzvQQ3nU
+	 /8B/6fGkMyJTZ6MEM16NdmmsN905CRfzCTRbQYUzt4PbXSytNQUz5NgcWsuk6ydJ61
+	 J7eDcdO6qC+b1CxBxlfoNYjw15cbS2w/L5rjqjr/M1D3QhVnh5CpbtgIP8d1B5ATkX
+	 p8TYP7G6LMJaQ==
+Message-ID: <e1829cf5-c277-4e34-8bcf-addc27bfd69c@kernel.org>
+Date: Thu, 30 Apr 2026 13:24:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 1/4] gpio: Remove "default y" in Kconfig
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Yu-Chun Lin <eleanor.lin@realtek.com>, linusw@kernel.org,
  brgl@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  afaerber@suse.com, tychang@realtek.com
@@ -45,7 +46,7 @@ Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
  stanley_chang@realtek.com, james.tai@realtek.com
 References: <20260408025243.1155482-1-eleanor.lin@realtek.com>
  <20260408025243.1155482-2-eleanor.lin@realtek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <6ff75de9-6d5f-4d4a-bb19-1c06d0aa8d3a@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -90,17 +91,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260408025243.1155482-2-eleanor.lin@realtek.com>
+In-Reply-To: <6ff75de9-6d5f-4d4a-bb19-1c06d0aa8d3a@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/04/2026 04:52, Yu-Chun Lin wrote:
-> Remove the default y to avoid bloating the build for non-Realtek platforms
-> when COMPILE_TEST is enable on other platforms.
+On 30/04/2026 13:23, Krzysztof Kozlowski wrote:
+> On 08/04/2026 04:52, Yu-Chun Lin wrote:
+>> Remove the default y to avoid bloating the build for non-Realtek platforms
+>> when COMPILE_TEST is enable on other platforms.
+>>
 > 
+> Why isn't this driver important for Realtek SoC? This should be
+> explained, otherwise proper fix is default for ARCH_REALTEK.
 
-Why isn't this driver important for Realtek SoC? This should be
-explained, otherwise proper fix is default for ARCH_REALTEK.
+And you were kind of asked for it at v1...
 
 Best regards,
 Krzysztof
