@@ -1,140 +1,95 @@
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1013FD129
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 12:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA303FFADC
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 12:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777550905; cv=none; b=HtDZioDhqkY1Psst0oP3Ulqk98lzb6WUTFMUf1335khcudoyMov0TLLDnuX49SxAV9HfVzBhX90YRGWGP6m2n29c8OmLZfshcfMz1d9ydp90H3ASz2LgIKWCAGvLbdIcxKRZu1gCPjCxpqQr3HdMVfw6y+mUqTUef7hAFqCiGBc=
+	t=1777550909; cv=none; b=txIWvO3VQszK47P5RzQKTh65lRXQ2s/cuQLo4kenyR9/SUQgS4hww2hlmc1+Bbq052g9tXWIoBqdhj+A+J9eTaW37n/B05etBwZaTLC/cnjy99AJ1bhaUThM9aVihfhg3YZvWf+pYF+rwpgsqWUKrlLbZtRjHHtMrPq3R8nJkdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777550905; c=relaxed/simple;
-	bh=EZZ2E4Hk4P3ioWVMaervDcnw6ADW65oM1zGar71sbpY=;
+	s=arc-20240116; t=1777550909; c=relaxed/simple;
+	bh=Z0SrwckcmMEhYsq872vQn8z1xxHWcTPFIyYdkrVQ7t0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FPKI6AGFzQryl1CXksUdBCVf8y+8vWPuk7YyRLOJAKBf98At1m2wVSZAQvmNVZfZLln60la/7rQIvOJcPtX4ytvjNkJbgd3Pay+rxCB0cn7PuW2Ac1cNS9YLy7EjsD9AF9KSJ61GuoTjurkFwAFfBsVbA+/7UE1TNMBSqzKaRWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-404254ffe8aso728991fac.0
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 05:08:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777550903; x=1778155703;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ksIL4rip+tLI1Yx6QhQXSN6krUTnsd9SRkVzjQXrZjA=;
-        b=WrZJ9QTkj2GnfY2+JlgSHMMfKSsGZT3ZVGWeBbdplG/tV3HYDwo1LJ1y79iAZMPJD/
-         burwC0TOXwKpJJ7vzEFvTJBe1EGf/EtCwYXnwSvnyImosALiKG100U5Iv1H0M+vmoCJd
-         rWIO8ZVseKFugLtCGgnkTbeN5SmjhV7/lw0QPQ1eDFyyjxmhZp8DEXjYoRlZHoFm5BXq
-         NN+V3z4uIwQbb2hzOZGr7aBaCIB0aOTBe0l4edNXW2z6NXWC+CtLJ7GN6W5fqPDK2G4c
-         g5PjA8g7XN38726c9yWrsBMJ9zYp2NmHkuaYbrWYHupC7ehYWqyKQU5RLOAFPgdUcTba
-         JG/g==
-X-Forwarded-Encrypted: i=1; AFNElJ8gu+s5vyRtiwZED1PEltFL8A96+G8RLPkPp/QTdWJsSckr3x5fDQaVxiM7Y/773TRUlfAGSkXptAhq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/nSYfLvnAydG0X/HTKEYqhUyEM0qWcgYHbsXtpkNfEiAmM7ur
-	k9gWhFNPsNnsa03QH1deX5T+r9QGEcXZOx13LBmg+rBqQQwHAa3BjdGGK58ZPztlPEw=
-X-Gm-Gg: AeBDievdVRP7mlrZks+43kAAvhdeWb45XhGlWjPqWqJoqertx+ubAntCd92oQ/nWVuZ
-	PRVtCvdrNAUxSG/JcB4qOpAWhix/ZZypKob8ZGHDC7xdGweQGRWbN5fUZru5GtFBFuE86zQdQEj
-	rij+zMOsOuKDQy2zlfr0ez/ci0VQOMdW/IWbA75JLCsu8HrjpmYQovo9y7yjXvKkmyDHbbKjADg
-	L02skZ8Sd3SAYpxa8CkbVIqP5i4dKg7BMCkrnnTJ+WR3s+NzaallK/X/dsT1gs1ouf98pGt5Gvg
-	CS4wkaaB/7OjGaeZcLMYAt96g96Y/6DotgCWpfav0Mx+dJc6CY3fmLYGFve0yrP7bzdUSnTESS+
-	A3+h9Ahn2a+Grob/MdYlEG4R2ojuN3yb/luKxE66nbSq0+AKzT60vpVd1ln+coJd1APdrAXHT6f
-	wF06cq6a15XDsm+Iy5yXn2pe6nsHhhMpFMT07vYj0C//1DmjGupuHvLfwvnXwfdyWhYWMKHuc=
-X-Received: by 2002:a05:6870:9d95:b0:42c:924:2bf0 with SMTP id 586e51a60fabf-43438c69391mr763279fac.27.1777550902934;
-        Thu, 30 Apr 2026 05:08:22 -0700 (PDT)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com. [209.85.160.43])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-43436af06f8sm1562228fac.5.2026.04.30.05.08.22
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2026 05:08:22 -0700 (PDT)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-404254ffe8aso728983fac.0
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 05:08:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9vRtRIca6jsEQQQM7Ni9S5TK8TrnSCzuueuVWOvk4ITC1UtRPPTx4/21HdQbCbF2D+P/fwUATBSh9o@vger.kernel.org
-X-Received: by 2002:a67:e708:0:b0:610:347f:9f3b with SMTP id
- ada2fe7eead31-62afc506100mr613209137.3.1777550404889; Thu, 30 Apr 2026
- 05:00:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=b78vAnvyJZ8TMvH6Hqm0EGu2PQjGixnx0DhuQauS+EVFco2W2juEW7a+qUT3bxHQWd/BFH9FSK+aaH+Z9j/+NIE5aMFaBMCCztMLefLEzpSpcDZu3uJ9HRFM+NQVzIJWBxGQK5ntBqlHGmwXSx+Qro34Ru9CEek3OajpLnnRKCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXFyrHDV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXFyrHDV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7025C2BCB3
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 12:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777550908;
+	bh=Z0SrwckcmMEhYsq872vQn8z1xxHWcTPFIyYdkrVQ7t0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mXFyrHDVW4CzmTPPXSkWX6ArMnD83/YLIYYNUXvi6hTeGxU8w1aZEMreLS+LlFeuz
+	 JNjSrJxdsoUruqZyDNVoF3x8r6vW7lWkoS37KDkqf2xZjtgLEeWHqGBxj9PRKj71DI
+	 rNpIML4FsvMecBomBPQ+nvWg1W7brrNDYjRr13tkrnqHvzwQL1R2CLPqAW5lK9KdC0
+	 74Fajb3bOmjJZPQSVV/E14I1CmAhXqUd1jAjcYvuYH2xTOnjqVIv+cVIWAjS29k5/j
+	 fvbV6zUeC2YLdDNeF/8z38rzq3cIoXkqmIwpT4vQCbVBx9pRUus60EfwYcVweVJiRX
+	 +XwMJ0hyNuEYg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a40cfab24dso934513e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 05:08:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9pG6Nxo3aUSnqHy9UG7FE2BmOhB7PZLVKuBCd+ggWMGa6oF5kzoBPGEpoY+reSSOEvsD+n1koY1OGB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxKFs06uBpsQ24Bifm/RORfrXxemxVNUiK26DSVeViyKOA7Hyf
+	HWBMGGL7JsygShwiKKlqLjYbm8H19dG7cS1Y2SbgqrI47IARBAAESqPoGTJC2kn9NaEfMlltMXA
+	wDumBHNehOf44FPyM/vOEsBFN+b2y+xQ=
+X-Received: by 2002:a05:6512:1394:b0:5a4:1798:31ba with SMTP id
+ 2adb3069b0e04-5a8522d4e93mr847311e87.21.1777550907436; Thu, 30 Apr 2026
+ 05:08:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260430110652.558622-1-vladimir.oltean@nxp.com> <20260430110652.558622-18-vladimir.oltean@nxp.com>
-In-Reply-To: <20260430110652.558622-18-vladimir.oltean@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Apr 2026 13:59:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWbeeRmLf6Ae0Fr0un=-z7z5ONc_hDdjebP=KVkXHPbhw@mail.gmail.com>
-X-Gm-Features: AVHnY4K0yYb6vTu9KdtDciwvAziqboYRX_ITZ386sa6ttixZ1EP_Mzy9gi4Pi0E
-Message-ID: <CAMuHMdWbeeRmLf6Ae0Fr0un=-z7z5ONc_hDdjebP=KVkXHPbhw@mail.gmail.com>
-Subject: Re: [PATCH v7 phy-next 17/27] phy: introduce phy_get_max_link_rate()
- helper for consumers
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev, 
-	UNGLinuxDriver@microchip.com, Markus Schneider-Pargmann <msp@baylibre.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andy Yan <andy.yan@rock-chips.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
+References: <cover.1776872453.git.happycpu@gmail.com> <20260429035134.1023330-2-happycpu@gmail.com>
+In-Reply-To: <20260429035134.1023330-2-happycpu@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 30 Apr 2026 14:08:15 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk43uWNojmajzKUGm-UzP8Z7qxC2nwMrRE6=WVbTt=-Ww@mail.gmail.com>
+X-Gm-Features: AVHnY4I0ki9rGDzmVa6bSPlog4a2U1FZNKcs6D7nH0y5brqxdc8g0KW-DN9bc0E
+Message-ID: <CAD++jLk43uWNojmajzKUGm-UzP8Z7qxC2nwMrRE6=WVbTt=-Ww@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: fairchild,74hc595: add
+ lines-initial-states property
+To: Chanhong Jung <happycpu@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vladimir,
+On Wed, Apr 29, 2026 at 5:51=E2=80=AFAM Chanhong Jung <happycpu@gmail.com> =
+wrote:
 
-On Thu, 30 Apr 2026 at 13:07, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
-> Consumer drivers shouldn't dereference struct phy, not even to get to
-> its attributes.
+> The 74HC595 and 74LVC594 shift registers latch their outputs until the
+> first serial write, so boards that depend on a specific power-on pattern
+> (for example active-low indicators, reset lines, or other signals that
+> must come up non-zero) have no way to express that today: the Linux
+> driver always writes zeros from its zero-initialised buffer during
+> probe.
 >
-> We have phy_get_bus_width() as a precedent for getting the bus_width
-> attribute, so let's add phy_get_max_link_rate() and use it in DRM and
-> CAN drivers.
+> Document support for the existing lines-initial-states bitmask, already
+> defined for nxp,pcf8575, so the same convention covers this output-only
+> device. Bit N corresponds to GPIO line N. Because the 74HC595/74LVC594
+> family is push-pull output only (no input mode, no high-impedance state
+> under software control), bit=3D0 drives the line low and bit=3D1 drives i=
+t
+> high; this differs from nxp,pcf8575, where the 0/1 polarity reflects the
+> quasi-bidirectional nature of that part.
 >
-> In CAN drivers, the transceiver is acquired through devm_phy_optional_get()
-> and NULL is given by the API as a non-error case, so the PHY API should
-> also tolerate NULL coming back to it. This means we can further simplify
-> the call sites that test for the NULL quality of the transceiver.
+> The bitmask covers up to 32 lines, which fits the typical 1-4 chip
+> cascades that appear in tree. Should longer chains require seeding in
+> the future, the property can be extended to a uint32-array without
+> breaking the bit-N-equals-line-N convention.
 >
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Acked-by: Markus Schneider-Pargmann <msp@baylibre.com> # m_can
+> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks for your patch!
+My old email but who cares.
 
->  drivers/net/can/rcar/rcar_canfd.c                   | 3 +--
+> Signed-off-by: Chanhong Jung <happycpu@gmail.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # rcar_canfd
+This works for me.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -57,6 +57,7 @@ int phy_notify_disconnect(struct phy *phy, int port);
->  int phy_notify_state(struct phy *phy, union phy_notify state);
->  int phy_get_bus_width(struct phy *phy);
->  void phy_set_bus_width(struct phy *phy, int bus_width);
-> +u32 phy_get_max_link_rate(struct phy *phy);
-
-This (and all the existing getters) should take a "const struct phy *".
-
->  #else
->  static inline struct phy *phy_get(struct device *dev, const char *string)
->  {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
