@@ -1,85 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7C3B95FF
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 14:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED183FD141
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 14:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777558749; cv=none; b=XQ19H/jRUGqQEWjElbkfdXg6PLFZdRNS6sdKtGGTRoZ8Bq4Lpf3HZX3mI+idTSbfMjhVAEb/UqO+OB5BU6fLhgsgDBR2hIfkph7p9Bfo8wSWs3m2Q0vEQSeAKWJq+yEGCG6/Dlt+7DNx1LSnQ3RS3gjCmapeB0rOvNJ7HSF+pMo=
+	t=1777558761; cv=none; b=mYJyyaT6HXyg49Dx92xFAkOOFYtXNrW7f/ojZOqNnBBX8I0zBzsNqA9R4EWujpvFDoZJkaiJpY8X1G016S0YY8/jtCGaZ/ftxXEcNZaxQliVEmfqNoNGdDN0EXkqQF9UL11G0m+r9/nmGDcbam9vCm/Ekka/cRo0u0ekvmxjWpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777558749; c=relaxed/simple;
-	bh=Q9tt+mnufVVwhHRJ8ZcddPBPStA7bWjY220nJuQiZsw=;
+	s=arc-20240116; t=1777558761; c=relaxed/simple;
+	bh=F/klmbLlHjty1gUUHqY2Dbg+r9lnLNSpnZBORzQfjJQ=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOacV5xKiIt3Kc6huXNLKT/QKNVGh8x9wYOnRntREeZJASb/mvRqcN+PiI/owCtYdp+Ny2QXDQW4EJG3VkwNIv8GOM6+5LhkEkymf4qCBnKFbfNDhTZZAVz/PHRXGMd5zqrDu+Z1HcXc9ILbPjSxWr5o2xqJIS7WpbuOsw1prgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc5HtqNa; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=BIg1tIBwrBmnlbI7sAXGBYcKTQ8IVQjGqAzKoWt2byZk/1F/OZcULFbS2WbdlUSTVpYP60x/W3msFC+SoBvjuxrBHn7N+7E4aDb20dELWW0jYZKmpVvlxVR+kBKFUpGX0yV1It8Oz6H/DqNOwVjinIj2QerDZ/6WKT8T36LIKSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4P/LG7t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc5HtqNa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763ECC2BCF5
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 14:19:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4P/LG7t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8897FC2BCFF
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 14:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777558749;
-	bh=Q9tt+mnufVVwhHRJ8ZcddPBPStA7bWjY220nJuQiZsw=;
+	s=k20201202; t=1777558761;
+	bh=F/klmbLlHjty1gUUHqY2Dbg+r9lnLNSpnZBORzQfjJQ=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=jc5HtqNacskNprJJ9Dlp7HsGz1z9+SSyhb8ZBvHJlCZa58bZHhWGkWgKW5oN3eqIV
-	 qVWy6G7UTpq034Ls83mhuQTbY8JHtkHJCvMjgCsSXjz8gTQSfNdUZH9gC4WdESysKl
-	 rUC1kNk+8Mfhth1p1ppElFSiKYqN2S3dDG4R+QZfhktHRVoAA9hPCagZjL9of75QD4
-	 kzSdVj1Alo0Z2e1bYwa0b75CwYW4LP9oqpzm6eaSN2ZW/4PVBh5ARNIR83dwmAl/th
-	 DPgZND0chXmkuZ0rUoO/40vr60VoOaa0b21hRFJfioPAqHqOJal5k7PWJRFME2lz+w
-	 /zA1IaatKmv2A==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a413f83226so1877020e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 07:19:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/mmmbHh7cHzDLX7+L8tvrf61gXKE+9Czecdwio0ZV1fW+21RHuLY0SeThFfPhezbuvPL9OcStVzSE7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/nzKzx0h5T2/88wtrb5sSrMRTuLsbrcVI5AFvyhQYAP9H1hUm
-	YQcN5jwGE2FZFho4u2yqGl0rrUlIYpobpLYdeiVRva5W6MhMP+2tciHNKCDuldjyP4wIt2qRXs9
-	SFkaVVr7D2SYUPTttoQEu4IuOBB2rTosXwg8sLYIBWw==
-X-Received: by 2002:a05:6512:1148:b0:5a7:4912:1a50 with SMTP id
- 2adb3069b0e04-5a852741d7amr1333075e87.20.1777558748095; Thu, 30 Apr 2026
- 07:19:08 -0700 (PDT)
+	b=I4P/LG7tkJ62TA4BzqdV5EF2UiWWFowy2id1mu3WJfGMqtDHJ6CGzB8xg+DjTBfUx
+	 inXNM5WQe+V6D/jPCfVPl5ILLXQmTIvGFx7hID3c3XT0BADAKicUNCVfheKbTczbIO
+	 PNUBpb7TiNv2hz623mQEGrU/zjTtAYPUpdK92zUChqA95lVwllzBAU1v3PQF0m6AQF
+	 ZVRQsq7Kkd6RDCTPyeveaeOH5V+cbiUsiroG5VGU+W4cC6SCy6h56gPq5H13IRsEbH
+	 WQHZT2zVf+Q0Fba+E9f4kuYAcfqp6jTvQRUrlABUY3UojE7mOJN52qYH7cGQ+pdlgW
+	 qac9vM6Gv/JKw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a62a049c1fso964741e87.3
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Apr 2026 07:19:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9eW25U0Str7XqJTz698mZu9b1vFDgZdXtbj+a3K9JzGQN4b1HkKXGEsGSMy9K5SYQb8/4ze+yjrtGZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuG4hN1vHWmECUyQgMXQXnjcywwl0mfjwwO3XO0ceCYWG2+f2f
+	l61vrf4BeZMi2lpG4A0SRICGzkxaknptrT5s8jSWJ6bTzXs9hpAbq8Wo9Mo4HYfwHrTT+V3td8k
+	xZXJ94vERAJf+rPVRCasYg44lxQrkdkUYRFYM84GAEg==
+X-Received: by 2002:a05:6512:2385:b0:5a4:18cb:884e with SMTP id
+ 2adb3069b0e04-5a8522d7f89mr1123970e87.26.1777558760093; Thu, 30 Apr 2026
+ 07:19:20 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 30 Apr 2026 16:19:06 +0200
+ HTTPREST; Thu, 30 Apr 2026 14:19:19 +0000
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 30 Apr 2026 16:19:06 +0200
+ HTTPREST; Thu, 30 Apr 2026 14:19:18 +0000
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260430091202.2724109-1-arnd@kernel.org>
+In-Reply-To: <20260430081242.3686993-4-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260430091202.2724109-1-arnd@kernel.org>
-Date: Thu, 30 Apr 2026 16:19:06 +0200
-X-Gmail-Original-Message-ID: <CAMRc=Mcy4SU_djLHzkvTT8TF+m+ny00HzitbEzafv=2hWeWAgw@mail.gmail.com>
-X-Gm-Features: AVHnY4Ko156ktPJQzga9Q43_ALjDDN6D0nk4oJKZZDvj7AlNETrBLA7qJ5w-vCw
-Message-ID: <CAMRc=Mcy4SU_djLHzkvTT8TF+m+ny00HzitbEzafv=2hWeWAgw@mail.gmail.com>
-Subject: Re: [PATCH] [v2] leds: gpio: make legacy gpiolib interface optional
+References: <20260430081242.3686993-1-arnd@kernel.org> <20260430081242.3686993-4-arnd@kernel.org>
+Date: Thu, 30 Apr 2026 14:19:18 +0000
+X-Gmail-Original-Message-ID: <CAMRc=MeYOxDdpS=AEMX7ChHcPTOsz1+DxuSNcNtV4PwOagwyUw@mail.gmail.com>
+X-Gm-Features: AVHnY4IpV9J_wm_g1EdQYCGOE-gGqU5pWdF_TAuz210HOf5B8hJhqLIEur523_Q
+Message-ID: <CAMRc=MeYOxDdpS=AEMX7ChHcPTOsz1+DxuSNcNtV4PwOagwyUw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3 omap] ARM: dts: omap2: add stlc4560 spi-wireless node
 To: Arnd Bergmann <arnd@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Bartosz Golaszewski <brgl@kernel.org>, 
+	=?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+	"David S. Miller" <davem@davemloft.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, Felipe Balbi <balbi@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Johannes Berg <johannes@sipsolutions.net>, Kevin Hilman <khilman@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 30 Apr 2026 11:11:55 +0200, Arnd Bergmann <arnd@kernel.org> said:
+On Thu, 30 Apr 2026 10:12:42 +0200, Arnd Bergmann <arnd@kernel.org> said:
 > From: Arnd Bergmann <arnd@arndb.de>
 >
-> There are still a handful of ancient mips/armv5/sh boards that use the
-> gpio_led:gpio member to pass an old-style gpio number, but all modern
-> users have been converted to gpio descriptors.
+> Converted from the platform_device creation in board-n8x0.c.
 >
-> While the CONFIG_GPIOLIB_LEGACY option that guards devm_gpio_request_one()
-> and related helpers is currently turned on in all kernel builds,
-> the plan is to only enable it on the few platforms that actually
-> pass gpio numbers in any platform_data.
->
-> Split out the legacy portion of the platform_data handling into a custom
-> helper function that is guarded with in #ifdef block, to allow the
-> the leds-gpio driver to compile cleanly when CONFIG_GPIOLIB_LEGACY
-> gets turned off. Once the last user is converted, this function can
-> be removed.
->
-> Link: https://lore.kernel.org/all/e9252384-a55c-4a91-9c61-06e05a0b2ce4@app.fastmail.com/
+> Link: https://lore.kernel.org/all/20230314163201.955689-1-arnd@kernel.org/
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
 
