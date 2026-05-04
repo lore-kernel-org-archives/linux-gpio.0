@@ -1,118 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F32378812;
-	Mon,  4 May 2026 14:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777906593; cv=none; b=Cws1r00e08TqMCXoxyxTa8jV4V2t2DC9Hwl8wXD/0XVm9fZoLHly00BhOnC4fjub6GPJ9Y1frz3OJksG2NvNkwAqsUXYpk34jA93Qn53MlFIFnINC6BzBdoSrkx6sAdEPwnKegRxg6lX0BMO0PXhzF7hktYqqo6G/Rm+SSKnnmw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777906593; c=relaxed/simple;
-	bh=KtagOfNLEs02cUVPj4FT+pAk0pBIYBNPgs62jaR0P04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SN5MiwxExtWN+KuS21TBdMMq9ue8e0FcAzyhuBi/L5MKAK2+pcmUXwnFy1KHUtLuf7meW9kGuXHQ4M2nN/aT59h/fpFGFj4mMRANGSe6Mzrf3UjWM0n1JuT17iobB0eQWAdSM86cwg1Hl2xC4gjnWGLC6ACCSCgEdoVR8S/DQOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rZWMKMgL; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1CB3D3008
+	for <linux-gpio@vger.kernel.org>; Mon,  4 May 2026 16:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.171
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777911231; cv=pass; b=J93nf8dXNVEFyADFSQ6ob4S4ONTwgHZ3vk/hsz/8+XnVF6oubZG5om0oUuhru5DAbQ7XcOv2Axd+/yIDV3AZQ7JainkdSViiHbdpkXsf0F5fcTNmpG8yUDTQIHCyccCZdW/8kldYhTb3ZK/DtefiaIdAcHhO5TmlHSargcUoBbE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777911231; c=relaxed/simple;
+	bh=grQPokDiwKkKR2cC+qIpUFc+ziae3fsVthjPxy+WT4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=emQU+wJFd0G+nt/m9uqVhs1aJ0oAgKiIAWOotPtWPvC8PNxSBufFfWFKLMu3GrA1pBFSKWlibbYVmDiTw+fZu1UYiSDbm11z93zfXpcla7GmYb+srphSAEK0itsbShnf79hIrzwgkNlRFk9AutO86XFGZeiRr/bYmGG02s4gAWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+s+KstR; arc=pass smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rZWMKMgL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9353C2BCC4;
-	Mon,  4 May 2026 14:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1777906593;
-	bh=KtagOfNLEs02cUVPj4FT+pAk0pBIYBNPgs62jaR0P04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZWMKMgLDxLk8OfQEWZkHQ2/vZEF0UzjawV1RjbsheUbUR0tnauJh5gj5Ey5UfcDf
-	 H+BJVA+E3umxco6Q9Ic/zwyrI1E3tp4zGaooZbUCwpYQSS7Q/M+DbU4EuhAuwKuyw0
-	 PlNfJx6LjogUGtJRiBAidVhHmbbM/0lv9OhL/QtY=
-Date: Mon, 4 May 2026 16:25:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: zain_zhou@realsil.com.cn
-Cc: linux-staging@lists.linux.dev, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: i3c: add Realtek RTS490x I3C HUB driver
-Message-ID: <2026050412-bush-rosy-959d@gregkh>
-References: <20260430121354.6253-1-zain_zhou@realsil.com.cn>
- <20260430121354.6253-2-zain_zhou@realsil.com.cn>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+s+KstR"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-79ee5037d44so57859267b3.0
+        for <linux-gpio@vger.kernel.org>; Mon, 04 May 2026 09:13:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777911229; cv=none;
+        d=google.com; s=arc-20240605;
+        b=j8MdzuyRWRx3BAWxqAiSevHZ+fXkHqwhbZeX93yczmvy6MINL7O5rlF7XcpeGTto9M
+         UMqJ0jtqDO44CziB+pl3SD2s3e5PnXIYlIWS3mXofuUsUmbvU0nkGUPbyU69x9TdxsGb
+         xbfGTqgO3lymDukaxmFpFWkdIrjqaXjVosfav7EF2Rg3+uexB3x/He/ecvOkSNNb7fP/
+         mfuKFW+bpJlqPNsRQFSgMSWYzZispHnOqNCSbpn2kweH9Pdu1ej285zJfAmmjq6dFXFU
+         spLzsyhLbUqCQh6qhZMZ36qHfBw79vXhmt4tDjqmhiOi4AjFYVUCKIrQeJhKGm51jNXZ
+         ro8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=aw1EJoGSTvPEmUW8dtUARkbi6z9e/iETAYYEQUh3CgA=;
+        fh=lCdUrgspx37gSeZ2Dv8tS3h7I2EzvJnonNy3RcbqS74=;
+        b=Zgvsvfys4i6VAQ+afQNjoAa8kkypEhKXxEwdBTNhRXme2IHx22JbW7M28wQUyAPk+D
+         YVCfhblBrp8sMCul0bRj53QRa/2c2K0PRkURaiRp3SwXmfZl5sKQwKnsk1PgNfx+SWjT
+         4fWiiEEQqciUU97Fz+/7mUEJXiuCMy+6xwtBUgjFZ/htFkIEtwyNnGIHubGtJsY75zDD
+         5vkckwK0ih6GRJzwN8tZE3ZKQuIUYPi0N/3P0VLiI4BoHbgTj4JIj9ObHOKAeAOs3qMu
+         RA2wL+EMib22SQSFJK5xkSpKnJsnyfh9yjPcJTtJqNn7WzeboJ2iBCQE598Qu6rKfOd0
+         38PQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777911229; x=1778516029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aw1EJoGSTvPEmUW8dtUARkbi6z9e/iETAYYEQUh3CgA=;
+        b=O+s+KstRxIQPHEUQp/CQ5zQm1QhkucyyyhCoEONdE2Z6KoG5XlBGgCP+Zy6lulc78P
+         jKPCbiD6/exeAQ17GIpyonQp7N/KGfE/ix1kwlW87DQF048UzWw4Ri9vAwwfNyuVtR3B
+         1UJGbSvR8KL84Ct+h4hY6MklAaPhARvW7PjlMhD8U3WJp+8y0GoPueES7AZ9944B+15m
+         CZZl3N9/N3oKma8n5xUvAMWkHP9rpZWu6nBkmBPpjZeGSViUv/OlgJ3Y6X75NlVcHkY6
+         2MIi/WVBdUyQLs3TKuYu/liFoYAewxwJ7bHi0HHPYEh+CLf2tUWTAQhdeJ2RRKRVitX9
+         BG3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777911229; x=1778516029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aw1EJoGSTvPEmUW8dtUARkbi6z9e/iETAYYEQUh3CgA=;
+        b=PwVwiD0PJzXDvNJhxGBYdZUEf8KpA3LzmDSip/00n1LYAjV0KpJoQzZaQNpzDcJgDG
+         rJtrtpRUuuqRNA/bhQTidN8tk6BZUB/zpEeLQPnx36S3oTYG4/9mFOgLVj5mdP2j9avo
+         9TbzJ61iuYof9hZXbmucLM8JvDEsYJ94Al/Fw5ZLqyQE2rN9jcFkFol0H/NCFf8PbPEL
+         v6vuaX4OBK0VG2tgs2RNZVzNyjoowXXl1k3IMMODRnOvFU5g94K7+bDiZZswN/MOh5Sj
+         Qe9z75ZAwSK4hb2NaTXpCiFQDnnL6KsjaH9wFyXh5Jt4gmilM1LtdF0Wdklyy0xp0165
+         Jf/g==
+X-Gm-Message-State: AOJu0YxbNaxNbwWEwlkQgzNrboqQR5yikcVvgdg6UlYBM+Fwq2rWr20M
+	BBtH4al4zP+e5UgdKPt/uoz8EZu44IAwrahp+ZPrue9x+qMZ8P65xTJi0hMY3e2pIaK3L8ijPxp
+	f328ClQR6A9fCR3iHZW8OdbboGgHiPpY=
+X-Gm-Gg: AeBDieuSUAhuPhykKy4zrUZ9ZirHfbrUFNFGKb1GB67zJmZqtDvMOSCR1cg3YLtSF/T
+	3Hl43Z+vC9NA/P/eDULHP0oSavyTWJnsYZqRvbfjxxCn8WjREizoQO6lBbTfP/i86IHuUmmHH92
+	P56favLdJNYkLZQZNdmKiKWL7NutaxB0K8bGFjuTYoWWRnK1AnlM14vkmEOGPU8vLcMDQfRDrpj
+	zzYsLoRFFgUwZbclsZ0jiz/XUqm7U/pxCmzJK7ps0DxQHF6qqONHpddiI5hFETdBp9/m6vF1J1k
+	BVe4GUWyFkOfGl4Ru9za
+X-Received: by 2002:a05:690c:dc6:b0:7bd:76f6:b3a6 with SMTP id
+ 00721157ae682-7bda893b844mr2026677b3.3.1777911228923; Mon, 04 May 2026
+ 09:13:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260430121354.6253-2-zain_zhou@realsil.com.cn>
+References: <20260503190016.13439-1-zxl434815272@gmail.com>
+ <20260504075036.12190-1-zxl434815272@gmail.com> <20260504075036.12190-2-zxl434815272@gmail.com>
+In-Reply-To: <20260504075036.12190-2-zxl434815272@gmail.com>
+From: Maxwell Doose <m32285159@gmail.com>
+Date: Mon, 4 May 2026 11:13:37 -0500
+X-Gm-Features: AVHnY4JDtbQyDHV4lFMguikU8ySIJc08NyGY4EMZ3ERTXO3Iow37nDmmugzLn2Q
+Message-ID: <CAKqfh0H7BzdxYJr3bQbymrh9ex4q7fLcCbGEkp3HPX++pJ-XMg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] tools: gpio: validate arguments in gpiotools_request_line
+To: Zhang Xiaolei <zxl434815272@gmail.com>
+Cc: linux-gpio@vger.kernel.org, brgl@kernel.org, warthog618@gmail.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 30, 2026 at 08:13:54PM +0800, zain_zhou@realsil.com.cn wrote:
-> From: zain_zhou <zain_zhou@realsil.com.cn>
-> 
-> Add driver for Realtek RTS490x series I3C HUB devices (RTS4900,
-> RTS4901, RTS4902, RTS4903, RTS4904, RTS4906).
-> 
-> The I3C HUB is a smart device that provides:
->   - voltage compatibility across I3C Controller and Target devices
->   - bus capacitance isolation
->   - address conflict isolation
->   - I3C port expansion (up to 8 target ports)
->   - dual controller port support
->   - I3C and SMBus device compatibility
->   - GPIO expansion via target ports
-> 
-> The driver supports:
->   - Device Tree based configuration of LDO, pull-up, IO strength
->     and per-port mode (I3C/SMBus/GPIO/disabled)
->   - Logical I3C bus registration per target port
->   - SMBus agent functionality with IBI and polling modes
->   - GPIO chip with IRQ support
->   - DebugFS interface for register access and DT config inspection
->   - IBI (In-Band Interrupt) handling
-> 
-> The driver is placed in staging as it has known issues to be resolved
-> before mainlining; see drivers/staging/rts490x/TODO for details.
-> 
-> Signed-off-by: zain_zhou <zain_zhou@realsil.com.cn>
+On Mon, May 4, 2026 at 2:56=E2=80=AFAM Zhang Xiaolei <zxl434815272@gmail.co=
+m> wrote:
+>
+> Add validation for input pointers and number of lines.
+>
 
-We need a real name, not an email alias.
+Perhaps make the commit message more descriptive?
 
-And no, please don't add new drivers to drivers/staging/ especially when
-it is so easy to fix them up properly "first" before adding them to the
-kernel tree.
-
-Your TODO file is pretty easy:
-
-> diff --git a/drivers/staging/rts490x/TODO b/drivers/staging/rts490x/TODO
-> new file mode 100644
-> index 000000000000..0be2d7693d68
-> --- /dev/null
-> +++ b/drivers/staging/rts490x/TODO
-> @@ -0,0 +1,19 @@
-> +TODO list for rts490xa-i3c-hub staging driver
-> +==============================================
+>
+> Signed-off-by: Zhang Xiaolei <zxl434815272@gmail.com>
+> ---
+>  tools/gpio/gpio-utils.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/tools/gpio/gpio-utils.c b/tools/gpio/gpio-utils.c
+> index 176bccfcccb0..930a38fe7911 100644
+> --- a/tools/gpio/gpio-utils.c
+> +++ b/tools/gpio/gpio-utils.c
+> @@ -65,6 +65,12 @@ int gpiotools_request_line(const char *device_name, un=
+signed int *lines,
+>         int i;
+>         int ret;
+>
+> +       if (!device_name || !lines || !config || !consumer || !num_lines)
+> +               return -EINVAL;
 > +
-> +- Move driver out of staging once the following are addressed:
-> +  - Add proper DT binding schema validation (dt-schema)
-> +  - Clean up open-coded OF property parsing; use device_property_* APIs
-> +    instead of of_property_read_* where possible
-> +  - Remove use of full_name / sscanf for node name parsing; use
-> +    of_node_name_eq() and fwnode helpers instead
-> +  - Replace global mutex (i3c_hub_regmap_mutex) with per-device locking
-> +  - Add kernel-doc comments for all exported/public functions
-> +  - Resolve TODO comment in i3c_hub_hw_configure_tp() regarding MUX
-> +    connection verification
-> +  - Remove TBD comment in i3c_hub_probe() regarding DEV_CMD security lock
-> +  - Review and fix potential locking issues in i3c_hub_delayed_work()
-> +    when registering logical buses
-> +  - Fix error handling in i3c_hub_delayed_work(): early return on failure
-> +    does not unregister already-registered logical buses, causing resource
-> +    leak; needs proper cleanup on error path
+> +       if (num_lines > GPIO_V2_LINES_MAX)
+> +               return -EINVAL;
+> +
 
-All of those you could do this week.  Don't add stuff to staging that
-you are going to maintain, as it will be more work in the end.  Just do
-the needed extra effort and then merge it to the proper place in the
-tree.
+I'm wondering if we might want to use ERANGE here for the num_lines >
+GPIO_V2_LINES_MAX check instead of EINVAL.
 
-thanks,
-
-greg k-h
+best regards,
+maxwell
