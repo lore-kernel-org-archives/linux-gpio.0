@@ -1,124 +1,118 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42FD3CEB89
-	for <linux-gpio@vger.kernel.org>; Mon,  4 May 2026 14:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F32378812;
+	Mon,  4 May 2026 14:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777906414; cv=none; b=FI7A8EeZTJ62iFIOp5R8GDkIT2VrSAZChnsM4mxMZcDc0K+wZT448CaNsbXVbySO6H/tEa/2PetXGPHzgbatRl1kCSMf1+AY8gUCddeyDT3ttJ5lT5r0pWU2BBe86rbfhJ3slbQamEbvT5YfopH1Tir9UYBfpMi4A9hkdm1Kv+E=
+	t=1777906593; cv=none; b=Cws1r00e08TqMCXoxyxTa8jV4V2t2DC9Hwl8wXD/0XVm9fZoLHly00BhOnC4fjub6GPJ9Y1frz3OJksG2NvNkwAqsUXYpk34jA93Qn53MlFIFnINC6BzBdoSrkx6sAdEPwnKegRxg6lX0BMO0PXhzF7hktYqqo6G/Rm+SSKnnmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777906414; c=relaxed/simple;
-	bh=KsGehUIs9yjLgFhJm+ALM6CihYTUD9IxFPyF+rbn54Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V0IxY7KuykE7tIqSmGVq5U2Rd8/YPcE6m0Lk91L3kjftk8+rbqAWB0gwjzecVv/HJqqTfj9hjl7urELS57YBZN0paqPxKJvlsakLZ40qOYoz/fRfkT5UgQ+Uc7KXiCIuEgOY6Ve7KYS8o+lnQmPUX9kup7D+ygWLJN0DoisKgwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vnni7daF; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777906593; c=relaxed/simple;
+	bh=KtagOfNLEs02cUVPj4FT+pAk0pBIYBNPgs62jaR0P04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SN5MiwxExtWN+KuS21TBdMMq9ue8e0FcAzyhuBi/L5MKAK2+pcmUXwnFy1KHUtLuf7meW9kGuXHQ4M2nN/aT59h/fpFGFj4mMRANGSe6Mzrf3UjWM0n1JuT17iobB0eQWAdSM86cwg1Hl2xC4gjnWGLC6ACCSCgEdoVR8S/DQOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rZWMKMgL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vnni7daF"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-35691a231a7so2879437a91.3
-        for <linux-gpio@vger.kernel.org>; Mon, 04 May 2026 07:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777906413; x=1778511213; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L68A0nliiu2Q3xuxzZG34RHvsW2Cqh1HButFAloiLuY=;
-        b=Vnni7daFHiQtPUTPwAC5VPvcWlkiSfDDTcHDsOguprYLJCPCctBmQbXXOymx4dLJNx
-         kD6L/+pO886c3Zg+EzpQRwX3JP9kB7Gv1HkiKSejZ6L/CVbCEa2SRBJBLEZRn0D3rWtE
-         vUL1Ljig/PPfB+MZi8fyK7iF30EXtU2eJCKUS2FH17VR96qwrwOgEzmpyIpq0dUTqa+i
-         ObODjY94AR4wuogW3s7fqlOzeUofbVZfCNFIcks97AOif4vp+hU2mSf662o3x73kN5De
-         Tz+y2YMqGR5H3SiH1+6KLQq5A+9jO0+M4vjHLM2Gu/U2JzaKk1w8eUiF1qEUyStlOJQo
-         w6Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777906413; x=1778511213;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L68A0nliiu2Q3xuxzZG34RHvsW2Cqh1HButFAloiLuY=;
-        b=HQtTZnY14JWy14YnM8qC+zMIxGLA9QH/Hzz4vlSQ056FcMtvPA2ahSVz88oXJi/gEJ
-         zMWtedgHjxdk7owyoP8dHdO4i6KaiKhzL81dFGvYbCe0m9XVTFdlctaV9v5kcLueEAVq
-         822/4CYXVXbabLAA6cicykoiMecAHuI2g2erv8zxPduNP91SkX/XbS/maX4gXvFHhaSO
-         Qe7Jyz8JAkEfjAyHrKQVo1ni6nPnPvBv7PR2YZh+dOTs5WPWjgRPn8coyup6OrDNR8PD
-         zU9tRaOF6Vtk31Jz/aDFpBr4cVw6D9CDMFP5fHpDnOGi0dbPJ8qI98f4ltDkJ0hzcOoy
-         ciOg==
-X-Gm-Message-State: AOJu0Yw6zMLBMX3CHSG+X09lscaT5fuUSUJkf2nFg5ibaWGI/x0WqXPa
-	dhpT9bHA5OM0/+6fEacjEAF1T/GK1+FJupEC9ujzhHInmXimaQSk3rhe
-X-Gm-Gg: AeBDietz6+gTYGAvZZMu/PLb+MlP4U63yx5I4C083mY2XsI/mcw9RDTtiyxp7rcH+9D
-	HGY22z9wOMAErWsWIdpNFx5SO9VTWBVreYQyZZiiFMFHKE/9zTpkU13jBNbnyuGEoe5hso4O87o
-	ltZoz7sCIsxokq2k0nW1dBh47nuwwxDYUVIabQ7+YQo3pGDwN1LqjC5FeDjiwg8Ph2X/wV93j1t
-	ZX6Cs1PMp3FXgKxIlvz1P/r/2YEff0EVkq9hO4iaXWfcm/J07ZC/3XQCB3g9M7AwPeHI+s+zKJf
-	XouUObWPx/9qspPP9KoZQPElPntqQZB0VoaKJi4tedbWPXkD/h7tEw4wi6vAGQPRwLBI7Z8xA4N
-	Vp387fb4QtAIqC7OlnVC9TlT+I2rSbIyB4tiaK9uOK360mPL1a+7V2P9IYkO/ocjXJWbwju2qEO
-	GcO+QanNRGFPXUMTtMT49uX/E99eKKV7GaVSK+Bhu/Y9St9uzU+ALznJ9s9tueJC4LVmSXmOoUY
-	CWf68MHFyZmlHGVYbpBNsMBgOA5bg==
-X-Received: by 2002:a17:90a:d444:b0:364:6558:99be with SMTP id 98e67ed59e1d1-3650ceaab7fmr9463975a91.22.1777906412786;
-        Mon, 04 May 2026 07:53:32 -0700 (PDT)
-Received: from junjungu-PC.localdomain ([223.166.246.30])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c7ffbb05798sm9926085a12.0.2026.05.04.07.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 May 2026 07:53:32 -0700 (PDT)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Mon, 04 May 2026 22:53:26 +0800
-Subject: [PATCH] pinctrl: sunxi: fix regulator leak in sunxi_pmx_request()
- error path
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rZWMKMgL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9353C2BCC4;
+	Mon,  4 May 2026 14:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1777906593;
+	bh=KtagOfNLEs02cUVPj4FT+pAk0pBIYBNPgs62jaR0P04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rZWMKMgLDxLk8OfQEWZkHQ2/vZEF0UzjawV1RjbsheUbUR0tnauJh5gj5Ey5UfcDf
+	 H+BJVA+E3umxco6Q9Ic/zwyrI1E3tp4zGaooZbUCwpYQSS7Q/M+DbU4EuhAuwKuyw0
+	 PlNfJx6LjogUGtJRiBAidVhHmbbM/0lv9OhL/QtY=
+Date: Mon, 4 May 2026 16:25:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: zain_zhou@realsil.com.cn
+Cc: linux-staging@lists.linux.dev, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, alexandre.belloni@bootlin.com,
+	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] staging: i3c: add Realtek RTS490x I3C HUB driver
+Message-ID: <2026050412-bush-rosy-959d@gregkh>
+References: <20260430121354.6253-1-zain_zhou@realsil.com.cn>
+ <20260430121354.6253-2-zain_zhou@realsil.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260504-sunxi-v1-1-c0fd0df52776@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAOWy+GkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDUwMT3eLSvIpM3eSUREtDMzPDZEMLQyWg2oKi1LTMCrA50bG1tQCZt7F
- DVwAAAA==
-X-Change-ID: 20260504-sunxi-cda91661c181
-To: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777906408; l=1142;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=KsGehUIs9yjLgFhJm+ALM6CihYTUD9IxFPyF+rbn54Y=;
- b=HeZnzJUAEwh2zXD8lRSUzBtxzjVKqCO0BBfYZRyGOZBJ5CwDrdBrjEiQHQdwkS1QwwsLUSbpO
- 6SW0IlZZ5BXCjzD1FqEQUkVaPWVJsfKl5GiXk3mGGLFIUcMtZBXaX+U
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260430121354.6253-2-zain_zhou@realsil.com.cn>
 
-In the error path of sunxi_pmx_request(), the code calls
-regulator_put(s_reg->regulator) to release the regulator. However,
-s_reg->regulator is only assigned after a successful regulator_enable().
-This causes a memory leak: the regulator obtained via regulator_get()
-is never properly released when regulator_enable() fails.
+On Thu, Apr 30, 2026 at 08:13:54PM +0800, zain_zhou@realsil.com.cn wrote:
+> From: zain_zhou <zain_zhou@realsil.com.cn>
+> 
+> Add driver for Realtek RTS490x series I3C HUB devices (RTS4900,
+> RTS4901, RTS4902, RTS4903, RTS4904, RTS4906).
+> 
+> The I3C HUB is a smart device that provides:
+>   - voltage compatibility across I3C Controller and Target devices
+>   - bus capacitance isolation
+>   - address conflict isolation
+>   - I3C port expansion (up to 8 target ports)
+>   - dual controller port support
+>   - I3C and SMBus device compatibility
+>   - GPIO expansion via target ports
+> 
+> The driver supports:
+>   - Device Tree based configuration of LDO, pull-up, IO strength
+>     and per-port mode (I3C/SMBus/GPIO/disabled)
+>   - Logical I3C bus registration per target port
+>   - SMBus agent functionality with IBI and polling modes
+>   - GPIO chip with IRQ support
+>   - DebugFS interface for register access and DT config inspection
+>   - IBI (In-Band Interrupt) handling
+> 
+> The driver is placed in staging as it has known issues to be resolved
+> before mainlining; see drivers/staging/rts490x/TODO for details.
+> 
+> Signed-off-by: zain_zhou <zain_zhou@realsil.com.cn>
 
-Fixes: dc1445584177 ("pinctrl: sunxi: Fix and simplify pin bank regulator handling")
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We need a real name, not an email alias.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index d3042e0c9712..25489beeb312 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -925,7 +925,7 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
- 	return 0;
- 
- out:
--	regulator_put(s_reg->regulator);
-+	regulator_put(reg);
- 
- 	return ret;
- }
+And no, please don't add new drivers to drivers/staging/ especially when
+it is so easy to fix them up properly "first" before adding them to the
+kernel tree.
 
----
-base-commit: b9303e6bff706758c167af686b5315ad00233bf8
-change-id: 20260504-sunxi-cda91661c181
+Your TODO file is pretty easy:
 
-Best regards,
--- 
-Felix Gu <ustc.gu@gmail.com>
+> diff --git a/drivers/staging/rts490x/TODO b/drivers/staging/rts490x/TODO
+> new file mode 100644
+> index 000000000000..0be2d7693d68
+> --- /dev/null
+> +++ b/drivers/staging/rts490x/TODO
+> @@ -0,0 +1,19 @@
+> +TODO list for rts490xa-i3c-hub staging driver
+> +==============================================
+> +
+> +- Move driver out of staging once the following are addressed:
+> +  - Add proper DT binding schema validation (dt-schema)
+> +  - Clean up open-coded OF property parsing; use device_property_* APIs
+> +    instead of of_property_read_* where possible
+> +  - Remove use of full_name / sscanf for node name parsing; use
+> +    of_node_name_eq() and fwnode helpers instead
+> +  - Replace global mutex (i3c_hub_regmap_mutex) with per-device locking
+> +  - Add kernel-doc comments for all exported/public functions
+> +  - Resolve TODO comment in i3c_hub_hw_configure_tp() regarding MUX
+> +    connection verification
+> +  - Remove TBD comment in i3c_hub_probe() regarding DEV_CMD security lock
+> +  - Review and fix potential locking issues in i3c_hub_delayed_work()
+> +    when registering logical buses
+> +  - Fix error handling in i3c_hub_delayed_work(): early return on failure
+> +    does not unregister already-registered logical buses, causing resource
+> +    leak; needs proper cleanup on error path
 
+All of those you could do this week.  Don't add stuff to staging that
+you are going to maintain, as it will be more work in the end.  Just do
+the needed extra effort and then merge it to the proper place in the
+tree.
+
+thanks,
+
+greg k-h
