@@ -1,129 +1,86 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AEE2C030E;
-	Tue,  5 May 2026 10:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E67430C637
+	for <linux-gpio@vger.kernel.org>; Tue,  5 May 2026 10:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777976845; cv=none; b=lNvRAklS0zcw4jK4MXV8jpiNBZ1l63zrzw1K1zu0ZxIj4W233DRTLl+n932LIzRdT82rydcLviqu0qILrqRGgo/6RDV2+XmtOtmQ2RcNvsyWuJRviRhReHpQznL7fF/jnfZG+rU3j4+udwsvSgJQR/nSJfE1uD7SScEE+2AMtiw=
+	t=1777976914; cv=none; b=f0JuGnzKDIhb3jNqB7RwAibWzGMmm/JFwitxdVdyaZkSUucsONjUDrtLtbWvyXHgYL9SfYdLKWz1ME4hISKLl1gXMK6XBPe/FLBPjaZxN3aQj1OI6JVhq0NZCU+zBBr3152mituja0D9koH0zZWcgC8PwbUjVvSlvLhToIfxMvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777976845; c=relaxed/simple;
-	bh=nd4ZcYSmdEtBrbYBc5EdvBORdOz6BQRpz7hjMzcloAs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YJlw3F/je/Yg0QHQlawvYXOVrw+rpOtZenN3ukGycFVlzMaU4q7kpnfpad8yOahnDN071utXRxKEtIH3Pvanp9MkJ0Vil+2rclvpj0UErjA2de9jq25DiKyIyXu+xedZh5qbPWSJ8AmJGu9US7lUheg8oRi0ZCnIF0k5womh+dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=KRUPH5Am; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1777976914; c=relaxed/simple;
+	bh=zytMuWjG0fiHX9INaamnKiHfY1coYLUKlKEAABYlbWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oc7r+OueyCPjcrCGELGl2ZvB/6MZnR2xygi+r3dI42FGyTgTVk88NzliI+wOF/6RPw4qKuUHSVjlFPGcKOkvziQe6Sz69OpZxH8jMGuT/+WokQtS1OD4NevEVesamvaELCJFogXfoKQlgz/IMFjVUSl/8kVACUNGXV0Wss+7+Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+XBGfQj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="KRUPH5Am"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 645AQbyP61150973, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1777976797; bh=nd4ZcYSmdEtBrbYBc5EdvBORdOz6BQRpz7hjMzcloAs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=KRUPH5AmyvR3Ywi2gVAXXKSJKUY1dbABEKalo9995UmQmFI3BknwOuxt4gqAgVM67
-	 09gzw4NaRay1M6Ev6gX10ZGvXQG8xsPoA6W+yVlfnxw1AiKOeGF/HQb896TiJ0hfeK
-	 YpUIhHSygWZ9XCh6J/O5MBVfbZP3wTyScU1hSpTlGJxKu0eNVTmnqRZKSY2FjXk4qR
-	 o8BZkbgrwzO0kFbNPK61+3MbgqzJ/NOmVqrjieJ2/Arv/mSsnAtJJr9c3F0BvtK9/u
-	 4Dr3QEYG/8HRT+N5uzhw/FpSscWM+Ug9oj+QM5IVQCdJxDjY8rl16q69102056mwGU
-	 9+rQJ+E78ZQkg==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.27/5.94) with ESMTPS id 645AQbyP61150973
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 May 2026 18:26:37 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 5 May 2026 18:26:36 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::ed72:3015:2840:4458]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::ed72:3015:2840:4458%10]) with mapi id
- 15.02.1748.010; Tue, 5 May 2026 18:26:36 +0800
-From: =?big5?B?WXUtQ2h1biBMaW4gW6pMr6enZ10=?= <eleanor.lin@realtek.com>
-To: Michael Walle <mwalle@kernel.org>, Linus Walleij <linusw@kernel.org>
-CC: Bartosz Golaszewski <brgl@kernel.org>,
-        "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-        =?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?=
-	<cy.huang@realtek.com>,
-        =?big5?B?U3RhbmxleSBDaGFuZ1up96h8vHdd?=
-	<stanley_chang@realtek.com>,
-        =?big5?B?SmFtZXMgVGFpIFvAuafTrnBd?=
-	<james.tai@realtek.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "afaerber@suse.com" <afaerber@suse.com>,
-        =?big5?B?VFlfQ2hhbmdbsWmkbLZoXQ==?= <tychang@realtek.com>
-Subject: RE: [PATCH v2 3/4] gpio: realtek: Add driver for Realtek DHC RTD1625
- SoC
-Thread-Topic: [PATCH v2 3/4] gpio: realtek: Add driver for Realtek DHC RTD1625
- SoC
-Thread-Index: AQHcxwLHJ5/eWVH9pU2ZY37QYpQGurXUP0uAgAPMV8CADmSzAIAAqFqAgBBo1aD//5D9AIAIUqFA
-Date: Tue, 5 May 2026 10:26:36 +0000
-Message-ID: <3f9aa7a00a384511bf12d5b420c98e85@realtek.com>
-References: <20260408025243.1155482-1-eleanor.lin@realtek.com>
- <20260408025243.1155482-4-eleanor.lin@realtek.com>
- <CAMRc=MfUh_OuxS4SC6QzSOg_PMNc9i9crGYgBASrbVUgHDHSCw@mail.gmail.com>
- <52bf9ce2b7754af8af69b0afee0d07b2@realtek.com>
- <CAD++jLkpS-T9yK=ctSwpLvXkj7s7ivmwu1KKwzy4KS40LVYeyA@mail.gmail.com>
- <DHXSUW3NJU22.1RUYUHQZSZ53S@kernel.org>
- <b73f34ec55984a33b0172e2ac3a28e04@realtek.com>
- <DI6G6LSE68E9.1PHS6K9083JJ9@kernel.org>
-In-Reply-To: <DI6G6LSE68E9.1PHS6K9083JJ9@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+XBGfQj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20847C2BCFA
+	for <linux-gpio@vger.kernel.org>; Tue,  5 May 2026 10:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777976914;
+	bh=zytMuWjG0fiHX9INaamnKiHfY1coYLUKlKEAABYlbWw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r+XBGfQjmEqlhCRyhvawLxMRxMqfQ8vs1qaoF8H1d1Lq7A3CvsSLHSsFL1d6EziXr
+	 fiqGCfi9rsnhRQ66tMpjqRGdlT55Ygdecf9N90TSkgSMcpAnkHmjJLypsC4G2Z8IWT
+	 trh3QJ0/ypwMnrf/XlqEij1u8tEEvFdUP2RcEALI35f4/Qwy+rc7EwGQJzSPWShQnE
+	 NiaFvFE5PxYCTv2YMmt3t67fQJTMdEq6vw9Gs+KAJkh2vDtgjse3sVynfJZlG2Dsrc
+	 7rueWHjaVpD2fIq2BIfPWlSJPv1WcBFw3TYlkIonUmYoygWBPNSs8CJoK5NobZnsVQ
+	 Z7taWD5BsRoZA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5a85b30dd54so3872730e87.2
+        for <linux-gpio@vger.kernel.org>; Tue, 05 May 2026 03:28:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9cG98o67FQa0WExU++BXuwEQlKG5Goa733EIhFt9eN+qkxs0PrtkW7HCJelRi4Gq+6uHnzbhAWGaQx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgJ74xPENM4TfpRRnaGSbN2BnArpsEB6gFYTXNjWcPqBiyXQfR
+	51ZlJkycQCxc8f867XN/g3mAw/Ci2EmROluG06oHZBheimX3mrgSZ/5PyAUnfPAkDR9a8OuGIxz
+	5vFEzVfGvbIq9IPqCqMh4KenYn3byLCc=
+X-Received: by 2002:a05:6512:1091:b0:5a8:7652:9258 with SMTP id
+ 2adb3069b0e04-5a876529284mr2605579e87.0.1777976912811; Tue, 05 May 2026
+ 03:28:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260430-enable_wakeup_capable_gpios-v1-1-5de39bf06094@oss.qualcomm.com>
+In-Reply-To: <20260430-enable_wakeup_capable_gpios-v1-1-5de39bf06094@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 5 May 2026 12:28:21 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnX5J+GncH1U6zE40eErQ1LeNiPmQqZe5UewR3S4VhBOw@mail.gmail.com>
+X-Gm-Features: AVHnY4JBZ0_aB4B7_nUxwn9lnfxpk_Z6f18SRCw7UeiainLcID73YORf9XCZVRs
+Message-ID: <CAD++jLnX5J+GncH1U6zE40eErQ1LeNiPmQqZe5UewR3S4VhBOw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: Unconditionally mark gpio as wakeup enable
+To: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBIaSwNCj4NCj4gT24gVGh1IEFwciAzMCwgMjAyNiBhdCAxMTo1OCBBTSBDRVNULCBZdS1DaHVu
-IExpbiBbqkyvp6dnXSB3cm90ZToNCj4gPj4gPj4gMy4gSGFyZHdhcmUgRGVib3VuY2U6IFdlIGFs
-c28gbmVlZCB0byBzdXBwb3J0IGhhcmR3YXJlIGRlYm91bmNlIA0KPiA+PiA+PiBzZXR0aW5ncyBw
-ZXIgcGluLCB3aGljaCByZXF1aXJlcyBjdXN0b20gY29uZmlndXJhdGlvbiB2aWEgDQo+ID4+ID4+
-IHNldF9jb25maWcgbWFwcGVkIHRvIHRoZXNlIHNwZWNpZmljIHBlci1waW4gcmVnaXN0ZXJzLg0K
-PiA+PiA+DQo+ID4+ID4gSnVzdCBhZGQgYSB2ZXJzaW9uIG9mIGFuIG9wdGlvbmFsIC5zZXRfY29u
-ZmlnKCkgY2FsbCB0byANCj4gPj4gPiBncGlvLXJlZ21hcC5jIHRvIGhhbmRsZSB0aGlzIHVzaW5n
-IC5yZWdfbWFza194bGF0ZSgpIHBlciBhYm92ZSBhbmQgDQo+ID4+ID4gYWRkIGEgbmV3IEdQSU9f
-UkVHTUFQX0NPTkZJR19PUCB0byB0aGUgYWJvdmUgZW51bSwgcHJvYmxlbSBzb2x2ZWQuDQo+ID4+
-ID4NCj4gPj4gPiBJZiBpdCBzZWVtcyB0b28gaGFyZCBJIGNhbiB3cml0ZSBwYXRjaCAxICYgMiBh
-ZGRpbmcgdGhpcyANCj4gPj4gPiBpbmZyYXN0cnVjdHVyZSBidXQgSSBiZXQgeW91IGNhbiBlYXNp
-bHkgc2VlIHdoYXQgY2FuIGJlIGRvbmUgd2l0aCANCj4gPj4gPiBncGlvLXJlZ21hcC5jIGhlcmUg
-cHJvdmlkZWQgTWljaGFlbCBXIGFwcHJvdmVzIHRoZSBpZGVhLg0KPiA+PiA+DQo+ID4NCj4gPiBP
-dXIgLnNldF9jb25maWcgcmVxdWlyZXMgbWFwcGluZyBzcGVjaWZpYyBkZWJvdW5jZSB0aW1lIHZh
-bHVlcyB0byANCj4gPiBoYXJkd2FyZS1zcGVjaWZpYyBlbnVtcyBhbmQgYXBwbHlpbmcgYSBXcml0
-ZS1FbmFibGUgYml0Lg0KPiA+DQo+ID4gV291bGQgaXQgYmUgYmV0dGVyIHRvIGFsbG93IGRyaXZl
-cnMgdG8gYXNzaWduIGEgY3VzdG9tICcuc2V0X2NvbmZpZycgDQo+ID4gY2FsbGJhY2sgZGlyZWN0
-bHkgd2l0aGluICdzdHJ1Y3QgZ3Bpb19yZWdtYXBfY29uZmlnJz8NCj4NCj4gWWVhaCwgSSBkb24n
-dCB0aGluayB0aGVyZSB3aWxsIGJlIG11Y2ggY29kZSBzaGFyaW5nIG9mIGNvZGUvZnVuY3Rpb25h
-bGl0eQ0KPiBmb3IgdGhlIC5zZXRfY29uZmlnIGNhbGxiYWNrLiBBIGN1c3RvbSAuc2V0X2NvbmZp
-ZyB3YXMgcHJvcG9zZWQgbWFueSB0aW1lcyBpbiB0aGUgcGFzdC4NCj4gDQoNCldpbGwgYWRkIGEg
-bmV3IHBhdGNoIHRvIHN1cHBvcnQgY3VzdG9tIC5zZXRfY29uZmlnLg0KDQo+ID4gQWRkaXRpb25h
-bGx5LCBJIGRpZG4ndCBtZW50aW9uIHRoaXMgaW4gbXkgcHJldmlvdXMgZW1haWwuIHdlIGFsc28g
-bmVlZCANCj4gPiB0byBpbXBsZW1lbnQgR1BJTyBpbnRlcnJ1cHRzLiBPdXIgaGFyZHdhcmUgZGVz
-aWduIGRvZXMgbm90IGZpdCB3ZWxsIA0KPiA+IHdpdGggJ3JlZ21hcF9pcnFfY2hpcCcuIFRoZXJl
-Zm9yZSwgSSBhbSBwbGFubmluZyB0byBjcmVhdGUgb3VyIG93biANCj4gPiAnaXJxZG9tYWluJyBh
-bmQgJ2lycWNoaXAnIG9wcyB0byBoYW5kbGUgb3VyIGNhc2NhZGVkIGludGVycnVwdHMuDQo+ID4N
-Cj4gPiBCZWNhdXNlIG9mIHRoaXMgY3VzdG9tIElSUSBpbXBsZW1lbnRhdGlvbiwgSSB3b3VsZCBu
-ZWVkIHRvIHVzZSAncmVhZGwoKS93cml0ZWwoKScNCj4gPiBmb3IgdGhlIElSUSBjYWxsYmFja3Mg
-aW4gdGhlIHJ0ZDE2MjUgR1BJTyBkcml2ZXIgaW5zdGVhZCBvZiB0aGUgcmVnbWFwIEFQSXMuDQo+
-ID4gRG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zIG9uIGhvdyB0byBoYW5kbGUgdGhpcyBncmFj
-ZWZ1bGx5IHdoaWxlIA0KPiA+IGtlZXBpbmcgaXQgYWxpZ25lZCB3aXRoIHRoZSByZWdtYXAgaW5m
-cmFzdHJ1Y3R1cmU/DQo+DQo+IFdoeSBjYW4ndCB0aGUgTU1JTyByZWdtYXAgYmUgdXNlZCBmb3Ig
-dGhhdD8NCj4NCj4gLW1pY2hhZWwNCg0KSSB3YXMgd29ycmllZCBhYm91dCByZWdtYXAgb3Zlcmhl
-YWQgaW4gYXRvbWljIGNvbnRleHQsIGJ1dCBNTUlPIHJlZ21hcCBzaG91bGQNCmJlIGZpbmUuIEkn
-bGwgY29udmVydCB0aGUgaXJxY2hpcCBjYWxsYmFja3MgdG8gdXNlIHJlZ21hcCBpbiB2My4NCg0K
-QmVzdCBSZWdhcmRzLA0KWXUtQ2h1bg0K
+On Thu, Apr 30, 2026 at 7:54=E2=80=AFAM Sneh Mankad
+<sneh.mankad@oss.qualcomm.com> wrote:
+
+> The wakeup enable bit needs to be set irrespective of the SoC using PDC o=
+r
+> MPM as wakeup capable irqchip to allow the GPIO interrupts to be forwarde=
+d
+> to parent irqchip.
+>
+> This is set only for PDC irqchip using additional check skip_wake_irqs
+> making it impossible for MPM irqchip to detect the GPIO interrupt during
+> SoC low power mode since for MPM irqchip the skip_wake_irqs is always
+> false.
+>
+> Remove skip_wake_irqs condition when setting wakeup enable bit to allow
+> forwarding GPIO interrupts for SoCs using MPM irqchip too.
+>
+> Fixes: 76b446f5b86e ("pinctrl: qcom: handle intr_target_reg wakeup_presen=
+t/enable bits")
+> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+
+Good work here, also super-dangerous so if some more Qualcomm
+engineers could pitch in on this patch it'd be great.
+
+Is this an urgent (-rc) or nonurgent (next) fix?
+
+Yours,
+Linus Walleij
