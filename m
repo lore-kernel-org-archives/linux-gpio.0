@@ -1,158 +1,225 @@
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2110.outbound.protection.partner.outlook.cn [139.219.146.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368F547DD65;
-	Wed,  6 May 2026 15:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778082328; cv=none; b=r0qpRPjH9RflHXHbWRCGjgyuNETuPeQ7WDd7P35plWmU40oChKLRT1t6WUhsn1zaGooQSKBzFQI4HrYs1a0hEATZS+FHrhvp885ZQeVcHS5MXpOd9UGZA1PW7ypqfbJqgrxrE7j5f37FzU83UYymeRjVqjTG9JPgNh2XsTLmHSY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778082328; c=relaxed/simple;
-	bh=cLst7TIrzB2EttSm/QmnT/2eZbnvabiG+RpImWplrts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CjdwVBRfo7ay8xcRFijGb48ydeTsp0acLKOm++O0yltb9fX2MMJLAQaH+lJVnDtX1mLbwjlXCuvZwbxcBTkkqB1FCrjgERAxmcVziyx2E2ohnXOpUdHTgL9AHIUFnsIPPbtmX17jhrPqVvFfTnKCB6wsxgWXzVOobghUr1WU528=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpsz7t1778082303tad718e7d
-X-QQ-Originating-IP: IUbeVjFMUOeWOYng8sGFzDDtrsWNZj3aHK3Nzskz1o8=
-Received: from [127.0.0.1] ( [116.234.74.217])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 06 May 2026 23:44:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7158039803468193792
-Message-ID: <549BE66F62F1470F+a489d4fd-10ab-484c-9b55-6aecfd05d383@radxa.com>
-Date: Wed, 6 May 2026 23:44:55 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966347D95B;
+	Wed,  6 May 2026 15:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778082998; cv=fail; b=SRgVmfGy2vBnheZ0JQugUtPB4tjM0p3O7YYY4Xp7dYdhBBiXUkjoGiB7HKe7f/9WlTpekycYHRCxQ8YouRl1YNMnU0mQ9QA7zEpEogtG425gaBf11yJ76qS2ySJ+hJ+2OHytiPA66fWR4+9Ob+kLiRIx49u3yaX0WqaCdsJT2CI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778082998; c=relaxed/simple;
+	bh=3cdirSAGaGDnorGyOgMnO90YvYT/I9F14uF2el/Zhhw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Kn4b2xBZWI22a1dO7Yp9pMScGe842absHH8xQrUUmFP2yLrFM3ty2H01hDBeCdIoVINpJ2qTL28wGCggDB3Sw3yw4XlMTHtozJhnyK6OfNAJXkHP7nuesAVeR/monYqILRUym+xVXmxj8UnWRmIz4gnBUr4XtMk5BGWyD0qeFNY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dbrRuxJkNqtOIrnxQp60IdNwxaWzDJpKByV4UzCu9FNk5vmBYa7/Oz73BXcxB8Mp7Do2jLe/wP2bbb/XVdY5Tk4lcSJ1k/YN7gTGaz9m7GkAur0rCt1kAyklbhyiDuddLai+XJ0Z/Z37YYV//edoxghv/lxm6qxnwpHzzI7I1E28xniRs+zpZMWkVviw3VCRPTvozrEn/anW0tEfd+UWuv7afscwRQz2+CA4Y2e39/JCCxxYxZwe7NI/Vy595nVThWfSUj6DaEPxogHAYDolmLAOfZ143N6SsiQywAsFBpYgBMhJOOG/kYN1rPBEQcTLGf+igw+6RZ965y/NzKYd8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uJKEKVPIq1XRSdKOOntc9VF2F23Ieo4f1lZdwnoGwX0=;
+ b=d+6JsZsTnWI37eX55CkEyUfZU72QTwsVwbldsh1+Aeo83m+qqvbbyNn1JUND9Ps5xXXRK+gBu8hMalRUIkFCa6JQP6RfQKomBicL+PmS0+eMQ8JTyzz2hTesmFzcz5IjFacSpPTvbGRCyf6lPCAYuJZ+E4vLQY7fpWE7woFAWxiyk8bQbI7170eRxn1m9T5IF7mpQD9DU+Xt8/iSMPfE/1u3TFTFQvVDUZl6HJm5JhA8iBQl7vL6Lt4guPkQ+tAzmUMC+MSIhNTUmR4IDKJZJIWSwiMFZ3CB6rpOo63fQhHRQFwSM6fjvy86TUwOOmfXHqJsT4tQDlOyfYG6YZGuhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1172.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:14::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.15; Wed, 6 May
+ 2026 09:23:37 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
+ with mapi id 15.20.9891.008; Wed, 6 May 2026 09:23:37 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, Lianfeng Ouyang
+	<lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v1 11/20] dt-bindings: pinctrl: Add
+ starfive,jhb100-per1-pinctrl
+Thread-Topic: [PATCH v1 11/20] dt-bindings: pinctrl: Add
+ starfive,jhb100-per1-pinctrl
+Thread-Index: AQHc09tvLatUK5oq3keSy4c9Ncpt5LXubvkAgAVF1NCAASNvgIAL9BTw
+Date: Wed, 6 May 2026 09:23:36 +0000
+Message-ID:
+ <ZQ4PR01MB1202F561A68C43547A85D1E7F23F2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+References: <20260424111330.702272-1-changhuang.liang@starfivetech.com>
+ <20260424111330.702272-12-changhuang.liang@starfivetech.com>
+ <20260424-mumps-foothill-ef122c1029c0@spud>
+ <ZQ4PR01MB120229BE0DAC2658164C066AF2372@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260428-hardhat-both-1c9aa594a45a@spud>
+In-Reply-To: <20260428-hardhat-both-1c9aa594a45a@spud>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1172:EE_
+x-ms-office365-filtering-correlation-id: 6475f694-eb94-495c-fc29-08deab51271b
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700021|56012099003|18002099003|22082099003;
+x-microsoft-antispam-message-info:
+ uKyLAUOB1M1rdjZ7VM216P9y7hUaP6JCFmlFKKjfxZ4zATBg9w6xBKsS5W19KVzwYxcm14cFhoPTlIJ+DgiA7CRK8SHrRZEWQyqWGgja5qeTcRfpcxRQ1pi4Jg1MR9unQbAfYm/y4gNQYMl/xMp207beYp6bKtAH0BpBRNHBn7m2u42K4bj0azHt6u8XpT4gmBo8FuKiazt9eWd1BXv259Il0afmXoOoWVXPpQIIqYS0+YPvOG2xvIpsKszFmLoHhtunP4M1B3L0Z0RtR8O2/Kp5jbdXt8K5QJoIM0Gn7iw6iBrjK2ZvzOIGuXm/koa/XvljjQLJyaHJEnVLP2ZEuW8I5ah39nJ4tKePSCxGufbCCYVvQDD4HilvylijYX2c8Ds9Tl/DZhgeHgrHPr6pHimGbEjE1AX7MWlIvJizzNso42hVH79SpOvbhJfVJWllGTGulaHsKbS5PMLmjcdRpugOJwrB6Nm6aBB8Hfml3jPGbfiiyRC0xyouZe2oyI3DXbNBKfogKu1NIzHLH4NYXJB6XTR4ekHDhcbEJujX2rDzt6DQi44l9M9iztGoXrFc
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700021)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Uy566qmnzeObFGEfVpxuK3doQQ83ff25mtBEh3d3TemKDeJ3nfwbguyTka32?=
+ =?us-ascii?Q?O0xOwISG1171zxuouK3rAbFQFsaz9ErbvfpRr+yqfpfWsGOn9lgXjMKZqu67?=
+ =?us-ascii?Q?NWIfQ08Rrz6XuU4dGwSdpXN2TjuBRO5r26oHOlzwNhl/GM3NiQ3VblX8ilOd?=
+ =?us-ascii?Q?yR3QfxnPvOE9x7C7REpXriIll4Rj8HMgq/8D7GddGlVjBlThGoz/aTCgg2+Q?=
+ =?us-ascii?Q?hMBm1imt3E1fadyJvm5hic7P33Cut8xeR3TWY0h1MMjCsPZYuAGa5yz2tx+5?=
+ =?us-ascii?Q?oP/DbJs+5GT12aG5mgBhwhhWVsV2P5SI5RPQogmKIlb3qokWFgadTs5id7e+?=
+ =?us-ascii?Q?sL+nQEedVU7ux0wsLm1nPeGMo4PTkW5+rsGhTYTTH1jNnXp257V6sX0aCR3/?=
+ =?us-ascii?Q?bHdKFtZxNXBOnOJN7yRTL2hny8AQEnFI96U/upVVu80PSaJA4TB/r0GiVwTI?=
+ =?us-ascii?Q?+J958lfHNEA4ypM0MNvgGiprWWHNJy1H0Q0v4WLJ2b5XZtz+uvMolp6vKY2f?=
+ =?us-ascii?Q?kixBACxg3v6ZIqGkynn+5uKu8xsZwlGi9PlPzW2enE5u8ZGR910YjYiiPfhx?=
+ =?us-ascii?Q?juBN5pWsjidVAl3nsd/I0kXqIfKj4AqsednlcPdkwrnrbRZkzqVggYvX/21v?=
+ =?us-ascii?Q?s75db86JFBhUgCC8oLESULbDXzlfJVc73rdNDwvVz99Ozk0g3lkjsETWbcxe?=
+ =?us-ascii?Q?Y1E5W+pWoWoRtISkuILLhYX8eLrlBtqtsZCTH83zDm0rbwqHd4H/Zb8TA73w?=
+ =?us-ascii?Q?92dpgqxPwzY3ECKsP5NsE2iDqpnUEJpx46yLflYf+W9fq6yfmVniPuRsj+74?=
+ =?us-ascii?Q?zpnok8aHJIPUMtIrJYb5ZOcGsBEqZkYtaE33K88mNuYSSJbWsXykxpCWW3vn?=
+ =?us-ascii?Q?l6LuPhnVaJWrw+I9p2EMO4uUPer60ExVL9xKv8vd8rbLpQX4uVsbHC1eeUXC?=
+ =?us-ascii?Q?Kiu6DR0W1Fm7640FophNtG7ueJN2Zgvn77JJFQRLKDB47GVmzk5mJedbpV5g?=
+ =?us-ascii?Q?X1lclNVc/DH/x2cPDgMBwDd6L1OuczzFVulBy4gW/mqkUqkYR5JMJZaKX/Av?=
+ =?us-ascii?Q?UuPp3QsxybF7SMhMhHR7lE+7xrIJ6K6SvxUNFkB2/xmJD3Z3vvf63I8Q6d6U?=
+ =?us-ascii?Q?+BV1tNGz436RXnmms+a3BRqy/7x1ZjT8Slg4cxgvh6zegvpTRV+78nWLABf5?=
+ =?us-ascii?Q?3uFBT0KmtRKMAeZwQrM7ux5ddjV4KG17mUDMBKlFfXvoiDr/R44ilufj5JRN?=
+ =?us-ascii?Q?uWYn1pcLmDkAYysoLwnlzUQkZ4ibx43hVjxEG/fZ7SejiaJ7d/nLgbwttvqf?=
+ =?us-ascii?Q?vrbhP/YRcUHxgrUG/PV7SDHDIH1jq+pP+5hQbnUXczoKWCEfiQftFXSs8Cun?=
+ =?us-ascii?Q?7R7VU87s6Ldk+7Htc3Y/7vKYfvXbyu3W8FhVNscPWGI9CXaFUGggJEH2Mq2Z?=
+ =?us-ascii?Q?ZnNkbnwbpnwWRLnXy/RHZ8diqhGSf2RMwN/KUlKxIKdJZTMFQhxZ6V0pjao1?=
+ =?us-ascii?Q?cOZvpDUTSvVK0r0dTrBKz6RJONW2yLgTwGLmumaUNB7FPtE31xPqFnon/xql?=
+ =?us-ascii?Q?q9tskyisgkIf6EmjgztfuUhrEupQEO1BU+W1UmSzKXG2BPa9IZM90xJgJPit?=
+ =?us-ascii?Q?uOABoJFPIUg0tPj3UwFSIL7Pb1H2rcxx+bdJY1SGdDJIqonASNaHx9XgUX4e?=
+ =?us-ascii?Q?YNn/Zq1lofKZI/TPoDWfaNVBovRPmwvr/A8x29RxXym9YHHUkTmrNlTgktXT?=
+ =?us-ascii?Q?stzmFJkkQEoKyJ3cw3hj9Sd8rp25wIo=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 10/12] net: stmmac: tc956x: add TC956x/QPS615
- support
-To: Daniel Thompson <daniel@riscstar.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Alex Elder <elder@riscstar.com>,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, maxime.chevallier@bootlin.com,
- rmk+kernel@armlinux.org.uk, andersson@kernel.org, konradybcio@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org,
- brgl@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- mohd.anwar@oss.qualcomm.com, a0987203069@gmail.com,
- alexandre.torgue@foss.st.com, ast@kernel.org, boon.khai.ng@altera.com,
- chenchuangyu@xiaomi.com, chenhuacai@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, hkallweit1@gmail.com, inochiama@gmail.com,
- john.fastabend@gmail.com, julianbraha@gmail.com, livelycarpet87@gmail.com,
- matthew.gerlach@altera.com, mcoquelin.stm32@gmail.com, me@ziyao.cc,
- prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com,
- rohan.g.thomas@altera.com, sdf@fomichev.me, siyanteng@cqsoftware.com.cn,
- weishangjuan@eswincomputing.com, wens@kernel.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260501155421.3329862-1-elder@riscstar.com>
- <20260501155421.3329862-11-elder@riscstar.com>
- <224E233C593EF171+8c8a43dd-5061-40f8-9eb7-f360eabf2ecc@radxa.com>
- <4015f47a-af62-441d-b1b8-a8598f963970@lunn.ch>
- <4C0D95BC59F1A4ED+53f3be85-2cdd-4058-8950-57970027d481@radxa.com>
- <aftgorkah-Hjrvq2@aspen.lan>
-Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <aftgorkah-Hjrvq2@aspen.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MGxrRyrvqqSAJPtm9+Xn8xQ2xA1AHSxENunW+ehiuhpYbHNZNVX+5I77
-	wfEoPZdY8rSSnBMxbOMBAUXrcxyTiHvHjYdLIruNFlVs5lr5HDLEQ1ApU0cFLR+6YfK0cxl
-	xLQwQUO7Tb69bQylEOxrNQ6mWphQKFg/TiXsZ1gi+FVTHjgIg/Fr6j8Q457nWfpG48XAJzc
-	5XvJ2E6Usyo8kQ57Bnnqm+krfqblXcs7i1vUPim1nujyUIPBIbi8cwlBm36UDmFh3srxEhE
-	+Ryb56EQI1VkDQa2KKpshuWjq99XGYnWUOM/1rx4F2kFuyYWa2Z4COGGN9BC+ALkqj5ePLH
-	gbFiAWQ8TibPnvNKMS36uWka8lMqh7bKXZxLD/k8uLcy/PVK3UWVekpSyAFTm1MafcK88MG
-	VoAWmLFZ2mggMy2AuIU7+qsCwNCuVdY5sg3BJB51QtMSyOfS2mUsq0m/v0hpmk3xADo5kK9
-	8FlW7z8nbMx8jvr66nXsWSoEdREevD5+5Xmy1nAdvuGWktXcGQhVnd2CZKJbVVfuaT1pf/4
-	C3cwwkAyC54RvT6IWnn9HShasbW724+bTFuNBJfsSCilvctGMH6syQbfTBK5OXQKvmIw3x4
-	qarzR6NdI1hR994C8uKTsqpkUrueoQnqMFptlxAEM7X3jvvwwKbXzDc48sHQUQXwZ7B7aMa
-	Nal6lzE8DmjyGk461b4kkEEATnaV8ntovq9/27lotTr1/xibXNTV9+AqsNiPkHXhoiDZ9aS
-	/5rpNyFTXrtTnE6OsWnPwjzI8uFcL7V3DeIY3PENtYZLgjn2hABGOpP/FpulKp01zIu/AgG
-	ENVE8OEgHs0pcexza2gSGkY1zJzV2iyqswTeiiqJ8XKL1yVdsmIBIFWYLyEqYOWPqPJzIhi
-	Tre2PFAPTXsrW8c0g33qtsnMjdlCxTQcbWps7nfZCdy4bU05lSAE96EcWRLkNu1O4Z27qV+
-	h9nrlUOx7j5H/UqAO0ENqXCkAmY5Rkmwfe7kIlC8UklVOo4ZAc5o6kI8cPsw3yP2N8BQ1fh
-	aBu0P+aQQ0sAvHSKc2povYS6tafFYhOZCJpENmhXfoKDGX96f5QE0Jx3VZ2z0/w7bZde9Wc
-	Lu07ZB4YcFxuQPT4Rqx3Cjt7S1VQoSk0g==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-X-QQ-RECHKSPAM: 0
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6475f694-eb94-495c-fc29-08deab51271b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2026 09:23:37.0018
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FuerHwtXM5GFeawXRfQk5QhdK71janhM/c8jakeLxsim3FYPkBHmdwDiPWcEaYv3XJPhBDpncXNR8Nt95Cxmwxt37ujp4I9izhQBt2Dtgxf+mKNX85vinzufyU6Jb8E6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1172
 
-On 5/6/2026 11:39 PM, Daniel Thompson wrote:
-> On Wed, May 06, 2026 at 10:35:18PM +0800, Xilin Wu wrote:
->> On 5/6/2026 10:19 PM, Andrew Lunn wrote:
->>> On Wed, May 06, 2026 at 08:59:01PM +0800, Xilin Wu wrote:
->>>> On 5/1/2026 11:54 PM, Alex Elder wrote:
->>>>> +	/* AXI Configuration */
->>>>> +	axi = &td->axi;
->>>>> +	axi->axi_lpi_en = 1;
->>>>> +	axi->axi_wr_osr_lmt = 31;
->>>>> +	axi->axi_rd_osr_lmt = 31;
->>>>> +	/* All sizes (2^2..2^8) are supported */
->>>>> +	axi->axi_blen_regval = DMA_AXI_BLEN_MASK;
->>>>> +	plat->axi = axi;
->>>>> +
->>>>> +	plat->mac_port_sel_speed = speed;
->>>>> +	plat->flags = STMMAC_FLAG_MULTI_MSI_EN | STMMAC_FLAG_TSO_EN;
->>>>
->>>> I got WoL working only after adding STMMAC_FLAG_USE_PHY_WOL here. I guess
->>>> it's required, since the driver clocks down the MAC/PMA/XPCS in its suspend
->>>> hook?
->>>
->>> Nice to see somebody testing WoL.
->>>
->>> In your testing, is it the PHY doing the WoL, or the MAC? I assume
->>> PHY.
->>>
->>> If i remember the DT correctly, the PHY interrupt is connected to a
->>> SoC GPIO, not a GPIO of this chip. So for your board, it is the SoCs
->>> GPIO controllers ability to perform the wake which is
->>> important. However, where the PHY interrupt is connected is a board
->>> design issue. Could the PHY interrupt be connected to the chip? Would
->>> the chip be able to wake the system? Should STMMAC_FLAG_USE_PHY_WOL be
->>> conditional?
->>
->> Yes, the PHY is doing the WoL. And I guess this makes sense as it allows the
->> MAC to power down during suspend to save power.
->>
->> The INTN pin of QCA8081 is connected to the ETH_0_INT_N of QPS615. And the
->> INTN_WOL pin is connected to a SoC GPIO.
-> 
-> Interesting. That is different to RB3gen2 where INTN is routed to both
-> (although there is a do-not-fit 0ohm resistor option that could change
-> that).
-> 
-> Does that mean you don't get phy interrupts reported in /proc/interrupts
-> before any suspend happens?
-> 
+Hi, Conor
 
-No. The phy works in polling mode AFAIK.
+Thanks for the review.
 
-> 
->> Without this change, I can't get WoL to work. I have a working branch for
->> our board here:
->> https://github.com/strongtz/linux-radxa-qcom/commits/v7.0.2-8280-wip/
-> 
-> I took a quick look at the DT and I noticed you have an SGMII PHY
-> attached to both eMAC0 and eMAC1 on your board. This is something we
-> think should work but were unable to test. Are you able to use both
-> eMACs concurrently? Would be great to see that confirmed!
-> 
-> 
-> Daniel.
-> 
+> On Tue, Apr 28, 2026 at 01:28:05AM +0000, Changhuang Liang wrote:
+> > > On Fri, Apr 24, 2026 at 04:13:21AM -0700, Changhuang Liang wrote:
+> > > > Add pinctrl bindings for StarFive JHB100 SoC Peripheral-1(per1)
+> > > > pinctrl controller.
+> > > >
+> > > > Signed-off-by: Changhuang Liang
+> > > > <changhuang.liang@starfivetech.com>
+> > > > +        properties:
+> > > > +          pinmux:
+> > > > +            description: |
+> > > > +              The list of GPIOs and their function select.
+> > > > +              The PINMUX macros are used to configure the
+> > > > +              function selection.
+> > >
+> > > Why is the pinmux property needed?
+> > > Can you use pins and function instead?
+> > >
+> > > Looking at the defines that you have added, it appears that lots of
+> > > defines for the same peripheral share the same numerical values,
+> > > suggesting that across peripheral, all (or most) pins would share
+> > > the same mux setting/"function select", suggesting that pins/function
+> would suffice.
+> > >
+> > > I'd like to see some justification for pinmux being the right
+> > > solution here, like the "function select" used by one peripheral
+> > > being significantly different for many of its pins.
+> >
+> > We think that implementing this in the pinmux will be relatively
+> > simple. It avoids the need to create a large number of mapping
+> > relationships in the driver, which simplifies our driver
+> > implementation. I'm not sure if you'll find this explanation acceptable=
+.
+>=20
+> I don't really see how pins + functions would require lots of "mapping
+> relationships". Instead of having
+> +/* pinctrl_sys2 pad function selection */
+> +#define FUNC_SYS2_UART_CTS				1
+> +#define FUNC_SYS2_UART_RTS				1
+> +#define FUNC_SYS2_UART_DCD				1
+> +#define FUNC_SYS2_UART_DSR				1
+> +#define FUNC_SYS2_UART_DTR				1
+> +#define FUNC_SYS2_UART_RI				1
+> +#define FUNC_SYS2_UART0_TX				1
+> +#define FUNC_SYS2_UART0_RX				1
+> +#define FUNC_SYS2_UART1_TX				1
+> +#define FUNC_SYS2_UART1_RX				1
+> +#define FUNC_SYS2_UART2_TX				1
+> +#define FUNC_SYS2_UART2_RX				1
+> +#define FUNC_SYS2_UART3_TX				1
+> +#define FUNC_SYS2_UART3_RX				1
+> +#define FUNC_SYS2_UART4_TX				1
+> +#define FUNC_SYS2_UART4_RX				1
+> +#define FUNC_SYS2_UART5_TX				1
+> +#define FUNC_SYS2_UART5_RX				1
+> +#define FUNC_SYS2_UART6_TX				1
+> +#define FUNC_SYS2_UART6_RX				1
+> +#define FUNC_SYS2_UART7_TX				1
+> +#define FUNC_SYS2_UART7_RX				1
+> +#define FUNC_SYS2_UART8_TX				1
+> +#define FUNC_SYS2_UART8_RX				1
+> +#define FUNC_SYS2_UART9_TX				1
+> +#define FUNC_SYS2_UART9_RX				1
+> +#define FUNC_SYS2_UART10_TX				1
+> +#define FUNC_SYS2_UART10_RX				1
+> +#define FUNC_SYS2_UART11_TX				1
+> +#define FUNC_SYS2_UART11_RX				1
+> +#define FUNC_SYS2_UART12_TX				1
+> +#define FUNC_SYS2_UART12_RX				1
+> +#define FUNC_SYS2_UART13_TX				1
+> +#define FUNC_SYS2_UART13_RX				1
+> +#define FUNC_SYS2_UART14_TX				1
+> +#define FUNC_SYS2_UART14_RX				1
+> you just define a function called "uart" and have a simple map of that st=
+ring to
+> the number 1. You end up with a single array with the relationships, not =
+lots.
+>=20
+> Frankly, pinmux just does not seem appropriate to me when it looks like 9=
+0%+
+> of the pin mappings for a peripheral share the same function value.
+> There appears only to be a rare number of cases where that doesn't apply,=
+ but
+> that could be handled by having them represented by a different group/pin=
+s
+> node with a different function.
 
-Yes, both eMACs can be used concurrently. And they can reach 2.5Gbps 
-under iperf3 testing.
+Thank you for sharing the method. We are trying to make some modifications,=
+ and the results are quite good.
 
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Best Regards,
+Changhuang
