@@ -1,133 +1,105 @@
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564F93EE1FD;
-	Wed,  6 May 2026 15:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827E748122F
+	for <linux-gpio@vger.kernel.org>; Wed,  6 May 2026 15:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778081931; cv=none; b=gBfzbcVSrw0gszrcW9xrlL8kser/M8khauOIghtcoTReynXhJTIUyIuKW0btyaOchCP7hlVcHSdL0aPo1FVDAujR887KUZJmmm41mjBq2e3bT5iI3ifJy0wRLDri+kHowSggO1nOtb0akOxYqycaIj9GYUtFtArf7VyWNw2iEaI=
+	t=1778081932; cv=none; b=qNWHgjYhIbZIHrTCvApCPbotF1faJyJpoYITOg9Lwicxzm+c5DK9mS4tki72i3/IVq4N+Cj7afbptMhZo/mdHFpRSASDs5rZ/Le0hjfovDI/nC33nKhAMxs7pdMuKan4c3uQ8/d0ePiV9GIc2GPTcb9rK1rb/uoWGG4OY1gZWAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778081931; c=relaxed/simple;
-	bh=6sQcvJ02EAB9Lz/kHFbKX/FUadBZAXtEZqWiVpfYz4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZ7chOJdLt5ErZt3+Y65KZpxiWWjKUwgaGmk1RypLw8Qgz/zTT/sCwq0vq/0kSAaaI4ZddUmYmG/IuONs4vwwmAxb0ZIsB/h7Z1W8oZW6VP5N+fCB7vh6d2Rcdtm0FfFOWF7TxL25LeRS5AGHEM4ae7gTdSvIWxM0ShTfGzzj2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: esmtpsz20t1778081905t5dc8af55
-X-QQ-Originating-IP: 66bIYIjIjPtDUf7ZMQLWTQPiTh7x0N6Cl1Fw8/bZasU=
-Received: from [127.0.0.1] ( [116.234.74.217])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 06 May 2026 23:38:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4295684557063516514
-Message-ID: <859776B5671B36B9+577c19e4-3e66-4036-b26f-fe20287a1d43@radxa.com>
-Date: Wed, 6 May 2026 23:38:17 +0800
+	s=arc-20240116; t=1778081932; c=relaxed/simple;
+	bh=qt46z/pT8ao0DLm63LJMC6q48E1ATkP2yfWfyJjvgvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h1TagscuvvvNjtvOKT9EoOH0XykXv3rIxeyabqsZkeO+vNNtA9JEzszZK9X/5+RYgzth4zF96Hz86f4P5t4NJ/ed9tvQ0Hs2JmRElpYgGJtH7eX6KS8hRIri7Le2WSWVWOF0S+Em9y+tDer4+3BEifa03MGXbnEG9gBI92BVIN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-94dd01deb53so1819344241.0
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2026 08:38:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778081929; x=1778686729;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+CjY/Fb28bFWjqLwLQHlyMRoP8RUF4B+j87OjTAnr0=;
+        b=sqD2dAYjM+A44XvZzPdMzmMjHV4KnG2kFT0c2r1V0fJ+0GrInEwnvpj+G4sN8/r6VI
+         YD5z9tkQ7hYDDakjKSKItSxY1/FJdTFUOx8lIqVG68HI3tEGJLViuK2n+Yv3XF/YiAk8
+         3BM4J/boK54dj9yb0mDRt0O/TDQlZd5aI/cy8yRb9EvdUJBMj7oqVBGXpBP11vvo2cb7
+         WJywP48vZugRIKr9SGI2/pCOjyc6T3uCAa9Cygw/9MCQpwxvt4g0vFW3j0FKUWFH7V5l
+         9t9qM1sIAMlvT8YgsGov9+pTF+4mUN3aIKK2EMkAGHAc1eiZhyzEP61nHE754gij+jzs
+         UtYw==
+X-Forwarded-Encrypted: i=1; AFNElJ9LCukzFQzoJ4jiYqs5RUzb2lXOcz9Xj2cBjoqHCWSq7+eKNe6V79A1nL88BhLNuHQg8bPr0FqEoCJm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdGEJLKCBgKUqTESdqPF6kPPueeGqRX0l5WymJ0OB+WH4ogLBa
+	c8BqnB1aUjx2Q7eb3fY/U1/8duetFnzPyQOmFPYWVIKs68kjtspxK1JEBBaDA4Ixhak=
+X-Gm-Gg: AeBDievAoCa4RWFW1ANyiZx1xXRgkc4tvxRmGBeLeVDqIGRUDPsPI1djkN6cuoU6lob
+	49leSlmLOTkyS6vW7vOFpyWY62JBjT1swhv5qz3e4qOd6jALAtE6KXYdW0bPkoCcP91oBRntp7m
+	7OiK1zRjyCug5D19YUintB+pHglMcteJb2n3xYTNpqExOiBrpVyCDT+vGLJvhgqXk3Wd011RKyg
+	MFstnT0BhZQx0QG23kk5VNyHDOU2+ZXN4QiX+7r7Cy6F8Yz0fDNTg5sYKNmL44G4jeA5wvG+K7Q
+	igxXH+1uP3VoLUpDd/yucRsoAZJ4rrZkNntQNRPfj7I6JFiWq+1RFQ2nvodiyq84oIRxILIW/eY
+	SFeFXYUQUJZ9uksTT3FeHrUJtvTdfrnBnVu177kQk0Hc0Duuz8s0kn2Cvw7vdWBvBsWylkTXhxh
+	Klt94VewigoRbhRoTfp3ltBk1Kzcopgrx0BX2CPS8n/xxTW1wByaFTZjQxI1homUo5MoWUsdM=
+X-Received: by 2002:a05:6102:5a95:b0:602:6784:3eef with SMTP id ada2fe7eead31-630f9063f65mr1881168137.28.1778081929038;
+        Wed, 06 May 2026 08:38:49 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-95d0ac3217dsm6201861241.3.2026.05.06.08.38.47
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 May 2026 08:38:48 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-62dff2771abso1496382137.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2026 08:38:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+d8tJrUUZ+llH0XuxQV4LiQbeuwfNQt+URNuXI1CLDls43CCJQ12Y9vh+roA7u10AdWaoVUrfZeHkS@vger.kernel.org
+X-Received: by 2002:a05:6102:2914:b0:611:d979:a38 with SMTP id
+ ada2fe7eead31-630f8e6ad2fmr1911752137.6.1778081927703; Wed, 06 May 2026
+ 08:38:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 10/12] net: stmmac: tc956x: add TC956x/QPS615
- support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alex Elder <elder@riscstar.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, maxime.chevallier@bootlin.com,
- rmk+kernel@armlinux.org.uk, andersson@kernel.org, konradybcio@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org,
- brgl@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- Daniel Thompson <daniel@riscstar.com>, mohd.anwar@oss.qualcomm.com,
- a0987203069@gmail.com, alexandre.torgue@foss.st.com, ast@kernel.org,
- boon.khai.ng@altera.com, chenchuangyu@xiaomi.com, chenhuacai@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, hkallweit1@gmail.com,
- inochiama@gmail.com, john.fastabend@gmail.com, julianbraha@gmail.com,
- livelycarpet87@gmail.com, matthew.gerlach@altera.com,
- mcoquelin.stm32@gmail.com, me@ziyao.cc,
- prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com,
- rohan.g.thomas@altera.com, sdf@fomichev.me, siyanteng@cqsoftware.com.cn,
- weishangjuan@eswincomputing.com, wens@kernel.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260501155421.3329862-1-elder@riscstar.com>
- <20260501155421.3329862-11-elder@riscstar.com>
- <224E233C593EF171+8c8a43dd-5061-40f8-9eb7-f360eabf2ecc@radxa.com>
- <4015f47a-af62-441d-b1b8-a8598f963970@lunn.ch>
- <4C0D95BC59F1A4ED+53f3be85-2cdd-4058-8950-57970027d481@radxa.com>
- <2af0fee3-d3d6-4434-847f-3fd2fbb841d3@lunn.ch>
-Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <2af0fee3-d3d6-4434-847f-3fd2fbb841d3@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NMth3b25qZ/y3GsZOZbTcTtn7ivxtNnfDwhten1J2cIhmuHszCIWDEp5
-	62vFagLVkDtj/ihAfFxqCDAkwPknNTQ8rt2JdPO3DntsuJvxTDZwhwn6v9Q2Zr3fexxrdav
-	Z8tOqhADpYyVy9j/gfNlM6y7qT+IPNVQIh9ISw9xH2humwR+0QuQgfl/S6YVNPcViexfzng
-	Tu0rFdlhN+wyFpLgg5vpKp26j9ufuc6yKDetrb4Ryuw7818jy3rdUpAnCorwW/EAkH7GC45
-	9sHsQ0R5GNdl9foXYGG8tVWqi46VBH2HlSGhx+89L9ZEqbHo1NLEErlzEuRkNG3xqWER7V5
-	xHAS00ExpjcrZcs2qHWpfE/7l1GfoyFa/+5zYjXotwBHkWlBP0uJxiOf01OCq9uFnyyXzpb
-	OeRyO4nGN5aYqgEjRrsxivJFb6rJNwBktM1YIPpoCA2CwJtV6zvB9XDvhjuDv5ZYgiwB29H
-	gGz3Qd1kYxiEFMNOgAJK2zvON05qEvjOLsSde0Vo+LL6YZHv4M+VlHospu6p2a+wEMuEmHF
-	Jc2st9+8GhXzqMowizoLQAL9VnQzdAOXMjWoyRvsXqT7B4Vc0LM4XecnPl0Ziru2BKirpPA
-	qHkI1zSenEcKZXkvc23ex+ZqmzUztSiU4e/RZIrZsvktRyV/SbBD38JEeWOcNI+nTpBNslx
-	iSwfov58UuPq6538i53SLFp+W5xh7QCd1qKPQXAOljWV5AvuAyaKKulKBGYDttswirvo6r0
-	0oNQl9z2qpNBc/OtuZcFmGLL4vpn7ILM/Y7dCPvMO85opK0XJce6YlVCCUTeh04dthfKACl
-	k+pLhAPReZWtmYTjow9htBMh3OFHZxmVd7cppGF6kZYVWO2OeK+mNL2+FOSTHHcxXshpWZb
-	vErub9eGThX/A8VngZnkNdzGFFh+kutCnJM/uiHn4Af2yNS/MOKLin5rNs1vHhv3TxdC4hu
-	PJzWLeXYsrFARDQrb66jMt7nTlS2mT9f+K/V7dpZw3LpyIDgi3kTgwqwerOn2yClL/iZKrv
-	DZbuWNVc60wjyJ2QSJx9V51Y+lE9LALFS636snRufTrAe5eLiCLWBoPPg2wB9ETWOt9C2EA
-	ghCObbyLYQElz+mAyIcubIu/ppF34Od5oZzNMZsR0f9
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
-X-QQ-RECHKSPAM: 0
+References: <20260430093422.74812-1-biju.das.jz@bp.renesas.com> <20260430093422.74812-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260430093422.74812-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 May 2026 17:38:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUiYg-F83Wq3mHsY+SRvfvFf863PL+ntWECS3Hg97fP=w@mail.gmail.com>
+X-Gm-Features: AVHnY4LkzS1oN-DrJ8JobrorWEPCRYsarVoNHuBu0KNSKv_fpIubNCM1zDCjywg
+Message-ID: <CAMuHMdUiYg-F83Wq3mHsY+SRvfvFf863PL+ntWECS3Hg97fP=w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] pinctrl: renesas: rzg2l: Make QSPI register
+ handling conditional
+To: Biju <biju.das.au@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/6/2026 10:45 PM, Andrew Lunn wrote:
->> Hi Andrew,
->>
->> Yes, the PHY is doing the WoL. And I guess this makes sense as it allows the
->> MAC to power down during suspend to save power.
->>
->> The INTN pin of QCA8081 is connected to the ETH_0_INT_N of QPS615. And the
->> INTN_WOL pin is connected to a SoC GPIO.
->>
->> Without this change, I can't get WoL to work. I have a working branch for
->> our board here:
->> https://github.com/strongtz/linux-radxa-qcom/commits/v7.0.2-8280-wip/
-> 
-> Please take a look at commit
-> 
-> commit 6911308d7d111a9c367293b52f2dc265819f2b60
-> Author: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Date:   Thu Oct 23 10:16:50 2025 +0100
-> 
->      net: stmmac: convert to phylink-managed Wake-on-Lan
-> 
-> In particular:
-> 
->      When STMMAC_FLAG_USE_PHY_WOL is not set, we provide the MAC's WoL
->      capabilities to phylink, which then allows phylink to choose between
->      the PHY and MAC for WoL depending on their individual capabilities
->      as described in the phylink commit. This only augments the WoL
->      functionality with PHYs that declare to the driver model that they are
->      wake-up capable. Currently, very few PHY drivers support this.
->      
-> Could you actually patch the PHY driver to make it list its
-> capabilities. That is the direction we want to go in the long term,
-> and not use STMMAC_FLAG_USE_PHY_WOL.
-> 
->      Andrew
-> 
+On Thu, 30 Apr 2026 at 11:34, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> The QSPI register at offset 0x3008 is not present on all SoCs supported by
+> the RZ/G2L pinctrl driver. Unconditionally reading and writing this
+> register during suspend/resume on hardware that lacks it can cause
+> undefined behaviour.
+>
+> Add a qspi field to rzg2l_register_offsets to allow per-SoC declaration of
+> the QSPI register offset, and guard the suspend/resume accesses with a
+> check on that field. Populate the offset only for the RZ/{G2L,G2LC,G2UL,
+> Five} hardware configuration, which is where the register is known to
+> exist.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks for pointing this out! You are right that I should patch the PHY 
-driver. I have made WoL work without the change in the tc956x driver.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.2.
 
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
