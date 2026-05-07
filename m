@@ -1,22 +1,22 @@
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE9034E763;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547BF31F98C;
 	Thu,  7 May 2026 08:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778141894; cv=none; b=kvlLST2RjY1Q9SScQcVfqXSR++S68db3l0H5xYAVpLwht8Ekhrwovg+FZPnVt6DdlxlxbB+jxdwUEJzNYjYeNSylp540B4YloNpHbcyJd4MDWj4c9Qk75A3pXwMIALlJTtx1sl3d4PteBa6PShekkX9BVw5o5mX9+ldkQQt1fPM=
+	t=1778141895; cv=none; b=jWZ9a1P3yEcjmwTWBGF25osM71VqbStT6kiLRTr5JYVr1VGDEGxoi66DiAdnPfE3UXh98mWsfkoPiclsqgpwRtdBNm6JKI9nx72mV2+dxfQnVcL42EIx1jpRnD2QY1dhEX9vaehjt3zy4XWOL8elox6u0ifA5DRoEzzqOnQElFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778141894; c=relaxed/simple;
-	bh=mL0t1GQDP3kEjnk3ZWV8xHn31sIE9uW+kqlS8Sf1Awg=;
+	s=arc-20240116; t=1778141895; c=relaxed/simple;
+	bh=OAfobsCoi/ZUK5Ppe1EQhmw0Gu6Uy0vOtLkIZ6UcaCc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g5G/hRdNSWE+Evjp+M7B+ZRMwrD+pwDaA4+HNJ19W4XBDpmVOuqepOz/h46n2YFxP+upmInGA93fKfhmdHaIb/B3wclxU9TB/DsU2anvU1PWEMVAEHxAiLR7Fq8fYRU0NZ4Y9IUl9VlQ+T6R89WlYXXRKPxmpbVPXtTTp2QW5Pg=
+	 MIME-Version; b=BbO7hy/Xas2fBG+Bzw6zGxEjqas/Qk44C81Rc8XrIh7lloUhIuY/TBKPnmjNYfYkOQnyyVEHXrlzWKVd5ZFwhfu7WHLcQ75BSMyMdjQs94lA06bYJKPH+BfEiogbcElJMpQ9ta9uGAF3pNKueiJA4uNCy5OFUQoLpNtEwLNBj74=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from edelgard.fodlan.icenowy.me (unknown [112.94.100.82])
-	by APP-03 (Coremail) with SMTP id rQCowAC3m+KLSvxpI_pNEA--.42168S3;
-	Thu, 07 May 2026 16:17:19 +0800 (CST)
+	by APP-03 (Coremail) with SMTP id rQCowAC3m+KLSvxpI_pNEA--.42168S5;
+	Thu, 07 May 2026 16:17:23 +0800 (CST)
 From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -46,9 +46,9 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Han Gao <rabenda.cn@gmail.com>,
 	Yao Zi <ziyao@disroot.org>,
 	Icenowy Zheng <zhengxingda@iscas.ac.cn>
-Subject: [PATCH 01/12] dt-bindings: clock: thead: add TH1520 MISC subsys clock controller
-Date: Thu,  7 May 2026 16:16:59 +0800
-Message-ID: <20260507081710.4090814-2-zhengxingda@iscas.ac.cn>
+Subject: [PATCH 03/12] riscv: dts: thead: add device tree node for MISC clock controller
+Date: Thu,  7 May 2026 16:17:01 +0800
+Message-ID: <20260507081710.4090814-4-zhengxingda@iscas.ac.cn>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
 References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
@@ -59,12 +59,12 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAC3m+KLSvxpI_pNEA--.42168S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw13Ww4xJw4xCF4rCw1fXrb_yoW8Zw4kp3
-	9xAFW8tF4vvFZ3Ww4xt3Z2kwsrWFWkWFnxta1UCFyIy3WSgF1ftayagF4jgFyfJFWxAF9r
-	uF1jgr4fZry2kw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+X-CM-TRANSID:rQCowAC3m+KLSvxpI_pNEA--.42168S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFW7Zr45tFyDGr1fXF4ruFg_yoW8uF4xp3
+	9xCrZ3AFs2qF4S93Waq3y0gr1xuas5CFWvqrnxCa48ArWagrWUXFW8GF93uFW8trW0vwsr
+	ZFnYyr18ArnIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
 	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
 	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
@@ -74,65 +74,74 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7Kw13Ww4xJw4xCF4rCw1fXrb_yoW8Zw4kp3
 	xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
 	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
 	kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjTRMfOzDUUUU
+	6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVF
+	xhVjvjDU0xZFpf9x0pRl_MsUUUUU=
 X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-TH1520 has a subsystem clock controller called MISC_SUBSYS in its
-manual, mainly controlling clocks for USB and MMC/SD in non-TEE
-environment.
+The MISC_SUBSYS clock controller on TH1520 SoC is a clock controller
+mainly controlling USB-related clocks (which isn't utilized yet) and
+MMC/SD controllers' AHB bus clocks.
 
-Add device tree binding for it.
+Add the device tree node for it along with the missing bus clock
+references for MMC/SD controllers.
 
 Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 ---
- .../devicetree/bindings/clock/thead,th1520-clk-ap.yaml |  5 +++--
- include/dt-bindings/clock/thead,th1520-clk-ap.h        | 10 ++++++++++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ arch/riscv/boot/dts/thead/th1520.dtsi | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-index 9d058c00ab3d5..d46d13597466f 100644
---- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-+++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-@@ -23,6 +23,7 @@ properties:
-   compatible:
-     enum:
-       - thead,th1520-clk-ap
-+      - thead,th1520-clk-misc
-       - thead,th1520-clk-vo
+diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+index 5e91dc1d2b9b7..c9930e63bbe93 100644
+--- a/arch/riscv/boot/dts/thead/th1520.dtsi
++++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+@@ -366,8 +366,8 @@ emmc: mmc@ffe7080000 {
+ 			compatible = "thead,th1520-dwcmshc";
+ 			reg = <0xff 0xe7080000 0x0 0x10000>;
+ 			interrupts = <62 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk CLK_EMMC_SDIO>;
+-			clock-names = "core";
++			clocks = <&clk CLK_EMMC_SDIO>, <&clk_misc CLK_EMMC>;
++			clock-names = "core", "bus";
+ 			status = "disabled";
+ 		};
  
-   reg:
-@@ -32,8 +33,8 @@ properties:
-     items:
-       - description: |
-           One input clock:
--          - For "thead,th1520-clk-ap": the clock input must be the 24 MHz
--            main oscillator.
-+          - For "thead,th1520-clk-ap" and "thead,th1520-clk-misc": the clock
-+            input must be the 24 MHz main oscillator.
-           - For "thead,th1520-clk-vo": the clock input must be the VIDEO_PLL,
-             which is configured by the AP clock controller. According to the
-             TH1520 manual, VIDEO_PLL is a Silicon Creations Sigma-Delta PLL
-diff --git a/include/dt-bindings/clock/thead,th1520-clk-ap.h b/include/dt-bindings/clock/thead,th1520-clk-ap.h
-index 68b35cc612041..642c2a69a5797 100644
---- a/include/dt-bindings/clock/thead,th1520-clk-ap.h
-+++ b/include/dt-bindings/clock/thead,th1520-clk-ap.h
-@@ -128,4 +128,14 @@
- #define CLK_MIPIDSI1_PIXCLK		29
- #define CLK_HDMI_PIXCLK			30
+@@ -375,8 +375,8 @@ sdio0: mmc@ffe7090000 {
+ 			compatible = "thead,th1520-dwcmshc";
+ 			reg = <0xff 0xe7090000 0x0 0x10000>;
+ 			interrupts = <64 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk CLK_EMMC_SDIO>;
+-			clock-names = "core";
++			clocks = <&clk CLK_EMMC_SDIO>, <&clk_misc CLK_SDIO0>;
++			clock-names = "core", "bus";
+ 			status = "disabled";
+ 		};
  
-+/* MISC clocks */
-+#define CLK_MISCSYS_ACLK	0
-+#define CLK_USB			1
-+#define CLK_USB_CTL_REF		2
-+#define CLK_USB_PHY_REF		3
-+#define CLK_USB_SUSPEND		4
-+#define CLK_EMMC		5
-+#define CLK_SDIO0		6
-+#define CLK_SDIO1		7
+@@ -384,8 +384,8 @@ sdio1: mmc@ffe70a0000 {
+ 			compatible = "thead,th1520-dwcmshc";
+ 			reg = <0xff 0xe70a0000 0x0 0x10000>;
+ 			interrupts = <71 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk CLK_EMMC_SDIO>;
+-			clock-names = "core";
++			clocks = <&clk CLK_EMMC_SDIO>, <&clk_misc CLK_SDIO1>;
++			clock-names = "core", "bus";
+ 			status = "disabled";
+ 		};
+ 
+@@ -533,6 +533,13 @@ rst_misc: reset-controller@ffec02c000 {
+ 			#reset-cells = <1>;
+ 		};
+ 
++		clk_misc: clock-controller@ffec02c100 {
++			compatible = "thead,th1520-clk-misc";
++			reg = <0xff 0xec02c100 0x0 0x100>;
++			clocks = <&osc>;
++			#clock-cells = <1>;
++		};
 +
- #endif
+ 		rst_vp: reset-controller@ffecc30000 {
+ 			compatible = "thead,th1520-reset-vp";
+ 			reg = <0xff 0xecc30000 0x0 0x14>;
 -- 
 2.52.0
 
