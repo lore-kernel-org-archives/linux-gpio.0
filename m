@@ -1,58 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EF63B7B9E;
-	Thu,  7 May 2026 16:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B87037269F;
+	Thu,  7 May 2026 16:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778170360; cv=none; b=iBYBwvM3S1OHh/HS3IoEz/Hmb7KOKd0YIMbtsJ+D0pvs849k6xu4i2c6vkilLX0N+MC3+yv/z7uSzQWfjfWZfGgkm3HsA63ktexTNFxgTOtvWJFMm0J0acylvnNOTBlS55tWGYkBrYyVlNEzEMvnCA0ngJP3DO8D4Z4TkBrcmaI=
+	t=1778171414; cv=none; b=p+O275LvhTwAFrvBhr8lc/pnzcBSwm5n2zDum2EJpj4cMGNKg7BNvnQG0YWGJwzOJqVfLR22q55w9pc48aQ2T+60fMy7kI5ZjpzWn3IFcZgFZF2I02WegptOm6UFqpG18+Cx7wUB4gIpQJKQEHSw1ebdZbVQBfHEk5wmFnNVKjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778170360; c=relaxed/simple;
-	bh=mHnpTkNqDMMgyjjmBDQelNHd6h4rfsO4RJEx1AkJBMo=;
+	s=arc-20240116; t=1778171414; c=relaxed/simple;
+	bh=JF5H04WoSuU8ZS1WCukHF3QcigcJRhlCF8unmAcPvLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jk1QxZ83uGRamUAM2cQF2UtBwoKbfzy7dp/kKYGjQbMYUM+IMOl4KXN6s2OOiLv/Di1Y6D3hX3lbMfe8GLLyyq9ajAs1d9kHWXtd6iLTevzgW496zbTrJ2PhIeAuPOLAz/2TUXKVS1f/A9fYZmTMOMjGa/ZFv7/1fxb8ZxdGqjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+S845O0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjlabwShmS5O7rDipjRxg+UKSrkwcZFp6fktdFYVnZW08bsrZuD1XhHgew5csPp6xLwkzlF52qTG7stW+uAC03TFypXNv51pEupw8+/oOyTrnim2Jz+3hhTGOz1f5wLwxV6c02sXQM7cKbmyB6KLiZZFf4CIgTcYBhqR9iKVPp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iWVScX3t; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+S845O0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A14C2BCB2;
-	Thu,  7 May 2026 16:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778170360;
-	bh=mHnpTkNqDMMgyjjmBDQelNHd6h4rfsO4RJEx1AkJBMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A+S845O03ps+IXB75wFjkzDN9v0tAykUbcR2VsLaQPNrIzkci3CBqgd7eWN3ioqH+
-	 pA+Fb4M/LLGrjCRvWdxhj8r17s8vMLtNx9LjMrG2acOEQZVJrphMzTI+FvfR0Po6/Y
-	 GB8oaJBVqomuilbtkK87vWRTAKcgElExFINXksKPV5+q8owzkU8BgRgpRSrDQJbaRu
-	 v63IN44HnwWOLJ1JH68hewGdvAGnhbdWXeHnejBBNx9vJqgNJYHUfJrgeIcwNiR3OF
-	 nnTQq2BDLnn3zSUBC5nTWu+8a1H/IQgqLI1pkv/Rhea2HPR1XGDGoTs6I4ZzUqnWbP
-	 ReUdrzlMnvGIQ==
-Date: Thu, 7 May 2026 11:12:32 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alex Elder <elder@riscstar.com>, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	maxime.chevallier@bootlin.com, rmk+kernel@armlinux.org.uk, konradybcio@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
-	brgl@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	Daniel Thompson <daniel@riscstar.com>, mohd.anwar@oss.qualcomm.com, a0987203069@gmail.com, 
-	alexandre.torgue@foss.st.com, ast@kernel.org, boon.khai.ng@altera.com, chenchuangyu@xiaomi.com, 
-	chenhuacai@kernel.org, daniel@iogearbox.net, hawk@kernel.org, hkallweit1@gmail.com, 
-	inochiama@gmail.com, john.fastabend@gmail.com, julianbraha@gmail.com, 
-	livelycarpet87@gmail.com, matthew.gerlach@altera.com, mcoquelin.stm32@gmail.com, 
-	me@ziyao.cc, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	richardcochran@gmail.com, rohan.g.thomas@altera.com, sdf@fomichev.me, 
-	siyanteng@cqsoftware.com.cn, weishangjuan@eswincomputing.com, wens@kernel.org, 
-	netdev@vger.kernel.org, bpf@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 08/12] dt-bindings: net: toshiba,tc965x-dwmac:
- add TC956x Ethernet bridge
-Message-ID: <afy5vHDGKNmNlOYV@baldur>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iWVScX3t"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=kYKaL1jQ8LGdN9smjIQLGtIx8ZielLRVj4GVygHNyZw=; b=iWVScX3t1Vr7jT65EBijDEZtTC
+	xR/IYFApXe/XCCjv6FXei/9xmMjJxEdUZzW87RUeUyhJcv+B3eVHQz9NAIK/eJD4bXgOtQg4e8bFF
+	6Q7shNjm3ibz3YIv1APpxKSOp0zLPRl0qLPCWLDITqKG+x6Yq2AcgJxHUp5giJaS4zUk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wL1b9-001qT0-IB; Thu, 07 May 2026 18:29:15 +0200
+Date: Thu, 7 May 2026 18:29:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Thompson <daniel@riscstar.com>
+Cc: Alex Elder <elder@riscstar.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, maxime.chevallier@bootlin.com,
+	rmk+kernel@armlinux.org.uk, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org,
+	arnd@arndb.de, gregkh@linuxfoundation.org,
+	mohd.anwar@oss.qualcomm.com, a0987203069@gmail.com,
+	alexandre.torgue@foss.st.com, ast@kernel.org,
+	boon.khai.ng@altera.com, chenchuangyu@xiaomi.com,
+	chenhuacai@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+	hkallweit1@gmail.com, inochiama@gmail.com, john.fastabend@gmail.com,
+	julianbraha@gmail.com, livelycarpet87@gmail.com,
+	matthew.gerlach@altera.com, mcoquelin.stm32@gmail.com, me@ziyao.cc,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com,
+	rohan.g.thomas@altera.com, sdf@fomichev.me,
+	siyanteng@cqsoftware.com.cn, weishangjuan@eswincomputing.com,
+	wens@kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 10/12] net: stmmac: tc956x: add TC956x/QPS615
+ support
+Message-ID: <ef6df85f-11ac-404d-958a-8cf69b3b6bb6@lunn.ch>
 References: <20260501155421.3329862-1-elder@riscstar.com>
- <20260501155421.3329862-9-elder@riscstar.com>
- <afycOwz5TpkegkZd@baldur>
- <0de89be0-d842-46f4-8a23-d7e6cc62bcc4@lunn.ch>
+ <20260501155421.3329862-11-elder@riscstar.com>
+ <2ce5897d-5bbb-486a-b0f0-0e30e54b451a@lunn.ch>
+ <afy34kj2hPxIlArO@aspen.lan>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -61,36 +67,67 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0de89be0-d842-46f4-8a23-d7e6cc62bcc4@lunn.ch>
+In-Reply-To: <afy34kj2hPxIlArO@aspen.lan>
 
-On Thu, May 07, 2026 at 04:19:49PM +0200, Andrew Lunn wrote:
-> > Are there other consumers of these TC956x gpios which would result in a
-> > board designer (and hence dts author) to ever reference this
-> > gpio-controller in a different way?
+On Thu, May 07, 2026 at 05:03:46PM +0100, Daniel Thompson wrote:
+> On Fri, May 01, 2026 at 09:04:58PM +0200, Andrew Lunn wrote:
+> > > +static struct tc956x_mac_speed mac_speed[] = {
+> > > +	{ PHY_INTERFACE_MODE_2500BASEX,	SPEED_2500,  SP_SEL_SGMII_2500M, },
+> > > +	{ PHY_INTERFACE_MODE_SGMII,	SPEED_2500,  SP_SEL_SGMII_2500M, },
+> > > +	{ PHY_INTERFACE_MODE_SGMII,	SPEED_1000,  SP_SEL_SGMII_1000M, },
+> >
+> > That looks odd. Some vendors implemented 2500BaseX using SGMII
+> > overclocked. But that is not strictly 2500BaseX. Having the 2500BASEX
+> > entry suggests you have real 2500BASEX, so why have an SGMII entry
+> > with SPEED_2500?
 > 
-> This Ethernet device could driver an SFP cage. Such cages typically
-> have a number of pins connect to GPIOs, so you can tell when there is
-> a module in the cage, enable the transmit laser, know if light is
-> entering the module from the link peer, etc.
+> This is a consequence of the code that uses this lookup table being
+> called both during initialization and from the fix_mac_speed() callback.
 > 
+> During initialization we only have the value in plat->phy_interface to
+> go on so we run the lookup table using plat->phy_interface (which is
+> typically PHY_INTERFACE_MODE_SGMII) and with the maximum permitted
+> speed.
 
-Okay, so the consumer of the gpio is actually an external component, and
-not just another part of the TC956x?
+Something sounds wrong here. SGMII only supports 10/100/1G. You should
+never be asked to do SGMII at 2500. It should ask for 2500BaseX.
 
-Then this seems reasonable.
+> I haven't got detailed enough notes to allow me to double check but I
+> think there were problems completing the initial MAC reset if we didn't
+> write something sensible to the hardware during initialization.
 
-Thank you,
-Bjorn
+> During fix_max_speed() we get told to adopt 2500base-x. Reviewing the
+> code I can see we don't propagate that and just use
+> plat->phy_interface for fix_mac_speed(). I will fix the code to that
+> the requested interface propagates properly to the lookup table but I
+> think we would still rely on the SGMII entry to get sane initial values
+> to write to the hardware.
 
->     sfp2: sfp {
->       compatible = "sff,sfp";
->       i2c-bus = <&sfp_i2c>;
->       los-gpios = <&cps_gpio1 28 GPIO_ACTIVE_HIGH>;
->       mod-def0-gpios = <&cps_gpio1 27 GPIO_ACTIVE_LOW>;
->       pinctrl-names = "default";
->       pinctrl-0 = <&cps_sfpp0_pins>;
->       tx-disable-gpios = <&cps_gpio1 29 GPIO_ACTIVE_HIGH>;
->       tx-fault-gpios = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
->     };
+Getting sane values into the hardware is good, but 2500 SGMII is not
+sane :-(
+
+> > Doesn't that break any other dwxgmac301 in the system? Shouldn't you
+> > be making a copy of the global structure, and then making
+> > modifications to your copy? mac->dma then points to your copy?
 > 
-> 	Andrew
+> That's exactly what this code does.
+> 
+> `*dma = dwxgmac301_dma_ops` is a structure copy, we never take a pointer
+> to dwxgmac301_dma_ops (and if we did, dwxgmac301_dma_ops is const so I
+> think we'd get a kernel oops if we tried to write to rodata).
+> 
+> Would to code be easier to read if we dropped the local `dma` variable
+> since that would make it clearer that td->dma is not a pointer? More
+> like:
+
+> +       /* dwxgmac301_dma_ops needs extending to provide DMA address translation */
+> +       td->dma = dwxgmac301_dma_ops;
+> +       td->dma.init_rx_chan = tc956x_dma_init_rx_chan;
+> +       td->dma.init_tx_chan = tc956x_dma_init_tx_chan;
+> +       mac->dma = &dma;
+
+Yes, that is better. I also think it is partially my problem. You
+don't often see structure assignments, just pointer assignments. So
+i'm somewhat blind to them.
+
+	Andrew
