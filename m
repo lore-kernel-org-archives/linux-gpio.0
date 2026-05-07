@@ -1,22 +1,22 @@
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0773383C84;
-	Thu,  7 May 2026 08:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95AF347533;
+	Thu,  7 May 2026 08:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778141905; cv=none; b=CdXDgpL0ND+foij6u3XPu0gfllrAz3nmKfbnAEYd4OI+aRCNczFoe11G9z21HGxYHeyhKBTccUddcOQ4QGfE81PY1Z9AB/1upjFSq7c2StA8abRdgGNnkIwSvvWrMg87UXHIFIZaxZrqFV6Bq4d10xHmA8i8VBXIgMWEO+gbvbQ=
+	t=1778141905; cv=none; b=lU8qTb+nj7cyqXdtqepzN5/F+wp+/lGhm8P3p/Sg5C0hDwsUE+icA62Wl/65z03eX6IndKmSkMhCMsg8bWBspZSaiiD4nPlKu9uyV45tGW66B1WwFFZEazWTtsi6Iy+y6DCBC86INkLyZiJU+kT7kLRPoNMHURId9DzvHKldO7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778141905; c=relaxed/simple;
-	bh=I7GhDoZ5Gz4L9bIQlXfzl7V3iuTfhIc3DyWoU/YAiMo=;
+	bh=hx5j7UE3kNi4rhGN4Erfamc90Rdc0PpVnTmIsbGGrZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MaSycidbpk/qz3sKOx5BrTk5uR+wq/kiLnnEKgsdPtXVMsQpkS/jElgs/0B+2+k6uBSeE4VHY0tL/2xqlipNrmPaOU9dPhYM93VnF/ahXJlmECt3u57Ao1/LYyd78AmYyejkxVRdXi9eY8IvDHc3cNqmWIdtT8l76VhEacArIT0=
+	 MIME-Version; b=GNje/OGEYqS/vfUfUnVo/GO6oJyOYprN+uj1PPSDYxdwHAIa4dXxwjm49jSusMXCEUUwJHSD8zvvVW3ZaFcXX+ZVYwfggG5sB/QhnyCSeHzsifFF2Lol7cRUwE37oZ/704AIL3ikM+1b74nIgqQuxZwX40uuuToiabv+/YbESLI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from edelgard.fodlan.icenowy.me (unknown [112.94.100.82])
-	by APP-03 (Coremail) with SMTP id rQCowAC3m+KLSvxpI_pNEA--.42168S10;
-	Thu, 07 May 2026 16:17:31 +0800 (CST)
+	by APP-03 (Coremail) with SMTP id rQCowAC3m+KLSvxpI_pNEA--.42168S6;
+	Thu, 07 May 2026 16:17:25 +0800 (CST)
 From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -45,11 +45,10 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	Icenowy Zheng <uwu@icenowy.me>,
 	Han Gao <rabenda.cn@gmail.com>,
 	Yao Zi <ziyao@disroot.org>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH 08/12] dt-bindings: usb: vialab,vl817: allow ports property
-Date: Thu,  7 May 2026 16:17:06 +0800
-Message-ID: <20260507081710.4090814-9-zhengxingda@iscas.ac.cn>
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>
+Subject: [PATCH 04/12] dt-bindings: phy: add binding for T-Head TH1520 USB PHY
+Date: Thu,  7 May 2026 16:17:02 +0800
+Message-ID: <20260507081710.4090814-5-zhengxingda@iscas.ac.cn>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
 References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
@@ -60,10 +59,10 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAC3m+KLSvxpI_pNEA--.42168S10
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF13uF4rJFWkAFWkAry3CFg_yoW8Jw43pF
-	WxKFyxJFn3tF13W34kKF48C3W3ZayDJr1DGFZrZrsrKFn8u3Z8trs8Kr98X3WkCr1kuFW3
-	Cryqkr45Ka42k3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:rQCowAC3m+KLSvxpI_pNEA--.42168S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kZrW3uryUJFW5Ww4kWFg_yoW8tF43pa
+	93GFyfJFnagFn3uw4SqF10kF1ftrZ5ZF15tr12gw10gws0g3WSqa9IkFy5uF48Jr48XFW7
+	uF4Y9ry7KF12kw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -74,49 +73,103 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7AF13uF4rJFWkAFWkAry3CFg_yoW8Jw43pF
 	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
 	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
 	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
+	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
 	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
+	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
 	daVFxhVjvjDU0xZFpf9x0pRQJ5wUUUUU=
 X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-As a USB hub device, VL817 can surely be connected to external USB
-connectors. The binding for such connectors connection is already
-described in the generic usb-hub.yaml binding with ports subnode, but
-it's not yet allowed in the VL817 binding.
+The TH1520 SoC features a Synopsys USB 3.0 FemtoPHY with some custom
+glue logic configuring PHY parameters.
 
-Switch the reference binding from usb-device.yaml to usb-hub.yaml (which
-recursively references usb-device.yaml and contains definition for ports
-subnode) and allow ports subnode in VL817 binding.
+Add a binding for it.
 
-Cc: Anand Moon <linux.amoon@gmail.com>
 Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 ---
- Documentation/devicetree/bindings/usb/vialab,vl817.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../bindings/phy/thead,th1520-usb-phy.yaml    | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/thead,th1520-usb-phy.yaml
 
-diff --git a/Documentation/devicetree/bindings/usb/vialab,vl817.yaml b/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-index c815010ba9c2e..7387f4fae54d1 100644
---- a/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-+++ b/Documentation/devicetree/bindings/usb/vialab,vl817.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - Anand Moon <linux.amoon@gmail.com>
- 
- allOf:
--  - $ref: usb-device.yaml#
-+  - $ref: usb-hub.yaml#
- 
- properties:
-   compatible:
-@@ -34,6 +34,8 @@ properties:
-     description:
-       phandle to the peer hub on the controller.
- 
-+  ports: true
+diff --git a/Documentation/devicetree/bindings/phy/thead,th1520-usb-phy.yaml b/Documentation/devicetree/bindings/phy/thead,th1520-usb-phy.yaml
+new file mode 100644
+index 0000000000000..37f5cfb95bad0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/thead,th1520-usb-phy.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/thead,th1520-usb-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- required:
-   - compatible
-   - reg
++title: T-Head TH1520 USB PHY
++
++description: |
++  The T-HEAD TH1520 USB PHY is a Synopsys USB 3.0 FemtoPHY glued with some
++  custom logic to configure PHY parameters.
++
++maintainers:
++  - Icenowy Zheng <zhengxingda@iscas.ac.cn>
++  - Wei Fu <wefu@redhat.com>
++  - Drew Fustini <dfustini@tenstorrent.com>
++
++properties:
++  compatible:
++    const: thead,th1520-usb-phy
++
++  reg:
++    maxItems: 1
++
++  "#phy-cells":
++    const: 0
++
++  clocks:
++    items:
++      - description: PHY bus clock
++      - description: PHY reference clock
++
++  clock-names:
++    items:
++      - const: bus
++      - const: ref
++
++  resets:
++    items:
++      - description: PHY bus reset
++      - description: PHY reset
++
++  reset-names:
++    items:
++      - const: bus
++      - const: phy
++
++  avdd33-usb3-supply:
++    description: |
++      3.3V power supply for the PHY, named AVDD33_USB3 in the SoC pin list.
++
++required:
++  - compatible
++  - "#phy-cells"
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - avdd33-usb3-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    phy@ec030000 {
++      compatible = "thead,th1520-usb-phy";
++      reg = <0xec030000 0x10000>;
++      #phy-cells = <0>;
++      clocks = <&clk_misc 1>, <&clk_misc 3>;
++      clock-names = "bus", "ref";
++      resets = <&rst_misc 6>, <&rst_misc 7>;
++      reset-names = "bus", "phy";
++      avdd33-usb3-supply = <&avdd33_usb3>;
++    };
 -- 
 2.52.0
 
