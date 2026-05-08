@@ -1,63 +1,63 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2A437104A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD330376463
 	for <linux-gpio@vger.kernel.org>; Fri,  8 May 2026 06:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778221085; cv=none; b=CZp1+mRCaFjaguTNBU7KiFfQOfbHtFVcG7YofiuSRMETyusM9MeGHAg6biObd09QIlsPl3EFxpvX0LZI3EUUS4fOY2Oesfm8tqV7xucG58nBbN8VDbghp96vzzSQyf0IEd8L688ALq8BTbMtEDa57uJCEhFebkqK6O+J8NKppPg=
+	t=1778221088; cv=none; b=EOZnpgh6aTstvd8U4p77VJw1uV/E1E0cOGqwl75KLRkjCiFSITXyL8GeVog33MrGt8fo9ZOQIzo+xmEexPBHesvViAEHIZdoCjNlerUO3Mqm3jHRxI8xwI5AWojvA9OKxvRCn81XaCMXchHjRhNVWBSx1bUysTtAEQ6VjR9oec0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778221085; c=relaxed/simple;
-	bh=iAz3jJlPBsba8da3kwjpUIhKKIX2c5o7oUegAZLaLs8=;
+	s=arc-20240116; t=1778221088; c=relaxed/simple;
+	bh=/DEFkIW9I9NwWWfUVQdS9qd8W0IKdC3W81KyiTB7ETg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K7xvV+46Rha6j+ea1R821a60R5WrabAQyfF4kkYoaMiGq3UmF5tNGIrSm/tCtO43gPu6SVJrea9bHdPQu3OqSM8Afl5ZzX7DR77OZW7v09CFZYrz/q5g2VIyrCAvBeS4Dc9dCFctg6JHy2U34pxagwijL4vNoEXEp6sgXgrE9eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZLlb5Xm; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=nPuUqvhIUu/dYpP6E8fxbPlvhCqzxc4DgGKXuJARtTz8b0i0wIVFQTi3X5zI7k0VYJNe133JEg2RYqPgYmqIhbzI05o6L76fHSzmfMLKUktRUCL7CDU3Npg0BLnkEVmpDTcx1B3idLYDiKHPYZobaYhEkYjAbXy1lpaP66jySjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nt0yV9oF; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZLlb5Xm"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488ff90d6c7so14113045e9.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nt0yV9oF"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488ba840146so14197965e9.1
         for <linux-gpio@vger.kernel.org>; Thu, 07 May 2026 23:18:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778221075; x=1778825875; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778221077; x=1778825877; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7/HBkO+y62XsV45mtLzlDevXxl0xhhsA9eRibM5h14I=;
-        b=bZLlb5XmFI5aUFxtUyQJyuZaE3fA3eA3C/SAu+k5kxhItC5EjvAhgAUvCjqJ9kF+NY
-         OzmFlXPYXSCe1jtrSxsLYiu0u7goCAbg1pu3FLUI/nFEgrDwRX3T61Tfx+VJoRWG94QV
-         z/tRN/WsF3ab6LItv1YThZycu9mDO6lmAJ7xWzveADTpHhKJliDuxq21hs2wSb3z0l/N
-         BpQiYVEQpTGvApanGRWRu8NdJd9qDCFrgGGy/rsGD6MxE+hjMjscTPOSvS96PXk5YpB1
-         gG+j45kP010HTcQ790KDFnIDOXQhxb3rk8VooSS1gQYlmPmt7NO9In6TK0661I1QydKF
-         3qFg==
+        bh=OIgsaz/80F7YVh1co0erXVe0CBs1zSzj8RjSOOEqAps=;
+        b=Nt0yV9oFYvcQdlpIVcBPIz+S5V2AVdvo7OlCMwpxJqakzKRFYEx0wGQl5QhioNGAee
+         uYQf4GifnjFC2J7xiOFL03dCy0Lm8dVkAwOQiyWQ8nu2SZNyrCMTzzUsnuRGggxF8r8O
+         y+c/u+50RjxwwLVHGKBW3899cvNsVoqWyKBImuwtGR/Iy77UFR2zMhLoez48TxBDRJd8
+         J9r97uEyipw/MCfrC+7cMGkRUamWEM/29FZmoH613I04NEM4UyB+PuJZRfTTv8pj0/2b
+         jTDEfED9Nk0hKmUJou2UnRHuobn96Myawnw11v8UvxtxZ6SuTdh896hzx4VjE8XfuvTU
+         hZZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778221075; x=1778825875;
+        d=1e100.net; s=20251104; t=1778221077; x=1778825877;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7/HBkO+y62XsV45mtLzlDevXxl0xhhsA9eRibM5h14I=;
-        b=Wx4Q7Ep6OD7UsH69Bh8I/xtAhpgW4oY2YXVm+1mz43RKe8u1ECpe6umCiaoq8hxUDY
-         8XTbwxLmddu4cRtZlUoZWlOKppdwkZysyV66wRTQEvVKdCgxm6MX9p73/igHamhN27A3
-         /5SXMthm3PJ/BepFTne/u9+vEGjwntRue2pn+vyyFuUxKldmzme60mNfjaSY7rWp7ydi
-         rMhXRDRHXEUPPaV4U+kwt2E+FqE110Qdcrvi51FRGizWD9bOPMN7Xgi5CQ9pTQTVvdX3
-         JhbttS7PNFibOsFMTELh9vTtE0D+AqxANWAt1xd9aWokViQ4AD3n1AtcQrSdgTazUjnA
-         SdOg==
-X-Forwarded-Encrypted: i=1; AFNElJ/KwEqRou71ViGoy1jK6Hf0ohEi1JwBa6KbSBye8ubBllVESzQY1XwJklcL0kNc2/gGBJpUm7x5UWsm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdGiYrs4M3B/EF7cHV6iQTniIZkdMLzHy/toSus8oWIrShUO5Q
-	2/hsAI5qGVSS1OcjMVXJ3YM0zVB1GMCWXj1BdLa8VROlP0CIj/j157zo
-X-Gm-Gg: AeBDiet35YZWpyhrSvyrKYr5Pcf7hXX7MlicjQwkuzGG4LAg9tsIXhksKipIGEvXYeG
-	6p1arYwotChgzWlbx/FNvsySuI2kl1vKS4V9HDBQ4XIOANobvGzn5QXY4tIVKv0u4x+WF7yC59o
-	trn8YejqYKtUsqTYrDfzN9BfYHDwpCMmZJbeOPcNWvqFKo8TGMMKc21qodRPL8JXqg7PW2yakl6
-	GDTueh1A/7ryf0LAI7tk5zNYUAZO5BxYa1KkzQb1p9o8RPbdcRlIW4r+GOC9h2qEm8uJymNHqKc
-	qMXZzqW2Uaa8FJC7GnyGU1XcDXFQqyY9O+8HE3ucuWObONBz1eSDoymBNa4GMVtfibscJpjw3/T
-	7nZ3PhNsXV07zgItxbFrIlPgYdkFytIqfzIQPcEN8NR324h4yIwZ5C5eXCST50dekYUKfIq4Dzp
-	6xlNzP2418NeUC7h99YD9cFvCmlw==
-X-Received: by 2002:a05:600c:3f18:b0:487:2671:fb8f with SMTP id 5b1f17b1804b1-48e51e19668mr170774595e9.8.1778221074930;
-        Thu, 07 May 2026 23:17:54 -0700 (PDT)
+        bh=OIgsaz/80F7YVh1co0erXVe0CBs1zSzj8RjSOOEqAps=;
+        b=B93fNqJpDRS3tEviSbaG4MP4hfag1krvblrYfrsDP6iYGCjNLkQz/p9g8Xp0F9netH
+         QrHsw98ckN3T6wYqNTKBzszVzvMRTRhpaqhq/5fc+bkQtj2JVjoJ60nLCFchp1fusZR4
+         dZq3NvwVxwBUGGg0CrGZDdemd6Eipn4Wq8nqatHCFgiRDgcjyDl9upTnJsy0CD4ElQsG
+         DiBdt/KVQrodOkjwzPWf5TgDEtRRf+t/GT82fPD/X2KLLix0TBC3D6UuVeyfirIIqxR1
+         2IwREaEZzKrPPQ/rEaM1jQx7rIiWCjMH/QEbhvjI4dkeTxxppPr6+4B27+RJJ0mgiy8/
+         h9hQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9kWKHNE2OP4wbnEtA9WbyhjNvYs2nW0DwSu0/RZ/Ko+AyXInQ/kN1e1RbvdvahMDkcCN8BPsENnsJ2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE+xTz8AL8RdWhsDAmxOAN/wzzvbG/sLxdGfOoUvjLNbTh6YFC
+	bp2koGMpJqemqL04Mi6FNcPPFwy+um1EQJVDfXo8jym+yrjJLozoYzYY
+X-Gm-Gg: AeBDievrgW0HyWPpD8NNRHUVQUnT6ejqFWM0v065+OtqkzpKXTAtpjZp3eBjosgckf7
+	bTJZWywKoiZj0n9NxtsFUOJyLbgJ+pOr31Scm7ytRyakRIsWNBzSbKzgZ7kpIS1URDIvVgf9VfI
+	LzSyMgqAzeTr9yPdeoh09MqNDnof3DkEHl2oEyNmT7qn+PWgd/viErhg6mGw07IN9BLry7e/Jo4
+	glxrzXrmjr1MdnAYWxLKHZhs4uEFjgGttjA39YKg7E57dbSeVBdgVG/7kyz/dlbzXdRlQaD5/wS
+	l+F5tTa0AgVY5oJMUimOVPVLOhH7mVvXv574yyz5QKodQnUvFzdpHVIk4cOWpXc0GR2j0dwCxqi
+	O6C2mdGqBEIgArQ7SUBYY4ItyI8+0L4GT1+k3L/tQq0nllPPCodqFHMrSfZZIaq+x35/ai1CKXB
+	ecjbiiwc0ttErax4s=
+X-Received: by 2002:a05:600c:a111:b0:488:79a3:f04c with SMTP id 5b1f17b1804b1-48e51f46d1bmr129939265e9.27.1778221077168;
+        Thu, 07 May 2026 23:17:57 -0700 (PDT)
 Received: from ROG ([2a01:e11:202b:40:68b1:8d59:e348:c16e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e68f5d48fsm11251175e9.14.2026.05.07.23.17.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e68f5d48fsm11251175e9.14.2026.05.07.23.17.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 23:17:54 -0700 (PDT)
+        Thu, 07 May 2026 23:17:56 -0700 (PDT)
 From: Marco Scardovi <mscardovi95@gmail.com>
 To: andriy.shevchenko@intel.com
 Cc: linux-acpi@vger.kernel.org,
@@ -66,9 +66,9 @@ Cc: linux-acpi@vger.kernel.org,
 	mathias.nyman@intel.com,
 	mika.westerberg@intel.com,
 	Marco Scardovi <mscardovi95@gmail.com>
-Subject: [PATCH v4 4/6] gpio: acpi: use guard(mutex) for conn_lock
-Date: Fri,  8 May 2026 08:17:27 +0200
-Message-ID: <20260508061729.9530-5-mscardovi95@gmail.com>
+Subject: [PATCH v4 6/6] gpio: acpi: sort header inclusion alphabetically
+Date: Fri,  8 May 2026 08:17:29 +0200
+Message-ID: <20260508061729.9530-7-mscardovi95@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260508061729.9530-1-mscardovi95@gmail.com>
 References: <afzlsRkyKQzuUcgL@ashevche-desk.local>
@@ -81,58 +81,34 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace manual mutex_lock() and mutex_unlock() calls in
-acpi_gpio_adr_space_handler() with the guard(mutex) helper. This
-ensures the conn_lock is automatically released when exiting the
-scope, preventing potential deadlocks and simplifying the logic.
+Reorder the #include directives in gpiolib-acpi-core.c to follow
+alphabetical order. This improves code readability and ensures
+consistency with kernel coding style for header management.
 
 Signed-off-by: Marco Scardovi <mscardovi95@gmail.com>
 ---
- drivers/gpio/gpiolib-acpi-core.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/gpio/gpiolib-acpi-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpiolib-acpi-core.c b/drivers/gpio/gpiolib-acpi-core.c
-index e53d68578024..33d6c3b6cdf0 100644
+index c9b12e24de14..7b324dd4ae67 100644
 --- a/drivers/gpio/gpiolib-acpi-core.c
 +++ b/drivers/gpio/gpiolib-acpi-core.c
-@@ -1123,7 +1123,7 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		u16 word, shift;
- 		bool found;
+@@ -8,12 +8,14 @@
+  */
  
--		mutex_lock(&achip->conn_lock);
-+		guard(mutex)(&achip->conn_lock);
+ #include <linux/acpi.h>
++#include <linux/cleanup.h>
+ #include <linux/dmi.h>
+ #include <linux/errno.h>
+ #include <linux/export.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/mutex.h>
++#include <linux/slab.h>
+ #include <linux/pinctrl/pinctrl.h>
  
- 		found = false;
- 		list_for_each_entry(conn, &achip->conns, node) {
-@@ -1155,17 +1155,15 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		if (!found) {
- 			desc = acpi_request_own_gpiod(chip, agpio, i, "ACPI:OpRegion");
- 			if (IS_ERR(desc)) {
--				mutex_unlock(&achip->conn_lock);
- 				status = AE_ERROR;
--				goto out;
-+				break;
- 			}
- 
- 			conn = kzalloc_obj(*conn);
- 			if (!conn) {
- 				gpiochip_free_own_desc(desc);
--				mutex_unlock(&achip->conn_lock);
- 				status = AE_NO_MEMORY;
--				goto out;
-+				break;
- 			}
- 
- 			conn->pin = pin;
-@@ -1173,8 +1171,6 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 			list_add_tail(&conn->node, &achip->conns);
- 		}
- 
--		mutex_unlock(&achip->conn_lock);
--
- 		/*
- 		 * For the cases when OperationRegion() consists of more than
- 		 * 64 bits calculate the word and bit shift to use that one to
+ #include <linux/gpio/consumer.h>
 -- 
 2.54.0
 
