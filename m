@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8C3ACA71;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1F3ACA74;
 	Sun, 10 May 2026 16:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778429342; cv=none; b=KLI3LSc5e9Sur7X4qg2aTSVFrZYcp85QA61mwKyvYdpXF61621t4a8De/WTARTE8V8s6mpoXpOsohVNU47SqIdLEE9MvfR1f68JRH5yy+j0A78Fzp1tgT189kTC8nlWp6l6xkiqH/HnAZMhwQobdcrzcQQs6cBeuVtQ/stXZo2A=
+	t=1778429342; cv=none; b=KD0H6vGQ6/nL/IAZK9Ne0O/ETkONxAVWPfQL/UbiIP2PpbDe5vrYRFQoSQa/ZnTkrdosAGZlMRYZCuu/hxBAWMUn3Pz5KaJQLgoAZnh4BUA6FliFUyw8K4+C5Fua/f9VYWJ/ls00zhC1jGWfCX4hOi3xJTYbvJVMc+pZg99dUXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778429342; c=relaxed/simple;
-	bh=/PkzzLvSPOXiK3/ODiyuapfBuRKWWlFUuOhJ1kbzYrk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RUGbzVJ9GRysEdKSLOH9bqhw5sCoD748U7qzc1cxQNMxSUxayCANwgy0500tsEIXcSpfzLfFIxQXGF+EaEZ1oF7HanJUaq8kG/9Tzh8h4el60/gDfba7wZGfwEsTbKSKSTedt6QAy693hm3ht+DsiLVvmbuvtbMdcJ07aiS4kXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBS+bBU/; arc=none smtp.client-ip=10.30.226.201
+	bh=wfHMaPVrKZ/CnHd2SjBdGDvMgPBPVKrMvAzVQG74mw4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R/+otcBP04xvL5goad3TT/rvpg93ZjB6Z//0PKx9y868f1viI+FwwS/XrgjWCQ3ooyjB+OIDAmceBxdng6/2pbKvmDyCGTYTv9HXB6qqhgJA+bYCPGoR0sylfldqHCWWy4hWWY2wPbUX3tt4GBa+lS6ZmSY0KTiDcR3xr19QMO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqFyAKC0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBS+bBU/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 18825C2BCC7;
-	Sun, 10 May 2026 16:09:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqFyAKC0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D9518C2BCB8;
+	Sun, 10 May 2026 16:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778429342;
-	bh=/PkzzLvSPOXiK3/ODiyuapfBuRKWWlFUuOhJ1kbzYrk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bBS+bBU/WMZ4B0IhjMjbe+52fkVPGu/+oW/+9+zdYW9F6oHAr9UjRIoiNKod8g4mT
-	 A4mELEEYOtmyWcbAaYMPsVL4dFCL7qSrkONXvm4vHgp86WAQrM3UeXEqfDbK2qiZUB
-	 AzbimDN/0pSyeb2uXc6QskbcZ9ecx6up2d5Jd0ilQWPmbDy1LpbTsPbs+RLwa+J2+D
-	 3GM1vm8I+4ua8tvbQUmT7frTDa5/VOvnV8hsXSoTzPbn1X7i/KSAdv9233kF4NqDPn
-	 V2uFkNwD8y7QI48eLfdKC+sC5dAfj1cVzh8C6oazhoIulPLSS30sB4b66Rda1EBP16
-	 XIfcK1k2veYIA==
+	s=k20201202; t=1778429341;
+	bh=wfHMaPVrKZ/CnHd2SjBdGDvMgPBPVKrMvAzVQG74mw4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AqFyAKC0ND+hX5XohxWudf08zaCe0LUMtshbEMMDka6aOBhvd7dm6Daymac3xa34z
+	 OsJM6eK8QKjNsYCHsTwl+WpMw2i885MoUEhI3HtwsrCr94F47y889sBSJHXyg/JCQ4
+	 VYrPFy3P+Lhc7PwCNqJn6aKBK/E0+3azX3Un8RTdeWPTLtYd1Bg8ccTfHjJikX1Puh
+	 eayiwmNeTJ1VYxahAuN5R8/agBW0H73zA6oKuxBDzJbjypJHeltXQ5Ui/6eK4CA0na
+	 sZZlDGLXYQQ5BTuFEBT99f9afcGdeN6frW7Ur3g2tYAPBFjKB6D64DR/artE6LVDoy
+	 NXmWhnUXIfwJA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A98CD3427;
-	Sun, 10 May 2026 16:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B84CD37B9;
+	Sun, 10 May 2026 16:09:01 +0000 (UTC)
 From: Alexandre Hamamdjian via B4 Relay <devnull+azkali.limited.gmail.com@kernel.org>
-Date: Sun, 10 May 2026 23:08:55 +0700
-Subject: [PATCH 2/2] dt-bindings: usb: add Rohm BM92TXX Type-C controller
+Subject: [PATCH 0/2] usb: typec: add Rohm BM92TXX Type-C / PD controller
+ driver
+Date: Sun, 10 May 2026 23:08:53 +0700
+Message-Id: <20260510-bm92t-v1-0-dff3c9d22426@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,9 +41,10 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260510-bm92t-v1-2-dff3c9d22426@gmail.com>
-References: <20260510-bm92t-v1-0-dff3c9d22426@gmail.com>
-In-Reply-To: <20260510-bm92t-v1-0-dff3c9d22426@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDU0MD3aRcS6MSXWNzi0RDy2RjY8tUYyWg2oKi1LTMCrA50bEQfnFpUlZ
+ qcglIs1JtLQBYUa82aQAAAA==
+X-Change-ID: 20260510-bm92t-378a19c339e3
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, CTCaer <ctcaer@gmail.com>, 
  Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
@@ -52,11 +54,11 @@ Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
  Alexandre Hamamdjian <azkali.limited@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778429339; l=5274;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778429339; l=1198;
  i=azkali.limited@gmail.com; s=20260510; h=from:subject:message-id;
- bh=ozSJxakD3nLP0mwcFo/HHRulxXgmVTFqvb1G9vOg8aA=;
- b=5UedgQhPGodFtSd/RZPXCz4svuo7xyrzsx02xAKjnxj8A1rklJ/tuGf7fgJ46ypmUoYHYG8Rz
- UsZPZ2gUehIDgMOPhc+xKGB3i+Q0QWyaXKJuMU2RJcX3zMp45WOFqLN
+ bh=wfHMaPVrKZ/CnHd2SjBdGDvMgPBPVKrMvAzVQG74mw4=;
+ b=REsPFHgjcoHND/C70+ey/FApHgnxXCkQO4GaIsf4qjx7zf5Ah/DseTUQfjvUrhp8TxB1assci
+ RFHuC6TxolQCm5SE1mpimcRyihDWI2KeGk0zx98PSSTDldp4yndSpRb
 X-Developer-Key: i=azkali.limited@gmail.com; a=ed25519;
  pk=I0Z0IdCdQJqNGX+FQUnXhrHg950u3cM6Xzz3YT6JOyQ=
 X-Endpoint-Received: by B4 Relay for azkali.limited@gmail.com/20260510 with
@@ -64,175 +66,36 @@ X-Endpoint-Received: by B4 Relay for azkali.limited@gmail.com/20260510 with
 X-Original-From: Alexandre Hamamdjian <azkali.limited@gmail.com>
 Reply-To: azkali.limited@gmail.com
 
-From: Alexandre Hamamdjian <azkali.limited@gmail.com>
+This series adds initial support for the Rohm Semiconductor BM92TXX
+family of USB Type-C and Power Delivery controllers.
 
-Add the device-tree binding documentation for the Rohm BM92TXX family
-of USB Type-C and Power Delivery controllers. The device is controlled
-over I2C and signals state changes through a dedicated interrupt line.
+This chipset is found on Nintendo Switch hardware, where it handles
+charger and dock USB-C / PD negotiation, DisplayPort alternate-mode
+entry through the dock and VBUS / VCONN control.
 
-Document the rohm,* properties consumed by the driver: the optional
-VCONN-enable GPIO, the DisplayPort alternate-mode toggles
-(rohm,dp-disable, rohm,dp-alerts-enable, rohm,dp-signal-toggle-on-resume,
-rohm,dp-lanes), the suspend/dock tunables (rohm,led-static-on-suspend,
-rohm,dock-power-limit-disable) and the four
-rohm,pd-{5,9,12,15}v-current-limit-ma per-PDO charging current limits.
-A graph port is required to link the controller to a USB role switch
-consumer.
+Further patches will follow to wire the driver up on Nintendo Switch
+device trees and to address review feedback.
 
 Signed-off-by: Alexandre Hamamdjian <azkali.limited@gmail.com>
 ---
- .../devicetree/bindings/usb/rohm,bm92t.yaml        | 128 +++++++++++++++++++++
- MAINTAINERS                                        |   1 +
- 2 files changed, 129 insertions(+)
+Alexandre Hamamdjian (1):
+      dt-bindings: usb: add Rohm BM92TXX Type-C controller
 
-diff --git a/Documentation/devicetree/bindings/usb/rohm,bm92t.yaml b/Documentation/devicetree/bindings/usb/rohm,bm92t.yaml
-new file mode 100644
-index 000000000000..007f70a8f5bb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/rohm,bm92t.yaml
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/rohm,bm92t.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rohm BM92TXX USB Type-C and Power Delivery controller
-+
-+maintainers:
-+  - CTCaer <ctcaer@gmail.com>
-+  - Alexandre Hamamdjian <azkali.limited@gmail.com>
-+
-+description:
-+  The Rohm BM92TXX is a family of USB Type-C and Power Delivery
-+  controllers with an integrated MCU. The host communicates with the
-+  device over I2C and is notified of state changes through a dedicated
-+  interrupt line.
-+
-+properties:
-+  compatible:
-+    const: rohm,bm92t
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  vbus-supply:
-+    description: VBUS sink regulator.
-+
-+  vbus-source-supply:
-+    description: VBUS source (provider) regulator.
-+
-+  pd_bat_chg-supply:
-+    description: Battery charger regulator gated by Power Delivery state.
-+
-+  rohm,vconn-en-gpio:
-+    maxItems: 1
-+    description: GPIO controlling the external VCONN switch.
-+
-+  rohm,dp-disable:
-+    type: boolean
-+    description: Disable DisplayPort alternate-mode handling.
-+
-+  rohm,dp-alerts-enable:
-+    type: boolean
-+    description: Enable DisplayPort status alerts.
-+
-+  rohm,dp-signal-toggle-on-resume:
-+    type: boolean
-+    description:
-+      Toggle the DisplayPort signal on resume to work around sinks that
-+      do not re-train after system resume.
-+
-+  rohm,dp-lanes:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [2, 4]
-+    default: 2
-+    description: Number of DisplayPort lanes to negotiate.
-+
-+  rohm,led-static-on-suspend:
-+    type: boolean
-+    description:
-+      Keep the charge LED in a static state during system suspend
-+      instead of letting the controller animate it.
-+
-+  rohm,dock-power-limit-disable:
-+    type: boolean
-+    description:
-+      Disable the lower power limit applied when a dock is detected.
-+
-+  rohm,pd-5v-current-limit-ma:
-+    description: Charging current limit in mA when 5V PD contract is active.
-+
-+  rohm,pd-9v-current-limit-ma:
-+    description: Charging current limit in mA when 9V PD contract is active.
-+
-+  rohm,pd-12v-current-limit-ma:
-+    description: Charging current limit in mA when 12V PD contract is active.
-+
-+  rohm,pd-15v-current-limit-ma:
-+    description: Charging current limit in mA when 15V PD contract is active.
-+
-+  port:
-+    $ref: /schemas/graph.yaml#/properties/port
-+    description:
-+      Output port linking to a USB role switch consumer endpoint.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - port
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        typec@18 {
-+            compatible = "rohm,bm92t";
-+            reg = <0x18>;
-+            interrupt-parent = <&gpio>;
-+            interrupts = <42 IRQ_TYPE_LEVEL_LOW>;
-+
-+            vbus-supply = <&vbus_reg>;
-+            vbus-source-supply = <&vbus_src_reg>;
-+            pd_bat_chg-supply = <&pd_bat_chg_reg>;
-+
-+            rohm,dp-lanes = <4>;
-+            rohm,pd-5v-current-limit-ma = <2000>;
-+            rohm,pd-9v-current-limit-ma = <2000>;
-+            rohm,pd-12v-current-limit-ma = <1500>;
-+            rohm,pd-15v-current-limit-ma = <1200>;
-+
-+            port {
-+                bm92t_ep: endpoint {
-+                    remote-endpoint = <&usb_role_sw>;
-+                };
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 01e06d87b926..8e8a23cad7c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23311,6 +23311,7 @@ M:	CTCaer <ctcaer@gmail.com>
- M:	Alexandre Hamamdjian <azkali.limited@gmail.com>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/usb/rohm,bm92t.yaml
- F:	drivers/usb/typec/bm92txx.c
- 
- ROHM BU270xx LIGHT SENSOR DRIVERs
+CTCaer (1):
+      usb: typec: bm92txx: add Rohm BM92TXX support
 
--- 
-2.54.0
+ .../devicetree/bindings/usb/rohm,bm92t.yaml        |  128 +
+ MAINTAINERS                                        |    8 +
+ drivers/usb/typec/Kconfig                          |   11 +
+ drivers/usb/typec/Makefile                         |    1 +
+ drivers/usb/typec/bm92txx.c                        | 2634 ++++++++++++++++++++
+ 5 files changed, 2782 insertions(+)
+---
+base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
+change-id: 20260510-bm92t-378a19c339e3
+
+Best regards,
+--  
+Alexandre Hamamdjian <azkali.limited@gmail.com>
 
 
