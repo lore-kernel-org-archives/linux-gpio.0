@@ -1,72 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C33803E7
-	for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 20:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C9D381B1E
+	for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 20:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778531188; cv=none; b=P2YfJsYMt6nAsWNvO6+pdqpvzbMlMLY2q0lAcKdxK5zBUWof2OuPe+/0SlDOjel4ZIej4i1H0IvbCjSRwAEYBtxF+DtZXLqfOtBEoYd1OAwMG7ChjgkoPWRCF2g0IAQ+dl1g61ph5pjS7YqCK2KpVBItxHsPGV4iJIXosTRz298=
+	t=1778531289; cv=none; b=VAbcLrQtpFJFCalcM34lqr4edtt9QyUBvl5w62EUbwcR7cyc/yghAz4n0dzMsegNbTeWPPR6BQJIqWlvDxUrSKZ9V1I4DC9Kg599jEHMB6NfXcOFerZOVgA/Wmvz4+HbeK3CeXERd5MeSJ5B8wAypVEB27Q0FhV3zNONVDmj1m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778531188; c=relaxed/simple;
-	bh=p0T1y41gsuJUzACGoRDlevBaHaCBq9uhq73rg/Jmuv0=;
+	s=arc-20240116; t=1778531289; c=relaxed/simple;
+	bh=Zufrx/VI2aTaZkc5aI8hQ7bIa937j/pEvPsW/ybHiHE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M99JLmC43H3LZ9Yp419VqJJ2yLOxz9z+IoclMSypMEgS5OdwsWQLuKDxKHnoJy2Yrf4cJDLY2spIJJo80AqrIcGT+Nt1uE9CzWF4OsonfetGG5+uN5eWdG9/FjOZcvJWr/Jr+gsLAIYmdfKlAih6zSIrEJWKt7gnv0K+unranW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LldN6Z98; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=t4AULGlhxyZYvdefHtG0rrIS6ErMpGG+3h08vvN2dAptiKMWVVK7QwSOhIu2j/emJfrQoUCjQnvdKqOEI9r4EEoCuKOLnr4OyQLPPesmlaH4UUsFq/kStLk+viGnbct1Z7r5iy7e6lZPJEtXStEqDq8wSXSF13Rv4I7/58pIh14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY0n0me5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LldN6Z98"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BF6C2BD04
-	for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 20:26:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY0n0me5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499F5C4AF0C
+	for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 20:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778531188;
-	bh=p0T1y41gsuJUzACGoRDlevBaHaCBq9uhq73rg/Jmuv0=;
+	s=k20201202; t=1778531289;
+	bh=Zufrx/VI2aTaZkc5aI8hQ7bIa937j/pEvPsW/ybHiHE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LldN6Z98cIgedoQ1TaLfLMP/zwRW1yu3s8fnf+NqB5fpUaJErnQj/LdGUHUIbsrw7
-	 fQJSFVSA3VbmVbWbuzpebSy3C2ayRDTjSSVskDWEdZcE5oZNLVgN3hKYpMpiwAndkm
-	 njYHMEK3UlEaazRrFCPyKJGvCOsbaMUNRoAX2hc8n3Pud/3BuKD40vr4gzZqcZMnp9
-	 nXDo8nlYrOMj8wD5YeGWzIox+ALVpNi8mr6c50USXyVzOVrO98I7GC9UraE9JcZaSp
-	 DGGVXsYe8iMsscqoWnr798QNy375S5qz2GKMaz5KybayrdoWwTHEcEQMtNv3JA6cyA
-	 JEnFk+dVB0gig==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a8d1f43432so1879626e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 13:26:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/17ZiFiCNX4lVxZ4FLAxYGWpLKl+s2rU6PxICxEKry+lJOaJ2CIqlDh2Q1R51xSqUUQTzdgQabZigi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7rj/PSnHLvVUW0yRvHhrjGuigunOQ7aAdgt9JdmFbkrtCvIJ7
-	aFcqH8meJ8TuNIUnm4btKHeYrnDX0Rdw8jJUcKmMw2ZysHoFIAshoEGZd1rgWDpoQe8Wp+Hyttu
-	Jxyis53TwX+1ZG3TwOplD5BSZAnuMKB4=
-X-Received: by 2002:a05:6512:3c9f:b0:5a7:46e6:74c4 with SMTP id
- 2adb3069b0e04-5a887adfc92mr8322271e87.9.1778531186735; Mon, 11 May 2026
- 13:26:26 -0700 (PDT)
+	b=kY0n0me5gHXh9SQBpm0nawZ5itoni+8MAOqu0APPqli6Q1gWVeenTtLbc7QYrM2XI
+	 gu/zJ6CgYj4Rj+bKfRhnqbs4kim2CfHCSmsE/wddLxU9oIcuvWsMrMxJTepLKh1oX1
+	 0uTRg6SA1yp98tnfeG8It03g16nMgBE9MA/aWNGr9Ht4qPMDrzCTIue7kOVjzgTFf1
+	 +rvC2qwFE61wiOdIoDCOE+fxqmNixJQQ+gFJiUkmHE4fYBrWittGipin0FxwGQUeJF
+	 xVcbdWi7Pxxwc7wmvjGrQHI7arOSyRrr9OtKPbXYCl1kJemmRf4RqnC1T9qHTUNWu8
+	 ZfrvpdlNdMPSQ==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5a40cfab24dso5271848e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 May 2026 13:28:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+6/8SSpKWkJKLZo5hQrWFbtxz/LDUWF2cSYB3it1k1LWE9t4YmH4ZDOSWqA4gtSjyQfmipeLSzM526@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMjn6W1Mhf9yKLY8hQ6s0CuUcjLJWLwmFLC+zDTDbAo8r3hmLV
+	6ZG2c+NjVB4GnvOBJmgdLbxXb1j4lCSLy2XTOkOihEwvTXE3yt6EJDO5+z2zVq7szQLFEvBNCsX
+	nJNsmrCQKmEGfqGsakSGoGM0b1WrKqUQ=
+X-Received: by 2002:a05:6512:32c5:b0:5a3:fd83:13f7 with SMTP id
+ 2adb3069b0e04-5a8a949f147mr5220966e87.6.1778531288026; Mon, 11 May 2026
+ 13:28:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260507-a9-pinctrl-v2-0-49774feff2ef@amlogic.com>
-In-Reply-To: <20260507-a9-pinctrl-v2-0-49774feff2ef@amlogic.com>
+References: <20260424111330.702272-1-changhuang.liang@starfivetech.com>
+ <20260424111330.702272-12-changhuang.liang@starfivetech.com>
+ <20260424-mumps-foothill-ef122c1029c0@spud> <ZQ4PR01MB120229BE0DAC2658164C066AF2372@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260428-hardhat-both-1c9aa594a45a@spud> <CAD++jL=96gzBL-VzNi3WtZQvhVgqATV1GwsnyZkTzNC1OiMa5g@mail.gmail.com>
+ <NT0PR01MB1216A40D68A84F944F4CEABCF23C2@NT0PR01MB1216.CHNPR01.prod.partner.outlook.cn>
+In-Reply-To: <NT0PR01MB1216A40D68A84F944F4CEABCF23C2@NT0PR01MB1216.CHNPR01.prod.partner.outlook.cn>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 11 May 2026 22:26:13 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmGr_UOja2yHjCHv7xRcGqit_TxKk7A5YzSoviicJrJUA@mail.gmail.com>
-X-Gm-Features: AVHnY4LSYvXrv4DsxJcvRd4oAMpQx2wvvbKBiUjGdIh3JcrN5btqHfX-VZZ23tw
-Message-ID: <CAD++jLmGr_UOja2yHjCHv7xRcGqit_TxKk7A5YzSoviicJrJUA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: add support amlogic a9
-To: xianwei.zhao@amlogic.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Mon, 11 May 2026 22:27:56 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk_7wqHYDL3K7s6AGTfLcH+Hs_sr3o53yJOBQ+F+Q4xGQ@mail.gmail.com>
+X-Gm-Features: AVHnY4LemyhdlVVL4fcj1rkaW0eUQWg0zRd1czeP7h1K7aGobHiBihe2v4zvxNE
+Message-ID: <CAD++jLk_7wqHYDL3K7s6AGTfLcH+Hs_sr3o53yJOBQ+F+Q4xGQ@mail.gmail.com>
+Subject: Re: [PATCH v1 11/20] dt-bindings: pinctrl: Add starfive,jhb100-per1-pinctrl
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 7, 2026 at 10:21=E2=80=AFAM Xianwei Zhao via B4 Relay
-<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
+On Thu, May 7, 2026 at 11:55=E2=80=AFAM Changhuang Liang
+<changhuang.liang@starfivetech.com> wrote:
 
-> Add pinctrl bindings and driver about for amlogic a9.
->
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> Thanks for the criticism. I'm now reworking the binding to use the simple=
+r
+> string-based functions+groups as Conor suggested, instead of overcomplica=
+ting
+> pinmux. Will send a new version soon.
 
-Patches applied!
+This sounds great, thanks Changhuang!
+Looking forward to the new version.
 
 Yours,
 Linus Walleij
