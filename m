@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB8E3A1682;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD92B3A381C;
 	Mon, 11 May 2026 12:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778502404; cv=none; b=dD/Ln/Sxk1JGtVL4fSLPC0grHbVrutTklrtPI7m1RHIR7E8DZwoqEENlazypvxKf8tGgqH1YztOZqXWhl5HHxxEQaFKVQhQmxCO+y2405Bjz0T+7F0NlO6a1pESxWtTvXdtYSBgCQijG6Z5jWYOQsZuee31MvwXzUjGJm0VdsXA=
+	t=1778502404; cv=none; b=YBiHF7PfB9iELYmgBnsUSonAKUI07dG+Os+l/qiU0KeDqyFwftcm6HsqCW3gviYflstJ794dGyQMOfMXRTRImn4Rss9VBzNg3ZjUJbRoOK1Kb9eoZ6o95Lv5FYJ3KgO40OGPDQiIvBPF4+soPXbsDeoNt41mQGMI8E/TrFBW41I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778502404; c=relaxed/simple;
-	bh=xMIlwRdst1SeOe2HLSassKpp6FloKB+OdNNB6+GEXuc=;
+	bh=NUURp62WwopTr77TB4GIFPU9ksmIOZKI4x5MeVndKAg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IMe8HemyV1Pi4PRj3Q8jQHVOJISdtTWNH1MBNOU8DkX4s5TuyqAACyXZlrca03ISSA16tYjGtxJUeP39nlDe8+HS5RN/UeT1gkJUsUL8xagjWUxh06aFX9nvYiFvpp0VOW+34h3v8qaZlci/ewzBXGEdjsl4vcpZrahlTTxn+QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuHi543+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=UJDCQP9A+ibmssTX03JdV8BwwuekQaZHn6JXrEheEMDHLh2i1aMA876HNpdwbKkDxfPMlFN1GVTsAF0BmbE+HWmXlvHWbHB8gqy6kX8jjhFq7n6NEXZVNmWXZoSW2C8moe1RQZTsbcCwVy1HSBmsxBhxpqReoYpAekF/Yg5VIWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQ+mxTXD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuHi543+"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4123CC2BCB0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQ+mxTXD"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A0094C2BCFA;
 	Mon, 11 May 2026 12:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1778502404;
-	bh=xMIlwRdst1SeOe2HLSassKpp6FloKB+OdNNB6+GEXuc=;
+	bh=NUURp62WwopTr77TB4GIFPU9ksmIOZKI4x5MeVndKAg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AuHi543+FzpxC10ezDESz2rrgaDK+OWp/9MgDgWuKWDzroGn16QCVtsYC2KftqVDt
-	 o9btr7wt2M2K20TlodN1LZc8f8Mgpvc+jB9y9lBYWZFe8xQsnMugcv/oscrF6Y8MvL
-	 OHl/NfTX5RJ+aeJoE9NzbtsfA/A17fCFTQ0uFuTBgFLbhiIDDu586gBuNiVlQ9M8Sr
-	 F0U7bZMmZ2Y2O+o32yto1oFH6LqP47tg0v6lzGxvZ+/JfhVkAWu0KGZuv2ZZhSLvOU
-	 1TxOTSgrzsZrr2jT37D/ktAHnFDpj5UHXANSuv2zNxPfyONnx5ewQ3RE/prlh623fg
-	 Wq9PxxcqCkiPA==
+	b=UQ+mxTXD6W8tWUuZNn27U9ZMST6aohtTrE5sFhNSAGdixjZ3gtKz5pHgAWaiohB5T
+	 UE2XjvmsodEtM3W6l+ojvTwAABygeEir6FUwoomrOqEi4vZzltZ/M5q3TG2+dqI8pw
+	 c46NOSqiqjsdcvdRb0kpE9MxUFMxmO21RCRn+k3XpSEAKEqTkcy9d/WfeWvFgPwqk6
+	 CAkv8bBtl7f0oerOQLQHn5GSc3a0ric/C9Q2hApxyiqCCXtDhmTleP1lWtQlq120HR
+	 eqZufDARy9X/ZCkZzq/3CS54ZCh2RwqJmbRuDZm59TY+mRUahl4Ltr8TINrSFK6teY
+	 +RwwsqANXZ/RQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38504CD4846;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98823CD4846;
 	Mon, 11 May 2026 12:26:44 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 11 May 2026 15:26:28 +0300
-Subject: [PATCH v11 05/22] dt-bindings: media: i2c: max96717: add support
- for MAX96793
+Date: Mon, 11 May 2026 15:26:33 +0300
+Subject: [PATCH v11 10/22] dt-bindings: media: i2c: max96712: add
+ control-channel-port property
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260511-gmsl2-3_serdes-v11-5-fc163073c16b@analog.com>
+Message-Id: <20260511-gmsl2-3_serdes-v11-10-fc163073c16b@analog.com>
 References: <20260511-gmsl2-3_serdes-v11-0-fc163073c16b@analog.com>
 In-Reply-To: <20260511-gmsl2-3_serdes-v11-0-fc163073c16b@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -57,13 +57,14 @@ Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
  linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
  =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
  Martin Hecht <Martin.Hecht@avnet.eu>, 
- Cosmin Tanislav <demonsingur@gmail.com>
+ Vivekananda Dayananda <vivekana@amd.com>, 
+ Dumitru Ceclan <dumitru.ceclan@analog.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778502401; l=1028;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778502401; l=1192;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=41yLSzOEvoj0Jv3WU/O/DMBlpijKUM4gvomwlNGqTSk=;
- b=eWkqchVCtISMyyXrKnvmbV4kGxFAm92uVXRKGnMTDlF8DuMzKWd09j7Ty3xhuG1B/bFOm7tDz
- SyC+6Ab3T3PDSryA4kY33npBWnWkcSLe6uUfGxHoQ3m0P9KyUH+TmgL
+ bh=IA/m8rGuBEmpF2gcpL400GZdflPXopNmk1jtZEjpf1M=;
+ b=2y3RWpfC/oIXAMq/zlp3NV+WfEfRIJO0Qm2t2ooLMoQim5jd8tWR7dfF11spbyCBm9XbhCxMf
+ aFKA0S0P37aDyWljq5Vqog41fdrS1Or0XHkK+eLxr60XdlAZ8hIoA5E
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -71,40 +72,37 @@ X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
 X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
 Reply-To: dumitru.ceclan@analog.com
 
-From: Cosmin Tanislav <demonsingur@gmail.com>
+From: Dumitru Ceclan <dumitru.ceclan@analog.com>
 
-MAX96793 is a newer variant of the MAX96717 which also supports GMSL3
-links.
+Add maxim,control-channel-port property to allow platforms choose which
+control-channel port MAX96724 exposes to the upstream I2C host.
 
-Document this compatibility.
-
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+Suggested-by: Vivekananda Dayananda <vivekana@amd.com>
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-index bbb38b3de7df..0d53637a6991 100644
---- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-@@ -29,6 +29,8 @@ description:
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
+index 161d40acdd28..538b639d4f54 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
+@@ -41,6 +41,14 @@ properties:
  
-   MAX9295A only supports pixel mode.
+   enable-gpios: true
  
-+  MAX96793 also supports GMSL3 mode.
++  maxim,control-channel-port:
++    description:
++      Selects which deserializer control-channel port is connected to the
++      upstream I2C segment when the device resets. 0 selects port 0, 1 selects
++      port 1. Defaults to 0 when omitted.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1]
 +
- properties:
-   compatible:
-     oneOf:
-@@ -38,6 +40,7 @@ properties:
-       - items:
-           - enum:
-               - maxim,max96717
-+              - maxim,max96793
-           - const: maxim,max96717f
+   i2c-alias-pool:
+     maxItems: 4
  
-   '#gpio-cells':
 
 -- 
 2.51.0
