@@ -1,46 +1,45 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011040.outbound.protection.outlook.com [40.107.208.40])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011067.outbound.protection.outlook.com [52.101.52.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F0343DA4F;
-	Tue, 12 May 2026 06:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F3343CEF7;
+	Tue, 12 May 2026 06:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778566198; cv=fail; b=W/Aw59UBK32+ou35OJ43fYUD5bJnG4sISCe8M6Pfm1x1DE0N9sRkgdR1L9yDfVoxuaWstSQuCvyRBJoxv1ks5fc48CJRTZ6q0zscLfuujbs7dka3qRCmQmUrHYRtQ5x7tI0ig/hx6labQLe8dXznF7z7EiZ5Ultw0tB3icbJdGA=
+	t=1778566198; cv=fail; b=kU/5M8o48OWHCG7J8ZWfjtovvN1GHaM3mMRMXBu77s6A+RTlgsfx2vZEKRdxvwuY7GG4VCEAg/ze5UsajbihHW5euFMVg2noXT1ztjlZGiUG9Q4oOzBZaMPPFwQjgCIspBCn/ECq40bHk29mw/72RnC8uhuJuKy7cCus94HTbgA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778566198; c=relaxed/simple;
-	bh=OV1EOfgrPR8jRQo531I9wj3Cr5ceU698kZh1srP5/tE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YOt4TVnq9gB8jsd1PGsn5Vk+IDCK6mLayv+VZhHcZSjE8U8obsEDnaGkKO9SWwoItgi4fDO/kPlZ6LAEHazdaR0PZ6GMFbgsQE1YifgL3REPFyQlvmJNpCObj7iurU7O9m9PJS2me7ID430SFn7e8Pkwcz/e//XfifovfJcIUj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uxCzkBjD; arc=fail smtp.client-ip=40.107.208.40
+	bh=Q67NjuuK3AIxvF0y6P3XvxSK0WhRZ7kZVeDGa+35Jq8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G0/niId1vY9nf69+07mbHqdHPUlAQehwVD5Sc5IZ/s8EMQaEH1e+KiZnkKFtZjOx7QaI3XCy3G9hYEIrRE5u0AI1/lVAly2m/5uTNjE0jjckJ1Fs+983tPIvUzSXh940hLH4IeeJQOAt6aeWVLArr+02J3qR5s9tLyDjHKduPHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=T8LpwkgY; arc=fail smtp.client-ip=52.101.52.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uxCzkBjD"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="T8LpwkgY"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LRO44lZbcroXZXtUONIqFEGhR20rMPVFX5JcA9DUPnY/dHCinSnwRdhErwp56cuQvT3hGqzxH9s0x4IoS9Em4HZ6otTSgWvx9ybl+idE5yAKraM19s2aKKod4YoisJIzPIGhZUdZatrrhpQF2YG6MbpYShA4KSC9NKqPrzwim5599etbjbYIwXwA0vPr6S+JPtc6WmuA5kOG1703hnEckbK5x6WstfATSzavpCl015+aYY+V6fr2cUCm06k9416Y7wLFNKCMz6B2diSTAeJpgWyDJ8yFpK7zVD0dZMqxUoxw4pagSdcFTdCj4aMzC1+mOTimGWpow+rAzdDDl09ZHA==
+ b=O3hgy/7/wpT5gqPnOZbG6iQHY3OtWfxY1O3Sbh7OHxhiE5P2a+ddHr++vSAtwMzC8eo98upN7i+QQ67cOpMKMOdiApa3SHDT9IdOFhJHiBZA05WaWuwtKNuBnJj48It2YnGW6XCZx6tZn8SoA/YBCUDJxtV1CIiDrZJ3pU+m67ayxL3BNayATxTzF3n27JypZPlRUU9N4vjnt22Qw4hKV8el4TbouPl4urV+JF4WuVqNc636qusefY2GzRLeF7ZiMtnY3qzC/e/cJR3oHETN4pg1sqODChj39xyfPau98rGteHjYKXWSi8LMycP3af4vuH6gO5nCHKZ1cKK4+XKEgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ah0PhSeyxPJ+iyZTlPevBN3vuUak12Ucav+orIO6GFc=;
- b=OS8iBeZwgJfbONH8Bad88VLwRgjybXTQpKJIewwutM9GA0ms/FoUq5wBLYnWBzFzLbNXqi2eV1c7zYHxWMat7t6VxF4L5G4WegGr1JD+FS1xbupL+EYtM/5I5eip1k+RpbeBOg7N0bdJeY1XH/RCwnoDhhL6HHqOrCccsoyqifWs33EVg1TYWDFqklWW01IlBT0wdmAdj2kFIeBuhWItNwasQBYAd86REU3oiB2zfmuzu0skPSiAlNpIxj2bXZXGvgFyKMSlkt0fOIG8xaJMCOLqhBryMTfXZibQRiu1IkgnH1/6YIgKayKqENIvzt0IuN8hxe3RtSUapxyNYhdMKw==
+ bh=yOzPw2XHxTwqLzoUDVZZqZpynWy4hiiH87kEXUIJuJM=;
+ b=eh9yZySG+M6F08nF4jGZHST6i7VB9Xe2Qif6P2skk7QLw4Qn6VCNICrXdJMX9ohfHxZG14EnZrGVgxSnR9YUWSqvLHNSJIofiVVplJlnrk1jVFQrcq3iXjO1gumPjGpTHfggLO+gtvL8bm6Y3r8y3IQn11FXLEnq/bV4qiQEfdTszerzoqvmYdZ5kuVLsqC5rfq/HLPaKD2/mFQW6q/rLzeoQuXjiluayK+WrpIN1Voe8fqcwHaVT+FbaArrQf7sAu0e3Ofa4teQ7iPe6l4/KmhAzlBtxHzEFgrilFYZZnFjHDdKOYe8Woshcl+qObY+ZHxrlNeRu19m/b+33CT7sA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ah0PhSeyxPJ+iyZTlPevBN3vuUak12Ucav+orIO6GFc=;
- b=uxCzkBjDUCJbC4yZEaPwbg8N1cP3KuihpaKH/qdKXoXeEsdg4+vZi0ouylmM4twg7f6BQf7azvQpHMy+soi16iLdmqy5vLIMkMUK9SmZRm13OtLp/GvC4gONbda7HK2m/dHdR1fW/0xOYOV7b8okblV3oWPUQu2Udn0L2hqEn38=
-Received: from PH8P220CA0024.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:345::20)
- by SN7PR12MB8790.namprd12.prod.outlook.com (2603:10b6:806:34b::7) with
+ bh=yOzPw2XHxTwqLzoUDVZZqZpynWy4hiiH87kEXUIJuJM=;
+ b=T8LpwkgYQgjoGayI8L7Nzg7AYyRmbVXoO6NYmzDbtRZM9x4Qpu/vaxEVTlLkSVVoA63H5UNg43/Nkr+4PRRqOB4PabfNETGRDN75d/1e9VVsL/NHLzT0Uz13hp0rIETD8AFqISIcu6T7qgfUvPmxktgwl68inc61lCK7NK4LKKo=
+Received: from SJ0PR03CA0237.namprd03.prod.outlook.com (2603:10b6:a03:39f::32)
+ by BY5PR12MB4193.namprd12.prod.outlook.com (2603:10b6:a03:20c::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Tue, 12 May
- 2026 06:09:35 +0000
-Received: from MW1PEPF00016160.namprd21.prod.outlook.com
- (2603:10b6:510:345:cafe::b2) by PH8P220CA0024.outlook.office365.com
- (2603:10b6:510:345::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.11 via Frontend Transport; Tue,
- 12 May 2026 06:09:35 +0000
+ 2026 06:09:27 +0000
+Received: from MW1PEPF0001615D.namprd21.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::b0) by SJ0PR03CA0237.outlook.office365.com
+ (2603:10b6:a03:39f::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.23 via Frontend Transport; Tue,
+ 12 May 2026 06:09:27 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -48,20 +47,20 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MW1PEPF00016160.mail.protection.outlook.com (10.167.249.91) with Microsoft
+ MW1PEPF0001615D.mail.protection.outlook.com (10.167.249.88) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.48.3 via Frontend Transport; Tue, 12 May 2026 06:09:34 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ 15.21.48.3 via Frontend Transport; Tue, 12 May 2026 06:09:27 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 12 May
- 2026 01:09:34 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 12 May
- 2026 01:09:33 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Tue, 12 May
+ 2026 01:09:22 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 12 May
+ 2026 01:09:21 -0500
 Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Tue, 12 May 2026 01:09:29 -0500
+ Transport; Tue, 12 May 2026 01:09:18 -0500
 From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 To: <linux-kernel@vger.kernel.org>
 CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Shubhrajyoti Datta
@@ -71,12 +70,10 @@ CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Shubhrajyoti Datta
  Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
 	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v4 3/3] gpio: zynq: Add eio gpio support
-Date: Tue, 12 May 2026 11:38:49 +0530
-Message-ID: <20260512060917.2096456-4-shubhrajyoti.datta@amd.com>
+Subject: [PATCH v4 0/3] gpio: Add EIO GPIO support
+Date: Tue, 12 May 2026 11:38:46 +0530
+Message-ID: <20260512060917.2096456-1-shubhrajyoti.datta@amd.com>
 X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20260512060917.2096456-1-shubhrajyoti.datta@amd.com>
-References: <20260512060917.2096456-1-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -85,87 +82,58 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: shubhrajyoti.datta@amd.com does not
+ designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW1PEPF00016160:EE_|SN7PR12MB8790:EE_
-X-MS-Office365-Filtering-Correlation-Id: 911061b9-7a70-4ffe-27bb-08deafed0a5f
+X-MS-TrafficTypeDiagnostic: MW1PEPF0001615D:EE_|BY5PR12MB4193:EE_
+X-MS-Office365-Filtering-Correlation-Id: 532c60d1-cea9-46f2-4142-08deafed05e9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700016|7416014|11063799003|22082099003|56012099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700016|18002099003|56012099003|11063799003;
 X-Microsoft-Antispam-Message-Info:
-	1TtQwqfEFOHMTuOIFQH3VX4yahCtgVtTZUx92WU476R3wgOhA44hQkl2eNkn+nI2qHPlS06OzVs447ytco0ZHeOxFqO8P4keXuM8rh76DFFxwMSIAml6c2aMfVg5E/YFaKufxcg78ctOF1cw2b9gDjRwaaUw6MMMuG2cAbFEc/deEThGU8fXOoRmUgvqBQnSGGb+M1eetu7h9PV0Ob/BmFkdPfQJ3R5fD7/VDKMvQfmXajsF0GVy34iuSgtljomJlvE5RPvBk6YQWfBCC4yokp9sDTCBmNujJ2yui+wWA8nZVv+TGJ4bTfvRTj0YOf/9tjj2K4HXdFQd2lNXocMJUHZLNAeDLSWdRtyKeh4vuBRLOL0uWXwvK5SdZBYlQnwRwpeKxRUzXC6LYc0R1sS4IBHjos2NNvTfqsbvSLSZDanOtvUz4vamgkGPQn6KmOZnSjjvd2d82L6Vb7F+OhJ6B1PXj5fsgJZTB1WNRriRsWfxRencMRVf4nyXbRl6zT8ksiAM8S/8FyJsV9+BKzQc9Gt8U53nMopOuyPj5Kzc+CnkkrHwBxDu/fq12kHyogmlzVYWLs3yrNfy2Z1uHFu8E0B5q9VTDfG4TiTM3ad8PihO4TOwv26TA+9sDX5V6ZgFX1FhUqlpnPsvxniy/IFC/Ea7qjAaTpfLRNCB/5tVRnsuwRceagBw/2gysYu/EyGetYXyl7lw1BQPAj+uQPvwc7vfwH3gke4SMm9kQTGCe0A=
+	xBx7I41X4cR7v+oX0GCH2DEXmusxI7GmxzYniNHBTrc7oq20i4m6L7X6opjY16jFxfCGJrFFsZS9teTUZpwVo54+Jkc0CM79Bb5Sq9Fb8UALa+tjgxPUeDFgRxveTeNk7gge9pc3SAA2hXZZFQ2nLk1g+U07m3yIRhS1SOTostNgleoRiM4Z/zqOTQO2X0oH02V57ZL6zKtElAgbWNOVbWXVHn/pdenWXgj7fNNdQng0H+vP8hp3wJq7Jla8Fk8SluEz85wj7fojT50iAIElfsm7odZFvfqurVr/waPbnKZDr4vjPUR+7lP2jJXHlh4Dh5Std56CT0VUCFIFycnZQ6D4R73JcMq5pvSJSAC1iC7hUfmrtDXidbOjUd4V9LcriMZ9QPuB2xv9OgJW0c0HwXxq2ciiuUTvmYfBFwDS5CeSfVaisWd8U45egAZdsWikT+h+Um6B+U3akRrZGrz2xGmdGWeUgyVDrsiP6N374RcPePJ9tFYT9KGfA7XsatSsEZXNUf9nsAbBTYprLBRysmpwCV8ERLds/rOEYkn7ATVT+W4NDcfRgCjt5CO/8tpIqeiAtd6GH0++ensaVnfA5sTmGUHsV09JsjoFzFxpD2HD0WHyjROPRMlrbcCdJZpOF0sH8v5PHEdw+uN3ymiCWkLzbIZ2AYXhS8TRJUM4b+C+JxGCSthj+Jy7O2wBABFDV8vFy7PhapX+SlsODRF73zAUsbw7uZVCd7YVBGVNqUo=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(7416014)(11063799003)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700016)(18002099003)(56012099003)(11063799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	cCNfmT3IPLQS2o8ERjkOIvnrfkXFSQ7+CimLSL/pVErSfqVaZEKJPLpXJtpxQb+eeSa/ZqIekWzh+r6lU55nZMvJImB8KX6C9saC8R6ztM0kRWejbDhmwMIkx7oA0scqQIwcuazb9hWnZBwApLA4c+rFwya+pOn98ncX/OhHl2hAlJ+HK3k6tI3YF0d0PtUhWGxaIJ/s+l7RBLkXVpdWVdSgK9sBa/uxfREYNjNPn11WFQr915qJPaEkOPa7boIOGcEFb8z1u6qaZfhFJTZYvSVqEpLZ1rIqZP3sulw7mpfreAWisotkIEDGNzyldUXiOVGJacGif3dV//D6/6LzEBBbXaBJ5zKL0UKrm6RHcu6Ci4hNEy1o6TL/njhW8kJu6FQhipbn2WMAfjkEbbeLT0zVTHOVuPIphToldwm946oSuRz5azxbW3HHMUEHLoF9
+	9v9r2C5SoLtA3lC77PUOs59nJD7BonmafEmX7VySFNrWNYvvz26hjtd0l4RuFSY6TEpGS6AgPxZ8wfguV1XLS9NWwSh4um/LXksrmumCtQTBoYaqI2ndV5dmRkJrT9I6ha/Afw33b441XimSTpSAmAlrHtUGOCA71zl5+wbmKJtGZNEVmimjB12EOGU9aSytnej6yPagybyH+puW3Uoh1Wqt9j468H9C6WEqOsWYtoZ+cK2CTMqy8l+Nr8Zgq0D0WABWckoe2rO6G04BlXMF1qIEIGwFttpiMEidEHqKgnleEZZ75ALSgxLhfSioonbNCxaMd3uh1UZENkbvDFsYOTrFKuX0zN2nNr4XZ7+Oiu7RWC57D6TARXJb5+/jT8Q0YboXqv/LLis3BtIgTf+y93jKozjwjuwbHmZmYhzKs628c105KIdDT470fPvM/KrO
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 06:09:34.8605
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 06:09:27.3142
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 911061b9-7a70-4ffe-27bb-08deafed0a5f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 532c60d1-cea9-46f2-4142-08deafed05e9
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MW1PEPF00016160.namprd21.prod.outlook.com
+	MW1PEPF0001615D.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8790
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4193
 
-Add support for the EIO GPIO controller found on
-xa2ve3288 silicon.
+Add the EIO GPIO support.
+Add the dt description and the compatible to the driver.
 
-The EIO GPIO block provides access to multiplexed I/O pins exposed
-through the EIO interface. Only bank 0 and bank 1 are connected to
-external MIO pins, with 26 GPIOs per bank (52 GPIOs total). This
-change extends the Zynq GPIO driver to support the EIO GPIO
-variant.
+Changes in v4:
+- Add Conor ack
+- Remove the min 52 for eio
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+Changes in v3:
+- Update the commit message
 
-(no changes since v1)
+Changes in v2:
+- Add new patch to sort the compatible strings alphabetically
+- Add description of EIO block
 
- drivers/gpio/gpio-zynq.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Shubhrajyoti Datta (3):
+  dt-bindings: gpio: zynq: Sort compatible strings alphabetically
+  dt-bindings: gpio: Add EIO GPIO compatible to gpio-zynq
+  gpio: zynq: Add eio gpio support
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 571e366624d2..8118ae3412c2 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -25,6 +25,7 @@
- #define VERSAL_GPIO_MAX_BANK	4
- #define PMC_GPIO_MAX_BANK	5
- #define VERSAL_UNUSED_BANKS	2
-+#define EIO_GPIO_MAX_BANK	2
- 
- #define ZYNQ_GPIO_BANK0_NGPIO	32
- #define ZYNQ_GPIO_BANK1_NGPIO	22
-@@ -818,6 +819,16 @@ static const struct dev_pm_ops zynq_gpio_dev_pm_ops = {
- 	RUNTIME_PM_OPS(zynq_gpio_runtime_suspend, zynq_gpio_runtime_resume, NULL)
- };
- 
-+static const struct zynq_platform_data eio_gpio_def = {
-+	.label = "eio_gpio",
-+	.ngpio = 52,
-+	.max_bank = EIO_GPIO_MAX_BANK,
-+	.bank_min[0] = 0,
-+	.bank_max[0] = 25, /* 0 to 25 are connected to MIOs (26 pins) */
-+	.bank_min[1] = 26,
-+	.bank_max[1] = 51, /* Bank 1 are connected to MIOs (26 pins) */
-+};
-+
- static const struct zynq_platform_data versal_gpio_def = {
- 	.label = "versal_gpio",
- 	.quirks = GPIO_QUIRK_VERSAL,
-@@ -882,6 +893,7 @@ static const struct of_device_id zynq_gpio_of_match[] = {
- 	{ .compatible = "xlnx,zynqmp-gpio-1.0", .data = &zynqmp_gpio_def },
- 	{ .compatible = "xlnx,versal-gpio-1.0", .data = &versal_gpio_def },
- 	{ .compatible = "xlnx,pmc-gpio-1.0", .data = &pmc_gpio_def },
-+	{ .compatible = "xlnx,eio-gpio-1.0", .data = &eio_gpio_def },
- 	{ /* end of table */ }
- };
- MODULE_DEVICE_TABLE(of, zynq_gpio_of_match);
+ .../devicetree/bindings/gpio/gpio-zynq.yaml     | 17 ++++++++++++++---
+ drivers/gpio/gpio-zynq.c                        | 12 ++++++++++++
+ 2 files changed, 26 insertions(+), 3 deletions(-)
+
 -- 
 2.34.1
 
