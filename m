@@ -1,67 +1,82 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010022.outbound.protection.outlook.com [52.101.61.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98442F83A2;
-	Tue, 12 May 2026 03:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778556899; cv=none; b=UMf1J66PWhfJS0BM7Z7HlAnoNyGGj/DhPdwzKVyf/DhW203v6Ynbf9HQ/2tx8tPO1+xDcjpBaSoWVhQN4Kc0qVG91QrfNEx4kjWQL0rbXB1yZt1hk1RQRtLEcN+lwEuGFQmzpwZsXjn5lCu+l0YxUhWv2pqGbUv68TOiRnPKEHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778556899; c=relaxed/simple;
-	bh=ZhdPSsqU1VtoN3zjMNuxTnfCBHFJ8NuxN7BaGty72eo=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9986543D4F5;
+	Tue, 12 May 2026 06:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778566188; cv=fail; b=P7i+kPxAjoD+HUmvRUPkoF8sVJ+63LVTaz2djCy7x3l9BBHZjvL6KCsNTxwtV5jTjvVEEXc5ne04QU2sF6UoaD9eKD4FdIWLD9Gcb+ZNdSHam7iuG8fcg9PM6Y2XcmYE+lPENVo0wwwM/VluWuVXIPWr0lbIPIL/u3xIJH4xYHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778566188; c=relaxed/simple;
+	bh=6kglonxAeB0RmLAN8k+CvrUqHAYKqdIC5k5CuC/A8w8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oX/iepNlY+mWUaJuzKUcBbimm3ypyFNdONJkl94iJOzOglokISO9ff734Pr5js+eKavZSuHeSYmuabh4smmfQ7j+p2LCcbmfyid6LTCp9oQvnViAAW+Ozy0ExXC+X6BumcVSsV5Y/dFUlSvbGD0NE/aMuFMzVh1Dg8whqaskhZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=PH/ibe10; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	 MIME-Version:Content-Type; b=Y+I5Vt0Jeebak4Ruzu/q/e26RCXTwFkMyDwOaBRKpQA7zlDyedz2gCvZbNWtfkNjauXvqCinG7rbl4hCxS8YtM3Qms76pezADteFpiFmjgjwI54qZ5zDvVVN1pO/PFx+HRo8UEaLjDqCxdaHR8RL1YikvlipiKEPEoA4eY00Kiw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QClDzNv8; arc=fail smtp.client-ip=52.101.61.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="PH/ibe10"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 64C3XJoF43571941, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1778556799; bh=LtdXnQEVIb6c5aCwt7NTASRXJz0sr0Gu7xDW8knSUp0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=PH/ibe10a+mefQYnoIHyfTzenlMWsYQCsiyitA/1ih68ubpjh4k6+k9o7bZ0qieRw
-	 PaDYkv2kH4AfQH0apvmW2y0R3AmXhvbyZx8kCVGVYAqtdcNTKffIieYTAIfAu73WNc
-	 bG74IX0xoiIyGCHxctQB/gfrzLgQWr+UE97QgqCUaAzPbpSBx/DvdXDPjK2hasHQRb
-	 xnfYO3PFRt+myy9gaBzM391GhMO4sOeVP0avb7ByxvJD+zwVm9a/LkFGNMi70CBzCT
-	 6SA5VN1OvC6fQGIztGBzOIne5eXDRVhKHC2EbrBGio+kOOLzp6DuJbtlGM69b/zBDt
-	 a/ZrCvPRA9YGg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.27/5.94) with ESMTPS id 64C3XJoF43571941
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 May 2026 11:33:19 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 12 May 2026 11:33:19 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 12 May 2026 11:33:19 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
- (10.21.1.55) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 12 May 2026 11:33:19 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <linusw@kernel.org>, <brgl@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afaerber@suse.com>,
-        <wbg@kernel.org>, <mathieu.dubois-briand@bootlin.com>,
-        <mwalle@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <jic23@kernel.org>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <dlechner@baylibre.com>, <tychang@realtek.com>
-CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-realtek-soc@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-        <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
-        <eleanor.lin@realtek.com>, <james.tai@realtek.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH v3 5/7] dt-bindings: gpio: realtek: Add realtek,rtd1625-gpio
-Date: Tue, 12 May 2026 11:33:15 +0800
-Message-ID: <20260512033317.1602537-6-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260512033317.1602537-1-eleanor.lin@realtek.com>
-References: <20260512033317.1602537-1-eleanor.lin@realtek.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QClDzNv8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CqvMOCDDYk5EsoPtJsfwYbqvqr+2BIhJB0ai6yovpigM9ftZBHm5leo3Vjx7ilqrrVH5ZhzRG5WtI5x68g8z73bM7BGRBNtWIHgakvLHVg52AHw8cHKxHF4RZaQYLBHZZeiGrTPWF4SWjb8c+He741efWRS5CM4giEqvBZL724twMzLqeSOc+xStecIClKPdg9Uo6jH222FCnUnmdobPhUo0SmvjhHuEw4m0iRuuBkSyMAXfCZ0Joc5O5utBsRKU9J1yv2NbJFU27dgZXMwnnDqhpELqm5LQtz1ypGE8HsXk397C328lSqOxzZM5R1qp4K47L0SIcGL0bSGlTCM66w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DR7wM94W4WPEH6a2yD5h6iLUv0ceeieWcpfrJRMkgIk=;
+ b=qFkvdEZlqongBWIrUQkaQtjSUKJ/IAd+cXhapgwfc4eUDw459O9TCpTaiuFOxN1X20kjmvzEHLxKvPeV1hm0zoxHI1GMhpHvRsQlOeyk7qDDhIl71EvO6SWV2lGdASNhtK2oavBBIkPBM0HapSOT97aG0J5TVmYqe4VPds0hXxJK6wt22RtzaQctxnU6PODfAjGpSR5xOj+QwrbineYsGicyq6yP08RmeOQap+ByU93j4t2J8OlHtTatIvd3qrpYtrudnxnqtjkaKjXSO+G1eY5IZ2SSdXGgSun6wW23ul/la6cKgGNs3BVSEQ5dew/oAPJEkkp7/2kPMxYKJaqdqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DR7wM94W4WPEH6a2yD5h6iLUv0ceeieWcpfrJRMkgIk=;
+ b=QClDzNv8u9ZkGViyCIvquNB+LYTykE2D0wYkRZrNLBHUEABuvBtNzJujsEFi7YTHzy47Gb9lRI+fUzOMrlqz94/WoWkc3V16ABGasmDEjlRO9iwScyxRyOv+V+8XbXy80KDzCHeoFm9u3ECMP9AFlvsbEcAxrmVnIDcrG7T+Ju0=
+Received: from BL1PR13CA0343.namprd13.prod.outlook.com (2603:10b6:208:2c6::18)
+ by SA1PR12MB6947.namprd12.prod.outlook.com (2603:10b6:806:24e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
+ 2026 06:09:27 +0000
+Received: from BL6PEPF0001AB50.namprd04.prod.outlook.com
+ (2603:10b6:208:2c6:cafe::83) by BL1PR13CA0343.outlook.office365.com
+ (2603:10b6:208:2c6::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.16 via Frontend Transport; Tue, 12
+ May 2026 06:09:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BL6PEPF0001AB50.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Tue, 12 May 2026 06:09:26 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 12 May
+ 2026 01:09:26 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 12 May
+ 2026 01:09:25 -0500
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
+ Transport; Tue, 12 May 2026 01:09:22 -0500
+From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <git@amd.com>, <shubhrajyoti.datta@gmail.com>, Shubhrajyoti Datta
+	<shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, Michal
+ Simek <michal.simek@amd.com>, Linus Walleij <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v4 1/3] dt-bindings: gpio: zynq: Sort compatible strings alphabetically
+Date: Tue, 12 May 2026 11:38:47 +0530
+Message-ID: <20260512060917.2096456-2-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.49.1
+In-Reply-To: <20260512060917.2096456-1-shubhrajyoti.datta@amd.com>
+References: <20260512060917.2096456-1-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -70,101 +85,65 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB50:EE_|SA1PR12MB6947:EE_
+X-MS-Office365-Filtering-Correlation-Id: d98529ae-a4f7-4236-575c-08deafed057a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700016|1800799024|11063799003|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	R4j6vCK8Dqv4VyscQAiZKjJcH3cO1VwsgynvgQ/l0WGWio9cM5Y5wrAtjaBZtV1mozAsejVZveM+J/28oTgC55lL28AmtQzxdth3RO34xylKaPKholBqk1L+z6UcL03Jte+ePXj7lYcom1+FPFcasTbr3q3ozzVsLg7WtR140R/8bDk2BWgwRWT/3TS1kTJt9fuezEpwmJ2iaGQx757DFsDHL1tg80hw88HKonX0WWDi5t+fyoQ35X/i+cShKu/ERD9lKpcVeYXRqV1a8Uc5GUvHPnBmE3Nn/DyokhoF3VQ9sN0HSD6oFCPU+7ERHpDATCATzE9UC3boSVWnQhBXtPw5pCH93GFZjJijgAXDyeCQh/qrgb9/FLXlnkTchdLNYvfqJBLgHxun8plk2DgaZetKV0iNow/x4NUAjF/4KiH60E+DeIpw57qS3YVnDHot5jClG9yr5HdL+o50bNRCY0z4F/WSaxk+dVnMAZo8lDs9fZ7Kbh4pylesdY+LlHzXlXrViI3r9Q3yCjEGCknwvderhYtCzPF9R8O9F0TwF1qqvt1aVGIOpdgDXgyw9pxS9ezuiUDYSJDEraK/XS+cLBR+MR4x1sS1wtEPi+u5l4nI7/SrMTJB4PoTcoYULxc8h/a+HMEjyvKWCEIVWdvf/WfWiF2wiAbBm2CnimddoCjAaXefjJxQxlNhnkBScCUsBs/AusHHr32X8ITJV2fVgZo6ZFMz/AQywUsqe2zENB8=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700016)(1800799024)(11063799003)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Sqb7sK7Cpeb0EKoWE6RpKvpNnRtm7RBEW5EW7NGqKbaQTVq15pBkVNUcZZCf37zpCSZzwpuzEtXF00kChZPfRk6BwnnzqSNfDhEb1hIQ69eqqz7WX4X4T7sZtLa3aNTy5p2dRs2plDz+qkrZBGaFCN13noSiK8ljYdy0mnd+vPqCXxI5Ct4n9DQmCwE1Nchxp17F9Ljj5SC4EtxCGnB7qEGn2vzOZG6x+X5hnT6s+8OxhGYvxTonMUBsflwpLV2uo84xUBEINgT3ZryZKPtqC7oiTNilhBO+TD+n5fyxAlvESmBJwAu7p7e3tfiIYqiU9pDIXddGp4/PRtBg7iYCQJwdprY7Ee5lhk/ZbsVSidqlIveXbkoh5l1Cg2Gz8rmz/HPklbCXif1CUcljOKogggXDRDItAXpRka0tIKqmajarWdrMzJTU1fVwPK24uxWA
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 06:09:26.6759
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d98529ae-a4f7-4236-575c-08deafed057a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB50.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6947
 
-From: Tzuyi Chang <tychang@realtek.com>
+Sort the compatible string alphabetically.
 
-Add the device tree bindings for the Realtek DHC (Digital Home Center)
-RTD1625 GPIO controllers.
-
-The RTD1625 GPIO controller features a per-pin register architecture
-that differs significantly from previous generations. It utilizes
-separate register blocks for GPIO configuration and interrupt control.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 ---
- .../bindings/gpio/realtek,rtd1625-gpio.yaml   | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
 
-diff --git a/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
-new file mode 100644
-index 000000000000..f13c910b73c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2023 Realtek Semiconductor Corporation
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/realtek,rtd1625-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek DHC RTD1625 GPIO controller
-+
-+maintainers:
-+  - Tzuyi Chang <tychang@realtek.com>
-+
-+description: |
-+  GPIO controller for the Realtek RTD1625 SoC, featuring a per-pin register
-+  architecture that differs significantly from earlier RTD series controllers.
-+  Each GPIO has dedicated registers for configuration (direction, input/output
-+  values, debounce), and interrupt control supporting edge and level detection
-+  modes.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rtd1625-iso-gpio
-+      - realtek,rtd1625-isom-gpio
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    items:
-+      - description: Interrupt number of the assert GPIO interrupt, which is
-+                     triggered when there is a rising edge.
-+      - description: Interrupt number of the deassert GPIO interrupt, which is
-+                     triggered when there is a falling edge.
-+      - description: Interrupt number of the level-sensitive GPIO interrupt,
-+                     triggered by a configured logic level.
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  gpio-ranges: true
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-ranges
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio@89100 {
-+      compatible = "realtek,rtd1625-isom-gpio";
-+      reg = <0x89100 0x30>;
-+      interrupt-parent = <&iso_m_irq_mux>;
-+      interrupts = <0>, <1>, <2>;
-+      interrupt-controller;
-+      #interrupt-cells = <2>;
-+      gpio-ranges = <&isom_pinctrl 0 0 4>;
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+    };
+Changes in v4:
+- Add Conor ack
+
+Changes in v2:
+- Add new patch to sort the compatible strings alphabetically
+
+ Documentation/devicetree/bindings/gpio/gpio-zynq.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-zynq.yaml b/Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
+index 5e2496379a3c..30a7f836c341 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
+@@ -12,10 +12,10 @@ maintainers:
+ properties:
+   compatible:
+     enum:
++      - xlnx,pmc-gpio-1.0
++      - xlnx,versal-gpio-1.0
+       - xlnx,zynq-gpio-1.0
+       - xlnx,zynqmp-gpio-1.0
+-      - xlnx,versal-gpio-1.0
+-      - xlnx,pmc-gpio-1.0
+ 
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
