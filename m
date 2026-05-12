@@ -1,170 +1,110 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8D33AD511
-	for <linux-gpio@vger.kernel.org>; Tue, 12 May 2026 20:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B923655F1
+	for <linux-gpio@vger.kernel.org>; Tue, 12 May 2026 20:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778616847; cv=none; b=ruZEMYa9nHNA+Cyxqm/7V4VQ6hRuMxJi4rlhXUz9NtX4ui07QvZ4mnLo7EJnptj6rJy3oTBLEelxuKILhqN5psQ/x08yUDD20u7KuTBqg2+jPdzV3GiIeHieNCVT8bpV4mNdRwGuKT7X22K5JQ6JK8ogJJqxE1h9xBjyFsMhAU0=
+	t=1778617023; cv=none; b=N5Axkz3F/9Huy5TQU2iMn3VuTAKZMTrSnXUafAr+ZgU+8ABUmJmYkDoM8TFlX4soADlhBX1ZwzN8m0FIRI+8/UiOJJhx8yq2ESKrVp8noN1PFe7CGTFpRoOw3dEhgEmGzt5G9RnA9KrrX6+7fVIpcFXPE+LVySRUE1rc8/LuXts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778616847; c=relaxed/simple;
-	bh=88xQleIJXK6IokQkniWArbJM5+3tw1S5di3yHlTUDpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=DNGAMYyosvmGEaSshIDNzFPbuPrhNdbIfULC6pjYjNjyvBmugWvnL8eqDmgccplqMjcDIO66rTWY4pVJduxpr+sXwbStmA3b91MjOcs+YWmdfdKMJTM0b3F/c2GNhx53A8rNRjwDgfqI3AXT3j51zIi1XTwH3umlreoTa/ySQzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcTxjZPi; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1778617023; c=relaxed/simple;
+	bh=97qM24lBz73MTGs2Ev7Dn8ABPmphQjfBKXokj6vSwKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s46ih3lf3d0HWR0/6a7dx1TOfQX773JM9kHVp1mbRJCPiVeGstnVF+630hyoImjieAtH6yfWEPEo8yZIpBlbP3mk68I3wJ0Xl3K1gkkGYeT/w43rJmIa7HKbnlgSuyKs32e+7wW04L6BCe+7nS3Qk3DEHtJ2g+1OR9sYrHNk5SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gez81Wgi; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcTxjZPi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1778616845; x=1810152845;
-  h=date:from:to:cc:subject:message-id;
-  bh=88xQleIJXK6IokQkniWArbJM5+3tw1S5di3yHlTUDpQ=;
-  b=UcTxjZPim4ayUNGEcRzd+mwtppaKxap9C4Gi2SnvPXTp4oe0x9vQsW3c
-   3INMcxmweEkSkPTUnUja71V+tpgIlsAEADTJOWGsjaRtkJpIPz5uSyWN3
-   SCssDBWfmTL6CfqEZTcK1m0CrE1wX9TiE/NqKm3brxCwFhhIEIM2I6Ti7
-   BLcFrpd+aQg5baOEDREaRVNyCRql6lbdv8nrG9GkmBrm+FcoO/T4YgpwL
-   U4IqWhJnkO98ArzwEinFSR6G04dSZ5WgI1f1fHLwtL2zSQqPyXZWouHGD
-   SJnKxV1mK/Lpu8Yf5apFMM9UyxnMcfWMwIe29bOa12FOmrhZsRt4kunFU
-   Q==;
-X-CSE-ConnectionGUID: FDzvwafzRQCAz5aYqao5bQ==
-X-CSE-MsgGUID: W/axfI6bRRSzp0FOY+xPsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11784"; a="78680851"
-X-IronPort-AV: E=Sophos;i="6.23,231,1770624000"; 
-   d="scan'208";a="78680851"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2026 13:14:05 -0700
-X-CSE-ConnectionGUID: JZEosLEBT4ukM8jMXztaXw==
-X-CSE-MsgGUID: WCkqrYAtTHi76FyNpTgtyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,231,1770624000"; 
-   d="scan'208";a="238116535"
-Received: from lkp-server01.sh.intel.com (HELO dca79079c3eb) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 12 May 2026 13:14:03 -0700
-Received: from kbuild by dca79079c3eb with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wMtUO-000000002kF-0S8i;
-	Tue, 12 May 2026 20:14:00 +0000
-Date: Wed, 13 May 2026 04:13:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
- Linus Walleij <linusw@kernel.org>
-Subject: [linusw-pinctrl:ib-mux-pinctrl 5/6]
- drivers/pinctrl/pinctrl-generic.c:20:5: error: conflicting types for
- 'pinctrl_generic_to_map'; have 'int(struct pinctrl_dev *, struct device_node
- *, struct device_node *, struct pinctrl_map **, unsigned int *, unsigned int
- *, const char **, unsigned int, ...
-Message-ID: <202605130440.GUAAk0kl-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gez81Wgi"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-366375c4076so2808176a91.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2026 13:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778617021; x=1779221821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fioO7dt+DtRipfouwWizM+WF82w1PhyP2cJ94Qb6G0o=;
+        b=gez81Wgii1VBlXYuOwhXTGUpmdyrO6X+vXiX5WeSmvJ6cWnelAiO8s04GVmKFmqeAJ
+         6csPOxPOU8iXuPYfI+Rzrnoy2A9DNspIel3n4N/yrRcHyFLDHbqU652VOdzv5qcmt57C
+         4ltce2Mt5wI8DmrP3kc1iUMRciAYvjomLc58K5cxWz0fYGYvdPC33dUtfH+0wBOduc00
+         PFZeaU7PglWMMu+Q3B1gLFdtRd6pUZvoZNNdjcd7XUnFwxB6ee1qj318vccy7sYEm6ZY
+         QLzTshhl7i7pUDultf4tbda9xOz+ZB+wJlT4WvWvrjL4l2vk/D8iA5qTAuKSTdNsyDph
+         Bzyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778617021; x=1779221821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fioO7dt+DtRipfouwWizM+WF82w1PhyP2cJ94Qb6G0o=;
+        b=V2tcTqGDVUxMuJPTxNr8c3RerQz2oVM16Yubvzr0360DAeJG50UR52eS3qkIzqJI1y
+         yBYe7CyGTfeoftV/CK8lkW3ThQ4cGLCPEFiFzx8QYwqVPq6nHE9UrPn/0r+VIlgGG6oU
+         9b/knYyiDxV40RL1ix1ltUuVomGM7jGx6G+vXsiusdMiZmQwGrlmO+3iMBg9oyLvIJuD
+         gl1PKri4XRE26LJv0M+i3+H9YyqPgylKx/hRKrOCfWUnLDMKy8z+xpDFOjiNXUJPn3bw
+         eWIJcFfK+ZTbyo1CFjB7ejs1nqLsNollbs0r64Dk087/Z6MNHHIlNswngU2AI5yMi4WL
+         1L8w==
+X-Gm-Message-State: AOJu0YyJpOPtEpEkpYjObvlYL5lAgcP+PL9izXp1T6tRpGmV8PKFOMIE
+	qOkRISMkNupB+TdS7qLd9/NXzOybAAtSGCCjug0W4nQSBG+BDME/3qU6LIlq+jEO
+X-Gm-Gg: Acq92OH9yxgRtfozF5W7EWtOYm9TyMSo1H8nMJmc/XHiX3jRG1g7VCODeuv2N3DhmZ9
+	YkwnGoFoH0ko9T0lmGXLlUIg4oPSH/VydwvxuAA+mE+MyQQpgSKKorxxVZxNewryBbeg506Bg1y
+	GJn6m0/lDlwo7ZQ53LFVcWKfi4jvdJ6QxtxfKiQQIpANlBjLPweTjky4s013YL0wGELC9S/FNC7
+	TX3VPmcxGvMRkS6wC5ZdXm1P+S57hv2z+yhLS65P1M0+dJCLYfTqelr/iHMqZjiVPLHK0zpmzmP
+	r9nczB3RYm18p96F/eeLM1hhSFVajS9dld/GW2hkDq89cwFITg51ZxUenZRo9981stV3bX/RTBI
+	9VNOILnxD2WyyALFWET2e22P8q8bFu7GAmhsoMrq7Qom8FILbAG6BG3KYN8Oz7yutmdg5yf02ts
+	tH6LUE08UazCSDxf6Kjo4yZl/8jdPI7Yq0EcCNKqnAtmDKqLAGwel8ZkLafYnKdB4JO+xJK0RH4
+	l+3BxKanKFT5F+7jvop/m0h4wtHxLCFoSk=
+X-Received: by 2002:a17:90b:3149:b0:366:132:fda6 with SMTP id 98e67ed59e1d1-368f3ab6d1dmr530731a91.11.1778617020651;
+        Tue, 12 May 2026 13:17:00 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8267688e2esm12863093a12.8.2026.05.12.13.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2026 13:16:59 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org (open list),
+	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
+Subject: [PATCHv2] gpio: sodaville: allow COMPILE_TEST builds
+Date: Tue, 12 May 2026 13:16:43 -0700
+Message-ID: <20260512201643.17351-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Frank,
+The Intel Sodaville GPIO driver uses PCI/MMIO and generic GPIO helpers,
+and builds outside X86.
 
-First bad commit (maybe != root cause):
+Tested with:
+make LLVM=1 ARCH=loongarch drivers/gpio/gpio-sodaville.o
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git ib-mux-pinctrl
-head:   d8074fd57a0231457e580c1f6cd33f089f09fd12
-commit: 34acc5a8adfb76f2de63c8b8317397fb72b0aec8 [5/6] pinctrl: add generic board-level pinctrl driver using mux framework
-config: sh-randconfig-r131-20260513 (https://download.01.org/0day-ci/archive/20260513/202605130440.GUAAk0kl-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.2.0
-sparse: v0.6.5-rc1
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260513/202605130440.GUAAk0kl-lkp@intel.com/reproduce)
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: just add COMPILE_TEST. Moving outside of menuconfig is wrong.
+ drivers/gpio/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202605130440.GUAAk0kl-lkp@intel.com/
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c9a0d53da6d8..92281c14653b 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1912,7 +1912,8 @@ config GPIO_RDC321X
 
-All errors (new ones prefixed by >>):
+ config GPIO_SODAVILLE
+ 	bool "Intel Sodaville GPIO support"
+-	depends on X86 && OF
++	depends on X86 || COMPILE_TEST
++	depends on OF
+ 	select GPIO_GENERIC
+ 	select GENERIC_IRQ_CHIP
+ 	help
+--
+2.54.0
 
->> drivers/pinctrl/pinctrl-generic.c:20:5: error: conflicting types for 'pinctrl_generic_to_map'; have 'int(struct pinctrl_dev *, struct device_node *, struct device_node *, struct pinctrl_map **, unsigned int *, unsigned int *, const char **, unsigned int,  const char **, unsigned int *, unsigned int)'
-      20 | int pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *parent,
-         |     ^~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/pinctrl/pinctrl-generic.c:16:
-   drivers/pinctrl/pinconf.h:193:1: note: previous definition of 'pinctrl_generic_to_map' with type 'int(struct pinctrl_dev *, struct device_node *, struct device_node *, struct pinctrl_map **, unsigned int *, unsigned int *, const char **, unsigned int,  const char **, unsigned int *, void *)'
-     193 | pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *parent,
-         | ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/pinctrl/pinctrl-generic.c:130:5: error: redefinition of 'pinctrl_generic_pins_function_dt_node_to_map'
-     130 | int pinctrl_generic_pins_function_dt_node_to_map(struct pinctrl_dev *pctldev,
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pinctrl/pinconf.h:184:1: note: previous definition of 'pinctrl_generic_pins_function_dt_node_to_map' with type 'int(struct pinctrl_dev *, struct device_node *, struct pinctrl_map **, unsigned int *)'
-     184 | pinctrl_generic_pins_function_dt_node_to_map(struct pinctrl_dev *pctldev,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pinctrl/pinctrl-generic-mux.c:59:65: sparse: sparse: Using plain integer as NULL pointer
-
-vim +20 drivers/pinctrl/pinctrl-generic.c
-
-43722575e5cdcc6 Conor Dooley 2026-01-20  19  
-aaaf31be0426031 Frank Li     2026-05-04 @20  int pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *parent,
-aaaf31be0426031 Frank Li     2026-05-04  21  			   struct device_node *np, struct pinctrl_map **maps,
-aaaf31be0426031 Frank Li     2026-05-04  22  			   unsigned int *num_maps, unsigned int *num_reserved_maps,
-aaaf31be0426031 Frank Li     2026-05-04  23  			   const char **group_names, unsigned int ngroups,
-aaaf31be0426031 Frank Li     2026-05-04  24  			   const char **functions, unsigned int *pins,
-aaaf31be0426031 Frank Li     2026-05-04  25  			   unsigned int npins)
-43722575e5cdcc6 Conor Dooley 2026-01-20  26  {
-43722575e5cdcc6 Conor Dooley 2026-01-20  27  	struct device *dev = pctldev->dev;
-aaaf31be0426031 Frank Li     2026-05-04  28  	unsigned int num_configs;
-43722575e5cdcc6 Conor Dooley 2026-01-20  29  	const char *group_name;
-43722575e5cdcc6 Conor Dooley 2026-01-20  30  	unsigned long *configs;
-aaaf31be0426031 Frank Li     2026-05-04  31  	int ret, reserve = 1;
-43722575e5cdcc6 Conor Dooley 2026-01-20  32  
-43722575e5cdcc6 Conor Dooley 2026-01-20  33  	group_name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn.%pOFn", parent, np);
-43722575e5cdcc6 Conor Dooley 2026-01-20  34  	if (!group_name)
-43722575e5cdcc6 Conor Dooley 2026-01-20  35  		return -ENOMEM;
-43722575e5cdcc6 Conor Dooley 2026-01-20  36  
-43722575e5cdcc6 Conor Dooley 2026-01-20  37  	group_names[ngroups] = group_name;
-43722575e5cdcc6 Conor Dooley 2026-01-20  38  
-43722575e5cdcc6 Conor Dooley 2026-01-20  39  	ret = pinctrl_utils_reserve_map(pctldev, maps, num_reserved_maps, num_maps, reserve);
-43722575e5cdcc6 Conor Dooley 2026-01-20  40  	if (ret)
-43722575e5cdcc6 Conor Dooley 2026-01-20  41  		return ret;
-43722575e5cdcc6 Conor Dooley 2026-01-20  42  
-43722575e5cdcc6 Conor Dooley 2026-01-20  43  	ret = pinctrl_utils_add_map_mux(pctldev, maps, num_reserved_maps, num_maps, group_name,
-43722575e5cdcc6 Conor Dooley 2026-01-20  44  					parent->name);
-43722575e5cdcc6 Conor Dooley 2026-01-20  45  	if (ret < 0)
-43722575e5cdcc6 Conor Dooley 2026-01-20  46  		return ret;
-43722575e5cdcc6 Conor Dooley 2026-01-20  47  
-43722575e5cdcc6 Conor Dooley 2026-01-20  48  	ret = pinctrl_generic_add_group(pctldev, group_name, pins, npins, functions);
-43722575e5cdcc6 Conor Dooley 2026-01-20  49  	if (ret < 0)
-43722575e5cdcc6 Conor Dooley 2026-01-20  50  		return dev_err_probe(dev, ret, "failed to add group %s: %d\n",
-43722575e5cdcc6 Conor Dooley 2026-01-20  51  				     group_name, ret);
-43722575e5cdcc6 Conor Dooley 2026-01-20  52  
-43722575e5cdcc6 Conor Dooley 2026-01-20  53  	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs, &num_configs);
-43722575e5cdcc6 Conor Dooley 2026-01-20  54  	if (ret)
-43722575e5cdcc6 Conor Dooley 2026-01-20  55  		return dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
-43722575e5cdcc6 Conor Dooley 2026-01-20  56  			group_name);
-43722575e5cdcc6 Conor Dooley 2026-01-20  57  
-43722575e5cdcc6 Conor Dooley 2026-01-20  58  	if (num_configs == 0)
-43722575e5cdcc6 Conor Dooley 2026-01-20  59  		return 0;
-43722575e5cdcc6 Conor Dooley 2026-01-20  60  
-43722575e5cdcc6 Conor Dooley 2026-01-20  61  	ret = pinctrl_utils_reserve_map(pctldev, maps, num_reserved_maps, num_maps, reserve);
-43722575e5cdcc6 Conor Dooley 2026-01-20  62  	if (ret)
-43722575e5cdcc6 Conor Dooley 2026-01-20  63  		return ret;
-43722575e5cdcc6 Conor Dooley 2026-01-20  64  
-43722575e5cdcc6 Conor Dooley 2026-01-20  65  	ret = pinctrl_utils_add_map_configs(pctldev, maps, num_reserved_maps, num_maps, group_name,
-43722575e5cdcc6 Conor Dooley 2026-01-20  66  					    configs,
-43722575e5cdcc6 Conor Dooley 2026-01-20  67  			num_configs, PIN_MAP_TYPE_CONFIGS_GROUP);
-43722575e5cdcc6 Conor Dooley 2026-01-20  68  	kfree(configs);
-43722575e5cdcc6 Conor Dooley 2026-01-20  69  	if (ret)
-43722575e5cdcc6 Conor Dooley 2026-01-20  70  		return ret;
-43722575e5cdcc6 Conor Dooley 2026-01-20  71  
-43722575e5cdcc6 Conor Dooley 2026-01-20  72  	return 0;
-43722575e5cdcc6 Conor Dooley 2026-01-20  73  };
-aaaf31be0426031 Frank Li     2026-05-04  74  EXPORT_SYMBOL_GPL(pinctrl_generic_to_map);
-aaaf31be0426031 Frank Li     2026-05-04  75  
-
-:::::: The code at line 20 was first introduced by commit
-:::::: aaaf31be04260316036f50a05b7d015c0d36b55a pinctrl: extract pinctrl_generic_to_map() from pinctrl_generic_pins_function_dt_node_to_map()
-
-:::::: TO: Frank Li <Frank.Li@nxp.com>
-:::::: CC: Linus Walleij <linusw@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
