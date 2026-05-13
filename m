@@ -1,38 +1,38 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2777F385D72
-	for <linux-gpio@vger.kernel.org>; Wed, 13 May 2026 08:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05E638889A;
+	Wed, 13 May 2026 08:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778660250; cv=none; b=tEGjhe+O+ntiAqSPHH64i7UPQ3XXwfzZKXx2i/J+3TrDWvXPsG2lWDuUJzoqacKD7Re7nIDgsE9nC1aBUjyausxINFJwBmAyu85stwcF6p7wOqgLgy2tTnNyPGiWtUhUCpxietz4AB7TH6AAMwdnPzGLeJSXzZECgzV1g6iXsvM=
+	t=1778660252; cv=none; b=ukpreb1vOo6zJwkPDlgLlbjFDEQPAsRz9HlCV1kfhstDY54ISdmDDxdK7bT/6zk9cjFQg07/CaEFxsOOELJslGvp2G8DkUf+E2AyVsaDihNz1JK39m3Z9Ycor6LzvNj7BshQlKQ+8zQRSd6dj3nwjB/ZV3H2iu9I1wk0EcGnNpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778660250; c=relaxed/simple;
-	bh=aQKpuKeLWGzs0rc2yJxJsWgIw5xsY6mHoRbEI75011I=;
+	s=arc-20240116; t=1778660252; c=relaxed/simple;
+	bh=PLXtGH7zPLXfkkIe9EqBxWu/O4wtMDgIlemph7UUw4Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cpKdaeLXVYwmJQFuaxrVwcwGs9z8cX/HVFBug2x0EfjgQ+r+oOnRYaic9lKuAgUU6uH7dIHY7PsC9+nWn6TIfe9OTh4Rw/Hvdi3Rz4yExtAOnCo71h6TmesBu/f1BrL7lv+5eCHSAn9CTgYlZvOILw+IhjrAt4GTsnT9ppnPnmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2ofK1yqG; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version; b=kex/7Xu0BkxFYizHW2zMd+0JbapZTlYDcvf7GN07WBYiLbdr01AnJO/fcF/16JPHfckoh3gZV/DnzR1EXhdpC3k2UcqSsEbu+IBfM5NSnxwDEFZeRQkc+heAWwN+pN/jjUo7068t63hcGTpZWyVYpDE9KAIGY/+LQa7Y3MtNqwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b+km4s4u; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2ofK1yqG"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b+km4s4u"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 81A761A3597;
-	Wed, 13 May 2026 08:17:22 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 2E981C5E175;
+	Wed, 13 May 2026 08:18:20 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5233B606CE;
-	Wed, 13 May 2026 08:17:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7F69E11AF8790;
-	Wed, 13 May 2026 10:17:19 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CA55F606CE;
+	Wed, 13 May 2026 08:17:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 02E4A11AF8CB9;
+	Wed, 13 May 2026 10:17:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778660241; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1778660248; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=hL78oEbudOSFeol+ORqqQXKroRRxjS7rg6+ZdehjJvI=;
-	b=2ofK1yqGhUwRj/frLcXVD4KQryIOeXSH/I75l5cLQEb0EZQfPJsp2TVt3LWdbfwBza+rym
-	/HP7m+0ID6Q8FUDy4UFf2kO1h1DMvPsfRTju6ALQZ1fuGnGCsf301+eKqpbvKlwY30Yclh
-	IRjIToaBG7CsF7IFvxSArSPPpDGCgvzQqbZ6Mt+H9mUM606RVstQPltMKiDUcgHTszdGNr
-	Q6kLCNfv5MH5aAf4gFczka/Os7zr6snePj++N7MsYvPStGPBn43NNCY4suyVETugoNXJWE
-	T0nC/VAaWw8kQD6BI9llRzJ6Vyy5ZUrQz0fzutCYvecFbdkMQQaAnMpzAu8SKw==
+	bh=qARIMrMbrBENAM5Goh6MMU9ZT8eSkmiHwLsrsbigu1A=;
+	b=b+km4s4uGR4r/QDMDdfIbHqae4X7QuYmJL1QzfahNN25I/JvBWGeDsvWRwHZjEUZ02Wfsg
+	jqGwAP3+kq/oWp1baXj2+YfjLmqVjIMfWijl/9Qa8GQK81AKVeBYcgSS0bjKqrq5GZoUna
+	jV5MU5NC42imaVx9SWqHHtgn21hxy8359wp0VRw6Sjq6cK09Wyx7/zECZFWV5CWl5jf2ZH
+	qkP+gFgGSNq3wcsZWXP+5/k4F9f7g3KSVFpdXLtI/Dp3hd9LbsCK9nB8/OqYK9uJNHZ8Q8
+	DjKkeelTschpnr0xB00dQ5wBwbQVrGAXHgNdVqd5mSR+F7oq7esLEvnuW37TWA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -51,9 +51,9 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v3 01/17] of: Introduce of_property_read_s32_index()
-Date: Wed, 13 May 2026 10:16:45 +0200
-Message-ID: <20260513081702.317117-2-herve.codina@bootlin.com>
+Subject: [PATCH v3 05/17] ASoC: simple-amplifier: Remove CONFIG_OF flag and of_match_ptr()
+Date: Wed, 13 May 2026 10:16:49 +0200
+Message-ID: <20260513081702.317117-6-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260513081702.317117-1-herve.codina@bootlin.com>
 References: <20260513081702.317117-1-herve.codina@bootlin.com>
@@ -66,36 +66,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Signed integers can be read from single value properties using
-of_property_read_s32() but nothing exist to read signed integers
-from multi-value properties.
+The simple-amplifier Use CONFIG_OF flag for its of_device_id table
+and of_match_ptr() when it assigns the table in the driver declaration.
 
-Fix this lack adding of_property_read_s32_index().
+This is no more needed. Drop them.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- include/linux/of.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/codecs/simple-amplifier.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 959786f8f196..28153616e616 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -1476,6 +1476,13 @@ static inline int of_property_read_s32(const struct device_node *np,
- 	return of_property_read_u32(np, propname, (u32*) out_value);
+diff --git a/sound/soc/codecs/simple-amplifier.c b/sound/soc/codecs/simple-amplifier.c
+index 5b44bcfef49e..215318ff62fc 100644
+--- a/sound/soc/codecs/simple-amplifier.c
++++ b/sound/soc/codecs/simple-amplifier.c
+@@ -86,19 +86,17 @@ static int simple_amp_probe(struct platform_device *pdev)
+ 					       NULL, 0);
  }
  
-+static inline int of_property_read_s32_index(const struct device_node *np,
-+					     const char *propname, u32 index,
-+					     s32 *out_value)
-+{
-+	return of_property_read_u32_index(np, propname, index, (u32 *)out_value);
-+}
-+
- #define of_for_each_phandle(it, err, np, ln, cn, cc)			\
- 	for (of_phandle_iterator_init((it), (np), (ln), (cn), (cc)),	\
- 	     err = of_phandle_iterator_next(it);			\
+-#ifdef CONFIG_OF
+ static const struct of_device_id simple_amp_ids[] = {
+ 	{ .compatible = "dioo,dio2125", },
+ 	{ .compatible = "simple-audio-amplifier", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, simple_amp_ids);
+-#endif
+ 
+ static struct platform_driver simple_amp_driver = {
+ 	.driver = {
+ 		.name = "simple-amplifier",
+-		.of_match_table = of_match_ptr(simple_amp_ids),
++		.of_match_table = simple_amp_ids,
+ 	},
+ 	.probe = simple_amp_probe,
+ };
 -- 
 2.54.0
 
