@@ -1,185 +1,140 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7C4C8FF0
-	for <linux-gpio@vger.kernel.org>; Wed, 13 May 2026 17:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CCC4DA551;
+	Wed, 13 May 2026 17:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778692637; cv=none; b=mz8ZPPfPgPYQ1vc57KYtHNbKna7nXgVsEClj/yEIZOuh27vxcXrXa/JdEcWNxqUX2ObTtw0N13hbuUaBLE/ks7mCuwNUYYOLmsjZ2+ccllym7Jm2noRytVIMa+DHxA9oLDnrOjIgWaUzwOss3tc0p5m4jCAEhVC9AIeMh+U8eHw=
+	t=1778693001; cv=none; b=RDA8go4PrYJrHoMvfpSBsLQwXn9ruGKtdpw6Mr+UBiYu2RrW4TBhLsEz/Lapqg6i1zhtpBwUybq1K1hCW/6yh/3GSGGDT8ZjstttPv/IdRizWKxJuYf/0XDueDKoaW3O8e3OxOvgdZ6ebexg8Uv9iGimYNiLi+/ktzJ/s+RDpGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778692637; c=relaxed/simple;
-	bh=O7ZY1AdiQuRGIWpyaBs7jFB0+sTG7KoUgEQpHyRFuKM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YkJYOsP+o0gXoX6U+Qzw0XyfR4NfJihvidsR3Ixf7IrTIZnHG4p1rVN5H6Q1gNh1OYZwAQlWJmB0hzB/BEe/mjPovZAGq3Pt4ZFRfwdvfdYId0dZ3EHgy0DgyskFW/7LB6BX3bzfhP9Sv0bi1DC5Oq1Gkz8oeHdBOFnIVw03Y9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a/Ber0gZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aTGc/y5R; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1778693001; c=relaxed/simple;
+	bh=e5DqDhlm5jcgbM0FWrFIsKCqiHgASHBxx/ZDVpUQ7SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tlQcYtqCg+ev/mmbfsX91BK8XWYfen3+JYCcD9+yRaUn3beIwnblX7QuehmSfFPX+89eAM2Z9JmCaHEuwRSTnlivn3ytuH2fdpCE9Ne+i4pcGOFVgclw2j9ZwmJynxTZ+vSLOw6clwjxPEXrQhRTYnVwWFhiI5b8zsQjRLsGT/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mf01HEhq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a/Ber0gZ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aTGc/y5R"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64DEZhBl2887848
-	for <linux-gpio@vger.kernel.org>; Wed, 13 May 2026 17:17:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mphgcl1+U0NC2VWtzWc6ce3S3u0PqqqNtDbXw6C9h80=; b=a/Ber0gZAjGFbcyA
-	DcLnT3cvWA0zHeuNw4CkdOV9sEaTHQ/CC5QhPsSiBi0HD/gY+hUW42xDhJmRWHr6
-	DK7/4Qt+fclHFLvyZXWSuA23qblGmuo8QNq7M0vhEkaF9NZCBHKAKdreKyf4tpep
-	9YZEw+OxxdKy8jFsPUIQhmdBlueZ1UXJCZ+aL8DByt4dO3SgGrp51ypjJfQS9qiy
-	iGGcIlr2wWoqGp3TnDLw/f5mpt5kgXvR76/zbPTo63RfRtrPH1v3fPErVKt07jtH
-	seb8k8GGNF4ttDv15ylzVPG/Yt6I1fkP/N147zI5Wl7OIHVQL/vxs111nUqC3pv9
-	Y8hhEg==
-Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e4p4gj1nt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 13 May 2026 17:17:05 +0000 (GMT)
-Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2ee5b73c5f2so14226730eec.0
-        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2026 10:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778692625; x=1779297425; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mphgcl1+U0NC2VWtzWc6ce3S3u0PqqqNtDbXw6C9h80=;
-        b=aTGc/y5RfbNYvSnddW4ZatQyEy/Z2ZfzC6xyzHkm9VFfOUsi6tdubGOpoICmSz06TA
-         py8zTZuMdlVtwCyFF1JW9V38Gy9pd9fa0ofR8FhIYzg/Y8nHkuyVu/iAQ0B7b+0SkJac
-         DrCQzUL/KX4aFUK/xF3VjdUFbh7LGEPHsEkQuKTzpaAvZOGqFpFjYkS99mG5HoMnjtSu
-         dI9FVrhxQVpw5PBqJf+fwL9zSfYahLjY0K3OAKMTquEt5i9EkoS9S/KMkQ6cAhAhfYEK
-         YIU+RpHZltw348Tj4jadh2RKdQ3XaWsRaelvKbt1hqIk92lOewjWfC6uvV6EQrJV7vBr
-         ZPRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778692625; x=1779297425;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mphgcl1+U0NC2VWtzWc6ce3S3u0PqqqNtDbXw6C9h80=;
-        b=TkAnXqUetnP23Jyxp3SWDpWti69ot+YHorGAnofIs3AIjrGl9tZNbMdhPv6Ft4P1V7
-         D6mKGXVQBjf6dZgAQMRs5gjebKnva1bHiFOl5QRqRWF+SDn16g8DiLpuvgoBU8iEYJPV
-         XQrpsRwzizB/oU7VukY8eix26XH7UuUASUOuqkNMvD1sqshWHbYHcABhMURRfEs2UAP6
-         yD1EZTEa+iTCJ4gh6jPkMnt46z+uuokzZ9vFHXL4RO2LHIYhvanf2VnXFY6t9ZcqibA8
-         6diFX5iaoiY5wrtN9KYo4UkmD/bp5fcv7klYaxZGYT32AQBsyo+Awf0qanLppe35/RCJ
-         Dz+g==
-X-Forwarded-Encrypted: i=1; AFNElJ96xYVw+qOyaEyQMVOj2l16Th7+llScmVT5RwuMOiBkTdJoBCH5WAXFJyJyBmSmcTRRJnx7roy7u2cm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZAxxGqyOLRAzjhVP94q5ID8o4uvugMUlIm4B+7iyL5NtWxo+o
-	WoR80xPZXnVaRBuFLfexcxE29FRwvkeC8XLKESGKRifbYSO3qruy0SzwASBeSJVNUlq/K6l/Ebb
-	dUAeLMWrduUdZGKwBY6C/ndviuzOFcVgSKZOPMDZ+2wbEm/oB50A+n4+aSjVL9OPi
-X-Gm-Gg: Acq92OFmCx4PkXl6PGQ9Qej7mA+zqIAe4EX3HwsClk7WBXP2rSLqT3LXnGTomIHPJYi
-	paA4pFUeiJrZSvT5O3FuTK+SoLRSQQEAWPXkjq1kil5NyZnVLBtVGjSdk4hCizCd3ezZvuhfPSO
-	xR+ISO1YITGxQjKjvE8ym3ETgNxgQrrqepeZqrfSqzot6dFt4pvuH+jOsmZs8ApXr3clIMne89K
-	iWDHyD3eFportjgV+QBrhFVy7s6/9E7UxN1o4T+TrwTmTG9Ws4CQF7aYLGZveDLWlPcJ8cRDeIt
-	fmqPXnvV+wJrtRH3GA4pO3SQUg9/Jl8DCKwPXuHNkdFXd5HQhHsWUkt9a4Dxteykjgfb6qNxRfY
-	cn+MI/s1sWFv9ia0mV24PsNMaQgZinB2MhXy+50msTWfxVDTG9iDaeZ3cQEaO+BHH3SaKCJm+SL
-	p1E5l06w==
-X-Received: by 2002:a05:7300:d706:b0:2f1:6252:f8ef with SMTP id 5a478bee46e88-30116f8cbdfmr2657888eec.1.1778692624717;
-        Wed, 13 May 2026 10:17:04 -0700 (PDT)
-X-Received: by 2002:a05:7300:d706:b0:2f1:6252:f8ef with SMTP id 5a478bee46e88-30116f8cbdfmr2657833eec.1.1778692624174;
-        Wed, 13 May 2026 10:17:04 -0700 (PDT)
-Received: from hu-aletran-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2f888d3af4esm23075939eec.25.2026.05.13.10.17.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2026 10:17:03 -0700 (PDT)
-From: Alex Tran <alex.tran@oss.qualcomm.com>
-Date: Wed, 13 May 2026 10:16:57 -0700
-Subject: [PATCH v2 4/5] reset: reset-scmi: Log number of reset domains
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mf01HEhq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508C3C2BCC9;
+	Wed, 13 May 2026 17:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778693000;
+	bh=e5DqDhlm5jcgbM0FWrFIsKCqiHgASHBxx/ZDVpUQ7SY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mf01HEhqG7GTlxcqyOcFtNCr9gjQjsQuKZz9Hz+nvXtcqqc8RB5hoCfkaY5ChT7sR
+	 k28ysHswSCyq/kGEpMu5YIOOQ1EwVnSy8ultZe/pg1oIcwkIKyZfUAla0Perer4lmf
+	 Ec05KgWgqg9+2x5qZZRmTGXCXXxVsBjiyKftt6hKRBcP3cyg0KJh2XaMN0CTvStvgw
+	 smpUpT657d9l7Z5j0oxb/rM8aFCxk5/2NQwNcXW+ZgMl+GDn+DS6B0WFHsoHUNsGRO
+	 xptdIyfD7LghBLh+1MeXtaG5OF7dDYAnnIL60X3loh0D8qXs0lCQd733oST4CFCVKV
+	 Mz1G5qr4mVuRA==
+Message-ID: <dcd84a44-d52b-4810-a1a8-5865f80db1ba@kernel.org>
+Date: Wed, 13 May 2026 12:23:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] pinctrl-amd: enable IRQ for WACF2200 touchscreen on
+ Lenovo Yoga 7 14AGP11
+Content-Language: en-US
+To: Hardik Prakash <hardikprakash.official@gmail.com>,
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: linus.walleij@linaro.org, wsa@kernel.org, andriy.shevchenko@intel.com,
+ "Natikar, Basavaraj" <basavaraj.natikar@amd.com>
+References: <20260513061338.9348-1-hardikprakash.official@gmail.com>
+ <20260513061338.9348-2-hardikprakash.official@gmail.com>
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20260513061338.9348-2-hardikprakash.official@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260513-scmi-client-probe-log-v2-4-36607e9dd540@oss.qualcomm.com>
-References: <20260513-scmi-client-probe-log-v2-0-36607e9dd540@oss.qualcomm.com>
-In-Reply-To: <20260513-scmi-client-probe-log-v2-0-36607e9dd540@oss.qualcomm.com>
-To: Jyoti Bhayana <jbhayana@google.com>, Jonathan Cameron <jic23@kernel.org>,
-        David Lechner <dlechner@baylibre.com>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sudeep Holla <sudeep.holla@kernel.org>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, Alex Tran <alex.tran@oss.qualcomm.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778692619; l=1390;
- i=alex.tran@oss.qualcomm.com; h=from:subject:message-id;
- bh=O7ZY1AdiQuRGIWpyaBs7jFB0+sTG7KoUgEQpHyRFuKM=;
- b=jxL4jV0oBZIyrWaKzHWraW6cLXO/KQj3WbcU2TE/4/0plegLFbNVGLvl0thcoqS0D2Btudgxl
- UpfJ6sQLaoJDGpSTD2IgN9J/pGAioz38x5frXs1rnPofpkMniCZtxas
-X-Developer-Key: i=alex.tran@oss.qualcomm.com; a=ed25519;
- pk=vKab/gw1fXij5UviWoglv+ho+H/oOiTHyETCLfayPE0=
-X-Proofpoint-GUID: Th21Za8v6zOzWfXIeVYnxhmh0qzSDtb7
-X-Authority-Analysis: v=2.4 cv=DOS/JSNb c=1 sm=1 tr=0 ts=6a04b211 cx=c_pps
- a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=wud5Z5ZUIjVBoUaN5zEA:9 a=QEXdDO2ut3YA:10
- a=bBxd6f-gb0O0v-kibOvt:22
-X-Proofpoint-ORIG-GUID: Th21Za8v6zOzWfXIeVYnxhmh0qzSDtb7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTEzMDE3NCBTYWx0ZWRfXzv6+UdiJm/kg
- dgsHto/qgu9QMnyuS41OjpS03o32l9jxMD9sFk4UYRe8uulF+c+XHF5UopB+CvN4inf0nh/z9ho
- kIhtucxDgwoLDfMictYDAH52P0T9uVwABQiKjHBtzkxyNR2rOaNl2hSkqrCwDwgVgeRURxHUZZN
- wzQ3Xc2o9IUgQWpnATC8L1k0K+d/2mtEqn/6jRVjSdP5Sym7uVhoi8X6sDx7OWzqeP+AgE0TdFx
- FzsqNG4oVlsLtCIx/zZ1emoJ8vSkIZPlsmeX+i8qEorBU4qS/wR1v+fVc+dk/QgFa0enrAOORO7
- iYmQaKTAfotQIrZgr2xxTXx3MmOcy6w3FCg7NGSSeksklMApih8EM1xIDh9e5v0Wik84AkcVfIf
- 2Tkkp0fcwyKotNO14tWl1dzuu9Qdie6zmI/6XdauVc/U1jthdr7mruCCB0QhTWftwBHTnj2yGKb
- /+gzulb1w75DS+zcpMw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-13_01,2026-05-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 impostorscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 phishscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605130174
 
-The SCMI reset driver does not currently report how many reset domains
-were discovered from firmware during probe. This makes it harder to
-confirm the firmware reset resources during debugging.
+++
 
-Log the reset domain count after a successful probe, aligning the driver
-with the existing SCMI client driver logging pattern.
+On 5/13/26 01:13, Hardik Prakash wrote:
+> On Lenovo Yoga 7 14AGP11 (83TD), the WACF2200 touchscreen controller
+> is wired via I2C2 (AMDI0010:02) with its interrupt on GPIO pin 157
+> (confirmed via ACPI _CRS GpioInt decode). After amd_gpio_irq_init()
+> clears all GPIO interrupts at boot, pin 157 is never re-enabled,
+> preventing the touchscreen from signalling the driver.
+> 
+> Windows keeps GPIO 157 INTERRUPT_ENABLE (bit 11) and INTERRUPT_MASK
+> (bit 12) set after initialisation. Add a DMI quirk to restore these
+> bits after amd_gpio_irq_init() on this hardware.
+> 
+> Signed-off-by: Hardik Prakash <hardikprakash.official@gmail.com>
+> Assisted-by: Claude:claude-sonnet-4-6
+> Assisted-by: GPT-Codex:gpt-5.2-codex
+> ---
+>   drivers/pinctrl/pinctrl-amd.c | 35 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+> index e3128b0045d22..64315b0edf2a6 100644
+> --- a/drivers/pinctrl/pinctrl-amd.c
+> +++ b/drivers/pinctrl/pinctrl-amd.c
+> @@ -26,6 +26,7 @@
+>   #include <linux/interrupt.h>
+>   #include <linux/bitops.h>
+>   #include <linux/pinctrl/pinconf.h>
+> +#include <linux/dmi.h>
+>   #include <linux/pinctrl/pinconf-generic.h>
+>   #include <linux/pinctrl/pinmux.h>
+>   #include <linux/string_choices.h>
+> @@ -39,6 +40,39 @@
+>   static struct amd_gpio *pinctrl_dev;
+>   #endif
+>   
+> +static const struct dmi_system_id amd_gpio_quirk_yoga7_14agp11[] = {
+> +	{
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "83TD"),
+> +			DMI_MATCH(DMI_BOARD_NAME, "LNVNB161216"),
+> +		},
+> +	},
+> +	{ }
+> +};
+> +
+> +static void amd_gpio_apply_quirks(struct amd_gpio *gpio_dev)
+> +{
+> +	const unsigned int pin = 157; /* WACF2200 GpioInt per ACPI _CRS */
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	if (!dmi_check_system(amd_gpio_quirk_yoga7_14agp11))
+> +		return;
+> +	if (pin >= gpio_dev->gc.ngpio)
+> +		return;
+> +
+> +	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+> +	reg = readl(gpio_dev->base + pin * 4);
+> +	reg |= BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
+> +	writel(reg, gpio_dev->base + pin * 4);
+> +	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+> +
+> +	dev_info(&gpio_dev->pdev->dev,
+> +		 "Enabled IRQ for GPIO %u (Yoga 7 14AGP11 touchscreen)\n",
+> +		 pin);
 
-Signed-off-by: Alex Tran <alex.tran@oss.qualcomm.com>
----
- drivers/reset/reset-scmi.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I don't understand.  Our design is that the interrupt is disabled 
+initially when driver loads (we don't trust state of the GPIO 
+configuration pre-boot), and then when i2c-hid loads later it is 
+re-enabled via amd_gpio_irq_enable().
 
-diff --git a/drivers/reset/reset-scmi.c b/drivers/reset/reset-scmi.c
-index 4335811e0cfa..114470c12931 100644
---- a/drivers/reset/reset-scmi.c
-+++ b/drivers/reset/reset-scmi.c
-@@ -93,6 +93,7 @@ static int scmi_reset_probe(struct scmi_device *sdev)
- 	struct device_node *np = dev->of_node;
- 	const struct scmi_handle *handle = sdev->handle;
- 	struct scmi_protocol_handle *ph;
-+	int ret;
- 
- 	if (!handle)
- 		return -ENODEV;
-@@ -111,7 +112,12 @@ static int scmi_reset_probe(struct scmi_device *sdev)
- 	data->rcdev.nr_resets = reset_ops->num_domains_get(ph);
- 	data->ph = ph;
- 
--	return devm_reset_controller_register(dev, &data->rcdev);
-+	ret = devm_reset_controller_register(dev, &data->rcdev);
-+	if (ret)
-+		return ret;
-+
-+	dev_dbg(dev, "Initialized %d reset domains\n", data->rcdev.nr_resets);
-+	return 0;
- }
- 
- static const struct scmi_device_id scmi_id_table[] = {
+Why isn't that flow working on this system?
 
--- 
-2.43.0
+> +}
+> +
+>   static int amd_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
+>   {
+>   	unsigned long flags;
+> @@ -1219,6 +1253,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+>   
+>   	/* Disable and mask interrupts */
+>   	amd_gpio_irq_init(gpio_dev);
+> +	amd_gpio_apply_quirks(gpio_dev);
+>   
+>   	girq = &gpio_dev->gc.irq;
+>   	gpio_irq_chip_set_chip(girq, &amd_gpio_irqchip);
 
