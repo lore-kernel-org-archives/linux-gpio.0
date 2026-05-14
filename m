@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B253E0745;
-	Thu, 14 May 2026 13:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AE83E0732;
+	Thu, 14 May 2026 13:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778764651; cv=none; b=W+J1NIxXgbUMpCs4JjjXq+j0Zsdv633ieIrCXY3TAAIb8NwaCep7dCcKSRT0LHamSF2w8oJxJ/ETWZyZSqIbiEhEKlKGCBSjOzG3EJs0kbaiJ1h7bePMj0iWO6ELd2abXCLqvX2GIC7s7ya6XvTZng70VUvF2b/VAg4c5h9c1Ec=
+	t=1778764654; cv=none; b=tiGpTM6ffUudF0VkUZr2fUSEIDPzibDrlQkfRHG1J4YdPtCrDCqN3tN+vAYVnXR/nD040pzRe8syqVdA6R2J4a/mtTMj2lDAgMxkv2g43RHmudK+pPqPgxKZuH33hBlCgapHUw7zrTjAl8+w9+ZzJBx9At11TRnWaPq3CRvbDCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778764651; c=relaxed/simple;
-	bh=GK+pcqSgFJkVn54Slq5nyvwaQWsp/qlPoexNRpOCAOg=;
+	s=arc-20240116; t=1778764654; c=relaxed/simple;
+	bh=LXjR9KI/K4yRWbtOHy6vX/mBQ02JhQVFQtCevl9ZyN4=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=daPPjfLXL1KEEklUAbA/TyVatQi4Y0SP6E/u2UYmGDVSVZj5MUDzGfORsB3S7mljHNXpt3GUhYvu44xI8jghj1qQznB9qn+k4zYgi3f/RTXwUnAQ4A8B1FAI3bN6QebzEBnCC4AMbqT5VGdYpy7AsJwz8PFfUX+fKzgjfseQNVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bun2uiHX; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=qquoE/TxMWhpkqpbBvOBQk0qBuC4n6b6vA110Wvo7z4UObV7dpj/GxHEH1qfg1ToNcnEqt17KEm3hdnZ8n561ldQcqZHX0yhsdPQ3efTWIFDNCSSPb5TzuMz4g1wzSUePO25d2hPsiDZXyDWXDSwmR9hg/J61zDxhmDALvoQoaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZqgPjyd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bun2uiHX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BEEC2BCB8;
-	Thu, 14 May 2026 13:17:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZqgPjyd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC04C2BCB3;
+	Thu, 14 May 2026 13:17:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778764651;
-	bh=GK+pcqSgFJkVn54Slq5nyvwaQWsp/qlPoexNRpOCAOg=;
+	s=k20201202; t=1778764653;
+	bh=LXjR9KI/K4yRWbtOHy6vX/mBQ02JhQVFQtCevl9ZyN4=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Bun2uiHXReT3cQ7hmE4On5Pj6AgD0axSugnB/1bEulhqpU5DEnwxUymmAQhqfOUg0
-	 HDxAQoAESbU47r3YR4F8pw2rXCslvM5mRFN08hqvseanirCI2kGd+AA8Io2gK2xFBb
-	 CXNLYIvS4uz7O7djvZTWnIGWoDdhjdboQcXZ/1Q4zSgbc7WLlqKL8nMHkQxQviw+M1
-	 1qoDxpTl0iEaYnFKa03UR1tOUvBQ+Ft0RB5pZ4x9wKZ/KeZ4h+g3h3MLuG/9WOkwip
-	 vdHvfZfBplaL035BR64XA3tRkkmhiihxo22Nh+pMaLRS9O7hUfIMsxythdg09VZo+z
-	 mHQR4hblNjFOg==
-Date: Thu, 14 May 2026 08:17:29 -0500
+	b=rZqgPjydVuobHeUYkV1cuOag+GmpEeNIEQR/HfW94JNIsgt/CABxNOsb6cPpkxgAW
+	 GB7XsEUzIjp7c/qAFZKhatGp8u4BGIf8m3ifeuJH/vAsDkmfF1rIR/KRcAXxE84zmt
+	 eYffQKHeaTxWIbYoWYUqQA9OJT60BRCjNG2bGZWM9Y2erzBnTTGOinHyKcGW8iSE2R
+	 koDyK/MqmVGmmBX+v0+x8mVtzgSxXzgUgJxKxAgG/W6Y2rd7fW6eK1tM8C3TQr86ld
+	 DPgzyCqlVD4MNGMLE2e8/uoFdW8tYOc7f7Zqd8zClC4mavyyR3jjAMP1uov1v5fA+O
+	 vRjjs0NZ6llXg==
+Date: Thu, 14 May 2026 08:17:31 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,54 +36,48 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
+Cc: Emil Renner Berthing <kernel@esmil.dk>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Alexandre Ghiti <alex@ghiti.fr>, 
  Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Bartosz Golaszewski <brgl@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
+ Paul Walmsley <pjw@kernel.org>, linux-gpio@vger.kernel.org, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Linus Walleij <linusw@kernel.org>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Bartosz Golaszewski <brgl@kernel.org>, linux-riscv@lists.infradead.org
 To: Changhuang Liang <changhuang.liang@starfivetech.com>
-In-Reply-To: <20260514111218.94519-13-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260514111218.94519-15-changhuang.liang@starfivetech.com>
 References: <20260514111218.94519-1-changhuang.liang@starfivetech.com>
- <20260514111218.94519-13-changhuang.liang@starfivetech.com>
-Message-Id: <177876463989.125858.724905267935459432.robh@kernel.org>
-Subject: Re: [PATCH v2 12/22] dt-bindings: pinctrl: Add
- starfive,jhb100-per0-pinctrl
+ <20260514111218.94519-15-changhuang.liang@starfivetech.com>
+Message-Id: <177876464157.125909.5389364363930328136.robh@kernel.org>
+Subject: Re: [PATCH v2 14/22] dt-bindings: pinctrl: Add
+ starfive,jhb100-per1-pinctrl
 
 
-On Thu, 14 May 2026 04:12:08 -0700, Changhuang Liang wrote:
-> Add pinctrl bindings for StarFive JHB100 SoC Peripheral-0(per0) pinctrl
+On Thu, 14 May 2026 04:12:10 -0700, Changhuang Liang wrote:
+> Add pinctrl bindings for StarFive JHB100 SoC Peripheral-1(per1) pinctrl
 > controller.
 > 
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  .../pinctrl/starfive,jhb100-per0-pinctrl.yaml | 176 ++++++++++++++++++
->  .../pinctrl/starfive,jhb100-pinctrl.h         |  62 ++++++
->  2 files changed, 238 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per0-pinctrl.yaml
+>  .../pinctrl/starfive,jhb100-per1-pinctrl.yaml | 175 ++++++++++++++++++
+>  .../pinctrl/starfive,jhb100-pinctrl.h         |  38 ++++
+>  2 files changed, 213 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per1-pinctrl.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys2-pinctrl.yaml:135:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
-./Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.yaml:136:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
-./Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per0-pinctrl.yaml:136:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
+./Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per1-pinctrl.yaml:135:14: [warning] wrong indentation: expected 12 but found 13 (indentation)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per0-pinctrl.example.dtb: pinctrl@11a0a000 (starfive,jhb100-per0-pinctrl): gpio-ranges:2: [32, 28] is too short
-	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.example.dtb: pinctrl@13081000 (starfive,jhb100-sys1-pinctrl): gpio-ranges:1: [8] is too short
-	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys2-pinctrl.example.dtb: pinctrl@13082000 (starfive,jhb100-sys2-pinctrl): gpio-ranges:2: [32, 5] is too short
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-per1-pinctrl.example.dtb: pinctrl@11b42000 (starfive,jhb100-per1-pinctrl): gpio-ranges:2: [32, 4] is too short
 	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260514111218.94519-13-changhuang.liang@starfivetech.com
+See https://patchwork.kernel.org/project/devicetree/patch/20260514111218.94519-15-changhuang.liang@starfivetech.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
