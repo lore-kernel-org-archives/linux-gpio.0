@@ -1,72 +1,54 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C483932D1
-	for <linux-gpio@vger.kernel.org>; Fri, 15 May 2026 15:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACA948AE18
+	for <linux-gpio@vger.kernel.org>; Fri, 15 May 2026 16:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778857271; cv=none; b=siOwUv9jeouGONksKwB1bryljfxhD0YdNX2i0DeD42Fr3lJ3CWx/QEUGHx4bQlafka+HK7wJ4qXDmX0WRmHJ4X6/lJySiqqgV0IlKWJ+UoxtqCEuqlWzWdlZd1LXn6dw0ykZtK9rhQ//tkyccMQPWmG/VIuDLG5Ub3wh9XtGF7k=
+	t=1778861159; cv=none; b=dYk+BrGL7ZcGYiCUO4D9aMYcRyz8osUYItVmtLDGneljhvtsfRh++k3X726va43da38ci17eNfvJM4gimmc8DY76P61yitFYOTUbs+huK2tb1ViVrKdFA5nDrdPF4+1ZLszNOoV4CTIB0YC7pdHcbemfRKJNAI+Oh8tTWfzEgG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778857271; c=relaxed/simple;
-	bh=eo4JHGBXgYQCSe/DE7+pZmIYRaXAcJB3SjLOrB7Xcno=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PJyP62f6uZIWl2yyuyjg555SrCricZJJCIPc98KPCAGGsKD5XiSzVqE17TiPp3OyQIKt/t6kh6u8thdiFT0N6J+YxXMst+sqcGpZrJfDt1N04INg+UDVx+osRPpBrbeFpwswHut3PWW3FNybaGCvd0jJjBgumfL/g1yRuVG0FCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qbr0DdBw; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbr0DdBw"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-44b7e8b65faso820321f8f.1
-        for <linux-gpio@vger.kernel.org>; Fri, 15 May 2026 08:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778857268; x=1779462068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=72ZekV4Qw/5wxdN6lentH6Bp50LjXJz/DgvExEUtVoE=;
-        b=qbr0DdBwSBRNXbK0J6MniGJZaK8EWmzoRumWSknGTbvzFk9F68CKu/pNZqkwc4kQ8x
-         T8gmrXw1weiGPMojQfVaVjnBe/m9y7geeVQOPBvW8AmTSxs/d+uI7GvKUp2Kvcb/pS9g
-         pjs5qY4LT3stXVW+2eQqLebDAfH4jbp7Pq7wx73ULzCMoeI5U4HWxXMn6Ad85w0NML9j
-         TIWoN6rtbEcULskmvIKJ0Vud1RFpieyUfHGBYNUmsw+dr3IyF+T2i6UtqtJ87dHQxwiM
-         yFpRpKRNAA+QdkQbpCEXp0IWFsZPzTBAY7YJH5SvLztFEKntrRVBBmKK9TcdYbX303tr
-         zLdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778857268; x=1779462068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=72ZekV4Qw/5wxdN6lentH6Bp50LjXJz/DgvExEUtVoE=;
-        b=KfGJSN/0dZFuu+RJOnMBY6iHz7JIJ2Or2ZU3l/KXsYmOcaLPkbbh7fZPhLlqBnSXkF
-         NbGfOInuYBil0500cCF0NJ6HQLbNy3ARdWup/9CmWJPlrgtLD2Gj8zJa2XCZn8DGuWFl
-         7X00EOTeiFChaAI/xdQNcMzE2xdYIz3vvuxAXd/Ovt9wc0HLWBLNPxAcTGkPOgeHkpm+
-         qgPYvRAE/2gsUaD3tH3LFPI1Y4v7IqnbR2Kx8iaZ3GiI1d0vpxGAJPM95kn2rOrlyj0g
-         q4SxytKW1r/eATcJH1SQdF+Fqhel0uBX2Pm0vB0n4Jyh32NbNxGAVNuy3VwTpohGUUDO
-         xDKQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8Wgfu3+EC4+Rtlta2aO1Y5u62UNQ4prHtluTdDeariyvieLOfD5eq9kH5ZwN8iXp5wo72e01CE7oa8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYRUSTgYJnmNecQMlibkDLIDw2SZjIEji55aZT3o4zF1HztCfK
-	GiGAUDgkzNNQRcFsg3tCTSDrUOs/w0k4mDs1wPTL0ZUFNQOcAUmFbAiN
-X-Gm-Gg: Acq92OGgUlLSArnMnye5wVssFQaPdFwDDb1IgzdBghTXydMZhL3tRHF61aERN+ZFpcI
-	TN2Znwq14LruImOFUk/pbAmcDjAbBWrpgjIJE6wtXQrH1LkivreYxc+Q60oMJIpBdxoTPD1Efvx
-	Fw5lZT69J3r1JyyTUjhDkEAfdVEAOktSqzGfKLP5rs5TgpPWPKxZNw7d9nxlvBZkltkMfYEs2Fp
-	ePOevzYTErHOEPKOU6kelOLY5zX7YQN8p7a+45HnKlahiToCx5HjNvyCpjx2l5I3t5ezMY0YrQb
-	B3Jqll8fwxl6Xg/Pf4dnZrL1lRgNCwyGQlxJkshgKVsbdI/RP4yyoWIdYfMtPxQrz416XCLmZTi
-	1V9r5SXt7/RoTcr2lXwpqxnQR9kqIpHp+cNRn4wAgwR1t0bt+vHkMhkNkEC3z0mDNwkjjmVEUA4
-	enXMW8dAZx2yc1CfvkUWipmu/em1ITXEgquaj7U7GWKsLD6hqGASnR3OTdOxz3v35ZXA==
-X-Received: by 2002:a05:6000:228a:b0:446:9d8:bb6d with SMTP id ffacd0b85a97d-45e5c5a96d9mr2927060f8f.2.1778857267912;
-        Fri, 15 May 2026 08:01:07 -0700 (PDT)
-Received: from localhost.localdomain ([82.215.118.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45d9e767d16sm15909333f8f.6.2026.05.15.08.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2026 08:01:06 -0700 (PDT)
-From: Stepan Ionichev <sozdayvek@gmail.com>
-To: andy@kernel.org
-Cc: mika.westerberg@linux.intel.com,
-	linusw@kernel.org,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1778861159; c=relaxed/simple;
+	bh=EsC7JRKY1dHFeqTc8rjqeF6+9bR/r+UBix9SFoUp0Sc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cBwSMT1z5xIFYibM8ysJ1U26eomZtsFe3GgRB5essKdX4Yqg0tPn4ICd2TbOWpbPbJozcTCZt/GWSRLqd7UUq1gh7UrOwY90+MxmzYA8yAoCi+gSZblMGh8X7LIfoYSBrjFg3yDemgGZ3uOxHShiJn9R05mFU1okPh0y78cL7bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1wNv2h-00023Z-2h; Fri, 15 May 2026 18:05:39 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac] helo=dude04)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1wNv2g-000wnD-1k;
+	Fri, 15 May 2026 18:05:38 +0200
+Received: from ore by dude04 with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1wNv2g-00000000U9B-1yI0;
+	Fri, 15 May 2026 18:05:38 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	sozdayvek@gmail.com
-Subject: [PATCH] pinctrl: intel: zero-initialize capability_offset[] in probe
-Date: Fri, 15 May 2026 20:00:49 +0500
-Message-Id: <20260515150049.33761-1-sozdayvek@gmail.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	devicetree@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	David Jander <david@protonic.nl>
+Subject: [PATCH v12 1/6] dt-bindings: pinctrl: add NXP MC33978/MC34978 MSDI
+Date: Fri, 15 May 2026 18:05:29 +0200
+Message-ID: <20260515160537.115808-2-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260515160537.115808-1-o.rempel@pengutronix.de>
+References: <20260515160537.115808-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -74,74 +56,255 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 
-intel_pinctrl_probe() declares a per-community capability_offset[]
-array on the stack and only writes the slots whose CAPLIST entries
-the device actually advertises:
+Add device tree binding documentation for the NXP MC33978 and MC34978
+Multiple Switch Detection Interface (MSDI) devices.
 
-	unsigned short capability_offset[6];
-	...
-	do {
-		value = readl(regs + offset);
-		switch ((value & CAPLIST_ID_MASK) >> CAPLIST_ID_SHIFT) {
-		case CAPLIST_ID_GPIO_HW_INFO:
-			capability_offset[CAPLIST_ID_GPIO_HW_INFO] = offset;
-			break;
-		case CAPLIST_ID_PWM:
-			capability_offset[CAPLIST_ID_PWM] = offset;
-			break;
-		...
-		default:
-			break;
-		}
-		...
-	} while (offset);
+The MC33978 and MC34978 differ primarily in their operating temperature
+ranges. While not software-detectable, providing specific compatible
+strings allows the hwmon subsystem to correctly interpret thermal
+thresholds and hardware faults.
 
-	...
-	ret = intel_pinctrl_probe_pwm(pctrl, community,
-				      capability_offset[CAPLIST_ID_PWM]);
+These ICs monitor up to 22 mechanical switch contacts in automotive and
+industrial environments. They provide configurable wetting currents to
+break through contact oxidation and feature extensive hardware
+protection against thermal overload and voltage transients (load
+dumps/brown-outs).
 
-If a community does not advertise a PWM capability, the loop never
-writes capability_offset[CAPLIST_ID_PWM] and the call to
-intel_pinctrl_probe_pwm() reads an indeterminate stack value.
+The device interfaces via SPI. While it provides multiple functions, its
+primary hardware purpose is pin/switch control. To accurately represent
+the hardware as a single physical integrated circuit without unnecessary
+DT overhead, all functions are flattened into a single pinctrl node:
+- pinctrl: Exposing the 22 switch inputs (SG/SP pins) as a GPIO controller
+  and managing their pin configurations.
+- hwmon: Exposing critical hardware faults (OT, OV, UV) and static
+  voltage/temperature thresholds.
+- mux: Controlling the 24-to-1 analog multiplexer to route pin voltages,
+  internal temperature, or battery voltage to an external SoC ADC.
 
-intel_pinctrl_probe_pwm() computes the PWM register base before it
-checks PINCTRL_FEATURE_PWM:
-
-	void __iomem *base = community->regs + capability_offset + 4;
-	...
-	if (!(community->features & PINCTRL_FEATURE_PWM))
-		return 0;
-
-so the base = community->regs + capability_offset + 4 expression is
-evaluated using the uninitialized value on every probe for any
-community that does not have CAPLIST_ID_PWM. The result is never
-dereferenced when the PWM feature flag is clear, but reading an
-indeterminate stack object is undefined behaviour by C, and KMSAN /
-UBSAN report it at probe time.
-
-Default the whole array to zero at declaration so unused slots are
-defined (community->regs + 4) instead of indeterminate.
-
-Fixes: 340bba73c545 ("pinctrl: intel: Improve capability support")
-Signed-off-by: Stepan Ionichev <sozdayvek@gmail.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changes v12:
+- no changes
+changes v11:
+- no changes
+changes v10:
+- no changes
+changes v9:
+- no changes
+changes v8:
+- Update IRQ_TYPE_* macros include path reference in documentation from
+  interrupt-controller.h to dt-bindings/interrupt-controller/irq.h.
+- Add bias-disable, drive-open-drain, drive-open-source, and drive-strength
+  to the list of supported pin configuration properties.
+changes v7:
+- no changes
+changes v6:
+- add Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+- add Reviewed-by: Linus Walleij <linusw@kernel.org>
+changes v5:
+- Commit Message: Added justification for distinct compatible strings
+  based on temperature ranges.
+- Restricted pins property to an explicit enum of valid hardware pins
+changes v4:
+- Drop the standalone mfd/nxp,mc33978.yaml schema entirely.
+- Move the unified device binding to bindings/pinctrl/nxp,mc33978.yaml,
+- Remove the dedicated child node compatible strings (nxp,mc33978-pinctrl).
+- Flatten the pinctrl/gpio properties directly into the main SPI device
+  node.
+changes v3:
+- Drop regular expression pattern from pinctrl child node and define
+  it as a standard property
+- Reorder required properties list in MFD binding
+- Remove stray blank line from the MFD binding devicetree example
+- Replace unevaluatedProperties with additionalProperties in the pinctrl
+  binding
+changes v2:
+- Squashed MFD, pinctrl, hwmon, and mux bindings into a single patch
+- Removed the empty hwmon child node
+- Folded the mux-controller node into the parent MFD node
+- Added vbatp-supply and vddq-supply to the required properties block
+- Changed the example node name from mc33978@0 to gpio@0
+- Removed unnecessary literal block scalars (|) from descriptions
+- Documented SG, SP, and SB pin acronyms in the pinctrl description
+- Added consumer polarity guidance (GPIO_ACTIVE_LOW/HIGH) for SG/SB
+  inputs, with a note on output circuit dependency
+- Updated commit message
+---
+ .../bindings/pinctrl/nxp,mc33978.yaml         | 158 ++++++++++++++++++
+ 1 file changed, 158 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,mc33978.yaml
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 97bf5ec78..4fb4a3dab 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1601,7 +1601,7 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 
- 	for (i = 0; i < pctrl->ncommunities; i++) {
- 		struct intel_community *community = &pctrl->communities[i];
--		unsigned short capability_offset[6];
-+		unsigned short capability_offset[6] = { };
- 		void __iomem *regs;
- 		u32 revision;
- 		u32 offset;
+diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,mc33978.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,mc33978.yaml
+new file mode 100644
+index 000000000000..2a3c565c3c03
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nxp,mc33978.yaml
+@@ -0,0 +1,158 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/nxp,mc33978.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP MC33978/MC34978 Multiple Switch Detection Interface
++
++maintainers:
++  - David Jander <david@protonic.nl>
++  - Oleksij Rempel <o.rempel@pengutronix.de>
++
++description: |
++  The MC33978 and MC34978 are Multiple Switch Detection Interface (MSDI)
++  devices with 22 switch inputs, integrated fault detection, and analog
++  multiplexer (AMUX) for voltage/temperature monitoring.
++
++  Pin numbering:
++  - Pins 0-13: SG0-SG13 (Switch-to-Ground inputs). These pins monitor
++    contacts closed to ground and typically require GPIO_ACTIVE_LOW
++    flags when used as digital inputs.
++  - Pins 14-21: SP0-SP7 (Programmable inputs). These can be configured
++    as SG (Switch-to-Ground) or SB (Switch-to-Battery) inputs. SB
++    inputs monitor contacts closed to the battery voltage and typically
++    require GPIO_ACTIVE_HIGH flags when used as digital inputs.
++
++  Output Emulation:
++  The hardware lacks standard push-pull output drivers. Outputs are emulated
++  by toggling the programmable wetting current sources (acting as pull-ups
++  or pull-downs) and the hardware tri-state registers. Because of this
++  physical constraint:
++  - Consumers using pins as outputs MUST flag them with GPIO_OPEN_DRAIN or
++    GPIO_OPEN_SOURCE in the device tree.
++  - Push-pull configurations are physically unsupported.
++  - The active polarity depends entirely on the external circuit (e.g., how
++    an LED is wired) and must be flagged accordingly by the consumer.
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - nxp,mc33978
++      - nxp,mc34978
++
++  reg:
++    maxItems: 1
++    description: SPI chip select number
++
++  spi-max-frequency:
++    maximum: 8000000
++    description: Maximum SPI clock frequency (up to 8 MHz)
++
++  interrupts:
++    maxItems: 1
++    description:
++      INT_B pin interrupt. Active-low, indicates pin state changes or
++      fault conditions.
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++    description:
++      First cell is the IRQ number (0-21 for pins, 22 for faults).
++      Second cell is the trigger type (IRQ_TYPE_* from dt-bindings/interrupt-controller/irq.h).
++
++  '#mux-control-cells':
++    const: 0
++    description:
++      Present if the device AMUX selector is used as a mux provider.
++      Consumers (e.g. io-channel-mux) must provide settle-time-us for the
++      external ADC sampling path.
++
++  vddq-supply:
++    description: Digital supply voltage
++
++  vbatp-supply:
++    description: Battery/power supply
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  ngpios:
++    const: 22
++
++patternProperties:
++  '^.*-grp$':
++    type: object
++    $ref: /schemas/pinctrl/pincfg-node.yaml#
++    additionalProperties: false
++    description: Pin configuration subnodes.
++    properties:
++      pins:
++        items:
++          enum: [sg0, sg1, sg2, sg3, sg4, sg5, sg6, sg7, sg8, sg9,
++                 sg10, sg11, sg12, sg13, sp0, sp1, sp2, sp3,
++                 sp4, sp5, sp6, sp7]
++
++      bias-pull-up: true
++      bias-pull-down: true
++      bias-high-impedance: true
++      bias-disable: true
++      drive-open-drain: true
++      drive-open-source: true
++      drive-strength:
++        enum: [2, 6, 8, 10, 12, 14, 16, 20]
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - vddq-supply
++  - vbatp-supply
++  - gpio-controller
++  - '#gpio-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        msdi: gpio@0 {
++            compatible = "nxp,mc33978";
++            reg = <0>;
++            spi-max-frequency = <4000000>;
++
++            interrupt-parent = <&gpiog>;
++            interrupts = <9 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            vddq-supply = <&reg_3v3>;
++            vbatp-supply = <&reg_12v>;
++
++            #mux-control-cells = <0>;
++
++            gpio-controller;
++            #gpio-cells = <2>;
++            ngpios = <22>;
++
++            door-grp {
++                pins = "sg0";
++                bias-high-impedance;
++            };
++        };
++    };
 -- 
-2.43.0
+2.47.3
 
