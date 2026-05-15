@@ -1,386 +1,206 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2114.outbound.protection.partner.outlook.cn [139.219.17.114])
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2136.outbound.protection.partner.outlook.cn [139.219.17.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D4A4611C9;
-	Fri, 15 May 2026 10:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16783B8948;
+	Fri, 15 May 2026 11:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.136
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778841930; cv=fail; b=ZKUWFxz4K+PmHOsoJ1wIQMnE2Svs3FxKSjLKwkKwrc8uifRrKc+a7Vp3ZF4jBLTCbnEXi+Z7Sz/WPd5slTqFMk3DZcY6WeVAxTA5/Boc2F46E6p8iKozOPxZq2OjWrM1j3OZAIOFiDekQe6pW4qg4pj4zTTuqh3LMBd0CErIrgQ=
+	t=1778843101; cv=fail; b=XnFoUAVrIs2ACgWTsSB43gGMikcreYhInrbKMq65qLHoIEauWvZoYStwnCN1r4C9f8tJZHAbuQKk315vY8VKyFgMvZWLJuxJdbrSoHhNjAwp24ZafeZ0lK4+bR3OZhOorCpkEczXePQgXEKIhqomE6tJiIX86vpgW8jDsezvXLo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778841930; c=relaxed/simple;
-	bh=64su+T8CMm6OsxYvnQLst/B1YarmNkBMxRXQWUGc7cs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jJoOWkCUGaa/h8OzvW7VXSbX22BuS2ucBbJKP7ApVp0llo50UCwq3xGNEsgq1zElLJWyjSe+d+PzAOcELb/M2pGPH5H1VXGdVMwZo9MMcdsGeWXdT17aL/elEkR5yzZ9oLn8dfVVxYH24rqY7KITyIYKgnmFWrbPOlt6q3CJX+8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	s=arc-20240116; t=1778843101; c=relaxed/simple;
+	bh=kiLvO8wNUWMGxGEWZNHPrDSidr8QMOrEqGyWCRy8+XU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gshGni5FH1BPE+m2npcmPrSBTzcj2LSwt7xhAYUG3r5vVuj9/8DwfVyhvhcJq0yD65vpe1B2TG3h28Q3jLGmP+2r91+TM6sP/F8wQ33Nomajr8w7moDPDppap4gUSDYI3kzxM3hL5Yabcw53a9o4/MWo+7NQQuAPWseNa6aVliM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lecomputing.com; spf=pass smtp.mailfrom=lecomputing.com; arc=fail smtp.client-ip=139.219.17.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MFMjLHdkJPniFWmsMIcNyfMOdRSidR731DLqLlBBedeatkkFjbW0CkJSqkLH0yc6dIDAqiKMsm3UtZWf3LNYg7flWwHoLObBg6MiHWA5taspksDhzxWmFRz+T7yBiBtogURR5nrR9jO/0NutQ7Kj4AvEC9NIJsWnP23IIIRk4kuA5IgO9Kq9dPA7MhwFXJ7PwUPw50Ys2bjBuJGVlyochqwM9xqn5f460HsggmdnUE2RYSZwrbY1XAB6uV6DK8+RCTMOwLWu4UEcTt+7v+VvWaQv02LIXThs7Cw8o3x0bo4kGeOByVv5DYHWxUgKJ0vs7xJ0UWffbjg/m7wpHhZvhQ==
+ b=BFoYt+e+5s1qRQE3uzxBjv0ik27Kn27CDLg0KmFXU8QCGWm0+WyDESr4OSybKFGZUrPM9ilQ5YtkzZOLvadqgEFrNVUgNTjjTiQekaaxUrIWoJfj2RIj+gALxMpucJoeIMMG18ZyY+ZDscKiuW4HB1v9lAEkc5A/aQ+eGY1vJijWnqFfNxyMmXh6jwWDI+DDtP5+7K/RN2iLR6OJ2RqoW7CigBVQr3AWJvQa25HZgLSMncnI9vj/7yp1TqOyE6pL4UpLhoBjb86oydzagwDP4NXvbs2IySkgHfNajUI2ACAFiFgv0AtoIUzdlgJo6q/PO0Nf25QyHbIAMqrrBbTqaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XoWscz4PesxAvAD+70LVXjdL7/ubcL+71qVNsWvsbQ0=;
- b=JyIKCYfE3/MV53Gg2HaxUtMyORF6d+LRMk86dppNj/DYWGkAN1R7BvIcEJpCPu9sHgAN5WJ2QMJCWL5RDJS/HMaJkZZtjs7A6ltaCgY6un9dnVNDcUXkvLcSAcJFVq64kI+LO8H0xi1OZgiqy7v+nsQtf2ZTRWqjaW9z2h0DgfuPol3Y4Y5R1VFCkdUsV8VrwmIc/IgbL8emXrkkoc6lGZjmn0srdNlkfyjIUDXgq0tTzC9ohS5v9LQfIKw4oVPh/87S1ji8xDa3wLK/xGRaZSW/sbKnFHIcb7iNHJH0gjtPaCx1KO1uHc/kbGpOjxamO99AglwDcLI30iBbDq/OKA==
+ bh=uXX0j9ZAgh9bokFmQw4QSpSoQ7S5H0jwuM/ezdVlGEY=;
+ b=Mz1FYUCFrdA9hQub5L2D5ksTzXa4ACjJJuH1+duSdlc7PZD4QDkk08fvGHDxbAWk41YBNN/x0kSqFRwUFIM60pA33S6g15NeB6p37XuCvECD8XP+8QTCzNDavUpQay+QEEZfO7qDtFjgZwlqNk/kIXqD/0Wkm10h7XvXE3C1W2jF1wOLlDHaSAwo8Vn4IYqyzlalbXioG8UlMy3jiQ8vj1IEi6Wjin5CN2GVxxMLhFLk2a30NOn6Zv1cj7lepMgK/Bke7tGaCk7YGIgNPvDjanAV3Oax8SGYSiKkFUtMI7a9/gDy25FgEyIr5J2WqKXLAjNNyce1MiK/V39xqF9gLQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1267.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:16::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.13; Fri, 15 May
- 2026 10:30:38 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
- with mapi id 15.20.9913.009; Fri, 15 May 2026 10:30:38 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Conor Dooley <conor.dooley@microchip.com>
-CC: Conor Dooley <conor@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, Paul
- Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, Lianfeng
- Ouyang <lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v2 03/22] pinctrl: pinctrl-generic: Make the "function"
- property optional
-Thread-Topic: [PATCH v2 03/22] pinctrl: pinctrl-generic: Make the "function"
- property optional
-Thread-Index:
- AQHc45KRzWGkgNqwEUK1h3GqM3NQzLYN3PGAgAC63ECAAByYgIAADMtAgAAXToCAAAwZ4A==
-Date: Fri, 15 May 2026 10:30:38 +0000
-Message-ID:
- <ZQ4PR01MB12021791B5A255F9EB91D9F6F2042@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260514111218.94519-1-changhuang.liang@starfivetech.com>
- <20260514111218.94519-4-changhuang.liang@starfivetech.com>
- <20260514-operation-remix-9f9fcf9a6102@spud>
- <ZQ4PR01MB120245CDE718812D1C65638AF2042@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260515-dandruff-shorts-d7417c6e977a@wendy>
- <ZQ4PR01MB1202D30B108C4562242C1ED8F2042@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260515-bounce-lather-23de8e36754c@wendy>
-In-Reply-To: <20260515-bounce-lather-23de8e36754c@wendy>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1267:EE_
-x-ms-office365-filtering-correlation-id: b5d3cca0-895f-4016-e979-08deb26d01df
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|4143699003|22082099003|56012099003|18002099003|38070700021;
-x-microsoft-antispam-message-info:
- XH5vQRDPQfJ5PzMkis2Y+MpRr/cxM+q0EyvEOSKPQsDvzzzIeaYi00lJPT21EM61wnP8KToxd92WNq/V41bPFZWht943tCLisOaAt/VxLoPTDvgEjTQNP6kZkvZWJkjY9npys00WhmBS8sUvwFvJQqCzKFkxC1i6Au9Z+oZI9PYtkOVTzhhskZh4Hf2T26+AEG5s4t9ZDN29eZ78+Cap/a0cWWkvISJC/MNLcaBZnIvj/eTXFM4bMN4UUG3Aszd2QAbwOvvBkE7Lo0FeG6YmkR5BkVqxB5ImVQOGe38KN6Ox67v0661RD+kefotRnn4u85jf6PL5OwRHx9GzY9rk9mopJPPW7DlROhUPSX7SKSDFEEvTNbBruXATFEQeaHWT6qcIg/gvBHApaDA0F8lNCHay2mDFFN/v6rRbnTRo+KOkgsGaFY68uE2ac/tFgCRNgC/YVtRFKq433dhTzKC+QMRrpEVlNjsHuIayWAUWDgVxqJ0HcI9Go3oBKG5eW0w6Uf3CArKQk5OSzIcVQ7kq0bf6oQuWJj9e/HOiaHi9dg33NvWb1a3KbEpiovczrg3s
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(4143699003)(22082099003)(56012099003)(18002099003)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ImNn2cufgY7lHZbVCePm63UdWFetAxJABqF7QrcmoEYS6YXnsY54A8xaDVPw?=
- =?us-ascii?Q?2yFqOUzwmUCGKNqfFKoxPyaSnUoAmYO4y6iYneLhQFavWoESqoldv687qEFo?=
- =?us-ascii?Q?tpBP8JX8pggaYH+SywTJuKXqs5TYHSDwHMGQQJ9Ut5M+pJXykpr5wGD5dXs9?=
- =?us-ascii?Q?Nsz7Htu177rzt7ICpEs2fjtprJKehCSzthHVXQ/sEDnnlefJ5O9kfpWZluHd?=
- =?us-ascii?Q?sOVjwNo60y9ZSebB9QXFuVIgdjPXK4vlJkdLTKxpymcTzH9vq4Tj5jA1BByW?=
- =?us-ascii?Q?jEs2vJ3q8qxR32zI6hcpXLvioN7tb8u8+LgiBn77o180Wyvo1rofaA1uCYao?=
- =?us-ascii?Q?2CTG3Nm27wh/Vf7Bl9vihnZBke9f9uwUqvMqD74dKiTYukWjTSA6vOe2LFgt?=
- =?us-ascii?Q?C9U8JMNFNvNSDrtC/dk2oeLFUAzKwfI3KTOMG7bvk59FTU8AhVhtSIiIJw9I?=
- =?us-ascii?Q?iv40W2C2U2ja2Ez1gnffbVwKlZIc/jYzCfJ7sp4CJ6V4jj4O9tl1Bz6dXx+v?=
- =?us-ascii?Q?2CDoeasGI4Ax/Q4YB3yB/BnDdC1qoGKCCwEy6sCezxt4fWcPugz1sp0dZldK?=
- =?us-ascii?Q?Ejuq+LGYBkVcIiyUUwJkh2mxrt4cgwgj8HkaEyHZW1/smJF/YZJ+gk8IPtoZ?=
- =?us-ascii?Q?5jier0Xz6Ou8Nk7Y/k97k63y71I/PKu4JvZ0Azb5fkljrqSZxGD2rXcNoSBr?=
- =?us-ascii?Q?kCp2Z6RF9/L9qNQbkPqGdFY3LB9HUGJQ9ny4E37ZA1XGDHDZFNBiM4kn7mAI?=
- =?us-ascii?Q?x4CDVTfaX/a1Bhn89K+nhQ9fy3SBPCoIbrkTp7mNLjrdzELnorn1lAq9hGSU?=
- =?us-ascii?Q?F7BUKx+ttjB3XvLibbHTvicRZOcphdItyrowmu7MOqcKCAySByFugOW2oI3H?=
- =?us-ascii?Q?a2CGcN9mf8L6CnldbLGA5/BMKefFUIpDJudpM7ebUQvGQt7MIqtJPT4W6FQc?=
- =?us-ascii?Q?gL17fjZUOgBNkU0nMomK5bgff5qoa9m0VOx4jR4T/1uRFIhTZY8YkltZCPd5?=
- =?us-ascii?Q?WalSkz3TronPuJzy5PyOcvMXXnajQ+1856oVJ4rTicJJ7GI8OHx8KqqbMASn?=
- =?us-ascii?Q?Skl/eJbjySssYNMLb24koEXvdE6C8qnsv4IAe4gUhm8j2GLz9OafNp1Q/ZGW?=
- =?us-ascii?Q?phmajMUpbTHT8nGRrQLsFACxqDvVsGnh9mweEiJpQepuhmkdk33E2LYQBFhu?=
- =?us-ascii?Q?vihd+aGVUYe2HvW/yAaGa76B0oFYw15Jj/mLljTfb4G8SXf7lAHD6jPWeOb5?=
- =?us-ascii?Q?YYjc6bv5bTIeGi5jEFhirZ+uKDyaVcgIHANlS42eVTdkyIw74Zb2ZVSUhaPJ?=
- =?us-ascii?Q?dAeWbkOOwhiDfMc4QlQhcnvBucuia9yu4xTz3K/5n83o0hwo1HlDC9hIdvUk?=
- =?us-ascii?Q?9WIPXYi3/GJtRUPfyf2iLKsKJJKR5x19swEG3gb7w3q/KBGjnyt8navZ2T9s?=
- =?us-ascii?Q?gSSgqU0tvmDWR4wTMGtIGglPGZnK5tyclfICoO081c6wswFLU4IkdRM3CbU2?=
- =?us-ascii?Q?8SrSyZFHYKLAoRjtPqWQ+8R5YAeOhocxo9DV+gSAP78NCPGlN6bpdSdIh3sy?=
- =?us-ascii?Q?A6FjYlNwo3gYgZfxcmtHMJAXr2HF/Yt1c/LHhKxFpsTLO8f1JwN7vAkprNJF?=
- =?us-ascii?Q?BCDKrwS6KU6UqyhSobVXoc8muZhYm/V/iF1R8kB8xkHREoo0+6yzybCPd8zg?=
- =?us-ascii?Q?ZjIOwgenJ8LNkp9FufUKPFaS7KJg8DoL9dre+LmsX+0MGmd97COeLjTTGB9K?=
- =?us-ascii?Q?VfXzkTrXWLVXcBeLTgDv6Gm7sum3Uq4=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=lecomputing.com; dmarc=pass action=none
+ header.from=lecomputing.com; dkim=pass header.d=lecomputing.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=lecomputing.com;
+Received: from BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1f::17) by BJSPR01MB0547.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:e::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.30; Fri, 15 May
+ 2026 11:03:41 +0000
+Received: from BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ ([fe80::1c61:86e3:3a75:155d]) by
+ BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn ([fe80::1c61:86e3:3a75:155d%4])
+ with mapi id 15.20.9818.023; Fri, 15 May 2026 11:03:40 +0000
+From: Thomas Lin <thomas_lin@lecomputing.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	hoan@os.amperecomputing.com,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	andi.shyti@kernel.org,
+	broonie@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	lucas_hao@lecomputing.com,
+	puntar_liu@lecomputing.com,
+	jihua_tao@lecomputing.com,
+	stan_xu@lecomputing.com,
+	lumin_liu@lecomputing.com,
+	notics_zhang@lecomputing.com,
+	braden_zhang@lecomputing.com,
+	harold_wu@lecomputing.com,
+	will_zhang@lecomputing.com,
+	aurora_jiang@lecomputing.com,
+	ryen_lin@lecomputing.com,
+	andy_jiang@lecomputing.com,
+	Thomas Lin <thomas_lin@lecomputing.com>
+Subject: [PATCH v2 2/3] spi: dw-mmio: Add ACPI ID LECA0002 for LECARC SoCs
+Date: Fri, 15 May 2026 19:03:19 +0800
+Message-ID: <20260515110322.2883310-3-thomas_lin@lecomputing.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260515110322.2883310-1-thomas_lin@lecomputing.com>
+References: <20260514034319.3507315-1-thomas_lin@lecomputing.com>
+ <20260515110322.2883310-1-thomas_lin@lecomputing.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: NT0PR01CA0033.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:c::10) To BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1f::17)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BJSPR01MB0707:EE_|BJSPR01MB0547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 594c7b42-ecbb-489e-45c5-08deb2719ec3
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|18002099003|22082099003|921020|56012099003|38350700014|4143699003;
+X-Microsoft-Antispam-Message-Info:
+ lP+EEbp6ZZbVbfLly4U/u8SAevp6rqpX2I4WjiAnmYkgt5muRos3gvcaRqcfVWUIyvuIcDoKt/0Hu26lEOZNkKt01xG7Rh5o1NaKWW27buErQIuV11lvIUf+9B085qpVAzCMfzAgbjFanlfHxXwobKeQX3ecZxEwVe21WucAC4LWE6An5CegCPmWXKqFMmO+KRhTyL9kUHMMuer5QzIYCw6eNFa5+33op+3+Y6CPKZBCQ91zWAop56LFVSWOoYjoJiipj5d5WloVg+V2L2DECrMaXIa3JEECYRqNK4mnSayZt6T+JOII71K9XQR2nlUzkchsTR0IH7GADDcMRj2ZjcHU+gc1yhF9v84RtyrGs4PhR/YvwfCUU8D/1HbsTL2FvP3Hy+/dHegrU4JmR7nzFHT1MvDyFOyNIwtZ/ZmvTxJF1hIm3OCQLjAMQVIPckc0JXAtsPNJMfaI5XVx9n/zJGz9m6cwu1E6TSNdRv3Nn98PL6dHQyimAelY18ycCw4HtkdKUUKFQGcLWQnKspifLW7A9KcmqhfqV/V0FsZXhh2xwyqaMHgplnNa3vo6lxaKC8Ru5f4Yg0ALPPiJ0aHvlA==
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(18002099003)(22082099003)(921020)(56012099003)(38350700014)(4143699003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?irFoC44HA1PPlos/ixsdoHAncgDulvhrUv8mpWPsap04QdrS3cAST1AMDceR?=
+ =?us-ascii?Q?sRTiYDf5JvSuTe2k25xdr2OQm/rLd9uTCggTja0IxnjBX/fk0xX+B25bI7ez?=
+ =?us-ascii?Q?As2h6kCTNKJlqmcU6men5AJLc36j5ShBYwNgJwgln5cleOjLdQgsJZafJjNo?=
+ =?us-ascii?Q?xILRR5q2obUDi23hkZw4TUsJe4m07YPLO5Crum6GvfB1U0tMWg3+wkEXuSfO?=
+ =?us-ascii?Q?Jhoetr+ADWpQDPom4jIh6L14Xni9PnGzxUflftl53VSqwCNbPniIQSvA2NcR?=
+ =?us-ascii?Q?b7xzCJ8MRWjGu0d3SqfqGgmQalFCH+ttek/etVwpPQhfBZhmohN/K8A9g3sg?=
+ =?us-ascii?Q?ZU0Y7TJ3Y6Syh8eRINcMFlZvs/EYpz5/w4FSIFORN222UXgTU9tBd9oqW1I1?=
+ =?us-ascii?Q?QgcC24x6ByiuRf5BqbxwxU7KVDpa0O1DihqWS/DqQs1YB3riaDzhcKbhTBc5?=
+ =?us-ascii?Q?54jYMliM8ucfHNab2Ed8tB3YbnhRvMs1ONMU4LQNAPCE/8HoWNDYhq8x0jo4?=
+ =?us-ascii?Q?jVOC2GSO2TVgCB+4i6bXMkALnJvxs8tIggng6/J//SyAsc5w1IueWZ7gHLQ8?=
+ =?us-ascii?Q?gxtS5sN8p9jNarfWd4S9ZTd11TDBQVkZNKGraJQ9rcvgKxdW2xtol1koeV9i?=
+ =?us-ascii?Q?Oti9Iq9pODiPX8AlyaygE70w/lBBsfXsb1T5WOBtHvWiToRl6c6xLl0+puL0?=
+ =?us-ascii?Q?wkq8SRquyPZcOGT1AnQ1/ez+eVA7H4O44HAaO0Mx0QmBGUcBtrCMyW293twi?=
+ =?us-ascii?Q?3edXu7kscBNS7UnDC1E+I7oRIatKyqBnXWNnHX2AjhcpfZvKqPUBQOP6oAz0?=
+ =?us-ascii?Q?xm46m+07LlVDusjbXrQGEYq3uYWqOJWxgeawo6M9LdK4hrq286uboxhyshep?=
+ =?us-ascii?Q?0SCXH9+Rm6naDaZtr/nK5CAm0dQfiJBYAh5941CuswHpMusPja/zahMl3OAx?=
+ =?us-ascii?Q?4nZRMR/3v+jagQn5HRnOgEqhUoPb2L7n/p/375e2wUR8bBn9nOoF0j4kQ4ai?=
+ =?us-ascii?Q?DiMDc5Y55Xre2kFXcF47WAe3kvCZAdBEdX9lCPU7pGmGibU7crfxoMJsor9E?=
+ =?us-ascii?Q?wUX6tP4/gqbv/46rFbnCO/J6nwKtuQj5qKDtw/46sMOPOnL8L5FhmLNMTbsD?=
+ =?us-ascii?Q?CsL2UkbyGigyT599M11xFtlhkv4Q/FBOOEdL8Ad+SjGiRkFU8kbp2PviXm3I?=
+ =?us-ascii?Q?A1g+7x3zSveQiIDTRt8JscWfmfs2EPTPW9oPe0QqsEPWXkYFSxAEFoNTUXgD?=
+ =?us-ascii?Q?yssqAvAO4lW9IdxAxlWBBqn7Jn/YMttiGtQlDyfObynf4kZ/GgyxmiNahkpy?=
+ =?us-ascii?Q?bNfck0V/Bp4wOscW2gdb1M+pIx/71wJucm8gVextuya7OT+SqttZElcE8y+s?=
+ =?us-ascii?Q?gQkrCVafbu6XB8eoeoiqF07t32Yss8gm88fbfENyUxAU4k60QrScEk5Kwxny?=
+ =?us-ascii?Q?3bpqc0AK+beYbzHgQVow0AFXGVrji72Asf4wBnmqVna/bECrUNlw9RESEWiH?=
+ =?us-ascii?Q?gc5c/9v/STnIuanBFRWGC2PL3DkBsT4L81OhJBj+TDMaWXEixoZ7xIKyVLRM?=
+ =?us-ascii?Q?OpfsQuHCbzDh4OhbLQIG7H7S4kBrJF6PUL0CS7HfIpZrO0EeCw0+W5YnBkI2?=
+ =?us-ascii?Q?HTfkCbb7IFQ/VYpePJU9VzH4wQdctDiCL/GBqXpdbSGmm8vLD7FIFAoUNDe5?=
+ =?us-ascii?Q?ICYCc39peWT0tXhR/I2xavnej4Y80E09hHuAkKvSTHP0rISXTV6jxrx78ddu?=
+ =?us-ascii?Q?W4achrvR32AsnHt3W3QyH5BBbLsLZig=3D?=
+X-OriginatorOrg: lecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 594c7b42-ecbb-489e-45c5-08deb2719ec3
+X-MS-Exchange-CrossTenant-AuthSource: BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5d3cca0-895f-4016-e979-08deb26d01df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2026 10:30:38.5566
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2026 11:03:40.1985
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bgfqw6SgenOoT+tM8I9dYdmI3aWxveqJa/ulOcKb/8h13OTETam7dBxYBzIH+9L+gMmNto1dZW7+8gEcWDxgeF37VExSkg34gUn4Ey3NdmHFwl2IrtzE31OEPE4Y08v+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1267
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3591a018-3909-4ea2-aee8-843d5abaed8d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BclCWhlIZg38eQLn+xUY4A27Q+Ev0xL1yuw24P683UxUzEecGH5O3FeOv8tU2ChLiV9rZcWdoDs+VCae9iC82IONn3KLGg+iWduWvu9CJo8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BJSPR01MB0547
 
-Hi, Conor
+Add ACPI ID "LECA0002" for LECARC SoCs. This ID requires a custom initialization function dw_spi_hssi_no_dma_init() that sets dws->dws.ip to DW_HSSI_ID.
 
-Thanks for the comments.
+Signed-off-by: Thomas Lin <thomas_lin@lecomputing.com>
+---
+ drivers/acpi/acpi_apd.c   | 7 +++++++
+ drivers/spi/spi-dw-mmio.c | 7 ++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-> On Fri, May 15, 2026 at 08:23:55AM +0000, Changhuang Liang wrote:
-> > > On Fri, May 15, 2026 at 05:55:48AM +0000, Changhuang Liang wrote:
-> > > > > On Thu, May 14, 2026 at 04:11:59AM -0700, Changhuang Liang wrote:
-> > > > > > Some pinctrl subnodes only need to configure pin properties
-> > > > > > (e.g., power-source, bias, drive strength) without assigning an=
-y mux
-> function.
-> > > > > >
-> > > > > > Currently, the driver requires a valid "function" property for
-> > > > > > all pinctrl subnodes. This forces the addition of dummy or
-> > > > > > redundant "function" entries when only pin configuration is nee=
-ded.
-> > > > > >
-> > > > > > Example use case:
-> > > > > > gpios-configs {
-> > > > > >     config {
-> > > > > >         pins =3D <0 1 2 3>;
-> > > > > >         power-source =3D <0>;
-> > > > > >     };
-> > > > > > };
-> > > > > >
-> > > > > > Make the "function" property optional. If it is missing, skip
-> > > > > > adding the mux map and only process the pin configuration.
-> > > > >
-> > > > > I looked through the series though and all controllers appear to
-> > > > > have pins and functions, is it the case that gpio is the default
-> > > > > for these pins, so you are omitting the functions property when
-> > > > > you are using
-> > > the pin in gpio mode?
-> > > > > Saying that the functions property is "redudant" makes it seem
-> > > > > like this might be the case?
-> > > > >
-> > > > > I've got some feedback here, but I can't really provide it
-> > > > > without knowing the answer to that question.
-> > > >
-> > > >
-> > > > "From v1, copying Linus's suggestion:
-> > > >
-> > > > > +  This domain contains 4 IO groups which support voltage levels
-> > > > > + 1.8V and 3.3V  gpioe-spi - comprises PAD_GPIO_C0 through
-> > > PAD_GPIO_C4.
-> > > > > +  gpioe-qspi0 - comprises PAD_GPIO_C5 through PAD_GPIO_C11.
-> > > > > +  gpioe-qspi1 - comprises PAD_GPIO_C12 through PAD_GPIO_C19.
-> > > > > +  gpioe-qspi2 - comprises PAD_GPIO_C20 through PAD_GPIO_C27.
-> > > > > +
-> > > > > +  Each of the above IO groups must be configured with a voltage
-> > > > > + setting that matches the external  voltage level provided to
-> > > > > + the IO
-> > > group.
-> > > >
-> > > > So your hardware has groups and support some properties on the
-> > > > group
-> > > level.
-> > > >
-> > > > So expose these groups and make these properties configurable per
-> > > > group instead of inventing per-group properties.
-> > > >
-> > > > > +  gpioe-spi-vref:
-> > > > > +  gpioe-qspi0-vref:
-> > > > > +  gpioe-qspi1-vref:
-> > > > > +  gpioe-qspi2-vref:
-> > > >
-> > > > Create proper groups in the pin controller then use the standard
-> > > > pincfg property power-source =3D <...>; for this.
-> > > >
-> > > > Example for a simple default hog:
-> > > >
-> > > > pinctrl {
-> > > >     /* Hog the QSPI pins */
-> > > >     pinctrl-names =3D "default";
-> > > >     pinctrl-0 =3D <&qspi_default>;
-> > > >
-> > > >     qspi_default: pinctrl-qspi {
-> > > >         config {
-> > > >             groups =3D "gpioe-qspi-pins";
-> > > >             power-source =3D <2>;
-> > > >         };
-> > > >     };
-> > > > };
-> > > >
-> > > > The groups can be orthogonal to other pin handling, that's fine.
-> > > > Implement .pin_config_group_set in struct pinconf_ops.
-> > > >
-> > > > However, I found that
-> > > > pinctrl_generic_pins_function_dt_node_to_map()
-> > > > does not handle the groups property,
-> > >
-> > > That's kind of the whole point of the function, see the comment
-> > > about
-> > > it:
-> > > /*
-> > >  * For platforms that do not define groups or functions in the
-> > > driver, but
-> > >  * instead use the devicetree to describe them. This function will,
-> > > unlike
-> > >  * pinconf_generic_dt_node_to_map() etc which rely on driver defined
-> > > groups
-> > >  * and functions, create them in addition to parsing pinconf
-> > > properties and
-> > >  * adding mappings.
-> > >  */
-> > >
-> > > If you have the groups property in your devicetree, it contains
-> > > strings that the driver uses to match against the groups it has defin=
-ed in it.
-> > > See my recently added microchip,pic64gx-pinctrl-gpio2 for an example
-> > > of that if you like.
-> > >
-> > > However, if you are using the pins or pinmux properties, the groups
-> > > are not defined in the driver, and need to be created at runtime.
-> > > That's what
-> > > pinctrl_generic_pins_function_dt_node_to_map() is for - it creates
-> > > the groups at runtime when using the *pins* and *function* properties=
-.
-> > > It's in the name!
-> > >
-> > > Judging by your drivers, and how many structures you have that look
-> > > very like groups from a quick glance, probably you can still make
-> > > use of the groups property. The equivalent function to
-> > > pinctrl_generic_pins_function_dt_node_to_map() when you're using
-> > > driver defined groups is pinconf_generic_dt_node_to_map().
-> >
-> > I feel that for the current platform, initializing pin voltage is
-> > suitable for using `pinconf_generic_dt_node_to_map()`,
-> > and configuring pin mux is suitable for using
-> > `pinctrl_generic_pins_function_dt_node_to_map()`. Should I use both of
-> them at the same time?
->=20
-> No, pick either groups or pins across the board and then use the appropri=
-ate
-> function after that. Mixing and matching just adds complication for no re=
-al
-> reason.
->=20
-> > > Also, I notice that you never actually answered the question that I
-> > > asked:
-> > > > > I looked through the series though and all controllers appear to
-> > > > > have pins and functions, is it the case that gpio is the default
-> > > > > for these pins, so you are omitting the functions property when
-> > > > > you are using
-> > > the pin in gpio mode?
-> > > > > Saying that the functions property is "redudant" makes it seem
-> > > > > like this might be the case?
-> > >
-> > > Are you omitting the functions property from your nodes when they're
-> > > using gpio because it is a default, or is there some other reason
-> > > why you're omitting the functions property sometimes?
-> >
-> > Sorry, I missed that question. What I meant by making 'functions'
-> > optional is that I don't care whether the current pin's default value i=
-s GPIO
-> or some other function.
-> > Here, I just want to initialize the default voltage of these pins, not
-> > configure their pin function.
->=20
-> You're making them gpios in all the cases that I saw, so I think you're b=
-est
-> served by using the "gpio" function and thereby being able to have functi=
-on as
-> a required property. Unless the pins are unused, you need to set the func=
-tion
-> anyway, and if they're unused and survived on the values set by reset or =
-prior
-> boot stages, why do you need to set the voltage anyway?
->=20
-> Looking at this node, it looks completely wrong to me:
-> +&pinctrl_sys2 {
-> +	gpiow0_configs: gpiow0-hog-grp {
-> +		gpiow0-hog-pins {
-> +			pins =3D <PADNUM_SYS2_GPIO_A36
-> +				PADNUM_SYS2_GPIO_A37
-> +				PADNUM_SYS2_GPIO_A38
-> +				PADNUM_SYS2_GPIO_A39>;
-> +			power-source =3D <JHB100_PINVREF_3_3V>;
-> +		};
-> +	};
-> +
-> +	gpiow_inner_configs: gpiow-inner-hog-grp {
-> +		gpiow-inner-hog-pins {
-> +			pins =3D <PADNUM_SYS2_GPIO_A40
-> +				PADNUM_SYS2_GPIO_A41
-> +				PADNUM_SYS2_GPIO_A42
-> +				PADNUM_SYS2_GPIO_A43>;
-> +			power-source =3D <JHB100_PINVREF_3_3V>;
-> +		};
-> +	};
-> +
-> +	uart6_pins: uart6-grp {
-> +		uart6-tx-pins {
-> +			pins =3D <PADNUM_SYS2_GPIO_A38>;
-> +			function =3D "uart";
-> +		};
-> +
-> +		uart6-rx-pins {
-> +			pins =3D <PADNUM_SYS2_GPIO_A39>;
-> +			function =3D "uart";
-> +			input-enable;
-> +		};
-> +	};
-> +};
->=20
-> The pins used by uart appear also in your hog node and...
->=20
-> > This part of the voltage configuration only has one register, but it
-> > applies to many pins, so currently it seems I can only use pinctrl hog =
-to
-> initialize it.
->=20
-> ...I think that relates to the point you make here. If a setting for the
-> power-source applies across an entire set of pins, there's no need to
-> preemptively apply this across the whole set. It's usually sufficient to =
-just set
-> the power-source in the nodes that describe pins that are actually in use=
-, for
-> example:
->=20
-> | &pinctrl_sys2 {
-> | 	uart6_pins: uart6-grp {
-> | 		uart6-tx-pins {
-> | 			pins =3D <PADNUM_SYS2_GPIO_A38>;
-> | 			function =3D "uart";
-> | 			power-source =3D <JHB100_PINVREF_3_3V>;
-> | 		};
-> |
-> | 		uart6-rx-pins {
-> | 			pins =3D <PADNUM_SYS2_GPIO_A39>;
-> | 			function =3D "uart";
-> | 			input-enable;
-> | 			power-source =3D <JHB100_PINVREF_3_3V>;
-> | 		};
-> | 	};
-> | };
-
-I think this approach is suitable for cases where each pin has its own inde=
-pendent register filed.=20
-I'm not sure if it's suitable for this kind of voltage configuration where =
-multiple pins share a=20
-single register field.
-
-With this approach, the driver would end up writing the same value to the s=
-ame register twice,=20
-once for A38 and once for A39. Is that acceptable?
-
-If that's acceptable, the code would indeed become much simpler.
-
-Best Regards,
-Changhuang
-
+diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
+index bed0791c17fc..4d5a51d30adc 100644
+--- a/drivers/acpi/acpi_apd.c
++++ b/drivers/acpi/acpi_apd.c
+@@ -181,6 +181,12 @@ static const struct apd_device_desc hip08_spi_desc = {
+ 	.setup = acpi_apd_setup,
+ 	.fixed_clk_rate = 250000000,
+ };
++
++static const struct apd_device_desc leca_spi_desc = {
++	.setup = acpi_apd_setup,
++	.fixed_clk_rate = 400000000,
++};
++
+ #endif /* CONFIG_ARM64 */
+ 
+ #endif
+@@ -251,6 +257,7 @@ static const struct acpi_device_id acpi_apd_device_ids[] = {
+ 	{ "HISI02A2", APD_ADDR(hip08_i2c_desc) },
+ 	{ "HISI02A3", APD_ADDR(hip08_lite_i2c_desc) },
+ 	{ "HISI0173", APD_ADDR(hip08_spi_desc) },
++	{ "LECA0002", APD_ADDR(leca_spi_desc) },
+ 	{ "NXP0001", APD_ADDR(nxp_i2c_desc) },
+ #endif
+ 	{ }
+diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+index 1bfdf24c3227..e131520fe887 100644
+--- a/drivers/spi/spi-dw-mmio.c
++++ b/drivers/spi/spi-dw-mmio.c
+@@ -226,8 +226,8 @@ static int dw_spi_hssi_init(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-static int dw_spi_intel_init(struct platform_device *pdev,
+-			     struct dw_spi_mmio *dwsmmio)
++static int dw_spi_hssi_no_dma_init(struct platform_device *pdev,
++			           struct dw_spi_mmio *dwsmmio)
+ {
+ 	dwsmmio->dws.ip = DW_HSSI_ID;
+ 
+@@ -438,7 +438,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
+ 	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
+ 	{ .compatible = "renesas,rzn1-spi", .data = dw_spi_pssi_init},
+ 	{ .compatible = "snps,dwc-ssi-1.01a", .data = dw_spi_hssi_init},
+-	{ .compatible = "intel,keembay-ssi", .data = dw_spi_intel_init},
++	{ .compatible = "intel,keembay-ssi", .data = dw_spi_hssi_no_dma_init},
+ 	{
+ 		.compatible = "intel,mountevans-imc-ssi",
+ 		.data = dw_spi_mountevans_imc_init,
+@@ -453,6 +453,7 @@ MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id dw_spi_mmio_acpi_match[] = {
+ 	{"HISI0173", (kernel_ulong_t)dw_spi_pssi_init},
++	{"LECA0002", (kernel_ulong_t)dw_spi_hssi_no_dma_init},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(acpi, dw_spi_mmio_acpi_match);
+-- 
+2.43.0
 
