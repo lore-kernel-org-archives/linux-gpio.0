@@ -1,66 +1,68 @@
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9194238E10C
-	for <linux-gpio@vger.kernel.org>; Sat, 16 May 2026 23:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA40397E66
+	for <linux-gpio@vger.kernel.org>; Sat, 16 May 2026 23:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778973539; cv=none; b=g35GZ0ns/eR7UVWmEW8qK2VJl5kaYoUIJZOAINXKbS1slUaN05CsXSJOWXJ9htlmTKcXYj3jHonkmYCjRpSdbvdA10eHlyiW27YIFjHvPelmGhxMnzWk2YX6Y001Yfl7SukwnSUA/xHoxNdnUEo6/rztEuq+dTP6QfisWfJRTnA=
+	t=1778973540; cv=none; b=E62NwmkAB5XC6RFQPiq3bWxHvZpTciBIFAdxrrdcq7su8aHraYLifu539tdKyjjOA0LFsiOYvmxj0Khkzdva9hDGJvscLymM+0G1noq64ugx8UF5XB8r0wYMvXHLVbepplAvEcgFXBhloXsPKqj0TFEyclaJUm+gPRFEoAiq+fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778973539; c=relaxed/simple;
-	bh=wsfn1MbAM5mT+uBLpfkIk6VPVX8dfOOxOV1mjJK+BXo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=trYXt6iWBrNV78Ku+Dcu5WxZSGR+AGNMB9xm/y60luO2v5AuqkZV6fYPh/K7BzVqmyfBVz+NtQXtZaEzuG3TAn7NwHVxb4m5urfpL48fiTZTMR66CDgu3wQmW467ulpovlntYY2vrLXrzLmAbIWbN+DuSPR4JQBdhqlRzDdzG9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nexthop.ai; spf=pass smtp.mailfrom=nexthop.ai; dkim=pass (2048-bit key) header.d=nexthop.ai header.i=@nexthop.ai header.b=Qv03CgDy; arc=none smtp.client-ip=74.125.82.52
+	s=arc-20240116; t=1778973540; c=relaxed/simple;
+	bh=N23J27IfJVGe7SPQQt1S3jRHCJD8YogYhTzhMnkG0uE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aYFharCr8rpUU8zuFnnUEzYQatmCuiXnQ41+NJWBhzW3/K8XNQJdmw6QAswkPkpUSuvYdIl6WXU/TNT4csXjojf+sPC5fqw9xMGgT0aly3+PQ4Qi9sEIRr8fM8bFW+mtS6OF25WXvkewTErABvqYFRfcZBtGF/zjm83ro1yFakA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nexthop.ai; spf=pass smtp.mailfrom=nexthop.ai; dkim=pass (2048-bit key) header.d=nexthop.ai header.i=@nexthop.ai header.b=TKiimgkS; arc=none smtp.client-ip=74.125.82.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nexthop.ai
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nexthop.ai
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexthop.ai header.i=@nexthop.ai header.b="Qv03CgDy"
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-1329fc4bf77so1695351c88.1
-        for <linux-gpio@vger.kernel.org>; Sat, 16 May 2026 16:18:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nexthop.ai header.i=@nexthop.ai header.b="TKiimgkS"
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-1331e851faaso437595c88.1
+        for <linux-gpio@vger.kernel.org>; Sat, 16 May 2026 16:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexthop.ai; s=google; t=1778973535; x=1779578335; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fz3Z7xk7sYmHcnQNijrkJ53RnF0rGP8+OWF9DAgytjM=;
-        b=Qv03CgDyvOtJ3yhwxBix4g1f2iG0VUI/rEfH7gsXqowJV2GtxEtLhWU7uwkbTKl49w
-         QREC+Sp38okf9h8tRGbtzdRtMzH/UpJopsRTS5m2PHgtoVaagPbHP0Nu+gpWAaboYRHS
-         FUpSAyFzYDawnv+31sZqcDUjSD9Jg13nIMlAa1lPjT+oovpheQKJI6TJ1u9Do2Qysc/Y
-         h93ayIkuPwiTYc4Gj99ffCTlkjRAXefR4b/3nWxuftFyiv+xX1AditSExVNB9Y1LqQh2
-         ks+yCj5d/iMyQOHgJpCS3tCBKkeFZXNQ2oVlCZXeZiwUj3PrwpSAG6YExfYKU7YUXIee
-         oC2g==
+        d=nexthop.ai; s=google; t=1778973538; x=1779578338; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dA2Xn0JnUjF9oxy4I1Ocf3rxy01MmF3T7GcfHEypX4c=;
+        b=TKiimgkSAL9g5bijz9kfouf72dVsWGjjga+8jKXZTK7hJuSTq7h8j7fLR65+G3qvhv
+         QVwCvVMVE4RYBXDYnaNOGiLOCwU/orzmrnwXgcZqpYBjMF6V95ESjEZJKsufgFv5IHTH
+         bWfEjMU/nYdwDcju3NYgugt6yRkjdum6KVnBhlFGygXxtHPa8x6eQBvmchL1Dn5g/xE2
+         b5L677/E9r3MAc6IGCnsAFhf7s+iMft/MTxr57/BRQ2XirBJj5kQjQ0DQ52COHRvB6Zc
+         f1kRTNOseNX5G9jLXsaqQultJqYh8o1Jjz1aXqRpgSvbtp/yrtki8Db6JsRAs2deqBvi
+         UZTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778973535; x=1779578335;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fz3Z7xk7sYmHcnQNijrkJ53RnF0rGP8+OWF9DAgytjM=;
-        b=G9lwgPGB5HeHdfmEYYVGu8GeTIwQS3nolQr0ttm7wj6SQm18bbX3fo9B1F1v+dixCs
-         TVkvoMeeWRttFTUh2XSGxfGNvxuwnb/h63QIFhRgrXBZqSxF8nvVr7Dfghv0FoQAR3kp
-         CsKEagzg04ca3sgE5e8taCYkMvaC1yL3YKNfZGndhHiFpvCzfAQq4u14zfKvgG5/yJV6
-         Vvdp6v2dXgyWKqDkiBxwUXnO2qZ2yFx2o9se8w8Bfl9V/FrGvbcpTdcRxPrWreWIo44l
-         XyFgL4fMeRm0we26eLYko/vrqmmtyNwP86yGyTbj9fBD2bTUJX1uSbA3A7mdvSIfSWcp
-         JExQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8lkLzlbKpuuWyppxGJwTmXe+ySf/WOAcTC+Xx+BhtFUlMo/Tr0VF5U88tCXud2RtIzmrlcc7JBOXMp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCg7gdXNkPWU7MmWPC2my1/i754GvyozCqXAReUlZtbBEfTTfK
-	1t6si+HD7RcnEOoxbmC8oDz5KorG7baGAsKVnOmJPWZZFftp1YJL+yMjzRTMszM2A960aDTzyd1
-	oX7I5efo=
-X-Gm-Gg: Acq92OGYnrXzE0YpqH6v01FHWSSTOz64m0BoEGoFYDjr9dV4OyUnmg51TayyAFFUjiI
-	Z5an0YON/UJHBpr3ieL3Htm/bcabmei3UY5wOFHRvcjeJhgu+q9uhjjtvkDV3BCmaxf/7TC+JCX
-	BgASiqrBmnPntjtYTw6ysMytl/pjM5vB7eo+OZ3VLNsuuqwtIDrteAcFxqMpjeUYugLTKue6oRZ
-	IRkiY17hNtrUw0fmtXat9phTeHFCLUbdW6EZIhwPWEwWa4zbXOULX/vbdSgap/SdZvwBlE3UIHJ
-	Pop7J9tZtfDFRSlHK/vfj49yC+6W7bIewbT2OYQGeo0sKx2NfB7q/V7Oq4V8yB7reD0wpjPZ+/K
-	mEujDrxm3tJ59LXkFoPNWp2FAy2D35hNoUaYmIbWtZ1pvs200L21zxJfi4hOuDQHozycUU8eBga
-	Lrd+BHa8BbdFEk8P0JJXtuxyLq9Q==
-X-Received: by 2002:a05:7022:e984:b0:127:3915:76b2 with SMTP id a92af1059eb24-1350484e87amr4490067c88.27.1778973535255;
-        Sat, 16 May 2026 16:18:55 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778973538; x=1779578338;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dA2Xn0JnUjF9oxy4I1Ocf3rxy01MmF3T7GcfHEypX4c=;
+        b=s1D+x5okq5ENQZtEZMeCQZhLIBXzhZUq79cg5bWTaKX6Bn58VQ4cdiGsj7cwClKUyP
+         eBea/cPjnQ5h8kaSduOeibUv1tCHVmmLSO1Jp4qCTK3b0PHxKNyAzTunZ2d9X3r2dI6E
+         +paOrjEq9ItbU7pjcgL+d8wjlq4KBOBcM+coqgefIrD9uxBKamfSP5an7UoCyfLEThKw
+         EOqTPINBU38Lefoh/+mj4tabKYBOpsyjOKE1dWxesOHvhMSEvuuFmX/MZ1rSXZWrQaeU
+         mvwUSu8g5gjZJT24maHVudbFmAQoM/4jfWDmk3joPVMJJ1NVuSIs32WrsfO+cQytMBUh
+         JEOg==
+X-Forwarded-Encrypted: i=1; AFNElJ/QdWUg9MtLFQKHzowuTJVIqPIq+qQoUaRoUOJRBSCU8V2dRDPTYZmLRlFz4yRaYAoaaddK2g++2C0A@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ6G2F7A5DpFJAWtLX0zTLN2WeEvb9rOlF3hD3VVgamjatvWs6
+	q88LCcaXeZXR6hvZCJbzO1YenvtvI/7COgbsWulybereijN4D+u34VK5kuvPmN82CCciLZ1YTZE
+	+tRGxxcE=
+X-Gm-Gg: Acq92OHD/3AP/e8iQFT/7zL1EBQoKVIaIJvSU6gXM4jystTi4z7GbdAECbguKOyM3qt
+	KbsSgtuI7MfH4K2Jbu5nPr71ngcQApFdZbi90rErUAe4AE/TdsS83H5Gwr6WhIcJVuUDa/dzSUu
+	oeLEvRuwxtXAojFuS5gltIYbJRaIgnRFSlv5ekSY0HiDg2aEfttoE+notzQJcvhwNcpuMqjHIuu
+	3OFLRMv6HA4XSOdykTO/hRvyEPsEQpUxvYu+gBdDnBwFL6EdvDIZv0kmIMBikRPGkBnDoyGTVQK
+	HFe1O5LQ3nBVWy5dNRstL9QhREhcR13fqBMwxXnulD1TiuJarzNQkrQQxRQ8F47GVEEXx6u3ZKQ
+	Gy/vqYv14/4JIV73uKJ1hGea/vSOnbpNgxF/0hGLa2S5wbPOa4DIMSFhDw5LAswQcT19SYS9r5g
+	Ling8YKkwTI8Um+qrazWCxlEn3TUt3NanI0hxD
+X-Received: by 2002:a05:7022:f96:b0:12c:9037:5115 with SMTP id a92af1059eb24-134ffe9529bmr3676098c88.13.1778973537611;
+        Sat, 16 May 2026 16:18:57 -0700 (PDT)
 Received: from [127.0.0.2] ([50.145.100.174])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbcb9ef5sm14722254c88.2.2026.05.16.16.18.54
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbcb9ef5sm14722254c88.2.2026.05.16.16.18.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 May 2026 16:18:54 -0700 (PDT)
+        Sat, 16 May 2026 16:18:57 -0700 (PDT)
 From: Abdurrahman Hussain <abdurrahman@nexthop.ai>
-Subject: [PATCH v2 0/5] hwmon: (pmbus/adm1266) GPIO accessor fixes
-Date: Sat, 16 May 2026 16:18:46 -0700
-Message-Id: <20260516-adm1266-gpio-fixes-v2-0-801f13debcb2@nexthop.ai>
+Date: Sat, 16 May 2026 16:18:49 -0700
+Subject: [PATCH v2 3/5] hwmon: (pmbus/adm1266) reject short block-read
+ responses in the GPIO accessors
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -69,11 +71,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFb7CGoC/32NzQ6CMBCEX8Xs2TVtkcZ68j0Mh/6ssCZS0iLBE
- N7dgnePX2a+mQUyJaYM18MCiSbOHPsC6ngA39m+JeRQGJRQWtRSow0vqbTGduCID54pY3DBGS+
- FPXsFRRwS7UHx7s2P89s9yY/b0tboOI8xffbXSW69vweTRIHVJZgQKuOMqG89zWMXh5NlaNZ1/
- QJeHLXjxwAAAA==
-X-Change-ID: 20260516-adm1266-gpio-fixes-dbdb9c10a4c2
+Message-Id: <20260516-adm1266-gpio-fixes-v2-3-801f13debcb2@nexthop.ai>
+References: <20260516-adm1266-gpio-fixes-v2-0-801f13debcb2@nexthop.ai>
+In-Reply-To: <20260516-adm1266-gpio-fixes-v2-0-801f13debcb2@nexthop.ai>
 To: Guenter Roeck <linux@roeck-us.net>, 
  Alexandru Tachici <alexandru.tachici@analog.com>, 
  Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
@@ -81,93 +81,75 @@ Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
  stable@vger.kernel.org, linux-gpio@vger.kernel.org, 
  Abdurrahman Hussain <abdurrahman@nexthop.ai>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778973534; l=3922;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778973534; l=2321;
  i=abdurrahman@nexthop.ai; s=20260510; h=from:subject:message-id;
- bh=wsfn1MbAM5mT+uBLpfkIk6VPVX8dfOOxOV1mjJK+BXo=;
- b=za08h5g4ZpshHcx+Wg3asjfc48fBSz7c/93TL0dYoERmUOOCNValX69QCzPvKeDUMLaJF8vOn
- o1MSwKepTH+D+e5GUx4i9YPVftkcjnnecfZSpXDwcw/Q5HhCrj2dIX8
+ bh=N23J27IfJVGe7SPQQt1S3jRHCJD8YogYhTzhMnkG0uE=;
+ b=XrOwSRfWwG+q0SuALxjvhTMWsm+OP1kNQlIn0Z46oqN7219YpmYw7z+gUT4oTOENMEBlSyuQv
+ Syirv9rW4wWBz9/Z9npoptY/vyCDDNp1+tsx75VEVuEyHPX4hV0gOhx
 X-Developer-Key: i=abdurrahman@nexthop.ai; a=ed25519;
  pk=omTm9cCAbO0ZhS32aKfJDKue0W3sQGpG9ub5eYHif8I=
 
-Five pre-existing bugs in the adm1266 GPIO path that all landed when
-GPIO support was first added (commit d98dfad35c38).  Each is
-reachable any time userspace queries an ADM1266 GPIO/PDIO line via
-the gpiolib char-dev or sysfs interfaces, or reads
-debugfs/gpio-<chip>.
+adm1266_gpio_get() and adm1266_gpio_get_multiple() both compose the
+pin-status word as
 
-Patch 1 caps the PDIO scan loop in adm1266_gpio_get_multiple() at
-ADM1266_PDIO_NR (16) instead of ADM1266_PDIO_STATUS (0xE9 = 233, a
-PMBus command code that ended up in the bound by mistake).  As
-written, the scan walks find_next_bit() up to bit 242 across a
-25-bit caller mask, reading out of bounds and -- if any of that
-incidental memory contains a set bit -- driving a corresponding
-out-of-bounds write to the caller's bits array.
+	pins_status = read_buf[0] + (read_buf[1] << 8);
 
-Patch 2 drops a redundant "*bits = 0" reset that sits between the
-GPIO and PDIO halves of adm1266_gpio_get_multiple().  As written,
-the GPIO bits the first loop populates are immediately discarded
-before the PDIO loop runs, so any caller asking for a mix of GPIO
-and PDIO lines sees the GPIO half always reported as 0.
+right after i2c_smbus_read_block_data(), guarding only against an
+error return.  A well-behaved device returns 2 bytes for
+GPIO_STATUS/PDIO_STATUS, but the helper happily reports a 0- or
+1-byte response too.  If the device returns 0 bytes, both read_buf
+slots are uninitialized stack memory; if it returns 1 byte, read_buf[1]
+is.
 
-Patch 3 adds the missing "ret < 2" length check after the three
-i2c_smbus_read_block_data() calls in adm1266_gpio_get() and
-adm1266_gpio_get_multiple().  A device returning a 0- or 1-byte
-response would otherwise compose pin status from uninitialised
-stack memory and leak it to userspace via gpiolib.
+The composed value then flows through set_bit() into the caller's
+*bits in adm1266_gpio_get_multiple(), or into the return value of
+adm1266_gpio_get(), and ends up in userspace via gpiolib (sysfs and
+the char-dev ioctls).  That leaks a few bits of kernel stack per
+request on any device whose firmware glitch, bus error, or hostile
+slave produces a short block-read response.
 
-Patch 4 moves adm1266_config_gpio() past pmbus_do_probe() in
-adm1266_probe() so the gpio_chip isn't registered (and reachable
-from userspace) until the PMBus state the GPIO accessors depend
-on is initialised.  This is a prerequisite for patch 5.
+Add the missing length check to both call sites and surface a short
+response as -EIO.
 
-Patch 5 takes pmbus_lock at the top of adm1266_gpio_get(),
-adm1266_gpio_get_multiple(), and adm1266_gpio_dbg_show() so the
-GPIO PMBus reads can't land between a PAGE write and the paged
-read pmbus_core does in another thread.
-
+Fixes: d98dfad35c38 ("hwmon: (pmbus/adm1266) Add support for GPIOs")
+Cc: stable@vger.kernel.org
 Signed-off-by: Abdurrahman Hussain <abdurrahman@nexthop.ai>
 ---
-Changes in v2:
-- New patch 3: reject short block-read responses in adm1266_gpio_get()
-  and adm1266_gpio_get_multiple(), so a 0- or 1-byte response from
-  the device cannot leak uninitialised stack memory to userspace
-  through the gpiolib interfaces (Sashiko review of v1).
-- New patch 4: move adm1266_config_gpio() down past pmbus_do_probe()
-  in adm1266_probe() so the gpio_chip isn't reachable from userspace
-  before the PMBus state the GPIO accessors depend on is initialised.
-  Prerequisite for the new patch 5; without it the lock acquired by
-  the GPIO accessors would race adm1266_config_gpio() / pmbus_do_probe()
-  setup.
-- New patch 5: take pmbus_lock in adm1266_gpio_get(),
-  adm1266_gpio_get_multiple(), and adm1266_gpio_dbg_show() so the
-  GPIO PMBus reads serialise against pmbus_core's PAGE+register
-  sequences (Sashiko review of v1).
-- Patches 1 and 2 are unchanged from v1.
-- Link to v1: https://patch.msgid.link/20260516-adm1266-gpio-fixes-v1-0-38d9dd39b905@nexthop.ai
+ drivers/hwmon/pmbus/adm1266.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-To: Guenter Roeck <linux@roeck-us.net>
-To: Linus Walleij <linusw@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-To: Alexandru Tachici <alexandru.tachici@analog.com>
-Cc: linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
+diff --git a/drivers/hwmon/pmbus/adm1266.c b/drivers/hwmon/pmbus/adm1266.c
+index 4dd67c02b412..57cb7d302cdd 100644
+--- a/drivers/hwmon/pmbus/adm1266.c
++++ b/drivers/hwmon/pmbus/adm1266.c
+@@ -175,6 +175,8 @@ static int adm1266_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	ret = i2c_smbus_read_block_data(data->client, pmbus_cmd, read_buf);
+ 	if (ret < 0)
+ 		return ret;
++	if (ret < 2)
++		return -EIO;
+ 
+ 	pins_status = read_buf[0] + (read_buf[1] << 8);
+ 	if (offset < ADM1266_GPIO_NR)
+@@ -195,6 +197,8 @@ static int adm1266_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask
+ 	ret = i2c_smbus_read_block_data(data->client, ADM1266_GPIO_STATUS, read_buf);
+ 	if (ret < 0)
+ 		return ret;
++	if (ret < 2)
++		return -EIO;
+ 
+ 	status = read_buf[0] + (read_buf[1] << 8);
+ 
+@@ -207,6 +211,8 @@ static int adm1266_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask
+ 	ret = i2c_smbus_read_block_data(data->client, ADM1266_PDIO_STATUS, read_buf);
+ 	if (ret < 0)
+ 		return ret;
++	if (ret < 2)
++		return -EIO;
+ 
+ 	status = read_buf[0] + (read_buf[1] << 8);
+ 
 
----
-Abdurrahman Hussain (5):
-      hwmon: (pmbus/adm1266) cap PDIO scan in get_multiple at ADM1266_PDIO_NR
-      hwmon: (pmbus/adm1266) don't clobber GPIO bits before PDIO read in get_multiple
-      hwmon: (pmbus/adm1266) reject short block-read responses in the GPIO accessors
-      hwmon: (pmbus/adm1266) register the gpio_chip after pmbus_do_probe()
-      hwmon: (pmbus/adm1266) serialize GPIO PMBus accesses with pmbus_lock
-
- drivers/hwmon/pmbus/adm1266.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
----
-base-commit: 70eda68668d1476b459b64e69b8f36659fa9dfa8
-change-id: 20260516-adm1266-gpio-fixes-dbdb9c10a4c2
-
-Best regards,
---  
-Abdurrahman Hussain <abdurrahman@nexthop.ai>
+-- 
+2.53.0
 
