@@ -1,94 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5162D47E9;
-	Tue, 19 May 2026 03:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB9A2C21D0;
+	Tue, 19 May 2026 03:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779161767; cv=none; b=gPnfv62XO0fErDa0crhb7nXHD6eeM3VGsRq9GpVs2nACzBtuDYq65nOuKe9HWQUtRwpoHMX6+2zScTGp46ZSs4b8KQV82zGUGmacE65echGIvFOA2LgPPVIQdGM/67W35B/Izld3bI9mMVjgztXQUX4Cnpu4DyLaB7V6c9ueSJE=
+	t=1779163187; cv=none; b=ClusmCL7KZ32eqZaoVaHvSntTam0bm0+BmLLJaInUGhOYMudkrrbwFulrAZTXO4WqKMoeiYvDCU/bEVtoDdGlKCZnjNcbVxWFwFaG+yDkHZrey5hCjyY4cM8ZXIyE065ou3d9lLh8H48Bx99aSZzgwwJNP1lHaewqK+wem1lmVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779161767; c=relaxed/simple;
-	bh=9wUT23wJRSWBAy7V49IVwor34TwuZpIjPh5K+j8ijq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5rKwm2ZWXDdxQTCcjs+m+i5kKHTI9vK0pcdRyLFz1UfdNNGlCcuw79t4BqkUMLsCf+gv6HxakDgY5t1lFn39d5dN5tU0kaFMRuhZodBhbWzfrOymYbUp5LN9aJu6SFpIbKpG/+wNmVGLTVDPshYOYsyKm6owV2jytzOKOsZ2A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiKVIS8w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779163187; c=relaxed/simple;
+	bh=+EKhPB0op5eF5whcf6k/JmiCiY0qlQfP4Onm0LgaO8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVlChDCmiUasr+wnzy4wsngimFsyyxGFKxdzjx/cQISaZE8RlyLjoFYMggiXelNd8mkCqfUOJkFbZem2wGDFFLDdLi71b/6oPfIftwhqjqaXcE62v0zaGIx/WJZS6xx4eN6pA7f2NAB9LLtpTtXXdohsoW6TwthHXNrrgsIO4WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=ZBeiXxko; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiKVIS8w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2AAC2BCB3;
-	Tue, 19 May 2026 03:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779161767;
-	bh=9wUT23wJRSWBAy7V49IVwor34TwuZpIjPh5K+j8ijq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PiKVIS8wLRB18sksYpfRX3It4h4TEMc+BqFKb+DkibU0mMJmeaaJaDfz4hu5Z3QPp
-	 8wE04z2yn/z5QMEYtne9uTXqQ/qNSI6J0nmNSK5msKru7sFZ2wFTCtdaVc7QWN8dzf
-	 MDFni9FiKgB8JHUK2mOLuy89rQLFH/b6r0yzfLmdk5nU9jU472SSQvuDaqRY5x7crG
-	 fR386/ue/K9GSgRXMSUOnqonEFRZjgwom+ARcT0s4bVYmwe+idxly7RmI9pl3Dz+6h
-	 g4jt9jf3VfIZpC7qMvRzYS2pLtGDK/A9lKKq1Dd3QR8MzLAlmqBg4T1ps1rvx8YJrq
-	 83lzvCwAaUF7g==
-Date: Mon, 18 May 2026 22:36:03 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexander Koskovich <akoskovich@pm.me>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] pinctrl: qcom: eliza: Merge QUP1_SE4 lane
- functions
-Message-ID: <agvaboztafz63P2y@baldur>
-References: <20260515-eliza-tlmm-group-qup1-se4-lanes-v2-0-ebb630de0dcf@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="ZBeiXxko"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23CA9114613;
+	Tue, 19 May 2026 05:59:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1779163177;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=qmJs5US+/rH1nCX4Uj+ki/3ilrQeeUX3cODn7cVnq6I=;
+	b=ZBeiXxkoe3MwzbN4QzNb8Eb9xugzS8GPyEK7WQWBkjDNZe2mfu0jkeUSZYAG+XKIVniVZV
+	2aej5YRxjO7O24qdPNDM0HXlb+pTPg8wDOkxfN91/YkemZ9uUqamDG6zS7HK1CKHEUC/Wu
+	LFv3pvOn6Ut/gZ6Uf6HUjOCK0hnZIgWv01XHXGsqYpTpnzBNaI8cbDhtsHErU1N5wICHjE
+	Hw58TSARxvJG8DaikNCXHgc2K22FrVMl2VLmBDkgXWuazAAgAymA7uzq99tCdiqfDVmrs1
+	eaYzvqZUujAHpGfNJkZ6uiUaBZUbXTKbmAvIMdhwkc+tdTbEZGiVdCUR9KrbJQ==
+Message-ID: <3612f5f6-eeca-49e5-9662-72729bb48c9f@nabladev.com>
+Date: Mon, 18 May 2026 21:20:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260515-eliza-tlmm-group-qup1-se4-lanes-v2-0-ebb630de0dcf@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: shared: make the voting mechanism adaptable
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
+Content-Language: en-US
+From: Marek Vasut <marex@nabladev.com>
+In-Reply-To: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, May 15, 2026 at 02:21:50PM +0300, Abel Vesa wrote:
-> QUP1_SE4 uses GPIO36 and GPIO37 for two selectable lane pairs.
-> Splitting into function per lane works, but it forces the devicetree to
-> describe a state per pin while these are usually configured in pairs.
+On 5/13/26 11:13 AM, Bartosz Golaszewski wrote:
+> The current voting mechanism in GPIO shared proxy assumes that "low" is
+> always the default value and users can only vote for driving the GPIO
+> "high" in which case it will remain high as long as there's at least one
+> user voting.
 > 
-> Follow the pair-wise scheme used on Qualcomm Hawi platform and expose
-> the two selectable pairs as qup1_se4_01 and qup1_se4_23 in both the
-> binding and the driver.
+> This makes it impossible to use the automatic sharing management for
+> certain use-cases such as the write-protect GPIOs of EEPROMs which are
+> requested "high" and driven "low" to enable writing. In this case, if
+> the WP GPIO is shared by multiple EEPROMs, and at least one of them
+> wants to enable writing, the pin must be set to "low".
 > 
+> Modify the voting heuristic to assume the value set by the first user on
+> request to be the "default" and subseqent calls to gpiod_set_value()
+> will constitute votes for a change of the value to the opposite. In the
+> wp-gpios case it will mean that the nvmem core requests the GPIO as
+> "out-high" for all EEPROMs sharing the pin, and when one of them wants
+> to write, the pin will be driven low, enabling it.
 
-Given how fresh this binding is, I think it's okay to make the change.
+Shouldn't this polarity inversion be handled by DT GPIO_ACTIVE_* flag ?
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-
-Regards,
-Bjorn
-
-> This has been proposed here:
-> https://lore.kernel.org/all/agIZOAa6nYSb5PWX@baldur/
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
+> Reported-by: Marek Vasut <marex@nabladev.com>
+> Closes: https://lore.kernel.org/all/20260511163518.51104-1-marex@nabladev.com/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 > ---
-> Changes in v2:
-> - Explicitly mentioned "per-lane qup1_se4_l[0-3] names" in the
->   bindings commit message, as Krzysztof suggested.
-> - Picked up Krzysztof's A-b tag for the bindings patch.
-> - Link to v1: https://patch.msgid.link/20260513-eliza-tlmm-group-qup1-se4-lanes-v1-0-1babc6118829@oss.qualcomm.com
+> Hi Marek!
 > 
-> ---
-> Abel Vesa (2):
->       dt-bindings: pinctrl: qcom,eliza-tlmm: Merge QUP1_SE4 lane functions
->       pinctrl: qcom: eliza: Merge QUP1_SE4 lanes in groups
-> 
->  .../bindings/pinctrl/qcom,eliza-tlmm.yaml          |  4 +--
->  drivers/pinctrl/qcom/pinctrl-eliza.c               | 32 +++++++---------------
->  2 files changed, 12 insertions(+), 24 deletions(-)
-> ---
-> base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
-> change-id: 20260513-eliza-tlmm-group-qup1-se4-lanes-2861e6928685
-> 
-> Best regards,
-> --  
-> Abel Vesa <abel.vesa@oss.qualcomm.com>
-> 
+> Please see if you can make your setup work with shared GPIOs with this
+> patch. You need to enable CONFIG_HAVE_SHARED_GPIOS on your platform.
+
+Why can this shared GPIO not be enabled generically for any GPIO 
+controller ?
+
+[...]
