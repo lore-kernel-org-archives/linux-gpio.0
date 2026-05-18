@@ -1,109 +1,164 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334C62D5937
-	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 01:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A52E2BD022;
+	Tue, 19 May 2026 02:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779152418; cv=none; b=RgtoLqaFw3VP9wpL7KHeXmGt4visZzYQviCdZ4i4rkiKNOpMbQYM1bdc/JkrjqWz/pWxYkQfc5t5qShk98Y+zukvZWoBB4KmjNUMQA0dQwINORQ2+MyxyIRTwWmrobmdeGCagshOsFt4Q6RaCihqihGE793dh2vLObRS1RWudTQ=
+	t=1779156796; cv=none; b=F3/+biJodMWUsHtLwXLOPVYQ7/Pb9umJCalXvl6RCksp5VjWlQmXsDZzv2UY+RaTZnsfp/FErenWoCKP6In6WRrTSkcUj7dereKmu2Y+TM0ynWGX42uio69acE31guNyVw2P9DrpRIhmwqUdmXe5H4yvlagFw97I8D8PesMN8Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779152418; c=relaxed/simple;
-	bh=9/4QdOoYt5GXCxv767gp0C8p+Gqp7DJJXOLTLhCLH2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bs0pLTGeCzP57z0FXlEpHxgEvRTtHQKToFAWvDLQbRk3ta/hBynjwjv5hbUItK0BxRvkEnlzZsGyOn4frGryCpjk4HCgK+xZEVz5mc5PnUsKun617MXFjLbYk8sFnYt9NZtymliJ8puU0uyXvjwztH3Po1Zf8VFmLHY/2wNFpBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKASs4P9; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779156796; c=relaxed/simple;
+	bh=YUmCsavKOtlk398DgQKYiDZ0NI/JX7vUuEM2/VVHOK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjO63kevRTm5220s4aLi2u3hE6dQEdPqx7W7ehONiYpkqEa5VqLy7Vj4yqkqYByXDurHvJpTVgyiWpaWMIqJb0Pky4fUGg8aCbJuYi8KtPL7GH+cT1LkinTIikliCxYDGtJKFpXgeJ8BtvKN191+i+5Piw+ceXvQ/QMV5bSr134=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUzdj70j; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKASs4P9"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8379e010b01so1207840b3a.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 May 2026 18:00:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779152416; x=1779757216; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VbNWklWh6Fsmc4pps8xgmKimSXfnh3n3C2bAnfYPLH8=;
-        b=hKASs4P9kFN+QdSraxFjS8nnWqQGZ8yMCkzMCHco+36aIHaXKfTQA73Y6Gb3dxXQCL
-         mu/e2wH0gqQy0TSp6dvQ64doEGg3tUmbaUPMtR2KiAtBvpW3ijuvMkv1IcnQST5PvAGL
-         EwmkzJENr1eCywye9LVWW5WMwRDZlhwIr14yM8H120MKUkM8Ki2cQCVpeK7lus9s0zKc
-         Xjxvg1eCCzBaCjvkSPaL1qW2t12JZV/r+XsAfWbzGkuNoN69vyH7EzHx5vUqx1raMUSZ
-         6M5RiwEPx3ZyfXpWwkGo8fnF4H8yImIAfD3Mf8Zau4zZWwkbhSK8dBYvf9EeKoXZqJ26
-         EjJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779152416; x=1779757216;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VbNWklWh6Fsmc4pps8xgmKimSXfnh3n3C2bAnfYPLH8=;
-        b=Wj/Hw8CV19NsSogFywvdKpk2WlXVPKClsaVRv3j0sZkLcwsCZFJsAyQD4pEWrWNTuC
-         ndawY4Oa25tp7rmNnkYIytZ21PVvIxYls85KREVMOEmolpI3hdiyRlKQIwHQATm+7lug
-         Ku/5V4Lh23yO7RYE56KkXgvTTKMC7sgls1IHfFqh/w6LfkPkdgnn5GR5mlXo8+RNxcDt
-         PnfJYVBcDSwXGvdCOQHjhNHuUSqNoSngKIc/3aX66dZNU19/0sjr+2IWhB3e1FGCEJNx
-         /0F7GxOURZTuoV3Kx2aAzGMPA6uw8iwxfI26HvWIjR4umgyf6CU2oGGiRDkKBQSwu7fE
-         LoUA==
-X-Gm-Message-State: AOJu0YzG6ZDGdtKN10vC10pTpnK1F3fTYB6V3zeBWyDiSAhxHqTDJfp4
-	ijeymHmlo7lBjJ6/wpcuwngm0T4/iDPQHoQQXhLt/1HL9jP8X5SUjDcGRW1/6fnk
-X-Gm-Gg: Acq92OF1IYzVXGN/shaZ/+lGwezoZnidQCjhrNL9NO5Vcn+aG2Bk+obwrQmYJVl5dju
-	3xNemzv1KvFmCcnb0zD+CbOf/PkT7TBUfSZ/PmN3Ooe/O5xNgSxnLSVkSm2DVXf4N6WkVyNbBXf
-	/YiNki4XjkU4s47H1QV0MR1WtLtvJyHFJtpuzRLhQ+iNIUHsvb7cRrqhHM4ZDT86cu1OPzHOmG9
-	swQhtKvrb6yOT+az69BoFG1ySHvhAedHl8/sT/ICzF32/yCidVLrvcSxXbmA68YdCMKdvgJr34N
-	fqUt6haShAxVWURhhA6tL4CoCyh01xadvjygqv1RIJ535bLM6LMECFj3fYBcmYUqjtoEgf5DHDr
-	RlkuJ33QHqGY4vzbmpJL6Dz6BFouY84B/Azyqf/j142uwFPRJZk4FM9WeW6w2ifIfE9bH7HzTec
-	GsgRSG58cpbR5VgACd5F7Hn/VbKaP+2bD3hyo57q86c5rAZAAr7Dq7yMTQE3w+AgcdRhfo6KITr
-	+ICqRgbI4TsLsiUDiHLinEj2TT4N4qNRBY=
-X-Received: by 2002:a05:6a00:2293:b0:82c:d7c4:4c57 with SMTP id d2e1a72fcca58-83f33cc684emr18154151b3a.19.1779152416542;
-        Mon, 18 May 2026 18:00:16 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83f196660easm15638026b3a.11.2026.05.18.18.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2026 18:00:15 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kernel@vger.kernel.org (open list),
-	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Subject: [PATCH] gpio: xgene: allow COMPILE_TEST builds
-Date: Mon, 18 May 2026 17:59:58 -0700
-Message-ID: <20260519005958.628783-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUzdj70j"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1779156795; x=1810692795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YUmCsavKOtlk398DgQKYiDZ0NI/JX7vUuEM2/VVHOK0=;
+  b=UUzdj70jvhBu5goDE0aE3gLhlHCNxKAN3p8uIR2qF4vLft/1npFYv1gx
+   OqDXUiYn+gEA31JNiXAmRdl9xPvC9rmvLyBqFfYKIsN4QeiOU2zVtMpJn
+   b0tDAoCQQCt0X84RnbejOGOxVB8LefAYxBpd04k/9Wz4KN3dgFtWE91RB
+   T1QWyD+eACpqu425jmNV7wQhNpO3Vnm48se9z3MuDW2w6Iz2XSXaAp0/1
+   g5HZBznbm4u7uHqTxZ9dPr1tCcJPpLyaTVnYBKrFS5IV9URSf0cpzV1Fn
+   Cs47H1mNSRaFp8icTPEd6iLFQJvkE2W3TxgvVvFbcG/BzfrAUJVo902Ph
+   A==;
+X-CSE-ConnectionGUID: 7qb+xokyQ5OxKPY9MqVlTw==
+X-CSE-MsgGUID: iPOf2RCTTzuYNQWTQYo90Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="67553783"
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
+   d="scan'208";a="67553783"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2026 19:13:14 -0700
+X-CSE-ConnectionGUID: VH/HwBksT7mZa7qATCvodA==
+X-CSE-MsgGUID: nDQMIyvaRIWtd4uEyuRzqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
+   d="scan'208";a="239684783"
+Received: from lkp-server02.sh.intel.com (HELO 30e86e9c1927) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 18 May 2026 19:13:13 -0700
+Received: from kbuild by 30e86e9c1927 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wP9xF-00000000015-46vW;
+	Tue, 19 May 2026 02:13:09 +0000
+Date: Tue, 19 May 2026 06:42:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	wsa+renesas@sang-engineering.com, andi.shyti@kernel.org,
+	linusw@kernel.org, brgl@kernel.org, linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Markus Stockhausen <markus.stockhausen@gmx.de>
+Subject: Re: [PATCH v2] i2c: i2c-gpio: Enhance driver for buses with shared
+ SCL
+Message-ID: <202605190501.z5y2mZnV-lkp@intel.com>
+References: <20260518161013.900504-1-markus.stockhausen@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260518161013.900504-1-markus.stockhausen@gmx.de>
 
-The APM X-Gene GPIO driver uses generic platform, ACPI, MMIO, and gpiolib
-interfaces.  Allow it to build with COMPILE_TEST, matching the existing
-coverage for the X-Gene standby GPIO driver.
+Hi Markus,
 
-Tested with:
-make LLVM=1 ARCH=loongarch drivers/gpio/gpio-xgene.o
+kernel test robot noticed the following build errors:
 
-Assisted-by: Codex:GPT-5.5
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[auto build test ERROR on linux-review/Markus-Stockhausen/dt-bindings-i2c-Add-i2c-shared-gpio/20260515-102710]
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ba2e8c802093..9ea5c2523fd4 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -825,7 +825,7 @@ config GPIO_WCD934X
- 
- config GPIO_XGENE
- 	bool "APM X-Gene GPIO controller support"
--	depends on ARM64
-+	depends on ARM64 || COMPILE_TEST
- 	help
- 	  This driver is to support the GPIO block within the APM X-Gene SoC
- 	  platform's generic flash controller. The GPIO pins are muxed with
--- 
-2.54.0
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Stockhausen/i2c-i2c-gpio-Enhance-driver-for-buses-with-shared-SCL/20260519-005100
+base:   https://github.com/intel-lab-lkp/linux Markus-Stockhausen/dt-bindings-i2c-Add-i2c-shared-gpio/20260515-102710
+patch link:    https://lore.kernel.org/r/20260518161013.900504-1-markus.stockhausen%40gmx.de
+patch subject: [PATCH v2] i2c: i2c-gpio: Enhance driver for buses with shared SCL
+config: hexagon-randconfig-001-20260519 (https://download.01.org/0day-ci/archive/20260519/202605190501.z5y2mZnV-lkp@intel.com/config)
+compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project 5bac06718f502014fade905512f1d26d578a18f3)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260519/202605190501.z5y2mZnV-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202605190501.z5y2mZnV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-gpio.c:426:2: error: no member named 'dep_map' in 'struct rt_mutex_base'
+     426 |         lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:158:33: note: expanded from macro 'lockdep_set_class'
+     158 |         lockdep_init_map_type(&(lock)->dep_map, #key, key, 0,   \
+         |                                ~~~~~~  ^
+>> drivers/i2c/busses/i2c-gpio.c:426:2: error: no member named 'dep_map' in 'struct rt_mutex_base'
+     426 |         lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:159:18: note: expanded from macro 'lockdep_set_class'
+     159 |                               (lock)->dep_map.wait_type_inner,  \
+         |                               ~~~~~~  ^
+>> drivers/i2c/busses/i2c-gpio.c:426:2: error: no member named 'dep_map' in 'struct rt_mutex_base'
+     426 |         lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:160:18: note: expanded from macro 'lockdep_set_class'
+     160 |                               (lock)->dep_map.wait_type_outer,  \
+         |                               ~~~~~~  ^
+>> drivers/i2c/busses/i2c-gpio.c:426:2: error: no member named 'dep_map' in 'struct rt_mutex_base'
+     426 |         lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:161:18: note: expanded from macro 'lockdep_set_class'
+     161 |                               (lock)->dep_map.lock_type)
+         |                               ~~~~~~  ^
+   4 errors generated.
+
+
+vim +426 drivers/i2c/busses/i2c-gpio.c
+
+   393	
+   394	static struct i2c_gpio_scl_data *i2c_gpio_create_scl(struct fwnode_handle *fwnode)
+   395	{
+   396		struct fwnode_reference_args args;
+   397		struct i2c_gpio_scl_data *scl;
+   398		int ret;
+   399	
+   400		ret = fwnode_property_get_reference_args(fwnode, "scl-gpios",
+   401							 "#gpio-cells", 0, 0, &args);
+   402		if (ret)
+   403			/* try the ancient way */
+   404			ret = fwnode_property_get_reference_args(fwnode, "gpios",
+   405								 "#gpio-cells", 0, 1, &args);
+   406		if (ret)
+   407			return ERR_PTR(ret);
+   408	
+   409		if (args.nargs < 1) {
+   410			fwnode_handle_put(args.fwnode);
+   411			return ERR_PTR(-EINVAL);
+   412		}
+   413	
+   414		scl = kzalloc(sizeof(*scl), GFP_KERNEL);
+   415		if (!scl) {
+   416			fwnode_handle_put(args.fwnode);
+   417			return ERR_PTR(-ENOMEM);
+   418		}
+   419	
+   420		/* The unique identification from the SCL GPIO reference in the device tree */
+   421		scl->fw_node = args.fwnode;
+   422		scl->fw_pin = args.args[0];
+   423		scl->fw_flags = (args.nargs >= 2) ? args.args[1] : 0;
+   424	
+   425		rt_mutex_init(&scl->lock);
+ > 426		lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+   427		refcount_set(&scl->ref, 1);
+   428	
+   429		return scl;
+   430	}
+   431	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
