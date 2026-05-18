@@ -1,79 +1,64 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DC238237D;
-	Mon, 18 May 2026 18:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2C2396D19;
+	Mon, 18 May 2026 21:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779128780; cv=none; b=K4qKyOo+CdkeUWENeTkd4r0lLziTuYsFg+M55ficJ9WjVLE0P6nUCQviCcPdpzoHfo5JCP046pn1YltIcpN4f1FgKtpiXxm3O2s8W9lx66St9syzvZt4LhmeUDrDa8tB2I44L5+MNe9U5Vm7Op4L7HHzp3JimzOcWjdkhYCE0Gg=
+	t=1779138893; cv=none; b=UmqkQxvlzoWvrGLwOb3JMXPObvaQP852YWAg6dEQvwvDyyGbyrgRqqMuk0K88xBXRbJzWlM3NawufFuRDToweC/vDiQwpzawIvzREr5xqTLtkGU+i6amaUSz7fNRLN/o7Xi22kDZvbDEbveHrrzplxUXwMQIrrus4iGIxwSuNDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779128780; c=relaxed/simple;
-	bh=pbXYLQ1mwct3+ssZlrWJpr6OzTUkZbnMsQ/G5sb/T3M=;
+	s=arc-20240116; t=1779138893; c=relaxed/simple;
+	bh=0NTob/lmSZJbtlL/Sfc01Q1tUC/xdilTB1xZMP6pz/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AD7/43eDuGOoEq+T35lC4QD/Y67eyRbJR31nR957MQEP33uzEiMhdd1Os9xCmMCY3IwNa6mJtH6kuzid6b1V1V0QMwYGzZ6Tal+6X1pqp/x9GUTkgvMDhlVWjPAxjcz1/VE5QjG9NyaeTs7t4nCrxNpTKBXlgY277v65NDN6foI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2T0DUHL; arc=none smtp.client-ip=192.198.163.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPLGYdOuxeIe5uc+TASIlYVwWmLQFpEWlSgbEg7D1fuaNCI52KHrvo4CAbTKc1oE6yIWiK4rv2PkZMJmUmTV2VUtdgtJlPSfDtyp9JmFHwEcQnPFbgxERgtbHgqE61OUH1EKQOrgyjwdmAuisfq1rw4cKBoU99AJkGeiz8ZsXos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aa+cmDCI; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2T0DUHL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aa+cmDCI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1779128779; x=1810664779;
+  t=1779138892; x=1810674892;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=pbXYLQ1mwct3+ssZlrWJpr6OzTUkZbnMsQ/G5sb/T3M=;
-  b=A2T0DUHLXSAZYQw2jRiF+UoKrVoD0sUG+NgJtbnOEQb18t2vQsGxLopw
-   YUxKWtYH8sxVruSa43cAl3BbpnZ04oBxA4nDyeKXLSbRW1afM6G4WSkr4
-   ZJObrW+BGc0Icc6onS9dZJE4WOU0QPpHzD8wHPszfE+/amcnq74W8dnKi
-   ojxajFEfbqExWClaWwZqO4rARkYfU4V+fyjqBpaVjrQhtM0PqYc19qSsI
-   3nLaQA3OGxSSKCqC+ljONKYwvx39XAdeaOkXLxRLKrsuiGC3BZF3e3Dub
-   /9Ft5tR0johwFWGFLRiCCXov2JNgAOk0WOR15314fzbbobb8vfam97s1H
-   A==;
-X-CSE-ConnectionGUID: 9qriItO/ScWlODNBpfRg1Q==
-X-CSE-MsgGUID: +k3VPqE9SVOFJAvzB/QnXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="90575555"
+  bh=0NTob/lmSZJbtlL/Sfc01Q1tUC/xdilTB1xZMP6pz/M=;
+  b=aa+cmDCIu2Y6Ed8AW+N+yn7x0lXFXAx0hkXvwxRcIIv1RJent1Zhq+WB
+   JTgYjJpydZG2gu8MfeW7wjorS/n1PAL1Oy/EvH22mZ9SG6TwRraxZ6jGI
+   YD5w+A/U3ZI//P8Dn0II41AnI1gWNj5LzoHVkAVbOYqsWFC6rzBrAZtjq
+   APvRfD7LRYHFb7MTfj46lfTFBDFT26h2mqbd/Mx0gce0gzMEnNf1HgANU
+   c8Eu/cIoqfW79++mzEgF0o186k/48me16ScAOccCqpIRVLlmhAps8lBCy
+   1RldhnoLtmCYhRH/WJkRsssTIVugi2qr8J80KmgycTx+8ENk0telUq5J7
+   w==;
+X-CSE-ConnectionGUID: jTd32rfOT+OQsoeKo6qN4A==
+X-CSE-MsgGUID: tFrTlzHlTtqRqxGahTaBsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="79855891"
 X-IronPort-AV: E=Sophos;i="6.23,242,1770624000"; 
-   d="scan'208";a="90575555"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2026 11:26:18 -0700
-X-CSE-ConnectionGUID: O0zap/NiRba3AYD16GFVrA==
-X-CSE-MsgGUID: e9aNJkI4TGO68gsQIjE1Pw==
+   d="scan'208";a="79855891"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2026 14:14:51 -0700
+X-CSE-ConnectionGUID: gOI2WDYHTZOe4tQgDM2Wug==
+X-CSE-MsgGUID: 9yqvd5RKR5W2zGcF14wJAg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,242,1770624000"; 
-   d="scan'208";a="239764455"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO localhost) ([10.245.244.3])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2026 11:26:12 -0700
-Date: Mon, 18 May 2026 21:26:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: "Sabau, Radu bogdan" <Radu.Sabau@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	"Sa, Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v11 4/6] iio: adc: ad4691: add SPI offload support
-Message-ID: <agtZwbeVeZdnlXTI@ashevche-desk.local>
-References: <20260515-ad4692-multichannel-sar-adc-driver-v11-0-eab27d852ac2@analog.com>
- <20260515-ad4692-multichannel-sar-adc-driver-v11-4-eab27d852ac2@analog.com>
- <80f61c0b-1f36-4fee-9f76-b93f63b87abe@baylibre.com>
- <LV9PR03MB841418AEF0059E802F7A69B2F7032@LV9PR03MB8414.namprd03.prod.outlook.com>
- <60d66897-41cc-4f3f-afd2-64e49f0bb55e@baylibre.com>
+   d="scan'208";a="238565917"
+Received: from lkp-server01.sh.intel.com (HELO d94e5e629b2d) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 18 May 2026 14:14:48 -0700
+Received: from kbuild by d94e5e629b2d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wP5IU-000000003PK-04b1;
+	Mon, 18 May 2026 21:14:46 +0000
+Date: Tue, 19 May 2026 05:14:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	wsa+renesas@sang-engineering.com, andi.shyti@kernel.org,
+	linusw@kernel.org, brgl@kernel.org, linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Markus Stockhausen <markus.stockhausen@gmx.de>
+Subject: Re: [PATCH v2] i2c: i2c-gpio: Enhance driver for buses with shared
+ SCL
+Message-ID: <202605190550.05JVXXRd-lkp@intel.com>
+References: <20260518161013.900504-1-markus.stockhausen@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -82,45 +67,77 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <60d66897-41cc-4f3f-afd2-64e49f0bb55e@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260518161013.900504-1-markus.stockhausen@gmx.de>
 
-On Mon, May 18, 2026 at 10:16:38AM -0500, David Lechner wrote:
-> On 5/18/26 10:14 AM, Sabau, Radu bogdan wrote:
-> >> -----Original Message-----
-> >> From: David Lechner <dlechner@baylibre.com>
-> >> Sent: Saturday, May 16, 2026 8:53 PM
+Hi Markus,
 
-...
+kernel test robot noticed the following build errors:
 
-> >>> +	if (st->manual_mode && st->offload)
-> >>> +		return sysfs_emit(buf, "%llu\n", READ_ONCE(st->offload-
-> >>> trigger_hz));
-> >>
-> >> Why do we need READ_ONCE?
-> > 
-> > trigger_hz is u64 and if the target is 32-bit, a 64-bit access compiles to two 32-bit
-> > instructions, so show() reading it without a lock and store() writing it concurrently
-> > can produce a torn value at the compiler level. READ_ONCE/WRITE_ONCE suppress
-> > the compiler transformations that would allow that splitting or caching. We could
-> > have st->lock in show() instead, but that felt heavier than necessary for a single
-> > scalar where a transiently stale-but-whole read is fine.
-> 
-> I would go with the mutex. It will be easier for people to understand.
+[auto build test ERROR on linux-review/Markus-Stockhausen/dt-bindings-i2c-Add-i2c-shared-gpio/20260515-102710]
 
-But why? READ_ONCE() here is exactly enough. We do not care about
-serialisation, we care only about integrity. With mutex it will confuse
-(some) people more, e.g., me. Because in that case I would think about
-some specific access to it that may happen. Yes, I saw many times the show
-functions that do mutex and then print the result when mutex is not held
-anymore, but for simple cases like here, mutex is overkill. Interestingly
-that using guard()() inside show makes the mentioned functions to print
-(almost) latest value of the variable in question. It narrows window down
-as printing will go inside critical section.
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Stockhausen/i2c-i2c-gpio-Enhance-driver-for-buses-with-shared-SCL/20260519-005100
+base:   https://github.com/intel-lab-lkp/linux Markus-Stockhausen/dt-bindings-i2c-Add-i2c-shared-gpio/20260515-102710
+patch link:    https://lore.kernel.org/r/20260518161013.900504-1-markus.stockhausen%40gmx.de
+patch subject: [PATCH v2] i2c: i2c-gpio: Enhance driver for buses with shared SCL
+config: sparc-randconfig-r073-20260519 (https://download.01.org/0day-ci/archive/20260519/202605190550.05JVXXRd-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 8.5.0
+smatch: v0.5.0-9185-gbcc58b9c
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260519/202605190550.05JVXXRd-lkp@intel.com/reproduce)
 
--- 
-With Best Regards,
-Andy Shevchenko
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202605190550.05JVXXRd-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/spinlock.h:63,
+                    from include/linux/swait.h:7,
+                    from include/linux/completion.h:12,
+                    from drivers/i2c/busses/i2c-gpio.c:7:
+   drivers/i2c/busses/i2c-gpio.c: In function 'i2c_gpio_create_scl':
+>> include/linux/lockdep.h:158:31: error: 'struct rt_mutex_base' has no member named 'dep_map'
+     lockdep_init_map_type(&(lock)->dep_map, #key, key, 0, \
+                                  ^~
+   drivers/i2c/busses/i2c-gpio.c:426:2: note: in expansion of macro 'lockdep_set_class'
+     lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+     ^~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:159:16: error: 'struct rt_mutex_base' has no member named 'dep_map'
+             (lock)->dep_map.wait_type_inner, \
+                   ^~
+   drivers/i2c/busses/i2c-gpio.c:426:2: note: in expansion of macro 'lockdep_set_class'
+     lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+     ^~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:160:16: error: 'struct rt_mutex_base' has no member named 'dep_map'
+             (lock)->dep_map.wait_type_outer, \
+                   ^~
+   drivers/i2c/busses/i2c-gpio.c:426:2: note: in expansion of macro 'lockdep_set_class'
+     lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+     ^~~~~~~~~~~~~~~~~
+   include/linux/lockdep.h:161:16: error: 'struct rt_mutex_base' has no member named 'dep_map'
+             (lock)->dep_map.lock_type)
+                   ^~
+   drivers/i2c/busses/i2c-gpio.c:426:2: note: in expansion of macro 'lockdep_set_class'
+     lockdep_set_class(&scl->lock.rtmutex, &i2c_gpio_scl_lock_key);
+     ^~~~~~~~~~~~~~~~~
 
 
+vim +158 include/linux/lockdep.h
+
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  150  
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  151  /*
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  152   * Reinitialize a lock key - for cases where there is special locking or
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  153   * special initialization of locks so that the validator gets the scope
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  154   * of dependencies wrong: they are either too broad (they need a class-split)
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  155   * or they are too narrow (they suffer from a false class-split):
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  156   */
+fbb9ce9530fd9b Ingo Molnar    2006-07-03  157  #define lockdep_set_class(lock, key)				\
+eae6d58d67d973 Peter Zijlstra 2022-06-17 @158  	lockdep_init_map_type(&(lock)->dep_map, #key, key, 0,	\
+de8f5e4f2dc1f0 Peter Zijlstra 2020-03-21  159  			      (lock)->dep_map.wait_type_inner,	\
+eae6d58d67d973 Peter Zijlstra 2022-06-17  160  			      (lock)->dep_map.wait_type_outer,	\
+eae6d58d67d973 Peter Zijlstra 2022-06-17  161  			      (lock)->dep_map.lock_type)
+de8f5e4f2dc1f0 Peter Zijlstra 2020-03-21  162  
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
