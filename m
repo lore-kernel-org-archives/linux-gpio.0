@@ -1,105 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AD23EFFBC
-	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404303EFFC2;
+	Tue, 19 May 2026 09:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779180998; cv=none; b=FRLfpMHZNMb5RWB9ncKZbwzdq/C/SDW1zRrRG5UoogS6gpVB94s41mAT22/2zk4U7/PygZpS/koUladLYCtEK70ELtHGnOmUpxUWcWOdkAq3BF5HJxsY62h/OGv4WxFOE96qCZfF/R8H2J7hTh7DrWpa1kvsK7pVfajEy+8fkX8=
+	t=1779182717; cv=none; b=eAzsjPBnzqsCC5t5tubNxBWq/zitFaT+ET7we6fEapoqbo+nEoj9VUcFQlGbJVMhVKEdglU8ZP3X+Lmjr9EgXxew+CNSAyvsCTwfaOdL/PwlGieVbNkJQ6xZd4SBSP0FJp3keSxKQJBa3BGfIryEzkQdTObpUdIRIWe7b1JzeD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779180998; c=relaxed/simple;
-	bh=DTO6oQ3UWQu7nWcb7xh4ej01bSLnP6c3NCUp9jbOkuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEsAPUq4iyoaF5waQOB4sVEj3Prg0a51/BzDB47ch5bH+vj377lsa8udxiWVG/hxkb2a5ZFMpigQbMy6nIBuWQNEnVS/H4HVpLIoW1ztznP6a6eEraIwxZYG3xtRGUgkF++IyKYQqMohbB8BwjgeOaPSJe/iYvuj6yHIGUx2DOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpvzYAJO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779182717; c=relaxed/simple;
+	bh=LY4j+awKez8uEwIL98fiH+gRN9x2qY9yTM+7byFWkT8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XCSl0BY8V4bYQ3ZfJUW8JzCjdyVSVA1JdAMye6F9RT09/6ZVi4tqCYNzKtbJVQ0hrvJPfvEaN6ihBi7UVxpl1sYsrEtFqfw2or4R+ivLaggUrtopJu1xMqBFYJ/D+rXuOyT3R1PDVN50+nIFUwf9C5lggQ8nMtkk+DUR8f8vsso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvFv9gRo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpvzYAJO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F803C2BCF5
-	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:56:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvFv9gRo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7643C2BCB3;
+	Tue, 19 May 2026 09:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779180998;
-	bh=DTO6oQ3UWQu7nWcb7xh4ej01bSLnP6c3NCUp9jbOkuc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lpvzYAJOFI8GPaQgxUFmASHSRktxbO3KHVjDEHnra6umMYqObeWTIu1XT3PxUXqWr
-	 VrKRmXwLqBDsz2nSnZE9x3B2d1XWau1L3kiqiRTpa6XwjRNyhqb5eQFht3X4NbxuEh
-	 Rhz1kBPMNSX2g723mFjvcc6+T/1fkdCDDNplYQpLTNvm00JrhKJfgX+qqYl7ql58M2
-	 A4Eozc4krWYnkw97EkC5Mf1RIxJC0K1HKV1VCXCEg6xJoIYcuLrSwDdA1/TVEUf6Lq
-	 yAWQPYGwYHpJRo1vmMroQzrsjWafwwD5VuWokzGleVf4c3RNUtS+YeRWTe/+/9uyst
-	 r/Yew2zAwIX3A==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a40d02b58bso2436815e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 01:56:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9cXyUkxX6/wztLkIAFGZhXg5GAftrAb1yevJehlfcDFf+odr5xcky4xkvD5m0wp1zJT0aWG9vQNu2Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0oOp9+k1chvkC7E89m7nEPzNmA+ReZhiw8lL416VS/D+CiT0j
-	V63mRXgKagN5B+Mo2wijD7ePvbXEm2PURCfedIDQeRyF5h1nYhcRPuyVO5Gqd27uXjCtTpS3irm
-	vzdD88b94T0IzHP4BjhUyWabtWylgMZU47IYWzkE2yA==
-X-Received: by 2002:a05:6512:2393:b0:5a8:9511:b906 with SMTP id
- 2adb3069b0e04-5aa0e769bc1mr5674355e87.33.1779180997192; Tue, 19 May 2026
- 01:56:37 -0700 (PDT)
+	s=k20201202; t=1779182717;
+	bh=LY4j+awKez8uEwIL98fiH+gRN9x2qY9yTM+7byFWkT8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qvFv9gRojvXoDWo7++gx8YgEHwBhplYpFEZMoqsGTigFypLqJomaA0Z0B4o7GyCD2
+	 utPNm/g4AFtD8Y7osfFHEYhQ3pWI6+0kjRAfmW368l2B6/pLxfQvSdAMdSG8N0Z9vt
+	 vLlAbg/xv3ZInCD10jp2pPWut9YR+mIacjErV0fi0z9yNgLgCcUk4Jazp8+t60gbMK
+	 pXyX1UiEbIlUFHQVH1p6hTHUWdBcRJK0/64QTtKcjqu4DGTXkXmMCJhyoh33xgIOn+
+	 DKfC6+YYc0X5FS5IIEO1Gm1D7hZA/PvNbHs0GsnFsFRzKBq0RNR8/Lg7alnQpqZyF7
+	 H1QbEGEsNJILg==
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Linus Walleij <linusw@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Herve Codina <herve.codina@bootlin.com>
+Cc: linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Christophe Leroy <chleroy@kernel.org>
+In-Reply-To: <20260513081702.317117-1-herve.codina@bootlin.com>
+References: <20260513081702.317117-1-herve.codina@bootlin.com>
+Subject: Re: [PATCH v3 00/17] ASoC: Add support for GPIOs driven amplifiers
+Message-Id: <177912269514.352391.10184061127272991864.b4-ty@b4>
+Date: Mon, 18 May 2026 17:44:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
- <CAD++jL=jL=YLOTy2JP8WfXZw-7K8Tf3KoJQz0+e353JCYxBx8Q@mail.gmail.com>
-In-Reply-To: <CAD++jL=jL=YLOTy2JP8WfXZw-7K8Tf3KoJQz0+e353JCYxBx8Q@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Tue, 19 May 2026 10:56:25 +0200
-X-Gmail-Original-Message-ID: <CAMRc=MdfhTkZRH_sx0S-v0UuAPfj8RT4HAZS4zD-5HF3r_U_Sg@mail.gmail.com>
-X-Gm-Features: AVHnY4IlaM9NWMSgBNuVtPeZCN56KULZcaBOFqvEg0GBt1sfX-3qo_dP0zLk4Lg
-Message-ID: <CAMRc=MdfhTkZRH_sx0S-v0UuAPfj8RT4HAZS4zD-5HF3r_U_Sg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: shared: make the voting mechanism adaptable
-To: Linus Walleij <linusw@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Marek Vasut <marex@nabladev.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3526; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=LY4j+awKez8uEwIL98fiH+gRN9x2qY9yTM+7byFWkT8=;
+ b=kA0DAAoBJNaLcl1Uh9AByyZiAGoMLHijtKhg2bzH9vN5cJeX23ssUzW9D4fCBT4nDr/XZaEGz
+ YkBMwQAAQoAHRYhBK3maKpnVxi1n+Kf6iTWi3JdVIfQBQJqDCx4AAoJECTWi3JdVIfQA98H/A0n
+ 6RYuh8WJgFqu9o0qrpi6xiTm+AFuikj7qx/QqA1NaYOX+V4TqaAfjOy4wmLTL4eNR1ItCGX8AQb
+ Mi599fXxb/Ru2fPh5glNkYVHs/DC1kRZ2ABo/79uxr58dhNy+GkY4Ce7AEgqsKgHNI0RS1A93a8
+ YIbXkgXwzhv7dM7SSXB4KO5Kfl3DYoBCYnwK/AfxglmtzcaNtOW3S7HPsc9DtDzRktXvMlFvp+0
+ VmCpGf5rOgWUlseQyN9hPShB7VVoUr66TG1WGmOFytXEujNiS00h9i7lEUdEGchh9BOSEarUB1U
+ VVKMk9FtEsbzTNQ4klCx1Rd+G/QhLEx2TsYpwKI=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, May 19, 2026 at 10:34=E2=80=AFAM Linus Walleij <linusw@kernel.org> =
-wrote:
->
-> On Wed, May 13, 2026 at 11:14=E2=80=AFAM Bartosz Golaszewski
-> <bartosz.golaszewski@oss.qualcomm.com> wrote:
->
-> > The current voting mechanism in GPIO shared proxy assumes that "low" is
-> > always the default value and users can only vote for driving the GPIO
-> > "high" in which case it will remain high as long as there's at least on=
-e
-> > user voting.
-> >
-> > This makes it impossible to use the automatic sharing management for
-> > certain use-cases such as the write-protect GPIOs of EEPROMs which are
-> > requested "high" and driven "low" to enable writing. In this case, if
-> > the WP GPIO is shared by multiple EEPROMs, and at least one of them
-> > wants to enable writing, the pin must be set to "low".
-> >
-> > Modify the voting heuristic to assume the value set by the first user o=
-n
-> > request to be the "default" and subseqent calls to gpiod_set_value()
-> > will constitute votes for a change of the value to the opposite. In the
-> > wp-gpios case it will mean that the nvmem core requests the GPIO as
-> > "out-high" for all EEPROMs sharing the pin, and when one of them wants
-> > to write, the pin will be driven low, enabling it.
-> >
-> > Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO pro=
-xy driver")
-> > Reported-by: Marek Vasut <marex@nabladev.com>
-> > Closes: https://lore.kernel.org/all/20260511163518.51104-1-marex@nablad=
-ev.com/
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
-m>
->
-> I like this idea.
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
->
-> BTW was this "voting" system inspired by the hardware "vote" thing
-> that Qualcomm is using for power management? That's the only place
-> I've seen it before.
->
+On Wed, 13 May 2026 10:16:44 +0200, Herve Codina wrote:
+> ASoC: Add support for GPIOs driven amplifiers
+> 
+> On some embedded system boards, audio amplifiers are designed using
+> discrete components such as op-amp, several resistors and switches to
+> either adjust the gain (switching resistors) or fully switch the
+> audio signal path (mute and/or bypass features).
+> 
+> [...]
 
-Really only the name, it's not much different from what we already
-have in clocks or regulators IMO.
+Applied to
 
-Bart
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
+
+Thanks!
+
+[01/17] of: Introduce of_property_read_s32_index()
+        https://git.kernel.org/broonie/sound/c/37dba38ac8d0
+[02/17] ASoC: dt-bindings: Add support for the GPIOs driven amplifier
+        https://git.kernel.org/broonie/sound/c/04a1fe8e6582
+[03/17] ASoC: simple-amplifier: Remove DRV_NAME defined value
+        https://git.kernel.org/broonie/sound/c/28188a6d8869
+[04/17] ASoC: simple-amplifier: Add missing headers
+        https://git.kernel.org/broonie/sound/c/23cf9e3ca498
+[05/17] ASoC: simple-amplifier: Remove CONFIG_OF flag and of_match_ptr()
+        https://git.kernel.org/broonie/sound/c/2c562adb159e
+[06/17] ASoC: simple-amplifier: Rename drv_event() function
+        https://git.kernel.org/broonie/sound/c/dc8beaad2926
+[07/17] ASoC: simple-amplifier: Use 'simple_amp' variable name instead of 'priv'
+        https://git.kernel.org/broonie/sound/c/34ddd2d368c3
+[08/17] ASoC: simple-amplifier: Remove DAPM widgets and routes from the ASoC component driver
+        https://git.kernel.org/broonie/sound/c/4d84b75e5eec
+[09/17] ASoC: simple-amplifier: Introduce support for gpio-audio-amp
+        https://git.kernel.org/broonie/sound/c/41e3ebbfcab1
+[10/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for extra power supplies
+        https://git.kernel.org/broonie/sound/c/f68933d0eb67
+[11/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for mute gpio
+        https://git.kernel.org/broonie/sound/c/432331970eca
+[12/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for bypass gpio
+        https://git.kernel.org/broonie/sound/c/46c21e55c3bf
+[13/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for basic gain
+        https://git.kernel.org/broonie/sound/c/5796026b8e90
+[14/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for gain-ranges
+        https://git.kernel.org/broonie/sound/c/d25e00ecd5c5
+[15/17] ASoC: simple-amplifier: gpio-audio-amp: Add support for gain-labels
+        https://git.kernel.org/broonie/sound/c/fb757dfa039f
+[16/17] ASoC: simple-amplifier: Update author and copyright
+        https://git.kernel.org/broonie/sound/c/7b295a6fc632
+[17/17] MAINTAINERS: Add the ASoC gpio audio amplifier entry
+        https://git.kernel.org/broonie/sound/c/5bd8c4b7d3bb
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
